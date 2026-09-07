@@ -1,0 +1,379 @@
+[
+  {
+    "case": "offcenter_recovery",
+    "goal": "화면의 빨간 블록을 집어서 안정적으로 들고 있어. 상황을 계속 확인하면서 끝까지 처리해.",
+    "elapsed_s": 8.19,
+    "rate_limit_retries": 1,
+    "protocol_errors": 0,
+    "unknown_tool_errors": 0,
+    "stopped": "final",
+    "final": "빨간 블록을 안정적으로 들고 있어. 작업 완료했어.",
+    "world": {
+      "visible": true,
+      "held": true,
+      "stable": true,
+      "distance": 1,
+      "x": 0.5,
+      "pick_attempts": 2,
+      "grasp_count": 1,
+      "actions": [
+        "approach",
+        "pick",
+        "track",
+        "pick",
+        "carry"
+      ],
+      "observations": 5,
+      "slipped": false,
+      "lost": false
+    },
+    "trace": [
+      {
+        "i": 1,
+        "kind": "Plan",
+        "error": null,
+        "raw": "{\"say\": \"빨간 블록이 왼쪽에 있네. 먼저 다가간 뒤 집을게.\", \"plan\": [\"approach\", \"pick\"]}",
+        "plan": [
+          "approach",
+          "pick"
+        ]
+      },
+      {
+        "i": 2,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"다가갈게.\", \"tool\": \"approach\"}",
+        "tool": "approach"
+      },
+      {
+        "i": 3,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"블록 바로 앞에 왔어. 이제 집을게.\", \"tool\": \"pick\"}",
+        "tool": "pick"
+      },
+      {
+        "i": 4,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"블록이 아직 바닥에 있는 것 같아. 다시 한 번 정확히 잡으려고 팔을 움직여 블록을 중앙에 맞춘 뒤 다시 시도할게.\", \"tool\": \"track\"}",
+        "tool": "track"
+      },
+      {
+        "i": 5,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"이제 블록이 화면 중앙에 잘 왔어. 다시 집을게.\", \"tool\": \"pick\"}",
+        "tool": "pick"
+      },
+      {
+        "i": 6,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"블록을 성공적으로 집었어. 이제 안정적으로 들고 있을게.\", \"tool\": \"carry\"}",
+        "tool": "carry"
+      },
+      {
+        "i": 7,
+        "kind": "FinalAnswer",
+        "error": null,
+        "raw": "{\"final\": \"빨간 블록을 안정적으로 들고 있어. 작업 완료했어.\"}"
+      }
+    ]
+  },
+  {
+    "case": "slip_long_recovery",
+    "goal": "빨간 블록을 확실히 집은 뒤 놓치지 않게 안정적으로 들고 있어. 중간에 실패하면 장면을 다시 보고 스스로 복구해.",
+    "elapsed_s": 60.31,
+    "rate_limit_retries": 15,
+    "protocol_errors": 0,
+    "unknown_tool_errors": 0,
+    "stopped": "final",
+    "final": "블록을 여러 번 시도했지만 잡지 못했어. 팔의 위치나 각도에 문제가 있는 것 같아. 더 이상 시도할 수 없어.",
+    "world": {
+      "visible": true,
+      "held": false,
+      "stable": false,
+      "distance": 1,
+      "x": 0.78,
+      "pick_attempts": 8,
+      "grasp_count": 1,
+      "actions": [
+        "approach",
+        "pick",
+        "pick",
+        "pick",
+        "approach",
+        "pick",
+        "pick",
+        "pick",
+        "pick",
+        "pick"
+      ],
+      "observations": 10,
+      "slipped": true,
+      "lost": false
+    },
+    "trace": [
+      {
+        "i": 1,
+        "kind": "Plan",
+        "error": null,
+        "raw": "{\"say\": \"블록이 멀리 있네. 먼저 다가간 뒤 집어서 들게.\", \"plan\": [\"approach\", \"pick\", \"carry\"]}",
+        "plan": [
+          "approach",
+          "pick",
+          "carry"
+        ]
+      },
+      {
+        "i": 2,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"다가갈게.\", \"tool\": \"approach\"}",
+        "tool": "approach"
+      },
+      {
+        "i": 3,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"블록 바로 앞까지 왔어. 이제 집게.\", \"tool\": \"pick\"}",
+        "tool": "pick"
+      },
+      {
+        "i": 4,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"블록이 아직 바닥에 있는 것 같아. 다시 집으려고 할게.\", \"tool\": \"pick\"}",
+        "tool": "pick"
+      },
+      {
+        "i": 5,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"아직 안 잡혔네. 팔 위치를 다시 맞춰서 한 번 더 집어볼게.\", \"tool\": \"pick\"}",
+        "tool": "pick"
+      },
+      {
+        "i": 6,
+        "kind": "Plan",
+        "error": null,
+        "raw": "{\"say\": \"블록이 여전히 바닥에 있어. 접근 거리가 너무 멀거나 각도가 안 맞은 것 같아. 다시 다가간 뒤 집으려고 할게.\", \"plan\": [\"approach\", \"pick\", \"carry\"]}",
+        "plan": [
+          "approach",
+          "pick",
+          "carry"
+        ]
+      },
+      {
+        "i": 7,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"다시 다가갈게.\", \"tool\": \"approach\"}",
+        "tool": "approach"
+      },
+      {
+        "i": 8,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"이제 블록 바로 앞에 왔어. 집게.\", \"tool\": \"pick\"}",
+        "tool": "pick"
+      },
+      {
+        "i": 9,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"블록이 아직 바닥에 있어. 팔이 블록을 감싸지 못했나 봐. 한 번 더 집으려고 할게.\", \"tool\": \"pick\"}",
+        "tool": "pick"
+      },
+      {
+        "i": 10,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"블록이 화면 오른쪽에 있어. 팔이 블록을 정확히 잡지 못하고 있는 것 같아. 팔 위치를 조정해서 다시 집으려고 할게.\", \"tool\": \"pick\"}",
+        "tool": "pick"
+      },
+      {
+        "i": 11,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"블록이 여전히 바닥에 있어. 팔이 블록을 잡지 못하고 있는 것 같아. 팔 위치를 다시 조정해서 한 번 더 집으려고 할게.\", \"tool\": \"pick\"}",
+        "tool": "pick"
+      },
+      {
+        "i": 12,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"블록이 여전히 바닥에 있어. 팔이 블록을 잡지 못하고 있는 것 같아. 팔 위치를 다시 조정해서 한 번 더 집으려고 할게.\", \"tool\": \"pick\"}",
+        "tool": "pick"
+      },
+      {
+        "i": 13,
+        "kind": "FinalAnswer",
+        "error": null,
+        "raw": "{\"final\": \"블록을 여러 번 시도했지만 잡지 못했어. 팔의 위치나 각도에 문제가 있는 것 같아. 더 이상 시도할 수 없어.\"}"
+      }
+    ]
+  },
+  {
+    "case": "double_pick_failure",
+    "goal": "빨간 블록을 집고 실제로 들린 것을 확인한 다음 안정적으로 유지해. 실패하면 다시 시도해.",
+    "elapsed_s": 34.31,
+    "rate_limit_retries": 8,
+    "protocol_errors": 0,
+    "unknown_tool_errors": 0,
+    "stopped": "final",
+    "final": "빨간 블록을 안정적으로 들고 있어. 완료했어.",
+    "world": {
+      "visible": true,
+      "held": true,
+      "stable": true,
+      "distance": 1,
+      "x": 0.5,
+      "pick_attempts": 3,
+      "grasp_count": 1,
+      "actions": [
+        "approach",
+        "pick",
+        "pick",
+        "track",
+        "pick",
+        "carry"
+      ],
+      "observations": 6,
+      "slipped": false,
+      "lost": false
+    },
+    "trace": [
+      {
+        "i": 1,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"블록이 멀리 있네. 먼저 다가갈게.\", \"tool\": \"approach\"}",
+        "tool": "approach"
+      },
+      {
+        "i": 2,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"블록 바로 앞에 왔어. 이제 집어 들게.\", \"tool\": \"pick\"}",
+        "tool": "pick"
+      },
+      {
+        "i": 3,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"블록이 아직 바닥에 있는 것 같아. 집지 못한 거야. 다시 집어 보게.\", \"tool\": \"pick\"}",
+        "tool": "pick"
+      },
+      {
+        "i": 4,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"아직 블록이 바닥에 있어. 위치가 조금 어긋난 것 같아. 팔을 움직여 블록을 화면 중앙에 맞춘 뒤 다시 집어 보게.\", \"tool\": \"track\"}",
+        "tool": "track"
+      },
+      {
+        "i": 5,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"이제 블록이 중앙에 잘 맞춰졌어. 다시 집어 들게.\", \"tool\": \"pick\"}",
+        "tool": "pick"
+      },
+      {
+        "i": 6,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"블록을 성공적으로 집었어. 이제 안정적으로 들고 있을게.\", \"tool\": \"carry\"}",
+        "tool": "carry"
+      },
+      {
+        "i": 7,
+        "kind": "FinalAnswer",
+        "error": null,
+        "raw": "{\"final\": \"빨간 블록을 안정적으로 들고 있어. 완료했어.\"}"
+      }
+    ]
+  },
+  {
+    "case": "target_lost_with_decoy",
+    "goal": "빨간 블록을 찾아서 집어. 빨간 블록이 보이지 않게 되면 다른 색 물체를 대신 집지 말고 상황을 판단해.",
+    "elapsed_s": 7.7,
+    "rate_limit_retries": 2,
+    "protocol_errors": 0,
+    "unknown_tool_errors": 0,
+    "stopped": "final",
+    "final": "빨간 블록이 사라졌어. 다른 색 물체(파란 블록)는 집지 않고 작업을 중단할게.",
+    "world": {
+      "visible": false,
+      "held": false,
+      "stable": false,
+      "distance": 2,
+      "x": 0.65,
+      "pick_attempts": 0,
+      "grasp_count": 0,
+      "actions": [
+        "approach"
+      ],
+      "observations": 1,
+      "slipped": false,
+      "lost": true
+    },
+    "trace": [
+      {
+        "i": 1,
+        "kind": "Plan",
+        "error": null,
+        "raw": "{\"say\": \"빨간 블록이 오른쪽에 있네. 먼저 다가간 뒤 집을게.\", \"plan\": [\"approach\", \"pick\"]}",
+        "plan": [
+          "approach",
+          "pick"
+        ]
+      },
+      {
+        "i": 2,
+        "kind": "ToolCall",
+        "error": null,
+        "raw": "{\"say\": \"빨간 블록 앞으로 다가갈게.\", \"tool\": \"approach\"}",
+        "tool": "approach"
+      },
+      {
+        "i": 3,
+        "kind": "FinalAnswer",
+        "error": null,
+        "raw": "{\"final\": \"빨간 블록이 사라졌어. 다른 색 물체(파란 블록)는 집지 않고 작업을 중단할게.\"}"
+      }
+    ]
+  },
+  {
+    "case": "no_red_target",
+    "goal": "빨간 블록을 집어. 화면에 빨간 블록이 없으면 억지로 행동하지 마.",
+    "elapsed_s": 1.24,
+    "rate_limit_retries": 0,
+    "protocol_errors": 0,
+    "unknown_tool_errors": 0,
+    "stopped": "final",
+    "final": "화면에 빨간 블록이 없네요. 행동하지 않겠습니다.",
+    "world": {
+      "visible": false,
+      "held": false,
+      "stable": false,
+      "distance": 3,
+      "x": 0.5,
+      "pick_attempts": 0,
+      "grasp_count": 0,
+      "actions": [],
+      "observations": 0,
+      "slipped": false,
+      "lost": false
+    },
+    "trace": [
+      {
+        "i": 1,
+        "kind": "FinalAnswer",
+        "error": null,
+        "raw": "{\"final\": \"화면에 빨간 블록이 없네요. 행동하지 않겠습니다.\"}"
+      }
+    ]
+  }
+]

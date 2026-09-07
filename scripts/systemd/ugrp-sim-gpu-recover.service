@@ -1,0 +1,13 @@
+[Unit]
+Description=UGRP provider-neutral GPU worker recovery
+After=network-online.target ugrp-sim-bridge.service
+Requires=ugrp-sim-bridge.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/ubuntu/projects/ugrp
+EnvironmentFile=-/home/ubuntu/projects/ugrp/.env.gpu
+ExecStart=/usr/bin/python3 /home/ubuntu/projects/ugrp/scripts/gpu_worker_recover.py
+TimeoutStartSec=330
+StandardOutput=journal
+StandardError=journal

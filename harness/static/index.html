@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UGRP</title>
+  <style>
+    :root {
+      --bg: #edf0f4;
+      --panel: #ffffff;
+      --card: #ffffff;
+      --text: #1c2026;
+      --muted: #68707c;
+      --line: #dde2e8;
+      --send: #1f2937;
+      --accent: #2563eb;
+      --ok-bg: #e7f4ec; --ok-text: #1d7a3d; --ok-line: #b9dfc6;
+      --warn-bg: #fdf2e0; --warn-text: #96690a; --warn-line: #eed9ac;
+      --bad-bg: #fdeceb; --bad-text: #c0251f; --bad-line: #f3c1bd;
+      --info-bg: #e9f1fd; --info-text: #1c55d6; --info-line: #c3d6f9;
+      --shadow: 0 1px 2px rgba(16, 24, 40, .07);
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+    button { font: inherit; }
+    button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+    .modebar { height: 52px; display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-bottom: 1px solid var(--line); background: var(--panel); box-shadow: var(--shadow); position: relative; z-index: 5; }
+    .modebar .brand { font-weight: 800; margin-right: 10px; letter-spacing: .02em; font-size: 16px; }
+    .mode-tab { display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 14px; border-radius: 9px; border: 1px solid var(--line); color: var(--muted); text-decoration: none; background: #f4f6f9; font-size: 13px; font-weight: 650; }
+    .mode-tab:hover { border-color: #c3cad3; color: var(--text); }
+    .mode-tab::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #b6bdc7; }
+    .mode-tab.active { color: #fff; background: var(--send); border-color: var(--send); }
+    .mode-tab.active::before { background: #7ee2a8; }
+    .modebar .mode-help { margin-left: auto; color: var(--muted); font-size: 12px; }
+    .robotbar { height: 44px; display:flex; align-items:center; gap:6px; padding:6px 16px; border-bottom:1px solid var(--line); background:#f7f9fb; }
+    .robot-tab { position:relative; height:30px; min-width:54px; padding:0 13px; border:1px solid var(--line); border-radius:8px; background:var(--panel); color:var(--muted); cursor:pointer; font:700 12px/1 ui-sans-serif,system-ui,sans-serif; }
+    .robot-tab:hover { border-color: #c3cad3; color: var(--text); }
+    .robot-tab.active { background:var(--send); color:#fff; border-color:var(--send); }
+    .robot-tab.running::after { content:''; position:absolute; top:5px; right:5px; width:6px; height:6px; border-radius:50%; background:#22a355; box-shadow:0 0 0 2px rgba(34,163,85,.18); }
+    .robot-tab.active.running::after { background:#7ee2a8; box-shadow:none; }
+    .robot-tab.team { margin-left:4px; min-width:68px; }
+    .robot-slot-note { margin-left:auto; color:var(--muted); font-size:11px; }
+    .shell { height: calc(100% - 96px); }
+    .team-panel { height:100%; padding:14px; overflow:auto; display:flex; flex-direction:column; }
+    .team-top { display:flex; align-items:flex-end; gap:10px; margin-bottom:12px; flex:0 0 auto; }
+    .team-heading { margin-right:auto; min-width:0; }
+    .team-heading h1 { margin:0; font-size:19px; font-weight:750; letter-spacing:-.01em; }
+    .team-heading p { margin:4px 0 0; color:var(--muted); font-size:12px; }
+    .team-goal-form { display:flex; gap:7px; align-items:center; min-width:min(520px,48vw); }
+    .team-goal-form input { flex:1; min-width:160px; background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:9px; padding:9px 11px; font:inherit; box-shadow: var(--shadow); }
+    .team-goal-form button { background:var(--send); color:#fff; border:1px solid var(--send); border-radius:9px; padding:9px 14px; font-weight:700; cursor:pointer; }
+    .team-goal-form button:hover { background:#374151; }
+    .team-sim-controls { display:flex; align-items:center; gap:6px; margin-left:auto; flex-wrap:wrap; }
+    .team-sim-controls input { width:92px; background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:8px; padding:7px 8px; font:inherit; font-variant-numeric:tabular-nums; }
+    .team-sim-controls button { background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:9px; padding:7px 10px; font:700 11px/1.2 inherit; cursor:pointer; white-space:nowrap; box-shadow: var(--shadow); }
+    .team-sim-controls button:hover { background:#f3f5f8; }
+    .team-sim-controls button.primary { background:var(--send); color:#fff; border-color:var(--send); }
+    .team-sim-controls button.primary:hover { background:#374151; }
+    .team-sim-controls button:disabled { opacity:.55; cursor:default; }
+    .team-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; flex:0 0 auto; }
+    .team-robot { background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; min-width:0; box-shadow: var(--shadow); }
+    .team-robot-head { display:flex; align-items:center; gap:8px; padding:9px 12px; }
+    .team-robot-head strong { font-size:13px; }
+    .slot-state { margin-left:auto; border:1px solid var(--line); border-radius:999px; padding:3px 8px; font:700 10px/1.4 ui-monospace,monospace; color:var(--muted); background:#f4f6f9; }
+    .slot-state.online { color:var(--ok-text); border-color:var(--ok-line); background:var(--ok-bg); }
+    .slot-state.offline { color:var(--bad-text); border-color:var(--bad-line); background:var(--bad-bg); }
+    .slot-state.thinking { color:var(--info-text); border-color:var(--info-line); background:var(--info-bg); }
+    .slot-state.queued { color:var(--warn-text); border-color:var(--warn-line); background:var(--warn-bg); }
+    .team-camera { aspect-ratio:16/9; max-height:170px; background:#101418; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+    .team-camera img { width:100%; height:100%; display:block; object-fit:contain; }
+    .team-overview { flex:0 0 auto; margin-bottom:12px; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; box-shadow: var(--shadow); }
+    .team-overview-head { padding:9px 12px; font-size:12px; font-weight:650; color:var(--muted); border-bottom:1px solid var(--line); background:#f7f9fb; }
+    .team-overview .team-camera { height:clamp(180px,28vh,300px); max-height:none; aspect-ratio:auto; }
+    .team-robot-meta { padding:8px 12px; color:var(--muted); font-size:11px; min-height:42px; white-space:pre-wrap; }
+    .team-feed { flex:0 0 auto; min-height:420px; height:min(48vh,520px); margin-top:12px; display:grid; grid-template-columns:minmax(420px,1.7fr) minmax(260px,.55fr); gap:12px; }
+    .team-chat-box { background:var(--card); border:1px solid var(--line); border-radius:12px; min-height:0; overflow:hidden; display:flex; flex-direction:column; box-shadow: var(--shadow); }
+    .team-chat-head { display:flex; align-items:center; gap:10px; padding:11px 14px; border-bottom:1px solid var(--line); background:#f7f9fb; }
+    .team-chat-head strong { font-size:13px; }
+    .team-chat-head span { margin-left:auto; color:var(--muted); font-size:11px; }
+    .team-chat-log { flex:1 1 auto; min-height:220px; overflow:auto; padding:14px; }
+    .team-chat-empty { color:var(--muted); text-align:center; margin-top:9vh; font-size:12px; }
+    .team-chat-row { display:flex; margin:0 0 12px; }
+    .team-chat-row.operator { justify-content:flex-end; }
+    .team-chat-msg { max-width:min(82%,760px); min-width:0; }
+    .team-chat-author { margin:0 4px 4px; color:var(--muted); font:700 10px/1.2 ui-monospace,monospace; }
+    .team-chat-row.operator .team-chat-author { text-align:right; }
+    .team-chat-bubble { padding:9px 13px; border:1px solid var(--line); border-radius:14px; background:#f1f4f8; white-space:pre-wrap; word-break:break-word; font-size:13px; }
+    .team-chat-row.operator .team-chat-bubble { background:var(--send); border-color:var(--send); color:#fff; }
+    .team-chat-meta { margin:4px 4px 0; color:#9aa1ab; font-size:10px; }
+    .team-chat-row.operator .team-chat-meta { text-align:right; }
+    .team-chat-compose { display:flex; gap:8px; align-items:flex-end; padding:10px 12px 7px; border-top:1px solid var(--line); }
+    .team-chat-compose textarea { flex:1; height:48px; min-height:48px; max-height:120px; resize:vertical; padding:10px 12px; border-radius:12px; border:1px solid var(--line); background:#f7f9fb; color:var(--text); font:inherit; }
+    .team-chat-compose button { height:48px; padding:0 16px; border:1px solid var(--send); border-radius:12px; background:var(--send); color:#fff; font-weight:700; cursor:pointer; }
+    .team-chat-compose button:hover { background:#374151; }
+    .team-chat-hint { padding:0 12px 10px; color:var(--muted); font-size:10px; }
+    .team-box { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; min-height:150px; overflow:auto; box-shadow: var(--shadow); }
+    .team-box h2 { margin:0 0 9px; color:var(--muted); font-size:12px; font-weight:700; letter-spacing:.02em; }
+    .team-message { padding:7px 0; border-top:1px solid var(--line); font-size:12px; }
+    .team-message:first-of-type { border-top:0; }
+    .team-message b { font-family:ui-monospace,monospace; font-size:11px; }
+    .team-message small { display:block; color:var(--muted); margin-top:3px; }
+    .app { display: grid; grid-template-columns: minmax(600px, 1.55fr) minmax(400px, .9fr); height: 100%; }
+    .stage, .chat { min-height: 0; display: flex; flex-direction: column; }
+    .stage { border-right: 1px solid var(--line); overflow: hidden; padding: 14px; gap: 12px; background: var(--bg); }
+    .views { display: block; flex: 0 0 auto; min-height: 0; }
+    .monitor-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; align-items: stretch; }
+    .camera { background: #101418; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; position: relative; min-width: 0; aspect-ratio: 4 / 3; box-shadow: var(--shadow); }
+    body[data-mode="sim"] .views { flex: 1 1 auto; min-height: 0; }
+    body[data-mode="sim"] .monitor-grid { height: 100%; grid-template-rows: minmax(0, 1fr); }
+    body[data-mode="sim"] .camera { aspect-ratio: auto; min-height: 0; }
+    body[data-mode="sim"] .camera.robot-view, body[data-mode="sim"] .camera.semantic-map { border-color: #c3cad3; }
+    body[data-mode="real"] .views { flex: 0 0 auto; }
+    body[data-mode="real"] .monitor-grid { height: auto; grid-template-rows: none; }
+    body[data-mode="real"] .camera.robot-view, body[data-mode="real"] .camera.semantic-map { aspect-ratio: 4 / 3; }
+    .camera img, .camera canvas { display: block; width: 100%; height: 100%; object-fit: contain; background: #0b0b0b; }
+    .camera img.cctv-native { object-fit: cover; image-rendering: auto; }
+    .camera img.offline-preview { display:none; position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:saturate(.72) brightness(.72); }
+    .camera.offline img.cctv-native, .camera.offline img.real-pov { display:none !important; }
+    .camera.offline img.offline-preview { display:block; }
+    .offline-flag { display:none; position:absolute; top:10px; right:10px; z-index:4; padding:4px 8px; border-radius:7px; background:rgba(120,30,20,.88); border:1px solid #a14a3c; color:#ffe3de; font:700 10px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing:.03em; }
+    .camera.offline .offline-flag { display:block; }
+    .camera.robot-view { outline: 2px solid #9aa5b1; outline-offset: -2px; aspect-ratio: 4 / 3; }
+    .camera.semantic-map { outline: 1px solid #7fb89f; outline-offset: -1px; aspect-ratio: 4 / 3; background: #06100d; }
+    .camera.semantic-map canvas { background: radial-gradient(circle at 50% 50%, #0d211b, #050a08 72%); }
+    .radar-legend { position:absolute; right:9px; top:9px; display:flex; flex-wrap:wrap; justify-content:flex-end; gap:5px; max-width:72%; pointer-events:none; }
+    .radar-chip { padding:3px 7px; border-radius:999px; font-size:10px; font-weight:600; line-height:1.4; background:rgba(255,255,255,.9); border:1px solid var(--line); color:#334155; }
+    .radar-chip.live { border-color:#22a355; color:#1d7a3d; }
+    .radar-chip.obstacle { border-color:#e8934a; color:#96690a; }
+    .radar-chip.zone { border-color:#5b8def; color:#1c55d6; }
+    .cards { display: block; flex: 0 0 auto; min-height: 0; }
+    .camera .meta { position: absolute; left: 10px; bottom: 10px; background: rgba(17,24,39,.72); color: #fff; font-size: 12px; padding: 4px 9px; border-radius: 8px; }
+    .grasp-hud { position:absolute; left:10px; top:10px; z-index:3; padding:5px 9px; border-radius:8px; background:rgba(255,255,255,.92); border:1px solid var(--line); color:#475569; font:700 11px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; pointer-events:none; }
+    .grasp-hud.ok { color:var(--ok-text); border-color:var(--ok-line); background:var(--ok-bg); }
+    .grasp-hud.warn { color:var(--warn-text); border-color:var(--warn-line); background:var(--warn-bg); }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 11px 13px; box-shadow: var(--shadow); }
+    .card h2 { margin: 0 0 8px; font-size: 13px; font-weight: 700; letter-spacing: .02em; color: var(--muted); }
+    details.card { padding: 0; overflow: hidden; }
+    details.card summary { list-style: none; display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 11px 13px; color: var(--muted); font-size: 12px; user-select: none; }
+    details.card summary::-webkit-details-marker { display: none; }
+    details.card summary::before { content: '›'; font-size: 18px; line-height: 1; transform: translateY(-1px); transition: transform .15s ease; color:#9aa1ab; }
+    details.card[open] summary::before { transform: rotate(90deg); }
+    details.card summary strong { color: var(--text); font-size: 13px; font-weight: 700; }
+    details.card summary .note { margin: 0 0 0 auto; max-width: 55%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    details.card .tools { border-top: 1px solid var(--line); padding: 11px 13px 13px; }
+    .note { color: var(--muted); font-size: 12px; margin: 0 0 10px; }
+    .speed-buttons button, .seed-control button { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 9px; padding: 8px; font: inherit; cursor: pointer; box-shadow: var(--shadow); }
+    .speed-buttons button:hover, .seed-control button:hover { background:#f3f5f8; }
+    .tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; max-height: 260px; overflow: auto; }
+    .speed-control { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); }
+    .speed-buttons { display: inline-flex; gap: 4px; }
+    .speed-buttons button { padding: 5px 9px; }
+    .speed-buttons button.active { background: var(--send); color: #fff; border-color: var(--send); }
+    .seed-control { display: inline-flex; align-items: center; gap: 5px; color: var(--muted); }
+    .seed-control input { width: 88px; background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 5px 7px; font: inherit; font-variant-numeric: tabular-nums; }
+    .seed-control button { padding: 5px 8px; }
+    .tool { background: #f7f9fb; border: 1px solid var(--line); border-radius: 9px; padding: 8px 10px; min-width: 0; }
+    .tool b { display: block; font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
+    .tool span { color: var(--muted); font-size: 12px; }
+    .trace-card[hidden] { display: none; }
+    .trace-list { border-top: 1px solid var(--line); padding: 10px 11px 12px; max-height: 320px; overflow: auto; display: grid; gap: 8px; }
+    .trace-empty { color: var(--muted); font-size: 12px; padding: 4px 2px; }
+    .trace-run { background: #f7f9fb; border: 1px solid var(--line); border-radius: 9px; padding: 9px 10px; min-width: 0; }
+    .trace-run-head { display: flex; align-items: center; gap: 7px; min-width: 0; }
+    .trace-status { flex: 0 0 auto; font: 700 10px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; border: 1px solid var(--line); border-radius: 999px; padding: 3px 7px; color: var(--muted); background:#f4f6f9; }
+    .trace-status.failed { color: var(--bad-text); border-color: var(--bad-line); background:var(--bad-bg); }
+    .trace-status.completed_with_failures { color: var(--warn-text); border-color: var(--warn-line); background:var(--warn-bg); }
+    .trace-status.completed { color: var(--ok-text); border-color: var(--ok-line); background:var(--ok-bg); }
+    .trace-status.running { color: var(--info-text); border-color: var(--info-line); background:var(--info-bg); }
+    .trace-command { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; color: var(--text); }
+    .trace-meta, .trace-reason, .trace-command-tail { color: var(--muted); font-size: 11px; margin-top: 5px; word-break: break-word; }
+    .trace-reason { color: var(--bad-text); }
+    .trace-evidence { margin-top: 8px; display: grid; gap: 7px; }
+    .trace-evidence-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 6px; }
+    .trace-frame { min-width: 0; }
+    .trace-frame img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: contain; background: #101418; border: 1px solid var(--line); border-radius: 7px; }
+    .trace-frame span { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+    .trace-kv { display: grid; grid-template-columns: 80px minmax(0,1fr); gap: 4px 7px; font-size: 11px; }
+    .trace-kv b { color: var(--muted); font-weight: 600; }
+    .trace-kv code { white-space: pre-wrap; word-break: break-word; color: #374151; font: 10px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; background:#f1f4f8; border-radius:5px; padding:1px 4px; }
+    .chat { background: var(--panel); }
+    .chat header { padding: 16px 20px 12px; border-bottom: 1px solid var(--line); background:#f7f9fb; }
+    .chat h1 { margin: 0; font-size: 17px; font-weight: 750; letter-spacing:-.01em; }
+    .chat header p { margin: 6px 0 0; color: var(--muted); font-size: 12px; }
+    #log { flex: 1; overflow: auto; padding: 20px; background: var(--panel); }
+    .msg { margin: 0 0 16px; }
+    .msg.user { display:flex; justify-content:flex-end; }
+    .msg.user .bubble { background: var(--send); color:#fff; max-width: 84%; border-color:var(--send); }
+    .bubble { padding: 10px 14px; border-radius: 16px; border:1px solid var(--line); background:#f1f4f8; white-space: pre-wrap; word-break: break-word; box-shadow: var(--shadow); }
+    .role { font-size: 12px; color: var(--muted); margin-bottom: 5px; font-weight:600; }
+    .run { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; box-shadow: var(--shadow); }
+    .run .role { margin-bottom: 8px; }
+    .step { display: grid; grid-template-columns: 52px 1fr; gap: 10px; padding: 7px 0; border-top: 1px solid var(--line); font-size: 13px; }
+    .step:first-of-type { border-top: 0; }
+    .step b { color: var(--muted); font-weight: 700; font-size: 11px; letter-spacing: .02em; }
+    .step ol { margin: 4px 0 0; padding-left: 18px; color: var(--muted); }
+    .work { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .chip { background: #f1f4f8; border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; font-size: 12px; color: var(--muted); }
+    .sim-health { margin-left: auto; display:flex; align-items:center; gap:7px; }
+    .sim-badge { border:1px solid var(--line); border-radius:999px; padding:4px 10px; font-size:11px; font-weight:700; letter-spacing:.03em; background:#f4f6f9; color:var(--muted); white-space:nowrap; }
+    .sim-badge.ok { color:var(--ok-text); border-color:var(--ok-line); background:var(--ok-bg); }
+    .sim-badge.warn { color:var(--warn-text); border-color:var(--warn-line); background:var(--warn-bg); }
+    .sim-badge.bad { color:var(--bad-text); border-color:var(--bad-line); background:var(--bad-bg); }
+    .sim-wake { background:var(--send); color:#fff; border:1px solid var(--send); border-radius:9px; padding:5px 10px; font:700 11px/1.4 inherit; cursor:pointer; white-space:nowrap; }
+    .sim-wake:hover { background:#374151; }
+    .sim-wake[hidden] { display:none; }
+    .composer { border-top: 1px solid var(--line); padding: 12px 16px 16px; background: var(--panel); }
+    .row { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-bottom: 8px; color: var(--muted); font-size: 12px; }
+    .row label { margin-left: auto; display: flex; align-items: center; gap: 6px; cursor:pointer; }
+    #stop-run { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 6px 11px; font: inherit; cursor: pointer; box-shadow: var(--shadow); }
+    #stop-run:hover { background:#f3f5f8; }
+    form { display: flex; gap: 8px; align-items: flex-end; }
+    textarea { flex: 1; resize: none; height: 54px; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #f7f9fb; color: var(--text); font: inherit; }
+    textarea:focus { background:#fff; border-color:var(--accent); outline:none; box-shadow:0 0 0 3px rgba(37,99,235,.15); }
+    button.send { background: var(--send); color: #fff; border: 1px solid var(--send); border-radius: 14px; padding: 0 18px; height: 54px; font-weight: 700; cursor: pointer; }
+    button.send:hover { background:#374151; }
+    button:disabled { opacity: .45; cursor: default; }
+    .empty { color: var(--muted); text-align: center; margin-top: 18vh; }
+    @media (max-width: 1180px) {
+      .app { grid-template-columns: minmax(520px, 1.3fr) minmax(360px, .9fr); }
+    }
+    @media (max-width: 900px) {
+      .shell { height: auto; min-height: calc(100% - 96px); }
+      .app { grid-template-columns: 1fr; min-height: calc(100vh - 96px); height: auto; }
+      .team-grid { grid-template-columns:1fr; }
+      .team-feed { grid-template-columns:1fr; overflow:visible; }
+      .team-panel { overflow:auto; }
+      .team-chat-log { min-height:360px; max-height:65vh; }
+      .team-top { align-items:stretch; flex-direction:column; }
+      .team-goal-form { min-width:0; }
+      .team-sim-controls { margin-left:0; }
+      .stage { border-right: 0; border-bottom: 1px solid var(--line); height: auto; max-height: none; overflow: visible; }
+      .chat { min-height: 70vh; }
+      body[data-mode="sim"] .views { flex: 0 0 auto; }
+      body[data-mode="sim"] .monitor-grid { height: auto; grid-template-rows: none; }
+      body[data-mode="sim"] .camera { aspect-ratio: 4 / 3; }
+      .monitor-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .tools { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .modebar .mode-help { display: none; }
+      .monitor-grid { grid-template-columns: 1fr; }
+      .stage { padding: 8px; }
+      .composer { padding-inline: 10px; }
+      .row label { margin-left: 0; }
+    }
+  </style>
+</head>
+<body data-mode="sim">
+  <nav class="modebar">
+    <div class="brand">UGRP</div>
+    <a class="mode-tab" id="sim-tab" href="#">SIM</a>
+    <a class="mode-tab" id="real-tab" href="#">REAL</a>
+    <div class="mode-help" id="mode-help">환경 확인 중</div>
+    <div class="sim-health" id="sim-health"><span class="sim-badge" id="physics-badge">PHYSICS 확인 중</span><span class="sim-badge" id="training-badge">TRAINING 확인 중</span><button class="sim-wake" type="button" id="sim-wake" hidden>SIM 켜기</button></div>
+  </nav>
+  <nav class="robotbar" aria-label="robot sessions">
+    <button class="robot-tab active" type="button" data-robot="r1">R1</button>
+    <button class="robot-tab" type="button" data-robot="r2">R2</button>
+    <button class="robot-tab" type="button" data-robot="r3">R3</button>
+    <button class="robot-tab team" type="button" data-robot="team">TEAM</button>
+    <span class="robot-slot-note" id="robot-slot-note">R1 · 독립 agent/session</span>
+  </nav>
+  <div class="shell">
+  <section class="team-panel" id="team-panel" hidden>
+    <div class="team-top">
+      <div class="team-heading"><h1>TEAM chat</h1><p>R1 · R2 · R3가 같은 방에서 각자 판단하고 대화합니다. TEAM은 메시지를 전달할 뿐 행동을 대신 결정하지 않습니다.</p></div>
+      <div class="team-sim-controls" id="team-sim-controls">
+        <span>Seed</span><input id="team-sim-seed" type="number" min="0" max="2147483647" step="1" value="7" inputmode="numeric" />
+        <button type="button" id="team-sim-reset">초기화</button>
+        <button type="button" id="team-sim-random">랜덤</button>
+        <button type="button" class="primary" id="team-sim-wake">SIM 켜기</button>
+      </div>
+      <form class="team-goal-form" id="team-goal-form"><input id="team-goal" placeholder="세 로봇이 공유할 목표" /><button type="submit">목표 공유</button></form>
+    </div>
+    <section class="team-overview" id="team-overview"><div class="team-overview-head">TEAM 관찰카메라 · 전체 작업 결과</div><div class="team-camera"><img id="team-cam-overview" alt="TEAM observer camera" /></div></section>
+    <div class="team-grid">
+      <article class="team-robot" data-team-robot="r1"><div class="team-robot-head"><strong>R1</strong><span class="slot-state" id="team-state-r1">확인 중</span></div><div class="team-camera"><img id="team-cam-r1" alt="R1 camera" /></div><div class="team-robot-meta" id="team-meta-r1">상태 확인 중</div></article>
+      <article class="team-robot" data-team-robot="r2"><div class="team-robot-head"><strong>R2</strong><span class="slot-state" id="team-state-r2">확인 중</span></div><div class="team-camera"><img id="team-cam-r2" alt="R2 camera" /></div><div class="team-robot-meta" id="team-meta-r2">상태 확인 중</div></article>
+      <article class="team-robot" data-team-robot="r3"><div class="team-robot-head"><strong>R3</strong><span class="slot-state" id="team-state-r3">확인 중</span></div><div class="team-camera"><img id="team-cam-r3" alt="R3 camera" /></div><div class="team-robot-meta" id="team-meta-r3">상태 확인 중</div></article>
+    </div>
+    <div class="team-feed">
+      <section class="team-chat-box">
+        <div class="team-chat-head"><strong>공용 대화</strong><span id="team-chat-status">연결 확인 중</span></div>
+        <div class="team-chat-log" id="team-chat-log"><div class="team-chat-empty">TEAM 대화가 아직 없습니다.</div></div>
+        <form class="team-chat-compose" id="team-chat-form"><textarea id="team-chat-input" placeholder="@R1, @R2, @R3로 특정 봇 호출 · @everyone/@TEAM 또는 멘션 없이 보내면 세 봇 모두에게 전달"></textarea><button type="submit">보내기</button></form>
+        <div class="team-chat-hint" id="team-chat-hint">SIM에서는 호출된 봇이 자기 판단으로 행동할 수 있습니다. REAL TEAM 자동 호출은 대화만 하며 물리 동작은 각 REAL 탭에서 명시적으로 실행합니다.</div>
+      </section>
+      <section class="team-box"><h2>공통 목표</h2><div id="team-goal-view" class="team-message">아직 설정되지 않음</div><h2 style="margin-top:14px">최근 이벤트</h2><div id="team-events"></div></section>
+    </div>
+  </section>
+  <div class="app" id="robot-app">
+    <section class="stage">
+      <div class="views">
+        <div class="monitor-grid">
+          <div class="camera robot-view"><img id="preview" class="real-pov" alt="MasterPi / MuJoCo first-person camera" /><img class="offline-preview" src="/offline/robot.jpg" alt="Offline MuJoCo robot camera preview" /><div class="offline-flag">OFFLINE PREVIEW</div><div class="grasp-hud" id="grasp-hud">GRIP · OPEN</div><div class="meta" id="cam-status">1인칭 · robot_cam · MuJoCo 실제 RGB</div></div>
+          <div class="camera observer"><img class="cctv-native" data-snapshot-src="/api/observer/cctv_front_left/snapshot" alt="MuJoCo front-follow third-person camera" /><img class="offline-preview" src="/offline/cctv_front_left.jpg" alt="Offline MuJoCo third-person preview" /><div class="offline-flag">OFFLINE PREVIEW</div><div class="meta">3인칭 · 전면 추적 카메라 · MuJoCo RGB</div></div>
+        </div>
+      </div>
+      <div class="cards">
+        <details class="card trace-card" id="trace-card" hidden>
+          <summary><strong>최근 REAL 실행 분석</strong><span class="note" id="trace-health">기록 없음</span></summary>
+          <div class="trace-list" id="trace-list"><div class="trace-empty">REAL 실행 기록이 없습니다.</div></div>
+        </details>
+        <details class="card tools-card">
+          <summary><strong>실행 가능한 Python 도구</strong><span class="note" id="tools-file">scripts/robot_actions.py</span></summary>
+          <div class="tools" id="tools"></div>
+        </details>
+      </div>
+    </section>
+    <section class="chat">
+      <header>
+        <h1>UGRP</h1>
+        <p id="mode-note">목표를 말하면 계획하고, 도구를 실행한 뒤 장면을 다시 봅니다.</p>
+      </header>
+      <div id="log"><div class="empty">목표를 말하면 계획하고, 도구를 실행한 뒤 장면을 다시 봅니다.</div></div>
+      <div class="composer">
+        <div class="row">
+          <button type="button" id="stop-run" hidden>중지</button>
+          <label><input id="execute" type="checkbox" /> 실제로 실행</label>
+          <span class="speed-control" id="sim-speed-wrap" hidden>시뮬 속도 <span class="speed-buttons"><button type="button" data-sim-speed="1">1×</button><button type="button" data-sim-speed="2">2×</button><button type="button" data-sim-speed="3">3×</button></span></span>
+          <span class="seed-control" id="sim-seed-wrap" hidden>Seed <input id="sim-seed" type="number" min="0" max="2147483647" step="1" value="7" inputmode="numeric" /><button type="button" id="sim-reset">초기화</button><button type="button" id="sim-random-seed">랜덤</button></span>
+        </div>
+        <form id="form">
+          <textarea id="input" placeholder="예: 빨간 블록을 집어서 들고 있어" autofocus></textarea>
+          <button class="send" type="submit" id="send">보내기</button>
+        </form>
+      </div>
+    </section>
+  </div>
+  </div>
+  <script src="/three.min.js?v=20260828a"></script>
+  <script src="/sim3d.js?v=20260901wake1"></script>
+  <script>
+    const LABELS = { approach: "다가감", pick: "집기", fetch: "가져오기", track: "정렬" };
+    const simTab = document.getElementById("sim-tab");
+    const realTab = document.getElementById("real-tab");
+    const modeHelp = document.getElementById("mode-help");
+    let activeMode = "sim";
+    let activeRobot = "r1";
+    let apiPrefix = "";
+    // Which robot slot THIS page is served by (null until probed).  A tab
+    // showing the serving slot itself talks to it directly (""); every other
+    // tab proxies via /sim|real/<rid> (server strips the prefix on a
+    // self-addressed request, so proxying can never loop).
+    let selfRobot = null;
+    let selfMode = null;
+    fetch("/api/status", {cache: "no-store"}).then((r) => r.json()).then((s) => {
+      selfRobot = String(s.robot_id || "").toLowerCase();
+      selfMode = String(s.ui_mode || "").toLowerCase();
+      updateApiPrefix();
+    }).catch(() => {});
+    let teamTimer = null;
+    let teamCameraGeneration = 0;
+    const teamCameraTimers = new Map();
+    const sessionUi = new Map();
+
+    // Each robot tab owns its own live DOM/session state. Moving the DOM nodes
+    // into a detached root (instead of serializing innerHTML) preserves an
+    // in-flight SSE stream while the operator watches or commands another robot.
+    function sessionKey(mode = activeMode, robot = activeRobot) { return `${mode}:${robot}`; }
+    function ensureSession(mode = activeMode, robot = activeRobot) {
+      const key = sessionKey(mode, robot);
+      let state = sessionUi.get(key);
+      if (!state) {
+        state = { root: document.createElement('div'), started: false, sending: false, abortCtl: null };
+        sessionUi.set(key, state);
+      }
+      return state;
+    }
+    function stashRobotSession(mode = activeMode, robot = activeRobot) {
+      if (robot === 'team' || typeof log === 'undefined') return;
+      const state = ensureSession(mode, robot);
+      while (log.firstChild) state.root.appendChild(log.firstChild);
+    }
+    function restoreRobotSession(mode = activeMode, robot = activeRobot) {
+      const state = ensureSession(mode, robot);
+      log.replaceChildren(...state.root.childNodes);
+      if (!log.children.length) {
+        log.innerHTML = '<div class="empty">' + (mode === 'sim' ? `${robot.toUpperCase()} 시뮬레이션 목표를 입력하세요.` : `${robot.toUpperCase()} 실제 MasterPi 목표를 입력하세요.`) + '</div>';
+        state.started = false;
+      }
+      syncRunControls();
+      return state;
+    }
+    function activeSession() { return activeRobot === 'team' ? null : ensureSession(activeMode, activeRobot); }
+    function syncRunControls() {
+      if (typeof send === 'undefined' || typeof stopRun === 'undefined' || activeRobot === 'team') return;
+      const state = activeSession();
+      send.disabled = !!state.sending;
+      stopRun.hidden = !state.sending;
+      setRobotTabs();
+    }
+
+    function robotApiPrefix(mode = activeMode, robot = activeRobot) {
+      if (robot === "team") return "";
+      if (selfRobot && robot === selfRobot && mode === selfMode) return "";
+      if (mode === "real") return `/real/${robot}`;
+      return `/sim/${robot}`;
+    }
+    function updateApiPrefix() { apiPrefix = robotApiPrefix(); window.UGRP_API_PREFIX = apiPrefix; }
+    function api(path) { return apiPrefix + path; }
+
+    let observerGeneration = 0;
+    const observerTimers = new Map();
+
+    // Presentation is latest-frame only. Long-lived MJPEG can accumulate old
+    // TCP frames when a remote browser cannot decode/download at producer rate,
+    // making the UI seconds behind the simulator. Snapshot refreshes have no
+    // backlog: every completed image is the bridge's newest available frame.
+    function setObserverStreams(enabled) {
+      observerGeneration += 1;
+      const generation = observerGeneration;
+      observerTimers.forEach((timer) => clearTimeout(timer));
+      observerTimers.clear();
+      document.querySelectorAll(".camera.observer img.cctv-native").forEach((img) => {
+        const snapshotSrc = img.dataset.snapshotSrc;
+        if (!enabled || !snapshotSrc) {
+          img.removeAttribute("src");
+          return;
+        }
+        const refresh = () => {
+          if (generation !== observerGeneration || activeMode !== "sim" || document.visibilityState !== "visible") return;
+          img.onload = () => {
+            if (generation !== observerGeneration) return;
+            observerTimers.set(img, setTimeout(refresh, 100));
+          };
+          img.onerror = () => {
+            if (generation !== observerGeneration) return;
+            observerTimers.set(img, setTimeout(refresh, 300));
+          };
+          img.src = api(snapshotSrc) + "?t=" + Date.now();
+        };
+        refresh();
+      });
+    }
+
+    async function switchMode(mode, preserveCurrent = true) {
+      if (preserveCurrent && activeRobot !== "team" && typeof log !== "undefined") stashRobotSession(activeMode, activeRobot);
+      send.disabled = true;
+      activeMode = mode === "real" ? "real" : "sim";
+      document.body.dataset.mode = activeMode;
+      updateApiPrefix();
+      simTab.classList.toggle("active", activeMode === "sim");
+      realTab.classList.toggle("active", activeMode === "real");
+      modeHelp.textContent = activeMode === "sim" ? "MuJoCo 시뮬레이션" : "MasterPi 실제 로봇";
+      document.title = `UGRP · ${activeMode.toUpperCase()} · ${activeRobot.toUpperCase()}`;
+      document.querySelector(".chat h1").textContent = `${activeMode === "sim" ? "시뮬레이션" : "실제 MasterPi"} · ${activeRobot.toUpperCase()}`;
+      document.querySelectorAll(".camera.observer").forEach(el => el.style.display = activeMode === "sim" ? "block" : "none");
+      setObserverStreams(activeMode === "sim" && document.visibilityState === "visible");
+      const semanticPanel = document.getElementById("semantic-map-panel");
+      if (semanticPanel) semanticPanel.style.display = "block";
+      document.getElementById("sim-speed-wrap").hidden = activeMode !== "sim";
+      document.getElementById("sim-seed-wrap").hidden = activeMode !== "sim";
+      document.getElementById("trace-card").hidden = activeMode !== "real";
+      if (activeRobot === "team") {
+        showTeamPanel();
+        await loadTeam();
+        send.disabled = false;
+        return;
+      }
+      showRobotPanel();
+      restoreRobotSession(activeMode, activeRobot);
+      execute.checked = false;
+      const simPreview = document.getElementById("sim-preview");
+      if (simPreview) simPreview.style.display = "none";
+      preview.style.display = "block";
+      // Never carry the last SIM bitmap into REAL while the physical camera
+      // is reconnecting. REAL stays blank until fresh MasterPi evidence exists.
+      preview.removeAttribute("src");
+      if (activeMode === "real") setTalkOnly(true);
+      startCamera();
+      if (window.UGRPSim3D) { window.UGRPSim3D.stop(); window.UGRPSim3D.setMode(activeMode); window.UGRPSim3D.start(); }
+      try {
+        await Promise.all([loadStatus(), loadTools(), activeMode === "real" ? loadRealTraces() : Promise.resolve()]);
+      } finally {
+        syncRunControls();
+      }
+    }
+
+    simTab.href = "#sim";
+    realTab.href = "#real";
+    simTab.addEventListener("click", (e) => { e.preventDefault(); switchMode("sim"); });
+    realTab.addEventListener("click", (e) => { e.preventDefault(); switchMode("real"); });
+
+    function showRobotPanel() {
+      document.getElementById("team-panel").hidden = true;
+      document.getElementById("robot-app").hidden = false;
+      if (teamTimer) { clearTimeout(teamTimer); teamTimer = null; }
+      setTeamCameraStreams(false);
+    }
+
+    function showTeamPanel() {
+      document.getElementById("robot-app").hidden = true;
+      document.getElementById("team-panel").hidden = false;
+      cameraGeneration += 1;
+      observerGeneration += 1;
+      if (cameraTimer) { clearTimeout(cameraTimer); cameraTimer = null; }
+      setObserverStreams(false);
+      setTeamCameraStreams(document.visibilityState === 'visible');
+      if (window.UGRPSim3D) window.UGRPSim3D.stop();
+    }
+
+    function setRobotTabs() {
+      document.querySelectorAll("[data-robot]").forEach((button) => {
+        const rid = button.dataset.robot;
+        const running = rid !== "team" && !!sessionUi.get(sessionKey(activeMode, rid))?.sending;
+        button.classList.toggle("active", rid === activeRobot);
+        button.classList.toggle("running", running);
+      });
+      const note = document.getElementById("robot-slot-note");
+      const current = activeRobot === "team" ? null : sessionUi.get(sessionKey(activeMode, activeRobot));
+      note.textContent = activeRobot === "team"
+        ? "TEAM · shared bot chat"
+        : `${activeRobot.toUpperCase()} · 독립 agent/session${current?.sending ? " · 실행 중" : ""}`;
+    }
+
+    async function switchRobot(robot) {
+      if (!['r1','r2','r3','team'].includes(robot)) return;
+      if (activeRobot !== 'team' && typeof log !== "undefined") stashRobotSession(activeMode, activeRobot);
+      // Tab navigation is presentation only. Never cancel another robot merely
+      // because the operator switched views; its SSE request stays attached to
+      // that robot's detached session DOM until it finishes or Stop is pressed.
+      activeRobot = robot;
+      updateApiPrefix();
+      setRobotTabs();
+      document.title = `UGRP · ${activeMode.toUpperCase()} · ${activeRobot.toUpperCase()}`;
+      if (activeRobot === 'team') {
+        showTeamPanel();
+        await loadTeam();
+      } else {
+        showRobotPanel();
+        await switchMode(activeMode, false);
+      }
+    }
+
+    function teamStateSummary(mode, rid, slot) {
+      if (!slot || !slot.backend_online) return mode === 'real' ? 'backend 비활성 / 연결 안 됨' : 'SIM worker 연결 대기';
+      const state = slot.state || {};
+      const statusObj = slot.status || {};
+      if (mode === 'real') {
+        const ep = statusObj.robot_endpoint || '';
+        const camera = statusObj.talk_only ? 'camera 없음' : 'camera live';
+        return [ep, camera].filter(Boolean).join(' · ') || 'backend online';
+      }
+      const base = state.base || state.robot || {};
+      const pos = base.xyz || state.base_xyz || state.position;
+      const held = state.grasp_color || state.held_color || ((state.grasp || {}).color);
+      const parts = [];
+      if (Array.isArray(pos) && pos.length >= 2) parts.push(`x ${Number(pos[0]).toFixed(2)} · y ${Number(pos[1]).toFixed(2)}`);
+      if (held) parts.push(`holding ${held}`);
+      return parts.join(' · ') || 'shared world online';
+    }
+
+    function renderTeam(data) {
+      const goal = data.goal && data.goal.text ? data.goal.text : '';
+      document.getElementById('team-goal').value = goal;
+      document.getElementById('team-goal-view').textContent = goal || '아직 설정되지 않음';
+
+      const pending = {};
+      for (const wake of (data.wakeups || [])) {
+        if (!['pending','claimed'].includes(String(wake.status || ''))) continue;
+        const rid = String(wake.robot_id || '');
+        if (!['r1','r2','r3'].includes(rid)) continue;
+        if (!pending[rid] || Number(wake.seq || 0) > Number(pending[rid].seq || 0)) pending[rid] = wake;
+      }
+      for (const rid of ['r1','r2','r3']) {
+        const slot = (data.robots || {})[rid] || {};
+        const wake = pending[rid];
+        const badge = document.getElementById(`team-state-${rid}`);
+        if (wake && wake.status === 'claimed') {
+          badge.textContent = 'THINKING';
+          badge.className = 'slot-state thinking';
+        } else if (wake) {
+          badge.textContent = 'QUEUED';
+          badge.className = 'slot-state queued';
+        } else {
+          badge.textContent = slot.backend_online ? 'ONLINE' : 'OFFLINE';
+          badge.className = 'slot-state ' + (slot.backend_online ? 'online' : 'offline');
+        }
+        document.getElementById(`team-meta-${rid}`).textContent = teamStateSummary(activeMode, rid, slot);
+      }
+
+      const chatBox = document.getElementById('team-chat-log');
+      const wasNearBottom = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight < 80;
+      const chat = (data.chat || []).slice(-100);
+      chatBox.replaceChildren();
+      if (!chat.length) {
+        const empty = document.createElement('div');
+        empty.className = 'team-chat-empty';
+        empty.textContent = 'TEAM 대화가 아직 없습니다.';
+        chatBox.appendChild(empty);
+      }
+      for (const item of chat) {
+        const author = String(item.author || 'team').toLowerCase();
+        const row = document.createElement('div');
+        row.className = 'team-chat-row' + (author === 'operator' ? ' operator' : '');
+        const msg = document.createElement('div');
+        msg.className = 'team-chat-msg';
+        const who = document.createElement('div');
+        who.className = 'team-chat-author';
+        let label = author === 'operator' ? 'YOU' : author.toUpperCase();
+        const targets = Array.isArray(item.targets) ? item.targets.map(x => String(x).toUpperCase()) : [];
+        if (item.role === 'peer' && targets.length) label += ` → ${targets.join(', ')}`;
+        if (item.role === 'ack') label += ' · ACK';
+        who.textContent = label;
+        const bubble = document.createElement('div');
+        bubble.className = 'team-chat-bubble';
+        bubble.textContent = item.message || '';
+        const meta = document.createElement('div');
+        meta.className = 'team-chat-meta';
+        const when = item.created_at ? new Date(Number(item.created_at) * 1000).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'}) : '';
+        const source = item.source && item.source !== 'operator_chat' ? String(item.source).replaceAll('_',' ') : '';
+        meta.textContent = [when, source].filter(Boolean).join(' · ');
+        msg.append(who, bubble, meta);
+        row.appendChild(msg);
+        chatBox.appendChild(row);
+      }
+      if (wasNearBottom || !chatBox.dataset.seen) {
+        chatBox.scrollTop = chatBox.scrollHeight;
+        chatBox.dataset.seen = '1';
+      }
+      const activeWakes = Object.keys(pending).length;
+      document.getElementById('team-chat-status').textContent = activeWakes ? `${activeWakes}개 봇 응답 중` : 'R1 · R2 · R3';
+      document.getElementById('team-chat-hint').textContent = activeMode === 'real'
+        ? 'REAL TEAM 자동 호출은 대화만 합니다. 물리 동작은 각 REAL 탭에서 명시적으로 실행합니다.'
+        : '@R1/@R2/@R3로 한 봇을 부르거나, @everyone/@TEAM 또는 멘션 없이 보내 세 봇 모두에게 말할 수 있습니다.';
+
+      const events = (data.events || []).slice(-16).reverse();
+      const eventBox = document.getElementById('team-events');
+      eventBox.replaceChildren();
+      if (!events.length) {
+        const empty = document.createElement('div');
+        empty.className = 'team-message';
+        empty.textContent = '이벤트 없음';
+        eventBox.appendChild(empty);
+      }
+      for (const item of events) {
+        const el = document.createElement('div');
+        el.className = 'team-message';
+        const rid = String(item.robot_id || item.source || 'team').toUpperCase();
+        const kind = String(item.kind || item.type || 'event').replaceAll('_',' ');
+        el.textContent = `${rid} · ${kind}`;
+        eventBox.appendChild(el);
+      }
+    }
+
+    function setTeamCameraStreams(enabled) {
+      teamCameraGeneration += 1;
+      const generation = teamCameraGeneration;
+      teamCameraTimers.forEach((timer) => clearTimeout(timer));
+      teamCameraTimers.clear();
+      const overview = document.getElementById('team-cam-overview');
+      if (overview) {
+        overview.onload = null;
+        overview.onerror = null;
+        if (!enabled || activeMode !== 'sim') {
+          overview.removeAttribute('src');
+        } else {
+          const refreshOverview = () => {
+            if (generation !== teamCameraGeneration || activeRobot !== 'team' || activeMode !== 'sim' || document.visibilityState !== 'visible') return;
+            overview.onload = () => {
+              if (generation !== teamCameraGeneration) return;
+              // Keep the browser ready for the worker's latest-frame stream.
+              // The endpoint is snapshot/latest-only, so polling faster does
+              // not build a stale-frame queue when the producer is slower.
+              teamCameraTimers.set(overview, setTimeout(refreshOverview, 100));
+            };
+            overview.onerror = () => {
+              if (generation !== teamCameraGeneration) return;
+              teamCameraTimers.set(overview, setTimeout(refreshOverview, 1200));
+            };
+            overview.src = `/api/team/camera/sim/overview?t=${Date.now()}`;
+          };
+          refreshOverview();
+        }
+      }
+      for (const rid of ['r1','r2','r3']) {
+        const img = document.getElementById(`team-cam-${rid}`);
+        img.onload = null;
+        img.onerror = null;
+        if (!enabled) {
+          img.removeAttribute('src');
+          continue;
+        }
+        const refresh = () => {
+          if (generation !== teamCameraGeneration || activeRobot !== 'team' || document.visibilityState !== 'visible') return;
+          img.onload = () => {
+            if (generation !== teamCameraGeneration) return;
+            // Never replace an in-flight image request. This keeps TEAM display
+            // traffic bounded and avoids browser-cancelled snapshot storms.
+            teamCameraTimers.set(img, setTimeout(refresh, activeMode === 'sim' ? 300 : 500));
+          };
+          img.onerror = () => {
+            if (generation !== teamCameraGeneration) return;
+            teamCameraTimers.set(img, setTimeout(refresh, activeMode === 'sim' ? 650 : 900));
+          };
+          img.src = `/api/team/camera/${activeMode}/${rid}?t=${Date.now()}`;
+        };
+        refresh();
+      }
+    }
+
+    async function loadTeam() {
+      if (activeRobot !== 'team') return;
+      if (teamTimer) { clearTimeout(teamTimer); teamTimer = null; }
+      try {
+        const res = await fetch(`/api/team?mode=${encodeURIComponent(activeMode)}`, {cache:'no-store'});
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+        renderTeam(data);
+        modeHelp.textContent = `${activeMode.toUpperCase()} · 3× TEAM`;
+      } catch (err) {
+        modeHelp.textContent = `TEAM 상태 조회 실패 · ${err.message || err}`;
+      }
+      if (activeRobot === 'team') {
+        teamTimer = setTimeout(() => { teamTimer = null; loadTeam(); }, 1000);
+      }
+    }
+
+    document.querySelectorAll('[data-robot]').forEach((button) => {
+      button.addEventListener('click', () => switchRobot(button.dataset.robot));
+    });
+    document.getElementById('team-goal-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const goal = document.getElementById('team-goal').value.trim();
+      const res = await fetch('/api/team/goal', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({goal, mode:activeMode})});
+      if (res.ok) loadTeam();
+    });
+    const teamChatForm = document.getElementById('team-chat-form');
+    const teamChatInput = document.getElementById('team-chat-input');
+    teamChatForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const message = teamChatInput.value.trim();
+      if (!message) return;
+      const button = teamChatForm.querySelector('button');
+      button.disabled = true;
+      try {
+        const res = await fetch('/api/team/chat', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({message, mode:activeMode})});
+        const data = await res.json();
+        if (!res.ok || data.ok === false) throw new Error(data.error || `HTTP ${res.status}`);
+        teamChatInput.value = '';
+        await loadTeam();
+      } catch (err) {
+        document.getElementById('team-chat-status').textContent = `전송 실패 · ${err.message || err}`;
+      } finally {
+        button.disabled = false;
+        teamChatInput.focus();
+      }
+    });
+    teamChatInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
+        event.preventDefault();
+        teamChatForm.requestSubmit();
+      }
+    });
+
+    const log = document.getElementById("log");
+    const form = document.getElementById("form");
+    const input = document.getElementById("input");
+    const send = document.getElementById("send");
+    const preview = document.getElementById("preview");
+    const status = document.getElementById("cam-status");
+    const execute = document.getElementById("execute");
+    const stopRun = document.getElementById("stop-run");
+    const modeNote = document.getElementById("mode-note");
+    const simSeedInput = document.getElementById("sim-seed");
+    const simResetButton = document.getElementById("sim-reset");
+    const simRandomSeedButton = document.getElementById("sim-random-seed");
+    const simWakeButton = document.getElementById("sim-wake");
+    const teamSimControls = document.getElementById("team-sim-controls");
+    const teamSimSeedInput = document.getElementById("team-sim-seed");
+    const teamSimResetButton = document.getElementById("team-sim-reset");
+    const teamSimRandomButton = document.getElementById("team-sim-random");
+    const teamSimWakeButton = document.getElementById("team-sim-wake");
+    const traceCard = document.getElementById("trace-card");
+    const traceList = document.getElementById("trace-list");
+    const traceHealth = document.getElementById("trace-health");
+    let composing = false;
+    let executeAllowed = false;
+    let cameraTimer = null;
+
+    function setTalkOnly(on) {
+      if (on) {
+        status.textContent = "연결 안 됨 · 지금은 대화만";
+        modeNote.textContent = "MasterPi 카메라의 최신 프레임을 받지 못하고 있습니다.";
+        if (activeMode === "real") preview.style.visibility = "hidden";
+        const empty = log.querySelector(".empty");
+        if (empty) empty.textContent = "실물 카메라가 다시 연결되면 화면이 자동으로 복구됩니다.";
+      } else {
+        status.textContent = "MasterPi 카메라";
+        modeNote.textContent = "목표를 말하면 계획하고, 도구를 실행한 뒤 장면을 다시 봅니다.";
+        if (activeMode === "real") preview.style.visibility = "visible";
+      }
+    }
+
+    let cameraGeneration = 0;
+
+    function startCamera() {
+      cameraGeneration += 1;
+      const generation = cameraGeneration;
+      if (cameraTimer) clearTimeout(cameraTimer);
+      if (activeMode === "real") {
+        status.textContent = `${activeRobot.toUpperCase()} · MasterPi 카메라 연결 중`;
+        const refresh = () => {
+          if (activeMode !== "real" || generation !== cameraGeneration) return;
+          preview.onload = () => {
+            if (generation !== cameraGeneration) return;
+            setTalkOnly(false);
+            // UI display only. Robot perception/skills use the independent
+            // low-latency camera pump, so 4 fps here cuts browser/HTTP work
+            // without reducing control-loop sensor fidelity.
+            cameraTimer = setTimeout(refresh, 250);
+          };
+          preview.onerror = () => {
+            if (generation !== cameraGeneration) return;
+            setTalkOnly(true);
+            cameraTimer = setTimeout(refresh, 500);
+          };
+          preview.src = api("/api/camera") + "?t=" + Date.now();
+        };
+        refresh();
+      } else {
+        preview.style.visibility = "visible";
+        status.textContent = `${activeRobot.toUpperCase()} 1인칭 · MuJoCo RGB · 해당 agent 입력`;
+        // Latest-frame-only refresh prevents a slow browser/network from
+        // accumulating historical MJPEG frames. The cached snapshot endpoint
+        // returns the newest bridge frame and never replays an old backlog.
+        const refresh = () => {
+          if (activeMode !== "sim" || generation !== cameraGeneration || document.visibilityState !== "visible") return;
+          preview.onload = () => {
+            if (generation !== cameraGeneration) return;
+            cameraTimer = setTimeout(refresh, 100);
+          };
+          preview.onerror = () => {
+            if (generation !== cameraGeneration) return;
+            cameraTimer = setTimeout(refresh, 300);
+          };
+          preview.src = api("/api/camera") + "?t=" + Date.now();
+        };
+        refresh();
+      }
+    }
+    setObserverStreams(document.visibilityState === "visible");
+    startCamera();
+    if (window.UGRPSim3D) { window.UGRPSim3D.setMode("sim"); window.UGRPSim3D.start(); }
+
+    // Suspend all display-only telemetry/streams when this tab is not visible.
+    // The REAL backend camera pump and robot action processes continue
+    // independently, so this affects presentation load only.
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState !== "visible") {
+        cameraGeneration += 1;
+        if (cameraTimer) { clearTimeout(cameraTimer); cameraTimer = null; }
+        preview.onload = null;
+        preview.onerror = null;
+        preview.removeAttribute("src");
+        setObserverStreams(false);
+        if (activeRobot === 'team') setTeamCameraStreams(false);
+        if (window.UGRPSim3D) window.UGRPSim3D.stop();
+        return;
+      }
+      if (activeRobot === 'team') {
+        loadTeam();
+        setTeamCameraStreams(true);
+        return;
+      }
+      setObserverStreams(activeMode === "sim");
+      startCamera();
+      if (window.UGRPSim3D) {
+        window.UGRPSim3D.setMode(activeMode);
+        window.UGRPSim3D.start();
+      }
+    });
+
+    function renderSimPower(online, recovery = {}) {
+      if (!simWakeButton) return;
+      if (teamSimWakeButton) {
+        teamSimWakeButton.hidden = activeMode !== "sim";
+        teamSimWakeButton.disabled = !!online;
+        teamSimWakeButton.textContent = online ? "SIM 켜짐" : "SIM 켜기";
+      }
+      if (activeMode !== "sim" || online) {
+        simWakeButton.hidden = true;
+        simWakeButton.disabled = false;
+        simWakeButton.textContent = "SIM 켜기";
+        return;
+      }
+      const state = String((recovery || {}).state || "").toLowerCase();
+      const recovering = ["starting", "recovering", "launching", "connecting", "provisioning"].includes(state);
+      simWakeButton.hidden = false;
+      simWakeButton.disabled = recovering;
+      simWakeButton.textContent = recovering ? "켜는 중…" : "SIM 켜기";
+    }
+
+    window.renderSimPower = renderSimPower;
+
+    async function wakeSim() {
+      if (!simWakeButton || activeMode !== "sim") return;
+      if (teamSimWakeButton) {
+        teamSimWakeButton.disabled = true;
+        teamSimWakeButton.textContent = "켜는 중…";
+      }
+      simWakeButton.hidden = false;
+      simWakeButton.disabled = true;
+      simWakeButton.textContent = "켜는 중…";
+      modeHelp.textContent = "SIM GPU를 켜는 중";
+      try {
+        const res = await fetch(api("/api/sim/wake"), {
+          method: "POST", headers: {"Content-Type": "application/json"}, body: "{}",
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "SIM 시작 실패");
+        if (data.sim_online) {
+          renderSimPower(true, data.gpu_recovery || {});
+          modeHelp.textContent = "MuJoCo 시뮬레이션 · GPU 온라인";
+          return;
+        }
+        // Recovery is asynchronous. Poll the bridge directly so the button also
+        // recovers correctly while TEAM view has the 3-D poller stopped.
+        for (let i = 0; i < 90; i += 1) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          const stateRes = await fetch(api("/api/sim/state"), {cache: "no-store"});
+          const state = await stateRes.json();
+          const online = !!(state.remote_ws_connected && state.remote_authoritative);
+          renderSimPower(online, state.gpu_recovery || {});
+          if (online) {
+            modeHelp.textContent = "MuJoCo 시뮬레이션 · GPU 온라인";
+            return;
+          }
+        }
+        simWakeButton.disabled = false;
+        simWakeButton.textContent = "SIM 다시 켜기";
+        if (teamSimWakeButton) { teamSimWakeButton.disabled = false; teamSimWakeButton.textContent = "SIM 다시 켜기"; }
+        modeHelp.textContent = "SIM GPU 연결 대기 중 · 필요하면 다시 시도하세요";
+      } catch (err) {
+        simWakeButton.hidden = false;
+        simWakeButton.disabled = false;
+        simWakeButton.textContent = "SIM 다시 켜기";
+        if (teamSimWakeButton) { teamSimWakeButton.disabled = false; teamSimWakeButton.textContent = "SIM 다시 켜기"; }
+        modeHelp.textContent = `SIM 시작 실패 · ${err.message || err}`;
+      }
+    }
+
+    function renderSimSpeed(speed, enabled) {
+      const wrap = document.getElementById("sim-speed-wrap");
+      wrap.hidden = !enabled;
+      document.querySelectorAll("[data-sim-speed]").forEach((button) => {
+        button.classList.toggle("active", Number(button.dataset.simSpeed) === Number(speed));
+      });
+    }
+
+    async function setSimSpeed(speed) {
+      const res = await fetch(api("/api/sim/speed"), {
+        method: "POST", headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({speed: Number(speed)}),
+      });
+      const data = await res.json();
+      if (!res.ok) return;
+      renderSimSpeed(data.sim_speed, true);
+    }
+
+    async function resetSim(seed) {
+      const running = ['r1','r2','r3'].filter((rid) => sessionUi.get(sessionKey('sim', rid))?.sending);
+      if (running.length) {
+        modeHelp.textContent = `${running.map(rid => rid.toUpperCase()).join(', ')} 실행 중 · shared world 초기화는 실행 종료 후 가능합니다`;
+        return;
+      }
+      const value = Number(seed);
+      if (!Number.isInteger(value) || value < 0 || value > 2147483647) {
+        modeHelp.textContent = "Seed는 0~2147483647 정수여야 합니다";
+        return;
+      }
+      simResetButton.disabled = true;
+      simRandomSeedButton.disabled = true;
+      if (teamSimResetButton) teamSimResetButton.disabled = true;
+      if (teamSimRandomButton) teamSimRandomButton.disabled = true;
+      modeHelp.textContent = `Seed ${value} · 초기화 중`;
+      try {
+        const res = await fetch(api("/api/sim/reset"), {
+          method: "POST", headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({seed: value}),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "초기화 실패");
+        simSeedInput.value = String(data.sim_seed);
+        if (teamSimSeedInput) teamSimSeedInput.value = String(data.sim_seed);
+        for (const rid of ['r1','r2','r3']) {
+          const state = ensureSession('sim', rid);
+          state.root.replaceChildren();
+          state.started = false;
+        }
+        log.innerHTML = `<div class="empty">Seed ${data.sim_seed}로 새 시뮬레이션을 시작했습니다.</div>`;
+        const state = activeSession();
+        if (state) state.started = false;
+        modeHelp.textContent = `MuJoCo 시뮬레이션 · Seed ${data.sim_seed}`;
+      } catch (err) {
+        modeHelp.textContent = `초기화 실패 · ${err.message || err}`;
+      } finally {
+        simResetButton.disabled = false;
+        simRandomSeedButton.disabled = false;
+        if (teamSimResetButton) teamSimResetButton.disabled = false;
+        if (teamSimRandomButton) teamSimRandomButton.disabled = false;
+      }
+    }
+
+    function randomSimSeed() {
+      const values = new Uint32Array(1);
+      crypto.getRandomValues(values);
+      const seed = values[0] & 0x7fffffff;
+      simSeedInput.value = String(seed);
+      if (teamSimSeedInput) teamSimSeedInput.value = String(seed);
+      return resetSim(seed);
+    }
+
+    async function loadStatus() {
+      const res = await fetch(api("/api/status"));
+      const data = await res.json();
+      executeAllowed = !!data.execute_allowed;
+      execute.disabled = !executeAllowed;
+      execute.checked = executeAllowed && !!data.execute_default;
+      if (!executeAllowed) {
+        execute.checked = false;
+        execute.parentElement.title = "서버를 --execute 로 켠 뒤에만 실제로 움직입니다";
+      }
+      if (activeMode === "real") setTalkOnly(!!data.talk_only);
+      renderSimSpeed(data.sim_speed || 1, !!data.sim_speed_control);
+      document.getElementById("sim-seed-wrap").hidden = activeMode !== "sim";
+      if (teamSimControls) teamSimControls.hidden = activeMode !== "sim";
+      if (Number.isInteger(data.sim_seed)) {
+        simSeedInput.value = String(data.sim_seed);
+        if (teamSimSeedInput) teamSimSeedInput.value = String(data.sim_seed);
+      }
+    }
+
+    function formatTraceBytes(value) {
+      const n = Number(value || 0);
+      if (n < 1024) return `${n} B`;
+      if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+      return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+    }
+
+    function traceAssetUrl(runId, rel) {
+      const safeRun = encodeURIComponent(runId);
+      const safeRel = String(rel || '').split('/').map(encodeURIComponent).join('/');
+      return api(`/api/real-traces/${safeRun}/asset/${safeRel}`);
+    }
+
+    function traceStatusClass(statusValue) {
+      return String(statusValue || 'unknown').toLowerCase().replace(/[^a-z0-9_]+/g, '_');
+    }
+
+    function appendTraceKv(parent, label, value) {
+      if (value === undefined || value === null || value === '') return;
+      const key = document.createElement('b');
+      key.textContent = label;
+      const val = document.createElement('code');
+      val.textContent = typeof value === 'string' ? value : JSON.stringify(value);
+      parent.append(key, val);
+    }
+
+    function appendTraceFrame(parent, runId, rel, label) {
+      if (!rel) return;
+      const cell = document.createElement('div');
+      cell.className = 'trace-frame';
+      const img = document.createElement('img');
+      img.loading = 'lazy';
+      img.alt = label;
+      img.src = traceAssetUrl(runId, rel);
+      const caption = document.createElement('span');
+      caption.textContent = label;
+      cell.append(img, caption);
+      parent.appendChild(cell);
+    }
+
+    function renderTraceRun(run, detail, isLatest) {
+      const card = document.createElement('div');
+      card.className = 'trace-run';
+      const head = document.createElement('div');
+      head.className = 'trace-run-head';
+      const badge = document.createElement('span');
+      badge.className = `trace-status ${traceStatusClass(run.status)}`;
+      badge.textContent = run.status || 'UNKNOWN';
+      const command = document.createElement('div');
+      command.className = 'trace-command';
+      command.textContent = run.user_command || '(명령 없음)';
+      head.append(badge, command);
+      card.appendChild(head);
+
+      const meta = document.createElement('div');
+      meta.className = 'trace-meta';
+      const when = run.created_wall_time_s ? new Date(Number(run.created_wall_time_s) * 1000).toLocaleString() : '';
+      meta.textContent = `${run.run_id} · ${run.skill_count || 0} skill · ${formatTraceBytes(run.bytes)}${when ? ' · ' + when : ''}`;
+      card.appendChild(meta);
+
+      const failure = run.failure || detail?.analysis?.failure;
+      if (failure) {
+        const reason = document.createElement('div');
+        reason.className = 'trace-reason';
+        reason.textContent = `${failure.skill || 'unknown'}${failure.failure_code ? ' · ' + failure.failure_code : ''} · ${failure.reason || '원인 미기록'}`;
+        card.appendChild(reason);
+      }
+      const rootCause = run.root_cause || detail?.analysis?.root_cause;
+      const boundary = run.failure_boundary || detail?.analysis?.failure_boundary;
+      if (rootCause || boundary) {
+        const rca = document.createElement('div');
+        rca.className = 'trace-meta';
+        const bits = [];
+        if (rootCause) bits.push(`RCA ${rootCause.category || 'UNCLASSIFIED'} · ${rootCause.confidence || 'unknown'}`);
+        if (boundary) bits.push(`${boundary.last_successful_skill || 'start'} → ${boundary.first_failed_skill || 'unknown'}`);
+        rca.textContent = bits.join(' · ');
+        card.appendChild(rca);
+      }
+
+      if (isLatest && detail?.analysis) {
+        const evidence = detail.analysis.evidence || {};
+        const transition = evidence.visibility_transition || {};
+        const body = document.createElement('div');
+        body.className = 'trace-evidence';
+        const frames = document.createElement('div');
+        frames.className = 'trace-evidence-grid';
+        if (transition.before_frame || transition.after_frame) {
+          appendTraceFrame(frames, run.run_id, transition.before_frame, 'target visible · before');
+          appendTraceFrame(frames, run.run_id, transition.after_frame, 'target lost · after');
+        } else {
+          appendTraceFrame(frames, run.run_id, evidence.previous_input_frame, 'previous input');
+          appendTraceFrame(frames, run.run_id, evidence.last_input_frame, 'last input');
+        }
+        if (frames.children.length) body.appendChild(frames);
+        const kv = document.createElement('div');
+        kv.className = 'trace-kv';
+        const pose = evidence.last_commanded_pose || {};
+        appendTraceKv(kv, 'pose', pose.pose);
+        appendTraceKv(kv, 'last command', evidence.last_actuator_command);
+        const det = evidence.last_detection || {};
+        if (Object.keys(det).length) appendTraceKv(kv, 'detection', {color: det.color, visible: det.visible, blob: det.blob, detector: det.detector});
+        if (kv.children.length) body.appendChild(kv);
+        const obs = detail.analysis.observability || {};
+        const recorder = (obs.recorder || []).slice(-1)[0] || null;
+        if (recorder) {
+          appendTraceKv(kv, 'trace cost', {
+            recorder_avg_ms_per_frame: recorder.frame_record_avg_ms,
+            recorder_max_ms_per_frame: recorder.frame_record_max_ms,
+            trace_copy_s: recorder.trace_copy_duration_s,
+          });
+        }
+        const tail = evidence.decision_log_tail || [];
+        if (tail.length) {
+          const decision = document.createElement('div');
+          decision.className = 'trace-command-tail';
+          decision.textContent = '판단 직전 · ' + tail.slice(-3).join(' / ');
+          body.appendChild(decision);
+        }
+        if (body.children.length) card.appendChild(body);
+      }
+      return card;
+    }
+
+    async function loadRealTraces() {
+      if (activeMode !== 'real') return;
+      traceCard.hidden = false;
+      try {
+        const res = await fetch(api('/api/real-traces'), {cache: 'no-store'});
+        if (!res.ok) {
+          if (res.status === 404) throw new Error('trace backend 활성화 대기');
+          throw new Error(`HTTP ${res.status}`);
+        }
+        const data = await res.json();
+        const runs = data.runs || [];
+        traceHealth.textContent = runs.length ? `${data.run_count} runs · ${formatTraceBytes(data.bytes)}` : '기록 없음';
+        traceList.innerHTML = '';
+        if (!runs.length) {
+          const empty = document.createElement('div');
+          empty.className = 'trace-empty';
+          empty.textContent = '새 trace 시스템 활성화 후 첫 REAL 실행부터 여기에 분석이 표시됩니다.';
+          traceList.appendChild(empty);
+          return;
+        }
+        let latestDetail = null;
+        try {
+          const detailRes = await fetch(api(`/api/real-traces/${encodeURIComponent(runs[0].run_id)}`), {cache: 'no-store'});
+          if (detailRes.ok) latestDetail = await detailRes.json();
+        } catch (_) {}
+        runs.slice(0, 6).forEach((run, idx) => traceList.appendChild(renderTraceRun(run, idx === 0 ? latestDetail : null, idx === 0)));
+      } catch (err) {
+        traceHealth.textContent = '분석 조회 실패';
+        traceList.innerHTML = '';
+        const empty = document.createElement('div');
+        empty.className = 'trace-empty';
+        empty.textContent = `trace API를 읽지 못했습니다: ${err.message || err}`;
+        traceList.appendChild(empty);
+      }
+    }
+
+    async function loadTools() {
+      const res = await fetch(api("/api/tools"));
+      const data = await res.json();
+      document.getElementById("tools-file").textContent = data.file || "scripts/robot_actions.py";
+      const box = document.getElementById("tools");
+      box.innerHTML = "";
+      for (const tool of data.tools || []) {
+        const el = document.createElement("div");
+        el.className = "tool";
+        el.innerHTML = "<b></b><span></span>";
+        el.querySelector("b").textContent = tool.name;
+        el.querySelector("span").textContent = tool.description || "";
+        box.appendChild(el);
+      }
+    }
+
+    document.querySelectorAll("[data-sim-speed]").forEach((button) => {
+      button.addEventListener("click", () => setSimSpeed(button.dataset.simSpeed).catch(() => {}));
+    });
+    simWakeButton.addEventListener("click", () => wakeSim());
+    simResetButton.addEventListener("click", () => resetSim(simSeedInput.value));
+    simRandomSeedButton.addEventListener("click", () => randomSimSeed());
+    teamSimWakeButton.addEventListener("click", () => wakeSim());
+    teamSimResetButton.addEventListener("click", () => resetSim(teamSimSeedInput.value));
+    teamSimRandomButton.addEventListener("click", () => randomSimSeed());
+    teamSimSeedInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") { event.preventDefault(); resetSim(teamSimSeedInput.value); }
+    });
+    simSeedInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") { event.preventDefault(); resetSim(simSeedInput.value); }
+    });
+    loadTools().catch(() => {});
+    loadStatus().catch(() => {});
+    if (activeMode === "real") loadRealTraces().catch(() => {});
+    // REAL camera health changes independently of navigation. Poll only the
+    // lightweight status endpoint so stale frames are hidden immediately and
+    // a recovered physical stream becomes visible without a page refresh.
+    setInterval(async () => {
+      if (activeMode !== "real") return;
+      try {
+        const res = await fetch(api("/api/status"), {cache: "no-store"});
+        const data = await res.json();
+        setTalkOnly(!!data.talk_only);
+      } catch (_) {
+        setTalkOnly(true);
+      }
+    }, 1000);
+
+    function addUser(text, session = activeSession()) {
+      if (!session.started) { log.innerHTML = ""; session.started = true; }
+      const el = document.createElement("div");
+      el.className = "msg user";
+      el.innerHTML = '<div class="bubble"></div>';
+      el.querySelector(".bubble").textContent = text;
+      log.appendChild(el);
+    }
+
+    function addRun() {
+      const el = document.createElement("div");
+      el.className = "msg assistant";
+      el.innerHTML = '<div class="run"><div class="role">agent</div><div class="steps"></div></div>';
+      log.appendChild(el);
+      return el.querySelector(".steps");
+    }
+
+    function addStep(box, kind, text, extra) {
+      const el = document.createElement("div");
+      el.className = "step";
+      el.innerHTML = "<b></b><div></div>";
+      el.querySelector("b").textContent = kind;
+      const body = el.querySelector("div");
+      if (text) body.appendChild(document.createTextNode(text));
+      if (extra) body.appendChild(extra);
+      box.appendChild(el);
+      if (box.isConnected) log.scrollTop = log.scrollHeight;
+    }
+
+    function applyEvent(box, event, context = {mode: activeMode, robot: activeRobot}) {
+      if (event.type === "status") {
+        addStep(box, "처리", event.text || "요청을 처리하고 있습니다");
+        return;
+      }
+      if (event.type === "done") {
+        if (context.mode === "real" && event.real_run_id) {
+          const failure = event.real_trace_failure || null;
+          const traceText = failure
+            ? `${event.real_trace_status || "FAILED"} · ${failure.skill || "unknown"} · ${failure.reason || "원인 미기록"}`
+            : `${event.real_trace_status || "기록 완료"} · ${event.real_run_id}`;
+          addStep(box, "진단", traceText);
+          if (activeMode === context.mode && activeRobot === context.robot) loadRealTraces().catch(() => {});
+        }
+        if (event.stopped && event.stopped !== "final" && event.stopped !== "empty" && event.stopped !== "goal_achieved") {
+          const labels = {
+            max_steps: "도구 횟수 한도에 걸렸습니다",
+            max_iters: "대기/확인이 너무 많습니다",
+            cancel: "중지했습니다",
+            tool_budget: "도구 횟수 한도에 걸려 마무리했습니다",
+            planner_budget: "계획 호출 한도에 걸려 마무리했습니다",
+            protocol_error: "모델 응답 형식 오류가 반복돼 멈췄습니다",
+            robot_offline: "로봇 연결이 끊겨 멈췄습니다",
+            carry_lost: "운반 중 블록을 놓쳐 멈췄습니다",
+          };
+          addStep(box, "중단", labels[event.stopped] || event.stopped);
+        } else if (!box.children.length && (event.error || event.text)) {
+          addStep(box, "완료", event.error || event.text);
+        }
+        return;
+      }
+      if (event.type === "plan") {
+        const list = document.createElement("ol");
+        for (const item of event.steps || []) {
+          const li = document.createElement("li");
+          li.textContent = item;
+          list.appendChild(li);
+        }
+        addStep(box, "계획", event.text || "", list);
+        return;
+      }
+      if (event.type === "tool") {
+        const mode = event.dry_run === false ? "실행" : "미리보기";
+        addStep(box, "실행", (event.text ? event.text + " · " : "") + (LABELS[event.name] || event.name) + " · " + mode);
+        return;
+      }
+      if (event.type === "wait") {
+        addStep(box, "대기", event.text || (event.seconds + "초 기다림"));
+        return;
+      }
+      if (event.type === "look") {
+        addStep(box, "확인", event.text || "장면 다시 봄");
+        return;
+      }
+      if (event.type === "final") {
+        addStep(box, "완료", event.text || "");
+        return;
+      }
+      if (event.type === "error") {
+        addStep(box, "오류", event.text || "실패");
+      }
+    }
+
+    async function readEvents(res, box, context) {
+      const type = res.headers.get("Content-Type") || "";
+      if (!type.includes("event-stream") || !res.body) {
+        const data = await res.json();
+        if (data.events && data.events.length) {
+          for (const event of data.events) applyEvent(box, event, context);
+        } else {
+          applyEvent(box, { type: data.error ? "error" : "final", text: data.error || data.text || "" }, context);
+        }
+        return;
+      }
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buf = "";
+      while (true) {
+        const chunk = await reader.read();
+        if (chunk.done) break;
+        buf += decoder.decode(chunk.value, { stream: true });
+        let split;
+        while ((split = buf.indexOf("\n\n")) >= 0) {
+          const block = buf.slice(0, split);
+          buf = buf.slice(split + 2);
+          const line = block.split("\n").find((row) => row.startsWith("data: "));
+          if (!line) continue;
+          applyEvent(box, JSON.parse(line.slice(6)), context);
+        }
+      }
+    }
+
+    function requestRunCancel(requestPrefix) {
+      return fetch(requestPrefix + "/api/cancel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+        keepalive: true,
+      }).catch(() => {});
+    }
+
+    async function submitOnce() {
+      if (activeRobot === 'team') return;
+      const session = activeSession();
+      if (session.sending) return;
+      const text = input.value.trim();
+      if (!text) return;
+      const requestMode = activeMode;
+      const requestRobot = activeRobot;
+      const requestPrefix = robotApiPrefix(requestMode, requestRobot);
+      const context = {mode: requestMode, robot: requestRobot};
+      session.sending = true;
+      addUser(text, session);
+      input.value = "";
+      syncRunControls();
+      session.abortCtl = new AbortController();
+      const box = addRun();
+      try {
+        const res = await fetch(requestPrefix + "/api/turn", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: text,
+            execute: executeAllowed && execute.checked,
+            stream: true,
+          }),
+          signal: session.abortCtl.signal,
+        });
+        await readEvents(res, box, context);
+      } catch (err) {
+        if (err && err.name === "AbortError") {
+          applyEvent(box, { type: "error", text: "중지했습니다" }, context);
+        } else {
+          // A transport failure used to leave the server-side autonomous loop
+          // running after the UI had already shown `TypeError: network error`.
+          // Ask the same robot endpoint to stop and show an actionable message
+          // rather than leaking the browser's implementation-specific error.
+          requestRunCancel(requestPrefix);
+          console.warn("UGRP turn stream disconnected", err);
+          applyEvent(box, {
+            type: "error",
+            text: "연결이 끊겼습니다. 안전을 위해 로봇 실행 중단을 요청했습니다.",
+          }, context);
+        }
+      } finally {
+        session.sending = false;
+        session.abortCtl = null;
+        if (activeMode === requestMode && activeRobot === requestRobot) {
+          syncRunControls();
+          input.focus();
+        } else {
+          setRobotTabs();
+        }
+      }
+    }
+
+    stopRun.addEventListener("click", () => {
+      const session = activeSession();
+      if (!session || !session.sending) return;
+      const requestPrefix = robotApiPrefix(activeMode, activeRobot);
+      requestRunCancel(requestPrefix);
+      if (session.abortCtl) session.abortCtl.abort();
+    });
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      submitOnce();
+    });
+    input.addEventListener("compositionstart", () => { composing = true; });
+    input.addEventListener("compositionend", () => { composing = false; });
+    input.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" || e.shiftKey) return;
+      if (composing || e.isComposing || e.keyCode === 229) return;
+      e.preventDefault();
+      submitOnce();
+    });
+  </script>
+</body>
+</html>

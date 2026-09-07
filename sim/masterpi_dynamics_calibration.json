@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "classification": "platform_calibration_not_research_result",
+  "validated": false,
+  "validated_at": null,
+  "hardware_unit": "ugrp1",
+  "model": "masterpi_dynamics_v2_reduced_mecanum",
+  "sources": {
+    "manufacturer_total_mass_kg": 1.1,
+    "physical_fk": "scripts/red_block/geometry.py",
+    "physical_motor_interface": "scripts/masterpi_control.py",
+    "camera_calibration": "sim/masterpi_camera_profile.py (ugrp1 measured 2026-08-30 operational profile)"
+  },
+  "parameters": {
+    "motor_time_constant_s": null,
+    "max_forward_force_n": null,
+    "max_lateral_force_n": null,
+    "max_yaw_torque_nm": null,
+    "linear_damping_n_per_mps": null,
+    "yaw_damping_nm_per_radps": null,
+    "stop_linear_damping_n_per_mps": null,
+    "stop_yaw_damping_nm_per_radps": null,
+    "wheel_radius_m": null,
+    "wheelbase_m": null,
+    "track_m": null,
+    "servo_deadband_pwm": null,
+    "servo_rate_pwm_per_s": null,
+    "camera_link_cm": null,
+    "camera_z_offset_cm": null,
+    "camera_pitch_offset_deg": null,
+    "servo6_center_pwm": null,
+    "block_mass_kg": null,
+    "block_floor_friction": null,
+    "gripper_position_kp": null,
+    "gripper_finger_friction": null,
+    "forward_slip_ratio": null,
+    "lateral_slip_ratio": null,
+    "gripper_contact_force_n": null
+  },
+  "required_real_trials": {
+    "forward": {
+      "commands": [
+        31,
+        35,
+        40
+      ],
+      "drive_durations_s": [
+        0.2,
+        0.55
+      ],
+      "fit_repeats_each": 2,
+      "holdout_repeats_each": 1
+    },
+    "backward": {
+      "commands": [
+        31,
+        35,
+        40
+      ],
+      "drive_durations_s": [
+        0.2,
+        0.55
+      ],
+      "fit_repeats_each": 2,
+      "holdout_repeats_each": 1
+    },
+    "left": {
+      "commands": [
+        31,
+        35,
+        40
+      ],
+      "drive_durations_s": [
+        0.2,
+        0.55
+      ],
+      "fit_repeats_each": 2,
+      "holdout_repeats_each": 1
+    },
+    "right": {
+      "commands": [
+        31,
+        35,
+        40
+      ],
+      "drive_durations_s": [
+        0.2,
+        0.55
+      ],
+      "fit_repeats_each": 2,
+      "holdout_repeats_each": 1
+    },
+    "rotate_left": {
+      "commands": [
+        31,
+        35,
+        40
+      ],
+      "drive_durations_s": [
+        0.2,
+        0.55
+      ],
+      "fit_repeats_each": 2,
+      "holdout_repeats_each": 1
+    },
+    "rotate_right": {
+      "commands": [
+        31,
+        35,
+        40
+      ],
+      "drive_durations_s": [
+        0.2,
+        0.55
+      ],
+      "fit_repeats_each": 2,
+      "holdout_repeats_each": 1
+    },
+    "servo_steps": {
+      "servos": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "pwm_deltas": [
+        5,
+        15,
+        30,
+        100,
+        500
+      ],
+      "fit_repeats_each": 2,
+      "holdout_repeats_each": 1
+    },
+    "grasp_contact": {
+      "fit_trials": 12,
+      "holdout_trials": 20,
+      "ground_truth": "physical_pick_outcome_with_external_start_pose"
+    },
+    "hand_eye": {
+      "fit_trials": 12,
+      "holdout_trials": 12,
+      "ground_truth": "external_floor_grid_or_metrology"
+    }
+  },
+  "acceptance": {
+    "held_out_translation_endpoint_mae_m_max": 0.025,
+    "held_out_yaw_endpoint_mae_deg_max": 5.0,
+    "held_out_peak_speed_relative_error_max": 0.15,
+    "held_out_stop_distance_mae_m_max": 0.02,
+    "held_out_servo_endpoint_mae_deg_max": 3.0,
+    "held_out_servo_settle_time_relative_error_max": 0.2,
+    "grasp_success_rate_gap_max": 0.15,
+    "held_out_hand_eye_position_mae_m_max": 0.02,
+    "task_outcome_disagreement_rate_max": 0.2
+  },
+  "results": {
+    "fit_trials": 0,
+    "held_out_trials": 0,
+    "translation_endpoint_mae_m": null,
+    "yaw_endpoint_mae_deg": null,
+    "peak_speed_relative_error": null,
+    "stop_distance_mae_m": null,
+    "servo_endpoint_mae_deg": null,
+    "servo_settle_time_relative_error": null,
+    "grasp_success_rate_gap": null,
+    "servo_fit_trials": 0,
+    "servo_held_out_trials": 0,
+    "hand_eye_fit_trials": 0,
+    "hand_eye_held_out_trials": 0,
+    "task_fit_trials": 0,
+    "task_held_out_trials": 0,
+    "hand_eye_position_mae_m": null,
+    "task_outcome_disagreement_rate": null
+  },
+  "notes": [
+    "All v2 force, damping, slip and inertia-distribution values are provisional until this manifest is validated.",
+    "Do not set validated=true manually; validation must be produced by a repeatable calibration/evaluation run with held-out physical trials.",
+    "Policy observations must remain limited to signals available on the physical MasterPi; hidden MuJoCo truth may be used for reward/evaluation only.",
+    "2026-08-29 chassis protocol uses only the live-safe measured-effective command range 31..40; historical <=30 dead-zone data may still be consumed offline but is not commanded by the calibration runner.",
+    "A validated twin requires chassis, servo, hand-eye, static geometry/object and task-level physical evidence; numeric defaults or SIM-generated measurements cannot promote the manifest.",
+    "forward_slip_ratio, lateral_slip_ratio and gripper_contact_force_n are retained as legacy metadata only; the current reduced model identifies their task effect through fitted wrench/contact parameters instead of double-counting them.",
+    "2026-08-30 camera image formation now uses the measured ugrp1 fisheye K/D and a rigid hand-eye fit; this does not validate arm-pose, chassis, servo, or grasp/contact dynamics."
+  ],
+  "validation_provenance": null
+}

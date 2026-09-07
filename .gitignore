@@ -1,0 +1,65 @@
+# UGRP Git policy: source/config/docs are versioned; runtime/build/heavy artifacts stay local.
+
+# Python / test caches
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.venv-*/
+
+# OS / editor / temporary conflict copies
+.DS_Store
+*.orig
+*.rej
+*.swp
+*.swo
+*.sync-conflict-*
+
+# Secrets and machine-local runtime configuration
+.env
+.env.*
+!.env.example
+*.env
+!*.example.env
+.webui_secret_key
+.groq_keys
+.sim_bridge_token
+.sim_remote_url
+.sim_worker_env
+
+# Runtime outputs / traces / stress runs
+outputs/
+stress_logs/
+*.log
+MUJOCO_LOG.TXT
+*.pid
+
+# Models / large ML binaries
+**/*.safetensors
+**/*.gguf
+**/*.bin
+**/*.pt
+**/*.pth
+**/*.onnx
+**/*.engine
+
+# Raspberry Pi / OS image and recovery workspace is local-only.
+work/
+boot/
+
+# Generic build/cache directories
+build/
+dist/
+.cache/
+tmp/
+
+# Local agent/session state and transient sync copies
+.agents/
+.claude/
+.codex/
+.ugrp-sync-tmp/
+.git.disabled-note
+docs/cursor-history/
+r1-nav-cam-camera-team-seed41.png
+**/.git/
+**/node_modules/

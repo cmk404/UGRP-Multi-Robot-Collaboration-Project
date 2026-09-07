@@ -1,0 +1,14 @@
+[Unit]
+Description=UGRP cloud simulation bridge
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/ubuntu/projects/ugrp
+Environment=UGRP_SIM_GPU_ONLY=1
+ExecStart=/home/ubuntu/projects/ugrp/.venv-sim/bin/python -m sim.bridge --host 127.0.0.1 --port 8091 --worker-port 8092
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target

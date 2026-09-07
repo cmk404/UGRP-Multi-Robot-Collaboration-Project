@@ -1,0 +1,18 @@
+# Pinned to what actually runs on 2026-09-02:
+#   Oracle  .venv-sim            (bridge, coworker harness, tests)   Python 3.12
+#   Mac     .venv-sim-worker-mac (MuJoCo WebSocket worker)           Python 3.12
+# Install:  python -m venv .venv-sim && .venv-sim/bin/pip install -r requirements-sim.txt
+# The RL extras (torch/SB3/gymnasium) are only needed for the legacy grasp_rl
+# path (UGRP_ENABLE_LEGACY_GRASP_RL=1) and the ugrp-ppo-policy service.
+mujoco==3.12.0
+numpy==2.5.2
+opencv-python-headless==5.0.0.93
+pillow==12.3.0
+websockets==15.0.1
+glfw==2.10.2
+PyOpenGL==3.1.10
+
+# --- optional RL / legacy policy path ---
+# torch==2.13.0            # Oracle has the +cpu wheel: pip install torch==2.13.0 --index-url https://download.pytorch.org/whl/cpu
+# stable_baselines3==2.9.0
+# gymnasium==1.3.0

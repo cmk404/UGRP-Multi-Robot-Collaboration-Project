@@ -1,0 +1,280 @@
+<mujoco model="ugrp_masterpi_dynamics_v2">
+  <compiler angle="radian" />
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="implicitfast" cone="elliptic" iterations="80" />
+  <visual><global offwidth="1280" offheight="720" /><map znear=".002" /></visual>
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1=".08 .09 .11" rgb2=".20 .22 .26" width="512" height="3072" />
+    <texture name="ground" type="2d" builtin="checker" width="256" height="256" rgb1=".20 .22 .24" rgb2=".27 .29 .31" />
+    <material name="groundmat" texture="ground" texrepeat="14 14" reflectance=".035" />
+    <material name="aluminum" rgba=".48 .50 .52 1" />
+    <material name="dark" rgba=".055 .060 .068 1" />
+    <material name="black" rgba=".018 .020 .024 1" />
+    
+    <material name="orange" rgba=".95 .60 .03 1" />
+    <material name="hub" rgba=".28 .30 .32 1" />
+    <material name="redmat" rgba=".88 .04 .04 1" />
+    <material name="blumat" rgba=".04 .18 .88 1" />
+    <material name="yellowmat" rgba=".95 .72 .05 1" />
+  </asset>
+  <worldbody>
+    <light pos="0 -1.3 2.4" dir="0 .25 -1" diffuse="1 1 1" ambient=".34 .34 .34" specular=".22 .22 .22" />
+    <light pos="-1 1.7 1.7" dir=".3 -.4 -1" diffuse=".70 .70 .70" ambient=".22 .22 .22" specular=".12 .12 .12" />
+    <light pos="1.4 -.2 2.0" dir="-.55 .05 -1" diffuse=".58 .58 .58" ambient=".18 .18 .18" specular=".08 .08 .08" />
+    <geom name="floor" type="plane" size="3 3 .1" material="groundmat" />
+
+    
+    <body name="robot" pos="0.000000 0.000000 0.032500">
+  <freejoint name="base_free" />
+  <inertial pos="0 0 .042" mass=".735" diaginertia=".0020 .0027 .0032" />
+
+  
+  <geom name="base_lower_collision" type="box" pos="0 0 -0.000500" size="0.058000 0.045000 0.015000" rgba="0 0 0 0" contype="2" conaffinity="1" friction=".55 .01 .001" />
+  <geom name="base_top" type="box" pos="0 0 0.016500" size="0.060000 0.048000 .002" material="dark" contype="2" conaffinity="1" />
+  <geom name="left_side_panel_visual" type="box" pos="0 0.046500 -0.000500" size="0.056000 .0015 0.015000" material="aluminum" mass="0" contype="0" conaffinity="0" />
+  <geom name="right_side_panel_visual" type="box" pos="0 -0.046500 -0.000500" size="0.056000 .0015 0.015000" material="aluminum" mass="0" contype="0" conaffinity="0" />
+  <geom name="front_plate" type="box" pos="0.060000 0 -0.000500" size=".0015 0.045000 0.015000" material="aluminum" contype="2" conaffinity="1" />
+  <geom name="rear_plate_visual" type="box" pos="-0.060000 0 -0.000500" size=".0015 0.045000 0.015000" material="aluminum" mass="0" contype="0" conaffinity="0" />
+
+  
+  <geom name="left_chassis_hole_front" type="cylinder" pos=".035 0.048200 -0.000500" size=".0045 .0005" euler="1.5708 0 0" material="dark" mass="0" contype="0" conaffinity="0" />
+  <geom name="left_chassis_hole_mid" type="cylinder" pos="0 0.048200 -0.000500" size=".0040 .0005" euler="1.5708 0 0" material="dark" mass="0" contype="0" conaffinity="0" />
+  <geom name="left_chassis_hole_rear" type="cylinder" pos="-.035 0.048200 -0.000500" size=".0045 .0005" euler="1.5708 0 0" material="dark" mass="0" contype="0" conaffinity="0" />
+  <geom name="right_chassis_hole_front" type="cylinder" pos=".035 -0.048200 -0.000500" size=".0045 .0005" euler="1.5708 0 0" material="dark" mass="0" contype="0" conaffinity="0" />
+  <geom name="right_chassis_hole_mid" type="cylinder" pos="0 -0.048200 -0.000500" size=".0040 .0005" euler="1.5708 0 0" material="dark" mass="0" contype="0" conaffinity="0" />
+  <geom name="right_chassis_hole_rear" type="cylinder" pos="-.035 -0.048200 -0.000500" size=".0045 .0005" euler="1.5708 0 0" material="dark" mass="0" contype="0" conaffinity="0" />
+
+  
+  <geom name="motor_fl_gearbox_visual" type="box" pos="0.060000 .037 0" size=".018 .018 .010" material="black" mass="0" contype="0" conaffinity="0" />
+  <geom name="motor_fr_gearbox_visual" type="box" pos="0.060000 -.037 0" size=".018 .018 .010" material="black" mass="0" contype="0" conaffinity="0" />
+  <geom name="motor_rl_gearbox_visual" type="box" pos="-0.060000 .037 0" size=".018 .018 .010" material="black" mass="0" contype="0" conaffinity="0" />
+  <geom name="motor_rr_gearbox_visual" type="box" pos="-0.060000 -.037 0" size=".018 .018 .010" material="black" mass="0" contype="0" conaffinity="0" />
+  <geom name="motor_fl_can_visual" type="cylinder" pos="0.060000 .014 0" size=".011 .012" euler="1.5708 0 0" rgba=".18 .19 .20 1" mass="0" contype="0" conaffinity="0" />
+  <geom name="motor_fr_can_visual" type="cylinder" pos="0.060000 -.014 0" size=".011 .012" euler="1.5708 0 0" rgba=".18 .19 .20 1" mass="0" contype="0" conaffinity="0" />
+  <geom name="motor_rl_can_visual" type="cylinder" pos="-0.060000 .014 0" size=".011 .012" euler="1.5708 0 0" rgba=".18 .19 .20 1" mass="0" contype="0" conaffinity="0" />
+  <geom name="motor_rr_can_visual" type="cylinder" pos="-0.060000 -.014 0" size=".011 .012" euler="1.5708 0 0" rgba=".18 .19 .20 1" mass="0" contype="0" conaffinity="0" />
+
+  
+  <geom name="rear_cage_collision" type="box" pos="-0.028000 0 0.043500" size="0.032000 0.046000 0.025000" rgba="0 0 0 0" contype="2" conaffinity="1" />
+  <geom name="pi_board_visual" type="box" pos="-0.028000 0 0.027500" size="0.028000 0.042500 .002" rgba=".035 .23 .09 1" mass="0" contype="0" conaffinity="0" />
+  <geom name="pi_heatsink_visual" type="box" pos="-0.034000 0 0.034500" size=".012 .014 .003" material="dark" mass="0" contype="0" conaffinity="0" />
+  <geom name="expansion_board_visual" type="box" pos="-0.028000 0 0.041500" size="0.028000 0.042500 .0015" rgba=".10 .11 .12 1" mass="0" contype="0" conaffinity="0" />
+
+  
+  <geom name="electronics_left_side_visual" type="box" pos="-0.028000 0.046000 0.043500" size="0.032000 .0014 0.025000" material="aluminum" mass="0" contype="0" conaffinity="0" />
+  <geom name="electronics_right_side_visual" type="box" pos="-0.028000 -0.046000 0.043500" size="0.032000 .0014 0.025000" material="aluminum" mass="0" contype="0" conaffinity="0" />
+  <geom name="electronics_top_cover_visual" type="box" pos="-0.028000 0 0.067300" size="0.032000 0.046000 .0012" material="aluminum" mass="0" contype="0" conaffinity="0" />
+  
+  <geom name="top_cover_slot_1" type="box" pos="-0.046000 .025 0.068550" size=".009 .003 .00015" material="dark" mass="0" contype="0" conaffinity="0" />
+  <geom name="top_cover_slot_2" type="box" pos="-0.046000 .010 0.068550" size=".009 .003 .00015" material="dark" mass="0" contype="0" conaffinity="0" />
+  <geom name="top_cover_slot_3" type="box" pos="-0.046000 -.005 0.068550" size=".009 .003 .00015" material="dark" mass="0" contype="0" conaffinity="0" />
+  <geom name="top_cover_slot_4" type="box" pos="-0.046000 -.020 0.068550" size=".009 .003 .00015" material="dark" mass="0" contype="0" conaffinity="0" />
+
+  
+  <geom name="cage_front_left_standoff" type="capsule" fromto="0.001000 0.043000 0.018500 0.001000 0.043000 0.065500" size=".002" rgba=".72 .42 .16 1" mass="0" contype="0" conaffinity="0" />
+  <geom name="cage_front_right_standoff" type="capsule" fromto="0.001000 -0.043000 0.018500 0.001000 -0.043000 0.065500" size=".002" rgba=".72 .42 .16 1" mass="0" contype="0" conaffinity="0" />
+  <geom name="cage_rear_left_standoff" type="capsule" fromto="-0.057000 0.043000 0.018500 -0.057000 0.043000 0.065500" size=".002" rgba=".72 .42 .16 1" mass="0" contype="0" conaffinity="0" />
+  <geom name="cage_rear_right_standoff" type="capsule" fromto="-0.057000 -0.043000 0.018500 -0.057000 -0.043000 0.065500" size=".002" rgba=".72 .42 .16 1" mass="0" contype="0" conaffinity="0" />
+  <geom name="cage_mid_left_standoff" type="capsule" fromto="-0.028000 0.043000 0.018500 -0.028000 0.043000 0.065500" size=".002" rgba=".72 .42 .16 1" mass="0" contype="0" conaffinity="0" />
+  <geom name="cage_mid_right_standoff" type="capsule" fromto="-0.028000 -0.043000 0.018500 -0.028000 -0.043000 0.065500" size=".002" rgba=".72 .42 .16 1" mass="0" contype="0" conaffinity="0" />
+
+  
+
+  
+  <geom name="ultrasonic_bracket" type="box" pos="0.074000 0 0.021500" size=".004 .030 .013" material="black" mass="0" contype="0" conaffinity="0" />
+  <geom name="ultrasonic_left" type="cylinder" pos="0.078000 .017 0.021500" size=".010 .006" euler="0 1.5708 0" rgba=".72 .76 .80 1" mass="0" contype="0" conaffinity="0" />
+  <geom name="ultrasonic_right" type="cylinder" pos="0.078000 -.017 0.021500" size=".010 .006" euler="0 1.5708 0" rgba=".72 .76 .80 1" mass="0" contype="0" conaffinity="0" />
+
+  
+  <body name="wheel_fl_body" pos="0.060000 0.065500 0">
+    <joint name="wheel_fl_joint" type="hinge" axis="0 1 0" damping=".0015" armature=".00002" />
+    <inertial pos="0 0 0" mass=".05" diaginertia=".000018 .000029 .000018" />
+    <geom name="wheel_fl" type="cylinder" size="0.032500 0.015500" euler="1.5708 0 0" rgba="0 0 0 0" contype="2" conaffinity="1" friction="0.001000 .0001 .00001" condim="4" priority="1" />
+    <geom name="wheel_fl_hub_visual" type="cylinder" size=".009 0.015500" euler="1.5708 0 0" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fl_hub_spoke_0" type="capsule" fromto="0.007000 0.000000 0.000000 0.021775 0.000000 0.000000" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fl_hub_spoke_1" type="capsule" fromto="0.004950 0.000000 0.004950 0.015397 0.000000 0.015397" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fl_hub_spoke_2" type="capsule" fromto="0.000000 0.000000 0.007000 0.000000 0.000000 0.021775" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fl_hub_spoke_3" type="capsule" fromto="-0.004950 0.000000 0.004950 -0.015397 0.000000 0.015397" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fl_hub_spoke_4" type="capsule" fromto="-0.007000 0.000000 0.000000 -0.021775 0.000000 0.000000" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fl_hub_spoke_5" type="capsule" fromto="-0.004950 0.000000 -0.004950 -0.015397 0.000000 -0.015397" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fl_hub_spoke_6" type="capsule" fromto="-0.000000 0.000000 -0.007000 -0.000000 0.000000 -0.021775" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fl_hub_spoke_7" type="capsule" fromto="0.004950 0.000000 -0.004950 0.015397 0.000000 -0.015397" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fl_roller_0" type="capsule" fromto="0.027300 -0.004750 -0.011562 0.027300 0.004750 0.011562" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fl_roller_1" type="capsule" fromto="0.027480 -0.004750 0.011128 0.011128 0.004750 0.027480" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fl_roller_2" type="capsule" fromto="0.011562 -0.004750 0.027300 -0.011562 0.004750 0.027300" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fl_roller_3" type="capsule" fromto="-0.011128 -0.004750 0.027480 -0.027480 0.004750 0.011128" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fl_roller_4" type="capsule" fromto="-0.027300 -0.004750 0.011562 -0.027300 0.004750 -0.011562" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fl_roller_5" type="capsule" fromto="-0.027480 -0.004750 -0.011128 -0.011128 0.004750 -0.027480" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fl_roller_6" type="capsule" fromto="-0.011562 -0.004750 -0.027300 0.011562 0.004750 -0.027300" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fl_roller_7" type="capsule" fromto="0.011128 -0.004750 -0.027480 0.027480 0.004750 -0.011128" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+  </body>
+  <body name="wheel_fr_body" pos="0.060000 -0.065500 0">
+    <joint name="wheel_fr_joint" type="hinge" axis="0 1 0" damping=".0015" armature=".00002" />
+    <inertial pos="0 0 0" mass=".05" diaginertia=".000018 .000029 .000018" />
+    <geom name="wheel_fr" type="cylinder" size="0.032500 0.015500" euler="1.5708 0 0" rgba="0 0 0 0" contype="2" conaffinity="1" friction="0.001000 .0001 .00001" condim="4" priority="1" />
+    <geom name="wheel_fr_hub_visual" type="cylinder" size=".009 0.015500" euler="1.5708 0 0" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fr_hub_spoke_0" type="capsule" fromto="0.007000 0.000000 0.000000 0.021775 0.000000 0.000000" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fr_hub_spoke_1" type="capsule" fromto="0.004950 0.000000 0.004950 0.015397 0.000000 0.015397" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fr_hub_spoke_2" type="capsule" fromto="0.000000 0.000000 0.007000 0.000000 0.000000 0.021775" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fr_hub_spoke_3" type="capsule" fromto="-0.004950 0.000000 0.004950 -0.015397 0.000000 0.015397" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fr_hub_spoke_4" type="capsule" fromto="-0.007000 0.000000 0.000000 -0.021775 0.000000 0.000000" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fr_hub_spoke_5" type="capsule" fromto="-0.004950 0.000000 -0.004950 -0.015397 0.000000 -0.015397" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fr_hub_spoke_6" type="capsule" fromto="-0.000000 0.000000 -0.007000 -0.000000 0.000000 -0.021775" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fr_hub_spoke_7" type="capsule" fromto="0.004950 0.000000 -0.004950 0.015397 0.000000 -0.015397" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fr_roller_0" type="capsule" fromto="0.027300 -0.004750 0.011562 0.027300 0.004750 -0.011562" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fr_roller_1" type="capsule" fromto="0.011128 -0.004750 0.027480 0.027480 0.004750 0.011128" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fr_roller_2" type="capsule" fromto="-0.011562 -0.004750 0.027300 0.011562 0.004750 0.027300" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fr_roller_3" type="capsule" fromto="-0.027480 -0.004750 0.011128 -0.011128 0.004750 0.027480" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fr_roller_4" type="capsule" fromto="-0.027300 -0.004750 -0.011562 -0.027300 0.004750 0.011562" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fr_roller_5" type="capsule" fromto="-0.011128 -0.004750 -0.027480 -0.027480 0.004750 -0.011128" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fr_roller_6" type="capsule" fromto="0.011562 -0.004750 -0.027300 -0.011562 0.004750 -0.027300" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_fr_roller_7" type="capsule" fromto="0.027480 -0.004750 -0.011128 0.011128 0.004750 -0.027480" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+  </body>
+  <body name="wheel_rl_body" pos="-0.060000 0.065500 0">
+    <joint name="wheel_rl_joint" type="hinge" axis="0 1 0" damping=".0015" armature=".00002" />
+    <inertial pos="0 0 0" mass=".05" diaginertia=".000018 .000029 .000018" />
+    <geom name="wheel_rl" type="cylinder" size="0.032500 0.015500" euler="1.5708 0 0" rgba="0 0 0 0" contype="2" conaffinity="1" friction="0.001000 .0001 .00001" condim="4" priority="1" />
+    <geom name="wheel_rl_hub_visual" type="cylinder" size=".009 0.015500" euler="1.5708 0 0" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rl_hub_spoke_0" type="capsule" fromto="0.007000 0.000000 0.000000 0.021775 0.000000 0.000000" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rl_hub_spoke_1" type="capsule" fromto="0.004950 0.000000 0.004950 0.015397 0.000000 0.015397" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rl_hub_spoke_2" type="capsule" fromto="0.000000 0.000000 0.007000 0.000000 0.000000 0.021775" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rl_hub_spoke_3" type="capsule" fromto="-0.004950 0.000000 0.004950 -0.015397 0.000000 0.015397" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rl_hub_spoke_4" type="capsule" fromto="-0.007000 0.000000 0.000000 -0.021775 0.000000 0.000000" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rl_hub_spoke_5" type="capsule" fromto="-0.004950 0.000000 -0.004950 -0.015397 0.000000 -0.015397" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rl_hub_spoke_6" type="capsule" fromto="-0.000000 0.000000 -0.007000 -0.000000 0.000000 -0.021775" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rl_hub_spoke_7" type="capsule" fromto="0.004950 0.000000 -0.004950 0.015397 0.000000 -0.015397" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rl_roller_0" type="capsule" fromto="0.027300 -0.004750 0.011562 0.027300 0.004750 -0.011562" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rl_roller_1" type="capsule" fromto="0.011128 -0.004750 0.027480 0.027480 0.004750 0.011128" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rl_roller_2" type="capsule" fromto="-0.011562 -0.004750 0.027300 0.011562 0.004750 0.027300" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rl_roller_3" type="capsule" fromto="-0.027480 -0.004750 0.011128 -0.011128 0.004750 0.027480" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rl_roller_4" type="capsule" fromto="-0.027300 -0.004750 -0.011562 -0.027300 0.004750 0.011562" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rl_roller_5" type="capsule" fromto="-0.011128 -0.004750 -0.027480 -0.027480 0.004750 -0.011128" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rl_roller_6" type="capsule" fromto="0.011562 -0.004750 -0.027300 -0.011562 0.004750 -0.027300" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rl_roller_7" type="capsule" fromto="0.027480 -0.004750 -0.011128 0.011128 0.004750 -0.027480" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+  </body>
+  <body name="wheel_rr_body" pos="-0.060000 -0.065500 0">
+    <joint name="wheel_rr_joint" type="hinge" axis="0 1 0" damping=".0015" armature=".00002" />
+    <inertial pos="0 0 0" mass=".05" diaginertia=".000018 .000029 .000018" />
+    <geom name="wheel_rr" type="cylinder" size="0.032500 0.015500" euler="1.5708 0 0" rgba="0 0 0 0" contype="2" conaffinity="1" friction="0.001000 .0001 .00001" condim="4" priority="1" />
+    <geom name="wheel_rr_hub_visual" type="cylinder" size=".009 0.015500" euler="1.5708 0 0" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rr_hub_spoke_0" type="capsule" fromto="0.007000 0.000000 0.000000 0.021775 0.000000 0.000000" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rr_hub_spoke_1" type="capsule" fromto="0.004950 0.000000 0.004950 0.015397 0.000000 0.015397" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rr_hub_spoke_2" type="capsule" fromto="0.000000 0.000000 0.007000 0.000000 0.000000 0.021775" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rr_hub_spoke_3" type="capsule" fromto="-0.004950 0.000000 0.004950 -0.015397 0.000000 0.015397" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rr_hub_spoke_4" type="capsule" fromto="-0.007000 0.000000 0.000000 -0.021775 0.000000 0.000000" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rr_hub_spoke_5" type="capsule" fromto="-0.004950 0.000000 -0.004950 -0.015397 0.000000 -0.015397" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rr_hub_spoke_6" type="capsule" fromto="-0.000000 0.000000 -0.007000 -0.000000 0.000000 -0.021775" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rr_hub_spoke_7" type="capsule" fromto="0.004950 0.000000 -0.004950 0.015397 0.000000 -0.015397" size=".0024" material="hub" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rr_roller_0" type="capsule" fromto="0.027300 -0.004750 -0.011562 0.027300 0.004750 0.011562" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rr_roller_1" type="capsule" fromto="0.027480 -0.004750 0.011128 0.011128 0.004750 0.027480" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rr_roller_2" type="capsule" fromto="0.011562 -0.004750 0.027300 -0.011562 0.004750 0.027300" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rr_roller_3" type="capsule" fromto="-0.011128 -0.004750 0.027480 -0.027480 0.004750 0.011128" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rr_roller_4" type="capsule" fromto="-0.027300 -0.004750 0.011562 -0.027300 0.004750 -0.011562" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rr_roller_5" type="capsule" fromto="-0.027480 -0.004750 -0.011128 -0.011128 0.004750 -0.027480" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rr_roller_6" type="capsule" fromto="-0.011562 -0.004750 -0.027300 0.011562 0.004750 -0.027300" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="wheel_rr_roller_7" type="capsule" fromto="0.011128 -0.004750 -0.027480 0.027480 0.004750 -0.011128" size=".0042" material="orange" mass="0" contype="0" conaffinity="0" />
+  </body>
+
+  
+  <body name="arm_base" pos="0 0 0.062500">
+    <joint name="arm_yaw" type="hinge" axis="0 0 1" range="-1.75 1.75" damping=".025" />
+    <inertial pos="0 0 .012" mass=".030" diaginertia=".000025 .000025 .000020" />
+    <geom name="base_yaw_servo_visual" type="box" pos="0 0 -.002" size="0.020000 0.010000 0.020250" material="black" mass="0" contype="0" conaffinity="0" />
+    <geom name="base_yaw_bearing_visual" type="cylinder" pos="0 0 -.021" size=".024 .004" material="aluminum" mass="0" contype="0" conaffinity="0" />
+    <geom name="arm_pedestal_collision" type="cylinder" size=".025 .020" pos="0 0 -.002" rgba="0 0 0 0" contype="2" conaffinity="1" />
+    
+    <geom name="shoulder_mount_plate_left" type="box" pos="0 0.012500 0.015250" size=".021 0.001000 0.019250" material="orange" mass="0" contype="0" conaffinity="0" />
+    <geom name="shoulder_mount_plate_right" type="box" pos="0 -0.012500 0.015250" size=".021 0.001000 0.019250" material="orange" mass="0" contype="0" conaffinity="0" />
+
+    <body name="shoulder_link" pos="0 0 0.030500">
+      <joint name="shoulder" type="hinge" axis="0 -1 0" range="-.15 2.80" damping=".035" />
+      <inertial pos="0.032500 0 0" mass=".050" diaginertia=".000020 .000030 .000030" />
+      <geom name="shoulder_servo_visual" type="box" pos=".004 0 0" size="0.020000 0.010000 0.020250" material="black" mass="0" contype="0" conaffinity="0" />
+      <geom name="shoulder_horn_outer" type="cylinder" pos="0 0.014500 0" size="0.018000 0.001500" euler="1.5708 0 0" material="orange" mass="0" contype="0" conaffinity="0" />
+      <geom name="shoulder_horn_center" type="cylinder" pos="0 0.016500 0" size=".006 .0012" euler="1.5708 0 0" rgba=".82 .84 .86 1" mass="0" contype="0" conaffinity="0" />
+      
+      <geom name="upper_arm_plate_left" type="box" pos="0.032500 0.012500 0.009500" size="0.032500 0.001000 0.003200" material="orange" mass="0" contype="0" conaffinity="0" />
+      <geom name="upper_arm_plate_left_lower" type="box" pos="0.032500 0.012500 -0.009500" size="0.032500 0.001000 0.003200" material="orange" mass="0" contype="0" conaffinity="0" />
+      <geom name="upper_arm_plate_right" type="box" pos="0.032500 -0.012500 0.009500" size="0.032500 0.001000 0.003200" material="orange" mass="0" contype="0" conaffinity="0" />
+      <geom name="upper_arm_plate_right_lower" type="box" pos="0.032500 -0.012500 -0.009500" size="0.032500 0.001000 0.003200" material="orange" mass="0" contype="0" conaffinity="0" />
+      <geom name="upper_arm_collision" type="capsule" fromto="0 0 0 0.065000 0 0" size=".011" rgba="0 0 0 0" contype="2" conaffinity="1" />
+
+      <body name="elbow_link" pos="0.065000 0 0">
+        <joint name="elbow" type="hinge" axis="0 -1 0" range="-1.80 1.80" damping=".030" />
+        <inertial pos="0.031000 0 0" mass=".040" diaginertia=".000016 .000022 .000022" />
+        <geom name="elbow_servo_visual" type="box" pos="0 0 0" size="0.020000 0.010000 0.020250" material="black" mass="0" contype="0" conaffinity="0" />
+        <geom name="elbow_horn_outer" type="cylinder" pos="0 0.014500 0" size="0.018000 0.001500" euler="1.5708 0 0" material="orange" mass="0" contype="0" conaffinity="0" />
+        <geom name="elbow_horn_center" type="cylinder" pos="0 0.016500 0" size=".006 .0012" euler="1.5708 0 0" rgba=".82 .84 .86 1" mass="0" contype="0" conaffinity="0" />
+        <geom name="forearm_plate_left" type="box" pos="0.031000 0.012500 0.009500" size="0.031000 0.001000 0.003200" material="orange" mass="0" contype="0" conaffinity="0" />
+        <geom name="forearm_plate_left_lower" type="box" pos="0.031000 0.012500 -0.009500" size="0.031000 0.001000 0.003200" material="orange" mass="0" contype="0" conaffinity="0" />
+        <geom name="forearm_plate_right" type="box" pos="0.031000 -0.012500 0.009500" size="0.031000 0.001000 0.003200" material="orange" mass="0" contype="0" conaffinity="0" />
+        <geom name="forearm_plate_right_lower" type="box" pos="0.031000 -0.012500 -0.009500" size="0.031000 0.001000 0.003200" material="orange" mass="0" contype="0" conaffinity="0" />
+        <geom name="forearm_collision" type="capsule" fromto="0 0 0 0.062000 0 0" size=".010" rgba="0 0 0 0" contype="2" conaffinity="1" />
+
+        <body name="wrist_link" pos="0.062000 0 0">
+          <joint name="wrist_pitch" type="hinge" axis="0 -1 0" range="-1.80 1.80" damping=".020" />
+          <inertial pos=".035 0 0" mass=".025" diaginertia=".000010 .000018 .000018" />
+          <geom name="wrist_servo_visual" type="box" pos="0 0 0" size="0.020000 0.010000 0.020250" material="black" mass="0" contype="0" conaffinity="0" />
+          <geom name="wrist_horn_outer" type="cylinder" pos="0 .022 0" size=".017 .003" euler="1.5708 0 0" material="orange" mass="0" contype="0" conaffinity="0" />
+          <geom name="wrist_horn_center" type="cylinder" pos="0 0.016500 0" size=".006 .0012" euler="1.5708 0 0" rgba=".82 .84 .86 1" mass="0" contype="0" conaffinity="0" />
+          <geom name="wrist_plate_left" type="box" pos=".027 0.012500 0.009000" size=".027 0.001000 0.003000" material="orange" mass="0" contype="0" conaffinity="0" />
+          <geom name="wrist_plate_left_lower" type="box" pos=".027 0.012500 -0.009000" size=".027 0.001000 0.003000" material="orange" mass="0" contype="0" conaffinity="0" />
+          <geom name="wrist_plate_right" type="box" pos=".027 -0.012500 0.009000" size=".027 0.001000 0.003000" material="orange" mass="0" contype="0" conaffinity="0" />
+          <geom name="wrist_plate_right_lower" type="box" pos=".027 -0.012500 -0.009000" size=".027 0.001000 0.003000" material="orange" mass="0" contype="0" conaffinity="0" />
+          <geom name="wrist_collision" type="capsule" fromto="0 0 0 .055 0 0" size=".009" rgba="0 0 0 0" contype="2" conaffinity="1" />
+
+          <body name="gripper" pos="0 0 0">
+            <inertial pos=".065 0 .006" mass=".010" diaginertia=".000010 .000017 .000017" />
+            <geom name="gripper_servo_visual" type="box" pos=".030 0 -.003" size="0.011150 0.006000 0.011600" material="black" mass="0" contype="0" conaffinity="0" />
+            <geom name="gripper_crossbar_visual" type="box" pos=".052 0 -.012" size=".024 .034 .0035" material="aluminum" mass="0" contype="0" conaffinity="0" />
+
+            
+            <geom name="camera_bracket" type="box" pos=".036 0 .018" size=".019 .026 .005" material="aluminum" contype="2" conaffinity="1" />
+            <geom name="camera_body" type="box" pos=".050 0 .025" size=".016 .022 .014" material="black" mass="0" contype="0" conaffinity="0" />
+            <geom name="camera_lens_visual" type="cylinder" pos=".067 0 .025" size=".009 .003" euler="0 1.5708 0" rgba=".02 .02 .025 1" mass="0" contype="0" conaffinity="0" />
+            <camera name="robot_cam" pos="0.067000000000 0.000000000000 0.013600000000" quat="0.466417262019 0.531464897891 -0.531464897891 -0.466417262019" focalpixel="619.519454051723 622.165488481875" principalpixel="32.310893911032 21.303133515443" resolution="640 480" sensorsize="640 480" />
+            <site name="camera_axis_site" pos="0.070000 0 0" size=".001" rgba="0 0 0 0" />
+
+            
+            <body name="left_jaw" pos="0 .035 0">
+              <joint name="left_gripper_close" type="slide" axis="0 -1 0" range="0 0.016000" damping="1.200" />
+              <inertial pos=".095 0 -.018" mass=".005" diaginertia=".000002 .000006 .000006" />
+              <geom name="left_jaw_link_visual" type="capsule" fromto=".039 0 -.006 .090 0 0" size=".0022" material="aluminum" mass="0" contype="0" conaffinity="0" />
+              <geom name="left_jaw_link_upper_visual" type="capsule" fromto=".047 0 .004 .089 0 0" size=".0016" material="aluminum" mass="0" contype="0" conaffinity="0" />
+              <geom name="left_jaw_pivot_visual" type="cylinder" pos=".043 0 -.002" size=".005 .0015" euler="1.5708 0 0" material="dark" mass="0" contype="0" conaffinity="0" />
+              <geom name="left_finger_pad_visual" type="box" pos=".100 0 0" size="0.015000 0.004000 0.002200" material="orange" mass="0" contype="0" conaffinity="0" />
+              <geom name="left_finger" type="box" pos=".100 0 0" size="0.014000 0.004500 0.003500" rgba="0 0 0 0" contype="2" conaffinity="1" friction="3.400000 0.030000 0.002000" solref=".006 1" solimp=".90 .97 .002" />
+            </body>
+            <body name="right_jaw" pos="0 -.035 0">
+              <joint name="right_gripper_close" type="slide" axis="0 1 0" range="0 0.016000" damping="1.200" />
+              <inertial pos=".095 0 -.018" mass=".005" diaginertia=".000002 .000006 .000006" />
+              <geom name="right_jaw_link_visual" type="capsule" fromto=".039 0 -.006 .090 0 0" size=".0022" material="aluminum" mass="0" contype="0" conaffinity="0" />
+              <geom name="right_jaw_link_upper_visual" type="capsule" fromto=".047 0 .004 .089 0 0" size=".0016" material="aluminum" mass="0" contype="0" conaffinity="0" />
+              <geom name="right_jaw_pivot_visual" type="cylinder" pos=".043 0 -.002" size=".005 .0015" euler="1.5708 0 0" material="dark" mass="0" contype="0" conaffinity="0" />
+              <geom name="right_finger_pad_visual" type="box" pos=".100 0 0" size="0.015000 0.004000 0.002200" material="orange" mass="0" contype="0" conaffinity="0" />
+              <geom name="right_finger" type="box" pos=".100 0 0" size="0.014000 0.004500 0.003500" rgba="0 0 0 0" contype="2" conaffinity="1" friction="3.400000 0.030000 0.002000" solref=".006 1" solimp=".90 .97 .002" />
+            </body>
+            <site name="grip_site" pos=".100 0 0" size=".001" rgba="0 0 0 0" />
+          </body>
+        </body>
+      </body>
+    </body>
+  </body>
+</body><body name="red_block" pos="0.550000 0.070000 0.015000">
+      <freejoint name="red_free" />
+      <geom name="red_block_geom" type="box" size="0.015000 0.015000 0.015000" material="redmat" mass="0.00500000" friction="1.000000 0.010000 0.001000" solimp="0.99 0.999 0.001 0.5 2" />
+    </body>
+    <body name="blue_block" pos="0.700000 -0.200000 0.015000">
+      <freejoint name="blue_free" />
+      <geom name="blue_block_geom" type="box" size="0.015000 0.015000 0.015000" material="blumat" mass="0.00500000" friction="1.000000 0.010000 0.001000" solimp="0.99 0.999 0.001 0.5 2" />
+    </body>
+    <body name="yellow_block" pos="0.820000 0.230000 0.015000">
+      <freejoint name="yellow_free" />
+      <geom name="yellow_block_geom" type="box" size="0.015000 0.015000 0.015000" material="yellowmat" mass="0.00500000" friction="1.000000 0.010000 0.001000" solimp="0.99 0.999 0.001 0.5 2" />
+    </body>
+    
+    <camera name="cctv_front_left" pos="-.45 -.95 .78" xyaxes=".653620 -.756823 0 .320718 .276984 .905771" fovy="50" />
+    <camera name="cctv_front_right" pos="1.48 -.92 .80" xyaxes=".742491 .669856 0 -.329484 .365212 .870667" fovy="50" />
+    <camera name="cctv_rear_left" pos="-.38 .98 .82" xyaxes="-.689304 -.724472 0 .327313 -.311424 .892122" fovy="50" />
+    <camera name="cctv_top" pos=".65 0 1.80" xyaxes="1 0 0 0 1 0" fovy="46" />
+  </worldbody>
+<actuator><velocity name="wheel_fl_drive" joint="wheel_fl_joint" kv=".001" ctrllimited="true" ctrlrange="-12.0 12.0" forcelimited="true" forcerange="-.002 .002" /><velocity name="wheel_fr_drive" joint="wheel_fr_joint" kv=".001" ctrllimited="true" ctrlrange="-12.0 12.0" forcelimited="true" forcerange="-.002 .002" /><velocity name="wheel_rl_drive" joint="wheel_rl_joint" kv=".001" ctrllimited="true" ctrlrange="-12.0 12.0" forcelimited="true" forcerange="-.002 .002" /><velocity name="wheel_rr_drive" joint="wheel_rr_joint" kv=".001" ctrllimited="true" ctrlrange="-12.0 12.0" forcelimited="true" forcerange="-.002 .002" /><position name="servo_arm_yaw" joint="arm_yaw" kp="4.0" forcelimited="true" forcerange="-1.2 1.2" /><position name="servo_shoulder" joint="shoulder" kp="7.0" forcelimited="true" forcerange="-2.2 2.2" /><position name="servo_elbow" joint="elbow" kp="6.0" forcelimited="true" forcerange="-1.8 1.8" /><position name="servo_wrist" joint="wrist_pitch" kp="3.5" forcelimited="true" forcerange="-1.0 1.0" /><position name="servo_gripper_left" joint="left_gripper_close" kp="1200.000" forcelimited="true" forcerange="-18 18" /><position name="servo_gripper_right" joint="right_gripper_close" kp="1200.000" forcelimited="true" forcerange="-18 18" /></actuator></mujoco>

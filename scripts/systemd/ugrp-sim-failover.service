@@ -1,0 +1,15 @@
+[Unit]
+Description=UGRP SIM remote GPU watchdog
+After=network-online.target ugrp-sim-bridge.service
+Requires=ugrp-sim-bridge.service
+
+[Service]
+Type=simple
+WorkingDirectory=/home/ubuntu/projects/ugrp
+EnvironmentFile=-/home/ubuntu/projects/ugrp/.env.gpu
+ExecStart=/usr/bin/python3 /home/ubuntu/projects/ugrp/scripts/sim_worker_failover.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target
