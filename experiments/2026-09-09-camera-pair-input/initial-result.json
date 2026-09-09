@@ -1,0 +1,26 @@
+{
+  "git_sha": "5eab546266490511483479b8f558b67d7dbf04c7",
+  "config": {
+    "out_dir": "/Users/changmin/projects/ugrp/outputs/camera-pair-20260909-first",
+    "rounds": 8,
+    "seed": 11,
+    "model": "gemini-3.8-flash",
+    "timeout": 45
+  },
+  "input_contract": "own robot_cam JPEG + shared fixed overhead JPEG only",
+  "calls": [],
+  "rounds_completed": 0,
+  "error": "ValueError: response must be JSON text",
+  "transport_success": false,
+  "success_claim": "input boundary validation only",
+  "files": {
+    "evaluation-only.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "motion.mp4": "cedb368a3cb322cb2e7b6cfcda902d4cb74a2a8e1fa6fcc88cadf971fdb4ddde",
+    "r1/wire-001.json": "e922c365f2be3d300d7d1614eeeea20175d744e3c9e97b6fd81e08aad2be43fc",
+    "r1/000-own.jpg": "3fdf4a55b73d437a11252fc2513905176bf024fe4042615819ab2493c58cfe6d",
+    "r1/000-overhead.jpg": "84f633b096247ccf4a9bce879942f863ce4442c200754bdbb735709c68221815",
+    "r3/wire-001.json": "04e0b3803ed5fd91c24f22615f25a6f43059d6e977d2ab6c99ec3e90eca46745",
+    "r3/000-own.jpg": "8aeab8b9b2d0cbded599b83971a61596f4f0691bbd78944a29f260aeacf13a19",
+    "r3/000-overhead.jpg": "84f633b096247ccf4a9bce879942f863ce4442c200754bdbb735709c68221815"
+  }
+}
