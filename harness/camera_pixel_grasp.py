@@ -15,6 +15,8 @@ from harness.camera_pixel_jacobian import LocalPixelJacobian, axis_residual
 
 
 SEARCH_SCALES = (1.0, .5, .25)
+BASIN_ACTIVE_BUDGET = 160
+BASIN_OFFSETS = (50, -50, 100, -100, 150, -150, 200, -200)
 
 
 def _wrap_axis(angle):
@@ -126,6 +128,12 @@ class PixelGraspController:
         self.composite_queue = []
         self.jacobian = LocalPixelJacobian()
         self.last_learned_outcome = None
+        self.basin_origin = None
+        self.basin_targets = []
+        self.basin_index = 0
+        self.basin_active_calls = 0
+        self.basin_motion = []
+        self.basin_target = None
         self.steps = 0
 
     @staticmethod
@@ -176,7 +184,11 @@ class PixelGraspController:
                               'candidate':label,'pending_test':bool(test),
                               'tried':sorted(self.tried),'cost':None if obs.get('alignment') is None else obs['alignment']['cost'],
                               'search_level':self.search_level,
-                              'search_scale':SEARCH_SCALES[self.search_level]}
+                              'search_scale':SEARCH_SCALES[self.search_level],
+                              'basin_origin':self.basin_origin,
+                              'basin_index':self.basin_index,
+                              'basin_active_calls':self.basin_active_calls,
+                              'basin_target':self.basin_target}
         diagnostics=getattr(self.jacobian,'diagnostics',None)
         if callable(diagnostics):
             self.last_decision['jacobian']=diagnostics()
@@ -203,6 +215,52 @@ class PixelGraspController:
     def _joint(self, channel, delta):
         pulse = int(max(500,min(2500,self.pulses.get(channel,1500)+delta)))
         return {'kind':'look','pan_pulse':pulse} if channel==6 else {'kind':'arm','servo_id':channel,'pulse':pulse}
+
+    def _next_basin(self, obs):
+        """Move to a bounded command-space height basin, then remeasure pixels."""
+        if self.basin_origin is None:
+            self.basin_origin = self.pulses.get(5, 1500)
+            self.basin_targets = [
+                self.basin_origin + offset for offset in BASIN_OFFSETS
+                if 500 <= self.basin_origin + offset <= 2500
+            ]
+        current = self.pulses.get(5, 1500)
+        while (self.basin_index < len(self.basin_targets)
+               and self.basin_targets[self.basin_index] == current):
+            self.basin_index += 1
+        if self.basin_index >= len(self.basin_targets):
+            self.basin_target = None
+            self.stage = 'blocked'
+            return self._issue(
+                {'kind':'wait'},
+                'bounded height-basin exploration exhausted without visual closure', obs,
+            )
+        target = self.basin_targets[self.basin_index]
+        self.basin_index += 1
+        self.basin_target = target
+        path = []
+        while current != target:
+            current += max(-100, min(100, target - current))
+            path.append({'kind':'arm','servo_id':5,'pulse':current})
+        self.basin_motion = path[1:]
+        self.pending = None
+        self.rollback.clear()
+        self.composite_queue.clear()
+        self.repeat = None
+        self.tried.clear()
+        self.search_anchor = None
+        self.search_level = 0
+        self.jacobian = LocalPixelJacobian()
+        self.last_learned_outcome = None
+        self.aligned = 0
+        self.measurement_rounds = 0
+        self.basin_active_calls = 0
+        self.height_lock = True
+        self.refresh_required = not self.basin_motion
+        return self._issue(
+            path[0],
+            'move to next bounded height-command basin; remeasure before local search', obs,
+        )
 
     def _candidates(self, alignment):
         far = alignment['distance_px'] > 30
@@ -321,6 +379,15 @@ class PixelGraspController:
         self.last_observation = copy.deepcopy(obs)
         if not active:
             return self._issue({'kind':'wait'},'peer owns this command slice; observe only',obs)
+        self.basin_active_calls += 1
+        if self.basin_motion:
+            action = self.basin_motion.pop(0)
+            if not self.basin_motion:
+                self.refresh_required = True
+            return self._issue(
+                action,
+                'continue bounded height-basin move; remeasure only after its endpoint', obs,
+            )
         if self.composite_queue:
             action=self.composite_queue.pop(0)
             pulses_before=copy.deepcopy(self.pulses)
@@ -456,6 +523,17 @@ class PixelGraspController:
             return self._issue({'kind':'arm','servo_id':1,'pulse':1500},'two open-view end/axis alignments; trial closure, never assumed capture',obs)
         if aligned:
             return self._issue({'kind':'wait'},'require a second observed alignment before closure',obs)
+        fresh_open = (gripper.get('valid') and gripper.get('source') == 'isolated_gripper_motion'
+                      and self.pulses.get(1) == 2000 and own is not None)
+        if self.basin_active_calls >= BASIN_ACTIVE_BUDGET:
+            if not fresh_open:
+                self.refresh_required=True
+                pulse=1500 if self.pulses.get(1,2000)==2000 else 2000
+                return self._issue(
+                    {'kind':'arm','servo_id':1,'pulse':pulse},
+                    'remeasure before leaving the bounded local search basin', obs,
+                )
+            return self._next_basin(obs)
         candidates=self._candidates(alignment)
         if self.repeat=='learned':
             learned=self.jacobian.propose(alignment,self.pulses)
@@ -497,7 +575,15 @@ class PixelGraspController:
                 candidates=self._candidates(alignment)
                 selected=candidates[0]
             else:
-                self.stage='blocked'
-                return self._issue({'kind':'wait'},'all bounded search scales failed at this observed state',obs)
+                fresh_open = (gripper.get('valid') and gripper.get('source') == 'isolated_gripper_motion'
+                              and self.pulses.get(1) == 2000 and own is not None)
+                if not fresh_open:
+                    self.refresh_required=True
+                    pulse=1500 if self.pulses.get(1,2000)==2000 else 2000
+                    return self._issue(
+                        {'kind':'arm','servo_id':1,'pulse':pulse},
+                        'remeasure before leaving the exhausted local search basin', obs,
+                    )
+                return self._next_basin(obs)
         label,action=selected
         return self._issue(action,'test one raw motion against visible beam-end and opening-axis error',obs,test=True,label=label,learn=True)

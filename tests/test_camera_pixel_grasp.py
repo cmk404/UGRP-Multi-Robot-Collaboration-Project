@@ -3,7 +3,10 @@ import copy
 import math
 from unittest.mock import patch
 
-from harness.camera_pixel_grasp import SEARCH_SCALES, PixelGraspController, alignment_features
+from harness.camera_pixel_grasp import (
+    BASIN_ACTIVE_BUDGET, BASIN_OFFSETS, SEARCH_SCALES,
+    PixelGraspController, alignment_features,
+)
 
 
 def beam():
@@ -192,13 +195,124 @@ def test_exhausted_half_scale_advances_to_quarter_scale():
     assert c.search_level==2
 
 
-def test_finest_scale_exhaustion_is_terminal_and_bounded():
+def test_finest_scale_exhaustion_moves_to_a_new_height_basin():
     c=PixelGraspController('r1');c.search_level=len(SEARCH_SCALES)-1;b=beam()
     exhaust_current_scale(c,alignment_features(grip(x=.47),b))
+    origin=c.pulses[5]
 
-    assert step_with(c,grip(x=.47),b)=={'kind':'wait'}
+    assert step_with(c,grip(x=.47),b)=={
+        'kind':'arm','servo_id':5,'pulse':origin+BASIN_OFFSETS[0],
+    }
+    assert c.stage=='align' and c.search_level==0
+    assert c.basin_origin==origin and c.basin_index==1
+    assert c.refresh_required and c.tried==set()
+
+
+def test_height_basin_targets_are_unique_legal_and_exhaust_boundedly():
+    c=PixelGraspController('r1');obs={'alignment':measured_alignment(20,.3)}
+    targets=[]
+    for _ in range(len(BASIN_OFFSETS)):
+        c._next_basin(obs)
+        while c.basin_motion:
+            c._issue(c.basin_motion.pop(0),'test transit',obs)
+        targets.append(c.pulses[5])
+
+    assert targets==[c.basin_origin+offset for offset in BASIN_OFFSETS]
+    assert len(set(targets))==len(targets)
+    assert all(500<=target<=2500 for target in targets)
+    assert c._next_basin(obs)=={'kind':'wait'}
     assert c.stage=='blocked'
-    assert c.last_decision['search_scale']==.25
+    assert c.last_decision['reason']=='bounded height-basin exploration exhausted without visual closure'
+
+
+def test_basin_move_requires_fresh_remeasurement_and_cannot_close_early():
+    c=PixelGraspController('r1');obs={'alignment':measured_alignment(20,.3)}
+    c._next_basin(obs)
+    tracked=grip();tracked['source']='verified_optical_flow'
+
+    assert step_with(c,tracked,beam())=={'kind':'arm','servo_id':1,'pulse':1500}
+    assert c.attempts==0 and c.aligned==0
+    step_with(c,grip(),beam())
+    assert c.attempts==0 and c.aligned==0
+    step_with(c,grip(),beam())
+    assert c.attempts==0 and c.aligned==1
+    assert step_with(c,grip(),beam())=={'kind':'arm','servo_id':1,'pulse':1500}
+    assert c.attempts==1
+
+
+def test_basin_active_budget_ignores_inactive_and_does_not_preempt_rollback():
+    c=PixelGraspController('r1');c.basin_active_calls=BASIN_ACTIVE_BUDGET-1
+    before=c.basin_active_calls
+    assert step_with(c,grip(x=.2),beam(),active=False)=={'kind':'wait'}
+    assert c.basin_active_calls==before
+
+    c.rollback=[{'kind':'drive','forward':-.05,'turn':0.,'duration_s':.4}]
+    action=step_with(c,grip(x=.2),beam())
+    assert action=={'kind':'drive','forward':-.05,'turn':0.,'duration_s':.4}
+    assert c.basin_index==0
+
+
+def test_basin_active_budget_escapes_before_local_scales_are_exhausted():
+    c=PixelGraspController('r1');c.basin_active_calls=BASIN_ACTIVE_BUDGET-1
+    origin=c.pulses[5]
+
+    action=step_with(c,grip(x=.2),beam())
+
+    assert action=={'kind':'arm','servo_id':5,'pulse':origin+50}
+    assert c.basin_index==1 and c.basin_active_calls==0
+    assert c.search_level==0 and c.refresh_required
+
+
+def test_basin_escape_skips_a_target_already_reached_by_local_search():
+    c=PixelGraspController('r1');obs={'alignment':measured_alignment(20,.3)}
+    origin=c.pulses[5]
+    c._next_basin(obs)
+    c.pulses[5]=origin+BASIN_OFFSETS[1]
+    c.basin_motion=[]
+
+    action=c._next_basin(obs)
+
+    assert action=={'kind':'arm','servo_id':5,'pulse':origin+BASIN_OFFSETS[0]}
+    assert c.basin_origin==origin
+    assert c.basin_target==origin+BASIN_OFFSETS[2]
+    assert c.basin_index==3
+    assert c.basin_motion==[{'kind':'arm','servo_id':5,
+                             'pulse':origin+BASIN_OFFSETS[2]}]
+
+
+def test_basin_targets_near_servo_limit_stay_legal_and_steps_stay_bounded():
+    c=PixelGraspController('r1');obs={'alignment':measured_alignment(20,.3)}
+    c.pulses[5]=2475
+    issued=[];targets=[]
+    while c.stage!='blocked':
+        action=c._next_basin(obs)
+        if action['kind']=='wait':
+            break
+        issued.append(action['pulse'])
+        targets.append(c.basin_target)
+        while c.basin_motion:
+            issued.append(c.basin_motion.pop(0)['pulse'])
+        c.pulses[5]=targets[-1]
+
+    assert targets==[2425,2375,2325,2275]
+    assert len(set(targets))==4
+    assert all(500<=pulse<=2500 for pulse in issued)
+    assert all(abs(after-before)<=100 for before,after in zip([2475,*issued],issued))
+
+
+def test_basin_active_budget_does_not_preempt_pending_candidate_rollback():
+    c=PixelGraspController('r1');c.basin_active_calls=BASIN_ACTIVE_BUDGET-1
+    before=measured_alignment(10,.3)
+    c.pending={'before':before,
+               'action':{'kind':'drive','forward':.05,'turn':0.,'duration_s':.4},
+               'pulses_before':copy.deepcopy(c.pulses),'own_beam_visible':False,
+               'learn':False,'label':'forward',
+               'undo':[{'kind':'drive','forward':-.05,'turn':0.,'duration_s':.4}]}
+
+    action=step_with_measured_alignment(c,measured_alignment(12,.3))
+
+    assert action=={'kind':'drive','forward':-.05,'turn':0.,'duration_s':.4}
+    assert c.basin_index==0
 
 
 def test_fine_near_and_far_candidates_scale_every_command_magnitude():

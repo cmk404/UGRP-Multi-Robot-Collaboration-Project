@@ -2671,5 +2671,198 @@
         }
       }
     }
+  },
+  {
+    "root": "/Users/changmin/projects/ugrp/outputs/pixel-grasp-20260910-r1-v14-continued",
+    "source_sha": "64f4bdaf21ac85678f6151016b846feff19c91db",
+    "config": {
+      "out_dir": "/Users/changmin/projects/ugrp/outputs/pixel-grasp-20260910-r1-v14-continued",
+      "rounds": 1250,
+      "seed": 11,
+      "active_robot": "r1",
+      "render_width": 1280,
+      "render_height": 960,
+      "video_fps": 4,
+      "settle_seconds": 1.0,
+      "weld": false,
+      "policy": "pixel-servo",
+      "policy_description": "diagnostic low-level image servo; not LLM cooperation",
+      "resume_from": "/Users/changmin/projects/ugrp/outputs/pixel-grasp-20260910-r1-v14"
+    },
+    "rounds_completed": 1250,
+    "error": null,
+    "wall_elapsed_s": 215.959,
+    "model_calls": 0,
+    "stages": {
+      "align": 41,
+      "measure": 206,
+      "reobserve": 3
+    },
+    "trial_closures": 0,
+    "identification_closures": 95,
+    "robots": {
+      "r1": {
+        "minimum_fresh_open_alignment": [
+          1042,
+          {
+            "axis_error_rad": 0.2564233363856272,
+            "cost": 24.852214957874367,
+            "distance_px": 16.832815284154425,
+            "endpoint": [
+              0.5080180177693172,
+              0.5854163148151194
+            ],
+            "offset_px": [
+              -15.024962149125543,
+              -7.5890831335417275
+            ],
+            "own_aim_error_px": 5.74118090238963,
+            "own_endpoint": [
+              0.5224264878999595,
+              0.31382504534555783
+            ],
+            "target": [
+              0.508041267271433,
+              0.5741646759147084
+            ],
+            "top_cost": 24.179979945368668,
+            "width_px": 18.002690565425155
+          }
+        ],
+        "first_alignment": [
+          1000,
+          {
+            "axis_error_rad": 0.4259362933273163,
+            "cost": 56.15815172056219,
+            "distance_px": 12.06757770855401,
+            "endpoint": [
+              0.5080690749855998,
+              0.5854154368398763
+            ],
+            "offset_px": [
+              -8.59388520781934,
+              -8.47181024261129
+            ],
+            "own_aim_error_px": 26.762153960385575,
+            "own_endpoint": [
+              0.6045396639077562,
+              0.3220157586047706
+            ],
+            "target": [
+              0.5080860096743883,
+              0.5741642266088579
+            ],
+            "top_cost": 49.37129854551428,
+            "width_px": 18.001972620815664
+          }
+        ],
+        "minimum_alignment": [
+          1043,
+          {
+            "axis_error_rad": 0.2378066002142165,
+            "cost": 23.315985423960132,
+            "distance_px": 17.29395325515873,
+            "endpoint": [
+              0.5080819618609344,
+              0.5864572559109228
+            ],
+            "offset_px": [
+              -16.0671033944881,
+              -6.3975782685672655
+            ],
+            "own_aim_error_px": -6.954912007092048,
+            "own_endpoint": [
+              0.4728323749722967,
+              0.3114034963157991
+            ],
+            "target": [
+              0.5080970044242964,
+              0.5752061765149865
+            ],
+            "top_cost": 22.254536060406387,
+            "width_px": 18.001755636829824
+          }
+        ],
+        "last_alignment": [
+          1242,
+          {
+            "axis_error_rad": 0.3124088198277075,
+            "cost": 76.287022053166,
+            "distance_px": 12.396627757222292,
+            "endpoint": [
+              0.5080364984533683,
+              0.5854151124142372
+            ],
+            "offset_px": [
+              -11.352602811091685,
+              -4.97943663125934
+            ],
+            "own_aim_error_px": 70.09445059272286,
+            "own_endpoint": [
+              0.7738064476278237,
+              0.3630406136606373
+            ],
+            "target": [
+              0.5080570679470202,
+              0.5741636539410067
+            ],
+            "top_cost": 30.107768596237243,
+            "width_px": 18.002387038867756
+          }
+        ],
+        "fresh_measurements": 78,
+        "unavailable_reasons": {
+          "no stable multi-contrast gripper-axis consensus": 111,
+          "gripper motion has not been calibrated": 20
+        }
+      }
+    },
+    "prefix_round_count": 1000,
+    "newly_executed_round_count": 250,
+    "evaluation_scope": {
+      "round_start": 1000,
+      "round_stop_exclusive": 1250,
+      "includes_reconstructed_prefix": false
+    },
+    "metrics_scope": "newly_executed_calls_only",
+    "resume": {
+      "parent_run": "/Users/changmin/projects/ugrp/outputs/pixel-grasp-20260910-r1-v14",
+      "parent_result_sha256": "816d77a3def4e46e8e7033958ca2bfc445ce004976ae5ee3a406b3621fadd6b8",
+      "parent_source_sha": "3d91db72203600641da2fc1b36490ae62a43e729",
+      "parent_config_sha256": "7bcac28f56189bccea3b8d3bfa0034f023ceb859f643bd89de986875cb3619e3",
+      "parent_rounds": 1000,
+      "prefix_call_count": 1000,
+      "last_input_live_hash_verified": true,
+      "last_input": {
+        "round": 999,
+        "top_sha256": "0d630f44a91d90d54ef0d82f9f38522281b904d1e596033827a1d4c378725166",
+        "own_sha256": {
+          "r1": "3fb7d025519006f0fbc43f5285fb06bdf2b1c287a1be99091e0fc4a9b274f1ed"
+        }
+      },
+      "reconstruction_wall_elapsed_s": 89.947
+    },
+    "new_execution_wall_elapsed_s": 125.012,
+    "output_only_evaluation": {
+      "dual_grasp_success": false,
+      "max_lift_m": -4.9e-05,
+      "longest_dual_hold_s": 0.0,
+      "contacts": {
+        "r1": {
+          "left": 0,
+          "right": 0,
+          "bilateral": 0,
+          "max_bilateral_lift_m": null,
+          "longest_bilateral_3cm_hold_s": 0.0
+        },
+        "r3": {
+          "left": 0,
+          "right": 0,
+          "bilateral": 0,
+          "max_bilateral_lift_m": null,
+          "longest_bilateral_3cm_hold_s": 0.0
+        }
+      }
+    }
   }
 ]
