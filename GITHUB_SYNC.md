@@ -12,4 +12,4 @@
 /Users/changmin/projects/main/scripts/project-sync finish /Users/changmin/projects/ugrp "설명" harness/file.py docs/note.md
 ```
 
-클라우드 변경은 pull request로 검토·merge한 후 로컬에서 받는다. background 자동 동기화는 설정하지 않는다.
+다른 작업 공간의 변경은 pull request로 검토·merge한 후 로컬에서 받는다. background 자동 동기화는 설정하지 않는다.

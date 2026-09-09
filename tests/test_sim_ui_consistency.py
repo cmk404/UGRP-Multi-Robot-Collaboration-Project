@@ -21,26 +21,6 @@ class SimUiConsistencyTests(unittest.TestCase):
         self.assertIn("crate_blue", geoms)
         self.assertIn("crate_yellow", geoms)
 
-    def test_lightning_package_has_remote_worker_supervisor(self):
-        src=(ROOT/"scripts/lightning_worker_recover.py").read_text()
-        self.assertIn("supervise_worker.sh", src)
-        self.assertIn("UGRP_LIGHTNING_MACHINES", src)
-        self.assertIn("pkill -f '[s]upervise_worker.sh'", src)
-
-    def test_remote_worker_bundles_share_one_v2_manifest(self):
-        manifest=(ROOT/"scripts/gpu_worker_bundle.py").read_text()
-        self.assertIn('"sim/masterpi_scene.xml"', manifest)
-        self.assertIn('"sim/masterpi_dynamics_v2.py"', manifest)
-        self.assertIn('"sim/masterpi_dynamics_calibration.json"', manifest)
-        self.assertIn('"scripts/red_block/recorder.py"', manifest)
-        for rel in ("scripts/lightning_worker_recover.py","scripts/colab_worker_recover.py"):
-            provider=(ROOT/rel).read_text()
-            self.assertIn("gpu_worker_bundle import BUNDLE_FILES", provider)
-        # Remote production imports PRIMITIVE_MOTIONS from this module at
-        # action time; it must travel with every GPU worker bundle.
-        from scripts.gpu_worker_bundle import BUNDLE_FILES
-        self.assertIn("scripts/robot_actions.py", BUNDLE_FILES)
-
     def test_dashboard_has_no_obsolete_manual_robot_control_panel(self):
         html=(ROOT/"harness/static/index.html").read_text()
         for obsolete in (

@@ -1,0 +1,241 @@
+{
+  "date": "2026-09-09",
+  "restore_from_commit": "76aeba36461ddae2044e8b732adb00b8365dde67",
+  "files": [
+    {
+      "path": "cloud/lightning/grasp_physics.py",
+      "bytes": 24609,
+      "sha256": "c6301c7a5e43244420895fe15c0e9c1da571924802e4c719d60bccf29289d366"
+    },
+    {
+      "path": "cloud/lightning/mujoco_world.py",
+      "bytes": 17132,
+      "sha256": "4e17da8fe28ad27d2ccf8ac10748bcd9e908b05eb671582240d6eab2d6d9f4a9"
+    },
+    {
+      "path": "cloud/lightning/requirements.txt",
+      "bytes": 37,
+      "sha256": "3f8c2daf2e97def9be36951212eef04f7115fcd1cd809e6140e7c3e53e5ed449"
+    },
+    {
+      "path": "cloud/lightning/server.py",
+      "bytes": 4759,
+      "sha256": "d2aa6ff8396f2e426e265e21e33d787e1405d78341066e11c623d06625c78355"
+    },
+    {
+      "path": "cloud/lightning/start.sh",
+      "bytes": 374,
+      "sha256": "16980b32328f0be19fa21c238b4f0ef41db79ea6bb31ef4d716b7a3f77b21e11"
+    },
+    {
+      "path": "scripts/azure_idle_controller.py",
+      "bytes": 4362,
+      "sha256": "98996c850020921a45f316817e6c011f966e0928a9dcebaa4776d67db71dc1ca"
+    },
+    {
+      "path": "scripts/azure_worker_recover.py",
+      "bytes": 10652,
+      "sha256": "9f15ab50f928c146761a0386f37e81da192369524fc0f1740c27014a21c5e175"
+    },
+    {
+      "path": "scripts/benchmarks/physics_fidelity.py",
+      "bytes": 20480,
+      "sha256": "5f4b481d3bbbca1d38c07f3f7533d550c10f0229f71f6dbb092f4d1a06754041"
+    },
+    {
+      "path": "scripts/benchmarks/physics_skill_stress.py",
+      "bytes": 5545,
+      "sha256": "2077a8537574fc2e7a4cfc62ead8bdabdb3877ed43b95a9e3fe93762921a6a8b"
+    },
+    {
+      "path": "scripts/colab_worker_recover.py",
+      "bytes": 7735,
+      "sha256": "bd36648acbf1b39cfab9fd6e5365798231d37e6029cff8f28ce8f02e361cb3fa"
+    },
+    {
+      "path": "scripts/configure_lightning_gpu.sh",
+      "bytes": 2128,
+      "sha256": "15a6740400e9c0335f501dfb9f73f6343b9bbdc1c0dd6e936481ac0df1a2f2b5"
+    },
+    {
+      "path": "scripts/deploy_lightning_sim.py",
+      "bytes": 3313,
+      "sha256": "c3ea56b1eb17f3901f513750c9efc331c0e0d0bf6028e00909bb4a07b728c7ed"
+    },
+    {
+      "path": "scripts/eval_grasp_ppo.py",
+      "bytes": 1897,
+      "sha256": "1092a2fdd218def6aa0bddf006d828d1f826736db2d2c2d0a793af076ce64b8b"
+    },
+    {
+      "path": "scripts/eval_realistic_grasp_ppo.py",
+      "bytes": 1364,
+      "sha256": "a69cfba6848369dc0cb33164c780fd77facc34648565aa7bf57df672da685fca"
+    },
+    {
+      "path": "scripts/generate_realistic_trial.py",
+      "bytes": 1866,
+      "sha256": "e72112aae974bae65765bd8d7ee067027b6bab97593ccd5f4ce8be8185dc53e4"
+    },
+    {
+      "path": "scripts/gpu_worker_bundle.py",
+      "bytes": 3462,
+      "sha256": "9c0a0fb78671acc163f4bd9c931844ae2475462cb3bab2282cd2a83c8cae252e"
+    },
+    {
+      "path": "scripts/lightning_worker_recover.py",
+      "bytes": 10350,
+      "sha256": "b9af37af4dbb308504fa10359a535b37c4c8b01d92f12a7ff3b845fc7cc66216"
+    },
+    {
+      "path": "scripts/render_masterpi_physics_demo.py",
+      "bytes": 3497,
+      "sha256": "7392cd9f1ccce6ca640532f68b0d31744fadfad5b38483b624632d71d38f2921"
+    },
+    {
+      "path": "scripts/render_realistic_trial.py",
+      "bytes": 4605,
+      "sha256": "db7056c47653c8c826a67094d47d8ccf278b6422a9e1075f18ea970d6698c546"
+    },
+    {
+      "path": "scripts/run_mujoco_worker.py",
+      "bytes": 10643,
+      "sha256": "bb1acb1b1f404eca0b03d0270686cf6d59b230292de312d5068550475cefa168"
+    },
+    {
+      "path": "scripts/stress_perception_views.py",
+      "bytes": 2809,
+      "sha256": "90200a2404343fe5685d79bbb6cf97de3eb118d6b3f58aeea335cc7c01693c2b"
+    },
+    {
+      "path": "scripts/stress_projection_geometry.py",
+      "bytes": 2366,
+      "sha256": "69d8d04c8e6fe1f5302ef15f8e91f7892e1986e93f6e4a34a154e2127f4bf1f2"
+    },
+    {
+      "path": "scripts/stress_random_tasks.py",
+      "bytes": 2996,
+      "sha256": "7af398c38e07da93835c5e7ab98fa0bf879deb4a5f1383cd1a99963f3c334af8"
+    },
+    {
+      "path": "scripts/stress_semantic_map.py",
+      "bytes": 6420,
+      "sha256": "48d7f2954460d3d63a8c6ea7512ed701cae4982611ffefa62717458dfd0148ed"
+    },
+    {
+      "path": "scripts/systemd/ugrp-sim-remote-proxy.service",
+      "bytes": 285,
+      "sha256": "7fd0b1cd26f5e0809b240e27f78693235724d35bb354954888f99da5b3a008ce"
+    },
+    {
+      "path": "scripts/systemd/ugrp-sim-worker.service",
+      "bytes": 458,
+      "sha256": "a411bb5fea05fd5be062608afbe746440b11dab1aa6f2189a4526945bd54719e"
+    },
+    {
+      "path": "scripts/train_grasp_ppo.py",
+      "bytes": 2555,
+      "sha256": "b2a883f20e7afc448fc17a0d41029e346639480f3eaf3697f7180b8b87133ac7"
+    },
+    {
+      "path": "scripts/train_realistic_grasp_ppo.py",
+      "bytes": 1794,
+      "sha256": "60d2e739cb81f9a87ffb9a5056cc636d9bf52aa01bc577be4f5e682ad52c872d"
+    },
+    {
+      "path": "scripts/transfer_train_realistic_v4.py",
+      "bytes": 1564,
+      "sha256": "5a09c7975918ce063cfad4361714ed390572968a96018a1c57eace97372f0e07"
+    },
+    {
+      "path": "scripts/use_lightning_sim.sh",
+      "bytes": 801,
+      "sha256": "52fcbd0dd9a5ddb279ea11cdb96c7395484c5d557582aeb966e31bd5e717c069"
+    },
+    {
+      "path": "sim/continuous_physics.py",
+      "bytes": 26728,
+      "sha256": "98d6954a9869f346384935cc7cdfd4e1413bc0f3ac27ed223f2d8d42a49b4a5b"
+    },
+    {
+      "path": "sim/grasp_env.py",
+      "bytes": 3957,
+      "sha256": "93c9c62bc21f46d67b3227236137db21b311d9d104cd0c7562ec2a3978f7e0d2"
+    },
+    {
+      "path": "sim/grasp_physics.py",
+      "bytes": 25105,
+      "sha256": "2ae8a8de738a16e9d804b17061d66116e919c54660a62895409e3b08ab40abc1"
+    },
+    {
+      "path": "sim/masterpi_physics.py",
+      "bytes": 78958,
+      "sha256": "65dfd94a7c4f976b7b70a631888b59f8086c8edaa1330231bc57ab88a0559872"
+    },
+    {
+      "path": "sim/masterpi_physics_baseline.py",
+      "bytes": 39533,
+      "sha256": "45a0123aa73bd50fea0d54f40e9f04ab86f6fbe2eabfc54df5720ab588a3c698"
+    },
+    {
+      "path": "sim/masterpi_physics_variant.py",
+      "bytes": 44235,
+      "sha256": "66159edf2d21eb610a0699ecf6c765116cd9a27ef7c087f90dfac16b3f38f26e"
+    },
+    {
+      "path": "sim/realistic_grasp_env.py",
+      "bytes": 4093,
+      "sha256": "736c5a514cdc6bfa958844544f2fcd9e9e4221e5fbf25acf4bcf33ea509375bf"
+    },
+    {
+      "path": "sim/remote_proxy.py",
+      "bytes": 4742,
+      "sha256": "44b90d38b8ee0883491d8f7b6d5d019ca6616a8c431eeddcc3c4c5f147a81db2"
+    },
+    {
+      "path": "sim/rl_skill.py",
+      "bytes": 3657,
+      "sha256": "a7ae61e3b8e00dde4ecbf65d6d3510817af0e94b7e037818d523de74ab2d2952"
+    },
+    {
+      "path": "tests/test_colab_recovery.py",
+      "bytes": 4989,
+      "sha256": "417fe5fd8a02cad695eceb6786740a1413ce30a79a1813bf1b487aed952f4caf"
+    },
+    {
+      "path": "tests/test_color_search.py",
+      "bytes": 763,
+      "sha256": "880d0a294663d31035429d1f727ff5d68b816dda06e86ab5744cc0a2c05f6d7c"
+    },
+    {
+      "path": "tests/test_continuous_physics.py",
+      "bytes": 1517,
+      "sha256": "b0ea9e6189da96b36ec796336ca2164dbe273a7f4eddb3c96f7b948a16d5ff46"
+    },
+    {
+      "path": "tests/test_grasp_physics.py",
+      "bytes": 1794,
+      "sha256": "1ce6c7f0c1b0927d026e8c750908e8f4567562bc8a400773c67eb6c493ab48b9"
+    },
+    {
+      "path": "tests/test_physics_fidelity_gate.py",
+      "bytes": 2984,
+      "sha256": "704fa9eaf4e751d75357145e28694ae9f13482f7bf160d1c8d8a70dc7dde904a"
+    },
+    {
+      "path": "tests/test_semantic_map.py",
+      "bytes": 1649,
+      "sha256": "495567e9032cea3a6dd466023308bf576eb837d37098c5f08f75a2ab5dbab60d"
+    },
+    {
+      "path": "tests/test_semantic_map_regressions.py",
+      "bytes": 5458,
+      "sha256": "05d2951e840d9b79292d554bb43502e4db48490dc4a7fc5ef0fdcbf2ff032a6f"
+    },
+    {
+      "path": "tests/test_spatial_memory.py",
+      "bytes": 1652,
+      "sha256": "ea544dc5edab4a3f710eab70a47ddc2768e37dddd39e2c30b5e1658f4e77e0b3"
+    }
+  ]
+}

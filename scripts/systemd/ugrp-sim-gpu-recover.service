@@ -1,5 +1,5 @@
 [Unit]
-Description=UGRP provider-neutral GPU worker recovery
+Description=UGRP Mac simulation worker recovery
 After=network-online.target ugrp-sim-bridge.service
 Requires=ugrp-sim-bridge.service
 

@@ -307,8 +307,8 @@
       } else {
         const r=await fetch(apiPath('/api/sim/state'),{cache:'no-store'}); const o=await r.json();
         const provider=String(o.remote_provider||'REMOTE').toUpperCase(); const machine=String(o.remote_machine||'GPU').toUpperCase();
-        const recovery=o.gpu_recovery||{}; const authRequired=recovery.state==='auth_required';
-        computeBackend=(o.remote_ws_connected&&o.remote_authoritative)?`${provider} ${machine}`:(authRequired?'GPU OFFLINE · LIGHTNING AUTH REQUIRED':'GPU OFFLINE');
+        const recovery=o.gpu_recovery||{}; const setupRequired=recovery.state==='manual_start_required';
+        computeBackend=(o.remote_ws_connected&&o.remote_authoritative)?`${provider} ${machine}`:(setupRequired?'SIM OFFLINE · MAC WORKER SETUP REQUIRED':'SIM OFFLINE');
         const physicsBadge=document.getElementById('physics-badge');
         const trainingBadge=document.getElementById('training-badge');
         const online=!!(o.remote_ws_connected&&o.remote_authoritative);
@@ -322,7 +322,7 @@
         }
         if(trainingBadge){ trainingBadge.textContent=o.training_ready?'TRAINING READY':`TRAINING BLOCKED · CAL ${o.calibration_fit_trials||0}/${o.calibration_held_out_trials||0}`; trainingBadge.className='sim-badge '+(o.training_ready?'ok':'warn'); }
         const camStatus=document.getElementById('cam-status');
-        if(camStatus&&currentMode==='sim') camStatus.textContent=online?`로봇 1인칭 · MuJoCo 실제 RGB · ${isV2?'Dynamics V2':'Legacy physics'} · ${provider} ${machine}`:(authRequired?'OFFLINE PREVIEW · Lightning 로그인 필요':'OFFLINE PREVIEW · 원격 MuJoCo worker 없음');
+        if(camStatus&&currentMode==='sim') camStatus.textContent=online?`로봇 1인칭 · MuJoCo 실제 RGB · ${isV2?'Dynamics V2':'Legacy physics'} · ${provider} ${machine}`:(setupRequired?'OFFLINE PREVIEW · Mac 워커 설정 필요':'OFFLINE PREVIEW · MuJoCo worker 없음');
         if(o.ok&&o.state&&o.state.robot_xy){
           target=o.state; workerAge=o.worker_age_s;
           updateGraspHud(o.state);

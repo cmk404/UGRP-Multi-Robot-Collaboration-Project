@@ -1,3 +1,5 @@
+> 2026-09-09 실행 기준: Mac 로컬 시뮬레이션. 이 문서의 이전 운영 구성은 역사적 기록이며, 최신 설치·실행은 [CONTRIBUTING.md](CONTRIBUTING.md), 클라우드 퇴역은 [기록](docs/cloud_simulation.md)을 따른다.
+
 # UGRP ROADMAP
 
 > 최종 갱신: 2026-09-04  

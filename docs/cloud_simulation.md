@@ -1,95 +1,11 @@
-# UGRP simulation compute architecture
+# 클라우드 시뮬레이션 퇴역 기록
 
-Updated: 2026-09-02 (cloud GPU providers retired)
+2026-09-09 사용자 요청으로 프로젝트 안의 클라우드 시뮬레이션 배포 코드와 옛 실행 환경을 정리했다. 웹사이트의 서버·계정·환경 삭제는 요청 범위에 포함하지 않는다.
 
-## Decision (2026-09-02)
+이전에는 Lightning T4/L4, Colab T4, Azure A10을 시도했다. 2026-09-02 기록에서는 네트워크 지연과 운영 비용 때문에 Mac 실행으로 전환했다고 보고했지만, 배포·복구 코드가 참고용으로 남아 있었다. 이번에 그 실행 코드를 제거하고 이 요약만 유지한다. 당시 원문과 코드는 Git 커밋 `76aeba36461ddae2044e8b732adb00b8365dde67`에서 확인할 수 있다. 과거 문서의 서버 삭제·성능 수치는 이번에 재검증한 현재 사실이 아니다.
 
-**MuJoCo for this project is CPU-bound, not GPU-bound.** The 3-robot MasterPi
-world runs at a few hundred µs per physics step; camera rendering is offscreen
-software/EGL at 640×480 and is not the bottleneck either. Every cloud GPU we
-tried (Colab T4, Lightning T4/L4, Azure A10) added 30–120 ms of WAN round trip
-per command/frame, cost money or quota, and needed its own recovery/cost-guard
-machinery, without making the simulator faster than a laptop CPU.
+현재 기준은 Mac의 `.venv-sim-worker-mac`와 표식 없는 상자 운반 코드다. [실행 절차](../CONTRIBUTING.md), [N7 기준](../experiments/2026-09-09-markerless-n7/README.md)을 따른다. Mac 워커와 브리지 사이의 통신 기능은 클라우드 GPU 배포와 별개다.
 
-Therefore:
+옛 Linux `.venv-sim`, `.venv-lightning`과 중복 Mac `.venv-sim-mac` 설치를 제거했다. [구성 기록](retired_sim_environments_20260909.json)에 Python·패키지 목록과 삭제 전 크기를 남겼다. `.venv-sim` 이름은 기존 실행기 호환을 위해 현재 워커 환경을 가리키는 작은 링크로만 유지한다. `.venv-real-mac`은 실물 로봇용이므로 보존한다.
 
-- **Mac (Apple M3, `.venv-sim-worker-mac`) is the only automatic remote worker.**
-  `scripts/mac_worker_recover.py` starts it over Tailscale SSH; it connects to
-  the bridge over the authenticated WebSocket (`wss://…:8443`).
-- **Oracle CPU worker (`ugrp-sim-worker.service`) is the manual fallback**
-  (disabled while `UGRP_SIM_GPU_ONLY=1`; see Trade-offs below).
-- **Azure, Colab and Lightning are retired.** The Azure PAYG subscription and
-  the `ugrp-a10-sim` VM no longer exist; `ugrp-azure-idle-controller.timer` is
-  disabled; `.env.gpu` lists only `UGRP_GPU_PROVIDERS='mac'` with
-  `UGRP_ALLOW_AZURE_WORKER=0`, `UGRP_ALLOW_COLAB_WORKER=0`. Their recover
-  scripts (`azure_worker_recover.py`, `colab_worker_recover.py`,
-  `lightning_worker_recover.py`, `deploy_lightning_sim.py`, `cloud/lightning/`)
-  stay in the tree as reference only and are never invoked automatically.
-- Kaggle/Modal notes from the earlier revision are no longer relevant to the
-  live simulator and are dropped; batch RL training, if ever needed, is a
-  separate decision.
-
-The simulator protocol is unchanged: one provider-neutral authenticated
-WebSocket worker; a connecting worker is parked until the failover controller
-grants authority, except that the **same process** reconnecting after a socket
-blip resumes authority immediately (bridge fix 2026-09-02).
-
-## Runtime architecture
-
-```text
-Browser (tailnet)  ──►  Oracle :8082/8084/8085  SIM coworker UI (r1/r2/r3)
-                          │
-                          ▼
-                        Oracle :8091  simulation bridge / command queue / authority
-                          │   token-authenticated control endpoints
-                          │   (/command, /remote/authority, /sim/speed)
-                          ├── local HTTP worker :8092 (Oracle CPU, manual fallback)
-                          └── WebSocket :8093 → tailscale serve :8443
-                                └── Mac M3 MuJoCo worker  (only automatic provider)
-
-Oracle :8083/8086/8087    REAL coworker UI (ugrp1/2/3)  — unrelated to the SIM compute path
-```
-
-## Automatic recovery (`ugrp-sim-failover.service`)
-
-1. Poll bridge health every second.
-2. If a remote worker is connected but its `provider` is not in the configured
-   set (`mac`) or its worker contract is incompatible, revoke authority and
-   ignore it.
-3. If no allowed remote worker is connected for 3 s **and** a browser touched
-   SIM within the last 75 s, start `ugrp-sim-gpu-recover.service`, which runs
-   `gpu_worker_recover.py` → `mac_worker_recover.py`.
-4. When the worker is connected, parked, and nothing is inflight, grant
-   authority; the bridge resets the publication epoch and requests a sync frame.
-
-`.env.gpu` is re-read on every provider probe, so provider changes take effect
-within ~15 s without restarting services.
-
-## Trade-offs the user may still want to revisit
-
-| Option | Latency (Mac browser ↔ sim) | Availability | Notes |
-| --- | --- | --- | --- |
-| **Mac worker via Oracle bridge (current)** | 2 WAN hops per command/frame, ~40–80 ms + Tailscale relay jitter | depends on Mac awake + Tailscale | UI/bridge/coworker stay on Oracle; nothing to install on Mac beyond the worker venv |
-| Oracle CPU worker (`UGRP_SIM_GPU_ONLY=0`) | 1 WAN hop | always on | ~2–3× slower physics/render than M3; fine for regression, slow for interactive 3-robot use |
-| Full local stack on Mac (bridge + coworker + worker) | 0 WAN hops | offline-capable | needs Groq keys on Mac, separate ports from REAL stack, and a decision to leave Oracle as REAL-only |
-
-## Security
-
-- Bridge control endpoints (`POST /command`, `/remote/authority`, `/sim/speed`)
-  and worker channels require `X-UGRP-Sim-Token`. Callers read it via
-  `sim/bridge_client.py` (env `UGRP_SIM_TOKEN`, else `.sim_bridge_token`).
-  Loopback binding is not treated as an authentication boundary.
-- Request bodies are capped (16 MiB worker, 64 KiB control); the command queue
-  is bounded (`UGRP_SIM_MAX_QUEUE_DEPTH`, default 16 → HTTP 429
-  `SIM_QUEUE_FULL`); MJPEG stream fan-out is bounded (`UGRP_SIM_MAX_STREAMS`).
-- Secrets (`.env.gpu`, `.sim_bridge_token`, `.sim_worker_env`, `.groq_keys`,
-  `.webui_secret_key`) are mode 0600 on both Oracle and the Mac mirror and are
-  git-ignored.
-- Human-facing UIs remain tailnet-only behind `tailscale serve`.
-
-## Previous revisions
-
-The 2026-08-29 revision of this file described Lightning as preferred GPU,
-Colab as opt-in and Kaggle/Modal as future options. That plan was superseded
-by the Azure A10 experiment (08-29 → 09-01, see `docs/decision_log.md`) and
-then by this CPU-only decision. Historical details remain in the decision log.
+raw 실험 결과·영상과 현재 코드가 사용하는 장면·보정 자료는 이번 환경 정리와 구분해 보존한다. 세부 삭제 목록·검증은 [정리 기록](simulation_cleanup_20260909.md)에 남긴다.
