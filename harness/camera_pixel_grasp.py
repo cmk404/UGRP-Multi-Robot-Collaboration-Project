@@ -17,10 +17,11 @@ def _wrap_axis(angle):
     return (angle + math.pi / 2) % math.pi - math.pi / 2
 
 
-def _own_beam_aim(own_beam, top_width):
+def _own_beam_endpoint(own_beam, previous_endpoint=None):
     if own_beam is None:
         return None
     own_width, own_height = own_beam['image_size']
+    reference = previous_endpoint if previous_endpoint is not None else [.5, .5]
     if own_beam['width_px'] <= 0:
         return None
     if own_beam['length_px'] / own_beam['width_px'] < 1.5:
@@ -28,12 +29,12 @@ def _own_beam_aim(own_beam, top_width):
     else:
         aim = min(
             own_beam['endpoints'],
-            key=lambda p: ((p[0] - .5) * own_width) ** 2 + ((p[1] - .5) * own_height) ** 2,
+            key=lambda p: ((p[0] - reference[0]) * own_width) ** 2 + ((p[1] - reference[1]) * own_height) ** 2,
         )
-    return (aim[0] - .5) * (.2 * top_width)
+    return list(aim)
 
 
-def alignment_features(gripper, beam, endpoint=None, own_beam=None):
+def alignment_features(gripper, beam, endpoint=None, own_beam=None, own_endpoint=None):
     if not gripper.get('valid') or beam is None:
         return None
     w, h = beam['image_size']
@@ -55,7 +56,8 @@ def alignment_features(gripper, beam, endpoint=None, own_beam=None):
     offset = [(target[0]-center[0])*w, (target[1]-center[1])*h]
     desired_axis = [-tangent[1], tangent[0]]
     angle = _wrap_axis(math.atan2(desired_axis[1], desired_axis[0])-math.atan2(axis[1], axis[0]))
-    own_aim_error = _own_beam_aim(own_beam, w)
+    own_aim = _own_beam_endpoint(own_beam, own_endpoint)
+    own_aim_error = None if own_aim is None else (own_aim[0] - .5) * (.2 * w)
     # Experimental priority: penalize an opening axis parallel to the beam
     # strongly enough that top-view position improvement cannot dominate it.
     angular_scale = max(8., beam['width_px']*10.)
@@ -64,7 +66,7 @@ def alignment_features(gripper, beam, endpoint=None, own_beam=None):
         cost_terms.append(own_aim_error)
     return {'offset_px': offset, 'axis_error_rad': angle, 'endpoint': list(end),
             'target': target, 'distance_px': math.hypot(*offset),
-            'own_aim_error_px': own_aim_error,
+            'own_aim_error_px': own_aim_error, 'own_endpoint': own_aim,
             'cost': math.hypot(*cost_terms),
             'width_px': beam['width_px']}
 
@@ -91,6 +93,7 @@ class PixelGraspController:
         self.last_decision = {}
         self.beam_center = None
         self.endpoint = None
+        self.own_endpoint = None
         self.stage = 'identify'
         self.pending = None
         self.rollback = []
@@ -183,9 +186,13 @@ class PixelGraspController:
         own = max(own_candidates,key=lambda c:c['area_px']) if own_candidates else None
         if beam is not None:
             self.beam_center=list(beam['center'])
-        alignment = alignment_features(gripper,beam,self.endpoint,own)
+        alignment = alignment_features(gripper,beam,self.endpoint,own,self.own_endpoint)
         if alignment is not None:
             self.endpoint=list(alignment['endpoint'])
+            # Keep the same visible end through a camera pan. Closed fingers
+            # can introduce orange edge components, so update on open views.
+            if self.pulses.get(1) == 2000 and alignment['own_endpoint'] is not None:
+                self.own_endpoint=list(alignment['own_endpoint'])
         obs={'gripper':gripper,'beam':beam,'own_beam':own,'alignment':alignment}
         self.last_observation = copy.deepcopy(obs)
         if not active:

@@ -112,3 +112,11 @@ def test_top_improvement_is_rejected_when_own_beam_disappears():
     assert rejected['kind']=='drive' and rejected['forward']<0
     assert c.repeat is None and 'forward' in c.tried
     assert 'previously visible own-camera beam' in c.last_decision['reason']
+
+
+def test_own_endpoint_continuity_prevents_switch_to_opposite_end_during_pan():
+    b=own_beam();b['endpoints']=[[.14,.386],[.91,.703]]
+    b['length_px']=517.;b['width_px']=100.
+    observed=alignment_features(grip(),beam(),own_beam=b,own_endpoint=[.76,.673])
+    assert observed['own_endpoint']==[.91,.703]
+    assert observed['own_aim_error_px']>0
