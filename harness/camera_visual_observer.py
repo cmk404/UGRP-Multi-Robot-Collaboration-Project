@@ -62,7 +62,7 @@ reasoning, including camera motion versus peer motion, in a nonempty reason of a
 suggested_action is only a visual proposal for target approach/search, or for lifting
 when capture is visibly established. The controller applies its own phase gates and
 limits before any execution; never assume the proposal executes. Choose one small raw
-action: wait; drive with forward -0.05..0.05, turn -0.1..0.1, duration_s 0..0.4;
+action: wait; drive with forward -0.05..0.15, turn -0.1..0.1, duration_s 0..1;
 look with pan_pulse 500..2500; or arm with servo_id 1|3|4|5 and pulse 500..2500.
 An arm servo's absolute first target is allowed. After a prior command to the same
 servo_id, keep its target change within 100 pulse units. Prefer reversible adjustments
@@ -73,6 +73,9 @@ Fixed hardware command documentation, not measured state: servo 1 opens at 2000
 and closes at 1500; servo 3 is wrist pitch, 4 elbow, 5 shoulder. Increasing 5 lowers
 the shoulder angle, increasing 4 bends the elbow, increasing 3 raises wrist pitch.
 look turns the whole arm AND wrist camera: 1500 forward, 2500 left, 500 right.
+Drive forward and turn are normalized MOTOR COMMANDS, not metres/second or radians.
+Positive turn turns the base left; negative turns right. Use forward approach when
+far from the beam and reserve very short motor commands for final alignment.
 These are command conventions, not a known current pose or a grasp macro.
 The caller isolates one robot's command at a time. PIXEL_MOTION_CUE is computed
 only from consecutive overhead images after this robot's issued command. A valid
@@ -121,7 +124,7 @@ def _suggested_action(value: Any, issued_actions: list[Any]) -> dict[str, Any]:
         forward = _finite_number(value["forward"], "forward")
         turn = _finite_number(value["turn"], "turn")
         duration = _finite_number(value["duration_s"], "duration_s")
-        if not -0.05 <= forward <= 0.05 or not -0.1 <= turn <= 0.1 or not 0 <= duration <= 0.4:
+        if not -0.05 <= forward <= 0.15 or not -0.1 <= turn <= 0.1 or not 0 <= duration <= 1.0:
             raise ValueError("suggested drive out of bounds")
     elif kind == "look":
         pulse = value["pan_pulse"]

@@ -36,6 +36,7 @@ class CameraGraspController:
         self.events = []
         self.last_decision = {}
         self.last_alignment = None
+        self.calibration_index = 0
         for command in startup_commands:
             command = _validate_action(command)
             if command['kind'] not in ('arm', 'look'):
@@ -65,9 +66,10 @@ class CameraGraspController:
                 last = self.issued_pulses.get(channel, 1500)
                 action[field] = max(500, min(2500, max(last - 100, min(last + 100, action[field]))))
         elif action['kind'] == 'drive':
-            action['forward'] = max(-.05, min(.05, action['forward']))
+            coarse = self.stage == 'approach'
+            action['forward'] = max(-.05, min(.15 if coarse else .05, action['forward']))
             action['turn'] = max(-.1, min(.1, action['turn']))
-            action['duration_s'] = max(0, min(.4, action['duration_s']))
+            action['duration_s'] = max(0, min(1.0 if coarse else .4, action['duration_s']))
         return action
 
     def _issue(self, action, obs, reason):
@@ -99,6 +101,14 @@ class CameraGraspController:
         suggestion = obs.get('suggested_action', {'kind': 'wait'})
         if self.stage == 'blocked':
             return self._issue({'kind': 'wait'}, obs, 'bounded recovery exhausted; no success claim')
+        if obs.get('view') == 'overhead' and obs.get('identity_confidence', 0) < .8:
+            if self.stage in ('verify_close', 'test_lift', 'hold'):
+                return self._issue({'kind': 'wait'}, obs, 'identity uncertain during capture verification; do not move a possibly held object')
+            # Establish self-motion before using an identity-dependent proposal.
+            # This is active sensing, not a target approach or grasp macro.
+            pulse = self.issued_pulses.get(6, 1500) + (50 if self.probe_index % 2 == 0 else -50)
+            self.probe_index += 1
+            return self._issue({'kind': 'look', 'pan_pulse': pulse}, obs, 'identify own motion before any overhead-guided movement')
         if self.stage == 'hold':
             if obs.get('capture_visible') and obs.get('lift_visible') and trusted:
                 return self._issue({'kind': 'wait'}, obs, 'visual hold evidence; physical success is evaluator-only')
@@ -151,11 +161,27 @@ class CameraGraspController:
             return self._issue(suggestion, obs, 'bounded visual search; landmarks unavailable or uncertain')
         self.unseen_count = 0
         self.stage = 'align'
+        if self.calibration_index < 8:
+            channel = (3, 4, 5, 6)[self.calibration_index // 2]
+            delta = 50 if self.calibration_index % 2 == 0 else -50
+            self.calibration_index += 1
+            self.stage = 'calibrate'
+            pulse = self.issued_pulses.get(channel, 1500) + delta
+            action = ({'kind': 'look', 'pan_pulse': pulse} if channel == 6 else
+                      {'kind': 'arm', 'servo_id': channel, 'pulse': pulse})
+            return self._issue(action, obs, 'bounded isolated bidirectional calibration from issued commands and visible landmarks')
         if error > .10 and suggestion['kind'] == 'drive':
             self.stage = 'approach'
             self.aligned_count = 0
             self.last_alignment = None
-            return self._issue(suggestion, obs, 'coarse visual approach before local arm alignment')
+            # Drive numbers are normalized motor commands, not metres/second.
+            # Far from the visual goal, use a bounded useful command-time slice;
+            # reobserve after every slice and reduce again in the alignment stage.
+            drive = dict(suggestion)
+            if drive['forward'] > 0:
+                drive['forward'] = min(.15, max(.08, error))
+            drive['duration_s'] = .8
+            return self._issue(drive, obs, 'image-error-scaled coarse motor command; reobserve before next slice')
         jaws, target = obs['jaws'], obs['target']
         axis = [jaws[1][k] - jaws[0][k] for k in (0, 1)]
         span2 = sum(x*x for x in axis)

@@ -13,6 +13,7 @@ def observation(**updates):
 class ControllerTests(unittest.TestCase):
     def test_close_requires_visible_alignment_and_does_not_claim_capture(self):
         c = CameraGraspController()
+        c.calibration_index = 8
         self.assertEqual(c.step(observation())['pulse'], 2000)
         c.step(observation())
         self.assertEqual(c.step(observation())['pulse'], 1500)
@@ -44,10 +45,11 @@ class ControllerTests(unittest.TestCase):
         self.assertEqual(c.step(obs, active=False), {'kind': 'wait'})
         c.step(obs)
         for _ in range(3):
-            self.assertNotEqual(c.step(obs).get('pulse'), 1500)
+            self.assertEqual(c.step(obs)['kind'], 'look')
 
     def test_view_switch_is_not_two_consecutive_alignment_observations(self):
         c = CameraGraspController()
+        c.calibration_index = 8
         c.step(observation())
         c.step(observation())
         action = c.step(observation(view='overhead'))
@@ -68,11 +70,21 @@ class ControllerTests(unittest.TestCase):
 
     def test_repeated_drive_remains_available_for_coarse_approach(self):
         c = CameraGraspController(STARTUP_COMMANDS)
+        c.calibration_index = 8
         drive = {'kind': 'drive', 'forward': .05, 'turn': 0, 'duration_s': .4}
         obs = observation(target=[.8, .5], suggested_action=drive)
-        self.assertEqual(c.step(obs), drive)
-        self.assertEqual(c.step(obs), drive)
+        expected = {**drive, 'forward': .15, 'duration_s': .8}
+        self.assertEqual(c.step(obs), expected)
+        self.assertEqual(c.step(obs), expected)
         self.assertEqual(c.stage, 'approach')
+
+    def test_bidirectional_calibration_does_not_close_or_change_startup_pose(self):
+        c = CameraGraspController(STARTUP_COMMANDS)
+        initial = dict(c.issued_pulses)
+        actions = [c.step(observation(target=[.8, .5])) for _ in range(8)]
+        self.assertEqual(c.issued_pulses, initial)
+        self.assertEqual(c.calibration_index, 8)
+        self.assertTrue(all(a.get('servo_id') != 1 for a in actions))
 
 
 if __name__ == '__main__':
