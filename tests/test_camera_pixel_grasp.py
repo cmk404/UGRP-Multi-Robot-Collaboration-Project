@@ -3,7 +3,7 @@ import copy
 import math
 from unittest.mock import patch
 
-from harness.camera_pixel_grasp import PixelGraspController, alignment_features
+from harness.camera_pixel_grasp import SEARCH_SCALES, PixelGraspController, alignment_features
 
 
 def beam():
@@ -71,6 +71,11 @@ def step_with_measured_alignment(controller, alignment):
 
 def exhaust_primitives(controller, alignment):
     controller.tried.update(label for label,_ in controller._candidates(alignment))
+
+
+def exhaust_current_scale(controller, alignment):
+    exhaust_primitives(controller, alignment)
+    controller.tried.update(('learned','lateral-left','lateral-right'))
 
 
 def start_lateral_composite(controller, b, initial=None):
@@ -154,6 +159,82 @@ def test_axis_outside_absolute_closure_gate_does_not_start_trial():
     assert step_with_measured_alignment(inside,measured_alignment(0.,.13)) == {
         'kind':'arm','servo_id':1,'pulse':1500}
     assert inside.attempts==1
+
+
+def test_exhausted_coarse_search_advances_to_half_scale():
+    c=PixelGraspController('r1');b=beam();current=alignment_features(grip(x=.47),b)
+    exhaust_current_scale(c,current)
+
+    action=step_with(c,grip(x=.47),b)
+
+    assert action=={'kind':'drive','forward':.025,'turn':0.,'duration_s':.4}
+    assert c.search_level==1
+    assert c.last_decision['search_scale']==.5
+
+
+def test_accepted_fine_step_continues_at_the_same_scale():
+    c=PixelGraspController('r1');c.search_level=1;b=beam()
+    first=step_with(c,grip(x=.47),b)
+    repeated=step_with(c,grip(x=.48),b)
+
+    assert first=={'kind':'drive','forward':.025,'turn':0.,'duration_s':.4}
+    assert repeated==first
+    assert c.repeat=='forward' and c.search_level==1
+
+
+def test_exhausted_half_scale_advances_to_quarter_scale():
+    c=PixelGraspController('r1');c.search_level=1;b=beam()
+    exhaust_primitives(c,alignment_features(grip(x=.47),b))
+
+    action=step_with(c,grip(x=.47),b)
+
+    assert action=={'kind':'drive','forward':.0125,'turn':0.,'duration_s':.4}
+    assert c.search_level==2
+
+
+def test_finest_scale_exhaustion_is_terminal_and_bounded():
+    c=PixelGraspController('r1');c.search_level=len(SEARCH_SCALES)-1;b=beam()
+    exhaust_current_scale(c,alignment_features(grip(x=.47),b))
+
+    assert step_with(c,grip(x=.47),b)=={'kind':'wait'}
+    assert c.stage=='blocked'
+    assert c.last_decision['search_scale']==.25
+
+
+def test_fine_near_and_far_candidates_scale_every_command_magnitude():
+    c=PixelGraspController('r1');c.search_level=2
+    near=dict(c._candidates({'distance_px':20}))
+    far=dict(c._candidates({'distance_px':40}))
+
+    assert near['forward']['forward']==.0125
+    assert far['forward']['forward']==.0375
+    assert near['back']['forward']==-.0125 and far['back']['forward']==-.0125
+    assert near['left']['turn']==.025 and far['left']['turn']==.025
+    assert near['wrist+']['pulse']-c.pulses[3]==12
+    assert far['wrist+']['pulse']-c.pulses[3]==25
+    assert all(500<=a.get('pulse',a.get('pan_pulse',1500))<=2500
+               for a in (*near.values(),*far.values()) if a['kind'] in ('arm','look'))
+
+
+def test_scale_change_waits_for_a_fresh_open_measurement():
+    c=PixelGraspController('r1');b=beam();current=alignment_features(grip(x=.47),b)
+    exhaust_current_scale(c,current)
+    tracked=grip(x=.47);tracked['source']='verified_optical_flow'
+
+    assert step_with(c,tracked,b)=={'kind':'arm','servo_id':1,'pulse':1500}
+    assert c.search_level==0 and c.refresh_required
+
+
+def test_failed_capture_recovery_restarts_coarse_search_at_new_height():
+    c=PixelGraspController('r1');c.search_level=2;c.stage='lift';c.lift_steps=3
+    c.lift_start={'beam':beam(),'own_beam':own_beam()};c.lift_pulse=c.pulses[5]
+    c.pulses[5]-=150
+
+    with patch.object(c,'_visual_lift',return_value=False):
+        action=step_with(c,grip(),beam())
+
+    assert action=={'kind':'arm','servo_id':1,'pulse':2000}
+    assert c.search_level==0 and c.height_lock
 
 
 def test_tracked_candidate_is_remeasured_before_acceptance():

@@ -14,6 +14,9 @@ from harness.camera_grasp_controller import STARTUP_COMMANDS
 from harness.camera_pixel_jacobian import LocalPixelJacobian, axis_residual
 
 
+SEARCH_SCALES = (1.0, .5, .25)
+
+
 def _wrap_axis(angle):
     return (angle + math.pi / 2) % math.pi - math.pi / 2
 
@@ -118,6 +121,7 @@ class PixelGraspController:
         self.lift_start = None
         self.lift_pulse = None
         self.height_lock = False
+        self.search_level = 0
         self.recovery = []
         self.composite_queue = []
         self.jacobian = LocalPixelJacobian()
@@ -170,7 +174,9 @@ class PixelGraspController:
         self.history.append(action);self.history=self.history[-32:]
         self.last_decision = {'stage':self.stage,'reason':reason,'attempts':self.attempts,
                               'candidate':label,'pending_test':bool(test),
-                              'tried':sorted(self.tried),'cost':None if obs.get('alignment') is None else obs['alignment']['cost']}
+                              'tried':sorted(self.tried),'cost':None if obs.get('alignment') is None else obs['alignment']['cost'],
+                              'search_level':self.search_level,
+                              'search_scale':SEARCH_SCALES[self.search_level]}
         diagnostics=getattr(self.jacobian,'diagnostics',None)
         if callable(diagnostics):
             self.last_decision['jacobian']=diagnostics()
@@ -200,16 +206,18 @@ class PixelGraspController:
 
     def _candidates(self, alignment):
         far = alignment['distance_px'] > 30
-        step = 100 if far else 50
-        drive = .15 if far else .05
+        scale = SEARCH_SCALES[self.search_level]
+        step = max(1, int(round((100 if far else 50) * scale)))
+        drive = (.15 if far else .05) * scale
+        turn = .1 * scale
         duration = .8 if far else .4
         candidates = [('forward',{'kind':'drive','forward':drive,'turn':0.,'duration_s':duration}),
                       ('look+',self._joint(6,step)),('look-',self._joint(6,-step)),
-                      ('left',{'kind':'drive','forward':0.,'turn':.1,'duration_s':.6}),
-                      ('right',{'kind':'drive','forward':0.,'turn':-.1,'duration_s':.6}),
+                      ('left',{'kind':'drive','forward':0.,'turn':turn,'duration_s':.6}),
+                      ('right',{'kind':'drive','forward':0.,'turn':-turn,'duration_s':.6}),
                       ('elbow-',self._joint(4,-step)),('elbow+',self._joint(4,step)),
                       ('wrist+',self._joint(3,step)),('wrist-',self._joint(3,-step)),
-                      ('back',{'kind':'drive','forward':-.05,'turn':0.,'duration_s':.4})]
+                      ('back',{'kind':'drive','forward':-.05*scale,'turn':0.,'duration_s':.4})]
         if not self.height_lock:
             candidates.extend([('shoulder+',self._joint(5,step)),('shoulder-',self._joint(5,-step))])
         return candidates
@@ -340,6 +348,7 @@ class PixelGraspController:
                     self.recovery.append({'kind':'arm','servo_id':5,'pulse':current})
                 self.recovery.append({'kind':'arm','servo_id':5,'pulse':min(2500,self.lift_pulse+50)})
                 self.height_lock=True
+                self.search_level=0
             else:
                 self.lift_steps += 1
                 return self._issue(self._joint(5,-50),'small commanded test lift; inspect object motion in both views',obs)
@@ -464,17 +473,31 @@ class PixelGraspController:
         if selected is None:
             selected=next(((label,action) for label,action in candidates if label not in self.tried),None)
         if selected is None:
-            if 'learned' not in self.tried:
+            if self.search_level == 0 and 'learned' not in self.tried:
                 learned=self.jacobian.propose(alignment,self.pulses)
                 if learned:
                     return self._start_learned(learned,obs)
-            composite=next(
-                ((label,actions) for label,actions in self._composite_candidates()
-                 if label not in self.tried), None
-            )
-            if composite is not None:
-                return self._start_composite(*composite,obs)
-            self.stage='blocked'
-            return self._issue({'kind':'wait'},'all bounded directions failed at this observed state',obs)
+            if self.search_level == 0:
+                composite=next(
+                    ((label,actions) for label,actions in self._composite_candidates()
+                     if label not in self.tried), None
+                )
+                if composite is not None:
+                    return self._start_composite(*composite,obs)
+            if self.search_level + 1 < len(SEARCH_SCALES):
+                fresh_open = (gripper.get('valid') and gripper.get('source') == 'isolated_gripper_motion'
+                              and self.pulses.get(1) == 2000)
+                if not fresh_open:
+                    self.refresh_required=True
+                    pulse=1500 if self.pulses.get(1,2000)==2000 else 2000
+                    return self._issue({'kind':'arm','servo_id':1,'pulse':pulse},
+                                       'remeasure before reducing bounded search scale',obs)
+                self.search_level += 1
+                self.tried.clear();self.repeat=None
+                candidates=self._candidates(alignment)
+                selected=candidates[0]
+            else:
+                self.stage='blocked'
+                return self._issue({'kind':'wait'},'all bounded search scales failed at this observed state',obs)
         label,action=selected
         return self._issue(action,'test one raw motion against visible beam-end and opening-axis error',obs,test=True,label=label,learn=True)
