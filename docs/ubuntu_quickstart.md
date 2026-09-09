@@ -80,7 +80,7 @@ git push -u origin HEAD
 gh pr create --base main --web
 ```
 
-PR 양식에 문제, 변경 후 동작, 테스트 결과와 데모 검토 결과를 적는다. GitHub의 `offline-regressions`와 `ubuntu-simulation` 결과를 확인한다. `main`에 직접 push하지 않는다. 권한 오류가 나면 관리자에게 저장소 쓰기 권한을 확인한다. 이 비공개 저장소를 공개 저장소로 복사하지 않는다.
+PR 양식에 문제, 변경 후 동작, 테스트 결과와 데모 검토 결과를 적는다. GitHub의 `offline-regressions`와 `ubuntu-simulation` 결과를 확인한다. `@kcm0127-dotcom`의 Approve 리뷰가 있어야 병합할 수 있다. 승인 후 코드를 바꾸면 다시 승인받는다. `main`에 직접 push하지 않는다. 권한 오류가 나면 관리자에게 저장소 쓰기 권한을 확인한다. 이 비공개 저장소를 공개 저장소로 복사하지 않는다.
 
 모델 행동을 바꾼 PR은 기본 데모만으로 운반 성능을 검증했다고 쓰지 않는다. [실험 관리 절차](../CONTRIBUTING.md)에 따라 실행 코드 SHA와 전체 결과를 별도로 남긴다. `outputs/` 영상·로그는 자동으로 GitHub에 업로드되지 않는다.
 
