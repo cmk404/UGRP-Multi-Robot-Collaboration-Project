@@ -26,6 +26,16 @@ class Completer:
 
 
 class CameraPairPlannerTests(unittest.TestCase):
+    def test_grasp_task_changes_only_static_instruction(self):
+        completer = Completer()
+        CameraPairPlanner('r1', completer, task='grasp').decide(jpeg(b'own'), jpeg(b'top'))
+        request = completer.calls[0]
+        self.assertIn('grasp and lift', request['messages'][0]['content'])
+        self.assertEqual(len(request['images']), 2)
+        self.assertNotIn('world_state', json.dumps(request))
+        with self.assertRaises(ValueError):
+            CameraPairPlanner('r1', completer, task='hidden_target')
+
     def test_request_contains_only_static_text_and_exact_two_images(self):
         own, overhead = jpeg(b"r1-private-pixels"), jpeg(b"shared-top-pixels")
         completer = Completer()

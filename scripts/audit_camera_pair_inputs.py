@@ -10,7 +10,11 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 def audit(root):
-    from harness.camera_pair_policy import _SYSTEM_TASK, _USER_TEXT
+    from harness.camera_pair_policy import static_task, _USER_TEXT
+    metadata = root / 'result.json'
+    if not metadata.exists():
+        metadata = root / 'progress.json'
+    task = json.loads(metadata.read_text()).get('config', {}).get('task', 'carry')
     result=[]
     for rid in ('r1','r3'):
         for path in sorted((root/rid).glob('wire-*.json')):
@@ -18,7 +22,7 @@ def audit(root):
             payload=json.loads(path.read_text())
             assert set(payload)=={'model','messages','temperature','max_tokens','reasoning_effort'}
             messages=payload['messages'];assert len(messages)==2
-            assert messages[0]=={'role':'system','content':_SYSTEM_TASK.replace('{robot_id}',rid)}
+            assert messages[0]=={'role':'system','content':static_task(rid,task)}
             content=messages[1]['content']
             assert messages[1]['role']=='user' and set(messages[1])=={'role','content'}
             assert len(content)==5

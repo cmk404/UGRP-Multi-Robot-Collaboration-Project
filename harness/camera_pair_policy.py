@@ -40,6 +40,29 @@ Numbers must be finite. Return JSON only."""
 _USER_TEXT = "Inspect OWN_VIEW and OVERHEAD pixels and select the next action."
 
 
+def static_task(robot_id: str, task: str = 'carry') -> str:
+    if task not in {'carry', 'grasp'}:
+        raise ValueError('task must be carry or grasp')
+    text = _SYSTEM_TASK.replace('{robot_id}', robot_id)
+    if task == 'grasp':
+        text = text.replace(
+            'Cooperate to carry\nthe plain orange beam from the nearby blue square into the neighboring green square.',
+            'Cooperate to grasp and lift the plain orange beam at the nearby blue square.\nHold it raised together; do not transport or release it in this task.')
+        text += '''
+Fixed hardware command documentation (not measured state): servo 1 is the gripper;
+2000 opens and 1500 closes it. Servo 3 is wrist pitch, 4 elbow, 5 shoulder.
+Increasing servo 5 lowers the shoulder angle; increasing 4 bends the elbow more;
+increasing 3 raises wrist pitch. The look action turns the whole arm and wrist camera,
+not just the camera: 1500 is forward, 2500 is left, 500 is right relative to the base.
+No grasp/lift macro is available: visually choose each joint command. Use small
+adjustments near the object; do not repeatedly drive through it. Position open jaws
+around the visible beam before closing, then visually verify capture and lift.
+Identify yourself by relating OWN_VIEW to OVERHEAD; do not assign yourself to a
+particular overhead robot solely from your name. Choose wait if already holding.
+'''
+    return text
+
+
 def _jpeg_data_uri(value: bytes, name: str) -> str:
     if not isinstance(value, bytes):
         raise ValueError(f"{name} must be bytes")
@@ -85,17 +108,19 @@ def _validate_action(action: Any) -> dict[str, Any]:
 class CameraPairPlanner:
     """Ask a completer using only this robot's current view and the overhead view."""
 
-    def __init__(self, robot_id: str, completer: Any) -> None:
+    def __init__(self, robot_id: str, completer: Any, task: str = 'carry') -> None:
         if robot_id not in _ROBOTS:
             raise ValueError("robot_id must be r1 or r3")
         self.robot_id = robot_id
         self.completer = completer
+        self.task = task
+        static_task(robot_id, task)
         self.last_request: dict[str, Any] | None = None
         self.last_response: Any = None
 
     def decide(self, own_jpeg: bytes, overhead_jpeg: bytes) -> dict[str, Any]:
         messages = [
-            {"role": "system", "content": _SYSTEM_TASK.replace("{robot_id}", self.robot_id)},
+            {"role": "system", "content": static_task(self.robot_id, self.task)},
             {"role": "user", "content": _USER_TEXT},
         ]
         images = [

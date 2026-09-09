@@ -16,6 +16,41 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 
+def evaluate_grasp_samples(samples: list[dict], sample_period_s: float = 0.1) -> dict:
+    """Score an unassisted dual grasp from output-only physics samples."""
+    longest_s = 0.0
+    current_s = 0.0
+    previous_time = None
+    previous_qualifies = False
+    max_lift_m = max(
+        (float(sample.get('height_above_start_m', 0.0)) for sample in samples),
+        default=0.0,
+    )
+    for sample in samples:
+        now = float(sample['sim_time_s'])
+        contacts = sample.get('contacts', {})
+        constraints = sample.get('constraints_active', {})
+        qualifies = (
+            float(sample.get('height_above_start_m', 0.0)) >= 0.03
+            and all(bool(contacts.get(rid, {}).get('bilateral')) for rid in ('r1', 'r3'))
+            and all(constraints.get(rid) is False for rid in ('r1', 'r3'))
+        )
+        contiguous = previous_time is not None and 0 < now - previous_time <= sample_period_s * 1.5
+        if qualifies:
+            current_s = current_s + (now - previous_time) if contiguous and previous_qualifies else 0.0
+        else:
+            current_s = 0.0
+        previous_qualifies = qualifies
+        longest_s = max(longest_s, current_s)
+        previous_time = now
+    return {
+        'grasp_success': longest_s + 1e-9 >= 2.0,
+        'longest_qualifying_duration_s': round(longest_s, 6),
+        'max_lift_m': round(max_lift_m, 6),
+        'sample_count': len(samples),
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--out-dir', type=Path, required=True)
@@ -23,9 +58,10 @@ def main() -> int:
     parser.add_argument('--seed', type=int, default=11)
     parser.add_argument('--model', default='gemini-3.8-flash')
     parser.add_argument('--timeout', type=float, default=45)
+    parser.add_argument('--task', choices=('carry', 'grasp'), default='carry')
     args = parser.parse_args()
     if not 1 <= args.rounds <= 30:
-        parser.error('rounds must be 1..30 (two bounded requests per round)')
+        parser.error('rounds must be 1..30 (2..60 bounded requests total)')
     out = args.out_dir.expanduser().resolve()
     out.mkdir(parents=True, exist_ok=False)
 
@@ -35,7 +71,7 @@ def main() -> int:
     from sim.camera_robot_port import CameraRobotPort
     import sim.multi_masterpi_production as production
     from scripts.probe_dual_grasp_sync import (
-        _plain_beam_xml, _pose_metrics, _git, Video,
+        _plain_beam_contact, _plain_beam_xml, _pose_metrics, _git, Video,
     )
 
     # This trusted fixture owner may place initial bodies. None of these values
@@ -47,7 +83,8 @@ def main() -> int:
     report = {'git_sha': _git(['rev-parse', 'HEAD']), 'config': vars(args).copy(),
               'input_contract': 'own robot_cam JPEG + shared fixed overhead JPEG only',
               'calls': [], 'rounds_completed': 0, 'error': None,
-              'transport_success': False, 'success_claim': 'input boundary validation only'}
+              'transport_success': None, 'grasp_success': None,
+              'success_claim': 'grasp evaluation pending fixed round budget'}
     report['config']['out_dir'] = str(out)
     video = None
     planners = {}
@@ -74,10 +111,12 @@ def main() -> int:
                 return urlopen(request, timeout=timeout)
             planners[rid] = CameraPairPlanner(rid, GeminiProxyCompleter(
                 model=args.model, max_tokens=600, timeout=args.timeout,
-                reasoning_effort='none', http_open=audited_open))
+                reasoning_effort='none', http_open=audited_open), task=args.task)
         video = Video(world, out / 'motion.mp4', 12)
         world.frame_callback = video.capture
         video.capture(force=True)
+        samples = []
+        next_referee_sample = float(world.data.time) + 0.1
         with (out / 'evaluation-only.jsonl').open('w') as referee, ThreadPoolExecutor(max_workers=2) as pool:
             for index in range(args.rounds):
                 # Snapshot both actors at the same instant. Inference latency
@@ -104,13 +143,32 @@ def main() -> int:
                         port.tick(float(world.data.time))
                     world._physics_step_for(world.controllers['r1'])
                     video.capture()
+                    if float(world.data.time) + 1e-9 >= next_referee_sample:
+                        sample = {
+                            'event': 'grasp_referee_sample',
+                            **_pose_metrics(world),
+                            'contacts': {
+                                rid: _plain_beam_contact(world, rid)
+                                for rid in ('r1', 'r3')
+                            },
+                        }
+                        samples.append(sample)
+                        referee.write(json.dumps(sample) + '\n')
+                        referee.flush()
+                        next_referee_sample += 0.1
                 for port in ports.values():
                     port.tick(float(world.data.time))
                     port.stop()
-                referee.write(json.dumps(_pose_metrics(world)) + '\n')
-                referee.flush()
                 report['rounds_completed'] += 1
                 (out / 'progress.json').write_text(json.dumps(report, indent=2))
+        evaluation = evaluate_grasp_samples(samples)
+        report.update(evaluation)
+        report['success_claim'] = (
+            f"evaluated grasp_success={evaluation['grasp_success']} after "
+            f"{args.rounds} fixed rounds; longest qualifying hold "
+            f"{evaluation['longest_qualifying_duration_s']:.1f}s, "
+            f"max lift {evaluation['max_lift_m']:.3f}m"
+        )
     except Exception as exc:
         report['error'] = f'{type(exc).__name__}: {exc}'
     finally:
@@ -119,9 +177,20 @@ def main() -> int:
         for rid in ('r1', 'r3'):
             world.controllers[rid].set_motor_commands(production.STOP)
         world.frame_callback = None
+        cleanup_errors = []
         if video is not None:
-            video.close()
-        world.close()
+            try:
+                video.close()
+            except Exception as exc:
+                cleanup_errors.append(f'video.close: {type(exc).__name__}: {exc}')
+        try:
+            world.close()
+        except Exception as exc:
+            cleanup_errors.append(f'world.close: {type(exc).__name__}: {exc}')
+        if cleanup_errors:
+            report['cleanup_errors'] = cleanup_errors
+            if report['error'] is None:
+                report['error'] = '; '.join(cleanup_errors)
         report['files'] = {str(p.relative_to(out)): hashlib.sha256(p.read_bytes()).hexdigest()
                            for p in out.rglob('*') if p.is_file()}
         (out / 'result.json').write_text(json.dumps(report, indent=2) + '\n')
