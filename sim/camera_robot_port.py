@@ -34,9 +34,10 @@ class CameraRobotPort:
     while awaiting :meth:`capture`.
     """
 
-    def __init__(self, world: Any, rid: str):
+    def __init__(self, world: Any, rid: str, *, allow_reverse: bool = False):
         self._world = world
         self.robot_id = str(rid)
+        self._allow_reverse = bool(allow_reverse)
         self._robot = world.robot(rid)
         self._frame_id = 0
         self._motor_commands = _STOP
@@ -89,7 +90,7 @@ class CameraRobotPort:
             raise ValueError(f"missing {kind} action fields: {sorted(missing)}")
 
         if kind == "drive":
-            forward = _bounded_number("forward", action["forward"], 0.0, 0.15)
+            forward = _bounded_number("forward", action["forward"], -0.05 if self._allow_reverse else 0.0, 0.15)
             turn = _bounded_number("turn", action["turn"], -0.2, 0.2)
             duration = _bounded_number("duration_s", action["duration_s"], 0.0, 1.0)
             # Simulator wheel order: front-left, front-right, rear-left, rear-right.

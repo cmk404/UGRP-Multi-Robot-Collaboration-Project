@@ -98,6 +98,18 @@ class CameraRobotPortTests(unittest.TestCase):
         self.assertEqual(self.world.robots["r1"].motor_calls[-1], [0.0] * 4)
         self.assertEqual(self.world.robots["r2"].motor_calls, [])
 
+    def test_reverse_is_explicit_opt_in_and_still_bounded(self):
+        action = {"kind": "drive", "forward": -.05, "turn": 0., "duration_s": .4}
+        with self.assertRaises(ValueError):
+            self.port.apply(action, 0.)
+        port = CameraRobotPort(self.world, 'r1', allow_reverse=True)
+        port.apply(action, 0.)
+        self.assertEqual(self.world.robots['r1'].motor_calls[-1], [-.05] * 4)
+        with self.assertRaises(ValueError):
+            port.apply({**action, 'forward': -.051}, 0.)
+        port.tick(.4)
+        self.assertEqual(self.world.robots['r1'].motor_calls[-1], [0.] * 4)
+
     def test_look_and_arm_use_physical_servo_channels(self):
         look = self.port.apply({"kind": "look", "pan_pulse": 1700}, 0.0)
         self.assertEqual(self.world.robots["r1"].servo_calls, [])

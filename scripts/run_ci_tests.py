@@ -13,6 +13,9 @@ ROOT = Path(__file__).resolve().parents[1]
 TEST_PATTERNS = (
     "tests/test_camera_pair*.py",
     "tests/test_camera_action_learning.py",
+    "tests/test_camera_local_servo.py",
+    "tests/test_camera_visual_observer.py",
+    "tests/test_camera_grasp_controller.py",
     "tests/test_markerless*.py",
     "tests/test_visual_attachment*.py",
     "tests/test_placement_guidance.py",
