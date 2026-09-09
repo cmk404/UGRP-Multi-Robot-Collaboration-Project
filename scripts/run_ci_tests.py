@@ -23,6 +23,7 @@ TEST_PATTERNS = (
     "tests/test_camera_beam_shaft.py",
     "tests/test_camera_gripper_motion.py",
     "tests/test_camera_pixel_grasp.py",
+    "tests/test_camera_pixel_resume.py",
     "tests/test_camera_pixel_jacobian.py",
     "tests/test_markerless*.py",
     "tests/test_visual_attachment*.py",
