@@ -1,0 +1,5256 @@
+{
+  "git_sha": "e82098a4b139ff465e92b1861e6de01599691b17",
+  "config": {
+    "out_dir": "/Users/changmin/projects/ugrp/outputs/visual-servo-20260909-r1-v4",
+    "rounds": 48,
+    "seed": 11,
+    "model": "gemini-3.8-flash",
+    "timeout": 45,
+    "task": "grasp",
+    "active_robot": "r1"
+  },
+  "input_contract": "current/prior own+top RGB and own issued commands only; pixel landmarks feed state-local control; alternating isolated actions; no truth feedback",
+  "calls": [
+    {
+      "round": 0,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1550
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.368,
+            0.369
+          ],
+          [
+            0.368,
+            0.377
+          ]
+        ],
+        "target": [
+          0.508,
+          0.443
+        ],
+        "confidence": 0.7,
+        "identity_confidence": 0.0,
+        "self_center": [
+          0.334,
+          0.373
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": 0.0,
+          "duration_s": 0.5
+        },
+        "reason": "In CURRENT_OWN_VIEW, the orange beam end is visible on the left/lower-left edge, matching the relative viewpoint of the northern robot facing eastward toward the northern end of the blue mat beam. The southern robot would see the beam on its right. Thus self is identified as the northern robot at approx (0.334, 0.373). Jaws are not visible in own view but visible in overhead view. Beam target point chosen along the plain orange beam. Forward approach proposed.",
+        "motion_identity": {
+          "consistent": false,
+          "cue": {
+            "center": null,
+            "fresh": false,
+            "age": 0,
+            "changed_pixels": 0,
+            "valid": false,
+            "reason": "no consecutive frame"
+          }
+        }
+      },
+      "decision": {
+        "stage": "acquire",
+        "reason": "identify own motion before any overhead-guided movement",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 0,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.368,0.369],[0.368,0.377]],\"target\":[0.508,0.443],\"confidence\":0.7,\"identity_confidence\":0.8,\"self_center\":[0.334,0.373],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":0.0,\"duration_s\":0.5},\"reason\":\"In CURRENT_OWN_VIEW, the orange beam end is visible on the left/lower-left edge, matching the relative viewpoint of the northern robot facing eastward toward the northern end of the blue mat beam. The southern robot would see the beam on its right. Thus self is identified as the northern robot at approx (0.334, 0.373). Jaws are not visible in own view but visible in overhead view. Beam target point chosen along the plain orange beam. Forward approach proposed.\"}\n```",
+      "usage": {
+        "prompt_tokens": 3308,
+        "completion_tokens": 233,
+        "total_tokens": 3541
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 2563.9223330654204,
+      "learning": {
+        "sample_count": 0,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 1,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 3,
+        "pulse": 790
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.354,
+            0.613
+          ],
+          [
+            0.354,
+            0.64
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.85,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.334,
+          0.626
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": 0.0,
+          "duration_s": 0.5
+        },
+        "reason": "PIXEL_MOTION_CUE confirms this robot is the southern robot at (0.334, 0.626). In own view, the orange beam end is visible on the left, but jaws are outside frame. Overhead view shows gripper jaws facing east toward the southern end of the orange beam.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.3427230046948357,
+              0.6325678496868476
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 165,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "calibrate",
+        "reason": "bounded isolated bidirectional calibration from issued commands and visible landmarks",
+        "visual_error": 0.16774459752850465,
+        "retries": 0,
+        "learning": {
+          "sample_count": 0,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.354,0.613],[0.354,0.640]],\"target\":[0.508,0.560],\"confidence\":0.85,\"identity_confidence\":0.95,\"self_center\":[0.334,0.626],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":0.0,\"duration_s\":0.5},\"reason\":\"PIXEL_MOTION_CUE confirms this robot is the southern robot at (0.334, 0.626). In own view, the orange beam end is visible on the left, but jaws are outside frame. Overhead view shows gripper jaws facing east toward the southern end of the orange beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6650,
+        "completion_tokens": 195,
+        "total_tokens": 6845
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3664.16975017637,
+      "learning": {
+        "sample_count": 0,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 2,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 3,
+        "pulse": 740
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.364,
+            0.613
+          ],
+          [
+            0.364,
+            0.637
+          ]
+        ],
+        "target": [
+          0.508,
+          0.567
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.92,
+        "self_center": [
+          0.334,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.1,
+          "turn": 0.0,
+          "duration_s": 0.5
+        },
+        "reason": "Motion cue at [0.347, 0.633] confirms this robot is the lower robot in overhead view. Jaws are visible in overhead at the front of this robot, currently far from the orange beam. Beam grasp target chosen along the lower section of the orange beam.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.3474178403755869,
+              0.6325678496868476
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 29,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "calibrate",
+        "reason": "bounded isolated bidirectional calibration from issued commands and visible landmarks",
+        "visual_error": 0.15524174696260026,
+        "retries": 0,
+        "learning": {
+          "sample_count": 1,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 1,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [
+            3
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.364,0.613],[0.364,0.637]],\"target\":[0.508,0.567],\"confidence\":0.78,\"identity_confidence\":0.92,\"self_center\":[0.334,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.1,\"turn\":0.0,\"duration_s\":0.5},\"reason\":\"Motion cue at [0.347, 0.633] confirms this robot is the lower robot in overhead view. Jaws are visible in overhead at the front of this robot, currently far from the orange beam. Beam grasp target chosen along the lower section of the orange beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6669,
+        "completion_tokens": 190,
+        "total_tokens": 6859
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3770.713249919936,
+      "learning": {
+        "sample_count": 1,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 1,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [
+          3
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 3,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 4,
+        "pulse": 2370
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.364,
+            0.618
+          ],
+          [
+            0.364,
+            0.638
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.334,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": 0.0,
+          "duration_s": 0.5
+        },
+        "reason": "Pixel motion cue at (0.349, 0.635) matches this robot's lower position in overhead view following the wrist pitch command. The orange beam is ahead to the right, so continue driving forward to approach the grasp position.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.3489827856025039,
+              0.6346555323590815
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 31,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "calibrate",
+        "reason": "bounded isolated bidirectional calibration from issued commands and visible landmarks",
+        "visual_error": 0.15924823389915505,
+        "retries": 0,
+        "learning": {
+          "sample_count": 2,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 2,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [
+            3
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.364,0.618],[0.364,0.638]],\"target\":[0.508,0.560],\"confidence\":0.78,\"identity_confidence\":0.95,\"self_center\":[0.334,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":0.0,\"duration_s\":0.5},\"reason\":\"Pixel motion cue at (0.349, 0.635) matches this robot's lower position in overhead view following the wrist pitch command. The orange beam is ahead to the right, so continue driving forward to approach the grasp position.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6694,
+        "completion_tokens": 183,
+        "total_tokens": 6877
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 5819.232458015904,
+      "learning": {
+        "sample_count": 2,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 2,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [
+          3
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 4,
+      "robot_id": "r1",
+      "action": {
+        "kind": "drive",
+        "forward": 0.05,
+        "turn": 0.0,
+        "duration_s": 0.4
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": null,
+        "target": [
+          0.508,
+          0.567
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.334,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": 0.0,
+          "duration_s": 0.5
+        },
+        "reason": "Motion cue and arm servo commands confirm self is the lower robot at [0.334, 0.627]. Own view shows plain beam end on left without jaws visible. Approaching beam forward.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.3348982785602504,
+              0.6346555323590815
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 85,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "acquire",
+        "reason": "bounded visual search; landmarks unavailable or uncertain",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 2,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 2,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [
+            3
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":null,\"target\":[0.508,0.567],\"confidence\":0.78,\"identity_confidence\":0.95,\"self_center\":[0.334,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":0.0,\"duration_s\":0.5},\"reason\":\"Motion cue and arm servo commands confirm self is the lower robot at [0.334, 0.627]. Own view shows plain beam end on left without jaws visible. Approaching beam forward.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6697,
+        "completion_tokens": 150,
+        "total_tokens": 6847
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3633.035749895498,
+      "learning": {
+        "sample_count": 2,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 2,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [
+          3
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 5,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 4,
+        "pulse": 2320
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.362,
+            0.618
+          ],
+          [
+            0.362,
+            0.636
+          ]
+        ],
+        "target": [
+          0.508,
+          0.567
+        ],
+        "confidence": 0.82,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.334,
+          0.628
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": -0.03,
+          "duration_s": 0.4
+        },
+        "reason": "Pixel motion cue matches the lower robot at y~0.63 after forward drive. Gripper tips and target beam end are clearly visible in overhead view; wrist camera only sees beam end off to the left without jaws.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.3348982785602504,
+              0.6283924843423799
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 429,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "calibrate",
+        "reason": "bounded isolated bidirectional calibration from issued commands and visible landmarks",
+        "visual_error": 0.15784802817900517,
+        "retries": 0,
+        "learning": {
+          "sample_count": 2,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 2,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [
+            3
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.362,0.618],[0.362,0.636]],\"target\":[0.508,0.567],\"confidence\":0.82,\"identity_confidence\":0.95,\"self_center\":[0.334,0.628],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":-0.03,\"duration_s\":0.4},\"reason\":\"Pixel motion cue matches the lower robot at y~0.63 after forward drive. Gripper tips and target beam end are clearly visible in overhead view; wrist camera only sees beam end off to the left without jaws.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6706,
+        "completion_tokens": 177,
+        "total_tokens": 6883
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3212.8302499186248,
+      "learning": {
+        "sample_count": 2,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 2,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [
+          3
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 6,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 5,
+        "pulse": 1370
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.364,
+            0.618
+          ],
+          [
+            0.364,
+            0.638
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.82,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.334,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.05,
+          "turn": 0.0,
+          "duration_s": 0.3
+        },
+        "reason": "Motion cue matches bottom robot at (0.341, 0.633) after prior elbow and drive actions. In overhead view, gripper jaws are visible facing the orange beam on the blue pad. Driving forward toward grasp target.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.3411580594679186,
+              0.6325678496868476
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 87,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "calibrate",
+        "reason": "bounded isolated bidirectional calibration from issued commands and visible landmarks",
+        "visual_error": 0.15924823389915505,
+        "retries": 0,
+        "learning": {
+          "sample_count": 3,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 2,
+            "4": 1,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [
+            3,
+            4
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.364,0.618],[0.364,0.638]],\"target\":[0.508,0.560],\"confidence\":0.82,\"identity_confidence\":0.95,\"self_center\":[0.334,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.05,\"turn\":0.0,\"duration_s\":0.3},\"reason\":\"Motion cue matches bottom robot at (0.341, 0.633) after prior elbow and drive actions. In overhead view, gripper jaws are visible facing the orange beam on the blue pad. Driving forward toward grasp target.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6694,
+        "completion_tokens": 180,
+        "total_tokens": 6874
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3202.565500047058,
+      "learning": {
+        "sample_count": 3,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 2,
+          "4": 1,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [
+          3,
+          4
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 7,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 5,
+        "pulse": 1320
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.364,
+            0.618
+          ],
+          [
+            0.364,
+            0.632
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.93,
+        "self_center": [
+          0.335,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": 0.0,
+          "duration_s": 0.5
+        },
+        "reason": "PIXEL_MOTION_CUE [0.340, 0.630] matches our bottom robot after servo 5 shoulder pulse. In overhead view, our gripper tips point toward the lower section of the plain orange beam on the blue mat. Target chosen on the lower beam segment. Suggesting forward drive to close distance.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.3395931142410016,
+              0.6304801670146137
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 140,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "calibrate",
+        "reason": "bounded isolated bidirectional calibration from issued commands and visible landmarks",
+        "visual_error": 0.15799050604387593,
+        "retries": 0,
+        "learning": {
+          "sample_count": 4,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 2,
+            "4": 1,
+            "5": 1,
+            "6": 0
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.364,0.618],[0.364,0.632]],\"target\":[0.508,0.560],\"confidence\":0.78,\"identity_confidence\":0.93,\"self_center\":[0.335,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":0.0,\"duration_s\":0.5},\"reason\":\"PIXEL_MOTION_CUE [0.340, 0.630] matches our bottom robot after servo 5 shoulder pulse. In overhead view, our gripper tips point toward the lower section of the plain orange beam on the blue mat. Target chosen on the lower beam segment. Suggesting forward drive to close distance.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6689,
+        "completion_tokens": 200,
+        "total_tokens": 6889
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3344.2375420127064,
+      "learning": {
+        "sample_count": 4,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 2,
+          "4": 1,
+          "5": 1,
+          "6": 0
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 8,
+      "robot_id": "r1",
+      "action": {
+        "kind": "drive",
+        "forward": 0.04,
+        "turn": 0.04,
+        "duration_s": 0.3
+      },
+      "active": true,
+      "observation": {
+        "view": "own",
+        "jaws": null,
+        "target": [
+          0.301,
+          0.415
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.92,
+        "self_center": [
+          0.336,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.04,
+          "turn": 0.04,
+          "duration_s": 0.3
+        },
+        "reason": "Motion cue matches the lower robot in overhead view following the recent shoulder command. The target orange beam is visible in own view entering from the left edge. Jaws are not yet in frame; propose a small forward drive with a slight left turn to bring the beam toward the center line.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.3395931142410016,
+              0.6304801670146137
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 147,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "acquire",
+        "reason": "bounded visual search; landmarks unavailable or uncertain",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 4,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 2,
+            "4": 1,
+            "5": 1,
+            "6": 0
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"own\",\"jaws\":null,\"target\":[0.301,0.415],\"confidence\":0.78,\"identity_confidence\":0.92,\"self_center\":[0.336,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.04,\"turn\":0.04,\"duration_s\":0.3},\"reason\":\"Motion cue matches the lower robot in overhead view following the recent shoulder command. The target orange beam is visible in own view entering from the left edge. Jaws are not yet in frame; propose a small forward drive with a slight left turn to bring the beam toward the center line.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6693,
+        "completion_tokens": 164,
+        "total_tokens": 7695
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 6743.6094579752535,
+      "learning": {
+        "sample_count": 4,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 2,
+          "4": 1,
+          "5": 1,
+          "6": 0
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 9,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1600
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.364,
+            0.613
+          ],
+          [
+            0.364,
+            0.645
+          ]
+        ],
+        "target": [
+          0.508,
+          0.567
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.336,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.05,
+          "turn": 0.0,
+          "duration_s": 0.4
+        },
+        "reason": "Pixel motion cue and prior drive action confirm bottom robot is self at [0.336, 0.627]. Own view shows beam tip on left edge but jaws are not visible in own view. In overhead view, jaws are visible at front of self robot facing the lower beam. Proposing forward drive to close distance to beam.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.33881064162754304,
+              0.6304801670146137
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 328,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "calibrate",
+        "reason": "bounded isolated bidirectional calibration from issued commands and visible landmarks",
+        "visual_error": 0.15678010077812812,
+        "retries": 0,
+        "learning": {
+          "sample_count": 4,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 2,
+            "4": 1,
+            "5": 1,
+            "6": 0
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.364,0.613],[0.364,0.645]],\"target\":[0.508,0.567],\"confidence\":0.78,\"identity_confidence\":0.95,\"self_center\":[0.336,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.05,\"turn\":0.0,\"duration_s\":0.4},\"reason\":\"Pixel motion cue and prior drive action confirm bottom robot is self at [0.336, 0.627]. Own view shows beam tip on left edge but jaws are not visible in own view. In overhead view, jaws are visible at front of self robot facing the lower beam. Proposing forward drive to close distance to beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6708,
+        "completion_tokens": 201,
+        "total_tokens": 6909
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3180.1074580289423,
+      "learning": {
+        "sample_count": 4,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 2,
+          "4": 1,
+          "5": 1,
+          "6": 0
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 10,
+      "robot_id": "r1",
+      "action": {
+        "kind": "drive",
+        "forward": 0.05,
+        "turn": 0.0,
+        "duration_s": 0.3
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": null,
+        "target": [
+          0.508,
+          0.565
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.92,
+        "self_center": [
+          0.336,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.05,
+          "turn": 0.0,
+          "duration_s": 0.3
+        },
+        "reason": "Look pan pulse slightly shifted the arm/view. Pixel motion cue at [0.347, 0.630] matches the lower robot in overhead view. Jaws are not distinctly resolved in overhead crop, and wrist view only shows the beam end without jaws visible. Approaching the orange beam segment with a small forward drive.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.34663536776212833,
+              0.6304801670146137
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 158,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "acquire",
+        "reason": "bounded visual search; landmarks unavailable or uncertain",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 4,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 2,
+            "4": 1,
+            "5": 1,
+            "6": 0
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":null,\"target\":[0.508,0.565],\"confidence\":0.78,\"identity_confidence\":0.92,\"self_center\":[0.336,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.05,\"turn\":0.0,\"duration_s\":0.3},\"reason\":\"Look pan pulse slightly shifted the arm/view. Pixel motion cue at [0.347, 0.630] matches the lower robot in overhead view. Jaws are not distinctly resolved in overhead crop, and wrist view only shows the beam end without jaws visible. Approaching the orange beam segment with a small forward drive.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6706,
+        "completion_tokens": 176,
+        "total_tokens": 6882
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3095.276749925688,
+      "learning": {
+        "sample_count": 4,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 2,
+          "4": 1,
+          "5": 1,
+          "6": 0
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 11,
+      "robot_id": "r1",
+      "action": {
+        "kind": "drive",
+        "forward": 0.05,
+        "turn": 0.0,
+        "duration_s": 0.3
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": null,
+        "target": [
+          0.508,
+          0.567
+        ],
+        "confidence": 0.75,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.337,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.05,
+          "turn": 0.0,
+          "duration_s": 0.3
+        },
+        "reason": "Pixel motion cue and prior forward drive confirm self is the lower robot at [0.337, 0.627]. Own view shows plain beam segment but no gripper jaws visible in either view. Target grasp point on lower beam in overhead view is at [0.508, 0.567]. Approaching beam with forward drive.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.3395931142410016,
+              0.6283924843423799
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 333,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "acquire",
+        "reason": "bounded visual search; landmarks unavailable or uncertain",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 4,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 2,
+            "4": 1,
+            "5": 1,
+            "6": 0
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":null,\"target\":[0.508,0.567],\"confidence\":0.75,\"identity_confidence\":0.95,\"self_center\":[0.337,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.05,\"turn\":0.0,\"duration_s\":0.3},\"reason\":\"Pixel motion cue and prior forward drive confirm self is the lower robot at [0.337, 0.627]. Own view shows plain beam segment but no gripper jaws visible in either view. Target grasp point on lower beam in overhead view is at [0.508, 0.567]. Approaching beam with forward drive.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6726,
+        "completion_tokens": 181,
+        "total_tokens": 6907
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4180.263791931793,
+      "learning": {
+        "sample_count": 4,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 2,
+          "4": 1,
+          "5": 1,
+          "6": 0
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 12,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1550
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.364,
+            0.618
+          ],
+          [
+            0.364,
+            0.638
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.92,
+        "self_center": [
+          0.34,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.05,
+          "turn": 0.0,
+          "duration_s": 0.3
+        },
+        "reason": "Motion cue matches the lower robot moving forward toward the orange beam. Beam is visible in own view on the left/center but gripper jaws are not visible in own view, so overhead view is selected for tracking. Approaching target beam with forward drive.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.3458528951486698,
+              0.6283924843423799
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 319,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "calibrate",
+        "reason": "bounded isolated bidirectional calibration from issued commands and visible landmarks",
+        "visual_error": 0.15924823389915505,
+        "retries": 0,
+        "learning": {
+          "sample_count": 4,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 2,
+            "4": 1,
+            "5": 1,
+            "6": 0
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.364,0.618],[0.364,0.638]],\"target\":[0.508,0.560],\"confidence\":0.78,\"identity_confidence\":0.92,\"self_center\":[0.340,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.05,\"turn\":0.0,\"duration_s\":0.3},\"reason\":\"Motion cue matches the lower robot moving forward toward the orange beam. Beam is visible in own view on the left/center but gripper jaws are not visible in own view, so overhead view is selected for tracking. Approaching target beam with forward drive.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6732,
+        "completion_tokens": 180,
+        "total_tokens": 6912
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3908.0389169976115,
+      "learning": {
+        "sample_count": 4,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 2,
+          "4": 1,
+          "5": 1,
+          "6": 0
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 13,
+      "robot_id": "r1",
+      "action": {
+        "kind": "drive",
+        "forward": 0.15,
+        "turn": 0.0,
+        "duration_s": 0.8
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.362,
+            0.613
+          ],
+          [
+            0.362,
+            0.638
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.85,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.337,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.05,
+          "turn": 0.0,
+          "duration_s": 0.3
+        },
+        "reason": "Motion cue matches lower robot r1 at ~[0.34, 0.63]. The plain orange beam lies directly ahead in overhead view. Jaws are visible on r1 facing east toward the southern end of the beam. Approaching forward.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.34976525821596244,
+              0.6304801670146137
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 178,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "approach",
+        "reason": "image-error-scaled coarse motor command; reobserve before next slice",
+        "visual_error": 0.16001953005805258,
+        "retries": 0,
+        "learning": {
+          "sample_count": 5,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 2,
+            "4": 1,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.362,0.613],[0.362,0.638]],\"target\":[0.508,0.560],\"confidence\":0.85,\"identity_confidence\":0.95,\"self_center\":[0.337,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.05,\"turn\":0.0,\"duration_s\":0.3},\"reason\":\"Motion cue matches lower robot r1 at ~[0.34, 0.63]. The plain orange beam lies directly ahead in overhead view. Jaws are visible on r1 facing east toward the southern end of the beam. Approaching forward.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6710,
+        "completion_tokens": 183,
+        "total_tokens": 6893
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 5319.597416790202,
+      "learning": {
+        "sample_count": 5,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 2,
+          "4": 1,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 14,
+      "robot_id": "r1",
+      "action": {
+        "kind": "drive",
+        "forward": 0.15,
+        "turn": -0.02,
+        "duration_s": 0.8
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.364,
+            0.613
+          ],
+          [
+            0.364,
+            0.638
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.347,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.1,
+          "turn": -0.02,
+          "duration_s": 0.5
+        },
+        "reason": "Motion cue and forward drive confirm self is the lower robot near y=0.63. Own view shows the bottom end of the orange beam on the left, but jaws are outside frame. Overhead view shows gripper front around x=0.364 and the beam target around [0.508, 0.560]. Advancing forward toward the beam.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.3458528951486698,
+              0.6283924843423799
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 1147,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "approach",
+        "reason": "image-error-scaled coarse motor command; reobserve before next slice",
+        "visual_error": 0.15819687101836113,
+        "retries": 0,
+        "learning": {
+          "sample_count": 5,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 2,
+            "4": 1,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.364,0.613],[0.364,0.638]],\"target\":[0.508,0.560],\"confidence\":0.78,\"identity_confidence\":0.95,\"self_center\":[0.347,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.1,\"turn\":-0.02,\"duration_s\":0.5},\"reason\":\"Motion cue and forward drive confirm self is the lower robot near y=0.63. Own view shows the bottom end of the orange beam on the left, but jaws are outside frame. Overhead view shows gripper front around x=0.364 and the beam target around [0.508, 0.560]. Advancing forward toward the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6729,
+        "completion_tokens": 209,
+        "total_tokens": 6938
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 8023.303500143811,
+      "learning": {
+        "sample_count": 5,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 2,
+          "4": 1,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 15,
+      "robot_id": "r1",
+      "action": {
+        "kind": "drive",
+        "forward": 0.05,
+        "turn": 0.0,
+        "duration_s": 0.4
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": null,
+        "target": [
+          0.508,
+          0.562
+        ],
+        "confidence": 0.85,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.366,
+          0.628
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": 0.0,
+          "duration_s": 0.5
+        },
+        "reason": "Pixel motion cue and prior forward driving confirm self is the lower robot at [0.366, 0.628]. The orange beam is ahead to the right on the blue mat. Continue driving forward to approach the beam grasp area.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.36619718309859156,
+              0.6283924843423799
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 1160,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "acquire",
+        "reason": "bounded visual search; landmarks unavailable or uncertain",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 5,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 2,
+            "4": 1,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":null,\"target\":[0.508,0.562],\"confidence\":0.85,\"identity_confidence\":0.95,\"self_center\":[0.366,0.628],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":0.0,\"duration_s\":0.5},\"reason\":\"Pixel motion cue and prior forward driving confirm self is the lower robot at [0.366, 0.628]. The orange beam is ahead to the right on the blue mat. Continue driving forward to approach the beam grasp area.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6745,
+        "completion_tokens": 157,
+        "total_tokens": 6902
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3234.0945419855416,
+      "learning": {
+        "sample_count": 5,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 2,
+          "4": 1,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 16,
+      "robot_id": "r1",
+      "action": {
+        "kind": "drive",
+        "forward": 0.14579780519610025,
+        "turn": 0.0,
+        "duration_s": 0.8
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.377,
+            0.618
+          ],
+          [
+            0.377,
+            0.63
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.92,
+        "self_center": [
+          0.379,
+          0.628
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": 0.0,
+          "duration_s": 0.4
+        },
+        "reason": "Pixel motion cue and prior forward drive confirm identity as the lower robot near y~0.63. The beam is visible ahead on the blue mat. Jaws are not visible in own view but visible on the overhead view. Suggest continuing forward approach towards target grasp point.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.37871674491392804,
+              0.6283924843423799
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 485,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "approach",
+        "reason": "image-error-scaled coarse motor command; reobserve before next slice",
+        "visual_error": 0.14579780519610025,
+        "retries": 0,
+        "learning": {
+          "sample_count": 5,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 2,
+            "4": 1,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.377,0.618],[0.377,0.630]],\"target\":[0.508,0.560],\"confidence\":0.78,\"identity_confidence\":0.92,\"self_center\":[0.379,0.628],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":0.0,\"duration_s\":0.4},\"reason\":\"Pixel motion cue and prior forward drive confirm identity as the lower robot near y~0.63. The beam is visible ahead on the blue mat. Jaws are not visible in own view but visible on the overhead view. Suggest continuing forward approach towards target grasp point.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6752,
+        "completion_tokens": 185,
+        "total_tokens": 6937
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 5615.187708986923,
+      "learning": {
+        "sample_count": 5,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 2,
+          "4": 1,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 17,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 3,
+        "pulse": 790
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.428,
+            0.613
+          ],
+          [
+            0.428,
+            0.627
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.85,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.395,
+          0.624
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.12,
+          "turn": -0.02,
+          "duration_s": 0.6
+        },
+        "reason": "Pixel motion cue and forward drive commands confirm self-identity as the bottom robot moving east toward the lower orange beam. Jaws visible in overhead view facing east; beam grasp target is tracked at the southern end of the beam.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.38810641627543035,
+              0.6283924843423799
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 1132,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "local current-image model predicts reduced alignment error",
+        "visual_error": 0.09999999999999998,
+        "retries": 0,
+        "learning": {
+          "sample_count": 5,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 2,
+            "4": 1,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.428,0.613],[0.428,0.627]],\"target\":[0.508,0.560],\"confidence\":0.85,\"identity_confidence\":0.95,\"self_center\":[0.395,0.624],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.12,\"turn\":-0.02,\"duration_s\":0.6},\"reason\":\"Pixel motion cue and forward drive commands confirm self-identity as the bottom robot moving east toward the lower orange beam. Jaws visible in overhead view facing east; beam grasp target is tracked at the southern end of the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6767,
+        "completion_tokens": 177,
+        "total_tokens": 6944
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4908.863165881485,
+      "learning": {
+        "sample_count": 5,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 2,
+          "4": 1,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 18,
+      "robot_id": "r1",
+      "action": {
+        "kind": "drive",
+        "forward": 0.10560303025955267,
+        "turn": -0.02,
+        "duration_s": 0.8
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.424,
+            0.618
+          ],
+          [
+            0.424,
+            0.63
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.75,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.398,
+          0.625
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": -0.02,
+          "duration_s": 0.5
+        },
+        "reason": "Pixel motion cue and prior arm command confirm this robot is the lower rover (self_center ~ [0.398, 0.625]). In wrist view, the orange beam end is visible on the bottom-left, while overhead shows the rover facing east towards the plain orange beam. Jaws are visible in overhead view. Beam target is the lower half of the beam to coordinate with peer.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.41001564945226915,
+              0.6242171189979123
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 96,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "approach",
+        "reason": "image-error-scaled coarse motor command; reobserve before next slice",
+        "visual_error": 0.10560303025955267,
+        "retries": 0,
+        "learning": {
+          "sample_count": 6,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 3,
+            "4": 1,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.424,0.618],[0.424,0.630]],\"target\":[0.508,0.560],\"confidence\":0.75,\"identity_confidence\":0.95,\"self_center\":[0.398,0.625],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":-0.02,\"duration_s\":0.5},\"reason\":\"Pixel motion cue and prior arm command confirm this robot is the lower rover (self_center ~ [0.398, 0.625]). In wrist view, the orange beam end is visible on the bottom-left, while overhead shows the rover facing east towards the plain orange beam. Jaws are visible in overhead view. Beam target is the lower half of the beam to coordinate with peer.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6757,
+        "completion_tokens": 216,
+        "total_tokens": 6973
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 2972.8429159149528,
+      "learning": {
+        "sample_count": 6,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 3,
+          "4": 1,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 19,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 3,
+        "pulse": 840
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.437,
+            0.613
+          ],
+          [
+            0.437,
+            0.638
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.75,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.408,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": -0.03,
+          "duration_s": 0.6
+        },
+        "reason": "Pixel motion cue and forward base translation identify self as the lower robot near [0.41, 0.63]. The beam target is visible at [0.508, 0.560] on the orange beam in overhead view. Own view shows the beam corner at the bottom left without visible jaw tips. Suggest continuing approach with slight right turn.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.4084507042253521,
+              0.6283924843423799
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 1010,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "isolated small joint probe for a state-local motion model",
+        "visual_error": 0.09659839543180822,
+        "retries": 0,
+        "learning": {
+          "sample_count": 6,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 3,
+            "4": 1,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.437,0.613],[0.437,0.638]],\"target\":[0.508,0.560],\"confidence\":0.75,\"identity_confidence\":0.95,\"self_center\":[0.408,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":-0.03,\"duration_s\":0.6},\"reason\":\"Pixel motion cue and forward base translation identify self as the lower robot near [0.41, 0.63]. The beam target is visible at [0.508, 0.560] on the orange beam in overhead view. Own view shows the beam corner at the bottom left without visible jaw tips. Suggest continuing approach with slight right turn.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6782,
+        "completion_tokens": 209,
+        "total_tokens": 6991
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4376.939292065799,
+      "learning": {
+        "sample_count": 6,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 3,
+          "4": 1,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 20,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 3,
+        "pulse": 890
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.442,
+            0.619
+          ],
+          [
+            0.442,
+            0.627
+          ]
+        ],
+        "target": [
+          0.508,
+          0.565
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.415,
+          0.625
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": -0.03,
+          "duration_s": 0.5
+        },
+        "reason": "Pixel motion cue matches the lower robot whose arm pitched up. The orange beam end is visible ahead and slightly to the right of this robot's current heading. Suggest a small forward drive with slight right turn to bring jaws closer to the beam grasp region.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.4303599374021909,
+              0.6304801670146137
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 109,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "local current-image model predicts reduced alignment error",
+        "visual_error": 0.08786353054595522,
+        "retries": 0,
+        "learning": {
+          "sample_count": 7,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 4,
+            "4": 1,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.442,0.619],[0.442,0.627]],\"target\":[0.508,0.565],\"confidence\":0.78,\"identity_confidence\":0.95,\"self_center\":[0.415,0.625],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":-0.03,\"duration_s\":0.5},\"reason\":\"Pixel motion cue matches the lower robot whose arm pitched up. The orange beam end is visible ahead and slightly to the right of this robot's current heading. Suggest a small forward drive with slight right turn to bring jaws closer to the beam grasp region.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6756,
+        "completion_tokens": 183,
+        "total_tokens": 6939
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3245.6511249765754,
+      "learning": {
+        "sample_count": 7,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 4,
+          "4": 1,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 21,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 3,
+        "pulse": 940
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.446,
+            0.618
+          ],
+          [
+            0.446,
+            0.63
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.88,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.413,
+          0.624
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": 0.0,
+          "duration_s": 0.5
+        },
+        "reason": "PIXEL_MOTION_CUE around [0.433, 0.637] matches wrist pitch adjustment (servo 3) on the lower robot. In own view, pitch raised the camera so the beam edge at bottom left shifted out of frame. Switching to overhead view where jaws and beam target are clearly localizable. Recommending forward drive to close distance to the orange beam target.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.43270735524256654,
+              0.6367432150313153
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 32,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "local current-image model predicts reduced alignment error",
+        "visual_error": 0.08910667763978182,
+        "retries": 0,
+        "learning": {
+          "sample_count": 8,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 5,
+            "4": 1,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.446,0.618],[0.446,0.630]],\"target\":[0.508,0.560],\"confidence\":0.88,\"identity_confidence\":0.95,\"self_center\":[0.413,0.624],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":0.0,\"duration_s\":0.5},\"reason\":\"PIXEL_MOTION_CUE around [0.433, 0.637] matches wrist pitch adjustment (servo 3) on the lower robot. In own view, pitch raised the camera so the beam edge at bottom left shifted out of frame. Switching to overhead view where jaws and beam target are clearly localizable. Recommending forward drive to close distance to the orange beam target.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6765,
+        "completion_tokens": 214,
+        "total_tokens": 6979
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3797.584041953087,
+      "learning": {
+        "sample_count": 8,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 5,
+          "4": 1,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 22,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 3,
+        "pulse": 990
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.442,
+            0.613
+          ],
+          [
+            0.442,
+            0.635
+          ]
+        ],
+        "target": [
+          0.508,
+          0.582
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.415,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": -0.03,
+          "duration_s": 0.5
+        },
+        "reason": "Motion cue matches the lower robot around [0.43, 0.64], confirming self identity. The wrist camera view does not have the beam in sight due to arm orientation and low pitch. In overhead view, the jaw tips and the target beam (plain orange beam on blue pad) are clearly visible. A forward-right adjustment will bring jaws toward the target grasp point.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.4303599374021909,
+              0.6367432150313153
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 117,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "local current-image model predicts reduced alignment error",
+        "visual_error": 0.07823042886243181,
+        "retries": 0,
+        "learning": {
+          "sample_count": 9,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 6,
+            "4": 1,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.442,0.613],[0.442,0.635]],\"target\":[0.508,0.582],\"confidence\":0.78,\"identity_confidence\":0.95,\"self_center\":[0.415,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":-0.03,\"duration_s\":0.5},\"reason\":\"Motion cue matches the lower robot around [0.43, 0.64], confirming self identity. The wrist camera view does not have the beam in sight due to arm orientation and low pitch. In overhead view, the jaw tips and the target beam (plain orange beam on blue pad) are clearly visible. A forward-right adjustment will bring jaws toward the target grasp point.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6753,
+        "completion_tokens": 211,
+        "total_tokens": 6964
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3172.1906249877065,
+      "learning": {
+        "sample_count": 9,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 6,
+          "4": 1,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 23,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 3,
+        "pulse": 1040
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.443,
+            0.618
+          ],
+          [
+            0.443,
+            0.635
+          ]
+        ],
+        "target": [
+          0.508,
+          0.575
+        ],
+        "confidence": 0.88,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.415,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": 0.0,
+          "duration_s": 0.5
+        },
+        "reason": "PIXEL_MOTION_CUE around [0.429, 0.637] matches prior wrist pitch action on the lower robot. Jaws are open facing the southern portion of the orange beam. Advancing forward to bring jaws to beam grasp target.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.4287949921752739,
+              0.6367432150313153
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 142,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "local current-image model predicts reduced alignment error",
+        "visual_error": 0.08292918665946272,
+        "retries": 0,
+        "learning": {
+          "sample_count": 10,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 7,
+            "4": 1,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.443,0.618],[0.443,0.635]],\"target\":[0.508,0.575],\"confidence\":0.88,\"identity_confidence\":0.95,\"self_center\":[0.415,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":0.0,\"duration_s\":0.5},\"reason\":\"PIXEL_MOTION_CUE around [0.429, 0.637] matches prior wrist pitch action on the lower robot. Jaws are open facing the southern portion of the orange beam. Advancing forward to bring jaws to beam grasp target.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6748,
+        "completion_tokens": 186,
+        "total_tokens": 6934
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3341.2503749132156,
+      "learning": {
+        "sample_count": 10,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 7,
+          "4": 1,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 24,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 3,
+        "pulse": 940
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.444,
+            0.619
+          ],
+          [
+            0.446,
+            0.636
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.88,
+        "self_center": [
+          0.414,
+          0.624
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": -0.03,
+          "duration_s": 0.5
+        },
+        "reason": "The robot near [0.414, 0.624] matches motion cues from recent arm adjustments. The wrist camera view does not see the orange beam, but overhead clearly shows the robot facing slightly south of the beam target point. Proposing a slight forward and right-turning drive to align with the southern section of the plain orange beam.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.431924882629108,
+              0.6388308977035491
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 81,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "isolated small joint probe for a state-local motion model",
+        "visual_error": 0.09233228037907429,
+        "retries": 0,
+        "learning": {
+          "sample_count": 11,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 8,
+            "4": 1,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.444,0.619],[0.446,0.636]],\"target\":[0.508,0.560],\"confidence\":0.78,\"identity_confidence\":0.88,\"self_center\":[0.414,0.624],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":-0.03,\"duration_s\":0.5},\"reason\":\"The robot near [0.414, 0.624] matches motion cues from recent arm adjustments. The wrist camera view does not see the orange beam, but overhead clearly shows the robot facing slightly south of the beam target point. Proposing a slight forward and right-turning drive to align with the southern section of the plain orange beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6738,
+        "completion_tokens": 205,
+        "total_tokens": 6943
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3844.311499968171,
+      "learning": {
+        "sample_count": 11,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 8,
+          "4": 1,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 25,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 3,
+        "pulse": 990
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.439,
+            0.618
+          ],
+          [
+            0.443,
+            0.627
+          ]
+        ],
+        "target": [
+          0.508,
+          0.567
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.92,
+        "self_center": [
+          0.415,
+          0.625
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.06,
+          "turn": -0.03,
+          "duration_s": 0.5
+        },
+        "reason": "The motion cue at [0.429, 0.637] corresponds to the lower robot adjusting wrist pitch (servo 3), matching prior action. Own view shows only dark floor/distant wall, while overhead clearly reveals the robot relative to the lower plain orange beam. Drive forward with slight right turn to approach target.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.4287949921752739,
+              0.6367432150313153
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 221,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "isolated small joint probe for a state-local motion model",
+        "visual_error": 0.08700143676974544,
+        "retries": 0,
+        "learning": {
+          "sample_count": 12,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 9,
+            "4": 1,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.439,0.618],[0.443,0.627]],\"target\":[0.508,0.567],\"confidence\":0.78,\"identity_confidence\":0.92,\"self_center\":[0.415,0.625],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.06,\"turn\":-0.03,\"duration_s\":0.5},\"reason\":\"The motion cue at [0.429, 0.637] corresponds to the lower robot adjusting wrist pitch (servo 3), matching prior action. Own view shows only dark floor/distant wall, while overhead clearly reveals the robot relative to the lower plain orange beam. Drive forward with slight right turn to approach target.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6716,
+        "completion_tokens": 201,
+        "total_tokens": 6917
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3845.5413749907166,
+      "learning": {
+        "sample_count": 12,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 9,
+          "4": 1,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 26,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 4,
+        "pulse": 2320
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.443,
+            0.619
+          ],
+          [
+            0.443,
+            0.638
+          ]
+        ],
+        "target": [
+          0.508,
+          0.565
+        ],
+        "confidence": 0.85,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.414,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": -0.02,
+          "duration_s": 0.6
+        },
+        "reason": "PIXEL_MOTION_CUE and recent arm adjustments confirm this robot is the bottom robot at ~[0.414, 0.627]. The plain orange beam on the blue mat is visible to the east. Target grasp point on beam is around [0.508, 0.565]. Driving forward to close distance.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.4287949921752739,
+              0.6367432150313153
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 149,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "isolated small joint probe for a state-local motion model",
+        "visual_error": 0.09086941179516908,
+        "retries": 0,
+        "learning": {
+          "sample_count": 13,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 1,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.443,0.619],[0.443,0.638]],\"target\":[0.508,0.565],\"confidence\":0.85,\"identity_confidence\":0.95,\"self_center\":[0.414,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":-0.02,\"duration_s\":0.6},\"reason\":\"PIXEL_MOTION_CUE and recent arm adjustments confirm this robot is the bottom robot at ~[0.414, 0.627]. The plain orange beam on the blue mat is visible to the east. Target grasp point on beam is around [0.508, 0.565]. Driving forward to close distance.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6716,
+        "completion_tokens": 207,
+        "total_tokens": 6923
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4355.824541999027,
+      "learning": {
+        "sample_count": 13,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 1,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 27,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 4,
+        "pulse": 2370
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.443,
+            0.619
+          ],
+          [
+            0.443,
+            0.637
+          ]
+        ],
+        "target": [
+          0.508,
+          0.565
+        ],
+        "confidence": 0.85,
+        "identity_confidence": 0.9,
+        "self_center": [
+          0.416,
+          0.626
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.06,
+          "turn": -0.02,
+          "duration_s": 0.4
+        },
+        "reason": "The motion cue anchor matches the lower robot at [0.416, 0.626]. In CURRENT_OWN_VIEW, the beam is out of view (too dark/low), whereas overhead clearly shows the robot facing eastward towards the lower orange beam. Jaws and beam target are clearly localizable in overhead. Proposing a forward approach with slight right adjustment to close distance to the target.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.4287949921752739,
+              0.6367432150313153
+            ],
+            "fresh": false,
+            "age": 1,
+            "changed_pixels": 0,
+            "valid": true,
+            "reason": "retained motion anchor; too few changed pixels"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "isolated small joint probe for a state-local motion model",
+        "visual_error": 0.09052071586106689,
+        "retries": 0,
+        "learning": {
+          "sample_count": 13,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 1,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.443,0.619],[0.443,0.637]],\"target\":[0.508,0.565],\"confidence\":0.85,\"identity_confidence\":0.9,\"self_center\":[0.416,0.626],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.06,\"turn\":-0.02,\"duration_s\":0.4},\"reason\":\"The motion cue anchor matches the lower robot at [0.416, 0.626]. In CURRENT_OWN_VIEW, the beam is out of view (too dark/low), whereas overhead clearly shows the robot facing eastward towards the lower orange beam. Jaws and beam target are clearly localizable in overhead. Proposing a forward approach with slight right adjustment to close distance to the target.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6692,
+        "completion_tokens": 215,
+        "total_tokens": 6907
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3558.7382919620723,
+      "learning": {
+        "sample_count": 13,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 1,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 28,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 4,
+        "pulse": 2320
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.444,
+            0.62
+          ],
+          [
+            0.444,
+            0.648
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.88,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.415,
+          0.625
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": 0.0,
+          "duration_s": 0.5
+        },
+        "reason": "Pixel motion cue at [0.429, 0.637] confirms self is the lower robot. Jaws and beam are clearly visible in overhead view while own view shows only floor and far boundary. Driving forward to approach the beam target.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.4287949921752739,
+              0.6367432150313153
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 212,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "local current-image model predicts reduced alignment error",
+        "visual_error": 0.09783659846908004,
+        "retries": 0,
+        "learning": {
+          "sample_count": 14,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 2,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.444,0.620],[0.444,0.648]],\"target\":[0.508,0.560],\"confidence\":0.88,\"identity_confidence\":0.95,\"self_center\":[0.415,0.625],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":0.0,\"duration_s\":0.5},\"reason\":\"Pixel motion cue at [0.429, 0.637] confirms self is the lower robot. Jaws and beam are clearly visible in overhead view while own view shows only floor and far boundary. Driving forward to approach the beam target.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6692,
+        "completion_tokens": 183,
+        "total_tokens": 6875
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3727.3141250479966,
+      "learning": {
+        "sample_count": 14,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 2,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 29,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 4,
+        "pulse": 2270
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.443,
+            0.618
+          ],
+          [
+            0.443,
+            0.638
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.75,
+        "identity_confidence": 0.9,
+        "self_center": [
+          0.414,
+          0.626
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.06,
+          "turn": 0.0,
+          "duration_s": 0.2
+        },
+        "reason": "Pixel motion cue matches the lower robot at [0.429, 0.637] following elbow/wrist servo movements. The robot's own camera view does not yet show the plain orange beam or gripper clearly, but in overhead view the gripper jaws are visible facing the lower portion of the orange beam on the blue mat. Suggest driving forward slightly to approach target grasp point.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.4287949921752739,
+              0.6367432150313153
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 209,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "local current-image model predicts reduced alignment error",
+        "visual_error": 0.0940691235209513,
+        "retries": 0,
+        "learning": {
+          "sample_count": 15,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 3,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.443,0.618],[0.443,0.638]],\"target\":[0.508,0.560],\"confidence\":0.75,\"identity_confidence\":0.9,\"self_center\":[0.414,0.626],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.06,\"turn\":0.0,\"duration_s\":0.2},\"reason\":\"Pixel motion cue matches the lower robot at [0.429, 0.637] following elbow/wrist servo movements. The robot's own camera view does not yet show the plain orange beam or gripper clearly, but in overhead view the gripper jaws are visible facing the lower portion of the orange beam on the blue mat. Suggest driving forward slightly to approach target grasp point.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6693,
+        "completion_tokens": 209,
+        "total_tokens": 6902
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3774.5168751571327,
+      "learning": {
+        "sample_count": 15,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 3,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 30,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 4,
+        "pulse": 2220
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.443,
+            0.618
+          ],
+          [
+            0.443,
+            0.627
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.75,
+        "identity_confidence": 0.9,
+        "self_center": [
+          0.415,
+          0.624
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": 0.0,
+          "duration_s": 0.5
+        },
+        "reason": "PIXEL_MOTION_CUE [0.428, 0.637] matches the lower robot whose arm moved following elbow servo 4 pulses. In overhead view, this robot's jaws are visible facing east towards the lower orange beam. Proposing forward drive to close the distance.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.42801251956181535,
+              0.6367432150313153
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 170,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "local current-image model predicts reduced alignment error",
+        "visual_error": 0.09017344398435717,
+        "retries": 0,
+        "learning": {
+          "sample_count": 16,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 4,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.443,0.618],[0.443,0.627]],\"target\":[0.508,0.560],\"confidence\":0.75,\"identity_confidence\":0.9,\"self_center\":[0.415,0.624],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":0.0,\"duration_s\":0.5},\"reason\":\"PIXEL_MOTION_CUE [0.428, 0.637] matches the lower robot whose arm moved following elbow servo 4 pulses. In overhead view, this robot's jaws are visible facing east towards the lower orange beam. Proposing forward drive to close the distance.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6694,
+        "completion_tokens": 192,
+        "total_tokens": 6886
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3793.3069160208106,
+      "learning": {
+        "sample_count": 16,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 4,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 31,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 4,
+        "pulse": 2120
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.439,
+            0.619
+          ],
+          [
+            0.439,
+            0.627
+          ]
+        ],
+        "target": [
+          0.507,
+          0.56
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.92,
+        "self_center": [
+          0.415,
+          0.625
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": 0.0,
+          "duration_s": 0.4
+        },
+        "reason": "PIXEL_MOTION_CUE [0.427, 0.637] matches the southern robot's arm movement following servo 4 adjustments. Jaws are visible facing right towards the southern end of the orange beam. Beam is outside own view. Driving forward toward grasp target.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.4272300469483568,
+              0.6367432150313153
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 218,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "isolated small joint probe for a state-local motion model",
+        "visual_error": 0.09269843580125824,
+        "retries": 0,
+        "learning": {
+          "sample_count": 17,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 5,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.439,0.619],[0.439,0.627]],\"target\":[0.507,0.560],\"confidence\":0.78,\"identity_confidence\":0.92,\"self_center\":[0.415,0.625],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":0.0,\"duration_s\":0.4},\"reason\":\"PIXEL_MOTION_CUE [0.427, 0.637] matches the southern robot's arm movement following servo 4 adjustments. Jaws are visible facing right towards the southern end of the orange beam. Beam is outside own view. Driving forward toward grasp target.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6692,
+        "completion_tokens": 192,
+        "total_tokens": 6884
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3005.314250010997,
+      "learning": {
+        "sample_count": 17,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 5,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 32,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 4,
+        "pulse": 2170
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.435,
+            0.618
+          ],
+          [
+            0.435,
+            0.64
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.75,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.415,
+          0.625
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "arm",
+          "servo_id": 4,
+          "pulse": 2020
+        },
+        "reason": "PIXEL_MOTION_CUE matches the lower robot around (0.42, 0.64) moving its arm in response to elbow servo 4 pulses. Own camera is completely dark/uninformative. Tracking overhead view to lower the arm/reach forward towards the lower half of the orange beam.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.4241001564945227,
+              0.6388308977035491
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 313,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "isolated small joint probe for a state-local motion model",
+        "visual_error": 0.10044899203078145,
+        "retries": 0,
+        "learning": {
+          "sample_count": 18,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 6,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.435,0.618],[0.435,0.640]],\"target\":[0.508,0.560],\"confidence\":0.75,\"identity_confidence\":0.95,\"self_center\":[0.415,0.625],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"arm\",\"servo_id\":4,\"pulse\":2020},\"reason\":\"PIXEL_MOTION_CUE matches the lower robot around (0.42, 0.64) moving its arm in response to elbow servo 4 pulses. Own camera is completely dark/uninformative. Tracking overhead view to lower the arm/reach forward towards the lower half of the orange beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6692,
+        "completion_tokens": 186,
+        "total_tokens": 6878
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3018.70704209432,
+      "learning": {
+        "sample_count": 18,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 6,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 33,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 5,
+        "pulse": 1320
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.439,
+            0.618
+          ],
+          [
+            0.44,
+            0.635
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.72,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.414,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": 0.0,
+          "duration_s": 0.4
+        },
+        "reason": "Pixel motion cue at (0.423, 0.637) confirms this robot is the lower vehicle. The beam target is visible ahead on the blue mat in overhead view; driving forward to close distance.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.4225352112676056,
+              0.6367432150313153
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 179,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "isolated small joint probe for a state-local motion model",
+        "visual_error": 0.09546989054146864,
+        "retries": 0,
+        "learning": {
+          "sample_count": 19,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 7,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.439,0.618],[0.440,0.635]],\"target\":[0.508,0.560],\"confidence\":0.72,\"identity_confidence\":0.95,\"self_center\":[0.414,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":0.0,\"duration_s\":0.4},\"reason\":\"Pixel motion cue at (0.423, 0.637) confirms this robot is the lower vehicle. The beam target is visible ahead on the blue mat in overhead view; driving forward to close distance.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6696,
+        "completion_tokens": 176,
+        "total_tokens": 6872
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3011.675207875669,
+      "learning": {
+        "sample_count": 19,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 7,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 34,
+      "robot_id": "r1",
+      "action": {
+        "kind": "drive",
+        "forward": 0.05,
+        "turn": 0.0,
+        "duration_s": 0.4
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": null,
+        "target": [
+          0.508,
+          0.551
+        ],
+        "confidence": 0.75,
+        "identity_confidence": 0.85,
+        "self_center": [
+          0.415,
+          0.625
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": 0.0,
+          "duration_s": 0.5
+        },
+        "reason": "The motion anchor and prior commands match the lower robot near [0.415, 0.625]. Own view is dark/empty and does not show the target beam or jaws. In overhead view, the target orange beam on the blue mat is visible to the right. The robot needs to drive forward towards the beam.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.4225352112676056,
+              0.6367432150313153
+            ],
+            "fresh": false,
+            "age": 1,
+            "changed_pixels": 0,
+            "valid": true,
+            "reason": "retained motion anchor; too few changed pixels"
+          }
+        }
+      },
+      "decision": {
+        "stage": "acquire",
+        "reason": "bounded visual search; landmarks unavailable or uncertain",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 19,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 7,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":null,\"target\":[0.508,0.551],\"confidence\":0.75,\"identity_confidence\":0.85,\"self_center\":[0.415,0.625],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":0.0,\"duration_s\":0.5},\"reason\":\"The motion anchor and prior commands match the lower robot near [0.415, 0.625]. Own view is dark/empty and does not show the target beam or jaws. In overhead view, the target orange beam on the blue mat is visible to the right. The robot needs to drive forward towards the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6698,
+        "completion_tokens": 175,
+        "total_tokens": 6873
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4247.360833920538,
+      "learning": {
+        "sample_count": 19,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 7,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 35,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 5,
+        "pulse": 1370
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.443,
+            0.619
+          ],
+          [
+            0.443,
+            0.635
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.75,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.416,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": -0.02,
+          "duration_s": 0.5
+        },
+        "reason": "Pixel motion cue matches the lower robot, which advanced slightly forward following the previous drive command. Own wrist view is occluded/dark/empty. Overhead view shows the plain orange beam to the right/front. Proposing forward drive to continue approaching the beam.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.41784037558685444,
+              0.6304801670146137
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 455,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "isolated small joint probe for a state-local motion model",
+        "visual_error": 0.09334880824091968,
+        "retries": 0,
+        "learning": {
+          "sample_count": 19,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 7,
+            "5": 1,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.443,0.619],[0.443,0.635]],\"target\":[0.508,0.560],\"confidence\":0.75,\"identity_confidence\":0.95,\"self_center\":[0.416,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":-0.02,\"duration_s\":0.5},\"reason\":\"Pixel motion cue matches the lower robot, which advanced slightly forward following the previous drive command. Own wrist view is occluded/dark/empty. Overhead view shows the plain orange beam to the right/front. Proposing forward drive to continue approaching the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6699,
+        "completion_tokens": 184,
+        "total_tokens": 6883
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 5207.258958136663,
+      "learning": {
+        "sample_count": 19,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 7,
+          "5": 1,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 36,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 5,
+        "pulse": 1270
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.449,
+            0.619
+          ],
+          [
+            0.449,
+            0.647
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.9,
+        "self_center": [
+          0.419,
+          0.625
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "arm",
+          "servo_id": 5,
+          "pulse": 1420
+        },
+        "reason": "Motion cue and prior arm action confirm this robot is the lower one around (0.42, 0.63). Own view shows dark background without target or jaws visible, so overhead view is used. Lowering shoulder further (servo 5) towards the beam grasp target.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.4272300469483568,
+              0.6367432150313153
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 307,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "isolated small joint probe for a state-local motion model",
+        "visual_error": 0.09386160024205849,
+        "retries": 0,
+        "learning": {
+          "sample_count": 20,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 7,
+            "5": 2,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.449,0.619],[0.449,0.647]],\"target\":[0.508,0.560],\"confidence\":0.78,\"identity_confidence\":0.90,\"self_center\":[0.419,0.625],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"arm\",\"servo_id\":5,\"pulse\":1420},\"reason\":\"Motion cue and prior arm action confirm this robot is the lower one around (0.42, 0.63). Own view shows dark background without target or jaws visible, so overhead view is used. Lowering shoulder further (servo 5) towards the beam grasp target.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6702,
+        "completion_tokens": 180,
+        "total_tokens": 6882
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3134.1768328566104,
+      "learning": {
+        "sample_count": 20,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 7,
+          "5": 2,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 37,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 5,
+        "pulse": 1320
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.435,
+            0.614
+          ],
+          [
+            0.443,
+            0.635
+          ]
+        ],
+        "target": [
+          0.508,
+          0.563
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.92,
+        "self_center": [
+          0.415,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": 0.0,
+          "duration_s": 0.4
+        },
+        "reason": "Pixel motion cue matches the southern robot arm/chassis area at (~0.42, 0.64) following own arm servo 5 motion. Own camera view is completely dark/uninformative. Tracking overhead view to align and approach the lower section of the orange beam.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.4241001564945227,
+              0.6367432150313153
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 357,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "isolated small joint probe for a state-local motion model",
+        "visual_error": 0.09242970301802346,
+        "retries": 0,
+        "learning": {
+          "sample_count": 21,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 7,
+            "5": 3,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.435,0.614],[0.443,0.635]],\"target\":[0.508,0.563],\"confidence\":0.78,\"identity_confidence\":0.92,\"self_center\":[0.415,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":0.0,\"duration_s\":0.4},\"reason\":\"Pixel motion cue matches the southern robot arm/chassis area at (~0.42, 0.64) following own arm servo 5 motion. Own camera view is completely dark/uninformative. Tracking overhead view to align and approach the lower section of the orange beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6702,
+        "completion_tokens": 188,
+        "total_tokens": 6890
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4089.1724589746445,
+      "learning": {
+        "sample_count": 21,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 7,
+          "5": 3,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 38,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1550
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.439,
+            0.613
+          ],
+          [
+            0.439,
+            0.638
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.75,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.417,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": 0.0,
+          "duration_s": 0.4
+        },
+        "reason": "PIXEL_MOTION_CUE ([0.424, 0.637]) and own-arm adjustments confirm this robot is the lower rover in overhead view. In wrist view, the beam is not visible yet. In overhead view, the gripper jaws point towards the plain orange beam. Drive forward toward grasp target.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.4241001564945227,
+              0.6367432150313153
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 237,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "isolated small joint probe for a state-local motion model",
+        "visual_error": 0.09513805757949857,
+        "retries": 0,
+        "learning": {
+          "sample_count": 22,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 7,
+            "5": 4,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.439,0.613],[0.439,0.638]],\"target\":[0.508,0.560],\"confidence\":0.75,\"identity_confidence\":0.95,\"self_center\":[0.417,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":0.0,\"duration_s\":0.4},\"reason\":\"PIXEL_MOTION_CUE ([0.424, 0.637]) and own-arm adjustments confirm this robot is the lower rover in overhead view. In wrist view, the beam is not visible yet. In overhead view, the gripper jaws point towards the plain orange beam. Drive forward toward grasp target.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6702,
+        "completion_tokens": 198,
+        "total_tokens": 6900
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3474.515042034909,
+      "learning": {
+        "sample_count": 22,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 7,
+          "5": 4,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 39,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1600
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.439,
+            0.613
+          ],
+          [
+            0.441,
+            0.627
+          ]
+        ],
+        "target": [
+          0.508,
+          0.563
+        ],
+        "confidence": 0.85,
+        "identity_confidence": 0.9,
+        "self_center": [
+          0.417,
+          0.624
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.05,
+          "turn": 0.0,
+          "duration_s": 0.2
+        },
+        "reason": "The robot is visible near [0.417, 0.624] aligned with the lower portion of the orange beam on the blue mat. In CURRENT_OWN_VIEW the beam is not in frame. Jaws are visible in overhead view approaching the target grasp point at [0.508, 0.563]. A small forward drive is suggested to close distance to the beam.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.4241001564945227,
+              0.6367432150313153
+            ],
+            "fresh": false,
+            "age": 1,
+            "changed_pixels": 1,
+            "valid": true,
+            "reason": "retained motion anchor; too few changed pixels"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "isolated small joint probe for a state-local motion model",
+        "visual_error": 0.08872992730753253,
+        "retries": 0,
+        "learning": {
+          "sample_count": 22,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 7,
+            "5": 4,
+            "6": 1
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.439,0.613],[0.441,0.627]],\"target\":[0.508,0.563],\"confidence\":0.85,\"identity_confidence\":0.9,\"self_center\":[0.417,0.624],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.05,\"turn\":0.0,\"duration_s\":0.2},\"reason\":\"The robot is visible near [0.417, 0.624] aligned with the lower portion of the orange beam on the blue mat. In CURRENT_OWN_VIEW the beam is not in frame. Jaws are visible in overhead view approaching the target grasp point at [0.508, 0.563]. A small forward drive is suggested to close distance to the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6699,
+        "completion_tokens": 215,
+        "total_tokens": 6914
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3951.567083830014,
+      "learning": {
+        "sample_count": 22,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 7,
+          "5": 4,
+          "6": 1
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 40,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1550
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.435,
+            0.613
+          ],
+          [
+            0.437,
+            0.627
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.417,
+          0.624
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "look",
+          "pan_pulse": 1650
+        },
+        "reason": "Pixel motion cue confirms r1 is the lower robot near [0.417, 0.624]. Own view is currently dark/occluded with only base frame visible. In overhead view, gripper jaws point right towards the orange beam. Pan further left/adjust gaze to re-acquire beam in wrist view.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.4303599374021909,
+              0.6325678496868476
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 194,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "local current-image model predicts reduced alignment error",
+        "visual_error": 0.09372299611087982,
+        "retries": 0,
+        "learning": {
+          "sample_count": 23,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 7,
+            "5": 4,
+            "6": 2
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.435,0.613],[0.437,0.627]],\"target\":[0.508,0.560],\"confidence\":0.78,\"identity_confidence\":0.95,\"self_center\":[0.417,0.624],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"look\",\"pan_pulse\":1650},\"reason\":\"Pixel motion cue confirms r1 is the lower robot near [0.417, 0.624]. Own view is currently dark/occluded with only base frame visible. In overhead view, gripper jaws point right towards the orange beam. Pan further left/adjust gaze to re-acquire beam in wrist view.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6691,
+        "completion_tokens": 185,
+        "total_tokens": 6876
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3437.4842909164727,
+      "learning": {
+        "sample_count": 23,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 7,
+          "5": 4,
+          "6": 2
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 41,
+      "robot_id": "r1",
+      "action": {
+        "kind": "drive",
+        "forward": 0.05,
+        "turn": 0.05,
+        "duration_s": 0.4
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": null,
+        "target": [
+          0.508,
+          0.565
+        ],
+        "confidence": 0.7,
+        "identity_confidence": 0.9,
+        "self_center": [
+          0.418,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": 0.05,
+          "duration_s": 0.4
+        },
+        "reason": "Pixel motion cue matches the lower robot around (0.43, 0.63). The beam is visible to the right/ahead on the blue mat in overhead view, but not in own view. Driving forward and slightly turning left towards the lower end of the orange beam.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.431924882629108,
+              0.6325678496868476
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 198,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "acquire",
+        "reason": "bounded visual search; landmarks unavailable or uncertain",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 23,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 7,
+            "5": 4,
+            "6": 2
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":null,\"target\":[0.508,0.565],\"confidence\":0.7,\"identity_confidence\":0.9,\"self_center\":[0.418,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":0.05,\"duration_s\":0.4},\"reason\":\"Pixel motion cue matches the lower robot around (0.43, 0.63). The beam is visible to the right/ahead on the blue mat in overhead view, but not in own view. Driving forward and slightly turning left towards the lower end of the orange beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6692,
+        "completion_tokens": 163,
+        "total_tokens": 6855
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3380.659749964252,
+      "learning": {
+        "sample_count": 23,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 7,
+          "5": 4,
+          "6": 2
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 42,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1500
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.439,
+            0.621
+          ],
+          [
+            0.441,
+            0.63
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.418,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.05,
+          "turn": -0.02,
+          "duration_s": 0.3
+        },
+        "reason": "PIXEL_MOTION_CUE and forward+turn drive confirm self is the lower robot near [0.418, 0.627]. The wrist view is completely dark/uninformative, so overhead view is used. Target beam grasp point is on the lower segment of the orange beam around [0.508, 0.560]. Jaws visible on front right of the robot. Proposing drive forward to close distance.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.4225352112676056,
+              0.6283924843423799
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 427,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "local current-image model predicts reduced alignment error",
+        "visual_error": 0.0944153059625397,
+        "retries": 0,
+        "learning": {
+          "sample_count": 23,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 7,
+            "5": 4,
+            "6": 2
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.439,0.621],[0.441,0.630]],\"target\":[0.508,0.560],\"confidence\":0.78,\"identity_confidence\":0.95,\"self_center\":[0.418,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.05,\"turn\":-0.02,\"duration_s\":0.3},\"reason\":\"PIXEL_MOTION_CUE and forward+turn drive confirm self is the lower robot near [0.418, 0.627]. The wrist view is completely dark/uninformative, so overhead view is used. Target beam grasp point is on the lower segment of the orange beam around [0.508, 0.560]. Jaws visible on front right of the robot. Proposing drive forward to close distance.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6713,
+        "completion_tokens": 227,
+        "total_tokens": 6940
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4223.557417048141,
+      "learning": {
+        "sample_count": 23,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 7,
+          "5": 4,
+          "6": 2
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 43,
+      "robot_id": "r1",
+      "action": {
+        "kind": "drive",
+        "forward": 0.05,
+        "turn": 0.0,
+        "duration_s": 0.4
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": null,
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.7,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.418,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": 0.0,
+          "duration_s": 0.5
+        },
+        "reason": "PIXEL_MOTION_CUE [0.432, 0.630] matches the lower robot whose arm rotated slightly towards center following pan_pulse 1500. Own camera view is looking at the floor/wall edge away from target. Overhead view shows this robot positioned south of the beam target. Jaw tips are not clearly distinguishable at this distance. Driving forward to approach the beam.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.431924882629108,
+              0.6304801670146137
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 171,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "acquire",
+        "reason": "bounded visual search; landmarks unavailable or uncertain",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 23,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 7,
+            "5": 4,
+            "6": 2
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":null,\"target\":[0.508,0.560],\"confidence\":0.7,\"identity_confidence\":0.95,\"self_center\":[0.418,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.08,\"turn\":0.0,\"duration_s\":0.5},\"reason\":\"PIXEL_MOTION_CUE [0.432, 0.630] matches the lower robot whose arm rotated slightly towards center following pan_pulse 1500. Own camera view is looking at the floor/wall edge away from target. Overhead view shows this robot positioned south of the beam target. Jaw tips are not clearly distinguishable at this distance. Driving forward to approach the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6686,
+        "completion_tokens": 190,
+        "total_tokens": 6876
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3486.4954580552876,
+      "learning": {
+        "sample_count": 23,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 7,
+          "5": 4,
+          "6": 2
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 44,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1450
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.449,
+            0.618
+          ],
+          [
+            0.449,
+            0.632
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.88,
+        "self_center": [
+          0.42,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.05,
+          "turn": 0.0,
+          "duration_s": 0.4
+        },
+        "reason": "PIXEL_MOTION_CUE at (0.423, 0.628) matches the lower robot, which advanced forward slightly following prior drive command. Wrist view does not see the beam yet (pointing too far forward/empty space). Overhead view clearly shows gripper jaws facing east toward the lower half of the orange beam.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.4225352112676056,
+              0.6283924843423799
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 401,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "local current-image model predicts reduced alignment error",
+        "visual_error": 0.08778382538941894,
+        "retries": 0,
+        "learning": {
+          "sample_count": 23,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 7,
+            "5": 4,
+            "6": 2
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.449,0.618],[0.449,0.632]],\"target\":[0.508,0.560],\"confidence\":0.78,\"identity_confidence\":0.88,\"self_center\":[0.420,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.05,\"turn\":0.0,\"duration_s\":0.4},\"reason\":\"PIXEL_MOTION_CUE at (0.423, 0.628) matches the lower robot, which advanced forward slightly following prior drive command. Wrist view does not see the beam yet (pointing too far forward/empty space). Overhead view clearly shows gripper jaws facing east toward the lower half of the orange beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6709,
+        "completion_tokens": 200,
+        "total_tokens": 6909
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 5159.210917074233,
+      "learning": {
+        "sample_count": 23,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 7,
+          "5": 4,
+          "6": 2
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 45,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1350
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.449,
+            0.627
+          ],
+          [
+            0.449,
+            0.635
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.75,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.42,
+          0.625
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.05,
+          "turn": 0.0,
+          "duration_s": 0.3
+        },
+        "reason": "PIXEL_MOTION_CUE around [0.435, 0.633] matches the lower robot's arm pan motion. The wrist camera view is almost entirely dark/facing floor away from the beam, so overhead view is used. Jaws are visibly protruding eastward towards the southern end of the orange beam. A small forward drive is suggested to close the gap.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.4350547730829421,
+              0.6325678496868476
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 178,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "isolated small joint probe for a state-local motion model",
+        "visual_error": 0.09231467922275413,
+        "retries": 0,
+        "learning": {
+          "sample_count": 24,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 7,
+            "5": 4,
+            "6": 3
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.449,0.627],[0.449,0.635]],\"target\":[0.508,0.560],\"confidence\":0.75,\"identity_confidence\":0.95,\"self_center\":[0.420,0.625],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.05,\"turn\":0.0,\"duration_s\":0.3},\"reason\":\"PIXEL_MOTION_CUE around [0.435, 0.633] matches the lower robot's arm pan motion. The wrist camera view is almost entirely dark/facing floor away from the beam, so overhead view is used. Jaws are visibly protruding eastward towards the southern end of the orange beam. A small forward drive is suggested to close the gap.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6694,
+        "completion_tokens": 210,
+        "total_tokens": 6904
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3051.7041669227183,
+      "learning": {
+        "sample_count": 24,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 7,
+          "5": 4,
+          "6": 3
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 46,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1400
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.439,
+            0.613
+          ],
+          [
+            0.449,
+            0.627
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.88,
+        "self_center": [
+          0.42,
+          0.63
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.05,
+          "turn": 0.02,
+          "duration_s": 0.3
+        },
+        "reason": "PIXEL_MOTION_CUE confirms this robot is the lower one around [0.43, 0.63], matching recent look adjustments. Own camera view is obscured/blank. In overhead view, jaws are visible facing the lower end of the plain orange beam. Proposing forward drive with slight left turn to approach target grasp point on beam.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.431924882629108,
+              0.6346555323590815
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 267,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "isolated small joint probe for a state-local motion model",
+        "visual_error": 0.0877268487978452,
+        "retries": 0,
+        "learning": {
+          "sample_count": 25,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 7,
+            "5": 4,
+            "6": 4
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.439,0.613],[0.449,0.627]],\"target\":[0.508,0.560],\"confidence\":0.78,\"identity_confidence\":0.88,\"self_center\":[0.420,0.630],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.05,\"turn\":0.02,\"duration_s\":0.3},\"reason\":\"PIXEL_MOTION_CUE confirms this robot is the lower one around [0.43, 0.63], matching recent look adjustments. Own camera view is obscured/blank. In overhead view, jaws are visible facing the lower end of the plain orange beam. Proposing forward drive with slight left turn to approach target grasp point on beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6701,
+        "completion_tokens": 204,
+        "total_tokens": 6905
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3221.662333002314,
+      "learning": {
+        "sample_count": 25,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 7,
+          "5": 4,
+          "6": 4
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 47,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 3,
+        "pulse": 990
+      },
+      "active": true,
+      "observation": {
+        "view": "overhead",
+        "jaws": [
+          [
+            0.446,
+            0.627
+          ],
+          [
+            0.442,
+            0.64
+          ]
+        ],
+        "target": [
+          0.508,
+          0.56
+        ],
+        "confidence": 0.78,
+        "identity_confidence": 0.85,
+        "self_center": [
+          0.42,
+          0.628
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "drive",
+          "forward": 0.05,
+          "turn": 0.02,
+          "duration_s": 0.3
+        },
+        "reason": "PIXEL_MOTION_CUE confirms this robot is at the lower position (~[0.43, 0.63]), where small arm panning occurred. Own wrist view remains dark/uninformative. Using overhead view, jaws are visible at roughly [0.446, 0.627] and [0.442, 0.640]. Target is the lower region of the plain orange beam at [0.508, 0.560]. A small forward drive with slight left turn will close the distance towards the beam.",
+        "motion_identity": {
+          "consistent": true,
+          "cue": {
+            "center": [
+              0.433489827856025,
+              0.6346555323590815
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 220,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          }
+        }
+      },
+      "decision": {
+        "stage": "align",
+        "reason": "isolated small joint probe for a state-local motion model",
+        "visual_error": 0.09745896572404196,
+        "retries": 0,
+        "learning": {
+          "sample_count": 25,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 10,
+            "4": 7,
+            "5": 4,
+            "6": 4
+          },
+          "sampled_channels": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.446,0.627],[0.442,0.640]],\"target\":[0.508,0.560],\"confidence\":0.78,\"identity_confidence\":0.85,\"self_center\":[0.420,0.628],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.05,\"turn\":0.02,\"duration_s\":0.3},\"reason\":\"PIXEL_MOTION_CUE confirms this robot is at the lower position (~[0.43, 0.63]), where small arm panning occurred. Own wrist view remains dark/uninformative. Using overhead view, jaws are visible at roughly [0.446, 0.627] and [0.442, 0.640]. Target is the lower region of the plain orange beam at [0.508, 0.560]. A small forward drive with slight left turn will close the distance towards the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6697,
+        "completion_tokens": 253,
+        "total_tokens": 6950
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3858.492167200893,
+      "learning": {
+        "sample_count": 25,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 10,
+          "4": 7,
+          "5": 4,
+          "6": 4
+        },
+        "sampled_channels": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    }
+  ],
+  "rounds_completed": 48,
+  "error": null,
+  "transport_success": null,
+  "grasp_success": false,
+  "success_claim": "evaluated grasp_success=False after 48 fixed rounds; longest qualifying hold 0.0s, max lift -0.000m",
+  "startup_commands": [
+    {
+      "kind": "arm",
+      "servo_id": 1,
+      "pulse": 2000
+    },
+    {
+      "kind": "arm",
+      "servo_id": 3,
+      "pulse": 740
+    },
+    {
+      "kind": "arm",
+      "servo_id": 4,
+      "pulse": 2320
+    },
+    {
+      "kind": "arm",
+      "servo_id": 5,
+      "pulse": 1320
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 1500
+    }
+  ],
+  "longest_qualifying_duration_s": 0.0,
+  "max_lift_m": -4.9e-05,
+  "sample_count": 480,
+  "wall_elapsed_s": 222.587,
+  "last_responses": {
+    "r1": {
+      "response": "```json\n{\"view\":\"overhead\",\"jaws\":[[0.446,0.627],[0.442,0.640]],\"target\":[0.508,0.560],\"confidence\":0.78,\"identity_confidence\":0.85,\"self_center\":[0.420,0.628],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"drive\",\"forward\":0.05,\"turn\":0.02,\"duration_s\":0.3},\"reason\":\"PIXEL_MOTION_CUE confirms this robot is at the lower position (~[0.43, 0.63]), where small arm panning occurred. Own wrist view remains dark/uninformative. Using overhead view, jaws are visible at roughly [0.446, 0.627] and [0.442, 0.640]. Target is the lower region of the plain orange beam at [0.508, 0.560]. A small forward drive with slight left turn will close the distance towards the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 6697,
+        "completion_tokens": 253,
+        "total_tokens": 6950
+      }
+    }
+  },
+  "files": {
+    "evaluation-only.jsonl": "52b69dfa633b9912b6992978cca2eb204487f40f882bec480d50ceeb9c8dd17f",
+    "motion.mp4": "042ea9f4ae9255780ff723525575aef9c85b096750b4f788f744327c5d90bdb9",
+    "progress.json": "9c00ae7e006fc3b1ad9c020dc538eac1a0fa4928673a9a4000b48f00409a77ce",
+    "r1/031-own.jpg": "4bf59a78af9d9f976191d491af5ca159dca905d602b19d67481ba203fdf44b82",
+    "r1/021-own.jpg": "8e4e8d5b91a2b208012c45bbc4c5a244f824d3944a86d4bee2575b0f20bd5ac5",
+    "r1/038-overhead.jpg": "a1e7722b4e3a1e8ac8a62f8948ad212534603edb39c6c66ce09e1545a2181daa",
+    "r1/wire-041.json": "5f2eaad948cca525357407378037c0ac63ea0a8a87b484a06d36aa5232192d4d",
+    "r1/wire-016.json": "4b8f507100cd9e2d9ae914a7b041960073e755b0ac8c494adcaddceb1d2d364c",
+    "r1/043-own.jpg": "dd48113657570e6b6e1b9b8da3043bb4ae6c38b83de1e5e6bd8673252e1973e8",
+    "r1/028-own.jpg": "930bd4090785e88834eb7564ea3219c05d32b9917d2b93bde3ddeb3cc2c0fdda",
+    "r1/038-own.jpg": "dccb489e99d293b489b7e06e34628bb410b8cc4c4dea9855388bc73aa3e2a39c",
+    "r1/009-overhead.jpg": "a05b2c3ff88a3f43f7ef7f9aeaf1f0a3f919cadf5a42b4b47425f0259fd30c83",
+    "r1/wire-036.json": "ebf0dae46ffa80cef03a9f4b98658009477c1cd1c8bd934fe891032a49dc073f",
+    "r1/wire-020.json": "14cd872935e4d0ba6ff161a002f032d1d5ce545d4ea1733cc9bad83c470c4657",
+    "r1/017-own.jpg": "616ac5023e0c48b68538dabe9cd532eae12382dfa70f6fb3d862d9c47e644d2e",
+    "r1/007-own.jpg": "3b8e76b40059768da78ea81b44174e4cfa77c233e75717f585370e80a7d263b5",
+    "r1/wire-021.json": "9568dda55bab6c382f4de7dda48c8e1846c8183781442280e80b54dcff31bef0",
+    "r1/wire-037.json": "a8a0e22afca4ed9964407c4a7d852bedfd5fadd2532b277eb389dfefa7cfd955",
+    "r1/039-own.jpg": "d1503e4110a164b73506c302974841e993ab01abbdc37a643d4e40cc9a0b4af4",
+    "r1/029-own.jpg": "ee198444922554bf5ff81c9fdc0b272ec1d34e9a3a7fdab7fe65263c5af73451",
+    "r1/039-overhead.jpg": "c12396c8fe69945cf5526ba3b9e14454c878f170d29efdd4d2e352b342a5ebb1",
+    "r1/006-own.jpg": "5039c4c0a5415e61e7768ce2504593a84bb6bfcf9be1cc5c7b2b0718b9d4b53f",
+    "r1/016-own.jpg": "2f1fb32a42c49c8f72a4b3223e461ee7ef9061b3b2c20eb1b94ad624cd120968",
+    "r1/008-overhead.jpg": "b6b8d955e784a441dd3120588a865d09ac633b868351b381d36bc2b8302543ec",
+    "r1/020-own.jpg": "a059201ff37a5ee2d3cba53ab947cd336d65404480fb891c4be7cf740b9d9da7",
+    "r1/030-own.jpg": "52ab198e76e0a154823217c8bf85052bcb996a83ef7eaa6becb985d1fe52ac54",
+    "r1/042-own.jpg": "90a5069f2c6c2b3186d9f3bcf593621bb72dade2a544f54e4b244a7c2426586a",
+    "r1/wire-017.json": "35380e2173b032e6c67d41007089d217abc7858605ad6dfd2ceb115cd8ee4ba5",
+    "r1/wire-040.json": "075e6fefb9759b3502dac7bab6843349096a6501ccd9eb942e4df9d24ca6b4dc",
+    "r1/wire-001.json": "16587285b9c3cbbf1c1d0ffa6fb6bbc3d4ce52939adedbd0e0d103fe3005f63d",
+    "r1/010-overhead.jpg": "32e08116273c140f30073d502ee06690a17dca81d130b9e25645e1ed943f98e0",
+    "r1/045-overhead.jpg": "85336388b512ce86fee45e7b4c2a148b6a4df2c5c2bc8bd5d67f034f17831e5e",
+    "r1/017-overhead.jpg": "a39b0b5f9b0b2a0858d684eaf9943d06316e720c0ac6beb6714dcd3b55ec751b",
+    "r1/042-overhead.jpg": "703df8695ce984c6c48c434a3480d229a70deb73df9d019e1d101b866e1c906d",
+    "r1/014-own.jpg": "9fe04b521a5937093b7ea183d617d40e4855d34ac323b5262d12499dc4f6061f",
+    "r1/004-own.jpg": "29ba03c94dc1dfa71e0ccb091327b67ae90b1ea409424aa044a91ae118a0247f",
+    "r1/002-overhead.jpg": "dd69c9e28a78dd014a9aaff9c95a2caeee85669c939e18e3c3232746a0094a2a",
+    "r1/wire-030.json": "95bcbacdfd1e2f3182114472318f94e7dde784b7599e9e6ad5eeb7e08091db2a",
+    "r1/005-overhead.jpg": "a61a80784449b486cf865043a58ea6bc15ac4ab926778d4ba61a490d09639d32",
+    "r1/wire-026.json": "83ac94c93b804273f4e0365bbd964322c9f6adbb3c26e23f5deed3b972b738dc",
+    "r1/040-own.jpg": "b9915ad83794525961c48867ad0d8a0acf6bb4dc9a381a04d807b9387a0e885f",
+    "r1/wire-006.json": "87704e7cead3fc19bf2d519581c836397eb4e41d1c2224746164095e4f50bfd4",
+    "r1/033-overhead.jpg": "fbe57c7e2ae5967efa70c8d0fd2c3e3e90a3c0be9f8c01e6a35e30a70b0bc84a",
+    "r1/034-overhead.jpg": "099f5bcfa46070ba57b2fb47cadc3c7223a4f0f098730c78d68f41b7dc52cc12",
+    "r1/wire-047.json": "922c2aeb5abf60cd543283da0564a35fb87437c5cd1232a722157fa5062dbbef",
+    "r1/wire-010.json": "a071f3db1b5db508bf6464f645b1588cac155916d1aa46c6239c76dc2336c78b",
+    "r1/032-own.jpg": "756cfc21763e2a3b066ee09c358c209d3996fdb1bf4b02a4f56e05a03311234a",
+    "r1/022-own.jpg": "61958c0d57ee2e64ad272e5d45eeef915c7dd62ee7bc07c006023806c538fd18",
+    "r1/021-overhead.jpg": "5c236fa0d3042cb8075fe84e9dde2cdc0e69e1f48105bb4b0fbd08ef096945b8",
+    "r1/026-overhead.jpg": "22b31bb12827e20f10ca59d822d9690b3f1da4232c75c300d858930521513c44",
+    "r1/004-overhead.jpg": "fbf3a1e63cfe1ed2b5adb5a44fce8468c7e06ec35c45902e84290491c537f455",
+    "r1/003-overhead.jpg": "a30f3691357488e4b85da6c2fd9b0f8c5a9e1c575b3edb5e573e15fe23c416d7",
+    "r1/041-own.jpg": "d1503e4110a164b73506c302974841e993ab01abbdc37a643d4e40cc9a0b4af4",
+    "r1/023-own.jpg": "0d92fcb97c7e8f055994bbd901a0c24185895cf43b05b7effd7ceeab6f2f5b8f",
+    "r1/033-own.jpg": "af49306258a76b95fd2e353023b038b8834de41d090416e8a5feb504f0bb21ce",
+    "r1/043-overhead.jpg": "092ec332973da35d94a1f2f89bdfbd844e85e8fedbb45401ac0140c1cc78d8d3",
+    "r1/016-overhead.jpg": "df6a40c44f9de1509fad42f352274ac9ad11add5c54d27a175eb66d05663837d",
+    "r1/wire-011.json": "57fa705087d181ac667b67a6166018298bf1b3f3eec72aa63bcc50ec1f45dd5d",
+    "r1/044-overhead.jpg": "ad2cfbfd9cea8f00b083eaab98510a1b13eadbe7ef3f9a67c5da13215780b914",
+    "r1/011-overhead.jpg": "b6c44955b7d6f093f57777455d46f33681c551e9d2f852c6db724659a07138eb",
+    "r1/wire-046.json": "41a247171fce1beb4d205a0d58c1bca6a1c069d9a448471c7d06b1fa57eee3e1",
+    "r1/wire-007.json": "d636bdc0edfb46b202d603629387a292e77f76a5d1f1cf03b67e67f35051942f",
+    "r1/027-overhead.jpg": "22b31bb12827e20f10ca59d822d9690b3f1da4232c75c300d858930521513c44",
+    "r1/wire-027.json": "f344da0b9e63e4cffc655e7ca925caf6f2a9252fe993756a0a2c7c3e9f0be08d",
+    "r1/020-overhead.jpg": "35f3222eb05f1af4504eba1c388bcd7ccee067b64ae925c18bd4125a65520db1",
+    "r1/wire-031.json": "ad35745d20d1f64a7f75c30dcf54ae43f1ff95f9e7ff2ac9e78a6e641d1315b4",
+    "r1/035-overhead.jpg": "6308a8eed35209f2f709905799b3e8ec243ec19a3e0fbdec875565d59b3b0c05",
+    "r1/005-own.jpg": "63fa289469c7686adbd90711825da519212db1ecb0458770eaa5e4a38aae6771",
+    "r1/032-overhead.jpg": "9367cd16104a546ca3eb77e76fa0a9098636b3b79676d0c7f4017e62ef5020e7",
+    "r1/015-own.jpg": "2b21c85970233e6b0f0c3123719c9843e2c776ca1f942282702a17a9554a26fc",
+    "r1/wire-024.json": "6340f471bb05b4bdb20a212ab8e4e2adf29ea8b521366f69be9f5186cda7bc34",
+    "r1/010-own.jpg": "3a43053c12e5663e5a82dc7d4a6ba6520db62ba7acfc3b35027e57f35e506724",
+    "r1/000-own.jpg": "f9cf6daebdb2ac980750002d732e84746cb25b5e714d67d9d2bead83a920377e",
+    "r1/wire-032.json": "f57712c2e4b9500693e35ec4ef2c885d9fb7b65e8fdb6ee84005b92583b768b1",
+    "r1/001-overhead.jpg": "a5f3ed0d60bdccb80a1074adc3ae33f492689306b82f94c37024029b7ea74070",
+    "r1/006-overhead.jpg": "e0c15fc44a7f1766ac09cf2f58dbe5da7f59fb26722343d2e90473c607e08661",
+    "r1/013-overhead.jpg": "d6c15191405f522dfceea79aeeb95f9835e282252f9288f6a887d53c05e0d2b2",
+    "r1/046-overhead.jpg": "41fe5ed513f4520ac828c3738542fc0b406e8e6566554f2ef9c67076732d1188",
+    "r1/014-overhead.jpg": "b714560263ac6ae16073e8fcf269108f516bc59c60e46c1bbc794433c64ddded",
+    "r1/041-overhead.jpg": "5890bafb951f2b78dafe6457dd10457a05e7f04cf0e0220ab69bdb1d7ff57d14",
+    "r1/wire-008.json": "d393650a917cfae4386470613a6ef3689e70faea66fd1bf4d9bb3ea199fda17d",
+    "r1/wire-028.json": "0af3f39afe9a1451bfdbdd2ee1877ba952b04c7dabdfed2f1aff2ff9541a37c1",
+    "r1/022-overhead.jpg": "82483b04520148e73d2d5de5d46a1b23d2a7052ebadfc66d9cc0eb0d5dd6678c",
+    "r1/025-overhead.jpg": "37ffe6126fa922575e63cbf3d3a1e8a031e3040bb620a4d691b8ea1e12649558",
+    "r1/009-own.jpg": "726dc822ddba588f4446a076283081231ecd194ebcad27c30a15ad4f92a657be",
+    "r1/019-own.jpg": "c588e5d4e54a74c4f5ae575571be89989532556b2993557c7b056a0cbefe191a",
+    "r1/wire-012.json": "a5e06dedf109a8f8cbe0e25b4ea03807ba300930859ca899ddf03d1efd6c6a93",
+    "r1/wire-045.json": "b592bd69a7242ff03f013ebbf2a81c5417ce79b0dc2ff99f77ffe307ae840fe8",
+    "r1/044-own.jpg": "6272d39304b1a99d7c9f6d31bff5a246c27e94bb22d7c2c80083e651b668b0f6",
+    "r1/036-own.jpg": "e986bdaa6fb2f041ad804951d24c8a7ba2ab8d18baf9e9cbc96806e3bbb6f6e5",
+    "r1/026-own.jpg": "e4457f6da0835534c06bee71bb530f08c65891a2b6cd8fedf5b9160cadc8684c",
+    "r1/030-overhead.jpg": "18c856246ac668b67881cedc75a6e2f415f0742e573a1330a02fc91692298a2a",
+    "r1/wire-004.json": "1570c9b0513d180a06ab0375dcbcf57b79bbb2876ba30c6800f3c3e4a287867b",
+    "r1/037-overhead.jpg": "277d52ec7a64c61ec02b8336a7d2442fb39853736018e859744010dcfb016e5a",
+    "r1/wire-005.json": "21c653c1e8e313485330da5b162018dedb4b13aaea78e102ec32b6e850dada66",
+    "r1/wire-044.json": "97aa1d681d6f63a92b52403bf71c0c3a66064f0b09c9c8e2577768bcb5430c6a",
+    "r1/040-overhead.jpg": "628ea9dd4f2509571934e5c359bef32f6a45f028966e6fe69420a9a3ecc6b9d1",
+    "r1/015-overhead.jpg": "c7a6567cfea356ee0f4aa0092f9d919e5df40bde2ac6069d69c95b595b8dbfd7",
+    "r1/018-own.jpg": "8a3ba596aae351e858b8457849d91b9a9350863280901bf6ef352d716733c4a2",
+    "r1/008-own.jpg": "ee3d74f7508c68de7c192106dbd96262a7423bb1248b20e2414de45f184c0fc5",
+    "r1/wire-013.json": "cc43121cd6c685f68c61fc177f15bee8ed61241d30475b1560346b387137b2ee",
+    "r1/047-overhead.jpg": "05e3fe0e3550997662726d9159aaf9ef8463d3198d3d48c2f79de7fd5d60c602",
+    "r1/012-overhead.jpg": "0b1a55d1b9d175cbc4de303b12b4db93091d6f2a520c938b902f04613eaec585",
+    "r1/045-own.jpg": "35ca251c9dd69e2c4e89db6cb43fd3c2f67e05c4eee28767fd74290e7e7460e5",
+    "r1/wire-029.json": "baf2507f8bf2c451e69b11ac3cb58a3374ed813846842aed41d8086f18bb4121",
+    "r1/007-overhead.jpg": "0098819311d4da160384014460b26f9f81518e22321c56ae09377df29c539ff8",
+    "r1/027-own.jpg": "0962ad5b44019f905e27fcd1f187e55a2f8153ebc2fc1f9043e7d74e948f867a",
+    "r1/037-own.jpg": "be924cca7d60374caee9098f7f0ef60c7c1d708cf75392c098e36628bde62547",
+    "r1/000-overhead.jpg": "43ace239491466d063aaeaadec9803e59c3c9b6f75283798fa8a98ad5300a56e",
+    "r1/wire-009.json": "605548112d8df0909c56d9b0199835164a48c550347251fc4c7e268692af4cfd",
+    "r1/001-own.jpg": "490f54c785dceb4ca7f528f3b751e47fba18d2cf3e941625551f92587278d5fe",
+    "r1/011-own.jpg": "7c7f7f4d054438f35d23597c4be8521002692176fc27ed42eb351c14bd7da08b",
+    "r1/036-overhead.jpg": "ad3491e1fd9639a8cad4e06a2a4483fb9916eef051449cdb44d4dede3c3ef82f",
+    "r1/wire-048.json": "3211814c2f71af22db72acf37d7096cae3f7402fbff83d39495dec5e2e2d20dd",
+    "r1/031-overhead.jpg": "03a06d84d4535870e21fecf2459ab16210cc6f988e9acadd9aa2339c1b4e4bb2",
+    "r1/wire-033.json": "abe5763f95d2646786f209e499c574f4832338e55e176276a1ecfc124d759d57",
+    "r1/024-overhead.jpg": "e2eed3d93bc2aeacaa20aeaf15dc0a7ca61b20129b1ec04a3044c33fd4f137c6",
+    "r1/wire-025.json": "f7f66940a94252a98acfcdc9379a24086ee138c2d5aec59e03b5b9d7de0427b4",
+    "r1/023-overhead.jpg": "5bd94b93e5df99b895cefef70a8cbfdae3a27f4fa3e0a66592b0923563add20f",
+    "r1/029-overhead.jpg": "c420496bbd0cf0856fb2da75fc52d6d2686f867ba8f67f74d92b7973d0a97545",
+    "r1/wire-038.json": "b9b49d7fc9f91a38ccb13530fdec0bc072054952d48d50a87211a9a111c9b67d",
+    "r1/wire-014.json": "fcb112f39bf9a5935e4a4e881491066b365a70d595f9af53d1bf0a22a7ece024",
+    "r1/wire-043.json": "5acd6c8e02c71c6f06bda08dfa642803ea6211d6102296d25c1bc767ae39fdc2",
+    "r1/035-own.jpg": "574325802c82cbe304eefcb420b1828e024b4af7052cc3e8e2ed66a0e936b0a4",
+    "r1/025-own.jpg": "c7178b1e2b5b0a6d5f790e6ac2fec11a1520bff46b17d44f8c562af11c6aca18",
+    "r1/047-own.jpg": "88f87d0a584350dcb02bfb0ca45071044f95320958e7686f6a69d26f7bd7007a",
+    "r1/wire-002.json": "f49cb59222f8e8c428b51392f61078fd5f5b06c40aeccfe141cbf2a2fe2f9194",
+    "r1/wire-022.json": "38ed90df3c789b86f560e98378dcab36ed6b17d59a902cc828acb98cce044261",
+    "r1/013-own.jpg": "72f3d1754dfbb9723c26a880d91f6c5f1b4385bfdfd0696715b25f7529ce89bc",
+    "r1/003-own.jpg": "8e7ebffcd1eaf0d445904d59716072c66bfc5470e15a6e68d8e090d615130daa",
+    "r1/wire-034.json": "a6a39a80a3687fe1bee76598ddfe895832b9a47556e3a8b26268ba97dce92211",
+    "r1/wire-018.json": "93c45166be9379ec7fc7a192219747c4faafacc39276fe6d2c7e95e73b8ee0ce",
+    "r1/018-overhead.jpg": "a0ed288d42222b1ab8d82fff1f82473760ecee73a6d15b2119ef9426914fc8e2",
+    "r1/002-own.jpg": "b674c575bea3d25e5503454cd1c469c0e1443db599f7a07f7dac33055a1ab742",
+    "r1/012-own.jpg": "0bf3b6799d8d55a169d099d5eaee9c358aa9c87bd9f3e7681362869edbfafb3b",
+    "r1/wire-019.json": "f170eff648e2a1b851370d5a5dba98dd3899fc97a4040223be797f9a82da37c4",
+    "r1/wire-035.json": "d1feae8ccc0ea77bca9175b3e9cacede9839851fbaf358438ffc2d3884c7bc4d",
+    "r1/wire-023.json": "953ea3383569b400e45cf202949b56729e8f0e7eddfa2198d56db4501490be46",
+    "r1/028-overhead.jpg": "0f2662095d849eae38921aadaf8155fe62092be1985949198b07a347fb819dd4",
+    "r1/wire-003.json": "15616036ecd871bd84cb2efdb0d57b7be161e651ae6f691a4a2a002ba8db2318",
+    "r1/wire-042.json": "9f534c538f8ef38f3e92e7815b229fea204470b0115234bb04c0184c040921ab",
+    "r1/wire-015.json": "540f4b7a0e0ae76fc3e93f722e56eb1895264e1ed84f3ed3f8916b89be284cce",
+    "r1/019-overhead.jpg": "01d6ec47109a2921af814870ab378448f059650ec08d0bc99318f0ca48379847",
+    "r1/024-own.jpg": "88e7f7f8899d81f2b63e950356d823548cd730297ee7b15dd9a3c9696163f670",
+    "r1/034-own.jpg": "088b3a1933f7668afa1058742f2db29c877e9e0b34c883550f476dee6bf26a52",
+    "r1/wire-039.json": "45c538eb5f79601f495c52b103a122ca6e45ceadf3cd33820e09c58d3aa2d3cf",
+    "r1/046-own.jpg": "26c9f8281cef85b87766b89d90a3ee3b8738b40119a01c736c2b6a3132229afd"
+  }
+}
