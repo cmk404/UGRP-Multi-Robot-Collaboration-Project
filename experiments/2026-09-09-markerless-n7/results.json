@@ -1,0 +1,219 @@
+{
+  "experiment_id": "2026-09-09-markerless-n7",
+  "configuration": {
+    "purpose": "fixed single-robot seed cohort, no within-cohort tuning or retries",
+    "seeds": [
+      45,
+      46,
+      42,
+      43,
+      44
+    ],
+    "robots": 1,
+    "max_calls": 30,
+    "max_input_tokens": 120000,
+    "seconds": 300,
+    "model": "gemini-3.8-flash",
+    "reasoning_effort": "medium",
+    "request_timeout": 60.0,
+    "sequential": true
+  },
+  "runs": [
+    {
+      "seed": 42,
+      "success": true,
+      "reason": "VISUAL_RELEASE_CONFIRMED",
+      "gates": {
+        "lift": true,
+        "inside_destination": true,
+        "stable": true,
+        "no_attachment_constraint": true,
+        "visual_release": true,
+        "input_budget_verified": true,
+        "call_budget": true,
+        "simulation_budget": true
+      },
+      "calls": 18,
+      "input_tokens": 82023,
+      "simulation_seconds": 195.95000000020895,
+      "recovery_attempts": 0,
+      "automated_checks_passed": true,
+      "manual_review": {
+        "manual_visual_review": true,
+        "nav_frames_reviewed": 18,
+        "video_sample_frames_reviewed": 12,
+        "decoded_frames": 1576,
+        "final_wrist": "inputs/r1/placement-call-0018-wrist.jpg",
+        "finding": "Obstacle bypass and final cyan cargo release inside yellow C floor verified from samples. Not continuous full-video viewing."
+      },
+      "local_artifact_directory": "outputs/markerless-improvement-20260909/n7/solo-42",
+      "artifact_sha256": {
+        "result.json": "5e24c2b28a21380aa82b80e8d1f0639be1de24a3a4fa6073744022864896b161",
+        "run-config.json": "151d32cd138dd7bcde4a0fb1bbd43b3a296e6c8c1f301a2d585c3abe5a7826d9",
+        "control.jsonl": "516506710d22c07ec5643dfdba69e3274cca19f549cc5757fbf118377ebb9253",
+        "llm-decisions.jsonl": "c54c4cc277beb01aac0de167a71ba1acacd6e9fd9a8aa07c901d0b643be793b6",
+        "motion-1x.mp4": "77ac1d6ae2c28abb5ea7c9b185c376fe50c3a1098ad3c30a2bddf5ba772b84d6",
+        "verification.json": "0afd9ad27e6e62841bfffe3e49a7e4117b244581ba477097456682145e0c28a7",
+        "manual-review.json": "fa93ccef0aad2a0f4796ca541d6d3df1cb9e8da4e3da4a48f94839b492411a84"
+      }
+    },
+    {
+      "seed": 43,
+      "success": true,
+      "reason": "VISUAL_RELEASE_CONFIRMED",
+      "gates": {
+        "lift": true,
+        "inside_destination": true,
+        "stable": true,
+        "no_attachment_constraint": true,
+        "visual_release": true,
+        "input_budget_verified": true,
+        "call_budget": true,
+        "simulation_budget": true
+      },
+      "calls": 16,
+      "input_tokens": 73175,
+      "simulation_seconds": 129.75399999989287,
+      "recovery_attempts": 0,
+      "automated_checks_passed": true,
+      "manual_review": {
+        "manual_visual_review": true,
+        "nav_frames_reviewed": 16,
+        "video_sample_frames_reviewed": 12,
+        "decoded_frames": 1047,
+        "final_wrist": "inputs/r1/placement-call-0016-wrist.jpg",
+        "finding": "Obstacle bypass and final cyan cargo release inside green B floor verified from samples. Not continuous full-video viewing."
+      },
+      "local_artifact_directory": "outputs/markerless-improvement-20260909/n7/solo-43",
+      "artifact_sha256": {
+        "result.json": "7680c5c7246325271301c92a48626b13a27d34a944ffa743c6ffde52753c5519",
+        "run-config.json": "cb008ec4690b3711ae41f4452f1720ed26af44454c388b878802c0c8af85e7be",
+        "control.jsonl": "8bb80ecc167bed468ba64530d7b2dda4898e388db2206fd3bc1113e3a7dc88f8",
+        "llm-decisions.jsonl": "6294bb88c36c71ec843fcfebbdc0865225be4ff2c9c6b7d5ee639be4e62198b6",
+        "motion-1x.mp4": "547ad76bdfb9a55ffce75f3d22f0280564f67abef283194b8a39efa5ed5919fb",
+        "verification.json": "8f86c6a97d5c2ff2dde9c57042af6c1da684bd77bf4a5d33d0084c25d84d4730",
+        "manual-review.json": "d23a42dcec41937f757f73d4746283cf1a23f7811680c4fd9871e7db322aeccd"
+      }
+    },
+    {
+      "seed": 44,
+      "success": true,
+      "reason": "VISUAL_RELEASE_CONFIRMED",
+      "gates": {
+        "lift": true,
+        "inside_destination": true,
+        "stable": true,
+        "no_attachment_constraint": true,
+        "visual_release": true,
+        "input_budget_verified": true,
+        "call_budget": true,
+        "simulation_budget": true
+      },
+      "calls": 15,
+      "input_tokens": 68011,
+      "simulation_seconds": 177.83600000012245,
+      "recovery_attempts": 0,
+      "automated_checks_passed": true,
+      "manual_review": {
+        "manual_visual_review": true,
+        "nav_frames_reviewed": 15,
+        "video_sample_frames_reviewed": 12,
+        "decoded_frames": 1431,
+        "final_wrist": "inputs/r1/placement-call-0015-wrist.jpg",
+        "finding": "Obstacle bypass and final cyan cargo release inside yellow C floor verified from samples. Not continuous full-video viewing."
+      },
+      "local_artifact_directory": "outputs/markerless-improvement-20260909/n7/solo-44",
+      "artifact_sha256": {
+        "result.json": "ce45a5548adb817683cdc71cf5b5d000ead8f255fbbb9cde57b8f449edfeed6d",
+        "run-config.json": "89ecdae8946b187dacfc2ab9d3957b972cadc374f23d915ed70d8d0dc9a96bf8",
+        "control.jsonl": "096913f2523ce7bd44b8e66a975217e90e4bba9a7dd821065e27456401c387d8",
+        "llm-decisions.jsonl": "8cbeb9e7c1701c13f0582aa527be6f3c03f94e1bbf24faa88f55e643585f31d6",
+        "motion-1x.mp4": "d616b472d3adf9fda8feff322214e2571a3907eccc647d6bc0dea3abf76943ed",
+        "verification.json": "001c439d43e089c26b4d1172f86b3aed934edebe2dcc5e457d617aa2b674f49b",
+        "manual-review.json": "53a4d7a717ef9596d836c8166f85f916f6f08cdeae3e6f8ba5e47e7d6bcfac19"
+      }
+    },
+    {
+      "seed": 45,
+      "success": true,
+      "reason": "VISUAL_RELEASE_CONFIRMED",
+      "gates": {
+        "lift": true,
+        "inside_destination": true,
+        "stable": true,
+        "no_attachment_constraint": true,
+        "visual_release": true,
+        "input_budget_verified": true,
+        "call_budget": true,
+        "simulation_budget": true
+      },
+      "calls": 21,
+      "input_tokens": 98676,
+      "simulation_seconds": 217.37800000031126,
+      "recovery_attempts": 0,
+      "automated_checks_passed": true,
+      "manual_review": {
+        "manual_visual_review": true,
+        "nav_frames_reviewed": 21,
+        "video_sample_frames_reviewed": 12,
+        "decoded_frames": 1748,
+        "final_wrist": "inputs/r1/placement-call-0021-wrist.jpg",
+        "finding": "Obstacle bypass and final cyan cargo release inside blue A floor verified from samples. Not continuous full-video viewing."
+      },
+      "local_artifact_directory": "outputs/markerless-improvement-20260909/n7/solo-45",
+      "artifact_sha256": {
+        "result.json": "70065862ca992fb874c7c0ed902c4c3a7b9941918ac84417e9427b56daf00fce",
+        "run-config.json": "f93125b6fd803021a67acb29d7a62a3ecb736dd7b179529851de09eefdc6ffca",
+        "control.jsonl": "66d13f2d74166d7ce433441eceffd6d73d856e25898ee7d4e10f1f87864ae6c4",
+        "llm-decisions.jsonl": "1ff87dcc5d53c7a7d14234e84465723da3c746d897b30c1b0a83da62746cd408",
+        "motion-1x.mp4": "35426e3e9d3585f60891b45b783d35128f05f77dbd5eee5431cad854a91fe1c1",
+        "verification.json": "4713da3573f6ff30ab9fb80ff4f7397c4254040a652700a30ccdedf98b000d01",
+        "manual-review.json": "5c1c287ace0161198657a4a19adba7b6c389117e82e9f81092203a2b32ac02d3"
+      }
+    },
+    {
+      "seed": 46,
+      "success": true,
+      "reason": "VISUAL_RELEASE_CONFIRMED",
+      "gates": {
+        "lift": true,
+        "inside_destination": true,
+        "stable": true,
+        "no_attachment_constraint": true,
+        "visual_release": true,
+        "input_budget_verified": true,
+        "call_budget": true,
+        "simulation_budget": true
+      },
+      "calls": 18,
+      "input_tokens": 83325,
+      "simulation_seconds": 138.5339999999348,
+      "recovery_attempts": 0,
+      "automated_checks_passed": true,
+      "manual_review": {
+        "manual_visual_review": true,
+        "nav_frames_reviewed": 18,
+        "video_sample_frames_reviewed": 12,
+        "decoded_frames": 1117,
+        "final_wrist": "inputs/r1/placement-call-0018-wrist.jpg",
+        "finding": "Obstacle bypass and final cyan cargo release inside green B floor verified from samples. Not continuous full-video viewing."
+      },
+      "local_artifact_directory": "outputs/markerless-improvement-20260909/n7/solo-46",
+      "artifact_sha256": {
+        "result.json": "d56e3ee42b018b2f3191d7283b4d4d18cb19c680aa9826cdd3f9de7e3bc15c83",
+        "run-config.json": "5f50fcbfab02dfe6d384a6357c2b6a432d085553d5c18ca97bb5e71b43a6fd4d",
+        "control.jsonl": "c27a00e445571531df4f5547def93c4c43455631f17094df425e752a50097496",
+        "llm-decisions.jsonl": "d0befa88ddd3abe0efca65c936bd020dd83370a6b8b6d23f8019daf39ec699ac",
+        "motion-1x.mp4": "a8c0c05cdbbd2dffb8d4d10aabe58181bb91b671b799a7e548bf3c0ba04e8487",
+        "verification.json": "1f3ca1a6b500f9e96f7dd8fb6fd8fb9e6939b20105ac1c0848bd97a76b46bafa",
+        "manual-review.json": "0864fea511d042bfb544979739f7e83bf3f73ccc63aa66da1903823b91b622a1"
+      }
+    }
+  ],
+  "limits": [
+    "Five previously tuned simulation seeds, one robot, no communication.",
+    "Not unseen-seed, hardware, or multi-robot collaboration validation.",
+    "Video review sampled 12 chronological frames per run; full decoding is not continuous manual viewing.",
+    "Raw logs/videos remain local at the recorded paths; hashes identify them but do not make them available on GitHub."
+  ]
+}

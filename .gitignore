@@ -6,6 +6,11 @@
 .pytest_cache/
 .venv/
 .venv-*/
+.venv-real-mac
+.venv-sim-worker-mac
+.venv-sim-mac
+.venv-lightning
+.venv-sim
 
 # OS / editor / temporary conflict copies
 .DS_Store
@@ -63,3 +68,11 @@ docs/cursor-history/
 r1-nav-cam-camera-team-seed41.png
 **/.git/
 **/node_modules/
+
+# Local experiment delivery copies; portable test fixtures remain versioned.
+/AGENTS (1).md
+/ugrp_budget_repair_bundle.zip
+/ugrp_budget_repaired_source.zip
+/ugrp_budget_repair_report.md
+/work_diff_check.py
+/작업 증거/
