@@ -12,6 +12,8 @@
 
 ## 시작하기
 
+- [현재 Gemini 구독 프록시 방식과 Ubuntu 연결](docs/gemini_subscription_proxy.md)
+
 - **[팀원용 Ubuntu 설치·시뮬레이션·PR 안내](docs/ubuntu_quickstart.md)** — 모델 계정 없이 시작 가능
 
 - [설치·테스트·실험 재현과 PR 절차](CONTRIBUTING.md)
