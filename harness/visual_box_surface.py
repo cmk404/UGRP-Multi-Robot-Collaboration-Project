@@ -52,7 +52,7 @@ def observe_known_box_top(image, servo_pose, target_id="small_box_01"):
     """Estimate an already-identified upright box centre from its cyan top.
 
     This color surface is not an identity signal. Callers may use it only after
-    the target ID was established by a marker/tracker during the same approach.
+    a unique visual target was bound during the same approach.
     Base axes are +x forward, +y left, +z up.
     """
     if target_id not in BOX_TOP_DIMS_M:
@@ -112,6 +112,6 @@ def observe_known_box_top(image, servo_pose, target_id="small_box_01"):
         "opposite_long_edge_height_disagreement_ratio": pair_disagreement,
         "measurement_scope": "height from two full long top edges; XY is bright surface-patch center, not full box center",
         "confidence": confidence,
-        "identity_source": "caller_prior_marker_tracking_required",
+        "identity_source": "caller_prior_visual_target_binding_required",
         "provenance": "own_rgb_cyan_top_quad+raw_fisheye_rays+own_camera_fk+known_upright_box_dimensions",
     }

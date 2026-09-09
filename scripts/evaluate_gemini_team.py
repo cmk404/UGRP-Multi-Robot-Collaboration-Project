@@ -8,10 +8,6 @@ import math
 import time
 from concurrent.futures import ThreadPoolExecutor
 
-import mujoco
-
-from sim.multi_masterpi_production import MultiMasterPiProductionV2
-from sim.camera_robot_port import CameraRobotPort
 from harness.llm_transport_skill import LLMTransportSkill
 from harness.gemini_transport_policy import GeminiTransportPlanner
 from harness.gemini_proxy import GeminiProxyCompleter, GeminiProxyError
@@ -21,6 +17,19 @@ from harness.visual_drive_guard import validate_visual_drive
 from harness.visual_placement import inspect_placement
 from harness.visual_macro_runtime import VisualMacroExecutor
 from harness.navigation_events import NavigationEvents, InferenceInputBudget
+from harness.inference_accounting import settle_pending, settle_completed
+
+
+def inspect_actor_placement(actor, wrist, nav):
+    """Use the same release continuity for planning and fresh action checks."""
+    released = actor.state == 'released'
+    release_confirmed = released and actor.box.reason == 'VISUAL_RELEASE_CONFIRMED'
+    return inspect_placement(
+        wrist, nav, cargo_id=actor.cargo_id, destination_zone=actor.destination_zone,
+        stage='released' if released else 'before_release',
+        held_identity_confirmed=actor.held or release_confirmed,
+        release_commanded=release_confirmed,
+    )
 
 
 def footprint_inside(position, yaw, dimensions, center, half_extents):
@@ -29,6 +38,18 @@ def footprint_inside(position, yaw, dimensions, center, half_extents):
     radii = ((c*dimensions[0]+s*dimensions[1])/2,
              (s*dimensions[0]+c*dimensions[1])/2)
     return all(abs(position[i]-center[i])+radii[i] <= half_extents[i] for i in (0,1))
+
+
+def record_command(row, *, commands, current_decision, execution_feedback):
+    """Persist one executor event and expose its completed macro to the planner."""
+    row = dict(row)
+    row['decision_id'] = current_decision.get(row.get('robot_id'))
+    execution = row.get('execution')
+    if execution is not None:
+        execution_feedback[row['robot_id']]['last_macro'] = {
+            'decision_id': row['decision_id'], **execution}
+    commands.write(json.dumps(row) + '\n')
+    commands.flush()
 
 
 def main():
@@ -42,14 +63,20 @@ def main():
     ap.add_argument('--record', action='store_true')
     ap.add_argument('--max-calls', type=int, default=40)
     ap.add_argument('--max-input-tokens', type=int, default=120000,
-                    help='reported input token ceiling per robot; may overshoot by one in-flight call')
+                    help='reported input limit; conservative estimated preflight is not a hard provider cap')
+    ap.add_argument('--input-request-estimate', type=int, default=6000)
     ap.add_argument('--model', default='gemini-3.8-flash')
+    ap.add_argument('--reasoning-effort', choices=('none','low','medium','high'), default='none')
     ap.add_argument('--communication', choices=('none','status','natural'), default='none')
     ap.add_argument('--request-timeout', type=float, default=30)
     ap.add_argument('--max-transient-failures', type=int, default=5)
     args = ap.parse_args()
-    if args.max_calls <= 0 or args.max_input_tokens <= 0:
-        ap.error('call and input-token budgets must be positive')
+    if (args.max_calls <= 0 or args.max_input_tokens <= 0 or args.input_request_estimate <= 0
+            or not math.isfinite(args.seconds) or args.seconds <= 0):
+        ap.error('call, input-token and finite simulation budgets must be positive')
+    import mujoco
+    from sim.multi_masterpi_production import MultiMasterPiProductionV2
+    from sim.camera_robot_port import CameraRobotPort
     out=Path(args.output); out.mkdir(parents=True, exist_ok=False)
     source={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for base in ('sim','harness','scripts','calibration')
             for p in sorted(Path(base).rglob('*')) if p.is_file() and p.suffix in ('.py','.xml','.json','.png','.yaml','.yml') and '__pycache__' not in p.parts}
@@ -72,10 +99,10 @@ def main():
     actors={rid:LLMTransportSkill(rid,cid,goals[rid]) for rid,cid in zip(active,cargo_ids)}
     commands=(out/'commands.jsonl').open('w'); control=(out/'control.jsonl').open('w'); truth=(out/'evaluation-only.jsonl').open('w')
     current_decision={rid:None for rid in active}
+    execution_feedback={rid:{} for rid in active}
     def command_log(row):
-        row=dict(row)
-        row['decision_id']=current_decision.get(row.get('robot_id'))
-        commands.write(json.dumps(row)+'\n');commands.flush()
+        record_command(row, commands=commands, current_decision=current_decision,
+                       execution_feedback=execution_feedback)
     def stop_actor(rid, reason):
         executors[rid].cancel(float(world.data.time), reason)
         ports[rid].stop()
@@ -89,7 +116,8 @@ def main():
         event_steps[rid]+=1
         path=out/'inputs'/rid/f'nav-event-{event_steps[rid]:06d}.jpg'
         path.write_bytes(base64.b64decode(nav['image']))
-        check=navigation_events[rid].inspect(nav,action,now,bus.inbox(rid,now))
+        check=navigation_events[rid].inspect(nav,action,now,bus.inbox(rid,now),
+            executed_drive_s=executors[rid].total_drive_control_s)
         event_log.write(json.dumps({'robot_id':rid,'time':now,'decision_id':current_decision[rid],
             'path':str(path.relative_to(out)),'sha256':nav['sha256'],'result':check})+'\n');event_log.flush()
         return check
@@ -100,12 +128,14 @@ def main():
     start=float(world.data.time); deadline=start+args.seconds; next_truth=start
     max_lifts={cid:0. for cid in cargo_ids}; peer_contact_s=0.; obstacle_contact_s=0.; concurrent_motion_s=0.; concurrent_carry_s=0.
     previous_cargo=None; previous_time=None; samples=[]; video=None; error=None
-    planners={rid:GeminiTransportPlanner(rid,GeminiProxyCompleter(model=args.model,max_tokens=800,timeout=args.request_timeout), communication_mode=args.communication) for rid in active}
+    planners={rid:GeminiTransportPlanner(rid,GeminiProxyCompleter(model=args.model,max_tokens=800,
+                timeout=args.request_timeout,reasoning_effort=args.reasoning_effort), communication_mode=args.communication) for rid in active}
     pool=ThreadPoolExecutor(max_workers=len(active),thread_name_prefix='gemini-robot')
     bus=CameraMessageBus(active,args.communication)
     message_log=(out/'messages.jsonl').open('w')
     recovery={rid:InferenceRecovery(args.max_transient_failures) for rid in active}
-    input_budgets={rid:InferenceInputBudget(args.max_input_tokens) for rid in active}
+    input_budgets={rid:InferenceInputBudget(args.max_input_tokens,
+        initial_request_estimate=args.input_request_estimate) for rid in active}
     pending={};memory={rid:[] for rid in active};calls={rid:0 for rid in active};failures={rid:0 for rid in active}
     state_versions={rid:0 for rid in active}
     state_fingerprints={rid:(actors[rid].state,actors[rid].operation,actors[rid].phase) for rid in active}
@@ -130,10 +160,11 @@ def main():
                 ex=executors[rid];ex.tick(now)
                 if rid in done:
                     if rid in pending:
-                        item=pending.pop(rid);cancelled=item['future'].cancel()
-                        llm_log.write(json.dumps({'event':'llm_result','robot_id':rid,'time':now,
-                            'call_id':item['call_id'],'disposition':'discarded_robot_done',
-                            'future_cancelled':cancelled},ensure_ascii=False)+'\n');llm_log.flush()
+                        pending[rid]['future'].cancel()
+                        row=settle_completed(rid,pending[rid],planners[rid],input_budgets[rid],now=now)
+                        if row is not None:
+                            llm_log.write(json.dumps(row,ensure_ascii=False)+'\n');llm_log.flush()
+                            pending.pop(rid)
                     continue
                 if not ex.idle:continue
                 actor=actors[rid]
@@ -152,12 +183,16 @@ def main():
                         audit=getattr(planners[rid],'last_audit',{})
                         input_budgets[rid].record(item['call_id'],audit.get('usage'))
                         audit['wall_latency_ms']=getattr(planners[rid].completer,'last_latency_ms',None)
+                        audit['requested_reasoning_effort']=planners[rid].completer.reasoning_effort
                         decision_id=item['call_id']+'-decision'
                         if state_version(rid)!=item['state_version']:
                             llm_log.write(json.dumps({'event':'llm_result','robot_id':rid,'time':now,
                                 'requested_at':requested_at,'call_id':item['call_id'],'decision_id':decision_id,
                                 'decision':decision,'audit':audit,'disposition':'discarded_state_changed',
                                 'requested_state_version':item['state_version'],'current_state_version':state_versions[rid]},ensure_ascii=False)+'\n');llm_log.flush()
+                            execution_feedback[rid]['last_decision']={
+                                'call_id':item['call_id'],'action':decision['action'],
+                                'disposition':'discarded_state_changed'}
                             memory[rid].append({'feedback':'STATE_CHANGED_REPLAN','skill_state':actor.state})
                             memory[rid]=memory[rid][-16:]
                             continue
@@ -176,13 +211,13 @@ def main():
                             current_wrist=ports[rid].capture();current_nav=ports[rid].capture(camera='nav_cam')
                             for label,obs in [('wrist',current_wrist),('nav',current_nav)]:
                                 (out/'inputs'/rid/f'placement-call-{item["call_number"]:04d}-{label}.jpg').write_bytes(base64.b64decode(obs['image']))
-                            fresh_placement=inspect_placement(current_wrist,current_nav,cargo_id=actor.cargo_id,
-                                destination_zone=actor.destination_zone,stage='released' if actor.state=='released' else 'before_release',
-                                held_identity_confirmed=actor.held)
+                            fresh_placement=inspect_actor_placement(actor,current_wrist,current_nav)
                         action=actor.request(decision['action'],placement_evidence=fresh_placement)
                         state_version(rid)
                         current_decision[rid]=decision_id
-                        navigation_events[rid].reset(item['known_message_ids'])
+                        navigation_events[rid].begin_command(decision['action'],item['known_message_ids'])
+                        execution_feedback[rid]['last_decision']={
+                            'call_id':item['call_id'],'action':decision['action'],'disposition':'accepted'}
                         if action:
                             if action['kind']=='finish':done.add(rid);reasons[rid]=action['reason'];stop_actor(rid,'runner_stop')
                             else:ex.submit(action,wrist,actor.phase,now)
@@ -202,8 +237,11 @@ def main():
                         print(rid,'GEMINI',calls[rid],actor.state,decision,flush=True)
                         failures[rid]=0
                     except Exception as exc:
+                        failure_audit=getattr(planners[rid],'last_audit',{})
+                        failure_audit['wall_latency_ms']=getattr(planners[rid].completer,'last_latency_ms',None)
+                        failure_audit['requested_reasoning_effort']=planners[rid].completer.reasoning_effort
                         if decision is None:
-                            input_budgets[rid].record(item['call_id'],getattr(planners[rid],'last_audit',{}).get('usage'))
+                            input_budgets[rid].record(item['call_id'],failure_audit.get('usage'))
                         stop_actor(rid,'runner_stop')
                         # A camera veto is valid feedback, not a broken model/API call.
                         expected_veto=str(exc).startswith(('OWN_RGB_DRIVE_BLOCKED:', 'SAFE_INSIDE_', 'CAMERA_INSIDE_', 'STALE_LLM_FRAME'))
@@ -221,10 +259,13 @@ def main():
                                      'rejected_guard' if message.startswith('OWN_RGB_DRIVE_BLOCKED:') else
                                      'inference_error' if inference_error is not None else
                                      'rejected_state')
+                        execution_feedback[rid]['last_decision']={
+                            'call_id':item['call_id'],'action':decision['action'] if decision else None,
+                            'disposition':disposition,'reason':message[:240]}
                         llm_log.write(json.dumps({'event':'llm_result','robot_id':rid,'time':now,'call_id':item['call_id'],
                             'decision_id':item['call_id']+'-decision','decision':decision,'error':message,
                             'disposition':disposition,'fresh_drive_guard':fresh_guard,'fresh_placement':fresh_placement,
-                            'audit':getattr(planners[rid],'last_audit',{}),'inference_error':inference_error},ensure_ascii=False)+'\n');llm_log.flush()
+                            'audit':failure_audit,'inference_error':inference_error},ensure_ascii=False)+'\n');llm_log.flush()
                         print(rid,'LLM_ERROR',str(exc),flush=True)
                         if inference_error is not None:
                             if not inference_error['retry_scheduled']:
@@ -245,15 +286,18 @@ def main():
                 control.write(json.dumps({'robot_id':rid,'step':index,'time':now,'phase':before,
                     'skill_state':actor.state,'wrist_sha256':wrist['sha256'],'nav_sha256':nav['sha256'],
                     'own_pose_commands':wrist['actuator_state']['servo_pulses'],
-                    'estimated_target':actor.box.last_target,'attachment':actor.box.last_attachment,
+                    'estimated_target':actor.box.last_target,
+                    'estimated_target_provenance':actor.box.last_target_provenance,
+                    'face_alignment':actor.box.last_face_alignment,
+                    'attachment':actor.box.last_attachment,
                     'action':action or {'kind':'llm_request'}},ensure_ascii=False)+'\n');control.flush()
                 if action:
                     if action['kind']=='finish':done.add(rid);reasons[rid]=action['reason'];stop_actor(rid,'runner_stop')
                     else:ex.submit(action,wrist,before,now)
                 elif calls[rid]>=args.max_calls:
                     done.add(rid);reasons[rid]='LLM_CALL_BUDGET';stop_actor(rid,'runner_stop')
-                elif input_budgets[rid].exhausted:
-                    done.add(rid);reasons[rid]='LLM_INPUT_TOKEN_BUDGET';stop_actor(rid,'runner_stop')
+                elif not input_budgets[rid].can_reserve:
+                    done.add(rid);reasons[rid]='LLM_INPUT_TOKEN_BUDGET_PREFLIGHT';stop_actor(rid,'runner_stop')
                 else:
                     current_decision[rid]=None
                     calls[rid]+=1
@@ -261,22 +305,29 @@ def main():
                         memory[rid].append({'visual_feedback':actor.last_guard_reason,'skill_state':actor.state})
                         actor.last_guard_reason=None
                     if actor.state in ('carrying','released'):
-                        placement=inspect_placement(wrist,nav,cargo_id=actor.cargo_id,destination_zone=actor.destination_zone,
-                            stage='released' if actor.state=='released' else 'before_release',held_identity_confirmed=actor.held)
+                        placement=inspect_actor_placement(actor,wrist,nav)
                         actor.observe_placement(placement)
                         memory[rid].append({'placement_evidence':placement})
                         memory[rid]=memory[rid][-16:]
                     call_id=f'{rid}-call-{calls[rid]:04d}'
+                    if not input_budgets[rid].reserve(call_id):
+                        raise RuntimeError('INPUT_RESERVATION_RACE')
+                    budget_context=input_budgets[rid].snapshot(calls_used=calls[rid],
+                        max_calls=args.max_calls,remaining_sim_seconds=deadline-now)
+                    execution_context=json.loads(json.dumps(execution_feedback[rid]))
                     wrist_path=f'inputs/{rid}/{index:04d}-wrist.jpg';nav_path=f'inputs/{rid}/{index:04d}-nav.jpg'
                     inbox=bus.inbox(rid,now)
                     request={'event':'llm_request','robot_id':rid,'time':now,'call_id':call_id,
+                        'requested_reasoning_effort':planners[rid].completer.reasoning_effort,
+                        'budget':budget_context,'execution_feedback':execution_context,
                         'task':{'cargo_id':actor.cargo_id,'destination_zone':actor.destination_zone},
                         'skill_state':actor.state,'state_version':state_version(rid),'memory':list(memory[rid]),'received_messages':inbox,
                         'images':[{'camera':'wrist','path':wrist_path,'sha256':wrist['sha256']},
                                   {'camera':'nav','path':nav_path,'sha256':nav['sha256']}]}
                     llm_log.write(json.dumps(request,ensure_ascii=False)+'\n');llm_log.flush()
                     pending[rid]={'future':pool.submit(planners[rid].decide,wrist,nav,list(memory[rid]),
-                        cargo_id=actor.cargo_id,destination_zone=actor.destination_zone,skill_state=actor.state,messages=inbox),
+                        cargo_id=actor.cargo_id,destination_zone=actor.destination_zone,skill_state=actor.state,messages=inbox,
+                        budget=budget_context,execution_feedback=execution_context),
                         'wrist':wrist,'nav':nav,'requested_at':now,'state_version':state_versions[rid],
                         'known_message_ids':[m['message_id'] for m in inbox],
                         'call_id':call_id,'call_number':calls[rid]}
@@ -290,7 +341,12 @@ def main():
                 stop=actor.advance(monitor)
                 state_version(rid)
                 monitor_log.write(json.dumps({'robot_id':rid,'time':now,'frame_id':monitor['frame_id'],
-                    'sha256':monitor['sha256'],'skill_state':actor.state,'attachment':actor.box.last_attachment})+'\n')
+                    'sha256':monitor['sha256'],'skill_state':actor.state,
+                    'estimated_target':actor.box.last_target,
+                    'estimated_target_provenance':actor.box.last_target_provenance,
+                    'face_alignment':actor.box.last_face_alignment,
+                    'guard_reason':actor.last_guard_reason,
+                    'attachment':actor.box.last_attachment})+'\n')
                 if actor.state!='carrying':
                     stop_actor(rid,'runner_stop')
                     if stop and stop['kind']=='finish':done.add(rid);reasons[rid]=stop['reason']
@@ -322,7 +378,7 @@ def main():
             world._physics_step_for(world.robot('r1'))
             if video and world.data.time>=video.next_frame:video.capture()
             # Inference latency advances the physical world without fast-forwarding stale images.
-            if pending or any(r not in done and not recovery[r].ready(time.monotonic()) for r in active):
+            if any(r not in done for r in pending) or any(r not in done and not recovery[r].ready(time.monotonic()) for r in active):
                 delay=float(world.model.opt.timestep)-(time.monotonic()-last_wall)
                 if delay>0:time.sleep(delay)
             last_wall=time.monotonic()
@@ -339,12 +395,18 @@ def main():
         raise
     finally:
         for rid in active:stop_actor(rid,'episode_end')
+        decision_elapsed_sim_s=float(world.data.time)-start
+        def emit_late(row):
+            llm_log.write(json.dumps(row,ensure_ascii=False)+'\n');llm_log.flush()
+        settle_pending(pending,planners,input_budgets,pool,
+                       now=float(world.data.time),emit=emit_late)
         until=float(world.data.time)+1
         while world.data.time<until:
             for port in ports.values():port.tick(float(world.data.time))
             world._physics_step_for(world.robot('r1'))
             if video and world.data.time>=video.next_frame:video.capture()
         final=world.warehouse_state(); outcomes={}
+        within_sim_budget=decision_elapsed_sim_s <= args.seconds+float(world.model.opt.timestep)+1e-9
         for rid,cid in zip(active,cargo_ids):
             box=final['cargo'][cid];zone=world.warehouse_zones[goals[rid]]
             p=box['position']; half=world.warehouse_spec_by_id[cid].dimensions_m
@@ -352,23 +414,35 @@ def main():
             constrained=any(any(s['cargo'][cid].get('constraints_active',{}).values()) for s in [initial,*samples,final])
             gates={'lift':max_lifts[cid]>=.04,'inside_destination':inside,'stable':box['stable'],
                    'no_attachment_constraint':not constrained,'visual_release':reasons[rid]=='VISUAL_RELEASE_CONFIRMED'}
-            outcomes[rid]={'cargo_id':cid,'destination_zone':goals[rid],'reason':reasons[rid],'success':all(gates.values()),'gates':gates,'max_lift_m':max_lifts[cid],'decisions':steps[rid],'recovery_attempts':actors[rid].recovery_attempts}
+            physical_success=all(gates.values())
+            gates.update({'input_budget_verified':input_budgets[rid].verified_within_limit,
+                          'call_budget':calls[rid]<=args.max_calls,'simulation_budget':within_sim_budget})
+            outcomes[rid]={'cargo_id':cid,'destination_zone':goals[rid],'reason':reasons[rid],'physical_success':physical_success,'success':all(gates.values()),'gates':gates,'max_lift_m':max_lifts[cid],'decisions':steps[rid],'recovery_attempts':actors[rid].recovery_attempts}
         result={'seed':args.seed,'active_robots':active,'outcomes':outcomes,'success':all(o['success'] for o in outcomes.values()),
                 'elapsed_wall_s':time.monotonic()-wall_start,
+                'episode_start_sim_time':start,
+                'episode_stop_sim_time':start+decision_elapsed_sim_s,
+                'decision_elapsed_sim_s':decision_elapsed_sim_s,
+                'passive_settle_s':float(world.data.time)-start-decision_elapsed_sim_s,
                 'elapsed_sim_s':float(world.data.time)-start,'peer_penetration_gt2mm_s':peer_contact_s,
                 'obstacle_penetration_gt2mm_s':obstacle_contact_s,'concurrent_drive_s':concurrent_motion_s,
                 'concurrent_cargo_motion_s':concurrent_carry_s,'initial':initial,'final':final,'source_hash':source_hash,
                 'physics':{'impratio':args.impratio,'noslip_iterations':args.noslip_iterations},
                 'budgets':{'sim_seconds':args.seconds,'max_calls_per_robot':args.max_calls,
-                           'max_input_tokens_per_robot':args.max_input_tokens},
+                           'max_input_tokens_per_robot':args.max_input_tokens,
+                           'input_request_estimate':args.input_request_estimate,
+                           'budget_mode':'estimated_preflight'},
                 'input_usage':{rid:{'reported_prompt_tokens':input_budgets[rid].tokens,
-                                   'calls_without_usage':input_budgets[rid].calls_without_usage} for rid in active},
-                'controller':'gemini_RGB_decisions_with_visual_manipulation_skills','llm_calls':calls,'model':args.model,'messages':len(bus.sent),'communication':args.communication,
+                                   'calls_without_usage':input_budgets[rid].calls_without_usage,
+                                   'estimated_unreported_tokens':input_budgets[rid].estimated_unreported_tokens,
+                                   'unsettled_reservations':len(input_budgets[rid].reservations),
+                                   'verified_within_limit':input_budgets[rid].verified_within_limit} for rid in active},
+                'controller':'gemini_RGB_decisions_with_visual_manipulation_skills','llm_calls':calls,
+                'model':args.model,'reasoning_effort':args.reasoning_effort,
+                'messages':len(bus.sent),'communication':args.communication,
                 'inference_errors':{rid:recovery[rid].total_errors for rid in active},
                 'inference_unresolved':{rid:recovery[rid].consecutive for rid in active},'error':error}
         (out/'result.json').write_text(json.dumps(result,indent=2));print(json.dumps({k:result[k] for k in ('success','outcomes','concurrent_drive_s','concurrent_cargo_motion_s')}),flush=True)
-        for item in pending.values():item['future'].cancel()
-        pool.shutdown(wait=True,cancel_futures=True)
         monitor_log.close();llm_log.close();commands.close();control.close();truth.close();message_log.close();event_log.close()
         if video:video.close()
         world.close()

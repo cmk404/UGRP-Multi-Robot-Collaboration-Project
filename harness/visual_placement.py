@@ -15,6 +15,7 @@ import cv2
 import numpy as np
 
 from harness.monocular_box import BOX_MARKER_IDS, observe_box
+from harness.markerless_box import observe_ground_box
 from harness.visual_arm import camera_to_base, forward_grip
 from sim.navigation_camera_profile import (
     NAV_CAMERA_HEIGHT_ABOVE_FLOOR_M, NAV_CX_PX, NAV_CY_PX, NAV_FX_PX,
@@ -99,6 +100,39 @@ def _zone_mask(frame: np.ndarray, zone: str) -> np.ndarray:
     mask = cv2.inRange(hsv, np.asarray(low, np.uint8), np.asarray(high, np.uint8))
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((7, 7), np.uint8))
     return cv2.erode(mask, np.ones((5, 5), np.uint8))
+
+
+def _entry_guidance(center, corners, dimensions, signed_margin):
+    """Describe the nearest interior region, not a route or motor command.
+
+    Everything is in the current camera-calibrated robot frame. Erode the
+    observed square by the SAME footprint used by the release gate; retain a
+    small additional target cushion without changing that gate's threshold.
+    """
+    square = np.asarray(corners, dtype=float)
+    edges = (square[1] - square[0], square[3] - square[0])
+    lengths = np.asarray([np.linalg.norm(edge) for edge in edges])
+    if not np.isfinite(square).all() or np.any(lengths < .15):
+        return None
+    axes = np.asarray([edge / length for edge, length in zip(edges, lengths)])
+    if abs(float(np.dot(axes[0], axes[1]))) > .02:
+        return None
+    half = np.asarray(dimensions[:2], dtype=float) / 2 + _PLACEMENT_MARGIN_M
+    support = np.abs(axes) @ half
+    lower, upper = support + .02, lengths - support - .02
+    if np.any(lower >= upper):
+        return None
+    local = axes @ (np.asarray(center) - square[0])
+    correction = axes.T @ (np.clip(local, lower, upper) - local)
+    distance = float(np.linalg.norm(correction))
+    return {
+        "source": "current_own_nav_rgb_boundary+own_pwm_lowering_estimate",
+        "minimum_footprint_margin_cm": round(float(signed_margin) * 100),
+        "estimated_entry_distance_cm": round(distance * 100),
+        "entry_bearing_deg": round(math.degrees(math.atan2(correction[1], correction[0]))) if distance > .005 else 0,
+        "bearing_convention": "robot_frame:0=forward,+90=left,-90=right",
+        "meaning": "approximate nearest interior, not safe path; check current RGB and release gate",
+    }
 
 
 def _reconstruct_zone_square(frame: np.ndarray, mask: np.ndarray) -> dict[str, Any] | None:
@@ -207,7 +241,9 @@ def _identity(wrist_encoded: str, cargo_id: str) -> dict[str, Any]:
 def inspect_placement(wrist_obs: Mapping[str, Any], nav_obs: Mapping[str, Any], *,
                       cargo_id: str, destination_zone: str,
                       stage: str = "before_release",
-                      held_identity_confirmed: bool = False) -> dict[str, Any]:
+                      held_identity_confirmed: bool = False,
+                      perception_mode: str = "markerless",
+                      release_commanded: bool = False) -> dict[str, Any]:
     """Return serializable inside/outside/uncertain placement evidence."""
     if cargo_id not in _BOX_DIMENSIONS:
         raise ValueError("unknown cargo_id")
@@ -218,8 +254,11 @@ def inspect_placement(wrist_obs: Mapping[str, Any], nav_obs: Mapping[str, Any], 
         stage = "before_release"
     if stage not in {"before_release", "released"}:
         raise ValueError("stage must be before_release or released")
+    if perception_mode not in {"markerless", "fiducial"}:
+        raise ValueError("perception_mode must be markerless or fiducial")
     base = {"status": "uncertain", "reason": "", "stage": stage,
             "cargo_id": cargo_id, "destination_zone": zone,
+            "perception_mode": perception_mode,
             "wrist_sha256": None, "nav_sha256": None}
     try:
         wrist_frame, wrist_hash, wrist_encoded = _decode(wrist_obs, {"robot_cam", "wrist"})
@@ -227,16 +266,38 @@ def inspect_placement(wrist_obs: Mapping[str, Any], nav_obs: Mapping[str, Any], 
     except ValueError as exc:
         return {**base, "reason": f"INVALID_VISUAL_EVIDENCE:{exc}"}
     base.update({"wrist_sha256": wrist_hash, "nav_sha256": nav_hash})
-    identity = _identity(wrist_encoded, cargo_id)
-    fresh_identity = bool(identity["confirmed"])
-    continuity_identity = bool(stage == "before_release" and held_identity_confirmed)
-    identity["confirmed"] = bool(fresh_identity or continuity_identity)
-    identity["provenance"] = ("fresh_target_marker_in_wrist_rgb" if fresh_identity else
-                              "caller_confirmed_tracked_id_grasp_plus_continuous_visual_grip"
-                              if continuity_identity else "unconfirmed")
     pose = _servo_pose(wrist_obs)
     if pose is None:
-        return {**base, "reason": "OWN_PWM_UNAVAILABLE", "identity": identity}
+        return {**base, "reason": "OWN_PWM_UNAVAILABLE"}
+
+    markerless_observation = None
+    if perception_mode == "fiducial":
+        identity = _identity(wrist_encoded, cargo_id)
+        fresh_identity = bool(identity["confirmed"])
+        continuity_identity = bool(stage == "before_release" and held_identity_confirmed)
+        identity["confirmed"] = bool(fresh_identity or continuity_identity)
+        identity["provenance"] = ("fresh_target_marker_in_wrist_rgb" if fresh_identity else
+                                  "caller_confirmed_tracked_id_grasp_plus_continuous_visual_grip"
+                                  if continuity_identity else "unconfirmed")
+    else:
+        identity = {
+            "confirmed": bool(held_identity_confirmed),
+            "visible": None,
+            "identity_source": "caller_selected_target_continuity_not_visually_decoded",
+            "provenance": ("caller_confirmed_selected_visual_target_plus_continuous_grip"
+                           if held_identity_confirmed else "unconfirmed"),
+        }
+        if stage == "released":
+            try:
+                markerless_observation = observe_ground_box(wrist_encoded, pose, cargo_id)
+            except (ValueError, KeyError, TypeError) as exc:
+                markerless_observation = {"visible": False, "reason": str(exc)}
+            identity["visible"] = bool(markerless_observation.get("visible"))
+            identity["confirmed"] = bool(identity["confirmed"] and release_commanded
+                                          and identity["visible"])
+            identity["provenance"] = (
+                "commanded_release_plus_selected_target_continuity_plus_fresh_unique_ground_box_rgb"
+                if identity["confirmed"] else "unconfirmed")
 
     center = None
     center_source = None
@@ -247,6 +308,11 @@ def inspect_placement(wrist_obs: Mapping[str, Any], nav_obs: Mapping[str, Any], 
             center_source = "predicted_lowering_center_from_owned_pwm_fk"
         except (ValueError, KeyError) as exc:
             return {**base, "reason": f"OWN_PWM_INVALID:{exc}", "identity": identity}
+    elif perception_mode == "markerless":
+        point = ((markerless_observation or {}).get("estimated_box_center_base_m"))
+        if identity["confirmed"] and isinstance(point, (list, tuple)) and len(point) == 3:
+            center = (float(point[0]), float(point[1]))
+            center_source = "fresh_markerless_ground_box_rgb_shape_fit_plus_owned_pwm_fk"
     elif identity["confirmed"]:
         point = identity.get("_face_inset_camera_m")
         if isinstance(point, (list, tuple)) and len(point) == 3:
@@ -273,9 +339,16 @@ def inspect_placement(wrist_obs: Mapping[str, Any], nav_obs: Mapping[str, Any], 
                 "calibration_estimate_source": center_source,
                 "box_dimensions_m": list(_BOX_DIMENSIONS[cargo_id]),
                 "placement_margin_m": _PLACEMENT_MARGIN_M, "zone_visible_pixels": visible_area}
+    if markerless_observation is not None:
+        evidence["markerless_ground_box_observation"] = markerless_observation
     evidence["zone_square_reconstruction"] = square
     if center is None:
-        return {**evidence, "reason": "TARGET_POSITION_UNOBSERVABLE"}
+        reason = None
+        if perception_mode == "markerless" and stage == "released":
+            reason = ("RELEASE_OR_SELECTED_TARGET_CONTINUITY_UNCONFIRMED"
+                      if (markerless_observation or {}).get("visible")
+                      else (markerless_observation or {}).get("reason"))
+        return {**evidence, "reason": reason or "TARGET_POSITION_UNOBSERVABLE"}
     pixels = [_project_ground(point, nav_frame.shape[1], nav_frame.shape[0])
               for point in _footprint(center, _BOX_DIMENSIONS[cargo_id])]
     evidence["predicted_footprint_pixels"] = [None if p is None else [float(p[0]), float(p[1])] for p in pixels]
@@ -284,13 +357,21 @@ def inspect_placement(wrist_obs: Mapping[str, Any], nav_obs: Mapping[str, Any], 
     if not identity["confirmed"]:
         # Held boxes commonly fill the wrist view. That occlusion must not be
         # misreported as outside, but it also cannot prove target identity.
-        return {**evidence, "reason": "TARGET_MARKER_OCCLUDED_OR_UNCONFIRMED"}
+        return {**evidence, "reason": ("TARGET_MARKER_OCCLUDED_OR_UNCONFIRMED"
+                                       if perception_mode == "fiducial"
+                                       else "SELECTED_TARGET_CONTINUITY_UNCONFIRMED")}
     if square is None:
         return {**evidence, "reason": "DESTINATION_SQUARE_UNDERCONSTRAINED"}
     square_corners = np.asarray(square["calibrated_zone_square_corners_m"], np.float32)
     metric_footprint = _footprint(center, _BOX_DIMENSIONS[cargo_id])
     signed = [float(cv2.pointPolygonTest(square_corners, point, True)) for point in metric_footprint]
     evidence["calibrated_footprint_signed_margin_m"] = signed
+    if stage == "before_release" and min(signed) < 0:
+        guidance = _entry_guidance(center, square_corners, _BOX_DIMENSIONS[cargo_id], min(signed))
+        if guidance is not None:
+            evidence["navigation_guidance"] = guidance
+            evidence["guidance_own_pwm"] = {str(key): float(pose.get(str(key), pose.get(key)))
+                                            for key in (3, 4, 5, 6)}
     if min(signed) >= 0.0:
         return {**evidence, "status": "inside", "reason": "TARGET_FOOTPRINT_INSIDE_VISIBLE_ZONE_WITH_MARGIN"}
     if min(signed) <= -.02:

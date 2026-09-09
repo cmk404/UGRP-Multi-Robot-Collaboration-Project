@@ -28,6 +28,19 @@ def test_only_comparison_relevant_critical_feedback_requests_previous_nav():
     assert not memory_needs_nav_comparison(grip)
 
 
+def test_old_block_retained_but_does_not_pin_comparison_after_new_action():
+    memory = [{"feedback": "OWN_RGB_DRIVE_BLOCKED:ORANGE_OBSTACLE_IN_FORWARD_FOOTPRINT"}]
+    assert memory_needs_nav_comparison(compact_own_memory(memory))
+    for _ in range(6):
+        memory.extend([{"action": {"kind": "drive", "fwd": .1, "duration": 2}, "feedback": "accepted"},
+                       {"placement_evidence": {"status": "outside", "stage": "before_release"}}])
+    compact = compact_own_memory(memory[-16:])
+    assert "OWN_RGB_DRIVE_BLOCKED" in json.dumps(compact["critical_feedback"])
+    assert not memory_needs_nav_comparison(compact)
+    memory.append({"feedback": "NAVIGATION_INTERRUPTED:OWN_RGB_STAGNATION"})
+    assert memory_needs_nav_comparison(compact_own_memory(memory[-16:]))
+
+
 def test_saved_request_shape_keeps_actual_placement_identity_without_geometry():
     # Shape copied from repaired02/team-41 request memory, with bulky values shortened.
     memory = [{"action": {"kind": "pick"}, "feedback": "accepted"},

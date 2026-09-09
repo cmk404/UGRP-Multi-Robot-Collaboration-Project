@@ -1,0 +1,128 @@
+{
+  "fixture": "seed45 blue-floor release frames",
+  "source_run": "outputs/markerless-improvement-20260909/n3/solo-45",
+  "seed": 45,
+  "camera": "robot_cam wrist JPEG",
+  "selection_reason": "representative frames spanning elbow and pan release verification scans",
+  "frames": [
+    {
+      "step": 245,
+      "file": "0245-wrist.jpg",
+      "source_path": "outputs/markerless-improvement-20260909/n3/solo-45/inputs/r1/0245-wrist.jpg",
+      "source_sha256": "8dd2cca8f94948701c85a90b4722c6913743bc6b6e46f7315b2d11ecef80e6c0",
+      "own_pwm": {
+        "1": 2000,
+        "3": 500,
+        "4": 2472,
+        "5": 1320,
+        "6": 1548
+      },
+      "phase": "verify_release",
+      "time_s": 208.71200000026846
+    },
+    {
+      "step": 246,
+      "file": "0246-wrist.jpg",
+      "source_path": "outputs/markerless-improvement-20260909/n3/solo-45/inputs/r1/0246-wrist.jpg",
+      "source_sha256": "18b1cd2a38a71eaae3489133d71f345ef550a2592232a873c1a36ba90d2d52db",
+      "own_pwm": {
+        "1": 2000,
+        "3": 500,
+        "4": 2480,
+        "5": 1320,
+        "6": 1548
+      },
+      "phase": "verify_release",
+      "time_s": 209.04200000027004
+    },
+    {
+      "step": 249,
+      "file": "0249-wrist.jpg",
+      "source_path": "outputs/markerless-improvement-20260909/n3/solo-45/inputs/r1/0249-wrist.jpg",
+      "source_sha256": "dda79d27c776efa58157f241a7420c904b80cc9de4e012a5786e7a402569cf78",
+      "own_pwm": {
+        "1": 2000,
+        "3": 500,
+        "4": 2500,
+        "5": 1320,
+        "6": 1548
+      },
+      "phase": "verify_release",
+      "time_s": 210.03200000027476
+    },
+    {
+      "step": 250,
+      "file": "0250-wrist.jpg",
+      "source_path": "outputs/markerless-improvement-20260909/n3/solo-45/inputs/r1/0250-wrist.jpg",
+      "source_sha256": "056975677c24f32057f9cee1762a5dc033b39b04e813c41d37ebfe94a0cce3c2",
+      "own_pwm": {
+        "1": 2000,
+        "3": 500,
+        "4": 2500,
+        "5": 1320,
+        "6": 1488
+      },
+      "phase": "verify_release",
+      "time_s": 210.36200000027634
+    },
+    {
+      "step": 253,
+      "file": "0253-wrist.jpg",
+      "source_path": "outputs/markerless-improvement-20260909/n3/solo-45/inputs/r1/0253-wrist.jpg",
+      "source_sha256": "79273dfde405a43501f72aab8b98871bc190d57d08730cb2bc7c75016c35ddf8",
+      "own_pwm": {
+        "1": 2000,
+        "3": 500,
+        "4": 2500,
+        "5": 1320,
+        "6": 1548
+      },
+      "phase": "verify_release",
+      "time_s": 211.35200000028107
+    },
+    {
+      "step": 258,
+      "file": "0258-wrist.jpg",
+      "source_path": "outputs/markerless-improvement-20260909/n3/solo-45/inputs/r1/0258-wrist.jpg",
+      "source_sha256": "f9492289b6a213504fccea1081d77c62a97434c12cf19b04cc2a8f74e5f42e12",
+      "own_pwm": {
+        "1": 2000,
+        "3": 500,
+        "4": 2500,
+        "5": 1320,
+        "6": 1608
+      },
+      "phase": "verify_release",
+      "time_s": 213.00200000028894
+    },
+    {
+      "step": 266,
+      "file": "0266-wrist.jpg",
+      "source_path": "outputs/markerless-improvement-20260909/n3/solo-45/inputs/r1/0266-wrist.jpg",
+      "source_sha256": "1bb8bf6c3dd570dc5d1a8b7caff93294b37a9e16deb899f8155aa7f951de50e8",
+      "own_pwm": {
+        "1": 2000,
+        "3": 500,
+        "4": 2500,
+        "5": 1320,
+        "6": 1728
+      },
+      "phase": "verify_release",
+      "time_s": 217.04200000030824
+    }
+  ],
+  "release_grasp_own_pwm": {
+    "1": 1500,
+    "3": 1081,
+    "4": 1899,
+    "5": 2481,
+    "6": 1553
+  },
+  "release_grasp_provenance": {
+    "source": "outputs/markerless-improvement-20260909/n3/solo-45/control.jsonl",
+    "step": 240,
+    "phase": "open",
+    "field": "own_pose_commands",
+    "meaning": "Actual commanded grasp pose immediately before gripper opening; FK uses only own PWM, not evaluator cargo state."
+  }
+}

@@ -46,7 +46,7 @@ class _Tracker:
 
 class VisualBoxSkillTests(unittest.TestCase):
     def test_explicit_near_field_reacquisition_bypasses_behind_chassis_standoff(self):
-        skill = VisualBoxSkill(near_field_reacquisition=True)
+        skill = VisualBoxSkill(perception_mode="fiducial", near_field_reacquisition=True)
         box = {"pixel_centroid": [320, 218.7],
                "marker_pose_camera": {"rotation_rvec_rad": [0.0, 0.0, 0.0]}}
         target = np.asarray([.1675, 0.0, .0195])
@@ -60,7 +60,7 @@ class VisualBoxSkillTests(unittest.TestCase):
         self.assertTrue(skill._face_approach)
 
     def test_default_near_field_target_keeps_standard_face_route(self):
-        skill = VisualBoxSkill()
+        skill = VisualBoxSkill(perception_mode="fiducial")
         box = {"pixel_centroid": [320, 218.7],
                "marker_pose_camera": {"rotation_rvec_rad": [0.0, 0.0, 0.0]}}
         target = np.asarray([.1675, 0.0, .0195])
@@ -73,7 +73,7 @@ class VisualBoxSkillTests(unittest.TestCase):
         self.assertFalse(skill._face_approach)
 
     def test_missing_target_returns_bounded_search_and_finishes(self):
-        skill = VisualBoxSkill()
+        skill = VisualBoxSkill(perception_mode="fiducial")
         skill.tracker = _Tracker({"visible": False})
         first = skill.decide(observation())
         self.assertEqual(first, {"kind": "drive", "fwd": 0.0, "turn": 0.12, "duration": 0.4})
@@ -84,7 +84,7 @@ class VisualBoxSkillTests(unittest.TestCase):
         self.assertEqual(skill.phase, "finished")
 
     def test_state_owns_no_simulator_or_actuator_capability(self):
-        skill = VisualBoxSkill()
+        skill = VisualBoxSkill(perception_mode="fiducial")
         skill.tracker = _Tracker({"visible": False})
         action = skill.decide(observation())
         self.assertEqual(action["kind"], "drive")
@@ -95,7 +95,7 @@ class VisualBoxSkillTests(unittest.TestCase):
         self.assertFalse(hasattr(skill, "data"))
 
     def test_attachment_must_survive_left_right_home_before_carry(self):
-        skill = VisualBoxSkill()
+        skill = VisualBoxSkill(perception_mode="fiducial")
         skill.phase = "verify_lift"
         pose = {"1": 1500, "3": 757, "4": 1746, "5": 2221, "6": 1500}
         skill.tracker = _Tracker({"visible": False})
@@ -112,7 +112,7 @@ class VisualBoxSkillTests(unittest.TestCase):
         self.assertEqual(drive, {"kind": "drive", "fwd": 0.12, "turn": 0.0, "duration": 1.0})
 
     def test_height_or_visibility_alone_cannot_pass_changed_attachment_mask(self):
-        skill = VisualBoxSkill()
+        skill = VisualBoxSkill(perception_mode="fiducial")
         skill.phase = "verify_lift"
         pose = {"1": 1500, "3": 757, "4": 1746, "5": 2221, "6": 1500}
         # Even a high metric target is insufficient: the controlled pan probe
@@ -135,7 +135,7 @@ class VisualBoxSkillTests(unittest.TestCase):
         self.assertFalse(skill.held)
 
     def test_carry_monitor_uses_explicit_probe_before_declaring_drop(self):
-        skill = VisualBoxSkill(task="short_transfer")
+        skill = VisualBoxSkill(perception_mode="fiducial", task="short_transfer")
         skill.phase = "carry"
         skill.held = True
         skill.tracker = _Tracker({"visible": False})
@@ -153,7 +153,7 @@ class VisualBoxSkillTests(unittest.TestCase):
         self.assertEqual(rejected, {"kind": "finish", "reason": "VISUAL_LOAD_DROPPED_OR_OCCLUDED"})
 
     def test_known_surface_fallback_can_confirm_release_without_marker(self):
-        skill = VisualBoxSkill()
+        skill = VisualBoxSkill(perception_mode="fiducial")
         skill.phase = "verify_release"
         skill._grasp = {3: 1100, 4: 1900, 5: 2400, 6: 1500}
         skill.tracker = _Tracker({"visible": False})
@@ -169,7 +169,7 @@ class VisualBoxSkillTests(unittest.TestCase):
         self.assertEqual(skill.last_target, (0.16, 0.0, 0.015))
 
     def test_rejects_stale_malformed_or_foreign_port_observations(self):
-        skill = VisualBoxSkill()
+        skill = VisualBoxSkill(perception_mode="fiducial")
         skill.tracker = _Tracker({"visible": False})
         skill.decide(observation())
         with self.assertRaisesRegex(ValueError, "stale"):

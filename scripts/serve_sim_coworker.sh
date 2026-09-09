@@ -72,7 +72,11 @@ cleanup() {
   ((${#pids[@]})) && kill "${pids[@]}" 2>/dev/null || true
   wait 2>/dev/null || true
 }
-trap cleanup TERM INT EXIT
+handle_term() { cleanup; exit 143; }
+handle_int() { cleanup; exit 130; }
+trap handle_term TERM
+trap handle_int INT
+trap cleanup EXIT
 start_child r1 "${UGRP_SIM_R1_PORT:-8082}"
 start_child r2 "${UGRP_SIM_R2_PORT:-8084}"
 start_child r3 "${UGRP_SIM_R3_PORT:-8085}"

@@ -1,0 +1,75 @@
+{
+  "fixture_scope": "own wrist RGB bytes plus contemporaneous owned servo PWM; no simulator/world state",
+  "sequences": [
+    {
+      "case": "m2-seed43-release-own-rgb",
+      "frames": [
+        {
+          "file": "seed43-0151-wrist.jpg",
+          "sha256": "1de910a68396b9570d8add3d52f8004bc56d0f3f221f90be882cf8e060c9054b",
+          "camera": "robot_cam",
+          "servo_pulses": {
+            "1": 2000,
+            "3": 500,
+            "4": 2456,
+            "5": 1320,
+            "6": 1500
+          }
+        },
+        {
+          "file": "seed43-0175-wrist.jpg",
+          "sha256": "b5ed1d4957dedca8660098b444427b12c667d6b04ff19bbfc7b172dee8a81d1f",
+          "camera": "robot_cam",
+          "servo_pulses": {
+            "1": 2000,
+            "3": 500,
+            "4": 2500,
+            "5": 1320,
+            "6": 1680
+          }
+        }
+      ]
+    },
+    {
+      "case": "m2-seed44-release-own-rgb",
+      "frames": [
+        {
+          "file": "seed44-0229-wrist.jpg",
+          "sha256": "739f8ed83e20beaa5f5472da88566e6fa1a314665779f21a1f08f06a984efcdd",
+          "camera": "robot_cam",
+          "servo_pulses": {
+            "1": 2000,
+            "3": 500,
+            "4": 2440,
+            "5": 1320,
+            "6": 1453
+          }
+        },
+        {
+          "file": "seed44-0230-wrist.jpg",
+          "sha256": "4b6edd6abe18be3c450ac0330e5f24bfae5e7e278a6d029dc55034e9e7ea0f14",
+          "camera": "robot_cam",
+          "servo_pulses": {
+            "1": 2000,
+            "3": 500,
+            "4": 2440,
+            "5": 1320,
+            "6": 1513
+          }
+        },
+        {
+          "file": "seed44-0231-wrist.jpg",
+          "sha256": "e8c0b3fcb83393243e20bf113bff0eed40cf6a4a334e9ffc50af3d6a6388a765",
+          "camera": "robot_cam",
+          "servo_pulses": {
+            "1": 2000,
+            "3": 500,
+            "4": 2440,
+            "5": 1320,
+            "6": 1393
+          }
+        }
+      ]
+    }
+  ]
+}

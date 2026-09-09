@@ -1,0 +1,104 @@
+{
+  "camera": "r1 own wrist RGB",
+  "source_run": "outputs/markerless-improvement-20260909/n5/solo-45",
+  "files": {
+    "origin.jpg": {
+      "sha256": "ac51097f0c1c81ef635d7492fe9f3cb76059ef8c03ed397968fc6f248a93800f",
+      "source_wrist_sha256": "ac51097f0c1c81ef635d7492fe9f3cb76059ef8c03ed397968fc6f248a93800f",
+      "source_step": 246,
+      "source_sim_time_s": 220.57000000032508,
+      "own_pose_commands": {
+        "1": 2000,
+        "3": 500,
+        "4": 2448,
+        "5": 1320,
+        "6": 1547
+      },
+      "recorded_pre_refinement": {
+        "visible": true,
+        "projection_iou": 0.8574070269159647,
+        "estimated_center_base_m": [
+          0.16816938571359955,
+          0.015093189725656427,
+          0.016
+        ]
+      }
+    },
+    "left.jpg": {
+      "sha256": "9bb053898f624d7d461dfd72ac680fc933859c0e9d7fe482fe7bee3275abb876",
+      "source_wrist_sha256": "9bb053898f624d7d461dfd72ac680fc933859c0e9d7fe482fe7bee3275abb876",
+      "source_step": 247,
+      "source_sim_time_s": 220.90000000032666,
+      "own_pose_commands": {
+        "1": 2000,
+        "3": 500,
+        "4": 2448,
+        "5": 1320,
+        "6": 1607
+      },
+      "recorded_pre_refinement": {
+        "visible": true,
+        "projection_iou": 0.6083138785323531,
+        "estimated_center_base_m": [
+          0.16612559040929384,
+          0.003603526971482237,
+          0.016
+        ]
+      }
+    },
+    "held.jpg": {
+      "sha256": "dc626d8ff7fd97c02a3b443a1bb0554470fe7dcd641a8d533d7753e9658958ea",
+      "source_wrist_sha256": "dc626d8ff7fd97c02a3b443a1bb0554470fe7dcd641a8d533d7753e9658958ea",
+      "source_step": 200,
+      "source_sim_time_s": 113.45599999991698,
+      "own_pose_commands": {
+        "1": 1500,
+        "3": 699,
+        "4": 1666,
+        "5": 2310,
+        "6": 1553
+      },
+      "recorded_pre_refinement": {
+        "visible": false,
+        "reason": "FLOOR_HYPOTHESIS_PROJECTION_MISMATCH",
+        "projection_iou": 0.30458806169785885
+      }
+    },
+    "seed46-origin.jpg": {
+      "sha256": "1d99f3bf3a7275037a5b7f3b165790f98dc7bd481d22487d39e5291af55ecb01",
+      "source_wrist_sha256": "1d99f3bf3a7275037a5b7f3b165790f98dc7bd481d22487d39e5291af55ecb01",
+      "source_step": 147,
+      "source_sim_time_s": 175.7160000001109,
+      "source_run": "outputs/markerless-improvement-20260909/n5/solo-46",
+      "own_pose_commands": {
+        "1": 2000,
+        "3": 500,
+        "4": 2448,
+        "5": 1320,
+        "6": 1444
+      }
+    },
+    "seed46-left.jpg": {
+      "sha256": "375c5c21fd8df0ba07f7a6068e22dcfd5838b769631158e0a8b322caa60ab140",
+      "source_wrist_sha256": "375c5c21fd8df0ba07f7a6068e22dcfd5838b769631158e0a8b322caa60ab140",
+      "source_step": 148,
+      "source_sim_time_s": 176.04600000011249,
+      "source_run": "outputs/markerless-improvement-20260909/n5/solo-46",
+      "own_pose_commands": {
+        "1": 2000,
+        "3": 500,
+        "4": 2448,
+        "5": 1320,
+        "6": 1504
+      }
+    }
+  },
+  "recorded_pre_refinement_pair_separation_m": 0.011670023541131341,
+  "stationarity_gate_m": 0.01,
+  "seed46_recorded_pre_correction": {
+    "origin_projection_iou": 0.8253639817915052,
+    "left_projection_iou": 0.4613668317134299,
+    "left_visible": false,
+    "physical_max_pairwise_displacement_m": 4.468789506305164e-09
+  }
+}

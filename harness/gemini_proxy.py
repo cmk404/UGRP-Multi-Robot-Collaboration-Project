@@ -19,6 +19,7 @@ from .vlm import VlmError
 
 DEFAULT_URL = "http://127.0.0.1:8391/v1/chat/completions"
 DEFAULT_MODEL = "gemini-3.7-flash"
+REASONING_EFFORTS = ("none", "low", "medium", "high")
 
 
 class GeminiProxyError(VlmError):
@@ -50,6 +51,7 @@ class GeminiProxyCompleter:
         url: str | None = None,
         max_tokens: int = 256,
         temperature: float = 0.2,
+        reasoning_effort: str = "none",
         timeout: float | None = None,
         http_open: Callable[..., Any] = urlopen,
     ) -> None:
@@ -57,6 +59,9 @@ class GeminiProxyCompleter:
         self.url = url or os.environ.get("GEMINI_PROXY_URL", DEFAULT_URL)
         self.max_tokens = max(1, int(max_tokens))
         self.temperature = float(temperature)
+        if reasoning_effort not in REASONING_EFFORTS:
+            raise ValueError("reasoning_effort must be one of: none, low, medium, high")
+        self.reasoning_effort = reasoning_effort
         if timeout is None:
             try:
                 timeout = float(os.environ.get("GEMINI_PROXY_REQUEST_TIMEOUT", "45"))
@@ -87,7 +92,7 @@ class GeminiProxyCompleter:
                              if images is not None else _to_groq_messages(messages, image)),
                 "temperature": self.temperature,
                 "max_tokens": self.max_tokens,
-                "reasoning_effort": "none",
+                "reasoning_effort": self.reasoning_effort,
             }
         ).encode("utf-8")
         request = Request(

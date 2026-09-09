@@ -88,7 +88,8 @@ class LLMTransportSkill:
                 guard=self.box.decide(wrist)
                 if guard['kind']=='finish':
                     self.last_guard_reason=guard['reason']
-                    if guard['reason'] in ('VISUAL_GRASP_DRIFT','VISUAL_LOAD_DROPPED_OR_OCCLUDED'):
+                    if guard['reason'] in ('VISUAL_GRASP_DRIFT','VISUAL_LOAD_DROPPED_OR_OCCLUDED',
+                                           'TOP_GEOMETRY_AMBIGUOUS_FOR_DROP'):
                         self.state='grip_uncertain';return None
                     self.state='failure';self.reason=guard['reason'];return guard
             return None
