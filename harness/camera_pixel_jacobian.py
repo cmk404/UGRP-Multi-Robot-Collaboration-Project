@@ -14,10 +14,16 @@ import numpy as np
 
 _PULSE_CHANNELS = {"wrist": 3, "elbow": 4, "shoulder": 5, "look": 6}
 _CHANNEL_ORDER = ("forward", "turn", "look", "elbow", "wrist", "shoulder")
+AXIS_DEADBAND_RAD = .16
 
 
 def _axis_delta(after, before):
     return (after - before + math.pi / 2) % math.pi - math.pi / 2
+
+
+def axis_residual(angle):
+    """Signed angular excess outside the alignment-safe inner cone."""
+    return math.copysign(max(0.0, abs(angle) - AXIS_DEADBAND_RAD), angle)
 
 
 def _error(alignment):
@@ -31,9 +37,10 @@ def _error(alignment):
             not isinstance(width, (int, float)) or isinstance(width, bool) or
             not isinstance(angle, (int, float)) or isinstance(angle, bool)):
         return None
-    if not math.isfinite(width) or width <= 0:
+    if not math.isfinite(width) or width <= 0 or not math.isfinite(angle):
         return None
-    value = np.asarray((offset[0], offset[1], max(8.0, 10.0 * width) * angle), dtype=float)
+    value = np.asarray((offset[0], offset[1],
+                        max(8.0, 10.0 * width) * axis_residual(angle)), dtype=float)
     return value if np.all(np.isfinite(value)) else None
 
 
@@ -42,11 +49,14 @@ def _response(before, after):
     before_error, after_error = _error(before), _error(after)
     if before_error is None or after_error is None:
         return None
-    angle_delta = _axis_delta(after["axis_error_rad"], before["axis_error_rad"])
+    before_angle = before["axis_error_rad"]
+    angle_delta = _axis_delta(after["axis_error_rad"], before_angle)
+    residual_delta = (axis_residual(before_angle + angle_delta)
+                      - axis_residual(before_angle))
     value = np.asarray((
         after["offset_px"][0] - before["offset_px"][0],
         after["offset_px"][1] - before["offset_px"][1],
-        max(8.0, 10.0 * before["width_px"]) * angle_delta,
+        max(8.0, 10.0 * before["width_px"]) * residual_delta,
     ), dtype=float)
     return value if np.all(np.isfinite(value)) else None
 

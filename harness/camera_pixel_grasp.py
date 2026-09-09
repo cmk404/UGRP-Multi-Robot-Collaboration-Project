@@ -11,7 +11,7 @@ import math
 from harness.camera_beam_features import extract_beams, select_beam
 from harness.camera_gripper_motion import GripperMotionTracker
 from harness.camera_grasp_controller import STARTUP_COMMANDS
-from harness.camera_pixel_jacobian import LocalPixelJacobian
+from harness.camera_pixel_jacobian import LocalPixelJacobian, axis_residual
 
 
 def _wrap_axis(angle):
@@ -63,16 +63,17 @@ def alignment_features(gripper, beam, endpoint=None, own_beam=None, own_endpoint
     angle = _wrap_axis(math.atan2(desired_axis[1], desired_axis[0])-math.atan2(axis[1], axis[0]))
     own_aim = _own_beam_endpoint(own_beam, own_endpoint)
     own_aim_error = None if own_aim is None else (own_aim[0] - .5) * (.2 * w)
-    # Experimental priority: penalize an opening axis parallel to the beam
-    # strongly enough that top-view position improvement cannot dominate it.
+    # Preserve a safe inner cone where raster angle jitter does not outweigh
+    # translation; closure still applies its separate absolute .22 rad gate.
     angular_scale = max(8., beam['width_px']*10.)
-    cost_terms = [*offset, angular_scale * angle]
+    angular_error = angular_scale * axis_residual(angle)
+    cost_terms = [*offset, angular_error]
     if own_aim_error is not None:
         cost_terms.append(own_aim_error)
     return {'offset_px': offset, 'axis_error_rad': angle, 'endpoint': list(end),
             'target': target, 'distance_px': math.hypot(*offset),
             'own_aim_error_px': own_aim_error, 'own_endpoint': own_aim,
-            'top_cost': math.hypot(*offset, angular_scale * angle),
+            'top_cost': math.hypot(*offset, angular_error),
             'cost': math.hypot(*cost_terms),
             'width_px': beam['width_px']}
 

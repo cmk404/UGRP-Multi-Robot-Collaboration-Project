@@ -1,6 +1,6 @@
 import numpy as np
 
-from harness.camera_pixel_jacobian import LocalPixelJacobian
+from harness.camera_pixel_jacobian import LocalPixelJacobian, axis_residual
 
 
 def alignment(x, y=0, angle=0, width=10, endpoint=(.5, .7)):
@@ -40,6 +40,8 @@ def test_rejects_nonfresh_mismatched_and_nonprimitive_samples():
     assert not j.add_sample(alignment(1), alignment(2), action, p, q,
                             fresh=True, same_endpoint=True, primitive="bogus")
     assert j.propose(alignment(1, width=float("nan")), p) is None
+    assert j.propose(alignment(1, angle=float("nan")), p) is None
+    assert j.propose(alignment(1, angle=float("inf")), p) is None
     assert len(j.samples) == 0
 
 
@@ -120,13 +122,29 @@ def test_angular_response_is_rescaled_to_current_compatible_beam_width():
     action={"kind":"arm","servo_id":3,"pulse":1550}
     for x in (5,6):
         assert j.add_sample(
-            alignment(x,angle=0,width=10),alignment(x,angle=.1,width=10),
+            alignment(x,angle=.1,width=10),alignment(x,angle=.2,width=10),
             action,p,q,fresh=True,same_endpoint=True,primitive="wrist",
         )
-    current=alignment(5,angle=0,width=12)
+    current=alignment(5,angle=.2,width=12)
     column=j._column("wrist",current,np.asarray((5,0,0),dtype=float),p)
     assert column is not None
-    assert abs(column[2]-12.0)<1e-9
+    assert abs(column[2]-4.8)<1e-9
+
+
+def test_axis_deadband_has_zero_inner_residual_and_partial_margin_crossing():
+    assert axis_residual(-.16) == 0
+    assert axis_residual(.1) == 0
+    assert np.isclose(axis_residual(.2), .04)
+    assert np.isclose(axis_residual(-.2), -.04)
+
+    j = LocalPixelJacobian()
+    p = {3: 1500, 4: 1500, 5: 1500, 6: 1500}
+    q = {**p, 3: 1550}
+    action = {"kind": "arm", "servo_id": 3, "pulse": 1550}
+    assert j.add_sample(alignment(5, angle=.1), alignment(5, angle=.2),
+                        action, p, q, fresh=True, same_endpoint=True,
+                        primitive="wrist")
+    assert np.isclose(j.samples[0]["response"][2], 4.0)
 
 
 def test_residual_outlier_is_rejected_and_plan_is_bounded():
@@ -219,7 +237,7 @@ def test_box_constrained_solution_improves_when_clipping_dls_does_not():
     }
     j._column = lambda name, *_: columns.get(name)
     current = alignment(26.814516129032242, -4.603225806451583,
-                        -0.1349706642643256, width=10)
+                        -0.2949706642643256, width=10)
     plan = j.propose(current, {3: 790, 4: 2320, 5: 1320, 6: 2250})
 
     assert plan[0] == {"kind": "arm", "servo_id": 3, "pulse": 840}

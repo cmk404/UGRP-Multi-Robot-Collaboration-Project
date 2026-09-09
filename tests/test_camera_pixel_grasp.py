@@ -1,5 +1,6 @@
 """Behavioral checks for image-only end/axis alignment and trial grasp gates."""
 import copy
+import math
 from unittest.mock import patch
 
 from harness.camera_pixel_grasp import PixelGraspController, alignment_features
@@ -21,9 +22,12 @@ def own_beam(x=.5):
 
 def test_alignment_requires_direction_not_just_midpoint():
     b=beam();a=alignment_features(grip(),b)
+    inside=alignment_features(grip(axis=(math.cos(.13),math.sin(.13))),b)
     wrong=alignment_features(grip(axis=(0.,1.)),b)
     assert a['distance_px']<.01
     assert a['cost']<.01
+    assert inside['cost']<.01
+    assert abs(inside['axis_error_rad'])<.16
     assert wrong['cost']>20
     assert abs(wrong['axis_error_rad'])>1.5
 
@@ -46,6 +50,23 @@ def test_own_camera_endpoint_aim_contributes_to_cost():
 def step_with(controller, gripper, candidate, active=True):
     with patch.object(controller.tracker,'update',return_value=copy.deepcopy(gripper)), patch('harness.camera_pixel_grasp.extract_beams',return_value=[copy.deepcopy(candidate)]):
         return controller.step(b'own',b'top',active=active)
+
+
+def measured_alignment(distance, angle, width=24.55):
+    angular_error=max(8.,10.*width)*max(0.,abs(angle)-.16)
+    cost=math.hypot(distance,angular_error)
+    return {'offset_px':[distance,0.], 'axis_error_rad':angle,
+            'endpoint':[.5,.7], 'target':[.5,.7],
+            'distance_px':distance, 'own_aim_error_px':None,
+            'own_endpoint':None, 'top_cost':cost,
+            'cost':cost, 'width_px':width}
+
+
+def step_with_measured_alignment(controller, alignment):
+    with patch.object(controller.tracker,'update',return_value=grip()), \
+         patch('harness.camera_pixel_grasp.extract_beams',side_effect=[[beam()],[own_beam()]]), \
+         patch('harness.camera_pixel_grasp.alignment_features',return_value=alignment):
+        return controller.step(b'own',b'top')
 
 
 def exhaust_primitives(controller, alignment):
@@ -107,6 +128,32 @@ def test_observed_bad_step_schedules_real_reverse_not_position_reset():
     undo=step_with(c,grip(x=.19),b)
     assert undo['kind']=='drive' and undo['forward']<0
     assert 'forward' in c.tried
+
+
+def test_inside_cone_v11_distance_improvement_is_accepted():
+    c=PixelGraspController('r1')
+    before=measured_alignment(18.723,-.0161)
+    after=measured_alignment(17.092,-.1307)
+    c.pending={'before':before,'action':{'kind':'drive','forward':.05,'turn':0.,'duration_s':1.},
+               'pulses_before':copy.deepcopy(c.pulses),'own_beam_visible':False,
+               'learn':True,'label':'forward','undo':[]}
+    step_with_measured_alignment(c,after)
+    assert c.repeat=='forward'
+    assert c.rollback==[]
+
+
+def test_axis_outside_absolute_closure_gate_does_not_start_trial():
+    c=PixelGraspController('r1')
+    c.aligned=1
+    outside=measured_alignment(0.,.23)
+    action=step_with_measured_alignment(c,outside)
+    assert action != {'kind':'arm','servo_id':1,'pulse':1500}
+    assert c.aligned==0 and c.attempts==0
+    inside=PixelGraspController('r1')
+    inside.aligned=1
+    assert step_with_measured_alignment(inside,measured_alignment(0.,.13)) == {
+        'kind':'arm','servo_id':1,'pulse':1500}
+    assert inside.attempts==1
 
 
 def test_tracked_candidate_is_remeasured_before_acceptance():
