@@ -120,3 +120,14 @@ def test_own_endpoint_continuity_prevents_switch_to_opposite_end_during_pan():
     observed=alignment_features(grip(),beam(),own_beam=b,own_endpoint=[.76,.673])
     assert observed['own_endpoint']==[.91,.703]
     assert observed['own_aim_error_px']>0
+
+
+def test_tentative_lift_can_use_top_scale_when_centroid_does_not_move():
+    c=PixelGraspController('r1')
+    c.lift_start={'beam':beam(),'own_beam':own_beam()}
+    observation=copy.deepcopy(c.lift_start)
+    assert not c._visual_lift(observation)
+    observation['beam']['area_px']*=1.08
+    assert c._visual_lift(observation)
+    observation['own_beam']['center'][0]+=.05
+    assert not c._visual_lift(observation)

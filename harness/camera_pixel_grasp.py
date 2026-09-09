@@ -174,9 +174,13 @@ class PixelGraspController:
         top_move = math.hypot((top['center'][0]-top0['center'][0])*w,(top['center'][1]-top0['center'][1])*h)
         own_move = math.hypot((own['center'][0]-own0['center'][0])*ow,(own['center'][1]-own0['center'][1])*oh)
         size_change = abs(math.log(max(1,own['area_px'])/max(1,own0['area_px'])))
+        top_size_change = abs(math.log(max(1,top['area_px'])/max(1,top0['area_px'])))
         # A tentative image hypothesis only; independent physical evaluation
         # is the success authority and is unavailable to this controller.
-        return top_move > 1.0 and own_move < 8.0 and size_change < .15
+        # Vertical motion near the top camera optical axis may change scale
+        # while leaving the centroid fixed; do not require lateral object motion.
+        top_changed = top_move > 1.0 or top_size_change > .04
+        return top_changed and own_move < 8.0 and size_change < .15
 
     def step(self, own_jpeg, top_jpeg, active=True):
         self.steps += 1

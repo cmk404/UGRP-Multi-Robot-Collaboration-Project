@@ -1,0 +1,32 @@
+{
+  "source_sha": "7f42befd76f0368081789239880f7b815016cbd7",
+  "source_root": "/Users/changmin/projects/ugrp/outputs/pixel-grasp-20260910-r1-v6/r1",
+  "camera": "unchanged cctv_top RGB JPEG",
+  "actions_between_frames": [
+    {
+      "kind": "arm",
+      "servo_id": 1,
+      "pulse": 1500
+    },
+    {
+      "kind": "arm",
+      "servo_id": 1,
+      "pulse": 2000
+    }
+  ],
+  "purpose": "Two persistent horizontal finger lobes plus a t15-only 10px satellite previously produced a false 45deg opening axis. No evaluator data is in these fixtures.",
+  "files": [
+    {
+      "file": "194-top.jpg",
+      "sha256": "923b1db69e066d0c7e338fcaed358dbaea53b27b4dc1eb11a531af8b4ec3674b"
+    },
+    {
+      "file": "195-top.jpg",
+      "sha256": "e583def7d09ab7aed2af9d07a966c89a743782288cf614b0a4e58d3a18f2f8fd"
+    },
+    {
+      "file": "196-top.jpg",
+      "sha256": "f376b02e62284a280e6b39b67cf558666cba735cb14a49142fe69c05301df273"
+    }
+  ]
+}

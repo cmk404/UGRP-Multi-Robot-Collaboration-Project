@@ -1,8 +1,15 @@
+import hashlib
+import json
+from pathlib import Path
+
 import cv2
 import numpy as np
 import pytest
 
 from harness.camera_gripper_motion import GripperMotionTracker
+
+
+SATELLITE_FIXTURE = Path(__file__).parent / "fixtures" / "gripper_motion_satellite"
 
 
 def _jpeg(image):
@@ -36,7 +43,7 @@ def test_isolated_gripper_change_initializes_without_coordinates_or_simulator_st
     _, result = _calibrated()
     assert result["source"] == "isolated_gripper_motion"
     assert result["tracked_points"] >= 3
-    assert result["center"] == pytest.approx([0.5, 120 / 239], abs=0.04)
+    assert result["center"] == pytest.approx([0.5, 120 / 240], abs=0.04)
     assert abs(result["opening_axis"][0]) > 0.9
     assert result["span_px"] >= 20
     assert 0 < result["confidence"] <= 1
@@ -59,9 +66,9 @@ def test_tracks_translation_and_rotation_from_only_calibrated_motion_pixels():
     transformed = cv2.warpAffine(_scene(True), matrix, (320, 240), borderValue=(35, 35, 35))
     result = tracker.update(_jpeg(transformed), {"kind": "look", "pan_pulse": 1550})
     assert result["valid"], result
-    original = np.array([calibrated["center"][0] * 319, calibrated["center"][1] * 239, 1.0])
+    original = np.array([calibrated["center"][0] * 320, calibrated["center"][1] * 240, 1.0])
     expected = matrix @ original
-    actual = np.array([result["center"][0] * 319, result["center"][1] * 239])
+    actual = np.array([result["center"][0] * 320, result["center"][1] * 240])
     assert actual == pytest.approx(expected, abs=2.0)
     angle = np.deg2rad(-7.0)
     expected_axis = np.array([[np.cos(angle), -np.sin(angle)],
@@ -134,6 +141,47 @@ def test_low_contrast_off_axis_clutter_cannot_override_rotated_lobe_consensus():
     expected_axis = np.array([-np.sin(np.deg2rad(11)), np.cos(np.deg2rad(11))])
     assert abs(float(np.dot(expected_axis, result["opening_axis"]))) > 0.95
     assert result["span_px"] >= 15
+
+
+def test_meaningful_base_threshold_satellite_cannot_rotate_consensus_axis():
+    rng = np.random.default_rng(38)
+    before = np.full((240, 320, 3), 42, np.uint8)
+    before += rng.integers(0, 6, before.shape, dtype=np.uint8)
+    after = before.copy()
+    for x in (145, 174):
+        after[116:125, x:x + 10] = np.clip(
+            after[116:125, x:x + 10].astype(np.int16) + 48, 0, 255
+        ).astype(np.uint8)
+    # This off-axis patch is meaningful at threshold 15, but disappears at
+    # stronger thresholds while both real horizontal lobes persist.
+    after[137:143, 145:151] = np.clip(
+        after[137:143, 145:151].astype(np.int16) + 18, 0, 255
+    ).astype(np.uint8)
+    tracker = GripperMotionTracker()
+    tracker.update(_jpeg(before), None)
+    result = tracker.update(
+        _jpeg(after), {"kind": "arm", "servo_id": 1, "pulse": 1500}
+    )
+    assert result["valid"], result
+    assert abs(result["opening_axis"][0]) > 0.97
+    assert abs(result["opening_axis"][1]) < 0.2
+
+
+def test_actual_satellite_frames_retain_horizontal_close_and_open_axes():
+    provenance = json.loads((SATELLITE_FIXTURE / "provenance.json").read_text())
+    frames = {}
+    for item in provenance["files"]:
+        raw = (SATELLITE_FIXTURE / item["file"]).read_bytes()
+        assert hashlib.sha256(raw).hexdigest() == item["sha256"]
+        frames[item["file"]] = raw
+    tracker = GripperMotionTracker(initial_gripper_pulse=2000)
+    assert not tracker.update(frames["194-top.jpg"], None)["valid"]
+    closed = tracker.update(frames["195-top.jpg"], provenance["actions_between_frames"][0])
+    opened = tracker.update(frames["196-top.jpg"], provenance["actions_between_frames"][1])
+    assert closed["valid"], closed
+    assert opened["valid"], opened
+    assert abs(closed["opening_axis"][0]) > 0.95
+    assert abs(opened["opening_axis"][0]) > 0.95
 
 
 def test_broad_whole_image_motion_is_rejected():

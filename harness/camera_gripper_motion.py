@@ -45,7 +45,7 @@ class GripperMotionTracker:
     @staticmethod
     def _normalized(point: np.ndarray, shape: tuple[int, ...]) -> list[float]:
         h, w = shape[:2]
-        return [float(point[0] / (w - 1)), float(point[1] / (h - 1))]
+        return [float(point[0] / w), float(point[1] / h)]
 
     @staticmethod
     def _gripper_change(action: dict | None, prior: int | None) -> tuple[bool, int | None]:
@@ -87,72 +87,53 @@ class GripperMotionTracker:
                 if int(component_stats[i, cv2.CC_STAT_AREA]) >= minimum
             ]
 
-        ids = meaningful(stats)
-
-        def geometry_is_unambiguous(component_centroids: np.ndarray,
-                                     component_ids: list[int]) -> bool:
-            if not 2 <= len(component_ids) <= 8:
-                return False
-            centers = component_centroids[component_ids].astype(np.float64)
-            centered_centers = centers - centers.mean(axis=0)
-            covariance = centered_centers.T @ centered_centers / max(
-                1, len(component_ids) - 1
+        # At close range JPEG-scale low-contrast pixels can bridge the two jaw
+        # lobes or leave an off-axis satellite.  Evaluate every calibration at
+        # several stronger contrasts: even plausible base-threshold geometry
+        # must agree with repeated axis and center evidence before it is used.
+        candidates = []
+        for threshold in range(15, 26):
+            candidate_mask = (color_delta > threshold).astype(np.uint8)
+            c_count, c_labels, c_stats, c_centroids = cv2.connectedComponentsWithStats(
+                candidate_mask, 8
             )
+            if c_count <= 1:
+                continue
+            c_ids = meaningful(c_stats)
+            if not 2 <= len(c_ids) <= 8:
+                continue
+            centers = c_centroids[c_ids].astype(np.float64)
+            centered_centers = centers - centers.mean(axis=0)
+            covariance = centered_centers.T @ centered_centers / max(1, len(c_ids) - 1)
             eigenvalues, eigenvectors = np.linalg.eigh(covariance)
+            linearity = float(eigenvalues[-1] / max(eigenvalues[-2], 1e-6))
+            sizes = [int(c_stats[i, cv2.CC_STAT_AREA]) for i in c_ids]
             axis = eigenvectors[:, -1]
             span = float(np.ptp(centers @ axis))
-            return bool(
-                eigenvalues[-1] >= 9.0
-                and eigenvalues[-1] >= 1.8 * max(eigenvalues[-2], 1e-6)
-                and span >= 5.0
+            balance = min(sizes) / max(sizes)
+            if linearity < 1.8 or span < 5.0 or balance < 0.35:
+                continue
+            score = min(linearity, 50.0) * balance * sum(sizes)
+            candidates.append(
+                (score, threshold, c_labels, c_stats, c_centroids, c_ids,
+                 axis, centers.mean(axis=0))
             )
-
-        # At close range JPEG-scale low-contrast pixels can bridge the two jaw
-        # lobes.  Only when the normal threshold produces one lobe, seek a
-        # stronger-contrast split inside the already-vetted compact raw region.
-        # The same route handles extra low-contrast clutter that creates two or
-        # more components but makes their base-threshold geometry ambiguous.
-        # Multiple thresholds and a balance/support score avoid accepting one
-        # bright speck beside a dominant moving body as a second finger.
-        if not geometry_is_unambiguous(centroids, ids):
-            candidates = []
-            for threshold in range(16, 26):
-                candidate_mask = (color_delta > threshold).astype(np.uint8)
-                c_count, c_labels, c_stats, c_centroids = cv2.connectedComponentsWithStats(
-                    candidate_mask, 8
-                )
-                if c_count <= 1:
-                    continue
-                c_ids = meaningful(c_stats)
-                if not 2 <= len(c_ids) <= 8:
-                    continue
-                centers = c_centroids[c_ids].astype(np.float64)
-                centered_centers = centers - centers.mean(axis=0)
-                covariance = centered_centers.T @ centered_centers / max(1, len(c_ids) - 1)
-                eigenvalues = np.linalg.eigvalsh(covariance)
-                linearity = float(eigenvalues[-1] / max(eigenvalues[-2], 1e-6))
-                sizes = [int(c_stats[i, cv2.CC_STAT_AREA]) for i in c_ids]
-                axis_span = math.sqrt(max(0.0, float(eigenvalues[-1])))
-                balance = min(sizes) / max(sizes)
-                if linearity < 1.8 or axis_span < 2.5 or balance < 0.35:
-                    continue
-                axis_candidate = np.linalg.eigh(covariance)[1][:, -1]
-                score = min(linearity, 50.0) * balance * sum(sizes)
-                candidates.append(
-                    (score, threshold, c_labels, c_stats, c_centroids, c_ids,
-                     axis_candidate, centers.mean(axis=0))
-                )
-            if len(candidates) >= 3:
-                best = max(
-                    candidates, key=lambda item: (item[0], item[1])
-                )
-                supporters = sum(
-                    abs(float(np.dot(best[6], candidate[6]))) >= 0.95
-                    and float(np.linalg.norm(best[7] - candidate[7])) <= 3.0
-                    for candidate in candidates
-                )
-                if supporters >= 3:
-                    _, _, labels, stats, centroids, ids, _, _ = best
+        supported = []
+        for candidate in candidates:
+            supporters = sum(
+                abs(float(np.dot(candidate[6], other[6]))) >= 0.95
+                and float(np.linalg.norm(candidate[7] - other[7])) <= 3.0
+                for other in candidates
+            )
+            if supporters >= 3:
+                supported.append((supporters, candidate))
+        if not supported:
+            self._track = None
+            return _result(reason="no stable multi-contrast gripper-axis consensus")
+        _, best = max(
+            supported, key=lambda item: (item[0], item[1][0], item[1][1])
+        )
+        _, _, labels, stats, centroids, ids, _, _ = best
         if len(ids) < 2:
             self._track = None
             return _result(reason="fewer than two meaningful motion lobes")
