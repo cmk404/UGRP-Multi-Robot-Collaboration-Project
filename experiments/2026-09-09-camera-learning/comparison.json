@@ -1,0 +1,559 @@
+[
+  {
+    "run": "/Users/changmin/projects/ugrp/outputs/camera-learning-20260909-baseline",
+    "sha": "6d33e089dba10c172edfb5caff6174ff341ed3a0",
+    "mode": "baseline",
+    "seed": 11,
+    "calls": 60,
+    "error": null,
+    "rounds": 30,
+    "grasp_success": false,
+    "max_lift_m": -4.9e-05,
+    "hold_s": 0.0,
+    "input_tokens": 160020,
+    "output_tokens": 3969,
+    "usage_records": 60,
+    "median_model_latency_ms": 7657.6208131155,
+    "wall_elapsed_s": 438.828,
+    "robots": {
+      "r1": {
+        "actions": {
+          "drive": 5,
+          "arm": 19,
+          "servo_1": 16,
+          "open": 16,
+          "servo_3": 1,
+          "servo_4": 1,
+          "look": 6,
+          "servo_5": 1
+        },
+        "longest_identical_command_streak": 16,
+        "unique_commands": 10,
+        "identical_consecutive_own_frames": 17,
+        "aba_command_patterns": 1,
+        "last_learning": null
+      },
+      "r3": {
+        "actions": {
+          "drive": 9,
+          "arm": 8,
+          "servo_1": 5,
+          "open": 5,
+          "look": 13,
+          "servo_5": 1,
+          "servo_3": 2
+        },
+        "longest_identical_command_streak": 6,
+        "unique_commands": 17,
+        "identical_consecutive_own_frames": 5,
+        "aba_command_patterns": 1,
+        "last_learning": null
+      }
+    }
+  },
+  {
+    "run": "/Users/changmin/projects/ugrp/outputs/camera-learning-20260909-memory",
+    "sha": "6d33e089dba10c172edfb5caff6174ff341ed3a0",
+    "mode": "memory",
+    "seed": 11,
+    "calls": 60,
+    "error": null,
+    "rounds": 30,
+    "grasp_success": false,
+    "max_lift_m": -4.9e-05,
+    "hold_s": 0.0,
+    "input_tokens": 167620,
+    "output_tokens": 3455,
+    "usage_records": 60,
+    "median_model_latency_ms": 4911.945938016288,
+    "wall_elapsed_s": 332.586,
+    "robots": {
+      "r1": {
+        "actions": {
+          "drive": 8,
+          "arm": 21,
+          "servo_1": 3,
+          "open": 3,
+          "servo_5": 8,
+          "servo_3": 8,
+          "servo_4": 2,
+          "look": 1
+        },
+        "longest_identical_command_streak": 1,
+        "unique_commands": 25,
+        "identical_consecutive_own_frames": 0,
+        "aba_command_patterns": 1,
+        "last_learning": null
+      },
+      "r3": {
+        "actions": {
+          "arm": 3,
+          "servo_1": 1,
+          "open": 1,
+          "drive": 26,
+          "look": 1,
+          "servo_5": 2
+        },
+        "longest_identical_command_streak": 3,
+        "unique_commands": 21,
+        "identical_consecutive_own_frames": 0,
+        "aba_command_patterns": 2,
+        "last_learning": null
+      }
+    }
+  },
+  {
+    "run": "/Users/changmin/projects/ugrp/outputs/camera-learning-20260909-temporal",
+    "sha": "6d33e089dba10c172edfb5caff6174ff341ed3a0",
+    "mode": "temporal",
+    "seed": 11,
+    "calls": 60,
+    "error": null,
+    "rounds": 30,
+    "grasp_success": false,
+    "max_lift_m": -4.9e-05,
+    "hold_s": 0.0,
+    "input_tokens": 293308,
+    "output_tokens": 3246,
+    "usage_records": 60,
+    "median_model_latency_ms": 5150.610250071622,
+    "wall_elapsed_s": 343.196,
+    "robots": {
+      "r1": {
+        "actions": {
+          "drive": 16,
+          "arm": 13,
+          "servo_1": 5,
+          "open": 5,
+          "look": 1,
+          "servo_5": 8
+        },
+        "longest_identical_command_streak": 2,
+        "unique_commands": 24,
+        "identical_consecutive_own_frames": 0,
+        "aba_command_patterns": 0,
+        "last_learning": null
+      },
+      "r3": {
+        "actions": {
+          "drive": 24,
+          "arm": 5,
+          "servo_1": 1,
+          "open": 1,
+          "servo_5": 2,
+          "servo_3": 1,
+          "look": 1,
+          "servo_4": 1
+        },
+        "longest_identical_command_streak": 5,
+        "unique_commands": 19,
+        "identical_consecutive_own_frames": 0,
+        "aba_command_patterns": 2,
+        "last_learning": null
+      }
+    }
+  },
+  {
+    "run": "/Users/changmin/projects/ugrp/outputs/camera-learning-20260909-learned",
+    "sha": "6d33e089dba10c172edfb5caff6174ff341ed3a0",
+    "mode": "learned",
+    "seed": 11,
+    "calls": 60,
+    "error": null,
+    "rounds": 30,
+    "grasp_success": false,
+    "max_lift_m": -4.9e-05,
+    "hold_s": 0.0,
+    "input_tokens": 350552,
+    "output_tokens": 3988,
+    "usage_records": 60,
+    "median_model_latency_ms": 4854.1831249604,
+    "wall_elapsed_s": 285.493,
+    "robots": {
+      "r1": {
+        "actions": {
+          "arm": 7,
+          "servo_1": 2,
+          "open": 2,
+          "drive": 22,
+          "servo_5": 2,
+          "servo_3": 3,
+          "look": 1
+        },
+        "longest_identical_command_streak": 2,
+        "unique_commands": 23,
+        "identical_consecutive_own_frames": 0,
+        "aba_command_patterns": 2,
+        "last_learning": {
+          "sample_count": 29,
+          "minimum_samples_per_command_channel": 3,
+          "feature_order": "own,top; each 2x2 row-major regions; RGB means",
+          "training_rmse": 0.00724,
+          "supported_candidate_count": 5,
+          "predictions": [
+            {
+              "command": {
+                "kind": "wait"
+              },
+              "sample_count": 0,
+              "predicted_pixel_feature_delta": null,
+              "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+            },
+            {
+              "command": {
+                "kind": "drive",
+                "forward": 0.05,
+                "turn": 0.0,
+                "duration_s": 0.3
+              },
+              "sample_count": 21,
+              "predicted_pixel_feature_delta": [
+                -0.00148,
+                -0.00065,
+                4e-05,
+                1e-05,
+                -1e-05,
+                0.00011,
+                0.00178,
+                0.00028,
+                -0.00096,
+                0.00017,
+                0.00015,
+                0.00031,
+                -5e-05,
+                -3e-05,
+                3e-05,
+                0.0,
+                0.0,
+                0.0,
+                -1e-05,
+                0.0,
+                1e-05,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "command": {
+                "kind": "drive",
+                "forward": 0.0,
+                "turn": -0.1,
+                "duration_s": 0.3
+              },
+              "sample_count": 21,
+              "predicted_pixel_feature_delta": null,
+              "unsupported_reason": "candidate command values fall outside the observed range"
+            },
+            {
+              "command": {
+                "kind": "drive",
+                "forward": 0.0,
+                "turn": 0.1,
+                "duration_s": 0.3
+              },
+              "sample_count": 21,
+              "predicted_pixel_feature_delta": [
+                0.00236,
+                0.00122,
+                0.00035,
+                0.0003,
+                0.00027,
+                0.00043,
+                0.00067,
+                0.00034,
+                0.00016,
+                0.0006,
+                0.00064,
+                0.00078,
+                -0.0,
+                -1e-05,
+                3e-05,
+                0.0,
+                0.0,
+                0.0,
+                -0.0,
+                -0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "command": {
+                "kind": "arm",
+                "pulse": 1400,
+                "servo_id": 3
+              },
+              "sample_count": 3,
+              "predicted_pixel_feature_delta": [
+                -0.00204,
+                -0.00044,
+                0.00075,
+                0.00075,
+                0.00107,
+                0.0017,
+                0.00098,
+                0.00234,
+                0.00383,
+                0.00152,
+                0.00231,
+                0.00362,
+                -2e-05,
+                -4e-05,
+                -8e-05,
+                0.0,
+                0.0,
+                0.0,
+                6e-05,
+                5e-05,
+                -0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "command": {
+                "kind": "look",
+                "pan_pulse": 1500
+              },
+              "sample_count": 1,
+              "predicted_pixel_feature_delta": null,
+              "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+            },
+            {
+              "command": {
+                "kind": "arm",
+                "pulse": 1800,
+                "servo_id": 3
+              },
+              "sample_count": 3,
+              "predicted_pixel_feature_delta": [
+                -0.00681,
+                -0.00398,
+                -0.00182,
+                -0.00161,
+                -0.00167,
+                -0.00143,
+                -0.00366,
+                -0.00211,
+                -0.00045,
+                -0.00123,
+                -0.00103,
+                -0.00037,
+                2e-05,
+                0.0,
+                -2e-05,
+                0.0,
+                0.0,
+                0.0,
+                -2e-05,
+                -0.0,
+                -2e-05,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "command": {
+                "duration_s": 0.8,
+                "forward": 0.0,
+                "kind": "drive",
+                "turn": 0.2
+              },
+              "sample_count": 21,
+              "predicted_pixel_feature_delta": [
+                0.00465,
+                0.00256,
+                0.00095,
+                0.0007,
+                0.00077,
+                0.00105,
+                0.00047,
+                0.00055,
+                0.0009,
+                0.0015,
+                0.00162,
+                0.0019,
+                1e-05,
+                1e-05,
+                3e-05,
+                0.0,
+                0.0,
+                0.0,
+                -1e-05,
+                1e-05,
+                2e-05,
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          ],
+          "warning": "Training RMSE is not calibrated uncertainty. Associations are confounded by peer/scene motion and do not prove execution, contact, grasp, or success; unsupported channels are not extrapolated."
+        }
+      },
+      "r3": {
+        "actions": {
+          "drive": 16,
+          "arm": 9,
+          "servo_1": 1,
+          "open": 1,
+          "look": 5,
+          "servo_5": 3,
+          "servo_3": 4,
+          "servo_4": 1
+        },
+        "longest_identical_command_streak": 3,
+        "unique_commands": 21,
+        "identical_consecutive_own_frames": 1,
+        "aba_command_patterns": 0,
+        "last_learning": {
+          "sample_count": 29,
+          "minimum_samples_per_command_channel": 3,
+          "feature_order": "own,top; each 2x2 row-major regions; RGB means",
+          "training_rmse": 0.0193,
+          "supported_candidate_count": 3,
+          "predictions": [
+            {
+              "command": {
+                "kind": "wait"
+              },
+              "sample_count": 0,
+              "predicted_pixel_feature_delta": null,
+              "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+            },
+            {
+              "command": {
+                "kind": "drive",
+                "forward": 0.05,
+                "turn": 0.0,
+                "duration_s": 0.3
+              },
+              "sample_count": 16,
+              "predicted_pixel_feature_delta": [
+                -0.00157,
+                -0.00221,
+                -0.00275,
+                -0.00323,
+                -0.00218,
+                -0.00132,
+                0.00029,
+                -0.00069,
+                -0.00156,
+                0.00278,
+                -0.00084,
+                -0.00412,
+                -0.0,
+                0.0,
+                1e-05,
+                0.0,
+                0.0,
+                0.0,
+                -2e-05,
+                -0.0,
+                2e-05,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "command": {
+                "kind": "drive",
+                "forward": 0.0,
+                "turn": -0.1,
+                "duration_s": 0.3
+              },
+              "sample_count": 16,
+              "predicted_pixel_feature_delta": [
+                -0.00169,
+                -0.00238,
+                -0.00304,
+                0.00019,
+                -0.0012,
+                -0.00249,
+                9e-05,
+                -0.00035,
+                -0.0008,
+                0.00066,
+                -0.00096,
+                -0.00243,
+                0.0,
+                -1e-05,
+                1e-05,
+                0.0,
+                0.0,
+                0.0,
+                -4e-05,
+                -2e-05,
+                -0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "command": {
+                "kind": "drive",
+                "forward": 0.0,
+                "turn": 0.1,
+                "duration_s": 0.3
+              },
+              "sample_count": 16,
+              "predicted_pixel_feature_delta": null,
+              "unsupported_reason": "candidate command values fall outside the observed range"
+            },
+            {
+              "command": {
+                "kind": "arm",
+                "pulse": 1500,
+                "servo_id": 4
+              },
+              "sample_count": 1,
+              "predicted_pixel_feature_delta": null,
+              "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+            },
+            {
+              "command": {
+                "kind": "look",
+                "pan_pulse": 1500
+              },
+              "sample_count": 5,
+              "predicted_pixel_feature_delta": [
+                -0.00093,
+                -0.0034,
+                -0.00574,
+                0.00261,
+                -0.00039,
+                -0.00323,
+                0.00226,
+                -0.00121,
+                -0.00453,
+                -0.00606,
+                -0.00319,
+                -0.0007,
+                -4e-05,
+                -1e-05,
+                1e-05,
+                0.0,
+                0.0,
+                0.0,
+                2e-05,
+                -1e-05,
+                -4e-05,
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          ],
+          "warning": "Training RMSE is not calibrated uncertainty. Associations are confounded by peer/scene motion and do not prove execution, contact, grasp, or success; unsupported channels are not extrapolated."
+        }
+      }
+    }
+  }
+]
