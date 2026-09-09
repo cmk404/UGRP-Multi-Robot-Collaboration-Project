@@ -108,6 +108,34 @@ def test_low_contrast_jpeg_bridge_is_split_by_corresponding_high_contrast_lobes(
     assert result["tracked_points"] >= 3
 
 
+def test_low_contrast_off_axis_clutter_cannot_override_rotated_lobe_consensus():
+    rng = np.random.default_rng(28)
+    before = np.full((240, 320, 3), 45, np.uint8)
+    before += rng.integers(0, 5, before.shape, dtype=np.uint8)
+    after = before.copy()
+    for y in (92, 114):
+        after[y:y + 9, 157:165] = np.clip(
+            after[y:y + 9, 157:165].astype(np.int16) + 45, 0, 255
+        ).astype(np.uint8)
+    # A meaningful-size off-axis component is present at the base threshold,
+    # but lacks repeated stronger-contrast support across the image pair.
+    after[102:109, 136:146] = np.clip(
+        after[102:109, 136:146].astype(np.int16) + 18, 0, 255
+    ).astype(np.uint8)
+    matrix = cv2.getRotationMatrix2D((161, 106), -11.0, 1.0)
+    rotated_before = cv2.warpAffine(before, matrix, (320, 240), borderValue=(45, 45, 45))
+    rotated_after = cv2.warpAffine(after, matrix, (320, 240), borderValue=(45, 45, 45))
+    tracker = GripperMotionTracker()
+    tracker.update(_jpeg(rotated_before), None)
+    result = tracker.update(
+        _jpeg(rotated_after), {"kind": "arm", "servo_id": 1, "pulse": 1500}
+    )
+    assert result["valid"], result
+    expected_axis = np.array([-np.sin(np.deg2rad(11)), np.cos(np.deg2rad(11))])
+    assert abs(float(np.dot(expected_axis, result["opening_axis"]))) > 0.95
+    assert result["span_px"] >= 15
+
+
 def test_broad_whole_image_motion_is_rejected():
     tracker = GripperMotionTracker()
     first = _scene(False)

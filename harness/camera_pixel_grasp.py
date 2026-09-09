@@ -72,6 +72,7 @@ class PixelGraspController:
         self.pending = None
         self.rollback = []
         self.refresh_required = False
+        self.measurement_rounds = 0
         self.tried = set()
         self.repeat = None
         self.search_anchor = None
@@ -106,6 +107,7 @@ class PixelGraspController:
             pieces = max(1, math.ceil(abs(f)/.05))
             undo = [{'kind':'drive','forward':-f/pieces,'turn':-t/pieces,'duration_s':d} for _ in range(pieces)]
         if test and obs.get('alignment') is not None:
+            self.measurement_rounds=0
             self.pending = {'before':copy.deepcopy(obs['alignment']), 'action':action,
                             'undo':undo, 'label':label, 'step':self.steps}
         self.last_action = action
@@ -195,6 +197,19 @@ class PixelGraspController:
             fresh_open = (gripper.get('valid') and gripper.get('source') == 'isolated_gripper_motion'
                           and self.pulses.get(1) == 2000)
             if not fresh_open:
+                self.measurement_rounds += 1
+                if self.measurement_rounds >= 6 and self.pending is not None:
+                    rejected=self.pending;self.pending=None
+                    self.repeat=None;self.tried.add(rejected['label'])
+                    self.rollback=list(rejected['undo'])
+                    if self.pulses.get(1)!=2000:
+                        self.rollback.insert(0,{'kind':'arm','servo_id':1,'pulse':2000})
+                    self.refresh_required=True;self.measurement_rounds=0
+                    if self.rollback:
+                        return self._issue(self.rollback.pop(0),'candidate lost measurable gripper geometry; undo before trying another direction',obs)
+                elif self.measurement_rounds >= 12:
+                    self.stage='blocked'
+                    return self._issue({'kind':'wait'},'bounded fresh-measurement recovery failed',obs)
                 self.stage='measure'
                 self.unseen = self.unseen+1 if not gripper.get('valid') else 0
                 if self.unseen > 12:
@@ -203,7 +218,7 @@ class PixelGraspController:
                 pulse=1500 if self.pulses.get(1,2000)==2000 else 2000
                 return self._issue({'kind':'arm','servo_id':1,'pulse':pulse},
                                    'fresh open/close measurement before accepting a candidate; do not score flow drift',obs)
-            self.refresh_required=False
+            self.refresh_required=False;self.measurement_rounds=0
         if alignment is None:
             self.unseen+=1
             if self.unseen>12:

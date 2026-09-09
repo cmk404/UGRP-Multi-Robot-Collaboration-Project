@@ -76,3 +76,12 @@ def test_tracked_candidate_is_remeasured_before_acceptance():
     assert action=={'kind':'arm','servo_id':1,'pulse':1500}
     assert c.stage=='measure' and c.pending is not None
     assert c.repeat is None
+
+
+def test_candidate_losing_visibility_is_reversed_within_measurement_budget():
+    c=PixelGraspController('r1');b=beam()
+    step_with(c,grip(x=.2),b)
+    invalid={'valid':False,'center':None,'opening_axis':None,'source':'unavailable'}
+    actions=[step_with(c,invalid,b) for _ in range(7)]
+    assert any(a['kind']=='drive' and a['forward']<0 for a in actions)
+    assert c.pending is None and 'forward' in c.tried

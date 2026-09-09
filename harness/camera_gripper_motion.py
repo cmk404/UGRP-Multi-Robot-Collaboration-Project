@@ -88,12 +88,33 @@ class GripperMotionTracker:
             ]
 
         ids = meaningful(stats)
+
+        def geometry_is_unambiguous(component_centroids: np.ndarray,
+                                     component_ids: list[int]) -> bool:
+            if not 2 <= len(component_ids) <= 8:
+                return False
+            centers = component_centroids[component_ids].astype(np.float64)
+            centered_centers = centers - centers.mean(axis=0)
+            covariance = centered_centers.T @ centered_centers / max(
+                1, len(component_ids) - 1
+            )
+            eigenvalues, eigenvectors = np.linalg.eigh(covariance)
+            axis = eigenvectors[:, -1]
+            span = float(np.ptp(centers @ axis))
+            return bool(
+                eigenvalues[-1] >= 9.0
+                and eigenvalues[-1] >= 1.8 * max(eigenvalues[-2], 1e-6)
+                and span >= 5.0
+            )
+
         # At close range JPEG-scale low-contrast pixels can bridge the two jaw
         # lobes.  Only when the normal threshold produces one lobe, seek a
         # stronger-contrast split inside the already-vetted compact raw region.
+        # The same route handles extra low-contrast clutter that creates two or
+        # more components but makes their base-threshold geometry ambiguous.
         # Multiple thresholds and a balance/support score avoid accepting one
         # bright speck beside a dominant moving body as a second finger.
-        if len(ids) < 2:
+        if not geometry_is_unambiguous(centroids, ids):
             candidates = []
             for threshold in range(16, 26):
                 candidate_mask = (color_delta > threshold).astype(np.uint8)
