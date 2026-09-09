@@ -12,3 +12,12 @@ The calibrated point is the center of the isolated moving finger regions, not a 
 - Selecting the own endpoint nearest the image center every frame switches ends during a pan. v5 frames57/60 demonstrate this. The own endpoint now follows its previous image location, updated from open views.
 
 These changes address measured perception and acceptance failures. They do not by themselves establish capture, lift, independent LLM cooperation, or task completion. The physical evaluator and complete run results remain the success authority.
+
+## Subsequent negative checks
+
+- Raw-command replay of v7 actions0..112 reproduces the original round113 own and top RGB hashes exactly. At that view, both gripper close1500 and close1000 fail all four isolated calibration pairs. A larger pulse excursion does not resolve this ambiguity. See jaw-amplitude-comparison.json and the two diagnostic result/manifests.
+- A short own-view rectangle can change its fitted major axis under a small pan; v7 rounds22/25 have aspect ratios about1.60/1.63. Its fitted endpoints are therefore not reliable physical endpoint correspondence. The controller omits endpoint aiming for aspect<2 and compares matched terms across observations. This is an observability heuristic and does not establish physical endpoint identity for every longer contour.
+- Bounded alternate look commands are a recovery action when baseline calibration remains unavailable. They are scored only after fresh isolated finger measurements.
+
+- v8 own-frame fitted rectangles extrapolate endpoints beyond the image bottom: r120/214/226 have y about1.074. Their horizontal error must not enter a camera-observed endpoint objective. The selected offscreen endpoint is omitted rather than silently switching to the other end.
+- Read-only independent review of v8 r214 confirms that the top target is on the vertical beam centerline 4.2px inside its lower end, desired opening axis horizontal, and the detected anchor matches the two finger-motion-lobe midpoint. Those frames do not support changing top target semantics or declaring the target physically impossible.
