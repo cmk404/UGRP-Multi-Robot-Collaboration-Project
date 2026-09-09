@@ -9,6 +9,7 @@ import platform
 from pathlib import Path
 import sys
 import time
+import xml.etree.ElementTree as ET
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -41,7 +42,11 @@ def main() -> int:
     parser.add_argument("--rounds", type=int, default=80)
     parser.add_argument("--seed", type=int, default=11)
     parser.add_argument("--active-robot", choices=("r1", "r3", "both"), default="r1")
+    parser.add_argument("--render-width", type=int, choices=(640,1280), default=640)
+    parser.add_argument("--render-height", type=int, choices=(480,960), default=480)
     args = parser.parse_args()
+    if (args.render_width,args.render_height) not in ((640,480),(1280,960)):
+        parser.error("render size must be 640x480 or 1280x960")
     if not 1 <= args.rounds <= 1000:
         parser.error("rounds must be 1..1000")
     out = args.out_dir.expanduser().resolve()
@@ -65,8 +70,8 @@ def main() -> int:
         "rounds": args.rounds,
         "seed": args.seed,
         "active_robot": args.active_robot,
-        "render_width": 640,
-        "render_height": 480,
+        "render_width": args.render_width,
+        "render_height": args.render_height,
         "settle_seconds": 1.0,
         "weld": False,
         "policy": "pixel-servo",
@@ -99,14 +104,28 @@ def main() -> int:
     active_ids = ("r1", "r3") if args.active_robot == "both" else (args.active_robot,)
     samples = []
 
+    fixture_builder = _plain_beam_xml(production.build_multi_robot_xml)
+
+    def sized_fixture(*builder_args, **builder_kwargs):
+        root = ET.fromstring(fixture_builder(*builder_args, **builder_kwargs))
+        visual = root.find("visual")
+        if visual is None:
+            visual = ET.SubElement(root, "visual")
+        global_visual = visual.find("global")
+        if global_visual is None:
+            global_visual = ET.SubElement(visual, "global")
+        for field, requested in (("offwidth", args.render_width), ("offheight", args.render_height)):
+            global_visual.set(field, str(max(requested, int(global_visual.get(field, "0")))))
+        return ET.tostring(root, encoding="unicode")
+
     try:
         with patch.object(
             production,
             "build_multi_robot_xml",
-            _plain_beam_xml(production.build_multi_robot_xml),
+            sized_fixture,
         ):
             world = production.MultiMasterPiProductionV2(
-                seed=args.seed, render=True, width=640, height=480
+                seed=args.seed, render=True, width=args.render_width, height=args.render_height
             )
         for rid, y in (("r1", -2.325), ("r3", -1.675)):
             world.controllers[rid].set_base_pose_for_test((-.02, y, .0324), 0.0)
