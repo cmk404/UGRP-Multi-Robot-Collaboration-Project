@@ -21,12 +21,20 @@
 
 | 경로 | 역할 |
 |---|---|
+| [`calibration/`](calibration/README.md) | 실물 MasterPi 캘리브레이션 측정값과 시험 기록 |
+| `cloud/` | 원격 시뮬레이션 워커 구성 |
+| `config/` | 로봇·실행 환경 설정 예시 |
+| `dashboard/` | 실물 로봇 상태 대시보드와 프런트엔드 |
 | `harness/` | 모델 입력, 행동 실행, 카메라 기반 인식과 판정 |
 | `sim/` | MuJoCo 환경과 평가 |
-| `scripts/` | 실행·기록·검증·프로세스 정리 |
-| `tests/` | 자동 회귀검사와 포터블 영상 fixture |
-| `experiments/` | 커밋에 연결한 실험 설정·결과·원본 식별값 |
-| `docs/` | 설계·연구 계약·진단 기록 |
+| [`scripts/`](scripts/README.md) | 실행·기록·검증·프로세스 정리 명령의 목적별 인덱스 |
+| [`tests/`](tests/README.md) | 자동 회귀검사와 포터블 영상 fixture의 영역별 인덱스 |
+| [`experiments/`](experiments/README.md) | 커밋에 연결한 실험 설정·결과·원본 식별값 |
+| [`docs/`](docs/README.md) | 설계·운영·연구·과거 결과 문서의 주제별 인덱스 |
+
+파일을 찾을 때는 위 인덱스에서 시작한다. 실행 경로는 실험 재현성과 기존 자동화를 위해 유지하며,
+새 파일은 가장 가까운 기존 영역에 둔다. 분류 원칙과 파일별 문서 위치는
+[`docs/README.md`](docs/README.md)에 정리돼 있다.
 
 ## 저장소 운영
 
