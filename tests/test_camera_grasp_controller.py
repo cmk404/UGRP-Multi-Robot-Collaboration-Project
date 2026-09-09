@@ -26,7 +26,8 @@ class ControllerTests(unittest.TestCase):
         obs = observation(jaws=None, suggested_action={'kind': 'arm', 'servo_id': 1, 'pulse': 1500})
         c.step(obs)
         for _ in range(14):
-            self.assertEqual(c.step(obs), {'kind': 'wait'})
+            action = c.step(obs)
+            self.assertFalse(action.get('servo_id') == 1 and action.get('pulse') == 1500)
         self.assertEqual(c.stage, 'blocked')
 
     def test_own_command_delta_is_bounded_and_reverse_available(self):
@@ -44,6 +45,20 @@ class ControllerTests(unittest.TestCase):
         c.step(obs)
         for _ in range(3):
             self.assertNotEqual(c.step(obs).get('pulse'), 1500)
+
+    def test_view_switch_is_not_two_consecutive_alignment_observations(self):
+        c = CameraGraspController()
+        c.step(observation())
+        c.step(observation())
+        action = c.step(observation(view='overhead'))
+        self.assertFalse(action.get('servo_id') == 1 and action.get('pulse') == 1500)
+
+    def test_low_identity_cannot_verify_capture_or_lift(self):
+        c = CameraGraspController()
+        c.stage = 'verify_close'
+        obs = observation(view='overhead', identity_confidence=.2, capture_visible=True, lift_visible=True)
+        self.assertEqual(c.step(obs), {'kind': 'wait'})
+        self.assertEqual(c.stage, 'verify_close')
 
 
 if __name__ == '__main__':

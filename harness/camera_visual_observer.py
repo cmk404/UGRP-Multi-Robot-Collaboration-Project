@@ -9,6 +9,10 @@ import math
 import re
 from typing import Any
 
+import cv2
+import numpy as np
+from harness.camera_motion_identity import ImageMotionIdentity
+
 
 _ROBOTS = {"r1", "r3"}
 _FIELDS = {
@@ -70,6 +74,14 @@ and closes at 1500; servo 3 is wrist pitch, 4 elbow, 5 shoulder. Increasing 5 lo
 the shoulder angle, increasing 4 bends the elbow, increasing 3 raises wrist pitch.
 look turns the whole arm AND wrist camera: 1500 forward, 2500 left, 500 right.
 These are command conventions, not a known current pose or a grasp macro.
+The caller isolates one robot's command at a time. PIXEL_MOTION_CUE is computed
+only from consecutive overhead images after this robot's issued command. A valid
+center denotes a compact moving image region, NOT a world coordinate or exact
+robot center. Use it to reject a contradictory overhead identity. A supplementary
+CURRENT_OVERHEAD_CROP, when present, is a crop of the SAME current overhead JPEG.
+Its original normalized bounds are supplied. Return ALL points in the original
+uncropped view coordinates, never crop coordinates. Prefer overhead for jaws if
+they are visible there but absent from the wrist view. Never invent occluded tips.
 """
 
 
@@ -200,6 +212,8 @@ class CameraVisualObserver:
         self.last_request: dict[str, Any] | None = None
         self.last_response: Any = None
         self._previous_images: tuple[bytes, bytes] | None = None
+        self._motion = ImageMotionIdentity()
+        self.last_motion_cue = None
 
     def prepare_request(
         self, own_jpeg: bytes, overhead_jpeg: bytes, issued_actions: list[Any]
@@ -225,9 +239,25 @@ class CameraVisualObserver:
                 {"label": "PREVIOUS_OWN_VIEW", "image": _jpeg_uri(self._previous_images[0], "previous_own_jpeg")},
                 {"label": "PREVIOUS_OVERHEAD_VIEW", "image": _jpeg_uri(self._previous_images[1], "previous_overhead_jpeg")},
             ])
+        cue = self._motion.update(overhead_jpeg, actions[-1] if actions else None)
+        self.last_motion_cue = cue
+        crop_bounds = None
+        if cue['valid'] and cue['center'] is not None:
+            decoded = cv2.imdecode(np.frombuffer(overhead_jpeg, dtype=np.uint8), cv2.IMREAD_COLOR)
+            height, width = decoded.shape[:2]
+            x, y = cue['center']
+            x0, x1 = max(0, int((x-.22)*width)), min(width, int((x+.22)*width))
+            y0, y1 = max(0, int((y-.18)*height)), min(height, int((y+.18)*height))
+            okay, encoded = cv2.imencode('.jpg', decoded[y0:y1, x0:x1], [cv2.IMWRITE_JPEG_QUALITY, 95])
+            if not okay:
+                raise ValueError('overhead crop encoding failed')
+            crop_bounds = [x0/width, y0/height, x1/width, y1/height]
+            images.append({'label': 'CURRENT_OVERHEAD_CROP', 'image': _jpeg_uri(encoded.tobytes(), 'crop')})
         messages = [
             {"role": "system", "content": _SYSTEM.replace("{robot_id}", self.robot_id)},
-            {"role": "user", "content": "Inspect the frames. PRIOR_OWN_ISSUED_ACTIONS (oldest to newest, maximum 8): " + action_text},
+            {"role": "user", "content": "Inspect the frames. PRIOR_OWN_ISSUED_ACTIONS (oldest to newest, maximum 8): " + action_text
+             + '\nPIXEL_MOTION_CUE: ' + json.dumps(cue, sort_keys=True)
+             + '\nCURRENT_OVERHEAD_CROP original normalized bounds: ' + json.dumps(crop_bounds)},
         ]
         request = {"messages": messages, "images": images}
         self.last_request = copy.deepcopy(request)
@@ -240,6 +270,16 @@ class CameraVisualObserver:
         request = self.prepare_request(own_jpeg, overhead_jpeg, issued_actions)
         raw = self.completer.complete(request["messages"], images=request["images"])
         self.last_response = raw
-        parsed = parse_observation(raw)
-        # Revalidate against bounded command context to enforce same-servo deltas.
-        return _validate_observation(parsed, issued_actions[-8:])
+        return self.validate_response(raw, issued_actions)
+
+    def validate_response(self, raw, issued_actions):
+        parsed = _validate_observation(parse_observation(raw), issued_actions[-8:])
+        cue = self.last_motion_cue
+        center = parsed['self_center']
+        consistent = bool(cue and cue['valid'] and center is not None
+                          and math.dist(center, cue['center']) <= .12)
+        # Semantic confidence cannot override contradictory/no motion evidence.
+        if not consistent:
+            parsed['identity_confidence'] = 0.0
+        parsed['motion_identity'] = {'consistent': consistent, 'cue': copy.deepcopy(cue)}
+        return parsed

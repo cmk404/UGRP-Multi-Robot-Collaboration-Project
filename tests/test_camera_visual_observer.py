@@ -1,12 +1,15 @@
 import json
 
 import pytest
+import cv2
+import numpy as np
 
 from harness.camera_visual_observer import CameraVisualObserver, parse_observation
 
 
 def jpeg(payload=b"x"):
-    return b"\xff\xd8" + payload + b"\xff\xd9"
+    frame = np.full((32, 32, 3), sum(payload) % 255, dtype=np.uint8)
+    return cv2.imencode('.jpg', frame)[1].tobytes()
 
 
 def valid(**changes):
@@ -108,3 +111,21 @@ def test_parse_observation_is_public_and_strict():
     assert parse_observation(json.dumps(valid()))["view"] == "own"
     with pytest.raises(ValueError):
         parse_observation(json.dumps({**valid(), "extra": 1}))
+
+
+def test_motion_crop_and_identity_gate_use_only_current_previous_pixels():
+    frame = np.zeros((240, 320, 3), np.uint8)
+    first = cv2.imencode('.jpg', frame)[1].tobytes()
+    frame[150:165, 90:105] = 255
+    second = cv2.imencode('.jpg', frame)[1].tobytes()
+    observer = CameraVisualObserver('r1', None)
+    observer.prepare_request(first, first, [])
+    actions = [{'kind': 'look', 'pan_pulse': 1600}]
+    request = observer.prepare_request(first, second, actions)
+    assert len(request['images']) == 5
+    assert observer.last_motion_cue['valid']
+    wrong = observer.validate_response(json.dumps(valid(view='overhead', self_center=[.3, .15], identity_confidence=.99)), actions)
+    assert wrong['identity_confidence'] == 0
+    right = observer.validate_response(json.dumps(valid(view='overhead', self_center=[.3, .65], identity_confidence=.99)), actions)
+    assert right['motion_identity']['consistent']
+    assert right['identity_confidence'] == .99

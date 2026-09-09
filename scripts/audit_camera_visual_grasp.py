@@ -26,7 +26,7 @@ def audit(root):
             wire = json.loads((root / rid / f'wire-{i + 1:03d}.json').read_text())
             assert set(wire) == {'model', 'messages', 'temperature', 'max_tokens', 'reasoning_effort'}
             assert wire['messages'] == _to_gemini_multi_image_messages(request['messages'], request['images'])
-            observation = parse_observation(call['response'])
+            observation = observer.validate_response(call['response'], controller.history)
             assert observation == call['observation']
             scheduled = report['config']['active_robot']
             expected_active = scheduled == rid if scheduled != 'both' else ('r1', 'r3')[call['round'] % 2] == rid
