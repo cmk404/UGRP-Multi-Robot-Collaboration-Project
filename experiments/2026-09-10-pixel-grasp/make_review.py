@@ -8,7 +8,7 @@ canvas=Image.new('RGB',(1280,520*len(rounds)),'white');d=ImageDraw.Draw(canvas)
 for i,n in enumerate(rounds):
  c=calls[n];y0=i*520
  for j,key in enumerate(['own','top']):
-  im=Image.open(root/c['images'][key]['path']);canvas.paste(im,(640*j,y0+35));d.text((640*j+8,y0+8),f'{root.name} / r{n} / {key} RGB',fill='black')
+  im=Image.open(root/c['images'][key]['path']);im.thumbnail((640,480));canvas.paste(im,(640*j,y0+35));d.text((640*j+8,y0+8),f'{root.name} / r{n} / {key} RGB',fill='black')
  a=c['observation'].get('alignment');g=c['observation']['gripper']
  if a and g.get('center'):
   for point,color in [(a['target'],'red'),(g['center'],'cyan')]:
