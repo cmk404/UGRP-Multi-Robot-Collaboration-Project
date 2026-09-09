@@ -1,0 +1,78 @@
+[
+  {
+    "mode": "with-weld",
+    "condition": "baseline",
+    "ok": true,
+    "final": {
+      "constraints_active": {
+        "r1": true,
+        "r3": true
+      },
+      "height_above_start_m": 0.052651,
+      "position_m": [
+        0.572681,
+        -2.0,
+        0.072651
+      ],
+      "sim_time_s": 4.96,
+      "tilt_deg": 6.9901
+    }
+  },
+  {
+    "mode": "with-weld",
+    "condition": "delayed_2s",
+    "ok": true,
+    "final": {
+      "constraints_active": {
+        "r1": true,
+        "r3": true
+      },
+      "height_above_start_m": 0.052702,
+      "position_m": [
+        0.572682,
+        -1.999989,
+        0.072702
+      ],
+      "sim_time_s": 7.79,
+      "tilt_deg": 6.9696
+    }
+  },
+  {
+    "mode": "no-weld",
+    "condition": "baseline",
+    "ok": false,
+    "final": {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "height_above_start_m": -4.9e-05,
+      "position_m": [
+        0.58001,
+        -2.0,
+        0.019951
+      ],
+      "sim_time_s": 4.96,
+      "tilt_deg": 0.0
+    }
+  },
+  {
+    "mode": "no-weld",
+    "condition": "delayed_2s",
+    "ok": false,
+    "final": {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "height_above_start_m": -4.9e-05,
+      "position_m": [
+        0.579999,
+        -1.999999,
+        0.019951
+      ],
+      "sim_time_s": 7.79,
+      "tilt_deg": 0.0
+    }
+  }
+]
