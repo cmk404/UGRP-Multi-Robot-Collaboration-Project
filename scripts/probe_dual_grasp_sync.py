@@ -364,9 +364,9 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, 
                 collision_steps = 0
                 original_step = world._physics_step_for
                 next_sample = float(world.data.time)
-                def approach_step(robot):
+                def approach_step(robot, commands=None):
                     nonlocal collision_steps, next_sample
-                    original_step(robot)
+                    original_step(robot, commands)
                     touched = False
                     for k in range(world.data.ncon):
                         c = world.data.contact[k]
