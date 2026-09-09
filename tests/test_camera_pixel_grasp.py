@@ -11,7 +11,7 @@ def beam():
 
 
 def grip(x=.5,y=.69,axis=(1.,0.)):
-    return {'valid':True,'center':[x,y],'opening_axis':list(axis),'span_px':12.,'confidence':.9}
+    return {'valid':True,'center':[x,y],'opening_axis':list(axis),'span_px':12.,'confidence':.9,'source':'isolated_gripper_motion'}
 
 
 def test_alignment_requires_direction_not_just_midpoint():
@@ -66,3 +66,13 @@ def test_observed_bad_step_schedules_real_reverse_not_position_reset():
     undo=step_with(c,grip(x=.19),b)
     assert undo['kind']=='drive' and undo['forward']<0
     assert 'forward' in c.tried
+
+
+def test_tracked_candidate_is_remeasured_before_acceptance():
+    c=PixelGraspController('r1');b=beam()
+    step_with(c,grip(x=.2),b)
+    propagated=grip(x=.3);propagated['source']='verified_optical_flow'
+    action=step_with(c,propagated,b)
+    assert action=={'kind':'arm','servo_id':1,'pulse':1500}
+    assert c.stage=='measure' and c.pending is not None
+    assert c.repeat is None

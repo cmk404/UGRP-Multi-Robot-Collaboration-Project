@@ -71,7 +71,7 @@ class PixelGraspController:
         self.stage = 'identify'
         self.pending = None
         self.rollback = []
-        self.after_rollback = False
+        self.refresh_required = False
         self.tried = set()
         self.repeat = None
         self.search_anchor = None
@@ -189,8 +189,21 @@ class PixelGraspController:
             if not self.recovery:self.stage='align'
             return self._issue(action,'restore commands after unconfirmed capture and explore next height',obs)
         if self.rollback:
-            action=self.rollback.pop(0);self.pending=None
+            action=self.rollback.pop(0);self.pending=None;self.refresh_required=True
             return self._issue(action,'reverse rejected command hypothesis, then reobserve actual pixels',obs)
+        if self.pending is not None or self.refresh_required:
+            fresh_open = (gripper.get('valid') and gripper.get('source') == 'isolated_gripper_motion'
+                          and self.pulses.get(1) == 2000)
+            if not fresh_open:
+                self.stage='measure'
+                self.unseen = self.unseen+1 if not gripper.get('valid') else 0
+                if self.unseen > 12:
+                    self.stage='blocked'
+                    return self._issue({'kind':'wait'},'cannot remeasure the candidate gripper motion',obs)
+                pulse=1500 if self.pulses.get(1,2000)==2000 else 2000
+                return self._issue({'kind':'arm','servo_id':1,'pulse':pulse},
+                                   'fresh open/close measurement before accepting a candidate; do not score flow drift',obs)
+            self.refresh_required=False
         if alignment is None:
             self.unseen+=1
             if self.unseen>12:
@@ -210,11 +223,12 @@ class PixelGraspController:
             before=pending['before']
             # A changed endpoint would invalidate this comparison.
             same_endpoint=math.dist(before['endpoint'],alignment['endpoint'])<.04
-            if same_endpoint and alignment['cost'] < before['cost'] - .35:
+            if same_endpoint and alignment['cost'] < before['cost'] - .15:
                 self.repeat=pending['label'];self.tried.clear()
             else:
                 self.repeat=None;self.tried.add(pending['label']);self.rollback=pending['undo']
                 if self.rollback:
+                    self.refresh_required=True
                     return self._issue(self.rollback.pop(0),'observed candidate failed to reduce combined position/direction error',obs)
         close_distance=max(3.,alignment['width_px']*.5)
         aligned=alignment['distance_px']<close_distance and abs(alignment['axis_error_rad'])<.22 and own is not None
