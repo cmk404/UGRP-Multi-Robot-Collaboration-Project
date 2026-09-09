@@ -12,6 +12,7 @@ from typing import Any
 import cv2
 import numpy as np
 from harness.camera_motion_identity import ImageMotionIdentity
+from harness.camera_landmark_tracker import CameraLandmarkTracker
 
 
 _ROBOTS = {"r1", "r3"}
@@ -217,6 +218,8 @@ class CameraVisualObserver:
         self._previous_images: tuple[bytes, bytes] | None = None
         self._motion = ImageMotionIdentity()
         self.last_motion_cue = None
+        self._landmarks = CameraLandmarkTracker()
+        self._current_images = None
 
     def prepare_request(
         self, own_jpeg: bytes, overhead_jpeg: bytes, issued_actions: list[Any]
@@ -265,6 +268,7 @@ class CameraVisualObserver:
         request = {"messages": messages, "images": images}
         self.last_request = copy.deepcopy(request)
         self._previous_images = (bytes(own_jpeg), bytes(overhead_jpeg))
+        self._current_images = self._previous_images
         return copy.deepcopy(request)
 
     def observe(
@@ -285,4 +289,4 @@ class CameraVisualObserver:
         if not consistent:
             parsed['identity_confidence'] = 0.0
         parsed['motion_identity'] = {'consistent': consistent, 'cue': copy.deepcopy(cue)}
-        return parsed
+        return self._landmarks.update(*self._current_images, parsed)

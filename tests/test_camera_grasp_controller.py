@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 from harness.camera_grasp_controller import CameraGraspController, STARTUP_COMMANDS
 
 
@@ -85,6 +86,24 @@ class ControllerTests(unittest.TestCase):
         self.assertEqual(c.issued_pulses, initial)
         self.assertEqual(c.calibration_index, 8)
         self.assertTrue(all(a.get('servo_id') != 1 for a in actions))
+
+    def test_local_step_is_reverted_when_observed_error_worsens(self):
+        c = CameraGraspController(STARTUP_COMMANDS)
+        c.calibration_index = 8
+        proposal = {'kind': 'arm', 'servo_id': 3, 'pulse': 790}
+        with patch.object(c.model, 'propose', return_value=proposal):
+            self.assertEqual(c.step(observation(target=[.59, .5])), proposal)
+            self.assertEqual(c.step(observation(target=[.61, .5])),
+                             {'kind': 'arm', 'servo_id': 3, 'pulse': 740})
+        self.assertEqual(len(c.rejected_actions), 1)
+
+    def test_stalled_alignment_can_reposition_base(self):
+        c = CameraGraspController(STARTUP_COMMANDS)
+        c.calibration_index = 8
+        obs = observation(target=[.59, .5], suggested_action={'kind': 'drive', 'forward': .04, 'turn': 0, 'duration_s': .2})
+        with patch.object(c.model, 'propose', return_value=None):
+            actions = [c.step(obs) for _ in range(7)]
+        self.assertEqual(actions[-1]['kind'], 'drive')
 
 
 if __name__ == '__main__':

@@ -37,6 +37,11 @@ class CameraGraspController:
         self.last_decision = {}
         self.last_alignment = None
         self.calibration_index = 0
+        self.pending_local = False
+        self.rollback_action = None
+        self.rejected_actions = []
+        self.best_error = float('inf')
+        self.stagnation = 0
         for command in startup_commands:
             command = _validate_action(command)
             if command['kind'] not in ('arm', 'look'):
@@ -82,6 +87,7 @@ class CameraGraspController:
                 pending['_delta'] = value - self.issued_pulses[channel]
             self.issued_pulses[channel] = value
         self.pending = pending
+        self.pending_local = reason.startswith('local current-image')
         self.previous = copy.deepcopy(obs)
         self.history.append(copy.deepcopy(action))
         self.history = self.history[-8:]
@@ -93,6 +99,18 @@ class CameraGraspController:
     def step(self, obs, *, active=True):
         if self.previous is not None and self.pending is not None:
             self.model.observe(self.previous, self.pending, obs, isolated=True)
+            old_error, new_error = self.error(self.previous), self.error(obs)
+            if (self.pending_local and self.previous['view'] == obs['view']
+                    and old_error is not None and new_error is not None
+                    and new_error > old_error + max(.003, .05 * old_error)
+                    and self.pending.get('_delta')):
+                previous_action = {k: v for k, v in self.pending.items() if not k.startswith('_')}
+                rollback = dict(previous_action)
+                field = 'pan_pulse' if rollback['kind'] == 'look' else 'pulse'
+                rollback[field] -= self.pending['_delta']
+                self.rollback_action = rollback
+                self.rejected_actions.append((copy.deepcopy(self.previous), previous_action))
+                self.rejected_actions = self.rejected_actions[-8:]
         self.pending = None
         if not active:
             return self._issue({'kind': 'wait'}, obs, 'scheduled peer turn; observe own previous action only')
@@ -109,6 +127,9 @@ class CameraGraspController:
             pulse = self.issued_pulses.get(6, 1500) + (50 if self.probe_index % 2 == 0 else -50)
             self.probe_index += 1
             return self._issue({'kind': 'look', 'pan_pulse': pulse}, obs, 'identify own motion before any overhead-guided movement')
+        if self.rollback_action is not None:
+            action, self.rollback_action = self.rollback_action, None
+            return self._issue(action, obs, 'visual error increased; revert last issued pulse and reject this local candidate')
         if self.stage == 'hold':
             if obs.get('capture_visible') and obs.get('lift_visible') and trusted:
                 return self._issue({'kind': 'wait'}, obs, 'visual hold evidence; physical success is evaluator-only')
@@ -170,7 +191,11 @@ class CameraGraspController:
             action = ({'kind': 'look', 'pan_pulse': pulse} if channel == 6 else
                       {'kind': 'arm', 'servo_id': channel, 'pulse': pulse})
             return self._issue(action, obs, 'bounded isolated bidirectional calibration from issued commands and visible landmarks')
-        if error > .10 and suggestion['kind'] == 'drive':
+        if error < self.best_error - .002:
+            self.best_error, self.stagnation = error, 0
+        else:
+            self.stagnation += 1
+        if (error > .10 or self.stagnation >= 6) and suggestion['kind'] == 'drive':
             self.stage = 'approach'
             self.aligned_count = 0
             self.last_alignment = None
@@ -179,8 +204,9 @@ class CameraGraspController:
             # reobserve after every slice and reduce again in the alignment stage.
             drive = dict(suggestion)
             if drive['forward'] > 0:
-                drive['forward'] = min(.15, max(.08, error))
-            drive['duration_s'] = .8
+                drive['forward'] = min(.15 if error > .10 else .08, max(.04, error))
+            drive['duration_s'] = .8 if error > .10 else .4
+            self.stagnation = 0
             return self._issue(drive, obs, 'image-error-scaled coarse motor command; reobserve before next slice')
         jaws, target = obs['jaws'], obs['target']
         axis = [jaws[1][k] - jaws[0][k] for k in (0, 1)]
@@ -195,6 +221,13 @@ class CameraGraspController:
             self.verify_count = 0
             return self._issue({'kind': 'arm', 'servo_id': 1, 'pulse': 1500}, obs, 'two visible midpoint alignment observations; test closure, not success')
         proposed = self.model.propose(obs, self.issued_pulses)
+        if proposed is not None:
+            for rejected_obs, rejected_action in self.rejected_actions:
+                if (proposed == rejected_action and rejected_obs['view'] == obs['view']
+                        and math.dist(rejected_obs['target'], obs['target']) < .05
+                        and math.dist(rejected_obs['jaws'][0], obs['jaws'][0]) < .05):
+                    proposed = None
+                    break
         if proposed is not None:
             return self._issue(proposed, obs, 'local current-image model predicts reduced alignment error')
         # Explicit bounded exploration supplies previously missing action data.
