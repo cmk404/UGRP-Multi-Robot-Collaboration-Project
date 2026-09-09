@@ -1,0 +1,334 @@
+[
+  {
+    "attempt": "initial",
+    "sha": "9d4be6d5fded8b0ff6e757eb8c8ff1cf2595a8e3",
+    "condition": "baseline",
+    "ok": false,
+    "error": "RuntimeError: CARRIER_CONTACT_MISSING: {'r1': {'contact_geom': 'team_beam_geom', 'left': True, 'right': False, 'bilateral': False, 'left_force_n': 3.142175783315737, 'right_force_n': 0.0}, 'r3': {'contact_geom': 'team_beam_geom', 'left': False, 'right': True, 'bilateral': False, 'left_force_n': 0.0, 'right_force_n': 3.1421755273592713}}",
+    "final": {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "height_above_start_m": -0.000195,
+      "position_m": [
+        0.580281,
+        -2.0,
+        0.019805
+      ],
+      "sim_time_s": 6.846,
+      "tilt_deg": 0.3141
+    },
+    "payload_contact_steps": 0
+  },
+  {
+    "attempt": "initial",
+    "sha": "9d4be6d5fded8b0ff6e757eb8c8ff1cf2595a8e3",
+    "condition": "delayed_2s",
+    "ok": false,
+    "error": "RuntimeError: CARRIER_CONTACT_MISSING: r1={'contact_geom': 'team_beam_geom', 'left': True, 'right': False, 'bilateral': False, 'left_force_n': 3.14212636861941, 'right_force_n': 0.0}",
+    "final": {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "height_above_start_m": -0.000195,
+      "position_m": [
+        0.580165,
+        -2.00001,
+        0.019805
+      ],
+      "sim_time_s": 6.846,
+      "tilt_deg": 0.3057
+    },
+    "payload_contact_steps": 0
+  },
+  {
+    "attempt": "drift",
+    "sha": "63c7044549ee6fd4d0d8a42ba242c92a2307a04c",
+    "condition": "baseline",
+    "ok": false,
+    "error": "RuntimeError: CARRIER_CONTACT_MISSING: {'r1': {'contact_geom': 'team_beam_geom', 'left': True, 'right': False, 'bilateral': False, 'left_force_n': 3.142175783315737, 'right_force_n': 0.0}, 'r3': {'contact_geom': 'team_beam_geom', 'left': False, 'right': True, 'bilateral': False, 'left_force_n': 0.0, 'right_force_n': 3.1421755273592713}}",
+    "final": {
+      "bases": {
+        "r1": {
+          "rpy": [
+            0.0018198782409662505,
+            0.00041588174207232676,
+            0.041401724017088117
+          ],
+          "xyz": [
+            0.633370056930037,
+            -2.3428446796760674,
+            0.032422324004324814
+          ]
+        },
+        "r3": {
+          "rpy": [
+            -0.001819904823322766,
+            0.00041586032779187095,
+            -0.04140189618718343
+          ],
+          "xyz": [
+            0.6333699744757363,
+            -1.6571552757737373,
+            0.03242232718266598
+          ]
+        }
+      },
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "height_above_start_m": -0.000195,
+      "position_m": [
+        0.580281,
+        -2.0,
+        0.019805
+      ],
+      "sim_time_s": 6.846,
+      "tilt_deg": 0.3141
+    },
+    "payload_contact_steps": 0
+  },
+  {
+    "attempt": "drift",
+    "sha": "63c7044549ee6fd4d0d8a42ba242c92a2307a04c",
+    "condition": "delayed_2s",
+    "ok": false,
+    "error": "RuntimeError: CARRIER_CONTACT_MISSING: r1={'contact_geom': 'team_beam_geom', 'left': True, 'right': False, 'bilateral': False, 'left_force_n': 3.14212636861941, 'right_force_n': 0.0}",
+    "final": {
+      "bases": {
+        "r1": {
+          "rpy": [
+            0.001820597781501637,
+            0.00041610731897565864,
+            0.041578476703303266
+          ],
+          "xyz": [
+            0.6333310350854464,
+            -2.342843933267248,
+            0.032422365959770966
+          ]
+        },
+        "r3": {
+          "rpy": [
+            -0.0019420052615199846,
+            0.0007123679903452869,
+            -0.00843121669143011
+          ],
+          "xyz": [
+            0.6406905413179225,
+            -1.6565858153062192,
+            0.03243154354650001
+          ]
+        }
+      },
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "height_above_start_m": -0.000195,
+      "position_m": [
+        0.580165,
+        -2.00001,
+        0.019805
+      ],
+      "sim_time_s": 6.846,
+      "tilt_deg": 0.3057
+    },
+    "payload_contact_steps": 0
+  },
+  {
+    "attempt": "observer-error",
+    "sha": "4eb7c75a48fda3e92206072eaf18514c609be629",
+    "condition": "baseline",
+    "ok": false,
+    "error": "TypeError: run_trial.<locals>.approach_step() takes 1 positional argument but 2 were given",
+    "final": {
+      "bases": {
+        "r1": {
+          "rpy": [
+            -2.3418728708032993e-08,
+            7.475645509519048e-05,
+            2.0133392677563444e-08
+          ],
+          "xyz": [
+            0.5781317841105883,
+            -2.3249999813435474,
+            0.03239151761199835
+          ]
+        },
+        "r3": {
+          "rpy": [
+            -2.3418728708872667e-08,
+            7.475645509519149e-05,
+            2.0133387025177025e-08
+          ],
+          "xyz": [
+            0.5781317841105884,
+            -1.6749999813435557,
+            0.03239151761199835
+          ]
+        }
+      },
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "height_above_start_m": -4.9e-05,
+      "position_m": [
+        0.58,
+        -2.0,
+        0.019951
+      ],
+      "sim_time_s": 1.986,
+      "tilt_deg": 0.0
+    },
+    "payload_contact_steps": 0
+  },
+  {
+    "attempt": "observer-error",
+    "sha": "4eb7c75a48fda3e92206072eaf18514c609be629",
+    "condition": "delayed_2s",
+    "ok": false,
+    "error": "TypeError: run_trial.<locals>.approach_step() takes 1 positional argument but 2 were given",
+    "final": {
+      "bases": {
+        "r1": {
+          "rpy": [
+            -2.3418728708032993e-08,
+            7.475645509519048e-05,
+            2.0133392677563444e-08
+          ],
+          "xyz": [
+            0.5781317841105883,
+            -2.3249999813435474,
+            0.03239151761199835
+          ]
+        },
+        "r3": {
+          "rpy": [
+            -2.3418728708872667e-08,
+            7.475645509519149e-05,
+            2.0133387025177025e-08
+          ],
+          "xyz": [
+            0.5781317841105884,
+            -1.6749999813435557,
+            0.03239151761199835
+          ]
+        }
+      },
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "height_above_start_m": -4.9e-05,
+      "position_m": [
+        0.58,
+        -2.0,
+        0.019951
+      ],
+      "sim_time_s": 1.986,
+      "tilt_deg": 0.0
+    },
+    "payload_contact_steps": 0
+  },
+  {
+    "attempt": "final",
+    "sha": "bc3ee75f44393dfec9be0f1bb4db22f52ccafc97",
+    "condition": "baseline",
+    "ok": true,
+    "error": null,
+    "final": {
+      "bases": {
+        "r1": {
+          "rpy": [
+            -0.0007545455386390532,
+            -7.535541638353296e-08,
+            -0.0005385607955308592
+          ],
+          "xyz": [
+            0.5797479662847695,
+            -2.324596313939846,
+            0.03234438363393341
+          ]
+        },
+        "r3": {
+          "rpy": [
+            0.0007542489531844859,
+            2.0492658151978874e-08,
+            0.00020876694686008235
+          ],
+          "xyz": [
+            0.5798545532228162,
+            -1.6753855916662017,
+            0.03234438360052491
+          ]
+        }
+      },
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "height_above_start_m": 0.071617,
+      "position_m": [
+        0.57985,
+        -2.000011,
+        0.091617
+      ],
+      "sim_time_s": 12.71,
+      "tilt_deg": 0.0114
+    },
+    "payload_contact_steps": 0
+  },
+  {
+    "attempt": "final",
+    "sha": "bc3ee75f44393dfec9be0f1bb4db22f52ccafc97",
+    "condition": "delayed_2s",
+    "ok": true,
+    "error": null,
+    "final": {
+      "bases": {
+        "r1": {
+          "rpy": [
+            -0.0007538695801109044,
+            -5.821661233534323e-08,
+            -0.00021739242000915566
+          ],
+          "xyz": [
+            0.5798718951184735,
+            -2.3245738631401456,
+            0.032344382054678295
+          ]
+        },
+        "r3": {
+          "rpy": [
+            0.0007543060305420698,
+            -7.301282945080337e-08,
+            0.0002844838048079293
+          ],
+          "xyz": [
+            0.5798495742153841,
+            -1.6754238361119023,
+            0.03234438358037645
+          ]
+        }
+      },
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "height_above_start_m": 0.071592,
+      "position_m": [
+        0.579894,
+        -1.99999,
+        0.091592
+      ],
+      "sim_time_s": 15.54,
+      "tilt_deg": 0.0079
+    },
+    "payload_contact_steps": 0
+  }
+]

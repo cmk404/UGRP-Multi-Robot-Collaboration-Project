@@ -1,0 +1,1022 @@
+{
+  "all_ok": false,
+  "config": {
+    "approach_distance_m": 0.6,
+    "conditions": [
+      {
+        "name": "baseline",
+        "second_grasp_delay_s": 0.0
+      },
+      {
+        "name": "delayed_2s",
+        "second_grasp_delay_s": 2.0
+      }
+    ],
+    "fixture_pose_writes_allowed_during_trial": false,
+    "fps": 12,
+    "known_waypoint_wheel_approach": true,
+    "max_expected_trial_sim_s": 30.0,
+    "payload": {
+      "dimensions_m": [
+        0.05,
+        0.45,
+        0.04
+      ],
+      "endpoint_markers": false,
+      "mass_basis": "preserves original 0.180 kg bar plus two 0.008 kg handle geoms",
+      "mass_kg": 0.196,
+      "separate_handles": false,
+      "shape": "single_uniform_box"
+    },
+    "payload_pose_writes": false,
+    "scout_or_navigation": false,
+    "seed": 11,
+    "side_grasp": true,
+    "weld_assistance": false
+  },
+  "environment": {
+    "UGRP_BEAM_DYNAMIC": null,
+    "executable": "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/python",
+    "mujoco": "3.12.0",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+  },
+  "git_sha": "4eb7c75a48fda3e92206072eaf18514c609be629",
+  "git_status_porcelain": "",
+  "probe": "plain_beam_weld_ablation_v3",
+  "repository": "/private/tmp/ugrp-approach-grasp",
+  "trials": [
+    {
+      "approach": {
+        "payload_contact_steps": 0,
+        "physics_timestep_s": 0.002,
+        "trajectory": [
+          {
+            "bases": {
+              "r1": [
+                -0.019996353608699276,
+                -2.3249999938122423,
+                0.032355119141866895
+              ],
+              "r3": [
+                -0.019996353608699276,
+                -1.674999993812244,
+                0.032355119141866895
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 0.9020000000000007
+          },
+          {
+            "bases": {
+              "r1": [
+                -0.01713617555359578,
+                -2.3249999938001613,
+                0.032355678778284436
+              ],
+              "r3": [
+                -0.01713617555359578,
+                -1.6749999938001636,
+                0.032355678778284436
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 1.0020000000000007
+          },
+          {
+            "bases": {
+              "r1": [
+                -0.0035994769967640206,
+                -2.324999993612171,
+                0.03235973219725729
+              ],
+              "r3": [
+                -0.0035994769967640206,
+                -1.6749999936121749,
+                0.03235973219725729
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 1.1020000000000008
+          },
+          {
+            "bases": {
+              "r1": [
+                0.02302188744951527,
+                -2.324999993167053,
+                0.032364948368460766
+              ],
+              "r3": [
+                0.023021887449515267,
+                -1.6749999931670585,
+                0.032364948368460766
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 1.2020000000000008
+          },
+          {
+            "bases": {
+              "r1": [
+                0.062307264238856366,
+                -2.3249999924533724,
+                0.03236995784997889
+              ],
+              "r3": [
+                0.062307264238856366,
+                -1.674999992453377,
+                0.03236995784997889
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 1.302000000000001
+          },
+          {
+            "bases": {
+              "r1": [
+                0.11309449354529186,
+                -2.3249999914704658,
+                0.0323744959856598
+              ],
+              "r3": [
+                0.11309449354529186,
+                -1.6749999914704727,
+                0.0323744959856598
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 1.402000000000001
+          },
+          {
+            "bases": {
+              "r1": [
+                0.17411625067860548,
+                -2.3249999902288616,
+                0.032378534985597764
+              ],
+              "r3": [
+                0.17411625067860548,
+                -1.6749999902288681,
+                0.032378534985597764
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 1.5020000000000011
+          },
+          {
+            "bases": {
+              "r1": [
+                0.24418153710638277,
+                -2.3249999887470185,
+                0.03238210784226852
+              ],
+              "r3": [
+                0.24418153710638285,
+                -1.6749999887470255,
+                0.03238210784226852
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 1.6020000000000012
+          },
+          {
+            "bases": {
+              "r1": [
+                0.32221863579534005,
+                -2.3249999870491798,
+                0.03238526126685326
+              ],
+              "r3": [
+                0.32221863579534016,
+                -1.674999987049188,
+                0.03238526126685326
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 1.7020000000000013
+          },
+          {
+            "bases": {
+              "r1": [
+                0.4072769012311009,
+                -2.324999985165103,
+                0.032388042016545084
+              ],
+              "r3": [
+                0.407276901231101,
+                -1.6749999851651114,
+                0.032388042016545084
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 1.8020000000000014
+          },
+          {
+            "bases": {
+              "r1": [
+                0.49849729985531505,
+                -2.324999983126773,
+                0.03239048509011717
+              ],
+              "r3": [
+                0.49849729985531516,
+                -1.6749999831267812,
+                0.03239048509011717
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 1.9020000000000015
+          }
+        ]
+      },
+      "approach_distance_m": 0.6,
+      "condition": "baseline",
+      "error": "TypeError: run_trial.<locals>.approach_step() takes 1 positional argument but 2 were given",
+      "final": {
+        "bases": {
+          "r1": {
+            "rpy": [
+              -2.3418728708032993e-08,
+              7.475645509519048e-05,
+              2.0133392677563444e-08
+            ],
+            "xyz": [
+              0.5781317841105883,
+              -2.3249999813435474,
+              0.03239151761199835
+            ]
+          },
+          "r3": {
+            "rpy": [
+              -2.3418728708872667e-08,
+              7.475645509519149e-05,
+              2.0133387025177025e-08
+            ],
+            "xyz": [
+              0.5781317841105884,
+              -1.6749999813435557,
+              0.03239151761199835
+            ]
+          }
+        },
+        "constraints_active": {
+          "r1": false,
+          "r3": false
+        },
+        "height_above_start_m": -4.9e-05,
+        "position_m": [
+          0.58,
+          -2.0,
+          0.019951
+        ],
+        "sim_time_s": 1.986,
+        "tilt_deg": 0.0
+      },
+      "ok": false,
+      "second_grasp_delay_s": 0.0,
+      "seed": 11,
+      "side_grasp": true,
+      "trace": [
+        {
+          "bases": {
+            "r1": {
+              "rpy": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "xyz": [
+                -0.020000000000000018,
+                -2.325,
+                0.032355118817659255
+              ]
+            },
+            "r3": {
+              "rpy": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "xyz": [
+                -0.020000000000000018,
+                -1.675,
+                0.032355118817659255
+              ]
+            }
+          },
+          "beam_fixture": {
+            "compiled_contact_geometries": {
+              "r1__left_finger": {
+                "condim": 3,
+                "friction": [
+                  3.4,
+                  0.03,
+                  0.002
+                ],
+                "rgba": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "size": [
+                  0.014,
+                  0.0045,
+                  0.0035
+                ]
+              },
+              "r1__left_finger_pad_visual": {
+                "condim": 3,
+                "friction": [
+                  1.0,
+                  0.005,
+                  0.0001
+                ],
+                "rgba": [
+                  0.5,
+                  0.5,
+                  0.5,
+                  1.0
+                ],
+                "size": [
+                  0.015,
+                  0.004,
+                  0.0022
+                ]
+              },
+              "r1__right_finger": {
+                "condim": 3,
+                "friction": [
+                  3.4,
+                  0.03,
+                  0.002
+                ],
+                "rgba": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "size": [
+                  0.014,
+                  0.0045,
+                  0.0035
+                ]
+              },
+              "team_beam_geom": {
+                "condim": 3,
+                "friction": [
+                  1.2,
+                  0.02,
+                  0.002
+                ],
+                "rgba": [
+                  0.8999999761581421,
+                  0.46000000834465027,
+                  0.07999999821186066,
+                  1.0
+                ],
+                "size": [
+                  0.025,
+                  0.225,
+                  0.02
+                ]
+              }
+            },
+            "compiled_geom_mass_requested_kg": 0.196,
+            "compiled_total_body_mass_kg": 0.196,
+            "contact_source": "team_beam_geom",
+            "dimensions_m": [
+              0.05,
+              0.45,
+              0.04
+            ],
+            "endpoint_bodies": "invisible coordinate anchors only; no collision geometry",
+            "main_geom_half_size_m": [
+              0.025,
+              0.225,
+              0.02
+            ],
+            "removed_handle_geometries_and_sites": [
+              {
+                "geom_id": -1,
+                "robot_id": "r1",
+                "site_id": -1
+              },
+              {
+                "geom_id": -1,
+                "robot_id": "r3",
+                "site_id": -1
+              }
+            ],
+            "shape": "single_uniform_box"
+          },
+          "carrier_base_poses": {
+            "r1": [
+              -0.020000000000000018,
+              -2.325,
+              0.032355118817659255
+            ],
+            "r3": [
+              -0.020000000000000018,
+              -1.675,
+              0.032355118817659255
+            ]
+          },
+          "constraints_active": {
+            "r1": false,
+            "r3": false
+          },
+          "event": "fixture_setup_complete",
+          "height_above_start_m": -4.9e-05,
+          "position_m": [
+            0.58,
+            -2.0,
+            0.019951
+          ],
+          "scout_motion": false,
+          "setup_only": true,
+          "setup_pose_write": true,
+          "sim_time_s": 0.3,
+          "tilt_deg": 0.0
+        },
+        {
+          "bases": {
+            "r1": {
+              "rpy": [
+                -1.916529476963987e-07,
+                7.189832193733203e-05,
+                2.387079409922637e-11
+              ],
+              "xyz": [
+                -0.019996577295807703,
+                -2.324999993812124,
+                0.03235512084859414
+              ]
+            },
+            "r3": {
+              "rpy": [
+                -1.916529476979666e-07,
+                7.189832193732888e-05,
+                2.3870794036302262e-11
+              ],
+              "xyz": [
+                -0.019996577295807703,
+                -1.6749999938121256,
+                0.03235512084859414
+              ]
+            }
+          },
+          "constraints_active": {
+            "r1": false,
+            "r3": false
+          },
+          "event": "wheel_approach_started",
+          "height_above_start_m": -4.9e-05,
+          "position_m": [
+            0.58,
+            -2.0,
+            0.019951
+          ],
+          "requested_distance_m": 0.6,
+          "sim_time_s": 0.9,
+          "target_x": 0.58,
+          "tilt_deg": 0.0
+        },
+        {
+          "bases": {
+            "r1": {
+              "rpy": [
+                -2.3418728708032993e-08,
+                7.475645509519048e-05,
+                2.0133392677563444e-08
+              ],
+              "xyz": [
+                0.5781317841105883,
+                -2.3249999813435474,
+                0.03239151761199835
+              ]
+            },
+            "r3": {
+              "rpy": [
+                -2.3418728708872667e-08,
+                7.475645509519149e-05,
+                2.0133387025177025e-08
+              ],
+              "xyz": [
+                0.5781317841105884,
+                -1.6749999813435557,
+                0.03239151761199835
+              ]
+            }
+          },
+          "constraints_active": {
+            "r1": false,
+            "r3": false
+          },
+          "error": "TypeError: run_trial.<locals>.approach_step() takes 1 positional argument but 2 were given",
+          "event": "trial_failed",
+          "height_above_start_m": -4.9e-05,
+          "position_m": [
+            0.58,
+            -2.0,
+            0.019951
+          ],
+          "sim_time_s": 1.986,
+          "tilt_deg": 0.0
+        }
+      ],
+      "traceback": "Traceback (most recent call last):\n  File \"/private/tmp/ugrp-approach-grasp/scripts/probe_dual_grasp_sync.py\", line 385, in run_trial\n    world._settle(world.controllers[rid])\n  File \"/private/tmp/ugrp-approach-grasp/sim/multi_masterpi_production.py\", line 1537, in _settle\n    robot.step(motor_commands=STOP, duration_s=0.10)\n  File \"/private/tmp/ugrp-approach-grasp/sim/masterpi_dynamics_v2.py\", line 1317, in step\n    self._physics_step()\n  File \"/private/tmp/ugrp-approach-grasp/sim/multi_masterpi_production.py\", line 322, in _physics_step\n    self._owner._physics_step_for(self, commands)\nTypeError: run_trial.<locals>.approach_step() takes 1 positional argument but 2 were given\n",
+      "video": "/Users/changmin/projects/ugrp/outputs/approach-grasp-20260909-aligned/baseline.mp4",
+      "video_duration_s": 2.583,
+      "video_frames": 31,
+      "weld_assistance": false
+    },
+    {
+      "approach": {
+        "payload_contact_steps": 0,
+        "physics_timestep_s": 0.002,
+        "trajectory": [
+          {
+            "bases": {
+              "r1": [
+                -0.019996353608699276,
+                -2.3249999938122423,
+                0.032355119141866895
+              ],
+              "r3": [
+                -0.019996353608699276,
+                -1.674999993812244,
+                0.032355119141866895
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 0.9020000000000007
+          },
+          {
+            "bases": {
+              "r1": [
+                -0.01713617555359578,
+                -2.3249999938001613,
+                0.032355678778284436
+              ],
+              "r3": [
+                -0.01713617555359578,
+                -1.6749999938001636,
+                0.032355678778284436
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 1.0020000000000007
+          },
+          {
+            "bases": {
+              "r1": [
+                -0.0035994769967640206,
+                -2.324999993612171,
+                0.03235973219725729
+              ],
+              "r3": [
+                -0.0035994769967640206,
+                -1.6749999936121749,
+                0.03235973219725729
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 1.1020000000000008
+          },
+          {
+            "bases": {
+              "r1": [
+                0.02302188744951527,
+                -2.324999993167053,
+                0.032364948368460766
+              ],
+              "r3": [
+                0.023021887449515267,
+                -1.6749999931670585,
+                0.032364948368460766
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 1.2020000000000008
+          },
+          {
+            "bases": {
+              "r1": [
+                0.062307264238856366,
+                -2.3249999924533724,
+                0.03236995784997889
+              ],
+              "r3": [
+                0.062307264238856366,
+                -1.674999992453377,
+                0.03236995784997889
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 1.302000000000001
+          },
+          {
+            "bases": {
+              "r1": [
+                0.11309449354529186,
+                -2.3249999914704658,
+                0.0323744959856598
+              ],
+              "r3": [
+                0.11309449354529186,
+                -1.6749999914704727,
+                0.0323744959856598
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 1.402000000000001
+          },
+          {
+            "bases": {
+              "r1": [
+                0.17411625067860548,
+                -2.3249999902288616,
+                0.032378534985597764
+              ],
+              "r3": [
+                0.17411625067860548,
+                -1.6749999902288681,
+                0.032378534985597764
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 1.5020000000000011
+          },
+          {
+            "bases": {
+              "r1": [
+                0.24418153710638277,
+                -2.3249999887470185,
+                0.03238210784226852
+              ],
+              "r3": [
+                0.24418153710638285,
+                -1.6749999887470255,
+                0.03238210784226852
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 1.6020000000000012
+          },
+          {
+            "bases": {
+              "r1": [
+                0.32221863579534005,
+                -2.3249999870491798,
+                0.03238526126685326
+              ],
+              "r3": [
+                0.32221863579534016,
+                -1.674999987049188,
+                0.03238526126685326
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 1.7020000000000013
+          },
+          {
+            "bases": {
+              "r1": [
+                0.4072769012311009,
+                -2.324999985165103,
+                0.032388042016545084
+              ],
+              "r3": [
+                0.407276901231101,
+                -1.6749999851651114,
+                0.032388042016545084
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 1.8020000000000014
+          },
+          {
+            "bases": {
+              "r1": [
+                0.49849729985531505,
+                -2.324999983126773,
+                0.03239048509011717
+              ],
+              "r3": [
+                0.49849729985531516,
+                -1.6749999831267812,
+                0.03239048509011717
+              ]
+            },
+            "payload_contact": false,
+            "sim_time_s": 1.9020000000000015
+          }
+        ]
+      },
+      "approach_distance_m": 0.6,
+      "condition": "delayed_2s",
+      "error": "TypeError: run_trial.<locals>.approach_step() takes 1 positional argument but 2 were given",
+      "final": {
+        "bases": {
+          "r1": {
+            "rpy": [
+              -2.3418728708032993e-08,
+              7.475645509519048e-05,
+              2.0133392677563444e-08
+            ],
+            "xyz": [
+              0.5781317841105883,
+              -2.3249999813435474,
+              0.03239151761199835
+            ]
+          },
+          "r3": {
+            "rpy": [
+              -2.3418728708872667e-08,
+              7.475645509519149e-05,
+              2.0133387025177025e-08
+            ],
+            "xyz": [
+              0.5781317841105884,
+              -1.6749999813435557,
+              0.03239151761199835
+            ]
+          }
+        },
+        "constraints_active": {
+          "r1": false,
+          "r3": false
+        },
+        "height_above_start_m": -4.9e-05,
+        "position_m": [
+          0.58,
+          -2.0,
+          0.019951
+        ],
+        "sim_time_s": 1.986,
+        "tilt_deg": 0.0
+      },
+      "ok": false,
+      "second_grasp_delay_s": 2.0,
+      "seed": 11,
+      "side_grasp": true,
+      "trace": [
+        {
+          "bases": {
+            "r1": {
+              "rpy": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "xyz": [
+                -0.020000000000000018,
+                -2.325,
+                0.032355118817659255
+              ]
+            },
+            "r3": {
+              "rpy": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "xyz": [
+                -0.020000000000000018,
+                -1.675,
+                0.032355118817659255
+              ]
+            }
+          },
+          "beam_fixture": {
+            "compiled_contact_geometries": {
+              "r1__left_finger": {
+                "condim": 3,
+                "friction": [
+                  3.4,
+                  0.03,
+                  0.002
+                ],
+                "rgba": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "size": [
+                  0.014,
+                  0.0045,
+                  0.0035
+                ]
+              },
+              "r1__left_finger_pad_visual": {
+                "condim": 3,
+                "friction": [
+                  1.0,
+                  0.005,
+                  0.0001
+                ],
+                "rgba": [
+                  0.5,
+                  0.5,
+                  0.5,
+                  1.0
+                ],
+                "size": [
+                  0.015,
+                  0.004,
+                  0.0022
+                ]
+              },
+              "r1__right_finger": {
+                "condim": 3,
+                "friction": [
+                  3.4,
+                  0.03,
+                  0.002
+                ],
+                "rgba": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "size": [
+                  0.014,
+                  0.0045,
+                  0.0035
+                ]
+              },
+              "team_beam_geom": {
+                "condim": 3,
+                "friction": [
+                  1.2,
+                  0.02,
+                  0.002
+                ],
+                "rgba": [
+                  0.8999999761581421,
+                  0.46000000834465027,
+                  0.07999999821186066,
+                  1.0
+                ],
+                "size": [
+                  0.025,
+                  0.225,
+                  0.02
+                ]
+              }
+            },
+            "compiled_geom_mass_requested_kg": 0.196,
+            "compiled_total_body_mass_kg": 0.196,
+            "contact_source": "team_beam_geom",
+            "dimensions_m": [
+              0.05,
+              0.45,
+              0.04
+            ],
+            "endpoint_bodies": "invisible coordinate anchors only; no collision geometry",
+            "main_geom_half_size_m": [
+              0.025,
+              0.225,
+              0.02
+            ],
+            "removed_handle_geometries_and_sites": [
+              {
+                "geom_id": -1,
+                "robot_id": "r1",
+                "site_id": -1
+              },
+              {
+                "geom_id": -1,
+                "robot_id": "r3",
+                "site_id": -1
+              }
+            ],
+            "shape": "single_uniform_box"
+          },
+          "carrier_base_poses": {
+            "r1": [
+              -0.020000000000000018,
+              -2.325,
+              0.032355118817659255
+            ],
+            "r3": [
+              -0.020000000000000018,
+              -1.675,
+              0.032355118817659255
+            ]
+          },
+          "constraints_active": {
+            "r1": false,
+            "r3": false
+          },
+          "event": "fixture_setup_complete",
+          "height_above_start_m": -4.9e-05,
+          "position_m": [
+            0.58,
+            -2.0,
+            0.019951
+          ],
+          "scout_motion": false,
+          "setup_only": true,
+          "setup_pose_write": true,
+          "sim_time_s": 0.3,
+          "tilt_deg": 0.0
+        },
+        {
+          "bases": {
+            "r1": {
+              "rpy": [
+                -1.916529476963987e-07,
+                7.189832193733203e-05,
+                2.387079409922637e-11
+              ],
+              "xyz": [
+                -0.019996577295807703,
+                -2.324999993812124,
+                0.03235512084859414
+              ]
+            },
+            "r3": {
+              "rpy": [
+                -1.916529476979666e-07,
+                7.189832193732888e-05,
+                2.3870794036302262e-11
+              ],
+              "xyz": [
+                -0.019996577295807703,
+                -1.6749999938121256,
+                0.03235512084859414
+              ]
+            }
+          },
+          "constraints_active": {
+            "r1": false,
+            "r3": false
+          },
+          "event": "wheel_approach_started",
+          "height_above_start_m": -4.9e-05,
+          "position_m": [
+            0.58,
+            -2.0,
+            0.019951
+          ],
+          "requested_distance_m": 0.6,
+          "sim_time_s": 0.9,
+          "target_x": 0.58,
+          "tilt_deg": 0.0
+        },
+        {
+          "bases": {
+            "r1": {
+              "rpy": [
+                -2.3418728708032993e-08,
+                7.475645509519048e-05,
+                2.0133392677563444e-08
+              ],
+              "xyz": [
+                0.5781317841105883,
+                -2.3249999813435474,
+                0.03239151761199835
+              ]
+            },
+            "r3": {
+              "rpy": [
+                -2.3418728708872667e-08,
+                7.475645509519149e-05,
+                2.0133387025177025e-08
+              ],
+              "xyz": [
+                0.5781317841105884,
+                -1.6749999813435557,
+                0.03239151761199835
+              ]
+            }
+          },
+          "constraints_active": {
+            "r1": false,
+            "r3": false
+          },
+          "error": "TypeError: run_trial.<locals>.approach_step() takes 1 positional argument but 2 were given",
+          "event": "trial_failed",
+          "height_above_start_m": -4.9e-05,
+          "position_m": [
+            0.58,
+            -2.0,
+            0.019951
+          ],
+          "sim_time_s": 1.986,
+          "tilt_deg": 0.0
+        }
+      ],
+      "traceback": "Traceback (most recent call last):\n  File \"/private/tmp/ugrp-approach-grasp/scripts/probe_dual_grasp_sync.py\", line 385, in run_trial\n    world._settle(world.controllers[rid])\n  File \"/private/tmp/ugrp-approach-grasp/sim/multi_masterpi_production.py\", line 1537, in _settle\n    robot.step(motor_commands=STOP, duration_s=0.10)\n  File \"/private/tmp/ugrp-approach-grasp/sim/masterpi_dynamics_v2.py\", line 1317, in step\n    self._physics_step()\n  File \"/private/tmp/ugrp-approach-grasp/sim/multi_masterpi_production.py\", line 322, in _physics_step\n    self._owner._physics_step_for(self, commands)\nTypeError: run_trial.<locals>.approach_step() takes 1 positional argument but 2 were given\n",
+      "video": "/Users/changmin/projects/ugrp/outputs/approach-grasp-20260909-aligned/delayed_2s.mp4",
+      "video_duration_s": 2.583,
+      "video_frames": 31,
+      "weld_assistance": false
+    }
+  ]
+}
