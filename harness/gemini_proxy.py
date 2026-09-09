@@ -1,4 +1,4 @@
-"""OpenAI-compatible Gemini Antigravity subscription proxy completer."""
+"""Gemini completer with direct API-key auth and legacy proxy fallback."""
 
 from __future__ import annotations
 
@@ -18,12 +18,14 @@ from .vlm import VlmError
 
 
 DEFAULT_URL = "http://127.0.0.1:8391/v1/chat/completions"
+GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
 DEFAULT_MODEL = "gemini-3.7-flash"
+DEFAULT_API_MODEL = "gemini-3.8-flash"
 REASONING_EFFORTS = ("none", "low", "medium", "high")
 
 
 class GeminiProxyError(VlmError):
-    """A safely reportable Gemini proxy failure with stable retry metadata."""
+    """A safely reportable Gemini transport failure with stable retry metadata."""
 
     def __init__(
         self,
@@ -55,8 +57,16 @@ class GeminiProxyCompleter:
         timeout: float | None = None,
         http_open: Callable[..., Any] = urlopen,
     ) -> None:
+        # New local installs can use a normal Gemini API key directly. An
+        # explicitly configured proxy URL still wins so existing deployments
+        # and recorded experiments remain reproducible.
+        self.api_key = os.environ.get("GEMINI_API_KEY", "").strip()
+        explicit_proxy_url = url or os.environ.get("GEMINI_PROXY_URL")
+        self.direct_api = bool(self.api_key) and not explicit_proxy_url
+        self.url = explicit_proxy_url or (GEMINI_API_URL if self.direct_api else DEFAULT_URL)
+        if self.direct_api and model == DEFAULT_MODEL:
+            model = os.environ.get("GEMINI_API_MODEL", DEFAULT_API_MODEL).strip() or DEFAULT_API_MODEL
         self.model_name = model
-        self.url = url or os.environ.get("GEMINI_PROXY_URL", DEFAULT_URL)
         self.max_tokens = max(1, int(max_tokens))
         self.temperature = float(temperature)
         if reasoning_effort not in REASONING_EFFORTS:
@@ -85,22 +95,23 @@ class GeminiProxyCompleter:
         self.last_latency_ms = None
         if image is not None and images is not None:
             raise ValueError("use image or images, not both")
-        payload = json.dumps(
-            {
-                "model": self.model_name,
-                "messages": (_to_gemini_multi_image_messages(messages, images)
-                             if images is not None else _to_groq_messages(messages, image)),
-                "temperature": self.temperature,
-                "max_tokens": self.max_tokens,
-                "reasoning_effort": self.reasoning_effort,
-            }
-        ).encode("utf-8")
-        request = Request(
-            self.url,
-            data=payload,
-            method="POST",
-            headers={"Content-Type": "application/json", "User-Agent": "ugrp-harness/1.0"},
-        )
+        body: dict[str, Any] = {
+            "model": self.model_name,
+            "messages": (_to_gemini_multi_image_messages(messages, images)
+                         if images is not None else _to_groq_messages(messages, image)),
+            "temperature": self.temperature,
+            "max_tokens": self.max_tokens,
+        }
+        # The direct OpenAI-compatible endpoint supports low/medium/high.
+        # Omit the legacy proxy-only "none" value for direct calls.
+        if not self.direct_api or self.reasoning_effort != "none":
+            body["reasoning_effort"] = self.reasoning_effort
+        payload = json.dumps(body).encode("utf-8")
+        headers = {"Content-Type": "application/json", "User-Agent": "ugrp-harness/1.0"}
+        if self.direct_api:
+            headers["Authorization"] = f"Bearer {self.api_key}"
+        request = Request(self.url, data=payload, method="POST", headers=headers)
+        target = "Gemini API" if self.direct_api else "Gemini 프록시"
         started = time.monotonic()
         try:
             with self.http_open(request, timeout=self.timeout) as response:
@@ -112,56 +123,56 @@ class GeminiProxyCompleter:
             retryable = status in {408, 429} or (status is not None and 500 <= status <= 599)
             retry_after_s = _retry_after_seconds(getattr(exc, "headers", None))
             raise GeminiProxyError(
-                f"Gemini 프록시 HTTP {status or 0}", error_kind="http",
+                f"{target} HTTP {status or 0}", error_kind="http",
                 retryable=retryable, http_status=status, latency_ms=latency_ms,
                 retry_after_s=retry_after_s,
             ) from exc
         except (TimeoutError, socket.timeout) as exc:
             latency_ms = (time.monotonic() - started) * 1000
             raise GeminiProxyError(
-                "Gemini 프록시 요청 시간이 초과되었습니다.", error_kind="timeout",
+                f"{target} 요청 시간이 초과되었습니다.", error_kind="timeout",
                 retryable=True, latency_ms=latency_ms,
             ) from exc
         except URLError as exc:
             latency_ms = (time.monotonic() - started) * 1000
             if isinstance(exc.reason, (TimeoutError, socket.timeout)):
                 raise GeminiProxyError(
-                    "Gemini 프록시 요청 시간이 초과되었습니다.", error_kind="timeout",
+                    f"{target} 요청 시간이 초과되었습니다.", error_kind="timeout",
                     retryable=True, latency_ms=latency_ms,
                 ) from exc
             raise GeminiProxyError(
-                "Gemini 프록시에 연결하지 못했습니다.", error_kind="connection",
+                f"{target}에 연결하지 못했습니다.", error_kind="connection",
                 retryable=True, latency_ms=latency_ms,
             ) from exc
         except OSError as exc:
             latency_ms = (time.monotonic() - started) * 1000
             raise GeminiProxyError(
-                "Gemini 프록시에 연결하지 못했습니다.", error_kind="connection",
+                f"{target}에 연결하지 못했습니다.", error_kind="connection",
                 retryable=True, latency_ms=latency_ms,
             ) from exc
         self.last_latency_ms = (time.monotonic() - started) * 1000
         try:
-            body = json.loads(raw.decode("utf-8"))
-            choices = body["choices"]
+            response_body = json.loads(raw.decode("utf-8"))
+            choices = response_body["choices"]
             text = choices[0]["message"]["content"]
         except (KeyError, IndexError, TypeError, UnicodeDecodeError, json.JSONDecodeError) as exc:
             raise GeminiProxyError(
-                "Gemini 프록시가 올바른 completion JSON을 주지 않았습니다.",
+                f"{target}가 올바른 completion JSON을 주지 않았습니다.",
                 error_kind="malformed_response", retryable=True,
                 latency_ms=self.last_latency_ms,
             ) from exc
         if not isinstance(text, str) or not text.strip():
             raise GeminiProxyError(
-                "Gemini 프록시 답이 비어 있습니다.", error_kind="malformed_response",
+                f"{target} 답이 비어 있습니다.", error_kind="malformed_response",
                 retryable=True, latency_ms=self.last_latency_ms,
             )
-        usage = body.get("usage")
+        usage = response_body.get("usage")
         if isinstance(usage, dict):
             measured = {key: value for key, value in usage.items()
                         if key in {"prompt_tokens", "completion_tokens", "total_tokens"}
                         and isinstance(value, int) and not isinstance(value, bool) and value >= 0}
             self.last_usage = measured or None
-        response_model = body.get("model")
+        response_model = response_body.get("model")
         if isinstance(response_model, str) and response_model.strip():
             self.last_model = response_model.strip()
         return text.strip()
