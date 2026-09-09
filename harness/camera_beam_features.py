@@ -8,6 +8,8 @@ from typing import Any
 import cv2
 import numpy as np
 
+from harness.camera_beam_shaft import robust_shaft_geometry
+
 
 # Broad enough for the shaded orange faces seen by both cameras while excluding
 # gray flooring and the yellow/gold parts of the robots.
@@ -22,12 +24,13 @@ def _ordered_corners(points: np.ndarray, center: tuple[float, float]) -> list[li
     return ordered[start:] + ordered[:start]
 
 
-def extract_beams(jpeg: bytes) -> list[dict[str, Any]]:
+def extract_beams(jpeg: bytes, robust_shaft: bool = False) -> list[dict[str, Any]]:
     """Return orange connected components described only by their image pixels.
 
-    Coordinates are normalized by image width and height. ``length_px`` and
-    ``width_px`` describe the component's 2-D minimum-area rectangle; they are
-    not estimates of physical dimensions or 3-D pose.
+    Coordinates are normalized by image width and height. By default,
+    ``length_px`` and ``width_px`` describe the component's 2-D minimum-area
+    rectangle. With ``robust_shaft=True`` they describe its longest stable
+    central shaft. Neither mode estimates physical dimensions or 3-D pose.
     """
 
     if not jpeg:
@@ -69,6 +72,18 @@ def extract_beams(jpeg: bytes) -> list[dict[str, Any]]:
             or np.any(contour[:, 0, 0] >= width - 2)
             or np.any(contour[:, 0, 1] >= height - 2)
         )
+        if robust_shaft:
+            component = np.zeros_like(mask)
+            cv2.drawContours(component, [contour], -1, 255, thickness=cv2.FILLED)
+            component = cv2.bitwise_and(component, mask)
+            shaft = robust_shaft_geometry(component)
+            if shaft is None:
+                continue
+            cx, cy = shaft["center_px"]
+            endpoints_px = sorted(map(tuple, shaft["endpoints_px"].tolist()))
+            box = _ordered_corners(shaft["corners_px"], (cx, cy))
+            width_px = float(shaft["width_px"])
+            length_px = float(shaft["length_px"])
         candidates.append(
             {
                 "center": [float(cx / width), float(cy / height)],

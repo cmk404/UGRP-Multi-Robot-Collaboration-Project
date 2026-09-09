@@ -297,7 +297,7 @@ class PixelGraspController:
     def step(self, own_jpeg, top_jpeg, active=True):
         self.steps += 1
         gripper = self.tracker.update(top_jpeg,self.last_action)
-        beam = select_beam(extract_beams(top_jpeg),gripper.get('center') if gripper.get('valid') else None,self.beam_center)
+        beam = select_beam(extract_beams(top_jpeg,robust_shaft=True),gripper.get('center') if gripper.get('valid') else None,self.beam_center)
         own_candidates = extract_beams(own_jpeg)
         own = max(own_candidates,key=lambda c:c['area_px']) if own_candidates else None
         if beam is not None:
