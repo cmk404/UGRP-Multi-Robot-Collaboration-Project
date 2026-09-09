@@ -630,6 +630,8 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
+    parser.add_argument('--ground-truth-diagnostic', action='store_true',
+                        help='Historical physics diagnostic only; never an image-only robot run.')
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--seed", type=int, default=11)
     parser.add_argument("--fps", type=int, default=12)
@@ -643,6 +645,8 @@ def main() -> int:
     parser.add_argument("--approach-distance", type=float, default=0.0, help="Start this many meters behind the side grasp waypoint (0 to 1m).")
     parser.add_argument("--transport-distance", type=float, default=0.0, help="Physically carry the lifted beam forward +x by this distance (0 to 0.8m).")
     args = parser.parse_args()
+    if not args.ground_truth_diagnostic:
+        parser.error('Coordinate-driven diagnostic is disabled by default. Use scripts/run_camera_pair_transport.py for own-view + overhead image-only control. Historical physics comparisons require explicit --ground-truth-diagnostic.')
     if not 0 <= args.approach_distance <= 1.0 or (args.approach_distance > 0 and not args.side_grasp):
         parser.error("--approach-distance requires --side-grasp and a distance between 0 and 1m")
     if args.side_grasp and args.weld_assistance:

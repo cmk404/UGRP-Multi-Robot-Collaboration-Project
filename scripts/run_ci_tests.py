@@ -11,6 +11,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 TEST_PATTERNS = (
+    "tests/test_camera_pair*.py",
     "tests/test_markerless*.py",
     "tests/test_visual_attachment*.py",
     "tests/test_placement_guidance.py",
