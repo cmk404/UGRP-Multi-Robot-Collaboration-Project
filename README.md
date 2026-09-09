@@ -8,9 +8,11 @@
 
 이 결과는 로봇1대·통신 없음 조건이다. 다중 로봇 협업, 새 시드의 일반 성능, 실물 MasterPi 성공을 뜻하지 않는다. 접근 보정 반복과 불필요한 이동은 아직 개선할 문제다. [진행 이슈](https://github.com/kcm0127-dotcom/ugrp/issues)에서 추적한다.
 
-현재 시뮬레이션은 Mac 로컬 환경을 기준으로 한다. 예전 클라우드 GPU 실행 환경은 [퇴역 기록](docs/cloud_simulation.md)으로만 남긴다.
+새 팀원은 **[Ubuntu 24.04 시작 안내](docs/ubuntu_quickstart.md)**에서 설치 → 무료 이동·카메라 데모 → 테스트 → PR 순서로 시작한다. 기존 연구 실험은 Mac 로컬 환경에서 검증했다. 예전 클라우드 GPU 실행 환경은 [퇴역 기록](docs/cloud_simulation.md)으로만 남긴다.
 
 ## 시작하기
+
+- **[팀원용 Ubuntu 설치·시뮬레이션·PR 안내](docs/ubuntu_quickstart.md)** — 모델 계정 없이 시작 가능
 
 - [설치·테스트·실험 재현과 PR 절차](CONTRIBUTING.md)
 - [실험 목록과 증거 관리](experiments/README.md)
