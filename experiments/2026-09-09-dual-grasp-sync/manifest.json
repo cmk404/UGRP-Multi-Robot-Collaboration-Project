@@ -1,0 +1,372 @@
+{
+  "all_ok": true,
+  "config": {
+    "conditions": [
+      {
+        "name": "baseline",
+        "second_grasp_delay_s": 0.0
+      },
+      {
+        "name": "delayed_2s",
+        "second_grasp_delay_s": 2.0
+      }
+    ],
+    "fixture_pose_writes_allowed_during_trial": false,
+    "fps": 12,
+    "max_expected_trial_sim_s": 15.0,
+    "payload_pose_writes": false,
+    "scout_or_navigation": false,
+    "seed": 11
+  },
+  "environment": {
+    "UGRP_BEAM_DYNAMIC": null,
+    "executable": "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/python",
+    "mujoco": "3.12.0",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+  },
+  "git_sha": "df4eeb083c94ede8d5e0198fc3dd86ea6b238036",
+  "git_status_porcelain": "?? scripts/sim_quickstart.py\n?? tests/test_sim_quickstart.py",
+  "probe": "dual_grasp_sync_v1",
+  "repository": "/Users/changmin/projects/ugrp",
+  "trials": [
+    {
+      "condition": "baseline",
+      "final": {
+        "constraints_active": {
+          "r1": true,
+          "r3": true
+        },
+        "height_above_start_m": 0.055545,
+        "position_m": [
+          0.573802,
+          -1.99999,
+          0.075545
+        ],
+        "sim_time_s": 4.96,
+        "tilt_deg": 6.2518
+      },
+      "ok": true,
+      "second_grasp_delay_s": 0.0,
+      "seed": 11,
+      "trace": [
+        {
+          "carrier_base_poses": {
+            "r1": [
+              0.4149999999999999,
+              -2.208,
+              0.032355118817659255
+            ],
+            "r3": [
+              0.4149999999999999,
+              -1.792,
+              0.032355118817659255
+            ]
+          },
+          "constraints_active": {
+            "r1": false,
+            "r3": false
+          },
+          "event": "fixture_setup_complete",
+          "height_above_start_m": -4.9e-05,
+          "position_m": [
+            0.58,
+            -2.0,
+            0.019951
+          ],
+          "scout_motion": false,
+          "setup_only": true,
+          "setup_pose_write": true,
+          "sim_time_s": 0.3,
+          "tilt_deg": 0.0
+        },
+        {
+          "constraints_active": {
+            "r1": false,
+            "r3": false
+          },
+          "event": "preclose_aligned",
+          "height_above_start_m": -0.000192,
+          "position_m": [
+            0.580588,
+            -2.0,
+            0.019808
+          ],
+          "sim_time_s": 3.18,
+          "tilt_deg": 0.2055
+        },
+        {
+          "constraints_active": {
+            "r1": false,
+            "r3": false
+          },
+          "contacts": {
+            "r1": {
+              "bilateral": true,
+              "left": true,
+              "left_force_n": 0.7377421029502647,
+              "right": true,
+              "right_force_n": 0.6543475123859628
+            },
+            "r3": {
+              "bilateral": true,
+              "left": true,
+              "left_force_n": 0.6543543232029794,
+              "right": true,
+              "right_force_n": 0.7377544893152654
+            }
+          },
+          "event": "simultaneous_close_complete",
+          "height_above_start_m": -0.000193,
+          "position_m": [
+            0.580528,
+            -2.0,
+            0.019807
+          ],
+          "sim_time_s": 4.01,
+          "tilt_deg": 0.151
+        },
+        {
+          "constraints_active": {
+            "r1": true,
+            "r3": true
+          },
+          "contacts": {
+            "r1": {
+              "bilateral": true,
+              "left": true,
+              "left_force_n": 0.7026994777117266,
+              "right": true,
+              "right_force_n": 0.6823721099132957
+            },
+            "r3": {
+              "bilateral": true,
+              "left": true,
+              "left_force_n": 0.6826357401083116,
+              "right": true,
+              "right_force_n": 0.7034775079209922
+            }
+          },
+          "event": "dual_grasp_confirmed",
+          "height_above_start_m": -0.000193,
+          "position_m": [
+            0.580526,
+            -2.0,
+            0.019807
+          ],
+          "sim_time_s": 4.01,
+          "tilt_deg": 0.148
+        },
+        {
+          "constraints_active": {
+            "r1": true,
+            "r3": true
+          },
+          "event": "lift_complete",
+          "height_above_start_m": 0.055545,
+          "position_m": [
+            0.573802,
+            -1.99999,
+            0.075545
+          ],
+          "sim_time_s": 4.96,
+          "tilt_deg": 6.2518
+        }
+      ],
+      "video": "/Users/changmin/projects/ugrp/outputs/dual-grasp-sync-20260909/isolated/baseline.mp4",
+      "video_duration_s": 4.917,
+      "video_frames": 59
+    },
+    {
+      "condition": "delayed_2s",
+      "final": {
+        "constraints_active": {
+          "r1": true,
+          "r3": true
+        },
+        "height_above_start_m": 0.055569,
+        "position_m": [
+          0.573773,
+          -2.000003,
+          0.075569
+        ],
+        "sim_time_s": 7.79,
+        "tilt_deg": 6.2684
+      },
+      "ok": true,
+      "second_grasp_delay_s": 2.0,
+      "seed": 11,
+      "trace": [
+        {
+          "carrier_base_poses": {
+            "r1": [
+              0.4149999999999999,
+              -2.208,
+              0.032355118817659255
+            ],
+            "r3": [
+              0.4149999999999999,
+              -1.792,
+              0.032355118817659255
+            ]
+          },
+          "constraints_active": {
+            "r1": false,
+            "r3": false
+          },
+          "event": "fixture_setup_complete",
+          "height_above_start_m": -4.9e-05,
+          "position_m": [
+            0.58,
+            -2.0,
+            0.019951
+          ],
+          "scout_motion": false,
+          "setup_only": true,
+          "setup_pose_write": true,
+          "sim_time_s": 0.3,
+          "tilt_deg": 0.0
+        },
+        {
+          "constraints_active": {
+            "r1": false,
+            "r3": false
+          },
+          "event": "preclose_aligned",
+          "height_above_start_m": -0.000192,
+          "position_m": [
+            0.580588,
+            -2.0,
+            0.019808
+          ],
+          "sim_time_s": 3.18,
+          "tilt_deg": 0.2055
+        },
+        {
+          "constraints_active": {
+            "r1": false,
+            "r3": false
+          },
+          "contact": {
+            "bilateral": true,
+            "left": true,
+            "left_force_n": 0.7353066553821527,
+            "right": true,
+            "right_force_n": 0.6538238166343295
+          },
+          "event": "r1_close_complete",
+          "height_above_start_m": -0.000192,
+          "position_m": [
+            0.580555,
+            -2.000071,
+            0.019808
+          ],
+          "sim_time_s": 4.01,
+          "tilt_deg": 0.1772
+        },
+        {
+          "constraints_active": {
+            "r1": true,
+            "r3": false
+          },
+          "event": "r1_constraint_activated_after_contact",
+          "height_above_start_m": -0.000192,
+          "position_m": [
+            0.580554,
+            -2.000071,
+            0.019808
+          ],
+          "sim_time_s": 4.01,
+          "tilt_deg": 0.1757
+        },
+        {
+          "constraints_active": {
+            "r1": true,
+            "r3": false
+          },
+          "event": "delay_elapsed",
+          "height_above_start_m": -0.000189,
+          "position_m": [
+            0.580548,
+            -2.000086,
+            0.019811
+          ],
+          "requested_delay_s": 2.0,
+          "sim_time_s": 6.01,
+          "tilt_deg": 0.1866
+        },
+        {
+          "constraints_active": {
+            "r1": true,
+            "r3": false
+          },
+          "contact": {
+            "bilateral": true,
+            "left": true,
+            "left_force_n": 0.6890666245784213,
+            "right": true,
+            "right_force_n": 0.7136994248179632
+          },
+          "event": "r3_close_complete",
+          "height_above_start_m": -0.00019,
+          "position_m": [
+            0.580519,
+            -2.000017,
+            0.01981
+          ],
+          "sim_time_s": 6.84,
+          "tilt_deg": 0.1598
+        },
+        {
+          "constraints_active": {
+            "r1": true,
+            "r3": true
+          },
+          "contacts": {
+            "r1": {
+              "bilateral": true,
+              "left": true,
+              "left_force_n": 0.7037701660586966,
+              "right": true,
+              "right_force_n": 0.5976166668680565
+            },
+            "r3": {
+              "bilateral": true,
+              "left": true,
+              "left_force_n": 0.7182180075118185,
+              "right": true,
+              "right_force_n": 0.6788146257635909
+            }
+          },
+          "event": "dual_grasp_confirmed",
+          "height_above_start_m": -0.00019,
+          "position_m": [
+            0.580518,
+            -2.000017,
+            0.01981
+          ],
+          "sim_time_s": 6.84,
+          "tilt_deg": 0.1584
+        },
+        {
+          "constraints_active": {
+            "r1": true,
+            "r3": true
+          },
+          "event": "lift_complete",
+          "height_above_start_m": 0.055569,
+          "position_m": [
+            0.573773,
+            -2.000003,
+            0.075569
+          ],
+          "sim_time_s": 7.79,
+          "tilt_deg": 6.2684
+        }
+      ],
+      "video": "/Users/changmin/projects/ugrp/outputs/dual-grasp-sync-20260909/isolated/delayed_2s.mp4",
+      "video_duration_s": 8.25,
+      "video_frames": 99
+    }
+  ]
+}
