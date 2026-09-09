@@ -552,9 +552,12 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, 
                 world._physics_step_for = transport_step
                 hold_start_s: float | None = None
                 try:
-                    world._team_joint_move_base_axis(
-                        "x", base_targets_x, tolerance_m=0.01, max_sim_s=15.0,
-                    )
+                    # Use the existing wheel controller at a bounded loaded
+                    # speed: the unloaded scale coasts ~5cm past the waypoint.
+                    with patch.object(multi_production, "TEAM_MOTOR_SCALE", 0.18):
+                        world._team_joint_move_base_axis(
+                            "x", base_targets_x, tolerance_m=0.005, max_sim_s=15.0,
+                        )
                     for rid in BEAM_CARRIER_IDS:
                         world._settle(world.controllers[rid])
                     record("loaded_transport_endpoint_reached")
