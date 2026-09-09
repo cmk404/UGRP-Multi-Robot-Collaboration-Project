@@ -34,6 +34,23 @@ python3.12 -m venv .venv-test
 
 Gemini 실험에는 접근 가능한 모델 프록시가 필요하다. `GEMINI_PROXY_URL`을 본인의 프록시 주소로 설정한다. 인증정보는 저장소에 넣지 않는다. 현재 기본 설정이 특정 개발자의 로컬 서비스를 가리킬 수 있으므로 새 환경에서는 명시적으로 설정한다.
 
+Google AI Studio API 키로 로컬 프록시를 실행할 수 있다. 키는 환경변수로만 전달하며 저장소 파일이나 명령 인자에 넣지 않는다.
+
+```sh
+GEMINI_API_KEY='...' .venv-sim/bin/python -m scripts.serve_gemini_proxy
+export GEMINI_PROXY_URL=http://127.0.0.1:8391/v1/chat/completions
+```
+
+`GET http://127.0.0.1:8391/health`가 `configured: true`를 반환하면 프록시가 준비된 상태다. 프록시는 Google의 OpenAI 호환 Chat Completions 엔드포인트로 요청을 전달한다.
+
+Windows PowerShell에서는 키가 화면과 명령 기록에 남지 않도록 제공된 실행기를 사용한다.
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\start_gemini_proxy.ps1
+```
+
+표시되는 프록시 주소를 시뮬레이션을 실행할 두 번째 PowerShell 창의 `GEMINI_PROXY_URL`에 설정한다. 프록시 창을 닫거나 `Ctrl+C`를 누르면 서버가 종료된다.
+
 다음 명령은 **실제 모델 호출과 비용**이 발생하는 수동 실험이며 CI에서 실행하지 않는다. 출력 폴더는 새 이름을 사용해야 한다.
 
 ```sh
