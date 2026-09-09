@@ -174,6 +174,14 @@ def _plain_beam_model_record(world: MultiMasterPiProductionV2) -> dict[str, Any]
             world.model, mujoco.mjtObj.mjOBJ_BODY, f"{BEAM_BODY_NAME}_{rid}_endpoint",
         ))
     return {
+        "compiled_contact_geometries": {
+            name: {"size": world.model.geom_size[gid].tolist(),
+                   "friction": world.model.geom_friction[gid].tolist(),
+                   "condim": int(world.model.geom_condim[gid]),
+                   "rgba": world.model.geom_rgba[gid].tolist()}
+            for name in [BEAM_GEOM_NAME, "r1__left_finger", "r1__left_finger_pad_visual", "r1__right_finger"]
+            for gid in [mujoco.mj_name2id(world.model, mujoco.mjtObj.mjOBJ_GEOM, name)] if gid >= 0
+        },
         "shape": "single_uniform_box",
         "dimensions_m": [BEAM_WIDTH_M, BEAM_LENGTH_M, BEAM_HEIGHT_M],
         "compiled_geom_mass_requested_kg": PLAIN_BEAM_MASS_KG,
@@ -265,12 +273,13 @@ def _step(world: MultiMasterPiProductionV2, seconds: float) -> None:
             world.frame_callback()
 
 
-def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int) -> dict[str, Any]:
+def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, weld_assistance: bool = True) -> dict[str, Any]:
     video_path = out_dir / f"{name}.mp4"
     json_path = out_dir / f"{name}.json"
     trace: list[dict[str, Any]] = []
     report: dict[str, Any] = {
         "condition": name,
+        "weld_assistance": weld_assistance,
         "second_grasp_delay_s": delay_s,
         "seed": seed,
         "video": str(video_path),
@@ -365,7 +374,8 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int) 
             if not all(bool(v.get("bilateral")) for v in contacts.values()):
                 raise RuntimeError(f"CARRIER_CONTACT_MISSING: {contacts}")
             for rid in BEAM_CARRIER_IDS:
-                world._activate_beam_constraint(world.controllers[rid])
+                if weld_assistance:
+                    world._activate_beam_constraint(world.controllers[rid])
         else:
             world._team_joint_move_servos(
                 {"r1": {1: precision.GRIPPER_CLOSE}}, 0.65, settle_s=0.18,
@@ -374,8 +384,9 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int) 
             record("r1_close_complete", contact=first)
             if not bool(first.get("bilateral")):
                 raise RuntimeError(f"CARRIER_CONTACT_MISSING: r1={first}")
-            world._activate_beam_constraint(world.controllers["r1"])
-            record("r1_constraint_activated_after_contact")
+            if weld_assistance:
+                world._activate_beam_constraint(world.controllers["r1"])
+            record("r1_grasp_checked", weld_assistance=weld_assistance)
             _step(world, delay_s)
             record("delay_elapsed", requested_delay_s=delay_s)
             world._team_joint_move_servos(
@@ -385,7 +396,8 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int) 
             record("r3_close_complete", contact=second)
             if not bool(second.get("bilateral")):
                 raise RuntimeError(f"CARRIER_CONTACT_MISSING: r3={second}")
-            world._activate_beam_constraint(world.controllers["r3"])
+            if weld_assistance:
+                world._activate_beam_constraint(world.controllers["r3"])
 
         contacts = {
             rid: world.controllers[rid].finger_payload_contact(rid)
@@ -394,13 +406,13 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int) 
         record("dual_grasp_confirmed", contacts=contacts)
         if not all(bool(v.get("bilateral")) for v in contacts.values()):
             raise RuntimeError(f"BILATERAL_CONTACT_LOST_BEFORE_LIFT: {contacts}")
-        if not all(world._beam_constraint_active(rid) for rid in BEAM_CARRIER_IDS):
+        if weld_assistance and not all(world._beam_constraint_active(rid) for rid in BEAM_CARRIER_IDS):
             raise RuntimeError("COOPERATIVE_GRASP_CONSTRAINT_MISSING")
 
         world._team_joint_move_servos(
             {rid: hover for rid in BEAM_CARRIER_IDS}, 0.70, settle_s=0.25,
         )
-        record("lift_complete")
+        record("lift_complete", contacts={rid: world.controllers[rid].finger_payload_contact(rid) for rid in BEAM_CARRIER_IDS})
         final = _pose_metrics(world)
         if final["height_above_start_m"] < 0.035:
             raise RuntimeError(f"COOPERATIVE_LIFT_FAILED: {final}")
@@ -440,12 +452,13 @@ def main() -> int:
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--seed", type=int, default=11)
     parser.add_argument("--fps", type=int, default=12)
+    parser.add_argument("--no-weld", action="store_true", help="Disable grasp weld assistance; retain real contact gates.")
     args = parser.parse_args()
     out_dir = args.out_dir.expanduser().resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
 
     manifest: dict[str, Any] = {
-        "probe": "plain_beam_dual_grasp_sync_v2",
+        "probe": "plain_beam_weld_ablation_v3",
         "repository": str(ROOT),
         "git_sha": _git(["rev-parse", "HEAD"]),
         "git_status_porcelain": _git(["status", "--porcelain"]),
@@ -457,6 +470,7 @@ def main() -> int:
             "UGRP_BEAM_DYNAMIC": os.environ.get("UGRP_BEAM_DYNAMIC"),
         },
         "config": {
+            "weld_assistance": not args.no_weld,
             "seed": args.seed,
             "fps": args.fps,
             "conditions": [
@@ -480,7 +494,7 @@ def main() -> int:
     }
     for name, delay in (("baseline", 0.0), ("delayed_2s", 2.0)):
         manifest["trials"].append(
-            run_trial(out_dir, name=name, delay_s=delay, seed=args.seed, fps=args.fps)
+            run_trial(out_dir, name=name, delay_s=delay, seed=args.seed, fps=args.fps, weld_assistance=not args.no_weld)
         )
     manifest["all_ok"] = all(item.get("ok") for item in manifest["trials"])
     (out_dir / "manifest.json").write_text(
