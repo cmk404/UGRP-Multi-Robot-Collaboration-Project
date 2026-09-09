@@ -482,15 +482,7 @@ def main() -> int:
             "payload_pose_writes": False,
             "scout_or_navigation": False,
             "payload": {
-                "compiled_contact_geometries": {
-            name: {"size": world.model.geom_size[gid].tolist(),
-                   "friction": world.model.geom_friction[gid].tolist(),
-                   "condim": int(world.model.geom_condim[gid]),
-                   "rgba": world.model.geom_rgba[gid].tolist()}
-            for name in [BEAM_GEOM_NAME, "r1__left_finger", "r1__left_finger_pad_visual", "r1__right_finger"]
-            for gid in [mujoco.mj_name2id(world.model, mujoco.mjtObj.mjOBJ_GEOM, name)] if gid >= 0
-        },
-        "shape": "single_uniform_box",
+                "shape": "single_uniform_box",
                 "dimensions_m": [BEAM_WIDTH_M, BEAM_LENGTH_M, BEAM_HEIGHT_M],
                 "mass_kg": PLAIN_BEAM_MASS_KG,
                 "mass_basis": "preserves original 0.180 kg bar plus two 0.008 kg handle geoms",
