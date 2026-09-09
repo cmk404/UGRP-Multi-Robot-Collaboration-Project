@@ -17,7 +17,23 @@ def _wrap_axis(angle):
     return (angle + math.pi / 2) % math.pi - math.pi / 2
 
 
-def alignment_features(gripper, beam, endpoint=None):
+def _own_beam_aim(own_beam, top_width):
+    if own_beam is None:
+        return None
+    own_width, own_height = own_beam['image_size']
+    if own_beam['width_px'] <= 0:
+        return None
+    if own_beam['length_px'] / own_beam['width_px'] < 1.5:
+        aim = own_beam['center']
+    else:
+        aim = min(
+            own_beam['endpoints'],
+            key=lambda p: ((p[0] - .5) * own_width) ** 2 + ((p[1] - .5) * own_height) ** 2,
+        )
+    return (aim[0] - .5) * (.2 * top_width)
+
+
+def alignment_features(gripper, beam, endpoint=None, own_beam=None):
     if not gripper.get('valid') or beam is None:
         return None
     w, h = beam['image_size']
@@ -39,10 +55,17 @@ def alignment_features(gripper, beam, endpoint=None):
     offset = [(target[0]-center[0])*w, (target[1]-center[1])*h]
     desired_axis = [-tangent[1], tangent[0]]
     angle = _wrap_axis(math.atan2(desired_axis[1], desired_axis[0])-math.atan2(axis[1], axis[0]))
-    angular_scale = max(8., beam['width_px']*2.)
+    own_aim_error = _own_beam_aim(own_beam, w)
+    # Experimental priority: penalize an opening axis parallel to the beam
+    # strongly enough that top-view position improvement cannot dominate it.
+    angular_scale = max(8., beam['width_px']*10.)
+    cost_terms = [*offset, angular_scale * angle]
+    if own_aim_error is not None:
+        cost_terms.append(own_aim_error)
     return {'offset_px': offset, 'axis_error_rad': angle, 'endpoint': list(end),
             'target': target, 'distance_px': math.hypot(*offset),
-            'cost': math.hypot(*offset, angular_scale*angle),
+            'own_aim_error_px': own_aim_error,
+            'cost': math.hypot(*cost_terms),
             'width_px': beam['width_px']}
 
 
@@ -109,7 +132,8 @@ class PixelGraspController:
         if test and obs.get('alignment') is not None:
             self.measurement_rounds=0
             self.pending = {'before':copy.deepcopy(obs['alignment']), 'action':action,
-                            'undo':undo, 'label':label, 'step':self.steps}
+                            'undo':undo, 'label':label, 'step':self.steps,
+                            'own_beam_visible':obs.get('own_beam') is not None}
         self.last_action = action
         self.history.append(action);self.history=self.history[-32:]
         self.last_decision = {'stage':self.stage,'reason':reason,'attempts':self.attempts,
@@ -159,7 +183,7 @@ class PixelGraspController:
         own = max(own_candidates,key=lambda c:c['area_px']) if own_candidates else None
         if beam is not None:
             self.beam_center=list(beam['center'])
-        alignment = alignment_features(gripper,beam,self.endpoint)
+        alignment = alignment_features(gripper,beam,self.endpoint,own)
         if alignment is not None:
             self.endpoint=list(alignment['endpoint'])
         obs={'gripper':gripper,'beam':beam,'own_beam':own,'alignment':alignment}
@@ -238,13 +262,17 @@ class PixelGraspController:
             before=pending['before']
             # A changed endpoint would invalidate this comparison.
             same_endpoint=math.dist(before['endpoint'],alignment['endpoint'])<.04
-            if same_endpoint and alignment['cost'] < before['cost'] - .15:
+            own_preserved = not pending['own_beam_visible'] or own is not None
+            if own_preserved and same_endpoint and alignment['cost'] < before['cost'] - .15:
                 self.repeat=pending['label'];self.tried.clear()
             else:
                 self.repeat=None;self.tried.add(pending['label']);self.rollback=pending['undo']
                 if self.rollback:
                     self.refresh_required=True
-                    return self._issue(self.rollback.pop(0),'observed candidate failed to reduce combined position/direction error',obs)
+                    reason = ('candidate removed a previously visible own-camera beam; reverse it'
+                              if not own_preserved else
+                              'observed candidate failed to reduce combined position/direction error')
+                    return self._issue(self.rollback.pop(0),reason,obs)
         close_distance=max(3.,alignment['width_px']*.5)
         aligned=alignment['distance_px']<close_distance and abs(alignment['axis_error_rad'])<.22 and own is not None
         self.aligned=self.aligned+1 if aligned else 0

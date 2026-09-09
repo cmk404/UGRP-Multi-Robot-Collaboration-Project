@@ -14,6 +14,11 @@ def grip(x=.5,y=.69,axis=(1.,0.)):
     return {'valid':True,'center':[x,y],'opening_axis':list(axis),'span_px':12.,'confidence':.9,'source':'isolated_gripper_motion'}
 
 
+def own_beam(x=.5):
+    return {'center':[x,.5],'endpoints':[[x,.4],[x,.6]],'width_px':20.,
+            'length_px':100.,'area_px':2000.,'image_size':[640,480]}
+
+
 def test_alignment_requires_direction_not_just_midpoint():
     b=beam();a=alignment_features(grip(),b)
     wrong=alignment_features(grip(axis=(0.,1.)),b)
@@ -28,6 +33,14 @@ def test_endpoint_continuity_and_axis_sign_invariance():
     a=alignment_features(grip(y=.2),b,endpoint=[.5,.7])
     assert a['endpoint']==[.5,.7]
     assert abs(alignment_features(grip(axis=(-1.,0.)),b)['cost'])<.01
+
+
+def test_own_camera_endpoint_aim_contributes_to_cost():
+    centered=alignment_features(grip(),beam(),own_beam=own_beam(.5))
+    off_center=alignment_features(grip(),beam(),own_beam=own_beam(.75))
+    assert centered['own_aim_error_px']==0
+    assert off_center['own_aim_error_px']>30
+    assert off_center['cost']>centered['cost']+30
 
 
 def step_with(controller, gripper, candidate):
@@ -85,3 +98,17 @@ def test_candidate_losing_visibility_is_reversed_within_measurement_budget():
     actions=[step_with(c,invalid,b) for _ in range(7)]
     assert any(a['kind']=='drive' and a['forward']<0 for a in actions)
     assert c.pending is None and 'forward' in c.tried
+
+
+def test_top_improvement_is_rejected_when_own_beam_disappears():
+    c=PixelGraspController('r1');b=beam();own=own_beam(.8)
+    with patch.object(c.tracker,'update',return_value=copy.deepcopy(grip(x=.2))), \
+         patch('harness.camera_pixel_grasp.extract_beams',side_effect=[[copy.deepcopy(b)],[copy.deepcopy(own)]]):
+        issued=c.step(b'own',b'top')
+    assert issued['kind']=='drive' and issued['forward']>0
+    with patch.object(c.tracker,'update',return_value=copy.deepcopy(grip(x=.45))), \
+         patch('harness.camera_pixel_grasp.extract_beams',side_effect=[[copy.deepcopy(b)],[]]):
+        rejected=c.step(b'own',b'top')
+    assert rejected['kind']=='drive' and rejected['forward']<0
+    assert c.repeat is None and 'forward' in c.tried
+    assert 'previously visible own-camera beam' in c.last_decision['reason']
