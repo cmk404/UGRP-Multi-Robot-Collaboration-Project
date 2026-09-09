@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 from concurrent.futures import ThreadPoolExecutor
 import json
+import math
 from pathlib import Path
 import subprocess
 import sys
@@ -53,6 +54,18 @@ def run_cohort(root: Path, runs: list[dict], *, jobs: int, execute) -> dict:
     return state
 
 
+def build_run_command(args, run):
+    """Use the same explicitly recorded model and budgets in every cell."""
+    return [sys.executable, '-m', 'scripts.evaluate_gemini_team',
+            '--output', str(args.output / run['path']), '--seed', str(run['seed']),
+            '--robots', '3', '--seconds', str(args.seconds),
+            '--model', args.model, '--max-calls', str(args.max_calls),
+            '--max-input-tokens', str(args.max_input_tokens),
+            '--input-request-estimate', str(args.input_request_estimate),
+            '--impratio', '10', '--noslip-iterations', '3',
+            '--communication', run['communication'], '--record']
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--output', type=Path, required=True)
@@ -60,7 +73,13 @@ def main():
     parser.add_argument('--jobs', type=int, choices=(1, 2, 3), default=1)
     parser.add_argument('--seconds', type=float, default=600)
     parser.add_argument('--max-calls', type=int, default=40)
+    parser.add_argument('--max-input-tokens', type=int, default=120000)
+    parser.add_argument('--input-request-estimate', type=int, default=6000)
+    parser.add_argument('--model', default='gemini-3.8-flash')
     args = parser.parse_args()
+    if (min(args.max_calls,args.max_input_tokens,args.input_request_estimate) <= 0
+            or not math.isfinite(args.seconds) or args.seconds <= 0):
+        parser.error("budgets must be positive")
     if len(set(args.seeds)) != len(args.seeds):
         parser.error('seeds must be unique')
     args.output.mkdir(parents=True, exist_ok=False)
@@ -68,19 +87,16 @@ def main():
             for seed in args.seeds for mode in ('none', 'status', 'natural')]
     manifest = {'purpose': 'matched exploratory communication comparison',
                 'seeds': args.seeds, 'modes': ['none', 'status', 'natural'],
-                'robots': 3, 'model': 'gemini-3.8-flash', 'seconds': args.seconds,
+                'robots': 3, 'model': args.model, 'seconds': args.seconds,
                 'max_calls_per_robot': args.max_calls, 'trial_jobs': args.jobs,
-                'runs': runs}
+                'max_input_tokens_per_robot': args.max_input_tokens,
+                'input_request_estimate': args.input_request_estimate,
+                'budget_mode':'estimated_preflight','runs': runs}
     (args.output / 'cohort-manifest.json').write_text(json.dumps(manifest, indent=2))
 
     def execute(run):
         with (args.output / (run['path'] + '.log')).open('w') as log:
-            return subprocess.run([
-                sys.executable, '-m', 'scripts.evaluate_gemini_team',
-                '--output', str(args.output / run['path']), '--seed', str(run['seed']),
-                '--robots', '3', '--seconds', str(args.seconds),
-                '--max-calls', str(args.max_calls), '--noslip-iterations', '3',
-                '--communication', run['communication'], '--record'],
+            return subprocess.run(build_run_command(args, run),
                 stdout=log, stderr=subprocess.STDOUT).returncode
 
     state = run_cohort(args.output, runs, jobs=args.jobs, execute=execute)

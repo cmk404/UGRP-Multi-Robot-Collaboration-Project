@@ -2605,3 +2605,46 @@ No physical MasterPi command was issued for this architecture change. The REAL s
 - Outcome LLM_INPUT_TOKEN_BUDGET: lifted6.94cm and carried, did NOTreachdestination orrelease. Do NOTclaimend-to-end deliverysuccess. Model chose1.5s drives despite4s ceiling; actualcaller-count reduction tocompletion remains unproven. No team expansion or additionalpaidtrial launched.
 - Outputs: coela-event-pilot-01/index.html,solo-41/motion-1x.mp4,verification.json,motion-qa.jpg; event-execution-check-01 holds explicitnoAPItestdouble executioncomparison andsavedmemorycomparison.
 - Defaults now40calls/robot and120k reportedinputtokens/robot; cohorttrialconcurrency1. This is a request/token brake, not exactsubscriptionquota accounting. Need futurework on visual navigation efficiency withinbudget beforeteamcommunication trials. Preservepilotfailure, notincreasebudgetsilently.
+
+
+### 2026-09-07 Mac runtime availability verification
+
+- User requested live verification of existing Mac simulation availability. Apple M3/arm64 and existing .venv-sim-worker-mac validated; MuJoCo3.12.0,cv2,websockets,numpy imports succeeded through Mac connector. No source/runtime configuration changes.
+- Independent existing MultiMasterPiProductionV2 mixed world seed11:1500physics steps,3simseconds,R1 wheel-command motion0.58565m,finite state;3robot cameras and30-frame video rendered and decoded. Before/after overhead and R1 camera visually inspected. This is a fixed motor runtime probe, zero LLM calls, not delivery or collaboration success. Evidence outputs/mac-runtime-check-20260907/.
+- Existing Mac loopback8091 bridge reports connected authoritative local/MAC worker; queue0,inflightNone. Oracle SSH succeeds and Oracle loopback8091 bridge is healthy but no remote worker connected. No restart,authority switch or live-world commands performed.
+- .sim_bridge_token and .sim_worker_env absent at documented repository paths on both hosts; .env.gpu exists. Other authentication locations/in-memory configuration and deletion/sync causality were not verified. Local runtime works; historical Oracle-to-Mac recovery path is not validated.
+
+
+### 2026-09-07 Camera budget candidate integrated on Mac; one live pilot failed honestly
+
+- User requested continuation from `ugrp_budget_repair_report.md`. Verified all11candidate code/test base hashes against Mac, applied only harness/scripts/tests; preserved existing .gitignore and decision-log changes, unchanged sim physics. Report retained at docs/camera_budget_repair_20260907.md.
+- Located historical RGB/video artifacts intact in /Users/changmin/Project-Archives/20260907/ugrp/outputs/warehouse_research. Four read-only reference symlinks restored test access; no archived files moved/edited. Mac focused122passed,29subtests,zero failures/skips after restoration and ordered action-chain validator correction.
+- Exactly one real Gemini3.8 solo41 pilot,30calls/60000input/300SIMseconds,impratio10,noslip3,communicationnone. Output camera-budget-repair-dev-01/solo-41,source da86e3f4dd0ca695d93a46cd5f3277a4a55d69eaa8df7b374c34cffe483e122b. 14calls,56321reportedinput,0unknownusage/unsettledreservations;170.828activeSIMseconds+1passivesettle. End LLM_INPUT_TOKEN_BUDGET_PREFLIGHT:lift6.936cm,not inside,no release.0peer/obstacle penetration metric. No429 in this run; no extra availability completion or automatic rerun.
+- Video1375frames fully decoded;8chronological spectator frames and all14originalnav inputs reviewed.9in-place rotation decisions cost36981inputtokens/13.5elapsedcontrolseconds,then2forwarddrives,thenobstacle-veto. This is not deliverysuccess or proof of general efficiency improvement.
+- Live audit found candidate integration defect: executor emits top-level execution, runner read details.execution.236logged macro results but0/14requests receivedlast_macro. Fixed runner record_command and regression through real executor callback to planner transmitted context with explicit offline completer. Added verifier trace-to-context gate; it now correctly rejects original pilot feedback. Related final85tests/23subtests pass. No further real Gemini calls.
+- Current runner+verifier differ from frozen live source; do not relabel this run as validation of final fix. Next validation requires a NEW fixed-budget solo41 run, verify last_macro reaches actual provider,then inspect navigation and release. No budget increase,team expansion,or claim that feedback fix alone solves delivery. Details docs/camera_budget_repair_mac_20260907.md;analysis and QA outputs/camera-budget-integration-20260907/.
+
+### 2026-09-07 Google Drive evidence retention requested and verified
+
+- User requested evidence for future UGRP work be retained in Drive. Added the workflow to local agent.md and the existing Drive agent.md; full text read-back matched while preserving original instructions.
+- Evidence root: https://drive.google.com/drive/folders/14vmzOC0TgdFMwBqiLMppM4i8HivRxmes ; current run: https://drive.google.com/drive/folders/16XG3SAiqH1sAayM1MHgeSLEqixLvDoe8 .
+- Uploaded report, failed-pilot video, decision camera overview, ZIP containing 907 evidence files, and SHA-256 manifest. Read-back metadata verified all five file sizes and parents. Local receipt: outputs/drive-evidence-20260907/upload-receipt.json. No further experiment was run; failed delivery and post-pilot source differences remain explicitly documented.
+
+### 2026-09-07 Fixed execution-feedback actual Gemini retest
+
+- User authorized same-budget solo41 retest. Ran exactly one new actual Gemini3.8Flash trial: camera-feedback-fixed-20260907/solo-41. Source 6ae7efdebb983da2ed73d6b1befb8c78ccc2114e2bcbea961d45e9acd119fb21. Only runner and verifier differ from prior pilot manifest; no physics/prompt/budget changes.
+- 13 calls,56462 input tokens,176.130 active SIMseconds plus1.000settle; no usage gaps/unsettled reservations/inference errors. Actual transmitted last_macro matches command trace for all12post-first requests. Accounting/RGB/config gates passed; full delivery/release gates failed honestly.
+- Outcome LLM_INPUT_TOKEN_BUDGET_PREFLIGHT;lift6.95cm,no destination entry/release.7rotation decisions consume31188inputtokens,2forwardexecutions,2forwardguardrejections. Call12 explicitly reacts to call11 rejection by fwd0turn; call13 still blocked. Target error1.651m versus previous1.650m,not improvement evidence.
+- All1418video frames decoded;12chronological scenes and13originalNAV inputs visually reviewed. Sol independently reviewed raw feedback and remaining navigation failure. motion_confirmed:false intentionally means no physical displacement attestation; do not flip it to true.
+- Next repair focus: ownRGB destination bearing/size and clearance changes for turn/avoidance evidence; first inspect saved calls6-8 and11-13. No hidden-coordinate route,guard relaxation,budget increase,or additional paid trial. Report docs/camera_feedback_fixed_retest_20260907.md.
+- Drive uploaded report,video,camera sheet,1124-file evidence/source ZIP,and manifest; all five sizes and parent folder verified. https://drive.google.com/drive/folders/1VZDIozd1CLoWUSugmApFO6dHzIdpPzFE . Receipt outputs/camera-feedback-fixed-review-20260907/upload-receipt.json.
+
+
+### 2026-09-08 Navigation trial/error: two actual solo41 completions
+
+- User authorized recording hypotheses and iterative actual Gemini experiments. Added ownRGB navigation_evidence and model-authored navigation_note, clarified safe longer existing macro choices and normalized control units. Fixed newly introduced screen-coordinate note rejection; malformed auxiliary notes preserve valid actions with recorded diagnostic.
+- C1/C2/C3 at60k failed honestly(55967/52631/56703input). C2 had1note-parser rejection, C3 had1stale response. Frozen3-call probe used16519input and no physical commands.
+- Unchanged C3 policy with120k cap completed twice: D1 18calls94065input204.252SIMseconds; D2 17calls86818input201.766SIMseconds. Both VISUAL_RELEASE_CONFIRMED; all14 explicitly120k automated checks passed. D1-D2 manifest difference only verifier script; policy/physics unchanged.
+- Decoded all1643/1623video frames and manually reviewed chronological samples,all18/17originalNAV inputs,and finalwrist. Destination-inside,stable,noattachment,visualrelease passed; obstacle/peer>2mm penetration0. Current execution sources match D2 manifest.121tests+23subtests passed; six owned process groups stopped.
+- Scope: seed41/one robot only;60k success and generalization remain unproven. No claim that memory or budget alone caused improvement. Persistent bypass-side state is a future unimplemented cost-reduction candidate. Total current-task70actualcalls/362703reportedinput.
+- Local report docs/navigation_trials_20260908.md; full journal,failed/successful trials,source snapshots,and camera/video evidence outputs/navigation-trials-20260908/. No Drive work per project exception.

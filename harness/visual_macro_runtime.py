@@ -25,6 +25,12 @@ class VisualMacroExecutor:
         self._macro: dict[str, Any] | None = None
         self._last_tick: float | None = None
         self.last_interruption: dict[str, Any] | None = None
+        self.last_execution: dict[str, Any] | None = None
+        self.total_drive_control_s = 0.0
+        self._macro_drive_control_s = 0.0
+        self._lease_end: float | None = None
+        self._lease_accounted_until: float | None = None
+        self._macro_started_at = 0.0
 
     @property
     def idle(self) -> bool:
@@ -124,6 +130,8 @@ class VisualMacroExecutor:
             return
 
         self._source_hash = source_hash
+        self._macro_started_at = timestamp
+        self._macro_drive_control_s = 0.0
         self._macro = requested
         self._events = events
         self._completion_time = completion
@@ -135,6 +143,7 @@ class VisualMacroExecutor:
         timestamp = _finite("now", now)
         if not isinstance(reason, str) or not reason:
             raise ValueError("cancel reason is required")
+        self._accrue_drive(timestamp)
         if self.idle:
             self._events = []
             self.port.stop()
@@ -147,6 +156,7 @@ class VisualMacroExecutor:
         if self._last_tick is not None and timestamp < self._last_tick:
             raise ValueError("now must not move backwards")
         self._last_tick = timestamp
+        self._accrue_drive(timestamp)
         self.port.tick(timestamp)
         if self.idle:
             return
@@ -156,7 +166,9 @@ class VisualMacroExecutor:
             if macro.get("kind") == "drive":
                 self.port.stop()
                 self._emit("explicit_stop", timestamp, self._source_hash, macro)
-            self._emit("macro_finished", timestamp, self._source_hash, macro)
+            self.last_execution = self._execution_summary(timestamp, "completed")
+            self._emit("macro_finished", timestamp, self._source_hash, macro,
+                       details={"execution": self.last_execution})
             self._events = []
             self._completion_time = None
             self._macro = None
@@ -203,6 +215,10 @@ class VisualMacroExecutor:
                 # command must use that same actual time rather than backdate
                 # itself to the ideal schedule.
                 self.port.apply(raw, now)
+                if raw.get("kind") == "drive":
+                    self._accrue_drive(now)
+                    self._lease_accounted_until = now
+                    self._lease_end = now + float(raw["duration_s"])
                 self._emit("raw_action", now, self._source_hash,
                            self._macro or {}, raw, scheduled_time=scheduled)
         self._events = pending
@@ -216,14 +232,38 @@ class VisualMacroExecutor:
             "source_frame_sha256": self._source_hash,
             "macro": macro,
         }
+        self._accrue_drive(now)
+        self._lease_end = self._lease_accounted_until = None
         self.last_interruption = interruption
+        self.last_execution = self._execution_summary(now, "interrupted", reason)
         self.port.stop()
         self._emit("macro_interrupted", now, self._source_hash, macro,
-                   details={"reason": reason, "evidence": evidence})
+                   details={"reason": reason, "evidence": evidence,
+                            "execution": self.last_execution})
         self._events = []
         self._completion_time = None
         self._macro = None
         self._source_hash = ""
+
+    def _accrue_drive(self, now: float) -> None:
+        """Count elapsed applied command leases, not requested or future time."""
+        if self._lease_end is None or self._lease_accounted_until is None:
+            return
+        until = min(now, self._lease_end)
+        elapsed = max(0.0, until - self._lease_accounted_until)
+        self.total_drive_control_s += elapsed
+        self._macro_drive_control_s += elapsed
+        self._lease_accounted_until = max(self._lease_accounted_until, until)
+        if now >= self._lease_end:
+            self._lease_end = self._lease_accounted_until = None
+
+    def _execution_summary(self, now: float, status: str, reason: str | None = None) -> dict[str, Any]:
+        return {"scope": "raw_skill_macro", "macro": dict(self._macro or {}),
+                "status": status, "reason": reason,
+                "requested_duration_s": (self._macro or {}).get("duration"),
+                "elapsed_drive_control_s": round(self._macro_drive_control_s, 6),
+                "started_at": self._macro_started_at, "ended_at": now,
+                "motion_confirmed": False}
 
     def _emit(self, event: str, now: float, source_hash: str,
               macro: Mapping[str, Any], raw: Mapping[str, Any] | None = None,

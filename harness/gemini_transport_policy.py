@@ -14,8 +14,10 @@ import cv2
 import numpy as np
 
 from harness.coela_modules import PlanningError
-from harness.transport_context import compact_own_memory, memory_needs_nav_comparison
+from harness.transport_context import compact_own_memory, current_placement_guidance, memory_needs_nav_comparison
 from harness.visual_progress import VisualProgressHistory
+from harness.navigation_evidence import navigation_evidence
+from harness.navigation_temporal import NavigationTemporalEvidence
 
 
 _OBS_FIELDS = {"robot_id", "frame_id", "sim_time", "image", "sha256", "camera", "actuator_state"}
@@ -25,45 +27,26 @@ _FORBIDDEN = {"pose", "position", "positions", "coordinates", "coords", "x", "y"
               "world_state", "map", "seed", "layout", "obstacle_positions", "peer_positions",
               "target_pose", "target_coords", "global_state"}
 
-PROMPT = """당신은 창고 운반 로봇 한 대의 실제 행동 결정자다. 매 호출마다 각각 별도로 제공되는
-두 실제 RGB 카메라 화면과 자신의 제한된 로컬 메모리, 현재 스킬 상태만 보고 다음 행동 하나를
-직접 선택하라. 첫 화면은 손목 카메라 WRIST_CAM이며 화물 접근·집기·놓기 판단용이다.
-둘째 화면은 차체 고정 전방 카메라 NAV_CAM이며 주행 판단용이다. 화면 밖 좌표, 지도,
-시드, 숨은 물체/동료 상태를 가정하지 마라. 어떤 규칙 알고리즘의 승인을 하는 역할이 아니다.
-PREVIOUS_NAV가 함께 제공되면 직전 성공한 모델 행동 전의 전방 화면이다. CURRENT_NAV와
-직접 비교해 실제 영상 변화와 진행 여부를 판단하라. 같은 전진/회전 명령 뒤 목표·장애물의
-크기와 위치가 거의 변하지 않았다면 같은 명령을 맹목적으로 반복하지 말고, 보이는 근거에
-따라 다른 제자리 회전이나 짧은 wait를 직접 선택하라. VISUAL_PROGRESS와
-RECENT_VISUAL_HISTORY는 자신의 NAV RGB 픽셀 변화만 요약하며 경로나 행동을 추천하지 않는다.
-정체 근거가 있으면 보이는 장면을 바탕으로 대안 행동을 네가 직접 선택하라.
+PROMPT = """Choose ONE action; executor does not plan/correct. Sources: current WRIST_CAM/NAV_CAM, own memory/state/feedback, supplied earlier own RGB only. Never use map, seed, off-screen coordinates, hidden objects/peers, simulator state, or inventions. A/B/C=blue/green/yellow; cargo=cyan, obstacle=orange, peer=magenta; turn +left/-right.
 
-목적지 A는 파랑, B는 초록, C는 노랑 바닥 구역이다. 청록은 운반 중인 작은 상자이며
-목표 구역이 아니다. 주황 물체는 정적 장애물이고, 자홍색 물리 밴드는 다른 로봇이다.
-NAV_CAM에서 이미지 왼쪽으로 회전은 turn 양수, 이미지 오른쪽으로 회전은 turn 음수다.
-보이는 장애물과 동료를 피하거나 기다리면서 목표색 구역으로 향하라.
-OWN_RGB_DRIVE_BLOCKED 피드백은 작은 양수 fwd도 거부하는 전방 위험이다. 이 경우 fwd=0인 제자리 회전으로 먼저 진행 방향을 충분히 비우고 새 화면을 확인하라.
-목표색이 화면 중앙에서 충분히 보이고 진행 경로가 비어 있으면 duration=4.0과 fwd=0.15까지 사용할 수 있다. drive는 네가 고른 속도와 제한 시간이며 실행기는 0.25초 안전 구간마다 위험 시 즉시 중단한다. 이를 자율 경로로 간주하지 말고 새 화면마다 다시 판단하라. 한 호출의 이동만으로 도착했다고 가정하지 마라. 통신은 이번 단계에
-없으며 보이지 않는 정보를 만들어내지 마라.
+Separate proposal/execution/RGB: previous_model_action may be rejected; last_decision=disposition; last_macro=actual control/interruption; PREVIOUS_NAV predates it; nav_evidence=current, feedback=past. Pixels/absent or out-of-view detections prove no distance, identity, arrival, safety, passage, clearance.
 
-approach와 pick은 손목 RGB를 사용하는 기존 저수준 폐루프 스킬을 호출한다. 이 스킬들은
-목적지까지 자율주행하지 않는다. pick은 ready_to_pick 상태에서만, release는 carrying
-상태에서 목적지 도착을 화면으로 판단했을 때만, finish는 released 상태에서만 선택하라.
-carrying 상태에서는 approach를 다시 선택하지 마라. JSON 하나만 반환하라:
-{"action":{"kind":"drive","fwd":0.08,"turn":0.1,"duration":0.6},
- "reason":"현재 두 화면에 근거한 짧은 한국어 이유"}
-grip_uncertain은 긴 운반 뒤 엄격한 시각 그립 검사가 불확실해진 상태다. 이때 상자가
-보인다는 이유만으로 기준을 낮추거나 release/drive를 선택하지 말고, 기존 제어 팔의
-좌/우/홈 소폭 프로브로 엄격한 검사를 다시 수행하도록 {"kind":"check_grip"}을 선택하라.
-잠시 가림이 해소되길 기다릴 근거가 있을 때만 wait를 선택할 수 있다.
-release 전에는 own_local_memory의 최신 카메라 배치 근거가 status=inside인지 확인하라.
-release 후에는 멈추고 새 두 화면과 stage=released 배치 근거를 다시 검사하라. inside가
-확인된 경우에만 finish를 선택한다. outside 또는 uncertain이면 finish를 선언하지 말고
-approach를 명시적으로 선택해 다시 접근→pick→drive→release 순서로 복구할 수 있다.
-previous_model_action은 직전 자신의 실제 모델 선택이며, 최신 own_local_memory 피드백과
-함께 사용하되 성공 증거로 간주하지 마라. 배치 복구 횟수 제한 피드백을 존중하라.
-action은 정확히 다음 중 하나다: {"kind":"approach"}, {"kind":"pick"}, {"kind":"check_grip"},
-{"kind":"release"}, drive(fwd 0..0.15, turn -0.2..0.2, duration 0초 초과 4초 이하),
-wait(duration 0초 초과 1초 이하), {"kind":"finish"}. 추가 필드나 메시지를 넣지 마라.
+navigation_temporal=own RGB+executed macros; time is not distance/passage. executed_since_forward counts turns/sign changes. potential_revisited_blocked_view=similar view without forward, not same place/object. Recurring clear/blocked views plus reversals may cycle. Evidence chooses no action/side.
+
+forward_stop_check.vetoed=true or OWN_RGB_DRIVE_BLOCKED forbids fwd>0: zero-forward RGB turn/wait. Clear permits consideration, not safety. Own-RGB guard checks <=.25s, may interrupt, cannot guarantee safety.
+
+drive: fwd 0..0.15, turn -0.2..0.2, duration >0..4s; wait >0..1s. fwd/turn magnitudes dimensionless; inspect new RGB. Broad aligned clear: fwd=.15 for 3-4s; clear curve: forward+turn 2-3s. Near hazards/fine placement use subsecond; large turn may use |turn|=.2 for 2-3s. Examples prove no safety/arrival.
+
+Budget never weakens safety/grip/inside; terminal_input_reserve protects release+finish. Before input_tokens_remaining < terminal_input_reserve+2*next_request_estimate, navigate deliberately. Repeated TARGET_FOOTPRINT_OUTSIDE_VISIBLE_ZONE_MARGIN: change alignment/duration, not micro-drives; one-sided floor is not centered. current_placement_guidance comes from exact own images/PWM, not safe routing: entry_bearing_deg robot-frame 0=forward,+left,-right; estimated_entry_distance_cm separates travel/fine alignment. On a broad aligned clear corridor, make useful forward/curved progress, then inspect. During bypass, translate sufficiently before goalward return when current RGB/non-veto permits; respect active bypass. Steer into visible interior. No boundary fit: improve view; do not assume progress. WRIST need not be all zone; release footprint must be inside. Release only on fresh inside.
+
+Every carrying reply needs Korean navigation_note {"observed":"current RGB <=100 chars","maneuver":"left|right|forward|wait|unknown","resume_when":"next visible condition <=100 chars"}; bypass adds "bypass_side":"left|right","bypass_until":"forward-camera condition". Side is obstacle-relative, not immediate turn; choose from RGB. Commitment persists; only bypass_side=none clears. Clear only on NEW image after executed goalward turn+visible destination approach+current non-veto. Goal/FOV/time/proposed turn insufficient; bypass_until cannot look behind. After forward reassess goal. If blocker returns, retain/restore bypass and, when RGB permits, advance materially farther before retest. Avoid turn alternation/endless travel away. You choose action/side.
+
+approach/pick use wrist RGB, not destination travel; pick only ready_to_pick; no approach carrying. grip_uncertain: check_grip strict left/right/home inspection or wait for visible occlusion; no drive/release. carrying latest_placement=inside: release now without centering, using fresh before_release inside. After release stop; finish needs fresh WRIST/NAV+released-stage inside. outside allows approach->pick->drive->release; uncertain proves neither success nor loss. DESTINATION_SQUARE_UNDERCONSTRAINED=unseen boundaries, not more forward: inspect another edge/corner; reacquire by heading, never blind advance. Require fresh inside; respect recovery limits.
+
+RECENT_BLOCKED_NAV=earlier own RGB veto. Clear after turn/no forward may hide it; compare before goal alignment. Current clear may support guarded translation; history does not veto now. 통신은 이번 단계에
+없으며 invent nothing unseen.
+
+Return one JSON object: top-level action+reason, plus navigation_note carrying, e.g. {"action":{"kind":"drive","fwd":0.15,"turn":0,"duration":4},"reason":"전방 통로가 열려 전진한다.","navigation_note":{"observed":"전방 통로가 열림","maneuver":"forward","resume_when":"다음 화면에서 재확인"}}. Never top-level kind/fwd/turn/duration. reason<=200 chars; notes concise Korean from current images; enums exact. action.kind=approach|pick|check_grip|release|finish|drive above|wait with duration. 허용된 navigation_note 외 추가 필드나 메시지를 넣지 마라.
 """
 
 _COMMUNICATION_PROMPTS = {
@@ -104,11 +87,18 @@ class GeminiTransportPlanner:
         self.last_audit: dict[str, Any] | None = None
         self._previous_model_action: dict[str, Any] | None = None
         self._previous_nav: dict[str, Any] | None = None
+        self._previous_navigation_note: dict[str, Any] | None = None
+        self._navigation_commitment: dict[str, str] | None = None
         self._progress = VisualProgressHistory()
+        self._navigation_temporal = NavigationTemporalEvidence(robot_id)
 
     def decide(self, wrist_obs: Mapping[str, Any], nav_obs: Mapping[str, Any], memory: Any, *,
                cargo_id: str, destination_zone: str, skill_state: str,
-               messages: Any = None) -> dict[str, Any]:
+               messages: Any = None, budget: Any = None,
+               execution_feedback: Any = None) -> dict[str, Any]:
+        # Validation can fail before a provider call: never reuse a previous audit.
+        self.last_audit = {"usage": None}
+        _validate_runtime_inputs(budget, execution_feedback)
         wrist_jpeg = self._validate_observation(wrist_obs, "robot_cam")
         nav_jpeg = self._validate_observation(nav_obs, "nav_cam")
         _validate_local_memory(memory)
@@ -124,29 +114,70 @@ class GeminiTransportPlanner:
         previous_nav = self._previous_nav
         progress = self._progress.compare(previous_nav["jpeg"] if previous_nav else None,
                                           nav_jpeg, self._previous_model_action)
-        compact_memory = compact_own_memory(memory)
+        full_compact_memory = compact_own_memory(memory)
+        # The actual previous proposal and full executor feedback are already
+        # transmitted separately. Avoid repeating their derived action list.
+        compact_memory = copy.deepcopy(full_compact_memory)
+        compact_memory.pop("last_actions", None)
+        placement_guidance = (current_placement_guidance(memory, wrist_obs["sha256"], nav_obs["sha256"],
+                              (wrist_obs.get("actuator_state") or {}).get("servo_pulses"))
+                              if skill_state == "carrying" else None)
         send_previous_nav = previous_nav is not None and (
             progress.get("nav_nearly_unchanged") is True
-            or memory_needs_nav_comparison(compact_memory))
+            or (self._previous_model_action is not None
+                and self._previous_model_action.get("kind") == "drive"
+                and self._previous_model_action.get("fwd", 0) == 0
+                and self._previous_model_action.get("turn", 0) != 0
+                and progress.get("same_action_streak", 0) >= 3)
+            or memory_needs_nav_comparison(full_compact_memory))
 
+        nav_summary = navigation_evidence(nav_obs, zone, previous_nav.get("observation") if previous_nav else None)
+        transmitted_nav_summary = copy.deepcopy(nav_summary)
+        # The original frame hash remains in the audit and is bound to the
+        # transmitted image bytes; it is redundant inside model text.
+        transmitted_nav_summary.pop("image_sha256", None)
+        temporal_summary = self._navigation_temporal.observe(nav_obs, nav_summary, execution_feedback)
+        blocked_reference_obs = (self._navigation_temporal.eligible_recent_blocked_observation()
+                                 if skill_state == "carrying" else None)
+        selected_reference = None
+        if blocked_reference_obs is not None:
+            reference_jpeg = self._validate_observation(blocked_reference_obs, "nav_cam")
+            selected_reference = {"label": "RECENT_BLOCKED_NAV",
+                                  "observation": blocked_reference_obs, "jpeg": reference_jpeg}
         context = {"robot_id": self.robot_id, "cargo_id": cargo_id,
                    "destination_zone": zone, "skill_state": skill_state,
                    "previous_model_action": copy.deepcopy(self._previous_model_action),
                    "visual_progress": progress,
-                   "recent_visual_history": [_compact_progress_item(item)
-                                               for item in self._progress.recent()[-3:]],
+                   "nav_evidence": transmitted_nav_summary,
+                   "navigation_temporal": temporal_summary,
+                   "previous_navigation_note": _historical_observation(self._previous_navigation_note),
+                   "navigation_commitment": copy.deepcopy(self._navigation_commitment),
                    "own_local_memory": compact_memory,
+                   "budget": copy.deepcopy(budget),
+                   "execution_feedback": copy.deepcopy(execution_feedback),
                    "camera_frames": [
                        {"label": "WRIST_CAM", "camera": "robot_cam", "frame_id": wrist_obs["frame_id"],
-                        "sim_time": wrist_obs["sim_time"], "sha256": wrist_obs["sha256"]},
+                        "sim_time": wrist_obs["sim_time"]},
                        {"label": "NAV_CAM", "camera": "nav_cam", "frame_id": nav_obs["frame_id"],
-                        "sim_time": nav_obs["sim_time"], "sha256": nav_obs["sha256"]},
+                        "sim_time": nav_obs["sim_time"]},
                    ]}
+        if placement_guidance:
+            context["current_placement_guidance"] = placement_guidance
+        if blocked_reference_obs is not None:
+            context["navigation_reference"] = {
+                "kind": "recent_forward_veto_own_nav_rgb",
+                "frame_id": blocked_reference_obs["frame_id"],
+                "sim_time": blocked_reference_obs["sim_time"],
+                "sha256": blocked_reference_obs["sha256"],
+                "observations_ago": self._navigation_temporal.recent_blocked_observations_ago,
+                "no_forward_control_since_reference": True,
+                "reason_shown": "compare a prior blocked view after turn-only motion",
+            }
         system_prompt = PROMPT
         if self.communication_mode != "none":
             context["incoming_messages"] = incoming
             system_prompt = system_prompt.replace("통신은 이번 단계에\n없으며 ", "")
-            system_prompt = system_prompt.replace("추가 필드나 메시지를 넣지 마라.",
+            system_prompt = system_prompt.replace("허용된 navigation_note 외 추가 필드나 메시지를 넣지 마라.",
                                                   "통신 지침에 허용된 outgoing_message 외 추가 필드를 넣지 마라.")
             system_prompt += "\n" + _COMMUNICATION_PROMPTS[self.communication_mode] + "\n" + _SHARED_COMMUNICATION_PROMPT
         serialized_context = _fit_serialized_context(context, 6000)
@@ -154,8 +185,14 @@ class GeminiTransportPlanner:
                            {"role": "user", "content": serialized_context}]
         images = [{"label": "CURRENT_WRIST - manipulation", "image": _jpeg_data_uri(wrist_jpeg)},
                   {"label": "CURRENT_NAV - fixed chassis forward", "image": _jpeg_data_uri(nav_jpeg)}]
-        if send_previous_nav:
-            images.append({"label": "PREVIOUS_NAV - before previous successful model action",
+        if selected_reference is not None:
+            images.append({"label": "RECENT_BLOCKED_NAV - earlier own RGB; historical, not current veto",
+                           "image": _jpeg_data_uri(selected_reference["jpeg"])})
+        elif send_previous_nav:
+            selected_reference = {"label": "PREVIOUS_NAV",
+                                  "observation": previous_nav["observation"],
+                                  "jpeg": previous_nav["jpeg"]}
+            images.append({"label": "PREVIOUS_NAV - before previous parsed proposal, execution may be rejected",
                            "image": _jpeg_data_uri(previous_nav["jpeg"])})
         raw: Any = None
         usage = None
@@ -169,18 +206,20 @@ class GeminiTransportPlanner:
             self.last_audit = _audit(wrist_obs, nav_obs, raw, usage, None,
                                      self.model_name, getattr(self.completer, "last_model", None), previous_nav,
                                      progress, self.communication_mode, incoming, prompt_messages, images,
-                                     send_previous_nav)
+                                     selected_reference)
             if isinstance(exc, PlanningError):
                 raise
             raise PlanningError(str(exc), raw, usage) from exc
         self.last_audit = _audit(wrist_obs, nav_obs, raw, usage, parsed,
                                  self.model_name, getattr(self.completer, "last_model", None), previous_nav,
                                  progress, self.communication_mode, incoming, prompt_messages, images,
-                                 send_previous_nav)
+                                 selected_reference)
         self._previous_model_action = copy.deepcopy(parsed["action"])
+        self._previous_navigation_note = copy.deepcopy(parsed.get("navigation_note"))
+        self._navigation_commitment = _updated_navigation_commitment(self._navigation_commitment, parsed)
         self._progress.record(action=parsed["action"], evidence=progress,
                               nav_frame_id=nav_obs["frame_id"], nav_sha256=nav_obs["sha256"])
-        self._previous_nav = {"jpeg": nav_jpeg, "camera": nav_obs["camera"],
+        self._previous_nav = {"observation": copy.deepcopy(dict(nav_obs)), "jpeg": nav_jpeg, "camera": nav_obs["camera"],
                               "frame_id": copy.deepcopy(nav_obs["frame_id"]),
                               "sim_time": float(nav_obs["sim_time"]), "sha256": nav_obs["sha256"]}
         return parsed
@@ -234,6 +273,32 @@ def _validate_local_memory(value: Any) -> None:
         raise ValueError("INVALID_MEMORY_VALUE")
 
 
+_BUDGET_FIELDS = {"budget_mode", "calls_remaining", "input_tokens_remaining", "reported_prompt_tokens",
+                  "reserved_input_tokens", "estimated_unreported_tokens", "calls_without_usage",
+                  "next_request_estimate", "terminal_input_reserve", "remaining_sim_seconds"}
+
+
+def _validate_runtime_inputs(budget: Any, execution: Any) -> None:
+    for value in (budget, execution):
+        if value is not None:
+            _validate_local_memory(value)
+            if not isinstance(value, Mapping):
+                raise ValueError("INVALID_RUNTIME_CONTEXT")
+    if budget is not None:
+        if set(budget) != _BUDGET_FIELDS or budget.get("budget_mode") != "estimated_preflight":
+            raise ValueError("INVALID_BUDGET_CONTEXT")
+        for key, value in budget.items():
+            if key != "budget_mode":
+                if (isinstance(value, bool) or not isinstance(value, (int, float))
+                        or not math.isfinite(value) or value < 0):
+                    raise ValueError("INVALID_BUDGET_CONTEXT")
+    if execution is not None:
+        if set(execution) - {"last_decision", "last_macro"}:
+            raise ValueError("INVALID_EXECUTION_CONTEXT")
+        if len(json.dumps(execution, ensure_ascii=False, allow_nan=False)) > 1800:
+            raise ValueError("EXECUTION_CONTEXT_TOO_LARGE")
+
+
 def _parse_reply(raw: Any, communication_mode: str = "none") -> dict[str, Any]:
     if not isinstance(raw, str):
         raise ValueError("INVALID_PLAN")
@@ -241,8 +306,8 @@ def _parse_reply(raw: Any, communication_mode: str = "none") -> dict[str, Any]:
     if text.startswith("```"):
         text = text.split("\n", 1)[1].rsplit("```", 1)[0].strip()
     value = json.loads(text)
-    allowed = ({"action", "reason"} if communication_mode == "none" else
-               {"action", "reason", "outgoing_message"})
+    allowed = ({"action", "reason", "navigation_note"} if communication_mode == "none" else
+               {"action", "reason", "navigation_note", "outgoing_message"})
     if (not isinstance(value, dict) or not {"action", "reason"}.issubset(value)
             or not set(value).issubset(allowed)):
         raise ValueError("INVALID_PLAN_FIELDS")
@@ -265,6 +330,31 @@ def _parse_reply(raw: Any, communication_mode: str = "none") -> dict[str, Any]:
     elif kind == "wait":
         _bounded(action["duration"], 0, 1, "duration", exclusive_low=True)
     result = {"action": copy.deepcopy(action), "reason": reason.strip()}
+    if "navigation_note" in value:
+        note = value["navigation_note"]
+        keys = set(note) if isinstance(note, dict) else set()
+        base_keys = {"observed", "maneuver", "resume_when"}
+        has_bypass_side = "bypass_side" in keys
+        bypass_side = note.get("bypass_side") if isinstance(note, dict) else None
+        bypass_until = note.get("bypass_until") if isinstance(note, dict) else None
+        valid_until = (isinstance(bypass_until, str) and bool(bypass_until.strip())
+                       and len(bypass_until) <= 100)
+        bypass_valid = ((not has_bypass_side and "bypass_until" not in keys)
+                        or (isinstance(bypass_side, str) and bypass_side in {"left", "right"}
+                            and valid_until)
+                        or (bypass_side == "none"
+                            and ("bypass_until" not in keys or valid_until)))
+        if (not isinstance(note, dict) or not base_keys.issubset(keys)
+                or keys - (base_keys | {"bypass_side", "bypass_until"})
+                or note.get("maneuver") not in {"left", "right", "forward", "wait", "unknown"}
+                or any(not isinstance(note[k], str) or not note[k].strip() or len(note[k]) > 100
+                       for k in ("observed", "resume_when"))
+                or not bypass_valid):
+            # Auxiliary commentary must not discard an otherwise valid action.
+            # Raw text remains in the audit; malformed notes are never remembered.
+            result["navigation_note_error"] = "INVALID_NAVIGATION_NOTE"
+        else:
+            result["navigation_note"] = copy.deepcopy(note)
     if "outgoing_message" in value:
         try:
             result["outgoing_message"] = _validate_outgoing(value["outgoing_message"], communication_mode)
@@ -272,6 +362,17 @@ def _parse_reply(raw: Any, communication_mode: str = "none") -> dict[str, Any]:
             # Communication is auxiliary; a malformed message must not erase valid movement.
             pass
     return result
+
+
+def _updated_navigation_commitment(current: dict[str, str] | None,
+                                   parsed: Mapping[str, Any]) -> dict[str, str] | None:
+    """Apply only an explicit, validated model commitment change."""
+    note = parsed.get("navigation_note")
+    if not isinstance(note, Mapping) or "bypass_side" not in note:
+        return copy.deepcopy(current)
+    if note["bypass_side"] == "none":
+        return None
+    return {"bypass_side": note["bypass_side"], "bypass_until": note["bypass_until"]}
 
 
 def _validate_outgoing(value: Any, mode: str) -> Any:
@@ -307,22 +408,28 @@ def _validate_incoming_messages(messages: Any) -> list[dict[str, Any]]:
     return copied
 
 
-def _compact_progress_item(item: Mapping[str, Any]) -> dict[str, Any]:
-    return {key: copy.deepcopy(item[key]) for key in
-            ("action", "nav_mean_absolute_change", "nav_nearly_unchanged") if key in item}
+def _historical_observation(note: Any) -> dict[str, str] | None:
+    """Keep only the fallible observation text from a previous model note."""
+    if not isinstance(note, Mapping):
+        return None
+    observed = note.get("observed")
+    if not isinstance(observed, str) or not observed.strip():
+        return None
+    return {"observed": observed.strip(),
+            "provenance": "fallible_historical_model_note_not_current_rgb"}
 
 
 def _fit_serialized_context(context: dict[str, Any], limit: int) -> str:
     """Bound routine request text by shedding oldest optional inbox entries."""
     fitted = copy.deepcopy(context)
-    text = json.dumps(fitted, ensure_ascii=False, allow_nan=False)
+    text = json.dumps(fitted, ensure_ascii=False, allow_nan=False, separators=(",", ":"))
     if len(text) <= limit:
         return text
     incoming = fitted.get("incoming_messages")
     if isinstance(incoming, list):
         fitted["incoming_messages"] = [_compact_incoming(item) for item in incoming[-6:]]
     while True:
-        text = json.dumps(fitted, ensure_ascii=False, allow_nan=False)
+        text = json.dumps(fitted, ensure_ascii=False, allow_nan=False, separators=(",", ":"))
         if len(text) <= limit:
             return text
         inbox = fitted.get("incoming_messages")
@@ -371,16 +478,17 @@ def _audit(wrist: Mapping[str, Any], nav: Mapping[str, Any], raw: Any, usage: An
            progress: Mapping[str, Any], communication_mode: str,
            incoming_messages: list[dict[str, Any]] | None,
            prompt_messages: list[dict[str, Any]], images: list[dict[str, str]],
-           sent_previous_nav: bool) -> dict[str, Any]:
+           selected_reference: Mapping[str, Any] | None) -> dict[str, Any]:
     frames = [{"camera": wrist["camera"], "label": "CURRENT_WRIST", "frame_id": wrist["frame_id"],
                               "sha256": wrist["sha256"], "transmitted_sha256": wrist["sha256"]},
               {"camera": nav["camera"], "label": "CURRENT_NAV", "frame_id": nav["frame_id"],
                "sha256": nav["sha256"], "transmitted_sha256": nav["sha256"]}]
-    if previous_nav is not None and sent_previous_nav:
-        frames.append({"camera": previous_nav["camera"], "label": "PREVIOUS_NAV",
-                       "frame_id": previous_nav["frame_id"], "sim_time": previous_nav["sim_time"],
-                       "sha256": previous_nav["sha256"],
-                       "transmitted_sha256": previous_nav["sha256"]})
+    if selected_reference is not None:
+        reference = selected_reference["observation"]
+        digest = reference["sha256"]
+        frames.append({"camera": reference["camera"], "label": selected_reference["label"],
+                       "frame_id": reference["frame_id"], "sim_time": reference["sim_time"],
+                       "sha256": digest, "transmitted_sha256": digest})
     model_context = json.loads(prompt_messages[-1]["content"])
     return {"input_frames": frames,
             "model_context": model_context,

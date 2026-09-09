@@ -3,6 +3,15 @@ import json
 from scripts.evaluate_gemini_cohort import run_cohort, infrastructure_problem
 
 
+def test_seed_runner_passes_timeout_and_reasoning_to_child_without_changing_budgets(tmp_path):
+    from scripts.run_gemini_seed_validation import command
+    args = command(tmp_path, 43, 'medium', 60)
+    for key, value in {'--request-timeout': '60', '--reasoning-effort': 'medium',
+                       '--max-calls': '30', '--max-input-tokens': '120000',
+                       '--seconds': '300', '--robots': '1'}.items():
+        assert args[args.index(key) + 1] == value
+
+
 def test_budget_ending_during_server_cooldown_remains_infrastructure_block(tmp_path):
     (tmp_path / 'result.json').write_text(json.dumps({
         'inference_unresolved': {'r1': 1},

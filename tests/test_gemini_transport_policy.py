@@ -29,6 +29,126 @@ class Completer:
 
 
 class GeminiTransportPlannerTest(unittest.TestCase):
+    def test_varying_turns_trigger_camera_comparison_and_direction_change_resets(self):
+        c = Completer({}); p = GeminiTransportPlanner("r1", c)
+        actions = [(0, .15, 2), (0, .18, 2.5), (0, .16, 1.5),
+                   (0, -.12, 1), (.1, -.12, 2), (.1, 0, 2)]
+        counts = []
+        for i, (fwd, turn, duration) in enumerate(actions):
+            c.reply = {"action": {"kind": "drive", "fwd": fwd, "turn": turn, "duration": duration},
+                       "reason": "현재 화면을 보고 선택"}
+            p.decide(obs("robot_cam", (0, 0, 0), frame=i+1),
+                     obs("nav_cam", (i*40, i*40, i*40), frame=i+1), [],
+                     cargo_id="small_box_01", destination_zone="A", skill_state="carrying")
+            context = json.loads(c.calls[-1][0][-1]["content"])
+            counts.append(context["visual_progress"]["same_action_streak"])
+            if i == 3:
+                self.assertFalse(context["visual_progress"]["nav_nearly_unchanged"])
+                self.assertEqual(len(c.calls[-1][1]), 3)
+            if i == 4:
+                self.assertEqual(len(c.calls[-1][1]), 2)
+        self.assertEqual(counts, [0, 1, 2, 3, 1, 1])
+
+    def test_model_navigation_note_is_audited_and_passed_as_proposal_not_action(self):
+        note = {"observed": "주황 장애물이 전방을 가림", "maneuver": "right",
+                "resume_when": "장애물이 진행 통로에서 벗어나고 전진 검사가 통과할 때"}
+        c = Completer({"action": {"kind": "drive", "fwd": 0, "turn": -.2, "duration": 2},
+                       "reason": "오른쪽으로 통로를 확보함", "navigation_note": note})
+        p = GeminiTransportPlanner("r1", c)
+        args = (obs("robot_cam", (0,0,0)), obs("nav_cam", (0,0,0)), [])
+        first = p.decide(*args, cargo_id="small_box_01", destination_zone="A", skill_state="carrying")
+        self.assertEqual(first["navigation_note"], note)
+        c.reply = {"action": {"kind": "wait", "duration": .2}, "reason": "새 화면을 확인함"}
+        p.decide(*args, cargo_id="small_box_01", destination_zone="A", skill_state="carrying")
+        context = json.loads(c.calls[-1][0][-1]["content"])
+        self.assertEqual(context["previous_navigation_note"], {
+            "observed": note["observed"],
+            "provenance": "fallible_historical_model_note_not_current_rgb"})
+        self.assertIn("nav_evidence", context)
+        self.assertEqual(p.last_audit["parsed"]["action"], c.reply["action"])
+        self.assertIsNone(p._previous_navigation_note)
+
+    def test_screen_coordinates_in_model_note_are_not_hidden_sensor_fields(self):
+        reply = {"action": {"kind": "drive", "fwd": .15, "turn": 0, "duration": 3.5},
+                 "reason": "현재 전방 화면을 근거로 전진함",
+                 "navigation_note": {"observed": "화면 중앙(x=0.44~0.68)에 파란 구역이 보임",
+                                     "maneuver": "forward", "resume_when": "빈 통로가 유지될 때"}}
+        _p, _c, result = self.call(reply, skill_state="carrying")
+        self.assertEqual(result["action"], reply["action"])
+        self.assertEqual(result["navigation_note"], reply["navigation_note"])
+
+    def test_invalid_auxiliary_navigation_note_keeps_action_and_records_error(self):
+        notes = [
+            {"unexpected": "invalid"},
+            {"observed": "장애물을 확인함", "maneuver": "left", "resume_when": "통로가 열릴 때",
+             "bypass_side": None},
+            {"observed": "장애물을 확인함", "maneuver": "left", "resume_when": "통로가 열릴 때",
+             "bypass_side": ["left"], "bypass_until": "장애물을 지날 때"},
+        ]
+        for note in notes:
+            with self.subTest(note=note):
+                reply = {"action": {"kind": "wait", "duration": .2}, "reason": "장면을 확인함",
+                         "navigation_note": note}
+                p, _c, result = self.call(reply, skill_state="carrying")
+                self.assertEqual(result["action"], reply["action"])
+                self.assertEqual(result["navigation_note_error"], "INVALID_NAVIGATION_NOTE")
+                self.assertNotIn("navigation_note", result)
+                self.assertEqual(json.loads(p.last_audit["raw_text"]), reply)
+
+    def test_bypass_commitment_persists_until_explicit_valid_clear(self):
+        committed = {"observed": "주황 장애물이 전방을 가림", "maneuver": "right",
+                     "resume_when": "오른쪽 통로가 열릴 때", "bypass_side": "right",
+                     "bypass_until": "장애물 옆을 충분히 전진한 뒤 뒤쪽에 보일 때"}
+        c = Completer({"action": {"kind": "drive", "fwd": 0, "turn": -.2, "duration": 2},
+                       "reason": "장애물 오른쪽 우회를 선택함", "navigation_note": committed})
+        p = GeminiTransportPlanner("r1", c)
+        args = (obs("robot_cam", (0, 0, 0)), obs("nav_cam", (0, 0, 0)), [])
+        p.decide(*args, cargo_id="small_box_01", destination_zone="A", skill_state="carrying")
+
+        forward = {"observed": "우회 통로가 열림", "maneuver": "forward",
+                   "resume_when": "빈 통로가 유지될 때"}
+        for reply in (
+            {"action": {"kind": "drive", "fwd": .15, "turn": 0, "duration": 4},
+             "reason": "열린 우회 통로로 전진함", "navigation_note": forward},
+            {"action": {"kind": "wait", "duration": .2}, "reason": "새 화면을 확인함"},
+            {"action": {"kind": "wait", "duration": .2}, "reason": "화면을 확인함",
+             "navigation_note": {"observed": "장애물이 안 보임", "maneuver": "left",
+                                 "resume_when": "통로 확인", "bypass_side": "left"}},
+        ):
+            c.reply = reply
+            result = p.decide(*args, cargo_id="small_box_01", destination_zone="A", skill_state="carrying")
+            context = json.loads(c.calls[-1][0][-1]["content"])
+            self.assertEqual(context["navigation_commitment"],
+                             {"bypass_side": "right", "bypass_until": committed["bypass_until"]})
+        self.assertEqual(result["navigation_note_error"], "INVALID_NAVIGATION_NOTE")
+
+        clear = {"observed": "충분히 전진해 장애물이 뒤쪽에 보임", "maneuver": "left",
+                 "resume_when": "목적지 통로가 정렬될 때", "bypass_side": "none"}
+        c.reply = {"action": {"kind": "drive", "fwd": 0, "turn": .2, "duration": 2},
+                   "reason": "우회를 마치고 목적지를 향함", "navigation_note": clear}
+        p.decide(*args, cargo_id="small_box_01", destination_zone="A", skill_state="carrying")
+        self.assertIsNone(p._navigation_commitment)
+        c.reply = {"action": {"kind": "wait", "duration": .2}, "reason": "화면을 확인함"}
+        p.decide(*args, cargo_id="small_box_01", destination_zone="A", skill_state="carrying")
+        self.assertIsNone(json.loads(c.calls[-1][0][-1]["content"])["navigation_commitment"])
+
+    def test_rejected_plan_does_not_change_bypass_commitment(self):
+        note = {"observed": "장애물이 전방에 있음", "maneuver": "left",
+                "resume_when": "왼쪽 통로가 열릴 때", "bypass_side": "left",
+                "bypass_until": "장애물 옆을 지나 뒤쪽에 보일 때"}
+        c = Completer({"action": {"kind": "drive", "fwd": 0, "turn": .2, "duration": 2},
+                       "reason": "왼쪽 우회를 시작함", "navigation_note": note})
+        p = GeminiTransportPlanner("r1", c)
+        args = (obs("robot_cam", (0, 0, 0)), obs("nav_cam", (0, 0, 0)), [])
+        p.decide(*args, cargo_id="small_box_01", destination_zone="A", skill_state="carrying")
+        c.reply = {"action": {"kind": "release"}, "reason": "잘못된 상태에서 놓기",
+                   "navigation_note": {"observed": "통과함", "maneuver": "forward",
+                                       "resume_when": "목표 확인", "bypass_side": "none"}}
+        with self.assertRaises(PlanningError):
+            p.decide(*args, cargo_id="small_box_01", destination_zone="A", skill_state="released")
+        self.assertEqual(p._navigation_commitment,
+                         {"bypass_side": "left", "bypass_until": note["bypass_until"]})
+
     def call(self, reply, *, skill_state="idle"):
         c = Completer(reply); p = GeminiTransportPlanner("r1", c)
         result = p.decide(obs("robot_cam", (0, 0, 255)), obs("nav_cam", (255, 0, 0), frame=2),
@@ -189,7 +309,7 @@ class GeminiTransportPlannerTest(unittest.TestCase):
         context=json.loads(c.calls[0][0][-1]["content"])
         compact=context["own_local_memory"]
         self.assertEqual(compact["latest_placement"]["status"],"inside")
-        self.assertLessEqual(len(compact["last_actions"]),3)
+        self.assertNotIn("last_actions", compact)
         self.assertNotIn("frame_geometry",json.dumps(compact))
         self.assertNotIn("sha256",json.dumps(compact))
         self.assertLessEqual(p.last_audit["serialized_context_chars"],6000)
@@ -235,7 +355,7 @@ class GeminiTransportPlannerTest(unittest.TestCase):
         self.assertTrue(evidence["nav_nearly_unchanged"])
         self.assertGreaterEqual(evidence["stagnation_streak"],2)
         self.assertGreaterEqual(evidence["same_action_streak"],2)
-        self.assertLessEqual(len(context["recent_visual_history"]),6)
+        self.assertNotIn("recent_visual_history", context)
         serialized=json.dumps(context)
         self.assertNotIn("recommended",serialized)
         self.assertNotIn("truth",serialized)

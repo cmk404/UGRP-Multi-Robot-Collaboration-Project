@@ -24,8 +24,12 @@ AREA_RATIO_RANGE = (.90, 1.10)
 
 def _cyan_object_mask(frame):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    # Include both illuminated top and darker vertical cyan faces.
-    mask = cv2.inRange(hsv, np.asarray((74, 65, 45)), np.asarray((108, 255, 255)))
+    # Saved held-box JPEGs put the cyan cargo at H=89--94. The green floor
+    # reaches H=74; keep a margin above it so it cannot merge into the cargo.
+    # The blue floor starts joining at H=106; stop two hue units below it.
+    # Color remains segmentation only: caller-established prior target
+    # identity is still required by compare_box_comotion().
+    mask = cv2.inRange(hsv, np.asarray((80, 65, 45)), np.asarray((104, 255, 255)))
     kernel = np.ones((5, 5), np.uint8)
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
@@ -48,7 +52,7 @@ def compare_box_comotion(before_image, after_image, *, camera_pan_delta_pwm=0):
     """Compare two controlled-arm RGB frames for relative attachment evidence.
 
     The cyan color does not identify a box. The caller must have established
-    target identity by marker tracking before the intervention. A positive
+    a unique visual target before the intervention. A positive
     result is evidence of visual attachment/co-motion only, not force sensing,
     absolute height, or guaranteed grasp success.
     """
@@ -66,7 +70,7 @@ def compare_box_comotion(before_image, after_image, *, camera_pan_delta_pwm=0):
     base = {
         "evidence": "visual_attachment",
         "attached": False,
-        "identity_source": "caller_prior_marker_tracking_required",
+        "identity_source": "caller_prior_visual_target_binding_required",
         "color_is_identity_evidence": False,
         "provenance": "two_own_rgb_jpegs+controlled_arm_intervention+cyan_mask_comotion",
         "thresholds": {"min_close_area_px": MIN_CLOSE_AREA_PX, "min_iou": MIN_IOU,

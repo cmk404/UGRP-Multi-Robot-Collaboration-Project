@@ -12,6 +12,7 @@ _ACTION_KEYS = {"kind", "fwd", "turn", "duration"}
 _CRITICAL_MARKERS = ("ERROR", "FAILED", "FAILURE", "BLOCKED", "UNCERTAIN", "LIMIT", "REJECT")
 _SEMANTIC_FEEDBACK_MARKERS = ("NAVIGATION_INTERRUPTED", "OWN_RGB_STAGNATION",
                               "NEW_PEER_MESSAGE", "VISUAL_LOAD_")
+_COMPARISON_MARKERS = ("OWN_RGB_DRIVE_BLOCKED", "STAGN", "NO_PROGRESS", "DRIVE_FAILED")
 
 
 def compact_own_memory(memory: Any) -> dict[str, Any]:
@@ -20,8 +21,13 @@ def compact_own_memory(memory: Any) -> dict[str, Any]:
     placement: dict[str, Any] | None = None
     feedback: list[Any] = []
     actions: list[dict[str, Any]] = []
+    compare_nav = False
 
     for record in records:
+        # A new accepted proposal advances the before/after comparison window.
+        # This does not erase the error history or assert physical recovery.
+        if isinstance(record, Mapping) and record.get("feedback") == "accepted" and record.get("action"):
+            compare_nav = False
         for node in _walk(record):
             if not isinstance(node, Mapping):
                 continue
@@ -47,8 +53,11 @@ def compact_own_memory(memory: Any) -> dict[str, Any]:
                     item = _compact_feedback(key, value)
                     if item is not None:
                         feedback.append(item)
+                        if any(marker in json.dumps(item, ensure_ascii=False).upper()
+                               for marker in _COMPARISON_MARKERS):
+                            compare_nav = True
 
-    result: dict[str, Any] = {}
+    result: dict[str, Any] = {"nav_comparison_requested": compare_nav}
     if placement:
         result["latest_placement"] = placement
     if feedback:
@@ -68,8 +77,36 @@ def compact_own_memory(memory: Any) -> dict[str, Any]:
 
 def memory_needs_nav_comparison(compact_memory: Mapping[str, Any]) -> bool:
     """Return true only for a current critical error that benefits from before/after RGB."""
-    text = json.dumps(compact_memory.get("critical_feedback", []), ensure_ascii=False).upper()
-    return any(marker in text for marker in ("OWN_RGB_DRIVE_BLOCKED", "STAGN", "NO_PROGRESS", "DRIVE_FAILED"))
+    return compact_memory.get("nav_comparison_requested") is True
+
+
+def current_placement_guidance(memory: Any, wrist_hash: str, nav_hash: str, own_pwm: Any = None) -> dict | None:
+    """Bind guidance to both images AND the owned FK inputs for this request."""
+    if not isinstance(own_pwm, Mapping):
+        return None
+    try:
+        pose = {str(key): float(own_pwm.get(str(key), own_pwm.get(key))) for key in (3, 4, 5, 6)}
+    except (TypeError, ValueError):
+        return None
+    records = list(memory) if isinstance(memory, (list, tuple)) else [memory]
+    for record in reversed(records):
+        if not isinstance(record, Mapping):
+            continue
+        placement = record.get("placement_evidence", record.get("placement"))
+        if not isinstance(placement, Mapping):
+            continue
+        if (placement.get("wrist_sha256") != wrist_hash or placement.get("nav_sha256") != nav_hash
+                or placement.get("guidance_own_pwm") != pose
+                or placement.get("stage") != "before_release"
+                or placement.get("status") not in {"outside", "uncertain"}
+                or (placement.get("identity") or {}).get("confirmed") is not True):
+            return None
+        guidance = placement.get("navigation_guidance")
+        if not isinstance(guidance, Mapping):
+            return None
+        return _pick_scalars(guidance, {"source", "minimum_footprint_margin_cm",
+            "estimated_entry_distance_cm", "entry_bearing_deg", "bearing_convention", "meaning"})
+    return None
 
 
 def _walk(value: Any):
@@ -121,4 +158,4 @@ def _latest_unique(items: list[Any], limit: int) -> list[Any]:
     return list(reversed(kept))
 
 
-__all__ = ["compact_own_memory", "memory_needs_nav_comparison"]
+__all__ = ["compact_own_memory", "memory_needs_nav_comparison", "current_placement_guidance"]

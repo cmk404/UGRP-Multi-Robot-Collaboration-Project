@@ -49,9 +49,9 @@ class VisualProgressHistory:
     def _same_action_streak(self, action: Mapping[str, Any] | None) -> int:
         if action is None:
             return 0
-        streak, target = 0, dict(action)
+        streak, target = 0, _action_family(action)
         for item in reversed(self._entries):
-            if item["action"] != target:
+            if _action_family(item["action"]) != target:
                 break
             streak += 1
         return streak
@@ -63,6 +63,15 @@ class VisualProgressHistory:
                 break
             streak += 1
         return streak
+
+
+def _action_family(action: Mapping[str, Any]) -> tuple:
+    """Group proposals by motion type/direction, not speed or lease duration."""
+    if action.get("kind") != "drive":
+        return (action.get("kind"),)
+    def sign(value: Any) -> int:
+        return (value > 0) - (value < 0)
+    return ("drive", sign(action.get("fwd", 0)), sign(action.get("turn", 0)))
 
 
 def _small_gray(jpeg: bytes) -> np.ndarray:

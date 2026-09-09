@@ -1,3 +1,4 @@
+import hashlib
 import json
 import unittest
 from pathlib import Path
@@ -10,12 +11,12 @@ from harness.visual_placement_corner import (
 )
 
 
-ROOT = Path(__file__).resolve().parents[1]
+FIXTURES = Path(__file__).parent / "fixtures" / "ci_recorded"
 
 
 class RecordedCornerReconstructionTests(unittest.TestCase):
     def test_recovers_late_redelivery_frames_rejected_by_three_edge_fit(self):
-        folder = ROOT / "outputs/warehouse_research/recovery-redelivery-01/inputs/r2"
+        folder = FIXTURES / "corner_recovery"
         recovered = []
         for index in range(10, 21):
             frame = cv2.imread(str(folder / f"{index:04d}-nav.jpg"))
@@ -29,7 +30,7 @@ class RecordedCornerReconstructionTests(unittest.TestCase):
         self.assertGreaterEqual(sum(recovered), 8)
 
     def test_checkpoint_outside_frame_remains_geometrically_reconstructable(self):
-        path = ROOT / "outputs/warehouse_research/recovery-redelivery-01/inputs/r2/0001-nav.jpg"
+        path = FIXTURES / "corner_recovery" / "0001-nav.jpg"
         fit = reconstruct_zone_from_corner(cv2.imread(str(path)), "B")
         self.assertIsNotNone(fit)
         margins = signed_footprint_margins(fit, (0.16749944, 0.00028043),
@@ -37,14 +38,10 @@ class RecordedCornerReconstructionTests(unittest.TestCase):
         self.assertLess(min(margins), -.10)
 
     def test_historical_inside_frames_remain_inside_with_conservative_margin(self):
-        run = ROOT / "outputs/warehouse_research/coela-gemini38-verified-01/team-58"
-        records = [json.loads(line) for line in (run / "llm-decisions.jsonl").read_text().splitlines()]
+        manifest = json.loads((FIXTURES / "manifest.json").read_text())
         for call in (111, 112):
-            record = next(item for item in records
-                          if item.get("call_id") == f"r2-call-{call:04d}"
-                          and isinstance(item.get("fresh_placement"), dict))
-            evidence = record["fresh_placement"]
-            frame = cv2.imread(str(run / f"inputs/r2/placement-call-{call:04d}-nav.jpg"))
+            evidence = manifest["corner_inside"][f"call-{call:04d}"]
+            frame = cv2.imread(str(FIXTURES / evidence["file"]))
             fit = reconstruct_zone_from_corner(frame, "B")
             self.assertIsNotNone(fit)
             center = (evidence.get("calibrated_lowering_center_m")
@@ -55,13 +52,13 @@ class RecordedCornerReconstructionTests(unittest.TestCase):
             self.assertGreaterEqual(min(margins), 0.0)
 
     def test_rejects_frame_without_zone_color(self):
-        path = ROOT / "outputs/warehouse_research/recovery-redelivery-01/inputs/r2/0020-nav.jpg"
+        path = FIXTURES / "corner_recovery" / "0020-nav.jpg"
         frame = cv2.imread(str(path))
         frame[:] = 0
         self.assertIsNone(reconstruct_zone_from_corner(frame, "B"))
 
     def test_does_not_fit_requested_zone_from_a_different_color(self):
-        path = ROOT / "outputs/warehouse_research/recovery-redelivery-01/inputs/r2/0020-nav.jpg"
+        path = FIXTURES / "corner_recovery" / "0020-nav.jpg"
         frame = cv2.imread(str(path))
         # Preserve only pixels from the green target mask; asking for blue must
         # not reinterpret the same geometry as zone A.
@@ -73,7 +70,7 @@ class RecordedCornerReconstructionTests(unittest.TestCase):
         self.assertIsNone(reconstruct_zone_from_corner(isolated, "A"))
 
     def test_rejects_when_corner_is_occluded(self):
-        path = ROOT / "outputs/warehouse_research/recovery-redelivery-01/inputs/r2/0020-nav.jpg"
+        path = FIXTURES / "corner_recovery" / "0020-nav.jpg"
         frame = cv2.imread(str(path))
         # Remove the central image region containing the meeting points of the
         # projected floor boundaries; a single remaining edge is insufficient.
@@ -97,6 +94,13 @@ class RecordedCornerReconstructionTests(unittest.TestCase):
         self.assertAlmostEqual(error, 2.0, places=4)
         ambiguous = np.asarray((np.cos(np.deg2rad(84)), np.sin(np.deg2rad(84))), np.float32)
         self.assertIsNone(_orthogonal_axes(first, ambiguous))
+
+    def test_recorded_fixture_hashes_match_manifest(self):
+        manifest = json.loads((FIXTURES / "manifest.json").read_text())
+        for relative, metadata in manifest["files"].items():
+            with self.subTest(file=relative):
+                payload = (FIXTURES / relative).read_bytes()
+                self.assertEqual(hashlib.sha256(payload).hexdigest(), metadata["sha256"])
 
 
 if __name__ == "__main__":

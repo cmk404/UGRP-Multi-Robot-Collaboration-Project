@@ -7,7 +7,10 @@ from harness.navigation_events import NavigationEvents, InferenceInputBudget
 
 
 def nav():
-    ok, jpg = cv2.imencode('.jpg', np.full((480,640,3), 70, np.uint8))
+    pixels = np.full((480,640,3), 70, np.uint8)
+    pixels[::16, :, :] = 180  # Textured fixture: flat imagery is unobservable.
+    pixels[:, ::16, :] = 180
+    ok, jpg = cv2.imencode('.jpg', pixels)
     assert ok
     raw = jpg.tobytes()
     return {'camera':'nav_cam','image':base64.b64encode(raw).decode(),

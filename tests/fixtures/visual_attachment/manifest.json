@@ -1,0 +1,57 @@
+{
+  "purpose": "Saved RGB-only visual-attachment segmentation regressions. Cargo ROI is H92-94; blue source-floor pixels begin merging into the owned contour at H106, so runtime stops at H104.",
+  "files": {
+    "straight46/anchor.jpg": {
+      "source": "outputs/markerless-improvement-20260909/grip46-straight/inputs/0101-wrist.jpg",
+      "sha256": "873e7b17ccffb538c911b8b89dcd45f7e06d2be1fedcaa0d662411eb14cbb4bb"
+    },
+    "straight46/left.jpg": {
+      "source": "outputs/markerless-improvement-20260909/grip46-straight/inputs/0102-wrist.jpg",
+      "sha256": "a09b1fc4ffb2623716eac52791039e16ad3409d849d56dc84de04d2913d4413a"
+    },
+    "straight46/right.jpg": {
+      "source": "outputs/markerless-improvement-20260909/grip46-straight/inputs/0103-wrist.jpg",
+      "sha256": "89061003d577657d3d34b5a92ba80881e2d812ccd67a70e26c805d758eb999a7"
+    },
+    "straight46/home.jpg": {
+      "source": "outputs/markerless-improvement-20260909/grip46-straight/inputs/0104-wrist.jpg",
+      "sha256": "1b4ea05696a332b3a4f6ab54c6ff343b58e426114cd95dd00fe635b692a8e570"
+    },
+    "m4_first_drive/before.jpg": {
+      "source": "outputs/markerless-blocks-20260909/m4/solo-46/inputs/r1/monitor-000262.jpg",
+      "sha256": "0f951477e6fe7a514a5e733f26462c5e54cb0e9bef10e93b2fa9f129d9c8db49"
+    },
+    "m4_first_drive/first_slice.jpg": {
+      "source": "outputs/markerless-blocks-20260909/m4/solo-46/inputs/r1/monitor-000265.jpg",
+      "sha256": "2bf9b0e078cff9947419ec27a81024cd3369c5bf90d7c580efeca3bcdbfb1683"
+    },
+    "m4_first_drive/shifted.jpg": {
+      "source": "outputs/markerless-blocks-20260909/m4/solo-46/inputs/r1/monitor-000268.jpg",
+      "sha256": "085bd9fca3df632be5e12e79d577c14a8f8034cf89bca78ae319fed05385ee4a"
+    },
+    "m4_first_drive/combined-blue-floor.jpg": {
+      "source": "outputs/markerless-improvement-20260909/grip46-combined-h110/inputs/monitor-000176.jpg",
+      "sha256": "e17f451771feb592f532abf6352936e7ed6f8c3826c013b1b9f8d7350b53157c"
+    },
+    "m4_first_drive/combined-gray-floor.jpg": {
+      "source": "outputs/markerless-improvement-20260909/grip46-combined-h110/inputs/monitor-000178.jpg",
+      "sha256": "39b00885a9665eb906d7a6c6d883412e727dfdd942fb9a769e34a30217665ff2"
+    },
+    "detached/anchor.jpg": {
+      "source": "outputs/grip-calibration-01/anchor.jpg",
+      "sha256": "1d5d92ca03d209f77d77201048a3dbee0863b2e4b93ad5ad0065ffd5e9261144"
+    },
+    "detached/left.jpg": {
+      "source": "outputs/grip-calibration-01/left.jpg",
+      "sha256": "6ca69dfb2479d49f8a3ff4b5f5b4a1a5d78f2e04f3a026c26855fbe58cd9fb81"
+    },
+    "detached/right.jpg": {
+      "source": "outputs/grip-calibration-01/right.jpg",
+      "sha256": "f912b1c79644cf8be7855139e06143446a176aa5398dbcdd781e2cd32f778b95"
+    },
+    "detached/home.jpg": {
+      "source": "outputs/grip-calibration-01/home.jpg",
+      "sha256": "a34a27f8d4f38cf4c42441eb047caa32ba8dfb1bfe734a3d95ac9c40571a8764"
+    }
+  }
+}

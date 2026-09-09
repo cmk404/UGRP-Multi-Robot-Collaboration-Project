@@ -308,7 +308,7 @@ def _zone_geom(world: ET.Element, zone: ZoneSpec) -> None:
     )
 
 
-def _cargo_body(spec: CargoSpec) -> ET.Element:
+def _cargo_body(spec: CargoSpec, *, include_small_box_fiducials: bool = False) -> ET.Element:
     body = ET.Element("body", {"name": spec.body_name, "pos": _attrs(spec.start_xyz)})
     ET.SubElement(body, "joint", {
         "name": spec.joint_name, "type": "free", "damping": ".08",
@@ -379,17 +379,18 @@ def _cargo_body(spec: CargoSpec) -> ET.Element:
             "size": ".0025 .032 .010", "mass": "0", "rgba": ".95 .72 .05 1",
             "contype": "0", "conaffinity": "0",
         })
-    # Actor-visible identity fiducials.  These are visual-only plates on both
-    # local +/-X faces, so a robot can decode cargo identity from its own RGB
-    # camera without geom/body ids or privileged state.
-    for side in (-1, 1):
-        ET.SubElement(body, "geom", {
-            "name": f"{spec.body_name}_tag_{'neg' if side < 0 else 'pos'}x",
-            "type": "box", "pos": _attrs((side * (half_width + .002), 0, .060)),
-            "size": ".050 .050 .0015", "euler": f"0 {side * math.pi / 2.0:.6f} 0",
-            "mass": "0", "material": f"warehouse_tag_mat_{spec.cargo_id}",
-            "contype": "0", "conaffinity": "0",
-        })
+    # Historical fixtures use visual-only identity plates. Small boxes are
+    # markerless by default so their visible geometry matches the real cargo;
+    # legacy experiments can opt in explicitly without changing its physics.
+    if spec.cargo_type != "small_box" or include_small_box_fiducials:
+        for side in (-1, 1):
+            ET.SubElement(body, "geom", {
+                "name": f"{spec.body_name}_tag_{'neg' if side < 0 else 'pos'}x",
+                "type": "box", "pos": _attrs((side * (half_width + .002), 0, .060)),
+                "size": ".050 .050 .0015", "euler": f"0 {side * math.pi / 2.0:.6f} 0",
+                "mass": "0", "material": f"warehouse_tag_mat_{spec.cargo_id}",
+                "contype": "0", "conaffinity": "0",
+            })
     return body
 
 
@@ -405,7 +406,13 @@ def add_warehouse_mission_xml(
     carrier_ids: tuple[str, ...] = ("r1", "r2", "r3"),
     terrain: tuple[TerrainSpec, ...] = (),
     zones: Mapping[str, ZoneSpec] | None = None,
+    include_small_box_fiducials: bool = False,
 ) -> ET.Element:
+    """Add the warehouse fixture, with realistic markerless small boxes by default.
+
+    ``include_small_box_fiducials=True`` preserves the legacy upright tag
+    plates for explicitly requested comparison fixtures.
+    """
     zones = WAREHOUSE_ZONES if zones is None else zones
     world = root.find("worldbody")
     if world is None:
@@ -425,6 +432,8 @@ def add_warehouse_mission_xml(
         "small_box_03": str(Path(__file__).resolve().parent / "assets/warehouse_tags/small_box_03.png"),
     }
     for spec in specs:
+        if spec.cargo_type == "small_box" and not include_small_box_fiducials:
+            continue
         texture_name = f"warehouse_tag_{spec.cargo_id}"
         material_name = f"warehouse_tag_mat_{spec.cargo_id}"
         if not any(node.get("name") == texture_name for node in asset):
@@ -477,7 +486,9 @@ def add_warehouse_mission_xml(
             "contype": "1", "conaffinity": "3", "mass": "0", "group": "0",
         })
     for spec in specs:
-        world.append(_cargo_body(spec))
+        world.append(_cargo_body(
+            spec, include_small_box_fiducials=include_small_box_fiducials,
+        ))
         for rid in carrier_ids:
             ET.SubElement(equality, "weld", {
                 "name": f"{rid}__{spec.cargo_id}_grasp",

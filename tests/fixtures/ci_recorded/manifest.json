@@ -1,0 +1,58 @@
+{
+  "description": "Minimal recorded RGB and placement metadata needed by the portable offline regression suite.",
+  "provenance": {
+    "corner_recovery": "outputs/warehouse_research/recovery-redelivery-01/inputs/r2 (archived run)",
+    "corner_inside": "outputs/warehouse_research/coela-gemini38-verified-01/team-58",
+    "visual_placement": "outputs/warehouse_research/gemini38-team-dev-01/inputs/r2",
+    "pan_team41": "outputs/warehouse_research/coela-gemini38-verified-01/team-41/inputs/r2 steps 0120-0121",
+    "pan_team73": "outputs/warehouse_research/coela-gemini38-verified-01/team-73/inputs/r2 steps 0233-0234",
+    "sweep_natural": "outputs/warehouse_research/coela-camera-repaired-01/team-41-natural/inputs/r2 steps 0192-0195",
+    "sweep_status": "outputs/warehouse_research/coela-camera-repaired-01/team-41-status/inputs/r2 steps 0221-0224"
+  },
+  "corner_inside": {
+    "call-0111": {
+      "file": "corner_inside/call-0111-nav.jpg",
+      "calibrated_lowering_center_m": [0.16536760477357265, 0.00025975903979248016],
+      "box_dimensions_m": [0.036, 0.038, 0.034],
+      "placement_margin_m": 0.05
+    },
+    "call-0112": {
+      "file": "corner_inside/call-0112-nav.jpg",
+      "calibrated_released_box_center_m": [0.16770671187832015, 0.0002221500839202826],
+      "box_dimensions_m": [0.036, 0.038, 0.034],
+      "placement_margin_m": 0.05
+    }
+  },
+  "files": {
+    "corner_inside/call-0111-nav.jpg": {"sha256": "14464e43752b7abb8ce0d466b5313c9c899a44d17388061aacaffd73be00c952"},
+    "corner_inside/call-0112-nav.jpg": {"sha256": "cd9c06f12ceee0a7241620a5374ecf453c1a197afdfff3de0c3a8838389ede55"},
+    "corner_recovery/0001-nav.jpg": {"sha256": "644586ab8868dced5b6ba8f748cccbedb0ba23772eb1476c2bc8c9536ff5deac"},
+    "corner_recovery/0010-nav.jpg": {"sha256": "935cae63ac94ef5ae43de5ef5d4855cf24788bf4a163797939bd348e117448fa"},
+    "corner_recovery/0011-nav.jpg": {"sha256": "a08d4a014f71b842e90db99fe5a25e641474aab361b89e66a0c0e85d630a3586"},
+    "corner_recovery/0012-nav.jpg": {"sha256": "2ec2d3872a7e6905f444c290575fc9b69ff681369d9ff4823d040a6dac4649fa"},
+    "corner_recovery/0013-nav.jpg": {"sha256": "ffff6887419254da005744de849919b32837b66edbfef2a3465b48755548117e"},
+    "corner_recovery/0014-nav.jpg": {"sha256": "15b1fbdcbdf583085660fcad9b4e7f86944115aa2a87318b877c03fa46e52158"},
+    "corner_recovery/0015-nav.jpg": {"sha256": "bf7c48d7b4f33aa7ca1992fd5fdd3651e3377b38752466542c0272252d071958"},
+    "corner_recovery/0016-nav.jpg": {"sha256": "39c3446e43328a26bc32e300b6d2e3fa0a1e66a562ade26376aaf73c8cdf515a"},
+    "corner_recovery/0017-nav.jpg": {"sha256": "b30c2e75f35bdef2b18194dc1d5b9e05469389160f7b754aefe08c29ecc489d0"},
+    "corner_recovery/0018-nav.jpg": {"sha256": "c91edd196b915423b19d24365c80923b8cc7bcf4a03020954653539a40122803"},
+    "corner_recovery/0019-nav.jpg": {"sha256": "5518331cb1cb15319f9189e97b5a9b0dbdc0b12835103cafb0d04e96349319ee"},
+    "corner_recovery/0020-nav.jpg": {"sha256": "441bae2a7573ce959708031bf83e8c0cfee00acac56eefade3d5146fea9112dc"},
+    "visual_attachment/pan_team41/anchor-wrist.jpg": {"sha256": "a6f25fd1ac25ad10462d04f13ee5b7112afea5ca2e93d234e629655c53c19486"},
+    "visual_attachment/pan_team41/panned-wrist.jpg": {"sha256": "f6c36fa1b0fc7dbc87eb983c82e46d88bf563f09c368895ad0f5b15957a16a0f"},
+    "visual_attachment/pan_team73/anchor-wrist.jpg": {"sha256": "3f703f4896ca4a7827ba87bbb8d832bd4f23c3ef8899885408cf1a35d91295d4"},
+    "visual_attachment/pan_team73/panned-wrist.jpg": {"sha256": "9012eb8704c0879211d82130b2d0b87b4b48c7ca1d7b20e03ae5ff73e72037ad"},
+    "visual_attachment/sweep_natural/anchor-wrist.jpg": {"sha256": "83beff0dcccb02175b7f5fffe47f5cd8651c43cb68eb527a290723e199569798"},
+    "visual_attachment/sweep_natural/home-wrist.jpg": {"sha256": "6e17e3921717e5f7abd4d8201c82b01cd41e487fbe3c37f38f83695428d6e97f"},
+    "visual_attachment/sweep_natural/left-wrist.jpg": {"sha256": "63c41c47a102521e1a3e8d616f2bd0d158d31938b9e5c51047057cfc3532bb73"},
+    "visual_attachment/sweep_natural/right-wrist.jpg": {"sha256": "7939cd1aaa2950cdeb3b33915392ec8c3888d78719228447388321489f52adce"},
+    "visual_attachment/sweep_status/anchor-wrist.jpg": {"sha256": "23a1a2df20d1881d5687e7935ed623cda4e4a359a8ae1e18323d8f3b9ef4c52b"},
+    "visual_attachment/sweep_status/home-wrist.jpg": {"sha256": "8fbc57c819eadf41f6114a2318aaf094560ae12061a236e67582fa03828d5434"},
+    "visual_attachment/sweep_status/left-wrist.jpg": {"sha256": "a93cd0101b6e60a8a8f1aef0436796bd9673e05f223dd060bfa7baada728a24f"},
+    "visual_attachment/sweep_status/right-wrist.jpg": {"sha256": "9d4f9f7d1352f962ff5b76fe4bd05bb8d282f125ec45ebf85a7d19c05a96d1cd"},
+    "visual_placement/0181-nav.jpg": {"sha256": "367561b6c250b18165725b8f27aeea43eed1fd003bedbc88a3caa24d99eb9e30"},
+    "visual_placement/0181-wrist.jpg": {"sha256": "189356a6c569c46b1a8188a489299b34f95b8303fce84c2a4a7727d2791747f7"},
+    "visual_placement/0200-nav.jpg": {"sha256": "944590b915ef6764628a6dce3dbb9644ddac6d967bc2e12b0994be3e67f56023"},
+    "visual_placement/0200-wrist.jpg": {"sha256": "7ff530bd0dfe7db07c87f9ca33cdf703de4954b260e6f5ff7308085e4914eac6"}
+  }
+}

@@ -12,6 +12,9 @@ import cv2
 import numpy as np
 
 from harness.monocular_box import CameraBoxTracker
+from harness.markerless_box import observe_ground_box
+from harness.markerless_face import MarkerlessFaceAligner
+from harness.approach_geometry import assess_face_standoff
 from harness.visual_arm import camera_extrinsics, camera_to_base, forward_grip, solve_grip_ik, tool_pose
 from harness.visual_floor import observe_zone
 from harness.visual_box_surface import observe_known_box_top
@@ -31,7 +34,7 @@ class VisualBoxSkill:
     """
 
     def __init__(self, task="short_transfer", destination_zone="B", robot_id="r1", cargo_id="small_box_01",
-                 near_field_reacquisition=False):
+                 near_field_reacquisition=False, perception_mode="markerless"):
         if task not in {"short_transfer", "destination_zone", "external_navigation"}:
             raise ValueError("unsupported visual box task")
         if destination_zone not in {"A", "B", "C"}:
@@ -43,12 +46,20 @@ class VisualBoxSkill:
         if not isinstance(near_field_reacquisition, bool):
             raise ValueError("near_field_reacquisition must be a bool")
         self.near_field_reacquisition = near_field_reacquisition
-        self.tracker = CameraBoxTracker(target_id=cargo_id)
+        if perception_mode not in {"markerless", "fiducial"}:
+            raise ValueError("unsupported perception_mode")
+        self.perception_mode = perception_mode
+        self.tracker = CameraBoxTracker(target_id=cargo_id) if perception_mode == "fiducial" else None
+        self._face_aligner = MarkerlessFaceAligner() if perception_mode == "markerless" else None
+        self.last_face_alignment = None
+        self._face_alignment_waits = 0
+        self._face_inspection_reached = False
         self.phase = "approach"
         self.reason = "RUNNING"
         self.held = False
         self.last_box: dict[str, Any] | None = None
         self.last_target: tuple[float, float, float] | None = None
+        self.last_target_provenance: str | None = None
         self._last_seen_pose: dict[str, int] | None = None
         self._missing = 0
         self._face_approach = False
@@ -58,6 +69,8 @@ class VisualBoxSkill:
         self.last_surface = None
         self._release_path = []
         self._release_scan_attempts = 0
+        self._release_ground_probe = []
+        self._release_ground_origin_pan = None
         self._inspection_pose = None
         self._attachment_image = None
         self._attachment_pan = None
@@ -66,6 +79,7 @@ class VisualBoxSkill:
         self._probe_side_image = None
         self._probe_side_pair = None
         self._probe_origin_phase = None
+        self._surface_drop_probe_validated = False
         self.last_attachment = None
         self._grasp: dict[int, int] | None = None
         self._hover: dict[int, int] | None = None
@@ -83,26 +97,55 @@ class VisualBoxSkill:
 
     def decide(self, observation: Mapping[str, Any]) -> dict[str, Any]:
         obs, pose = self._validate_observation(observation)
-        box = self.tracker.observe(obs["image"])
+        ground_phase = self.phase in {"approach", "verify_release", "release_ground_left", "release_ground_right", "release_ground_home"}
+        if self.perception_mode == "markerless":
+            # A floor hypothesis is only appropriate before pickup or after
+            # opening/retracting. Never manufacture a ground-height estimate
+            # while the object is carried.
+            box = (observe_ground_box(obs["image"], pose, self.cargo_id)
+                   if ground_phase else {"visible": False, "reason": "GROUND_ESTIMATE_NOT_APPLICABLE_WHILE_HELD"})
+        else:
+            box = self.tracker.observe(obs["image"])
         target = None
-        if box.get("visible") is True and _finite_or_inf(box.get("reprojection_rmse_px")) < 3.0:
+        target_provenance = None
+        if self.perception_mode == "markerless" and box.get("visible") is True:
+            point = box.get("estimated_box_center_base_m")
+            if isinstance(point, (list, tuple)) and len(point) == 3 and np.all(np.isfinite(point)):
+                target = np.asarray(point, dtype=float)
+                target_provenance = "ground_shape_fit:" + str(box.get("provenance", "unknown"))
+        elif self.perception_mode == "fiducial" and box.get("visible") is True and _finite_or_inf(box.get("reprojection_rmse_px")) < 3.0:
             camera_point = box.get("box_face_inset_camera_m")
             if isinstance(camera_point, (list, tuple)) and len(camera_point) == 3:
                 estimate = np.asarray(camera_to_base(camera_point, pose), dtype=float)
                 estimate[2] -= 0.06
                 if np.all(np.isfinite(estimate)):
                     target = estimate
+                    target_provenance = "marker_pose:" + str(box.get("provenance", "unknown"))
         self.last_surface = None
-        if self._grasp is not None and self.phase != "approach":
+        if self._grasp is not None and self.phase != "approach" and not (self.perception_mode == "markerless" and ground_phase):
             surface = observe_known_box_top(obs["image"], pose, target_id=self.cargo_id)
             self.last_surface = surface
             if target is None and surface.get("visible") and surface.get("confidence", 0) >= .5:
                 target = np.asarray(surface["estimated_surface_patch_base_m"], dtype=float)
                 target[2] = surface["estimated_box_center_height_m"]
+                target_provenance = "surface_height:" + str(surface.get("provenance", "unknown"))
         self.last_box = dict(box)
         self.last_target = tuple(float(v) for v in target) if target is not None else None
+        self.last_target_provenance = target_provenance
 
         if self.phase == "approach":
+            if self._face_aligner is not None:
+                # The 4 cm top is too small for reliable face orientation at
+                # the initial half-metre range. First obtain a closer RGB
+                # view while retaining the observed centre and drive guard.
+                if target is not None and np.linalg.norm(target[:2]) <= .405:
+                    self._face_inspection_reached = True
+                if self._face_inspection_reached:
+                    self.last_face_alignment = self._face_aligner.observe(
+                        box, tuple(target[:2]) if target is not None else ())
+                else:
+                    self.last_face_alignment = {"ready": False,
+                        "reason": "CLOSER_FACE_INSPECTION_REQUIRED", "normal_xy": None}
             return self._approach(box, target, pose)
         if self.phase == "lower":
             if self._lower_path:
@@ -163,11 +206,14 @@ class VisualBoxSkill:
             if not self.last_attachment["attached"] or not self._probe_side_pair["attached"]:
                 return self._finish("VISUAL_LOAD_DROPPED_OR_OCCLUDED" if is_carry_probe
                                     else "VISUAL_ATTACHMENT_UNCONFIRMED")
+            if self._probe_origin_phase == "surface_low_height":
+                self._surface_drop_probe_validated = True
             self.held = True
             self._attachment_image = obs["image"]
             self._carry_previous_image = obs["image"]
             self.phase = "carry"
             self._probe_results = []
+            self._probe_origin_phase = None
             return _wait(.1)
         if self.phase == "carry":
             return self._carry(obs, pose)
@@ -183,6 +229,20 @@ class VisualBoxSkill:
             self.phase = "verify_release"
             return _pose({**self._inspection_pose, 1: 2000})
         if self.phase == "verify_release":
+            if self.perception_mode == "markerless" and target is not None:
+                # Ground-fitting one image is conditional on the floor model.
+                # Also require the observed box to stay fixed in the base
+                # frame across a controlled camera sweep after opening.
+                expected = forward_grip(self._required_plan(self._grasp, "grasp"))
+                if np.linalg.norm(np.asarray(target[:2])-np.asarray(expected[:2])) <= .045:
+                    pan = int(pose["6"])
+                    if not 560 <= pan <= 2440:
+                        return self._finish("RELEASE_PROBE_PAN_LIMIT")
+                    self._release_ground_origin_pan = pan
+                    self._release_ground_probe = [tuple(target)]
+                    self.phase = "release_ground_left"
+                    return _pose({6: pan + 60})
+                target = None
             if target is not None and -.01 <= target[2] <= .04:
                 return self._finish("VISUAL_RELEASE_CONFIRMED")
             self._release_scan_attempts += 1
@@ -194,6 +254,28 @@ class VisualBoxSkill:
             offset = ((self._release_scan_attempts - 13) // 2 + 1) * 30
             offset *= -1 if self._release_scan_attempts % 2 else 1
             return _pose({6: _clip_int(self._inspection_pose[6] + offset, 500, 2500)})
+        if self.phase in {"release_ground_left", "release_ground_right", "release_ground_home"}:
+            expected_pan = self._release_ground_origin_pan + {
+                "release_ground_left": 60, "release_ground_right": -60,
+                "release_ground_home": 0}[self.phase]
+            if abs(int(pose["6"]) - expected_pan) > 2:
+                return self._finish("RELEASE_PROBE_POSE_UNCONFIRMED")
+            if target is None:
+                return self._finish("RELEASE_GROUND_TARGET_UNOBSERVABLE")
+            self._release_ground_probe.append(tuple(target))
+            # Check every pair, especially opposite sweep endpoints: a
+            # camera-following object can otherwise sit within each origin
+            # tolerance while traversing twice that amount left to right.
+            if any(np.linalg.norm(np.asarray(target[:2])-np.asarray(prior[:2])) > .010
+                   for prior in self._release_ground_probe[:-1]):
+                return self._finish("RELEASE_OBJECT_NOT_GROUND_STATIONARY")
+            if self.phase == "release_ground_left":
+                self.phase = "release_ground_right"
+                return _pose({6: self._release_ground_origin_pan - 60})
+            if self.phase == "release_ground_right":
+                self.phase = "release_ground_home"
+                return _pose({6: self._release_ground_origin_pan})
+            return self._finish("VISUAL_RELEASE_CONFIRMED")
         return {"kind": "finish", "reason": self.reason}
 
     def _approach(self, box, target, pose):
@@ -229,13 +311,27 @@ class VisualBoxSkill:
             if adjusted != wrist:
                 return _pose({3: adjusted})
             return _pose({4: _clip_int(int(pose["4"]) - delta, 500, 2500)})
+        if self.perception_mode == "markerless" and not self._face_inspection_reached:
+            if abs(bearing) > .05:
+                return _drive(0.0, float(np.clip(bearing * .6, -.18, .18)), .4)
+            return _drive(.10, 0.0, .6)
         if not self._face_approach:
-            marker_pose = box.get("marker_pose_camera")
-            rvec = marker_pose.get("rotation_rvec_rad") if isinstance(marker_pose, Mapping) else None
-            if not isinstance(rvec, (list, tuple)) or len(rvec) != 3:
-                return self._finish("INVALID_MARKER_ROTATION")
-            rotation, _ = cv2.Rodrigues(np.asarray(rvec, dtype=float))
-            normal = np.asarray(camera_extrinsics(pose)[1], dtype=float).T @ rotation[:, 2]
+            if self.perception_mode == "markerless":
+                alignment = self.last_face_alignment or {}
+                if not alignment.get("ready"):
+                    self._face_alignment_waits += 1
+                    if self._face_alignment_waits > 20:
+                        return self._finish("BOX_FACE_ALIGNMENT_UNOBSERVABLE")
+                    return _wait(.1)
+                self._face_alignment_waits = 0
+                normal = np.asarray([*alignment["normal_xy"], 0.0], dtype=float)
+            else:
+                marker_pose = box.get("marker_pose_camera")
+                rvec = marker_pose.get("rotation_rvec_rad") if isinstance(marker_pose, Mapping) else None
+                if not isinstance(rvec, (list, tuple)) or len(rvec) != 3:
+                    return self._finish("INVALID_MARKER_ROTATION")
+                rotation, _ = cv2.Rodrigues(np.asarray(rvec, dtype=float))
+                normal = np.asarray(camera_extrinsics(pose)[1], dtype=float).T @ rotation[:, 2]
             norm = float(np.linalg.norm(normal[:2]))
             if norm <= 1e-9 or not math.isfinite(norm):
                 return self._finish("INVALID_MARKER_NORMAL")
@@ -251,6 +347,14 @@ class VisualBoxSkill:
             if (self.near_field_reacquisition and 0.145 <= radial <= 0.20
                     and abs(bearing) <= 0.10
                     and face_alignment >= math.cos(math.radians(15.0))):
+                self._face_approach = True
+                return _wait(0.05)
+            # A usable face standoff can be reached before the exact derived
+            # waypoint crosses the chassis origin. Continuing tangent travel
+            # there can push the marker beyond the wrist pan range. Finish
+            # only this subgoal; the normal target-bearing and IK checks below
+            # still govern the final approach and grasp.
+            if assess_face_standoff(target[:2], normal[:2]).reached:
                 self._face_approach = True
                 return _wait(0.05)
             waypoint = target[:2] + normal[:2] / norm * 0.35
@@ -302,14 +406,38 @@ class VisualBoxSkill:
             if not 560 <= self._attachment_pan <= 2440:
                 return self._finish("ATTACHMENT_PROBE_PAN_LIMIT")
             self._probe_results = []
+            self._probe_origin_phase = "attachment_change"
             self.phase = "carry_probe_left"
             return _pose({6: self._attachment_pan + 60, 1: 1500})
         if (anchor.get("mask_iou", 0) < .80
                 or anchor.get("centroid_delta_px", math.inf) > 25.6
                 or not .8 <= anchor.get("area_ratio", 0) <= 1.25):
             return self._finish("VISUAL_GRASP_DRIFT")
-        if self.last_target is not None and self.last_target[2] < .035:
+        low_target = self.last_target is not None and self.last_target[2] < .035
+        marker_height = bool(self.last_target_provenance
+                             and self.last_target_provenance.startswith("marker_pose:"))
+        surface_height = bool(self.last_target_provenance
+                              and self.last_target_provenance.startswith("surface_height:"))
+        if low_target and marker_height:
             return self._finish("VISUAL_LOAD_DROPPED")
+        if low_target and surface_height and not self._surface_drop_probe_validated:
+            # A cyan surface is not fresh identity evidence and a partial face
+            # can satisfy the upright-top fit at extreme close range.  Stop
+            # chassis motion and use the existing strict left/right/home
+            # camera-relative attachment intervention before declaring loss.
+            self._attachment_pan = int(pose["6"])
+            if not 560 <= self._attachment_pan <= 2440:
+                return self._finish("ATTACHMENT_PROBE_PAN_LIMIT")
+            self._probe_results = []
+            self._probe_origin_phase = "surface_low_height"
+            if self.task == "external_navigation":
+                # The external planner must explicitly select check_grip;
+                # never execute an arm intervention as a navigation guard.
+                return self._finish("TOP_GEOMETRY_AMBIGUOUS_FOR_DROP")
+            self.phase = "carry_probe_left"
+            return _pose({6: self._attachment_pan + 60, 1: 1500})
+        if not low_target:
+            self._surface_drop_probe_validated = False
         self._carry_previous_image = obs["image"]
         if self.task == "external_navigation":
             return _wait(0.05)
@@ -381,6 +509,8 @@ class VisualBoxSkill:
         return observation, clean
 
     def _finish(self, reason):
+        if reason == "VISUAL_RELEASE_CONFIRMED":
+            self.held = False
         self.phase = "finished"
         self.reason = str(reason)
         return {"kind": "finish", "reason": self.reason}

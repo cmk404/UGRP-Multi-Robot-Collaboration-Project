@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+"""Run the portable UGRP regression suite used by GitHub Actions."""
+
+from __future__ import annotations
+
+import os
+from pathlib import Path
+import subprocess
+import sys
+
+
+ROOT = Path(__file__).resolve().parents[1]
+TEST_PATTERNS = (
+    "tests/test_markerless*.py",
+    "tests/test_visual_attachment*.py",
+    "tests/test_placement_guidance.py",
+    "tests/test_visual_placement*.py",
+    "tests/test_gemini_transport_policy.py",
+    "tests/test_transport_context.py",
+    "tests/test_budget_repair_regressions.py",
+    "tests/test_navigation_evidence.py",
+    "tests/test_navigation_temporal.py",
+    "tests/test_ugrp_session.py",
+)
+
+
+def main() -> int:
+    tests = sorted(
+        {
+            str(path.relative_to(ROOT))
+            for pattern in TEST_PATTERNS
+            for path in ROOT.glob(pattern)
+        }
+    )
+    if not tests:
+        print("No CI tests matched", file=sys.stderr)
+        return 2
+
+    env = os.environ.copy()
+    for name in tuple(env):
+        if name.endswith("_API_KEY") or name in {"GOOGLE_APPLICATION_CREDENTIALS"}:
+            env.pop(name)
+    env.update({"CI": "true", "PYTHONDONTWRITEBYTECODE": "1"})
+    command = [sys.executable, "-m", "pytest", "-q", *tests]
+    print(f"Running {len(tests)} offline test modules", flush=True)
+    return subprocess.call(command, cwd=ROOT, env=env)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
