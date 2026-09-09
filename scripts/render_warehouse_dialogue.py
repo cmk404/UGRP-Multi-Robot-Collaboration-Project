@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import html
 import json
+import os
 from pathlib import Path
 import subprocess
 
@@ -16,7 +17,8 @@ COLORS = {"r1": "#ffdc28", "r2": "#3ca5ff", "r3": "#ff6478"}
 
 
 def font(size):
-    for path in ("/System/Library/Fonts/AppleSDGothicNeo.ttc",
+    for path in (str(Path(os.environ.get("WINDIR", "C:/Windows")) / "Fonts/malgun.ttf"),
+                 "/System/Library/Fonts/AppleSDGothicNeo.ttc",
                  "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"):
         if Path(path).exists():
             return ImageFont.truetype(path, size)

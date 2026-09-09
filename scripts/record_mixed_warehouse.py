@@ -16,10 +16,19 @@ def main():
     parser.add_argument("--condition",choices=("rule","llm_peer_comm"),default="llm_peer_comm")
     parser.add_argument("--output",required=True)
     parser.add_argument("--scenario",choices=("normal","joint_obstacle"),default="normal")
+    parser.add_argument("--model", default="gemini-3.8-flash")
+    parser.add_argument("--timeout", type=float, default=240)
+    parser.add_argument("--max-calls", type=int, default=12)
     args=parser.parse_args()
+    if args.timeout <= 0 or args.max_calls <= 0:
+        parser.error("timeout and max-calls must be positive")
     out=Path(args.output).resolve();out.mkdir(parents=True,exist_ok=False)
     world=MultiMasterPiProductionV2(warehouse_layout="mixed",render=True)
-    video=CrewVideo(world,out/"mixed-solo-joint-1x.mp4")
+    try:
+        video=CrewVideo(world,out/"mixed-solo-joint-1x.mp4")
+    except BaseException:
+        world.close()
+        raise
     sink=(out/"cargo-motion.jsonl").open("w")
     dialogue=(out/"dialogue.jsonl").open("w")
     dialogue_lock=threading.Lock()
@@ -43,7 +52,7 @@ def main():
             return result
     try:
         video.capture(force=True);world.frame_callback=capture
-        policies={r:MixedRulePolicy(r) if args.condition=="rule" else MixedLLMPolicy(r,GeminiProxyCompleter(max_tokens=384,timeout=30)) for r in world.robot_ids}
+        policies={r:MixedRulePolicy(r) if args.condition=="rule" else MixedLLMPolicy(r,GeminiProxyCompleter(model=args.model,max_tokens=384,timeout=30)) for r in world.robot_ids}
         injected=[]
         def scenario(environment,eid,status):
             if args.scenario!="joint_obstacle" or injected:return
@@ -55,7 +64,7 @@ def main():
                 if not event.get('event_id'):raise RuntimeError('SCENARIO_NOT_INJECTED:'+str(event))
                 print('INJECTED_OBSTACLE',event,flush=True)
         result=run_mixed_episode(Environment(world),policies,condition=args.condition,
-                                 timeout_s=240,journal_path=out/"episode.jsonl",
+                                 timeout_s=args.timeout,max_calls_per_robot=args.max_calls,journal_path=out/"episode.jsonl",
                                  scenario_hook=scenario,
                                  event_callback=on_message)
         result['scenario']=args.scenario
@@ -70,8 +79,15 @@ def main():
         return 0 if result["success"] else 1
     finally:
         world.frame_callback=None
-        world._mixed_engine.close()
-        video.close();sink.close();dialogue.close();world.close()
+        try:
+            engine=getattr(world,"_mixed_engine",None)
+            if engine is not None:
+                engine.close()
+        finally:
+            try:
+                video.close()
+            finally:
+                sink.close();dialogue.close();world.close()
         from scripts.render_warehouse_dialogue import render_dialogue_video
         render_dialogue_video(out/"mixed-solo-joint-1x.mp4",out/"dialogue.jsonl",
                               out/"mixed-dialogue-1x.mp4")
