@@ -117,6 +117,7 @@ class PixelGraspController:
         self.lift_pulse = None
         self.height_lock = False
         self.recovery = []
+        self.composite_queue = []
         self.steps = 0
 
     def _issue(self, action, reason, obs, *, test=False, label=None):
@@ -187,6 +188,43 @@ class PixelGraspController:
             candidates.extend([('shoulder+',self._joint(5,step)),('shoulder-',self._joint(5,-step))])
         return candidates
 
+    @staticmethod
+    def _composite_candidates():
+        """Bounded turn-drive-counterturn probes for lateral displacement."""
+        return [
+            ('lateral-left', [
+                {'kind':'drive','forward':0.,'turn':.1,'duration_s':1.},
+                {'kind':'drive','forward':.05,'turn':0.,'duration_s':.8},
+                {'kind':'drive','forward':0.,'turn':-.1,'duration_s':1.},
+            ]),
+            ('lateral-right', [
+                {'kind':'drive','forward':0.,'turn':-.1,'duration_s':1.},
+                {'kind':'drive','forward':.05,'turn':0.,'duration_s':.8},
+                {'kind':'drive','forward':0.,'turn':.1,'duration_s':1.},
+            ]),
+        ]
+
+    @staticmethod
+    def _drive_undo(action):
+        """Return the same bounded impulse-reversal hypothesis used by _issue."""
+        f,t,d = action['forward'],action['turn'],action['duration_s']
+        pieces = max(1, math.ceil(abs(f)/.05))
+        return [
+            {'kind':'drive','forward':-f/pieces,'turn':-t/pieces,'duration_s':d}
+            for _ in range(pieces)
+        ]
+
+    def _start_composite(self, label, actions, obs):
+        """Issue the first raw action while retaining one before observation."""
+        first, *remaining = copy.deepcopy(actions)
+        issued = self._issue(
+            first, 'begin bounded lateral probe; score only its measured endpoint',
+            obs, test=True, label=label,
+        )
+        self.pending['composite'] = True
+        self.composite_queue = remaining
+        return issued
+
     def _visual_lift(self, obs):
         start = self.lift_start
         if start is None or obs.get('beam') is None or start.get('beam') is None or obs.get('own_beam') is None or start.get('own_beam') is None:
@@ -224,6 +262,15 @@ class PixelGraspController:
         self.last_observation = copy.deepcopy(obs)
         if not active:
             return self._issue({'kind':'wait'},'peer owns this command slice; observe only',obs)
+        if self.composite_queue:
+            action=self.composite_queue.pop(0)
+            issued=self._issue(
+                action, 'continue bounded lateral probe; defer scoring until its endpoint', obs
+            )
+            # Each newly issued inverse belongs before earlier inverses so a
+            # failed composite is unwound in exact reverse action order.
+            self.pending['undo'] = self._drive_undo(issued) + self.pending['undo']
+            return issued
         if self.stage in ('hold','blocked'):
             return self._issue({'kind':'wait'},'fixed-budget observation; no physical success input',obs)
         if self.stage == 'lift':
@@ -325,10 +372,23 @@ class PixelGraspController:
         if aligned:
             return self._issue({'kind':'wait'},'require a second observed alignment before closure',obs)
         candidates=self._candidates(alignment)
+        if self.repeat is not None:
+            repeated=next(
+                ((label,actions) for label,actions in self._composite_candidates()
+                 if label==self.repeat), None
+            )
+            if repeated is not None:
+                return self._start_composite(*repeated,obs)
         selected=next(((label,action) for label,action in candidates if label==self.repeat),None)
         if selected is None:
             selected=next(((label,action) for label,action in candidates if label not in self.tried),None)
         if selected is None:
+            composite=next(
+                ((label,actions) for label,actions in self._composite_candidates()
+                 if label not in self.tried), None
+            )
+            if composite is not None:
+                return self._start_composite(*composite,obs)
             self.stage='blocked'
             return self._issue({'kind':'wait'},'all bounded directions failed at this observed state',obs)
         label,action=selected

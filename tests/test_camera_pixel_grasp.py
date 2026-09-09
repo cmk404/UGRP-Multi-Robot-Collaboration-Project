@@ -43,9 +43,22 @@ def test_own_camera_endpoint_aim_contributes_to_cost():
     assert off_center['cost']>centered['cost']+30
 
 
-def step_with(controller, gripper, candidate):
+def step_with(controller, gripper, candidate, active=True):
     with patch.object(controller.tracker,'update',return_value=copy.deepcopy(gripper)), patch('harness.camera_pixel_grasp.extract_beams',return_value=[copy.deepcopy(candidate)]):
-        return controller.step(b'own',b'top')
+        return controller.step(b'own',b'top',active=active)
+
+
+def exhaust_primitives(controller, alignment):
+    controller.tried.update(label for label,_ in controller._candidates(alignment))
+
+
+def start_lateral_composite(controller, b, initial=None):
+    initial=initial or grip(x=.2)
+    alignment=alignment_features(initial,b)
+    exhaust_primitives(controller,alignment)
+    action=step_with(controller,initial,b)
+    assert action=={'kind':'drive','forward':0.,'turn':.1,'duration_s':1.}
+    return copy.deepcopy(controller.pending['before'])
 
 
 def test_no_hidden_gripper_or_missing_target_cannot_claim_capture():
@@ -178,3 +191,53 @@ def test_offscreen_fitted_own_endpoint_is_not_observed_alignment():
     a=alignment_features(grip(),beam(),own_beam=own,own_endpoint=[.58,1.06])
     assert a['own_endpoint'] is None and a['own_aim_error_px'] is None
     assert a['cost']==a['top_cost']
+
+
+def test_composite_does_not_score_intermediate_temporary_worsening():
+    c=PixelGraspController('r1');b=beam()
+    before=start_lateral_composite(c,b)
+    action=step_with(c,grip(x=.1),b)
+    assert action=={'kind':'drive','forward':.05,'turn':0.,'duration_s':.8}
+    assert c.pending['before']==before
+    assert c.pending['label']=='lateral-left'
+    assert 'lateral-left' not in c.tried
+    assert len(c.composite_queue)==1
+
+
+def test_composite_scores_only_after_endpoint_fresh_open_measurement():
+    c=PixelGraspController('r1');b=beam();before=start_lateral_composite(c,b)
+    step_with(c,grip(x=.1),b)
+    final_raw=step_with(c,grip(x=.1),b)
+    assert final_raw=={'kind':'drive','forward':0.,'turn':-.1,'duration_s':1.}
+    propagated=grip(x=.3);propagated['source']='verified_optical_flow'
+    assert step_with(c,propagated,b)=={'kind':'arm','servo_id':1,'pulse':1500}
+    assert c.pending['before']==before and c.repeat is None
+    assert step_with(c,grip(x=.3),b)=={'kind':'arm','servo_id':1,'pulse':2000}
+    assert c.pending['before']==before and c.repeat is None
+    next_action=step_with(c,grip(x=.3),b)
+    assert c.repeat=='lateral-left'
+    assert next_action=={'kind':'drive','forward':0.,'turn':.1,'duration_s':1.}
+
+
+def test_failed_composite_rolls_back_every_raw_action_in_reverse_order():
+    c=PixelGraspController('r1');b=beam();start_lateral_composite(c,b)
+    step_with(c,grip(x=.1),b)
+    step_with(c,grip(x=.1),b)
+    propagated=grip(x=.1);propagated['source']='verified_optical_flow'
+    step_with(c,propagated,b)
+    step_with(c,grip(x=.1),b)
+    first_undo=step_with(c,grip(x=.1),b)
+    second_undo=step_with(c,grip(x=.1),b)
+    third_undo=step_with(c,grip(x=.1),b)
+    assert first_undo=={'kind':'drive','forward':0.,'turn':.1,'duration_s':1.}
+    assert second_undo=={'kind':'drive','forward':-.05,'turn':0.,'duration_s':.8}
+    assert third_undo=={'kind':'drive','forward':0.,'turn':-.1,'duration_s':1.}
+    assert 'lateral-left' in c.tried
+
+
+def test_inactive_peer_slice_does_not_advance_composite_queue():
+    c=PixelGraspController('r1');b=beam();start_lateral_composite(c,b)
+    queued=copy.deepcopy(c.composite_queue);pending=copy.deepcopy(c.pending)
+    assert step_with(c,grip(x=.1),b,active=False)=={'kind':'wait'}
+    assert c.composite_queue==queued and c.pending==pending
+    assert step_with(c,grip(x=.1),b)==queued[0]
