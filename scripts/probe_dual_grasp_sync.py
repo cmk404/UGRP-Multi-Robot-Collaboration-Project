@@ -259,6 +259,7 @@ def _pose_metrics(world: MultiMasterPiProductionV2) -> dict[str, Any]:
     up = matrix[:, 2]
     tilt_deg = math.degrees(math.acos(float(np.clip(up[2], -1.0, 1.0))))
     return {
+        "bases": {rid: {"xyz": list(map(float,world.controllers[rid].base_xyz())), "rpy": list(map(float,world.controllers[rid].base_rpy()))} for rid in BEAM_CARRIER_IDS},
         "sim_time_s": round(float(world.data.time), 6),
         "position_m": [round(float(v), 6) for v in pose["position"]],
         "height_above_start_m": round(float(pose["position"][2]) - BEAM_START[2], 6),
