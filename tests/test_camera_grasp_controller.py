@@ -1,5 +1,5 @@
 import unittest
-from harness.camera_grasp_controller import CameraGraspController
+from harness.camera_grasp_controller import CameraGraspController, STARTUP_COMMANDS
 
 
 def observation(**updates):
@@ -59,6 +59,20 @@ class ControllerTests(unittest.TestCase):
         obs = observation(view='overhead', identity_confidence=.2, capture_visible=True, lift_visible=True)
         self.assertEqual(c.step(obs), {'kind': 'wait'})
         self.assertEqual(c.stage, 'verify_close')
+
+    def test_explicit_startup_commands_prevent_unknown_neutral_jump(self):
+        c = CameraGraspController(STARTUP_COMMANDS)
+        action = c.step(observation(jaws=None, suggested_action={'kind': 'arm', 'servo_id': 3, 'pulse': 800}))
+        self.assertEqual(action['pulse'], 800)
+        self.assertEqual(c.pending['_delta'], 60)
+
+    def test_repeated_drive_remains_available_for_coarse_approach(self):
+        c = CameraGraspController(STARTUP_COMMANDS)
+        drive = {'kind': 'drive', 'forward': .05, 'turn': 0, 'duration_s': .4}
+        obs = observation(target=[.8, .5], suggested_action=drive)
+        self.assertEqual(c.step(obs), drive)
+        self.assertEqual(c.step(obs), drive)
+        self.assertEqual(c.stage, 'approach')
 
 
 if __name__ == '__main__':

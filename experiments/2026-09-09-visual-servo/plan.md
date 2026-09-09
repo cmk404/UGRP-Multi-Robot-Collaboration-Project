@@ -5,3 +5,10 @@ User authorized implementing the visible gaps. Preserve physical cameras, scene 
 Implementation acceptance: strict pixel observations, state- and view-conditioned local goal-error prediction, isolated own actions, bounded raw pulse changes, reverse opt-in, explicit visual alignment/closure/verification/recovery, exact wire and controller replay. These are code capabilities, not proof of grasp.
 
 Experiment acceptance: inspect landmark overlays against the actual original input; report missing or wrong landmarks, selected stages, samples and actions. Physical grasp is still the output-only two-robot referee (bilateral contact, 3 cm lift, 2 s hold, no weld). Single-robot trials diagnose one-side alignment/closure and cannot establish dual grasp. If prerequisites fail, fix the evidenced cause before further pair trials. Record all unsuccessful attempts, tokens and raw locations. No Drive use. PR review before merging.
+
+## Evidence-driven revisions before final candidate
+
+- dffdfd2 r1/16: no landmarks; self-ID contradicted isolated pixel motion. Exact input/action replay passed 16 requests.
+- 44626d3 r1/24: motion cue corrected identity; same-source overhead crop yielded one tentative jaw observation. First unknown wrist target near neutral pointed the own camera away; repeated-drive suppression also interrupted useful approach. Exact replay passed 24 requests.
+- Final candidate explicitly reissues the existing documented SEARCH_POSE command values and stores those issued commands (not measured PWM), physically settles for one second, then limits changes from that history. It allows repeated coarse drive and applies local alignment only near the target. Initial camera/scene geometry is unchanged.
+- Final candidate cohort: r1-only 30 decisions and r3-only 30 decisions, same seed11 and fixed source; inspect both. Pair test follows only if observations/controller permit a meaningful check. No claim of general success rate from these trials.

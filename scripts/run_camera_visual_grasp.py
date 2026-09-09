@@ -39,7 +39,7 @@ def main() -> int:
 
     import mujoco
     from harness.camera_visual_observer import CameraVisualObserver
-    from harness.camera_grasp_controller import CameraGraspController
+    from harness.camera_grasp_controller import CameraGraspController, STARTUP_COMMANDS
     from harness.gemini_proxy import GeminiProxyCompleter
     from sim.camera_robot_port import CameraRobotPort
     import sim.multi_masterpi_production as production
@@ -76,6 +76,16 @@ def main() -> int:
             world.model.cam_fovy[cid] = 55
         mujoco.mj_forward(world.model, world.data)
         ports = {rid: CameraRobotPort(world, rid, allow_reverse=True) for rid in ('r1', 'r3')}
+        # Explicitly issue the existing startup commands before recording them
+        # as own history. Never read current PWM or joint state into the policy.
+        report['startup_commands'] = list(STARTUP_COMMANDS)
+        for port in ports.values():
+            for command in STARTUP_COMMANDS:
+                port.apply(command, float(world.data.time))
+        for _ in range(round(1.0 / float(world.model.opt.timestep))):
+            for port in ports.values():
+                port.tick(float(world.data.time))
+            world._physics_step_for(world.controllers['r1'])
         request_counts = {'r1': 0, 'r3': 0}
         for rid in ports:
             if args.active_robot != 'both' and rid != args.active_robot:
@@ -87,7 +97,7 @@ def main() -> int:
                 # image bytes. No headers, endpoint credentials or secrets.
                 (out / _rid / f'wire-{request_counts[_rid]:03d}.json').write_bytes(request.data)
                 return urlopen(request, timeout=timeout)
-            controls[rid] = CameraGraspController()
+            controls[rid] = CameraGraspController(STARTUP_COMMANDS)
             planners[rid] = CameraVisualObserver(rid, GeminiProxyCompleter(
                 model=args.model, max_tokens=1200, timeout=args.timeout,
                 reasoning_effort='none', http_open=audited_open))

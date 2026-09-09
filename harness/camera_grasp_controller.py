@@ -5,12 +5,23 @@ import copy
 import math
 
 from harness.camera_local_servo import LocalVisualServo
+from harness.camera_pair_policy import _validate_action
+
+# Existing documented floor-search startup command, not a target/grasp pose.
+# The runner physically issues these before passing this own-command history.
+STARTUP_COMMANDS = (
+    {'kind': 'arm', 'servo_id': 1, 'pulse': 2000},
+    {'kind': 'arm', 'servo_id': 3, 'pulse': 740},
+    {'kind': 'arm', 'servo_id': 4, 'pulse': 2320},
+    {'kind': 'arm', 'servo_id': 5, 'pulse': 1320},
+    {'kind': 'look', 'pan_pulse': 1500},
+)
 
 
 class CameraGraspController:
     """Own-issued command memory is not measured joint state or physical success."""
 
-    def __init__(self):
+    def __init__(self, startup_commands=()):
         self.model = LocalVisualServo()
         self.issued_pulses = {}
         self.history = []
@@ -25,6 +36,14 @@ class CameraGraspController:
         self.events = []
         self.last_decision = {}
         self.last_alignment = None
+        for command in startup_commands:
+            command = _validate_action(command)
+            if command['kind'] not in ('arm', 'look'):
+                raise ValueError('startup history must contain own servo commands')
+            channel = command['servo_id'] if command['kind'] == 'arm' else 6
+            self.issued_pulses[channel] = command['pulse'] if channel != 6 else command['pan_pulse']
+            self.history.append(copy.deepcopy(command))
+        self.history = self.history[-8:]
 
     @staticmethod
     def error(obs):
@@ -121,7 +140,9 @@ class CameraGraspController:
             # A suggested gripper close cannot bypass the visual alignment gate.
             if suggestion['kind'] == 'arm' and suggestion['servo_id'] == 1:
                 suggestion = {'kind': 'wait'}
-            if suggestion in self.history[-4:] or suggestion['kind'] == 'wait':
+            prior_same = next((a for a in reversed(self.history)
+                               if a['kind'] == suggestion['kind'] and a.get('servo_id') == suggestion.get('servo_id')), None)
+            if (suggestion['kind'] in ('arm', 'look') and suggestion == prior_same) or suggestion['kind'] == 'wait':
                 channel = (3, 4, 5, 6)[self.probe_index % 4]
                 self.probe_index += 1
                 pulse = self.issued_pulses.get(channel, 1500) + 50
@@ -130,6 +151,11 @@ class CameraGraspController:
             return self._issue(suggestion, obs, 'bounded visual search; landmarks unavailable or uncertain')
         self.unseen_count = 0
         self.stage = 'align'
+        if error > .10 and suggestion['kind'] == 'drive':
+            self.stage = 'approach'
+            self.aligned_count = 0
+            self.last_alignment = None
+            return self._issue(suggestion, obs, 'coarse visual approach before local arm alignment')
         jaws, target = obs['jaws'], obs['target']
         axis = [jaws[1][k] - jaws[0][k] for k in (0, 1)]
         span2 = sum(x*x for x in axis)

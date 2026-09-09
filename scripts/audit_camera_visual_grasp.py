@@ -11,13 +11,14 @@ if str(ROOT) not in sys.path:
 
 def audit(root):
     from harness.camera_visual_observer import CameraVisualObserver, parse_observation
-    from harness.camera_grasp_controller import CameraGraspController
+    from harness.camera_grasp_controller import CameraGraspController, STARTUP_COMMANDS
     from harness.gemini_proxy import _to_gemini_multi_image_messages
     root = Path(root)
     report = json.loads((root / 'result.json').read_text())
     rows = []
     for rid in ('r1', 'r3'):
-        observer, controller = CameraVisualObserver(rid, None), CameraGraspController()
+        assert report['startup_commands'] == list(STARTUP_COMMANDS)
+        observer, controller = CameraVisualObserver(rid, None), CameraGraspController(STARTUP_COMMANDS)
         calls = [c for c in report['calls'] if c['robot_id'] == rid]
         for i, call in enumerate(calls):
             own = (root / rid / f'{call["round"]:03d}-own.jpg').read_bytes()
