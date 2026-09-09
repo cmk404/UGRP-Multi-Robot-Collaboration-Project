@@ -21,6 +21,8 @@ import subprocess
 import sys
 import traceback
 from typing import Any
+from unittest.mock import patch
+import xml.etree.ElementTree as ET
 
 import cv2
 import mujoco
@@ -31,16 +33,25 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from sim.cooperative_payload import (
+    BEAM_BODY_NAME,
     BEAM_CARRIER_IDS,
     BEAM_ENDPOINT_OFFSETS_M,
+    BEAM_GEOM_NAME,
+    BEAM_HEIGHT_M,
     BEAM_HALF_HEIGHT_M,
+    BEAM_LENGTH_M,
+    BEAM_MASS_KG,
     BEAM_START,
+    BEAM_WIDTH_M,
     beam_pose,
 )
 from sim.multi_masterpi_production import (
     TEAM_APPROACH_STANDOFF_M,
     MultiMasterPiProductionV2,
 )
+import sim.multi_masterpi_production as multi_production
+
+PLAIN_BEAM_MASS_KG = BEAM_MASS_KG + 0.008 * len(BEAM_CARRIER_IDS)
 
 
 def _git(args: list[str]) -> str:
@@ -68,6 +79,110 @@ def _camera_look_at(world: MultiMasterPiProductionV2) -> None:
     world.model.cam_quat[camera_id] = quat
     world.model.cam_fovy[camera_id] = 47.0
     mujoco.mj_forward(world.model, world.data)
+
+
+def _plain_beam_contact(world: MultiMasterPiProductionV2, rid: str) -> dict[str, Any]:
+    """Read this robot's two finger contacts against the uniform beam geom."""
+    robot = world.controllers[rid]
+    beam = mujoco.mj_name2id(world.model, mujoco.mjtObj.mjOBJ_GEOM, BEAM_GEOM_NAME)
+    left = mujoco.mj_name2id(
+        world.model, mujoco.mjtObj.mjOBJ_GEOM, robot._n("left_finger"),
+    )
+    right = mujoco.mj_name2id(
+        world.model, mujoco.mjtObj.mjOBJ_GEOM, robot._n("right_finger"),
+    )
+    hits = {left: False, right: False}
+    forces = {left: 0.0, right: 0.0}
+    with world.physics_lock:
+        for index in range(world.data.ncon):
+            contact = world.data.contact[index]
+            g1, g2 = int(contact.geom1), int(contact.geom2)
+            if beam not in (g1, g2):
+                continue
+            finger = g2 if g1 == beam else g1
+            if finger not in hits:
+                continue
+            wrench = np.zeros(6, dtype=float)
+            if int(contact.efc_address) >= 0:
+                mujoco.mj_contactForce(world.model, world.data, index, wrench)
+            hits[finger] = True
+            forces[finger] += abs(float(wrench[0]))
+    return {
+        "contact_geom": BEAM_GEOM_NAME,
+        "left": hits[left],
+        "right": hits[right],
+        "bilateral": bool(hits[left] and hits[right]),
+        "left_force_n": forces[left],
+        "right_force_n": forces[right],
+    }
+
+
+def _plain_beam_xml(original_builder: Any) -> Any:
+    """Wrap the production XML builder with the diagnostic's plain beam fixture."""
+    def build(*args: Any, **kwargs: Any) -> str:
+        root = ET.fromstring(original_builder(*args, **kwargs))
+        beam = root.find(f".//body[@name='{BEAM_BODY_NAME}']")
+        if beam is None:
+            raise RuntimeError("beam body missing from generated model")
+        geom = beam.find(f"geom[@name='{BEAM_GEOM_NAME}']")
+        if geom is None:
+            raise RuntimeError("main beam geom missing from generated model")
+        geom.set(
+            "size",
+            f"{BEAM_WIDTH_M / 2:.6f} {BEAM_LENGTH_M / 2:.6f} {BEAM_HEIGHT_M / 2:.6f}",
+        )
+        # Preserve the prior fixture's complete 0.196 kg physical mass while
+        # consolidating it into the one uniform box (0.180 kg bar + 2x0.008 kg).
+        geom.set("mass", f"{PLAIN_BEAM_MASS_KG:.6f}")
+        for rid in BEAM_CARRIER_IDS:
+            anchor = beam.find(f"body[@name='{BEAM_BODY_NAME}_{rid}_endpoint']")
+            if anchor is None:
+                raise RuntimeError(f"{rid} weld coordinate anchor missing")
+            for child in list(anchor):
+                if child.tag in {"geom", "site"}:
+                    anchor.remove(child)
+        return ET.tostring(root, encoding="unicode")
+    return build
+
+
+def _plain_beam_model_record(world: MultiMasterPiProductionV2) -> dict[str, Any]:
+    """Audit the already compiled uniform beam fixture."""
+    beam_gid = mujoco.mj_name2id(
+        world.model, mujoco.mjtObj.mjOBJ_GEOM, BEAM_GEOM_NAME,
+    )
+    removed: list[dict[str, Any]] = []
+    for rid in BEAM_CARRIER_IDS:
+        endpoint_name = f"{BEAM_BODY_NAME}_{rid}_endpoint"
+        gid = mujoco.mj_name2id(
+            world.model, mujoco.mjtObj.mjOBJ_GEOM, f"{endpoint_name}_geom",
+        )
+        sid = mujoco.mj_name2id(
+            world.model, mujoco.mjtObj.mjOBJ_SITE, f"{endpoint_name}_site",
+        )
+        removed.append({"robot_id": rid, "geom_id": int(gid), "site_id": int(sid)})
+        # Keep the child body only as an invisible coordinate anchor for its weld.
+        robot = world.controllers[rid]
+        robot.finger_payload_contact = (
+            lambda endpoint_for, *, _rid=rid: _plain_beam_contact(world, _rid)
+        )
+    beam_bid = mujoco.mj_name2id(
+        world.model, mujoco.mjtObj.mjOBJ_BODY, BEAM_BODY_NAME,
+    )
+    body_ids = [beam_bid]
+    for rid in BEAM_CARRIER_IDS:
+        body_ids.append(mujoco.mj_name2id(
+            world.model, mujoco.mjtObj.mjOBJ_BODY, f"{BEAM_BODY_NAME}_{rid}_endpoint",
+        ))
+    return {
+        "shape": "single_uniform_box",
+        "dimensions_m": [BEAM_WIDTH_M, BEAM_LENGTH_M, BEAM_HEIGHT_M],
+        "compiled_geom_mass_requested_kg": PLAIN_BEAM_MASS_KG,
+        "compiled_total_body_mass_kg": float(sum(world.model.body_mass[bid] for bid in body_ids)),
+        "main_geom_half_size_m": [float(v) for v in world.model.geom_size[beam_gid]],
+        "removed_handle_geometries_and_sites": removed,
+        "endpoint_bodies": "invisible coordinate anchors only; no collision geometry",
+        "contact_source": BEAM_GEOM_NAME,
+    }
 
 
 class Video:
@@ -174,7 +289,16 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int) 
             video.hold(0.35)
 
     try:
-        world = MultiMasterPiProductionV2(seed=seed, width=960, height=720, render=True)
+        original_builder = multi_production.build_multi_robot_xml
+        with patch.object(
+            multi_production,
+            "build_multi_robot_xml",
+            _plain_beam_xml(original_builder),
+        ):
+            world = MultiMasterPiProductionV2(
+                seed=seed, width=960, height=720, render=True,
+            )
+        fixture = _plain_beam_model_record(world)
         _camera_look_at(world)
         precision = world._precision_module()
         hover = world._hover_pose()
@@ -205,6 +329,7 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int) 
             setup_only=True,
             carrier_base_poses=setup_poses,
             scout_motion=False,
+            beam_fixture=fixture,
         )
 
         world._team_joint_move_servos(
@@ -320,7 +445,7 @@ def main() -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     manifest: dict[str, Any] = {
-        "probe": "dual_grasp_sync_v1",
+        "probe": "plain_beam_dual_grasp_sync_v2",
         "repository": str(ROOT),
         "git_sha": _git(["rev-parse", "HEAD"]),
         "git_status_porcelain": _git(["status", "--porcelain"]),
@@ -342,6 +467,14 @@ def main() -> int:
             "fixture_pose_writes_allowed_during_trial": False,
             "payload_pose_writes": False,
             "scout_or_navigation": False,
+            "payload": {
+                "shape": "single_uniform_box",
+                "dimensions_m": [BEAM_WIDTH_M, BEAM_LENGTH_M, BEAM_HEIGHT_M],
+                "mass_kg": PLAIN_BEAM_MASS_KG,
+                "mass_basis": "preserves original 0.180 kg bar plus two 0.008 kg handle geoms",
+                "separate_handles": False,
+                "endpoint_markers": False,
+            },
         },
         "trials": [],
     }
