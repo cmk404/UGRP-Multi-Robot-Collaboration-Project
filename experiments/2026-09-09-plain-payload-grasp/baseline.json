@@ -1,0 +1,180 @@
+{
+  "condition": "baseline",
+  "final": {
+    "constraints_active": {
+      "r1": true,
+      "r3": true
+    },
+    "height_above_start_m": 0.052651,
+    "position_m": [
+      0.572681,
+      -2.0,
+      0.072651
+    ],
+    "sim_time_s": 4.96,
+    "tilt_deg": 6.9901
+  },
+  "ok": true,
+  "second_grasp_delay_s": 0.0,
+  "seed": 11,
+  "trace": [
+    {
+      "beam_fixture": {
+        "compiled_geom_mass_requested_kg": 0.196,
+        "compiled_total_body_mass_kg": 0.196,
+        "contact_source": "team_beam_geom",
+        "dimensions_m": [
+          0.05,
+          0.45,
+          0.04
+        ],
+        "endpoint_bodies": "invisible coordinate anchors only; no collision geometry",
+        "main_geom_half_size_m": [
+          0.025,
+          0.225,
+          0.02
+        ],
+        "removed_handle_geometries_and_sites": [
+          {
+            "geom_id": -1,
+            "robot_id": "r1",
+            "site_id": -1
+          },
+          {
+            "geom_id": -1,
+            "robot_id": "r3",
+            "site_id": -1
+          }
+        ],
+        "shape": "single_uniform_box"
+      },
+      "carrier_base_poses": {
+        "r1": [
+          0.4149999999999999,
+          -2.208,
+          0.032355118817659255
+        ],
+        "r3": [
+          0.4149999999999999,
+          -1.792,
+          0.032355118817659255
+        ]
+      },
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "event": "fixture_setup_complete",
+      "height_above_start_m": -4.9e-05,
+      "position_m": [
+        0.58,
+        -2.0,
+        0.019951
+      ],
+      "scout_motion": false,
+      "setup_only": true,
+      "setup_pose_write": true,
+      "sim_time_s": 0.3,
+      "tilt_deg": 0.0
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "event": "preclose_aligned",
+      "height_above_start_m": -0.000191,
+      "position_m": [
+        0.580587,
+        -2.0,
+        0.019809
+      ],
+      "sim_time_s": 3.18,
+      "tilt_deg": 0.2053
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 1.4871210287327936,
+          "right": true,
+          "right_force_n": 1.4711144552666382
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 1.4711502894372086,
+          "right": true,
+          "right_force_n": 1.487085194801362
+        }
+      },
+      "event": "simultaneous_close_complete",
+      "height_above_start_m": -0.00019,
+      "position_m": [
+        0.580574,
+        -2.0,
+        0.01981
+      ],
+      "sim_time_s": 4.01,
+      "tilt_deg": 0.2138
+    },
+    {
+      "constraints_active": {
+        "r1": true,
+        "r3": true
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 1.4872553025999036,
+          "right": true,
+          "right_force_n": 1.4712477279247822
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 1.4712726237213305,
+          "right": true,
+          "right_force_n": 1.487208402611343
+        }
+      },
+      "event": "dual_grasp_confirmed",
+      "height_above_start_m": -0.00019,
+      "position_m": [
+        0.580574,
+        -2.0,
+        0.01981
+      ],
+      "sim_time_s": 4.01,
+      "tilt_deg": 0.2138
+    },
+    {
+      "constraints_active": {
+        "r1": true,
+        "r3": true
+      },
+      "event": "lift_complete",
+      "height_above_start_m": 0.052651,
+      "position_m": [
+        0.572681,
+        -2.0,
+        0.072651
+      ],
+      "sim_time_s": 4.96,
+      "tilt_deg": 6.9901
+    }
+  ],
+  "video": "/Users/changmin/projects/ugrp/outputs/plain-grasp-20260909/baseline.mp4",
+  "video_duration_s": 4.917,
+  "video_frames": 59
+}
