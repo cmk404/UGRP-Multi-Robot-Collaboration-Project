@@ -62,13 +62,16 @@ def _git(args: list[str]) -> str:
     return result.stdout.strip() if result.returncode == 0 else f"unavailable: {result.stderr.strip()}"
 
 
-def _camera_look_at(world: MultiMasterPiProductionV2) -> None:
+def _camera_look_at(world: MultiMasterPiProductionV2, approach_distance: float = 0.0) -> None:
     """Aim an existing presentation camera closely at the beam fixture."""
     camera_id = mujoco.mj_name2id(
         world.model, mujoco.mjtObj.mjOBJ_CAMERA, "cctv_warehouse",
     )
     position = np.asarray((0.18, -2.68, 0.78), dtype=float)
     target = np.asarray((BEAM_START[0], BEAM_START[1], 0.09), dtype=float)
+    if approach_distance > 0:
+        position = np.asarray((-0.50, -3.12, 1.14))
+        target = np.asarray((BEAM_START[0] - approach_distance / 2, BEAM_START[1], 0.08))
     forward = target - position
     forward /= np.linalg.norm(forward)
     right = np.cross(forward, (0.0, 0.0, 1.0))
@@ -274,7 +277,7 @@ def _step(world: MultiMasterPiProductionV2, seconds: float) -> None:
             world.frame_callback()
 
 
-def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, weld_assistance: bool = False, side_grasp: bool = False) -> dict[str, Any]:
+def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, weld_assistance: bool = False, side_grasp: bool = False, approach_distance: float = 0.0) -> dict[str, Any]:
     video_path = out_dir / f"{name}.mp4"
     json_path = out_dir / f"{name}.json"
     trace: list[dict[str, Any]] = []
@@ -282,6 +285,7 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, 
         "condition": name,
         "weld_assistance": weld_assistance,
         "side_grasp": side_grasp,
+        "approach_distance_m": approach_distance,
         "second_grasp_delay_s": delay_s,
         "seed": seed,
         "video": str(video_path),
@@ -310,7 +314,7 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, 
                 seed=seed, width=960, height=720, render=True,
             )
         fixture = _plain_beam_model_record(world)
-        _camera_look_at(world)
+        _camera_look_at(world, approach_distance)
         precision = world._precision_module()
         hover = world._hover_pose()
         grasp = precision.solve_ik(
@@ -335,6 +339,8 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, 
             if side_grasp:
                 sign = 1.0 if rid == "r1" else -1.0
                 pose = (BEAM_START[0], BEAM_START[1] - sign * (0.16 + TEAM_APPROACH_STANDOFF_M), float(robot.base_xyz()[2]))
+            if approach_distance > 0:
+                pose = (pose[0] - approach_distance, pose[1], pose[2])
             robot.set_base_pose_for_test(pose, 0.0)
             setup_poses[rid] = [float(v) for v in pose]
         # R2 is irrelevant to this isolated fixture and remains at its default pose.
@@ -352,6 +358,34 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, 
         if side_grasp:
             from sim.masterpi_production_v2 import SEARCH_POSE
             world._team_joint_move_servos({rid: {**SEARCH_POSE, 1: precision.GRIPPER_OPEN, 6: 1500} for rid in BEAM_CARRIER_IDS}, 0.6)
+            if approach_distance > 0:
+                approach_trace = []
+                collision_steps = 0
+                original_step = world._physics_step_for
+                next_sample = float(world.data.time)
+                def approach_step(robot):
+                    nonlocal collision_steps, next_sample
+                    original_step(robot)
+                    touched = False
+                    for k in range(world.data.ncon):
+                        c = world.data.contact[k]
+                        names = [mujoco.mj_id2name(world.model, mujoco.mjtObj.mjOBJ_GEOM, int(g)) or "" for g in (c.geom1, c.geom2)]
+                        if BEAM_GEOM_NAME in names and any(n.startswith(("r1__", "r3__")) for n in names):
+                            touched = True
+                    collision_steps += int(touched)
+                    if world.data.time >= next_sample:
+                        approach_trace.append({"sim_time_s": float(world.data.time), "bases": {rid: list(map(float,world.controllers[rid].base_xyz())) for rid in BEAM_CARRIER_IDS}, "payload_contact": touched})
+                        next_sample = float(world.data.time) + 0.1
+                record("wheel_approach_started", target_x=BEAM_START[0], requested_distance_m=approach_distance)
+                world._physics_step_for = approach_step
+                try:
+                    world._team_joint_move_base_axis("x", {rid: BEAM_START[0] for rid in BEAM_CARRIER_IDS}, tolerance_m=0.002, max_sim_s=15.0)
+                finally:
+                    world._physics_step_for = original_step
+                    report["approach"] = {"trajectory": approach_trace, "payload_contact_steps": collision_steps, "physics_timestep_s":float(world.model.opt.timestep)}
+                record("wheel_approach_complete", bases={rid: list(map(float,world.controllers[rid].base_xyz())) for rid in BEAM_CARRIER_IDS}, payload_contact_steps=collision_steps)
+                if collision_steps:
+                    raise RuntimeError("PAYLOAD_CONTACT_DURING_APPROACH")
             record("folded_before_side_rotation")
             world._team_joint_move_servos({rid: {6: yaw_pulses[rid]} for rid in BEAM_CARRIER_IDS}, 1.0, settle_s=0.15)
             record("side_rotation_complete", yaw_pulses=yaw_pulses)
@@ -484,7 +518,10 @@ def main() -> int:
                             help="Use unassisted contact physics (the default).")
     parser.set_defaults(weld_assistance=False)
     parser.add_argument("--side-grasp", action="store_true", help="Forward bases, arms rotated +/-90 degrees; no weld permitted.")
+    parser.add_argument("--approach-distance", type=float, default=0.0, help="Start this many meters behind the side grasp waypoint (0 to 1m).")
     args = parser.parse_args()
+    if not 0 <= args.approach_distance <= 1.0 or (args.approach_distance > 0 and not args.side_grasp):
+        parser.error("--approach-distance requires --side-grasp and a distance between 0 and 1m")
     if args.side_grasp and args.weld_assistance:
         parser.error("--side-grasp cannot be combined with --with-weld")
     out_dir = args.out_dir.expanduser().resolve()
@@ -505,16 +542,18 @@ def main() -> int:
         "config": {
             "weld_assistance": args.weld_assistance,
             "side_grasp": args.side_grasp,
+            "approach_distance_m": args.approach_distance,
             "seed": args.seed,
             "fps": args.fps,
             "conditions": [
                 {"name": "baseline", "second_grasp_delay_s": 0.0},
                 {"name": "delayed_2s", "second_grasp_delay_s": 2.0},
             ],
-            "max_expected_trial_sim_s": 15.0,
+            "max_expected_trial_sim_s": 15.0 + (15.0 if args.approach_distance else 0.0),
             "fixture_pose_writes_allowed_during_trial": False,
             "payload_pose_writes": False,
             "scout_or_navigation": False,
+            "known_waypoint_wheel_approach": args.approach_distance > 0,
             "payload": {
                 "shape": "single_uniform_box",
                 "dimensions_m": [BEAM_WIDTH_M, BEAM_LENGTH_M, BEAM_HEIGHT_M],
@@ -528,7 +567,7 @@ def main() -> int:
     }
     for name, delay in (("baseline", 0.0), ("delayed_2s", 2.0)):
         manifest["trials"].append(
-            run_trial(out_dir, name=name, delay_s=delay, seed=args.seed, fps=args.fps, weld_assistance=args.weld_assistance, side_grasp=args.side_grasp)
+            run_trial(out_dir, name=name, delay_s=delay, seed=args.seed, fps=args.fps, weld_assistance=args.weld_assistance, side_grasp=args.side_grasp, approach_distance=args.approach_distance)
         )
     manifest["all_ok"] = all(item.get("ok") for item in manifest["trials"])
     (out_dir / "manifest.json").write_text(
