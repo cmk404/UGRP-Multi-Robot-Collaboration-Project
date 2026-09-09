@@ -381,6 +381,14 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, 
                 world._physics_step_for = approach_step
                 try:
                     world._team_joint_move_base_axis("x", {rid: BEAM_START[0] for rid in BEAM_CARRIER_IDS}, tolerance_m=0.002, max_sim_s=15.0)
+                    for rid in BEAM_CARRIER_IDS:
+                        world._settle(world.controllers[rid])
+                    record("approach_stopped_before_alignment")
+                    for rid in BEAM_CARRIER_IDS:
+                        world._move_axis(world.controllers[rid], "x", BEAM_START[0], tolerance=0.0025, max_pulses=30)
+                    for rid in BEAM_CARRIER_IDS:
+                        world._settle(world.controllers[rid])
+                    record("approach_fine_alignment_complete")
                 finally:
                     world._physics_step_for = original_step
                     report["approach"] = {"trajectory": approach_trace, "payload_contact_steps": collision_steps, "physics_timestep_s":float(world.model.opt.timestep)}
