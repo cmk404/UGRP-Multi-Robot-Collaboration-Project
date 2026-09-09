@@ -51,7 +51,7 @@ def step_with(controller, gripper, candidate):
 def test_no_hidden_gripper_or_missing_target_cannot_claim_capture():
     c=PixelGraspController('r1')
     with patch.object(c.tracker,'update',return_value={'valid':False,'center':None,'opening_axis':None}),patch('harness.camera_pixel_grasp.extract_beams',return_value=[]):
-        for _ in range(14):
+        for _ in range(40):
             c.step(b'own',b'top')
     assert c.stage=='blocked'
     assert c.attempts==0
@@ -131,3 +131,43 @@ def test_tentative_lift_can_use_top_scale_when_centroid_does_not_move():
     assert c._visual_lift(observation)
     observation['own_beam']['center'][0]+=.05
     assert not c._visual_lift(observation)
+
+
+def test_ambiguous_baseline_tries_bounded_alternate_views_and_restores():
+    c=PixelGraspController('r1');c.refresh_required=True
+    invalid={'valid':False,'center':None,'opening_axis':None,'source':'unavailable'}
+    actions=[step_with(c,invalid,beam()) for _ in range(40)]
+    looks=[a['pan_pulse'] for a in actions if a['kind']=='look']
+    assert looks==[1550,1450,1500]
+    assert c.stage=='blocked' and c.attempts==0
+    assert c.last_action=={'kind':'wait'}
+
+
+def test_recovered_alternate_view_resumes_fresh_measurement_search():
+    c=PixelGraspController('r1');c.refresh_required=True
+    invalid={'valid':False,'center':None,'opening_axis':None,'source':'unavailable'}
+    for _ in range(4):step_with(c,invalid,beam())
+    assert c.last_action=={'kind':'look','pan_pulse':1550}
+    # The view move itself is not accepted as geometric alignment. An open
+    # command and its fresh isolated observation must follow it.
+    step_with(c,grip(x=.2),beam())
+    action=step_with(c,grip(x=.2),beam())
+    assert action['kind']=='drive'
+    assert c.stage=='align' and c.view_repair_index==0
+
+
+def test_foreshortened_own_rectangle_does_not_invent_a_physical_endpoint():
+    own=own_beam(.3);own['width_px']=65.
+    a=alignment_features(grip(),beam(),own_beam=own,own_endpoint=[.1,.7])
+    assert a['own_endpoint'] is None and a['own_aim_error_px'] is None
+    assert a['cost']==a['top_cost']
+
+
+def test_newly_observable_own_endpoint_does_not_add_an_unmatched_cost_penalty():
+    c=PixelGraspController('r1');b=beam();ambiguous=own_beam(.9);ambiguous['width_px']=65.
+    with patch.object(c.tracker,'update',return_value=grip(x=.44)),patch('harness.camera_pixel_grasp.extract_beams',side_effect=[[b],[ambiguous]]):
+        c.step(b'own',b'top')
+    with patch.object(c.tracker,'update',return_value=grip(x=.45)),patch('harness.camera_pixel_grasp.extract_beams',side_effect=[[b],[own_beam(.9)]]):
+        action=c.step(b'own',b'top')
+    assert action['kind']=='drive' and action['forward']>0
+    assert c.repeat=='forward'

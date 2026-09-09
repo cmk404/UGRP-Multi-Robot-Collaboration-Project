@@ -24,8 +24,9 @@ def _own_beam_endpoint(own_beam, previous_endpoint=None):
     reference = previous_endpoint if previous_endpoint is not None else [.5, .5]
     if own_beam['width_px'] <= 0:
         return None
-    if own_beam['length_px'] / own_beam['width_px'] < 1.5:
-        aim = own_beam['center']
+    if own_beam['length_px'] / own_beam['width_px'] < 2.0:
+        # Foreshortened/end-on rectangles do not identify a physical beam end.
+        return None
     else:
         aim = min(
             own_beam['endpoints'],
@@ -67,6 +68,7 @@ def alignment_features(gripper, beam, endpoint=None, own_beam=None, own_endpoint
     return {'offset_px': offset, 'axis_error_rad': angle, 'endpoint': list(end),
             'target': target, 'distance_px': math.hypot(*offset),
             'own_aim_error_px': own_aim_error, 'own_endpoint': own_aim,
+            'top_cost': math.hypot(*offset, angular_scale * angle),
             'cost': math.hypot(*cost_terms),
             'width_px': beam['width_px']}
 
@@ -99,6 +101,8 @@ class PixelGraspController:
         self.rollback = []
         self.refresh_required = False
         self.measurement_rounds = 0
+        self.view_repair_origin = None
+        self.view_repair_index = 0
         self.tried = set()
         self.repeat = None
         self.search_anchor = None
@@ -143,6 +147,22 @@ class PixelGraspController:
                               'candidate':label,'pending_test':bool(test),
                               'tried':sorted(self.tried),'cost':None if obs.get('alignment') is None else obs['alignment']['cost']}
         return action
+
+    def _repair_view(self, obs):
+        """Change an unobservable view with bounded own commands, then measure."""
+        if self.view_repair_origin is None:
+            self.view_repair_origin=self.pulses.get(6,1500)
+        offsets=(50,-50)
+        self.repeat=None;self.tried.clear();self.measurement_rounds=0;self.unseen=0
+        self.refresh_required=True
+        if self.view_repair_index < len(offsets):
+            target=self.view_repair_origin+offsets[self.view_repair_index]
+            self.view_repair_index+=1;self.stage='reobserve'
+            return self._issue({'kind':'look','pan_pulse':target},
+                               'isolated motion remained ambiguous; change view slightly and remeasure',obs)
+        target=self.view_repair_origin;self.stage='blocked'
+        action=({'kind':'look','pan_pulse':target} if self.pulses.get(6)!=target else {'kind':'wait'})
+        return self._issue(action,'bounded alternate views exhausted; restore original look command',obs)
 
     def _joint(self, channel, delta):
         pulse = int(max(500,min(2500,self.pulses.get(channel,1500)+delta)))
@@ -242,9 +262,8 @@ class PixelGraspController:
                     self.refresh_required=True;self.measurement_rounds=0
                     if self.rollback:
                         return self._issue(self.rollback.pop(0),'candidate lost measurable gripper geometry; undo before trying another direction',obs)
-                elif self.measurement_rounds >= 12:
-                    self.stage='blocked'
-                    return self._issue({'kind':'wait'},'bounded fresh-measurement recovery failed',obs)
+                elif self.measurement_rounds >= 4 and self.pending is None:
+                    return self._repair_view(obs)
                 self.stage='measure'
                 self.unseen = self.unseen+1 if not gripper.get('valid') else 0
                 if self.unseen > 12:
@@ -254,11 +273,11 @@ class PixelGraspController:
                 return self._issue({'kind':'arm','servo_id':1,'pulse':pulse},
                                    'fresh open/close measurement before accepting a candidate; do not score flow drift',obs)
             self.refresh_required=False;self.measurement_rounds=0
+            self.view_repair_origin=None;self.view_repair_index=0
         if alignment is None:
             self.unseen+=1
-            if self.unseen>12:
-                self.stage='blocked'
-                return self._issue({'kind':'wait'},'active gripper identification remained unobservable',obs)
+            if self.unseen>=4:
+                return self._repair_view(obs)
             self.stage='identify'
             # Identification by isolated finger motion, including at start.
             # This command is explicitly a probe, not a grasp success claim.
@@ -274,7 +293,13 @@ class PixelGraspController:
             # A changed endpoint would invalidate this comparison.
             same_endpoint=math.dist(before['endpoint'],alignment['endpoint'])<.04
             own_preserved = not pending['own_beam_visible'] or own is not None
-            if own_preserved and same_endpoint and alignment['cost'] < before['cost'] - .15:
+            # Compare identical terms if an endpoint is not observable in one
+            # own frame; appearance of a new term is not geometric regression.
+            both_own_ends = before.get('own_aim_error_px') is not None and alignment.get('own_aim_error_px') is not None
+            score = 'cost' if both_own_ends else 'top_cost'
+            before_score=before.get(score,before['cost'])
+            after_score=alignment.get(score,alignment['cost'])
+            if own_preserved and same_endpoint and after_score < before_score - .15:
                 self.repeat=pending['label'];self.tried.clear()
             else:
                 self.repeat=None;self.tried.add(pending['label']);self.rollback=pending['undo']
