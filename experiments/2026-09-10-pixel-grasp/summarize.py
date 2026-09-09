@@ -7,7 +7,12 @@ def summarize(root):
  data={'root':str(root),'source_sha':r['source_sha'],'config':r['config'],'rounds_completed':r['rounds_completed'],'error':r['error'],'wall_elapsed_s':r['wall_elapsed_s'],'model_calls':0,'stages':dict(collections.Counter(c['decision']['stage'] for c in a)),'trial_closures':sum(c['decision']['stage']=='lift' and c['action'].get('servo_id')==1 and c['action'].get('pulse')==1500 for c in a),'identification_closures':sum(c['decision']['stage']!='lift' and c['action'].get('servo_id')==1 and c['action'].get('pulse')==1500 for c in a),'robots':{}}
  for rid in set(c['robot_id'] for c in calls):
   rc=[c for c in calls if c['robot_id']==rid];vals=[(c['round'],c['observation']['alignment']) for c in rc if c['observation'].get('alignment') is not None]
-  data['robots'][rid]={'first_alignment':vals[0] if vals else None,'minimum_alignment':min(vals,key=lambda p:p[1]['cost']) if vals else None,'last_alignment':vals[-1] if vals else None,'fresh_measurements':sum(c['observation']['gripper']['source']=='isolated_gripper_motion' for c in rc),'unavailable_reasons':dict(collections.Counter(c['observation']['gripper']['reason'] for c in rc if not c['observation']['gripper']['valid']))}
+  pulse=2000;fresh=[]
+  for c in rc:
+   observation=c['observation']
+   if pulse==2000 and observation.get('alignment') is not None and observation['gripper']['source']=='isolated_gripper_motion':fresh.append((c['round'],observation['alignment']))
+   if c['action'].get('servo_id')==1:pulse=c['action']['pulse']
+  data['robots'][rid]={'minimum_fresh_open_alignment':min(fresh,key=lambda p:p[1]['cost']) if fresh else None,'first_alignment':vals[0] if vals else None,'minimum_alignment':min(vals,key=lambda p:p[1]['cost']) if vals else None,'last_alignment':vals[-1] if vals else None,'fresh_measurements':sum(c['observation']['gripper']['source']=='isolated_gripper_motion' for c in rc),'unavailable_reasons':dict(collections.Counter(c['observation']['gripper']['reason'] for c in rc if not c['observation']['gripper']['valid']))}
  samples=[json.loads(l) for l in (root/'evaluation-only.jsonl').read_text().splitlines()];truth={'dual_grasp_success':r['grasp_success'],'max_lift_m':r['max_lift_m'],'longest_dual_hold_s':r['longest_qualifying_duration_s'],'contacts':{}}
  for rid in ('r1','r3'):
   truth['contacts'][rid]={key:sum(bool(e['contacts'][rid][key]) for e in samples) for key in ['left','right','bilateral']}

@@ -42,8 +42,8 @@ def main() -> int:
     parser.add_argument("--seed", type=int, default=11)
     parser.add_argument("--active-robot", choices=("r1", "r3", "both"), default="r1")
     args = parser.parse_args()
-    if not 1 <= args.rounds <= 200:
-        parser.error("rounds must be 1..200")
+    if not 1 <= args.rounds <= 1000:
+        parser.error("rounds must be 1..1000")
     out = args.out_dir.expanduser().resolve()
     out.mkdir(parents=True, exist_ok=False)
 
