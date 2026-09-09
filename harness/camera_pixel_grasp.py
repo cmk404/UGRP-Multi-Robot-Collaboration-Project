@@ -11,6 +11,7 @@ import math
 from harness.camera_beam_features import extract_beams, select_beam
 from harness.camera_gripper_motion import GripperMotionTracker
 from harness.camera_grasp_controller import STARTUP_COMMANDS
+from harness.camera_pixel_jacobian import LocalPixelJacobian
 
 
 def _wrap_axis(angle):
@@ -118,10 +119,26 @@ class PixelGraspController:
         self.height_lock = False
         self.recovery = []
         self.composite_queue = []
+        self.jacobian = LocalPixelJacobian()
+        self.last_learned_outcome = None
         self.steps = 0
 
-    def _issue(self, action, reason, obs, *, test=False, label=None):
+    @staticmethod
+    def _primitive_name(action):
+        if action.get('kind')=='look':
+            return 'look'
+        if action.get('kind')=='arm':
+            return {3:'wrist',4:'elbow',5:'shoulder'}.get(action.get('servo_id'))
+        if action.get('kind')=='drive':
+            if action.get('turn')==0 and action.get('forward')!=0:
+                return 'forward'
+            if action.get('forward')==0 and action.get('turn')!=0:
+                return 'turn'
+        return None
+
+    def _issue(self, action, reason, obs, *, test=False, label=None, learn=False):
         action = copy.deepcopy(action)
+        pulses_before = copy.deepcopy(self.pulses)
         undo = []
         if action['kind'] in ('arm', 'look'):
             ch = 6 if action['kind']=='look' else action['servo_id']
@@ -144,12 +161,20 @@ class PixelGraspController:
             self.measurement_rounds=0
             self.pending = {'before':copy.deepcopy(obs['alignment']), 'action':action,
                             'undo':undo, 'label':label, 'step':self.steps,
+                            'pulses_before':pulses_before,
+                            'learn':bool(learn and obs.get('gripper',{}).get('source')=='isolated_gripper_motion'
+                                         and self.pulses.get(1)==2000),
                             'own_beam_visible':obs.get('own_beam') is not None}
         self.last_action = action
         self.history.append(action);self.history=self.history[-32:]
         self.last_decision = {'stage':self.stage,'reason':reason,'attempts':self.attempts,
                               'candidate':label,'pending_test':bool(test),
                               'tried':sorted(self.tried),'cost':None if obs.get('alignment') is None else obs['alignment']['cost']}
+        diagnostics=getattr(self.jacobian,'diagnostics',None)
+        if callable(diagnostics):
+            self.last_decision['jacobian']=diagnostics()
+        if self.last_learned_outcome is not None:
+            self.last_decision['learned_outcome']=copy.deepcopy(self.last_learned_outcome)
         return action
 
     def _repair_view(self, obs):
@@ -205,8 +230,18 @@ class PixelGraspController:
         ]
 
     @staticmethod
-    def _drive_undo(action):
-        """Return the same bounded impulse-reversal hypothesis used by _issue."""
+    def _action_undo(action, pulses_before):
+        """Build an inverse command from the actual pre-command pulse state."""
+        if action['kind'] in ('arm','look'):
+            ch=6 if action['kind']=='look' else action['servo_id']
+            field='pan_pulse' if ch==6 else 'pulse'
+            old=pulses_before.get(ch)
+            if old is None or action[field]==old:
+                return []
+            back=copy.deepcopy(action);back[field]=old
+            return [back]
+        if action['kind']!='drive':
+            return []
         f,t,d = action['forward'],action['turn'],action['duration_s']
         pieces = max(1, math.ceil(abs(f)/.05))
         return [
@@ -223,6 +258,21 @@ class PixelGraspController:
         )
         self.pending['composite'] = True
         self.composite_queue = remaining
+        return issued
+
+    def _start_learned(self, actions, obs):
+        """Run a learned coupled correction through the measured sequence gate."""
+        first, *remaining = copy.deepcopy(actions)
+        self.last_learned_outcome=None
+        issued=self._issue(
+            first, 'begin learned image-Jacobian correction; score only its measured endpoint',
+            obs, test=True, label='learned',
+        )
+        self.pending['composite']=True
+        diagnostics=getattr(self.jacobian,'diagnostics',None)
+        if callable(diagnostics):
+            self.pending['prediction']=diagnostics()
+        self.composite_queue=remaining
         return issued
 
     def _visual_lift(self, obs):
@@ -264,12 +314,13 @@ class PixelGraspController:
             return self._issue({'kind':'wait'},'peer owns this command slice; observe only',obs)
         if self.composite_queue:
             action=self.composite_queue.pop(0)
+            pulses_before=copy.deepcopy(self.pulses)
             issued=self._issue(
-                action, 'continue bounded lateral probe; defer scoring until its endpoint', obs
+                action, 'continue coupled correction; defer scoring until its endpoint', obs
             )
             # Each newly issued inverse belongs before earlier inverses so a
             # failed composite is unwound in exact reverse action order.
-            self.pending['undo'] = self._drive_undo(issued) + self.pending['undo']
+            self.pending['undo'] = self._action_undo(issued,pulses_before) + self.pending['undo']
             return issued
         if self.stage in ('hold','blocked'):
             return self._issue({'kind':'wait'},'fixed-budget observation; no physical success input',obs)
@@ -305,6 +356,15 @@ class PixelGraspController:
                 self.measurement_rounds += 1
                 if self.measurement_rounds >= 6 and self.pending is not None:
                     rejected=self.pending;self.pending=None
+                    if rejected.get('label')=='learned':
+                        self.last_learned_outcome={
+                            'before_top_cost':rejected['before'].get('top_cost'),
+                            'after_top_cost':None,
+                            'accepted':False,
+                            'measurement_unavailable':True,
+                        }
+                        if rejected.get('prediction') is not None:
+                            self.last_learned_outcome['proposal']=rejected['prediction']
                     self.repeat=None;self.tried.add(rejected['label'])
                     self.rollback=list(rejected['undo'])
                     if self.pulses.get(1)!=2000:
@@ -349,7 +409,22 @@ class PixelGraspController:
             score = 'cost' if both_own_ends else 'top_cost'
             before_score=before.get(score,before['cost'])
             after_score=alignment.get(score,alignment['cost'])
-            if own_preserved and same_endpoint and after_score < before_score - .15:
+            if pending.get('learn') and own_preserved and same_endpoint:
+                primitive=self._primitive_name(pending['action'])
+                self.jacobian.add_sample(
+                    before, alignment, pending['action'], pending['pulses_before'],
+                    self.pulses, fresh=True, same_endpoint=True, primitive=primitive,
+                )
+            accepted=own_preserved and same_endpoint and after_score < before_score - .15
+            if pending.get('label')=='learned':
+                self.last_learned_outcome={
+                    'before_top_cost':before.get('top_cost'),
+                    'after_top_cost':alignment.get('top_cost'),
+                    'accepted':bool(accepted),
+                }
+                if pending.get('prediction') is not None:
+                    self.last_learned_outcome['proposal']=pending['prediction']
+            if accepted:
                 self.repeat=pending['label'];self.tried.clear()
             else:
                 self.repeat=None;self.tried.add(pending['label']);self.rollback=pending['undo']
@@ -372,6 +447,11 @@ class PixelGraspController:
         if aligned:
             return self._issue({'kind':'wait'},'require a second observed alignment before closure',obs)
         candidates=self._candidates(alignment)
+        if self.repeat=='learned':
+            learned=self.jacobian.propose(alignment,self.pulses)
+            if learned:
+                return self._start_learned(learned,obs)
+            self.repeat=None
         if self.repeat is not None:
             repeated=next(
                 ((label,actions) for label,actions in self._composite_candidates()
@@ -383,6 +463,10 @@ class PixelGraspController:
         if selected is None:
             selected=next(((label,action) for label,action in candidates if label not in self.tried),None)
         if selected is None:
+            if 'learned' not in self.tried:
+                learned=self.jacobian.propose(alignment,self.pulses)
+                if learned:
+                    return self._start_learned(learned,obs)
             composite=next(
                 ((label,actions) for label,actions in self._composite_candidates()
                  if label not in self.tried), None
@@ -392,4 +476,4 @@ class PixelGraspController:
             self.stage='blocked'
             return self._issue({'kind':'wait'},'all bounded directions failed at this observed state',obs)
         label,action=selected
-        return self._issue(action,'test one raw motion against visible beam-end and opening-axis error',obs,test=True,label=label)
+        return self._issue(action,'test one raw motion against visible beam-end and opening-axis error',obs,test=True,label=label,learn=True)

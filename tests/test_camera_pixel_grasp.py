@@ -61,6 +61,21 @@ def start_lateral_composite(controller, b, initial=None):
     return copy.deepcopy(controller.pending['before'])
 
 
+class StubJacobian:
+    def __init__(self, plans=()):
+        self.plans=list(plans)
+        self.added=[]
+        self.proposed=[]
+
+    def add_sample(self,*args,**kwargs):
+        self.added.append((args,kwargs))
+        return True
+
+    def propose(self,alignment,pulses):
+        self.proposed.append((copy.deepcopy(alignment),copy.deepcopy(pulses)))
+        return copy.deepcopy(self.plans.pop(0)) if self.plans else None
+
+
 def test_no_hidden_gripper_or_missing_target_cannot_claim_capture():
     c=PixelGraspController('r1')
     with patch.object(c.tracker,'update',return_value={'valid':False,'center':None,'opening_axis':None}),patch('harness.camera_pixel_grasp.extract_beams',return_value=[]):
@@ -241,3 +256,80 @@ def test_inactive_peer_slice_does_not_advance_composite_queue():
     assert step_with(c,grip(x=.1),b,active=False)=={'kind':'wait'}
     assert c.composite_queue==queued and c.pending==pending
     assert step_with(c,grip(x=.1),b)==queued[0]
+
+
+def test_jacobian_learns_only_after_fresh_open_primitive_endpoint():
+    c=PixelGraspController('r1');c.jacobian=StubJacobian();b=beam()
+    step_with(c,grip(x=.2),b)
+    propagated=grip(x=.3);propagated['source']='verified_optical_flow'
+    assert step_with(c,propagated,b)=={'kind':'arm','servo_id':1,'pulse':1500}
+    assert c.jacobian.added==[]
+    step_with(c,grip(x=.3),b)
+    assert c.jacobian.added==[]
+    step_with(c,grip(x=.3),b)
+    assert len(c.jacobian.added)==1
+    assert c.jacobian.added[0][1]=={
+        'fresh':True,'same_endpoint':True,'primitive':'forward',
+    }
+
+    # A tracked before image can still be explored, but cannot seed learning.
+    c=PixelGraspController('r1');c.jacobian=StubJacobian()
+    tracked=grip(x=.2);tracked['source']='verified_optical_flow'
+    step_with(c,tracked,b)
+    step_with(c,grip(x=.3),b)
+    assert c.jacobian.added==[]
+
+
+def test_learned_sequence_has_heterogeneous_reverse_undo_and_inactive_hold():
+    c=PixelGraspController('r1');b=beam()
+    plan=[
+        {'kind':'arm','servo_id':3,'pulse':790},
+        {'kind':'look','pan_pulse':1550},
+        {'kind':'drive','forward':.05,'turn':0.,'duration_s':1.},
+    ]
+    c.jacobian=StubJacobian([plan])
+    exhaust_primitives(c,alignment_features(grip(x=.2),b))
+    assert step_with(c,grip(x=.2),b)==plan[0]
+    queued=copy.deepcopy(c.composite_queue);pending=copy.deepcopy(c.pending)
+    assert step_with(c,grip(x=.1),b,active=False)=={'kind':'wait'}
+    assert c.composite_queue==queued and c.pending==pending
+    assert step_with(c,grip(x=.1),b)==plan[1]
+    assert step_with(c,grip(x=.1),b)==plan[2]
+
+    # The measured endpoint worsened, so unwind drive, look, then wrist.
+    assert step_with(c,grip(x=.1),b)=={
+        'kind':'drive','forward':-.05,'turn':-0.,'duration_s':1.,
+    }
+    assert step_with(c,grip(x=.1),b)=={'kind':'look','pan_pulse':1500}
+    assert step_with(c,grip(x=.1),b)=={'kind':'arm','servo_id':3,'pulse':740}
+    assert 'learned' in c.tried
+
+
+def test_successful_learned_sequence_replans_from_the_fresh_endpoint():
+    c=PixelGraspController('r1');b=beam()
+    first=[{'kind':'arm','servo_id':3,'pulse':790}]
+    second=[{'kind':'arm','servo_id':4,'pulse':2370}]
+    c.jacobian=StubJacobian([first,second])
+    exhaust_primitives(c,alignment_features(grip(x=.2),b))
+    assert step_with(c,grip(x=.2),b)==first[0]
+    assert step_with(c,grip(x=.3),b)==second[0]
+    assert c.repeat=='learned'
+    assert len(c.jacobian.proposed)==2
+    assert c.jacobian.proposed[1][0]['offset_px'] != c.jacobian.proposed[0][0]['offset_px']
+
+
+def test_unmeasurable_learned_sequence_records_failure_and_full_rollback():
+    c=PixelGraspController('r1');b=beam()
+    plan=[{'kind':'arm','servo_id':3,'pulse':790}]
+    c.jacobian=StubJacobian([plan])
+    exhaust_primitives(c,alignment_features(grip(x=.2),b))
+    assert step_with(c,grip(x=.2),b)==plan[0]
+    invalid={'valid':False,'center':None,'opening_axis':None,'source':'unavailable'}
+    actions=[step_with(c,invalid,b) for _ in range(7)]
+    assert actions[-1]=={'kind':'arm','servo_id':3,'pulse':740}
+    assert c.last_learned_outcome['before_top_cost']>0
+    assert c.last_learned_outcome['after_top_cost'] is None
+    assert c.last_learned_outcome['accepted'] is False
+    assert c.last_learned_outcome['measurement_unavailable'] is True
+    assert c.last_decision['learned_outcome']==c.last_learned_outcome
+    assert 'learned' in c.tried

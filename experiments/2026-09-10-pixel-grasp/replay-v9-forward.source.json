@@ -1,0 +1,21 @@
+{
+  "source_sha": "0aca6eee1564837d99325953dc26308729d1823f",
+  "raw_result": "/Users/changmin/projects/ugrp/outputs/pixel-grasp-20260910-r1-v9/result.json",
+  "raw_sha256": "1bb63a35136304d3951d7cce51b49e436f1d85da5d0a907fef44625a7179502e",
+  "replay_rounds": [
+    0,
+    286
+  ],
+  "probe_action_rounds": [
+    287,
+    291
+  ],
+  "purpose": "fixed raw-command replay; compare image rendering at same camera geometry; no pose restoration or outcome feedback",
+  "expected_after_capture_matches_by_zero_based_probe_action": {
+    "0": 288,
+    "1": 289,
+    "2": 290,
+    "3": 291,
+    "4": 292
+  }
+}
