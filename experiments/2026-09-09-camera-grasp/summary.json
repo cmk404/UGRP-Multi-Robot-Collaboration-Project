@@ -1,0 +1,31 @@
+{
+  "grasp_success": false,
+  "rounds": 30,
+  "model_calls": 60,
+  "prompt_tokens": 160020,
+  "maximum_lift_m": -4.9e-05,
+  "hold_s": 0.0,
+  "bilateral_samples": {
+    "r1": 0,
+    "r3": 0
+  },
+  "actions": {
+    "r1": {
+      "{\"duration_s\": 1.0, \"forward\": 0.1, \"kind\": \"drive\", \"turn\": 0.05}": 1,
+      "{\"duration_s\": 0.6, \"forward\": 0.08, \"kind\": \"drive\", \"turn\": 0.15}": 1,
+      "{\"duration_s\": 1.0, \"forward\": 0.1, \"kind\": \"drive\", \"turn\": 0.0}": 1,
+      "{\"duration_s\": 1.0, \"forward\": 0.08, \"kind\": \"drive\", \"turn\": 0.06}": 1,
+      "{\"kind\": \"arm\", \"pulse\": 2000, \"servo_id\": 1}": 24,
+      "{\"duration_s\": 0.5, \"forward\": 0.08, \"kind\": \"drive\", \"turn\": 0.0}": 1,
+      "{\"kind\": \"look\", \"pan_pulse\": 1800}": 1
+    },
+    "r3": {
+      "{\"duration_s\": 1.0, \"forward\": 0.08, \"kind\": \"drive\", \"turn\": -0.1}": 1,
+      "{\"duration_s\": 1.0, \"forward\": 0.12, \"kind\": \"drive\", \"turn\": 0.0}": 1,
+      "{\"duration_s\": 0.6, \"forward\": 0.06, \"kind\": \"drive\", \"turn\": -0.08}": 1,
+      "{\"kind\": \"look\", \"pan_pulse\": 1350}": 1,
+      "{\"kind\": \"arm\", \"pulse\": 2000, \"servo_id\": 1}": 24,
+      "{\"duration_s\": 0.5, \"forward\": 0.08, \"kind\": \"drive\", \"turn\": 0.05}": 2
+    }
+  }
+}

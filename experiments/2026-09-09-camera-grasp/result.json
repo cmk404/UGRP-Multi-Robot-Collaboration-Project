@@ -1,0 +1,1133 @@
+{
+  "git_sha": "15db9f58f65eb3ba7289e7ec7c90402a851d7833",
+  "config": {
+    "out_dir": "/Users/changmin/projects/ugrp/outputs/camera-grasp-20260909-first",
+    "rounds": 30,
+    "seed": 11,
+    "model": "gemini-3.8-flash",
+    "timeout": 45,
+    "task": "grasp"
+  },
+  "input_contract": "own robot_cam JPEG + shared fixed overhead JPEG only",
+  "calls": [
+    {
+      "round": 0,
+      "robot_id": "r1",
+      "action": {
+        "kind": "drive",
+        "forward": 0.1,
+        "turn": 0.05,
+        "duration_s": 1.0
+      },
+      "response": "```json\n{\n  \"reason\": \"I am the lower robot facing east, as the orange beam enters from the left (north) and ends near my center. I need to drive forward and steer slightly left toward the southern end of the beam.\",\n  \"action\": {\"kind\": \"drive\", \"forward\": 0.1, \"turn\": 0.05, \"duration_s\": 1.0}\n}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 94,
+        "total_tokens": 4169
+      }
+    },
+    {
+      "round": 0,
+      "robot_id": "r3",
+      "action": {
+        "kind": "drive",
+        "forward": 0.08,
+        "turn": -0.1,
+        "duration_s": 1.0
+      },
+      "response": "```json\n{\"reason\": \"I am the top robot because the orange beam is to my right in OWN_VIEW. Driving forward and turning right toward the near end of the beam.\", \"action\": {\"kind\": \"drive\", \"forward\": 0.08, \"turn\": -0.1, \"duration_s\": 1.0}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 76,
+        "total_tokens": 4690
+      }
+    },
+    {
+      "round": 1,
+      "robot_id": "r1",
+      "action": {
+        "kind": "drive",
+        "forward": 0.08,
+        "turn": 0.15,
+        "duration_s": 0.6
+      },
+      "response": "```json\n{\"reason\": \"OWN_VIEW shows the southern end of the orange beam to our left, identifying us as the southern robot. Turn left slightly and drive forward to approach the beam.\", \"action\": {\"kind\": \"drive\", \"forward\": 0.08, \"turn\": 0.15, \"duration_s\": 0.6}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 79,
+        "total_tokens": 4502
+      }
+    },
+    {
+      "round": 1,
+      "robot_id": "r3",
+      "action": {
+        "kind": "drive",
+        "forward": 0.12,
+        "turn": 0.0,
+        "duration_s": 1.0
+      },
+      "response": "```json\n{\"reason\": \"I am approaching the plain orange beam. Driving forward to close the distance toward the blue square.\", \"action\": {\"kind\": \"drive\", \"forward\": 0.12, \"turn\": 0.0, \"duration_s\": 1.0}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 64,
+        "total_tokens": 3822
+      }
+    },
+    {
+      "round": 2,
+      "robot_id": "r1",
+      "action": {
+        "kind": "drive",
+        "forward": 0.1,
+        "turn": 0.0,
+        "duration_s": 1.0
+      },
+      "response": "{\"reason\": \"I am the southern robot viewing the southern tip of the beam to my left-center. I need to approach the beam before positioning the arm.\", \"action\": {\"kind\": \"drive\", \"forward\": 0.1, \"turn\": 0.0, \"duration_s\": 1.0}}",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 68,
+        "total_tokens": 4442
+      }
+    },
+    {
+      "round": 2,
+      "robot_id": "r3",
+      "action": {
+        "kind": "drive",
+        "forward": 0.06,
+        "turn": -0.08,
+        "duration_s": 0.6
+      },
+      "response": "```json\n{\"reason\": \"I am the southern robot; the beam end is visible to my right with the partner robot in the upper-left background. Driving forward and turning slightly right to align with the beam.\", \"action\": {\"kind\": \"drive\", \"forward\": 0.06, \"turn\": -0.08, \"duration_s\": 0.6}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 83,
+        "total_tokens": 3256
+      }
+    },
+    {
+      "round": 3,
+      "robot_id": "r1",
+      "action": {
+        "kind": "drive",
+        "forward": 0.08,
+        "turn": 0.06,
+        "duration_s": 1.0
+      },
+      "response": "```json\n{\"reason\": \"I am the lower robot facing east towards the southern end of the beam. The beam is visible in the lower-left; I need to drive forward and turn slightly left to approach it.\", \"action\": {\"kind\": \"drive\", \"forward\": 0.08, \"turn\": 0.06, \"duration_s\": 1.0}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 84,
+        "total_tokens": 3895
+      }
+    },
+    {
+      "round": 3,
+      "robot_id": "r3",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1350
+      },
+      "response": "```json\n{\"reason\": \"I am the upper robot facing east, as the north end of the beam is visible on the left of OWN_VIEW and extends right. The beam is off-center to the right, so turning the arm right will align it.\", \"action\": {\"kind\": \"look\", \"pan_pulse\": 1350}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 76,
+        "total_tokens": 6100
+      }
+    },
+    {
+      "round": 4,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"In OVERHEAD, two robots are near the orange beam at the blue rectangle. In OWN_VIEW, the end of the orange beam is in the lower-left to bottom area, and the camera is looking somewhat forward/past it. First open the gripper (servo 1 -> 2000).\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 99,
+        "total_tokens": 2766
+      }
+    },
+    {
+      "round": 4,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"I am the northern robot. The beam end is to my left. I will first open the gripper fully before positioning the arm.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 61,
+        "total_tokens": 3906
+      }
+    },
+    {
+      "round": 5,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"Identified as the southern robot facing the beam's end. Opening the gripper before lowering the arm to grasp.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 58,
+        "total_tokens": 4802
+      }
+    },
+    {
+      "round": 5,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      },
+      "response": "```json\n{\"action\":{\"kind\":\"arm\",\"pulse\":2000,\"servo_id\":1},\"reason\":\"Open the gripper jaws before positioning around the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 38,
+        "total_tokens": 3381
+      }
+    },
+    {
+      "round": 6,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"I am the lower robot near the south end of the beam. Before aligning and descending for the grasp, I open the gripper jaws fully.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 63,
+        "total_tokens": 4873
+      }
+    },
+    {
+      "round": 6,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"Open the gripper fully before positioning the jaws around the beam.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 47,
+        "total_tokens": 3875
+      }
+    },
+    {
+      "round": 7,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"The orange beam is directly below the camera. Before positioning the arm and descending to grasp, ensure the gripper is fully opened.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 60,
+        "total_tokens": 5107
+      }
+    },
+    {
+      "round": 7,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"Open the gripper fully before positioning the arm around the beam.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 47,
+        "total_tokens": 3180
+      }
+    },
+    {
+      "round": 8,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\n  \"reason\": \"I am the bottom robot facing northeast toward the south end of the plain orange beam. Before positioning the arm and grasping, ensure the gripper jaws are open.\",\n  \"action\": {\n    \"kind\": \"arm\",\n    \"servo_id\": 1,\n    \"pulse\": 2000\n  }\n}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 82,
+        "total_tokens": 8274
+      }
+    },
+    {
+      "round": 8,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\":\"Open the gripper jaws first so we are ready to position them around the orange beam.\",\"action\":{\"kind\":\"arm\",\"servo_id\":1,\"pulse\":2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 45,
+        "total_tokens": 3731
+      }
+    },
+    {
+      "round": 9,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"I am the lower robot near the southern end of the beam. Before positioning the arm to grasp, I will ensure the gripper jaws are fully open.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 65,
+        "total_tokens": 4401
+      }
+    },
+    {
+      "round": 9,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 0.5,
+        "forward": 0.08,
+        "kind": "drive",
+        "turn": 0.05
+      },
+      "response": "```json\n{\"action\": {\"duration_s\": 0.5, \"forward\": 0.08, \"kind\": \"drive\", \"turn\": 0.05}, \"reason\": \"OVERHEAD shows r3 is the lower robot approaching the bottom end of the orange beam. Drive forward slightly with a small left turn to get closer to the beam endpoint.\"}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 81,
+        "total_tokens": 2748
+      }
+    },
+    {
+      "round": 10,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"I am the lower robot near the south end of the beam. Before positioning the arm over the beam, I ensure the gripper jaws are fully opened.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 65,
+        "total_tokens": 6702
+      }
+    },
+    {
+      "round": 10,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"The orange beam end is visible across the lower frame. Open the gripper jaws first before positioning and lowering the arm for a grasp.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 61,
+        "total_tokens": 3899
+      }
+    },
+    {
+      "round": 11,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"I see the end of the plain orange beam in the lower portion of OWN_VIEW. Before lowering to grasp, ensure the gripper is fully opened.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 65,
+        "total_tokens": 5785
+      }
+    },
+    {
+      "round": 11,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"Opening the gripper to prepare for grasping the bottom end of the beam.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 49,
+        "total_tokens": 3119
+      }
+    },
+    {
+      "round": 12,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"Open the gripper jaws fully to prepare for grasping the orange beam.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 48,
+        "total_tokens": 5193
+      }
+    },
+    {
+      "round": 12,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"In OWN_VIEW, the beam is directly below the camera view. Ensuring the gripper is fully open to prepare for descending onto the beam.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 63,
+        "total_tokens": 3581
+      }
+    },
+    {
+      "round": 13,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\n  \"reason\": \"Identify as the lower robot facing the southern end of the beam. Before aligning and lowering the arm onto the beam, ensure the gripper is fully opened.\",\n  \"action\": {\n    \"kind\": \"arm\",\n    \"servo_id\": 1,\n    \"pulse\": 2000\n  }\n}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 81,
+        "total_tokens": 6378
+      }
+    },
+    {
+      "round": 13,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"I am the top robot because the beam's end terminates on the left and extends rightward. I will ensure the gripper is fully open before lowering onto the beam.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 69,
+        "total_tokens": 4420
+      }
+    },
+    {
+      "round": 14,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      },
+      "response": "```json\n{\"action\": {\"kind\": \"arm\", \"pulse\": 2000, \"servo_id\": 1}, \"reason\": \"We are the southern robot near the beam's end. Ensure gripper jaws are open before positioning the arm down to grasp.\"}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 61,
+        "total_tokens": 3347
+      }
+    },
+    {
+      "round": 14,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"I am the upper robot facing east-southeast. Opening gripper fully before positioning jaws around the orange beam.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 56,
+        "total_tokens": 3767
+      }
+    },
+    {
+      "round": 15,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      },
+      "response": "```json\n{\"action\":{\"kind\":\"arm\",\"pulse\":2000,\"servo_id\":1},\"reason\":\"Open the gripper jaws first before positioning the arm over the plain orange beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 42,
+        "total_tokens": 5212
+      }
+    },
+    {
+      "round": 15,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      },
+      "response": "```json\n{\"action\":{\"kind\":\"arm\",\"pulse\":2000,\"servo_id\":1},\"reason\":\"Open the gripper jaws before lowering and positioning the arm over the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 42,
+        "total_tokens": 4547
+      }
+    },
+    {
+      "round": 16,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      },
+      "response": "```json\n{\"action\":{\"kind\":\"arm\",\"pulse\":2000,\"servo_id\":1},\"reason\":\"Open the gripper jaws before positioning the arm over the visible plain orange beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 43,
+        "total_tokens": 4970
+      }
+    },
+    {
+      "round": 16,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"Open the gripper jaws first to prepare for positioning around the orange beam.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 49,
+        "total_tokens": 5825
+      }
+    },
+    {
+      "round": 17,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"I am the southern robot facing the bottom end of the orange beam. I will open the gripper first to prepare for positioning around the beam.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 63,
+        "total_tokens": 3472
+      }
+    },
+    {
+      "round": 17,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"I am the upper robot facing the north end of the beam. Before lowering onto the beam, ensure the gripper is fully opened.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 61,
+        "total_tokens": 5494
+      }
+    },
+    {
+      "round": 18,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"Open the gripper fully before aligning and lowering the arm onto the plain orange beam.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 51,
+        "total_tokens": 5020
+      }
+    },
+    {
+      "round": 18,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"The orange beam is visible in front of the arm. Open the gripper jaws first to prepare for lowering and grasping.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 58,
+        "total_tokens": 2868
+      }
+    },
+    {
+      "round": 19,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"Identifying as the lower robot facing east towards the southern end of the beam; opening gripper before positioning the arm.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 57,
+        "total_tokens": 3338
+      }
+    },
+    {
+      "round": 19,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"I am the upper robot facing southeast near the north end of the beam. Before lowering to grasp the beam, I will ensure the gripper jaws are fully open.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 67,
+        "total_tokens": 7594
+      }
+    },
+    {
+      "round": 20,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"Open the gripper fully to prepare for positioning the jaws around the visible orange beam.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 51,
+        "total_tokens": 6225
+      }
+    },
+    {
+      "round": 20,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"The plain orange beam is visible in front. First, open the gripper to prepare for grasping.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 54,
+        "total_tokens": 4294
+      }
+    },
+    {
+      "round": 21,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"I will open the gripper to prepare for grasping the orange beam.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 48,
+        "total_tokens": 5263
+      }
+    },
+    {
+      "round": 21,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"OWN_VIEW shows the end of the orange beam nearby. I am the top robot approaching the beam's north end. I will ensure the gripper jaws are fully opened before positioning around the beam.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 75,
+        "total_tokens": 6147
+      }
+    },
+    {
+      "round": 22,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\n  \"reason\": \"The beam is visible at the bottom of OWN_VIEW. Ensuring the gripper is fully opened before positioning the arm over the beam.\",\n  \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}\n}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 68,
+        "total_tokens": 5460
+      }
+    },
+    {
+      "round": 22,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"I am the southern robot facing the lower end of the plain orange beam. I will open the gripper before positioning the arm to grasp.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 62,
+        "total_tokens": 2985
+      }
+    },
+    {
+      "round": 23,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"The orange beam is visible in front on the ground. I need to prepare the arm to grasp it by ensuring the gripper is opened fully.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 63,
+        "total_tokens": 3532
+      }
+    },
+    {
+      "round": 23,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"I am the lower robot near the bottom of the orange beam. I will first open my gripper wide to prepare for grasping.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 59,
+        "total_tokens": 3381
+      }
+    },
+    {
+      "round": 24,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"The plain orange beam is visible at the bottom of the field of view. First open the gripper before lowering the arm to approach.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 60,
+        "total_tokens": 3479
+      }
+    },
+    {
+      "round": 24,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"Open the gripper to ensure the jaws are ready to envelop the beam before descending.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 51,
+        "total_tokens": 3344
+      }
+    },
+    {
+      "round": 25,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\":\"Open the gripper jaws first before positioning the arm over the visible end of the orange beam.\",\"action\":{\"kind\":\"arm\",\"servo_id\":1,\"pulse\":2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 46,
+        "total_tokens": 3765
+      }
+    },
+    {
+      "round": 25,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"The beam end is visible on the left extending right, confirming r3 is the northern robot. Open the gripper fully before lowering toward the beam.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 64,
+        "total_tokens": 4698
+      }
+    },
+    {
+      "round": 26,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"I am the lower robot near the south end of the beam, as the beam terminates to the right and extends to the left in OWN_VIEW. First, ensure the gripper is fully opened before positioning the arm.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 78,
+        "total_tokens": 4244
+      }
+    },
+    {
+      "round": 26,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 0.5,
+        "forward": 0.08,
+        "kind": "drive",
+        "turn": 0.05
+      },
+      "response": "```json\n{\"action\": {\"duration_s\": 0.5, \"forward\": 0.08, \"kind\": \"drive\", \"turn\": 0.05}, \"reason\": \"Drive slightly forward and rightward to get into grasping range of the orange beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 63,
+        "total_tokens": 3023
+      }
+    },
+    {
+      "round": 27,
+      "robot_id": "r1",
+      "action": {
+        "kind": "drive",
+        "forward": 0.08,
+        "turn": 0.0,
+        "duration_s": 0.5
+      },
+      "response": "{\"reason\": \"OWN_VIEW shows the southern end of the beam in the lower visual field. Drive forward slightly to get into arm reach.\", \"action\": {\"kind\": \"drive\", \"forward\": 0.08, \"turn\": 0.0, \"duration_s\": 0.5}}",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 65,
+        "total_tokens": 4770
+      }
+    },
+    {
+      "round": 27,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"Ensure the gripper is fully open before positioning the arm over the beam.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 49,
+        "total_tokens": 3476
+      }
+    },
+    {
+      "round": 28,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1800
+      },
+      "response": "```json\n{\"reason\": \"The orange beam is visible in the lower-left of the view. Panning the arm left will center the beam in the camera and align the arm toward it.\", \"action\": {\"kind\": \"look\", \"pan_pulse\": 1800}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 62,
+        "total_tokens": 4955
+      }
+    },
+    {
+      "round": 28,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      },
+      "response": "```json\n{\"action\": {\"kind\": \"arm\", \"pulse\": 2000, \"servo_id\": 1}, \"reason\": \"Ensure gripper is fully open before positioning around the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 47,
+        "total_tokens": 4592
+      }
+    },
+    {
+      "round": 29,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"In OWN_VIEW, the plain orange beam is directly ahead, with the red-marked beam visible in the northern background, confirming I am the southern robot. I need to open the gripper before positioning for a grasp.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 79,
+        "total_tokens": 3347
+      }
+    },
+    {
+      "round": 29,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "response": "```json\n{\"reason\": \"The plain orange beam is visible in front of the wrist camera. Opening the gripper fully to prepare for grasping the beam.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 59,
+        "total_tokens": 3218
+      }
+    }
+  ],
+  "rounds_completed": 30,
+  "error": null,
+  "transport_success": null,
+  "grasp_success": false,
+  "success_claim": "evaluated grasp_success=False after 30 fixed rounds; longest qualifying hold 0.0s, max lift -0.000m",
+  "longest_qualifying_duration_s": 0.0,
+  "max_lift_m": -4.9e-05,
+  "sample_count": 300,
+  "last_responses": {
+    "r1": {
+      "response": "```json\n{\"reason\": \"In OWN_VIEW, the plain orange beam is directly ahead, with the red-marked beam visible in the northern background, confirming I am the southern robot. I need to open the gripper before positioning for a grasp.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 79,
+        "total_tokens": 3347
+      }
+    },
+    "r3": {
+      "response": "```json\n{\"reason\": \"The plain orange beam is visible in front of the wrist camera. Opening the gripper fully to prepare for grasping the beam.\", \"action\": {\"kind\": \"arm\", \"servo_id\": 1, \"pulse\": 2000}}\n```",
+      "usage": {
+        "prompt_tokens": 2667,
+        "completion_tokens": 59,
+        "total_tokens": 3218
+      }
+    }
+  },
+  "files": {
+    "evaluation-only.jsonl": "73801374dbf0c8d4a1fbd7c4b97ab50eea6da5973ada00bb1582d880f92cbb26",
+    "motion.mp4": "bf2428bd725d09138a4dbc187e297ef777f91b8885f10039b12a2b1d54645f1b",
+    "progress.json": "b56ece858cf7dbbddcac6bbfbbc57a634ea28ceb6a4917bb172f715a4e7be2c0",
+    "r1/021-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/wire-016.json": "55ebcdda74cf1ac6264facbf34b7d619cd2c1460cca52cff560635ae0ed318ca",
+    "r1/028-own.jpg": "a00dd85c6ef33a6765f49c53c49357f97e9c5460a903a2cc601a63b63a8f2212",
+    "r1/009-overhead.jpg": "acebd6783ffd9a75e9c0c142f10558a1113170087385a29bfc4eae030e7b3b86",
+    "r1/wire-020.json": "545e0c8a237cdbce07e77180bbd339b083c4131e29eb5a3ee255b19912b33bfc",
+    "r1/017-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/007-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/wire-021.json": "f2acf72b6a3e5f43bdc6e16c1b482d5ff73db1d913116ae7da9e8869f7d44aad",
+    "r1/029-own.jpg": "54c01891a305b021b272468e85b1139121028621b91dae1ade6d7a130126931b",
+    "r1/006-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/016-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/008-overhead.jpg": "acebd6783ffd9a75e9c0c142f10558a1113170087385a29bfc4eae030e7b3b86",
+    "r1/020-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/wire-017.json": "f2acf72b6a3e5f43bdc6e16c1b482d5ff73db1d913116ae7da9e8869f7d44aad",
+    "r1/wire-001.json": "7cb2956374f9d13891395454b328696ac331518e7c91d705e7e2c80d61c42bb8",
+    "r1/010-overhead.jpg": "9557dcc223f7aa50c3d881a47f68c17fd65d94a4f137475dccfc18b4e0f3d168",
+    "r1/017-overhead.jpg": "80f522bd00d64e12d7a5f797e41605043962a09a8be80deb43ec8359b543dd4c",
+    "r1/014-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/004-own.jpg": "df1b3606f218d3cf1d0a521d849f8e6a43664e3383960a3b3e7cfc5f07302966",
+    "r1/002-overhead.jpg": "2d244f3050daefbacd44039c50076ea8756be319e7336cf1d7ff172fb413bcf8",
+    "r1/wire-030.json": "1922d9f2fc5ecebb04ebbf74338b34a5637b982d9369ce38bbfa8fd6dc485d3f",
+    "r1/005-overhead.jpg": "acebd6783ffd9a75e9c0c142f10558a1113170087385a29bfc4eae030e7b3b86",
+    "r1/wire-026.json": "f2acf72b6a3e5f43bdc6e16c1b482d5ff73db1d913116ae7da9e8869f7d44aad",
+    "r1/wire-006.json": "ce7247f88a7152198ca7c3ccacfabedcd7a27eb4a4a9eda845755ce5862596bf",
+    "r1/wire-010.json": "ce7247f88a7152198ca7c3ccacfabedcd7a27eb4a4a9eda845755ce5862596bf",
+    "r1/022-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/021-overhead.jpg": "80f522bd00d64e12d7a5f797e41605043962a09a8be80deb43ec8359b543dd4c",
+    "r1/026-overhead.jpg": "3c40a476fdca04e56a38667e6ee6ed3d5ed7737133ba3a84a9fdc14a6c12af93",
+    "r1/004-overhead.jpg": "a160a4092ffa72e75532b3e973fc0dfab8b91aa2e3ebba000a51ef9b63a42d80",
+    "r1/003-overhead.jpg": "4885350813effd5ea01ec0136e7b93d2f40fb4ef9dd03630bfbc8eaee32b9a1b",
+    "r1/023-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/016-overhead.jpg": "80f522bd00d64e12d7a5f797e41605043962a09a8be80deb43ec8359b543dd4c",
+    "r1/wire-011.json": "d28f28a510b46a8295a29f777951d11470e28b01a18439553aa9c2a223c3cdc1",
+    "r1/011-overhead.jpg": "1c2d983ce7a6eb71db2069d0c1a79fbde051f7708f5902194f7dc011c60a1e40",
+    "r1/wire-007.json": "ce7247f88a7152198ca7c3ccacfabedcd7a27eb4a4a9eda845755ce5862596bf",
+    "r1/027-overhead.jpg": "92473c8c1d03fae41b1c5a92e6ad674f1bdbf43f15db5d1c450a71a2523ebd6c",
+    "r1/wire-027.json": "c880bc49da6ebd39571bf69008ae12f58711476d9c5a4ee76e7c4d1dbd213741",
+    "r1/020-overhead.jpg": "80f522bd00d64e12d7a5f797e41605043962a09a8be80deb43ec8359b543dd4c",
+    "r1/005-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/015-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/wire-024.json": "f2acf72b6a3e5f43bdc6e16c1b482d5ff73db1d913116ae7da9e8869f7d44aad",
+    "r1/010-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/000-own.jpg": "3fdf4a55b73d437a11252fc2513905176bf024fe4042615819ab2493c58cfe6d",
+    "r1/001-overhead.jpg": "191dfa71cfd97943b6e7ca09e0c2111719a8ba589a265f32f83fcd868ee322aa",
+    "r1/006-overhead.jpg": "acebd6783ffd9a75e9c0c142f10558a1113170087385a29bfc4eae030e7b3b86",
+    "r1/013-overhead.jpg": "707bb4f776d913845a2327100895d553c42b728b525f4f3eafd072631f2f51a6",
+    "r1/014-overhead.jpg": "707bb4f776d913845a2327100895d553c42b728b525f4f3eafd072631f2f51a6",
+    "r1/wire-008.json": "ce7247f88a7152198ca7c3ccacfabedcd7a27eb4a4a9eda845755ce5862596bf",
+    "r1/wire-028.json": "a8b87f68249aebb65896209f650c05aefd395df904db4fe9d1a3ff455c1ca67e",
+    "r1/022-overhead.jpg": "80f522bd00d64e12d7a5f797e41605043962a09a8be80deb43ec8359b543dd4c",
+    "r1/025-overhead.jpg": "80f522bd00d64e12d7a5f797e41605043962a09a8be80deb43ec8359b543dd4c",
+    "r1/009-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/019-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/wire-012.json": "6e420ab213673d6ab7bac1f756db2a626cbdd70d482400c0d2225967cd43a901",
+    "r1/026-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/wire-004.json": "6ea40027fecf6964d7b4df8b697a4167eafb29681fbe3303575bff7ae8b60dc4",
+    "r1/wire-005.json": "065eb65a637dd597079d9af882761cc9475ef202cbc3b7c79147b3140842db14",
+    "r1/015-overhead.jpg": "707bb4f776d913845a2327100895d553c42b728b525f4f3eafd072631f2f51a6",
+    "r1/018-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/008-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/wire-013.json": "55ebcdda74cf1ac6264facbf34b7d619cd2c1460cca52cff560635ae0ed318ca",
+    "r1/012-overhead.jpg": "707bb4f776d913845a2327100895d553c42b728b525f4f3eafd072631f2f51a6",
+    "r1/wire-029.json": "99cd1ca28dee2c39710f02387e95eefe80680e2ca0be4a8c34326513ba55d740",
+    "r1/007-overhead.jpg": "acebd6783ffd9a75e9c0c142f10558a1113170087385a29bfc4eae030e7b3b86",
+    "r1/027-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/000-overhead.jpg": "84f633b096247ccf4a9bce879942f863ce4442c200754bdbb735709c68221815",
+    "r1/wire-009.json": "ce7247f88a7152198ca7c3ccacfabedcd7a27eb4a4a9eda845755ce5862596bf",
+    "r1/001-own.jpg": "9a619636775428e3b11dd3ebbd808523b9acb29360b5c3cc053358fda4bbaa81",
+    "r1/011-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/024-overhead.jpg": "ff0a9ddf1fbab898d399184b22944a5a862a7b4407b461e7bc794434e8b051a3",
+    "r1/wire-025.json": "545e0c8a237cdbce07e77180bbd339b083c4131e29eb5a3ee255b19912b33bfc",
+    "r1/023-overhead.jpg": "80f522bd00d64e12d7a5f797e41605043962a09a8be80deb43ec8359b543dd4c",
+    "r1/029-overhead.jpg": "650baa4c00dd5b3ea3403641489e786781c9af0f395be4056a72dd0f909af755",
+    "r1/wire-014.json": "55ebcdda74cf1ac6264facbf34b7d619cd2c1460cca52cff560635ae0ed318ca",
+    "r1/025-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/wire-002.json": "590025cc668051ea7ae818f4b54b38a33aff0057c7ae2ca407573aa6060b2b27",
+    "r1/wire-022.json": "f2acf72b6a3e5f43bdc6e16c1b482d5ff73db1d913116ae7da9e8869f7d44aad",
+    "r1/013-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/003-own.jpg": "f94a65348efd9339fd5b2e42aaee75619ccd828d7460952b7d3df33693fb626d",
+    "r1/wire-018.json": "f2acf72b6a3e5f43bdc6e16c1b482d5ff73db1d913116ae7da9e8869f7d44aad",
+    "r1/018-overhead.jpg": "ff0a9ddf1fbab898d399184b22944a5a862a7b4407b461e7bc794434e8b051a3",
+    "r1/002-own.jpg": "2b6ba4997ba2a2f759fb2427b57ec8eefff807a5e07119f6e50d4443931df46b",
+    "r1/012-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r1/wire-019.json": "545e0c8a237cdbce07e77180bbd339b083c4131e29eb5a3ee255b19912b33bfc",
+    "r1/wire-023.json": "f2acf72b6a3e5f43bdc6e16c1b482d5ff73db1d913116ae7da9e8869f7d44aad",
+    "r1/028-overhead.jpg": "050293743a6f112e0d67fe441819963c0be3a8546dcddc6cb570cbb811cac08d",
+    "r1/wire-003.json": "737ab702da3c8898b4c366ca27b3561314247e5763ce4ac0247471d5055ec54a",
+    "r1/wire-015.json": "55ebcdda74cf1ac6264facbf34b7d619cd2c1460cca52cff560635ae0ed318ca",
+    "r1/019-overhead.jpg": "ff0a9ddf1fbab898d399184b22944a5a862a7b4407b461e7bc794434e8b051a3",
+    "r1/024-own.jpg": "87dc205b8a6c700c178349f56f55393965bf1f9f348e7b44909d1e6b7241a180",
+    "r3/021-own.jpg": "2e420496203566c787fe9466f8c9c5664eee80729221dd09e1ed4d15c26254c9",
+    "r3/wire-016.json": "da8dd6305e08eaad1b16b93e97a8e4b3789f52ec3cad58b989a65509fd9a2300",
+    "r3/028-own.jpg": "73b0fa8598e21936836a0078fbae39eae2d04ed836afb87fe47907cf010bd83b",
+    "r3/009-overhead.jpg": "acebd6783ffd9a75e9c0c142f10558a1113170087385a29bfc4eae030e7b3b86",
+    "r3/wire-020.json": "17992993232d11421e2c7c03e62cd1d846678c87c496960d7ebdb773d2295aef",
+    "r3/017-own.jpg": "17d324028bbc3a2233f2bac5bb9d59554f14ae551c5ecc4a504d8dd2dd46e2e4",
+    "r3/007-own.jpg": "9a8983a7e34c72e0e9479eb83c00e7a1f886e0a319a124054cdcf64f12f33590",
+    "r3/wire-021.json": "b9c025c02f079bd4190640d19774ccef90019816ec01bb033020ad02942a01a8",
+    "r3/029-own.jpg": "73b0fa8598e21936836a0078fbae39eae2d04ed836afb87fe47907cf010bd83b",
+    "r3/006-own.jpg": "9a8983a7e34c72e0e9479eb83c00e7a1f886e0a319a124054cdcf64f12f33590",
+    "r3/016-own.jpg": "fd46da2415c4d608b2dcb5a46e51a4f3b9469dbddb7442539af250dae4ad4d81",
+    "r3/008-overhead.jpg": "acebd6783ffd9a75e9c0c142f10558a1113170087385a29bfc4eae030e7b3b86",
+    "r3/020-own.jpg": "d2cddca31f47d5214a294cb19ef939b0b19b487f24b43501e938c9c24dead5a5",
+    "r3/wire-017.json": "32123a81f9f5dd3b5e82f8ccc0a9413975c839412ce2313fbc8ad6e95b2529c3",
+    "r3/wire-001.json": "915fab82815081714596e03302909b8ecbbf36b7956b925c72a42178d93fbadb",
+    "r3/010-overhead.jpg": "9557dcc223f7aa50c3d881a47f68c17fd65d94a4f137475dccfc18b4e0f3d168",
+    "r3/017-overhead.jpg": "80f522bd00d64e12d7a5f797e41605043962a09a8be80deb43ec8359b543dd4c",
+    "r3/014-own.jpg": "8bbc16f0bb3afebf00018145e38c43ca363e6afc5d32143875c15c237e87b4f4",
+    "r3/004-own.jpg": "9a8983a7e34c72e0e9479eb83c00e7a1f886e0a319a124054cdcf64f12f33590",
+    "r3/002-overhead.jpg": "2d244f3050daefbacd44039c50076ea8756be319e7336cf1d7ff172fb413bcf8",
+    "r3/wire-030.json": "fdf9921770c67a1918d79fa445a37d2e10195909645d122aa8d965047c048fad",
+    "r3/005-overhead.jpg": "acebd6783ffd9a75e9c0c142f10558a1113170087385a29bfc4eae030e7b3b86",
+    "r3/wire-026.json": "a7d36b146c5771ed33115d7070b23617289e3de3a5ea3312803025604236e864",
+    "r3/wire-006.json": "d88b1ccacf24f20e6f82f6c9f46d8ea240340feab6be28cd32e7fa810998bbc0",
+    "r3/wire-010.json": "3e888e726475a8db42436a60ef93fc3e14deaca1b5dfcad72162187f770d46e0",
+    "r3/022-own.jpg": "2e420496203566c787fe9466f8c9c5664eee80729221dd09e1ed4d15c26254c9",
+    "r3/021-overhead.jpg": "80f522bd00d64e12d7a5f797e41605043962a09a8be80deb43ec8359b543dd4c",
+    "r3/026-overhead.jpg": "3c40a476fdca04e56a38667e6ee6ed3d5ed7737133ba3a84a9fdc14a6c12af93",
+    "r3/004-overhead.jpg": "a160a4092ffa72e75532b3e973fc0dfab8b91aa2e3ebba000a51ef9b63a42d80",
+    "r3/003-overhead.jpg": "4885350813effd5ea01ec0136e7b93d2f40fb4ef9dd03630bfbc8eaee32b9a1b",
+    "r3/023-own.jpg": "f21b6c8d01edc2d970caf75c8d16067bc45ba950b34c2350c21c95f8045f4fe5",
+    "r3/016-overhead.jpg": "80f522bd00d64e12d7a5f797e41605043962a09a8be80deb43ec8359b543dd4c",
+    "r3/wire-011.json": "4e25ead3aec6c7ee70cce2c27526c9cf463380dc7260b88256a258a399588c9a",
+    "r3/011-overhead.jpg": "1c2d983ce7a6eb71db2069d0c1a79fbde051f7708f5902194f7dc011c60a1e40",
+    "r3/wire-007.json": "d88b1ccacf24f20e6f82f6c9f46d8ea240340feab6be28cd32e7fa810998bbc0",
+    "r3/027-overhead.jpg": "92473c8c1d03fae41b1c5a92e6ad674f1bdbf43f15db5d1c450a71a2523ebd6c",
+    "r3/wire-027.json": "bc5165ce66720e64e01dcfeba627b2079b360af8d0a630ac024c27ebcf7f299d",
+    "r3/020-overhead.jpg": "80f522bd00d64e12d7a5f797e41605043962a09a8be80deb43ec8359b543dd4c",
+    "r3/005-own.jpg": "9a8983a7e34c72e0e9479eb83c00e7a1f886e0a319a124054cdcf64f12f33590",
+    "r3/015-own.jpg": "8bbc16f0bb3afebf00018145e38c43ca363e6afc5d32143875c15c237e87b4f4",
+    "r3/wire-024.json": "a7d36b146c5771ed33115d7070b23617289e3de3a5ea3312803025604236e864",
+    "r3/010-own.jpg": "fa39937278b407d193f233612cc710f73b49038a8f0df98d7c873de898502348",
+    "r3/000-own.jpg": "8aeab8b9b2d0cbded599b83971a61596f4f0691bbd78944a29f260aeacf13a19",
+    "r3/001-overhead.jpg": "191dfa71cfd97943b6e7ca09e0c2111719a8ba589a265f32f83fcd868ee322aa",
+    "r3/006-overhead.jpg": "acebd6783ffd9a75e9c0c142f10558a1113170087385a29bfc4eae030e7b3b86",
+    "r3/013-overhead.jpg": "707bb4f776d913845a2327100895d553c42b728b525f4f3eafd072631f2f51a6",
+    "r3/014-overhead.jpg": "707bb4f776d913845a2327100895d553c42b728b525f4f3eafd072631f2f51a6",
+    "r3/wire-008.json": "d88b1ccacf24f20e6f82f6c9f46d8ea240340feab6be28cd32e7fa810998bbc0",
+    "r3/wire-028.json": "21a2881cf99baf0f231ffb6d908db960d60bb7b83a0b6df9f5b264eb7fbcea3e",
+    "r3/022-overhead.jpg": "80f522bd00d64e12d7a5f797e41605043962a09a8be80deb43ec8359b543dd4c",
+    "r3/025-overhead.jpg": "80f522bd00d64e12d7a5f797e41605043962a09a8be80deb43ec8359b543dd4c",
+    "r3/009-own.jpg": "0d45ab30bbc4e01339fe57f019f23c91bad1bfe7a491779c9955b176c35c47ff",
+    "r3/019-own.jpg": "470f63aa3ab9e7fa953036bcaf5424a7b9fe98eb11165bb33d40644c379c41ca",
+    "r3/wire-012.json": "2d26e2cfccc2e224dc8d6289d7cbdd15ccff6038ac4a67b08fc84f29190ed6d1",
+    "r3/026-own.jpg": "729835ee6b51311876aa204b3f2583226a9b7ed72bfa62b0bbabb6e660859c7d",
+    "r3/wire-004.json": "6f0cc36cbd25a158005a9fecae3c3ded3a72ddf06aa6b204ea50e425b0de6113",
+    "r3/wire-005.json": "a1591f626333533226346a2ecc7b30af88fae77fa4bc2f77eea3e743e8b3b163",
+    "r3/015-overhead.jpg": "707bb4f776d913845a2327100895d553c42b728b525f4f3eafd072631f2f51a6",
+    "r3/018-own.jpg": "17d324028bbc3a2233f2bac5bb9d59554f14ae551c5ecc4a504d8dd2dd46e2e4",
+    "r3/008-own.jpg": "0d45ab30bbc4e01339fe57f019f23c91bad1bfe7a491779c9955b176c35c47ff",
+    "r3/wire-013.json": "36c65e6498469bcb670cd857023ccc13a17872ef7c6a244de6b2f8f17b414538",
+    "r3/012-overhead.jpg": "707bb4f776d913845a2327100895d553c42b728b525f4f3eafd072631f2f51a6",
+    "r3/wire-029.json": "4345d62f62ccb6719c02b84a758cfb5faecacae67667ffa67951cf695ff4c1df",
+    "r3/007-overhead.jpg": "acebd6783ffd9a75e9c0c142f10558a1113170087385a29bfc4eae030e7b3b86",
+    "r3/027-own.jpg": "71a6653a22a5799c1e96f2035623960f10bb39038417d20e929e7ae43b157fe4",
+    "r3/000-overhead.jpg": "84f633b096247ccf4a9bce879942f863ce4442c200754bdbb735709c68221815",
+    "r3/wire-009.json": "3e888e726475a8db42436a60ef93fc3e14deaca1b5dfcad72162187f770d46e0",
+    "r3/001-own.jpg": "69c392787c4bc6c1175920109915907e830e2aed7c7aa63637e10a9f4c875fef",
+    "r3/011-own.jpg": "5f5276e422b128c94391d882d7f9aebb8ec93bb0dadc3484ec89bf3a3b1eff18",
+    "r3/024-overhead.jpg": "ff0a9ddf1fbab898d399184b22944a5a862a7b4407b461e7bc794434e8b051a3",
+    "r3/wire-025.json": "8a9144520dd268bb803ac67e6105c3319bbfd15e935d6ee3e6426a5fa195269d",
+    "r3/023-overhead.jpg": "80f522bd00d64e12d7a5f797e41605043962a09a8be80deb43ec8359b543dd4c",
+    "r3/029-overhead.jpg": "650baa4c00dd5b3ea3403641489e786781c9af0f395be4056a72dd0f909af755",
+    "r3/wire-014.json": "da8dd6305e08eaad1b16b93e97a8e4b3789f52ec3cad58b989a65509fd9a2300",
+    "r3/025-own.jpg": "f21b6c8d01edc2d970caf75c8d16067bc45ba950b34c2350c21c95f8045f4fe5",
+    "r3/wire-002.json": "729ed6332c3f0288c9e764e463ce09667b0390c88b2b55e068b89e2ffea84436",
+    "r3/wire-022.json": "e3171d118c7c9fb4274769aa240b586a9d3b69467a4cbdd916523f0e9762ca64",
+    "r3/013-own.jpg": "8bbc16f0bb3afebf00018145e38c43ca363e6afc5d32143875c15c237e87b4f4",
+    "r3/003-own.jpg": "71051b4cb599dce90cc44e254fffe9a2adbfe71656dec7251aab9b01c7e245c6",
+    "r3/wire-018.json": "46d2cb2b85c2edbf09385fa4c67297c05b6c3989af15fee7bfbdf2949d9ff69c",
+    "r3/018-overhead.jpg": "ff0a9ddf1fbab898d399184b22944a5a862a7b4407b461e7bc794434e8b051a3",
+    "r3/002-own.jpg": "07cef3ea2b8edd21825ed23c26187d5a2ff95c3be4bfa72e0d4db0d14c2dee9a",
+    "r3/012-own.jpg": "76280bbea1b1d0b6759caa50c3b15865c7f6fc8285f2d76477f0afca87cbf8ef",
+    "r3/wire-019.json": "15c4248d77ecc6699b4715dd970bee00b6c9a12f8d7a130bc79566b4a0087c7e",
+    "r3/wire-023.json": "e3171d118c7c9fb4274769aa240b586a9d3b69467a4cbdd916523f0e9762ca64",
+    "r3/028-overhead.jpg": "050293743a6f112e0d67fe441819963c0be3a8546dcddc6cb570cbb811cac08d",
+    "r3/wire-003.json": "206be9fba2ada7c05b303a1e039f27284b0caaf954bb8f91a48773b0e0a0a334",
+    "r3/wire-015.json": "da8dd6305e08eaad1b16b93e97a8e4b3789f52ec3cad58b989a65509fd9a2300",
+    "r3/019-overhead.jpg": "ff0a9ddf1fbab898d399184b22944a5a862a7b4407b461e7bc794434e8b051a3",
+    "r3/024-own.jpg": "f21b6c8d01edc2d970caf75c8d16067bc45ba950b34c2350c21c95f8045f4fe5"
+  }
+}
