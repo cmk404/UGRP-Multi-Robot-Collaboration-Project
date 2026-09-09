@@ -63,3 +63,22 @@ def test_legacy_small_box_fiducials_are_explicit_opt_in_and_do_not_change_box_ph
     for spec in specs:
         assert f"warehouse_tag_{spec.cargo_id}" in asset_names
         assert f"warehouse_tag_mat_{spec.cargo_id}" in asset_names
+
+
+def test_all_default_cargo_has_no_identity_plates_and_preserves_physics():
+    from sim.warehouse_mission import CARGO_SPECS
+
+    plain, legacy = _root(), _root()
+    add_warehouse_mission_xml(plain)
+    add_warehouse_mission_xml(legacy, include_fiducials=True)
+    assert not any("warehouse_tag" in node.get("name", "") for node in plain.iter())
+    for spec in CARGO_SPECS:
+        plain_body = plain.find(f"worldbody/body[@name='{spec.body_name}']")
+        legacy_body = legacy.find(f"worldbody/body[@name='{spec.body_name}']")
+        assert not any("_tag_" in geom.get("name", "") for geom in plain_body)
+        tags = [geom for geom in legacy_body if "_tag_" in geom.get("name", "")]
+        assert len(tags) == 2
+        assert all(geom.get("mass") == "0" and geom.get("contype") == "0" for geom in tags)
+        assert [node.attrib for node in plain_body] == [
+            node.attrib for node in legacy_body if node not in tags
+        ]

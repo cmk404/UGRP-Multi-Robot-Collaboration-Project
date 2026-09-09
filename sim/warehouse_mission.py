@@ -308,7 +308,7 @@ def _zone_geom(world: ET.Element, zone: ZoneSpec) -> None:
     )
 
 
-def _cargo_body(spec: CargoSpec, *, include_small_box_fiducials: bool = False) -> ET.Element:
+def _cargo_body(spec: CargoSpec, *, include_fiducials: bool = False) -> ET.Element:
     body = ET.Element("body", {"name": spec.body_name, "pos": _attrs(spec.start_xyz)})
     ET.SubElement(body, "joint", {
         "name": spec.joint_name, "type": "free", "damping": ".08",
@@ -379,10 +379,8 @@ def _cargo_body(spec: CargoSpec, *, include_small_box_fiducials: bool = False) -
             "size": ".0025 .032 .010", "mass": "0", "rgba": ".95 .72 .05 1",
             "contype": "0", "conaffinity": "0",
         })
-    # Historical fixtures use visual-only identity plates. Small boxes are
-    # markerless by default so their visible geometry matches the real cargo;
-    # legacy experiments can opt in explicitly without changing its physics.
-    if spec.cargo_type != "small_box" or include_small_box_fiducials:
+    # Identity plates are only for explicitly requested legacy fixtures.
+    if include_fiducials:
         for side in (-1, 1):
             ET.SubElement(body, "geom", {
                 "name": f"{spec.body_name}_tag_{'neg' if side < 0 else 'pos'}x",
@@ -407,11 +405,12 @@ def add_warehouse_mission_xml(
     terrain: tuple[TerrainSpec, ...] = (),
     zones: Mapping[str, ZoneSpec] | None = None,
     include_small_box_fiducials: bool = False,
+    include_fiducials: bool = False,
 ) -> ET.Element:
-    """Add the warehouse fixture, with realistic markerless small boxes by default.
+    """Add the warehouse fixture without identity plates on any cargo by default.
 
-    ``include_small_box_fiducials=True`` preserves the legacy upright tag
-    plates for explicitly requested comparison fixtures.
+    ``include_fiducials=True`` restores plates for legacy comparison fixtures.
+    ``include_small_box_fiducials=True`` restores only the small-box plates.
     """
     zones = WAREHOUSE_ZONES if zones is None else zones
     world = root.find("worldbody")
@@ -432,7 +431,7 @@ def add_warehouse_mission_xml(
         "small_box_03": str(Path(__file__).resolve().parent / "assets/warehouse_tags/small_box_03.png"),
     }
     for spec in specs:
-        if spec.cargo_type == "small_box" and not include_small_box_fiducials:
+        if not (include_fiducials or (spec.cargo_type == "small_box" and include_small_box_fiducials)):
             continue
         texture_name = f"warehouse_tag_{spec.cargo_id}"
         material_name = f"warehouse_tag_mat_{spec.cargo_id}"
@@ -487,7 +486,9 @@ def add_warehouse_mission_xml(
         })
     for spec in specs:
         world.append(_cargo_body(
-            spec, include_small_box_fiducials=include_small_box_fiducials,
+            spec, include_fiducials=(include_fiducials or (
+                spec.cargo_type == "small_box" and include_small_box_fiducials
+            )),
         ))
         for rid in carrier_ids:
             ET.SubElement(equality, "weld", {
