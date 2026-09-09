@@ -9,7 +9,6 @@ from harness import team_bus
 from harness import web as harness_web
 from sim.bridge import BRIDGE_ALLOWED_ACTIONS, BRIDGE_COLOR_ACTIONS, BRIDGE_DESTINATION_ACTIONS, BridgeState
 from scripts import sim_actions
-from scripts.gpu_worker_bundle import BUNDLE_FILES
 
 
 class TeamBusTests(unittest.TestCase):
@@ -825,12 +824,6 @@ class SimRoutingTests(unittest.TestCase):
         self.assertTrue(out["ok"])
         self.assertEqual(captured["robot_id"], "r3")
         self.assertEqual(captured["action"], "move_forward")
-
-    def test_gpu_bundle_contains_shared_three_robot_world(self):
-        self.assertIn("sim/multi_masterpi_production.py", BUNDLE_FILES)
-        self.assertIn("sim/cooperative_payload.py", BUNDLE_FILES)
-        self.assertIn("sim/adaptive_warehouse.py", BUNDLE_FILES)
-        self.assertIn("sim/warehouse_mission.py", BUNDLE_FILES)
 
     def test_verified_stage_base_satisfies_the_place_goal(self):
         # Live trace 20260902: R3 staged yellow, then the PLACE goal stayed

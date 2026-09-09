@@ -1,5 +1,5 @@
 [Unit]
-Description=UGRP SIM remote GPU watchdog
+Description=UGRP Mac simulation worker watchdog
 After=network-online.target ugrp-sim-bridge.service
 Requires=ugrp-sim-bridge.service
 

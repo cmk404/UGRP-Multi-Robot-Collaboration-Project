@@ -1297,8 +1297,6 @@ class Handler(BaseHTTPRequestHandler):
                 # map/colour aliases remain bridge-only for diagnostics/tests,
                 # but no independent task policy is exposed through sim_actions.
                 allowed = set(BRIDGE_ALLOWED_ACTIONS)
-                if os.environ.get("UGRP_ENABLE_LEGACY_GRASP_RL") == "1":
-                    allowed.add("grasp_rl")
                 if action not in allowed:
                     raise ValueError("unsupported action")
                 params = {}

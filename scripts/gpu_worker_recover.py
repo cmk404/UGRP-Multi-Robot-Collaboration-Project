@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Provider-neutral GPU worker recovery for UGRP."""
+"""Recover the current Mac MuJoCo worker used by the simulation bridge.
+
+Cloud simulation providers are retired. This compatibility entry point now
+owns only the Mac worker path used through the existing bridge.
+"""
 from __future__ import annotations
 
 import argparse
@@ -10,115 +14,63 @@ import subprocess
 import sys
 import time
 from urllib.request import urlopen
+
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+
 from sim.worker_contract import REMOTE_WORKER_CONTRACT
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-LIGHTNING_PY = ROOT / ".venv-lightning" / "bin" / "python"
-LIGHTNING_CLI = ROOT / ".venv-lightning" / "bin" / "lightning"
-COLAB = Path(os.environ.get("UGRP_COLAB_CLI", "/home/ubuntu/.local/bin/colab"))
-AZURE = ROOT / "scripts" / "azure_worker_recover.py"
+
 MAC = ROOT / "scripts" / "mac_worker_recover.py"
-AZURE_KEY = Path(os.environ.get("UGRP_AZURE_SSH_KEY", "/home/ubuntu/azure_keys/ugrp-a10-sim_key.pem"))
 HEALTH = os.environ.get("UGRP_SIM_HEALTH", "http://127.0.0.1:8091/health")
 STATUS_FILE = Path(os.environ.get("UGRP_GPU_RECOVERY_STATUS", "/tmp/ugrp_gpu_recovery_status.json"))
 
 
 def provider_order() -> list[str]:
-    raw = os.environ.get("UGRP_GPU_PROVIDERS", "lightning")
-    out: list[str] = []
-    for name in raw.split(","):
-        name = name.strip().lower()
-        if name and name not in out:
-            out.append(name)
-    return out
-
-
-def _cmd_ok(args: list[str], timeout: float = 15.0) -> bool:
-    try:
-        proc = subprocess.run(
-            args, cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=timeout
-        )
-        return proc.returncode == 0
-    except (OSError, subprocess.TimeoutExpired):
-        return False
+    """Return the sole supported worker location."""
+    return ["mac"]
 
 
 def provider_configured(name: str) -> bool:
-    if name == "lightning":
-        return (
-            LIGHTNING_PY.exists()
-            and LIGHTNING_CLI.exists()
-            and _cmd_ok([str(LIGHTNING_CLI), "auth", "whoami"])
-        )
-    if name == "azure":
-        # Azure is paid capacity, so merely having a key on disk must never make
-        # it an automatic provider.  It becomes eligible only after explicit
-        # opt-in; the dedicated recovery script owns VM power/deploy handling.
-        return (
-            os.environ.get("UGRP_ALLOW_AZURE_WORKER") == "1"
-            and AZURE.exists()
-            and AZURE_KEY.exists()
-            and bool(os.environ.get("UGRP_AZURE_SUBSCRIPTION", "UGRP GPU PAYG").strip())
-            and bool(os.environ.get("UGRP_AZURE_RG", "ugrp-gpu-rg").strip())
-            and bool(os.environ.get("UGRP_AZURE_VM", "ugrp-a10-sim").strip())
-        )
-    if name == "colab":
-        # Colab remains explicitly opt-in. The free managed runtime is not used
-        # as an automatic persistent worker just because the CLI happens to exist.
-        return os.environ.get("UGRP_ALLOW_COLAB_WORKER") == "1" and COLAB.exists()
-    if name == "mac":
-        # The Mac is a free local fallback/primary worker reached through Tailscale SSH.
-        # Keep it opt-in so unattended deployments never assume the laptop is available.
-        return os.environ.get("UGRP_ALLOW_MAC_WORKER") == "1" and MAC.exists()
-    return False
+    return name == "mac" and os.environ.get("UGRP_ALLOW_MAC_WORKER") == "1" and MAC.exists()
 
 
 def configured_providers() -> list[str]:
-    return [name for name in provider_order() if provider_configured(name)]
+    return ["mac"] if provider_configured("mac") else []
 
 
 def remote_health() -> dict:
     try:
         with urlopen(HEALTH, timeout=2) as response:
-            obj=json.loads(response.read().decode())
+            obj = json.loads(response.read().decode())
         return obj if isinstance(obj, dict) else {}
     except Exception:
         return {}
 
+
 def remote_ready(provider: str | None = None) -> bool:
-    obj=remote_health()
+    obj = remote_health()
     if not (obj.get("remote_ws_connected") and obj.get("remote_authoritative")):
         return False
     if str(obj.get("remote_worker_contract") or "").strip() != REMOTE_WORKER_CONTRACT:
         return False
-    if provider is None:
-        return True
-    return str(obj.get("remote_provider") or "").strip().lower() == provider.strip().lower()
+    actual = str(obj.get("remote_provider") or "").strip().lower()
+    return actual == "mac" and (provider is None or provider.strip().lower() == "mac")
 
-def wait_remote_ready(provider: str, timeout: float = 15.0) -> bool:
-    deadline=time.monotonic()+max(0.0, timeout)
+
+def wait_remote_ready(timeout: float = 15.0) -> bool:
+    deadline = time.monotonic() + max(0.0, timeout)
     while time.monotonic() < deadline:
-        if remote_ready(provider):
+        if remote_ready("mac"):
             return True
         time.sleep(0.25)
-    return remote_ready(provider)
+    return remote_ready("mac")
 
 
 def command_for(name: str) -> list[str]:
-    if name == "lightning":
-        # provider_configured() already performed the CLI auth check in this
-        # recovery process; avoid repeating it in the child and wasting outage time.
-        return [str(LIGHTNING_PY), str(ROOT / "scripts/lightning_worker_recover.py"), "--auth-prechecked"]
-    if name == "azure":
-        return ["/usr/bin/python3", str(AZURE)]
-    if name == "colab":
-        return ["/usr/bin/python3", str(ROOT / "scripts/colab_worker_recover.py")]
-    if name == "mac":
-        return ["/usr/bin/python3", str(MAC)]
-    raise ValueError(name)
+    if name != "mac":
+        raise ValueError(name)
+    return [sys.executable, str(MAC)]
 
 
 def write_status(**data) -> None:
@@ -129,42 +81,45 @@ def write_status(**data) -> None:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--preflight", action="store_true")
-    args = ap.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--preflight", action="store_true")
+    args = parser.parse_args()
     configured = configured_providers()
     if args.preflight:
         print(json.dumps({"order": provider_order(), "configured": configured}))
         return 0 if configured else 3
-    existing=remote_health()
-    existing_provider=str(existing.get("remote_provider") or "").strip().lower()
-    if remote_ready() and existing_provider in configured:
-        write_status(ok=True, state="connected", provider=existing_provider, order=provider_order(), configured=configured, detail="configured remote already connected")
+    if remote_ready("mac"):
+        write_status(ok=True, state="connected", provider="mac", configured=configured)
         return 0
     if not configured:
-        detail = "no configured automatic GPU provider; simulation remains GPU_OFFLINE"
-        print(f"gpu recovery: {detail}", flush=True)
-        write_status(ok=False, state="auth_required", provider=None, order=provider_order(), configured=configured, detail=detail)
+        detail = "Mac simulation worker recovery is not enabled"
+        write_status(
+            ok=False,
+            state="manual_start_required",
+            provider=None,
+            configured=[],
+            detail=detail,
+        )
+        print(f"worker recovery: {detail}", flush=True)
         return 0
-
-    failures = []
-    for provider in configured:
-        print(f"gpu recovery: trying {provider}", flush=True)
-        try:
-            proc = subprocess.run(
-                command_for(provider), cwd=ROOT, capture_output=True, text=True, timeout=300
-            )
-            detail = ((proc.stdout or "") + (proc.stderr or ""))[-1800:].strip()
-        except Exception as exc:
-            proc = None
-            detail = f"{type(exc).__name__}: {exc}"
-        if proc is not None and proc.returncode == 0 and wait_remote_ready(provider):
-            print(f"gpu recovery: {provider} connected", flush=True)
-            write_status(ok=True, state="connected", provider=provider, order=provider_order(), configured=configured, detail="connected")
-            return 0
-        failures.append({"provider": provider, "detail": detail[-700:]})
-        print(f"gpu recovery: {provider} unavailable", flush=True)
-    write_status(ok=False, state="recovery_failed", provider=None, order=provider_order(), configured=configured, detail="all configured providers failed", failures=failures)
+    try:
+        proc = subprocess.run(
+            command_for("mac"), cwd=ROOT, capture_output=True, text=True, timeout=300
+        )
+        detail = ((proc.stdout or "") + (proc.stderr or ""))[-1800:].strip()
+    except Exception as exc:
+        proc = None
+        detail = f"{type(exc).__name__}: {exc}"
+    if proc is not None and proc.returncode == 0 and wait_remote_ready():
+        write_status(ok=True, state="connected", provider="mac", configured=configured)
+        return 0
+    write_status(
+        ok=False,
+        state="recovery_failed",
+        provider="mac",
+        configured=configured,
+        detail=detail[-700:],
+    )
     return 4
 
 

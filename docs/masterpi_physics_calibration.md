@@ -1,3 +1,5 @@
+> 2026-09-09: 이 문서는 구형 물리 엔진의 역사적 기록이다. 해당 전용 엔진·physics_fidelity 도구는 제거했으며 현재 V2 실행 절차는 [CONTRIBUTING.md](../CONTRIBUTING.md)를 따른다. 제거 전 코드는 Git `76aeba36461ddae2044e8b732adb00b8365dde67`에 남아 있다.
+
 # MasterPi SIM physics fidelity and calibration
 
 Status: **platform/demo work, NOT an approved research result**.

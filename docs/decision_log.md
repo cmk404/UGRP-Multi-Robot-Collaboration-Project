@@ -2659,3 +2659,11 @@ No physical MasterPi command was issued for this architecture change. The REAL s
 - [GitHub 관리](github_management_20260909.md): 소스 기준 커밋 c6eb676a3fcf1fd2d9f9911825085dd62542f251은 N7 실행 후 생성됐다. 이번 감사에서도 고정 manifest의 125개 Git blob SHA-256이 모두 일치했다. 향후에는 실행 전에 소스를 커밋한다. 관리 PR #4에서 원본 outputs 의존 테스트를 포터블 fixture로 수정했고 CI 188개+107개 세부 검사가 통과했다.
 - 감사 보완: [실험 인덱스](../experiments/README.md)에 이전 단계와 실패 보고서를 연결하고 [26회 실행 표](../experiments/2026-09-09-markerless-trials/README.md)를 Git에 보존했다. 26개 로컬 result.json과 성공 여부·종료 사유·활성 SIM 시간을 대조했다. 호출·토큰 재집계, 전체 과거 실험의 커밋 매핑 및 raw 원격 백업까지 완료한 것은 아니다. 새 모델 호출이나 시뮬레이션은 실행하지 않았다.
 - 감사 PR #5 CI에서 추가 발견: [PR 실행](https://github.com/kcm0127-dotcom/ugrp/actions/runs/34330522269)은 세션 종료 검사에서 종료코드 143 대신 1로 실패(187개+107개 세부 검사 통과, 1개 실패). [같은 소스 push 실행](https://github.com/kcm0127-dotcom/ugrp/actions/runs/34330496329)은 통과했다. 원인은 미확정이며 [이슈 #6](https://github.com/kcm0127-dotcom/ugrp/issues/6)에 남겼다. 과거 CI 통과 사실과 현재 발견한 실패를 구분하고 원인 확인 전 PR을 병합하지 않는다.
+
+
+### 2026-09-09 구형·클라우드 시뮬레이션 환경 제거
+
+- 사용자 요청과 후속 확인 범위는 프로젝트 내부 파일·환경 정리다. 외부 서버·계정 삭제나 과거 raw 실험 증거 삭제는 하지 않았다.
+- 옛 Linux/중복 Mac 가상환경 3개(삭제 전 약 1.21 GB), 사용하지 않는 구형 물리 엔진과 클라우드 배포 파일을 제거했다. 현재 Mac 워커, V2 기반 XML, 실물 코드, 회귀 fixture는 유지했다. `.venv-sim`은 현재 워커의 호환 링크로 통합했다.
+- 현재 운반 기본 회귀 188개+107개 세부 검사, 장면/공유 제어 48개, Bridge 35개 통과. 초기 장면의 물리 진행·NAV 렌더링을 직접 확인했으며 새 전체 운반 실험은 하지 않았다.
+- [정리 기록과 검증](simulation_cleanup_20260909.md), [클라우드 간략 이력](cloud_simulation.md), [삭제 소스 식별값](retired_sim_sources_20260909.json)에 보존했다. 코드 원문은 정리 전 Git 커밋으로 복원할 수 있다.
