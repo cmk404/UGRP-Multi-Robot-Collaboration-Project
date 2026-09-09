@@ -6,6 +6,7 @@ caller owns observation freshness and issues returned commands one at a time.
 from __future__ import annotations
 
 from collections import deque
+from itertools import product
 import math
 
 import numpy as np
@@ -265,33 +266,66 @@ class LocalPixelJacobian:
         if not chosen:
             return None
         reduced = matrix[:, chosen]
-        try:
-            bounded = -reduced.T @ np.linalg.solve(
-                reduced @ reduced.T + self.damping ** 2 * np.eye(3), error)
-        except np.linalg.LinAlgError:
-            self.last_proposal = {"sample_count": len(self.samples), "usable_channels": names,
-                                  "command_count": 0, "reason": "dls_failed"}
-            return None
-        actions, applied = [], []
-        for local_i, original_i in enumerate(chosen):
+        bounds = []
+        for original_i in chosen:
             name = names[original_i]
-            action = self._action(name, float(bounded[local_i]), pulse_state)
-            if action is not None:
-                actions.append(action)
-                # Convert the bounded action back to the learned normalized unit.
+            if name in _PULSE_CHANNELS:
+                current = pulse_state.get(_PULSE_CHANNELS[name], 1500)
+                bounds.append((max(-1.0, (500 - current) / 50.0),
+                               min(1.0, (2500 - current) / 50.0)))
+            else:
+                bounds.append((-1.0, 1.0))
+        candidates = []
+        # For at most three variables, exhaustively choose whether each is at
+        # its lower bound, free, or at its upper bound.  Solving the remaining
+        # free variables finds the bounded least-squares optimum without scipy.
+        for status in product((-1, 0, 1), repeat=len(chosen)):
+            candidate = np.zeros(len(chosen), dtype=float)
+            fixed = [i for i, value in enumerate(status) if value]
+            free = [i for i, value in enumerate(status) if not value]
+            for i in fixed:
+                candidate[i] = bounds[i][status[i] > 0]
+            if free:
+                residual = error + reduced[:, fixed] @ candidate[fixed] if fixed else error
+                free_matrix = reduced[:, free]
+                try:
+                    candidate[free] = np.linalg.solve(
+                        free_matrix.T @ free_matrix
+                        + self.damping ** 2 * np.eye(len(free)),
+                        -free_matrix.T @ residual,
+                    )
+                except np.linalg.LinAlgError:
+                    continue
+                if any(candidate[i] < bounds[i][0] - 1e-9 or
+                       candidate[i] > bounds[i][1] + 1e-9 for i in free):
+                    continue
+
+            actions, applied = [], []
+            for local_i, original_i in enumerate(chosen):
+                name = names[original_i]
+                action = self._action(name, float(candidate[local_i]), pulse_state)
+                if action is None:
+                    continue
                 after = dict(pulse_state)
                 if name in _PULSE_CHANNELS:
                     after[_PULSE_CHANNELS[name]] = action.get("pan_pulse", action.get("pulse"))
-                applied.append((original_i, self._amount(action, pulse_state, after, name)))
-        if not actions:
+                amount = self._amount(action, pulse_state, after, name)
+                if amount is not None:
+                    actions.append(action)
+                    applied.append((original_i, amount))
+            if not actions:
+                continue
+            prediction = error.copy()
+            for original_i, amount in applied:
+                prediction += matrix[:, original_i] * amount
+            candidates.append((float(np.linalg.norm(prediction)), tuple(candidate), actions))
+
+        if not candidates:
             self.last_proposal = {"sample_count": len(self.samples), "usable_channels": names,
                                   "command_count": 0, "reason": "bounded_step_is_zero"}
             return None
-        prediction = error.copy()
-        for original_i, amount in applied:
-            if amount is not None:
-                prediction += matrix[:, original_i] * amount
-        observed_norm, predicted_norm = float(np.linalg.norm(error)), float(np.linalg.norm(prediction))
+        predicted_norm, _, actions = min(candidates, key=lambda item: (item[0], item[1]))
+        observed_norm = float(np.linalg.norm(error))
         if observed_norm - predicted_norm < self.min_improvement:
             self.last_proposal = {"sample_count": len(self.samples), "usable_channels": names,
                                   "command_count": 0, "reason": "no_predicted_improvement",

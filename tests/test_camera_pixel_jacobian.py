@@ -209,3 +209,38 @@ def test_coupled_smaller_correction_improves_when_each_full_step_worsens():
     assert all(1450 <= a["pulse"] < 1500 for a in plan)
     diagnostics = j.diagnostics()
     assert diagnostics["predicted_error"] < diagnostics["observed_error"]
+
+
+def test_box_constrained_solution_improves_when_clipping_dls_does_not():
+    j = LocalPixelJacobian()
+    columns = {
+        "turn": np.asarray((2.899841951658131, .9856851086291307, 26.851980820409945)),
+        "wrist": np.asarray((.613597215152879, .37009159180581896, 7.325829554665351)),
+    }
+    j._column = lambda name, *_: columns.get(name)
+    current = alignment(26.814516129032242, -4.603225806451583,
+                        -0.1349706642643256, width=10)
+    plan = j.propose(current, {3: 790, 4: 2320, 5: 1320, 6: 2250})
+
+    assert plan[0] == {"kind": "arm", "servo_id": 3, "pulse": 840}
+    assert plan[1]["kind"] == "drive"
+    assert plan[1]["forward"] == 0.0
+    assert np.isclose(plan[1]["turn"], .012352214968162946)
+    assert plan[1]["duration_s"] == 1.0
+    diagnostics = j.diagnostics()
+    assert np.isclose(diagnostics["observed_error"], 30.370689244382405)
+    assert diagnostics["predicted_error"] < diagnostics["observed_error"]
+
+
+def test_box_bounds_reflect_remaining_servo_travel():
+    j = LocalPixelJacobian()
+    columns = {
+        "wrist": np.asarray((10.0, 0.0, 0.0)),
+        "elbow": np.asarray((0.0, 1.0, 0.0)),
+    }
+    j._column = lambda name, *_: columns.get(name)
+    plan = j.propose(alignment(-10, -.5), {3: 2490, 4: 1500, 5: 1500, 6: 1500})
+
+    wrist = next(action for action in plan if action.get("servo_id") == 3)
+    assert wrist["pulse"] == 2500
+    assert j.diagnostics()["predicted_error"] < j.diagnostics()["observed_error"]
