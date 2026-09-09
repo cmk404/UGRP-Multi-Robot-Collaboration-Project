@@ -10,6 +10,7 @@ import platform
 from pathlib import Path
 import sys
 import time
+import xml.etree.ElementTree as ET
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -239,11 +240,25 @@ def main() -> int:
             if video is not None and capture_video:
                 video.capture()
 
+    fixture_builder = _plain_beam_xml(production.build_multi_robot_xml)
+
+    def sized_fixture(*builder_args, **builder_kwargs):
+        root = ET.fromstring(fixture_builder(*builder_args, **builder_kwargs))
+        visual = root.find("visual")
+        if visual is None:
+            visual = ET.SubElement(root, "visual")
+        global_visual = visual.find("global")
+        if global_visual is None:
+            global_visual = ET.SubElement(visual, "global")
+        for field, requested in (("offwidth", args.render_width), ("offheight", args.render_height)):
+            global_visual.set(field, str(max(requested, int(global_visual.get(field, "0")))))
+        return ET.tostring(root, encoding="unicode")
+
     try:
         with patch.object(
             production,
             "build_multi_robot_xml",
-            _plain_beam_xml(production.build_multi_robot_xml),
+            sized_fixture,
         ):
             world = production.MultiMasterPiProductionV2(
                 seed=11, render=True, width=args.render_width, height=args.render_height
