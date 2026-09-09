@@ -32,7 +32,7 @@ def _has_visual_detail(image: Image.Image) -> bool:
 
 
 def _frame(world: Any, robot_id: str, sim_time: float) -> Image.Image:
-    overview = Image.open(io.BytesIO(world.render_team_jpeg(camera="cctv_top", quality=84))).convert("RGB")
+    overview = Image.open(io.BytesIO(world.render_team_jpeg(camera="cctv_warehouse", quality=84))).convert("RGB")
     camera = Image.fromarray(world.render_rgb(robot_id=robot_id, camera="robot_cam")).convert("RGB")
     if not _has_visual_detail(overview) or not _has_visual_detail(camera):
         raise RuntimeError("overview or robot camera frame is blank or nearly blank")
