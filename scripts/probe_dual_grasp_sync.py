@@ -274,13 +274,14 @@ def _step(world: MultiMasterPiProductionV2, seconds: float) -> None:
             world.frame_callback()
 
 
-def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, weld_assistance: bool = False) -> dict[str, Any]:
+def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, weld_assistance: bool = False, side_grasp: bool = False) -> dict[str, Any]:
     video_path = out_dir / f"{name}.mp4"
     json_path = out_dir / f"{name}.json"
     trace: list[dict[str, Any]] = []
     report: dict[str, Any] = {
         "condition": name,
         "weld_assistance": weld_assistance,
+        "side_grasp": side_grasp,
         "second_grasp_delay_s": delay_s,
         "seed": seed,
         "video": str(video_path),
@@ -317,6 +318,9 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, 
             precision.CAPTURE_GRASP_HEIGHT_CM,
             precision.CAPTURE_GRASP_PITCH_DEG,
         )
+        if side_grasp and weld_assistance:
+            raise ValueError("side grasp requires unassisted contact physics")
+        yaw_pulses = {rid: (2500 if rid == "r1" else 500) if side_grasp else 1500 for rid in BEAM_CARRIER_IDS}
         base_x = BEAM_START[0] - TEAM_APPROACH_STANDOFF_M
         handle_margin = 0.008
         setup_poses: dict[str, list[float]] = {}
@@ -328,6 +332,9 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, 
                 + (-handle_margin if rid == "r1" else handle_margin),
                 float(robot.base_xyz()[2]),
             )
+            if side_grasp:
+                sign = 1.0 if rid == "r1" else -1.0
+                pose = (BEAM_START[0], BEAM_START[1] - sign * (0.16 + TEAM_APPROACH_STANDOFF_M), float(robot.base_xyz()[2]))
             robot.set_base_pose_for_test(pose, 0.0)
             setup_poses[rid] = [float(v) for v in pose]
         # R2 is irrelevant to this isolated fixture and remains at its default pose.
@@ -342,8 +349,14 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, 
             beam_fixture=fixture,
         )
 
+        if side_grasp:
+            from sim.masterpi_production_v2 import SEARCH_POSE
+            world._team_joint_move_servos({rid: {**SEARCH_POSE, 1: precision.GRIPPER_OPEN, 6: 1500} for rid in BEAM_CARRIER_IDS}, 0.6)
+            record("folded_before_side_rotation")
+            world._team_joint_move_servos({rid: {6: yaw_pulses[rid]} for rid in BEAM_CARRIER_IDS}, 1.0, settle_s=0.15)
+            record("side_rotation_complete", yaw_pulses=yaw_pulses)
         world._team_joint_move_servos(
-            {rid: {1: precision.GRIPPER_OPEN, 6: 1500, **hover} for rid in BEAM_CARRIER_IDS},
+            {rid: {1: precision.GRIPPER_OPEN, 6: yaw_pulses[rid], **hover} for rid in BEAM_CARRIER_IDS},
             0.70, settle_s=0.08,
         )
         for height in precision.GRASP_DESCENT_HEIGHTS_CM:
@@ -417,6 +430,17 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, 
         final = _pose_metrics(world)
         if final["height_above_start_m"] < 0.035:
             raise RuntimeError(f"COOPERATIVE_LIFT_FAILED: {final}")
+        if side_grasp:
+            for index in range(20):
+                _step(world, 0.1)
+                contacts = {rid: world.controllers[rid].finger_payload_contact(rid) for rid in BEAM_CARRIER_IDS}
+                # Record continuous physical hold without inserting frozen video frames.
+                item = {"event": "physical_hold_sample", **_pose_metrics(world), "contacts": contacts}
+                trace.append(item)
+                if item["height_above_start_m"] < 0.03 or not all(c["bilateral"] for c in contacts.values()):
+                    raise RuntimeError("UNASSISTED_HOLD_FAILED")
+            record("physical_hold_complete", duration_s=2.0)
+            final = _pose_metrics(world)
         report["ok"] = True
         report["final"] = final
     except Exception as exc:
@@ -459,7 +483,10 @@ def main() -> int:
     assistance.add_argument("--no-weld", dest="weld_assistance", action="store_false",
                             help="Use unassisted contact physics (the default).")
     parser.set_defaults(weld_assistance=False)
+    parser.add_argument("--side-grasp", action="store_true", help="Forward bases, arms rotated +/-90 degrees; no weld permitted.")
     args = parser.parse_args()
+    if args.side_grasp and args.weld_assistance:
+        parser.error("--side-grasp cannot be combined with --with-weld")
     out_dir = args.out_dir.expanduser().resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -477,6 +504,7 @@ def main() -> int:
         },
         "config": {
             "weld_assistance": args.weld_assistance,
+            "side_grasp": args.side_grasp,
             "seed": args.seed,
             "fps": args.fps,
             "conditions": [
@@ -500,7 +528,7 @@ def main() -> int:
     }
     for name, delay in (("baseline", 0.0), ("delayed_2s", 2.0)):
         manifest["trials"].append(
-            run_trial(out_dir, name=name, delay_s=delay, seed=args.seed, fps=args.fps, weld_assistance=args.weld_assistance)
+            run_trial(out_dir, name=name, delay_s=delay, seed=args.seed, fps=args.fps, weld_assistance=args.weld_assistance, side_grasp=args.side_grasp)
         )
     manifest["all_ok"] = all(item.get("ok") for item in manifest["trials"])
     (out_dir / "manifest.json").write_text(

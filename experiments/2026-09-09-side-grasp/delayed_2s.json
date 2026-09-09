@@ -1,0 +1,1033 @@
+{
+  "condition": "delayed_2s",
+  "final": {
+    "constraints_active": {
+      "r1": false,
+      "r3": false
+    },
+    "height_above_start_m": 0.071601,
+    "position_m": [
+      0.579998,
+      -1.999992,
+      0.091601
+    ],
+    "sim_time_s": 11.54,
+    "tilt_deg": 0.0018
+  },
+  "ok": true,
+  "second_grasp_delay_s": 2.0,
+  "seed": 11,
+  "side_grasp": true,
+  "trace": [
+    {
+      "beam_fixture": {
+        "compiled_contact_geometries": {
+          "r1__left_finger": {
+            "condim": 3,
+            "friction": [
+              3.4,
+              0.03,
+              0.002
+            ],
+            "rgba": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              0.014,
+              0.0045,
+              0.0035
+            ]
+          },
+          "r1__left_finger_pad_visual": {
+            "condim": 3,
+            "friction": [
+              1.0,
+              0.005,
+              0.0001
+            ],
+            "rgba": [
+              0.5,
+              0.5,
+              0.5,
+              1.0
+            ],
+            "size": [
+              0.015,
+              0.004,
+              0.0022
+            ]
+          },
+          "r1__right_finger": {
+            "condim": 3,
+            "friction": [
+              3.4,
+              0.03,
+              0.002
+            ],
+            "rgba": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              0.014,
+              0.0045,
+              0.0035
+            ]
+          },
+          "team_beam_geom": {
+            "condim": 3,
+            "friction": [
+              1.2,
+              0.02,
+              0.002
+            ],
+            "rgba": [
+              0.8999999761581421,
+              0.46000000834465027,
+              0.07999999821186066,
+              1.0
+            ],
+            "size": [
+              0.025,
+              0.225,
+              0.02
+            ]
+          }
+        },
+        "compiled_geom_mass_requested_kg": 0.196,
+        "compiled_total_body_mass_kg": 0.196,
+        "contact_source": "team_beam_geom",
+        "dimensions_m": [
+          0.05,
+          0.45,
+          0.04
+        ],
+        "endpoint_bodies": "invisible coordinate anchors only; no collision geometry",
+        "main_geom_half_size_m": [
+          0.025,
+          0.225,
+          0.02
+        ],
+        "removed_handle_geometries_and_sites": [
+          {
+            "geom_id": -1,
+            "robot_id": "r1",
+            "site_id": -1
+          },
+          {
+            "geom_id": -1,
+            "robot_id": "r3",
+            "site_id": -1
+          }
+        ],
+        "shape": "single_uniform_box"
+      },
+      "carrier_base_poses": {
+        "r1": [
+          0.58,
+          -2.325,
+          0.032355118817659255
+        ],
+        "r3": [
+          0.58,
+          -1.675,
+          0.032355118817659255
+        ]
+      },
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "event": "fixture_setup_complete",
+      "height_above_start_m": -4.9e-05,
+      "position_m": [
+        0.58,
+        -2.0,
+        0.019951
+      ],
+      "scout_motion": false,
+      "setup_only": true,
+      "setup_pose_write": true,
+      "sim_time_s": 0.3,
+      "tilt_deg": 0.0
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "event": "folded_before_side_rotation",
+      "height_above_start_m": -4.9e-05,
+      "position_m": [
+        0.58,
+        -2.0,
+        0.019951
+      ],
+      "sim_time_s": 0.9,
+      "tilt_deg": 0.0
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "event": "side_rotation_complete",
+      "height_above_start_m": -4.9e-05,
+      "position_m": [
+        0.58,
+        -2.0,
+        0.019951
+      ],
+      "sim_time_s": 2.05,
+      "tilt_deg": 0.0,
+      "yaw_pulses": {
+        "r1": 2500,
+        "r3": 500
+      }
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "event": "preclose_aligned",
+      "height_above_start_m": -4.9e-05,
+      "position_m": [
+        0.58,
+        -2.0,
+        0.019951
+      ],
+      "sim_time_s": 4.93,
+      "tilt_deg": 0.0
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contact": {
+        "bilateral": true,
+        "contact_geom": "team_beam_geom",
+        "left": true,
+        "left_force_n": 11.546859278075722,
+        "right": true,
+        "right_force_n": 11.54691676483668
+      },
+      "event": "r1_close_complete",
+      "height_above_start_m": -4.9e-05,
+      "position_m": [
+        0.579999,
+        -1.999999,
+        0.019951
+      ],
+      "sim_time_s": 5.76,
+      "tilt_deg": 0.0
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "event": "r1_grasp_checked",
+      "height_above_start_m": -4.9e-05,
+      "position_m": [
+        0.579999,
+        -1.999999,
+        0.019951
+      ],
+      "sim_time_s": 5.76,
+      "tilt_deg": 0.0,
+      "weld_assistance": false
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "event": "delay_elapsed",
+      "height_above_start_m": -4.9e-05,
+      "position_m": [
+        0.579999,
+        -1.999998,
+        0.019951
+      ],
+      "requested_delay_s": 2.0,
+      "sim_time_s": 7.76,
+      "tilt_deg": 0.0
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contact": {
+        "bilateral": true,
+        "contact_geom": "team_beam_geom",
+        "left": true,
+        "left_force_n": 11.546916243205823,
+        "right": true,
+        "right_force_n": 11.546859801310813
+      },
+      "event": "r3_close_complete",
+      "height_above_start_m": -4.9e-05,
+      "position_m": [
+        0.579999,
+        -1.999997,
+        0.019951
+      ],
+      "sim_time_s": 8.59,
+      "tilt_deg": 0.0001
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.546880716345129,
+          "right": true,
+          "right_force_n": 11.54689532591696
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.546916243205823,
+          "right": true,
+          "right_force_n": 11.546859801310813
+        }
+      },
+      "event": "dual_grasp_confirmed",
+      "height_above_start_m": -4.9e-05,
+      "position_m": [
+        0.579999,
+        -1.999997,
+        0.019951
+      ],
+      "sim_time_s": 8.59,
+      "tilt_deg": 0.0001
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.546889596141,
+          "right": true,
+          "right_force_n": 11.546886444016842
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.546888448937993,
+          "right": true,
+          "right_force_n": 11.546887591234976
+        }
+      },
+      "event": "lift_complete",
+      "height_above_start_m": 0.075896,
+      "position_m": [
+        0.579998,
+        -1.999993,
+        0.095896
+      ],
+      "sim_time_s": 9.54,
+      "tilt_deg": 0.002
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.546887415858262,
+          "right": true,
+          "right_force_n": 11.546888624292066
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.54688698659462,
+          "right": true,
+          "right_force_n": 11.546889053549522
+        }
+      },
+      "event": "physical_hold_sample",
+      "height_above_start_m": 0.075896,
+      "position_m": [
+        0.579998,
+        -1.999993,
+        0.095896
+      ],
+      "sim_time_s": 9.64,
+      "tilt_deg": 0.002
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.54688768645616,
+          "right": true,
+          "right_force_n": 11.546888353665743
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.546886586972974,
+          "right": true,
+          "right_force_n": 11.546889453158155
+        }
+      },
+      "event": "physical_hold_sample",
+      "height_above_start_m": 0.075684,
+      "position_m": [
+        0.579998,
+        -1.999993,
+        0.095684
+      ],
+      "sim_time_s": 9.74,
+      "tilt_deg": 0.002
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.546881613364741,
+          "right": true,
+          "right_force_n": 11.546894426794125
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.546880652773025,
+          "right": true,
+          "right_force_n": 11.546895387315022
+        }
+      },
+      "event": "physical_hold_sample",
+      "height_above_start_m": 0.075385,
+      "position_m": [
+        0.579998,
+        -1.999993,
+        0.095385
+      ],
+      "sim_time_s": 9.84,
+      "tilt_deg": 0.002
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.546891937838337,
+          "right": true,
+          "right_force_n": 11.546884102275266
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.546891027500438,
+          "right": true,
+          "right_force_n": 11.546885012630174
+        }
+      },
+      "event": "physical_hold_sample",
+      "height_above_start_m": 0.075146,
+      "position_m": [
+        0.579998,
+        -1.999993,
+        0.095146
+      ],
+      "sim_time_s": 9.94,
+      "tilt_deg": 0.002
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.546890636874235,
+          "right": true,
+          "right_force_n": 11.546885403226971
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.546889737360916,
+          "right": true,
+          "right_force_n": 11.546886302777997
+        }
+      },
+      "event": "physical_hold_sample",
+      "height_above_start_m": 0.074898,
+      "position_m": [
+        0.579998,
+        -1.999993,
+        0.094898
+      ],
+      "sim_time_s": 10.04,
+      "tilt_deg": 0.002
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.546884376336823,
+          "right": true,
+          "right_force_n": 11.546891663801059
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.54688348134967,
+          "right": true,
+          "right_force_n": 11.546892558749095
+        }
+      },
+      "event": "physical_hold_sample",
+      "height_above_start_m": 0.074646,
+      "position_m": [
+        0.579998,
+        -1.999993,
+        0.094646
+      ],
+      "sim_time_s": 10.14,
+      "tilt_deg": 0.002
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.546890036412336,
+          "right": true,
+          "right_force_n": 11.546886003702197
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.546889143683218,
+          "right": true,
+          "right_force_n": 11.546886896435797
+        }
+      },
+      "event": "physical_hold_sample",
+      "height_above_start_m": 0.074397,
+      "position_m": [
+        0.579998,
+        -1.999993,
+        0.094397
+      ],
+      "sim_time_s": 10.24,
+      "tilt_deg": 0.002
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.660375875434287,
+          "right": true,
+          "right_force_n": 11.660362753592963
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.66819743007715,
+          "right": true,
+          "right_force_n": 11.668194656512835
+        }
+      },
+      "event": "physical_hold_sample",
+      "height_above_start_m": 0.074155,
+      "position_m": [
+        0.579998,
+        -1.999994,
+        0.094155
+      ],
+      "sim_time_s": 10.34,
+      "tilt_deg": 0.0014
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.66728615948859,
+          "right": true,
+          "right_force_n": 11.667288046413454
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.667285614067612,
+          "right": true,
+          "right_force_n": 11.667288602288876
+        }
+      },
+      "event": "physical_hold_sample",
+      "height_above_start_m": 0.073963,
+      "position_m": [
+        0.579998,
+        -1.999994,
+        0.093963
+      ],
+      "sim_time_s": 10.44,
+      "tilt_deg": 0.0015
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.667306156253954,
+          "right": true,
+          "right_force_n": 11.667268054094578
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.667309821108576,
+          "right": true,
+          "right_force_n": 11.667264388237271
+        }
+      },
+      "event": "physical_hold_sample",
+      "height_above_start_m": 0.073752,
+      "position_m": [
+        0.579998,
+        -1.999993,
+        0.093752
+      ],
+      "sim_time_s": 10.54,
+      "tilt_deg": 0.0017
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.667517859073625,
+          "right": true,
+          "right_force_n": 11.66705635649954
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.66751189083754,
+          "right": true,
+          "right_force_n": 11.667062328283812
+        }
+      },
+      "event": "physical_hold_sample",
+      "height_above_start_m": 0.073537,
+      "position_m": [
+        0.579998,
+        -1.999993,
+        0.093537
+      ],
+      "sim_time_s": 10.64,
+      "tilt_deg": 0.0018
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.667204029309103,
+          "right": true,
+          "right_force_n": 11.6673701877157
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.667227768154195,
+          "right": true,
+          "right_force_n": 11.66734644595243
+        }
+      },
+      "event": "physical_hold_sample",
+      "height_above_start_m": 0.073323,
+      "position_m": [
+        0.579998,
+        -1.999992,
+        0.093323
+      ],
+      "sim_time_s": 10.74,
+      "tilt_deg": 0.0018
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.667452531573026,
+          "right": true,
+          "right_force_n": 11.66712167954876
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.667453616426563,
+          "right": true,
+          "right_force_n": 11.667120597284418
+        }
+      },
+      "event": "physical_hold_sample",
+      "height_above_start_m": 0.073109,
+      "position_m": [
+        0.579998,
+        -1.999992,
+        0.093109
+      ],
+      "sim_time_s": 10.84,
+      "tilt_deg": 0.0018
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.667374495695967,
+          "right": true,
+          "right_force_n": 11.667199715528376
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.6673719796418,
+          "right": true,
+          "right_force_n": 11.667202233446888
+        }
+      },
+      "event": "physical_hold_sample",
+      "height_above_start_m": 0.072894,
+      "position_m": [
+        0.579998,
+        -1.999993,
+        0.092894
+      ],
+      "sim_time_s": 10.94,
+      "tilt_deg": 0.0018
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.667188082692569,
+          "right": true,
+          "right_force_n": 11.66738612973687
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.667186792845012,
+          "right": true,
+          "right_force_n": 11.667387418330009
+        }
+      },
+      "event": "physical_hold_sample",
+      "height_above_start_m": 0.072679,
+      "position_m": [
+        0.579998,
+        -1.999993,
+        0.092679
+      ],
+      "sim_time_s": 11.04,
+      "tilt_deg": 0.0018
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.667294152910767,
+          "right": true,
+          "right_force_n": 11.66728005833966
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.667294407061252,
+          "right": true,
+          "right_force_n": 11.667279804608855
+        }
+      },
+      "event": "physical_hold_sample",
+      "height_above_start_m": 0.072464,
+      "position_m": [
+        0.579998,
+        -1.999993,
+        0.092464
+      ],
+      "sim_time_s": 11.14,
+      "tilt_deg": 0.0018
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.667234754527666,
+          "right": true,
+          "right_force_n": 11.66733945709781
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.667233290523011,
+          "right": true,
+          "right_force_n": 11.66734092028746
+        }
+      },
+      "event": "physical_hold_sample",
+      "height_above_start_m": 0.072248,
+      "position_m": [
+        0.579998,
+        -1.999992,
+        0.092248
+      ],
+      "sim_time_s": 11.24,
+      "tilt_deg": 0.0018
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.667304034504758,
+          "right": true,
+          "right_force_n": 11.667270176617505
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.667302598129746,
+          "right": true,
+          "right_force_n": 11.667271613082818
+        }
+      },
+      "event": "physical_hold_sample",
+      "height_above_start_m": 0.072032,
+      "position_m": [
+        0.579998,
+        -1.999992,
+        0.092032
+      ],
+      "sim_time_s": 11.34,
+      "tilt_deg": 0.0018
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.667314067328286,
+          "right": true,
+          "right_force_n": 11.667260143527844
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.667312619468188,
+          "right": true,
+          "right_force_n": 11.667261591921184
+        }
+      },
+      "event": "physical_hold_sample",
+      "height_above_start_m": 0.071817,
+      "position_m": [
+        0.579998,
+        -1.999992,
+        0.091817
+      ],
+      "sim_time_s": 11.44,
+      "tilt_deg": 0.0018
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "contacts": {
+        "r1": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.667266384266004,
+          "right": true,
+          "right_force_n": 11.667307826937833
+        },
+        "r3": {
+          "bilateral": true,
+          "contact_geom": "team_beam_geom",
+          "left": true,
+          "left_force_n": 11.667264927974811,
+          "right": true,
+          "right_force_n": 11.667309283014413
+        }
+      },
+      "event": "physical_hold_sample",
+      "height_above_start_m": 0.071601,
+      "position_m": [
+        0.579998,
+        -1.999992,
+        0.091601
+      ],
+      "sim_time_s": 11.54,
+      "tilt_deg": 0.0018
+    },
+    {
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "duration_s": 2.0,
+      "event": "physical_hold_complete",
+      "height_above_start_m": 0.071601,
+      "position_m": [
+        0.579998,
+        -1.999992,
+        0.091601
+      ],
+      "sim_time_s": 11.54,
+      "tilt_deg": 0.0018
+    }
+  ],
+  "video": "/Users/changmin/projects/ugrp/outputs/side-grasp-20260909/delayed_2s.mp4",
+  "video_duration_s": 12.0,
+  "video_frames": 144,
+  "weld_assistance": false
+}
