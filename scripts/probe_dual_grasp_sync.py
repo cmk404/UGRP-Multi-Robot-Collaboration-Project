@@ -2,8 +2,9 @@
 """Bounded physical probe for simultaneous versus delayed dual beam grasp.
 
 The only direct pose writes are fixture setup, before each trial begins.  During
-the trial, arms move through the shared servo interpolator, contacts come from
-MuJoCo, and endpoint welds are enabled only after bilateral finger contact.
+the trial, arms move through the shared servo interpolator and contacts come from
+MuJoCo. Artificial grasp welds are OFF by default; --with-weld explicitly enables
+them after bilateral finger contact for diagnostic comparisons only.
 Every attempted condition retains a JSON trace and close external-camera MP4,
 including failures.  This is intentionally independent of the production beam
 mission controller and its structural demo path.
@@ -273,7 +274,7 @@ def _step(world: MultiMasterPiProductionV2, seconds: float) -> None:
             world.frame_callback()
 
 
-def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, weld_assistance: bool = True) -> dict[str, Any]:
+def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, weld_assistance: bool = False) -> dict[str, Any]:
     video_path = out_dir / f"{name}.mp4"
     json_path = out_dir / f"{name}.json"
     trace: list[dict[str, Any]] = []
@@ -452,7 +453,12 @@ def main() -> int:
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--seed", type=int, default=11)
     parser.add_argument("--fps", type=int, default=12)
-    parser.add_argument("--no-weld", action="store_true", help="Disable grasp weld assistance; retain real contact gates.")
+    assistance = parser.add_mutually_exclusive_group()
+    assistance.add_argument("--with-weld", dest="weld_assistance", action="store_true",
+                            help="Explicit diagnostic opt-in to artificial grasp weld assistance.")
+    assistance.add_argument("--no-weld", dest="weld_assistance", action="store_false",
+                            help="Use unassisted contact physics (the default).")
+    parser.set_defaults(weld_assistance=False)
     args = parser.parse_args()
     out_dir = args.out_dir.expanduser().resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -470,7 +476,7 @@ def main() -> int:
             "UGRP_BEAM_DYNAMIC": os.environ.get("UGRP_BEAM_DYNAMIC"),
         },
         "config": {
-            "weld_assistance": not args.no_weld,
+            "weld_assistance": args.weld_assistance,
             "seed": args.seed,
             "fps": args.fps,
             "conditions": [
@@ -494,7 +500,7 @@ def main() -> int:
     }
     for name, delay in (("baseline", 0.0), ("delayed_2s", 2.0)):
         manifest["trials"].append(
-            run_trial(out_dir, name=name, delay_s=delay, seed=args.seed, fps=args.fps, weld_assistance=not args.no_weld)
+            run_trial(out_dir, name=name, delay_s=delay, seed=args.seed, fps=args.fps, weld_assistance=args.weld_assistance)
         )
     manifest["all_ok"] = all(item.get("ok") for item in manifest["trials"])
     (out_dir / "manifest.json").write_text(
