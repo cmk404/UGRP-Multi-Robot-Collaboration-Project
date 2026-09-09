@@ -8,6 +8,7 @@ import hashlib
 import json
 from pathlib import Path
 import sys
+import time
 from unittest.mock import patch
 from urllib.request import urlopen
 
@@ -59,6 +60,8 @@ def main() -> int:
     parser.add_argument('--model', default='gemini-3.8-flash')
     parser.add_argument('--timeout', type=float, default=45)
     parser.add_argument('--task', choices=('carry', 'grasp'), default='carry')
+    parser.add_argument('--mode', choices=('baseline', 'memory', 'temporal', 'learned'),
+                        default='baseline', help='Cumulative camera/action-only policy additions')
     args = parser.parse_args()
     if not 1 <= args.rounds <= 30:
         parser.error('rounds must be 1..30 (2..60 bounded requests total)')
@@ -80,8 +83,10 @@ def main() -> int:
                       _plain_beam_xml(production.build_multi_robot_xml)):
         world = production.MultiMasterPiProductionV2(seed=args.seed, render=True,
                                                     width=640, height=480)
+    started = time.monotonic()
     report = {'git_sha': _git(['rev-parse', 'HEAD']), 'config': vars(args).copy(),
-              'input_contract': 'own robot_cam JPEG + shared fixed overhead JPEG only',
+              'input_contract': ('own robot_cam + fixed overhead RGB; mode may retain own '
+                                 'issued commands, prior RGB and learned pixel changes; no truth feedback'),
               'calls': [], 'rounds_completed': 0, 'error': None,
               'transport_success': None, 'grasp_success': None,
               'success_claim': 'grasp evaluation pending fixed round budget'}
@@ -111,7 +116,7 @@ def main() -> int:
                 return urlopen(request, timeout=timeout)
             planners[rid] = CameraPairPlanner(rid, GeminiProxyCompleter(
                 model=args.model, max_tokens=600, timeout=args.timeout,
-                reasoning_effort='none', http_open=audited_open), task=args.task)
+                reasoning_effort='none', http_open=audited_open), task=args.task, mode=args.mode)
         video = Video(world, out / 'motion.mp4', 12)
         world.frame_callback = video.capture
         video.capture(force=True)
@@ -134,7 +139,10 @@ def main() -> int:
                     ports[rid].apply(action, now)
                     report['calls'].append({'round': index, 'robot_id': rid,
                         'action': action, 'response': planners[rid].last_response,
-                        'usage': planners[rid].completer.last_usage})
+                        'usage': planners[rid].completer.last_usage,
+                        'reported_model': planners[rid].completer.last_model,
+                        'model_latency_ms': planners[rid].completer.last_latency_ms,
+                        'learning': getattr(planners[rid], 'last_learning_summary', None)})
                 video.stage = f'image_only_round_{index + 1}'
                 # Fixed command-time slice. Servo interpolation and wheel lease
                 # expiry are actuator execution, never target-position control.
@@ -172,6 +180,7 @@ def main() -> int:
     except Exception as exc:
         report['error'] = f'{type(exc).__name__}: {exc}'
     finally:
+        report['wall_elapsed_s'] = round(time.monotonic() - started, 3)
         report['last_responses'] = {rid: {'response': planner.last_response,
             'usage': planner.completer.last_usage} for rid, planner in planners.items()}
         for rid in ('r1', 'r3'):

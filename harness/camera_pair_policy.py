@@ -9,6 +9,8 @@ import math
 import re
 from typing import Any
 
+from harness.camera_action_learning import CameraActionLearner, visual_features
+
 
 _ROBOTS = {"r1", "r3"}
 _ACTION_FIELDS = {
@@ -38,6 +40,14 @@ of at most 500 characters. action must have exactly one of these forms:
 Numbers must be finite. Return JSON only."""
 
 _USER_TEXT = "Inspect OWN_VIEW and OVERHEAD pixels and select the next action."
+
+_MODE_ORDER = {"baseline": 0, "memory": 1, "temporal": 2, "learned": 3}
+_LEARNING_CANDIDATES = (
+    {"kind": "wait"},
+    {"kind": "drive", "forward": 0.05, "turn": 0.0, "duration_s": 0.3},
+    {"kind": "drive", "forward": 0.0, "turn": -0.1, "duration_s": 0.3},
+    {"kind": "drive", "forward": 0.0, "turn": 0.1, "duration_s": 0.3},
+)
 
 
 def static_task(robot_id: str, task: str = 'carry') -> str:
@@ -108,26 +118,97 @@ def _validate_action(action: Any) -> dict[str, Any]:
 class CameraPairPlanner:
     """Ask a completer using only this robot's current view and the overhead view."""
 
-    def __init__(self, robot_id: str, completer: Any, task: str = 'carry') -> None:
+    def __init__(self, robot_id: str, completer: Any, task: str = 'carry', mode: str = "baseline") -> None:
         if robot_id not in _ROBOTS:
             raise ValueError("robot_id must be r1 or r3")
         self.robot_id = robot_id
         self.completer = completer
         self.task = task
         static_task(robot_id, task)
+        if mode not in _MODE_ORDER:
+            raise ValueError("mode must be baseline, memory, temporal, or learned")
+        self.mode = mode
         self.last_request: dict[str, Any] | None = None
         self.last_response: Any = None
+        self.last_learning_summary: dict[str, Any] | None = None
+        self._actions: list[dict[str, Any]] = []
+        self._previous_images: tuple[bytes, bytes] | None = None
+        self._previous_features = None
+        self._pending_action: dict[str, Any] | None = None
+        self._record_open = False
+        self._learner = CameraActionLearner()
+
+    def prepare_request(self, own_jpeg: bytes, overhead_jpeg: bytes) -> dict[str, Any]:
+        """Build the next request and advance replay state from the prior issued action.
+
+        Auditors can reconstruct an offline sequence by alternating this method with
+        :meth:`record_action`.  Calling ``prepare_request`` observes the pixel change
+        since the preceding call; ``record_action`` associates only a validated issued
+        command with that interval.  Neither method observes physical robot state.
+        """
+        own_uri = _jpeg_data_uri(own_jpeg, "own_jpeg")
+        overhead_uri = _jpeg_data_uri(overhead_jpeg, "overhead_jpeg")
+        level = _MODE_ORDER[self.mode]
+        current_features = visual_features(own_jpeg, overhead_jpeg) if level >= 3 else None
+        if level >= 3 and self._pending_action is not None and self._previous_features is not None:
+            self._learner.observe(self._pending_action, self._previous_features, current_features)
+        self._pending_action = None
+
+        system = static_task(self.robot_id, self.task)
+        user = _USER_TEXT
+        if level >= 1:
+            system = system.replace(
+                "memory,\nhistory, peer status, messages, action budget, or runtime feedback.",
+                "peer status, messages, action budget, measured actuator state, or non-camera runtime feedback.",
+            )
+            system += "\nYou may use the bounded history of your own issued commands below. It is command history, not measured actuator state or proof of execution."
+            user += "\nOWN_ISSUED_ACTIONS (oldest to newest, maximum 4): " + json.dumps(self._actions, separators=(",", ":"))
+        images = [
+            {"label": "OWN_VIEW", "image": own_uri},
+            {"label": "OVERHEAD", "image": overhead_uri},
+        ]
+        if level >= 2 and self._previous_images is not None:
+            system = system.replace(
+                f"exactly two current RGB images: OWN_VIEW is {self.robot_id}'s\nwrist robot_cam, and OVERHEAD is cctv_top.",
+                f"the current and immediately previous RGB image pairs: OWN_VIEW is {self.robot_id}'s\nwrist robot_cam, and OVERHEAD is cctv_top.",
+            )
+            system = system.replace("from the current images.", "from the provided images.")
+            system += "\nPrevious and current image pairs are time ordered camera samples only; scene changes may include peer motion and do not prove your command executed."
+            images.extend([
+                {"label": "PREVIOUS_OWN_VIEW", "image": _jpeg_data_uri(self._previous_images[0], "previous_own_jpeg")},
+                {"label": "PREVIOUS_OVERHEAD", "image": _jpeg_data_uri(self._previous_images[1], "previous_overhead_jpeg")},
+            ])
+        if level >= 3:
+            candidates = list(_LEARNING_CANDIDATES)
+            for issued in self._actions:
+                if issued not in candidates:
+                    candidates.append(copy.deepcopy(issued))
+            self.last_learning_summary = self._learner.summarize(candidates[-8:])
+            system += "\nLEARNED_VISUAL_EFFECT is a bounded ridge estimate from RGB feature changes after your issued commands. Treat sample support, training RMSE, and peer-motion confounding explicitly. Training RMSE is not calibrated uncertainty. It does not establish grasp or success and must not be auto-executed as a macro."
+            user += "\nLEARNED_VISUAL_EFFECT: " + json.dumps(self.last_learning_summary, separators=(",", ":"))
+
+        messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
+        self.last_request = copy.deepcopy({"messages": messages, "images": images})
+        self._previous_images = (bytes(own_jpeg), bytes(overhead_jpeg)) if level >= 2 else None
+        self._previous_features = current_features
+        self._record_open = True
+        return copy.deepcopy(self.last_request)
+
+    def record_action(self, action: dict[str, Any]) -> dict[str, Any]:
+        """Record one validated command issued after the latest prepared request."""
+        if not self._record_open:
+            raise ValueError("prepare_request must precede record_action")
+        validated = _validate_action(action)
+        self._actions.append(validated)
+        del self._actions[:-4]
+        if _MODE_ORDER[self.mode] >= 3:
+            self._pending_action = copy.deepcopy(validated)
+        self._record_open = False
+        return copy.deepcopy(validated)
 
     def decide(self, own_jpeg: bytes, overhead_jpeg: bytes) -> dict[str, Any]:
-        messages = [
-            {"role": "system", "content": static_task(self.robot_id, self.task)},
-            {"role": "user", "content": _USER_TEXT},
-        ]
-        images = [
-            {"label": "OWN_VIEW", "image": _jpeg_data_uri(own_jpeg, "own_jpeg")},
-            {"label": "OVERHEAD", "image": _jpeg_data_uri(overhead_jpeg, "overhead_jpeg")},
-        ]
-        self.last_request = copy.deepcopy({"messages": messages, "images": images})
+        request = self.prepare_request(own_jpeg, overhead_jpeg)
+        messages, images = request["messages"], request["images"]
         raw = self.completer.complete(messages, images=images)
         self.last_response = raw
         if not isinstance(raw, str):
@@ -145,4 +226,6 @@ class CameraPairPlanner:
         reason = response["reason"]
         if not isinstance(reason, str) or not reason.strip() or len(reason) > 500:
             raise ValueError("invalid reason")
-        return _validate_action(response["action"])
+        action = _validate_action(response["action"])
+        self.record_action(action)
+        return action

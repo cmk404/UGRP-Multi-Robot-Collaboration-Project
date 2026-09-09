@@ -26,6 +26,15 @@ class Completer:
 
 
 class CameraPairPlannerTests(unittest.TestCase):
+    def test_mode_validation_and_baseline_request_remain_identical(self):
+        own, top = jpeg(b"own"), jpeg(b"top")
+        implicit, explicit = Completer(), Completer()
+        CameraPairPlanner("r1", implicit).decide(own, top)
+        CameraPairPlanner("r1", explicit, mode="baseline").decide(own, top)
+        self.assertEqual(implicit.calls, explicit.calls)
+        with self.assertRaises(ValueError):
+            CameraPairPlanner("r1", Completer(), mode="oracle")
+
     def test_grasp_task_changes_only_static_instruction(self):
         completer = Completer()
         CameraPairPlanner('r1', completer, task='grasp').decide(jpeg(b'own'), jpeg(b'top'))
@@ -115,6 +124,40 @@ class CameraPairPlannerTests(unittest.TestCase):
         for raw in (f"result:\n```json\n{body}\n```", f"```json\n{body}\n```\nextra"):
             with self.subTest(raw=raw), self.assertRaises(ValueError):
                 CameraPairPlanner("r1", Completer(raw)).decide(jpeg(b"own"), jpeg(b"top"))
+
+    def test_invalid_response_does_not_contaminate_action_memory(self):
+        completer = Completer("not json")
+        planner = CameraPairPlanner("r1", completer, mode="memory")
+        with self.assertRaises(ValueError):
+            planner.decide(jpeg(b"one"), jpeg(b"top-one"))
+        completer.response = {"reason": "pixels", "action": {"kind": "wait"}}
+        planner.decide(jpeg(b"two"), jpeg(b"top-two"))
+        self.assertIn("OWN_ISSUED_ACTIONS (oldest to newest, maximum 4): []", completer.calls[1]["messages"][1]["content"])
+
+    def test_temporal_request_has_only_own_top_current_and_prior_pixels(self):
+        planner = CameraPairPlanner("r3", Completer(), mode="temporal")
+        first = (jpeg(b"own-1"), jpeg(b"top-1"))
+        second = (jpeg(b"own-2"), jpeg(b"top-2"))
+        planner.decide(*first)
+        request = planner.prepare_request(*second)
+        self.assertEqual([item["label"] for item in request["images"]], [
+            "OWN_VIEW", "OVERHEAD", "PREVIOUS_OWN_VIEW", "PREVIOUS_OVERHEAD",
+        ])
+        decoded = [base64.b64decode(item["image"].split(",", 1)[1]) for item in request["images"]]
+        self.assertEqual(decoded, [*second, *first])
+        self.assertNotIn("world_state", json.dumps(request))
+
+    def test_prepare_record_interface_replays_bounded_issued_actions(self):
+        planner = CameraPairPlanner("r1", Completer(), mode="memory")
+        action = {"kind": "wait"}
+        for index in range(6):
+            planner.prepare_request(jpeg(f"own-{index}".encode()), jpeg(f"top-{index}".encode()))
+            planner.record_action(action)
+            with self.assertRaises(ValueError):
+                planner.record_action(action)
+        request = planner.prepare_request(jpeg(b"last"), jpeg(b"top-last"))
+        history = request["messages"][1]["content"].split("OWN_ISSUED_ACTIONS (oldest to newest, maximum 4): ", 1)[1]
+        self.assertEqual(json.loads(history), [action] * 4)
 
 
 if __name__ == "__main__":
