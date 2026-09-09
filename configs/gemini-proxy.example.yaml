@@ -1,0 +1,15 @@
+# CLIProxyAPI v7.2.155: one person's computer and own account only.
+host: "127.0.0.1"
+port: 8391
+auth-dir: "~/.local/share/ugrp/gemini-proxy/auth"
+# UGRP currently sends no Authorization header. Keep the loopback bind above.
+api-keys: []
+remote-management:
+  allow-remote: false
+  secret-key: ""
+  disable-control-panel: true
+  disable-auto-update-panel: true
+request-retry: 0
+quota-exceeded:
+  switch-project: false
+  switch-preview-model: false
