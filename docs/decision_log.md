@@ -2648,3 +2648,13 @@ No physical MasterPi command was issued for this architecture change. The REAL s
 - Decoded all1643/1623video frames and manually reviewed chronological samples,all18/17originalNAV inputs,and finalwrist. Destination-inside,stable,noattachment,visualrelease passed; obstacle/peer>2mm penetration0. Current execution sources match D2 manifest.121tests+23subtests passed; six owned process groups stopped.
 - Scope: seed41/one robot only;60k success and generalization remain unproven. No claim that memory or budget alone caused improvement. Persistent bypass-side state is a future unimplemented cost-reduction candidate. Total current-task70actualcalls/362703reportedinput.
 - Local report docs/navigation_trials_20260908.md; full journal,failed/successful trials,source snapshots,and camera/video evidence outputs/navigation-trials-20260908/. No Drive work per project exception.
+
+
+### 2026-09-09 기록 감사 및 누락된 결정 보완
+
+- 사용자 지적에 따라 기록을 감사했다. 상세 보고서는 있었지만 이 중앙 로그가 9월 8일 D1/D2에 머물렀고 실험 인덱스는 N7만 가리켰다. 아래 내용은 당시 기록을 바탕으로 오늘 보완한 것이며 실험 당시에 작성한 로그로 소급하지 않는다.
+- 저장 정책: 현재 프로젝트 AGENTS.md의 2026-09-07 예외에 따라 UGRP는 Drive를 사용하지 않는다. 위의 과거 Drive 업로드 기록은 역사적 사실로 보존하되 향후 저장 지침으로 해석하지 않는다. 코드·요약은 GitHub, raw는 현재 로컬이며 원격 복구는 [이슈 #3](https://github.com/kcm0127-dotcom/ugrp/issues/3)에 남아 있다.
+- D1/D2 이후: [고정 시드 수정](navigation_generalization_repair_20260908.md) E7r1은 42~46에서 5/5. 동일 시드를 반복 튜닝한 결과로 미관측 조건 일반화가 아니다. E7 응답 장애 중단 기록과 분리한다.
+- [표식 제거](markerless_blocks_20260909.md) M4는 2/5였고, [후속 개선](markerless_improvement_trials_20260909.md) N7은 고정 소스로 5/5였다. N1 단독 실행, N2 영상 QA 폐기, N3~N6 실패와 진단 중단을 보존한다. 물리 설정과 기존 완료 기준을 유지하고 RGB 인식·문맥·지시문을 개선했다. 실제 하드웨어·다중 로봇 성공은 검증하지 않았다.
+- [GitHub 관리](github_management_20260909.md): 소스 기준 커밋 c6eb676a3fcf1fd2d9f9911825085dd62542f251은 N7 실행 후 생성됐다. 이번 감사에서도 고정 manifest의 125개 Git blob SHA-256이 모두 일치했다. 향후에는 실행 전에 소스를 커밋한다. 관리 PR #4에서 원본 outputs 의존 테스트를 포터블 fixture로 수정했고 CI 188개+107개 세부 검사가 통과했다.
+- 감사 보완: [실험 인덱스](../experiments/README.md)에 이전 단계와 실패 보고서를 연결하고 [26회 실행 표](../experiments/2026-09-09-markerless-trials/README.md)를 Git에 보존했다. 26개 로컬 result.json과 성공 여부·종료 사유·활성 SIM 시간을 대조했다. 호출·토큰 재집계, 전체 과거 실험의 커밋 매핑 및 raw 원격 백업까지 완료한 것은 아니다. 새 모델 호출이나 시뮬레이션은 실행하지 않았다.
