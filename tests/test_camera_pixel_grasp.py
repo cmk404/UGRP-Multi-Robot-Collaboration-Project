@@ -171,3 +171,10 @@ def test_newly_observable_own_endpoint_does_not_add_an_unmatched_cost_penalty():
         action=c.step(b'own',b'top')
     assert action['kind']=='drive' and action['forward']>0
     assert c.repeat=='forward'
+
+
+def test_offscreen_fitted_own_endpoint_is_not_observed_alignment():
+    own=own_beam(.58);own['endpoints']=[[.58,1.074],[.05,.45]]
+    a=alignment_features(grip(),beam(),own_beam=own,own_endpoint=[.58,1.06])
+    assert a['own_endpoint'] is None and a['own_aim_error_px'] is None
+    assert a['cost']==a['top_cost']

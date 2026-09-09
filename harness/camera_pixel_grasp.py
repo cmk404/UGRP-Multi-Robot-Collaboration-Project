@@ -32,6 +32,9 @@ def _own_beam_endpoint(own_beam, previous_endpoint=None):
             own_beam['endpoints'],
             key=lambda p: ((p[0] - reference[0]) * own_width) ** 2 + ((p[1] - reference[1]) * own_height) ** 2,
         )
+    if not all(0.0 <= value <= 1.0 for value in aim):
+        # A fitted rectangle may extrapolate beyond a clipped image contour.
+        return None
     return list(aim)
 
 
