@@ -50,6 +50,7 @@ def main() -> int:
               'transport_success': False, 'success_claim': 'input boundary validation only'}
     report['config']['out_dir'] = str(out)
     video = None
+    planners = {}
     try:
         for rid, y in [('r1', -2.325), ('r3', -1.675)]:
             world.controllers[rid].set_base_pose_for_test((-.02, y, .0324), 0.0)
@@ -62,7 +63,6 @@ def main() -> int:
             world.model.cam_fovy[cid] = 55
         mujoco.mj_forward(world.model, world.data)
         ports = {rid: CameraRobotPort(world, rid) for rid in ('r1', 'r3')}
-        planners = {}
         request_counts = {'r1': 0, 'r3': 0}
         for rid in ports:
             (out / rid).mkdir()
@@ -114,6 +114,8 @@ def main() -> int:
     except Exception as exc:
         report['error'] = f'{type(exc).__name__}: {exc}'
     finally:
+        report['last_responses'] = {rid: {'response': planner.last_response,
+            'usage': planner.completer.last_usage} for rid, planner in planners.items()}
         for rid in ('r1', 'r3'):
             world.controllers[rid].set_motor_commands(production.STOP)
         world.frame_callback = None

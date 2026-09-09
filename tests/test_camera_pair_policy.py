@@ -20,6 +20,8 @@ class Completer:
 
     def complete(self, messages, *, images):
         self.calls.append({"messages": messages, "images": images})
+        if isinstance(self.response, str):
+            return self.response
         return json.dumps(self.response, allow_nan=True)
 
 
@@ -93,6 +95,16 @@ class CameraPairPlannerTests(unittest.TestCase):
         planner = CameraPairPlanner("r3", Completer(response))
         self.assertEqual(planner.decide(jpeg(b"own"), jpeg(b"top")), response["action"])
         self.assertEqual(json.loads(planner.last_response), response)
+
+    def test_accepts_only_optional_standard_json_fence(self):
+        body = '{"reason":"pixels","action":{"kind":"wait"}}'
+        for raw in (f"```json\n{body}\n```", f"```\n{body}\n```"):
+            with self.subTest(raw=raw):
+                action = CameraPairPlanner("r1", Completer(raw)).decide(jpeg(b"own"), jpeg(b"top"))
+                self.assertEqual(action, {"kind": "wait"})
+        for raw in (f"result:\n```json\n{body}\n```", f"```json\n{body}\n```\nextra"):
+            with self.subTest(raw=raw), self.assertRaises(ValueError):
+                CameraPairPlanner("r1", Completer(raw)).decide(jpeg(b"own"), jpeg(b"top"))
 
 
 if __name__ == "__main__":

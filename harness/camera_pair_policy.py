@@ -6,6 +6,7 @@ import base64
 import copy
 import json
 import math
+import re
 from typing import Any
 
 
@@ -106,8 +107,12 @@ class CameraPairPlanner:
         self.last_response = raw
         if not isinstance(raw, str):
             raise ValueError("response must be JSON text")
+        text = raw.strip()
+        fenced = re.fullmatch(r"```(?:json)?\s*\n([\s\S]*?)\n```", text, re.IGNORECASE)
+        if fenced:
+            text = fenced.group(1).strip()
         try:
-            response = json.loads(raw)
+            response = json.loads(text)
         except json.JSONDecodeError as exc:
             raise ValueError("response must be JSON text") from exc
         if not isinstance(response, dict) or set(response) != {"reason", "action"}:
