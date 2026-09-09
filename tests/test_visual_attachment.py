@@ -10,6 +10,9 @@ import numpy as np
 from harness.visual_attachment import _cyan_object_mask, compare_box_comotion
 
 
+RECORDED = Path(__file__).parent / "fixtures" / "ci_recorded" / "visual_attachment"
+
+
 def encode(frame):
     ok, payload = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, 98])
     assert ok
@@ -58,13 +61,10 @@ class VisualAttachmentTests(unittest.TestCase):
         self.assertGreater(result["centroid_delta_px"], 8)
 
     def test_own_pan_calibration_accepts_saved_held_box_frames(self):
-        root = Path(__file__).resolve().parents[1] / "outputs/warehouse_research/coela-gemini38-verified-01"
         pairs = (
-            (root / "team-41/inputs/r2/0120-wrist.jpg", root / "team-41/inputs/r2/0121-wrist.jpg"),
-            (root / "team-73/inputs/r2/0233-wrist.jpg", root / "team-73/inputs/r2/0234-wrist.jpg"),
+            (RECORDED / "pan_team41/anchor-wrist.jpg", RECORDED / "pan_team41/panned-wrist.jpg"),
+            (RECORDED / "pan_team73/anchor-wrist.jpg", RECORDED / "pan_team73/panned-wrist.jpg"),
         )
-        if not all(path.exists() for pair in pairs for path in pair):
-            self.skipTest("saved physical held-box regression frames are unavailable")
         for before, after in pairs:
             with self.subTest(after=after.name):
                 result = compare_box_comotion(
@@ -156,17 +156,11 @@ class VisualAttachmentTests(unittest.TestCase):
                     result["reason"], "CLOSE_CYAN_OBJECT_NOT_VISIBLE_IN_BOTH_FRAMES")
 
     def test_saved_compliant_held_box_passes_full_sweep_geometry(self):
-        cohort = (Path(__file__).resolve().parents[1] /
-                  "outputs/warehouse_research/coela-camera-repaired-01")
-        sweeps = ((cohort / "team-41-natural/inputs/r2", (192, 193, 194, 195)),
-                  (cohort / "team-41-status/inputs/r2", (221, 222, 223, 224)))
-        if not all((root / f"{step:04d}-wrist.jpg").exists()
-                   for root, steps in sweeps for step in steps):
-            self.skipTest("saved compliant held-box sweep is unavailable")
-        for root, steps in sweeps:
+        for root in (RECORDED / "sweep_natural", RECORDED / "sweep_status"):
             anchor, left, right, home = [base64.b64encode(
-                (root / f"{step:04d}-wrist.jpg").read_bytes()).decode() for step in steps]
-            with self.subTest(run=root.parents[1].name):
+                (root / f"{name}-wrist.jpg").read_bytes()).decode()
+                for name in ("anchor", "left", "right", "home")]
+            with self.subTest(run=root.name):
                 self.assertTrue(compare_box_comotion(left, right, camera_pan_delta_pwm=-120)["attached"])
                 self.assertTrue(compare_box_comotion(anchor, home)["attached"])
 

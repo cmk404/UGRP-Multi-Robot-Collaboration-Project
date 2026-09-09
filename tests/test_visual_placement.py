@@ -13,6 +13,7 @@ from harness.visual_placement import _project_ground, inspect_placement
 
 
 POSE = {"3": 705, "4": 1742, "5": 2207, "6": 1554}
+RECORDED = Path(__file__).parent / "fixtures" / "ci_recorded" / "visual_placement"
 
 
 def obs(frame: np.ndarray, camera: str) -> dict:
@@ -100,17 +101,13 @@ class VisualPlacementTests(unittest.TestCase):
                          ("uncertain", "TARGET_POSITION_UNOBSERVABLE"))
 
     def test_recorded_r2_call68_is_not_false_inside(self):
-        root = Path(__file__).resolve().parents[1]
-        folder = root / "outputs/warehouse_research/gemini38-team-dev-01/inputs/r2"
-        if not folder.exists():
-            self.skipTest("recorded Gemini development frames unavailable")
         def recorded(path: Path, camera: str) -> dict:
             data = path.read_bytes()
             return {"camera": camera, "image": base64.b64encode(data).decode(),
                     "sha256": hashlib.sha256(data).hexdigest(),
                     "actuator_state": {"servo_pulses": POSE}}
-        result = inspect_placement(recorded(folder / "0181-wrist.jpg", "robot_cam"),
-                                   recorded(folder / "0181-nav.jpg", "nav_cam"),
+        result = inspect_placement(recorded(RECORDED / "0181-wrist.jpg", "robot_cam"),
+                                   recorded(RECORDED / "0181-nav.jpg", "nav_cam"),
                                    perception_mode="fiducial", cargo_id="small_box_02", destination_zone="B",
                                    stage="before_release", held_identity_confirmed=True)
         self.assertNotEqual(result["status"], "inside", result)
@@ -122,18 +119,14 @@ class VisualPlacementTests(unittest.TestCase):
                          "367561b6c250b18165725b8f27aeea43eed1fd003bedbc88a3caa24d99eb9e30")
 
     def test_recorded_r2_post_release_marker_confirms_outside(self):
-        root = Path(__file__).resolve().parents[1]
-        folder = root / "outputs/warehouse_research/gemini38-team-dev-01/inputs/r2"
-        if not folder.exists():
-            self.skipTest("recorded Gemini development frames unavailable")
         released_pose = {"1": 2000, "3": 500, "4": 2392, "5": 1320, "6": 1500}
         def recorded(path: Path, camera: str) -> dict:
             data = path.read_bytes()
             return {"camera": camera, "image": base64.b64encode(data).decode(),
                     "sha256": hashlib.sha256(data).hexdigest(),
                     "actuator_state": {"servo_pulses": released_pose}}
-        result = inspect_placement(recorded(folder / "0200-wrist.jpg", "robot_cam"),
-                                   recorded(folder / "0200-nav.jpg", "nav_cam"),
+        result = inspect_placement(recorded(RECORDED / "0200-wrist.jpg", "robot_cam"),
+                                   recorded(RECORDED / "0200-nav.jpg", "nav_cam"),
                                    perception_mode="fiducial", cargo_id="small_box_02", destination_zone="B", stage="released")
         self.assertEqual(result["status"], "outside", result)
         self.assertTrue(result["identity"]["confirmed"])
