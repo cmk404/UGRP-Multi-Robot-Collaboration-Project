@@ -76,9 +76,62 @@ class GripperMotionTracker:
         if count <= 1:
             self._track = None
             return _result(reason="no measurable isolated gripper motion")
-        largest = int(np.max(stats[1:, cv2.CC_STAT_AREA]))
-        minimum = max(8, int(round(h * w * 0.000025)), int(math.ceil(largest * 0.12)))
-        ids = [i for i in range(1, count) if int(stats[i, cv2.CC_STAT_AREA]) >= minimum]
+
+        def meaningful(component_stats: np.ndarray) -> list[int]:
+            largest = int(np.max(component_stats[1:, cv2.CC_STAT_AREA]))
+            minimum = max(
+                8, int(round(h * w * 0.000025)), int(math.ceil(largest * 0.12))
+            )
+            return [
+                i for i in range(1, len(component_stats))
+                if int(component_stats[i, cv2.CC_STAT_AREA]) >= minimum
+            ]
+
+        ids = meaningful(stats)
+        # At close range JPEG-scale low-contrast pixels can bridge the two jaw
+        # lobes.  Only when the normal threshold produces one lobe, seek a
+        # stronger-contrast split inside the already-vetted compact raw region.
+        # Multiple thresholds and a balance/support score avoid accepting one
+        # bright speck beside a dominant moving body as a second finger.
+        if len(ids) < 2:
+            candidates = []
+            for threshold in range(16, 26):
+                candidate_mask = (color_delta > threshold).astype(np.uint8)
+                c_count, c_labels, c_stats, c_centroids = cv2.connectedComponentsWithStats(
+                    candidate_mask, 8
+                )
+                if c_count <= 1:
+                    continue
+                c_ids = meaningful(c_stats)
+                if not 2 <= len(c_ids) <= 8:
+                    continue
+                centers = c_centroids[c_ids].astype(np.float64)
+                centered_centers = centers - centers.mean(axis=0)
+                covariance = centered_centers.T @ centered_centers / max(1, len(c_ids) - 1)
+                eigenvalues = np.linalg.eigvalsh(covariance)
+                linearity = float(eigenvalues[-1] / max(eigenvalues[-2], 1e-6))
+                sizes = [int(c_stats[i, cv2.CC_STAT_AREA]) for i in c_ids]
+                axis_span = math.sqrt(max(0.0, float(eigenvalues[-1])))
+                balance = min(sizes) / max(sizes)
+                if linearity < 1.8 or axis_span < 2.5 or balance < 0.35:
+                    continue
+                axis_candidate = np.linalg.eigh(covariance)[1][:, -1]
+                score = min(linearity, 50.0) * balance * sum(sizes)
+                candidates.append(
+                    (score, threshold, c_labels, c_stats, c_centroids, c_ids,
+                     axis_candidate, centers.mean(axis=0))
+                )
+            if len(candidates) >= 3:
+                best = max(
+                    candidates, key=lambda item: (item[0], item[1])
+                )
+                supporters = sum(
+                    abs(float(np.dot(best[6], candidate[6]))) >= 0.95
+                    and float(np.linalg.norm(best[7] - candidate[7])) <= 3.0
+                    for candidate in candidates
+                )
+                if supporters >= 3:
+                    _, _, labels, stats, centroids, ids, _, _ = best
         if len(ids) < 2:
             self._track = None
             return _result(reason="fewer than two meaningful motion lobes")

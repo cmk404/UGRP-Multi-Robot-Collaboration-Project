@@ -81,6 +81,33 @@ def test_no_pixel_change_cannot_fake_calibration():
     assert "no measurable" in result["reason"]
 
 
+def test_low_contrast_jpeg_bridge_is_split_by_corresponding_high_contrast_lobes():
+    rng = np.random.default_rng(18)
+    before = np.full((240, 320, 3), 45, np.uint8)
+    before += rng.integers(0, 5, before.shape, dtype=np.uint8)
+    after = before.copy()
+    # Two textured vertical motion lobes with a weaker JPEG-like connecting
+    # trace: threshold 15 is one component, stronger support separates them.
+    after[91:101, 157:164] = np.clip(
+        after[91:101, 157:164].astype(np.int16) + 42, 0, 255
+    ).astype(np.uint8)
+    after[111:121, 157:164] = np.clip(
+        after[111:121, 157:164].astype(np.int16) + 42, 0, 255
+    ).astype(np.uint8)
+    after[101:111, 160:161] = np.clip(
+        after[101:111, 160:161].astype(np.int16) + 18, 0, 255
+    ).astype(np.uint8)
+    tracker = GripperMotionTracker()
+    tracker.update(_jpeg(before), None)
+    result = tracker.update(
+        _jpeg(after), {"kind": "arm", "servo_id": 1, "pulse": 1500}
+    )
+    assert result["valid"], result
+    assert abs(result["opening_axis"][1]) > 0.9
+    assert result["span_px"] >= 15
+    assert result["tracked_points"] >= 3
+
+
 def test_broad_whole_image_motion_is_rejected():
     tracker = GripperMotionTracker()
     first = _scene(False)
