@@ -15,6 +15,7 @@ GAINS = {"yaw": .3, "lateral": .35, "forward": .2}
 # headings +/-0.25, 0.5, 0.75, and 1 degree, with 3 mm forward/2 mm lateral
 # offsets (8/8). This 0.344-degree visual stop band leaves estimation margin.
 TOLERANCES = {"yaw": .006, "lateral": .0025, "forward": .004}
+MOVING_TARGET_FRACTION = .75
 
 
 def fit_pose_stage_model(reference_own, reference_top, samples, rid, stage,
@@ -32,6 +33,7 @@ def fit_pose_stage_model(reference_own, reference_top, samples, rid, stage,
     return {"schema": SCHEMA, "robot_id": rid, "stage": stage,
             "runtime_inputs": ["fixed_top_rgb"], "geometry": geometry,
             "settings": {"gain": GAINS[stage], "tolerance": TOLERANCES[stage],
+                         "moving_target_fraction": MOVING_TARGET_FRACTION,
                          "command_bounds": list(COMMAND_BOUNDS[stage]),
                          "minimum_moving_command": MIN_MOVING_COMMAND},
             "diagnostics": geometry["diagnostics"]}
@@ -44,6 +46,7 @@ def predict_pose_stage(model, own_jpeg, top_jpeg):
             or model.get("robot_id") not in ("r1", "r3")):
         raise ValueError("invalid RGB pose model")
     expected = {"gain": GAINS[stage], "tolerance": TOLERANCES[stage],
+                "moving_target_fraction": MOVING_TARGET_FRACTION,
                 "command_bounds": list(COMMAND_BOUNDS[stage]),
                 "minimum_moving_command": MIN_MOVING_COMMAND}
     if model.get("settings") != expected:
@@ -63,11 +66,16 @@ def predict_pose_stage(model, own_jpeg, top_jpeg):
     error = float(result["error"])
     if not math.isfinite(error):
         raise ValueError("nonfinite image-derived alignment error")
-    ready = abs(error) <= TOLERANCES[stage]
+    # Drive toward the inner target; hold and final checks use the outer band.
+    # This absorbs observed subpixel changes after the wheels stop without
+    # permitting any motion during a stationary confirmation.
+    ready = abs(error) <= TOLERANCES[stage] * MOVING_TARGET_FRACTION
+    stationary_ready = abs(error) <= TOLERANCES[stage]
     command = 0. if ready else math.copysign(max(MIN_MOVING_COMMAND, abs(error * GAINS[stage])), error)
     low, high = COMMAND_BOUNDS[stage]
     command = max(low, min(high, command))
     return {"ok": True, "command": command, "ready_score": float(ready), "ready": ready,
+            "stationary_ready": stationary_ready,
             "precision": result.get("precision", "fine"),
             "reason": "visual_pose_ready" if ready else "visual_pose_command",
             "diagnostics": {**result["diagnostics"], "image_derived_error": error}}

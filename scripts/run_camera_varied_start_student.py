@@ -47,7 +47,9 @@ def load_stage_models(root):
 def choose_stage_actions(decisions, stage, confirming=False):
     """Use image predictions only. Confirmation never drives the wheels."""
     valid = all(bool(decisions[r]['ok']) for r in ROBOTS)
-    ready = {r: bool(decisions[r]['ok'] and decisions[r]['ready']) for r in ROBOTS}
+    ready = {r: bool(decisions[r]['ok'] and
+                    (decisions[r].get('stationary_ready', decisions[r]['ready'])
+                     if confirming else decisions[r]['ready'])) for r in ROBOTS}
     commands = {r: dict(forward=0., left=0., turn=0.) for r in ROBOTS}
     if valid and not confirming:
         for r in ROBOTS:
@@ -171,7 +173,7 @@ def main():
                 checks = {r: {s: predict_stage(stage_models[r][s], frames[r]['own_bytes'], frames[r]['top_bytes']) for s in AXES} for r in ROBOTS}
                 report['final_alignment_checks'].append({'frame_ids': {r: frames[r]['frame_id'] for r in ROBOTS},
                     'images': {r: {'own': frames[r]['own_rgb'], 'top': frames[r]['shared_top_rgb']} for r in ROBOTS}, 'decisions': checks})
-                report['approach_ok'] &= all(d['ok'] and d['ready'] and d.get('precision', 'fine') == 'fine'
+                report['approach_ok'] &= all(d['ok'] and d.get('stationary_ready', d['ready']) and d.get('precision', 'fine') == 'fine'
                                             for stages in checks.values() for d in stages.values())
                 scene.stop_dwell()
         report['approach_elapsed_sim_s'] = scene.time() - approach_start

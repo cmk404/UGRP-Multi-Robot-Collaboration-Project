@@ -182,7 +182,7 @@ def train(teacher_dir: Path | str, out_dir: Path | str, *, backend: str = "kerne
                     "own_jpeg": loaded[sample_id][0], "top_jpeg": loaded[sample_id][1],
                     "command": label["command"], "ready": label["ready"],
                     **({"error": label["teacher_truth"]["error"]} if backend == "geometry" else {})})
-            selected = _balanced(domain)
+            selected = domain if backend == "geometry" else _balanced(domain)
             if len({row["case_id"] for row in selected}) < 4:
                 raise ValueError(f"{rid}/{stage} requires at least four successful cases")
             model = fitter(ref_own, ref_top, selected, rid, stage,
@@ -204,13 +204,14 @@ def train(teacher_dir: Path | str, out_dir: Path | str, *, backend: str = "kerne
                            "fresh_stationary_confirmations": 2},
              "models": records}
     if backend == "geometry":
-        from harness.camera_varied_start_pose_student import TOLERANCES
+        from harness.camera_varied_start_pose_student import TOLERANCES, MOVING_TARGET_FRACTION
         skill["readiness"] = {"image_derived_absolute_error_tolerances": TOLERANCES,
+                              "moving_target_fraction": MOVING_TARGET_FRACTION,
                               "fresh_stationary_confirmations": 2}
     _write(out / "varied-start-skill.json", skill)
     result = {"backend": backend, "source_sha": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
               "teacher_dir": str(teacher), "successful_cases": successful,
-              "excluded_cases": excluded, "regression_cap_per_robot_stage": REGRESSION_CAP,
+              "excluded_cases": excluded, "regression_cap_per_robot_stage": None if backend == "geometry" else REGRESSION_CAP,
               "input_hashes": {"report.json": _sha(report_path), "actor-samples.jsonl": _sha(actors_path),
                                "teacher-labels.jsonl": _sha(labels_path)},
               "models": records, "diagnostics": diagnostics,
@@ -226,7 +227,9 @@ def main() -> int:
     parser.add_argument("--backend", choices=("kernel", "geometry"), default="kernel")
     args = parser.parse_args()
     result = train(args.teacher_dir, args.out_dir, backend=args.backend)
-    print(json.dumps({"models": result["models"], "diagnostics": result["diagnostics"]}, sort_keys=True))
+    print(json.dumps({"models": result["models"], "diagnostics": {
+        rid: {stage: value["model"] for stage, value in rows.items()}
+        for rid, rows in result["diagnostics"].items()}}, sort_keys=True))
     return 0
 
 

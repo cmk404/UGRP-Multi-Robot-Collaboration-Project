@@ -24,5 +24,15 @@ class VariedRunnerTests(unittest.TestCase):
         self.assertFalse(c['valid'])
         self.assertTrue(all(v == 0 for r in c['commands'].values() for v in r.values()))
 
+    def test_hold_band_accepts_small_settling_change_without_moving(self):
+        d = {r: dict(ok=True, ready=False, stationary_ready=True, command=.01)
+             for r in ('r1', 'r3')}
+        moving = choose_stage_actions(d, 'yaw')
+        self.assertFalse(moving['enter_confirmation'])
+        self.assertEqual(moving['commands']['r1']['turn'], .01)
+        holding = choose_stage_actions(d, 'yaw', confirming=True)
+        self.assertTrue(all(holding['ready'].values()))
+        self.assertTrue(all(v == 0 for r in holding['commands'].values() for v in r.values()))
+
 if __name__ == '__main__':
     unittest.main()

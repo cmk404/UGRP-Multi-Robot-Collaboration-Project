@@ -91,6 +91,18 @@
       "setup": "opposite robot headings +/-0.25,+/-0.5,+/-0.75,+/-1 degree with 3mm forward offset and opposing 2mm lateral offsets",
       "grasp_decisions_replayed": 256,
       "video_review": "1degree sign+1 four frames including lift"
+    },
+    {
+      "source_sha": "81793ec1f2f19fd3663e2e461af22ab7fbd70509",
+      "model_raw_dir": "/Users/changmin/projects/ugrp/outputs/varied-start-model-20260910-v2",
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/varied-start-development-20260910-v2",
+      "purpose": "geometry student full development cohort",
+      "cases": 8,
+      "success": 6,
+      "approach_payload_contact_steps": 0,
+      "audit_all_passed": true,
+      "finding": "01 final r3 yaw estimate 0.006228 exceeded 0.006 after later lateral correction; 03 stationary lateral estimate changed 0.002444 to0.002501 versus0.0025 limit. Other6 fullgrasp. Introduce inner movement target at75% of unchanged stationary tolerances; stationary confirmations still issue onlyzero commands.",
+      "training_metadata_note": "v2 wrapper reported selected600 although geometry fit correctly used all stage domain samples; actual model diagnostics report779 yaw/760 lateral/841forward perrobot. Corrected future trainer metadata."
     }
   ],
   "teacher_controller": {
@@ -131,5 +143,16 @@
     "lateral_stop_tolerance_m": 0.0025,
     "forward_stop_tolerance_m": 0.004,
     "actuator": "preserve teacher gain and 0.01 friction minimum; no privileged runtime state"
+  },
+  "candidate_v3": {
+    "change": "stop/hold hysteresis: drive toward75% of the stationary error limits; confirm and finalchecks use originallimits withfineheadingrequired",
+    "stationary_tolerances": {
+      "yaw_rad": 0.006,
+      "lateral_m": 0.0025,
+      "forward_m": 0.004
+    },
+    "moving_target_fraction": 0.75,
+    "same_teacher_data": true,
+    "final_execution": "Two independent process shards may run concurrently; every original case included once percondition, source/model freeze spansbothshards, percase physics/RGB pairing and exactaudits unchanged."
   }
 }

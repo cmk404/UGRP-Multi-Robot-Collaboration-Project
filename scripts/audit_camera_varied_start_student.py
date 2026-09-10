@@ -269,7 +269,7 @@ def audit(run_dir: Path | str, stage_model_dir: Path | str,
                     decision = _predict_stage(stage_models[rid][axis], own, top)
                     if _canonical(decision) != saved[rid][axis]:
                         raise ValueError(f"final alignment decision mismatch: {rid}/{axis}/{check_index}")
-                    final_alignment_ok &= bool(decision["ok"] and decision["ready"]
+                    final_alignment_ok &= bool(decision["ok"] and decision.get("stationary_ready", decision["ready"])
                                                and decision.get("precision", "fine") == "fine")
             expected_trace.append(_zero_drive_actions())
         approach_ok &= final_alignment_ok
