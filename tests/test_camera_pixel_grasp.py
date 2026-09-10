@@ -665,3 +665,23 @@ def test_failed_capture_at_command_limit_opens_restores_and_stops_without_retria
     ]
     assert c.stage=='blocked' and c.recovery==[]
     assert step_with(c,grip(),beam())=={'kind':'wait'}
+
+
+def test_failed_capture_starts_a_fresh_local_budget_at_the_next_commanded_height():
+    c=PixelGraspController('r1');c.stage='lift';c.lift_steps=3
+    c.lift_pulse=1900;c.pulses[5]=1750;c.pulses[1]=1500
+    c.basin_active_calls=BASIN_ACTIVE_BUDGET+20
+    c.basin_origin=1320;c.basin_targets=[1370,1270];c.basin_index=1
+    c.basin_target=1370;c.search_anchor={'old':True}
+    old_jacobian=c.jacobian
+    with patch.object(c,'_visual_lift',return_value=False):
+        actions=[step_with(c,grip(),beam()) for _ in range(4)]
+    assert actions[-1]=={'kind':'arm','servo_id':5,'pulse':1950}
+    assert c.basin_active_calls<BASIN_ACTIVE_BUDGET
+    assert c.basin_origin is None and c.basin_targets==[] and c.basin_index==0
+    assert c.basin_target is None and c.search_anchor is None
+    assert c.jacobian is not old_jacobian
+    assert c.stage=='align' and c.refresh_required
+    tracked=grip();tracked['source']='verified_optical_flow'
+    assert step_with(c,tracked,beam())=={'kind':'arm','servo_id':1,'pulse':1500}
+    assert c.basin_index==0

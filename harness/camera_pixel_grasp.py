@@ -437,6 +437,15 @@ class PixelGraspController:
                     self.recovery.append({'kind':'arm','servo_id':5,'pulse':min(2500,self.lift_pulse+50)})
                 self.height_lock=True
                 self.search_level=0
+                # A failed capture moves to a new commanded height.  Do not
+                # spend its local-search budget on earlier trials or reuse a
+                # Jacobian/escape anchor learned before this height change.
+                self.basin_active_calls=0
+                self.basin_origin=None;self.basin_targets=[];self.basin_index=0
+                self.basin_target=None
+                self.search_anchor=None
+                self.jacobian=LocalPixelJacobian();self.last_learned_outcome=None
+                self.measurement_rounds=0
             else:
                 self.lift_steps += 1
                 return self._issue(self._joint(5,-50),'small commanded test lift; inspect object motion in both views',obs)
@@ -444,6 +453,7 @@ class PixelGraspController:
             action=self.recovery.pop(0)
             if not self.recovery:
                 self.stage='blocked' if self.capture_height_exhausted else 'align'
+                self.refresh_required=not self.capture_height_exhausted
             reason = ('open and restore after unconfirmed capture; height-command range exhausted'
                       if self.capture_height_exhausted else
                       'restore commands after unconfirmed capture and explore next height')
