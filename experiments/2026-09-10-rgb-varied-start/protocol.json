@@ -40,5 +40,16 @@
     "grasp": "height>=.03m with bilateral contact and weld off continuously>=2s"
   },
   "storage": "Source committed before each run and frozen throughout each cohort. All failures retained. Video raw local unless explicitly archived. No Drive.",
-  "status": "declared_before_collection"
+  "status": "declared_before_collection",
+  "development_history": [
+    {
+      "source_sha": "f025813",
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/varied-start-teacher-smoke-20260910-v1",
+      "purpose": "physical teacher corner smoke before training",
+      "cases": 1,
+      "success": 0,
+      "approach_payload_contact_steps": 0,
+      "finding": "Yaw command shrank to0.0046 and stalled at0.01534rad after18simseconds; raise teacher minimum moving yaw to0.01 while preserving gain0.3,tolerance0.0035rad,max0.06."
+    }
+  ]
 }

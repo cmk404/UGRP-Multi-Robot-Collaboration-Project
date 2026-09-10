@@ -24,7 +24,7 @@ def clipped(value,low,high,min_abs):
  if value and abs(value)<min_abs:value=math.copysign(min_abs,value)
  return value
 def teacher_label(stage,rid,xyz,rpy,fixture):
- if stage=='yaw':error=-float(rpy[2]);command=clipped(error*.3,-.06,.06,.004)
+ if stage=='yaw':error=-float(rpy[2]);command=clipped(error*.3,-.06,.06,.01)
  elif stage=='lateral':error=float(fixture[rid][1])-float(xyz[1]);command=clipped(error*.35,-.06,.06,.01)
  else:error=float(fixture[rid][0])-float(xyz[0]);command=clipped(error*.2,-.05,.15,.01)
  ready=abs(error)<=TOLS[stage]
