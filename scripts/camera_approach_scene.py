@@ -89,6 +89,7 @@ class ApproachScene:
 
     def open(self, base_offsets: Mapping[str, float] | None = None, *,
              start_poses: Mapping[str, Mapping[str, Any]] | None = None):
+        starts = validate_start_poses(start_poses) if start_poses is not None else None
         import mujoco
         from unittest.mock import patch
         import sim.multi_masterpi_production as production
@@ -101,7 +102,6 @@ class ApproachScene:
                           _plain_beam_xml(production.build_multi_robot_xml)):
             self.world = production.MultiMasterPiProductionV2(
                 seed=int(self.fixture['seed']), width=960, height=720, render=True)
-        starts = validate_start_poses(start_poses) if start_poses is not None else None
         offsets = ({r: starts[r]['distance_m'] for r in ROBOTS} if starts is not None
                    else base_offsets or {r: 0.0 for r in ROBOTS})
         for rid in ROBOTS:

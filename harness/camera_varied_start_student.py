@@ -144,27 +144,36 @@ def predict_stage(model: dict[str, Any], own_jpeg: bytes, top_jpeg: bytes) -> di
     alpha = np.asarray(model.get("kernel_alpha_scaled"), dtype=np.float64)
     bandwidth, limit = model.get("bandwidth"), model.get("pca_residual_limit")
     settings = model.get("settings")
+    expected_bounds = list(COMMAND_BOUNDS[stage])
     if (reference.ndim != 1 or components.ndim != 2 or components.shape[1:] != reference.shape
             or not 1 <= len(components) <= MAX_COMPONENTS or support.shape != (len(alpha), len(components))
             or alpha.shape != (len(support), 2) or not isinstance(settings, dict)
+            or settings.get("command_bounds") != expected_bounds
+            or settings.get("command_scale") != max(abs(v) for v in expected_bounds)
+            or settings.get("ready_score") != READY_SCORE
+            or settings.get("ready_command_max") != READY_COMMAND
             or any(isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) or v <= 0
                    for v in (bandwidth, limit))
             or not all(np.all(np.isfinite(v)) for v in (reference, components, support, alpha))):
         raise ValueError("invalid varied-start model arrays or settings")
     difference = _encode(own_jpeg, top_jpeg, rid) - reference
+    feature_error = float(np.linalg.norm(difference) / math.sqrt(len(difference)))
     coordinate = difference @ components.T
     orthogonal = float(np.linalg.norm(difference - coordinate @ components))
     distances = np.linalg.norm(support - coordinate, axis=1)
     nearest = float(np.min(distances))
     weights = np.exp(-.5 * distances * distances / (float(bandwidth) ** 2))
     effective = float(weights.sum() ** 2 / max(1e-12, np.sum(weights * weights)))
-    diagnostics = {"nearest_support_distance": nearest, "orthogonal_residual": orthogonal,
+    diagnostics = {"feature_error": feature_error, "nearest_support_distance": nearest, "orthogonal_residual": orthogonal,
                    "effective_support": effective, "training_case_count": model["diagnostics"].get("case_count")}
+    if feature_error <= 1e-9:
+        return {"ok": True, "command": 0.0, "ready_score": 1.0, "ready": True,
+                "reason": "learned_stage_goal_anchor", "diagnostics": diagnostics}
     if nearest > 2 * bandwidth or orthogonal > limit or effective < 1.25:
         return {"ok": False, "command": 0.0, "ready_score": 0.0, "ready": False,
                 "reason": "rgb_state_outside_stage_support", "diagnostics": diagnostics}
     prediction = weights @ alpha
-    low, high = settings["command_bounds"]
+    low, high = expected_bounds
     command = float(np.clip(prediction[0] * settings["command_scale"], low, high))
     ready_score = float(np.clip(prediction[1], 0.0, 1.0))
     ready = ready_score >= settings["ready_score"] and abs(command) <= settings["ready_command_max"]

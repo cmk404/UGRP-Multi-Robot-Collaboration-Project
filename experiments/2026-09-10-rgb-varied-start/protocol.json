@@ -1,0 +1,44 @@
+{
+  "request": "\uc880 \ub354 \ub2e4\uc591\ud55c \uc0c1\ud669\uc5d0\uc11c \ud574\ubcfc\ub798? \ucc98\uc74c \uc2dc\uc791\ud558\ub294 \uc704\uce58\uac00 \uace0\uc815\ub41c \uac8c \uc544\ub2c8\uc5b4\ub3c4 \uac00\ub2a5\ud558\uac8c",
+  "base_sha": "6542c3504449547f60510f88c34cf44f2b6cf84c",
+  "scope": {
+    "distance_m": [
+      0.15,
+      0.4
+    ],
+    "lateral_m": [
+      -0.06,
+      0.06
+    ],
+    "yaw_deg": [
+      -10,
+      10
+    ],
+    "independent_robots": true,
+    "fixed_scene": true,
+    "fixed_side_assignment": true,
+    "fixed_camera": true,
+    "weld": false
+  },
+  "training": "483 independent reset RGB calibration pairs with privileged teacher labels; 6 physical teacher trajectories tested separately and may supplement training. Static resets are not physical successes.",
+  "controller": "Independent learned RGB command and readiness per robot/stage; yaw -> lateral -> yaw -> forward; one active wheel axis per phase. Two consecutive fresh stationary confirmations within four captures; all axes rechecked before existing RGB grasp.",
+  "runtime_boundary": "Own RGB, fixed top RGB, saved models, own issued commands, phase/history only; no truth, velocity, contacts or setup pose feedback. Fixed top image crop per robot lane preserves rawcamera geometry.",
+  "teacher_boundary": "Truth allowed only in collection labels and teacher controller, never student decision inputs.",
+  "final_comparison": {
+    "novel_varied_starts": 30,
+    "paired_baseline": "prior learned forward-only RGB approach from modelv2, same starts and exact physics/RGB",
+    "prior_straight_retention": 20,
+    "development_cases": 8,
+    "heldout_tuning": false
+  },
+  "acceptance": {
+    "novel_fullsuccess_min": 27,
+    "novel_count": 30,
+    "retention_fullsuccess_min": 19,
+    "retention_count": 20,
+    "approach_payload_contact_steps": 0,
+    "grasp": "height>=.03m with bilateral contact and weld off continuously>=2s"
+  },
+  "storage": "Source committed before each run and frozen throughout each cohort. All failures retained. Video raw local unless explicitly archived. No Drive.",
+  "status": "declared_before_collection"
+}
