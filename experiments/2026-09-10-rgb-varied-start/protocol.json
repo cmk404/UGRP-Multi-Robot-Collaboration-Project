@@ -50,6 +50,58 @@
       "success": 0,
       "approach_payload_contact_steps": 0,
       "finding": "Yaw command shrank to0.0046 and stalled at0.01534rad after18simseconds; raise teacher minimum moving yaw to0.01 while preserving gain0.3,tolerance0.0035rad,max0.06."
+    },
+    {
+      "source_sha": "5513b2e",
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/varied-start-teacher-smoke-20260910-v2",
+      "purpose": "same physical corner withminimumyaw0.01",
+      "cases": 1,
+      "success": 1,
+      "approach_payload_contact_steps": 0,
+      "approach_elapsed_sim_s": 32.6,
+      "longest_qualifying_hold_s": 2.7,
+      "status": "completed_samecorner_smoke"
+    },
+    {
+      "source_sha": "5513b2e",
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/varied-start-teacher-pilot-20260910-v1",
+      "purpose": "six physical teachers",
+      "cases": 6,
+      "success": 6,
+      "approach_payload_contact_steps": 0,
+      "grasp_decisions_replayed": 192
     }
-  ]
+  ],
+  "teacher_controller": {
+    "yaw": {
+      "gain": 0.3,
+      "min_moving_abs": 0.01,
+      "max_abs": 0.06,
+      "ready_tolerance_rad": 0.0035
+    },
+    "lateral": {
+      "gain": 0.35,
+      "min_moving_abs": 0.01,
+      "max_abs": 0.06,
+      "ready_tolerance_m": 0.0025
+    },
+    "forward": {
+      "gain": 0.2,
+      "min_moving_abs": 0.01,
+      "bounds": [
+        -0.05,
+        0.15
+      ],
+      "ready_tolerance_m": 0.004
+    }
+  },
+  "actuator_calibration": "For a supported non-ready RGB prediction, retain learned sign but enforce teacher minimum moving magnitude0.01; ready still requires raw regression magnitude<=0.003 and ready_score>=0.65. Initial teacher yaw stalled at0.0046; six teacher paths succeeded with0.01 minimum.",
+  "training_collection": {
+    "calibration_cases": 483,
+    "source_sha": "5513b2e",
+    "calibration_raw_dir": "/Users/changmin/projects/ugrp/outputs/varied-start-calibration-20260910-v1",
+    "physical_teacher_cases": 6,
+    "physical_teacher_success": 6,
+    "validation": "complete reports and per-grasp exact32decision replays; all training images hashed by merge/trainer"
+  }
 }

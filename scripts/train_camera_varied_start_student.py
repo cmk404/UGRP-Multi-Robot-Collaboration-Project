@@ -188,7 +188,7 @@ def train(teacher_dir: Path | str, out_dir: Path | str) -> dict[str, Any]:
     skill = {"schema": "ugrp.rgb_varied_start_skill.v1",
              "scope": {"forward_distance_m": [.15, .40], "lateral_m": [-.06, .06],
                        "heading_deg": [-10, 10], "robots": list(ROBOTS)},
-             "runtime_inputs": ["own_rgb", "fixed_top_rgb"], "stage_order": list(STAGES),
+             "runtime_inputs": ["own_rgb", "fixed_top_rgb"], "stage_order": ["yaw", "lateral", "yaw", "forward"],
              "readiness": {"score": .65, "absolute_command_max": .003,
                            "fresh_stationary_confirmations": 2},
              "models": records}

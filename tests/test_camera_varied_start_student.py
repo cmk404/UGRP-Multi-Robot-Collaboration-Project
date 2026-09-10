@@ -61,6 +61,18 @@ def test_robot_roi_ignores_pixels_in_peer_lane():
     assert a["diagnostics"] == pytest.approx(b["diagnostics"], abs=1e-12)
 
 
+def test_unready_small_prediction_overcomes_measured_friction():
+    samples = _samples()
+    for row in samples:
+        row['command'] *= .1
+    model = fit_stage_model(*_views('r1', 0), samples, 'r1', 'yaw')
+    for state in (-2, 2):
+        result = predict_stage(model, *_views('r1', state))
+        assert result['ok'] and not result['ready']
+        assert abs(result['diagnostics']['regression_command']) < .01
+        assert result['command'] == pytest.approx(.01 if state > 0 else -.01)
+
+
 def test_unseen_rgb_fails_closed():
     goal = _views("r3", 0)
     model = fit_stage_model(*goal, _samples("r3"), "r3", "lateral")

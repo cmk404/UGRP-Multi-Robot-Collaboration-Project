@@ -16,6 +16,7 @@ STAGES = ("yaw", "lateral", "forward")
 MAX_COMPONENTS = 32
 READY_SCORE = .65
 READY_COMMAND = .003
+MIN_MOVING_COMMAND = .01
 COMMAND_BOUNDS = {"yaw": (-.06, .06), "lateral": (-.06, .06),
                   "forward": (-.05, .15)}
 # Pixel calibration on the fixed 960x720 top camera. r1 is the lower lane.
@@ -119,7 +120,8 @@ def fit_stage_model(reference_own: bytes, reference_top: bytes,
             "regularization": regularization, "pca_residual_limit": residual_limit,
             "settings": {"command_bounds": list(COMMAND_BOUNDS[stage]),
                          "command_scale": scale, "ready_score": READY_SCORE,
-                         "ready_command_max": READY_COMMAND},
+                         "ready_command_max": READY_COMMAND,
+                         "minimum_moving_command": MIN_MOVING_COMMAND},
             "diagnostics": {"sample_count": len(samples), "support_count": len(coordinates),
                 "case_count": len(set(groups)), "components": len(components),
                 "feature_rank": rank, "hyperparameter_selection": selection,
@@ -152,6 +154,7 @@ def predict_stage(model: dict[str, Any], own_jpeg: bytes, top_jpeg: bytes) -> di
             or settings.get("command_scale") != max(abs(v) for v in expected_bounds)
             or settings.get("ready_score") != READY_SCORE
             or settings.get("ready_command_max") != READY_COMMAND
+            or settings.get("minimum_moving_command") != MIN_MOVING_COMMAND
             or any(isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) or v <= 0
                    for v in (bandwidth, limit))
             or not all(np.all(np.isfinite(v)) for v in (reference, components, support, alpha))):
@@ -177,6 +180,11 @@ def predict_stage(model: dict[str, Any], own_jpeg: bytes, top_jpeg: bytes) -> di
     command = float(np.clip(prediction[0] * settings["command_scale"], low, high))
     ready_score = float(np.clip(prediction[1], 0.0, 1.0))
     ready = ready_score >= settings["ready_score"] and abs(command) <= settings["ready_command_max"]
+    # The physical teacher established a friction floor for all three axes.
+    # Only direction/readiness come from RGB; this calibration adds no state input.
+    diagnostics['regression_command'] = command
+    if not ready and command != 0.0:
+        command = math.copysign(max(MIN_MOVING_COMMAND, abs(command)), command)
     return {"ok": True, "command": command, "ready_score": ready_score,
             "ready": bool(ready), "reason": "learned_stage_ready" if ready else "learned_stage_command",
             "diagnostics": diagnostics}

@@ -250,6 +250,7 @@ def audit(run_dir: Path | str, stage_model_dir: Path | str,
     if approach_ok and condition == "visual":
         if not isinstance(final_checks, list) or len(final_checks) != 2:
             raise ValueError("successful varied approach needs two final all-axis checks")
+        final_alignment_ok = True
         for check_index, check in enumerate(final_checks):
             frames, images, saved = check.get("frame_ids"), check.get("images"), check.get("decisions")
             if not all(isinstance(value, dict) for value in (frames, images, saved)) or set(frames) != set(ROBOTS):
@@ -266,9 +267,11 @@ def audit(run_dir: Path | str, stage_model_dir: Path | str,
                 top_record = images[rid]["top"]
                 for axis in AXES:
                     decision = _predict_stage(stage_models[rid][axis], own, top)
-                    if _canonical(decision) != saved[rid][axis] or not decision["ok"] or not decision["ready"]:
-                        raise ValueError(f"final alignment replay failed: {rid}/{axis}/{check_index}")
+                    if _canonical(decision) != saved[rid][axis]:
+                        raise ValueError(f"final alignment decision mismatch: {rid}/{axis}/{check_index}")
+                    final_alignment_ok &= bool(decision["ok"] and decision["ready"])
             expected_trace.append(_zero_drive_actions())
+        approach_ok &= final_alignment_ok
     elif final_checks is not None:
         raise ValueError("unexpected final alignment checks")
     if bool(report.get("approach_ok")) != approach_ok:
@@ -283,6 +286,12 @@ def audit(run_dir: Path | str, stage_model_dir: Path | str,
             raise ValueError(f"execution trace action mismatch: {index}")
     if any(row.get("stage") == "folded_setup" for row in trace[1:]):
         raise ValueError("setup replay appears after execution began")
+    approach_positions = [index for index, row in enumerate(trace)
+                          if row.get("stage") in ("approach", "approach_stop_dwell")]
+    grasp_positions = [index for index, row in enumerate(trace)
+                       if isinstance(row.get("stage"), str) and row["stage"].startswith("grasp")]
+    if grasp_positions and approach_positions and min(grasp_positions) < max(approach_positions):
+        raise ValueError("grasp trace begins before final approach checks finish")
 
     samples = []
     for line in (run_dir / "evaluation-only.jsonl").read_text().splitlines():
@@ -291,12 +300,18 @@ def audit(run_dir: Path | str, stage_model_dir: Path | str,
             raise ValueError("evaluation sample lacks phase tag")
         samples.append(sample)
     evaluation = evaluate_grasp_samples(samples)
-    if _canonical(evaluation) != report.get("evaluation") or evaluation["grasp_success"] is not bool(report.get("grasp_success")):
+    if _canonical(evaluation) != report.get("evaluation") or evaluation["grasp_success"] != bool(report.get("grasp_success")):
         raise ValueError("physics evaluation replay mismatch")
     steps, contacts, events = report.get("approach_physics_steps"), report.get("approach_payload_contact_steps"), report.get("approach_collision_events")
     if (any(isinstance(v, bool) or not isinstance(v, int) or v < 0 for v in (steps, contacts))
             or not isinstance(events, list) or len(events) != contacts or contacts > steps):
         raise ValueError("approach collision evidence is inconsistent")
+    for event in events:
+        when, geoms = (event.get("sim_time_s"), event.get("robot_geom_ids")) if isinstance(event, dict) else (None, None)
+        if (isinstance(when, bool) or not isinstance(when, (int, float)) or not math.isfinite(when)
+                or not isinstance(geoms, list) or not geoms
+                or any(isinstance(geom, bool) or not isinstance(geom, int) or geom < 0 for geom in geoms)):
+            raise ValueError("invalid approach collision event")
 
     grasp_audit = None
     if approach_ok:
