@@ -1,11 +1,13 @@
 import json
+from pathlib import Path
+import tempfile
 
 import cv2
 import numpy as np
 import pytest
 
 from harness.camera_approach_student import fit_approach_model, predict_approach
-from scripts.train_camera_approach_student import _balanced, _labels, _validate_pair
+from scripts.train_camera_approach_student import _balanced, _labels, _validate_pair, train
 
 
 def _views(state=0):
@@ -55,6 +57,26 @@ def test_ood_rgb_stops_without_claiming_readiness():
     result = predict_approach(model, encoded.tobytes(), encoded.tobytes())
     assert result["ok"] is False and result["forward"] == 0
     assert result["ready"] is False
+
+
+def test_discarded_training_rgb_calibrates_domain_without_joining_regression():
+    goal = _views(0)
+    selected = _samples()
+    own, top = _views(6)
+    own_image = cv2.imdecode(np.frombuffer(own, np.uint8), cv2.IMREAD_COLOR)
+    # A small appearance variation absent from the regression subset creates a
+    # PCA residual while retaining the same supported approach coordinate.
+    cv2.rectangle(own_image, (4, 4), (12, 12), (0, 80, 180), -1)
+    ok, encoded = cv2.imencode(".png", own_image);assert ok
+    discarded = {"own_jpeg": encoded.tobytes(), "top_jpeg": top,
+                 "forward": 0.144, "stop": False, "case_id": "case-domain"}
+    selected_only = fit_approach_model(*goal, selected)
+    calibrated = fit_approach_model(
+        *goal, selected, domain_samples=selected + [discarded])
+    assert predict_approach(selected_only, discarded["own_jpeg"], top)["ok"] is False
+    assert predict_approach(calibrated, discarded["own_jpeg"], top)["ok"] is True
+    assert calibrated["diagnostics"]["support_count"] == selected_only["diagnostics"]["support_count"]
+    assert calibrated["diagnostics"]["residual_domain_sample_count"] == len(selected) + 1
 
 
 @pytest.mark.parametrize("forward,stop", [(-0.01, False), (0.151, False),
@@ -110,3 +132,12 @@ def test_corrupt_excluded_actor_label_pair_is_rejected_before_filtering():
              "forward": 0.0, "stop": False}
     with pytest.raises(ValueError, match="robot mismatch"):
         _validate_pair(actor, label, "excluded-sample", {"excluded-case"})
+
+
+def test_trainer_rejects_incomplete_teacher_collection():
+    with tempfile.TemporaryDirectory() as value:
+        teacher = Path(value) / "teacher"
+        teacher.mkdir()
+        (teacher / "report.json").write_text(json.dumps({"complete": False}))
+        with pytest.raises(ValueError, match="must be complete"):
+            train(teacher, Path(value) / "model")

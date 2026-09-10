@@ -122,6 +122,8 @@ def train(teacher_dir: Path | str, out_dir: Path | str) -> dict:
     if out.exists():
         raise FileExistsError(out)
     report = json.loads((teacher / "report.json").read_text())
+    if report.get("complete") is not True:
+        raise ValueError("teacher report must be complete before training")
     actors = json.loads((teacher / "actor_samples.json").read_text())
     labels = _labels(json.loads((teacher / "privileged_labels.json").read_text()))
     successful = report.get("successful_cases")
@@ -175,10 +177,12 @@ def train(teacher_dir: Path | str, out_dir: Path | str) -> dict:
                            "own_jpeg": loaded[sample_id][0],
                            "top_jpeg": loaded[sample_id][1],
                            "forward": label.get("forward"), "stop": label.get("stop")})
+        domain_samples = joined
         joined = _balanced(joined)
         if len({row["case_id"] for row in joined}) < 4:
             raise ValueError(f"{rid} requires at least four successful teacher trajectories")
-        model = fit_approach_model(ref_own, ref_top, joined)
+        model = fit_approach_model(ref_own, ref_top, joined,
+                                   domain_samples=domain_samples)
         path = out / f"model-{rid}.json";_write(path, model)
         model_records[rid] = {"path": path.name, "sha256": _sha(path)}
         diagnostics[rid] = {"available_sample_count": available_count,

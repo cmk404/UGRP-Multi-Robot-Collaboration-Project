@@ -25,7 +25,8 @@ def _forward(value: Any) -> float:
 
 
 def fit_approach_model(reference_own: bytes, reference_top: bytes,
-                       samples: list[dict[str, Any]]) -> dict[str, Any]:
+                       samples: list[dict[str, Any]], *,
+                       domain_samples: list[dict[str, Any]] | None = None) -> dict[str, Any]:
     """Fit RGB-to-forward/stop interpolation with grouped trajectory CV."""
     if not isinstance(samples, list) or not samples:
         raise ValueError("samples must be a non-empty list")
@@ -58,7 +59,27 @@ def fit_approach_model(reference_own: bytes, reference_top: bytes,
     reconstruction = coordinates @ components
     residuals = np.linalg.norm(delta - reconstruction, axis=1)
     median = float(np.median(residuals));mad = float(np.median(np.abs(residuals - median)))
-    residual_limit = max(1e-8, float(np.max(residuals)), median + 4 * max(mad, 1e-8)) * 1.25
+    domain_residuals = residuals
+    if domain_samples is not None:
+        if not isinstance(domain_samples, list) or not domain_samples:
+            raise ValueError("domain_samples must be a non-empty list when provided")
+        domain_features = []
+        for sample in domain_samples:
+            if not isinstance(sample, dict) or not all(key in sample for key in
+                    ("own_jpeg", "top_jpeg", "forward", "stop", "case_id")):
+                raise ValueError("each domain sample requires RGB, forward, stop, and case_id")
+            _forward(sample["forward"])
+            if not isinstance(sample["stop"], bool):
+                raise ValueError("domain sample stop must be boolean")
+            if not isinstance(sample["case_id"], str) or not sample["case_id"]:
+                raise ValueError("domain sample case_id must be a non-empty string")
+            domain_features.append(_compact(encode_views(sample["own_jpeg"], sample["top_jpeg"])))
+        domain_delta = np.stack(domain_features) - reference
+        domain_coordinates = domain_delta @ components.T
+        domain_residuals = np.linalg.norm(
+            domain_delta - domain_coordinates @ components, axis=1)
+    residual_limit = max(1e-8, float(np.max(domain_residuals)),
+                         median + 4 * max(mad, 1e-8)) * 1.25
     bandwidth, regularization, alpha, cv_mse, selection = _select_kernel(
         coordinates, targets, case_ids
     )
@@ -90,6 +111,12 @@ def fit_approach_model(reference_own: bytes, reference_top: bytes,
                 "PCA is fit once on all included training cases; grouped CV refits only kernel regression"
             ),
             "pca_residual_median": median,
+            "residual_domain_sample_count": int(len(domain_residuals)),
+            "residual_domain_max": float(np.max(domain_residuals)),
+            "residual_limit_source": (
+                "all_validated_training_rgb" if domain_samples is not None
+                else "regression_samples"
+            ),
         },
     }
 
