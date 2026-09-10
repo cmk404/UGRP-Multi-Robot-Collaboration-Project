@@ -1,0 +1,632 @@
+[
+  {
+    "id": "elbow-minus37-playback",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.077599,
+      "sample_count": 106
+    },
+    "source_sha": "c1b429a2b1dfa237800e4f765ba6dc706415f0cf",
+    "config": {
+      "condition": "playback",
+      "max_step": 25,
+      "perturb": [
+        0,
+        -37,
+        0
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        0,
+        -37,
+        0
+      ],
+      "r3": [
+        0,
+        -37,
+        0
+      ]
+    },
+    "wall_elapsed_s": 6.0251588330138475,
+    "action_count": 0,
+    "initial_feature_errors": {
+      "r1": 7.832395110320489,
+      "r3": 13.8667001994966
+    },
+    "final_feature_errors": {
+      "r1": 7.928685107482435,
+      "r3": 14.03246688066222
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ]
+  },
+  {
+    "id": "elbow-minus37-visual",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.078054,
+      "sample_count": 90
+    },
+    "source_sha": "c1b429a2b1dfa237800e4f765ba6dc706415f0cf",
+    "config": {
+      "condition": "visual",
+      "max_step": 25,
+      "perturb": [
+        0,
+        -37,
+        0
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        0,
+        -37,
+        0
+      ],
+      "r3": [
+        0,
+        -37,
+        0
+      ]
+    },
+    "wall_elapsed_s": 5.761680917115882,
+    "action_count": 94,
+    "initial_feature_errors": {
+      "r1": 7.832395110320489,
+      "r3": 13.8667001994966
+    },
+    "final_feature_errors": {
+      "r1": 10.399414177500288,
+      "r3": 15.026612986963473
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ],
+    "matched_initial_rgb": true
+  },
+  {
+    "id": "elbow-plus37-playback",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.076496,
+      "sample_count": 106
+    },
+    "source_sha": "c1b429a2b1dfa237800e4f765ba6dc706415f0cf",
+    "config": {
+      "condition": "playback",
+      "max_step": 25,
+      "perturb": [
+        0,
+        37,
+        0
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        0,
+        37,
+        0
+      ],
+      "r3": [
+        0,
+        37,
+        0
+      ]
+    },
+    "wall_elapsed_s": 5.823974791914225,
+    "action_count": 0,
+    "initial_feature_errors": {
+      "r1": 5.726472492544164,
+      "r3": 9.819651159637006
+    },
+    "final_feature_errors": {
+      "r1": 5.73239092558134,
+      "r3": 9.81800974427744
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ]
+  },
+  {
+    "id": "elbow-plus37-visual",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.076575,
+      "sample_count": 90
+    },
+    "source_sha": "c1b429a2b1dfa237800e4f765ba6dc706415f0cf",
+    "config": {
+      "condition": "visual",
+      "max_step": 25,
+      "perturb": [
+        0,
+        37,
+        0
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        0,
+        37,
+        0
+      ],
+      "r3": [
+        0,
+        37,
+        0
+      ]
+    },
+    "wall_elapsed_s": 5.6390117078553885,
+    "action_count": 94,
+    "initial_feature_errors": {
+      "r1": 5.726472492544164,
+      "r3": 9.819651159637006
+    },
+    "final_feature_errors": {
+      "r1": 3.5258922026247457,
+      "r3": 16.24705562431248
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ],
+    "matched_initial_rgb": true
+  },
+  {
+    "id": "shoulder-minus37-playback",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.077504,
+      "sample_count": 106
+    },
+    "source_sha": "c1b429a2b1dfa237800e4f765ba6dc706415f0cf",
+    "config": {
+      "condition": "playback",
+      "max_step": 25,
+      "perturb": [
+        0,
+        0,
+        -37
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        0,
+        0,
+        -37
+      ],
+      "r3": [
+        0,
+        0,
+        -37
+      ]
+    },
+    "wall_elapsed_s": 5.380889667198062,
+    "action_count": 0,
+    "initial_feature_errors": {
+      "r1": 9.669380176732306,
+      "r3": 16.807739451520177
+    },
+    "final_feature_errors": {
+      "r1": 9.728392886363254,
+      "r3": 16.891445702412327
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ]
+  },
+  {
+    "id": "shoulder-minus37-visual",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.075439,
+      "sample_count": 90
+    },
+    "source_sha": "c1b429a2b1dfa237800e4f765ba6dc706415f0cf",
+    "config": {
+      "condition": "visual",
+      "max_step": 25,
+      "perturb": [
+        0,
+        0,
+        -37
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        0,
+        0,
+        -37
+      ],
+      "r3": [
+        0,
+        0,
+        -37
+      ]
+    },
+    "wall_elapsed_s": 5.864460916025564,
+    "action_count": 88,
+    "initial_feature_errors": {
+      "r1": 9.669380176732306,
+      "r3": 16.807739451520177
+    },
+    "final_feature_errors": {
+      "r1": 4.187504949644372,
+      "r3": 2.5412797147278483
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ],
+    "matched_initial_rgb": true
+  },
+  {
+    "id": "shoulder-plus7-playback",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.076964,
+      "sample_count": 106
+    },
+    "source_sha": "c1b429a2b1dfa237800e4f765ba6dc706415f0cf",
+    "config": {
+      "condition": "playback",
+      "max_step": 25,
+      "perturb": [
+        0,
+        0,
+        7
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        0,
+        0,
+        7
+      ],
+      "r3": [
+        0,
+        0,
+        7
+      ]
+    },
+    "wall_elapsed_s": 5.743818958057091,
+    "action_count": 0,
+    "initial_feature_errors": {
+      "r1": 4.999221161164023,
+      "r3": 8.882767982699631
+    },
+    "final_feature_errors": {
+      "r1": 5.054794523550788,
+      "r3": 8.975973084516726
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ]
+  },
+  {
+    "id": "shoulder-plus7-visual",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.075928,
+      "sample_count": 90
+    },
+    "source_sha": "c1b429a2b1dfa237800e4f765ba6dc706415f0cf",
+    "config": {
+      "condition": "visual",
+      "max_step": 25,
+      "perturb": [
+        0,
+        0,
+        7
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        0,
+        0,
+        7
+      ],
+      "r3": [
+        0,
+        0,
+        7
+      ]
+    },
+    "wall_elapsed_s": 5.9245972922071815,
+    "action_count": 93,
+    "initial_feature_errors": {
+      "r1": 4.999221161164023,
+      "r3": 8.882767982699631
+    },
+    "final_feature_errors": {
+      "r1": 3.07659056492271,
+      "r3": 2.8585453696986995
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ],
+    "matched_initial_rgb": true
+  },
+  {
+    "id": "wrist-minus37-playback",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.076817,
+      "sample_count": 106
+    },
+    "source_sha": "c1b429a2b1dfa237800e4f765ba6dc706415f0cf",
+    "config": {
+      "condition": "playback",
+      "max_step": 25,
+      "perturb": [
+        -37,
+        0,
+        0
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        -37,
+        0,
+        0
+      ],
+      "r3": [
+        -37,
+        0,
+        0
+      ]
+    },
+    "wall_elapsed_s": 5.549715209053829,
+    "action_count": 0,
+    "initial_feature_errors": {
+      "r1": 5.598554859654332,
+      "r3": 9.768613793041858
+    },
+    "final_feature_errors": {
+      "r1": 5.601317335351973,
+      "r3": 9.77139195865468
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ]
+  },
+  {
+    "id": "wrist-minus37-visual",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.077823,
+      "sample_count": 90
+    },
+    "source_sha": "c1b429a2b1dfa237800e4f765ba6dc706415f0cf",
+    "config": {
+      "condition": "visual",
+      "max_step": 25,
+      "perturb": [
+        -37,
+        0,
+        0
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        -37,
+        0,
+        0
+      ],
+      "r3": [
+        -37,
+        0,
+        0
+      ]
+    },
+    "wall_elapsed_s": 5.930275666993111,
+    "action_count": 96,
+    "initial_feature_errors": {
+      "r1": 5.598554859654332,
+      "r3": 9.768613793041858
+    },
+    "final_feature_errors": {
+      "r1": 9.885653721278665,
+      "r3": 15.185322657228832
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ],
+    "matched_initial_rgb": true
+  },
+  {
+    "id": "wrist-plus37-playback",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.077066,
+      "sample_count": 106
+    },
+    "source_sha": "c1b429a2b1dfa237800e4f765ba6dc706415f0cf",
+    "config": {
+      "condition": "playback",
+      "max_step": 25,
+      "perturb": [
+        37,
+        0,
+        0
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        37,
+        0,
+        0
+      ],
+      "r3": [
+        37,
+        0,
+        0
+      ]
+    },
+    "wall_elapsed_s": 5.787184332963079,
+    "action_count": 0,
+    "initial_feature_errors": {
+      "r1": 5.883191365969511,
+      "r3": 10.532829527212556
+    },
+    "final_feature_errors": {
+      "r1": 5.991522429750565,
+      "r3": 10.718163749956117
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ]
+  },
+  {
+    "id": "wrist-plus37-visual",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.075922,
+      "sample_count": 90
+    },
+    "source_sha": "c1b429a2b1dfa237800e4f765ba6dc706415f0cf",
+    "config": {
+      "condition": "visual",
+      "max_step": 25,
+      "perturb": [
+        37,
+        0,
+        0
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        37,
+        0,
+        0
+      ],
+      "r3": [
+        37,
+        0,
+        0
+      ]
+    },
+    "wall_elapsed_s": 5.8407740839757025,
+    "action_count": 96,
+    "initial_feature_errors": {
+      "r1": 5.883191365969511,
+      "r3": 10.532829527212556
+    },
+    "final_feature_errors": {
+      "r1": 2.9131926791708938,
+      "r3": 0.8600628223677995
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ],
+    "matched_initial_rgb": true
+  }
+]

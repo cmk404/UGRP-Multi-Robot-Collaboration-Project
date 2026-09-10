@@ -22,10 +22,8 @@ import platform
 import subprocess
 import sys
 import traceback
-from typing import Any, Mapping
+from typing import Any, Mapping, TYPE_CHECKING
 from unittest.mock import patch
-
-import mujoco
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -37,15 +35,8 @@ from sim.cooperative_payload import (  # noqa: E402
     BEAM_START,
     beam_pose,
 )
-from sim.multi_masterpi_production import (  # noqa: E402
-    TEAM_APPROACH_STANDOFF_M,
-    MultiMasterPiProductionV2,
-)
-import sim.multi_masterpi_production as multi_production  # noqa: E402
-from scripts.probe_dual_grasp_sync import (  # noqa: E402
-    _plain_beam_model_record,
-    _plain_beam_xml,
-)
+if TYPE_CHECKING:
+    from sim.multi_masterpi_production import MultiMasterPiProductionV2
 
 TEACHER_STAGES = ("hover", "preclose", "closed", "lifted", "held")
 PROBE_SERVOS = (3, 4, 5)
@@ -82,6 +73,7 @@ def _string_pulses(pulses: Mapping[int, int]) -> dict[str, int]:
 
 
 def _set_fixed_top_camera(world: MultiMasterPiProductionV2) -> dict[str, Any]:
+    import mujoco
     camera_id = mujoco.mj_name2id(
         world.model, mujoco.mjtObj.mjOBJ_CAMERA, "cctv_top",
     )
@@ -227,6 +219,12 @@ def _teacher_action(
 
 
 def collect(out_dir: Path, *, seed: int, collect_probes: bool) -> dict[str, Any]:
+    # Dataset and command-record tests run without the simulation dependency.
+    import mujoco
+    import sim.multi_masterpi_production as multi_production
+    from sim.multi_masterpi_production import TEAM_APPROACH_STANDOFF_M, MultiMasterPiProductionV2
+    from scripts.probe_dual_grasp_sync import _plain_beam_model_record, _plain_beam_xml
+
     out_dir.mkdir(parents=True, exist_ok=False)
     writer = DatasetWriter(out_dir)
     video = None
