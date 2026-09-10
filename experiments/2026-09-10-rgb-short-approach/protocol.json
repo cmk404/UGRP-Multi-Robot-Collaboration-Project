@@ -1,0 +1,39 @@
+{
+  "request": "Learn a 20–30 cm straight physical wheel approach after local grasp passed 20/20 new poses and 14/14 retention.",
+  "base_sha": "c23602e2e17727165aaa5fb65773e8b40c365f88",
+  "grasp_model_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-model-20260910-v1",
+  "teacher_training": "25 independent r1/r3 distance pairs on the 20, 22.5, 25, 27.5, 30 cm grid; fixed scene, seed 11.",
+  "development_pilot": "20/20 cm, 30/30 cm, 20/30 cm; all are training conditions. Do not tune using the sealed 20-case rollout.",
+  "heldout": "20 predeclared new continuous distances: 10 symmetric and 10 independent asymmetric pairs. Same scene; no new object, heading, or layout.",
+  "runtime_inputs": "Own RGB, fixed top RGB, own issued commands and controller history. No GT, IK, contact, or measured velocity in transitions.",
+  "physical_boundary": "Only initial fixture placement may write base pose. Folded setup precedes raw wheel motion. No post-approach pose writes or GT alignment. Two fresh images after fixed stop dwells authorize initialization replay sequence 1 onward and the existing grasp.",
+  "camera": "Preserve current own/top camera placement, field of view, and image resolution.",
+  "weld": false,
+  "nominal_budget": {
+    "wheel_duration_s": 0.2,
+    "max_rounds": 100,
+    "max_forward": 0.15,
+    "turn": 0,
+    "stop_dwell_s": 0.25,
+    "ready_confirmation_fresh_stationary_frames": 2,
+    "grasp_rounds": 16,
+    "grasp_max_step_pulses": 25,
+    "hold_s": 2.2,
+    "confirmation_behavior": "After both robots propose stop, apply 0.25 s zero-wheel dwell, capture confirmation 1, apply another 0.25 s zero-wheel dwell, then capture confirmation 2. Both fresh stationary predictions must authorize stop. Failed confirmation aborts without blind forward motion.",
+    "max_total_approach_sim_s": 20.5
+  },
+  "conditions": [
+    "rgb_approach",
+    "fixedwheelplayback"
+  ],
+  "baseline": "Constant forward command 0.1 with duration calibrated from 25 cm training evidence before heldout. One duration for every test distance; no GT stop feedback.",
+  "gate": {
+    "full_approach_grasp_success_min": 18,
+    "case_count": 20,
+    "approach_payload_collision_steps": 0,
+    "grasp": "height>=.03 bilateralboth weldOFF continuously>=2s"
+  },
+  "scope": "Learned straight approach and local RGB correction. Arm deployment, close, and lift remain explicit playback. This is not general navigation, LLM collaboration, or hardware validation.",
+  "storage": "Commit source before collection and freeze each cohort. Keep all results, including failures and exclusions, with source and raw file hashes. Raw video is local unless explicitly archived.",
+  "status": "declared_before_collection"
+}
