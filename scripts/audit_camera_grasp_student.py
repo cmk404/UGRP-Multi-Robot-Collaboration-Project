@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from harness.camera_teacher_student import predict_correction
+from harness.grasp_student_inference import predict_student as predict_correction
 
 
 def _sha_bytes(value: bytes) -> str:

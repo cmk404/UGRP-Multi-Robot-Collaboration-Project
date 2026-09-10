@@ -19,7 +19,7 @@ from unittest.mock import patch
 
 ROOT=Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:sys.path.insert(0,str(ROOT))
-from harness.camera_teacher_student import predict_correction
+from harness.grasp_student_inference import predict_student as predict_correction
 
 BOUNDARY='local pregrasp actor: own RGB, shared top RGB, own issued commands, fixed trained image model; no live teacher, IK, coordinates, joint measurements, contacts or evaluator feedback'
 
@@ -35,10 +35,12 @@ def main():
  p.add_argument('--model-dir',type=Path,required=True);p.add_argument('--out-dir',type=Path,required=True)
  p.add_argument('--condition',choices=('visual','playback'),required=True)
  p.add_argument('--perturb',type=int,nargs=3,required=True,metavar=('WRIST','ELBOW','SHOULDER'))
+ p.add_argument('--perturb-r3',type=int,nargs=3,help='Optional independent r3 perturbation; defaults to --perturb')
  p.add_argument('--rounds',type=int,default=16);p.add_argument('--max-step',type=int,default=25)
  p.add_argument('--video-fps',type=int,default=4)
  args=p.parse_args()
- if not 1<=args.rounds<=40 or not 1<=args.max_step<=50 or max(map(abs,args.perturb))>100:p.error('bounded local pilot only')
+ if not 1<=args.rounds<=40 or not 1<=args.max_step<=50 or max(map(abs,args.perturb+(args.perturb_r3 or [])))>150:p.error('bounded local pilot only')
+ perturbations={'r1':args.perturb,'r3':args.perturb_r3 if args.perturb_r3 is not None else args.perturb}
  out=args.out_dir.resolve();out.mkdir(parents=True,exist_ok=False);models_root=args.model_dir.resolve()
  skill=json.loads((models_root/'student-skill.json').read_text())
  fixture=json.loads((models_root/'evaluation-fixture.json').read_text())
@@ -56,7 +58,7 @@ def main():
          'input_boundary':BOUNDARY,'skill_sha256':sha(models_root/'student-skill.json'),
          'evaluation_fixture_sha256':sha(models_root/'evaluation-fixture.json'),
          'model_sha256':{rid:v['sha256'] for rid,v in skill['models'].items()},
-         'config':{'condition':args.condition,'perturb':args.perturb,'rounds':args.rounds,'max_step':args.max_step,'seed':fixture['seed'],'weld':False},
+         'config':{'condition':args.condition,'perturb':args.perturb,'perturb_by_robot':perturbations,'rounds':args.rounds,'max_step':args.max_step,'seed':fixture['seed'],'weld':False},
          'scope':skill['scope'],'environment':{'python':sys.version,'platform':platform.platform(),'mujoco':mujoco.__version__},
          'calls':calls,'error':None,'evaluation':None}
  next_sample=0.0;actor_started=False
@@ -98,7 +100,7 @@ def main():
   # Explicit teacher-initialized curriculum. No inverse kinematics in this file.
   for c in skill['initialization_replay']:move(normcmd(c),c['duration_s'],c.get('settle_s',0.0))
   report['initialization_commands']={rid:dict(c) for rid,c in commands.items()}
-  targets={rid:{ch:max(500,min(2500,commands[rid][ch]+args.perturb[i])) for i,ch in enumerate((3,4,5))} for rid in models}
+  targets={rid:{ch:max(500,min(2500,commands[rid][ch]+perturbations[rid][i])) for i,ch in enumerate((3,4,5))} for rid in models}
   move(targets,.35,.10)
   report['actor_initial_issued_commands']={rid:dict(c) for rid,c in commands.items()}
   report['applied_perturbation']={rid:[commands[rid][ch]-report['initialization_commands'][rid][ch] for ch in (3,4,5)] for rid in models}
