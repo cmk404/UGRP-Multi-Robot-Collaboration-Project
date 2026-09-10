@@ -3220,5 +3220,186 @@
         }
       }
     }
+  },
+  {
+    "root": "/Users/changmin/projects/ugrp/outputs/pixel-grasp-20260910-r1-v16",
+    "source_sha": "089c2ab15bc5f07bd8a9062caf674a3fac286ae6",
+    "config": {
+      "out_dir": "/Users/changmin/projects/ugrp/outputs/pixel-grasp-20260910-r1-v16",
+      "rounds": 500,
+      "seed": 11,
+      "active_robot": "r1",
+      "render_width": 1280,
+      "render_height": 960,
+      "video_fps": 4,
+      "settle_seconds": 1.0,
+      "weld": false,
+      "policy": "pixel-servo",
+      "policy_description": "diagnostic low-level image servo; not LLM cooperation"
+    },
+    "rounds_completed": 500,
+    "error": null,
+    "wall_elapsed_s": 174.675,
+    "model_calls": 0,
+    "stages": {
+      "identify": 4,
+      "align": 80,
+      "measure": 99,
+      "reobserve": 2,
+      "lift": 24,
+      "recover": 18,
+      "blocked": 273
+    },
+    "trial_closures": 6,
+    "identification_closures": 61,
+    "robots": {
+      "r1": {
+        "minimum_fresh_open_alignment": [
+          174,
+          {
+            "axis_error_rad": -0.1914854941399129,
+            "cost": 17.18049932423466,
+            "distance_px": 15.661241026890377,
+            "endpoint": [
+              0.5083057133181329,
+              0.5864590801780418
+            ],
+            "offset_px": [
+              10.760792496461349,
+              -11.378919779594874
+            ],
+            "own_aim_error_px": 4.2154492889048925,
+            "own_endpoint": [
+              0.5164665987847847,
+              0.05694381292950806
+            ],
+            "target": [
+              0.5082918627926828,
+              0.5752080837744279
+            ],
+            "top_cost": 16.655315797747544,
+            "width_px": 18.001618495611403
+          }
+        ],
+        "first_alignment": [
+          1,
+          {
+            "axis_error_rad": 1.4719090841004303,
+            "cost": 318.6512850806134,
+            "distance_px": 206.35200643022029,
+            "endpoint": [
+              0.5083336880360325,
+              0.5854154036120239
+            ],
+            "offset_px": [
+              198.0416993859626,
+              -57.97099155696493
+            ],
+            "own_aim_error_px": -56.400000000000006,
+            "own_endpoint": [
+              0.2796875,
+              0.4197916666666667
+            ],
+            "target": [
+              0.5083160597881404,
+              0.5741641456995902
+            ],
+            "top_cost": 313.6202823216737,
+            "width_px": 18.002051941044897
+          }
+        ],
+        "minimum_alignment": [
+          160,
+          {
+            "axis_error_rad": 0.15633852476223886,
+            "cost": 11.201724707065193,
+            "distance_px": 10.980750352482156,
+            "endpoint": [
+              0.508319387825811,
+              0.5864591634053355
+            ],
+            "offset_px": [
+              9.438335064902645,
+              -5.612014745718881
+            ],
+            "own_aim_error_px": 2.2139914429233443,
+            "own_endpoint": [
+              0.5086484040739193,
+              0.17553292846651067
+            ],
+            "target": [
+              0.5083036909314598,
+              0.5752080386395222
+            ],
+            "top_cost": 10.980750352482156,
+            "width_px": 18.001830771038613
+          }
+        ],
+        "last_alignment": [
+          231,
+          {
+            "axis_error_rad": -0.04223980747100464,
+            "cost": 19.97046782598368,
+            "distance_px": 19.97046782598368,
+            "endpoint": [
+              0.5081819665074423,
+              0.5770831575282493
+            ],
+            "offset_px": [
+              0.0022357908964920625,
+              -19.97046770082985
+            ],
+            "own_aim_error_px": null,
+            "own_endpoint": null,
+            "target": [
+              0.5081847364023596,
+              0.5658329535332851
+            ],
+            "top_cost": 19.97046782598368,
+            "width_px": 18.00032736185765
+          }
+        ],
+        "fresh_measurements": 130,
+        "unavailable_reasons": {
+          "waiting for a prior top-camera frame": 1,
+          "no stable multi-contrast gripper-axis consensus": 4,
+          "gripper motion has not been calibrated": 271,
+          "gripper affine fit is ambiguous or inconsistent": 2,
+          "too few forward-backward-consistent gripper points": 5,
+          "gripper image track expired": 1
+        }
+      }
+    },
+    "prefix_round_count": 0,
+    "newly_executed_round_count": 500,
+    "evaluation_scope": {
+      "round_start": 0,
+      "round_stop_exclusive": 500,
+      "includes_reconstructed_prefix": false
+    },
+    "metrics_scope": "newly_executed_calls_only",
+    "resume": null,
+    "new_execution_wall_elapsed_s": 174.329,
+    "output_only_evaluation": {
+      "dual_grasp_success": false,
+      "max_lift_m": -4.9e-05,
+      "longest_dual_hold_s": 0.0,
+      "contacts": {
+        "r1": {
+          "left": 0,
+          "right": 0,
+          "bilateral": 0,
+          "max_bilateral_lift_m": null,
+          "longest_bilateral_3cm_hold_s": 0.0
+        },
+        "r3": {
+          "left": 0,
+          "right": 0,
+          "bilateral": 0,
+          "max_bilateral_lift_m": null,
+          "longest_bilateral_3cm_hold_s": 0.0
+        }
+      }
+    }
   }
 ]

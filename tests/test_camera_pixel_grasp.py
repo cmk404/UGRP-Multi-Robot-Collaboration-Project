@@ -4,7 +4,7 @@ import math
 from unittest.mock import patch
 
 from harness.camera_pixel_grasp import (
-    BASIN_ACTIVE_BUDGET, BASIN_OFFSETS, SEARCH_SCALES,
+    BASIN_ACTIVE_BUDGET, BASIN_OFFSETS, SEARCH_SCALES, MAX_CAPTURE_TRIALS,
     PixelGraspController, alignment_features,
 )
 
@@ -629,3 +629,39 @@ def test_failed_second_sweep_returns_to_normal_policy_without_recounting_frame()
     assert c.sweep_passes==0 and c.sweep_phase is None and c.attempts==0
     assert action['kind']!='arm' or action.get('servo_id')!=1
     assert c.last_observation['sweep_topology']['passed'] is False
+
+
+def test_six_trials_do_not_exhaust_the_legal_command_search():
+    c=PixelGraspController('r1');c.attempts=6;c.aligned=1
+    assert step_with(c,grip(),beam())=={'kind':'arm','servo_id':1,'pulse':1500}
+    assert c.attempts==7 and c.stage=='lift'
+
+
+def test_capture_trial_budget_still_blocks_both_closure_paths():
+    c=PixelGraspController('r1');c.attempts=MAX_CAPTURE_TRIALS;c.aligned=1
+    assert step_with(c,grip(),beam())=={'kind':'wait'}
+    assert c.stage=='blocked'
+
+    c=PixelGraspController('r1');c.attempts=MAX_CAPTURE_TRIALS
+    b=beam();b['width_px']=20.
+    passed={'passed':True,'candidate_count':1,'candidates':[],'reason':'pass'}
+    with patch('harness.camera_pixel_grasp.evaluate_sweep_topology',return_value=passed):
+        step_with(c,grip(x=.47),b)
+        step_with(c,grip(x=.47),b)
+        assert step_with(c,grip(x=.47),b)=={'kind':'wait'}
+    assert c.stage=='blocked' and c.attempts==MAX_CAPTURE_TRIALS
+
+
+def test_failed_capture_at_command_limit_opens_restores_and_stops_without_retrial():
+    c=PixelGraspController('r1');c.stage='lift';c.lift_steps=3
+    c.lift_pulse=2500;c.pulses[5]=2350;c.pulses[1]=1500
+    c.lift_start={'beam':beam(),'own_beam':own_beam()}
+    with patch.object(c,'_visual_lift',return_value=False):
+        actions=[step_with(c,grip(),beam()) for _ in range(3)]
+    assert actions==[
+        {'kind':'arm','servo_id':1,'pulse':2000},
+        {'kind':'arm','servo_id':5,'pulse':2450},
+        {'kind':'arm','servo_id':5,'pulse':2500},
+    ]
+    assert c.stage=='blocked' and c.recovery==[]
+    assert step_with(c,grip(),beam())=={'kind':'wait'}

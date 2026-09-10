@@ -18,6 +18,9 @@ from harness.camera_sweep_trial import evaluate_sweep_topology
 SEARCH_SCALES = (1.0, .5, .25)
 BASIN_ACTIVE_BUDGET = 160
 BASIN_OFFSETS = (50, -50, 100, -100, 150, -150, 200, -200)
+# One trial per 50-pulse step can cover the documented command interval.
+# This is a command budget, not a measured height or a target grasp pose.
+MAX_CAPTURE_TRIALS = (2500 - 500) // 50 + 1
 
 
 def _wrap_axis(angle):
@@ -124,6 +127,7 @@ class PixelGraspController:
         self.lift_start = None
         self.lift_pulse = None
         self.height_lock = False
+        self.capture_height_exhausted = False
         self.search_level = 0
         self.recovery = []
         self.composite_queue = []
@@ -428,7 +432,9 @@ class PixelGraspController:
                 while current < self.lift_pulse:
                     current=min(current+100,self.lift_pulse)
                     self.recovery.append({'kind':'arm','servo_id':5,'pulse':current})
-                self.recovery.append({'kind':'arm','servo_id':5,'pulse':min(2500,self.lift_pulse+50)})
+                self.capture_height_exhausted = self.lift_pulse >= 2500
+                if not self.capture_height_exhausted:
+                    self.recovery.append({'kind':'arm','servo_id':5,'pulse':min(2500,self.lift_pulse+50)})
                 self.height_lock=True
                 self.search_level=0
             else:
@@ -436,8 +442,12 @@ class PixelGraspController:
                 return self._issue(self._joint(5,-50),'small commanded test lift; inspect object motion in both views',obs)
         if self.recovery:
             action=self.recovery.pop(0)
-            if not self.recovery:self.stage='align'
-            return self._issue(action,'restore commands after unconfirmed capture and explore next height',obs)
+            if not self.recovery:
+                self.stage='blocked' if self.capture_height_exhausted else 'align'
+            reason = ('open and restore after unconfirmed capture; height-command range exhausted'
+                      if self.capture_height_exhausted else
+                      'restore commands after unconfirmed capture and explore next height')
+            return self._issue(action,reason,obs)
         if self.rollback:
             action=self.rollback.pop(0);self.pending=None;self.refresh_required=True
             return self._issue(action,'reverse rejected command hypothesis, then reobserve actual pixels',obs)
@@ -502,7 +512,7 @@ class PixelGraspController:
                 self.sweep_passes += 1
                 self.sweep_pass_steps.append(self.steps)
                 if self.sweep_passes >= 2:
-                    if self.attempts >= 6:
+                    if self.attempts >= MAX_CAPTURE_TRIALS:
                         self._reset_sweep_confirmation()
                         self.stage='blocked'
                         return self._issue(
@@ -580,7 +590,7 @@ class PixelGraspController:
         aligned=alignment['distance_px']<close_distance and abs(alignment['axis_error_rad'])<.22 and own is not None
         self.aligned=self.aligned+1 if aligned else 0
         if self.aligned>=2:
-            if self.attempts>=6:
+            if self.attempts>=MAX_CAPTURE_TRIALS:
                 self.stage='blocked'
                 return self._issue({'kind':'wait'},'bounded capture trials exhausted',obs)
             self.attempts+=1;self.stage='lift';self.lift_steps=0

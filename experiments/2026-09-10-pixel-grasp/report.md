@@ -124,3 +124,12 @@ v14의 마지막 입력r999도 raw 명령0–998을 다시 실행해 두 RGB SHA
 높이 목표는1370→1270→1420→1220→1470까지 방문했다. [첫 구간 대표 입력](v15-selected-inputs.jpg)을 검토했다. r821–823에서1470으로 이동한 뒤 집게의 다중 대비 방향 추정이 불가능해졌고, 시점 복구도 실패하여r835부터blocked 상태였다. [실제 실패 입력](v15-block-inputs.jpg)을 검토했다. 따라서 나머지 세 높이 후보까지 검증한 것으로 보고하지 않는다. 최종대기 구간을 파지 진행으로 해석하지 않는다.
 
 [출력 전용 swept-support 실험](sweep_topology_gate_probe.jpg)은 막대의 두 프레임 polygon을 개폐 변화 영역에서 제외한 후에도, 네 과거 쌍에서 모든 runtime-equivalent 대비 후보가 막대 끝을 양쪽에서 감싸는 위상 조건을 통과했다. 코드의 meaningful minimum은 각 threshold별 largest component로 다시 계산했으며, 입력의 기존 alignment.endpoint를 사용했다. 사례별9/9,9/9,10/10,8/8이다. 이는 현재 접촉 pad나 실제 높이의 증거가 아니며, 네 연관 양성 예시는 오탐률을 제공하지 않는다. 기존 각도 조건과 서로 다른 두 fresh close→open 확인을 보존하는 제한된 trial 가설만 검토한다.
+
+
+## RGB sweep trial v16
+
+`089c2ab`의 필수388 tests/140 subtests 통과. undilated calibration masks는 같은 호출에서만 쓰고 JSON에는 대비별 판정만 남긴다. 기존 point gate에 더해, 실제 fresh 1500→2000 두 개폐 주기에서 old/current top beam polygon을 제외한 sweep topology가 모든 대비 후보에 대해 성립하고 기존 각도·own-beam visibility 조건을 만족할 때만 제한된 trial을 시작한다. 같은 frame 재계수·flow 관측·중간 비집게 동작·두번째 확인 실패는 허용하지 않는다. [실제 기존 영상으로 runtime 검사](sweep-runtime-pair-check.json)의 네 쌍은 topology를 모두 통과하지만 v14r991은 기존 각도 조건에서 제외된다.
+
+v16은500단계/174.675초와 정확 재생500개 감사를 완료했다. trial closure가 처음으로6회 발생했다(r140/152/164/176/188/200, 자기 servo5 명령1320/1370/1420/1470/1520/1570). [실제 trial 직전 입력](v16-trial-inputs.jpg)을 검토했다. 하지만 모든 손가락 접촉0·최대상승 -0.000049m·유지0으로 실패했다. r227의두번째sweep확인에서6회 제한으로blocked됐다. 전체21개 기록의 신규 판단누적9510개.
+
+후속 후보는 측정 높이를 목표로 삼지 않고, 이미 허용된500–2500 pulse 범위를50씩 탐색할 수 있는 명령 예산41회를 사용한다. 실패한2500 trial은 집게를 열고 시험 전 명령으로 복구한 뒤 종료하며, 같은 상한에서 무한 재시도하지 않는다. 새로운 성공 기준이나 물리 상태 입력은 추가하지 않는다.
