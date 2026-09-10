@@ -110,6 +110,39 @@ class CameraRobotPortTests(unittest.TestCase):
         port.tick(.4)
         self.assertEqual(self.world.robots['r1'].motor_calls[-1], [0.] * 4)
 
+    def test_mecanum_is_opt_in_uses_verified_patterns_and_expires(self):
+        action = {"kind":"mecanum", "forward":.10, "left":.04,
+                  "turn":.02, "duration_s":.5}
+        with self.assertRaises(ValueError):
+            self.port.apply(action, 2.)
+        port = CameraRobotPort(self.world, 'r1', allow_mecanum=True)
+        result = port.apply(action, 2.)
+        expected = [.04, .16, .12, .08]
+        for actual, wanted in zip(self.world.robots['r1'].motor_calls[-1], expected):
+            self.assertAlmostEqual(actual, wanted)
+        for actual, wanted in zip(result['actuator_state']['motor_commands'], expected):
+            self.assertAlmostEqual(actual, wanted)
+        port.tick(2.499)
+        self.assertNotEqual(self.world.robots['r1'].motor_calls[-1], [0.] * 4)
+        port.tick(2.5)
+        self.assertEqual(self.world.robots['r1'].motor_calls[-1], [0.] * 4)
+
+    def test_mecanum_bounds_reverse_and_exact_schema(self):
+        port = CameraRobotPort(self.world, 'r1', allow_mecanum=True)
+        valid = {"kind":"mecanum", "forward":0., "left":0., "turn":0., "duration_s":.2}
+        for update in ({'left':.101},{'left':-.101},{'turn':.151},{'turn':-.151},
+                       {'forward':.151},{'duration_s':1.01},{'left':math.nan}):
+            with self.subTest(update=update), self.assertRaises(ValueError):
+                port.apply({**valid,**update},0.)
+        with self.assertRaises(ValueError):
+            port.apply({**valid,'forward':-.01},0.)
+        reverse = CameraRobotPort(self.world,'r1',allow_reverse=True,allow_mecanum=True)
+        reverse.apply({**valid,'forward':-.05},0.)
+        with self.assertRaises(ValueError):
+            reverse.apply({**valid,'forward':-.051},0.)
+        with self.assertRaises(ValueError):
+            port.apply({**valid,'cargo':'secret'},0.)
+
     def test_look_and_arm_use_physical_servo_channels(self):
         look = self.port.apply({"kind": "look", "pan_pulse": 1700}, 0.0)
         self.assertEqual(self.world.robots["r1"].servo_calls, [])

@@ -3,6 +3,7 @@
 from __future__ import annotations
 import hashlib
 import json
+import math
 from pathlib import Path
 from typing import Any, Mapping
 
@@ -46,6 +47,27 @@ def payload_contact_other_geoms(contacts, beam_geom: int, robot_geoms: set[int])
                (b == beam_geom and a in robot_geoms)]
 
 
+def validate_start_poses(start_poses: Mapping[str, Mapping[str, Any]]) -> dict[str, dict[str, float]]:
+    if not isinstance(start_poses, Mapping) or set(start_poses) != set(ROBOTS):
+        raise ValueError('start_poses must contain exactly r1 and r3')
+    result = {}
+    bounds = {'distance_m': (-.02, .45), 'lateral_m': (-.1, .1), 'yaw_deg': (-20., 20.)}
+    for rid in ROBOTS:
+        pose = start_poses[rid]
+        if not isinstance(pose, Mapping) or set(pose) != set(bounds):
+            raise ValueError(f'{rid} start pose requires distance_m, lateral_m, yaw_deg')
+        result[rid] = {}
+        for key, (lower, upper) in bounds.items():
+            value = pose[key]
+            if (isinstance(value, bool) or not isinstance(value, (int, float))
+                    or not math.isfinite(value)
+                    or lower is not None and not lower <= value <= upper):
+                bound = f' in {lower}..{upper}' if lower is not None else ''
+                raise ValueError(f'{rid}.{key} must be finite{bound}')
+            result[rid][key] = float(value)
+    return result
+
+
 class ApproachScene:
     def __init__(self, out_dir: Path, grasp_model_dir: Path, *, fps: int = 4):
         self.out, self.models_root = out_dir.resolve(), grasp_model_dir.resolve()
@@ -65,7 +87,8 @@ class ApproachScene:
         self.fixture = json.loads((self.models_root / 'evaluation-fixture.json').read_text())
         self.grasp_report = None
 
-    def open(self, base_offsets: Mapping[str, float] | None = None):
+    def open(self, base_offsets: Mapping[str, float] | None = None, *,
+             start_poses: Mapping[str, Mapping[str, Any]] | None = None):
         import mujoco
         from unittest.mock import patch
         import sim.multi_masterpi_production as production
@@ -78,11 +101,16 @@ class ApproachScene:
                           _plain_beam_xml(production.build_multi_robot_xml)):
             self.world = production.MultiMasterPiProductionV2(
                 seed=int(self.fixture['seed']), width=960, height=720, render=True)
-        offsets = base_offsets or {r: 0.0 for r in ROBOTS}
+        starts = validate_start_poses(start_poses) if start_poses is not None else None
+        offsets = ({r: starts[r]['distance_m'] for r in ROBOTS} if starts is not None
+                   else base_offsets or {r: 0.0 for r in ROBOTS})
         for rid in ROBOTS:
             pose = list(self.fixture['base_poses'][rid])
             pose[0] -= float(offsets[rid])
-            self.world.controllers[rid].set_base_pose_for_test(tuple(pose), 0.0)
+            if starts is not None:
+                pose[1] += starts[rid]['lateral_m']
+            yaw = math.radians(starts[rid]['yaw_deg']) if starts is not None else 0.0
+            self.world.controllers[rid].set_base_pose_for_test(tuple(pose), yaw)
         c = self.fixture['top_camera']
         cid = mujoco.mj_name2id(self.world.model, mujoco.mjtObj.mjOBJ_CAMERA, 'cctv_top')
         self.world.model.cam_pos[cid] = c['position_m']
@@ -92,7 +120,8 @@ class ApproachScene:
         # Observer video only; policy own/top cameras remain unchanged.
         _camera_look_at(self.world, approach_distance=max(map(float, offsets.values())))
         self.replay([self.skill['initialization_replay'][0]], 'folded_setup')
-        self.ports = {r: CameraRobotPort(self.world, r) for r in ROBOTS}
+        self.ports = {r: CameraRobotPort(self.world, r, allow_reverse=starts is not None,
+                                         allow_mecanum=starts is not None) for r in ROBOTS}
         self.beam_geom = mujoco.mj_name2id(self.world.model, mujoco.mjtObj.mjOBJ_GEOM, BEAM_GEOM_NAME)
         self.robot_geoms = {i for i in range(self.world.model.ngeom)
                             if (mujoco.mj_id2name(self.world.model, mujoco.mjtObj.mjOBJ_GEOM, i) or '').startswith(('r1__', 'r3__'))}
@@ -163,6 +192,31 @@ class ApproachScene:
         self.trace.append({'stage': self.phase, 'actions': actions,
                            'start_sim_time_s': start, 'end_sim_time_s': self.time()})
 
+    def drive_mecanum(self, commands, duration_s=DRIVE_SLICE_S):
+        if not isinstance(commands, Mapping) or set(commands) != set(ROBOTS):
+            raise ValueError('commands must contain exactly r1 and r3')
+        for rid, command in commands.items():
+            if not isinstance(command, Mapping) or set(command) != {'forward','left','turn'}:
+                raise ValueError(f'{rid} command requires exactly forward, left, and turn')
+            for axis, (lower, upper) in {'forward':(-.05,.15),'left':(-.10,.10),'turn':(-.15,.15)}.items():
+                value=command[axis]
+                if isinstance(value,bool) or not isinstance(value,(int,float)) or not math.isfinite(value) or not lower<=value<=upper:
+                    raise ValueError(f'{rid}.{axis} must be finite in {lower}..{upper}')
+        if isinstance(duration_s,bool) or not isinstance(duration_s,(int,float)) or not math.isfinite(duration_s) or not 0<=duration_s<=1:
+            raise ValueError('duration_s must be finite in 0..1')
+        moving = any(any(command[axis] != 0.0 for axis in ('forward','left','turn'))
+                     for command in commands.values())
+        self.phase = 'approach' if moving else 'approach_stop_dwell'
+        start = self.time()
+        actions = {rid: {'kind':'mecanum','forward':commands[rid]['forward'],
+                         'left':commands[rid]['left'],'turn':commands[rid]['turn'],
+                         'duration_s':duration_s} for rid in ROBOTS}
+        for rid, action in actions.items():
+            self.ports[rid].apply(action, start)
+        self.tick(duration_s)
+        self.trace.append({'stage':self.phase,'actions':actions,
+                           'start_sim_time_s':start,'end_sim_time_s':self.time()})
+
     def stop_dwell(self):
         self.drive({r: 0.0 for r in ROBOTS}, STOP_DWELL_S)
 
@@ -228,6 +282,8 @@ class ApproachScene:
         from scripts.probe_dual_grasp_sync import _plain_beam_contact, _pose_metrics
         result = {**_pose_metrics(self.world), 'phase': self.phase,
                   'bases': {r: list(map(float, self.world.controllers[r].base_xyz())) for r in ROBOTS},
+                  'base_rpy': {r: list(map(float, self.world.controllers[r].base_rpy())) for r in ROBOTS},
+                  'base_yaw_rad': {r: float(self.world.controllers[r].base_rpy()[2]) for r in ROBOTS},
                   'contacts': {r: _plain_beam_contact(self.world, r) for r in ROBOTS}}
         if full_state:
             result.update(qpos=self.world.data.qpos.tolist(), qvel=self.world.data.qvel.tolist())

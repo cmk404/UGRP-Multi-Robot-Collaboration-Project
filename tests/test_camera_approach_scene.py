@@ -1,5 +1,5 @@
 import unittest
-from scripts.camera_approach_scene import normalize_replay, ready_after_two_fresh_stationary, payload_contact_other_geoms
+from scripts.camera_approach_scene import normalize_replay, ready_after_two_fresh_stationary, payload_contact_other_geoms, validate_start_poses
 
 class ApproachContractTests(unittest.TestCase):
  def test_replay_keys_are_ints(self):
@@ -30,3 +30,20 @@ class CollisionAndStopTests(unittest.TestCase):
   d={'r1':{'ok':True,'ready':False,'forward':.1},'r3':{'ok':True,'ready':True,'forward':0.}}
   c=choose_actions(d,'visual','confirmation-1',9,1)
   self.assertTrue(c['blocked']);self.assertEqual(c['actions']['r1']['forward'],0.)
+
+class VariedStartTests(unittest.TestCase):
+ def test_validates_and_normalizes_two_robot_start_poses(self):
+  value={'r1':{'distance_m':.2,'lateral_m':-.1,'yaw_deg':-15},
+         'r3':{'distance_m':.3,'lateral_m':.1,'yaw_deg':15}}
+  got=validate_start_poses(value)
+  self.assertEqual(got['r1'],{'distance_m':.2,'lateral_m':-.1,'yaw_deg':-15.})
+ def test_rejects_missing_extra_nonfinite_and_out_of_bounds(self):
+  base={'r1':{'distance_m':.25,'lateral_m':0.,'yaw_deg':0.},
+        'r3':{'distance_m':.25,'lateral_m':0.,'yaw_deg':0.}}
+  bad=[{'r1':base['r1']},
+       {**base,'r1':{**base['r1'],'extra':1}},
+       {**base,'r1':{**base['r1'],'distance_m':.451}},
+       {**base,'r1':{**base['r1'],'lateral_m':float('inf')}},
+       {**base,'r1':{**base['r1'],'yaw_deg':float('nan')}}]
+  for value in bad:
+   with self.subTest(value=value),self.assertRaises(ValueError):validate_start_poses(value)
