@@ -11,7 +11,7 @@ import sys
 import time
 
 import numpy as np
-from PIL import Image
+import cv2
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -44,10 +44,11 @@ def compare_initial_rgb(first_root, first_images, current_root, current_images):
             if a['sha256'] == b['sha256']:
                 metrics[f'{rid}/{view}'] = {'byte_exact': True, 'max_abs': 0, 'mean_abs': 0.0}
                 continue
-            with Image.open(first_root / a['path']) as im:
-                left = np.asarray(im.convert('RGB'), dtype=np.int16)
-            with Image.open(current_root / b['path']) as im:
-                right = np.asarray(im.convert('RGB'), dtype=np.int16)
+            left = cv2.imread(str(first_root / a['path']), cv2.IMREAD_COLOR)
+            right = cv2.imread(str(current_root / b['path']), cv2.IMREAD_COLOR)
+            if left is None or right is None:
+                raise ValueError('paired initial RGB cannot be decoded')
+            left, right = left.astype(np.int16), right.astype(np.int16)
             if left.shape != right.shape:
                 raise ValueError('paired initial RGB shape differs')
             delta = np.abs(left - right)
