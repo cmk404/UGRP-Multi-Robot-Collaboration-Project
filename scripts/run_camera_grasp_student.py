@@ -104,6 +104,9 @@ def main():
   move(targets,.35,.10)
   report['actor_initial_issued_commands']={rid:dict(c) for rid,c in commands.items()}
   report['applied_perturbation']={rid:[commands[rid][ch]-report['initialization_commands'][rid][ch] for ch in (3,4,5)] for rid in models}
+  # Privileged pairing evidence only; never passed to the RGB predictor.
+  report['evaluation_initial_state']={'sim_time_s':float(world.data.time),
+      'qpos':world.data.qpos.tolist(),'qvel':world.data.qvel.tolist()}
   (out/'rgb').mkdir();referee=(out/'evaluation-only.jsonl').open('w')
   video=Video(world,out/'motion.mp4',args.video_fps);world.frame_callback=frame_callback;actor_started=True
   for index in range(args.rounds):

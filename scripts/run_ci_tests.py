@@ -31,6 +31,7 @@ TEST_PATTERNS = (
     "tests/test_audit_camera_grasp_student.py",
     "tests/test_camera_grasp_teacher.py",
     "tests/test_grasp_recovery_teacher.py",
+    "tests/test_grasp_recovery_cohort.py",
     "tests/test_markerless*.py",
     "tests/test_visual_attachment*.py",
     "tests/test_placement_guidance.py",

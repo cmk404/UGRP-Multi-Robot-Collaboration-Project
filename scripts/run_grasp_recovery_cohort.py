@@ -10,6 +10,9 @@ import subprocess
 import sys
 import time
 
+import numpy as np
+from PIL import Image
+
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
@@ -29,6 +32,30 @@ def sha(path):
 
 def git(*args):
     return subprocess.check_output(['git', *args], cwd=ROOT, text=True).strip()
+
+
+def compare_initial_rgb(first_root, first_images, current_root, current_images):
+    """Allow tiny raster/JPEG noise only; physical initial state is checked separately."""
+    metrics = {}
+    for rid in first_images:
+        for view in ('own', 'top'):
+            a = first_images[rid][view]
+            b = current_images[rid][view]
+            if a['sha256'] == b['sha256']:
+                metrics[f'{rid}/{view}'] = {'byte_exact': True, 'max_abs': 0, 'mean_abs': 0.0}
+                continue
+            with Image.open(first_root / a['path']) as im:
+                left = np.asarray(im.convert('RGB'), dtype=np.int16)
+            with Image.open(current_root / b['path']) as im:
+                right = np.asarray(im.convert('RGB'), dtype=np.int16)
+            if left.shape != right.shape:
+                raise ValueError('paired initial RGB shape differs')
+            delta = np.abs(left - right)
+            maximum, mean = int(delta.max()), float(delta.mean())
+            if maximum > 3 or mean > 0.001:
+                raise ValueError(f'paired initial RGB differs: {rid}/{view}: max={maximum}, mean={mean}')
+            metrics[f'{rid}/{view}'] = {'byte_exact': False, 'max_abs': maximum, 'mean_abs': mean}
+    return metrics
 
 
 def main():
@@ -69,6 +96,8 @@ def main():
     for case in cases:
         first_images = None
         first_time_range = None
+        first_state = None
+        first_destination = None
         for condition in args.conditions:
             if git('rev-parse', 'HEAD') != source or git('status', '--porcelain=v1'):
                 raise RuntimeError('source changed during frozen cohort')
@@ -102,14 +131,18 @@ def main():
             sim_range = [evaluation_samples[0]['sim_time_s'], evaluation_samples[-1]['sim_time_s']]
             if first_images is None:
                 first_images, first_time_range = initial_images, sim_range
-            if initial_images != first_images or sim_range != first_time_range:
-                raise ValueError(f"unmatched paired initial RGB/timing: {case['id']}")
+                first_state = report['evaluation_initial_state']
+                first_destination = destination
+            if report['evaluation_initial_state'] != first_state or sim_range != first_time_range:
+                raise ValueError(f"unmatched paired initial physical state/timing: {case['id']}")
+            image_match = compare_initial_rgb(first_destination, first_images, destination, initial_images)
             if report['applied_perturbation'] != case['perturb']:
                 raise ValueError('requested perturbation clipped or changed')
             if report['source_sha'] != source:
                 raise ValueError('runner used another source')
             row.update({'ok': True, 'evaluation': evaluation, 'audit_calls': replay['calls'],
-                        'matched_initial_rgb': True, 'sim_time_range': sim_range,
+                        'matched_initial_rgb': True, 'initial_rgb_comparison': image_match,
+                        'matched_initial_physical_state': True, 'sim_time_range': sim_range,
                         'action_count': sum(len(c['actions']) for c in report['calls']),
                         'wall_elapsed_s': report['wall_elapsed_s'],
                         'result_sha256': sha(destination / 'result.json'),
