@@ -29,7 +29,7 @@ def main():
  cp=a.cases_json.resolve();cases=load_cases(cp);gr=a.grasp_model_dir.resolve();models,skillhash,modelhashes=load_models(gr)
  import mujoco
  out=a.out_dir.resolve();out.mkdir(parents=True,exist_ok=False);started=time.monotonic()
- report={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'cases_sha256':sha(cp),'grasp_skill_sha256':skillhash,'grasp_model_sha256':modelhashes,'environment':{'python':sys.version,'platform':platform.platform(),'mujoco':mujoco.__version__},'config':{'seed':11,'weld':False,'slice_s':.2,'stop_dwell_s':.25,'max_rounds':MAX_APPROACH_ROUNDS},'successful_cases':[],'excluded_cases':[],'goal_references':{},'cases':[],'complete':False};write(out/'report.json',report)
+ report={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'cases_sha256':sha(cp),'grasp_skill_sha256':skillhash,'grasp_model_sha256':modelhashes,'environment':{'python':sys.version,'platform':platform.platform(),'mujoco':mujoco.__version__},'config':{'seed':11,'weld':False,'slice_s':.2,'stop_dwell_s':.25,'teacher_forward_gain_per_m':.2,'max_rounds':MAX_APPROACH_ROUNDS},'successful_cases':[],'excluded_cases':[],'goal_references':{},'cases':[],'complete':False};write(out/'report.json',report)
  ref=ApproachScene(out/'reference',gr)
  try:
   ref.open({r:0 for r in ROBOTS});ref.stop_dwell();frames=ref.capture('goal')
@@ -43,7 +43,7 @@ def main():
    for i in range(MAX_APPROACH_ROUNDS):
     frames=scene.capture(f'approach-{i:03d}');speeds={};both=True
     for rid in ROBOTS:
-     remaining=goals[rid]-float(scene.world.controllers[rid].base_xyz()[0]);stop=abs(remaining)<=.004;forward=0. if stop else min(.15,max(0.,.8*remaining));both&=stop;sid=f'{cid}:{i:03d}:{rid}';actors.append({'id':sid,'case_id':cid,'robot_id':rid,'observations':{'own_rgb':frames[rid]['own_rgb'],'shared_top_rgb':frames[rid]['shared_top_rgb']},'own_command_history':list(hist[rid])});labels.append({'sample_id':sid,'case_id':cid,'robot_id':rid,'forward':forward,'stop':bool(stop)});speeds[rid]=forward
+     remaining=goals[rid]-float(scene.world.controllers[rid].base_xyz()[0]);stop=abs(remaining)<=.004;forward=0. if stop else min(.15,max(0.,.2*remaining));both&=stop;sid=f'{cid}:{i:03d}:{rid}';actors.append({'id':sid,'case_id':cid,'robot_id':rid,'observations':{'own_rgb':frames[rid]['own_rgb'],'shared_top_rgb':frames[rid]['shared_top_rgb']},'own_command_history':list(hist[rid])});labels.append({'sample_id':sid,'case_id':cid,'robot_id':rid,'forward':forward,'stop':bool(stop)});speeds[rid]=forward
     if both:rec['approach_ok']=True;break
     for rid in ROBOTS:hist[rid].append({'kind':'drive','forward':speeds[rid],'turn':0.,'duration_s':.2})
     scene.drive(speeds)
@@ -54,7 +54,7 @@ def main():
     for rid in ROBOTS:
      remaining=goals[rid]-float(scene.world.controllers[rid].base_xyz()[0]);stop=abs(remaining)<=.004;sid=f'{cid}:stationary-{confirm}:{rid}'
      actors.append({'id':sid,'case_id':cid,'robot_id':rid,'observations':{'own_rgb':frames[rid]['own_rgb'],'shared_top_rgb':frames[rid]['shared_top_rgb']},'own_command_history':list(hist[rid])})
-     labels.append({'sample_id':sid,'case_id':cid,'robot_id':rid,'forward':0. if stop else min(.15,max(0.,.8*remaining)),'stop':bool(stop)})
+     labels.append({'sample_id':sid,'case_id':cid,'robot_id':rid,'forward':0. if stop else min(.15,max(0.,.2*remaining)),'stop':bool(stop)})
      rec['approach_ok']=bool(rec['approach_ok'] and stop)
     if confirm==0:scene.stop_dwell()
    rec['approach_end_state']=scene.evaluation_snapshot()
