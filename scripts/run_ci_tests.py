@@ -27,6 +27,7 @@ TEST_PATTERNS = (
     "tests/test_camera_pixel_resume.py",
     "tests/test_camera_pixel_jacobian.py",
     "tests/test_camera_teacher_student.py",
+    "tests/test_audit_camera_grasp_student.py",
     "tests/test_camera_grasp_teacher.py",
     "tests/test_markerless*.py",
     "tests/test_visual_attachment*.py",

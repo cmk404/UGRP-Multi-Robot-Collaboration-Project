@@ -1,0 +1,71 @@
+{
+  "schema": "ugrp.local_rgb_student_cohort.v1",
+  "status": "declared_before_cohort",
+  "training_dir": "/Users/changmin/projects/ugrp/outputs/grasp-teacher-20260910-v2",
+  "model_dir": "/Users/changmin/projects/ugrp/outputs/grasp-student-model-20260910-v1",
+  "seed": 11,
+  "rounds": 16,
+  "max_step": 25,
+  "conditions": [
+    "visual",
+    "playback"
+  ],
+  "holdouts": [
+    {
+      "id": "wrist-plus37",
+      "perturb": [
+        37,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wrist-minus37",
+      "perturb": [
+        -37,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "elbow-plus37",
+      "perturb": [
+        0,
+        37,
+        0
+      ]
+    },
+    {
+      "id": "elbow-minus37",
+      "perturb": [
+        0,
+        -37,
+        0
+      ]
+    },
+    {
+      "id": "shoulder-minus37",
+      "perturb": [
+        0,
+        0,
+        -37
+      ]
+    },
+    {
+      "id": "shoulder-plus7",
+      "perturb": [
+        0,
+        0,
+        7
+      ]
+    }
+  ],
+  "criteria": {
+    "physical": "lift >= 0.03m and both robot bilateral contacts and no weld continuously >=2s",
+    "local_pilot_gate": "visual succeeds in at least 5 of 6; report paired playback and feature errors without claiming statistical generalization"
+  },
+  "matching": "both conditions identical fixture, initial RGB hashes, 16 recovery rounds, .45 simulation seconds per round, close/lift/hold commands; differs only image-derived corrections",
+  "scope": "Same fixed base poses/object/camera/seed; unseen local servo perturbations, not independent approach or task-level generalization. First wrist-plus37 pilot was viewed before declaring this cohort and is a repeated diagnostic case, not untouched validation. Other five have not run.",
+  "cost": "local numpy/OpenCV fit; no neural network/LLM/API calls; record wall time and raw servo action count",
+  "source_sha": "the commit containing this declaration (resolve with git history)"
+}

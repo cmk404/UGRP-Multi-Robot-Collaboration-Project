@@ -49,11 +49,12 @@ def main():
   models[rid]=json.loads(path.read_text())
  import mujoco
  import sim.multi_masterpi_production as production
- from scripts.probe_dual_grasp_sync import Video,_plain_beam_xml,_pose_metrics,_plain_beam_contact
+ from scripts.probe_dual_grasp_sync import Video,_plain_beam_xml,_pose_metrics,_plain_beam_contact,_camera_look_at
  from scripts.run_camera_pair_transport import evaluate_grasp_samples
  started=time.monotonic();world=None;video=None;referee=None;calls=[];evals=[];commands={rid:{} for rid in models}
  report={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
          'input_boundary':BOUNDARY,'skill_sha256':sha(models_root/'student-skill.json'),
+         'evaluation_fixture_sha256':sha(models_root/'evaluation-fixture.json'),
          'model_sha256':{rid:v['sha256'] for rid,v in skill['models'].items()},
          'config':{'condition':args.condition,'perturb':args.perturb,'rounds':args.rounds,'max_step':args.max_step,'seed':fixture['seed'],'weld':False},
          'scope':skill['scope'],'environment':{'python':sys.version,'platform':platform.platform(),'mujoco':mujoco.__version__},
@@ -88,16 +89,19 @@ def main():
    world=production.MultiMasterPiProductionV2(seed=fixture['seed'],width=960,height=720,render=True)
   for rid,pose in fixture['base_poses'].items():world.controllers[rid].set_base_pose_for_test(tuple(pose),0.0)
   topconf=fixture['top_camera']
-  for name in ('cctv_top','cctv_warehouse'):
+  for name in ('cctv_top',):
    cid=mujoco.mj_name2id(world.model,mujoco.mjtObj.mjOBJ_CAMERA,name)
    world.model.cam_pos[cid]=topconf['position_m'];world.model.cam_quat[cid]=topconf['quaternion_wxyz'];world.model.cam_fovy[cid]=topconf['fov_y_deg']
   mujoco.mj_forward(world.model,world.data)
+  # Presentation-only video camera; neither actor RGB view uses this camera.
+  _camera_look_at(world)
   # Explicit teacher-initialized curriculum. No inverse kinematics in this file.
   for c in skill['initialization_replay']:move(normcmd(c),c['duration_s'],c.get('settle_s',0.0))
   report['initialization_commands']={rid:dict(c) for rid,c in commands.items()}
   targets={rid:{ch:max(500,min(2500,commands[rid][ch]+args.perturb[i])) for i,ch in enumerate((3,4,5))} for rid in models}
   move(targets,.35,.10)
   report['actor_initial_issued_commands']={rid:dict(c) for rid,c in commands.items()}
+  report['applied_perturbation']={rid:[commands[rid][ch]-report['initialization_commands'][rid][ch] for ch in (3,4,5)] for rid in models}
   (out/'rgb').mkdir();referee=(out/'evaluation-only.jsonl').open('w')
   video=Video(world,out/'motion.mp4',args.video_fps);world.frame_callback=frame_callback;actor_started=True
   for index in range(args.rounds):
