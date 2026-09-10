@@ -1,0 +1,35 @@
+{
+  "source_sha": "b4c9535d24efc6747ed4f6df244b902976efb00f",
+  "review_type": "manual inspection of sampled MP4 frames, combined with exact RGB/action replay audits; not every frame manually inspected",
+  "reviews": [
+    {
+      "cases": [
+        "development-03"
+      ],
+      "condition": "visual v3",
+      "frames_per_case": 4,
+      "sheet": "development-03-review.jpg",
+      "observed": "Different robot starts, wheel alignment, then physical grasp/lift."
+    },
+    {
+      "cases": [
+        "heldout-01",
+        "heldout-02",
+        "heldout-05"
+      ],
+      "condition": "visual v3",
+      "frames_per_case": 4,
+      "sheet": "heldout-motion-review.jpg",
+      "observed": "Independent distances and yaw, wheel motion before grasp, beam lift after bilateral grasp."
+    },
+    {
+      "cases": [
+        "heldout-19"
+      ],
+      "condition": "visual v3",
+      "frames_per_case": 4,
+      "sheet": "heldout-19-failure-review.jpg",
+      "observed": "Approach reaches beam, stops before grasp; beam remains on floor. Final r3 image-derived lateral error 0.002773m exceeds stationary limit0.0025m."
+    }
+  ]
+}

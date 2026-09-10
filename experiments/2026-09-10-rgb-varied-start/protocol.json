@@ -1,5 +1,5 @@
 {
-  "request": "좀 더 다양한 상황에서 해볼래? 처음 시작하는 위치가 고정된 게 아니어도 가능하게",
+  "request": "\uc880 \ub354 \ub2e4\uc591\ud55c \uc0c1\ud669\uc5d0\uc11c \ud574\ubcfc\ub798? \ucc98\uc74c \uc2dc\uc791\ud558\ub294 \uc704\uce58\uac00 \uace0\uc815\ub41c \uac8c \uc544\ub2c8\uc5b4\ub3c4 \uac00\ub2a5\ud558\uac8c",
   "base_sha": "6542c3504449547f60510f88c34cf44f2b6cf84c",
   "scope": {
     "distance_m": [
@@ -40,7 +40,7 @@
     "grasp": "height>=.03m with bilateral contact and weld off continuously>=2s"
   },
   "storage": "Source committed before each run and frozen throughout each cohort. All failures retained. Video raw local unless explicitly archived. No Drive.",
-  "status": "declared_before_collection",
+  "status": "completed_pass",
   "development_history": [
     {
       "source_sha": "f025813",
@@ -103,6 +103,19 @@
       "audit_all_passed": true,
       "finding": "01 final r3 yaw estimate 0.006228 exceeded 0.006 after later lateral correction; 03 stationary lateral estimate changed 0.002444 to0.002501 versus0.0025 limit. Other6 fullgrasp. Introduce inner movement target at75% of unchanged stationary tolerances; stationary confirmations still issue onlyzero commands.",
       "training_metadata_note": "v2 wrapper reported selected600 although geometry fit correctly used all stage domain samples; actual model diagnostics report779 yaw/760 lateral/841forward perrobot. Corrected future trainer metadata."
+    },
+    {
+      "source_sha": "b4c9535d24efc6747ed4f6df244b902976efb00f",
+      "model_raw_dir": "/Users/changmin/projects/ugrp/outputs/varied-start-model-20260910-v3",
+      "raw_dirs": [
+        "/Users/changmin/projects/ugrp/outputs/varied-start-development-20260910-v3-0",
+        "/Users/changmin/projects/ugrp/outputs/varied-start-development-20260910-v3-1"
+      ],
+      "purpose": "geometry student with moving/stationary hysteresis; same fitted geometry and training data",
+      "cases": 8,
+      "success": 8,
+      "approach_payload_contact_steps": 0,
+      "audit_all_passed": true
     }
   ],
   "teacher_controller": {
@@ -128,7 +141,6 @@
       "ready_tolerance_m": 0.004
     }
   },
-  "actuator_calibration": "For a supported non-ready RGB prediction, retain learned sign but enforce teacher minimum moving magnitude0.01; ready still requires raw regression magnitude<=0.003 and ready_score>=0.65. Initial teacher yaw stalled at0.0046; six teacher paths succeeded with0.01 minimum.",
   "training_collection": {
     "calibration_cases": 483,
     "source_sha": "5513b2e",
@@ -154,5 +166,21 @@
     "moving_target_fraction": 0.75,
     "same_teacher_data": true,
     "final_execution": "Two independent process shards may run concurrently; every original case included once percondition, source/model freeze spansbothshards, percase physics/RGB pairing and exactaudits unchanged."
+  },
+  "actuator_calibration_v1": "For a supported non-ready RGB prediction, retain learned sign but enforce teacher minimum moving magnitude0.01; ready still requires raw regression magnitude<=0.003 and ready_score>=0.65. Initial teacher yaw stalled at0.0046; six teacher paths succeeded with0.01 minimum.",
+  "final_results": {
+    "source_sha": "b4c9535d24efc6747ed4f6df244b902976efb00f",
+    "novel_success": 29,
+    "novel_count": 30,
+    "paired_straight_success": 0,
+    "retention_success": 20,
+    "retention_count": 20,
+    "accepted": true,
+    "all_80_audits_passed": true,
+    "heldout_tuning": false,
+    "summary": "final-summary.json",
+    "csv": "final-results.csv",
+    "failure_record": "README.md",
+    "raw_manifest": "final-raw-manifest.jsonl"
   }
 }
