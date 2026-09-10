@@ -18,7 +18,7 @@ from scripts.camera_approach_scene import ApproachScene, ROBOTS, validate_start_
 from scripts.run_camera_approach_student import models, sha, write
 from scripts.run_camera_pair_transport import evaluate_grasp_samples
 
-PHASES = ('yaw', 'lateral', 'yaw', 'forward')
+from harness.camera_varied_start_student import PHASES
 LIMITS = {'yaw': 90, 'lateral': 110, 'forward': 160}
 AXES = {'yaw': 'turn', 'lateral': 'left', 'forward': 'forward'}
 
@@ -171,7 +171,8 @@ def main():
                 checks = {r: {s: predict_stage(stage_models[r][s], frames[r]['own_bytes'], frames[r]['top_bytes']) for s in AXES} for r in ROBOTS}
                 report['final_alignment_checks'].append({'frame_ids': {r: frames[r]['frame_id'] for r in ROBOTS},
                     'images': {r: {'own': frames[r]['own_rgb'], 'top': frames[r]['shared_top_rgb']} for r in ROBOTS}, 'decisions': checks})
-                report['approach_ok'] &= all(d['ok'] and d['ready'] for stages in checks.values() for d in stages.values())
+                report['approach_ok'] &= all(d['ok'] and d['ready'] and d.get('precision', 'fine') == 'fine'
+                                            for stages in checks.values() for d in stages.values())
                 scene.stop_dwell()
         report['approach_elapsed_sim_s'] = scene.time() - approach_start
         report['approach_end_state'] = scene.evaluation_snapshot()

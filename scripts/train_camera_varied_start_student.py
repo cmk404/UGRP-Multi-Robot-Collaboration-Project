@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from harness.camera_varied_start_student import (COMMAND_BOUNDS, STAGES,
+from harness.camera_varied_start_student import (COMMAND_BOUNDS, PHASES, STAGES,
                                                   fit_stage_model)
 
 ROBOTS = ("r1", "r3")
@@ -117,7 +117,13 @@ def _balanced(rows: list[dict[str, Any]], cap: int = REGRESSION_CAP) -> list[dic
     return selected
 
 
-def train(teacher_dir: Path | str, out_dir: Path | str) -> dict[str, Any]:
+def train(teacher_dir: Path | str, out_dir: Path | str, *, backend: str = "kernel") -> dict[str, Any]:
+    if backend not in ("kernel", "geometry"):
+        raise ValueError("unsupported training backend")
+    fitter = fit_stage_model
+    if backend == "geometry":
+        from harness.camera_varied_start_pose_student import fit_pose_stage_model
+        fitter = fit_pose_stage_model
     teacher, out = Path(teacher_dir).resolve(), Path(out_dir).resolve()
     if out.exists():
         raise FileExistsError(out)
@@ -148,6 +154,10 @@ def train(teacher_dir: Path | str, out_dir: Path | str) -> dict[str, Any]:
     for sample_id, actor in actor_by_id.items():
         label = labels[sample_id]
         _validate_pair(actor, label, declared)
+        if backend == "geometry":
+            error = label.get("teacher_truth", {}).get("error")
+            if isinstance(error, bool) or not isinstance(error, (int, float)) or not math.isfinite(error):
+                raise ValueError("geometry training requires a finite offline teacher error")
         observations = actor.get("observations")
         if not isinstance(observations, dict):
             raise ValueError("actor observations are missing")
@@ -170,11 +180,12 @@ def train(teacher_dir: Path | str, out_dir: Path | str) -> dict[str, Any]:
                 label = labels[sample_id]
                 domain.append({"sample_id": sample_id, "case_id": actor["case_id"],
                     "own_jpeg": loaded[sample_id][0], "top_jpeg": loaded[sample_id][1],
-                    "command": label["command"], "ready": label["ready"]})
+                    "command": label["command"], "ready": label["ready"],
+                    **({"error": label["teacher_truth"]["error"]} if backend == "geometry" else {})})
             selected = _balanced(domain)
             if len({row["case_id"] for row in selected}) < 4:
                 raise ValueError(f"{rid}/{stage} requires at least four successful cases")
-            model = fit_stage_model(ref_own, ref_top, selected, rid, stage,
+            model = fitter(ref_own, ref_top, selected, rid, stage,
                                     domain_samples=domain)
             path = out / f"model-{rid}-{stage}.json"
             _write(path, model)
@@ -185,15 +196,19 @@ def train(teacher_dir: Path | str, out_dir: Path | str) -> dict[str, Any]:
                 "selected_case_count": len({row["case_id"] for row in selected}),
                 "selected_sample_ids": [row["sample_id"] for row in selected],
                 "model": model["diagnostics"]}
-    skill = {"schema": "ugrp.rgb_varied_start_skill.v1",
+    skill = {"schema": "ugrp.rgb_varied_start_skill.v1", "backend": backend,
              "scope": {"forward_distance_m": [.15, .40], "lateral_m": [-.06, .06],
                        "heading_deg": [-10, 10], "robots": list(ROBOTS)},
-             "runtime_inputs": ["own_rgb", "fixed_top_rgb"], "stage_order": ["yaw", "lateral", "yaw", "forward"],
+             "runtime_inputs": ["own_rgb", "fixed_top_rgb"], "stage_order": list(PHASES),
              "readiness": {"score": .65, "absolute_command_max": .003,
                            "fresh_stationary_confirmations": 2},
              "models": records}
+    if backend == "geometry":
+        from harness.camera_varied_start_pose_student import TOLERANCES
+        skill["readiness"] = {"image_derived_absolute_error_tolerances": TOLERANCES,
+                              "fresh_stationary_confirmations": 2}
     _write(out / "varied-start-skill.json", skill)
-    result = {"source_sha": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
+    result = {"backend": backend, "source_sha": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
               "teacher_dir": str(teacher), "successful_cases": successful,
               "excluded_cases": excluded, "regression_cap_per_robot_stage": REGRESSION_CAP,
               "input_hashes": {"report.json": _sha(report_path), "actor-samples.jsonl": _sha(actors_path),
@@ -208,8 +223,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--teacher-dir", type=Path, required=True)
     parser.add_argument("--out-dir", type=Path, required=True)
+    parser.add_argument("--backend", choices=("kernel", "geometry"), default="kernel")
     args = parser.parse_args()
-    result = train(args.teacher_dir, args.out_dir)
+    result = train(args.teacher_dir, args.out_dir, backend=args.backend)
     print(json.dumps({"models": result["models"], "diagnostics": result["diagnostics"]}, sort_keys=True))
     return 0
 

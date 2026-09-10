@@ -1,5 +1,5 @@
 {
-  "request": "\uc880 \ub354 \ub2e4\uc591\ud55c \uc0c1\ud669\uc5d0\uc11c \ud574\ubcfc\ub798? \ucc98\uc74c \uc2dc\uc791\ud558\ub294 \uc704\uce58\uac00 \uace0\uc815\ub41c \uac8c \uc544\ub2c8\uc5b4\ub3c4 \uac00\ub2a5\ud558\uac8c",
+  "request": "좀 더 다양한 상황에서 해볼래? 처음 시작하는 위치가 고정된 게 아니어도 가능하게",
   "base_sha": "6542c3504449547f60510f88c34cf44f2b6cf84c",
   "scope": {
     "distance_m": [
@@ -21,7 +21,7 @@
     "weld": false
   },
   "training": "483 independent reset RGB calibration pairs with privileged teacher labels; 6 physical teacher trajectories tested separately and may supplement training. Static resets are not physical successes.",
-  "controller": "Independent learned RGB command and readiness per robot/stage; yaw -> lateral -> yaw -> forward; one active wheel axis per phase. Two consecutive fresh stationary confirmations within four captures; all axes rechecked before existing RGB grasp.",
+  "controller": "Independent learned RGB alignment error per robot/axis; yaw -> lateral -> yaw -> forward -> yaw -> lateral -> forward. Two consecutive fresh stationary confirmations within four captures; all axes rechecked before existing RGB grasp, requiring fine heading measurement.",
   "runtime_boundary": "Own RGB, fixed top RGB, saved models, own issued commands, phase/history only; no truth, velocity, contacts or setup pose feedback. Fixed top image crop per robot lane preserves rawcamera geometry.",
   "teacher_boundary": "Truth allowed only in collection labels and teacher controller, never student decision inputs.",
   "final_comparison": {
@@ -70,6 +70,27 @@
       "success": 6,
       "approach_payload_contact_steps": 0,
       "grasp_decisions_replayed": 192
+    },
+    {
+      "source_sha": "5ae9589548a1c178a0c143d8e8f502e8b121926d",
+      "model_raw_dir": "/Users/changmin/projects/ugrp/outputs/varied-start-model-20260910-v1",
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/varied-start-development-20260910-v1",
+      "purpose": "first staged RGB student fulldevelopment",
+      "cases": 8,
+      "success": 1,
+      "approach_payload_contact_steps": 0,
+      "audit_all_passed": true,
+      "finding": "6yawbudget aborts,1finalalignmentabort,1fullgrasp. First4cornercases aligned yaw within0.2deg but jointKRR binaryreadiness only0.35-0.46 causingcontinuedminimumcommands. Novelcaseerrors larger; investigate separatecompletionmodel/translationinvariantRGBfeatures beforeheldout."
+    },
+    {
+      "source_sha": "d45d3d0",
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/varied-start-grasp-tolerance-20260910-v1",
+      "purpose": "setup-only heading residual tolerance of existing RGB grasp, not varied-start approach validation",
+      "cases": 8,
+      "success": 8,
+      "setup": "opposite robot headings +/-0.25,+/-0.5,+/-0.75,+/-1 degree with 3mm forward offset and opposing 2mm lateral offsets",
+      "grasp_decisions_replayed": 256,
+      "video_review": "1degree sign+1 four frames including lift"
     }
   ],
   "teacher_controller": {
@@ -103,5 +124,12 @@
     "physical_teacher_cases": 6,
     "physical_teacher_success": 6,
     "validation": "complete reports and per-grasp exact32decision replays; all training images hashed by merge/trainer"
+  },
+  "candidate_v2": {
+    "backend": "RGB foreground XY forest and soft-yellow ECC heading with learned parallax correction; full-difference ECC may guide coarse approach but never authorize final grasp",
+    "yaw_visual_stop_tolerance_rad": 0.006,
+    "lateral_stop_tolerance_m": 0.0025,
+    "forward_stop_tolerance_m": 0.004,
+    "actuator": "preserve teacher gain and 0.01 friction minimum; no privileged runtime state"
   }
 }

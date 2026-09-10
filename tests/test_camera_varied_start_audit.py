@@ -125,7 +125,7 @@ class VariedStartAuditTests(unittest.TestCase):
                 {"source_sha": source, "calls": [], "evaluation": evaluation}))
         return report, ready, not_ready
 
-    def test_exact_four_phase_replay_and_final_checks(self):
+    def test_exact_phase_replay_and_final_checks(self):
         _report, ready, _ = self.make_run()
         with patch("scripts.audit_camera_varied_start_student._predict_stage", return_value=ready), \
              patch("scripts.audit_camera_varied_start_student._audit_grasp", return_value={"ok": True}):
@@ -139,6 +139,20 @@ class VariedStartAuditTests(unittest.TestCase):
         def prediction(_model, own, _top):
             calls[0] += 1
             return not_ready if b"final-own" in own else ready
+        with patch("scripts.audit_camera_varied_start_student._predict_stage", side_effect=prediction):
+            result = audit(self.run, self.stage, self.straight, self.grasp)
+        self.assertFalse(result["approach_ok"])
+
+    def test_coarse_heading_cannot_approve_final_grasp(self):
+        report, ready, _ = self.make_run(final_ready=False)
+        coarse = {**ready, "precision": "coarse"}
+        for check in report["final_alignment_checks"]:
+            for rid in ("r1", "r3"):
+                for axis in AXES:
+                    check["decisions"][rid][axis] = coarse
+        (self.run / "result.json").write_text(json.dumps(report))
+        def prediction(_model, own, _top):
+            return coarse if b"final-own" in own else ready
         with patch("scripts.audit_camera_varied_start_student._predict_stage", side_effect=prediction):
             result = audit(self.run, self.stage, self.straight, self.grasp)
         self.assertFalse(result["approach_ok"])

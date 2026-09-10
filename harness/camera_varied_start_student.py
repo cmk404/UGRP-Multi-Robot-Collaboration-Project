@@ -13,6 +13,7 @@ from harness.camera_teacher_student import OWN_SIZE, TOP_SIZE, _decode_gray, _vi
 
 SCHEMA = "ugrp.rgb_varied_start_stage_kernel.v1"
 STAGES = ("yaw", "lateral", "forward")
+PHASES = ("yaw", "lateral", "yaw", "forward", "yaw", "lateral", "forward")
 MAX_COMPONENTS = 32
 READY_SCORE = .65
 READY_COMMAND = .003
@@ -132,6 +133,9 @@ def fit_stage_model(reference_own: bytes, reference_top: bytes,
 
 
 def predict_stage(model: dict[str, Any], own_jpeg: bytes, top_jpeg: bytes) -> dict[str, Any]:
+    if isinstance(model, dict) and model.get("schema") == "ugrp.rgb_varied_start_pose.v1":
+        from harness.camera_varied_start_pose_student import predict_pose_stage
+        return predict_pose_stage(model, own_jpeg, top_jpeg)
     if not isinstance(model, dict) or model.get("schema") != SCHEMA:
         raise ValueError("unsupported varied-start stage model")
     rid, stage = model.get("robot_id"), model.get("stage")
