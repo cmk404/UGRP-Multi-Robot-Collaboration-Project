@@ -36,7 +36,7 @@
   "scope": "Learned straight approach and local RGB correction. Arm deployment, close, and lift remain explicit playback. This is not general navigation, LLM collaboration, or hardware validation.",
   "storage": "Commit source before collection and freeze each cohort. Keep all results, including failures and exclusions, with source and raw file hashes. Raw video is local unless explicitly archived.",
   "status": "declared_before_collection",
-  "teacher_controller": "Forward = min(0.15, max(0, 0.2 * remaining_m)); command zero inside the 4 mm stop band. This gain was reduced from 0.8 after the first three development teacher pilots overshot by 16.5–23.2 mm. No heldout rollout was run or used.",
+  "teacher_controller": "Outside the 4 mm stop band and before the target: forward = min(0.15, max(0.01, 0.2 * remaining_m)); otherwise zero. Gain was reduced after momentum overshoot, then a minimum moving command was added after small commands stalled 12.4–12.9 mm before target. Only three development teacher cases were used; no heldout rollout was run.",
   "development_history": [
     {
       "source_sha": "fd3ff26e3e28e9b1c090ce938b6232c6baa079f4",
@@ -45,6 +45,14 @@
       "success": 0,
       "approach_contact_steps": 0,
       "finding": "0.8 proportional gain and .2 s observations led to momentum overshoot; retained all failed evidence."
+    },
+    {
+      "source_sha": "d1a699d",
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/rgb-approach-teacher-pilot-20260910-v2",
+      "cases": 3,
+      "success": 0,
+      "approach_contact_steps": 0,
+      "finding": "Gain0.2 avoided overshoot but commands around0.0025 left12.4–12.9mm distance after20s; add minimum moving forward0.01 before target."
     }
   ]
 }
