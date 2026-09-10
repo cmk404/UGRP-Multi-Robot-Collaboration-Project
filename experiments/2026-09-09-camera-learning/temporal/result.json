@@ -1,0 +1,1345 @@
+{
+  "git_sha": "6d33e089dba10c172edfb5caff6174ff341ed3a0",
+  "config": {
+    "out_dir": "/Users/changmin/projects/ugrp/outputs/camera-learning-20260909-temporal",
+    "rounds": 30,
+    "seed": 11,
+    "model": "gemini-3.8-flash",
+    "timeout": 45,
+    "task": "grasp",
+    "mode": "temporal"
+  },
+  "input_contract": "own robot_cam + fixed overhead RGB; mode may retain own issued commands, prior RGB and learned pixel changes; no truth feedback",
+  "calls": [
+    {
+      "round": 0,
+      "robot_id": "r1",
+      "action": {
+        "kind": "drive",
+        "forward": 0.08,
+        "turn": 0.05,
+        "duration_s": 0.6
+      },
+      "response": "```json\n{\"reason\": \"I am the bottom robot, as the beam extends to the left in OWN_VIEW. Driving forward with a slight left turn to approach and center the beam.\", \"action\": {\"kind\": \"drive\", \"forward\": 0.08, \"turn\": 0.05, \"duration_s\": 0.6}}\n```",
+      "usage": {
+        "prompt_tokens": 2714,
+        "completion_tokens": 78,
+        "total_tokens": 4009
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 7219.592541921884,
+      "learning": null
+    },
+    {
+      "round": 0,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 1,
+        "forward": 0.05,
+        "kind": "drive",
+        "turn": -0.15
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":1,\"forward\":0.05,\"kind\":\"drive\",\"turn\":-0.15},\"reason\":\"We are the northern robot; the plain orange beam is to our right (south). Turn right while moving forward slightly to align with the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 2714,
+        "completion_tokens": 65,
+        "total_tokens": 4868
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 11537.95100003481,
+      "learning": null
+    },
+    {
+      "round": 1,
+      "robot_id": "r1",
+      "action": {
+        "duration_s": 0.6,
+        "forward": 0.08,
+        "kind": "drive",
+        "turn": 0.06
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":0.6,\"forward\":0.08,\"kind\":\"drive\",\"turn\":0.06},\"reason\":\"I am r1 (the southern robot). The plain orange beam's end is visible on the left of OWN_VIEW up to pixel 308. Driving forward while turning left aligns the base toward the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4909,
+        "completion_tokens": 82,
+        "total_tokens": 10521
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 22956.15612505935,
+      "learning": null
+    },
+    {
+      "round": 1,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 1,
+        "forward": 0.12,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":1,\"forward\":0.12,\"kind\":\"drive\",\"turn\":0.0},\"reason\":\"Drive forward toward the plain orange beam to get within arm reach.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4908,
+        "completion_tokens": 47,
+        "total_tokens": 6482
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 9037.28691698052,
+      "learning": null
+    },
+    {
+      "round": 2,
+      "robot_id": "r1",
+      "action": {
+        "duration_s": 0.6,
+        "forward": 0.08,
+        "kind": "drive",
+        "turn": 0.06
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":0.6,\"forward\":0.08,\"kind\":\"drive\",\"turn\":0.06},\"reason\":\"Approaching the plain orange beam while continuing a slight right turn to center the beam in the camera frame.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4935,
+        "completion_tokens": 58,
+        "total_tokens": 12855
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 32562.340958043933,
+      "learning": null
+    },
+    {
+      "round": 2,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      },
+      "response": "```json\n{\"action\":{\"kind\":\"arm\",\"pulse\":2000,\"servo_id\":1},\"reason\":\"Open gripper jaws prior to positioning and grasping the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4931,
+        "completion_tokens": 39,
+        "total_tokens": 5763
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 5762.072167126462,
+      "learning": null
+    },
+    {
+      "round": 3,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      },
+      "response": "```json\n{\"action\":{\"kind\":\"arm\",\"pulse\":2000,\"servo_id\":1},\"reason\":\"Open the gripper while approaching the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4961,
+        "completion_tokens": 36,
+        "total_tokens": 5914
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 6589.130583917722,
+      "learning": null
+    },
+    {
+      "round": 3,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "pulse": 1800,
+        "servo_id": 5
+      },
+      "response": "```json\n{\"action\":{\"kind\":\"arm\",\"pulse\":1800,\"servo_id\":5},\"reason\":\"Lower the shoulder to bring the open gripper down towards the orange beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4948,
+        "completion_tokens": 42,
+        "total_tokens": 4990
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 2472.85862499848,
+      "learning": null
+    },
+    {
+      "round": 4,
+      "robot_id": "r1",
+      "action": {
+        "duration_s": 0.4,
+        "forward": 0.06,
+        "kind": "drive",
+        "turn": -0.08
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":0.4,\"forward\":0.06,\"kind\":\"drive\",\"turn\":-0.08},\"reason\":\"Target beam is visible on the left of OWN_VIEW. Steer slightly right/forward to align the base towards the beam end.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4978,
+        "completion_tokens": 65,
+        "total_tokens": 5043
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 2897.460041102022,
+      "learning": null
+    },
+    {
+      "round": 4,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "pulse": 1800,
+        "servo_id": 3
+      },
+      "response": "{\"action\":{\"kind\":\"arm\",\"pulse\":1800,\"servo_id\":3},\"reason\":\"Lowering the shoulder directed the wrist camera down at the floor; raise wrist pitch with servo 3 to reacquire view of the beam and gripper jaws.\"}",
+      "usage": {
+        "prompt_tokens": 4965,
+        "completion_tokens": 54,
+        "total_tokens": 5254
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3746.264124987647,
+      "learning": null
+    },
+    {
+      "round": 5,
+      "robot_id": "r1",
+      "action": {
+        "duration_s": 0.3,
+        "forward": 0.03,
+        "kind": "drive",
+        "turn": 0.08
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":0.3,\"forward\":0.03,\"kind\":\"drive\",\"turn\":0.08},\"reason\":\"Turn left slightly and inch forward to center the orange beam in the wrist camera view before lowering the arm.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4979,
+        "completion_tokens": 58,
+        "total_tokens": 6379
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 9881.19583320804,
+      "learning": null
+    },
+    {
+      "round": 5,
+      "robot_id": "r3",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1500
+      },
+      "response": "```json\n{\"action\":{\"kind\":\"look\",\"pan_pulse\":1500},\"reason\":\"Reset arm pan to center to align camera and view the workspace and target beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4957,
+        "completion_tokens": 40,
+        "total_tokens": 5336
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4903.320958139375,
+      "learning": null
+    },
+    {
+      "round": 6,
+      "robot_id": "r1",
+      "action": {
+        "duration_s": 0.4,
+        "forward": 0.05,
+        "kind": "drive",
+        "turn": -0.1
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":0.4,\"forward\":0.05,\"kind\":\"drive\",\"turn\":-0.1},\"reason\":\"Orient towards the beam and approach closer to align gripper with the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4979,
+        "completion_tokens": 51,
+        "total_tokens": 12892
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 34527.07541594282,
+      "learning": null
+    },
+    {
+      "round": 6,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "pulse": 1400,
+        "servo_id": 5
+      },
+      "response": "```json\n{\"action\":{\"kind\":\"arm\",\"pulse\":1400,\"servo_id\":5},\"reason\":\"OWN_VIEW is dark, likely due to shoulder lowered into chassis or floor; raising shoulder (servo 5) to bring camera and arm up.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4947,
+        "completion_tokens": 58,
+        "total_tokens": 5448
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4311.323291854933,
+      "learning": null
+    },
+    {
+      "round": 7,
+      "robot_id": "r1",
+      "action": {
+        "duration_s": 0.4,
+        "forward": 0.05,
+        "kind": "drive",
+        "turn": -0.08
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":0.4,\"forward\":0.05,\"kind\":\"drive\",\"turn\":-0.08},\"reason\":\"Drive forward and turn slightly right towards the beam tip to align the gripper closer.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4979,
+        "completion_tokens": 54,
+        "total_tokens": 5033
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4535.999790998176,
+      "learning": null
+    },
+    {
+      "round": 7,
+      "robot_id": "r3",
+      "action": {
+        "kind": "arm",
+        "pulse": 1000,
+        "servo_id": 4
+      },
+      "response": "```json\n{\"action\": {\"kind\": \"arm\", \"pulse\": 1000, \"servo_id\": 4}, \"reason\": \"OWN_VIEW is occluded/dark; extend elbow (servo 4) forward to reveal camera view and position arm towards beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4947,
+        "completion_tokens": 63,
+        "total_tokens": 6007
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 7202.66449986957,
+      "learning": null
+    },
+    {
+      "round": 8,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      },
+      "response": "```json\n{\"action\":{\"kind\":\"arm\",\"pulse\":2000,\"servo_id\":1},\"reason\":\"Open gripper jaws fully while positioning near the orange beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4989,
+        "completion_tokens": 39,
+        "total_tokens": 5343
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3765.818207990378,
+      "learning": null
+    },
+    {
+      "round": 8,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 1,
+        "forward": 0,
+        "kind": "drive",
+        "turn": 0.2
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":1,\"forward\":0,\"kind\":\"drive\",\"turn\":0.2},\"reason\":\"I am the upper robot facing west, opposite to the orange beam. Turning right to orient toward the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4947,
+        "completion_tokens": 53,
+        "total_tokens": 5695
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 7480.1199161447585,
+      "learning": null
+    },
+    {
+      "round": 9,
+      "robot_id": "r1",
+      "action": {
+        "duration_s": 0.4,
+        "forward": 0.02,
+        "kind": "drive",
+        "turn": 0.12
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":0.4,\"forward\":0.02,\"kind\":\"drive\",\"turn\":0.12},\"reason\":\"The plain orange beam is positioned to the left in OWN_VIEW; drive forward slightly while turning left to center the open gripper on the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4979,
+        "completion_tokens": 66,
+        "total_tokens": 7935
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 16817.718665814027,
+      "learning": null
+    },
+    {
+      "round": 9,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 1,
+        "forward": 0,
+        "kind": "drive",
+        "turn": 0.2
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":1,\"forward\":0,\"kind\":\"drive\",\"turn\":0.2},\"reason\":\"Turn base counter-clockwise to rotate around toward the plain orange beam on the blue mat to the east.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4950,
+        "completion_tokens": 52,
+        "total_tokens": 5973
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 10871.600750135258,
+      "learning": null
+    },
+    {
+      "round": 10,
+      "robot_id": "r1",
+      "action": {
+        "duration_s": 0.5,
+        "forward": 0.08,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":0.5,\"forward\":0.08,\"kind\":\"drive\",\"turn\":0.0},\"reason\":\"The orange beam's southern end is now well aligned across the center-left of the view. Driving forward toward the beam to approach grasping distance.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4979,
+        "completion_tokens": 66,
+        "total_tokens": 12574
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 33906.120624858886,
+      "learning": null
+    },
+    {
+      "round": 10,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 1,
+        "forward": 0,
+        "kind": "drive",
+        "turn": 0.2
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":1,\"forward\":0,\"kind\":\"drive\",\"turn\":0.2},\"reason\":\"I am the lower robot in OVERHEAD, facing roughly north. Turning left to face toward the orange beam on the blue mat.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4957,
+        "completion_tokens": 57,
+        "total_tokens": 5014
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4934.535542037338,
+      "learning": null
+    },
+    {
+      "round": 11,
+      "robot_id": "r1",
+      "action": {
+        "duration_s": 0.4,
+        "forward": 0.02,
+        "kind": "drive",
+        "turn": -0.12
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":0.4,\"forward\":0.02,\"kind\":\"drive\",\"turn\":-0.12},\"reason\":\"I am the upper robot facing the orange beam. Turning slightly right/clockwise to center the beam in view and align for grasp.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4978,
+        "completion_tokens": 64,
+        "total_tokens": 5042
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4104.991124942899,
+      "learning": null
+    },
+    {
+      "round": 11,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 1,
+        "forward": 0,
+        "kind": "drive",
+        "turn": -0.2
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":1,\"forward\":0,\"kind\":\"drive\",\"turn\":-0.2},\"reason\":\"Turn right towards the nearby blue square and plain orange beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4960,
+        "completion_tokens": 44,
+        "total_tokens": 5662
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 5236.593167064711,
+      "learning": null
+    },
+    {
+      "round": 12,
+      "robot_id": "r1",
+      "action": {
+        "kind": "drive",
+        "forward": 0.02,
+        "turn": 0.15,
+        "duration_s": 0.4
+      },
+      "response": "```json\n{\"reason\": \"The orange beam shifted left after turning right. I will turn left while creeping forward to bring the beam to the center of view.\", \"action\": {\"kind\": \"drive\", \"forward\": 0.02, \"turn\": 0.15, \"duration_s\": 0.4}}\n```",
+      "usage": {
+        "prompt_tokens": 4978,
+        "completion_tokens": 72,
+        "total_tokens": 8486
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 16717.771583003923,
+      "learning": null
+    },
+    {
+      "round": 12,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 1,
+        "forward": 0,
+        "kind": "drive",
+        "turn": 0.2
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":1,\"forward\":0,\"kind\":\"drive\",\"turn\":0.2},\"reason\":\"Turn right towards the plain orange beam on the blue square to align for approach.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4964,
+        "completion_tokens": 47,
+        "total_tokens": 8127
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 15077.545874984935,
+      "learning": null
+    },
+    {
+      "round": 13,
+      "robot_id": "r1",
+      "action": {
+        "duration_s": 0.4,
+        "forward": 0.0,
+        "kind": "drive",
+        "turn": 0.15
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":0.4,\"forward\":0.0,\"kind\":\"drive\",\"turn\":0.15},\"reason\":\"Rotate further right to bring the orange beam towards the center of view.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4987,
+        "completion_tokens": 50,
+        "total_tokens": 5037
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4520.798665937036,
+      "learning": null
+    },
+    {
+      "round": 13,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 1,
+        "forward": 0,
+        "kind": "drive",
+        "turn": 0.2
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":1,\"forward\":0,\"kind\":\"drive\",\"turn\":0.2},\"reason\":\"I am the lower robot facing right towards the plain orange beam. Turning slightly counterclockwise aligns directly with the target.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4964,
+        "completion_tokens": 54,
+        "total_tokens": 5018
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3752.687167143449,
+      "learning": null
+    },
+    {
+      "round": 14,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      },
+      "response": "```json\n{\"action\":{\"kind\":\"arm\",\"pulse\":2000,\"servo_id\":1},\"reason\":\"Open the gripper jaws before lowering the arm toward the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4986,
+        "completion_tokens": 40,
+        "total_tokens": 7615
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 13126.833874965087,
+      "learning": null
+    },
+    {
+      "round": 14,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 1,
+        "forward": 0,
+        "kind": "drive",
+        "turn": 0.2
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":1,\"forward\":0,\"kind\":\"drive\",\"turn\":0.2},\"reason\":\"I am the lower robot facing right/down; rotating left to align towards the plain orange beam on the blue mat.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4964,
+        "completion_tokens": 55,
+        "total_tokens": 5019
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 2695.4322080127895,
+      "learning": null
+    },
+    {
+      "round": 15,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1700
+      },
+      "response": "```json\n{\"action\":{\"kind\":\"look\",\"pan_pulse\":1700},\"reason\":\"I am the upper robot facing the orange beam; the beam end is visible to the left. Pan arm slightly left to center the beam in view.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4978,
+        "completion_tokens": 54,
+        "total_tokens": 5032
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4071.917957859114,
+      "learning": null
+    },
+    {
+      "round": 15,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 1,
+        "forward": 0,
+        "kind": "drive",
+        "turn": 0.2
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":1,\"forward\":0,\"kind\":\"drive\",\"turn\":0.2},\"reason\":\"I am the lower robot facing southwest. Turning left to face eastward toward the orange beam on the blue mat.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4964,
+        "completion_tokens": 53,
+        "total_tokens": 5017
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3667.572416830808,
+      "learning": null
+    },
+    {
+      "round": 16,
+      "robot_id": "r1",
+      "action": {
+        "duration_s": 0.4,
+        "forward": 0.03,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":0.4,\"forward\":0.03,\"kind\":\"drive\",\"turn\":0.0},\"reason\":\"Moving forward slowly toward the plain orange beam to position for grasping.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4964,
+        "completion_tokens": 49,
+        "total_tokens": 5013
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3235.718416981399,
+      "learning": null
+    },
+    {
+      "round": 16,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 1,
+        "forward": 0,
+        "kind": "drive",
+        "turn": 0.2
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":1,\"forward\":0,\"kind\":\"drive\",\"turn\":0.2},\"reason\":\"Continuing left turn to face the orange beam and blue mat.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4963,
+        "completion_tokens": 43,
+        "total_tokens": 5006
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3308.3823330234736,
+      "learning": null
+    },
+    {
+      "round": 17,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "pulse": 1800,
+        "servo_id": 5
+      },
+      "response": "{\"action\":{\"kind\":\"arm\",\"pulse\":1800,\"servo_id\":5},\"reason\":\"Lowering the shoulder (servo 5) towards the plain orange beam to bring the open gripper down for grasping.\"}",
+      "usage": {
+        "prompt_tokens": 4963,
+        "completion_tokens": 46,
+        "total_tokens": 5230
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3983.6137499660254,
+      "learning": null
+    },
+    {
+      "round": 17,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 1,
+        "forward": 0.08,
+        "kind": "drive",
+        "turn": 0
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":1,\"forward\":0.08,\"kind\":\"drive\",\"turn\":0},\"reason\":\"Drive forward toward the lower end of the plain orange beam on the blue mat.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4963,
+        "completion_tokens": 48,
+        "total_tokens": 6056
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 8182.037208927795,
+      "learning": null
+    },
+    {
+      "round": 18,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "pulse": 1400,
+        "servo_id": 5
+      },
+      "response": "```json\n{\"action\":{\"kind\":\"arm\",\"pulse\":1400,\"servo_id\":5},\"reason\":\"Lowering the shoulder obscured the camera view against the surface; raising servo 5 back up to re-acquire sight of the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4955,
+        "completion_tokens": 55,
+        "total_tokens": 5149
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3904.5945410616696,
+      "learning": null
+    },
+    {
+      "round": 18,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 1,
+        "forward": 0,
+        "kind": "drive",
+        "turn": 0.2
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":1,\"forward\":0,\"kind\":\"drive\",\"turn\":0.2},\"reason\":\"Turn left to face east toward the north end of the plain orange beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4964,
+        "completion_tokens": 46,
+        "total_tokens": 6556
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 9401.377124944702,
+      "learning": null
+    },
+    {
+      "round": 19,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      },
+      "response": "```json\n{\"action\":{\"kind\":\"arm\",\"pulse\":2000,\"servo_id\":1},\"reason\":\"Open gripper fingers to prepare for positioning around the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4955,
+        "completion_tokens": 39,
+        "total_tokens": 5149
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4259.9619589746,
+      "learning": null
+    },
+    {
+      "round": 19,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 1,
+        "forward": 0,
+        "kind": "drive",
+        "turn": -0.15
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":1,\"forward\":0,\"kind\":\"drive\",\"turn\":-0.15},\"reason\":\"The plain orange beam is visible on the right side of OWN_VIEW; turning right aligns the base towards the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4964,
+        "completion_tokens": 57,
+        "total_tokens": 5538
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 5412.7030831296,
+      "learning": null
+    },
+    {
+      "round": 20,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "pulse": 1700,
+        "servo_id": 5
+      },
+      "response": "```json\n{\"action\":{\"kind\":\"arm\",\"pulse\":1700,\"servo_id\":5},\"reason\":\"Lower shoulder to position open gripper jaws down around the orange beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4959,
+        "completion_tokens": 41,
+        "total_tokens": 5228
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4808.88337502256,
+      "learning": null
+    },
+    {
+      "round": 20,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 1,
+        "forward": 0.08,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "response": "```json\n{\"action\": {\"duration_s\": 1, \"forward\": 0.08, \"kind\": \"drive\", \"turn\": 0.0}, \"reason\": \"Drive forward toward the bottom end of the plain orange beam to close distance for grasping.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4966,
+        "completion_tokens": 61,
+        "total_tokens": 5763
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 7953.3443751279265,
+      "learning": null
+    },
+    {
+      "round": 21,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 5
+      },
+      "response": "{\"action\":{\"kind\":\"arm\",\"pulse\":1500,\"servo_id\":5},\"reason\":\"The shoulder pitch at 1700 aimed the wrist camera into the floor; raising servo 5 back toward 1500 will restore visual contact with the beam.\"}",
+      "usage": {
+        "prompt_tokens": 4951,
+        "completion_tokens": 59,
+        "total_tokens": 5560
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 5267.321416176856,
+      "learning": null
+    },
+    {
+      "round": 21,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 1,
+        "forward": 0.08,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":1,\"forward\":0.08,\"kind\":\"drive\",\"turn\":0.0},\"reason\":\"I am the southern robot facing east towards the plain orange beam on the blue mat. Advancing forward closer to the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4969,
+        "completion_tokens": 59,
+        "total_tokens": 5028
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3150.227624922991,
+      "learning": null
+    },
+    {
+      "round": 22,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "pulse": 1650,
+        "servo_id": 5
+      },
+      "response": "```json\n{\"action\":{\"kind\":\"arm\",\"pulse\":1650,\"servo_id\":5},\"reason\":\"Lower shoulder slightly to bring the gripper closer to the orange beam visible at the top of the view.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4951,
+        "completion_tokens": 48,
+        "total_tokens": 4999
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 5064.627333078533,
+      "learning": null
+    },
+    {
+      "round": 22,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 1,
+        "forward": 0.08,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":1,\"forward\":0.08,\"kind\":\"drive\",\"turn\":0.0},\"reason\":\"Advancing forward towards the orange beam at the blue square to bring the arm within reach.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4971,
+        "completion_tokens": 52,
+        "total_tokens": 5023
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 5014.726958004758,
+      "learning": null
+    },
+    {
+      "round": 23,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "pulse": 1450,
+        "servo_id": 5
+      },
+      "response": "```json\n{\"action\":{\"kind\":\"arm\",\"pulse\":1450,\"servo_id\":5},\"reason\":\"Lowering shoulder with pulse 1650 pointed the camera too far down into the floor, losing the beam. Raising shoulder back to 1450 to re-center the orange beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4951,
+        "completion_tokens": 69,
+        "total_tokens": 5020
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 2678.821749985218,
+      "learning": null
+    },
+    {
+      "round": 23,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 1,
+        "forward": 0.08,
+        "kind": "drive",
+        "turn": 0
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":1,\"forward\":0.08,\"kind\":\"drive\",\"turn\":0},\"reason\":\"Drive forward toward the plain orange beam on the blue mat.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4974,
+        "completion_tokens": 44,
+        "total_tokens": 5469
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 8000.90091698803,
+      "learning": null
+    },
+    {
+      "round": 24,
+      "robot_id": "r1",
+      "action": {
+        "duration_s": 1,
+        "forward": 0.08,
+        "kind": "drive",
+        "turn": 0.05
+      },
+      "response": "{\"action\":{\"duration_s\":1,\"forward\":0.08,\"kind\":\"drive\",\"turn\":0.05},\"reason\":\"The plain orange beam is visible ahead after raising the shoulder; drive forward towards the beam to close the distance for grasping.\"}",
+      "usage": {
+        "prompt_tokens": 4951,
+        "completion_tokens": 54,
+        "total_tokens": 5817
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 11190.910374978557,
+      "learning": null
+    },
+    {
+      "round": 24,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 0.5,
+        "forward": 0.05,
+        "kind": "drive",
+        "turn": -0.1
+      },
+      "response": "```json\n{\"action\": {\"duration_s\": 0.5, \"forward\": 0.05, \"kind\": \"drive\", \"turn\": -0.1}, \"reason\": \"Turn right toward the orange beam while continuing to approach the blue zone.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4973,
+        "completion_tokens": 60,
+        "total_tokens": 5485
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 5385.305166942999,
+      "learning": null
+    },
+    {
+      "round": 25,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      },
+      "response": "```json\n{\"action\":{\"kind\":\"arm\",\"pulse\":2000,\"servo_id\":1},\"reason\":\"Open the gripper jaws before lowering the arm onto the plain orange beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4958,
+        "completion_tokens": 42,
+        "total_tokens": 5311
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4139.513457892463,
+      "learning": null
+    },
+    {
+      "round": 25,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 0.8,
+        "forward": 0.08,
+        "kind": "drive",
+        "turn": -0.08
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":0.8,\"forward\":0.08,\"kind\":\"drive\",\"turn\":-0.08},\"reason\":\"Drive forward while turning slightly right toward the plain orange beam to close distance.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4976,
+        "completion_tokens": 53,
+        "total_tokens": 5763
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 5776.150583056733,
+      "learning": null
+    },
+    {
+      "round": 26,
+      "robot_id": "r1",
+      "action": {
+        "duration_s": 0.6,
+        "forward": 0.06,
+        "kind": "drive",
+        "turn": 0.02
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":0.6,\"forward\":0.06,\"kind\":\"drive\",\"turn\":0.02},\"reason\":\"I am the robot near the southern plain orange beam on the blue mat. The beam is visible ahead; driving forward slightly to bring the gripper jaws directly around the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4958,
+        "completion_tokens": 71,
+        "total_tokens": 5029
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3286.286709131673,
+      "learning": null
+    },
+    {
+      "round": 26,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 0.8,
+        "forward": 0.08,
+        "kind": "drive",
+        "turn": 0.05
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":0.8,\"forward\":0.08,\"kind\":\"drive\",\"turn\":0.05},\"reason\":\"Drive forward slightly turning right to approach the lower end of the plain orange beam at the blue square.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4980,
+        "completion_tokens": 57,
+        "total_tokens": 5037
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3222.2194171044976,
+      "learning": null
+    },
+    {
+      "round": 27,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "pulse": 1600,
+        "servo_id": 5
+      },
+      "response": "{\"action\":{\"kind\":\"arm\",\"pulse\":1600,\"servo_id\":5},\"reason\":\"Lower the shoulder further toward the plain orange beam to bring the gripper into grasping position.\"}",
+      "usage": {
+        "prompt_tokens": 4967,
+        "completion_tokens": 40,
+        "total_tokens": 5168
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4094.9831251055,
+      "learning": null
+    },
+    {
+      "round": 27,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 0.8,
+        "forward": 0.08,
+        "kind": "drive",
+        "turn": 0.08
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":0.8,\"forward\":0.08,\"kind\":\"drive\",\"turn\":0.08},\"reason\":\"Advance closer to the plain orange beam while angling toward it.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4983,
+        "completion_tokens": 49,
+        "total_tokens": 5218
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3312.043792102486,
+      "learning": null
+    },
+    {
+      "round": 28,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "pulse": 1400,
+        "servo_id": 5
+      },
+      "response": "```json\n{\"action\":{\"kind\":\"arm\",\"pulse\":1400,\"servo_id\":5},\"reason\":\"Lowering the shoulder to 1600 pointed the camera downward and the beam moved out of view near the top. Raising servo 5 back to 1400 to restore beam visibility.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4967,
+        "completion_tokens": 69,
+        "total_tokens": 5036
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4414.881584001705,
+      "learning": null
+    },
+    {
+      "round": 28,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 0.7,
+        "forward": 0.06,
+        "kind": "drive",
+        "turn": -0.15
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":0.7,\"forward\":0.06,\"kind\":\"drive\",\"turn\":-0.15},\"reason\":\"Turn right towards the plain orange beam to bring it into the center of the camera and approach its lower end.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4988,
+        "completion_tokens": 60,
+        "total_tokens": 6261
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 7860.008750110865,
+      "learning": null
+    },
+    {
+      "round": 29,
+      "robot_id": "r1",
+      "action": {
+        "duration_s": 0.6,
+        "forward": 0.08,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":0.6,\"forward\":0.08,\"kind\":\"drive\",\"turn\":0.0},\"reason\":\"Drive forward toward the plain orange beam to position the gripper closer for grasping.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4960,
+        "completion_tokens": 51,
+        "total_tokens": 5909
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 6119.074332993478,
+      "learning": null
+    },
+    {
+      "round": 29,
+      "robot_id": "r3",
+      "action": {
+        "duration_s": 0.6,
+        "forward": 0.05,
+        "kind": "drive",
+        "turn": 0.15
+      },
+      "response": "```json\n{\"action\":{\"duration_s\":0.6,\"forward\":0.05,\"kind\":\"drive\",\"turn\":0.15},\"reason\":\"The plain orange beam shifted right in OWN_VIEW after turning left; driving forward and turning right to bring the beam toward the center of the camera view.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4989,
+        "completion_tokens": 68,
+        "total_tokens": 5708
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 6216.71862504445,
+      "learning": null
+    }
+  ],
+  "rounds_completed": 30,
+  "error": null,
+  "transport_success": null,
+  "grasp_success": false,
+  "success_claim": "evaluated grasp_success=False after 30 fixed rounds; longest qualifying hold 0.0s, max lift -0.000m",
+  "longest_qualifying_duration_s": 0.0,
+  "max_lift_m": -4.9e-05,
+  "sample_count": 300,
+  "wall_elapsed_s": 343.196,
+  "last_responses": {
+    "r1": {
+      "response": "```json\n{\"action\":{\"duration_s\":0.6,\"forward\":0.08,\"kind\":\"drive\",\"turn\":0.0},\"reason\":\"Drive forward toward the plain orange beam to position the gripper closer for grasping.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4960,
+        "completion_tokens": 51,
+        "total_tokens": 5909
+      }
+    },
+    "r3": {
+      "response": "```json\n{\"action\":{\"duration_s\":0.6,\"forward\":0.05,\"kind\":\"drive\",\"turn\":0.15},\"reason\":\"The plain orange beam shifted right in OWN_VIEW after turning left; driving forward and turning right to bring the beam toward the center of the camera view.\"}\n```",
+      "usage": {
+        "prompt_tokens": 4989,
+        "completion_tokens": 68,
+        "total_tokens": 5708
+      }
+    }
+  },
+  "files": {
+    "evaluation-only.jsonl": "174a405f90e154f5fac823fdbd415a79af392d611f404725942d9bd5e2d89df5",
+    "motion.mp4": "5670fe37cf1394235207df74c911dc83bf81ba6a8c5e6cb22730e33c8fb399d8",
+    "progress.json": "09173a7ef6fd42dda0ee5074e96c5b3798746ec8cde7ce978cda7aa8a3034797",
+    "r1/021-own.jpg": "6b4618fdeeca6dbe7d656c6ee692c9f2f6cae65306c19d1bb2588c899f252974",
+    "r1/wire-016.json": "9e0968a8b4667e7ec8bffaba8215c058cdf1260e70078fab1f9fd764db41a542",
+    "r1/028-own.jpg": "74cc57f0a345c9fd4b07a37a6a7b2325adce3a1d25f3ddd90d79cac262669b67",
+    "r1/009-overhead.jpg": "77a55592978373a7f56d54880acb9fe1f8f10f2f925a8e0a923532a5e383d94c",
+    "r1/wire-020.json": "2573f0cb2b2a980518859b6043a44bb58a360695eaa411db269ab570f46d6869",
+    "r1/017-own.jpg": "8aa5e704b6bd6c9040392d30050cdd10b6d4beb7457598ce0b7c0efba920f215",
+    "r1/007-own.jpg": "723560d06ce00b4e7529de22e3e6c986eac07daa7f1d67b93900b7dd10dd1f67",
+    "r1/wire-021.json": "feb0fd1805d752fc6916176ca6320d212765bf616efcbd667fab644485285bd9",
+    "r1/029-own.jpg": "22a518ddbe1f2039628fdbf2035a262cf926248a1233842cd3da754eca489c02",
+    "r1/006-own.jpg": "fe4dbe2cb82a06f6e6265d615e7c2334b321a5b8edbeab3c2cd18c067ebe9c1e",
+    "r1/016-own.jpg": "432a6e4222afcbf811fb6457473edbdfa852a38bac5e5a4277eef11a5e95da8e",
+    "r1/008-overhead.jpg": "7ee65dbca48e68bae62a77d6ef3b2bd07006b3fdcc9244a31445f1b5474ef60c",
+    "r1/020-own.jpg": "1cfd851c42dedc8e6c299880795ddd54d594d691e86a65cd31052089d64545b5",
+    "r1/wire-017.json": "36033491794f051bdbdda67468a50175f0787d294a7a53c97890caf7c3cde809",
+    "r1/wire-001.json": "84267100c276b9d900cfa102dada122431dd3606964eff33ad3966a2dfc68daa",
+    "r1/010-overhead.jpg": "29568d085960fe3547d049cbb0bb9a3e843913664bfebf0bf20ce7bf0978678f",
+    "r1/017-overhead.jpg": "8c8dc22c64eedf0cb5706606d8d26287810735815a7cb0aa8e9e532b68525447",
+    "r1/014-own.jpg": "b05c8804a6d841637a936682198267a5ad2d1509a990c5e93052a3c3d3087460",
+    "r1/004-own.jpg": "257cb81ce1416641c66a1f80b832bd19a6b20ae8000c582a08701b8ecb9824d1",
+    "r1/002-overhead.jpg": "a8a2be365374a30ce1234e4d4026fa6bcd7e477e870e3690e6af599970a8bc4f",
+    "r1/wire-030.json": "30e6cf4e63d87739586996b597910f430c2ac99f272b2b46fefe9cfeb7100e68",
+    "r1/005-overhead.jpg": "929367020431496ef901d74bec01f59702d542bda8d34afaaa9a57b01f427809",
+    "r1/wire-026.json": "9afa079ca5047908ed42496776dbd50c5422e6623108f3eef371f30793e192d4",
+    "r1/wire-006.json": "2fa26d1807eb7d7bac72d8d0125dffbe5343e6d956065bb2207f1db96b7848cc",
+    "r1/wire-010.json": "4fa728cfa6efd2643392a8d1b506969fa51d4a17a8367c039d4f6db25e441506",
+    "r1/022-own.jpg": "a288ce4b14849474a3d930980625b1cadbbcfe58df9b4f40bc73db8d6fc2d10b",
+    "r1/021-overhead.jpg": "b78c4934e6e4ecc9939841358dcc5857e1a5744ebf2f492ca52f2e05f8ddae6b",
+    "r1/026-overhead.jpg": "f87fc6d0ee532e8dfcca47c5af33d1d1b2d55b5673fb6c024c9b1f50ced27843",
+    "r1/004-overhead.jpg": "d6295821bd5577644ee25c7270a664012c9ce2e03226b70505f9d05fb99a8db5",
+    "r1/003-overhead.jpg": "323b08dbcb2d68190e5a5fb4e679dc21c8483d4cf90546d96d1a73e497a69b77",
+    "r1/023-own.jpg": "63ced8313192636944bc2fa1ae59e3190db9cae1863cdd329f86e9bbc4613c0a",
+    "r1/016-overhead.jpg": "77a9c439c106c007c81601d7f33b7ed58e43bed9d5a484e335e9e5aa9a9ee5ae",
+    "r1/wire-011.json": "e61175b0ca28de7bc93c76eb0a559a3216ccd3a5d4571326eaaa82ba27a8ecc7",
+    "r1/011-overhead.jpg": "dcf70ce64f17e4fbd5add179f1988ac7729cb44dd7d143be77c6c692f686a578",
+    "r1/wire-007.json": "8e3d103d91ce1193fc4764d74b361acc23a891083ecdb313700f74f95f495eaf",
+    "r1/027-overhead.jpg": "62b49a9db992113fc1d951c24fd9f94152d93a7a27c064adfcc751ced87daf4a",
+    "r1/wire-027.json": "76b86b0d277ae505cd0e9d2fc8039fa78cdc72f675a971f59a1d44d49c44c40c",
+    "r1/020-overhead.jpg": "449e4950f13fcd26e896f74f70bb7195c0abbe6cab1006b57b8fd705eb0ccea3",
+    "r1/005-own.jpg": "3dac315d082f837247872cd1e662e33f10cee545ae49b19f7adee856dafb1894",
+    "r1/015-own.jpg": "88196545fdc528a92bd509bf1c68d813b080518cbd1e24a05663d94ceb6d674f",
+    "r1/wire-024.json": "6835c1f2d0be5b065752b2ff583c92b19b2086c3fd2986700fd9e8e767b9da34",
+    "r1/010-own.jpg": "57414965ab5ed061da8939903f1059373b4b6a67aa01e2e7adbdf0f2ce5ab8cd",
+    "r1/000-own.jpg": "3fdf4a55b73d437a11252fc2513905176bf024fe4042615819ab2493c58cfe6d",
+    "r1/001-overhead.jpg": "e05e35a7088c39aad858a4abb195f0e62f14a95dc4ce7951f6b36ea1c1a1765b",
+    "r1/006-overhead.jpg": "b18ba1a6b50cb5feaa579c22657ceaa50846f79f756c2c447805a81c796ae3fb",
+    "r1/013-overhead.jpg": "612361902ef0146f6f7001be344166672aeb4941ab717fe4ec8728038f4418d2",
+    "r1/014-overhead.jpg": "7c51db748f2a848d1429e4ce2621b422082c0f116b319a6aca3c11d51f529963",
+    "r1/wire-008.json": "28d485bffabad60ecc4c6b316dfd59734041e7a309618a4d1cbafde0e3368b45",
+    "r1/wire-028.json": "c6d265f93d6e01e1ff0bbfae63606b3da436c38ca0d832e69e8bec2d209d9cf4",
+    "r1/022-overhead.jpg": "5f85174b8912cfa13a9b1ba4511d8383ee182ad02e31d801e38c4d06ce1377c7",
+    "r1/025-overhead.jpg": "c2fc1a9c55cca6ff7b865ccf8b08274fe1708446c866ea51f5d91e3b843d44ea",
+    "r1/009-own.jpg": "9e665613881a4677432ccbc8eda9f7ba33b6b0af8b341658d0fd6acfcf784dc4",
+    "r1/019-own.jpg": "0afb6ad2d15286d97f8bfef8eaf6381f0b4e8c7c5dbaaaf013c45607b7cef8f8",
+    "r1/wire-012.json": "8b91c9622377bac08a800e2dab59d3f0093a8b368aa4a27834f7e82b0d019559",
+    "r1/026-own.jpg": "69b1c78ef18d5f67293cf85b840b54a28afb472e7e558305d55647279272a6ea",
+    "r1/wire-004.json": "698fc85edb6d183727b3dae008a9851bd80664db2bce2b2cf97f89f542b761fe",
+    "r1/wire-005.json": "f4e9de2fd86e8725e6f5e822930dd28923d6a0d1b2a1a5f6f2624d728cf193fb",
+    "r1/015-overhead.jpg": "2a31db44a6da2b17b7760651b30ea7b16fdf8f7a7f86e9df9ffe916e77a5f77d",
+    "r1/018-own.jpg": "ca1cdd3ee911780f61d126c271dcbb8b7d5f3d42c23ca73affa0a0c46fadb698",
+    "r1/008-own.jpg": "b63c7a9684d8b7a33a967f6c743646fede4698e4b00888914537b84f6b4b90d4",
+    "r1/wire-013.json": "50a65861765251a0754ef1877fed1da7d1200ef0d96d4cb57297b850671a95aa",
+    "r1/012-overhead.jpg": "d6a91e25699df3c281ecbc92872f1bc782618d15632714ad57fb3dcd794c432f",
+    "r1/wire-029.json": "f34247a15a77eb759e550d3b608a7651899a56b28faab1b616fb4c1c657fb5ef",
+    "r1/007-overhead.jpg": "dec9775b57239fa2dcf41b4cff9dd1f09f7dc62abe7aa4b8643e0055c18ec7fb",
+    "r1/027-own.jpg": "e1502c423d8b1e08436dc6f17a20c73b6cd3d67b393ea62ff53a1eadcef45b2c",
+    "r1/000-overhead.jpg": "84f633b096247ccf4a9bce879942f863ce4442c200754bdbb735709c68221815",
+    "r1/wire-009.json": "cee2f4771e4a759a15dbee3d5bc3a0a1cf1f1e1232ec87dc15eefa0d14a7e908",
+    "r1/001-own.jpg": "9046fdddb735482d13c6f1f8550c78a80e51bf49eb26bd9adcbc36bfbab349a2",
+    "r1/011-own.jpg": "7b00806b36feb13370231b55c508420cfe73cada0ac09b961315f16131de959e",
+    "r1/024-overhead.jpg": "9a0643eec8466328a035779457aa2f254b1d6bd86b9e060af8bb386eb2101f26",
+    "r1/wire-025.json": "1387f5d6159263675a636d16f504a3c6100eb23126fe3508096114db78c681a9",
+    "r1/023-overhead.jpg": "47c82b2506a44a15c7b792e7808f235c208eff60075b4340676b66ff9dabf550",
+    "r1/029-overhead.jpg": "d381c33363baa98052df790a13dab4d7696a850fa58148e91f8a6e60227f2d65",
+    "r1/wire-014.json": "4a1577ff0ee23408f67460648df8f4b1ed390d2db60101eb335d59d29605cb26",
+    "r1/025-own.jpg": "0d8efde20856bf9089e23bb982636e069b9e3251b95933feb5a6ce8ca93c0ef6",
+    "r1/wire-002.json": "07f1988c6edd6f8810319993a3b996f5b114d26a09185bf733b67135cb9be1c5",
+    "r1/wire-022.json": "5fa1b274d0831947c91ecf6035d0322da54826a82ed1785401274687394cb9c0",
+    "r1/013-own.jpg": "0c651fb3c05159b44ba437fb2a5ef066a349bfb9747d5c6301c2d938b41ce73a",
+    "r1/003-own.jpg": "6d2d58e3c7ab0ea6ba40cf335da110f30a0862857362e96336b05e7d8cacd21b",
+    "r1/wire-018.json": "bce057844219db9e8fff6f31f5dd522a929cdea8e95179987a3faeb76c938f2b",
+    "r1/018-overhead.jpg": "3c7448f10117887173892737c833cfd7fbae2a8d615075df93335baedc8d0dc1",
+    "r1/002-own.jpg": "79ec4dc12ec3960009650e563b9d50986fab32e043497bb84e9c3aa1356716fc",
+    "r1/012-own.jpg": "e4c9d768d93c1c6d9bdc53b69f4f8bd5b0221caa78e26547c5e04c73ce051f81",
+    "r1/wire-019.json": "875317965611e4b3a574d87cc327895ab89409f0b92c1104c21057df757068fc",
+    "r1/wire-023.json": "a6ce4bd79a6900df9cd845de4fc09c6acefc4e793f4dc04b791f8c46fcc1b905",
+    "r1/028-overhead.jpg": "56e92c57b6ba73725724aac52bbba1216afb5a37e4cab43060eb8c4123fdd840",
+    "r1/wire-003.json": "ff48c75915423d0d427487754792f0dfee4d99bd8c73f09fb8b58a6d871a744a",
+    "r1/wire-015.json": "62953d3f69be94bb41dff190a0feb9c3eda8bd71badc9930bd5894787f7bbe02",
+    "r1/019-overhead.jpg": "a1d06f65c2cfe69cbe2c993ea922aa853f66f12fc45fb156420f30157da4fba5",
+    "r1/024-own.jpg": "446024c361f0eb794f3c04c14e703825da8f68bd1a581e59d2259e8ec2feb69b",
+    "r3/021-own.jpg": "a5988bbc118510104f8774c9b529509f42c59c1567e35163cfb458c1b7ec9ec7",
+    "r3/wire-016.json": "fff9d695e96800d6247c1c9536382ccbc6303fc743780b209629e45b470cdf04",
+    "r3/028-own.jpg": "2bd0bf29ebaa88967d8a0691cdc2555eec3246d01c7ea50e8433989c7774c110",
+    "r3/009-overhead.jpg": "77a55592978373a7f56d54880acb9fe1f8f10f2f925a8e0a923532a5e383d94c",
+    "r3/wire-020.json": "3e6d3b3aec362a35a18847edf641799b8b780203f8d3b6281eab4002fed6f3fd",
+    "r3/017-own.jpg": "56428082137f08d650960abe498d7a8b7b2ea6fba5a14511c3d7ec24eafdb799",
+    "r3/007-own.jpg": "cd82ede64819dd7b02f64ff1fbccd0afea3c18ea5cf3ac9a4f434e1975d4c506",
+    "r3/wire-021.json": "5cf10beabdecdb31145acfdcde912137b31c883258677bddd1c5a8565bed0b5c",
+    "r3/029-own.jpg": "bdd0955ea203d8a78a0c0efb2a6064e77ed712ae052a151d0c7ce35551ff45cf",
+    "r3/006-own.jpg": "e9b29ad1697877ce764bf5addca50ac98d7713e15132d9723e9ee11a3b49387a",
+    "r3/016-own.jpg": "fbd709618faef5645748bd5cc9f1ed79e0516533a922f48c033f71003f8997b1",
+    "r3/008-overhead.jpg": "7ee65dbca48e68bae62a77d6ef3b2bd07006b3fdcc9244a31445f1b5474ef60c",
+    "r3/020-own.jpg": "47281cccf38bc7152715ae9d291aeec64b0fd9d247af93f18e99a62904e52fa5",
+    "r3/wire-017.json": "9316dd053725c0f7dc15d91fbfd168a0c5422b451bb9e23a8294950ed54b15a9",
+    "r3/wire-001.json": "9e36c7ff7cacdb9b87834e28d6cec29a0744d824ab1bf5c331f6abfb31a69c92",
+    "r3/010-overhead.jpg": "29568d085960fe3547d049cbb0bb9a3e843913664bfebf0bf20ce7bf0978678f",
+    "r3/017-overhead.jpg": "8c8dc22c64eedf0cb5706606d8d26287810735815a7cb0aa8e9e532b68525447",
+    "r3/014-own.jpg": "ac3485796b8a4f5f04389bc273a6776c100769ed14f89021d308756905d0f78a",
+    "r3/004-own.jpg": "7b01065c4e5c2d2e943809784c153058027cd6396df9a81b90ca5425806881b9",
+    "r3/002-overhead.jpg": "a8a2be365374a30ce1234e4d4026fa6bcd7e477e870e3690e6af599970a8bc4f",
+    "r3/wire-030.json": "3a9d102e18f7476b244ca67d94734dd3b5945ada996678c4a5f9f5ecdd3c8316",
+    "r3/005-overhead.jpg": "929367020431496ef901d74bec01f59702d542bda8d34afaaa9a57b01f427809",
+    "r3/wire-026.json": "e201a05910299b744d15d2b67a3219888900e9800a2bf428cd74501c02cea593",
+    "r3/wire-006.json": "28d61c66430a618ebac1aec74c61928025a114741d48299ac0f7b6c4f7d14d14",
+    "r3/wire-010.json": "e94747889599c97f5efaaae48e466db38e9dfeb4751f8638efddab1a3cc9e782",
+    "r3/022-own.jpg": "257457091b5bbb321a98fdf4ea986bd05617f82a6da61ed0e43d4acbc61ab32c",
+    "r3/021-overhead.jpg": "b78c4934e6e4ecc9939841358dcc5857e1a5744ebf2f492ca52f2e05f8ddae6b",
+    "r3/026-overhead.jpg": "f87fc6d0ee532e8dfcca47c5af33d1d1b2d55b5673fb6c024c9b1f50ced27843",
+    "r3/004-overhead.jpg": "d6295821bd5577644ee25c7270a664012c9ce2e03226b70505f9d05fb99a8db5",
+    "r3/003-overhead.jpg": "323b08dbcb2d68190e5a5fb4e679dc21c8483d4cf90546d96d1a73e497a69b77",
+    "r3/023-own.jpg": "db16ca70eb8c7d8d16759e9623498dc98119b5356d00562f0b7e8a642b6ee0d4",
+    "r3/016-overhead.jpg": "77a9c439c106c007c81601d7f33b7ed58e43bed9d5a484e335e9e5aa9a9ee5ae",
+    "r3/wire-011.json": "4860107e182afe2f7715973b1a1c855fbeda97972bb2127a506e4602ef89da34",
+    "r3/011-overhead.jpg": "dcf70ce64f17e4fbd5add179f1988ac7729cb44dd7d143be77c6c692f686a578",
+    "r3/wire-007.json": "6d9a843e9fe6f07fc52f11d9b173efba45ca9ffabf7ef8b83015e62f39bdc032",
+    "r3/027-overhead.jpg": "62b49a9db992113fc1d951c24fd9f94152d93a7a27c064adfcc751ced87daf4a",
+    "r3/wire-027.json": "707ce84765fb57ed641b9527e651e51136d127f614874568c736253e441b2edc",
+    "r3/020-overhead.jpg": "449e4950f13fcd26e896f74f70bb7195c0abbe6cab1006b57b8fd705eb0ccea3",
+    "r3/005-own.jpg": "3d93100c85322c2221e2bea3207267fb395c5d6efd7d21d5dbe73d5eacf723b9",
+    "r3/015-own.jpg": "06d5a35f3a62b43c198ebc527d312d3b57705ab793cea5222aad08d26499adaa",
+    "r3/wire-024.json": "9a2a9cbdcbbec09b508500288221204e43b3264cb8190d2fb1b2dce1d1e0efe8",
+    "r3/010-own.jpg": "8e4d03d75a5812c444cd63c37c71ab773916fbe2851f836ba071d716f29cdcf1",
+    "r3/000-own.jpg": "8aeab8b9b2d0cbded599b83971a61596f4f0691bbd78944a29f260aeacf13a19",
+    "r3/001-overhead.jpg": "e05e35a7088c39aad858a4abb195f0e62f14a95dc4ce7951f6b36ea1c1a1765b",
+    "r3/006-overhead.jpg": "b18ba1a6b50cb5feaa579c22657ceaa50846f79f756c2c447805a81c796ae3fb",
+    "r3/013-overhead.jpg": "612361902ef0146f6f7001be344166672aeb4941ab717fe4ec8728038f4418d2",
+    "r3/014-overhead.jpg": "7c51db748f2a848d1429e4ce2621b422082c0f116b319a6aca3c11d51f529963",
+    "r3/wire-008.json": "38eea3b6cbbb90b80606d589de2f099d199a6b110aead2888e78e19cb404423e",
+    "r3/wire-028.json": "a663f5329252ad156736e4d23bef95043ddf3a646aabe7dcab8c24588a961be2",
+    "r3/022-overhead.jpg": "5f85174b8912cfa13a9b1ba4511d8383ee182ad02e31d801e38c4d06ce1377c7",
+    "r3/025-overhead.jpg": "c2fc1a9c55cca6ff7b865ccf8b08274fe1708446c866ea51f5d91e3b843d44ea",
+    "r3/009-own.jpg": "fe891090b5cd84f04360ef5e758b52beac80d6ce271d13e671b36202c94f3dd0",
+    "r3/019-own.jpg": "74b45399dea4adde263ba09a2b2bb4aefb19cfd4d64f9970f5d9e9fc093faa07",
+    "r3/wire-012.json": "59f0bd10838788cd0d4ad6d6ac98f03ab95ce258cb5a55fcce8620a14167688d",
+    "r3/026-own.jpg": "451da11b0f03b4e13fb78d07cfd5f9bf3fe1ba1a8492ca2765f1dbf87e0cbb1b",
+    "r3/wire-004.json": "9af973398ea73b56739259ba5cad3663664672c62accd4606e3dc6971d0a61f0",
+    "r3/wire-005.json": "bb6968b44e429acad7c2135e979b8b7f937019c8b07e5de48385565feeccb16f",
+    "r3/015-overhead.jpg": "2a31db44a6da2b17b7760651b30ea7b16fdf8f7a7f86e9df9ffe916e77a5f77d",
+    "r3/018-own.jpg": "19a302bfd5a62b24bbe2403350ba42245effd06e044b9c2ed0a3da4579f1036b",
+    "r3/008-own.jpg": "89e0e8c7c7b4e7c1bb5d4fd8c6cc19efd9fbe992f5f3acda6ddaca13af186ec3",
+    "r3/wire-013.json": "96be1a0b1b280c995840733b4f9c61c03927dda09b1462a484b1ddc10edbcaa4",
+    "r3/012-overhead.jpg": "d6a91e25699df3c281ecbc92872f1bc782618d15632714ad57fb3dcd794c432f",
+    "r3/wire-029.json": "71b7cdce16c53f645a7811b5668c3635daaa02941af97d74c763f418adc51a55",
+    "r3/007-overhead.jpg": "dec9775b57239fa2dcf41b4cff9dd1f09f7dc62abe7aa4b8643e0055c18ec7fb",
+    "r3/027-own.jpg": "475f9815558f397438a086e3316e36a4e3bb8ae62af7673fc11f85389ab6dcdc",
+    "r3/000-overhead.jpg": "84f633b096247ccf4a9bce879942f863ce4442c200754bdbb735709c68221815",
+    "r3/wire-009.json": "32c00ce5cb81d34ba0372380970da2246a1e61600911c35c0c1af5f1e45b6b8b",
+    "r3/001-own.jpg": "74633b179aa912b47359f865b3a910e68a5d1d6ea7ca079c3ac03c16c1f28f64",
+    "r3/011-own.jpg": "bad680269f4eac19ae40f4d3b24c8c9ac15ff402fb2c75df89862594f63eac77",
+    "r3/024-overhead.jpg": "9a0643eec8466328a035779457aa2f254b1d6bd86b9e060af8bb386eb2101f26",
+    "r3/wire-025.json": "451c2c64374e77a9431b12ad887ccc8aee98d3af35984d514044849447ac1ae5",
+    "r3/023-overhead.jpg": "47c82b2506a44a15c7b792e7808f235c208eff60075b4340676b66ff9dabf550",
+    "r3/029-overhead.jpg": "d381c33363baa98052df790a13dab4d7696a850fa58148e91f8a6e60227f2d65",
+    "r3/wire-014.json": "5c00b431f6b39a9c2606e164095a827041473609a7bc915e5fa2f6d512e2d1b1",
+    "r3/025-own.jpg": "f99b1f32f368833e30a9299d95a6d1e673d350a1276f678554d28c67ed491511",
+    "r3/wire-002.json": "b4c09ad759b4347bd16c4558ed87d54933776211635eebcdf404dc14db97afe3",
+    "r3/wire-022.json": "c1ce342a0e4511eb6ee5b6745500275d5866ebd3259bb3e8bc33c3769a33c877",
+    "r3/013-own.jpg": "36e3905b6849d605680c4000c53862c5d6e9c412a8369da4c197856050805896",
+    "r3/003-own.jpg": "87b9c7b527eb6a3e29eac09b4ee44750faad392910ed494c67040c8d588df8bd",
+    "r3/wire-018.json": "0d945e35b6048be7dfe36fc3118f5497a3b9adab014e87dc636a0597491294a7",
+    "r3/018-overhead.jpg": "3c7448f10117887173892737c833cfd7fbae2a8d615075df93335baedc8d0dc1",
+    "r3/002-own.jpg": "8782a24401d8392891e7340f5699b14dd046a8fd12deea6a7918d9c407667697",
+    "r3/012-own.jpg": "c9c51897884ab74c69a5662eaa84af47a4184229e775cb84a405c6b944756ab1",
+    "r3/wire-019.json": "13355644cee7702b4466edd9a5a302a37e65fa125da018208ad0222014cad213",
+    "r3/wire-023.json": "b94607cf411cfefbf6f3491c0a5e4bebfdd9ef9aed8ca068cf1029c662d1afb9",
+    "r3/028-overhead.jpg": "56e92c57b6ba73725724aac52bbba1216afb5a37e4cab43060eb8c4123fdd840",
+    "r3/wire-003.json": "857092fc18b823c742615be7f353c36ea908f9866cbe842fc4d67a50462e5a32",
+    "r3/wire-015.json": "48eb37935cddcf63afcaae7a03532a3d23d091519125e80f11a3cb0f66761188",
+    "r3/019-overhead.jpg": "a1d06f65c2cfe69cbe2c993ea922aa853f66f12fc45fb156420f30157da4fba5",
+    "r3/024-own.jpg": "6c65b01256234a8eda700a8419e441e02f7b8f7e9bdef22096b1bb5ce817ad4b"
+  }
+}

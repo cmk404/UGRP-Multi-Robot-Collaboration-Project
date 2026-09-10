@@ -1,0 +1,710 @@
+{
+  "audit": "v12 beam component minAreaRect versus robust central shaft",
+  "source_sha": "b07b3a096e8260f463e620244c79c43742b6653b",
+  "metadata": {
+    "path": "/Users/changmin/projects/ugrp/outputs/pixel-grasp-20260910-r1-v12/result.json",
+    "sha256": "28edbd40149514c17ad25bc6a6eef38c538ee949842ab9d73f57518a94b98d65"
+  },
+  "threshold": {
+    "hsv_low": [
+      3,
+      105,
+      45
+    ],
+    "hsv_high": [
+      24,
+      255,
+      255
+    ],
+    "morphology": "3x3 open then close"
+  },
+  "rounds": [
+    {
+      "round": 0,
+      "image": {
+        "path": "/Users/changmin/projects/ugrp/outputs/pixel-grasp-20260910-r1-v12/r1/000-top.jpg",
+        "sha256": "9f13bed7b9e6a5d22c9fbec8a96c2a4b99ea05ee57452290b6734ae30cd8a062",
+        "image_size": [
+          1280,
+          960
+        ]
+      },
+      "reported": null,
+      "recomputed_component": {
+        "area_px": 2824.0,
+        "bbox_xywh": [
+          642,
+          396,
+          18,
+          168
+        ],
+        "min_area_rect": {
+          "center_px": [
+            650.5,
+            479.5
+          ],
+          "length_px": 167.0,
+          "width_px": 17.0,
+          "opencv_angle_deg": -90.0,
+          "corners_px": [
+            [
+              659.0,
+              563.0
+            ],
+            [
+              642.0,
+              563.0
+            ],
+            [
+              642.0,
+              396.0
+            ],
+            [
+              659.0,
+              396.0
+            ]
+          ]
+        },
+        "central_shaft": {
+          "slice_range_fraction": [
+            0.15,
+            0.65
+          ],
+          "median_width_px": 18.0,
+          "median_center_x_px": 650.5,
+          "longest_consistent_run_y_px": [
+            396,
+            562
+          ],
+          "robust_endpoints_normalized": [
+            [
+              0.508203125,
+              0.4125
+            ],
+            [
+              0.508203125,
+              0.5854166666666667
+            ]
+          ],
+          "widest_row": {
+            "y": 399,
+            "left": 642,
+            "right": 659,
+            "count": 18,
+            "center_x": 650.5
+          }
+        }
+      },
+      "output_only_reference": {
+        "sample_index": 0,
+        "relation_to_rgb": "first post-action sample; no pre-startup evaluation sample exists",
+        "matched_sim_time_s": 1.4,
+        "beam_position_m": [
+          0.58,
+          -2.0,
+          0.019951
+        ],
+        "beam_tilt_deg": 0.0,
+        "r1_bilateral_contact": false,
+        "r1_base": {
+          "xyz": [
+            -0.01999657738995699,
+            -2.3249999938159203,
+            0.032355120846119904
+          ],
+          "rpy": [
+            -1.9163370580288392e-07,
+            7.189847186274271e-05,
+            -2.8390294167985988e-11
+          ]
+        },
+        "source": "/Users/changmin/projects/ugrp/outputs/pixel-grasp-20260910-r1-v12/evaluation-only.jsonl",
+        "source_sha256": "fac2d34151a761cc2cf17e135421878377806220f1807a9847ac684fece3bb9f",
+        "usage": "post-run discrimination only; never controller input"
+      }
+    },
+    {
+      "round": 141,
+      "image": {
+        "path": "/Users/changmin/projects/ugrp/outputs/pixel-grasp-20260910-r1-v12/r1/141-top.jpg",
+        "sha256": "78fc54139a8b642f00e8e21226e653a42961d2c74ef13377f5b4e97a2fb8791c",
+        "image_size": [
+          1280,
+          960
+        ]
+      },
+      "reported": {
+        "area_px": 2965.0,
+        "center": [
+          0.5088177680969238,
+          0.5085742314656575
+        ],
+        "corners4": [
+          [
+            0.5145552635192872,
+            0.41111234029134114
+          ],
+          [
+            0.5268423080444335,
+            0.6033358256022135
+          ],
+          [
+            0.5030802726745606,
+            0.606036122639974
+          ],
+          [
+            0.49079322814941406,
+            0.4138125737508138
+          ]
+        ],
+        "endpoints": [
+          [
+            0.502674260466728,
+            0.41246246344859294
+          ],
+          [
+            0.5149612757271196,
+            0.6046859994827222
+          ]
+        ],
+        "image_size": [
+          1280,
+          960
+        ],
+        "length_px": 185.20358276367188,
+        "touches_border": false,
+        "width_px": 30.52569580078125
+      },
+      "recomputed_component": {
+        "area_px": 2965.0,
+        "bbox_xywh": [
+          642,
+          396,
+          33,
+          185
+        ],
+        "min_area_rect": {
+          "center_px": [
+            651.2867431640625,
+            488.23126220703125
+          ],
+          "length_px": 185.20358276367188,
+          "width_px": 30.52569580078125,
+          "opencv_angle_deg": -4.8713908195495605,
+          "corners_px": [
+            [
+              643.9427490234375,
+              581.794677734375
+            ],
+            [
+              628.21533203125,
+              397.26007080078125
+            ],
+            [
+              658.6307373046875,
+              394.6678466796875
+            ],
+            [
+              674.358154296875,
+              579.202392578125
+            ]
+          ]
+        },
+        "central_shaft": {
+          "slice_range_fraction": [
+            0.15,
+            0.65
+          ],
+          "median_width_px": 18.0,
+          "median_center_x_px": 650.5,
+          "longest_consistent_run_y_px": [
+            396,
+            563
+          ],
+          "robust_endpoints_normalized": [
+            [
+              0.508203125,
+              0.4125
+            ],
+            [
+              0.508203125,
+              0.5864583333333333
+            ]
+          ],
+          "widest_row": {
+            "y": 575,
+            "left": 653,
+            "right": 674,
+            "count": 22,
+            "center_x": 663.5
+          }
+        }
+      },
+      "output_only_reference": {
+        "sample_index": 1409,
+        "relation_to_rgb": "previous round final physics sample, before current action",
+        "matched_sim_time_s": 142.3,
+        "beam_position_m": [
+          0.58,
+          -2.0,
+          0.019951
+        ],
+        "beam_tilt_deg": 0.0,
+        "r1_bilateral_contact": false,
+        "r1_base": {
+          "xyz": [
+            0.5534119633505095,
+            -2.3241305541520485,
+            0.0323551187757002
+          ],
+          "rpy": [
+            -5.705411530094546e-05,
+            5.630025873296648e-06,
+            0.009238729492647231
+          ]
+        },
+        "source": "/Users/changmin/projects/ugrp/outputs/pixel-grasp-20260910-r1-v12/evaluation-only.jsonl",
+        "source_sha256": "fac2d34151a761cc2cf17e135421878377806220f1807a9847ac684fece3bb9f",
+        "usage": "post-run discrimination only; never controller input"
+      }
+    },
+    {
+      "round": 216,
+      "image": {
+        "path": "/Users/changmin/projects/ugrp/outputs/pixel-grasp-20260910-r1-v12/r1/216-top.jpg",
+        "sha256": "217b6ce65cf2f3f57575e33a39834089d1faa3af7ce3aee444d35e0a2aeb4aab",
+        "image_size": [
+          1280,
+          960
+        ]
+      },
+      "reported": {
+        "area_px": 2940.5,
+        "center": [
+          0.5085891246795654,
+          0.5080272038777669
+        ],
+        "corners4": [
+          [
+            0.5146252632141113,
+            0.4113771120707194
+          ],
+          [
+            0.5244633674621582,
+            0.6026740392049154
+          ],
+          [
+            0.5025529861450195,
+            0.6046772638956706
+          ],
+          [
+            0.49271488189697266,
+            0.4133803367614746
+          ]
+        ],
+        "endpoints": [
+          [
+            0.503670060323205,
+            0.4123787339702588
+          ],
+          [
+            0.5135081890359258,
+            0.6036756737852751
+          ]
+        ],
+        "image_size": [
+          1280,
+          960
+        ],
+        "length_px": 184.07630920410156,
+        "touches_border": false,
+        "width_px": 28.111129760742188
+      },
+      "recomputed_component": {
+        "area_px": 2940.5,
+        "bbox_xywh": [
+          642,
+          396,
+          30,
+          184
+        ],
+        "min_area_rect": {
+          "center_px": [
+            650.9940795898438,
+            487.70611572265625
+          ],
+          "length_px": 184.07630920410156,
+          "width_px": 28.111129760742188,
+          "opencv_angle_deg": -3.922713041305542,
+          "corners_px": [
+            [
+              643.267822265625,
+              580.4901733398438
+            ],
+            [
+              630.675048828125,
+              396.8451232910156
+            ],
+            [
+              658.7203369140625,
+              394.9220275878906
+            ],
+            [
+              671.3131103515625,
+              578.5670776367188
+            ]
+          ]
+        },
+        "central_shaft": {
+          "slice_range_fraction": [
+            0.15,
+            0.65
+          ],
+          "median_width_px": 18.0,
+          "median_center_x_px": 650.5,
+          "longest_consistent_run_y_px": [
+            396,
+            563
+          ],
+          "robust_endpoints_normalized": [
+            [
+              0.508203125,
+              0.4125
+            ],
+            [
+              0.508203125,
+              0.5864583333333333
+            ]
+          ],
+          "widest_row": {
+            "y": 576,
+            "left": 649,
+            "right": 671,
+            "count": 23,
+            "center_x": 660.0
+          }
+        }
+      },
+      "output_only_reference": {
+        "sample_index": 2159,
+        "relation_to_rgb": "previous round final physics sample, before current action",
+        "matched_sim_time_s": 217.3,
+        "beam_position_m": [
+          0.58,
+          -2.0,
+          0.019951
+        ],
+        "beam_tilt_deg": 0.0,
+        "r1_bilateral_contact": false,
+        "r1_base": {
+          "xyz": [
+            0.5471783793053537,
+            -2.3241829338056843,
+            0.03235511837706601
+          ],
+          "rpy": [
+            -5.555747048340423e-05,
+            5.4829857714336665e-06,
+            0.008968619276213828
+          ]
+        },
+        "source": "/Users/changmin/projects/ugrp/outputs/pixel-grasp-20260910-r1-v12/evaluation-only.jsonl",
+        "source_sha256": "fac2d34151a761cc2cf17e135421878377806220f1807a9847ac684fece3bb9f",
+        "usage": "post-run discrimination only; never controller input"
+      }
+    },
+    {
+      "round": 333,
+      "image": {
+        "path": "/Users/changmin/projects/ugrp/outputs/pixel-grasp-20260910-r1-v12/r1/333-top.jpg",
+        "sha256": "716200dc50b6dd149f1f517e1955d67e849eb693244a36e18ef877dabee98ed3",
+        "image_size": [
+          1280,
+          960
+        ]
+      },
+      "reported": {
+        "area_px": 2920.5,
+        "center": [
+          0.5085873126983642,
+          0.5079916636149089
+        ],
+        "corners4": [
+          [
+            0.5146252632141113,
+            0.4113771438598633
+          ],
+          [
+            0.5244597434997559,
+            0.6026029586791992
+          ],
+          [
+            0.5025493621826171,
+            0.6046061833699544
+          ],
+          [
+            0.49271488189697266,
+            0.4133803685506185
+          ]
+        ],
+        "endpoints": [
+          [
+            0.503670076031919,
+            0.4123787379505048
+          ],
+          [
+            0.5135045493648095,
+            0.6036045892793129
+          ]
+        ],
+        "image_size": [
+          1280,
+          960
+        ],
+        "length_px": 184.00790405273438,
+        "touches_border": false,
+        "width_px": 28.111129760742188
+      },
+      "recomputed_component": {
+        "area_px": 2920.5,
+        "bbox_xywh": [
+          642,
+          396,
+          30,
+          184
+        ],
+        "min_area_rect": {
+          "center_px": [
+            650.9917602539062,
+            487.6719970703125
+          ],
+          "length_px": 184.00790405273438,
+          "width_px": 28.111129760742188,
+          "opencv_angle_deg": -3.922713279724121,
+          "corners_px": [
+            [
+              643.26318359375,
+              580.4219360351562
+            ],
+            [
+              630.675048828125,
+              396.84515380859375
+            ],
+            [
+              658.7203369140625,
+              394.92205810546875
+            ],
+            [
+              671.3084716796875,
+              578.4988403320312
+            ]
+          ]
+        },
+        "central_shaft": {
+          "slice_range_fraction": [
+            0.15,
+            0.65
+          ],
+          "median_width_px": 18.0,
+          "median_center_x_px": 650.5,
+          "longest_consistent_run_y_px": [
+            396,
+            563
+          ],
+          "robust_endpoints_normalized": [
+            [
+              0.508203125,
+              0.4125
+            ],
+            [
+              0.508203125,
+              0.5864583333333333
+            ]
+          ],
+          "widest_row": {
+            "y": 576,
+            "left": 652,
+            "right": 671,
+            "count": 20,
+            "center_x": 661.5
+          }
+        }
+      },
+      "output_only_reference": {
+        "sample_index": 3329,
+        "relation_to_rgb": "previous round final physics sample, before current action",
+        "matched_sim_time_s": 334.3,
+        "beam_position_m": [
+          0.58,
+          -2.0,
+          0.019951
+        ],
+        "beam_tilt_deg": 0.0,
+        "r1_bilateral_contact": false,
+        "r1_base": {
+          "xyz": [
+            0.5471768418902481,
+            -2.3242187822384697,
+            0.03235512224043475
+          ],
+          "rpy": [
+            -6.855388110772978e-05,
+            6.768864959540291e-06,
+            0.008960500434021823
+          ]
+        },
+        "source": "/Users/changmin/projects/ugrp/outputs/pixel-grasp-20260910-r1-v12/evaluation-only.jsonl",
+        "source_sha256": "fac2d34151a761cc2cf17e135421878377806220f1807a9847ac684fece3bb9f",
+        "usage": "post-run discrimination only; never controller input"
+      }
+    },
+    {
+      "round": 374,
+      "image": {
+        "path": "/Users/changmin/projects/ugrp/outputs/pixel-grasp-20260910-r1-v12/r1/374-top.jpg",
+        "sha256": "0c822b3b9cbe1fce2f8f497e21abf8e5df5b2442b3d1deb7123e2e5edb5f1339",
+        "image_size": [
+          1280,
+          960
+        ]
+      },
+      "reported": {
+        "area_px": 2945.0,
+        "center": [
+          0.5090176105499268,
+          0.5084060668945313
+        ],
+        "corners4": [
+          [
+            0.5144148826599121,
+            0.4106499989827474
+          ],
+          [
+            0.5309088706970215,
+            0.6019799550374348
+          ],
+          [
+            0.5036203384399414,
+            0.6061621348063151
+          ],
+          [
+            0.48712635040283203,
+            0.4148321787516276
+          ]
+        ],
+        "endpoints": [
+          [
+            0.5007706300372943,
+            0.4127410897020056
+          ],
+          [
+            0.5172645910625593,
+            0.6040710440870569
+          ]
+        ],
+        "image_size": [
+          1280,
+          960
+        ],
+        "length_px": 184.88612365722656,
+        "touches_border": false,
+        "width_px": 35.15930938720703
+      },
+      "recomputed_component": {
+        "area_px": 2945.0,
+        "bbox_xywh": [
+          642,
+          396,
+          38,
+          184
+        ],
+        "min_area_rect": {
+          "center_px": [
+            651.5425415039062,
+            488.06982421875
+          ],
+          "length_px": 184.88612365722656,
+          "width_px": 35.15930938720703,
+          "opencv_angle_deg": -6.556946277618408,
+          "corners_px": [
+            [
+              644.634033203125,
+              581.9156494140625
+            ],
+            [
+              623.521728515625,
+              398.2388916015625
+            ],
+            [
+              658.4510498046875,
+              394.2239990234375
+            ],
+            [
+              679.5633544921875,
+              577.9007568359375
+            ]
+          ]
+        },
+        "central_shaft": {
+          "slice_range_fraction": [
+            0.15,
+            0.65
+          ],
+          "median_width_px": 18.0,
+          "median_center_x_px": 650.5,
+          "longest_consistent_run_y_px": [
+            396,
+            563
+          ],
+          "robust_endpoints_normalized": [
+            [
+              0.508203125,
+              0.4125
+            ],
+            [
+              0.508203125,
+              0.5864583333333333
+            ]
+          ],
+          "widest_row": {
+            "y": 562,
+            "left": 643,
+            "right": 664,
+            "count": 22,
+            "center_x": 653.5
+          }
+        }
+      },
+      "output_only_reference": {
+        "sample_index": 3739,
+        "relation_to_rgb": "previous round final physics sample, before current action",
+        "matched_sim_time_s": 375.3,
+        "beam_position_m": [
+          0.58,
+          -2.0,
+          0.019951
+        ],
+        "beam_tilt_deg": 0.0,
+        "r1_bilateral_contact": false,
+        "r1_base": {
+          "xyz": [
+            0.569003667296665,
+            -2.3210759057978803,
+            0.03235512224204993
+          ],
+          "rpy": [
+            -6.859486854009659e-05,
+            6.768868378064865e-06,
+            0.026240017960259144
+          ]
+        },
+        "source": "/Users/changmin/projects/ugrp/outputs/pixel-grasp-20260910-r1-v12/evaluation-only.jsonl",
+        "source_sha256": "fac2d34151a761cc2cf17e135421878377806220f1807a9847ac684fece3bb9f",
+        "usage": "post-run discrimination only; never controller input"
+      }
+    }
+  ],
+  "all_evaluated_beam_poses_constant": true,
+  "conclusion": "Central shaft width and x remain stable while small endpoint-connected orange tails rotate and widen the whole-component minAreaRect and displace its endpoints.",
+  "scope": "vertical scanline diagnostic for selected v12 frames; not a runtime estimator"
+}

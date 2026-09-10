@@ -1,0 +1,1230 @@
+{
+  "git_sha": "dffdfd20372b241d9228d0c0246cb80d97ca359d",
+  "config": {
+    "out_dir": "/Users/changmin/projects/ugrp/outputs/visual-servo-20260909-r1-diagnostic",
+    "rounds": 16,
+    "seed": 11,
+    "model": "gemini-3.8-flash",
+    "timeout": 45,
+    "task": "grasp",
+    "active_robot": "r1"
+  },
+  "input_contract": "current/prior own+top RGB and own issued commands only; pixel landmarks feed state-local control; alternating isolated actions; no truth feedback",
+  "calls": [
+    {
+      "round": 0,
+      "robot_id": "r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 1,
+        "pulse": 2000
+      },
+      "active": true,
+      "observation": {
+        "view": "own",
+        "jaws": null,
+        "target": [
+          0.207,
+          0.418
+        ],
+        "confidence": 0.7,
+        "identity_confidence": 0.5,
+        "self_center": null,
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "look",
+          "pan_pulse": 1700
+        },
+        "reason": "Initial frame. In own view, an orange beam is visible on the lower-left, but jaw tips are not visible. Overhead view shows two robots facing right towards the beam. To bring the beam into central view and localize jaws, look pan to the left (increase pan_pulse)."
+      },
+      "decision": {
+        "stage": "acquire",
+        "reason": "establish open command, not assumed aperture",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 0,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"own\",\"jaws\":null,\"target\":[0.207,0.418],\"confidence\":0.7,\"identity_confidence\":0.5,\"self_center\":null,\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"look\",\"pan_pulse\":1700},\"reason\":\"Initial frame. In own view, an orange beam is visible on the lower-left, but jaw tips are not visible. Overhead view shows two robots facing right towards the beam. To bring the beam into central view and localize jaws, look pan to the left (increase pan_pulse).\"}\n```",
+      "usage": {
+        "prompt_tokens": 2984,
+        "completion_tokens": 140,
+        "total_tokens": 3124
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3165.506249992177,
+      "learning": {
+        "sample_count": 0,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 1,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1600
+      },
+      "active": true,
+      "observation": {
+        "view": "own",
+        "jaws": null,
+        "target": [
+          0.247,
+          0.413
+        ],
+        "confidence": 0.7,
+        "identity_confidence": 0.5,
+        "self_center": null,
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "look",
+          "pan_pulse": 1700
+        },
+        "reason": "The plain orange beam end is visible on the left side of CURRENT_OWN_VIEW. Gripper jaws are not visible in the frame. Suggest panning camera left towards the beam."
+      },
+      "decision": {
+        "stage": "acquire",
+        "reason": "bounded visual search; landmarks unavailable or uncertain",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 0,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"own\",\"jaws\":null,\"target\":[0.247,0.413],\"confidence\":0.7,\"identity_confidence\":0.5,\"self_center\":null,\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"look\",\"pan_pulse\":1700},\"reason\":\"The plain orange beam end is visible on the left side of CURRENT_OWN_VIEW. Gripper jaws are not visible in the frame. Suggest panning camera left towards the beam.\"}\n```",
+      "usage": {
+        "prompt_tokens": 5142,
+        "completion_tokens": 118,
+        "total_tokens": 5260
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 2619.425875134766,
+      "learning": {
+        "sample_count": 0,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 2,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1700
+      },
+      "active": true,
+      "observation": {
+        "view": "own",
+        "jaws": null,
+        "target": [
+          0.347,
+          0.407
+        ],
+        "confidence": 0.7,
+        "identity_confidence": 0.7,
+        "self_center": [
+          0.334,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "look",
+          "pan_pulse": 1700
+        },
+        "reason": "In CURRENT_OWN_VIEW, the orange beam end moved slightly to the right compared to PREVIOUS_OWN_VIEW following look pan_pulse 1600 (panning camera left shifts view rightward). This matches the bottom robot facing east whose left is north (upwards towards the beam). Gripper jaws are not visible. Suggest continuing pan left to center the beam grasp region."
+      },
+      "decision": {
+        "stage": "acquire",
+        "reason": "bounded visual search; landmarks unavailable or uncertain",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 0,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"own\",\"jaws\":null,\"target\":[0.347,0.407],\"confidence\":0.7,\"identity_confidence\":0.7,\"self_center\":[0.334,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"look\",\"pan_pulse\":1700},\"reason\":\"In CURRENT_OWN_VIEW, the orange beam end moved slightly to the right compared to PREVIOUS_OWN_VIEW following look pan_pulse 1600 (panning camera left shifts view rightward). This matches the bottom robot facing east whose left is north (upwards towards the beam). Gripper jaws are not visible. Suggest continuing pan left to center the beam grasp region.\"}\n```",
+      "usage": {
+        "prompt_tokens": 5155,
+        "completion_tokens": 172,
+        "total_tokens": 5327
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4080.7568340096623,
+      "learning": {
+        "sample_count": 0,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 3,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1800
+      },
+      "active": true,
+      "observation": {
+        "view": "own",
+        "jaws": null,
+        "target": [
+          0.457,
+          0.395
+        ],
+        "confidence": 0.7,
+        "identity_confidence": 0.75,
+        "self_center": [
+          0.334,
+          0.373
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "look",
+          "pan_pulse": 1800
+        },
+        "reason": "In own view, panning left (1600->1700) shifted the orange beam rightward across frames. In overhead view, the upper robot's arm orientation aligns with looking toward the beam end, matching self-motion. The gripper jaws remain out of frame; continue panning left to center the beam grasp point."
+      },
+      "decision": {
+        "stage": "acquire",
+        "reason": "bounded visual search; landmarks unavailable or uncertain",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 0,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"own\",\"jaws\":null,\"target\":[0.457,0.395],\"confidence\":0.7,\"identity_confidence\":0.75,\"self_center\":[0.334,0.373],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"look\",\"pan_pulse\":1800},\"reason\":\"In own view, panning left (1600->1700) shifted the orange beam rightward across frames. In overhead view, the upper robot's arm orientation aligns with looking toward the beam end, matching self-motion. The gripper jaws remain out of frame; continue panning left to center the beam grasp point.\"}\n```",
+      "usage": {
+        "prompt_tokens": 5168,
+        "completion_tokens": 161,
+        "total_tokens": 5329
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4927.6317921467125,
+      "learning": {
+        "sample_count": 0,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 4,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1700
+      },
+      "active": true,
+      "observation": {
+        "view": "own",
+        "jaws": null,
+        "target": [
+          0.457,
+          0.373
+        ],
+        "confidence": 0.85,
+        "identity_confidence": 0.95,
+        "self_center": [
+          0.334,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "look",
+          "pan_pulse": 1700
+        },
+        "reason": "In CURRENT_OWN_VIEW, panning left (pan_pulse 1800) shifted the orange beam further right and revealed the left end. The arm/camera is turned somewhat to the left of the beam center. Lowering pan_pulse back toward 1700 will re-center the target grasp region. Jaw tips are not visible in own view. Overhead view matches the lower robot whose arm is angled to the left."
+      },
+      "decision": {
+        "stage": "acquire",
+        "reason": "bounded visual search; landmarks unavailable or uncertain",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 0,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"own\",\"jaws\":null,\"target\":[0.457,0.373],\"confidence\":0.85,\"identity_confidence\":0.95,\"self_center\":[0.334,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"look\",\"pan_pulse\":1700},\"reason\":\"In CURRENT_OWN_VIEW, panning left (pan_pulse 1800) shifted the orange beam further right and revealed the left end. The arm/camera is turned somewhat to the left of the beam center. Lowering pan_pulse back toward 1700 will re-center the target grasp region. Jaw tips are not visible in own view. Overhead view matches the lower robot whose arm is angled to the left.\"}\n```",
+      "usage": {
+        "prompt_tokens": 5181,
+        "completion_tokens": 184,
+        "total_tokens": 5365
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3119.5069171953946,
+      "learning": {
+        "sample_count": 0,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 5,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1600
+      },
+      "active": true,
+      "observation": {
+        "view": "own",
+        "jaws": null,
+        "target": [
+          0.506,
+          0.407
+        ],
+        "confidence": 0.7,
+        "identity_confidence": 0.8,
+        "self_center": [
+          0.334,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "look",
+          "pan_pulse": 1600
+        },
+        "reason": "In CURRENT_OWN_VIEW, panning right (1800->1700) shifted the orange beam further rightwards, consistent with the southern robot whose arm points toward the beam. The jaws are not visible in own view. Panning back slightly toward center (1600) will keep the beam aligned."
+      },
+      "decision": {
+        "stage": "acquire",
+        "reason": "bounded visual search; landmarks unavailable or uncertain",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 0,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"own\",\"jaws\":null,\"target\":[0.506,0.407],\"confidence\":0.7,\"identity_confidence\":0.8,\"self_center\":[0.334,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"look\",\"pan_pulse\":1600},\"reason\":\"In CURRENT_OWN_VIEW, panning right (1800->1700) shifted the orange beam further rightwards, consistent with the southern robot whose arm points toward the beam. The jaws are not visible in own view. Panning back slightly toward center (1600) will keep the beam aligned.\"}\n```",
+      "usage": {
+        "prompt_tokens": 5194,
+        "completion_tokens": 159,
+        "total_tokens": 5353
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 5078.3308329992,
+      "learning": {
+        "sample_count": 0,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 6,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1500
+      },
+      "active": true,
+      "observation": {
+        "view": "own",
+        "jaws": null,
+        "target": [
+          0.35,
+          0.4
+        ],
+        "confidence": 0.75,
+        "identity_confidence": 0.85,
+        "self_center": [
+          0.33,
+          0.62
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "look",
+          "pan_pulse": 1500
+        },
+        "reason": "Panned right from 1700 to 1600 pulse, shifting beam rightward in own view. The robot at [0.33, 0.62] faces the plain beam, with its end extending leftward in own view, confirming identity as the lower robot. Jaws not visible. Continue panning arm to center (pan_pulse 1500) to bring gripper into view."
+      },
+      "decision": {
+        "stage": "acquire",
+        "reason": "bounded visual search; landmarks unavailable or uncertain",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 0,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"own\",\"jaws\":null,\"target\":[0.35,0.40],\"confidence\":0.75,\"identity_confidence\":0.85,\"self_center\":[0.33,0.62],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"look\",\"pan_pulse\":1500},\"reason\":\"Panned right from 1700 to 1600 pulse, shifting beam rightward in own view. The robot at [0.33, 0.62] faces the plain beam, with its end extending leftward in own view, confirming identity as the lower robot. Jaws not visible. Continue panning arm to center (pan_pulse 1500) to bring gripper into view.\"}\n```",
+      "usage": {
+        "prompt_tokens": 5207,
+        "completion_tokens": 178,
+        "total_tokens": 5385
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4297.829457791522,
+      "learning": {
+        "sample_count": 0,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 7,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1600
+      },
+      "active": true,
+      "observation": {
+        "view": "own",
+        "jaws": null,
+        "target": [
+          0.2,
+          0.42
+        ],
+        "confidence": 0.7,
+        "identity_confidence": 0.8,
+        "self_center": [
+          0.33,
+          0.63
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "look",
+          "pan_pulse": 1600
+        },
+        "reason": "In CURRENT_OWN_VIEW, the orange beam end is visible on the left edge. Look was returned to 1500, moving beam leftward. Looking back left towards pan_pulse 1600 will bring the beam more centrally into view."
+      },
+      "decision": {
+        "stage": "acquire",
+        "reason": "bounded visual search; landmarks unavailable or uncertain",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 0,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"own\",\"jaws\":null,\"target\":[0.20,0.42],\"confidence\":0.7,\"identity_confidence\":0.8,\"self_center\":[0.33,0.63],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"look\",\"pan_pulse\":1600},\"reason\":\"In CURRENT_OWN_VIEW, the orange beam end is visible on the left edge. Look was returned to 1500, moving beam leftward. Looking back left towards pan_pulse 1600 will bring the beam more centrally into view.\"}\n```",
+      "usage": {
+        "prompt_tokens": 5220,
+        "completion_tokens": 142,
+        "total_tokens": 5362
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3451.47812506184,
+      "learning": {
+        "sample_count": 0,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 8,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1700
+      },
+      "active": true,
+      "observation": {
+        "view": "own",
+        "jaws": null,
+        "target": [
+          0.244,
+          0.407
+        ],
+        "confidence": 0.7,
+        "identity_confidence": 0.8,
+        "self_center": [
+          0.334,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "look",
+          "pan_pulse": 1700
+        },
+        "reason": "In CURRENT_OWN_VIEW, panning left (pan_pulse 1600) brought more of the plain orange beam into view from the left side. The beam end is at x~0.44. The bottom robot in overhead view faces right-upwards toward the bottom end of the beam; its camera pan matches our perspective. Continuing to pan arm/camera left to center the beam target."
+      },
+      "decision": {
+        "stage": "acquire",
+        "reason": "bounded visual search; landmarks unavailable or uncertain",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 0,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"own\",\"jaws\":null,\"target\":[0.244,0.407],\"confidence\":0.7,\"identity_confidence\":0.8,\"self_center\":[0.334,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"look\",\"pan_pulse\":1700},\"reason\":\"In CURRENT_OWN_VIEW, panning left (pan_pulse 1600) brought more of the plain orange beam into view from the left side. The beam end is at x~0.44. The bottom robot in overhead view faces right-upwards toward the bottom end of the beam; its camera pan matches our perspective. Continuing to pan arm/camera left to center the beam target.\"}\n```",
+      "usage": {
+        "prompt_tokens": 5233,
+        "completion_tokens": 176,
+        "total_tokens": 5409
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 4040.9117499366403,
+      "learning": {
+        "sample_count": 0,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 9,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1600
+      },
+      "active": true,
+      "observation": {
+        "view": "own",
+        "jaws": null,
+        "target": [
+          0.45,
+          0.4
+        ],
+        "confidence": 0.75,
+        "identity_confidence": 0.8,
+        "self_center": [
+          0.33,
+          0.63
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "look",
+          "pan_pulse": 1600
+        },
+        "reason": "In CURRENT_OWN_VIEW, the orange beam end moved rightward as the camera panned left (pan_pulse 1700). In overhead view, the lower robot corresponds to this robot facing the plain beam from the south/lower side. Jaws are not visible in own view yet. Pan slightly back towards 1600 to keep the beam centered while preparing to approach."
+      },
+      "decision": {
+        "stage": "acquire",
+        "reason": "bounded visual search; landmarks unavailable or uncertain",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 0,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"own\",\"jaws\":null,\"target\":[0.45,0.40],\"confidence\":0.75,\"identity_confidence\":0.8,\"self_center\":[0.33,0.63],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"look\",\"pan_pulse\":1600},\"reason\":\"In CURRENT_OWN_VIEW, the orange beam end moved rightward as the camera panned left (pan_pulse 1700). In overhead view, the lower robot corresponds to this robot facing the plain beam from the south/lower side. Jaws are not visible in own view yet. Pan slightly back towards 1600 to keep the beam centered while preparing to approach.\"}\n```",
+      "usage": {
+        "prompt_tokens": 5229,
+        "completion_tokens": 170,
+        "total_tokens": 5399
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3308.2300410605967,
+      "learning": {
+        "sample_count": 0,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 10,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1500
+      },
+      "active": true,
+      "observation": {
+        "view": "own",
+        "jaws": null,
+        "target": [
+          0.24,
+          0.41
+        ],
+        "confidence": 0.7,
+        "identity_confidence": 0.8,
+        "self_center": [
+          0.33,
+          0.62
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "look",
+          "pan_pulse": 1500
+        },
+        "reason": "In own view, the orange beam end is visible on the left/center, but gripper jaws are not visible. Looking towards 1500 (forward) will center the beam relative to the robot base and bring the arm/jaws into view."
+      },
+      "decision": {
+        "stage": "acquire",
+        "reason": "bounded visual search; landmarks unavailable or uncertain",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 0,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"own\",\"jaws\":null,\"target\":[0.24,0.41],\"confidence\":0.7,\"identity_confidence\":0.8,\"self_center\":[0.33,0.62],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"look\",\"pan_pulse\":1500},\"reason\":\"In own view, the orange beam end is visible on the left/center, but gripper jaws are not visible. Looking towards 1500 (forward) will center the beam relative to the robot base and bring the arm/jaws into view.\"}\n```",
+      "usage": {
+        "prompt_tokens": 5229,
+        "completion_tokens": 140,
+        "total_tokens": 5369
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3262.9902500193566,
+      "learning": {
+        "sample_count": 0,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 11,
+      "robot_id": "r1",
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1600
+      },
+      "active": true,
+      "observation": {
+        "view": "own",
+        "jaws": null,
+        "target": [
+          0.274,
+          0.418
+        ],
+        "confidence": 0.7,
+        "identity_confidence": 0.8,
+        "self_center": [
+          0.334,
+          0.627
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "look",
+          "pan_pulse": 1600
+        },
+        "reason": "In CURRENT_OWN_VIEW, panning right (1600 to 1500) caused the orange beam end to shift slightly leftward. The beam end is at [0.274, 0.418] on the left side, but jaws are not yet in view. In overhead view, this corresponds to the lower robot facing toward the beam on the blue mat, with the beam to its left. Increasing pan_pulse slightly back to 1600 or turning left will bring the beam more centrally into view."
+      },
+      "decision": {
+        "stage": "acquire",
+        "reason": "bounded visual search; landmarks unavailable or uncertain",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 0,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"own\",\"jaws\":null,\"target\":[0.274,0.418],\"confidence\":0.7,\"identity_confidence\":0.8,\"self_center\":[0.334,0.627],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"look\",\"pan_pulse\":1600},\"reason\":\"In CURRENT_OWN_VIEW, panning right (1600 to 1500) caused the orange beam end to shift slightly leftward. The beam end is at [0.274, 0.418] on the left side, but jaws are not yet in view. In overhead view, this corresponds to the lower robot facing toward the beam on the blue mat, with the beam to its left. Increasing pan_pulse slightly back to 1600 or turning left will bring the beam more centrally into view.\"}\n```",
+      "usage": {
+        "prompt_tokens": 5229,
+        "completion_tokens": 206,
+        "total_tokens": 5435
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3784.11729214713,
+      "learning": {
+        "sample_count": 0,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 12,
+      "robot_id": "r1",
+      "action": {
+        "kind": "wait"
+      },
+      "active": true,
+      "observation": {
+        "view": "own",
+        "jaws": null,
+        "target": [
+          0.24,
+          0.4
+        ],
+        "confidence": 0.75,
+        "identity_confidence": 0.85,
+        "self_center": [
+          0.33,
+          0.63
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "look",
+          "pan_pulse": 1700
+        },
+        "reason": "In CURRENT_OWN_VIEW, panning left (pulse 1600) brings more of the orange beam into view on the left side compared to previous view. Arm tips are not visible. We continue panning left towards pulse 1700 to center the beam in view. Self is the lower robot in overhead view looking right/forward towards the orange beam on the blue mat."
+      },
+      "decision": {
+        "stage": "blocked",
+        "reason": "jaws/target or identity not observable after bounded search",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 0,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"own\",\"jaws\":null,\"target\":[0.24,0.40],\"confidence\":0.75,\"identity_confidence\":0.85,\"self_center\":[0.33,0.63],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"look\",\"pan_pulse\":1700},\"reason\":\"In CURRENT_OWN_VIEW, panning left (pulse 1600) brings more of the orange beam into view on the left side compared to previous view. Arm tips are not visible. We continue panning left towards pulse 1700 to center the beam in view. Self is the lower robot in overhead view looking right/forward towards the orange beam on the blue mat.\"}\n```",
+      "usage": {
+        "prompt_tokens": 5229,
+        "completion_tokens": 169,
+        "total_tokens": 5398
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 10106.041834224015,
+      "learning": {
+        "sample_count": 0,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 13,
+      "robot_id": "r1",
+      "action": {
+        "kind": "wait"
+      },
+      "active": true,
+      "observation": {
+        "view": "own",
+        "jaws": null,
+        "target": [
+          0.24,
+          0.4
+        ],
+        "confidence": 0.7,
+        "identity_confidence": 0.7,
+        "self_center": [
+          0.33,
+          0.37
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "look",
+          "pan_pulse": 1500
+        },
+        "reason": "In CURRENT_OWN_VIEW, the orange beam extends in from the left and ends around x=0.44. The robot's own jaws are not in view. Looking at the overhead view, two robots face east towards the blue mat containing an orange beam. The top robot faces the northern end of the beam, matching CURRENT_OWN_VIEW where the beam end terminates to the right (facing the beam sideways or towards the northern end). Suggest returning pan pulse towards 1500 to center the view or locate the gripper."
+      },
+      "decision": {
+        "stage": "blocked",
+        "reason": "bounded recovery exhausted; no success claim",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 0,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"own\",\"jaws\":null,\"target\":[0.24,0.40],\"confidence\":0.7,\"identity_confidence\":0.7,\"self_center\":[0.33,0.37],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"look\",\"pan_pulse\":1500},\"reason\":\"In CURRENT_OWN_VIEW, the orange beam extends in from the left and ends around x=0.44. The robot's own jaws are not in view. Looking at the overhead view, two robots face east towards the blue mat containing an orange beam. The top robot faces the northern end of the beam, matching CURRENT_OWN_VIEW where the beam end terminates to the right (facing the beam sideways or towards the northern end). Suggest returning pan pulse towards 1500 to center the view or locate the gripper.\"}\n```",
+      "usage": {
+        "prompt_tokens": 5221,
+        "completion_tokens": 198,
+        "total_tokens": 5419
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 2442.431000061333,
+      "learning": {
+        "sample_count": 0,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 14,
+      "robot_id": "r1",
+      "action": {
+        "kind": "wait"
+      },
+      "active": true,
+      "observation": {
+        "view": "own",
+        "jaws": null,
+        "target": [
+          0.24,
+          0.4
+        ],
+        "confidence": 0.7,
+        "identity_confidence": 0.8,
+        "self_center": [
+          0.33,
+          0.37
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "look",
+          "pan_pulse": 1700
+        },
+        "reason": "In CURRENT_OWN_VIEW, the orange beam extends into the left half of the frame with the right tip ending around x=0.44, y=0.41. Own jaws are not visible. In CURRENT_OVERHEAD_VIEW, the upper robot faces towards the beam whose top edge is aligned with its view (beam extends downwards). The upper robot's camera pan left brings the beam into view from the left. Suggested action pans slightly more left (pan_pulse 1700) to bring the beam center and jaws into view."
+      },
+      "decision": {
+        "stage": "blocked",
+        "reason": "bounded recovery exhausted; no success claim",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 0,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"own\",\"jaws\":null,\"target\":[0.24,0.40],\"confidence\":0.7,\"identity_confidence\":0.8,\"self_center\":[0.33,0.37],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"look\",\"pan_pulse\":1700},\"reason\":\"In CURRENT_OWN_VIEW, the orange beam extends into the left half of the frame with the right tip ending around x=0.44, y=0.41. Own jaws are not visible. In CURRENT_OVERHEAD_VIEW, the upper robot faces towards the beam whose top edge is aligned with its view (beam extends downwards). The upper robot's camera pan left brings the beam into view from the left. Suggested action pans slightly more left (pan_pulse 1700) to bring the beam center and jaws into view.\"}\n```",
+      "usage": {
+        "prompt_tokens": 5212,
+        "completion_tokens": 203,
+        "total_tokens": 5415
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 2540.10337498039,
+      "learning": {
+        "sample_count": 0,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    },
+    {
+      "round": 15,
+      "robot_id": "r1",
+      "action": {
+        "kind": "wait"
+      },
+      "active": true,
+      "observation": {
+        "view": "own",
+        "jaws": null,
+        "target": [
+          0.38,
+          0.4
+        ],
+        "confidence": 0.7,
+        "identity_confidence": 0.7,
+        "self_center": [
+          0.33,
+          0.63
+        ],
+        "capture_visible": false,
+        "lift_visible": false,
+        "suggested_action": {
+          "kind": "look",
+          "pan_pulse": 1500
+        },
+        "reason": "In CURRENT_OWN_VIEW, the right end of the plain orange beam is visible on the left side of the frame, extending towards x~0.44. Based on the beam end in own view, this robot faces the bottom end of the vertical beam, corresponding to the lower robot around [0.33, 0.63] in overhead view. To bring the beam end and gripper into view, pan toward center (1500)."
+      },
+      "decision": {
+        "stage": "blocked",
+        "reason": "bounded recovery exhausted; no success claim",
+        "visual_error": null,
+        "retries": 0,
+        "learning": {
+          "sample_count": 0,
+          "max_transitions": 128,
+          "minimum_samples_per_channel": 2,
+          "channel_sample_counts": {
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "sampled_channels": [],
+          "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+          "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+        }
+      },
+      "response": "```json\n{\"view\":\"own\",\"jaws\":null,\"target\":[0.38,0.40],\"confidence\":0.7,\"identity_confidence\":0.7,\"self_center\":[0.33,0.63],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"look\",\"pan_pulse\":1500},\"reason\":\"In CURRENT_OWN_VIEW, the right end of the plain orange beam is visible on the left side of the frame, extending towards x~0.44. Based on the beam end in own view, this robot faces the bottom end of the vertical beam, corresponding to the lower robot around [0.33, 0.63] in overhead view. To bring the beam end and gripper into view, pan toward center (1500).\"}\n```",
+      "usage": {
+        "prompt_tokens": 5203,
+        "completion_tokens": 183,
+        "total_tokens": 5386
+      },
+      "reported_model": "gemini-3.8-flash",
+      "model_latency_ms": 3007.0051250513643,
+      "learning": {
+        "sample_count": 0,
+        "max_transitions": 128,
+        "minimum_samples_per_channel": 2,
+        "channel_sample_counts": {
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "sampled_channels": [],
+        "support_note": "A sampled channel still requires two nearby, same-view, consistent samples at proposal time.",
+        "conditioning": "jaw midpoint, target, jaw direction, jaw separation"
+      }
+    }
+  ],
+  "rounds_completed": 16,
+  "error": null,
+  "transport_success": null,
+  "grasp_success": false,
+  "success_claim": "evaluated grasp_success=False after 16 fixed rounds; longest qualifying hold 0.0s, max lift -0.000m",
+  "longest_qualifying_duration_s": 0.0,
+  "max_lift_m": -4.9e-05,
+  "sample_count": 160,
+  "wall_elapsed_s": 73.047,
+  "last_responses": {
+    "r1": {
+      "response": "```json\n{\"view\":\"own\",\"jaws\":null,\"target\":[0.38,0.40],\"confidence\":0.7,\"identity_confidence\":0.7,\"self_center\":[0.33,0.63],\"capture_visible\":false,\"lift_visible\":false,\"suggested_action\":{\"kind\":\"look\",\"pan_pulse\":1500},\"reason\":\"In CURRENT_OWN_VIEW, the right end of the plain orange beam is visible on the left side of the frame, extending towards x~0.44. Based on the beam end in own view, this robot faces the bottom end of the vertical beam, corresponding to the lower robot around [0.33, 0.63] in overhead view. To bring the beam end and gripper into view, pan toward center (1500).\"}\n```",
+      "usage": {
+        "prompt_tokens": 5203,
+        "completion_tokens": 183,
+        "total_tokens": 5386
+      }
+    }
+  },
+  "files": {
+    "evaluation-only.jsonl": "2038e58e80aa1a7faa72b7e09adc0c807395514e92a4cdd4ae80f04f13735a1e",
+    "motion.mp4": "40f02c1ede5163146efa4c4272849b85319a1c13c8319f894d22bab1d53a1b52",
+    "progress.json": "ad0094954dca9fb7aeee0eb4434fd8eb3f91d90ec48b2c2ed38c2d9d68d8229a",
+    "r1/wire-016.json": "6fd916fa5020b22a5844a1b4ec24dc56b97df304ce4a14080cf1d51258dcb861",
+    "r1/009-overhead.jpg": "c9b124b9daa60eeab26e775f224837745c2afb90c07f12acb50153a0761030d7",
+    "r1/007-own.jpg": "cd8870d21fc753eed92fefea9959a8ec87e2485809ecd65536877e989981927b",
+    "r1/006-own.jpg": "32e66ec870e037bd8d5cb804e87d62f68a1406b7842a628b69bc0674dd5178cd",
+    "r1/008-overhead.jpg": "5297d069797593037097c6ee257f41f7d2c22959beb0e1962a9165b49681a01e",
+    "r1/wire-001.json": "cd540b15e27c46a993e9b21c24a037a6ccfb01bd407809ff780f746a9c54f7cf",
+    "r1/010-overhead.jpg": "89586e8fb5af1005ce51e60c0b394a46cbd4695218fe2f47a99a95b06e0b9db1",
+    "r1/014-own.jpg": "71033435b21ea151618dcd4f31289ca4458e7ad884260fc37b3d4b5e240ba88f",
+    "r1/004-own.jpg": "5188f6874e094f0c33b827270323aeeb5b8c0e3913f58d2e3abe64f2d2ac0403",
+    "r1/002-overhead.jpg": "edc0fa332cc10f8c2c111e5e7843eddd130d2db970568063417bc8daeee30d72",
+    "r1/005-overhead.jpg": "ba46ee1a68ad3fc522b3f0273d76a4556b91fb7cb3ba1b10e073cd4a79d380cb",
+    "r1/wire-006.json": "3d3d51e89a8c9e9138c61c28a7eabba6d125cb0bbd0e8e5e16c90aa8333e220b",
+    "r1/wire-010.json": "bacc24ca05a5b98069c9c05d092625f9976ead9b8aa64c0c6478c0e68af991f1",
+    "r1/004-overhead.jpg": "bce1ec75261cd7d6cac57a327751f49d0ca4bbb8bda195a14472d3c9aacaa296",
+    "r1/003-overhead.jpg": "7326e1080c66ade37c671df9c74376da77acbfb8db54b8abc92c1dbe64f960cb",
+    "r1/wire-011.json": "25d08df60d9e92e432fdce41c9b0dc7bf6834cea2f076595faedbf1dd46291b8",
+    "r1/011-overhead.jpg": "56f9c5f8e7def914aa0d7c58887bfaaebe52d65cb6beb3f583ec4383c8dd9697",
+    "r1/wire-007.json": "f79ff820b2d09714dd3e18e08f6419cd7dadcfbc8ea18b76d32151ddac2bf35e",
+    "r1/005-own.jpg": "75bf10e37dd13d3ff8505985efd7df3f449956e144325f4c8fa0ad03e001837f",
+    "r1/015-own.jpg": "71033435b21ea151618dcd4f31289ca4458e7ad884260fc37b3d4b5e240ba88f",
+    "r1/010-own.jpg": "87d94a6b4bf00c08dd496f3b2490da7c348d7406a9697d411256d29ebf964cb1",
+    "r1/000-own.jpg": "3fdf4a55b73d437a11252fc2513905176bf024fe4042615819ab2493c58cfe6d",
+    "r1/001-overhead.jpg": "43ace239491466d063aaeaadec9803e59c3c9b6f75283798fa8a98ad5300a56e",
+    "r1/006-overhead.jpg": "0178bf9d37071b499c025d7052136ae70a9df5220b4d9c3484e991d4aba31f0f",
+    "r1/013-overhead.jpg": "b1a6dabd95b9bb29f92219ce5c445b96164ebab3f90f112aed0e6969c979c20d",
+    "r1/014-overhead.jpg": "b1a6dabd95b9bb29f92219ce5c445b96164ebab3f90f112aed0e6969c979c20d",
+    "r1/wire-008.json": "2c9e3a1b3972fa12ea23b7206617349f638b825a0921b9426fcbc6bfdda9daef",
+    "r1/009-own.jpg": "eaffeb78492ba571e96f352b74e2cfcaa41419e5592dc8ae59cc2364770a9c11",
+    "r1/wire-012.json": "31a82c2f643784910e67f558cfcfe16f8730b20a27583c9106bdf70d35c2d471",
+    "r1/wire-004.json": "14993696034dc6d25354fc6b98dcbb7cf5ec388c1042afff481165ceeec6557b",
+    "r1/wire-005.json": "37be5e2e96a63ba5952d9cb0a6dc4ee907d578bde054770ea38a8a5b6966e4eb",
+    "r1/015-overhead.jpg": "b1a6dabd95b9bb29f92219ce5c445b96164ebab3f90f112aed0e6969c979c20d",
+    "r1/008-own.jpg": "4c6a087d8c0a066037f5d0d87d5e5ccc7329b1e4144663a290e159ea254ff4bf",
+    "r1/wire-013.json": "ceb909ed9782b1529acad0a8f0d857b6fc60666e7fe908b5832d5e364e45c6a9",
+    "r1/012-overhead.jpg": "b1a6dabd95b9bb29f92219ce5c445b96164ebab3f90f112aed0e6969c979c20d",
+    "r1/007-overhead.jpg": "a7fce0a837b0ff5b4a33e3f453f357a7d3fe1b96e83d5a4dd877baaecfdf0fe7",
+    "r1/000-overhead.jpg": "84f633b096247ccf4a9bce879942f863ce4442c200754bdbb735709c68221815",
+    "r1/wire-009.json": "8b0d190e04179a26517a643be2ad26ef02f15ac24f622a0151890380b9d7e853",
+    "r1/001-own.jpg": "f9cf6daebdb2ac980750002d732e84746cb25b5e714d67d9d2bead83a920377e",
+    "r1/011-own.jpg": "01d379f6b92b88af47a48a62c33bbd3b131c311d08078a7ba25cc32c47026ae9",
+    "r1/wire-014.json": "9960d67ee330ee10fc6bda9158341157edce02ba48c9442339d7666392225752",
+    "r1/wire-002.json": "99e67a62c2249105969f9d416c6302ee981b5fbe1745e9c4a1690ebcc2598907",
+    "r1/013-own.jpg": "71033435b21ea151618dcd4f31289ca4458e7ad884260fc37b3d4b5e240ba88f",
+    "r1/003-own.jpg": "5557256138d4ce3859c0da1b2925e624634d1c2567b3d29b113dd68669b07f86",
+    "r1/002-own.jpg": "c7fc37c7e634b4c8371c67380495d3c753c0711da8b59f341a48153360d1cd90",
+    "r1/012-own.jpg": "71033435b21ea151618dcd4f31289ca4458e7ad884260fc37b3d4b5e240ba88f",
+    "r1/wire-003.json": "8fa86728c49bbbab50a6eb05ef92cbfb2a5432d9348238d900805c7a908634ca",
+    "r1/wire-015.json": "191d7082108c7164328c45582d13a8a0620149f1e29f02b4f82097ea56ee0a51"
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "schema": "ugrp.local_rgb_student_stress_cohort.v1",
+  "status": "declared_after_small_cohort_before_stress_runs",
+  "training_dir": "/Users/changmin/projects/ugrp/outputs/grasp-teacher-20260910-v2",
+  "model_dir": "/Users/changmin/projects/ugrp/outputs/grasp-student-model-20260910-v1",
+  "seed": 11,
+  "rounds": 16,
+  "max_step": 25,
+  "conditions": [
+    "visual",
+    "playback"
+  ],
+  "holdouts": [
+    {
+      "id": "corner-1",
+      "perturb": [
+        -90,
+        -90,
+        -90
+      ]
+    },
+    {
+      "id": "corner-2",
+      "perturb": [
+        -90,
+        -90,
+        7
+      ]
+    },
+    {
+      "id": "corner-3",
+      "perturb": [
+        -90,
+        90,
+        -90
+      ]
+    },
+    {
+      "id": "corner-4",
+      "perturb": [
+        -90,
+        90,
+        7
+      ]
+    },
+    {
+      "id": "corner-5",
+      "perturb": [
+        90,
+        -90,
+        -90
+      ]
+    },
+    {
+      "id": "corner-6",
+      "perturb": [
+        90,
+        -90,
+        7
+      ]
+    },
+    {
+      "id": "corner-7",
+      "perturb": [
+        90,
+        90,
+        -90
+      ]
+    },
+    {
+      "id": "corner-8",
+      "perturb": [
+        90,
+        90,
+        7
+      ]
+    }
+  ],
+  "criteria": {
+    "physical": "same >=3cm, bilateral both, no weld, >=2s",
+    "report": "report all eight paired outcomes and feature errors; exploratory extension, not independent confirmatory or generalization claim"
+  },
+  "matching": "both conditions identical fixture, initial RGB hashes, 16 recovery rounds, .45 simulation seconds per round, close/lift/hold commands; differs only image-derived corrections",
+  "scope": "Same scene/base/camera/seed. Large unseen joint-command perturbations, outside training radius on negative side. Close/lift/approach remain demonstration playback. No tuning/retraining after either cohort.",
+  "cost": "local numpy/OpenCV fit; no neural network/LLM/API calls; record wall time and raw servo action count",
+  "source_sha": "the commit containing this declaration (resolve with git history)",
+  "rationale": "Small 6-case cohort succeeds 6/6 in both conditions; increase perturbation without changing model/controller to measure recovery envelope. Full factorial rather than chosen successful cases."
+}

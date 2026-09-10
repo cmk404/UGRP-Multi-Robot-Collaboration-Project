@@ -1,0 +1,842 @@
+[
+  {
+    "id": "corner-1-playback",
+    "evaluation": {
+      "grasp_success": false,
+      "longest_qualifying_duration_s": 0.0,
+      "max_lift_m": -4.9e-05,
+      "sample_count": 106
+    },
+    "source_sha": "691812147aeafd6202f955941ef6727c5a7fb06f",
+    "config": {
+      "condition": "playback",
+      "max_step": 25,
+      "perturb": [
+        -90,
+        -90,
+        -90
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        -90,
+        -90,
+        -90
+      ],
+      "r3": [
+        -90,
+        -90,
+        -90
+      ]
+    },
+    "wall_elapsed_s": 5.7253293748945,
+    "action_count": 0,
+    "initial_feature_errors": {
+      "r1": 9.584909553463179,
+      "r3": 15.191613877590301
+    },
+    "final_feature_errors": {
+      "r1": 9.542345943585884,
+      "r3": 15.066178081666626
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ]
+  },
+  {
+    "id": "corner-1-visual",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.078202,
+      "sample_count": 90
+    },
+    "source_sha": "691812147aeafd6202f955941ef6727c5a7fb06f",
+    "config": {
+      "condition": "visual",
+      "max_step": 25,
+      "perturb": [
+        -90,
+        -90,
+        -90
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        -90,
+        -90,
+        -90
+      ],
+      "r3": [
+        -90,
+        -90,
+        -90
+      ]
+    },
+    "wall_elapsed_s": 6.195584374945611,
+    "action_count": 95,
+    "initial_feature_errors": {
+      "r1": 9.584909553463179,
+      "r3": 15.191613877590301
+    },
+    "final_feature_errors": {
+      "r1": 8.747218584954792,
+      "r3": 15.859877513004093
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ],
+    "matched_initial_rgb": true
+  },
+  {
+    "id": "corner-2-playback",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.077768,
+      "sample_count": 106
+    },
+    "source_sha": "691812147aeafd6202f955941ef6727c5a7fb06f",
+    "config": {
+      "condition": "playback",
+      "max_step": 25,
+      "perturb": [
+        -90,
+        -90,
+        7
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        -90,
+        -90,
+        7
+      ],
+      "r3": [
+        -90,
+        -90,
+        7
+      ]
+    },
+    "wall_elapsed_s": 5.194523625075817,
+    "action_count": 0,
+    "initial_feature_errors": {
+      "r1": 7.832831003234994,
+      "r3": 13.742588688035106
+    },
+    "final_feature_errors": {
+      "r1": 7.935816228727601,
+      "r3": 13.925336462614567
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ]
+  },
+  {
+    "id": "corner-2-visual",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.079526,
+      "sample_count": 90
+    },
+    "source_sha": "691812147aeafd6202f955941ef6727c5a7fb06f",
+    "config": {
+      "condition": "visual",
+      "max_step": 25,
+      "perturb": [
+        -90,
+        -90,
+        7
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        -90,
+        -90,
+        7
+      ],
+      "r3": [
+        -90,
+        -90,
+        7
+      ]
+    },
+    "wall_elapsed_s": 5.682827792130411,
+    "action_count": 95,
+    "initial_feature_errors": {
+      "r1": 7.832831003234994,
+      "r3": 13.742588688035106
+    },
+    "final_feature_errors": {
+      "r1": 10.415520853152435,
+      "r3": 17.454790576556046
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ],
+    "matched_initial_rgb": true
+  },
+  {
+    "id": "corner-3-playback",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.075147,
+      "sample_count": 106
+    },
+    "source_sha": "691812147aeafd6202f955941ef6727c5a7fb06f",
+    "config": {
+      "condition": "playback",
+      "max_step": 25,
+      "perturb": [
+        -90,
+        90,
+        -90
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        -90,
+        90,
+        -90
+      ],
+      "r3": [
+        -90,
+        90,
+        -90
+      ]
+    },
+    "wall_elapsed_s": 5.876718667102978,
+    "action_count": 0,
+    "initial_feature_errors": {
+      "r1": 3.5768108248195123,
+      "r3": 5.548704850218613
+    },
+    "final_feature_errors": {
+      "r1": 3.668694528567444,
+      "r3": 5.744054249365784
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ]
+  },
+  {
+    "id": "corner-3-visual",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.080074,
+      "sample_count": 90
+    },
+    "source_sha": "691812147aeafd6202f955941ef6727c5a7fb06f",
+    "config": {
+      "condition": "visual",
+      "max_step": 25,
+      "perturb": [
+        -90,
+        90,
+        -90
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        -90,
+        90,
+        -90
+      ],
+      "r3": [
+        -90,
+        90,
+        -90
+      ]
+    },
+    "wall_elapsed_s": 5.452372124884278,
+    "action_count": 96,
+    "initial_feature_errors": {
+      "r1": 3.5768108248195123,
+      "r3": 5.548704850218613
+    },
+    "final_feature_errors": {
+      "r1": 7.300183191895139,
+      "r3": 11.501075266873718
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ],
+    "matched_initial_rgb": true
+  },
+  {
+    "id": "corner-4-playback",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.063528,
+      "sample_count": 106
+    },
+    "source_sha": "691812147aeafd6202f955941ef6727c5a7fb06f",
+    "config": {
+      "condition": "playback",
+      "max_step": 25,
+      "perturb": [
+        -90,
+        90,
+        7
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        -90,
+        90,
+        7
+      ],
+      "r3": [
+        -90,
+        90,
+        7
+      ]
+    },
+    "wall_elapsed_s": 5.236062709009275,
+    "action_count": 0,
+    "initial_feature_errors": {
+      "r1": 5.73707334567323,
+      "r3": 9.724348091882034
+    },
+    "final_feature_errors": {
+      "r1": 5.727670656005562,
+      "r3": 9.724079253274473
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ]
+  },
+  {
+    "id": "corner-4-visual",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.077842,
+      "sample_count": 90
+    },
+    "source_sha": "691812147aeafd6202f955941ef6727c5a7fb06f",
+    "config": {
+      "condition": "visual",
+      "max_step": 25,
+      "perturb": [
+        -90,
+        90,
+        7
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        -90,
+        90,
+        7
+      ],
+      "r3": [
+        -90,
+        90,
+        7
+      ]
+    },
+    "wall_elapsed_s": 5.715013166889548,
+    "action_count": 96,
+    "initial_feature_errors": {
+      "r1": 5.73707334567323,
+      "r3": 9.724348091882034
+    },
+    "final_feature_errors": {
+      "r1": 9.159343680726565,
+      "r3": 15.09412718365322
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ],
+    "matched_initial_rgb": true
+  },
+  {
+    "id": "corner-5-playback",
+    "evaluation": {
+      "grasp_success": false,
+      "longest_qualifying_duration_s": 0.0,
+      "max_lift_m": -4.9e-05,
+      "sample_count": 106
+    },
+    "source_sha": "691812147aeafd6202f955941ef6727c5a7fb06f",
+    "config": {
+      "condition": "playback",
+      "max_step": 25,
+      "perturb": [
+        90,
+        -90,
+        -90
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        90,
+        -90,
+        -90
+      ],
+      "r3": [
+        90,
+        -90,
+        -90
+      ]
+    },
+    "wall_elapsed_s": 5.172892709029838,
+    "action_count": 0,
+    "initial_feature_errors": {
+      "r1": 8.092986628952142,
+      "r3": 13.225629040043385
+    },
+    "final_feature_errors": {
+      "r1": 8.101130784838224,
+      "r3": 13.173239970785474
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ]
+  },
+  {
+    "id": "corner-5-visual",
+    "evaluation": {
+      "grasp_success": false,
+      "longest_qualifying_duration_s": 0.0,
+      "max_lift_m": -4.9e-05,
+      "sample_count": 90
+    },
+    "source_sha": "691812147aeafd6202f955941ef6727c5a7fb06f",
+    "config": {
+      "condition": "visual",
+      "max_step": 25,
+      "perturb": [
+        90,
+        -90,
+        -90
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        90,
+        -90,
+        -90
+      ],
+      "r3": [
+        90,
+        -90,
+        -90
+      ]
+    },
+    "wall_elapsed_s": 5.266097499988973,
+    "action_count": 96,
+    "initial_feature_errors": {
+      "r1": 8.092986628952142,
+      "r3": 13.225629040043385
+    },
+    "final_feature_errors": {
+      "r1": 12.569401736570516,
+      "r3": 12.510132819361937
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ],
+    "matched_initial_rgb": true
+  },
+  {
+    "id": "corner-6-playback",
+    "evaluation": {
+      "grasp_success": false,
+      "longest_qualifying_duration_s": 1.0,
+      "max_lift_m": 0.079243,
+      "sample_count": 106
+    },
+    "source_sha": "691812147aeafd6202f955941ef6727c5a7fb06f",
+    "config": {
+      "condition": "playback",
+      "max_step": 25,
+      "perturb": [
+        90,
+        -90,
+        7
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        90,
+        -90,
+        7
+      ],
+      "r3": [
+        90,
+        -90,
+        7
+      ]
+    },
+    "wall_elapsed_s": 4.911956416908652,
+    "action_count": 0,
+    "initial_feature_errors": {
+      "r1": 8.649594072580603,
+      "r3": 14.556072373611501
+    },
+    "final_feature_errors": {
+      "r1": 8.660425939901994,
+      "r3": 14.526204051281054
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ]
+  },
+  {
+    "id": "corner-6-visual",
+    "evaluation": {
+      "grasp_success": false,
+      "longest_qualifying_duration_s": 0.0,
+      "max_lift_m": -4.9e-05,
+      "sample_count": 90
+    },
+    "source_sha": "691812147aeafd6202f955941ef6727c5a7fb06f",
+    "config": {
+      "condition": "visual",
+      "max_step": 25,
+      "perturb": [
+        90,
+        -90,
+        7
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        90,
+        -90,
+        7
+      ],
+      "r3": [
+        90,
+        -90,
+        7
+      ]
+    },
+    "wall_elapsed_s": 5.043960165930912,
+    "action_count": 95,
+    "initial_feature_errors": {
+      "r1": 8.649594072580603,
+      "r3": 14.556072373611501
+    },
+    "final_feature_errors": {
+      "r1": 12.597103246023877,
+      "r3": 12.199936007262128
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ],
+    "matched_initial_rgb": true
+  },
+  {
+    "id": "corner-7-playback",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.076971,
+      "sample_count": 106
+    },
+    "source_sha": "691812147aeafd6202f955941ef6727c5a7fb06f",
+    "config": {
+      "condition": "playback",
+      "max_step": 25,
+      "perturb": [
+        90,
+        90,
+        -90
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        90,
+        90,
+        -90
+      ],
+      "r3": [
+        90,
+        90,
+        -90
+      ]
+    },
+    "wall_elapsed_s": 5.040162958903238,
+    "action_count": 0,
+    "initial_feature_errors": {
+      "r1": 9.626390290177078,
+      "r3": 16.356092882477153
+    },
+    "final_feature_errors": {
+      "r1": 9.616237417584285,
+      "r3": 16.309268145323443
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ]
+  },
+  {
+    "id": "corner-7-visual",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.074351,
+      "sample_count": 90
+    },
+    "source_sha": "691812147aeafd6202f955941ef6727c5a7fb06f",
+    "config": {
+      "condition": "visual",
+      "max_step": 25,
+      "perturb": [
+        90,
+        90,
+        -90
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        90,
+        90,
+        -90
+      ],
+      "r3": [
+        90,
+        90,
+        -90
+      ]
+    },
+    "wall_elapsed_s": 6.622946209041402,
+    "action_count": 91,
+    "initial_feature_errors": {
+      "r1": 9.626390290177078,
+      "r3": 16.356092882477153
+    },
+    "final_feature_errors": {
+      "r1": 6.551135831185844,
+      "r3": 1.5721030999062893
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ],
+    "matched_initial_rgb": true
+  },
+  {
+    "id": "corner-8-playback",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.075024,
+      "sample_count": 106
+    },
+    "source_sha": "691812147aeafd6202f955941ef6727c5a7fb06f",
+    "config": {
+      "condition": "playback",
+      "max_step": 25,
+      "perturb": [
+        90,
+        90,
+        7
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        90,
+        90,
+        7
+      ],
+      "r3": [
+        90,
+        90,
+        7
+      ]
+    },
+    "wall_elapsed_s": 5.09221304114908,
+    "action_count": 0,
+    "initial_feature_errors": {
+      "r1": 5.972672160385142,
+      "r3": 9.953234919672296
+    },
+    "final_feature_errors": {
+      "r1": 5.972484853654984,
+      "r3": 9.951330014588233
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ]
+  },
+  {
+    "id": "corner-8-visual",
+    "evaluation": {
+      "grasp_success": true,
+      "longest_qualifying_duration_s": 2.2,
+      "max_lift_m": 0.075629,
+      "sample_count": 90
+    },
+    "source_sha": "691812147aeafd6202f955941ef6727c5a7fb06f",
+    "config": {
+      "condition": "visual",
+      "max_step": 25,
+      "perturb": [
+        90,
+        90,
+        7
+      ],
+      "rounds": 16,
+      "seed": 11,
+      "weld": false
+    },
+    "applied_perturbation": {
+      "r1": [
+        90,
+        90,
+        7
+      ],
+      "r3": [
+        90,
+        90,
+        7
+      ]
+    },
+    "wall_elapsed_s": 5.119033000199124,
+    "action_count": 94,
+    "initial_feature_errors": {
+      "r1": 5.972672160385142,
+      "r3": 9.953234919672296
+    },
+    "final_feature_errors": {
+      "r1": 5.332456083255277,
+      "r3": 14.80598663332572
+    },
+    "audit": {
+      "ok": true,
+      "calls": 32
+    },
+    "sim_time_range": [
+      5.382,
+      16.472
+    ],
+    "matched_initial_rgb": true
+  }
+]

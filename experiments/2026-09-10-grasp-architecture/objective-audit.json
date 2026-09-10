@@ -1,0 +1,111 @@
+{
+  "source_sha": "190a7c891226101b83c4921766bb1768d2ab5ea2",
+  "input_file": "/Users/changmin/projects/ugrp/outputs/pixel-grasp-20260910-r1-v18/result.json",
+  "input_sha256": "f885734fafc2de73c3e6a2493988213430de1c224e912c0bb6f3c8913183af92",
+  "scope": "code objective invariance and saved RGB-derived features only; no new robot actions",
+  "actual_trial_rows": [
+    {
+      "round": 140,
+      "own_center": [
+        0.4993847370147705,
+        0.6874336878458659
+      ],
+      "own_width_px": 263.9344787597656,
+      "own_area_px": 104777.5,
+      "own_endpoint_available": true,
+      "jacobian_error": [
+        9.481916807964268,
+        -15.772979085339038,
+        -0.0
+      ],
+      "trial_action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "round": 638,
+      "own_center": [
+        0.406640625,
+        0.49322916666666666
+      ],
+      "own_width_px": 577.0,
+      "own_area_px": 414453.5,
+      "own_endpoint_available": false,
+      "jacobian_error": [
+        -2.0202572345394287,
+        -17.832188669415245,
+        -0.0
+      ],
+      "trial_action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "round": 743,
+      "own_center": [
+        0.40625,
+        0.49322916666666666
+      ],
+      "own_width_px": 584.0,
+      "own_area_px": 403497.5,
+      "own_endpoint_available": false,
+      "jacobian_error": [
+        -3.3763651122799843,
+        -16.527722101148754,
+        0.0
+      ],
+      "trial_action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "round": 764,
+      "own_center": [
+        0.550390625,
+        0.49322916666666666
+      ],
+      "own_width_px": 679.0,
+      "own_area_px": 485771.0,
+      "own_endpoint_available": false,
+      "jacobian_error": [
+        2.7043344707331585,
+        -18.613924287416452,
+        0.0
+      ],
+      "trial_action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    }
+  ],
+  "counterfactual_invariance": {
+    "own_endpoint_before": [
+      0.48969780890812303,
+      0.40758909058689713
+    ],
+    "own_endpoint_after": [
+      0.48969780890812303,
+      0.45379454529344854
+    ],
+    "cost_before": 18.591645656033574,
+    "cost_after": 18.591645656033574,
+    "jacobian_error_before": [
+      9.481916807964268,
+      -15.772979085339038,
+      -0.0
+    ],
+    "jacobian_error_after": [
+      9.481916807964268,
+      -15.772979085339038,
+      -0.0
+    ]
+  },
+  "limitation": "Does not prove two real physical states have identical full RGB; does not demonstrate a new successful controller."
+}

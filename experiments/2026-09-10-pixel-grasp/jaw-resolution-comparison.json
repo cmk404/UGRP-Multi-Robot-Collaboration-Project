@@ -1,0 +1,142 @@
+{
+  "purpose": "output-only diagnostic; reference projected finger geom centers are not exact fingertips; no truth feedback",
+  "results": [
+    {
+      "raw_root": "/Users/changmin/projects/ugrp/outputs/jaw-resolution-20260910-640",
+      "source_sha": "2eb9fd60105f5a081c525b5199c8f9992ecdb442",
+      "resolution": [
+        640,
+        480
+      ],
+      "measurements": [
+        {
+          "index": 2,
+          "measured_axis_deg": 1.8688670484800083,
+          "reference_geom_center_axis_deg": 14.872333741560679,
+          "axis_error_deg": -13.003466693080671,
+          "measurement": {
+            "valid": true,
+            "center": [
+              0.4646739130434782,
+              0.5842617753623188
+            ],
+            "opening_axis": [
+              0.9994680840076917,
+              0.032612099748312195
+            ],
+            "span_px": 13.392518520372334,
+            "confidence": 0.8475609756097562,
+            "source": "isolated_gripper_motion",
+            "reason": "compact two-or-more-lobe servo-1 image motion calibrated",
+            "tracked_points": 8
+          }
+        },
+        {
+          "index": 5,
+          "measured_axis_deg": 15.574554610094934,
+          "reference_geom_center_axis_deg": 14.857411720766617,
+          "axis_error_deg": 0.7171428893283193,
+          "measurement": {
+            "valid": true,
+            "center": [
+              0.4671180555555556,
+              0.5846296296296296
+            ],
+            "opening_axis": [
+              0.9632819006724861,
+              0.26849204799547166
+            ],
+            "span_px": 11.248005378732728,
+            "confidence": 0.9100000000000001,
+            "source": "isolated_gripper_motion",
+            "reason": "compact two-or-more-lobe servo-1 image motion calibrated",
+            "tracked_points": 7
+          }
+        }
+      ],
+      "exact_v9_rgb_matches_r287_to292": [
+        {
+          "own": true,
+          "top": true
+        },
+        {
+          "own": true,
+          "top": true
+        },
+        {
+          "own": true,
+          "top": true
+        },
+        {
+          "own": true,
+          "top": true
+        },
+        {
+          "own": true,
+          "top": true
+        },
+        {
+          "own": true,
+          "top": true
+        }
+      ],
+      "error": null
+    },
+    {
+      "raw_root": "/Users/changmin/projects/ugrp/outputs/jaw-resolution-20260910-1280-v2",
+      "source_sha": "bb76e68420a12a49793b1e72c47eb9595492a539",
+      "resolution": [
+        1280,
+        960
+      ],
+      "measurements": [
+        {
+          "index": 2,
+          "measured_axis_deg": 14.412916853079459,
+          "reference_geom_center_axis_deg": 14.872333741560679,
+          "axis_error_deg": -0.45941688848122336,
+          "measurement": {
+            "valid": true,
+            "center": [
+              0.4659850543478261,
+              0.584993961352657
+            ],
+            "opening_axis": [
+              0.9685270714656542,
+              0.24890823979563975
+            ],
+            "span_px": 21.120667970965883,
+            "confidence": 0.9465517241379311,
+            "source": "isolated_gripper_motion",
+            "reason": "compact two-or-more-lobe servo-1 image motion calibrated",
+            "tracked_points": 16
+          }
+        },
+        {
+          "index": 5,
+          "measured_axis_deg": 13.425760080862833,
+          "reference_geom_center_axis_deg": 14.857411720766617,
+          "axis_error_deg": -1.4316516399037875,
+          "measurement": {
+            "valid": true,
+            "center": [
+              0.46773841185410336,
+              0.5837544326241134
+            ],
+            "opening_axis": [
+              0.9726715864487105,
+              0.23218523836658647
+            ],
+            "span_px": 21.121925805321098,
+            "confidence": 0.9325581395348839,
+            "source": "isolated_gripper_motion",
+            "reason": "compact two-or-more-lobe servo-1 image motion calibrated",
+            "tracked_points": 14
+          }
+        }
+      ],
+      "exact_v9_rgb_matches_r287_to292": null,
+      "error": null
+    }
+  ]
+}

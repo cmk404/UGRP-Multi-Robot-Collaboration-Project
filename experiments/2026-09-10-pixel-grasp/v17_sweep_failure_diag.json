@@ -1,0 +1,3210 @@
+[
+  {
+    "case": [
+      "v17",
+      224,
+      225
+    ],
+    "transition": {
+      "old_frame_follows_action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      },
+      "new_frame_follows_action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    "supported_candidate_count": 11,
+    "all_supported_candidates_pass": true,
+    "endpoint": [
+      650.4729171295262,
+      553.9998312271193
+    ],
+    "endpoint_match_error_px": 0.0,
+    "candidates": [
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -1.995728597846453,
+          22.995718277439526
+        ],
+        "inside_distance_px": 1.0729587286137094,
+        "lateral_bracket_margins_px": [
+          13.288180509601943,
+          14.77210155269961
+        ],
+        "threshold": 15,
+        "supporters": 11,
+        "raw_pixels": 192,
+        "external_pixels": 191,
+        "removed_beam_pixels": 1,
+        "left_pixels": 96,
+        "right_pixels": 95,
+        "side_centers": [
+          [
+            636.7395833333334,
+            562.4479166666666
+          ],
+          [
+            664.7684210526315,
+            563.7789473684211
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 19.366474151611328,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.9960575662620813,
+          22.995718277439526
+        ],
+        "inside_distance_px": 0.5581388228776835,
+        "lateral_bracket_margins_px": [
+          12.989630056288775,
+          14.813372163322924
+        ],
+        "threshold": 16,
+        "supporters": 11,
+        "raw_pixels": 179,
+        "external_pixels": 179,
+        "removed_beam_pixels": 0,
+        "left_pixels": 90,
+        "right_pixels": 89,
+        "side_centers": [
+          [
+            636.9777777777778,
+            561.9888888888889
+          ],
+          [
+            664.7303370786517,
+            563.6629213483146
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 10.054853439331055,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.9960575662620813,
+          22.995718277439526
+        ],
+        "inside_distance_px": 0.5581388228776835,
+        "lateral_bracket_margins_px": [
+          12.527706327952956,
+          14.894135115526637
+        ],
+        "threshold": 17,
+        "supporters": 11,
+        "raw_pixels": 169,
+        "external_pixels": 169,
+        "removed_beam_pixels": 0,
+        "left_pixels": 84,
+        "right_pixels": 85,
+        "side_centers": [
+          [
+            637.2857142857143,
+            561.3452380952381
+          ],
+          [
+            664.6117647058824,
+            563.635294117647
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 10.054853439331055,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.9960575662620813,
+          22.995718277439526
+        ],
+        "inside_distance_px": 0.5581388228776835,
+        "lateral_bracket_margins_px": [
+          12.492705026842827,
+          14.946208780553093
+        ],
+        "threshold": 18,
+        "supporters": 11,
+        "raw_pixels": 168,
+        "external_pixels": 168,
+        "removed_beam_pixels": 0,
+        "left_pixels": 84,
+        "right_pixels": 84,
+        "side_centers": [
+          [
+            637.2857142857143,
+            561.3452380952381
+          ],
+          [
+            664.6190476190476,
+            563.75
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 10.054853439331055,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.9960575662620813,
+          22.995718277439526
+        ],
+        "inside_distance_px": 0.5581388228776835,
+        "lateral_bracket_margins_px": [
+          12.521124965912918,
+          14.896535048617011
+        ],
+        "threshold": 19,
+        "supporters": 11,
+        "raw_pixels": 164,
+        "external_pixels": 164,
+        "removed_beam_pixels": 0,
+        "left_pixels": 81,
+        "right_pixels": 83,
+        "side_centers": [
+          [
+            637.283950617284,
+            561.2962962962963
+          ],
+          [
+            664.6024096385543,
+            563.6265060240963
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 10.054853439331055,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.9960575662620813,
+          21.995718331531844
+        ],
+        "inside_distance_px": 0.5581388228776835,
+        "lateral_bracket_margins_px": [
+          12.54729884297069,
+          14.80062520591764
+        ],
+        "threshold": 20,
+        "supporters": 11,
+        "raw_pixels": 161,
+        "external_pixels": 161,
+        "removed_beam_pixels": 0,
+        "left_pixels": 80,
+        "right_pixels": 81,
+        "side_centers": [
+          [
+            637.325,
+            561.3375
+          ],
+          [
+            664.5925925925926,
+            563.4320987654321
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 10.054853439331055,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.9957286519387704,
+          21.995718331531844
+        ],
+        "inside_distance_px": 0.07569097415700052,
+        "lateral_bracket_margins_px": [
+          12.587910193803054,
+          14.754169385361251
+        ],
+        "threshold": 21,
+        "supporters": 11,
+        "raw_pixels": 153,
+        "external_pixels": 153,
+        "removed_beam_pixels": 0,
+        "left_pixels": 75,
+        "right_pixels": 78,
+        "side_centers": [
+          [
+            637.3066666666666,
+            561.5066666666667
+          ],
+          [
+            664.5769230769231,
+            563.4871794871794
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 3.7091128826141357,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.9957286519387704,
+          21.995718331531844
+        ],
+        "inside_distance_px": 0.07569097415700052,
+        "lateral_bracket_margins_px": [
+          12.719786090657408,
+          14.676245757509491
+        ],
+        "threshold": 22,
+        "supporters": 11,
+        "raw_pixels": 147,
+        "external_pixels": 147,
+        "removed_beam_pixels": 0,
+        "left_pixels": 74,
+        "right_pixels": 73,
+        "side_centers": [
+          [
+            637.2702702702703,
+            561.6081081081081
+          ],
+          [
+            664.6164383561644,
+            563.2602739726027
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 3.7091128826141357,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.9957286519387704,
+          21.995718331531844
+        ],
+        "inside_distance_px": 0.07569097415700052,
+        "lateral_bracket_margins_px": [
+          12.689321790354825,
+          14.735380662359944
+        ],
+        "threshold": 23,
+        "supporters": 11,
+        "raw_pixels": 146,
+        "external_pixels": 146,
+        "removed_beam_pixels": 0,
+        "left_pixels": 74,
+        "right_pixels": 72,
+        "side_centers": [
+          [
+            637.2702702702703,
+            561.6081081081081
+          ],
+          [
+            664.6388888888889,
+            563.3611111111111
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 3.7091128826141357,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.9957286519387704,
+          21.995718331531844
+        ],
+        "inside_distance_px": 0.07569097415700052,
+        "lateral_bracket_margins_px": [
+          12.783773534960915,
+          14.627591118678879
+        ],
+        "threshold": 24,
+        "supporters": 11,
+        "raw_pixels": 143,
+        "external_pixels": 143,
+        "removed_beam_pixels": 0,
+        "left_pixels": 73,
+        "right_pixels": 70,
+        "side_centers": [
+          [
+            637.2328767123288,
+            561.6575342465753
+          ],
+          [
+            664.6,
+            563.2142857142857
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 3.7091128826141357,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.9957286519387704,
+          21.995718331531844
+        ],
+        "inside_distance_px": 0.07569097415700052,
+        "lateral_bracket_margins_px": [
+          12.82625125733,
+          14.55104467084766
+        ],
+        "threshold": 25,
+        "supporters": 11,
+        "raw_pixels": 141,
+        "external_pixels": 141,
+        "removed_beam_pixels": 0,
+        "left_pixels": 73,
+        "right_pixels": 68,
+        "side_centers": [
+          [
+            637.2328767123288,
+            561.6575342465753
+          ],
+          [
+            664.5735294117648,
+            563.0735294117648
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 3.7091128826141357,
+        "passed": true,
+        "reasons": []
+      }
+    ]
+  },
+  {
+    "case": [
+      "v17",
+      226,
+      227
+    ],
+    "transition": {
+      "old_frame_follows_action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      },
+      "new_frame_follows_action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    "supported_candidate_count": 11,
+    "all_supported_candidates_pass": true,
+    "endpoint": [
+      650.4729171295262,
+      553.9998312271193
+    ],
+    "endpoint_match_error_px": 0.0,
+    "candidates": [
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -1.995728597846453,
+          22.995718277439526
+        ],
+        "inside_distance_px": 1.0729587286137094,
+        "lateral_bracket_margins_px": [
+          13.377059016700173,
+          14.698706395802105
+        ],
+        "threshold": 15,
+        "supporters": 11,
+        "raw_pixels": 194,
+        "external_pixels": 193,
+        "removed_beam_pixels": 1,
+        "left_pixels": 98,
+        "right_pixels": 95,
+        "side_centers": [
+          [
+            636.7142857142857,
+            562.6734693877551
+          ],
+          [
+            664.7684210526315,
+            563.7789473684211
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 19.366474151611328,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.9960575662620813,
+          22.995718277439526
+        ],
+        "inside_distance_px": 0.5581388228776835,
+        "lateral_bracket_margins_px": [
+          12.989630056288775,
+          14.813372163322924
+        ],
+        "threshold": 16,
+        "supporters": 11,
+        "raw_pixels": 179,
+        "external_pixels": 179,
+        "removed_beam_pixels": 0,
+        "left_pixels": 90,
+        "right_pixels": 89,
+        "side_centers": [
+          [
+            636.9777777777778,
+            561.9888888888889
+          ],
+          [
+            664.7303370786517,
+            563.6629213483146
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 10.054853439331055,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.9960575662620813,
+          22.995718277439526
+        ],
+        "inside_distance_px": 0.5581388228776835,
+        "lateral_bracket_margins_px": [
+          12.996113868076804,
+          14.686875199578708
+        ],
+        "threshold": 17,
+        "supporters": 11,
+        "raw_pixels": 175,
+        "external_pixels": 175,
+        "removed_beam_pixels": 0,
+        "left_pixels": 90,
+        "right_pixels": 85,
+        "side_centers": [
+          [
+            636.9777777777778,
+            561.9888888888889
+          ],
+          [
+            664.6117647058824,
+            563.635294117647
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 10.054853439331055,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.9960575662620813,
+          22.995718277439526
+        ],
+        "inside_distance_px": 0.5581388228776835,
+        "lateral_bracket_margins_px": [
+          12.461420133214801,
+          14.98561435285228
+        ],
+        "threshold": 18,
+        "supporters": 11,
+        "raw_pixels": 167,
+        "external_pixels": 167,
+        "removed_beam_pixels": 0,
+        "left_pixels": 83,
+        "right_pixels": 84,
+        "side_centers": [
+          [
+            637.289156626506,
+            561.2168674698795
+          ],
+          [
+            664.6190476190476,
+            563.75
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 10.054853439331055,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.9960575662620813,
+          22.995718277439526
+        ],
+        "inside_distance_px": 0.5581388228776835,
+        "lateral_bracket_margins_px": [
+          12.521124965912918,
+          14.896535048617011
+        ],
+        "threshold": 19,
+        "supporters": 11,
+        "raw_pixels": 164,
+        "external_pixels": 164,
+        "removed_beam_pixels": 0,
+        "left_pixels": 81,
+        "right_pixels": 83,
+        "side_centers": [
+          [
+            637.283950617284,
+            561.2962962962963
+          ],
+          [
+            664.6024096385543,
+            563.6265060240963
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 10.054853439331055,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.9960575662620813,
+          21.995718331531844
+        ],
+        "inside_distance_px": 0.5581388228776835,
+        "lateral_bracket_margins_px": [
+          12.54729884297069,
+          14.80062520591764
+        ],
+        "threshold": 20,
+        "supporters": 11,
+        "raw_pixels": 161,
+        "external_pixels": 161,
+        "removed_beam_pixels": 0,
+        "left_pixels": 80,
+        "right_pixels": 81,
+        "side_centers": [
+          [
+            637.325,
+            561.3375
+          ],
+          [
+            664.5925925925926,
+            563.4320987654321
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 10.054853439331055,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.9957286519387704,
+          21.995718331531844
+        ],
+        "inside_distance_px": 0.07569097415700052,
+        "lateral_bracket_margins_px": [
+          12.587910193803054,
+          14.754169385361251
+        ],
+        "threshold": 21,
+        "supporters": 11,
+        "raw_pixels": 153,
+        "external_pixels": 153,
+        "removed_beam_pixels": 0,
+        "left_pixels": 75,
+        "right_pixels": 78,
+        "side_centers": [
+          [
+            637.3066666666666,
+            561.5066666666667
+          ],
+          [
+            664.5769230769231,
+            563.4871794871794
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 3.7091128826141357,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.9957286519387704,
+          21.995718331531844
+        ],
+        "inside_distance_px": 0.07569097415700052,
+        "lateral_bracket_margins_px": [
+          12.719786090657408,
+          14.676245757509491
+        ],
+        "threshold": 22,
+        "supporters": 11,
+        "raw_pixels": 147,
+        "external_pixels": 147,
+        "removed_beam_pixels": 0,
+        "left_pixels": 74,
+        "right_pixels": 73,
+        "side_centers": [
+          [
+            637.2702702702703,
+            561.6081081081081
+          ],
+          [
+            664.6164383561644,
+            563.2602739726027
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 3.7091128826141357,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.9957286519387704,
+          21.995718331531844
+        ],
+        "inside_distance_px": 0.07569097415700052,
+        "lateral_bracket_margins_px": [
+          12.689321790354825,
+          14.735380662359944
+        ],
+        "threshold": 23,
+        "supporters": 11,
+        "raw_pixels": 146,
+        "external_pixels": 146,
+        "removed_beam_pixels": 0,
+        "left_pixels": 74,
+        "right_pixels": 72,
+        "side_centers": [
+          [
+            637.2702702702703,
+            561.6081081081081
+          ],
+          [
+            664.6388888888889,
+            563.3611111111111
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 3.7091128826141357,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.9957286519387704,
+          21.995718331531844
+        ],
+        "inside_distance_px": 0.07569097415700052,
+        "lateral_bracket_margins_px": [
+          12.783773534960915,
+          14.627591118678879
+        ],
+        "threshold": 24,
+        "supporters": 11,
+        "raw_pixels": 143,
+        "external_pixels": 143,
+        "removed_beam_pixels": 0,
+        "left_pixels": 73,
+        "right_pixels": 70,
+        "side_centers": [
+          [
+            637.2328767123288,
+            561.6575342465753
+          ],
+          [
+            664.6,
+            563.2142857142857
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 3.7091128826141357,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.9957286519387704,
+          21.995718331531844
+        ],
+        "inside_distance_px": 0.07569097415700052,
+        "lateral_bracket_margins_px": [
+          12.82625125733,
+          14.55104467084766
+        ],
+        "threshold": 25,
+        "supporters": 11,
+        "raw_pixels": 141,
+        "external_pixels": 141,
+        "removed_beam_pixels": 0,
+        "left_pixels": 73,
+        "right_pixels": 68,
+        "side_centers": [
+          [
+            637.2328767123288,
+            561.6575342465753
+          ],
+          [
+            664.5735294117648,
+            563.0735294117648
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 3.7091128826141357,
+        "passed": true,
+        "reasons": []
+      }
+    ]
+  },
+  {
+    "case": [
+      "v17",
+      237,
+      238
+    ],
+    "transition": {
+      "old_frame_follows_action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      },
+      "new_frame_follows_action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    "supported_candidate_count": 11,
+    "all_supported_candidates_pass": false,
+    "endpoint": [
+      650.3638921386141,
+      553.0007064901677
+    ],
+    "endpoint_match_error_px": 0.0,
+    "candidates": [
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -1.0314525770207665,
+          21.973465775806464
+        ],
+        "inside_distance_px": 0.3793181348008897,
+        "lateral_bracket_margins_px": [
+          10.141037971618744,
+          17.419762989411424
+        ],
+        "threshold": 15,
+        "supporters": 11,
+        "raw_pixels": 202,
+        "external_pixels": 202,
+        "removed_beam_pixels": 0,
+        "left_pixels": 113,
+        "right_pixels": 89,
+        "side_centers": [
+          [
+            639.6725663716815,
+            561.4955752212389
+          ],
+          [
+            667.1797752808989,
+            563.2134831460675
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 6.831915378570557,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          0.9718444723630872,
+          20.018015413298887
+        ],
+        "inside_distance_px": -0.999267578125,
+        "lateral_bracket_margins_px": [
+          10.416076911350274,
+          16.9069349480161
+        ],
+        "threshold": 16,
+        "supporters": 11,
+        "raw_pixels": 171,
+        "external_pixels": 171,
+        "removed_beam_pixels": 0,
+        "left_pixels": 101,
+        "right_pixels": 70,
+        "side_centers": [
+          [
+            639.7821782178218,
+            561.3960396039604
+          ],
+          [
+            667.1,
+            561.9285714285714
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          0.9718444723630872,
+          20.018015413298887
+        ],
+        "inside_distance_px": -0.999267578125,
+        "lateral_bracket_margins_px": [
+          10.258356096056104,
+          16.945648740034358
+        ],
+        "threshold": 17,
+        "supporters": 11,
+        "raw_pixels": 161,
+        "external_pixels": 161,
+        "removed_beam_pixels": 0,
+        "left_pixels": 92,
+        "right_pixels": 69,
+        "side_centers": [
+          [
+            639.945652173913,
+            561.4782608695652
+          ],
+          [
+            667.1449275362319,
+            561.9855072463768
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          1.0147415019763018,
+          19.02131654587002
+        ],
+        "inside_distance_px": -1.35841288315347,
+        "lateral_bracket_margins_px": [
+          10.07776615629723,
+          17.054442667976787
+        ],
+        "threshold": 18,
+        "supporters": 11,
+        "raw_pixels": 155,
+        "external_pixels": 155,
+        "removed_beam_pixels": 0,
+        "left_pixels": 88,
+        "right_pixels": 67,
+        "side_centers": [
+          [
+            640.0568181818181,
+            561.3409090909091
+          ],
+          [
+            667.179104477612,
+            562.0746268656717
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          1.0147415019763018,
+          19.02131654587002
+        ],
+        "inside_distance_px": -1.35841288315347,
+        "lateral_bracket_margins_px": [
+          10.099904997088515,
+          16.97238809860596
+        ],
+        "threshold": 19,
+        "supporters": 11,
+        "raw_pixels": 150,
+        "external_pixels": 150,
+        "removed_beam_pixels": 0,
+        "left_pixels": 85,
+        "right_pixels": 65,
+        "side_centers": [
+          [
+            640.0588235294117,
+            561.2941176470588
+          ],
+          [
+            667.123076923077,
+            561.9538461538461
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          1.0147415019763018,
+          19.02131654587002
+        ],
+        "inside_distance_px": -1.35841288315347,
+        "lateral_bracket_margins_px": [
+          10.161719560812912,
+          16.943219391216758
+        ],
+        "threshold": 20,
+        "supporters": 11,
+        "raw_pixels": 148,
+        "external_pixels": 148,
+        "removed_beam_pixels": 0,
+        "left_pixels": 83,
+        "right_pixels": 65,
+        "side_centers": [
+          [
+            640.0240963855422,
+            561.3855421686746
+          ],
+          [
+            667.123076923077,
+            561.9538461538461
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          1.0147415019763018,
+          19.02131654587002
+        ],
+        "inside_distance_px": -1.35841288315347,
+        "lateral_bracket_margins_px": [
+          10.109395670100639,
+          16.871141512014106
+        ],
+        "threshold": 21,
+        "supporters": 11,
+        "raw_pixels": 145,
+        "external_pixels": 145,
+        "removed_beam_pixels": 0,
+        "left_pixels": 82,
+        "right_pixels": 63,
+        "side_centers": [
+          [
+            640.0731707317074,
+            561.4268292682926
+          ],
+          [
+            667.047619047619,
+            562.0
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          1.0147415019763018,
+          19.02131654587002
+        ],
+        "inside_distance_px": -1.372725500708027,
+        "lateral_bracket_margins_px": [
+          10.706539378327875,
+          16.716531321744924
+        ],
+        "threshold": 22,
+        "supporters": 11,
+        "raw_pixels": 132,
+        "external_pixels": 132,
+        "removed_beam_pixels": 0,
+        "left_pixels": 73,
+        "right_pixels": 59,
+        "side_centers": [
+          [
+            639.5616438356165,
+            561.6301369863014
+          ],
+          [
+            666.9830508474577,
+            561.9322033898305
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          1.0147415019763018,
+          19.02131654587002
+        ],
+        "inside_distance_px": -1.6882637893282069,
+        "lateral_bracket_margins_px": [
+          10.613738554021097,
+          16.90970095251987
+        ],
+        "threshold": 23,
+        "supporters": 11,
+        "raw_pixels": 126,
+        "external_pixels": 126,
+        "removed_beam_pixels": 0,
+        "left_pixels": 69,
+        "right_pixels": 57,
+        "side_centers": [
+          [
+            639.5217391304348,
+            561.2898550724638
+          ],
+          [
+            667.0350877192982,
+            562.0350877192982
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          1.0147415019763018,
+          19.02131654587002
+        ],
+        "inside_distance_px": -1.71450192276187,
+        "lateral_bracket_margins_px": [
+          10.699764130382505,
+          16.879092789468586
+        ],
+        "threshold": 24,
+        "supporters": 11,
+        "raw_pixels": 123,
+        "external_pixels": 123,
+        "removed_beam_pixels": 0,
+        "left_pixels": 67,
+        "right_pixels": 56,
+        "side_centers": [
+          [
+            639.4477611940298,
+            561.4477611940298
+          ],
+          [
+            667.0178571428571,
+            562.1428571428571
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          1.0147415019763018,
+          19.02131654587002
+        ],
+        "inside_distance_px": -1.71450192276187,
+        "lateral_bracket_margins_px": [
+          10.719757460905726,
+          16.80488954805469
+        ],
+        "threshold": 25,
+        "supporters": 11,
+        "raw_pixels": 120,
+        "external_pixels": 120,
+        "removed_beam_pixels": 0,
+        "left_pixels": 65,
+        "right_pixels": 55,
+        "side_centers": [
+          [
+            639.4461538461538,
+            561.5538461538462
+          ],
+          [
+            666.9636363636364,
+            562.1818181818181
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      }
+    ]
+  },
+  {
+    "case": [
+      "v17",
+      317,
+      318
+    ],
+    "transition": {
+      "old_frame_follows_action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      },
+      "new_frame_follows_action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    "supported_candidate_count": 11,
+    "all_supported_candidates_pass": false,
+    "endpoint": [
+      650.3616895141217,
+      553.499877664837
+    ],
+    "endpoint_match_error_px": 0.0,
+    "candidates": [
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -1.5313116572729923,
+          20.519256259781358
+        ],
+        "inside_distance_px": 0.8911308460864698,
+        "lateral_bracket_margins_px": [
+          11.210284038526197,
+          16.753124514685737
+        ],
+        "threshold": 15,
+        "supporters": 11,
+        "raw_pixels": 159,
+        "external_pixels": 159,
+        "removed_beam_pixels": 0,
+        "left_pixels": 84,
+        "right_pixels": 75,
+        "side_centers": [
+          [
+            639.2380952380952,
+            561.9166666666666
+          ],
+          [
+            667.2,
+            561.6266666666667
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 16.05106544494629,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -1.5313116572729923,
+          20.519256259781358
+        ],
+        "inside_distance_px": 0.8693841641892486,
+        "lateral_bracket_margins_px": [
+          11.242379651773831,
+          16.711911904305452
+        ],
+        "threshold": 16,
+        "supporters": 11,
+        "raw_pixels": 156,
+        "external_pixels": 156,
+        "removed_beam_pixels": 0,
+        "left_pixels": 82,
+        "right_pixels": 74,
+        "side_centers": [
+          [
+            639.280487804878,
+            562.0853658536586
+          ],
+          [
+            667.2297297297297,
+            561.5540540540541
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 15.659941673278809,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.48240051057709443,
+          20.519256259781358
+        ],
+        "inside_distance_px": -0.26692368494824054,
+        "lateral_bracket_margins_px": [
+          10.855538954669896,
+          16.915156473693628
+        ],
+        "threshold": 17,
+        "supporters": 11,
+        "raw_pixels": 144,
+        "external_pixels": 144,
+        "removed_beam_pixels": 0,
+        "left_pixels": 77,
+        "right_pixels": 67,
+        "side_centers": [
+          [
+            639.3116883116883,
+            561.5974025974026
+          ],
+          [
+            667.0746268656717,
+            562.2537313432836
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 1.01749849319458,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.48240051057709443,
+          19.51925768216014
+        ],
+        "inside_distance_px": -0.26692368494824054,
+        "lateral_bracket_margins_px": [
+          10.696510001455408,
+          16.99865392285585
+        ],
+        "threshold": 18,
+        "supporters": 11,
+        "raw_pixels": 138,
+        "external_pixels": 138,
+        "removed_beam_pixels": 0,
+        "left_pixels": 73,
+        "right_pixels": 65,
+        "side_centers": [
+          [
+            639.3835616438356,
+            561.3013698630137
+          ],
+          [
+            667.0615384615385,
+            562.276923076923
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 1.01749849319458,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          0.5159114267312013,
+          19.51925768216014
+        ],
+        "inside_distance_px": -0.859551708926753,
+        "lateral_bracket_margins_px": [
+          10.735523761977106,
+          16.96437611281749
+        ],
+        "threshold": 19,
+        "supporters": 11,
+        "raw_pixels": 137,
+        "external_pixels": 137,
+        "removed_beam_pixels": 0,
+        "left_pixels": 72,
+        "right_pixels": 65,
+        "side_centers": [
+          [
+            639.375,
+            561.4166666666666
+          ],
+          [
+            667.0615384615385,
+            562.276923076923
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          0.5159114267312013,
+          19.51925768216014
+        ],
+        "inside_distance_px": -0.859551708926753,
+        "lateral_bracket_margins_px": [
+          10.690053707869083,
+          16.893524343230183
+        ],
+        "threshold": 20,
+        "supporters": 11,
+        "raw_pixels": 134,
+        "external_pixels": 134,
+        "removed_beam_pixels": 0,
+        "left_pixels": 70,
+        "right_pixels": 64,
+        "side_centers": [
+          [
+            639.4571428571429,
+            561.5428571428571
+          ],
+          [
+            667.03125,
+            562.265625
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          0.5159114267312013,
+          18.520945744851847
+        ],
+        "inside_distance_px": -0.859551708926753,
+        "lateral_bracket_margins_px": [
+          10.576683508921064,
+          16.973038508143077
+        ],
+        "threshold": 21,
+        "supporters": 11,
+        "raw_pixels": 131,
+        "external_pixels": 131,
+        "removed_beam_pixels": 0,
+        "left_pixels": 68,
+        "right_pixels": 63,
+        "side_centers": [
+          [
+            639.4852941176471,
+            561.3382352941177
+          ],
+          [
+            667.015873015873,
+            562.3650793650794
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          0.5175980670441214,
+          18.520945744851847
+        ],
+        "inside_distance_px": -0.8832829166262953,
+        "lateral_bracket_margins_px": [
+          10.673626145881485,
+          16.94930172364036
+        ],
+        "threshold": 22,
+        "supporters": 11,
+        "raw_pixels": 127,
+        "external_pixels": 127,
+        "removed_beam_pixels": 0,
+        "left_pixels": 66,
+        "right_pixels": 61,
+        "side_centers": [
+          [
+            639.439393939394,
+            561.3939393939394
+          ],
+          [
+            667.0491803278688,
+            562.2459016393443
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          0.5175980670441214,
+          18.520945744851847
+        ],
+        "inside_distance_px": -0.8832829166262953,
+        "lateral_bracket_margins_px": [
+          10.716641564723886,
+          16.895546457061528
+        ],
+        "threshold": 23,
+        "supporters": 11,
+        "raw_pixels": 125,
+        "external_pixels": 125,
+        "removed_beam_pixels": 0,
+        "left_pixels": 65,
+        "right_pixels": 60,
+        "side_centers": [
+          [
+            639.4615384615385,
+            561.4923076923077
+          ],
+          [
+            667.0666666666667,
+            562.1166666666667
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          0.5175980670441214,
+          18.520945744851847
+        ],
+        "inside_distance_px": -1.2641914394049496,
+        "lateral_bracket_margins_px": [
+          10.546369297460728,
+          16.92959429556595
+        ],
+        "threshold": 24,
+        "supporters": 11,
+        "raw_pixels": 119,
+        "external_pixels": 119,
+        "removed_beam_pixels": 0,
+        "left_pixels": 63,
+        "right_pixels": 56,
+        "side_centers": [
+          [
+            639.5238095238095,
+            561.4444444444445
+          ],
+          [
+            666.9821428571429,
+            562.4285714285714
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          0.5175980670441214,
+          18.520945744851847
+        ],
+        "inside_distance_px": -1.2641914394049496,
+        "lateral_bracket_margins_px": [
+          10.530441765483829,
+          16.956551838407904
+        ],
+        "threshold": 25,
+        "supporters": 11,
+        "raw_pixels": 118,
+        "external_pixels": 118,
+        "removed_beam_pixels": 0,
+        "left_pixels": 62,
+        "right_pixels": 56,
+        "side_centers": [
+          [
+            639.516129032258,
+            561.3548387096774
+          ],
+          [
+            666.9821428571429,
+            562.4285714285714
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      }
+    ]
+  },
+  {
+    "case": [
+      "v17",
+      323,
+      324
+    ],
+    "transition": {
+      "old_frame_follows_action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      },
+      "new_frame_follows_action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    "supported_candidate_count": 11,
+    "all_supported_candidates_pass": false,
+    "endpoint": [
+      650.3616895141217,
+      553.499877664837
+    ],
+    "endpoint_match_error_px": 0.0,
+    "candidates": [
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -1.5313116572729923,
+          19.51925768216014
+        ],
+        "inside_distance_px": 0.8911308460864698,
+        "lateral_bracket_margins_px": [
+          11.02312751317072,
+          17.08366426054613
+        ],
+        "threshold": 15,
+        "supporters": 11,
+        "raw_pixels": 159,
+        "external_pixels": 159,
+        "removed_beam_pixels": 0,
+        "left_pixels": 80,
+        "right_pixels": 79,
+        "side_centers": [
+          [
+            639.225,
+            561.65
+          ],
+          [
+            667.3291139240506,
+            562.0379746835443
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 16.05106544494629,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -1.5313116572729923,
+          19.51925768216014
+        ],
+        "inside_distance_px": 0.8693841641892486,
+        "lateral_bracket_margins_px": [
+          11.104953558580632,
+          16.838680928885196
+        ],
+        "threshold": 16,
+        "supporters": 11,
+        "raw_pixels": 149,
+        "external_pixels": 149,
+        "removed_beam_pixels": 0,
+        "left_pixels": 76,
+        "right_pixels": 73,
+        "side_centers": [
+          [
+            639.2894736842105,
+            561.5657894736842
+          ],
+          [
+            667.2328767123288,
+            561.4520547945206
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 15.659941673278809,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.48240051057709443,
+          19.51925768216014
+        ],
+        "inside_distance_px": -0.26692368494824054,
+        "lateral_bracket_margins_px": [
+          10.8744536896113,
+          16.945101652880794
+        ],
+        "threshold": 17,
+        "supporters": 11,
+        "raw_pixels": 142,
+        "external_pixels": 142,
+        "removed_beam_pixels": 0,
+        "left_pixels": 75,
+        "right_pixels": 67,
+        "side_centers": [
+          [
+            639.3066666666666,
+            561.5333333333333
+          ],
+          [
+            667.1194029850747,
+            562.1492537313433
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 1.01749849319458,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -0.48240051057709443,
+          19.51925768216014
+        ],
+        "inside_distance_px": -0.26692368494824054,
+        "lateral_bracket_margins_px": [
+          10.867332333882018,
+          16.895845068710855
+        ],
+        "threshold": 18,
+        "supporters": 11,
+        "raw_pixels": 139,
+        "external_pixels": 139,
+        "removed_beam_pixels": 0,
+        "left_pixels": 75,
+        "right_pixels": 64,
+        "side_centers": [
+          [
+            639.3066666666666,
+            561.5333333333333
+          ],
+          [
+            667.0625,
+            562.171875
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 1.01749849319458,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          0.5159114267312013,
+          19.51925768216014
+        ],
+        "inside_distance_px": -0.859551708926753,
+        "lateral_bracket_margins_px": [
+          10.840245064209626,
+          16.850549727799375
+        ],
+        "threshold": 19,
+        "supporters": 11,
+        "raw_pixels": 135,
+        "external_pixels": 135,
+        "removed_beam_pixels": 0,
+        "left_pixels": 72,
+        "right_pixels": 63,
+        "side_centers": [
+          [
+            639.3472222222222,
+            561.5694444444445
+          ],
+          [
+            667.031746031746,
+            562.1587301587301
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          0.5159114267312013,
+          19.51925768216014
+        ],
+        "inside_distance_px": -0.859551708926753,
+        "lateral_bracket_margins_px": [
+          10.661918601295952,
+          16.894264318955265
+        ],
+        "threshold": 20,
+        "supporters": 11,
+        "raw_pixels": 131,
+        "external_pixels": 131,
+        "removed_beam_pixels": 0,
+        "left_pixels": 68,
+        "right_pixels": 63,
+        "side_centers": [
+          [
+            639.4852941176471,
+            561.4264705882352
+          ],
+          [
+            667.031746031746,
+            562.1587301587301
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          0.5159114267312013,
+          19.51925768216014
+        ],
+        "inside_distance_px": -0.859551708926753,
+        "lateral_bracket_margins_px": [
+          10.632116192560034,
+          16.911275384304304
+        ],
+        "threshold": 21,
+        "supporters": 11,
+        "raw_pixels": 130,
+        "external_pixels": 130,
+        "removed_beam_pixels": 0,
+        "left_pixels": 68,
+        "right_pixels": 62,
+        "side_centers": [
+          [
+            639.4852941176471,
+            561.4264705882352
+          ],
+          [
+            667.016129032258,
+            562.258064516129
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          0.5175980670441214,
+          19.51925768216014
+        ],
+        "inside_distance_px": -0.8832829166262953,
+        "lateral_bracket_margins_px": [
+          10.698129431108441,
+          16.922144034611847
+        ],
+        "threshold": 22,
+        "supporters": 11,
+        "raw_pixels": 127,
+        "external_pixels": 127,
+        "removed_beam_pixels": 0,
+        "left_pixels": 66,
+        "right_pixels": 61,
+        "side_centers": [
+          [
+            639.439393939394,
+            561.4848484848485
+          ],
+          [
+            667.0491803278688,
+            562.2459016393443
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          0.5175980670441214,
+          19.51925768216014
+        ],
+        "inside_distance_px": -0.8832829166262953,
+        "lateral_bracket_margins_px": [
+          10.716168134063992,
+          16.85537903798786
+        ],
+        "threshold": 23,
+        "supporters": 11,
+        "raw_pixels": 123,
+        "external_pixels": 123,
+        "removed_beam_pixels": 0,
+        "left_pixels": 64,
+        "right_pixels": 59,
+        "side_centers": [
+          [
+            639.453125,
+            561.5
+          ],
+          [
+            667.0169491525423,
+            562.1525423728814
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          0.5175980670441214,
+          19.51925768216014
+        ],
+        "inside_distance_px": -1.2641914394049496,
+        "lateral_bracket_margins_px": [
+          10.590350091919959,
+          16.941891376916942
+        ],
+        "threshold": 24,
+        "supporters": 11,
+        "raw_pixels": 119,
+        "external_pixels": 119,
+        "removed_beam_pixels": 0,
+        "left_pixels": 62,
+        "right_pixels": 57,
+        "side_centers": [
+          [
+            639.516129032258,
+            561.5483870967741
+          ],
+          [
+            667.0350877192982,
+            562.4035087719299
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          0.5175980670441214,
+          19.51925768216014
+        ],
+        "inside_distance_px": -1.2641914394049496,
+        "lateral_bracket_margins_px": [
+          10.582203085467086,
+          16.897910449354868
+        ],
+        "threshold": 25,
+        "supporters": 11,
+        "raw_pixels": 118,
+        "external_pixels": 118,
+        "removed_beam_pixels": 0,
+        "left_pixels": 62,
+        "right_pixels": 56,
+        "side_centers": [
+          [
+            639.516129032258,
+            561.5483870967741
+          ],
+          [
+            666.9821428571429,
+            562.4285714285714
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": false,
+        "intersection_area_px2": 0.0,
+        "passed": false,
+        "reasons": [
+          "shaft endpoint is not strictly inside external-support hull",
+          "no positive-area shaft/support-hull intersection"
+        ]
+      }
+    ]
+  },
+  {
+    "case": [
+      "v17",
+      537,
+      538
+    ],
+    "transition": {
+      "old_frame_follows_action": {
+        "kind": "arm",
+        "pulse": 1720,
+        "servo_id": 5
+      },
+      "new_frame_follows_action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    "supported_candidate_count": 11,
+    "all_supported_candidates_pass": true,
+    "endpoint": [
+      650.257619968228,
+      551.9981182703957
+    ],
+    "endpoint_match_error_px": 0.0,
+    "candidates": [
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.042480705295511,
+          22.044703259683065
+        ],
+        "inside_distance_px": 3.99810791015625,
+        "lateral_bracket_margins_px": [
+          14.078315128939153,
+          13.512835988114148
+        ],
+        "threshold": 15,
+        "supporters": 11,
+        "raw_pixels": 209,
+        "external_pixels": 209,
+        "removed_beam_pixels": 0,
+        "left_pixels": 96,
+        "right_pixels": 113,
+        "side_centers": [
+          [
+            636.2604166666666,
+            558.8020833333334
+          ],
+          [
+            663.8495575221239,
+            558.4690265486726
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 71.97810363769531,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.039470299146101,
+          22.044703259683065
+        ],
+        "inside_distance_px": 3.99810791015625,
+        "lateral_bracket_margins_px": [
+          14.140328012205032,
+          13.470498990448505
+        ],
+        "threshold": 16,
+        "supporters": 11,
+        "raw_pixels": 205,
+        "external_pixels": 205,
+        "removed_beam_pixels": 0,
+        "left_pixels": 94,
+        "right_pixels": 111,
+        "side_centers": [
+          [
+            636.2021276595744,
+            558.8936170212766
+          ],
+          [
+            663.8108108108108,
+            558.5495495495495
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 71.97810363769531,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.039470299146101,
+          22.044703259683065
+        ],
+        "inside_distance_px": 3.99810791015625,
+        "lateral_bracket_margins_px": [
+          14.195181392398695,
+          13.334477210799719
+        ],
+        "threshold": 17,
+        "supporters": 11,
+        "raw_pixels": 196,
+        "external_pixels": 196,
+        "removed_beam_pixels": 0,
+        "left_pixels": 93,
+        "right_pixels": 103,
+        "side_centers": [
+          [
+            636.2258064516129,
+            558.989247311828
+          ],
+          [
+            663.747572815534,
+            558.3300970873786
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 71.97810363769531,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.039470299146101,
+          22.044703259683065
+        ],
+        "inside_distance_px": 3.99810791015625,
+        "lateral_bracket_margins_px": [
+          14.239375497917308,
+          13.326718820287851
+        ],
+        "threshold": 18,
+        "supporters": 11,
+        "raw_pixels": 193,
+        "external_pixels": 193,
+        "removed_beam_pixels": 0,
+        "left_pixels": 92,
+        "right_pixels": 101,
+        "side_centers": [
+          [
+            636.2065217391304,
+            559.0978260869565
+          ],
+          [
+            663.7623762376238,
+            558.3465346534654
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 71.97810363769531,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.039470299146101,
+          22.044703259683065
+        ],
+        "inside_distance_px": 3.99810791015625,
+        "lateral_bracket_margins_px": [
+          14.221360700286027,
+          13.332328677747569
+        ],
+        "threshold": 19,
+        "supporters": 11,
+        "raw_pixels": 188,
+        "external_pixels": 188,
+        "removed_beam_pixels": 0,
+        "left_pixels": 89,
+        "right_pixels": 99,
+        "side_centers": [
+          [
+            636.2134831460675,
+            558.8988764044943
+          ],
+          [
+            663.7575757575758,
+            558.1717171717172
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 71.97810363769531,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.039470299146101,
+          22.041692853533654
+        ],
+        "inside_distance_px": 3.99810791015625,
+        "lateral_bracket_margins_px": [
+          14.182067194269166,
+          13.306702046438886
+        ],
+        "threshold": 20,
+        "supporters": 11,
+        "raw_pixels": 184,
+        "external_pixels": 184,
+        "removed_beam_pixels": 0,
+        "left_pixels": 87,
+        "right_pixels": 97,
+        "side_centers": [
+          [
+            636.2298850574713,
+            558.8505747126437
+          ],
+          [
+            663.7113402061856,
+            558.2164948453608
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 71.97810363769531,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.039470299146101,
+          21.044707790965923
+        ],
+        "inside_distance_px": 3.99810791015625,
+        "lateral_bracket_margins_px": [
+          14.186588887634116,
+          13.294493146751392
+        ],
+        "threshold": 21,
+        "supporters": 11,
+        "raw_pixels": 181,
+        "external_pixels": 181,
+        "removed_beam_pixels": 0,
+        "left_pixels": 86,
+        "right_pixels": 95,
+        "side_centers": [
+          [
+            636.2209302325581,
+            558.6744186046511
+          ],
+          [
+            663.6947368421053,
+            558.0421052631579
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 71.97810363769531,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.039470299146101,
+          21.044707790965923
+        ],
+        "inside_distance_px": 3.99810791015625,
+        "lateral_bracket_margins_px": [
+          14.121622432947447,
+          13.307508084541041
+        ],
+        "threshold": 22,
+        "supporters": 11,
+        "raw_pixels": 176,
+        "external_pixels": 176,
+        "removed_beam_pixels": 0,
+        "left_pixels": 83,
+        "right_pixels": 93,
+        "side_centers": [
+          [
+            636.2530120481928,
+            558.433734939759
+          ],
+          [
+            663.6774193548387,
+            557.9247311827957
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 71.97810363769531,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.039470299146101,
+          21.044707790965923
+        ],
+        "inside_distance_px": 3.99810791015625,
+        "lateral_bracket_margins_px": [
+          14.14332932622085,
+          13.308350777077976
+        ],
+        "threshold": 23,
+        "supporters": 11,
+        "raw_pixels": 172,
+        "external_pixels": 172,
+        "removed_beam_pixels": 0,
+        "left_pixels": 81,
+        "right_pixels": 91,
+        "side_centers": [
+          [
+            636.2469135802469,
+            558.3456790123457
+          ],
+          [
+            663.6923076923077,
+            557.7582417582418
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 71.97810363769531,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.036459892996691,
+          20.04471232224878
+        ],
+        "inside_distance_px": 3.99810791015625,
+        "lateral_bracket_margins_px": [
+          14.083331928872667,
+          13.408549502471601
+        ],
+        "threshold": 24,
+        "supporters": 11,
+        "raw_pixels": 167,
+        "external_pixels": 167,
+        "removed_beam_pixels": 0,
+        "left_pixels": 78,
+        "right_pixels": 89,
+        "side_centers": [
+          [
+            636.2051282051282,
+            557.8974358974359
+          ],
+          [
+            663.6966292134831,
+            557.7528089887641
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 71.97810363769531,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.036459892996691,
+          20.04471232224878
+        ],
+        "inside_distance_px": 3.99810791015625,
+        "lateral_bracket_margins_px": [
+          14.09424622961842,
+          13.402475598966817
+        ],
+        "threshold": 25,
+        "supporters": 11,
+        "raw_pixels": 165,
+        "external_pixels": 165,
+        "removed_beam_pixels": 0,
+        "left_pixels": 78,
+        "right_pixels": 87,
+        "side_centers": [
+          [
+            636.2051282051282,
+            557.8974358974359
+          ],
+          [
+            663.7011494252873,
+            557.7011494252873
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 71.97810363769531,
+        "passed": true,
+        "reasons": []
+      }
+    ]
+  },
+  {
+    "case": [
+      "v17",
+      538,
+      539
+    ],
+    "transition": {
+      "old_frame_follows_action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      },
+      "new_frame_follows_action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    "supported_candidate_count": 11,
+    "all_supported_candidates_pass": true,
+    "endpoint": [
+      650.738886807711,
+      551.999634438971
+    ],
+    "endpoint_match_error_px": 0.0,
+    "candidates": [
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.049085929108134,
+          21.957072129387928
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.559528601947022,
+          13.031622515106278
+        ],
+        "threshold": 15,
+        "supporters": 11,
+        "raw_pixels": 209,
+        "external_pixels": 209,
+        "removed_beam_pixels": 0,
+        "left_pixels": 96,
+        "right_pixels": 113,
+        "side_centers": [
+          [
+            636.2604166666666,
+            558.8020833333334
+          ],
+          [
+            663.8495575221239,
+            558.4690265486726
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.049085929108134,
+          21.957072129387928
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.621538590103114,
+          12.989288412550422
+        ],
+        "threshold": 16,
+        "supporters": 11,
+        "raw_pixels": 205,
+        "external_pixels": 205,
+        "removed_beam_pixels": 0,
+        "left_pixels": 94,
+        "right_pixels": 111,
+        "side_centers": [
+          [
+            636.2021276595744,
+            558.8936170212766
+          ],
+          [
+            663.8108108108108,
+            558.5495495495495
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.049085929108134,
+          21.957072129387928
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.676273959618356,
+          12.853384643580057
+        ],
+        "threshold": 17,
+        "supporters": 11,
+        "raw_pixels": 196,
+        "external_pixels": 196,
+        "removed_beam_pixels": 0,
+        "left_pixels": 93,
+        "right_pixels": 103,
+        "side_centers": [
+          [
+            636.2258064516129,
+            558.989247311828
+          ],
+          [
+            663.747572815534,
+            558.3300970873786
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.049085929108134,
+          21.957072129387928
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.720422242015616,
+          12.845672076189544
+        ],
+        "threshold": 18,
+        "supporters": 11,
+        "raw_pixels": 193,
+        "external_pixels": 193,
+        "removed_beam_pixels": 0,
+        "left_pixels": 92,
+        "right_pixels": 101,
+        "side_centers": [
+          [
+            636.2065217391304,
+            559.0978260869565
+          ],
+          [
+            663.7623762376238,
+            558.3465346534654
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.049085929108134,
+          21.957072129387928
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.702419905089187,
+          12.85126947294441
+        ],
+        "threshold": 19,
+        "supporters": 11,
+        "raw_pixels": 188,
+        "external_pixels": 188,
+        "removed_beam_pixels": 0,
+        "left_pixels": 89,
+        "right_pixels": 99,
+        "side_centers": [
+          [
+            636.2134831460675,
+            558.8988764044943
+          ],
+          [
+            663.7575757575758,
+            558.1717171717172
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.045942679587407,
+          21.957072129387928
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.66317100710421,
+          12.825598233603841
+        ],
+        "threshold": 20,
+        "supporters": 11,
+        "raw_pixels": 184,
+        "external_pixels": 184,
+        "removed_beam_pixels": 0,
+        "left_pixels": 87,
+        "right_pixels": 97,
+        "side_centers": [
+          [
+            636.2298850574713,
+            558.8505747126437
+          ],
+          [
+            663.7113402061856,
+            558.2164948453608
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.045942679587407,
+          20.957077069408903
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.667693429492488,
+          12.81338860489302
+        ],
+        "threshold": 21,
+        "supporters": 11,
+        "raw_pixels": 181,
+        "external_pixels": 181,
+        "removed_beam_pixels": 0,
+        "left_pixels": 86,
+        "right_pixels": 95,
+        "side_centers": [
+          [
+            636.2209302325581,
+            558.6744186046511
+          ],
+          [
+            663.6947368421053,
+            558.0421052631579
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.045942679587407,
+          20.953933819888178
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.602778264163021,
+          12.826352253325467
+        ],
+        "threshold": 22,
+        "supporters": 11,
+        "raw_pixels": 176,
+        "external_pixels": 176,
+        "removed_beam_pixels": 0,
+        "left_pixels": 83,
+        "right_pixels": 93,
+        "side_centers": [
+          [
+            636.2530120481928,
+            558.433734939759
+          ],
+          [
+            663.6774193548387,
+            557.9247311827957
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.045942679587407,
+          20.953933819888178
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.624453518950418,
+          12.82722658434841
+        ],
+        "threshold": 23,
+        "supporters": 11,
+        "raw_pixels": 172,
+        "external_pixels": 172,
+        "removed_beam_pixels": 0,
+        "left_pixels": 81,
+        "right_pixels": 91,
+        "side_centers": [
+          [
+            636.2469135802469,
+            558.3456790123457
+          ],
+          [
+            663.6923076923077,
+            557.7582417582418
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.045942679587407,
+          19.95708200942988
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.564584132625896,
+          12.927297298718372
+        ],
+        "threshold": 24,
+        "supporters": 11,
+        "raw_pixels": 167,
+        "external_pixels": 167,
+        "removed_beam_pixels": 0,
+        "left_pixels": 78,
+        "right_pixels": 89,
+        "side_centers": [
+          [
+            636.2051282051282,
+            557.8974358974359
+          ],
+          [
+            663.6966292134831,
+            557.7528089887641
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.045942679587407,
+          19.95708200942988
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.57548998333175,
+          12.921231845253487
+        ],
+        "threshold": 25,
+        "supporters": 11,
+        "raw_pixels": 165,
+        "external_pixels": 165,
+        "removed_beam_pixels": 0,
+        "left_pixels": 78,
+        "right_pixels": 87,
+        "side_centers": [
+          [
+            636.2051282051282,
+            557.8974358974359
+          ],
+          [
+            663.7011494252873,
+            557.7011494252873
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      }
+    ]
+  },
+  {
+    "case": [
+      "v17",
+      540,
+      541
+    ],
+    "transition": {
+      "old_frame_follows_action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      },
+      "new_frame_follows_action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    "supported_candidate_count": 11,
+    "all_supported_candidates_pass": true,
+    "endpoint": [
+      650.738886807711,
+      551.999634438971
+    ],
+    "endpoint_match_error_px": 0.0,
+    "candidates": [
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.049085929108134,
+          21.957072129387928
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.576234351040625,
+          13.035383142672003
+        ],
+        "threshold": 15,
+        "supporters": 11,
+        "raw_pixels": 211,
+        "external_pixels": 211,
+        "removed_beam_pixels": 0,
+        "left_pixels": 97,
+        "right_pixels": 114,
+        "side_centers": [
+          [
+            636.2783505154639,
+            558.9175257731958
+          ],
+          [
+            663.8859649122807,
+            558.4473684210526
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.049085929108134,
+          21.957072129387928
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.644889215006515,
+          12.986989081317233
+        ],
+        "threshold": 16,
+        "supporters": 11,
+        "raw_pixels": 207,
+        "external_pixels": 207,
+        "removed_beam_pixels": 0,
+        "left_pixels": 95,
+        "right_pixels": 112,
+        "side_centers": [
+          [
+            636.2210526315789,
+            559.0105263157894
+          ],
+          [
+            663.8482142857143,
+            558.5
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.049085929108134,
+          21.957072129387928
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.627788181201709,
+          12.90808945023889
+        ],
+        "threshold": 17,
+        "supporters": 11,
+        "raw_pixels": 197,
+        "external_pixels": 197,
+        "removed_beam_pixels": 0,
+        "left_pixels": 92,
+        "right_pixels": 105,
+        "side_centers": [
+          [
+            636.2717391304348,
+            559.0
+          ],
+          [
+            663.8,
+            558.3523809523809
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.049085929108134,
+          21.957072129387928
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.661287833721872,
+          12.844743411058971
+        ],
+        "threshold": 18,
+        "supporters": 11,
+        "raw_pixels": 191,
+        "external_pixels": 191,
+        "removed_beam_pixels": 0,
+        "left_pixels": 90,
+        "right_pixels": 101,
+        "side_centers": [
+          [
+            636.2666666666667,
+            559.1
+          ],
+          [
+            663.7623762376238,
+            558.3465346534654
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.049085929108134,
+          21.957072129387928
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.682460591497374,
+          12.856823924932314
+        ],
+        "threshold": 19,
+        "supporters": 11,
+        "raw_pixels": 187,
+        "external_pixels": 187,
+        "removed_beam_pixels": 0,
+        "left_pixels": 88,
+        "right_pixels": 99,
+        "side_centers": [
+          [
+            636.2272727272727,
+            558.875
+          ],
+          [
+            663.7575757575758,
+            558.1717171717172
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.045942679587407,
+          21.957072129387928
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.63727681228761,
+          12.867693561353121
+        ],
+        "threshold": 20,
+        "supporters": 11,
+        "raw_pixels": 183,
+        "external_pixels": 183,
+        "removed_beam_pixels": 0,
+        "left_pixels": 85,
+        "right_pixels": 98,
+        "side_centers": [
+          [
+            636.2352941176471,
+            558.7882352941176
+          ],
+          [
+            663.734693877551,
+            558.234693877551
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.045942679587407,
+          21.953928879867203
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.66560049376585,
+          12.83002658988903
+        ],
+        "threshold": 21,
+        "supporters": 11,
+        "raw_pixels": 178,
+        "external_pixels": 178,
+        "removed_beam_pixels": 0,
+        "left_pixels": 83,
+        "right_pixels": 95,
+        "side_centers": [
+          [
+            636.2048192771084,
+            558.6024096385543
+          ],
+          [
+            663.6947368421053,
+            558.0421052631579
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.045942679587407,
+          19.95708200942988
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.566318887760985,
+          12.911386014181176
+        ],
+        "threshold": 22,
+        "supporters": 11,
+        "raw_pixels": 173,
+        "external_pixels": 173,
+        "removed_beam_pixels": 0,
+        "left_pixels": 80,
+        "right_pixels": 93,
+        "side_centers": [
+          [
+            636.2,
+            558.05
+          ],
+          [
+            663.6774193548387,
+            557.9247311827957
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.045942679587407,
+          19.95708200942988
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.594350743271434,
+          12.921167978681297
+        ],
+        "threshold": 23,
+        "supporters": 11,
+        "raw_pixels": 170,
+        "external_pixels": 170,
+        "removed_beam_pixels": 0,
+        "left_pixels": 79,
+        "right_pixels": 91,
+        "side_centers": [
+          [
+            636.1772151898734,
+            557.9113924050633
+          ],
+          [
+            663.6923076923077,
+            557.7582417582418
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.045942679587407,
+          19.95708200942988
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.564584132625896,
+          12.927297298718372
+        ],
+        "threshold": 24,
+        "supporters": 11,
+        "raw_pixels": 167,
+        "external_pixels": 167,
+        "removed_beam_pixels": 0,
+        "left_pixels": 78,
+        "right_pixels": 89,
+        "side_centers": [
+          [
+            636.2051282051282,
+            557.8974358974359
+          ],
+          [
+            663.6966292134831,
+            557.7528089887641
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      },
+      {
+        "longitudinal_support_relative_to_endpoint_px": [
+          -4.045942679587407,
+          19.95708200942988
+        ],
+        "inside_distance_px": 3.9996337890625,
+        "lateral_bracket_margins_px": [
+          14.565144086457394,
+          12.957395339287245
+        ],
+        "threshold": 25,
+        "supporters": 11,
+        "raw_pixels": 166,
+        "external_pixels": 166,
+        "removed_beam_pixels": 0,
+        "left_pixels": 78,
+        "right_pixels": 88,
+        "side_centers": [
+          [
+            636.2051282051282,
+            557.8974358974359
+          ],
+          [
+            663.7272727272727,
+            557.75
+          ]
+        ],
+        "endpoint_bracketed": true,
+        "endpoint_strictly_inside_hull": true,
+        "intersection_area_px2": 72.00572967529297,
+        "passed": true,
+        "reasons": []
+      }
+    ]
+  }
+]

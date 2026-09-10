@@ -62,13 +62,25 @@ def _git(args: list[str]) -> str:
     return result.stdout.strip() if result.returncode == 0 else f"unavailable: {result.stderr.strip()}"
 
 
-def _camera_look_at(world: MultiMasterPiProductionV2) -> None:
+def _camera_look_at(
+    world: MultiMasterPiProductionV2,
+    approach_distance: float = 0.0,
+    transport_distance: float = 0.0,
+) -> None:
     """Aim an existing presentation camera closely at the beam fixture."""
     camera_id = mujoco.mj_name2id(
         world.model, mujoco.mjtObj.mjOBJ_CAMERA, "cctv_warehouse",
     )
     position = np.asarray((0.18, -2.68, 0.78), dtype=float)
     target = np.asarray((BEAM_START[0], BEAM_START[1], 0.09), dtype=float)
+    if approach_distance > 0:
+        position = np.asarray((-0.50, -3.12, 1.14))
+        target = np.asarray((BEAM_START[0] - approach_distance / 2, BEAM_START[1], 0.08))
+    if transport_distance > 0:
+        path_mid_x = BEAM_START[0] + (transport_distance - approach_distance) / 2
+        path_span = approach_distance + transport_distance
+        position = np.asarray((path_mid_x, -3.35 - 0.35 * path_span, 1.35))
+        target = np.asarray((path_mid_x, BEAM_START[1], 0.10))
     forward = target - position
     forward /= np.linalg.norm(forward)
     right = np.cross(forward, (0.0, 0.0, 1.0))
@@ -78,7 +90,7 @@ def _camera_look_at(world: MultiMasterPiProductionV2) -> None:
     mujoco.mju_mat2Quat(quat, np.column_stack((right, up, -forward)).ravel())
     world.model.cam_pos[camera_id] = position
     world.model.cam_quat[camera_id] = quat
-    world.model.cam_fovy[camera_id] = 47.0
+    world.model.cam_fovy[camera_id] = 55.0 if transport_distance > 0 else 47.0
     mujoco.mj_forward(world.model, world.data)
 
 
@@ -256,6 +268,7 @@ def _pose_metrics(world: MultiMasterPiProductionV2) -> dict[str, Any]:
     up = matrix[:, 2]
     tilt_deg = math.degrees(math.acos(float(np.clip(up[2], -1.0, 1.0))))
     return {
+        "bases": {rid: {"xyz": list(map(float,world.controllers[rid].base_xyz())), "rpy": list(map(float,world.controllers[rid].base_rpy()))} for rid in BEAM_CARRIER_IDS},
         "sim_time_s": round(float(world.data.time), 6),
         "position_m": [round(float(v), 6) for v in pose["position"]],
         "height_above_start_m": round(float(pose["position"][2]) - BEAM_START[2], 6),
@@ -274,7 +287,7 @@ def _step(world: MultiMasterPiProductionV2, seconds: float) -> None:
             world.frame_callback()
 
 
-def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, weld_assistance: bool = False, side_grasp: bool = False) -> dict[str, Any]:
+def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, weld_assistance: bool = False, side_grasp: bool = False, approach_distance: float = 0.0, transport_distance: float = 0.0) -> dict[str, Any]:
     video_path = out_dir / f"{name}.mp4"
     json_path = out_dir / f"{name}.json"
     trace: list[dict[str, Any]] = []
@@ -282,6 +295,8 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, 
         "condition": name,
         "weld_assistance": weld_assistance,
         "side_grasp": side_grasp,
+        "approach_distance_m": approach_distance,
+        "transport_distance_m": transport_distance,
         "second_grasp_delay_s": delay_s,
         "seed": seed,
         "video": str(video_path),
@@ -310,7 +325,7 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, 
                 seed=seed, width=960, height=720, render=True,
             )
         fixture = _plain_beam_model_record(world)
-        _camera_look_at(world)
+        _camera_look_at(world, approach_distance, transport_distance)
         precision = world._precision_module()
         hover = world._hover_pose()
         grasp = precision.solve_ik(
@@ -335,6 +350,8 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, 
             if side_grasp:
                 sign = 1.0 if rid == "r1" else -1.0
                 pose = (BEAM_START[0], BEAM_START[1] - sign * (0.16 + TEAM_APPROACH_STANDOFF_M), float(robot.base_xyz()[2]))
+            if approach_distance > 0:
+                pose = (pose[0] - approach_distance, pose[1], pose[2])
             robot.set_base_pose_for_test(pose, 0.0)
             setup_poses[rid] = [float(v) for v in pose]
         # R2 is irrelevant to this isolated fixture and remains at its default pose.
@@ -352,6 +369,42 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, 
         if side_grasp:
             from sim.masterpi_production_v2 import SEARCH_POSE
             world._team_joint_move_servos({rid: {**SEARCH_POSE, 1: precision.GRIPPER_OPEN, 6: 1500} for rid in BEAM_CARRIER_IDS}, 0.6)
+            if approach_distance > 0:
+                approach_trace = []
+                collision_steps = 0
+                original_step = world._physics_step_for
+                next_sample = float(world.data.time)
+                def approach_step(robot, commands=None):
+                    nonlocal collision_steps, next_sample
+                    original_step(robot, commands)
+                    touched = False
+                    for k in range(world.data.ncon):
+                        c = world.data.contact[k]
+                        names = [mujoco.mj_id2name(world.model, mujoco.mjtObj.mjOBJ_GEOM, int(g)) or "" for g in (c.geom1, c.geom2)]
+                        if BEAM_GEOM_NAME in names and any(n.startswith(("r1__", "r3__")) for n in names):
+                            touched = True
+                    collision_steps += int(touched)
+                    if world.data.time >= next_sample:
+                        approach_trace.append({"sim_time_s": float(world.data.time), "bases": {rid: list(map(float,world.controllers[rid].base_xyz())) for rid in BEAM_CARRIER_IDS}, "payload_contact": touched})
+                        next_sample = float(world.data.time) + 0.1
+                record("wheel_approach_started", target_x=BEAM_START[0], requested_distance_m=approach_distance)
+                world._physics_step_for = approach_step
+                try:
+                    world._team_joint_move_base_axis("x", {rid: BEAM_START[0] for rid in BEAM_CARRIER_IDS}, tolerance_m=0.002, max_sim_s=15.0)
+                    for rid in BEAM_CARRIER_IDS:
+                        world._settle(world.controllers[rid])
+                    record("approach_stopped_before_alignment")
+                    for rid in BEAM_CARRIER_IDS:
+                        world._move_axis(world.controllers[rid], "x", BEAM_START[0], tolerance=0.0025, max_pulses=30)
+                    for rid in BEAM_CARRIER_IDS:
+                        world._settle(world.controllers[rid])
+                    record("approach_fine_alignment_complete")
+                finally:
+                    world._physics_step_for = original_step
+                    report["approach"] = {"trajectory": approach_trace, "payload_contact_steps": collision_steps, "physics_timestep_s":float(world.model.opt.timestep)}
+                record("wheel_approach_complete", bases={rid: list(map(float,world.controllers[rid].base_xyz())) for rid in BEAM_CARRIER_IDS}, payload_contact_steps=collision_steps)
+                if collision_steps:
+                    raise RuntimeError("PAYLOAD_CONTACT_DURING_APPROACH")
             record("folded_before_side_rotation")
             world._team_joint_move_servos({rid: {6: yaw_pulses[rid]} for rid in BEAM_CARRIER_IDS}, 1.0, settle_s=0.15)
             record("side_rotation_complete", yaw_pulses=yaw_pulses)
@@ -441,6 +494,109 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, 
                     raise RuntimeError("UNASSISTED_HOLD_FAILED")
             record("physical_hold_complete", duration_s=2.0)
             final = _pose_metrics(world)
+            if transport_distance > 0:
+                transport_start = _pose_metrics(world)
+                start_x = float(transport_start["position_m"][0])
+                base_start_x = {
+                    rid: float(world.controllers[rid].base_xyz()[0])
+                    for rid in BEAM_CARRIER_IDS
+                }
+                base_targets_x = {
+                    rid: value + transport_distance
+                    for rid, value in base_start_x.items()
+                }
+                samples: list[dict[str, Any]] = []
+                original_step = world._physics_step_for
+                next_sample = float(world.data.time)
+
+                def transport_step(robot, commands=None):
+                    nonlocal next_sample
+                    original_step(robot, commands)
+                    if any(world._beam_constraint_active(rid) for rid in BEAM_CARRIER_IDS):
+                        raise RuntimeError("WELD_ACTIVE_DURING_TRANSPORT")
+                    if float(world.data.time) + 1e-9 < next_sample:
+                        return
+                    contacts = {
+                        rid: world.controllers[rid].finger_payload_contact(rid)
+                        for rid in BEAM_CARRIER_IDS
+                    }
+                    sample = {
+                        "event": "transport_physics_sample",
+                        **_pose_metrics(world),
+                        "contacts": contacts,
+                    }
+                    sample["payload_displacement_m"] = float(sample["position_m"][0]) - start_x
+                    sample["payload_target_displacement_m"] = transport_distance
+                    sample["payload_displacement_error_m"] = (
+                        sample["payload_displacement_m"] - transport_distance
+                    )
+                    sample["base_x_error_m"] = {
+                        rid: base_targets_x[rid] - float(world.controllers[rid].base_xyz()[0])
+                        for rid in BEAM_CARRIER_IDS
+                    }
+                    samples.append(sample)
+                    trace.append(sample)
+                    next_sample = float(world.data.time) + 0.1
+                    if sample["height_above_start_m"] < 0.03:
+                        raise RuntimeError("LOADED_TRANSPORT_LIFT_LOST")
+                    if not all(bool(contact.get("bilateral")) for contact in contacts.values()):
+                        raise RuntimeError("LOADED_TRANSPORT_BILATERAL_CONTACT_LOST")
+
+                record(
+                    "loaded_transport_started",
+                    payload_start_x_m=start_x,
+                    payload_target_x_m=start_x + transport_distance,
+                    base_start_x_m=base_start_x,
+                    base_target_x_m=base_targets_x,
+                )
+                world._physics_step_for = transport_step
+                hold_start_s: float | None = None
+                try:
+                    # Use the existing wheel controller at a bounded loaded
+                    # speed: the unloaded scale coasts ~5cm past the waypoint.
+                    with patch.object(multi_production, "TEAM_MOTOR_SCALE", 0.18):
+                        world._team_joint_move_base_axis(
+                            "x", base_targets_x, tolerance_m=0.005, max_sim_s=15.0,
+                        )
+                    for rid in BEAM_CARRIER_IDS:
+                        world._settle(world.controllers[rid])
+                    record("loaded_transport_endpoint_reached")
+                    hold_start_s = float(world.data.time)
+                    _step(world, 2.0)
+                    record("loaded_transport_final_hold_complete", duration_s=2.0)
+                finally:
+                    for rid in BEAM_CARRIER_IDS:
+                        world.controllers[rid].set_motor_commands(multi_production.STOP)
+                    world._physics_step_for = original_step
+                    final = _pose_metrics(world)
+                    payload_displacement = float(final["position_m"][0]) - start_x
+                    displacement_error = payload_displacement - transport_distance
+                    report["transport"] = {
+                        "requested_distance_m": transport_distance,
+                        "payload_start_x_m": start_x,
+                        "payload_target_x_m": start_x + transport_distance,
+                        "payload_final_x_m": float(final["position_m"][0]),
+                        "payload_displacement_m": payload_displacement,
+                        "payload_displacement_error_m": displacement_error,
+                        "base_start_x_m": base_start_x,
+                        "base_target_x_m": base_targets_x,
+                        "base_final_x_m": {
+                            rid: float(world.controllers[rid].base_xyz()[0])
+                            for rid in BEAM_CARRIER_IDS
+                        },
+                        "transport_start_sim_time_s": float(transport_start["sim_time_s"]),
+                        "final_hold_start_sim_time_s": hold_start_s,
+                        "transport_end_sim_time_s": float(final["sim_time_s"]),
+                        "sample_period_target_s": 0.1,
+                        "trajectory": samples,
+                        "weld_audit": "inactive on every transport and final-hold physics step",
+                    }
+                if abs(displacement_error) > 0.03:
+                    raise RuntimeError(
+                        "LOADED_TRANSPORT_ENDPOINT_MISSED: "
+                        f"requested={transport_distance:.4f}m "
+                        f"actual={payload_displacement:.4f}m error={displacement_error:.4f}m"
+                    )
         report["ok"] = True
         report["final"] = final
     except Exception as exc:
@@ -474,6 +630,8 @@ def run_trial(out_dir: Path, *, name: str, delay_s: float, seed: int, fps: int, 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
+    parser.add_argument('--ground-truth-diagnostic', action='store_true',
+                        help='Historical physics diagnostic only; never an image-only robot run.')
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--seed", type=int, default=11)
     parser.add_argument("--fps", type=int, default=12)
@@ -484,9 +642,17 @@ def main() -> int:
                             help="Use unassisted contact physics (the default).")
     parser.set_defaults(weld_assistance=False)
     parser.add_argument("--side-grasp", action="store_true", help="Forward bases, arms rotated +/-90 degrees; no weld permitted.")
+    parser.add_argument("--approach-distance", type=float, default=0.0, help="Start this many meters behind the side grasp waypoint (0 to 1m).")
+    parser.add_argument("--transport-distance", type=float, default=0.0, help="Physically carry the lifted beam forward +x by this distance (0 to 0.8m).")
     args = parser.parse_args()
+    if not args.ground_truth_diagnostic:
+        parser.error('Coordinate-driven diagnostic is disabled by default. Use scripts/run_camera_pair_transport.py for own-view + overhead image-only control. Historical physics comparisons require explicit --ground-truth-diagnostic.')
+    if not 0 <= args.approach_distance <= 1.0 or (args.approach_distance > 0 and not args.side_grasp):
+        parser.error("--approach-distance requires --side-grasp and a distance between 0 and 1m")
     if args.side_grasp and args.weld_assistance:
         parser.error("--side-grasp cannot be combined with --with-weld")
+    if not 0 <= args.transport_distance <= 0.8 or (args.transport_distance > 0 and not args.side_grasp):
+        parser.error("--transport-distance requires --side-grasp and a distance between 0 and 0.8m")
     out_dir = args.out_dir.expanduser().resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -505,16 +671,21 @@ def main() -> int:
         "config": {
             "weld_assistance": args.weld_assistance,
             "side_grasp": args.side_grasp,
+            "approach_distance_m": args.approach_distance,
+            "transport_distance_m": args.transport_distance,
             "seed": args.seed,
             "fps": args.fps,
             "conditions": [
                 {"name": "baseline", "second_grasp_delay_s": 0.0},
                 {"name": "delayed_2s", "second_grasp_delay_s": 2.0},
             ],
-            "max_expected_trial_sim_s": 15.0,
+            "max_expected_trial_sim_s": 15.0 + (15.0 if args.approach_distance else 0.0) + (17.0 if args.transport_distance else 0.0),
             "fixture_pose_writes_allowed_during_trial": False,
             "payload_pose_writes": False,
             "scout_or_navigation": False,
+            "known_waypoint_wheel_approach": args.approach_distance > 0,
+            "known_waypoint_loaded_transport": args.transport_distance > 0,
+            "transport_planning_source": "fixed_known_waypoint_cli_not_camera_or_llm",
             "payload": {
                 "shape": "single_uniform_box",
                 "dimensions_m": [BEAM_WIDTH_M, BEAM_LENGTH_M, BEAM_HEIGHT_M],
@@ -528,7 +699,7 @@ def main() -> int:
     }
     for name, delay in (("baseline", 0.0), ("delayed_2s", 2.0)):
         manifest["trials"].append(
-            run_trial(out_dir, name=name, delay_s=delay, seed=args.seed, fps=args.fps, weld_assistance=args.weld_assistance, side_grasp=args.side_grasp)
+            run_trial(out_dir, name=name, delay_s=delay, seed=args.seed, fps=args.fps, weld_assistance=args.weld_assistance, side_grasp=args.side_grasp, approach_distance=args.approach_distance, transport_distance=args.transport_distance)
         )
     manifest["all_ok"] = all(item.get("ok") for item in manifest["trials"])
     (out_dir / "manifest.json").write_text(

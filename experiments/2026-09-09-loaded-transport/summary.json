@@ -1,0 +1,302 @@
+[
+  {
+    "attempt": "initial",
+    "sha": "2313827bfedb576fd7de004ebc2293a0a5896376",
+    "condition": "baseline",
+    "ok": false,
+    "error": "RuntimeError: LOADED_TRANSPORT_ENDPOINT_MISSED: requested=0.5000m actual=0.5521m error=0.0521m",
+    "transport": {
+      "base_final_x_m": {
+        "r1": 1.1316502942033204,
+        "r3": 1.1317621025844935
+      },
+      "base_start_x_m": {
+        "r1": 0.5797479662847695,
+        "r3": 0.5798545532228162
+      },
+      "base_target_x_m": {
+        "r1": 1.0797479662847695,
+        "r3": 1.079854553222816
+      },
+      "final_hold_start_sim_time_s": 14.19600000000141,
+      "payload_displacement_error_m": 0.05205700000000002,
+      "payload_displacement_m": 0.552057,
+      "payload_final_x_m": 1.131907,
+      "payload_start_x_m": 0.57985,
+      "payload_target_x_m": 1.07985,
+      "requested_distance_m": 0.5,
+      "sample_period_target_s": 0.1,
+      "transport_end_sim_time_s": 16.196,
+      "transport_start_sim_time_s": 12.71,
+      "weld_audit": "inactive on every transport and final-hold physics step"
+    },
+    "samples": 35,
+    "minimum_sampled_height_above_start_m": 0.063079,
+    "maximum_sampled_tilt_deg": 0.7867,
+    "final": {
+      "bases": {
+        "r1": {
+          "rpy": [
+            -0.0007678982963138323,
+            -4.2511337997004257e-07,
+            -0.0017110270876548443
+          ],
+          "xyz": [
+            1.1316502942033204,
+            -2.324523920350315,
+            0.032344436965408514
+          ]
+        },
+        "r3": {
+          "rpy": [
+            0.0007679917580929986,
+            -4.197445078319252e-07,
+            0.0013661723296362108
+          ],
+          "xyz": [
+            1.1317621025844935,
+            -1.6756475469192678,
+            0.03234444039172642
+          ]
+        }
+      },
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "height_above_start_m": 0.062865,
+      "position_m": [
+        1.131907,
+        -2.000106,
+        0.082865
+      ],
+      "sim_time_s": 16.196,
+      "tilt_deg": 0.0375
+    }
+  },
+  {
+    "attempt": "initial",
+    "sha": "2313827bfedb576fd7de004ebc2293a0a5896376",
+    "condition": "delayed_2s",
+    "ok": false,
+    "error": "RuntimeError: LOADED_TRANSPORT_ENDPOINT_MISSED: requested=0.5000m actual=0.5521m error=0.0521m",
+    "transport": {
+      "base_final_x_m": {
+        "r1": 1.1317780848470107,
+        "r3": 1.1317534930809052
+      },
+      "base_start_x_m": {
+        "r1": 0.5798718951184735,
+        "r3": 0.5798495742153841
+      },
+      "base_target_x_m": {
+        "r1": 1.0798718951184734,
+        "r3": 1.079849574215384
+      },
+      "final_hold_start_sim_time_s": 17.026000000001442,
+      "payload_displacement_error_m": 0.052072999999999925,
+      "payload_displacement_m": 0.5520729999999999,
+      "payload_final_x_m": 1.131967,
+      "payload_start_x_m": 0.579894,
+      "payload_target_x_m": 1.079894,
+      "requested_distance_m": 0.5,
+      "sample_period_target_s": 0.1,
+      "transport_end_sim_time_s": 19.026,
+      "transport_start_sim_time_s": 15.54,
+      "weld_audit": "inactive on every transport and final-hold physics step"
+    },
+    "samples": 35,
+    "minimum_sampled_height_above_start_m": 0.06305,
+    "maximum_sampled_tilt_deg": 0.7912,
+    "final": {
+      "bases": {
+        "r1": {
+          "rpy": [
+            -0.0007677886358571309,
+            -4.198526593105126e-07,
+            -0.0014998675485342575
+          ],
+          "xyz": [
+            1.1317780848470107,
+            -2.3243832040552745,
+            0.03234443954457454
+          ]
+        },
+        "r3": {
+          "rpy": [
+            0.0007681557432645522,
+            -4.2456870239592993e-07,
+            0.001575941718044532
+          ],
+          "xyz": [
+            1.1317534930809052,
+            -1.675568172672832,
+            0.03234443801769779
+          ]
+        }
+      },
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "height_above_start_m": 0.062836,
+      "position_m": [
+        1.131967,
+        -1.999967,
+        0.082836
+      ],
+      "sim_time_s": 19.026,
+      "tilt_deg": 0.0372
+    }
+  },
+  {
+    "attempt": "final",
+    "sha": "ac3626f699de4b0e6b88354ce443529df143d8c4",
+    "condition": "baseline",
+    "ok": true,
+    "error": null,
+    "transport": {
+      "base_final_x_m": {
+        "r1": 1.093559463701292,
+        "r3": 1.093667551600868
+      },
+      "base_start_x_m": {
+        "r1": 0.5797479662847695,
+        "r3": 0.5798545532228162
+      },
+      "base_target_x_m": {
+        "r1": 1.0797479662847695,
+        "r3": 1.079854553222816
+      },
+      "final_hold_start_sim_time_s": 15.808000000001948,
+      "payload_displacement_error_m": 0.013945000000000096,
+      "payload_displacement_m": 0.5139450000000001,
+      "payload_final_x_m": 1.093795,
+      "payload_start_x_m": 0.57985,
+      "payload_target_x_m": 1.07985,
+      "requested_distance_m": 0.5,
+      "sample_period_target_s": 0.1,
+      "transport_end_sim_time_s": 17.808,
+      "transport_start_sim_time_s": 12.71,
+      "weld_audit": "inactive on every transport and final-hold physics step"
+    },
+    "samples": 51,
+    "minimum_sampled_height_above_start_m": 0.058997,
+    "maximum_sampled_tilt_deg": 0.2647,
+    "final": {
+      "bases": {
+        "r1": {
+          "rpy": [
+            -0.0007718554206203651,
+            -3.7580423944941444e-07,
+            -0.001542856161152994
+          ],
+          "xyz": [
+            1.093559463701292,
+            -2.324505497903645,
+            0.03234445182718789
+          ]
+        },
+        "r3": {
+          "rpy": [
+            0.0007720666496362618,
+            -3.7069403245494193e-07,
+            0.0012092959896730583
+          ],
+          "xyz": [
+            1.093667551600868,
+            -1.6756466933919676,
+            0.03234445528685471
+          ]
+        }
+      },
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "height_above_start_m": 0.058753,
+      "position_m": [
+        1.093795,
+        -2.000096,
+        0.078753
+      ],
+      "sim_time_s": 17.808,
+      "tilt_deg": 0.0276
+    }
+  },
+  {
+    "attempt": "final",
+    "sha": "ac3626f699de4b0e6b88354ce443529df143d8c4",
+    "condition": "delayed_2s",
+    "ok": true,
+    "error": null,
+    "transport": {
+      "base_final_x_m": {
+        "r1": 1.0936848530812866,
+        "r3": 1.0936627132402874
+      },
+      "base_start_x_m": {
+        "r1": 0.5798718951184735,
+        "r3": 0.5798495742153841
+      },
+      "base_target_x_m": {
+        "r1": 1.0798718951184734,
+        "r3": 1.079849574215384
+      },
+      "final_hold_start_sim_time_s": 18.63800000000055,
+      "payload_displacement_error_m": 0.013961999999999919,
+      "payload_displacement_m": 0.5139619999999999,
+      "payload_final_x_m": 1.093856,
+      "payload_start_x_m": 0.579894,
+      "payload_target_x_m": 1.079894,
+      "requested_distance_m": 0.5,
+      "sample_period_target_s": 0.1,
+      "transport_end_sim_time_s": 20.638,
+      "transport_start_sim_time_s": 15.54,
+      "weld_audit": "inactive on every transport and final-hold physics step"
+    },
+    "samples": 51,
+    "minimum_sampled_height_above_start_m": 0.058968,
+    "maximum_sampled_tilt_deg": 0.2728,
+    "final": {
+      "bases": {
+        "r1": {
+          "rpy": [
+            -0.0007717449454887129,
+            -3.7123903663306695e-07,
+            -0.0013421874952641625
+          ],
+          "xyz": [
+            1.0936848530812866,
+            -2.3243800657354643,
+            0.032344454381293034
+          ]
+        },
+        "r3": {
+          "rpy": [
+            0.0007722298424431397,
+            -3.752953993817536e-07,
+            0.0014107243532325902
+          ],
+          "xyz": [
+            1.0936627132402874,
+            -1.6755821268051538,
+            0.03234445294000612
+          ]
+        }
+      },
+      "constraints_active": {
+        "r1": false,
+        "r3": false
+      },
+      "height_above_start_m": 0.058723,
+      "position_m": [
+        1.093856,
+        -1.999973,
+        0.078723
+      ],
+      "sim_time_s": 20.638,
+      "tilt_deg": 0.0273
+    }
+  }
+]

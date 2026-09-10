@@ -1,0 +1,70 @@
+{
+  "root": "/Users/changmin/projects/ugrp/outputs/visual-servo-20260909-r1-v2",
+  "git_sha": "44626d379f858c83a3167fa209c49e65f4de6ab9",
+  "rounds_completed": 24,
+  "call_count": 24,
+  "error": null,
+  "token_sums": {
+    "prompt_tokens": 151702,
+    "completion_tokens": 4061,
+    "total_tokens": 156258
+  },
+  "stage_counts": {
+    "acquire": 14,
+    "align": 1,
+    "blocked": 9
+  },
+  "close_command_count": 0,
+  "trusted_landmarks": {
+    "count": 1,
+    "total": 24,
+    "fraction": 0.041666666666666664
+  },
+  "motion_identity_raw_high_confidence": {
+    "count": 20,
+    "consistent_and_accepted": 19,
+    "rejected_or_not_consistent": 1
+  },
+  "final_learning": {
+    "r1": {
+      "sample_count": 0,
+      "channel_sample_counts": {
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      }
+    }
+  },
+  "local_model_decision_count": 0,
+  "local_model_valid_next_same_view": {
+    "count": 0,
+    "error_decreased": 0,
+    "error_increased": 0,
+    "error_unchanged": 0,
+    "comparisons": []
+  },
+  "output_only_evaluation": {
+    "source": "output-only referee; excluded from controller/input metrics",
+    "sample_count": 240,
+    "planar_base_displacement_m_first_to_last": {
+      "r1": 0.0030668251947977786,
+      "r3": 1.3805894266150452e-06
+    },
+    "contact_sample_counts": {
+      "r1": {
+        "left": 0,
+        "right": 0,
+        "bilateral": 0
+      },
+      "r3": {
+        "left": 0,
+        "right": 0,
+        "bilateral": 0
+      }
+    },
+    "reported_grasp_success": false,
+    "reported_longest_qualifying_duration_s": 0.0,
+    "reported_max_lift_m": -4.9e-05
+  }
+}

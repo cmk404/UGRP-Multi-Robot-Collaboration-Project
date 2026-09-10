@@ -1,0 +1,709 @@
+{
+  "r1": {
+    "evaluated_transitions": 29,
+    "supported_predictions": 15,
+    "held_out_prediction_rmse": 0.0007690661324637702,
+    "zero_change_rmse_same_transitions": 0.0012991785650062224,
+    "rows": [
+      {
+        "round": 0,
+        "action": {
+          "kind": "arm",
+          "servo_id": 1,
+          "pulse": 2000
+        },
+        "supported": false,
+        "sample_count": 0,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 1,
+        "action": {
+          "duration_s": 0.3,
+          "forward": 0.0,
+          "kind": "drive",
+          "turn": -0.08
+        },
+        "supported": false,
+        "sample_count": 0,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 2,
+        "action": {
+          "duration_s": 0.3,
+          "forward": 0.0,
+          "kind": "drive",
+          "turn": 0.08
+        },
+        "supported": false,
+        "sample_count": 1,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 3,
+        "action": {
+          "duration_s": 0.3,
+          "forward": 0.0,
+          "kind": "drive",
+          "turn": -0.08
+        },
+        "supported": false,
+        "sample_count": 2,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 4,
+        "action": {
+          "duration_s": 0.4,
+          "forward": 0.06,
+          "kind": "drive",
+          "turn": 0.08
+        },
+        "supported": false,
+        "sample_count": 3,
+        "unsupported_reason": "candidate command values fall outside the observed range"
+      },
+      {
+        "round": 5,
+        "action": {
+          "duration_s": 0.4,
+          "forward": 0.08,
+          "turn": 0.12,
+          "kind": "drive"
+        },
+        "supported": false,
+        "sample_count": 4,
+        "unsupported_reason": "candidate command values fall outside the observed range"
+      },
+      {
+        "round": 6,
+        "action": {
+          "duration_s": 0.4,
+          "forward": 0.08,
+          "kind": "drive",
+          "turn": -0.08
+        },
+        "supported": true,
+        "sample_count": 5,
+        "prediction_rmse": 0.0019444260907712872,
+        "zero_change_rmse": 0.002422281427897294
+      },
+      {
+        "round": 7,
+        "action": {
+          "duration_s": 0.3,
+          "forward": 0.04,
+          "kind": "drive",
+          "turn": 0.08
+        },
+        "supported": true,
+        "sample_count": 6,
+        "prediction_rmse": 0.0003659717149180847,
+        "zero_change_rmse": 0.0011032957173445935
+      },
+      {
+        "round": 8,
+        "action": {
+          "duration_s": 0.4,
+          "forward": 0.08,
+          "kind": "drive",
+          "turn": 0.1
+        },
+        "supported": true,
+        "sample_count": 7,
+        "prediction_rmse": 0.0008466883127907367,
+        "zero_change_rmse": 0.0017791164099978491
+      },
+      {
+        "round": 9,
+        "action": {
+          "duration_s": 0.3,
+          "forward": 0.06,
+          "kind": "drive",
+          "turn": 0.08
+        },
+        "supported": true,
+        "sample_count": 8,
+        "prediction_rmse": 0.0005025146062058396,
+        "zero_change_rmse": 0.001038959862611099
+      },
+      {
+        "round": 10,
+        "action": {
+          "duration_s": 0.3,
+          "forward": 0.05,
+          "kind": "drive",
+          "turn": -0.08
+        },
+        "supported": true,
+        "sample_count": 9,
+        "prediction_rmse": 0.0007374888661060545,
+        "zero_change_rmse": 0.0018551779130499316
+      },
+      {
+        "round": 11,
+        "action": {
+          "duration_s": 0.3,
+          "forward": 0.06,
+          "kind": "drive",
+          "turn": 0.1
+        },
+        "supported": true,
+        "sample_count": 10,
+        "prediction_rmse": 0.0006569635878840313,
+        "zero_change_rmse": 0.001273935225875723
+      },
+      {
+        "round": 12,
+        "action": {
+          "duration_s": 0.3,
+          "forward": 0.06,
+          "kind": "drive",
+          "turn": 0.0
+        },
+        "supported": true,
+        "sample_count": 11,
+        "prediction_rmse": 0.00030137247593137737,
+        "zero_change_rmse": 0.0007325230326972788
+      },
+      {
+        "round": 13,
+        "action": {
+          "duration_s": 0.3,
+          "forward": 0.05,
+          "kind": "drive",
+          "turn": 0.0
+        },
+        "supported": true,
+        "sample_count": 12,
+        "prediction_rmse": 0.000550379068658111,
+        "zero_change_rmse": 0.0006948197995577623
+      },
+      {
+        "round": 14,
+        "action": {
+          "duration_s": 0.3,
+          "forward": 0.05,
+          "kind": "drive",
+          "turn": 0.0
+        },
+        "supported": true,
+        "sample_count": 13,
+        "prediction_rmse": 0.0004381011427230989,
+        "zero_change_rmse": 0.0006015365783110228
+      },
+      {
+        "round": 15,
+        "action": {
+          "duration_s": 0.3,
+          "forward": 0.0,
+          "kind": "drive",
+          "turn": 0.1
+        },
+        "supported": true,
+        "sample_count": 14,
+        "prediction_rmse": 0.0008553877324454408,
+        "zero_change_rmse": 0.001739052199303726
+      },
+      {
+        "round": 16,
+        "action": {
+          "duration_s": 0.3,
+          "forward": 0.0,
+          "kind": "drive",
+          "turn": 0.1
+        },
+        "supported": true,
+        "sample_count": 15,
+        "prediction_rmse": 0.001026497068782166,
+        "zero_change_rmse": 0.0017052598100583036
+      },
+      {
+        "round": 17,
+        "action": {
+          "duration_s": 0.3,
+          "forward": 0.05,
+          "kind": "drive",
+          "turn": 0.0
+        },
+        "supported": true,
+        "sample_count": 16,
+        "prediction_rmse": 0.0003190831494962579,
+        "zero_change_rmse": 0.0007427033429565667
+      },
+      {
+        "round": 18,
+        "action": {
+          "duration_s": 0.3,
+          "forward": 0.04,
+          "kind": "drive",
+          "turn": 0.0
+        },
+        "supported": true,
+        "sample_count": 17,
+        "prediction_rmse": 0.00046182036476097137,
+        "zero_change_rmse": 0.0006104429793250982
+      },
+      {
+        "round": 19,
+        "action": {
+          "duration_s": 0.3,
+          "forward": 0.04,
+          "kind": "drive",
+          "turn": 0.0
+        },
+        "supported": true,
+        "sample_count": 18,
+        "prediction_rmse": 0.000380067388081232,
+        "zero_change_rmse": 0.0005527456664420533
+      },
+      {
+        "round": 20,
+        "action": {
+          "kind": "arm",
+          "pulse": 2000,
+          "servo_id": 1
+        },
+        "supported": false,
+        "sample_count": 1,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 21,
+        "action": {
+          "duration_s": 0.3,
+          "forward": 0.04,
+          "kind": "drive",
+          "turn": 0.0
+        },
+        "supported": true,
+        "sample_count": 19,
+        "prediction_rmse": 0.0004262825133710573,
+        "zero_change_rmse": 0.0006170701119289534
+      },
+      {
+        "round": 22,
+        "action": {
+          "kind": "arm",
+          "pulse": 1700,
+          "servo_id": 5
+        },
+        "supported": false,
+        "sample_count": 0,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 23,
+        "action": {
+          "kind": "arm",
+          "pulse": 1550,
+          "servo_id": 5
+        },
+        "supported": false,
+        "sample_count": 1,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 24,
+        "action": {
+          "kind": "arm",
+          "pulse": 1700,
+          "servo_id": 3
+        },
+        "supported": false,
+        "sample_count": 0,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 25,
+        "action": {
+          "kind": "arm",
+          "pulse": 1400,
+          "servo_id": 3
+        },
+        "supported": false,
+        "sample_count": 1,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 26,
+        "action": {
+          "kind": "look",
+          "pan_pulse": 1500
+        },
+        "supported": false,
+        "sample_count": 0,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 27,
+        "action": {
+          "kind": "arm",
+          "pulse": 1800,
+          "servo_id": 3
+        },
+        "supported": false,
+        "sample_count": 2,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 28,
+        "action": {
+          "duration_s": 0.8,
+          "forward": 0.0,
+          "kind": "drive",
+          "turn": 0.2
+        },
+        "supported": false,
+        "sample_count": 20,
+        "unsupported_reason": "candidate command values fall outside the observed range"
+      }
+    ]
+  },
+  "r3": {
+    "evaluated_transitions": 29,
+    "supported_predictions": 7,
+    "held_out_prediction_rmse": 0.0020616476171158617,
+    "zero_change_rmse_same_transitions": 0.0015901183644724444,
+    "rows": [
+      {
+        "round": 0,
+        "action": {
+          "kind": "drive",
+          "forward": 0.06,
+          "turn": -0.08,
+          "duration_s": 0.4
+        },
+        "supported": false,
+        "sample_count": 0,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 1,
+        "action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": -0.1,
+          "duration_s": 0.4
+        },
+        "supported": false,
+        "sample_count": 1,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 2,
+        "action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": -0.08,
+          "duration_s": 0.4
+        },
+        "supported": false,
+        "sample_count": 2,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 3,
+        "action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": -0.08,
+          "duration_s": 0.4
+        },
+        "supported": true,
+        "sample_count": 3,
+        "prediction_rmse": 0.0006485259230141604,
+        "zero_change_rmse": 0.0021443525174808862
+      },
+      {
+        "round": 4,
+        "action": {
+          "kind": "drive",
+          "forward": 0.08,
+          "turn": -0.06,
+          "duration_s": 0.4
+        },
+        "supported": false,
+        "sample_count": 4,
+        "unsupported_reason": "candidate command values fall outside the observed range"
+      },
+      {
+        "round": 5,
+        "action": {
+          "duration_s": 0.4,
+          "forward": 0.08,
+          "kind": "drive",
+          "turn": -0.05
+        },
+        "supported": false,
+        "sample_count": 5,
+        "unsupported_reason": "candidate command values fall outside the observed range"
+      },
+      {
+        "round": 6,
+        "action": {
+          "duration_s": 0.4,
+          "forward": 0.08,
+          "kind": "drive",
+          "turn": -0.03
+        },
+        "supported": false,
+        "sample_count": 6,
+        "unsupported_reason": "candidate command values fall outside the observed range"
+      },
+      {
+        "round": 7,
+        "action": {
+          "duration_s": 0.4,
+          "forward": 0.08,
+          "kind": "drive",
+          "turn": -0.02
+        },
+        "supported": false,
+        "sample_count": 7,
+        "unsupported_reason": "candidate command values fall outside the observed range"
+      },
+      {
+        "round": 8,
+        "action": {
+          "duration_s": 0.4,
+          "forward": 0.08,
+          "kind": "drive",
+          "turn": -0.01
+        },
+        "supported": false,
+        "sample_count": 8,
+        "unsupported_reason": "candidate command values fall outside the observed range"
+      },
+      {
+        "round": 9,
+        "action": {
+          "duration_s": 0.4,
+          "forward": 0.08,
+          "kind": "drive",
+          "turn": 0.0
+        },
+        "supported": false,
+        "sample_count": 9,
+        "unsupported_reason": "candidate command values fall outside the observed range"
+      },
+      {
+        "round": 10,
+        "action": {
+          "duration_s": 0.4,
+          "forward": 0.08,
+          "kind": "drive",
+          "turn": 0.0
+        },
+        "supported": true,
+        "sample_count": 10,
+        "prediction_rmse": 0.0016229166220629943,
+        "zero_change_rmse": 0.002498768199032299
+      },
+      {
+        "round": 11,
+        "action": {
+          "duration_s": 0.4,
+          "forward": 0.08,
+          "kind": "drive",
+          "turn": 0.0
+        },
+        "supported": true,
+        "sample_count": 11,
+        "prediction_rmse": 0.0015564058507321814,
+        "zero_change_rmse": 0.002617199940471207
+      },
+      {
+        "round": 12,
+        "action": {
+          "kind": "arm",
+          "pulse": 2000,
+          "servo_id": 1
+        },
+        "supported": false,
+        "sample_count": 0,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 13,
+        "action": {
+          "kind": "look",
+          "pan_pulse": 1400
+        },
+        "supported": false,
+        "sample_count": 0,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 14,
+        "action": {
+          "kind": "arm",
+          "pulse": 1700,
+          "servo_id": 5
+        },
+        "supported": false,
+        "sample_count": 0,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 15,
+        "action": {
+          "kind": "arm",
+          "pulse": 1800,
+          "servo_id": 3
+        },
+        "supported": false,
+        "sample_count": 0,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 16,
+        "action": {
+          "duration_s": 0.5,
+          "forward": 0.08,
+          "kind": "drive",
+          "turn": 0.0
+        },
+        "supported": false,
+        "sample_count": 12,
+        "unsupported_reason": "candidate command values fall outside the observed range"
+      },
+      {
+        "round": 17,
+        "action": {
+          "kind": "arm",
+          "pulse": 1200,
+          "servo_id": 5
+        },
+        "supported": false,
+        "sample_count": 1,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 18,
+        "action": {
+          "kind": "look",
+          "pan_pulse": 1500
+        },
+        "supported": false,
+        "sample_count": 1,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 19,
+        "action": {
+          "duration_s": 0.5,
+          "forward": 0.08,
+          "kind": "drive",
+          "turn": 0.0
+        },
+        "supported": true,
+        "sample_count": 13,
+        "prediction_rmse": 0.001613301150489964,
+        "zero_change_rmse": 3.0637254901960675e-05
+      },
+      {
+        "round": 20,
+        "action": {
+          "kind": "look",
+          "pan_pulse": 900
+        },
+        "supported": false,
+        "sample_count": 2,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 21,
+        "action": {
+          "kind": "arm",
+          "pulse": 1500,
+          "servo_id": 3
+        },
+        "supported": false,
+        "sample_count": 1,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 22,
+        "action": {
+          "kind": "arm",
+          "pulse": 1800,
+          "servo_id": 3
+        },
+        "supported": false,
+        "sample_count": 2,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 23,
+        "action": {
+          "kind": "look",
+          "pan_pulse": 1500
+        },
+        "supported": true,
+        "sample_count": 3,
+        "prediction_rmse": 0.003220059871191537,
+        "zero_change_rmse": 4.844175337268013e-05
+      },
+      {
+        "round": 24,
+        "action": {
+          "kind": "arm",
+          "pulse": 1500,
+          "servo_id": 5
+        },
+        "supported": false,
+        "sample_count": 2,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 25,
+        "action": {
+          "kind": "arm",
+          "pulse": 1500,
+          "servo_id": 4
+        },
+        "supported": false,
+        "sample_count": 0,
+        "unsupported_reason": "fewer than 3 transitions for this command kind/servo channel"
+      },
+      {
+        "round": 26,
+        "action": {
+          "duration_s": 0.3,
+          "forward": 0.0,
+          "kind": "drive",
+          "turn": -0.1
+        },
+        "supported": false,
+        "sample_count": 14,
+        "unsupported_reason": "candidate command values fall outside the observed range"
+      },
+      {
+        "round": 27,
+        "action": {
+          "duration_s": 0.3,
+          "forward": 0.0,
+          "kind": "drive",
+          "turn": -0.1
+        },
+        "supported": true,
+        "sample_count": 15,
+        "prediction_rmse": 0.001565612243406135,
+        "zero_change_rmse": 6.499143209435157e-05
+      },
+      {
+        "round": 28,
+        "action": {
+          "kind": "look",
+          "pan_pulse": 1500
+        },
+        "supported": true,
+        "sample_count": 4,
+        "prediction_rmse": 0.0029754369427027016,
+        "zero_change_rmse": 0.0
+      }
+    ]
+  }
+}

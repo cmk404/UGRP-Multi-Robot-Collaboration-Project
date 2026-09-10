@@ -1,0 +1,21 @@
+{
+  "source_sha": "2eb9fd60105f5a081c525b5199c8f9992ecdb442",
+  "config": {
+    "out_dir": "/Users/changmin/projects/ugrp/outputs/jaw-resolution-20260910-1280",
+    "robot": "r1",
+    "close_pulse": 1500,
+    "render_width": 1280,
+    "render_height": 960,
+    "seed": 11,
+    "settle_seconds": 1.0,
+    "weld": false,
+    "purpose": "bounded image-only active-perception amplitude diagnostic"
+  },
+  "error": "ValueError: Image height 960 > framebuffer height 720. Either reduce the\nimage height or specify a larger offscreen framebuffer in the model XML using\nthe clause:\n<visual>\n  <global offheight=\"my_height\"/>\n</visual>",
+  "wall_elapsed_s": 0.15,
+  "raw_result": "/Users/changmin/projects/ugrp/outputs/jaw-resolution-20260910-1280/result.json",
+  "raw_result_sha256": "0be9fd1e62aefd2c35c0311c721a61da536785deebd7392af9e0a2b09155f09c",
+  "capture_count": 0,
+  "replay_actions_sha256": "b94dee89148406e7bff6d311e471541e79e6491e2188f6fa01638e08c05212e6",
+  "probe_actions_sha256": "61a576824896df57a12c59767b54e2eecd369771da69dfeb19814465c1f018e1"
+}

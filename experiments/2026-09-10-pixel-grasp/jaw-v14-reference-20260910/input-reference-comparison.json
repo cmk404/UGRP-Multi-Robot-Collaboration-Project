@@ -1,0 +1,44 @@
+{
+  "input_round": 999,
+  "exact_image_hash_matches": {
+    "own": true,
+    "top": true
+  },
+  "source_sha": "02bcce41d12e847a152f8c67cffd35f15a888bb3",
+  "parent_source_sha": "3d91db72203600641da2fc1b36490ae62a43e729",
+  "output_only_reference": {
+    "event": "output_only_geom_center_reference",
+    "reference_scope": "projected finger geom centers, not exact fingertips",
+    "index": 999,
+    "phase": "post-replay",
+    "sim_time": 1000.2999999901698,
+    "camera": "cctv_top",
+    "image_size": [
+      1280,
+      960
+    ],
+    "points": {
+      "left_finger": {
+        "pixel": [
+          650.4913335605037,
+          558.349388332815
+        ],
+        "camera_depth_m": 2.326414201822937
+      },
+      "right_finger": {
+        "pixel": [
+          665.0187003824417,
+          554.3748496924619
+        ],
+        "camera_depth_m": 2.326414397645604
+      }
+    },
+    "connecting_axis_angle_rad": -0.26705463950533515,
+    "base_rpy_rad": [
+      -0.00010310967719955275,
+      2.576398094623354e-05,
+      0.46340378597394566
+    ]
+  },
+  "scope": "geom/contact-pad center, not fingertip surfaces; not provided to policy; source camera at z2.5 gives center height about0.1736m"
+}

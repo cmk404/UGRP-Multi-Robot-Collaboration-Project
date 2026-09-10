@@ -1,0 +1,86 @@
+{
+  "source_sha": "8626a836dfb88f0e48af020473da8c347bdead2a",
+  "baseline_input_round": 303,
+  "own_pulses": {
+    "1": 2000,
+    "3": 740,
+    "4": 2270,
+    "5": 1320,
+    "6": 2450
+  },
+  "scope": "bounded raw command response diagnostic, pixel-only analysis; output evaluator unavailable to control",
+  "probes": [
+    {
+      "label": "channel6:25",
+      "before_after_probe_index": 0,
+      "measurement_after_probe_index": 3,
+      "restored_after_probe_index": 6
+    },
+    {
+      "label": "channel6:-25",
+      "before_after_probe_index": 6,
+      "measurement_after_probe_index": 9,
+      "restored_after_probe_index": 12
+    },
+    {
+      "label": "channel4:25",
+      "before_after_probe_index": 12,
+      "measurement_after_probe_index": 15,
+      "restored_after_probe_index": 18
+    },
+    {
+      "label": "channel4:-25",
+      "before_after_probe_index": 18,
+      "measurement_after_probe_index": 21,
+      "restored_after_probe_index": 24
+    },
+    {
+      "label": "channel3:25",
+      "before_after_probe_index": 24,
+      "measurement_after_probe_index": 27,
+      "restored_after_probe_index": 30
+    },
+    {
+      "label": "channel3:-25",
+      "before_after_probe_index": 30,
+      "measurement_after_probe_index": 33,
+      "restored_after_probe_index": 36
+    },
+    {
+      "label": "channel5:25",
+      "before_after_probe_index": 36,
+      "measurement_after_probe_index": 39,
+      "restored_after_probe_index": 42
+    },
+    {
+      "label": "channel5:-25",
+      "before_after_probe_index": 42,
+      "measurement_after_probe_index": 45,
+      "restored_after_probe_index": 48
+    },
+    {
+      "label": "forward:0.025",
+      "before_after_probe_index": 48,
+      "measurement_after_probe_index": 51,
+      "restored_after_probe_index": 54
+    },
+    {
+      "label": "forward:-0.025",
+      "before_after_probe_index": 54,
+      "measurement_after_probe_index": 57,
+      "restored_after_probe_index": 60
+    },
+    {
+      "label": "turn:0.05",
+      "before_after_probe_index": 60,
+      "measurement_after_probe_index": 63,
+      "restored_after_probe_index": 66
+    },
+    {
+      "label": "turn:-0.05",
+      "before_after_probe_index": 66,
+      "measurement_after_probe_index": 69,
+      "restored_after_probe_index": 72
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "requests": 2,
+  "audit": [
+    {
+      "robot_id": "r1",
+      "round": 0,
+      "wire": "r1/wire-001.json",
+      "own": "3fdf4a55b73d437a11252fc2513905176bf024fe4042615819ab2493c58cfe6d",
+      "overhead": "84f633b096247ccf4a9bce879942f863ce4442c200754bdbb735709c68221815"
+    },
+    {
+      "robot_id": "r3",
+      "round": 0,
+      "wire": "r3/wire-001.json",
+      "own": "8aeab8b9b2d0cbded599b83971a61596f4f0691bbd78944a29f260aeacf13a19",
+      "overhead": "84f633b096247ccf4a9bce879942f863ce4442c200754bdbb735709c68221815"
+    }
+  ],
+  "checked": "exact static text + exactly two original JPEGs, correct own view and identical overhead per round; no other observation fields"
+}

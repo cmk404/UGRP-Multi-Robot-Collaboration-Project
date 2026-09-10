@@ -1,0 +1,4201 @@
+{
+  "source_sha": "7997282e25958c926feb009c3ec2fa7620263712",
+  "config": {
+    "out_dir": "/Users/changmin/projects/ugrp/outputs/jaw-v13-reference-20260910",
+    "robot": "r1",
+    "close_pulse": 1500,
+    "render_width": 1280,
+    "render_height": 960,
+    "seed": 11,
+    "settle_seconds": 1.0,
+    "weld": false,
+    "purpose": "bounded image-only active-perception amplitude diagnostic"
+  },
+  "environment": {
+    "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "mujoco": "3.12.0"
+  },
+  "startup_commands": [
+    {
+      "kind": "arm",
+      "servo_id": 1,
+      "pulse": 2000
+    },
+    {
+      "kind": "arm",
+      "servo_id": 3,
+      "pulse": 740
+    },
+    {
+      "kind": "arm",
+      "servo_id": 4,
+      "pulse": 2320
+    },
+    {
+      "kind": "arm",
+      "servo_id": 5,
+      "pulse": 1320
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 1500
+    }
+  ],
+  "input_boundary": "fixed fixture/startup plus caller-supplied previously observed own raw actions; no controller, tracker, evaluator, simulator state, or geometry feedback",
+  "replay_input": {
+    "source": "/private/tmp/ugrp-approach-grasp/experiments/2026-09-10-pixel-grasp/replay-v13-through-299.json",
+    "sha256": "cc6dcde7cd5040be8e9f79a1f358fef1b25b7c9c28116991e2243e8f81d10b01"
+  },
+  "replay_actions": [
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.8,
+      "forward": 0.15,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.8,
+      "forward": 0.15,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.8,
+      "forward": -0.049999999999999996,
+      "kind": "drive",
+      "turn": -0.0
+    },
+    {
+      "duration_s": 0.8,
+      "forward": -0.049999999999999996,
+      "kind": "drive",
+      "turn": -0.0
+    },
+    {
+      "duration_s": 0.8,
+      "forward": -0.049999999999999996,
+      "kind": "drive",
+      "turn": -0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 1550
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.8,
+      "forward": 0.15,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.8,
+      "forward": 0.15,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.8,
+      "forward": 0.15,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.8,
+      "forward": 0.15,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.8,
+      "forward": 0.15,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.8,
+      "forward": -0.049999999999999996,
+      "kind": "drive",
+      "turn": -0.0
+    },
+    {
+      "duration_s": 0.8,
+      "forward": -0.049999999999999996,
+      "kind": "drive",
+      "turn": -0.0
+    },
+    {
+      "duration_s": 0.8,
+      "forward": -0.049999999999999996,
+      "kind": "drive",
+      "turn": -0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 1650
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 1750
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 1850
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 1950
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 1850
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.8,
+      "forward": 0.15,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.8,
+      "forward": -0.049999999999999996,
+      "kind": "drive",
+      "turn": -0.0
+    },
+    {
+      "duration_s": 0.8,
+      "forward": -0.049999999999999996,
+      "kind": "drive",
+      "turn": -0.0
+    },
+    {
+      "duration_s": 0.8,
+      "forward": -0.049999999999999996,
+      "kind": "drive",
+      "turn": -0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 1900
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.8,
+      "forward": 0.15,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.8,
+      "forward": 0.15,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.8,
+      "forward": -0.049999999999999996,
+      "kind": "drive",
+      "turn": -0.0
+    },
+    {
+      "duration_s": 0.8,
+      "forward": -0.049999999999999996,
+      "kind": "drive",
+      "turn": -0.0
+    },
+    {
+      "duration_s": 0.8,
+      "forward": -0.049999999999999996,
+      "kind": "drive",
+      "turn": -0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2000
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2100
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2200
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2300
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2400
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2300
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.8,
+      "forward": 0.15,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.8,
+      "forward": 0.15,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.8,
+      "forward": -0.049999999999999996,
+      "kind": "drive",
+      "turn": -0.0
+    },
+    {
+      "duration_s": 0.8,
+      "forward": -0.049999999999999996,
+      "kind": "drive",
+      "turn": -0.0
+    },
+    {
+      "duration_s": 0.8,
+      "forward": -0.049999999999999996,
+      "kind": "drive",
+      "turn": -0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2400
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2500
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2400
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.8,
+      "forward": 0.15,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.4,
+      "forward": 0.05,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.4,
+      "forward": -0.05,
+      "kind": "drive",
+      "turn": -0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2450
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2500
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2450
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.4,
+      "forward": 0.05,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.4,
+      "forward": 0.05,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.4,
+      "forward": 0.05,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.4,
+      "forward": 0.05,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.4,
+      "forward": -0.05,
+      "kind": "drive",
+      "turn": -0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2500
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2450
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2400
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2450
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.6,
+      "forward": 0.0,
+      "kind": "drive",
+      "turn": 0.1
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.6,
+      "forward": -0.0,
+      "kind": "drive",
+      "turn": -0.1
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.6,
+      "forward": 0.0,
+      "kind": "drive",
+      "turn": -0.1
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.6,
+      "forward": -0.0,
+      "kind": "drive",
+      "turn": 0.1
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2270,
+      "servo_id": 4
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2220,
+      "servo_id": 4
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2270,
+      "servo_id": 4
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.4,
+      "forward": 0.05,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.4,
+      "forward": 0.05,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.4,
+      "forward": 0.05,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.4,
+      "forward": -0.05,
+      "kind": "drive",
+      "turn": -0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2500
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2450
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2500
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.4,
+      "forward": 0.05,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.4,
+      "forward": 0.05,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.4,
+      "forward": -0.05,
+      "kind": "drive",
+      "turn": -0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2500
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2450
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2400
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2450
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.4,
+      "forward": 0.05,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.4,
+      "forward": 0.05,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.4,
+      "forward": -0.05,
+      "kind": "drive",
+      "turn": -0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2500
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2450
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2400
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2450
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.6,
+      "forward": 0.0,
+      "kind": "drive",
+      "turn": 0.1
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.6,
+      "forward": -0.0,
+      "kind": "drive",
+      "turn": -0.1
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.6,
+      "forward": 0.0,
+      "kind": "drive",
+      "turn": -0.1
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.6,
+      "forward": 0.0,
+      "kind": "drive",
+      "turn": -0.1
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.6,
+      "forward": -0.0,
+      "kind": "drive",
+      "turn": 0.1
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.4,
+      "forward": 0.05,
+      "kind": "drive",
+      "turn": 0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.4,
+      "forward": -0.05,
+      "kind": "drive",
+      "turn": -0.0
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2500
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2450
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2400
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "look",
+      "pan_pulse": 2450
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.6,
+      "forward": 0.0,
+      "kind": "drive",
+      "turn": 0.1
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.6,
+      "forward": -0.0,
+      "kind": "drive",
+      "turn": -0.1
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2220,
+      "servo_id": 4
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2270,
+      "servo_id": 4
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2320,
+      "servo_id": 4
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2270,
+      "servo_id": 4
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 790,
+      "servo_id": 3
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 740,
+      "servo_id": 3
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 690,
+      "servo_id": 3
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    }
+  ],
+  "replay_actions_sha256": "c03301e1d3f3239635ea5a8332b299aa7ad6fae11916465baa67369b9c908932",
+  "replay": [
+    {
+      "index": 1,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 2,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 3,
+      "action": {
+        "duration_s": 0.8,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 4,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 5,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 6,
+      "action": {
+        "duration_s": 0.8,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 7,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 8,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 9,
+      "action": {
+        "duration_s": 0.8,
+        "forward": -0.049999999999999996,
+        "kind": "drive",
+        "turn": -0.0
+      }
+    },
+    {
+      "index": 10,
+      "action": {
+        "duration_s": 0.8,
+        "forward": -0.049999999999999996,
+        "kind": "drive",
+        "turn": -0.0
+      }
+    },
+    {
+      "index": 11,
+      "action": {
+        "duration_s": 0.8,
+        "forward": -0.049999999999999996,
+        "kind": "drive",
+        "turn": -0.0
+      }
+    },
+    {
+      "index": 12,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 13,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 14,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 15,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1550
+      }
+    },
+    {
+      "index": 16,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 17,
+      "action": {
+        "duration_s": 0.8,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 18,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 19,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 20,
+      "action": {
+        "duration_s": 0.8,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 21,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 22,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 23,
+      "action": {
+        "duration_s": 0.8,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 24,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 25,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 26,
+      "action": {
+        "duration_s": 0.8,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 27,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 28,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 29,
+      "action": {
+        "duration_s": 0.8,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 30,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 31,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 32,
+      "action": {
+        "duration_s": 0.8,
+        "forward": -0.049999999999999996,
+        "kind": "drive",
+        "turn": -0.0
+      }
+    },
+    {
+      "index": 33,
+      "action": {
+        "duration_s": 0.8,
+        "forward": -0.049999999999999996,
+        "kind": "drive",
+        "turn": -0.0
+      }
+    },
+    {
+      "index": 34,
+      "action": {
+        "duration_s": 0.8,
+        "forward": -0.049999999999999996,
+        "kind": "drive",
+        "turn": -0.0
+      }
+    },
+    {
+      "index": 35,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 36,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 37,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1650
+      }
+    },
+    {
+      "index": 38,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 39,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 40,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1750
+      }
+    },
+    {
+      "index": 41,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 42,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 43,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1850
+      }
+    },
+    {
+      "index": 44,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 45,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 46,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1950
+      }
+    },
+    {
+      "index": 47,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 48,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 49,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1850
+      }
+    },
+    {
+      "index": 50,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 51,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 52,
+      "action": {
+        "duration_s": 0.8,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 53,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 54,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 55,
+      "action": {
+        "duration_s": 0.8,
+        "forward": -0.049999999999999996,
+        "kind": "drive",
+        "turn": -0.0
+      }
+    },
+    {
+      "index": 56,
+      "action": {
+        "duration_s": 0.8,
+        "forward": -0.049999999999999996,
+        "kind": "drive",
+        "turn": -0.0
+      }
+    },
+    {
+      "index": 57,
+      "action": {
+        "duration_s": 0.8,
+        "forward": -0.049999999999999996,
+        "kind": "drive",
+        "turn": -0.0
+      }
+    },
+    {
+      "index": 58,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 59,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 60,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 61,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 1900
+      }
+    },
+    {
+      "index": 62,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 63,
+      "action": {
+        "duration_s": 0.8,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 64,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 65,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 66,
+      "action": {
+        "duration_s": 0.8,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 67,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 68,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 69,
+      "action": {
+        "duration_s": 0.8,
+        "forward": -0.049999999999999996,
+        "kind": "drive",
+        "turn": -0.0
+      }
+    },
+    {
+      "index": 70,
+      "action": {
+        "duration_s": 0.8,
+        "forward": -0.049999999999999996,
+        "kind": "drive",
+        "turn": -0.0
+      }
+    },
+    {
+      "index": 71,
+      "action": {
+        "duration_s": 0.8,
+        "forward": -0.049999999999999996,
+        "kind": "drive",
+        "turn": -0.0
+      }
+    },
+    {
+      "index": 72,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 73,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 74,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2000
+      }
+    },
+    {
+      "index": 75,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 76,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 77,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2100
+      }
+    },
+    {
+      "index": 78,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 79,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 80,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2200
+      }
+    },
+    {
+      "index": 81,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 82,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 83,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2300
+      }
+    },
+    {
+      "index": 84,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 85,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 86,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2400
+      }
+    },
+    {
+      "index": 87,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 88,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 89,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2300
+      }
+    },
+    {
+      "index": 90,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 91,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 92,
+      "action": {
+        "duration_s": 0.8,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 93,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 94,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 95,
+      "action": {
+        "duration_s": 0.8,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 96,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 97,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 98,
+      "action": {
+        "duration_s": 0.8,
+        "forward": -0.049999999999999996,
+        "kind": "drive",
+        "turn": -0.0
+      }
+    },
+    {
+      "index": 99,
+      "action": {
+        "duration_s": 0.8,
+        "forward": -0.049999999999999996,
+        "kind": "drive",
+        "turn": -0.0
+      }
+    },
+    {
+      "index": 100,
+      "action": {
+        "duration_s": 0.8,
+        "forward": -0.049999999999999996,
+        "kind": "drive",
+        "turn": -0.0
+      }
+    },
+    {
+      "index": 101,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 102,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 103,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2400
+      }
+    },
+    {
+      "index": 104,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 105,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 106,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2500
+      }
+    },
+    {
+      "index": 107,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 108,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 109,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2400
+      }
+    },
+    {
+      "index": 110,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 111,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 112,
+      "action": {
+        "duration_s": 0.8,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 113,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 114,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 115,
+      "action": {
+        "duration_s": 0.4,
+        "forward": 0.05,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 116,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 117,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 118,
+      "action": {
+        "duration_s": 0.4,
+        "forward": -0.05,
+        "kind": "drive",
+        "turn": -0.0
+      }
+    },
+    {
+      "index": 119,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 120,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 121,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2450
+      }
+    },
+    {
+      "index": 122,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 123,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 124,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2500
+      }
+    },
+    {
+      "index": 125,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 126,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 127,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2450
+      }
+    },
+    {
+      "index": 128,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 129,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 130,
+      "action": {
+        "duration_s": 0.4,
+        "forward": 0.05,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 131,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 132,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 133,
+      "action": {
+        "duration_s": 0.4,
+        "forward": 0.05,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 134,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 135,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 136,
+      "action": {
+        "duration_s": 0.4,
+        "forward": 0.05,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 137,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 138,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 139,
+      "action": {
+        "duration_s": 0.4,
+        "forward": 0.05,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 140,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 141,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 142,
+      "action": {
+        "duration_s": 0.4,
+        "forward": -0.05,
+        "kind": "drive",
+        "turn": -0.0
+      }
+    },
+    {
+      "index": 143,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 144,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 145,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2500
+      }
+    },
+    {
+      "index": 146,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 147,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 148,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2450
+      }
+    },
+    {
+      "index": 149,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 150,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 151,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2400
+      }
+    },
+    {
+      "index": 152,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 153,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 154,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2450
+      }
+    },
+    {
+      "index": 155,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 156,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 157,
+      "action": {
+        "duration_s": 0.6,
+        "forward": 0.0,
+        "kind": "drive",
+        "turn": 0.1
+      }
+    },
+    {
+      "index": 158,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 159,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 160,
+      "action": {
+        "duration_s": 0.6,
+        "forward": -0.0,
+        "kind": "drive",
+        "turn": -0.1
+      }
+    },
+    {
+      "index": 161,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 162,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 163,
+      "action": {
+        "duration_s": 0.6,
+        "forward": 0.0,
+        "kind": "drive",
+        "turn": -0.1
+      }
+    },
+    {
+      "index": 164,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 165,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 166,
+      "action": {
+        "duration_s": 0.6,
+        "forward": -0.0,
+        "kind": "drive",
+        "turn": 0.1
+      }
+    },
+    {
+      "index": 167,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 168,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 169,
+      "action": {
+        "kind": "arm",
+        "pulse": 2270,
+        "servo_id": 4
+      }
+    },
+    {
+      "index": 170,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 171,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 172,
+      "action": {
+        "kind": "arm",
+        "pulse": 2220,
+        "servo_id": 4
+      }
+    },
+    {
+      "index": 173,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 174,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 175,
+      "action": {
+        "kind": "arm",
+        "pulse": 2270,
+        "servo_id": 4
+      }
+    },
+    {
+      "index": 176,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 177,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 178,
+      "action": {
+        "duration_s": 0.4,
+        "forward": 0.05,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 179,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 180,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 181,
+      "action": {
+        "duration_s": 0.4,
+        "forward": 0.05,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 182,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 183,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 184,
+      "action": {
+        "duration_s": 0.4,
+        "forward": 0.05,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 185,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 186,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 187,
+      "action": {
+        "duration_s": 0.4,
+        "forward": -0.05,
+        "kind": "drive",
+        "turn": -0.0
+      }
+    },
+    {
+      "index": 188,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 189,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 190,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2500
+      }
+    },
+    {
+      "index": 191,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 192,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 193,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2450
+      }
+    },
+    {
+      "index": 194,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 195,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 196,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 197,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2500
+      }
+    },
+    {
+      "index": 198,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 199,
+      "action": {
+        "duration_s": 0.4,
+        "forward": 0.05,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 200,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 201,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 202,
+      "action": {
+        "duration_s": 0.4,
+        "forward": 0.05,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 203,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 204,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 205,
+      "action": {
+        "duration_s": 0.4,
+        "forward": -0.05,
+        "kind": "drive",
+        "turn": -0.0
+      }
+    },
+    {
+      "index": 206,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 207,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 208,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2500
+      }
+    },
+    {
+      "index": 209,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 210,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 211,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2450
+      }
+    },
+    {
+      "index": 212,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 213,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 214,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2400
+      }
+    },
+    {
+      "index": 215,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 216,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 217,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2450
+      }
+    },
+    {
+      "index": 218,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 219,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 220,
+      "action": {
+        "duration_s": 0.4,
+        "forward": 0.05,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 221,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 222,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 223,
+      "action": {
+        "duration_s": 0.4,
+        "forward": 0.05,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 224,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 225,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 226,
+      "action": {
+        "duration_s": 0.4,
+        "forward": -0.05,
+        "kind": "drive",
+        "turn": -0.0
+      }
+    },
+    {
+      "index": 227,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 228,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 229,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2500
+      }
+    },
+    {
+      "index": 230,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 231,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 232,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2450
+      }
+    },
+    {
+      "index": 233,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 234,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 235,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2400
+      }
+    },
+    {
+      "index": 236,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 237,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 238,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2450
+      }
+    },
+    {
+      "index": 239,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 240,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 241,
+      "action": {
+        "duration_s": 0.6,
+        "forward": 0.0,
+        "kind": "drive",
+        "turn": 0.1
+      }
+    },
+    {
+      "index": 242,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 243,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 244,
+      "action": {
+        "duration_s": 0.6,
+        "forward": -0.0,
+        "kind": "drive",
+        "turn": -0.1
+      }
+    },
+    {
+      "index": 245,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 246,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 247,
+      "action": {
+        "duration_s": 0.6,
+        "forward": 0.0,
+        "kind": "drive",
+        "turn": -0.1
+      }
+    },
+    {
+      "index": 248,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 249,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 250,
+      "action": {
+        "duration_s": 0.6,
+        "forward": 0.0,
+        "kind": "drive",
+        "turn": -0.1
+      }
+    },
+    {
+      "index": 251,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 252,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 253,
+      "action": {
+        "duration_s": 0.6,
+        "forward": -0.0,
+        "kind": "drive",
+        "turn": 0.1
+      }
+    },
+    {
+      "index": 254,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 255,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 256,
+      "action": {
+        "duration_s": 0.4,
+        "forward": 0.05,
+        "kind": "drive",
+        "turn": 0.0
+      }
+    },
+    {
+      "index": 257,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 258,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 259,
+      "action": {
+        "duration_s": 0.4,
+        "forward": -0.05,
+        "kind": "drive",
+        "turn": -0.0
+      }
+    },
+    {
+      "index": 260,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 261,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 262,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2500
+      }
+    },
+    {
+      "index": 263,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 264,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 265,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2450
+      }
+    },
+    {
+      "index": 266,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 267,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 268,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2400
+      }
+    },
+    {
+      "index": 269,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 270,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 271,
+      "action": {
+        "kind": "look",
+        "pan_pulse": 2450
+      }
+    },
+    {
+      "index": 272,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 273,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 274,
+      "action": {
+        "duration_s": 0.6,
+        "forward": 0.0,
+        "kind": "drive",
+        "turn": 0.1
+      }
+    },
+    {
+      "index": 275,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 276,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 277,
+      "action": {
+        "duration_s": 0.6,
+        "forward": -0.0,
+        "kind": "drive",
+        "turn": -0.1
+      }
+    },
+    {
+      "index": 278,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 279,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 280,
+      "action": {
+        "kind": "arm",
+        "pulse": 2220,
+        "servo_id": 4
+      }
+    },
+    {
+      "index": 281,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 282,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 283,
+      "action": {
+        "kind": "arm",
+        "pulse": 2270,
+        "servo_id": 4
+      }
+    },
+    {
+      "index": 284,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 285,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 286,
+      "action": {
+        "kind": "arm",
+        "pulse": 2320,
+        "servo_id": 4
+      }
+    },
+    {
+      "index": 287,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 288,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 289,
+      "action": {
+        "kind": "arm",
+        "pulse": 2270,
+        "servo_id": 4
+      }
+    },
+    {
+      "index": 290,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 291,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 292,
+      "action": {
+        "kind": "arm",
+        "pulse": 790,
+        "servo_id": 3
+      }
+    },
+    {
+      "index": 293,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 294,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 295,
+      "action": {
+        "kind": "arm",
+        "pulse": 740,
+        "servo_id": 3
+      }
+    },
+    {
+      "index": 296,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 297,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 298,
+      "action": {
+        "kind": "arm",
+        "pulse": 690,
+        "servo_id": 3
+      }
+    },
+    {
+      "index": 299,
+      "action": {
+        "kind": "arm",
+        "pulse": 1500,
+        "servo_id": 1
+      }
+    },
+    {
+      "index": 300,
+      "action": {
+        "kind": "arm",
+        "pulse": 2000,
+        "servo_id": 1
+      }
+    }
+  ],
+  "probe_input": {
+    "source": "/private/tmp/ugrp-approach-grasp/experiments/2026-09-10-pixel-grasp/probe-v13-300-303.json",
+    "sha256": "e72b2f14eb856e7e90d9c7ba1fc766c5e6e7b6b913741d789223ed00bc000efa"
+  },
+  "probe_actions_sha256": "629d7f20376a9a9b86e340ee50b77493f49a414209cf3298918bc7412b9e1206",
+  "command_sequence": [
+    {
+      "kind": "arm",
+      "pulse": 740,
+      "servo_id": 3
+    },
+    {
+      "kind": "arm",
+      "pulse": 1500,
+      "servo_id": 1
+    },
+    {
+      "kind": "arm",
+      "pulse": 2000,
+      "servo_id": 1
+    },
+    {
+      "duration_s": 0.4,
+      "forward": -0.05,
+      "kind": "drive",
+      "turn": 0.0
+    }
+  ],
+  "captures": [
+    {
+      "index": 0,
+      "phase": "startup",
+      "sim_time": 1.300000000000001,
+      "files": {
+        "own": {
+          "path": "00-startup-own.jpg",
+          "sha256": "2556431cc9b47c96c3082f7f8d1f854c044d286149646589b11d49196b92d0bf"
+        },
+        "top": {
+          "path": "00-startup-top.jpg",
+          "sha256": "9f13bed7b9e6a5d22c9fbec8a96c2a4b99ea05ee57452290b6734ae30cd8a062"
+        }
+      }
+    },
+    {
+      "index": 300,
+      "phase": "post-replay",
+      "sim_time": 301.30000000071055,
+      "files": {
+        "own": {
+          "path": "300-post-replay-own.jpg",
+          "sha256": "348dfead975571eb8fd37f587f71b5e70d1e00af29481e457378e1732da27479"
+        },
+        "top": {
+          "path": "300-post-replay-top.jpg",
+          "sha256": "4d3075445dcd1b8644a9712f5127aa64bc3ad53ae0a0d308ee28385247b4042f"
+        }
+      }
+    },
+    {
+      "index": 1,
+      "phase": "before",
+      "sim_time": 301.30000000071055,
+      "files": {
+        "own": {
+          "path": "01-before-own.jpg",
+          "sha256": "348dfead975571eb8fd37f587f71b5e70d1e00af29481e457378e1732da27479"
+        },
+        "top": {
+          "path": "01-before-top.jpg",
+          "sha256": "4d3075445dcd1b8644a9712f5127aa64bc3ad53ae0a0d308ee28385247b4042f"
+        }
+      }
+    },
+    {
+      "index": 1,
+      "phase": "after",
+      "sim_time": 302.30000000071533,
+      "files": {
+        "own": {
+          "path": "01-after-own.jpg",
+          "sha256": "f566b5e389ea2eae7e8ac96c6283b43b4fe0204c2261bf4c5621a37d1764f93c"
+        },
+        "top": {
+          "path": "01-after-top.jpg",
+          "sha256": "2aff8700c1adb8fe34f25e63ba32d7245c97347b4fdddef6612973d28fd8e7d4"
+        }
+      }
+    },
+    {
+      "index": 2,
+      "phase": "before",
+      "sim_time": 302.30000000071533,
+      "files": {
+        "own": {
+          "path": "02-before-own.jpg",
+          "sha256": "f566b5e389ea2eae7e8ac96c6283b43b4fe0204c2261bf4c5621a37d1764f93c"
+        },
+        "top": {
+          "path": "02-before-top.jpg",
+          "sha256": "2aff8700c1adb8fe34f25e63ba32d7245c97347b4fdddef6612973d28fd8e7d4"
+        }
+      }
+    },
+    {
+      "index": 2,
+      "phase": "after",
+      "sim_time": 303.3000000007201,
+      "files": {
+        "own": {
+          "path": "02-after-own.jpg",
+          "sha256": "34bb374b1b8a12194dc10391686ec474623a166a5b26950f22fc464dd6b071db"
+        },
+        "top": {
+          "path": "02-after-top.jpg",
+          "sha256": "cae3e49aa1b9cad409c1d8f01fccbe1d123a8344c41c6a57fc02628f6515f8ba"
+        }
+      }
+    },
+    {
+      "index": 3,
+      "phase": "before",
+      "sim_time": 303.3000000007201,
+      "files": {
+        "own": {
+          "path": "03-before-own.jpg",
+          "sha256": "34bb374b1b8a12194dc10391686ec474623a166a5b26950f22fc464dd6b071db"
+        },
+        "top": {
+          "path": "03-before-top.jpg",
+          "sha256": "cae3e49aa1b9cad409c1d8f01fccbe1d123a8344c41c6a57fc02628f6515f8ba"
+        }
+      }
+    },
+    {
+      "index": 3,
+      "phase": "after",
+      "sim_time": 304.3000000007249,
+      "files": {
+        "own": {
+          "path": "03-after-own.jpg",
+          "sha256": "421d3144dab770359d023e0bb2d78b6266869f1c3733ae719406918099769402"
+        },
+        "top": {
+          "path": "03-after-top.jpg",
+          "sha256": "47612efca4f1cef29b3837cc5257f02828c1fddce5029731d8c2220dc856e119"
+        }
+      }
+    },
+    {
+      "index": 4,
+      "phase": "before",
+      "sim_time": 304.3000000007249,
+      "files": {
+        "own": {
+          "path": "04-before-own.jpg",
+          "sha256": "421d3144dab770359d023e0bb2d78b6266869f1c3733ae719406918099769402"
+        },
+        "top": {
+          "path": "04-before-top.jpg",
+          "sha256": "47612efca4f1cef29b3837cc5257f02828c1fddce5029731d8c2220dc856e119"
+        }
+      }
+    },
+    {
+      "index": 4,
+      "phase": "after",
+      "sim_time": 305.30000000072965,
+      "files": {
+        "own": {
+          "path": "04-after-own.jpg",
+          "sha256": "df1f80402491048a0200f956d402197893ae7c462b561e7651b8856db21229b1"
+        },
+        "top": {
+          "path": "04-after-top.jpg",
+          "sha256": "74457be2a762f5279d4dfa4c71bde3f9a7511bf2a9c97aee61451d9df2e8d6dd"
+        }
+      }
+    }
+  ],
+  "error": null,
+  "wall_elapsed_s": 16.135,
+  "files": {
+    "evaluation-only.jsonl": "0729a8af745f6372f8ac544da03ed4333c5c241806098bbda2616b507aa16e96",
+    "02-after-own.jpg": "34bb374b1b8a12194dc10391686ec474623a166a5b26950f22fc464dd6b071db",
+    "03-after-top.jpg": "47612efca4f1cef29b3837cc5257f02828c1fddce5029731d8c2220dc856e119",
+    "01-after-own.jpg": "f566b5e389ea2eae7e8ac96c6283b43b4fe0204c2261bf4c5621a37d1764f93c",
+    "04-after-top.jpg": "74457be2a762f5279d4dfa4c71bde3f9a7511bf2a9c97aee61451d9df2e8d6dd",
+    "01-before-own.jpg": "348dfead975571eb8fd37f587f71b5e70d1e00af29481e457378e1732da27479",
+    "04-before-own.jpg": "421d3144dab770359d023e0bb2d78b6266869f1c3733ae719406918099769402",
+    "00-startup-top.jpg": "9f13bed7b9e6a5d22c9fbec8a96c2a4b99ea05ee57452290b6734ae30cd8a062",
+    "03-before-own.jpg": "34bb374b1b8a12194dc10391686ec474623a166a5b26950f22fc464dd6b071db",
+    "02-before-own.jpg": "f566b5e389ea2eae7e8ac96c6283b43b4fe0204c2261bf4c5621a37d1764f93c",
+    "motion.mp4": "2ff9c4405d0e46ecd840a1e1fd23451ca9dca0a682385124ee27714dd008d620",
+    "300-post-replay-top.jpg": "4d3075445dcd1b8644a9712f5127aa64bc3ad53ae0a0d308ee28385247b4042f",
+    "02-before-top.jpg": "2aff8700c1adb8fe34f25e63ba32d7245c97347b4fdddef6612973d28fd8e7d4",
+    "300-post-replay-own.jpg": "348dfead975571eb8fd37f587f71b5e70d1e00af29481e457378e1732da27479",
+    "04-before-top.jpg": "47612efca4f1cef29b3837cc5257f02828c1fddce5029731d8c2220dc856e119",
+    "00-startup-own.jpg": "2556431cc9b47c96c3082f7f8d1f854c044d286149646589b11d49196b92d0bf",
+    "03-before-top.jpg": "cae3e49aa1b9cad409c1d8f01fccbe1d123a8344c41c6a57fc02628f6515f8ba",
+    "01-after-top.jpg": "2aff8700c1adb8fe34f25e63ba32d7245c97347b4fdddef6612973d28fd8e7d4",
+    "04-after-own.jpg": "df1f80402491048a0200f956d402197893ae7c462b561e7651b8856db21229b1",
+    "01-before-top.jpg": "4d3075445dcd1b8644a9712f5127aa64bc3ad53ae0a0d308ee28385247b4042f",
+    "02-after-top.jpg": "cae3e49aa1b9cad409c1d8f01fccbe1d123a8344c41c6a57fc02628f6515f8ba",
+    "03-after-own.jpg": "421d3144dab770359d023e0bb2d78b6266869f1c3733ae719406918099769402"
+  }
+}
