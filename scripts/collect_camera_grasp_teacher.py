@@ -115,7 +115,8 @@ class DatasetWriter:
             raise RuntimeError(f"renderer returned invalid JPEG for {relative}")
         path = self.out_dir / relative
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_bytes(jpeg)
+        with path.open("xb") as stream:
+            stream.write(jpeg)
         record = {
             "path": relative.as_posix(),
             "sha256": _sha256(jpeg),
@@ -329,10 +330,10 @@ def collect(out_dir: Path, *, seed: int, collect_probes: bool) -> dict[str, Any]
                     for delta in PROBE_DELTAS:
                         target = max(500, min(2500, nominal + delta))
                         actual_delta = target - nominal
-                        pair_id = f"{rid}_s{servo}_{actual_delta:+d}"
+                        pair_id = f"{rid}_s{servo}_requested{delta:+d}_applied{actual_delta:+d}"
                         probe = {
                             "pair_id": pair_id, "acted_robot_id": rid, "servo": servo,
-                            "delta_pwm": actual_delta, "from_phase": "preclose_open",
+                            "requested_delta_pwm": delta, "delta_pwm": actual_delta, "from_phase": "preclose_open",
                         }
                         writer.capture(
                             world,
@@ -563,7 +564,7 @@ def main() -> int:
         "error": run_report.get("error"),
     }
     _json_write(out_dir / "manifest.json", manifest)
-    print(json.dumps(manifest, ensure_ascii=False, sort_keys=True))
+    print(json.dumps({"out_dir": str(out_dir), "source_sha": manifest["source_sha"], **manifest["result"]}, ensure_ascii=False, sort_keys=True))
     return 0 if run_report["ok"] else 1
 
 

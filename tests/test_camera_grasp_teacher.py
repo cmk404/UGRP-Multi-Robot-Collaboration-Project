@@ -53,6 +53,14 @@ class CameraGraspTeacherTest(unittest.TestCase):
             self.assertEqual(privileged["probe_delta_label"]["delta_pwm"], 25)
             self.assertIn("physics_evaluation", privileged)
 
+    def test_duplicate_image_path_fails_before_overwriting_evidence(self):
+        with TemporaryDirectory() as temporary:
+            writer = DatasetWriter(Path(temporary))
+            first = writer._save_jpeg(Path("rgb/same.jpg"), JPEG)
+            with self.assertRaises(FileExistsError):
+                writer._save_jpeg(Path("rgb/same.jpg"), b"\xff\xd8new\xff\xd9")
+            self.assertEqual((Path(temporary) / first["path"]).read_bytes(), JPEG)
+
     def test_move_records_interpolator_command_chronology(self):
         world = _World()
         issued = {rid: dict(c.servo_command_pulses) for rid, c in world.controllers.items()}
