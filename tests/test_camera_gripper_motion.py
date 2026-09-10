@@ -220,3 +220,23 @@ def test_valid_outputs_are_finite_and_bounded():
     assert all(math_value == math_value and 0 <= math_value <= 1 for math_value in result["center"])
     assert all(math_value == math_value and abs(math_value) <= 1 for math_value in result["opening_axis"])
     assert result["span_px"] == result["span_px"] and result["span_px"] > 0
+
+
+def test_supported_undilated_masks_are_ephemeral_and_not_serialized():
+    tracker=GripperMotionTracker()
+    tracker.update(_jpeg(_scene(False)),None)
+    result=tracker.update(
+        _jpeg(_scene(True)),{"kind":"arm","servo_id":1,"pulse":1500}
+    )
+    assert result["valid"]
+    assert tracker.calibration_transition=={
+        "from_pulse":2000,"to_pulse":1500,"image_size":[320,240],
+    }
+    assert len(tracker.calibration_candidates)>=3
+    assert all(item["mask"].dtype==np.bool_ and item["mask"].shape==(240,320)
+               for item in tracker.calibration_candidates)
+    assert "mask" not in json.dumps(result)
+
+    tracker.update(_jpeg(_scene(True)),None)
+    assert tracker.calibration_candidates==()
+    assert tracker.calibration_transition is None

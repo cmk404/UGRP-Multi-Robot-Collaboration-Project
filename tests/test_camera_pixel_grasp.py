@@ -575,3 +575,57 @@ def test_unmeasurable_learned_sequence_records_failure_and_full_rollback():
     assert c.last_learned_outcome['measurement_unavailable'] is True
     assert c.last_decision['learned_outcome']==c.last_learned_outcome
     assert 'learned' in c.tried
+
+
+def test_sweep_topology_needs_two_distinct_close_open_cycles_before_trial():
+    c=PixelGraspController('r1');b=beam();b['width_px']=20.
+    passed={"passed":True,"candidate_count":2,"candidates":[],"reason":"pass"}
+    with patch('harness.camera_pixel_grasp.evaluate_sweep_topology',return_value=passed):
+        first=step_with(c,grip(x=.47),b)
+        assert first=={'kind':'arm','servo_id':1,'pulse':1500}
+        assert c.sweep_passes==1 and c.attempts==0
+        opened=step_with(c,grip(x=.47),b)
+        assert opened=={'kind':'arm','servo_id':1,'pulse':2000}
+        assert c.attempts==0
+        trial=step_with(c,grip(x=.47),b)
+    assert trial=={'kind':'arm','servo_id':1,'pulse':1500}
+    assert c.stage=='lift' and c.attempts==1
+    assert c.last_observation['sweep_topology']['cycle']==2
+    assert 'never assume contact or success' in c.last_decision['reason']
+
+
+def test_sweep_first_pass_is_reset_by_intervening_nonjaw_action():
+    c=PixelGraspController('r1');b=beam();b['width_px']=20.
+    passed={"passed":True,"candidate_count":1,"candidates":[],"reason":"pass"}
+    with patch('harness.camera_pixel_grasp.evaluate_sweep_topology',return_value=passed):
+        assert step_with(c,grip(x=.47),b)['pulse']==1500
+        assert step_with(c,grip(x=.47),b,active=False)=={'kind':'wait'}
+        assert c.sweep_passes==0 and c.sweep_phase is None
+        assert step_with(c,grip(x=.47),b)['pulse']==2000
+        # A later passing frame can only become a new first confirmation.
+        assert step_with(c,grip(x=.47),b)['pulse']==1500
+    assert c.sweep_passes==1 and c.attempts==0
+
+
+def test_flow_only_frame_cannot_start_sweep_confirmation():
+    c=PixelGraspController('r1');b=beam();b['width_px']=20.
+    tracked=grip(x=.47);tracked['source']='verified_optical_flow'
+    with patch('harness.camera_pixel_grasp.evaluate_sweep_topology') as topology:
+        action=step_with(c,tracked,b)
+    assert action['kind']!='arm' or action.get('servo_id')!=1
+    topology.assert_not_called()
+    assert c.sweep_passes==0 and c.attempts==0
+
+
+def test_failed_second_sweep_returns_to_normal_policy_without_recounting_frame():
+    c=PixelGraspController('r1');b=beam();b['width_px']=20.
+    passed={"passed":True,"candidate_count":1,"candidates":[],"reason":"pass"}
+    failed={"passed":False,"candidate_count":1,"candidates":[],"reason":"fail"}
+    with patch('harness.camera_pixel_grasp.evaluate_sweep_topology',side_effect=[passed,failed]) as topology:
+        step_with(c,grip(x=.47),b)
+        step_with(c,grip(x=.47),b)
+        action=step_with(c,grip(x=.47),b)
+    assert topology.call_count==2
+    assert c.sweep_passes==0 and c.sweep_phase is None and c.attempts==0
+    assert action['kind']!='arm' or action.get('servo_id')!=1
+    assert c.last_observation['sweep_topology']['passed'] is False

@@ -41,6 +41,10 @@ class GripperMotionTracker:
         self._gripper_pulse = initial_gripper_pulse
         self._max_track_age = max(1, int(max_track_age))
         self._track: dict[str, Any] | None = None
+        # Ephemeral calibration evidence for same-call consumers.  Masks are
+        # deliberately never included in the JSON-sized result dictionary.
+        self.calibration_candidates: tuple[dict[str, Any], ...] = ()
+        self.calibration_transition: dict[str, Any] | None = None
 
     @staticmethod
     def _normalized(point: np.ndarray, shape: tuple[int, ...]) -> list[float]:
@@ -192,6 +196,12 @@ class GripperMotionTracker:
             "features": features.astype(np.float32), "mask": feature_mask,
             "age": 0, "confidence": confidence, "seed_confidence": confidence,
         }
+        self.calibration_candidates = tuple({
+            "threshold": int(candidate[1]),
+            "supporters": int(supporters),
+            "axis": candidate[6].astype(np.float64).copy(),
+            "mask": np.isin(candidate[2], candidate[5]),
+        } for supporters, candidate in supported)
         return _result(
             valid=True, center=self._normalized(center, new.shape), axis=axis.tolist(),
             span=span, confidence=confidence, source="isolated_gripper_motion",
@@ -282,17 +292,26 @@ class GripperMotionTracker:
         )
 
     def update(self, top_jpeg: bytes, previous_action: dict | None) -> dict[str, Any]:
+        self.calibration_candidates = ()
+        self.calibration_transition = None
         frame = _decode(top_jpeg)
         if frame is None:
             self._prev = None
             self._track = None
             return _result(reason="top_jpeg is not a decodable image")
-        changed, pulse = self._gripper_change(previous_action, self._gripper_pulse)
+        prior_pulse = self._gripper_pulse
+        changed, pulse = self._gripper_change(previous_action, prior_pulse)
         self._gripper_pulse = pulse
         if self._prev is None:
             result = _result(reason="waiting for a prior top-camera frame")
         elif changed:
             result = self._calibrate(self._prev, frame)
+            if result["valid"] and self.calibration_candidates:
+                self.calibration_transition = {
+                    "from_pulse": prior_pulse,
+                    "to_pulse": pulse,
+                    "image_size": [int(frame.shape[1]), int(frame.shape[0])],
+                }
         else:
             result = self._track_frame(self._prev, frame)
         self._prev = frame

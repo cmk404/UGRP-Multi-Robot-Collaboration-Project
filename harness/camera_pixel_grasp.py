@@ -12,6 +12,7 @@ from harness.camera_beam_features import extract_beams, select_beam
 from harness.camera_gripper_motion import GripperMotionTracker
 from harness.camera_grasp_controller import STARTUP_COMMANDS
 from harness.camera_pixel_jacobian import LocalPixelJacobian, axis_residual
+from harness.camera_sweep_trial import evaluate_sweep_topology
 
 
 SEARCH_SCALES = (1.0, .5, .25)
@@ -134,7 +135,15 @@ class PixelGraspController:
         self.basin_active_calls = 0
         self.basin_motion = []
         self.basin_target = None
+        self.sweep_phase = None
+        self.sweep_passes = 0
+        self.sweep_pass_steps = []
         self.steps = 0
+
+    def _reset_sweep_confirmation(self):
+        self.sweep_phase = None
+        self.sweep_passes = 0
+        self.sweep_pass_steps = []
 
     @staticmethod
     def _primitive_name(action):
@@ -151,6 +160,9 @@ class PixelGraspController:
 
     def _issue(self, action, reason, obs, *, test=False, label=None, learn=False):
         action = copy.deepcopy(action)
+        is_jaw = (action.get('kind') == 'arm' and action.get('servo_id') == 1)
+        if not is_jaw:
+            self._reset_sweep_confirmation()
         pulses_before = copy.deepcopy(self.pulses)
         undo = []
         if action['kind'] in ('arm', 'look'):
@@ -188,7 +200,9 @@ class PixelGraspController:
                               'basin_origin':self.basin_origin,
                               'basin_index':self.basin_index,
                               'basin_active_calls':self.basin_active_calls,
-                              'basin_target':self.basin_target}
+                              'basin_target':self.basin_target,
+                              'sweep_phase':self.sweep_phase,
+                              'sweep_passes':self.sweep_passes}
         diagnostics=getattr(self.jacobian,'diagnostics',None)
         if callable(diagnostics):
             self.last_decision['jacobian']=diagnostics()
@@ -362,6 +376,7 @@ class PixelGraspController:
 
     def step(self, own_jpeg, top_jpeg, active=True):
         self.steps += 1
+        previous_beam = copy.deepcopy(self.last_observation.get('beam'))
         gripper = self.tracker.update(top_jpeg,self.last_action)
         beam = select_beam(extract_beams(top_jpeg,robust_shaft=True),gripper.get('center') if gripper.get('valid') else None,self.beam_center)
         own_candidates = extract_beams(own_jpeg)
@@ -461,6 +476,56 @@ class PixelGraspController:
                                    'fresh open/close measurement before accepting a candidate; do not score flow drift',obs)
             self.refresh_required=False;self.measurement_rounds=0
             self.view_repair_origin=None;self.view_repair_index=0
+        if self.sweep_phase == 'await_close_frame':
+            self.sweep_phase = 'await_open_frame'
+            return self._issue(
+                {'kind':'arm','servo_id':1,'pulse':2000},
+                'open after exploratory close to obtain a fresh jaw-sweep image pair', obs,
+            )
+        if self.sweep_phase == 'await_open_frame':
+            topology = evaluate_sweep_topology(
+                self.tracker.calibration_candidates,
+                self.tracker.calibration_transition,
+                previous_beam, beam,
+                None if alignment is None else alignment.get('endpoint'),
+            )
+            if (alignment is None or abs(alignment['axis_error_rad']) >= .22
+                    or own is None):
+                topology['passed'] = False
+                topology['reason'] = (
+                    'current axis/own-camera visibility preconditions failed'
+                )
+            topology['cycle'] = self.sweep_passes + 1
+            obs['sweep_topology'] = topology
+            self.last_observation['sweep_topology'] = copy.deepcopy(topology)
+            if topology['passed'] and self.steps not in self.sweep_pass_steps:
+                self.sweep_passes += 1
+                self.sweep_pass_steps.append(self.steps)
+                if self.sweep_passes >= 2:
+                    if self.attempts >= 6:
+                        self._reset_sweep_confirmation()
+                        self.stage='blocked'
+                        return self._issue(
+                            {'kind':'wait'},'bounded capture trials exhausted',obs
+                        )
+                    self.attempts += 1
+                    self.stage='lift';self.lift_steps=0
+                    self.lift_start=copy.deepcopy(obs);self.lift_pulse=self.pulses[5]
+                    self._reset_sweep_confirmation()
+                    return self._issue(
+                        {'kind':'arm','servo_id':1,'pulse':1500},
+                        'two independent image-only jaw-sweep topology confirmations; '
+                        'begin trial closure, never assume contact or success', obs,
+                    )
+                self.sweep_phase = 'await_close_frame'
+                return self._issue(
+                    {'kind':'arm','servo_id':1,'pulse':1500},
+                    'first image-only jaw-sweep topology pass; request an independent cycle', obs,
+                )
+            self._reset_sweep_confirmation()
+            sweep_evaluated_this_step = True
+        else:
+            sweep_evaluated_this_step = False
         if alignment is None:
             self.unseen+=1
             if self.unseen>=4:
@@ -523,6 +588,30 @@ class PixelGraspController:
             return self._issue({'kind':'arm','servo_id':1,'pulse':1500},'two open-view end/axis alignments; trial closure, never assumed capture',obs)
         if aligned:
             return self._issue({'kind':'wait'},'require a second observed alignment before closure',obs)
+        sweep_eligible = (
+            not sweep_evaluated_this_step
+            and abs(alignment['axis_error_rad']) < .22 and own is not None
+            and gripper.get('valid')
+            and gripper.get('source') == 'isolated_gripper_motion'
+            and self.pulses.get(1) == 2000
+        )
+        if sweep_eligible:
+            topology = evaluate_sweep_topology(
+                self.tracker.calibration_candidates,
+                self.tracker.calibration_transition,
+                previous_beam, beam, alignment.get('endpoint'),
+            )
+            topology['cycle'] = 1
+            obs['sweep_topology'] = topology
+            self.last_observation['sweep_topology'] = copy.deepcopy(topology)
+            if topology['passed']:
+                self.sweep_passes = 1
+                self.sweep_pass_steps = [self.steps]
+                self.sweep_phase = 'await_close_frame'
+                return self._issue(
+                    {'kind':'arm','servo_id':1,'pulse':1500},
+                    'first image-only jaw-sweep topology pass; request an independent cycle', obs,
+                )
         fresh_open = (gripper.get('valid') and gripper.get('source') == 'isolated_gripper_motion'
                       and self.pulses.get(1) == 2000 and own is not None)
         if self.basin_active_calls >= BASIN_ACTIVE_BUDGET:
