@@ -1,0 +1,35 @@
+{
+  "parent_raw": "/Users/changmin/projects/ugrp/outputs/pixel-grasp-20260910-r1-v17",
+  "parent_result_sha256": "b29dbbc9f26e836e81d232fc310ff663ea0756b6736e4533d01bbf34abadd30b",
+  "parent_source": "f9d5e8ab73991439734e1b1c1af1daa372e4ccd3",
+  "prefix_rounds": 680,
+  "expected_post_replay_input_round": 680,
+  "expected_first_after_probe_input_round": 681,
+  "purpose": "output-only depth/reference and serial bounded wrist-command diagnostic; no policy feedback or independent success claim",
+  "candidates": [
+    {
+      "delta_from_own_command": 100,
+      "target_command": 840,
+      "first_probe_action_zero_based": 2,
+      "open_probe_action_zero_based": 4
+    },
+    {
+      "delta_from_own_command": -100,
+      "target_command": 640,
+      "first_probe_action_zero_based": 6,
+      "open_probe_action_zero_based": 8
+    },
+    {
+      "delta_from_own_command": 200,
+      "target_command": 940,
+      "first_probe_action_zero_based": 10,
+      "open_probe_action_zero_based": 13
+    },
+    {
+      "delta_from_own_command": -200,
+      "target_command": 540,
+      "first_probe_action_zero_based": 16,
+      "open_probe_action_zero_based": 19
+    }
+  ]
+}
