@@ -1,0 +1,861 @@
+[
+  {
+    "actor_status": "runner_failed",
+    "error": "OpenCV distribution-name metadata error before scene creation",
+    "cohort": "known-map-development-v1",
+    "run": "development_r1-open-map",
+    "source_sha": "90fa95624a7251276fbd80cfa30b8f776e191a39",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-development-v1/development_r1-open-map"
+  },
+  {
+    "source_sha": "2593bd3002b1d6e764f2108e12f99cc6840932ef",
+    "map_sha256": "f1c281c507dff1aa777d11e0f9d093b25951208571bf2c6b01560158e9b83f20",
+    "case_id": "development_r1",
+    "condition": "map",
+    "actor_status": "localization_lost",
+    "decisions": 4,
+    "wall_elapsed_s": 1.6521552079939283,
+    "evaluation": {
+      "success": false,
+      "gates": {
+        "actor_arrived": false,
+        "goal_distance": false,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 2.049996703851074,
+        "path_length_m": 8.264690097176338e-10,
+        "collision_steps": 0,
+        "physics_steps": 502,
+        "weld_steps": 0,
+        "max_tilt_rad": 7.189878352940097e-05,
+        "sim_elapsed_s": 0.9999999999999563
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-development-v2",
+    "run": "development_r1-open-map",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-development-v2/development_r1-open-map"
+  },
+  {
+    "source_sha": "a2df4025d0bc504e9cd5d441f327bb8fda05dddd",
+    "map_sha256": "f1c281c507dff1aa777d11e0f9d093b25951208571bf2c6b01560158e9b83f20",
+    "case_id": "development_r1",
+    "condition": "map",
+    "actor_status": "arrived",
+    "decisions": 60,
+    "wall_elapsed_s": 8.238241041006404,
+    "evaluation": {
+      "success": true,
+      "gates": {
+        "actor_arrived": true,
+        "goal_distance": true,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 0.16027083291759048,
+        "path_length_m": 2.076347194243178,
+        "collision_steps": 0,
+        "physics_steps": 7652,
+        "weld_steps": 0,
+        "max_tilt_rad": 0.00010740224847022578,
+        "sim_elapsed_s": 15.300000000001623
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-development-v3",
+    "run": "development_r1-open-map",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-development-v3/development_r1-open-map"
+  },
+  {
+    "source_sha": "a2df4025d0bc504e9cd5d441f327bb8fda05dddd",
+    "map_sha256": "0a54ebfbc5463dcc9b8c1b73a9b0218f2dd662da3c9583e4941229d080d014b0",
+    "case_id": "development_r1",
+    "condition": "map",
+    "actor_status": "no_map_route",
+    "decisions": 65,
+    "wall_elapsed_s": 10.183291875000577,
+    "evaluation": {
+      "success": false,
+      "gates": {
+        "actor_arrived": false,
+        "goal_distance": false,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 1.1350942168627132,
+        "path_length_m": 1.8220783832761216,
+        "collision_steps": 0,
+        "physics_steps": 8277,
+        "weld_steps": 0,
+        "max_tilt_rad": 0.00010684010834114674,
+        "sim_elapsed_s": 16.550000000000928
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-development-v3",
+    "run": "development_r1-slalom-map",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-development-v3/development_r1-slalom-map"
+  },
+  {
+    "source_sha": "a2df4025d0bc504e9cd5d441f327bb8fda05dddd",
+    "map_sha256": "f13e097f58cb4f4e2aee8cc6b904a5f8e6ef08be38e36dc2be49a76759bafb68",
+    "case_id": "development_r1",
+    "condition": "map",
+    "actor_status": "no_map_route",
+    "decisions": 1,
+    "wall_elapsed_s": 0.6116074589954223,
+    "evaluation": {
+      "success": false,
+      "gates": {
+        "actor_arrived": false,
+        "goal_distance": false,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 2.0499967032310424,
+        "path_length_m": 2.0643667489528952e-10,
+        "collision_steps": 0,
+        "physics_steps": 127,
+        "weld_steps": 0,
+        "max_tilt_rad": 7.189877618080791e-05,
+        "sim_elapsed_s": 0.2500000000000002
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-development-v3",
+    "run": "development_r1-narrow-map",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-development-v3/development_r1-narrow-map"
+  },
+  {
+    "source_sha": "a0f070ec3684497574af35c9a693822d996df3d2",
+    "map_sha256": "f1c281c507dff1aa777d11e0f9d093b25951208571bf2c6b01560158e9b83f20",
+    "case_id": "development_r1",
+    "condition": "map",
+    "actor_status": "arrived",
+    "decisions": 63,
+    "wall_elapsed_s": 8.984480375002022,
+    "evaluation": {
+      "success": true,
+      "gates": {
+        "actor_arrived": true,
+        "goal_distance": true,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 0.12041020351061503,
+        "path_length_m": 1.9576485908906456,
+        "collision_steps": 0,
+        "physics_steps": 8327,
+        "weld_steps": 0,
+        "max_tilt_rad": 0.00010758508634331125,
+        "sim_elapsed_s": 16.650000000000873
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-development-v4",
+    "run": "development_r1-open-map",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-development-v4/development_r1-open-map"
+  },
+  {
+    "source_sha": "a0f070ec3684497574af35c9a693822d996df3d2",
+    "map_sha256": "0a54ebfbc5463dcc9b8c1b73a9b0218f2dd662da3c9583e4941229d080d014b0",
+    "case_id": "development_r1",
+    "condition": "map",
+    "actor_status": "no_map_route",
+    "decisions": 57,
+    "wall_elapsed_s": 10.154369124997174,
+    "evaluation": {
+      "success": false,
+      "gates": {
+        "actor_arrived": false,
+        "goal_distance": false,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 1.6117427032610687,
+        "path_length_m": 1.3080171708644577,
+        "collision_steps": 0,
+        "physics_steps": 7652,
+        "weld_steps": 0,
+        "max_tilt_rad": 0.00010753797951984806,
+        "sim_elapsed_s": 15.300000000001623
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-development-v4",
+    "run": "development_r1-slalom-map",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-development-v4/development_r1-slalom-map"
+  },
+  {
+    "source_sha": "a0f070ec3684497574af35c9a693822d996df3d2",
+    "map_sha256": "f13e097f58cb4f4e2aee8cc6b904a5f8e6ef08be38e36dc2be49a76759bafb68",
+    "case_id": "development_r1",
+    "condition": "map",
+    "actor_status": "no_map_route",
+    "decisions": 1,
+    "wall_elapsed_s": 0.6266719580016797,
+    "evaluation": {
+      "success": false,
+      "gates": {
+        "actor_arrived": false,
+        "goal_distance": false,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 2.0499967032310424,
+        "path_length_m": 2.0643667489528952e-10,
+        "collision_steps": 0,
+        "physics_steps": 127,
+        "weld_steps": 0,
+        "max_tilt_rad": 7.189877618080791e-05,
+        "sim_elapsed_s": 0.2500000000000002
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-development-v4",
+    "run": "development_r1-narrow-map",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-development-v4/development_r1-narrow-map"
+  },
+  {
+    "source_sha": "9428f09ab29bec6cba9d194c4d096c9924116031",
+    "map_sha256": "f1c281c507dff1aa777d11e0f9d093b25951208571bf2c6b01560158e9b83f20",
+    "case_id": "development_r1",
+    "condition": "map",
+    "actor_status": "calibration_insufficient_visual_signal",
+    "decisions": 24,
+    "wall_elapsed_s": 4.379968708002707,
+    "evaluation": {
+      "success": false,
+      "gates": {
+        "actor_arrived": false,
+        "goal_distance": false,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 1.9984816792229536,
+        "path_length_m": 0.08348563393797499,
+        "collision_steps": 0,
+        "physics_steps": 4727,
+        "weld_steps": 0,
+        "max_tilt_rad": 8.098375366056902e-05,
+        "sim_elapsed_s": 9.450000000000292
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-development-v5",
+    "run": "development_r1-open-map",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-development-v5/development_r1-open-map"
+  },
+  {
+    "source_sha": "9428f09ab29bec6cba9d194c4d096c9924116031",
+    "map_sha256": "0a54ebfbc5463dcc9b8c1b73a9b0218f2dd662da3c9583e4941229d080d014b0",
+    "case_id": "development_r1",
+    "condition": "map",
+    "actor_status": "calibration_insufficient_visual_signal",
+    "decisions": 23,
+    "wall_elapsed_s": 4.628253375005443,
+    "evaluation": {
+      "success": false,
+      "gates": {
+        "actor_arrived": false,
+        "goal_distance": false,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 1.998416113204115,
+        "path_length_m": 0.0835511984845929,
+        "collision_steps": 0,
+        "physics_steps": 4527,
+        "weld_steps": 0,
+        "max_tilt_rad": 8.098375366276844e-05,
+        "sim_elapsed_s": 9.050000000000159
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-development-v5",
+    "run": "development_r1-slalom-map",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-development-v5/development_r1-slalom-map"
+  },
+  {
+    "source_sha": "9428f09ab29bec6cba9d194c4d096c9924116031",
+    "map_sha256": "f13e097f58cb4f4e2aee8cc6b904a5f8e6ef08be38e36dc2be49a76759bafb68",
+    "case_id": "development_r1",
+    "condition": "map",
+    "actor_status": "no_map_route",
+    "decisions": 1,
+    "wall_elapsed_s": 0.6235778749978635,
+    "evaluation": {
+      "success": false,
+      "gates": {
+        "actor_arrived": false,
+        "goal_distance": false,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 2.0499967032310424,
+        "path_length_m": 2.0643667489528952e-10,
+        "collision_steps": 0,
+        "physics_steps": 127,
+        "weld_steps": 0,
+        "max_tilt_rad": 7.189877618080791e-05,
+        "sim_elapsed_s": 0.2500000000000002
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-development-v5",
+    "run": "development_r1-narrow-map",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-development-v5/development_r1-narrow-map"
+  },
+  {
+    "source_sha": "9e810183e4ed5053661e660f17817689b0f7cd29",
+    "map_sha256": "f1c281c507dff1aa777d11e0f9d093b25951208571bf2c6b01560158e9b83f20",
+    "case_id": "development_r1",
+    "condition": "map",
+    "actor_status": "arrived",
+    "decisions": 71,
+    "wall_elapsed_s": 9.874664624992874,
+    "evaluation": {
+      "success": true,
+      "gates": {
+        "actor_arrived": true,
+        "goal_distance": true,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 0.16352414050936495,
+        "path_length_m": 1.9430800742486938,
+        "collision_steps": 0,
+        "physics_steps": 10952,
+        "weld_steps": 0,
+        "max_tilt_rad": 0.00010762420731068405,
+        "sim_elapsed_s": 21.899999999997963
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-development-v6",
+    "run": "development_r1-open-map",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-development-v6/development_r1-open-map"
+  },
+  {
+    "source_sha": "9e810183e4ed5053661e660f17817689b0f7cd29",
+    "map_sha256": "0a54ebfbc5463dcc9b8c1b73a9b0218f2dd662da3c9583e4941229d080d014b0",
+    "case_id": "development_r1",
+    "condition": "map",
+    "actor_status": "arrived",
+    "decisions": 144,
+    "wall_elapsed_s": 22.04029420801089,
+    "evaluation": {
+      "success": true,
+      "gates": {
+        "actor_arrived": true,
+        "goal_distance": true,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 0.1572636673150724,
+        "path_length_m": 3.466845301279137,
+        "collision_steps": 0,
+        "physics_steps": 20077,
+        "weld_steps": 0,
+        "max_tilt_rad": 0.0001076108013993786,
+        "sim_elapsed_s": 40.150000000004816
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-development-v6",
+    "run": "development_r1-slalom-map",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-development-v6/development_r1-slalom-map"
+  },
+  {
+    "source_sha": "9e810183e4ed5053661e660f17817689b0f7cd29",
+    "map_sha256": "f13e097f58cb4f4e2aee8cc6b904a5f8e6ef08be38e36dc2be49a76759bafb68",
+    "case_id": "development_r1",
+    "condition": "map",
+    "actor_status": "no_map_route",
+    "decisions": 1,
+    "wall_elapsed_s": 0.6921600420027971,
+    "evaluation": {
+      "success": false,
+      "gates": {
+        "actor_arrived": false,
+        "goal_distance": false,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 2.0499967032310424,
+        "path_length_m": 2.0643667489528952e-10,
+        "collision_steps": 0,
+        "physics_steps": 127,
+        "weld_steps": 0,
+        "max_tilt_rad": 7.189877618080791e-05,
+        "sim_elapsed_s": 0.2500000000000002
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-development-v6",
+    "run": "development_r1-narrow-map",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-development-v6/development_r1-narrow-map"
+  },
+  {
+    "source_sha": "9e810183e4ed5053661e660f17817689b0f7cd29",
+    "map_sha256": "f1c281c507dff1aa777d11e0f9d093b25951208571bf2c6b01560158e9b83f20",
+    "case_id": "heldout_r1",
+    "condition": "map",
+    "actor_status": "arrived",
+    "decisions": 70,
+    "wall_elapsed_s": 11.02674320799997,
+    "evaluation": {
+      "success": true,
+      "gates": {
+        "actor_arrived": true,
+        "goal_distance": true,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 0.12130879027105566,
+        "path_length_m": 1.9857954012534744,
+        "collision_steps": 0,
+        "physics_steps": 10827,
+        "weld_steps": 0,
+        "max_tilt_rad": 0.00010761919573627899,
+        "sim_elapsed_s": 21.6499999999981
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-heldout-v1",
+    "run": "heldout_r1-open-map",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-heldout-v1/heldout_r1-open-map"
+  },
+  {
+    "source_sha": "9e810183e4ed5053661e660f17817689b0f7cd29",
+    "map_sha256": "f1c281c507dff1aa777d11e0f9d093b25951208571bf2c6b01560158e9b83f20",
+    "case_id": "heldout_r1",
+    "condition": "direct",
+    "actor_status": "arrived",
+    "decisions": 70,
+    "wall_elapsed_s": 11.103614749998087,
+    "evaluation": {
+      "success": true,
+      "gates": {
+        "actor_arrived": true,
+        "goal_distance": true,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 0.12130879027105566,
+        "path_length_m": 1.9857954012534744,
+        "collision_steps": 0,
+        "physics_steps": 10827,
+        "weld_steps": 0,
+        "max_tilt_rad": 0.00010761919573627899,
+        "sim_elapsed_s": 21.6499999999981
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-heldout-v1",
+    "run": "heldout_r1-open-direct",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-heldout-v1/heldout_r1-open-direct"
+  },
+  {
+    "source_sha": "9e810183e4ed5053661e660f17817689b0f7cd29",
+    "map_sha256": "0a54ebfbc5463dcc9b8c1b73a9b0218f2dd662da3c9583e4941229d080d014b0",
+    "case_id": "heldout_r1",
+    "condition": "map",
+    "actor_status": "arrived",
+    "decisions": 138,
+    "wall_elapsed_s": 23.446178792000865,
+    "evaluation": {
+      "success": true,
+      "gates": {
+        "actor_arrived": true,
+        "goal_distance": true,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 0.1373744068236655,
+        "path_length_m": 3.4145649042714,
+        "collision_steps": 0,
+        "physics_steps": 19327,
+        "weld_steps": 0,
+        "max_tilt_rad": 0.00010759201299929288,
+        "sim_elapsed_s": 38.65000000000298
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-heldout-v1",
+    "run": "heldout_r1-slalom-map",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-heldout-v1/heldout_r1-slalom-map"
+  },
+  {
+    "source_sha": "9e810183e4ed5053661e660f17817689b0f7cd29",
+    "map_sha256": "0a54ebfbc5463dcc9b8c1b73a9b0218f2dd662da3c9583e4941229d080d014b0",
+    "case_id": "heldout_r1",
+    "condition": "direct",
+    "actor_status": "budget_exhausted",
+    "decisions": 240,
+    "wall_elapsed_s": 35.24482429200725,
+    "evaluation": {
+      "success": false,
+      "gates": {
+        "actor_arrived": false,
+        "goal_distance": false,
+        "zero_map_collisions": false,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 1.6188636857287302,
+        "path_length_m": 0.5807553364128019,
+        "collision_steps": 25798,
+        "physics_steps": 32077,
+        "weld_steps": 0,
+        "max_tilt_rad": 0.0009054794810628508,
+        "sim_elapsed_s": 64.15000000002863
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-heldout-v1",
+    "run": "heldout_r1-slalom-direct",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-heldout-v1/heldout_r1-slalom-direct"
+  },
+  {
+    "source_sha": "9e810183e4ed5053661e660f17817689b0f7cd29",
+    "map_sha256": "f13e097f58cb4f4e2aee8cc6b904a5f8e6ef08be38e36dc2be49a76759bafb68",
+    "case_id": "heldout_r1",
+    "condition": "map",
+    "actor_status": "no_map_route",
+    "decisions": 1,
+    "wall_elapsed_s": 0.7848057500086725,
+    "evaluation": {
+      "success": false,
+      "gates": {
+        "actor_arrived": false,
+        "goal_distance": false,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 2.030611702773417,
+        "path_length_m": 2.0643750650067405e-10,
+        "collision_steps": 0,
+        "physics_steps": 127,
+        "weld_steps": 0,
+        "max_tilt_rad": 7.18987761813464e-05,
+        "sim_elapsed_s": 0.2500000000000002
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-heldout-v1",
+    "run": "heldout_r1-narrow-map",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-heldout-v1/heldout_r1-narrow-map"
+  },
+  {
+    "source_sha": "9e810183e4ed5053661e660f17817689b0f7cd29",
+    "map_sha256": "f1c281c507dff1aa777d11e0f9d093b25951208571bf2c6b01560158e9b83f20",
+    "case_id": "heldout_r3",
+    "condition": "map",
+    "actor_status": "arrived",
+    "decisions": 72,
+    "wall_elapsed_s": 11.592166082991753,
+    "evaluation": {
+      "success": true,
+      "gates": {
+        "actor_arrived": true,
+        "goal_distance": true,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 0.14839201234352623,
+        "path_length_m": 1.9867919193093742,
+        "collision_steps": 0,
+        "physics_steps": 11152,
+        "weld_steps": 0,
+        "max_tilt_rad": 0.00010760778636463731,
+        "sim_elapsed_s": 22.29999999999774
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-heldout-v1",
+    "run": "heldout_r3-open-map",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-heldout-v1/heldout_r3-open-map"
+  },
+  {
+    "source_sha": "9e810183e4ed5053661e660f17817689b0f7cd29",
+    "map_sha256": "f1c281c507dff1aa777d11e0f9d093b25951208571bf2c6b01560158e9b83f20",
+    "case_id": "heldout_r3",
+    "condition": "direct",
+    "actor_status": "arrived",
+    "decisions": 72,
+    "wall_elapsed_s": 11.548242292003124,
+    "evaluation": {
+      "success": true,
+      "gates": {
+        "actor_arrived": true,
+        "goal_distance": true,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 0.14839201234352623,
+        "path_length_m": 1.9867919193093742,
+        "collision_steps": 0,
+        "physics_steps": 11152,
+        "weld_steps": 0,
+        "max_tilt_rad": 0.00010760778636463731,
+        "sim_elapsed_s": 22.29999999999774
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-heldout-v1",
+    "run": "heldout_r3-open-direct",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-heldout-v1/heldout_r3-open-direct"
+  },
+  {
+    "source_sha": "9e810183e4ed5053661e660f17817689b0f7cd29",
+    "map_sha256": "0a54ebfbc5463dcc9b8c1b73a9b0218f2dd662da3c9583e4941229d080d014b0",
+    "case_id": "heldout_r3",
+    "condition": "map",
+    "actor_status": "arrived",
+    "decisions": 147,
+    "wall_elapsed_s": 23.19158920799964,
+    "evaluation": {
+      "success": true,
+      "gates": {
+        "actor_arrived": true,
+        "goal_distance": true,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 0.14332619092541726,
+        "path_length_m": 3.537162505118162,
+        "collision_steps": 0,
+        "physics_steps": 20527,
+        "weld_steps": 0,
+        "max_tilt_rad": 0.0001075967472763386,
+        "sim_elapsed_s": 41.050000000005916
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-heldout-v1",
+    "run": "heldout_r3-slalom-map",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-heldout-v1/heldout_r3-slalom-map"
+  },
+  {
+    "source_sha": "9e810183e4ed5053661e660f17817689b0f7cd29",
+    "map_sha256": "0a54ebfbc5463dcc9b8c1b73a9b0218f2dd662da3c9583e4941229d080d014b0",
+    "case_id": "heldout_r3",
+    "condition": "direct",
+    "actor_status": "budget_exhausted",
+    "decisions": 240,
+    "wall_elapsed_s": 34.77631170800305,
+    "evaluation": {
+      "success": false,
+      "gates": {
+        "actor_arrived": false,
+        "goal_distance": false,
+        "zero_map_collisions": false,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 1.6187492071048286,
+        "path_length_m": 0.6015312794673278,
+        "collision_steps": 25537,
+        "physics_steps": 32152,
+        "weld_steps": 0,
+        "max_tilt_rad": 0.000887676669856949,
+        "sim_elapsed_s": 64.30000000002828
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-heldout-v1",
+    "run": "heldout_r3-slalom-direct",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-heldout-v1/heldout_r3-slalom-direct"
+  },
+  {
+    "source_sha": "9e810183e4ed5053661e660f17817689b0f7cd29",
+    "map_sha256": "f13e097f58cb4f4e2aee8cc6b904a5f8e6ef08be38e36dc2be49a76759bafb68",
+    "case_id": "heldout_r3",
+    "condition": "map",
+    "actor_status": "no_map_route",
+    "decisions": 1,
+    "wall_elapsed_s": 0.7005015000031563,
+    "evaluation": {
+      "success": false,
+      "gates": {
+        "actor_arrived": false,
+        "goal_distance": false,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 2.0903802720735483,
+        "path_length_m": 2.064364667829793e-10,
+        "collision_steps": 0,
+        "physics_steps": 127,
+        "weld_steps": 0,
+        "max_tilt_rad": 7.189877618138927e-05,
+        "sim_elapsed_s": 0.2500000000000002
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0,
+    "cohort": "known-map-heldout-v1",
+    "run": "heldout_r3-narrow-map",
+    "raw_dir": "/Users/changmin/projects/ugrp/outputs/known-map-heldout-v1/heldout_r3-narrow-map"
+  }
+]

@@ -60,7 +60,7 @@ def plot_pair(map_run, direct_run, target):
         cv2.polylines(img,[points],False,color,3,cv2.LINE_AA)
         cv2.circle(img,tuple(points[-1]),6,color,-1,cv2.LINE_AA)
         result=json.loads((run/'result.json').read_text()); ev=result['evaluation']
-        summaries.append((f"{label}: {result['actor_status']} | contacts={ev['metrics']['collision_steps']} | {result['decisions']} decisions",color))
+        summaries.append((f"{label}: {result['actor_status']} | contact_steps={ev['metrics']['collision_steps']} | {result['decisions']} decisions",color))
     for i,(line,color) in enumerate(summaries):
         cv2.putText(img,line,(pad,height-55+i*26),cv2.FONT_HERSHEY_SIMPLEX,.65,color,2,cv2.LINE_AA)
     if not cv2.imwrite(str(target),img): raise RuntimeError('plot write failed')

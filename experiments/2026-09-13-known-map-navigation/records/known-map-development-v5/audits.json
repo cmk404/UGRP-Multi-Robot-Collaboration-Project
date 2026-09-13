@@ -1,0 +1,65 @@
+[
+  {
+    "audit_pass": true,
+    "navigation_success": false,
+    "condition": "map",
+    "robot_id": "r1",
+    "frames": 24,
+    "map_sha256": "f1c281c507dff1aa777d11e0f9d093b25951208571bf2c6b01560158e9b83f20",
+    "manifest_files": 56,
+    "source_check": {
+      "forbidden_runtime_imports": [],
+      "runner_decide_positional_inputs": 3
+    },
+    "claim_limit": "artifact replay checks saved inputs and code boundaries; input logging does not cryptographically prove hidden state was absent at runtime",
+    "localization_error": {
+      "valid_frames": 24,
+      "mean_m": 0.017775810790163684,
+      "max_m": 0.019364686956764906,
+      "reference": "output-only pose interpolated between ~0.1 s samples; no control use"
+    },
+    "name": "development_r1-open-map"
+  },
+  {
+    "audit_pass": true,
+    "navigation_success": false,
+    "condition": "map",
+    "robot_id": "r1",
+    "frames": 23,
+    "map_sha256": "0a54ebfbc5463dcc9b8c1b73a9b0218f2dd662da3c9583e4941229d080d014b0",
+    "manifest_files": 54,
+    "source_check": {
+      "forbidden_runtime_imports": [],
+      "runner_decide_positional_inputs": 3
+    },
+    "claim_limit": "artifact replay checks saved inputs and code boundaries; input logging does not cryptographically prove hidden state was absent at runtime",
+    "localization_error": {
+      "valid_frames": 23,
+      "mean_m": 0.01779472499049109,
+      "max_m": 0.019312176677124863,
+      "reference": "output-only pose interpolated between ~0.1 s samples; no control use"
+    },
+    "name": "development_r1-slalom-map"
+  },
+  {
+    "audit_pass": true,
+    "navigation_success": false,
+    "condition": "map",
+    "robot_id": "r1",
+    "frames": 1,
+    "map_sha256": "f13e097f58cb4f4e2aee8cc6b904a5f8e6ef08be38e36dc2be49a76759bafb68",
+    "manifest_files": 10,
+    "source_check": {
+      "forbidden_runtime_imports": [],
+      "runner_decide_positional_inputs": 3
+    },
+    "claim_limit": "artifact replay checks saved inputs and code boundaries; input logging does not cryptographically prove hidden state was absent at runtime",
+    "localization_error": {
+      "valid_frames": 1,
+      "mean_m": 0.01893655998271172,
+      "max_m": 0.01893655998271172,
+      "reference": "output-only pose interpolated between ~0.1 s samples; no control use"
+    },
+    "name": "development_r1-narrow-map"
+  }
+]

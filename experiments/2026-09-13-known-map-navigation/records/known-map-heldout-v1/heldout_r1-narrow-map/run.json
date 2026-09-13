@@ -1,0 +1,42 @@
+{
+  "schema": "ugrp.known_map_run.v1",
+  "source_sha": "9e810183e4ed5053661e660f17817689b0f7cd29",
+  "map_sha256": "f13e097f58cb4f4e2aee8cc6b904a5f8e6ef08be38e36dc2be49a76759bafb68",
+  "condition": "map",
+  "robot_id": "r1",
+  "private_setup": {
+    "case_id": "heldout_r1",
+    "robot_id": "r1",
+    "start_xy_m": [
+      -0.48,
+      -2.5
+    ],
+    "start_yaw_deg": 12
+  },
+  "max_steps": 240,
+  "controller": "classical RGB localization, visual actuator calibration, static-map A*",
+  "actor_inputs": [
+    "authored static map with fixed camera calibration",
+    "own RGB JPEG",
+    "common top RGB JPEG",
+    "frame index",
+    "own issued command history"
+  ],
+  "own_camera_usage": "decoded and preserved; current localization and control use top RGB only",
+  "prohibited_runtime_inputs": [
+    "simulator pose",
+    "joint measurements",
+    "contacts",
+    "referee evaluation"
+  ],
+  "environment": {
+    "python": "3.12.13",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "opencv_imported": "5.0.0",
+    "numpy": "2.5.2",
+    "mujoco": "3.12.0"
+  },
+  "model_calls": 0,
+  "model_cost_usd": 0,
+  "scope": "one unloaded active robot per run; fixed cameras; weld OFF"
+}
