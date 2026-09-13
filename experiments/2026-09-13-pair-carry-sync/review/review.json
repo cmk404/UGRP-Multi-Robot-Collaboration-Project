@@ -1,0 +1,48 @@
+{
+  "schema": "ugrp.pair_carry_final_independent_review.v1",
+  "reviewed_at": "2026-09-14",
+  "source_sha": "99898d8983315e39635c063e0b6b430c01818b22",
+  "simulator_rerun": false,
+  "verdict": "trace_consistent_and_no_sampled_visual_conflict",
+  "cohort": {
+    "runs": 52,
+    "physical_successes": 46,
+    "physical_failures": 6,
+    "sync_successes": 26,
+    "sync_total": 26,
+    "carry_trace_rows": 970,
+    "applied_action_mismatches": 0,
+    "trace_boundary_tolerance_s": 0.002
+  },
+  "failed_runs": [
+    "departure-r1-060-baseline",
+    "departure-r1-100-baseline",
+    "departure-r3-060-baseline",
+    "departure-r3-100-baseline",
+    "midcarry-r3-035-baseline",
+    "midcarry-r3-075-baseline"
+  ],
+  "blackout_sync": {
+    "report-r1-000-sync": {"hold_indices": [0, 1, 2, 3, 4, 5], "zero_during_omission": true, "resume_index": 6, "resume_observed_s": 1.2, "resume_epoch": 1},
+    "report-r3-000-sync": {"hold_indices": [0, 1, 2, 3, 4, 5], "zero_during_omission": true, "resume_index": 6, "resume_observed_s": 1.2, "resume_epoch": 1},
+    "report-r1-120-sync": {"hold_indices": [7, 8, 9, 10, 11], "zero_during_omission": true, "resume_index": 12, "resume_observed_s": 2.4, "resume_epoch": 1},
+    "report-r3-120-sync": {"hold_indices": [7, 8, 9, 10, 11], "zero_during_omission": true, "resume_index": 12, "resume_observed_s": 2.4, "resume_epoch": 1}
+  },
+  "video_samples": {
+    "departure-r1-100-sync": [14, 16, 18, 20, 22, 24],
+    "departure-r3-100-sync": [14, 16, 18, 20, 22, 24],
+    "midcarry-r3-075-sync": [14, 16, 18, 20, 22, 24],
+    "report-r3-120-sync": [14, 16, 18, 20, 22],
+    "departure-r1-100-baseline": [14, 15, 16],
+    "departure-r3-100-baseline": [14, 15, 16],
+    "midcarry-r3-075-baseline": [14, 15, 16]
+  },
+  "visual_conflicts": [],
+  "limitations": [
+    "commands do not by themselves prove physical actuation outcome",
+    "video review is sampled and referee continuity has up to 0.15 s gaps",
+    "fixed deterministic fixture does not establish real robot or broad generalization",
+    "baseline does not consume report synchronization faults",
+    "sync comparison bundles stop, skew catch-up, rejoin, and barrier effects"
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "date_kst": "2026-09-14",
+  "execution_source_sha": "99898d8983315e39635c063e0b6b430c01818b22",
+  "base_pr": 34,
+  "base_sha": "690bead094195404fd8de9f6b86d12a8ea249852",
+  "implementation_pr": 40,
+  "local_tests": {
+    "command": "python scripts/run_ci_tests.py",
+    "tests": 536,
+    "subtests": 154,
+    "result": "passed"
+  },
+  "execution_source_ci": {
+    "push": {
+      "run_id": 34764301368,
+      "offline-regressions": "success",
+      "ubuntu-simulation": "success"
+    },
+    "pull_request": {
+      "run_id": 34764378149,
+      "offline-regressions": "success",
+      "ubuntu-simulation": "success"
+    }
+  },
+  "local_restored_evidence": {
+    "runs": 55,
+    "verified_restored_files": 6638,
+    "audits_passed": 55,
+    "physical_successes_recomputed": 49,
+    "artifact": "local-readback-audit.json.gz"
+  },
+  "independent_trace_review": {
+    "carry_trace_rows": 970,
+    "mismatches": 0,
+    "artifact": "review/review.json"
+  },
+  "video_rebuild_identical": true,
+  "comparison_session": "stopped",
+  "main_merged": false,
+  "limits": [
+    "Source CI Ubuntu job is a basic rendering/motion demo, not this 52-run cohort.",
+    "The cohort and camera replay run on macOS; no hardware or independent LLM agents.",
+    "Remote publication and delivery commit checks are recorded in the PR and local delivery record after push."
+  ]
+}
