@@ -13,6 +13,8 @@ import subprocess
 import time
 import traceback
 
+import cv2
+
 from harness.known_map_navigation import KnownMapNavigator
 from sim.authored_navigation_map import load_map, map_sha256
 
@@ -58,7 +60,8 @@ def run(map_path, case, condition, out, max_steps):
         'own_camera_usage': 'decoded and preserved; current localization and control use top RGB only',
         'prohibited_runtime_inputs': ['simulator pose', 'joint measurements', 'contacts', 'referee evaluation'],
         'environment': {'python': platform.python_version(), 'platform': platform.platform(),
-            **{p: importlib.metadata.version(p) for p in ('numpy', 'mujoco', 'opencv-python')}},
+            'opencv_imported': cv2.__version__,
+            **{p: importlib.metadata.version(p) for p in ('numpy', 'mujoco')}},
         'model_calls': 0, 'model_cost_usd': 0, 'scope': 'one unloaded active robot per run; fixed cameras; weld OFF'}
     dump(out / 'run.json', metadata)
     scene = KnownMapScene(out, authored_map, case['robot_id'], case)
