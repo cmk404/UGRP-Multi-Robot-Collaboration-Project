@@ -1,8 +1,9 @@
 import unittest
 from types import SimpleNamespace
+from unittest.mock import patch
 
 from scripts.camera_short_transport_scene import ShortTransportScene
-from scripts.run_camera_short_transport_student import choose_carry_actions
+from scripts.run_camera_short_transport_student import choose_carry_actions, load_transport_models
 
 
 class ShortSceneTests(unittest.TestCase):
@@ -53,6 +54,14 @@ class ShortSceneTests(unittest.TestCase):
         self.assertEqual(choose_carry_actions(rows)['forwards'], {'r1': 0., 'r3': 0.})
         rows['r3'] = good
         self.assertEqual(choose_carry_actions(rows, True)['forwards'], {'r1': 0., 'r3': 0.})
+
+    def test_swapped_robot_model_is_rejected_before_scene_creation(self):
+        skill = {'schema': 'ugrp.camera_short_transport_skill.v1'}
+        swapped = {r: {'schema': 'ugrp.camera_short_transport_model.v1', 'robot_id': other}
+                   for r, other in (('r1', 'r3'), ('r3', 'r1'))}
+        with patch('scripts.run_camera_short_transport_student.models', return_value=(skill, swapped)):
+            with self.assertRaisesRegex(ValueError, 'identity/schema'):
+                load_transport_models(None)
 
 
 if __name__ == '__main__':

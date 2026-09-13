@@ -31,6 +31,16 @@ def choose_carry_actions(decisions, confirming=False):
             'forwards': {r: 0. if stop else float(decisions[r]['forward']) for r in ROBOTS}}
 
 
+def load_transport_models(root):
+    skill, loaded = models(root, 'short-transport-skill.json')
+    if skill.get('schema') != 'ugrp.camera_short_transport_skill.v1':
+        raise ValueError('invalid transport skill schema')
+    for rid, model in loaded.items():
+        if model.get('schema') != 'ugrp.camera_short_transport_model.v1' or model.get('robot_id') != rid:
+            raise ValueError(f'transport model identity/schema mismatch: {rid}')
+    return skill, loaded
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--grasp-model-dir', type=Path, required=True)
@@ -52,7 +62,7 @@ def main():
         p.error('varied starts need stage model and prior validated start bounds')
     grasp_root, model_root, out = args.grasp_model_dir.resolve(), args.transport_model_dir.resolve(), args.out_dir.resolve()
     _, grasp_models = models(grasp_root, 'student-skill.json')
-    transport_skill, transport_models = models(model_root, 'short-transport-skill.json')
+    transport_skill, transport_models = load_transport_models(model_root)
     replay = None
     if args.condition == 'playback':
         if args.replay_teacher_dir is None:
@@ -86,7 +96,10 @@ def main():
         report['invariants_initial'] = scene.invariant_record()
         if starts is not None:
             from scripts.run_camera_varied_start_student import load_stage_models, run_approach
-            _, stage_models = load_stage_models(args.stage_model_dir.resolve())
+            stage_skill, stage_models = load_stage_models(args.stage_model_dir.resolve())
+            report['approach_stage_skill_sha256'] = sha(args.stage_model_dir / 'varied-start-skill.json')
+            report['approach_stage_model_sha256'] = {r: {s: v['sha256'] for s, v in stages.items()}
+                                                   for r, stages in stage_skill['models'].items()}
             report.update(run_approach(scene, stage_models))
         if not report['approach_ok']:
             raise RuntimeError('RGB approach did not qualify')

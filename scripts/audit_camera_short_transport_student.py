@@ -17,12 +17,15 @@ if str(ROOT) not in sys.path:
 from scripts.camera_approach_scene import ROBOTS
 from scripts.evaluate_camera_short_transport import evaluate_transport_samples
 from scripts.run_camera_short_transport_student import choose_carry_actions
+from scripts.run_camera_varied_start_student import AXES, LIMITS, PHASES, choose_stage_actions
 
 CALL_KEYS = {"index", "robot_id", "frame_id", "stationary", "images",
              "own_command_history", "decision", "action"}
 IMAGE_KEYS = {"own", "top"}
 RGB_KEYS = {"path", "sha256"}
 ACTION_KEYS = {"kind", "forward", "turn", "duration_s"}
+APPROACH_CALL_KEYS = {"phase_index", "stage", "index", "robot_id", "frame_id",
+                      "stationary", "images", "decision", "action", "own_command_history"}
 
 
 def _digest(data: bytes) -> str:
@@ -113,6 +116,179 @@ def _predict(model, own, top, initial_own, initial_top, history):
     from harness.camera_short_transport_student import predict_transport
     return predict_transport(model, own, top, initial_own, initial_top,
                              own_command_history=history)
+
+
+def _predict_stage(model, own, top):
+    from harness.camera_varied_start_student import predict_stage
+    return predict_stage(model, own, top)
+
+
+def _stage_models(root: Path, report: dict[str, Any]) -> dict[str, dict[str, dict[str, Any]]]:
+    manifest_path = _safe_file(root, "varied-start-skill.json")
+    if report.get("approach_stage_skill_sha256") != _digest(manifest_path.read_bytes()):
+        raise ValueError("approach stage manifest hash mismatch")
+    manifest = json.loads(manifest_path.read_text())
+    records, reported = manifest.get("models"), report.get("approach_stage_model_sha256")
+    if (not isinstance(records, dict) or set(records) != set(ROBOTS)
+            or not isinstance(reported, dict) or set(reported) != set(ROBOTS)):
+        raise ValueError("approach stage model coverage mismatch")
+    result = {}
+    for rid in ROBOTS:
+        if (not isinstance(records[rid], dict) or set(records[rid]) != set(AXES)
+                or not isinstance(reported[rid], dict) or set(reported[rid]) != set(AXES)):
+            raise ValueError(f"approach stage coverage mismatch: {rid}")
+        result[rid] = {}
+        for stage in AXES:
+            record = records[rid][stage]
+            if not isinstance(record, dict) or not {"path", "sha256"} <= set(record):
+                raise ValueError(f"approach stage model record mismatch: {rid}/{stage}")
+            path = _safe_file(root, record["path"])
+            digest = _digest(path.read_bytes())
+            if digest != record["sha256"] or digest != reported[rid][stage]:
+                raise ValueError(f"approach stage model hash mismatch: {rid}/{stage}")
+            model = json.loads(path.read_text())
+            if model.get("robot_id") != rid or model.get("stage") != stage:
+                raise ValueError(f"approach stage model identity mismatch: {rid}/{stage}")
+            result[rid][stage] = model
+    return result
+
+
+def _audit_approach(run_dir: Path, stage_root: Path | None,
+                    report: dict[str, Any]) -> dict[str, Any]:
+    calls = report.get("approach_calls", [])
+    has_stage_evidence = ("approach_stage_skill_sha256" in report
+                          or "approach_stage_model_sha256" in report)
+    if not has_stage_evidence:
+        if calls or report.get("stage_results") or report.get("final_alignment_checks") is not None:
+            raise ValueError("fixed-start run has unexpected approach evidence")
+        if report.get("approach_ok") is not True:
+            raise ValueError("fixed-start run is not marked approach-ready")
+        return {"passed": True, "applicable": False, "approach_ok": True,
+                "approach_call_count": 0, "stage_count": 0}
+    if stage_root is None:
+        raise ValueError("varied-start approach requires stage_model_dir")
+    models = _stage_models(stage_root, report)
+    if not isinstance(calls, list) or not calls or len(calls) % 2:
+        raise ValueError("invalid paired approach calls")
+    histories = {r: [] for r in ROBOTS}
+    last_frame = {r: 0 for r in ROBOTS}
+    offset, stage_results, approach_ok = 0, [], True
+    for phase_index, stage in enumerate(PHASES):
+        confirming, confirmations, consecutive, movements = False, 0, 0, 0
+        record = {"phase_index": phase_index, "stage": stage, "ok": False,
+                  "confirmations": []}
+        for index in range(LIMITS[stage] + 5):
+            pair = calls[offset:offset + 2]
+            if len(pair) != 2 or [row.get("robot_id") if isinstance(row, dict) else None for row in pair] != list(ROBOTS):
+                raise ValueError(f"missing approach pair: {phase_index}/{index}")
+            decisions, top_hash = {}, None
+            for row in pair:
+                if set(row) != APPROACH_CALL_KEYS:
+                    raise ValueError("approach call schema or unexpected actor input keys")
+                rid, frame_id = row["robot_id"], row["frame_id"]
+                if row["phase_index"] != phase_index or row["stage"] != stage or row["index"] != index:
+                    raise ValueError("approach phase/index mismatch")
+                if isinstance(frame_id, bool) or not isinstance(frame_id, int) or frame_id <= 0 or frame_id <= last_frame[rid]:
+                    raise ValueError("approach frame is not fresh and positive")
+                last_frame[rid] = frame_id
+                if row["stationary"] is not confirming or row["own_command_history"] != histories[rid]:
+                    raise ValueError("approach stationary flag or own command history mismatch")
+                if not isinstance(row["images"], dict) or set(row["images"]) != IMAGE_KEYS:
+                    raise ValueError("approach image schema mismatch")
+                own, _ = _rgb(run_dir, row["images"]["own"])
+                top, digest = _rgb(run_dir, row["images"]["top"])
+                if top_hash is not None and digest != top_hash:
+                    raise ValueError("approach robots do not share top RGB")
+                top_hash = digest
+                decision = _predict_stage(models[rid][stage], own, top)
+                if not _close(decision, row["decision"]):
+                    raise ValueError(f"approach RGB decision replay mismatch: {rid}/{stage}/{index}")
+                decisions[rid] = decision
+            if pair[0]["frame_id"] != pair[1]["frame_id"]:
+                raise ValueError("approach pair does not share a frame id")
+            control = choose_stage_actions(decisions, stage, confirming)
+            for row in pair:
+                rid = row["robot_id"]
+                expected = {"kind": "mecanum", **control["commands"][rid],
+                            "duration_s": control["duration_s"]}
+                if not _close(expected, row["action"]):
+                    raise ValueError(f"approach action replay mismatch: {rid}/{stage}/{index}")
+                histories[rid].append(row["action"])
+            offset += 2
+            if not control["valid"]:
+                record["reason"] = "RGB outside learned stage support"
+                break
+            if confirming:
+                confirmations += 1
+                consecutive = consecutive + 1 if all(control["ready"].values()) else 0
+                record["confirmations"].append({"frame_ids": {r: pair[i]["frame_id"] for i, r in enumerate(ROBOTS)},
+                    "ready": control["ready"], "stationary": True})
+                if consecutive >= 2:
+                    record["ok"] = True
+                    record["reason"] = "two consecutive fresh stationary RGB confirmations"
+                    break
+                if confirmations >= 4:
+                    record["reason"] = "stationary RGB confirmation budget exhausted"
+                    break
+            elif control["enter_confirmation"]:
+                confirming = True
+            else:
+                movements += 1
+                if movements >= LIMITS[stage]:
+                    record["reason"] = "bounded phase movement budget exhausted"
+                    break
+        record["movement_slices"] = movements
+        stage_results.append(record)
+        if not record["ok"]:
+            approach_ok = False
+            break
+    if offset != len(calls) or report.get("stage_results") != stage_results:
+        raise ValueError("approach stage result or termination mismatch")
+    approach_ok = approach_ok and len(stage_results) == len(PHASES)
+    final = report.get("final_alignment_checks")
+    if approach_ok:
+        if not isinstance(final, list) or len(final) != 2:
+            raise ValueError("successful approach requires two final alignment checks")
+        final_ok = True
+        for check_index, check in enumerate(final):
+            if not isinstance(check, dict) or set(check) != {"frame_ids", "images", "decisions"}:
+                raise ValueError("final alignment record schema mismatch")
+            if any(not isinstance(check[key], dict) or set(check[key]) != set(ROBOTS)
+                   for key in ("frame_ids", "images", "decisions")):
+                raise ValueError("final alignment robot coverage mismatch")
+            top_hash = None
+            for rid in ROBOTS:
+                frame_id = check["frame_ids"].get(rid)
+                if isinstance(frame_id, bool) or not isinstance(frame_id, int) or frame_id <= last_frame[rid]:
+                    raise ValueError("final alignment frame is not fresh")
+                last_frame[rid] = frame_id
+                images = check["images"].get(rid)
+                if not isinstance(images, dict) or set(images) != IMAGE_KEYS:
+                    raise ValueError("final alignment image schema mismatch")
+                own, _ = _rgb(run_dir, images["own"])
+                top, digest = _rgb(run_dir, images["top"])
+                if top_hash is not None and digest != top_hash:
+                    raise ValueError("final alignment robots do not share top RGB")
+                top_hash = digest
+                saved = check["decisions"].get(rid)
+                if not isinstance(saved, dict) or set(saved) != set(AXES):
+                    raise ValueError("final alignment decision coverage mismatch")
+                for axis in AXES:
+                    decision = _predict_stage(models[rid][axis], own, top)
+                    if not _close(decision, saved[axis]):
+                        raise ValueError(f"final alignment decision replay mismatch: {rid}/{axis}/{check_index}")
+                    final_ok &= bool(decision["ok"] and decision.get("stationary_ready", decision["ready"])
+                                     and decision.get("precision", "fine") == "fine")
+            if len(set(check["frame_ids"].values())) != 1:
+                raise ValueError("final alignment robots do not share a frame id")
+        approach_ok &= final_ok
+    elif final is not None:
+        raise ValueError("failed approach has unexpected final alignment checks")
+    if bool(report.get("approach_ok")) != approach_ok:
+        raise ValueError("saved approach_ok differs from replay")
+    return {"passed": True, "applicable": True, "approach_ok": approach_ok,
+            "approach_call_count": len(calls), "stage_count": len(stage_results),
+            "final_alignment_check_count": len(final) if final else 0}
 
 
 def _playback(report: dict[str, Any]) -> list[dict[str, Any]]:
@@ -258,13 +434,26 @@ def _audit_actor(run_dir: Path, model_root: Path, report: dict[str, Any]) -> dic
             "checked": "exact model and RGB hashes; current and anchor RGB; own issued-action histories; prediction, action, bounds, and stationary transition replay"}
 
 
-def audit(run_dir: Path, transport_model_dir: Path) -> dict[str, Any]:
+def audit(run_dir: Path, transport_model_dir: Path,
+          stage_model_dir: Path | None = None) -> dict[str, Any]:
     run_dir, model_root = Path(run_dir).resolve(), Path(transport_model_dir).resolve()
+    stage_root = Path(stage_model_dir).resolve() if stage_model_dir is not None else None
     errors: list[str] = []
-    actor = None
+    actor = approach = None
     try:
         report = json.loads(_safe_file(run_dir, "result.json").read_text())
-        actor = _audit_actor(run_dir, model_root, report)
+        approach = _audit_approach(run_dir, stage_root, report)
+        if approach["approach_ok"]:
+            actor = _audit_actor(run_dir, model_root, report)
+        else:
+            if (report.get("carry_calls") not in (None, []) or report.get("carry_ready") is not False
+                    or report.get("actor_initial_images") is not None
+                    or report.get("actor_initial_issued_arm_commands") is not None):
+                raise ValueError("carry actor evidence exists after failed approach")
+            actor = {"passed": True, "condition": report.get("config", {}).get("condition"),
+                     "carry_ready": False, "carry_call_count": 0,
+                     "carry_frame_count": 0, "initial_arm_command_archives": 0,
+                     "not_applicable_reason": "approach did not qualify"}
     except Exception as exc:
         return {"success": False, "rgb_action_audit_passed": False,
                 "physics_evaluation_matches": False, "experiment_success": False,
@@ -292,10 +481,11 @@ def audit(run_dir: Path, transport_model_dir: Path) -> dict[str, Any]:
         and report.get("invariants_initial") == report.get("invariants_final"))
     if experiment_success != expected_success:
         errors.append("ValueError: saved success predicate mismatch")
-    return {"success": actor["passed"] and physics_matches and not errors,
-            "rgb_action_audit_passed": actor["passed"],
+    return {"success": approach["passed"] and actor["passed"] and physics_matches and not errors,
+            "rgb_action_audit_passed": approach["passed"] and actor["passed"],
             "physics_evaluation_matches": physics_matches,
             "experiment_success": experiment_success, "actor": actor,
+            "approach": approach,
             "evaluation": evaluation, "errors": errors,
             "counts": {"carry_calls": actor["carry_call_count"],
                        "carry_frames": actor["carry_frame_count"],
@@ -307,9 +497,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-dir", type=Path, required=True)
     parser.add_argument("--transport-model-dir", type=Path, required=True)
+    parser.add_argument("--stage-model-dir", type=Path)
     parser.add_argument("--out", type=Path)
     args = parser.parse_args()
-    result = audit(args.run_dir, args.transport_model_dir)
+    result = audit(args.run_dir, args.transport_model_dir, args.stage_model_dir)
     value = json.dumps(result, indent=2, sort_keys=True, allow_nan=False) + "\n"
     if args.out:
         args.out.write_text(value)

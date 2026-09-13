@@ -13,6 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 from scripts.run_camera_approach_student import sha, write
+from scripts.audit_camera_short_transport_student import audit
+from scripts.audit_camera_grasp_student import audit as audit_grasp
 
 
 def git(*args):
@@ -71,8 +73,24 @@ def main():
                 completed = subprocess.run(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
             result_path = run_out / 'result.json'
             result = json.loads(result_path.read_text()) if result_path.exists() else {}
+            run_out.mkdir(exist_ok=True)
+            evidence_audit = audit(run_out, args.transport_model_dir, args.stage_model_dir)
+            try:
+                grasp_audit = (audit_grasp(run_out, args.grasp_model_dir, report_name='grasp-result.json')
+                               if (run_out / 'grasp-result.json').exists() else None)
+            except Exception as exc:
+                grasp_audit = {'ok': False, 'error': str(exc)}
+            audit_path = run_out / 'input-audit.json'
+            write(audit_path, {'transport_and_approach': evidence_audit, 'grasp': grasp_audit})
+            qualified = bool(completed.returncode == 0 and result.get('success') is True
+                             and evidence_audit.get('success') is True
+                             and grasp_audit and grasp_audit.get('ok') is True)
             row = {'case_id': case['case_id'], 'condition': condition, 'directory': str(run_out),
-                   'returncode': completed.returncode, 'success': result.get('success', False),
+                   'returncode': completed.returncode, 'success': qualified,
+                   'raw_physics_success': result.get('success', False),
+                   'evidence_audit_success': evidence_audit.get('success', False),
+                   'grasp_audit_success': grasp_audit.get('ok', False) if grasp_audit else None,
+                   'input_audit_sha256': sha(audit_path),
                    'error': result.get('error', 'missing result' if not result else None),
                    'evaluation': result.get('evaluation'), 'wall_time_s': result.get('wall_time_s'),
                    'sim_time_s': result.get('sim_time_s'), 'carry_decisions': len(result.get('carry_calls', [])),
