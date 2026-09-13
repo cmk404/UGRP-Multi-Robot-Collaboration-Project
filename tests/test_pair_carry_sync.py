@@ -108,41 +108,94 @@ class PairCarrySyncTests(unittest.TestCase):
 
 class SharedResourceLedgerTests(unittest.TestCase):
     def _reserve_pair(self, ledger, resource="aisle-a", task="carry-1", version=1, now=1.0):
-        self.assertTrue(ledger.reserve(resource, task_id=task, plan_version=version,
-                                       participant="r1", now_s=now))
-        self.assertTrue(ledger.reserve(resource, task_id=task, plan_version=version,
-                                       participant="r3", now_s=now))
+        generation = ledger.reserve(resource, task_id=task, plan_version=version,
+                                    participant="r1", now_s=now)
+        self.assertIsInstance(generation, int)
+        self.assertEqual(generation, ledger.reserve(
+            resource, task_id=task, plan_version=version, participant="r3",
+            now_s=now, generation=generation))
+        return generation
 
     def test_occupied_resource_never_expires_and_cannot_be_stolen(self):
         ledger = SharedResourceLedger(reservation_ttl_s=0.5)
-        self._reserve_pair(ledger)
-        self.assertTrue(ledger.occupy("aisle-a", task_id="carry-1", plan_version=1, now_s=1.1))
+        generation = self._reserve_pair(ledger)
+        self.assertTrue(ledger.occupy("aisle-a", task_id="carry-1", plan_version=1,
+                                      generation=generation, now_s=1.1))
         self.assertTrue(ledger.state("aisle-a", 1000.0)["occupied"])
-        self.assertFalse(ledger.reserve("aisle-a", task_id="carry-2", plan_version=1,
-                                        participant="r1", now_s=1000.0))
+        self.assertIsNone(ledger.reserve("aisle-a", task_id="carry-2", plan_version=1,
+                                         participant="r1", now_s=1000.0))
 
     def test_release_requires_exact_owner_version_and_all_acknowledgments(self):
         ledger = SharedResourceLedger()
-        self._reserve_pair(ledger)
-        ledger.occupy("aisle-a", task_id="carry-1", plan_version=1, now_s=1.1)
+        generation = self._reserve_pair(ledger)
+        ledger.occupy("aisle-a", task_id="carry-1", plan_version=1,
+                      generation=generation, now_s=1.1)
         self.assertFalse(ledger.release("aisle-a", task_id="carry-1", plan_version=2,
-                                        participant="r1", now_s=1.2))
+                                        participant="r1", generation=generation, now_s=1.2))
         self.assertFalse(ledger.release("aisle-a", task_id="carry-2", plan_version=1,
-                                        participant="r1", now_s=1.2))
+                                        participant="r1", generation=generation, now_s=1.2))
         self.assertFalse(ledger.release("aisle-a", task_id="carry-1", plan_version=1,
-                                        participant="r1", now_s=1.2))
+                                        participant="r1", generation=generation, now_s=1.2))
         self.assertIsNotNone(ledger.state("aisle-a", 1.3))
         self.assertTrue(ledger.release("aisle-a", task_id="carry-1", plan_version=1,
-                                       participant="r3", now_s=1.3))
+                                       participant="r3", generation=generation, now_s=1.3))
         self.assertIsNone(ledger.state("aisle-a", 1.3))
 
     def test_unoccupied_reservation_expires(self):
         ledger = SharedResourceLedger(reservation_ttl_s=0.5)
-        self.assertTrue(ledger.reserve("aisle-a", task_id="old", plan_version=1,
-                                       participant="r1", now_s=1.0))
-        self.assertTrue(ledger.reserve("aisle-a", task_id="new", plan_version=1,
-                                       participant="r1", now_s=1.51))
+        old_generation = ledger.reserve("aisle-a", task_id="old", plan_version=1,
+                                        participant="r1", now_s=1.0)
+        new_generation = ledger.reserve("aisle-a", task_id="new", plan_version=1,
+                                        participant="r1", now_s=1.51)
+        self.assertGreater(new_generation, old_generation)
         self.assertEqual("new", ledger.state("aisle-a", 1.51)["task_id"])
+
+    def test_stale_generation_cannot_join_or_release_reused_identity(self):
+        ledger = SharedResourceLedger()
+        old_generation = self._reserve_pair(ledger)
+        self.assertTrue(ledger.occupy("aisle-a", task_id="carry-1", plan_version=1,
+                                      generation=old_generation, now_s=1.1))
+        self.assertFalse(ledger.release("aisle-a", task_id="carry-1", plan_version=1,
+                                        participant="r1", generation=old_generation, now_s=1.2))
+        self.assertTrue(ledger.release("aisle-a", task_id="carry-1", plan_version=1,
+                                       participant="r3", generation=old_generation, now_s=1.2))
+
+        new_generation = self._reserve_pair(ledger, now=1.3)
+        self.assertGreater(new_generation, old_generation)
+        self.assertIsNone(ledger.reserve("aisle-a", task_id="carry-1", plan_version=1,
+                                         participant="r3", generation=old_generation, now_s=1.3))
+        self.assertFalse(ledger.occupy("aisle-a", task_id="carry-1", plan_version=1,
+                                       generation=old_generation, now_s=1.3))
+        self.assertTrue(ledger.occupy("aisle-a", task_id="carry-1", plan_version=1,
+                                      generation=new_generation, now_s=1.4))
+        self.assertFalse(ledger.release("aisle-a", task_id="carry-1", plan_version=1,
+                                        participant="r1", generation=old_generation, now_s=1.5))
+        self.assertTrue(ledger.state("aisle-a", 1.5)["occupied"])
+
+    def test_clock_cannot_move_backwards(self):
+        ledger = SharedResourceLedger()
+        generation = ledger.reserve("aisle-a", task_id="carry-1", plan_version=1,
+                                    participant="r1", now_s=2.0)
+        with self.assertRaises(ValueError):
+            ledger.reserve("aisle-a", task_id="carry-1", plan_version=1,
+                           participant="r3", generation=generation, now_s=1.9)
+        with self.assertRaises(ValueError):
+            ledger.state("aisle-a", 1.9)
+
+    def test_repeated_occupy_preserves_partial_release(self):
+        ledger = SharedResourceLedger()
+        generation = self._reserve_pair(ledger)
+        self.assertTrue(ledger.occupy("aisle-a", task_id="carry-1", plan_version=1,
+                                      generation=generation, now_s=1.1))
+        self.assertFalse(ledger.release("aisle-a", task_id="carry-1", plan_version=1,
+                                        participant="r1", generation=generation, now_s=1.2))
+        self.assertTrue(ledger.occupy("aisle-a", task_id="carry-1", plan_version=1,
+                                      generation=generation, now_s=1.3))
+        self.assertEqual(["r1"], ledger.state("aisle-a", 1.3)["release_acks"])
+        self.assertFalse(ledger.release("aisle-a", task_id="carry-1", plan_version=1,
+                                        participant="r1", generation=generation, now_s=1.3))
+        self.assertTrue(ledger.release("aisle-a", task_id="carry-1", plan_version=1,
+                                       participant="r3", generation=generation, now_s=1.4))
 
 
 if __name__ == "__main__":

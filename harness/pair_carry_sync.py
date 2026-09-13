@@ -236,6 +236,7 @@ class PairCarrySync:
 
 @dataclass
 class _ResourceState:
+    generation: int
     task_id: str
     plan_version: int
     reserved_at_s: float
@@ -257,44 +258,63 @@ class SharedResourceLedger:
         self.reservation_ttl_s = float(reservation_ttl_s)
         self.events: List[Dict[str, Any]] = []
         self._resources: Dict[str, _ResourceState] = {}
+        self._next_generation = 1
+        self._last_clock_s = -math.inf
 
     def reserve(self, resource_id: str, *, task_id: str, plan_version: int,
-                participant: str, now_s: float) -> bool:
+                participant: str, now_s: float, generation: Optional[int] = None) -> Optional[int]:
         self._validate_request(resource_id, task_id, plan_version, participant, now_s)
+        if generation is not None:
+            self._validate_generation(generation)
         state = self._resources.get(resource_id)
         if state and not state.occupied and now_s > state.expires_at_s:
             del self._resources[resource_id]
             state = None
         if state is None:
-            state = _ResourceState(task_id, plan_version, now_s, now_s + self.reservation_ttl_s)
+            if generation is not None:
+                return None
+            generation = self._next_generation
+            self._next_generation += 1
+            state = _ResourceState(generation, task_id, plan_version, now_s,
+                                   now_s + self.reservation_ttl_s)
             self._resources[resource_id] = state
+        elif generation != state.generation:
+            return None
         if state.task_id != task_id or state.plan_version != plan_version:
-            return False
+            return None
         state.reservations.add(participant)
         state.expires_at_s = max(state.expires_at_s, now_s + self.reservation_ttl_s)
         self._record("RESERVED", resource_id, state, now_s, participant)
-        return True
+        return state.generation
 
-    def occupy(self, resource_id: str, *, task_id: str, plan_version: int, now_s: float) -> bool:
+    def occupy(self, resource_id: str, *, task_id: str, plan_version: int,
+               generation: int, now_s: float) -> bool:
         self._validate_identity(resource_id, task_id, plan_version, now_s)
+        self._validate_generation(generation)
         state = self._resources.get(resource_id)
-        if not state or state.task_id != task_id or state.plan_version != plan_version:
+        if (not state or state.generation != generation or state.task_id != task_id
+                or state.plan_version != plan_version):
             return False
         if not state.occupied and now_s > state.expires_at_s:
             del self._resources[resource_id]
             return False
+        if state.occupied:
+            return True
         if set(self.required_participants) != state.reservations:
             return False
         state.occupied = True
-        state.release_acks.clear()
         self._record("OCCUPIED", resource_id, state, now_s)
         return True
 
     def release(self, resource_id: str, *, task_id: str, plan_version: int,
-                participant: str, now_s: float) -> bool:
+                participant: str, generation: int, now_s: float) -> bool:
         self._validate_request(resource_id, task_id, plan_version, participant, now_s)
+        self._validate_generation(generation)
         state = self._resources.get(resource_id)
-        if not state or not state.occupied or state.task_id != task_id or state.plan_version != plan_version:
+        if (not state or not state.occupied or state.generation != generation
+                or state.task_id != task_id or state.plan_version != plan_version):
+            return False
+        if participant in state.release_acks:
             return False
         state.release_acks.add(participant)
         self._record("RELEASE_ACK", resource_id, state, now_s, participant)
@@ -305,7 +325,7 @@ class SharedResourceLedger:
         return False
 
     def state(self, resource_id: str, now_s: float) -> Optional[Dict[str, Any]]:
-        PairCarrySync._require_time(now_s)
+        self._accept_clock(now_s)
         state = self._resources.get(resource_id)
         if state and not state.occupied and now_s > state.expires_at_s:
             del self._resources[resource_id]
@@ -313,7 +333,7 @@ class SharedResourceLedger:
         if state is None:
             return None
         return {
-            "resource_id": resource_id, "task_id": state.task_id,
+            "resource_id": resource_id, "generation": state.generation, "task_id": state.task_id,
             "plan_version": state.plan_version, "occupied": state.occupied,
             "reservations": sorted(state.reservations),
             "release_acks": sorted(state.release_acks),
@@ -325,17 +345,28 @@ class SharedResourceLedger:
         if participant not in self.required_participants:
             raise ValueError("unknown participant")
 
-    @staticmethod
-    def _validate_identity(resource_id, task_id, plan_version, now_s) -> None:
+    def _validate_identity(self, resource_id, task_id, plan_version, now_s) -> None:
         if not resource_id or not task_id:
             raise ValueError("resource_id and task_id are required")
         if not isinstance(plan_version, int) or isinstance(plan_version, bool) or plan_version < 1:
             raise ValueError("plan_version must be a positive integer")
+        self._accept_clock(now_s)
+
+    @staticmethod
+    def _validate_generation(generation: int) -> None:
+        if not isinstance(generation, int) or isinstance(generation, bool) or generation < 1:
+            raise ValueError("generation must be a positive integer")
+
+    def _accept_clock(self, now_s: float) -> None:
         PairCarrySync._require_time(now_s)
+        if now_s < self._last_clock_s:
+            raise ValueError("timestamp must not move backwards")
+        self._last_clock_s = float(now_s)
 
     def _record(self, event, resource_id, state, timestamp_s, participant=None) -> None:
         item = {"event": event, "timestamp_s": float(timestamp_s), "resource_id": resource_id,
-                "task_id": state.task_id, "plan_version": state.plan_version}
+                "generation": state.generation, "task_id": state.task_id,
+                "plan_version": state.plan_version}
         if participant is not None:
             item["participant"] = participant
         self.events.append(item)

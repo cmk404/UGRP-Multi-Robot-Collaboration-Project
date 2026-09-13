@@ -56,6 +56,29 @@ class PairCarryPolicyTests(unittest.TestCase):
         self.assertEqual(row['permission']['phase'], 'HOLD')
         self.assertFalse(any(row['forwards'].values()))
 
+    def test_undelivered_ready_cannot_complete_or_change_policy(self):
+        p, q = PairCarryPolicy(), PairCarryPolicy()
+        self.step(p, 0, ready=True)
+        self.step(q, 0, ready=True)
+        a, b = decisions(True), decisions(False)
+        a['r1'] = b['r1']
+        for i in range(1,4):
+            frames = {'r1': str(i), 'r3': str(i)}
+            left = p.step(a, 0, frames, i*.2, ('r1',))
+            right = q.step(b, 0, frames, i*.2, ('r1',))
+            self.assertEqual(left,right)
+            self.assertFalse(left['done'])
+            self.assertFalse(any(left['forwards'].values()))
+
+    def test_rejected_duplicate_evidence_does_not_count_as_confirmation(self):
+        p = PairCarryPolicy()
+        self.step(p, 0, ready=True)
+        for t in (.2,.4,.6):
+            row = p.step(decisions(True),0,{'r1':'0','r3':'0'},t)
+            self.assertFalse(row['done'])
+            self.assertFalse(any(row['forwards'].values()))
+        self.assertFalse(self.step(p,.8,ready=True)['done'])
+
 
 if __name__ == '__main__':
     unittest.main()

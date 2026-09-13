@@ -43,6 +43,10 @@ class PairCarryPolicy:
             raise ValueError('finite monotonic clock required')
         duration = .20
         forwards = {r: 0. for r in ROBOTS}
+        # Local predictors may run during a relay outage, but an undelivered
+        # report must not influence the execution coordinator.
+        decisions = {r: decisions[r] for r in delivered if r in decisions}
+        missing = set(decisions) != set(ROBOTS)
         valid = (set(decisions) == set(ROBOTS)
                  and all(d.get('ok') is True and d.get('held_estimate') is True
                          for d in decisions.values())
@@ -53,7 +57,11 @@ class PairCarryPolicy:
         self.index += 1
         if self.mode == 'ABORT':
             permission = self.sync.abort('terminal_abort', now_s)
+        elif missing:
+            self.confirmations = 0
+            permission = self.sync.hold('fresh_pair_report_missing', now_s)
         elif not valid:
+            self.confirmations = 0
             self.invalid_count += 1
             permission = self.sync.hold('visual_evidence_unavailable', now_s)
             if self.invalid_count >= 5:
@@ -65,8 +73,9 @@ class PairCarryPolicy:
                 self.mode = 'ABORT'
                 permission = self.sync.abort('skew_outside_bounded_recovery', now_s)
             else:
-                if self.mode == 'CRUISE' and abs(error_px) > 3.:
+                if self.mode in ('CRUISE', 'CONFIRM') and abs(error_px) > 3.:
                     self.mode, self.until_s = 'SETTLE', now_s + .4
+                    self.confirmations = 0
                     self.recoveries += 1
                     self.sync.hold('visual_payload_skew', now_s)
                     self.events.append({'event': 'SKEW_HOLD', 'time_s': now_s,
@@ -82,12 +91,17 @@ class PairCarryPolicy:
                         self.mode, self.until_s = 'REJOIN', now_s + .4
                         self.sync.hold('alignment_observed_reconfirm', now_s)
                     waiting = self.mode in ('SETTLE', 'REJOIN')
+                    accepted = []
                     for rid in delivered:
-                        self.sync.report(rid, plan_version=1, epoch=self.sync.epoch,
+                        accepted.append(self.sync.report(rid, plan_version=1, epoch=self.sync.epoch,
                             sequence=self.index, ready=not waiting, observed_at_s=now_s,
                             received_at_s=now_s, frame_id=str(frame_ids[rid]),
-                            reason='rgb_valid_and_held_estimate')
-                    permission = self.sync.authorize(now_s)
+                            reason='rgb_valid_and_held_estimate'))
+                    if len(accepted) != len(ROBOTS) or not all(accepted):
+                        self.confirmations = 0
+                        permission = self.sync.hold('current_report_rejected', now_s)
+                    else:
+                        permission = self.sync.authorize(now_s)
                     if permission['phase'] == 'GO' and not waiting:
                         if self.mode == 'ALIGN':
                             # r1 is bottom, r3 top in this fixed-view fixture.

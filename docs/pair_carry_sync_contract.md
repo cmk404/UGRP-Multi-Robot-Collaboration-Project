@@ -38,10 +38,28 @@ allowed camera observations and be reported separately. This module has no
 physical safety guarantee and does not provide network fault tolerance or
 distributed consensus.
 
-`SharedResourceLedger` is similarly local. Each required participant must reserve
-the same `(resource_id, task_id, plan_version)` before it can become occupied.
-An unoccupied reservation expires, but an occupied resource never expires. It
-can be removed only after explicit release acknowledgments from every required
-participant with the exact owning task and plan version. Other tasks and stale
-versions cannot occupy, release, or replace it. Durable ownership, crash recovery,
-authentication, and network replication remain responsibilities of the caller.
+`SharedResourceLedger` is similarly local and all of its timestamps must come
+from one nondecreasing monotonic clock. The first successful `reserve()` for a
+free resource omits `generation` and returns a positive integer generation
+token. Every later participant joining that reservation supplies that exact
+token to `reserve()`; a successful join returns the same token. A conflicting,
+expired-token, or stale-token request returns `None`. The token is allocated
+monotonically within that ledger instance and is not reused, including when the
+same resource, task, and plan version are used again.
+
+Each required participant must reserve the same `(resource_id, generation,
+task_id, plan_version)` before `occupy()` can succeed. `occupy()` and `release()`
+require the generation token and return a boolean. Repeating `occupy()` for the
+current occupied generation is idempotently successful and does not erase
+partial release acknowledgments. A duplicate release acknowledgment returns
+`False` without changing state. An unoccupied reservation expires, but an
+occupied resource never expires. It can be removed only after one explicit
+release acknowledgment from every required participant with the exact owning
+generation, task, and plan version. `state()` includes `generation` and also
+enforces the ledger clock rule.
+
+The generation token prevents delayed join, occupy, or release calls from an
+older use of the same identity tuple from changing its replacement. It is an
+in-process fencing value, not a credential or a durable distributed lease.
+Durable ownership, restart recovery, caller authentication, message delivery,
+and network replication remain responsibilities of the caller.

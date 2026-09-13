@@ -95,7 +95,8 @@ def run(case, condition, grasp_root, transport_root, out):
                          and blackout['start_s'] <= now < blackout['start_s']+blackout['duration_s'])]
             # Fault information ends at relay/executor. Policy sees only delivered reports.
             if condition == 'sync':
-                control = policy.step(decisions, skew, {r: frames[r]['frame_id'] for r in ROBOTS}, now, delivered)
+                control = policy.step({r: decisions[r] for r in delivered}, skew,
+                                      {r: frames[r]['frame_id'] for r in delivered}, now, delivered)
             else:
                 base = choose_carry_actions(decisions, confirming)
                 control = {**base, 'mode': 'CONFIRM' if confirming else 'CRUISE',
