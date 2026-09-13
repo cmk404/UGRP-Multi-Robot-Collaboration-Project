@@ -1,0 +1,129 @@
+import inspect
+
+import cv2
+import numpy as np
+
+import harness.known_map_navigation as nav
+
+
+def map_data(obstacles=()):
+    return {"schema": "ugrp.authored_navigation_map.v1", "map_id": "test", "version": 1,
+            "frame": "warehouse_xy_m", "bounds_m": [-.85, 1.95, -3.1, -.9],
+            "grid_resolution_m": .025,
+            "top_camera": {"name": "cctv_top", "position_m": [.55, -2, 2.5],
+                           "quaternion_wxyz": [1, 0, 0, 0], "fov_y_deg": 55},
+            "footprint": {"unloaded_radius_m": .18, "safety_margin_m": .04},
+            "zones": {"start": {"center_m": [-.50, -2.55], "radius_m": .20},
+                      "goal": {"center_m": [1.55, -2.55], "radius_m": .18}},
+            "obstacles": list(obstacles)}
+
+
+def obstacle(center, half):
+    return {"id": "wall", "kind": "box", "center_m": center, "half_extents_m": half,
+            "height_m": .4, "traversable": False, "cost_multiplier": 1}
+
+
+def jpeg_at(point, data, shape=(480, 640)):
+    h, w = shape
+    camera = data["top_camera"]
+    distance = camera["position_m"][2] - .09
+    visible_h = 2 * distance * np.tan(np.deg2rad(camera["fov_y_deg"]) / 2)
+    visible_w = visible_h * w / h
+    u = round((point[0] - camera["position_m"][0]) * w / visible_w + (w - 1) / 2)
+    v = round((camera["position_m"][1] - point[1]) * h / visible_h + (h - 1) / 2)
+    image = np.zeros((h, w, 3), np.uint8)
+    cv2.circle(image, (u, v), 10, (0, 255, 255), -1)
+    ok, encoded = cv2.imencode(".jpg", image)
+    assert ok
+    return encoded.tobytes()
+
+
+def test_projection_round_trip_center_and_offset():
+    data = map_data()
+    assert np.allclose(nav.pixel_to_world((319.5, 239.5), (480, 640, 3), data["top_camera"]), (.55, -2))
+    image = jpeg_at((-.5, -2.55), data)
+    decoded = cv2.imdecode(np.frombuffer(image, np.uint8), cv2.IMREAD_COLOR)
+    hsv = cv2.cvtColor(decoded, cv2.COLOR_BGR2HSV)
+    ys, xs = np.where(cv2.inRange(hsv, (20, 70, 50), (40, 255, 255)) > 0)
+    assert np.allclose(nav.pixel_to_world((xs.mean(), ys.mean()), decoded.shape, data["top_camera"]),
+                       (-.5, -2.55), atol=.015)
+
+
+def test_astar_detours_and_fully_blocked_narrow_map_has_no_path():
+    detour = map_data([obstacle((.5, -2.55), (.12, .25))])
+    path = nav.plan_grid_path(detour, (-.5, -2.55), (1.55, -2.55))
+    assert path and len(path) > 2
+    wall = map_data([obstacle((.5, -2.0), (.12, 1.0))])
+    assert nav.plan_grid_path(wall, (-.5, -2.55), (1.55, -2.55)) is None
+
+
+def test_inflated_footprint_cannot_plan_with_centre_near_map_boundary():
+    data = map_data()
+    # Centre is within the authored rectangle, but the 0.22 m inflated chassis is not.
+    assert nav.plan_grid_path(data, (-.75, -2.55), (1.55, -2.55)) is None
+
+
+def test_uncertain_localization_stops_and_own_rgb_is_decoded():
+    data = map_data()
+    blank = jpeg_at((10, 10), data)
+    result = nav.KnownMapNavigator(data, "r1").decide(blank, blank, 1)
+    assert result["action"]["forward"] == result["action"]["left"] == 0
+    assert result["status"] == "localization_uncertain"
+    assert result["diagnostics"]["own_rgb"]["decoded"] is True
+
+
+def test_four_consecutive_image_localization_losses_are_terminal():
+    data = map_data()
+    blank = jpeg_at((10, 10), data)
+    navigator = nav.KnownMapNavigator(data, "r1")
+    results = [navigator.decide(blank, blank, frame) for frame in range(4)]
+    assert [item["done"] for item in results] == [False, False, False, True]
+    assert results[-1]["status"] == "localization_lost"
+
+
+def test_same_image_after_probe_is_not_treated_as_measured_motion():
+    data = map_data()
+    own = jpeg_at((-.5, -2.55), data)
+    navigator = nav.KnownMapNavigator(data, "r3")
+    first = navigator.decide(own, own, 1)
+    second = navigator.decide(own, own, 2)
+    assert first["status"] == "calibrating_forward"
+    assert second["status"] == "calibration_no_visual_progress"
+    assert second["done"] is True
+    assert second["action"]["forward"] == second["action"]["left"] == 0
+    assert second["diagnostics"]["calibration"]["uses_issued_commands_as_measurement"] is False
+
+
+def test_two_visual_probes_create_jacobian_and_bounded_command():
+    data = map_data()
+    own = jpeg_at((-.5, -2.55), data)
+    navigator = nav.KnownMapNavigator(data, "r1")
+    navigator.decide(own, own, 1)
+    p2 = jpeg_at((-.468, -2.55), data)
+    assert navigator.decide(own, p2, 2)["status"] == "calibrating_lateral"
+    p3 = jpeg_at((-.468, -2.526), data)
+    result = navigator.decide(own, p3, 3)
+    assert result["status"] == "navigating"
+    assert -.05 <= result["action"]["forward"] <= .10
+    assert -.08 <= result["action"]["left"] <= .08
+    assert result["action"]["turn"] == 0
+    assert result["diagnostics"]["calibration"]["visual_displacement_jacobian"]
+
+
+def test_probe_fails_closed_when_route_exists_but_unknown_yaw_disk_is_not_clear():
+    data = map_data([obstacle((-.22, -2.55), (.01, .08))])
+    own = jpeg_at((-.5, -2.55), data)
+    result = nav.KnownMapNavigator(data, "r1").decide(own, own, 1)
+    assert nav.plan_grid_path(data, (-.5, -2.55), (1.55, -2.55)) is not None
+    assert result["status"] == "calibration_unsafe_clearance"
+    assert result["done"] is True
+    assert result["action"]["forward"] == result["action"]["left"] == 0
+
+
+def test_module_input_purity_has_no_simulator_or_world_state_dependency():
+    source = inspect.getsource(nav)
+    assert "import mujoco" not in source
+    assert "from sim.authored_navigation_map import validate_map" in source
+    assert "world_state" not in source
+    assert "render-label" not in source
+    assert "nav_cam" not in source
