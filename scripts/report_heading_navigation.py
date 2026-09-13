@@ -29,6 +29,13 @@ def motion_metrics(root):
     commands = [d['action'] for d in actor]
     counts = Counter(d['status'] for d in actor)
     action_ends = times[0] + np.cumsum([a['duration_s'] for a in commands])
+    frame_times = np.r_[times[0], action_ends[:-1]]
+    heading_errors = []
+    for frame_time, decision in zip(frame_times, actor):
+        estimate = decision['diagnostics'].get('heading', {}).get('estimate_rad')
+        if estimate is not None:
+            truth = np.interp(frame_time, times, yaw)
+            heading_errors.append(float(np.degrees(abs((estimate-truth+np.pi) % (2*np.pi)-np.pi))))
     indices = np.minimum(np.searchsorted(action_ends, (times[:-1]+times[1:])/2), len(commands)-1)
     forward = np.array([commands[i]['forward'] > 0 and commands[i]['turn'] == 0 for i in indices]) & moving
     def angular_summary(mask):
@@ -42,6 +49,9 @@ def motion_metrics(root):
             'forward_commands': sum(a['forward'] > 0 for a in commands),
             'stop_commands': sum(a['forward'] == a['left'] == a['turn'] == 0 for a in commands),
             'absolute_yaw_travel_deg': float(np.degrees(np.abs(np.diff(yaw)).sum())),
+            'heading_estimate_error_deg': {'frames': len(heading_errors),
+                'mean': float(np.mean(heading_errors)) if heading_errors else None,
+                'max': max(heading_errors) if heading_errors else None},
             'all_moving_samples': angular_summary(moving), 'forward_only_commands': angular_summary(forward),
             'reference': 'output-only ~0.1 s pose samples; >=0.2 mm translation; time interpolation only after run'}
 

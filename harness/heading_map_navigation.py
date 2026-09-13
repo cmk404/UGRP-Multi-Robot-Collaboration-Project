@@ -36,8 +36,8 @@ def _estimate_patch_rotation_deg(before: np.ndarray, after: np.ndarray,
     """Match a centred chassis mask over small rotations.
 
     Positive image rotation has the same measured sign as world yaw for the
-    declared fixed nadir view.  ``expected_sign`` only limits the search
-    side; acceptance still requires a measured improvement over zero rotation.
+    declared fixed nadir view. ``expected_sign`` checks the independently
+    measured response direction; the search itself always covers both signs.
     """
     if before.shape != after.shape or before.ndim != 2 or before.size == 0:
         return None, {"ok": False, "reason": "heading_patch_shape"}
@@ -45,20 +45,25 @@ def _estimate_patch_rotation_deg(before: np.ndarray, after: np.ndarray,
         return None, {"ok": False, "reason": "heading_patch_sparse"}
     angles = np.arange(-12.0, 12.01, 0.5)
     h, w = before.shape
+    # Smooth over individual mecanum roller facets while retaining the spatial
+    # asymmetry of the complete chassis. This materially stabilizes consecutive
+    # turns as different rollers become yellow-visible from the nadir camera.
+    before_match = cv2.GaussianBlur(before, (0, 0), 2.0)
+    after_match = cv2.GaussianBlur(after, (0, 0), 2.0)
     scores = []
     for angle in angles:
         matrix = cv2.getRotationMatrix2D((w / 2.0, h / 2.0), float(angle), 1.0)
-        rotated = cv2.warpAffine(before, matrix, (w, h), flags=cv2.INTER_NEAREST)
-        score = float(cv2.matchTemplate(rotated, after, cv2.TM_CCOEFF_NORMED)[0, 0])
+        rotated = cv2.warpAffine(before_match, matrix, (w, h))
+        score = float(cv2.matchTemplate(rotated, after_match, cv2.TM_CCOEFF_NORMED)[0, 0])
         scores.append((score, float(angle)))
     best_score, best_angle = max(scores)
     zero_score = next(score for score, angle in scores if angle == 0.0)
     diagnostics = {"ok": False, "image_rotation_deg": best_angle,
                    "score": round(best_score, 4), "zero_rotation_score": round(zero_score, 4),
                    "score_gain": round(best_score - zero_score, 4)}
-    # Actual unchanged-camera diagnostics produced 0.77--0.90 correlation and
-    # 0.076--0.13 gain for each +0.10/0.6 s turn pulse.
-    if best_score < 0.65 or best_score - zero_score < 0.04 or abs(best_angle) < 1.0:
+    # Unchanged-camera diagnostics with smoothing produced >=0.82 correlation;
+    # small 3 degree pulses retained >=0.042 gain over the no-rotation match.
+    if best_score < 0.80 or best_score - zero_score < 0.035 or abs(best_angle) < 1.0:
         diagnostics["reason"] = "heading_rotation_unresolved"
         return None, diagnostics
     if expected_sign and int(math.copysign(1, best_angle)) != expected_sign:
@@ -139,6 +144,19 @@ class HeadingMapNavigator(KnownMapNavigator):
         self._localization_losses = 0
         previous = self._position
         self._position = position
+        if (previous is not None and self._phase == "navigating" and self._issued and
+                float(self._issued[-1].get("forward", 0.0)) > 0 and
+                float(self._issued[-1].get("turn", 0.0)) == 0.0):
+            prior = self._issued[-1]
+            observed = math.dist(previous, position)
+            impulse = float(prior["forward"]) * float(prior["duration_s"])
+            if 0.01 <= observed <= 0.12 and impulse > 0:
+                observed_gain = observed / impulse
+                # The largest valid RGB-observed response produces the shortest,
+                # hence most conservative, future lease for the 4 cm target.
+                self._forward_gain_m_per_impulse = max(
+                    self._forward_gain_m_per_impulse or 0.0,
+                    min(3.0, max(0.1, observed_gain)))
         goal = tuple(map(float, self.map_data["zones"]["goal"]["center_m"]))
         planned = [position, goal] if self.condition == "direct" else plan_grid_path(self.map_data, position, goal)
         if plan_grid_path(self.map_data, position, goal) is None:

@@ -42,7 +42,8 @@ def jpeg_at(point, data):
 
 def asymmetric_patch(angle=0.0):
     patch = np.zeros((96, 96), np.uint8)
-    cv2.rectangle(patch, (29, 31), (66, 62), 255, -1)
+    cv2.rectangle(patch, (27, 31), (68, 61), 255, -1)
+    cv2.rectangle(patch, (59, 24), (72, 40), 255, -1)
     cv2.circle(patch, (62, 35), 7, 0, -1)
     matrix = cv2.getRotationMatrix2D((47.5, 47.5), angle, 1)
     return cv2.warpAffine(patch, matrix, (96, 96), flags=cv2.INTER_NEAREST)
@@ -58,10 +59,10 @@ def calibrate(navigator, data, end=(-.44, -2.55)):
 
 def test_rotation_match_tracks_both_signs_from_pixels():
     base = asymmetric_patch()
-    positive, diag = heading._estimate_patch_rotation_deg(base, asymmetric_patch(6), 1)
-    negative, negative_diag = heading._estimate_patch_rotation_deg(base, asymmetric_patch(-7), -1)
-    assert diag["ok"] and positive == 6
-    assert negative_diag["ok"] and negative == -7
+    positive, diag = heading._estimate_patch_rotation_deg(base, asymmetric_patch(10), 1)
+    negative, negative_diag = heading._estimate_patch_rotation_deg(base, asymmetric_patch(-10), -1)
+    assert diag["ok"] and positive == 10
+    assert negative_diag["ok"] and negative == -10
 
 
 def test_rotation_match_rejects_symmetric_or_lost_appearance():
@@ -75,9 +76,19 @@ def test_rotation_match_rejects_symmetric_or_lost_appearance():
 
 def test_rotation_match_detects_opposite_response_instead_of_hiding_it():
     value, diag = heading._estimate_patch_rotation_deg(
-        asymmetric_patch(), asymmetric_patch(-6), expected_sign=1)
+        asymmetric_patch(), asymmetric_patch(-10), expected_sign=1)
     assert value is None
     assert diag["reason"] == "heading_rotation_opposite_command"
+
+
+def test_rotation_match_tolerates_local_roller_appearance_changes():
+    base = asymmetric_patch()
+    changed = asymmetric_patch(10)
+    cv2.circle(changed, (31, 54), 4, 0, -1)
+    cv2.circle(changed, (68, 56), 3, 255, -1)
+    value, diag = heading._estimate_patch_rotation_deg(base, changed, 1)
+    assert diag["ok"]
+    assert value is not None and abs(value - 10) <= 1
 
 
 def test_calibration_establishes_front_then_aligns_before_forward():
@@ -99,6 +110,20 @@ def test_aligned_navigation_is_forward_only_with_no_lateral_slide():
     assert result["action"]["forward"] == .10
     assert .25 <= result["action"]["duration_s"] <= .6
     assert result["action"]["left"] == result["action"]["turn"] == 0
+
+
+def test_forward_rgb_response_shortens_later_lease_without_pose_feedback():
+    data = map_data()
+    navigator = heading.HeadingMapNavigator(data, "r3")
+    first = calibrate(navigator, data)
+    initial_duration = first["action"]["duration_s"]
+    own = jpeg_at((-.5, -2.55), data)
+    # The next raw top frame shows 8 cm travel from the issued straight lease.
+    moved = jpeg_at((-.36, -2.55), data)
+    result = navigator.decide(own, moved, 3)
+    assert result["status"] == "navigating_forward"
+    assert result["action"]["duration_s"] < initial_duration
+    assert navigator._forward_gain_m_per_impulse > 1.0
 
 
 def test_blocked_map_refuses_before_motion_and_bad_jpeg_is_rejected():

@@ -1,4 +1,7 @@
 import json
+from pathlib import Path
+
+import cv2
 
 import pytest
 
@@ -50,3 +53,21 @@ def test_audit_rejects_changed_style_even_with_new_manifest(tmp_path):
     p.write_text(json.dumps(data)); _rehash(tmp_path)
     with pytest.raises(ValueError, match='motion style mismatch'):
         audit_run(tmp_path)
+
+
+def test_real_rotation_frames_with_spinning_roller_appearance():
+    from harness.heading_map_navigation import _estimate_patch_rotation_deg
+    from sim.authored_navigation_map import load_map
+    root = Path(__file__).resolve().parents[1]
+    actor = HeadingMapNavigator(load_map(root/'maps/navigation/slalom.json'), 'r1')
+    patches = []
+    for i in (7, 8, 9):
+        image = cv2.imread(str(root/f'tests/fixtures/known_map/heading-turn-{i:04d}.jpg'))
+        position, info = actor._localize(image)
+        assert info['ok']
+        actor._position = position
+        patches.append(actor._patch(image, position))
+    for before, after in zip(patches, patches[1:]):
+        angle, observation = _estimate_patch_rotation_deg(before, after, 1)
+        assert observation['ok']
+        assert 3 <= angle <= 10
