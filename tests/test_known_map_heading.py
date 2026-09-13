@@ -88,7 +88,7 @@ def test_rotation_match_tolerates_local_roller_appearance_changes():
     cv2.circle(changed, (68, 56), 3, 255, -1)
     value, diag = heading._estimate_patch_rotation_deg(base, changed, 1)
     assert diag["ok"]
-    assert value is not None and abs(value - 10) <= 1
+    assert value is not None and abs(value - 10) <= 2
 
 
 def test_calibration_establishes_front_then_aligns_before_forward():

@@ -52,15 +52,21 @@ def _estimate_patch_rotation_deg(before: np.ndarray, after: np.ndarray,
     after_match = cv2.GaussianBlur(after, (0, 0), 2.0)
     scores = []
     for angle in angles:
-        matrix = cv2.getRotationMatrix2D((w / 2.0, h / 2.0), float(angle), 1.0)
-        rotated = cv2.warpAffine(before_match, matrix, (w, h))
-        score = float(cv2.matchTemplate(rotated, after_match, cv2.TM_CCOEFF_NORMED)[0, 0])
-        scores.append((score, float(angle)))
-    best_score, best_angle = max(scores)
-    zero_score = next(score for score, angle in scores if angle == 0.0)
+        rotation = cv2.getRotationMatrix2D((w / 2.0, h / 2.0), float(angle), 1.0)
+        for dx in range(-3, 4):
+            for dy in range(-3, 4):
+                matrix = rotation.copy()
+                matrix[:, 2] += (dx, dy)
+                transformed = cv2.warpAffine(before_match, matrix, (w, h))
+                score = float(cv2.matchTemplate(transformed, after_match,
+                                                cv2.TM_CCOEFF_NORMED)[0, 0])
+                scores.append((score, float(angle), dx, dy))
+    best_score, best_angle, best_dx, best_dy = max(scores)
+    zero_score = max(score for score, angle, _, _ in scores if angle == 0.0)
     diagnostics = {"ok": False, "image_rotation_deg": best_angle,
                    "score": round(best_score, 4), "zero_rotation_score": round(zero_score, 4),
-                   "score_gain": round(best_score - zero_score, 4)}
+                   "score_gain": round(best_score - zero_score, 4),
+                   "registration_translation_px": [best_dx, best_dy]}
     # Unchanged-camera diagnostics with smoothing produced >=0.82 correlation;
     # small 3 degree pulses retained >=0.042 gain over the no-rotation match.
     if best_score < 0.80 or best_score - zero_score < 0.035 or abs(best_angle) < 1.0:
@@ -82,6 +88,7 @@ class HeadingMapNavigator(KnownMapNavigator):
         self._phase = "initial"
         self._heading_rad: float | None = None
         self._forward_gain_m_per_impulse: float | None = None
+        self._straight_origin: Point | None = None
         self._heading_patch: np.ndarray | None = None
         self._pending_turn_sign = 0
         self._heading_losses = 0
@@ -107,8 +114,10 @@ class HeadingMapNavigator(KnownMapNavigator):
         if len(xs) < 80:
             return None
         size = 96
-        transform = np.float32([[1, 0, size / 2 - float(xs.mean())],
-                                [0, 1, size / 2 - float(ys.mean())]])
+        # Use the localized chassis envelope centre rather than the yellow-pixel
+        # centroid, which shifts as individual mecanum rollers rotate into view.
+        transform = np.float32([[1, 0, size / 2 - u],
+                                [0, 1, size / 2 - v]])
         isolated = np.where(selected, 255, 0).astype(np.uint8)
         return cv2.warpAffine(isolated, transform, (size, size), flags=cv2.INTER_NEAREST)
 
@@ -136,6 +145,7 @@ class HeadingMapNavigator(KnownMapNavigator):
         self._image_history = self._image_history[-4:]
         position, localization = self._localize(top)
         if position is None:
+            self._straight_origin = None
             self._goal_confirmations = 0
             self._localization_losses += 1
             terminal = self._localization_losses >= 4
@@ -157,12 +167,23 @@ class HeadingMapNavigator(KnownMapNavigator):
                 self._forward_gain_m_per_impulse = max(
                     self._forward_gain_m_per_impulse or 0.0,
                     min(3.0, max(0.1, observed_gain)))
+                if self._straight_origin is None:
+                    self._straight_origin = previous
+                straight_displacement = math.dist(self._straight_origin, position)
+                if straight_displacement >= 0.08:
+                    self._heading_rad = math.atan2(position[1] - self._straight_origin[1],
+                                                   position[0] - self._straight_origin[0])
+                    self._last_heading_observation = {
+                        "ok": True, "kind": "straight_displacement_refresh",
+                        "displacement_m": straight_displacement}
+                    self._straight_origin = position
         goal = tuple(map(float, self.map_data["zones"]["goal"]["center_m"]))
         planned = [position, goal] if self.condition == "direct" else plan_grid_path(self.map_data, position, goal)
         if plan_grid_path(self.map_data, position, goal) is None:
             return self._result_heading(_STOP, "no_map_route", localization, done=True)
         patch = self._patch(top, position)
         if patch is None:
+            self._straight_origin = None
             self._goal_confirmations = 0
             self._heading_losses += 1
             terminal = self._heading_losses >= 4
@@ -215,6 +236,7 @@ class HeadingMapNavigator(KnownMapNavigator):
                                              "turn": 0.0, "duration_s": _PROBE_DURATION_S},
                                             "calibrating_forward_repeat", localization, path=planned)
             self._heading_rad = math.atan2(float(delta[1]), float(delta[0]))
+            self._straight_origin = position
             self._forward_gain_m_per_impulse = displacement / self._probe_impulse["forward"]
             self._heading_patch = patch
             self._last_heading_observation = {"ok": True, "kind": "forward_displacement",
@@ -242,6 +264,7 @@ class HeadingMapNavigator(KnownMapNavigator):
                                         {**localization, "ok": False}, path=planned)
         conservative_radius = max(0.0, float(self.map_data["zones"]["goal"]["radius_m"]) - 0.025)
         if math.dist(position, goal) <= conservative_radius:
+            self._straight_origin = None
             self._goal_confirmations += 1
             done = self._goal_confirmations >= 2
             return self._result_heading(_STOP, "arrived" if done else "goal_confirmation_1_of_2",
@@ -252,6 +275,7 @@ class HeadingMapNavigator(KnownMapNavigator):
         desired = math.atan2(waypoint[1] - position[1], waypoint[0] - position[0])
         error = _wrap_angle(desired - self._heading_rad)
         if abs(error) > _ALIGN_RAD:
+            self._straight_origin = None
             turn = _TURN_LIMIT if error > 0 else -_TURN_LIMIT
             self._pending_turn_sign = 1 if turn > 0 else -1
             self._heading_patch = patch
