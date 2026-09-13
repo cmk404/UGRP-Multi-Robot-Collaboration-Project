@@ -39,7 +39,7 @@ def main():
                          'setup': 'fixed demonstrated grasp station; no wheel approach'},
               'grasp_skill_sha256': sha(grasp_root / 'student-skill.json'),
               'teacher_privileged_inputs': 'payload/base xyz and contacts for offline demonstration only',
-              'calls': [], 'grasp_calls': [], 'error': None}
+              'calls': [], 'grasp_calls': [], 'state_samples': [], 'error': None}
     try:
         import mujoco
         from harness.grasp_student_inference import predict_student
@@ -47,6 +47,7 @@ def main():
                                  'mujoco': mujoco.__version__}
         scene.open()
         report['invariants_initial'] = scene.invariant_record()
+        initial_frames = scene.capture('state-folded')
         report['grasp_calls'] = scene.finish_grasp(predict_student, grasp_models)
         write(out / 'grasp-report.json', scene.grasp_report)
         origin = scene.evaluation_snapshot(full_state=False)
@@ -91,10 +92,30 @@ def main():
             raise RuntimeError('teacher carry slice budget exhausted')
         scene.phase = 'carry_stop'
         scene.tick(1.)
-        scene.capture('carry-final')
+        final_frames = scene.capture('carry-final')
         report['carry_final_evaluation_only'] = scene.evaluation_snapshot(full_state=False)
+        for r in ROBOTS:
+            truth = report['carry_final_evaluation_only']
+            report['calls'].append({'index': i + 1, 'robot_id': r,
+                'images': {'own': final_frames[r]['own_rgb'], 'top': final_frames[r]['shared_top_rgb']},
+                'frame_id': final_frames[r]['frame_id'], 'own_command_history': list(histories[r]),
+                'teacher_labels': {'payload_progress_m': truth['position_m'][0] - origin['position_m'][0],
+                    'base_progress_m': truth['bases'][r][0] - origin['bases'][r][0],
+                    'held': truth['height_above_start_m'] >= .03 and all(truth['contacts'][k]['bilateral'] for k in ROBOTS),
+                    'ready': True},
+                'action': {'kind': 'drive', 'forward': 0., 'turn': 0., 'duration_s': .2}})
         scene.place()
+        for phase, frames in {'setup': initial_frames, **scene.place_observations}.items():
+            rows = [s for s in scene.evaluation_samples if s['phase'] == phase]
+            truth = rows[-1]
+            held = truth['height_above_start_m'] >= .03 and all(truth['contacts'][r]['bilateral'] for r in ROBOTS)
+            for r in ROBOTS:
+                report['state_samples'].append({'robot_id': r,
+                    'images': {'own': frames[r]['own_rgb'], 'top': frames[r]['shared_top_rgb']},
+                    'teacher_labels': {'held': held, 'phase': phase}})
         report['release_final_evaluation_only'] = scene.evaluation_snapshot(full_state=False)
+        from scripts.evaluate_camera_short_transport import evaluate_transport_samples
+        report['evaluation'] = evaluate_transport_samples(scene.evaluation_samples)
         print(json.dumps({'stage': 'release_hold', 'pose': report['release_final_evaluation_only']}), flush=True)
     except Exception:
         report['error'] = traceback.format_exc()

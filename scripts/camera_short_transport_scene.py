@@ -77,11 +77,11 @@ class ShortTransportScene(ApproachScene):
         preclose = {r: {ch: self.grasp_report['preclose_issued_commands'][r][ch]
                         for ch in (3, 4, 5)} for r in ROBOTS}
         self.replay([{'targets': preclose, 'duration_s': .70, 'settle_s': .25}], 'place_lower')
-        self.capture('place-lowered')
+        self.place_observations = {'place_lower': self.capture('place-lowered')}
         self.replay([{'targets': {r: {1: 2000} for r in ROBOTS},
                       'duration_s': .65, 'settle_s': .50}], 'place_open')
-        self.capture('place-opened')
+        self.place_observations['place_open'] = self.capture('place-opened')
         self.replay([{'targets': lifted, 'duration_s': .70, 'settle_s': .25}], 'place_retract')
         self.phase = 'release_hold'
         self.tick(2.2)
-        self.capture('release-final')
+        self.place_observations['release_hold'] = self.capture('release-final')
