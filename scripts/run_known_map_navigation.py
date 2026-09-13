@@ -16,6 +16,7 @@ import traceback
 import cv2
 
 from harness.known_map_navigation import KnownMapNavigator
+from harness.heading_map_navigation import HeadingMapNavigator
 from sim.authored_navigation_map import load_map, map_sha256
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -39,10 +40,19 @@ def validate_case(case, authored_map):
     return copy.deepcopy(case)
 
 
-def run(map_path, case, condition, out, max_steps):
+def navigator_class(motion_style):
+    if motion_style == 'holonomic':
+        return KnownMapNavigator
+    if motion_style == 'heading':
+        return HeadingMapNavigator
+    raise ValueError('motion_style must be heading or holonomic')
+
+
+def run(map_path, case, condition, out, max_steps, motion_style='heading'):
     from scripts.known_map_scene import KnownMapScene
     authored_map = load_map(map_path)
     case = validate_case(case, authored_map)
+    controller_class = navigator_class(motion_style)
     if not 1 <= max_steps <= 400:
         raise ValueError('max_steps must be 1..400')
     dirty = subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True)
@@ -54,7 +64,7 @@ def run(map_path, case, condition, out, max_steps):
     digest = map_sha256(authored_map)
     dump(out / 'actor-map.json', authored_map)
     metadata = {'schema': 'ugrp.known_map_run.v1', 'source_sha': source, 'map_sha256': digest,
-        'condition': condition, 'robot_id': case['robot_id'], 'private_setup': case,
+        'condition': condition, 'motion_style': motion_style, 'robot_id': case['robot_id'], 'private_setup': case,
         'max_steps': max_steps, 'controller': 'classical RGB localization, visual actuator calibration, static-map A*',
         'actor_inputs': ['authored static map with fixed camera calibration', 'own RGB JPEG', 'common top RGB JPEG', 'frame index', 'own issued command history'],
         'own_camera_usage': 'decoded and preserved; current localization and control use top RGB only',
@@ -65,7 +75,7 @@ def run(map_path, case, condition, out, max_steps):
         'model_calls': 0, 'model_cost_usd': 0, 'scope': 'one unloaded active robot per run; fixed cameras; weld OFF'}
     dump(out / 'run.json', metadata)
     scene = KnownMapScene(out, authored_map, case['robot_id'], case)
-    actor = KnownMapNavigator(copy.deepcopy(authored_map), case['robot_id'], condition)
+    actor = controller_class(copy.deepcopy(authored_map), case['robot_id'], condition)
     started = time.monotonic()
     status, decisions, history, error = 'budget_exhausted', 0, [], None
     evaluation = None
@@ -101,7 +111,7 @@ def run(map_path, case, condition, out, max_steps):
             error = (error or '') + '\ncleanup: ' + traceback.format_exc()
             status = 'error'
     result = {'source_sha': source, 'map_sha256': digest, 'case_id': case['case_id'],
-        'condition': condition, 'actor_status': status, 'decisions': decisions,
+        'condition': condition, 'motion_style': motion_style, 'actor_status': status, 'decisions': decisions,
         'wall_elapsed_s': time.monotonic() - started, 'evaluation': evaluation, 'error': error,
         'model_calls': 0, 'model_cost_usd': 0}
     dump(out / 'result.json', result)
@@ -117,10 +127,11 @@ def main():
     p.add_argument('--map-file', type=Path, required=True)
     p.add_argument('--case-json', required=True)
     p.add_argument('--condition', choices=['map', 'direct'], default='map')
+    p.add_argument('--motion-style', choices=['heading', 'holonomic'], default='heading')
     p.add_argument('--out-dir', type=Path, required=True)
     p.add_argument('--max-steps', type=int, default=240)
     a = p.parse_args()
-    result = run(a.map_file, json.loads(a.case_json), a.condition, a.out_dir, a.max_steps)
+    result = run(a.map_file, json.loads(a.case_json), a.condition, a.out_dir, a.max_steps, a.motion_style)
     return 1 if result['error'] else 0
 
 

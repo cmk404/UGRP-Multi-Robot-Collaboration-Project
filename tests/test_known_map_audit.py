@@ -47,11 +47,15 @@ def _rehash(root):
     _dump(root / "manifest.json", files)
 
 
-def make_run(root):
+def make_run(root, motion_style=None):
     (root / "rgb").mkdir(parents=True)
     data = _map(); digest = map_sha256(data)
     own = _jpeg((-.5, -2.55), data)
-    actor = KnownMapNavigator(data, "r1", "map")
+    if motion_style is None:
+        actor = KnownMapNavigator(data, "r1", "map")
+    else:
+        from scripts.run_known_map_navigation import navigator_class
+        actor = navigator_class(motion_style)(data, "r1", "map")
     history = []
     rows = []
     for frame in range(2):
@@ -72,6 +76,11 @@ def make_run(root):
     _dump(root / "result.json", {"map_sha256": digest, "condition": "map", "decisions": 2,
                                  "actor_status": (rows[-1]["decision"]["status"] if rows[-1]["decision"]["done"] else "budget_exhausted"),
                                  "evaluation": {"success": False}, "error": None})
+    if motion_style is not None:
+        for name in ('run.json', 'result.json'):
+            path = root / name
+            value = json.loads(path.read_text()); value['motion_style'] = motion_style
+            _dump(path, value)
     _rehash(root)
     return rows
 
