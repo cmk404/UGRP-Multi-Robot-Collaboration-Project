@@ -128,14 +128,21 @@ def test_same_image_after_probe_is_not_treated_as_measured_motion():
     own = jpeg_at((-.5, -2.55), data)
     navigator = nav.KnownMapNavigator(data, "r3")
     first = navigator.decide(own, own, 1)
-    second = navigator.decide(own, own, 2)
-    third = navigator.decide(own, own, 3)
     assert first["status"] == "calibrating_forward"
-    assert second["status"] == "settling_forward_probe"
-    assert third["status"] == "calibration_no_visual_progress"
-    assert third["done"] is True
-    assert third["action"]["forward"] == third["action"]["left"] == 0
-    assert third["diagnostics"]["calibration"]["uses_issued_commands_as_measurement"] is False
+    frame = 2
+    result = None
+    for _ in range(6):
+        assert navigator.decide(own, own, frame)["status"] == "settling_forward_probe"
+        frame += 1
+        result = navigator.decide(own, own, frame)
+        frame += 1
+        if result["done"]:
+            break
+        assert result["status"] == "calibrating_forward_repeat"
+    assert result["status"] == "calibration_insufficient_visual_signal"
+    assert result["done"] is True
+    assert result["action"]["forward"] == result["action"]["left"] == 0
+    assert result["diagnostics"]["calibration"]["uses_issued_commands_as_measurement"] is False
 
 
 def test_two_visual_probes_create_jacobian_and_bounded_command():
@@ -143,10 +150,10 @@ def test_two_visual_probes_create_jacobian_and_bounded_command():
     own = jpeg_at((-.5, -2.55), data)
     navigator = nav.KnownMapNavigator(data, "r1")
     navigator.decide(own, own, 1)
-    p2 = jpeg_at((-.468, -2.55), data)
+    p2 = jpeg_at((-.44, -2.55), data)
     assert navigator.decide(own, p2, 2)["status"] == "settling_forward_probe"
     assert navigator.decide(own, p2, 3)["status"] == "calibrating_lateral"
-    p3 = jpeg_at((-.468, -2.526), data)
+    p3 = jpeg_at((-.44, -2.49), data)
     assert navigator.decide(own, p3, 4)["status"] == "settling_lateral_probe"
     result = navigator.decide(own, p3, 5)
     assert result["status"] == "navigating"
@@ -160,15 +167,32 @@ def test_calibration_waits_through_visual_coast_before_measuring_total_probe_mot
     data = map_data(); own = jpeg_at((-.5, -2.55), data)
     navigator = nav.KnownMapNavigator(data, "r1")
     navigator.decide(own, own, 0)
-    moving = jpeg_at((-.48, -2.55), data)
+    moving = jpeg_at((-.47, -2.55), data)
     assert navigator.decide(own, moving, 1)["status"] == "settling_forward_probe"
-    coasting = jpeg_at((-.468, -2.55), data)
+    coasting = jpeg_at((-.44, -2.55), data)
     assert navigator.decide(own, coasting, 2)["status"] == "settling_forward_probe"
-    settled = jpeg_at((-.468, -2.55), data)
+    settled = jpeg_at((-.44, -2.55), data)
     result = navigator.decide(own, settled, 3)
     assert result["status"] == "calibrating_lateral"
     # Column uses full displacement from the pre-probe stationary origin.
-    assert np.allclose(navigator._forward_delta, (1.0, 0.0), atol=.12)
+    assert np.allclose(navigator._forward_delta, (.06 / .032, 0.0), atol=.15)
+
+
+def test_short_visual_signal_repeats_same_axis_and_uses_accumulated_impulse():
+    data = map_data(); own = jpeg_at((-.5, -2.55), data)
+    navigator = nav.KnownMapNavigator(data, "r1")
+    navigator.decide(own, own, 0)
+    short = jpeg_at((-.485, -2.55), data)
+    navigator.decide(own, short, 1)
+    repeated = navigator.decide(own, short, 2)
+    assert repeated["status"] == "calibrating_forward_repeat"
+    assert repeated["action"]["forward"] == .08
+    enough = jpeg_at((-.445, -2.55), data)
+    navigator.decide(own, enough, 3)
+    result = navigator.decide(own, enough, 4)
+    assert result["status"] == "calibrating_lateral"
+    assert navigator._probe_pulses["forward"] == 2
+    assert np.allclose(navigator._forward_delta, (.055 / .064, 0.0), atol=.12)
 
 
 def test_uniform_saturation_preserves_control_direction():

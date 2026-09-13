@@ -25,6 +25,8 @@ Point = tuple[float, float]
 Cell = tuple[int, int]
 _STOP = {"kind": "mecanum", "forward": 0.0, "left": 0.0, "turn": 0.0, "duration_s": 0.25}
 _CALIBRATION_STOP = {**_STOP, "duration_s": 0.4}
+_PROBE_TARGET_DISPLACEMENT_M = 0.05
+_MAX_PROBE_PULSES_PER_AXIS = 6
 
 
 def _decode_jpeg(value: bytes, name: str) -> np.ndarray:
@@ -134,13 +136,15 @@ def _uniformly_bound_control(forward: float, left: float) -> tuple[float, float]
     return forward * scale, left * scale
 
 
-def _line_clear(grid: _Grid, a: Cell, b: Cell) -> bool:
+def _line_clear(grid: _Grid, a: Cell, b: Cell, clearance=None, minimum_clearance=0.0) -> bool:
     # Dense sampling plus a supercover-sized radius prevents diagonal corner cuts.
     steps = max(abs(b[0] - a[0]), abs(b[1] - a[1])) * 2 + 1
     for t in np.linspace(0.0, 1.0, steps):
         x = int(round(a[0] + (b[0] - a[0]) * t))
         y = int(round(a[1] + (b[1] - a[1]) * t))
         if not grid.clear((x, y)):
+            return False
+        if clearance is not None and clearance[y, x] < minimum_clearance:
             return False
         if 0 < t < 1 and not (grid.clear((x - 1, y)) and grid.clear((x + 1, y)) and
                               grid.clear((x, y - 1)) and grid.clear((x, y + 1))):
@@ -154,6 +158,11 @@ def plan_grid_path(data: Mapping[str, Any], start: Point, goal: Point) -> list[P
     source, target = grid.cell(start), grid.cell(goal)
     if not grid.clear(source) or not grid.clear(target):
         return None
+    # A mathematically shortest route hugs the forbidden-cell boundary. Prefer
+    # room for RGB projection noise and motor transients while keeping the hard
+    # footprint exclusion unchanged (including narrow-passage refusal).
+    clearance = cv2.distanceTransform((~grid.blocked).astype(np.uint8), cv2.DIST_L2, 5) * grid.resolution
+    proximity_cost = 1.0 + 5.0 * np.exp(-clearance / 0.08)
     frontier: list[tuple[float, Cell]] = [(0.0, source)]
     cost = {source: 0.0}
     parent: dict[Cell, Cell] = {}
@@ -169,7 +178,7 @@ def plan_grid_path(data: Mapping[str, Any], start: Point, goal: Point) -> list[P
             if dx and dy and (not grid.clear((current[0] + dx, current[1])) or
                               not grid.clear((current[0], current[1] + dy))):
                 continue
-            new_cost = cost[current] + math.hypot(dx, dy)
+            new_cost = cost[current] + math.hypot(dx, dy) * float(proximity_cost[nxt[1], nxt[0]])
             if new_cost < cost.get(nxt, math.inf):
                 cost[nxt], parent[nxt] = new_cost, current
                 heuristic = math.hypot(target[0] - nxt[0], target[1] - nxt[1])
@@ -184,7 +193,10 @@ def plan_grid_path(data: Mapping[str, Any], start: Point, goal: Point) -> list[P
     anchor = 0
     while anchor < len(cells) - 1:
         candidate = len(cells) - 1
-        while candidate > anchor + 1 and not _line_clear(grid, cells[anchor], cells[candidate]):
+        while candidate > anchor + 1:
+            minimum = min(float(clearance[y, x]) for x,y in cells[anchor:candidate+1]) * .95
+            if _line_clear(grid, cells[anchor], cells[candidate], clearance, minimum):
+                break
             candidate -= 1
         simple.append(cells[candidate])
         anchor = candidate
@@ -215,6 +227,8 @@ class KnownMapNavigator:
         self._forward_delta: np.ndarray | None = None
         self._settle_previous: Point | None = None
         self._settle_checks = 0
+        self._probe_pulses = {"forward": 0, "lateral": 0}
+        self._probe_impulse = {"forward": 0.0, "lateral": 0.0}
         self._jacobian: np.ndarray | None = None
         self._goal_confirmations = 0
         self._localization_losses = 0
@@ -223,18 +237,24 @@ class KnownMapNavigator:
 
     def _localize(self, image: np.ndarray) -> tuple[Point | None, dict[str, Any]]:
         hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-        mask = cv2.inRange(hsv, np.array([20, 70, 50], np.uint8), np.array([40, 255, 255], np.uint8))
+        mask = cv2.inRange(hsv, np.array([12, 60, 30], np.uint8), np.array([42, 255, 255], np.uint8))
         mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, np.ones((13, 13), np.uint8))
         count, _, stats, centroids = cv2.connectedComponentsWithStats(mask, 8)
-        components: list[tuple[Point, int]] = []
+        components: list[tuple[Point, int, tuple[float, float, float, float]]] = []
         xmin, xmax, ymin, ymax = map(float, self.map_data["bounds_m"])
         for i in range(1, count):
             area = int(stats[i, cv2.CC_STAT_AREA])
-            if area < 20:
+            if area < 15:
                 continue
             point = pixel_to_world(centroids[i], image.shape, self.map_data["top_camera"])
             if xmin <= point[0] <= xmax and ymin <= point[1] <= ymax:
-                components.append((point, area))
+                left, top = int(stats[i, cv2.CC_STAT_LEFT]), int(stats[i, cv2.CC_STAT_TOP])
+                right = left + int(stats[i, cv2.CC_STAT_WIDTH]) - 1
+                bottom = top + int(stats[i, cv2.CC_STAT_HEIGHT]) - 1
+                corners = [pixel_to_world((u, v), image.shape, self.map_data["top_camera"])
+                           for u, v in ((left, top), (left, bottom), (right, top), (right, bottom))]
+                components.append((point, area, (min(p[0] for p in corners), max(p[0] for p in corners),
+                                                 min(p[1] for p in corners), max(p[1] for p in corners))))
         # The unchanged MasterPi appearance exposes several disconnected yellow
         # structural/wheel regions from above.  Group only components fitting in
         # one declared chassis diameter before associating a robot candidate.
@@ -256,7 +276,7 @@ class KnownMapNavigator:
             for second in range(first + 1, len(components)):
                 if math.dist(components[first][0], components[second][0]) <= chassis_diameter:
                     union(first, second)
-        groups: dict[int, list[tuple[Point, int]]] = {}
+        groups: dict[int, list[tuple[Point, int, tuple[float, float, float, float]]]] = {}
         for index, component in enumerate(components):
             groups.setdefault(find(index), []).append(component)
         candidates: list[tuple[Point, int, int, float]] = []
@@ -267,8 +287,8 @@ class KnownMapNavigator:
                 rejected_oversized += 1
                 continue
             total_area = sum(item[1] for item in group)
-            center = (sum(item[0][0] * item[1] for item in group) / total_area,
-                      sum(item[0][1] * item[1] for item in group) / total_area)
+            center = ((min(item[2][0] for item in group) + max(item[2][1] for item in group)) / 2.0,
+                      (min(item[2][2] for item in group) + max(item[2][3] for item in group)) / 2.0)
             candidates.append((center, total_area, len(group), span))
         reference = self._position
         if reference is None:
@@ -292,13 +312,16 @@ class KnownMapNavigator:
                        "component_count": len(components), "group_component_count": group_components,
                        "group_span_m": group_span, "feature_area_px": area,
                        "feature_plane_height_m": 0.09,
-                       "assumption": "yellow feature centroid lies on a 0.09 m horizontal plane"}
+                       "assumption": "yellow feature envelope center lies on a 0.09 m horizontal plane"}
 
     def _result(self, action: Mapping[str, Any], status: str, localization: Mapping[str, Any],
                 *, path: list[Point] | None = None, done: bool = False) -> dict[str, Any]:
         emitted = dict(action)
         self._issued.append(emitted)
         calibration: dict[str, Any] = {"phase": self._phase, "uses_issued_commands_as_measurement": False}
+        calibration["probe_pulses"] = dict(self._probe_pulses)
+        calibration["issued_probe_impulse"] = dict(self._probe_impulse)
+        calibration["target_visual_displacement_m"] = _PROBE_TARGET_DISPLACEMENT_M
         if self._jacobian is not None:
             calibration["visual_displacement_jacobian"] = self._jacobian.tolist()
             calibration["condition_number"] = float(np.linalg.cond(self._jacobian))
@@ -343,6 +366,8 @@ class KnownMapNavigator:
                 return self._result(_STOP, "calibration_unsafe_clearance", localization,
                                     path=planned, done=True)
             self._probe_origin = position
+            self._probe_pulses["forward"] = 1
+            self._probe_impulse["forward"] = 0.08 * 0.4
             self._phase = "forward_probe_issued"
             return self._result({"kind": "mecanum", "forward": 0.08, "left": 0.0, "turn": 0.0,
                                  "duration_s": 0.4}, "calibrating_forward", localization, path=planned)
@@ -362,12 +387,26 @@ class KnownMapNavigator:
                                         path=planned, done=True)
                 return self._result(_CALIBRATION_STOP, "settling_forward_probe", localization, path=planned)
             delta = np.subtract(position, self._probe_origin)
-            if float(np.linalg.norm(delta)) < 0.008:
-                self._phase = "failed"
-                return self._result(_STOP, "calibration_no_visual_progress", localization,
-                                    path=planned, done=True)
-            self._forward_delta = delta / (0.08 * 0.4)
+            displacement = float(np.linalg.norm(delta))
+            if displacement < _PROBE_TARGET_DISPLACEMENT_M:
+                if self._probe_pulses["forward"] >= _MAX_PROBE_PULSES_PER_AXIS:
+                    self._phase = "failed"
+                    return self._result(_STOP, "calibration_insufficient_visual_signal", localization,
+                                        path=planned, done=True)
+                if not _probe_disk_clear(self.map_data, position):
+                    self._phase = "failed"
+                    return self._result(_STOP, "calibration_unsafe_clearance", localization,
+                                        path=planned, done=True)
+                self._probe_pulses["forward"] += 1
+                self._probe_impulse["forward"] += 0.08 * 0.4
+                self._phase = "forward_probe_issued"
+                return self._result({"kind": "mecanum", "forward": 0.08, "left": 0.0,
+                                     "turn": 0.0, "duration_s": 0.4},
+                                    "calibrating_forward_repeat", localization, path=planned)
+            self._forward_delta = delta / self._probe_impulse["forward"]
             self._probe_origin = position
+            self._probe_pulses["lateral"] = 1
+            self._probe_impulse["lateral"] = 0.06 * 0.4
             self._phase = "lateral_probe_issued"
             return self._result({"kind": "mecanum", "forward": 0.0, "left": 0.06, "turn": 0.0,
                                  "duration_s": 0.4}, "calibrating_lateral", localization, path=planned)
@@ -387,11 +426,24 @@ class KnownMapNavigator:
                                         path=planned, done=True)
                 return self._result(_CALIBRATION_STOP, "settling_lateral_probe", localization, path=planned)
             delta = np.subtract(position, self._probe_origin)
-            if float(np.linalg.norm(delta)) < 0.006:
-                self._phase = "failed"
-                return self._result(_STOP, "calibration_no_visual_progress", localization,
-                                    path=planned, done=True)
-            self._jacobian = np.column_stack((self._forward_delta, delta / (0.06 * 0.4)))
+            displacement = float(np.linalg.norm(delta))
+            if displacement < _PROBE_TARGET_DISPLACEMENT_M:
+                if self._probe_pulses["lateral"] >= _MAX_PROBE_PULSES_PER_AXIS:
+                    self._phase = "failed"
+                    return self._result(_STOP, "calibration_insufficient_visual_signal", localization,
+                                        path=planned, done=True)
+                if not _probe_disk_clear(self.map_data, position):
+                    self._phase = "failed"
+                    return self._result(_STOP, "calibration_unsafe_clearance", localization,
+                                        path=planned, done=True)
+                self._probe_pulses["lateral"] += 1
+                self._probe_impulse["lateral"] += 0.06 * 0.4
+                self._phase = "lateral_probe_issued"
+                return self._result({"kind": "mecanum", "forward": 0.0, "left": 0.06,
+                                     "turn": 0.0, "duration_s": 0.4},
+                                    "calibrating_lateral_repeat", localization, path=planned)
+            self._jacobian = np.column_stack((self._forward_delta,
+                                              delta / self._probe_impulse["lateral"]))
             if not np.all(np.isfinite(self._jacobian)) or abs(float(np.linalg.det(self._jacobian))) < 0.08 or np.linalg.cond(self._jacobian) > 25:
                 self._phase = "failed"
                 return self._result(_STOP, "calibration_singular", localization,
