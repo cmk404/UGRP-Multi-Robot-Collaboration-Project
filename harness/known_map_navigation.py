@@ -24,6 +24,7 @@ from sim.authored_navigation_map import validate_map
 Point = tuple[float, float]
 Cell = tuple[int, int]
 _STOP = {"kind": "mecanum", "forward": 0.0, "left": 0.0, "turn": 0.0, "duration_s": 0.25}
+_CALIBRATION_STOP = {**_STOP, "duration_s": 0.4}
 
 
 def _decode_jpeg(value: bytes, name: str) -> np.ndarray:
@@ -118,6 +119,21 @@ def _probe_disk_clear(data: Mapping[str, Any], position: Point, radius_m: float 
     return True
 
 
+def _uniformly_bound_control(forward: float, left: float) -> tuple[float, float]:
+    """Scale a mecanum vector to limits without rotating its intended direction."""
+    if not math.isfinite(forward) or not math.isfinite(left):
+        raise ValueError("control must be finite")
+    scales = [1.0]
+    if forward > 0.10:
+        scales.append(0.10 / forward)
+    elif forward < -0.05:
+        scales.append(-0.05 / forward)
+    if abs(left) > 0.08:
+        scales.append(0.08 / abs(left))
+    scale = min(scales)
+    return forward * scale, left * scale
+
+
 def _line_clear(grid: _Grid, a: Cell, b: Cell) -> bool:
     # Dense sampling plus a supercover-sized radius prevents diagonal corner cuts.
     steps = max(abs(b[0] - a[0]), abs(b[1] - a[1])) * 2 + 1
@@ -197,6 +213,8 @@ class KnownMapNavigator:
         self._phase = "initial"
         self._probe_origin: Point | None = None
         self._forward_delta: np.ndarray | None = None
+        self._settle_previous: Point | None = None
+        self._settle_checks = 0
         self._jacobian: np.ndarray | None = None
         self._goal_confirmations = 0
         self._localization_losses = 0
@@ -329,6 +347,20 @@ class KnownMapNavigator:
             return self._result({"kind": "mecanum", "forward": 0.08, "left": 0.0, "turn": 0.0,
                                  "duration_s": 0.4}, "calibrating_forward", localization, path=planned)
         if self._phase == "forward_probe_issued":
+            self._settle_previous = position
+            self._settle_checks = 0
+            self._phase = "forward_settling"
+            return self._result(_CALIBRATION_STOP, "settling_forward_probe", localization, path=planned)
+        if self._phase == "forward_settling":
+            residual = math.dist(position, self._settle_previous)
+            if residual > 0.004:
+                self._settle_checks += 1
+                self._settle_previous = position
+                if self._settle_checks > 3:
+                    self._phase = "failed"
+                    return self._result(_STOP, "calibration_failed_to_settle", localization,
+                                        path=planned, done=True)
+                return self._result(_CALIBRATION_STOP, "settling_forward_probe", localization, path=planned)
             delta = np.subtract(position, self._probe_origin)
             if float(np.linalg.norm(delta)) < 0.008:
                 self._phase = "failed"
@@ -340,6 +372,20 @@ class KnownMapNavigator:
             return self._result({"kind": "mecanum", "forward": 0.0, "left": 0.06, "turn": 0.0,
                                  "duration_s": 0.4}, "calibrating_lateral", localization, path=planned)
         if self._phase == "lateral_probe_issued":
+            self._settle_previous = position
+            self._settle_checks = 0
+            self._phase = "lateral_settling"
+            return self._result(_CALIBRATION_STOP, "settling_lateral_probe", localization, path=planned)
+        if self._phase == "lateral_settling":
+            residual = math.dist(position, self._settle_previous)
+            if residual > 0.004:
+                self._settle_checks += 1
+                self._settle_previous = position
+                if self._settle_checks > 3:
+                    self._phase = "failed"
+                    return self._result(_STOP, "calibration_failed_to_settle", localization,
+                                        path=planned, done=True)
+                return self._result(_CALIBRATION_STOP, "settling_lateral_probe", localization, path=planned)
             delta = np.subtract(position, self._probe_origin)
             if float(np.linalg.norm(delta)) < 0.006:
                 self._phase = "failed"
@@ -368,8 +414,8 @@ class KnownMapNavigator:
         length = float(np.linalg.norm(vector))
         desired = vector * min(0.035, length) / max(length, 1e-9)
         impulse = np.linalg.solve(self._jacobian, desired)
-        forward = float(np.clip(impulse[0] / 0.25, -0.05, 0.10))
-        left = float(np.clip(impulse[1] / 0.25, -0.08, 0.08))
+        forward, left = _uniformly_bound_control(float(impulse[0] / 0.25),
+                                                 float(impulse[1] / 0.25))
         if previous is not None and math.dist(previous, position) > 0.22:
             return self._result(_STOP, "localization_large_jump", {**localization, "ok": False}, path=planned)
         return self._result({"kind": "mecanum", "forward": forward, "left": left, "turn": 0.0,

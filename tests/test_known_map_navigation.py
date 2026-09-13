@@ -2,6 +2,7 @@ import inspect
 
 import cv2
 import numpy as np
+import pytest
 
 import harness.known_map_navigation as nav
 
@@ -128,11 +129,13 @@ def test_same_image_after_probe_is_not_treated_as_measured_motion():
     navigator = nav.KnownMapNavigator(data, "r3")
     first = navigator.decide(own, own, 1)
     second = navigator.decide(own, own, 2)
+    third = navigator.decide(own, own, 3)
     assert first["status"] == "calibrating_forward"
-    assert second["status"] == "calibration_no_visual_progress"
-    assert second["done"] is True
-    assert second["action"]["forward"] == second["action"]["left"] == 0
-    assert second["diagnostics"]["calibration"]["uses_issued_commands_as_measurement"] is False
+    assert second["status"] == "settling_forward_probe"
+    assert third["status"] == "calibration_no_visual_progress"
+    assert third["done"] is True
+    assert third["action"]["forward"] == third["action"]["left"] == 0
+    assert third["diagnostics"]["calibration"]["uses_issued_commands_as_measurement"] is False
 
 
 def test_two_visual_probes_create_jacobian_and_bounded_command():
@@ -141,14 +144,38 @@ def test_two_visual_probes_create_jacobian_and_bounded_command():
     navigator = nav.KnownMapNavigator(data, "r1")
     navigator.decide(own, own, 1)
     p2 = jpeg_at((-.468, -2.55), data)
-    assert navigator.decide(own, p2, 2)["status"] == "calibrating_lateral"
+    assert navigator.decide(own, p2, 2)["status"] == "settling_forward_probe"
+    assert navigator.decide(own, p2, 3)["status"] == "calibrating_lateral"
     p3 = jpeg_at((-.468, -2.526), data)
-    result = navigator.decide(own, p3, 3)
+    assert navigator.decide(own, p3, 4)["status"] == "settling_lateral_probe"
+    result = navigator.decide(own, p3, 5)
     assert result["status"] == "navigating"
     assert -.05 <= result["action"]["forward"] <= .10
     assert -.08 <= result["action"]["left"] <= .08
     assert result["action"]["turn"] == 0
     assert result["diagnostics"]["calibration"]["visual_displacement_jacobian"]
+
+
+def test_calibration_waits_through_visual_coast_before_measuring_total_probe_motion():
+    data = map_data(); own = jpeg_at((-.5, -2.55), data)
+    navigator = nav.KnownMapNavigator(data, "r1")
+    navigator.decide(own, own, 0)
+    moving = jpeg_at((-.48, -2.55), data)
+    assert navigator.decide(own, moving, 1)["status"] == "settling_forward_probe"
+    coasting = jpeg_at((-.468, -2.55), data)
+    assert navigator.decide(own, coasting, 2)["status"] == "settling_forward_probe"
+    settled = jpeg_at((-.468, -2.55), data)
+    result = navigator.decide(own, settled, 3)
+    assert result["status"] == "calibrating_lateral"
+    # Column uses full displacement from the pre-probe stationary origin.
+    assert np.allclose(navigator._forward_delta, (1.0, 0.0), atol=.12)
+
+
+def test_uniform_saturation_preserves_control_direction():
+    forward, left = nav._uniformly_bound_control(.25, -.10)
+    assert forward == pytest.approx(.10)
+    assert left == pytest.approx(-.04)
+    assert left / forward == pytest.approx(-.10 / .25)
 
 
 def test_probe_fails_closed_when_route_exists_but_unknown_yaw_disk_is_not_clear():

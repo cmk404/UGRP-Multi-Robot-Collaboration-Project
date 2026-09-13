@@ -70,7 +70,7 @@ def make_run(root):
     invariant = {"map_sha256": digest, "actor_cameras": {}, "added_navigation_camera": False}
     _dump(root / "invariants-before.json", invariant); _dump(root / "invariants-after.json", invariant)
     _dump(root / "result.json", {"map_sha256": digest, "condition": "map", "decisions": 2,
-                                 "actor_status": rows[-1]["decision"]["status"],
+                                 "actor_status": (rows[-1]["decision"]["status"] if rows[-1]["decision"]["done"] else "budget_exhausted"),
                                  "evaluation": {"success": False}, "error": None})
     _rehash(root)
     return rows

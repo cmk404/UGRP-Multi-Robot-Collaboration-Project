@@ -11,6 +11,24 @@ import numpy as np
 from scripts.audit_known_map_navigation import audit_run
 
 
+def localization_errors(root):
+    """Compare saved estimates with interpolated output-only pose samples."""
+    actor=[json.loads(l) for l in (root/'actor-decisions.jsonl').read_text().splitlines()]
+    referee=[json.loads(l) for l in (root/'evaluation-only.jsonl').read_text().splitlines()]
+    times=[r['sim_time_s'] for r in referee]
+    xy=np.array([r['robot_xyz_m'][:2] for r in referee])
+    now=times[0]; errors=[]
+    for row in actor:
+        decision=row['decision']; estimate=decision['diagnostics']['position_estimate_m']
+        if estimate is not None and decision['diagnostics']['localization']['ok']:
+            truth=[np.interp(now,times,xy[:,axis]) for axis in range(2)]
+            errors.append(float(np.linalg.norm(np.subtract(estimate,truth))))
+        now+=decision['action']['duration_s']
+    return {'valid_frames':len(errors), 'mean_m':float(np.mean(errors)) if errors else None,
+            'max_m':max(errors) if errors else None,
+            'reference':'output-only pose interpolated between ~0.1 s samples; no control use'}
+
+
 def plot_pair(map_run, direct_run, target):
     """Draw authored geometry and referee trajectories, never actor inputs."""
     data = json.loads((map_run / 'actor-map.json').read_text())
@@ -58,6 +76,7 @@ def main():
         try:
             audit=audit_run(root)
             entry={k:v for k,v in audit.items() if k!='replay'}
+            entry['localization_error']=localization_errors(root)
         except Exception as exc:
             entry={'audit_pass':False,'error':str(exc)}
         entry['name']=row['name'];summaries.append(entry)
