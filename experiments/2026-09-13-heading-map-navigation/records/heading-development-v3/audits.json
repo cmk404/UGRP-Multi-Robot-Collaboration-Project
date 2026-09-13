@@ -1,0 +1,57 @@
+[
+  {
+    "audit_pass": true,
+    "navigation_success": true,
+    "condition": "map",
+    "motion_style": "heading",
+    "robot_id": "r1",
+    "frames": 165,
+    "map_sha256": "0a54ebfbc5463dcc9b8c1b73a9b0218f2dd662da3c9583e4941229d080d014b0",
+    "manifest_files": 338,
+    "source_check": {
+      "forbidden_runtime_imports": [],
+      "runner_decide_positional_inputs": 3
+    },
+    "claim_limit": "artifact replay checks saved inputs and code boundaries; input logging does not cryptographically prove hidden state was absent at runtime",
+    "motion": {
+      "status_counts": {
+        "calibrating_forward": 1,
+        "settling_forward_probe": 4,
+        "calibrating_forward_repeat": 2,
+        "aligning_heading": 68,
+        "navigating_forward": 88,
+        "goal_confirmation_1_of_2": 1,
+        "arrived": 1
+      },
+      "lateral_commands": 0,
+      "reverse_commands": 0,
+      "turn_commands": 68,
+      "forward_commands": 91,
+      "stop_commands": 6,
+      "absolute_yaw_travel_deg": 500.3744185994763,
+      "heading_estimate_error_deg": {
+        "frames": 158,
+        "mean": 3.3748291909533585,
+        "max": 14.08296020142215
+      },
+      "all_moving_samples": {
+        "distance_m": 3.4587555698014354,
+        "distance_weighted_heading_error_deg": 1.7870360788361455,
+        "distance_fraction_within_20deg": 0.9896639418563499
+      },
+      "forward_only_commands": {
+        "distance_m": 2.562770517441911,
+        "distance_weighted_heading_error_deg": 0.6185634152269642,
+        "distance_fraction_within_20deg": 1.0
+      },
+      "reference": "output-only ~0.1 s pose samples; >=0.2 mm translation; time interpolation only after run"
+    },
+    "localization_error": {
+      "valid_frames": 165,
+      "mean_m": 0.01547343457944005,
+      "max_m": 0.025284433054009847,
+      "reference": "output-only pose interpolated between ~0.1 s samples; no control use"
+    },
+    "name": "development_r1-slalom-map"
+  }
+]

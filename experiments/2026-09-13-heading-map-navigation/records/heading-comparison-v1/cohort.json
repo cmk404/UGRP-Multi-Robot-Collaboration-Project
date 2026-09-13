@@ -1,0 +1,188 @@
+{
+  "source_sha": "3abedb6e776b960359033b3371f38275e1bdfda1",
+  "matrix": "heading-comparison",
+  "motion_style": "holonomic",
+  "max_steps": 400,
+  "jobs": [
+    {
+      "name": "heldout_r1-open-heading",
+      "case": {
+        "case_id": "heldout_r1",
+        "robot_id": "r1",
+        "start_xy_m": [
+          -0.48,
+          -2.5
+        ],
+        "start_yaw_deg": 12
+      },
+      "map": "open",
+      "condition": "map",
+      "motion_style": "heading"
+    },
+    {
+      "name": "heldout_r1-open-holonomic",
+      "case": {
+        "case_id": "heldout_r1",
+        "robot_id": "r1",
+        "start_xy_m": [
+          -0.48,
+          -2.5
+        ],
+        "start_yaw_deg": 12
+      },
+      "map": "open",
+      "condition": "map",
+      "motion_style": "holonomic"
+    },
+    {
+      "name": "heldout_r1-slalom-heading",
+      "case": {
+        "case_id": "heldout_r1",
+        "robot_id": "r1",
+        "start_xy_m": [
+          -0.48,
+          -2.5
+        ],
+        "start_yaw_deg": 12
+      },
+      "map": "slalom",
+      "condition": "map",
+      "motion_style": "heading"
+    },
+    {
+      "name": "heldout_r1-slalom-holonomic",
+      "case": {
+        "case_id": "heldout_r1",
+        "robot_id": "r1",
+        "start_xy_m": [
+          -0.48,
+          -2.5
+        ],
+        "start_yaw_deg": 12
+      },
+      "map": "slalom",
+      "condition": "map",
+      "motion_style": "holonomic"
+    },
+    {
+      "name": "heldout_r1-narrow-heading",
+      "case": {
+        "case_id": "heldout_r1",
+        "robot_id": "r1",
+        "start_xy_m": [
+          -0.48,
+          -2.5
+        ],
+        "start_yaw_deg": 12
+      },
+      "map": "narrow",
+      "condition": "map",
+      "motion_style": "heading"
+    },
+    {
+      "name": "heldout_r1-narrow-holonomic",
+      "case": {
+        "case_id": "heldout_r1",
+        "robot_id": "r1",
+        "start_xy_m": [
+          -0.48,
+          -2.5
+        ],
+        "start_yaw_deg": 12
+      },
+      "map": "narrow",
+      "condition": "map",
+      "motion_style": "holonomic"
+    },
+    {
+      "name": "heldout_r3-open-heading",
+      "case": {
+        "case_id": "heldout_r3",
+        "robot_id": "r3",
+        "start_xy_m": [
+          -0.54,
+          -2.59
+        ],
+        "start_yaw_deg": -12
+      },
+      "map": "open",
+      "condition": "map",
+      "motion_style": "heading"
+    },
+    {
+      "name": "heldout_r3-open-holonomic",
+      "case": {
+        "case_id": "heldout_r3",
+        "robot_id": "r3",
+        "start_xy_m": [
+          -0.54,
+          -2.59
+        ],
+        "start_yaw_deg": -12
+      },
+      "map": "open",
+      "condition": "map",
+      "motion_style": "holonomic"
+    },
+    {
+      "name": "heldout_r3-slalom-heading",
+      "case": {
+        "case_id": "heldout_r3",
+        "robot_id": "r3",
+        "start_xy_m": [
+          -0.54,
+          -2.59
+        ],
+        "start_yaw_deg": -12
+      },
+      "map": "slalom",
+      "condition": "map",
+      "motion_style": "heading"
+    },
+    {
+      "name": "heldout_r3-slalom-holonomic",
+      "case": {
+        "case_id": "heldout_r3",
+        "robot_id": "r3",
+        "start_xy_m": [
+          -0.54,
+          -2.59
+        ],
+        "start_yaw_deg": -12
+      },
+      "map": "slalom",
+      "condition": "map",
+      "motion_style": "holonomic"
+    },
+    {
+      "name": "heldout_r3-narrow-heading",
+      "case": {
+        "case_id": "heldout_r3",
+        "robot_id": "r3",
+        "start_xy_m": [
+          -0.54,
+          -2.59
+        ],
+        "start_yaw_deg": -12
+      },
+      "map": "narrow",
+      "condition": "map",
+      "motion_style": "heading"
+    },
+    {
+      "name": "heldout_r3-narrow-holonomic",
+      "case": {
+        "case_id": "heldout_r3",
+        "robot_id": "r3",
+        "start_xy_m": [
+          -0.54,
+          -2.59
+        ],
+        "start_yaw_deg": -12
+      },
+      "map": "narrow",
+      "condition": "map",
+      "motion_style": "holonomic"
+    }
+  ]
+}
