@@ -53,7 +53,7 @@ def main():
         report['carry_origin_evaluation_only'] = origin
         print(json.dumps({'stage': 'grasp_hold', 'evaluation': scene.grasp_report['evaluation'],
                           'pose': origin}), flush=True)
-        if not scene.grasp_report['evaluation']['success']:
+        if not scene.grasp_report['evaluation']['grasp_success']:
             raise RuntimeError('teacher initial grasp failed')
         histories = {r: [] for r in ROBOTS}
         ready = False
