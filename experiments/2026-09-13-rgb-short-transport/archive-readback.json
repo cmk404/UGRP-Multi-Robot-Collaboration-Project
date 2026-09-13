@@ -1,0 +1,48 @@
+{
+  "restored_files": 5990,
+  "audits": [
+    {
+      "cohort": "fixed",
+      "run": "fixed-01-visual",
+      "transport_approach_audit": true,
+      "grasp_audit": true,
+      "experiment_success": true,
+      "errors": []
+    },
+    {
+      "cohort": "fixed",
+      "run": "fixed-01-playback",
+      "transport_approach_audit": true,
+      "grasp_audit": true,
+      "experiment_success": true,
+      "errors": []
+    },
+    {
+      "cohort": "varied",
+      "run": "heldout-01-visual",
+      "transport_approach_audit": true,
+      "grasp_audit": true,
+      "experiment_success": false,
+      "errors": []
+    },
+    {
+      "cohort": "varied",
+      "run": "heldout-02-visual",
+      "transport_approach_audit": true,
+      "grasp_audit": true,
+      "experiment_success": true,
+      "errors": []
+    }
+  ],
+  "playback_limitation": "Historical playback read-back also used original local absolute teacher-report path; no claim of its portable re-audit.",
+  "retraining_from_restored_teacher_rgb": {
+    "r1": {
+      "byte_equal": true,
+      "sha256": "eab2a4088cf09cef1a50c9224c624b5412d009e44363f6edb45bade5e8f27190"
+    },
+    "r3": {
+      "byte_equal": true,
+      "sha256": "03911bab777322f6c5535e39ada41ceefe4cc2eb5006d907b88498ab832bde8b"
+    }
+  }
+}
