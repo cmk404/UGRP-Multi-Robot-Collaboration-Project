@@ -46,6 +46,9 @@ def main():
         summary = {'name': job['name'], 'exit_code': result.returncode}
         if (out / 'result.json').exists():
             summary.update(json.loads((out / 'result.json').read_text()))
+        else:
+            # Some GUI Python launchers return zero even after a child traceback.
+            summary.update(actor_status='runner_failed', error='No result.json; inspect retained process log')
         results.append(summary)
         (a.out_dir / 'results.json').write_text(json.dumps(results, indent=2)+'\n')
         print(json.dumps(summary), flush=True)

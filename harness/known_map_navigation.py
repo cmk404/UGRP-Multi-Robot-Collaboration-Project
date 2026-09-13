@@ -208,7 +208,7 @@ class KnownMapNavigator:
         mask = cv2.inRange(hsv, np.array([20, 70, 50], np.uint8), np.array([40, 255, 255], np.uint8))
         mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, np.ones((13, 13), np.uint8))
         count, _, stats, centroids = cv2.connectedComponentsWithStats(mask, 8)
-        candidates: list[tuple[Point, int]] = []
+        components: list[tuple[Point, int]] = []
         xmin, xmax, ymin, ymax = map(float, self.map_data["bounds_m"])
         for i in range(1, count):
             area = int(stats[i, cv2.CC_STAT_AREA])
@@ -216,22 +216,64 @@ class KnownMapNavigator:
                 continue
             point = pixel_to_world(centroids[i], image.shape, self.map_data["top_camera"])
             if xmin <= point[0] <= xmax and ymin <= point[1] <= ymax:
-                candidates.append((point, area))
+                components.append((point, area))
+        # The unchanged MasterPi appearance exposes several disconnected yellow
+        # structural/wheel regions from above.  Group only components fitting in
+        # one declared chassis diameter before associating a robot candidate.
+        chassis_diameter = 2.0 * float(self.map_data["footprint"]["unloaded_radius_m"])
+        parent = list(range(len(components)))
+
+        def find(index: int) -> int:
+            while parent[index] != index:
+                parent[index] = parent[parent[index]]
+                index = parent[index]
+            return index
+
+        def union(first: int, second: int) -> None:
+            a, b = find(first), find(second)
+            if a != b:
+                parent[b] = a
+
+        for first in range(len(components)):
+            for second in range(first + 1, len(components)):
+                if math.dist(components[first][0], components[second][0]) <= chassis_diameter:
+                    union(first, second)
+        groups: dict[int, list[tuple[Point, int]]] = {}
+        for index, component in enumerate(components):
+            groups.setdefault(find(index), []).append(component)
+        candidates: list[tuple[Point, int, int, float]] = []
+        rejected_oversized = 0
+        for group in groups.values():
+            span = max((math.dist(a[0], b[0]) for a in group for b in group), default=0.0)
+            if span > chassis_diameter:
+                rejected_oversized += 1
+                continue
+            total_area = sum(item[1] for item in group)
+            center = (sum(item[0][0] * item[1] for item in group) / total_area,
+                      sum(item[0][1] * item[1] for item in group) / total_area)
+            candidates.append((center, total_area, len(group), span))
         reference = self._position
         if reference is None:
             reference = tuple(map(float, self.map_data["zones"]["start"]["center_m"]))
             max_distance = float(self.map_data["zones"]["start"]["radius_m"]) + 0.18
         else:
             max_distance = 0.22
-        ranked = sorted(((math.dist(point, reference), point, area) for point, area in candidates), key=lambda x: x[0])
+        ranked = sorted(((math.dist(point, reference), point, area, count, span)
+                         for point, area, count, span in candidates), key=lambda x: x[0])
         if not ranked or ranked[0][0] > max_distance:
-            return None, {"ok": False, "reason": "yellow_component_lost", "candidate_count": len(candidates)}
+            return None, {"ok": False, "reason": "yellow_component_lost",
+                          "candidate_count": len(candidates), "component_count": len(components),
+                          "rejected_oversized_groups": rejected_oversized}
         if len(ranked) > 1 and ranked[1][0] - ranked[0][0] < 0.08:
-            return None, {"ok": False, "reason": "ambiguous_yellow_components", "candidate_count": len(candidates)}
-        distance, point, area = ranked[0]
+            return None, {"ok": False, "reason": "ambiguous_yellow_groups",
+                          "candidate_count": len(candidates), "component_count": len(components),
+                          "rejected_oversized_groups": rejected_oversized}
+        distance, point, area, group_components, group_span = ranked[0]
         confidence = max(0.0, min(1.0, 0.9 - distance / max(max_distance, 1e-6) * 0.25))
         return point, {"ok": True, "confidence": round(confidence, 3), "candidate_count": len(candidates),
-                       "feature_area_px": area, "feature_plane_height_m": 0.09,
+                       "component_count": len(components), "group_component_count": group_components,
+                       "group_span_m": group_span, "feature_area_px": area,
+                       "feature_plane_height_m": 0.09,
                        "assumption": "yellow feature centroid lies on a 0.09 m horizontal plane"}
 
     def _result(self, action: Mapping[str, Any], status: str, localization: Mapping[str, Any],

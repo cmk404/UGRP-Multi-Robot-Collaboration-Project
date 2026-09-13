@@ -38,6 +38,15 @@ def jpeg_at(point, data, shape=(480, 640)):
     return encoded.tobytes()
 
 
+def jpeg_with_pixels(points, shape=(720, 960), radius=6):
+    image = np.zeros((*shape, 3), np.uint8)
+    for point in points:
+        cv2.circle(image, point, radius, (0, 255, 255), -1)
+    ok, encoded = cv2.imencode(".jpg", image, [cv2.IMWRITE_JPEG_QUALITY, 95])
+    assert ok
+    return encoded.tobytes()
+
+
 def test_projection_round_trip_center_and_offset():
     data = map_data()
     assert np.allclose(nav.pixel_to_world((319.5, 239.5), (480, 640, 3), data["top_camera"]), (.55, -2))
@@ -79,6 +88,38 @@ def test_four_consecutive_image_localization_losses_are_terminal():
     results = [navigator.decide(blank, blank, frame) for frame in range(4)]
     assert [item["done"] for item in results] == [False, False, False, True]
     assert results[-1]["status"] == "localization_lost"
+
+
+def test_real_r1_top_image_component_layout_groups_as_one_chassis():
+    # Derived from development_r1-open-map/rgb/0000-top.jpg, source SHA-256
+    # 6e0b89bc4cff83f1bf9f0ca0e422dd16837780eef09bcae368bc744ccdcb4192.
+    # These are the four measured yellow-component centroids, retained as a
+    # compact pixel-only regression fixture rather than simulator/referee data.
+    data = map_data()
+    top = jpeg_with_pixels([(168, 495), (201, 496), (166, 525), (201, 533)])
+    own = jpeg_at((-.5, -2.55), data)
+    result = nav.KnownMapNavigator(data, "r1").decide(own, top, 0)
+    assert result["status"] == "calibrating_forward"
+    assert np.allclose(result["diagnostics"]["position_estimate_m"], (-.5, -2.55), atol=.08)
+    assert result["diagnostics"]["localization"]["group_component_count"] == 4
+
+
+def test_two_separate_robot_sized_yellow_groups_are_ambiguous():
+    data = map_data()
+    # Two compact groups are 0.40 m apart and equally near the start centre.
+    points = []
+    for world in [(-.5, -2.35), (-.5, -2.75)]:
+        camera = data["top_camera"]; h, w = 720, 960
+        distance = camera["position_m"][2] - .09
+        visible_h = 2 * distance * np.tan(np.deg2rad(camera["fov_y_deg"]) / 2)
+        visible_w = visible_h * w / h
+        u = round((world[0] - camera["position_m"][0]) * w / visible_w + (w - 1) / 2)
+        v = round((camera["position_m"][1] - world[1]) * h / visible_h + (h - 1) / 2)
+        points.extend([(u - 12, v - 10), (u + 12, v - 10), (u - 12, v + 10), (u + 12, v + 10)])
+    top = jpeg_with_pixels(points, radius=4)
+    result = nav.KnownMapNavigator(data, "r1").decide(top, top, 0)
+    assert result["status"] == "localization_uncertain"
+    assert result["diagnostics"]["localization"]["reason"] == "ambiguous_yellow_groups"
 
 
 def test_same_image_after_probe_is_not_treated_as_measured_motion():
