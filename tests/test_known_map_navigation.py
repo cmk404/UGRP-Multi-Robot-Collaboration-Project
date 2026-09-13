@@ -175,7 +175,7 @@ def test_calibration_waits_through_visual_coast_before_measuring_total_probe_mot
     result = navigator.decide(own, settled, 3)
     assert result["status"] == "calibrating_lateral"
     # Column uses full displacement from the pre-probe stationary origin.
-    assert np.allclose(navigator._forward_delta, (.06 / .032, 0.0), atol=.15)
+    assert np.allclose(navigator._forward_delta, (.06 / .048, 0.0), atol=.15)
 
 
 def test_short_visual_signal_repeats_same_axis_and_uses_accumulated_impulse():
@@ -192,7 +192,7 @@ def test_short_visual_signal_repeats_same_axis_and_uses_accumulated_impulse():
     result = navigator.decide(own, enough, 4)
     assert result["status"] == "calibrating_lateral"
     assert navigator._probe_pulses["forward"] == 2
-    assert np.allclose(navigator._forward_delta, (.055 / .064, 0.0), atol=.12)
+    assert np.allclose(navigator._forward_delta, (.055 / .096, 0.0), atol=.12)
 
 
 def test_uniform_saturation_preserves_control_direction():

@@ -25,6 +25,7 @@ Point = tuple[float, float]
 Cell = tuple[int, int]
 _STOP = {"kind": "mecanum", "forward": 0.0, "left": 0.0, "turn": 0.0, "duration_s": 0.25}
 _CALIBRATION_STOP = {**_STOP, "duration_s": 0.4}
+_PROBE_DURATION_S = 0.6
 _PROBE_TARGET_DISPLACEMENT_M = 0.05
 _MAX_PROBE_PULSES_PER_AXIS = 6
 
@@ -367,10 +368,10 @@ class KnownMapNavigator:
                                     path=planned, done=True)
             self._probe_origin = position
             self._probe_pulses["forward"] = 1
-            self._probe_impulse["forward"] = 0.08 * 0.4
+            self._probe_impulse["forward"] = 0.08 * _PROBE_DURATION_S
             self._phase = "forward_probe_issued"
             return self._result({"kind": "mecanum", "forward": 0.08, "left": 0.0, "turn": 0.0,
-                                 "duration_s": 0.4}, "calibrating_forward", localization, path=planned)
+                                 "duration_s": _PROBE_DURATION_S}, "calibrating_forward", localization, path=planned)
         if self._phase == "forward_probe_issued":
             self._settle_previous = position
             self._settle_checks = 0
@@ -398,18 +399,21 @@ class KnownMapNavigator:
                     return self._result(_STOP, "calibration_unsafe_clearance", localization,
                                         path=planned, done=True)
                 self._probe_pulses["forward"] += 1
-                self._probe_impulse["forward"] += 0.08 * 0.4
+                self._probe_impulse["forward"] += 0.08 * _PROBE_DURATION_S
                 self._phase = "forward_probe_issued"
                 return self._result({"kind": "mecanum", "forward": 0.08, "left": 0.0,
-                                     "turn": 0.0, "duration_s": 0.4},
+                                     "turn": 0.0, "duration_s": _PROBE_DURATION_S},
                                     "calibrating_forward_repeat", localization, path=planned)
+            if not _probe_disk_clear(self.map_data, position):
+                self._phase = "failed"
+                return self._result(_STOP, "calibration_unsafe_clearance", localization, path=planned, done=True)
             self._forward_delta = delta / self._probe_impulse["forward"]
             self._probe_origin = position
             self._probe_pulses["lateral"] = 1
-            self._probe_impulse["lateral"] = 0.06 * 0.4
+            self._probe_impulse["lateral"] = 0.06 * _PROBE_DURATION_S
             self._phase = "lateral_probe_issued"
             return self._result({"kind": "mecanum", "forward": 0.0, "left": 0.06, "turn": 0.0,
-                                 "duration_s": 0.4}, "calibrating_lateral", localization, path=planned)
+                                 "duration_s": _PROBE_DURATION_S}, "calibrating_lateral", localization, path=planned)
         if self._phase == "lateral_probe_issued":
             self._settle_previous = position
             self._settle_checks = 0
@@ -437,14 +441,14 @@ class KnownMapNavigator:
                     return self._result(_STOP, "calibration_unsafe_clearance", localization,
                                         path=planned, done=True)
                 self._probe_pulses["lateral"] += 1
-                self._probe_impulse["lateral"] += 0.06 * 0.4
+                self._probe_impulse["lateral"] += 0.06 * _PROBE_DURATION_S
                 self._phase = "lateral_probe_issued"
                 return self._result({"kind": "mecanum", "forward": 0.0, "left": 0.06,
-                                     "turn": 0.0, "duration_s": 0.4},
+                                     "turn": 0.0, "duration_s": _PROBE_DURATION_S},
                                     "calibrating_lateral_repeat", localization, path=planned)
             self._jacobian = np.column_stack((self._forward_delta,
                                               delta / self._probe_impulse["lateral"]))
-            if not np.all(np.isfinite(self._jacobian)) or abs(float(np.linalg.det(self._jacobian))) < 0.08 or np.linalg.cond(self._jacobian) > 25:
+            if not np.all(np.isfinite(self._jacobian)) or float(np.linalg.svd(self._jacobian, compute_uv=False)[-1]) < 0.02 or np.linalg.cond(self._jacobian) > 25:
                 self._phase = "failed"
                 return self._result(_STOP, "calibration_singular", localization,
                                     path=planned, done=True)
