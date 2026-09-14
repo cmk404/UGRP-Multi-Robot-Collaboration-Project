@@ -57,6 +57,9 @@ def audit(root,models):
  if not _same(evaluated,r['evaluation']):raise ValueError('output-only verdict mismatch')
  if r['success']!=bool(not r['error'] and not r.get('cleanup_error') and evaluated['success']):raise ValueError('false success')
  if hashlib.sha256(_safe_file(root,'scene.xml').read_bytes()).hexdigest()!=r['scene_xml_sha256']:raise ValueError('scene hash mismatch')
+ if r.get('stiff_finger_contact'):
+  pairs=r['invariants_initial']['explicit_contact_pairs']
+  if len(pairs['pair_solimp'])!=4 or any(x[:2]!=[.995,.999] for x in pairs['pair_solimp']):raise ValueError('finger impedance profile mismatch')
  if r.get('finger_friction_damping',0):
   pairs=r['invariants_initial']['explicit_contact_pairs']
   if pairs['pair_solreffriction'] != [[0.,-r['finger_friction_damping']]]*4:raise ValueError('finger friction profile mismatch')

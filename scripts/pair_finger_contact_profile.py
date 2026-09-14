@@ -1,9 +1,10 @@
 """Static, explicit friction damping for the four finger/beam contacts only."""
 import xml.etree.ElementTree as ET
 
-def configure_finger_contacts(root, damping):
+def configure_finger_contacts(root, damping, stiff=False):
     if damping not in (0,3000):raise ValueError('explicit finger friction damping must be 0 or 3000')
-    if not damping:return
+    if not damping and not stiff:return
+    if damping and stiff:raise ValueError("compare damping and impedance separately")
     import mujoco
     import numpy as np
     # Resolve defaults from the authored model, not live simulation state.
@@ -19,6 +20,7 @@ def configure_finger_contacts(root, damping):
             friction=np.maximum(m.geom_friction[a],m.geom_friction[b])
             values={'friction':friction[[0,0,1,2,2]],'solref':weight*m.geom_solref[a]+(1-weight)*m.geom_solref[b],
                     'solimp':weight*m.geom_solimp[a]+(1-weight)*m.geom_solimp[b]}
+            if stiff:values['solimp']=np.array([.995,.999,*values['solimp'][2:]])
             ET.SubElement(contact,'pair',name=rid+'_'+side+'_beam_contact',geom1=names[0],geom2=names[1],
                 condim=str(max(m.geom_condim[a],m.geom_condim[b])),margin=str(m.geom_margin[a]+m.geom_margin[b]),
                 gap=str(m.geom_gap[a]+m.geom_gap[b]),solreffriction=f'0 {-damping}',

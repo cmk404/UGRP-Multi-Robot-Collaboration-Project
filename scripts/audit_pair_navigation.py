@@ -22,6 +22,9 @@ def audit(run_dir, grasp_dir=None):
         raise ValueError('map/schema mismatch')
     if 'noslip_iterations' in report and report['invariants_initial']['contact_solver']['noslip_iterations'] != report['noslip_iterations']:
         raise ValueError('declared NoSlip profile mismatch')
+    if report.get('stiff_finger_contact'):
+     pairs=report['invariants_initial']['explicit_contact_pairs']
+     if len(pairs['pair_solimp'])!=4 or any(x[:2]!=[.995,.999] for x in pairs['pair_solimp']):raise ValueError('finger impedance profile mismatch')
     if report.get('finger_friction_damping',0):
      pairs=report['invariants_initial']['explicit_contact_pairs']
      if pairs['pair_solreffriction'] != [[0.,-report['finger_friction_damping']]]*4:raise ValueError('finger friction profile mismatch')

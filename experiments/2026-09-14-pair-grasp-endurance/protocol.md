@@ -29,3 +29,7 @@ impratio100 / 기존 RGB PD 후보 fd68a2c도 양쪽 모드 출발 전 실패했
 RGB 적분 보정 후보 ff2d423도 출발 전 실패했다. 최대 간격 변화 2.752cm로 개선이 미미하고 최종 횡방향 명령이 ±0.1m/s에 포화됐다. 이 후보도 채택하지 않는다.
 
 다음은 baseline의 impratio10/NoSlip0/integral0으로 복귀하고 네 손가락–빔 접촉만 명시적 pair로 기술한다. 모델의 geom defaults를 정적으로 컴파일해 기존 동적 혼합 규칙의 normal solref/solimp/condim/friction/margin/gap을 그대로 복사한다. 유일한 접촉법칙 변경은 elliptic cone의 solreffriction을 0 -3000으로 지정해 마찰 방향 속도 감쇠를 높이는 것이다. 바퀴/바닥/관절/형상/질량/마찰계수/정상 방향 접촉법칙과 모든 제어기는 baseline과 같다. [MuJoCo pair solreffriction](https://mujoco.readthedocs.io/en/stable/XMLreference.html#contact-pair-solreffriction) 및 [friction solver](https://mujoco.readthedocs.io/en/stable/modeling.html#friction) 정의를 따른다. 부착 제약이나 adhesion은 추가하지 않는다. 접촉이 사라지면 마찰도 사라지는 일반 접촉이며, fixed place 후 완전 분리를 확인한다.
+
+마찰 감쇠 3000 후보 17e59b9는 13.174초에 QACC 수치 불안정 경고가 발생했고 이후 영상 guard가 초기 파지에 실패했다. 5분 시험으로 진입하지 못한 실패이며 채택하지 않는다.
+
+다음 후보는 감쇠를 원래 solref .007 1로 복구하고 네 손가락–빔 접촉의 solimp 첫 두 값만 혼합 기준 .91/.975→.995/.999로 높인다. 나머지 solimp 형상값, normal/friction reference, 마찰계수/마진/형상/질량/바퀴/전역 솔버/제어는 baseline과 동일하다. 이 변경은 정상 방향과 마찰 방향의 접촉 유연성을 함께 줄이는 명시적 모델 변경이다. 사용자에게 제어기 개선이나 실물 파지 증거로 제시하지 않는다. --stiff-finger-contact 옵션으로 비교하며 기본은 이전 동적 접촉이다.

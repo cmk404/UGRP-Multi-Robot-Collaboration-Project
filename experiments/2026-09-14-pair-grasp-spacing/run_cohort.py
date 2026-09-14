@@ -23,6 +23,7 @@ def main():
     p.add_argument('--noslip-iterations',type=int,choices=(0,3),default=0)
     p.add_argument('--spacing-integral',type=float,choices=(0.,2.),default=0.)
     p.add_argument('--finger-friction-damping',type=int,choices=(0,3000),default=0)
+    p.add_argument('--stiff-finger-contact',action='store_true')
     args=p.parse_args()
     out=args.out_dir.resolve(); models=args.grasp_model_dir.resolve()
     if out.exists(): raise FileExistsError(out)
@@ -45,7 +46,7 @@ def main():
         command=[str(args.mjpython.resolve()),str(ROOT/'scripts/run_pair_navigation.py'),
                  '--map',str(ROOT/'maps/pair_navigation'/e['map']),
                  '--grasp-model-dir',str(models),'--out-dir',str(out/e['id']),
-                 '--budget','750','--impratio',str(args.impratio),'--vision-mode','robust','--grasp-spacing','visual','--close-pulse',str(args.close_pulse),'--noslip-iterations',str(args.noslip_iterations),'--spacing-integral',str(args.spacing_integral),'--finger-friction-damping',str(args.finger_friction_damping)]
+                 '--budget','750','--impratio',str(args.impratio),'--vision-mode','robust','--grasp-spacing','visual','--close-pulse',str(args.close_pulse),'--noslip-iterations',str(args.noslip_iterations),'--spacing-integral',str(args.spacing_integral),'--finger-friction-damping',str(args.finger_friction_damping)]+(['--stiff-finger-contact'] if args.stiff_finger_contact else [])
         print('START '+e['id'],flush=True)
         started=time.monotonic()
         trial={'id':e['id'],'expected_route':e['expected_geometric_route'],'command':command}
