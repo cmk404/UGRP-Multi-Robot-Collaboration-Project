@@ -331,8 +331,9 @@ class TemporalPairVision(PairVision):
     length. Wheel memory is added only after both robots and the beam pass;
     the original appearance remains an independent acceptance check.
     """
-    def __init__(self, data):
+    def __init__(self, data, *, edge_axis=False):
         super().__init__(data)
+        self.edge_axis = edge_axis
         self.appearance = {r: [] for r in ROBOTS}
 
     def _track_payload(self, frame):
@@ -360,6 +361,12 @@ class TemporalPairVision(PairVision):
         point = cloud.mean(axis=0)
         eig,vectors = np.linalg.eigh(np.cov(cloud.T))
         axis = vectors[:,-1]
+        if self.edge_axis:
+            # Occlusion can remove one corner and bias the pixel covariance.
+            # The visible long edges still bound the unchanged straight shaft.
+            box = cv2.boxPoints(cv2.minAreaRect(cloud.astype(np.float32)))
+            edge = max((box[(j+1)%4]-box[j] for j in range(4)),key=np.linalg.norm)
+            axis = edge/np.linalg.norm(edge)
         if axis@previous_axis < 0: axis = -axis
         raw = math.atan2(axis[1],axis[0])
         delta = (raw-self.payload_angle+math.pi/2)%math.pi-math.pi/2
@@ -457,9 +464,10 @@ class PairNavigator:
     def __init__(self, data, robot_id, task_id='pair-navigation', *, vision_mode='legacy'):
         self.map, self.rid = validate_map(data), robot_id
         if robot_id not in ROBOTS: raise ValueError('invalid robot')
-        if vision_mode not in ('legacy','temporal'): raise ValueError('unknown vision mode')
+        if vision_mode not in ('legacy','temporal','temporal-edges'): raise ValueError('unknown vision mode')
         self.vision_mode = vision_mode
-        self.vision = (TemporalPairVision if vision_mode == 'temporal' else PairVision)(data)
+        self.vision = (PairVision(data) if vision_mode == 'legacy' else
+                       TemporalPairVision(data,edge_axis=vision_mode=='temporal-edges'))
         self.recovery_frames = 0
         self.recovery_confirmations = 0
         self.vision_terminal = False

@@ -1,0 +1,326 @@
+[
+  {
+    "map_id": "l-corner",
+    "frames": 84,
+    "candidate_vision_mode": "temporal-edges",
+    "baseline_source_sha": "f4da89ec53fed15c9efcea2e8bee19b99de31dfc",
+    "observers": {
+      "legacy": {
+        "accepted": 83,
+        "errors": [
+          {
+            "index": 83,
+            "error": "orange payload missing/ambiguous"
+          }
+        ],
+        "memory_matches": 0
+      },
+      "temporal": {
+        "accepted": 84,
+        "errors": [],
+        "memory_matches": 0
+      }
+    },
+    "max_position_difference_when_both_valid_m": 0.0,
+    "last_observations": {
+      "temporal": {
+        "r1": {
+          "xy_m": [
+            0.5343179176021287,
+            -2.0365915255950333
+          ],
+          "relative_yaw_rad": 0.8115781021773634,
+          "confidence": 0.784805417060852,
+          "center_uv": [
+            475.0,
+            370.0
+          ],
+          "feature_plane_height_m": 0.09,
+          "appearance_source": "initial",
+          "anchor_confidence": 0.784805417060852
+        },
+        "r3": {
+          "xy_m": [
+            0.1474932184546352,
+            -1.6671913624451746
+          ],
+          "relative_yaw_rad": 0.7941248096574202,
+          "confidence": 0.8372055292129517,
+          "center_uv": [
+            364.0,
+            264.0
+          ],
+          "feature_plane_height_m": 0.09,
+          "appearance_source": "initial",
+          "anchor_confidence": 0.8372055292129517
+        }
+      }
+    },
+    "wall_seconds": 2.0993909999961033,
+    "scope": "Recorded baseline RGB only; revised actions and physical success are untested here"
+  },
+  {
+    "map_id": "narrow-door",
+    "frames": 395,
+    "candidate_vision_mode": "temporal-edges",
+    "baseline_source_sha": "f4da89ec53fed15c9efcea2e8bee19b99de31dfc",
+    "observers": {
+      "legacy": {
+        "accepted": 394,
+        "errors": [
+          {
+            "index": 394,
+            "error": "r3 wheel template lost (0.478)"
+          }
+        ],
+        "memory_matches": 0
+      },
+      "temporal": {
+        "accepted": 395,
+        "errors": [],
+        "memory_matches": 1
+      }
+    },
+    "max_position_difference_when_both_valid_m": 0.0,
+    "last_observations": {
+      "temporal": {
+        "r1": {
+          "xy_m": [
+            -0.31251453188292455,
+            -2.2178066999704353
+          ],
+          "relative_yaw_rad": 0.637045176977931,
+          "confidence": 0.6182592511177063,
+          "center_uv": [
+            232.0,
+            422.0
+          ],
+          "feature_plane_height_m": 0.09,
+          "appearance_source": "initial",
+          "anchor_confidence": 0.6182592511177063
+        },
+        "r3": {
+          "xy_m": [
+            -0.6261561798403517,
+            -1.7787083928300376
+          ],
+          "relative_yaw_rad": 0.628318530717959,
+          "confidence": 0.5886773467063904,
+          "center_uv": [
+            142.0,
+            296.0
+          ],
+          "feature_plane_height_m": 0.09,
+          "appearance_source": "memory",
+          "anchor_confidence": 0.47788262367248535
+        }
+      }
+    },
+    "wall_seconds": 9.756602041976294,
+    "scope": "Recorded baseline RGB only; revised actions and physical success are untested here"
+  },
+  {
+    "map_id": "s-bends",
+    "frames": 198,
+    "candidate_vision_mode": "temporal-edges",
+    "baseline_source_sha": "f4da89ec53fed15c9efcea2e8bee19b99de31dfc",
+    "observers": {
+      "legacy": {
+        "accepted": 197,
+        "errors": [
+          {
+            "index": 197,
+            "error": "orange payload missing/ambiguous"
+          }
+        ],
+        "memory_matches": 0
+      },
+      "temporal": {
+        "accepted": 198,
+        "errors": [],
+        "memory_matches": 0
+      }
+    },
+    "max_position_difference_when_both_valid_m": 0.0,
+    "last_observations": {
+      "temporal": {
+        "r1": {
+          "xy_m": [
+            -0.22190694469522332,
+            -2.029621711195979
+          ],
+          "relative_yaw_rad": 0.026179938779914945,
+          "confidence": 0.6859013438224792,
+          "center_uv": [
+            258.0,
+            368.0
+          ],
+          "feature_plane_height_m": 0.09,
+          "appearance_source": "initial",
+          "anchor_confidence": 0.6859013438224792
+        },
+        "r3": {
+          "xy_m": [
+            -0.23584657349333138,
+            -1.4929460024688261
+          ],
+          "relative_yaw_rad": -0.03490658503988659,
+          "confidence": 0.5885401368141174,
+          "center_uv": [
+            254.0,
+            214.0
+          ],
+          "feature_plane_height_m": 0.09,
+          "appearance_source": "initial",
+          "anchor_confidence": 0.5885401368141174
+        }
+      }
+    },
+    "wall_seconds": 4.8724395419994835,
+    "scope": "Recorded baseline RGB only; revised actions and physical success are untested here"
+  },
+  {
+    "map_id": "blocked-branch",
+    "frames": 317,
+    "candidate_vision_mode": "temporal-edges",
+    "baseline_source_sha": "f4da89ec53fed15c9efcea2e8bee19b99de31dfc",
+    "observers": {
+      "legacy": {
+        "accepted": 316,
+        "errors": [
+          {
+            "index": 316,
+            "error": "r3 wheel template lost (0.477)"
+          }
+        ],
+        "memory_matches": 0
+      },
+      "temporal": {
+        "accepted": 317,
+        "errors": [],
+        "memory_matches": 1
+      }
+    },
+    "max_position_difference_when_both_valid_m": 0.0,
+    "last_observations": {
+      "temporal": {
+        "r1": {
+          "xy_m": [
+            -0.21493713029616945,
+            -2.5384181623269164
+          ],
+          "relative_yaw_rad": 1.5882496193148403,
+          "confidence": 0.6416152715682983,
+          "center_uv": [
+            260.0,
+            514.0
+          ],
+          "feature_plane_height_m": 0.09,
+          "appearance_source": "initial",
+          "anchor_confidence": 0.6416152715682983
+        },
+        "r3": {
+          "xy_m": [
+            -0.7550977462228494,
+            -2.5384181623269164
+          ],
+          "relative_yaw_rad": 1.5358897417550113,
+          "confidence": 0.6659254431724548,
+          "center_uv": [
+            105.0,
+            514.0
+          ],
+          "feature_plane_height_m": 0.09,
+          "appearance_source": "memory",
+          "anchor_confidence": 0.47667571902275085
+        }
+      }
+    },
+    "wall_seconds": 7.889387833012734,
+    "scope": "Recorded baseline RGB only; revised actions and physical success are untested here"
+  },
+  {
+    "map_id": "l-corner",
+    "frames": 92,
+    "candidate_vision_mode": "temporal-edges",
+    "baseline_source_sha": "13b1a4995c3b7d40990c49fa3c57396cec7b5fa8",
+    "observers": {
+      "legacy": {
+        "accepted": 85,
+        "errors": [
+          {
+            "index": 83,
+            "error": "orange payload missing/ambiguous"
+          },
+          {
+            "index": 84,
+            "error": "orange payload missing/ambiguous"
+          },
+          {
+            "index": 85,
+            "error": "orange payload missing/ambiguous"
+          },
+          {
+            "index": 86,
+            "error": "orange payload missing/ambiguous"
+          },
+          {
+            "index": 89,
+            "error": "orange payload missing/ambiguous"
+          },
+          {
+            "index": 90,
+            "error": "orange payload missing/ambiguous"
+          },
+          {
+            "index": 91,
+            "error": "orange payload missing/ambiguous"
+          }
+        ],
+        "memory_matches": 0
+      },
+      "temporal": {
+        "accepted": 92,
+        "errors": [],
+        "memory_matches": 0
+      }
+    },
+    "max_position_difference_when_both_valid_m": 0.0,
+    "last_observations": {
+      "temporal": {
+        "r1": {
+          "xy_m": [
+            0.5203782888040208,
+            -2.0017424535997637
+          ],
+          "relative_yaw_rad": 0.8988445647770802,
+          "confidence": 0.7734134197235107,
+          "center_uv": [
+            471.0,
+            360.0
+          ],
+          "feature_plane_height_m": 0.09,
+          "appearance_source": "initial",
+          "anchor_confidence": 0.7734134197235107
+        },
+        "r3": {
+          "xy_m": [
+            0.10218942486078458,
+            -1.6671913624451746
+          ],
+          "relative_yaw_rad": 0.8901179185171084,
+          "confidence": 0.8400475978851318,
+          "center_uv": [
+            351.0,
+            264.0
+          ],
+          "feature_plane_height_m": 0.09,
+          "appearance_source": "initial",
+          "anchor_confidence": 0.8400475978851318
+        }
+      }
+    },
+    "wall_seconds": 2.233515083004022,
+    "scope": "Recorded baseline RGB only; revised actions and physical success are untested here"
+  }
+]

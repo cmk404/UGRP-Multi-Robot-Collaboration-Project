@@ -12,9 +12,11 @@ from harness.pair_navigation import PairVision, TemporalPairVision, ROBOTS
 from scripts.audit_pair_carry_sync import _rgb
 
 
-def replay(root):
+def replay(root, vision_mode='temporal'):
     record = json.loads((root/'result.json').read_text())
-    observers = {'legacy':PairVision(record['map']), 'temporal':TemporalPairVision(record['map'])}
+    if vision_mode not in ('temporal','temporal-edges'): raise ValueError('unknown candidate vision mode')
+    observers = {'legacy':PairVision(record['map']),
+                 'temporal':TemporalPairVision(record['map'],edge_axis=vision_mode=='temporal-edges')}
     results = {name:{'accepted':0,'errors':[],'memory_matches':0} for name in observers}
     maximum_delta = 0.
     last = {}
@@ -34,7 +36,7 @@ def replay(root):
             import math
             maximum_delta=max(maximum_delta,*(math.dist(outputs['legacy'][r]['xy_m'],outputs['temporal'][r]['xy_m']) for r in ROBOTS))
         last = outputs
-    return {'map_id':record['map']['map_id'],'frames':len(record['steps']),
+    return {'map_id':record['map']['map_id'],'frames':len(record['steps']),'candidate_vision_mode':vision_mode,
             'baseline_source_sha':record['source_sha'],'observers':results,
             'max_position_difference_when_both_valid_m':maximum_delta,
             'last_observations':last,'wall_seconds':time.monotonic()-started,
@@ -45,11 +47,12 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('run_dirs',nargs='+',type=Path)
     p.add_argument('--out',type=Path,required=True)
+    p.add_argument('--vision-mode',choices=('temporal','temporal-edges'),default='temporal')
     args=p.parse_args()
     if args.out.exists(): raise FileExistsError(args.out)
     records=[]
     for root in args.run_dirs:
-        result=replay(root.resolve());records.append(result)
+        result=replay(root.resolve(),args.vision_mode);records.append(result)
         args.out.parent.mkdir(parents=True,exist_ok=True)
         args.out.write_text(json.dumps(records,ensure_ascii=False,indent=2)+'\n')
         print(json.dumps({k:result[k] for k in ('map_id','frames','observers','max_position_difference_when_both_valid_m')},ensure_ascii=False),flush=True)

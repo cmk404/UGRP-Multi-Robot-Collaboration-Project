@@ -2,6 +2,7 @@
 import copy
 import hashlib
 import json
+import math
 from pathlib import Path
 
 import cv2
@@ -31,9 +32,10 @@ def blank():
     return encoded.tobytes()
 
 
-def test_temporary_occlusion_stops_both_until_three_good_observations():
+@pytest.mark.parametrize('mode',['temporal','temporal-edges'])
+def test_temporary_occlusion_stops_both_until_three_good_observations(mode):
     own,top=inputs()
-    actors={r:PairNavigator(data(),r,vision_mode='temporal') for r in ROBOTS}
+    actors={r:PairNavigator(data(),r,vision_mode=mode) for r in ROBOTS}
     sync=PairCarrySync('visual-recovery')
     def step(image,index):
         reports={r:a.decide(own,image) for r,a in actors.items()}
@@ -52,9 +54,10 @@ def test_temporary_occlusion_stops_both_until_three_good_observations():
     assert permission['phase']=='GO' and all(d['ready'] for d in reports.values())
 
 
-def test_persistent_occlusion_times_out_and_never_resumes():
+@pytest.mark.parametrize('mode',['temporal','temporal-edges'])
+def test_persistent_occlusion_times_out_and_never_resumes(mode):
     own,top=inputs()
-    actor=PairNavigator(data(),'r1',vision_mode='temporal')
+    actor=PairNavigator(data(),'r1',vision_mode=mode)
     actor.decide(own,top)
     for _ in range(24):
         decision=actor.decide(own,blank())
@@ -111,8 +114,9 @@ def test_orange_blob_cannot_replace_the_tracked_beam():
     with pytest.raises(VisionUncertain):vision.observe(own,encoded.tobytes())
 
 
-@pytest.mark.parametrize('case',['l-corner','s-bends','narrow-door','blocked-branch'])
-def test_recorded_failure_is_tracked_without_identity_jump(case):
+@pytest.mark.parametrize('case',['l-corner','s-bends','narrow-door','blocked-branch','l-corner-shaft-axis'])
+@pytest.mark.parametrize('edge_axis',[False,True])
+def test_recorded_failure_is_tracked_without_identity_jump(case,edge_axis):
     root=RECOVERY/case
     manifest=json.loads((root/'manifest.json').read_text())
     def read(name):
@@ -120,7 +124,7 @@ def test_recorded_failure_is_tracked_without_identity_jump(case):
         assert hashlib.sha256(raw).hexdigest()==manifest['files'][name]
         return raw
     state=json.loads(read('state.json'))
-    vision=TemporalPairVision(json.loads((ROOT/manifest['map']).read_text()))
+    vision=TemporalPairVision(json.loads((ROOT/manifest['map']).read_text()),edge_axis=edge_axis)
     for key in ('centers','angles','payload','payload_angle','payload_origin_angle'):
         setattr(vision,key,state[key])
     for rid in ROBOTS:
@@ -133,4 +137,9 @@ def test_recorded_failure_is_tracked_without_identity_jump(case):
         # runtime simulator coordinates or candidate-generated target values.
         for rid in ROBOTS:
             assert np.linalg.norm(np.array(obs[rid]['center_uv'])-row['wheel_labels_uv'][rid]) < 8
+        if 'shaft_axis_deg' in row:
+            axis=vision.payload['axis_xy']
+            error=abs((math.degrees(math.atan2(axis[1],axis[0]))-row['shaft_axis_deg']+90)%180-90)
+            if edge_axis: assert error < 3
+            else: assert error > 3  # Preserve the actual v1 PCA-bias counterexample.
     assert all(np.isfinite(o['relative_yaw_rad']) for o in obs.values())

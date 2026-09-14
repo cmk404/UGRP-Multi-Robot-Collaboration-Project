@@ -25,7 +25,7 @@ def main():
     sha=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
     catalog=json.loads((ROOT/'maps/pair_navigation/catalog.json').read_text())
     out.mkdir(parents=True)
-    record={'source_sha':sha,'vision_mode':'temporal','baseline_source_sha':'f4da89ec53fed15c9efcea2e8bee19b99de31dfc','impratio':10,'budget_per_trial':750,'wall_timeout_per_trial_s':600,
+    record={'source_sha':sha,'vision_mode':'temporal-edges','baseline_source_sha':'f4da89ec53fed15c9efcea2e8bee19b99de31dfc','impratio':10,'budget_per_trial':750,'wall_timeout_per_trial_s':600,
             'model_files':{f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in sorted(models.iterdir()) if f.is_file()},
             'trials':[]}
     write(out/'cohort.json',record)
@@ -35,7 +35,7 @@ def main():
         command=[str(args.mjpython.resolve()),str(ROOT/'scripts/run_pair_navigation.py'),
                  '--map',str(ROOT/'maps/pair_navigation'/e['map']),
                  '--grasp-model-dir',str(models),'--out-dir',str(out/e['id']),
-                 '--budget','750','--impratio','10','--vision-mode','temporal']
+                 '--budget','750','--impratio','10','--vision-mode','temporal-edges']
         print('START '+e['id'],flush=True)
         started=time.monotonic()
         trial={'id':e['id'],'expected_route':e['expected_geometric_route'],'command':command}

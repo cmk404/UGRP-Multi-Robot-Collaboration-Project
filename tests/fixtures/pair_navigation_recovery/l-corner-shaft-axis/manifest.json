@@ -1,0 +1,51 @@
+{
+  "map": "maps/pair_navigation/l-corner.json",
+  "baseline_source_sha": "13b1a4995c3b7d40990c49fa3c57396cec7b5fa8",
+  "source_run": "/Users/changmin/projects/ugrp-worktrees/pair-vision-recovery/outputs/pair-vision-recovery-2026-09-14/l-corner",
+  "state_scope": "Observer memory derived only from preceding recorded RGB; no simulator state",
+  "state_before_index": 91,
+  "frames": [
+    {
+      "index": 91,
+      "own": "stop-own.jpg",
+      "top": "stop-top.jpg",
+      "source": {
+        "own": {
+          "path": "rgb/nav-0091-r1-own.jpg",
+          "sha256": "8c0a2f7463c415e27fed63b390a5d54b6ff9005a164e89f2702cd3ddc4e65d24"
+        },
+        "top": {
+          "path": "rgb/nav-0091-top.jpg",
+          "sha256": "5b32dc8c4414b95d6b0203d3534543e2afbcbe7c010ed34f2dd93ed907030a54"
+        }
+      },
+      "wheel_labels_uv": {
+        "r1": [
+          471,
+          360
+        ],
+        "r3": [
+          351,
+          264
+        ]
+      },
+      "shaft_axis_deg": 142.0
+    }
+  ],
+  "files": {
+    "state.json": "5862441913cedd146961a174e838c82b5f9462816ffa6223f8fe80f0ed9b6c1f",
+    "r3-initial.png": "1e13bd1eeeb1122618456f15ec192d5980853706eb6b274560bb2642d815351c",
+    "stop-top.jpg": "5b32dc8c4414b95d6b0203d3534543e2afbcbe7c010ed34f2dd93ed907030a54",
+    "r3-memory-2.png": "a62746d6a32f14e835f6ce4a64e0326d120a7d11804376c1af49a0c9a5531ef8",
+    "r3-memory-3.png": "65a811553c872a309133ecd076bd90676f6796fe2e663deee8889b2e08cb5f3a",
+    "r3-memory-1.png": "6e50846a171800706c0a499bc854a49a018ead9532242bd5a4b8cd80dff02756",
+    "r3-memory-0.png": "2a2cad7ba2fa920dd16254dd375135d6872c426baf36285378f743c363a2acda",
+    "r1-memory-2.png": "0db6b75bd583f5aa8cee0bd0b6e40a4dfb1f835855f43a4ac4889577aac7521a",
+    "r1-memory-3.png": "55ad8ae859160eb39d348aa2eace9f0c01b5f898080904912e2dd6e2c07e81c2",
+    "r1-memory-1.png": "7ae7f990c7613b2bd7c6823abf153b0a51b10ed0059ab0df0c2f6abd952d2d96",
+    "r1-memory-0.png": "4330c9f00defef35db8ed16ecb1f6d974ec943f4afa0b45f15aba55f82fc1876",
+    "stop-own.jpg": "8c0a2f7463c415e27fed63b390a5d54b6ff9005a164e89f2702cd3ddc4e65d24",
+    "r1-initial.png": "330a6cba5b391b3366da48e16d9a034b3eb845bf1281f2acadcf997ddfe0f13f"
+  },
+  "label_scope": "Manually reviewed shaft long edge near pixels (403,296) to (434,320), plus wheel envelopes; image coordinates only"
+}
