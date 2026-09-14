@@ -1,0 +1,40 @@
+{
+  "audit_pass": true,
+  "claim_limit": "artifact replay checks saved inputs and code boundaries; input logging does not cryptographically prove hidden state was absent at runtime",
+  "condition": "map",
+  "frames": 4,
+  "manifest_files": 16,
+  "map_sha256": "f1c281c507dff1aa777d11e0f9d093b25951208571bf2c6b01560158e9b83f20",
+  "navigation_success": false,
+  "replay": [
+    {
+      "frame_id": 0,
+      "own_sha256": "718e90a07f00756c74d42831f62788ccddd5094953ffac23d436c53fae5f9e0a",
+      "status": "localization_uncertain",
+      "top_sha256": "6e0b89bc4cff83f1bf9f0ca0e422dd16837780eef09bcae368bc744ccdcb4192"
+    },
+    {
+      "frame_id": 1,
+      "own_sha256": "718e90a07f00756c74d42831f62788ccddd5094953ffac23d436c53fae5f9e0a",
+      "status": "localization_uncertain",
+      "top_sha256": "6e0b89bc4cff83f1bf9f0ca0e422dd16837780eef09bcae368bc744ccdcb4192"
+    },
+    {
+      "frame_id": 2,
+      "own_sha256": "718e90a07f00756c74d42831f62788ccddd5094953ffac23d436c53fae5f9e0a",
+      "status": "localization_uncertain",
+      "top_sha256": "6e0b89bc4cff83f1bf9f0ca0e422dd16837780eef09bcae368bc744ccdcb4192"
+    },
+    {
+      "frame_id": 3,
+      "own_sha256": "718e90a07f00756c74d42831f62788ccddd5094953ffac23d436c53fae5f9e0a",
+      "status": "localization_lost",
+      "top_sha256": "6e0b89bc4cff83f1bf9f0ca0e422dd16837780eef09bcae368bc744ccdcb4192"
+    }
+  ],
+  "robot_id": "r1",
+  "source_check": {
+    "forbidden_runtime_imports": [],
+    "runner_decide_positional_inputs": 3
+  }
+}

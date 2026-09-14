@@ -1,0 +1,212 @@
+[
+  {
+    "audit_pass": true,
+    "navigation_success": true,
+    "condition": "map",
+    "robot_id": "r1",
+    "frames": 70,
+    "map_sha256": "f1c281c507dff1aa777d11e0f9d093b25951208571bf2c6b01560158e9b83f20",
+    "manifest_files": 148,
+    "source_check": {
+      "forbidden_runtime_imports": [],
+      "runner_decide_positional_inputs": 3
+    },
+    "claim_limit": "artifact replay checks saved inputs and code boundaries; input logging does not cryptographically prove hidden state was absent at runtime",
+    "localization_error": {
+      "valid_frames": 70,
+      "mean_m": 0.019592302109797233,
+      "max_m": 0.02653686541859712,
+      "reference": "output-only pose interpolated between ~0.1 s samples; no control use"
+    },
+    "name": "heldout_r1-open-map"
+  },
+  {
+    "audit_pass": true,
+    "navigation_success": true,
+    "condition": "direct",
+    "robot_id": "r1",
+    "frames": 70,
+    "map_sha256": "f1c281c507dff1aa777d11e0f9d093b25951208571bf2c6b01560158e9b83f20",
+    "manifest_files": 148,
+    "source_check": {
+      "forbidden_runtime_imports": [],
+      "runner_decide_positional_inputs": 3
+    },
+    "claim_limit": "artifact replay checks saved inputs and code boundaries; input logging does not cryptographically prove hidden state was absent at runtime",
+    "localization_error": {
+      "valid_frames": 70,
+      "mean_m": 0.019592302109797233,
+      "max_m": 0.02653686541859712,
+      "reference": "output-only pose interpolated between ~0.1 s samples; no control use"
+    },
+    "name": "heldout_r1-open-direct"
+  },
+  {
+    "audit_pass": true,
+    "navigation_success": true,
+    "condition": "map",
+    "robot_id": "r1",
+    "frames": 138,
+    "map_sha256": "0a54ebfbc5463dcc9b8c1b73a9b0218f2dd662da3c9583e4941229d080d014b0",
+    "manifest_files": 284,
+    "source_check": {
+      "forbidden_runtime_imports": [],
+      "runner_decide_positional_inputs": 3
+    },
+    "claim_limit": "artifact replay checks saved inputs and code boundaries; input logging does not cryptographically prove hidden state was absent at runtime",
+    "localization_error": {
+      "valid_frames": 138,
+      "mean_m": 0.01781010092791992,
+      "max_m": 0.02516379316478081,
+      "reference": "output-only pose interpolated between ~0.1 s samples; no control use"
+    },
+    "name": "heldout_r1-slalom-map"
+  },
+  {
+    "audit_pass": true,
+    "navigation_success": false,
+    "condition": "direct",
+    "robot_id": "r1",
+    "frames": 240,
+    "map_sha256": "0a54ebfbc5463dcc9b8c1b73a9b0218f2dd662da3c9583e4941229d080d014b0",
+    "manifest_files": 488,
+    "source_check": {
+      "forbidden_runtime_imports": [],
+      "runner_decide_positional_inputs": 3
+    },
+    "claim_limit": "artifact replay checks saved inputs and code boundaries; input logging does not cryptographically prove hidden state was absent at runtime",
+    "localization_error": {
+      "valid_frames": 240,
+      "mean_m": 0.01575577452035874,
+      "max_m": 0.02653686541859712,
+      "reference": "output-only pose interpolated between ~0.1 s samples; no control use"
+    },
+    "name": "heldout_r1-slalom-direct"
+  },
+  {
+    "audit_pass": true,
+    "navigation_success": false,
+    "condition": "map",
+    "robot_id": "r1",
+    "frames": 1,
+    "map_sha256": "f13e097f58cb4f4e2aee8cc6b904a5f8e6ef08be38e36dc2be49a76759bafb68",
+    "manifest_files": 10,
+    "source_check": {
+      "forbidden_runtime_imports": [],
+      "runner_decide_positional_inputs": 3
+    },
+    "claim_limit": "artifact replay checks saved inputs and code boundaries; input logging does not cryptographically prove hidden state was absent at runtime",
+    "localization_error": {
+      "valid_frames": 1,
+      "mean_m": 0.022849486218425672,
+      "max_m": 0.022849486218425672,
+      "reference": "output-only pose interpolated between ~0.1 s samples; no control use"
+    },
+    "name": "heldout_r1-narrow-map"
+  },
+  {
+    "audit_pass": true,
+    "navigation_success": true,
+    "condition": "map",
+    "robot_id": "r3",
+    "frames": 72,
+    "map_sha256": "f1c281c507dff1aa777d11e0f9d093b25951208571bf2c6b01560158e9b83f20",
+    "manifest_files": 152,
+    "source_check": {
+      "forbidden_runtime_imports": [],
+      "runner_decide_positional_inputs": 3
+    },
+    "claim_limit": "artifact replay checks saved inputs and code boundaries; input logging does not cryptographically prove hidden state was absent at runtime",
+    "localization_error": {
+      "valid_frames": 72,
+      "mean_m": 0.019214651171847216,
+      "max_m": 0.025368879427296112,
+      "reference": "output-only pose interpolated between ~0.1 s samples; no control use"
+    },
+    "name": "heldout_r3-open-map"
+  },
+  {
+    "audit_pass": true,
+    "navigation_success": true,
+    "condition": "direct",
+    "robot_id": "r3",
+    "frames": 72,
+    "map_sha256": "f1c281c507dff1aa777d11e0f9d093b25951208571bf2c6b01560158e9b83f20",
+    "manifest_files": 152,
+    "source_check": {
+      "forbidden_runtime_imports": [],
+      "runner_decide_positional_inputs": 3
+    },
+    "claim_limit": "artifact replay checks saved inputs and code boundaries; input logging does not cryptographically prove hidden state was absent at runtime",
+    "localization_error": {
+      "valid_frames": 72,
+      "mean_m": 0.019214651171847216,
+      "max_m": 0.025368879427296112,
+      "reference": "output-only pose interpolated between ~0.1 s samples; no control use"
+    },
+    "name": "heldout_r3-open-direct"
+  },
+  {
+    "audit_pass": true,
+    "navigation_success": true,
+    "condition": "map",
+    "robot_id": "r3",
+    "frames": 147,
+    "map_sha256": "0a54ebfbc5463dcc9b8c1b73a9b0218f2dd662da3c9583e4941229d080d014b0",
+    "manifest_files": 302,
+    "source_check": {
+      "forbidden_runtime_imports": [],
+      "runner_decide_positional_inputs": 3
+    },
+    "claim_limit": "artifact replay checks saved inputs and code boundaries; input logging does not cryptographically prove hidden state was absent at runtime",
+    "localization_error": {
+      "valid_frames": 147,
+      "mean_m": 0.018798484988170695,
+      "max_m": 0.027088305936233636,
+      "reference": "output-only pose interpolated between ~0.1 s samples; no control use"
+    },
+    "name": "heldout_r3-slalom-map"
+  },
+  {
+    "audit_pass": true,
+    "navigation_success": false,
+    "condition": "direct",
+    "robot_id": "r3",
+    "frames": 240,
+    "map_sha256": "0a54ebfbc5463dcc9b8c1b73a9b0218f2dd662da3c9583e4941229d080d014b0",
+    "manifest_files": 488,
+    "source_check": {
+      "forbidden_runtime_imports": [],
+      "runner_decide_positional_inputs": 3
+    },
+    "claim_limit": "artifact replay checks saved inputs and code boundaries; input logging does not cryptographically prove hidden state was absent at runtime",
+    "localization_error": {
+      "valid_frames": 240,
+      "mean_m": 0.016368884062093296,
+      "max_m": 0.025368879427296112,
+      "reference": "output-only pose interpolated between ~0.1 s samples; no control use"
+    },
+    "name": "heldout_r3-slalom-direct"
+  },
+  {
+    "audit_pass": true,
+    "navigation_success": false,
+    "condition": "map",
+    "robot_id": "r3",
+    "frames": 1,
+    "map_sha256": "f13e097f58cb4f4e2aee8cc6b904a5f8e6ef08be38e36dc2be49a76759bafb68",
+    "manifest_files": 10,
+    "source_check": {
+      "forbidden_runtime_imports": [],
+      "runner_decide_positional_inputs": 3
+    },
+    "claim_limit": "artifact replay checks saved inputs and code boundaries; input logging does not cryptographically prove hidden state was absent at runtime",
+    "localization_error": {
+      "valid_frames": 1,
+      "mean_m": 0.021671314107766446,
+      "max_m": 0.021671314107766446,
+      "reference": "output-only pose interpolated between ~0.1 s samples; no control use"
+    },
+    "name": "heldout_r3-narrow-map"
+  }
+]
