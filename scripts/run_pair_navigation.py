@@ -27,8 +27,10 @@ from scripts.run_camera_approach_student import models, sha, write
 
 class PairNavigationScene(ShortTransportScene):
     """Private setup, raw actuators, and output-only referee. Never an actor API."""
-    def __init__(self, out, grasp_root, data):
+    def __init__(self, out, grasp_root, data, *, impratio=1):
         super().__init__(out, grasp_root)
+        if impratio not in (1, 10, 100): raise ValueError('explicit contact impedance profile required')
+        self.impratio = impratio
         self.map = data
         self.wall_ids = set()
         self.wall_contact_ticks = 0
@@ -43,6 +45,7 @@ class PairNavigationScene(ShortTransportScene):
         original = production.build_multi_robot_xml
         def builder(*args, **kwargs):
             root = ET.fromstring(original(*args, **kwargs))
+            root.find('option').set('impratio', str(self.impratio))
             world = root.find('worldbody')
             for box in self.map['obstacles']:
                 x, y = box['center_m']; hx, hy = box['half_extents_m']; height = box['height_m']
@@ -68,6 +71,13 @@ class PairNavigationScene(ShortTransportScene):
         m.cam_pos[cid] = position; m.cam_quat[cid] = quat; m.cam_fovy[cid] = 55.
         mujoco.mj_forward(m, self.world.data)
         return self
+
+    def invariant_record(self):
+        record = super().invariant_record()
+        opt = self.world.model.opt
+        record['contact_solver'] = {k: float(getattr(opt, k)) for k in (
+            'impratio', 'cone', 'solver', 'iterations', 'tolerance', 'noslip_iterations', 'timestep')}
+        return record
 
     def _referee_tick(self):
         if self.wall_ids and self.phase in ('carry', 'carry_stop'):
@@ -122,11 +132,11 @@ def evaluate(scene, report):
             'sample_gap_max_s': max((b['sim_time_s']-a['sim_time_s'] for a,b in zip(rows,rows[1:])), default=0.)}
 
 
-def run(data, grasp_root, out, budget=750):
+def run(data, grasp_root, out, budget=750, *, impratio=1):
     validate_map(data)
     if out.exists(): raise FileExistsError(out)
     skill, grasp_models = models(grasp_root, 'student-skill.json')
-    scene = PairNavigationScene(out, grasp_root, data)
+    scene = PairNavigationScene(out, grasp_root, data, impratio=impratio)
     actors = {r: PairNavigator(data, r) for r in ROBOTS}
     sync = PairCarrySync(task_id=data['map_id'])
     started = time.monotonic()
@@ -136,6 +146,7 @@ def run(data, grasp_root, out, budget=750):
               'environment': {'python': sys.version, 'platform': platform.platform()},
               'scope': 'Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay',
               'budget': budget, 'steps': [], 'arrived': False, 'error': None,
+              'contact_impratio': impratio,
               'external_model_calls': 0, 'cost_usd': 0}
     try:
         import mujoco
@@ -195,9 +206,12 @@ def main():
     parser.add_argument('--grasp-model-dir', type=Path, required=True)
     parser.add_argument('--out-dir', type=Path, required=True)
     parser.add_argument('--budget', type=int, default=750)
+    parser.add_argument('--impratio', type=int, choices=(1, 10, 100), default=1,
+                        help='explicit friction impedance comparison; default preserves main')
     args = parser.parse_args()
     if not 1 <= args.budget <= 1200: parser.error('budget must be 1..1200')
-    result = run(json.loads(args.map.read_text()), args.grasp_model_dir.resolve(), args.out_dir.resolve(), args.budget)
+    result = run(json.loads(args.map.read_text()), args.grasp_model_dir.resolve(), args.out_dir.resolve(), args.budget,
+                 impratio=args.impratio)
     return int(bool(result['error']))
 
 

@@ -20,14 +20,18 @@ def main():
     p.add_argument('--grasp-model-dir', type=Path, required=True)
     p.add_argument('--map', type=Path, required=True)
     p.add_argument('--wrist-delta', type=int, default=0)
+    p.add_argument('--impratio', type=int, choices=(1, 10, 100), default=1)
+    p.add_argument('--seconds', type=int, default=16)
     a = p.parse_args()
     if not -100 <= a.wrist_delta <= 100: p.error('bounded wrist diagnostic only')
+    if not 1 <= a.seconds <= 120: p.error('hold must be 1..120 seconds')
     out = a.out_dir.resolve()
     if out.exists(): raise FileExistsError(out)
     _, ms = models(a.grasp_model_dir.resolve(), 'student-skill.json')
-    scene = PairNavigationScene(out, a.grasp_model_dir.resolve(), json.loads(a.map.read_text()))
+    scene = PairNavigationScene(out, a.grasp_model_dir.resolve(), json.loads(a.map.read_text()), impratio=a.impratio)
     rec = {'source_sha': subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
-           'diagnostic_only': True, 'wrist_delta': a.wrist_delta, 'error': None}
+           'diagnostic_only': True, 'wrist_delta': a.wrist_delta, 'impratio': a.impratio,
+           'seconds': a.seconds, 'error': None}
     try:
         scene.open(); rec['invariants_initial'] = scene.invariant_record()
         scene.finish_grasp(predict_student, ms)
@@ -35,7 +39,7 @@ def main():
         if a.wrist_delta:
             scene.replay([{'targets':{r:{3:scene.commands[r][3]+a.wrist_delta} for r in ROBOTS},
                            'duration_s':.5,'settle_s':.2}], 'diagnostic_wrist')
-        for index in range(80):
+        for index in range(a.seconds*5):
             scene.capture(f'hold-{index:03d}')
             scene.execute({r:{'kind':'mecanum','forward':0.,'left':0.,'turn':0.,'duration_s':.2} for r in ROBOTS})
         rows = [r for r in scene.evaluation_samples if r['phase'] in ('carry','carry_stop')]
