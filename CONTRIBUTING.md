@@ -11,6 +11,8 @@
 5. 실험 ID·코드 SHA·환경·설정·전체 결과·제약을 `experiments/`에 기록한다. 실패도 남기고 새로운 결과는 기존 결과를 덮어쓰지 않는다.
 6. CI와 검토가 끝난 PR을 병합한다. `main`에는 PR과 `offline-regressions` 통과, 최신 base 반영 및 미해결 대화 해소를 요구하는 GitHub 보호 규칙이 설정돼 있다. 강제 push와 브랜치 삭제는 금지한다. 승인 리뷰 1개와 코드 소유자 `@kcm0127-dotcom`의 승인을 필수로 한다. [.github/CODEOWNERS](.github/CODEOWNERS)는 모든 파일에 적용된다. 새 코드 변경이 push되면 기존 승인을 해제해 다시 검토받는다. 팀원의 Write 권한은 유지되지만 다른 팀원의 승인만으로는 병합할 수 없다. 관리자 우회 권한은 기존대로 소유자에게 남으며, 자동 작업은 이를 사용자 승인 없이 사용하지 않는다.
 
+7. 병합한 에이전트는 아래 절차로 기본 로컬 프로젝트도 최신화하고 검증한다.
+
 GitHub PR의 **Files changed → Review changes → Approve → Submit review**로 소유자가 승인한다. 확인했다는 일반 댓글은 승인 리뷰를 대신하지 않는다. 소유자 본인이 작성한 PR에는 자기 승인을 제출할 수 없으므로, 소유자가 직접 확인 후 관리자 권한으로 병합한다. 에이전트는 해당 PR의 명시적인 병합 승인을 받은 뒤에만 진행한다.
 
 작은 문서 수정에는 전체 시뮬레이션이 필요 없다. CI는 외부 모델 호출이나 하드웨어 검증을 대신하지 않는다.
@@ -75,3 +77,24 @@ PYTHONPATH=. .venv-sim-worker-mac/bin/python scripts/verify_gemini_budget_run.py
 ## 과거 실패 재생 도구
 
 `scripts/probe_markerless_loaded_grip.py`는 로컬 M4/solo-46 원본 로그에 의존하고, `scripts/probe_markerless_release_recovery.py`는 과거 실행 폴더를 입력으로 받는다(기본값 N3/solo-45). 원시 폴더는 Git에 포함되지 않아 새 clone만으로 이 진단을 실행할 수 없다. 진단 성공과 실제 모델 운반 성공은 구분한다. 최신 방출 재생기의 비매크로 전이 보완은 전체 재생으로 재검증하지 않았으므로 검증된 N7 실행 경로로 취급하지 않는다.
+
+## 병합 후 로컬 최신화
+
+PR이 GitHub에서 병합되어도 이미 열려 있는 로컬 폴더의 파일은 자동 변경되지 않는다. 병합한 작업에서 이 단계까지 완료한다. 별도 작업 worktree는 그대로 두고 기본 체크아웃만 대상으로 한다.
+
+1. GitHub에서 해당 PR의 MERGED 상태와 병합 SHA를 확인한다.
+2. 기본 경로와 origin이 맞는지 확인한다. 이 Mac은 `/Users/changmin/projects/ugrp`이며, 다른 호스트의 경로는 프로젝트 설정과 `git worktree list`에서 확인한다.
+3. 기본 경로의 AGENTS.md를 다시 읽고 main 브랜치·깨끗한 작업 트리(미추적 파일 포함)·실험 및 소스 고정 작업 부재를 확인한다. 실행 여부가 불명확하면 갱신을 미룬다.
+4. 다음을 **기본 체크아웃에서** 실행한다. 각 단계가 실패하면 중단한다.
+
+```sh
+git fetch origin
+git status --short --branch
+git merge --ff-only origin/main
+git rev-parse HEAD origin/main
+git status --short --branch
+```
+
+두 SHA가 동일하고 `git merge-base --is-ancestor <확인한-PR-병합-SHA> HEAD`가 성공해야 해당 PR의 로컬 반영을 확인한 것이다. 병합 이후 다른 PR이 추가될 수 있으므로 병합 SHA와 HEAD가 직접 같아야 하는 것은 아니다.
+
+미커밋 변경, 로컬 분기 또는 실험이 있으면 자동 stash/reset/clean이나 프로세스 종료로 해결하지 않는다. 갱신을 미룬 경로와 이유를 보고하고 다음 안전한 종료 시점에 다시 확인한다. 다른 작업 브랜치에 main을 자동 병합하지 않는다. 새 작업을 시작하는 에이전트도 기본 체크아웃의 최신 지침과 원격 대비 상태를 먼저 확인한다.
