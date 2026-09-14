@@ -1,0 +1,60 @@
+{
+  "source_sha": "7701d1d719d6ecce42de2101a38cc47e8591e244",
+  "case_count": 20,
+  "conditions": {
+    "visual": {
+      "runs": 20,
+      "success": 19,
+      "approach_ok": 19,
+      "contact_steps": 0,
+      "wall_mean_s": 19.343445679044816,
+      "approach_mean_sim_s": 11.53000000000082,
+      "approach_calls": 2324,
+      "grasp_calls": 608,
+      "audit_ok": true,
+      "failures": [
+        "approach-heldout-16"
+      ]
+    },
+    "playback": {
+      "runs": 20,
+      "success": 2,
+      "approach_ok": 20,
+      "contact_steps": 0,
+      "wall_mean_s": 10.588595420925412,
+      "approach_mean_sim_s": 2.8999999999998023,
+      "approach_calls": 600,
+      "grasp_calls": 640,
+      "audit_ok": true,
+      "failures": [
+        "approach-heldout-01",
+        "approach-heldout-03",
+        "approach-heldout-04",
+        "approach-heldout-05",
+        "approach-heldout-06",
+        "approach-heldout-07",
+        "approach-heldout-08",
+        "approach-heldout-09",
+        "approach-heldout-10",
+        "approach-heldout-11",
+        "approach-heldout-12",
+        "approach-heldout-13",
+        "approach-heldout-14",
+        "approach-heldout-15",
+        "approach-heldout-16",
+        "approach-heldout-18",
+        "approach-heldout-19",
+        "approach-heldout-20"
+      ]
+    }
+  },
+  "cohort_wall_s": 660.2068096669391,
+  "gate_pass": true,
+  "environment": {
+    "mujoco": "3.12.0",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+  },
+  "raw_dir": "/Users/changmin/projects/ugrp/outputs/rgb-approach-validation-20260910-v1",
+  "cohort_report_sha256": "d8a2bd9b47c40ab4c21c384a883f3b655c816c0344b857339906f56ece0f2c1b"
+}
