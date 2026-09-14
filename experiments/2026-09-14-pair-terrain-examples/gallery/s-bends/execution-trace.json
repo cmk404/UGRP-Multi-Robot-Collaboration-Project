@@ -1,0 +1,49 @@
+[
+  {
+    "stage": "folded_setup",
+    "command": {
+      "duration_s": 0.6,
+      "execution": "MultiMasterPiProductionV2._team_joint_move_servos",
+      "issued_after": {
+        "r1": {
+          "1": 2000,
+          "3": 740,
+          "4": 2320,
+          "5": 1320,
+          "6": 1500
+        },
+        "r3": {
+          "1": 2000,
+          "3": 740,
+          "4": 2320,
+          "5": 1320,
+          "6": 1500
+        }
+      },
+      "issued_before": {
+        "r1": {},
+        "r3": {}
+      },
+      "phase": "folded_setup",
+      "sequence": 0,
+      "settle_s": 0.0,
+      "targets": {
+        "r1": {
+          "1": 2000,
+          "3": 740,
+          "4": 2320,
+          "5": 1320,
+          "6": 1500
+        },
+        "r3": {
+          "1": 2000,
+          "3": 740,
+          "4": 2320,
+          "5": 1320,
+          "6": 1500
+        }
+      }
+    },
+    "end_sim_time_s": 0.9000000000000007
+  }
+]
