@@ -155,6 +155,11 @@ def run(data, grasp_root, out, budget=750, *, impratio=1):
         report['scene_xml_sha256'] = scene.xml_sha
         report['invariants_initial'] = scene.invariant_record()
         scene.finish_grasp(predict_student, grasp_models)
+        # Fixed settling interval for all numerical profiles. No contact/pose
+        # condition controls this wait or the start of navigation.
+        scene.phase = 'grasp_hold'
+        scene.tick(5.)
+        report['post_grasp_settle_s'] = 5.
         write(out/'grasp-result.json', scene.grasp_report)
         for index in range(budget):
             frames = scene.capture(f'nav-{index:04d}')

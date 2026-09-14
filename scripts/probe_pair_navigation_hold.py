@@ -22,9 +22,11 @@ def main():
     p.add_argument('--wrist-delta', type=int, default=0)
     p.add_argument('--impratio', type=int, choices=(1, 10, 100), default=1)
     p.add_argument('--seconds', type=int, default=16)
+    p.add_argument('--post-grasp-settle', type=float, default=0.)
     a = p.parse_args()
     if not -100 <= a.wrist_delta <= 100: p.error('bounded wrist diagnostic only')
     if not 1 <= a.seconds <= 120: p.error('hold must be 1..120 seconds')
+    if a.post_grasp_settle not in (0., 5.): p.error('predeclared settling intervals are 0 or 5 seconds')
     out = a.out_dir.resolve()
     if out.exists(): raise FileExistsError(out)
     _, ms = models(a.grasp_model_dir.resolve(), 'student-skill.json')
@@ -32,9 +34,12 @@ def main():
     rec = {'source_sha': subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
            'diagnostic_only': True, 'wrist_delta': a.wrist_delta, 'impratio': a.impratio,
            'seconds': a.seconds, 'error': None}
+    rec['post_grasp_settle_s'] = a.post_grasp_settle
     try:
         scene.open(); rec['invariants_initial'] = scene.invariant_record()
         scene.finish_grasp(predict_student, ms)
+        scene.phase = 'grasp_hold'
+        scene.tick(a.post_grasp_settle)
         write(out/'grasp-result.json', scene.grasp_report)
         if a.wrist_delta:
             scene.replay([{'targets':{r:{3:scene.commands[r][3]+a.wrist_delta} for r in ROBOTS},

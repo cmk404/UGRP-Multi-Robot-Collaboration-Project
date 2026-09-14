@@ -182,6 +182,36 @@ class PairVision:
         self.templates = {}
         self.centers = {}
         self.angles = {r: 0. for r in ROBOTS}
+        self.payload = None
+        self.payload_origin_angle = None
+        self.payload_angle = None
+
+    def _payload(self, frame):
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        mask = cv2.inRange(hsv, np.array([10, 100, 70], np.uint8), np.array([16, 255, 255], np.uint8))
+        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
+        count, labels, stats, centers = cv2.connectedComponentsWithStats(mask, 8)
+        reference = self.map['start_zone']['center_m'] if self.payload is None else self.payload['xy_m']
+        candidates = []
+        for i in range(1, count):
+            if stats[i, cv2.CC_STAT_AREA] < 400: continue
+            yy, xx = np.where(labels == i)
+            eig, vectors = np.linalg.eigh(np.cov(np.column_stack([xx, yy]).T))
+            if eig[1] < 400 or eig[1]/max(eig[0], 1) < 10: continue
+            point = pixel_to_world(centers[i], frame.shape, self.map['top_camera'])
+            if math.dist(point, reference) > (.25 if self.payload is None else .10): continue
+            axis = vectors[:, -1]
+            angle = math.atan2(-axis[1], axis[0])
+            candidates.append((point, angle, int(stats[i, cv2.CC_STAT_AREA])))
+        if len(candidates) != 1:
+            raise ValueError('orange payload missing/ambiguous')
+        point, raw, area = candidates[0]
+        if self.payload_origin_angle is None:
+            self.payload_origin_angle = self.payload_angle = raw
+        else:
+            self.payload_angle += (raw-self.payload_angle+math.pi/2) % math.pi-math.pi/2
+        self.payload = {'xy_m': list(point), 'relative_yaw_rad': self.payload_angle-self.payload_origin_angle,
+                        'feature_area_px': area, 'feature_plane_height_m': .09}
 
     def _mask(self, image):
         hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
@@ -192,6 +222,7 @@ class PairVision:
         # observer uses the common camera; it does not claim own-camera grasp QA.
         _decode_jpeg(own_rgb, 'own_rgb')
         frame = _decode_jpeg(top_rgb, 'shared_top_rgb')
+        self._payload(frame)
         mask = self._mask(frame)
         h, w = mask.shape
         if not self.templates:
@@ -271,7 +302,6 @@ class PairNavigator:
         self.reference = None
         self.segment = 1
         self.confirmations = 0
-        self.issued = []
         self.plan_hash = None
 
     def decide(self, own_rgb, top_rgb):
@@ -302,6 +332,7 @@ class PairNavigator:
             if self.confirmations >= 3:
                 self.offsets = {r: positions[r]-center for r in ROBOTS}
                 self.anchor_yaws = {r: obs[r]['relative_yaw_rad'] for r in ROBOTS}
+                self.anchor_payload = dict(self.vision.payload)
                 self.reference = np.array([*center, 0.])
                 goal = [*self.map['goal']['center_m'], math.radians(self.map['goal']['relative_yaw_deg'])]
                 # Footprint orientation follows initial visual heading plus turn.
@@ -317,6 +348,12 @@ class PairNavigator:
                     self.phase = 'track'
                 self.confirmations = 0
         elif self.phase == 'track':
+            payload = self.vision.payload
+            payload_angle = payload['relative_yaw_rad']-self.anchor_payload['relative_yaw_rad']
+            observed_turn = sum(obs[r]['relative_yaw_rad']-self.anchor_yaws[r] for r in ROBOTS)/2
+            if abs(wrap(payload_angle-observed_turn)) > .12 or math.dist(payload['xy_m'], center) > .04:
+                return {'action': zero, 'status': 'payload_decoupled', 'ready': False, 'done': False,
+                        'observations': obs, 'payload': dict(payload)}
             target = np.array(self.route[self.segment])
             error_xy = target[:2]-self.reference[:2]
             error_yaw = wrap(target[2]-self.reference[2])
@@ -348,7 +385,9 @@ class PairNavigator:
                           left=float(np.clip(local[1]/1.18, -.08, .08)),
                           turn=float(np.clip(angular/1.5, -.10, .10)))
             if np.linalg.norm(target[:2]-self.reference[:2]) < .002 and abs(wrap(target[2]-self.reference[2])) < .005:
-                reached = max(e[0] for e in formation_errors.values()) < .012 and max(e[1] for e in formation_errors.values()) < .045
+                reached = (max(e[0] for e in formation_errors.values()) < .012
+                           and max(e[1] for e in formation_errors.values()) < .045
+                           and abs(wrap(payload_angle-target[2])) < .045)
                 self.confirmations = self.confirmations+1 if reached else 0
                 if self.confirmations >= 3:
                     self.confirmations = 0
@@ -361,7 +400,7 @@ class PairNavigator:
                   'done': self.phase == 'done', 'observations': obs, 'plan_hash': self.plan_hash,
                   'route': self.route, 'reference': None if self.reference is None else self.reference.tolist(),
                   'heading_rad': self.heading, 'segment': self.segment}
-        self.issued.append(action)
+        result['payload'] = dict(self.vision.payload)
         return result
 
 
