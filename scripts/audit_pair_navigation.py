@@ -22,7 +22,7 @@ def audit(run_dir, grasp_dir=None):
     import hashlib
     if hashlib.sha256((ROOT/'harness/assets/pair_navigation/manifest.json').read_bytes()).hexdigest() != report['appearance_manifest_sha256']:
         raise ValueError('appearance model manifest mismatch')
-    actors = {r: PairNavigator(report['map'], r) for r in ROBOTS}
+    actors = {r: PairNavigator(report['map'], r, vision_mode=report.get('vision_mode','legacy')) for r in ROBOTS}
     sync = PairCarrySync(report['map']['map_id'])
     seen = {r:set() for r in ROBOTS}
     for i, row in enumerate(report['steps']):

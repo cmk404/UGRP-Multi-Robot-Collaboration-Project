@@ -19,7 +19,7 @@ if str(ROOT) not in sys.path: sys.path.insert(0, str(ROOT))
 
 from harness.grasp_student_inference import predict_student
 from harness.pair_carry_sync import PairCarrySync
-from harness.pair_navigation import PairNavigator, ROBOTS, authorize_pair, digest, validate_map
+from harness.pair_navigation import PairNavigator, ROBOTS, authorize_pair, digest, validate_map, retryable_visual_hold
 from scripts.camera_short_transport_scene import ShortTransportScene
 from scripts.run_camera_approach_student import models, sha, write
 from scripts.evaluate_pair_navigation import evaluate_samples
@@ -152,14 +152,14 @@ def evaluate(scene, report):
                             unexpected_contact_ticks=scene.unexpected_contact_ticks)
 
 
-def run(data, grasp_root, out, budget=750, *, impratio=1):
+def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy'):
     validate_map(data)
     if out.exists(): raise FileExistsError(out)
     if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip():
         raise RuntimeError('commit the complete execution source and protocol before an experiment')
     skill, grasp_models = models(grasp_root, 'student-skill.json')
     scene = PairNavigationScene(out, grasp_root, data, impratio=impratio)
-    actors = {r: PairNavigator(data, r) for r in ROBOTS}
+    actors = {r: PairNavigator(data, r, vision_mode=vision_mode) for r in ROBOTS}
     sync = PairCarrySync(task_id=data['map_id'])
     started = time.monotonic()
     report = {'schema': 'ugrp.pair_navigation_trial.v1', 'map': data, 'map_sha256': digest(data),
@@ -170,6 +170,7 @@ def run(data, grasp_root, out, budget=750, *, impratio=1):
               'scope': 'Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay',
               'budget': budget, 'steps': [], 'arrived': False, 'error': None,
               'contact_impratio': impratio,
+              'vision_mode': vision_mode,
               'external_model_calls': 0, 'cost_usd': 0}
     try:
         import mujoco
@@ -197,6 +198,8 @@ def run(data, grasp_root, out, budget=750, *, impratio=1):
             report['steps'].append(row)
             scene.execute(actions)
             if not all(d['ready'] for d in decisions.values()):
+                if retryable_visual_hold(decisions):
+                    continue  # Both commands were zero; capture a fresh pair of images.
                 if all(d['status'] == 'no_route' for d in decisions.values()):
                     report['refused_no_route'] = True
                     break
@@ -243,12 +246,14 @@ def main():
     parser.add_argument('--grasp-model-dir', type=Path, required=True)
     parser.add_argument('--out-dir', type=Path, required=True)
     parser.add_argument('--budget', type=int, default=750)
+    parser.add_argument('--vision-mode', choices=('legacy','temporal'), default='legacy',
+                        help='explicit temporal tracking/recovery comparison; legacy remains reproducible')
     parser.add_argument('--impratio', type=int, choices=(1, 10, 100), default=1,
                         help='explicit friction impedance comparison; default preserves main')
     args = parser.parse_args()
     if not 1 <= args.budget <= 1200: parser.error('budget must be 1..1200')
     result = run(json.loads(args.map.read_text()), args.grasp_model_dir.resolve(), args.out_dir.resolve(), args.budget,
-                 impratio=args.impratio)
+                 impratio=args.impratio, vision_mode=args.vision_mode)
     return int(bool(result['error']))
 
 

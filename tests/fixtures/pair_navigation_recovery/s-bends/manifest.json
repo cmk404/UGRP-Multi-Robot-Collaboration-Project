@@ -1,0 +1,50 @@
+{
+  "map": "maps/pair_navigation/s-bends.json",
+  "baseline_source_sha": "f4da89ec53fed15c9efcea2e8bee19b99de31dfc",
+  "source_run": "/Users/changmin/projects/ugrp-worktrees/pair-terrain-examples/outputs/pair-terrain-trials-2026-09-14/s-bends",
+  "state_scope": "Observer memory derived only from preceding recorded RGB; no simulator state",
+  "state_before_index": 197,
+  "frames": [
+    {
+      "index": 197,
+      "own": "stop-own.jpg",
+      "top": "stop-top.jpg",
+      "source": {
+        "own": {
+          "path": "rgb/nav-0197-r1-own.jpg",
+          "sha256": "27cf2943aa4deb47f9e72214838489386bd21cc247ec771f941f1eb79be160b5"
+        },
+        "top": {
+          "path": "rgb/nav-0197-top.jpg",
+          "sha256": "67bc927a56ce473fa1a449e048933ecf2d6814fb514012f041a145ff0112b727"
+        }
+      },
+      "wheel_labels_uv": {
+        "r1": [
+          258,
+          368
+        ],
+        "r3": [
+          260,
+          216
+        ]
+      }
+    }
+  ],
+  "files": {
+    "state.json": "7b7778142181c9be457d019491976e617b5c727e26ecd1f4e70c5093c7aa3d7e",
+    "r3-initial.png": "1e13bd1eeeb1122618456f15ec192d5980853706eb6b274560bb2642d815351c",
+    "stop-top.jpg": "67bc927a56ce473fa1a449e048933ecf2d6814fb514012f041a145ff0112b727",
+    "r3-memory-2.png": "fc308ae64517106bb59195926fcde02d017dedd59c0f98c70dd04b2615bf199a",
+    "r3-memory-3.png": "1f9f7a5f8820f69ccaf7aef14030d83b5d43bbf6bd0ad5bf3f0a080916844149",
+    "r3-memory-1.png": "de6f63e1470ff725d4891bbdfac5922380ecdf0d98d6fbc578c3cb87eeaa1724",
+    "r3-memory-0.png": "b18e08479644c6d3c9dd44854b8cb3ec0e7aa77c837007f90a6a5eb65597c66e",
+    "r1-memory-2.png": "507c69a911e727970c0a6c39231f45b493d3a324861daff852a035b8eb6ba1fb",
+    "r1-memory-3.png": "8032c14bcdf1ca428d634f96989d55f3f5c559901348c347795f854ec85e4440",
+    "r1-memory-1.png": "859411af624fea403268b6701317a5dd53e3d1a7159e746d1ef9f427dc41032c",
+    "r1-memory-0.png": "ce794b968ef6fafa7095ca921ebd9245dda83f55c98c3fadb071c72451b543ea",
+    "stop-own.jpg": "27cf2943aa4deb47f9e72214838489386bd21cc247ec771f941f1eb79be160b5",
+    "r1-initial.png": "330a6cba5b391b3366da48e16d9a034b3eb845bf1281f2acadcf997ddfe0f13f"
+  },
+  "label_scope": "Manually reviewed wheel-envelope centers on a 40 px image grid; tolerance 8 px; no simulator poses"
+}
