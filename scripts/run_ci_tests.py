@@ -49,6 +49,7 @@ TEST_PATTERNS = (
     "tests/test_navigation_evidence.py",
     "tests/test_navigation_temporal.py",
     "tests/test_ugrp_session.py",
+    "tests/test_seed_validation_model.py",
 )
 
 
