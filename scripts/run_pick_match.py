@@ -10,7 +10,9 @@ import base64
 import hashlib
 import json
 from pathlib import Path
+import platform
 import subprocess
+import sys
 import time
 from urllib.request import urlopen
 
@@ -137,6 +139,9 @@ def main():
               'physics': {'impratio': 10, 'noslip_iterations': 0},
               'seconds_is_sim_budget': True}
     dump(out / 'config.json', config)
+    dump(out / 'environment.json', {'python': sys.version, 'platform': platform.platform(),
+        'modules': {'mujoco': mujoco.__version__, 'numpy': np.__version__, 'cv2': cv2.__version__},
+        'ffmpeg': subprocess.check_output(['ffmpeg', '-version'], text=True).splitlines()[0]})
     started = time.monotonic()
     world = None
     video = None
@@ -217,7 +222,11 @@ def main():
             row = {'elapsed_sim_s': now - start,
                    'lift_m': float(cargo['position'][2]) - initial_height,
                    'bilateral_contact': bool(contact.get('bilateral')),
-                   'constraints_active': cargo['constraints_active'],
+                   # Small-box specs have no assigned carriers, so their public
+                   # state dictionary is empty even though welds are registered.
+                   'constraints_active': {rid: bool(world.data.eq_active[int(eid)])
+                       for (cid, rid), eid in world.warehouse_weld_ids.items()
+                       if cid == 'small_box_01'},
                    'stable': cargo.get('stable'), 'position': cargo['position']}
             samples.append(row)
             referee_file.write(json.dumps(row) + '\n')

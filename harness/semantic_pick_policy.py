@@ -42,6 +42,7 @@ PROFILE_HASH = hashlib.sha256(
 ).hexdigest()
 
 _SYSTEM_COMMON = """You control one MasterPi in a raise-and-hold box task.
+The target is the small cyan box. Other colored objects are not the target.
 Use only the two current RGB images and the listed actions previously selected by you.
 OWN_CAMERA is the robot's unchanged physical wrist camera. SHARED_TOP_CAMERA is the
 unchanged fixed overhead camera. The action history is issued-command history, never
