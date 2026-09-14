@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import math
 from pathlib import Path
 import platform
 import subprocess
@@ -20,9 +19,10 @@ if str(ROOT) not in sys.path: sys.path.insert(0, str(ROOT))
 
 from harness.grasp_student_inference import predict_student
 from harness.pair_carry_sync import PairCarrySync
-from harness.pair_navigation import PairNavigator, ROBOTS, authorize_pair, digest, validate_map, wrap
+from harness.pair_navigation import PairNavigator, ROBOTS, authorize_pair, digest, validate_map
 from scripts.camera_short_transport_scene import ShortTransportScene
 from scripts.run_camera_approach_student import models, sha, write
+from scripts.evaluate_pair_navigation import evaluate_samples
 
 
 class PairNavigationScene(ShortTransportScene):
@@ -34,6 +34,8 @@ class PairNavigationScene(ShortTransportScene):
         self.map = data
         self.wall_ids = set()
         self.wall_contact_ticks = 0
+        self.unexpected_contact_ticks = 0
+        self.contact_events = []
         self.nav_start_s = None
         self.xml_sha = None
 
@@ -60,6 +62,8 @@ class PairNavigationScene(ShortTransportScene):
         self.ports = {r: CameraRobotPort(self.world, r, allow_reverse=True, allow_mecanum=True) for r in ROBOTS}
         self.wall_ids = {i for i in range(self.world.model.ngeom)
             if (mujoco.mj_id2name(self.world.model, mujoco.mjtObj.mjOBJ_GEOM, i) or '').startswith('pair_wall_')}
+        self.geom_names = {i: mujoco.mj_id2name(self.world.model, mujoco.mjtObj.mjOBJ_GEOM, i) or ''
+                           for i in range(self.world.model.ngeom)}
         # Presentation camera only. Actor camera parameters stay byte-for-byte.
         m = self.world.model
         cid = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_CAMERA, 'cctv_warehouse')
@@ -70,6 +74,9 @@ class PairNavigationScene(ShortTransportScene):
         mujoco.mju_mat2Quat(quat, np.column_stack((right, up, -forward)).ravel())
         m.cam_pos[cid] = position; m.cam_quat[cid] = quat; m.cam_fovy[cid] = 55.
         mujoco.mj_forward(m, self.world.data)
+        # Save the final compiled scene, after the inherited plain-beam wrapper.
+        mujoco.mj_saveLastXML(str(self.out/'scene.xml'), m)
+        self.xml_sha = sha(self.out/'scene.xml')
         return self
 
     def invariant_record(self):
@@ -80,12 +87,26 @@ class PairNavigationScene(ShortTransportScene):
         return record
 
     def _referee_tick(self):
-        if self.wall_ids and self.phase in ('carry', 'carry_stop'):
+        if hasattr(self, 'geom_names') and self.phase in ('carry', 'carry_stop'):
+            wall_hit, unexpected = False, False
             for c in self.world.data.contact[:self.world.data.ncon]:
                 pair = {int(c.geom1), int(c.geom2)}
                 if pair & self.wall_ids and pair & (self.robot_geoms | {self.beam_geom}):
-                    self.wall_contact_ticks += 1
-                    break
+                    wall_hit = True
+                a, b = int(c.geom1), int(c.geom2)
+                na, nb = self.geom_names[a], self.geom_names[b]
+                if 'floor' in (na, nb) and self.beam_geom not in pair:
+                    continue
+                if self.beam_geom in pair:
+                    if not pair & self.robot_geoms: unexpected = True
+                    continue
+                ra, rb = na.split('__')[0], nb.split('__')[0]
+                if (ra in ROBOTS or rb in ROBOTS) and ra != rb:
+                    unexpected = True
+            self.wall_contact_ticks += int(wall_hit)
+            self.unexpected_contact_ticks += int(unexpected)
+            if wall_hit or unexpected:
+                self.contact_events.append({'sim_time_s':self.time(), 'wall':wall_hit, 'unexpected':unexpected})
         super()._referee_tick()
 
     def evaluation_snapshot(self, *, full_state=True):
@@ -94,6 +115,22 @@ class PairNavigationScene(ShortTransportScene):
         result['yaw_rad'] = float(beam_pose(self.world.data, self.world.model)['yaw_rad'])
         result['arm_joints'] = {rid: {name: float(self.world.data.qpos[self.world.model.jnt_qposadr[jid]])
                                for name, jid in self.world.controllers[rid].arm_joint.items()} for rid in ROBOTS}
+        # Conservative world AABBs of the actual physical robot/payload geoms.
+        import numpy as np
+        m, d = self.world.model, self.world.data
+        inside = True
+        xmin, xmax, ymin, ymax = self.map['bounds_m']
+        for gid in self.robot_geoms | {self.beam_geom}:
+            if not (m.geom_contype[gid] or m.geom_conaffinity[gid]): continue
+            size = m.geom_size[gid]
+            # Boxes: exact AABB. Other types: bounding sphere, conservatively.
+            if int(m.geom_type[gid]) == 6:
+                extent = np.abs(d.geom_xmat[gid].reshape(3,3)) @ size
+            else:
+                extent = np.full(3, m.geom_rbound[gid])
+            x, y, _ = d.geom_xpos[gid]
+            inside &= xmin <= x-extent[0] and x+extent[0] <= xmax and ymin <= y-extent[1] and y+extent[1] <= ymax
+        result['within_authored_bounds'] = bool(inside)
         return result
 
     def execute(self, actions):
@@ -109,32 +146,17 @@ class PairNavigationScene(ShortTransportScene):
 
 def evaluate(scene, report):
     """Only called after the actor stops. No result is sent back to either actor."""
-    rows = [r for r in scene.evaluation_samples if r['phase'] in ('carry', 'carry_stop')]
-    if not rows: return {'success': False, 'reason': 'no navigation samples'}
-    first, last = rows[0], rows[-1]
-    bilateral = [all(r['contacts'][rid]['bilateral'] for rid in ROBOTS) for r in rows]
-    lifted = [r['height_above_start_m'] >= .03 for r in rows]
-    angle = wrap(last['yaw_rad']-first['yaw_rad'])
-    goal = scene.map['goal']
-    displacement = math.dist(last['position_m'][:2], goal['center_m'])
-    error_yaw = abs(wrap(angle-math.radians(goal['relative_yaw_deg'])))
-    gates = {'actor_arrived': report['arrived'], 'bilateral_every_sample': all(bilateral),
-             'lifted_every_sample': all(lifted), 'wall_contact_free': scene.wall_contact_ticks == 0,
-             'weld_off': scene.weld_active_ticks == 0,
-             'cameras_geometry_unchanged': report['invariants_initial'] == report['invariants_final'],
-             'goal_position': displacement <= .08, 'goal_orientation': error_yaw <= math.radians(10)}
-    return {'success': all(gates.values()), 'gates': gates, 'samples': len(rows),
-            'bilateral_fraction': sum(bilateral)/len(rows), 'lifted_fraction': sum(lifted)/len(rows),
-            'min_lift_m': min(r['height_above_start_m'] for r in rows),
-            'payload_turn_deg': math.degrees(angle), 'goal_position_error_m': displacement,
-            'goal_yaw_error_deg': math.degrees(error_yaw), 'wall_contact_ticks': scene.wall_contact_ticks,
-            'navigation_sim_seconds': last['sim_time_s']-first['sim_time_s'],
-            'sample_gap_max_s': max((b['sim_time_s']-a['sim_time_s'] for a,b in zip(rows,rows[1:])), default=0.)}
+    return evaluate_samples(scene.evaluation_samples, scene.map, arrived=report['arrived'],
+                            invariants_match=report.get('invariants_initial') == report.get('invariants_final'),
+                            weld_ticks=scene.weld_active_ticks, wall_contact_ticks=scene.wall_contact_ticks,
+                            unexpected_contact_ticks=scene.unexpected_contact_ticks)
 
 
 def run(data, grasp_root, out, budget=750, *, impratio=1):
     validate_map(data)
     if out.exists(): raise FileExistsError(out)
+    if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip():
+        raise RuntimeError('commit the complete execution source and protocol before an experiment')
     skill, grasp_models = models(grasp_root, 'student-skill.json')
     scene = PairNavigationScene(out, grasp_root, data, impratio=impratio)
     actors = {r: PairNavigator(data, r) for r in ROBOTS}
@@ -143,6 +165,7 @@ def run(data, grasp_root, out, budget=750, *, impratio=1):
     report = {'schema': 'ugrp.pair_navigation_trial.v1', 'map': data, 'map_sha256': digest(data),
               'source_sha': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
               'grasp_skill_sha256': sha(grasp_root/'student-skill.json'),
+              'appearance_manifest_sha256': sha(ROOT/'harness/assets/pair_navigation/manifest.json'),
               'environment': {'python': sys.version, 'platform': platform.platform()},
               'scope': 'Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay',
               'budget': budget, 'steps': [], 'arrived': False, 'error': None,
@@ -158,8 +181,8 @@ def run(data, grasp_root, out, budget=750, *, impratio=1):
         # Fixed settling interval for all numerical profiles. No contact/pose
         # condition controls this wait or the start of navigation.
         scene.phase = 'grasp_hold'
-        scene.tick(5.)
-        report['post_grasp_settle_s'] = 5.
+        scene.tick(8.)
+        report['post_grasp_settle_s'] = 8.
         write(out/'grasp-result.json', scene.grasp_report)
         for index in range(budget):
             frames = scene.capture(f'nav-{index:04d}')
@@ -170,7 +193,7 @@ def run(data, grasp_root, out, budget=750, *, impratio=1):
                 for a in actions.values(): a.update(forward=0., left=0., turn=0.)
             row = {'index': index, 'images': {r: {'own': frames[r]['own_rgb'], 'top': frames[r]['shared_top_rgb']} for r in ROBOTS},
                    'frame_ids': {r: frames[r]['frame_id'] for r in ROBOTS}, 'decisions': decisions,
-                   'permission': permission, 'issued_actions': actions}
+                   'permission': permission, 'issued_actions': actions, 'sim_time_s': scene.time()}
             report['steps'].append(row)
             scene.execute(actions)
             if not all(d['ready'] for d in decisions.values()):
@@ -194,13 +217,22 @@ def run(data, grasp_root, out, budget=750, *, impratio=1):
         if scene.world:
             report['invariants_final'] = scene.invariant_record()
             report['weld_active_ticks'] = scene.weld_active_ticks
+            report['wall_contact_ticks'] = scene.wall_contact_ticks
+            report['unexpected_contact_ticks'] = scene.unexpected_contact_ticks
             report['evaluation'] = evaluate(scene, report)
             report['sim_seconds'] = scene.time()
         report['sync_events'] = sync.events
         report['wall_seconds'] = time.monotonic()-started
-        scene.close()
-        out.mkdir(parents=True, exist_ok=True)
-        write(out/'result.json', report)
+        report['success'] = bool(not report['error'] and report.get('evaluation',{}).get('success'))
+        write(out/'contact-events-evaluation-only.json', scene.contact_events)
+        try:
+            scene.close()
+        except Exception:
+            report['cleanup_error'] = traceback.format_exc()
+            report['success'] = False
+        finally:
+            out.mkdir(parents=True, exist_ok=True)
+            write(out/'result.json', report)
     print(json.dumps({'out': str(out), 'evaluation': report.get('evaluation'), 'error': report['error']}, indent=2))
     return report
 

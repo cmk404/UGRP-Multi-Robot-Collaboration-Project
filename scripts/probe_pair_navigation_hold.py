@@ -23,10 +23,11 @@ def main():
     p.add_argument('--impratio', type=int, choices=(1, 10, 100), default=1)
     p.add_argument('--seconds', type=int, default=16)
     p.add_argument('--post-grasp-settle', type=float, default=0.)
+    p.add_argument('--drop-test', action='store_true')
     a = p.parse_args()
     if not -100 <= a.wrist_delta <= 100: p.error('bounded wrist diagnostic only')
     if not 1 <= a.seconds <= 120: p.error('hold must be 1..120 seconds')
-    if a.post_grasp_settle not in (0., 5.): p.error('predeclared settling intervals are 0 or 5 seconds')
+    if a.post_grasp_settle not in (0., 5., 8.): p.error('predeclared settling intervals are 0, 5 or 8 seconds')
     out = a.out_dir.resolve()
     if out.exists(): raise FileExistsError(out)
     _, ms = models(a.grasp_model_dir.resolve(), 'student-skill.json')
@@ -35,6 +36,7 @@ def main():
            'diagnostic_only': True, 'wrist_delta': a.wrist_delta, 'impratio': a.impratio,
            'seconds': a.seconds, 'error': None}
     rec['post_grasp_settle_s'] = a.post_grasp_settle
+    rec['drop_test'] = a.drop_test
     try:
         scene.open(); rec['invariants_initial'] = scene.invariant_record()
         scene.finish_grasp(predict_student, ms)
@@ -52,6 +54,16 @@ def main():
         bad = [r for r in rows if not good(r)]
         rec.update(success=not bad, first_failure_s=None if not bad else bad[0]['sim_time_s']-rows[0]['sim_time_s'],
                    initial=rows[0], final=rows[-1], invariants_final=scene.invariant_record())
+        if a.drop_test:
+            scene.capture('before-air-release')
+            scene.replay([{'targets':{r:{1:2000} for r in ROBOTS},'duration_s':.65,'settle_s':.3}], 'air_release')
+            scene.phase='air_release_hold';scene.tick(2.)
+            scene.capture('after-air-release')
+            final=scene.evaluation_snapshot(full_state=False)
+            rec['air_release_final']=final
+            rec['air_release_success']=bool(final['payload_floor_contact'] and
+                 all(not final['contacts'][r][side] for r in ROBOTS for side in ('left','right'))
+                 and rows[-1]['position_m'][2]-final['position_m'][2]>.03 and scene.weld_active_ticks==0)
     except Exception:
         rec['error'] = traceback.format_exc()
     finally:

@@ -53,6 +53,8 @@ def validate_map(data):
     xmin, xmax, ymin, ymax = vector(data['bounds_m'], 4)
     if not xmin < xmax or not ymin < ymax:
         raise ValueError('empty map bounds')
+    if not (-1.2 <= xmin < xmax <= 2.3 and -3.35 <= ymin < ymax <= -.65):
+        raise ValueError('map exceeds fixed camera coverage')
     if set(data['start_zone']) != {'center_m', 'radius_m'}:
         raise ValueError('invalid start zone')
     vector(data['start_zone']['center_m'], 2)
@@ -60,7 +62,9 @@ def validate_map(data):
         raise ValueError('invalid start radius')
     if set(data['goal']) != {'center_m', 'relative_yaw_deg'}:
         raise ValueError('invalid goal')
-    vector(data['goal']['center_m'], 2)
+    gx, gy = vector(data['goal']['center_m'], 2)
+    if not (xmin <= gx <= xmax and ymin <= gy <= ymax):
+        raise ValueError('goal outside map')
     vector([data['goal']['relative_yaw_deg']], 1)
     if abs(data['goal']['relative_yaw_deg']) > 180:
         raise ValueError('goal yaw out of range')
@@ -232,6 +236,8 @@ class PairVision:
         # observer uses the common camera; it does not claim own-camera grasp QA.
         _decode_jpeg(own_rgb, 'own_rgb')
         frame = _decode_jpeg(top_rgb, 'shared_top_rgb')
+        if frame.shape != (720, 960, 3):
+            raise ValueError('wheel appearance requires the calibrated 960x720 top camera')
         self._payload(frame)
         mask = self._mask(frame)
         h, w = mask.shape
@@ -322,6 +328,14 @@ class PairNavigator:
         action = dict(zero)
         status = self.phase
         if self.phase == 'probe':
+            # The fixed-start appearance recognizer only accepts headings near
+            # its canonical orientation. Check that entire bounded probe envelope
+            # before issuing the small movement that resolves heading direction.
+            for angle in np.linspace(-math.pi/12, math.pi/12, 7):
+                target = center+rotate((.065, 0.), angle)
+                if not swept_clear((*center, angle), (*target, angle), self.map):
+                    return {'action': zero, 'status': 'no_route', 'ready': False, 'done': False,
+                            'observations': obs, 'reason': 'probe_envelope_blocked'}
             displacement = center-self.probe_origin
             if np.linalg.norm(displacement) >= .03:
                 self.heading = math.atan2(displacement[1], displacement[0])
