@@ -39,6 +39,8 @@ TEST_PATTERNS = (
     "tests/test_navigation_evidence.py",
     "tests/test_navigation_temporal.py",
     "tests/test_ugrp_session.py",
+    "tests/test_semantic_pick_policy.py",
+    "tests/test_pick_match*.py",
 )
 
 
