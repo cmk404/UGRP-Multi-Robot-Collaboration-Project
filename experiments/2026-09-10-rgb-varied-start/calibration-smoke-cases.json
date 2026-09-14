@@ -1,0 +1,65 @@
+{
+  "purpose": "collector smoke only",
+  "cases": [
+    {
+      "case_id": "cal-000",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0,
+          "lateral_m": -0.06,
+          "yaw_deg": -10
+        },
+        "r3": {
+          "distance_m": 0.007,
+          "lateral_m": -0.002,
+          "yaw_deg": 0.2
+        }
+      }
+    },
+    {
+      "case_id": "cal-120",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.15,
+          "lateral_m": 0.03,
+          "yaw_deg": -0.4
+        },
+        "r3": {
+          "distance_m": 0.3,
+          "lateral_m": -0.002,
+          "yaw_deg": 0.2
+        }
+      }
+    },
+    {
+      "case_id": "cal-240",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0,
+          "lateral_m": 0,
+          "yaw_deg": 0.2
+        },
+        "r3": {
+          "distance_m": 0.4,
+          "lateral_m": -0.03,
+          "yaw_deg": 6
+        }
+      }
+    },
+    {
+      "case_id": "cal-482",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.35,
+          "lateral_m": 0.002,
+          "yaw_deg": 0.2
+        },
+        "r3": {
+          "distance_m": 0,
+          "lateral_m": 0.03,
+          "yaw_deg": -2
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,186 @@
+{
+  "request": "\uc880 \ub354 \ub2e4\uc591\ud55c \uc0c1\ud669\uc5d0\uc11c \ud574\ubcfc\ub798? \ucc98\uc74c \uc2dc\uc791\ud558\ub294 \uc704\uce58\uac00 \uace0\uc815\ub41c \uac8c \uc544\ub2c8\uc5b4\ub3c4 \uac00\ub2a5\ud558\uac8c",
+  "base_sha": "6542c3504449547f60510f88c34cf44f2b6cf84c",
+  "scope": {
+    "distance_m": [
+      0.15,
+      0.4
+    ],
+    "lateral_m": [
+      -0.06,
+      0.06
+    ],
+    "yaw_deg": [
+      -10,
+      10
+    ],
+    "independent_robots": true,
+    "fixed_scene": true,
+    "fixed_side_assignment": true,
+    "fixed_camera": true,
+    "weld": false
+  },
+  "training": "483 independent reset RGB calibration pairs with privileged teacher labels; 6 physical teacher trajectories tested separately and may supplement training. Static resets are not physical successes.",
+  "controller": "Independent learned RGB alignment error per robot/axis; yaw -> lateral -> yaw -> forward -> yaw -> lateral -> forward. Two consecutive fresh stationary confirmations within four captures; all axes rechecked before existing RGB grasp, requiring fine heading measurement.",
+  "runtime_boundary": "Own RGB, fixed top RGB, saved models, own issued commands, phase/history only; no truth, velocity, contacts or setup pose feedback. Fixed top image crop per robot lane preserves rawcamera geometry.",
+  "teacher_boundary": "Truth allowed only in collection labels and teacher controller, never student decision inputs.",
+  "final_comparison": {
+    "novel_varied_starts": 30,
+    "paired_baseline": "prior learned forward-only RGB approach from modelv2, same starts and exact physics/RGB",
+    "prior_straight_retention": 20,
+    "development_cases": 8,
+    "heldout_tuning": false
+  },
+  "acceptance": {
+    "novel_fullsuccess_min": 27,
+    "novel_count": 30,
+    "retention_fullsuccess_min": 19,
+    "retention_count": 20,
+    "approach_payload_contact_steps": 0,
+    "grasp": "height>=.03m with bilateral contact and weld off continuously>=2s"
+  },
+  "storage": "Source committed before each run and frozen throughout each cohort. All failures retained. Video raw local unless explicitly archived. No Drive.",
+  "status": "completed_pass",
+  "development_history": [
+    {
+      "source_sha": "f025813",
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/varied-start-teacher-smoke-20260910-v1",
+      "purpose": "physical teacher corner smoke before training",
+      "cases": 1,
+      "success": 0,
+      "approach_payload_contact_steps": 0,
+      "finding": "Yaw command shrank to0.0046 and stalled at0.01534rad after18simseconds; raise teacher minimum moving yaw to0.01 while preserving gain0.3,tolerance0.0035rad,max0.06."
+    },
+    {
+      "source_sha": "5513b2e",
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/varied-start-teacher-smoke-20260910-v2",
+      "purpose": "same physical corner withminimumyaw0.01",
+      "cases": 1,
+      "success": 1,
+      "approach_payload_contact_steps": 0,
+      "approach_elapsed_sim_s": 32.6,
+      "longest_qualifying_hold_s": 2.7,
+      "status": "completed_samecorner_smoke"
+    },
+    {
+      "source_sha": "5513b2e",
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/varied-start-teacher-pilot-20260910-v1",
+      "purpose": "six physical teachers",
+      "cases": 6,
+      "success": 6,
+      "approach_payload_contact_steps": 0,
+      "grasp_decisions_replayed": 192
+    },
+    {
+      "source_sha": "5ae9589548a1c178a0c143d8e8f502e8b121926d",
+      "model_raw_dir": "/Users/changmin/projects/ugrp/outputs/varied-start-model-20260910-v1",
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/varied-start-development-20260910-v1",
+      "purpose": "first staged RGB student fulldevelopment",
+      "cases": 8,
+      "success": 1,
+      "approach_payload_contact_steps": 0,
+      "audit_all_passed": true,
+      "finding": "6yawbudget aborts,1finalalignmentabort,1fullgrasp. First4cornercases aligned yaw within0.2deg but jointKRR binaryreadiness only0.35-0.46 causingcontinuedminimumcommands. Novelcaseerrors larger; investigate separatecompletionmodel/translationinvariantRGBfeatures beforeheldout."
+    },
+    {
+      "source_sha": "d45d3d0",
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/varied-start-grasp-tolerance-20260910-v1",
+      "purpose": "setup-only heading residual tolerance of existing RGB grasp, not varied-start approach validation",
+      "cases": 8,
+      "success": 8,
+      "setup": "opposite robot headings +/-0.25,+/-0.5,+/-0.75,+/-1 degree with 3mm forward offset and opposing 2mm lateral offsets",
+      "grasp_decisions_replayed": 256,
+      "video_review": "1degree sign+1 four frames including lift"
+    },
+    {
+      "source_sha": "81793ec1f2f19fd3663e2e461af22ab7fbd70509",
+      "model_raw_dir": "/Users/changmin/projects/ugrp/outputs/varied-start-model-20260910-v2",
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/varied-start-development-20260910-v2",
+      "purpose": "geometry student full development cohort",
+      "cases": 8,
+      "success": 6,
+      "approach_payload_contact_steps": 0,
+      "audit_all_passed": true,
+      "finding": "01 final r3 yaw estimate 0.006228 exceeded 0.006 after later lateral correction; 03 stationary lateral estimate changed 0.002444 to0.002501 versus0.0025 limit. Other6 fullgrasp. Introduce inner movement target at75% of unchanged stationary tolerances; stationary confirmations still issue onlyzero commands.",
+      "training_metadata_note": "v2 wrapper reported selected600 although geometry fit correctly used all stage domain samples; actual model diagnostics report779 yaw/760 lateral/841forward perrobot. Corrected future trainer metadata."
+    },
+    {
+      "source_sha": "b4c9535d24efc6747ed4f6df244b902976efb00f",
+      "model_raw_dir": "/Users/changmin/projects/ugrp/outputs/varied-start-model-20260910-v3",
+      "raw_dirs": [
+        "/Users/changmin/projects/ugrp/outputs/varied-start-development-20260910-v3-0",
+        "/Users/changmin/projects/ugrp/outputs/varied-start-development-20260910-v3-1"
+      ],
+      "purpose": "geometry student with moving/stationary hysteresis; same fitted geometry and training data",
+      "cases": 8,
+      "success": 8,
+      "approach_payload_contact_steps": 0,
+      "audit_all_passed": true
+    }
+  ],
+  "teacher_controller": {
+    "yaw": {
+      "gain": 0.3,
+      "min_moving_abs": 0.01,
+      "max_abs": 0.06,
+      "ready_tolerance_rad": 0.0035
+    },
+    "lateral": {
+      "gain": 0.35,
+      "min_moving_abs": 0.01,
+      "max_abs": 0.06,
+      "ready_tolerance_m": 0.0025
+    },
+    "forward": {
+      "gain": 0.2,
+      "min_moving_abs": 0.01,
+      "bounds": [
+        -0.05,
+        0.15
+      ],
+      "ready_tolerance_m": 0.004
+    }
+  },
+  "training_collection": {
+    "calibration_cases": 483,
+    "source_sha": "5513b2e",
+    "calibration_raw_dir": "/Users/changmin/projects/ugrp/outputs/varied-start-calibration-20260910-v1",
+    "physical_teacher_cases": 6,
+    "physical_teacher_success": 6,
+    "validation": "complete reports and per-grasp exact32decision replays; all training images hashed by merge/trainer"
+  },
+  "candidate_v2": {
+    "backend": "RGB foreground XY forest and soft-yellow ECC heading with learned parallax correction; full-difference ECC may guide coarse approach but never authorize final grasp",
+    "yaw_visual_stop_tolerance_rad": 0.006,
+    "lateral_stop_tolerance_m": 0.0025,
+    "forward_stop_tolerance_m": 0.004,
+    "actuator": "preserve teacher gain and 0.01 friction minimum; no privileged runtime state"
+  },
+  "candidate_v3": {
+    "change": "stop/hold hysteresis: drive toward75% of the stationary error limits; confirm and finalchecks use originallimits withfineheadingrequired",
+    "stationary_tolerances": {
+      "yaw_rad": 0.006,
+      "lateral_m": 0.0025,
+      "forward_m": 0.004
+    },
+    "moving_target_fraction": 0.75,
+    "same_teacher_data": true,
+    "final_execution": "Two independent process shards may run concurrently; every original case included once percondition, source/model freeze spansbothshards, percase physics/RGB pairing and exactaudits unchanged."
+  },
+  "actuator_calibration_v1": "For a supported non-ready RGB prediction, retain learned sign but enforce teacher minimum moving magnitude0.01; ready still requires raw regression magnitude<=0.003 and ready_score>=0.65. Initial teacher yaw stalled at0.0046; six teacher paths succeeded with0.01 minimum.",
+  "final_results": {
+    "source_sha": "b4c9535d24efc6747ed4f6df244b902976efb00f",
+    "novel_success": 29,
+    "novel_count": 30,
+    "paired_straight_success": 0,
+    "retention_success": 20,
+    "retention_count": 20,
+    "accepted": true,
+    "all_80_audits_passed": true,
+    "heldout_tuning": false,
+    "summary": "final-summary.json",
+    "csv": "final-results.csv",
+    "failure_record": "README.md",
+    "raw_manifest": "final-raw-manifest.jsonl"
+  }
+}
