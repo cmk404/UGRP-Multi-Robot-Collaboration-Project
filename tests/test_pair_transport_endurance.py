@@ -51,3 +51,14 @@ def test_sliding_beam_fails_even_when_contacts_and_lift_remain():
     assert not r['checkpoints']['300']['gates']['height_retained']
     assert r['checkpoints']['300']['finger_height_change_m']['r1']==0
     assert r['checkpoints']['300']['beam_relative_to_finger_change_m']['r1']==pytest.approx(-.02)
+
+def test_endurance_pass_does_not_imply_release():
+    rows,report=record();report['release_check_required']=True
+    result=evaluate_endurance(rows,report)
+    assert result['checkpoints']['300']['passed']
+    assert not result['success'] and not result['released_on_floor']
+    release={'phase':'release_hold','payload_floor_contact':True,'contacts':{r:{'left':False,'right':False} for r in ('r1','r3')}}
+    rows.extend(copy.deepcopy(release) for _ in range(10))
+    assert evaluate_endurance(rows,report)['success']
+    rows[-1]['contacts']['r3']['left']=True
+    assert not evaluate_endurance(rows,report)['success']

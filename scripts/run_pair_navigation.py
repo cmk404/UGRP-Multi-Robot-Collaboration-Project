@@ -28,9 +28,11 @@ from scripts.evaluate_pair_navigation import evaluate_samples, evaluate_grasp_st
 
 class PairNavigationScene(ShortTransportScene):
     """Private setup, raw actuators, and output-only referee. Never an actor API."""
-    def __init__(self, out, grasp_root, data, *, impratio=1):
+    def __init__(self, out, grasp_root, data, *, impratio=1, noslip_iterations=0):
         super().__init__(out, grasp_root)
         if impratio not in (1, 10, 100): raise ValueError('explicit contact impedance profile required')
+        if noslip_iterations not in (0, 3): raise ValueError("explicit NoSlip profile must be 0 or 3")
+        self.noslip_iterations = noslip_iterations
         self.impratio = impratio
         self.map = data
         self.wall_ids = set()
@@ -83,6 +85,7 @@ class PairNavigationScene(ShortTransportScene):
         def builder(*args, **kwargs):
             root = ET.fromstring(original(*args, **kwargs))
             root.find('option').set('impratio', str(self.impratio))
+            root.find('option').set('noslip_iterations', str(self.noslip_iterations))
             world = root.find('worldbody')
             for box in self.map['obstacles']:
                 x, y = box['center_m']; hx, hy = box['half_extents_m']; height = box['height_m']
@@ -188,7 +191,7 @@ def evaluate(scene, report):
                             require_full_grasp=report.get('grasp_spacing')=='visual')
 
 
-def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy', grasp_spacing=None, grasp_only=False, close_pulse=None):
+def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy', grasp_spacing=None, grasp_only=False, close_pulse=None, noslip_iterations=0):
     validate_map(data)
     grasp_spacing = grasp_spacing or ('visual' if vision_mode=='robust' else 'passive')
     if grasp_spacing not in ('visual','passive'):raise ValueError('unknown grasp spacing mode')
@@ -197,7 +200,7 @@ def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy', 
     if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip():
         raise RuntimeError('commit the complete execution source and protocol before an experiment')
     skill, grasp_models = models(grasp_root, 'student-skill.json')
-    scene = PairNavigationScene(out, grasp_root, data, impratio=impratio)
+    scene = PairNavigationScene(out, grasp_root, data, impratio=impratio, noslip_iterations=noslip_iterations)
     actors = {r: PairNavigator(data, r, vision_mode=vision_mode) for r in ROBOTS}
     sync = PairCarrySync(task_id=data['map_id'])
     started = time.monotonic()
@@ -208,7 +211,7 @@ def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy', 
               'environment': {'python': sys.version, 'platform': platform.platform()},
               'scope': 'Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay',
               'budget': budget, 'steps': [], 'arrived': False, 'error': None,
-              'contact_impratio': impratio,
+              'contact_impratio': impratio, 'noslip_iterations': noslip_iterations,
               'vision_mode': vision_mode,
               'grasp_spacing':grasp_spacing,'grasp_only':bool(grasp_only),
               'close_command_override':close_pulse,
@@ -304,10 +307,11 @@ def main():
                         help='explicit vision/control comparison; robust adds wheel geometry and own-view carry guard')
     parser.add_argument('--impratio', type=int, choices=(1, 10, 100), default=1,
                         help='explicit friction impedance comparison; default preserves main')
+    parser.add_argument('--noslip-iterations', type=int, choices=(0,3), default=0, help='explicit solver comparison; 0 preserves prior contact behavior')
     args = parser.parse_args()
     if not 1 <= args.budget <= 1200: parser.error('budget must be 1..1200')
     result = run(json.loads(args.map.read_text()), args.grasp_model_dir.resolve(), args.out_dir.resolve(), args.budget,
-        impratio=args.impratio, vision_mode=args.vision_mode, grasp_spacing=args.grasp_spacing, grasp_only=args.grasp_only,close_pulse=args.close_pulse)
+        impratio=args.impratio, vision_mode=args.vision_mode, grasp_spacing=args.grasp_spacing, grasp_only=args.grasp_only,close_pulse=args.close_pulse,noslip_iterations=args.noslip_iterations)
     return int(bool(result['error']))
 
 

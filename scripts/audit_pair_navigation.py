@@ -20,6 +20,8 @@ def audit(run_dir, grasp_dir=None):
     report = json.loads(_safe_file(root, 'result.json').read_text())
     if report['schema'] != 'ugrp.pair_navigation_trial.v1' or digest(report['map']) != report['map_sha256']:
         raise ValueError('map/schema mismatch')
+    if 'noslip_iterations' in report and report['invariants_initial']['contact_solver']['noslip_iterations'] != report['noslip_iterations']:
+        raise ValueError('declared NoSlip profile mismatch')
     import hashlib
     if hashlib.sha256((ROOT/'harness/assets/pair_navigation/manifest.json').read_bytes()).hexdigest() != report['appearance_manifest_sha256']:
         raise ValueError('appearance model manifest mismatch')
