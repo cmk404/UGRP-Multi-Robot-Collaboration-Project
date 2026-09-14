@@ -93,6 +93,17 @@ def audit(run_dir, grasp_dir=None):
     if grasp is not None and not grasp.get('ok'): raise ValueError('grasp input audit failed: '+str(grasp))
     if grasp_dir and hashlib.sha256((Path(grasp_dir)/'student-skill.json').read_bytes()).hexdigest() != report['grasp_skill_sha256']:
         raise ValueError('grasp manifest mismatch')
+    if 'close_command_override' in report and grasp_dir:
+        override=report['close_command_override']
+        if override not in (None,1500,1700,1800):raise ValueError('invalid fixed close command')
+        skill=json.loads((Path(grasp_dir)/'student-skill.json').read_text())
+        trace=json.loads(_safe_file(root,'execution-trace.json').read_text())
+        close=[r for r in trace if r['stage']=='grasp_close']
+        expected={r:{'1':skill['close_pulses'][r] if override is None else override} for r in ROBOTS}
+        if len(close)!=1 or close[0]['command']['targets']!=expected:
+            raise ValueError('actual close command differs from declared fixed comparison')
+        if close[0]['command']['duration_s']!=skill['close_duration_s'] or close[0]['command']['settle_s']!=skill['close_settle_s']:
+            raise ValueError('close command timing mismatch')
     if hashlib.sha256(_safe_file(root,'scene.xml').read_bytes()).hexdigest() != report['scene_xml_sha256']:
         raise ValueError('compiled scene hash mismatch')
     return {'passed': True, 'steps': len(report['steps']), 'spacing_steps':len(report.get('spacing_steps',[])), 'grasp': grasp,

@@ -10,7 +10,7 @@ import pytest
 from harness.pair_grasp_spacing import PairGraspSpacing, HOLD_DT
 from harness.pair_navigation import ROBOTS, authorize_pair
 from harness.pair_carry_sync import PairCarrySync
-from scripts.evaluate_pair_navigation import evaluate_grasp_stability
+from scripts.evaluate_pair_navigation import evaluate_grasp_stability, evaluate_samples
 
 FIX = Path(__file__).parent/'fixtures/pair_grasp_spacing'
 MAP = Path(__file__).parents[1]/'maps/pair_navigation/narrow-door.json'
@@ -57,6 +57,20 @@ def test_invalid_owned_camera_stops_even_if_top_is_valid():
     assert not d['ready'] and d['status']=='spacing_stop'
 
 
+@pytest.mark.parametrize('axis',[0,1])
+def test_largest_recoverable_drift_respects_robot_port_bounds(monkeypatch,axis):
+    actor=PairGraspSpacing(json.loads(MAP.read_text()),'r1')
+    initial=actor.decide(read('anchor-r1-own.jpg'),read('anchor-top.jpg'))
+    obs=copy.deepcopy(initial['observations'])
+    for r in ROBOTS:obs[r]['xy_m'][axis]+=.024
+    monkeypatch.setattr(actor.vision,'observe',lambda a,b:copy.deepcopy(obs))
+    d=actor.decide(b'',b'')
+    assert d['ready']
+    assert -.05<=d['action']['forward']<=.15
+    assert -.10<=d['action']['left']<=.10
+    assert -.15<=d['action']['turn']<=.15
+
+
 def test_original_transport_success_fails_whole_grasp_stability():
     rows=json.loads(read('baseline-evaluation-only.json'))
     result=evaluate_grasp_stability(rows)
@@ -71,3 +85,21 @@ def test_stability_evaluation_requires_full_hold_and_not_just_its_last_two_secon
     rows=json.loads(read('baseline-evaluation-only.json'))
     rows=[r for r in rows if r['phase']!='grasp_hold' or r['sim_time_s']>22.5]
     assert not evaluate_grasp_stability(rows)['gates']['full_grasp_samples']
+
+
+def test_navigation_cannot_accept_spacing_collapse_after_a_stable_hold():
+    rows=json.loads(read('baseline-evaluation-only.json'))
+    anchor=copy.deepcopy(next(r for r in rows if r['phase']=='grasp_close')['bases'])
+    for r in rows:
+        r['bases']=copy.deepcopy(anchor)
+        r['constraints_active']={rid:False for rid in ROBOTS}
+        for contact in r['contacts'].values():contact['bilateral']=True
+    carry=copy.deepcopy(rows[-1])
+    carry.update(phase='carry',sim_time_s=24.6,position_m=[.58,-2,.10],yaw_rad=0.,
+                 tilt_deg=0.,constraints_active={r:False for r in ROBOTS},within_authored_bounds=True)
+    rows.append(carry)
+    def score():return evaluate_samples(rows,json.loads(MAP.read_text()),arrived=False,invariants_match=True,
+        weld_ticks=0,wall_contact_ticks=0,require_full_grasp=True)
+    assert score()['gates']['carry_spacing_preserved']
+    carry['bases']['r1'][1]+=.03
+    assert not score()['gates']['carry_spacing_preserved']

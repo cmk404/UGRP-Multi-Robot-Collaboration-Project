@@ -58,7 +58,11 @@ def evaluate_samples(samples, data, *, arrived, invariants_match, weld_ticks,
              'goal_position': position_error <= .08,
              'goal_orientation': yaw_error <= math.radians(10), 'released_on_floor': released}
     if require_full_grasp:
-        gates.update(evaluate_grasp_stability(samples)['gates'])
+        stability=evaluate_grasp_stability(samples)
+        gates.update(stability['gates'])
+        anchor=stability.get('anchor_spacing_m')
+        gates['carry_spacing_preserved'] = bool(anchor is not None and all('bases' in r and
+            abs(math.dist(r['bases']['r1'][:2],r['bases']['r3'][:2])-anchor)<=.02 for r in rows))
     return {'success': all(gates.values()), 'gates': gates, 'samples': len(rows),
             'bilateral_fraction': sum(grip)/len(rows), 'lifted_fraction': sum(lifted)/len(rows),
             'min_lift_m': min(r['height_above_start_m'] for r in rows),

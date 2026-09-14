@@ -40,7 +40,7 @@ def main():
         command=[str(args.mjpython.resolve()),str(ROOT/'scripts/run_pair_navigation.py'),
                  '--map',str(ROOT/'maps/pair_navigation'/e['map']),
                  '--grasp-model-dir',str(models),'--out-dir',str(out/e['id']),
-                 '--budget','750','--impratio','10','--vision-mode','robust','--grasp-spacing','visual']
+                 '--budget','750','--impratio','10','--vision-mode','robust','--grasp-spacing','visual','--close-pulse','1700']
         print('START '+e['id'],flush=True)
         started=time.monotonic()
         trial={'id':e['id'],'expected_route':e['expected_geometric_route'],'command':command}
