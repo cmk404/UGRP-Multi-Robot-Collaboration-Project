@@ -11,13 +11,10 @@ from harness.pair_transport_vision import GeometryPairVision
 DT = .1
 
 class EnduranceActor:
-    def __init__(self, data, rid, mode, *, integral_gain=0.):
+    def __init__(self, data, rid, mode):
         if rid not in ROBOTS or mode not in ('stationary','shuttle'):
             raise ValueError('invalid endurance actor configuration')
         self.data,self.rid,self.mode=data,rid,mode
-        if integral_gain not in (0.,2.):raise ValueError('explicit integral gain must be 0 or 2')
-        self.integral_gain=integral_gain
-        self.integral_effort=np.zeros(2)
         self.vision=GeometryPairVision(data)
         self.anchor=self.previous=self.anchor_angles=None
         self.velocity={r:np.zeros(2) for r in ROBOTS}
@@ -53,8 +50,7 @@ class EnduranceActor:
         if (max(np.linalg.norm(e) for e in errors.values())>.03 or abs(separation-self.spacing)>.03
                 or max(abs(e) for e in yaw_errors.values())>.12):
             self.terminal='visual endurance formation exceeded tracking envelope';return self.decide(own_rgb,top_rgb)
-        self.integral_effort=np.clip(self.integral_effort+self.integral_gain*errors[self.rid]*DT,-.08,.08)
-        local=rotate(desired_velocity+6*errors[self.rid]-.6*(self.velocity[self.rid]-desired_velocity)+self.integral_effort,-angles[self.rid])
+        local=rotate(desired_velocity+6*errors[self.rid]-.6*(self.velocity[self.rid]-desired_velocity),-angles[self.rid])
         action.update(forward=float(np.clip(local[0],-.05,.05)),left=float(np.clip(local[1],-.10,.10)),turn=float(np.clip(1.5*yaw_errors[self.rid],-.10,.10)))
         self.previous=positions;self.sequence+=1
         return {'action':action,'status':'endurance_'+self.mode,'ready':True,'done':False,'plan_hash':self.plan_hash,

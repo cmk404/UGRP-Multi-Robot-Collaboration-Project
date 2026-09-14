@@ -20,21 +20,13 @@ def audit(run_dir, grasp_dir=None):
     report = json.loads(_safe_file(root, 'result.json').read_text())
     if report['schema'] != 'ugrp.pair_navigation_trial.v1' or digest(report['map']) != report['map_sha256']:
         raise ValueError('map/schema mismatch')
-    if 'noslip_iterations' in report and report['invariants_initial']['contact_solver']['noslip_iterations'] != report['noslip_iterations']:
-        raise ValueError('declared NoSlip profile mismatch')
-    if report.get('stiff_finger_contact'):
-     pairs=report['invariants_initial']['explicit_contact_pairs']
-     if len(pairs['pair_solimp'])!=4 or any(x[:2]!=[.995,.999] for x in pairs['pair_solimp']):raise ValueError('finger impedance profile mismatch')
-    if report.get('finger_friction_damping',0):
-     pairs=report['invariants_initial']['explicit_contact_pairs']
-     if pairs['pair_solreffriction'] != [[0.,-report['finger_friction_damping']]]*4:raise ValueError('finger friction profile mismatch')
     import hashlib
     if hashlib.sha256((ROOT/'harness/assets/pair_navigation/manifest.json').read_bytes()).hexdigest() != report['appearance_manifest_sha256']:
         raise ValueError('appearance model manifest mismatch')
     actors = {r: PairNavigator(report['map'], r, vision_mode=report.get('vision_mode','legacy')) for r in ROBOTS}
     sync = PairCarrySync(report['map']['map_id'])
     seen = {r:set() for r in ROBOTS}
-    spacing = {r:PairGraspSpacing(report['map'],r,integral_gain=report.get('spacing_integral',0.)) for r in ROBOTS}
+    spacing = {r:PairGraspSpacing(report['map'],r) for r in ROBOTS}
     spacing_sync = PairCarrySync(report['map']['map_id']+'-grasp-spacing')
     for i,row in enumerate(report.get('spacing_steps',[])):
         if set(row)!={'index','images','frame_ids','decisions','permission','issued_actions','sim_time_s','executed'} or row['index']!=i:

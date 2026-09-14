@@ -15,13 +15,10 @@ HOLD_DT = .1
 
 
 class PairGraspSpacing:
-    def __init__(self, data, robot_id, *, integral_gain=0.):
+    def __init__(self, data, robot_id):
         if robot_id not in ROBOTS:
             raise ValueError('invalid robot')
         self.rid = robot_id
-        if integral_gain not in (0.,2.):raise ValueError('explicit integral gain must be 0 or 2')
-        self.integral_gain=integral_gain
-        self.integral_effort=np.zeros(2)
         self.vision = GeometryPairVision(data)
         self.anchor = None
         self.previous = None
@@ -69,8 +66,7 @@ class PairGraspSpacing:
                   and max(abs(e) for e in angle_errors.values()) <= .03)
         self.stable_frames = self.stable_frames+1 if stable else 0
         if not first:
-            self.integral_effort=np.clip(self.integral_effort+self.integral_gain*errors[self.rid]*HOLD_DT,-.08,.08)
-            local = rotate(6.*errors[self.rid]-.6*self.velocity[self.rid]+self.integral_effort, -angles[self.rid])
+            local = rotate(6.*errors[self.rid]-.6*self.velocity[self.rid], -angles[self.rid])
             angular = 1.5*angle_errors[self.rid]-.25*self.angular_velocity[self.rid]
             action.update(forward=float(np.clip(local[0],-.05,.08)),
                           left=float(np.clip(local[1],-.10,.10)),

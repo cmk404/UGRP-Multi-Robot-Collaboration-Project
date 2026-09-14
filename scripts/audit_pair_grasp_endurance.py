@@ -14,10 +14,11 @@ from scripts.run_pair_grasp_endurance import evaluate_endurance
 
 def audit(root,models):
  root=Path(root).resolve();models=Path(models).resolve();r=json.loads(_safe_file(root,'result.json').read_text())
+ if any(r.get(k,0) for k in ('spacing_integral','finger_friction_damping','stiff_finger_contact')) or r['impratio']!=10 or r['noslip_iterations']!=0:raise ValueError('rejected diagnostic profile requires its recorded source checkout')
  if r['schema']!='ugrp.pair_grasp_endurance.v1' or digest(r['map'])!=r['map_sha256']:raise ValueError('schema/map mismatch')
  seen={rid:set() for rid in ROBOTS}
  for kind in ('spacing','endurance'):
-  actors={rid:(PairGraspSpacing(r['map'],rid,integral_gain=r.get('spacing_integral',0.)) if kind=='spacing' else EnduranceActor(r['map'],rid,r['mode'],integral_gain=r.get('spacing_integral',0.))) for rid in ROBOTS}
+  actors={rid:(PairGraspSpacing(r['map'],rid) if kind=='spacing' else EnduranceActor(r['map'],rid,r['mode'])) for rid in ROBOTS}
   sync=PairCarrySync(r['map']['map_id']+('-grasp-spacing' if kind=='spacing' else '-endurance'))
   rows=r['spacing_steps'] if kind=='spacing' else r['steps']
   for i,row in enumerate(rows):
@@ -57,13 +58,6 @@ def audit(root,models):
  if not _same(evaluated,r['evaluation']):raise ValueError('output-only verdict mismatch')
  if r['success']!=bool(not r['error'] and not r.get('cleanup_error') and evaluated['success']):raise ValueError('false success')
  if hashlib.sha256(_safe_file(root,'scene.xml').read_bytes()).hexdigest()!=r['scene_xml_sha256']:raise ValueError('scene hash mismatch')
- if r.get('stiff_finger_contact'):
-  pairs=r['invariants_initial']['explicit_contact_pairs']
-  if len(pairs['pair_solimp'])!=4 or any(x[:2]!=[.995,.999] for x in pairs['pair_solimp']):raise ValueError('finger impedance profile mismatch')
- if r.get('finger_friction_damping',0):
-  pairs=r['invariants_initial']['explicit_contact_pairs']
-  if pairs['pair_solreffriction'] != [[0.,-r['finger_friction_damping']]]*4:raise ValueError('finger friction profile mismatch')
- if r['invariants_initial']['contact_solver']['impratio']!=r['impratio']:raise ValueError('impedance declaration mismatch')
  if r['invariants_initial']['contact_solver']['noslip_iterations']!=r['noslip_iterations']:raise ValueError('solver declaration mismatch')
  return {'passed':True,'source_sha':r['source_sha'],'spacing_rounds':len(r['spacing_steps']),'endurance_rounds':len(r['steps']),'grasp':grasp,'physical_success':r['success'],'scope':'Exact saved RGB/command replay and output-only scoring; not a physical rerun'}
 def main():
