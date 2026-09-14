@@ -36,6 +36,17 @@ def rotate(point, angle):
     return np.array([c * point[0] - s * point[1], s * point[0] + c * point[1]])
 
 
+def payload_coupled(payload, robot_center, robot_turn, anchor_turn):
+    """Occluded shaft pixels identify a line and a center interval, not a point."""
+    angle_error = abs(wrap(payload['relative_yaw_rad']-anchor_turn-robot_turn))
+    axis = np.array(payload['axis_xy'])
+    normal = np.array([-axis[1], axis[0]])
+    lateral = abs(float(np.dot(np.array(payload['xy_m'])-robot_center, normal)))
+    along = float(np.dot(robot_center, axis))
+    lower, upper = payload['center_projection_interval_m']
+    return angle_error <= .12 and lateral <= .04 and lower-.04 <= along <= upper+.04
+
+
 def validate_map(data):
     required = {'schema', 'map_id', 'top_camera', 'bounds_m', 'start_zone',
                 'goal', 'obstacles', 'footprint', 'grid_m'}
@@ -192,6 +203,7 @@ class PairVision:
         self.payload_angle = None
         root = Path(__file__).parent/'assets'/'pair_navigation'
         metadata = json.loads((root/'manifest.json').read_text())
+        self.payload_length_m = float(metadata['payload_length_m'])
         self.initial_templates = {}
         for rid in ROBOTS:
             rec = metadata['templates'][rid]
@@ -216,16 +228,25 @@ class PairVision:
             if math.dist(point, reference) > (.25 if self.payload is None else .10): continue
             axis = vectors[:, -1]
             angle = math.atan2(-axis[1], axis[0])
-            candidates.append((point, angle, int(stats[i, cv2.CC_STAT_AREA])))
+            axis_world = np.array([axis[0], -axis[1]])
+            scale = 2*(2.5-.09)*math.tan(math.radians(55)/2)/frame.shape[0]
+            pixels_world = np.column_stack([.55+(xx-(frame.shape[1]-1)/2)*scale,
+                                            -2-(yy-(frame.shape[0]-1)/2)*scale])
+            projections = pixels_world @ axis_world
+            interval = [float(projections.max()-self.payload_length_m/2),
+                        float(projections.min()+self.payload_length_m/2)]
+            candidates.append((point, angle, int(stats[i, cv2.CC_STAT_AREA]), axis_world, interval))
         if len(candidates) != 1:
             raise ValueError('orange payload missing/ambiguous')
-        point, raw, area = candidates[0]
+        point, raw, area, axis_world, interval = candidates[0]
         if self.payload_origin_angle is None:
             self.payload_origin_angle = self.payload_angle = raw
         else:
             self.payload_angle += (raw-self.payload_angle+math.pi/2) % math.pi-math.pi/2
         self.payload = {'xy_m': list(point), 'relative_yaw_rad': self.payload_angle-self.payload_origin_angle,
-                        'feature_area_px': area, 'feature_plane_height_m': .09}
+                        'feature_area_px': area, 'feature_plane_height_m': .09,
+                        'xy_is_visible_fragment_centroid': True, 'axis_xy': axis_world.tolist(),
+                        'center_projection_interval_m': interval}
 
     def _mask(self, image):
         hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
@@ -369,7 +390,7 @@ class PairNavigator:
             payload = self.vision.payload
             payload_angle = payload['relative_yaw_rad']-self.anchor_payload['relative_yaw_rad']
             observed_turn = sum(obs[r]['relative_yaw_rad']-self.anchor_yaws[r] for r in ROBOTS)/2
-            if abs(wrap(payload_angle-observed_turn)) > .12 or math.dist(payload['xy_m'], center) > .04:
+            if not payload_coupled(payload, center, observed_turn, self.anchor_payload['relative_yaw_rad']):
                 return {'action': zero, 'status': 'payload_decoupled', 'ready': False, 'done': False,
                         'observations': obs, 'payload': dict(payload)}
             target = np.array(self.route[self.segment])

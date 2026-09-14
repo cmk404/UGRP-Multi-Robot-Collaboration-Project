@@ -8,7 +8,7 @@ import numpy as np
 import pytest
 
 from harness.pair_navigation import (PairVision, PairNavigator, validate_map, footprint_clear,
-                                     swept_clear, plan_route, authorize_pair)
+                                     swept_clear, plan_route, authorize_pair, payload_coupled)
 from harness.pair_carry_sync import PairCarrySync
 from scripts.evaluate_pair_navigation import evaluate_samples
 from scripts.audit_pair_carry_sync import _rgb
@@ -81,11 +81,22 @@ def test_invalid_own_rgb_also_stops():
 def test_payload_left_behind_stops_even_when_robot_pose_matches_plan():
     actor=PairNavigator(data(),'r1')
     actor.phase='track';actor.anchor_yaws={'r1':0.,'r3':0.}
-    actor.anchor_payload={'relative_yaw_rad':0.};actor.vision.payload={'relative_yaw_rad':0.,'xy_m':[.62,-2]}
+    actor.anchor_payload={'relative_yaw_rad':0.};actor.vision.payload={'relative_yaw_rad':0.,'xy_m':[.62,-2],
+        'axis_xy':[0.,1.],'center_projection_interval_m':[-2.1,-1.9]}
     obs={r:{'xy_m':[.62,y],'relative_yaw_rad':.2} for r,y in [('r1',-2.3),('r3',-1.7)]}
     with patch.object(actor.vision,'observe',return_value=obs):d=actor.decide(b'',b'')
     assert d['status']=='payload_decoupled'
     assert not d['ready'] and d['action']['turn']==0
+
+
+def test_occluded_fragment_centroid_is_not_assumed_to_be_whole_beam_center():
+    # Regression from final-wall: a gripper hides one end of the horizontal
+    # shaft. Its orange-fragment centroid shifts along the shaft, not away.
+    payload={'relative_yaw_rad':-math.pi/2,'xy_m':[-.46,-2.37], 'axis_xy':[1.,0.],
+             'center_projection_interval_m':[-.56,-.34]}
+    assert payload_coupled(payload,np.array([-.42,-2.35]),-math.pi/2,0.)
+    assert not payload_coupled(payload,np.array([-.20,-2.35]),-math.pi/2,0.)
+    assert not payload_coupled(payload,np.array([-.42,-2.30]),-math.pi/2,0.)
 
 
 def test_common_plan_mismatch_and_stale_reports_cannot_authorize_go():
