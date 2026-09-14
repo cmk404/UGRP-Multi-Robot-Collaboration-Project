@@ -82,6 +82,8 @@ class PairNavigationScene(ShortTransportScene):
         from sim.cooperative_payload import beam_pose
         result = super().evaluation_snapshot(full_state=full_state)
         result['yaw_rad'] = float(beam_pose(self.world.data, self.world.model)['yaw_rad'])
+        result['arm_joints'] = {rid: {name: float(self.world.data.qpos[self.world.model.jnt_qposadr[jid]])
+                               for name, jid in self.world.controllers[rid].arm_joint.items()} for rid in ROBOTS}
         return result
 
     def execute(self, actions):
