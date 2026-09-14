@@ -1,0 +1,72 @@
+{
+  "source_execution_sha": "cdac7b7e5154cdc531169a46c90732461b5ae06e",
+  "provenance": "Preceding observer states reconstructed only from saved top RGB. Wheel angle checks use visible wheel rectangles; drop examples are manually identified own RGB silhouettes. No runtime ground truth inputs.",
+  "cases": {
+    "narrow-door": {
+      "source_directory": "/Users/changmin/projects/ugrp-worktrees/pair-vision-recovery/outputs/pair-vision-recovery-v2-2026-09-14/narrow-door",
+      "index": 451,
+      "manual_wheel_axis_deg": 0,
+      "angle_tolerance_deg": 3
+    },
+    "l-corner": {
+      "source_directory": "/Users/changmin/projects/ugrp-worktrees/pair-vision-recovery/outputs/pair-vision-recovery-v2-2026-09-14/l-corner",
+      "index": 132,
+      "manual_wheel_axis_deg": 62,
+      "angle_tolerance_deg": 3
+    },
+    "s-bends": {
+      "source_directory": "/Users/changmin/projects/ugrp-worktrees/pair-vision-recovery/outputs/pair-vision-recovery-v2-2026-09-14/s-bends",
+      "index": 400,
+      "manual_wheel_axis_deg": 0,
+      "angle_tolerance_deg": 3
+    },
+    "staggered-obstacles": {
+      "source_directory": "/Users/changmin/projects/ugrp-worktrees/pair-vision-recovery/outputs/pair-vision-recovery-v2-2026-09-14/staggered-obstacles",
+      "index": 400,
+      "manual_wheel_axis_deg": 45,
+      "angle_tolerance_deg": 3
+    },
+    "blocked-branch": {
+      "source_directory": "/Users/changmin/projects/ugrp-worktrees/pair-vision-recovery/outputs/pair-vision-recovery-v2-2026-09-14/blocked-branch",
+      "index": 373,
+      "manual_wheel_axis_deg": 90,
+      "angle_tolerance_deg": 3
+    }
+  },
+  "files": {
+    "blocked-branch/map.json": "e0379c9c575631fd3609d094ba5744e488f280df51fe7ed64a2aca61794fa97a",
+    "blocked-branch/start-own.jpg": "efbdcc95abe14c145ecf724ae819444c0db143f998d0b3c82506a2d2e875c2bd",
+    "blocked-branch/start-top.jpg": "975b04de7eeabd5514d67fa7ab33eb723ada19cacb036f84086f17bbfd3f17e8",
+    "blocked-branch/state.json": "7960d9556e86d9fc09510c8c36e37d1c2b47c0d6ec503ddef005ab2f30ceb396",
+    "blocked-branch/target-own.jpg": "77317ea5a563d28c4d09ef4bed4d145de5e6d39b59df2b92578b69c3ff8d1efe",
+    "blocked-branch/target-top.jpg": "d14e20dc83325f5796c875137543f1cb6821e721ac348b32a4b3a45224c6e695",
+    "l-corner/map.json": "ee622829c0bc058812e05e4a9a235b564a931ce9182acf2e7a82def6f0eac7af",
+    "l-corner/start-own.jpg": "efbdcc95abe14c145ecf724ae819444c0db143f998d0b3c82506a2d2e875c2bd",
+    "l-corner/start-top.jpg": "7e3c92ad62957f8727a5b98896ce869cb6a78dfcc9ededef67244a15995d9970",
+    "l-corner/state.json": "4e70c0c5dfca38515312d173f2e2104ed268649f603466fc2c7d1a93fb158c76",
+    "l-corner/target-own.jpg": "b0a830b9639952604e172a94498e710d8ff6aaf039c3cbad19cf3786bf3e850f",
+    "l-corner/target-top.jpg": "46ace4097d6ca6f863f0b7a120adfc2f3411f77ed2ba63ec987174e018e31078",
+    "narrow-door/map.json": "28fdab70d1fddfcf6142f182eae037d6c191ef69469cfebe6781e807c179bfb6",
+    "narrow-door/start-own.jpg": "efbdcc95abe14c145ecf724ae819444c0db143f998d0b3c82506a2d2e875c2bd",
+    "narrow-door/start-top.jpg": "c23d5f468f9f5fedd695f3a667f5f406ea2ad8ced0f131b9b98bd91235eb1ed9",
+    "narrow-door/state.json": "4e4bd5425a01d157b1074978016f588a89c224c69204c570a6d96a8ceee2156e",
+    "narrow-door/target-own.jpg": "f89e3643c1b2c1ab7af061d97030771283846f5f100421c4cc15b4a137300b6a",
+    "narrow-door/target-top.jpg": "442aa60add2c9bf0072398b5ae075f020b38ffceb04fea10ca3b7620add143e2",
+    "s-bends/dropped-r1-own.jpg": "dbd59b20f7948b29b20b336b5fd00d330216769ef61de1f8f104a802de036539",
+    "s-bends/dropped-r3-own.jpg": "f5d5fe288bbb4cbf3c65b3ef7966e32e1aa9ea4cac6b5cf6967747bd94549b0a",
+    "s-bends/map.json": "8a455ae4cb3f29953fb4e07a561a23f1ecd22e6b911c2e300655633aed37d2e7",
+    "s-bends/start-own.jpg": "efbdcc95abe14c145ecf724ae819444c0db143f998d0b3c82506a2d2e875c2bd",
+    "s-bends/start-top.jpg": "fb1579a015347e43054028de493183f2e0c0c3134519f7ae1fdded692203f628",
+    "s-bends/state.json": "f258f88c29d80b36c994949bd80e50359b7acc8d6865a1edaf7a78d0a84b7f88",
+    "s-bends/target-own.jpg": "b5fcd9b9a0128242d77917c8018d9215bcef55187691e24728186a2b15733ae5",
+    "s-bends/target-top.jpg": "efeed7e0abde032c33b5eda5161fc1dfe4cf9c87cdfc0757e1a7af0a52414ca8",
+    "staggered-obstacles/dropped-r1-own.jpg": "f73a9f06f1dfd676299853f9f4e60beb6c9e66226ddafe18639cb29fd94910b3",
+    "staggered-obstacles/dropped-r3-own.jpg": "542d2475e90f28505bef2bb6847fd568dd2a55b91dc61ac449224f79ff85ec9a",
+    "staggered-obstacles/map.json": "5eccc1c0a05d2e83353db85df2a72f316fc662efc584e7f5cc259d0676a6b439",
+    "staggered-obstacles/start-own.jpg": "efbdcc95abe14c145ecf724ae819444c0db143f998d0b3c82506a2d2e875c2bd",
+    "staggered-obstacles/start-top.jpg": "0668f40e36026b0c4ddf4a0aae8981eea9553a689f266a1fce28963e4d2adcbb",
+    "staggered-obstacles/state.json": "bac4ba1879608ee00e91bfaee64d24420c75aa73936195dde132cd1d6f83e021",
+    "staggered-obstacles/target-own.jpg": "d0722a470d8c7ac98b94ab6ea3282ac925409cee8205255cb61577e8bbcb3c36",
+    "staggered-obstacles/target-top.jpg": "8653ca2ade1328fbceb137e4a3c1def57921caf9fc465d2e85792df855a0eac9"
+  }
+}

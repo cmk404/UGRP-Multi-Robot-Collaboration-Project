@@ -464,10 +464,20 @@ class PairNavigator:
     def __init__(self, data, robot_id, task_id='pair-navigation', *, vision_mode='legacy'):
         self.map, self.rid = validate_map(data), robot_id
         if robot_id not in ROBOTS: raise ValueError('invalid robot')
-        if vision_mode not in ('legacy','temporal','temporal-edges'): raise ValueError('unknown vision mode')
+        if vision_mode not in ('legacy','temporal','temporal-edges','robust'): raise ValueError('unknown vision mode')
         self.vision_mode = vision_mode
         self.vision = (PairVision(data) if vision_mode == 'legacy' else
                        TemporalPairVision(data,edge_axis=vision_mode=='temporal-edges'))
+        if vision_mode == 'robust':
+            from harness.pair_transport_vision import GeometryPairVision
+            self.vision = GeometryPairVision(data)
+        self.plan_version = 1
+        self.motion_terminal = None
+        self.progress_segment = None
+        self.progress_best = math.inf
+        self.progress_stale = 0
+        self.progress_age = 0
+        self.replans = 0
         self.recovery_frames = 0
         self.recovery_confirmations = 0
         self.vision_terminal = False
@@ -485,6 +495,8 @@ class PairNavigator:
     def decide(self, own_rgb, top_rgb):
         self.sequence += 1
         zero = {'kind': 'mecanum', 'forward': 0., 'left': 0., 'turn': 0., 'duration_s': .2}
+        if self.motion_terminal:
+            return {'action':zero,'status':self.motion_terminal,'ready':False,'done':False}
         if self.vision_terminal:
             return {'action':zero,'status':'vision_stop','error':'visual recovery timed out',
                     'ready':False,'done':False}
@@ -499,6 +511,12 @@ class PairNavigator:
                     'error':str(error),'ready':False,'done':False,'retryable':not self.vision_terminal,
                     'recovery_frames':self.recovery_frames,'plan_hash':self.plan_hash}
         except ValueError as error:
+            if self.vision_mode == 'robust':
+                from harness.pair_transport_vision import GripUncertain
+                if isinstance(error,GripUncertain):
+                    self.motion_terminal = 'grip_stop'
+                    return {'action':zero,'status':'grip_stop','error':str(error),'ready':False,'done':False,
+                            'own_carry_observation':self.vision.carry_monitor.last}
             return {'action': zero, 'status': 'vision_stop', 'error': str(error), 'ready': False, 'done': False}
         if self.recovery_frames:
             self.recovery_confirmations += 1
@@ -527,6 +545,16 @@ class PairNavigator:
             displacement = center-self.probe_origin
             if np.linalg.norm(displacement) >= .03:
                 self.heading = math.atan2(displacement[1], displacement[0])
+                if self.vision_mode == 'robust':
+                    # Short translation resolves forward/backward ambiguity;
+                    # the wheel rectangle supplies the angle, avoiding a large
+                    # heading error from subpixel drift over a 3 cm probe.
+                    directions = list(self.vision.geometry_angles.values())
+                    heading = math.atan2(sum(math.sin(a) for a in directions),
+                                         sum(math.cos(a) for a in directions))
+                    if abs(wrap(heading-self.heading)) > math.pi/2:
+                        heading = wrap(heading+math.pi)
+                    self.heading = heading
                 self.phase = 'probe_settle'
             elif self.probe_steps < 20:
                 action['forward'] = .045
@@ -561,6 +589,43 @@ class PairNavigator:
                 return {'action': zero, 'status': 'payload_decoupled', 'ready': False, 'done': False,
                         'observations': obs, 'payload': dict(payload)}
             target = np.array(self.route[self.segment])
+            if self.vision_mode == 'robust':
+                # Measure observed motion, not advancement of the reference.
+                progress = np.linalg.norm(target[:2]-center)+.2*abs(wrap(target[2]-observed_turn))
+                if self.progress_segment != self.segment:
+                    self.progress_segment = self.segment
+                    self.progress_best = math.inf
+                    self.progress_stale = self.progress_age = 0
+                self.progress_age += 1
+                if progress < self.progress_best-.005:
+                    self.progress_best = progress
+                    self.progress_stale = 0
+                else:
+                    self.progress_stale += 1
+                if self.progress_stale >= 50 or self.progress_age >= 180:
+                    if self.replans >= 2:
+                        self.motion_terminal = 'motion_stalled'
+                        return {'action':zero,'status':'motion_stalled','ready':False,'done':False,
+                                'observations':obs,'reason':'bounded visual progress recovery exhausted'}
+                    goal = [*self.map['goal']['center_m'],self.heading+math.radians(self.map['goal']['relative_yaw_deg'])]
+                    absolute = plan_route([*center,self.heading+observed_turn],goal,self.map)
+                    if absolute is None:
+                        self.motion_terminal = 'motion_stalled'
+                        return {'action':zero,'status':'motion_stalled','ready':False,'done':False,
+                                'observations':obs,'reason':'no clear route from current visual pose'}
+                    self.route = [[p[0],p[1],wrap(p[2]-self.heading)] for p in absolute]
+                    self.reference = np.array([*center,observed_turn])
+                    self.segment = 1
+                    self.confirmations = 0
+                    self.progress_segment = None
+                    self.replans += 1
+                    self.plan_version += 1
+                    self.plan_hash = digest({'map_sha256':digest(self.map),'route':self.route,
+                                            'offsets':{r:self.offsets[r].tolist() for r in ROBOTS}})
+                    return {'action':zero,'status':'replan_hold','ready':False,'done':False,'retryable':True,
+                            'observations':obs,'route':self.route,'reference':self.reference.tolist(),
+                            'segment':self.segment,'plan_hash':self.plan_hash,'plan_version':self.plan_version,
+                            'replans':self.replans}
             error_xy = target[:2]-self.reference[:2]
             error_yaw = wrap(target[2]-self.reference[2])
             delta = max(np.linalg.norm(error_xy)/.04, abs(error_yaw)/.055, .2)
@@ -607,6 +672,9 @@ class PairNavigator:
                   'route': self.route, 'reference': None if self.reference is None else self.reference.tolist(),
                   'heading_rad': self.heading, 'segment': self.segment}
         result['payload'] = dict(self.vision.payload)
+        if self.vision_mode == 'robust':
+            result.update(plan_version=self.plan_version,replans=self.replans,
+                          own_carry_observation=self.vision.carry_monitor.last)
         return result
 
 
@@ -614,17 +682,20 @@ def authorize_pair(sync, reports, frames, index):
     """Renew GO only for two fresh reports accepting exactly the same route."""
     now = index*.2
     hashes = [reports[r].get('plan_hash') for r in ROBOTS]
-    agree = hashes[0] == hashes[1]
+    versions = [reports[r].get('plan_version',sync.plan_version) for r in ROBOTS]
+    if versions[0] == versions[1] and versions[0] > sync.plan_version and hashes[0] == hashes[1]:
+        sync.update_plan(versions[0],now,'visual_progress_replan')
+    agree = hashes[0] == hashes[1] and all(v == sync.plan_version for v in versions)
     for rid in ROBOTS:
         sync.report(rid, plan_version=sync.plan_version, epoch=sync.epoch,
-                    sequence=index+1, ready=bool(reports[rid]['ready'] and agree),
+                    sequence=index+1, ready=bool(reports[rid]['ready'] and agree and len(set(versions))==1),
                     observed_at_s=now, received_at_s=now, frame_id=str(frames[rid]),
                     reason='' if agree else 'plan_mismatch')
     return sync.authorize(now_s=now)
 
 
 def retryable_visual_hold(reports):
-    """Only temporary visual uncertainty may keep a stopped trial alive."""
-    return (any(d['status'] == 'vision_hold' for d in reports.values())
-            and all(d['ready'] or (d['status'] == 'vision_hold' and d.get('retryable') is True)
+    """Only explicit visual/replanning holds may keep a stopped trial alive."""
+    return (any(d['status'] in ('vision_hold','replan_hold') for d in reports.values())
+            and all(d['ready'] or (d['status'] in ('vision_hold','replan_hold') and d.get('retryable') is True)
                     for d in reports.values()))

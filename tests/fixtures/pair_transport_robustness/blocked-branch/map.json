@@ -1,0 +1,71 @@
+{
+  "bounds_m": [
+    -1.08,
+    1.85,
+    -2.9,
+    -1.15
+  ],
+  "footprint": {
+    "half_forward_m": 0.2,
+    "half_lateral_m": 0.51,
+    "margin_m": 0.025
+  },
+  "goal": {
+    "center_m": [
+      -0.52,
+      -2
+    ],
+    "relative_yaw_deg": 90
+  },
+  "grid_m": 0.06,
+  "map_id": "blocked-branch",
+  "obstacles": [
+    {
+      "center_m": [
+        0.1,
+        -2.0
+      ],
+      "half_extents_m": [
+        0.04,
+        0.26
+      ],
+      "height_m": 0.3,
+      "id": "junction"
+    },
+    {
+      "center_m": [
+        -0.4695,
+        -1.64
+      ],
+      "half_extents_m": [
+        0.6095,
+        0.06
+      ],
+      "height_m": 0.3,
+      "id": "dead_end_cap"
+    }
+  ],
+  "schema": "ugrp.pair_navigation_map.v1",
+  "start_zone": {
+    "center_m": [
+      0.58,
+      -2.0
+    ],
+    "radius_m": 0.25
+  },
+  "top_camera": {
+    "fov_y_deg": 55.0,
+    "name": "cctv_top",
+    "position_m": [
+      0.55,
+      -2.0,
+      2.5
+    ],
+    "quaternion_wxyz": [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  }
+}

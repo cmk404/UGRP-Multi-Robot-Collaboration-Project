@@ -14,6 +14,7 @@ TEST_PATTERNS = (
     "tests/test_camera_pair*.py",
     "tests/test_pair_carry*.py",
     "tests/test_pair_navigation*.py",
+    "tests/test_pair_transport*.py",
     "tests/test_camera_action_learning.py",
     "tests/test_camera_local_servo.py",
     "tests/test_camera_visual_observer.py",

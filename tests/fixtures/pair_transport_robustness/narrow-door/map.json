@@ -1,0 +1,71 @@
+{
+  "bounds_m": [
+    -1.08,
+    1.85,
+    -2.9,
+    -1.15
+  ],
+  "footprint": {
+    "half_forward_m": 0.2,
+    "half_lateral_m": 0.51,
+    "margin_m": 0.025
+  },
+  "goal": {
+    "center_m": [
+      -0.52,
+      -2
+    ],
+    "relative_yaw_deg": 0
+  },
+  "grid_m": 0.06,
+  "map_id": "narrow-door",
+  "obstacles": [
+    {
+      "center_m": [
+        0.15,
+        -2.5895
+      ],
+      "half_extents_m": [
+        0.04,
+        0.3095
+      ],
+      "height_m": 0.3,
+      "id": "door_lower"
+    },
+    {
+      "center_m": [
+        0.15,
+        -1.4355
+      ],
+      "half_extents_m": [
+        0.04,
+        0.2845
+      ],
+      "height_m": 0.3,
+      "id": "door_upper"
+    }
+  ],
+  "schema": "ugrp.pair_navigation_map.v1",
+  "start_zone": {
+    "center_m": [
+      0.58,
+      -2.0
+    ],
+    "radius_m": 0.25
+  },
+  "top_camera": {
+    "fov_y_deg": 55.0,
+    "name": "cctv_top",
+    "position_m": [
+      0.55,
+      -2.0,
+      2.5
+    ],
+    "quaternion_wxyz": [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  }
+}
