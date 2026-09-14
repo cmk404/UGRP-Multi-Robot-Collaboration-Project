@@ -28,7 +28,7 @@ def audit(run_dir, grasp_dir=None):
     actors = {r: PairNavigator(report['map'], r, vision_mode=report.get('vision_mode','legacy')) for r in ROBOTS}
     sync = PairCarrySync(report['map']['map_id'])
     seen = {r:set() for r in ROBOTS}
-    spacing = {r:PairGraspSpacing(report['map'],r) for r in ROBOTS}
+    spacing = {r:PairGraspSpacing(report['map'],r,integral_gain=report.get('spacing_integral',0.)) for r in ROBOTS}
     spacing_sync = PairCarrySync(report['map']['map_id']+'-grasp-spacing')
     for i,row in enumerate(report.get('spacing_steps',[])):
         if set(row)!={'index','images','frame_ids','decisions','permission','issued_actions','sim_time_s','executed'} or row['index']!=i:

@@ -62,3 +62,24 @@ def test_endurance_pass_does_not_imply_release():
     assert evaluate_endurance(rows,report)['success']
     rows[-1]['contacts']['r3']['left']=True
     assert not evaluate_endurance(rows,report)['success']
+
+@pytest.mark.parametrize('kind',['spacing','endurance'])
+def test_integral_resists_persistent_rgb_error_but_stays_bounded_and_stops(monkeypatch,kind):
+    import numpy as np
+    from harness.pair_grasp_spacing import PairGraspSpacing
+    a=PairGraspSpacing(data(),'r1',integral_gain=2.) if kind=='spacing' else EnduranceActor(data(),'r1','stationary',integral_gain=2.)
+    initial=a.decide(rgb('anchor-r1-own.jpg'),rgb('anchor-top.jpg'))
+    obs=copy.deepcopy(initial['observations'])
+    for value in obs.values():value['xy_m'][1]+=.005
+    monkeypatch.setattr(a.vision,'observe',lambda *args:copy.deepcopy(obs))
+    first=a.decide(b'',b'')['action']['left']
+    for _ in range(300):result=a.decide(b'',b'')
+    assert result['ready'] and abs(result['action']['left'])>abs(first)
+    assert np.max(np.abs(a.integral_effort))<=.08
+    assert -.1<=result['action']['left']<=.1
+    saved=a.integral_effort.copy()
+    def lost(*args):raise ValueError('own camera missing')
+    monkeypatch.setattr(a.vision,'observe',lost)
+    result=a.decide(b'',b'')
+    assert not result['ready'] and all(result['action'][k]==0 for k in ('forward','left','turn'))
+    assert np.array_equal(saved,a.integral_effort)

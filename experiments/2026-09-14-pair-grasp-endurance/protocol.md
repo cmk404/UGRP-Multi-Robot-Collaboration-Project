@@ -21,3 +21,7 @@
 NoSlip 후보 863bbae는 두 모드 모두 초기 24.5 SIM초에 영상 간격 안정화 조건을 만족하지 못해 출발 전 종료했다. lift/hold 중 bilateral 누락 1표본, 간격 최대 변화 1.469cm로 기존 기준 파지보다 퇴행했다. 이 설정은 채택하지 않는다.
 
 다음 비교는 기준의 elliptic cone / NoSlip 0을 유지하고 impratio 10→100 한 변수만 변경한다. 위 공식 문서의 elliptic cone에서 friction impedance를 높여 soft contact 미끄러짐을 줄이는 방법을 검사한다. solver2/Newton, iterations80, tolerance1e-8, dt.002는 유지한다. 명시적 --impratio 100 --noslip-iterations 0 후보를 2개 5분 조건과 기존 6지형에서 검증한다.
+
+impratio100 / 기존 RGB PD 후보 fd68a2c도 양쪽 모드 출발 전 실패했다. 초기 접촉은 유지했으나 간격은 2.776cm 줄었고 영상 안정화도 만족하지 못했다. 동일 PD에서 더 강한 접촉 조건은 잔류 위치 오차를 남겼다.
+
+그 다음 후보는 impratio100 / NoSlip0을 유지하고 RGB 위치 오차의 누적 보정만 추가한다. integral gain2, world 축별 보정 기여 ±0.08m/s 제한, 기존 최종 포트 속도 제한/복구 범위/정지 조건은 유지한다. 영상 실패 이후 적분하지 않는다. 파지 hold와 endurance의 자기 RGB+공용 RGB 위치 오차에서만 계산한다. 기본 gain0과 명시적 --spacing-integral 2를 기록하고 저장 영상으로 재현한다. 물리 파라미터와 제어 보정을 함께 바꾼 최종 후보가 되므로 최종 효과를 어느 한 변경 단독 효과로 주장하지 않는다.

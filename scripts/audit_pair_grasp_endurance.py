@@ -17,7 +17,7 @@ def audit(root,models):
  if r['schema']!='ugrp.pair_grasp_endurance.v1' or digest(r['map'])!=r['map_sha256']:raise ValueError('schema/map mismatch')
  seen={rid:set() for rid in ROBOTS}
  for kind in ('spacing','endurance'):
-  actors={rid:(PairGraspSpacing(r['map'],rid) if kind=='spacing' else EnduranceActor(r['map'],rid,r['mode'])) for rid in ROBOTS}
+  actors={rid:(PairGraspSpacing(r['map'],rid,integral_gain=r.get('spacing_integral',0.)) if kind=='spacing' else EnduranceActor(r['map'],rid,r['mode'],integral_gain=r.get('spacing_integral',0.))) for rid in ROBOTS}
   sync=PairCarrySync(r['map']['map_id']+('-grasp-spacing' if kind=='spacing' else '-endurance'))
   rows=r['spacing_steps'] if kind=='spacing' else r['steps']
   for i,row in enumerate(rows):
