@@ -95,7 +95,7 @@ def audit(run_dir, grasp_dir=None):
         raise ValueError('grasp manifest mismatch')
     if 'close_command_override' in report and grasp_dir:
         override=report['close_command_override']
-        if override not in (None,1500,1700,1800):raise ValueError('invalid fixed close command')
+        if override not in (None,1500,1600,1700,1800):raise ValueError('invalid fixed close command')
         skill=json.loads((Path(grasp_dir)/'student-skill.json').read_text())
         trace=json.loads(_safe_file(root,'execution-trace.json').read_text())
         close=[r for r in trace if r['stage']=='grasp_close']

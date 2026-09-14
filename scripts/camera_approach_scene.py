@@ -267,7 +267,7 @@ class ApproachScene:
         rec['preclose_issued_commands'] = {r: dict(self.commands[r]) for r in ROBOTS}
         rec['post_recovery_images'] = {r: {'own': frames[r]['own_rgb'], 'top': frames[r]['shared_top_rgb']} for r in ROBOTS}
         rec['final_visual_errors'] = {r: predict_correction(models[r], frames[r]['own_bytes'], frames[r]['top_bytes'], max_step=25) for r in ROBOTS}
-        if close_pulse is not None and close_pulse not in (1500,1700,1800):
+        if close_pulse is not None and close_pulse not in (1500,1600,1700,1800):
             raise ValueError('explicit bounded grasp command comparison required')
         rec['close_command_override'] = close_pulse
         self.replay([{'targets': {r: {1: int(self.skill['close_pulses'][r] if close_pulse is None else close_pulse)} for r in ROBOTS},
