@@ -232,7 +232,7 @@ class ApproachScene:
                            'shared_top_rgb': top_record, 'frame_id': self.frame_ids[rid]}
         return result
 
-    def finish_grasp(self, predict_correction, models, *, rounds=16, after_close=None, hold=None):
+    def finish_grasp(self, predict_correction, models, *, rounds=16, after_close=None, hold=None, close_pulse=None):
         from scripts.run_camera_pair_transport import evaluate_grasp_samples
         self.replay(self.skill['initialization_replay'][1:], 'grasp_initialization')
         # Match the original zero-perturbation runner's pre-recovery settling step.
@@ -267,7 +267,10 @@ class ApproachScene:
         rec['preclose_issued_commands'] = {r: dict(self.commands[r]) for r in ROBOTS}
         rec['post_recovery_images'] = {r: {'own': frames[r]['own_rgb'], 'top': frames[r]['shared_top_rgb']} for r in ROBOTS}
         rec['final_visual_errors'] = {r: predict_correction(models[r], frames[r]['own_bytes'], frames[r]['top_bytes'], max_step=25) for r in ROBOTS}
-        self.replay([{'targets': {r: {1: int(self.skill['close_pulses'][r])} for r in ROBOTS},
+        if close_pulse is not None and close_pulse not in (1500,1700,1800):
+            raise ValueError('explicit bounded grasp command comparison required')
+        rec['close_command_override'] = close_pulse
+        self.replay([{'targets': {r: {1: int(self.skill['close_pulses'][r] if close_pulse is None else close_pulse)} for r in ROBOTS},
                       'duration_s': self.skill['close_duration_s'], 'settle_s': self.skill['close_settle_s']}], 'grasp_close')
         if after_close is not None:
             after_close()

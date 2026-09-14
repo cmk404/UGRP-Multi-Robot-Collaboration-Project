@@ -68,7 +68,7 @@ class PairGraspSpacing:
         if not first:
             local = rotate(6.*errors[self.rid]-.6*self.velocity[self.rid], -angles[self.rid])
             angular = 1.5*angle_errors[self.rid]-.25*self.angular_velocity[self.rid]
-            action.update(forward=float(np.clip(local[0],-.08,.08)),
+            action.update(forward=float(np.clip(local[0],-.05,.08)),
                           left=float(np.clip(local[1],-.10,.10)),
                           turn=float(np.clip(angular,-.10,.10)))
         # The anchor precedes the fixed lift replay. Its next frame is not

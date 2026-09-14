@@ -188,7 +188,7 @@ def evaluate(scene, report):
                             require_full_grasp=report.get('grasp_spacing')=='visual')
 
 
-def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy', grasp_spacing=None, grasp_only=False):
+def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy', grasp_spacing=None, grasp_only=False, close_pulse=None):
     validate_map(data)
     grasp_spacing = grasp_spacing or ('visual' if vision_mode=='robust' else 'passive')
     if grasp_spacing not in ('visual','passive'):raise ValueError('unknown grasp spacing mode')
@@ -210,6 +210,7 @@ def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy', 
               'contact_impratio': impratio,
               'vision_mode': vision_mode,
               'grasp_spacing':grasp_spacing,'grasp_only':bool(grasp_only),
+              'close_command_override':close_pulse,
               'external_model_calls': 0, 'cost_usd': 0}
     try:
         import mujoco
@@ -219,7 +220,7 @@ def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy', 
         report['invariants_initial'] = scene.invariant_record()
         scene.finish_grasp(predict_student, grasp_models,
                           after_close=scene.anchor_spacing if grasp_spacing=='visual' else None,
-                          hold=scene.hold_spacing if grasp_spacing=='visual' else None)
+                          hold=scene.hold_spacing if grasp_spacing=='visual' else None, close_pulse=close_pulse)
         # Fixed settling interval for all numerical profiles. No contact/pose
         # condition controls this wait or the start of navigation.
         scene.phase = 'grasp_hold'
@@ -297,6 +298,7 @@ def main():
     parser.add_argument('--budget', type=int, default=750)
     parser.add_argument('--grasp-spacing',choices=('passive','visual'),help='robust defaults to visual; passive retains the previous comparison')
     parser.add_argument('--grasp-only',action='store_true',help='bounded pre-drive diagnostic; does not claim navigation success')
+    parser.add_argument('--close-pulse',type=int,choices=(1500,1700,1800),help='explicit fixed gripper-command comparison; no contact feedback')
     parser.add_argument('--vision-mode', choices=('legacy','temporal','temporal-edges','robust'), default='legacy',
                         help='explicit vision/control comparison; robust adds wheel geometry and own-view carry guard')
     parser.add_argument('--impratio', type=int, choices=(1, 10, 100), default=1,
@@ -304,7 +306,7 @@ def main():
     args = parser.parse_args()
     if not 1 <= args.budget <= 1200: parser.error('budget must be 1..1200')
     result = run(json.loads(args.map.read_text()), args.grasp_model_dir.resolve(), args.out_dir.resolve(), args.budget,
-        impratio=args.impratio, vision_mode=args.vision_mode, grasp_spacing=args.grasp_spacing, grasp_only=args.grasp_only)
+        impratio=args.impratio, vision_mode=args.vision_mode, grasp_spacing=args.grasp_spacing, grasp_only=args.grasp_only,close_pulse=args.close_pulse)
     return int(bool(result['error']))
 
 
