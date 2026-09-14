@@ -1,0 +1,48 @@
+[
+  {
+    "call": 1,
+    "sim_time_s": 0.0,
+    "own_sha256": "d9240731df1d27ef07ed775add9be144bbd4f3e87c2928d16c6eeae37f9f4f34",
+    "top_sha256": "e4c29e5cc93553655156f5e33563bd93bd3a4734b64dc87ddff137b3a95d4a5e",
+    "decision": {
+      "reason": "The cyan box is visible in front of the robot. Initiating approach to position the gripper for picking.",
+      "action": {
+        "kind": "approach"
+      }
+    },
+    "action": {
+      "kind": "approach"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is visible in front of the robot. Initiating approach to position the gripper for picking.\",\"action\":{\"kind\":\"approach\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2359,
+      "completion_tokens": 36,
+      "total_tokens": 2480
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 2297.1926250029355
+  },
+  {
+    "call": 2,
+    "sim_time_s": 25.58999999999653,
+    "own_sha256": "40faccc1e58ef9efe7c861448007e4b909a3f3de139d807adc700ec3b8169c14",
+    "top_sha256": "e4c29e5cc93553655156f5e33563bd93bd3a4734b64dc87ddff137b3a95d4a5e",
+    "decision": {
+      "reason": "The cyan box is centered and directly in front of the gripper in the wrist camera view following approach. Now executing pick.",
+      "action": {
+        "kind": "pick"
+      }
+    },
+    "action": {
+      "kind": "pick"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is centered and directly in front of the gripper in the wrist camera view following approach. Now executing pick.\",\"action\":{\"kind\":\"pick\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2363,
+      "completion_tokens": 39,
+      "total_tokens": 2450
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 2133.2030829944415
+  }
+]

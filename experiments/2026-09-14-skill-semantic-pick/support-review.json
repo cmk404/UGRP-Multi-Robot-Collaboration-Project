@@ -1,0 +1,258 @@
+{
+  "schema": "ugrp.pick_match_support_review.v1",
+  "scope": "independent replay evaluation log and source hash review; no model or simulation execution; visual video interpretation excluded",
+  "allowed_support_geoms": [
+    "r1__left_finger",
+    "r1__right_finger"
+  ],
+  "episodes": [
+    {
+      "episode": "skill-41",
+      "source_episode": "/Users/changmin/projects/ugrp-worktrees/skill-vs-semantic-pick/outputs/pick-match-cohort-v1/skill-41",
+      "samples": {
+        "source": 1201,
+        "replay": 1201
+      },
+      "independent_trajectory_comparison": {
+        "max_position_error_m": 5.314269267697735e-10,
+        "max_lift_error_m": 5.314269302392205e-10,
+        "max_time_error_s": 0.0,
+        "within_declared_tolerances": true
+      },
+      "qualifying_hold_runs": [
+        {
+          "start_s": 85.99999999998028,
+          "end_s": 119.99999999990104,
+          "duration_s": 33.99999999992076,
+          "samples": 341,
+          "both_fingers_every_sample": true,
+          "unexpected_support_geoms": []
+        }
+      ],
+      "has_qualifying_2s_hold": true,
+      "qualifying_samples": 341,
+      "all_qualifying_contacts_only_both_r1_fingers": true,
+      "unexpected_support_geoms_across_qualifying": [],
+      "all_registered_target_welds_off_all_replay_samples": true,
+      "source_file_hash_checks": {
+        "config.json": {
+          "declared": "7d50bfef69e79bffca886064ff88942766739bca50c895c96b39177c52802196",
+          "actual": "7d50bfef69e79bffca886064ff88942766739bca50c895c96b39177c52802196",
+          "matches": true
+        },
+        "raw-commands.jsonl": {
+          "declared": "e46e2ac21e0c463abe1edc3e6b5d62ce03e4b06c6383b67139b4d17639906b22",
+          "actual": "e46e2ac21e0c463abe1edc3e6b5d62ce03e4b06c6383b67139b4d17639906b22",
+          "matches": true
+        },
+        "evaluation-only.jsonl": {
+          "declared": "cadae5baefbf97f799930a9fc911cd13a0b66782dc283be603b7856d33e5a2ff",
+          "actual": "cadae5baefbf97f799930a9fc911cd13a0b66782dc283be603b7856d33e5a2ff",
+          "matches": true
+        }
+      },
+      "all_source_file_hashes_match": true,
+      "fixture_hash_checks": {
+        "initial_qpos": true,
+        "camera_initial": true,
+        "geometry_initial": true,
+        "camera_final": true,
+        "geometry_final": true
+      },
+      "all_fixture_hashes_match": true,
+      "replay_provenance": {
+        "replay_git_sha": "42e448bc97a61ea10d2ae89d2871db4ca5d04938",
+        "source_git_sha": "c692d5c45138e3e77157dd2854b80449a3f0f5b1",
+        "sim_harness_tree_matches_source": true,
+        "all_raw_actions_reissued": true,
+        "fixture_unchanged": true
+      }
+    },
+    {
+      "episode": "skill-42",
+      "source_episode": "/Users/changmin/projects/ugrp-worktrees/skill-vs-semantic-pick/outputs/pick-match-cohort-v1/skill-42",
+      "samples": {
+        "source": 1201,
+        "replay": 1201
+      },
+      "independent_trajectory_comparison": {
+        "max_position_error_m": 5.314269267697735e-10,
+        "max_lift_error_m": 5.314269302392205e-10,
+        "max_time_error_s": 0.0,
+        "within_declared_tolerances": true
+      },
+      "qualifying_hold_runs": [
+        {
+          "start_s": 84.59999999998354,
+          "end_s": 119.99999999990104,
+          "duration_s": 35.3999999999175,
+          "samples": 355,
+          "both_fingers_every_sample": true,
+          "unexpected_support_geoms": []
+        }
+      ],
+      "has_qualifying_2s_hold": true,
+      "qualifying_samples": 355,
+      "all_qualifying_contacts_only_both_r1_fingers": true,
+      "unexpected_support_geoms_across_qualifying": [],
+      "all_registered_target_welds_off_all_replay_samples": true,
+      "source_file_hash_checks": {
+        "config.json": {
+          "declared": "8c4d5aa9f57be356e098dd086829a61ee2509577485442dc98e43190bec44cd8",
+          "actual": "8c4d5aa9f57be356e098dd086829a61ee2509577485442dc98e43190bec44cd8",
+          "matches": true
+        },
+        "raw-commands.jsonl": {
+          "declared": "9312321b43f28fcc70538c24af8c542b24c467b9791f30f4ea95f70aeac0b578",
+          "actual": "9312321b43f28fcc70538c24af8c542b24c467b9791f30f4ea95f70aeac0b578",
+          "matches": true
+        },
+        "evaluation-only.jsonl": {
+          "declared": "0c1b09e41292c674aec448558599bcd908ab424ccfb70b2880571824018d5a2e",
+          "actual": "0c1b09e41292c674aec448558599bcd908ab424ccfb70b2880571824018d5a2e",
+          "matches": true
+        }
+      },
+      "all_source_file_hashes_match": true,
+      "fixture_hash_checks": {
+        "initial_qpos": true,
+        "camera_initial": true,
+        "geometry_initial": true,
+        "camera_final": true,
+        "geometry_final": true
+      },
+      "all_fixture_hashes_match": true,
+      "replay_provenance": {
+        "replay_git_sha": "42e448bc97a61ea10d2ae89d2871db4ca5d04938",
+        "source_git_sha": "c692d5c45138e3e77157dd2854b80449a3f0f5b1",
+        "sim_harness_tree_matches_source": true,
+        "all_raw_actions_reissued": true,
+        "fixture_unchanged": true
+      }
+    },
+    {
+      "episode": "skill-43",
+      "source_episode": "/Users/changmin/projects/ugrp-worktrees/skill-vs-semantic-pick/outputs/pick-match-cohort-v1/skill-43",
+      "samples": {
+        "source": 1201,
+        "replay": 1201
+      },
+      "independent_trajectory_comparison": {
+        "max_position_error_m": 5.314269267697735e-10,
+        "max_lift_error_m": 5.314269302392205e-10,
+        "max_time_error_s": 0.0,
+        "within_declared_tolerances": true
+      },
+      "qualifying_hold_runs": [
+        {
+          "start_s": 35.9999999999984,
+          "end_s": 119.99999999990104,
+          "duration_s": 83.99999999990263,
+          "samples": 841,
+          "both_fingers_every_sample": true,
+          "unexpected_support_geoms": []
+        }
+      ],
+      "has_qualifying_2s_hold": true,
+      "qualifying_samples": 841,
+      "all_qualifying_contacts_only_both_r1_fingers": true,
+      "unexpected_support_geoms_across_qualifying": [],
+      "all_registered_target_welds_off_all_replay_samples": true,
+      "source_file_hash_checks": {
+        "config.json": {
+          "declared": "96a0825c431258211db42960182a951db504c414fc53c5d4ace2715091ba9ad3",
+          "actual": "96a0825c431258211db42960182a951db504c414fc53c5d4ace2715091ba9ad3",
+          "matches": true
+        },
+        "raw-commands.jsonl": {
+          "declared": "74f56f45b31e3b2db7c6a91d18bae8b5e7bbd1eb9d66a12ac8026364f0bb7c81",
+          "actual": "74f56f45b31e3b2db7c6a91d18bae8b5e7bbd1eb9d66a12ac8026364f0bb7c81",
+          "matches": true
+        },
+        "evaluation-only.jsonl": {
+          "declared": "9246d733468acbf52ec8bb3636d62778aa3593cdf801b9f9235388c3ed5debe6",
+          "actual": "9246d733468acbf52ec8bb3636d62778aa3593cdf801b9f9235388c3ed5debe6",
+          "matches": true
+        }
+      },
+      "all_source_file_hashes_match": true,
+      "fixture_hash_checks": {
+        "initial_qpos": true,
+        "camera_initial": true,
+        "geometry_initial": true,
+        "camera_final": true,
+        "geometry_final": true
+      },
+      "all_fixture_hashes_match": true,
+      "replay_provenance": {
+        "replay_git_sha": "42e448bc97a61ea10d2ae89d2871db4ca5d04938",
+        "source_git_sha": "c692d5c45138e3e77157dd2854b80449a3f0f5b1",
+        "sim_harness_tree_matches_source": true,
+        "all_raw_actions_reissued": true,
+        "fixture_unchanged": true
+      }
+    },
+    {
+      "episode": "semantic-41",
+      "source_episode": "/Users/changmin/projects/ugrp-worktrees/skill-vs-semantic-pick/outputs/pick-match-cohort-v1/semantic-41",
+      "samples": {
+        "source": 1201,
+        "replay": 1201
+      },
+      "independent_trajectory_comparison": {
+        "max_position_error_m": 5.314269267697735e-10,
+        "max_lift_error_m": 5.314269267697735e-10,
+        "max_time_error_s": 0.0,
+        "within_declared_tolerances": true
+      },
+      "qualifying_hold_runs": [],
+      "has_qualifying_2s_hold": false,
+      "qualifying_samples": 0,
+      "all_qualifying_contacts_only_both_r1_fingers": false,
+      "unexpected_support_geoms_across_qualifying": [],
+      "all_registered_target_welds_off_all_replay_samples": true,
+      "source_file_hash_checks": {
+        "config.json": {
+          "declared": "53b98b6649ff217b7d5ddbc1053fbde047a575ec01223b930237f7c9c8f9b456",
+          "actual": "53b98b6649ff217b7d5ddbc1053fbde047a575ec01223b930237f7c9c8f9b456",
+          "matches": true
+        },
+        "raw-commands.jsonl": {
+          "declared": "fa42ef721fa47b079e8d867210e9b486f4f49682320b4513c633b7fb26b7184a",
+          "actual": "fa42ef721fa47b079e8d867210e9b486f4f49682320b4513c633b7fb26b7184a",
+          "matches": true
+        },
+        "evaluation-only.jsonl": {
+          "declared": "a69d7bdd10a1d8d1a1921ea528fc2bd23093c89b818b16386fe003ce0845c996",
+          "actual": "a69d7bdd10a1d8d1a1921ea528fc2bd23093c89b818b16386fe003ce0845c996",
+          "matches": true
+        }
+      },
+      "all_source_file_hashes_match": true,
+      "fixture_hash_checks": {
+        "initial_qpos": true,
+        "camera_initial": true,
+        "geometry_initial": true,
+        "camera_final": true,
+        "geometry_final": true
+      },
+      "all_fixture_hashes_match": true,
+      "replay_provenance": {
+        "replay_git_sha": "42e448bc97a61ea10d2ae89d2871db4ca5d04938",
+        "source_git_sha": "c692d5c45138e3e77157dd2854b80449a3f0f5b1",
+        "sim_harness_tree_matches_source": true,
+        "all_raw_actions_reissued": true,
+        "fixture_unchanged": true
+      }
+    }
+  ],
+  "aggregate": {
+    "all_three_positive_replays_have_2s_hold": true,
+    "all_positive_qualifying_contacts_exclusively_both_fingers": true,
+    "all_target_welds_off": true,
+    "all_source_hashes_match": true,
+    "all_fixture_hashes_match": true,
+    "all_trajectory_comparisons_within_tolerance": true,
+    "semantic_41_has_no_qualifying_hold": true
+  }
+}
