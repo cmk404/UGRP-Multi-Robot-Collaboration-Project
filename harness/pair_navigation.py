@@ -9,6 +9,7 @@ import hashlib
 import heapq
 import json
 import math
+from pathlib import Path
 
 import cv2
 import numpy as np
@@ -185,6 +186,15 @@ class PairVision:
         self.payload = None
         self.payload_origin_angle = None
         self.payload_angle = None
+        root = Path(__file__).parent/'assets'/'pair_navigation'
+        metadata = json.loads((root/'manifest.json').read_text())
+        self.initial_templates = {}
+        for rid in ROBOTS:
+            rec = metadata['templates'][rid]
+            raw = (root/rec['path']).read_bytes()
+            if hashlib.sha256(raw).hexdigest() != rec['sha256']:
+                raise ValueError('wheel appearance model hash mismatch')
+            self.initial_templates[rid] = cv2.imdecode(np.frombuffer(raw, np.uint8), cv2.IMREAD_GRAYSCALE)
 
     def _payload(self, frame):
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -197,7 +207,7 @@ class PairVision:
             if stats[i, cv2.CC_STAT_AREA] < 400: continue
             yy, xx = np.where(labels == i)
             eig, vectors = np.linalg.eigh(np.cov(np.column_stack([xx, yy]).T))
-            if eig[1] < 400 or eig[1]/max(eig[0], 1) < 10: continue
+            if eig[1] < 150 or eig[1]/max(eig[0], 1) < 10: continue
             point = pixel_to_world(centers[i], frame.shape, self.map['top_camera'])
             if math.dist(point, reference) > (.25 if self.payload is None else .10): continue
             axis = vectors[:, -1]
@@ -226,32 +236,26 @@ class PairVision:
         mask = self._mask(frame)
         h, w = mask.shape
         if not self.templates:
-            hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-            orange = cv2.inRange(hsv, np.array([10, 80, 55], np.uint8), np.array([38, 255, 255], np.uint8))
-            count, labels, stats, centers = cv2.connectedComponentsWithStats(orange, 8)
-            beams = []
-            for i in range(1, count):
-                x, y, sx, sy, area = stats[i]
-                point = pixel_to_world(centers[i], frame.shape, self.map['top_camera'])
-                if area > 450 and max(sx, sy) > 70 and max(sx, sy)/max(1, min(sx, sy)) > 4 and math.dist(point, self.map['start_zone']['center_m']) < self.map['start_zone']['radius_m']:
-                    beams.append(i)
-            if len(beams) != 1:
-                raise ValueError('ambiguous/missing initial orange beam')
-            yy, xx = np.where(labels == beams[0]); points = np.column_stack([xx, yy]).astype(float)
-            center = points.mean(axis=0)
-            _, vectors = np.linalg.eigh(np.cov(points.T)); axis = vectors[:, -1]
-            if axis[1] < 0: axis *= -1
             scale = 2*(2.5-.09)*math.tan(math.radians(55)/2)/h
+            point = self.payload['xy_m']
+            center = np.array([(point[0]-.55)/scale+(w-1)/2, (-2-point[1])/scale+(h-1)/2])
             for rid, sign in (('r1', 1), ('r3', -1)):
-                expected = center+sign*axis*(.325/scale)
+                expected = center+np.array([0, sign*.30/scale])
                 x, y = np.round(expected).astype(int)
-                crop = mask[y-29:y+30, x-29:x+30]
-                cy, cx = np.where(crop > 0)
-                if len(cx) < 80:
-                    raise ValueError('missing initial robot wheels')
-                # Wheel-envelope center, robust to unequal feature pixel counts.
-                px, py = x-29+(cx.min()+cx.max())/2, y-29+(cy.min()+cy.max())/2
-                px, py = int(round(px)), int(round(py))
+                extent = 70
+                if min(x-extent, y-extent) < 0 or x+extent >= w or y+extent >= h:
+                    raise ValueError('start-side search outside fixed camera')
+                crop = cv2.GaussianBlur(mask[y-extent:y+extent+1, x-extent:x+extent+1], (3,3), .7)
+                best = None
+                for angle in range(-15, 16):
+                    matrix = cv2.getRotationMatrix2D((30,30), angle, 1.)
+                    template = cv2.warpAffine(self.initial_templates[rid], matrix, (61,61))
+                    score = cv2.matchTemplate(crop, template, cv2.TM_CCOEFF_NORMED)
+                    _, peak, _, loc = cv2.minMaxLoc(score)
+                    if best is None or peak > best[0]: best = (peak, loc)
+                peak, (u,v) = best
+                if peak < .55: raise ValueError('initial wheel appearance not recognized')
+                px, py = x-extent+u+30, y-extent+v+30
                 template = mask[py-30:py+31, px-30:px+31].copy()
                 if template.shape != (61, 61):
                     raise ValueError('robot template outside fixed camera')
