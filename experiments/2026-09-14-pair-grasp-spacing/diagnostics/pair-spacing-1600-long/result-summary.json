@@ -1,8 +1,8 @@
 {
   "appearance_manifest_sha256": "5d61c5bcac5750b552e24ed656ba6367e80386f8e7d185c34e3e584629e50a7b",
-  "arrived": false,
+  "arrived": true,
   "budget": 750,
-  "close_command_override": 1700,
+  "close_command_override": 1600,
   "contact_impratio": 10,
   "cost_usd": 0,
   "environment": {
@@ -12,16 +12,47 @@
   },
   "error": null,
   "evaluation": {
-    "reason": "no navigation samples",
-    "success": false
+    "bilateral_fraction": 1.0,
+    "gates": {
+      "actor_arrived": true,
+      "bilateral_every_sample": true,
+      "cameras_geometry_unchanged": true,
+      "carry_spacing_preserved": true,
+      "continuous_samples": true,
+      "full_grasp_samples": true,
+      "goal_orientation": true,
+      "goal_position": true,
+      "grasp_bilateral_through_lift_hold": true,
+      "grasp_hold_lifted_every_sample": true,
+      "grasp_spacing_preserved": true,
+      "grasp_stable_before_departure": true,
+      "level_payload": true,
+      "lifted_every_sample": true,
+      "other_collision_free": true,
+      "released_on_floor": true,
+      "wall_contact_free": true,
+      "weld_off": true,
+      "within_authored_bounds": true
+    },
+    "goal_position_error_m": 0.02653864778017149,
+    "goal_yaw_error_deg": 0.8281016774469229,
+    "lifted_fraction": 1.0,
+    "min_lift_m": 0.049194,
+    "navigation_sim_seconds": 90.69999999999999,
+    "payload_turn_deg": -0.8281016774469229,
+    "sample_gap_max_s": 0.10000000000000853,
+    "samples": 908,
+    "success": true,
+    "unexpected_contact_ticks": 0,
+    "wall_contact_ticks": 0
   },
   "external_model_calls": 0,
-  "grasp_only": true,
+  "grasp_only": false,
   "grasp_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
   "grasp_spacing": "visual",
   "grasp_stability": {
-    "anchor_spacing_m": 0.6505918846035863,
-    "final_spacing_m": 0.6492996283153897,
+    "anchor_spacing_m": 0.6505937001159792,
+    "final_spacing_m": 0.6492980828319981,
     "gates": {
       "full_grasp_samples": true,
       "grasp_bilateral_through_lift_hold": true,
@@ -29,7 +60,7 @@
       "grasp_spacing_preserved": true
     },
     "max_sample_gap_s": 0.10000000000000142,
-    "max_spacing_change_m": 0.005685386773926493,
+    "max_spacing_change_m": 0.00613684043512619,
     "nonbilateral_samples": 0,
     "samples": 111,
     "success": true
@@ -238,17 +269,17 @@
   "scene_xml_sha256": "fb8f0a48c8fbb496d836add38560519b922aba033f24164247710c237832f354",
   "schema": "ugrp.pair_navigation_trial.v1",
   "scope": "Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay",
-  "sim_seconds": 24.559999999997267,
-  "source_sha": "b7426bcd7299569e8e25d4f76f27d7dc85f68676",
+  "sim_seconds": 120.60999999990031,
+  "source_sha": "52b84c8319206ec105ca69d83d29902e69fd0275",
   "success": true,
   "unexpected_contact_ticks": 0,
   "vision_mode": "robust",
   "wall_contact_ticks": 0,
-  "wall_seconds": 22.047624334023567,
+  "wall_seconds": 103.73034033397562,
   "weld_active_ticks": 0,
   "input_audit": {
     "passed": true,
-    "steps": 0,
+    "steps": 449,
     "spacing_steps": 104,
     "grasp": {
       "ok": true,
@@ -488,7 +519,7 @@
       ],
       "checked": "skill/model and RGB hashes; exact RGB-only correction, condition-specific pulse deltas, raw arm actions, and own-command history; evaluator data unused"
     },
-    "physical_success": false,
+    "physical_success": true,
     "grasp_stability": {
       "success": true,
       "gates": {
@@ -497,9 +528,9 @@
         "grasp_bilateral_through_lift_hold": true,
         "grasp_hold_lifted_every_sample": true
       },
-      "anchor_spacing_m": 0.6505918846035863,
-      "final_spacing_m": 0.6492996283153897,
-      "max_spacing_change_m": 0.005685386773926493,
+      "anchor_spacing_m": 0.6505937001159792,
+      "final_spacing_m": 0.6492980828319981,
+      "max_spacing_change_m": 0.00613684043512619,
       "nonbilateral_samples": 0,
       "samples": 111,
       "max_sample_gap_s": 0.10000000000000142
@@ -507,5 +538,5 @@
     "refused_no_route": false,
     "scope": "Exact RGB/command replay and output-only scoring; no actual physics rerun"
   },
-  "raw_directory": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-spacing/outputs/pair-spacing-diagnostic3-2026-09-14"
+  "raw_directory": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-spacing/outputs/pair-spacing-1600-long-2026-09-14/narrow-door"
 }

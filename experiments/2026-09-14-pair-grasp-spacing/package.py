@@ -56,7 +56,7 @@ for k,e in enumerate(catalog['entries']):
     r['vision_hold_sim_seconds']=r['vision_hold_rounds']*.2
     r['vision_recovery_episodes']=sum(status=='vision_hold' and (i==0 or statuses[i-1]!='vision_hold') for i,status in enumerate(statuses))
     r['vision_recovery_resumes']=sum(status!='vision_hold' and report['steps'][i]['decisions']['r1']['ready'] and i>0 and statuses[i-1]=='vision_hold' for i,status in enumerate(statuses))
-    r['memory_wheel_observations','spacing_rounds','max_carry_spacing_change_m']=sum(obs.get('appearance_source')=='memory' for row in report['steps'] for obs in row['decisions']['r1'].get('observations',{}).values())
+    r['memory_wheel_observations']=sum(obs.get('appearance_source')=='memory' for row in report['steps'] for obs in row['decisions']['r1'].get('observations',{}).values())
     results.append(r)
     status=('완주 성공' if r['success'] else '차단 판단·공동 정지' if expected_stop else
             {'vision_stop':'영상 재획득 한도 도달','payload_decoupled':'짐 정렬 이탈 판정','formation_abort':'로봇 대형 이탈','track':'판단 예산 소진'}.get(final['r1']['status'],'완주 실패'))

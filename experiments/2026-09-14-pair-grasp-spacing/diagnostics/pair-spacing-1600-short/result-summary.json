@@ -2,7 +2,7 @@
   "appearance_manifest_sha256": "5d61c5bcac5750b552e24ed656ba6367e80386f8e7d185c34e3e584629e50a7b",
   "arrived": false,
   "budget": 750,
-  "close_command_override": 1700,
+  "close_command_override": 1600,
   "contact_impratio": 10,
   "cost_usd": 0,
   "environment": {
@@ -20,8 +20,8 @@
   "grasp_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
   "grasp_spacing": "visual",
   "grasp_stability": {
-    "anchor_spacing_m": 0.6505918846035863,
-    "final_spacing_m": 0.6492996283153897,
+    "anchor_spacing_m": 0.6505937001159792,
+    "final_spacing_m": 0.6492980828319981,
     "gates": {
       "full_grasp_samples": true,
       "grasp_bilateral_through_lift_hold": true,
@@ -29,7 +29,7 @@
       "grasp_spacing_preserved": true
     },
     "max_sample_gap_s": 0.10000000000000142,
-    "max_spacing_change_m": 0.005685386773926493,
+    "max_spacing_change_m": 0.00613684043512619,
     "nonbilateral_samples": 0,
     "samples": 111,
     "success": true
@@ -239,12 +239,12 @@
   "schema": "ugrp.pair_navigation_trial.v1",
   "scope": "Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay",
   "sim_seconds": 24.559999999997267,
-  "source_sha": "b7426bcd7299569e8e25d4f76f27d7dc85f68676",
+  "source_sha": "52b84c8319206ec105ca69d83d29902e69fd0275",
   "success": true,
   "unexpected_contact_ticks": 0,
   "vision_mode": "robust",
   "wall_contact_ticks": 0,
-  "wall_seconds": 22.047624334023567,
+  "wall_seconds": 19.909431500011124,
   "weld_active_ticks": 0,
   "input_audit": {
     "passed": true,
@@ -497,9 +497,9 @@
         "grasp_bilateral_through_lift_hold": true,
         "grasp_hold_lifted_every_sample": true
       },
-      "anchor_spacing_m": 0.6505918846035863,
-      "final_spacing_m": 0.6492996283153897,
-      "max_spacing_change_m": 0.005685386773926493,
+      "anchor_spacing_m": 0.6505937001159792,
+      "final_spacing_m": 0.6492980828319981,
+      "max_spacing_change_m": 0.00613684043512619,
       "nonbilateral_samples": 0,
       "samples": 111,
       "max_sample_gap_s": 0.10000000000000142
@@ -507,5 +507,5 @@
     "refused_no_route": false,
     "scope": "Exact RGB/command replay and output-only scoring; no actual physics rerun"
   },
-  "raw_directory": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-spacing/outputs/pair-spacing-diagnostic3-2026-09-14"
+  "raw_directory": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-spacing/outputs/pair-spacing-1600-short-2026-09-14"
 }
