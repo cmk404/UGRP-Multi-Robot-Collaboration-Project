@@ -1,0 +1,446 @@
+[
+  {
+    "name": "heldout_r1-open-heading",
+    "exit_code": 0,
+    "source_sha": "3abedb6e776b960359033b3371f38275e1bdfda1",
+    "map_sha256": "f1c281c507dff1aa777d11e0f9d093b25951208571bf2c6b01560158e9b83f20",
+    "case_id": "heldout_r1",
+    "condition": "map",
+    "motion_style": "heading",
+    "actor_status": "arrived",
+    "decisions": 58,
+    "wall_elapsed_s": 9.753561958001228,
+    "evaluation": {
+      "success": true,
+      "gates": {
+        "actor_arrived": true,
+        "goal_distance": true,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 0.15547750715233322,
+        "path_length_m": 1.8788499233764338,
+        "collision_steps": 0,
+        "physics_steps": 9025,
+        "weld_steps": 0,
+        "max_tilt_rad": 0.00010762434982819488,
+        "sim_elapsed_s": 18.0460000000001
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0
+  },
+  {
+    "name": "heldout_r1-open-holonomic",
+    "exit_code": 0,
+    "source_sha": "3abedb6e776b960359033b3371f38275e1bdfda1",
+    "map_sha256": "f1c281c507dff1aa777d11e0f9d093b25951208571bf2c6b01560158e9b83f20",
+    "case_id": "heldout_r1",
+    "condition": "map",
+    "motion_style": "holonomic",
+    "actor_status": "arrived",
+    "decisions": 70,
+    "wall_elapsed_s": 10.534452625011909,
+    "evaluation": {
+      "success": true,
+      "gates": {
+        "actor_arrived": true,
+        "goal_distance": true,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 0.12130879027105566,
+        "path_length_m": 1.9857954012534744,
+        "collision_steps": 0,
+        "physics_steps": 10827,
+        "weld_steps": 0,
+        "max_tilt_rad": 0.00010761919573627899,
+        "sim_elapsed_s": 21.6499999999981
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0
+  },
+  {
+    "name": "heldout_r1-slalom-heading",
+    "exit_code": 0,
+    "source_sha": "3abedb6e776b960359033b3371f38275e1bdfda1",
+    "map_sha256": "0a54ebfbc5463dcc9b8c1b73a9b0218f2dd662da3c9583e4941229d080d014b0",
+    "case_id": "heldout_r1",
+    "condition": "map",
+    "motion_style": "heading",
+    "actor_status": "arrived",
+    "decisions": 142,
+    "wall_elapsed_s": 45.53777591700782,
+    "evaluation": {
+      "success": true,
+      "gates": {
+        "actor_arrived": true,
+        "goal_distance": true,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 0.13337174837787316,
+        "path_length_m": 3.3081402487368243,
+        "collision_steps": 0,
+        "physics_steps": 28177,
+        "weld_steps": 0,
+        "max_tilt_rad": 0.00010625357248114489,
+        "sim_elapsed_s": 56.350000000024615
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0
+  },
+  {
+    "name": "heldout_r1-slalom-holonomic",
+    "exit_code": 0,
+    "source_sha": "3abedb6e776b960359033b3371f38275e1bdfda1",
+    "map_sha256": "0a54ebfbc5463dcc9b8c1b73a9b0218f2dd662da3c9583e4941229d080d014b0",
+    "case_id": "heldout_r1",
+    "condition": "map",
+    "motion_style": "holonomic",
+    "actor_status": "arrived",
+    "decisions": 138,
+    "wall_elapsed_s": 23.370994625001913,
+    "evaluation": {
+      "success": true,
+      "gates": {
+        "actor_arrived": true,
+        "goal_distance": true,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 0.1373744068236655,
+        "path_length_m": 3.4145649042714,
+        "collision_steps": 0,
+        "physics_steps": 19327,
+        "weld_steps": 0,
+        "max_tilt_rad": 0.00010759201299929288,
+        "sim_elapsed_s": 38.65000000000298
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0
+  },
+  {
+    "name": "heldout_r1-narrow-heading",
+    "exit_code": 0,
+    "source_sha": "3abedb6e776b960359033b3371f38275e1bdfda1",
+    "map_sha256": "f13e097f58cb4f4e2aee8cc6b904a5f8e6ef08be38e36dc2be49a76759bafb68",
+    "case_id": "heldout_r1",
+    "condition": "map",
+    "motion_style": "heading",
+    "actor_status": "no_map_route",
+    "decisions": 1,
+    "wall_elapsed_s": 0.7787233749986626,
+    "evaluation": {
+      "success": false,
+      "gates": {
+        "actor_arrived": false,
+        "goal_distance": false,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 2.030611702773417,
+        "path_length_m": 2.0643750650067405e-10,
+        "collision_steps": 0,
+        "physics_steps": 127,
+        "weld_steps": 0,
+        "max_tilt_rad": 7.18987761813464e-05,
+        "sim_elapsed_s": 0.2500000000000002
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0
+  },
+  {
+    "name": "heldout_r1-narrow-holonomic",
+    "exit_code": 0,
+    "source_sha": "3abedb6e776b960359033b3371f38275e1bdfda1",
+    "map_sha256": "f13e097f58cb4f4e2aee8cc6b904a5f8e6ef08be38e36dc2be49a76759bafb68",
+    "case_id": "heldout_r1",
+    "condition": "map",
+    "motion_style": "holonomic",
+    "actor_status": "no_map_route",
+    "decisions": 1,
+    "wall_elapsed_s": 0.7448086249933112,
+    "evaluation": {
+      "success": false,
+      "gates": {
+        "actor_arrived": false,
+        "goal_distance": false,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 2.030611702773417,
+        "path_length_m": 2.0643750650067405e-10,
+        "collision_steps": 0,
+        "physics_steps": 127,
+        "weld_steps": 0,
+        "max_tilt_rad": 7.18987761813464e-05,
+        "sim_elapsed_s": 0.2500000000000002
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0
+  },
+  {
+    "name": "heldout_r3-open-heading",
+    "exit_code": 0,
+    "source_sha": "3abedb6e776b960359033b3371f38275e1bdfda1",
+    "map_sha256": "f1c281c507dff1aa777d11e0f9d093b25951208571bf2c6b01560158e9b83f20",
+    "case_id": "heldout_r3",
+    "condition": "map",
+    "motion_style": "heading",
+    "actor_status": "arrived",
+    "decisions": 62,
+    "wall_elapsed_s": 13.75333729099657,
+    "evaluation": {
+      "success": true,
+      "gates": {
+        "actor_arrived": true,
+        "goal_distance": true,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 0.15675787108541256,
+        "path_length_m": 1.9546458065248642,
+        "collision_steps": 0,
+        "physics_steps": 10031,
+        "weld_steps": 0,
+        "max_tilt_rad": 9.788199124543597e-05,
+        "sim_elapsed_s": 20.057999999998984
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0
+  },
+  {
+    "name": "heldout_r3-open-holonomic",
+    "exit_code": 0,
+    "source_sha": "3abedb6e776b960359033b3371f38275e1bdfda1",
+    "map_sha256": "f1c281c507dff1aa777d11e0f9d093b25951208571bf2c6b01560158e9b83f20",
+    "case_id": "heldout_r3",
+    "condition": "map",
+    "motion_style": "holonomic",
+    "actor_status": "arrived",
+    "decisions": 72,
+    "wall_elapsed_s": 12.791099499998381,
+    "evaluation": {
+      "success": true,
+      "gates": {
+        "actor_arrived": true,
+        "goal_distance": true,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 0.14839201234352623,
+        "path_length_m": 1.9867919193093742,
+        "collision_steps": 0,
+        "physics_steps": 11152,
+        "weld_steps": 0,
+        "max_tilt_rad": 0.00010760778636463731,
+        "sim_elapsed_s": 22.29999999999774
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0
+  },
+  {
+    "name": "heldout_r3-slalom-heading",
+    "exit_code": 0,
+    "source_sha": "3abedb6e776b960359033b3371f38275e1bdfda1",
+    "map_sha256": "0a54ebfbc5463dcc9b8c1b73a9b0218f2dd662da3c9583e4941229d080d014b0",
+    "case_id": "heldout_r3",
+    "condition": "map",
+    "motion_style": "heading",
+    "actor_status": "arrived",
+    "decisions": 152,
+    "wall_elapsed_s": 45.459101249987725,
+    "evaluation": {
+      "success": true,
+      "gates": {
+        "actor_arrived": true,
+        "goal_distance": true,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 0.12994527378065465,
+        "path_length_m": 3.509080830091934,
+        "collision_steps": 0,
+        "physics_steps": 30196,
+        "weld_steps": 0,
+        "max_tilt_rad": 0.00010761121133243844,
+        "sim_elapsed_s": 60.38800000002955
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0
+  },
+  {
+    "name": "heldout_r3-slalom-holonomic",
+    "exit_code": 0,
+    "source_sha": "3abedb6e776b960359033b3371f38275e1bdfda1",
+    "map_sha256": "0a54ebfbc5463dcc9b8c1b73a9b0218f2dd662da3c9583e4941229d080d014b0",
+    "case_id": "heldout_r3",
+    "condition": "map",
+    "motion_style": "holonomic",
+    "actor_status": "arrived",
+    "decisions": 147,
+    "wall_elapsed_s": 24.225298541990924,
+    "evaluation": {
+      "success": true,
+      "gates": {
+        "actor_arrived": true,
+        "goal_distance": true,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 0.14332619092541726,
+        "path_length_m": 3.537162505118162,
+        "collision_steps": 0,
+        "physics_steps": 20527,
+        "weld_steps": 0,
+        "max_tilt_rad": 0.0001075967472763386,
+        "sim_elapsed_s": 41.050000000005916
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0
+  },
+  {
+    "name": "heldout_r3-narrow-heading",
+    "exit_code": 0,
+    "source_sha": "3abedb6e776b960359033b3371f38275e1bdfda1",
+    "map_sha256": "f13e097f58cb4f4e2aee8cc6b904a5f8e6ef08be38e36dc2be49a76759bafb68",
+    "case_id": "heldout_r3",
+    "condition": "map",
+    "motion_style": "heading",
+    "actor_status": "no_map_route",
+    "decisions": 1,
+    "wall_elapsed_s": 0.6412888749910053,
+    "evaluation": {
+      "success": false,
+      "gates": {
+        "actor_arrived": false,
+        "goal_distance": false,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 2.0903802720735483,
+        "path_length_m": 2.064364667829793e-10,
+        "collision_steps": 0,
+        "physics_steps": 127,
+        "weld_steps": 0,
+        "max_tilt_rad": 7.189877618138927e-05,
+        "sim_elapsed_s": 0.2500000000000002
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0
+  },
+  {
+    "name": "heldout_r3-narrow-holonomic",
+    "exit_code": 0,
+    "source_sha": "3abedb6e776b960359033b3371f38275e1bdfda1",
+    "map_sha256": "f13e097f58cb4f4e2aee8cc6b904a5f8e6ef08be38e36dc2be49a76759bafb68",
+    "case_id": "heldout_r3",
+    "condition": "map",
+    "motion_style": "holonomic",
+    "actor_status": "no_map_route",
+    "decisions": 1,
+    "wall_elapsed_s": 0.6299007080087904,
+    "evaluation": {
+      "success": false,
+      "gates": {
+        "actor_arrived": false,
+        "goal_distance": false,
+        "zero_map_collisions": true,
+        "weld_off": true,
+        "footprint_inside_map": true,
+        "upright": true,
+        "invariants": true
+      },
+      "metrics": {
+        "goal_distance_m": 2.0903802720735483,
+        "path_length_m": 2.064364667829793e-10,
+        "collision_steps": 0,
+        "physics_steps": 127,
+        "weld_steps": 0,
+        "max_tilt_rad": 7.189877618138927e-05,
+        "sim_elapsed_s": 0.2500000000000002
+      },
+      "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+    },
+    "error": null,
+    "model_calls": 0,
+    "model_cost_usd": 0
+  }
+]

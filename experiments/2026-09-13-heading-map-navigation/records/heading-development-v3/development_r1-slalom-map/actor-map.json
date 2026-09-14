@@ -1,0 +1,80 @@
+{
+  "schema": "ugrp.authored_navigation_map.v1",
+  "map_id": "slalom",
+  "version": 1,
+  "frame": "warehouse_xy_m",
+  "bounds_m": [
+    -0.85,
+    1.95,
+    -3.1,
+    -0.9
+  ],
+  "grid_resolution_m": 0.025,
+  "top_camera": {
+    "name": "cctv_top",
+    "position_m": [
+      0.55,
+      -2,
+      2.5
+    ],
+    "quaternion_wxyz": [
+      1,
+      0,
+      0,
+      0
+    ],
+    "fov_y_deg": 55
+  },
+  "footprint": {
+    "unloaded_radius_m": 0.18,
+    "safety_margin_m": 0.04
+  },
+  "zones": {
+    "start": {
+      "center_m": [
+        -0.5,
+        -2.55
+      ],
+      "radius_m": 0.2
+    },
+    "goal": {
+      "center_m": [
+        1.55,
+        -2.55
+      ],
+      "radius_m": 0.18
+    }
+  },
+  "obstacles": [
+    {
+      "id": "wall1",
+      "kind": "wall",
+      "center_m": [
+        0.15,
+        -2.55
+      ],
+      "half_extents_m": [
+        0.1,
+        0.55
+      ],
+      "height_m": 0.18,
+      "traversable": false,
+      "cost_multiplier": 1
+    },
+    {
+      "id": "wall2",
+      "kind": "wall",
+      "center_m": [
+        0.95,
+        -1.5
+      ],
+      "half_extents_m": [
+        0.1,
+        0.6
+      ],
+      "height_m": 0.18,
+      "traversable": false,
+      "cost_multiplier": 1
+    }
+  ]
+}

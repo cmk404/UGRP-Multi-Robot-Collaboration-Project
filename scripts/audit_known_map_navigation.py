@@ -16,6 +16,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from harness.known_map_navigation import KnownMapNavigator
+from harness.heading_map_navigation import HeadingMapNavigator
+from scripts.run_known_map_navigation import navigator_class
 from sim.authored_navigation_map import map_sha256, validate_map
 
 
@@ -77,14 +79,16 @@ def _read_image(root: Path, record: Any, expected_path: str) -> bytes:
     return value
 
 
-def _inspect_actor_source() -> dict[str, Any]:
-    tree = ast.parse(inspect.getsource(sys.modules[KnownMapNavigator.__module__]))
+def _inspect_actor_source(motion_style='holonomic') -> dict[str, Any]:
+    classes = [KnownMapNavigator] + ([HeadingMapNavigator] if motion_style == 'heading' else [])
     imports: list[str] = []
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            imports.extend(alias.name for alias in node.names)
-        elif isinstance(node, ast.ImportFrom) and node.module:
-            imports.append(node.module)
+    for cls in classes:
+        tree = ast.parse(inspect.getsource(sys.modules[cls.__module__]))
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                imports.extend(alias.name for alias in node.names)
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                imports.append(node.module)
     forbidden = [name for name in imports if name == "mujoco" or name.startswith("mujoco.") or
                  (name.startswith("sim.") and name != "sim.authored_navigation_map")]
     if forbidden:
@@ -123,6 +127,11 @@ def audit_run(path: str | Path) -> dict[str, Any]:
         raise ValueError("saved condition mismatch")
     if robot_id not in {"r1", "r3"}:
         raise ValueError("invalid saved robot id")
+    # Records predating the motion-style option contain the unchanged holonomic baseline.
+    motion_style = metadata.get('motion_style', 'holonomic')
+    if result.get('motion_style', 'holonomic') != motion_style:
+        raise ValueError('saved motion style mismatch')
+    controller_class = navigator_class(motion_style)
 
     ledger_path = root / "actor-decisions.jsonl"
     rows = []
@@ -139,7 +148,7 @@ def audit_run(path: str | Path) -> dict[str, Any]:
     if result.get("decisions") != len(rows):
         raise ValueError("result decision count differs from ledger")
 
-    actor = KnownMapNavigator(authored_map, robot_id, condition)
+    actor = controller_class(authored_map, robot_id, condition)
     history: list[dict[str, Any]] = []
     replay = []
     terminal_seen = False
@@ -166,11 +175,11 @@ def audit_run(path: str | Path) -> dict[str, Any]:
     expected_status = rows[-1]["decision"]["status"] if terminal_seen else "budget_exhausted"
     if result.get("actor_status") != expected_status:
         raise ValueError("result actor status differs from replay")
-    source_check = _inspect_actor_source()
+    source_check = _inspect_actor_source(motion_style)
     navigation_success = bool(isinstance(result.get("evaluation"), dict) and
                               result["evaluation"].get("success") is True)
     return {"audit_pass": True, "navigation_success": navigation_success,
-            "condition": condition, "robot_id": robot_id, "frames": len(rows),
+            "condition": condition, "motion_style": motion_style, "robot_id": robot_id, "frames": len(rows),
             "map_sha256": digest, "manifest_files": len(manifest), "replay": replay,
             "source_check": source_check,
             "claim_limit": "artifact replay checks saved inputs and code boundaries; input logging does not cryptographically prove hidden state was absent at runtime"}
