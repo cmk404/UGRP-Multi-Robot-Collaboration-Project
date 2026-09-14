@@ -17,3 +17,7 @@
 후보는 noslip_iterations 0→3만 변경한다. MuJoCo의 [Preventing slip](https://mujoco.readthedocs.io/en/stable/modeling.html#preventing-slip)은 soft contact 정규화가 지속적 미끄러짐을 만들 수 있고 NoSlip 후처리로 억제할 수 있다고 설명한다. 수치 솔버 변경의 효과를 검증하는 것이며 실물 성능 개선이나 제어기의 일반화를 뜻하지 않는다. 마찰/질량/형상/카메라/1600 PWM/팔 명령/두 RGB 제어기는 그대로 유지한다. 기본값은 0, 후보 실행 명령에 --noslip-iterations 3을 명시한다.
 
 후보에 실제 endurance actuator trace를 추가하고, 300초 명령 완료 후 고정 place 시연을 실행해 바닥 방출/양쪽 접촉 해제를 출력 전용으로 확인한다. 이 추가 동작은 처음 300초 비교 구간에 영향을 주지 않는다. 기준 기록에는 release_check_required가 없으므로 이전 평가를 그대로 재현한다. 180/300초 접촉 충돌 판정은 전체 endurance 구간 누적값을 보수적으로 공유한다.
+
+NoSlip 후보 863bbae는 두 모드 모두 초기 24.5 SIM초에 영상 간격 안정화 조건을 만족하지 못해 출발 전 종료했다. lift/hold 중 bilateral 누락 1표본, 간격 최대 변화 1.469cm로 기존 기준 파지보다 퇴행했다. 이 설정은 채택하지 않는다.
+
+다음 비교는 기준의 elliptic cone / NoSlip 0을 유지하고 impratio 10→100 한 변수만 변경한다. 위 공식 문서의 elliptic cone에서 friction impedance를 높여 soft contact 미끄러짐을 줄이는 방법을 검사한다. solver2/Newton, iterations80, tolerance1e-8, dt.002는 유지한다. 명시적 --impratio 100 --noslip-iterations 0 후보를 2개 5분 조건과 기존 6지형에서 검증한다.
