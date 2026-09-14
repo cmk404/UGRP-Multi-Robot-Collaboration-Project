@@ -25,6 +25,16 @@ class Completer:
 
 
 class PickMatchPlannerTest(unittest.TestCase):
+    def test_fenced_json_is_normalized_without_accepting_prose(self):
+        class Raw:
+            def __init__(self, reply): self.reply = reply
+            def complete(self, *args, **kwargs): return self.reply
+        payload = '{"reason":"visible","action":{"kind":"approach"}}'
+        result = PickMatchPlanner(Raw('```json\n' + payload + '\n```')).decide(jpeg(0), jpeg(1))
+        self.assertEqual(result['action'], {'kind': 'approach'})
+        with self.assertRaises(ValueError):
+            PickMatchPlanner(Raw('Choose this: ' + payload)).decide(jpeg(0), jpeg(1))
+
     def test_request_contains_only_fixed_task_images_and_own_selected_history(self):
         c = Completer({"reason": "visible", "action": {"kind": "approach"}})
         planner = PickMatchPlanner(c, "skill")

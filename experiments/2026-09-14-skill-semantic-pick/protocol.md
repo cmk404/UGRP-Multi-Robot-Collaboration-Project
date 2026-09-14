@@ -57,7 +57,10 @@ User request: run a head-to-head after discussing existing action-selecting cont
   controller; failed skills and exhausted budgets also stop issuing decisions.
   Physics continues to fixed 120 s so hold and drop are observed without
   referee-driven stopping. Semantic policy retains its normal wait action.
-- Invalid JSON/schema terminates decisions and counts as a policy error. Invalid
+- One whole Markdown JSON fence is removed before parsing, equally for both
+  conditions (observed provider formatting on development seed 40); prose or
+  multiple objects are not repaired. Invalid JSON/schema terminates decisions
+  and counts as a policy error. Invalid
   state action or unreachable command issues a fixed wait on either side, logged
   as rejection; no rejection description or state is returned to the model.
 - Infrastructure failure is reported separately, with no automatic replacement.

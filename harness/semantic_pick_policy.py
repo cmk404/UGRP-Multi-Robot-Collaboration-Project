@@ -7,6 +7,7 @@ import hashlib
 import itertools
 import json
 import math
+import re
 from collections.abc import Mapping
 from typing import Any
 
@@ -118,6 +119,11 @@ class PickMatchPlanner:
         raw = self.completer.complete(request["messages"], images=request["images"])
         self.last_response = raw
         try:
+            if isinstance(raw, str):
+                # Transport formatting only: accept one complete fenced JSON
+                # object, never extract an action out of surrounding prose.
+                fenced = re.fullmatch(r"\s*```(?:json)?\s*\n(.*?)\n```\s*", raw, re.DOTALL)
+                raw = fenced.group(1) if fenced else raw
             value = json.loads(raw) if isinstance(raw, str) else raw
             if not isinstance(value, Mapping) or set(value) != {"reason", "action"}:
                 raise ValueError("response must contain exactly reason and action")
