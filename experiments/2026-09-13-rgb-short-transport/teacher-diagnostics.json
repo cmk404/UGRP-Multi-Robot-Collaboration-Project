@@ -1,0 +1,246 @@
+{
+  "runs": [
+    {
+      "run": "short-transport-teacher-20260913-v1",
+      "raw_directory": "/Users/changmin/projects/ugrp/outputs/short-transport-teacher-20260913-v1",
+      "source_sha": "464ff9a5cf90705eb16f8421cf030a58a66cf191",
+      "config": {
+        "max_forward": 0.1,
+        "max_slices": 180,
+        "setup": "fixed demonstrated grasp station; no wheel approach",
+        "slice_s": 0.2,
+        "target_distance_m": 0.2,
+        "weld": false
+      },
+      "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/rgb-short-transport/scripts/collect_camera_short_transport_teacher.py\", line 56, in main\n    if not scene.grasp_report['evaluation']['success']:\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^\nKeyError: 'success'\n",
+      "evaluation": {
+        "success": false,
+        "gates": {
+          "valid_samples": true,
+          "required_phases": false,
+          "weld_off": true,
+          "grasp_hold": true,
+          "carry_continuity": false,
+          "carry_progress": false,
+          "transport_endpoint": false,
+          "lateral_drift": false,
+          "release_continuity": false,
+          "release_grounded_clear": false,
+          "release_stable": false
+        },
+        "reasons": [
+          "missing required phases: carry, carry_stop, place_lower, place_open, place_retract, release_hold",
+          "carry samples are missing, discontinuous, unlifted, non-bilateral, or welded",
+          "carry start-to-end progress is below 0.15 m",
+          "final displacement is outside target tolerance",
+          "final lateral drift exceeds 0.03 m",
+          "final release_hold is not contiguous and long enough",
+          "release_hold is not grounded and clear of robots/fingers",
+          "release position span exceeds 0.005 m"
+        ],
+        "metrics": {
+          "target_distance_m": 0.2,
+          "tolerance_m": 0.03,
+          "minimum_hold_s": 2.0,
+          "release_stable_s": 1.0,
+          "max_sample_gap_s": 0.15,
+          "sample_count": 157,
+          "grasp_hold_duration_s": 2.0999999999999996,
+          "carry_start_to_end_progress_m": null,
+          "final_displacement_m": null,
+          "displacement_error_m": null,
+          "lateral_drift_m": null,
+          "release_hold_duration_s": null,
+          "release_position_span_3d_m": null
+        },
+        "scope": "sampled referee continuity only"
+      },
+      "weld_active_ticks": 0,
+      "invariants_equal": true,
+      "wall_time_s": 6.917417375007062,
+      "sim_time_s": 16.5600000000017,
+      "carry_decisions": 0,
+      "artifacts": {
+        "teacher-report.json": "1c8eafb84f74ac90d988d90cda135b105375eb28536b5972bc0a8350cb584dfe",
+        "evaluation-only.jsonl": "dbdfd0038acb0b9ca9f6e5e4bc0ad83c3edd7dca2e733d66b31424ace7f642dc",
+        "motion.mp4": "cb538a5214b8e3d0af1736da6d74f471486abc41c847c125598634007f885218"
+      },
+      "rgb_count": 51
+    },
+    {
+      "run": "short-transport-teacher-20260913-v2",
+      "raw_directory": "/Users/changmin/projects/ugrp/outputs/short-transport-teacher-20260913-v2",
+      "source_sha": "45afc8588a40fafc0d2c956f4a68eead5671cda9",
+      "config": {
+        "max_forward": 0.1,
+        "max_slices": 180,
+        "setup": "fixed demonstrated grasp station; no wheel approach",
+        "slice_s": 0.2,
+        "target_distance_m": 0.2,
+        "weld": false
+      },
+      "error": null,
+      "evaluation": {
+        "success": true,
+        "gates": {
+          "valid_samples": true,
+          "required_phases": true,
+          "weld_off": true,
+          "grasp_hold": true,
+          "carry_continuity": true,
+          "carry_progress": true,
+          "transport_endpoint": true,
+          "lateral_drift": true,
+          "release_continuity": true,
+          "release_grounded_clear": true,
+          "release_stable": true
+        },
+        "reasons": [],
+        "metrics": {
+          "target_distance_m": 0.2,
+          "tolerance_m": 0.03,
+          "minimum_hold_s": 2.0,
+          "release_stable_s": 1.0,
+          "max_sample_gap_s": 0.15,
+          "sample_count": 244,
+          "grasp_hold_duration_s": 2.0999999999999996,
+          "carry_start_to_end_progress_m": 0.20746799999999999,
+          "final_displacement_m": 0.20740999999999998,
+          "displacement_error_m": 0.007409999999999972,
+          "lateral_drift_m": 0.00018600000000001948,
+          "release_hold_duration_s": 2.099999999999998,
+          "release_position_span_3d_m": 0.0
+        },
+        "scope": "sampled referee continuity only"
+      },
+      "weld_active_ticks": 0,
+      "invariants_equal": true,
+      "wall_time_s": 8.969487084003049,
+      "sim_time_s": 25.209999999996906,
+      "carry_decisions": 24,
+      "artifacts": {
+        "teacher-report.json": "8faaeaa60a9829783ea7b8ab44a2a848dd95a7db6c2018e4682912c4b7a32cf9",
+        "evaluation-only.jsonl": "c2ed358a4dc72eeac083a96e52057c918036ceabd0250a0968a6ec6a09d73a61",
+        "motion.mp4": "3a407d4d49ea3d8ba8e139bfc6fb68db6322db996038d56952a62a7d1a189cc0"
+      },
+      "rgb_count": 99
+    },
+    {
+      "run": "short-transport-teacher-20260913-v3",
+      "raw_directory": "/Users/changmin/projects/ugrp/outputs/short-transport-teacher-20260913-v3",
+      "source_sha": "b61bb4c9476b1f6cefcc03ee00c83a5243c33be7",
+      "config": {
+        "max_forward": 0.07,
+        "max_slices": 180,
+        "setup": "fixed demonstrated grasp station; no wheel approach",
+        "slice_s": 0.2,
+        "target_distance_m": 0.2,
+        "weld": false
+      },
+      "error": null,
+      "evaluation": {
+        "success": true,
+        "gates": {
+          "valid_samples": true,
+          "required_phases": true,
+          "weld_off": true,
+          "grasp_hold": true,
+          "carry_continuity": true,
+          "carry_progress": true,
+          "transport_endpoint": true,
+          "lateral_drift": true,
+          "release_continuity": true,
+          "release_grounded_clear": true,
+          "release_stable": true
+        },
+        "reasons": [],
+        "metrics": {
+          "target_distance_m": 0.2,
+          "tolerance_m": 0.03,
+          "minimum_hold_s": 2.0,
+          "release_stable_s": 1.0,
+          "max_sample_gap_s": 0.15,
+          "sample_count": 252,
+          "grasp_hold_duration_s": 2.0999999999999996,
+          "carry_start_to_end_progress_m": 0.21672099999999994,
+          "final_displacement_m": 0.216669,
+          "displacement_error_m": 0.01666899999999999,
+          "lateral_drift_m": 0.00017700000000009375,
+          "release_hold_duration_s": 2.1000000000000014,
+          "release_position_span_3d_m": 0.0
+        },
+        "scope": "sampled referee continuity only"
+      },
+      "weld_active_ticks": 0,
+      "invariants_equal": true,
+      "wall_time_s": 9.51028391699947,
+      "sim_time_s": 26.009999999996463,
+      "carry_decisions": 34,
+      "artifacts": {
+        "teacher-report.json": "2b00fd12d21c26487207500d3ac123e7608359ae9b22fa828afef88730043a7a",
+        "evaluation-only.jsonl": "b6ea3a2b77d61841494ecd150c1a72909bbf1d8cd6f22564d4e5f273ce59e021",
+        "motion.mp4": "d40ee1f83609965371e4b4e1a6efac73bad9365319cf066af22de7b23783342b"
+      },
+      "rgb_count": 114
+    },
+    {
+      "run": "short-transport-teacher-20260913-v4",
+      "raw_directory": "/Users/changmin/projects/ugrp/outputs/short-transport-teacher-20260913-v4",
+      "source_sha": "b61bb4c9476b1f6cefcc03ee00c83a5243c33be7",
+      "config": {
+        "max_forward": 0.04,
+        "max_slices": 180,
+        "setup": "fixed demonstrated grasp station; no wheel approach",
+        "slice_s": 0.2,
+        "target_distance_m": 0.2,
+        "weld": false
+      },
+      "error": null,
+      "evaluation": {
+        "success": true,
+        "gates": {
+          "valid_samples": true,
+          "required_phases": true,
+          "weld_off": true,
+          "grasp_hold": true,
+          "carry_continuity": true,
+          "carry_progress": true,
+          "transport_endpoint": true,
+          "lateral_drift": true,
+          "release_continuity": true,
+          "release_grounded_clear": true,
+          "release_stable": true
+        },
+        "reasons": [],
+        "metrics": {
+          "target_distance_m": 0.2,
+          "tolerance_m": 0.03,
+          "minimum_hold_s": 2.0,
+          "release_stable_s": 1.0,
+          "max_sample_gap_s": 0.15,
+          "sample_count": 268,
+          "grasp_hold_duration_s": 2.0999999999999996,
+          "carry_start_to_end_progress_m": 0.20354699999999992,
+          "final_displacement_m": 0.20352199999999998,
+          "displacement_error_m": 0.0035219999999999696,
+          "lateral_drift_m": 0.00016799999999994597,
+          "release_hold_duration_s": 2.1000000000000014,
+          "release_position_span_3d_m": 0.0
+        },
+        "scope": "sampled referee continuity only"
+      },
+      "weld_active_ticks": 0,
+      "invariants_equal": true,
+      "wall_time_s": 11.208011916998657,
+      "sim_time_s": 27.609999999995576,
+      "carry_decisions": 50,
+      "artifacts": {
+        "teacher-report.json": "7ade09ee5c60d78ecfda7fdc26f9c1d18480f14a870ab9f7a5a0add8d5e39311",
+        "evaluation-only.jsonl": "686ff7bcad5020b580e72ff3dc545de1d06ac38aed48664cd6bdddbad4c0c72a",
+        "motion.mp4": "915bbf084c69512fe411fb7604bf338c333ca10387dd671d4fecc6809380a649"
+      },
+      "rgb_count": 138
+    }
+  ],
+  "review": "Teacher v2 observer video frames 55, 69, 88 and top/own inputs inspected; v1 connector KeyError retained. Teacher success is offline privileged diagnostic, not independent student success."
+}

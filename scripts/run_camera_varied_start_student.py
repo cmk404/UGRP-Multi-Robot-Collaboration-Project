@@ -61,6 +61,85 @@ def choose_stage_actions(decisions, stage, confirming=False):
             'duration_s': .25 if confirming or enter_confirmation or not valid else .2}
 
 
+def run_approach(scene, stage_models, *, condition='visual', straight_models=None):
+    """Run the RGB-only wheel approach and return output-only audit data."""
+    from harness.camera_varied_start_student import predict_stage
+    from harness.camera_approach_student import predict_approach
+
+    if condition not in ('visual', 'straight'):
+        raise ValueError(f'unsupported approach condition: {condition}')
+    if condition == 'straight' and straight_models is None:
+        raise ValueError('straight baseline requires old models')
+
+    result = {'approach_calls': [], 'stage_results': [], 'approach_ok': False}
+    approach_start = scene.time()
+    phases = PHASES if condition == 'visual' else ('forward',)
+    history = {r: [] for r in ROBOTS}
+    for phase_index, stage in enumerate(phases):
+        confirming, confirmations, consecutive, movements = False, 0, 0, 0
+        record = {'phase_index': phase_index, 'stage': stage, 'ok': False, 'confirmations': []}
+        result['stage_results'].append(record)
+        for index in range(LIMITS[stage] + 5):
+            frames = scene.capture(f'phase-{phase_index}-{index:03d}')
+            if condition == 'visual':
+                decisions = {r: predict_stage(stage_models[r][stage], frames[r]['own_bytes'], frames[r]['top_bytes']) for r in ROBOTS}
+            else:
+                decisions = {}
+                for r in ROBOTS:
+                    d = predict_approach(straight_models[r], frames[r]['own_bytes'], frames[r]['top_bytes'])
+                    decisions[r] = {**d, 'command': d['forward']}
+            control = choose_stage_actions(decisions, stage, confirming)
+            for rid in ROBOTS:
+                action = {'kind': 'mecanum', **control['commands'][rid], 'duration_s': control['duration_s']}
+                result['approach_calls'].append({'phase_index': phase_index, 'stage': stage,
+                    'index': index, 'robot_id': rid, 'frame_id': frames[rid]['frame_id'],
+                    'stationary': confirming, 'images': {'own': frames[rid]['own_rgb'], 'top': frames[rid]['shared_top_rgb']},
+                    'decision': decisions[rid], 'action': action, 'own_command_history': list(history[rid])})
+                history[rid].append(action)
+            scene.drive_mecanum(control['commands'], control['duration_s'])
+            if not control['valid']:
+                record['reason'] = 'RGB outside learned stage support'
+                break
+            if confirming:
+                confirmations += 1
+                consecutive = consecutive + 1 if all(control['ready'].values()) else 0
+                record['confirmations'].append({'frame_ids': {r: frames[r]['frame_id'] for r in ROBOTS},
+                                               'ready': control['ready'], 'stationary': True})
+                if consecutive >= 2:
+                    record['ok'] = True
+                    record['reason'] = 'two consecutive fresh stationary RGB confirmations'
+                    break
+                if confirmations >= 4:
+                    record['reason'] = 'stationary RGB confirmation budget exhausted'
+                    break
+            elif control['enter_confirmation']:
+                confirming = True
+            else:
+                movements += 1
+                if movements >= LIMITS[stage]:
+                    scene.stop_dwell()
+                    record['reason'] = 'bounded phase movement budget exhausted'
+                    break
+        record['movement_slices'] = movements
+        if not record['ok']:
+            break
+    result['approach_ok'] = len(result['stage_results']) == len(phases) and all(s['ok'] for s in result['stage_results'])
+    # Recheck all three axes with stationary images before arm deployment.
+    if result['approach_ok'] and condition == 'visual':
+        result['final_alignment_checks'] = []
+        for index in range(2):
+            frames = scene.capture(f'final-alignment-{index}')
+            checks = {r: {s: predict_stage(stage_models[r][s], frames[r]['own_bytes'], frames[r]['top_bytes']) for s in AXES} for r in ROBOTS}
+            result['final_alignment_checks'].append({'frame_ids': {r: frames[r]['frame_id'] for r in ROBOTS},
+                'images': {r: {'own': frames[r]['own_rgb'], 'top': frames[r]['shared_top_rgb']} for r in ROBOTS}, 'decisions': checks})
+            result['approach_ok'] &= all(d['ok'] and d.get('stationary_ready', d['ready']) and d.get('precision', 'fine') == 'fine'
+                                         for stages in checks.values() for d in stages.values())
+            scene.stop_dwell()
+    result['approach_elapsed_sim_s'] = scene.time() - approach_start
+    result['approach_end_state'] = scene.evaluation_snapshot()
+    return result
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--grasp-model-dir', type=Path, required=True)
@@ -107,77 +186,12 @@ def main():
         report['straight_model_sha256'] = {r: straight_skill['models'][r]['sha256'] for r in ROBOTS}
     try:
         import mujoco
-        from harness.camera_varied_start_student import predict_stage
-        from harness.camera_approach_student import predict_approach
         from harness.grasp_student_inference import predict_student
         report['environment'] = {'python': sys.version, 'platform': platform.platform(), 'mujoco': mujoco.__version__}
         scene.open(start_poses=starts)
         report['evaluation_initial_state'] = scene.evaluation_snapshot()
-        approach_start = scene.time()
-        phases = PHASES if args.condition == 'visual' else ('forward',)
-        history = {r: [] for r in ROBOTS}
-        for phase_index, stage in enumerate(phases):
-            confirming, confirmations, consecutive, movements = False, 0, 0, 0
-            record = {'phase_index': phase_index, 'stage': stage, 'ok': False, 'confirmations': []}
-            report['stage_results'].append(record)
-            for index in range(LIMITS[stage] + 5):
-                frames = scene.capture(f'phase-{phase_index}-{index:03d}')
-                if args.condition == 'visual':
-                    decisions = {r: predict_stage(stage_models[r][stage], frames[r]['own_bytes'], frames[r]['top_bytes']) for r in ROBOTS}
-                else:
-                    decisions = {}
-                    for r in ROBOTS:
-                        d = predict_approach(straight_models[r], frames[r]['own_bytes'], frames[r]['top_bytes'])
-                        decisions[r] = {**d, 'command': d['forward']}
-                control = choose_stage_actions(decisions, stage, confirming)
-                for rid in ROBOTS:
-                    action = {'kind': 'mecanum', **control['commands'][rid], 'duration_s': control['duration_s']}
-                    report['approach_calls'].append({'phase_index': phase_index, 'stage': stage,
-                        'index': index, 'robot_id': rid, 'frame_id': frames[rid]['frame_id'],
-                        'stationary': confirming, 'images': {'own': frames[rid]['own_rgb'], 'top': frames[rid]['shared_top_rgb']},
-                        'decision': decisions[rid], 'action': action, 'own_command_history': list(history[rid])})
-                    history[rid].append(action)
-                scene.drive_mecanum(control['commands'], control['duration_s'])
-                if not control['valid']:
-                    record['reason'] = 'RGB outside learned stage support'
-                    break
-                if confirming:
-                    confirmations += 1
-                    consecutive = consecutive + 1 if all(control['ready'].values()) else 0
-                    record['confirmations'].append({'frame_ids': {r: frames[r]['frame_id'] for r in ROBOTS},
-                                                   'ready': control['ready'], 'stationary': True})
-                    if consecutive >= 2:
-                        record['ok'] = True
-                        record['reason'] = 'two consecutive fresh stationary RGB confirmations'
-                        break
-                    if confirmations >= 4:
-                        record['reason'] = 'stationary RGB confirmation budget exhausted'
-                        break
-                elif control['enter_confirmation']:
-                    confirming = True
-                else:
-                    movements += 1
-                    if movements >= LIMITS[stage]:
-                        scene.stop_dwell()
-                        record['reason'] = 'bounded phase movement budget exhausted'
-                        break
-            record['movement_slices'] = movements
-            if not record['ok']:
-                break
-        report['approach_ok'] = len(report['stage_results']) == len(phases) and all(s['ok'] for s in report['stage_results'])
-        # Recheck all three axes with stationary images before arm deployment.
-        if report['approach_ok'] and args.condition == 'visual':
-            report['final_alignment_checks'] = []
-            for index in range(2):
-                frames = scene.capture(f'final-alignment-{index}')
-                checks = {r: {s: predict_stage(stage_models[r][s], frames[r]['own_bytes'], frames[r]['top_bytes']) for s in AXES} for r in ROBOTS}
-                report['final_alignment_checks'].append({'frame_ids': {r: frames[r]['frame_id'] for r in ROBOTS},
-                    'images': {r: {'own': frames[r]['own_rgb'], 'top': frames[r]['shared_top_rgb']} for r in ROBOTS}, 'decisions': checks})
-                report['approach_ok'] &= all(d['ok'] and d.get('stationary_ready', d['ready']) and d.get('precision', 'fine') == 'fine'
-                                            for stages in checks.values() for d in stages.values())
-                scene.stop_dwell()
-        report['approach_elapsed_sim_s'] = scene.time() - approach_start
-        report['approach_end_state'] = scene.evaluation_snapshot()
+        report.update(run_approach(scene, stage_models, condition=args.condition,
+                                   straight_models=straight_models))
         if report['approach_ok']:
             report['calls'] = scene.finish_grasp(predict_student, grasp_models)
             scene.grasp_report['source_sha'] = report['source_sha']

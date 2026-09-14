@@ -1,0 +1,61 @@
+{
+  "scope": "Unseen carry command interception delays; actors see RGB and requested own commands, not applied state.",
+  "cases": [
+    {
+      "case_id": "delay-r1-01",
+      "departure_delay_slices": {
+        "r1": 1,
+        "r3": 0
+      }
+    },
+    {
+      "case_id": "delay-r3-01",
+      "departure_delay_slices": {
+        "r1": 0,
+        "r3": 1
+      }
+    },
+    {
+      "case_id": "delay-r1-02",
+      "departure_delay_slices": {
+        "r1": 2,
+        "r3": 0
+      }
+    },
+    {
+      "case_id": "delay-r3-02",
+      "departure_delay_slices": {
+        "r1": 0,
+        "r3": 2
+      }
+    },
+    {
+      "case_id": "delay-r1-03",
+      "departure_delay_slices": {
+        "r1": 3,
+        "r3": 0
+      }
+    },
+    {
+      "case_id": "delay-r3-03",
+      "departure_delay_slices": {
+        "r1": 0,
+        "r3": 3
+      }
+    },
+    {
+      "case_id": "delay-r1-05",
+      "departure_delay_slices": {
+        "r1": 5,
+        "r3": 0
+      }
+    },
+    {
+      "case_id": "delay-r3-05",
+      "departure_delay_slices": {
+        "r1": 0,
+        "r3": 5
+      }
+    }
+  ]
+}

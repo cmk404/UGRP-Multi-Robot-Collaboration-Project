@@ -1,0 +1,36 @@
+{
+  "schema":"ugrp.short_transport.varied_independent_review.v1",
+  "scope":"all 10 result/input-audit/grasp-report files; direct failed first-anchor top+r1-own RGB; selected heldout-01/02 observer frames; referee and observer are evaluation-only",
+  "cohort_root":"/Users/changmin/projects/ugrp/outputs/short-transport-varied-20260913-v1",
+  "source_sha":"1d904c255b9ff551b103e6de98ba22bd7692d86f",
+  "cohort_report":{"path":"cohort-report.json","sha256":"b41f9059a4674a769d15e6cca4948b94e06421626389f4fbee765c6f5ae92e19"},
+  "cases_sha256":"fd273df42b0d129cf56f811e27a5fb19bc3c2c2b68c31c9fc55aff403fc7d15b",
+  "score":{"success":6,"total":10},
+  "runs":[
+    {"case":"heldout-01","approach":{"stages":7,"calls":316,"final_alignment_checks":2,"success":true},"grasp":{"success":true,"hold_s":2.8,"max_lift_m":0.079468},"success":false},
+    {"case":"heldout-02","approach":{"stages":7,"calls":300,"final_alignment_checks":2,"success":true},"grasp":{"success":true,"hold_s":2.8,"max_lift_m":0.078659},"success":true},
+    {"case":"heldout-03","approach":{"stages":7,"calls":324,"final_alignment_checks":2,"success":true},"grasp":{"success":true,"hold_s":2.8,"max_lift_m":0.079799},"success":true},
+    {"case":"heldout-04","approach":{"stages":7,"calls":330,"final_alignment_checks":2,"success":true},"grasp":{"success":true,"hold_s":2.7,"max_lift_m":0.079175},"success":false},
+    {"case":"heldout-05","approach":{"stages":7,"calls":282,"final_alignment_checks":2,"success":true},"grasp":{"success":true,"hold_s":2.8,"max_lift_m":0.079420},"success":false},
+    {"case":"heldout-06","approach":{"stages":7,"calls":258,"final_alignment_checks":2,"success":true},"grasp":{"success":true,"hold_s":2.8,"max_lift_m":0.079642},"success":false},
+    {"case":"heldout-07","approach":{"stages":7,"calls":306,"final_alignment_checks":2,"success":true},"grasp":{"success":true,"hold_s":2.7,"max_lift_m":0.079218},"success":true},
+    {"case":"heldout-08","approach":{"stages":7,"calls":318,"final_alignment_checks":2,"success":true},"grasp":{"success":true,"hold_s":2.8,"max_lift_m":0.079558},"success":true},
+    {"case":"heldout-09","approach":{"stages":7,"calls":280,"final_alignment_checks":2,"success":true},"grasp":{"success":true,"hold_s":2.8,"max_lift_m":0.080169},"success":true},
+    {"case":"heldout-10","approach":{"stages":7,"calls":346,"final_alignment_checks":2,"success":true},"grasp":{"success":true,"hold_s":2.8,"max_lift_m":0.079758},"success":true}
+  ],
+  "failed_first_carry":{
+    "r1_support":{"own_orange_fraction":[0.6649091435185185,0.8380538194444445],"own_orange_y":[0.3991668271343263,0.5383653269264477]},
+    "cases":[
+      {"case":"heldout-01","violations":{"own_orange_fraction":0.6559794560185185},"own":{"path":"heldout-01-visual/rgb/carry-anchor-r1-own.jpg","sha256":"e33ad45d91ccd0bda9030b0a4adfe64ea29078d3543f4620a020a2134649b389"},"top":{"path":"heldout-01-visual/rgb/carry-anchor-top.jpg","sha256":"731300a68345bb49245c54e08b9e32b83a6b6570982c1813c9a67959a24b9867"}},
+      {"case":"heldout-04","violations":{"own_orange_fraction":0.6307349537037037,"own_orange_y":0.3899485106568432},"own":{"path":"heldout-04-visual/rgb/carry-anchor-r1-own.jpg","sha256":"d4e95649fa14936e1c883e4b46fc262063eca50950cef1a0a2603fd041d61a3b"},"top":{"path":"heldout-04-visual/rgb/carry-anchor-top.jpg","sha256":"eca76f8f0f35a37d3b17f31959e9c4b178ea9bde93251fd58d8e60fb42007a9b"}},
+      {"case":"heldout-05","violations":{"own_orange_fraction":0.6570529513888889},"own":{"path":"heldout-05-visual/rgb/carry-anchor-r1-own.jpg","sha256":"055a1da618bad804200752c8a607d54963af8893f6515a827b7aeb35bf53b82e"},"top":{"path":"heldout-05-visual/rgb/carry-anchor-top.jpg","sha256":"2f5d382bf45333dc608d8601d618261e4f092706ce44002bf3eeced2598c8803"}},
+      {"case":"heldout-06","violations":{"own_orange_fraction":0.656412037037037},"own":{"path":"heldout-06-visual/rgb/carry-anchor-r1-own.jpg","sha256":"f0d9517d94b019f46bdbc65d5e02a2eb3f7d8ec643895a8a34a1ce87f758e716"},"top":{"path":"heldout-06-visual/rgb/carry-anchor-top.jpg","sha256":"590ec66e2a913797ea6e50bdd1c55063d238f0ff62be6467be63e07c024a2bfa"}}
+    ]
+  },
+  "observer_videos":{"heldout-01":{"path":"heldout-01-visual/motion.mp4","sha256":"f35690263cbe31aedabe81932e2892b34e9fa20426cdb5bc68e2f50b54739af7"},"heldout-02":{"path":"heldout-02-visual/motion.mp4","sha256":"0c5ff8542b9cbc4f0c916dbdef165bd6563fc0d16be07201eb2f272654d06772"}},
+  "frames":[
+    {"path":"qa/varied-heldout-01-approach-early.png","sha256":"d8941aae58d798d1935d0a3d041a8b3f5f6c32ee0d085a2d06ebf5280e95eb63"},{"path":"qa/varied-heldout-01-approach-late.png","sha256":"f0ad0d1730815d8954b7c989ea705115006de4e5040afeaf4bcfa62ef352fa73"},{"path":"qa/varied-heldout-01-lift.png","sha256":"1d7261678c919195ca58bdf035b928b9ed8b8ae8d2dbbed73d63666d75f895ae"},{"path":"qa/varied-heldout-01-grasp-hold.png","sha256":"fd2c3b0cb346f2c4952ecb8324c127b3e41a9e952954fce016aafa273172b632"},{"path":"qa/varied-heldout-01-first-carry-stop.png","sha256":"1b693de22ac2c260d62eb17d5b2d2cc6d2c8fb5b3b79848095bb1b3aa0a1f5cf"},
+    {"path":"qa/varied-heldout-02-approach-early.png","sha256":"f6ee9dfe34b1d8c90c5b38ff78dcac63536cc10650d1fa2b95ea7bcff8d4bec4"},{"path":"qa/varied-heldout-02-approach-late.png","sha256":"8b44debff62420e56a1ee6204000651cd7865546a6ab70f7289146a4d1604810"},{"path":"qa/varied-heldout-02-lift.png","sha256":"0413fb8170b98ece2148073b89365b02bfe686c0cf33da957fe5e0de1d0408ed"},{"path":"qa/varied-heldout-02-carry.png","sha256":"20c0a732607386e227951e2be0333d664c7eb3b8f7700fa526f55afa66f9cc5d"},{"path":"qa/varied-heldout-02-lower.png","sha256":"8de5433e027b915a18899f0194d34cba733af2f0d76656989f58fd1736a6a4fd"},{"path":"qa/varied-heldout-02-release.png","sha256":"9e56a988d88cfc837addc22e2d558f5c562dbb32251967d84d371804b988d4f2"}
+  ],
+  "interpretation":"all approaches and grasps succeeded; four failures are fail-closed r1 own-camera crop/appearance support exits at the first carry anchor; observer and referee evidence are not student observations"
+}
