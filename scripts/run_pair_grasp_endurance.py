@@ -58,13 +58,13 @@ def evaluate_endurance(rows, report):
         result['success'] &= released
     return result
 
-def run(data,grasp_root,out,mode,duration_s=300,noslip_iterations=0,impratio=10,spacing_integral=0.):
+def run(data,grasp_root,out,mode,duration_s=300,noslip_iterations=0,impratio=10,spacing_integral=0.,finger_friction_damping=0):
     if out.exists():raise FileExistsError(out)
     if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip():raise RuntimeError('commit execution source and protocol first')
-    skill,gm=models(grasp_root,'student-skill.json');scene=EnduranceScene(out,grasp_root,data,impratio=impratio,noslip_iterations=noslip_iterations,spacing_integral=spacing_integral)
+    skill,gm=models(grasp_root,'student-skill.json');scene=EnduranceScene(out,grasp_root,data,impratio=impratio,noslip_iterations=noslip_iterations,spacing_integral=spacing_integral,finger_friction_damping=finger_friction_damping)
     actors={r:EnduranceActor(data,r,mode,integral_gain=spacing_integral) for r in ROBOTS};sync=PairCarrySync(data['map_id']+'-endurance')
     report={'schema':'ugrp.pair_grasp_endurance.v1','source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
-        'spacing_integral':spacing_integral,'map':data,'map_sha256':digest(data),'mode':mode,'duration_s':duration_s,'close_pulse':1600,'impratio':impratio,'noslip_iterations':noslip_iterations,'endurance_trace_version':1,'release_check_required':True,
+        'finger_friction_damping':finger_friction_damping,'spacing_integral':spacing_integral,'map':data,'map_sha256':digest(data),'mode':mode,'duration_s':duration_s,'close_pulse':1600,'impratio':impratio,'noslip_iterations':noslip_iterations,'endurance_trace_version':1,'release_check_required':True,
         'grasp_model_files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(grasp_root.iterdir()) if p.is_file()},
         'environment':{'python':sys.version,'platform':platform.platform()},'steps':[],'error':None,'external_model_calls':0,'cost_usd':0,'scope':'Fixed-start RGB guarded endurance, 180/300s checkpoints from the same trajectory'}
     started=time.monotonic()
@@ -110,6 +110,7 @@ def main():
     p.add_argument('--impratio',type=int,choices=(1,10,100),default=10)
     p.add_argument('--noslip-iterations',type=int,choices=(0,3),default=0)
     p.add_argument('--spacing-integral',type=float,choices=(0.,2.),default=0.)
-    a=p.parse_args();r=run(json.loads(a.map.read_text()),a.grasp_model_dir.resolve(),a.out_dir.resolve(),a.mode,noslip_iterations=a.noslip_iterations,impratio=a.impratio,spacing_integral=a.spacing_integral)
+    p.add_argument('--finger-friction-damping',type=int,choices=(0,3000),default=0)
+    a=p.parse_args();r=run(json.loads(a.map.read_text()),a.grasp_model_dir.resolve(),a.out_dir.resolve(),a.mode,noslip_iterations=a.noslip_iterations,impratio=a.impratio,spacing_integral=a.spacing_integral,finger_friction_damping=a.finger_friction_damping)
     return int(not r['success'])
 if __name__=='__main__':raise SystemExit(main())

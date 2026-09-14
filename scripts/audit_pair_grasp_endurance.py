@@ -57,6 +57,9 @@ def audit(root,models):
  if not _same(evaluated,r['evaluation']):raise ValueError('output-only verdict mismatch')
  if r['success']!=bool(not r['error'] and not r.get('cleanup_error') and evaluated['success']):raise ValueError('false success')
  if hashlib.sha256(_safe_file(root,'scene.xml').read_bytes()).hexdigest()!=r['scene_xml_sha256']:raise ValueError('scene hash mismatch')
+ if r.get('finger_friction_damping',0):
+  pairs=r['invariants_initial']['explicit_contact_pairs']
+  if pairs['pair_solreffriction'] != [[0.,-r['finger_friction_damping']]]*4:raise ValueError('finger friction profile mismatch')
  if r['invariants_initial']['contact_solver']['impratio']!=r['impratio']:raise ValueError('impedance declaration mismatch')
  if r['invariants_initial']['contact_solver']['noslip_iterations']!=r['noslip_iterations']:raise ValueError('solver declaration mismatch')
  return {'passed':True,'source_sha':r['source_sha'],'spacing_rounds':len(r['spacing_steps']),'endurance_rounds':len(r['steps']),'grasp':grasp,'physical_success':r['success'],'scope':'Exact saved RGB/command replay and output-only scoring; not a physical rerun'}

@@ -25,3 +25,7 @@ NoSlip 후보 863bbae는 두 모드 모두 초기 24.5 SIM초에 영상 간격 �
 impratio100 / 기존 RGB PD 후보 fd68a2c도 양쪽 모드 출발 전 실패했다. 초기 접촉은 유지했으나 간격은 2.776cm 줄었고 영상 안정화도 만족하지 못했다. 동일 PD에서 더 강한 접촉 조건은 잔류 위치 오차를 남겼다.
 
 그 다음 후보는 impratio100 / NoSlip0을 유지하고 RGB 위치 오차의 누적 보정만 추가한다. integral gain2, world 축별 보정 기여 ±0.08m/s 제한, 기존 최종 포트 속도 제한/복구 범위/정지 조건은 유지한다. 영상 실패 이후 적분하지 않는다. 파지 hold와 endurance의 자기 RGB+공용 RGB 위치 오차에서만 계산한다. 기본 gain0과 명시적 --spacing-integral 2를 기록하고 저장 영상으로 재현한다. 물리 파라미터와 제어 보정을 함께 바꾼 최종 후보가 되므로 최종 효과를 어느 한 변경 단독 효과로 주장하지 않는다.
+
+RGB 적분 보정 후보 ff2d423도 출발 전 실패했다. 최대 간격 변화 2.752cm로 개선이 미미하고 최종 횡방향 명령이 ±0.1m/s에 포화됐다. 이 후보도 채택하지 않는다.
+
+다음은 baseline의 impratio10/NoSlip0/integral0으로 복귀하고 네 손가락–빔 접촉만 명시적 pair로 기술한다. 모델의 geom defaults를 정적으로 컴파일해 기존 동적 혼합 규칙의 normal solref/solimp/condim/friction/margin/gap을 그대로 복사한다. 유일한 접촉법칙 변경은 elliptic cone의 solreffriction을 0 -3000으로 지정해 마찰 방향 속도 감쇠를 높이는 것이다. 바퀴/바닥/관절/형상/질량/마찰계수/정상 방향 접촉법칙과 모든 제어기는 baseline과 같다. [MuJoCo pair solreffriction](https://mujoco.readthedocs.io/en/stable/XMLreference.html#contact-pair-solreffriction) 및 [friction solver](https://mujoco.readthedocs.io/en/stable/modeling.html#friction) 정의를 따른다. 부착 제약이나 adhesion은 추가하지 않는다. 접촉이 사라지면 마찰도 사라지는 일반 접촉이며, fixed place 후 완전 분리를 확인한다.

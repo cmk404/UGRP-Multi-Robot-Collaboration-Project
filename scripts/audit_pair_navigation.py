@@ -22,6 +22,9 @@ def audit(run_dir, grasp_dir=None):
         raise ValueError('map/schema mismatch')
     if 'noslip_iterations' in report and report['invariants_initial']['contact_solver']['noslip_iterations'] != report['noslip_iterations']:
         raise ValueError('declared NoSlip profile mismatch')
+    if report.get('finger_friction_damping',0):
+     pairs=report['invariants_initial']['explicit_contact_pairs']
+     if pairs['pair_solreffriction'] != [[0.,-report['finger_friction_damping']]]*4:raise ValueError('finger friction profile mismatch')
     import hashlib
     if hashlib.sha256((ROOT/'harness/assets/pair_navigation/manifest.json').read_bytes()).hexdigest() != report['appearance_manifest_sha256']:
         raise ValueError('appearance model manifest mismatch')

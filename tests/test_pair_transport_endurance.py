@@ -83,3 +83,26 @@ def test_integral_resists_persistent_rgb_error_but_stays_bounded_and_stops(monke
     result=a.decide(b'',b'')
     assert not result['ready'] and all(result['action'][k]==0 for k in ('forward','left','turn'))
     assert np.array_equal(saved,a.integral_effort)
+
+def test_finger_profile_changes_friction_reference_only():
+    import xml.etree.ElementTree as ET
+    import mujoco,numpy as np
+    from scripts.pair_finger_contact_profile import configure_finger_contacts
+    root=ET.fromstring('<mujoco><option cone="elliptic"/><worldbody><body><freejoint/><geom name="team_beam_geom" type="box" size=".1 .1 .1" friction="1.2 .02 .002" solref=".008 1" solimp=".92 .98 .002"/></body></worldbody></mujoco>')
+    world=root.find('worldbody')
+    for i,rid in enumerate(('r1','r3')):
+        for j,side in enumerate(('left','right')):
+            ET.SubElement(world,'geom',name=rid+'__'+side+'_finger',type='box',size='.05 .05 .05',pos=f'{.14 if i else -.14} {.05 if j else -.05} 0',friction='3.4 .03 .002',solref='.006 1',solimp='.9 .97 .002')
+    before=mujoco.MjModel.from_xml_string(ET.tostring(root,encoding='unicode'));bd=mujoco.MjData(before);mujoco.mj_forward(before,bd)
+    configure_finger_contacts(root,3000)
+    after=mujoco.MjModel.from_xml_string(ET.tostring(root,encoding='unicode'));ad=mujoco.MjData(after);mujoco.mj_forward(after,ad)
+    def contacts(model,data):
+        return {tuple(sorted((model.geom(int(c.geom1)).name,model.geom(int(c.geom2)).name))):c for c in data.contact[:data.ncon]}
+    old,new=contacts(before,bd),contacts(after,ad)
+    assert set(old)==set(new) and len(old)==4
+    for key in old:
+        for field in ('solref','solimp','friction','dist','includemargin','dim'):
+            assert np.allclose(getattr(old[key],field),getattr(new[key],field))
+        assert np.array_equal(new[key].solreffriction,[0,-3000])
+    for field in ('geom_size','geom_pos','geom_friction','geom_solref','geom_solimp','body_mass','body_inertia'):
+        assert np.array_equal(getattr(before,field),getattr(after,field))
