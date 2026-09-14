@@ -1,0 +1,62 @@
+{
+  "paths_relative_to_local_directory": "/Users/changmin/projects/ugrp-worktrees/pair-loaded-navigation/outputs/pair-navigation/review",
+  "record": {
+    "note": "4x raw source playback, no interpolation or generated motion. Actor cameras were not changed. Source SIM timestamps are in the original label; raw video duration is not identical to simulation duration.",
+    "segments": [
+      {
+        "case": "final-left-v2",
+        "source": "../final-left-v2/motion.mp4",
+        "output_start_s": 0.0,
+        "output_end_s": 14.75,
+        "source_fps": 4,
+        "review_fps": 16,
+        "crop": {
+          "x": 0,
+          "y": 280,
+          "width": 960,
+          "height": 410
+        },
+        "preserved_top_label_rows": [
+          0,
+          40
+        ]
+      },
+      {
+        "case": "final-right-v2",
+        "source": "../final-right-v2/motion.mp4",
+        "output_start_s": 14.75,
+        "output_end_s": 29.5,
+        "source_fps": 4,
+        "review_fps": 16,
+        "crop": {
+          "x": 0,
+          "y": 280,
+          "width": 960,
+          "height": 410
+        },
+        "preserved_top_label_rows": [
+          0,
+          40
+        ]
+      },
+      {
+        "case": "final-wall-v2",
+        "source": "../final-wall-v2/motion.mp4",
+        "output_start_s": 29.5,
+        "output_end_s": 60.5625,
+        "source_fps": 4,
+        "review_fps": 16,
+        "crop": {
+          "x": 0,
+          "y": 280,
+          "width": 960,
+          "height": 410
+        },
+        "preserved_top_label_rows": [
+          0,
+          40
+        ]
+      }
+    ]
+  }
+}
