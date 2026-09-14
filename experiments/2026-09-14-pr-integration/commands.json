@@ -1,0 +1,364 @@
+[
+  {
+    "argv": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/experiments/2026-09-13-pair-carry-sync/restore_evidence.py",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/restored"
+    ],
+    "exit_code": 0,
+    "name": "restore",
+    "wall_s": 1.1687922499986598
+  },
+  {
+    "argv": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/experiments/2026-09-13-pair-carry-sync/audit_restored.py",
+      "--evidence-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/restored",
+      "--grasp-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/models/grasp",
+      "--out",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/saved-audit.json"
+    ],
+    "exit_code": 0,
+    "name": "saved-audit",
+    "wall_s": 48.36056791699957
+  },
+  {
+    "argv": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+      "-m",
+      "scripts.run_camera_approach_student",
+      "--grasp-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/models/grasp",
+      "--approach-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/models/straight",
+      "--condition",
+      "visual",
+      "--distance",
+      ".2062",
+      ".2062",
+      "--out-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/straight-heldout-01"
+    ],
+    "exit_code": 0,
+    "name": "straight-heldout-01",
+    "wall_s": 15.99290183300036
+  },
+  {
+    "argv": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python",
+      "-m",
+      "scripts.audit_camera_approach_student",
+      "--run-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/straight-heldout-01",
+      "--grasp-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/models/grasp",
+      "--approach-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/models/straight",
+      "--out",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/straight-heldout-01-audit.json"
+    ],
+    "exit_code": 0,
+    "name": "straight-heldout-01-audit",
+    "wall_s": 1.1090916249959264
+  },
+  {
+    "argv": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+      "-m",
+      "scripts.run_camera_varied_start_student",
+      "--grasp-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/models/grasp",
+      "--stage-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/models/varied",
+      "--straight-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/models/straight",
+      "--condition",
+      "visual",
+      "--case-json",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/varied-case.json",
+      "--out-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/varied-heldout-01"
+    ],
+    "exit_code": 0,
+    "name": "varied-heldout-01",
+    "wall_s": 40.30085129199142
+  },
+  {
+    "argv": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python",
+      "-m",
+      "scripts.audit_camera_varied_start_student",
+      "--run-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/varied-heldout-01",
+      "--grasp-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/models/grasp",
+      "--stage-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/models/varied",
+      "--straight-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/models/straight",
+      "--out",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/varied-heldout-01-audit.json"
+    ],
+    "exit_code": 0,
+    "name": "varied-heldout-01-audit",
+    "wall_s": 8.70697004100657
+  },
+  {
+    "argv": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+      "-m",
+      "scripts.run_pair_carry_sync",
+      "--grasp-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/models/grasp",
+      "--transport-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/experiments/2026-09-13-rgb-short-transport/models",
+      "--case-json",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/fixed-01.json",
+      "--condition",
+      "sync",
+      "--out-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/fixed-01-sync"
+    ],
+    "exit_code": 0,
+    "name": "fixed-01-sync",
+    "wall_s": 10.66416308299813
+  },
+  {
+    "argv": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python",
+      "-m",
+      "scripts.audit_pair_carry_sync",
+      "--run-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/fixed-01-sync",
+      "--grasp-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/models/grasp",
+      "--transport-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/experiments/2026-09-13-rgb-short-transport/models",
+      "--out",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/fixed-01-sync-audit.json"
+    ],
+    "exit_code": 0,
+    "name": "fixed-01-sync-audit",
+    "wall_s": 0.937084874996799
+  },
+  {
+    "argv": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+      "-m",
+      "scripts.run_pair_carry_sync",
+      "--grasp-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/models/grasp",
+      "--transport-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/experiments/2026-09-13-rgb-short-transport/models",
+      "--case-json",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/departure-r1-100.json",
+      "--condition",
+      "baseline",
+      "--out-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/departure-r1-100-baseline"
+    ],
+    "exit_code": 0,
+    "name": "departure-r1-100-baseline",
+    "wall_s": 9.073173416996724
+  },
+  {
+    "argv": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python",
+      "-m",
+      "scripts.audit_pair_carry_sync",
+      "--run-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/departure-r1-100-baseline",
+      "--grasp-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/models/grasp",
+      "--transport-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/experiments/2026-09-13-rgb-short-transport/models",
+      "--out",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/departure-r1-100-baseline-audit.json"
+    ],
+    "exit_code": 0,
+    "name": "departure-r1-100-baseline-audit",
+    "wall_s": 0.9356291250005597
+  },
+  {
+    "argv": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+      "-m",
+      "scripts.run_pair_carry_sync",
+      "--grasp-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/models/grasp",
+      "--transport-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/experiments/2026-09-13-rgb-short-transport/models",
+      "--case-json",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/departure-r1-100.json",
+      "--condition",
+      "sync",
+      "--out-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/departure-r1-100-sync"
+    ],
+    "exit_code": 0,
+    "name": "departure-r1-100-sync",
+    "wall_s": 13.164436749997549
+  },
+  {
+    "argv": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python",
+      "-m",
+      "scripts.audit_pair_carry_sync",
+      "--run-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/departure-r1-100-sync",
+      "--grasp-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/models/grasp",
+      "--transport-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/experiments/2026-09-13-rgb-short-transport/models",
+      "--out",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/departure-r1-100-sync-audit.json"
+    ],
+    "exit_code": 0,
+    "name": "departure-r1-100-sync-audit",
+    "wall_s": 1.4390713750035502
+  },
+  {
+    "argv": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+      "-m",
+      "scripts.run_pair_carry_sync",
+      "--grasp-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/models/grasp",
+      "--transport-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/experiments/2026-09-13-rgb-short-transport/models",
+      "--case-json",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/midcarry-r3-075.json",
+      "--condition",
+      "sync",
+      "--out-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/midcarry-r3-075-sync"
+    ],
+    "exit_code": 0,
+    "name": "midcarry-r3-075-sync",
+    "wall_s": 13.936695458003669
+  },
+  {
+    "argv": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python",
+      "-m",
+      "scripts.audit_pair_carry_sync",
+      "--run-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/midcarry-r3-075-sync",
+      "--grasp-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/models/grasp",
+      "--transport-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/experiments/2026-09-13-rgb-short-transport/models",
+      "--out",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/midcarry-r3-075-sync-audit.json"
+    ],
+    "exit_code": 0,
+    "name": "midcarry-r3-075-sync-audit",
+    "wall_s": 1.5553607920010109
+  },
+  {
+    "argv": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+      "-m",
+      "scripts.run_pair_carry_sync",
+      "--grasp-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/models/grasp",
+      "--transport-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/experiments/2026-09-13-rgb-short-transport/models",
+      "--case-json",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/report-r3-120.json",
+      "--condition",
+      "sync",
+      "--out-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/report-r3-120-sync"
+    ],
+    "exit_code": 0,
+    "name": "report-r3-120-sync",
+    "wall_s": 11.72444937498949
+  },
+  {
+    "argv": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python",
+      "-m",
+      "scripts.audit_pair_carry_sync",
+      "--run-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/report-r3-120-sync",
+      "--grasp-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/models/grasp",
+      "--transport-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/experiments/2026-09-13-rgb-short-transport/models",
+      "--out",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/report-r3-120-sync-audit.json"
+    ],
+    "exit_code": 0,
+    "name": "report-r3-120-sync-audit",
+    "wall_s": 1.1384038339892868
+  },
+  {
+    "argv": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+      "-m",
+      "scripts.run_known_map_navigation",
+      "--map-file",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/maps/navigation/slalom.json",
+      "--case-json",
+      "{\"case_id\": \"heldout_r1\", \"robot_id\": \"r1\", \"start_xy_m\": [-0.48, -2.5], \"start_yaw_deg\": 12}",
+      "--condition",
+      "map",
+      "--motion-style",
+      "heading",
+      "--max-steps",
+      "400",
+      "--out-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/slalom-heading"
+    ],
+    "exit_code": 0,
+    "name": "slalom-heading",
+    "wall_s": 42.31111866699939
+  },
+  {
+    "argv": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python",
+      "-m",
+      "scripts.audit_known_map_navigation",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/slalom-heading"
+    ],
+    "exit_code": 0,
+    "name": "slalom-heading-audit",
+    "wall_s": 19.434817125002155
+  },
+  {
+    "argv": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+      "-m",
+      "scripts.run_known_map_navigation",
+      "--map-file",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/maps/navigation/narrow.json",
+      "--case-json",
+      "{\"case_id\": \"heldout_r1\", \"robot_id\": \"r1\", \"start_xy_m\": [-0.48, -2.5], \"start_yaw_deg\": 12}",
+      "--condition",
+      "map",
+      "--motion-style",
+      "heading",
+      "--max-steps",
+      "400",
+      "--out-dir",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/narrow-heading"
+    ],
+    "exit_code": 0,
+    "name": "narrow-heading",
+    "wall_s": 1.2989565420139115
+  },
+  {
+    "argv": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python",
+      "-m",
+      "scripts.audit_known_map_navigation",
+      "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/narrow-heading"
+    ],
+    "exit_code": 0,
+    "name": "narrow-heading-audit",
+    "wall_s": 0.22102337500837166
+  }
+]

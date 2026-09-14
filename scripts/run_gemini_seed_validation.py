@@ -12,9 +12,9 @@ def policy_hashes():
             and '__pycache__' not in p.parts}
 
 
-def command(output,seed,reasoning_effort='none',request_timeout=30):
+def command(output,seed,reasoning_effort='none',request_timeout=30,model='gemini-3.8-flash'):
     return [sys.executable,'-m','scripts.evaluate_gemini_team','--output',str(output),
-        '--seed',str(seed),'--robots','1','--seconds','300','--model','gemini-3.8-flash',
+        '--seed',str(seed),'--robots','1','--seconds','300','--model',model,
         '--max-calls','30','--max-input-tokens','120000','--input-request-estimate','6000',
         '--impratio','10','--noslip-iterations','3','--communication','none',
         '--request-timeout',str(request_timeout),'--max-transient-failures','2',
@@ -26,6 +26,7 @@ def main():
     ap.add_argument('--output',type=Path,required=True)
     ap.add_argument('--seeds',type=int,nargs='+',default=[42,43,44,45,46])
     ap.add_argument('--execute',action='store_true')
+    ap.add_argument('--model',default='gemini-3.8-flash',help='Exact model ID exposed by your local proxy')
     ap.add_argument('--reasoning-effort',choices=('none','low','medium','high'),default='none')
     ap.add_argument('--request-timeout',type=float,default=30)
     args=ap.parse_args()
@@ -38,7 +39,7 @@ def main():
            'reasoning_effort':args.reasoning_effort,'request_timeout':args.request_timeout} for s in args.seeds]
     manifest={'purpose':'fixed single-robot seed cohort, no within-cohort tuning or retries',
       'seeds':args.seeds,'robots':1,'max_calls':30,'max_input_tokens':120000,'seconds':300,
-      'model':'gemini-3.8-flash','reasoning_effort':args.reasoning_effort,
+      'model':args.model,'reasoning_effort':args.reasoning_effort,
       'request_timeout':args.request_timeout,
       'sequential':True,'policy_source':frozen,'runs':runs}
     (args.output/'validation-manifest.json').write_text(json.dumps(manifest,indent=2))
@@ -47,7 +48,7 @@ def main():
             print('POLICY_CHANGED_STOP',flush=True);return 3
         print(json.dumps({'event':'start','seed':run['seed']}),flush=True)
         with (args.output/(run['path']+'.log')).open('x') as log:
-            code=subprocess.run(command(args.output/run['path'],run['seed'],run['reasoning_effort'],run['request_timeout']),stdout=log,stderr=subprocess.STDOUT).returncode
+            code=subprocess.run(command(args.output/run['path'],run['seed'],run['reasoning_effort'],run['request_timeout'],args.model),stdout=log,stderr=subprocess.STDOUT).returncode
         path=args.output/run['path']/'result.json'
         if path.exists():
             r=json.loads(path.read_text());summary={'event':'finished','seed':run['seed'],

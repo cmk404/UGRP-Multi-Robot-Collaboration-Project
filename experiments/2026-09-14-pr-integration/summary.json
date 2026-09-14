@@ -1,0 +1,108 @@
+{
+  "cases": [
+    {
+      "actual": true,
+      "audit_exit": 0,
+      "audit_pass": true,
+      "audit_path": "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/straight-heldout-01-audit.json",
+      "case": "straight-heldout-01",
+      "expected": true,
+      "regression_pass": true,
+      "result_path": "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/straight-heldout-01/result.json",
+      "run_exit": 0
+    },
+    {
+      "actual": true,
+      "audit_exit": 0,
+      "audit_pass": true,
+      "audit_path": "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/varied-heldout-01-audit.json",
+      "case": "varied-heldout-01",
+      "expected": true,
+      "regression_pass": true,
+      "result_path": "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/varied-heldout-01/result.json",
+      "run_exit": 0
+    },
+    {
+      "actual": true,
+      "audit_exit": 0,
+      "audit_pass": true,
+      "audit_path": "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/fixed-01-sync-audit.json",
+      "case": "fixed-01-sync",
+      "expected": true,
+      "regression_pass": true,
+      "result_path": "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/fixed-01-sync/result.json",
+      "run_exit": 0
+    },
+    {
+      "actual": false,
+      "audit_exit": 0,
+      "audit_pass": true,
+      "audit_path": "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/departure-r1-100-baseline-audit.json",
+      "case": "departure-r1-100-baseline",
+      "expected": false,
+      "regression_pass": true,
+      "result_path": "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/departure-r1-100-baseline/result.json",
+      "run_exit": 0
+    },
+    {
+      "actual": true,
+      "audit_exit": 0,
+      "audit_pass": true,
+      "audit_path": "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/departure-r1-100-sync-audit.json",
+      "case": "departure-r1-100-sync",
+      "expected": true,
+      "regression_pass": true,
+      "result_path": "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/departure-r1-100-sync/result.json",
+      "run_exit": 0
+    },
+    {
+      "actual": true,
+      "audit_exit": 0,
+      "audit_pass": true,
+      "audit_path": "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/midcarry-r3-075-sync-audit.json",
+      "case": "midcarry-r3-075-sync",
+      "expected": true,
+      "regression_pass": true,
+      "result_path": "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/midcarry-r3-075-sync/result.json",
+      "run_exit": 0
+    },
+    {
+      "actual": true,
+      "audit_exit": 0,
+      "audit_pass": true,
+      "audit_path": "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/report-r3-120-sync-audit.json",
+      "case": "report-r3-120-sync",
+      "expected": true,
+      "regression_pass": true,
+      "result_path": "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/report-r3-120-sync/result.json",
+      "run_exit": 0
+    },
+    {
+      "actual": "arrived",
+      "audit_exit": 0,
+      "audit_pass": true,
+      "audit_path": "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/slalom-heading-audit.json",
+      "case": "slalom-heading",
+      "expected": "arrived",
+      "regression_pass": true,
+      "result_path": "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/slalom-heading/result.json",
+      "run_exit": 0
+    },
+    {
+      "actual": "no_map_route",
+      "audit_exit": 0,
+      "audit_pass": true,
+      "audit_path": "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/narrow-heading-audit.json",
+      "case": "narrow-heading",
+      "expected": "no_map_route",
+      "regression_pass": true,
+      "result_path": "/Users/changmin/projects/ugrp-worktrees/integrate-reviewed-stack/outputs/integration-review/runtime/narrow-heading/result.json",
+      "run_exit": 0
+    }
+  ],
+  "pass": true,
+  "saved_audits_passed": 55,
+  "saved_physical_successes": 49,
+  "scope": "Nine previously evaluated regression cases; no new generalization cohort or LLM calls.",
+  "source_sha": "4dc01c12c24afbbb183d4618d733ecce7a96f270"
+}

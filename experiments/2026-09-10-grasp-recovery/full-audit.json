@@ -1,0 +1,1027 @@
+{
+  "runs": [
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-pilot-20260910-v1/goal-zero-recovery",
+      "source_sha": "523873613dc3a7aab942baf565cc86fb167dfb34",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076989,
+        "sample_count": 91
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-pilot-20260910-v1/known-failure-5-recovery",
+      "source_sha": "523873613dc3a7aab942baf565cc86fb167dfb34",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076509,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-pilot-20260910-v1/known-failure-6-recovery",
+      "source_sha": "523873613dc3a7aab942baf565cc86fb167dfb34",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076877,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v1/heldout-01-linear",
+      "source_sha": "523873613dc3a7aab942baf565cc86fb167dfb34",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v1/heldout-01-playback",
+      "source_sha": "523873613dc3a7aab942baf565cc86fb167dfb34",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v1/heldout-01-recovery",
+      "source_sha": "523873613dc3a7aab942baf565cc86fb167dfb34",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076709,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v1/heldout-02-linear",
+      "source_sha": "523873613dc3a7aab942baf565cc86fb167dfb34",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v1/heldout-02-playback",
+      "source_sha": "523873613dc3a7aab942baf565cc86fb167dfb34",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v1/heldout-02-recovery",
+      "source_sha": "523873613dc3a7aab942baf565cc86fb167dfb34",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.075686,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v1/heldout-03-linear",
+      "source_sha": "523873613dc3a7aab942baf565cc86fb167dfb34",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v1/heldout-03-recovery",
+      "source_sha": "523873613dc3a7aab942baf565cc86fb167dfb34",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.077226,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-01-linear",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-01-playback",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-01-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076709,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-02-linear",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-02-playback",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-02-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.075686,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-03-linear",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-03-playback",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-03-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.077226,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-04-linear",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-04-playback",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-04-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076456,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-05-linear",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-05-playback",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-05-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076673,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-06-linear",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-06-playback",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-06-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.077129,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-07-linear",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-07-playback",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-07-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076868,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-08-linear",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-08-playback",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-08-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076492,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-09-linear",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.07837,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-09-playback",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.07653,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-09-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076923,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-10-linear",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.075236,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-10-playback",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076364,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-10-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076469,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-11-linear",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.077621,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-11-playback",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.078191,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-11-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.077017,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-12-linear",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-12-playback",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-12-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.07669,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-13-linear",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.077953,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-13-playback",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.075554,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-13-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076855,
+        "sample_count": 98
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-14-linear",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.082207,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-14-playback",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076088,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-14-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076062,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-15-linear",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.074064,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-15-playback",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 1.7,
+        "max_lift_m": 0.077824,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-15-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076064,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-16-linear",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.078036,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-16-playback",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.07851,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-16-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.07686,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-17-linear",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": -4.9e-05,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-17-playback",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": 0.046084,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-17-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.077118,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-18-linear",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": 0.043571,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-18-playback",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.077666,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-18-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076688,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-19-linear",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": 0.041091,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-19-playback",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.077855,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-19-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076415,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-20-linear",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": 0.044439,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-20-playback",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": false,
+        "longest_qualifying_duration_s": 0.0,
+        "max_lift_m": 0.067156,
+        "sample_count": 106
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-validation-20260910-v2/heldout-20-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076423,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-retention-20260910-v1/previous-corner-1-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076809,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-retention-20260910-v1/previous-corner-2-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.07698,
+        "sample_count": 93
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-retention-20260910-v1/previous-corner-3-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076824,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-retention-20260910-v1/previous-corner-4-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.077074,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-retention-20260910-v1/previous-corner-5-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076509,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-retention-20260910-v1/previous-corner-6-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076877,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-retention-20260910-v1/previous-corner-7-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076174,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-retention-20260910-v1/previous-corner-8-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.077112,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-retention-20260910-v1/previous-elbow-minus37-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.077166,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-retention-20260910-v1/previous-elbow-plus37-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076823,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-retention-20260910-v1/previous-shoulder-minus37-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076962,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-retention-20260910-v1/previous-shoulder-plus7-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076572,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-retention-20260910-v1/previous-wrist-minus37-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.07698,
+        "sample_count": 100
+      },
+      "exact_rgb_action_replay": true
+    },
+    {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-retention-20260910-v1/previous-wrist-plus37-recovery",
+      "source_sha": "9d5872c35b2e4f5d7ddda1e54e9f2db09e2d8000",
+      "calls": 32,
+      "evaluation": {
+        "grasp_success": true,
+        "longest_qualifying_duration_s": 2.2,
+        "max_lift_m": 0.076536,
+        "sample_count": 90
+      },
+      "exact_rgb_action_replay": true
+    }
+  ],
+  "run_count": 85,
+  "exact_decision_count": 2720,
+  "opencv_pairing_comparisons_match_prior_pillow_results": 40
+}

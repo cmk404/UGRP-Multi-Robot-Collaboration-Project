@@ -1,0 +1,86 @@
+{
+  "feature_names": [
+    "top_payload_x",
+    "top_payload_y",
+    "top_payload_area",
+    "top_own_x",
+    "top_own_y",
+    "own_orange_fraction",
+    "own_orange_y"
+  ],
+  "feature_support": {
+    "own_orange_fraction": [
+      0.6682251157407408,
+      0.8373492476851851
+    ],
+    "own_orange_y": [
+      0.40096105921161573,
+      0.5385897427737414
+    ],
+    "top_own_x": [
+      0.49113188490848475,
+      0.5892090931255811
+    ],
+    "top_own_y": [
+      0.36438066893424037,
+      0.3873366013071896
+    ],
+    "top_payload_area": [
+      -0.003541666666666667,
+      0.006993634259259259
+    ],
+    "top_payload_x": [
+      0.49479869842529295,
+      0.5858953094482422
+    ],
+    "top_payload_y": [
+      0.4936110687255859,
+      0.5070832909478081
+    ]
+  },
+  "held_feature_scale": [
+    0.0650690078735352,
+    0.005,
+    0.005,
+    0.07005514872649743,
+    0.01295593237294923,
+    0.12080295138888886,
+    0.0983062025443755
+  ],
+  "held_negative_center": [
+    0.5686631414625379,
+    0.49930552023428465,
+    0.0019750675154320985,
+    0.5710577202586037,
+    0.37532076860455615,
+    0.40922140239197535,
+    0.3995994629823792
+  ],
+  "held_own_orange_min": 0.6423857060185185,
+  "held_positive_center": [
+    0.5343255384468737,
+    0.49945054230866576,
+    0.0016519177597736625,
+    0.5342260910877181,
+    0.37515637089092735,
+    0.7806677597736625,
+    0.4861168755705946
+  ],
+  "limitations": "fixed demonstrated camera/appearance domain; held is an RGB estimate, not bilateral-contact proof",
+  "progress_coefficients": [
+    0.0027317802218315887,
+    2.6803557754265492,
+    0.6564901799714067
+  ],
+  "ready_progress_m": 0.19,
+  "ready_threshold_source": "fixed_0.19m_for_0.20m_task_to_allow_coast",
+  "regression_names": [
+    "bias",
+    "payload_dx",
+    "own_robot_dx"
+  ],
+  "robot_id": "r3",
+  "schema": "ugrp.camera_short_transport_model.v1",
+  "slow_progress_m": 0.17,
+  "target_distance_m": 0.2
+}

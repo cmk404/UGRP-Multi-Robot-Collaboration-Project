@@ -1,0 +1,43 @@
+{
+  "scope": "Representative motion and camera-input visual inspection; not exhaustive frame review of all46 trials. Referee fields establish sampled contact/lift/weld separately.",
+  "root_review": [
+    {
+      "path": "qa/varied-heldout-02-carry.png",
+      "sha256": "20c0a732607386e227951e2be0333d664c7eb3b8f7700fa526f55afa66f9cc5d"
+    },
+    {
+      "path": "qa/varied-heldout-02-release.png",
+      "sha256": "9e56a988d88cfc837addc22e2d558f5c562dbb32251967d84d371804b988d4f2"
+    },
+    {
+      "path": "qa/varied-heldout-01-first-carry-stop.png",
+      "sha256": "1b693de22ac2c260d62eb17d5b2d2cc6d2c8fb5b3b79848095bb1b3aa0a1f5cf"
+    },
+    {
+      "path": "qa/delay-r1-03-visual-observer-final.png",
+      "sha256": "3f949006d7f6007cdb039dfde21a7714fbd4aa73c3010266308332516d9c796f"
+    },
+    {
+      "path": "qa/fixed-development-qa-68.jpg",
+      "sha256": "f4852afc6f297da6643525ef431318e0be6cac82f3f25aaf0d5edb2acb499a1b"
+    },
+    {
+      "path": "qa/fixed-development-qa-80.jpg",
+      "sha256": "65a9fe780d757090876150eeee1f7d19e4f59762deadccb67e777c4420be317a"
+    },
+    {
+      "path": "qa/fixed-development-qa-99.jpg",
+      "sha256": "d1bceb56bfddc3ec8cbb8d0d0d5e73fbd2d757e6fc239c05ebe2b88aaf455094"
+    }
+  ],
+  "findings": [
+    "Varied02 observer shows elevated carry followed by lowered beam and arm retraction.",
+    "Varied01 stops while beam is held, before any carry; no placement is attempted.",
+    "Delay r1 .6s final observer shows skewed formation with beam elevated, matching sampled referee diagnostics.",
+    "Fixed development carry/lower/release frames were inspected earlier in this task."
+  ],
+  "independent_reviews": [
+    "qa/delay-cohort-independent-review.json",
+    "qa/varied-cohort-independent-review.json"
+  ]
+}

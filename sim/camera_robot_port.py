@@ -8,10 +8,17 @@ import math
 from collections.abc import Mapping
 from typing import Any
 
+# Keep this capability boundary importable without the simulation runtime.
+# ABAB mixing matches masterpi_dynamics_v2's reduced mecanum wrench basis.
+_FORWARD_PATTERN = (1., 1., 1., 1.)
+_LEFT_PATTERN = (-1., 1., 1., -1.)
+_YAW_LEFT_PATTERN = (-1., 1., -1., 1.)
+
 
 _STOP = (0.0, 0.0, 0.0, 0.0)
 _ACTION_FIELDS = {
     "drive": frozenset({"kind", "forward", "turn", "duration_s"}),
+    "mecanum": frozenset({"kind", "forward", "left", "turn", "duration_s"}),
     "look": frozenset({"kind", "pan_pulse"}),
     "arm": frozenset({"kind", "servo_id", "pulse"}),
     "wait": frozenset({"kind"}),
@@ -34,10 +41,12 @@ class CameraRobotPort:
     while awaiting :meth:`capture`.
     """
 
-    def __init__(self, world: Any, rid: str, *, allow_reverse: bool = False):
+    def __init__(self, world: Any, rid: str, *, allow_reverse: bool = False,
+                 allow_mecanum: bool = False):
         self._world = world
         self.robot_id = str(rid)
         self._allow_reverse = bool(allow_reverse)
+        self._allow_mecanum = bool(allow_mecanum)
         self._robot = world.robot(rid)
         self._frame_id = 0
         self._motor_commands = _STOP
@@ -101,6 +110,18 @@ class CameraRobotPort:
                 forward + turn,
             )
             self._set_motors(command)
+            self._drive_expires_at = now + duration
+            self._busy_until = self._drive_expires_at
+        elif kind == "mecanum":
+            if not self._allow_mecanum:
+                raise ValueError("mecanum action requires allow_mecanum=True")
+            forward = _bounded_number("forward", action["forward"], -0.05 if self._allow_reverse else 0.0, 0.15)
+            left = _bounded_number("left", action["left"], -0.10, 0.10)
+            turn = _bounded_number("turn", action["turn"], -0.15, 0.15)
+            duration = _bounded_number("duration_s", action["duration_s"], 0.0, 1.0)
+            mixed = tuple(f * forward + l * left + t * turn for f, l, t in
+                          zip(_FORWARD_PATTERN, _LEFT_PATTERN, _YAW_LEFT_PATTERN))
+            self._set_motors(tuple(float(value) for value in mixed))
             self._drive_expires_at = now + duration
             self._busy_until = self._drive_expires_at
         elif kind == "look":

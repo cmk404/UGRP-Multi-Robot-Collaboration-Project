@@ -1,0 +1,51 @@
+{
+  "remote_runs": [
+    {
+      "conclusion": "success",
+      "databaseId": 34754559325,
+      "headSha": "50eb2746b7f4fef2462a9ff32d35ec8f797986d4",
+      "jobs": [
+        {
+          "name": "ubuntu-simulation",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kcm0127-dotcom/ugrp/actions/runs/34754559325/job/103716632387"
+        },
+        {
+          "name": "offline-regressions",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kcm0127-dotcom/ugrp/actions/runs/34754559325/job/103716632443"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/kcm0127-dotcom/ugrp/actions/runs/34754559325"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 34754953715,
+      "headSha": "1d904c255b9ff551b103e6de98ba22bd7692d86f",
+      "jobs": [
+        {
+          "name": "offline-regressions",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kcm0127-dotcom/ugrp/actions/runs/34754953715/job/103717655601"
+        },
+        {
+          "name": "ubuntu-simulation",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kcm0127-dotcom/ugrp/actions/runs/34754953715/job/103717655666"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/kcm0127-dotcom/ugrp/actions/runs/34754953715"
+    }
+  ],
+  "local_latest_source": "1d904c255b9ff551b103e6de98ba22bd7692d86f",
+  "local_regression_result": {
+    "tests_passed": 505,
+    "subtests_passed": 152
+  }
+}

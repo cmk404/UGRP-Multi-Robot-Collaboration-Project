@@ -12,6 +12,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 TEST_PATTERNS = (
     "tests/test_camera_pair*.py",
+    "tests/test_pair_carry*.py",
     "tests/test_camera_action_learning.py",
     "tests/test_camera_local_servo.py",
     "tests/test_camera_visual_observer.py",
@@ -27,8 +28,17 @@ TEST_PATTERNS = (
     "tests/test_camera_pixel_resume.py",
     "tests/test_camera_pixel_jacobian.py",
     "tests/test_camera_teacher_student.py",
+    "tests/test_camera_recovery_student.py",
     "tests/test_audit_camera_grasp_student.py",
     "tests/test_camera_grasp_teacher.py",
+    "tests/test_grasp_recovery_teacher.py",
+    "tests/test_grasp_recovery_cohort.py",
+    "tests/test_camera_approach_student.py",
+    "tests/test_camera_approach_scene.py",
+    "tests/test_audit_camera_approach_student.py",
+    "tests/test_camera_varied_start*.py",
+    "tests/test_camera_short_transport*.py",
+    "tests/test_known_map*.py",
     "tests/test_markerless*.py",
     "tests/test_visual_attachment*.py",
     "tests/test_placement_guidance.py",
@@ -39,6 +49,7 @@ TEST_PATTERNS = (
     "tests/test_navigation_evidence.py",
     "tests/test_navigation_temporal.py",
     "tests/test_ugrp_session.py",
+    "tests/test_seed_validation_model.py",
 )
 
 

@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from harness.camera_teacher_student import predict_correction
+from harness.grasp_student_inference import predict_student as predict_correction
 
 
 def _sha_bytes(value: bytes) -> str:
@@ -66,9 +66,9 @@ def _calls(report: dict[str, Any]) -> list[dict[str, Any]]:
     return rows
 
 
-def audit(run_dir: Path | str, model_dir: Path | str) -> dict[str, Any]:
+def audit(run_dir: Path | str, model_dir: Path | str, *, report_name: str = "result.json") -> dict[str, Any]:
     run_dir, model_dir = Path(run_dir).resolve(), Path(model_dir).resolve()
-    report_path = run_dir / "result.json"
+    report_path = _inside(run_dir, report_name)
     report = json.loads(report_path.read_text())
     config = report.get("config")
     if not isinstance(config, dict):

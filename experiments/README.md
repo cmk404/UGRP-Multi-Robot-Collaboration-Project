@@ -3,6 +3,14 @@
 | ID | 코드 연결 | 범위 | 결과 |
 |---|---|---|---|
 | [2026-09-09-markerless-n7](2026-09-09-markerless-n7/README.md) | [커밋](2026-09-09-markerless-n7/code-version.json), [소스 해시](2026-09-09-markerless-n7/source-manifest.json) | 로봇1대, 표식 없음, Gemini, 시드42~46 | 5/5; 효율 개선 필요 |
+| [2026-09-10-grasp-recovery](2026-09-10-grasp-recovery/report.md) | 보고서의 학습/최종 SHA | RGB 국소 파지 복구 | 새 20/20, 기존 14/14 |
+| [2026-09-10-rgb-short-approach](2026-09-10-rgb-short-approach/report.md) | 보고서의 최종 SHA | 20–30cm 직진 접근 후 파지 | 학생 19/20, 고정 주행 2/20 |
+| [2026-09-10-rgb-varied-start](2026-09-10-rgb-varied-start/README.md) | 보고서의 최종 SHA | 거리·옆 오차·방향 변동 접근 | 새 29/30, 기존 20/20 |
+| [2026-09-13-rgb-short-transport](2026-09-13-rgb-short-transport/README.md) | 보고서의 실행 SHA | 20cm 운반·시연 내려놓기 | 고정 10/10, 다양한 시작 6/10 |
+| [2026-09-13-pair-carry-sync](2026-09-13-pair-carry-sync/README.md) | protocol 및 manifest | 고정 fixture의 운반 지연·보고 누락 | 비교군 20/26, 동기화 26/26 |
+| [2026-09-13-known-map-navigation](2026-09-13-known-map-navigation/README.md) | 보고서의 실행 SHA | 정적 지도·RGB 무부하 주행 | 통행 가능 4/4 도착, 좁은 통로 2/2 거부 |
+| [2026-09-13-heading-map-navigation](2026-09-13-heading-map-navigation/README.md) | 보고서의 실행 SHA | 회전 후 전진과 기존 옆걸음 비교 | 두 방식 모두 4/4 도착·2/2 거부 |
+| [2026-09-14-pr-integration](2026-09-14-pr-integration/README.md) | 통합 검증 기록 | PR 9개 조합의 회귀검사 | 595 tests + 154 subtests, 기록 감사 55/55, 새 실행 9/9 예상 일치 |
 
 새 실험은 별도 ID 폴더에 코드 SHA·실행 환경·설정·성공과 실패 전부·판정 기준·자동/영상 검토 범위·원본 저장 위치와 식별값을 남긴다. 소스가 달라지면 별도 후보로 구분한다. 실험 결과 파일을 추가한 커밋과 실제 실행 코드의 커밋은 다를 수 있다.
 

@@ -86,17 +86,15 @@ PR 양식에 문제, 변경 후 동작, 테스트 결과와 데모 검토 결과
 
 ## 4. 실제 Gemini 운반 실험 — 선택 사항
 
-현재 개발자가 사용하는 연결 구조와 SSH 터널 예시는 **[Gemini 구독 프록시 안내](gemini_subscription_proxy.md)**를 참고한다. 공식 API 키 방식과 구분한다.
+기본 데모와 테스트가 통과한 뒤 **[각자 PC에서 Gemini 로그인 프록시 설치](gemini_subscription_proxy.md)**를 따른다. 각 팀원이 본인 PC에서 서버를 실행하고 본인 Google 계정으로 로그인한다. 개발자 Mac이나 개발자 계정에 연결할 필요가 없다.
 
-기본 데모와 테스트가 통과한 뒤 진행한다. 저장소에는 Gemini **클라이언트만** 있으며 프록시 서버와 계정은 포함하지 않는다. 저장소 관리자에게 사용 가능한 프록시의 **전체 chat completions URL**, 사용 권한·과금 주체, 지원 모델 이름을 확인한다. 프록시는 이미지 입력, OpenAI 형식의 `messages`, `reasoning_effort`와 토큰 사용량 응답을 지원해야 한다. 현재 재현 실행기는 `gemini-3.8-flash` 모델 이름을 요청한다.
+위 안내의 설치·로그인·모델 목록·실제 짧은 응답 확인을 완료하고 로컬 프록시를 실행한 상태에서 진행한다. 아래 명령은 CLIProxyAPI의 `gemini-3.8-flash-high`를 명시하므로 본인 계정에서 해당 이름으로 응답할 수 있어야 한다. 기존 기본값 `gemini-3.8-flash`와 구분해 실험 manifest에 기록한다. 지원되지 않으면 기존 비교 실험을 그대로 실행할 수 없으며, 기본 데모·테스트·PR 작업은 계속할 수 있다.
 
-클라이언트는 현재 Authorization 헤더 설정을 지원하지 않는다. Bearer 인증이 필수인 엔드포인트는 URL 설정만으로 사용할 수 없다. 관리자가 승인한 호환 서비스가 준비되지 않았다면 이 단계는 실행할 수 없지만, 기본 데모·테스트·PR 작업은 가능하다. 계정 정보나 토큰을 URL, 저장소, PR에 넣지 않는다.
-
-아래 주소는 예시이므로 제공받은 전체 URL로 바꾼다. `127.0.0.1`은 이 Ubuntu 자신을 뜻한다.
+`127.0.0.1`은 이 Ubuntu 자신을 뜻한다. UGRP 저장소 루트의 터미널에서:
 
 ```bash
 export MUJOCO_GL=osmesa
-export GEMINI_PROXY_URL='http://YOUR-PROXY-HOST:PORT/v1/chat/completions'
+export GEMINI_PROXY_URL='http://127.0.0.1:8391/v1/chat/completions'
 ffmpeg -hide_banner -encoders | grep libx264
 ```
 
@@ -106,6 +104,7 @@ ffmpeg -hide_banner -encoders | grep libx264
 .venv-dev/bin/python scripts/ugrp_session.py run gemini-trial -- \
   .venv-dev/bin/python -m scripts.run_gemini_seed_validation \
   --execute --output outputs/gemini-trial-01 --seeds 45 \
+  --model gemini-3.8-flash-high \
   --reasoning-effort medium --request-timeout 60
 ```
 
@@ -129,7 +128,7 @@ ffmpeg -hide_banner -encoders | grep libx264
 | `DISPLAY`, GLFW, OpenGL 오류 | 실행하는 터미널에서 `export MUJOCO_GL=osmesa`를 다시 실행하고 `libosmesa6` 설치 확인 |
 | `FileExistsError` 또는 출력 폴더가 이미 존재 | 기존 결과를 지우지 말고 새 출력 이름 사용 |
 | `ffmpeg`가 없거나 `libx264` 오류 | `sudo apt install ffmpeg`와 위 인코더 검사. 무료 GIF 데모에는 ffmpeg가 필요 없음 |
-| 모델 연결 거부·401·모델 없음 | Ubuntu에서 접근 가능한 URL과 서비스 권한·모델 별칭 확인. 기본 데모와는 별도 문제 |
+| 모델 연결 거부·401·모델 없음 | 본인 PC의 프록시 실행·로그인 상태와 지원 모델 확인. 기본 데모와는 별도 문제 |
 | `fcntl` 없음, `.venv-dev/bin/python` 없음 | Windows Python이 아닌 Ubuntu 터미널인지, 저장소 루트에서 환경을 만들었는지 확인 |
 
 문제를 공유할 때 OS, Python 버전, `git rev-parse HEAD`, 실행 명령과 오류를 첨부한다. 인증정보는 제외한다.

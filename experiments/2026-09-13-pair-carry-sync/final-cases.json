@@ -1,0 +1,192 @@
+{
+  "cases": [
+    {
+      "case_id": "fixed-01",
+      "group": "fixed"
+    },
+    {
+      "case_id": "fixed-02",
+      "group": "fixed"
+    },
+    {
+      "case_id": "fixed-03",
+      "group": "fixed"
+    },
+    {
+      "case_id": "fixed-04",
+      "group": "fixed"
+    },
+    {
+      "case_id": "fixed-05",
+      "group": "fixed"
+    },
+    {
+      "case_id": "fixed-06",
+      "group": "fixed"
+    },
+    {
+      "case_id": "fixed-07",
+      "group": "fixed"
+    },
+    {
+      "case_id": "fixed-08",
+      "group": "fixed"
+    },
+    {
+      "case_id": "fixed-09",
+      "group": "fixed"
+    },
+    {
+      "case_id": "fixed-10",
+      "group": "fixed"
+    },
+    {
+      "case_id": "departure-r1-020",
+      "group": "departure",
+      "actuation_fault": {
+        "robot_id": "r1",
+        "start_s": 0.0,
+        "duration_s": 0.2
+      }
+    },
+    {
+      "case_id": "departure-r1-040",
+      "group": "departure",
+      "actuation_fault": {
+        "robot_id": "r1",
+        "start_s": 0.0,
+        "duration_s": 0.4
+      }
+    },
+    {
+      "case_id": "departure-r1-060",
+      "group": "departure",
+      "actuation_fault": {
+        "robot_id": "r1",
+        "start_s": 0.0,
+        "duration_s": 0.6
+      }
+    },
+    {
+      "case_id": "departure-r1-100",
+      "group": "departure",
+      "actuation_fault": {
+        "robot_id": "r1",
+        "start_s": 0.0,
+        "duration_s": 1.0
+      }
+    },
+    {
+      "case_id": "midcarry-r1-035",
+      "group": "midcarry",
+      "actuation_fault": {
+        "robot_id": "r1",
+        "start_s": 0.8,
+        "duration_s": 0.35
+      }
+    },
+    {
+      "case_id": "midcarry-r1-075",
+      "group": "midcarry",
+      "actuation_fault": {
+        "robot_id": "r1",
+        "start_s": 0.8,
+        "duration_s": 0.75
+      }
+    },
+    {
+      "case_id": "report-r1-000",
+      "group": "report",
+      "report_blackout": {
+        "robot_id": "r1",
+        "start_s": 0.0,
+        "duration_s": 1.0
+      }
+    },
+    {
+      "case_id": "report-r1-120",
+      "group": "report",
+      "report_blackout": {
+        "robot_id": "r1",
+        "start_s": 1.2,
+        "duration_s": 1.0
+      }
+    },
+    {
+      "case_id": "departure-r3-020",
+      "group": "departure",
+      "actuation_fault": {
+        "robot_id": "r3",
+        "start_s": 0.0,
+        "duration_s": 0.2
+      }
+    },
+    {
+      "case_id": "departure-r3-040",
+      "group": "departure",
+      "actuation_fault": {
+        "robot_id": "r3",
+        "start_s": 0.0,
+        "duration_s": 0.4
+      }
+    },
+    {
+      "case_id": "departure-r3-060",
+      "group": "departure",
+      "actuation_fault": {
+        "robot_id": "r3",
+        "start_s": 0.0,
+        "duration_s": 0.6
+      }
+    },
+    {
+      "case_id": "departure-r3-100",
+      "group": "departure",
+      "actuation_fault": {
+        "robot_id": "r3",
+        "start_s": 0.0,
+        "duration_s": 1.0
+      }
+    },
+    {
+      "case_id": "midcarry-r3-035",
+      "group": "midcarry",
+      "actuation_fault": {
+        "robot_id": "r3",
+        "start_s": 0.8,
+        "duration_s": 0.35
+      }
+    },
+    {
+      "case_id": "midcarry-r3-075",
+      "group": "midcarry",
+      "actuation_fault": {
+        "robot_id": "r3",
+        "start_s": 0.8,
+        "duration_s": 0.75
+      }
+    },
+    {
+      "case_id": "report-r3-000",
+      "group": "report",
+      "report_blackout": {
+        "robot_id": "r3",
+        "start_s": 0.0,
+        "duration_s": 1.0
+      }
+    },
+    {
+      "case_id": "report-r3-120",
+      "group": "report",
+      "report_blackout": {
+        "robot_id": "r3",
+        "start_s": 1.2,
+        "duration_s": 1.0
+      }
+    }
+  ],
+  "conditions": [
+    "baseline",
+    "sync"
+  ]
+}

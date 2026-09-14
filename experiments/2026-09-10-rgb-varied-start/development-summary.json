@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "evidence_scope": "completed development evidence only; heldout and retention were intentionally not inspected",
+  "final_development_source_sha": "b4c9535d24efc6747ed4f6df244b902976efb00f",
+  "axes": {
+    "source": "outputs/varied-start-axes-20260910-v1/report.json",
+    "complete": true,
+    "trial_count": 4,
+    "axes": [
+      "forward",
+      "left",
+      "turn",
+      "r1_forward"
+    ]
+  },
+  "teacher": {
+    "smoke-v1": {
+      "source": "outputs/varied-start-teacher-smoke-20260910-v1/report.json",
+      "source_sha": "f025813c9aa28735af2f040bf9a26baf523eb950",
+      "complete": false,
+      "case_count": 1,
+      "errors": [
+        "RuntimeError: yaw teacher budget exhausted"
+      ],
+      "all_grasp_replayed": null
+    },
+    "smoke-v2": {
+      "source": "outputs/varied-start-teacher-smoke-20260910-v2/report.json",
+      "source_sha": "5513b2ea92062e8c80e326bcb2e4fcbe7b91b51e",
+      "complete": true,
+      "case_count": 1,
+      "errors": [],
+      "all_grasp_replayed": null
+    },
+    "pilot-v1": {
+      "source": "outputs/varied-start-teacher-pilot-20260910-v1/pilot-summary.json",
+      "source_sha": "5513b2ea92062e8c80e326bcb2e4fcbe7b91b51e",
+      "complete": true,
+      "case_count": 6,
+      "errors": [],
+      "all_grasp_replayed": true
+    }
+  },
+  "calibration": {
+    "source": "outputs/varied-start-calibration-20260910-v1/report.json",
+    "source_sha": "5513b2ea92062e8c80e326bcb2e4fcbe7b91b51e",
+    "complete": true,
+    "case_count": 483,
+    "successful_case_count": 483,
+    "excluded_case_count": 0,
+    "classification": "static reset-state calibration; nonphysical and excluded from execution success claims"
+  },
+  "training": {
+    "source": "outputs/varied-start-training-20260910-v1",
+    "actor_rows": 4760,
+    "teacher_label_rows": 4760,
+    "merged_rows": 4760
+  },
+  "model_metadata_correction": {
+    "v2_selected_sample_counts": {
+      "r1": {
+        "forward": 600,
+        "lateral": 600,
+        "yaw": 600
+      },
+      "r3": {
+        "forward": 600,
+        "lateral": 600,
+        "yaw": 600
+      }
+    },
+    "v2_metadata_issue": "v2 selected metadata reports 600 samples per robot/stage even though the merged training JSONL contains 4760 rows",
+    "v3_selected_sample_counts": {
+      "r1": {
+        "forward": 841,
+        "lateral": 760,
+        "yaw": 779
+      },
+      "r3": {
+        "forward": 841,
+        "lateral": 760,
+        "yaw": 779
+      }
+    },
+    "v3_correction": "v3 regenerated selection metadata from all 4760 merged rows",
+    "v2_v3_geometry_identical_for_all_six_models": true,
+    "comparison_source": "outputs/varied-start-model-v2-v3-comparison.json"
+  },
+  "development": {
+    "versions": {
+      "v1": {
+        "source": "outputs/varied-start-development-20260910-v1/cohort-report.json",
+        "source_sha": "5ae9589548a1c178a0c143d8e8f502e8b121926d",
+        "cases_sha256": "5b55d252e5d583801a6217203d99e0e8d9e6553aecf68fa4a0f422ca8fe6cc8e",
+        "complete": true,
+        "case_count": 8,
+        "successes": 1,
+        "wall_elapsed_s": 150.92229041690007
+      },
+      "v2": {
+        "source": "outputs/varied-start-development-20260910-v2/cohort-report.json",
+        "source_sha": "81793ec1f2f19fd3663e2e461af22ab7fbd70509",
+        "cases_sha256": "5b55d252e5d583801a6217203d99e0e8d9e6553aecf68fa4a0f422ca8fe6cc8e",
+        "complete": true,
+        "case_count": 8,
+        "successes": 6,
+        "wall_elapsed_s": 383.6808734999504
+      },
+      "v3-shard-0": {
+        "source": "outputs/varied-start-development-20260910-v3-0/cohort-report.json",
+        "source_sha": "b4c9535d24efc6747ed4f6df244b902976efb00f",
+        "cases_sha256": "ac5d97e6ba8935a355238f7292e6042dd23cee33e96c5e714102486bf7a5493e",
+        "complete": true,
+        "case_count": 4,
+        "successes": 4,
+        "wall_elapsed_s": 277.85875837504864
+      },
+      "v3-shard-1": {
+        "source": "outputs/varied-start-development-20260910-v3-1/cohort-report.json",
+        "source_sha": "b4c9535d24efc6747ed4f6df244b902976efb00f",
+        "cases_sha256": "dd8dd1c6917dbbac09d50d4711cfd4bec114097f0ef948eb9497f1e78dbae35b",
+        "complete": true,
+        "case_count": 4,
+        "successes": 4,
+        "wall_elapsed_s": 267.184554874897
+      }
+    },
+    "v3_combined": {
+      "source_sha": "b4c9535d24efc6747ed4f6df244b902976efb00f",
+      "case_count": 8,
+      "successes": 8
+    },
+    "representative_pair": {
+      "v2_failure": "outputs/varied-start-development-20260910-v2/development-03-visual",
+      "v3_success": "outputs/varied-start-development-20260910-v3-0/development-03-visual"
+    }
+  },
+  "grasp_tolerance": {
+    "source": "outputs/varied-start-grasp-tolerance-20260910-v1/report.json",
+    "source_sha": "d45d3d04a86b9fc4648f9b7165fb10df9691b763",
+    "complete": true,
+    "purpose": "setup perturbation tolerance of existing RGB grasp, not approach validation",
+    "case_count": 8,
+    "audit_pass_count": 8,
+    "replay_count": 256
+  }
+}

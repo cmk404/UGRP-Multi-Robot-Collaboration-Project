@@ -1,0 +1,282 @@
+{
+  "definition": {
+    "carry_sim_s": "carry anchor observation to last carry command end; excludes grasp and demonstrated placement",
+    "total_sim_s": "whole run including setup/grasp and placement if completed",
+    "run_wall_s": "run-reported wall clock, excludes scene.close encoding flush and outer audit",
+    "hold_permission_sim_s": "issued command duration whose permission phase is HOLD; ALIGN and REJOIN tracked separately",
+    "failed_run_comparison": "Early failure shortens a run; failed duration is not efficiency evidence",
+    "external_api_cost_usd": "External API only; local compute/electricity not measured",
+    "paired_initial_carry_rgb_equal": "Pair checked after sync run; earlier baseline row is null/blank in raw cohort and CSV."
+  },
+  "groups": {
+    "fixed": {
+      "baseline": {
+        "successes": 10,
+        "runs": 10,
+        "all_attempt_means": {
+          "decisions": 14,
+          "robot_commands": 28,
+          "recoveries": 0,
+          "carry_sim_s": 2.949999999998365,
+          "total_sim_s": 24.759999999997156,
+          "run_wall_s": 8.695223474898375,
+          "inference_wall_s": 1.7161890958959702,
+          "execution_wall_s": 0.5766486466076458,
+          "hold_permission_sim_s": 0,
+          "settle_sim_s": 0,
+          "align_sim_s": 0,
+          "rejoin_sim_s": 0
+        },
+        "successful_run_means": {
+          "decisions": 14,
+          "robot_commands": 28,
+          "recoveries": 0,
+          "carry_sim_s": 2.949999999998365,
+          "total_sim_s": 24.759999999997156,
+          "run_wall_s": 8.695223474898375,
+          "inference_wall_s": 1.7161890958959702,
+          "execution_wall_s": 0.5766486466076458,
+          "hold_permission_sim_s": 0,
+          "settle_sim_s": 0,
+          "align_sim_s": 0,
+          "rejoin_sim_s": 0
+        }
+      },
+      "sync": {
+        "successes": 10,
+        "runs": 10,
+        "all_attempt_means": {
+          "decisions": 14,
+          "robot_commands": 28,
+          "recoveries": 0,
+          "carry_sim_s": 2.949999999998365,
+          "total_sim_s": 24.759999999997156,
+          "run_wall_s": 8.650064816699887,
+          "inference_wall_s": 1.7285841749981046,
+          "execution_wall_s": 0.5753711706056492,
+          "hold_permission_sim_s": 0,
+          "settle_sim_s": 0,
+          "align_sim_s": 0,
+          "rejoin_sim_s": 0
+        },
+        "successful_run_means": {
+          "decisions": 14,
+          "robot_commands": 28,
+          "recoveries": 0,
+          "carry_sim_s": 2.949999999998365,
+          "total_sim_s": 24.759999999997156,
+          "run_wall_s": 8.650064816699887,
+          "inference_wall_s": 1.7285841749981046,
+          "execution_wall_s": 0.5753711706056492,
+          "hold_permission_sim_s": 0,
+          "settle_sim_s": 0,
+          "align_sim_s": 0,
+          "rejoin_sim_s": 0
+        }
+      }
+    },
+    "departure": {
+      "baseline": {
+        "successes": 4,
+        "runs": 8,
+        "all_attempt_means": {
+          "decisions": 14.625,
+          "robot_commands": 29.25,
+          "recoveries": 0,
+          "carry_sim_s": 3.0374999999983165,
+          "total_sim_s": 22.22249999999856,
+          "run_wall_s": 8.124869567749556,
+          "inference_wall_s": 1.7905288539914181,
+          "execution_wall_s": 0.5961513962483878,
+          "hold_permission_sim_s": 0,
+          "settle_sim_s": 0,
+          "align_sim_s": 0,
+          "rejoin_sim_s": 0
+        },
+        "successful_run_means": {
+          "decisions": 15,
+          "robot_commands": 30,
+          "recoveries": 0,
+          "carry_sim_s": 3.149999999998254,
+          "total_sim_s": 24.959999999997045,
+          "run_wall_s": 8.825189854498603,
+          "inference_wall_s": 1.8416629169805674,
+          "execution_wall_s": 0.6164614170011191,
+          "hold_permission_sim_s": 0,
+          "settle_sim_s": 0,
+          "align_sim_s": 0,
+          "rejoin_sim_s": 0
+        }
+      },
+      "sync": {
+        "successes": 8,
+        "runs": 8,
+        "all_attempt_means": {
+          "decisions": 28.875,
+          "robot_commands": 57.75,
+          "recoveries": 1.25,
+          "carry_sim_s": 5.924999999996716,
+          "total_sim_s": 27.73499999999551,
+          "run_wall_s": 11.184910281375778,
+          "inference_wall_s": 3.6488595996397635,
+          "execution_wall_s": 1.2009787906099518,
+          "hold_permission_sim_s": 1.0999999999993904,
+          "settle_sim_s": 0.4999999999997229,
+          "align_sim_s": 1.2499999999993072,
+          "rejoin_sim_s": 0.5999999999996675
+        },
+        "successful_run_means": {
+          "decisions": 28.875,
+          "robot_commands": 57.75,
+          "recoveries": 1.25,
+          "carry_sim_s": 5.924999999996716,
+          "total_sim_s": 27.73499999999551,
+          "run_wall_s": 11.184910281375778,
+          "inference_wall_s": 3.6488595996397635,
+          "execution_wall_s": 1.2009787906099518,
+          "hold_permission_sim_s": 1.0999999999993904,
+          "settle_sim_s": 0.4999999999997229,
+          "align_sim_s": 1.2499999999993072,
+          "rejoin_sim_s": 0.5999999999996675
+        }
+      }
+    },
+    "midcarry": {
+      "baseline": {
+        "successes": 2,
+        "runs": 4,
+        "all_attempt_means": {
+          "decisions": 16,
+          "robot_commands": 32,
+          "recoveries": 0,
+          "carry_sim_s": 3.299999999998171,
+          "total_sim_s": 22.484999999998415,
+          "run_wall_s": 8.331620635250147,
+          "inference_wall_s": 1.9654454372321197,
+          "execution_wall_s": 0.6597002282542235,
+          "hold_permission_sim_s": 0,
+          "settle_sim_s": 0,
+          "align_sim_s": 0,
+          "rejoin_sim_s": 0
+        },
+        "successful_run_means": {
+          "decisions": 17,
+          "robot_commands": 34,
+          "recoveries": 0,
+          "carry_sim_s": 3.5499999999980325,
+          "total_sim_s": 25.359999999996823,
+          "run_wall_s": 9.133978520498204,
+          "inference_wall_s": 2.0925450834838557,
+          "execution_wall_s": 0.7125487290104502,
+          "hold_permission_sim_s": 0,
+          "settle_sim_s": 0,
+          "align_sim_s": 0,
+          "rejoin_sim_s": 0
+        }
+      },
+      "sync": {
+        "successes": 4,
+        "runs": 4,
+        "all_attempt_means": {
+          "decisions": 32.5,
+          "robot_commands": 65,
+          "recoveries": 1,
+          "carry_sim_s": 6.649999999996314,
+          "total_sim_s": 28.459999999995105,
+          "run_wall_s": 11.79901531249925,
+          "inference_wall_s": 4.1012171652619145,
+          "execution_wall_s": 1.3547452084931138,
+          "hold_permission_sim_s": 0.7999999999995566,
+          "settle_sim_s": 0.3999999999997783,
+          "align_sim_s": 2.1999999999987807,
+          "rejoin_sim_s": 0.3999999999997783
+        },
+        "successful_run_means": {
+          "decisions": 32.5,
+          "robot_commands": 65,
+          "recoveries": 1,
+          "carry_sim_s": 6.649999999996314,
+          "total_sim_s": 28.459999999995105,
+          "run_wall_s": 11.79901531249925,
+          "inference_wall_s": 4.1012171652619145,
+          "execution_wall_s": 1.3547452084931138,
+          "hold_permission_sim_s": 0.7999999999995566,
+          "settle_sim_s": 0.3999999999997783,
+          "align_sim_s": 2.1999999999987807,
+          "rejoin_sim_s": 0.3999999999997783
+        }
+      }
+    },
+    "report": {
+      "baseline": {
+        "successes": 4,
+        "runs": 4,
+        "all_attempt_means": {
+          "decisions": 14,
+          "robot_commands": 28,
+          "recoveries": 0,
+          "carry_sim_s": 2.949999999998365,
+          "total_sim_s": 24.759999999997156,
+          "run_wall_s": 8.594893343997683,
+          "inference_wall_s": 1.7239241872484854,
+          "execution_wall_s": 0.5762108122617065,
+          "hold_permission_sim_s": 0,
+          "settle_sim_s": 0,
+          "align_sim_s": 0,
+          "rejoin_sim_s": 0
+        },
+        "successful_run_means": {
+          "decisions": 14,
+          "robot_commands": 28,
+          "recoveries": 0,
+          "carry_sim_s": 2.949999999998365,
+          "total_sim_s": 24.759999999997156,
+          "run_wall_s": 8.594893343997683,
+          "inference_wall_s": 1.7239241872484854,
+          "execution_wall_s": 0.5762108122617065,
+          "hold_permission_sim_s": 0,
+          "settle_sim_s": 0,
+          "align_sim_s": 0,
+          "rejoin_sim_s": 0
+        }
+      },
+      "sync": {
+        "successes": 4,
+        "runs": 4,
+        "all_attempt_means": {
+          "decisions": 21,
+          "robot_commands": 42,
+          "recoveries": 0,
+          "carry_sim_s": 4.349999999997589,
+          "total_sim_s": 26.15999999999638,
+          "run_wall_s": 9.775312541751191,
+          "inference_wall_s": 2.6155356985109393,
+          "execution_wall_s": 0.8689254892597091,
+          "hold_permission_sim_s": 1.0999999999993904,
+          "settle_sim_s": 0,
+          "align_sim_s": 0,
+          "rejoin_sim_s": 0
+        },
+        "successful_run_means": {
+          "decisions": 21,
+          "robot_commands": 42,
+          "recoveries": 0,
+          "carry_sim_s": 4.349999999997589,
+          "total_sim_s": 26.15999999999638,
+          "run_wall_s": 9.775312541751191,
+          "inference_wall_s": 2.6155356985109393,
+          "execution_wall_s": 0.8689254892597091,
+          "hold_permission_sim_s": 1.0999999999993904,
+          "settle_sim_s": 0,
+          "align_sim_s": 0,
+          "rejoin_sim_s": 0
+        }
+      }
+    }
+  },
+  "cohort_wall_s": 554.752021207998,
+  "all_input_audits_pass": true,
+  "all_paired_initial_carry_rgb_equal": true,
+  "all_weld_off": true,
+  "paired_initial_carry_rgb_pairs_checked": 26
+}

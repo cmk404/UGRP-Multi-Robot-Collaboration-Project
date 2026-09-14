@@ -1,0 +1,34 @@
+{
+  "source_sha": "9e810183e4ed5053661e660f17817689b0f7cd29",
+  "map_sha256": "0a54ebfbc5463dcc9b8c1b73a9b0218f2dd662da3c9583e4941229d080d014b0",
+  "case_id": "heldout_r3",
+  "condition": "direct",
+  "actor_status": "budget_exhausted",
+  "decisions": 240,
+  "wall_elapsed_s": 34.77631170800305,
+  "evaluation": {
+    "success": false,
+    "gates": {
+      "actor_arrived": false,
+      "goal_distance": false,
+      "zero_map_collisions": false,
+      "weld_off": true,
+      "footprint_inside_map": true,
+      "upright": true,
+      "invariants": true
+    },
+    "metrics": {
+      "goal_distance_m": 1.6187492071048286,
+      "path_length_m": 0.6015312794673278,
+      "collision_steps": 25537,
+      "physics_steps": 32152,
+      "weld_steps": 0,
+      "max_tilt_rad": 0.000887676669856949,
+      "sim_elapsed_s": 64.30000000002828
+    },
+    "scope": "unloaded single active robot; all-step map contact/weld checks; sampled pose/path; output-only referee"
+  },
+  "error": null,
+  "model_calls": 0,
+  "model_cost_usd": 0
+}

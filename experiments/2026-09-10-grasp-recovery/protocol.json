@@ -1,0 +1,30 @@
+{
+  "request": "Recover from failed grasp postures, validate >=18/20 unseen cases, then connect20-30cm approach if gate passes",
+  "base_sha": "266a4e76c5ae3b028a4dd325481495d61caa6f21",
+  "teacher_skill_dir": "/Users/changmin/projects/ugrp/outputs/grasp-student-model-20260910-v1",
+  "training_cases": "training-cases.json",
+  "heldout_cases": "validation-cases.json",
+  "heldout_distribution": "8 symmetric cases near previous failure region,8 symmetric broad cases,4 asymmetric broad cases; same scene/seed11; command perturbations not new object placement",
+  "candidate": "nonlinear supervised image-to-corrective-command regression from privileged expert recovery trajectories",
+  "runtime_inputs": "own RGB, unchanged fixed shared top RGB, own issued command history; no live GT/IK/contacts/measurements",
+  "conditions": [
+    "recovery_student",
+    "prior_linear_student",
+    "playback"
+  ],
+  "student_budget": {
+    "rounds": 16,
+    "max_step": 25,
+    "simulation_seconds_per_round": 0.45
+  },
+  "gate": {
+    "heldout_success_min": 18,
+    "heldout_count": 20,
+    "physical": "height>=.03,bilateralboth,weldOFF continuously>=2s",
+    "retention": "all12 previous successful small/stress postures remain successful; both known failures also pass"
+  },
+  "development_pilots": "only the two known failure cases and goalzero; final20 must not guide tuning; report every failure",
+  "scope": "approach/close/lift remain explicit playback during this local phase. If gate passes, begin separate teacher-assisted20-30cm approach curriculum, with own source and evaluation; do not claim end-to-end visual approach without test.",
+  "artifacts": "code commit before experiments; freeze eachcohort; allcase results/model/data provenance/rawhashes archive under thisfolder; rawvideos localunlessexplicitlyarchived",
+  "status": "declared_before_teacher_collection"
+}

@@ -1,0 +1,48 @@
+{
+  "source_sha": "9e810183e4ed5053661e660f17817689b0f7cd29",
+  "matrix": "development",
+  "jobs": [
+    {
+      "name": "development_r1-open-map",
+      "case": {
+        "case_id": "development_r1",
+        "robot_id": "r1",
+        "start_xy_m": [
+          -0.5,
+          -2.55
+        ],
+        "start_yaw_deg": 0
+      },
+      "map": "open",
+      "condition": "map"
+    },
+    {
+      "name": "development_r1-slalom-map",
+      "case": {
+        "case_id": "development_r1",
+        "robot_id": "r1",
+        "start_xy_m": [
+          -0.5,
+          -2.55
+        ],
+        "start_yaw_deg": 0
+      },
+      "map": "slalom",
+      "condition": "map"
+    },
+    {
+      "name": "development_r1-narrow-map",
+      "case": {
+        "case_id": "development_r1",
+        "robot_id": "r1",
+        "start_xy_m": [
+          -0.5,
+          -2.55
+        ],
+        "start_yaw_deg": 0
+      },
+      "map": "narrow",
+      "condition": "map"
+    }
+  ]
+}

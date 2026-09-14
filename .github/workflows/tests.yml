@@ -81,3 +81,12 @@ jobs:
           path: outputs/quickstart-ci/
           if-no-files-found: warn
           retention-days: 14
+
+  individual-proxy-bootstrap:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Check personal proxy installation without Google credentials
+        run: bash scripts/smoke_gemini_proxy.sh

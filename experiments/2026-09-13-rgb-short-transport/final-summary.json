@@ -1,0 +1,73 @@
+{
+  "groups": [
+    {
+      "cohort": "fixed",
+      "condition": "visual",
+      "source_sha": "50eb2746b7f4fef2462a9ff32d35ec8f797986d4",
+      "success": 10,
+      "total": 10,
+      "input_audits_pass": 10,
+      "median_sim_time_s_all_runs": 24.759999999997156,
+      "median_wall_time_s_all_runs": 9.774813541502226,
+      "median_carry_robot_decisions_all_runs": 28.0,
+      "cohort_wall_time_s_including_both_conditions_and_audits": 210.53377624999848
+    },
+    {
+      "cohort": "fixed",
+      "condition": "playback",
+      "source_sha": "50eb2746b7f4fef2462a9ff32d35ec8f797986d4",
+      "success": 10,
+      "total": 10,
+      "input_audits_pass": 10,
+      "median_sim_time_s_all_runs": 24.959999999997045,
+      "median_wall_time_s_all_runs": 9.96225077049894,
+      "median_carry_robot_decisions_all_runs": 30.0,
+      "cohort_wall_time_s_including_both_conditions_and_audits": 210.53377624999848
+    },
+    {
+      "cohort": "delay",
+      "condition": "visual",
+      "source_sha": "1d904c255b9ff551b103e6de98ba22bd7692d86f",
+      "success": 4,
+      "total": 8,
+      "input_audits_pass": 8,
+      "median_sim_time_s_all_runs": 22.434999999998446,
+      "median_wall_time_s_all_runs": 8.668978875502944,
+      "median_carry_robot_decisions_all_runs": 30.0,
+      "cohort_wall_time_s_including_both_conditions_and_audits": 161.36579279099533
+    },
+    {
+      "cohort": "delay",
+      "condition": "playback",
+      "source_sha": "1d904c255b9ff551b103e6de98ba22bd7692d86f",
+      "success": 4,
+      "total": 8,
+      "input_audits_pass": 8,
+      "median_sim_time_s_all_runs": 24.959999999997045,
+      "median_wall_time_s_all_runs": 9.261033624999982,
+      "median_carry_robot_decisions_all_runs": 30.0,
+      "cohort_wall_time_s_including_both_conditions_and_audits": 161.36579279099533
+    },
+    {
+      "cohort": "varied",
+      "condition": "visual",
+      "source_sha": "1d904c255b9ff551b103e6de98ba22bd7692d86f",
+      "success": 6,
+      "total": 10,
+      "input_audits_pass": 10,
+      "median_sim_time_s_all_runs": 55.31000000002163,
+      "median_wall_time_s_all_runs": 38.56941958299285,
+      "median_carry_robot_decisions_all_runs": 28.0,
+      "cohort_wall_time_s_including_both_conditions_and_audits": 472.7961347500095
+    }
+  ],
+  "total_runs": 46,
+  "notes": [
+    "Fixed runs are deterministic repeatability, not ten independent new conditions.",
+    "Varied cases reuse ten pre-existing approach heldouts; they were selected before new transport validation, not newly independent approach tests.",
+    "Visual uses learned carry predictions. Lower/open/retract replays demonstrated commands.",
+    "Fixed source 50eb was audited after the cohort. Delay/varied source 1d requires audit inside the cohort.",
+    "No test-case tuning, retries, or omitted failures. Physical-contact continuity is sampled, not every simulation substep.",
+    "External model cost is zero; local compute/electricity cost is not measured."
+  ]
+}

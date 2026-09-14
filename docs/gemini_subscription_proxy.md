@@ -1,125 +1,110 @@
-# 현재 사용하는 Gemini 구독 프록시 연결 방식
+# 각자 PC에서 Gemini 로그인 프록시 사용하기
 
-2026-09-09 현재 개발자의 실행 중인 서비스와 소스를 확인한 기록이다. **현재 방식을 설명하는 문서이며, 공식 Gemini API 키 방식으로 전환하는 안내가 아니다.**
-
-## 연결 구조
+**팀원마다 자기 Ubuntu PC에 프록시를 설치하고 자기 Google 계정으로 로그인한다.** 개발자의 Mac이 켜져 있거나 개발자 계정의 프록시가 실행 중일 필요가 없다. 계정·인증 파일·프록시 서비스를 팀원끼리 공유하지 않는다.
 
 ```text
-UGRP 시뮬레이션 / GeminiTransportPlanner
-    ↓ GeminiProxyCompleter: 텍스트 + 카메라 이미지
-http://127.0.0.1:8391/v1/chat/completions
-    ↓ 개인 gemini_subscription_proxy.py
-저장된 Google OAuth 로그인 인증 + 구독 계정의 모델 사용 권한
-    ↓ 모델별 백엔드 요청
-Gemini 응답 → OpenAI 호환 응답·토큰 사용량 → UGRP 행동 실행
+본인 PC의 UGRP → 본인 PC의 127.0.0.1:8391 → 본인 Google 로그인 → Gemini
 ```
 
-UGRP에는 [harness/gemini_proxy.py](../harness/gemini_proxy.py)의 클라이언트가 들어 있다. 이 클라이언트는 `GEMINI_PROXY_URL`로 주소를 정하고, 현재 요청에는 별도 API 키나 Authorization 헤더를 붙이지 않는다. **Google 인증은 프록시 서버가 담당한다.**
+기존 안내에 있던 개발자 Mac으로의 SSH 터널은 이 목적에 맞지 않아 제거했다. `127.0.0.1`은 명령을 실행하는 각자의 컴퓨터다.
 
-실행 중인 프록시는 `~/.local/bin/gemini_subscription_proxy.py`이고, `~/.gemini/antigravity_creds.json`의 OAuth 인증을 읽고 갱신한다. 로컬 로그는 `~/.hermes/logs/gemini-subscription-proxy.log`에 남는다. 이 경로는 프록시를 운영하는 컴퓨터의 홈 디렉터리 기준이다. 현재 Mac에서는 기존 launchd 서비스가 이를 실행하고 있다.
+## 사용할 서버
 
-이 개인 서버 소스와 로그인 파일은 UGRP 저장소에 포함돼 있지 않다. **저장소를 clone하는 것만으로 동일한 프록시 서버가 설치되지는 않는다.** 인증 파일이나 개인 설정을 복사해서 공유하는 방식으로 설명하지 않는다.
+UGRP 저장소의 `harness/gemini_proxy.py`는 HTTP 클라이언트다. 서버는 별도로 설치한다. 여기서는 공개 도구 [CLIProxyAPI v7.2.155](https://github.com/router-for-me/CLIProxyAPI/releases/tag/v7.2.155)의 Antigravity OAuth 로그인을 사용한다. 개발자 Mac의 개인 Python 어댑터와는 다른 구현이며, 개인 스크립트·인증·프로젝트 설정을 복사할 필요가 없다. Google 공식 배포 도구는 아니다.
 
-## API 키와 로그인 인증의 구분
+이 경로는 별도 Gemini API 키 대신 본인의 Google 로그인을 사용한다. 구독 이름만으로 Antigravity 접근 권한이나 특정 모델의 사용 가능 여부가 보장되지는 않는다. 본인 계정으로 로그인하고 실제 응답을 확인해야 한다.
 
-| 항목 | 현재 방식 |
-|---|---|
-| UGRP에서 설정하는 값 | `GEMINI_PROXY_URL` (전체 chat completions URL) |
-| UGRP의 `GEMINI_API_KEY` | 현재 클라이언트는 읽지 않음 |
-| 프록시 → Google 인증 | 프록시 소유자의 저장된 OAuth 로그인 인증 |
-| 사용량의 주체 | 프록시에 로그인된 계정의 사용 권한·할당량 |
-| 별도 프록시 API 키 | 현재 로컬 HTTP 서버에는 클라이언트 키 검증이 없음 |
+## 1. Ubuntu 24.04 x86_64에 설치
 
-다른 도구의 OpenAI 호환 설정 화면이 API 키 입력을 요구하더라도, 그 입력란이 현재 프록시의 Google 로그인 인증을 대신하지 않는다. UGRP 자체에는 임의의 키를 추가할 필요가 없다.
+먼저 [Ubuntu 기본 설치와 무료 데모](ubuntu_quickstart.md)를 완료한다. 아래 명령은 UGRP 저장소 루트에서 실행한다. 같은 버전이 이미 설치됐다면 재설치하지 않아도 된다.
 
-구독 이름만으로 다른 계정에도 같은 모델·할당량이 제공된다고 단정할 수 없다. 현재 프록시의 주석상 기반은 Google One AI Pro / Antigravity이지만, 실제 계정 권한은 별도 확인 대상이다.
+```bash
+sudo apt-get install -y curl ca-certificates
+ugrp_proxy_dir="$HOME/.local/share/ugrp/gemini-proxy"
+mkdir -p "$ugrp_proxy_dir/bin" "$ugrp_proxy_dir/auth"
+chmod 700 "$ugrp_proxy_dir" "$ugrp_proxy_dir/auth"
+(
+  set -eu
+  test "$(uname -m)" = x86_64
+  cd "$ugrp_proxy_dir/bin"
+  release='https://github.com/router-for-me/CLIProxyAPI/releases/download/v7.2.155'
+  archive='CLIProxyAPI_7.2.155_linux_amd64.tar.gz'
+  curl -fL "$release/$archive" -o "$archive"
+  curl -fL "$release/checksums.txt" -o checksums.txt
+  grep " $archive$" checksums.txt | sha256sum --check --strict -
+  tar -xzf "$archive"
+  test -x ./cli-proxy-api
+)
+# 처음 설정할 때만 복사: 이미 있는 개인 설정은 보존한다.
+if [ ! -f "$ugrp_proxy_dir/config.yaml" ]; then
+  cp configs/gemini-proxy.example.yaml "$ugrp_proxy_dir/config.yaml"
+fi
+```
 
-## 현재 모델 매핑
+[설정 예제](../configs/gemini-proxy.example.yaml)는 `127.0.0.1:8391`에만 바인딩하고 인증을 본인 홈 디렉터리에 저장한다. UGRP 클라이언트는 Authorization 헤더를 보내지 않으므로 로컬 HTTP API 키는 비워 둔다. 이 설정은 같은 PC의 프로세스가 접근할 수 있으므로 개인 PC용이다. `host`를 외부 공개 주소로 바꾸지 않는다. 관리 패널과 자동 계정·모델 전환도 사용하지 않는다.
 
-개인 프록시 소스에 설정된 매핑이다. `/v1/models`는 이 목록을 반환하며, Google 측 실시간 모델 사용 권한을 조회한 결과는 아니다.
+## 2. 본인 Google 계정으로 로그인
 
-| UGRP 요청 모델 | 프록시가 요청하는 모델 | 백엔드 호스트 |
-|---|---|---|
-| `gemini-3.1-pro-preview` | `gemini-3.1-pro-low` | `cloudcode-pa.googleapis.com` |
-| `gemini-3.7-flash` | `gemini-3.7-flash-tiered` | `daily-cloudcode-pa.googleapis.com` |
-| `gemini-3.8-flash` | `gemini-3.8-flash-medium` | `daily-cloudcode-pa.googleapis.com` |
+```bash
+ugrp_proxy_dir="$HOME/.local/share/ugrp/gemini-proxy"
+"$ugrp_proxy_dir/bin/cli-proxy-api" \
+  --config "$ugrp_proxy_dir/config.yaml" --antigravity-login
+```
 
-현재 [시드 검증 실행기](../scripts/run_gemini_seed_validation.py)는 `gemini-3.8-flash`를 요청한다. `/health`의 기본 `model` 필드가 `gemini-3.1-pro-preview`여도, 개별 요청의 모델 이름이 3.8이면 위 3.8 매핑을 사용한다. 이 별칭을 공식 Gemini API의 모델 이름과 자동으로 동일시하지 않는다.
+열린 브라우저에서 **본인 계정**을 선택하고 안내를 완료한다. 브라우저 자동 실행이 안 되면 명령에 `--no-browser`를 추가하고 표시된 URL을 같은 PC의 브라우저에서 연다. 로그인 콜백은 기본 51121 포트를 사용한다. WSL에서는 Windows 브라우저에서 WSL의 localhost 콜백에 접근 가능한지도 확인한다. 이 포트는 로그인용이며 UGRP 요청 포트 8391과 다르다.
 
-프록시는 OpenAI 형식의 `messages`, `image_url`에 들어 있는 base64 카메라 이미지, `reasoning_effort`, 토큰 사용량을 변환한다. 현재 이미지 입력은 `data:image/...;base64,...` 형식이며 원격 이미지 URL을 가져오는 방식은 지원하지 않는다.
+토큰은 본인의 `~/.local/share/ugrp/gemini-proxy/auth`에 저장된다. 이 디렉터리나 토큰을 Git·PR·메신저에 올리지 않는다. 로그인 오류는 본인 계정 권한과 CLIProxyAPI 로그인 출력을 기준으로 확인한다.
 
-## Ubuntu에서 연결하기
+## 3. 필요할 때만 로컬 서버 실행
 
-먼저 [Ubuntu 기본 설치와 무료 데모](ubuntu_quickstart.md)를 완료한다. 아래 두 경우 중 프록시 위치에 맞는 경로를 사용한다.
+UGRP 저장소 루트의 터미널 1에서:
 
-### A. 같은 Ubuntu 컴퓨터에 호환 프록시가 이미 준비된 경우
+```bash
+ugrp_proxy_dir="$HOME/.local/share/ugrp/gemini-proxy"
+.venv-dev/bin/python scripts/ugrp_session.py run gemini-proxy -- \
+  "$ugrp_proxy_dir/bin/cli-proxy-api" --config "$ugrp_proxy_dir/config.yaml"
+```
 
-본인 계정으로 동작하는 서버 소스와 로그인 절차가 준비돼 있어야 한다. 이 문서는 새 계정의 OAuth 로그인·서버 설치 프로그램을 제공하지 않는다. 기존 개인 소스를 단순 복사하면 계정별 프로젝트 설정이나 인증이 맞지 않을 수 있다.
-
-서버가 `127.0.0.1:8391`에서 실행되고 있다면, UGRP 저장소 루트에서:
+터미널 2도 저장소 루트에서 열고:
 
 ```bash
 export GEMINI_PROXY_URL='http://127.0.0.1:8391/v1/chat/completions'
-curl --fail --silent --show-error http://127.0.0.1:8391/health
-curl --fail --silent --show-error http://127.0.0.1:8391/v1/models
+curl --fail --silent --show-error http://127.0.0.1:8391/v1/models \
+  | .venv-dev/bin/python -m json.tool
 ```
 
-이미 실행 중인 서버를 중복 실행하지 않는다. 별도로 준비된 서버를 UGRP 작업용으로 처음 시작할 때는 프로젝트의 세션 관리 절차를 따른다. Mac의 기존 launchd 서비스는 Ubuntu 설치 방법이 아니다.
+응답의 `data`에서 사용할 모델 ID를 확인한다. 빈 배열이면 서버는 실행됐지만 사용 가능한 계정·모델이 등록되지 않은 상태다. CLIProxyAPI에서 확인하는 경로는 `/v1/models`이며, 기존 개인 서버의 `/health` 응답을 기대하지 않는다.
 
-### B. 허가받은 기존 프록시 컴퓨터에 연결하는 경우
+**모델 목록 응답만으로 로그인 유효성·실제 생성·남은 할당량은 입증되지 않는다.** 이 버전의 Antigravity 카탈로그에서 3.8 모델 ID는 `gemini-3.8-flash-high`다. 아래 명령은 이 ID가 본인 목록에도 있을 때 사용한다. 기존 개인 프록시의 `gemini-3.8-flash` 별칭과는 다르므로, 시드 실행기에 `--model`로 정확한 ID를 전달한다. 선택한 모델은 결과 manifest에도 기록된다. 동일한 과거 모델 조건이라고 간주하지 않는다.
 
-현재 개발자 Mac의 서버는 `127.0.0.1`에만 바인딩돼 있어 다른 컴퓨터에서 Mac IP의 8391 포트로 직접 접속할 수 없다. 관리자가 사용을 허가하고 SSH 접속을 준비해 준 경우, **SSH 로컬 포트 전달**로 연결한다. 서버를 공개 주소에 노출하거나 인증 파일을 옮길 필요가 없다.
+## 4. 실제 응답과 한 시드 확인
 
-Ubuntu 터미널 1에서 다음의 `SSH_USER`, `PROXY_HOST`를 관리자가 제공한 SSH 계정과 호스트로 바꾼다. 이 명령은 SSH 접근 권한을 새로 만들어주지는 않는다.
+`gemini-3.8-flash-high`가 목록에 있는 본인 계정에서, 실제 모델 사용량을 소비하는 짧은 요청:
 
 ```bash
-ssh -N -T -o ExitOnForwardFailure=yes \
-  -L 127.0.0.1:18391:127.0.0.1:8391 SSH_USER@PROXY_HOST
+curl --fail-with-body --silent --show-error --max-time 90 \
+  "$GEMINI_PROXY_URL" -H 'Content-Type: application/json' \
+  -d '{"model":"gemini-3.8-flash-high","messages":[{"role":"user","content":"Reply with OK."}],"max_tokens":32}'
 ```
 
-이 터미널을 유지한다. Ubuntu 터미널 2에서:
+`choices` 안의 모델 응답을 확인한 다음 [Ubuntu 안내의 한 시드 실행과 결과 검증](ubuntu_quickstart.md#4-실제-gemini-운반-실험--선택-사항)을 따른다. 텍스트 응답 성공은 카메라 입력이나 운반 성공의 증거가 아니므로 결과와 영상을 함께 검토한다. 실험에 사용한 코드 SHA, 프록시 버전, 모델 이름과 실패 결과도 보존한다.
+
+작업이 끝나면 터미널 1에서 `Ctrl-C`로 프록시 세션을 종료한다. 다른 터미널에서는 다음 명령으로 이 세션만 종료할 수 있다.
 
 ```bash
-cd ~/projects/ugrp
-export GEMINI_PROXY_URL='http://127.0.0.1:18391/v1/chat/completions'
-curl --fail --silent --show-error http://127.0.0.1:18391/health
-curl --fail --silent --show-error http://127.0.0.1:18391/v1/models
+.venv-dev/bin/python scripts/ugrp_session.py stop gemini-proxy
 ```
 
-18391은 Ubuntu의 로컬 포트이고, 8391은 원격 프록시 컴퓨터의 로컬 포트다. 실험이 끝나면 터미널 1에서 `Ctrl-C`로 터널을 종료한다. 여러 사람이 같은 프록시를 사용하면 같은 계정의 할당량과 지연에 영향을 주므로 관리자와 실행 시간·예산을 맞춘다.
+## 오류 구분과 검증 범위
 
-이번 문서 작업에서 SSH 접속을 개설하거나 프록시 공유 권한을 변경한 것은 아니다.
-
-## 연결 확인 후 한 시드 실행
-
-`/health`의 정상 응답은 HTTP 서버가 떠 있다는 뜻이다. `/v1/models`는 등록된 별칭 목록이다. **두 GET 요청만으로 로그인 유효성·상위 모델 응답·남은 할당량이 검증되지는 않는다.**
-
-관리자에게 모델 사용을 허가받고 예산을 확인한 뒤, 앞에서 설정한 `GEMINI_PROXY_URL`을 유지한 같은 Ubuntu 터미널에서:
-
-```bash
-export MUJOCO_GL=osmesa
-.venv-dev/bin/python scripts/ugrp_session.py run gemini-trial -- \
-  .venv-dev/bin/python -m scripts.run_gemini_seed_validation \
-  --execute --output outputs/gemini-proxy-trial-01 --seeds 45 \
-  --reasoning-effort medium --request-timeout 60
-```
-
-시드당 설정 예산은 최대 30회 모델 호출·120,000 입력 토큰·300 SIM초다. 실제 모델 호출은 프록시 계정의 사용량을 소비하며, 입력 토큰 추정은 제공자 측 과금의 절대 상한이 아니다. 새 결과 폴더명을 사용하고 실행 중 코드를 바꾸지 않는다.
-
-[Ubuntu 안내의 결과 검증 단계](ubuntu_quickstart.md#4-실제-gemini-운반-실험--선택-사항)를 따를 때 출력 경로는 `outputs/gemini-proxy-trial-01/solo-45`로 맞춘다. 모델 응답에 성공했다고 실제 운반까지 성공한 것은 아니므로 결과와 영상을 함께 검토한다.
-
-## 오류를 구분하는 방법
-
-| 증상 | 확인할 곳 |
+| 증상 | 확인 |
 |---|---|
-| 연결 거부 | 같은 컴퓨터인지, SSH 터널이 유지되는지, Ubuntu 쪽 포트가 8391/18391 중 어느 것인지 |
-| `/health`는 성공하지만 모델 요청 실패 | 프록시의 로그인 갱신, 계정 권한, 상위 서버 오류를 운영자가 확인 |
-| 429 또는 시간 초과 | 계정 할당량·동시 요청·모델 지연. 자동 계정 교체로 처리하지 않음 |
-| 이미지 입력 오류 | `data:image/...;base64,...` 형식인지 확인 |
-| `GEMINI_API_KEY`를 넣었는데 변화 없음 | 현재 클라이언트는 그 환경변수를 읽지 않음. 위 URL 연결 구조 확인 |
+| 연결 거부 | 본인 PC에서 프록시 세션이 실행 중인지, 설정 포트가 8391인지 |
+| `data: []` 또는 모델 없음 | 본인 계정 로그인 완료 여부, 설정의 auth-dir, 지원 모델 ID |
+| 401·403·로그인 갱신 실패 | 본인 계정 권한과 로그인 상태; 토큰을 공유하지 않고 본인 PC에서 재로그인 |
+| 429·시간 초과 | 본인 계정 할당량과 모델 지연; 다른 사람 계정으로 우회하지 않음 |
+| 포트 사용 중 | 이미 실행된 본인 프록시인지 확인; 관련 없는 프로세스를 종료하지 않음 |
 
-오류를 공유할 때 인증 파일·토큰·전체 개인 로그를 첨부하지 않는다. 실행 코드 SHA, 모델 별칭, 오류 상태, 출력 폴더의 필요한 검증 결과를 남긴다.
+자동 검증은 고정 릴리스의 다운로드·체크섬·빈 인증 디렉터리로 서버 실행·무키 `/v1/models` 응답·종료까지 확인한다. 새 Google 계정 OAuth 로그인, 실제 Gemini 생성, 이미지 입력과 운반은 자동 검증에 포함하지 않는다. 개발자의 기존 프록시와 동일한 모델 매핑·성능을 검증한 것도 아니다.
 
-## 이 문서에서 확인한 범위
-
-개발자 Mac의 8391 리스너, 실제 실행 스크립트 경로, 프록시 소스의 인증·매핑 구조, `/health`와 `/v1/models` 응답을 직접 확인했다. 인증 파일의 내용은 수집하지 않았고 모델 생성 요청도 보내지 않았다. Ubuntu에서의 SSH 터널·새 계정 로그인·실제 모델 호출은 이번 문서 검증 범위에 포함하지 않는다.
+참고: [공식 Antigravity 로그인 안내](https://help.router-for.me/configuration/provider/antigravity), [고정 버전의 설정 예제](https://github.com/router-for-me/CLIProxyAPI/blob/v7.2.155/config.example.yaml). 여기서 '공식'은 CLIProxyAPI 프로젝트 문서를 뜻한다.
