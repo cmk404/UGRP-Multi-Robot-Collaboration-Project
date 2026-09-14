@@ -40,6 +40,9 @@
 완전 차단 정지 1/1이었다. 좁은 문만 운반·내려놓기를 완료했으며,
 나머지는 가림·바퀴 재획득 실패 또는 정체·파지 이탈이 남았다.
 [후보 비교 결과와 영상](../experiments/2026-09-14-pair-vision-recovery/README.md)에 전체 기록을 보존했다.
+최종 `robust` 후보는 같은 고정 시작·물리 조건에서 **운반·내려놓기 5/5, 완전 차단 정지 1/1**을
+통과했다. 네 바퀴의 기하 추적·중앙 빔 인식·자기 카메라 운반 감시를 사용한다.
+[최종 전체 결과와 영상](../experiments/2026-09-14-pair-transport-robustness/README.md)을 참고한다.
 원본 예시·정적 갤러리 기록의 시험 전 상태는 보존한다. 단독 주행 완주와 LLM 경로 선택은
 이 시험의 검증 범위가 아니다.
 
@@ -71,14 +74,13 @@
   .venv-sim-worker-mac/bin/mjpython scripts/run_pair_navigation.py \
   --map maps/pair_navigation/s-bends.json \
   --grasp-model-dir /absolute/path/to/models/grasp \
+  --vision-mode robust --impratio 10 --budget 750 \
   --out-dir outputs/s-bends-pair-NEW
 ```
 
-위 공동 운반 명령은 기존 기본 물리 설정 `impratio=1`을 사용한다. 이 지형들의
-실제 운반 성공을 보장하는 명령은 아니며, 이전 비교 실험의 수치 설정을 자동 적용하지 않는다.
-새 영상 추적 후보를 같은 설정으로 비교하려면 공동 운반 명령에
-`--vision-mode temporal-edges --impratio 10 --budget 750`을 명시한다.
-영상 추적의 기본 모드는 여전히 `legacy`다.
+위 공동 운반 명령은 이번 고정 시작 비교에서 검증한 `robust`, `impratio=10` 조건을 명시한다.
+옵션을 생략했을 때의 기존 CLI 기본값은 `legacy`, `impratio=1`로 유지한다.
+이전 영상 후보를 재현하려면 모드를 `temporal` 또는 `temporal-edges`로 지정한다.
 
 ## 지도와 정적 장면만 확인하기
 

@@ -1,0 +1,130 @@
+{
+  "summary": {
+    "final": {
+      "rounds": 1805,
+      "raw_bytes": 289140619,
+      "raw_files": 5829,
+      "media_bytes": 5540529,
+      "video_seconds": 131.375,
+      "grasp_model_files_identical": true
+    },
+    "diagnostic": {
+      "rounds": 956,
+      "raw_bytes": 152651951,
+      "raw_files": 3081,
+      "media_bytes": 2914835,
+      "video_seconds": 69.0625,
+      "grasp_model_files_identical": true
+    }
+  },
+  "checks": [
+    {
+      "cohort": "final",
+      "case": "narrow-door",
+      "source_frozen": true,
+      "map_identical": true,
+      "scene_identical": true,
+      "initial_invariants_identical": true,
+      "invariants_preserved": true,
+      "weld_off": true,
+      "input_audit_passed": true,
+      "grasp_audit_passed": true
+    },
+    {
+      "cohort": "final",
+      "case": "l-corner",
+      "source_frozen": true,
+      "map_identical": true,
+      "scene_identical": true,
+      "initial_invariants_identical": true,
+      "invariants_preserved": true,
+      "weld_off": true,
+      "input_audit_passed": true,
+      "grasp_audit_passed": true
+    },
+    {
+      "cohort": "final",
+      "case": "s-bends",
+      "source_frozen": true,
+      "map_identical": true,
+      "scene_identical": true,
+      "initial_invariants_identical": true,
+      "invariants_preserved": true,
+      "weld_off": true,
+      "input_audit_passed": true,
+      "grasp_audit_passed": true
+    },
+    {
+      "cohort": "final",
+      "case": "staggered-obstacles",
+      "source_frozen": true,
+      "map_identical": true,
+      "scene_identical": true,
+      "initial_invariants_identical": true,
+      "invariants_preserved": true,
+      "weld_off": true,
+      "input_audit_passed": true,
+      "grasp_audit_passed": true
+    },
+    {
+      "cohort": "final",
+      "case": "blocked-branch",
+      "source_frozen": true,
+      "map_identical": true,
+      "scene_identical": true,
+      "initial_invariants_identical": true,
+      "invariants_preserved": true,
+      "weld_off": true,
+      "input_audit_passed": true,
+      "grasp_audit_passed": true
+    },
+    {
+      "cohort": "final",
+      "case": "fully-blocked",
+      "source_frozen": true,
+      "map_identical": true,
+      "scene_identical": true,
+      "initial_invariants_identical": true,
+      "invariants_preserved": true,
+      "weld_off": true,
+      "input_audit_passed": true,
+      "grasp_audit_passed": true
+    },
+    {
+      "cohort": "diagnostic",
+      "case": "l-corner",
+      "source_frozen": true,
+      "map_identical": true,
+      "scene_identical": true,
+      "initial_invariants_identical": true,
+      "invariants_preserved": true,
+      "weld_off": true,
+      "input_audit_passed": true,
+      "grasp_audit_passed": true
+    },
+    {
+      "cohort": "diagnostic",
+      "case": "s-bends",
+      "source_frozen": true,
+      "map_identical": true,
+      "scene_identical": true,
+      "initial_invariants_identical": true,
+      "invariants_preserved": true,
+      "weld_off": true,
+      "input_audit_passed": true,
+      "grasp_audit_passed": true
+    },
+    {
+      "cohort": "diagnostic",
+      "case": "blocked-branch",
+      "source_frozen": true,
+      "map_identical": true,
+      "scene_identical": true,
+      "initial_invariants_identical": true,
+      "invariants_preserved": true,
+      "weld_off": true,
+      "input_audit_passed": true,
+      "grasp_audit_passed": true
+    }
+  ]
+}
