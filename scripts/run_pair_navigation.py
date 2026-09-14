@@ -20,9 +20,10 @@ if str(ROOT) not in sys.path: sys.path.insert(0, str(ROOT))
 from harness.grasp_student_inference import predict_student
 from harness.pair_carry_sync import PairCarrySync
 from harness.pair_navigation import PairNavigator, ROBOTS, authorize_pair, digest, validate_map, retryable_visual_hold
+from harness.pair_grasp_spacing import PairGraspSpacing, HOLD_DT
 from scripts.camera_short_transport_scene import ShortTransportScene
 from scripts.run_camera_approach_student import models, sha, write
-from scripts.evaluate_pair_navigation import evaluate_samples
+from scripts.evaluate_pair_navigation import evaluate_samples, evaluate_grasp_stability
 
 
 class PairNavigationScene(ShortTransportScene):
@@ -38,6 +39,40 @@ class PairNavigationScene(ShortTransportScene):
         self.contact_events = []
         self.nav_start_s = None
         self.xml_sha = None
+        self.spacing_actors = {r:PairGraspSpacing(data,r) for r in ROBOTS}
+        self.spacing_sync = PairCarrySync(task_id=data['map_id']+'-grasp-spacing')
+        self.spacing_steps = []
+
+    def spacing_frame(self, *, execute=True):
+        index = len(self.spacing_steps)
+        frames = self.capture(f'spacing-{index:04d}')
+        decisions = {r:self.spacing_actors[r].decide(frames[r]['own_bytes'],frames[r]['top_bytes']) for r in ROBOTS}
+        permission = authorize_pair(self.spacing_sync,decisions,{r:frames[r]['frame_id'] for r in ROBOTS},index,interval_s=HOLD_DT)
+        actions = {r:dict(decisions[r]['action']) for r in ROBOTS}
+        if permission['phase'] != 'GO':
+            for action in actions.values():action.update(forward=0.,left=0.,turn=0.)
+        self.spacing_steps.append({'index':index,'images':{r:{'own':frames[r]['own_rgb'],'top':frames[r]['shared_top_rgb']} for r in ROBOTS},
+            'frame_ids':{r:frames[r]['frame_id'] for r in ROBOTS},'decisions':decisions,
+            'permission':permission,'issued_actions':actions,'sim_time_s':self.time(),'executed':execute})
+        for r in ROBOTS:self.ports[r].apply(actions[r],self.time())
+        if not all(d['ready'] for d in decisions.values()):
+            raise RuntimeError('grasp spacing stopped: '+json.dumps({r:d.get('error') for r,d in decisions.items()}))
+        if execute:
+            self.phase = 'grasp_hold'
+            self.tick(HOLD_DT)
+
+    def anchor_spacing(self):
+        self.spacing_frame(execute=False)
+
+    def hold_spacing(self, duration_s):
+        for _ in range(round(duration_s/HOLD_DT)):
+            self.spacing_frame()
+
+    def finish_spacing(self):
+        self.spacing_frame(execute=False)
+        for r in ROBOTS:self.ports[r].stop()
+        if not all(d['stable_frames'] >= 5 for d in self.spacing_steps[-1]['decisions'].values()):
+            raise RuntimeError('grasp spacing did not visually settle before departure')
 
     def open(self):
         import mujoco
@@ -149,11 +184,14 @@ def evaluate(scene, report):
     return evaluate_samples(scene.evaluation_samples, scene.map, arrived=report['arrived'],
                             invariants_match=report.get('invariants_initial') == report.get('invariants_final'),
                             weld_ticks=scene.weld_active_ticks, wall_contact_ticks=scene.wall_contact_ticks,
-                            unexpected_contact_ticks=scene.unexpected_contact_ticks)
+                            unexpected_contact_ticks=scene.unexpected_contact_ticks,
+                            require_full_grasp=report.get('grasp_spacing')=='visual')
 
 
-def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy'):
+def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy', grasp_spacing=None, grasp_only=False):
     validate_map(data)
+    grasp_spacing = grasp_spacing or ('visual' if vision_mode=='robust' else 'passive')
+    if grasp_spacing not in ('visual','passive'):raise ValueError('unknown grasp spacing mode')
     if out.exists(): raise FileExistsError(out)
     if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip():
         raise RuntimeError('commit the complete execution source and protocol before an experiment')
@@ -171,6 +209,7 @@ def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy'):
               'budget': budget, 'steps': [], 'arrived': False, 'error': None,
               'contact_impratio': impratio,
               'vision_mode': vision_mode,
+              'grasp_spacing':grasp_spacing,'grasp_only':bool(grasp_only),
               'external_model_calls': 0, 'cost_usd': 0}
     try:
         import mujoco
@@ -178,14 +217,17 @@ def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy'):
         scene.open()
         report['scene_xml_sha256'] = scene.xml_sha
         report['invariants_initial'] = scene.invariant_record()
-        scene.finish_grasp(predict_student, grasp_models)
+        scene.finish_grasp(predict_student, grasp_models,
+                          after_close=scene.anchor_spacing if grasp_spacing=='visual' else None,
+                          hold=scene.hold_spacing if grasp_spacing=='visual' else None)
         # Fixed settling interval for all numerical profiles. No contact/pose
         # condition controls this wait or the start of navigation.
         scene.phase = 'grasp_hold'
-        scene.tick(8.)
+        (scene.hold_spacing if grasp_spacing=='visual' else scene.tick)(8.)
+        if grasp_spacing=='visual':scene.finish_spacing()
         report['post_grasp_settle_s'] = 8.
         write(out/'grasp-result.json', scene.grasp_report)
-        for index in range(budget):
+        for index in range(0 if grasp_only else budget):
             frames = scene.capture(f'nav-{index:04d}')
             decisions = {r: actors[r].decide(frames[r]['own_bytes'], frames[r]['top_bytes']) for r in ROBOTS}
             permission = authorize_pair(sync, decisions, {r: frames[r]['frame_id'] for r in ROBOTS}, index)
@@ -208,7 +250,8 @@ def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy'):
                 report['arrived'] = True
                 break
         else:
-            raise RuntimeError('RGB navigation budget exhausted')
+            if not grasp_only:
+                raise RuntimeError('RGB navigation budget exhausted')
         if report['arrived']:
             for _ in range(5):
                 scene.execute({r: {'kind':'mecanum', 'forward':0., 'left':0., 'turn':0., 'duration_s':.2} for r in ROBOTS})
@@ -223,10 +266,16 @@ def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy'):
             report['wall_contact_ticks'] = scene.wall_contact_ticks
             report['unexpected_contact_ticks'] = scene.unexpected_contact_ticks
             report['evaluation'] = evaluate(scene, report)
+            report['grasp_stability'] = evaluate_grasp_stability(scene.evaluation_samples)
             report['sim_seconds'] = scene.time()
         report['sync_events'] = sync.events
+        if scene.grasp_report is not None:
+            write(out/'grasp-result.json',scene.grasp_report)
+        report['spacing_steps'] = scene.spacing_steps
+        report['spacing_sync_events'] = scene.spacing_sync.events
         report['wall_seconds'] = time.monotonic()-started
         report['success'] = bool(not report['error'] and report.get('evaluation',{}).get('success'))
+        if grasp_only:report['success'] = bool(not report['error'] and report.get('grasp_stability',{}).get('success'))
         write(out/'contact-events-evaluation-only.json', scene.contact_events)
         try:
             scene.close()
@@ -246,6 +295,8 @@ def main():
     parser.add_argument('--grasp-model-dir', type=Path, required=True)
     parser.add_argument('--out-dir', type=Path, required=True)
     parser.add_argument('--budget', type=int, default=750)
+    parser.add_argument('--grasp-spacing',choices=('passive','visual'),help='robust defaults to visual; passive retains the previous comparison')
+    parser.add_argument('--grasp-only',action='store_true',help='bounded pre-drive diagnostic; does not claim navigation success')
     parser.add_argument('--vision-mode', choices=('legacy','temporal','temporal-edges','robust'), default='legacy',
                         help='explicit vision/control comparison; robust adds wheel geometry and own-view carry guard')
     parser.add_argument('--impratio', type=int, choices=(1, 10, 100), default=1,
@@ -253,7 +304,7 @@ def main():
     args = parser.parse_args()
     if not 1 <= args.budget <= 1200: parser.error('budget must be 1..1200')
     result = run(json.loads(args.map.read_text()), args.grasp_model_dir.resolve(), args.out_dir.resolve(), args.budget,
-                 impratio=args.impratio, vision_mode=args.vision_mode)
+        impratio=args.impratio, vision_mode=args.vision_mode, grasp_spacing=args.grasp_spacing, grasp_only=args.grasp_only)
     return int(bool(result['error']))
 
 

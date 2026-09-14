@@ -232,7 +232,7 @@ class ApproachScene:
                            'shared_top_rgb': top_record, 'frame_id': self.frame_ids[rid]}
         return result
 
-    def finish_grasp(self, predict_correction, models, *, rounds=16):
+    def finish_grasp(self, predict_correction, models, *, rounds=16, after_close=None, hold=None):
         from scripts.run_camera_pair_transport import evaluate_grasp_samples
         self.replay(self.skill['initialization_replay'][1:], 'grasp_initialization')
         # Match the original zero-perturbation runner's pre-recovery settling step.
@@ -244,6 +244,7 @@ class ApproachScene:
                'model_sha256': {r: self.skill['models'][r]['sha256'] for r in ROBOTS},
                'actor_initial_issued_commands': {r: dict(self.commands[r]) for r in ROBOTS},
                'calls': calls, 'error': None}
+        self.grasp_report = rec
         for i in range(rounds):
             frames, targets = self.capture(f'grasp-{i:03d}'), {}
             for rid in ROBOTS:
@@ -268,12 +269,14 @@ class ApproachScene:
         rec['final_visual_errors'] = {r: predict_correction(models[r], frames[r]['own_bytes'], frames[r]['top_bytes'], max_step=25) for r in ROBOTS}
         self.replay([{'targets': {r: {1: int(self.skill['close_pulses'][r])} for r in ROBOTS},
                       'duration_s': self.skill['close_duration_s'], 'settle_s': self.skill['close_settle_s']}], 'grasp_close')
+        if after_close is not None:
+            after_close()
         lift = {r: {int(ch): max(500, min(2500, self.commands[r][int(ch)] + int(delta)))
                     for ch, delta in self.skill['lift_delta_pulses'][r].items()} for r in ROBOTS}
         self.replay([{'targets': lift, 'duration_s': self.skill['lift_duration_s'],
                       'settle_s': self.skill['lift_settle_s']}], 'grasp_lift')
         self.phase = 'grasp_hold'
-        self.tick(float(self.skill['hold_s']))
+        (hold or self.tick)(float(self.skill['hold_s']))
         rec['evaluation'] = evaluate_grasp_samples(self.evaluation_samples)
         self.grasp_report = rec
         return calls

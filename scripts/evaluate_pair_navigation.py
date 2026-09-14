@@ -4,8 +4,29 @@ import math
 from harness.pair_navigation import ROBOTS, wrap
 
 
+def evaluate_grasp_stability(samples):
+    """Whole lift/hold assessment; values never enter an actor or transition."""
+    close = [r for r in samples if r['phase']=='grasp_close']
+    rows = [r for r in samples if r['phase'] in ('grasp_lift','grasp_hold')]
+    hold = [r for r in rows if r['phase']=='grasp_hold']
+    if not close or not rows or not hold or any('bases' not in r for r in [close[-1],*rows]):
+        return {'success':False,'reason':'complete close/lift/hold samples required','gates':{'full_grasp_samples':False}}
+    distance = lambda r:math.dist(r['bases']['r1'][:2],r['bases']['r3'][:2])
+    initial = distance(close[-1])
+    maximum = max(abs(distance(r)-initial) for r in rows)
+    nonbilateral = sum(not all(r['contacts'][rid]['bilateral'] for rid in ROBOTS) for r in rows)
+    gap = max(b['sim_time_s']-a['sim_time_s'] for a,b in zip([close[-1],*rows],rows))
+    gates = {'full_grasp_samples':len(hold)>=100 and gap<=.15,
+             'grasp_spacing_preserved':maximum<=.02,
+             'grasp_bilateral_through_lift_hold':nonbilateral==0,
+             'grasp_hold_lifted_every_sample':all(r['height_above_start_m']>=.03 for r in hold)}
+    return {'success':all(gates.values()),'gates':gates,'anchor_spacing_m':initial,
+            'final_spacing_m':distance(rows[-1]),'max_spacing_change_m':maximum,
+            'nonbilateral_samples':nonbilateral,'samples':len(rows),'max_sample_gap_s':gap}
+
+
 def evaluate_samples(samples, data, *, arrived, invariants_match, weld_ticks,
-                     wall_contact_ticks, unexpected_contact_ticks=0):
+                     wall_contact_ticks, unexpected_contact_ticks=0, require_full_grasp=False):
     rows = [r for r in samples if r['phase'] in ('carry', 'carry_stop')]
     if not rows:
         return {'success': False, 'reason': 'no navigation samples'}
@@ -36,6 +57,8 @@ def evaluate_samples(samples, data, *, arrived, invariants_match, weld_ticks,
              'cameras_geometry_unchanged': invariants_match,
              'goal_position': position_error <= .08,
              'goal_orientation': yaw_error <= math.radians(10), 'released_on_floor': released}
+    if require_full_grasp:
+        gates.update(evaluate_grasp_stability(samples)['gates'])
     return {'success': all(gates.values()), 'gates': gates, 'samples': len(rows),
             'bilateral_fraction': sum(grip)/len(rows), 'lifted_fraction': sum(lifted)/len(rows),
             'min_lift_m': min(r['height_above_start_m'] for r in rows),
