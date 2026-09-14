@@ -18,7 +18,7 @@ def main():
     p.add_argument('--grasp-model-dir',type=Path,required=True)
     p.add_argument('--out-dir',type=Path,required=True)
     p.add_argument('--case',action='append',help='explicit diagnostic subset; omit for the full fixed cohort')
-    p.add_argument('--close-pulse',type=int,choices=(1500,1600,1700,1800),default=1700)
+    p.add_argument('--close-pulse',type=int,choices=(1500,1600,1700,1800),default=1600)
     args=p.parse_args()
     out=args.out_dir.resolve(); models=args.grasp_model_dir.resolve()
     if out.exists(): raise FileExistsError(out)

@@ -192,7 +192,7 @@ def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy', 
     validate_map(data)
     grasp_spacing = grasp_spacing or ('visual' if vision_mode=='robust' else 'passive')
     if grasp_spacing not in ('visual','passive'):raise ValueError('unknown grasp spacing mode')
-    if close_pulse is None and grasp_spacing=='visual':close_pulse=1700
+    if close_pulse is None and grasp_spacing=='visual':close_pulse=1600
     if out.exists(): raise FileExistsError(out)
     if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip():
         raise RuntimeError('commit the complete execution source and protocol before an experiment')
@@ -299,7 +299,7 @@ def main():
     parser.add_argument('--budget', type=int, default=750)
     parser.add_argument('--grasp-spacing',choices=('passive','visual'),help='robust defaults to visual; passive retains the previous comparison')
     parser.add_argument('--grasp-only',action='store_true',help='bounded pre-drive diagnostic; does not claim navigation success')
-    parser.add_argument('--close-pulse',type=int,choices=(1500,1600,1700,1800),help='visual spacing defaults to 1700; passive retains the skill command; no contact feedback')
+    parser.add_argument('--close-pulse',type=int,choices=(1500,1600,1700,1800),help='visual spacing defaults to 1600; passive retains the skill command; no contact feedback')
     parser.add_argument('--vision-mode', choices=('legacy','temporal','temporal-edges','robust'), default='legacy',
                         help='explicit vision/control comparison; robust adds wheel geometry and own-view carry guard')
     parser.add_argument('--impratio', type=int, choices=(1, 10, 100), default=1,
