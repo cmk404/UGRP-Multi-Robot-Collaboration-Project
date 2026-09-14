@@ -19,7 +19,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 from harness.pair_navigation import digest, footprint_clear, plan_route, swept_clear, validate_map
 
-CATALOG = ROOT / 'experiments/2026-09-14-pair-terrain-examples/catalog.json'
+CATALOG = ROOT / 'maps/pair_navigation/catalog.json'
 
 
 def sha(path):

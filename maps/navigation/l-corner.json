@@ -1,0 +1,80 @@
+{
+  "schema": "ugrp.authored_navigation_map.v1",
+  "map_id": "l_corner",
+  "version": 1,
+  "frame": "warehouse_xy_m",
+  "bounds_m": [
+    -1.08,
+    1.85,
+    -2.9,
+    -1.15
+  ],
+  "grid_resolution_m": 0.025,
+  "top_camera": {
+    "name": "cctv_top",
+    "position_m": [
+      0.55,
+      -2.0,
+      2.5
+    ],
+    "quaternion_wxyz": [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "fov_y_deg": 55.0
+  },
+  "footprint": {
+    "unloaded_radius_m": 0.18,
+    "safety_margin_m": 0.04
+  },
+  "zones": {
+    "start": {
+      "center_m": [
+        0.58,
+        -2.0
+      ],
+      "radius_m": 0.25
+    },
+    "goal": {
+      "center_m": [
+        -0.52,
+        -1.49
+      ],
+      "radius_m": 0.18
+    }
+  },
+  "obstacles": [
+    {
+      "id": "inside_corner",
+      "center_m": [
+        -0.4895,
+        -2.4395
+      ],
+      "half_extents_m": [
+        0.5895,
+        0.4595
+      ],
+      "height_m": 0.3,
+      "kind": "wall",
+      "traversable": false,
+      "cost_multiplier": 1
+    },
+    {
+      "id": "entry_wall",
+      "center_m": [
+        1.46,
+        -2.025
+      ],
+      "half_extents_m": [
+        0.04,
+        0.874
+      ],
+      "height_m": 0.3,
+      "kind": "wall",
+      "traversable": false,
+      "cost_multiplier": 1
+    }
+  ]
+}
