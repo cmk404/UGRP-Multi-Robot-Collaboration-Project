@@ -11,6 +11,8 @@ import subprocess
 import time
 import traceback
 
+import cv2
+
 from harness.rgb_traffic import RGBTrafficRuntime
 from scripts.traffic_scenarios import SCENARIOS, scenario, faults
 
@@ -36,7 +38,8 @@ def run(name, out, *, coordinated=True, max_steps=300):
         'own_rgb_usage': 'required, decoded and archived; top RGB controls localization/navigation',
         'scope': 'two unloaded robots, centralized whole-route reservation, no LLM; no loaded-team claim',
         'environment': {'python': platform.python_version(), 'platform': platform.platform(),
-                        **{p: importlib.metadata.version(p) for p in ('mujoco', 'numpy', 'opencv-python')}},
+                        'opencv_imported': cv2.__version__,
+                        **{p: importlib.metadata.version(p) for p in ('mujoco', 'numpy')}},
         'model_calls': 0, 'model_cost_usd': 0})
     runtime = RGBTrafficRuntime(maps, coordination=coordinated)
     scene = RGBTrafficScene(out, maps, setup)
