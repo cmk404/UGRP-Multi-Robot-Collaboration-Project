@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import copy
 import unittest
+from pathlib import Path
 
 from harness.traffic_reservations import TrafficCoordinator, TrafficCommandGate, paths_conflict
+from harness.rgb_traffic import RGBTrafficRuntime, moving
 from scripts.traffic_scenarios import SCENARIOS, scenario
 
 
@@ -22,6 +24,19 @@ def reports(sequence=0, now=0.):
 
 
 class TrafficTests(unittest.TestCase):
+    def test_actual_rgb_denied_probe_does_not_advance_or_pretend_to_execute(self):
+        fixture = Path(__file__).parent/'fixtures/rgb_traffic'
+        top = (fixture/'top.jpg').read_bytes()
+        frames = {u: ((fixture/(u+'-own.jpg')).read_bytes(), top) for u in ('r1','r3')}
+        runtime = RGBTrafficRuntime(scenario('crossing')[0])
+        row = runtime.step(frames, 0, 0.)
+        self.assertTrue(moving(row['proposals']['r3']['action']))
+        self.assertFalse(moving(row['issued_actions']['r3']))
+        self.assertEqual(runtime.actors['r3']._phase, 'initial')
+        self.assertEqual(runtime.actors['r3']._probe_pulses['forward'], 0)
+        self.assertFalse(moving(runtime.actors['r3']._issued[-1]))
+        self.assertEqual(runtime.actors['r1']._phase, 'forward_probe_issued')
+
     def test_continuous_conflict_geometry(self):
         self.assertTrue(paths_conflict([[-1,0],[1,0]], [[0,-1],[0,1]], .1))
         self.assertTrue(paths_conflict([[-1,0],[1,0]], [[1,0],[-1,0]], .1))

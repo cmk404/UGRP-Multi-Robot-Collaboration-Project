@@ -1,0 +1,104 @@
+[
+  {
+    "event": "RESTART",
+    "unit_id": "*",
+    "clock_s": 8.690180423166764,
+    "coordinator_epoch": 2,
+    "retained_generations": {
+      "r1": 1
+    }
+  },
+  {
+    "event": "GO",
+    "unit_id": "r1",
+    "clock_s": 8.941139263231715,
+    "coordinator_epoch": 2,
+    "reason": "reserved_route_ready",
+    "generation": 1
+  },
+  {
+    "event": "HOLD",
+    "unit_id": "r3",
+    "clock_s": 8.941139263231715,
+    "coordinator_epoch": 2,
+    "reason": "reserved_route:r1",
+    "generation": null
+  },
+  {
+    "event": "CLEAR",
+    "unit_id": "r1",
+    "clock_s": 19.445234802573225,
+    "coordinator_epoch": 2,
+    "generation": 1,
+    "sequence": 66,
+    "top_sha256": "1bf43b28dba29beb7466ea3c4ca8dfb953bd6af5e4efe5026e0752cada66766c"
+  },
+  {
+    "event": "RELEASE",
+    "unit_id": "r1",
+    "clock_s": 19.445234802573225,
+    "coordinator_epoch": 2,
+    "generation": 1
+  },
+  {
+    "event": "GRANT",
+    "unit_id": "r3",
+    "clock_s": 19.445234802573225,
+    "coordinator_epoch": 2,
+    "generation": 2,
+    "identity": [
+      "traffic_restart:r3",
+      1,
+      1
+    ],
+    "occupancy": "possibly occupied until RGB CLEAR, without TTL"
+  },
+  {
+    "event": "HOLD",
+    "unit_id": "r1",
+    "clock_s": 19.445234802573225,
+    "coordinator_epoch": 2,
+    "reason": "completed_or_waiting",
+    "generation": null
+  },
+  {
+    "event": "GO",
+    "unit_id": "r3",
+    "clock_s": 19.445234802573225,
+    "coordinator_epoch": 2,
+    "reason": "reserved_route_ready",
+    "generation": 2
+  },
+  {
+    "event": "ENTER",
+    "unit_id": "r3",
+    "clock_s": 20.045234802573226,
+    "coordinator_epoch": 2,
+    "generation": 2,
+    "evidence": "RGB displacement; not command acknowledgement"
+  },
+  {
+    "event": "CLEAR",
+    "unit_id": "r3",
+    "clock_s": 34.24586979123329,
+    "coordinator_epoch": 2,
+    "generation": 2,
+    "sequence": 114,
+    "top_sha256": "86063845deddd72205f433ea533883d74754fbe1036c935aba9bde334908fed2"
+  },
+  {
+    "event": "RELEASE",
+    "unit_id": "r3",
+    "clock_s": 34.24586979123329,
+    "coordinator_epoch": 2,
+    "generation": 2
+  },
+  {
+    "event": "HOLD",
+    "unit_id": "r3",
+    "clock_s": 34.24586979123329,
+    "coordinator_epoch": 2,
+    "reason": "completed_or_waiting",
+    "generation": null
+  }
+]

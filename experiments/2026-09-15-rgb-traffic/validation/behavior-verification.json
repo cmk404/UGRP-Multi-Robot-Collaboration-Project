@@ -1,0 +1,45 @@
+{
+  "all_checks_pass": true,
+  "conditions": {
+    "crossing-independent": {
+      "rgb_error_within_declared_uncertainty": true,
+      "all_input_audits_pass": true
+    },
+    "crossing-reserved": {
+      "rgb_error_within_declared_uncertainty": true,
+      "all_input_audits_pass": true
+    },
+    "head_on-reserved": {
+      "rgb_error_within_declared_uncertainty": true,
+      "all_input_audits_pass": true
+    },
+    "following-reserved": {
+      "rgb_error_within_declared_uncertainty": true,
+      "all_input_audits_pass": true
+    },
+    "delayed_owner-reserved": {
+      "rgb_error_within_declared_uncertainty": true,
+      "all_input_audits_pass": true,
+      "delay_never_reassigns_owner_corridor": true
+    },
+    "report_gap-reserved": {
+      "rgb_error_within_declared_uncertainty": true,
+      "all_input_audits_pass": true,
+      "missing_reports_stop_both": true,
+      "gap_stop_within_margin": true
+    },
+    "restart-reserved": {
+      "rgb_error_within_declared_uncertainty": true,
+      "all_input_audits_pass": true,
+      "restart_retains_generation": true,
+      "restart_increments_epoch": true,
+      "restart_waiter_not_granted": true
+    },
+    "blocked_exit-reserved": {
+      "rgb_error_within_declared_uncertainty": true,
+      "all_input_audits_pass": true,
+      "blocked_exit_r1_never_moves": true,
+      "blocked_exit_safe_wait": true
+    }
+  }
+}

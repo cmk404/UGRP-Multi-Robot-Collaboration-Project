@@ -1,0 +1,100 @@
+{
+  "r1": {
+    "schema": "ugrp.authored_navigation_map.v1",
+    "map_id": "traffic_crossing",
+    "version": 1,
+    "frame": "warehouse_xy_m",
+    "bounds_m": [
+      -0.95,
+      2.05,
+      -3.1,
+      -0.9
+    ],
+    "grid_resolution_m": 0.025,
+    "top_camera": {
+      "name": "cctv_top",
+      "position_m": [
+        0.55,
+        -2,
+        2.5
+      ],
+      "quaternion_wxyz": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fov_y_deg": 55
+    },
+    "footprint": {
+      "unloaded_radius_m": 0.18,
+      "safety_margin_m": 0.04
+    },
+    "zones": {
+      "start": {
+        "center_m": [
+          -0.6,
+          -2.0
+        ],
+        "radius_m": 0.14
+      },
+      "goal": {
+        "center_m": [
+          1.7,
+          -2.0
+        ],
+        "radius_m": 0.1
+      }
+    },
+    "obstacles": []
+  },
+  "r3": {
+    "schema": "ugrp.authored_navigation_map.v1",
+    "map_id": "traffic_crossing",
+    "version": 1,
+    "frame": "warehouse_xy_m",
+    "bounds_m": [
+      -0.95,
+      2.05,
+      -3.1,
+      -0.9
+    ],
+    "grid_resolution_m": 0.025,
+    "top_camera": {
+      "name": "cctv_top",
+      "position_m": [
+        0.55,
+        -2,
+        2.5
+      ],
+      "quaternion_wxyz": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fov_y_deg": 55
+    },
+    "footprint": {
+      "unloaded_radius_m": 0.18,
+      "safety_margin_m": 0.04
+    },
+    "zones": {
+      "start": {
+        "center_m": [
+          0.55,
+          -2.8
+        ],
+        "radius_m": 0.14
+      },
+      "goal": {
+        "center_m": [
+          0.55,
+          -1.2
+        ],
+        "radius_m": 0.1
+      }
+    },
+    "obstacles": []
+  }
+}
