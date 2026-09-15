@@ -15,3 +15,7 @@
 dd54bf6: 기준은 30초에 7.982mm 내려가고 접촉의 접선 마찰 한계 사용률은 마지막 표본 최대 약 1.81%다. NoSlip1은 유지 약 19.2초에 간격 축소와 own RGB guard로 실패했다. NoSlip3은 기존 출발 준비 실패를 재현했고 tracked lift 역시 hold 중 간격 복구 범위 초과로 실패했다. 이 후보들은 채택하지 않는다.
 
 다음 30초 비교는 NoSlip0/원래 lift를 유지한다. (1) diagexact만 ON, (2) 같은 diagexact ON에서 네 손가락 접촉에만 solreffriction=0 -3000, (3) 기존 diagexact OFF에서 같은 국소 감쇠와 timestep .001을 사용한다. (2)는 (1)과 국소 마찰 감쇠 단독 비교, (3)은 과거 17e59b9의 .002 timestep 수치 불안정과 step 크기 단독 비교다. 정적 모델 defaults를 컴파일하여 normal solref/solimp, condim, friction, margin/gap을 복사하며 실시간 상태를 참조하지 않는다. diagexact는 현 MuJoCo 3.12.0에서 지원되는 현재 자세의 정확한 제약 질량 계산 옵션으로, actor 관측 추가가 아니다. https://mujoco.readthedocs.io/en/stable/XMLreference.html#option-flag-diagexact . 이들 변경은 모두 진단 후보이며 자동 채택하지 않는다.
+
+9572493: diagexact 단독은 hold 중 간격 초과, 국소 감쇠+diagexact와 국소 감쇠+1ms는 초기 파지에서 QACC 수치 불안정으로 실패했다. 채택하지 않는다. 다음 국소 감쇠 후보는 timestep만 .00025로 줄여 큰 감쇠의 명시적 시간 적분 불안정을 분리한다.
+
+또한 NoSlip1 실패 마지막 입력에서 횡방향 명령이 기존 상한 .1에 근접하고 간격이 계속 축소됐다. 기존 물리의 최대 횡방향 힘 1.65N에 정규화 모터 명령을 곱하는 구현에서 .1은 최대 .165N 요구다. 별도의 제어 후보는 NoSlip1에서 RGB 위치오차의 제한된 적분(gain2, 기여 ±.25)을 추가하고 (a) 원래 횡방향 명령 상한 .1, (b) 상한 .3을 비교한다. 모델의 최대 힘·모터 동역학은 바꾸지 않으며 허용된 바퀴 명령만 변경한다. 적분은 관측된 위치오차에서만 갱신한다. 이 두 후보도 30초 진단 후 결정하며 기본 포트/기존 조건의 상한은 .1이다.

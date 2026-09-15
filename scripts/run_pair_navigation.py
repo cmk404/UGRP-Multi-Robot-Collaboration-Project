@@ -29,7 +29,7 @@ from scripts.evaluate_pair_navigation import evaluate_samples, evaluate_grasp_st
 class PairNavigationScene(ShortTransportScene):
     """Private setup, raw actuators, and output-only referee. Never an actor API."""
     def __init__(self, out, grasp_root, data, *, impratio=1, noslip_iterations=0, tracked_lift=False,
-                 finger_damping=0, timestep=.002, diagexact=False):
+                 finger_damping=0, timestep=.002, diagexact=False, formation_integral=0., lateral_limit=.10):
         super().__init__(out, grasp_root)
         if impratio not in (1, 10, 100): raise ValueError('explicit contact impedance profile required')
         self.impratio = impratio
@@ -37,9 +37,10 @@ class PairNavigationScene(ShortTransportScene):
             raise ValueError('explicit bounded NoSlip comparison required')
         self.noslip_iterations = noslip_iterations
         self.tracked_lift = bool(tracked_lift)
-        if finger_damping not in (0,3000) or timestep not in (.002,.001):
+        if finger_damping not in (0,3000) or timestep not in (.002,.001,.00025):
             raise ValueError('unregistered local contact comparison')
         self.finger_damping, self.timestep, self.diagexact = finger_damping, timestep, bool(diagexact)
+        self.formation_integral,self.lateral_limit=formation_integral,lateral_limit
         self.map = data
         self.wall_ids = set()
         self.wall_contact_ticks = 0
@@ -47,7 +48,7 @@ class PairNavigationScene(ShortTransportScene):
         self.contact_events = []
         self.nav_start_s = None
         self.xml_sha = None
-        self.spacing_actors = {r:PairGraspSpacing(data,r) for r in ROBOTS}
+        self.spacing_actors = {r:PairGraspSpacing(data,r,integral_gain=formation_integral,lateral_limit=lateral_limit) for r in ROBOTS}
         self.spacing_sync = PairCarrySync(task_id=data['map_id']+'-grasp-spacing')
         self.spacing_steps = []
 
@@ -137,7 +138,7 @@ class PairNavigationScene(ShortTransportScene):
             return xml
         with patch.object(production, 'build_multi_robot_xml', builder):
             super().open()
-        self.ports = {r: CameraRobotPort(self.world, r, allow_reverse=True, allow_mecanum=True) for r in ROBOTS}
+        self.ports = {r: CameraRobotPort(self.world, r, allow_reverse=True, allow_mecanum=True, lateral_limit=self.lateral_limit) for r in ROBOTS}
         self.wall_ids = {i for i in range(self.world.model.ngeom)
             if (mujoco.mj_id2name(self.world.model, mujoco.mjtObj.mjOBJ_GEOM, i) or '').startswith('pair_wall_')}
         self.geom_names = {i: mujoco.mj_id2name(self.world.model, mujoco.mjtObj.mjOBJ_GEOM, i) or ''

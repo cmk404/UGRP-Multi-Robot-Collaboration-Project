@@ -44,20 +44,27 @@ def main():
     p.add_argument('--noslip', type=int, choices=(0,1,3), default=0)
     p.add_argument('--tracked-lift', action='store_true')
     p.add_argument('--finger-damping', type=int, choices=(0,3000), default=0)
-    p.add_argument('--timestep', type=float, choices=(.002,.001), default=.002)
+    p.add_argument('--timestep', type=float, choices=(.002,.001,.00025), default=.002)
     p.add_argument('--diagexact', action='store_true')
+    p.add_argument('--formation-integral', type=float, choices=(0.,2.), default=0.)
+    p.add_argument('--lateral-limit', type=float, choices=(.10,.30), default=.10)
     p.add_argument('--duration', type=int, choices=(30,60,300), default=30)
     p.add_argument('--mode', choices=('stationary','shuttle'), default='stationary')
     a=p.parse_args()
     data=json.loads((ROOT/'maps/pair_navigation/narrow-door.json').read_text())
     def factory(*args, **kwargs):
         return DiagnosticScene(*args, **kwargs, noslip_iterations=a.noslip, tracked_lift=a.tracked_lift,
-                               finger_damping=a.finger_damping, timestep=a.timestep, diagexact=a.diagexact)
-    with patch.object(endurance,'EnduranceScene',factory):
+                               finger_damping=a.finger_damping, timestep=a.timestep, diagexact=a.diagexact,
+                               formation_integral=a.formation_integral, lateral_limit=a.lateral_limit)
+    original_actor = endurance.EnduranceActor
+    def actor(*args):
+        return original_actor(*args, integral_gain=a.formation_integral, lateral_limit=a.lateral_limit)
+    with patch.object(endurance,'EnduranceScene',factory), patch.object(endurance,'EnduranceActor',actor):
         result=endurance.run(data,a.grasp_model_dir.resolve(),a.out_dir.resolve(),a.mode,a.duration)
     result.update(schema='ugrp.pair_grasp_retention_diagnostic.v1', noslip_iterations=a.noslip,
                   tracked_lift=a.tracked_lift, diagnostic_only=True, finger_damping=a.finger_damping,
-                  timestep=a.timestep, diagexact=a.diagexact)
+                  timestep=a.timestep, diagexact=a.diagexact,
+                  formation_integral=a.formation_integral, lateral_limit=a.lateral_limit)
     write(a.out_dir/'result.json', result)
     return 0 if result['error'] is None else 1
 

@@ -11,7 +11,7 @@ from harness.pair_transport_vision import GeometryPairVision
 DT = .1
 
 class EnduranceActor:
-    def __init__(self, data, rid, mode):
+    def __init__(self, data, rid, mode, *, integral_gain=0., lateral_limit=.10):
         if rid not in ROBOTS or mode not in ('stationary','shuttle'):
             raise ValueError('invalid endurance actor configuration')
         self.data,self.rid,self.mode=data,rid,mode
@@ -19,6 +19,8 @@ class EnduranceActor:
         self.anchor=self.previous=self.anchor_angles=None
         self.velocity={r:np.zeros(2) for r in ROBOTS}
         self.sequence=0;self.terminal=None;self.plan_hash=None
+        self.integral_gain,self.lateral_limit=integral_gain,lateral_limit
+        self.integral=np.zeros(2)
 
     def decide(self, own_rgb, top_rgb):
         action={'kind':'mecanum','forward':0.,'left':0.,'turn':0.,'duration_s':DT}
@@ -50,8 +52,9 @@ class EnduranceActor:
         if (max(np.linalg.norm(e) for e in errors.values())>.03 or abs(separation-self.spacing)>.03
                 or max(abs(e) for e in yaw_errors.values())>.12):
             self.terminal='visual endurance formation exceeded tracking envelope';return self.decide(own_rgb,top_rgb)
-        local=rotate(desired_velocity+6*errors[self.rid]-.6*(self.velocity[self.rid]-desired_velocity),-angles[self.rid])
-        action.update(forward=float(np.clip(local[0],-.05,.05)),left=float(np.clip(local[1],-.10,.10)),turn=float(np.clip(1.5*yaw_errors[self.rid],-.10,.10)))
+        self.integral=np.clip(self.integral+self.integral_gain*DT*errors[self.rid],-.25,.25)
+        local=rotate(desired_velocity+6*errors[self.rid]-.6*(self.velocity[self.rid]-desired_velocity)+self.integral,-angles[self.rid])
+        action.update(forward=float(np.clip(local[0],-.05,.05)),left=float(np.clip(local[1],-self.lateral_limit,self.lateral_limit)),turn=float(np.clip(1.5*yaw_errors[self.rid],-.10,.10)))
         self.previous=positions;self.sequence+=1
         return {'action':action,'status':'endurance_'+self.mode,'ready':True,'done':False,'plan_hash':self.plan_hash,
                 'observations':obs,'elapsed_command_s':elapsed,'target_offset_m':offset.tolist(),

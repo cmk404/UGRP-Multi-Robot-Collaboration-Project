@@ -42,11 +42,12 @@ class CameraRobotPort:
     """
 
     def __init__(self, world: Any, rid: str, *, allow_reverse: bool = False,
-                 allow_mecanum: bool = False):
+                 allow_mecanum: bool = False, lateral_limit: float = .10):
         self._world = world
         self.robot_id = str(rid)
         self._allow_reverse = bool(allow_reverse)
         self._allow_mecanum = bool(allow_mecanum)
+        self._lateral_limit = _bounded_number('lateral_limit', lateral_limit, .10, .30)
         self._robot = world.robot(rid)
         self._frame_id = 0
         self._motor_commands = _STOP
@@ -116,7 +117,7 @@ class CameraRobotPort:
             if not self._allow_mecanum:
                 raise ValueError("mecanum action requires allow_mecanum=True")
             forward = _bounded_number("forward", action["forward"], -0.05 if self._allow_reverse else 0.0, 0.15)
-            left = _bounded_number("left", action["left"], -0.10, 0.10)
+            left = _bounded_number("left", action["left"], -self._lateral_limit, self._lateral_limit)
             turn = _bounded_number("turn", action["turn"], -0.15, 0.15)
             duration = _bounded_number("duration_s", action["duration_s"], 0.0, 1.0)
             mixed = tuple(f * forward + l * left + t * turn for f, l, t in

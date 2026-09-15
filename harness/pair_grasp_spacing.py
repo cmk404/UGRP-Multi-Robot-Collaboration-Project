@@ -15,7 +15,7 @@ HOLD_DT = .1
 
 
 class PairGraspSpacing:
-    def __init__(self, data, robot_id):
+    def __init__(self, data, robot_id, *, integral_gain=0., lateral_limit=.10):
         if robot_id not in ROBOTS:
             raise ValueError('invalid robot')
         self.rid = robot_id
@@ -28,6 +28,8 @@ class PairGraspSpacing:
         self.stable_frames = 0
         self.terminal = None
         self.plan_hash = None
+        self.integral_gain, self.lateral_limit = integral_gain, lateral_limit
+        self.integral = np.zeros(2)
 
     def decide(self, own_rgb, top_rgb):
         action = {'kind':'mecanum', 'forward':0., 'left':0., 'turn':0., 'duration_s':HOLD_DT}
@@ -66,10 +68,11 @@ class PairGraspSpacing:
                   and max(abs(e) for e in angle_errors.values()) <= .03)
         self.stable_frames = self.stable_frames+1 if stable else 0
         if not first:
-            local = rotate(6.*errors[self.rid]-.6*self.velocity[self.rid], -angles[self.rid])
+            self.integral = np.clip(self.integral+self.integral_gain*HOLD_DT*errors[self.rid], -.25, .25)
+            local = rotate(6.*errors[self.rid]-.6*self.velocity[self.rid]+self.integral, -angles[self.rid])
             angular = 1.5*angle_errors[self.rid]-.25*self.angular_velocity[self.rid]
             action.update(forward=float(np.clip(local[0],-.05,.08)),
-                          left=float(np.clip(local[1],-.10,.10)),
+                          left=float(np.clip(local[1],-self.lateral_limit,self.lateral_limit)),
                           turn=float(np.clip(angular,-.10,.10)))
         # The anchor precedes the fixed lift replay. Its next frame is not
         # spaced by HOLD_DT, so start velocity differencing after that frame.
