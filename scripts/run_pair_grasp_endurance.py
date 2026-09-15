@@ -106,6 +106,8 @@ def run(data,grasp_root,out,mode,duration_s=300, *, contact_profile='retention',
             report.update(invariants_final=scene.invariant_record(),weld_active_ticks=scene.weld_active_ticks,wall_contact_ticks=scene.wall_contact_ticks,
                 unexpected_contact_ticks=scene.unexpected_contact_ticks,sim_seconds=scene.time())
             report['evaluation']=evaluate_endurance(scene.evaluation_samples,report)
+            from scripts.evaluate_pair_grasp_recovery import evaluate_recoveries
+            report['recovery_evaluation']=evaluate_recoveries(scene.evaluation_samples,report)
         report.update(spacing_steps=scene.spacing_steps,spacing_sync_events=scene.spacing_sync.events,sync_events=sync.events,wall_seconds=time.monotonic()-started)
         report['success']=not report['error'] and report.get('evaluation',{}).get('success',False)
         write(out/'grasp-result.json',initial_grasp or scene.grasp_report);write(out/'contact-events-evaluation-only.json',scene.contact_events)

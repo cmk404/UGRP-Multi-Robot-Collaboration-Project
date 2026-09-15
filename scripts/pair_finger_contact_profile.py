@@ -27,3 +27,32 @@ def configure_finger_contacts(root, damping):
 def contact_profile_record(m):
     fields=('pair_dim','pair_geom1','pair_geom2','pair_solref','pair_solreffriction','pair_solimp','pair_margin','pair_gap','pair_friction')
     return {name:getattr(m,name).tolist() for name in fields}
+
+def audit_contact_profile(scene_path, report):
+    """Compile saved static XML for output auditing, never for an actor."""
+    if 'contact_profile' not in report:return  # Legacy records retain their own audit scope.
+    import mujoco
+    import numpy as np
+    m=mujoco.MjModel.from_xml_path(str(scene_path))
+    profile=report['contact_profile']
+    if profile not in ('baseline','retention'):raise ValueError('unknown contact profile')
+    if m.opt.timestep != (.00025 if profile=='retention' else .002) or m.opt.noslip_iterations!=0:
+        raise ValueError('declared contact solver differs from saved XML')
+    if contact_profile_record(m)!=report['invariants_initial']['explicit_contact_pairs']:
+        raise ValueError('contact pair record differs from saved XML')
+    expected={(rid+'__'+side+'_finger','team_beam_geom') for rid in ('r1','r3') for side in ('left','right')}
+    actual={(m.geom(int(a)).name,m.geom(int(b)).name) for a,b in zip(m.pair_geom1,m.pair_geom2)}
+    if profile=='baseline':
+        if actual:raise ValueError('baseline contains explicit contact overrides')
+        return
+    if actual!=expected or m.npair!=4 or m.opt.impratio!=10 or not np.all(m.pair_solreffriction==[0,-3000]):
+        raise ValueError('retention contact scope mismatch')
+    # Verify the explicit profile preserved each contact's authored normal law
+    # and friction capacity. Only its tangential regularization was changed.
+    for i,(a,b) in enumerate(zip(m.pair_geom1,m.pair_geom2)):
+        weight=m.geom_solmix[a]/(m.geom_solmix[a]+m.geom_solmix[b])
+        for pair,geom in ((m.pair_solref,m.geom_solref),(m.pair_solimp,m.geom_solimp)):
+            if not np.allclose(pair[i],weight*geom[a]+(1-weight)*geom[b],rtol=0,atol=1e-12):
+                raise ValueError('normal contact law changed')
+        if not np.array_equal(m.pair_friction[i],np.maximum(m.geom_friction[a],m.geom_friction[b])[[0,0,1,2,2]]):
+            raise ValueError('friction capacity changed')

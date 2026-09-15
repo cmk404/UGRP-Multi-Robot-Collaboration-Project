@@ -23,7 +23,7 @@ def audit(run_dir, grasp_dir=None):
     import hashlib
     if hashlib.sha256((ROOT/'harness/assets/pair_navigation/manifest.json').read_bytes()).hexdigest() != report['appearance_manifest_sha256']:
         raise ValueError('appearance model manifest mismatch')
-    actors = {r: PairNavigator(report['map'], r, vision_mode=report.get('vision_mode','legacy')) for r in ROBOTS}
+    actors = {r: PairNavigator(report['map'], r, vision_mode=report.get('vision_mode','legacy'),slip_guard=report.get('slip_guard',False)) for r in ROBOTS}
     sync = PairCarrySync(report['map']['map_id'])
     seen = {r:set() for r in ROBOTS}
     spacing = {r:PairGraspSpacing(report['map'],r) for r in ROBOTS}
@@ -72,6 +72,9 @@ def audit(run_dir, grasp_dir=None):
             action = dict(decisions[rid]['action'])
             if permission['phase'] != 'GO': action.update(forward=0.,left=0.,turn=0.)
             if not _same(action,row['issued_actions'][rid]): raise ValueError('issued action mismatch')
+        for rec in report.get('recoveries',[]):
+            if rec['trigger_index']==i and rec.get('regrasp_commands_completed') and not rec['error']:
+                for actor in actors.values():actor.after_regrasp()
     if not _same(sync.events, report['sync_events']): raise ValueError('coordination trace mismatch')
     final = report['steps'][-1]['decisions'] if report['steps'] else None
     if report['arrived'] != bool(final and all(final[r]['done'] for r in ROBOTS)): raise ValueError('false arrival')
@@ -91,6 +94,11 @@ def audit(run_dir, grasp_dir=None):
     if report['success'] != bool(not report['error'] and scored['success']): raise ValueError('false success')
     grasp = audit_grasp(root, Path(grasp_dir).resolve(), report_name='grasp-result.json') if grasp_dir else None
     if grasp is not None and not grasp.get('ok'): raise ValueError('grasp input audit failed: '+str(grasp))
+    from scripts.audit_pair_grasp_recovery import audit_recoveries
+    if report.get('recoveries') and not grasp_dir:raise ValueError('recovery audit requires grasp models')
+    recovery_audit=audit_recoveries(root,report,Path(grasp_dir).resolve(),seen) if grasp_dir else []
+    from scripts.evaluate_pair_grasp_recovery import evaluate_recoveries
+    if 'recovery_evaluation' in report and not _same(evaluate_recoveries(rows,report),report['recovery_evaluation']):raise ValueError('recovery scoring mismatch')
     if grasp_dir and hashlib.sha256((Path(grasp_dir)/'student-skill.json').read_bytes()).hexdigest() != report['grasp_skill_sha256']:
         raise ValueError('grasp manifest mismatch')
     if 'close_command_override' in report and grasp_dir:
@@ -98,7 +106,7 @@ def audit(run_dir, grasp_dir=None):
         if override not in (None,1500,1600,1700,1800):raise ValueError('invalid fixed close command')
         skill=json.loads((Path(grasp_dir)/'student-skill.json').read_text())
         trace=json.loads(_safe_file(root,'execution-trace.json').read_text())
-        close=[r for r in trace if r['stage']=='grasp_close']
+        close=[r for r in trace if r['stage']=='grasp_close' and not r.get('recovery_index')]
         expected={r:{'1':skill['close_pulses'][r] if override is None else override} for r in ROBOTS}
         if len(close)!=1 or close[0]['command']['targets']!=expected:
             raise ValueError('actual close command differs from declared fixed comparison')
@@ -106,7 +114,10 @@ def audit(run_dir, grasp_dir=None):
             raise ValueError('close command timing mismatch')
     if hashlib.sha256(_safe_file(root,'scene.xml').read_bytes()).hexdigest() != report['scene_xml_sha256']:
         raise ValueError('compiled scene hash mismatch')
+    from scripts.pair_finger_contact_profile import audit_contact_profile
+    audit_contact_profile(_safe_file(root,'scene.xml'),report)
     return {'passed': True, 'steps': len(report['steps']), 'spacing_steps':len(report.get('spacing_steps',[])), 'grasp': grasp,
+            'recoveries':recovery_audit,
             'physical_success': evaluation['success'], 'grasp_stability':grasp_stability,
             'refused_no_route':report.get('refused_no_route',False),
             'scope': 'Exact RGB/command replay and output-only scoring; no actual physics rerun'}

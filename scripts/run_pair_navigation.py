@@ -24,6 +24,7 @@ from harness.pair_grasp_spacing import PairGraspSpacing, HOLD_DT
 from scripts.camera_short_transport_scene import ShortTransportScene
 from scripts.run_camera_approach_student import models, sha, write
 from scripts.evaluate_pair_navigation import evaluate_samples, evaluate_grasp_stability
+from scripts.pair_grasp_recovery import recover_pair, slip_requested
 
 
 class PairNavigationScene(ShortTransportScene):
@@ -214,19 +215,21 @@ def evaluate(scene, report):
                             require_full_grasp=report.get('grasp_spacing')=='visual')
 
 
-def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy', grasp_spacing=None, grasp_only=False, close_pulse=None):
+def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy', grasp_spacing=None, grasp_only=False, close_pulse=None, contact_profile=None):
     validate_map(data)
     grasp_spacing = grasp_spacing or ('visual' if vision_mode=='robust' else 'passive')
     if grasp_spacing not in ('visual','passive'):raise ValueError('unknown grasp spacing mode')
     if close_pulse is None and grasp_spacing=='visual':close_pulse=1600
+    contact_profile = contact_profile or ('retention' if vision_mode=='robust' and impratio==10 else 'baseline')
+    slip_guard = vision_mode=='robust' and contact_profile=='retention'
     if out.exists(): raise FileExistsError(out)
     if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip():
         raise RuntimeError('commit the complete execution source and protocol before an experiment')
     skill, grasp_models = models(grasp_root, 'student-skill.json')
-    scene = PairNavigationScene(out, grasp_root, data, impratio=impratio)
-    actors = {r: PairNavigator(data, r, vision_mode=vision_mode) for r in ROBOTS}
+    scene = PairNavigationScene(out, grasp_root, data, impratio=impratio,contact_profile=contact_profile)
+    actors = {r: PairNavigator(data, r, vision_mode=vision_mode,slip_guard=slip_guard) for r in ROBOTS}
     sync = PairCarrySync(task_id=data['map_id'])
-    started = time.monotonic()
+    started = time.monotonic();initial_grasp=None
     report = {'schema': 'ugrp.pair_navigation_trial.v1', 'map': data, 'map_sha256': digest(data),
               'source_sha': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
               'grasp_skill_sha256': sha(grasp_root/'student-skill.json'),
@@ -235,6 +238,7 @@ def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy', 
               'scope': 'Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay',
               'budget': budget, 'steps': [], 'arrived': False, 'error': None,
               'contact_impratio': impratio,
+              'contact_profile':contact_profile,'slip_guard':slip_guard,'recoveries':[],
               'vision_mode': vision_mode,
               'grasp_spacing':grasp_spacing,'grasp_only':bool(grasp_only),
               'close_command_override':close_pulse,
@@ -254,6 +258,7 @@ def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy', 
         (scene.hold_spacing if grasp_spacing=='visual' else scene.tick)(8.)
         if grasp_spacing=='visual':scene.finish_spacing()
         report['post_grasp_settle_s'] = 8.
+        initial_grasp=scene.grasp_report
         write(out/'grasp-result.json', scene.grasp_report)
         for index in range(0 if grasp_only else budget):
             frames = scene.capture(f'nav-{index:04d}')
@@ -268,6 +273,14 @@ def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy', 
             report['steps'].append(row)
             scene.execute(actions)
             if not all(d['ready'] for d in decisions.values()):
+                if slip_requested(decisions):
+                    retry=len(report['recoveries'])==0
+                    rec=recover_pair(scene,grasp_models,len(report['recoveries'])+1,regrasp=retry)
+                    rec['trigger_index']=index;report['recoveries'].append(rec)
+                    if rec['error']:raise RuntimeError('RGB recovery stopped: '+rec['error'])
+                    if not retry:raise RuntimeError('slip recurred after one regrasp; placed and stopped')
+                    for actor in actors.values():actor.after_regrasp()
+                    continue
                 if retryable_visual_hold(decisions):
                     continue  # Both commands were zero; capture a fresh pair of images.
                 if all(d['status'] == 'no_route' for d in decisions.values()):
@@ -296,9 +309,11 @@ def run(data, grasp_root, out, budget=750, *, impratio=1, vision_mode='legacy', 
             report['evaluation'] = evaluate(scene, report)
             report['grasp_stability'] = evaluate_grasp_stability(scene.evaluation_samples)
             report['sim_seconds'] = scene.time()
+            from scripts.evaluate_pair_grasp_recovery import evaluate_recoveries
+            report['recovery_evaluation']=evaluate_recoveries(scene.evaluation_samples,report)
         report['sync_events'] = sync.events
         if scene.grasp_report is not None:
-            write(out/'grasp-result.json',scene.grasp_report)
+            write(out/'grasp-result.json',initial_grasp or scene.grasp_report)
         report['spacing_steps'] = scene.spacing_steps
         report['spacing_sync_events'] = scene.spacing_sync.events
         report['wall_seconds'] = time.monotonic()-started
@@ -330,10 +345,12 @@ def main():
                         help='explicit vision/control comparison; robust adds wheel geometry and own-view carry guard')
     parser.add_argument('--impratio', type=int, choices=(1, 10, 100), default=1,
                         help='explicit friction impedance comparison; default preserves main')
+    parser.add_argument('--contact-profile',choices=('baseline','retention'),
+                        help='robust vision with impratio 10 defaults to the retention profile')
     args = parser.parse_args()
     if not 1 <= args.budget <= 1200: parser.error('budget must be 1..1200')
     result = run(json.loads(args.map.read_text()), args.grasp_model_dir.resolve(), args.out_dir.resolve(), args.budget,
-        impratio=args.impratio, vision_mode=args.vision_mode, grasp_spacing=args.grasp_spacing, grasp_only=args.grasp_only,close_pulse=args.close_pulse)
+        impratio=args.impratio, vision_mode=args.vision_mode, grasp_spacing=args.grasp_spacing, grasp_only=args.grasp_only,close_pulse=args.close_pulse,contact_profile=args.contact_profile)
     return int(bool(result['error']))
 
 

@@ -461,16 +461,17 @@ class TemporalPairVision(PairVision):
 
 class PairNavigator:
     """A common geometric plan with independent own-command/RGB instances."""
-    def __init__(self, data, robot_id, task_id='pair-navigation', *, vision_mode='legacy'):
+    def __init__(self, data, robot_id, task_id='pair-navigation', *, vision_mode='legacy', slip_guard=False):
         self.map, self.rid = validate_map(data), robot_id
         if robot_id not in ROBOTS: raise ValueError('invalid robot')
         if vision_mode not in ('legacy','temporal','temporal-edges','robust'): raise ValueError('unknown vision mode')
         self.vision_mode = vision_mode
+        self.slip_guard = slip_guard
         self.vision = (PairVision(data) if vision_mode == 'legacy' else
                        TemporalPairVision(data,edge_axis=vision_mode=='temporal-edges'))
         if vision_mode == 'robust':
             from harness.pair_transport_vision import GeometryPairVision
-            self.vision = GeometryPairVision(data)
+            self.vision = GeometryPairVision(data, slip_guard=slip_guard, interval_s=.2)
         self.plan_version = 1
         self.motion_terminal = None
         self.progress_segment = None
@@ -491,6 +492,14 @@ class PairNavigator:
         self.segment = 1
         self.confirmations = 0
         self.plan_hash = None
+
+    def after_regrasp(self):
+        # Preserve the route, orientation reference and goal. Fresh RGB must
+        # pass the normal formation/visibility checks before another GO.
+        from harness.pair_transport_vision import OwnCarryMonitor
+        self.motion_terminal = None
+        self.vision.carry_monitor = OwnCarryMonitor(slip_guard=self.slip_guard, interval_s=.2)
+        self.confirmations = 0
 
     def decide(self, own_rgb, top_rgb):
         self.sequence += 1
