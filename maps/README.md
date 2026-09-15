@@ -74,11 +74,16 @@
   .venv-sim-worker-mac/bin/mjpython scripts/run_pair_navigation.py \
   --map maps/pair_navigation/s-bends.json \
   --grasp-model-dir /absolute/path/to/models/grasp \
-  --vision-mode robust --impratio 10 --budget 750 \
+  --vision-mode robust --impratio 10 --contact-profile retention --budget 750 \
   --out-dir outputs/s-bends-pair-NEW
 ```
 
-위 공동 운반 명령은 이번 고정 시작 비교에서 검증한 `robust`, `impratio=10` 조건을 명시한다.
+위 공동 운반 명령은 `robust`, `impratio=10`, `retention` 조건을 명시한다.
+retention은 네 손가락 접촉의 수치적 미끄러짐을 줄이고 물리 계산 간격을 0.25ms로 한다.
+같은 고정 시작에서 5분 유지와 여섯 지형을 검증한 [결과와 한계](../experiments/2026-09-15-pair-grasp-retention/README.md)를 참고한다.
+RGB로 지속 미끄러짐이 보이면 내려놓고 한 번 재파지하며, 재발하면 내려놓고 종료한다.
+기존 접촉 조건은 `--contact-profile baseline`으로 구분한다. robust + impratio=10은
+프로필을 생략하면 retention을 선택한다.
 옵션을 생략했을 때의 기존 CLI 기본값은 `legacy`, `impratio=1`로 유지한다.
 이전 영상 후보를 재현하려면 모드를 `temporal` 또는 `temporal-edges`로 지정한다.
 
