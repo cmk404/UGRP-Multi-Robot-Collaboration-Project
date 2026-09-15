@@ -5,7 +5,7 @@ import copy
 import hashlib
 
 from harness.heading_map_navigation import HeadingMapNavigator
-from harness.traffic_reservations import TrafficCoordinator, TrafficCommandGate
+from harness.traffic_reservations import TrafficCoordinator, TrafficCommandGate, path_distance
 
 
 STOP = {'kind': 'mecanum', 'forward': 0., 'left': 0., 'turn': 0., 'duration_s': .25}
@@ -28,6 +28,8 @@ class RGBTrafficRuntime:
         self.gates = {u: TrafficCommandGate(u) for u in maps}
         self.issued = {u: [] for u in maps}
         self.coordination = coordination
+        self.route_versions = {u: 1 for u in maps}
+        self.published_routes = {}
 
     def step(self, frames, sequence, now, *, missing=(), restart=False):
         if restart:
@@ -39,8 +41,17 @@ class RGBTrafficRuntime:
             decision = candidates[unit].decide(own, top, sequence)
             proposals[unit] = decision
             diagnostic = decision['diagnostics']
+            route = diagnostic['path']
+            if route:
+                previous = self.published_routes.get(unit)
+                if previous and max(path_distance(p, previous) for p in route) > .04:
+                    self.route_versions[unit] += 1
+                    self.published_routes[unit] = copy.deepcopy(route)
+                elif previous is None:
+                    self.published_routes[unit] = copy.deepcopy(route)
             report = {'unit_id': unit, 'participants': [unit], 'accepted_by': [unit],
-                'task_id': self.maps[unit]['map_id'] + ':' + unit, 'plan_version': 1, 'route_version': 1,
+                'task_id': self.maps[unit]['map_id'] + ':' + unit, 'plan_version': 1,
+                'route_version': self.route_versions[unit],
                 'sequence': sequence, 'clock_s': now, 'clock_id': 'issued_command_clock_v1',
                 'source': 'top_rgb', 'top_sha256': hashlib.sha256(top).hexdigest(),
                 'position_m': diagnostic['position_estimate_m'],

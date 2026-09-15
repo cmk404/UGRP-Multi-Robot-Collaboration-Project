@@ -147,8 +147,25 @@ class TrafficCoordinator:
 
         # Replan cannot erase a corridor a previous command might still occupy.
         for unit, reservation in self.reservations.items():
-            if list(self.identity(reports[unit])) != reservation['identity']:
+            report = reports[unit]
+            identity = list(self.identity(report))
+            if identity[:2] != reservation['identity'][:2]:
                 reservation['replan_blocked'] = True
+            elif identity[2] > reservation['identity'][2]:
+                # Atomic route extension retains every old possibly occupied
+                # capsule, and invalidates the old generation before dispatch.
+                blocked = any(paths_conflict(report['route'], path, separation)
+                    for peer, r in self.reservations.items() if peer != unit for path in r['routes'])
+                blocked |= any(path_distance(r['position_m'], report['route']) <= separation
+                               for peer, r in reports.items() if peer != unit)
+                reservation['revision_blocked'] = blocked
+                if not blocked:
+                    self.generation += 1
+                    reservation['routes'].append(copy.deepcopy(report['route']))
+                    reservation['identity'] = identity
+                    reservation['generation'] = self.generation
+                    self._event('EXTEND', unit, now, generation=self.generation,
+                                identity=identity, retained_route_count=len(reservation['routes']))
         for unit, report in reports.items():
             key = list(self.identity(report))
             if not report['arrived'] and self.cleared.get(unit) != key:
@@ -158,7 +175,7 @@ class TrafficCoordinator:
 
         for unit, reservation in list(self.reservations.items()):
             report = reports[unit]
-            if reservation.get('replan_blocked'):
+            if reservation.get('replan_blocked') or reservation.get('revision_blocked'):
                 continue
             if not reservation['entered'] and math.dist(report['position_m'], reservation['start_m']) > .01:
                 reservation['entered'] = True
@@ -183,7 +200,7 @@ class TrafficCoordinator:
             if unit in self.reservations or report['arrived']:
                 continue
             blockers = [u for u, r in self.reservations.items()
-                        if paths_conflict(report['route'], r['route'], separation)]
+                        if any(paths_conflict(report['route'], path, separation) for path in r['routes'])]
             if blockers:
                 reasons[unit] = 'reserved_route:' + ','.join(sorted(blockers))
                 continue
@@ -196,6 +213,7 @@ class TrafficCoordinator:
             self.generation += 1
             self.reservations[unit] = {'identity': list(self.identity(report)),
                 'generation': self.generation, 'route': copy.deepcopy(report['route']),
+                'routes': [copy.deepcopy(report['route'])],
                 'start_m': report['position_m'], 'last_m': report['position_m'],
                 'clear_frames': 0, 'entered': False, 'replan_blocked': False}
             self._event('GRANT', unit, now, generation=self.generation,
@@ -205,12 +223,13 @@ class TrafficCoordinator:
         go = {}
         for unit, reservation in self.reservations.items():
             report = reports[unit]
-            if reservation.get('replan_blocked'):
+            if reservation.get('replan_blocked') or reservation.get('revision_blocked'):
                 reasons[unit] = 'occupied_plan_changed_replan_required'
                 continue
             # The route can be refined inside its original conservative tube;
             # a different corridor must obtain a new plan/version handshake.
-            deviation = max(path_distance(p, reservation['route']) for p in [report['position_m'], *report['route']])
+            deviation = max(min(path_distance(p, path) for path in reservation['routes'])
+                            for p in [report['position_m'], *report['route']])
             if deviation > self.stopping_margin_m:
                 reasons[unit] = 'route_left_reserved_tube_replan_required'
                 continue

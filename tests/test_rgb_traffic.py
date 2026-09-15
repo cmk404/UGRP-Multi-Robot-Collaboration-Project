@@ -90,6 +90,20 @@ class TrafficTests(unittest.TestCase):
         self.assertEqual(permission['r1']['phase'], 'HOLD')
         self.assertIn('peer_occupies_route', permission['r1']['reason'])
 
+    def test_route_extension_retains_old_occupancy_and_invalidates_generation(self):
+        coordinator = TrafficCoordinator(('r1','r3'))
+        old = coordinator.step(reports(), 0.)
+        data = reports(1, .5)
+        data['r1']['route_version'] = 2
+        data['r1']['route'] = [[-1.,0.], [-.3,.12], [1.,0.]]
+        new = coordinator.step(data, .5)
+        self.assertEqual(new['r1']['phase'], 'GO')
+        self.assertGreater(new['r1']['generation'], old['r1']['generation'])
+        self.assertEqual(len(coordinator.reservations['r1']['routes']), 2)
+        self.assertEqual(new['r3']['phase'], 'HOLD')
+        self.assertFalse(TrafficCommandGate('r1').accept(old['r1'], data['r1'], now=.5,
+            epoch=1, current_generation=new['r1']['generation'], duration_s=.05))
+
     def test_gate_rejects_wrong_identity_generation_expiry_and_replay(self):
         coordinator = TrafficCoordinator(('r1','r3'))
         data = reports(); permission = coordinator.step(data, 0.)['r1']
