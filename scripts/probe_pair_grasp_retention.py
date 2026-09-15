@@ -43,16 +43,21 @@ def main():
     p.add_argument('--out-dir', type=Path, required=True)
     p.add_argument('--noslip', type=int, choices=(0,1,3), default=0)
     p.add_argument('--tracked-lift', action='store_true')
+    p.add_argument('--finger-damping', type=int, choices=(0,3000), default=0)
+    p.add_argument('--timestep', type=float, choices=(.002,.001), default=.002)
+    p.add_argument('--diagexact', action='store_true')
     p.add_argument('--duration', type=int, choices=(30,60,300), default=30)
     p.add_argument('--mode', choices=('stationary','shuttle'), default='stationary')
     a=p.parse_args()
     data=json.loads((ROOT/'maps/pair_navigation/narrow-door.json').read_text())
     def factory(*args, **kwargs):
-        return DiagnosticScene(*args, **kwargs, noslip_iterations=a.noslip, tracked_lift=a.tracked_lift)
+        return DiagnosticScene(*args, **kwargs, noslip_iterations=a.noslip, tracked_lift=a.tracked_lift,
+                               finger_damping=a.finger_damping, timestep=a.timestep, diagexact=a.diagexact)
     with patch.object(endurance,'EnduranceScene',factory):
         result=endurance.run(data,a.grasp_model_dir.resolve(),a.out_dir.resolve(),a.mode,a.duration)
     result.update(schema='ugrp.pair_grasp_retention_diagnostic.v1', noslip_iterations=a.noslip,
-                  tracked_lift=a.tracked_lift, diagnostic_only=True)
+                  tracked_lift=a.tracked_lift, diagnostic_only=True, finger_damping=a.finger_damping,
+                  timestep=a.timestep, diagexact=a.diagexact)
     write(a.out_dir/'result.json', result)
     return 0 if result['error'] is None else 1
 

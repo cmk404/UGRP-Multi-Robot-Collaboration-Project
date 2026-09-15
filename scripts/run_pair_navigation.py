@@ -28,7 +28,8 @@ from scripts.evaluate_pair_navigation import evaluate_samples, evaluate_grasp_st
 
 class PairNavigationScene(ShortTransportScene):
     """Private setup, raw actuators, and output-only referee. Never an actor API."""
-    def __init__(self, out, grasp_root, data, *, impratio=1, noslip_iterations=0, tracked_lift=False):
+    def __init__(self, out, grasp_root, data, *, impratio=1, noslip_iterations=0, tracked_lift=False,
+                 finger_damping=0, timestep=.002, diagexact=False):
         super().__init__(out, grasp_root)
         if impratio not in (1, 10, 100): raise ValueError('explicit contact impedance profile required')
         self.impratio = impratio
@@ -36,6 +37,9 @@ class PairNavigationScene(ShortTransportScene):
             raise ValueError('explicit bounded NoSlip comparison required')
         self.noslip_iterations = noslip_iterations
         self.tracked_lift = bool(tracked_lift)
+        if finger_damping not in (0,3000) or timestep not in (.002,.001):
+            raise ValueError('unregistered local contact comparison')
+        self.finger_damping, self.timestep, self.diagexact = finger_damping, timestep, bool(diagexact)
         self.map = data
         self.wall_ids = set()
         self.wall_contact_ticks = 0
@@ -115,6 +119,13 @@ class PairNavigationScene(ShortTransportScene):
             root = ET.fromstring(original(*args, **kwargs))
             root.find('option').set('impratio', str(self.impratio))
             root.find('option').set('noslip_iterations', str(self.noslip_iterations))
+            root.find('option').set('timestep', str(self.timestep))
+            if self.diagexact:
+                flag = root.find('option/flag')
+                if flag is None: flag = ET.SubElement(root.find('option'), 'flag')
+                flag.set('diagexact', 'enable')
+            from scripts.pair_finger_contact_profile import configure_finger_contacts
+            configure_finger_contacts(root, self.finger_damping)
             world = root.find('worldbody')
             for box in self.map['obstacles']:
                 x, y = box['center_m']; hx, hy = box['half_extents_m']; height = box['height_m']
@@ -150,7 +161,9 @@ class PairNavigationScene(ShortTransportScene):
         record = super().invariant_record()
         opt = self.world.model.opt
         record['contact_solver'] = {k: float(getattr(opt, k)) for k in (
-            'impratio', 'cone', 'solver', 'iterations', 'tolerance', 'noslip_iterations', 'timestep')}
+            'impratio', 'cone', 'solver', 'iterations', 'tolerance', 'noslip_iterations', 'timestep', 'enableflags')}
+        from scripts.pair_finger_contact_profile import contact_profile_record
+        record['explicit_contact_pairs'] = contact_profile_record(self.world.model)
         return record
 
     def _referee_tick(self):

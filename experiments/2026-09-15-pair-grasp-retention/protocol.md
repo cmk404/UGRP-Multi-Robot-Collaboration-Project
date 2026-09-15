@@ -9,3 +9,9 @@
 성공 후보가 나오면 같은 최종 실행 SHA에서 stationary/shuttle 300초, 180/300초 checkpoint 및 최종 방출을 검증한다. 1cm 높이 감소, 2cm 간격 변화, 10도 기울기, 양쪽 집게 접촉 유지, 지형 충돌 없음 기준을 유지한다. 저장된 실제 RGB로 제어 결정을 재생 감사한다. 그 후 영향받는 여섯 지형을 재검증한다.
 
 미끄러짐 조기 감지는 기존 카메라를 옮기지 않고 물체의 세로 경계 변화가 독립적인 영상 근거가 되는지 먼저 오프라인으로 확인한다. 실제 정답은 학습/평가 표적에만 사용하며 실행 중 감지/회복/단계 전환에 전달하지 않는다. 조기 감지와 회복은 별도 검증하며, 조기 중단을 연속 5분 유지 성공으로 바꾸지 않는다.
+
+## 첫 진단 이후 추가 분리
+
+dd54bf6: 기준은 30초에 7.982mm 내려가고 접촉의 접선 마찰 한계 사용률은 마지막 표본 최대 약 1.81%다. NoSlip1은 유지 약 19.2초에 간격 축소와 own RGB guard로 실패했다. NoSlip3은 기존 출발 준비 실패를 재현했고 tracked lift 역시 hold 중 간격 복구 범위 초과로 실패했다. 이 후보들은 채택하지 않는다.
+
+다음 30초 비교는 NoSlip0/원래 lift를 유지한다. (1) diagexact만 ON, (2) 같은 diagexact ON에서 네 손가락 접촉에만 solreffriction=0 -3000, (3) 기존 diagexact OFF에서 같은 국소 감쇠와 timestep .001을 사용한다. (2)는 (1)과 국소 마찰 감쇠 단독 비교, (3)은 과거 17e59b9의 .002 timestep 수치 불안정과 step 크기 단독 비교다. 정적 모델 defaults를 컴파일하여 normal solref/solimp, condim, friction, margin/gap을 복사하며 실시간 상태를 참조하지 않는다. diagexact는 현 MuJoCo 3.12.0에서 지원되는 현재 자세의 정확한 제약 질량 계산 옵션으로, actor 관측 추가가 아니다. https://mujoco.readthedocs.io/en/stable/XMLreference.html#option-flag-diagexact . 이들 변경은 모두 진단 후보이며 자동 채택하지 않는다.
