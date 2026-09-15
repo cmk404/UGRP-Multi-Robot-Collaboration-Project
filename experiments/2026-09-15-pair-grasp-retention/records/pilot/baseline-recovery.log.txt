@@ -1,0 +1,25 @@
+{
+  "success": false,
+  "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_grasp_endurance.py\", line 96, in run\n    if not retry:raise RuntimeError('slip recurred after one regrasp; placed and stopped')\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: slip recurred after one regrasp; placed and stopped\n",
+  "evaluation": {
+    "success": false,
+    "checkpoints": {},
+    "grasp_stability": {
+      "success": false,
+      "gates": {
+        "full_grasp_samples": false,
+        "grasp_spacing_preserved": true,
+        "grasp_bilateral_through_lift_hold": true,
+        "grasp_hold_lifted_every_sample": true
+      },
+      "anchor_spacing_m": 0.657804976514023,
+      "final_spacing_m": 0.6564930915638508,
+      "max_spacing_change_m": 0.013348116833170054,
+      "nonbilateral_samples": 0,
+      "samples": 222,
+      "max_sample_gap_s": 20.200000000000003
+    },
+    "released_on_floor": true
+  },
+  "wall_seconds": 64.30170224999893
+}

@@ -24,7 +24,7 @@ def main():
    shutil.copy2(raw/'scene.xml',dest/'scene.xml')
   for f in sorted(base.glob('*')):
    if f.is_file():
-    (out/label).mkdir(exist_ok=True);shutil.copy2(f,out/label/f.name)
+    (out/label).mkdir(exist_ok=True);shutil.copy2(f,out/label/(f.name+'.txt' if f.suffix=='.log' else f.name))
   for f in sorted(base.rglob('*')):
    if f.is_file():
     with f.open('rb') as src:digest=hashlib.file_digest(src,'sha256').hexdigest()
