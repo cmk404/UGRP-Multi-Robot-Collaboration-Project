@@ -94,6 +94,11 @@ class RGBTrafficScene(KnownMapScene):
             frames[unit] = (own, top)
             records[unit] = {k: {'path': str(p.relative_to(self.out)), 'sha256': sha(data)}
                 for k, p, data in [('own', own_path, own), ('top', top_path, top)]}
+        # Exact image-time truth is written only to the referee file. No return
+        # value from this call is routed into the runtime or coordinator.
+        self.observation_sequence = index
+        self._referee_tick(force=True)
+        self.observation_sequence = None
         return frames, records
 
     def execute(self, actions, *, drive_blocked=()):
@@ -113,7 +118,7 @@ class RGBTrafficScene(KnownMapScene):
     def _referee_tick(self, force=False):
         import json
         world = self.world
-        self.physics_steps += 1
+        self.physics_steps += int(not force)
         hits, peer = [], False
         for c in world.data.contact[:world.data.ncon]:
             if c.dist > 0: continue
@@ -124,8 +129,9 @@ class RGBTrafficScene(KnownMapScene):
                           for u in self.units for v in self.units if u != v)
             if wall or between: hits.append([a, b])
             peer |= between
-        self.collision_steps += bool(hits); self.peer_collision_steps += peer
-        self.weld_steps += bool(np.any(world.data.eq_active))
+        if not force:
+            self.collision_steps += bool(hits); self.peer_collision_steps += peer
+            self.weld_steps += bool(np.any(world.data.eq_active))
         now = float(world.data.time)
         if hits: self.contact_events.append({'sim_time_s': now, 'geom_pairs': hits})
         if force or not self.samples or now-self.samples[-1]['sim_time_s'] >= .099:
@@ -134,6 +140,8 @@ class RGBTrafficScene(KnownMapScene):
             self.max_tilt_rad = max(self.max_tilt_rad, *(abs(v) for p in poses.values() for v in p['rpy_rad'][:2]))
             sample = {'sim_time_s': now, 'robots': poses, 'collision_steps_total': self.collision_steps,
                 'peer_collision_steps_total': self.peer_collision_steps, 'weld_steps_total': self.weld_steps}
+            if getattr(self, 'observation_sequence', None) is not None:
+                sample['observation_sequence'] = self.observation_sequence
             self.samples.append(sample); self.referee.write(json.dumps(sample)+'\n')
 
     def evaluate(self, statuses):
