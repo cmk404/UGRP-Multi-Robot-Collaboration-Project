@@ -28,10 +28,14 @@ from scripts.evaluate_pair_navigation import evaluate_samples, evaluate_grasp_st
 
 class PairNavigationScene(ShortTransportScene):
     """Private setup, raw actuators, and output-only referee. Never an actor API."""
-    def __init__(self, out, grasp_root, data, *, impratio=1):
+    def __init__(self, out, grasp_root, data, *, impratio=1, noslip_iterations=0, tracked_lift=False):
         super().__init__(out, grasp_root)
         if impratio not in (1, 10, 100): raise ValueError('explicit contact impedance profile required')
         self.impratio = impratio
+        if noslip_iterations not in (0, 1, 3):
+            raise ValueError('explicit bounded NoSlip comparison required')
+        self.noslip_iterations = noslip_iterations
+        self.tracked_lift = bool(tracked_lift)
         self.map = data
         self.wall_ids = set()
         self.wall_contact_ticks = 0
@@ -42,6 +46,33 @@ class PairNavigationScene(ShortTransportScene):
         self.spacing_actors = {r:PairGraspSpacing(data,r) for r in ROBOTS}
         self.spacing_sync = PairCarrySync(task_id=data['map_id']+'-grasp-spacing')
         self.spacing_steps = []
+
+    def replay(self, commands, stage):
+        if stage != 'grasp_lift' or not self.tracked_lift:
+            return super().replay(commands, stage)
+        # Continue the existing RGB formation loop while issuing the same arm
+        # ramp. Starts are our own command history, never measured joint state.
+        from scripts.camera_approach_scene import normalize_replay
+        for command in commands:
+            targets = normalize_replay(command)
+            starts = {r: {ch: self.commands[r][ch] for ch in pose} for r, pose in targets.items()}
+            duration = float(command['duration_s'])
+            settle = float(command.get('settle_s', 0.))
+            dt = float(self.world.model.opt.timestep)
+            steps = round((duration+settle)/dt)
+            self.phase = stage
+            for i in range(steps):
+                if i % round(HOLD_DT/dt) == 0:
+                    self.spacing_frame(execute=False)
+                fraction = min(1., (i+1)*dt/duration)
+                for r, pose in targets.items():
+                    issued = {ch: round(starts[r][ch]+fraction*(pulse-starts[r][ch])) for ch, pulse in pose.items()}
+                    self.world.controllers[r].set_servo_pulses(issued)
+                self.tick(dt)
+            for r, pose in targets.items():
+                self.commands[r].update(pose)
+            self.trace.append({'stage':stage,'command':command,'end_sim_time_s':self.time(),
+                               'formation_tracking':'RGB during arm ramp'})
 
     def spacing_frame(self, *, execute=True):
         index = len(self.spacing_steps)
@@ -83,6 +114,7 @@ class PairNavigationScene(ShortTransportScene):
         def builder(*args, **kwargs):
             root = ET.fromstring(original(*args, **kwargs))
             root.find('option').set('impratio', str(self.impratio))
+            root.find('option').set('noslip_iterations', str(self.noslip_iterations))
             world = root.find('worldbody')
             for box in self.map['obstacles']:
                 x, y = box['center_m']; hx, hy = box['half_extents_m']; height = box['height_m']
