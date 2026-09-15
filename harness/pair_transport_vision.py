@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import copy
 import math
+from collections import deque
 
 import cv2
 import numpy as np
@@ -25,10 +26,15 @@ class OwnCarryMonitor:
     This is a visual continuation guard, not a contact sensor. It deliberately
     does not certify a physical grasp. Physical scoring stays output-only.
     """
-    def __init__(self):
+    def __init__(self, *, slip_guard=False, interval_s=.1):
         self.initial_width = None
         self.bad_frames = 0
         self.last = None
+        self.slip_guard = slip_guard
+        self.interval_s = interval_s
+        self.edge_history = deque(maxlen=round(2./interval_s)+1)
+        self.initial_edge = None
+        self.drift_frames = 0
 
     def observe(self, frame):
         h, w = frame.shape[:2]
@@ -49,16 +55,37 @@ class OwnCarryMonitor:
                      'continuation_supported': not uncertain}
         if uncertain:
             raise GripUncertain('own-camera beam silhouette changed or disappeared')
+        if self.slip_guard:
+            # The camera stays attached to its real mount. Only the visible
+            # beam edge in RGB is tracked; this is not a measured object height.
+            central = cv2.cvtColor(frame[:,round(w*.25):round(w*.75)], cv2.COLOR_BGR2HSV)
+            stripe = cv2.inRange(central, (5,90,45), (22,255,255)) > 0
+            rows = np.flatnonzero(stripe.mean(axis=1) > .8)
+            if not len(rows): raise GripUncertain('central beam edge unsupported')
+            edge = float(rows[-1]/h)
+            if self.initial_edge is None: self.initial_edge = edge
+            self.edge_history.append(edge)
+            slope = 0.
+            if len(self.edge_history) == self.edge_history.maxlen:
+                edges = list(self.edge_history)
+                n = max(1,round(.4/self.interval_s))
+                slope = float((np.median(edges[-n:])-np.median(edges[:n]))/((len(edges)-n)*self.interval_s))
+            drifting = edge-self.initial_edge > .035 and slope > .008
+            self.drift_frames = self.drift_frames+1 if drifting else 0
+            alert = self.drift_frames*self.interval_s >= .3-1e-9
+            self.last.update(beam_lower_edge_fraction=edge, beam_edge_rate_per_s=slope,
+                             beam_edge_shift_fraction=edge-self.initial_edge, slip_suspected=alert)
+            if alert: raise GripUncertain('own-camera sustained downward beam-edge drift')
         return dict(self.last)
 
 
 class GeometryPairVision(PairVision):
     """Track four wheel clusters instead of rotating a whole color template."""
-    def __init__(self, data):
+    def __init__(self, data, *, slip_guard=False, interval_s=.1):
         super().__init__(data)
         self.wheel_origins = {}
         self.geometry_angles = {}
-        self.carry_monitor = OwnCarryMonitor()
+        self.carry_monitor = OwnCarryMonitor(slip_guard=slip_guard, interval_s=interval_s)
 
     @staticmethod
     def wheel_landmarks(mask, center, angle):

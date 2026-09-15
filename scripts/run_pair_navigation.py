@@ -28,19 +28,16 @@ from scripts.evaluate_pair_navigation import evaluate_samples, evaluate_grasp_st
 
 class PairNavigationScene(ShortTransportScene):
     """Private setup, raw actuators, and output-only referee. Never an actor API."""
-    def __init__(self, out, grasp_root, data, *, impratio=1, noslip_iterations=0, tracked_lift=False,
-                 finger_damping=0, timestep=.002, diagexact=False, formation_integral=0., lateral_limit=.10):
+    def __init__(self, out, grasp_root, data, *, impratio=1, contact_profile='baseline'):
         super().__init__(out, grasp_root)
         if impratio not in (1, 10, 100): raise ValueError('explicit contact impedance profile required')
         self.impratio = impratio
-        if noslip_iterations not in (0, 1, 3):
-            raise ValueError('explicit bounded NoSlip comparison required')
-        self.noslip_iterations = noslip_iterations
-        self.tracked_lift = bool(tracked_lift)
-        if finger_damping not in (0,3000) or timestep not in (.002,.001,.00025):
-            raise ValueError('unregistered local contact comparison')
-        self.finger_damping, self.timestep, self.diagexact = finger_damping, timestep, bool(diagexact)
-        self.formation_integral,self.lateral_limit=formation_integral,lateral_limit
+        if contact_profile not in ('baseline','retention'):
+            raise ValueError('unknown contact profile')
+        if contact_profile == 'retention' and impratio != 10:
+            raise ValueError('retention profile requires impratio 10')
+        self.contact_profile = contact_profile
+        self.active_recovery_index = 0
         self.map = data
         self.wall_ids = set()
         self.wall_contact_ticks = 0
@@ -48,36 +45,21 @@ class PairNavigationScene(ShortTransportScene):
         self.contact_events = []
         self.nav_start_s = None
         self.xml_sha = None
-        self.spacing_actors = {r:PairGraspSpacing(data,r,integral_gain=formation_integral,lateral_limit=lateral_limit) for r in ROBOTS}
+        self.spacing_actors = {r:PairGraspSpacing(data,r) for r in ROBOTS}
         self.spacing_sync = PairCarrySync(task_id=data['map_id']+'-grasp-spacing')
         self.spacing_steps = []
 
+    def capture(self, tag):
+        if self.active_recovery_index:
+            tag = f'recovery-{self.active_recovery_index}-'+tag
+        return super().capture(tag)
+
     def replay(self, commands, stage):
-        if stage != 'grasp_lift' or not self.tracked_lift:
-            return super().replay(commands, stage)
-        # Continue the existing RGB formation loop while issuing the same arm
-        # ramp. Starts are our own command history, never measured joint state.
-        from scripts.camera_approach_scene import normalize_replay
-        for command in commands:
-            targets = normalize_replay(command)
-            starts = {r: {ch: self.commands[r][ch] for ch in pose} for r, pose in targets.items()}
-            duration = float(command['duration_s'])
-            settle = float(command.get('settle_s', 0.))
-            dt = float(self.world.model.opt.timestep)
-            steps = round((duration+settle)/dt)
-            self.phase = stage
-            for i in range(steps):
-                if i % round(HOLD_DT/dt) == 0:
-                    self.spacing_frame(execute=False)
-                fraction = min(1., (i+1)*dt/duration)
-                for r, pose in targets.items():
-                    issued = {ch: round(starts[r][ch]+fraction*(pulse-starts[r][ch])) for ch, pulse in pose.items()}
-                    self.world.controllers[r].set_servo_pulses(issued)
-                self.tick(dt)
-            for r, pose in targets.items():
-                self.commands[r].update(pose)
-            self.trace.append({'stage':stage,'command':command,'end_sim_time_s':self.time(),
-                               'formation_tracking':'RGB during arm ramp'})
+        first = len(self.trace)
+        result = super().replay(commands, stage)
+        if self.active_recovery_index:
+            for row in self.trace[first:]: row['recovery_index'] = self.active_recovery_index
+        return result
 
     def spacing_frame(self, *, execute=True):
         index = len(self.spacing_steps)
@@ -119,14 +101,12 @@ class PairNavigationScene(ShortTransportScene):
         def builder(*args, **kwargs):
             root = ET.fromstring(original(*args, **kwargs))
             root.find('option').set('impratio', str(self.impratio))
-            root.find('option').set('noslip_iterations', str(self.noslip_iterations))
-            root.find('option').set('timestep', str(self.timestep))
-            if self.diagexact:
-                flag = root.find('option/flag')
-                if flag is None: flag = ET.SubElement(root.find('option'), 'flag')
-                flag.set('diagexact', 'enable')
-            from scripts.pair_finger_contact_profile import configure_finger_contacts
-            configure_finger_contacts(root, self.finger_damping)
+            if self.contact_profile == 'retention':
+                # Numerical contact resolution, fixed before scene creation.
+                # All shapes, masses, friction coefficients and cameras persist.
+                root.find('option').set('timestep', '.00025')
+                from scripts.pair_finger_contact_profile import configure_finger_contacts
+                configure_finger_contacts(root, 3000)
             world = root.find('worldbody')
             for box in self.map['obstacles']:
                 x, y = box['center_m']; hx, hy = box['half_extents_m']; height = box['height_m']
@@ -138,7 +118,7 @@ class PairNavigationScene(ShortTransportScene):
             return xml
         with patch.object(production, 'build_multi_robot_xml', builder):
             super().open()
-        self.ports = {r: CameraRobotPort(self.world, r, allow_reverse=True, allow_mecanum=True, lateral_limit=self.lateral_limit) for r in ROBOTS}
+        self.ports = {r: CameraRobotPort(self.world, r, allow_reverse=True, allow_mecanum=True) for r in ROBOTS}
         self.wall_ids = {i for i in range(self.world.model.ngeom)
             if (mujoco.mj_id2name(self.world.model, mujoco.mjtObj.mjOBJ_GEOM, i) or '').startswith('pair_wall_')}
         self.geom_names = {i: mujoco.mj_id2name(self.world.model, mujoco.mjtObj.mjOBJ_GEOM, i) or ''
@@ -162,7 +142,7 @@ class PairNavigationScene(ShortTransportScene):
         record = super().invariant_record()
         opt = self.world.model.opt
         record['contact_solver'] = {k: float(getattr(opt, k)) for k in (
-            'impratio', 'cone', 'solver', 'iterations', 'tolerance', 'noslip_iterations', 'timestep', 'enableflags')}
+            'impratio', 'cone', 'solver', 'iterations', 'tolerance', 'noslip_iterations', 'timestep')}
         from scripts.pair_finger_contact_profile import contact_profile_record
         record['explicit_contact_pairs'] = contact_profile_record(self.world.model)
         return record
