@@ -1,0 +1,120 @@
+{
+  "nominal": {
+    "eligible_trajectories": 48,
+    "per_robot": {
+      "r1": {
+        "frames": 2693,
+        "sampling_groups": {
+          "forward": 2218,
+          "stop": 475
+        }
+      },
+      "r3": {
+        "frames": 2693,
+        "sampling_groups": {
+          "forward": 2290,
+          "stop": 403
+        }
+      }
+    },
+    "exclusions": {
+      "training": [],
+      "development": []
+    },
+    "dataset_sha256": "520cad1c0cfa3f9c1f392e622afcf23b8a12e2f47701602adfd9d8ca6322f792"
+  },
+  "recovery": {
+    "eligible_trajectories": 48,
+    "per_robot": {
+      "r1": {
+        "frames": 2984,
+        "sampling_groups": {
+          "forward": 2032,
+          "stop": 436,
+          "turn": 169,
+          "left": 142,
+          "reverse": 205
+        }
+      },
+      "r3": {
+        "frames": 2984,
+        "sampling_groups": {
+          "forward": 2049,
+          "stop": 342,
+          "turn": 172,
+          "left": 167,
+          "reverse": 254
+        }
+      }
+    },
+    "exclusions": {
+      "training": [],
+      "development": []
+    },
+    "dataset_sha256": "2c96f2a50c242f916f1a6a02f6fc251df1979e3cb77c22be538850c1df0d8f35"
+  },
+  "aggregated": {
+    "eligible_trajectories": 45,
+    "per_robot": {
+      "r1": {
+        "frames": 2518,
+        "sampling_groups": {
+          "forward": 1683,
+          "stop": 533,
+          "turn": 82,
+          "left": 94,
+          "reverse": 126
+        }
+      },
+      "r3": {
+        "frames": 2518,
+        "sampling_groups": {
+          "forward": 1879,
+          "stop": 329,
+          "turn": 86,
+          "left": 109,
+          "reverse": 115
+        }
+      }
+    },
+    "exclusions": {
+      "training": [
+        "yaw-aggregate-01",
+        "yaw-aggregate-02",
+        "yaw-aggregate-03"
+      ],
+      "development": []
+    },
+    "dataset_sha256": "2a1588409943c2de79652b12f26057129c94db039d6816ddd60d2205f94e1c3b"
+  },
+  "bootstrap": {
+    "eligible_trajectories": 36,
+    "per_robot": {
+      "r1": {
+        "frames": 2185,
+        "sampling_groups": {
+          "forward": 1572,
+          "stop": 364,
+          "turn": 82,
+          "left": 72,
+          "reverse": 95
+        }
+      },
+      "r3": {
+        "frames": 2185,
+        "sampling_groups": {
+          "forward": 1594,
+          "stop": 287,
+          "turn": 86,
+          "left": 105,
+          "reverse": 113
+        }
+      }
+    },
+    "exclusions": {
+      "training": [],
+      "development": []
+    },
+    "dataset_sha256": "c08735ade4ffe801395fb6d0ff4b5c5d21cd95bd2a3f1d90b8540fcd3931b3a3"
+  }
+}
