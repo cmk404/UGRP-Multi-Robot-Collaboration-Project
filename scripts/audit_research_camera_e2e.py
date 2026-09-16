@@ -101,6 +101,15 @@ def audit(path):
         for dependency in ('harness/camera_beam_features.py','harness/camera_motion_identity.py'):
             assert subprocess.check_output(['git','show',report['source_sha']+':'+dependency],cwd=ROOT)==(ROOT/dependency).read_bytes()
         visual=recorded_module(report['source_sha'],'harness/research_visual_lease.py')
+        for window in report.get('settling_windows',[]):
+            check=visual.VisualStillness((path/window['before']).read_bytes())
+            assert 1<=len(window['frames'])<=10
+            for i,frame in enumerate(window['frames']):
+                verdict=check.update((path/frame['ref']).read_bytes())
+                assert verdict==frame['decision']
+                if i+1<len(window['frames']):assert not verdict['ready']
+            if not verdict['ready']:
+                assert not any(c['robot_id']==window['robot_id'] and c['turn']==window['turn'] for c in report['issued_commands'])
         commands=report['issued_commands']
         assert len({c['command_id'] for c in commands})==len(commands)
         for batch in report['local_batches']:

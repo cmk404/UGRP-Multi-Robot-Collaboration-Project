@@ -9,7 +9,24 @@ from __future__ import annotations
 import math
 
 from harness.camera_beam_features import extract_beams, select_beam
-from harness.camera_motion_identity import ImageMotionIdentity
+from harness.camera_motion_identity import ImageMotionIdentity, _decode_jpeg
+import cv2
+import numpy as np
+
+
+class VisualStillness:
+    """Require two quiet image intervals; issuing HOLD is not proof of rest."""
+    def __init__(self, first):
+        self.previous=_decode_jpeg(first);self.quiet=0
+
+    def update(self, jpeg):
+        current=_decode_jpeg(jpeg)
+        if current.shape!=self.previous.shape:
+            self.previous=current;self.quiet=0
+            return {'ready':False,'changed_pixels':None,'quiet_intervals':0}
+        changed=int(np.count_nonzero(cv2.absdiff(current,self.previous).max(axis=2)>20))
+        self.previous=current;self.quiet=self.quiet+1 if changed<20 else 0
+        return {'ready':self.quiet>=2,'changed_pixels':changed,'quiet_intervals':self.quiet}
 
 
 def segment_distance(point, ends):
@@ -37,7 +54,8 @@ class VisualDriveLease:
         reason=None
         if self.steps>=self.max_steps:reason="local_budget"
         elif not motion["valid"] or not motion["fresh"]:reason="fresh_own_motion_unconfirmed"
-        elif self.action["forward"]<=0:reason="turn_only_requires_new_high_level_observation"
+        elif self.action["forward"]<=0 or self.action['turn']!=0:
+            reason="turn_requires_new_high_level_observation"
         if reason is None:
             target=select_beam(extract_beams(fresh_top,robust_shaft=True),motion["center"],self.target_center)
             if target is None:reason="beam_lost"

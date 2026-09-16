@@ -8,7 +8,7 @@ import pytest
 from harness.gemini_proxy import GeminiProxyError
 from harness.research_camera_actor import validate_reply
 from harness.research_execution_recovery import RoleAgreement, request_with_recovery
-from harness.research_visual_lease import VisualDriveLease
+from harness.research_visual_lease import VisualDriveLease, VisualStillness
 
 
 def proposal(inverse=False, **extra):
@@ -125,3 +125,17 @@ def test_validated_ack_must_reference_this_request_and_frozen_plan():
     for change in ({'request_id':'old'},{'plan_hash':'other'},{'roles':proposal(True)['roles']}):
         with pytest.raises(ValueError):
             validate_reply(json.dumps({**good,**change}),'NEGOTIATE',request_id='r1-turn1',agreement=a.context())
+
+
+def test_holding_must_wait_for_two_quiet_rgb_intervals():
+    check=VisualStillness(frame(180))
+    assert not check.update(frame(186))['ready']
+    assert not check.update(frame(186))['ready']
+    assert not check.update(frame(192))['ready']
+    assert not check.update(frame(192))['ready']
+    assert check.update(frame(192))['ready']
+
+
+def test_curved_motion_is_not_extended_into_a_large_turn():
+    lease=VisualDriveLease(frame(180),{**DRIVE,'turn':.15})
+    assert lease.after_step(frame(186))['reason']=='turn_requires_new_high_level_observation'

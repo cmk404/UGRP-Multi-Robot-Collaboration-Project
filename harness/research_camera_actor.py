@@ -147,7 +147,7 @@ Both READY is required to enter joint GRASP; being near the beam is insufficient
                        own_proposals=copy.deepcopy(list(own_proposals)[-4:]),retry=copy.deepcopy(retry))
         fields=(['reason','message','roles','accept','proposal_id','plan_hash','request_id'] if phase=='NEGOTIATE'
                 else ['reason','message','status','confidence','checks','command_id','action','request_id'])
-        system+='\nRequired top-level JSON keys (exactly): '+json.dumps(fields)+'.'
+        system+='\nRequired top-level JSON keys (exactly): '+json.dumps(fields)+'. Keep reason and message short (each at most 800 characters).'
     images=[]
     for prefix,pair in (("CURRENT",camera),("PREVIOUS",previous)):
         if pair is None: continue

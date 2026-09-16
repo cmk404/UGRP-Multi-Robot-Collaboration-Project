@@ -57,7 +57,7 @@ def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.
     from sim.cooperative_payload import beam_pose, evaluate_beam_mission
     from harness.gemini_proxy import GeminiProxyCompleter
     from scripts.probe_dual_grasp_sync import _plain_beam_xml, _plain_beam_contact, _pose_metrics, Video
-    from harness.research_visual_lease import VisualDriveLease
+    from harness.research_visual_lease import VisualDriveLease, VisualStillness
 
     if subprocess.check_output(["git","status","--porcelain"],cwd=ROOT,text=True).strip():
         raise RuntimeError("commit and freeze the complete source before a trial")
@@ -70,7 +70,7 @@ def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.
             "request_attempts":request_attempts,"local_drive_steps":local_drive_steps,"negotiation_turns":6},
         "environment":{"python":sys.version,"platform":platform.platform(),"mujoco":mujoco.__version__},
         "calls":[],"turns":[],"messages":[],"phase_events":[],"error":None,"stop_reason":None,
-        "issued_commands":[],"local_batches":[],"recovery_events":[],"agreement_events":[],
+        "issued_commands":[],"local_batches":[],"settling_windows":[],"recovery_events":[],"agreement_events":[],
         "protocol_finish":False,"roles":None,"cost_usd":None,"cost_note":"proxy supplies tokens, not a billing amount",
         "shared_clock":"SIM pauses during model inference; no asynchronous physical latency claim"}
     world=execution=video=referee=None
@@ -150,6 +150,24 @@ def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.
         for r in ROBOTS:
             for p in ports.values():p.hold(now())
             action={"kind":"wait"} if preparation_ready(replies[r]) else replies[r]["action"]
+            if local_drive_steps>1 and action['kind']!='wait':
+                # Both actuators are held, but inertia/servo settling can still
+                # move pixels. Establish a quiet baseline without reading GT.
+                initial=bytes(world.render_team_jpeg(camera='cctv_top'))
+                check=VisualStillness(initial)
+                ref=f'{r}/{index:03d}-settle-before.jpg';(output/ref).write_bytes(initial)
+                window={'robot_id':r,'turn':index,'before':ref,'frames':[]}
+                report['settling_windows'].append(window)
+                for wait_step in range(10):
+                    step(.1)
+                    fresh=bytes(world.render_team_jpeg(camera='cctv_top'))
+                    verdict=check.update(fresh)
+                    ref=f'{r}/{index:03d}-settle-{wait_step:02d}.jpg';(output/ref).write_bytes(fresh)
+                    window['frames'].append({'ref':ref,'decision':verdict})
+                    if verdict['ready']:break
+                if not verdict['ready']:
+                    row.setdefault('local_stops',{})[r]='quiet_baseline_budget'
+                    continue
             if action["kind"]!="drive" or local_drive_steps==1:
                 issue(r,index,action,row);step(.3)
                 continue
@@ -226,7 +244,10 @@ def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.
                     if len(c["entries"])>1 or c["stop_reason"]:
                         report["recovery_events"].append({"robot_id":r,"turn":index,"attempts":len(c["entries"]),
                             "recovered":c["reply"] is not None,"stop_reason":c["stop_reason"],"held_sim_time_s":now()})
-                if any(c["reply"] is None for c in calls.values()):report["stop_reason"]="model_recovery_exhausted";break
+                if any(c["reply"] is None for c in calls.values()):
+                    report['stop_reason']=('request_budget' if any(c['stop_reason']=='request_budget' for c in calls.values())
+                                           else 'model_recovery_exhausted')
+                    break
                 replies={r:calls[r]["reply"] for r in ROBOTS}
                 row={"turn":index,"phase":phase,"observed_at_s":now(),"replies":replies,"issued":{}}
                 report["turns"].append(row)
