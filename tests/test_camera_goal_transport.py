@@ -1,0 +1,74 @@
+import json
+from pathlib import Path
+
+import cv2
+import numpy as np
+import pytest
+
+from harness.camera_goal_transport import coarse_approach, goal_carry, goal_features
+from harness.camera_skill_actor import build_skill_request, validate_skill_reply, pair_skill_ready
+
+FIXTURE=Path(__file__).parent/'fixtures/camera_goal_transport'
+
+
+def rgb(name): return (FIXTURE/name).read_bytes()
+
+
+def test_remembers_goal_when_robot_occludes_and_splits_marker():
+    own,top=rgb('anchor-own.jpg'),rgb('anchor-top.jpg')
+    assert goal_features(rgb('occluded-top.jpg')) is None
+    d=goal_carry(own,rgb('occluded-top.jpg'),own,top)
+    assert d['ok'] and not d['ready']
+    assert d['features']['goal_x']==goal_features(top)['goal_x']
+    assert .04<=d['forward']<=.10
+
+
+def test_stationary_images_cannot_claim_progress_and_visible_goal_stops():
+    own,top=rgb('anchor-own.jpg'),rgb('anchor-top.jpg')
+    for _ in range(5):
+        d=goal_carry(own,top,own,top)
+        assert not d['ready'] and d['forward']==.1
+    arrived=goal_carry(rgb('goal-own.jpg'),rgb('goal-top.jpg'),own,top)
+    assert arrived['ready'] and arrived['forward']==0
+
+
+def test_missing_payload_fails_closed():
+    _,blank=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))
+    d=goal_carry(blank.tobytes(),rgb('goal-top.jpg'),rgb('anchor-own.jpg'),rgb('anchor-top.jpg'))
+    assert not d['ok'] and not d['ready'] and d['forward']==0
+
+
+@pytest.mark.parametrize('rid',['r1','r3'])
+def test_far_approach_handoff_is_not_grasp_readiness(rid):
+    far=coarse_approach(rgb('start-top.jpg'),rgb('reference-top.jpg'),rid)
+    assert far['ok'] and not far['ready'] and far['forward']>0
+    assert coarse_approach(rgb('reference-top.jpg'),rgb('reference-top.jpg'),rid)['ready']
+
+
+def reply(**kwargs):
+    return dict(request_id='r1-CLOSE',skill='CLOSE',confidence=.9,reason='visible jaws',message='',**kwargs)
+
+
+@pytest.mark.parametrize('updates',[{'confidence':True},{'confidence':float('nan')},
+    {'request_id':'stale'},{'skill':'LIFT'},{'contacts':True},{'reason':'x'*601}])
+def test_skill_replies_reject_stale_truth_fields_and_invalid_confidence(updates):
+    d=reply();d.update(updates)
+    with pytest.raises(ValueError): validate_skill_reply(json.dumps(d),'r1-CLOSE','CLOSE')
+
+
+def test_both_llms_must_select_same_skill_with_confidence():
+    d=reply()
+    assert pair_skill_ready({'r1':d,'r3':d},'CLOSE')
+    for denied in (None,{**d,'skill':'HOLD'},{**d,'confidence':.79}):
+        assert not pair_skill_ready({'r1':d,'r3':denied},'CLOSE')
+    assert not pair_skill_ready({'r1':d},'CLOSE')
+
+
+def test_skill_prompt_preserves_scope_and_only_declared_inputs():
+    req=build_skill_request('r1','LIFT',request_id='x',own_rgb=b'own',top_rgb=b'top',
+        own_commands=[{'kind':'close'}],peer_claims=[{'message':'claim'}])
+    context=json.loads(req['messages'][1]['content'])
+    assert set(context)=={'request_id','offered_skill','own_issued_commands','peer_visual_claims','retry'}
+    assert len(req['images'])==2
+    assert 'NOT guaranteed' in req['messages'][0]['content']
+    assert 'not measured' in req['messages'][0]['content']

@@ -28,6 +28,32 @@ from harness.pair_carry_policy import PairCarryPolicy, payload_skew
 
 
 class GoalScene(ShortTransportScene):
+    gate=None
+
+    def checkpoint(self,skill):
+        if self.gate is None: return
+        for attempt in range(3):
+            frames=self.capture(f'skill-{skill}-{attempt}')
+            own_commands={r:[] for r in ROBOTS}
+            for row in self.trace:
+                for r in ROBOTS:
+                    if 'actions' in row:
+                        own_commands[r].append(dict(stage=row['stage'],action=row['actions'][r]))
+                    elif r in row['command']['targets']:
+                        own_commands[r].append(dict(stage=row['stage'],targets=row['command']['targets'][r],
+                            duration_s=row['command']['duration_s']))
+            own_commands={r:h[-16:] for r,h in own_commands.items()}
+            if self.gate.decide(skill,frames,own_commands): return
+            self.tick(.2)
+        raise RuntimeError(f'two independent LLMs did not authorize {skill}')
+
+    def replay(self,commands,stage):
+        skill={'grasp_initialization':'PREPARE_GRASP','grasp_close':'CLOSE',
+               'grasp_lift':'LIFT','place_lower':'LOWER','place_open':'RELEASE',
+               'place_retract':'RETRACT'}.get(stage)
+        if skill: self.checkpoint(skill)
+        return super().replay(commands,stage)
+
     def evaluation_snapshot(self, *, full_state=True):
         from sim.cooperative_payload import beam_pose, evaluate_beam_mission
         row=super().evaluation_snapshot(full_state=full_state)
@@ -47,7 +73,7 @@ def run(args):
     report=dict(schema='ugrp.camera_goal_transport.v1',
         source_sha=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         scope='local RGB wheel feedback; demonstrated arm sequence plus learned RGB recovery; no LLM',
-        config=dict(start_distance_m=dict(zip(ROBOTS,args.distance)),weld=False),
+        config=dict(start_distance_m=dict(zip(ROBOTS,args.distance)),weld=False,planner=args.planner),
         assets=dict(grasp_skill=dict(path=str(args.grasp_model_dir.resolve()),sha256=sha(args.grasp_model_dir/'student-skill.json')),
                     stage_skill=dict(path=str(args.stage_model_dir.resolve()),sha256=sha(args.stage_model_dir/'varied-start-skill.json')),
                     reference_top=dict(path=str(args.reference_top.resolve()),sha256=sha(args.reference_top))),
@@ -61,6 +87,11 @@ def run(args):
         scene.open(dict(zip(ROBOTS,args.distance)))
         scene.ports={r:CameraRobotPort(scene.world,r,allow_reverse=True,allow_mecanum=True) for r in ROBOTS}
         report['invariants_initial']=scene.invariant_record()
+        if args.planner=='llm':
+            from scripts.camera_skill_gate import CameraSkillGate
+            scene.gate=CameraSkillGate(out/'llm')
+            report['scope']='two independent LLM visual skill permissions; RGB wheels; demonstrated arm sequence plus RGB correction; fixed workflow, not raw-action LLM control'
+        scene.checkpoint('APPROACH')
         # Reference pixels were produced offline, before this run. No teacher
         # state or live evaluation result can enter either controller.
         (out/'reference-top.jpg').write_bytes(reference)
@@ -80,6 +111,7 @@ def run(args):
         if not report['approach_ok']: raise RuntimeError('fine RGB alignment failed')
         report['grasp_calls']=scene.finish_grasp(predict_student,grasp)
         write(out/'grasp-result.json',scene.grasp_report)
+        scene.checkpoint('CARRY')
         anchor=scene.capture('carry-anchor')
         report['carry_anchor']={r:dict(own=anchor[r]['own_rgb'],top=anchor[r]['shared_top_rgb']) for r in ROBOTS}
         policy=PairCarryPolicy('visible-goal-carry')
@@ -100,6 +132,7 @@ def run(args):
                 break
         if not report['carry_ready']: raise RuntimeError('carry budget')
         scene.place()
+        scene.checkpoint('FINISH')
     except Exception:
         report['error']=traceback.format_exc()
     finally:
@@ -110,6 +143,12 @@ def run(args):
         report['approach_payload_contact_steps']=scene.approach_payload_contact_steps
         report['weld_active_ticks']=scene.weld_active_ticks
         report['wall_s']=time.monotonic()-started
+        report['llm']=None if scene.gate is None else dict(
+            call_count=len(scene.gate.calls),events=scene.gate.events,
+            usage={k:sum((c.get('usage') or {}).get(k,0) for c in scene.gate.calls)
+                   for k in ('prompt_tokens','completion_tokens','total_tokens')},
+            usage_unknown_calls=sum(c.get('usage') is None for c in scene.gate.calls),
+            cost_usd=None,cost_note='proxy does not report billing; SIM pauses during inference')
         if scene.world:
             report['invariants_final']=scene.invariant_record()
             report['sim_s']=scene.time()
@@ -129,6 +168,7 @@ def main():
     p.add_argument('--reference-top',type=Path,required=True)
     p.add_argument('--out-dir',type=Path,required=True)
     p.add_argument('--distance',type=float,nargs=2,default=(.6,.6))
+    p.add_argument('--planner',choices=('local','llm'),default='local')
     a=p.parse_args()
     if any(not .15<=d<=.7 for d in a.distance): p.error('distance must be .15...7 m')
     return run(a)
