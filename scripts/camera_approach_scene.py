@@ -244,6 +244,8 @@ class ApproachScene:
                'model_sha256': {r: self.skill['models'][r]['sha256'] for r in ROBOTS},
                'actor_initial_issued_commands': {r: dict(self.commands[r]) for r in ROBOTS},
                'calls': calls, 'error': None}
+        # Preserve RGB correction evidence even if a later readiness gate stops.
+        self.grasp_report = rec
         for i in range(rounds):
             frames, targets = self.capture(f'grasp-{i:03d}'), {}
             for rid in ROBOTS:

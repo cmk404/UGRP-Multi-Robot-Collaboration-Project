@@ -183,6 +183,8 @@ def run(args):
             and report['goal_stable_at_end'] and scene.approach_payload_contact_steps==0
             and scene.weld_active_ticks==0 and report['invariants_initial']==report['invariants_final'])
         scene.close()
+        if scene.grasp_report is not None:
+            write(out/'grasp-result.json',scene.grasp_report)
         if out.exists(): write(out/'result.json',report)
     print(json.dumps({k:report[k] for k in ('success','error','evaluation','goal_stable_at_end','wall_s')}),flush=True)
     return 0 if report['success'] else 1
