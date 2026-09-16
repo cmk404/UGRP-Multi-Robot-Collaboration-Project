@@ -20,7 +20,7 @@ SKILLS = {
 
 
 def build_skill_request(rid, skill, *, request_id, own_rgb, top_rgb,
-                        previous=None, own_commands=(), peer_claims=(), retry=None):
+                        previous=None, own_commands=(), peer_claims=(), retry=None, team_plan=None):
     if rid not in ('r1','r3') or skill not in SKILLS:
         raise ValueError('unknown actor or skill')
     system = f'''You are independent robot {rid} executing a cooperative transport task.
@@ -46,6 +46,9 @@ For HOLD use skill="HOLD". Do not emit raw wheel or joint commands.'''
     context={'request_id':request_id,'offered_skill':skill,
              'own_issued_commands':list(own_commands),
              'peer_visual_claims':list(peer_claims),'retry':retry}
+    if team_plan is not None:
+        context['committed_team_plan'] = team_plan
+        system += '\nThe committed team plan is an agreed task assignment, not current visual evidence. Only the two carriers authorize joint motor stages; the inspection robot is not their controller.'
     def item(label,data):
         return {'label':label,'image':'data:image/jpeg;base64,'+base64.b64encode(data).decode()}
     images=[item('CURRENT OWN RGB',own_rgb),item('CURRENT SHARED TOP RGB',top_rgb)]
