@@ -90,7 +90,12 @@ class SoloBoxTransport:
             features.update(goal=self.target, image_error=[dx,dy])
             if abs(dy) > .04 or dx < -.02:
                 raise RuntimeError('solo path left supported visual lane')
-            ready = -.01 <= dx <= .003
+            # Destination is a floor region, not a zero-error point. Require
+            # the entire visible cargo width inside it with an image margin;
+            # the fixed lane check above governs lateral alignment.
+            bx, _, bw, _ = features['boxes'][0]['bounds']
+            gx, _, gw, _ = self.target['bounds']
+            ready = gx+.01 <= bx and bx+bw <= gx+gw-.01
             self.goal_confirmations = self.goal_confirmations+1 if ready else 0
             if self.goal_confirmations >= 2:
                 self.box.phase = 'release'
