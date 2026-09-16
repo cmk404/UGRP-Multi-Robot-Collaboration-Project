@@ -1,0 +1,254 @@
+{
+  "scope": "offline replay only; no command generated or executed in physical cohort",
+  "rows": [
+    {
+      "case_id": "baseline",
+      "initial_heading_predictions": {
+        "r1": {
+          "ok": false,
+          "command": 0.0,
+          "ready_score": 0.0,
+          "ready": false,
+          "reason": "rgb_pose_outside_support",
+          "diagnostics": {
+            "method": null,
+            "precision": "unavailable",
+            "reason": "heading_registration_unsupported",
+            "attempts": [
+              {
+                "method": "soft_yellow",
+                "ok": false,
+                "reason": "outside_training_domain"
+              },
+              {
+                "method": "full_delta",
+                "ok": false,
+                "reason": "outside_training_domain"
+              }
+            ]
+          }
+        },
+        "r3": {
+          "ok": false,
+          "command": 0.0,
+          "ready_score": 0.0,
+          "ready": false,
+          "reason": "rgb_pose_outside_support",
+          "diagnostics": {
+            "method": null,
+            "precision": "unavailable",
+            "reason": "heading_registration_unsupported",
+            "attempts": [
+              {
+                "method": "soft_yellow",
+                "ok": false,
+                "reason": "outside_training_domain"
+              },
+              {
+                "method": "full_delta",
+                "ok": false,
+                "reason": "outside_training_domain"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "case_id": "yaw-opposed10",
+      "initial_heading_predictions": {
+        "r1": {
+          "ok": false,
+          "command": 0.0,
+          "ready_score": 0.0,
+          "ready": false,
+          "reason": "rgb_pose_outside_support",
+          "diagnostics": {
+            "method": null,
+            "precision": "unavailable",
+            "reason": "heading_registration_unsupported",
+            "attempts": [
+              {
+                "method": "soft_yellow",
+                "ok": false,
+                "reason": "outside_training_domain"
+              },
+              {
+                "method": "full_delta",
+                "ok": false,
+                "reason": "outside_training_domain"
+              }
+            ]
+          }
+        },
+        "r3": {
+          "ok": false,
+          "command": 0.0,
+          "ready_score": 0.0,
+          "ready": false,
+          "reason": "rgb_pose_outside_support",
+          "diagnostics": {
+            "method": null,
+            "precision": "unavailable",
+            "reason": "heading_registration_unsupported",
+            "attempts": [
+              {
+                "method": "soft_yellow",
+                "ok": false,
+                "reason": "outside_training_domain"
+              },
+              {
+                "method": "full_delta",
+                "ok": false,
+                "reason": "outside_training_domain"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "case_id": "mixed-far-mild",
+      "initial_heading_predictions": {
+        "r1": {
+          "ok": false,
+          "command": 0.0,
+          "ready_score": 0.0,
+          "ready": false,
+          "reason": "rgb_pose_outside_support",
+          "diagnostics": {
+            "method": null,
+            "precision": "unavailable",
+            "reason": "heading_registration_unsupported",
+            "attempts": [
+              {
+                "method": "soft_yellow",
+                "ok": false,
+                "reason": "outside_training_domain"
+              },
+              {
+                "method": "full_delta",
+                "ok": false,
+                "reason": "outside_training_domain"
+              }
+            ]
+          }
+        },
+        "r3": {
+          "ok": false,
+          "command": 0.0,
+          "ready_score": 0.0,
+          "ready": false,
+          "reason": "rgb_pose_outside_support",
+          "diagnostics": {
+            "method": null,
+            "precision": "unavailable",
+            "reason": "heading_registration_unsupported",
+            "attempts": [
+              {
+                "method": "soft_yellow",
+                "ok": false,
+                "reason": "outside_training_domain"
+              },
+              {
+                "method": "full_delta",
+                "ok": false,
+                "reason": "outside_training_domain"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "case_id": "mixed-near-wide",
+      "initial_heading_predictions": {
+        "r1": {
+          "ok": true,
+          "command": -0.05419209056358967,
+          "ready_score": 0.0,
+          "ready": false,
+          "stationary_ready": false,
+          "precision": "fine",
+          "reason": "visual_pose_command",
+          "diagnostics": {
+            "method": "soft_yellow",
+            "precision": "fine",
+            "ecc_score": 0.8537356010571376,
+            "attempts": [],
+            "image_derived_error": -0.18064030187863225
+          }
+        },
+        "r3": {
+          "ok": true,
+          "command": 0.05234172934517809,
+          "ready_score": 0.0,
+          "ready": false,
+          "stationary_ready": false,
+          "precision": "fine",
+          "reason": "visual_pose_command",
+          "diagnostics": {
+            "method": "soft_yellow",
+            "precision": "fine",
+            "ecc_score": 0.8462145718945192,
+            "attempts": [],
+            "image_derived_error": 0.17447243115059363
+          }
+        }
+      }
+    },
+    {
+      "case_id": "mixed-far-wide",
+      "initial_heading_predictions": {
+        "r1": {
+          "ok": false,
+          "command": 0.0,
+          "ready_score": 0.0,
+          "ready": false,
+          "reason": "rgb_pose_outside_support",
+          "diagnostics": {
+            "method": null,
+            "precision": "unavailable",
+            "reason": "heading_registration_unsupported",
+            "attempts": [
+              {
+                "method": "soft_yellow",
+                "ok": false,
+                "reason": "outside_training_domain"
+              },
+              {
+                "method": "full_delta",
+                "ok": false,
+                "reason": "outside_training_domain"
+              }
+            ]
+          }
+        },
+        "r3": {
+          "ok": false,
+          "command": 0.0,
+          "ready_score": 0.0,
+          "ready": false,
+          "reason": "rgb_pose_outside_support",
+          "diagnostics": {
+            "method": null,
+            "precision": "unavailable",
+            "reason": "heading_registration_unsupported",
+            "attempts": [
+              {
+                "method": "soft_yellow",
+                "ok": false,
+                "reason": "outside_training_domain"
+              },
+              {
+                "method": "full_delta",
+                "ok": false,
+                "reason": "outside_training_domain"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
