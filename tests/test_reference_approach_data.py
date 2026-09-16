@@ -1,4 +1,9 @@
 import base64
+import os
+import signal
+import subprocess
+import sys
+import time
 
 import pytest
 
@@ -38,3 +43,38 @@ def test_inference_wire_rejects_privileged_and_training_fields():
         decode_request({'own_rgb': 12, 'top_rgb': ''})
     with pytest.raises(ValueError):
         decode_request({'own_rgb': '@@not-base64', 'top_rgb': ''})
+
+
+def test_pilot_timeout_reaps_owned_child(tmp_path):
+    from scripts.run_reference_approach_pilot import run_owned
+    with (tmp_path / 'run.log').open('w') as log:
+        code, timeout = run_owned([sys.executable, '-c', 'import time; time.sleep(60)'], log, .1)
+    assert timeout is True
+    assert code != 0
+
+
+def test_pilot_session_signal_reaches_detached_child(tmp_path):
+    pid_path = tmp_path / 'child.pid'
+    child = f"import os,time; open({str(pid_path)!r},'w').write(str(os.getpid())); time.sleep(60)"
+    driver = ('from scripts.run_reference_approach_pilot import run_owned; import sys; '
+              f'run_owned([sys.executable, "-c", {child!r}], sys.stdout)')
+    parent = subprocess.Popen([sys.executable, '-c', driver], start_new_session=True)
+    child_pid = None
+    try:
+        deadline = time.monotonic() + 5
+        while not pid_path.exists() and time.monotonic() < deadline:
+            time.sleep(.02)
+        assert pid_path.exists()
+        child_pid = int(pid_path.read_text())
+        parent.send_signal(signal.SIGTERM)
+        assert parent.wait(timeout=4) == 128 + signal.SIGTERM
+        with pytest.raises(ProcessLookupError):
+            os.kill(child_pid, 0)
+    finally:
+        if parent.poll() is None:
+            parent.kill(); parent.wait()
+        if child_pid:
+            try:
+                os.kill(child_pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
