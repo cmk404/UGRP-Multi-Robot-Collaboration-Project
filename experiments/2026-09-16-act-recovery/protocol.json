@@ -1,0 +1,35 @@
+{
+  "schema": "ugrp.act_recovery.v1",
+  "seeds": [
+    20260916,
+    20260917
+  ],
+  "steps": 10000,
+  "chunk": 4,
+  "execute_steps": 1,
+  "rgb": "own and fixed top only",
+  "student_conditions": [
+    "nominal",
+    "recovery",
+    "aggregated"
+  ],
+  "teacher_comparators": [
+    "nominal_teacher",
+    "recovery_teacher"
+  ],
+  "test_cases": "test-cases.json",
+  "max_rounds": 160,
+  "slice_s": 0.2,
+  "confirmation_steps": 3,
+  "evaluation_only_tolerance": {
+    "xy_m": 0.005,
+    "yaw_deg": 1,
+    "stationary_s": 0.4,
+    "linear_speed_mps": 0.005,
+    "angular_speed_radps": 0.02
+  },
+  "data_design": "All conditions same expanded action space. Nominal and recovery initial cohorts use 48 successful attempted slots; recovery uses 24 shared nominal and 24 single-perturbation starts. Aggregation adds up to24 fixed-prefix student-visited teacher recovery tails; compare an equally sized additional scripted recovery data control. Report exclusions and sample counts, do not replace failures silently. Pilot data never train. Final conditions never seed aggregation.",
+  "heldout_region_screen": "Training trajectories excluded if teacher-labeled state has |yaw|>3deg AND (|y|>8mm OR remaining x>0.33m OR remaining x<-3mm). Audit coverage and do not claim unseen combinations if this screen is violated.",
+  "selection": "Checkpoint only development loss/ready mistakes; no final test retuning. Final test run after all checkpoints fixed.",
+  "boundary": "No truth-gated grasp or teacher fallback during independent student evaluation; privileged takeover is training-only."
+}
