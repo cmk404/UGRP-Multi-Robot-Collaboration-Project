@@ -83,7 +83,7 @@ def audit(root):
     for row in report.get('approach_calls',[]):
         tag=Path(row['images']['top']['path']).stem.removesuffix('-top')
         image_map.setdefault(tag,{})[row['robot_id']]={**row['images'],'frame_id':row['frame_id']}
-    for row in report.get('final_alignment_checks',[]):
+    for row in report.get('final_alignment_checks',[]) + report.get('alignment_refinement_calls',[]):
         for r in ROBOTS:
             tag=Path(row['images'][r]['top']['path']).stem.removesuffix('-top')
             image_map.setdefault(tag,{})[r]={**row['images'][r],'frame_id':row['frame_ids'][r]}
@@ -103,8 +103,11 @@ def audit(root):
         def evaluation_snapshot(self): return {}  # output-only, deliberately no truth in replay
     if image_map:
         options = ({'reacquire_on_settle': True} if report['config'].get('reacquire_on_settle') is True else {})
+        if report['config'].get('final_refinement_steps'):
+            options['final_refinement_steps'] = report['config']['final_refinement_steps']
         replayed=approach.run_approach(Replay(),stages,**options)
-        for key in ('approach_calls','stage_results','approach_ok','final_alignment_checks'):
+        for key in ('approach_calls','stage_results','approach_ok','final_alignment_checks',
+                    'alignment_refinement_calls','alignment_refinement_reason'):
             same(replayed.get(key),report.get(key),'fine approach replay '+key)
     for row in report.get('dock_calls',[]):
         predictions={r:predict_stage(stages[r]['forward'],_image(root,row['images'][r]['own']),

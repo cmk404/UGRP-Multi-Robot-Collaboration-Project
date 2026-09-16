@@ -1,0 +1,151 @@
+{
+  "case_id": "mixed-far-wide-llm",
+  "scope": "Provider HTTP errors, not model visual refusal",
+  "errors": [
+    {
+      "event": 1,
+      "robot_id": "r1",
+      "attempt": 0,
+      "error": "Gemini \ud504\ub85d\uc2dc HTTP 500",
+      "error_kind": "http",
+      "latency_ms": 1098.5652079980355
+    },
+    {
+      "event": 1,
+      "robot_id": "r1",
+      "attempt": 1,
+      "error": "Gemini \ud504\ub85d\uc2dc HTTP 500",
+      "error_kind": "http",
+      "latency_ms": 75.96424999064766
+    },
+    {
+      "event": 1,
+      "robot_id": "r1",
+      "attempt": 2,
+      "error": "Gemini \ud504\ub85d\uc2dc HTTP 500",
+      "error_kind": "http",
+      "latency_ms": 85.43937499052845
+    },
+    {
+      "event": 1,
+      "robot_id": "r3",
+      "attempt": 0,
+      "error": "Gemini \ud504\ub85d\uc2dc HTTP 500",
+      "error_kind": "http",
+      "latency_ms": 1097.3212919780053
+    },
+    {
+      "event": 1,
+      "robot_id": "r3",
+      "attempt": 1,
+      "error": "Gemini \ud504\ub85d\uc2dc HTTP 500",
+      "error_kind": "http",
+      "latency_ms": 77.03733400558122
+    },
+    {
+      "event": 1,
+      "robot_id": "r3",
+      "attempt": 2,
+      "error": "Gemini \ud504\ub85d\uc2dc HTTP 500",
+      "error_kind": "http",
+      "latency_ms": 85.83216700935736
+    },
+    {
+      "event": 2,
+      "robot_id": "r1",
+      "attempt": 0,
+      "error": "Gemini \ud504\ub85d\uc2dc HTTP 500",
+      "error_kind": "http",
+      "latency_ms": 1884.4677500019316
+    },
+    {
+      "event": 2,
+      "robot_id": "r1",
+      "attempt": 1,
+      "error": "Gemini \ud504\ub85d\uc2dc HTTP 500",
+      "error_kind": "http",
+      "latency_ms": 117.03308302094229
+    },
+    {
+      "event": 2,
+      "robot_id": "r1",
+      "attempt": 2,
+      "error": "Gemini \ud504\ub85d\uc2dc HTTP 500",
+      "error_kind": "http",
+      "latency_ms": 60.17020798753947
+    },
+    {
+      "event": 2,
+      "robot_id": "r3",
+      "attempt": 0,
+      "error": "Gemini \ud504\ub85d\uc2dc HTTP 500",
+      "error_kind": "http",
+      "latency_ms": 1882.0987910148688
+    },
+    {
+      "event": 2,
+      "robot_id": "r3",
+      "attempt": 1,
+      "error": "Gemini \ud504\ub85d\uc2dc HTTP 500",
+      "error_kind": "http",
+      "latency_ms": 58.908209000946954
+    },
+    {
+      "event": 2,
+      "robot_id": "r3",
+      "attempt": 2,
+      "error": "Gemini \ud504\ub85d\uc2dc HTTP 500",
+      "error_kind": "http",
+      "latency_ms": 69.59920801455155
+    },
+    {
+      "event": 3,
+      "robot_id": "r1",
+      "attempt": 0,
+      "error": "Gemini \ud504\ub85d\uc2dc HTTP 500",
+      "error_kind": "http",
+      "latency_ms": 199.62854200275615
+    },
+    {
+      "event": 3,
+      "robot_id": "r1",
+      "attempt": 1,
+      "error": "Gemini \ud504\ub85d\uc2dc HTTP 500",
+      "error_kind": "http",
+      "latency_ms": 75.65437498851679
+    },
+    {
+      "event": 3,
+      "robot_id": "r1",
+      "attempt": 2,
+      "error": "Gemini \ud504\ub85d\uc2dc HTTP 500",
+      "error_kind": "http",
+      "latency_ms": 54.93037498672493
+    },
+    {
+      "event": 3,
+      "robot_id": "r3",
+      "attempt": 0,
+      "error": "Gemini \ud504\ub85d\uc2dc HTTP 500",
+      "error_kind": "http",
+      "latency_ms": 215.75899998424575
+    },
+    {
+      "event": 3,
+      "robot_id": "r3",
+      "attempt": 1,
+      "error": "Gemini \ud504\ub85d\uc2dc HTTP 500",
+      "error_kind": "http",
+      "latency_ms": 76.89008399029262
+    },
+    {
+      "event": 3,
+      "robot_id": "r3",
+      "attempt": 2,
+      "error": "Gemini \ud504\ub85d\uc2dc HTTP 500",
+      "error_kind": "http",
+      "latency_ms": 40.39020900381729
+    }
+  ],
+  "next_case_completed": true
+}

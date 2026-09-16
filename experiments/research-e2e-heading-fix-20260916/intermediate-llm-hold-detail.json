@@ -1,0 +1,63 @@
+{
+  "case_id": "yaw-opposed10",
+  "first_replies": {
+    "r1": {
+      "confidence": 0.85,
+      "message": "Both robots arrived at their respective ends of the plain orange beam; r1 executing PREPARE_GRASP.",
+      "reason": "Top view shows r1 aligned at the lower end and r3 at the upper end of the plain orange beam on the blue mat. Own view is facing inward toward the grasp region. The approach is complete and ready for arm deployment.",
+      "request_id": "r1-skill-001-PREPARE_GRASP-a0",
+      "skill": "PREPARE_GRASP"
+    },
+    "r3": {
+      "confidence": 0.85,
+      "message": "Holding PREPARE_GRASP. The plain orange beam is not visible in current own RGB camera view.",
+      "reason": "The orange beam was visible in previous own RGB but is now completely missing from current own RGB, showing only an untextured grey obstacle/wall. Because the learned RGB recovery policy for PREPARE_GRASP requires visual feedback of the target beam to refine grasp alignment, attempting deployment now risks failure. Holding until alignment and beam visibility are confirmed.",
+      "request_id": "r3-skill-001-PREPARE_GRASP-a0",
+      "skill": "HOLD"
+    }
+  },
+  "retry_replies": {
+    "r1": {
+      "request_id": "r1-skill-002-PREPARE_GRASP-a0",
+      "skill": "PREPARE_GRASP",
+      "confidence": 0.85,
+      "reason": "TOP RGB confirms r1 is positioned at the lower end of the plain orange beam in the blue zone facing inward toward the beam. Ready to deploy the open arm and refine alignment.",
+      "message": "Executing PREPARE_GRASP at bottom end of the plain orange beam."
+    },
+    "r3": {
+      "confidence": 0.95,
+      "message": "r3 is positioned at the top end of the plain orange beam; executing PREPARE_GRASP.",
+      "reason": "TOP RGB confirms r3 is aligned at the upper end of the plain orange beam in the blue zone following approach. Proceeding with PREPARE_GRASP.",
+      "request_id": "r3-skill-002-PREPARE_GRASP-a0",
+      "skill": "PREPARE_GRASP"
+    }
+  },
+  "own_commands_equal": true,
+  "images": {
+    "r1": {
+      "own": {
+        "byte_equal": true,
+        "changed_pixels": 0,
+        "max_channel_difference": 0
+      },
+      "top": {
+        "byte_equal": false,
+        "changed_pixels": 1722,
+        "max_channel_difference": 28
+      }
+    },
+    "r3": {
+      "own": {
+        "byte_equal": false,
+        "changed_pixels": 1124,
+        "max_channel_difference": 3
+      },
+      "top": {
+        "byte_equal": false,
+        "changed_pixels": 1722,
+        "max_channel_difference": 28
+      }
+    }
+  },
+  "scope": "One HOLD then reauthorization; no corrective action between requests. This does not demonstrate recovery or communication benefit."
+}
