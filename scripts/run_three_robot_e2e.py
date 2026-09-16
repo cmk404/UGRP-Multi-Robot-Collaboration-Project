@@ -64,11 +64,16 @@ class ThreeRobotScene(GoalScene):
                 delivery_filter=lambda skill, events: stage_deliveries(self.fault, skill, events))
         elif self.fault == 'ready_delay':
             raise ValueError('ready_delay requires real pair visual replies (--planner llm)')
-        if self.team.agreement.committed['plan']['inspection']['timing'] == 'during_approach':
-            self.team.start_inspection(self.team_capture('team-inspection-0')['r2'], self.time())
+
+    def drive_mecanum(self, commands, duration_s=.2):
+        if self.team and not any(e['event'] == 'PAIR_MOTION_START' for e in self.team.execution_events):
+            if any(any(c.values()) for c in commands.values()):
+                self.team.event('PAIR_MOTION_START', self.time())
+        return super().drive_mecanum(commands, duration_s)
 
     def checkpoint(self, skill):
         if self.team is not None:
+            self.team.event('PAIR_CHECKPOINT', self.time(), skill=skill)
             committed = self.team.agreement.committed
             if not committed or not self.team.agreement.authorize(committed['proposal_id'], committed['plan_hash']):
                 raise RuntimeError('plan authorization revoked; replan while stopped')
@@ -86,7 +91,15 @@ class ThreeRobotScene(GoalScene):
                     raise RuntimeError('destination obstruction reported; stopped for replanning')
             if skill == 'FINISH' and not self.team.inspection_result:
                 raise RuntimeError('inspection task has no report')
-        return super().checkpoint(skill)
+        result = super().checkpoint(skill)
+        if self.team is not None:
+            self.team.event('PAIR_AUTHORIZED', self.time(), skill=skill)
+            # Launch after the pair's initial LLM barrier, so the third model
+            # can run while physics advances, rather than only during a pause.
+            if (skill == 'APPROACH' and not self.team.inspections
+                    and committed['plan']['inspection']['timing'] == 'during_approach'):
+                self.team.start_inspection(self.team_capture('team-inspection-0')['r2'], self.time())
+        return result
 
     def delivered_reports(self, index):
         return carry_deliveries(self.fault, index)

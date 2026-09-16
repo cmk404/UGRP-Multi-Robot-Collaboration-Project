@@ -29,6 +29,7 @@ class ThreeRobotRuntime:
         self.agreement = TeamAgreement(run_id)
         self.inbox = {r: [] for r in ROBOTS}
         self.calls, self.rounds, self.inspections = [], [], []
+        self.execution_events = []
         self.started = time.monotonic()
         self.wires = {r: 0 for r in ROBOTS}
         self.clients = {}
@@ -57,11 +58,13 @@ class ThreeRobotRuntime:
             reply = validate(raw, request['request_id'])
             record = {'attempt': 0, 'request_id': request['request_id'], 'reply': reply,
                       'raw_response': raw, 'model': 'scripted-fixture-not-llm', 'usage': None,
-                      'latency_ms': 0., 'request': path, 'robot_id': rid, 'wire_index': None}
+                      'latency_ms': 0., 'request': path, 'robot_id': rid, 'wire_index': None,
+                      'returned_wall_s': time.monotonic()-self.started}
             return reply, None, [record]
         records = []
         def record(row):
-            row.update(request=path, robot_id=rid, wire_index=self.wires[rid])
+            row.update(request=path, robot_id=rid, wire_index=self.wires[rid],
+                       returned_wall_s=time.monotonic()-self.started)
             records.append(row)
             write(self.output/rid/f'{request["request_id"]}-decision.json', row)
         reply, stop = request_with_recovery(self.clients[rid], lambda attempt, retry: request,
@@ -127,7 +130,8 @@ class ThreeRobotRuntime:
         self.calls.extend(records)
         row = self.inspections[-1]
         row.update(reply=reply, stop=stop, received_at_sim_s=sim_time,
-                   received_wall_s=time.monotonic()-self.started)
+                   received_wall_s=time.monotonic()-self.started,
+                   completed_wall_s=records[-1]['returned_wall_s'] if records else None)
         self.inspection_result = row
         self.inspection_future = None
         self.save()
@@ -136,11 +140,17 @@ class ThreeRobotRuntime:
     def save(self):
         write(self.output/'team.json', self.snapshot())
 
+    def event(self, name, sim_time, **details):
+        self.execution_events.append({'event': name, 'sim_time_s': sim_time,
+                                      'wall_s': time.monotonic()-self.started, **details})
+        self.save()
+
     def snapshot(self):
         return {'schema': 'ugrp.three_robot_runtime.v1', 'mode': self.mode,
                 'run_id': self.agreement.run_id, 'rounds': self.rounds,
                 'agreement_events': self.agreement.events, 'committed': self.agreement.committed,
                 'inspections': self.inspections, 'calls': self.calls,
+                'execution_events': self.execution_events,
                 'transport_roles_fixed_by_skill': True,
                 'inspection_has_no_motor_permission': True,
                 'cost_usd': None, 'cost_note': 'provider billing unavailable'}
