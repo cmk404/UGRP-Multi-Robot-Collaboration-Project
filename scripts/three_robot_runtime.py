@@ -27,8 +27,11 @@ class ThreeRobotRuntime:
     def __init__(self, output, *, run_id, mode='llm', fixture_timing='during_approach',
                  agreement=None, request_builder=build_plan_request,
                  reply_validator=validate_plan_reply, plan_fixture=None,
-                 request_timeout=30., max_tokens=950):
+                 request_timeout=30., max_tokens=950,
+                 roles_fixed_by_skill=True, planning_only=False):
         self.output, self.mode, self.fixture_timing = output, mode, fixture_timing
+        self.roles_fixed_by_skill = roles_fixed_by_skill
+        self.planning_only = planning_only
         self.agreement = agreement or TeamAgreement(run_id)
         self.request_builder, self.reply_validator = request_builder, reply_validator
         self.plan_fixture = plan_fixture
@@ -156,9 +159,10 @@ class ThreeRobotRuntime:
                 'agreement_events': self.agreement.events, 'committed': self.agreement.committed,
                 'inspections': self.inspections, 'calls': self.calls,
                 'execution_events': self.execution_events,
-                'transport_roles_fixed_by_skill': True,
-                'inspection_has_no_motor_permission': self.plan_fixture is None,
-                'physical_task_plan': self.plan_fixture is not None,
+                'transport_roles_fixed_by_skill': self.roles_fixed_by_skill,
+                'inspection_has_no_motor_permission': self.planning_only or self.plan_fixture is None,
+                'physical_task_plan': not self.planning_only and self.plan_fixture is not None,
+                'planning_only': self.planning_only,
                 'cost_usd': None, 'cost_note': 'provider billing unavailable'}
 
     def close(self, sim_time):

@@ -45,7 +45,7 @@ def run(args):
                 agreement=TeamAgreement(run_id,plan_validator=validate_dispatch_plan),
                 request_builder=partial(build_dispatch_request,task=actor_task(config['static_map'])),
                 reply_validator=validate_dispatch_reply,plan_fixture=fixture_plan(),
-                request_timeout=60.,max_tokens=1400)
+                request_timeout=60.,max_tokens=1400,roles_fixed_by_skill=False,planning_only=True)
             for turn in range(8):
                 if team.negotiate(frames,scene.command_history,turn,float(scene.world.data.time)):
                     break

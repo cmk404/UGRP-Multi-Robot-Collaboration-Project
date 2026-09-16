@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import copy
 import json
+import math
 
 from harness.three_robot_plan import ROBOTS, images, validate_plan_reply, digest
 
@@ -151,6 +152,8 @@ class DispatchCoordinator:
             raise ValueError('invalid current-stage claim')
         if not all(isinstance(v,str) and v for v in (own_rgb_ref,top_rgb_ref)):
             raise ValueError('both camera evidence references required')
+        if isinstance(now_s,bool) or not isinstance(now_s,(int,float)) or not math.isfinite(now_s) or now_s<0:
+            raise ValueError('finite nonnegative report time required')
         self.events.append({'event':status,'robot':rid,'stage':stage,'at_s':now_s,
             'own_rgb_ref':own_rgb_ref,'top_rgb_ref':top_rgb_ref})
         key=(row['task_id'],stage,rid)
@@ -174,10 +177,10 @@ class DispatchCoordinator:
         row=self.current(rid)
         if self.revoked or not row:
             return False
-        if any(not any(t==dep and stage=='RELEASE' and all((dep,stage,p) in self.done for p in
-                      next(j['participants'] for j in self.committed['plan']['tasks'] if j['id']==dep))
-                      for t,stage,_ in self.done) for dep in row['after']):
-            return False
+        tasks={t['id']:t for t in self.committed['plan']['tasks']}
+        for dep in row['after']:
+            if not all((dep,'RELEASE',p) in self.done for p in tasks[dep]['participants']):
+                return False
         peers=row['participants'] if row['barrier'] else [rid]
         if not all((row['task_id'],row['stage'],p) in self.ready for p in peers):
             return False
