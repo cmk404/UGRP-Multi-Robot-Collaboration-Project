@@ -185,7 +185,8 @@ class MissionScene(GoalScene):
             raise RuntimeError('plan violates operator destination requirement')
         self.solo = SoloBoxTransport(chosen)
         self.solo_log=(self.out/'solo-decisions.jsonl').open('w')
-        self.solo_executor=VisualMacroExecutor(self.solo_port,log_callback=self.solo_raw.append)
+        self.solo_executor=VisualMacroExecutor(self.solo_port,log_callback=self.solo_raw.append,
+                                             drive_settle_by_phase={'carry':0.0})
         self.solo_started=None
         self.team.event('MISSION_COMMITTED',self.time(),plan=committed)
         if args.planner=='llm':
@@ -280,7 +281,8 @@ class MissionScene(GoalScene):
                 'solo':{'goal':goal,'visual_reason':self.solo.reason if self.solo else None,
                         'decision_count':len(self.solo_rows),'evaluation':evaluation},
                 'all_weld_active_ticks':self.all_weld_ticks,
-                'pair_success':self.report['success'],
+                'pair_success':bool(self.report['evaluation']['success']
+                                    and self.report['goal_stable_at_end']),
                 'success':bool(self.report['success'] and evaluation['success']
                                and self.all_weld_ticks==0)}
 
