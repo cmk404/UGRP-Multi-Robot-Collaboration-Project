@@ -1,0 +1,205 @@
+{
+  "case": "command_only",
+  "passed": true,
+  "error": null,
+  "scope": "synthetic protocol fixture; no image inference, physics, network or hardware",
+  "phase": "HOLD",
+  "stage": "GRASP",
+  "assertions": 10,
+  "issued_commands": {
+    "r1": [
+      "GRASP-r1"
+    ],
+    "r3": [
+      "GRASP-r3"
+    ]
+  },
+  "command_count": 2,
+  "report_count": 2,
+  "hold_count": 1,
+  "fixture_clock_s": 1.7,
+  "wall_time_s": 8.570897625759244e-05,
+  "model_calls": 0,
+  "cost_usd": 0,
+  "physical_success_evaluated": false,
+  "events": [
+    {
+      "event": "REQUEST",
+      "task_id": "example-paired-transfer",
+      "run_id": "020a29af8d8942739dac2fba8da59eb1",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 0,
+      "timestamp_s": 0.0,
+      "clock_domain": "monotonic",
+      "wall_elapsed_s": 1.1250085663050413e-06,
+      "plan": {
+        "schema": "ugrp.task_plan.v1",
+        "task_id": "example-paired-transfer",
+        "plan_version": 1,
+        "object_id": "example-beam",
+        "participants": [
+          {
+            "robot_id": "r1",
+            "role": "left-grasp"
+          },
+          {
+            "robot_id": "r3",
+            "role": "right-grasp"
+          }
+        ],
+        "goal_region": "goal",
+        "static_map": {
+          "id": "open",
+          "version": "1",
+          "sha256": "96abf11c1fcabb80c97e912379fd543349226c9ba53b5485e67576f5a52237ac"
+        }
+      }
+    },
+    {
+      "event": "REPORT",
+      "task_id": "example-paired-transfer",
+      "run_id": "020a29af8d8942739dac2fba8da59eb1",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 0,
+      "timestamp_s": 1.0,
+      "clock_domain": "monotonic",
+      "wall_elapsed_s": 2.6583002181723714e-05,
+      "robot_id": "r1",
+      "report": {
+        "task_id": "example-paired-transfer",
+        "run_id": "020a29af8d8942739dac2fba8da59eb1",
+        "plan_version": 1,
+        "stage": "GRASP",
+        "epoch": 0,
+        "robot_id": "r1",
+        "sequence": 1,
+        "status": "READY",
+        "observed_at_s": 1.0,
+        "decided_at_s": 1.0,
+        "sent_at_s": 1.0,
+        "observation_id": "fixture://command_only/r1/1",
+        "own_rgb_ref": "fixture://command_only/r1/1/own",
+        "top_rgb_ref": "fixture://command_only/r1/1/top",
+        "confidence": 0.95,
+        "checks": [
+          "at_grasp_pose",
+          "stopped"
+        ],
+        "command_id": null,
+        "reason": "SYNTHETIC protocol fixture",
+        "schema": "ugrp.stage_report.v1",
+        "evidence_source": "own_rgb+top_rgb"
+      },
+      "ready": true,
+      "observation_to_decision_s": 0.0,
+      "sender_queue_s": 0.0,
+      "delivery_s": 0.0
+    },
+    {
+      "event": "REPORT",
+      "task_id": "example-paired-transfer",
+      "run_id": "020a29af8d8942739dac2fba8da59eb1",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 0,
+      "timestamp_s": 1.0,
+      "clock_domain": "monotonic",
+      "wall_elapsed_s": 4.916699253953993e-05,
+      "robot_id": "r3",
+      "report": {
+        "task_id": "example-paired-transfer",
+        "run_id": "020a29af8d8942739dac2fba8da59eb1",
+        "plan_version": 1,
+        "stage": "GRASP",
+        "epoch": 0,
+        "robot_id": "r3",
+        "sequence": 1,
+        "status": "READY",
+        "observed_at_s": 1.0,
+        "decided_at_s": 1.0,
+        "sent_at_s": 1.0,
+        "observation_id": "fixture://command_only/r3/1",
+        "own_rgb_ref": "fixture://command_only/r3/1/own",
+        "top_rgb_ref": "fixture://command_only/r3/1/top",
+        "confidence": 0.95,
+        "checks": [
+          "at_grasp_pose",
+          "stopped"
+        ],
+        "command_id": null,
+        "reason": "SYNTHETIC protocol fixture",
+        "schema": "ugrp.stage_report.v1",
+        "evidence_source": "own_rgb+top_rgb"
+      },
+      "ready": true,
+      "observation_to_decision_s": 0.0,
+      "sender_queue_s": 0.0,
+      "delivery_s": 0.0
+    },
+    {
+      "event": "GO",
+      "task_id": "example-paired-transfer",
+      "run_id": "020a29af8d8942739dac2fba8da59eb1",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 0,
+      "timestamp_s": 1.0,
+      "clock_domain": "monotonic",
+      "wall_elapsed_s": 5.7541998103260994e-05,
+      "permission": {
+        "run_id": "020a29af8d8942739dac2fba8da59eb1",
+        "task_id": "example-paired-transfer",
+        "plan_version": 1,
+        "stage": "GRASP",
+        "epoch": 0,
+        "token": "aa158e76c6264cd4bcc4ae850692eb8b",
+        "issued_at_s": 1.0,
+        "expires_at_s": 1.25
+      }
+    },
+    {
+      "event": "COMMAND_ISSUED",
+      "task_id": "example-paired-transfer",
+      "run_id": "020a29af8d8942739dac2fba8da59eb1",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 0,
+      "timestamp_s": 1.0,
+      "clock_domain": "monotonic",
+      "wall_elapsed_s": 6.379198748618364e-05,
+      "robot_id": "r1",
+      "command_id": "GRASP-r1",
+      "duration_s": 0.05,
+      "permission_token": "aa158e76c6264cd4bcc4ae850692eb8b"
+    },
+    {
+      "event": "COMMAND_ISSUED",
+      "task_id": "example-paired-transfer",
+      "run_id": "020a29af8d8942739dac2fba8da59eb1",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 0,
+      "timestamp_s": 1.0,
+      "clock_domain": "monotonic",
+      "wall_elapsed_s": 6.841699359938502e-05,
+      "robot_id": "r3",
+      "command_id": "GRASP-r3",
+      "duration_s": 0.05,
+      "permission_token": "aa158e76c6264cd4bcc4ae850692eb8b"
+    },
+    {
+      "event": "HOLD",
+      "task_id": "example-paired-transfer",
+      "run_id": "020a29af8d8942739dac2fba8da59eb1",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 1,
+      "timestamp_s": 1.7,
+      "clock_domain": "monotonic",
+      "wall_elapsed_s": 7.404200732707977e-05,
+      "reason": "report_expired:r1"
+    }
+  ]
+}

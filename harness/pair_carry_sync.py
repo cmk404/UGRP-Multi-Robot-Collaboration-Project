@@ -113,11 +113,11 @@ class PairCarrySync:
             self._event("AUTHORIZED", now_s, phase="GO", reason=self._reason)
         return self._decision()
 
-    def hold(self, reason: str, now_s: float) -> Dict[str, Any]:
+    def hold(self, reason: str, now_s: float, *, renew: bool = False) -> Dict[str, Any]:
         self._accept_clock(now_s)
         if self._phase == "ABORT":
             return self._decision()
-        if self._phase != "HOLD":
+        if self._phase != "HOLD" or renew:
             self.epoch += 1
             self._reports.clear()
             self._phase = "HOLD"

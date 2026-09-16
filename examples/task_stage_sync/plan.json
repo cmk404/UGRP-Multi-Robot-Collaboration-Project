@@ -1,0 +1,22 @@
+{
+  "schema": "ugrp.task_plan.v1",
+  "task_id": "example-paired-transfer",
+  "plan_version": 1,
+  "object_id": "example-beam",
+  "participants": [
+    {
+      "robot_id": "r1",
+      "role": "left-grasp"
+    },
+    {
+      "robot_id": "r3",
+      "role": "right-grasp"
+    }
+  ],
+  "goal_region": "goal",
+  "static_map": {
+    "id": "open",
+    "version": "1",
+    "sha256": "96abf11c1fcabb80c97e912379fd543349226c9ba53b5485e67576f5a52237ac"
+  }
+}

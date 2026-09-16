@@ -30,6 +30,7 @@
 - **[팀원용 Ubuntu 설치·시뮬레이션·PR 안내](docs/ubuntu_quickstart.md)** — 모델 계정 없이 시작 가능
 
 - [설치·테스트·실험 재현과 PR 절차](CONTRIBUTING.md)
+- [동기화 담당: 공동 파지부터 해제까지 입출력 계약과 실행 예제](docs/task_stage_sync_contract.md) — 프로토콜 검증, 실제 로봇 연결은 후속 작업
 - [실험 목록과 증거 관리](experiments/README.md)
 - [연구 비교 조건과 관측 경계](docs/warehouse_research_contract.md)
 - [현재 아키텍처 상세 기록](docs/current_architecture_todo.md) — 각 항목의 기록 날짜를 확인한다.
