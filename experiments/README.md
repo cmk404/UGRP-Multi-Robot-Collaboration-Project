@@ -2,6 +2,7 @@
 
 | ID | 코드 연결 | 범위 | 결과 |
 |---|---|---|---|
+| [three-robot-e2e-20260916](three-robot-e2e-20260916/README.md) | 실행 `d79c97d`, 결과·원본 해시·대표 영상 | 3대 계획 승인, R1/R3 운반·R2 정지 관찰; 준비 지연·보고 단절 | 최종 실제 모델 3/3·연결 fixture 2/2; 첫 협상 실패 보존, 자유로운 역할 분담 아님 |
 | [research-e2e-heading-fix-20260916](research-e2e-heading-fix-20260916/README.md) | 실행 `d863e74`, 전체 결과·원본 해시 | 먼 거리 RGB 방향 보정·정지 재정렬·마지막 전 축 복구, 같은 19배치 × 두 조건 | 로컬 19/19·LLM 19/19; 중간 18/19·17/19 실패와 개발 6회 보존 |
 | [research-e2e-varied-start-20260916](research-e2e-varied-start-20260916/README.md) | 실행 `fd5d68e`, 전체 결과·원본 해시 | 거리 30–70 cm·yaw ±10°·좌우 ±6 cm의 19배치, 두 조건 38회 | 로컬 15/19·LLM 15/19; 4배치 모두 파지 전 영상 정렬 실패 |
 | [research-e2e-local-skills-20260916](research-e2e-local-skills-20260916/README.md) | 실행 `11da613`, 전체 결과·원본 해시 | 고정 역할·평지, RGB 제어·시연 팔, 두 LLM 단계 허가 | 최종 로컬 3/3·LLM 3/3; 첫 코호트 4/6과 개발 실패 포함 |
