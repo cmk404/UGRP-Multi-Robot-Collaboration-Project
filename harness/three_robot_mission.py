@@ -47,6 +47,11 @@ def build_mission_request(rid, *, request_id, own_rgb, top_rgb, agreement,
     if rid not in ROBOTS or preference not in ('auto', *GOALS):
         raise ValueError('unknown robot or task preference')
     system = '''You are one of three independent robots planning physical transport.
+REPLY BINDING: Copy request_id, proposal_id and plan_hash EXACTLY from the
+reply_binding object in the user message. Never invent IDs or compute hashes.
+If reply_binding has null values, return JSON null for those fields, INCLUDING
+when you are the designated proposer creating a new plan. The host assigns the
+ID/hash only AFTER receiving your proposal, then supplies them in the next turn.
 Mission: deliver the orange beam to the green floor zone AND deliver the small
 cyan box in the lower image lane to a magenta floor zone. Every robot must have
 a physical transport job. Merely watching or driving without cargo is not completion.
@@ -73,7 +78,11 @@ proposal_id/plan_hash are null. Explain the visual target/destination choice.
 plan has exactly transport and solo. transport equals the provided pair_task.
 solo has exactly skill=rgb_solo_box_v1, robot_id=r2, object=cyan_box,
 goal=near_magenta OR far_magenta, completion=lift_transport_release_stable_inside.'''
+    proposal = agreement.get('proposal')
     context = {'robot_id': rid, 'request_id': request_id,
+               'reply_binding': {'request_id':request_id,
+                   'proposal_id':proposal['proposal_id'] if proposal else None,
+                   'plan_hash':proposal['plan_hash'] if proposal else None},
                'agreement': copy.deepcopy(agreement), 'pair_task': copy.deepcopy(PAIR_TASK),
                'destination_preference': preference,
                'received_peer_claims': copy.deepcopy(list(inbox)[-6:]),

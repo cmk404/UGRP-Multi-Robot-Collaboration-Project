@@ -44,7 +44,8 @@ def test_plan_builder_uses_only_serialized_rgb_task_and_own_history():
     context=json.loads(req['messages'][1]['content'])
     assert context['own_issued_commands']==[{'kind':'wait'}]
     assert len(req['images'])==2
-    assert set(context)=={'robot_id','request_id','agreement','pair_task',
+    assert context['reply_binding']=={'request_id':'x','proposal_id':None,'plan_hash':None}
+    assert set(context)=={'robot_id','request_id','reply_binding','agreement','pair_task',
                           'destination_preference','received_peer_claims','own_issued_commands'}
 
 
