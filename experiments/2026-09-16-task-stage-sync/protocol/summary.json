@@ -1,0 +1,358 @@
+{
+  "schema": "ugrp.task_stage_sync_fixture.v1",
+  "source_sha": "89b93d81e45670f09c0d0d90842d6ddcac376d56",
+  "environment": {
+    "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+    "platform": "macOS-27.0-arm64-arm-64bit"
+  },
+  "scope": "protocol fixture cohort; not physical or independent robot validation",
+  "plan": {
+    "schema": "ugrp.task_plan.v1",
+    "task_id": "example-paired-transfer",
+    "plan_version": 1,
+    "object_id": "example-beam",
+    "participants": [
+      {
+        "robot_id": "r1",
+        "role": "left-grasp"
+      },
+      {
+        "robot_id": "r3",
+        "role": "right-grasp"
+      }
+    ],
+    "goal_region": "goal",
+    "static_map": {
+      "id": "open",
+      "version": "1",
+      "sha256": "96abf11c1fcabb80c97e912379fd543349226c9ba53b5485e67576f5a52237ac"
+    }
+  },
+  "evidence": [
+    {
+      "path": "normal.json",
+      "sha256": "cfef5ae31268d89becf9e2162676dec73b009b359e1ea3fc662134dd4d66e8e4"
+    },
+    {
+      "path": "delayed_ready.json",
+      "sha256": "f4b572679c5b24cff577b9b6b94f4fab12015d9d153759c0078fcba375593563"
+    },
+    {
+      "path": "delayed_done.json",
+      "sha256": "d60fc0520bfba31b02d4cf46283cd107de9ba505096a76cc6765117e59136735"
+    },
+    {
+      "path": "hold_reobserve.json",
+      "sha256": "e24f8b36f4762acd7d43ec581816e7953935b75b530b6c992ba11035fcf39709"
+    },
+    {
+      "path": "report_gap.json",
+      "sha256": "89dd146266d0fbc59954b64448b62210f5c8d4002d9f16169b25950df6a234a0"
+    },
+    {
+      "path": "missing_support.json",
+      "sha256": "afcbedabbc7b6b3cb91726ad986e128e50db327729bbf7cd039f1fc6d504985b"
+    },
+    {
+      "path": "command_only.json",
+      "sha256": "6ab68a2a4bd6835de13b755c851049b78b20e5e18a5a152148118af3a23b066b"
+    },
+    {
+      "path": "old_stage_permission.json",
+      "sha256": "700e58e5481b2d0c1cdcad4f55d0ad9c1e7faa5772f45a195a7f32d70f8bcec5"
+    },
+    {
+      "path": "plan_change.json",
+      "sha256": "1f4ef9bca7de8d7232709831a861dbe32b8c88f1e0e7427e5b1442ce4a5e9725"
+    }
+  ],
+  "results": [
+    {
+      "case": "normal",
+      "passed": true,
+      "error": null,
+      "scope": "synthetic protocol fixture; no image inference, physics, network or hardware",
+      "phase": "FINISH",
+      "stage": "RELEASE",
+      "assertions": 56,
+      "issued_commands": {
+        "r1": [
+          "GRASP-r1",
+          "LIFT-r1",
+          "CARRY-r1",
+          "LOWER-r1",
+          "RELEASE-r1"
+        ],
+        "r3": [
+          "GRASP-r3",
+          "LIFT-r3",
+          "CARRY-r3",
+          "LOWER-r3",
+          "RELEASE-r3"
+        ]
+      },
+      "command_count": 10,
+      "report_count": 20,
+      "hold_count": 0,
+      "fixture_clock_s": 13.08,
+      "wall_time_s": 0.001535834016976878,
+      "model_calls": 0,
+      "cost_usd": 0,
+      "physical_success_evaluated": false
+    },
+    {
+      "case": "delayed_ready",
+      "passed": true,
+      "error": null,
+      "scope": "synthetic protocol fixture; no image inference, physics, network or hardware",
+      "phase": "FINISH",
+      "stage": "RELEASE",
+      "assertions": 176,
+      "issued_commands": {
+        "r1": [
+          "GRASP-r1",
+          "LIFT-r1",
+          "CARRY-r1",
+          "LOWER-r1",
+          "RELEASE-r1"
+        ],
+        "r3": [
+          "GRASP-r3",
+          "LIFT-r3",
+          "CARRY-r3",
+          "LOWER-r3",
+          "RELEASE-r3"
+        ]
+      },
+      "command_count": 10,
+      "report_count": 60,
+      "hold_count": 0,
+      "fixture_clock_s": 13.879999999999999,
+      "wall_time_s": 0.0017340420163236558,
+      "model_calls": 0,
+      "cost_usd": 0,
+      "physical_success_evaluated": false
+    },
+    {
+      "case": "delayed_done",
+      "passed": true,
+      "error": null,
+      "scope": "synthetic protocol fixture; no image inference, physics, network or hardware",
+      "phase": "FINISH",
+      "stage": "RELEASE",
+      "assertions": 66,
+      "issued_commands": {
+        "r1": [
+          "GRASP-r1",
+          "LIFT-r1",
+          "CARRY-r1",
+          "LOWER-r1",
+          "RELEASE-r1"
+        ],
+        "r3": [
+          "GRASP-r3",
+          "LIFT-r3",
+          "CARRY-r3",
+          "LOWER-r3",
+          "RELEASE-r3"
+        ]
+      },
+      "command_count": 10,
+      "report_count": 20,
+      "hold_count": 0,
+      "fixture_clock_s": 13.28,
+      "wall_time_s": 0.0006587919779121876,
+      "model_calls": 0,
+      "cost_usd": 0,
+      "physical_success_evaluated": false
+    },
+    {
+      "case": "hold_reobserve",
+      "passed": true,
+      "error": null,
+      "scope": "synthetic protocol fixture; no image inference, physics, network or hardware",
+      "phase": "FINISH",
+      "stage": "RELEASE",
+      "assertions": 61,
+      "issued_commands": {
+        "r1": [
+          "GRASP-r1",
+          "LIFT-r1",
+          "CARRY-r1",
+          "LOWER-r1",
+          "RELEASE-r1"
+        ],
+        "r3": [
+          "GRASP-r3",
+          "LIFT-r3",
+          "CARRY-r3",
+          "LOWER-r3",
+          "RELEASE-r3"
+        ]
+      },
+      "command_count": 10,
+      "report_count": 20,
+      "hold_count": 5,
+      "fixture_clock_s": 13.09,
+      "wall_time_s": 0.0006556659936904907,
+      "model_calls": 0,
+      "cost_usd": 0,
+      "physical_success_evaluated": false
+    },
+    {
+      "case": "report_gap",
+      "passed": true,
+      "error": null,
+      "scope": "synthetic protocol fixture; no image inference, physics, network or hardware",
+      "phase": "FINISH",
+      "stage": "RELEASE",
+      "assertions": 63,
+      "issued_commands": {
+        "r1": [
+          "GRASP-r1",
+          "LIFT-r1",
+          "CARRY-r1",
+          "LOWER-r1",
+          "RELEASE-r1"
+        ],
+        "r3": [
+          "GRASP-r3",
+          "LIFT-r3",
+          "CARRY-r3",
+          "LOWER-r3",
+          "RELEASE-r3"
+        ]
+      },
+      "command_count": 10,
+      "report_count": 23,
+      "hold_count": 1,
+      "fixture_clock_s": 13.08,
+      "wall_time_s": 0.0017274999991059303,
+      "model_calls": 0,
+      "cost_usd": 0,
+      "physical_success_evaluated": false
+    },
+    {
+      "case": "missing_support",
+      "passed": true,
+      "error": null,
+      "scope": "synthetic protocol fixture; no image inference, physics, network or hardware",
+      "phase": "HOLD",
+      "stage": "RELEASE",
+      "assertions": 50,
+      "issued_commands": {
+        "r1": [
+          "GRASP-r1",
+          "LIFT-r1",
+          "CARRY-r1",
+          "LOWER-r1"
+        ],
+        "r3": [
+          "GRASP-r3",
+          "LIFT-r3",
+          "CARRY-r3",
+          "LOWER-r3"
+        ]
+      },
+      "command_count": 8,
+      "report_count": 18,
+      "hold_count": 1,
+      "fixture_clock_s": 13.0,
+      "wall_time_s": 0.0005637080175802112,
+      "model_calls": 0,
+      "cost_usd": 0,
+      "physical_success_evaluated": false
+    },
+    {
+      "case": "command_only",
+      "passed": true,
+      "error": null,
+      "scope": "synthetic protocol fixture; no image inference, physics, network or hardware",
+      "phase": "HOLD",
+      "stage": "GRASP",
+      "assertions": 10,
+      "issued_commands": {
+        "r1": [
+          "GRASP-r1"
+        ],
+        "r3": [
+          "GRASP-r3"
+        ]
+      },
+      "command_count": 2,
+      "report_count": 2,
+      "hold_count": 1,
+      "fixture_clock_s": 1.7,
+      "wall_time_s": 8.570897625759244e-05,
+      "model_calls": 0,
+      "cost_usd": 0,
+      "physical_success_evaluated": false
+    },
+    {
+      "case": "old_stage_permission",
+      "passed": true,
+      "error": null,
+      "scope": "synthetic protocol fixture; no image inference, physics, network or hardware",
+      "phase": "FINISH",
+      "stage": "RELEASE",
+      "assertions": 61,
+      "issued_commands": {
+        "r1": [
+          "GRASP-r1",
+          "LIFT-r1",
+          "CARRY-r1",
+          "LOWER-r1",
+          "RELEASE-r1"
+        ],
+        "r3": [
+          "GRASP-r3",
+          "LIFT-r3",
+          "CARRY-r3",
+          "LOWER-r3",
+          "RELEASE-r3"
+        ]
+      },
+      "command_count": 10,
+      "report_count": 20,
+      "hold_count": 0,
+      "fixture_clock_s": 13.08,
+      "wall_time_s": 0.0006240840011741966,
+      "model_calls": 0,
+      "cost_usd": 0,
+      "physical_success_evaluated": false
+    },
+    {
+      "case": "plan_change",
+      "passed": true,
+      "error": null,
+      "scope": "synthetic protocol fixture; no image inference, physics, network or hardware",
+      "phase": "FINISH",
+      "stage": "RELEASE",
+      "assertions": 60,
+      "issued_commands": {
+        "r1": [
+          "GRASP-r1",
+          "LIFT-r1",
+          "CARRY-r1",
+          "LOWER-r1",
+          "RELEASE-r1"
+        ],
+        "r3": [
+          "GRASP-r3",
+          "LIFT-r3",
+          "CARRY-r3",
+          "LOWER-r3",
+          "RELEASE-r3"
+        ]
+      },
+      "command_count": 10,
+      "report_count": 22,
+      "hold_count": 0,
+      "fixture_clock_s": 13.08,
+      "wall_time_s": 0.0011291249829810113,
+      "model_calls": 0,
+      "cost_usd": 0,
+      "physical_success_evaluated": false
+    }
+  ]
+}
