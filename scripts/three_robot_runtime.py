@@ -26,7 +26,8 @@ def refs(frames):
 class ThreeRobotRuntime:
     def __init__(self, output, *, run_id, mode='llm', fixture_timing='during_approach',
                  agreement=None, request_builder=build_plan_request,
-                 reply_validator=validate_plan_reply, plan_fixture=None):
+                 reply_validator=validate_plan_reply, plan_fixture=None,
+                 request_timeout=30., max_tokens=950):
         self.output, self.mode, self.fixture_timing = output, mode, fixture_timing
         self.agreement = agreement or TeamAgreement(run_id)
         self.request_builder, self.reply_validator = request_builder, reply_validator
@@ -51,8 +52,8 @@ class ThreeRobotRuntime:
                     data = response.read()
                 path.with_name(path.stem+'-response.json').write_bytes(data)
                 return io.BytesIO(data)
-            self.clients[rid] = GeminiProxyCompleter(model='gemini-3.8-flash', max_tokens=950,
-                timeout=30., reasoning_effort='none', http_open=audited_open)
+            self.clients[rid] = GeminiProxyCompleter(model='gemini-3.8-flash', max_tokens=max_tokens,
+                timeout=request_timeout, reasoning_effort='none', http_open=audited_open)
 
     def _invoke(self, rid, request, validate, *, fixture_reply=None):
         path = f'{rid}/{request["request_id"]}-request.json'

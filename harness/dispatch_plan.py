@@ -66,7 +66,14 @@ def build_dispatch_request(rid, *, task, request_id, own_rgb, top_rgb, agreement
         'agreement':copy.deepcopy(agreement),'mission':copy.deepcopy(task),
         'peer_claims':copy.deepcopy(list(inbox)[-6:]),
         'own_issued_commands':copy.deepcopy(list(own_history)[-16:])}
-    prompt = '''You are an equal robot peer, not a central controller. Negotiate ONE
+    context['reply_envelope']={**context['reply_binding'], 'accept':'JSON boolean true or false, NEVER null',
+        'plan':'your valid proposed plan, exact accepted plan, or null when rejecting',
+        'reason':'brief visual reason', 'message':'brief peer message'}
+    prompt = '''REPLY ENVELOPE IS MANDATORY. Copy request_id, proposal_id and
+plan_hash EXACTLY from reply_envelope. JSON null stays null, INCLUDING when you
+are the proposer. Do not invent proposal IDs. The host assigns them AFTER your
+proposal. accept MUST be a JSON boolean: true to propose/accept, false to reject.
+You are an equal robot peer, not a central controller. Negotiate ONE
 shared dispatch plan before local execution. The orange beam needs two carriers;
 the cyan box needs one. Assign each of r1,r2,r3 exactly once from the CURRENT two
 camera images. Roles are NOT preset by robot ID. Choose ONE dock for both cargo,
@@ -83,7 +90,7 @@ return accept=false, plan=null and a useful peer message. After a proposal exist
 accept its EXACT plan or reject with your visual reason; never silently edit ACKs.
 Copy reply_binding request_id, proposal_id and plan_hash exactly (including null).
 Reply JSON only with request_id, proposal_id, plan_hash, accept, plan, reason,
-message. reason/message are strings <=600 characters. Plan is exactly:
+message. Keep reason/message brief (under 240 characters each). Plan is exactly:
 {"dock":"dock_a OR dock_b","tasks":[
 {"id":"beam_job","object":"beam","participants":["chosen robot","chosen robot"],
 "route":"north OR south","after":[]},

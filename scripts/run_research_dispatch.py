@@ -44,7 +44,8 @@ def run(args):
             team=ThreeRobotRuntime(args.output/'team',run_id=run_id,mode=args.planner,
                 agreement=TeamAgreement(run_id,plan_validator=validate_dispatch_plan),
                 request_builder=partial(build_dispatch_request,task=actor_task(config['static_map'])),
-                reply_validator=validate_dispatch_reply,plan_fixture=fixture_plan())
+                reply_validator=validate_dispatch_reply,plan_fixture=fixture_plan(),
+                request_timeout=60.,max_tokens=1400)
             for turn in range(8):
                 if team.negotiate(frames,scene.command_history,turn,float(scene.world.data.time)):
                     break
