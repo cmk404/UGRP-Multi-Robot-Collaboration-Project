@@ -48,12 +48,13 @@ def audit(root):
         'harness/camera_beam_features.py','harness/camera_varied_start_student.py',
         'harness/camera_varied_start_pose_student.py','harness/camera_varied_start_geometry.py',
         'harness/camera_varied_start_heading.py','harness/grasp_student_inference.py',
-        'harness/camera_recovery_student.py','scripts/run_camera_varied_start_student.py',
+        'harness/camera_recovery_student.py',
         'scripts/evaluate_camera_short_transport.py']
     for path in dependencies:
         raw=subprocess.check_output(['git','show',f'{source}:{path}'],cwd=ROOT)
         require(raw==(ROOT/path).read_bytes(),f'replay dependency changed: {path}')
     vision=source_module(source,'harness/camera_goal_transport.py')
+    approach=source_module(source,'scripts/run_camera_varied_start_student.py')
     assets=report['assets']
     grasp_root=Path(assets['grasp_skill']['path'])
     stage_root=Path(assets['stage_skill']['path'])
@@ -100,7 +101,8 @@ def audit(root):
             self.elapsed+=.25
         def evaluation_snapshot(self): return {}  # output-only, deliberately no truth in replay
     if image_map:
-        replayed=run_approach(Replay(),stages)
+        options = ({'reacquire_on_settle': True} if report['config'].get('reacquire_on_settle') is True else {})
+        replayed=approach.run_approach(Replay(),stages,**options)
         for key in ('approach_calls','stage_results','approach_ok','final_alignment_checks'):
             same(replayed.get(key),report.get(key),'fine approach replay '+key)
     for row in report.get('dock_calls',[]):

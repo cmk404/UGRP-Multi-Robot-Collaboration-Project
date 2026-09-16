@@ -61,7 +61,8 @@ def choose_stage_actions(decisions, stage, confirming=False):
             'duration_s': .25 if confirming or enter_confirmation or not valid else .2}
 
 
-def run_approach(scene, stage_models, *, condition='visual', straight_models=None):
+def run_approach(scene, stage_models, *, condition='visual', straight_models=None,
+                 reacquire_on_settle=False):
     """Run the RGB-only wheel approach and return output-only audit data."""
     from harness.camera_varied_start_student import predict_stage
     from harness.camera_approach_student import predict_approach
@@ -112,6 +113,12 @@ def run_approach(scene, stage_models, *, condition='visual', straight_models=Non
                 if confirmations >= 4:
                     record['reason'] = 'stationary RGB confirmation budget exhausted'
                     break
+                if reacquire_on_settle and not all(control['ready'].values()):
+                    # The current slice remains stationary. Resume correction
+                    # only after another fresh image, under the same movement
+                    # and total confirmation budgets. Never relax readiness.
+                    confirming = False
+                    record['reacquisitions'] = record.get('reacquisitions', 0) + 1
             elif control['enter_confirmation']:
                 confirming = True
             else:

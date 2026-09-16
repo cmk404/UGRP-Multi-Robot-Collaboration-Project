@@ -97,7 +97,8 @@ def run(args):
     report=dict(schema='ugrp.camera_goal_transport.v1',
         source_sha=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         scope='local RGB wheel feedback; demonstrated arm sequence plus learned RGB recovery; no LLM',
-        config=dict(coarse_control='rgb-wheel-heading-v1',start_distance_m=dict(zip(ROBOTS,args.distance)),
+        config=dict(coarse_control='rgb-wheel-heading-v1',reacquire_on_settle=True,
+                    start_distance_m=dict(zip(ROBOTS,args.distance)),
                     start_poses_setup_only=starts,weld=False,planner=args.planner),
         assets=dict(grasp_skill=dict(path=str(args.grasp_model_dir.resolve()),sha256=sha(args.grasp_model_dir/'student-skill.json')),
                     stage_skill=dict(path=str(args.stage_model_dir.resolve()),sha256=sha(args.stage_model_dir/'varied-start-skill.json')),
@@ -133,7 +134,7 @@ def run(args):
                 scene.stop_dwell()
                 break
         else: raise RuntimeError('coarse approach budget')
-        report.update(run_approach(scene,stages))
+        report.update(run_approach(scene,stages,reacquire_on_settle=True))
         print(json.dumps(dict(stage='approach',ok=report['approach_ok'],results=report['stage_results'])),flush=True)
         if not report['approach_ok']: raise RuntimeError('fine RGB alignment failed')
         confirmations=0

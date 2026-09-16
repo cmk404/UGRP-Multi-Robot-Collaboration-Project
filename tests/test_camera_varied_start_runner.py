@@ -61,6 +61,33 @@ class VariedRunnerTests(unittest.TestCase):
         self.assertTrue(all(v == 0 for r in holding['commands'].values() for v in r.values()))
 
     @patch('harness.camera_approach_student.predict_approach')
+    def test_settling_error_reacquires_from_fresh_rgb_before_confirming(self, predict):
+        ready = dict(ok=True, ready=True, stationary_ready=True, forward=0.)
+        drift = dict(ok=True, ready=False, stationary_ready=False, forward=.01)
+        predict.side_effect = [d for d in (ready, drift, drift, ready, ready, ready) for _ in range(2)]
+        scene = FakeScene()
+        result = run_approach(scene, {}, condition='straight',
+                              straight_models={'r1': {}, 'r3': {}}, reacquire_on_settle=True)
+        self.assertTrue(result['approach_ok'])
+        self.assertEqual(result['stage_results'][0]['reacquisitions'], 1)
+        self.assertEqual(scene.drives[1][0]['r1']['forward'], 0.)
+        self.assertEqual(scene.drives[2][0]['r1']['forward'], .01)
+        confirmations = result['stage_results'][0]['confirmations']
+        self.assertEqual([all(c['ready'].values()) for c in confirmations], [False, True, True])
+        self.assertEqual(len(result['approach_calls']), 12)
+
+    @patch('harness.camera_approach_student.predict_approach')
+    def test_reacquisition_keeps_total_confirmation_budget(self, predict):
+        ready = dict(ok=True, ready=True, forward=0.)
+        drift = dict(ok=True, ready=False, forward=.01)
+        predict.side_effect = [d for d in (ready, drift)*4 for _ in range(2)]
+        result = run_approach(FakeScene(), {}, condition='straight',
+                              straight_models={'r1': {}, 'r3': {}}, reacquire_on_settle=True)
+        self.assertFalse(result['approach_ok'])
+        self.assertEqual(len(result['stage_results'][0]['confirmations']), 4)
+        self.assertEqual(result['stage_results'][0]['reason'], 'stationary RGB confirmation budget exhausted')
+
+    @patch('harness.camera_approach_student.predict_approach')
     def test_run_approach_returns_auditable_straight_confirmation(self, predict):
         predict.return_value = {'ok': True, 'ready': True, 'forward': .04}
         scene = FakeScene()
