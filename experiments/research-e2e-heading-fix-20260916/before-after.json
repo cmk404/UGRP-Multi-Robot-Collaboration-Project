@@ -1,0 +1,1757 @@
+{
+  "scope": "Same previously observed 19 setups; output-only handoff diagnostics never enter control",
+  "before_source": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+  "after_source": "d863e74702902253bebd40b5429bad85bd5e6612",
+  "complete": true,
+  "cases_equal": true,
+  "runs": [
+    {
+      "case_id": "baseline",
+      "planner": "local",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 40.64002995897317,
+        "sim_s": 48.16000000001289,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 4.652472052057988e-06,
+            "r3": 4.62467011352885e-06
+          },
+          "yaw_deg": {
+            "r1": 5.763185111217143e-06,
+            "r3": 5.762236984981225e-06
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.809100000000008
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 45.18370987501112,
+        "sim_s": 48.16000000001289,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 4.652472052057988e-06,
+            "r3": 4.62467011352885e-06
+          },
+          "yaw_deg": {
+            "r1": 5.763185111217143e-06,
+            "r3": 5.762236984981225e-06
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.809100000000008
+      }
+    },
+    {
+      "case_id": "baseline",
+      "planner": "llm",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 89.5937282499799,
+        "sim_s": 48.16000000001289,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 4.652472052057988e-06,
+            "r3": 4.62467011352885e-06
+          },
+          "yaw_deg": {
+            "r1": 5.763185111217143e-06,
+            "r3": 5.762236984981225e-06
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.809100000000008
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 102.33797404100187,
+        "sim_s": 48.16000000001289,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 4.652472052057988e-06,
+            "r3": 4.62467011352885e-06
+          },
+          "yaw_deg": {
+            "r1": 5.763185111217143e-06,
+            "r3": 5.762236984981225e-06
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.809100000000008
+      }
+    },
+    {
+      "case_id": "distance-30",
+      "planner": "local",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 38.70852775001549,
+        "sim_s": 47.56000000001216,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -9.275105128381256e-07,
+            "r3": -2.2423804146853854e-06
+          },
+          "yaw_deg": {
+            "r1": -3.6996059796727014e-05,
+            "r3": 3.0191232844233854e-06
+          }
+        },
+        "coarse_slices": 8,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7679000000000111
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 66.37681200000225,
+        "sim_s": 47.56000000001216,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -9.275105128381256e-07,
+            "r3": -2.2423804146853854e-06
+          },
+          "yaw_deg": {
+            "r1": -3.6996059796727014e-05,
+            "r3": 3.0191232844233854e-06
+          }
+        },
+        "coarse_slices": 8,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7679000000000111
+      }
+    },
+    {
+      "case_id": "distance-30",
+      "planner": "llm",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 103.90321354201296,
+        "sim_s": 47.56000000001216,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -9.275105128381256e-07,
+            "r3": -2.2423804146853854e-06
+          },
+          "yaw_deg": {
+            "r1": -3.6996059796727014e-05,
+            "r3": 3.0191232844233854e-06
+          }
+        },
+        "coarse_slices": 8,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7679000000000111
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 105.05801479198271,
+        "sim_s": 47.56000000001216,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -9.275105128381256e-07,
+            "r3": -2.2423804146853854e-06
+          },
+          "yaw_deg": {
+            "r1": -3.6996059796727014e-05,
+            "r3": 3.0191232844233854e-06
+          }
+        },
+        "coarse_slices": 8,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7679000000000111
+      }
+    },
+    {
+      "case_id": "distance-45",
+      "planner": "local",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 38.84284816699801,
+        "sim_s": 47.760000000012404,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 2.881583327507542e-06,
+            "r3": 2.8540243945940347e-06
+          },
+          "yaw_deg": {
+            "r1": 5.733466349974659e-06,
+            "r3": 5.7308353641030596e-06
+          }
+        },
+        "coarse_slices": 12,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7014000000000085
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 57.781673916004365,
+        "sim_s": 48.96000000001387,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -0.0004488194832674708,
+            "r3": 2.8540243945940347e-06
+          },
+          "yaw_deg": {
+            "r1": -0.20680765247512548,
+            "r3": 5.7308353641030596e-06
+          }
+        },
+        "coarse_slices": 12,
+        "heading_only_slices": 1,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.721499999999998
+      }
+    },
+    {
+      "case_id": "distance-45",
+      "planner": "llm",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 97.37340941600269,
+        "sim_s": 47.760000000012404,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 2.881583327507542e-06,
+            "r3": 2.8540243945940347e-06
+          },
+          "yaw_deg": {
+            "r1": 5.733466349974659e-06,
+            "r3": 5.7308353641030596e-06
+          }
+        },
+        "coarse_slices": 12,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7014000000000085
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 118.56683516700286,
+        "sim_s": 48.96000000001387,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -0.0004488194832674708,
+            "r3": 2.8540243945940347e-06
+          },
+          "yaw_deg": {
+            "r1": -0.20680765247512548,
+            "r3": 5.7308353641030596e-06
+          }
+        },
+        "coarse_slices": 12,
+        "heading_only_slices": 1,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.721499999999998
+      }
+    },
+    {
+      "case_id": "distance-70",
+      "planner": "local",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 40.81665287501528,
+        "sim_s": 49.560000000014604,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 5.446049922142038e-06,
+            "r3": 5.430573879472433e-06
+          },
+          "yaw_deg": {
+            "r1": 5.763594192604628e-06,
+            "r3": 5.763856155267459e-06
+          }
+        },
+        "coarse_slices": 19,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.8708000000000058
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 66.36685629200656,
+        "sim_s": 50.560000000015826,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -0.022017984270528146,
+            "r3": 5.426669624775116e-06
+          },
+          "yaw_deg": {
+            "r1": -0.22255289182565835,
+            "r3": 6.425952780325237e-06
+          }
+        },
+        "coarse_slices": 20,
+        "heading_only_slices": 1,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.720300000000008
+      }
+    },
+    {
+      "case_id": "distance-70",
+      "planner": "llm",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 98.5098009170033,
+        "sim_s": 49.560000000014604,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 5.446049922142038e-06,
+            "r3": 5.430573879472433e-06
+          },
+          "yaw_deg": {
+            "r1": 5.763594192604628e-06,
+            "r3": 5.763856155267459e-06
+          }
+        },
+        "coarse_slices": 19,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.8708000000000058
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 94.35720250001759,
+        "sim_s": 50.560000000015826,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -0.022017984270528146,
+            "r3": 5.426669624775116e-06
+          },
+          "yaw_deg": {
+            "r1": -0.22255289182565835,
+            "r3": 6.425952780325237e-06
+          }
+        },
+        "coarse_slices": 20,
+        "heading_only_slices": 1,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.720300000000008
+      }
+    },
+    {
+      "case_id": "distance-asymmetric",
+      "planner": "local",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 41.5913076249999,
+        "sim_s": 49.560000000014604,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -9.374863552125134e-07,
+            "r3": 5.430573879472433e-06
+          },
+          "yaw_deg": {
+            "r1": -3.695168771863754e-05,
+            "r3": 5.763856155267459e-06
+          }
+        },
+        "coarse_slices": 19,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.6992000000000118
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 62.19258212498971,
+        "sim_s": 49.560000000014604,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -0.00023028747158093665,
+            "r3": 5.430573879472433e-06
+          },
+          "yaw_deg": {
+            "r1": 0.05401515210845005,
+            "r3": 5.763856155267459e-06
+          }
+        },
+        "coarse_slices": 19,
+        "heading_only_slices": 1,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.801800000000009
+      }
+    },
+    {
+      "case_id": "distance-asymmetric",
+      "planner": "llm",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 109.23897916599526,
+        "sim_s": 49.560000000014604,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -9.374863552125134e-07,
+            "r3": 5.430573879472433e-06
+          },
+          "yaw_deg": {
+            "r1": -3.695168771863754e-05,
+            "r3": 5.763856155267459e-06
+          }
+        },
+        "coarse_slices": 19,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.6992000000000118
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 113.3426780840091,
+        "sim_s": 49.560000000014604,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -0.00023028747158093665,
+            "r3": 5.430573879472433e-06
+          },
+          "yaw_deg": {
+            "r1": 0.05401515210845005,
+            "r3": 5.763856155267459e-06
+          }
+        },
+        "coarse_slices": 19,
+        "heading_only_slices": 1,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.801800000000009
+      }
+    },
+    {
+      "case_id": "yaw-plus5",
+      "planner": "local",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 61.22875245800242,
+        "sim_s": 66.76000000002581,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 3.6261412137516214,
+            "r3": 3.614574585220587
+          },
+          "yaw_deg": {
+            "r1": 5.000005763195674,
+            "r3": 5.000005762574827
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.6886999999999985
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 80.49596808297792,
+        "sim_s": 54.76000000002096,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 0.23818643446862353,
+            "r3": 0.5210199373671287
+          },
+          "yaw_deg": {
+            "r1": 0.07961825720523398,
+            "r3": 0.3695322708396771
+          }
+        },
+        "coarse_slices": 32,
+        "heading_only_slices": 19,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.8558000000000074
+      }
+    },
+    {
+      "case_id": "yaw-plus5",
+      "planner": "llm",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 122.9941554160032,
+        "sim_s": 66.76000000002581,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 3.6261412137516214,
+            "r3": 3.614574585220587
+          },
+          "yaw_deg": {
+            "r1": 5.000005763195674,
+            "r3": 5.000005762574827
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.6886999999999985
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 107.0237482090015,
+        "sim_s": 54.76000000002096,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 0.23818643446862353,
+            "r3": 0.5210199373671287
+          },
+          "yaw_deg": {
+            "r1": 0.07961825720523398,
+            "r3": 0.3695322708396771
+          }
+        },
+        "coarse_slices": 32,
+        "heading_only_slices": 19,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.8558000000000074
+      }
+    },
+    {
+      "case_id": "yaw-minus5",
+      "planner": "local",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 61.354844583023805,
+        "sim_s": 65.36000000002907,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -3.6235441011108094,
+            "r3": -3.3747732780560424
+          },
+          "yaw_deg": {
+            "r1": -4.99999423687695,
+            "r3": -4.99999393412624
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7384999999999984
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 66.20933279101155,
+        "sim_s": 54.560000000020715,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -0.7662392890764647,
+            "r3": -0.6154753259172141
+          },
+          "yaw_deg": {
+            "r1": -0.39751098825644643,
+            "r3": -0.07063323088616198
+          }
+        },
+        "coarse_slices": 32,
+        "heading_only_slices": 18,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7100999999999922
+      }
+    },
+    {
+      "case_id": "yaw-minus5",
+      "planner": "llm",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 110.1358103340026,
+        "sim_s": 65.36000000002907,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -3.6235441011108094,
+            "r3": -3.3747732780560424
+          },
+          "yaw_deg": {
+            "r1": -4.99999423687695,
+            "r3": -4.99999393412624
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7384999999999984
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 104.88804479199462,
+        "sim_s": 54.560000000020715,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -0.7662392890764647,
+            "r3": -0.6154753259172141
+          },
+          "yaw_deg": {
+            "r1": -0.39751098825644643,
+            "r3": -0.07063323088616198
+          }
+        },
+        "coarse_slices": 32,
+        "heading_only_slices": 18,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7100999999999922
+      }
+    },
+    {
+      "case_id": "yaw-opposed10",
+      "planner": "local",
+      "before": {
+        "success": false,
+        "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/scripts/run_camera_goal_transport.py\", line 137, in run\n    if not report['approach_ok']: raise RuntimeError('fine RGB alignment failed')\n                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: fine RGB alignment failed\n",
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 14.869838250015164,
+        "sim_s": 15.150000000001729,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 7.239946071961079,
+            "r3": -7.200125010777247
+          },
+          "yaw_deg": {
+            "r1": 10.000005763577073,
+            "r3": -9.999994237391997
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": null
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 73.50753125001211,
+        "sim_s": 56.16000000002267,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 0.14141033715171503,
+            "r3": -0.5740687815048551
+          },
+          "yaw_deg": {
+            "r1": -0.14924199464268711,
+            "r3": -0.6988435706186489
+          }
+        },
+        "coarse_slices": 35,
+        "heading_only_slices": 22,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7028000000000043
+      }
+    },
+    {
+      "case_id": "yaw-opposed10",
+      "planner": "llm",
+      "before": {
+        "success": false,
+        "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/scripts/run_camera_goal_transport.py\", line 137, in run\n    if not report['approach_ok']: raise RuntimeError('fine RGB alignment failed')\n                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: fine RGB alignment failed\n",
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 20.139251207991038,
+        "sim_s": 15.150000000001729,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 7.239946071961079,
+            "r3": -7.200125010777247
+          },
+          "yaw_deg": {
+            "r1": 10.000005763577073,
+            "r3": -9.999994237391997
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": null
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 104.88254670900642,
+        "sim_s": 56.16000000002267,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 0.14141033715171503,
+            "r3": -0.5740687815048551
+          },
+          "yaw_deg": {
+            "r1": -0.14924199464268711,
+            "r3": -0.6988435706186489
+          }
+        },
+        "coarse_slices": 35,
+        "heading_only_slices": 22,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7028000000000043
+      }
+    },
+    {
+      "case_id": "yaw-reversed10",
+      "planner": "local",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 63.6547638750053,
+        "sim_s": 69.36000000001975,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -6.7640219003174185,
+            "r3": 7.216536524501693
+          },
+          "yaw_deg": {
+            "r1": -9.999994239005291,
+            "r3": 10.000005763060518
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.8044999999999978
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 55.51648712501628,
+        "sim_s": 56.56000000002316,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -0.8668850155843622,
+            "r3": 0.4448401154409032
+          },
+          "yaw_deg": {
+            "r1": -0.37047994222205577,
+            "r3": 0.4869632802356112
+          }
+        },
+        "coarse_slices": 36,
+        "heading_only_slices": 23,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.8575000000000008
+      }
+    },
+    {
+      "case_id": "yaw-reversed10",
+      "planner": "llm",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 123.15502720797667,
+        "sim_s": 69.36000000001975,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -6.7640219003174185,
+            "r3": 7.216536524501693
+          },
+          "yaw_deg": {
+            "r1": -9.999994239005291,
+            "r3": 10.000005763060518
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.8044999999999978
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 95.9411948749912,
+        "sim_s": 56.56000000002316,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -0.8668850155843622,
+            "r3": 0.4448401154409032
+          },
+          "yaw_deg": {
+            "r1": -0.37047994222205577,
+            "r3": 0.4869632802356112
+          }
+        },
+        "coarse_slices": 36,
+        "heading_only_slices": 23,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.8575000000000008
+      }
+    },
+    {
+      "case_id": "lateral-plus3",
+      "planner": "local",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 51.10823729200638,
+        "sim_s": 56.7600000000234,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 3.0000046560336724,
+            "r3": 3.000004382159016
+          },
+          "yaw_deg": {
+            "r1": 5.76328145333468e-06,
+            "r3": 5.758005706488747e-06
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.720199999999994
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 55.53400333298487,
+        "sim_s": 56.7600000000234,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 3.0000046560336724,
+            "r3": 3.000004382159016
+          },
+          "yaw_deg": {
+            "r1": 5.76328145333468e-06,
+            "r3": 5.758005706488747e-06
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.720199999999994
+      }
+    },
+    {
+      "case_id": "lateral-plus3",
+      "planner": "llm",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 116.3696047909907,
+        "sim_s": 56.7600000000234,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 3.0000046560336724,
+            "r3": 3.000004382159016
+          },
+          "yaw_deg": {
+            "r1": 5.76328145333468e-06,
+            "r3": 5.758005706488747e-06
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.720199999999994
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 97.7490877090022,
+        "sim_s": 56.7600000000234,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 3.0000046560336724,
+            "r3": 3.000004382159016
+          },
+          "yaw_deg": {
+            "r1": 5.76328145333468e-06,
+            "r3": 5.758005706488747e-06
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.720199999999994
+      }
+    },
+    {
+      "case_id": "lateral-minus3",
+      "planner": "local",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 51.1675905000011,
+        "sim_s": 56.360000000022914,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -2.999995353973972,
+            "r3": -2.9999953899409793
+          },
+          "yaw_deg": {
+            "r1": 5.763143043397195e-06,
+            "r3": 5.761787191952924e-06
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7398000000000025
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 58.86644516699016,
+        "sim_s": 59.510000000026764,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -3.1281382098500288,
+            "r3": -3.0001808774301475
+          },
+          "yaw_deg": {
+            "r1": -0.3564321414011501,
+            "r3": 0.10051186123697166
+          }
+        },
+        "coarse_slices": 19,
+        "heading_only_slices": 4,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.6927999999999943
+      }
+    },
+    {
+      "case_id": "lateral-minus3",
+      "planner": "llm",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 120.32211995800026,
+        "sim_s": 56.360000000022914,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -2.999995353973972,
+            "r3": -2.9999953899409793
+          },
+          "yaw_deg": {
+            "r1": 5.763143043397195e-06,
+            "r3": 5.761787191952924e-06
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7398000000000025
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 105.78926183300791,
+        "sim_s": 59.510000000026764,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -3.1281382098500288,
+            "r3": -3.0001808774301475
+          },
+          "yaw_deg": {
+            "r1": -0.3564321414011501,
+            "r3": 0.10051186123697166
+          }
+        },
+        "coarse_slices": 19,
+        "heading_only_slices": 4,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.6927999999999943
+      }
+    },
+    {
+      "case_id": "lateral-opposed6",
+      "planner": "local",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 55.21701254200889,
+        "sim_s": 58.76000000002585,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 6.000004629312405,
+            "r3": -5.999995633413202
+          },
+          "yaw_deg": {
+            "r1": 5.762583762133374e-06,
+            "r3": 5.7590214737596705e-06
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7164000000000068
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 67.18662570801098,
+        "sim_s": 58.96000000002609,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 5.977937806508482,
+            "r3": -5.9999956336142635
+          },
+          "yaw_deg": {
+            "r1": 0.003195289394014349,
+            "r3": 5.758329947800018e-06
+          }
+        },
+        "coarse_slices": 18,
+        "heading_only_slices": 2,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.6838999999999937
+      }
+    },
+    {
+      "case_id": "lateral-opposed6",
+      "planner": "llm",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 115.51969608399668,
+        "sim_s": 58.76000000002585,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 6.000004629312405,
+            "r3": -5.999995633413202
+          },
+          "yaw_deg": {
+            "r1": 5.762583762133374e-06,
+            "r3": 5.7590214737596705e-06
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7164000000000068
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 111.5176552089979,
+        "sim_s": 58.96000000002609,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 5.977937806508482,
+            "r3": -5.9999956336142635
+          },
+          "yaw_deg": {
+            "r1": 0.003195289394014349,
+            "r3": 5.758329947800018e-06
+          }
+        },
+        "coarse_slices": 18,
+        "heading_only_slices": 2,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.6838999999999937
+      }
+    },
+    {
+      "case_id": "lateral-reversed6",
+      "planner": "local",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 55.57123308299924,
+        "sim_s": 59.36000000002658,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -5.99999562217195,
+            "r3": 6.000004374079948
+          },
+          "yaw_deg": {
+            "r1": 5.763912667859526e-06,
+            "r3": 5.7638757480517415e-06
+          }
+        },
+        "coarse_slices": 16,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7541000000000029
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 69.1788589580101,
+        "sim_s": 59.36000000002658,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -5.99999562217195,
+            "r3": 6.000004374079948
+          },
+          "yaw_deg": {
+            "r1": 5.763912667859526e-06,
+            "r3": 5.7638757480517415e-06
+          }
+        },
+        "coarse_slices": 16,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7541000000000029
+      }
+    },
+    {
+      "case_id": "lateral-reversed6",
+      "planner": "llm",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 113.90221966599347,
+        "sim_s": 59.36000000002658,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -5.99999562217195,
+            "r3": 6.000004374079948
+          },
+          "yaw_deg": {
+            "r1": 5.763912667859526e-06,
+            "r3": 5.7638757480517415e-06
+          }
+        },
+        "coarse_slices": 16,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7541000000000029
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 108.16911812499166,
+        "sim_s": 59.36000000002658,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -5.99999562217195,
+            "r3": 6.000004374079948
+          },
+          "yaw_deg": {
+            "r1": 5.763912667859526e-06,
+            "r3": 5.7638757480517415e-06
+          }
+        },
+        "coarse_slices": 16,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7541000000000029
+      }
+    },
+    {
+      "case_id": "mixed-near-mild",
+      "planner": "local",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 61.4258700000064,
+        "sim_s": 65.96000000002768,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 3.9860676171650677,
+            "r3": -5.106281670702106
+          },
+          "yaw_deg": {
+            "r1": 4.999998906557778,
+            "r3": -4.999994269817552
+          }
+        },
+        "coarse_slices": 12,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.772600000000002
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 58.70887983398279,
+        "sim_s": 61.360000000029025,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 3.1972187698019017,
+            "r3": -3.2693720955315086
+          },
+          "yaw_deg": {
+            "r1": 0.6624540652552505,
+            "r3": -0.40002678069803405
+          }
+        },
+        "coarse_slices": 31,
+        "heading_only_slices": 19,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7220000000000124
+      }
+    },
+    {
+      "case_id": "mixed-near-mild",
+      "planner": "llm",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 112.73786970798392,
+        "sim_s": 65.96000000002768,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 3.9860676171650677,
+            "r3": -5.106281670702106
+          },
+          "yaw_deg": {
+            "r1": 4.999998906557778,
+            "r3": -4.999994269817552
+          }
+        },
+        "coarse_slices": 12,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.772600000000002
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 90.3352001250023,
+        "sim_s": 61.360000000029025,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 3.1972187698019017,
+            "r3": -3.2693720955315086
+          },
+          "yaw_deg": {
+            "r1": 0.6624540652552505,
+            "r3": -0.40002678069803405
+          }
+        },
+        "coarse_slices": 31,
+        "heading_only_slices": 19,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7220000000000124
+      }
+    },
+    {
+      "case_id": "mixed-mid-mild",
+      "planner": "local",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 61.93224366698996,
+        "sim_s": 66.16000000002721,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -5.356034165879775,
+            "r3": 6.6181275665865735
+          },
+          "yaw_deg": {
+            "r1": -4.999994921503813,
+            "r3": 5.000005762698185
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.8240999999999952
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 53.19489079201594,
+        "sim_s": 60.56000000002805,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -3.5061188530460807,
+            "r3": 3.7171416357436815
+          },
+          "yaw_deg": {
+            "r1": -0.37767863481216146,
+            "r3": 0.6799732325887946
+          }
+        },
+        "coarse_slices": 30,
+        "heading_only_slices": 20,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7132000000000147
+      }
+    },
+    {
+      "case_id": "mixed-mid-mild",
+      "planner": "llm",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 126.7960967090039,
+        "sim_s": 66.16000000002721,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -5.356034165879775,
+            "r3": 6.6181275665865735
+          },
+          "yaw_deg": {
+            "r1": -4.999994921503813,
+            "r3": 5.000005762698185
+          }
+        },
+        "coarse_slices": 17,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.8240999999999952
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 91.45949324997491,
+        "sim_s": 60.56000000002805,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -3.5061188530460807,
+            "r3": 3.7171416357436815
+          },
+          "yaw_deg": {
+            "r1": -0.37767863481216146,
+            "r3": 0.6799732325887946
+          }
+        },
+        "coarse_slices": 30,
+        "heading_only_slices": 20,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7132000000000147
+      }
+    },
+    {
+      "case_id": "mixed-far-mild",
+      "planner": "local",
+      "before": {
+        "success": false,
+        "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/scripts/run_camera_goal_transport.py\", line 137, in run\n    if not report['approach_ok']: raise RuntimeError('fine RGB alignment failed')\n                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: fine RGB alignment failed\n",
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 14.240264374995604,
+        "sim_s": 14.150000000001395,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 7.310299331165826,
+            "r3": -6.375787368236874
+          },
+          "yaw_deg": {
+            "r1": 5.00000576356264,
+            "r3": -4.999994007220147
+          }
+        },
+        "coarse_slices": 19,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": null
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 54.77161458399496,
+        "sim_s": 62.16000000003,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 3.443646973189063,
+            "r3": -3.4174354134556717
+          },
+          "yaw_deg": {
+            "r1": 0.45390659785967996,
+            "r3": -0.29983236814001657
+          }
+        },
+        "coarse_slices": 34,
+        "heading_only_slices": 19,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7148000000000052
+      }
+    },
+    {
+      "case_id": "mixed-far-mild",
+      "planner": "llm",
+      "before": {
+        "success": false,
+        "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/scripts/run_camera_goal_transport.py\", line 137, in run\n    if not report['approach_ok']: raise RuntimeError('fine RGB alignment failed')\n                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: fine RGB alignment failed\n",
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 21.497720082988963,
+        "sim_s": 14.150000000001395,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 7.310299331165826,
+            "r3": -6.375787368236874
+          },
+          "yaw_deg": {
+            "r1": 5.00000576356264,
+            "r3": -4.999994007220147
+          }
+        },
+        "coarse_slices": 19,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": null
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 93.61763475000043,
+        "sim_s": 62.16000000003,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 3.443646973189063,
+            "r3": -3.4174354134556717
+          },
+          "yaw_deg": {
+            "r1": 0.45390659785967996,
+            "r3": -0.29983236814001657
+          }
+        },
+        "coarse_slices": 34,
+        "heading_only_slices": 19,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7148000000000052
+      }
+    },
+    {
+      "case_id": "mixed-near-wide",
+      "planner": "local",
+      "before": {
+        "success": false,
+        "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/scripts/run_camera_goal_transport.py\", line 137, in run\n    if not report['approach_ok']: raise RuntimeError('fine RGB alignment failed')\n                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: fine RGB alignment failed\n",
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 2.780887625005562,
+        "sim_s": 3.199999999999869,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 7.921564677961923,
+            "r3": -7.551967217222044
+          },
+          "yaw_deg": {
+            "r1": 9.999992196927387,
+            "r3": -10.000001155487821
+          }
+        },
+        "coarse_slices": 9,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": null
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 57.31764337501954,
+        "sim_s": 65.16000000002954,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 6.240081377127504,
+            "r3": -6.203975995006172
+          },
+          "yaw_deg": {
+            "r1": 0.8714552778000465,
+            "r3": -0.693526281900348
+          }
+        },
+        "coarse_slices": 25,
+        "heading_only_slices": 17,
+        "reacquisitions": 2,
+        "goal_error_cm": -1.7336999999999936
+      }
+    },
+    {
+      "case_id": "mixed-near-wide",
+      "planner": "llm",
+      "before": {
+        "success": false,
+        "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/scripts/run_camera_goal_transport.py\", line 137, in run\n    if not report['approach_ok']: raise RuntimeError('fine RGB alignment failed')\n                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: fine RGB alignment failed\n",
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 9.433540084020933,
+        "sim_s": 3.199999999999869,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 7.921564677961923,
+            "r3": -7.551967217222044
+          },
+          "yaw_deg": {
+            "r1": 9.999992196927387,
+            "r3": -10.000001155487821
+          }
+        },
+        "coarse_slices": 9,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": null
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 92.0919537919981,
+        "sim_s": 65.16000000002954,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": 6.240081377127504,
+            "r3": -6.203975995006172
+          },
+          "yaw_deg": {
+            "r1": 0.8714552778000465,
+            "r3": -0.693526281900348
+          }
+        },
+        "coarse_slices": 25,
+        "heading_only_slices": 17,
+        "reacquisitions": 2,
+        "goal_error_cm": -1.7336999999999936
+      }
+    },
+    {
+      "case_id": "mixed-far-wide",
+      "planner": "local",
+      "before": {
+        "success": false,
+        "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/scripts/run_camera_goal_transport.py\", line 137, in run\n    if not report['approach_ok']: raise RuntimeError('fine RGB alignment failed')\n                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: fine RGB alignment failed\n",
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 4.860171042004367,
+        "sim_s": 5.399999999999627,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -14.578611473173098,
+            "r3": 15.083092720142632
+          },
+          "yaw_deg": {
+            "r1": -9.99999425651722,
+            "r3": 10.000005761446982
+          }
+        },
+        "coarse_slices": 20,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": null
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 56.94178925000597,
+        "sim_s": 64.16000000003187,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -6.606309083871631,
+            "r3": 6.712010492288423
+          },
+          "yaw_deg": {
+            "r1": -0.46523214967387894,
+            "r3": 0.5069781447662834
+          }
+        },
+        "coarse_slices": 38,
+        "heading_only_slices": 24,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7460999999999949
+      }
+    },
+    {
+      "case_id": "mixed-far-wide",
+      "planner": "llm",
+      "before": {
+        "success": false,
+        "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/scripts/run_camera_goal_transport.py\", line 137, in run\n    if not report['approach_ok']: raise RuntimeError('fine RGB alignment failed')\n                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: fine RGB alignment failed\n",
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 17.666761707980186,
+        "sim_s": 5.399999999999627,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -14.578611473173098,
+            "r3": 15.083092720142632
+          },
+          "yaw_deg": {
+            "r1": -9.99999425651722,
+            "r3": 10.000005761446982
+          }
+        },
+        "coarse_slices": 20,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": null
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 101.54319558400312,
+        "sim_s": 64.16000000003187,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -6.606309083871631,
+            "r3": 6.712010492288423
+          },
+          "yaw_deg": {
+            "r1": -0.46523214967387894,
+            "r3": 0.5069781447662834
+          }
+        },
+        "coarse_slices": 38,
+        "heading_only_slices": 24,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7460999999999949
+      }
+    },
+    {
+      "case_id": "mixed-asymmetric",
+      "planner": "local",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 58.63398920901818,
+        "sim_s": 67.76000000002348,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -4.42977782256091,
+            "r3": -2.590167025295176
+          },
+          "yaw_deg": {
+            "r1": 9.999999177389208,
+            "r3": -9.999994236530565
+          }
+        },
+        "coarse_slices": 19,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.8029000000000073
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 57.20576833302039,
+        "sim_s": 64.96000000003,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -5.754997945089935,
+            "r3": 5.550899331948056
+          },
+          "yaw_deg": {
+            "r1": 1.0745326560349733,
+            "r3": -0.13782426432759506
+          }
+        },
+        "coarse_slices": 39,
+        "heading_only_slices": 24,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7677999999999972
+      }
+    },
+    {
+      "case_id": "mixed-asymmetric",
+      "planner": "llm",
+      "before": {
+        "success": true,
+        "error": null,
+        "source_sha": "fd5d68ee41bc56c8b61d1f020f5891b218e36ef0",
+        "wall_s": 105.96866687500733,
+        "sim_s": 67.76000000002348,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -4.42977782256091,
+            "r3": -2.590167025295176
+          },
+          "yaw_deg": {
+            "r1": 9.999999177389208,
+            "r3": -9.999994236530565
+          }
+        },
+        "coarse_slices": 19,
+        "heading_only_slices": 0,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.8029000000000073
+      },
+      "after": {
+        "success": true,
+        "error": null,
+        "source_sha": "d863e74702902253bebd40b5429bad85bd5e6612",
+        "wall_s": 101.6123856670165,
+        "sim_s": 64.96000000003,
+        "handoff_output_only": {
+          "lateral_offset_cm": {
+            "r1": -5.754997945089935,
+            "r3": 5.550899331948056
+          },
+          "yaw_deg": {
+            "r1": 1.0745326560349733,
+            "r3": -0.13782426432759506
+          }
+        },
+        "coarse_slices": 39,
+        "heading_only_slices": 24,
+        "reacquisitions": 0,
+        "goal_error_cm": -1.7677999999999972
+      }
+    }
+  ]
+}
