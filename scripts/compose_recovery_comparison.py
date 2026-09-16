@@ -69,7 +69,7 @@ def main():
         proc=subprocess.Popen(['ffmpeg','-y','-v','error','-f','rawvideo','-pix_fmt','rgb24','-s','1920x1720','-r','10','-i','-',
             '-an','-c:v','libx264','-threads','2','-preset','veryfast','-crf','20','-pix_fmt','yuv420p','-movflags','+faststart',str(dest)],stdin=subprocess.PIPE)
         base=Image.new('RGB',(1920,1720),'#101820');draw=ImageDraw.Draw(base)
-        draw.text((22,14),f'{case}  |  같은 시작 조건 · SIM 시간 정렬',font=large,fill='white')
+        draw.text((22,14),f'{case}  |  학습 seed {a.seed}  |  같은 시작 조건 · SIM 시간 정렬',font=large,fill='white')
         for i,(title,_) in enumerate(specs):
             x=(i%2)*960;y=70+(i//2)*790
             info=sources[i][2];result='전체 성공' if info['success'] else ('실패·들기만 성공' if info['physical_grasp_success'] else '실패')
