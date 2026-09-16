@@ -72,7 +72,7 @@ def own_payload(jpeg):
     return [float(len(xs)/mask.size), float(xs.mean()/mask.shape[1]), float(ys.mean()/mask.shape[0])]
 
 
-def goal_features(top_jpeg):
+def goal_features(top_jpeg, *, remembered_goal_x=None):
     frame = decode(top_jpeg)
     h,w = frame.shape[:2]
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -84,14 +84,22 @@ def goal_features(top_jpeg):
              and .4 <= centers[i,1]/h <= .6]
     beams = [b for b in extract_beams(top_jpeg)
              if .35 <= b['center'][1] <= .65 and not b['touches_border']]
-    if len(goals) != 1 or len(beams) != 1:
+    if (remembered_goal_x is None and len(goals) != 1) or len(beams) != 1:
         return None
-    return dict(goal_x=float(centers[goals[0],0]/w), beam_x=beams[0]['center'][0],
+    goal_x = (float((stats[goals[0],0]+(stats[goals[0],2]-1)/2)/w)
+              if remembered_goal_x is None else remembered_goal_x)
+    return dict(goal_x=goal_x, beam_x=beams[0]['center'][0],
                 beam_y=beams[0]['center'][1], beam_length=beams[0]['length_px']/h)
 
 
-def goal_carry(own_jpeg, top_jpeg, anchor_own):
-    current, anchor, top = own_payload(own_jpeg), own_payload(anchor_own), goal_features(top_jpeg)
+def goal_carry(own_jpeg, top_jpeg, anchor_own, anchor_top):
+    # The static floor goal is remembered from the first carry frame. A robot
+    # may occlude/split its green pixels later; that must not move the target.
+    initial_top = goal_features(anchor_top)
+    if initial_top is None:
+        return dict(ok=False, held_estimate=False, ready=False, forward=0., reason='initial_goal_unresolved')
+    current, anchor = own_payload(own_jpeg), own_payload(anchor_own)
+    top = goal_features(top_jpeg, remembered_goal_x=initial_top['goal_x'])
     if current is None or anchor is None or top is None:
         return dict(ok=False, held_estimate=False, ready=False, forward=0., reason='visual_evidence_missing')
     # Consistency with the post-lift RGB, never a claim of measured contact.

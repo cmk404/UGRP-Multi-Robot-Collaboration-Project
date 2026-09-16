@@ -85,7 +85,7 @@ def run(args):
         policy=PairCarryPolicy('visible-goal-carry')
         for index in range(160):
             frames=anchor if index==0 else scene.capture(f'carry-{index:03d}')
-            decisions={r:goal_carry(frames[r]['own_bytes'],frames[r]['top_bytes'],anchor[r]['own_bytes']) for r in ROBOTS}
+            decisions={r:goal_carry(frames[r]['own_bytes'],frames[r]['top_bytes'],anchor[r]['own_bytes'],anchor[r]['top_bytes']) for r in ROBOTS}
             skew=payload_skew(frames['r1']['top_bytes'])
             control=policy.step(decisions,skew,{r:frames[r]['frame_id'] for r in ROBOTS},scene.time())
             report['carry_calls'].append(dict(index=index,decisions=decisions,skew=skew,control=control,
