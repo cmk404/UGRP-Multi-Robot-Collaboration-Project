@@ -21,6 +21,7 @@ TEST_PATTERNS = (
     "tests/test_camera_goal_transport.py",
     "tests/test_three_robot_plan.py",
     "tests/test_three_robot_mission.py",
+    "tests/test_three_robot_physical_controls.py",
     "tests/test_camera_action_learning.py",
     "tests/test_camera_local_servo.py",
     "tests/test_camera_visual_observer.py",
