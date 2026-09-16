@@ -31,6 +31,7 @@
 
 - [설치·테스트·실험 재현과 PR 절차](CONTRIBUTING.md)
 - [동기화 담당: 공동 파지부터 해제까지 입출력 계약과 실행 예제](docs/task_stage_sync_contract.md) — 프로토콜 검증, 실제 로봇 연결은 후속 작업
+- [실제 RGB·LLM 연구 E2E 병목 파일럿](experiments/research-e2e-20260916/README.md) — 역할 합의·접근까지 실행, 공동 파지 이후는 미도달; 자연어 합의 진동·모델 오류·짧은 원시 명령 반복을 분리 기록
 - [실험 목록과 증거 관리](experiments/README.md)
 - [연구 비교 조건과 관측 경계](docs/warehouse_research_contract.md)
 - [현재 아키텍처 상세 기록](docs/current_architecture_todo.md) — 각 항목의 기록 날짜를 확인한다.

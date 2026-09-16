@@ -26,6 +26,7 @@ def test_role_disagreement_never_gets_centrally_repaired():
     {"checks":["contact_truth"]},{"position":[1,2,3]},{"confidence":float("nan")},
     {"action":{"kind":"arm","servo_id":1,"pulse":1500}},
     {"action":{"kind":"drive","forward":.1,"turn":0,"duration_s":1}},
+    {"action":{"forward":.08,"turn":-.15,"duration_s":.2}},
 ])
 def test_rejects_truth_fields_and_unsafe_preparation(change):
     value=reply();value.update(change)
