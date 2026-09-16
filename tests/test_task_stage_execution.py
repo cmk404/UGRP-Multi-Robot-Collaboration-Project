@@ -252,3 +252,61 @@ def test_stop_failure_still_attempts_peer_and_aborts(setup, monkeypatch):
     ex.ports["r3"].tick(.3)
     assert world.robots["r3"].servo_calls == []
     assert ex.sync.status(now_s=.3)["phase"] == "ABORT"
+
+
+@pytest.mark.parametrize("completed", ["r1", "r3"])
+def test_grasp_partial_completion_dispatches_only_ready_peer_then_advances(setup, completed):
+    ex, world, _ = setup
+    pending = next(r for r in ex.ports if r != completed)
+    first = batch(ex)
+    first[pending]["action"] = {"kind": "wait"}
+    assert ex.dispatch_pair(ready(ex, 0.), first, now_s=0.)
+    ex.tick(.3)
+    for rid in ex.ports:
+        answer = reply(capture(ex, rid, .3), "DONE" if rid == completed else "READY", first[rid]["command_id"])
+        assert ex.receive(rid, answer, now_s=.3)
+    permission = ex.authorize(now_s=.3)["permission"]
+    assert ex.sync.command_participants(now_s=.3) == (pending,)
+    assert not ex.advance(now_s=.3)
+    calls = list(world.robots[completed].servo_calls)
+    second = {pending: batch(ex, 1)[pending]}
+    assert ex.dispatch_pair(permission, second, now_s=.3)
+    ex.tick(.5)
+    assert world.robots[completed].servo_calls == calls
+    assert len(ex._history[completed]) == 1  # No wait replacing evidence command.
+    for rid in ex.ports:
+        command = first[rid] if rid == completed else second[rid]
+        assert ex.receive(rid, reply(capture(ex, rid, .5), "DONE", command["command_id"]), now_s=.5)
+    assert ex.advance(now_s=.5) and ex.sync.stage == "LIFT"
+
+
+@pytest.mark.parametrize("fault", ["expired", "revoked", "stale_permission", "completed_command", "coupled_stage"])
+def test_partial_completion_cannot_bypass_barrier_or_move_completed_peer(setup, fault):
+    ex, world, _ = setup
+    if fault == "coupled_stage":
+        assert ex.dispatch_pair(ready(ex, 0.), batch(ex), now_s=0.)
+        ex.tick(.2)
+        for rid in ex.ports:
+            assert ex.receive(rid, reply(capture(ex, rid, .2), "DONE", f"{rid}-0"), now_s=.2)
+        assert ex.advance(now_s=.2)
+    now = .3
+    assert ex.dispatch_pair(ready(ex, now), batch(ex, 1), now_s=now)
+    now = .6
+    ex.tick(now)
+    for rid in ex.ports:
+        assert ex.receive(rid, reply(capture(ex, rid, now), "DONE" if rid == "r1" else "READY", f"{rid}-1"), now_s=now)
+    permission = ex.authorize(now_s=now)["permission"]
+    if fault == "expired": now = 1.3
+    elif fault in ("revoked", "stale_permission"):
+        ex.hold("observation_lost", now_s=now)
+        if fault == "stale_permission":
+            for rid in ex.ports:
+                assert ex.receive(rid, reply(capture(ex, rid, now), "DONE" if rid == "r1" else "READY", f"{rid}-1"), now_s=now)
+            ex.authorize(now_s=now)
+    before = len([e for e in ex.events if e["event"] == "LOCAL_COMMAND"])
+    commands = batch(ex, 2) if fault == "completed_command" else {"r3": batch(ex, 2)["r3"]}
+    if fault == "stale_permission":
+        assert not ex.dispatch_pair(permission, commands, now_s=now)
+    else:
+        with pytest.raises(ValueError): ex.dispatch_pair(permission, commands, now_s=now)
+    assert len([e for e in ex.events if e["event"] == "LOCAL_COMMAND"]) == before

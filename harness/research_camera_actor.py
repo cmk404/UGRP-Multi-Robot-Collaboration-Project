@@ -89,7 +89,8 @@ def agreed_roles(replies: dict) -> dict | None:
 
 def build_request(robot_id: str, phase: str, camera: dict, *, roles: dict | None,
                   own_history: list, inbox: list, previous: dict | None, communication: str,
-                  request_id=None, agreement=None, own_proposals=(), retry=None, local_drive_steps=1) -> dict:
+                  request_id=None, agreement=None, own_proposals=(), retry=None, local_drive_steps=1,
+                  own_visual_feedback=None) -> dict:
     if robot_id not in ROBOTS or communication not in ("none","natural"): raise ValueError("invalid actor")
     if phase not in ("NEGOTIATE","PREPARE",*STAGES): raise ValueError("invalid phase")
     system=f"You are independent robot {robot_id}. {TASK}\n"+HARDWARE
@@ -137,7 +138,7 @@ Both READY is required to enter joint GRASP; being near the beam is insufficient
                 system+=f"\nPREPARE drive is an intent: a local executor may renew that same .2-second drive up to {local_drive_steps} times using fresh TOP image motion, target visibility and conservative clearance. It stops on ambiguity, no progress, approaching the beam or budget. Each actual subcommand appears in own history. Peers are held during these isolated motion windows. No READY is inferred by this executor. Choose forward/turn accordingly; use turn=0 for straight translation and separate small turn-only adjustments when needed."
         else:
             system+=f"\nCurrent joint stage {phase}. READY requires {sorted(READY_CHECKS[phase])}; DONE requires {sorted(DONE_CHECKS[phase])}."
-            system+="\nCARRY permits drive/wait; other joint stages permit arm/wait. No look in joint stages. Both READY is required to issue a pair command. If unsure, report UNCERTAIN and wait. Once visually DONE, use wait."
+            system+="\nCARRY permits drive/wait; other joint stages permit arm/wait. No look in joint stages. Both READY is required to start joint commands. During GRASP only, one fresh DONE peer may hold while the remaining READY robot closes its jaws. If unsure, report UNCERTAIN and wait. Once visually DONE, use wait."
     context={"phase":phase,"roles":roles,"own_issued_commands":copy.deepcopy(own_history[-16:]),
              "received_peer_claims":copy.deepcopy(inbox[-4:]) if communication=="natural" else [],
              "stage_context":{k:camera[k] for k in ("run_id","stage","epoch","plan_version") if k in camera}}
@@ -148,6 +149,14 @@ Both READY is required to enter joint GRASP; being near the beam is insufficient
         fields=(['reason','message','roles','accept','proposal_id','plan_hash','request_id'] if phase=='NEGOTIATE'
                 else ['reason','message','status','confidence','checks','command_id','action','request_id'])
         system+='\nRequired top-level JSON keys (exactly): '+json.dumps(fields)+'. Keep reason and message short (each at most 800 characters).'
+    if own_visual_feedback is not None:
+        context['own_visual_feedback']=copy.deepcopy(own_visual_feedback[-4:])
+        system+='''\nYour own visual witness reviews are fallible interpretations of your allowed
+camera pair, not ground truth. If a review could not resolve fingers around the
+beam, do not repeat READY/DONE just because an earlier command was issued. During
+PREPARE use fresh images to choose a safe alignment adjustment. Explicitly locate
+both fingers and the beam between them; wheel rims and image corners are not jaws.
+READY requires open jaws straddling the endpoint, not the body reaching the beam.'''
     images=[]
     for prefix,pair in (("CURRENT",camera),("PREVIOUS",previous)):
         if pair is None: continue

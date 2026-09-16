@@ -152,15 +152,21 @@ class TaskStageExecution:
         return self.sync.authorize(now_s=now_s)
 
     def dispatch_pair(self, permission: dict | None, commands: dict, *, now_s: float) -> bool:
-        """Validate both commands before issuing either; stop both on partial failure.
+        """Preflight the entire batch; stop all participants on partial failure.
+
+        A GRASP batch may omit freshly DONE peers, which retain their current
+        setpoints. All other stages require a complete batch. No fabricated wait
+        command replaces the completed peer's last evidence-bound command ID.
 
         Submissions share a frozen SIM instant: no physics step occurs between
         them. This does not guarantee simultaneous actuation on physical robots.
         """
-        self.tick(now_s)
+        status = self.tick(now_s)
         try:
             commands = json.loads(json.dumps(commands, allow_nan=False))
-            if not isinstance(commands, dict) or set(commands) != set(self.ports):
+            pending = set(self.sync.command_participants(now_s=now_s))
+            expected = pending if status["phase"] == "GO" else set(self.ports)
+            if not isinstance(commands, dict) or not commands or set(commands) != expected:
                 raise ValueError("one bounded command per participant required")
             for rid, command in commands.items():
                 if not isinstance(command, dict) or set(command) != {"command_id", "action", "duration_s"}:
@@ -174,6 +180,8 @@ class TaskStageExecution:
             self.hold("invalid_command_batch", now_s=now_s)
             raise
         try:
+            for rid in set(self.ports) - set(commands):
+                self.ports[rid].hold(now_s)
             for rid, command in commands.items():
                 accepted = self.sync.dispatch(rid, permission, command["command_id"],
                     now_s=now_s, duration_s=command["duration_s"],

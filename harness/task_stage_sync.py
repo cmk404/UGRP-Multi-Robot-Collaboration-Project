@@ -361,6 +361,18 @@ class TaskStageSync:
             raise
         return True
 
+    def command_participants(self, *, now_s: float) -> tuple[str, ...]:
+        """Participants needing another command under the current fresh barrier.
+
+        Only GRASP permits an incomplete participant to act while a completed
+        peer holds its setpoint. Coupled lift/transport/lower/release still require
+        every participant to be incomplete. DONE remains a visual producer claim.
+        """
+        if self._refresh(now_s)["phase"] != "GO":
+            return ()
+        pending = tuple(r for r in self.plan.participants if self._latest[r].status != "DONE")
+        return pending if self.stage == "GRASP" or len(pending) == len(self.plan.participants) else ()
+
     def hold(self, reason: str, *, now_s: float, renew: bool = False) -> dict:
         self._clock(now_s)
         if self._finished or self._aborted:

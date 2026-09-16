@@ -30,6 +30,7 @@ from harness.research_camera_actor import ROBOTS, TASK, build_request, validate_
 from harness.task_stage_execution import TaskStageExecution
 from harness.task_stage_sync import TaskPlan
 from harness.research_execution_recovery import RoleAgreement, request_with_recovery
+from harness.research_visual_evidence import build_review_request, validate_review, reviewed_reply, supports_claim
 
 
 def write(path, value):
@@ -63,7 +64,7 @@ def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.
     if subprocess.check_output(["git","status","--porcelain"],cwd=ROOT,text=True).strip():
         raise RuntimeError("commit and freeze the complete source before a trial")
     output.mkdir(parents=True,exist_ok=False)
-    for r in ROBOTS: (output/r).mkdir()
+    for r in ROBOTS: (output/r/'reviews').mkdir(parents=True)
     source=subprocess.check_output(["git","rev-parse","HEAD"],cwd=ROOT,text=True).strip()
     report={"source_sha":source,"scope":"Live two-robot L2 feasibility pilot; no synthetic stage verdicts; single fixed scene",
         "task":TASK,"config":{"communication":communication,"seed":seed,"rounds":rounds,"model":model,
@@ -72,12 +73,14 @@ def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.
         "environment":{"python":sys.version,"platform":platform.platform(),"mujoco":mujoco.__version__},
         "calls":[],"turns":[],"messages":[],"phase_events":[],"error":None,"stop_reason":None,
         "issued_commands":[],"local_batches":[],"settling_windows":[],"recovery_events":[],"agreement_events":[],
+        "visual_review_calls":[],"visual_reviews":[],"visual_review_policy":"independent-rgb-witness-v1",
         "protocol_finish":False,"roles":None,"cost_usd":None,"cost_note":"proxy supplies tokens, not a billing amount",
         "shared_clock":"SIM pauses during model inference; no asynchronous physical latency claim"}
     world=execution=video=referee=None
     ports={}
     history={r:[] for r in ROBOTS};inbox={r:[] for r in ROBOTS};previous={r:None for r in ROBOTS}
     wire_counts={r:0 for r in ROBOTS};samples=[];phase="NEGOTIATE";roles=None
+    review_wire_counts={r:0 for r in ROBOTS};feedback={r:[] for r in ROBOTS};grasp_attempt=0
     agreement=RoleAgreement()
     usage_by_robot={r:0 for r in ROBOTS}
     started=time.monotonic();last_sample=0.;all_waits=0
@@ -110,7 +113,7 @@ def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.
         if execution:
             packet=execution.capture(rid,own_rgb=own,top_rgb=top,now_s=now())
             # References in the stage adapter are relative to its own evidence root.
-            for image in packet["images"].values():image["ref"]="stage-execution/"+image["ref"]
+            for image in packet["images"].values():image["ref"]=str(execution.output.relative_to(output))+"/"+image["ref"]
             return packet
         images={}
         tag=f"{index:03d}" if isinstance(index,int) else index
@@ -140,6 +143,28 @@ def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.
             max_attempts=request_attempts,
             can_request=lambda:time.monotonic()-started<max_wall_s and sum(usage_by_robot.values())<max_input_tokens)
         return {"reply":reply,"stop_reason":stop,"entries":entries}
+    def review_claim(rid, inputs, index):
+        entries=[]
+        def make_request(attempt,retry):
+            request_id=f'{rid}-{index:03d}-{phase}-review-a{attempt}'
+            arguments={"phase":phase,"camera":inputs["camera"],"previous":inputs["previous"],
+                       "roles":inputs["roles"],"request_id":request_id,"retry":retry}
+            write(output/rid/'reviews'/f'{index:03d}-a{attempt}-inputs.json',arguments)
+            request=build_review_request(rid,**arguments)
+            write(output/rid/'reviews'/f'{index:03d}-a{attempt}-request.json',request)
+            return {**request,'request_id':request_id}
+        def record(entry):
+            attempt=entry['attempt']
+            entry.update(robot_id=rid,turn=index,phase=phase,wire_index=review_wire_counts[rid],
+                         inputs=f'{rid}/reviews/{index:03d}-a{attempt}-inputs.json',
+                         request=f'{rid}/reviews/{index:03d}-a{attempt}-request.json')
+            usage_by_robot[rid]+=(entry.get('usage') or {}).get('prompt_tokens',0)
+            write(output/rid/'reviews'/f'{index:03d}-a{attempt}-decision.json',entry)
+            entries.append(entry)
+        answer,stop=request_with_recovery(review_completers[rid],make_request,validate_review,record,
+            max_attempts=request_attempts,
+            can_request=lambda:time.monotonic()-started<max_wall_s and sum(usage_by_robot.values())<max_input_tokens)
+        return {'reply':answer,'stop_reason':stop,'entries':entries}
     def issue(rid,index,action,row,*,suffix=""):
         command={"command_id":f"{rid}-{index}{suffix}","action":action,"duration_s":.2,"issued_at_s":now(),"phase":phase}
         ports[rid].apply_bounded(action,now(),.2)
@@ -210,7 +235,7 @@ def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.
         descriptor={"id":"camera-pair-plain-beam-v1","version":"1","task":TASK,
                     "static_geometry_source":source,"compiled_xml_sha256":hashlib.sha256((output/"scene.xml").read_bytes()).hexdigest()}
         write(output/"scene-descriptor.json",descriptor)
-        completers={}
+        completers={};review_completers={}
         for rid in ROBOTS:
             def audited_open(req, *, timeout, _rid=rid):
                 wire_counts[_rid]+=1;count=wire_counts[_rid]
@@ -219,13 +244,21 @@ def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.
                 (output/_rid/f"wire-{count:03d}-response.json").write_bytes(data)
                 return io.BytesIO(data)
             completers[rid]=GeminiProxyCompleter(model=model,max_tokens=900,timeout=timeout,reasoning_effort="none",http_open=audited_open)
+            def audited_review_open(req, *, timeout, _rid=rid):
+                review_wire_counts[_rid]+=1;count=review_wire_counts[_rid]
+                (output/_rid/'reviews'/f'wire-{count:03d}.json').write_bytes(req.data)
+                with urlopen(req,timeout=timeout) as response:data=response.read()
+                (output/_rid/'reviews'/f'wire-{count:03d}-response.json').write_bytes(data)
+                return io.BytesIO(data)
+            review_completers[rid]=GeminiProxyCompleter(model=model,max_tokens=900,timeout=timeout,
+                reasoning_effort='none',http_open=audited_review_open)
         video=Video(world,output/"motion.mp4",6);video.stage=phase;video.capture(force=True)
         referee=(output/"evaluation-only.jsonl").open("w");last_sample=now();evaluate_sample()
         negotiation_turns=action_turns=0
         with ThreadPoolExecutor(max_workers=2) as pool:
             for index in range(rounds+6):
                 if time.monotonic()-started>=max_wall_s:report["stop_reason"]="wall_budget";break
-                used=sum((c.get("usage") or {}).get("prompt_tokens",0) for c in report["calls"])
+                used=sum(usage_by_robot.values())
                 if used>=max_input_tokens:report["stop_reason"]="input_token_budget";break
                 if execution:
                     execution.tick(now())
@@ -237,7 +270,8 @@ def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.
                 inputs={r:{"phase":phase,"camera":packets[r],"roles":roles,
                         "own_history":history[r][-16:],"inbox":inbox[r][-4:] if communication=="natural" else [],
                         "previous":previous[r],"communication":communication,"agreement":agreement.context(),
-                        "own_proposals":agreement.history[r][-4:],"local_drive_steps":local_drive_steps} for r in ROBOTS}
+                        "own_proposals":agreement.history[r][-4:],"local_drive_steps":local_drive_steps,
+                        "own_visual_feedback":feedback[r][-4:]} for r in ROBOTS}
                 futures={r:pool.submit(invoke,r,inputs[r],index) for r in ROBOTS}
                 calls={r:futures[r].result() for r in ROBOTS}
                 for r,c in calls.items():
@@ -258,6 +292,18 @@ def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.
                     if communication=="natural" and replies[sender]["message"].strip():
                         message={"sender":sender,"recipient":receiver,"turn":index,"text":replies[sender]["message"],"source":"peer_claim"}
                         inbox[receiver].append(message);report["messages"].append(message)
+                effective=dict(replies)
+                review_targets=[r for r in ROBOTS if (phase=='PREPARE' and preparation_ready(replies[r]))
+                    or (phase=='GRASP' and replies[r]['status']=='DONE')]
+                review_futures={r:pool.submit(review_claim,r,inputs[r],index) for r in review_targets}
+                for r,future in review_futures.items():
+                    result=future.result();report['visual_review_calls'].extend(result['entries'])
+                    witness=result['reply']
+                    entry={'robot_id':r,'turn':index,'phase':phase,'review':witness,
+                           'supported':supports_claim(witness,phase),'stop_reason':result['stop_reason']}
+                    report['visual_reviews'].append(entry);feedback[r].append(entry)
+                    effective[r]=reviewed_reply(replies[r],witness,phase)
+                row['effective_replies']=effective
                 previous=packets
                 if phase=="NEGOTIATE":
                     negotiation_turns+=1;roles=agreement.receive(replies,index)
@@ -266,20 +312,32 @@ def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.
                     elif negotiation_turns>=6:report["stop_reason"]="role_agreement_budget";break
                 elif phase=="PREPARE":
                     action_turns+=1
-                    if all(preparation_ready(replies[r]) for r in ROBOTS):
+                    if all(preparation_ready(effective[r]) for r in ROBOTS):
                         for p in ports.values():p.hold(now())
-                        plan=TaskPlan("live-camera-beam",1,"plain_orange_beam",tuple((r,roles[r]) for r in ROBOTS),
+                        grasp_attempt+=1
+                        plan=TaskPlan("live-camera-beam",grasp_attempt,"plain_orange_beam",tuple((r,roles[r]) for r in ROBOTS),
                             "green_square",descriptor["id"],descriptor["version"],hashlib.sha256((output/"scene-descriptor.json").read_bytes()).hexdigest())
-                        execution=TaskStageExecution(plan,ports,map_path=output/"scene-descriptor.json",output=output/"stage-execution",now_s=now())
+                        execution=TaskStageExecution(plan,ports,map_path=output/"scene-descriptor.json",
+                            output=output/f"stage-execution-{grasp_attempt}",now_s=now())
                         transition("GRASP")
                     else:
                         # Independent pre-grasp motion; the five-stage contract starts
                         # only after both model-produced at_grasp_pose/stopped reports.
-                        prepare(replies,index,row)
+                        prepare(effective,index,row)
                 else:
                     action_turns+=1
+                    if phase=='GRASP' and any(effective[r]!=replies[r] for r in review_targets):
+                        execution.close(now_s=now());execution=None
+                        report['recovery_events'].append({'turn':index,'reason':'grasp_witness_did_not_confirm',
+                            'action':'hold_all_and_request_fresh_preparation','attempt':grasp_attempt})
+                        transition('PREPARE')
+                        if grasp_attempt>=3:
+                            report['stop_reason']='grasp_review_recovery_budget';break
+                        step(.3)
+                        write(output/'progress.json',report)
+                        continue
                     for r in ROBOTS:
-                        result=replies[r]
+                        result=effective[r]
                         row.setdefault("reports_accepted",{})[r]=execution.receive(r,{
                             "request_id":packets[r]["request_id"],"status":result["status"],"confidence":result["confidence"],
                             "checks":result["checks"],"command_id":result["command_id"],"reason":result["reason"],"decided_at_s":now()},now_s=now())
@@ -288,10 +346,10 @@ def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.
                         if execution.authorize(now_s=now())["phase"]=="FINISH":
                             report["protocol_finish"]=True;report["stop_reason"]="model_reported_finish";break
                         transition(execution.sync.stage)
-                    elif decision["permission"] and all(x["status"]=="READY" for x in replies.values()):
-                        commands={r:{"command_id":f"{r}-{index}","action":replies[r]["action"],"duration_s":.2} for r in ROBOTS}
+                    elif decision["permission"] and (participants:=execution.sync.command_participants(now_s=now())):
+                        commands={r:{"command_id":f"{r}-{index}","action":replies[r]["action"],"duration_s":.2} for r in participants}
                         if execution.dispatch_pair(decision["permission"],commands,now_s=now()):
-                            for r in ROBOTS:
+                            for r in participants:
                                 cmd={**commands[r],"issued_at_s":now(),"phase":phase};history[r].append(cmd);row["issued"][r]=cmd
                                 report["issued_commands"].append({"robot_id":r,"turn":index,**cmd})
                 step(.3)
@@ -316,7 +374,8 @@ def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.
     finally:
         report["wall_seconds"]=time.monotonic()-started
         report["wire_requests"]=wire_counts
-        report["token_usage"]={key:sum((c.get("usage") or {}).get(key,0) for c in report["calls"])
+        report["review_wire_requests"]=review_wire_counts
+        report["token_usage"]={key:sum((c.get("usage") or {}).get(key,0) for c in report["calls"]+report['visual_review_calls'])
             for key in ("prompt_tokens","completion_tokens","total_tokens")}
         report["physical_success"]=bool(report.get("physical_success",False) and not report["error"])
         cleanup=[]
