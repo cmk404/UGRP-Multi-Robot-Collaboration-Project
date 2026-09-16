@@ -20,11 +20,11 @@ def execute(args):
     models,skillhash,modelhashes=load_models(args.grasp_model.resolve())
     goals=scene.fixture['base_poses']
     rec={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
-         'case':fixture,'policy':args.policy,'takeover_step':args.takeover_step,'config':{'max_rounds':160,'slice_s':.2,'weld':False,'confirmation_steps':3},
+         'case':fixture,'policy':args.policy,'takeover_step':args.takeover_step,'config':{'max_rounds':160,'slice_s':.2,'weld':False,'confirmation_steps':3,'teacher_tail_budget':160 if args.takeover_step is not None else None},
          'grasp_skill_sha256':skillhash,'grasp_model_sha256':modelhashes,'calls':[],'approach_ok':False,'error':None,
          'input_boundary':'ACT process receives own_rgb and top_rgb only. Teacher/evaluation state is never passed to ACT.',
          'teacher_observations':[] if args.policy!='act' or args.takeover_step is not None else None}
-    clients={};actors=[];labels=[];hist={r:[] for r in ROBOTS};takeover=None
+    clients={};actors=[];labels=[];hist={r:[] for r in ROBOTS};takeover=None;prefix_declared_ready=False
     try:
         import mujoco
         from harness.grasp_student_inference import predict_student
@@ -36,23 +36,24 @@ def execute(args):
                 model=args.model.resolve()/r/'act';clients[r]=RecoveryClient(args.act_python,model)
                 rec['model_hashes'][r]={p.name:sha(p) for p in model.iterdir() if p.is_file()}
         scene.open(start_poses=starts);rec['initial_state']=scene.evaluation_snapshot();begin=scene.time();confirm=0
-        for i in range(160):
+        for i in range(160 + (args.takeover_step or 0)):
             frames=scene.capture(f'approach-{i:03d}')
             teaching=args.policy!='act' or (args.takeover_step is not None and i>=args.takeover_step)
             state=scene.evaluation_snapshot() # logging/referee only; no actor argument
             es={r:errors(state,goals,r) for r in ROBOTS}
             if teaching:
                 if args.takeover_step is not None and takeover is None:
-                    takeover={'index':i,'state':state,'prefix_contact_steps':scene.approach_payload_contact_steps};confirm=0
+                    takeover={'index':i,'state':state,'prefix_contact_steps':scene.approach_payload_contact_steps,'prefix_declared_ready':prefix_declared_ready,'errors':es};confirm=0
                 ds={r:command(es[r]) if args.policy!='nominal_teacher' else {**teacher_command(es[r]['x'],2.),'left':0.,'turn':0.} for r in ROBOTS}
                 rec['teacher_observations'].append({'index':i,'state':state,'errors':es})
             else:ds={r:clients[r].predict(frames[r]['own_bytes'],frames[r]['top_bytes']) for r in ROBOTS}
             both=all(d['ok'] and d['ready'] for d in ds.values())
             confirm=confirm+1 if both else 0
+            if not teaching and confirm>=3:prefix_declared_ready=True
             actions={r:dict.fromkeys(AXES,0.) if ds[r]['ready'] else {k:ds[r][k] for k in AXES} for r in ROBOTS}
             for r in ROBOTS:
                 obs={'own':frames[r]['own_rgb'],'top':frames[r]['shared_top_rgb']};sid=f'{fixture["id"]}:{i:03d}:{r}'
-                rec['calls'].append({'index':i,'robot_id':r,'images':obs,'decision':ds[r],'action':actions[r],'teaching':teaching,'history':list(hist[r])})
+                rec['calls'].append({'index':i,'robot_id':r,'images':obs,'decision':ds[r],'action':actions[r],'teaching':teaching,'history':list(hist[r]),'wire_request_sha256':None if teaching else clients[r].last_request_sha256})
                 if teaching:
                     actors.append({'id':sid,'case_id':fixture['id'],'robot_id':r,'images':obs})
                     labels.append({'id':sid,'case_id':fixture['id'],'robot_id':r,'target':{**actions[r],'stop':ds[r]['ready']},'heldout_region':heldout_region(es[r])})

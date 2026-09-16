@@ -37,5 +37,14 @@
     "steps": 5000,
     "data": "first24 nominal, first4 per recovery factor",
     "not_final_comparator": true
+  },
+  "pretraining_amendment": {
+    "takeover_steps": [
+      20,
+      60,
+      100
+    ],
+    "teacher_tail_budget_steps": 160,
+    "reason": "Before any student training or final test, extend prefixes beyond early nominal approach to sample closed-loop drift; allow the teacher a full recovery budget after each prefix. Fixed intervention times, no truth-triggered intervention. Strengthen scoring to require the full 0.4s (five 0.1s samples); collected teacher windows already satisfy this."
   }
 }

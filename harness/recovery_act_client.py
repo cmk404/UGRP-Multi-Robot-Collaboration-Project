@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
 from pathlib import Path
 import selectors
@@ -45,7 +46,9 @@ class RecoveryClient:
     def predict(self, own_jpeg: bytes, top_jpeg: bytes):
         request = {"own_rgb": base64.b64encode(own_jpeg).decode("ascii"),
                    "top_rgb": base64.b64encode(top_jpeg).decode("ascii")}
-        self.process.stdin.write(json.dumps(request) + "\n")
+        payload = json.dumps(request) + "\n"
+        self.last_request_sha256 = hashlib.sha256(payload.encode()).hexdigest()
+        self.process.stdin.write(payload)
         self.process.stdin.flush()
         return self._read()
 

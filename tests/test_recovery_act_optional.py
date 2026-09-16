@@ -1,4 +1,4 @@
-import io,json
+import io,json,hashlib,base64
 from pathlib import Path
 import pytest
 pytest.importorskip('lerobot')
@@ -20,7 +20,10 @@ def test_actual_rgb_forward_backward_and_checkpoint(tmp_path):
  with pytest.raises(ValueError):decode_request({'own_rgb':'','top_rgb':'','state':[]})
  import sys
  client=RecoveryClient(Path(sys.executable),tmp_path/'act')
- try:assert client.predict(rgb,rgb)==before
+ try:
+  assert client.predict(rgb,rgb)==before
+  payload=json.dumps({k+'_rgb':base64.b64encode(rgb).decode('ascii') for k in ('own','top')})+'\n'
+  assert client.last_request_sha256==hashlib.sha256(payload.encode()).hexdigest()
  finally:client.close()
 
 def test_recovery_config_rejects_measured_state(tmp_path):

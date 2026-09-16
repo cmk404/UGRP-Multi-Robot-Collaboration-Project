@@ -32,7 +32,7 @@ def heldout_region(error):
 
 def score_alignment(samples,goals,end_time):
     window=[s for s in samples if end_time-.401<=s['sim_time_s']<=end_time+.0001 and s['phase'].startswith('approach')]
-    good=len(window)>=4 and window[-1]['sim_time_s']-window[0]['sim_time_s']>=.299
+    good=len(window)>=5 and window[-1]['sim_time_s']-window[0]['sim_time_s']>=.399
     maximum={'x':0.,'y':0.,'yaw':0.,'linear_speed':0.,'angular_speed':0.}
     for s in window:
         for rid in goals:

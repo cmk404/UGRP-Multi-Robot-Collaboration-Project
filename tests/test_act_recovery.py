@@ -17,5 +17,6 @@ def test_alignment_requires_stationary_window():
  goals={'r1':[0,0,0]}
  rows=[{'sim_time_s':i*.1,'phase':'approach_stop_dwell','bases':{'r1':[0,0,0]},'base_yaw_rad':{'r1':0}} for i in range(5)]
  assert score_alignment(rows,goals,.4)['success']
+ assert not score_alignment(rows[1:],goals,.4)['success']
  rows[-1]['bases']['r1'][0]=.003
  assert not score_alignment(rows,goals,.4)['success'] # tolerance met, movement not stable
