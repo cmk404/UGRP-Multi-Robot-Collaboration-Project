@@ -24,6 +24,11 @@ the same; repeated calls while already held are idempotent. Returning to `GO`
 requires a new report from every participant in the new epoch. `update_plan()`
 accepts only a higher version and also advances the epoch. `ABORT` is terminal.
 
+`hold(..., renew=True)` also clears partial readiness and advances the epoch
+when already in HOLD. It is used for a newly received negative report in the
+[task-stage coordinator](task_stage_sync_contract.md). The default remains
+idempotent for repeated hold requests; existing carry callers are unchanged.
+
 `authorize()`, `hold()`, `abort()`, and `update_plan()` return a JSON-compatible
 decision with `phase`, `epoch`, and `reason`. `events` is an append-only,
 JSON-serializable diagnostic list. Every event includes `event`, `timestamp_s`,

@@ -35,6 +35,18 @@ jobs:
       - name: Run offline regression suite
         run: python scripts/run_ci_tests.py
 
+      - name: Exercise the task-stage JSON contract with fixture robot ports
+        run: python scripts/demo_task_stage_sync.py --output outputs/task-stage-sync-ci
+
+      - name: Keep task-stage protocol evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: task-stage-sync-protocol
+          path: outputs/task-stage-sync-ci/
+          if-no-files-found: warn
+          retention-days: 14
+
   ubuntu-simulation:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
