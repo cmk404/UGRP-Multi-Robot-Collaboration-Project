@@ -1,0 +1,22 @@
+{
+  "path": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/recovery-overview-v1.mp4",
+  "sha256": "02afe40aac09918abe667269f5e6abfbec6cf60f795baa722235d40daf5dd80f",
+  "duration_s": 78.3,
+  "method": "Stream copy concatenation, unchanged playback rate; simulation clock restarts for each case.",
+  "segments": [
+    {
+      "case": "nominal-01",
+      "duration_s": 36.5,
+      "source": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/video-final-seed16-v1/nominal-01-comparison.mp4",
+      "sha256": "b634db51da7f38d067f71b8b5ee27a362efacc4ae4c0d081a3be37cb85a7f52b"
+    },
+    {
+      "case": "yaw_lateral-01",
+      "duration_s": 41.8,
+      "source": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/video-final-seed16-v1/yaw_lateral-01-comparison.mp4",
+      "sha256": "c0db93d780453d982ea34ba96cc5f5f011ce8cb0980e68cb03ba3a60792f01f2"
+    }
+  ],
+  "ffmpeg": "ffmpeg version 8.1.1 Copyright (c) 2000-2026 the FFmpeg developers",
+  "decoded_entire_video": true
+}

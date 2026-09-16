@@ -1,0 +1,1292 @@
+{
+  "aggregated-seed16-v1": {
+    "source_sha": "c482f511cd8b013972c8f46de82308f1a7c078f4",
+    "seed": 20260916,
+    "steps": 10000,
+    "batch": 32,
+    "robots": {
+      "r1": {
+        "selected": {
+          "step": 9000,
+          "loss": 0.01729615405201912,
+          "development": {
+            "samples": 840,
+            "stop_samples": 82,
+            "missed_ready": 6,
+            "false_ready": 4,
+            "normalized_action_mae": [
+              0.032365819967189825,
+              0.014992937827748892,
+              0.011169711558856491
+            ],
+            "selection_score": 0.14545067004072815
+          },
+          "elapsed_s": 256.4147860420053
+        },
+        "samples": 2518,
+        "development_samples": 840,
+        "groups": {
+          "0": 1683,
+          "1": 94,
+          "2": 82,
+          "3": 533,
+          "4": 126
+        },
+        "readback": [
+          {
+            "sample_id": "nominal-train-01:000:r1",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.047427722811698915,
+              "left": 0.0003781050443649292,
+              "turn": -0.00074017234146595,
+              "stop_score": 0.0023929476737976074,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-train-01:051:r1",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.0005955051630735397,
+              "left": 0.000585445761680603,
+              "turn": -0.00016619972884655,
+              "stop_score": 0.27612102031707764,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:000:r1",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.0835952639579773,
+              "left": -0.0008399635553359985,
+              "turn": 0.00043462514877319337,
+              "stop_score": 0.0,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:045:r1",
+            "decision": {
+              "ok": true,
+              "ready": true,
+              "forward": 0.0010019224137067795,
+              "left": -9.772181510925294e-06,
+              "turn": 0.00017156638205051422,
+              "stop_score": 0.7857531309127808,
+              "reason": "recovery_act_rgb"
+            }
+          }
+        ],
+        "parameters": 11419156,
+        "trainable_parameters": 252244,
+        "training_s": 295.6688587499957
+      },
+      "r3": {
+        "selected": {
+          "step": 8500,
+          "loss": 0.015233258716762066,
+          "development": {
+            "samples": 840,
+            "stop_samples": 143,
+            "missed_ready": 12,
+            "false_ready": 10,
+            "normalized_action_mae": [
+              0.04679879451257117,
+              0.009255131698435268,
+              0.01361420123580816
+            ],
+            "selection_score": 0.2506108160205458
+          },
+          "elapsed_s": 295.41671175000374
+        },
+        "samples": 2518,
+        "development_samples": 840,
+        "groups": {
+          "0": 1879,
+          "1": 109,
+          "2": 86,
+          "3": 329,
+          "4": 115
+        },
+        "readback": [
+          {
+            "sample_id": "nominal-train-01:000:r3",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.12639155387878417,
+              "left": 8.345246315002442e-05,
+              "turn": -0.0007160313427448272,
+              "stop_score": 0.0,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-train-01:032:r3",
+            "decision": {
+              "ok": true,
+              "ready": true,
+              "forward": 6.72781839966774e-05,
+              "left": 0.00016399025917053224,
+              "turn": -7.67335295677185e-05,
+              "stop_score": 1.0,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:000:r3",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.076426362991333,
+              "left": -0.0004364728927612305,
+              "turn": -0.00019228197634220122,
+              "stop_score": 0.0026056673377752304,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:047:r3",
+            "decision": {
+              "ok": true,
+              "ready": true,
+              "forward": 0.00031280536204576493,
+              "left": 4.014372825622559e-06,
+              "turn": -0.00010246038436889648,
+              "stop_score": 1.0,
+              "reason": "recovery_act_rgb"
+            }
+          }
+        ],
+        "parameters": 11419156,
+        "trainable_parameters": 252244,
+        "training_s": 344.2151624170074
+      }
+    },
+    "wall_s": 951.3127612090029,
+    "upstream_sha": "89236ea0f4f81a81ca566081e20dd1ff5f823cbe",
+    "environment": {
+      "python": "3.12.12 (main, Feb  4 2026, 01:57:59) [Clang 21.1.4 ]",
+      "platform": "macOS-27.0-arm64-arm-64bit",
+      "torch": "2.11.0",
+      "torchvision": "0.26.0",
+      "lerobot": "0.6.2",
+      "numpy": "2.2.6"
+    },
+    "external_model_calls": 0,
+    "report_path": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/aggregated-seed16-v1/report.json",
+    "report_sha256": "265e7bf44df8165e0c89667882644e5255447950ed17463daf9f840c76e97e89",
+    "dataset_sha256": "2a1588409943c2de79652b12f26057129c94db039d6816ddd60d2205f94e1c3b",
+    "eligible_training_trajectories": 45,
+    "development_trajectories": 12
+  },
+  "aggregated-seed17-v1": {
+    "source_sha": "c482f511cd8b013972c8f46de82308f1a7c078f4",
+    "seed": 20260917,
+    "steps": 10000,
+    "batch": 32,
+    "robots": {
+      "r1": {
+        "selected": {
+          "step": 8500,
+          "loss": 0.011800585314631462,
+          "development": {
+            "samples": 840,
+            "stop_samples": 82,
+            "missed_ready": 6,
+            "false_ready": 4,
+            "normalized_action_mae": [
+              0.038121227937009894,
+              0.014231735011296596,
+              0.008141248999620498
+            ],
+            "selection_score": 0.1461059175721054
+          },
+          "elapsed_s": 248.02446304101613
+        },
+        "samples": 2518,
+        "development_samples": 840,
+        "groups": {
+          "0": 1683,
+          "1": 94,
+          "2": 82,
+          "3": 533,
+          "4": 126
+        },
+        "readback": [
+          {
+            "sample_id": "nominal-train-01:000:r1",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.022962943464517594,
+              "left": 0.0006095677614212036,
+              "turn": -0.0013374801725149154,
+              "stop_score": 0.016330108046531677,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-train-01:051:r1",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.00014739409089088438,
+              "left": -3.0849874019622805e-05,
+              "turn": -0.00025066584348678586,
+              "stop_score": 0.6258783936500549,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:000:r1",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.06412847936153411,
+              "left": -3.249868750572205e-05,
+              "turn": -0.0003784585744142532,
+              "stop_score": 0.0,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:045:r1",
+            "decision": {
+              "ok": true,
+              "ready": true,
+              "forward": 0.0005028672516345978,
+              "left": 0.00020911395549774172,
+              "turn": -0.00024395026266574857,
+              "stop_score": 0.9540663957595825,
+              "reason": "recovery_act_rgb"
+            }
+          }
+        ],
+        "parameters": 11419156,
+        "trainable_parameters": 252244,
+        "training_s": 283.170610458008
+      },
+      "r3": {
+        "selected": {
+          "step": 3000,
+          "loss": 0.013105172663927078,
+          "development": {
+            "samples": 840,
+            "stop_samples": 143,
+            "missed_ready": 11,
+            "false_ready": 8,
+            "normalized_action_mae": [
+              0.050142727313637746,
+              0.01464967968988983,
+              0.02019888481294939
+            ],
+            "selection_score": 0.22003112589298818
+          },
+          "elapsed_s": 62.318218125001295
+        },
+        "samples": 2518,
+        "development_samples": 840,
+        "groups": {
+          "0": 1879,
+          "1": 109,
+          "2": 86,
+          "3": 329,
+          "4": 115
+        },
+        "readback": [
+          {
+            "sample_id": "nominal-train-01:000:r3",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.1130774438381195,
+              "left": 0.0005958274006843567,
+              "turn": -0.0015305466949939728,
+              "stop_score": 0.006502188742160797,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-train-01:032:r3",
+            "decision": {
+              "ok": true,
+              "ready": true,
+              "forward": 0.0009559566155076027,
+              "left": -0.0007917314767837525,
+              "turn": -0.0005086619406938553,
+              "stop_score": 1.0,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:000:r3",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.03149365782737732,
+              "left": -0.00023331344127655031,
+              "turn": -0.0031320534646511076,
+              "stop_score": 0.0002531185746192932,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:047:r3",
+            "decision": {
+              "ok": true,
+              "ready": true,
+              "forward": 8.280370384454727e-05,
+              "left": -0.0009683817625045776,
+              "turn": -0.0002623166888952255,
+              "stop_score": 1.0,
+              "reason": "recovery_act_rgb"
+            }
+          }
+        ],
+        "parameters": 11419156,
+        "trainable_parameters": 252244,
+        "training_s": 205.34938025000156
+      }
+    },
+    "wall_s": 735.7438104999892,
+    "upstream_sha": "89236ea0f4f81a81ca566081e20dd1ff5f823cbe",
+    "environment": {
+      "python": "3.12.12 (main, Feb  4 2026, 01:57:59) [Clang 21.1.4 ]",
+      "platform": "macOS-27.0-arm64-arm-64bit",
+      "torch": "2.11.0",
+      "torchvision": "0.26.0",
+      "lerobot": "0.6.2",
+      "numpy": "2.2.6"
+    },
+    "external_model_calls": 0,
+    "report_path": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/aggregated-seed17-v1/report.json",
+    "report_sha256": "fe066df99b97c9e208ee3c316533db87c285651195c086b72bca61b3ee20fd4f",
+    "dataset_sha256": "2a1588409943c2de79652b12f26057129c94db039d6816ddd60d2205f94e1c3b",
+    "eligible_training_trajectories": 45,
+    "development_trajectories": 12
+  },
+  "bootstrap-seed16-v1": {
+    "source_sha": "c482f511cd8b013972c8f46de82308f1a7c078f4",
+    "seed": 20260916,
+    "steps": 5000,
+    "batch": 32,
+    "robots": {
+      "r1": {
+        "selected": {
+          "step": 5000,
+          "loss": 0.017080828547477722,
+          "development": {
+            "samples": 840,
+            "stop_samples": 82,
+            "missed_ready": 31,
+            "false_ready": 3,
+            "normalized_action_mae": [
+              0.04357069501004708,
+              0.017685104631774435,
+              0.02286070037753617
+            ],
+            "selection_score": 0.4456654502392003
+          },
+          "elapsed_s": 127.00059170799796
+        },
+        "samples": 2185,
+        "development_samples": 840,
+        "groups": {
+          "0": 1572,
+          "1": 72,
+          "2": 82,
+          "3": 364,
+          "4": 95
+        },
+        "readback": [
+          {
+            "sample_id": "nominal-train-01:000:r1",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.020446796715259553,
+              "left": -0.0018968947231769564,
+              "turn": 0.0008015614002943039,
+              "stop_score": 0.0,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-train-01:051:r1",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.0033541515469551085,
+              "left": 0.000420137494802475,
+              "turn": 0.003368091210722923,
+              "stop_score": 0.697026789188385,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:000:r1",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.034540841728448866,
+              "left": -0.005103401094675064,
+              "turn": -0.002613847330212593,
+              "stop_score": 0.027883755043148994,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:045:r1",
+            "decision": {
+              "ok": true,
+              "ready": true,
+              "forward": 0.0011236622929573059,
+              "left": 0.0005109004676342011,
+              "turn": 0.0017781782895326614,
+              "stop_score": 0.8004862666130066,
+              "reason": "recovery_act_rgb"
+            }
+          }
+        ],
+        "parameters": 11419156,
+        "trainable_parameters": 252244,
+        "training_s": 128.71478441599174
+      },
+      "r3": {
+        "selected": {
+          "step": 5000,
+          "loss": 0.039405494928359985,
+          "development": {
+            "samples": 840,
+            "stop_samples": 143,
+            "missed_ready": 66,
+            "false_ready": 23,
+            "normalized_action_mae": [
+              0.054417361237501176,
+              0.013706670063592113,
+              0.01773357501395552
+            ],
+            "selection_score": 0.8201433164411822
+          },
+          "elapsed_s": 134.26439129200298
+        },
+        "samples": 2185,
+        "development_samples": 840,
+        "groups": {
+          "0": 1594,
+          "1": 105,
+          "2": 86,
+          "3": 287,
+          "4": 113
+        },
+        "readback": [
+          {
+            "sample_id": "nominal-train-01:000:r3",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.1226711243391037,
+              "left": -0.0003218315541744232,
+              "turn": 0.0025258652865886686,
+              "stop_score": 0.018566656857728958,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-train-01:032:r3",
+            "decision": {
+              "ok": true,
+              "ready": true,
+              "forward": -0.001044093444943428,
+              "left": -0.00021888241171836854,
+              "turn": 0.0005224104970693588,
+              "stop_score": 0.9447070956230164,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:000:r3",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.051192855834960936,
+              "left": -0.0026930563151836397,
+              "turn": -0.001889916881918907,
+              "stop_score": 0.0,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:047:r3",
+            "decision": {
+              "ok": true,
+              "ready": true,
+              "forward": 4.445873200893402e-05,
+              "left": -0.0007761381566524506,
+              "turn": 0.0005032975226640701,
+              "stop_score": 0.9986158013343811,
+              "reason": "recovery_act_rgb"
+            }
+          }
+        ],
+        "parameters": 11419156,
+        "trainable_parameters": 252244,
+        "training_s": 136.3679130829987
+      }
+    },
+    "wall_s": 446.1812670000072,
+    "upstream_sha": "89236ea0f4f81a81ca566081e20dd1ff5f823cbe",
+    "environment": {
+      "python": "3.12.12 (main, Feb  4 2026, 01:57:59) [Clang 21.1.4 ]",
+      "platform": "macOS-27.0-arm64-arm-64bit",
+      "torch": "2.11.0",
+      "torchvision": "0.26.0",
+      "lerobot": "0.6.2",
+      "numpy": "2.2.6"
+    },
+    "external_model_calls": 0,
+    "report_path": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/bootstrap-seed16-v1/report.json",
+    "report_sha256": "cb82b605259cf1a9b997ba3097f4ff9ec4eb349648497677da37d5dd40d1fe01",
+    "dataset_sha256": "c08735ade4ffe801395fb6d0ff4b5c5d21cd95bd2a3f1d90b8540fcd3931b3a3",
+    "eligible_training_trajectories": 36,
+    "development_trajectories": 12
+  },
+  "nominal-seed16-v1": {
+    "source_sha": "c482f511cd8b013972c8f46de82308f1a7c078f4",
+    "seed": 20260916,
+    "steps": 10000,
+    "batch": 32,
+    "robots": {
+      "r1": {
+        "selected": {
+          "step": 6500,
+          "loss": 0.0032819020561873913,
+          "development": {
+            "samples": 840,
+            "stop_samples": 82,
+            "missed_ready": 21,
+            "false_ready": 38,
+            "normalized_action_mae": [
+              0.08640509699904991,
+              0.013822124069290485,
+              0.017708476145855315
+            ],
+            "selection_score": 0.7967287212607286
+          },
+          "elapsed_s": 169.95007870800328
+        },
+        "samples": 2693,
+        "development_samples": 840,
+        "groups": {
+          "0": 2218,
+          "3": 475
+        },
+        "readback": [
+          {
+            "sample_id": "nominal-train-01:000:r1",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.0716650664806366,
+              "left": 1.752525568008423e-05,
+              "turn": 0.0006516482681035995,
+              "stop_score": 0.0,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-train-01:051:r1",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.005737127177417278,
+              "left": -0.00022142678499221803,
+              "turn": 0.000567757710814476,
+              "stop_score": 0.0,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:000:r1",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.08626955151557922,
+              "left": -0.00022853463888168336,
+              "turn": 0.0005561191588640213,
+              "stop_score": 0.0,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:045:r1",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.00296409297734499,
+              "left": -0.0003587976098060608,
+              "turn": -0.00016857124865055084,
+              "stop_score": 0.5293712615966797,
+              "reason": "recovery_act_rgb"
+            }
+          }
+        ],
+        "parameters": 11419156,
+        "trainable_parameters": 252244,
+        "training_s": 267.15442520799115
+      },
+      "r3": {
+        "selected": {
+          "step": 2000,
+          "loss": 0.007869643159210682,
+          "development": {
+            "samples": 840,
+            "stop_samples": 143,
+            "missed_ready": 25,
+            "false_ready": 46,
+            "normalized_action_mae": [
+              0.07871094372536806,
+              0.011448374981149319,
+              0.019302941291638866
+            ],
+            "selection_score": 0.8712839004199691
+          },
+          "elapsed_s": 49.347342207998736
+        },
+        "samples": 2693,
+        "development_samples": 840,
+        "groups": {
+          "0": 2290,
+          "3": 403
+        },
+        "readback": [
+          {
+            "sample_id": "nominal-train-01:000:r3",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.115406334400177,
+              "left": 0.0006066471338272095,
+              "turn": -0.0013805732131004333,
+              "stop_score": 0.0,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-train-01:032:r3",
+            "decision": {
+              "ok": true,
+              "ready": true,
+              "forward": 0.0010456044226884841,
+              "left": 5.526095628738403e-05,
+              "turn": -0.0020011212676763535,
+              "stop_score": 1.0,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:000:r3",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.08604307472705841,
+              "left": 0.00034112930297851567,
+              "turn": 0.0005208492279052734,
+              "stop_score": 0.0,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:047:r3",
+            "decision": {
+              "ok": true,
+              "ready": true,
+              "forward": 0.0010549519211053848,
+              "left": -4.2790174484252935e-05,
+              "turn": -0.0022751994431018828,
+              "stop_score": 1.0,
+              "reason": "recovery_act_rgb"
+            }
+          }
+        ],
+        "parameters": 11419156,
+        "trainable_parameters": 252244,
+        "training_s": 333.236209167022
+      }
+    },
+    "wall_s": 809.3958095420094,
+    "upstream_sha": "89236ea0f4f81a81ca566081e20dd1ff5f823cbe",
+    "environment": {
+      "python": "3.12.12 (main, Feb  4 2026, 01:57:59) [Clang 21.1.4 ]",
+      "platform": "macOS-27.0-arm64-arm-64bit",
+      "torch": "2.11.0",
+      "torchvision": "0.26.0",
+      "lerobot": "0.6.2",
+      "numpy": "2.2.6"
+    },
+    "external_model_calls": 0,
+    "report_path": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/nominal-seed16-v1/report.json",
+    "report_sha256": "fb9f8125da0de2cbb9b1d287cc9e6ca15a8074e7bf660d9033190981e673e107",
+    "dataset_sha256": "520cad1c0cfa3f9c1f392e622afcf23b8a12e2f47701602adfd9d8ca6322f792",
+    "eligible_training_trajectories": 48,
+    "development_trajectories": 12
+  },
+  "nominal-seed17-v1": {
+    "source_sha": "c482f511cd8b013972c8f46de82308f1a7c078f4",
+    "seed": 20260917,
+    "steps": 10000,
+    "batch": 32,
+    "robots": {
+      "r1": {
+        "selected": {
+          "step": 5500,
+          "loss": 0.004422314465045929,
+          "development": {
+            "samples": 840,
+            "stop_samples": 82,
+            "missed_ready": 20,
+            "false_ready": 29,
+            "normalized_action_mae": [
+              0.10208916913372061,
+              0.015390028809152875,
+              0.019016808822189354
+            ],
+            "selection_score": 0.6719868599249696
+          },
+          "elapsed_s": 181.79415204099496
+        },
+        "samples": 2693,
+        "development_samples": 840,
+        "groups": {
+          "0": 2218,
+          "3": 475
+        },
+        "readback": [
+          {
+            "sample_id": "nominal-train-01:000:r1",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.07639362215995789,
+              "left": 0.0002543024718761444,
+              "turn": 0.0002859821543097496,
+              "stop_score": 4.3585896492004395e-06,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-train-01:051:r1",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.005543752759695053,
+              "left": 0.00019377395510673524,
+              "turn": 0.001362547092139721,
+              "stop_score": 0.007430478930473328,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:000:r1",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.09136641919612884,
+              "left": 0.0006839536130428315,
+              "turn": 0.0007017312571406364,
+              "stop_score": 0.0,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:045:r1",
+            "decision": {
+              "ok": true,
+              "ready": true,
+              "forward": 0.0012546613812446593,
+              "left": 0.00035047009587287905,
+              "turn": 0.001561821810901165,
+              "stop_score": 0.8104324340820312,
+              "reason": "recovery_act_rgb"
+            }
+          }
+        ],
+        "parameters": 11419156,
+        "trainable_parameters": 252244,
+        "training_s": 324.23194262501784
+      },
+      "r3": {
+        "selected": {
+          "step": 1000,
+          "loss": 0.01736200973391533,
+          "development": {
+            "samples": 840,
+            "stop_samples": 143,
+            "missed_ready": 143,
+            "false_ready": 0,
+            "normalized_action_mae": [
+              0.09479410984676111,
+              0.020939249466217665,
+              0.022551549468279676
+            ],
+            "selection_score": 1.046094969593753
+          },
+          "elapsed_s": 21.44052775000455
+        },
+        "samples": 2693,
+        "development_samples": 840,
+        "groups": {
+          "0": 2290,
+          "3": 403
+        },
+        "readback": [
+          {
+            "sample_id": "nominal-train-01:000:r3",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.11169945001602173,
+              "left": 0.0010878831148147584,
+              "turn": -0.003177797980606556,
+              "stop_score": 0.0267166867852211,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-train-01:032:r3",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.006068597920238971,
+              "left": -0.0016347259283065797,
+              "turn": -0.0008107753470540047,
+              "stop_score": 0.9855300784111023,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:000:r3",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.09206333756446838,
+              "left": 0.0010393261909484863,
+              "turn": -0.0011066319420933723,
+              "stop_score": 0.023688681423664093,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:047:r3",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.005659659393131733,
+              "left": -0.0017960652709007264,
+              "turn": -0.0002713099122047424,
+              "stop_score": 1.0,
+              "reason": "recovery_act_rgb"
+            }
+          }
+        ],
+        "parameters": 11419156,
+        "trainable_parameters": 252244,
+        "training_s": 331.9820029590046
+      }
+    },
+    "wall_s": 906.1398547500139,
+    "upstream_sha": "89236ea0f4f81a81ca566081e20dd1ff5f823cbe",
+    "environment": {
+      "python": "3.12.12 (main, Feb  4 2026, 01:57:59) [Clang 21.1.4 ]",
+      "platform": "macOS-27.0-arm64-arm-64bit",
+      "torch": "2.11.0",
+      "torchvision": "0.26.0",
+      "lerobot": "0.6.2",
+      "numpy": "2.2.6"
+    },
+    "external_model_calls": 0,
+    "report_path": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/nominal-seed17-v1/report.json",
+    "report_sha256": "0c6c377345410f3a3981da0b840602393493a801ba5aa2d7d6caea3961c27a65",
+    "dataset_sha256": "520cad1c0cfa3f9c1f392e622afcf23b8a12e2f47701602adfd9d8ca6322f792",
+    "eligible_training_trajectories": 48,
+    "development_trajectories": 12
+  },
+  "recovery-seed16-v1": {
+    "source_sha": "c482f511cd8b013972c8f46de82308f1a7c078f4",
+    "seed": 20260916,
+    "steps": 10000,
+    "batch": 32,
+    "robots": {
+      "r1": {
+        "selected": {
+          "step": 10000,
+          "loss": 0.010279622860252857,
+          "development": {
+            "samples": 840,
+            "stop_samples": 82,
+            "missed_ready": 5,
+            "false_ready": 6,
+            "normalized_action_mae": [
+              0.02918392651866346,
+              0.007317416618090309,
+              0.006305799985960732
+            ],
+            "selection_score": 0.15440033028688807
+          },
+          "elapsed_s": 327.0794682500127
+        },
+        "samples": 2984,
+        "development_samples": 840,
+        "groups": {
+          "0": 2032,
+          "1": 142,
+          "2": 169,
+          "3": 436,
+          "4": 205
+        },
+        "readback": [
+          {
+            "sample_id": "nominal-train-01:000:r1",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.012743816524744033,
+              "left": 0.0015015974640846252,
+              "turn": -0.0012123037129640579,
+              "stop_score": 0.0,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-train-01:051:r1",
+            "decision": {
+              "ok": true,
+              "ready": true,
+              "forward": 4.9178302288055416e-05,
+              "left": 0.00035288557410240173,
+              "turn": 0.0003393564373254776,
+              "stop_score": 0.726626992225647,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:000:r1",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.07035721242427825,
+              "left": -0.0019469551742076876,
+              "turn": -0.0012595955282449721,
+              "stop_score": 0.005629498511552811,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:045:r1",
+            "decision": {
+              "ok": true,
+              "ready": true,
+              "forward": -0.0006307013332843781,
+              "left": 0.0002039201557636261,
+              "turn": -0.00034187324345111845,
+              "stop_score": 0.9629676342010498,
+              "reason": "recovery_act_rgb"
+            }
+          }
+        ],
+        "parameters": 11419156,
+        "trainable_parameters": 252244,
+        "training_s": 330.022370916995
+      },
+      "r3": {
+        "selected": {
+          "step": 10000,
+          "loss": 0.011163800023496151,
+          "development": {
+            "samples": 840,
+            "stop_samples": 143,
+            "missed_ready": 8,
+            "false_ready": 14,
+            "normalized_action_mae": [
+              0.03246800112773404,
+              0.00759171443574486,
+              0.007919450669795672
+            ],
+            "selection_score": 0.2727979434928806
+          },
+          "elapsed_s": 297.8585940829944
+        },
+        "samples": 2984,
+        "development_samples": 840,
+        "groups": {
+          "0": 2049,
+          "1": 167,
+          "2": 172,
+          "3": 342,
+          "4": 254
+        },
+        "readback": [
+          {
+            "sample_id": "nominal-train-01:000:r3",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.12453915774822234,
+              "left": -0.00017438009381294252,
+              "turn": 0.0010011535137891769,
+              "stop_score": 0.00112195685505867,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-train-01:032:r3",
+            "decision": {
+              "ok": true,
+              "ready": true,
+              "forward": 0.0001980392262339592,
+              "left": 0.00016628727316856385,
+              "turn": -0.00017638541758060455,
+              "stop_score": 0.9988038539886475,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:000:r3",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.08111636638641358,
+              "left": -5.673542618751526e-05,
+              "turn": 3.662668168544769e-05,
+              "stop_score": 0.0,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:047:r3",
+            "decision": {
+              "ok": true,
+              "ready": true,
+              "forward": 0.00034430455416440965,
+              "left": -6.331875920295715e-05,
+              "turn": -0.00016574598848819732,
+              "stop_score": 0.9995856285095215,
+              "reason": "recovery_act_rgb"
+            }
+          }
+        ],
+        "parameters": 11419156,
+        "trainable_parameters": 252244,
+        "training_s": 299.8147566670086
+      }
+    },
+    "wall_s": 932.3248709169857,
+    "upstream_sha": "89236ea0f4f81a81ca566081e20dd1ff5f823cbe",
+    "environment": {
+      "python": "3.12.12 (main, Feb  4 2026, 01:57:59) [Clang 21.1.4 ]",
+      "platform": "macOS-27.0-arm64-arm-64bit",
+      "torch": "2.11.0",
+      "torchvision": "0.26.0",
+      "lerobot": "0.6.2",
+      "numpy": "2.2.6"
+    },
+    "external_model_calls": 0,
+    "report_path": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/recovery-seed16-v1/report.json",
+    "report_sha256": "d81ce69f16c9565b02900a2f61c2b052fed04b8bb95d1bde4b3f0fc8e8829425",
+    "dataset_sha256": "2c96f2a50c242f916f1a6a02f6fc251df1979e3cb77c22be538850c1df0d8f35",
+    "eligible_training_trajectories": 48,
+    "development_trajectories": 12
+  },
+  "recovery-seed17-v1": {
+    "source_sha": "c482f511cd8b013972c8f46de82308f1a7c078f4",
+    "seed": 20260917,
+    "steps": 10000,
+    "batch": 32,
+    "robots": {
+      "r1": {
+        "selected": {
+          "step": 10000,
+          "loss": 0.00942493136972189,
+          "development": {
+            "samples": 840,
+            "stop_samples": 82,
+            "missed_ready": 0,
+            "false_ready": 6,
+            "normalized_action_mae": [
+              0.02888672624762939,
+              0.006341522133776126,
+              0.004413540439675905
+            ],
+            "selection_score": 0.09236960243024614
+          },
+          "elapsed_s": 365.7439761249989
+        },
+        "samples": 2984,
+        "development_samples": 840,
+        "groups": {
+          "0": 2032,
+          "1": 142,
+          "2": 169,
+          "3": 436,
+          "4": 205
+        },
+        "readback": [
+          {
+            "sample_id": "nominal-train-01:000:r1",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.025709328800439833,
+              "left": 0.00275513157248497,
+              "turn": -0.0024283234030008315,
+              "stop_score": 0.009213171899318695,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-train-01:051:r1",
+            "decision": {
+              "ok": true,
+              "ready": true,
+              "forward": -0.00023903846740722654,
+              "left": 0.0001270569860935211,
+              "turn": -0.00019788108766078947,
+              "stop_score": 0.9561381340026855,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:000:r1",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.04624029994010925,
+              "left": -0.0003079004585742951,
+              "turn": -0.0010585762560367583,
+              "stop_score": 0.0019943341612815857,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:045:r1",
+            "decision": {
+              "ok": true,
+              "ready": true,
+              "forward": -9.139180183410644e-05,
+              "left": 7.962808012962341e-05,
+              "turn": -0.00016527436673641205,
+              "stop_score": 0.9985724687576294,
+              "reason": "recovery_act_rgb"
+            }
+          }
+        ],
+        "parameters": 11419156,
+        "trainable_parameters": 252244,
+        "training_s": 368.81801337501383
+      },
+      "r3": {
+        "selected": {
+          "step": 9000,
+          "loss": 0.006442515645176172,
+          "development": {
+            "samples": 840,
+            "stop_samples": 143,
+            "missed_ready": 2,
+            "false_ready": 13,
+            "normalized_action_mae": [
+              0.03498672077962652,
+              0.007151837400382479,
+              0.00968071009687266
+            ],
+            "selection_score": 0.217772733253822
+          },
+          "elapsed_s": 321.24616129198694
+        },
+        "samples": 2984,
+        "development_samples": 840,
+        "groups": {
+          "0": 2049,
+          "1": 167,
+          "2": 172,
+          "3": 342,
+          "4": 254
+        },
+        "readback": [
+          {
+            "sample_id": "nominal-train-01:000:r3",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.12168557345867156,
+              "left": -2.133697271347046e-05,
+              "turn": -0.00019875112920999526,
+              "stop_score": 0.0014318302273750305,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-train-01:032:r3",
+            "decision": {
+              "ok": true,
+              "ready": true,
+              "forward": 2.502612769603729e-05,
+              "left": -8.337944746017456e-05,
+              "turn": 0.00025183763355016706,
+              "stop_score": 1.0,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:000:r3",
+            "decision": {
+              "ok": true,
+              "ready": false,
+              "forward": 0.052160668373107906,
+              "left": 0.00010451674461364746,
+              "turn": -0.002051890455186367,
+              "stop_score": 0.0,
+              "reason": "recovery_act_rgb"
+            }
+          },
+          {
+            "sample_id": "nominal-dev-01:047:r3",
+            "decision": {
+              "ok": true,
+              "ready": true,
+              "forward": -3.503076732158661e-05,
+              "left": -8.630454540252686e-05,
+              "turn": 0.0002158675342798233,
+              "stop_score": 1.0,
+              "reason": "recovery_act_rgb"
+            }
+          }
+        ],
+        "parameters": 11419156,
+        "trainable_parameters": 252244,
+        "training_s": 351.1072351250041
+      }
+    },
+    "wall_s": 1013.3723817919963,
+    "upstream_sha": "89236ea0f4f81a81ca566081e20dd1ff5f823cbe",
+    "environment": {
+      "python": "3.12.12 (main, Feb  4 2026, 01:57:59) [Clang 21.1.4 ]",
+      "platform": "macOS-27.0-arm64-arm-64bit",
+      "torch": "2.11.0",
+      "torchvision": "0.26.0",
+      "lerobot": "0.6.2",
+      "numpy": "2.2.6"
+    },
+    "external_model_calls": 0,
+    "report_path": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/recovery-seed17-v1/report.json",
+    "report_sha256": "66e3f6239e0b8c3a5ca866c518d9f3b6dfd59d597480285a2772b617d71b9ad9",
+    "dataset_sha256": "2c96f2a50c242f916f1a6a02f6fc251df1979e3cb77c22be538850c1df0d8f35",
+    "eligible_training_trajectories": 48,
+    "development_trajectories": 12
+  }
+}

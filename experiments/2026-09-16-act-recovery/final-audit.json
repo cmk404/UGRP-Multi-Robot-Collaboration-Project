@@ -1,0 +1,6184 @@
+{
+  "audit_source_sha": "a43826315049c33e3611003b6d64c13d4f4cee11",
+  "scope": "All file/image hashes and actions, paired initial physics/RGB, recomputed common alignment and grasp; sampled first/middle/last and ready-transition native ACT decisions. Teacher/data information never used to correct live students.",
+  "raw_files_verified": 53982,
+  "image_references_verified": 156156,
+  "actions_verified": 33906,
+  "model_decisions_replayed": 777,
+  "teacher_decisions_replayed": 5338,
+  "runs": [
+    {
+      "id": "nominal-01",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal_teacher/nominal-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0019485630737597903,
+          "y": 1.3127040054961014e-07,
+          "yaw": 4.424678916592484e-07,
+          "linear_speed": 0.0006110702480877176,
+          "angular_speed": 1.5765522221045159e-09
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": true,
+      "contact_steps": 0,
+      "approach_sim_s": 4.19999999999966,
+      "wall_s": 8.26877174997935,
+      "error": null,
+      "condition": "nominal_teacher",
+      "physical_grasp_success": true,
+      "total_sim_s": 19.860000000000003,
+      "action_count": 42
+    },
+    {
+      "id": "nominal-01",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery_teacher/nominal-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.001579172654199823,
+          "y": 1.3867090586927588e-08,
+          "yaw": 2.4721855229614675e-08,
+          "linear_speed": 8.107143410374179e-05,
+          "angular_speed": 4.6516568374954824e-10
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": true,
+      "contact_steps": 0,
+      "approach_sim_s": 10.800000000000576,
+      "wall_s": 12.73839283300913,
+      "error": null,
+      "condition": "recovery_teacher",
+      "physical_grasp_success": true,
+      "total_sim_s": 26.46,
+      "action_count": 108
+    },
+    {
+      "id": "nominal-01",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal16/nominal-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.3073948865103818,
+          "y": 0.013030359021974247,
+          "yaw": 0.008485710880916653,
+          "linear_speed": 0.0021287126592675755,
+          "angular_speed": 0.00011546934084005592
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 32.434555624990026,
+      "error": null,
+      "condition": "nominal16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "nominal-01",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal17/nominal-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.18699489823383764,
+          "y": 0.018797739636585042,
+          "yaw": 0.011804353637661524,
+          "linear_speed": 0.0012241957898534415,
+          "angular_speed": 1.2943797251807425e-05
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.045309792010812,
+      "error": null,
+      "condition": "nominal17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "nominal-01",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery16/nominal-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0019731548800995258,
+          "y": 0.0007177672830076531,
+          "yaw": 0.0016543626881291296,
+          "linear_speed": 8.47404315390548e-05,
+          "angular_speed": 9.865569250422578e-08
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": true,
+      "contact_steps": 0,
+      "approach_sim_s": 19.799999999999404,
+      "wall_s": 25.8159472909756,
+      "error": null,
+      "condition": "recovery16",
+      "physical_grasp_success": true,
+      "total_sim_s": 35.46,
+      "action_count": 198
+    },
+    {
+      "id": "nominal-01",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery17/nominal-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.013375497433711248,
+          "y": 0.001979213749953246,
+          "yaw": 0.0033692472028175047,
+          "linear_speed": 0.001888959612130711,
+          "angular_speed": 1.1537865951538443e-06
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.694768874993315,
+      "error": null,
+      "condition": "recovery17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "nominal-01",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated16/nominal-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0026227910259790654,
+          "y": 0.0008249910742481603,
+          "yaw": 0.0023110526255880615,
+          "linear_speed": 2.7400426456793905e-05,
+          "angular_speed": 1.3688295830149662e-07
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": true,
+      "contact_steps": 0,
+      "approach_sim_s": 18.20000000000029,
+      "wall_s": 24.147820749989478,
+      "error": null,
+      "condition": "aggregated16",
+      "physical_grasp_success": true,
+      "total_sim_s": 33.86,
+      "action_count": 182
+    },
+    {
+      "id": "nominal-01",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated17/nominal-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0036254928965869793,
+          "y": 0.0016123964054446382,
+          "yaw": 0.009431419477017755,
+          "linear_speed": 0.00010520346062626321,
+          "angular_speed": 2.2559654988540634e-06
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 32.7282132920227,
+      "error": null,
+      "condition": "aggregated17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "nominal-02",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal_teacher/nominal-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0031975529072523212,
+          "y": 3.6971529615570375e-08,
+          "yaw": 1.067759867190432e-07,
+          "linear_speed": 0.0006571460953877059,
+          "angular_speed": 4.05499633870933e-09
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": true,
+      "contact_steps": 0,
+      "approach_sim_s": 4.19999999999966,
+      "wall_s": 8.205866290983977,
+      "error": null,
+      "condition": "nominal_teacher",
+      "physical_grasp_success": true,
+      "total_sim_s": 19.860000000000003,
+      "action_count": 42
+    },
+    {
+      "id": "nominal-02",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery_teacher/nominal-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0017276021928016583,
+          "y": 1.289113122915353e-07,
+          "yaw": 6.259274103470602e-07,
+          "linear_speed": 8.107144049529544e-05,
+          "angular_speed": 1.633715385196416e-10
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": true,
+      "contact_steps": 0,
+      "approach_sim_s": 11.400000000000777,
+      "wall_s": 13.151791999989655,
+      "error": null,
+      "condition": "recovery_teacher",
+      "physical_grasp_success": true,
+      "total_sim_s": 27.060000000000002,
+      "action_count": 114
+    },
+    {
+      "id": "nominal-02",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal16/nominal-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.2819712841610976,
+          "y": 0.010088941920931349,
+          "yaw": 0.006779032607318047,
+          "linear_speed": 0.0041021161507933356,
+          "angular_speed": 0.002137828887014536
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.84263633401133,
+      "error": null,
+      "condition": "nominal16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "nominal-02",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal17/nominal-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.1830325944206509,
+          "y": 0.018602206390713416,
+          "yaw": 0.008818168501867785,
+          "linear_speed": 0.0006432321988028951,
+          "angular_speed": 1.6153514574845698e-05
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 30.69942841702141,
+      "error": null,
+      "condition": "nominal17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "nominal-02",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery16/nominal-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.002213955394540723,
+          "y": 0.0009739312474543738,
+          "yaw": 0.001582322556950011,
+          "linear_speed": 6.280267404665868e-05,
+          "angular_speed": 4.4848107449978944e-08
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": true,
+      "contact_steps": 0,
+      "approach_sim_s": 18.20000000000029,
+      "wall_s": 24.118658209015848,
+      "error": null,
+      "condition": "recovery16",
+      "physical_grasp_success": true,
+      "total_sim_s": 33.86,
+      "action_count": 182
+    },
+    {
+      "id": "nominal-02",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery17/nominal-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0023037754649601894,
+          "y": 0.0009800291799906269,
+          "yaw": 0.0011859462154406586,
+          "linear_speed": 3.5165206898736716e-05,
+          "angular_speed": 9.818557744622896e-07
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.342473083001096,
+      "error": null,
+      "condition": "recovery17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "nominal-02",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated16/nominal-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.001909790197730632,
+          "y": 0.0008002296775135864,
+          "yaw": 0.00011312020489739893,
+          "linear_speed": 1.5532638610989607e-05,
+          "angular_speed": 1.1713148229119993e-07
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": true,
+      "contact_steps": 0,
+      "approach_sim_s": 14.800000000001912,
+      "wall_s": 21.174792791018263,
+      "error": null,
+      "condition": "aggregated16",
+      "physical_grasp_success": true,
+      "total_sim_s": 30.46,
+      "action_count": 148
+    },
+    {
+      "id": "nominal-02",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated17/nominal-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0017526217076343498,
+          "y": 0.0010273360091499484,
+          "yaw": 0.004168613724737202,
+          "linear_speed": 2.014876380948546e-05,
+          "angular_speed": 4.684726029324726e-07
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": true,
+      "contact_steps": 0,
+      "approach_sim_s": 15.200000000001955,
+      "wall_s": 22.054937208013143,
+      "error": null,
+      "condition": "aggregated17",
+      "physical_grasp_success": true,
+      "total_sim_s": 30.860000000000003,
+      "action_count": 152
+    },
+    {
+      "id": "nominal-03",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal_teacher/nominal-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.003160496276819913,
+          "y": 3.778823187694513e-08,
+          "yaw": 1.1290384938078546e-07,
+          "linear_speed": 0.0006556575476013321,
+          "angular_speed": 1.2719514330683569e-09
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": true,
+      "contact_steps": 0,
+      "approach_sim_s": 4.19999999999966,
+      "wall_s": 8.15900962500018,
+      "error": null,
+      "condition": "nominal_teacher",
+      "physical_grasp_success": true,
+      "total_sim_s": 19.860000000000003,
+      "action_count": 42
+    },
+    {
+      "id": "nominal-03",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery_teacher/nominal-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0017754588032498075,
+          "y": 2.5601781805661972e-08,
+          "yaw": 9.300923453636756e-08,
+          "linear_speed": 8.107141339364178e-05,
+          "angular_speed": 1.814148831158465e-10
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": true,
+      "contact_steps": 0,
+      "approach_sim_s": 10.000000000000309,
+      "wall_s": 12.156820416013943,
+      "error": null,
+      "condition": "recovery_teacher",
+      "physical_grasp_success": true,
+      "total_sim_s": 25.66,
+      "action_count": 100
+    },
+    {
+      "id": "nominal-03",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal16/nominal-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.30406254090841234,
+          "y": 0.013482036269199194,
+          "yaw": 0.009526857483880935,
+          "linear_speed": 0.008196137867273164,
+          "angular_speed": 0.0008011536194940547
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.963083582988475,
+      "error": null,
+      "condition": "nominal16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "nominal-03",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal17/nominal-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.18052229869314684,
+          "y": 0.019057405533929428,
+          "yaw": 0.008791990138008465,
+          "linear_speed": 0.00018750133507187028,
+          "angular_speed": 2.1378788654935172e-05
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 30.446180790982908,
+      "error": null,
+      "condition": "nominal17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "nominal-03",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery16/nominal-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.001841285039895002,
+          "y": 0.000611490569402573,
+          "yaw": 0.0016791395420758803,
+          "linear_speed": 8.997801501020494e-05,
+          "angular_speed": 1.2877379429454367e-06
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.219222290994367,
+      "error": null,
+      "condition": "recovery16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "nominal-03",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery17/nominal-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0022279864472353195,
+          "y": 0.000635305362370886,
+          "yaw": 7.439679551968226e-05,
+          "linear_speed": 8.847871004984766e-05,
+          "angular_speed": 7.22408861619773e-07
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.343404082988854,
+      "error": null,
+      "condition": "recovery17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "nominal-03",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated16/nominal-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.002610660634883577,
+          "y": 0.0014666137560492842,
+          "yaw": 0.0016353109990472348,
+          "linear_speed": 4.271339230042343e-05,
+          "angular_speed": 1.007515582074369e-07
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": true,
+      "contact_steps": 0,
+      "approach_sim_s": 17.800000000000512,
+      "wall_s": 23.77394179199473,
+      "error": null,
+      "condition": "aggregated16",
+      "physical_grasp_success": true,
+      "total_sim_s": 33.46,
+      "action_count": 178
+    },
+    {
+      "id": "nominal-03",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated17/nominal-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0036375068807529276,
+          "y": 0.0003680207438123695,
+          "yaw": 0.006569067407901308,
+          "linear_speed": 9.111891212398014e-05,
+          "angular_speed": 1.8638736998255203e-06
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 32.929886208003154,
+      "error": null,
+      "condition": "aggregated17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "nominal-04",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal_teacher/nominal-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0012287269056744377,
+          "y": 8.75573702430188e-09,
+          "yaw": 3.81347078359795e-08,
+          "linear_speed": 0.0005711305525657542,
+          "angular_speed": 1.7143308994604982e-09
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": true,
+      "contact_steps": 0,
+      "approach_sim_s": 4.19999999999966,
+      "wall_s": 8.203081791987643,
+      "error": null,
+      "condition": "nominal_teacher",
+      "physical_grasp_success": true,
+      "total_sim_s": 19.860000000000003,
+      "action_count": 42
+    },
+    {
+      "id": "nominal-04",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery_teacher/nominal-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.001705803766219427,
+          "y": 3.025240302712007e-08,
+          "yaw": 1.244982206216605e-08,
+          "linear_speed": 8.107144327973491e-05,
+          "angular_speed": 4.469757897140896e-10
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": true,
+      "contact_steps": 0,
+      "approach_sim_s": 11.600000000000843,
+      "wall_s": 13.40589125000406,
+      "error": null,
+      "condition": "recovery_teacher",
+      "physical_grasp_success": true,
+      "total_sim_s": 27.26,
+      "action_count": 116
+    },
+    {
+      "id": "nominal-04",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal16/nominal-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.27140446554407915,
+          "y": 0.009194632538014558,
+          "yaw": 0.00633235503529983,
+          "linear_speed": 0.01342153745083924,
+          "angular_speed": 0.0024983049714366245
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.794352999975672,
+      "error": null,
+      "condition": "nominal16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "nominal-04",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal17/nominal-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.18020312654264647,
+          "y": 0.01910645512045339,
+          "yaw": 0.009609614834153124,
+          "linear_speed": 4.7825112859455204e-05,
+          "angular_speed": 1.868516285252726e-05
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 32.53796412498923,
+      "error": null,
+      "condition": "nominal17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "nominal-04",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery16/nominal-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0025845194892769596,
+          "y": 0.0004794137916892538,
+          "yaw": 0.0022134778015159284,
+          "linear_speed": 7.586158454395778e-05,
+          "angular_speed": 9.038084058943113e-08
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": true,
+      "contact_steps": 0,
+      "approach_sim_s": 15.200000000001955,
+      "wall_s": 21.407201416994212,
+      "error": null,
+      "condition": "recovery16",
+      "physical_grasp_success": true,
+      "total_sim_s": 30.860000000000003,
+      "action_count": 152
+    },
+    {
+      "id": "nominal-04",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery17/nominal-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0024756451777143695,
+          "y": 0.0005719338617073966,
+          "yaw": 0.0015437387374759304,
+          "linear_speed": 5.235301449945851e-05,
+          "angular_speed": 1.4199217801546892e-07
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.493762875004904,
+      "error": null,
+      "condition": "recovery17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "nominal-04",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated16/nominal-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0020685195560005143,
+          "y": 0.00034539742694228437,
+          "yaw": 0.0009475879926292841,
+          "linear_speed": 8.947109885045542e-05,
+          "angular_speed": 7.219731479324206e-08
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": true,
+      "contact_steps": 0,
+      "approach_sim_s": 14.200000000001712,
+      "wall_s": 20.939706083998317,
+      "error": null,
+      "condition": "aggregated16",
+      "physical_grasp_success": true,
+      "total_sim_s": 29.860000000000003,
+      "action_count": 142
+    },
+    {
+      "id": "nominal-04",
+      "group": "nominal",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated17/nominal-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.001501434871709506,
+          "y": 0.001271838945399617,
+          "yaw": 0.002702315645763065,
+          "linear_speed": 3.1094930245605465e-05,
+          "angular_speed": 6.01695266944104e-07
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": true,
+      "contact_steps": 0,
+      "approach_sim_s": 21.799999999998295,
+      "wall_s": 28.735656417004066,
+      "error": null,
+      "condition": "aggregated17",
+      "physical_grasp_success": true,
+      "total_sim_s": 37.46,
+      "action_count": 218
+    },
+    {
+      "id": "yaw_lateral-01",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal_teacher/yaw_lateral-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": true,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0011746768507305827,
+          "y": 0.012290655014177032,
+          "yaw": 0.15241963328580477,
+          "linear_speed": 0.0006289404088161446,
+          "angular_speed": 1.5932499763948782e-09
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 37,
+      "approach_sim_s": 4.19999999999966,
+      "wall_s": 8.132615915994393,
+      "error": null,
+      "condition": "nominal_teacher",
+      "physical_grasp_success": false,
+      "total_sim_s": 19.860000000000003,
+      "action_count": 42
+    },
+    {
+      "id": "yaw_lateral-01",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery_teacher/yaw_lateral-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.001631745859530187,
+          "y": 0.0011946674137042201,
+          "yaw": 0.007970777482853464,
+          "linear_speed": 8.107136327294875e-05,
+          "angular_speed": 2.0170531911389556e-11
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 24.999999999996522,
+      "wall_s": 22.742257874982897,
+      "error": null,
+      "condition": "recovery_teacher",
+      "physical_grasp_success": true,
+      "total_sim_s": 40.660000000000004,
+      "action_count": 250
+    },
+    {
+      "id": "yaw_lateral-01",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal16/yaw_lateral-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.3543493721078663,
+          "y": 0.05556270667355534,
+          "yaw": 0.18146685176421729,
+          "linear_speed": 0.012686934863930155,
+          "angular_speed": 0.0031754882590639515
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 226,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.72330733301351,
+      "error": null,
+      "condition": "nominal16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "yaw_lateral-01",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal17/yaw_lateral-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 1.2102522680494725,
+          "y": 0.2858560778777055,
+          "yaw": 0.3008417511077073,
+          "linear_speed": 0.0454242585326412,
+          "angular_speed": 0.0034738684890144927
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 33.01538666698616,
+      "error": null,
+      "condition": "nominal17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "yaw_lateral-01",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery16/yaw_lateral-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.002752044940093734,
+          "y": 0.000646070542251076,
+          "yaw": 0.023683853751271133,
+          "linear_speed": 3.41006167544591e-05,
+          "angular_speed": 8.84236119880187e-07
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.495884584001033,
+      "error": null,
+      "condition": "recovery16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "yaw_lateral-01",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery17/yaw_lateral-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": true,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.004023013524700025,
+          "y": 0.0012791629341621924,
+          "yaw": 0.01910367058630147,
+          "linear_speed": 1.3270843009947783e-06,
+          "angular_speed": 8.795173478404069e-09
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 25.999999999995968,
+      "wall_s": 31.21619104099227,
+      "error": null,
+      "condition": "recovery17",
+      "physical_grasp_success": false,
+      "total_sim_s": 41.660000000000004,
+      "action_count": 260
+    },
+    {
+      "id": "yaw_lateral-01",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated16/yaw_lateral-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.07248092754864655,
+          "y": 0.06247761403834251,
+          "yaw": 0.6200726824242739,
+          "linear_speed": 0.00019404603736437377,
+          "angular_speed": 0.003389547086807228
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 14197,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 32.05432250001468,
+      "error": null,
+      "condition": "aggregated16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "yaw_lateral-01",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated17/yaw_lateral-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.023128560090005634,
+          "y": 0.01104949545529288,
+          "yaw": 2.0182098565047406,
+          "linear_speed": 0.0029995870040332314,
+          "angular_speed": 0.0365249276733998
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 7514,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 32.163460750016384,
+      "error": null,
+      "condition": "aggregated17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "yaw_lateral-02",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal_teacher/yaw_lateral-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": true,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0005262786228769079,
+          "y": 0.012432777457365152,
+          "yaw": 0.1377665960965122,
+          "linear_speed": 0.0006286003622038982,
+          "angular_speed": 7.685751590713635e-08
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 196,
+      "approach_sim_s": 4.19999999999966,
+      "wall_s": 8.161622749990784,
+      "error": null,
+      "condition": "nominal_teacher",
+      "physical_grasp_success": false,
+      "total_sim_s": 19.860000000000003,
+      "action_count": 42
+    },
+    {
+      "id": "yaw_lateral-02",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery_teacher/yaw_lateral-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0018329140592726612,
+          "y": 0.0007510371305252672,
+          "yaw": 0.00806613318651861,
+          "linear_speed": 8.10713608223376e-05,
+          "angular_speed": 4.5474735088645766e-12
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 22.599999999997852,
+      "wall_s": 21.06091266599833,
+      "error": null,
+      "condition": "recovery_teacher",
+      "physical_grasp_success": true,
+      "total_sim_s": 38.26,
+      "action_count": 226
+    },
+    {
+      "id": "yaw_lateral-02",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal16/yaw_lateral-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.44716625084699635,
+          "y": 0.057265919358321815,
+          "yaw": 0.1316620928357266,
+          "linear_speed": 0.009954897977877351,
+          "angular_speed": 0.0047119748870726895
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 159,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.322430792002706,
+      "error": null,
+      "condition": "nominal16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "yaw_lateral-02",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal17/yaw_lateral-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 1.2712272291714664,
+          "y": 0.1965889424262004,
+          "yaw": 0.21099678278498457,
+          "linear_speed": 0.028216057631710062,
+          "angular_speed": 0.004749954736680205
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 23,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 33.07990966600482,
+      "error": null,
+      "condition": "nominal17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "yaw_lateral-02",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery16/yaw_lateral-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": true,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0025282381046835,
+          "y": 0.0004983188771074953,
+          "yaw": 0.02347163461874091,
+          "linear_speed": 8.702085850743687e-06,
+          "angular_speed": 1.5812560150152197e-07
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 18.40000000000018,
+      "wall_s": 24.67537633300526,
+      "error": null,
+      "condition": "recovery16",
+      "physical_grasp_success": true,
+      "total_sim_s": 34.06,
+      "action_count": 184
+    },
+    {
+      "id": "yaw_lateral-02",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery17/yaw_lateral-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.00483825362640411,
+          "y": 0.001130093225765183,
+          "yaw": 0.014183846453938997,
+          "linear_speed": 0.0010191152628159753,
+          "angular_speed": 1.358452451416506e-05
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.438415374985198,
+      "error": null,
+      "condition": "recovery17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "yaw_lateral-02",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated16/yaw_lateral-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.07111469872870158,
+          "y": 0.06077213726763131,
+          "yaw": 0.6498352410342241,
+          "linear_speed": 0.000522377752305226,
+          "angular_speed": 0.002928827282260252
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 14043,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.740081500000088,
+      "error": null,
+      "condition": "aggregated16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "yaw_lateral-02",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated17/yaw_lateral-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0013534739283742603,
+          "y": 0.008878224763340992,
+          "yaw": 1.795965519423257,
+          "linear_speed": 0.003425935446685361,
+          "angular_speed": 0.056644978267995943
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 4914,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 32.23337441700278,
+      "error": null,
+      "condition": "aggregated17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "yaw_lateral-03",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal_teacher/yaw_lateral-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": true,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0007256958936839863,
+          "y": 0.049135044074568146,
+          "yaw": 0.13596111923562582,
+          "linear_speed": 0.0006285444143153051,
+          "angular_speed": 9.445757509496422e-08
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 183,
+      "approach_sim_s": 4.19999999999966,
+      "wall_s": 8.168432375008706,
+      "error": null,
+      "condition": "nominal_teacher",
+      "physical_grasp_success": false,
+      "total_sim_s": 19.860000000000003,
+      "action_count": 42
+    },
+    {
+      "id": "yaw_lateral-03",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery_teacher/yaw_lateral-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0016780852573826666,
+          "y": 0.0004728937964015856,
+          "yaw": 0.008553325359887065,
+          "linear_speed": 8.107137061741131e-05,
+          "angular_speed": 8.734346579330907e-11
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 20.39999999999907,
+      "wall_s": 19.381339457992,
+      "error": null,
+      "condition": "recovery_teacher",
+      "physical_grasp_success": true,
+      "total_sim_s": 36.06,
+      "action_count": 204
+    },
+    {
+      "id": "yaw_lateral-03",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal16/yaw_lateral-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.40456116075319437,
+          "y": 0.04061490402582102,
+          "yaw": 0.1576951686408905,
+          "linear_speed": 0.0013542061228133935,
+          "angular_speed": 1.618061406194448e-05
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 165,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.929887999984203,
+      "error": null,
+      "condition": "nominal16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "yaw_lateral-03",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal17/yaw_lateral-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 1.1931002782491271,
+          "y": 0.19307064665990392,
+          "yaw": 0.20738219995106988,
+          "linear_speed": 0.01757504746275941,
+          "angular_speed": 0.004267058357170167
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 33.39822841598652,
+      "error": null,
+      "condition": "nominal17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "yaw_lateral-03",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery16/yaw_lateral-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.00280679396573702,
+          "y": 0.00013770278207347886,
+          "yaw": 0.022737148271072538,
+          "linear_speed": 2.2362360317917044e-05,
+          "angular_speed": 3.6373479561646088e-06
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.573794208001345,
+      "error": null,
+      "condition": "recovery16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "yaw_lateral-03",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery17/yaw_lateral-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.004250856400903502,
+          "y": 0.0030471229874633465,
+          "yaw": 0.018498640407551115,
+          "linear_speed": 0.0010110634642695184,
+          "angular_speed": 4.678385874257108e-06
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.380708250013413,
+      "error": null,
+      "condition": "recovery17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "yaw_lateral-03",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated16/yaw_lateral-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.060933788283015655,
+          "y": 0.051833727975256316,
+          "yaw": 0.8279503445251315,
+          "linear_speed": 0.0009359196574998032,
+          "angular_speed": 0.008769184642649516
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 14175,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.0610806249897,
+      "error": null,
+      "condition": "aggregated16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "yaw_lateral-03",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated17/yaw_lateral-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.01433870219755451,
+          "y": 0.010250445013511023,
+          "yaw": 1.8718659894265297,
+          "linear_speed": 0.004190625791119429,
+          "angular_speed": 0.019079564196995143
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 5739,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 30.658354375016643,
+      "error": null,
+      "condition": "aggregated17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "yaw_lateral-04",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal_teacher/yaw_lateral-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": true,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0014989653892308885,
+          "y": 0.05605154701422066,
+          "yaw": 0.12774061846344464,
+          "linear_speed": 0.0006300625577020684,
+          "angular_speed": 1.5903545147466558e-09
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 4.19999999999966,
+      "wall_s": 8.13530754201929,
+      "error": null,
+      "condition": "nominal_teacher",
+      "physical_grasp_success": false,
+      "total_sim_s": 19.860000000000003,
+      "action_count": 42
+    },
+    {
+      "id": "yaw_lateral-04",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery_teacher/yaw_lateral-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0016768484151119534,
+          "y": 0.0011451184617845556,
+          "yaw": 0.0076900179684882275,
+          "linear_speed": 8.107137271844505e-05,
+          "angular_speed": 3.4527936065843105e-11
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 20.79999999999885,
+      "wall_s": 19.740455749997636,
+      "error": null,
+      "condition": "recovery_teacher",
+      "physical_grasp_success": true,
+      "total_sim_s": 36.46,
+      "action_count": 208
+    },
+    {
+      "id": "yaw_lateral-04",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal16/yaw_lateral-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.7955256400935758,
+          "y": 0.13577764473073906,
+          "yaw": 0.18878555858474044,
+          "linear_speed": 0.0013080303450641877,
+          "angular_speed": 6.797002702896679e-06
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.865717917011352,
+      "error": null,
+      "condition": "nominal16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "yaw_lateral-04",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal17/yaw_lateral-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.7925632041953913,
+          "y": 0.10352623243790648,
+          "yaw": 0.21822492912984304,
+          "linear_speed": 0.0014718330530313721,
+          "angular_speed": 0.003405740415005583
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 33.272445791983046,
+      "error": null,
+      "condition": "nominal17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "yaw_lateral-04",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery16/yaw_lateral-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.011985660075357507,
+          "y": 0.0004484059105462901,
+          "yaw": 0.004370571085922315,
+          "linear_speed": 0.0015841703713169234,
+          "angular_speed": 1.505809854585017e-06
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.825167000002693,
+      "error": null,
+      "condition": "recovery16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "yaw_lateral-04",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery17/yaw_lateral-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.2577683765871987,
+          "y": 0.0033458975325544316,
+          "yaw": 0.004187670754590478,
+          "linear_speed": 0.0013475091433142316,
+          "angular_speed": 1.2826608863924877e-05
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.55718087501009,
+      "error": null,
+      "condition": "recovery17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "yaw_lateral-04",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated16/yaw_lateral-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.009107102862329186,
+          "y": 0.0037261360056244364,
+          "yaw": 0.007588623989950527,
+          "linear_speed": 0.0018418550254787297,
+          "angular_speed": 9.138889422999861e-07
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 30.922200500004692,
+      "error": null,
+      "condition": "aggregated16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "yaw_lateral-04",
+      "group": "yaw_lateral",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated17/yaw_lateral-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.2665344598022832,
+          "y": 0.01623816604734918,
+          "yaw": 0.01817095475031083,
+          "linear_speed": 0.0019092926212874778,
+          "angular_speed": 0.0005589996313792787
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 30.66870349997771,
+      "error": null,
+      "condition": "aggregated17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-01",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal_teacher/far_yaw-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.08119306191570902,
+          "y": 0.09204494298645649,
+          "yaw": 0.4360100672144194,
+          "linear_speed": 0.00011520650596893489,
+          "angular_speed": 0.00014379866903002433
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 14797,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 23.1563570839935,
+      "error": null,
+      "condition": "nominal_teacher",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-01",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery_teacher/far_yaw-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0016729031969577868,
+          "y": 0.001390478186271693,
+          "yaw": 0.008264817217799703,
+          "linear_speed": 8.107130224389132e-05,
+          "angular_speed": 1.253264159117844e-10
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 17.000000000000956,
+      "wall_s": 17.15115741698537,
+      "error": null,
+      "condition": "recovery_teacher",
+      "physical_grasp_success": true,
+      "total_sim_s": 32.660000000000004,
+      "action_count": 170
+    },
+    {
+      "id": "far_yaw-01",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal16/far_yaw-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.13049713180130623,
+          "y": 0.09064608752811454,
+          "yaw": 0.44547087300033406,
+          "linear_speed": 0.00022679953991439062,
+          "angular_speed": 0.00019639864509368442
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 14420,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 32.13311383398832,
+      "error": null,
+      "condition": "nominal16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-01",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal17/far_yaw-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.18515138249165675,
+          "y": 0.09153058238410083,
+          "yaw": 0.44094726190392386,
+          "linear_speed": 0.0020115312917238074,
+          "angular_speed": 2.576901488193747e-05
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 14367,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.90904220798984,
+      "error": null,
+      "condition": "nominal17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-01",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery16/far_yaw-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.2847833838217317,
+          "y": 0.010816179237525425,
+          "yaw": 0.23933172707437222,
+          "linear_speed": 4.3699859112677045e-05,
+          "angular_speed": 1.299161923373741e-05
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 12950,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.947390208981233,
+      "error": null,
+      "condition": "recovery16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-01",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery17/far_yaw-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.05998006514530385,
+          "y": 0.0062071510597843105,
+          "yaw": 0.10858172308076997,
+          "linear_speed": 0.004943748485725347,
+          "angular_speed": 0.014358817605364189
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 10463,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.693509667005856,
+      "error": null,
+      "condition": "recovery17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-01",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated16/far_yaw-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.30320263591994934,
+          "y": 0.0808690802649572,
+          "yaw": 0.4853931274468519,
+          "linear_speed": 2.78996623540668e-05,
+          "angular_speed": 0.00022876499683021864
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 13780,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.028858375007985,
+      "error": null,
+      "condition": "aggregated16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-01",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated17/far_yaw-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.008066670046249391,
+          "y": 0.0013111930780380643,
+          "yaw": 1.7668446604644448,
+          "linear_speed": 0.00542468192080842,
+          "angular_speed": 0.07421328957531231
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 6568,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 30.852843416010728,
+      "error": null,
+      "condition": "aggregated17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-02",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal_teacher/far_yaw-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.07616642363383241,
+          "y": 0.07972424665086164,
+          "yaw": 0.4949876051392388,
+          "linear_speed": 0.00011112725140488185,
+          "angular_speed": 0.00015323593387073014
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 14871,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 23.112815250002313,
+      "error": null,
+      "condition": "nominal_teacher",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-02",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery_teacher/far_yaw-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.001828098298473968,
+          "y": 0.0015653877727772603,
+          "yaw": 0.008370832257092342,
+          "linear_speed": 8.107130989922188e-05,
+          "angular_speed": 4.5460968323140414e-10
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 17.200000000000845,
+      "wall_s": 17.25535479199607,
+      "error": null,
+      "condition": "recovery_teacher",
+      "physical_grasp_success": true,
+      "total_sim_s": 32.86,
+      "action_count": 172
+    },
+    {
+      "id": "far_yaw-02",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal16/far_yaw-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.918238103380934,
+          "y": 0.19875469436568993,
+          "yaw": 0.47715475463734425,
+          "linear_speed": 0.021270376353577224,
+          "angular_speed": 0.005150207788782096
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 14096,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 32.341263209003955,
+      "error": null,
+      "condition": "nominal16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-02",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal17/far_yaw-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.6432693252644527,
+          "y": 0.13162706640562094,
+          "yaw": 0.5177274976362702,
+          "linear_speed": 0.012422782101373191,
+          "angular_speed": 0.0019505934926078161
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 14271,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 32.38007229100913,
+      "error": null,
+      "condition": "nominal17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-02",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery16/far_yaw-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0022983436945351876,
+          "y": 0.0016833985167172827,
+          "yaw": 0.005288718272737025,
+          "linear_speed": 2.7746093576133768e-05,
+          "angular_speed": 1.5512629891744957e-06
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.361755666992394,
+      "error": null,
+      "condition": "recovery16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-02",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery17/far_yaw-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.24928126689608804,
+          "y": 0.003031614603334898,
+          "yaw": 0.0025738008134004176,
+          "linear_speed": 0.00027961138826120533,
+          "angular_speed": 1.4258201286310978e-05
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 32.11902529199142,
+      "error": null,
+      "condition": "recovery17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-02",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated16/far_yaw-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.017271725984010722,
+          "y": 0.0031838208207779495,
+          "yaw": 0.01716407419777166,
+          "linear_speed": 0.0001461979363109239,
+          "angular_speed": 8.042596513213482e-06
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 30.800896375003504,
+      "error": null,
+      "condition": "aggregated16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-02",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated17/far_yaw-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.25011721101903855,
+          "y": 0.009487730687723683,
+          "yaw": 0.019710492064423324,
+          "linear_speed": 0.03636412269965949,
+          "angular_speed": 0.0006729201646038423
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 30.785701332992176,
+      "error": null,
+      "condition": "aggregated17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-03",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal_teacher/far_yaw-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.08004753910174317,
+          "y": 0.08816717284942266,
+          "yaw": 0.452779496743124,
+          "linear_speed": 0.0001144541202546174,
+          "angular_speed": 0.0001450177368011986
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 14882,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 23.024499250022927,
+      "error": null,
+      "condition": "nominal_teacher",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-03",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery_teacher/far_yaw-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.001752799053921339,
+          "y": 0.0014935634405242038,
+          "yaw": 0.00832948501365216,
+          "linear_speed": 8.10713265971028e-05,
+          "angular_speed": 3.425970618309366e-10
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 17.600000000000623,
+      "wall_s": 17.635465249972185,
+      "error": null,
+      "condition": "recovery_teacher",
+      "physical_grasp_success": true,
+      "total_sim_s": 33.26,
+      "action_count": 176
+    },
+    {
+      "id": "far_yaw-03",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal16/far_yaw-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.2876568479657664,
+          "y": 0.08568632818490607,
+          "yaw": 0.46965289181549386,
+          "linear_speed": 0.0002242831561240232,
+          "angular_speed": 0.00019068584383054006
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 14571,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.967875875008758,
+      "error": null,
+      "condition": "nominal16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-03",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal17/far_yaw-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.19955712846479667,
+          "y": 0.08632606559920286,
+          "yaw": 0.46597961176018377,
+          "linear_speed": 0.007632549005171874,
+          "angular_speed": 0.0020518711503924856
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 14547,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 32.20775445899926,
+      "error": null,
+      "condition": "nominal17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-03",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery16/far_yaw-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.28219595378048096,
+          "y": 0.009699132330593718,
+          "yaw": 0.23673686965772633,
+          "linear_speed": 4.7962326207463046e-05,
+          "angular_speed": 2.685157136639457e-05
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 13328,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.797918500000378,
+      "error": null,
+      "condition": "recovery16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-03",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery17/far_yaw-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.031864653098343965,
+          "y": 0.002548758828224029,
+          "yaw": 0.043053264905154265,
+          "linear_speed": 0.00015751932038225876,
+          "angular_speed": 2.575394520754023e-05
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 2429,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.984990166994976,
+      "error": null,
+      "condition": "recovery17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-03",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated16/far_yaw-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.2881322171634148,
+          "y": 0.06596839565043044,
+          "yaw": 0.6893667937524137,
+          "linear_speed": 0.00042721665403051416,
+          "angular_speed": 0.006684252753616964
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 13770,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.084007625002414,
+      "error": null,
+      "condition": "aggregated16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-03",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated17/far_yaw-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.28241691181929557,
+          "y": 0.030710514926028276,
+          "yaw": 1.968988374208811,
+          "linear_speed": 0.017133123479228393,
+          "angular_speed": 0.0571489204287526
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 10740,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 30.73553066601744,
+      "error": null,
+      "condition": "aggregated17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-04",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal_teacher/far_yaw-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.004093224746090196,
+          "y": 0.0462441178276789,
+          "yaw": 0.11807151055261489,
+          "linear_speed": 5.2071757184723745e-11,
+          "angular_speed": 9.971135028764023e-11
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 22.732767915993463,
+      "error": null,
+      "condition": "nominal_teacher",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-04",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery_teacher/far_yaw-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0016697115126652617,
+          "y": 0.0014975210612591106,
+          "yaw": 0.008397524241265941,
+          "linear_speed": 8.107131279512324e-05,
+          "angular_speed": 3.858069419493349e-10
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 17.200000000000845,
+      "wall_s": 17.419001290982123,
+      "error": null,
+      "condition": "recovery_teacher",
+      "physical_grasp_success": true,
+      "total_sim_s": 32.86,
+      "action_count": 172
+    },
+    {
+      "id": "far_yaw-04",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal16/far_yaw-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.7350879356702288,
+          "y": 0.1550247020675528,
+          "yaw": 0.1771014844442118,
+          "linear_speed": 0.0076882877236959515,
+          "angular_speed": 0.00046341724229125757
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.806060500006424,
+      "error": null,
+      "condition": "nominal16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-04",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal17/far_yaw-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.7663077498396808,
+          "y": 0.11578565123847118,
+          "yaw": 0.24626301906285963,
+          "linear_speed": 0.0019163486626780934,
+          "angular_speed": 0.0028279652570839127
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.840402292000363,
+      "error": null,
+      "condition": "nominal17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-04",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery16/far_yaw-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.282752441028442,
+          "y": 0.0020569077271015423,
+          "yaw": 0.008389700653674836,
+          "linear_speed": 3.014368507148342e-05,
+          "angular_speed": 2.789260471480719e-06
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.39951679200749,
+      "error": null,
+      "condition": "recovery16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-04",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery17/far_yaw-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.26396877478121183,
+          "y": 0.0025737764759663495,
+          "yaw": 0.007791724856866633,
+          "linear_speed": 9.800475573027588e-06,
+          "angular_speed": 2.4080323068886512e-06
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.742809667019174,
+      "error": null,
+      "condition": "recovery17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-04",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated16/far_yaw-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.2874074916814213,
+          "y": 0.003552458661634894,
+          "yaw": 0.011114367818171544,
+          "linear_speed": 5.606914793187481e-05,
+          "angular_speed": 1.5397364983016141e-06
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.040098083001794,
+      "error": null,
+      "condition": "aggregated16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "far_yaw-04",
+      "group": "far_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated17/far_yaw-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.22892406664794612,
+          "y": 0.00280593174283994,
+          "yaw": 0.0030102116791894673,
+          "linear_speed": 0.000717959916582373,
+          "angular_speed": 6.367643790028319e-06
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 30.557557374995667,
+      "error": null,
+      "condition": "aggregated17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-01",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal_teacher/overshoot_yaw-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.013853356496429048,
+          "y": 5.259075190888751e-07,
+          "yaw": 0.15360645105990978,
+          "linear_speed": 1.1469064160904633e-09,
+          "angular_speed": 1.1208500794168526e-09
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 22.682728875020985,
+      "error": null,
+      "condition": "nominal_teacher",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-01",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery_teacher/overshoot_yaw-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.001842293532647088,
+          "y": 7.370819537277917e-05,
+          "yaw": 0.008533173224308133,
+          "linear_speed": 8.107139464926e-05,
+          "angular_speed": 1.249422787452663e-09
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 12.40000000000111,
+      "wall_s": 13.813403792009922,
+      "error": null,
+      "condition": "recovery_teacher",
+      "physical_grasp_success": true,
+      "total_sim_s": 28.060000000000002,
+      "action_count": 124
+    },
+    {
+      "id": "overshoot_yaw-01",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal16/overshoot_yaw-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": true,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.7042432372900959,
+          "y": 0.1311391464549354,
+          "yaw": 0.22123753330957507,
+          "linear_speed": 4.954302196739773e-05,
+          "angular_speed": 2.5553233751197103e-07
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 20.59999999999896,
+      "wall_s": 26.528263167012483,
+      "error": null,
+      "condition": "nominal16",
+      "physical_grasp_success": false,
+      "total_sim_s": 36.26,
+      "action_count": 206
+    },
+    {
+      "id": "overshoot_yaw-01",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal17/overshoot_yaw-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.6838020166218574,
+          "y": 0.08170465103046753,
+          "yaw": 0.17203982613964452,
+          "linear_speed": 0.0006296868439716567,
+          "angular_speed": 2.4158570699483674e-05
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.91103808299522,
+      "error": null,
+      "condition": "nominal17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-01",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery16/overshoot_yaw-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.026512063874151726,
+          "y": 0.003151080088321434,
+          "yaw": 0.047400774399751544,
+          "linear_speed": 0.0005215437557895139,
+          "angular_speed": 9.79542108314732e-06
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.817762082995614,
+      "error": null,
+      "condition": "recovery16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-01",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery17/overshoot_yaw-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": true,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.014816442203256952,
+          "y": 0.0013618983299328313,
+          "yaw": 0.04311702815249685,
+          "linear_speed": 6.184727240587134e-05,
+          "angular_speed": 1.5713264689409867e-06
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 14.600000000001845,
+      "wall_s": 21.35000570799457,
+      "error": null,
+      "condition": "recovery17",
+      "physical_grasp_success": false,
+      "total_sim_s": 30.26,
+      "action_count": 146
+    },
+    {
+      "id": "overshoot_yaw-01",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated16/overshoot_yaw-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.009929393413662058,
+          "y": 0.002571887746992463,
+          "yaw": 0.04812961374314817,
+          "linear_speed": 0.0002201216675511007,
+          "angular_speed": 5.665319835479385e-06
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.148921874992084,
+      "error": null,
+      "condition": "aggregated16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-01",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated17/overshoot_yaw-01",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.12726772113738993,
+          "y": 0.013953505490708284,
+          "yaw": 0.017335245055738024,
+          "linear_speed": 0.02062914423400865,
+          "angular_speed": 0.005789141007004257
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 30.71085524998489,
+      "error": null,
+      "condition": "aggregated17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-02",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal_teacher/overshoot_yaw-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.012873373454863946,
+          "y": 4.0292344083425746e-07,
+          "yaw": 0.120689494460136,
+          "linear_speed": 1.150044339048211e-09,
+          "angular_speed": 1.124225157411713e-09
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 22.649121374997776,
+      "error": null,
+      "condition": "nominal_teacher",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-02",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery_teacher/overshoot_yaw-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0015983808027427715,
+          "y": 5.623834654588933e-05,
+          "yaw": 0.008546083144708394,
+          "linear_speed": 8.107139541275765e-05,
+          "angular_speed": 9.427481018065042e-10
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 11.600000000000843,
+      "wall_s": 13.332816707988968,
+      "error": null,
+      "condition": "recovery_teacher",
+      "physical_grasp_success": true,
+      "total_sim_s": 27.26,
+      "action_count": 116
+    },
+    {
+      "id": "overshoot_yaw-02",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal16/overshoot_yaw-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": true,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.7581478415038615,
+          "y": 0.11808003263079025,
+          "yaw": 0.19489770394406758,
+          "linear_speed": 5.39435343192517e-05,
+          "angular_speed": 3.3411557076589794e-07
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 27.39999999999519,
+      "wall_s": 32.3771349999879,
+      "error": null,
+      "condition": "nominal16",
+      "physical_grasp_success": false,
+      "total_sim_s": 43.06,
+      "action_count": 274
+    },
+    {
+      "id": "overshoot_yaw-02",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal17/overshoot_yaw-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.8002383831752727,
+          "y": 0.06985077406182882,
+          "yaw": 0.14748209518506616,
+          "linear_speed": 0.0005787248783697741,
+          "angular_speed": 0.00020688901316123483
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.97240824997425,
+      "error": null,
+      "condition": "nominal17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-02",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery16/overshoot_yaw-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.027162229232117974,
+          "y": 0.0032611899962033952,
+          "yaw": 0.050387128086398114,
+          "linear_speed": 0.0005494583645574471,
+          "angular_speed": 4.1862394799529426e-05
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.716825915995287,
+      "error": null,
+      "condition": "recovery16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-02",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery17/overshoot_yaw-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": true,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.00835878169729054,
+          "y": 0.002717471845038233,
+          "yaw": 0.05271561962997806,
+          "linear_speed": 4.18716607353347e-06,
+          "angular_speed": 1.08626121875235e-06
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 20.59999999999896,
+      "wall_s": 26.349280375026865,
+      "error": null,
+      "condition": "recovery17",
+      "physical_grasp_success": false,
+      "total_sim_s": 36.26,
+      "action_count": 206
+    },
+    {
+      "id": "overshoot_yaw-02",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated16/overshoot_yaw-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.015148105129625722,
+          "y": 0.001536234345230092,
+          "yaw": 0.047920440662302166,
+          "linear_speed": 0.0028538681676569142,
+          "angular_speed": 0.00022578956992091683
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 30.814932416018564,
+      "error": null,
+      "condition": "aggregated16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-02",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated17/overshoot_yaw-02",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.06207092278844262,
+          "y": 0.002837848744851268,
+          "yaw": 0.017284218874191293,
+          "linear_speed": 0.011997224263857065,
+          "angular_speed": 0.0029582322829925806
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 30.540107040986186,
+      "error": null,
+      "condition": "aggregated17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-03",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal_teacher/overshoot_yaw-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0072633626389997374,
+          "y": 4.850493322550165e-07,
+          "yaw": 0.14507174410900214,
+          "linear_speed": 1.1460051080908855e-09,
+          "angular_speed": 1.1174217107168101e-09
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 22.734280624979874,
+      "error": null,
+      "condition": "nominal_teacher",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-03",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery_teacher/overshoot_yaw-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0018516289141259357,
+          "y": 0.0001255140215565831,
+          "yaw": 0.008542723164928656,
+          "linear_speed": 8.107137447491895e-05,
+          "angular_speed": 8.360157011111399e-10
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 8.399999999999775,
+      "wall_s": 11.098241375002544,
+      "error": null,
+      "condition": "recovery_teacher",
+      "physical_grasp_success": true,
+      "total_sim_s": 24.060000000000002,
+      "action_count": 84
+    },
+    {
+      "id": "overshoot_yaw-03",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal16/overshoot_yaw-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.722776684108588,
+          "y": 0.11803644555713833,
+          "yaw": 0.193679832555246,
+          "linear_speed": 0.0017209450146607678,
+          "angular_speed": 1.1491159170873942e-05
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.25360012499732,
+      "error": null,
+      "condition": "nominal16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-03",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal17/overshoot_yaw-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.7172020980856765,
+          "y": 0.07446458463864158,
+          "yaw": 0.14507174410900214,
+          "linear_speed": 0.0008663832515818586,
+          "angular_speed": 6.448470899478218e-06
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.277102207997814,
+      "error": null,
+      "condition": "nominal17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-03",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery16/overshoot_yaw-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.04619837064347321,
+          "y": 0.004261534975309456,
+          "yaw": 0.05022179879732791,
+          "linear_speed": 0.0006071322860095695,
+          "angular_speed": 0.0005132575198718497
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.907115125010023,
+      "error": null,
+      "condition": "recovery16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-03",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery17/overshoot_yaw-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": true,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.009997165617889325,
+          "y": 0.002426220573342963,
+          "yaw": 0.034620451682858544,
+          "linear_speed": 3.153477592336616e-05,
+          "angular_speed": 1.9417934771226166e-06
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 25.999999999995968,
+      "wall_s": 30.899183792003896,
+      "error": null,
+      "condition": "recovery17",
+      "physical_grasp_success": true,
+      "total_sim_s": 41.660000000000004,
+      "action_count": 260
+    },
+    {
+      "id": "overshoot_yaw-03",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated16/overshoot_yaw-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.011651980006677665,
+          "y": 0.000918577021749023,
+          "yaw": 0.05478042850725462,
+          "linear_speed": 3.449641938077955e-05,
+          "angular_speed": 1.5763200225116013e-05
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 30.563028459000634,
+      "error": null,
+      "condition": "aggregated16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-03",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated17/overshoot_yaw-03",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.014589007594127956,
+          "y": 0.0034326443163519293,
+          "yaw": 0.03668066198899167,
+          "linear_speed": 0.0006467483618249316,
+          "angular_speed": 4.817178282934196e-06
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 30.546338082989678,
+      "error": null,
+      "condition": "aggregated17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-04",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal_teacher/overshoot_yaw-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.010193356936898823,
+          "y": 5.229153694497057e-07,
+          "yaw": 0.15271633314401845,
+          "linear_speed": 1.1475995574708137e-09,
+          "angular_speed": 1.1215961492894007e-09
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 22.64353862500866,
+      "error": null,
+      "condition": "nominal_teacher",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-04",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery_teacher/overshoot_yaw-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "alignment": {
+        "success": true,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.0017095417302441795,
+          "y": 0.00013709186492416592,
+          "yaw": 0.008526202878083033,
+          "linear_speed": 8.107138050245337e-05,
+          "angular_speed": 8.471001677889824e-10
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 10.200000000000376,
+      "wall_s": 12.357887249992928,
+      "error": null,
+      "condition": "recovery_teacher",
+      "physical_grasp_success": true,
+      "total_sim_s": 25.860000000000003,
+      "action_count": 102
+    },
+    {
+      "id": "overshoot_yaw-04",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal16/overshoot_yaw-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": true,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.6989626818793743,
+          "y": 0.13098959409218036,
+          "yaw": 0.22588274105334305,
+          "linear_speed": 6.397332897092508e-05,
+          "angular_speed": 4.016619037372436e-08
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 19.999999999999293,
+      "wall_s": 25.182539208995877,
+      "error": null,
+      "condition": "nominal16",
+      "physical_grasp_success": false,
+      "total_sim_s": 35.660000000000004,
+      "action_count": 200
+    },
+    {
+      "id": "overshoot_yaw-04",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal17/overshoot_yaw-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.6693471103684211,
+          "y": 0.07492029278958401,
+          "yaw": 0.21055015517420772,
+          "linear_speed": 0.00025729420740035246,
+          "angular_speed": 0.002105326650307907
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.96756199997617,
+      "error": null,
+      "condition": "nominal17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-04",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery16/overshoot_yaw-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.02466237836964047,
+          "y": 0.0036917422563371716,
+          "yaw": 0.04908992700625037,
+          "linear_speed": 0.0007992977925743957,
+          "angular_speed": 1.2759932968009298e-05
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.918585750012426,
+      "error": null,
+      "condition": "recovery16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-04",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery17/overshoot_yaw-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.010383843734600107,
+          "y": 0.002127491732823561,
+          "yaw": 0.05898101762782382,
+          "linear_speed": 0.00028421462381260414,
+          "angular_speed": 1.0781760559907941e-05
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.24187175001134,
+      "error": null,
+      "condition": "recovery17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-04",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated16/overshoot_yaw-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.009907907578280861,
+          "y": 0.0007562732097450287,
+          "yaw": 0.056160083122480664,
+          "linear_speed": 6.593381089246744e-05,
+          "angular_speed": 1.1886624586843028e-05
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.81623200001195,
+      "error": null,
+      "condition": "aggregated16",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    },
+    {
+      "id": "overshoot_yaw-04",
+      "group": "overshoot_yaw",
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated17/overshoot_yaw-04",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "alignment": {
+        "success": false,
+        "samples": 5,
+        "max_errors": {
+          "x": 0.01700256196387928,
+          "y": 0.0029982450737642274,
+          "yaw": 0.025865331926827828,
+          "linear_speed": 0.0007604725296614116,
+          "angular_speed": 0.0005914039864318625
+        },
+        "tolerance": {
+          "x_m": 0.005,
+          "y_m": 0.005,
+          "yaw_deg": 1.0,
+          "linear_speed_mps": 0.005,
+          "angular_speed_radps": 0.02,
+          "window_s": 0.4
+        }
+      },
+      "training_eligible": false,
+      "contact_steps": 0,
+      "approach_sim_s": 31.99999999999424,
+      "wall_s": 31.28915420800331,
+      "error": null,
+      "condition": "aggregated17",
+      "physical_grasp_success": false,
+      "total_sim_s": 32.0,
+      "action_count": 320
+    }
+  ],
+  "pairs": [
+    {
+      "case_id": "nominal-01",
+      "all_initial_physics_and_rgb_match": true
+    },
+    {
+      "case_id": "nominal-02",
+      "all_initial_physics_and_rgb_match": true
+    },
+    {
+      "case_id": "nominal-03",
+      "all_initial_physics_and_rgb_match": true
+    },
+    {
+      "case_id": "nominal-04",
+      "all_initial_physics_and_rgb_match": true
+    },
+    {
+      "case_id": "yaw_lateral-01",
+      "all_initial_physics_and_rgb_match": true
+    },
+    {
+      "case_id": "yaw_lateral-02",
+      "all_initial_physics_and_rgb_match": true
+    },
+    {
+      "case_id": "yaw_lateral-03",
+      "all_initial_physics_and_rgb_match": true
+    },
+    {
+      "case_id": "yaw_lateral-04",
+      "all_initial_physics_and_rgb_match": true
+    },
+    {
+      "case_id": "far_yaw-01",
+      "all_initial_physics_and_rgb_match": true
+    },
+    {
+      "case_id": "far_yaw-02",
+      "all_initial_physics_and_rgb_match": true
+    },
+    {
+      "case_id": "far_yaw-03",
+      "all_initial_physics_and_rgb_match": true
+    },
+    {
+      "case_id": "far_yaw-04",
+      "all_initial_physics_and_rgb_match": true
+    },
+    {
+      "case_id": "overshoot_yaw-01",
+      "all_initial_physics_and_rgb_match": true
+    },
+    {
+      "case_id": "overshoot_yaw-02",
+      "all_initial_physics_and_rgb_match": true
+    },
+    {
+      "case_id": "overshoot_yaw-03",
+      "all_initial_physics_and_rgb_match": true
+    },
+    {
+      "case_id": "overshoot_yaw-04",
+      "all_initial_physics_and_rgb_match": true
+    }
+  ],
+  "groups": {
+    "far_yaw": {
+      "nominal_teacher": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 320,
+        "mean_wall_s_all": 23.00660987500305
+      },
+      "recovery_teacher": {
+        "trials": 4,
+        "successes": 4,
+        "physical_grasp_successes": 4,
+        "mean_success_approach_sim_s": 17.250000000000817,
+        "mean_success_total_sim_s": 32.91,
+        "mean_actions_all": 172.5,
+        "mean_wall_s_all": 17.365244687483937
+      },
+      "nominal16": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 320,
+        "mean_wall_s_all": 32.062078354501864
+      },
+      "nominal17": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 320,
+        "mean_wall_s_all": 32.08431781249965
+      },
+      "recovery16": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 320,
+        "mean_wall_s_all": 31.626645291995374
+      },
+      "recovery17": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 320,
+        "mean_wall_s_all": 31.885083698252856
+      },
+      "aggregated16": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 320,
+        "mean_wall_s_all": 30.988465114503924
+      },
+      "aggregated17": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 320,
+        "mean_wall_s_all": 30.732908197504003
+      }
+    },
+    "nominal": {
+      "nominal_teacher": {
+        "trials": 4,
+        "successes": 4,
+        "physical_grasp_successes": 4,
+        "mean_success_approach_sim_s": 4.19999999999966,
+        "mean_success_total_sim_s": 19.860000000000003,
+        "mean_actions_all": 42,
+        "mean_wall_s_all": 8.209182364487788
+      },
+      "recovery_teacher": {
+        "trials": 4,
+        "successes": 4,
+        "physical_grasp_successes": 4,
+        "mean_success_approach_sim_s": 10.950000000000626,
+        "mean_success_total_sim_s": 26.61,
+        "mean_actions_all": 109.5,
+        "mean_wall_s_all": 12.863224124754197
+      },
+      "nominal16": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 320,
+        "mean_wall_s_all": 32.008657135491376
+      },
+      "nominal17": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 320,
+        "mean_wall_s_all": 31.18222078125109
+      },
+      "recovery16": {
+        "trials": 4,
+        "successes": 3,
+        "physical_grasp_successes": 3,
+        "mean_success_approach_sim_s": 17.73333333333388,
+        "mean_success_total_sim_s": 33.39333333333333,
+        "mean_actions_all": 213,
+        "mean_wall_s_all": 25.640257301995007
+      },
+      "recovery17": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 320,
+        "mean_wall_s_all": 31.468602228997042
+      },
+      "aggregated16": {
+        "trials": 4,
+        "successes": 4,
+        "physical_grasp_successes": 4,
+        "mean_success_approach_sim_s": 16.25000000000111,
+        "mean_success_total_sim_s": 31.91,
+        "mean_actions_all": 162.5,
+        "mean_wall_s_all": 22.509065354250197
+      },
+      "aggregated17": {
+        "trials": 4,
+        "successes": 2,
+        "physical_grasp_successes": 2,
+        "mean_success_approach_sim_s": 18.500000000000124,
+        "mean_success_total_sim_s": 34.160000000000004,
+        "mean_actions_all": 252.5,
+        "mean_wall_s_all": 29.112173281260766
+      }
+    },
+    "overshoot_yaw": {
+      "nominal_teacher": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 320,
+        "mean_wall_s_all": 22.677417375001824
+      },
+      "recovery_teacher": {
+        "trials": 4,
+        "successes": 4,
+        "physical_grasp_successes": 4,
+        "mean_success_approach_sim_s": 10.650000000000526,
+        "mean_success_total_sim_s": 26.310000000000002,
+        "mean_actions_all": 106.5,
+        "mean_wall_s_all": 12.65058728124859
+      },
+      "nominal16": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 250,
+        "mean_wall_s_all": 28.835384375248395
+      },
+      "nominal17": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 320,
+        "mean_wall_s_all": 31.782027635235863
+      },
+      "recovery16": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 320,
+        "mean_wall_s_all": 31.840072218503337
+      },
+      "recovery17": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 1,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 233,
+        "mean_wall_s_all": 27.460085406259168
+      },
+      "aggregated16": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 320,
+        "mean_wall_s_all": 31.085778687505808
+      },
+      "aggregated17": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 320,
+        "mean_wall_s_all": 30.771613645491016
+      }
+    },
+    "yaw_lateral": {
+      "nominal_teacher": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 42,
+        "mean_wall_s_all": 8.149494645753293
+      },
+      "recovery_teacher": {
+        "trials": 4,
+        "successes": 4,
+        "physical_grasp_successes": 4,
+        "mean_success_approach_sim_s": 22.199999999998074,
+        "mean_success_total_sim_s": 37.86,
+        "mean_actions_all": 222,
+        "mean_wall_s_all": 20.731241437242716
+      },
+      "nominal16": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 320,
+        "mean_wall_s_all": 31.710336010502942
+      },
+      "nominal17": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 320,
+        "mean_wall_s_all": 33.19149263524014
+      },
+      "recovery16": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 1,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 286,
+        "mean_wall_s_all": 29.892555531252583
+      },
+      "recovery17": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 305,
+        "mean_wall_s_all": 31.398123885250243
+      },
+      "aggregated16": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 320,
+        "mean_wall_s_all": 31.44442128125229
+      },
+      "aggregated17": {
+        "trials": 4,
+        "successes": 0,
+        "physical_grasp_successes": 0,
+        "mean_success_approach_sim_s": null,
+        "mean_success_total_sim_s": null,
+        "mean_actions_all": 320,
+        "mean_wall_s_all": 31.43097326050338
+      }
+    }
+  },
+  "sources": {
+    "nominal_teacher": {
+      "source_sha": "911bf99e93cebdda111f3b8cd96bc9adcc3e426c",
+      "summary": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal_teacher/summary.json",
+      "summary_sha256": "28c6dd916e13e454344b9557d9962122249e58082e1ae7e3ce44ee8c98197066",
+      "manifest_sha256": "ff05d8898b69b15438a919761ee1d7aec83e619ff4ed45216bd31ffad3799094"
+    },
+    "recovery_teacher": {
+      "source_sha": "911bf99e93cebdda111f3b8cd96bc9adcc3e426c",
+      "summary": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery_teacher/summary.json",
+      "summary_sha256": "11278511e2437ad3f0fc82d44587280c57b6e9c8473675204b2ddc7ee1be157b",
+      "manifest_sha256": "52ba8b43fd271e4d4a16b086fcf234103deda85a72d7db1685b2e3f36b01610d"
+    },
+    "nominal16": {
+      "source_sha": "911bf99e93cebdda111f3b8cd96bc9adcc3e426c",
+      "summary": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal16/summary.json",
+      "summary_sha256": "35805c25e4ed9324cdd3a0b3c9562dbbbe6990f7551d20ec7fb5aa3e07fcc481",
+      "manifest_sha256": "7d1b7bb316726b866c3aafddf05979ee6a84794c837383348396113987c0e1f9"
+    },
+    "nominal17": {
+      "source_sha": "911bf99e93cebdda111f3b8cd96bc9adcc3e426c",
+      "summary": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal17/summary.json",
+      "summary_sha256": "ee10dc888992322ee99ff5ecceb3abc4168b4ee2b3e65972fd1aab6ff7cf4f91",
+      "manifest_sha256": "94296d6c6a059868cfd590c7641b349274cdb8b7075536c8be12e04fb7af38a6"
+    },
+    "recovery16": {
+      "source_sha": "911bf99e93cebdda111f3b8cd96bc9adcc3e426c",
+      "summary": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery16/summary.json",
+      "summary_sha256": "9ea5df3a96510ae7a4eb5bad29b5fa62ec5a909330b712f9fa15868d6340b57a",
+      "manifest_sha256": "f4cb32283ebf438934d24d642fb4c5345a4d78079bf7e444ac0aa8c0af56a2ca"
+    },
+    "recovery17": {
+      "source_sha": "911bf99e93cebdda111f3b8cd96bc9adcc3e426c",
+      "summary": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery17/summary.json",
+      "summary_sha256": "ff63ca26f4a366fd4584e9fd8549dcbf5c07b6c7012d8f9108fd1a34912c6ac6",
+      "manifest_sha256": "c4fecaccb90d1fefdfacfeb00c9e50928adf8c6db1aa2ab1daf525b86542d0ac"
+    },
+    "aggregated16": {
+      "source_sha": "911bf99e93cebdda111f3b8cd96bc9adcc3e426c",
+      "summary": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated16/summary.json",
+      "summary_sha256": "455d70f779f823bedde9c2d7ab799fc03ff0bfab18ec8f5832baca1d3b6646cd",
+      "manifest_sha256": "2d59befb31dc2b267ebf2a1c473446e6c0c76a516310d5cd717921bd9113f720"
+    },
+    "aggregated17": {
+      "source_sha": "911bf99e93cebdda111f3b8cd96bc9adcc3e426c",
+      "summary": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated17/summary.json",
+      "summary_sha256": "aed8bc21d08a477aad4735f05e8b7239b1dfcc80a2b639b90e948590ee0d2832",
+      "manifest_sha256": "24e7ec9f86f1500385ff59ffcee089f851ddeda1f68c845822de36332650d6df"
+    }
+  },
+  "training": {
+    "nominal16": {
+      "source_sha": "c482f511cd8b013972c8f46de82308f1a7c078f4",
+      "report_sha256": "fb9f8125da0de2cbb9b1d287cc9e6ca15a8074e7bf660d9033190981e673e107",
+      "seed": 20260916,
+      "steps": 10000,
+      "train_trajectories": 48,
+      "robots": {
+        "r1": {
+          "selected": {
+            "step": 6500,
+            "loss": 0.0032819020561873913,
+            "development": {
+              "samples": 840,
+              "stop_samples": 82,
+              "missed_ready": 21,
+              "false_ready": 38,
+              "normalized_action_mae": [
+                0.08640509699904991,
+                0.013822124069290485,
+                0.017708476145855315
+              ],
+              "selection_score": 0.7967287212607286
+            },
+            "elapsed_s": 169.95007870800328
+          },
+          "samples": 2693,
+          "development_samples": 840,
+          "groups": {
+            "0": 2218,
+            "3": 475
+          },
+          "readback": [
+            {
+              "sample_id": "nominal-train-01:000:r1",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.0716650664806366,
+                "left": 1.752525568008423e-05,
+                "turn": 0.0006516482681035995,
+                "stop_score": 0.0,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-train-01:051:r1",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.005737127177417278,
+                "left": -0.00022142678499221803,
+                "turn": 0.000567757710814476,
+                "stop_score": 0.0,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:000:r1",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.08626955151557922,
+                "left": -0.00022853463888168336,
+                "turn": 0.0005561191588640213,
+                "stop_score": 0.0,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:045:r1",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.00296409297734499,
+                "left": -0.0003587976098060608,
+                "turn": -0.00016857124865055084,
+                "stop_score": 0.5293712615966797,
+                "reason": "recovery_act_rgb"
+              }
+            }
+          ],
+          "parameters": 11419156,
+          "trainable_parameters": 252244,
+          "training_s": 267.15442520799115
+        },
+        "r3": {
+          "selected": {
+            "step": 2000,
+            "loss": 0.007869643159210682,
+            "development": {
+              "samples": 840,
+              "stop_samples": 143,
+              "missed_ready": 25,
+              "false_ready": 46,
+              "normalized_action_mae": [
+                0.07871094372536806,
+                0.011448374981149319,
+                0.019302941291638866
+              ],
+              "selection_score": 0.8712839004199691
+            },
+            "elapsed_s": 49.347342207998736
+          },
+          "samples": 2693,
+          "development_samples": 840,
+          "groups": {
+            "0": 2290,
+            "3": 403
+          },
+          "readback": [
+            {
+              "sample_id": "nominal-train-01:000:r3",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.115406334400177,
+                "left": 0.0006066471338272095,
+                "turn": -0.0013805732131004333,
+                "stop_score": 0.0,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-train-01:032:r3",
+              "decision": {
+                "ok": true,
+                "ready": true,
+                "forward": 0.0010456044226884841,
+                "left": 5.526095628738403e-05,
+                "turn": -0.0020011212676763535,
+                "stop_score": 1.0,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:000:r3",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.08604307472705841,
+                "left": 0.00034112930297851567,
+                "turn": 0.0005208492279052734,
+                "stop_score": 0.0,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:047:r3",
+              "decision": {
+                "ok": true,
+                "ready": true,
+                "forward": 0.0010549519211053848,
+                "left": -4.2790174484252935e-05,
+                "turn": -0.0022751994431018828,
+                "stop_score": 1.0,
+                "reason": "recovery_act_rgb"
+              }
+            }
+          ],
+          "parameters": 11419156,
+          "trainable_parameters": 252244,
+          "training_s": 333.236209167022
+        }
+      },
+      "wall_s": 809.3958095420094
+    },
+    "nominal17": {
+      "source_sha": "c482f511cd8b013972c8f46de82308f1a7c078f4",
+      "report_sha256": "0c6c377345410f3a3981da0b840602393493a801ba5aa2d7d6caea3961c27a65",
+      "seed": 20260917,
+      "steps": 10000,
+      "train_trajectories": 48,
+      "robots": {
+        "r1": {
+          "selected": {
+            "step": 5500,
+            "loss": 0.004422314465045929,
+            "development": {
+              "samples": 840,
+              "stop_samples": 82,
+              "missed_ready": 20,
+              "false_ready": 29,
+              "normalized_action_mae": [
+                0.10208916913372061,
+                0.015390028809152875,
+                0.019016808822189354
+              ],
+              "selection_score": 0.6719868599249696
+            },
+            "elapsed_s": 181.79415204099496
+          },
+          "samples": 2693,
+          "development_samples": 840,
+          "groups": {
+            "0": 2218,
+            "3": 475
+          },
+          "readback": [
+            {
+              "sample_id": "nominal-train-01:000:r1",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.07639362215995789,
+                "left": 0.0002543024718761444,
+                "turn": 0.0002859821543097496,
+                "stop_score": 4.3585896492004395e-06,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-train-01:051:r1",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.005543752759695053,
+                "left": 0.00019377395510673524,
+                "turn": 0.001362547092139721,
+                "stop_score": 0.007430478930473328,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:000:r1",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.09136641919612884,
+                "left": 0.0006839536130428315,
+                "turn": 0.0007017312571406364,
+                "stop_score": 0.0,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:045:r1",
+              "decision": {
+                "ok": true,
+                "ready": true,
+                "forward": 0.0012546613812446593,
+                "left": 0.00035047009587287905,
+                "turn": 0.001561821810901165,
+                "stop_score": 0.8104324340820312,
+                "reason": "recovery_act_rgb"
+              }
+            }
+          ],
+          "parameters": 11419156,
+          "trainable_parameters": 252244,
+          "training_s": 324.23194262501784
+        },
+        "r3": {
+          "selected": {
+            "step": 1000,
+            "loss": 0.01736200973391533,
+            "development": {
+              "samples": 840,
+              "stop_samples": 143,
+              "missed_ready": 143,
+              "false_ready": 0,
+              "normalized_action_mae": [
+                0.09479410984676111,
+                0.020939249466217665,
+                0.022551549468279676
+              ],
+              "selection_score": 1.046094969593753
+            },
+            "elapsed_s": 21.44052775000455
+          },
+          "samples": 2693,
+          "development_samples": 840,
+          "groups": {
+            "0": 2290,
+            "3": 403
+          },
+          "readback": [
+            {
+              "sample_id": "nominal-train-01:000:r3",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.11169945001602173,
+                "left": 0.0010878831148147584,
+                "turn": -0.003177797980606556,
+                "stop_score": 0.0267166867852211,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-train-01:032:r3",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.006068597920238971,
+                "left": -0.0016347259283065797,
+                "turn": -0.0008107753470540047,
+                "stop_score": 0.9855300784111023,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:000:r3",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.09206333756446838,
+                "left": 0.0010393261909484863,
+                "turn": -0.0011066319420933723,
+                "stop_score": 0.023688681423664093,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:047:r3",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.005659659393131733,
+                "left": -0.0017960652709007264,
+                "turn": -0.0002713099122047424,
+                "stop_score": 1.0,
+                "reason": "recovery_act_rgb"
+              }
+            }
+          ],
+          "parameters": 11419156,
+          "trainable_parameters": 252244,
+          "training_s": 331.9820029590046
+        }
+      },
+      "wall_s": 906.1398547500139
+    },
+    "recovery16": {
+      "source_sha": "c482f511cd8b013972c8f46de82308f1a7c078f4",
+      "report_sha256": "d81ce69f16c9565b02900a2f61c2b052fed04b8bb95d1bde4b3f0fc8e8829425",
+      "seed": 20260916,
+      "steps": 10000,
+      "train_trajectories": 48,
+      "robots": {
+        "r1": {
+          "selected": {
+            "step": 10000,
+            "loss": 0.010279622860252857,
+            "development": {
+              "samples": 840,
+              "stop_samples": 82,
+              "missed_ready": 5,
+              "false_ready": 6,
+              "normalized_action_mae": [
+                0.02918392651866346,
+                0.007317416618090309,
+                0.006305799985960732
+              ],
+              "selection_score": 0.15440033028688807
+            },
+            "elapsed_s": 327.0794682500127
+          },
+          "samples": 2984,
+          "development_samples": 840,
+          "groups": {
+            "0": 2032,
+            "1": 142,
+            "2": 169,
+            "3": 436,
+            "4": 205
+          },
+          "readback": [
+            {
+              "sample_id": "nominal-train-01:000:r1",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.012743816524744033,
+                "left": 0.0015015974640846252,
+                "turn": -0.0012123037129640579,
+                "stop_score": 0.0,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-train-01:051:r1",
+              "decision": {
+                "ok": true,
+                "ready": true,
+                "forward": 4.9178302288055416e-05,
+                "left": 0.00035288557410240173,
+                "turn": 0.0003393564373254776,
+                "stop_score": 0.726626992225647,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:000:r1",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.07035721242427825,
+                "left": -0.0019469551742076876,
+                "turn": -0.0012595955282449721,
+                "stop_score": 0.005629498511552811,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:045:r1",
+              "decision": {
+                "ok": true,
+                "ready": true,
+                "forward": -0.0006307013332843781,
+                "left": 0.0002039201557636261,
+                "turn": -0.00034187324345111845,
+                "stop_score": 0.9629676342010498,
+                "reason": "recovery_act_rgb"
+              }
+            }
+          ],
+          "parameters": 11419156,
+          "trainable_parameters": 252244,
+          "training_s": 330.022370916995
+        },
+        "r3": {
+          "selected": {
+            "step": 10000,
+            "loss": 0.011163800023496151,
+            "development": {
+              "samples": 840,
+              "stop_samples": 143,
+              "missed_ready": 8,
+              "false_ready": 14,
+              "normalized_action_mae": [
+                0.03246800112773404,
+                0.00759171443574486,
+                0.007919450669795672
+              ],
+              "selection_score": 0.2727979434928806
+            },
+            "elapsed_s": 297.8585940829944
+          },
+          "samples": 2984,
+          "development_samples": 840,
+          "groups": {
+            "0": 2049,
+            "1": 167,
+            "2": 172,
+            "3": 342,
+            "4": 254
+          },
+          "readback": [
+            {
+              "sample_id": "nominal-train-01:000:r3",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.12453915774822234,
+                "left": -0.00017438009381294252,
+                "turn": 0.0010011535137891769,
+                "stop_score": 0.00112195685505867,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-train-01:032:r3",
+              "decision": {
+                "ok": true,
+                "ready": true,
+                "forward": 0.0001980392262339592,
+                "left": 0.00016628727316856385,
+                "turn": -0.00017638541758060455,
+                "stop_score": 0.9988038539886475,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:000:r3",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.08111636638641358,
+                "left": -5.673542618751526e-05,
+                "turn": 3.662668168544769e-05,
+                "stop_score": 0.0,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:047:r3",
+              "decision": {
+                "ok": true,
+                "ready": true,
+                "forward": 0.00034430455416440965,
+                "left": -6.331875920295715e-05,
+                "turn": -0.00016574598848819732,
+                "stop_score": 0.9995856285095215,
+                "reason": "recovery_act_rgb"
+              }
+            }
+          ],
+          "parameters": 11419156,
+          "trainable_parameters": 252244,
+          "training_s": 299.8147566670086
+        }
+      },
+      "wall_s": 932.3248709169857
+    },
+    "recovery17": {
+      "source_sha": "c482f511cd8b013972c8f46de82308f1a7c078f4",
+      "report_sha256": "66e3f6239e0b8c3a5ca866c518d9f3b6dfd59d597480285a2772b617d71b9ad9",
+      "seed": 20260917,
+      "steps": 10000,
+      "train_trajectories": 48,
+      "robots": {
+        "r1": {
+          "selected": {
+            "step": 10000,
+            "loss": 0.00942493136972189,
+            "development": {
+              "samples": 840,
+              "stop_samples": 82,
+              "missed_ready": 0,
+              "false_ready": 6,
+              "normalized_action_mae": [
+                0.02888672624762939,
+                0.006341522133776126,
+                0.004413540439675905
+              ],
+              "selection_score": 0.09236960243024614
+            },
+            "elapsed_s": 365.7439761249989
+          },
+          "samples": 2984,
+          "development_samples": 840,
+          "groups": {
+            "0": 2032,
+            "1": 142,
+            "2": 169,
+            "3": 436,
+            "4": 205
+          },
+          "readback": [
+            {
+              "sample_id": "nominal-train-01:000:r1",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.025709328800439833,
+                "left": 0.00275513157248497,
+                "turn": -0.0024283234030008315,
+                "stop_score": 0.009213171899318695,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-train-01:051:r1",
+              "decision": {
+                "ok": true,
+                "ready": true,
+                "forward": -0.00023903846740722654,
+                "left": 0.0001270569860935211,
+                "turn": -0.00019788108766078947,
+                "stop_score": 0.9561381340026855,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:000:r1",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.04624029994010925,
+                "left": -0.0003079004585742951,
+                "turn": -0.0010585762560367583,
+                "stop_score": 0.0019943341612815857,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:045:r1",
+              "decision": {
+                "ok": true,
+                "ready": true,
+                "forward": -9.139180183410644e-05,
+                "left": 7.962808012962341e-05,
+                "turn": -0.00016527436673641205,
+                "stop_score": 0.9985724687576294,
+                "reason": "recovery_act_rgb"
+              }
+            }
+          ],
+          "parameters": 11419156,
+          "trainable_parameters": 252244,
+          "training_s": 368.81801337501383
+        },
+        "r3": {
+          "selected": {
+            "step": 9000,
+            "loss": 0.006442515645176172,
+            "development": {
+              "samples": 840,
+              "stop_samples": 143,
+              "missed_ready": 2,
+              "false_ready": 13,
+              "normalized_action_mae": [
+                0.03498672077962652,
+                0.007151837400382479,
+                0.00968071009687266
+              ],
+              "selection_score": 0.217772733253822
+            },
+            "elapsed_s": 321.24616129198694
+          },
+          "samples": 2984,
+          "development_samples": 840,
+          "groups": {
+            "0": 2049,
+            "1": 167,
+            "2": 172,
+            "3": 342,
+            "4": 254
+          },
+          "readback": [
+            {
+              "sample_id": "nominal-train-01:000:r3",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.12168557345867156,
+                "left": -2.133697271347046e-05,
+                "turn": -0.00019875112920999526,
+                "stop_score": 0.0014318302273750305,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-train-01:032:r3",
+              "decision": {
+                "ok": true,
+                "ready": true,
+                "forward": 2.502612769603729e-05,
+                "left": -8.337944746017456e-05,
+                "turn": 0.00025183763355016706,
+                "stop_score": 1.0,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:000:r3",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.052160668373107906,
+                "left": 0.00010451674461364746,
+                "turn": -0.002051890455186367,
+                "stop_score": 0.0,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:047:r3",
+              "decision": {
+                "ok": true,
+                "ready": true,
+                "forward": -3.503076732158661e-05,
+                "left": -8.630454540252686e-05,
+                "turn": 0.0002158675342798233,
+                "stop_score": 1.0,
+                "reason": "recovery_act_rgb"
+              }
+            }
+          ],
+          "parameters": 11419156,
+          "trainable_parameters": 252244,
+          "training_s": 351.1072351250041
+        }
+      },
+      "wall_s": 1013.3723817919963
+    },
+    "aggregated16": {
+      "source_sha": "c482f511cd8b013972c8f46de82308f1a7c078f4",
+      "report_sha256": "265e7bf44df8165e0c89667882644e5255447950ed17463daf9f840c76e97e89",
+      "seed": 20260916,
+      "steps": 10000,
+      "train_trajectories": 45,
+      "robots": {
+        "r1": {
+          "selected": {
+            "step": 9000,
+            "loss": 0.01729615405201912,
+            "development": {
+              "samples": 840,
+              "stop_samples": 82,
+              "missed_ready": 6,
+              "false_ready": 4,
+              "normalized_action_mae": [
+                0.032365819967189825,
+                0.014992937827748892,
+                0.011169711558856491
+              ],
+              "selection_score": 0.14545067004072815
+            },
+            "elapsed_s": 256.4147860420053
+          },
+          "samples": 2518,
+          "development_samples": 840,
+          "groups": {
+            "0": 1683,
+            "1": 94,
+            "2": 82,
+            "3": 533,
+            "4": 126
+          },
+          "readback": [
+            {
+              "sample_id": "nominal-train-01:000:r1",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.047427722811698915,
+                "left": 0.0003781050443649292,
+                "turn": -0.00074017234146595,
+                "stop_score": 0.0023929476737976074,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-train-01:051:r1",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.0005955051630735397,
+                "left": 0.000585445761680603,
+                "turn": -0.00016619972884655,
+                "stop_score": 0.27612102031707764,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:000:r1",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.0835952639579773,
+                "left": -0.0008399635553359985,
+                "turn": 0.00043462514877319337,
+                "stop_score": 0.0,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:045:r1",
+              "decision": {
+                "ok": true,
+                "ready": true,
+                "forward": 0.0010019224137067795,
+                "left": -9.772181510925294e-06,
+                "turn": 0.00017156638205051422,
+                "stop_score": 0.7857531309127808,
+                "reason": "recovery_act_rgb"
+              }
+            }
+          ],
+          "parameters": 11419156,
+          "trainable_parameters": 252244,
+          "training_s": 295.6688587499957
+        },
+        "r3": {
+          "selected": {
+            "step": 8500,
+            "loss": 0.015233258716762066,
+            "development": {
+              "samples": 840,
+              "stop_samples": 143,
+              "missed_ready": 12,
+              "false_ready": 10,
+              "normalized_action_mae": [
+                0.04679879451257117,
+                0.009255131698435268,
+                0.01361420123580816
+              ],
+              "selection_score": 0.2506108160205458
+            },
+            "elapsed_s": 295.41671175000374
+          },
+          "samples": 2518,
+          "development_samples": 840,
+          "groups": {
+            "0": 1879,
+            "1": 109,
+            "2": 86,
+            "3": 329,
+            "4": 115
+          },
+          "readback": [
+            {
+              "sample_id": "nominal-train-01:000:r3",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.12639155387878417,
+                "left": 8.345246315002442e-05,
+                "turn": -0.0007160313427448272,
+                "stop_score": 0.0,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-train-01:032:r3",
+              "decision": {
+                "ok": true,
+                "ready": true,
+                "forward": 6.72781839966774e-05,
+                "left": 0.00016399025917053224,
+                "turn": -7.67335295677185e-05,
+                "stop_score": 1.0,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:000:r3",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.076426362991333,
+                "left": -0.0004364728927612305,
+                "turn": -0.00019228197634220122,
+                "stop_score": 0.0026056673377752304,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:047:r3",
+              "decision": {
+                "ok": true,
+                "ready": true,
+                "forward": 0.00031280536204576493,
+                "left": 4.014372825622559e-06,
+                "turn": -0.00010246038436889648,
+                "stop_score": 1.0,
+                "reason": "recovery_act_rgb"
+              }
+            }
+          ],
+          "parameters": 11419156,
+          "trainable_parameters": 252244,
+          "training_s": 344.2151624170074
+        }
+      },
+      "wall_s": 951.3127612090029
+    },
+    "aggregated17": {
+      "source_sha": "c482f511cd8b013972c8f46de82308f1a7c078f4",
+      "report_sha256": "fe066df99b97c9e208ee3c316533db87c285651195c086b72bca61b3ee20fd4f",
+      "seed": 20260917,
+      "steps": 10000,
+      "train_trajectories": 45,
+      "robots": {
+        "r1": {
+          "selected": {
+            "step": 8500,
+            "loss": 0.011800585314631462,
+            "development": {
+              "samples": 840,
+              "stop_samples": 82,
+              "missed_ready": 6,
+              "false_ready": 4,
+              "normalized_action_mae": [
+                0.038121227937009894,
+                0.014231735011296596,
+                0.008141248999620498
+              ],
+              "selection_score": 0.1461059175721054
+            },
+            "elapsed_s": 248.02446304101613
+          },
+          "samples": 2518,
+          "development_samples": 840,
+          "groups": {
+            "0": 1683,
+            "1": 94,
+            "2": 82,
+            "3": 533,
+            "4": 126
+          },
+          "readback": [
+            {
+              "sample_id": "nominal-train-01:000:r1",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.022962943464517594,
+                "left": 0.0006095677614212036,
+                "turn": -0.0013374801725149154,
+                "stop_score": 0.016330108046531677,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-train-01:051:r1",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.00014739409089088438,
+                "left": -3.0849874019622805e-05,
+                "turn": -0.00025066584348678586,
+                "stop_score": 0.6258783936500549,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:000:r1",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.06412847936153411,
+                "left": -3.249868750572205e-05,
+                "turn": -0.0003784585744142532,
+                "stop_score": 0.0,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:045:r1",
+              "decision": {
+                "ok": true,
+                "ready": true,
+                "forward": 0.0005028672516345978,
+                "left": 0.00020911395549774172,
+                "turn": -0.00024395026266574857,
+                "stop_score": 0.9540663957595825,
+                "reason": "recovery_act_rgb"
+              }
+            }
+          ],
+          "parameters": 11419156,
+          "trainable_parameters": 252244,
+          "training_s": 283.170610458008
+        },
+        "r3": {
+          "selected": {
+            "step": 3000,
+            "loss": 0.013105172663927078,
+            "development": {
+              "samples": 840,
+              "stop_samples": 143,
+              "missed_ready": 11,
+              "false_ready": 8,
+              "normalized_action_mae": [
+                0.050142727313637746,
+                0.01464967968988983,
+                0.02019888481294939
+              ],
+              "selection_score": 0.22003112589298818
+            },
+            "elapsed_s": 62.318218125001295
+          },
+          "samples": 2518,
+          "development_samples": 840,
+          "groups": {
+            "0": 1879,
+            "1": 109,
+            "2": 86,
+            "3": 329,
+            "4": 115
+          },
+          "readback": [
+            {
+              "sample_id": "nominal-train-01:000:r3",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.1130774438381195,
+                "left": 0.0005958274006843567,
+                "turn": -0.0015305466949939728,
+                "stop_score": 0.006502188742160797,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-train-01:032:r3",
+              "decision": {
+                "ok": true,
+                "ready": true,
+                "forward": 0.0009559566155076027,
+                "left": -0.0007917314767837525,
+                "turn": -0.0005086619406938553,
+                "stop_score": 1.0,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:000:r3",
+              "decision": {
+                "ok": true,
+                "ready": false,
+                "forward": 0.03149365782737732,
+                "left": -0.00023331344127655031,
+                "turn": -0.0031320534646511076,
+                "stop_score": 0.0002531185746192932,
+                "reason": "recovery_act_rgb"
+              }
+            },
+            {
+              "sample_id": "nominal-dev-01:047:r3",
+              "decision": {
+                "ok": true,
+                "ready": true,
+                "forward": 8.280370384454727e-05,
+                "left": -0.0009683817625045776,
+                "turn": -0.0002623166888952255,
+                "stop_score": 1.0,
+                "reason": "recovery_act_rgb"
+              }
+            }
+          ],
+          "parameters": 11419156,
+          "trainable_parameters": 252244,
+          "training_s": 205.34938025000156
+        }
+      },
+      "wall_s": 735.7438104999892
+    }
+  },
+  "external_model_calls": 0
+}

@@ -1,0 +1,100 @@
+{
+  "frozen_at_utc": "2026-09-16T15:37:33.431108+00:00",
+  "source_sha": "911bf99e93cebdda111f3b8cd96bc9adcc3e426c",
+  "spec_sha256": "e9864cfecee5a4b7e05b98d6f2ef5fbf677a91ab097db3e2a0a70d8bfb3b5fa4",
+  "test_cases_sha256": "f8316a77ed202fcb246361750e1264d3312440ed7662127d8e0196791913052d",
+  "decoder": "raw for all six students; calibration rejected on development-only criterion",
+  "models": {
+    "nominal16": {
+      "report_sha256": "fb9f8125da0de2cbb9b1d287cc9e6ca15a8074e7bf660d9033190981e673e107",
+      "source_sha": "c482f511cd8b013972c8f46de82308f1a7c078f4",
+      "seed": 20260916,
+      "robots": {
+        "r1": {
+          "selected_step": 6500,
+          "training_s": 267.15442520799115
+        },
+        "r3": {
+          "selected_step": 2000,
+          "training_s": 333.236209167022
+        }
+      }
+    },
+    "nominal17": {
+      "report_sha256": "0c6c377345410f3a3981da0b840602393493a801ba5aa2d7d6caea3961c27a65",
+      "source_sha": "c482f511cd8b013972c8f46de82308f1a7c078f4",
+      "seed": 20260917,
+      "robots": {
+        "r1": {
+          "selected_step": 5500,
+          "training_s": 324.23194262501784
+        },
+        "r3": {
+          "selected_step": 1000,
+          "training_s": 331.9820029590046
+        }
+      }
+    },
+    "recovery16": {
+      "report_sha256": "d81ce69f16c9565b02900a2f61c2b052fed04b8bb95d1bde4b3f0fc8e8829425",
+      "source_sha": "c482f511cd8b013972c8f46de82308f1a7c078f4",
+      "seed": 20260916,
+      "robots": {
+        "r1": {
+          "selected_step": 10000,
+          "training_s": 330.022370916995
+        },
+        "r3": {
+          "selected_step": 10000,
+          "training_s": 299.8147566670086
+        }
+      }
+    },
+    "recovery17": {
+      "report_sha256": "66e3f6239e0b8c3a5ca866c518d9f3b6dfd59d597480285a2772b617d71b9ad9",
+      "source_sha": "c482f511cd8b013972c8f46de82308f1a7c078f4",
+      "seed": 20260917,
+      "robots": {
+        "r1": {
+          "selected_step": 10000,
+          "training_s": 368.81801337501383
+        },
+        "r3": {
+          "selected_step": 9000,
+          "training_s": 351.1072351250041
+        }
+      }
+    },
+    "aggregated16": {
+      "report_sha256": "265e7bf44df8165e0c89667882644e5255447950ed17463daf9f840c76e97e89",
+      "source_sha": "c482f511cd8b013972c8f46de82308f1a7c078f4",
+      "seed": 20260916,
+      "robots": {
+        "r1": {
+          "selected_step": 9000,
+          "training_s": 295.6688587499957
+        },
+        "r3": {
+          "selected_step": 8500,
+          "training_s": 344.2151624170074
+        }
+      }
+    },
+    "aggregated17": {
+      "report_sha256": "fe066df99b97c9e208ee3c316533db87c285651195c086b72bca61b3ee20fd4f",
+      "source_sha": "c482f511cd8b013972c8f46de82308f1a7c078f4",
+      "seed": 20260917,
+      "robots": {
+        "r1": {
+          "selected_step": 8500,
+          "training_s": 283.170610458008
+        },
+        "r3": {
+          "selected_step": 3000,
+          "training_s": 205.34938025000156
+        }
+      }
+    }
+  },
+  "final_test_started": false
+}
