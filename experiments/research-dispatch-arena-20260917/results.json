@@ -1,0 +1,2940 @@
+[
+  {
+    "id": "open",
+    "title": "기본 공간",
+    "desc": "장애물 없이 역할·목적지 합의를 비교합니다.",
+    "result": {
+      "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+      "source_sha": "e9ececb5fb71fe3368f1eb45b9361274a134f2df",
+      "variant": "open",
+      "seed": 11,
+      "mode": "none",
+      "scene_ok": true,
+      "plan_committed": false,
+      "transport_success": null,
+      "error": null,
+      "cost_usd": null,
+      "physics_steps": 450,
+      "weld_steps": 0,
+      "obstacle_contact_steps": 0,
+      "invariants_unchanged": true,
+      "motion_smoke": true,
+      "robot_displacement_m": {
+        "r1": 0.03448883462192409,
+        "r2": 0.034488834621922204,
+        "r3": 0.03448883462192576
+      },
+      "initial_invariants": {
+        "scene_xml_sha256": "c1b9574303ac4f832e2b52bec166dcdf4c2c96fb41b0321579f692c17bcdc965",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "final_invariants": {
+        "scene_xml_sha256": "c1b9574303ac4f832e2b52bec166dcdf4c2c96fb41b0321579f692c17bcdc965",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "wall_seconds": 2.2813792079978157
+    },
+    "map": {
+      "schema": "ugrp.dispatch_map.v1",
+      "map_id": "dispatch_open",
+      "version": 1,
+      "frame": "warehouse_xy_m",
+      "bounds_m": [
+        -1.02,
+        2.12,
+        -3.18,
+        -0.82
+      ],
+      "top_camera": {
+        "name": "cctv_top",
+        "position_m": [
+          0.55,
+          -2.0,
+          2.5
+        ],
+        "quaternion_wxyz": [
+          1,
+          0,
+          0,
+          0
+        ],
+        "fov_y_deg": 55
+      },
+      "obstacles": [
+        {
+          "id": "wall_north",
+          "center_m": [
+            0.55,
+            -0.82
+          ],
+          "half_extents_m": [
+            1.57,
+            0.025
+          ],
+          "height_m": 0.1,
+          "kind": "wall"
+        },
+        {
+          "id": "wall_south",
+          "center_m": [
+            0.55,
+            -3.18
+          ],
+          "half_extents_m": [
+            1.57,
+            0.025
+          ],
+          "height_m": 0.1,
+          "kind": "wall"
+        },
+        {
+          "id": "wall_west",
+          "center_m": [
+            -1.02,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.025,
+            1.18
+          ],
+          "height_m": 0.1,
+          "kind": "wall"
+        },
+        {
+          "id": "wall_east",
+          "center_m": [
+            2.12,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.025,
+            1.18
+          ],
+          "height_m": 0.1,
+          "kind": "wall"
+        }
+      ],
+      "terrain": [],
+      "regions": {
+        "pickup": {
+          "center_m": [
+            -0.35,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.45,
+            0.96
+          ],
+          "rgba": ".12 .36 .70 .14"
+        },
+        "wait_west": {
+          "center_m": [
+            0.18,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.16,
+            0.29
+          ],
+          "rgba": ".95 .70 .16 .22"
+        },
+        "wait_east": {
+          "center_m": [
+            1.02,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.16,
+            0.29
+          ],
+          "rgba": ".95 .70 .16 .22"
+        },
+        "north_gate": {
+          "center_m": [
+            0.6,
+            -1.18
+          ],
+          "half_extents_m": [
+            0.32,
+            0.29
+          ],
+          "rgba": ".22 .65 .75 .15"
+        },
+        "south_gate": {
+          "center_m": [
+            0.6,
+            -2.82
+          ],
+          "half_extents_m": [
+            0.32,
+            0.29
+          ],
+          "rgba": ".22 .65 .75 .15"
+        },
+        "dispatch_apron": {
+          "center_m": [
+            1.48,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.38,
+            0.2
+          ],
+          "rgba": ".95 .70 .16 .18"
+        },
+        "dock_a": {
+          "center_m": [
+            1.59,
+            -1.34
+          ],
+          "half_extents_m": [
+            0.37,
+            0.38
+          ],
+          "rgba": ".14 .55 .40 .14"
+        },
+        "dock_b": {
+          "center_m": [
+            1.59,
+            -2.66
+          ],
+          "half_extents_m": [
+            0.37,
+            0.38
+          ],
+          "rgba": ".14 .55 .40 .14"
+        }
+      },
+      "routes": {
+        "north": {
+          "resource": "north_gate",
+          "regions": [
+            "pickup",
+            "north_gate",
+            "dispatch_apron"
+          ],
+          "declared_min_width_m": 0.685,
+          "loaded_passage": "unvalidated"
+        },
+        "south": {
+          "resource": "south_gate",
+          "regions": [
+            "pickup",
+            "south_gate",
+            "dispatch_apron"
+          ],
+          "declared_min_width_m": 0.685,
+          "loaded_passage": "unvalidated"
+        }
+      },
+      "docks": {
+        "dock_a": {
+          "slots": {
+            "beam": {
+              "center_m": [
+                1.54,
+                -1.34
+              ],
+              "half_extents_m": [
+                0.14,
+                0.27
+              ]
+            },
+            "box": {
+              "center_m": [
+                1.82,
+                -1.34
+              ],
+              "half_extents_m": [
+                0.1,
+                0.12
+              ]
+            }
+          }
+        },
+        "dock_b": {
+          "slots": {
+            "beam": {
+              "center_m": [
+                1.54,
+                -2.66
+              ],
+              "half_extents_m": [
+                0.14,
+                0.27
+              ]
+            },
+            "box": {
+              "center_m": [
+                1.82,
+                -2.66
+              ],
+              "half_extents_m": [
+                0.1,
+                0.12
+              ]
+            }
+          }
+        }
+      },
+      "resource_rules": {
+        "north_gate": "one transport team at a time",
+        "south_gate": "one transport team at a time",
+        "dispatch_apron": "one transport team at a time"
+      },
+      "completion": "Both cargo footprints fully inside the same selected dock slots, released and stable; referee output only."
+    }
+  },
+  {
+    "id": "shared_crossing",
+    "title": "공유 통로",
+    "desc": "두 경로와 출하 앞마당에서 통행 순서를 조율합니다.",
+    "result": {
+      "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+      "source_sha": "e9ececb5fb71fe3368f1eb45b9361274a134f2df",
+      "variant": "shared_crossing",
+      "seed": 11,
+      "mode": "llm",
+      "scene_ok": true,
+      "plan_committed": true,
+      "transport_success": null,
+      "error": null,
+      "cost_usd": null,
+      "plan": {
+        "proposal_id": "dispatch-3a7800eaf22b-plan-v1",
+        "version": 1,
+        "plan_hash": "f4c17fb3102f1d31ee1eed63179bec3e397c5f215457d392a88851229fcf99ee",
+        "plan": {
+          "dock": "dock_a",
+          "tasks": [
+            {
+              "id": "beam_job",
+              "object": "beam",
+              "participants": [
+                "r1",
+                "r2"
+              ],
+              "route": "north",
+              "after": []
+            },
+            {
+              "id": "box_job",
+              "object": "box",
+              "participants": [
+                "r3"
+              ],
+              "route": "south",
+              "after": [
+                "beam_job"
+              ]
+            }
+          ]
+        },
+        "proposer": "r1"
+      },
+      "model_attempts": 6,
+      "execution_status": "awaiting_new_arena_local_executor; no cargo actions issued",
+      "physics_steps": 450,
+      "weld_steps": 0,
+      "obstacle_contact_steps": 0,
+      "invariants_unchanged": true,
+      "motion_smoke": true,
+      "robot_displacement_m": {
+        "r1": 0.03448883462897545,
+        "r2": 0.03448883462897556,
+        "r3": 0.03448883462897301
+      },
+      "initial_invariants": {
+        "scene_xml_sha256": "a85370d879977f49fc95588263865782381ee8564e59c792882d85a9406d609f",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "18427114fa288e6e5d2ca0a6b5f7c29cffae4b7d6bc78f20ee931f22c64816ef",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "final_invariants": {
+        "scene_xml_sha256": "a85370d879977f49fc95588263865782381ee8564e59c792882d85a9406d609f",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "18427114fa288e6e5d2ca0a6b5f7c29cffae4b7d6bc78f20ee931f22c64816ef",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "wall_seconds": 65.21727370799636
+    },
+    "map": {
+      "schema": "ugrp.dispatch_map.v1",
+      "map_id": "dispatch_shared_crossing",
+      "version": 1,
+      "frame": "warehouse_xy_m",
+      "bounds_m": [
+        -1.02,
+        2.12,
+        -3.18,
+        -0.82
+      ],
+      "top_camera": {
+        "name": "cctv_top",
+        "position_m": [
+          0.55,
+          -2.0,
+          2.5
+        ],
+        "quaternion_wxyz": [
+          1,
+          0,
+          0,
+          0
+        ],
+        "fov_y_deg": 55
+      },
+      "obstacles": [
+        {
+          "id": "wall_north",
+          "center_m": [
+            0.55,
+            -0.82
+          ],
+          "half_extents_m": [
+            1.57,
+            0.025
+          ],
+          "height_m": 0.1,
+          "kind": "wall"
+        },
+        {
+          "id": "wall_south",
+          "center_m": [
+            0.55,
+            -3.18
+          ],
+          "half_extents_m": [
+            1.57,
+            0.025
+          ],
+          "height_m": 0.1,
+          "kind": "wall"
+        },
+        {
+          "id": "wall_west",
+          "center_m": [
+            -1.02,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.025,
+            1.18
+          ],
+          "height_m": 0.1,
+          "kind": "wall"
+        },
+        {
+          "id": "wall_east",
+          "center_m": [
+            2.12,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.025,
+            1.18
+          ],
+          "height_m": 0.1,
+          "kind": "wall"
+        },
+        {
+          "id": "service_island",
+          "center_m": [
+            0.6,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.18,
+            0.47
+          ],
+          "height_m": 0.16,
+          "kind": "island"
+        }
+      ],
+      "terrain": [],
+      "regions": {
+        "pickup": {
+          "center_m": [
+            -0.35,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.45,
+            0.96
+          ],
+          "rgba": ".12 .36 .70 .14"
+        },
+        "wait_west": {
+          "center_m": [
+            0.18,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.16,
+            0.29
+          ],
+          "rgba": ".95 .70 .16 .22"
+        },
+        "wait_east": {
+          "center_m": [
+            1.02,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.16,
+            0.29
+          ],
+          "rgba": ".95 .70 .16 .22"
+        },
+        "north_gate": {
+          "center_m": [
+            0.6,
+            -1.18
+          ],
+          "half_extents_m": [
+            0.32,
+            0.29
+          ],
+          "rgba": ".22 .65 .75 .15"
+        },
+        "south_gate": {
+          "center_m": [
+            0.6,
+            -2.82
+          ],
+          "half_extents_m": [
+            0.32,
+            0.29
+          ],
+          "rgba": ".22 .65 .75 .15"
+        },
+        "dispatch_apron": {
+          "center_m": [
+            1.48,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.38,
+            0.2
+          ],
+          "rgba": ".95 .70 .16 .18"
+        },
+        "dock_a": {
+          "center_m": [
+            1.59,
+            -1.34
+          ],
+          "half_extents_m": [
+            0.37,
+            0.38
+          ],
+          "rgba": ".14 .55 .40 .14"
+        },
+        "dock_b": {
+          "center_m": [
+            1.59,
+            -2.66
+          ],
+          "half_extents_m": [
+            0.37,
+            0.38
+          ],
+          "rgba": ".14 .55 .40 .14"
+        }
+      },
+      "routes": {
+        "north": {
+          "resource": "north_gate",
+          "regions": [
+            "pickup",
+            "north_gate",
+            "dispatch_apron"
+          ],
+          "declared_min_width_m": 0.685,
+          "loaded_passage": "unvalidated"
+        },
+        "south": {
+          "resource": "south_gate",
+          "regions": [
+            "pickup",
+            "south_gate",
+            "dispatch_apron"
+          ],
+          "declared_min_width_m": 0.685,
+          "loaded_passage": "unvalidated"
+        }
+      },
+      "docks": {
+        "dock_a": {
+          "slots": {
+            "beam": {
+              "center_m": [
+                1.54,
+                -1.34
+              ],
+              "half_extents_m": [
+                0.14,
+                0.27
+              ]
+            },
+            "box": {
+              "center_m": [
+                1.82,
+                -1.34
+              ],
+              "half_extents_m": [
+                0.1,
+                0.12
+              ]
+            }
+          }
+        },
+        "dock_b": {
+          "slots": {
+            "beam": {
+              "center_m": [
+                1.54,
+                -2.66
+              ],
+              "half_extents_m": [
+                0.14,
+                0.27
+              ]
+            },
+            "box": {
+              "center_m": [
+                1.82,
+                -2.66
+              ],
+              "half_extents_m": [
+                0.1,
+                0.12
+              ]
+            }
+          }
+        }
+      },
+      "resource_rules": {
+        "north_gate": "one transport team at a time",
+        "south_gate": "one transport team at a time",
+        "dispatch_apron": "one transport team at a time"
+      },
+      "completion": "Both cargo footprints fully inside the same selected dock slots, released and stable; referee output only."
+    },
+    "programs": {
+      "r1": [
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "APPROACH",
+          "role": "end_a",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_a_beam",
+          "route": "north",
+          "after": [],
+          "resources": [],
+          "barrier": false,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "GRASP",
+          "role": "end_a",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_a_beam",
+          "route": "north",
+          "after": [],
+          "resources": [],
+          "barrier": true,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "LIFT",
+          "role": "end_a",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_a_beam",
+          "route": "north",
+          "after": [],
+          "resources": [],
+          "barrier": true,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "TRANSIT",
+          "role": "end_a",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_a_beam",
+          "route": "north",
+          "after": [],
+          "resources": [
+            "north_gate",
+            "dispatch_apron"
+          ],
+          "barrier": true,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "LOWER",
+          "role": "end_a",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_a_beam",
+          "route": "north",
+          "after": [],
+          "resources": [],
+          "barrier": true,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "RELEASE",
+          "role": "end_a",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_a_beam",
+          "route": "north",
+          "after": [],
+          "resources": [],
+          "barrier": true,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        }
+      ],
+      "r2": [
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "APPROACH",
+          "role": "end_b",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_a_beam",
+          "route": "north",
+          "after": [],
+          "resources": [],
+          "barrier": false,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "GRASP",
+          "role": "end_b",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_a_beam",
+          "route": "north",
+          "after": [],
+          "resources": [],
+          "barrier": true,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "LIFT",
+          "role": "end_b",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_a_beam",
+          "route": "north",
+          "after": [],
+          "resources": [],
+          "barrier": true,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "TRANSIT",
+          "role": "end_b",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_a_beam",
+          "route": "north",
+          "after": [],
+          "resources": [
+            "north_gate",
+            "dispatch_apron"
+          ],
+          "barrier": true,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "LOWER",
+          "role": "end_b",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_a_beam",
+          "route": "north",
+          "after": [],
+          "resources": [],
+          "barrier": true,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "RELEASE",
+          "role": "end_b",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_a_beam",
+          "route": "north",
+          "after": [],
+          "resources": [],
+          "barrier": true,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        }
+      ],
+      "r3": [
+        {
+          "task_id": "box_job",
+          "object": "box",
+          "stage": "APPROACH",
+          "role": "carrier",
+          "participants": [
+            "r3"
+          ],
+          "goal_region": "dock_a_box",
+          "route": "south",
+          "after": [
+            "beam_job"
+          ],
+          "resources": [],
+          "barrier": false,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "box_job",
+          "object": "box",
+          "stage": "GRASP",
+          "role": "carrier",
+          "participants": [
+            "r3"
+          ],
+          "goal_region": "dock_a_box",
+          "route": "south",
+          "after": [
+            "beam_job"
+          ],
+          "resources": [],
+          "barrier": false,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "box_job",
+          "object": "box",
+          "stage": "LIFT",
+          "role": "carrier",
+          "participants": [
+            "r3"
+          ],
+          "goal_region": "dock_a_box",
+          "route": "south",
+          "after": [
+            "beam_job"
+          ],
+          "resources": [],
+          "barrier": false,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "box_job",
+          "object": "box",
+          "stage": "TRANSIT",
+          "role": "carrier",
+          "participants": [
+            "r3"
+          ],
+          "goal_region": "dock_a_box",
+          "route": "south",
+          "after": [
+            "beam_job"
+          ],
+          "resources": [
+            "south_gate",
+            "dispatch_apron"
+          ],
+          "barrier": false,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "box_job",
+          "object": "box",
+          "stage": "LOWER",
+          "role": "carrier",
+          "participants": [
+            "r3"
+          ],
+          "goal_region": "dock_a_box",
+          "route": "south",
+          "after": [
+            "beam_job"
+          ],
+          "resources": [],
+          "barrier": false,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "box_job",
+          "object": "box",
+          "stage": "RELEASE",
+          "role": "carrier",
+          "participants": [
+            "r3"
+          ],
+          "goal_region": "dock_a_box",
+          "route": "south",
+          "after": [
+            "beam_job"
+          ],
+          "resources": [],
+          "barrier": false,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        }
+      ]
+    }
+  },
+  {
+    "id": "north_blocked",
+    "title": "예상 밖 장애물",
+    "desc": "사전 지도에는 없는 북쪽 장애물을 영상으로 확인합니다.",
+    "result": {
+      "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+      "source_sha": "e9ececb5fb71fe3368f1eb45b9361274a134f2df",
+      "variant": "north_blocked",
+      "seed": 11,
+      "mode": "llm",
+      "scene_ok": true,
+      "plan_committed": true,
+      "transport_success": null,
+      "error": null,
+      "cost_usd": null,
+      "plan": {
+        "proposal_id": "dispatch-974033d5aaf2-plan-v1",
+        "version": 1,
+        "plan_hash": "3e54997a5bb843ad9678897053ab90cc5598bea07720bfd85a7d62127cd597c4",
+        "plan": {
+          "dock": "dock_b",
+          "tasks": [
+            {
+              "id": "beam_job",
+              "object": "beam",
+              "participants": [
+                "r1",
+                "r2"
+              ],
+              "route": "south",
+              "after": [
+                "box_job"
+              ]
+            },
+            {
+              "id": "box_job",
+              "object": "box",
+              "participants": [
+                "r3"
+              ],
+              "route": "south",
+              "after": []
+            }
+          ]
+        },
+        "proposer": "r1"
+      },
+      "model_attempts": 6,
+      "execution_status": "awaiting_new_arena_local_executor; no cargo actions issued",
+      "physics_steps": 450,
+      "weld_steps": 0,
+      "obstacle_contact_steps": 0,
+      "invariants_unchanged": true,
+      "motion_smoke": true,
+      "robot_displacement_m": {
+        "r1": 0.03448883462897545,
+        "r2": 0.03448883462897556,
+        "r3": 0.03448883462897301
+      },
+      "initial_invariants": {
+        "scene_xml_sha256": "7f883e0e905baf0c8f3ef7bf10d36cca0abf47c0f4674f7939087e8922a2461f",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "18427114fa288e6e5d2ca0a6b5f7c29cffae4b7d6bc78f20ee931f22c64816ef",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "final_invariants": {
+        "scene_xml_sha256": "7f883e0e905baf0c8f3ef7bf10d36cca0abf47c0f4674f7939087e8922a2461f",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "18427114fa288e6e5d2ca0a6b5f7c29cffae4b7d6bc78f20ee931f22c64816ef",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "wall_seconds": 78.63065537498915
+    },
+    "map": {
+      "schema": "ugrp.dispatch_map.v1",
+      "map_id": "dispatch_shared_crossing",
+      "version": 1,
+      "frame": "warehouse_xy_m",
+      "bounds_m": [
+        -1.02,
+        2.12,
+        -3.18,
+        -0.82
+      ],
+      "top_camera": {
+        "name": "cctv_top",
+        "position_m": [
+          0.55,
+          -2.0,
+          2.5
+        ],
+        "quaternion_wxyz": [
+          1,
+          0,
+          0,
+          0
+        ],
+        "fov_y_deg": 55
+      },
+      "obstacles": [
+        {
+          "id": "wall_north",
+          "center_m": [
+            0.55,
+            -0.82
+          ],
+          "half_extents_m": [
+            1.57,
+            0.025
+          ],
+          "height_m": 0.1,
+          "kind": "wall"
+        },
+        {
+          "id": "wall_south",
+          "center_m": [
+            0.55,
+            -3.18
+          ],
+          "half_extents_m": [
+            1.57,
+            0.025
+          ],
+          "height_m": 0.1,
+          "kind": "wall"
+        },
+        {
+          "id": "wall_west",
+          "center_m": [
+            -1.02,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.025,
+            1.18
+          ],
+          "height_m": 0.1,
+          "kind": "wall"
+        },
+        {
+          "id": "wall_east",
+          "center_m": [
+            2.12,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.025,
+            1.18
+          ],
+          "height_m": 0.1,
+          "kind": "wall"
+        },
+        {
+          "id": "service_island",
+          "center_m": [
+            0.6,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.18,
+            0.47
+          ],
+          "height_m": 0.16,
+          "kind": "island"
+        }
+      ],
+      "terrain": [],
+      "regions": {
+        "pickup": {
+          "center_m": [
+            -0.35,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.45,
+            0.96
+          ],
+          "rgba": ".12 .36 .70 .14"
+        },
+        "wait_west": {
+          "center_m": [
+            0.18,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.16,
+            0.29
+          ],
+          "rgba": ".95 .70 .16 .22"
+        },
+        "wait_east": {
+          "center_m": [
+            1.02,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.16,
+            0.29
+          ],
+          "rgba": ".95 .70 .16 .22"
+        },
+        "north_gate": {
+          "center_m": [
+            0.6,
+            -1.18
+          ],
+          "half_extents_m": [
+            0.32,
+            0.29
+          ],
+          "rgba": ".22 .65 .75 .15"
+        },
+        "south_gate": {
+          "center_m": [
+            0.6,
+            -2.82
+          ],
+          "half_extents_m": [
+            0.32,
+            0.29
+          ],
+          "rgba": ".22 .65 .75 .15"
+        },
+        "dispatch_apron": {
+          "center_m": [
+            1.48,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.38,
+            0.2
+          ],
+          "rgba": ".95 .70 .16 .18"
+        },
+        "dock_a": {
+          "center_m": [
+            1.59,
+            -1.34
+          ],
+          "half_extents_m": [
+            0.37,
+            0.38
+          ],
+          "rgba": ".14 .55 .40 .14"
+        },
+        "dock_b": {
+          "center_m": [
+            1.59,
+            -2.66
+          ],
+          "half_extents_m": [
+            0.37,
+            0.38
+          ],
+          "rgba": ".14 .55 .40 .14"
+        }
+      },
+      "routes": {
+        "north": {
+          "resource": "north_gate",
+          "regions": [
+            "pickup",
+            "north_gate",
+            "dispatch_apron"
+          ],
+          "declared_min_width_m": 0.685,
+          "loaded_passage": "unvalidated"
+        },
+        "south": {
+          "resource": "south_gate",
+          "regions": [
+            "pickup",
+            "south_gate",
+            "dispatch_apron"
+          ],
+          "declared_min_width_m": 0.685,
+          "loaded_passage": "unvalidated"
+        }
+      },
+      "docks": {
+        "dock_a": {
+          "slots": {
+            "beam": {
+              "center_m": [
+                1.54,
+                -1.34
+              ],
+              "half_extents_m": [
+                0.14,
+                0.27
+              ]
+            },
+            "box": {
+              "center_m": [
+                1.82,
+                -1.34
+              ],
+              "half_extents_m": [
+                0.1,
+                0.12
+              ]
+            }
+          }
+        },
+        "dock_b": {
+          "slots": {
+            "beam": {
+              "center_m": [
+                1.54,
+                -2.66
+              ],
+              "half_extents_m": [
+                0.14,
+                0.27
+              ]
+            },
+            "box": {
+              "center_m": [
+                1.82,
+                -2.66
+              ],
+              "half_extents_m": [
+                0.1,
+                0.12
+              ]
+            }
+          }
+        }
+      },
+      "resource_rules": {
+        "north_gate": "one transport team at a time",
+        "south_gate": "one transport team at a time",
+        "dispatch_apron": "one transport team at a time"
+      },
+      "completion": "Both cargo footprints fully inside the same selected dock slots, released and stable; referee output only."
+    },
+    "programs": {
+      "r1": [
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "APPROACH",
+          "role": "end_a",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_b_beam",
+          "route": "south",
+          "after": [
+            "box_job"
+          ],
+          "resources": [],
+          "barrier": false,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "GRASP",
+          "role": "end_a",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_b_beam",
+          "route": "south",
+          "after": [
+            "box_job"
+          ],
+          "resources": [],
+          "barrier": true,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "LIFT",
+          "role": "end_a",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_b_beam",
+          "route": "south",
+          "after": [
+            "box_job"
+          ],
+          "resources": [],
+          "barrier": true,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "TRANSIT",
+          "role": "end_a",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_b_beam",
+          "route": "south",
+          "after": [
+            "box_job"
+          ],
+          "resources": [
+            "south_gate",
+            "dispatch_apron"
+          ],
+          "barrier": true,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "LOWER",
+          "role": "end_a",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_b_beam",
+          "route": "south",
+          "after": [
+            "box_job"
+          ],
+          "resources": [],
+          "barrier": true,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "RELEASE",
+          "role": "end_a",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_b_beam",
+          "route": "south",
+          "after": [
+            "box_job"
+          ],
+          "resources": [],
+          "barrier": true,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        }
+      ],
+      "r2": [
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "APPROACH",
+          "role": "end_b",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_b_beam",
+          "route": "south",
+          "after": [
+            "box_job"
+          ],
+          "resources": [],
+          "barrier": false,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "GRASP",
+          "role": "end_b",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_b_beam",
+          "route": "south",
+          "after": [
+            "box_job"
+          ],
+          "resources": [],
+          "barrier": true,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "LIFT",
+          "role": "end_b",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_b_beam",
+          "route": "south",
+          "after": [
+            "box_job"
+          ],
+          "resources": [],
+          "barrier": true,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "TRANSIT",
+          "role": "end_b",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_b_beam",
+          "route": "south",
+          "after": [
+            "box_job"
+          ],
+          "resources": [
+            "south_gate",
+            "dispatch_apron"
+          ],
+          "barrier": true,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "LOWER",
+          "role": "end_b",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_b_beam",
+          "route": "south",
+          "after": [
+            "box_job"
+          ],
+          "resources": [],
+          "barrier": true,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "beam_job",
+          "object": "beam",
+          "stage": "RELEASE",
+          "role": "end_b",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "goal_region": "dock_b_beam",
+          "route": "south",
+          "after": [
+            "box_job"
+          ],
+          "resources": [],
+          "barrier": true,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        }
+      ],
+      "r3": [
+        {
+          "task_id": "box_job",
+          "object": "box",
+          "stage": "APPROACH",
+          "role": "carrier",
+          "participants": [
+            "r3"
+          ],
+          "goal_region": "dock_b_box",
+          "route": "south",
+          "after": [],
+          "resources": [],
+          "barrier": false,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "box_job",
+          "object": "box",
+          "stage": "GRASP",
+          "role": "carrier",
+          "participants": [
+            "r3"
+          ],
+          "goal_region": "dock_b_box",
+          "route": "south",
+          "after": [],
+          "resources": [],
+          "barrier": false,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "box_job",
+          "object": "box",
+          "stage": "LIFT",
+          "role": "carrier",
+          "participants": [
+            "r3"
+          ],
+          "goal_region": "dock_b_box",
+          "route": "south",
+          "after": [],
+          "resources": [],
+          "barrier": false,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "box_job",
+          "object": "box",
+          "stage": "TRANSIT",
+          "role": "carrier",
+          "participants": [
+            "r3"
+          ],
+          "goal_region": "dock_b_box",
+          "route": "south",
+          "after": [],
+          "resources": [
+            "south_gate",
+            "dispatch_apron"
+          ],
+          "barrier": false,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "box_job",
+          "object": "box",
+          "stage": "LOWER",
+          "role": "carrier",
+          "participants": [
+            "r3"
+          ],
+          "goal_region": "dock_b_box",
+          "route": "south",
+          "after": [],
+          "resources": [],
+          "barrier": false,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        },
+        {
+          "task_id": "box_job",
+          "object": "box",
+          "stage": "RELEASE",
+          "role": "carrier",
+          "participants": [
+            "r3"
+          ],
+          "goal_region": "dock_b_box",
+          "route": "south",
+          "after": [],
+          "resources": [],
+          "barrier": false,
+          "completion_source": "local RGB claim, separately checked by output-only referee",
+          "execution_adapter": "unbound_new_arena_skill"
+        }
+      ]
+    }
+  },
+  {
+    "id": "narrow_south",
+    "title": "좁은 남쪽 통로",
+    "desc": "39cm 통로에서 화물과 팀의 통과 가능성을 판단합니다.",
+    "result": {
+      "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+      "source_sha": "e9ececb5fb71fe3368f1eb45b9361274a134f2df",
+      "variant": "narrow_south",
+      "seed": 11,
+      "mode": "none",
+      "scene_ok": true,
+      "plan_committed": false,
+      "transport_success": null,
+      "error": null,
+      "cost_usd": null,
+      "physics_steps": 450,
+      "weld_steps": 0,
+      "obstacle_contact_steps": 0,
+      "invariants_unchanged": true,
+      "motion_smoke": true,
+      "robot_displacement_m": {
+        "r1": 0.03448883462897545,
+        "r2": 0.03448883462897556,
+        "r3": 0.03448883462897301
+      },
+      "initial_invariants": {
+        "scene_xml_sha256": "cd6b226d3ec7f8ea9e04253c9802fea723a94f5624213a08140e2df56ac312a3",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "0be696b4b1e13e9bdc0f49d2d3adf256bc16c503b029126c03a3c47a3ac286d0",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "final_invariants": {
+        "scene_xml_sha256": "cd6b226d3ec7f8ea9e04253c9802fea723a94f5624213a08140e2df56ac312a3",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "0be696b4b1e13e9bdc0f49d2d3adf256bc16c503b029126c03a3c47a3ac286d0",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "wall_seconds": 2.149781833984889
+    },
+    "map": {
+      "schema": "ugrp.dispatch_map.v1",
+      "map_id": "dispatch_narrow_south",
+      "version": 1,
+      "frame": "warehouse_xy_m",
+      "bounds_m": [
+        -1.02,
+        2.12,
+        -3.18,
+        -0.82
+      ],
+      "top_camera": {
+        "name": "cctv_top",
+        "position_m": [
+          0.55,
+          -2.0,
+          2.5
+        ],
+        "quaternion_wxyz": [
+          1,
+          0,
+          0,
+          0
+        ],
+        "fov_y_deg": 55
+      },
+      "obstacles": [
+        {
+          "id": "wall_north",
+          "center_m": [
+            0.55,
+            -0.82
+          ],
+          "half_extents_m": [
+            1.57,
+            0.025
+          ],
+          "height_m": 0.1,
+          "kind": "wall"
+        },
+        {
+          "id": "wall_south",
+          "center_m": [
+            0.55,
+            -3.18
+          ],
+          "half_extents_m": [
+            1.57,
+            0.025
+          ],
+          "height_m": 0.1,
+          "kind": "wall"
+        },
+        {
+          "id": "wall_west",
+          "center_m": [
+            -1.02,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.025,
+            1.18
+          ],
+          "height_m": 0.1,
+          "kind": "wall"
+        },
+        {
+          "id": "wall_east",
+          "center_m": [
+            2.12,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.025,
+            1.18
+          ],
+          "height_m": 0.1,
+          "kind": "wall"
+        },
+        {
+          "id": "service_island",
+          "center_m": [
+            0.6,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.18,
+            0.47
+          ],
+          "height_m": 0.16,
+          "kind": "island"
+        },
+        {
+          "id": "south_chicane",
+          "center_m": [
+            0.58,
+            -2.99
+          ],
+          "half_extents_m": [
+            0.2,
+            0.13
+          ],
+          "height_m": 0.14,
+          "kind": "barrier"
+        }
+      ],
+      "terrain": [],
+      "regions": {
+        "pickup": {
+          "center_m": [
+            -0.35,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.45,
+            0.96
+          ],
+          "rgba": ".12 .36 .70 .14"
+        },
+        "wait_west": {
+          "center_m": [
+            0.18,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.16,
+            0.29
+          ],
+          "rgba": ".95 .70 .16 .22"
+        },
+        "wait_east": {
+          "center_m": [
+            1.02,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.16,
+            0.29
+          ],
+          "rgba": ".95 .70 .16 .22"
+        },
+        "north_gate": {
+          "center_m": [
+            0.6,
+            -1.18
+          ],
+          "half_extents_m": [
+            0.32,
+            0.29
+          ],
+          "rgba": ".22 .65 .75 .15"
+        },
+        "south_gate": {
+          "center_m": [
+            0.6,
+            -2.82
+          ],
+          "half_extents_m": [
+            0.32,
+            0.29
+          ],
+          "rgba": ".22 .65 .75 .15"
+        },
+        "dispatch_apron": {
+          "center_m": [
+            1.48,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.38,
+            0.2
+          ],
+          "rgba": ".95 .70 .16 .18"
+        },
+        "dock_a": {
+          "center_m": [
+            1.59,
+            -1.34
+          ],
+          "half_extents_m": [
+            0.37,
+            0.38
+          ],
+          "rgba": ".14 .55 .40 .14"
+        },
+        "dock_b": {
+          "center_m": [
+            1.59,
+            -2.66
+          ],
+          "half_extents_m": [
+            0.37,
+            0.38
+          ],
+          "rgba": ".14 .55 .40 .14"
+        }
+      },
+      "routes": {
+        "north": {
+          "resource": "north_gate",
+          "regions": [
+            "pickup",
+            "north_gate",
+            "dispatch_apron"
+          ],
+          "declared_min_width_m": 0.685,
+          "loaded_passage": "unvalidated"
+        },
+        "south": {
+          "resource": "south_gate",
+          "regions": [
+            "pickup",
+            "south_gate",
+            "dispatch_apron"
+          ],
+          "declared_min_width_m": 0.39,
+          "loaded_passage": "unvalidated_narrow"
+        }
+      },
+      "docks": {
+        "dock_a": {
+          "slots": {
+            "beam": {
+              "center_m": [
+                1.54,
+                -1.34
+              ],
+              "half_extents_m": [
+                0.14,
+                0.27
+              ]
+            },
+            "box": {
+              "center_m": [
+                1.82,
+                -1.34
+              ],
+              "half_extents_m": [
+                0.1,
+                0.12
+              ]
+            }
+          }
+        },
+        "dock_b": {
+          "slots": {
+            "beam": {
+              "center_m": [
+                1.54,
+                -2.66
+              ],
+              "half_extents_m": [
+                0.14,
+                0.27
+              ]
+            },
+            "box": {
+              "center_m": [
+                1.82,
+                -2.66
+              ],
+              "half_extents_m": [
+                0.1,
+                0.12
+              ]
+            }
+          }
+        }
+      },
+      "resource_rules": {
+        "north_gate": "one transport team at a time",
+        "south_gate": "one transport team at a time",
+        "dispatch_apron": "one transport team at a time"
+      },
+      "completion": "Both cargo footprints fully inside the same selected dock slots, released and stable; referee output only."
+    }
+  },
+  {
+    "id": "rough_south",
+    "title": "낮은 턱",
+    "desc": "8mm 턱을 지날지 우회할지 결정합니다.",
+    "result": {
+      "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+      "source_sha": "e9ececb5fb71fe3368f1eb45b9361274a134f2df",
+      "variant": "rough_south",
+      "seed": 11,
+      "mode": "none",
+      "scene_ok": true,
+      "plan_committed": false,
+      "transport_success": null,
+      "error": null,
+      "cost_usd": null,
+      "physics_steps": 450,
+      "weld_steps": 0,
+      "obstacle_contact_steps": 0,
+      "invariants_unchanged": true,
+      "motion_smoke": true,
+      "robot_displacement_m": {
+        "r1": 0.03448883462897545,
+        "r2": 0.03448883462897556,
+        "r3": 0.03448883462897301
+      },
+      "initial_invariants": {
+        "scene_xml_sha256": "88ce77af56a577a4a4118e36dc0ca51d0f3c95bf4e411f6b9ea3d11794dccec0",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "b06d89e6e6f0ac67ef864af6f742ab47c13942b280d197e998323b532cec12a4",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "final_invariants": {
+        "scene_xml_sha256": "88ce77af56a577a4a4118e36dc0ca51d0f3c95bf4e411f6b9ea3d11794dccec0",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "b06d89e6e6f0ac67ef864af6f742ab47c13942b280d197e998323b532cec12a4",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "wall_seconds": 2.066487166011939
+    },
+    "map": {
+      "schema": "ugrp.dispatch_map.v1",
+      "map_id": "dispatch_rough_south",
+      "version": 1,
+      "frame": "warehouse_xy_m",
+      "bounds_m": [
+        -1.02,
+        2.12,
+        -3.18,
+        -0.82
+      ],
+      "top_camera": {
+        "name": "cctv_top",
+        "position_m": [
+          0.55,
+          -2.0,
+          2.5
+        ],
+        "quaternion_wxyz": [
+          1,
+          0,
+          0,
+          0
+        ],
+        "fov_y_deg": 55
+      },
+      "obstacles": [
+        {
+          "id": "wall_north",
+          "center_m": [
+            0.55,
+            -0.82
+          ],
+          "half_extents_m": [
+            1.57,
+            0.025
+          ],
+          "height_m": 0.1,
+          "kind": "wall"
+        },
+        {
+          "id": "wall_south",
+          "center_m": [
+            0.55,
+            -3.18
+          ],
+          "half_extents_m": [
+            1.57,
+            0.025
+          ],
+          "height_m": 0.1,
+          "kind": "wall"
+        },
+        {
+          "id": "wall_west",
+          "center_m": [
+            -1.02,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.025,
+            1.18
+          ],
+          "height_m": 0.1,
+          "kind": "wall"
+        },
+        {
+          "id": "wall_east",
+          "center_m": [
+            2.12,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.025,
+            1.18
+          ],
+          "height_m": 0.1,
+          "kind": "wall"
+        },
+        {
+          "id": "service_island",
+          "center_m": [
+            0.6,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.18,
+            0.47
+          ],
+          "height_m": 0.16,
+          "kind": "island"
+        }
+      ],
+      "terrain": [
+        {
+          "id": "south_rough",
+          "center_m": [
+            0.58,
+            -2.66
+          ],
+          "half_extents_m": [
+            0.25,
+            0.19
+          ],
+          "height_m": 0.008,
+          "kind": "low_ridge",
+          "loaded_passage": "unvalidated"
+        }
+      ],
+      "regions": {
+        "pickup": {
+          "center_m": [
+            -0.35,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.45,
+            0.96
+          ],
+          "rgba": ".12 .36 .70 .14"
+        },
+        "wait_west": {
+          "center_m": [
+            0.18,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.16,
+            0.29
+          ],
+          "rgba": ".95 .70 .16 .22"
+        },
+        "wait_east": {
+          "center_m": [
+            1.02,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.16,
+            0.29
+          ],
+          "rgba": ".95 .70 .16 .22"
+        },
+        "north_gate": {
+          "center_m": [
+            0.6,
+            -1.18
+          ],
+          "half_extents_m": [
+            0.32,
+            0.29
+          ],
+          "rgba": ".22 .65 .75 .15"
+        },
+        "south_gate": {
+          "center_m": [
+            0.6,
+            -2.82
+          ],
+          "half_extents_m": [
+            0.32,
+            0.29
+          ],
+          "rgba": ".22 .65 .75 .15"
+        },
+        "dispatch_apron": {
+          "center_m": [
+            1.48,
+            -2.0
+          ],
+          "half_extents_m": [
+            0.38,
+            0.2
+          ],
+          "rgba": ".95 .70 .16 .18"
+        },
+        "dock_a": {
+          "center_m": [
+            1.59,
+            -1.34
+          ],
+          "half_extents_m": [
+            0.37,
+            0.38
+          ],
+          "rgba": ".14 .55 .40 .14"
+        },
+        "dock_b": {
+          "center_m": [
+            1.59,
+            -2.66
+          ],
+          "half_extents_m": [
+            0.37,
+            0.38
+          ],
+          "rgba": ".14 .55 .40 .14"
+        }
+      },
+      "routes": {
+        "north": {
+          "resource": "north_gate",
+          "regions": [
+            "pickup",
+            "north_gate",
+            "dispatch_apron"
+          ],
+          "declared_min_width_m": 0.685,
+          "loaded_passage": "unvalidated"
+        },
+        "south": {
+          "resource": "south_gate",
+          "regions": [
+            "pickup",
+            "south_gate",
+            "dispatch_apron"
+          ],
+          "declared_min_width_m": 0.685,
+          "loaded_passage": "unvalidated_terrain"
+        }
+      },
+      "docks": {
+        "dock_a": {
+          "slots": {
+            "beam": {
+              "center_m": [
+                1.54,
+                -1.34
+              ],
+              "half_extents_m": [
+                0.14,
+                0.27
+              ]
+            },
+            "box": {
+              "center_m": [
+                1.82,
+                -1.34
+              ],
+              "half_extents_m": [
+                0.1,
+                0.12
+              ]
+            }
+          }
+        },
+        "dock_b": {
+          "slots": {
+            "beam": {
+              "center_m": [
+                1.54,
+                -2.66
+              ],
+              "half_extents_m": [
+                0.14,
+                0.27
+              ]
+            },
+            "box": {
+              "center_m": [
+                1.82,
+                -2.66
+              ],
+              "half_extents_m": [
+                0.1,
+                0.12
+              ]
+            }
+          }
+        }
+      },
+      "resource_rules": {
+        "north_gate": "one transport team at a time",
+        "south_gate": "one transport team at a time",
+        "dispatch_apron": "one transport team at a time"
+      },
+      "completion": "Both cargo footprints fully inside the same selected dock slots, released and stable; referee output only."
+    }
+  }
+]
