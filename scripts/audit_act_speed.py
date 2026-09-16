@@ -113,6 +113,8 @@ def audit(protocol_path,cohorts,models,teacher,out):
             info={**record,'total_sim_s':r['final_physics']['sim_time_s']-r['evaluation_initial_state']['sim_time_s'],
                   'stop_x_error_m':{robot:r['approach_end_state']['bases'][robot][0]-goals[robot] for robot in ('r1','r3')},
                   'grasp_evaluation':evaluation}
+            info['within_teacher_stop_tolerance'] = all(abs(value) <= .004 for value in info['stop_x_error_m'].values())
+            info['success_with_common_stop_tolerance'] = success and info['within_teacher_stop_tolerance']
             evidence['runs'].append(info);case_results[condition]=info
         evidence['pairs'].append({'case_id':case['id'],'initial_physics_and_rgb_identical':True,
                                   'teacher_failed':not case_results['teacher2']['success'],
@@ -123,6 +125,7 @@ def audit(protocol_path,cohorts,models,teacher,out):
             rows=[r for r in evidence['runs'] if r['group']==group and r['condition']==condition]
             successes=[r for r in rows if r['success']]
             evidence['groups'][group][condition]={'trials':len(rows),'successes':len(successes),
+                'successes_with_common_4mm_stop':sum(r['success_with_common_stop_tolerance'] for r in rows),
                 'approach_ready':sum(r['approach_ok'] for r in rows),'contact_failures':sum(bool(r['contact_steps']) for r in rows),
                 'mean_approach_sim_s_success_only':statistics.mean(r['sim_s'] for r in successes) if successes else None,
                 'mean_total_sim_s_success_only':statistics.mean(r['total_sim_s'] for r in successes) if successes else None}
@@ -138,6 +141,16 @@ def audit(protocol_path,cohorts,models,teacher,out):
     evidence['teacher_failure_subset']={'cases':len(hard),'case_ids':[p['case_id'] for p in hard],
         'student_successes':{c:sum(c in p['student_successes'] for p in hard) for c in models},
         'both_fast_seeds_success':[p['case_id'] for p in hard if all(c in p['student_successes'] for c in ('fast_act16','fast_act17'))]}
+    evidence['common_stop_diagnostic'] = {
+        'scope': 'Post hoc diagnostic after first far-start student success: apply the teacher 4mm x tolerance equally to all methods at settled approach end. Does not replace preregistered physical task success or alter any controller.',
+        'teacher_failure_subset_student_successes_with_4mm_stop': {
+            c: sum(r['success_with_common_stop_tolerance'] for r in evidence['runs']
+                   if r['condition']==c and r['case_id'] in evidence['teacher_failure_subset']['case_ids'])
+            for c in models},
+        'both_fast_seeds_success_with_4mm_stop': [
+            cid for cid in evidence['teacher_failure_subset']['case_ids']
+            if all(any(r['case_id']==cid and r['condition']==c and r['success_with_common_stop_tolerance']
+                       for r in evidence['runs']) for c in ('fast_act16','fast_act17'))]}
     out.parent.mkdir(parents=True,exist_ok=True)
     out.write_text(json.dumps(evidence,indent=2,allow_nan=False)+'\n')
     print(json.dumps({k:evidence[k] for k in ('groups','paired_speed','teacher_failure_subset')},indent=2))
