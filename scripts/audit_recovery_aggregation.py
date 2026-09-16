@@ -1,5 +1,5 @@
 """Read-only audit of all intervention attempts, including excluded failures."""
-import argparse,base64,hashlib,json,sys
+import argparse,base64,hashlib,json,sys,subprocess
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
 from scripts.recovery_teacher import AXES,command,errors,heldout_region,score_alignment
@@ -10,7 +10,14 @@ def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def audit(a):
  if a.out.exists():raise FileExistsError(a.out)
  goals=read(a.grasp/'evaluation-fixture.json')['base_poses'];summary=read(a.root/'summary.json');assert summary['complete']
- result={'summary_sha256':sha(a.root/'summary.json'),'manifest_sha256':sha(a.root/'raw-manifest.json'),'attempts':[],'raw_files_verified':0,'actual_rgb_requests_verified':0}
+ result={'audit_source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'model_decisions_replayed':0,'summary_sha256':sha(a.root/'summary.json'),'manifest_sha256':sha(a.root/'raw-manifest.json'),'attempts':[],'raw_files_verified':0,'actual_rgb_requests_verified':0}
+ models={}
+ if a.bootstrap:
+  import torch
+  from harness.recovery_act import RecoveryAct
+  torch.set_num_threads(2);training=read(a.bootstrap/'report.json');assert training['complete']
+  for rel,h in training['artifacts'].items():assert sha(a.bootstrap/rel)==h
+  models={rid:RecoveryAct.load(a.bootstrap/rid/'act') for rid in ('r1','r3')};result['bootstrap_report_sha256']=sha(a.bootstrap/'report.json')
  for rel,h in read(a.root/'raw-manifest.json').items():
   p=(a.root/rel).resolve();assert p.is_relative_to(a.root.resolve()) and sha(p)==h;result['raw_files_verified']+=1
  for row in summary['cases']:
@@ -21,6 +28,19 @@ def audit(a):
   for c in prefix:
    payload=json.dumps({k+'_rgb':base64.b64encode((folder/c['images'][k]['path']).read_bytes()).decode('ascii') for k in ('own','top')})+'\n'
    assert hashlib.sha256(payload.encode()).hexdigest()==c['wire_request_sha256'];result['actual_rgb_requests_verified']+=1
+  for c in prefix:
+   d=c['decision'];assert c['action']==(dict.fromkeys(AXES,0.) if d['ready'] else {k:d[k] for k in AXES})
+  if models:
+   for rid in ('r1','r3'):
+    for name,h in r['model_hashes'][rid].items():assert sha(a.bootstrap/rid/'act'/name)==h
+    calls=[c for c in prefix if c['robot_id']==rid]
+    for i in {0,len(calls)//2,len(calls)-1}:
+     c=calls[i];d=models[rid].predict(*[(folder/c['images'][k]['path']).read_bytes() for k in ('own','top')]);assert d==c['decision'];result['model_decisions_replayed']+=1
+  confirm=0;declared=False
+  for i in range(0,len(prefix),2):
+   both=all(c['decision']['ok'] and c['decision']['ready'] for c in prefix[i:i+2]);confirm=confirm+1 if both else 0
+   declared=declared or confirm>=3
+  assert declared==t['prefix_declared_ready']
   actors=read(folder/'actor_samples.json');labels=read(folder/'teacher_labels.json');assert len(actors)==len(labels)==len(tail)
   obs={x['index']:x for x in r['teacher_observations']};held=0
   for actor,label,c in zip(actors,labels,tail):
@@ -44,4 +64,5 @@ def audit(a):
 if __name__=='__main__':
  p=argparse.ArgumentParser()
  for k in ('root','grasp','out'):p.add_argument('--'+k,type=Path,required=True)
+ p.add_argument('--bootstrap',type=Path)
  audit(p.parse_args())
