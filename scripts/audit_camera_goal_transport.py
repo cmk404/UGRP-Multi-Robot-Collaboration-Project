@@ -36,6 +36,7 @@ def source_module(sha,path):
     # Execute only the repository's own locally committed experiment source.
     raw=subprocess.check_output(['git','show',f'{sha}:{path}'],cwd=ROOT,text=True)
     module=types.ModuleType('experiment_replay')
+    module.__file__ = str(ROOT/path)
     exec(compile(raw,path,'exec'),module.__dict__)
     return module
 

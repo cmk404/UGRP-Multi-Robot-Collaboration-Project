@@ -150,3 +150,10 @@ def test_missing_wheel_corners_fail_closed():
     assert lane_heading(encoded.tobytes(),'r1') is None
     d=coarse_approach(encoded.tobytes(),rgb('reference-top.jpg'),'r1')
     assert not d['ok'] and not d['ready'] and d['forward']==0 and d['turn']==0
+
+
+def test_audit_can_load_committed_approach_runner_with_its_file_context():
+    from scripts.audit_camera_goal_transport import source_module, ROOT
+    module=source_module('HEAD','scripts/run_camera_varied_start_student.py')
+    assert module.ROOT==ROOT
+    assert callable(module.run_approach)
