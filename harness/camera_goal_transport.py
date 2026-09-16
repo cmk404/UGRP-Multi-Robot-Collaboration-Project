@@ -107,8 +107,11 @@ def goal_carry(own_jpeg, top_jpeg, anchor_own, anchor_top):
                   and math.dist(current[1:],anchor[1:]) <= .15)
     error = top['goal_x']-top['beam_x']
     valid = consistent and -.015 <= error <= .25
-    ready = valid and abs(error) <= .0025
-    forward = 0. if ready or not valid else min(.07, max(.015, .6*error))
+    ready = valid and -.006 <= error <= .0025
+    # The loaded platform barely advances with very small wheel commands.
+    # Use the demonstrated .04..10 motion range, then stop on fresh RGB.
+    # A small bounded crossing of the target is also a stop, never more drive.
+    forward = 0. if ready or not valid else min(.10, max(.04, 1.2*error))
     return dict(ok=valid, held_estimate=consistent, ready=ready, forward=forward,
                 reason='visual_goal' if ready else 'visual_goal_error', image_gap=error,
                 features=top, own_features=current, anchor_features=anchor)
