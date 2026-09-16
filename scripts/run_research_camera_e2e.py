@@ -25,9 +25,10 @@ from urllib.request import urlopen
 ROOT=Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path: sys.path.insert(0,str(ROOT))
 
-from harness.research_camera_actor import ROBOTS, TASK, build_request, validate_reply, preparation_ready, agreed_roles
+from harness.research_camera_actor import ROBOTS, TASK, build_request, validate_reply, preparation_ready
 from harness.task_stage_execution import TaskStageExecution
 from harness.task_stage_sync import TaskPlan
+from harness.research_execution_recovery import RoleAgreement, request_with_recovery
 
 
 def write(path, value):
@@ -49,13 +50,14 @@ def evaluate_trial(samples):
 
 
 def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.8-flash", timeout=30.,
-        max_input_tokens=180000, max_wall_s=600.):
+        max_input_tokens=180000, max_wall_s=600., request_attempts=3, local_drive_steps=10):
     import mujoco
     import sim.multi_masterpi_production as production
     from sim.camera_robot_port import CameraRobotPort
     from sim.cooperative_payload import beam_pose, evaluate_beam_mission
     from harness.gemini_proxy import GeminiProxyCompleter
     from scripts.probe_dual_grasp_sync import _plain_beam_xml, _plain_beam_contact, _pose_metrics, Video
+    from harness.research_visual_lease import VisualDriveLease
 
     if subprocess.check_output(["git","status","--porcelain"],cwd=ROOT,text=True).strip():
         raise RuntimeError("commit and freeze the complete source before a trial")
@@ -64,15 +66,19 @@ def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.
     source=subprocess.check_output(["git","rev-parse","HEAD"],cwd=ROOT,text=True).strip()
     report={"source_sha":source,"scope":"Live two-robot L2 feasibility pilot; no synthetic stage verdicts; single fixed scene",
         "task":TASK,"config":{"communication":communication,"seed":seed,"rounds":rounds,"model":model,
-            "timeout_s":timeout,"max_input_tokens":max_input_tokens,"max_wall_s":max_wall_s,"slice_s":.3,"lease_s":.2},
+            "timeout_s":timeout,"max_input_tokens":max_input_tokens,"max_wall_s":max_wall_s,"slice_s":.3,"lease_s":.2,
+            "request_attempts":request_attempts,"local_drive_steps":local_drive_steps,"negotiation_turns":6},
         "environment":{"python":sys.version,"platform":platform.platform(),"mujoco":mujoco.__version__},
         "calls":[],"turns":[],"messages":[],"phase_events":[],"error":None,"stop_reason":None,
+        "issued_commands":[],"local_batches":[],"recovery_events":[],"agreement_events":[],
         "protocol_finish":False,"roles":None,"cost_usd":None,"cost_note":"proxy supplies tokens, not a billing amount",
         "shared_clock":"SIM pauses during model inference; no asynchronous physical latency claim"}
     world=execution=video=referee=None
     ports={}
     history={r:[] for r in ROBOTS};inbox={r:[] for r in ROBOTS};previous={r:None for r in ROBOTS}
     wire_counts={r:0 for r in ROBOTS};samples=[];phase="NEGOTIATE";roles=None
+    agreement=RoleAgreement()
+    usage_by_robot={r:0 for r in ROBOTS}
     started=time.monotonic();last_sample=0.;all_waits=0
     def now(): return float(world.data.time)
     def transition(new_phase):
@@ -106,24 +112,64 @@ def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.
             for image in packet["images"].values():image["ref"]="stage-execution/"+image["ref"]
             return packet
         images={}
+        tag=f"{index:03d}" if isinstance(index,int) else index
         for label,data in (("own_rgb",own),("top_rgb",top)):
-            relative=f"{rid}/{index:03d}-{label}.jpg";(output/relative).write_bytes(data)
+            relative=f"{rid}/{tag}-{label}.jpg";(output/relative).write_bytes(data)
             images[label]={"ref":relative,"sha256":hashlib.sha256(data).hexdigest(),"jpeg_base64":base64.b64encode(data).decode()}
         return {"images":images,"observed_at_s":now()}
-    def invoke(rid, request, index):
-        write(output/rid/f"{index:03d}-request.json",request)
-        entry={"robot_id":rid,"turn":index,"phase":phase,"request":f"{rid}/{index:03d}-request.json"}
-        try:
-            raw=completers[rid].complete(request["messages"],images=request["images"])
-            entry["raw_response"]=raw
-            entry["reply"]=validate_reply(raw,phase)
-        except Exception:
-            entry["error"]=traceback.format_exc()
-        finally:
-            c=completers[rid]
-            entry.update(usage=c.last_usage,model=c.last_model,latency_ms=c.last_latency_ms)
-            write(output/rid/f"{index:03d}-decision.json",entry)
-        return entry
+    def invoke(rid, inputs, index):
+        entries=[]
+        def make_request(attempt,retry):
+            request_id=f"{rid}-{index:03d}-{phase}-a{attempt}"
+            arguments={**inputs,"request_id":request_id,"retry":retry}
+            write(output/rid/f"{index:03d}-a{attempt}-inputs.json",arguments)
+            request=build_request(rid,**arguments)
+            write(output/rid/f"{index:03d}-a{attempt}-request.json",request)
+            return {**request,"request_id":request_id}
+        def record(entry):
+            attempt=entry["attempt"]
+            entry.update(robot_id=rid,turn=index,phase=phase,wire_index=wire_counts[rid],
+                         request=f"{rid}/{index:03d}-a{attempt}-request.json",
+                         inputs=f"{rid}/{index:03d}-a{attempt}-inputs.json")
+            usage_by_robot[rid]+=(entry.get("usage") or {}).get("prompt_tokens",0)
+            write(output/rid/f"{index:03d}-a{attempt}-decision.json",entry)
+            entries.append(entry)
+        reply,stop=request_with_recovery(completers[rid],make_request,
+            lambda raw,req:validate_reply(raw,phase,request_id=req,agreement=inputs["agreement"]),record,
+            max_attempts=request_attempts,
+            can_request=lambda:time.monotonic()-started<max_wall_s and sum(usage_by_robot.values())<max_input_tokens)
+        return {"reply":reply,"stop_reason":stop,"entries":entries}
+    def issue(rid,index,action,row,*,suffix=""):
+        command={"command_id":f"{rid}-{index}{suffix}","action":action,"duration_s":.2,"issued_at_s":now(),"phase":phase}
+        ports[rid].apply_bounded(action,now(),.2)
+        history[rid].append(command);row["issued"][rid]=command
+        report["issued_commands"].append({"robot_id":rid,"turn":index,**command})
+        return command
+    def prepare(replies,index,row):
+        for r in ROBOTS:ports[r].validate_bounded(replies[r]["action"],.2)
+        for r in ROBOTS:
+            for p in ports.values():p.hold(now())
+            action={"kind":"wait"} if preparation_ready(replies[r]) else replies[r]["action"]
+            if action["kind"]!="drive" or local_drive_steps==1:
+                issue(r,index,action,row);step(.3)
+                continue
+            # Peers remain held while image-motion identity observes this robot.
+            before=bytes(world.render_team_jpeg(camera="cctv_top"))
+            packet=camera(r,f"{index:03d}-local-before",before)
+            image_ref=lambda p:{k:v for k,v in p["images"]["top_rgb"].items() if k!="jpeg_base64"}
+            batch={"task_id":f"prepare-{index}-{r}","robot_id":r,"turn":index,"action":action,
+                   "max_steps":local_drive_steps,"before_top":image_ref(packet),"steps":[]}
+            report["local_batches"].append(batch)
+            lease=VisualDriveLease(before,action,max_steps=local_drive_steps)
+            for substep in range(local_drive_steps):
+                command=issue(r,index,action,row,suffix=f"-local-{substep}")
+                step(.2)
+                top=bytes(world.render_team_jpeg(camera="cctv_top"))
+                after=camera(r,f"{index:03d}-local-{substep:02d}",top)
+                decision=lease.after_step(top)
+                batch["steps"].append({"command_id":command["command_id"],"top":image_ref(after),"decision":decision})
+                if not decision["renew"]:break
+            ports[r].hold(now())
     try:
         # Same approved plain-beam fixture, startup poses and actor camera calibration
         # as run_camera_pair_transport.py; these setup values never reach an actor.
@@ -158,26 +204,29 @@ def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.
         referee=(output/"evaluation-only.jsonl").open("w");last_sample=now();evaluate_sample()
         negotiation_turns=action_turns=0
         with ThreadPoolExecutor(max_workers=2) as pool:
-            for index in range(rounds+4):
+            for index in range(rounds+6):
                 if time.monotonic()-started>=max_wall_s:report["stop_reason"]="wall_budget";break
                 used=sum((c.get("usage") or {}).get("prompt_tokens",0) for c in report["calls"])
                 if used>=max_input_tokens:report["stop_reason"]="input_token_budget";break
                 if execution:
                     execution.tick(now())
                     if execution.sync.stage!=phase: transition(execution.sync.stage)
+                # Inference/recovery cannot leave a previously issued command active.
+                for p in ports.values():p.hold(now())
                 top=bytes(world.render_team_jpeg(camera="cctv_top"))
                 packets={r:camera(r,index,top) for r in ROBOTS}
-                requests={r:build_request(r,phase,packets[r],roles=roles,own_history=history[r],inbox=inbox[r],
-                    previous=previous[r],communication=communication) for r in ROBOTS}
-                # Preserve the exact allowed derivation inputs, independently of referee data.
-                for r in ROBOTS:
-                    write(output/r/f"{index:03d}-inputs.json",{"phase":phase,"camera":packets[r],"roles":roles,
+                inputs={r:{"phase":phase,"camera":packets[r],"roles":roles,
                         "own_history":history[r][-16:],"inbox":inbox[r][-4:] if communication=="natural" else [],
-                        "previous":previous[r],"communication":communication})
-                futures={r:pool.submit(invoke,r,requests[r],index) for r in ROBOTS}
+                        "previous":previous[r],"communication":communication,"agreement":agreement.context(),
+                        "own_proposals":agreement.history[r][-4:],"local_drive_steps":local_drive_steps} for r in ROBOTS}
+                futures={r:pool.submit(invoke,r,inputs[r],index) for r in ROBOTS}
                 calls={r:futures[r].result() for r in ROBOTS}
-                report["calls"].extend(calls.values())
-                if any("error" in c for c in calls.values()):report["stop_reason"]="model_or_reply_error";break
+                for r,c in calls.items():
+                    report["calls"].extend(c["entries"])
+                    if len(c["entries"])>1 or c["stop_reason"]:
+                        report["recovery_events"].append({"robot_id":r,"turn":index,"attempts":len(c["entries"]),
+                            "recovered":c["reply"] is not None,"stop_reason":c["stop_reason"],"held_sim_time_s":now()})
+                if any(c["reply"] is None for c in calls.values()):report["stop_reason"]="model_recovery_exhausted";break
                 replies={r:calls[r]["reply"] for r in ROBOTS}
                 row={"turn":index,"phase":phase,"observed_at_s":now(),"replies":replies,"issued":{}}
                 report["turns"].append(row)
@@ -189,9 +238,10 @@ def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.
                         inbox[receiver].append(message);report["messages"].append(message)
                 previous=packets
                 if phase=="NEGOTIATE":
-                    negotiation_turns+=1;roles=agreed_roles(replies)
+                    negotiation_turns+=1;roles=agreement.receive(replies,index)
+                    report["agreement_events"]=agreement.events
                     if roles:report["roles"]=roles;transition("PREPARE")
-                    elif negotiation_turns>=4:report["stop_reason"]="role_agreement_budget";break
+                    elif negotiation_turns>=6:report["stop_reason"]="role_agreement_budget";break
                 elif phase=="PREPARE":
                     action_turns+=1
                     if all(preparation_ready(replies[r]) for r in ROBOTS):
@@ -203,12 +253,7 @@ def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.
                     else:
                         # Independent pre-grasp motion; the five-stage contract starts
                         # only after both model-produced at_grasp_pose/stopped reports.
-                        for r in ROBOTS:ports[r].validate_bounded(replies[r]["action"],.2)
-                        for r in ROBOTS:
-                            action={"kind":"wait"} if preparation_ready(replies[r]) else replies[r]["action"]
-                            ports[r].apply_bounded(action,now(),.2)
-                            command={"command_id":f"{r}-{index}","action":action,"duration_s":.2,"issued_at_s":now(),"phase":phase}
-                            history[r].append(command);row["issued"][r]=command
+                        prepare(replies,index,row)
                 else:
                     action_turns+=1
                     for r in ROBOTS:
@@ -226,6 +271,7 @@ def run(output, *, communication="natural", seed=11, rounds=40, model="gemini-3.
                         if execution.dispatch_pair(decision["permission"],commands,now_s=now()):
                             for r in ROBOTS:
                                 cmd={**commands[r],"issued_at_s":now(),"phase":phase};history[r].append(cmd);row["issued"][r]=cmd
+                                report["issued_commands"].append({"robot_id":r,"turn":index,**cmd})
                 step(.3)
                 report["current_phase"]=phase;report["sim_time_s"]=now()
                 write(output/"progress.json",report)
@@ -274,9 +320,12 @@ def main():
     p.add_argument("--communication",choices=("natural","none"),default="natural")
     p.add_argument("--rounds",type=int,default=40);p.add_argument("--seed",type=int,default=11)
     p.add_argument("--model",default="gemini-3.8-flash")
+    p.add_argument("--request-attempts",type=int,choices=(1,2,3),default=3)
+    p.add_argument("--local-drive-steps",type=int,choices=range(1,11),default=10)
     a=p.parse_args()
     if not 1<=a.rounds<=64:p.error("rounds must be 1..64")
-    r=run(a.output.resolve(),communication=a.communication,rounds=a.rounds,seed=a.seed,model=a.model)
+    r=run(a.output.resolve(),communication=a.communication,rounds=a.rounds,seed=a.seed,model=a.model,
+          request_attempts=a.request_attempts,local_drive_steps=a.local_drive_steps)
     print(json.dumps({k:r.get(k) for k in ("current_phase","stop_reason","physical_success","error","wall_seconds","token_usage")},ensure_ascii=False))
     return int(bool(r["error"] or r["cleanup_errors"]))
 

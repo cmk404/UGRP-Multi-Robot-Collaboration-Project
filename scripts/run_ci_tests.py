@@ -16,6 +16,7 @@ TEST_PATTERNS = (
     "tests/test_task_stage_sync.py",
     "tests/test_task_stage_execution.py",
     "tests/test_research_camera_e2e.py",
+    "tests/test_research_execution_recovery.py",
     "tests/test_camera_action_learning.py",
     "tests/test_camera_local_servo.py",
     "tests/test_camera_visual_observer.py",
