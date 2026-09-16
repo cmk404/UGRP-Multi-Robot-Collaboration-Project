@@ -100,6 +100,6 @@ class SoloBoxTransport:
             if self.goal_confirmations >= 2:
                 self.box.phase = 'release'
                 return {'kind': 'wait', 'duration': .1}, features
-            action = {'kind':'drive', 'fwd':0. if ready else min(.10,max(.04,dx)),
+            action = {'kind':'drive', 'fwd':0. if ready else min(.15,max(.04,2*dx)),
                       'turn':0., 'duration':.25}
         return action, features
