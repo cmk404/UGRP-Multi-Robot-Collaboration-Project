@@ -109,3 +109,22 @@ def test_environment_builder_retains_robots_camera_and_real_collision_geometry()
         assert tree.find('.//geom[@name="dispatch_wall_north"]').get('contype')=='1'
         assert tree.find('.//geom[@name="dispatch_dock_a_beam"]').get('contype')=='0'
         assert (tree.find('.//geom[@name="dispatch_unannounced_north_barrier"]') is not None)==(variant=='north_blocked')
+
+
+def test_saved_negotiation_history_cannot_gain_commands_issued_after_request(tmp_path):
+    from functools import partial
+    from harness.dispatch_plan import validate_dispatch_reply
+    from scripts.three_robot_runtime import ThreeRobotRuntime
+    frames={r:{'own_bytes':b'own','top_bytes':b'top','own_rgb':{'path':'own.jpg'},
+               'shared_top_rgb':{'path':'top.jpg'},'frame_id':1} for r in ROBOTS}
+    history={r:[] for r in ROBOTS}
+    team=ThreeRobotRuntime(tmp_path/'team',run_id='history',mode='fixture',
+        agreement=TeamAgreement('history',plan_validator=validate_dispatch_plan),
+        request_builder=partial(build_dispatch_request,task=actor_task(authored_map())),
+        reply_validator=validate_dispatch_reply,plan_fixture=fixture_plan(),
+        roles_fixed_by_skill=False,planning_only=True)
+    try:
+        team.negotiate(frames,history,0,0.)
+        history['r1'].append({'kind':'drive'})
+        assert team.rounds[0]['own_history']['r1']==[]
+    finally:team.close(1.)

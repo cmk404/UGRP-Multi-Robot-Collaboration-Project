@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
+import copy
 import io
 import json
 import time
@@ -102,7 +103,7 @@ class ThreeRobotRuntime:
             self.calls.extend(records)
         committed = self.agreement.receive(replies, turn)
         self.rounds.append({'turn': turn, 'sim_time_s': sim_time, 'agreement': context,
-            'images': refs(frames), 'own_history': own_history,
+            'images': refs(frames), 'own_history': copy.deepcopy(own_history),
             'replies': replies, 'stops': {r: v[1] for r, v in batch.items()}, 'committed': committed})
         for sender, reply in replies.items():
             if reply and reply['message']:
