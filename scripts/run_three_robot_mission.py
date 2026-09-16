@@ -5,6 +5,7 @@ from __future__ import annotations
 import base64
 from functools import partial
 import json
+import hashlib
 import math
 from pathlib import Path
 import sys
@@ -50,6 +51,24 @@ def mission_xml(builder):
                 rgba='.8 .12 .7 .5', contype='0', conaffinity='0')
         return ET.tostring(root, encoding='unicode')
     return build
+
+
+def prepare_grasp_models(source, target):
+    """Copy learned weights unchanged; scope only constant TOP background."""
+    target.mkdir(parents=True,exist_ok=False)
+    skill=json.loads((source/'student-skill.json').read_text())
+    for rid in ('r1','r3'):
+        entry=skill['models'][rid]
+        model=json.loads((source/entry['path']).read_text())
+        model['constant_background_top_band']=[6,19]
+        write(target/entry['path'],model)
+        entry['sha256']=hashlib.sha256((target/entry['path']).read_bytes()).hexdigest()
+    write(target/'student-skill.json',skill)
+    (target/'evaluation-fixture.json').write_bytes((source/'evaluation-fixture.json').read_bytes())
+    write(target/'provenance.json',{'source':str(source.resolve()),
+        'source_skill_sha256':hashlib.sha256((source/'student-skill.json').read_bytes()).hexdigest(),
+        'change':'constant TOP background band only; own RGB, learned weights, support and limits unchanged'})
+    return target
 
 
 def evaluate_solo(samples, goal):
@@ -272,7 +291,10 @@ def main():
     parser.set_defaults(planner='llm')
     parser.add_argument('--team-planner',choices=('llm','fixture'),default='llm')
     parser.add_argument('--solo-goal',choices=('auto',*GOALS),default='auto')
-    return run(parser.parse_args(),scene_factory=MissionScene)
+    args=parser.parse_args()
+    args.grasp_model_dir=prepare_grasp_models(args.grasp_model_dir,
+        args.out_dir.with_name(args.out_dir.name+'-grasp-models'))
+    return run(args,scene_factory=MissionScene)
 
 
 if __name__=='__main__':raise SystemExit(main())
