@@ -103,11 +103,6 @@ class MissionScene(GoalScene):
         # The production constructor resets XML spawns to its own layout.
         # Apply this authored initial pose once, before folded setup and RGB.
         self.world.controllers['r2'].set_base_pose_for_test((0.,-3.,.032355118817659255),0.)
-        # Match the already validated markerless N7 contact-solver settings.
-        # These numerical solver options apply to the entire shared world;
-        # geometry, masses, friction, actuators and all welds stay unchanged.
-        self.world.model.opt.impratio=10
-        self.world.model.opt.noslip_iterations=3
 
     def open(self, *args, **kwargs):
         from unittest.mock import patch

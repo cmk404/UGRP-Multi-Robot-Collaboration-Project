@@ -31,7 +31,8 @@ class SoloBoxTransport:
         if goal not in GOALS:
             raise ValueError('unsupported goal')
         self.goal = goal
-        self.box = VisualBoxSkill(task='external_navigation', robot_id='r2')
+        self.box = VisualBoxSkill(task='external_navigation', robot_id='r2',
+                                  attachment_home_reference='previous_endpoint')
         self.initialized = False
         self.target = None
         self.done = False
