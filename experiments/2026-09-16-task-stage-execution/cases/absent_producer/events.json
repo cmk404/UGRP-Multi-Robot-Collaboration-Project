@@ -1,0 +1,169 @@
+{
+  "sync": [
+    {
+      "event": "REQUEST",
+      "task_id": "absent_producer",
+      "run_id": "0a4dfaad0ec8474a92269f42c49bca13",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 0,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 5.166017217561603e-06,
+      "plan": {
+        "schema": "ugrp.task_plan.v1",
+        "task_id": "absent_producer",
+        "plan_version": 1,
+        "object_id": "unloaded-actuator-diagnostic",
+        "participants": [
+          {
+            "robot_id": "r1",
+            "role": "left"
+          },
+          {
+            "robot_id": "r3",
+            "role": "right"
+          }
+        ],
+        "goal_region": "diagnostic-only-no-navigation-goal",
+        "static_map": {
+          "id": "camera-team-port-diagnostic",
+          "version": "1",
+          "sha256": "a97b041efcf78171143f867780dab8193a2aecd47c11bb5664dd6496d24c57df"
+        }
+      }
+    },
+    {
+      "event": "REPORT",
+      "task_id": "absent_producer",
+      "run_id": "0a4dfaad0ec8474a92269f42c49bca13",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 0,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.40395370800979435,
+      "robot_id": "r1",
+      "report": {
+        "task_id": "absent_producer",
+        "run_id": "0a4dfaad0ec8474a92269f42c49bca13",
+        "plan_version": 1,
+        "stage": "GRASP",
+        "epoch": 0,
+        "robot_id": "r1",
+        "sequence": 1,
+        "status": "UNCERTAIN",
+        "observed_at_s": 0.3000000000000002,
+        "decided_at_s": 0.3000000000000002,
+        "sent_at_s": 0.3000000000000002,
+        "observation_id": "r1-000001",
+        "own_rgb_ref": "rgb/r1-000001-own_rgb.jpg",
+        "top_rgb_ref": "rgb/r1-000001-top_rgb.jpg",
+        "confidence": 0.0,
+        "checks": [],
+        "command_id": null,
+        "reason": "visual_stage_producer_not_connected",
+        "schema": "ugrp.stage_report.v1",
+        "evidence_source": "own_rgb+top_rgb"
+      },
+      "ready": false,
+      "observation_to_decision_s": 0.0,
+      "sender_queue_s": 0.0,
+      "delivery_s": 0.0
+    },
+    {
+      "event": "HOLD",
+      "task_id": "absent_producer",
+      "run_id": "0a4dfaad0ec8474a92269f42c49bca13",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 1,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.4039582910190802,
+      "reason": "participant_not_ready_or_completion_revoked:r1"
+    },
+    {
+      "event": "REPORT",
+      "task_id": "absent_producer",
+      "run_id": "0a4dfaad0ec8474a92269f42c49bca13",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 1,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.46312650002073497,
+      "robot_id": "r3",
+      "report": {
+        "task_id": "absent_producer",
+        "run_id": "0a4dfaad0ec8474a92269f42c49bca13",
+        "plan_version": 1,
+        "stage": "GRASP",
+        "epoch": 1,
+        "robot_id": "r3",
+        "sequence": 1,
+        "status": "UNCERTAIN",
+        "observed_at_s": 0.3000000000000002,
+        "decided_at_s": 0.3000000000000002,
+        "sent_at_s": 0.3000000000000002,
+        "observation_id": "r3-000002",
+        "own_rgb_ref": "rgb/r3-000002-own_rgb.jpg",
+        "top_rgb_ref": "rgb/r3-000002-top_rgb.jpg",
+        "confidence": 0.0,
+        "checks": [],
+        "command_id": null,
+        "reason": "visual_stage_producer_not_connected",
+        "schema": "ugrp.stage_report.v1",
+        "evidence_source": "own_rgb+top_rgb"
+      },
+      "ready": false,
+      "observation_to_decision_s": 0.0,
+      "sender_queue_s": 0.0,
+      "delivery_s": 0.0
+    },
+    {
+      "event": "HOLD",
+      "task_id": "absent_producer",
+      "run_id": "0a4dfaad0ec8474a92269f42c49bca13",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 2,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.4631307499948889,
+      "reason": "participant_not_ready_or_completion_revoked:r3"
+    },
+    {
+      "event": "COMMAND_DENIED",
+      "task_id": "absent_producer",
+      "run_id": "0a4dfaad0ec8474a92269f42c49bca13",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 2,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.4631870409939438,
+      "robot_id": "r1"
+    },
+    {
+      "event": "ABORT",
+      "task_id": "absent_producer",
+      "run_id": "0a4dfaad0ec8474a92269f42c49bca13",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 2,
+      "timestamp_s": 0.7000000000000005,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 1.0168983330077026,
+      "reason": "execution_closed"
+    }
+  ],
+  "execution": [
+    {
+      "event": "LOCAL_HOLD",
+      "timestamp_s": 0.3000000000000002,
+      "reason": "waiting_for_readiness",
+      "errors": []
+    }
+  ]
+}
