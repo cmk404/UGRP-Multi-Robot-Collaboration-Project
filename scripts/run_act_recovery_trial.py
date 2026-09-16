@@ -11,6 +11,7 @@ sys.path.insert(0,str(ROOT))
 from scripts.camera_approach_scene import ApproachScene,ROBOTS,validate_start_poses
 from scripts.collect_camera_approach_teacher import load_models,sha,write
 from scripts.recovery_teacher import command,errors,heldout_region,score_alignment,AXES
+from harness.recovery_commands import issued_command
 from scripts.approach_speed_teacher import teacher_command
 from scripts.run_camera_pair_transport import evaluate_grasp_samples
 
@@ -20,7 +21,7 @@ def execute(args):
     models,skillhash,modelhashes=load_models(args.grasp_model.resolve())
     goals=scene.fixture['base_poses']
     rec={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
-         'case':fixture,'policy':args.policy,'takeover_step':args.takeover_step,'config':{'max_rounds':160,'slice_s':.2,'weld':False,'confirmation_steps':3,'teacher_tail_budget':160 if args.takeover_step is not None else None},
+         'case':fixture,'policy':args.policy,'takeover_step':args.takeover_step,'config':{'max_rounds':160,'slice_s':.2,'weld':False,'confirmation_steps':3,'teacher_tail_budget':160 if args.takeover_step is not None else None,'command_decoder':args.command_decoder if args.policy=='act' else 'raw'},
          'grasp_skill_sha256':skillhash,'grasp_model_sha256':modelhashes,'calls':[],'approach_ok':False,'error':None,
          'input_boundary':'ACT process receives own_rgb and top_rgb only. Teacher/evaluation state is never passed to ACT.',
          'teacher_observations':[] if args.policy!='act' or args.takeover_step is not None else None}
@@ -50,7 +51,7 @@ def execute(args):
             both=all(d['ok'] and d['ready'] for d in ds.values())
             confirm=confirm+1 if both else 0
             if not teaching and confirm>=3:prefix_declared_ready=True
-            actions={r:dict.fromkeys(AXES,0.) if ds[r]['ready'] else {k:ds[r][k] for k in AXES} for r in ROBOTS}
+            actions={r:issued_command(ds[r], 'raw' if teaching else args.command_decoder) for r in ROBOTS}
             for r in ROBOTS:
                 obs={'own':frames[r]['own_rgb'],'top':frames[r]['shared_top_rgb']};sid=f'{fixture["id"]}:{i:03d}:{r}'
                 rec['calls'].append({'index':i,'robot_id':r,'images':obs,'decision':ds[r],'action':actions[r],'teaching':teaching,'history':list(hist[r]),'wire_request_sha256':None if teaching else clients[r].last_request_sha256})
@@ -85,6 +86,7 @@ if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     for key in ('case','out','grasp-model'):p.add_argument('--'+key,type=Path,required=True)
     p.add_argument('--policy',choices=('recovery_teacher','nominal_teacher','act'),required=True)
+    p.add_argument('--command-decoder',choices=('raw','calibrated'),default='raw')
     p.add_argument('--model',type=Path);p.add_argument('--act-python',type=Path);p.add_argument('--takeover-step',type=int);p.add_argument('--skip-grasp',action='store_true')
     a=p.parse_args()
     if a.policy=='act' and (not a.model or not a.act_python):p.error('ACT needs model and interpreter')

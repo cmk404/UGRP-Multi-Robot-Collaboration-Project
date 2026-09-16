@@ -46,5 +46,13 @@
     ],
     "teacher_tail_budget_steps": 160,
     "reason": "Before any student training or final test, extend prefixes beyond early nominal approach to sample closed-loop drift; allow the teacher a full recovery budget after each prefix. Fixed intervention times, no truth-triggered intervention. Strengthen scoring to require the full 0.4s (five 0.1s samples); collected teacher windows already satisfy this."
+  },
+  "pre_final_actuator_diagnostic": {
+    "models": "Completed nominal16 and recovery16; weights and predicted readiness unchanged",
+    "evidence": "Raw recovery16 lateral development trial ended 11.18mm short with forward=0.00461894; calibrated teacher minimum=0.005. Tiny cross-axis regression outputs can also drift. No final-test executions seen.",
+    "candidate": "Predicted-ready -> zero, unchanged. Otherwise forward abs>0.003 -> min 0.005; lateral abs>0.004 -> min 0.012; turn abs>0.004 -> min 0.006; below activation -> zero. Signs and larger values preserved. No state/observations accepted by decoder.",
+    "development_trials": "Same four development-preflight cases, both completed models, eight trials. Raw results nominal16=0/4, recovery16=2/4 (nominal and overshoot).",
+    "selection_rule": "Use calibrated decoder for ALL six final students iff pooled strict success exceeds raw 2/8 and both previously successful recovery16 cases remain successful. Otherwise use raw for ALL students. No threshold tuning after these eight trials. Teachers retain original command mappings.",
+    "scope": "A shared deployment calibration, not learned recovery or oracle correction. Model-native predictions and actual issued commands are logged separately."
   }
 }

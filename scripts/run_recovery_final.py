@@ -17,6 +17,7 @@ def main():
  for condition,e in spec['conditions'].items():
   if subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()!=source:raise ValueError('source changed')
   cmd=[sys.executable,str(ROOT/'scripts/run_recovery_cases.py'),'--cases',spec['test_cases'],'--out',e['cohort'],'--mjpython',str(a.mjpython.absolute()),'--grasp-model',str(a.grasp_model.resolve()),'--policy',e['policy']]
+  cmd+=['--command-decoder',e.get('command_decoder','raw')]
   if e.get('model'):cmd+=['--model',e['model'],'--act-python',str(a.act_python.absolute())]
   subprocess.run(cmd,cwd=ROOT,check=True)
 if __name__=='__main__':main()

@@ -11,6 +11,7 @@ def main():
  p=argparse.ArgumentParser()
  for k in ('cases','out','grasp-model','mjpython'):p.add_argument('--'+k,type=Path,required=True)
  p.add_argument('--policy',required=True,choices=('recovery_teacher','nominal_teacher','act'))
+ p.add_argument('--command-decoder',choices=('raw','calibrated'),default='raw')
  p.add_argument('--act-python',type=Path);p.add_argument('--model',type=Path);p.add_argument('--takeover',action='store_true')
  a=p.parse_args();git=lambda *x:subprocess.check_output(['git',*x],cwd=ROOT,text=True).strip();source=git('rev-parse','HEAD')
  if git('status','--porcelain'):raise ValueError('commit before cohort')
@@ -19,6 +20,7 @@ def main():
   if git('rev-parse','HEAD')!=source or git('status','--porcelain'):raise ValueError('source changed during cohort')
   fixture=a.out/(c['id']+'-fixture.json');write(fixture,c);dest=a.out/c['id']
   cmd=[str(a.mjpython.absolute()),str(ROOT/'scripts/run_act_recovery_trial.py'),'--case',str(fixture.resolve()),'--out',str(dest.resolve()),'--grasp-model',str(a.grasp_model.resolve()),'--policy',a.policy]
+  cmd+=['--command-decoder',a.command_decoder]
   if a.model:cmd+=['--model',str(a.model.resolve()),'--act-python',str(a.act_python.absolute())]
   if a.takeover:cmd+=['--takeover-step',str(c['takeover_step'])]
   print(json.dumps({'case':c['id'],'status':'running'}),flush=True)

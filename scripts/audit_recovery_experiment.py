@@ -4,6 +4,7 @@ import argparse,json,hashlib,subprocess,sys,statistics,base64
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
 from scripts.recovery_teacher import AXES,command,errors,heldout_region,score_alignment
+from harness.recovery_commands import issued_command
 from scripts.approach_speed_teacher import teacher_command
 from scripts.run_camera_pair_transport import evaluate_grasp_samples
 
@@ -32,6 +33,11 @@ def audit(a):
     for name,key in [('result.json','result_sha256'),('actor_samples.json','actor_sha256'),('teacher_labels.json','label_sha256')]:assert sha(p/name)==source[key]
     assert read(p/'result.json')['training_eligible']
     labels=read(p/'teacher_labels.json');assert not any(l['heldout_region'] for l in labels)
+    for actor in read(p/'actor_samples.json'):
+     assert set(actor['images'])=={'own','top'}
+     for im in actor['images'].values():
+      ip=(p/im['path']).resolve();assert ip.is_relative_to(p.resolve()) and sha(ip)==im['sha256']
+      evidence['image_references_verified']+=1
     raw=read(p/'result.json');observations={x['index']:x for x in raw['teacher_observations']}
     for label in labels:
      index=int(label['id'].split(':')[-2]);rid=label['robot_id'];e=errors(observations[index]['state'],goals,rid)
@@ -74,7 +80,7 @@ def audit(a):
     both=all(c['decision']['ok'] and c['decision']['ready'] for c in calls);consecutive=consecutive+1 if both else 0
     for c in calls:
      rid=c['robot_id'];d=c['decision'];assert c['history']==hist[rid] and set(c['images'])=={'own','top'}
-     expected=dict.fromkeys(AXES,0.) if d['ready'] else {k:d[k] for k in AXES};assert c['action']==expected
+     expected=issued_command(d,r['config'].get('command_decoder','raw'));assert c['action']==expected
      hist[rid].append(expected);evidence['actions_verified']+=1
      if r['policy']!='act':
       obs=r['teacher_observations'][i//2];e=errors(obs['state'],goals,rid);assert e==obs['errors'][rid]
