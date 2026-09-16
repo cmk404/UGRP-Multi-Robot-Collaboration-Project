@@ -5,6 +5,7 @@ import hashlib
 import json
 from pathlib import Path
 import statistics
+import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -21,6 +22,8 @@ def read(path):
 
 
 def audit(first, second, models1, models2, out):
+    if out.exists():
+        raise FileExistsError(out)
     import torch
     from harness.reference_act import RGBAct
     from harness.camera_approach_student import predict_approach
@@ -43,6 +46,13 @@ def audit(first, second, models1, models2, out):
     evidence={'image_references_checked':0,'decision_samples_replayed':0,'all_control_actions_replayed':0,
               'pairs':[], 'groups':{}, 'errors':[], 'all_initial_final_weld_off':True,
               'scope':'All RGB references and controller actions; first/middle/last learned decisions per robot per run. Not every video frame.'}
+    evidence['audit_source_sha'] = subprocess.check_output(
+        ['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
+    evidence['actor_source_shas'] = sorted({s['source_sha'] for s in summaries})
+    for source in evidence['actor_source_shas']:
+        subprocess.run(['git', 'diff', '--exit-code', source, 'HEAD', '--',
+                        'harness', 'scripts/run_camera_approach_student.py',
+                        'scripts/camera_approach_scene.py'], cwd=ROOT, check=True)
     evidence['raw_files_verified'] = 0
     for root in (first,second):
         for name,expected in read(root/'raw-manifest.json').items():
