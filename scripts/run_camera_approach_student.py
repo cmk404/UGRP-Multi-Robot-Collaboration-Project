@@ -115,7 +115,7 @@ def main():
                 model_dir = args.act_model_dir.resolve() / rid / 'act'
                 report['act_checkpoint_sha256'][rid] = {
                     name: sha(model_dir / name) for name in ('config.json', 'model.safetensors')}
-                act_clients[rid] = ActClient(args.act_python.resolve(), model_dir)
+                act_clients[rid] = ActClient(args.act_python, model_dir)
         else:
             report['approach_policy'] = 'existing_kernel'
         scene.open(dict(zip(ROBOTS, args.distance)))

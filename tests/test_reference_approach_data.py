@@ -9,6 +9,7 @@ import pytest
 
 from harness.reference_approach_data import action_chunks, split_cases
 from scripts.reference_act_worker import decode_request
+from harness.reference_act_client import interpreter_path
 
 
 def test_case_split_keeps_both_robots_and_all_frames_together():
@@ -18,6 +19,14 @@ def test_case_split_keeps_both_robots_and_all_frames_together():
     for bad in ([], ['c2', 'c2'], ['missing'], [f'c{i}' for i in range(6)]):
         with pytest.raises(ValueError):
             split_cases([f'c{i}' for i in range(6)], bad)
+
+
+def test_python_symlink_preserves_virtual_environment(tmp_path):
+    executable = tmp_path / 'venv' / 'bin' / 'python'
+    executable.parent.mkdir(parents=True)
+    executable.symlink_to(sys.executable)
+    assert interpreter_path(executable) == executable
+    assert interpreter_path(executable) != executable.resolve()
 
 
 def test_chunks_never_use_other_case_or_heldout_labels():

@@ -8,12 +8,18 @@ import selectors
 import subprocess
 
 
+def interpreter_path(path: Path) -> Path:
+    # Resolving a venv's python symlink selects the system Python and loses its
+    # site-packages. Absolute is intentional; do not replace it with resolve().
+    return path.expanduser().absolute()
+
+
 class ActClient:
     def __init__(self, python: Path, model_dir: Path, *, timeout_s: float = 30):
         root = Path(__file__).resolve().parents[1]
         self.timeout_s = timeout_s
         self.process = subprocess.Popen(
-            [str(python), str(root / "scripts/reference_act_worker.py"), "--model-dir", str(model_dir)],
+            [str(interpreter_path(python)), str(root / "scripts/reference_act_worker.py"), "--model-dir", str(model_dir)],
             cwd=root, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True, bufsize=1,
         )
         self.selector = selectors.DefaultSelector()

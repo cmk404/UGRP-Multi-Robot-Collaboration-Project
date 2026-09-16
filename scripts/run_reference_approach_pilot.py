@@ -12,6 +12,9 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from harness.reference_act_client import interpreter_path
 
 
 def run_owned(command, log, timeout=300):
@@ -68,9 +71,11 @@ def main():
         raise ValueError('training must be complete')
     # Orchestration/records may change after training. Learned-policy and
     # preprocessing sources must still exactly match the training commit.
-    compared_paths = ['harness', 'scripts/compare_reference_approach.py',
+    compared_paths = ['harness/reference_act.py', 'harness/reference_approach_data.py',
+                      'harness/camera_approach_student.py', 'harness/camera_recovery_student.py',
+                      'harness/camera_teacher_student.py', 'scripts/compare_reference_approach.py',
                       'scripts/train_camera_approach_student.py', 'scripts/patch_reference_act.py',
-                      'scripts/reference_act_worker.py', 'scripts/run_camera_approach_student.py',
+                      'scripts/reference_act_worker.py',
                       'requirements-reference-act.txt',
                       'experiments/2026-09-16-reference-act/protocol.json']
     subprocess.run(['git', 'diff', '--exit-code', training['source_sha'], 'HEAD', '--',
@@ -91,7 +96,7 @@ def main():
                        '--approach-model-dir', str(args.comparison_dir.resolve()),
                        '--distance', *map(str, distance), '--condition', 'visual', '--out-dir', str(case)]
             if condition == 'act':
-                command += ['--act-python', str(args.act_python.resolve()),
+                command += ['--act-python', str(interpreter_path(args.act_python)),
                             '--act-model-dir', str(args.comparison_dir.resolve())]
             elif condition != 'kernel':
                 raise ValueError('unknown comparison condition')
