@@ -1,0 +1,165 @@
+{
+  "source_sha": "c10d24bc57d3e50dc5cd55908a1b0b2106371b18",
+  "protocol": {
+    "schema": "ugrp.reference_act_approach_comparison.v1",
+    "seed": 20260916,
+    "heldout_cases": [
+      "train-05",
+      "train-10",
+      "train-15",
+      "train-20",
+      "train-25"
+    ],
+    "threads": 2,
+    "steps": 300,
+    "batch_size": 16,
+    "learning_rate": 0.0001,
+    "physical_pilot_distances": [
+      [
+        0.205,
+        0.205
+      ],
+      [
+        0.255,
+        0.225
+      ],
+      [
+        0.295,
+        0.275
+      ]
+    ],
+    "physical_pilot_conditions": [
+      "kernel",
+      "act"
+    ],
+    "claim": "Small-preset integration pilot; no architecture ranking, no original-paper reproduction.",
+    "selection_rule": "Keep the existing default. Record every declared case and failure. Do not tune on held-out cases."
+  },
+  "cases": [
+    {
+      "case": "01-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.205,
+        0.205
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 16.5801874169847,
+      "sim_s": 11.100000000000676,
+      "approach_calls": 112,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "c10d24bc57d3e50dc5cd55908a1b0b2106371b18"
+    },
+    {
+      "case": "01-act",
+      "condition": "act",
+      "distance": [
+        0.205,
+        0.205
+      ],
+      "returncode": 1,
+      "timed_out": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "wall_s": 0.19786333400406875,
+      "sim_s": null,
+      "approach_calls": 0,
+      "contact_steps": null,
+      "stop_reason": null,
+      "error": "RuntimeError: ACT worker exited without a reply",
+      "source_sha": "c10d24bc57d3e50dc5cd55908a1b0b2106371b18"
+    },
+    {
+      "case": "02-act",
+      "condition": "act",
+      "distance": [
+        0.255,
+        0.225
+      ],
+      "returncode": 1,
+      "timed_out": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "wall_s": 0.17822416700073518,
+      "sim_s": null,
+      "approach_calls": 0,
+      "contact_steps": null,
+      "stop_reason": null,
+      "error": "RuntimeError: ACT worker exited without a reply",
+      "source_sha": "c10d24bc57d3e50dc5cd55908a1b0b2106371b18"
+    },
+    {
+      "case": "02-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.255,
+        0.225
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 18.170734166982584,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "c10d24bc57d3e50dc5cd55908a1b0b2106371b18"
+    },
+    {
+      "case": "03-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.295,
+        0.275
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 20.06290675001219,
+      "sim_s": 11.50000000000081,
+      "approach_calls": 116,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "c10d24bc57d3e50dc5cd55908a1b0b2106371b18"
+    },
+    {
+      "case": "03-act",
+      "condition": "act",
+      "distance": [
+        0.295,
+        0.275
+      ],
+      "returncode": 1,
+      "timed_out": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "wall_s": 0.2454953750129789,
+      "sim_s": null,
+      "approach_calls": 0,
+      "contact_steps": null,
+      "stop_reason": null,
+      "error": "RuntimeError: ACT worker exited without a reply",
+      "source_sha": "c10d24bc57d3e50dc5cd55908a1b0b2106371b18"
+    }
+  ],
+  "training_source_sha": "f0ee14dadb0f285273f926b8d7fbab445c395c11",
+  "training_code_unchanged": true,
+  "complete": true,
+  "external_model_calls": 0,
+  "external_model_tokens": 0
+}
