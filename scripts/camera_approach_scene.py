@@ -47,11 +47,12 @@ def payload_contact_other_geoms(contacts, beam_geom: int, robot_geoms: set[int])
                (b == beam_geom and a in robot_geoms)]
 
 
-def validate_start_poses(start_poses: Mapping[str, Mapping[str, Any]]) -> dict[str, dict[str, float]]:
+def validate_start_poses(start_poses: Mapping[str, Mapping[str, Any]], *,
+                         max_distance_m: float = .45) -> dict[str, dict[str, float]]:
     if not isinstance(start_poses, Mapping) or set(start_poses) != set(ROBOTS):
         raise ValueError('start_poses must contain exactly r1 and r3')
     result = {}
-    bounds = {'distance_m': (-.02, .45), 'lateral_m': (-.1, .1), 'yaw_deg': (-20., 20.)}
+    bounds = {'distance_m': (-.02, max_distance_m), 'lateral_m': (-.1, .1), 'yaw_deg': (-20., 20.)}
     for rid in ROBOTS:
         pose = start_poses[rid]
         if not isinstance(pose, Mapping) or set(pose) != set(bounds):
@@ -88,8 +89,10 @@ class ApproachScene:
         self.grasp_report = None
 
     def open(self, base_offsets: Mapping[str, float] | None = None, *,
-             start_poses: Mapping[str, Mapping[str, Any]] | None = None):
-        starts = validate_start_poses(start_poses) if start_poses is not None else None
+             start_poses: Mapping[str, Mapping[str, Any]] | None = None,
+             max_start_distance_m: float = .45):
+        starts = (validate_start_poses(start_poses, max_distance_m=max_start_distance_m)
+                  if start_poses is not None else None)
         import mujoco
         from unittest.mock import patch
         import sim.multi_masterpi_production as production

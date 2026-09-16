@@ -20,7 +20,7 @@ ROOT=Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path: sys.path.insert(0,str(ROOT))
 
 from scripts.camera_short_transport_scene import ShortTransportScene
-from scripts.camera_approach_scene import ROBOTS
+from scripts.camera_approach_scene import ROBOTS, validate_start_poses
 from scripts.run_camera_approach_student import models, sha, write
 from scripts.run_camera_varied_start_student import load_stage_models, run_approach
 from scripts.evaluate_camera_short_transport import evaluate_transport_samples
@@ -73,9 +73,21 @@ class GoalScene(ShortTransportScene):
         return row
 
 
+def setup_poses(distance, lateral, yaw_deg):
+    """Experiment setup only; never pass these values into either controller."""
+    if any(len(values) != 2 for values in (distance, lateral, yaw_deg)):
+        raise ValueError('exactly two values required for each start axis')
+    starts = validate_start_poses({r: dict(distance_m=distance[i], lateral_m=lateral[i],
+        yaw_deg=yaw_deg[i]) for i, r in enumerate(ROBOTS)}, max_distance_m=.7)
+    if any(s['distance_m'] < .15 for s in starts.values()):
+        raise ValueError('distance must be .15...7 m')
+    return starts
+
+
 def run(args):
     if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip():
         raise RuntimeError('commit and freeze source before physical experiments')
+    starts=setup_poses(args.distance,args.lateral,args.yaw_deg)
     out=args.out_dir.resolve()
     if out.exists(): raise FileExistsError(out)
     skill, grasp=models(args.grasp_model_dir.resolve(),'student-skill.json')
@@ -85,7 +97,8 @@ def run(args):
     report=dict(schema='ugrp.camera_goal_transport.v1',
         source_sha=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         scope='local RGB wheel feedback; demonstrated arm sequence plus learned RGB recovery; no LLM',
-        config=dict(start_distance_m=dict(zip(ROBOTS,args.distance)),weld=False,planner=args.planner),
+        config=dict(start_distance_m=dict(zip(ROBOTS,args.distance)),
+                    start_poses_setup_only=starts,weld=False,planner=args.planner),
         assets=dict(grasp_skill=dict(path=str(args.grasp_model_dir.resolve()),sha256=sha(args.grasp_model_dir/'student-skill.json')),
                     stage_skill=dict(path=str(args.stage_model_dir.resolve()),sha256=sha(args.stage_model_dir/'varied-start-skill.json')),
                     reference_top=dict(path=str(args.reference_top.resolve()),sha256=sha(args.reference_top))),
@@ -97,17 +110,17 @@ def run(args):
         from sim.camera_robot_port import CameraRobotPort
         from harness.grasp_student_inference import predict_student
         report['environment']=dict(python=sys.version,platform=platform.platform(),mujoco=mujoco.__version__)
-        scene.open(dict(zip(ROBOTS,args.distance)))
+        scene.open(start_poses=starts,max_start_distance_m=.7)
         scene.ports={r:CameraRobotPort(scene.world,r,allow_reverse=True,allow_mecanum=True) for r in ROBOTS}
         report['invariants_initial']=scene.invariant_record()
         if args.planner=='llm':
             from scripts.camera_skill_gate import CameraSkillGate
             scene.gate=CameraSkillGate(out/'llm')
             report['scope']='two independent LLM visual skill permissions; RGB wheels; demonstrated arm sequence plus RGB correction; fixed workflow, not raw-action LLM control'
-        scene.checkpoint('APPROACH')
         # Reference pixels were produced offline, before this run. No teacher
         # state or live evaluation result can enter either controller.
         (out/'reference-top.jpg').write_bytes(reference)
+        scene.checkpoint('APPROACH')
         for index in range(120):
             frames=scene.capture(f'coarse-{index:03d}')
             decisions={r:coarse_approach(frames[r]['top_bytes'],reference,r) for r in ROBOTS}
@@ -197,9 +210,12 @@ def main():
     p.add_argument('--reference-top',type=Path,required=True)
     p.add_argument('--out-dir',type=Path,required=True)
     p.add_argument('--distance',type=float,nargs=2,default=(.6,.6))
+    p.add_argument('--lateral',type=float,nargs=2,default=(0.,0.),help='setup-only world y offsets in m, r1/r3')
+    p.add_argument('--yaw-deg',type=float,nargs=2,default=(0.,0.),help='setup-only headings in degrees, r1/r3')
     p.add_argument('--planner',choices=('local','llm'),default='local')
     a=p.parse_args()
-    if any(not .15<=d<=.7 for d in a.distance): p.error('distance must be .15...7 m')
+    try: setup_poses(a.distance,a.lateral,a.yaw_deg)
+    except ValueError as exc: p.error(str(exc))
     return run(a)
 
 

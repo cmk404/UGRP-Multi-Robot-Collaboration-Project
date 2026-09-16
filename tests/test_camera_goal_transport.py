@@ -99,3 +99,14 @@ def test_unsupported_grasp_cannot_be_closed_even_if_peer_is_ready():
     good=dict(observable=True,confidence=.99)
     assert preclose_supported(dict(r1=good,r3=good))
     assert not preclose_supported(dict(r1=dict(observable=False,confidence=0),r3=good))
+
+
+def test_e2e_setup_supports_far_rotated_starts_without_expanding_old_near_domain():
+    from scripts.run_camera_goal_transport import setup_poses
+    from scripts.camera_approach_scene import validate_start_poses
+    starts=setup_poses([.3,.7],[.06,-.06],[10,-10])
+    assert starts['r3']==dict(distance_m=.7,lateral_m=-.06,yaw_deg=-10.)
+    with pytest.raises(ValueError): validate_start_poses(starts)
+    for distance,lateral,yaw in (([.3,.71],[0,0],[0,0]),([.3,.6],[0,float('nan')],[0,0]),
+        ([.3,.6],[0,0],[0,True]),([.3,.6],[0,0],[0,21]),([.3],[0,0],[0,0])):
+        with pytest.raises(ValueError): setup_poses(distance,lateral,yaw)

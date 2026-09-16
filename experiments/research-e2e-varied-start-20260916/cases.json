@@ -1,0 +1,309 @@
+{
+  "schema": "ugrp.goal_transport_starts.v1",
+  "cases": [
+    {
+      "case_id": "baseline",
+      "group": "baseline",
+      "distance": [
+        0.6,
+        0.6
+      ],
+      "lateral": [
+        0,
+        0
+      ],
+      "yaw_deg": [
+        0,
+        0
+      ]
+    },
+    {
+      "case_id": "distance-30",
+      "group": "distance",
+      "distance": [
+        0.3,
+        0.3
+      ],
+      "lateral": [
+        0,
+        0
+      ],
+      "yaw_deg": [
+        0,
+        0
+      ]
+    },
+    {
+      "case_id": "distance-45",
+      "group": "distance",
+      "distance": [
+        0.45,
+        0.45
+      ],
+      "lateral": [
+        0,
+        0
+      ],
+      "yaw_deg": [
+        0,
+        0
+      ]
+    },
+    {
+      "case_id": "distance-70",
+      "group": "distance",
+      "distance": [
+        0.7,
+        0.7
+      ],
+      "lateral": [
+        0,
+        0
+      ],
+      "yaw_deg": [
+        0,
+        0
+      ]
+    },
+    {
+      "case_id": "distance-asymmetric",
+      "group": "distance",
+      "distance": [
+        0.3,
+        0.7
+      ],
+      "lateral": [
+        0,
+        0
+      ],
+      "yaw_deg": [
+        0,
+        0
+      ]
+    },
+    {
+      "case_id": "yaw-plus5",
+      "group": "yaw",
+      "distance": [
+        0.6,
+        0.6
+      ],
+      "lateral": [
+        0,
+        0
+      ],
+      "yaw_deg": [
+        5,
+        5
+      ]
+    },
+    {
+      "case_id": "yaw-minus5",
+      "group": "yaw",
+      "distance": [
+        0.6,
+        0.6
+      ],
+      "lateral": [
+        0,
+        0
+      ],
+      "yaw_deg": [
+        -5,
+        -5
+      ]
+    },
+    {
+      "case_id": "yaw-opposed10",
+      "group": "yaw",
+      "distance": [
+        0.6,
+        0.6
+      ],
+      "lateral": [
+        0,
+        0
+      ],
+      "yaw_deg": [
+        10,
+        -10
+      ]
+    },
+    {
+      "case_id": "yaw-reversed10",
+      "group": "yaw",
+      "distance": [
+        0.6,
+        0.6
+      ],
+      "lateral": [
+        0,
+        0
+      ],
+      "yaw_deg": [
+        -10,
+        10
+      ]
+    },
+    {
+      "case_id": "lateral-plus3",
+      "group": "lateral",
+      "distance": [
+        0.6,
+        0.6
+      ],
+      "lateral": [
+        0.03,
+        0.03
+      ],
+      "yaw_deg": [
+        0,
+        0
+      ]
+    },
+    {
+      "case_id": "lateral-minus3",
+      "group": "lateral",
+      "distance": [
+        0.6,
+        0.6
+      ],
+      "lateral": [
+        -0.03,
+        -0.03
+      ],
+      "yaw_deg": [
+        0,
+        0
+      ]
+    },
+    {
+      "case_id": "lateral-opposed6",
+      "group": "lateral",
+      "distance": [
+        0.6,
+        0.6
+      ],
+      "lateral": [
+        0.06,
+        -0.06
+      ],
+      "yaw_deg": [
+        0,
+        0
+      ]
+    },
+    {
+      "case_id": "lateral-reversed6",
+      "group": "lateral",
+      "distance": [
+        0.6,
+        0.6
+      ],
+      "lateral": [
+        -0.06,
+        0.06
+      ],
+      "yaw_deg": [
+        0,
+        0
+      ]
+    },
+    {
+      "case_id": "mixed-near-mild",
+      "group": "mixed",
+      "distance": [
+        0.3,
+        0.45
+      ],
+      "lateral": [
+        0.03,
+        -0.03
+      ],
+      "yaw_deg": [
+        5,
+        -5
+      ]
+    },
+    {
+      "case_id": "mixed-mid-mild",
+      "group": "mixed",
+      "distance": [
+        0.45,
+        0.6
+      ],
+      "lateral": [
+        -0.03,
+        0.03
+      ],
+      "yaw_deg": [
+        -5,
+        5
+      ]
+    },
+    {
+      "case_id": "mixed-far-mild",
+      "group": "mixed",
+      "distance": [
+        0.7,
+        0.6
+      ],
+      "lateral": [
+        0.03,
+        -0.03
+      ],
+      "yaw_deg": [
+        5,
+        -5
+      ]
+    },
+    {
+      "case_id": "mixed-near-wide",
+      "group": "mixed",
+      "distance": [
+        0.3,
+        0.3
+      ],
+      "lateral": [
+        0.06,
+        -0.06
+      ],
+      "yaw_deg": [
+        10,
+        -10
+      ]
+    },
+    {
+      "case_id": "mixed-far-wide",
+      "group": "mixed",
+      "distance": [
+        0.7,
+        0.7
+      ],
+      "lateral": [
+        -0.06,
+        0.06
+      ],
+      "yaw_deg": [
+        -10,
+        10
+      ]
+    },
+    {
+      "case_id": "mixed-asymmetric",
+      "group": "mixed",
+      "distance": [
+        0.3,
+        0.7
+      ],
+      "lateral": [
+        -0.06,
+        0.06
+      ],
+      "yaw_deg": [
+        10,
+        -10
+      ]
+    }
+  ]
+}
