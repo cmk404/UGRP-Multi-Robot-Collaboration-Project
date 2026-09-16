@@ -57,7 +57,12 @@ class SoloBoxTransport:
         if not self.initialized:
             self.initialized = True
             return {'kind': 'pose', 'pulses': dict(SEARCH)}, features
+        previous_phase = self.box.phase
         action = self.box.decide(own)
+        if previous_phase == 'lift' and self.box.phase == 'verify_lift':
+            # Establish the visual attachment anchor after lift settling, not
+            # during the final arm transient. Keep all comotion thresholds.
+            action = {'kind':'wait', 'duration':1.0}
         if action['kind'] == 'finish':
             self.reason = action['reason']
             self.done = True
