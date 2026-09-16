@@ -58,6 +58,7 @@ def main():
     p.add_argument('--steps', type=int, default=10000)
     p.add_argument('--seed', type=int, default=20260916)
     p.add_argument('--eval-every', type=int, default=500)
+    p.add_argument('--slow-threshold', type=float, default=.015)
     args = p.parse_args()
     out = args.out_dir.resolve(); out.mkdir(parents=True, exist_ok=False)
     source_sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
@@ -91,7 +92,8 @@ def main():
         raise ValueError('invalid split')
     report = {'complete': False, 'source_sha': source_sha, 'upstream_sha': UPSTREAM_SHA,
               'protocol': protocol, 'sources': sources, 'train_cases': train, 'development_cases': dev,
-              'sampling': args.sampling, 'seed': args.seed, 'steps': args.steps, 'batch_size': 32,
+              'sampling': args.sampling, 'slow_threshold': args.slow_threshold,
+              'seed': args.seed, 'steps': args.steps, 'batch_size': 32,
               'profile': 'imagenet128', 'backbone': 'ImageNet ResNet18 frozen; exact RGB feature cache',
               'learning_rate': .0001, 'checkpoint_selection': 'lowest development selection_score; no final test data',
               'environment': {'python': sys.version, 'platform': platform.platform(),
@@ -122,7 +124,7 @@ def main():
         print(json.dumps({'robot': rid, 'event': 'feature_cache', 'seconds': time.monotonic()-feature_started,
                           'train_samples': len(rows), 'stop_samples': sum(r['stop'] for r in rows)}), flush=True)
         target = torch.tensor(target, dtype=torch.float32); padding = torch.tensor(padding, dtype=torch.bool)
-        weights = sampling_weights(rows, args.sampling == 'balanced')
+        weights = sampling_weights(rows, args.sampling == 'balanced', args.slow_threshold)
         generator = torch.Generator().manual_seed(args.seed)
         optimizer = torch.optim.AdamW([v for v in policy.parameters() if v.requires_grad], lr=1e-4, weight_decay=1e-4)
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, args.steps, eta_min=1e-5)

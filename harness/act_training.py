@@ -6,11 +6,13 @@ import numpy as np
 import torch
 
 
-def sampling_weights(rows, balanced):
+def sampling_weights(rows, balanced, slow_threshold=.015):
     if not balanced:
         return torch.ones(len(rows), dtype=torch.double)
     # Equal mass for stop, slow approach, and remaining approach. Only training labels.
-    groups = [2 if row['stop'] else 1 if row['forward'] <= .015 else 0 for row in rows]
+    if not 0 < slow_threshold <= .15:
+        raise ValueError('slow threshold must be in (0, .15]')
+    groups = [2 if row['stop'] else 1 if row['forward'] <= slow_threshold else 0 for row in rows]
     counts = {g: groups.count(g) for g in set(groups)}
     return torch.tensor([1. / counts[g] for g in groups], dtype=torch.double)
 
