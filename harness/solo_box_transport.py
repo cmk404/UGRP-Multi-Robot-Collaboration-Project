@@ -39,6 +39,7 @@ class SoloBoxTransport:
         self.reason = None
         self.steps = 0
         self.goal_confirmations = 0
+        self.grip_reobservations = 0
 
     @property
     def phase(self):
@@ -64,6 +65,18 @@ class SoloBoxTransport:
             # Establish the visual attachment anchor after lift settling, not
             # during the final arm transient. Keep all comotion thresholds.
             action = {'kind':'wait', 'duration':1.0}
+        if (action['kind']=='finish' and previous_phase=='carry'
+                and action['reason'] in {'VISUAL_GRASP_DRIFT', 'TOP_GEOMETRY_AMBIGUOUS_FOR_DROP'}
+                and self.grip_reobservations < 4):
+            # A stale held-image anchor is not a new contact measurement.
+            # Stop and request the same complete physical pan intervention;
+            # resume only after new three-view comotion evidence passes.
+            self.grip_reobservations += 1
+            self.box.phase='verify_lift'
+            self.box.reason='RUNNING'
+            self.box.held=False
+            return {'kind':'wait','duration':.3}, {**features,
+                'grip_reobservation':self.grip_reobservations,'trigger':action['reason']}
         if action['kind'] == 'finish':
             self.reason = action['reason']
             self.done = True
