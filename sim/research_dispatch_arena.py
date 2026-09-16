@@ -35,7 +35,7 @@ def authored_map(variant='shared_crossing'):
     if variant == 'narrow_south':
         value['obstacles'].append({'id':'south_chicane', 'center_m':[.58,-2.99],
             'half_extents_m':[.20,.13], 'height_m':.14, 'kind':'barrier'})
-        value['routes']['south']['declared_min_width_m'] = .46
+        value['routes']['south']['declared_min_width_m'] = .39
         value['routes']['south']['loaded_passage'] = 'unvalidated_narrow'
     if variant == 'rough_south':
         value['terrain'].append({'id':'south_rough', 'center_m':[.58,-2.66],
@@ -133,6 +133,8 @@ def build_scene_xml(source, config):
     top.set('quat','1 0 0 0'); top.set('fovy','55')
     for eq in root.findall('equality/weld'):
         eq.set('active','false')
+    ET.SubElement(world,'light',name='dispatch_ceiling',pos='.55 -2 3.5',
+                  dir='0 0 -1',diffuse='.55 .55 .55',specular='.05 .05 .05',castshadow='true')
     after = {n.get('name'): ET.tostring(n) for n in world.findall('body') if n.get('name') in robots}
     if after != robots or ET.tostring(beam) != beam_bytes:
         raise ValueError('arena changed robot or plain beam geometry')
