@@ -3647,6 +3647,296 @@
         "case-00/inputs-0.json": "1f85ae3e5cbd29a68300eb16424f88fa83c33a32e9d2d0f550caabc589fb1bb8",
         "case-00/wire-1.json": "b06a16f46351294b81745c3ae27039ff571455eb1d80ca3f1d60310e702a6b06"
       }
+    },
+    {
+      "name": "research-witness-resolution-20260916",
+      "source_sha": "119b3518ad8f3527cbf613be52935b5eeba88300",
+      "raw_path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-20260916",
+      "cases": [
+        {
+          "case": {
+            "name": "positive-prepare-r1-640x480",
+            "robot_id": "r1",
+            "phase": "PREPARE",
+            "roles": {
+              "r1": "bottom_end",
+              "r3": "top_end"
+            },
+            "expected_supported": true,
+            "source": "short-transport-teacher-20260913-v1 preclose RGB, actual subsequent bilateral grasp; teacher initialized, classification only",
+            "current": {
+              "own_rgb": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r1-current-own_rgb.jpg",
+              "top_rgb": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r1-current-top_rgb.jpg"
+            },
+            "previous": {
+              "own_rgb": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r1-previous-own_rgb.jpg",
+              "top_rgb": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r1-previous-top_rgb.jpg"
+            },
+            "offline_derivation": [
+              {
+                "source_path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/tests/fixtures/research_visual_witness/positive-prepare-r1-current-own_rgb.jpg",
+                "source_sha256": "47ac9236d42fc63227da236f2bde05d4a95ab1f213fbc06227d2496d0994ba2d",
+                "source_size": [
+                  960,
+                  720
+                ],
+                "target_path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r1-current-own_rgb.jpg",
+                "target_sha256": "070517c63e3990e398d059a213445d4cfe55aa5f870fc3ffc25ed27afc8b2610",
+                "target_size": [
+                  640,
+                  480
+                ],
+                "method": "Pillow LANCZOS JPEG quality=95",
+                "pillow": "12.3.0"
+              },
+              {
+                "source_path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/tests/fixtures/research_visual_witness/positive-prepare-r1-current-top_rgb.jpg",
+                "source_sha256": "dee3b6c3b41516854f1eddf701226d652054246683f32da164401104e55722d8",
+                "source_size": [
+                  960,
+                  720
+                ],
+                "target_path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r1-current-top_rgb.jpg",
+                "target_sha256": "d92252aa5537928c45b136a3b63ced6a09998fef9b640ff97d3db8506af81af9",
+                "target_size": [
+                  640,
+                  480
+                ],
+                "method": "Pillow LANCZOS JPEG quality=95",
+                "pillow": "12.3.0"
+              },
+              {
+                "source_path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/tests/fixtures/research_visual_witness/positive-prepare-r1-previous-own_rgb.jpg",
+                "source_sha256": "47ac9236d42fc63227da236f2bde05d4a95ab1f213fbc06227d2496d0994ba2d",
+                "source_size": [
+                  960,
+                  720
+                ],
+                "target_path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r1-previous-own_rgb.jpg",
+                "target_sha256": "070517c63e3990e398d059a213445d4cfe55aa5f870fc3ffc25ed27afc8b2610",
+                "target_size": [
+                  640,
+                  480
+                ],
+                "method": "Pillow LANCZOS JPEG quality=95",
+                "pillow": "12.3.0"
+              },
+              {
+                "source_path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/tests/fixtures/research_visual_witness/positive-prepare-r1-previous-top_rgb.jpg",
+                "source_sha256": "709e6249f2eb91ffd3847798ebc77722c09e7b8d7b4d55a719f3996423683cbb",
+                "source_size": [
+                  960,
+                  720
+                ],
+                "target_path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r1-previous-top_rgb.jpg",
+                "target_sha256": "0a1c376646d019c4875c9d5abe084772cd731410a0f4157176c8e128266a786d",
+                "target_size": [
+                  640,
+                  480
+                ],
+                "method": "Pillow LANCZOS JPEG quality=95",
+                "pillow": "12.3.0"
+              }
+            ]
+          },
+          "review": {
+            "request_id": "witness-probe-0-a0",
+            "identity_resolved": true,
+            "target_visible": true,
+            "two_fingers_resolved": true,
+            "target_between_fingers": true,
+            "jaws_state": "open",
+            "stationary": true,
+            "confidence": 0.95,
+            "reason": "r1 is the bottom robot assigned to bottom_end. In TOP and TOP_DETAIL views, its two gripper fingers are clearly resolved and open, straddling the bottom endpoint of the plain orange beam. OWN view looks upward along the beam. The scene is stationary across frames."
+          },
+          "supported": true,
+          "stop_reason": null,
+          "calls": [
+            {
+              "attempt": 0,
+              "request_id": "witness-probe-0-a0",
+              "raw_response": "```json\n{\n  \"request_id\": \"witness-probe-0-a0\",\n  \"identity_resolved\": true,\n  \"target_visible\": true,\n  \"two_fingers_resolved\": true,\n  \"target_between_fingers\": true,\n  \"jaws_state\": \"open\",\n  \"stationary\": true,\n  \"confidence\": 0.95,\n  \"reason\": \"r1 is the bottom robot assigned to bottom_end. In TOP and TOP_DETAIL views, its two gripper fingers are clearly resolved and open, straddling the bottom endpoint of the plain orange beam. OWN view looks upward along the beam. The scene is stationary across frames.\"\n}\n```",
+              "reply": {
+                "request_id": "witness-probe-0-a0",
+                "identity_resolved": true,
+                "target_visible": true,
+                "two_fingers_resolved": true,
+                "target_between_fingers": true,
+                "jaws_state": "open",
+                "stationary": true,
+                "confidence": 0.95,
+                "reason": "r1 is the bottom robot assigned to bottom_end. In TOP and TOP_DETAIL views, its two gripper fingers are clearly resolved and open, straddling the bottom endpoint of the plain orange beam. OWN view looks upward along the beam. The scene is stationary across frames."
+              },
+              "usage": {
+                "prompt_tokens": 6865,
+                "completion_tokens": 158,
+                "total_tokens": 7023
+              },
+              "model": "gemini-3.8-flash",
+              "latency_ms": 5656.918124994263
+            }
+          ],
+          "exact_wire_audited": true
+        },
+        {
+          "case": {
+            "name": "positive-prepare-r3-640x480",
+            "robot_id": "r3",
+            "phase": "PREPARE",
+            "roles": {
+              "r1": "bottom_end",
+              "r3": "top_end"
+            },
+            "expected_supported": true,
+            "source": "short-transport-teacher-20260913-v1 preclose RGB, actual subsequent bilateral grasp; teacher initialized, classification only",
+            "current": {
+              "own_rgb": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r3-current-own_rgb.jpg",
+              "top_rgb": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r3-current-top_rgb.jpg"
+            },
+            "previous": {
+              "own_rgb": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r3-previous-own_rgb.jpg",
+              "top_rgb": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r3-previous-top_rgb.jpg"
+            },
+            "offline_derivation": [
+              {
+                "source_path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/tests/fixtures/research_visual_witness/positive-prepare-r3-current-own_rgb.jpg",
+                "source_sha256": "56c3b7b6f6db9fe57ccd8db40089bb25f3c3da4119f1ab2005eb658a42fb1da7",
+                "source_size": [
+                  960,
+                  720
+                ],
+                "target_path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r3-current-own_rgb.jpg",
+                "target_sha256": "e4970000012450bc29367d59dc6bcca746eef7c0c24713c47eab8f9fec22214c",
+                "target_size": [
+                  640,
+                  480
+                ],
+                "method": "Pillow LANCZOS JPEG quality=95",
+                "pillow": "12.3.0"
+              },
+              {
+                "source_path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/tests/fixtures/research_visual_witness/positive-prepare-r3-current-top_rgb.jpg",
+                "source_sha256": "dee3b6c3b41516854f1eddf701226d652054246683f32da164401104e55722d8",
+                "source_size": [
+                  960,
+                  720
+                ],
+                "target_path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r3-current-top_rgb.jpg",
+                "target_sha256": "d92252aa5537928c45b136a3b63ced6a09998fef9b640ff97d3db8506af81af9",
+                "target_size": [
+                  640,
+                  480
+                ],
+                "method": "Pillow LANCZOS JPEG quality=95",
+                "pillow": "12.3.0"
+              },
+              {
+                "source_path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/tests/fixtures/research_visual_witness/positive-prepare-r3-previous-own_rgb.jpg",
+                "source_sha256": "599eceab458fac15d8dbdc7d50cb83b8b4c057403337cb131460bb762a623be9",
+                "source_size": [
+                  960,
+                  720
+                ],
+                "target_path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r3-previous-own_rgb.jpg",
+                "target_sha256": "4661018896df1817bd292d6b27cf88514bd68328ee88872bf1fafa991b070084",
+                "target_size": [
+                  640,
+                  480
+                ],
+                "method": "Pillow LANCZOS JPEG quality=95",
+                "pillow": "12.3.0"
+              },
+              {
+                "source_path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/tests/fixtures/research_visual_witness/positive-prepare-r3-previous-top_rgb.jpg",
+                "source_sha256": "709e6249f2eb91ffd3847798ebc77722c09e7b8d7b4d55a719f3996423683cbb",
+                "source_size": [
+                  960,
+                  720
+                ],
+                "target_path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r3-previous-top_rgb.jpg",
+                "target_sha256": "0a1c376646d019c4875c9d5abe084772cd731410a0f4157176c8e128266a786d",
+                "target_size": [
+                  640,
+                  480
+                ],
+                "method": "Pillow LANCZOS JPEG quality=95",
+                "pillow": "12.3.0"
+              }
+            ]
+          },
+          "review": {
+            "request_id": "witness-probe-1-a0",
+            "identity_resolved": true,
+            "target_visible": true,
+            "two_fingers_resolved": true,
+            "target_between_fingers": true,
+            "jaws_state": "open",
+            "stationary": true,
+            "confidence": 0.95,
+            "reason": "TOP and TOP_DETAIL clearly show robot r3 at the top end of the plain orange beam in the blue square. Two gripper fingers are resolved straddling the top endpoint of the beam, open and positioned for grasping. OWN view shows the beam close-up. No movement between previous and current frames."
+          },
+          "supported": true,
+          "stop_reason": null,
+          "calls": [
+            {
+              "attempt": 0,
+              "request_id": "witness-probe-1-a0",
+              "raw_response": "```json\n{\n  \"request_id\": \"witness-probe-1-a0\",\n  \"identity_resolved\": true,\n  \"target_visible\": true,\n  \"two_fingers_resolved\": true,\n  \"target_between_fingers\": true,\n  \"jaws_state\": \"open\",\n  \"stationary\": true,\n  \"confidence\": 0.95,\n  \"reason\": \"TOP and TOP_DETAIL clearly show robot r3 at the top end of the plain orange beam in the blue square. Two gripper fingers are resolved straddling the top endpoint of the beam, open and positioned for grasping. OWN view shows the beam close-up. No movement between previous and current frames.\"\n}\n```",
+              "reply": {
+                "request_id": "witness-probe-1-a0",
+                "identity_resolved": true,
+                "target_visible": true,
+                "two_fingers_resolved": true,
+                "target_between_fingers": true,
+                "jaws_state": "open",
+                "stationary": true,
+                "confidence": 0.95,
+                "reason": "TOP and TOP_DETAIL clearly show robot r3 at the top end of the plain orange beam in the blue square. Two gripper fingers are resolved straddling the top endpoint of the beam, open and positioned for grasping. OWN view shows the beam close-up. No movement between previous and current frames."
+              },
+              "usage": {
+                "prompt_tokens": 6865,
+                "completion_tokens": 163,
+                "total_tokens": 7028
+              },
+              "model": "gemini-3.8-flash",
+              "latency_ms": 4341.5729999833275
+            }
+          ],
+          "exact_wire_audited": true
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 13730,
+        "completion_tokens": 321,
+        "total_tokens": 14051
+      },
+      "files": {
+        "result.json": "e7296ed1c1614c87bdf2f5135478fe1158be6a6882564e75a4cd5a68ccc47532",
+        "case-00/request-0.json": "55f9f78e851c3ead93432d45f803188f7da8b6beafb43181acac418969630ac9",
+        "case-00/wire-1-response.json": "40bd14124740eefcbd134886b116b2b8ad960856be4886fb0c1c339d379279c0",
+        "case-00/result.json": "b628b3503c4cfb41e0e6ebe9f60a31759630745a4670cb6b1c3d6ca64ed88430",
+        "case-00/inputs-0.json": "6d81ec905a63f5d27a7aea48dbfda929087cba9a90c8b7debbe4a525852028e2",
+        "case-00/wire-1.json": "27445e4ba2a04243e387d897d431101a1c55b3d0edeea12f11351efb7739d9ac",
+        "case-01/request-0.json": "c9eabf23f85e25392bdbceb737668481fbc27a8376c1bd288f895e9d7b62df9a",
+        "case-01/wire-1-response.json": "2d8acd4dd058d98ffde21345080d525ae4371b2a5957afc5bc2aafd78f5decff",
+        "case-01/result.json": "be117967036a539cce683ddfe51cf05748131ebb59511b0bad25495d6e5589c7",
+        "case-01/inputs-0.json": "af5f7051fcdc25147d84bae1797c01309970da7169592c6095a0198e4eb80f42",
+        "case-01/wire-1.json": "16f601ea78ec558f59e8eb888342804036c1958b8f8c6623742ee0d921c19c3f"
+      },
+      "scope": "Additional offline sensitivity check: positive teacher-origin images resampled from 960x720 to live 640x480; not autonomous execution.",
+      "code_unchanged_from_live_sha": true,
+      "input_files": {
+        "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r3-previous-own_rgb.jpg": "4661018896df1817bd292d6b27cf88514bd68328ee88872bf1fafa991b070084",
+        "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r3-current-top_rgb.jpg": "d92252aa5537928c45b136a3b63ced6a09998fef9b640ff97d3db8506af81af9",
+        "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r1-current-top_rgb.jpg": "d92252aa5537928c45b136a3b63ced6a09998fef9b640ff97d3db8506af81af9",
+        "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r1-previous-top_rgb.jpg": "0a1c376646d019c4875c9d5abe084772cd731410a0f4157176c8e128266a786d",
+        "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r1-previous-own_rgb.jpg": "070517c63e3990e398d059a213445d4cfe55aa5f870fc3ffc25ed27afc8b2610",
+        "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/cases.json": "983ebe75f964d8b000e57842828b946ea402636acbae23163234c6484a517515",
+        "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r1-current-own_rgb.jpg": "070517c63e3990e398d059a213445d4cfe55aa5f870fc3ffc25ed27afc8b2610",
+        "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r3-current-own_rgb.jpg": "e4970000012450bc29367d59dc6bcca746eef7c0c24713c47eab8f9fec22214c",
+        "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/research-witness-resolution-inputs-20260916/positive-prepare-r3-previous-top_rgb.jpg": "0a1c376646d019c4875c9d5abe084772cd731410a0f4157176c8e128266a786d"
+      }
     }
   ],
   "limitations": [

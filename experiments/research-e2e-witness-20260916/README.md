@@ -40,6 +40,9 @@ UNCERTAIN/wait로 보류한다. GRASP에서 확인 실패 시 모두 정지하�
   r3의 GRASP 음성 장면은 분류 대조용이며 과거 r3 DONE 보고가 있었다는 뜻은 아니다.
 - 양성 장면은 교사 초기화 뒤 실제 파지가 성공한 실행의 **닫기 전 영상**이다.
   학생 독립 실행 성공이나 닫힌 파지 양성 판별 검증으로 해석하지 않는다.
+  원본 양성 영상은 960×720이므로 라이브와 같은 640×480으로 축소한 추가 검사도
+  **2/2 인정**을 확인했다. 파생 방법·원본/파생 해시를 기록했으며 제어 코드는 동일하다
+  (추가 검사 실행 SHA `119b351`; 그 사이 변경은 결과 문서뿐이다).
 - GitHub의 실행 소스 CI는 offline-regressions, ubuntu-simulation,
   individual-proxy-bootstrap 모두 통과했다(실제 모델 E2E 성공과 별도).
 
@@ -69,7 +72,7 @@ DONE/READY 혼합 상태의 실제 파지 성공까지 검증했다고 주장하
 E2E **204개 실제 요청 / 804개 이미지 참조 / 148개 로컬 RGB 판단** 재계산 감사 통과.
 입력·전송 본문·자기 이력·재시도·평가 분리 및 카메라/형상 불변·weld OFF를 확인했다.
 none 최초의 실패 요청 11개는 usage가 없어 비용을 알 수 없다. 공급자가 청구액을 주지 않아
-금액을 추정하지 않았다. 진단 영상 요청 7개는 E2E 요청 수와 별도로 기록했다.
+금액을 추정하지 않았다. 진단 영상 요청 9개는 E2E 요청 수와 별도로 기록했다.
 SIM은 모델 추론 중 멈춘다. 이 결과로 통신 효과나 일반화된 성공률을 결론내리지 않는다.
 
 ## 남은 연결 작업
@@ -96,6 +99,8 @@ SIM은 모델 추론 중 멈춘다. 이 결과로 통신 효과나 일반화된 
 - `outputs/research-visual-witness-probe-20260916`: 여섯 영상 분류, 실제 옛 답 3개 재생,
   원본/확대 영상·실제 전송 본문·응답·분류 검토 시트.
 - `outputs/research-witness-connectivity-20260916`: 프록시 오류 뒤 실제 영상 요청 복구 확인.
+- `outputs/research-witness-resolution-20260916`: 양성 영상의 라이브 해상도 추가 검사 2개;
+  파생 입력은 `outputs/research-witness-resolution-inputs-20260916`에 보관했다.
 - `outputs/research-e2e-witness-{natural,none,none-repeat}-20260916`: 각 실행의 전체 입력,
   응답·평가·실행 로그, motion.mp4, audit.json, visual-review.json.
 - 영상은 natural 397프레임, none 최초 102프레임, 재실행 377프레임에서 각각 균등한
