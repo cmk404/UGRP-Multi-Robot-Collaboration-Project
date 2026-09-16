@@ -136,4 +136,8 @@ def main():
 
 
 if __name__ == '__main__':
-    raise SystemExit(main())
+    if '--inspection-demo' in sys.argv:
+        sys.argv.remove('--inspection-demo')
+        raise SystemExit(main())
+    from scripts.run_three_robot_mission import main as mission_main
+    raise SystemExit(mission_main())

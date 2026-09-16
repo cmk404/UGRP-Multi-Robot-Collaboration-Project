@@ -60,7 +60,7 @@ def text_fields(value):
         raise ValueError('reason and message must be strings of at most 600 characters')
 
 
-def validate_plan_reply(raw, request_id, agreement):
+def validate_plan_reply(raw, request_id, agreement, *, plan_validator=validate_plan):
     value = parse(raw)
     if not isinstance(value, dict) or set(value) != {
             'request_id', 'proposal_id', 'plan_hash', 'accept', 'plan', 'reason', 'message'}:
@@ -71,7 +71,7 @@ def validate_plan_reply(raw, request_id, agreement):
     # Before a proposal exists, non-proposers may legitimately wait. A null
     # rejection must never be coerced into an affirmative model decision.
     if value['plan'] is not None:
-        validate_plan(value['plan'])
+        plan_validator(value['plan'])
     elif value['accept']:
         raise ValueError('acceptance requires an explicit valid plan')
     proposal = agreement['proposal']
@@ -85,10 +85,11 @@ def validate_plan_reply(raw, request_id, agreement):
 
 class TeamAgreement:
     """Rotating proposal token, exact unanimous ACK; never repairs decisions."""
-    def __init__(self, run_id):
+    def __init__(self, run_id, *, plan_validator=validate_plan):
         if not isinstance(run_id, str) or not run_id:
             raise ValueError('run id required')
         self.run_id, self.version = run_id, 1
+        self.plan_validator = plan_validator
         self.pending = self.committed = None
         self.events = []
         self.last_turn = -1
@@ -109,7 +110,8 @@ class TeamAgreement:
         context = self.context()
         for rid, value in replies.items():
             if value is not None:
-                validate_plan_reply(json.dumps(value), f'{self.run_id}-{rid}-plan-{turn}', context)
+                validate_plan_reply(json.dumps(value), f'{self.run_id}-{rid}-plan-{turn}', context,
+                                    plan_validator=self.plan_validator)
         if self.pending is None:
             proposer = context['proposer']
             candidate = replies.get(proposer)

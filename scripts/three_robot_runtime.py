@@ -24,9 +24,13 @@ def refs(frames):
 
 
 class ThreeRobotRuntime:
-    def __init__(self, output, *, run_id, mode='llm', fixture_timing='during_approach'):
+    def __init__(self, output, *, run_id, mode='llm', fixture_timing='during_approach',
+                 agreement=None, request_builder=build_plan_request,
+                 reply_validator=validate_plan_reply, plan_fixture=None):
         self.output, self.mode, self.fixture_timing = output, mode, fixture_timing
-        self.agreement = TeamAgreement(run_id)
+        self.agreement = agreement or TeamAgreement(run_id)
+        self.request_builder, self.reply_validator = request_builder, reply_validator
+        self.plan_fixture = plan_fixture
         self.inbox = {r: [] for r in ROBOTS}
         self.calls, self.rounds, self.inspections = [], [], []
         self.execution_events = []
@@ -78,16 +82,16 @@ class ThreeRobotRuntime:
         for rid in ROBOTS:
             request_id = f'{self.agreement.run_id}-{rid}-plan-{turn}'
             frame = frames[rid]
-            requests[rid] = build_plan_request(rid, request_id=request_id,
+            requests[rid] = self.request_builder(rid, request_id=request_id,
                 own_rgb=frame['own_bytes'], top_rgb=frame['top_bytes'], agreement=context,
                 inbox=self.inbox[rid], own_history=own_history[rid])
             p = context['proposal']
             fixture = {'request_id': request_id, 'proposal_id': p['proposal_id'] if p else None,
                        'plan_hash': p['plan_hash'] if p else None, 'accept': True,
-                       'plan': p['plan'] if p else fixture_plan(self.fixture_timing),
+                       'plan': p['plan'] if p else (self.plan_fixture or fixture_plan(self.fixture_timing)),
                        'reason': 'scripted protocol fixture, not visual reasoning', 'message': ''}
             futures[rid] = self.pool.submit(self._invoke, rid, requests[rid],
-                lambda raw, req, c=context: validate_plan_reply(raw, req, c), fixture_reply=fixture)
+                lambda raw, req, c=context: self.reply_validator(raw, req, c), fixture_reply=fixture)
         batch = {r: f.result() for r, f in futures.items()}
         replies = {r: v[0] for r, v in batch.items()}
         for reply, stop, records in batch.values():
@@ -152,7 +156,8 @@ class ThreeRobotRuntime:
                 'inspections': self.inspections, 'calls': self.calls,
                 'execution_events': self.execution_events,
                 'transport_roles_fixed_by_skill': True,
-                'inspection_has_no_motor_permission': True,
+                'inspection_has_no_motor_permission': self.plan_fixture is None,
+                'physical_task_plan': self.plan_fixture is not None,
                 'cost_usd': None, 'cost_note': 'provider billing unavailable'}
 
     def close(self, sim_time):
