@@ -69,7 +69,12 @@ def audit(root):
         for r in ROBOTS: _image(root,row['images'][r]['own'])
         same(decisions,row['decisions'],'coarse RGB decision')
         if not all(d['ok'] for d in decisions.values()): break
-        expected.append({r:dict(kind='drive',forward=decisions[r]['forward'],turn=0.,duration_s=.2) for r in ROBOTS})
+        if report['config'].get('coarse_control') == 'rgb-wheel-heading-v1':
+            expected.append({r:dict(kind='mecanum',forward=decisions[r]['forward'],left=0.,
+                turn=decisions[r]['turn'],duration_s=.2) for r in ROBOTS})
+        else:
+            require('coarse_control' not in report['config'],'unknown coarse control')
+            expected.append({r:dict(kind='drive',forward=decisions[r]['forward'],turn=0.,duration_s=.2) for r in ROBOTS})
         if all(d['ready'] for d in decisions.values()):
             expected.append({r:dict(kind='drive',forward=0.,turn=0.,duration_s=.25) for r in ROBOTS})
     image_map={}

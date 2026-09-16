@@ -23,7 +23,7 @@ def decode(jpeg):
     return frame
 
 
-def lane_features(top_jpeg, rid):
+def lane_yellow(top_jpeg, rid):
     if rid not in ('r1', 'r3'):
         raise ValueError('unknown robot')
     top = decode(top_jpeg)
@@ -39,6 +39,46 @@ def lane_features(top_jpeg, rid):
         yellow[h//2:] = 0
     yellow[:int(.25*h)] = 0
     yellow[int(.8*h):] = 0
+    return yellow
+
+
+def lane_heading(top_jpeg, rid):
+    """Coarse image angle of the four wheels in the fixed, right-facing task.
+
+    The authored camera/task convention is image-right = forward and positive
+    turn = counterclockwise in the image. This is an unoriented rectangle:
+    it cannot recognize reversed robots or arbitrary headings. Keep the near
+    learned estimator for precise docking, and reject ambiguous wheel shapes.
+    """
+    yellow = lane_yellow(top_jpeg, rid)
+    h, w = yellow.shape
+    ys, xs = np.nonzero(yellow)
+    if len(xs) < 80 or len(xs) > 700:
+        return None
+    (cx, cy), (a, b), angle = cv2.minAreaRect(np.column_stack((xs, ys)).astype(np.float32))
+    long, short = max(a, b), min(a, b)
+    if a < b:
+        angle += 90
+    angle = (angle + 90) % 180 - 90
+    if not (.05*w <= long <= .075*w and .045*h <= short <= .07*h
+            and 1.12 <= long/short <= 1.65 and abs(angle) <= 18):
+        return None
+    # All four wheel corners must contribute; a partial silhouette is not
+    # sufficient evidence to turn. Coordinates here remain image pixels.
+    theta = math.radians(angle)
+    dx, dy = xs-cx, ys-cy
+    u = dx*math.cos(theta)+dy*math.sin(theta)
+    v = -dx*math.sin(theta)+dy*math.cos(theta)
+    counts = [int(np.sum((u*s > .15*long) & (v*t > .15*short)))
+              for s in (-1, 1) for t in (-1, 1)]
+    if min(counts) < 5:
+        return None
+    return dict(angle_deg=float(angle), wheel_pixels=len(xs), corner_pixels=counts)
+
+
+def lane_features(top_jpeg, rid):
+    yellow = lane_yellow(top_jpeg, rid)
+    h, w = yellow.shape
     ys, xs = np.nonzero(yellow)
     beams = [b for b in extract_beams(top_jpeg)
              if .35 <= b['center'][1] <= .65 and not b['touches_border']]
@@ -51,15 +91,26 @@ def lane_features(top_jpeg, rid):
 def coarse_approach(top_jpeg, reference_top, rid):
     current, reference = lane_features(top_jpeg, rid), lane_features(reference_top, rid)
     if current is None or reference is None:
-        return dict(ok=False, ready=False, forward=0., reason='lane_or_payload_unresolved')
+        return dict(ok=False, ready=False, forward=0., turn=0., reason='lane_or_payload_unresolved')
+    heading = lane_heading(top_jpeg, rid)
+    if heading is None:
+        return dict(ok=False, ready=False, forward=0., turn=0., reason='wheel_heading_unresolved')
     error = ((current['beam_x']-current['robot_x']) -
              (reference['beam_x']-reference['robot_x']))
     # Handoff while still well inside the independently trained 15..40 cm
     # alignment domain. Readiness here is not grasp readiness.
-    ready = error <= .065
-    return dict(ok=True, ready=ready, forward=0. if ready else min(.12, max(.03, error)),
-                reason='visual_near_domain' if ready else 'visual_coarse_approach',
-                image_gap=error, features=current)
+    # Far forward-only driving amplified a +/-10 degree starting error into
+    # 7..15 cm of lateral drift. Turn in place before advancing, and recheck
+    # from fresh RGB at every slice. Issued turn is never assumed to succeed.
+    heading_ready = abs(heading['angle_deg']) <= 1.5
+    turn = (0. if heading_ready else math.copysign(
+        min(.10, max(.01, .5*abs(math.radians(heading['angle_deg'])))), heading['angle_deg']))
+    ready = error <= .065 and heading_ready
+    forward = min(.12, max(.03, error)) if heading_ready and not ready else 0.
+    reason = ('visual_coarse_heading' if not heading_ready else
+              'visual_near_domain' if ready else 'visual_coarse_approach')
+    return dict(ok=True, ready=ready, forward=forward, turn=turn, reason=reason,
+                image_gap=error, features=current, heading=heading)
 
 
 def own_payload(jpeg):

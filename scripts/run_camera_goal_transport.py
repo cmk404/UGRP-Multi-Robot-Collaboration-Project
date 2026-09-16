@@ -97,7 +97,7 @@ def run(args):
     report=dict(schema='ugrp.camera_goal_transport.v1',
         source_sha=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         scope='local RGB wheel feedback; demonstrated arm sequence plus learned RGB recovery; no LLM',
-        config=dict(start_distance_m=dict(zip(ROBOTS,args.distance)),
+        config=dict(coarse_control='rgb-wheel-heading-v1',start_distance_m=dict(zip(ROBOTS,args.distance)),
                     start_poses_setup_only=starts,weld=False,planner=args.planner),
         assets=dict(grasp_skill=dict(path=str(args.grasp_model_dir.resolve()),sha256=sha(args.grasp_model_dir/'student-skill.json')),
                     stage_skill=dict(path=str(args.stage_model_dir.resolve()),sha256=sha(args.stage_model_dir/'varied-start-skill.json')),
@@ -127,7 +127,8 @@ def run(args):
             report['coarse_calls'].append(dict(index=index,decisions=decisions,
                 images={r:dict(own=frames[r]['own_rgb'],top=frames[r]['shared_top_rgb']) for r in ROBOTS}))
             if not all(d['ok'] for d in decisions.values()): raise RuntimeError('coarse RGB unresolved')
-            scene.drive({r:d['forward'] for r,d in decisions.items()})
+            scene.drive_mecanum({r:dict(forward=d['forward'],left=0.,turn=d['turn'])
+                                 for r,d in decisions.items()})
             if all(d['ready'] for d in decisions.values()):
                 scene.stop_dwell()
                 break

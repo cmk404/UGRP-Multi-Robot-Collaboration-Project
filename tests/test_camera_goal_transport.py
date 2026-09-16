@@ -110,3 +110,43 @@ def test_e2e_setup_supports_far_rotated_starts_without_expanding_old_near_domain
     for distance,lateral,yaw in (([.3,.71],[0,0],[0,0]),([.3,.6],[0,float('nan')],[0,0]),
         ([.3,.6],[0,0],[0,True]),([.3,.6],[0,0],[0,21]),([.3],[0,0],[0,0])):
         with pytest.raises(ValueError): setup_poses(distance,lateral,yaw)
+
+
+HEADING_FIXTURE=Path(__file__).parent/'fixtures/camera_goal_heading'
+
+
+def test_heading_covers_saved_far_failures_without_forward_drift():
+    import hashlib
+    manifest=json.loads((HEADING_FIXTURE/'manifest.json').read_text())
+    assert len(manifest)==19
+    for name,source in manifest.items():
+        top=(HEADING_FIXTURE/name).read_bytes()
+        assert hashlib.sha256(top).hexdigest()==source['sha256']
+        for rid,setup in source['setup_only'].items():
+            decision=coarse_approach(top,rgb('reference-top.jpg'),rid)
+            assert decision['ok']
+            # Labels are used only here to evaluate saved input predictions.
+            assert abs(decision['heading']['angle_deg']+setup['yaw_deg'])<1.5
+            if setup['yaw_deg']:
+                assert decision['turn']*setup['yaw_deg']<0
+                assert decision['forward']==0 and not decision['ready']
+            else:
+                assert decision['turn']==0 and decision['forward']>0
+
+
+def test_unchanged_heading_images_cannot_claim_rotation_succeeded():
+    top=(HEADING_FIXTURE/'mixed-far-wide.jpg').read_bytes()
+    for _ in range(10):
+        d=coarse_approach(top,rgb('reference-top.jpg'),'r1')
+        assert d['ok'] and d['turn']>0 and d['forward']==0 and not d['ready']
+
+
+def test_missing_wheel_corners_fail_closed():
+    from harness.camera_goal_transport import lane_heading
+    frame=cv2.imdecode(np.frombuffer((HEADING_FIXTURE/'baseline.jpg').read_bytes(),np.uint8),cv2.IMREAD_COLOR)
+    # Occlude the robot's lower wheel row while preserving the payload.
+    frame[450:500,270:370]=0
+    _,encoded=cv2.imencode('.jpg',frame)
+    assert lane_heading(encoded.tobytes(),'r1') is None
+    d=coarse_approach(encoded.tobytes(),rgb('reference-top.jpg'),'r1')
+    assert not d['ok'] and not d['ready'] and d['forward']==0 and d['turn']==0
