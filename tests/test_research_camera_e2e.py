@@ -4,6 +4,7 @@ import json
 import pytest
 
 from harness.research_camera_actor import agreed_roles, build_request, preparation_ready, validate_reply
+from harness.task_stage_sync import CHECKS
 from scripts.run_research_camera_e2e import evaluate_trial
 
 
@@ -49,6 +50,7 @@ def test_request_whitelists_camera_context_and_communication_condition():
     assert context["received_peer_claims"]==[]
     assert context["own_issued_commands"]==kwargs["own_history"]
     assert len(request["images"])==4
+    assert json.dumps(sorted(CHECKS)) in request["messages"][0]["content"]
     request=build_request("r1","GRASP",camera,communication="natural",**kwargs)
     assert json.loads(request["messages"][1]["content"])["received_peer_claims"]==kwargs["inbox"]
 

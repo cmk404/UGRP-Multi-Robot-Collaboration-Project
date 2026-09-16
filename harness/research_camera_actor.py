@@ -95,6 +95,7 @@ Return {"reason":"...","message":"...","roles":{"r1":"top_end or bottom_end",
 "r3":"the other end"},"accept":true or false}. Both independently proposed role
 maps must agree. The coordinator will not choose or repair an assignment.'''
     else:
+        system+="\nThe checks field is an enum array, not free text. Its only permitted values are "+json.dumps(sorted(CHECKS))+". Use [] when none is visually established; put all other observations in reason/message."
         system+='''\nReturn {"reason":"...","message":"...","status":"READY|NOT_READY|UNCERTAIN|FAILED|DONE",
 "confidence":0..1,"checks":[...],"command_id":null or a previous OWN command ID,
 "action":{"kind":"drive","forward":0..0.15,"turn":-0.2..0.2,"duration_s":0.2}
