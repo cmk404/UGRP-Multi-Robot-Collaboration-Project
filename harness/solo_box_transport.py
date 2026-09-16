@@ -21,7 +21,7 @@ def solo_top_features(jpeg):
                  'bounds': (stats[i,:4]/[w,h,w,h]).tolist(), 'area': int(stats[i,4])}
                 for i in range(1,count) if stats[i,4] >= area]
     zones = components((135, 70, 40), (175, 255, 255), 200)
-    boxes = components((80, 70, 35), (105, 255, 255), 12)
+    boxes = components((80, 70, 35), (105, 255, 255), 30)
     return {'zones': sorted(zones, key=lambda z:z['center'][0]), 'boxes': boxes}
 
 

@@ -80,6 +80,11 @@ def evaluate_solo(samples, goal):
 class MissionScene(GoalScene):
     team = solo = solo_executor = solo_log = None
 
+    def configure_world_setup(self):
+        # The production constructor resets XML spawns to its own layout.
+        # Apply this authored initial pose once, before folded setup and RGB.
+        self.world.controllers['r2'].set_base_pose_for_test((0.,-3.,.032355118817659255),0.)
+
     def open(self, *args, **kwargs):
         from unittest.mock import patch
         import sim.multi_masterpi_production as production
@@ -174,6 +179,15 @@ class MissionScene(GoalScene):
             return
         obs=self.solo_port.capture()
         own=base64.b64decode(obs['image'])
+        # Existing monocular skill calibration is 640x480; preserve FOV and
+        # image content by resizing the full image, never changing the camera.
+        import cv2
+        import numpy as np
+        import hashlib
+        native=cv2.imdecode(np.frombuffer(own,np.uint8),cv2.IMREAD_COLOR)
+        own=cv2.imencode('.jpg',cv2.resize(native,(640,480)),[cv2.IMWRITE_JPEG_QUALITY,95])[1].tobytes()
+        obs['image']=base64.b64encode(own).decode()
+        obs['sha256']=hashlib.sha256(own).hexdigest()
         top=self.world.render_team_jpeg(camera='cctv_top',quality=95)
         index=len(self.solo_rows)
         refs={'own':image_record(self.out/'rgb'/f'solo-{index:04d}-own.jpg',self.out,own),

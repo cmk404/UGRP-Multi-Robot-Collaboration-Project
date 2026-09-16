@@ -105,6 +105,7 @@ class ApproachScene:
                           _plain_beam_xml(production.build_multi_robot_xml)):
             self.world = production.MultiMasterPiProductionV2(
                 seed=int(self.fixture['seed']), width=960, height=720, render=True)
+        self.configure_world_setup()
         offsets = ({r: starts[r]['distance_m'] for r in ROBOTS} if starts is not None
                    else base_offsets or {r: 0.0 for r in ROBOTS})
         for rid in ROBOTS:
@@ -139,6 +140,10 @@ class ApproachScene:
         self.video.stage = self.phase
         self.video.capture(force=True)
         return self
+
+    def configure_world_setup(self):
+        """Optional authored scene setup, before any task motion or observation."""
+        pass
 
     def time(self):
         return float(self.world.data.time)
