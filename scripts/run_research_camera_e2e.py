@@ -13,6 +13,7 @@ from concurrent.futures import ThreadPoolExecutor
 import hashlib
 import io
 import json
+import math
 from pathlib import Path
 import platform
 import subprocess
@@ -343,10 +344,15 @@ def main():
     p.add_argument("--model",default="gemini-3.8-flash")
     p.add_argument("--request-attempts",type=int,choices=(1,2,3),default=3)
     p.add_argument("--local-drive-steps",type=int,choices=range(1,11),default=10)
+    p.add_argument("--max-input-tokens",type=int,default=180000)
+    p.add_argument("--max-wall-s",type=float,default=600.)
     a=p.parse_args()
     if not 1<=a.rounds<=64:p.error("rounds must be 1..64")
+    if a.max_input_tokens<=0:p.error("max-input-tokens must be positive")
+    if not math.isfinite(a.max_wall_s) or a.max_wall_s<=0:p.error("max-wall-s must be positive and finite")
     r=run(a.output.resolve(),communication=a.communication,rounds=a.rounds,seed=a.seed,model=a.model,
-          request_attempts=a.request_attempts,local_drive_steps=a.local_drive_steps)
+          request_attempts=a.request_attempts,local_drive_steps=a.local_drive_steps,
+          max_input_tokens=a.max_input_tokens,max_wall_s=a.max_wall_s)
     print(json.dumps({k:r.get(k) for k in ("current_phase","stop_reason","physical_success","error","wall_seconds","token_usage")},ensure_ascii=False))
     return int(bool(r["error"] or r["cleanup_errors"]))
 
