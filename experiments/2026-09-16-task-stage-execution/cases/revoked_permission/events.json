@@ -1,0 +1,299 @@
+{
+  "sync": [
+    {
+      "event": "REQUEST",
+      "task_id": "revoked_permission",
+      "run_id": "b33cefbe04de4daf9628e78440745774",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 0,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 2.500019036233425e-06,
+      "plan": {
+        "schema": "ugrp.task_plan.v1",
+        "task_id": "revoked_permission",
+        "plan_version": 1,
+        "object_id": "unloaded-actuator-diagnostic",
+        "participants": [
+          {
+            "robot_id": "r1",
+            "role": "left"
+          },
+          {
+            "robot_id": "r3",
+            "role": "right"
+          }
+        ],
+        "goal_region": "diagnostic-only-no-navigation-goal",
+        "static_map": {
+          "id": "camera-team-port-diagnostic",
+          "version": "1",
+          "sha256": "a97b041efcf78171143f867780dab8193a2aecd47c11bb5664dd6496d24c57df"
+        }
+      }
+    },
+    {
+      "event": "REPORT",
+      "task_id": "revoked_permission",
+      "run_id": "b33cefbe04de4daf9628e78440745774",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 0,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.24884495802689344,
+      "robot_id": "r1",
+      "report": {
+        "task_id": "revoked_permission",
+        "run_id": "b33cefbe04de4daf9628e78440745774",
+        "plan_version": 1,
+        "stage": "GRASP",
+        "epoch": 0,
+        "robot_id": "r1",
+        "sequence": 1,
+        "status": "READY",
+        "observed_at_s": 0.3000000000000002,
+        "decided_at_s": 0.3000000000000002,
+        "sent_at_s": 0.3000000000000002,
+        "observation_id": "r1-000001",
+        "own_rgb_ref": "rgb/r1-000001-own_rgb.jpg",
+        "top_rgb_ref": "rgb/r1-000001-top_rgb.jpg",
+        "confidence": 1.0,
+        "checks": [
+          "at_grasp_pose",
+          "stopped"
+        ],
+        "command_id": null,
+        "reason": "SYNTHETIC diagnostic verdict; NOT inferred from RGB",
+        "schema": "ugrp.stage_report.v1",
+        "evidence_source": "own_rgb+top_rgb"
+      },
+      "ready": true,
+      "observation_to_decision_s": 0.0,
+      "sender_queue_s": 0.0,
+      "delivery_s": 0.0
+    },
+    {
+      "event": "REPORT",
+      "task_id": "revoked_permission",
+      "run_id": "b33cefbe04de4daf9628e78440745774",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 0,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.3083236670063343,
+      "robot_id": "r3",
+      "report": {
+        "task_id": "revoked_permission",
+        "run_id": "b33cefbe04de4daf9628e78440745774",
+        "plan_version": 1,
+        "stage": "GRASP",
+        "epoch": 0,
+        "robot_id": "r3",
+        "sequence": 1,
+        "status": "READY",
+        "observed_at_s": 0.3000000000000002,
+        "decided_at_s": 0.3000000000000002,
+        "sent_at_s": 0.3000000000000002,
+        "observation_id": "r3-000002",
+        "own_rgb_ref": "rgb/r3-000002-own_rgb.jpg",
+        "top_rgb_ref": "rgb/r3-000002-top_rgb.jpg",
+        "confidence": 1.0,
+        "checks": [
+          "at_grasp_pose",
+          "stopped"
+        ],
+        "command_id": null,
+        "reason": "SYNTHETIC diagnostic verdict; NOT inferred from RGB",
+        "schema": "ugrp.stage_report.v1",
+        "evidence_source": "own_rgb+top_rgb"
+      },
+      "ready": true,
+      "observation_to_decision_s": 0.0,
+      "sender_queue_s": 0.0,
+      "delivery_s": 0.0
+    },
+    {
+      "event": "GO",
+      "task_id": "revoked_permission",
+      "run_id": "b33cefbe04de4daf9628e78440745774",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 0,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.30835454200860113,
+      "permission": {
+        "run_id": "b33cefbe04de4daf9628e78440745774",
+        "task_id": "revoked_permission",
+        "plan_version": 1,
+        "stage": "GRASP",
+        "epoch": 0,
+        "token": "87aebae30c044b6d9d9784dd6a449703",
+        "issued_at_s": 0.3000000000000002,
+        "expires_at_s": 0.5500000000000003
+      }
+    },
+    {
+      "event": "HOLD",
+      "task_id": "revoked_permission",
+      "run_id": "b33cefbe04de4daf9628e78440745774",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 1,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.3083593750197906,
+      "reason": "injected_hold"
+    },
+    {
+      "event": "REPORT",
+      "task_id": "revoked_permission",
+      "run_id": "b33cefbe04de4daf9628e78440745774",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 1,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.36970754200592637,
+      "robot_id": "r1",
+      "report": {
+        "task_id": "revoked_permission",
+        "run_id": "b33cefbe04de4daf9628e78440745774",
+        "plan_version": 1,
+        "stage": "GRASP",
+        "epoch": 1,
+        "robot_id": "r1",
+        "sequence": 2,
+        "status": "READY",
+        "observed_at_s": 0.3000000000000002,
+        "decided_at_s": 0.3000000000000002,
+        "sent_at_s": 0.3000000000000002,
+        "observation_id": "r1-000003",
+        "own_rgb_ref": "rgb/r1-000003-own_rgb.jpg",
+        "top_rgb_ref": "rgb/r1-000003-top_rgb.jpg",
+        "confidence": 1.0,
+        "checks": [
+          "at_grasp_pose",
+          "stopped"
+        ],
+        "command_id": null,
+        "reason": "SYNTHETIC diagnostic verdict; NOT inferred from RGB",
+        "schema": "ugrp.stage_report.v1",
+        "evidence_source": "own_rgb+top_rgb"
+      },
+      "ready": true,
+      "observation_to_decision_s": 0.0,
+      "sender_queue_s": 0.0,
+      "delivery_s": 0.0
+    },
+    {
+      "event": "REPORT",
+      "task_id": "revoked_permission",
+      "run_id": "b33cefbe04de4daf9628e78440745774",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 1,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.4569120830274187,
+      "robot_id": "r3",
+      "report": {
+        "task_id": "revoked_permission",
+        "run_id": "b33cefbe04de4daf9628e78440745774",
+        "plan_version": 1,
+        "stage": "GRASP",
+        "epoch": 1,
+        "robot_id": "r3",
+        "sequence": 2,
+        "status": "READY",
+        "observed_at_s": 0.3000000000000002,
+        "decided_at_s": 0.3000000000000002,
+        "sent_at_s": 0.3000000000000002,
+        "observation_id": "r3-000004",
+        "own_rgb_ref": "rgb/r3-000004-own_rgb.jpg",
+        "top_rgb_ref": "rgb/r3-000004-top_rgb.jpg",
+        "confidence": 1.0,
+        "checks": [
+          "at_grasp_pose",
+          "stopped"
+        ],
+        "command_id": null,
+        "reason": "SYNTHETIC diagnostic verdict; NOT inferred from RGB",
+        "schema": "ugrp.stage_report.v1",
+        "evidence_source": "own_rgb+top_rgb"
+      },
+      "ready": true,
+      "observation_to_decision_s": 0.0,
+      "sender_queue_s": 0.0,
+      "delivery_s": 0.0
+    },
+    {
+      "event": "GO",
+      "task_id": "revoked_permission",
+      "run_id": "b33cefbe04de4daf9628e78440745774",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 1,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.4569496670155786,
+      "permission": {
+        "run_id": "b33cefbe04de4daf9628e78440745774",
+        "task_id": "revoked_permission",
+        "plan_version": 1,
+        "stage": "GRASP",
+        "epoch": 1,
+        "token": "927d11af12a342fc8bb4637c232d109e",
+        "issued_at_s": 0.3000000000000002,
+        "expires_at_s": 0.5500000000000003
+      }
+    },
+    {
+      "event": "COMMAND_DENIED",
+      "task_id": "revoked_permission",
+      "run_id": "b33cefbe04de4daf9628e78440745774",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 1,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.4569835830188822,
+      "robot_id": "r1"
+    },
+    {
+      "event": "HOLD",
+      "task_id": "revoked_permission",
+      "run_id": "b33cefbe04de4daf9628e78440745774",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 2,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.45698754201293923,
+      "reason": "command_batch_denied"
+    },
+    {
+      "event": "ABORT",
+      "task_id": "revoked_permission",
+      "run_id": "b33cefbe04de4daf9628e78440745774",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 2,
+      "timestamp_s": 0.6000000000000004,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.887928042007843,
+      "reason": "execution_closed"
+    }
+  ],
+  "execution": [
+    {
+      "event": "LOCAL_HOLD",
+      "timestamp_s": 0.3000000000000002,
+      "reason": "waiting_for_readiness",
+      "errors": []
+    }
+  ]
+}

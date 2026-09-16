@@ -1,0 +1,123 @@
+{
+  "case": "five_stage_fixture",
+  "passed": true,
+  "error": null,
+  "scope": "Real RGB and MuJoCo raw ports; synthetic stage verdicts; no autonomous or loaded transport",
+  "physical_task_success_evaluated": false,
+  "model_calls": 0,
+  "cost_usd": 0,
+  "scene_xml_sha256": "491d8cfc7ec93f156f42774d131bacca71d10a24605cbe1c3f1fc121a356ed28",
+  "cameras_initial": {
+    "cctv_top": {
+      "pos": [
+        0.65,
+        0.0,
+        1.8
+      ],
+      "quat": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fov": 46.0
+    },
+    "r1__robot_cam": {
+      "pos": [
+        0.067,
+        0.0,
+        0.0136
+      ],
+      "quat": [
+        0.466417262018992,
+        0.531464897891391,
+        -0.531464897891391,
+        -0.466417262018992
+      ],
+      "fov": 42.18818995586325
+    },
+    "r3__robot_cam": {
+      "pos": [
+        0.067,
+        0.0,
+        0.0136
+      ],
+      "quat": [
+        0.466417262018992,
+        0.531464897891391,
+        -0.531464897891391,
+        -0.466417262018992
+      ],
+      "fov": 42.18818995586325
+    }
+  },
+  "final_status": {
+    "phase": "FINISH",
+    "epoch": 5,
+    "reason": "all_stages_reported_done",
+    "run_id": "2ec81ac55aa34789b2c31ca34bd70bac",
+    "task_id": "five_stage_fixture",
+    "plan_version": 1,
+    "stage": "RELEASE",
+    "permission": null
+  },
+  "cameras_final": {
+    "cctv_top": {
+      "pos": [
+        0.65,
+        0.0,
+        1.8
+      ],
+      "quat": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fov": 46.0
+    },
+    "r1__robot_cam": {
+      "pos": [
+        0.067,
+        0.0,
+        0.0136
+      ],
+      "quat": [
+        0.466417262018992,
+        0.531464897891391,
+        -0.531464897891391,
+        -0.466417262018992
+      ],
+      "fov": 42.18818995586325
+    },
+    "r3__robot_cam": {
+      "pos": [
+        0.067,
+        0.0,
+        0.0136
+      ],
+      "quat": [
+        0.466417262018992,
+        0.531464897891391,
+        -0.531464897891391,
+        -0.466417262018992
+      ],
+      "fov": 42.18818995586325
+    }
+  },
+  "active_welds_at_end": [],
+  "physical_motion_evaluation": {
+    "r1": {
+      "max_base_displacement_m": 0.004306363897554654,
+      "max_arm_joint_change_rad": 0.9376105514715198
+    },
+    "r3": {
+      "max_base_displacement_m": 0.004306363897553371,
+      "max_arm_joint_change_rad": 0.9376105514715198
+    }
+  },
+  "command_count": 10,
+  "sim_time_s": 1.400000000000001,
+  "assertions": 81,
+  "wall_seconds": 2.668379457987612
+}

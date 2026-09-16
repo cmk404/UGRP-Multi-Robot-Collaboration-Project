@@ -1,0 +1,132 @@
+{
+  "case": "arm_hold_resume",
+  "passed": true,
+  "error": null,
+  "scope": "Real RGB and MuJoCo raw ports; synthetic stage verdicts; no autonomous or loaded transport",
+  "physical_task_success_evaluated": false,
+  "model_calls": 0,
+  "cost_usd": 0,
+  "scene_xml_sha256": "491d8cfc7ec93f156f42774d131bacca71d10a24605cbe1c3f1fc121a356ed28",
+  "cameras_initial": {
+    "cctv_top": {
+      "pos": [
+        0.65,
+        0.0,
+        1.8
+      ],
+      "quat": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fov": 46.0
+    },
+    "r1__robot_cam": {
+      "pos": [
+        0.067,
+        0.0,
+        0.0136
+      ],
+      "quat": [
+        0.466417262018992,
+        0.531464897891391,
+        -0.531464897891391,
+        -0.466417262018992
+      ],
+      "fov": 42.18818995586325
+    },
+    "r3__robot_cam": {
+      "pos": [
+        0.067,
+        0.0,
+        0.0136
+      ],
+      "quat": [
+        0.466417262018992,
+        0.531464897891391,
+        -0.531464897891391,
+        -0.466417262018992
+      ],
+      "fov": 42.18818995586325
+    }
+  },
+  "final_status": {
+    "phase": "GO",
+    "epoch": 1,
+    "reason": "all_participants_ready_to_resume",
+    "run_id": "5293192b42144f45ac0abbbec16f2c3d",
+    "task_id": "arm_hold_resume",
+    "plan_version": 1,
+    "stage": "GRASP",
+    "permission": {
+      "run_id": "5293192b42144f45ac0abbbec16f2c3d",
+      "task_id": "arm_hold_resume",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 1,
+      "token": "32fe5a409f124867ba30e87730c9c881",
+      "issued_at_s": 0.8800000000000007,
+      "expires_at_s": 1.1300000000000008
+    }
+  },
+  "cameras_final": {
+    "cctv_top": {
+      "pos": [
+        0.65,
+        0.0,
+        1.8
+      ],
+      "quat": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fov": 46.0
+    },
+    "r1__robot_cam": {
+      "pos": [
+        0.067,
+        0.0,
+        0.0136
+      ],
+      "quat": [
+        0.466417262018992,
+        0.531464897891391,
+        -0.531464897891391,
+        -0.466417262018992
+      ],
+      "fov": 42.18818995586325
+    },
+    "r3__robot_cam": {
+      "pos": [
+        0.067,
+        0.0,
+        0.0136
+      ],
+      "quat": [
+        0.466417262018992,
+        0.531464897891391,
+        -0.531464897891391,
+        -0.466417262018992
+      ],
+      "fov": 42.18818995586325
+    }
+  },
+  "active_welds_at_end": [],
+  "physical_motion_evaluation": {
+    "r1": {
+      "max_base_displacement_m": 0.000294186028872235,
+      "max_arm_joint_change_rad": 0.3472360448970422
+    },
+    "r3": {
+      "max_base_displacement_m": 0.00029418602887155515,
+      "max_arm_joint_change_rad": 0.3472360448970422
+    }
+  },
+  "command_count": 4,
+  "sim_time_s": 0.8800000000000007,
+  "assertions": 31,
+  "wall_seconds": 1.1934242910065223
+}

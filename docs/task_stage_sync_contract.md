@@ -141,3 +141,6 @@ python scripts/demo_task_stage_sync.py --output outputs/task-stage-sync-example
 다음 통합 작업은 실제 메시지 전달 경로와 별도 로봇 실행기 연결이다. 영상 판단 생산자와
 정지 watchdog을 연결한 뒤, 통신 장애·프로세스 재시작과 실제 파지·하중·내려놓기를 별도 검증한다.
 이 문서와 예제만으로 T1/T2 전체나 물리적 전 과정 완료를 선언하지 않는다.
+
+후속 [실행 포트 어댑터](task_stage_execution.md)는 로컬 SIM에서 이 계약을 실제 RGB 캡처와
+팔/바퀴 정지·재개에 연결한다. 단계 영상 판별기와 별도 프로세스/통신 연결은 계속 구분한다.

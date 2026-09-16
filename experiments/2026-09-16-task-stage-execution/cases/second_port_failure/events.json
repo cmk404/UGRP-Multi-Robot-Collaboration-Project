@@ -1,0 +1,233 @@
+{
+  "sync": [
+    {
+      "event": "REQUEST",
+      "task_id": "second_port_failure",
+      "run_id": "ee18ebfee0b64f389ee59c0d23a23f73",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 0,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 2.374988980591297e-06,
+      "plan": {
+        "schema": "ugrp.task_plan.v1",
+        "task_id": "second_port_failure",
+        "plan_version": 1,
+        "object_id": "unloaded-actuator-diagnostic",
+        "participants": [
+          {
+            "robot_id": "r1",
+            "role": "left"
+          },
+          {
+            "robot_id": "r3",
+            "role": "right"
+          }
+        ],
+        "goal_region": "diagnostic-only-no-navigation-goal",
+        "static_map": {
+          "id": "camera-team-port-diagnostic",
+          "version": "1",
+          "sha256": "a97b041efcf78171143f867780dab8193a2aecd47c11bb5664dd6496d24c57df"
+        }
+      }
+    },
+    {
+      "event": "REPORT",
+      "task_id": "second_port_failure",
+      "run_id": "ee18ebfee0b64f389ee59c0d23a23f73",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 0,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.252301999978954,
+      "robot_id": "r1",
+      "report": {
+        "task_id": "second_port_failure",
+        "run_id": "ee18ebfee0b64f389ee59c0d23a23f73",
+        "plan_version": 1,
+        "stage": "GRASP",
+        "epoch": 0,
+        "robot_id": "r1",
+        "sequence": 1,
+        "status": "READY",
+        "observed_at_s": 0.3000000000000002,
+        "decided_at_s": 0.3000000000000002,
+        "sent_at_s": 0.3000000000000002,
+        "observation_id": "r1-000001",
+        "own_rgb_ref": "rgb/r1-000001-own_rgb.jpg",
+        "top_rgb_ref": "rgb/r1-000001-top_rgb.jpg",
+        "confidence": 1.0,
+        "checks": [
+          "at_grasp_pose",
+          "stopped"
+        ],
+        "command_id": null,
+        "reason": "SYNTHETIC diagnostic verdict; NOT inferred from RGB",
+        "schema": "ugrp.stage_report.v1",
+        "evidence_source": "own_rgb+top_rgb"
+      },
+      "ready": true,
+      "observation_to_decision_s": 0.0,
+      "sender_queue_s": 0.0,
+      "delivery_s": 0.0
+    },
+    {
+      "event": "REPORT",
+      "task_id": "second_port_failure",
+      "run_id": "ee18ebfee0b64f389ee59c0d23a23f73",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 0,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.31483879100414924,
+      "robot_id": "r3",
+      "report": {
+        "task_id": "second_port_failure",
+        "run_id": "ee18ebfee0b64f389ee59c0d23a23f73",
+        "plan_version": 1,
+        "stage": "GRASP",
+        "epoch": 0,
+        "robot_id": "r3",
+        "sequence": 1,
+        "status": "READY",
+        "observed_at_s": 0.3000000000000002,
+        "decided_at_s": 0.3000000000000002,
+        "sent_at_s": 0.3000000000000002,
+        "observation_id": "r3-000002",
+        "own_rgb_ref": "rgb/r3-000002-own_rgb.jpg",
+        "top_rgb_ref": "rgb/r3-000002-top_rgb.jpg",
+        "confidence": 1.0,
+        "checks": [
+          "at_grasp_pose",
+          "stopped"
+        ],
+        "command_id": null,
+        "reason": "SYNTHETIC diagnostic verdict; NOT inferred from RGB",
+        "schema": "ugrp.stage_report.v1",
+        "evidence_source": "own_rgb+top_rgb"
+      },
+      "ready": true,
+      "observation_to_decision_s": 0.0,
+      "sender_queue_s": 0.0,
+      "delivery_s": 0.0
+    },
+    {
+      "event": "GO",
+      "task_id": "second_port_failure",
+      "run_id": "ee18ebfee0b64f389ee59c0d23a23f73",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 0,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.3148669579823036,
+      "permission": {
+        "run_id": "ee18ebfee0b64f389ee59c0d23a23f73",
+        "task_id": "second_port_failure",
+        "plan_version": 1,
+        "stage": "GRASP",
+        "epoch": 0,
+        "token": "0585590e046b4e9c8ba472008561efc8",
+        "issued_at_s": 0.3000000000000002,
+        "expires_at_s": 0.5500000000000003
+      }
+    },
+    {
+      "event": "COMMAND_ISSUED",
+      "task_id": "second_port_failure",
+      "run_id": "ee18ebfee0b64f389ee59c0d23a23f73",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 0,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.31489879099535756,
+      "robot_id": "r1",
+      "command_id": "second_port_failure-1-r1",
+      "duration_s": 0.2,
+      "permission_token": "0585590e046b4e9c8ba472008561efc8"
+    },
+    {
+      "event": "COMMAND_ISSUED",
+      "task_id": "second_port_failure",
+      "run_id": "ee18ebfee0b64f389ee59c0d23a23f73",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 0,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.3149163329799194,
+      "robot_id": "r3",
+      "command_id": "second_port_failure-1-r3",
+      "duration_s": 0.2,
+      "permission_token": "0585590e046b4e9c8ba472008561efc8"
+    },
+    {
+      "event": "COMMAND_ERROR",
+      "task_id": "second_port_failure",
+      "run_id": "ee18ebfee0b64f389ee59c0d23a23f73",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 0,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.31491841599927284,
+      "robot_id": "r3",
+      "command_id": "second_port_failure-1-r3"
+    },
+    {
+      "event": "HOLD",
+      "task_id": "second_port_failure",
+      "run_id": "ee18ebfee0b64f389ee59c0d23a23f73",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 1,
+      "timestamp_s": 0.3000000000000002,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.31492199999047443,
+      "reason": "local_submission_failed:r3"
+    },
+    {
+      "event": "ABORT",
+      "task_id": "second_port_failure",
+      "run_id": "ee18ebfee0b64f389ee59c0d23a23f73",
+      "plan_version": 1,
+      "stage": "GRASP",
+      "epoch": 1,
+      "timestamp_s": 0.6000000000000004,
+      "clock_domain": "sim",
+      "wall_elapsed_s": 0.7503452909877524,
+      "reason": "execution_closed"
+    }
+  ],
+  "execution": [
+    {
+      "event": "LOCAL_HOLD",
+      "timestamp_s": 0.3000000000000002,
+      "reason": "waiting_for_readiness",
+      "errors": []
+    },
+    {
+      "event": "LOCAL_COMMAND",
+      "robot_id": "r1",
+      "timestamp_s": 0.3000000000000002,
+      "command_id": "second_port_failure-1-r1",
+      "action": {
+        "kind": "arm",
+        "servo_id": 5,
+        "pulse": 1100
+      },
+      "duration_s": 0.2
+    },
+    {
+      "event": "LOCAL_HOLD",
+      "timestamp_s": 0.3000000000000002,
+      "reason": "local_submission_failed",
+      "errors": []
+    }
+  ]
+}

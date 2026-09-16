@@ -1,0 +1,1663 @@
+{
+  "source_sha": "b11659c078f00fd099bcc28aa6d236b559772a44",
+  "environment": {
+    "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+    "platform": "macOS-27.0-arm64-arm-64bit"
+  },
+  "results": [
+    {
+      "case": "absent_producer",
+      "passed": true,
+      "error": null,
+      "scope": "Real RGB and MuJoCo raw ports; synthetic stage verdicts; no autonomous or loaded transport",
+      "physical_task_success_evaluated": false,
+      "model_calls": 0,
+      "cost_usd": 0,
+      "scene_xml_sha256": "491d8cfc7ec93f156f42774d131bacca71d10a24605cbe1c3f1fc121a356ed28",
+      "cameras_initial": {
+        "cctv_top": {
+          "pos": [
+            0.65,
+            0.0,
+            1.8
+          ],
+          "quat": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fov": 46.0
+        },
+        "r1__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        }
+      },
+      "final_status": {
+        "phase": "HOLD",
+        "epoch": 2,
+        "reason": "participant_not_ready_or_completion_revoked:r3",
+        "run_id": "0a4dfaad0ec8474a92269f42c49bca13",
+        "task_id": "absent_producer",
+        "plan_version": 1,
+        "stage": "GRASP",
+        "permission": null
+      },
+      "cameras_final": {
+        "cctv_top": {
+          "pos": [
+            0.65,
+            0.0,
+            1.8
+          ],
+          "quat": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fov": 46.0
+        },
+        "r1__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        }
+      },
+      "active_welds_at_end": [],
+      "physical_motion_evaluation": {
+        "r1": {
+          "max_base_displacement_m": 4.2719335038882924e-07,
+          "max_arm_joint_change_rad": 1.260469126918018e-05
+        },
+        "r3": {
+          "max_base_displacement_m": 4.2719334967597547e-07,
+          "max_arm_joint_change_rad": 1.260469126918018e-05
+        }
+      },
+      "command_count": 0,
+      "sim_time_s": 0.7000000000000005,
+      "assertions": 22,
+      "wall_seconds": 1.497671832999913
+    },
+    {
+      "case": "five_stage_fixture",
+      "passed": true,
+      "error": null,
+      "scope": "Real RGB and MuJoCo raw ports; synthetic stage verdicts; no autonomous or loaded transport",
+      "physical_task_success_evaluated": false,
+      "model_calls": 0,
+      "cost_usd": 0,
+      "scene_xml_sha256": "491d8cfc7ec93f156f42774d131bacca71d10a24605cbe1c3f1fc121a356ed28",
+      "cameras_initial": {
+        "cctv_top": {
+          "pos": [
+            0.65,
+            0.0,
+            1.8
+          ],
+          "quat": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fov": 46.0
+        },
+        "r1__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        }
+      },
+      "final_status": {
+        "phase": "FINISH",
+        "epoch": 5,
+        "reason": "all_stages_reported_done",
+        "run_id": "2ec81ac55aa34789b2c31ca34bd70bac",
+        "task_id": "five_stage_fixture",
+        "plan_version": 1,
+        "stage": "RELEASE",
+        "permission": null
+      },
+      "cameras_final": {
+        "cctv_top": {
+          "pos": [
+            0.65,
+            0.0,
+            1.8
+          ],
+          "quat": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fov": 46.0
+        },
+        "r1__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        }
+      },
+      "active_welds_at_end": [],
+      "physical_motion_evaluation": {
+        "r1": {
+          "max_base_displacement_m": 0.004306363897554654,
+          "max_arm_joint_change_rad": 0.9376105514715198
+        },
+        "r3": {
+          "max_base_displacement_m": 0.004306363897553371,
+          "max_arm_joint_change_rad": 0.9376105514715198
+        }
+      },
+      "command_count": 10,
+      "sim_time_s": 1.400000000000001,
+      "assertions": 81,
+      "wall_seconds": 2.668379457987612
+    },
+    {
+      "case": "arm_hold_resume",
+      "passed": true,
+      "error": null,
+      "scope": "Real RGB and MuJoCo raw ports; synthetic stage verdicts; no autonomous or loaded transport",
+      "physical_task_success_evaluated": false,
+      "model_calls": 0,
+      "cost_usd": 0,
+      "scene_xml_sha256": "491d8cfc7ec93f156f42774d131bacca71d10a24605cbe1c3f1fc121a356ed28",
+      "cameras_initial": {
+        "cctv_top": {
+          "pos": [
+            0.65,
+            0.0,
+            1.8
+          ],
+          "quat": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fov": 46.0
+        },
+        "r1__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        }
+      },
+      "final_status": {
+        "phase": "GO",
+        "epoch": 1,
+        "reason": "all_participants_ready_to_resume",
+        "run_id": "5293192b42144f45ac0abbbec16f2c3d",
+        "task_id": "arm_hold_resume",
+        "plan_version": 1,
+        "stage": "GRASP",
+        "permission": {
+          "run_id": "5293192b42144f45ac0abbbec16f2c3d",
+          "task_id": "arm_hold_resume",
+          "plan_version": 1,
+          "stage": "GRASP",
+          "epoch": 1,
+          "token": "32fe5a409f124867ba30e87730c9c881",
+          "issued_at_s": 0.8800000000000007,
+          "expires_at_s": 1.1300000000000008
+        }
+      },
+      "cameras_final": {
+        "cctv_top": {
+          "pos": [
+            0.65,
+            0.0,
+            1.8
+          ],
+          "quat": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fov": 46.0
+        },
+        "r1__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        }
+      },
+      "active_welds_at_end": [],
+      "physical_motion_evaluation": {
+        "r1": {
+          "max_base_displacement_m": 0.000294186028872235,
+          "max_arm_joint_change_rad": 0.3472360448970422
+        },
+        "r3": {
+          "max_base_displacement_m": 0.00029418602887155515,
+          "max_arm_joint_change_rad": 0.3472360448970422
+        }
+      },
+      "command_count": 4,
+      "sim_time_s": 0.8800000000000007,
+      "assertions": 31,
+      "wall_seconds": 1.1934242910065223
+    },
+    {
+      "case": "carry_report_loss",
+      "passed": true,
+      "error": null,
+      "scope": "Real RGB and MuJoCo raw ports; synthetic stage verdicts; no autonomous or loaded transport",
+      "physical_task_success_evaluated": false,
+      "model_calls": 0,
+      "cost_usd": 0,
+      "scene_xml_sha256": "491d8cfc7ec93f156f42774d131bacca71d10a24605cbe1c3f1fc121a356ed28",
+      "cameras_initial": {
+        "cctv_top": {
+          "pos": [
+            0.65,
+            0.0,
+            1.8
+          ],
+          "quat": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fov": 46.0
+        },
+        "r1__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        }
+      },
+      "final_status": {
+        "phase": "GO",
+        "epoch": 3,
+        "reason": "all_participants_ready_to_resume",
+        "run_id": "f0f0f6b21583418cbaba8c6cd85f9412",
+        "task_id": "carry_report_loss",
+        "plan_version": 1,
+        "stage": "CARRY",
+        "permission": {
+          "run_id": "f0f0f6b21583418cbaba8c6cd85f9412",
+          "task_id": "carry_report_loss",
+          "plan_version": 1,
+          "stage": "CARRY",
+          "epoch": 3,
+          "token": "c3462ec97bbe4c7e820ee3abd670b833",
+          "issued_at_s": 1.6800000000000013,
+          "expires_at_s": 1.9300000000000013
+        }
+      },
+      "cameras_final": {
+        "cctv_top": {
+          "pos": [
+            0.65,
+            0.0,
+            1.8
+          ],
+          "quat": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fov": 46.0
+        },
+        "r1__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        }
+      },
+      "active_welds_at_end": [],
+      "physical_motion_evaluation": {
+        "r1": {
+          "max_base_displacement_m": 0.007609866034294558,
+          "max_arm_joint_change_rad": 0.3510276445142151
+        },
+        "r3": {
+          "max_base_displacement_m": 0.0076098660342934325,
+          "max_arm_joint_change_rad": 0.3510276445142151
+        }
+      },
+      "command_count": 8,
+      "sim_time_s": 1.6800000000000013,
+      "assertions": 67,
+      "wall_seconds": 2.493256334011676
+    },
+    {
+      "case": "second_port_failure",
+      "passed": true,
+      "error": null,
+      "scope": "Real RGB and MuJoCo raw ports; synthetic stage verdicts; no autonomous or loaded transport",
+      "physical_task_success_evaluated": false,
+      "model_calls": 0,
+      "cost_usd": 0,
+      "scene_xml_sha256": "491d8cfc7ec93f156f42774d131bacca71d10a24605cbe1c3f1fc121a356ed28",
+      "cameras_initial": {
+        "cctv_top": {
+          "pos": [
+            0.65,
+            0.0,
+            1.8
+          ],
+          "quat": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fov": 46.0
+        },
+        "r1__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        }
+      },
+      "final_status": {
+        "phase": "HOLD",
+        "epoch": 1,
+        "reason": "local_submission_failed:r3",
+        "run_id": "ee18ebfee0b64f389ee59c0d23a23f73",
+        "task_id": "second_port_failure",
+        "plan_version": 1,
+        "stage": "GRASP",
+        "permission": null
+      },
+      "cameras_final": {
+        "cctv_top": {
+          "pos": [
+            0.65,
+            0.0,
+            1.8
+          ],
+          "quat": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fov": 46.0
+        },
+        "r1__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        }
+      },
+      "active_welds_at_end": [],
+      "physical_motion_evaluation": {
+        "r1": {
+          "max_base_displacement_m": 4.1304086515250316e-07,
+          "max_arm_joint_change_rad": 1.260469126918018e-05
+        },
+        "r3": {
+          "max_base_displacement_m": 4.1304086437354546e-07,
+          "max_arm_joint_change_rad": 1.260469126918018e-05
+        }
+      },
+      "command_count": 1,
+      "sim_time_s": 0.6000000000000004,
+      "assertions": 20,
+      "wall_seconds": 0.8678443750250153
+    },
+    {
+      "case": "revoked_permission",
+      "passed": true,
+      "error": null,
+      "scope": "Real RGB and MuJoCo raw ports; synthetic stage verdicts; no autonomous or loaded transport",
+      "physical_task_success_evaluated": false,
+      "model_calls": 0,
+      "cost_usd": 0,
+      "scene_xml_sha256": "491d8cfc7ec93f156f42774d131bacca71d10a24605cbe1c3f1fc121a356ed28",
+      "cameras_initial": {
+        "cctv_top": {
+          "pos": [
+            0.65,
+            0.0,
+            1.8
+          ],
+          "quat": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fov": 46.0
+        },
+        "r1__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        }
+      },
+      "final_status": {
+        "phase": "HOLD",
+        "epoch": 2,
+        "reason": "command_batch_denied",
+        "run_id": "b33cefbe04de4daf9628e78440745774",
+        "task_id": "revoked_permission",
+        "plan_version": 1,
+        "stage": "GRASP",
+        "permission": null
+      },
+      "cameras_final": {
+        "cctv_top": {
+          "pos": [
+            0.65,
+            0.0,
+            1.8
+          ],
+          "quat": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fov": 46.0
+        },
+        "r1__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "pos": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quat": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov": 42.18818995586325
+        }
+      },
+      "active_welds_at_end": [],
+      "physical_motion_evaluation": {
+        "r1": {
+          "max_base_displacement_m": 4.1304086515250316e-07,
+          "max_arm_joint_change_rad": 1.260469126918018e-05
+        },
+        "r3": {
+          "max_base_displacement_m": 4.1304086437354546e-07,
+          "max_arm_joint_change_rad": 1.260469126918018e-05
+        }
+      },
+      "command_count": 0,
+      "sim_time_s": 0.6000000000000004,
+      "assertions": 22,
+      "wall_seconds": 1.0032112500048243
+    }
+  ],
+  "manifest": [
+    {
+      "path": "absent_producer/contact-sheet.png",
+      "sha256": "a3942814f2f93ef33d2cc56e5be6e8dbb340b54ccf2e24e07b19c9207c1dfe25"
+    },
+    {
+      "path": "absent_producer/evaluation-only.json",
+      "sha256": "58c023a9902b12208237c611155c342890bce89faffe42f96da4ef114800d32a"
+    },
+    {
+      "path": "absent_producer/execution/events.json",
+      "sha256": "455c587c5a21cf6e1c99d47e49e56a5e93854be87da276ef9db59120d29ba4a7"
+    },
+    {
+      "path": "absent_producer/execution/plan.json",
+      "sha256": "9e9acd6ab6ab8799164ee0ab7955dddd588723be3a55d93c952475dffae65c8b"
+    },
+    {
+      "path": "absent_producer/execution/r1-000001-reply.json",
+      "sha256": "d729a513de8d3e95e813cc7588d3bdaa86628089f311f25f96bf5875f03116e1"
+    },
+    {
+      "path": "absent_producer/execution/r1-000001-request.json",
+      "sha256": "6aaee396319d3ddaccdc6a29de4fa61de01dacd6e738daa59c7c97fa59a57d22"
+    },
+    {
+      "path": "absent_producer/execution/r3-000002-reply.json",
+      "sha256": "c72686c330d6d8884ce9cb05891835f0e0f7402b91595b4d29229a74470beaf8"
+    },
+    {
+      "path": "absent_producer/execution/r3-000002-request.json",
+      "sha256": "df28ee153fb1a71304c88dd8995eb38ebc47f9a04fbe99375dcae2a2d6e162cd"
+    },
+    {
+      "path": "absent_producer/execution/rgb/r1-000001-own_rgb.jpg",
+      "sha256": "ae2f28de10934451c3dceda49ebfef8044abf12e52dce0ae834cd99eec59e1ce"
+    },
+    {
+      "path": "absent_producer/execution/rgb/r1-000001-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "absent_producer/execution/rgb/r3-000002-own_rgb.jpg",
+      "sha256": "ea3c2408194d437ef5884091df199578d0e9ba588a647ec61486d7e2b6f9e836"
+    },
+    {
+      "path": "absent_producer/execution/rgb/r3-000002-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "absent_producer/execution/static-map.json",
+      "sha256": "a97b041efcf78171143f867780dab8193a2aecd47c11bb5664dd6496d24c57df"
+    },
+    {
+      "path": "absent_producer/motion.gif",
+      "sha256": "0c27b7c0fec0fbbe117b7ba2f1a610243ca8bb995543a85acdff4f4a6f6443e5"
+    },
+    {
+      "path": "absent_producer/result.json",
+      "sha256": "e4aee2e90bf1cd527a959e6e553e93c245df54d22a3bb12747bce610e9c1b809"
+    },
+    {
+      "path": "absent_producer/scene.xml",
+      "sha256": "491d8cfc7ec93f156f42774d131bacca71d10a24605cbe1c3f1fc121a356ed28"
+    },
+    {
+      "path": "arm_hold_resume/contact-sheet.png",
+      "sha256": "b915fdcf8908eb0c3c85b1dbd989a95de503e5eefc5656db2532cb423d8efc18"
+    },
+    {
+      "path": "arm_hold_resume/evaluation-only.json",
+      "sha256": "90eb012311e703fc0b5b1885abeb226f35fb9ed3bc5023604d0a781929ebadf5"
+    },
+    {
+      "path": "arm_hold_resume/execution/events.json",
+      "sha256": "2e8c4ee597d235f767f92007d3451da0aedf04346f32a316f07d68fe73b4d117"
+    },
+    {
+      "path": "arm_hold_resume/execution/plan.json",
+      "sha256": "99ddeec9bc064d64e5f8e023c508baa58a4803d20a584f14883dc69b854c52e9"
+    },
+    {
+      "path": "arm_hold_resume/execution/r1-000001-reply.json",
+      "sha256": "91c0d36715d8bacbcb21c7b5a63ca4a7d6abb7cded11698eb29bcaabb586b271"
+    },
+    {
+      "path": "arm_hold_resume/execution/r1-000001-request.json",
+      "sha256": "ce9b5884fb82c66f373914862787cc0b3cf1aeb3afe50b284ef72ade63166319"
+    },
+    {
+      "path": "arm_hold_resume/execution/r1-000003-reply.json",
+      "sha256": "d859a0185b2d3905941ba7db1bea022e24b8ea0e54b5d97d81370999e379d15a"
+    },
+    {
+      "path": "arm_hold_resume/execution/r1-000003-request.json",
+      "sha256": "bbe58fb30832086e2165006b7ff436780bfe6c8c2b537bcf0afb87c00010b035"
+    },
+    {
+      "path": "arm_hold_resume/execution/r3-000002-reply.json",
+      "sha256": "8efec0c024c0234e232a4e0ae51465b64f91a739e5ca5b2243b8c32fe79fda44"
+    },
+    {
+      "path": "arm_hold_resume/execution/r3-000002-request.json",
+      "sha256": "e902cb6756d3109be9801f8b474cbfa19bcfbbdbb52ffc339d767b88cba72540"
+    },
+    {
+      "path": "arm_hold_resume/execution/r3-000004-reply.json",
+      "sha256": "a55473c7d32c8189868a5dd64519648676d8712aad31edd55cc055d9e9d1c862"
+    },
+    {
+      "path": "arm_hold_resume/execution/r3-000004-request.json",
+      "sha256": "1eaaf8c8a0a77ef36daff9203c1db29a97f880cf0dcbb5941f4bd3f2c77a83c1"
+    },
+    {
+      "path": "arm_hold_resume/execution/rgb/r1-000001-own_rgb.jpg",
+      "sha256": "ae2f28de10934451c3dceda49ebfef8044abf12e52dce0ae834cd99eec59e1ce"
+    },
+    {
+      "path": "arm_hold_resume/execution/rgb/r1-000001-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "arm_hold_resume/execution/rgb/r1-000003-own_rgb.jpg",
+      "sha256": "d8287481719158d9e136d25ce9435aeb37c660c100e823e5fd11f4d87cb3e26e"
+    },
+    {
+      "path": "arm_hold_resume/execution/rgb/r1-000003-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "arm_hold_resume/execution/rgb/r3-000002-own_rgb.jpg",
+      "sha256": "ea3c2408194d437ef5884091df199578d0e9ba588a647ec61486d7e2b6f9e836"
+    },
+    {
+      "path": "arm_hold_resume/execution/rgb/r3-000002-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "arm_hold_resume/execution/rgb/r3-000004-own_rgb.jpg",
+      "sha256": "8444d2e744cd099d094a3dd68fa87482086db36207123388bdcc22add49a8aeb"
+    },
+    {
+      "path": "arm_hold_resume/execution/rgb/r3-000004-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "arm_hold_resume/execution/static-map.json",
+      "sha256": "a97b041efcf78171143f867780dab8193a2aecd47c11bb5664dd6496d24c57df"
+    },
+    {
+      "path": "arm_hold_resume/motion.gif",
+      "sha256": "6b4b7a94f8f0265ef1b70e71b7aa89da6a7b3622b2e5db308394201f80e55f4f"
+    },
+    {
+      "path": "arm_hold_resume/result.json",
+      "sha256": "3b78082b019bb4b95b7c93cbafb6ad0013567d04ab0f24256c9e02a36482f020"
+    },
+    {
+      "path": "arm_hold_resume/scene.xml",
+      "sha256": "491d8cfc7ec93f156f42774d131bacca71d10a24605cbe1c3f1fc121a356ed28"
+    },
+    {
+      "path": "carry_report_loss/contact-sheet.png",
+      "sha256": "530fea36a03dae06b461431a6474910596ce92306a184c3f24e3828e28af0d8c"
+    },
+    {
+      "path": "carry_report_loss/evaluation-only.json",
+      "sha256": "22e0d6ee58ac8e4602022221058fe8a05040677b0955375533ec3fb019c2d4bd"
+    },
+    {
+      "path": "carry_report_loss/execution/events.json",
+      "sha256": "ecdd15563104866f9120b8f99ceacd8c44a629dd6f85baf563da5dcccbd4d7f5"
+    },
+    {
+      "path": "carry_report_loss/execution/plan.json",
+      "sha256": "e2a317cdf2d75f6bde46a1fa5da678acad58df0f64fc60f93f975bf45a973073"
+    },
+    {
+      "path": "carry_report_loss/execution/r1-000001-reply.json",
+      "sha256": "91c0d36715d8bacbcb21c7b5a63ca4a7d6abb7cded11698eb29bcaabb586b271"
+    },
+    {
+      "path": "carry_report_loss/execution/r1-000001-request.json",
+      "sha256": "237f7bcf35f37263301da7910e124f7e6e7b0f38858dcfc2abb1eeed112e823f"
+    },
+    {
+      "path": "carry_report_loss/execution/r1-000003-reply.json",
+      "sha256": "018431d63c7d766b5c1b13e52ebf23b56f9ad0d889d38d7009c07639e89e325c"
+    },
+    {
+      "path": "carry_report_loss/execution/r1-000003-request.json",
+      "sha256": "13fa2a9f39533b13a5b5be4c12c90f2fa2e02652f75f20f84ba7624dd29c51b9"
+    },
+    {
+      "path": "carry_report_loss/execution/r1-000005-reply.json",
+      "sha256": "aed40d9c2bd0592cb8b1b173847f092387b1c568212255bdff80cfb4a33818db"
+    },
+    {
+      "path": "carry_report_loss/execution/r1-000005-request.json",
+      "sha256": "b73d7c7c956cc8c2cb62875ed42591272eacc37ff15c8a03f8faa3112ba1d3c8"
+    },
+    {
+      "path": "carry_report_loss/execution/r1-000007-reply.json",
+      "sha256": "de1dcfefc8be0b9968abd8bbdb792220b81f5ad4932e34ffde5886ca6402e7dd"
+    },
+    {
+      "path": "carry_report_loss/execution/r1-000007-request.json",
+      "sha256": "601a4cf5a54a10b505094ebe4550c76b77fd881d966c5e59df6b8b9bd046fc75"
+    },
+    {
+      "path": "carry_report_loss/execution/r1-000009-reply.json",
+      "sha256": "0ca161dd55c15e18d3ab4882bfa12eb1ea7615044a134fb8d3e9650068daf58b"
+    },
+    {
+      "path": "carry_report_loss/execution/r1-000009-request.json",
+      "sha256": "da85d73d70f9049e05b9b7728d064f1a75751b8c65a4f8363158d49a2389df5a"
+    },
+    {
+      "path": "carry_report_loss/execution/r1-000011-reply.json",
+      "sha256": "7fba574b8eb08753b1056683b526d83072f9e415f2bb8e03d6d3a8178ef2ac96"
+    },
+    {
+      "path": "carry_report_loss/execution/r1-000011-request.json",
+      "sha256": "4d271191cffd9cad8e632b067bca504364baf8cfa1dad644d16744f42872bc94"
+    },
+    {
+      "path": "carry_report_loss/execution/r3-000002-reply.json",
+      "sha256": "8efec0c024c0234e232a4e0ae51465b64f91a739e5ca5b2243b8c32fe79fda44"
+    },
+    {
+      "path": "carry_report_loss/execution/r3-000002-request.json",
+      "sha256": "091ac37e8a5d8992be9d7a72fb340c99ebb482189bac8feccb8bbf218fed9a2d"
+    },
+    {
+      "path": "carry_report_loss/execution/r3-000004-reply.json",
+      "sha256": "eb917b05bf74a293e14e3f3b3e7aa5c02d6a46923196679524dd6b9ff458a08c"
+    },
+    {
+      "path": "carry_report_loss/execution/r3-000004-request.json",
+      "sha256": "dade28c29ccd29ca27bae0c580143ab73656da6c1d13405ce5a821cdcd8bfc6d"
+    },
+    {
+      "path": "carry_report_loss/execution/r3-000006-reply.json",
+      "sha256": "e185f797e4ee3b60ba6b9ceace354101dc5f737683a9979d7465289fbeabd162"
+    },
+    {
+      "path": "carry_report_loss/execution/r3-000006-request.json",
+      "sha256": "c364790b16c07946139ffe0e3ea487cc456f2d5f4348bec3632fe90d452c34ad"
+    },
+    {
+      "path": "carry_report_loss/execution/r3-000008-reply.json",
+      "sha256": "f52fc8bbaa213cae45bd48696fb865815ac6e9961899a2c3fc0b8df24fcc9036"
+    },
+    {
+      "path": "carry_report_loss/execution/r3-000008-request.json",
+      "sha256": "532e305352131018423627011e11f55baed0c0f62a5dd0879d4deb32954b5591"
+    },
+    {
+      "path": "carry_report_loss/execution/r3-000010-reply.json",
+      "sha256": "e3f1ce4491d186f3cfe119b45379f5d5ad48e34f071910b7699d6f501a0ca5cf"
+    },
+    {
+      "path": "carry_report_loss/execution/r3-000010-request.json",
+      "sha256": "255d368201b5687507fdb9062f6e1a722451ffb3a2f8089eb0f72a0f285c0dc6"
+    },
+    {
+      "path": "carry_report_loss/execution/r3-000012-reply.json",
+      "sha256": "eff41f6eb28b571575c1777df48070d9273154b60bd1c86da6d276744bc6f195"
+    },
+    {
+      "path": "carry_report_loss/execution/r3-000012-request.json",
+      "sha256": "bbc0de473509b68489f4dccbcd206ae001177fbc05672e46a9f3170c584edc20"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r1-000001-own_rgb.jpg",
+      "sha256": "ae2f28de10934451c3dceda49ebfef8044abf12e52dce0ae834cd99eec59e1ce"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r1-000001-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r1-000003-own_rgb.jpg",
+      "sha256": "df82729d8a96faa19f3e1e504edfa034fb47f5d0c075d3ac82bd36b6865dc00e"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r1-000003-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r1-000005-own_rgb.jpg",
+      "sha256": "df82729d8a96faa19f3e1e504edfa034fb47f5d0c075d3ac82bd36b6865dc00e"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r1-000005-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r1-000007-own_rgb.jpg",
+      "sha256": "0fcc5ce9f4b0c89d41f72974887eaa9e547bd8983895f7f56f8e8188cdf49898"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r1-000007-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r1-000009-own_rgb.jpg",
+      "sha256": "0fcc5ce9f4b0c89d41f72974887eaa9e547bd8983895f7f56f8e8188cdf49898"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r1-000009-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r1-000011-own_rgb.jpg",
+      "sha256": "a4ec61f9042a7c167d40d66eded1933a6f6e89c372fe3f7026919de96cc20aa8"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r1-000011-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r3-000002-own_rgb.jpg",
+      "sha256": "ea3c2408194d437ef5884091df199578d0e9ba588a647ec61486d7e2b6f9e836"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r3-000002-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r3-000004-own_rgb.jpg",
+      "sha256": "37c1caafeac98d90a62fd76cf4ffaf5ec9e8d4da891e13a2e24c53412f87a983"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r3-000004-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r3-000006-own_rgb.jpg",
+      "sha256": "37c1caafeac98d90a62fd76cf4ffaf5ec9e8d4da891e13a2e24c53412f87a983"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r3-000006-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r3-000008-own_rgb.jpg",
+      "sha256": "0d4cedb546d83138675d9e03fb01b5c2974ec118a7471782d50e7ceb67602bb5"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r3-000008-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r3-000010-own_rgb.jpg",
+      "sha256": "0d4cedb546d83138675d9e03fb01b5c2974ec118a7471782d50e7ceb67602bb5"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r3-000010-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r3-000012-own_rgb.jpg",
+      "sha256": "7868d232c5afad0d420fa2727916ad329f679f2743c482fefd89620287f6e938"
+    },
+    {
+      "path": "carry_report_loss/execution/rgb/r3-000012-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "carry_report_loss/execution/static-map.json",
+      "sha256": "a97b041efcf78171143f867780dab8193a2aecd47c11bb5664dd6496d24c57df"
+    },
+    {
+      "path": "carry_report_loss/motion.gif",
+      "sha256": "f5f9a9ec213c52bc2ad04b552bc89609f3408a45959ebe00c2da58ec43b228e8"
+    },
+    {
+      "path": "carry_report_loss/result.json",
+      "sha256": "9cb63a3477d3212d95db01d9b4513beb3f6207dfd549d9498764047441be402f"
+    },
+    {
+      "path": "carry_report_loss/scene.xml",
+      "sha256": "491d8cfc7ec93f156f42774d131bacca71d10a24605cbe1c3f1fc121a356ed28"
+    },
+    {
+      "path": "five_stage_fixture/contact-sheet.png",
+      "sha256": "ab1f3caf85ff764a8f5054bfd89a816983131731553c20118e0bc0eb4298917f"
+    },
+    {
+      "path": "five_stage_fixture/evaluation-only.json",
+      "sha256": "15ede7b56509e0064f071ecc8bb088f483037fa6f2cbbf2f48accb3c82052103"
+    },
+    {
+      "path": "five_stage_fixture/execution/events.json",
+      "sha256": "799adf2de567d6c7a262d527b1c338e53d71a0a68b465be695125c2a65921e29"
+    },
+    {
+      "path": "five_stage_fixture/execution/plan.json",
+      "sha256": "aab84f10c71175e255845f2c94aec17311de72ef3933a4b0cfc16ecb3a16aac6"
+    },
+    {
+      "path": "five_stage_fixture/execution/r1-000001-reply.json",
+      "sha256": "91c0d36715d8bacbcb21c7b5a63ca4a7d6abb7cded11698eb29bcaabb586b271"
+    },
+    {
+      "path": "five_stage_fixture/execution/r1-000001-request.json",
+      "sha256": "a9edf7fa135dcee624a28764290c222f33a126a60729f62d1cb35114a1a443c1"
+    },
+    {
+      "path": "five_stage_fixture/execution/r1-000003-reply.json",
+      "sha256": "70943628d64c3a57d8b67c5ae0ed6b3ac610e71370b8f6a8c6deaec6b656b3d8"
+    },
+    {
+      "path": "five_stage_fixture/execution/r1-000003-request.json",
+      "sha256": "811df233f21bf763d081d00359d3889ed90439b747be907067d0dbb9dd838f56"
+    },
+    {
+      "path": "five_stage_fixture/execution/r1-000005-reply.json",
+      "sha256": "aed40d9c2bd0592cb8b1b173847f092387b1c568212255bdff80cfb4a33818db"
+    },
+    {
+      "path": "five_stage_fixture/execution/r1-000005-request.json",
+      "sha256": "f01a7551dc7e46c6e9c44eac46bcd177d71c6b45412c30afcaed9af709611830"
+    },
+    {
+      "path": "five_stage_fixture/execution/r1-000007-reply.json",
+      "sha256": "3c86e69259ab759da4fbec50c4ef21f4a814108a2c3ca381a58dabb6a2f3fffe"
+    },
+    {
+      "path": "five_stage_fixture/execution/r1-000007-request.json",
+      "sha256": "007ee8e6819c845cfc0b05f45cf96865fa4ab8f1eb887ef2c2fd4dda93edb162"
+    },
+    {
+      "path": "five_stage_fixture/execution/r1-000009-reply.json",
+      "sha256": "0ca161dd55c15e18d3ab4882bfa12eb1ea7615044a134fb8d3e9650068daf58b"
+    },
+    {
+      "path": "five_stage_fixture/execution/r1-000009-request.json",
+      "sha256": "5718b84667d20a47f588e4eab58ef10952dd46acfa95ff3b85dc091e9a5d8aee"
+    },
+    {
+      "path": "five_stage_fixture/execution/r1-000011-reply.json",
+      "sha256": "d243520202be81824fe36a00523d3a4427061edcfaff45aecf883a947bff7663"
+    },
+    {
+      "path": "five_stage_fixture/execution/r1-000011-request.json",
+      "sha256": "e0ca0ebf51cdc1e4810cd0e28baa6bdb95aceb14699ef548b2c12d80efed258d"
+    },
+    {
+      "path": "five_stage_fixture/execution/r1-000013-reply.json",
+      "sha256": "1791c04e0843bc332f2048e35ac05d2e7d0edfc9c51b448b13300da7311c1bfb"
+    },
+    {
+      "path": "five_stage_fixture/execution/r1-000013-request.json",
+      "sha256": "216c38df089356966688863a93e91f2a1c1d14bb6fae570736da12dec40a2d47"
+    },
+    {
+      "path": "five_stage_fixture/execution/r1-000015-reply.json",
+      "sha256": "82f5f8c0e54ceb09fd4ecf483a2e886ef73c6c434c35107746f5f91cbc31c002"
+    },
+    {
+      "path": "five_stage_fixture/execution/r1-000015-request.json",
+      "sha256": "e57abb12cc204fd057550c8147c20ca608693360e2957e182f90f0ec18b30b19"
+    },
+    {
+      "path": "five_stage_fixture/execution/r1-000017-reply.json",
+      "sha256": "0269243297e5d2f83225d3c66405d3270aee34a57e3055f4c6e18c32073610af"
+    },
+    {
+      "path": "five_stage_fixture/execution/r1-000017-request.json",
+      "sha256": "17c11d322fcccede442e0ccdeba7fdf89b022cd5c9c8345d39cea86892b4a3b8"
+    },
+    {
+      "path": "five_stage_fixture/execution/r1-000019-reply.json",
+      "sha256": "0bd3e140ca6bd38bad93497550b62f8eb686f8e6152c45abd7aa21fce6ea320c"
+    },
+    {
+      "path": "five_stage_fixture/execution/r1-000019-request.json",
+      "sha256": "b81fd7712b46e23704295432a194e4ed7ed41baceec4ae2a54526434db174786"
+    },
+    {
+      "path": "five_stage_fixture/execution/r3-000002-reply.json",
+      "sha256": "8efec0c024c0234e232a4e0ae51465b64f91a739e5ca5b2243b8c32fe79fda44"
+    },
+    {
+      "path": "five_stage_fixture/execution/r3-000002-request.json",
+      "sha256": "544882cd9ca1a4eab8d18e767c77942553425b6230820da063b41d0d1bea49af"
+    },
+    {
+      "path": "five_stage_fixture/execution/r3-000004-reply.json",
+      "sha256": "d719a361dfd18bb81a6b64b0c09f5cff5238e48bfa90e25e1eaba24dbdd67820"
+    },
+    {
+      "path": "five_stage_fixture/execution/r3-000004-request.json",
+      "sha256": "9243bdb64e2beb554ffaa13a990f786adde5fc26a3675b713266b896e299e6e7"
+    },
+    {
+      "path": "five_stage_fixture/execution/r3-000006-reply.json",
+      "sha256": "e185f797e4ee3b60ba6b9ceace354101dc5f737683a9979d7465289fbeabd162"
+    },
+    {
+      "path": "five_stage_fixture/execution/r3-000006-request.json",
+      "sha256": "5f5f658c4c003645128c45db0e10a5fea7c955bd65208158b1bf13512c8794ec"
+    },
+    {
+      "path": "five_stage_fixture/execution/r3-000008-reply.json",
+      "sha256": "48e59210afaa9b6e3a2b7fa875a8073b8cd73451e30735c558d196f3f79d5f7a"
+    },
+    {
+      "path": "five_stage_fixture/execution/r3-000008-request.json",
+      "sha256": "4433ee3ae6a4d6567aa5a4b2b84de0bb4a887018681924303718d8135f9984b2"
+    },
+    {
+      "path": "five_stage_fixture/execution/r3-000010-reply.json",
+      "sha256": "e3f1ce4491d186f3cfe119b45379f5d5ad48e34f071910b7699d6f501a0ca5cf"
+    },
+    {
+      "path": "five_stage_fixture/execution/r3-000010-request.json",
+      "sha256": "551fef195fd60693c07a209e9be91829d64e8e8c0c3e3ed91bdc9cf27c109095"
+    },
+    {
+      "path": "five_stage_fixture/execution/r3-000012-reply.json",
+      "sha256": "be342520933e7edd80a324fa3d6d8eb3ea53c1bbd1870069c5c93167220cdd43"
+    },
+    {
+      "path": "five_stage_fixture/execution/r3-000012-request.json",
+      "sha256": "b640a1b32326f5ce979f58a7c12eeb6b0172997248fa86fc832dbabc5af0951b"
+    },
+    {
+      "path": "five_stage_fixture/execution/r3-000014-reply.json",
+      "sha256": "e2e8014c491ea6d75cd46dd308afdb805023d2ba701cde8f0b29aab12d3632b9"
+    },
+    {
+      "path": "five_stage_fixture/execution/r3-000014-request.json",
+      "sha256": "bd66ba6f7bba124f4907b1b73b51bc82b293a23a259b0249c9dd0438bf99f5e9"
+    },
+    {
+      "path": "five_stage_fixture/execution/r3-000016-reply.json",
+      "sha256": "27c58096adf209b9bff4ee3de834295e9a84dd5d5ce3c5cf98ece0b631b8f071"
+    },
+    {
+      "path": "five_stage_fixture/execution/r3-000016-request.json",
+      "sha256": "9b2a1d375c80e9efddc39c2fac1c6f59aea1dbdb389761c63701d7440b919c9a"
+    },
+    {
+      "path": "five_stage_fixture/execution/r3-000018-reply.json",
+      "sha256": "3bba53492719b848331bf1e0855d84424e7d5620a0f7cc14f6921d0395e60201"
+    },
+    {
+      "path": "five_stage_fixture/execution/r3-000018-request.json",
+      "sha256": "5627a9c343be8d7d234c7772a80d07b251cda3b42269212bf95fbb6296a3b729"
+    },
+    {
+      "path": "five_stage_fixture/execution/r3-000020-reply.json",
+      "sha256": "c2c9f6218cb8bc2f1b98bdf2b05622737590d2f61f2c7869b4110fcbe80327a4"
+    },
+    {
+      "path": "five_stage_fixture/execution/r3-000020-request.json",
+      "sha256": "2ed0e1bd1a8411a4b3760fba310018243c125e10c8f3c47abbba1a79bd7f5f24"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r1-000001-own_rgb.jpg",
+      "sha256": "ae2f28de10934451c3dceda49ebfef8044abf12e52dce0ae834cd99eec59e1ce"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r1-000001-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r1-000003-own_rgb.jpg",
+      "sha256": "df82729d8a96faa19f3e1e504edfa034fb47f5d0c075d3ac82bd36b6865dc00e"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r1-000003-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r1-000005-own_rgb.jpg",
+      "sha256": "df82729d8a96faa19f3e1e504edfa034fb47f5d0c075d3ac82bd36b6865dc00e"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r1-000005-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r1-000007-own_rgb.jpg",
+      "sha256": "0fcc5ce9f4b0c89d41f72974887eaa9e547bd8983895f7f56f8e8188cdf49898"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r1-000007-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r1-000009-own_rgb.jpg",
+      "sha256": "0fcc5ce9f4b0c89d41f72974887eaa9e547bd8983895f7f56f8e8188cdf49898"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r1-000009-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r1-000011-own_rgb.jpg",
+      "sha256": "6738f6d4a377b025af7f80a8208514b7d3eac575f17458539f1c61b71e5a4b60"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r1-000011-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r1-000013-own_rgb.jpg",
+      "sha256": "6738f6d4a377b025af7f80a8208514b7d3eac575f17458539f1c61b71e5a4b60"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r1-000013-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r1-000015-own_rgb.jpg",
+      "sha256": "432f413db68afa5ab4117a80f74c20b79ea027c9b81ededaa8d2f642d1e78f02"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r1-000015-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r1-000017-own_rgb.jpg",
+      "sha256": "432f413db68afa5ab4117a80f74c20b79ea027c9b81ededaa8d2f642d1e78f02"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r1-000017-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r1-000019-own_rgb.jpg",
+      "sha256": "83c688ac65b2227b69620bb853c8f55f132d7c9bbce212fbd386cf7be55ffd00"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r1-000019-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r3-000002-own_rgb.jpg",
+      "sha256": "ea3c2408194d437ef5884091df199578d0e9ba588a647ec61486d7e2b6f9e836"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r3-000002-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r3-000004-own_rgb.jpg",
+      "sha256": "37c1caafeac98d90a62fd76cf4ffaf5ec9e8d4da891e13a2e24c53412f87a983"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r3-000004-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r3-000006-own_rgb.jpg",
+      "sha256": "37c1caafeac98d90a62fd76cf4ffaf5ec9e8d4da891e13a2e24c53412f87a983"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r3-000006-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r3-000008-own_rgb.jpg",
+      "sha256": "0d4cedb546d83138675d9e03fb01b5c2974ec118a7471782d50e7ceb67602bb5"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r3-000008-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r3-000010-own_rgb.jpg",
+      "sha256": "0d4cedb546d83138675d9e03fb01b5c2974ec118a7471782d50e7ceb67602bb5"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r3-000010-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r3-000012-own_rgb.jpg",
+      "sha256": "c630675ac7bd7a20f4506a2abdde7d50ddac0028e4b9dab02459250451a7cc86"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r3-000012-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r3-000014-own_rgb.jpg",
+      "sha256": "c630675ac7bd7a20f4506a2abdde7d50ddac0028e4b9dab02459250451a7cc86"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r3-000014-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r3-000016-own_rgb.jpg",
+      "sha256": "6d1edda7f19e92c6df305e972b39cef04f912ccf9cfddbdd60bc91cd75eb4024"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r3-000016-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r3-000018-own_rgb.jpg",
+      "sha256": "6d1edda7f19e92c6df305e972b39cef04f912ccf9cfddbdd60bc91cd75eb4024"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r3-000018-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r3-000020-own_rgb.jpg",
+      "sha256": "56359f23c42490583f655030f2d3d76c6333cda482adad3e1ec187a82a05be5a"
+    },
+    {
+      "path": "five_stage_fixture/execution/rgb/r3-000020-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "five_stage_fixture/execution/static-map.json",
+      "sha256": "a97b041efcf78171143f867780dab8193a2aecd47c11bb5664dd6496d24c57df"
+    },
+    {
+      "path": "five_stage_fixture/motion.gif",
+      "sha256": "c875c4201ba29be6675a4ac312dcb522045e8c3676fa58b953bef5615768acca"
+    },
+    {
+      "path": "five_stage_fixture/result.json",
+      "sha256": "4c41c2be3b8c5b1915b5195698e003a998f9685a19322731ebc1f4fc7f5476e0"
+    },
+    {
+      "path": "five_stage_fixture/scene.xml",
+      "sha256": "491d8cfc7ec93f156f42774d131bacca71d10a24605cbe1c3f1fc121a356ed28"
+    },
+    {
+      "path": "revoked_permission/contact-sheet.png",
+      "sha256": "81968bc5b6d8a95608303d4afe9d00c2d9abad3f0592d3ed17984f981692cb5e"
+    },
+    {
+      "path": "revoked_permission/evaluation-only.json",
+      "sha256": "cedc84d8b35ae6ea8c2b403e98105a35128da721a7731e39078b4e0005546cef"
+    },
+    {
+      "path": "revoked_permission/execution/events.json",
+      "sha256": "fc762ebb16493897dc22e411effe0376ad07538eeaee7dd6531f0e76587dccb2"
+    },
+    {
+      "path": "revoked_permission/execution/plan.json",
+      "sha256": "839aae23ab82fdca63c3927a15867973788d8d59c6bb37a0de2b50859839a3fd"
+    },
+    {
+      "path": "revoked_permission/execution/r1-000001-reply.json",
+      "sha256": "91c0d36715d8bacbcb21c7b5a63ca4a7d6abb7cded11698eb29bcaabb586b271"
+    },
+    {
+      "path": "revoked_permission/execution/r1-000001-request.json",
+      "sha256": "f38914b2f34f2be5aaac8a3206b5ea2362c9258156992ba94402eb839d541998"
+    },
+    {
+      "path": "revoked_permission/execution/r1-000003-reply.json",
+      "sha256": "8995882f1850db1f3c512ee655c2e3c48a0726a9f45636bbfd9eea6bcf33ae3e"
+    },
+    {
+      "path": "revoked_permission/execution/r1-000003-request.json",
+      "sha256": "e72e60de2e924f80126c30ba5408eb6277f35cec027f53186c392e7ad95a1e21"
+    },
+    {
+      "path": "revoked_permission/execution/r3-000002-reply.json",
+      "sha256": "8efec0c024c0234e232a4e0ae51465b64f91a739e5ca5b2243b8c32fe79fda44"
+    },
+    {
+      "path": "revoked_permission/execution/r3-000002-request.json",
+      "sha256": "43656c7b18eef2446bdc2639b244799ba02ee7aafadd204619d53a53aff23822"
+    },
+    {
+      "path": "revoked_permission/execution/r3-000004-reply.json",
+      "sha256": "35dc9bf37bea5f60234a6dba122f9e7974a1acd9b1b690e46452fc642df25548"
+    },
+    {
+      "path": "revoked_permission/execution/r3-000004-request.json",
+      "sha256": "273691c18858f586a3c3ed961277558453c8d2e155e1f64380a9a4e06d610e54"
+    },
+    {
+      "path": "revoked_permission/execution/rgb/r1-000001-own_rgb.jpg",
+      "sha256": "ae2f28de10934451c3dceda49ebfef8044abf12e52dce0ae834cd99eec59e1ce"
+    },
+    {
+      "path": "revoked_permission/execution/rgb/r1-000001-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "revoked_permission/execution/rgb/r1-000003-own_rgb.jpg",
+      "sha256": "ae2f28de10934451c3dceda49ebfef8044abf12e52dce0ae834cd99eec59e1ce"
+    },
+    {
+      "path": "revoked_permission/execution/rgb/r1-000003-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "revoked_permission/execution/rgb/r3-000002-own_rgb.jpg",
+      "sha256": "ea3c2408194d437ef5884091df199578d0e9ba588a647ec61486d7e2b6f9e836"
+    },
+    {
+      "path": "revoked_permission/execution/rgb/r3-000002-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "revoked_permission/execution/rgb/r3-000004-own_rgb.jpg",
+      "sha256": "ea3c2408194d437ef5884091df199578d0e9ba588a647ec61486d7e2b6f9e836"
+    },
+    {
+      "path": "revoked_permission/execution/rgb/r3-000004-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "revoked_permission/execution/static-map.json",
+      "sha256": "a97b041efcf78171143f867780dab8193a2aecd47c11bb5664dd6496d24c57df"
+    },
+    {
+      "path": "revoked_permission/motion.gif",
+      "sha256": "058b1c0c4a1265d0d5fe7d7410fc41db15f5b1947f3f0af7bdb2159e913dbceb"
+    },
+    {
+      "path": "revoked_permission/result.json",
+      "sha256": "2ce7681f5f55036661844c4a27ee6071834a26a9a23c86380fe79883abf41068"
+    },
+    {
+      "path": "revoked_permission/scene.xml",
+      "sha256": "491d8cfc7ec93f156f42774d131bacca71d10a24605cbe1c3f1fc121a356ed28"
+    },
+    {
+      "path": "second_port_failure/contact-sheet.png",
+      "sha256": "d308d7ecade3d676eb600079fc6cdcb0bbd85f9cb37c34556f0151b8e54f8ba0"
+    },
+    {
+      "path": "second_port_failure/evaluation-only.json",
+      "sha256": "bd68fd81c5cbd73bf47ada64187f400786c113788a4c3f76ee24e4dcc50865dc"
+    },
+    {
+      "path": "second_port_failure/execution/events.json",
+      "sha256": "ab93796f8c637ba94d6e11ba95ec80dd1de825d482c41ede363f9e3b692232e7"
+    },
+    {
+      "path": "second_port_failure/execution/plan.json",
+      "sha256": "b724356e05aba6a0c2bb8075fb14cce1a15974507ef1bba34f8eea9e189253d4"
+    },
+    {
+      "path": "second_port_failure/execution/r1-000001-reply.json",
+      "sha256": "91c0d36715d8bacbcb21c7b5a63ca4a7d6abb7cded11698eb29bcaabb586b271"
+    },
+    {
+      "path": "second_port_failure/execution/r1-000001-request.json",
+      "sha256": "484e05753c96eaba310d5dafb8d27595e4c788b56a405b74f192ccdee42d331f"
+    },
+    {
+      "path": "second_port_failure/execution/r3-000002-reply.json",
+      "sha256": "8efec0c024c0234e232a4e0ae51465b64f91a739e5ca5b2243b8c32fe79fda44"
+    },
+    {
+      "path": "second_port_failure/execution/r3-000002-request.json",
+      "sha256": "dddf17d5e9232d14b27eb9cf6b8598c1da0d1e2472fdf73b9cb76ddbace07e7e"
+    },
+    {
+      "path": "second_port_failure/execution/rgb/r1-000001-own_rgb.jpg",
+      "sha256": "ae2f28de10934451c3dceda49ebfef8044abf12e52dce0ae834cd99eec59e1ce"
+    },
+    {
+      "path": "second_port_failure/execution/rgb/r1-000001-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "second_port_failure/execution/rgb/r3-000002-own_rgb.jpg",
+      "sha256": "ea3c2408194d437ef5884091df199578d0e9ba588a647ec61486d7e2b6f9e836"
+    },
+    {
+      "path": "second_port_failure/execution/rgb/r3-000002-top_rgb.jpg",
+      "sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051"
+    },
+    {
+      "path": "second_port_failure/execution/static-map.json",
+      "sha256": "a97b041efcf78171143f867780dab8193a2aecd47c11bb5664dd6496d24c57df"
+    },
+    {
+      "path": "second_port_failure/motion.gif",
+      "sha256": "aade2a4e18e01146d3f3010b9d05815cacd2cee704da2c969a29ad77bc94512a"
+    },
+    {
+      "path": "second_port_failure/result.json",
+      "sha256": "5b6b0e45ca4d6db9877d141e2c2ce21747e84331fe1b68a016562a51d17785a1"
+    },
+    {
+      "path": "second_port_failure/scene.xml",
+      "sha256": "491d8cfc7ec93f156f42774d131bacca71d10a24605cbe1c3f1fc121a356ed28"
+    }
+  ]
+}
