@@ -1,0 +1,23 @@
+{
+  "schema": "ugrp.task_stage_execution_protocol.v1",
+  "scope": "Synchronization integration with actual RGB capture and CameraRobotPort/MuJoCo actuators. Visual stage verdicts are synthetic except the default absent producer UNCERTAIN. No autonomous transport success claim.",
+  "cases": ["absent_producer", "five_stage_fixture", "arm_hold_resume", "carry_report_loss", "second_port_failure", "revoked_permission"],
+  "report_ttl_s": 0.6,
+  "max_command_s": 0.25,
+  "issued_command_s": 0.2,
+  "clock_domain": "sim",
+  "seed": 41,
+  "weld": "OFF",
+  "camera_geometry_solver_changes": false,
+  "model_calls": 0,
+  "success_criteria": [
+    "Every case satisfies its predeclared command gating, HOLD, expiry or resume assertion",
+    "Five stages advance only after both synthetic post-command DONE replies",
+    "Missing visual producer never issues a command or advances",
+    "Both physical bases move more than 1 mm in wheel diagnostic cases, evaluated after actions",
+    "Both physical arms change by more than 0.001 rad in arm diagnostic cases, evaluated after actions",
+    "Three actor cameras are unchanged and welds remain OFF",
+    "All original RGB requests/replies, events, evaluation-only samples and visual artifacts are retained"
+  ],
+  "limits": ["One fixed unloaded fixture", "No true grasp/lift/support/release perception", "No loaded stop or transport test", "Local serialized JSON connection, no network or separate process restart", "SIM watchdog requires physics-owner tick"]
+}

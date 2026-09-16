@@ -57,6 +57,7 @@ class CameraRobotPort:
         self._servo_tick_time = self._clock_time()
         self._drive_expires_at: float | None = None
         self._busy_until = 0.0
+        self._command_expires_at: float | None = None
 
     @property
     def busy_until(self) -> float:
@@ -83,9 +84,8 @@ class CameraRobotPort:
             "actuator_state": self._actuator_state(),
         }
 
-    def apply(self, action: Mapping[str, Any], sim_time: float) -> dict[str, Any]:
-        """Validate and issue one raw command, returning acknowledgement only."""
-        now = _finite_number("sim_time", sim_time)
+    def validate_action(self, action: Mapping[str, Any]) -> None:
+        """Check a command without touching actuators (for batch preflight)."""
         if not isinstance(action, Mapping):
             raise ValueError("action must be an object")
         kind = action.get("kind")
@@ -97,6 +97,44 @@ class CameraRobotPort:
             raise ValueError(f"unknown {kind} action fields: {sorted(unknown)}")
         if missing:
             raise ValueError(f"missing {kind} action fields: {sorted(missing)}")
+
+        if kind in {"drive", "mecanum"}:
+            if kind == "mecanum" and not self._allow_mecanum:
+                raise ValueError("mecanum action requires allow_mecanum=True")
+            _bounded_number("forward", action["forward"], -0.05 if self._allow_reverse else 0.0, 0.15)
+            _bounded_number("turn", action["turn"], -.15 if kind == "mecanum" else -.2,
+                            .15 if kind == "mecanum" else .2)
+            _bounded_number("duration_s", action["duration_s"], 0.0, 1.0)
+            if kind == "mecanum":
+                _bounded_number("left", action["left"], -.10, .10)
+        elif kind == "look":
+            _bounded_int("pan_pulse", action["pan_pulse"], 500, 2500)
+        elif kind == "arm":
+            servo = _bounded_int("servo_id", action["servo_id"], 1, 5)
+            if servo not in {1, 3, 4, 5}:
+                raise ValueError("servo_id must be one of 1, 3, 4, or 5")
+            _bounded_int("pulse", action["pulse"], 500, 2500)
+
+    def validate_bounded(self, action: Mapping[str, Any], duration_s: float) -> None:
+        self.validate_action(action)
+        duration = _bounded_number("duration_s", duration_s, 0.0, .25)
+        if duration <= 0 or ("duration_s" in action and action["duration_s"] != duration):
+            raise ValueError("positive lease and matching drive duration required")
+
+    def apply_bounded(self, action: Mapping[str, Any], sim_time: float,
+                      duration_s: float) -> dict[str, Any]:
+        """Issue a short command; tick() also expires unfinished arm interpolation."""
+        self.validate_bounded(action, duration_s)
+        result = self.apply(action, sim_time)
+        self._command_expires_at = float(sim_time) + float(duration_s)
+        return result
+
+    def apply(self, action: Mapping[str, Any], sim_time: float) -> dict[str, Any]:
+        """Validate and issue one raw command, returning acknowledgement only."""
+        now = _finite_number("sim_time", sim_time)
+        self.validate_action(action)
+        self._command_expires_at = None
+        kind = action["kind"]
 
         if kind == "drive":
             forward = _bounded_number("forward", action["forward"], -0.05 if self._allow_reverse else 0.0, 0.15)
@@ -149,8 +187,12 @@ class CameraRobotPort:
         }
 
     def tick(self, sim_time: float) -> None:
-        """Stop a drive whose bounded simulated-time lease has expired."""
+        """Enforce leases on the physics clock, even without coordinator polling."""
         now = _finite_number("sim_time", sim_time)
+        if self._command_expires_at is not None and now >= self._command_expires_at:
+            self._advance_servos(self._command_expires_at)
+            self.hold(now)
+            return
         self._advance_servos(now)
         if self._drive_expires_at is not None and now >= self._drive_expires_at:
             self._set_motors(_STOP)
@@ -158,6 +200,23 @@ class CameraRobotPort:
     def stop(self) -> None:
         """Immediately stop this robot's wheels."""
         self._set_motors(_STOP)
+
+    def hold(self, sim_time: float) -> None:
+        """Stop wheels and cancel queued arm motion at the last issued setpoint.
+
+        This reads no measured joint state and does not prove stationary motion
+        or load retention. Physics may coast or settle under position control.
+        Do not advance pending interpolation after a revocation.
+        """
+        now = _finite_number("sim_time", sim_time)
+        if now < self._servo_tick_time:
+            raise ValueError("sim_time must not move backwards")
+        self._set_motors(_STOP)
+        self._servo_targets.clear()
+        self._servo_pulses = {servo: int(round(pulse)) for servo, pulse in self._servo_applied.items()}
+        self._servo_tick_time = now
+        self._command_expires_at = None
+        self._busy_until = now
 
     def _set_motors(self, command: tuple[float, float, float, float]) -> None:
         owned = tuple(float(value) for value in command)

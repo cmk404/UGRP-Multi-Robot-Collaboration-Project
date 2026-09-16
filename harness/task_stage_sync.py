@@ -311,6 +311,11 @@ class TaskStageSync:
             self.hold("participant_not_ready_or_completion_revoked:" + robot_id, now_s=now_s, renew=True)
         return True
 
+    def status(self, *, now_s: float) -> dict:
+        """Refresh revocation/expiry without minting a new permission per physics tick."""
+        return {**self._refresh(now_s), "run_id": self.run_id, "task_id": self.plan.task_id,
+                "plan_version": self.plan.plan_version, "stage": self.stage, "permission": None}
+
     def authorize(self, *, now_s: float) -> dict:
         decision = self._refresh(now_s)
         permit = None
