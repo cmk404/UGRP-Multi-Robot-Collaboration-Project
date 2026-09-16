@@ -52,3 +52,18 @@ Validate the three predeclared starts with local execution and with the LLM
 interface on the same frozen source. Keep all attempts including denied
 permissions. Reconstruct actual model wires and pure RGB wheel decisions from
 saved inputs; evaluate physical success separately after all control ends.
+
+## Asymmetric-start correction after first frozen cohort
+
+Source `6de79d5` completed 4/6 (local and LLM both 2/3). The (65,57) cm
+case passed the former approach band but r1's post-recovery RGB was outside
+learned grasp support; both variants lost r1 grip about 8 cm into carry.
+LLM permission did not detect this. Preserve the failed cases.
+
+Candidate `018c8eb` adds bounded folded-arm refinement using the existing
+RGB forward-error estimator, a +/-1 mm *estimated* band (not measured robot
+accuracy), and two fresh confirmations. It also rejects CLOSE when either
+robot's RGB grasp prediction is unobservable or confidence <.8. No physical
+parameters, cameras, teacher motions, or success thresholds change. First
+rerun the failed local case as a diagnosis, then repeat all six predeclared
+local/LLM cases on one final frozen source if the diagnosis passes.
