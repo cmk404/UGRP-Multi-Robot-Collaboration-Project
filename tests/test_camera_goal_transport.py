@@ -38,6 +38,15 @@ def test_missing_payload_fails_closed():
     assert not d['ok'] and not d['ready'] and d['forward']==0
 
 
+def test_overshooting_goal_never_drives_farther_away():
+    top=cv2.imdecode(np.frombuffer(rgb('goal-top.jpg'),np.uint8),cv2.IMREAD_COLOR)
+    shifted=cv2.warpAffine(top,np.float32([[1,0,20],[0,1,0]]),(960,720))
+    _,jpeg=cv2.imencode('.jpg',shifted)
+    d=goal_carry(rgb('goal-own.jpg'),jpeg.tobytes(),rgb('anchor-own.jpg'),rgb('anchor-top.jpg'))
+    assert d['image_gap']<-.006
+    assert not d['ok'] and not d['ready'] and d['forward']==0
+
+
 @pytest.mark.parametrize('rid',['r1','r3'])
 def test_far_approach_handoff_is_not_grasp_readiness(rid):
     far=coarse_approach(rgb('start-top.jpg'),rgb('reference-top.jpg'),rid)

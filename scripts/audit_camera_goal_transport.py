@@ -134,6 +134,10 @@ def audit(root):
 
 
 def audit_llm(root,report):
+    for path in ('harness/camera_skill_actor.py','scripts/camera_skill_gate.py',
+                 'harness/research_execution_recovery.py','harness/gemini_proxy.py'):
+        raw=subprocess.check_output(['git','show',f'{report["source_sha"]}:{path}'],cwd=ROOT)
+        require(raw==(ROOT/path).read_bytes(),f'LLM replay dependency changed: {path}')
     records=json.loads((root/'llm/gate.json').read_text())
     trace=json.loads((root/'execution-trace.json').read_text())
     previous={r:None for r in ROBOTS};inbox={r:[] for r in ROBOTS};calls=records['calls']
@@ -168,6 +172,10 @@ def audit_llm(root,report):
                 same(wire['messages'],_to_gemini_multi_image_messages(request['messages'],request['images']),'exact model wire')
                 wire_count+=1
                 if 'reply' in row:
+                    response=json.loads((root/'llm'/rid/f'wire-{row["wire_index"]:03d}-response.json').read_text())
+                    same(response['choices'][0]['message']['content'].strip(),row['raw_response'],
+                         'actual model response bytes')
+                    same(response.get('usage'),row.get('usage'),'actual model token usage')
                     reply=validate_skill_reply(row['raw_response'],row['request_id'],event['skill'])
                     same(reply,row['reply'],'LLM schema replay');replies[rid]=reply
                 elif row['error_kind']=='reply_schema':

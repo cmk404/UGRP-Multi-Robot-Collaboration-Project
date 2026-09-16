@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """60 cm image approach -> demonstrated/RGB grasp -> visible goal -> placement.
 
-Local execution curriculum. No LLM or teacher feedback at runtime. Arm segments
-are explicitly demonstrated playback with RGB recovery, not learned autonomy.
+Local execution curriculum, optionally gated by two visual LLM actors. No
+teacher feedback at runtime. Arm segments are explicitly demonstrated
+playback with RGB recovery, not learned autonomy.
 """
 from __future__ import annotations
 import argparse

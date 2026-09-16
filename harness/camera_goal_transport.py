@@ -106,7 +106,7 @@ def goal_carry(own_jpeg, top_jpeg, anchor_own, anchor_top):
     consistent = (.25 <= current[0]/anchor[0] <= 4.
                   and math.dist(current[1:],anchor[1:]) <= .15)
     error = top['goal_x']-top['beam_x']
-    valid = consistent and -.015 <= error <= .25
+    valid = consistent and -.006 <= error <= .25
     ready = valid and -.006 <= error <= .0025
     # The loaded platform barely advances with very small wheel commands.
     # Use the demonstrated .04..10 motion range, then stop on fresh RGB.
