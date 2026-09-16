@@ -123,6 +123,7 @@ class ApproachScene:
         mujoco.mj_forward(self.world.model, self.world.data)
         # Observer video only; policy own/top cameras remain unchanged.
         _camera_look_at(self.world, approach_distance=max(map(float, offsets.values())))
+        self.configure_observer_camera()
         self.replay([self.skill['initialization_replay'][0]], 'folded_setup')
         self.ports = {r: CameraRobotPort(self.world, r, allow_reverse=starts is not None,
                                          allow_mecanum=starts is not None) for r in ROBOTS}
@@ -143,6 +144,10 @@ class ApproachScene:
 
     def configure_world_setup(self):
         """Optional authored scene setup, before any task motion or observation."""
+        pass
+
+    def configure_observer_camera(self):
+        """Optional presentation-only camera setup before recording begins."""
         pass
 
     def time(self):

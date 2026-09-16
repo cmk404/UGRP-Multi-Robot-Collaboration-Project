@@ -103,6 +103,11 @@ class MissionScene(GoalScene):
         # The production constructor resets XML spawns to its own layout.
         # Apply this authored initial pose once, before folded setup and RGB.
         self.world.controllers['r2'].set_base_pose_for_test((0.,-3.,.032355118817659255),0.)
+        # Match the already validated markerless N7 contact-solver settings.
+        # These numerical solver options apply to the entire shared world;
+        # geometry, masses, friction, actuators and all welds stay unchanged.
+        self.world.model.opt.impratio=10
+        self.world.model.opt.noslip_iterations=3
 
     def open(self, *args, **kwargs):
         from unittest.mock import patch
@@ -117,18 +122,26 @@ class MissionScene(GoalScene):
         import mujoco
         self.solo_body = mujoco.mj_name2id(self.world.model,mujoco.mjtObj.mjOBJ_BODY,'mission_cyan_box')
         self.solo_geom = mujoco.mj_name2id(self.world.model,mujoco.mjtObj.mjOBJ_GEOM,'mission_cyan_box_geom')
+        return self
+
+    def configure_observer_camera(self):
         # Presentation camera only: include all three robots and both task lanes.
+        import mujoco
         import numpy as np
         cid = mujoco.mj_name2id(self.world.model,mujoco.mjtObj.mjOBJ_CAMERA,'cctv_warehouse')
-        position, target = np.array((.4,-4.5,2.6)), np.array((.65,-2.35,.05))
+        position, target = np.array((.35,-3.85,1.9)), np.array((.70,-2.3,.04))
         forward = target-position; forward /= np.linalg.norm(forward)
         right = np.cross(forward,(0.,0.,1.)); right /= np.linalg.norm(right)
         up = np.cross(right,forward); quat=np.empty(4)
         mujoco.mju_mat2Quat(quat,np.column_stack((right,up,-forward)).ravel())
         self.world.model.cam_pos[cid],self.world.model.cam_quat[cid]=position,quat
-        self.world.model.cam_fovy[cid]=55.
+        self.world.model.cam_fovy[cid]=47.
         mujoco.mj_forward(self.world.model,self.world.data)
-        return self
+
+    def _frame(self):
+        if self.video:
+            self.video.stage=self.phase+' | R2:'+('waiting_plan' if self.solo is None else self.solo.phase)
+            self.video.capture()
 
     def team_capture(self, tag):
         frames = self.capture(tag)
@@ -147,6 +160,8 @@ class MissionScene(GoalScene):
             'position':self.world.model.cam_pos[cid].tolist(),
             'quaternion':self.world.model.cam_quat[cid].tolist(),
             'fov_y_deg':float(self.world.model.cam_fovy[cid])}
+        row['contact_solver']={'impratio':float(self.world.model.opt.impratio),
+                               'noslip_iterations':int(self.world.model.opt.noslip_iterations)}
         return row
 
     def configure_run(self, args, report):
