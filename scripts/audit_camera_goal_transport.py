@@ -18,6 +18,8 @@ from scripts.run_camera_approach_student import models
 from harness.pair_carry_policy import PairCarryPolicy, payload_skew
 from harness.gemini_proxy import _to_gemini_multi_image_messages
 from harness.camera_skill_actor import build_skill_request, validate_skill_reply, pair_skill_ready
+from harness.camera_varied_start_student import predict_stage
+from harness.grasp_student_inference import predict_student
 
 ROBOTS=('r1','r3')
 
@@ -58,7 +60,7 @@ def audit(root):
     require(_sha(grasp_root/'student-skill.json')==assets['grasp_skill']['sha256'],'grasp skill hash')
     require(_sha(stage_root/'varied-start-skill.json')==assets['stage_skill']['sha256'],'alignment skill hash')
     require(_sha(root/'reference-top.jpg')==assets['reference_top']['sha256'],'reference hash')
-    skill,_=models(grasp_root,'student-skill.json')
+    skill,grasp_models=models(grasp_root,'student-skill.json')
     _,stages=load_stage_models(stage_root)
     reference=(root/'reference-top.jpg').read_bytes()
     expected=[]
@@ -96,6 +98,20 @@ def audit(root):
         replayed=run_approach(Replay(),stages)
         for key in ('approach_calls','stage_results','approach_ok','final_alignment_checks'):
             same(replayed.get(key),report.get(key),'fine approach replay '+key)
+    for row in report.get('dock_calls',[]):
+        predictions={r:predict_stage(stages[r]['forward'],_image(root,row['images'][r]['own']),
+                                    _image(root,row['images'][r]['top'])) for r in ROBOTS}
+        same(predictions,row['predictions'],'dock RGB prediction')
+        decisions={r:vision.dock_command(p) for r,p in predictions.items()}
+        same(decisions,row['decisions'],'dock command')
+        if not all(d['ok'] for d in decisions.values()): break
+        expected.append({r:dict(kind='drive',forward=decisions[r]['forward'],turn=0.,duration_s=.2) for r in ROBOTS})
+    preclose=report.get('preclose_check')
+    if preclose is not None:
+        decisions={r:predict_student(grasp_models[r],_image(root,preclose['images'][r]['own']),
+                                    _image(root,preclose['images'][r]['top']),max_step=25) for r in ROBOTS}
+        same(decisions,preclose['decisions'],'preclose RGB support')
+        same(vision.preclose_supported(decisions),preclose['ok'],'preclose readiness')
     grasp=None
     if (root/'grasp-result.json').exists(): grasp=audit_grasp(root,grasp_root,report_name='grasp-result.json')
     policy=PairCarryPolicy('visible-goal-carry')
@@ -129,6 +145,7 @@ def audit(root):
     same(report['invariants_initial'],report['invariants_final'],'camera/geometry changed')
     return dict(ok=True,source_sha=source,physical_success=report['success'],
         coarse_decisions=2*len(report['coarse_calls']),fine_decisions=len(report.get('approach_calls',[])),
+        dock_decisions=2*len(report.get('dock_calls',[])),
         grasp=grasp,carry_decisions=2*len(report['carry_calls']),llm=llm,
         replayed_wheel_batches=len(expected),scope='saved input/command replay, not OS isolation')
 

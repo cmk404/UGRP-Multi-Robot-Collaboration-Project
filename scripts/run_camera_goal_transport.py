@@ -24,12 +24,14 @@ from scripts.camera_approach_scene import ROBOTS
 from scripts.run_camera_approach_student import models, sha, write
 from scripts.run_camera_varied_start_student import load_stage_models, run_approach
 from scripts.evaluate_camera_short_transport import evaluate_transport_samples
-from harness.camera_goal_transport import coarse_approach, goal_carry
+from harness.camera_goal_transport import coarse_approach, goal_carry, dock_command, preclose_supported
+from harness.camera_varied_start_student import predict_stage
 from harness.pair_carry_policy import PairCarryPolicy, payload_skew
 
 
 class GoalScene(ShortTransportScene):
     gate=None
+    grasp_check=None
 
     def checkpoint(self,skill):
         if self.gate is None: return
@@ -49,6 +51,15 @@ class GoalScene(ShortTransportScene):
         raise RuntimeError(f'two independent LLMs did not authorize {skill}')
 
     def replay(self,commands,stage):
+        if stage=='grasp_close':
+            from harness.grasp_student_inference import predict_student
+            frames=self.capture('preclose-support')
+            decisions={r:predict_student(self.grasp_models[r],frames[r]['own_bytes'],
+                frames[r]['top_bytes'],max_step=25) for r in ROBOTS}
+            self.grasp_check=dict(decisions=decisions,ok=preclose_supported(decisions),
+                images={r:dict(own=frames[r]['own_rgb'],top=frames[r]['shared_top_rgb']) for r in ROBOTS})
+            if not self.grasp_check['ok']:
+                raise RuntimeError('preclose RGB outside learned grasp support')
         skill={'grasp_initialization':'PREPARE_GRASP','grasp_close':'CLOSE',
                'grasp_lift':'LIFT','place_lower':'LOWER','place_open':'RELEASE',
                'place_retract':'RETRACT'}.get(stage)
@@ -78,7 +89,8 @@ def run(args):
         assets=dict(grasp_skill=dict(path=str(args.grasp_model_dir.resolve()),sha256=sha(args.grasp_model_dir/'student-skill.json')),
                     stage_skill=dict(path=str(args.stage_model_dir.resolve()),sha256=sha(args.stage_model_dir/'varied-start-skill.json')),
                     reference_top=dict(path=str(args.reference_top.resolve()),sha256=sha(args.reference_top))),
-        coarse_calls=[],carry_calls=[],error=None,success=False,carry_ready=False)
+        coarse_calls=[],dock_calls=[],carry_calls=[],error=None,success=False,carry_ready=False)
+    scene.grasp_models=grasp
     started=time.monotonic()
     try:
         import mujoco
@@ -110,6 +122,19 @@ def run(args):
         report.update(run_approach(scene,stages))
         print(json.dumps(dict(stage='approach',ok=report['approach_ok'],results=report['stage_results'])),flush=True)
         if not report['approach_ok']: raise RuntimeError('fine RGB alignment failed')
+        confirmations=0
+        for index in range(30):
+            frames=scene.capture(f'dock-{index:03d}')
+            predictions={r:predict_stage(stages[r]['forward'],frames[r]['own_bytes'],
+                frames[r]['top_bytes']) for r in ROBOTS}
+            decisions={r:dock_command(p) for r,p in predictions.items()}
+            report['dock_calls'].append(dict(index=index,predictions=predictions,decisions=decisions,
+                images={r:dict(own=frames[r]['own_rgb'],top=frames[r]['shared_top_rgb']) for r in ROBOTS}))
+            if not all(d['ok'] for d in decisions.values()): raise RuntimeError('dock RGB unresolved')
+            scene.drive({r:d['forward'] for r,d in decisions.items()},.2)
+            confirmations=confirmations+1 if all(d['ready'] for d in decisions.values()) else 0
+            if confirmations>=2: break
+        else: raise RuntimeError('precise RGB docking budget')
         report['grasp_calls']=scene.finish_grasp(predict_student,grasp)
         write(out/'grasp-result.json',scene.grasp_report)
         scene.checkpoint('CARRY')
@@ -143,6 +168,7 @@ def run(args):
         report['goal_stable_at_end']=len(tail)==11 and all(s['goal']['success'] for s in tail)
         report['approach_payload_contact_steps']=scene.approach_payload_contact_steps
         report['weld_active_ticks']=scene.weld_active_ticks
+        report['preclose_check']=scene.grasp_check
         report['wall_s']=time.monotonic()-started
         report['llm']=None if scene.gate is None else dict(
             call_count=len(scene.gate.calls),events=scene.gate.events,

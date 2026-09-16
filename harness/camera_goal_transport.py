@@ -72,6 +72,24 @@ def own_payload(jpeg):
     return [float(len(xs)/mask.size), float(xs.mean()/mask.shape[1]), float(ys.mean()/mask.shape[0])]
 
 
+def dock_command(prediction):
+    """Tighter folded-arm docking using an existing RGB error estimate only."""
+    error = prediction.get('diagnostics', {}).get('image_derived_error')
+    valid = (prediction.get('ok') is True and prediction.get('precision') == 'fine'
+             and isinstance(error, (int, float)) and not isinstance(error, bool)
+             and math.isfinite(error) and abs(error) <= .015)
+    ready = valid and abs(error) <= .001
+    return dict(ok=bool(valid), ready=bool(ready),
+                forward=0. if ready or not valid else math.copysign(.01, error),
+                image_derived_error=error)
+
+
+def preclose_supported(predictions):
+    return set(predictions) == {'r1', 'r3'} and all(
+        d.get('observable') is True and d.get('confidence', 0) >= .8
+        for d in predictions.values())
+
+
 def goal_features(top_jpeg, *, remembered_goal_x=None):
     frame = decode(top_jpeg)
     h,w = frame.shape[:2]

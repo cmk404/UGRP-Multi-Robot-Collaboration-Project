@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 import pytest
 
-from harness.camera_goal_transport import coarse_approach, goal_carry, goal_features
+from harness.camera_goal_transport import coarse_approach, goal_carry, goal_features, dock_command, preclose_supported
 from harness.camera_skill_actor import build_skill_request, validate_skill_reply, pair_skill_ready
 
 FIXTURE=Path(__file__).parent/'fixtures/camera_goal_transport'
@@ -81,3 +81,21 @@ def test_skill_prompt_preserves_scope_and_only_declared_inputs():
     assert len(req['images'])==2
     assert 'NOT guaranteed' in req['messages'][0]['content']
     assert 'not measured' in req['messages'][0]['content']
+
+
+def test_previous_ready_band_is_not_precise_docking():
+    # Failed asymmetric run had READY but still 2.54 mm of RGB-estimated error.
+    d=dict(ok=True,precision='fine',ready=True,diagnostics=dict(image_derived_error=.00254))
+    assert dock_command(d)['forward']>0
+    assert not dock_command(d)['ready']
+    for error in (.0007,-.0007):
+        assert dock_command({**d,'diagnostics':dict(image_derived_error=error)})['forward']==0
+    for error in (None,True,float('nan'),.02):
+        v=dock_command({**d,'diagnostics':dict(image_derived_error=error)})
+        assert not v['ok'] and v['forward']==0
+
+
+def test_unsupported_grasp_cannot_be_closed_even_if_peer_is_ready():
+    good=dict(observable=True,confidence=.99)
+    assert preclose_supported(dict(r1=good,r3=good))
+    assert not preclose_supported(dict(r1=dict(observable=False,confidence=0),r3=good))
