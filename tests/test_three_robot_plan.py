@@ -41,6 +41,31 @@ def test_rejection_rotates_proposer_without_repairing_decision():
     assert a.committed is None
 
 
+def test_nonproposers_may_wait_for_formal_proposal_without_deadlocking():
+    # Reproduces the first live run: the peers correctly refused to ACK a
+    # non-existent proposal; requiring three proposed plans stalled all rounds.
+    a = TeamAgreement('run')
+    replies = batch(a, 0)
+    for r in ('r2', 'r3'):
+        replies[r].update(accept=False, plan=None, reason='Waiting for r1 formal proposal')
+    assert a.receive(replies, 0) is None
+    assert a.pending is not None
+    assert not a.authorize(a.pending['proposal_id'], a.pending['plan_hash'])
+    assert a.receive(batch(a, 1), 1) is not None
+
+
+def test_proposal_can_be_recorded_without_peer_reply_but_never_committed():
+    a = TeamAgreement('run')
+    assert a.receive({'r1': batch(a, 0)['r1']}, 0) is None
+    assert a.pending is not None and a.committed is None
+    assert a.receive({'r1': batch(a, 1)['r1']}, 1) is None
+    assert a.committed is None
+    with pytest.raises(ValueError, match='explicit valid plan'):
+        d = batch(a, 2)['r1']
+        d['plan'] = None
+        validate_plan_reply(json.dumps(d), d['request_id'], a.context())
+
+
 @pytest.mark.parametrize('field,value', [('request_id', 'old'), ('proposal_id', 'old'),
     ('plan_hash', 'bad'), ('accept', 1)])
 def test_stale_or_malformed_acks_do_not_commit(field, value):

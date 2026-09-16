@@ -68,7 +68,12 @@ def validate_plan_reply(raw, request_id, agreement):
     if value['request_id'] != request_id or type(value['accept']) is not bool:
         raise ValueError('stale request or invalid acceptance')
     text_fields(value)
-    validate_plan(value['plan'])
+    # Before a proposal exists, non-proposers may legitimately wait. A null
+    # rejection must never be coerced into an affirmative model decision.
+    if value['plan'] is not None:
+        validate_plan(value['plan'])
+    elif value['accept']:
+        raise ValueError('acceptance requires an explicit valid plan')
     proposal = agreement['proposal']
     expected = (proposal['proposal_id'], proposal['plan_hash']) if proposal else (None, None)
     if (value['proposal_id'], value['plan_hash']) != expected:
@@ -99,15 +104,18 @@ class TeamAgreement:
         if turn <= self.last_turn:
             raise ValueError('stale negotiation turn')
         self.last_turn = turn
-        if set(replies) != set(ROBOTS) or any(v is None for v in replies.values()):
-            self.events.append({'event': 'MISSING_REPLY', 'turn': turn})
-            return None
+        if not set(replies) <= set(ROBOTS):
+            raise ValueError('unknown participant')
         context = self.context()
         for rid, value in replies.items():
-            validate_plan_reply(json.dumps(value), f'{self.run_id}-{rid}-plan-{turn}', context)
+            if value is not None:
+                validate_plan_reply(json.dumps(value), f'{self.run_id}-{rid}-plan-{turn}', context)
         if self.pending is None:
             proposer = context['proposer']
-            candidate = replies[proposer]
+            candidate = replies.get(proposer)
+            if candidate is None:
+                self.events.append({'event': 'MISSING_PROPOSER', 'turn': turn})
+                return None
             if not candidate['accept']:
                 self.events.append({'event': 'PROPOSER_DECLINED', 'turn': turn, 'robot_id': proposer})
                 self.version += 1
@@ -117,6 +125,8 @@ class TeamAgreement:
                             'version': self.version, 'plan_hash': digest(plan),
                             'plan': plan, 'proposer': proposer}
             self.events.append({'event': 'PROPOSED', 'turn': turn, **copy.deepcopy(self.pending)})
+        elif set(replies) != set(ROBOTS) or any(v is None for v in replies.values()):
+            self.events.append({'event': 'MISSING_REPLY', 'turn': turn})
         elif all(v['accept'] for v in replies.values()):
             self.committed = copy.deepcopy(self.pending)
             self.events.append({'event': 'COMMITTED', 'turn': turn, **copy.deepcopy(self.committed)})
@@ -163,6 +173,10 @@ No actuation occurs until all three ACK the same version. No permanent leader.
 Reply JSON only, exactly request_id, proposal_id, plan_hash, accept (boolean),
 plan, reason, message. reason/message <=600 characters. For an initial proposal
 proposal_id and plan_hash are null. A plan has exactly transport and inspection.
+If proposal is null and you are NOT the designated proposer, wait by returning
+accept=false and plan=null (with null proposal_id and plan_hash). This is not a
+rejection of a pending plan. Once a proposal exists, review that frozen plan;
+all three peers, including the original proposer, must explicitly ACK it.
 transport = {{"skill":"rgb_pair_goal_v1","participants":{{"r1":"bottom_end","r3":"top_end"}},"object":"orange_beam","goal":"green_zone"}}.
 inspection = {{"skill":"inspect_goal_rgb_v1","robot_id":"r2","region":"green_zone","timing":"during_approach or before_carry"}}.'''
     context = {'request_id': request_id, 'agreement': copy.deepcopy(agreement),
