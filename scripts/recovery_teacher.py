@@ -22,7 +22,7 @@ def command(error):
     elif abs(ey)>.002:
         # World y error transformed into body axes at the actual teacher yaw.
         yaw=-angle;a['forward']=max(-.05,min(.15,math.sin(yaw)*.35*ey))
-        a['left']=bounded(math.cos(yaw)*.35*ey,.04,.005)
+        a['left']=bounded(math.cos(yaw)*.35*ey,.04,.012)
     elif abs(ex)>.002:a['forward']=bounded(.3*ex,.12 if ex>0 else .045,.005)
     return {'ok':True,'ready':ready,**a,'stop_score':float(ready),'reason':'privileged_recovery_teacher'}
 

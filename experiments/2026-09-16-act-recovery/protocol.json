@@ -28,8 +28,14 @@
     "linear_speed_mps": 0.005,
     "angular_speed_radps": 0.02
   },
-  "data_design": "All conditions same expanded action space. Nominal and recovery initial cohorts use 48 successful attempted slots; recovery uses 24 shared nominal and 24 single-perturbation starts. Aggregation adds up to24 fixed-prefix student-visited teacher recovery tails; compare an equally sized additional scripted recovery data control. Report exclusions and sample counts, do not replace failures silently. Pilot data never train. Final conditions never seed aggregation.",
+  "data_design": "Nominal:48 nominal attempts. Recovery:24 shared nominal +24 single-perturbation attempts. Aggregated:24 shared nominal +12 shared single-perturbation attempts +12 student-prefix/teacher-tail attempts. Temporary bootstrap:24 nominal +12 singles, seed20260916,5000 updates/robot. All final models10000 updates/robot,2 seeds. All failures/exclusions retained; successful sample counts can differ and are reported. No failed-slot replacement. Recovery extra12 and aggregation12 compare equal attempted demonstration budgets, not equal unique-frame counts.",
   "heldout_region_screen": "Training trajectories excluded if teacher-labeled state has |yaw|>3deg AND (|y|>8mm OR remaining x>0.33m OR remaining x<-3mm). Audit coverage and do not claim unseen combinations if this screen is violated.",
   "selection": "Checkpoint only development loss/ready mistakes; no final test retuning. Final test run after all checkpoints fixed.",
-  "boundary": "No truth-gated grasp or teacher fallback during independent student evaluation; privileged takeover is training-only."
+  "boundary": "No truth-gated grasp or teacher fallback during independent student evaluation; privileged takeover is training-only.",
+  "bootstrap": {
+    "seed": 20260916,
+    "steps": 5000,
+    "data": "first24 nominal, first4 per recovery factor",
+    "not_final_comparator": true
+  }
 }
