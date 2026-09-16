@@ -46,7 +46,7 @@ def load_video(folder,cache):
     if abs(times[0]-report['initial_state']['sim_time_s'])>.02:raise ValueError('initial timestamp mismatch')
     if abs(times[-1]-report['final_state']['sim_time_s'])>.6:raise ValueError('final timestamp mismatch')
     record={'path':str(p.resolve()),'sha256':digest(p),'frames':len(frames),'timestamps':times,'ocr':ocr,
-            'success':report['success'],'approach_sim_s':report['approach_sim_s'],
+            'success':report['success'],'physical_grasp_success':report['evaluation']['grasp_success'],'approach_sim_s':report['approach_sim_s'],
             'result_sha256':digest(folder/'result.json')}
     cache.write_text(json.dumps(record,ensure_ascii=False,indent=2)+'\n')
     return frames,times,record
@@ -72,8 +72,8 @@ def main():
         draw.text((22,14),f'{case}  |  같은 시작 조건 · SIM 시간 정렬',font=large,fill='white')
         for i,(title,_) in enumerate(specs):
             x=(i%2)*960;y=70+(i//2)*790
-            info=sources[i][2];result='성공' if info['success'] else '실패'
-            draw.text((x+18,y),f'{title}  |  {result}  |  접근 종료 {info["approach_sim_s"]:.1f}s',font=large,fill=(['#80c8ff','#e4c78a','#69e1bb','#ffcf78'][i] if info['success'] else '#ff7777'))
+            info=sources[i][2];result='전체 성공' if info['success'] else ('실패·들기만 성공' if info['physical_grasp_success'] else '실패')
+            draw.text((x+18,y),f'{title}  |  {result}  |  접근 {info["approach_sim_s"]:.1f}s',font=large,fill=(['#80c8ff','#e4c78a','#69e1bb','#ffcf78'][i] if info['success'] else '#ff7777'))
         try:
             for n in range(nframes):
                 now=first+n/10;frame=base.copy()
@@ -85,7 +85,7 @@ def main():
                         ImageDraw.Draw(frame).text((x+20,y+650),'기록 종료 · 마지막 화면 유지',font=small,fill='#ffcf78',stroke_width=2,stroke_fill='black')
                 draw=ImageDraw.Draw(frame)
                 draw.text((22,1655),f'SIM 경과 {min(now,end)-first:.1f}s · 원본 약4fps의 기록 시각으로 정렬 · 프레임 사이에는 이전 화면 유지',font=small,fill='white')
-                draw.text((22,1690),'ACT는 두 RGB 영상만 입력 · 파지·들기는 공통 스킬 · 교사는 정답 상태 사용. 실패 시 접근 종료 시간은 성공 완료 시간이 아닙니다.',font=small,fill='#b4bfcc')
+                draw.text((22,1690),'전체 성공: 정렬·안정·접촉·파지 기준 통과 | ACT 두 RGB 입력 · 교사 정답 상태 사용 | 실패 시 접근 시간은 성공 시간이 아님',font=small,fill='#b4bfcc')
                 proc.stdin.write(np.asarray(frame).tobytes())
                 if n in (0,40,110,nframes-1):frame.resize((960,860)).save(out/(case+f'-qa-{n:03d}.jpg'))
         finally:
