@@ -1,0 +1,18 @@
+{
+  "training": {
+    "python": "3.12.12 (main, Feb  4 2026, 01:57:59) [Clang 21.1.4 ]",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "torch": "2.11.0",
+    "torchvision": "0.26.0",
+    "lerobot": "0.6.2",
+    "numpy": "2.2.6"
+  },
+  "simulation": {
+    "mujoco": "3.12.0",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+  },
+  "upstream_act_sha": "89236ea0f4f81a81ca566081e20dd1ff5f823cbe",
+  "training_devices": "CPU, torch threads=2; no external model calls",
+  "video": "ffmpeg libx264, OCR tesseract OMP_THREAD_LIMIT=1, 10fps sample-and-hold; source observer frames approximately 4fps"
+}

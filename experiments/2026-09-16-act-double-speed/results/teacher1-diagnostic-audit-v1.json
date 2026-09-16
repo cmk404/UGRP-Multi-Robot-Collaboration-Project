@@ -1,0 +1,332 @@
+{
+  "scope": "Post hoc mechanism diagnostic: original 1x teacher on all failed 2x teacher starts. No student retuning.",
+  "source_sha": "ef3e6de886da83bd5ede2b2a7df4bacc24513ff2",
+  "audit_sha": "ef3e6de886da83bd5ede2b2a7df4bacc24513ff2",
+  "summary_sha256": "efd291497683e1088af9300798e2d9a374ca8b713f47b7e29e0a0af274d2cea3",
+  "manifest_sha256": "70a4eb5defd1af4c605f476ba6a14e89e94875b0c0a441bb1d82e6f50a49cdcf",
+  "files_verified": 4428,
+  "images_verified": 5004,
+  "teacher_decisions_replayed": 2502,
+  "runs": [
+    {
+      "case_id": "distance_shift-05",
+      "group": "distance_shift",
+      "returncode": 0,
+      "timeout": false,
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/teacher1-failure-diagnostic-v1/distance_shift-05-teacher1",
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "sim_s": 11.900000000000944,
+      "error": null,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "initial_state_and_rgb_match": true,
+      "stop_x_error_m": {
+        "r1": -0.0034930754937860797,
+        "r3": -0.0026085062043200713
+      }
+    },
+    {
+      "case_id": "distance_shift-06",
+      "group": "distance_shift",
+      "returncode": 0,
+      "timeout": false,
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/teacher1-failure-diagnostic-v1/distance_shift-06-teacher1",
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "sim_s": 11.900000000000944,
+      "error": null,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "initial_state_and_rgb_match": true,
+      "stop_x_error_m": {
+        "r1": -0.0026085062043198493,
+        "r3": -0.0034930754937860797
+      }
+    },
+    {
+      "case_id": "distance_shift-07",
+      "group": "distance_shift",
+      "returncode": 0,
+      "timeout": false,
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/teacher1-failure-diagnostic-v1/distance_shift-07-teacher1",
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "sim_s": 12.300000000001077,
+      "error": null,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "initial_state_and_rgb_match": true,
+      "stop_x_error_m": {
+        "r1": -0.0023338684385325603,
+        "r3": -0.0019175221062224246
+      }
+    },
+    {
+      "case_id": "distance_shift-08",
+      "group": "distance_shift",
+      "returncode": 0,
+      "timeout": false,
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/teacher1-failure-diagnostic-v1/distance_shift-08-teacher1",
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "sim_s": 12.300000000001077,
+      "error": null,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "initial_state_and_rgb_match": true,
+      "stop_x_error_m": {
+        "r1": -0.0019175221062222025,
+        "r3": -0.002333868438625486
+      }
+    },
+    {
+      "case_id": "lateral_shift-02",
+      "group": "lateral_shift",
+      "returncode": 0,
+      "timeout": false,
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/teacher1-failure-diagnostic-v1/lateral_shift-02-teacher1",
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "sim_s": 11.50000000000081,
+      "error": null,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "initial_state_and_rgb_match": true,
+      "stop_x_error_m": {
+        "r1": -0.0020816343608380805,
+        "r3": -0.0024967633852971405
+      }
+    },
+    {
+      "case_id": "lateral_shift-04",
+      "group": "lateral_shift",
+      "returncode": 0,
+      "timeout": false,
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/teacher1-failure-diagnostic-v1/lateral_shift-04-teacher1",
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "sim_s": 11.50000000000081,
+      "error": null,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "initial_state_and_rgb_match": true,
+      "stop_x_error_m": {
+        "r1": -0.0020816343608380805,
+        "r3": -0.0024967633852970295
+      }
+    },
+    {
+      "case_id": "lateral_shift-05",
+      "group": "lateral_shift",
+      "returncode": 0,
+      "timeout": false,
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/teacher1-failure-diagnostic-v1/lateral_shift-05-teacher1",
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "error": null,
+      "stop_reason": "bounded approach budget exhausted",
+      "initial_state_and_rgb_match": true,
+      "stop_x_error_m": {
+        "r1": -0.08754527957039582,
+        "r3": -0.002496081843385567
+      }
+    },
+    {
+      "case_id": "lateral_shift-06",
+      "group": "lateral_shift",
+      "returncode": 0,
+      "timeout": false,
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/teacher1-failure-diagnostic-v1/lateral_shift-06-teacher1",
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "error": null,
+      "stop_reason": "bounded approach budget exhausted",
+      "initial_state_and_rgb_match": true,
+      "stop_x_error_m": {
+        "r1": -0.002081571433980023,
+        "r3": -0.08815203703737878
+      }
+    },
+    {
+      "case_id": "lateral_shift-07",
+      "group": "lateral_shift",
+      "returncode": 0,
+      "timeout": false,
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/teacher1-failure-diagnostic-v1/lateral_shift-07-teacher1",
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "error": null,
+      "stop_reason": "bounded approach budget exhausted",
+      "initial_state_and_rgb_match": true,
+      "stop_x_error_m": {
+        "r1": -0.08735212652806063,
+        "r3": -0.08796458416195763
+      }
+    },
+    {
+      "case_id": "yaw_shift-01",
+      "group": "yaw_shift",
+      "returncode": 0,
+      "timeout": false,
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/teacher1-failure-diagnostic-v1/yaw_shift-01-teacher1",
+      "success": false,
+      "approach_ok": true,
+      "grasp_success": false,
+      "sim_s": 11.50000000000081,
+      "error": null,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "initial_state_and_rgb_match": true,
+      "stop_x_error_m": {
+        "r1": -0.0023531961593927786,
+        "r3": -0.002773118247184403
+      }
+    },
+    {
+      "case_id": "yaw_shift-02",
+      "group": "yaw_shift",
+      "returncode": 0,
+      "timeout": false,
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/teacher1-failure-diagnostic-v1/yaw_shift-02-teacher1",
+      "success": false,
+      "approach_ok": true,
+      "grasp_success": false,
+      "sim_s": 11.50000000000081,
+      "error": null,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "initial_state_and_rgb_match": true,
+      "stop_x_error_m": {
+        "r1": -0.0023531961730413054,
+        "r3": -0.002787282382292866
+      }
+    },
+    {
+      "case_id": "yaw_shift-03",
+      "group": "yaw_shift",
+      "returncode": 0,
+      "timeout": false,
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/teacher1-failure-diagnostic-v1/yaw_shift-03-teacher1",
+      "success": false,
+      "approach_ok": true,
+      "grasp_success": false,
+      "sim_s": 11.50000000000081,
+      "error": null,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "initial_state_and_rgb_match": true,
+      "stop_x_error_m": {
+        "r1": -0.0023531961593927786,
+        "r3": -0.002787282382292866
+      }
+    },
+    {
+      "case_id": "yaw_shift-04",
+      "group": "yaw_shift",
+      "returncode": 0,
+      "timeout": false,
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/teacher1-failure-diagnostic-v1/yaw_shift-04-teacher1",
+      "success": false,
+      "approach_ok": true,
+      "grasp_success": false,
+      "sim_s": 11.50000000000081,
+      "error": null,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "initial_state_and_rgb_match": true,
+      "stop_x_error_m": {
+        "r1": -0.0023531961730413054,
+        "r3": -0.002773118247184403
+      }
+    },
+    {
+      "case_id": "yaw_shift-05",
+      "group": "yaw_shift",
+      "returncode": 0,
+      "timeout": false,
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/teacher1-failure-diagnostic-v1/yaw_shift-05-teacher1",
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "error": null,
+      "stop_reason": "bounded approach budget exhausted",
+      "initial_state_and_rgb_match": true,
+      "stop_x_error_m": {
+        "r1": -0.0797209537588045,
+        "r3": -0.002020145999306666
+      }
+    },
+    {
+      "case_id": "yaw_shift-06",
+      "group": "yaw_shift",
+      "returncode": 0,
+      "timeout": false,
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/teacher1-failure-diagnostic-v1/yaw_shift-06-teacher1",
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "error": null,
+      "stop_reason": "bounded approach budget exhausted",
+      "initial_state_and_rgb_match": true,
+      "stop_x_error_m": {
+        "r1": -0.0031726024164681066,
+        "r3": -0.07894272041474926
+      }
+    },
+    {
+      "case_id": "yaw_shift-07",
+      "group": "yaw_shift",
+      "returncode": 0,
+      "timeout": false,
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/teacher1-failure-diagnostic-v1/yaw_shift-07-teacher1",
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "error": null,
+      "stop_reason": "bounded approach budget exhausted",
+      "initial_state_and_rgb_match": true,
+      "stop_x_error_m": {
+        "r1": -0.07955569896362114,
+        "r3": -0.07885815012786579
+      }
+    },
+    {
+      "case_id": "yaw_shift-08",
+      "group": "yaw_shift",
+      "returncode": 0,
+      "timeout": false,
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/teacher1-failure-diagnostic-v1/yaw_shift-08-teacher1",
+      "success": false,
+      "approach_ok": true,
+      "grasp_success": false,
+      "sim_s": 11.700000000000877,
+      "error": null,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "initial_state_and_rgb_match": true,
+      "stop_x_error_m": {
+        "r1": -0.003172607236077818,
+        "r3": -0.002020821231792258
+      }
+    }
+  ],
+  "groups": {
+    "distance_shift": {
+      "trials": 4,
+      "successes": 4
+    },
+    "lateral_shift": {
+      "trials": 5,
+      "successes": 2
+    },
+    "yaw_shift": {
+      "trials": 8,
+      "successes": 0
+    }
+  }
+}

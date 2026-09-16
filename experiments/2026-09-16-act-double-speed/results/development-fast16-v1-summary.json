@@ -1,0 +1,95 @@
+{
+  "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da",
+  "protocol": {
+    "role": "development physical check; never included in final test success rate",
+    "development_case_ids": [
+      "fast-train-05",
+      "fast-train-15",
+      "fast-train-25"
+    ],
+    "physical_pilot_conditions": [
+      "act"
+    ],
+    "physical_pilot_distances": [
+      [
+        0.2,
+        0.3
+      ],
+      [
+        0.25,
+        0.3
+      ],
+      [
+        0.3,
+        0.3
+      ]
+    ]
+  },
+  "cases": [
+    {
+      "case": "01-act",
+      "condition": "act",
+      "distance": [
+        0.2,
+        0.3
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 13.956050334003521,
+      "sim_s": 4.099999999999671,
+      "approach_calls": 42,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case": "02-act",
+      "condition": "act",
+      "distance": [
+        0.25,
+        0.3
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 13.971422667003935,
+      "sim_s": 4.099999999999671,
+      "approach_calls": 42,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case": "03-act",
+      "condition": "act",
+      "distance": [
+        0.3,
+        0.3
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 13.260047749994555,
+      "sim_s": 4.099999999999671,
+      "approach_calls": 42,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    }
+  ],
+  "training_source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da",
+  "training_code_unchanged": true,
+  "complete": true,
+  "external_model_calls": 0,
+  "external_model_tokens": 0
+}

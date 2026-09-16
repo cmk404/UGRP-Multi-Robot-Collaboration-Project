@@ -1,0 +1,1526 @@
+{
+  "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da",
+  "protocol_sha256": "6928c85c1241282e1e8630de55ae102ac4246018d69d98095785edea167a0f42",
+  "protocol": {
+    "schema": "ugrp.act_double_speed.v1",
+    "development_cases": [
+      "fast-train-05",
+      "fast-train-10",
+      "fast-train-15",
+      "fast-train-20",
+      "fast-train-25"
+    ],
+    "teacher_multiplier": 2.0,
+    "train_case_count": 50,
+    "training_seeds": [
+      20260916,
+      20260917
+    ],
+    "updates_per_robot": 10000,
+    "slow_sampling_threshold": 0.03,
+    "test_cases": [
+      {
+        "id": "in_domain-01",
+        "group": "in_domain",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.23192,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.28936,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "in_domain-02",
+        "group": "in_domain",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.22083,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.26829,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "in_domain-03",
+        "group": "in_domain",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.29161,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.27729,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "in_domain-04",
+        "group": "in_domain",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.23478,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.29157,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "in_domain-05",
+        "group": "in_domain",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.223,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.28048,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "in_domain-06",
+        "group": "in_domain",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.24901,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.29449,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "in_domain-07",
+        "group": "in_domain",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.22926,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.20176,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "in_domain-08",
+        "group": "in_domain",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.22734,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.25034,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "distance_shift-01",
+        "group": "distance_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.12,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.15,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "distance_shift-02",
+        "group": "distance_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.15,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.12,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "distance_shift-03",
+        "group": "distance_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.16,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.18,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "distance_shift-04",
+        "group": "distance_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.18,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.16,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "distance_shift-05",
+        "group": "distance_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.34,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.36,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "distance_shift-06",
+        "group": "distance_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.36,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.34,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "distance_shift-07",
+        "group": "distance_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.4,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.44,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "distance_shift-08",
+        "group": "distance_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.44,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.4,
+            "lateral_m": 0,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "lateral_shift-01",
+        "group": "lateral_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.241,
+            "lateral_m": 0.015,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.279,
+            "lateral_m": 0.015,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "lateral_shift-02",
+        "group": "lateral_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.241,
+            "lateral_m": -0.015,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.279,
+            "lateral_m": -0.015,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "lateral_shift-03",
+        "group": "lateral_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.241,
+            "lateral_m": 0.015,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.279,
+            "lateral_m": -0.015,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "lateral_shift-04",
+        "group": "lateral_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.241,
+            "lateral_m": -0.015,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.279,
+            "lateral_m": 0.015,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "lateral_shift-05",
+        "group": "lateral_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.241,
+            "lateral_m": 0.03,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.279,
+            "lateral_m": 0.03,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "lateral_shift-06",
+        "group": "lateral_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.241,
+            "lateral_m": -0.03,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.279,
+            "lateral_m": -0.03,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "lateral_shift-07",
+        "group": "lateral_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.241,
+            "lateral_m": 0.03,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.279,
+            "lateral_m": -0.03,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "lateral_shift-08",
+        "group": "lateral_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.241,
+            "lateral_m": -0.03,
+            "yaw_deg": 0
+          },
+          "r3": {
+            "distance_m": 0.279,
+            "lateral_m": 0.03,
+            "yaw_deg": 0
+          }
+        }
+      },
+      {
+        "id": "yaw_shift-01",
+        "group": "yaw_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.241,
+            "lateral_m": 0,
+            "yaw_deg": 4
+          },
+          "r3": {
+            "distance_m": 0.279,
+            "lateral_m": 0,
+            "yaw_deg": 4
+          }
+        }
+      },
+      {
+        "id": "yaw_shift-02",
+        "group": "yaw_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.241,
+            "lateral_m": 0,
+            "yaw_deg": -4
+          },
+          "r3": {
+            "distance_m": 0.279,
+            "lateral_m": 0,
+            "yaw_deg": -4
+          }
+        }
+      },
+      {
+        "id": "yaw_shift-03",
+        "group": "yaw_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.241,
+            "lateral_m": 0,
+            "yaw_deg": 4
+          },
+          "r3": {
+            "distance_m": 0.279,
+            "lateral_m": 0,
+            "yaw_deg": -4
+          }
+        }
+      },
+      {
+        "id": "yaw_shift-04",
+        "group": "yaw_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.241,
+            "lateral_m": 0,
+            "yaw_deg": -4
+          },
+          "r3": {
+            "distance_m": 0.279,
+            "lateral_m": 0,
+            "yaw_deg": 4
+          }
+        }
+      },
+      {
+        "id": "yaw_shift-05",
+        "group": "yaw_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.241,
+            "lateral_m": 0,
+            "yaw_deg": 8
+          },
+          "r3": {
+            "distance_m": 0.279,
+            "lateral_m": 0,
+            "yaw_deg": 8
+          }
+        }
+      },
+      {
+        "id": "yaw_shift-06",
+        "group": "yaw_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.241,
+            "lateral_m": 0,
+            "yaw_deg": -8
+          },
+          "r3": {
+            "distance_m": 0.279,
+            "lateral_m": 0,
+            "yaw_deg": -8
+          }
+        }
+      },
+      {
+        "id": "yaw_shift-07",
+        "group": "yaw_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.241,
+            "lateral_m": 0,
+            "yaw_deg": 8
+          },
+          "r3": {
+            "distance_m": 0.279,
+            "lateral_m": 0,
+            "yaw_deg": -8
+          }
+        }
+      },
+      {
+        "id": "yaw_shift-08",
+        "group": "yaw_shift",
+        "start_poses": {
+          "r1": {
+            "distance_m": 0.241,
+            "lateral_m": 0,
+            "yaw_deg": -8
+          },
+          "r3": {
+            "distance_m": 0.279,
+            "lateral_m": 0,
+            "yaw_deg": 8
+          }
+        }
+      }
+    ],
+    "conditions": [
+      "teacher2",
+      "slow_act",
+      "fast_act16",
+      "fast_act17"
+    ],
+    "success": "two settled approach confirmations AND common grasp success AND zero approach payload contact; no error",
+    "primary_speed_metric": "paired approach simulated seconds among both-success cases; report all failures separately",
+    "teacher_hard_metric": "all preregistered cases with teacher2 failure; count each frozen ACT seed success, no adaptation to test",
+    "scope": "Straight 20-30cm training only. Near starts overlap states in training trajectories; far starts, lateral and yaw shift unseen. Actions forward/stop only; no lateral/yaw correction trained. No object/light/FOV edits. Weld OFF.",
+    "evaluation_rule": "Same initial full physics and RGB; all 32 cases all 4 conditions, same 100-round cap, rotate order; no final-test checkpoint selection",
+    "development_failure_rule": "If teacher collection or development fails, diagnose there before final testing; record all exclusions/changes. Never retune on final results."
+  },
+  "model_hashes": {
+    "fast_act17": {
+      "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/act-fast-seed17-v1/r1/act/adapter.json": "1098e499ba0ff2e0b24af88723cf892ff07e2ba0c52fe3e9f6b8c48b59e24e4b",
+      "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/act-fast-seed17-v1/r1/act/config.json": "c371f30ea3177e5d7e70a4102f1878dea9557443b90c0f08447f37e5ddcfbdcc",
+      "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/act-fast-seed17-v1/r1/act/model.safetensors": "12a821e2b7e0ee382a16185154af91e4439207f96796b28a7ccca7aceb12828f",
+      "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/act-fast-seed17-v1/r3/act/adapter.json": "1098e499ba0ff2e0b24af88723cf892ff07e2ba0c52fe3e9f6b8c48b59e24e4b",
+      "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/act-fast-seed17-v1/r3/act/config.json": "c371f30ea3177e5d7e70a4102f1878dea9557443b90c0f08447f37e5ddcfbdcc",
+      "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/act-fast-seed17-v1/r3/act/model.safetensors": "5887aaf819100b8684f650a0a950727528be0d9b7afa63cabc3c1f791f03b4e5"
+    }
+  },
+  "conditions": [
+    "fast_act17"
+  ],
+  "cases": [
+    {
+      "case_id": "in_domain-01",
+      "group": "in_domain",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.23192,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.28936,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/in_domain-01-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "sim_s": 4.099999999999671,
+      "wall_s": 11.632882334000897,
+      "commands": 42,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "in_domain-02",
+      "group": "in_domain",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.22083,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.26829,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/in_domain-02-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "sim_s": 4.099999999999671,
+      "wall_s": 11.614001042005839,
+      "commands": 42,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "in_domain-03",
+      "group": "in_domain",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.29161,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.27729,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/in_domain-03-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "sim_s": 4.099999999999671,
+      "wall_s": 11.612809207988903,
+      "commands": 42,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "in_domain-04",
+      "group": "in_domain",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.23478,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.29157,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/in_domain-04-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "sim_s": 4.099999999999671,
+      "wall_s": 11.54695412502042,
+      "commands": 42,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "in_domain-05",
+      "group": "in_domain",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.223,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.28048,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/in_domain-05-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "sim_s": 4.099999999999671,
+      "wall_s": 11.51376129197888,
+      "commands": 42,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "in_domain-06",
+      "group": "in_domain",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.24901,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.29449,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/in_domain-06-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "sim_s": 4.099999999999671,
+      "wall_s": 11.536806624993915,
+      "commands": 42,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "in_domain-07",
+      "group": "in_domain",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.22926,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.20176,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/in_domain-07-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "sim_s": 4.099999999999671,
+      "wall_s": 11.79274995898595,
+      "commands": 42,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "in_domain-08",
+      "group": "in_domain",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.22734,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.25034,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/in_domain-08-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "sim_s": 4.099999999999671,
+      "wall_s": 11.758190083986847,
+      "commands": 42,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "distance_shift-01",
+      "group": "distance_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.12,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.15,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/distance_shift-01-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "sim_s": 4.099999999999671,
+      "wall_s": 11.942985915986355,
+      "commands": 42,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "distance_shift-02",
+      "group": "distance_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.15,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.12,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/distance_shift-02-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "sim_s": 4.099999999999671,
+      "wall_s": 12.491245832992718,
+      "commands": 42,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "distance_shift-03",
+      "group": "distance_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.16,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.18,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/distance_shift-03-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "sim_s": 4.099999999999671,
+      "wall_s": 12.41494462499395,
+      "commands": 42,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "distance_shift-04",
+      "group": "distance_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.18,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.16,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/distance_shift-04-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "sim_s": 4.099999999999671,
+      "wall_s": 12.652782499993918,
+      "commands": 42,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "distance_shift-05",
+      "group": "distance_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.34,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.36,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/distance_shift-05-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "wall_s": 22.40150450001238,
+      "commands": 200,
+      "contact_steps": 0,
+      "stop_reason": "bounded approach budget exhausted",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "distance_shift-06",
+      "group": "distance_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.36,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.34,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/distance_shift-06-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "wall_s": 22.245467250002548,
+      "commands": 200,
+      "contact_steps": 0,
+      "stop_reason": "bounded approach budget exhausted",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "distance_shift-07",
+      "group": "distance_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.4,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.44,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/distance_shift-07-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "wall_s": 21.97706587499124,
+      "commands": 200,
+      "contact_steps": 0,
+      "stop_reason": "bounded approach budget exhausted",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "distance_shift-08",
+      "group": "distance_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.44,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.4,
+          "lateral_m": 0.0,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/distance_shift-08-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "wall_s": 22.189078374998644,
+      "commands": 200,
+      "contact_steps": 0,
+      "stop_reason": "bounded approach budget exhausted",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "lateral_shift-01",
+      "group": "lateral_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0.015,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0.015,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/lateral_shift-01-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "wall_s": 22.42574804200558,
+      "commands": 200,
+      "contact_steps": 0,
+      "stop_reason": "bounded approach budget exhausted",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "lateral_shift-02",
+      "group": "lateral_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": -0.015,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": -0.015,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/lateral_shift-02-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": true,
+      "grasp_success": false,
+      "sim_s": 4.299999999999649,
+      "wall_s": 12.704287958011264,
+      "commands": 44,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "lateral_shift-03",
+      "group": "lateral_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0.015,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": -0.015,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/lateral_shift-03-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": true,
+      "grasp_success": false,
+      "sim_s": 3.8999999999996926,
+      "wall_s": 11.971446666982956,
+      "commands": 40,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "lateral_shift-04",
+      "group": "lateral_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": -0.015,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0.015,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/lateral_shift-04-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "wall_s": 22.658630833990173,
+      "commands": 200,
+      "contact_steps": 0,
+      "stop_reason": "bounded approach budget exhausted",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "lateral_shift-05",
+      "group": "lateral_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0.03,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0.03,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/lateral_shift-05-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "wall_s": 22.322844708018238,
+      "commands": 200,
+      "contact_steps": 9310,
+      "stop_reason": "bounded approach budget exhausted",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "lateral_shift-06",
+      "group": "lateral_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": -0.03,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": -0.03,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/lateral_shift-06-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "wall_s": 21.753309541003546,
+      "commands": 200,
+      "contact_steps": 9140,
+      "stop_reason": "bounded approach budget exhausted",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "lateral_shift-07",
+      "group": "lateral_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0.03,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": -0.03,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/lateral_shift-07-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "wall_s": 21.830709250003565,
+      "commands": 200,
+      "contact_steps": 9319,
+      "stop_reason": "bounded approach budget exhausted",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "lateral_shift-08",
+      "group": "lateral_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": -0.03,
+          "yaw_deg": 0.0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0.03,
+          "yaw_deg": 0.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/lateral_shift-08-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "wall_s": 21.3055750830099,
+      "commands": 200,
+      "contact_steps": 0,
+      "stop_reason": "bounded approach budget exhausted",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "yaw_shift-01",
+      "group": "yaw_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0.0,
+          "yaw_deg": 4.0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0.0,
+          "yaw_deg": 4.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/yaw_shift-01-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "wall_s": 21.276406584016513,
+      "commands": 200,
+      "contact_steps": 0,
+      "stop_reason": "bounded approach budget exhausted",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "yaw_shift-02",
+      "group": "yaw_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0.0,
+          "yaw_deg": -4.0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0.0,
+          "yaw_deg": -4.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/yaw_shift-02-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "wall_s": 21.526304917002562,
+      "commands": 200,
+      "contact_steps": 166,
+      "stop_reason": "bounded approach budget exhausted",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "yaw_shift-03",
+      "group": "yaw_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0.0,
+          "yaw_deg": 4.0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0.0,
+          "yaw_deg": -4.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/yaw_shift-03-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "wall_s": 21.368454791983822,
+      "commands": 200,
+      "contact_steps": 175,
+      "stop_reason": "bounded approach budget exhausted",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "yaw_shift-04",
+      "group": "yaw_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0.0,
+          "yaw_deg": -4.0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0.0,
+          "yaw_deg": 4.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/yaw_shift-04-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "wall_s": 21.35687379099545,
+      "commands": 200,
+      "contact_steps": 0,
+      "stop_reason": "bounded approach budget exhausted",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "yaw_shift-05",
+      "group": "yaw_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0.0,
+          "yaw_deg": 8.0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0.0,
+          "yaw_deg": 8.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/yaw_shift-05-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "wall_s": 21.13012083299691,
+      "commands": 200,
+      "contact_steps": 9133,
+      "stop_reason": "bounded approach budget exhausted",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "yaw_shift-06",
+      "group": "yaw_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0.0,
+          "yaw_deg": -8.0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0.0,
+          "yaw_deg": -8.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/yaw_shift-06-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "wall_s": 21.301154584012693,
+      "commands": 200,
+      "contact_steps": 9148,
+      "stop_reason": "bounded approach budget exhausted",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "yaw_shift-07",
+      "group": "yaw_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0.0,
+          "yaw_deg": 8.0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0.0,
+          "yaw_deg": -8.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/yaw_shift-07-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "wall_s": 21.501315207977314,
+      "commands": 200,
+      "contact_steps": 8975,
+      "stop_reason": "bounded approach budget exhausted",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    },
+    {
+      "case_id": "yaw_shift-08",
+      "group": "yaw_shift",
+      "condition": "fast_act17",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0.0,
+          "yaw_deg": -8.0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0.0,
+          "yaw_deg": 8.0
+        }
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-double-speed-generalization/outputs/final-fast17-v1/yaw_shift-08-fast_act17",
+      "returncode": 0,
+      "timeout": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "sim_s": 20.249999999999154,
+      "wall_s": 22.64412120898487,
+      "commands": 200,
+      "contact_steps": 0,
+      "stop_reason": "bounded approach budget exhausted",
+      "error": null,
+      "source_sha": "7d231f7d85c6ef02e1f90575ad6492412472e9da"
+    }
+  ],
+  "complete": true,
+  "external_model_calls": 0,
+  "external_model_tokens": 0
+}

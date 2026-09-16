@@ -1,0 +1,32 @@
+{
+  "offline_regressions": {
+    "passed": 684,
+    "subtests_passed": 154
+  },
+  "targeted_boundary_data_control": {
+    "passed": 18,
+    "subtests_passed": 5
+  },
+  "optional_act_reference_and_new_boundary": {
+    "passed": 13
+  },
+  "primary_physics_runs": 128,
+  "primary_runtime_errors": 0,
+  "development_physics_runs": 6,
+  "development_successes": 6,
+  "teacher_collection_successes": 55,
+  "secondary_teacher1_runs": 17,
+  "primary_audit": "results/final-audit-v1.json",
+  "secondary_audit": "results/teacher1-diagnostic-audit-v1.json",
+  "visual_review": {
+    "teacher": "fast-train-05 four sampled development frames",
+    "student": "seed16 development four sampled frames",
+    "comparisons": [
+      "in_domain-01 at11s",
+      "distance_shift-07 finalframe",
+      "lateral_shift-05 at11s",
+      "yaw_shift-05 at11s"
+    ],
+    "scope": "Sampled visual inspection, not every video frame. Full video streams decoded; all original frame timestamps OCR-validated."
+  }
+}
