@@ -10,6 +10,7 @@ from pathlib import Path
 import subprocess
 import sys
 import time
+import uuid
 
 ROOT=Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:sys.path.insert(0,str(ROOT))
@@ -20,6 +21,11 @@ from harness.dispatch_plan import (validate_dispatch_plan,validate_dispatch_repl
 from harness.three_robot_plan import TeamAgreement
 from scripts.three_robot_runtime import ThreeRobotRuntime,write
 from scripts.research_dispatch_scene import DispatchScene
+
+
+def opaque_run_id():
+    """An actor-visible identifier must not encode condition, seed or answer."""
+    return 'dispatch-'+uuid.uuid4().hex[:12]
 
 
 def run(args):
@@ -40,7 +46,7 @@ def run(args):
         initial=scene.evaluate_positions()
         frames=scene.capture('initial')
         if args.planner!='none':
-            run_id=f'dispatch-{args.variant}-{args.seed}'
+            run_id=opaque_run_id()
             team=ThreeRobotRuntime(args.output/'team',run_id=run_id,mode=args.planner,
                 agreement=TeamAgreement(run_id,plan_validator=validate_dispatch_plan),
                 request_builder=partial(build_dispatch_request,task=actor_task(config['static_map'])),

@@ -1,5 +1,6 @@
 import copy
 import json
+import re
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
@@ -37,6 +38,16 @@ def test_arena_actor_inputs_do_not_reveal_seed_spawn_or_unannounced_barrier():
     text=request['messages'][1]['content']
     assert all(k not in text for k in ('setup_only','unexpected_obstacles','spawns','seed','evaluation'))
     assert len(request['images'])==2
+
+
+def test_request_identifiers_do_not_disclose_condition_or_seed():
+    from scripts.run_research_dispatch import opaque_run_id
+    run_id=opaque_run_id()
+    assert re.fullmatch(r'dispatch-[0-9a-f]{12}',run_id)
+    req=build_dispatch_request('r1',task=actor_task(authored_map('north_blocked')),
+        request_id=run_id+'-r1-plan-0',own_rgb=b'own',top_rgb=b'top',
+        agreement=TeamAgreement(run_id,plan_validator=validate_dispatch_plan).context())
+    assert 'north_blocked' not in json.dumps(req)
 
 
 @pytest.mark.parametrize('solo',ROBOTS)
