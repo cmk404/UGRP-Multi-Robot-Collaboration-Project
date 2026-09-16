@@ -6,8 +6,9 @@
 
 **3대 실행 기본 경로: 목표 합의 → R1/R3 빔 운반 + R2 별도 상자 운반.**
 세 독립 LLM이 같은 물체·담당·목적지·완료 조건에 합의한 뒤 두 작업을 함께 실행한다.
+자동 선택·먼 구역 지정의 실제 LLM 두 실행과 연결 진단 한 실행 모두 운반·방출·안정을 확인했다.
 상자 목적지는 두 구역 중 선택하며, 기술이 지원하는 로봇 조합과 레인은 고정되어 있다.
-[구성·실행 방법](docs/three_robot_e2e.md) · [검증 계획](experiments/three-robot-physical-mission-20260916/protocol.md).
+[구성·실행 방법](docs/three_robot_e2e.md) · [최종 3/3 결과·실패 기록·영상](experiments/three-robot-physical-mission-20260916/README.md).
 과거 R2 정지 관찰 구성은 `--inspection-demo`로만 실행하며,
 [기존 관찰 구성의 결과](experiments/three-robot-e2e-20260916/README.md)와 구분한다.
 
