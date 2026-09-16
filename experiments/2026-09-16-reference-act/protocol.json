@@ -1,0 +1,13 @@
+{
+  "schema": "ugrp.reference_act_approach_comparison.v1",
+  "seed": 20260916,
+  "heldout_cases": ["train-05", "train-10", "train-15", "train-20", "train-25"],
+  "threads": 2,
+  "steps": 300,
+  "batch_size": 16,
+  "learning_rate": 0.0001,
+  "physical_pilot_distances": [[0.205, 0.205], [0.255, 0.225], [0.295, 0.275]],
+  "physical_pilot_conditions": ["kernel", "act"],
+  "claim": "Small-preset integration pilot; no architecture ranking, no original-paper reproduction.",
+  "selection_rule": "Keep the existing default. Record every declared case and failure. Do not tune on held-out cases."
+}

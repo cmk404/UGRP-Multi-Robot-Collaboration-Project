@@ -33,6 +33,7 @@
 - [동기화 담당: 공동 파지부터 해제까지 입출력 계약과 실행 예제](docs/task_stage_sync_contract.md) — 프로토콜 검증, 실제 로봇 연결은 후속 작업
 - [실험 목록과 증거 관리](experiments/README.md)
 - [연구 비교 조건과 관측 경계](docs/warehouse_research_contract.md)
+- [레퍼런스 차이표와 공식 ACT 비교 경로](docs/reference_alignment.md) — RGB 전용 소규모 비교; 기본 제어기 변경 아님
 - [현재 아키텍처 상세 기록](docs/current_architecture_todo.md) — 각 항목의 기록 날짜를 확인한다.
 - [실물 로봇 trace 진단](docs/real_trace_system.md)
 - [결정 이력](docs/decision_log.md)
