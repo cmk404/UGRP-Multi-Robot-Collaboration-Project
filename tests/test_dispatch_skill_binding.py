@@ -224,3 +224,14 @@ def test_box_tracking_uses_actual_prior_appearance_over_same_colour_floor():
     assert 409<after['cargo_center_px'][0]<423
     blank=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))[1].tobytes()
     with pytest.raises(RuntimeError):route.observe(blank)
+
+
+def test_tracked_thin_cargo_reacquires_after_leaving_cyan_floor():
+    from harness.dispatch_skill_binding import ImageRoute
+    root=Path('tests/fixtures/dispatch_skill_transfer')
+    route=ImageRoute(SkillBindings(committed(),authored_map('open')),'box')
+    route.box_center=np.array([577.,574.]);route.box_delta=np.array([6.,0.])
+    route.box_previous=cv2.imdecode(np.frombuffer((root/'box-edge-190.jpg').read_bytes(),np.uint8),cv2.IMREAD_COLOR)
+    _,e=route.observe((root/'box-edge-191.jpg').read_bytes())
+    assert np.allclose(e['cargo_center_px'],[583.,573.],atol=2)
+    assert e['tracking']['method']=='cyan component'

@@ -138,7 +138,8 @@ class ImageRoute:
         else:
             hsv=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
             mask=cv2.inRange(hsv,np.array((80,125 if self.box_center is None else 70,35),np.uint8),np.array((102,255,255),np.uint8))
-            mask=cv2.morphologyEx(mask,cv2.MORPH_OPEN,np.ones((3,3),np.uint8))
+            if self.box_center is None:
+                mask=cv2.morphologyEx(mask,cv2.MORPH_OPEN,np.ones((3,3),np.uint8))
             n,_,stats,centers=cv2.connectedComponentsWithStats(mask)
             choices=[i for i in range(1,n) if 25 <= stats[i,4] <= 600
                      and max(stats[i,2:4]) < 40]
@@ -165,8 +166,17 @@ class ImageRoute:
                     raise RuntimeError('dispatch box appearance unresolved in TOP RGB')
                 matches=cv2.matchTemplate(search,template,cv2.TM_CCOEFF_NORMED)
                 _,score,_,location=cv2.minMaxLoc(matches)
-                center=np.array([px-18+location[0],py-18+location[1]],dtype=float)
-                cx,cy=center.astype(int)
+                # Preserve subpixel displacement; rounding every .2 s slice
+                # otherwise accumulates a several-pixel lead over the cargo.
+                offset=np.zeros(2)
+                lx,ly=location
+                for axis,(before,peak,after) in enumerate((
+                    (matches[ly,max(0,lx-1)],matches[ly,lx],matches[ly,min(matches.shape[1]-1,lx+1)]),
+                    (matches[max(0,ly-1),lx],matches[ly,lx],matches[min(matches.shape[0]-1,ly+1),lx]))):
+                    denominator=float(before)-2*float(peak)+float(after)
+                    if abs(denominator)>1e-8:offset[axis]=np.clip(.5*(float(before)-float(after))/denominator,-.5,.5)
+                center=self.box_center+np.array(location)-18+offset
+                cx,cy=np.rint(center).astype(int)
                 local_cyan=cv2.inRange(hsv[cy-12:cy+13,cx-12:cx+13],np.array((80,70,25),np.uint8),np.array((102,255,255),np.uint8))
                 if score<.85 or np.linalg.norm(center-self.box_center)>20 or np.count_nonzero(local_cyan)<15:
                     raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')

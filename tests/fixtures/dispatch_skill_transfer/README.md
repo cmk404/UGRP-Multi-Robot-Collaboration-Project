@@ -13,3 +13,5 @@
 `box-floor-122/162/163.jpg`: Q2 source 18474aa, raw shared RGB. At 163 the cargo mask joins the cyan floor; prior observed background separates it.
 
 `box-floor-165.jpg`: Q3 source 2e5f20b; raw shared RGB, narrow visible cyan edge over cyan floor.
+
+`box-edge-190/191.jpg`: Q4 source 6c7a941; thin cargo color component leaving cyan floor. Raw TOP.
