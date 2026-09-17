@@ -209,6 +209,12 @@ def test_contact_profile_preserves_robot_cargo_physics_and_cameras():
         assert np.array_equal(getattr(old,attr),getattr(new,attr)),attr
     assert new.opt.noslip_iterations==0 and new.opt.timestep==.0005
     assert new.npair-old.npair==12 and np.all(new.pair_solreffriction[:,1]==-3000)
+    fine=mujoco.MjModel.from_xml_string(contact_profile(xml,'local_contact_fine'))
+    for attr in ('geom_friction','body_mass','geom_size','geom_pos','cam_pos','cam_quat','cam_fovy',
+                 'actuator_gainprm','actuator_forcerange','pair_friction','pair_solref','pair_solimp','pair_margin','pair_gap'):
+        assert np.array_equal(getattr(new,attr),getattr(fine,attr)),attr
+    assert fine.opt.noslip_iterations==0 and fine.opt.timestep==.00025
+    assert fine.npair==new.npair and np.all(fine.pair_solreffriction[:,1]==-6000)
 
 
 def test_grasp_reserves_transport_before_a_load_is_lifted():
