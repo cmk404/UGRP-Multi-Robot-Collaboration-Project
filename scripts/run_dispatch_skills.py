@@ -158,7 +158,7 @@ def run(args):
     stage_skill,stages=load_stage_models(args.stage_model_dir)
     reference=args.reference_top.read_bytes()
     config=episode(args.variant,args.seed)
-    config['contact_solver']={'noslip_iterations':args.contact_refinement}
+    config['contact_solver_profile']=args.contact_profile
     scene=SkillScene(config,args.output)
     started=time.monotonic();pair=team=None
     result={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),

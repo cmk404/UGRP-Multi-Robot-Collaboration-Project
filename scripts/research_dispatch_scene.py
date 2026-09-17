@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import hashlib
-import xml.etree.ElementTree as ET
 from pathlib import Path
 from unittest.mock import patch
 
@@ -27,15 +26,12 @@ class DispatchScene:
         def builder(*args,**kwargs):
             kwargs['navigation_camera']=False
             xml,self.manifest=build_scene_xml(original(*args,**kwargs),self.config)
-            solver=self.config.get('contact_solver')
-            if solver is not None:
-                if solver not in ({'noslip_iterations':0},{'noslip_iterations':4}):
-                    raise ValueError('unsupported contact solver profile')
-                root=ET.fromstring(xml)
-                root.find('option').set('noslip_iterations',str(solver['noslip_iterations']))
-                xml=ET.tostring(root,encoding='unicode')
+            profile=self.config.get('contact_solver_profile')
+            if profile is not None:
+                from sim.dispatch_contact_profile import contact_profile
+                xml=contact_profile(xml,profile)
                 self.manifest['scene_xml_sha256']=hashlib.sha256(xml.encode()).hexdigest()
-                self.manifest['contact_solver']=dict(solver)
+                self.manifest['contact_solver_profile']=profile
             self.xml=xml
             return xml
         self.out.mkdir(parents=True,exist_ok=False)

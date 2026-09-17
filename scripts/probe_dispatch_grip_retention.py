@@ -20,6 +20,7 @@ def main():
     import mujoco
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--source-run',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
+    p.add_argument('--profiles',nargs='+',default=['legacy','global_noslip','local_friction'])
     args=p.parse_args()
     if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip():raise RuntimeError('commit source first')
     args.output.mkdir(parents=True,exist_ok=False)
@@ -32,15 +33,15 @@ def main():
     setup=min(samples,key=lambda x:abs(x['sim_time_s']-start))
     report={'teacher_only':True,'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         'replayed_run':str(args.source_run.resolve()),'cases':[]}
-    for refinement in [0,4]:
+    for profile in args.profiles:
         for moving in [False,True]:
-            case={'noslip_iterations':refinement,'moving':moving,'samples':[]}
-            out=args.output/f'noslip-{refinement}-move-{int(moving)}'
-            config=episode('open',11)
+            case={'contact_solver_profile':profile,'moving':moving,'samples':[]}
+            out=args.output/f'{profile}-move-{int(moving)}'
+            config=episode('open',11);config['contact_solver_profile']=profile
             for rid in pair.values():config['setup_only']['spawns'][rid]=[*setup['robots'][rid],0.]
             scene=DispatchScene(config,out);began=time.monotonic()
             try:
-                scene.open();w=scene.world;w.model.opt.noslip_iterations=refinement
+                scene.open();w=scene.world
                 for item in replay:
                     if not item['stage'].startswith('grasp'):continue
                     cmd=item['command'];targets=normalize_replay(cmd)
@@ -48,13 +49,18 @@ def main():
                 scene.capture('lift-start')
                 beam=mujoco.mj_name2id(w.model,mujoco.mjtObj.mjOBJ_GEOM,'team_beam_geom')
                 for i in range(310):
-                    a={'kind':'mecanum','forward':.08 if moving and 35<=i<235 else 0.,
+                    a={'kind':'mecanum','forward':.08 if moving and 35<=i<135 else 0.,
                         'left':.08 if moving and i<35 else 0.,'turn':0.,'duration_s':.1}
                     for rid in pair.values():scene.ports[rid].apply(a,float(w.data.time))
                     scene.step(.1)
                     case['samples'].append({'t':round((i+1)*.1,1),'beam_position':w.data.geom_xpos[beam].tolist(),
                         'contacts':{rid:_plain_beam_contact(w,rid) for rid in pair.values()},'weld':bool(w.data.eq_active.any())})
                     if i in [21,99,309]:scene.capture('hold-'+str(i))
+                scene.hold()
+                w._team_joint_move_servos({rid:{1:2000} for rid in pair.values()},.65,settle_s=.5)
+                scene.step(1.)
+                case['opened_release_height']=float(w.data.geom_xpos[beam][2])
+                scene.capture('opened-release')
                 case['final_height']=case['samples'][-1]['beam_position'][2]
                 case['min_height']=min(s['beam_position'][2] for s in case['samples'])
                 case['weld_steps']=scene.weld_steps
