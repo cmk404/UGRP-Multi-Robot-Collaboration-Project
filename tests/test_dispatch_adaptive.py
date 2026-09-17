@@ -161,3 +161,18 @@ def test_bright_cyan_probe_keeps_full_cargo_silhouette_without_floor_merge():
     image[165:]=0
     floor_only=base64.b64encode(cv2.imencode('.jpg',image)[1]).decode()
     assert not compare_box_comotion(floor_only,floor_only,min_saturation=150)['attached']
+
+
+def test_box_identity_does_not_switch_to_a_nearby_painted_floor_fragment():
+    import json
+    from harness.dispatch_skill_binding import ImageRoute,SkillBindings
+    from sim.research_dispatch_arena import authored_map
+    root=Path('tests/fixtures/dispatch_adaptive')
+    prior=json.loads((root/'box-floor-identity-prior.json').read_text())
+    route=ImageRoute(SkillBindings(prior['committed'],authored_map('narrow_south')),'box')
+    route.box_center=np.array(prior['previous_center_px'])
+    route.box_delta=np.array(prior['previous_delta_px'])
+    route.box_previous=cv2.imread(str(root/'box-floor-identity-199.jpg'))
+    _,evidence=route.observe((root/'box-floor-identity-200.jpg').read_bytes())
+    assert np.linalg.norm(np.array(evidence['cargo_center_px'])-[268.25,204.66])<1
+    assert np.linalg.norm(np.array(evidence['cargo_center_px'])-[256.30,218.37])>15

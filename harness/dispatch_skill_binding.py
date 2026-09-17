@@ -202,7 +202,10 @@ class ImageRoute:
             bounds=np.array(feature['corners4'])*[w,h]
         else:
             hsv=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
-            mask=cv2.inRange(hsv,np.array((80,125 if self.box_center is None else 70,35),np.uint8),np.array((102,255,255),np.uint8))
+            # Keep the acquired cargo's saturation boundary during tracking.
+            # Relaxing it after acquisition admits tiny painted-floor regions
+            # near the prediction and silently switches the target identity.
+            mask=cv2.inRange(hsv,np.array((80,125,35),np.uint8),np.array((102,255,255),np.uint8))
             if self.box_center is None:
                 mask=cv2.morphologyEx(mask,cv2.MORPH_OPEN,np.ones((3,3),np.uint8))
             n,_,stats,centers=cv2.connectedComponentsWithStats(mask)
