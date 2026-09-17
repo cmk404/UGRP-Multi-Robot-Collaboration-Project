@@ -1,0 +1,317 @@
+{
+  "map": {
+    "schema": "ugrp.dispatch_pair_navigation.v1",
+    "top_camera": {
+      "name": "cctv_top",
+      "position_m": [
+        0.55,
+        -2.0,
+        2.5
+      ],
+      "quaternion_wxyz": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fov_y_deg": 55
+    },
+    "bounds_m": [
+      -1.02,
+      2.12,
+      -3.18,
+      -0.82
+    ],
+    "footprint": {
+      "half_forward_m": 0.2,
+      "half_lateral_m": 0.47,
+      "margin_m": 0.025
+    },
+    "obstacles": [
+      {
+        "id": "wall_north",
+        "center_m": [
+          0.55,
+          -0.82
+        ],
+        "half_extents_m": [
+          1.57,
+          0.025
+        ],
+        "height_m": 0.1,
+        "kind": "wall"
+      },
+      {
+        "id": "wall_south",
+        "center_m": [
+          0.55,
+          -3.18
+        ],
+        "half_extents_m": [
+          1.57,
+          0.025
+        ],
+        "height_m": 0.1,
+        "kind": "wall"
+      },
+      {
+        "id": "wall_west",
+        "center_m": [
+          -1.02,
+          -2.0
+        ],
+        "half_extents_m": [
+          0.025,
+          1.18
+        ],
+        "height_m": 0.1,
+        "kind": "wall"
+      },
+      {
+        "id": "wall_east",
+        "center_m": [
+          2.12,
+          -2.0
+        ],
+        "half_extents_m": [
+          0.025,
+          1.18
+        ],
+        "height_m": 0.1,
+        "kind": "wall"
+      },
+      {
+        "id": "service_island",
+        "center_m": [
+          0.6,
+          -2.0
+        ],
+        "half_extents_m": [
+          0.18,
+          0.47
+        ],
+        "height_m": 0.16,
+        "kind": "island"
+      },
+      {
+        "id": "rgb_barrier_0",
+        "center_m": [
+          0.6060332589135561,
+          -1.1319363679601522
+        ],
+        "half_extents_m": [
+          0.1646019584865962,
+          0.37563044165297244
+        ],
+        "height_m": 0.25,
+        "source": "conservative TOP RGB projection; unknown actual height",
+        "bbox_px": [
+          455,
+          21,
+          80,
+          181
+        ],
+        "image_sha256": "adb24132a2f9031093720ce96784ee643f0bbd08ebe44ed19544f178304a51ad"
+      },
+      {
+        "id": "rgb_box_0",
+        "center_m": [
+          1.7371866687153765,
+          -1.4352480606610059
+        ],
+        "half_extents_m": [
+          0.05,
+          0.06
+        ],
+        "height_m": 0.1,
+        "source": "current cyan cargo RGB with conservative projection bound"
+      },
+      {
+        "id": "rgb_other_robot",
+        "center_m": [
+          1.905024155573127,
+          -1.9931700991223886
+        ],
+        "half_extents_m": [
+          0.14,
+          0.14
+        ],
+        "height_m": 0.35,
+        "source": "current wheel-envelope RGB observation"
+      },
+      {
+        "id": "unselected_north",
+        "center_m": [
+          0.6,
+          -1.18
+        ],
+        "half_extents_m": [
+          0.18,
+          0.35
+        ],
+        "height_m": 0.25,
+        "source": "agreed route constraint"
+      }
+    ],
+    "grid_m": 0.06,
+    "goal": {
+      "center_m": [
+        1.5043600000000001,
+        -1.36376
+      ],
+      "relative_yaw_deg": 0.0,
+      "placement_tolerance_m": [
+        0.06,
+        0.015
+      ],
+      "preferred_offset_m": [
+        -0.06,
+        0.0
+      ],
+      "placement_preference": "leave clearance toward adjacent authored box slot"
+    },
+    "route_name": "south",
+    "source_map_sha256": "c7743e938857df66b4080e8b13f22f6640e7776fef53b2534556ed1f79e08f46"
+  },
+  "observations": {
+    "r1": {
+      "xy_m": [
+        -0.12192655225974525,
+        -1.972966595491736
+      ],
+      "relative_yaw_rad": -0.0037664722218292788,
+      "confidence": 1.0,
+      "center_uv": [
+        286.68954227792614,
+        351.7427189705558
+      ],
+      "feature_plane_height_m": 0.09,
+      "tracking": {
+        "method": "bidirectional RGB rigid chassis motion; rolling tread excluded",
+        "inlier_fraction": 1.0,
+        "features": 40,
+        "inliers": 40,
+        "scale": 0.9998334524272535,
+        "turn_deg": 0.002554442961901792,
+        "max_cycle_error_px": 0.0036835360806435347,
+        "current_wheel_geometry": {
+          "accepted": true,
+          "corner_pixels": [
+            83,
+            83,
+            94,
+            86
+          ],
+          "corners_px": [
+            [
+              267.9277108433735,
+              332.4096385542169
+            ],
+            [
+              305.03614457831327,
+              333.7710843373494
+            ],
+            [
+              305.06382978723406,
+              370.43617021276594
+            ],
+            [
+              268.6860465116279,
+              370.3837209302326
+            ]
+          ],
+          "observed_center_px": [
+            286.67843293013715,
+            351.75015350864123
+          ],
+          "correction_px": [
+            -0.011109347788988089,
+            0.007434538085419717
+          ],
+          "heading_correction_deg": -0.027061051841367402,
+          "source": "current four wheel cluster arrangement; texture motion is not chassis heading"
+        }
+      }
+    },
+    "r3": {
+      "xy_m": [
+        -0.12496554016673622,
+        -1.3364430471944069
+      ],
+      "relative_yaw_rad": -0.026590389048014498,
+      "confidence": 1.0,
+      "center_uv": [
+        285.8174995711925,
+        169.09121296094696
+      ],
+      "feature_plane_height_m": 0.09,
+      "tracking": {
+        "method": "bidirectional RGB rigid chassis motion; rolling tread excluded",
+        "inlier_fraction": 1.0,
+        "features": 44,
+        "inliers": 44,
+        "scale": 0.999958850500427,
+        "turn_deg": -0.00048499688569553906,
+        "max_cycle_error_px": 0.004014105536043644,
+        "current_wheel_geometry": {
+          "accepted": true,
+          "corner_pixels": [
+            70,
+            102,
+            110,
+            70
+          ],
+          "corners_px": [
+            [
+              267.2857142857143,
+              150.2
+            ],
+            [
+              304.7549019607843,
+              151.18627450980392
+            ],
+            [
+              304.54545454545456,
+              188.56363636363636
+            ],
+            [
+              266.64285714285717,
+              186.4
+            ]
+          ],
+          "observed_center_px": [
+            285.80723198370254,
+            169.08747771836008
+          ],
+          "correction_px": [
+            -0.010267587489977359,
+            -0.003735242586870413
+          ],
+          "heading_correction_deg": -0.01563166712268076,
+          "source": "current four wheel cluster arrangement; texture motion is not chassis heading"
+        }
+      }
+    }
+  },
+  "payload": {
+    "xy_m": [
+      -0.13825308611803555,
+      -1.6375694284643196
+    ],
+    "relative_yaw_rad": 0.004137335066051406,
+    "feature_area_px": 1393.5,
+    "feature_plane_height_m": 0.09,
+    "xy_is_visible_fragment_centroid": true,
+    "axis_xy": [
+      0.009232475297424875,
+      -0.9999573797917002
+    ],
+    "center_projection_interval_m": [
+      1.5558468654921644,
+      1.7165995679314263
+    ]
+  },
+  "motion_heading_rad": 0.09890752524844233,
+  "provenance": "candidate13 F4 archived actor RGB-derived values and authored map only; no referee",
+  "source_sha": "3e7a38a3cdd99e01b68babbb06584b593e995ebc"
+}

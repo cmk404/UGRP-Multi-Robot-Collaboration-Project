@@ -439,6 +439,7 @@ class PairNavigator:
         self.probe_origin = None
         self.probe_steps = 0
         self.heading = None
+        self.formation_heading = None
         self.route = None
         self.reference = None
         self.segment = 1
@@ -482,20 +483,23 @@ class PairNavigator:
                 self.offsets = {r: positions[r]-center for r in ROBOTS}
                 line=positions['r1']-positions['r3']
                 self.anchor_line_angle=math.atan2(line[1],line[0])
+                self.formation_heading=wrap(self.anchor_line_angle+math.pi/2)
                 self.target_span=float(np.linalg.norm(line));self.previous_span=self.target_span;self.span_rate=0.;self.span_bias=0.
                 self.anchor_yaws = {r: obs[r]['relative_yaw_rad'] for r in ROBOTS}
                 self.anchor_payload = dict(self.vision.payload)
                 self.reference = np.array([*center, 0.])
                 goal_xy=np.array(self.map['goal']['center_m'])-(np.array(self.anchor_payload['xy_m'])-center)
                 goal = [*goal_xy, math.radians(self.map['goal']['relative_yaw_deg'])]
-                # Footprint orientation follows initial visual heading plus turn.
-                start_pose = [*center, self.heading]
-                goal_pose = [*goal[:2], self.heading+goal[2]]
+                # A mecanum forward probe measures the motion response, not the
+                # orientation of the full carried formation. Current RGB chassis
+                # centres determine the footprint; keep the probe for motor axes.
+                start_pose = [*center, self.formation_heading]
+                goal_pose = [*goal[:2], self.formation_heading+goal[2]]
                 absolute = plan_placement_route(start_pose, goal_pose, self.map)
                 if absolute is None:
                     self.phase = 'no_route'
                 else:
-                    self.route = [[p[0], p[1], wrap(p[2]-self.heading)] for p in absolute]
+                    self.route = [[p[0], p[1], wrap(p[2]-self.formation_heading)] for p in absolute]
                     self.plan_hash = digest({'map_sha256': digest(self.map), 'route': self.route,
                                              'offsets': {r: self.offsets[r].tolist() for r in ROBOTS}})
                     self.phase = 'track'
@@ -554,7 +558,7 @@ class PairNavigator:
         result = {'action': action, 'status': self.phase, 'ready': self.phase not in ('no_route',),
                   'done': self.phase == 'done', 'observations': obs, 'plan_hash': self.plan_hash,
                   'route': self.route, 'reference': None if self.reference is None else self.reference.tolist(),
-                  'heading_rad': self.heading, 'segment': self.segment}
+                  'heading_rad': self.heading, 'formation_heading_rad':self.formation_heading, 'segment': self.segment}
         result['payload'] = dict(self.vision.payload)
         if hasattr(self,'last_twist'):result['common_formation_twist']=self.last_twist
         return result

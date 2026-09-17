@@ -314,3 +314,19 @@ def test_release_yield_recovers_four_corners_when_last_cargo_hint_clips_the_chas
     # Removing a complete lower row of wheels must not turn the arm into a base.
     mask[205:]=0
     with pytest.raises(ValueError):acquire_wheel_geometry(mask,np.array(hint)-[50,0])
+
+
+def test_formation_footprint_uses_rgb_chassis_axis_not_mecanum_probe_drift():
+    import json
+    from harness.dispatch_pair_navigation import PairNavigator
+    raw=json.loads((ROOT/'formation-route-after-yield.json').read_text())
+    nav=PairNavigator(raw['map'],'r1')
+    nav.phase='probe_settle';nav.confirmations=2;nav.heading=raw['motion_heading_rad']
+    nav.vision.observe=lambda own,top:raw['observations']
+    nav.vision.payload=raw['payload']
+    decision=nav.decide(b'unused',b'unused')
+    assert decision['status']=='track' and decision['route']
+    assert abs(decision['formation_heading_rad'])<.01
+    assert decision['heading_rad']>.09  # Distinct observed motor response retained.
+    absolute=[[x,y,a+decision['formation_heading_rad']]for x,y,a in decision['route']]
+    assert all(swept_clear(a,b,raw['map'])for a,b in zip(absolute,absolute[1:]))

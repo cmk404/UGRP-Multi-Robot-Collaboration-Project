@@ -116,6 +116,12 @@ class VisualBoxSkill:
             # opening/retracting. Never manufacture a ground-height estimate
             # while the object is carried.
             ground_options={"refine_position":True} if self.release_refine_ground_fit and self.phase!="approach" else {}
+            # The dispatch cargo binding uses a stronger cyan cut than the
+            # legacy room: blue-green floor pixels otherwise merge the released
+            # box into a clipped background component. Projection, identity and
+            # multi-view ground-stationarity gates remain unchanged.
+            if self.phase!="approach" and self.attachment_min_saturation>65:
+                ground_options["min_saturation"]=self.attachment_min_saturation
             box = (observe_ground_box(obs["image"], pose, self.cargo_id,**ground_options)
                    if ground_phase else {"visible": False, "reason": "GROUND_ESTIMATE_NOT_APPLICABLE_WHILE_HELD"})
         else:

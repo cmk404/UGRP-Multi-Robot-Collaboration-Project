@@ -188,3 +188,18 @@ def test_box_identity_does_not_switch_to_a_nearby_painted_floor_fragment():
     _,evidence=route.observe((root/'box-floor-identity-200.jpg').read_bytes())
     assert np.linalg.norm(np.array(evidence['cargo_center_px'])-[268.25,204.66])<1
     assert np.linalg.norm(np.array(evidence['cargo_center_px'])-[256.30,218.37])>15
+
+
+def test_release_floor_silhouette_rejects_background_and_stays_fixed_across_own_pan():
+    import base64,json,numpy as np
+    from pathlib import Path
+    from harness.markerless_box import observe_ground_box
+    root=Path('tests/fixtures/dispatch_adaptive')
+    meta=json.loads((root/'released-box-floor.json').read_text());points=[]
+    for row in meta['frames']:
+        image=base64.b64encode((root/row['file']).read_bytes()).decode()
+        assert not observe_ground_box(image,row['pose'],refine_position=True)['visible']
+        seen=observe_ground_box(image,row['pose'],refine_position=True,min_saturation=150)
+        assert seen['visible'] and seen['reason']=='FLOOR_CUBOID_HYPOTHESIS_VALIDATED'
+        points.append(np.array(seen['estimated_box_center_base_m']))
+    assert max(np.linalg.norm(a-b)for a in points for b in points)<.01
