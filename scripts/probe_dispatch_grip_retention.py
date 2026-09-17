@@ -56,7 +56,7 @@ def main():
                     case['samples'].append({'t':round((i+1)*.1,1),'beam_position':w.data.geom_xpos[beam].tolist(),
                         'contacts':{rid:_plain_beam_contact(w,rid) for rid in pair.values()},'weld':bool(w.data.eq_active.any())})
                     if i in [21,99,309]:scene.capture('hold-'+str(i))
-                scene.hold()
+                for port in scene.ports.values():port.hold(float(w.data.time))
                 w._team_joint_move_servos({rid:{1:2000} for rid in pair.values()},.65,settle_s=.5)
                 scene.step(1.)
                 case['opened_release_height']=float(w.data.geom_xpos[beam][2])
