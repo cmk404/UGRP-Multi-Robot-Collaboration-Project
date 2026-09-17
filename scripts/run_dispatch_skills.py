@@ -110,9 +110,6 @@ class SkillScene(DispatchScene):
         if self.solo.done or not self.solo_executor.idle or now<self.solo_lease:return
         stage='APPROACH' if self.solo.phase=='approach' else 'TRANSIT' if self.solo.phase=='carry' else 'GRASP'
         if not self.bindings.permission('box',stage):return
-        # The approach macro can itself start lowering. Do not let that first
-        # manipulation action cross an unresolved whole-job dependency.
-        if not self.bindings.permission('box','GRASP'):return
         obs=self.ports[self.bindings.solo].capture()
         native=base64.b64decode(obs['image'])
         decoded=cv2.imdecode(np.frombuffer(native,np.uint8),cv2.IMREAD_COLOR)
@@ -123,7 +120,14 @@ class SkillScene(DispatchScene):
         refs={'own':image_record(self.out/'rgb'/f'solo-{index}-own.jpg',self.out,own),
               'top':image_record(self.out/'rgb'/f'solo-{index}-top.jpg',self.out,top)}
         before=self.solo.phase
+        approach_state=copy.deepcopy(self.solo.box) if before=='approach' else None
         action,evidence=self.solo.decide(obs,top)
+        if before=='approach' and self.solo.phase=='lower' and not self.bindings.permission('box','GRASP'):
+            # Stay at the pregrasp visual boundary and reobserve after waiting.
+            # Never hold a lifted cargo merely to queue for the apron.
+            self.solo.box=approach_state
+            action={'kind':'wait','duration':.3}
+            evidence={**evidence,'waiting_before_grasp':True}
         if action['kind']=='mecanum' and not self.bindings.permission('box','TRANSIT'):
             action={'kind':'wait','duration':.1}
             evidence={**evidence,'waiting_for_resource':True}

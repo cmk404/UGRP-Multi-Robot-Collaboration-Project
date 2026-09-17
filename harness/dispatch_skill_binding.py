@@ -79,7 +79,7 @@ class SkillBindings:
         task = self.tasks[obj]
         if stage != 'APPROACH' and any(dep not in self.finished for dep in task['after']):
             return False
-        if stage == 'TRANSIT':
+        if stage in ('GRASP','TRANSIT'):
             resources = [self.static_map['routes'][task['route']]['resource'], 'dispatch_apron']
             if any(self.locks.get(r,task['id']) != task['id'] for r in resources):return False
             for r in resources:self.locks[r] = task['id']
@@ -157,6 +157,17 @@ class ImageRoute:
             goal_px=pixel_from_map(destination,self.map,frame.shape)
             self.points=[np.array([center[0],gate_px[1]]),east_px,
                          np.array([east_px[0],goal_px[1]]),goal_px]
+            if self.obj=='box':
+                # Cross the shared apron between docks, then approach the box
+                # slot from the east. A straight west entry crosses the beam
+                # slot and its parked carriers after the beam job releases.
+                apron_y=self.map['regions']['dispatch_apron']['center_m'][1]
+                east_clear=self.map['bounds_m'][1]-.12
+                goal_px=pixel_from_map([destination[0]+.04,destination[1]],self.map,frame.shape)
+                self.points=[self.points[0],east_px,
+                    pixel_from_map([1.12,apron_y],self.map,frame.shape),
+                    pixel_from_map([east_clear,apron_y],self.map,frame.shape),
+                    pixel_from_map([east_clear,destination[1]],self.map,frame.shape),goal_px]
         error=self.points[self.index]-center
         tolerance=4 if self.index==len(self.points)-1 else 6
         ready=float(np.max(np.abs(error))) <= tolerance
@@ -169,6 +180,7 @@ class ImageRoute:
         if ready and self.confirmations>=2 and not done:
             self.index+=1;self.confirmations=0
         control=np.clip(error*.002,-.08,.08)
+        control[0]=max(-.05,control[0])
         if ready:control[:]=0
         else:
             for i in range(2):

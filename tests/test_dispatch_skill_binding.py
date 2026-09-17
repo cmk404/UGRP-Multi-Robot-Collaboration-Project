@@ -166,3 +166,23 @@ def test_contact_profile_preserves_robot_cargo_physics_and_cameras():
         assert np.array_equal(getattr(old,attr),getattr(new,attr)),attr
     assert new.opt.noslip_iterations==0 and new.opt.timestep==.0005
     assert new.npair-old.npair==12 and np.all(new.pair_solreffriction[:,1]==-3000)
+
+
+def test_grasp_reserves_transport_before_a_load_is_lifted():
+    b=SkillBindings(committed(),authored_map('open'))
+    assert b.permission('beam','GRASP')
+    assert b.permission('box','APPROACH')
+    assert not b.permission('box','GRASP')
+    b.finish('beam')
+    assert b.permission('box','GRASP')
+
+
+def test_box_approaches_from_east_of_the_beam_slot():
+    from harness.dispatch_skill_binding import ImageRoute,pixel_from_map
+    raw=Path('tests/fixtures/dispatch_skill_transfer/box-top-held.jpg').read_bytes()
+    b=SkillBindings(committed(),authored_map('open'));route=ImageRoute(b,'box')
+    _,e=route.observe(raw)
+    assert len(e['waypoints_px'])==6
+    points=np.array(e['waypoints_px'])
+    assert points[-2,0]>points[-1,0]>points[1,0]
+    assert points[2,1]==points[3,1]
