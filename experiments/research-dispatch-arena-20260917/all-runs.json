@@ -1,0 +1,4238 @@
+[
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "4c8379438b058525c064b6feb891cc8b1022c29a",
+    "variant": "shared_crossing",
+    "seed": 11,
+    "mode": "fixture",
+    "scene_ok": true,
+    "plan_committed": true,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "plan": {
+      "proposal_id": "dispatch-shared_crossing-11-plan-v1",
+      "version": 1,
+      "plan_hash": "c2f420b7d1eb537334502b0eebe14161ffc0468f058bb5230e3d31c39281e45c",
+      "plan": {
+        "dock": "dock_a",
+        "tasks": [
+          {
+            "id": "beam_job",
+            "object": "beam",
+            "participants": [
+              "r1",
+              "r3"
+            ],
+            "route": "north",
+            "after": []
+          },
+          {
+            "id": "box_job",
+            "object": "box",
+            "participants": [
+              "r2"
+            ],
+            "route": "south",
+            "after": []
+          }
+        ]
+      },
+      "proposer": "r1"
+    },
+    "model_attempts": 6,
+    "execution_status": "awaiting_new_arena_local_executor; no cargo actions issued",
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462897545,
+      "r2": 0.03448883462897556,
+      "r3": 0.03448883462897301
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "deb3174bc7af26939a7eec3d75f97a0837a6679d13a8595618463f59e7c1e405",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "18427114fa288e6e5d2ca0a6b5f7c29cffae4b7d6bc78f20ee931f22c64816ef",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "deb3174bc7af26939a7eec3d75f97a0837a6679d13a8595618463f59e7c1e405",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "18427114fa288e6e5d2ca0a6b5f7c29cffae4b7d6bc78f20ee931f22c64816ef",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 2.3272263329999987,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-diag-v1",
+    "final_cohort": false,
+    "research_input_validity": "environment/protocol diagnostic only"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "2c62896ce59e9da31ba4aa7e77a0bceec1dfacb2",
+    "variant": "narrow_south",
+    "seed": 11,
+    "mode": "none",
+    "scene_ok": true,
+    "plan_committed": false,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462897545,
+      "r2": 0.03448883462897556,
+      "r3": 0.03448883462897301
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "cd6b226d3ec7f8ea9e04253c9802fea723a94f5624213a08140e2df56ac312a3",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "0be696b4b1e13e9bdc0f49d2d3adf256bc16c503b029126c03a3c47a3ac286d0",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "cd6b226d3ec7f8ea9e04253c9802fea723a94f5624213a08140e2df56ac312a3",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "0be696b4b1e13e9bdc0f49d2d3adf256bc16c503b029126c03a3c47a3ac286d0",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 2.7443857500038575,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-narrow_south-final",
+    "final_cohort": false,
+    "research_input_validity": "environment/protocol diagnostic only"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "e3d3810e9747d269c885b76f3493818a2f82e06f",
+    "variant": "narrow_south",
+    "seed": 11,
+    "mode": "none",
+    "scene_ok": true,
+    "plan_committed": false,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462897545,
+      "r2": 0.03448883462897556,
+      "r3": 0.03448883462897301
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "cd6b226d3ec7f8ea9e04253c9802fea723a94f5624213a08140e2df56ac312a3",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "0be696b4b1e13e9bdc0f49d2d3adf256bc16c503b029126c03a3c47a3ac286d0",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "cd6b226d3ec7f8ea9e04253c9802fea723a94f5624213a08140e2df56ac312a3",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "0be696b4b1e13e9bdc0f49d2d3adf256bc16c503b029126c03a3c47a3ac286d0",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 1.392145416000858,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-narrow_south-v2",
+    "final_cohort": false,
+    "research_input_validity": "environment/protocol diagnostic only"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "efba4322b33974dbf3d84e38c56726843f36506c",
+    "variant": "narrow_south",
+    "seed": 11,
+    "mode": "none",
+    "scene_ok": true,
+    "plan_committed": false,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462897545,
+      "r2": 0.03448883462897556,
+      "r3": 0.03448883462897301
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "cd6b226d3ec7f8ea9e04253c9802fea723a94f5624213a08140e2df56ac312a3",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "0be696b4b1e13e9bdc0f49d2d3adf256bc16c503b029126c03a3c47a3ac286d0",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "cd6b226d3ec7f8ea9e04253c9802fea723a94f5624213a08140e2df56ac312a3",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "0be696b4b1e13e9bdc0f49d2d3adf256bc16c503b029126c03a3c47a3ac286d0",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 2.1479699999908917,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-narrow_south-v3",
+    "final_cohort": false,
+    "research_input_validity": "environment/protocol diagnostic only"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "c99a0d18256d6d125eebe7ae2ee7421aa9b2eea3",
+    "variant": "narrow_south",
+    "seed": 11,
+    "mode": "none",
+    "scene_ok": true,
+    "plan_committed": false,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462897545,
+      "r2": 0.03448883462897556,
+      "r3": 0.03448883462897301
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "cd6b226d3ec7f8ea9e04253c9802fea723a94f5624213a08140e2df56ac312a3",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "0be696b4b1e13e9bdc0f49d2d3adf256bc16c503b029126c03a3c47a3ac286d0",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "cd6b226d3ec7f8ea9e04253c9802fea723a94f5624213a08140e2df56ac312a3",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "0be696b4b1e13e9bdc0f49d2d3adf256bc16c503b029126c03a3c47a3ac286d0",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 1.5679888330050744,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-narrow_south-v4",
+    "final_cohort": false,
+    "research_input_validity": "environment/protocol diagnostic only"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "e9ececb5fb71fe3368f1eb45b9361274a134f2df",
+    "variant": "narrow_south",
+    "seed": 11,
+    "mode": "none",
+    "scene_ok": true,
+    "plan_committed": false,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462897545,
+      "r2": 0.03448883462897556,
+      "r3": 0.03448883462897301
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "cd6b226d3ec7f8ea9e04253c9802fea723a94f5624213a08140e2df56ac312a3",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "0be696b4b1e13e9bdc0f49d2d3adf256bc16c503b029126c03a3c47a3ac286d0",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "cd6b226d3ec7f8ea9e04253c9802fea723a94f5624213a08140e2df56ac312a3",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "0be696b4b1e13e9bdc0f49d2d3adf256bc16c503b029126c03a3c47a3ac286d0",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 2.149781833984889,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-narrow_south-v5",
+    "final_cohort": true,
+    "research_input_validity": "audited in input-audit.json"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "efba4322b33974dbf3d84e38c56726843f36506c",
+    "variant": "north_blocked",
+    "seed": 11,
+    "mode": "llm",
+    "scene_ok": true,
+    "plan_committed": true,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "plan": {
+      "proposal_id": "dispatch-north_blocked-11-plan-v1",
+      "version": 1,
+      "plan_hash": "869ca7637cdd0afd8cff3169595acd05b81139455eeeb18b86b65221ec9c46d7",
+      "plan": {
+        "dock": "dock_b",
+        "tasks": [
+          {
+            "id": "beam_job",
+            "object": "beam",
+            "participants": [
+              "r1",
+              "r2"
+            ],
+            "route": "south",
+            "after": []
+          },
+          {
+            "id": "box_job",
+            "object": "box",
+            "participants": [
+              "r3"
+            ],
+            "route": "south",
+            "after": [
+              "beam_job"
+            ]
+          }
+        ]
+      },
+      "proposer": "r1"
+    },
+    "model_attempts": 6,
+    "execution_status": "awaiting_new_arena_local_executor; no cargo actions issued",
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462897545,
+      "r2": 0.03448883462897556,
+      "r3": 0.03448883462897301
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "7f883e0e905baf0c8f3ef7bf10d36cca0abf47c0f4674f7939087e8922a2461f",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "18427114fa288e6e5d2ca0a6b5f7c29cffae4b7d6bc78f20ee931f22c64816ef",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "7f883e0e905baf0c8f3ef7bf10d36cca0abf47c0f4674f7939087e8922a2461f",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "18427114fa288e6e5d2ca0a6b5f7c29cffae4b7d6bc78f20ee931f22c64816ef",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 65.9784711250104,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-north_blocked-v3",
+    "final_cohort": false,
+    "research_input_validity": "excluded: condition name and seed appeared in request IDs; earlier records also had mutable command history"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "c99a0d18256d6d125eebe7ae2ee7421aa9b2eea3",
+    "variant": "north_blocked",
+    "seed": 11,
+    "mode": "llm",
+    "scene_ok": true,
+    "plan_committed": true,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "plan": {
+      "proposal_id": "dispatch-north_blocked-11-plan-v1",
+      "version": 1,
+      "plan_hash": "869ca7637cdd0afd8cff3169595acd05b81139455eeeb18b86b65221ec9c46d7",
+      "plan": {
+        "dock": "dock_b",
+        "tasks": [
+          {
+            "after": [],
+            "id": "beam_job",
+            "object": "beam",
+            "participants": [
+              "r1",
+              "r2"
+            ],
+            "route": "south"
+          },
+          {
+            "after": [
+              "beam_job"
+            ],
+            "id": "box_job",
+            "object": "box",
+            "participants": [
+              "r3"
+            ],
+            "route": "south"
+          }
+        ]
+      },
+      "proposer": "r1"
+    },
+    "model_attempts": 6,
+    "execution_status": "awaiting_new_arena_local_executor; no cargo actions issued",
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462897545,
+      "r2": 0.03448883462897556,
+      "r3": 0.03448883462897301
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "7f883e0e905baf0c8f3ef7bf10d36cca0abf47c0f4674f7939087e8922a2461f",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "18427114fa288e6e5d2ca0a6b5f7c29cffae4b7d6bc78f20ee931f22c64816ef",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "7f883e0e905baf0c8f3ef7bf10d36cca0abf47c0f4674f7939087e8922a2461f",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "18427114fa288e6e5d2ca0a6b5f7c29cffae4b7d6bc78f20ee931f22c64816ef",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 47.49692216599942,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-north_blocked-v4",
+    "final_cohort": false,
+    "research_input_validity": "excluded: condition name and seed appeared in request IDs; earlier records also had mutable command history"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "e9ececb5fb71fe3368f1eb45b9361274a134f2df",
+    "variant": "north_blocked",
+    "seed": 11,
+    "mode": "llm",
+    "scene_ok": true,
+    "plan_committed": true,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "plan": {
+      "proposal_id": "dispatch-974033d5aaf2-plan-v1",
+      "version": 1,
+      "plan_hash": "3e54997a5bb843ad9678897053ab90cc5598bea07720bfd85a7d62127cd597c4",
+      "plan": {
+        "dock": "dock_b",
+        "tasks": [
+          {
+            "id": "beam_job",
+            "object": "beam",
+            "participants": [
+              "r1",
+              "r2"
+            ],
+            "route": "south",
+            "after": [
+              "box_job"
+            ]
+          },
+          {
+            "id": "box_job",
+            "object": "box",
+            "participants": [
+              "r3"
+            ],
+            "route": "south",
+            "after": []
+          }
+        ]
+      },
+      "proposer": "r1"
+    },
+    "model_attempts": 6,
+    "execution_status": "awaiting_new_arena_local_executor; no cargo actions issued",
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462897545,
+      "r2": 0.03448883462897556,
+      "r3": 0.03448883462897301
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "7f883e0e905baf0c8f3ef7bf10d36cca0abf47c0f4674f7939087e8922a2461f",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "18427114fa288e6e5d2ca0a6b5f7c29cffae4b7d6bc78f20ee931f22c64816ef",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "7f883e0e905baf0c8f3ef7bf10d36cca0abf47c0f4674f7939087e8922a2461f",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "18427114fa288e6e5d2ca0a6b5f7c29cffae4b7d6bc78f20ee931f22c64816ef",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 78.63065537498915,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-north_blocked-v5",
+    "final_cohort": true,
+    "research_input_validity": "audited in input-audit.json"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "2c62896ce59e9da31ba4aa7e77a0bceec1dfacb2",
+    "variant": "open",
+    "seed": 11,
+    "mode": "none",
+    "scene_ok": true,
+    "plan_committed": false,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462192409,
+      "r2": 0.034488834621922204,
+      "r3": 0.03448883462192576
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "c1b9574303ac4f832e2b52bec166dcdf4c2c96fb41b0321579f692c17bcdc965",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "c1b9574303ac4f832e2b52bec166dcdf4c2c96fb41b0321579f692c17bcdc965",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 1.8441731669881847,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-open-final",
+    "final_cohort": false,
+    "research_input_validity": "environment/protocol diagnostic only"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "e3d3810e9747d269c885b76f3493818a2f82e06f",
+    "variant": "open",
+    "seed": 11,
+    "mode": "none",
+    "scene_ok": true,
+    "plan_committed": false,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462192409,
+      "r2": 0.034488834621922204,
+      "r3": 0.03448883462192576
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "c1b9574303ac4f832e2b52bec166dcdf4c2c96fb41b0321579f692c17bcdc965",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "c1b9574303ac4f832e2b52bec166dcdf4c2c96fb41b0321579f692c17bcdc965",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 1.4104850830044597,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-open-v2",
+    "final_cohort": false,
+    "research_input_validity": "environment/protocol diagnostic only"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "efba4322b33974dbf3d84e38c56726843f36506c",
+    "variant": "open",
+    "seed": 11,
+    "mode": "none",
+    "scene_ok": true,
+    "plan_committed": false,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462192409,
+      "r2": 0.034488834621922204,
+      "r3": 0.03448883462192576
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "c1b9574303ac4f832e2b52bec166dcdf4c2c96fb41b0321579f692c17bcdc965",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "c1b9574303ac4f832e2b52bec166dcdf4c2c96fb41b0321579f692c17bcdc965",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 2.248084207996726,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-open-v3",
+    "final_cohort": false,
+    "research_input_validity": "environment/protocol diagnostic only"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "c99a0d18256d6d125eebe7ae2ee7421aa9b2eea3",
+    "variant": "open",
+    "seed": 11,
+    "mode": "none",
+    "scene_ok": true,
+    "plan_committed": false,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462192409,
+      "r2": 0.034488834621922204,
+      "r3": 0.03448883462192576
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "c1b9574303ac4f832e2b52bec166dcdf4c2c96fb41b0321579f692c17bcdc965",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "c1b9574303ac4f832e2b52bec166dcdf4c2c96fb41b0321579f692c17bcdc965",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 1.6085326249885838,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-open-v4",
+    "final_cohort": false,
+    "research_input_validity": "environment/protocol diagnostic only"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "e9ececb5fb71fe3368f1eb45b9361274a134f2df",
+    "variant": "open",
+    "seed": 11,
+    "mode": "none",
+    "scene_ok": true,
+    "plan_committed": false,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462192409,
+      "r2": 0.034488834621922204,
+      "r3": 0.03448883462192576
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "c1b9574303ac4f832e2b52bec166dcdf4c2c96fb41b0321579f692c17bcdc965",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "c1b9574303ac4f832e2b52bec166dcdf4c2c96fb41b0321579f692c17bcdc965",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 2.2813792079978157,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-open-v5",
+    "final_cohort": true,
+    "research_input_validity": "audited in input-audit.json"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "2c62896ce59e9da31ba4aa7e77a0bceec1dfacb2",
+    "variant": "rough_south",
+    "seed": 11,
+    "mode": "none",
+    "scene_ok": true,
+    "plan_committed": false,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462897545,
+      "r2": 0.03448883462897556,
+      "r3": 0.03448883462897301
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "88ce77af56a577a4a4118e36dc0ca51d0f3c95bf4e411f6b9ea3d11794dccec0",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "b06d89e6e6f0ac67ef864af6f742ab47c13942b280d197e998323b532cec12a4",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "88ce77af56a577a4a4118e36dc0ca51d0f3c95bf4e411f6b9ea3d11794dccec0",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "b06d89e6e6f0ac67ef864af6f742ab47c13942b280d197e998323b532cec12a4",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 1.8894003749883268,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-rough_south-final",
+    "final_cohort": false,
+    "research_input_validity": "environment/protocol diagnostic only"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "e3d3810e9747d269c885b76f3493818a2f82e06f",
+    "variant": "rough_south",
+    "seed": 11,
+    "mode": "none",
+    "scene_ok": true,
+    "plan_committed": false,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462897545,
+      "r2": 0.03448883462897556,
+      "r3": 0.03448883462897301
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "88ce77af56a577a4a4118e36dc0ca51d0f3c95bf4e411f6b9ea3d11794dccec0",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "b06d89e6e6f0ac67ef864af6f742ab47c13942b280d197e998323b532cec12a4",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "88ce77af56a577a4a4118e36dc0ca51d0f3c95bf4e411f6b9ea3d11794dccec0",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "b06d89e6e6f0ac67ef864af6f742ab47c13942b280d197e998323b532cec12a4",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 1.3491998340177815,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-rough_south-v2",
+    "final_cohort": false,
+    "research_input_validity": "environment/protocol diagnostic only"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "efba4322b33974dbf3d84e38c56726843f36506c",
+    "variant": "rough_south",
+    "seed": 11,
+    "mode": "none",
+    "scene_ok": true,
+    "plan_committed": false,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462897545,
+      "r2": 0.03448883462897556,
+      "r3": 0.03448883462897301
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "88ce77af56a577a4a4118e36dc0ca51d0f3c95bf4e411f6b9ea3d11794dccec0",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "b06d89e6e6f0ac67ef864af6f742ab47c13942b280d197e998323b532cec12a4",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "88ce77af56a577a4a4118e36dc0ca51d0f3c95bf4e411f6b9ea3d11794dccec0",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "b06d89e6e6f0ac67ef864af6f742ab47c13942b280d197e998323b532cec12a4",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 2.3955988330126274,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-rough_south-v3",
+    "final_cohort": false,
+    "research_input_validity": "environment/protocol diagnostic only"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "c99a0d18256d6d125eebe7ae2ee7421aa9b2eea3",
+    "variant": "rough_south",
+    "seed": 11,
+    "mode": "none",
+    "scene_ok": true,
+    "plan_committed": false,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462897545,
+      "r2": 0.03448883462897556,
+      "r3": 0.03448883462897301
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "88ce77af56a577a4a4118e36dc0ca51d0f3c95bf4e411f6b9ea3d11794dccec0",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "b06d89e6e6f0ac67ef864af6f742ab47c13942b280d197e998323b532cec12a4",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "88ce77af56a577a4a4118e36dc0ca51d0f3c95bf4e411f6b9ea3d11794dccec0",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "b06d89e6e6f0ac67ef864af6f742ab47c13942b280d197e998323b532cec12a4",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 1.530363625002792,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-rough_south-v4",
+    "final_cohort": false,
+    "research_input_validity": "environment/protocol diagnostic only"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "e9ececb5fb71fe3368f1eb45b9361274a134f2df",
+    "variant": "rough_south",
+    "seed": 11,
+    "mode": "none",
+    "scene_ok": true,
+    "plan_committed": false,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462897545,
+      "r2": 0.03448883462897556,
+      "r3": 0.03448883462897301
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "88ce77af56a577a4a4118e36dc0ca51d0f3c95bf4e411f6b9ea3d11794dccec0",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "b06d89e6e6f0ac67ef864af6f742ab47c13942b280d197e998323b532cec12a4",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "88ce77af56a577a4a4118e36dc0ca51d0f3c95bf4e411f6b9ea3d11794dccec0",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "b06d89e6e6f0ac67ef864af6f742ab47c13942b280d197e998323b532cec12a4",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 2.066487166011939,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-rough_south-v5",
+    "final_cohort": true,
+    "research_input_validity": "audited in input-audit.json"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "2c62896ce59e9da31ba4aa7e77a0bceec1dfacb2",
+    "variant": "shared_crossing",
+    "seed": 11,
+    "mode": "llm",
+    "scene_ok": false,
+    "plan_committed": false,
+    "transport_success": null,
+    "error": "RuntimeError: no unanimous valid dispatch plan within 8 rounds",
+    "cost_usd": null,
+    "wall_seconds": 228.83336512499955,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-shared-final",
+    "final_cohort": false,
+    "research_input_validity": "excluded: condition name and seed appeared in request IDs; earlier records also had mutable command history"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "e3d3810e9747d269c885b76f3493818a2f82e06f",
+    "variant": "shared_crossing",
+    "seed": 11,
+    "mode": "llm",
+    "scene_ok": true,
+    "plan_committed": true,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "plan": {
+      "proposal_id": "dispatch-shared_crossing-11-plan-v1",
+      "version": 1,
+      "plan_hash": "d2842fd4c457443243c1d006e10a8c77021a04fd56e01b93cbf1c248d01a9a25",
+      "plan": {
+        "dock": "dock_a",
+        "tasks": [
+          {
+            "id": "beam_job",
+            "object": "beam",
+            "participants": [
+              "r1",
+              "r2"
+            ],
+            "route": "north",
+            "after": []
+          },
+          {
+            "id": "box_job",
+            "object": "box",
+            "participants": [
+              "r3"
+            ],
+            "route": "south",
+            "after": []
+          }
+        ]
+      },
+      "proposer": "r1"
+    },
+    "model_attempts": 6,
+    "execution_status": "awaiting_new_arena_local_executor; no cargo actions issued",
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462897545,
+      "r2": 0.03448883462897556,
+      "r3": 0.03448883462897301
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "a85370d879977f49fc95588263865782381ee8564e59c792882d85a9406d609f",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "18427114fa288e6e5d2ca0a6b5f7c29cffae4b7d6bc78f20ee931f22c64816ef",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "a85370d879977f49fc95588263865782381ee8564e59c792882d85a9406d609f",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "18427114fa288e6e5d2ca0a6b5f7c29cffae4b7d6bc78f20ee931f22c64816ef",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 59.82156949999626,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-shared-v2",
+    "final_cohort": false,
+    "research_input_validity": "excluded: condition name and seed appeared in request IDs; earlier records also had mutable command history"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "efba4322b33974dbf3d84e38c56726843f36506c",
+    "variant": "shared_crossing",
+    "seed": 11,
+    "mode": "llm",
+    "scene_ok": true,
+    "plan_committed": true,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "plan": {
+      "proposal_id": "dispatch-shared_crossing-11-plan-v1",
+      "version": 1,
+      "plan_hash": "d2842fd4c457443243c1d006e10a8c77021a04fd56e01b93cbf1c248d01a9a25",
+      "plan": {
+        "dock": "dock_a",
+        "tasks": [
+          {
+            "after": [],
+            "id": "beam_job",
+            "object": "beam",
+            "participants": [
+              "r1",
+              "r2"
+            ],
+            "route": "north"
+          },
+          {
+            "after": [],
+            "id": "box_job",
+            "object": "box",
+            "participants": [
+              "r3"
+            ],
+            "route": "south"
+          }
+        ]
+      },
+      "proposer": "r1"
+    },
+    "model_attempts": 6,
+    "execution_status": "awaiting_new_arena_local_executor; no cargo actions issued",
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462897545,
+      "r2": 0.03448883462897556,
+      "r3": 0.03448883462897301
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "a85370d879977f49fc95588263865782381ee8564e59c792882d85a9406d609f",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "18427114fa288e6e5d2ca0a6b5f7c29cffae4b7d6bc78f20ee931f22c64816ef",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "a85370d879977f49fc95588263865782381ee8564e59c792882d85a9406d609f",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "18427114fa288e6e5d2ca0a6b5f7c29cffae4b7d6bc78f20ee931f22c64816ef",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 66.02981104099308,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-shared-v3",
+    "final_cohort": false,
+    "research_input_validity": "excluded: condition name and seed appeared in request IDs; earlier records also had mutable command history"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "c99a0d18256d6d125eebe7ae2ee7421aa9b2eea3",
+    "variant": "shared_crossing",
+    "seed": 11,
+    "mode": "llm",
+    "scene_ok": true,
+    "plan_committed": true,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "plan": {
+      "proposal_id": "dispatch-shared_crossing-11-plan-v1",
+      "version": 1,
+      "plan_hash": "d2842fd4c457443243c1d006e10a8c77021a04fd56e01b93cbf1c248d01a9a25",
+      "plan": {
+        "dock": "dock_a",
+        "tasks": [
+          {
+            "after": [],
+            "id": "beam_job",
+            "object": "beam",
+            "participants": [
+              "r1",
+              "r2"
+            ],
+            "route": "north"
+          },
+          {
+            "after": [],
+            "id": "box_job",
+            "object": "box",
+            "participants": [
+              "r3"
+            ],
+            "route": "south"
+          }
+        ]
+      },
+      "proposer": "r1"
+    },
+    "model_attempts": 6,
+    "execution_status": "awaiting_new_arena_local_executor; no cargo actions issued",
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462897545,
+      "r2": 0.03448883462897556,
+      "r3": 0.03448883462897301
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "a85370d879977f49fc95588263865782381ee8564e59c792882d85a9406d609f",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "18427114fa288e6e5d2ca0a6b5f7c29cffae4b7d6bc78f20ee931f22c64816ef",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "a85370d879977f49fc95588263865782381ee8564e59c792882d85a9406d609f",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "18427114fa288e6e5d2ca0a6b5f7c29cffae4b7d6bc78f20ee931f22c64816ef",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 83.95604816699051,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-shared-v4",
+    "final_cohort": false,
+    "research_input_validity": "excluded: condition name and seed appeared in request IDs; earlier records also had mutable command history"
+  },
+  {
+    "scope": "physical environment + RGB common-plan negotiation; not autonomous cargo delivery",
+    "source_sha": "e9ececb5fb71fe3368f1eb45b9361274a134f2df",
+    "variant": "shared_crossing",
+    "seed": 11,
+    "mode": "llm",
+    "scene_ok": true,
+    "plan_committed": true,
+    "transport_success": null,
+    "error": null,
+    "cost_usd": null,
+    "plan": {
+      "proposal_id": "dispatch-3a7800eaf22b-plan-v1",
+      "version": 1,
+      "plan_hash": "f4c17fb3102f1d31ee1eed63179bec3e397c5f215457d392a88851229fcf99ee",
+      "plan": {
+        "dock": "dock_a",
+        "tasks": [
+          {
+            "id": "beam_job",
+            "object": "beam",
+            "participants": [
+              "r1",
+              "r2"
+            ],
+            "route": "north",
+            "after": []
+          },
+          {
+            "id": "box_job",
+            "object": "box",
+            "participants": [
+              "r3"
+            ],
+            "route": "south",
+            "after": [
+              "beam_job"
+            ]
+          }
+        ]
+      },
+      "proposer": "r1"
+    },
+    "model_attempts": 6,
+    "execution_status": "awaiting_new_arena_local_executor; no cargo actions issued",
+    "physics_steps": 450,
+    "weld_steps": 0,
+    "obstacle_contact_steps": 0,
+    "invariants_unchanged": true,
+    "motion_smoke": true,
+    "robot_displacement_m": {
+      "r1": 0.03448883462897545,
+      "r2": 0.03448883462897556,
+      "r3": 0.03448883462897301
+    },
+    "initial_invariants": {
+      "scene_xml_sha256": "a85370d879977f49fc95588263865782381ee8564e59c792882d85a9406d609f",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "18427114fa288e6e5d2ca0a6b5f7c29cffae4b7d6bc78f20ee931f22c64816ef",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "final_invariants": {
+      "scene_xml_sha256": "a85370d879977f49fc95588263865782381ee8564e59c792882d85a9406d609f",
+      "robot_xml_sha256": {
+        "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+        "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+        "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+      },
+      "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+      "static_map_sha256": "18427114fa288e6e5d2ca0a6b5f7c29cffae4b7d6bc78f20ee931f22c64816ef",
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fovy": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r2__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fovy": 42.18818995586325
+        }
+      },
+      "weld_active": false,
+      "solver": {
+        "impratio": 1.0,
+        "noslip_iterations": 0
+      }
+    },
+    "wall_seconds": 65.21727370799636,
+    "run_directory": "/Users/changmin/projects/ugrp-worktrees/research-coordination-arena/outputs/dispatch-shared-v5",
+    "final_cohort": true,
+    "research_input_validity": "audited in input-audit.json"
+  }
+]

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
+import copy
 import io
 import json
 import time
@@ -26,8 +27,12 @@ def refs(frames):
 class ThreeRobotRuntime:
     def __init__(self, output, *, run_id, mode='llm', fixture_timing='during_approach',
                  agreement=None, request_builder=build_plan_request,
-                 reply_validator=validate_plan_reply, plan_fixture=None):
+                 reply_validator=validate_plan_reply, plan_fixture=None,
+                 request_timeout=30., max_tokens=950,
+                 roles_fixed_by_skill=True, planning_only=False):
         self.output, self.mode, self.fixture_timing = output, mode, fixture_timing
+        self.roles_fixed_by_skill = roles_fixed_by_skill
+        self.planning_only = planning_only
         self.agreement = agreement or TeamAgreement(run_id)
         self.request_builder, self.reply_validator = request_builder, reply_validator
         self.plan_fixture = plan_fixture
@@ -51,8 +56,8 @@ class ThreeRobotRuntime:
                     data = response.read()
                 path.with_name(path.stem+'-response.json').write_bytes(data)
                 return io.BytesIO(data)
-            self.clients[rid] = GeminiProxyCompleter(model='gemini-3.8-flash', max_tokens=950,
-                timeout=30., reasoning_effort='none', http_open=audited_open)
+            self.clients[rid] = GeminiProxyCompleter(model='gemini-3.8-flash', max_tokens=max_tokens,
+                timeout=request_timeout, reasoning_effort='none', http_open=audited_open)
 
     def _invoke(self, rid, request, validate, *, fixture_reply=None):
         path = f'{rid}/{request["request_id"]}-request.json'
@@ -98,7 +103,7 @@ class ThreeRobotRuntime:
             self.calls.extend(records)
         committed = self.agreement.receive(replies, turn)
         self.rounds.append({'turn': turn, 'sim_time_s': sim_time, 'agreement': context,
-            'images': refs(frames), 'own_history': own_history,
+            'images': refs(frames), 'own_history': copy.deepcopy(own_history),
             'replies': replies, 'stops': {r: v[1] for r, v in batch.items()}, 'committed': committed})
         for sender, reply in replies.items():
             if reply and reply['message']:
@@ -155,9 +160,10 @@ class ThreeRobotRuntime:
                 'agreement_events': self.agreement.events, 'committed': self.agreement.committed,
                 'inspections': self.inspections, 'calls': self.calls,
                 'execution_events': self.execution_events,
-                'transport_roles_fixed_by_skill': True,
-                'inspection_has_no_motor_permission': self.plan_fixture is None,
-                'physical_task_plan': self.plan_fixture is not None,
+                'transport_roles_fixed_by_skill': self.roles_fixed_by_skill,
+                'inspection_has_no_motor_permission': self.planning_only or self.plan_fixture is None,
+                'physical_task_plan': not self.planning_only and self.plan_fixture is not None,
+                'planning_only': self.planning_only,
                 'cost_usd': None, 'cost_note': 'provider billing unavailable'}
 
     def close(self, sim_time):
