@@ -207,3 +207,17 @@ def test_dispatch_attachment_does_not_merge_cyan_floor_with_held_box():
     assert not compare_box_comotion(a,b)['attached']
     calibrated=compare_box_comotion(a,b,min_saturation=150)
     assert calibrated['attached'] and calibrated['thresholds']['min_iou']==.88
+
+
+def test_box_tracking_separates_static_floor_using_prior_rgb():
+    from harness.dispatch_skill_binding import ImageRoute
+    root=Path('tests/fixtures/dispatch_skill_transfer')
+    route=ImageRoute(SkillBindings(committed(),authored_map('open')),'box')
+    route.observe((root/'box-floor-122.jpg').read_bytes())
+    # Previous tracking result is itself reconstructed from archived RGB.
+    route.box_center=np.array([395.,575.]);route.box_delta[:]=0
+    route.observe((root/'box-floor-162.jpg').read_bytes())
+    _,e=route.observe((root/'box-floor-163.jpg').read_bytes())
+    assert np.allclose(e['cargo_center_px'],[402.,575.],atol=2)
+    blank=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))[1].tobytes()
+    with pytest.raises(RuntimeError):route.observe(blank)

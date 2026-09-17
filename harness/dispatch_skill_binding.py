@@ -127,7 +127,7 @@ class ImageRoute:
         self.map=bindings.static_map;self.obj=obj
         self.task=bindings.tasks[obj];self.dock=bindings.plan['dock']
         self.points=None;self.index=0;self.confirmations=0
-        self.box_center=None;self.box_delta=np.zeros(2)
+        self.box_center=None;self.box_delta=np.zeros(2);self.box_background=None
 
     def observe(self,jpeg):
         frame=decode(jpeg);h,w=frame.shape[:2]
@@ -148,7 +148,19 @@ class ImageRoute:
                                key=lambda i:np.linalg.norm(centers[i]-predicted))
                 if len(choices)>1 and np.linalg.norm(centers[choices[1]]-predicted)-np.linalg.norm(centers[choices[0]]-predicted)>5:
                     choices=choices[:1]
+            if len(choices)!=1 and self.box_background is not None:
+                # Fixed shared camera: remove pixels unchanged from the first
+                # allowed carry RGB. This separates cyan cargo from same-colour
+                # floor without a simulator segmentation or location oracle.
+                changed=np.max(np.abs(frame.astype(np.int16)-self.box_background),axis=2)>=15
+                mask=cv2.inRange(hsv,np.array((80,70,25),np.uint8),np.array((102,255,255),np.uint8))
+                mask[~changed]=0
+                mask=cv2.morphologyEx(mask,cv2.MORPH_OPEN,np.ones((3,3),np.uint8))
+                n,_,stats,centers=cv2.connectedComponentsWithStats(mask)
+                choices=[i for i in range(1,n) if 25<=stats[i,4]<=600
+                         and max(stats[i,2:4])<40 and np.linalg.norm(centers[i]-predicted)<=25]
             if len(choices)!=1:raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
+            if self.box_background is None:self.box_background=frame.astype(np.int16)
             i=choices[0];center=centers[i];x,y,bw,bh=stats[i,:4]
             self.box_delta=np.zeros(2) if self.box_center is None else center-self.box_center
             self.box_center=center.copy()

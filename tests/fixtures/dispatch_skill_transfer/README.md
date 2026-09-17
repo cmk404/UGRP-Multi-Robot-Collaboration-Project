@@ -9,3 +9,5 @@
 `box-transit-274/275.jpg`: S13 source 273da1b, raw solo-274/275-top. Transition into changed illumination during actual carrying.
 
 `box-own-158/159.jpg`: Q1 source 71900de; unchanged cargo grip while cyan floor joined old segmentation. Raw owned camera, 640x480 same-FOV resize.
+
+`box-floor-122/162/163.jpg`: Q2 source 18474aa, raw shared RGB. At 163 the cargo mask joins the cyan floor; prior observed background separates it.
