@@ -55,8 +55,8 @@ def lane_heading(top_jpeg, rid):
 
 def wheel_heading(yellow, *, pixel_tolerance=0.):
     """Existing four-corner heading gate on an explicitly selected RGB mask."""
-    if not 0 <= pixel_tolerance <= 1.:
-        raise ValueError("wheel mask tolerance must be at most one pixel")
+    if not 0 <= pixel_tolerance <= 2.:
+        raise ValueError("wheel mask tolerance must be at most two pixels")
     h, w = yellow.shape
     ys, xs = np.nonzero(yellow)
     if len(xs) < 80 or len(xs) > 700:

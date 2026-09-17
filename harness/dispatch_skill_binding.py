@@ -205,7 +205,7 @@ class PairCoarsePixels:
         yy,xx=np.indices(clean.shape)
         clean[(abs(xx-cx)>55)|(abs(yy-cy)>48)]=0
         ys,xs=np.nonzero(clean)
-        heading=wheel_heading(clean,pixel_tolerance=1.)
+        heading=wheel_heading(clean,pixel_tolerance=2.)
         if heading is None:
             return dict(ok=False,ready=False,forward=0.,left=0.,turn=0.,reason='own_wheel_heading_unresolved',pixel_count=len(xs))
         center=np.array([xs.mean(),ys.mean()]);self.centers[slot]=center

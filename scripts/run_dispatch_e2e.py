@@ -283,6 +283,7 @@ def main():
     p.add_argument('--max-wall-s',type=float,default=1200.)
     p.add_argument('--max-input-tokens',type=int,default=500000)
     p.add_argument('--max-quiet-rounds',type=int,default=4)
+    p.add_argument('--plan-replay',type=Path,help='diagnostic only: replay a saved agreed plan with fixture votes')
     p.add_argument('--executor',choices=('skills','raw'),default='skills')
     p.add_argument('--grasp-model-dir',type=Path)
     p.add_argument('--stage-model-dir',type=Path)

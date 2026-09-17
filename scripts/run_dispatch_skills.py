@@ -190,7 +190,15 @@ def run(args):
         run_id=opaque_run_id()
         def planner(rid,**kwargs):
             return build_dispatch_request(rid,task=task,execution_pilot=True,identity_evidence=identity[rid],**kwargs)
-        team=ThreeRobotRuntime(args.output/'team',run_id=run_id,mode='llm',
+        replay_plan=None
+        if args.plan_replay:
+            saved=json.loads(args.plan_replay.read_text())
+            SkillBindings(saved,scene.config['static_map'])
+            replay_plan=saved['plan']
+            result['scope']='recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E'
+            result['plan_replay_sha256']=sha(args.plan_replay)
+        team=ThreeRobotRuntime(args.output/'team',run_id=run_id,mode='fixture' if replay_plan else 'llm',
+            plan_fixture=replay_plan,
             agreement=TeamAgreement(run_id,plan_validator=validate_dispatch_plan),request_builder=planner,
             reply_validator=validate_dispatch_reply,request_timeout=args.timeout,max_tokens=1600,
             roles_fixed_by_skill=False,planning_only=False,max_wall_s=args.max_wall_s)
