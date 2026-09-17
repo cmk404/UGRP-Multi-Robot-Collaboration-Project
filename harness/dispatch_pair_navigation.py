@@ -289,7 +289,7 @@ def update_span_bias(previous,span,target):
     return float(np.clip(previous+excess*.2,-.025,.025))
 
 
-def rigid_pair_commands(positions,headings,reference,observed_turn,velocity,omega,*,target_span=None,span_rate=0.,span_bias=0.):
+def rigid_pair_commands(positions,headings,reference,observed_turn,velocity,omega,*,target_span=None,span_rate=0.,span_bias=0.,heading_errors=None):
     """One observed formation twist, independently converted by each endpoint.
 
     Correcting two absolute chassis targets separately can twist a held beam
@@ -306,17 +306,21 @@ def rigid_pair_commands(positions,headings,reference,observed_turn,velocity,omeg
     # Accumulate only persistent RGB error: a fixed weak correction can leave
     # a loaded carrier stuck while the other endpoint compresses the grasp.
     correction=0. if target_span is None else float(np.clip(2.*position_error-.25*span_rate+span_bias,-.05,.05))
-    commands={};world={}
+    # A common formation twist does not guarantee equal measured body yaw:
+    # wheel response and load differ. Restore each observed heading relative
+    # to the formation while retaining the common orbital translation.
+    commands={};world={};turn_corrections={}
     for rid,position in positions.items():
         offset=np.asarray(position)-center
         world[rid]=translation+angular*np.array([-offset[1],offset[0]])
         world[rid]+=correction*(1 if rid=='r1' else -1)*line/span
         local=rotate(world[rid],-headings[rid])
+        turn_corrections[rid]=0. if heading_errors is None else float(np.clip(.9*heading_errors[rid],-.08,.08))
         commands[rid]={'kind':'mecanum','forward':float(np.clip(local[0]/1.57,-.05,.08)),
             'left':float(np.clip(local[1]/1.18,-.08,.08)),
-            'turn':float(np.clip(angular/1.5,-.10,.10)),'duration_s':.2}
+            'turn':float(np.clip((angular+turn_corrections[rid])/1.5,-.10,.10)),'duration_s':.2}
     return commands,{'center_xy_m':center.tolist(),'common_translation_m_s':translation.tolist(),
-        'common_angular_rad_s':angular,'world_velocity_m_s':{r:v.tolist() for r,v in world.items()},
+        'common_angular_rad_s':angular,'individual_heading_correction_rad_s':turn_corrections,'world_velocity_m_s':{r:v.tolist() for r,v in world.items()},
         'observed_span_m':span,'target_span_m':target_span,'span_rate_m_s':span_rate,'span_bias_m_s':span_bias,'radial_correction_m_s':correction,
         'source':'current RGB formation, authored route and own action calibration; common turn with bounded span correction'}
 
@@ -524,9 +528,10 @@ class PairNavigator:
             error_yaw = wrap(target[2]-self.reference[2])
             delta = max(np.linalg.norm(error_xy)/.04, abs(error_yaw)/.055, .2)
             velocity, omega = error_xy/delta, error_yaw/delta
-            formation_errors = {}
+            formation_errors = {};heading_errors={}
             for r in ROBOTS:
                 yaw = obs[r]['relative_yaw_rad']-self.anchor_yaws[r]
+                heading_errors[r]=wrap(observed_turn-yaw)
                 if abs(wrap(yaw-observed_turn))>.30:
                     return {'action':zero,'status':'individual_heading_abort','ready':False,'done':False,'observations':obs}
                 formation_errors[r] = (float(np.linalg.norm(self.reference[:2]-center)), abs(wrap(self.reference[2]-observed_turn)))
@@ -536,12 +541,12 @@ class PairNavigator:
             # Both local participants see the same RGB and hold the common
             # reference while either member catches up; commands are not poses.
             if (max(e[0] for e in formation_errors.values()) > .020 or max(e[1] for e in formation_errors.values()) > .10
-                    or abs(span-self.target_span)>.02):
+                    or abs(span-self.target_span)>.02 or max(map(abs,heading_errors.values()))>.10):
                 velocity, omega = np.zeros(2), 0.
             self.reference[:2] += velocity*.2
             self.reference[2] += omega*.2
             headings={r:self.heading+obs[r]['relative_yaw_rad']-self.anchor_yaws[r] for r in ROBOTS}
-            commands,self.last_twist=rigid_pair_commands(positions,headings,self.reference,observed_turn,velocity,omega,target_span=self.target_span,span_rate=self.span_rate,span_bias=self.span_bias)
+            commands,self.last_twist=rigid_pair_commands(positions,headings,self.reference,observed_turn,velocity,omega,target_span=self.target_span,span_rate=self.span_rate,span_bias=self.span_bias,heading_errors=heading_errors)
             action=commands[self.rid]
             if np.linalg.norm(target[:2]-self.reference[:2]) < .002 and abs(wrap(target[2]-self.reference[2])) < .005:
                 reached = (max(e[0] for e in formation_errors.values()) < .012

@@ -330,3 +330,18 @@ def test_formation_footprint_uses_rgb_chassis_axis_not_mecanum_probe_drift():
     assert decision['heading_rad']>.09  # Distinct observed motor response retained.
     absolute=[[x,y,a+decision['formation_heading_rad']]for x,y,a in decision['route']]
     assert all(swept_clear(a,b,raw['map'])for a,b in zip(absolute,absolute[1:]))
+
+
+def test_shared_rotation_keeps_body_headings_synchronized_with_unequal_wheel_response():
+    from harness.dispatch_pair_navigation import rigid_pair_commands,rotate,wrap
+    yaw={'r1':0.,'r3':0.};gains={'r1':.75,'r3':1.25};dt=.2
+    for i in range(160):
+        turn=.05*i*dt
+        positions={'r1':rotate([0.,-.325],turn),'r3':rotate([0.,.325],turn)}
+        errors={r:wrap(turn-yaw[r])for r in yaw}
+        actions,e=rigid_pair_commands(positions,yaw,[0.,0.,turn],turn,[0.,0.],.05,
+                                     target_span=.65,heading_errors=errors)
+        for r in yaw:yaw[r]+=1.5*gains[r]*actions[r]['turn']*dt
+        assert max(map(abs,e['individual_heading_correction_rad_s'].values()))<=.08
+    assert abs(yaw['r1']-yaw['r3'])<math.radians(2)
+    assert max(abs(v-1.6)for v in yaw.values())<math.radians(2)
