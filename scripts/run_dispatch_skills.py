@@ -235,6 +235,7 @@ def run(args):
         scene.bindings.check_route()
         scene.start_solo()
         pair=BoundPairSkill(scene,scene.bindings,skill,grasp,stages,grasp_root,reference,identity)
+        while not scene.bindings.permission('beam','APPROACH'):scene.step(.2)
         result['phase']='APPROACH';result['pair_approach']=pair.approach()
         while not scene.bindings.permission('beam','GRASP'):scene.step(.2)
         result['phase']='GRASP';result['pair_grasp']=pair.finish_grasp(predict_student,grasp)

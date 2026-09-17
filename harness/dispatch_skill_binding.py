@@ -114,6 +114,7 @@ class SkillBindings:
         self.finished = set()
         self.locks = {}
         self.revoked = False
+        self.cluttered=any(o['id']=='service_island' for o in static_map['obstacles'])
 
     def authorize(self, committed):
         if self.revoked or committed != self.committed:
@@ -122,10 +123,11 @@ class SkillBindings:
     def permission(self, obj, stage):
         if self.revoked:return False
         task = self.tasks[obj]
-        if stage != 'APPROACH' and any(dep not in self.finished for dep in task['after']):
+        if (stage != 'APPROACH' or self.cluttered) and any(dep not in self.finished for dep in task['after']):
             return False
-        if stage in ('GRASP','TRANSIT'):
+        if stage in ('GRASP','TRANSIT') or (stage=='APPROACH' and self.cluttered):
             resources = [self.static_map['routes'][task['route']]['resource'], 'dispatch_apron']
+            if self.cluttered:resources.append('pickup_maneuver')
             if any(self.locks.get(r,task['id']) != task['id'] for r in resources):return False
             for r in resources:self.locks[r] = task['id']
         return True
@@ -143,18 +145,18 @@ class SkillBindings:
         narrow = []
         if any(o['id']=='service_island' for o in self.static_map['obstacles']):
             for name, route in self.static_map['routes'].items():
-                if route['declared_min_width_m'] < width:narrow.append(name)
+                if route['declared_min_width_m'] < .45:narrow.append(name)
         return {'pair_model_slots':self.pair, 'solo_robot':self.solo,
             'parallel_pair_envelope_m':width,'unsupported_parallel_pair_routes':narrow,
-            'pair_rotation_skill_available':False,
-            'route_execution':'RGB waypoint translation; loaded lateral motion experimental',
+            'pair_rotation_skill_available':True,'rotated_pair_envelope_m':.45,
+            'route_execution':'RGB wheel/shaft tracking and swept full-load SE2 search when cluttered; experimental',
             'model_support':'unchanged learned support thresholds; fail closed on novelty'}
 
     def check_route(self):
         route = self.tasks['beam']['route']
         if route in self.capabilities()['unsupported_parallel_pair_routes']:
             raise RuntimeError('PAIR_ROUTE_TOO_NARROW: agreed '+route+
-                ' route needs a rotation/regrasp skill; parallel formation is unsupported')
+                ' route is narrower than the rotated loaded footprint')
 
 
 def pixel_from_map(xy, static_map, shape, *, height=0.):

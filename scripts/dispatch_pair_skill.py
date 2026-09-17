@@ -111,6 +111,7 @@ class BoundPairSkill:
         raise RuntimeError('fine docking confirmation budget exhausted')
 
     def carry(self,navigator):
+        if self.bindings.cluttered:return self.carry_with_rotation()
         self.phase='TRANSIT';self.transport_started=True
         anchor=self.capture('carry-anchor')
         policy=PairCarryPolicy('dispatch-'+self.bindings.committed['plan_hash'][:12])
@@ -141,6 +142,37 @@ class BoundPairSkill:
                       left=motion['left'] if moving else 0.,turn=0.) for r,v in control['forwards'].items()}
             self.drive_mecanum(commands,control['duration_s'])
         raise RuntimeError('pair route decision budget exhausted')
+
+    def carry_with_rotation(self):
+        from harness.dispatch_navigation_map import navigation_map
+        from harness.dispatch_pair_navigation import PairNavigator,authorize_pair
+        from harness.pair_carry_sync import PairCarrySync
+        self.phase='TRANSIT';self.transport_started=True
+        anchor=self.capture('carry-anchor')
+        data=navigation_map(self.bindings,anchor['r1']['raw_top_bytes'])
+        agents={r:PairNavigator(data,r) for r in ROBOTS}
+        sync=PairCarrySync('dispatch-'+self.bindings.committed['plan_hash'])
+        self.calls.append({'kind':'navigation_map','map':data})
+        for index in range(1200):
+            frames=self.capture('rotate-carry')
+            decisions={}
+            for r in ROBOTS:
+                decision=agents[r].decide(frames[r]['own_bytes'],frames[r]['raw_top_bytes'])
+                current,initial=own_payload(frames[r]['own_bytes'],hue_upper=35),own_payload(anchor[r]['own_bytes'],hue_upper=35)
+                held=bool(current and initial and .25<=current[0]/initial[0]<=4
+                    and math.dist(current[1:],initial[1:])<=.15)
+                decision['own_attachment']={'held_estimate':held,'current':current,'anchor':initial}
+                decision['ready']=decision['ready'] and held
+                decisions[r]=decision
+            permission=authorize_pair(sync,decisions,{r:f['frame_id'] for r,f in frames.items()},index)
+            self.calls.append({'kind':'rotating_carry','decisions':decisions,'permission':permission,
+                'images':{r:{'own':f['own_rgb'],'top':f['raw_top_rgb']} for r,f in frames.items()}})
+            if permission['phase']!='GO':
+                raise RuntimeError('paired navigation stopped: '+str({r:d.get('status') for r,d in decisions.items()}))
+            if all(d['done'] for d in decisions.values()):return
+            self.drive_mecanum({r:{k:d['action'][k] for k in ('forward','left','turn')}
+                for r,d in decisions.items()},.2)
+        raise RuntimeError('rotating pair route decision budget exhausted')
 
     def verify_placement(self):
         """Fresh visual slot/stability claim; physical release stays referee-only."""

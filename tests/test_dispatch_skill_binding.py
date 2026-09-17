@@ -41,7 +41,8 @@ def test_every_allocation_reaches_its_physical_endpoints(order):
 
 
 def test_no_silent_route_change_or_revoked_plan_execution():
-    c=committed();b=SkillBindings(c,authored_map('shared_crossing'))
+    c=committed();c['plan']['tasks'][0]['route']='south';c['plan_hash']=digest(c['plan'])
+    b=SkillBindings(c,authored_map('narrow_south'))
     with pytest.raises(RuntimeError,match='PAIR_ROUTE_TOO_NARROW'):b.check_route()
     assert b.committed==c
     changed=copy.deepcopy(c);changed['plan']['dock']='dock_a'
