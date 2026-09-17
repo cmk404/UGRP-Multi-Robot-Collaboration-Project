@@ -28,6 +28,7 @@ class BoundPairSkill:
         self.commands={r:{int(c):int(v) for c,v in p.items()} for r,p in self.commands.items()}
         self.trace=[];self.evaluation_samples=[];self.grasp_report={};self.phase='APPROACH'
         self.last_capture=None;self.count=0;self.calls=[]
+        self.grasp_translation=None;self.latest_translation=None
         self.coarse=PairCoarsePixels(identity,bindings,reference) if identity is not None else None
 
     def time(self):return self.io.time()
@@ -40,7 +41,9 @@ class BoundPairSkill:
     def capture(self,tag):
         self.count+=1
         frames=self.io.capture('pair-'+str(self.count)+'-'+tag)
-        top, transform=canonical_pair_top(frames['r1']['top_bytes'],self.reference)
+        top, transform=canonical_pair_top(frames['r1']['top_bytes'],self.reference,
+            translation_px=self.grasp_translation if self.phase.startswith('grasp') else None)
+        self.latest_translation=transform['translation_px']
         top_ref=image_record(self.out/'rgb'/f'pair-{self.count}-canonical-top.jpg',self.out,top)
         mapped={slot:{**frames[rid], 'top_bytes':top,'shared_top_rgb':top_ref,
                       'raw_top_rgb':frames[rid]['shared_top_rgb'],'physical_robot_id':rid}
@@ -60,6 +63,7 @@ class BoundPairSkill:
     def stop_dwell(self):self.drive({r:0. for r in ROBOTS},.25)
 
     def replay(self,commands,stage):
+        if stage=='grasp_initialization':self.grasp_translation=self.latest_translation
         self.phase=stage
         if stage=='grasp_close':
             frames=self.capture('preclose-support')

@@ -68,9 +68,10 @@ def main():
             w.data.qacc_warmstart[:]=0
             for r,c in w.controllers.items():c.servo_command_pulses=copy.deepcopy(s[4][r])
             w.data.eq_active[:]=0;mujoco.mj_forward(w.model,w.data)
+        frozen_translation=None
         def capture(tag,slot):
             f=scene.capture(tag)[pair[slot]]
-            top,tr=canonical_pair_top(f['top_bytes'],reference)
+            top,tr=canonical_pair_top(f['top_bytes'],reference,translation_px=frozen_translation)
             rec=image_record(out/'student-rgb'/f'{tag}-top.jpg',out,top)
             own=image_record(out/'student-rgb'/f'{tag}-own.jpg',out,f['own_bytes'])
             actor_rows.append({'sample_id':tag,'model_slot':slot,'own_rgb':own,'top_rgb':rec,'transform':tr,
@@ -125,6 +126,8 @@ def main():
             report['complete']=True;report['scope']='approach transfer only; no new grasp model'
             return 0
         restore(folded)
+        anchor=scene.capture('grasp-frame-anchor')['r1']['top_bytes']
+        frozen_translation=canonical_pair_top(anchor,reference)[1]['translation_px']
         for cmd in skill['initialization_replay'][1:]:arm(normalize_replay(cmd),cmd['duration_s'],cmd.get('settle_s',0))
         neutral={s:{int(ch):int(v) for ch,v in w.controllers[rid].servo_command_pulses.items()} for s,rid in pair.items()}
         arm({s:{ch:neutral[s][ch] for ch in (3,4,5)} for s in pair})
@@ -159,14 +162,27 @@ def main():
             perturbations=[tuple(int(x) for x in v) for v in rng.integers(-50,51,size=(90,3))]
             for i,delta in enumerate(perturbations):
                 restore(preclose)
+                # Cover the existing visual approach handoff tolerances, rather
+                # than training only one mathematically exact base pose.
+                setup_jitter={}
+                for slot,rid in pair.items():
+                    dx,dy,dyaw=float(rng.uniform(-.004,.004)),float(rng.uniform(-.0025,.0025)),float(rng.uniform(-.35,.35))
+                    xyz=target[slot].copy();xyz[0]+=dx;xyz[1]+=dy
+                    w.controllers[rid].set_base_pose_for_test(tuple(xyz),math.radians(dyaw))
+                    setup_jitter[slot]=[dx,dy,dyaw]
                 arm({s:{ch:neutral[s][ch]+d for ch,d in zip((3,4,5),delta)}})
                 own,top=capture(f'grasp-{s}-{i:04d}',s)
                 arm({s:{ch:neutral[s][ch] for ch in (3,4,5)}})
                 ok=close_lift()
-                teacher_rows.append({'sample_id':f'grasp-{s}-{i:04d}','correction_pulses':[-d for d in delta],'physical_teacher_recovery':ok})
+                teacher_rows.append({'sample_id':f'grasp-{s}-{i:04d}','correction_pulses':[-d for d in delta],'physical_teacher_recovery':ok,'setup_jitter_teacher_only':setup_jitter})
                 if ok:rows.append({'own_jpeg':own,'top_jpeg':top,'case_id':f'grasp-{i:04d}','correction_pulses':[-d for d in delta]})
                 if i%15==0:print(json.dumps({'teacher':'grasp','slot':s,'sample':i,'accepted':len(rows)}),flush=True)
             model=fit_recovery_model(*grasp_refs[s],rows)
+            # The original transfer rule only ignores TOP rows that carry no
+            # learned direction; own-camera novelty remains fully checked.
+            model['constant_background_top_band']=[6,19]
+            from harness.camera_recovery_student import predict_recovery
+            predict_recovery(model,*grasp_refs[s])
             path=grasp_out/f'{s}-model.json';write(path,model)
             grasp_manifest['models'][s]={'path':path.name,'sha256':sha(path)}
             for view,data in zip(('own','top'),grasp_refs[s]):(grasp_out/f'{s}-goal-{view}.jpg').write_bytes(data)

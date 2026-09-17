@@ -25,7 +25,7 @@ def beam_feature(jpeg):
     return candidates[0]
 
 
-def canonical_pair_top(jpeg, reference):
+def canonical_pair_top(jpeg, reference, *, translation_px=None):
     """Translate observed pixels to the saved beam-centred image convention.
 
     This is image preprocessing, not a changed camera or world reset. Retain
@@ -37,13 +37,15 @@ def canonical_pair_top(jpeg, reference):
         raise ValueError('pair reference and live TOP dimensions differ')
     current, anchor = beam_feature(jpeg), beam_feature(reference)
     h, w = frame.shape[:2]
-    shift = (np.array(anchor['center']) - current['center']) * [w, h]
+    shift = (np.array(anchor['center']) - current['center']) * [w, h] if translation_px is None else np.asarray(translation_px,dtype=float)
+    if shift.shape!=(2,) or not np.isfinite(shift).all():raise ValueError('invalid image translation')
     transformed = cv2.warpAffine(frame, np.float32([[1,0,shift[0]],[0,1,shift[1]]]),
                                  (w,h), flags=cv2.INTER_LINEAR)
     data = cv2.imencode('.jpg', transformed, [cv2.IMWRITE_JPEG_QUALITY,95])[1].tobytes()
     return data, {'source_sha256':hashlib.sha256(jpeg).hexdigest(),
         'reference_sha256':hashlib.sha256(reference).hexdigest(),
         'translation_px':shift.tolist(),'observed_beam':current,
+        'fixed_from_prior_rgb':translation_px is not None,
         'method':'RGB translation only; black padding; unchanged own RGB'}
 
 
