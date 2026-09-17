@@ -1,0 +1,28 @@
+{
+  "source_sha": "c482f511cd8b013972c8f46de82308f1a7c078f4",
+  "workspace": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization",
+  "training_python": "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python",
+  "simulation_python": "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python",
+  "mjpython": "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+  "grasp_model": "/Users/changmin/projects/ugrp/outputs/grasp-recovery-model-20260910-v1",
+  "protocol_sha256": {
+    "development-cases.json": "aab43c0409faea6310c1d7521e6270d09b1d025000ddc7a4fa0b25dfc0bcabd0",
+    "development-preflight.json": "a67d2775e9910aeee0c4703177b1521859573700389b78430c9503abd17f6f42",
+    "aggregation-cases.json": "ae248c192aa64c1835a7819012a07fba3aeefc6169f9e3a7b86b1f64ee4b7871",
+    "test-cases.json": "f8316a77ed202fcb246361750e1264d3312440ed7662127d8e0196791913052d",
+    "protocol.json": "7ee95772a8a888e2a7f11bd1a29c59181c93cdf9d372963992ea2e461a7482fd",
+    "recovery-cases.json": "c3af24aae6189d888b3f34c7e49e76c1d90ea6d7517be65da51271e604934c8b",
+    "nominal-cases.json": "759a504024d080c9026bc7fe410b6f593715dce81bddb1f2a0311e167ae374ee",
+    "teacher-pilot.json": "716629504c97a6ee7485467a92b2a4649782f42494f5fc02a2c529c578917ac8",
+    "lateral-diagnostic.json": "c08eac736ec44cc5e79f1729d32309c45e0451921d88025b408600fd8a95497d"
+  },
+  "no_external_model_calls": true,
+  "raw_storage": "Local only; not uploaded/backed up by this task",
+  "live_workers": "Lifecycle owned by ugrp_session; simulation cohorts serial; at most two two-thread training workers.",
+  "act_runtime_source": {
+    "path": "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/lib/python3.12/site-packages/lerobot/policies/act/modeling_act.py",
+    "sha256": "2ea0acbdf210acee9d08f1f306afbda1e935bce0604b3b67b8d87c57c3f79a19",
+    "local_patch_script": "scripts/patch_reference_act.py",
+    "patch_script_sha256": "4a168456aa75fdff824c862ed8a36ee41ca7c6374fd36f9d6bbcc67ac1d1d97c"
+  }
+}

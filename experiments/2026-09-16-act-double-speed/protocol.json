@@ -1,0 +1,544 @@
+{
+  "schema": "ugrp.act_double_speed.v1",
+  "development_cases": [
+    "fast-train-05",
+    "fast-train-10",
+    "fast-train-15",
+    "fast-train-20",
+    "fast-train-25"
+  ],
+  "teacher_multiplier": 2.0,
+  "train_case_count": 50,
+  "training_seeds": [
+    20260916,
+    20260917
+  ],
+  "updates_per_robot": 10000,
+  "slow_sampling_threshold": 0.03,
+  "test_cases": [
+    {
+      "id": "in_domain-01",
+      "group": "in_domain",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.23192,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.28936,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "in_domain-02",
+      "group": "in_domain",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.22083,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.26829,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "in_domain-03",
+      "group": "in_domain",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.29161,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.27729,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "in_domain-04",
+      "group": "in_domain",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.23478,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.29157,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "in_domain-05",
+      "group": "in_domain",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.223,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.28048,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "in_domain-06",
+      "group": "in_domain",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.24901,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.29449,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "in_domain-07",
+      "group": "in_domain",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.22926,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.20176,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "in_domain-08",
+      "group": "in_domain",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.22734,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.25034,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "distance_shift-01",
+      "group": "distance_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.12,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.15,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "distance_shift-02",
+      "group": "distance_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.15,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.12,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "distance_shift-03",
+      "group": "distance_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.16,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.18,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "distance_shift-04",
+      "group": "distance_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.18,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.16,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "distance_shift-05",
+      "group": "distance_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.34,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.36,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "distance_shift-06",
+      "group": "distance_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.36,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.34,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "distance_shift-07",
+      "group": "distance_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.4,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.44,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "distance_shift-08",
+      "group": "distance_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.44,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.4,
+          "lateral_m": 0,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "lateral_shift-01",
+      "group": "lateral_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0.015,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0.015,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "lateral_shift-02",
+      "group": "lateral_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": -0.015,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": -0.015,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "lateral_shift-03",
+      "group": "lateral_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0.015,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": -0.015,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "lateral_shift-04",
+      "group": "lateral_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": -0.015,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0.015,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "lateral_shift-05",
+      "group": "lateral_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0.03,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0.03,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "lateral_shift-06",
+      "group": "lateral_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": -0.03,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": -0.03,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "lateral_shift-07",
+      "group": "lateral_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0.03,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": -0.03,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "lateral_shift-08",
+      "group": "lateral_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": -0.03,
+          "yaw_deg": 0
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0.03,
+          "yaw_deg": 0
+        }
+      }
+    },
+    {
+      "id": "yaw_shift-01",
+      "group": "yaw_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0,
+          "yaw_deg": 4
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0,
+          "yaw_deg": 4
+        }
+      }
+    },
+    {
+      "id": "yaw_shift-02",
+      "group": "yaw_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0,
+          "yaw_deg": -4
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0,
+          "yaw_deg": -4
+        }
+      }
+    },
+    {
+      "id": "yaw_shift-03",
+      "group": "yaw_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0,
+          "yaw_deg": 4
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0,
+          "yaw_deg": -4
+        }
+      }
+    },
+    {
+      "id": "yaw_shift-04",
+      "group": "yaw_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0,
+          "yaw_deg": -4
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0,
+          "yaw_deg": 4
+        }
+      }
+    },
+    {
+      "id": "yaw_shift-05",
+      "group": "yaw_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0,
+          "yaw_deg": 8
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0,
+          "yaw_deg": 8
+        }
+      }
+    },
+    {
+      "id": "yaw_shift-06",
+      "group": "yaw_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0,
+          "yaw_deg": -8
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0,
+          "yaw_deg": -8
+        }
+      }
+    },
+    {
+      "id": "yaw_shift-07",
+      "group": "yaw_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0,
+          "yaw_deg": 8
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0,
+          "yaw_deg": -8
+        }
+      }
+    },
+    {
+      "id": "yaw_shift-08",
+      "group": "yaw_shift",
+      "start_poses": {
+        "r1": {
+          "distance_m": 0.241,
+          "lateral_m": 0,
+          "yaw_deg": -8
+        },
+        "r3": {
+          "distance_m": 0.279,
+          "lateral_m": 0,
+          "yaw_deg": 8
+        }
+      }
+    }
+  ],
+  "conditions": [
+    "teacher2",
+    "slow_act",
+    "fast_act16",
+    "fast_act17"
+  ],
+  "success": "two settled approach confirmations AND common grasp success AND zero approach payload contact; no error",
+  "primary_speed_metric": "paired approach simulated seconds among both-success cases; report all failures separately",
+  "teacher_hard_metric": "all preregistered cases with teacher2 failure; count each frozen ACT seed success, no adaptation to test",
+  "scope": "Straight 20-30cm training only. Near starts overlap states in training trajectories; far starts, lateral and yaw shift unseen. Actions forward/stop only; no lateral/yaw correction trained. No object/light/FOV edits. Weld OFF.",
+  "evaluation_rule": "Same initial full physics and RGB; all 32 cases all 4 conditions, same 100-round cap, rotate order; no final-test checkpoint selection",
+  "development_failure_rule": "If teacher collection or development fails, diagnose there before final testing; record all exclusions/changes. Never retune on final results."
+}

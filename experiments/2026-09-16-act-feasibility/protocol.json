@@ -1,0 +1,127 @@
+{
+  "schema": "ugrp.act_feasibility.v1",
+  "development_cases": [
+    "train-05",
+    "train-10",
+    "train-15",
+    "train-20",
+    "train-25"
+  ],
+  "physical_pilot_conditions": [
+    "kernel",
+    "act"
+  ],
+  "physical_pilot_distances": [
+    [
+      0.27095,
+      0.27591
+    ],
+    [
+      0.22947,
+      0.22023
+    ],
+    [
+      0.29833,
+      0.28776
+    ],
+    [
+      0.23013,
+      0.28722
+    ],
+    [
+      0.23583,
+      0.22118
+    ],
+    [
+      0.29133,
+      0.25876
+    ],
+    [
+      0.27939,
+      0.21747
+    ],
+    [
+      0.2029,
+      0.23511
+    ],
+    [
+      0.23967,
+      0.28785
+    ],
+    [
+      0.20288,
+      0.28818
+    ],
+    [
+      0.25012,
+      0.23957
+    ],
+    [
+      0.2375,
+      0.22828
+    ],
+    [
+      0.23623,
+      0.25082
+    ],
+    [
+      0.26381,
+      0.25846
+    ],
+    [
+      0.28828,
+      0.25489
+    ],
+    [
+      0.24852,
+      0.27913
+    ],
+    [
+      0.25819,
+      0.28823
+    ],
+    [
+      0.23641,
+      0.25052
+    ],
+    [
+      0.20622,
+      0.23648
+    ],
+    [
+      0.25786,
+      0.27808
+    ]
+  ],
+  "development_physical_distances": [
+    [
+      0.205,
+      0.205
+    ],
+    [
+      0.255,
+      0.225
+    ],
+    [
+      0.295,
+      0.275
+    ]
+  ],
+  "candidate_plan": [
+    "frozen ImageNet128 uniform 3000 steps",
+    "same frozen ImageNet128 balanced 10000 steps"
+  ],
+  "seed_plan": [
+    20260916,
+    20260917
+  ],
+  "checkpoint_rule": "lowest development missed_stop_rate + 10*false_ready_rate + forward_mae/0.15; fixed ready thresholds",
+  "constraints": [
+    "two RGB only",
+    "original camera/FOV",
+    "weld OFF",
+    "no final-test tuning"
+  ],
+  "interpretation": "20 fresh starts in the same straight approach scene; not whole cooperative transport or real hardware",
+  "data_expansion": "existing 20 training cases + 30 new teacher cases; original 5 heldout cases now development only"
+}

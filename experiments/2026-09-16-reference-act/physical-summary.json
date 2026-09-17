@@ -1,0 +1,165 @@
+{
+  "source_sha": "85f5441906080acd770a848b29845ced1a53b61a",
+  "protocol": {
+    "schema": "ugrp.reference_act_approach_comparison.v1",
+    "seed": 20260916,
+    "heldout_cases": [
+      "train-05",
+      "train-10",
+      "train-15",
+      "train-20",
+      "train-25"
+    ],
+    "threads": 2,
+    "steps": 300,
+    "batch_size": 16,
+    "learning_rate": 0.0001,
+    "physical_pilot_distances": [
+      [
+        0.205,
+        0.205
+      ],
+      [
+        0.255,
+        0.225
+      ],
+      [
+        0.295,
+        0.275
+      ]
+    ],
+    "physical_pilot_conditions": [
+      "kernel",
+      "act"
+    ],
+    "claim": "Small-preset integration pilot; no architecture ranking, no original-paper reproduction.",
+    "selection_rule": "Keep the existing default. Record every declared case and failure. Do not tune on held-out cases."
+  },
+  "cases": [
+    {
+      "case": "01-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.205,
+        0.205
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 18.156807334016776,
+      "sim_s": 11.100000000000676,
+      "approach_calls": 112,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "85f5441906080acd770a848b29845ced1a53b61a"
+    },
+    {
+      "case": "01-act",
+      "condition": "act",
+      "distance": [
+        0.205,
+        0.205
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "wall_s": 25.355600832990604,
+      "sim_s": 20.249999999999154,
+      "approach_calls": 200,
+      "contact_steps": 0,
+      "stop_reason": "bounded approach budget exhausted",
+      "error": null,
+      "source_sha": "85f5441906080acd770a848b29845ced1a53b61a"
+    },
+    {
+      "case": "02-act",
+      "condition": "act",
+      "distance": [
+        0.255,
+        0.225
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "wall_s": 24.495746333006537,
+      "sim_s": 20.249999999999154,
+      "approach_calls": 200,
+      "contact_steps": 0,
+      "stop_reason": "bounded approach budget exhausted",
+      "error": null,
+      "source_sha": "85f5441906080acd770a848b29845ced1a53b61a"
+    },
+    {
+      "case": "02-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.255,
+        0.225
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 23.66964487498626,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "85f5441906080acd770a848b29845ced1a53b61a"
+    },
+    {
+      "case": "03-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.295,
+        0.275
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 29.697818207991077,
+      "sim_s": 11.50000000000081,
+      "approach_calls": 116,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "85f5441906080acd770a848b29845ced1a53b61a"
+    },
+    {
+      "case": "03-act",
+      "condition": "act",
+      "distance": [
+        0.295,
+        0.275
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": false,
+      "approach_ok": false,
+      "grasp_success": false,
+      "wall_s": 34.60245533302077,
+      "sim_s": 20.249999999999154,
+      "approach_calls": 200,
+      "contact_steps": 0,
+      "stop_reason": "bounded approach budget exhausted",
+      "error": null,
+      "source_sha": "85f5441906080acd770a848b29845ced1a53b61a"
+    }
+  ],
+  "training_source_sha": "f0ee14dadb0f285273f926b8d7fbab445c395c11",
+  "training_code_unchanged": true,
+  "complete": true,
+  "external_model_calls": 0,
+  "external_model_tokens": 0
+}

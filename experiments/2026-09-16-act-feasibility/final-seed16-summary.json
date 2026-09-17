@@ -1,0 +1,937 @@
+{
+  "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a",
+  "protocol": {
+    "schema": "ugrp.act_feasibility.v1",
+    "development_cases": [
+      "train-05",
+      "train-10",
+      "train-15",
+      "train-20",
+      "train-25"
+    ],
+    "physical_pilot_conditions": [
+      "kernel",
+      "act"
+    ],
+    "physical_pilot_distances": [
+      [
+        0.27095,
+        0.27591
+      ],
+      [
+        0.22947,
+        0.22023
+      ],
+      [
+        0.29833,
+        0.28776
+      ],
+      [
+        0.23013,
+        0.28722
+      ],
+      [
+        0.23583,
+        0.22118
+      ],
+      [
+        0.29133,
+        0.25876
+      ],
+      [
+        0.27939,
+        0.21747
+      ],
+      [
+        0.2029,
+        0.23511
+      ],
+      [
+        0.23967,
+        0.28785
+      ],
+      [
+        0.20288,
+        0.28818
+      ],
+      [
+        0.25012,
+        0.23957
+      ],
+      [
+        0.2375,
+        0.22828
+      ],
+      [
+        0.23623,
+        0.25082
+      ],
+      [
+        0.26381,
+        0.25846
+      ],
+      [
+        0.28828,
+        0.25489
+      ],
+      [
+        0.24852,
+        0.27913
+      ],
+      [
+        0.25819,
+        0.28823
+      ],
+      [
+        0.23641,
+        0.25052
+      ],
+      [
+        0.20622,
+        0.23648
+      ],
+      [
+        0.25786,
+        0.27808
+      ]
+    ],
+    "development_physical_distances": [
+      [
+        0.205,
+        0.205
+      ],
+      [
+        0.255,
+        0.225
+      ],
+      [
+        0.295,
+        0.275
+      ]
+    ],
+    "candidate_plan": [
+      "frozen ImageNet128 uniform 3000 steps",
+      "same frozen ImageNet128 balanced 10000 steps"
+    ],
+    "seed_plan": [
+      20260916,
+      20260917
+    ],
+    "checkpoint_rule": "lowest development missed_stop_rate + 10*false_ready_rate + forward_mae/0.15; fixed ready thresholds",
+    "constraints": [
+      "two RGB only",
+      "original camera/FOV",
+      "weld OFF",
+      "no final-test tuning"
+    ],
+    "interpretation": "20 fresh starts in the same straight approach scene; not whole cooperative transport or real hardware",
+    "data_expansion": "existing 20 training cases + 30 new teacher cases; original 5 heldout cases now development only"
+  },
+  "cases": [
+    {
+      "case": "01-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.27095,
+        0.27591
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 21.521132875001058,
+      "sim_s": 11.50000000000081,
+      "approach_calls": 116,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "01-act",
+      "condition": "act",
+      "distance": [
+        0.27095,
+        0.27591
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 30.50342150000506,
+      "sim_s": 11.50000000000081,
+      "approach_calls": 116,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "02-act",
+      "condition": "act",
+      "distance": [
+        0.22947,
+        0.22023
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 26.728761292004492,
+      "sim_s": 11.100000000000676,
+      "approach_calls": 112,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "02-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.22947,
+        0.22023
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 19.652267124998616,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "03-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.29833,
+        0.28776
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 20.717366790981032,
+      "sim_s": 11.700000000000877,
+      "approach_calls": 118,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "03-act",
+      "condition": "act",
+      "distance": [
+        0.29833,
+        0.28776
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 30.188909250020515,
+      "sim_s": 11.700000000000877,
+      "approach_calls": 118,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "04-act",
+      "condition": "act",
+      "distance": [
+        0.23013,
+        0.28722
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 30.563926083006663,
+      "sim_s": 11.700000000000877,
+      "approach_calls": 118,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "04-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.23013,
+        0.28722
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 21.2640092499787,
+      "sim_s": 11.50000000000081,
+      "approach_calls": 116,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "05-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.23583,
+        0.22118
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 20.577386084012687,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "05-act",
+      "condition": "act",
+      "distance": [
+        0.23583,
+        0.22118
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 23.84990866598673,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "06-act",
+      "condition": "act",
+      "distance": [
+        0.29133,
+        0.25876
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 20.071756999997888,
+      "sim_s": 11.700000000000877,
+      "approach_calls": 118,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "06-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.29133,
+        0.25876
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 16.450581375014735,
+      "sim_s": 11.700000000000877,
+      "approach_calls": 118,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "07-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.27939,
+        0.21747
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 15.188086790993111,
+      "sim_s": 11.50000000000081,
+      "approach_calls": 116,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "07-act",
+      "condition": "act",
+      "distance": [
+        0.27939,
+        0.21747
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 20.18119454200496,
+      "sim_s": 11.700000000000877,
+      "approach_calls": 118,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "08-act",
+      "condition": "act",
+      "distance": [
+        0.2029,
+        0.23511
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 21.346397625020472,
+      "sim_s": 11.50000000000081,
+      "approach_calls": 116,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "08-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.2029,
+        0.23511
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 16.175462583021726,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "09-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.23967,
+        0.28785
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 15.561566958000185,
+      "sim_s": 11.700000000000877,
+      "approach_calls": 118,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "09-act",
+      "condition": "act",
+      "distance": [
+        0.23967,
+        0.28785
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 20.718563375005033,
+      "sim_s": 11.700000000000877,
+      "approach_calls": 118,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "10-act",
+      "condition": "act",
+      "distance": [
+        0.20288,
+        0.28818
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 20.954262457991717,
+      "sim_s": 11.900000000000944,
+      "approach_calls": 120,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "10-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.20288,
+        0.28818
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 15.400527708989102,
+      "sim_s": 11.900000000000944,
+      "approach_calls": 120,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "11-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.25012,
+        0.23957
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 13.887029167002765,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "11-act",
+      "condition": "act",
+      "distance": [
+        0.25012,
+        0.23957
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 18.670780625019688,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "12-act",
+      "condition": "act",
+      "distance": [
+        0.2375,
+        0.22828
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 18.393805458006682,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "12-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.2375,
+        0.22828
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 15.73299187500379,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "13-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.23623,
+        0.25082
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 15.859791958006099,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "13-act",
+      "condition": "act",
+      "distance": [
+        0.23623,
+        0.25082
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 20.87654100000509,
+      "sim_s": 11.50000000000081,
+      "approach_calls": 116,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "14-act",
+      "condition": "act",
+      "distance": [
+        0.26381,
+        0.25846
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 18.704681165982038,
+      "sim_s": 11.50000000000081,
+      "approach_calls": 116,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "14-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.26381,
+        0.25846
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 15.829603249992942,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "15-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.28828,
+        0.25489
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 15.99569254097878,
+      "sim_s": 11.700000000000877,
+      "approach_calls": 118,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "15-act",
+      "condition": "act",
+      "distance": [
+        0.28828,
+        0.25489
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 19.177533250011038,
+      "sim_s": 11.700000000000877,
+      "approach_calls": 118,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "16-act",
+      "condition": "act",
+      "distance": [
+        0.24852,
+        0.27913
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 19.469843750004657,
+      "sim_s": 11.700000000000877,
+      "approach_calls": 118,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "16-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.24852,
+        0.27913
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 14.38217154200538,
+      "sim_s": 11.50000000000081,
+      "approach_calls": 116,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "17-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.25819,
+        0.28823
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 14.748730916006025,
+      "sim_s": 11.50000000000081,
+      "approach_calls": 116,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "17-act",
+      "condition": "act",
+      "distance": [
+        0.25819,
+        0.28823
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 21.158396417013137,
+      "sim_s": 11.700000000000877,
+      "approach_calls": 118,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "18-act",
+      "condition": "act",
+      "distance": [
+        0.23641,
+        0.25052
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 20.223336917028064,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "18-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.23641,
+        0.25052
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 15.757021042023553,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "19-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.20622,
+        0.23648
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 14.695354708004743,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "19-act",
+      "condition": "act",
+      "distance": [
+        0.20622,
+        0.23648
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 22.453310916986084,
+      "sim_s": 11.50000000000081,
+      "approach_calls": 116,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "20-act",
+      "condition": "act",
+      "distance": [
+        0.25786,
+        0.27808
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 23.698430791002465,
+      "sim_s": 11.700000000000877,
+      "approach_calls": 118,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "20-kernel",
+      "condition": "kernel",
+      "distance": [
+        0.25786,
+        0.27808
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 16.992693583015352,
+      "sim_s": 11.50000000000081,
+      "approach_calls": 116,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    }
+  ],
+  "training_source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a",
+  "training_code_unchanged": true,
+  "complete": true,
+  "external_model_calls": 0,
+  "external_model_tokens": 0
+}

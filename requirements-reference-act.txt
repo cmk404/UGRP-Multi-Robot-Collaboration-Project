@@ -1,0 +1,8 @@
+# Optional research environment: keep separate from the simulation environment.
+# Upstream ACT is imported, not copied or reimplemented.
+lerobot @ git+https://github.com/huggingface/lerobot.git@89236ea0f4f81a81ca566081e20dd1ff5f823cbe
+torch==2.11.0
+torchvision==0.26.0
+numpy==2.2.6
+opencv-python-headless==4.13.0.92
+pytest==9.1.1

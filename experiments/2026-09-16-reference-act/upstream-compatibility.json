@@ -1,0 +1,10 @@
+{
+  "stage": "preflight_before_training",
+  "upstream_sha": "89236ea0f4f81a81ca566081e20dd1ff5f823cbe",
+  "original_modeling_act_sha256": "8d622935319af7d03f1efd95d51e726af2921010f7e4f5ec3742f62280493111",
+  "failure": "KeyError: observation.state in ACT.forward while constructing cls_joint_is_pad at line 435",
+  "additional_same_cause": "Inference also unconditionally reads batch[OBS_STATE].device at line 459",
+  "fix": "Replace only those two device references with self.encoder_latent_input_proj.weight.device",
+  "fake_state_added": false,
+  "note": "Network, loss, camera inputs and action dimensions are unchanged by this compatibility patch."
+}

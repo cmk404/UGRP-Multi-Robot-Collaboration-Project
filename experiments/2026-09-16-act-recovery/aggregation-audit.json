@@ -1,0 +1,353 @@
+{
+  "summary_sha256": "fa9233e1605ecf7d49de35275e57a4fe058b3d508bc84380bca6f974ade968db",
+  "manifest_sha256": "87fbd176bd3b040ce0c55555acbfc2a9c93f5b9c6ca4f34b6ac0c961ef8cfca3",
+  "attempts": [
+    {
+      "id": "nominal-aggregate-01",
+      "group": "nominal",
+      "eligible": true,
+      "full_run_strict_success": true,
+      "physical_grasp_success": true,
+      "prefix_steps": 20,
+      "prefix_declared_ready": false,
+      "prefix_contact_steps": 0,
+      "takeover_errors": {
+        "r1": {
+          "x": 0.16408923049568785,
+          "y": -0.0011091138810828127,
+          "yaw": -0.002614836134469556
+        },
+        "r3": {
+          "x": 0.13295841577442136,
+          "y": -0.00016489908811379017,
+          "yaw": -0.0020891515857819343
+        }
+      },
+      "teacher_tail_contact_steps": 0,
+      "teacher_label_rows": 112,
+      "heldout_label_rows": 0,
+      "exclusions": [],
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/aggregation-v1/nominal-aggregate-01",
+      "result_sha256": "9adbf914d29d452d1e60a0e04e396b26134d8279dfd77c435a14590fbbf21d7b"
+    },
+    {
+      "id": "nominal-aggregate-02",
+      "group": "nominal",
+      "eligible": true,
+      "full_run_strict_success": true,
+      "physical_grasp_success": true,
+      "prefix_steps": 60,
+      "prefix_declared_ready": false,
+      "prefix_contact_steps": 0,
+      "takeover_errors": {
+        "r1": {
+          "x": -0.002373110164335279,
+          "y": -0.0018262889528326554,
+          "yaw": 0.0035550057599169627
+        },
+        "r3": {
+          "x": 0.02131763476553905,
+          "y": 0.0021987522419815164,
+          "yaw": -0.0036427929949409688
+        }
+      },
+      "teacher_tail_contact_steps": 0,
+      "teacher_label_rows": 120,
+      "heldout_label_rows": 0,
+      "exclusions": [],
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/aggregation-v1/nominal-aggregate-02",
+      "result_sha256": "a1e7d15fd1d25d3a886eed1709ba391ba4c1f5bb015178e628695671302f64ab"
+    },
+    {
+      "id": "nominal-aggregate-03",
+      "group": "nominal",
+      "eligible": true,
+      "full_run_strict_success": true,
+      "physical_grasp_success": true,
+      "prefix_steps": 100,
+      "prefix_declared_ready": true,
+      "prefix_contact_steps": 0,
+      "takeover_errors": {
+        "r1": {
+          "x": -0.001186781120714131,
+          "y": -0.0003938158468255182,
+          "yaw": 0.0003630476372245006
+        },
+        "r3": {
+          "x": 0.0029443386746326183,
+          "y": 0.0015252594358681204,
+          "yaw": -0.0028362797186236577
+        }
+      },
+      "teacher_tail_contact_steps": 0,
+      "teacher_label_rows": 14,
+      "heldout_label_rows": 0,
+      "exclusions": [],
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/aggregation-v1/nominal-aggregate-03",
+      "result_sha256": "0faf7d780b13e76b0ed9d9fc05f12e36c40a8a838c71b045c0d1a5eb459539d9"
+    },
+    {
+      "id": "yaw-aggregate-01",
+      "group": "yaw",
+      "eligible": false,
+      "full_run_strict_success": false,
+      "physical_grasp_success": true,
+      "prefix_steps": 20,
+      "prefix_declared_ready": false,
+      "prefix_contact_steps": 405,
+      "takeover_errors": {
+        "r1": {
+          "x": 0.06584633652782335,
+          "y": 0.001908115400357513,
+          "yaw": -0.018965269504638727
+        },
+        "r3": {
+          "x": 0.10009202211237145,
+          "y": 0.014966228737691045,
+          "yaw": 0.2161135725525125
+        }
+      },
+      "teacher_tail_contact_steps": 722,
+      "teacher_label_rows": 206,
+      "heldout_label_rows": 10,
+      "exclusions": [
+        "teacher tail contact",
+        "held-out combination region in teacher labels"
+      ],
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/aggregation-v1/yaw-aggregate-01",
+      "result_sha256": "ea6c3f3f87a35cac6e50fac60755d4c24322af9598121104068caf4e67725155"
+    },
+    {
+      "id": "yaw-aggregate-02",
+      "group": "yaw",
+      "eligible": false,
+      "full_run_strict_success": false,
+      "physical_grasp_success": true,
+      "prefix_steps": 60,
+      "prefix_declared_ready": false,
+      "prefix_contact_steps": 4597,
+      "takeover_errors": {
+        "r1": {
+          "x": 0.2604916228060985,
+          "y": 0.003584436626509202,
+          "yaw": -0.01398182312387597
+        },
+        "r3": {
+          "x": 0.07225570538952841,
+          "y": 0.0622287314771135,
+          "yaw": 0.6101556371818284
+        }
+      },
+      "teacher_tail_contact_steps": 4237,
+      "teacher_label_rows": 294,
+      "heldout_label_rows": 26,
+      "exclusions": [
+        "teacher tail contact",
+        "held-out combination region in teacher labels"
+      ],
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/aggregation-v1/yaw-aggregate-02",
+      "result_sha256": "27b9267d6873072a9764150048d172a8acd58a9821869b785cdbc96b2f42ea84"
+    },
+    {
+      "id": "yaw-aggregate-03",
+      "group": "yaw",
+      "eligible": false,
+      "full_run_strict_success": false,
+      "physical_grasp_success": true,
+      "prefix_steps": 100,
+      "prefix_declared_ready": false,
+      "prefix_contact_steps": 8604,
+      "takeover_errors": {
+        "r1": {
+          "x": -0.002320319478176125,
+          "y": -0.001544997766643963,
+          "yaw": 0.013055853384579486
+        },
+        "r3": {
+          "x": 0.07574514130159427,
+          "y": 0.06814311079963553,
+          "yaw": 0.5758358245334216
+        }
+      },
+      "teacher_tail_contact_steps": 4000,
+      "teacher_label_rows": 292,
+      "heldout_label_rows": 24,
+      "exclusions": [
+        "teacher tail contact",
+        "held-out combination region in teacher labels"
+      ],
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/aggregation-v1/yaw-aggregate-03",
+      "result_sha256": "cd8dc81e46337b77c2ea1c94876366436a91b52d8a384b98aac4af9f32674de6"
+    },
+    {
+      "id": "lateral-aggregate-01",
+      "group": "lateral",
+      "eligible": true,
+      "full_run_strict_success": true,
+      "physical_grasp_success": true,
+      "prefix_steps": 20,
+      "prefix_declared_ready": false,
+      "prefix_contact_steps": 0,
+      "takeover_errors": {
+        "r1": {
+          "x": 0.2090941237589718,
+          "y": -0.0024105723803224954,
+          "yaw": -0.0019321077810747767
+        },
+        "r3": {
+          "x": 0.20814594319420343,
+          "y": 0.0007192164546312441,
+          "yaw": -0.0029500335163428204
+        }
+      },
+      "teacher_tail_contact_steps": 0,
+      "teacher_label_rows": 138,
+      "heldout_label_rows": 0,
+      "exclusions": [],
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/aggregation-v1/lateral-aggregate-01",
+      "result_sha256": "b544702e477b5a75862051202cdf22b439e13154ced52b53f15d74162650f457"
+    },
+    {
+      "id": "lateral-aggregate-02",
+      "group": "lateral",
+      "eligible": true,
+      "full_run_strict_success": true,
+      "physical_grasp_success": true,
+      "prefix_steps": 60,
+      "prefix_declared_ready": false,
+      "prefix_contact_steps": 0,
+      "takeover_errors": {
+        "r1": {
+          "x": -0.0022996335322125194,
+          "y": -0.005873794748922467,
+          "yaw": 0.005089163005420172
+        },
+        "r3": {
+          "x": 0.03662213412531479,
+          "y": 0.0018338243385545017,
+          "yaw": -0.002506702777879788
+        }
+      },
+      "teacher_tail_contact_steps": 0,
+      "teacher_label_rows": 118,
+      "heldout_label_rows": 0,
+      "exclusions": [],
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/aggregation-v1/lateral-aggregate-02",
+      "result_sha256": "d2aa13c1dbd39bf5b07871333716c0d1dab2a76d0b25877cc77886248df64a90"
+    },
+    {
+      "id": "lateral-aggregate-03",
+      "group": "lateral",
+      "eligible": true,
+      "full_run_strict_success": true,
+      "physical_grasp_success": true,
+      "prefix_steps": 100,
+      "prefix_declared_ready": false,
+      "prefix_contact_steps": 0,
+      "takeover_errors": {
+        "r1": {
+          "x": -0.009211176183971825,
+          "y": -0.010746292338756902,
+          "yaw": 0.005731175380251141
+        },
+        "r3": {
+          "x": 0.02680405409517239,
+          "y": 0.002097139573349782,
+          "yaw": -0.00545139092009439
+        }
+      },
+      "teacher_tail_contact_steps": 0,
+      "teacher_label_rows": 136,
+      "heldout_label_rows": 0,
+      "exclusions": [],
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/aggregation-v1/lateral-aggregate-03",
+      "result_sha256": "cf18ff5bd11ebcad41a44a3a9233de01585e68ef7e9f0e5efdfd3fd9bd9f37f0"
+    },
+    {
+      "id": "overshoot-aggregate-01",
+      "group": "overshoot",
+      "eligible": true,
+      "full_run_strict_success": true,
+      "physical_grasp_success": true,
+      "prefix_steps": 20,
+      "prefix_declared_ready": false,
+      "prefix_contact_steps": 0,
+      "takeover_errors": {
+        "r1": {
+          "x": -0.0023178282699526376,
+          "y": 1.469439423917862e-06,
+          "yaw": -0.00013641752843707167
+        },
+        "r3": {
+          "x": -0.0026378284296189047,
+          "y": 1.5792668834890833e-05,
+          "yaw": -3.371132805796151e-06
+        }
+      },
+      "teacher_tail_contact_steps": 0,
+      "teacher_label_rows": 10,
+      "heldout_label_rows": 0,
+      "exclusions": [],
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/aggregation-v1/overshoot-aggregate-01",
+      "result_sha256": "3fdd1bb053d75070c8825a3b2ccfefa37b9376afa262f0f98f1559a9f1ee47de"
+    },
+    {
+      "id": "overshoot-aggregate-02",
+      "group": "overshoot",
+      "eligible": true,
+      "full_run_strict_success": true,
+      "physical_grasp_success": true,
+      "prefix_steps": 60,
+      "prefix_declared_ready": true,
+      "prefix_contact_steps": 0,
+      "takeover_errors": {
+        "r1": {
+          "x": -0.0019068986768931984,
+          "y": 2.0432358027733244e-07,
+          "yaw": -2.4143918175845158e-05
+        },
+        "r3": {
+          "x": -0.0008894211452952216,
+          "y": 2.4163273067978608e-05,
+          "yaw": -1.390195381434367e-05
+        }
+      },
+      "teacher_tail_contact_steps": 0,
+      "teacher_label_rows": 6,
+      "heldout_label_rows": 0,
+      "exclusions": [],
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/aggregation-v1/overshoot-aggregate-02",
+      "result_sha256": "444ed00af270ad4018961b0185a1c808783e4991ad01e1238390e2468b0804e6"
+    },
+    {
+      "id": "overshoot-aggregate-03",
+      "group": "overshoot",
+      "eligible": true,
+      "full_run_strict_success": true,
+      "physical_grasp_success": true,
+      "prefix_steps": 100,
+      "prefix_declared_ready": false,
+      "prefix_contact_steps": 0,
+      "takeover_errors": {
+        "r1": {
+          "x": -0.0024015079776789072,
+          "y": 7.858641905356123e-05,
+          "yaw": -0.0017664570918736189
+        },
+        "r3": {
+          "x": -0.00030202746870744424,
+          "y": 3.0151370806308364e-05,
+          "yaw": 2.090706841251233e-05
+        }
+      },
+      "teacher_tail_contact_steps": 0,
+      "teacher_label_rows": 12,
+      "heldout_label_rows": 0,
+      "exclusions": [],
+      "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/aggregation-v1/overshoot-aggregate-03",
+      "result_sha256": "d7f2a9293e9b08b382f8fa573645888ca73f5eb15d2cd74cf98ac6639841ee95"
+    }
+  ],
+  "raw_files_verified": 5056,
+  "actual_rgb_requests_verified": 1440
+}

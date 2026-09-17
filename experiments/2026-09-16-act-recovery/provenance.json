@@ -1,0 +1,388 @@
+{
+  "packaging_source_sha": "a43826315049c33e3611003b6d64c13d4f4cee11",
+  "raw_storage": "Local only; no Drive/remote artifact backup",
+  "raw_roots": [
+    "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs",
+    "/Users/changmin/projects/ugrp-worktrees/act-recovery-command-calibration/outputs"
+  ],
+  "final_source_sha": "911bf99e93cebdda111f3b8cd96bc9adcc3e426c",
+  "artifacts": {
+    "dataset-counts.json": "707f6ff78b2d756f0202de44b5493d90075085080fa663cd3348d744aef28c41",
+    "final-failure-analysis.json": "12d4cc48791dce2cfed2e6cb5b7f0f1fbc0d1ac364a77dbf85100ae7c76d4306",
+    "development-cases.json": "aab43c0409faea6310c1d7521e6270d09b1d025000ddc7a4fa0b25dfc0bcabd0",
+    "aggregation-audit-v2.json": "0e95dd91fd7a403b25d47798101ddf7f0da1a3e357a09d50ce88872894412223",
+    "development-preflight.json": "a67d2775e9910aeee0c4703177b1521859573700389b78430c9503abd17f6f42",
+    "training-summary.json": "73332335d96e90f6c23e5ad06ab3c914b3fac5315d89c77bd88a88c4be396a8a",
+    "results.json": "f7c1b402bcedacae6744d1d07a95e3b3bc15f9af1e6b2a8f967346b2ac6d478b",
+    "aggregation-cases.json": "ae248c192aa64c1835a7819012a07fba3aeefc6169f9e3a7b86b1f64ee4b7871",
+    "curriculum-manifest-audit.json": "d14c463268b7d74f998f8019fbd58b48f7c56ea27f8f6858a83fee437498bd28",
+    "development-preflight-results.json": "990c2a827b27c55ffe17d5cf6b1233e1f47a8d74788cffaa193b2ced0eb902de",
+    "final-spec.json": "e9864cfecee5a4b7e05b98d6f2ef5fbf677a91ab097db3e2a0a70d8bfb3b5fa4",
+    "video-overview.json": "4f2c132bfe04d082473ca0e0aed06197f0b04d232c373f2c862ba48a73a9e637",
+    "test-cases.json": "f8316a77ed202fcb246361750e1264d3312440ed7662127d8e0196791913052d",
+    "videos-seed17.json": "6a857cce35eb25308034ed5fb4e667c6720556ea22e040e483e45ce4581aa900",
+    "preregistration-audit.json": "557c22cfbf65cd03aebdb5bdc484acce6ce53ac129fb3a03501dca3f3258d291",
+    "final-freeze.json": "727186835d8e4c98a72d2b754d814c9d038043ee02752637fb4d3cd5bf5e0c70",
+    "videos-seed16.json": "c5925b08bf546389d5a5fd9d51a4921bac53723728daa63f2dc4c0ee2e20b75e",
+    "protocol.json": "94b501bce51f6eedc97a76a82e4c446dad1d49556cb04cdd2b6ed77e0b6a622a",
+    "curriculum-audit.json": "aa7a71e3d00ff73e4c707f7310dc9a40a785c84da0752f9f15c79d31e1ed920c",
+    "videos-development.json": "01483a87ca99a50ad8460d2cd7d9b4c94a0d8ce9e30a3f32606c11945c719857",
+    "recovery-cases.json": "c3af24aae6189d888b3f34c7e49e76c1d90ea6d7517be65da51271e604934c8b",
+    "final-video-qa.json": "d753dd3155682c259a740539d09aeaa3d344ed319c3a5a856cfa77d9a40c2948",
+    "actuator-calibration-audit.json": "f0abeed7295d423b876799a1aab43afb0a79252027ed264291df2922e09af68c",
+    "final-audit.json": "000bad1ad14bca4dc33af60329c11c5ca5aa4b28d2edbc9829c7a4d0a39998dd",
+    "aggregation-audit.json": "903031e42275fa757459f50f434e4352ab9bf0042d19f7bf0d706d174cfcc1a3",
+    "training-environment.json": "45a9cefaff3ac5dd80a9d0bdbe37625e82524b0dd674c189fedd251c585ae5ff",
+    "nominal-cases.json": "759a504024d080c9026bc7fe410b6f593715dce81bddb1f2a0311e167ae374ee",
+    "freeze-verification.json": "355eae323f46623bec9c42cd398735136e8ea9db3124340e9ae26c9475e98643",
+    "teacher-pilot.json": "716629504c97a6ee7485467a92b2a4649782f42494f5fc02a2c529c578917ac8",
+    "lateral-diagnostic.json": "c08eac736ec44cc5e79f1729d32309c45e0451921d88025b408600fd8a95497d",
+    "development-video-qa.json": "89b93c7c876f5e9c42f240c04e4e063c66dfbfb3c826a0c05b85dada8b116fc8"
+  },
+  "initial_teacher_pilot": {
+    "source_sha": "024e53581dcd4ee01bf299fd19a51d0b51432722",
+    "cases_sha256": "716629504c97a6ee7485467a92b2a4649782f42494f5fc02a2c529c578917ac8",
+    "policy": "recovery_teacher",
+    "cases": [
+      {
+        "id": "pilot-01",
+        "group": "pilot",
+        "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/teacher-pilot-v1/pilot-01",
+        "returncode": 0,
+        "timeout": false,
+        "success": true,
+        "approach_ok": true,
+        "alignment": {
+          "max_errors": {
+            "angular_speed": 1.1351808382187341e-10,
+            "linear_speed": 8.107142609681356e-05,
+            "x": 0.0016969767477755804,
+            "y": 3.251389468772459e-08,
+            "yaw": 8.520318228733004e-09
+          },
+          "samples": 5,
+          "success": true,
+          "tolerance": {
+            "angular_speed_radps": 0.02,
+            "linear_speed_mps": 0.005,
+            "window_s": 0.4,
+            "x_m": 0.005,
+            "y_m": 0.005,
+            "yaw_deg": 1.0
+          }
+        },
+        "training_eligible": true,
+        "contact_steps": 0,
+        "approach_sim_s": 10.60000000000051,
+        "wall_s": 13.184925459005171,
+        "error": null
+      },
+      {
+        "id": "pilot-02",
+        "group": "pilot",
+        "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/teacher-pilot-v1/pilot-02",
+        "returncode": 0,
+        "timeout": false,
+        "success": true,
+        "approach_ok": true,
+        "alignment": {
+          "max_errors": {
+            "angular_speed": 9.083844787482902e-11,
+            "linear_speed": 8.15364754480637e-05,
+            "x": 0.001593122442492212,
+            "y": 4.391553876104126e-08,
+            "yaw": 1.0306035092000343e-07
+          },
+          "samples": 5,
+          "success": true,
+          "tolerance": {
+            "angular_speed_radps": 0.02,
+            "linear_speed_mps": 0.005,
+            "window_s": 0.4,
+            "x_m": 0.005,
+            "y_m": 0.005,
+            "yaw_deg": 1.0
+          }
+        },
+        "training_eligible": true,
+        "contact_steps": 0,
+        "approach_sim_s": 7.399999999999441,
+        "wall_s": 10.610399042023346,
+        "error": null
+      },
+      {
+        "id": "pilot-03",
+        "group": "pilot",
+        "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/teacher-pilot-v1/pilot-03",
+        "returncode": 0,
+        "timeout": false,
+        "success": true,
+        "approach_ok": true,
+        "alignment": {
+          "max_errors": {
+            "angular_speed": 8.478551194457275e-11,
+            "linear_speed": 8.107138810214464e-05,
+            "x": 0.0018118342197676052,
+            "y": 0.0016119428035614725,
+            "yaw": 0.008253627506885408
+          },
+          "samples": 5,
+          "success": true,
+          "tolerance": {
+            "angular_speed_radps": 0.02,
+            "linear_speed_mps": 0.005,
+            "window_s": 0.4,
+            "x_m": 0.005,
+            "y_m": 0.005,
+            "yaw_deg": 1.0
+          }
+        },
+        "training_eligible": true,
+        "contact_steps": 0,
+        "approach_sim_s": 16.2000000000014,
+        "wall_s": 16.978574500011746,
+        "error": null
+      },
+      {
+        "id": "pilot-04",
+        "group": "pilot",
+        "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/teacher-pilot-v1/pilot-04",
+        "returncode": 0,
+        "timeout": false,
+        "success": false,
+        "approach_ok": false,
+        "alignment": {
+          "max_errors": {
+            "angular_speed": 1.221693942898821e-05,
+            "linear_speed": 4.61110669433657e-05,
+            "x": 0.2500257209799663,
+            "y": 0.013680034870469093,
+            "yaw": 0.0007985128375329609
+          },
+          "samples": 5,
+          "success": false,
+          "tolerance": {
+            "angular_speed_radps": 0.02,
+            "linear_speed_mps": 0.005,
+            "window_s": 0.4,
+            "x_m": 0.005,
+            "y_m": 0.005,
+            "yaw_deg": 1.0
+          }
+        },
+        "training_eligible": false,
+        "contact_steps": 0,
+        "approach_sim_s": 31.99999999999424,
+        "wall_s": 24.15064574999269,
+        "error": null
+      },
+      {
+        "id": "pilot-05",
+        "group": "pilot",
+        "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/teacher-pilot-v1/pilot-05",
+        "returncode": 0,
+        "timeout": false,
+        "success": true,
+        "approach_ok": true,
+        "alignment": {
+          "max_errors": {
+            "angular_speed": 9.832490377448215e-10,
+            "linear_speed": 8.107142958291335e-05,
+            "x": 0.0017921698119022222,
+            "y": 6.1845153442874334e-09,
+            "yaw": 4.918896356898017e-08
+          },
+          "samples": 5,
+          "success": true,
+          "tolerance": {
+            "angular_speed_radps": 0.02,
+            "linear_speed_mps": 0.005,
+            "window_s": 0.4,
+            "x_m": 0.005,
+            "y_m": 0.005,
+            "yaw_deg": 1.0
+          }
+        },
+        "training_eligible": true,
+        "contact_steps": 0,
+        "approach_sim_s": 6.799999999999374,
+        "wall_s": 10.381792540982133,
+        "error": null
+      },
+      {
+        "id": "pilot-06",
+        "group": "pilot",
+        "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/teacher-pilot-v1/pilot-06",
+        "returncode": 0,
+        "timeout": false,
+        "success": false,
+        "approach_ok": false,
+        "alignment": {
+          "max_errors": {
+            "angular_speed": 1.2204277175520244e-05,
+            "linear_speed": 4.8421224739849705e-05,
+            "x": 0.2504369106039845,
+            "y": 0.01403195494461218,
+            "yaw": 0.008679782843024064
+          },
+          "samples": 5,
+          "success": false,
+          "tolerance": {
+            "angular_speed_radps": 0.02,
+            "linear_speed_mps": 0.005,
+            "window_s": 0.4,
+            "x_m": 0.005,
+            "y_m": 0.005,
+            "yaw_deg": 1.0
+          }
+        },
+        "training_eligible": false,
+        "contact_steps": 0,
+        "approach_sim_s": 31.99999999999424,
+        "wall_s": 23.73378358298214,
+        "error": null
+      },
+      {
+        "id": "pilot-07",
+        "group": "pilot",
+        "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/teacher-pilot-v1/pilot-07",
+        "returncode": 0,
+        "timeout": false,
+        "success": true,
+        "approach_ok": true,
+        "alignment": {
+          "max_errors": {
+            "angular_speed": 1.3039347379617818e-10,
+            "linear_speed": 8.107130858294716e-05,
+            "x": 0.0018784552463673165,
+            "y": 0.000537412594352471,
+            "yaw": 0.008152269048984806
+          },
+          "samples": 5,
+          "success": true,
+          "tolerance": {
+            "angular_speed_radps": 0.02,
+            "linear_speed_mps": 0.005,
+            "window_s": 0.4,
+            "x_m": 0.005,
+            "y_m": 0.005,
+            "yaw_deg": 1.0
+          }
+        },
+        "training_eligible": false,
+        "contact_steps": 0,
+        "approach_sim_s": 18.60000000000007,
+        "wall_s": 20.82128274999559,
+        "error": null
+      },
+      {
+        "id": "pilot-08",
+        "group": "pilot",
+        "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/teacher-pilot-v1/pilot-08",
+        "returncode": 0,
+        "timeout": false,
+        "success": true,
+        "approach_ok": true,
+        "alignment": {
+          "max_errors": {
+            "angular_speed": 9.931166999876985e-10,
+            "linear_speed": 8.107139343834002e-05,
+            "x": 0.0017815845326044633,
+            "y": 0.00011601870332311748,
+            "yaw": 0.008408721577124911
+          },
+          "samples": 5,
+          "success": true,
+          "tolerance": {
+            "angular_speed_radps": 0.02,
+            "linear_speed_mps": 0.005,
+            "window_s": 0.4,
+            "x_m": 0.005,
+            "y_m": 0.005,
+            "yaw_deg": 1.0
+          }
+        },
+        "training_eligible": false,
+        "contact_steps": 0,
+        "approach_sim_s": 11.20000000000071,
+        "wall_s": 15.750025666027796,
+        "error": null
+      }
+    ],
+    "complete": true
+  },
+  "lateral_teacher_diagnostic": {
+    "source_sha": "9084510d47f6bc5c83a09a0df4b84f9d6d05b7ed",
+    "cases_sha256": "c08eac736ec44cc5e79f1729d32309c45e0451921d88025b408600fd8a95497d",
+    "policy": "recovery_teacher",
+    "cases": [
+      {
+        "id": "pilot-04",
+        "group": "pilot",
+        "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/lateral-diagnostic-v2/pilot-04",
+        "returncode": 0,
+        "timeout": false,
+        "success": true,
+        "approach_ok": true,
+        "alignment": {
+          "max_errors": {
+            "angular_speed": 3.212541344055307e-11,
+            "linear_speed": 8.107137793898493e-05,
+            "x": 0.0017585799117447731,
+            "y": 0.00019158698500598703,
+            "yaw": 0.00045868010789051894
+          },
+          "samples": 5,
+          "success": true,
+          "tolerance": {
+            "angular_speed_radps": 0.02,
+            "linear_speed_mps": 0.005,
+            "window_s": 0.4,
+            "x_m": 0.005,
+            "y_m": 0.005,
+            "yaw_deg": 1.0
+          }
+        },
+        "training_eligible": true,
+        "contact_steps": 0,
+        "approach_sim_s": 18.20000000000029,
+        "wall_s": 17.975704749987926,
+        "error": null
+      },
+      {
+        "id": "pilot-06",
+        "group": "pilot",
+        "raw_dir": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/lateral-diagnostic-v2/pilot-06",
+        "returncode": 0,
+        "timeout": false,
+        "success": true,
+        "approach_ok": true,
+        "alignment": {
+          "max_errors": {
+            "angular_speed": 1.0175416065294702e-10,
+            "linear_speed": 8.107139539879267e-05,
+            "x": 0.0016990088883040988,
+            "y": 0.00010901214134051429,
+            "yaw": 0.007206912320025349
+          },
+          "samples": 5,
+          "success": true,
+          "tolerance": {
+            "angular_speed_radps": 0.02,
+            "linear_speed_mps": 0.005,
+            "window_s": 0.4,
+            "x_m": 0.005,
+            "y_m": 0.005,
+            "yaw_deg": 1.0
+          }
+        },
+        "training_eligible": false,
+        "contact_steps": 0,
+        "approach_sim_s": 18.799999999999958,
+        "wall_s": 21.15697858398198,
+        "error": null
+      }
+    ],
+    "complete": true
+  }
+}

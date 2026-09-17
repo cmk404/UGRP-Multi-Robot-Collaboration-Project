@@ -11,6 +11,9 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 TEST_PATTERNS = (
+    "tests/test_act_speed_generalization.py",
+    "tests/test_act_recovery.py", "tests/test_recovery_commands.py",
+    "tests/test_reference_approach_data.py",
     "tests/test_camera_pair*.py",
     "tests/test_pair_carry*.py",
     "tests/test_task_stage_sync.py",
