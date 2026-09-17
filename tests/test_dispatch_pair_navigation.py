@@ -256,6 +256,24 @@ def test_small_dim_cargo_fragment_preserves_colour_identity_during_motion():
     assert np.allclose(e['cargo_center_px'],[463.5,130.],atol=2.)
 
 
+def test_observed_static_floor_memory_prevents_apron_tracking_loss():
+    import json
+    from harness.dispatch_skill_binding import ImageRoute
+    from harness.camera_goal_transport import decode
+    prior=json.loads((ROOT/'box-background-prior.json').read_text())
+    route=ImageRoute(bindings(),'box')
+    route.box_center=np.array(prior['center']);route.box_delta=np.array(prior['delta'])
+    route.box_previous=decode((ROOT/'box-background-prior.jpg').read_bytes())
+    route.box_background=decode((ROOT/'box-background-reference.jpg').read_bytes())
+    route.box_origin=np.array(prior['origin']);route.box_background_sha=prior['background_sha256']
+    route.points=[np.array([637.17,359.5]),np.array([880.6,359.5])]
+    _,e=route.observe((ROOT/'box-background-failure.jpg').read_bytes())
+    assert e['tracking']['static_background']['active']
+    assert e['tracking']['static_background']['reference_sha256']==prior['background_sha256']
+    assert 2<np.linalg.norm(np.array(e['cargo_center_px'])-prior['center'])<5
+    assert not e['ready'] and not e['done']
+
+
 def test_visible_shaft_survives_a_narrow_consistent_contrast_band():
     import json
     from harness.dispatch_beam_tracker import CarriedBeamTracker

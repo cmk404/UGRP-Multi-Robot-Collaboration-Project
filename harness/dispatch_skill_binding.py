@@ -191,6 +191,7 @@ class ImageRoute:
         self.task=bindings.tasks[obj];self.dock=bindings.plan['dock']
         self.points=None;self.index=0;self.confirmations=0
         self.box_center=None;self.box_delta=np.zeros(2);self.box_previous=None
+        self.box_background=None;self.box_origin=None;self.box_background_sha=None
         from harness.dispatch_beam_tracker import CarriedBeamTracker
         self.beam_tracker=CarriedBeamTracker()
 
@@ -206,9 +207,19 @@ class ImageRoute:
             # acquired target may use dimmer/smaller visible fragments, and each
             # candidate must match its prior RGB motion within eight pixels.
             # Otherwise gripper flow at a different height accumulates drift.
+            if self.box_background is None:
+                self.box_background=frame.copy()
+                self.box_background_sha=hashlib.sha256(jpeg).hexdigest()
+                self.box_origin=None if self.box_center is None else self.box_center.copy()
+            # The fixed TOP camera provides observed static-floor memory. Do
+            # not suppress the initially occupied patch, whose floor was hidden.
+            suppress_background=(self.box_center is not None and self.box_origin is not None
+                                 and np.linalg.norm(self.box_center-self.box_origin)>30)
+            foreground=cv2.absdiff(frame,self.box_background).max(axis=2)>20
             levels=[125] if self.box_center is None else [125,105,90,70]
             for saturation in levels:
                 mask=cv2.inRange(hsv,np.array((80,saturation,35),np.uint8),np.array((102,255,255),np.uint8))
+                if suppress_background:mask[~foreground]=0
                 if self.box_center is None:
                     mask=cv2.morphologyEx(mask,cv2.MORPH_OPEN,np.ones((3,3),np.uint8))
                 n,_,stats,centers=cv2.connectedComponentsWithStats(mask)
@@ -258,6 +269,10 @@ class ImageRoute:
                           'feature_count':int(len(delta)),'consistent_features':int(inliers.sum()),
                           'max_cycle_error_px':float(cycle[inliers].max()),'motion_px':motion.tolist()}
             else:raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
+            if self.box_origin is None:self.box_origin=center.copy()
+            tracking['static_background']={'reference_sha256':self.box_background_sha,
+                'active':bool(suppress_background),'rgb_difference_threshold':20,
+                'initial_occupied_radius_px':30,'origin_px':self.box_origin.tolist()}
             self.box_delta=np.zeros(2) if self.box_center is None else center-self.box_center
             self.box_center=center.copy();self.box_previous=frame.copy()
 
