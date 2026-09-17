@@ -82,3 +82,27 @@ def test_solo_navigation_cannot_skip_existing_attachment_failure():
     action,_=skill.decide({},b'')
     assert action['kind']=='finish' and skill.done
     navigator.observe.assert_not_called()
+
+
+def test_model_transfer_checks_source_hash_before_rewriting_manifest(tmp_path):
+    import json
+    from scripts.run_three_robot_mission import prepare_grasp_models
+    source=tmp_path/'source';source.mkdir()
+    (source/'bad.json').write_text('{"tampered":true}')
+    (source/'student-skill.json').write_text(json.dumps({'models':{'r1':{'path':'bad.json','sha256':'wrong'}}}))
+    with pytest.raises(ValueError,match='source model path/hash mismatch'):
+        prepare_grasp_models(source,tmp_path/'export')
+    assert not (tmp_path/'export').exists()
+
+
+def test_grasp_retains_prior_image_alignment_when_visible_tip_changes():
+    ref=Path('tests/fixtures/camera_goal_transport/reference-top.jpg').read_bytes()
+    first,meta=canonical_pair_top(ref,ref)
+    image=cv2.imdecode(np.frombuffer(ref,np.uint8),cv2.IMREAD_COLOR)
+    # Cover one endpoint without moving the beam. The prior RGB transform must
+    # remain fixed, so occlusion cannot translate the entire scene to a new goal.
+    image[296:319,480:496]=0
+    changed=cv2.imencode('.jpg',image)[1].tobytes()
+    _,after=canonical_pair_top(changed,ref,translation_px=meta['translation_px'])
+    assert after['translation_px']==meta['translation_px']
+    assert after['fixed_from_prior_rgb']

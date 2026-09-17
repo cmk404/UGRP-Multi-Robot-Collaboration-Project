@@ -224,9 +224,11 @@ def run(args):
         result['phase']='APPROACH';result['pair_approach']=pair.approach()
         while not scene.bindings.permission('beam','GRASP'):scene.step(.2)
         result['phase']='GRASP';result['pair_grasp']=pair.finish_grasp(predict_student,grasp)
+        pair.grasp_report.pop('evaluation',None)
+        pair.grasp_report['evaluation_source']='separate referee-only.jsonl after control ends'
         while not scene.bindings.permission('beam','TRANSIT'):scene.step(.2)
         result['phase']='TRANSIT';pair.carry(ImageRoute(scene.bindings,'beam'))
-        result['phase']='RELEASE';pair.place();scene.bindings.finish('beam')
+        result['phase']='RELEASE';pair.place();pair.verify_placement();scene.bindings.finish('beam')
         while not scene.solo.done:scene.step(.2)
         result['protocol_complete']=True;result['phase']='FINISHED'
     except Exception as exc:
@@ -258,7 +260,8 @@ def run(args):
             scene.close()
         result['wall_s']=time.monotonic()-started
         if team:
-            result['llm_calls']=len(team.calls)
+            result['protocol_calls']=len(team.calls)
+            result['llm_calls']=sum(c.get('model')!='scripted-fixture-not-llm' for c in team.calls)
             result['usage']={k:sum((c.get('usage') or {}).get(k,0) for c in team.calls)
                 for k in ('prompt_tokens','completion_tokens','total_tokens')}
         args.output.mkdir(parents=True,exist_ok=True);write(args.output/'result.json',result)

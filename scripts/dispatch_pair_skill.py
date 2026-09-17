@@ -5,7 +5,7 @@ model slots, remapped at the driver boundary using the committed plan.
 """
 from __future__ import annotations
 from pathlib import Path
-from harness.dispatch_skill_binding import canonical_pair_top, beam_feature, PairCoarsePixels
+from harness.dispatch_skill_binding import canonical_pair_top, beam_feature, PairCoarsePixels, pixel_from_map
 from harness.camera_goal_transport import coarse_approach, dock_command, preclose_supported, own_payload
 from harness.camera_varied_start_student import predict_stage
 from harness.grasp_student_inference import predict_student
@@ -14,6 +14,7 @@ from scripts.camera_approach_scene import ApproachScene, image_record, normalize
 from scripts.camera_short_transport_scene import ShortTransportScene
 from scripts.run_camera_varied_start_student import run_approach
 import math
+import numpy as np
 
 
 class BoundPairSkill:
@@ -46,7 +47,7 @@ class BoundPairSkill:
         self.latest_translation=transform['translation_px']
         top_ref=image_record(self.out/'rgb'/f'pair-{self.count}-canonical-top.jpg',self.out,top)
         mapped={slot:{**frames[rid], 'top_bytes':top,'shared_top_rgb':top_ref,
-                      'raw_top_rgb':frames[rid]['shared_top_rgb'],'physical_robot_id':rid}
+                      'raw_top_rgb':frames[rid]['shared_top_rgb'],'raw_top_bytes':frames[rid]['top_bytes'],'physical_robot_id':rid}
                 for slot,rid in self.bindings.pair.items()}
         self.calls.append({'kind':'image_binding','frame_id':frames['r1']['frame_id'],
             'pair_binding':self.bindings.pair,'transform':transform,'derived_top':top_ref,
@@ -131,3 +132,22 @@ class BoundPairSkill:
                       left=motion['left'] if moving else 0.,turn=0.) for r,v in control['forwards'].items()}
             self.drive_mecanum(commands,control['duration_s'])
         raise RuntimeError('pair route decision budget exhausted')
+
+    def verify_placement(self):
+        """Fresh visual slot/stability claim; physical release stays referee-only."""
+        slot=self.bindings.static_map['docks'][self.bindings.plan['dock']]['slots']['beam']
+        samples=[]
+        for index in range(2):
+            frames=self.capture('placement-confirmation')
+            b=beam_feature(frames['r1']['raw_top_bytes'])
+            w,h=b['image_size'];corners=np.array(b['corners4'])*[w,h]
+            a=pixel_from_map(np.array(slot['center_m'])-slot['half_extents_m'],self.bindings.static_map,(h,w))
+            z=pixel_from_map(np.array(slot['center_m'])+slot['half_extents_m'],self.bindings.static_map,(h,w))
+            inside=bool(np.all(corners>=np.minimum(a,z)) and np.all(corners<=np.maximum(a,z)))
+            samples.append({'frame_id':frames['r1']['frame_id'],'beam':b,'inside_visible_slot':inside})
+            self.tick(.5)
+        stable=math.dist(samples[0]['beam']['center'],samples[1]['beam']['center'])<.003
+        self.calls.append({'kind':'visual_placement','samples':samples,'stable':stable,
+            'meaning':'RGB estimate; contact/release truth is separate output only'})
+        if not stable or not all(s['inside_visible_slot'] for s in samples):
+            raise RuntimeError('visual placement confirmation failed')
