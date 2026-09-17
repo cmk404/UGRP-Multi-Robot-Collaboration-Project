@@ -53,14 +53,14 @@ def mission_xml(builder):
     return build
 
 
-def prepare_grasp_models(source, target):
+def prepare_grasp_models(source, target, *, background_band=True):
     """Copy learned weights unchanged; scope only constant TOP background."""
     target.mkdir(parents=True,exist_ok=False)
     skill=json.loads((source/'student-skill.json').read_text())
     for rid in ('r1','r3'):
         entry=skill['models'][rid]
         model=json.loads((source/entry['path']).read_text())
-        model['constant_background_top_band']=[6,19]
+        if background_band:model['constant_background_top_band']=[6,19]
         write(target/entry['path'],model)
         entry['sha256']=hashlib.sha256((target/entry['path']).read_bytes()).hexdigest()
     write(target/'student-skill.json',skill)
