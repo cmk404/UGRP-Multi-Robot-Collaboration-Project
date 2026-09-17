@@ -17,3 +17,5 @@
 `box-edge-190/191.jpg`: Q4 source 6c7a941; thin cargo color component leaving cyan floor. Raw TOP.
 
 `box-shadow-237/238.jpg`: Q5 source cbfc38a, raw TOP; held cargo retains silhouette while cyan edge has 14 pixels.
+
+`box-apron-303/304.jpg`: Q6 source dea5d27, raw TOP. Background boundary changes template correlation; foreground corner flow retains 10 mutually consistent moving features.

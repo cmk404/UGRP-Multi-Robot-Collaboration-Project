@@ -219,7 +219,7 @@ def test_box_tracking_uses_actual_prior_appearance_over_same_colour_floor():
     route.observe((root/'box-floor-162.jpg').read_bytes())
     _,e=route.observe((root/'box-floor-163.jpg').read_bytes())
     assert np.allclose(e['cargo_center_px'],[402.,575.],atol=3)
-    assert e['tracking']['score']>=.85
+    assert e['tracking']['consistent_features']>=3
     _,after=route.observe((root/'box-floor-165.jpg').read_bytes())
     assert 409<after['cargo_center_px'][0]<423
     blank=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))[1].tobytes()
@@ -244,7 +244,18 @@ def test_shadowed_cargo_requires_bidirectional_rgb_match():
     route.box_center=np.array([632.4217760904792,491.7954463713328]);route.box_delta=np.array([0.,-5.])
     route.box_previous=cv2.imdecode(np.frombuffer((root/'box-shadow-237.jpg').read_bytes(),np.uint8),cv2.IMREAD_COLOR)
     _,e=route.observe((root/'box-shadow-238.jpg').read_bytes())
-    assert e['tracking']['reverse_score']>.85 and e['tracking']['cycle_error_px']<=2
+    assert e['tracking']['consistent_features']>=3 and e['tracking']['max_cycle_error_px']<1
     assert np.allclose(e['cargo_center_px'],[632.,487.],atol=2)
     blank=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))[1].tobytes()
     with pytest.raises(RuntimeError):route.observe(blank)
+
+
+def test_cargo_motion_separates_stationary_floor_corners_at_boundary():
+    from harness.dispatch_skill_binding import ImageRoute
+    root=Path('tests/fixtures/dispatch_skill_transfer')
+    route=ImageRoute(SkillBindings(committed(),authored_map('open')),'box')
+    route.box_center=np.array([844.0717475615736,352.2126817154773]);route.box_delta=np.array([6.,0.])
+    route.box_previous=cv2.imdecode(np.frombuffer((root/'box-apron-303.jpg').read_bytes(),np.uint8),cv2.IMREAD_COLOR)
+    _,e=route.observe((root/'box-apron-304.jpg').read_bytes())
+    assert np.allclose(e['cargo_center_px'],[850.6,351.7],atol=1)
+    assert e['tracking']['consistent_features']>=6

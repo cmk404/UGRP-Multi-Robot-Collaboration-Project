@@ -160,35 +160,31 @@ class ImageRoute:
                 px,py=np.rint(self.box_center).astype(int)
                 gray=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
                 old=cv2.cvtColor(self.box_previous,cv2.COLOR_BGR2GRAY)
-                template=old[py-12:py+13,px-12:px+13]
-                search=gray[py-30:py+31,px-30:px+31]
-                if template.shape!=(25,25) or search.shape!=(61,61) or template.std()<15:
+                feature_mask=np.zeros_like(old)
+                feature_mask[max(0,py-18):py+19,max(0,px-18):px+19]=255
+                feature_mask[old>90]=0
+                points=cv2.goodFeaturesToTrack(old,30,.01,3,mask=feature_mask)
+                if points is None or len(points)<3:
                     raise RuntimeError('dispatch box appearance unresolved in TOP RGB')
-                matches=cv2.matchTemplate(search,template,cv2.TM_CCOEFF_NORMED)
-                _,score,_,location=cv2.minMaxLoc(matches)
-                # Preserve subpixel displacement; rounding every .2 s slice
-                # otherwise accumulates a several-pixel lead over the cargo.
-                offset=np.zeros(2)
-                lx,ly=location
-                for axis,(before,peak,after) in enumerate((
-                    (matches[ly,max(0,lx-1)],matches[ly,lx],matches[ly,min(matches.shape[1]-1,lx+1)]),
-                    (matches[max(0,ly-1),lx],matches[ly,lx],matches[min(matches.shape[0]-1,ly+1),lx]))):
-                    denominator=float(before)-2*float(peak)+float(after)
-                    if abs(denominator)>1e-8:offset[axis]=np.clip(.5*(float(before)-float(after))/denominator,-.5,.5)
-                center=self.box_center+np.array(location)-18+offset
-                cx,cy=np.rint(center).astype(int)
-                local_cyan=cv2.inRange(hsv[cy-12:cy+13,cx-12:cx+13],np.array((80,70,25),np.uint8),np.array((102,255,255),np.uint8))
-                reverse_template=gray[cy-12:cy+13,cx-12:cx+13]
-                reverse_search=old[cy-30:cy+31,cx-30:cx+31]
-                reverse=cv2.matchTemplate(reverse_search,reverse_template,cv2.TM_CCOEFF_NORMED)
-                _,reverse_score,_,back=cv2.minMaxLoc(reverse)
-                cycle_error=float(np.linalg.norm(np.array([cx-18+back[0],cy-18+back[1]])-[px,py]))
-                if score<.85 or reverse_score<.85 or cycle_error>2 or np.linalg.norm(center-self.box_center)>20:
-                    raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
+                forward,ok,errors=cv2.calcOpticalFlowPyrLK(old,gray,points,None,winSize=(15,15),maxLevel=2)
+                backward,back_ok,_=cv2.calcOpticalFlowPyrLK(gray,old,forward,None,winSize=(15,15),maxLevel=2)
+                cycle=np.linalg.norm(backward-points,axis=2).ravel()
+                delta=(forward-points).reshape(-1,2)
+                valid=(ok.ravel()>0)&(back_ok.ravel()>0)&(cycle<1)&(np.linalg.norm(delta,axis=1)<20)&(errors.ravel()<30)
+                delta=delta[valid];cycle=cycle[valid]
+                if len(delta)<3:raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
+                # A painted edge may supply stationary corners; require a
+                # majority of independently tracked corners to share motion.
+                groups=np.linalg.norm(delta[:,None,:]-delta[None,:,:],axis=2)<1.5
+                inliers=groups[np.argmax(groups.sum(axis=1))]
+                if inliers.sum()<max(3,.6*len(delta)):
+                    raise RuntimeError('dispatch box motion ambiguous in TOP RGB')
+                motion=np.median(delta[inliers],axis=0)
+                center=self.box_center+motion
                 bounds=np.array([center-12,center+12])
-                tracking={'method':'bidirectional prior RGB appearance; own attachment independently required','score':score,
-                          'reverse_score':reverse_score,'cycle_error_px':cycle_error,
-                          'cyan_pixels':int(np.count_nonzero(local_cyan))}
+                tracking={'method':'bidirectional RGB feature motion; own attachment independently required',
+                          'feature_count':int(len(delta)),'consistent_features':int(inliers.sum()),
+                          'max_cycle_error_px':float(cycle[inliers].max()),'motion_px':motion.tolist()}
             else:raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
             self.box_delta=np.zeros(2) if self.box_center is None else center-self.box_center
             self.box_center=center.copy();self.box_previous=frame.copy()
