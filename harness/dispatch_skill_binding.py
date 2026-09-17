@@ -127,7 +127,7 @@ class ImageRoute:
         self.map=bindings.static_map;self.obj=obj
         self.task=bindings.tasks[obj];self.dock=bindings.plan['dock']
         self.points=None;self.index=0;self.confirmations=0
-        self.box_center=None;self.box_delta=np.zeros(2);self.box_background=None
+        self.box_center=None;self.box_delta=np.zeros(2);self.box_previous=None
 
     def observe(self,jpeg):
         frame=decode(jpeg);h,w=frame.shape[:2]
@@ -148,23 +148,35 @@ class ImageRoute:
                                key=lambda i:np.linalg.norm(centers[i]-predicted))
                 if len(choices)>1 and np.linalg.norm(centers[choices[1]]-predicted)-np.linalg.norm(centers[choices[0]]-predicted)>5:
                     choices=choices[:1]
-            if len(choices)!=1 and self.box_background is not None:
-                # Fixed shared camera: remove pixels unchanged from the first
-                # allowed carry RGB. This separates cyan cargo from same-colour
-                # floor without a simulator segmentation or location oracle.
-                changed=np.max(np.abs(frame.astype(np.int16)-self.box_background),axis=2)>=15
-                mask=cv2.inRange(hsv,np.array((80,70,25),np.uint8),np.array((102,255,255),np.uint8))
-                mask[~changed]=0
-                mask=cv2.morphologyEx(mask,cv2.MORPH_OPEN,np.ones((3,3),np.uint8))
-                n,_,stats,centers=cv2.connectedComponentsWithStats(mask)
-                choices=[i for i in range(1,n) if 25<=stats[i,4]<=600
-                         and max(stats[i,2:4])<40 and np.linalg.norm(centers[i]-predicted)<=25]
-            if len(choices)!=1:raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
-            if self.box_background is None:self.box_background=frame.astype(np.int16)
-            i=choices[0];center=centers[i];x,y,bw,bh=stats[i,:4]
+            tracking={'method':'cyan component'}
+            if len(choices)==1:
+                i=choices[0];center=centers[i];x,y,bw,bh=stats[i,:4]
+                bounds=np.array([[x,y],[x+bw,y+bh]])
+            elif self.box_previous is not None:
+                # Follow actual prior RGB appearance when same-colour floor
+                # merges the component. Own-camera attachment must independently
+                # pass before this navigator is called. No pose/state fallback.
+                px,py=np.rint(self.box_center).astype(int)
+                gray=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+                old=cv2.cvtColor(self.box_previous,cv2.COLOR_BGR2GRAY)
+                template=old[py-12:py+13,px-12:px+13]
+                search=gray[py-30:py+31,px-30:px+31]
+                if template.shape!=(25,25) or search.shape!=(61,61) or template.std()<15:
+                    raise RuntimeError('dispatch box appearance unresolved in TOP RGB')
+                matches=cv2.matchTemplate(search,template,cv2.TM_CCOEFF_NORMED)
+                _,score,_,location=cv2.minMaxLoc(matches)
+                center=np.array([px-18+location[0],py-18+location[1]],dtype=float)
+                cx,cy=center.astype(int)
+                local_cyan=cv2.inRange(hsv[cy-12:cy+13,cx-12:cx+13],np.array((80,70,25),np.uint8),np.array((102,255,255),np.uint8))
+                if score<.85 or np.linalg.norm(center-self.box_center)>20 or np.count_nonzero(local_cyan)<15:
+                    raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
+                bounds=np.array([center-12,center+12])
+                tracking={'method':'prior RGB appearance with current cyan evidence','score':score,
+                          'cyan_pixels':int(np.count_nonzero(local_cyan))}
+            else:raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
             self.box_delta=np.zeros(2) if self.box_center is None else center-self.box_center
-            self.box_center=center.copy()
-            bounds=np.array([[x,y],[x+bw,y+bh]])
+            self.box_center=center.copy();self.box_previous=frame.copy()
+
         if self.points is None:
             # The open arena permits the original parallel formation. Avoid
             # shifting it into a wall merely to hit a narrow symbolic gate.
@@ -198,6 +210,7 @@ class ImageRoute:
                   'cargo_bounds_px':bounds.tolist(),'waypoint_index':self.index,
                   'waypoints_px':[p.tolist() for p in self.points],
                   'error_px':error.tolist(),'ready':ready,'done':done}
+        if self.obj=='box':evidence['tracking']=tracking
         if ready and self.confirmations>=2 and not done:
             self.index+=1;self.confirmations=0
         control=np.clip(error*.002,-.08,.08)

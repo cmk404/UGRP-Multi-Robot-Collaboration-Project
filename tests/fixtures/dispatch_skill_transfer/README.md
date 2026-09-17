@@ -11,3 +11,5 @@
 `box-own-158/159.jpg`: Q1 source 71900de; unchanged cargo grip while cyan floor joined old segmentation. Raw owned camera, 640x480 same-FOV resize.
 
 `box-floor-122/162/163.jpg`: Q2 source 18474aa, raw shared RGB. At 163 the cargo mask joins the cyan floor; prior observed background separates it.
+
+`box-floor-165.jpg`: Q3 source 2e5f20b; raw shared RGB, narrow visible cyan edge over cyan floor.

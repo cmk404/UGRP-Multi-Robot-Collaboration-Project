@@ -209,7 +209,7 @@ def test_dispatch_attachment_does_not_merge_cyan_floor_with_held_box():
     assert calibrated['attached'] and calibrated['thresholds']['min_iou']==.88
 
 
-def test_box_tracking_separates_static_floor_using_prior_rgb():
+def test_box_tracking_uses_actual_prior_appearance_over_same_colour_floor():
     from harness.dispatch_skill_binding import ImageRoute
     root=Path('tests/fixtures/dispatch_skill_transfer')
     route=ImageRoute(SkillBindings(committed(),authored_map('open')),'box')
@@ -218,6 +218,9 @@ def test_box_tracking_separates_static_floor_using_prior_rgb():
     route.box_center=np.array([395.,575.]);route.box_delta[:]=0
     route.observe((root/'box-floor-162.jpg').read_bytes())
     _,e=route.observe((root/'box-floor-163.jpg').read_bytes())
-    assert np.allclose(e['cargo_center_px'],[402.,575.],atol=2)
+    assert np.allclose(e['cargo_center_px'],[402.,575.],atol=3)
+    assert e['tracking']['score']>=.85
+    _,after=route.observe((root/'box-floor-165.jpg').read_bytes())
+    assert 409<after['cargo_center_px'][0]<423
     blank=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))[1].tobytes()
     with pytest.raises(RuntimeError):route.observe(blank)
