@@ -269,7 +269,7 @@ def run(args):
         result['phase']='NEGOTIATE'
         result['plan_feasibility']=negotiate_executable(team,frames,scene.command_history,task,
             scene.config['static_map'],scene.time(),max_tokens=args.max_input_tokens,
-            live_replan=getattr(args,'live_replan',False),identity=identity)
+            live_replan=getattr(args,'live_replan',False),identity=identity,reference_top=reference)
         scene.bindings=SkillBindings(team.agreement.committed,scene.config['static_map'])
         result.update(plan_committed=True,plan=scene.bindings.plan,bindings=scene.bindings.capabilities())
         write(args.output/'committed-plan.json',team.agreement.committed)

@@ -1,0 +1,73 @@
+{
+  "claims": {
+    "r1": {
+      "claim": {
+        "center": [
+          0.11313868613138686,
+          0.20027816411682892
+        ],
+        "fresh": true,
+        "age": 0,
+        "changed_pixels": 2588,
+        "valid": true,
+        "reason": "compact motion follows prior own action"
+      }
+    },
+    "r2": {
+      "claim": {
+        "center": [
+          0.11261730969760167,
+          0.8004172461752433
+        ],
+        "fresh": true,
+        "age": 0,
+        "changed_pixels": 2052,
+        "valid": true,
+        "reason": "compact motion follows prior own action"
+      }
+    },
+    "r3": {
+      "claim": {
+        "center": [
+          0.11366006256517205,
+          0.49791376912378305
+        ],
+        "fresh": true,
+        "age": 0,
+        "changed_pixels": 2019,
+        "valid": true,
+        "reason": "compact motion follows prior own action"
+      }
+    }
+  },
+  "committed": {
+    "proposal_id": "dispatch-09d3b9ef49a2-plan-v1",
+    "version": 1,
+    "plan_hash": "57acf3c83749553137a0b17e57fe035ee5a0f05cfba83ea675c8565ef85b4d40",
+    "plan": {
+      "dock": "dock_a",
+      "tasks": [
+        {
+          "id": "beam_job",
+          "object": "beam",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "route": "north",
+          "after": []
+        },
+        {
+          "id": "box_job",
+          "object": "box",
+          "participants": [
+            "r3"
+          ],
+          "route": "north",
+          "after": []
+        }
+      ]
+    },
+    "proposer": "r1"
+  }
+}

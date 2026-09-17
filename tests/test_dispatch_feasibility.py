@@ -30,6 +30,27 @@ def test_same_prior_map_has_different_feasibility_from_actual_rgb():
  assert a['beam_routes']['north']['observed_barriers']
  assert 'swept' in a['beam_routes']['north']['reason']
 
+
+def test_pickup_allocation_must_fit_observed_approach_not_fixed_robot_names():
+ import json
+ from harness.dispatch_feasibility import inspect_pickup_approach
+ from harness.dispatch_skill_binding import SkillBindings
+ root=Path('tests/fixtures/dispatch_adaptive')
+ raw=(root/'blocked-pickup-top.jpg').read_bytes()
+ value=json.loads((root/'blocked-pickup-input.json').read_text())
+ reference=Path('tests/fixtures/camera_goal_transport/reference-top.jpg').read_bytes()
+ c=value['committed'];identity=value['claims']
+ report=inspect_pickup_approach(SkillBindings(c,authored_map('narrow_south')),raw,identity,reference)
+ assert not report['feasible'] and report['robots']['r2']['blocking_robots']==['r3']
+ c['plan']['tasks'][0]['participants']=['r1','r3'];c['plan']['tasks'][1]['participants']=['r2']
+ c['plan_hash']=digest(c['plan'])
+ assert inspect_pickup_approach(SkillBindings(c,authored_map()),raw,identity,reference)['feasible']
+ # Renaming image-bound identities preserves feasibility; no hardcoded pair.
+ names={'r1':'r2','r2':'r3','r3':'r1'}
+ for task in c['plan']['tasks']:task['participants']=[names[r] for r in task['participants']]
+ c['plan_hash']=digest(c['plan']);identity={names[r]:v for r,v in identity.items()}
+ assert inspect_pickup_approach(SkillBindings(c,authored_map()),raw,identity,reference)['feasible']
+
 @pytest.mark.parametrize('live',[False,True])
 def test_rejected_route_requires_new_plan_and_three_new_exact_votes(tmp_path,live):
  task={};agreement=TeamAgreement('feedback',plan_validator=lambda p:p)
