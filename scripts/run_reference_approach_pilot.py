@@ -76,8 +76,10 @@ def main():
                       'harness/camera_teacher_student.py', 'scripts/compare_reference_approach.py',
                       'scripts/train_camera_approach_student.py', 'scripts/patch_reference_act.py',
                       'scripts/reference_act_worker.py',
+                      'harness/act_training.py', 'scripts/train_act_feasibility.py',
                       'requirements-reference-act.txt',
-                      'experiments/2026-09-16-reference-act/protocol.json']
+                      'experiments/2026-09-16-reference-act/protocol.json',
+                      'experiments/2026-09-16-act-feasibility/protocol.json']
     subprocess.run(['git', 'diff', '--exit-code', training['source_sha'], 'HEAD', '--',
                     *compared_paths], cwd=ROOT, check=True)
     for name, expected in training['artifacts'].items():
@@ -118,7 +120,7 @@ def main():
             summary = {'source_sha': source, 'protocol': protocol, 'cases': records,
                        'training_source_sha': training['source_sha'],
                        'training_code_unchanged': True,
-                       'complete': len(records) == len(protocol['physical_pilot_distances']) * 2,
+                       'complete': len(records) == len(protocol['physical_pilot_distances']) * len(protocol['physical_pilot_conditions']),
                        'external_model_calls': 0, 'external_model_tokens': 0}
             (out / 'summary.json').write_text(json.dumps(summary, indent=2) + '\n')
             print(json.dumps(record), flush=True)

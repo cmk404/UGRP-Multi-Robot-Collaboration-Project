@@ -109,12 +109,14 @@ def main():
         report['environment'] = {'python': sys.version, 'platform': platform.platform(), 'mujoco': mujoco.__version__}
         if args.act_python:
             from harness.reference_act_client import ActClient
-            report['approach_policy'] = 'upstream_act_small_rgb_preset'
+            report['approach_policy'] = 'upstream_act_rgb_preset'
             report['act_checkpoint_sha256'] = {}
             for rid in ROBOTS:
                 model_dir = args.act_model_dir.resolve() / rid / 'act'
                 report['act_checkpoint_sha256'][rid] = {
                     name: sha(model_dir / name) for name in ('config.json', 'model.safetensors')}
+                if (model_dir / 'adapter.json').exists():
+                    report['act_checkpoint_sha256'][rid]['adapter.json'] = sha(model_dir / 'adapter.json')
                 act_clients[rid] = ActClient(args.act_python, model_dir)
         else:
             report['approach_policy'] = 'existing_kernel'

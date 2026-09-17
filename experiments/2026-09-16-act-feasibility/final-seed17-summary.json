@@ -1,0 +1,537 @@
+{
+  "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a",
+  "protocol": {
+    "schema": "ugrp.act_feasibility.v1",
+    "development_cases": [
+      "train-05",
+      "train-10",
+      "train-15",
+      "train-20",
+      "train-25"
+    ],
+    "physical_pilot_conditions": [
+      "act"
+    ],
+    "physical_pilot_distances": [
+      [
+        0.27095,
+        0.27591
+      ],
+      [
+        0.22947,
+        0.22023
+      ],
+      [
+        0.29833,
+        0.28776
+      ],
+      [
+        0.23013,
+        0.28722
+      ],
+      [
+        0.23583,
+        0.22118
+      ],
+      [
+        0.29133,
+        0.25876
+      ],
+      [
+        0.27939,
+        0.21747
+      ],
+      [
+        0.2029,
+        0.23511
+      ],
+      [
+        0.23967,
+        0.28785
+      ],
+      [
+        0.20288,
+        0.28818
+      ],
+      [
+        0.25012,
+        0.23957
+      ],
+      [
+        0.2375,
+        0.22828
+      ],
+      [
+        0.23623,
+        0.25082
+      ],
+      [
+        0.26381,
+        0.25846
+      ],
+      [
+        0.28828,
+        0.25489
+      ],
+      [
+        0.24852,
+        0.27913
+      ],
+      [
+        0.25819,
+        0.28823
+      ],
+      [
+        0.23641,
+        0.25052
+      ],
+      [
+        0.20622,
+        0.23648
+      ],
+      [
+        0.25786,
+        0.27808
+      ]
+    ],
+    "development_physical_distances": [
+      [
+        0.205,
+        0.205
+      ],
+      [
+        0.255,
+        0.225
+      ],
+      [
+        0.295,
+        0.275
+      ]
+    ],
+    "candidate_plan": [
+      "frozen ImageNet128 uniform 3000 steps",
+      "same frozen ImageNet128 balanced 10000 steps"
+    ],
+    "seed_plan": [
+      20260916,
+      20260917
+    ],
+    "checkpoint_rule": "lowest development missed_stop_rate + 10*false_ready_rate + forward_mae/0.15; fixed ready thresholds",
+    "constraints": [
+      "two RGB only",
+      "original camera/FOV",
+      "weld OFF",
+      "no final-test tuning"
+    ],
+    "interpretation": "20 fresh starts in the same straight approach scene; not whole cooperative transport or real hardware",
+    "data_expansion": "existing 20 training cases + 30 new teacher cases; original 5 heldout cases now development only",
+    "scope": "Second training seed, same final starts; compare with identical kernel from first cohort"
+  },
+  "cases": [
+    {
+      "case": "01-act",
+      "condition": "act",
+      "distance": [
+        0.27095,
+        0.27591
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 20.327424582996173,
+      "sim_s": 11.50000000000081,
+      "approach_calls": 116,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "02-act",
+      "condition": "act",
+      "distance": [
+        0.22947,
+        0.22023
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 23.520147625007667,
+      "sim_s": 11.100000000000676,
+      "approach_calls": 112,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "03-act",
+      "condition": "act",
+      "distance": [
+        0.29833,
+        0.28776
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 24.44124924999778,
+      "sim_s": 11.700000000000877,
+      "approach_calls": 118,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "04-act",
+      "condition": "act",
+      "distance": [
+        0.23013,
+        0.28722
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 24.264384667010745,
+      "sim_s": 11.50000000000081,
+      "approach_calls": 116,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "05-act",
+      "condition": "act",
+      "distance": [
+        0.23583,
+        0.22118
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 22.09970637501101,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "06-act",
+      "condition": "act",
+      "distance": [
+        0.29133,
+        0.25876
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 25.110791290993802,
+      "sim_s": 11.700000000000877,
+      "approach_calls": 118,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "07-act",
+      "condition": "act",
+      "distance": [
+        0.27939,
+        0.21747
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 22.62120379199041,
+      "sim_s": 11.700000000000877,
+      "approach_calls": 118,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "08-act",
+      "condition": "act",
+      "distance": [
+        0.2029,
+        0.23511
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 20.635860625014175,
+      "sim_s": 11.100000000000676,
+      "approach_calls": 112,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "09-act",
+      "condition": "act",
+      "distance": [
+        0.23967,
+        0.28785
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 21.30933891699533,
+      "sim_s": 11.50000000000081,
+      "approach_calls": 116,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "10-act",
+      "condition": "act",
+      "distance": [
+        0.20288,
+        0.28818
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 22.32456566701876,
+      "sim_s": 11.700000000000877,
+      "approach_calls": 118,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "11-act",
+      "condition": "act",
+      "distance": [
+        0.25012,
+        0.23957
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 24.309229207981844,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "12-act",
+      "condition": "act",
+      "distance": [
+        0.2375,
+        0.22828
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 24.501759624981787,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "13-act",
+      "condition": "act",
+      "distance": [
+        0.23623,
+        0.25082
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 23.206619916978525,
+      "sim_s": 11.100000000000676,
+      "approach_calls": 112,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "14-act",
+      "condition": "act",
+      "distance": [
+        0.26381,
+        0.25846
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 22.640103290992556,
+      "sim_s": 11.50000000000081,
+      "approach_calls": 116,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "15-act",
+      "condition": "act",
+      "distance": [
+        0.28828,
+        0.25489
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 24.98119154199958,
+      "sim_s": 11.700000000000877,
+      "approach_calls": 118,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "16-act",
+      "condition": "act",
+      "distance": [
+        0.24852,
+        0.27913
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 22.082006792014,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "17-act",
+      "condition": "act",
+      "distance": [
+        0.25819,
+        0.28823
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 21.21894095800235,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "18-act",
+      "condition": "act",
+      "distance": [
+        0.23641,
+        0.25052
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 20.14413225001772,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "19-act",
+      "condition": "act",
+      "distance": [
+        0.20622,
+        0.23648
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 21.06337766701472,
+      "sim_s": 11.100000000000676,
+      "approach_calls": 112,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    },
+    {
+      "case": "20-act",
+      "condition": "act",
+      "distance": [
+        0.25786,
+        0.27808
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "success": true,
+      "approach_ok": true,
+      "grasp_success": true,
+      "wall_s": 21.510469333006768,
+      "sim_s": 11.300000000000743,
+      "approach_calls": 114,
+      "contact_steps": 0,
+      "stop_reason": "two fresh fixed-dwell stationary confirmations",
+      "error": null,
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a"
+    }
+  ],
+  "training_source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a",
+  "training_code_unchanged": true,
+  "complete": true,
+  "external_model_calls": 0,
+  "external_model_tokens": 0
+}

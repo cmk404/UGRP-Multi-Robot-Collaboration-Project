@@ -1,0 +1,466 @@
+{
+  "complete": true,
+  "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a",
+  "upstream_sha": "89236ea0f4f81a81ca566081e20dd1ff5f823cbe",
+  "protocol": {
+    "schema": "ugrp.act_feasibility.v1",
+    "development_cases": [
+      "train-05",
+      "train-10",
+      "train-15",
+      "train-20",
+      "train-25"
+    ],
+    "physical_pilot_conditions": [
+      "kernel",
+      "act"
+    ],
+    "physical_pilot_distances": [
+      [
+        0.27095,
+        0.27591
+      ],
+      [
+        0.22947,
+        0.22023
+      ],
+      [
+        0.29833,
+        0.28776
+      ],
+      [
+        0.23013,
+        0.28722
+      ],
+      [
+        0.23583,
+        0.22118
+      ],
+      [
+        0.29133,
+        0.25876
+      ],
+      [
+        0.27939,
+        0.21747
+      ],
+      [
+        0.2029,
+        0.23511
+      ],
+      [
+        0.23967,
+        0.28785
+      ],
+      [
+        0.20288,
+        0.28818
+      ],
+      [
+        0.25012,
+        0.23957
+      ],
+      [
+        0.2375,
+        0.22828
+      ],
+      [
+        0.23623,
+        0.25082
+      ],
+      [
+        0.26381,
+        0.25846
+      ],
+      [
+        0.28828,
+        0.25489
+      ],
+      [
+        0.24852,
+        0.27913
+      ],
+      [
+        0.25819,
+        0.28823
+      ],
+      [
+        0.23641,
+        0.25052
+      ],
+      [
+        0.20622,
+        0.23648
+      ],
+      [
+        0.25786,
+        0.27808
+      ]
+    ],
+    "development_physical_distances": [
+      [
+        0.205,
+        0.205
+      ],
+      [
+        0.255,
+        0.225
+      ],
+      [
+        0.295,
+        0.275
+      ]
+    ],
+    "candidate_plan": [
+      "frozen ImageNet128 uniform 3000 steps",
+      "same frozen ImageNet128 balanced 10000 steps"
+    ],
+    "seed_plan": [
+      20260916,
+      20260917
+    ],
+    "checkpoint_rule": "lowest development missed_stop_rate + 10*false_ready_rate + forward_mae/0.15; fixed ready thresholds",
+    "constraints": [
+      "two RGB only",
+      "original camera/FOV",
+      "weld OFF",
+      "no final-test tuning"
+    ],
+    "interpretation": "20 fresh starts in the same straight approach scene; not whole cooperative transport or real hardware",
+    "data_expansion": "existing 20 training cases + 30 new teacher cases; original 5 heldout cases now development only"
+  },
+  "sources": [
+    {
+      "root": "/Users/changmin/projects/ugrp/outputs/rgb-approach-teacher-20260910-v1",
+      "source_sha": "360e747fe8d126d0b42693276f0632b4d8989b3d",
+      "successful_cases": [
+        "train-01",
+        "train-02",
+        "train-03",
+        "train-04",
+        "train-05",
+        "train-06",
+        "train-07",
+        "train-08",
+        "train-09",
+        "train-10",
+        "train-11",
+        "train-12",
+        "train-13",
+        "train-14",
+        "train-15",
+        "train-16",
+        "train-17",
+        "train-18",
+        "train-19",
+        "train-20",
+        "train-21",
+        "train-22",
+        "train-23",
+        "train-24",
+        "train-25"
+      ],
+      "excluded_cases": [],
+      "hashes": {
+        "report.json": "ee130941576a3c047648178f6536c8017f91a97c92d118c66e96a93fcb794b4f",
+        "actor_samples.json": "f758b8cd2a029fc7a3cb9a0d355f351262dfa1f8a577b1e41b3ecde8abe7bcb9",
+        "privileged_labels.json": "aaa09747d30ae8d49b99623ef19ef4b955f5e7259b7a946a6cdb4ab057ecd411"
+      }
+    },
+    {
+      "root": "/Users/changmin/projects/ugrp-worktrees/act-feasibility-training/outputs/teacher-expand30-v1",
+      "source_sha": "361695c31569fb2004304fbcafe6cf0b5738fc7a",
+      "successful_cases": [
+        "expand-01",
+        "expand-02",
+        "expand-03",
+        "expand-04",
+        "expand-05",
+        "expand-06",
+        "expand-07",
+        "expand-08",
+        "expand-09",
+        "expand-10",
+        "expand-11",
+        "expand-12",
+        "expand-13",
+        "expand-14",
+        "expand-15",
+        "expand-16",
+        "expand-17",
+        "expand-18",
+        "expand-19",
+        "expand-20",
+        "expand-21",
+        "expand-22",
+        "expand-23",
+        "expand-24",
+        "expand-25",
+        "expand-26",
+        "expand-27",
+        "expand-28",
+        "expand-29",
+        "expand-30"
+      ],
+      "excluded_cases": [],
+      "hashes": {
+        "report.json": "7129ca6bc228d0b79822b6a56734914eff0df15e1008d7b7520c58cf3f2b3d38",
+        "actor_samples.json": "51b9796184b03671878b9edfa2f46fd93801e72d7b9d7488785e885053939aab",
+        "privileged_labels.json": "571df1566e1dedd4c10d1aea26f1d469064004871fa792fa64360230c75ef0f1"
+      }
+    }
+  ],
+  "train_cases": [
+    "expand-01",
+    "expand-02",
+    "expand-03",
+    "expand-04",
+    "expand-05",
+    "expand-06",
+    "expand-07",
+    "expand-08",
+    "expand-09",
+    "expand-10",
+    "expand-11",
+    "expand-12",
+    "expand-13",
+    "expand-14",
+    "expand-15",
+    "expand-16",
+    "expand-17",
+    "expand-18",
+    "expand-19",
+    "expand-20",
+    "expand-21",
+    "expand-22",
+    "expand-23",
+    "expand-24",
+    "expand-25",
+    "expand-26",
+    "expand-27",
+    "expand-28",
+    "expand-29",
+    "expand-30",
+    "train-01",
+    "train-02",
+    "train-03",
+    "train-04",
+    "train-06",
+    "train-07",
+    "train-08",
+    "train-09",
+    "train-11",
+    "train-12",
+    "train-13",
+    "train-14",
+    "train-16",
+    "train-17",
+    "train-18",
+    "train-19",
+    "train-21",
+    "train-22",
+    "train-23",
+    "train-24"
+  ],
+  "development_cases": [
+    "train-05",
+    "train-10",
+    "train-15",
+    "train-20",
+    "train-25"
+  ],
+  "sampling": "balanced",
+  "seed": 20260916,
+  "steps": 10000,
+  "batch_size": 32,
+  "profile": "imagenet128",
+  "backbone": "ImageNet ResNet18 frozen; exact RGB feature cache",
+  "learning_rate": 0.0001,
+  "checkpoint_selection": "lowest development selection_score; no final test data",
+  "environment": {
+    "python": "3.12.12 (main, Feb  4 2026, 01:57:59) [Clang 21.1.4 ]",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "torch": "2.11.0",
+    "torchvision": "0.26.0",
+    "lerobot": "0.6.2",
+    "numpy": "2.2.6"
+  },
+  "robots": {
+    "r1": {
+      "selected": {
+        "step": 9500,
+        "loss": 0.0020820884965360165,
+        "l1_loss": 0.0020809550769627094,
+        "kld_loss": 1.1334195733070374e-06,
+        "train": {
+          "samples": 2871,
+          "stop_samples": 170,
+          "missed_ready": 0,
+          "false_ready": 8,
+          "forward_mae": 0.00025733330701161453,
+          "stop_recall": 1.0,
+          "selection_score": 0.03133421513572349
+        },
+        "development": {
+          "samples": 290,
+          "stop_samples": 21,
+          "missed_ready": 0,
+          "false_ready": 0,
+          "forward_mae": 0.00024532300229582665,
+          "stop_recall": 1.0,
+          "selection_score": 0.0016354866819721777
+        },
+        "elapsed_s": 357.67194941599155
+      },
+      "training_s": 376.8379929160001,
+      "total_s": 558.3349533749861,
+      "readback": [
+        {
+          "sample_id": "expand-01:000:r1",
+          "prediction": {
+            "ok": true,
+            "ready": false,
+            "forward": 0.046147455275058744,
+            "stop_score": 0.0,
+            "reason": "reference_act_rgb",
+            "ood_detection": "not_implemented"
+          }
+        },
+        {
+          "sample_id": "expand-01:053:r1",
+          "prediction": {
+            "ok": true,
+            "ready": true,
+            "forward": 0.0,
+            "stop_score": 0.9993721842765808,
+            "reason": "reference_act_rgb",
+            "ood_detection": "not_implemented"
+          }
+        },
+        {
+          "sample_id": "train-05:000:r1",
+          "prediction": {
+            "ok": true,
+            "ready": false,
+            "forward": 0.04060171991586685,
+            "stop_score": 0.0,
+            "reason": "reference_act_rgb",
+            "ood_detection": "not_implemented"
+          }
+        },
+        {
+          "sample_id": "train-05:052:r1",
+          "prediction": {
+            "ok": true,
+            "ready": true,
+            "forward": 0.0,
+            "stop_score": 1.0,
+            "reason": "reference_act_rgb",
+            "ood_detection": "not_implemented"
+          }
+        }
+      ],
+      "parameters": 11418898,
+      "trainable_parameters": 251986
+    },
+    "r3": {
+      "selected": {
+        "step": 9500,
+        "loss": 0.000802572991233319,
+        "l1_loss": 0.000802488240879029,
+        "kld_loss": 8.475035429000854e-08,
+        "train": {
+          "samples": 2871,
+          "stop_samples": 188,
+          "missed_ready": 0,
+          "false_ready": 5,
+          "forward_mae": 0.00023264951142466867,
+          "stop_recall": 1.0,
+          "selection_score": 0.020186852128593332
+        },
+        "development": {
+          "samples": 290,
+          "stop_samples": 15,
+          "missed_ready": 0,
+          "false_ready": 0,
+          "forward_mae": 0.00026506922471390194,
+          "stop_recall": 1.0,
+          "selection_score": 0.0017671281647593463
+        },
+        "elapsed_s": 343.03678816597676
+      },
+      "training_s": 362.97441824999987,
+      "total_s": 521.0701754999754,
+      "readback": [
+        {
+          "sample_id": "expand-01:000:r3",
+          "prediction": {
+            "ok": true,
+            "ready": false,
+            "forward": 0.05331621766090393,
+            "stop_score": 0.00019322708249092102,
+            "reason": "reference_act_rgb",
+            "ood_detection": "not_implemented"
+          }
+        },
+        {
+          "sample_id": "expand-01:054:r3",
+          "prediction": {
+            "ok": true,
+            "ready": true,
+            "forward": 0.0,
+            "stop_score": 0.9996404647827148,
+            "reason": "reference_act_rgb",
+            "ood_detection": "not_implemented"
+          }
+        },
+        {
+          "sample_id": "train-05:000:r3",
+          "prediction": {
+            "ok": true,
+            "ready": false,
+            "forward": 0.06013767421245575,
+            "stop_score": 0.0,
+            "reason": "reference_act_rgb",
+            "ood_detection": "not_implemented"
+          }
+        },
+        {
+          "sample_id": "train-05:055:r3",
+          "prediction": {
+            "ok": true,
+            "ready": true,
+            "forward": 0.0,
+            "stop_score": 0.9990053176879883,
+            "reason": "reference_act_rgb",
+            "ood_detection": "not_implemented"
+          }
+        }
+      ],
+      "parameters": 11418898,
+      "trainable_parameters": 251986
+    }
+  },
+  "external_model_calls": 0,
+  "external_model_tokens": 0,
+  "wall_s": 1079.5096024999802,
+  "artifacts": {
+    "approach-skill.json": "9a97a960be7f9a6bc3c2bcbf50ade72e8ab1d57fe58d98d4df5a9194ac9502e6",
+    "r1/act/adapter.json": "1098e499ba0ff2e0b24af88723cf892ff07e2ba0c52fe3e9f6b8c48b59e24e4b",
+    "r1/act/config.json": "c371f30ea3177e5d7e70a4102f1878dea9557443b90c0f08447f37e5ddcfbdcc",
+    "r1/act/model.safetensors": "359d66dd92f2a963af789c0cfe625abade14025c6922c5a0114e6ba5e7772b25",
+    "r1/development-predictions.json": "0070617239773f27897ebb1ffac904e958ed382b1604d4654df4aeb2b160794c",
+    "r1/kernel.json": "7990228a9159addbd05e3786e04aae18f0670bb655a9a4de92d6dc6a1f796145",
+    "r1/progress.json": "58a4b8dadc7019bcb6cb88c838a9f21f1461f910a92f4a1cd8d5f157f2f1d6af",
+    "r1/train-predictions.json": "ebc905ec1fc2487f56b97bc9e0ad755a13d4df00367c4c506ae76061316a6794",
+    "r1/training-inputs.json": "525dedf7dd35e310b0dac6f7723493c973cefe2740c12c2375c20e91a024038a",
+    "r3/act/adapter.json": "1098e499ba0ff2e0b24af88723cf892ff07e2ba0c52fe3e9f6b8c48b59e24e4b",
+    "r3/act/config.json": "c371f30ea3177e5d7e70a4102f1878dea9557443b90c0f08447f37e5ddcfbdcc",
+    "r3/act/model.safetensors": "c59ddeecb650e78f273dd0530668451498951d9bdb2f34541c8d1c31eb4a0697",
+    "r3/development-predictions.json": "892613c84a25a71bccad9f974af26035c24d90ad9fe758541d7c19397ace39e2",
+    "r3/kernel.json": "db77d72856faa2571ad83eec21db7408ff790fc0cf0bc88a63bc3e71d5d5d0b3",
+    "r3/progress.json": "c8191b78ea2e5b80bf6b33219f81e89af1dfe69b10c69bb3d47f3bbbf177ef34",
+    "r3/train-predictions.json": "ff305f5d759e01df691be95ad3664563d119eb99cf892a9160c29dcae63c0991",
+    "r3/training-inputs.json": "8869d9d8b1228c2632044375cfbb0d638e3056f4a1b32246172f0d2563a00f17"
+  }
+}
