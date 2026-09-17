@@ -131,6 +131,16 @@ def test_translation_centerline_excludes_adjacent_yellow_apron():
     assert evidence['min_saturation']==150
 
 
+def test_exact_vertical_half_pixel_shaft_keeps_its_visible_row_coverage():
+    import json
+    from harness.dispatch_translation_skew import translation_skew
+    root=Path('tests/fixtures/dispatch_adaptive')
+    beam=json.loads((root/'translation-vertical-half-pixel.json').read_text())
+    skew,evidence=translation_skew((root/'translation-vertical-half-pixel.jpg').read_bytes(),beam)
+    assert evidence['supported_sections']>=50
+    assert abs(skew)<1.5
+
+
 def test_bright_cyan_probe_keeps_full_cargo_silhouette_without_floor_merge():
     import base64
     from harness.visual_attachment import compare_box_comotion

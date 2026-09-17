@@ -27,7 +27,9 @@ def translation_skew(jpeg, beam):
     yy,xx=np.where(mask);points=np.column_stack((xx+x0,yy+y0))
     axial=(points-center)@axis;lateral=(points-center)@normal
     selected=(abs(axial)<beam['length_px']*.35)&(abs(lateral)<beam['width_px']*.75)
-    indices=np.round(axial).astype(int);sections=[]
+    # Half-pixel centres on an exactly vertical shaft must still produce one
+    # section per image row. Banker's rounding aliases alternate rows.
+    indices=np.floor(axial).astype(int);sections=[]
     for index in sorted(set(indices[selected])):
         values=lateral[(indices==index)&selected]
         if len(values)>=beam['width_px']*.6:
