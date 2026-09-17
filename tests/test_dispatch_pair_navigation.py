@@ -170,6 +170,22 @@ def test_shared_heading_is_not_changed_by_one_wheel_appearance_bias():
     assert all(a['turn']==a['forward']==a['left']==0. for a in actions.values())
 
 
+def test_motor_saturation_preserves_the_common_twist_and_span():
+    from harness.dispatch_pair_navigation import rigid_pair_commands,rotate
+    positions={'r1':np.array([0.,-.325]),'r3':np.array([0.,.325])}
+    headings={'r1':.4,'r3':-.3}
+    actions,evidence=rigid_pair_commands(positions,headings,[0.,0.,0.],0.,[-.075,.075],.1)
+    assert 0<evidence['shared_motor_scale']<1
+    world={r:rotate([a['forward']*1.57,a['left']*1.18],headings[r]) for r,a in actions.items()}
+    line=positions['r1']-positions['r3']
+    assert abs(float((world['r1']-world['r3'])@line))<1e-10
+    assert np.allclose(sum(world.values())/2,evidence['common_translation_m_s'])
+    assert actions['r1']['turn']==actions['r3']['turn']
+    for action in actions.values():
+        assert -.050000001<=action['forward']<=.080000001
+        assert abs(action['left'])<=.080000001 and abs(action['turn'])<=.100000001
+
+
 def test_span_recovery_pushes_apart_when_one_carrier_catches_the_other():
     from harness.dispatch_pair_navigation import rigid_pair_commands,rotate
     positions={'r1':np.array([0.,-.31]),'r3':np.array([0.,.31])}

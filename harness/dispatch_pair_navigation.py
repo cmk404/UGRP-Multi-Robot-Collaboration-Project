@@ -316,12 +316,23 @@ def rigid_pair_commands(positions,headings,reference,observed_turn,velocity,omeg
         world[rid]+=correction*(1 if rid=='r1' else -1)*line/span
         local=rotate(world[rid],-headings[rid])
         turn_corrections[rid]=0. if heading_errors is None else float(np.clip(.9*heading_errors[rid],-.08,.08))
-        commands[rid]={'kind':'mecanum','forward':float(np.clip(local[0]/1.57,-.05,.08)),
-            'left':float(np.clip(local[1]/1.18,-.08,.08)),
-            'turn':float(np.clip((angular+turn_corrections[rid])/1.5,-.10,.10)),'duration_s':.2}
-    return commands,{'center_xy_m':center.tolist(),'common_translation_m_s':translation.tolist(),
-        'common_angular_rad_s':angular,'individual_heading_correction_rad_s':turn_corrections,'world_velocity_m_s':{r:v.tolist() for r,v in world.items()},
-        'observed_span_m':span,'target_span_m':target_span,'span_rate_m_s':span_rate,'span_bias_m_s':span_bias,'radial_correction_m_s':correction,
+        commands[rid]={'kind':'mecanum','forward':float(local[0]/1.57),
+            'left':float(local[1]/1.18),
+            'turn':float((angular+turn_corrections[rid])/1.5),'duration_s':.2}
+    # Independent axis clipping changes the shared formation twist. When any
+    # endpoint reaches a motor limit, scale every endpoint/axis together.
+    scale=1.
+    for command in commands.values():
+        for axis in ('forward','left','turn'):
+            value=command[axis]
+            limit=(.08 if value>=0 else .05) if axis=='forward' else .08 if axis=='left' else .10
+            if abs(value)>limit:scale=min(scale,limit/abs(value))
+    for command in commands.values():
+        for axis in ('forward','left','turn'):command[axis]*=scale
+    return commands,{'center_xy_m':center.tolist(),'common_translation_m_s':(translation*scale).tolist(),
+        'common_angular_rad_s':angular*scale,'shared_motor_scale':scale,
+        'individual_heading_correction_rad_s':{r:v*scale for r,v in turn_corrections.items()},'world_velocity_m_s':{r:(v*scale).tolist() for r,v in world.items()},
+        'observed_span_m':span,'target_span_m':target_span,'span_rate_m_s':span_rate,'span_bias_m_s':span_bias,'radial_correction_m_s':correction*scale,
         'source':'current RGB formation, authored route and own action calibration; common turn with bounded span correction'}
 
 
@@ -529,7 +540,7 @@ class PairNavigator:
             # Advance within the existing actuator/vision limits instead of
             # prolonging a loaded grasp at the former .04 m/s reference rate.
             # RGB lag/heading/span gates below still pause this reference.
-            delta = max(np.linalg.norm(error_xy)/.06, abs(error_yaw)/.08, .2)
+            delta = max(np.linalg.norm(error_xy)/.075, abs(error_yaw)/.10, .2)
             velocity, omega = error_xy/delta, error_yaw/delta
             formation_errors = {};heading_errors={}
             for r in ROBOTS:
