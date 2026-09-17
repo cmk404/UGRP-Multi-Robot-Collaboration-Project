@@ -5,3 +5,5 @@
 `beam-top-lit.jpg`: S7 source ca11f79, pair-233-carry-top; loaded beam under unchanged lighting, raw shared camera.
 
 `box-top-held.jpg`: S8 source 6e349db, solo-121-top; raw shared camera with held box and cyan floor distractors.
+
+`box-transit-274/275.jpg`: S13 source 273da1b, raw solo-274/275-top. Transition into changed illumination during actual carrying.

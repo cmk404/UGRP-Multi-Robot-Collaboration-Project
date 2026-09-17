@@ -33,7 +33,9 @@ class BoundPairSkill:
         self.coarse=PairCoarsePixels(identity,bindings,reference) if identity is not None else None
 
     def time(self):return self.io.time()
-    def tick(self,seconds):self.io.step(seconds)
+    def tick(self,seconds):
+        self.io.pair_phase=self.phase
+        self.io.step(seconds)
     def evaluation_snapshot(self):
         # Legacy run_approach stores this as output only. Keep the facade free
         # of simulator state even for reporting; the driver owns the referee.

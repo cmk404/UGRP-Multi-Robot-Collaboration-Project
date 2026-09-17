@@ -62,7 +62,9 @@ class SkillScene(DispatchScene):
             (int(c.geom1) in self.robot_ids and int(c.geom2) in self.obstacle_ids)
             or (int(c.geom2) in self.robot_ids and int(c.geom1) in self.obstacle_ids)
             for c in self.world.data.contact[:self.world.data.ncon] if c.dist<0)
-        if self.video:self.video.capture()
+        if self.video:
+            self.video.stage='PAIR '+self.pair_phase+' | '+(self.bindings.solo+' '+self.solo.phase if self.solo else 'SETUP/END')
+            self.video.capture()
         if self.referee and self.time()+1e-9>=self.next_sample:
             self.referee.sample();self.next_sample=self.time()+.1
     def step(self,seconds):

@@ -127,6 +127,7 @@ class ImageRoute:
         self.map=bindings.static_map;self.obj=obj
         self.task=bindings.tasks[obj];self.dock=bindings.plan['dock']
         self.points=None;self.index=0;self.confirmations=0
+        self.box_center=None;self.box_delta=np.zeros(2)
 
     def observe(self,jpeg):
         frame=decode(jpeg);h,w=frame.shape[:2]
@@ -136,13 +137,21 @@ class ImageRoute:
             bounds=np.array(feature['corners4'])*[w,h]
         else:
             hsv=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
-            mask=cv2.inRange(hsv,np.array((80,125,35),np.uint8),np.array((102,255,255),np.uint8))
+            mask=cv2.inRange(hsv,np.array((80,125 if self.box_center is None else 70,35),np.uint8),np.array((102,255,255),np.uint8))
             mask=cv2.morphologyEx(mask,cv2.MORPH_OPEN,np.ones((3,3),np.uint8))
             n,_,stats,centers=cv2.connectedComponentsWithStats(mask)
             choices=[i for i in range(1,n) if 25 <= stats[i,4] <= 600
                      and max(stats[i,2:4]) < 40]
+            if self.box_center is not None:
+                predicted=self.box_center+np.clip(self.box_delta,-15,15)
+                choices=sorted((i for i in choices if np.linalg.norm(centers[i]-predicted)<=25),
+                               key=lambda i:np.linalg.norm(centers[i]-predicted))
+                if len(choices)>1 and np.linalg.norm(centers[choices[1]]-predicted)-np.linalg.norm(centers[choices[0]]-predicted)>5:
+                    choices=choices[:1]
             if len(choices)!=1:raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
             i=choices[0];center=centers[i];x,y,bw,bh=stats[i,:4]
+            self.box_delta=np.zeros(2) if self.box_center is None else center-self.box_center
+            self.box_center=center.copy()
             bounds=np.array([[x,y],[x+bw,y+bh]])
         if self.points is None:
             # The open arena permits the original parallel formation. Avoid

@@ -186,3 +186,14 @@ def test_box_approaches_from_east_of_the_beam_slot():
     points=np.array(e['waypoints_px'])
     assert points[-2,0]>points[-1,0]>points[1,0]
     assert points[2,1]==points[3,1]
+
+
+def test_box_tracking_survives_observed_lighting_change_without_global_reacquisition():
+    from harness.dispatch_skill_binding import ImageRoute
+    root=Path('tests/fixtures/dispatch_skill_transfer')
+    route=ImageRoute(SkillBindings(committed(),authored_map('open')),'box')
+    _,first=route.observe((root/'box-transit-274.jpg').read_bytes())
+    _,second=route.observe((root/'box-transit-275.jpg').read_bytes())
+    assert 3<np.linalg.norm(np.array(first['cargo_center_px'])-second['cargo_center_px'])<15
+    with pytest.raises(RuntimeError):
+        route.observe((root/'box-top-held.jpg').read_bytes())
