@@ -157,7 +157,9 @@ def run(args):
     skill,grasp=models(grasp_root,'student-skill.json')
     stage_skill,stages=load_stage_models(args.stage_model_dir)
     reference=args.reference_top.read_bytes()
-    scene=SkillScene(episode(args.variant,args.seed),args.output)
+    config=episode(args.variant,args.seed)
+    config['contact_solver']={'noslip_iterations':args.contact_refinement}
+    scene=SkillScene(config,args.output)
     started=time.monotonic();pair=team=None
     result={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         'scope':'three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute',

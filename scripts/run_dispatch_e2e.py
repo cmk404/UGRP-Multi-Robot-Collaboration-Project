@@ -285,6 +285,7 @@ def main():
     p.add_argument('--max-quiet-rounds',type=int,default=4)
     p.add_argument('--plan-replay',type=Path,help='diagnostic only: replay a saved agreed plan with fixture votes')
     p.add_argument('--executor',choices=('skills','raw'),default='skills')
+    p.add_argument('--contact-refinement',type=int,choices=(0,4),default=4,help='skills only: friction solver refinement; 0 reproduces legacy soft-contact drift')
     p.add_argument('--grasp-model-dir',type=Path)
     p.add_argument('--stage-model-dir',type=Path)
     p.add_argument('--reference-top',type=Path,default=ROOT/'tests/fixtures/camera_goal_transport/reference-top.jpg')

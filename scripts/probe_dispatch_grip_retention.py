@@ -35,7 +35,7 @@ def main():
     for refinement in [0,4]:
         for moving in [False,True]:
             case={'noslip_iterations':refinement,'moving':moving,'samples':[]}
-            out=args.output/f'noslip-{refinement}-'+Path('unused') if False else args.output/f'noslip-{refinement}-move-{int(moving)}'
+            out=args.output/f'noslip-{refinement}-move-{int(moving)}'
             config=episode('open',11)
             for rid in pair.values():config['setup_only']['spawns'][rid]=[*setup['robots'][rid],0.]
             scene=DispatchScene(config,out);began=time.monotonic()
@@ -48,8 +48,8 @@ def main():
                 scene.capture('lift-start')
                 beam=mujoco.mj_name2id(w.model,mujoco.mjtObj.mjOBJ_GEOM,'team_beam_geom')
                 for i in range(310):
-                    a={'kind':'mecanum','forward':.08 if moving and i>=50 else 0.,
-                        'left':.08 if moving and i<50 else 0.,'turn':0.,'duration_s':.1}
+                    a={'kind':'mecanum','forward':.08 if moving and 35<=i<235 else 0.,
+                        'left':.08 if moving and i<35 else 0.,'turn':0.,'duration_s':.1}
                     for rid in pair.values():scene.ports[rid].apply(a,float(w.data.time))
                     scene.step(.1)
                     case['samples'].append({'t':round((i+1)*.1,1),'beam_position':w.data.geom_xpos[beam].tolist(),
@@ -58,6 +58,7 @@ def main():
                 case['final_height']=case['samples'][-1]['beam_position'][2]
                 case['min_height']=min(s['beam_position'][2] for s in case['samples'])
                 case['weld_steps']=scene.weld_steps
+                case['obstacle_contact_steps']=scene.obstacle_contact_steps
             finally:scene.close()
             case['wall_s']=time.monotonic()-began
             (out/'teacher-only.json').write_text(json.dumps(case,indent=2))
