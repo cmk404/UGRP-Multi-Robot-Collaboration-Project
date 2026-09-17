@@ -17,7 +17,7 @@ def contact_profile(xml,profile):
     root=ET.fromstring(xml)
     if profile=='global_noslip':root.find('option').set('noslip_iterations','4')
     if profile in ('local_contact','local_contact_fine'):
-        # The finer diagnostic doubles tangential damping and resolves its
+        # The finer profile doubles tangential damping and resolves its
         # time scale with half the step. Normal contact and force limits stay
         # identical; finite soft-contact drift is not an adhesion constraint.
         fine=profile=='local_contact_fine'
