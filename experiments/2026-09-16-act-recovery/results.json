@@ -1,0 +1,134 @@
+{
+  "rows": [
+    {
+      "condition": "nominal_teacher",
+      "successes": 4,
+      "trials": 16,
+      "groups": {
+        "nominal": 4,
+        "yaw_lateral": 0,
+        "far_yaw": 0,
+        "overshoot_yaw": 0
+      },
+      "physical_grasp_successes": 4,
+      "mean_success_approach_sim_s": 4.19999999999966,
+      "mean_success_total_sim_s": 19.860000000000003,
+      "mean_approach_robot_commands_all": 181,
+      "mean_wall_s_all": 15.510676065061489
+    },
+    {
+      "condition": "recovery_teacher",
+      "successes": 16,
+      "trials": 16,
+      "groups": {
+        "nominal": 4,
+        "yaw_lateral": 4,
+        "far_yaw": 4,
+        "overshoot_yaw": 4
+      },
+      "physical_grasp_successes": 16,
+      "mean_success_approach_sim_s": 15.26250000000001,
+      "mean_success_total_sim_s": 30.9225,
+      "mean_approach_robot_commands_all": 152.625,
+      "mean_wall_s_all": 15.90257438268236
+    },
+    {
+      "condition": "nominal16",
+      "successes": 0,
+      "trials": 16,
+      "groups": {
+        "nominal": 0,
+        "yaw_lateral": 0,
+        "far_yaw": 0,
+        "overshoot_yaw": 0
+      },
+      "physical_grasp_successes": 0,
+      "mean_success_approach_sim_s": null,
+      "mean_success_total_sim_s": null,
+      "mean_approach_robot_commands_all": 302.5,
+      "mean_wall_s_all": 31.154113968936144
+    },
+    {
+      "condition": "nominal17",
+      "successes": 0,
+      "trials": 16,
+      "groups": {
+        "nominal": 0,
+        "yaw_lateral": 0,
+        "far_yaw": 0,
+        "overshoot_yaw": 0
+      },
+      "physical_grasp_successes": 0,
+      "mean_success_approach_sim_s": null,
+      "mean_success_total_sim_s": null,
+      "mean_approach_robot_commands_all": 320,
+      "mean_wall_s_all": 32.060014716056685
+    },
+    {
+      "condition": "recovery16",
+      "successes": 3,
+      "trials": 16,
+      "groups": {
+        "nominal": 3,
+        "yaw_lateral": 0,
+        "far_yaw": 0,
+        "overshoot_yaw": 0
+      },
+      "physical_grasp_successes": 4,
+      "mean_success_approach_sim_s": 17.73333333333388,
+      "mean_success_total_sim_s": 33.39333333333333,
+      "mean_approach_robot_commands_all": 284.75,
+      "mean_wall_s_all": 29.749882585936575
+    },
+    {
+      "condition": "recovery17",
+      "successes": 0,
+      "trials": 16,
+      "groups": {
+        "nominal": 0,
+        "yaw_lateral": 0,
+        "far_yaw": 0,
+        "overshoot_yaw": 0
+      },
+      "physical_grasp_successes": 1,
+      "mean_success_approach_sim_s": null,
+      "mean_success_total_sim_s": null,
+      "mean_approach_robot_commands_all": 294.5,
+      "mean_wall_s_all": 30.552973804689827
+    },
+    {
+      "condition": "aggregated16",
+      "successes": 4,
+      "trials": 16,
+      "groups": {
+        "nominal": 4,
+        "yaw_lateral": 0,
+        "far_yaw": 0,
+        "overshoot_yaw": 0
+      },
+      "physical_grasp_successes": 4,
+      "mean_success_approach_sim_s": 16.25000000000111,
+      "mean_success_total_sim_s": 31.91,
+      "mean_approach_robot_commands_all": 280.625,
+      "mean_wall_s_all": 29.006932609378055
+    },
+    {
+      "condition": "aggregated17",
+      "successes": 2,
+      "trials": 16,
+      "groups": {
+        "nominal": 2,
+        "yaw_lateral": 0,
+        "far_yaw": 0,
+        "overshoot_yaw": 0
+      },
+      "physical_grasp_successes": 2,
+      "mean_success_approach_sim_s": 18.500000000000124,
+      "mean_success_total_sim_s": 34.160000000000004,
+      "mean_approach_robot_commands_all": 303.125,
+      "mean_wall_s_all": 30.51191709618979
+    }
+  ],
+  "scope": "Same sixteen initial scenes for every policy. Two training seeds repeat those scenes; not thirty-two independent scenes. Strict success includes stable pose and physical grasp with no approach contact.",
+  "external_model_calls": 0
+}

@@ -1,0 +1,68 @@
+{
+  "schema": "ugrp.act_recovery.v1",
+  "seeds": [
+    20260916,
+    20260917
+  ],
+  "steps": 10000,
+  "chunk": 4,
+  "execute_steps": 1,
+  "rgb": "own and fixed top only",
+  "student_conditions": [
+    "nominal",
+    "recovery",
+    "aggregated"
+  ],
+  "teacher_comparators": [
+    "nominal_teacher",
+    "recovery_teacher"
+  ],
+  "test_cases": "test-cases.json",
+  "max_rounds": 160,
+  "slice_s": 0.2,
+  "confirmation_steps": 3,
+  "evaluation_only_tolerance": {
+    "xy_m": 0.005,
+    "yaw_deg": 1,
+    "stationary_s": 0.4,
+    "linear_speed_mps": 0.005,
+    "angular_speed_radps": 0.02
+  },
+  "data_design": "Nominal:48 nominal attempts. Recovery:24 shared nominal +24 single-perturbation attempts. Aggregated:24 shared nominal +12 shared single-perturbation attempts +12 student-prefix/teacher-tail attempts. Temporary bootstrap:24 nominal +12 singles, seed20260916,5000 updates/robot. All final models10000 updates/robot,2 seeds. All failures/exclusions retained; successful sample counts can differ and are reported. No failed-slot replacement. Recovery extra12 and aggregation12 compare equal attempted demonstration budgets, not equal unique-frame counts.",
+  "heldout_region_screen": "Training trajectories excluded if teacher-labeled state has |yaw|>3deg AND (|y|>8mm OR remaining x>0.33m OR remaining x<-3mm). Audit coverage and do not claim unseen combinations if this screen is violated.",
+  "selection": "Checkpoint only development loss/ready mistakes; no final test retuning. Final test run after all checkpoints fixed.",
+  "boundary": "No truth-gated grasp or teacher fallback during independent student evaluation; privileged takeover is training-only.",
+  "bootstrap": {
+    "seed": 20260916,
+    "steps": 5000,
+    "data": "first24 nominal, first4 per recovery factor",
+    "not_final_comparator": true
+  },
+  "pretraining_amendment": {
+    "takeover_steps": [
+      20,
+      60,
+      100
+    ],
+    "teacher_tail_budget_steps": 160,
+    "reason": "Before any student training or final test, extend prefixes beyond early nominal approach to sample closed-loop drift; allow the teacher a full recovery budget after each prefix. Fixed intervention times, no truth-triggered intervention. Strengthen scoring to require the full 0.4s (five 0.1s samples); collected teacher windows already satisfy this."
+  },
+  "pre_final_actuator_diagnostic": {
+    "models": "Completed nominal16 and recovery16; weights and predicted readiness unchanged",
+    "evidence": "Raw recovery16 lateral development trial ended 11.18mm short with forward=0.00461894; calibrated teacher minimum=0.005. Tiny cross-axis regression outputs can also drift. No final-test executions seen.",
+    "candidate": "Predicted-ready -> zero, unchanged. Otherwise forward abs>0.003 -> min 0.005; lateral abs>0.004 -> min 0.012; turn abs>0.004 -> min 0.006; below activation -> zero. Signs and larger values preserved. No state/observations accepted by decoder.",
+    "development_trials": "Same four development-preflight cases, both completed models, eight trials. Raw results nominal16=0/4, recovery16=2/4 (nominal and overshoot).",
+    "selection_rule": "Use calibrated decoder for ALL six final students iff pooled strict success exceeds raw 2/8 and both previously successful recovery16 cases remain successful. Otherwise use raw for ALL students. No threshold tuning after these eight trials. Teachers retain original command mappings.",
+    "scope": "A shared deployment calibration, not learned recovery or oracle correction. Model-native predictions and actual issued commands are logged separately."
+  },
+  "actuator_diagnostic_decision": {
+    "selected_decoder": "raw",
+    "raw_nominal": 0,
+    "raw_recovery": 2,
+    "calibrated_nominal": 1,
+    "calibrated_recovery": 1,
+    "trials_per_model_and_decoder": 4,
+    "why": "Pooled success tied 2/8; the previously successful recovery nominal case failed. Reject by the predeclared rule; all final students retain raw decoding.",
+    "thresholds_retuned": false
+  }
+}

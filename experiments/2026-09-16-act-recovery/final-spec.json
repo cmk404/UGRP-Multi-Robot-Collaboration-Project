@@ -1,0 +1,51 @@
+{
+  "test_cases": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/experiments/2026-09-16-act-recovery/test-cases.json",
+  "conditions": {
+    "nominal_teacher": {
+      "cohort": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal_teacher",
+      "policy": "nominal_teacher",
+      "command_decoder": "raw"
+    },
+    "recovery_teacher": {
+      "cohort": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery_teacher",
+      "policy": "recovery_teacher",
+      "command_decoder": "raw"
+    },
+    "nominal16": {
+      "cohort": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal16",
+      "policy": "act",
+      "model": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/nominal-seed16-v1",
+      "command_decoder": "raw"
+    },
+    "nominal17": {
+      "cohort": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/nominal17",
+      "policy": "act",
+      "model": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/nominal-seed17-v1",
+      "command_decoder": "raw"
+    },
+    "recovery16": {
+      "cohort": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery16",
+      "policy": "act",
+      "model": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/recovery-seed16-v1",
+      "command_decoder": "raw"
+    },
+    "recovery17": {
+      "cohort": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/recovery17",
+      "policy": "act",
+      "model": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/recovery-seed17-v1",
+      "command_decoder": "raw"
+    },
+    "aggregated16": {
+      "cohort": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated16",
+      "policy": "act",
+      "model": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/aggregated-seed16-v1",
+      "command_decoder": "raw"
+    },
+    "aggregated17": {
+      "cohort": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/final-v1/aggregated17",
+      "policy": "act",
+      "model": "/Users/changmin/projects/ugrp-worktrees/act-recovery-generalization/outputs/aggregated-seed17-v1",
+      "command_decoder": "raw"
+    }
+  }
+}
