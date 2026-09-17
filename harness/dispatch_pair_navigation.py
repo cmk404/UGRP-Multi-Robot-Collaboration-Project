@@ -526,7 +526,10 @@ class PairNavigator:
             target = np.array(self.route[self.segment])
             error_xy = target[:2]-self.reference[:2]
             error_yaw = wrap(target[2]-self.reference[2])
-            delta = max(np.linalg.norm(error_xy)/.04, abs(error_yaw)/.055, .2)
+            # Advance within the existing actuator/vision limits instead of
+            # prolonging a loaded grasp at the former .04 m/s reference rate.
+            # RGB lag/heading/span gates below still pause this reference.
+            delta = max(np.linalg.norm(error_xy)/.06, abs(error_yaw)/.08, .2)
             velocity, omega = error_xy/delta, error_yaw/delta
             formation_errors = {};heading_errors={}
             for r in ROBOTS:
