@@ -53,7 +53,7 @@ def mission_xml(builder):
     return build
 
 
-def prepare_grasp_models(source, target, *, background_band=True):
+def prepare_grasp_models(source, target, *, background_band=True, top_roi=None):
     """Copy learned weights unchanged; scope only constant TOP background."""
     source=source.resolve()
     skill=json.loads((source/'student-skill.json').read_text())
@@ -66,11 +66,15 @@ def prepare_grasp_models(source, target, *, background_band=True):
         entry=skill['models'][rid]
         model=json.loads((source/entry['path']).read_text())
         if background_band:model['constant_background_top_band']=[6,19]
+        if top_roi is not None:
+            if top_roi!=[12,6,20,19]:raise ValueError('unsupported TOP window')
+            model['constant_background_top_roi']=top_roi[:]
         write(target/entry['path'],model)
         entry['sha256']=hashlib.sha256((target/entry['path']).read_bytes()).hexdigest()
     write(target/'student-skill.json',skill)
     (target/'evaluation-fixture.json').write_bytes((source/'evaluation-fixture.json').read_bytes())
     write(target/'provenance.json',{'source':str(source.resolve()),
+        'constant_background_top_roi':top_roi,
         'source_skill_sha256':hashlib.sha256((source/'student-skill.json').read_bytes()).hexdigest(),
         'change':('constant TOP background band only; own RGB, learned weights, support and limits unchanged'
                   if background_band else 'native model contents unchanged; no additional background mask')})

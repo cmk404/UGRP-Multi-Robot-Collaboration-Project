@@ -116,3 +116,20 @@ def test_partial_case_ids_are_rejected_instead_of_leaking_frames():
     rows[0]["case_id"] = "only-one"
     with pytest.raises(ValueError, match="all samples require"):
         fit_recovery_model(*reference, rows)
+
+
+def test_local_top_window_excludes_distant_scenery_but_preserves_novelty_guards():
+    own,top=_views();model=fit_recovery_model(own,top,_training())
+    model['constant_background_top_roi']=[12,6,20,19]
+    scene=cv2.imdecode(np.frombuffer(top,np.uint8),cv2.IMREAD_COLOR)
+    scene[50:145,200:245]=255
+    distant=cv2.imencode('.png',scene)[1].tobytes()
+    assert predict_recovery(model,own,distant)['observable']
+    scene[70:120,105:145]=255
+    occluded=cv2.imencode('.png',scene)[1].tobytes()
+    assert not predict_recovery(model,own,occluded)['observable']
+    changed_own=cv2.imencode('.png',np.full((144,192,3),255,np.uint8))[1].tobytes()
+    assert not predict_recovery(model,changed_own,top)['observable']
+    model['pca_components'][0][-1]=.001
+    with pytest.raises(ValueError,match='removes a learned'):
+        predict_recovery(model,own,top)

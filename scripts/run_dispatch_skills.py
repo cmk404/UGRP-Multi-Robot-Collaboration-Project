@@ -161,7 +161,8 @@ def run(args):
     from scripts.probe_dual_grasp_sync import Video
     source_skill=json.loads((args.grasp_model_dir/'student-skill.json').read_text())
     grasp_root=prepare_grasp_models(args.grasp_model_dir,args.output.with_name(args.output.name+'-grasp-models'),
-        background_band=source_skill.get('task_domain')!='dispatch_open_v1').resolve()
+        background_band=source_skill.get('task_domain')!='dispatch_open_v1',
+        top_roi=[12,6,20,19] if source_skill.get('task_domain')=='dispatch_open_v1' else None).resolve()
     skill,grasp=models(grasp_root,'student-skill.json')
     stage_skill,stages=load_stage_models(args.stage_model_dir)
     reference=args.reference_top.read_bytes()
