@@ -235,3 +235,16 @@ def test_tracked_thin_cargo_reacquires_after_leaving_cyan_floor():
     _,e=route.observe((root/'box-edge-191.jpg').read_bytes())
     assert np.allclose(e['cargo_center_px'],[583.,573.],atol=2)
     assert e['tracking']['method']=='cyan component'
+
+
+def test_shadowed_cargo_requires_bidirectional_rgb_match():
+    from harness.dispatch_skill_binding import ImageRoute
+    root=Path('tests/fixtures/dispatch_skill_transfer')
+    route=ImageRoute(SkillBindings(committed(),authored_map('open')),'box')
+    route.box_center=np.array([632.4217760904792,491.7954463713328]);route.box_delta=np.array([0.,-5.])
+    route.box_previous=cv2.imdecode(np.frombuffer((root/'box-shadow-237.jpg').read_bytes(),np.uint8),cv2.IMREAD_COLOR)
+    _,e=route.observe((root/'box-shadow-238.jpg').read_bytes())
+    assert e['tracking']['reverse_score']>.85 and e['tracking']['cycle_error_px']<=2
+    assert np.allclose(e['cargo_center_px'],[632.,487.],atol=2)
+    blank=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))[1].tobytes()
+    with pytest.raises(RuntimeError):route.observe(blank)

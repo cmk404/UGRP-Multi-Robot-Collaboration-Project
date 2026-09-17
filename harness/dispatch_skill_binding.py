@@ -178,10 +178,16 @@ class ImageRoute:
                 center=self.box_center+np.array(location)-18+offset
                 cx,cy=np.rint(center).astype(int)
                 local_cyan=cv2.inRange(hsv[cy-12:cy+13,cx-12:cx+13],np.array((80,70,25),np.uint8),np.array((102,255,255),np.uint8))
-                if score<.85 or np.linalg.norm(center-self.box_center)>20 or np.count_nonzero(local_cyan)<15:
+                reverse_template=gray[cy-12:cy+13,cx-12:cx+13]
+                reverse_search=old[cy-30:cy+31,cx-30:cx+31]
+                reverse=cv2.matchTemplate(reverse_search,reverse_template,cv2.TM_CCOEFF_NORMED)
+                _,reverse_score,_,back=cv2.minMaxLoc(reverse)
+                cycle_error=float(np.linalg.norm(np.array([cx-18+back[0],cy-18+back[1]])-[px,py]))
+                if score<.85 or reverse_score<.85 or cycle_error>2 or np.linalg.norm(center-self.box_center)>20:
                     raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
                 bounds=np.array([center-12,center+12])
-                tracking={'method':'prior RGB appearance with current cyan evidence','score':score,
+                tracking={'method':'bidirectional prior RGB appearance; own attachment independently required','score':score,
+                          'reverse_score':reverse_score,'cycle_error_px':cycle_error,
                           'cyan_pixels':int(np.count_nonzero(local_cyan))}
             else:raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
             self.box_delta=np.zeros(2) if self.box_center is None else center-self.box_center

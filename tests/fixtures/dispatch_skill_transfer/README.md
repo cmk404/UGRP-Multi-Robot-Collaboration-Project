@@ -15,3 +15,5 @@
 `box-floor-165.jpg`: Q3 source 2e5f20b; raw shared RGB, narrow visible cyan edge over cyan floor.
 
 `box-edge-190/191.jpg`: Q4 source 6c7a941; thin cargo color component leaving cyan floor. Raw TOP.
+
+`box-shadow-237/238.jpg`: Q5 source cbfc38a, raw TOP; held cargo retains silhouette while cyan edge has 14 pixels.
