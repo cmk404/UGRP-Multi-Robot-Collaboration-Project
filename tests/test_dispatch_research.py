@@ -73,6 +73,19 @@ def test_invalid_plan_rejected_before_actuation():
         with pytest.raises(ValueError):validate_dispatch_plan(plan)
 
 
+def test_required_destination_rejects_wrong_dock_without_assigning_roles():
+    task=actor_task(authored_map('open'),required_dock='dock_b')
+    assert task['required_dock']=='dock_b'
+    assert task['static_map']==authored_map('open')
+    for solo in ROBOTS:
+        plan=fixture_plan(solo=solo,dock='dock_b')
+        assert validate_dispatch_plan(plan,required_dock='dock_b')==plan
+        with pytest.raises(ValueError,match='mission requires'):
+            validate_dispatch_plan(fixture_plan(solo=solo),required_dock='dock_b')
+    with pytest.raises(ValueError,match='unknown required dock'):
+        actor_task(authored_map('open'),required_dock='missing')
+
+
 def test_local_preparation_independent_but_joint_lift_waits_for_partner():
     c=DispatchCoordinator(committed(fixture_plan()),authored_map())
     report(c,'r1');assert c.permission('r1');assert not c.permission('r3')

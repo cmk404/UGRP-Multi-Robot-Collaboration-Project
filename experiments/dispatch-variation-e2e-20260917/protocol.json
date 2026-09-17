@@ -1,0 +1,54 @@
+{
+  "scope": "frozen-code screening, one fresh three-peer LLM E2E per condition; not a robustness success-rate estimate",
+  "cases": [
+    {
+      "id": "V1",
+      "variant": "open",
+      "required_dock": "dock_a",
+      "seed": 11
+    },
+    {
+      "id": "V2",
+      "variant": "open",
+      "required_dock": "dock_b",
+      "seed": 11
+    },
+    {
+      "id": "V3",
+      "variant": "shared_crossing",
+      "required_dock": "dock_a",
+      "seed": 11
+    },
+    {
+      "id": "V4",
+      "variant": "north_blocked",
+      "required_dock": "dock_a",
+      "seed": 11
+    },
+    {
+      "id": "V5",
+      "variant": "narrow_south",
+      "required_dock": "dock_a",
+      "seed": 11
+    },
+    {
+      "id": "V6",
+      "variant": "rough_south",
+      "required_dock": "dock_a",
+      "seed": 11
+    }
+  ],
+  "executor": "skills",
+  "contact_profile": "local_contact",
+  "max_wall_s": 900,
+  "max_input_tokens": 250000,
+  "grasp_model_dir": "outputs/dispatch-transfer-t4/models/grasp",
+  "stage_model_dir": "outputs/dispatch-transfer-t4/models/varied",
+  "reference_top": "tests/fixtures/camera_goal_transport/reference-top.jpg",
+  "expected_limitation": "Service-island variants can reject before transport because both passages are narrower than the supported pair formation. Such a result is not dynamic obstacle avoidance evidence.",
+  "success": "fresh unanimous plan + both cargo lifted, fully inside requested dock slots, released and stable, weld OFF; independent evaluator output only",
+  "freeze": "Commit configuration and destination option before all cases. Do not tune between cases. Save all failures.",
+  "controls": "same seed/physical setup/models/contact profile/cameras; peer role, route and dependency choices are not preset; LLM variability can change multiple downstream choices",
+  "storage": "Raw RGB/log/video local outputs only; summaries and hashes in Git; no Drive.",
+  "cost": "Provider usage preserved; USD unavailable unless provider reports it."
+}

@@ -14,11 +14,13 @@ from harness.three_robot_plan import ROBOTS, images, validate_plan_reply, digest
 STAGES = ('APPROACH','GRASP','LIFT','TRANSIT','LOWER','RELEASE')
 
 
-def validate_dispatch_plan(value):
+def validate_dispatch_plan(value, *, required_dock=None):
     if not isinstance(value,dict) or set(value) != {'dock','tasks'}:
         raise ValueError('plan requires dock and tasks')
     if value['dock'] not in ('dock_a','dock_b') or not isinstance(value['tasks'],list) or len(value['tasks']) != 2:
         raise ValueError('one common dock and exactly two cargo tasks required')
+    if required_dock is not None and value['dock'] != required_dock:
+        raise ValueError('mission requires destination '+required_dock)
     tasks = value['tasks']
     used, objects, ids = [], [], []
     for task in tasks:

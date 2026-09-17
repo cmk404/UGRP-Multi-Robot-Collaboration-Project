@@ -7,6 +7,7 @@ existing staged approach/grasp code. Evaluation is a separate output sink.
 from __future__ import annotations
 import base64
 import copy
+from functools import partial
 import hashlib
 import json
 from pathlib import Path
@@ -198,7 +199,7 @@ def run(args):
                 evidence += [{'label':label+'_'+i['label'],'image':i['image']} for i in images(f['own_bytes'],f['top_bytes'])]
             identity[rid]={'claim':tracker.update(after['top_bytes'],probe),'images':evidence}
         write(args.output/'identity-evidence.json',identity)
-        task=actor_task(scene.config['static_map'])
+        task=actor_task(scene.config['static_map'],required_dock=getattr(args,'required_dock',None))
         task['capability_scope']='Existing RGB pair approach/grasp with image-convention adapter; existing VisualBoxSkill. Role binding follows your plan. Route transfer remains experimental; no raw-action fallback.'
         write(args.output/'actor-mission.json',task)
         run_id=opaque_run_id()
@@ -213,7 +214,8 @@ def run(args):
             result['plan_replay_sha256']=sha(args.plan_replay)
         team=ThreeRobotRuntime(args.output/'team',run_id=run_id,mode='fixture' if replay_plan else 'llm',
             plan_fixture=replay_plan,
-            agreement=TeamAgreement(run_id,plan_validator=validate_dispatch_plan),request_builder=planner,
+            agreement=TeamAgreement(run_id,plan_validator=partial(validate_dispatch_plan,
+                required_dock=getattr(args,'required_dock',None))),request_builder=planner,
             reply_validator=validate_dispatch_reply,request_timeout=args.timeout,max_tokens=1600,
             roles_fixed_by_skill=False,planning_only=False,max_wall_s=args.max_wall_s)
         scene.team=team;frames=scene.capture('planning')

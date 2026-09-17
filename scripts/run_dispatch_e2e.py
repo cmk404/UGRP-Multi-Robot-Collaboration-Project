@@ -146,7 +146,7 @@ def run(args):
         scene.open()
         write(args.output/'episode-setup-only.json',scene.config)
         write(args.output/'scene-manifest.json',scene.manifest)
-        task = actor_task(scene.config['static_map'])
+        task = actor_task(scene.config['static_map'],required_dock=args.required_dock)
         write(args.output/'actor-mission.json',task)
         scene.video = Video(scene.world,args.output/'execution.mp4',10)
         scene.referee = Referee(scene);scene.referee.sample()
@@ -175,7 +175,7 @@ def run(args):
             return build_dispatch_request(rid,task=task,execution_pilot=True,
                 identity_evidence=identity[rid],**kwargs)
         team = ThreeRobotRuntime(args.output/'team',run_id=run_id,mode='llm',
-            agreement=TeamAgreement(run_id,plan_validator=validate_dispatch_plan),
+            agreement=TeamAgreement(run_id,plan_validator=partial(validate_dispatch_plan,required_dock=args.required_dock)),
             request_builder=planner,reply_validator=validate_dispatch_reply,
             request_timeout=args.timeout,max_tokens=1600,roles_fixed_by_skill=False,
             planning_only=False,max_wall_s=args.max_wall_s)
@@ -278,6 +278,7 @@ def main():
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--variant',choices=VARIANTS,default='shared_crossing')
     p.add_argument('--seed',type=int,default=11)
+    p.add_argument('--required-dock',choices=('dock_a','dock_b'),help='authored mission destination; allocation and routes still require peer agreement')
     p.add_argument('--rounds',type=int,default=24)
     p.add_argument('--timeout',type=float,default=60.)
     p.add_argument('--max-wall-s',type=float,default=1200.)
