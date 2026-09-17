@@ -217,17 +217,29 @@ def test_chassis_motion_survives_paint_without_tracking_tread():
 
 def test_box_delivery_uses_the_padded_region_before_point_chasing_hits_the_beam():
     from harness.dispatch_skill_binding import ImageRoute,pixel_from_map
-    raw=(ROOT/'box-inside-slot-stalled.jpg').read_bytes();route=ImageRoute(bindings(),'box')
-    route.box_center=np.array([847.,179.]);route.observe(raw);route.index=len(route.points)-1
+    raw=(ROOT/'box-delivered-inside-slot.jpg').read_bytes();route=ImageRoute(bindings(),'box')
+    route.box_center=np.array([835.,179.]);route.observe(raw);route.index=len(route.points)-1
     action,evidence=route.observe(raw)
     assert max(abs(e) for e in evidence['error_px'])>4
     assert evidence['ready'] and evidence['destination_region']['inside']
     assert all(action[k]==0 for k in ['forward','left','turn'])
     _,confirmed=route.observe(raw);assert confirmed['done']
     # The same image is outside a different authored destination.
-    wrong=ImageRoute(bindings(),'box');wrong.dock='dock_b';wrong.box_center=np.array([847.,179.])
+    wrong=ImageRoute(bindings(),'box');wrong.dock='dock_b';wrong.box_center=np.array([835.,179.])
     wrong.observe(raw);wrong.index=len(wrong.points)-1
     _,evidence=wrong.observe(raw);assert not evidence['ready'] and not evidence['done']
+
+
+def test_dim_box_keeps_prior_rgb_and_requires_its_full_uncertainty_inside_slot():
+    from harness.dispatch_skill_binding import ImageRoute
+    from harness.camera_goal_transport import decode
+    raw=(ROOT/'box-inside-slot-stalled.jpg').read_bytes();route=ImageRoute(bindings(),'box')
+    route.box_center=np.array([847.,179.]);route.box_previous=decode(raw)
+    route.observe(raw);route.index=len(route.points)-1
+    action,evidence=route.observe(raw)
+    assert evidence['tracking']['consistent_features']>=3
+    assert not evidence['ready'] and not evidence['destination_region']['inside']
+    assert action['forward']<0  # Move the uncertain right edge fully into the slot.
 
 
 def test_persistent_rgb_span_error_increases_recovery_with_bounded_memory():
