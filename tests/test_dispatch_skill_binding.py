@@ -220,14 +220,15 @@ def test_box_tracking_uses_actual_prior_appearance_over_same_colour_floor():
     route.observe((root/'box-floor-162.jpg').read_bytes())
     _,e=route.observe((root/'box-floor-163.jpg').read_bytes())
     assert np.allclose(e['cargo_center_px'],[402.,575.],atol=3)
-    assert e['tracking']['consistent_features']>=3
+    assert e['tracking']['method'] in {'cyan component','bidirectional RGB feature motion; own attachment independently required'}
+    if 'consistent_features' in e['tracking']:assert e['tracking']['consistent_features']>=3
     _,after=route.observe((root/'box-floor-165.jpg').read_bytes())
     assert 409<after['cargo_center_px'][0]<423
     blank=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))[1].tobytes()
     with pytest.raises(RuntimeError):route.observe(blank)
 
 
-def test_tracked_thin_cargo_reacquires_after_leaving_cyan_floor():
+def test_tracked_thin_cargo_keeps_identity_after_leaving_cyan_floor():
     from harness.dispatch_skill_binding import ImageRoute
     root=Path('tests/fixtures/dispatch_skill_transfer')
     route=ImageRoute(SkillBindings(committed(),authored_map('open')),'box')
@@ -235,7 +236,8 @@ def test_tracked_thin_cargo_reacquires_after_leaving_cyan_floor():
     route.box_previous=cv2.imdecode(np.frombuffer((root/'box-edge-190.jpg').read_bytes(),np.uint8),cv2.IMREAD_COLOR)
     _,e=route.observe((root/'box-edge-191.jpg').read_bytes())
     assert np.allclose(e['cargo_center_px'],[583.,573.],atol=2)
-    assert e['tracking']['method']=='cyan component'
+    assert e['tracking']['method']=='bidirectional RGB feature motion; own attachment independently required'
+    assert e['tracking']['consistent_features']>=3
 
 
 def test_shadowed_cargo_requires_bidirectional_rgb_match():

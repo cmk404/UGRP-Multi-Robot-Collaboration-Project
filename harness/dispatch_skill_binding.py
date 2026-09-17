@@ -213,7 +213,10 @@ class ImageRoute:
                      and max(stats[i,2:4]) < 40]
             if self.box_center is not None:
                 predicted=self.box_center+np.clip(self.box_delta,-15,15)
-                choices=sorted((i for i in choices if np.linalg.norm(centers[i]-predicted)<=25),
+                # Reacquisition must agree with observed recent motion. An
+                # unrelated floor fragment 10--25px away must not replace the
+                # target; retain the existing RGB flow fallback in that case.
+                choices=sorted((i for i in choices if np.linalg.norm(centers[i]-predicted)<=8),
                                key=lambda i:np.linalg.norm(centers[i]-predicted))
                 if len(choices)>1 and np.linalg.norm(centers[choices[1]]-predicted)-np.linalg.norm(centers[choices[0]]-predicted)>5:
                     choices=choices[:1]
