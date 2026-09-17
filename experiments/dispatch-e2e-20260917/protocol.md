@@ -48,3 +48,13 @@ probe motion is explicitly labeled and is not counted as cargo work.
 Runtime source must be committed before each trial and unchanged while running.
 Results and raw hashes will be added after verification. Raw media/logs stay in
 local ignored outputs; no Drive upload or remote raw-backup claim.
+
+## D1 finding and D2 change
+
+D1 stopped before cargo commands: an accepted beam participant order was rejected
+by r1 when execution explained upper/lower endpoint semantics. The plan prompt
+had named end_a/end_b without defining them. D2 states exactly the same endpoint
+semantics before agreement, and spells out normalized probe coordinates as image
+percentages from the top-left. This readout derives only from the original RGB
+difference, never from robot IDs, seed, spawns or referee positions. Same physical
+scene, seed, raw executor and budgets; D1 remains in the record as a failure.

@@ -124,3 +124,14 @@ def test_execution_planning_prompt_is_not_mislabeled_planning_only():
         own_rgb=b'own',top_rgb=b'top',agreement=TeamAgreement('opaque').context(),execution_pilot=True)
     assert 'PLANNING ONLY' not in request['messages'][0]['content']
     assert 'physical execution pilot' in request['messages'][0]['content']
+    assert 'participant[0] is end_a' in request['messages'][0]['content']
+    assert 'UPPER beam endpoint' in request['messages'][0]['content']
+
+
+def test_probe_readout_is_computed_only_from_pixel_motion_claim():
+    request=build_dispatch_request('r1',request_id='opaque',task=actor_task(authored_map()),
+        own_rgb=b'own',top_rgb=b'top',agreement=TeamAgreement('opaque').context(),
+        identity_evidence={'claim':{'center':[.123,.789],'valid':True},'images':[]})
+    context=json.loads(request['messages'][1]['content'])
+    assert context['own_probe_image_readout']['vertical_percent_from_top']==78.9
+    assert context['own_probe_image_readout']['horizontal_percent_from_left']==12.3
