@@ -236,7 +236,7 @@ def run(args):
         result['phase']='RELEASE';pair.place();pair.verify_placement();scene.bindings.finish('beam')
         while not scene.solo.done:scene.step(.2)
         result['protocol_complete']=True;result['phase']='FINISHED'
-    except Exception as exc:
+    except (Exception,KeyboardInterrupt) as exc:
         result['error']=f'{type(exc).__name__}: {exc}'
         if args.output.exists():(args.output/'exception.txt').write_text(traceback.format_exc())
     finally:
@@ -245,8 +245,11 @@ def run(args):
                 # Freeze decisions before final referee-only settling.
                 if scene.solo_executor:scene.solo_executor.cancel(scene.time(),'trial_end')
                 if scene.solo:result['solo_status']={'phase':scene.solo.phase,'reason':scene.solo.reason,'done':scene.solo.done}
-                scene.solo=None;scene.deadline=None;scene.hold();scene.step(1.3)
-                scene.capture('final')
+                scene.solo=None;scene.deadline=None;scene.hold()
+                try:
+                    scene.step(1.3);scene.capture('final')
+                except Exception as exc:
+                    result['cleanup_error']=str(exc)
                 result['camera_geometry_unchanged']=scene.initial_invariants==scene.invariants()
                 result['obstacle_contact_steps']=scene.obstacle_contact_steps
                 if scene.referee:
@@ -260,9 +263,10 @@ def run(args):
                     write(args.output/'pair-grasp.json',pair.grasp_report)
                     write(args.output/'pair-replay.json',pair.trace)
         finally:
-            if team:team.close(scene.time() if scene.world else 0.)
-            if scene.video:scene.video.close()
-            scene.close()
+            for cleanup in (lambda:team.close(scene.time() if scene.world else 0.) if team else None,
+                            lambda:scene.video.close() if scene.video else None,scene.close):
+                try:cleanup()
+                except Exception as exc:result.setdefault('cleanup_errors',[]).append(str(exc))
         result['wall_s']=time.monotonic()-started
         if team:
             result['protocol_calls']=len(team.calls)

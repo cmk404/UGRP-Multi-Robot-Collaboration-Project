@@ -138,3 +138,31 @@ def test_dispatch_box_route_rejects_cyan_floor_distractors():
     action,evidence=route.observe(raw)
     assert np.allclose(evidence['cargo_center_px'],[274,545],atol=2)
     assert not evidence['done'] and action['kind']=='mecanum'
+
+
+def test_route_cannot_stop_in_diagonal_dead_zone():
+    from harness.dispatch_skill_binding import ImageRoute
+    raw=Path('tests/fixtures/dispatch_skill_transfer/box-top-held.jpg').read_bytes()
+    route=ImageRoute(SkillBindings(committed(),authored_map('open')),'box')
+    _,evidence=route.observe(raw)
+    center=np.array(evidence['cargo_center_px'])
+    route.points=[center+[4.,5.],center+[50.,5.]]
+    assert route.observe(raw)[1]['ready']
+    route.observe(raw)
+    action,_=route.observe(raw)
+    assert route.index==1 and action['forward']>0
+
+
+def test_contact_profile_preserves_robot_cargo_physics_and_cameras():
+    mujoco=pytest.importorskip('mujoco')
+    from sim.dispatch_contact_profile import contact_profile
+    from sim.research_dispatch_arena import build_scene_xml,episode
+    from sim.multi_masterpi_production import build_multi_robot_xml
+    from scripts.probe_dual_grasp_sync import _plain_beam_xml
+    xml,_=build_scene_xml(_plain_beam_xml(build_multi_robot_xml)(),episode('open',11))
+    old=mujoco.MjModel.from_xml_string(xml)
+    new=mujoco.MjModel.from_xml_string(contact_profile(xml,'local_contact'))
+    for attr in ('geom_friction','body_mass','geom_size','geom_pos','cam_pos','cam_quat','cam_fovy','actuator_gainprm','actuator_forcerange'):
+        assert np.array_equal(getattr(old,attr),getattr(new,attr)),attr
+    assert new.opt.noslip_iterations==0 and new.opt.timestep==.0005
+    assert new.npair-old.npair==12 and np.all(new.pair_solreffriction[:,1]==-3000)

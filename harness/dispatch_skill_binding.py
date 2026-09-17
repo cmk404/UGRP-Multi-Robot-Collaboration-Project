@@ -159,7 +159,7 @@ class ImageRoute:
                          np.array([east_px[0],goal_px[1]]),goal_px]
         error=self.points[self.index]-center
         tolerance=4 if self.index==len(self.points)-1 else 6
-        ready=float(np.linalg.norm(error)) <= tolerance
+        ready=float(np.max(np.abs(error))) <= tolerance
         self.confirmations=self.confirmations+1 if ready else 0
         done=self.index==len(self.points)-1 and self.confirmations>=2
         evidence={'source':'TOP RGB + authored map', 'cargo_center_px':center.tolist(),
