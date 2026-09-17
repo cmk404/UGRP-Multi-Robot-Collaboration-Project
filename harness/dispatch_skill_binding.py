@@ -174,3 +174,48 @@ class ImageRoute:
         action={'kind':'mecanum','forward':float(control[0]),'left':float(-control[1]),
                 'turn':0.,'duration_s':.2}
         return action,evidence
+
+
+class PairCoarsePixels:
+    """Role-bound RGB wheel selection; rejects painted floor/beam components.
+
+    The old HSV lane mask confused new yellow paint and brighter beam pixels
+    with wheels. Identity comes from the robot's own isolated probe. Heading
+    keeps the original four-corner gate; model support checks are untouched.
+    """
+    def __init__(self, identity, bindings, reference):
+        self.centers={}
+        self.reference=reference
+        for slot,rid in bindings.pair.items():
+            claim=identity[rid]['claim']
+            if not claim.get('valid') or not claim.get('center'):
+                raise ValueError('valid own motion identity required for '+rid)
+            self.centers[slot]=np.array(claim['center'])*[960,720]
+
+    def decide(self, raw_top, slot):
+        from harness.camera_goal_transport import lane_features, wheel_heading
+        frame=decode(raw_top);h,w=frame.shape[:2]
+        hsv=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
+        yellow=cv2.inRange(hsv,np.array((20,70,50),np.uint8),np.array((40,255,255),np.uint8))
+        n,labels,stats,_=cv2.connectedComponentsWithStats(yellow)
+        clean=np.zeros_like(yellow)
+        for i in range(1,n):
+            if stats[i,4]<=300:clean[labels==i]=255
+        cx,cy=self.centers[slot]
+        yy,xx=np.indices(clean.shape)
+        clean[(abs(xx-cx)>55)|(abs(yy-cy)>48)]=0
+        ys,xs=np.nonzero(clean)
+        heading=wheel_heading(clean,pixel_tolerance=1.)
+        if heading is None:
+            return dict(ok=False,ready=False,forward=0.,left=0.,turn=0.,reason='own_wheel_heading_unresolved',pixel_count=len(xs))
+        center=np.array([xs.mean(),ys.mean()]);self.centers[slot]=center
+        beam=beam_feature(raw_top);ref=lane_features(self.reference,slot)
+        gap=(np.array(beam['center'])-center/[w,h])-np.array([ref['beam_x']-ref['robot_x'],ref['beam_y']-ref['robot_y']])
+        angle=heading['angle_deg'];angle_ready=abs(angle)<=1.5
+        lateral_ready=abs(gap[1])<=.003
+        ready=gap[0]<=.065 and angle_ready and lateral_ready
+        return dict(ok=True,ready=bool(ready),
+            forward=min(.12,max(.03,float(gap[0]))) if angle_ready and lateral_ready and not ready else 0.,
+            left=(-math.copysign(min(.05,max(.01,abs(float(gap[1])))),float(gap[1])) if angle_ready and not lateral_ready else 0.),
+            turn=0. if angle_ready else math.copysign(min(.10,max(.01,.5*abs(math.radians(angle)))),angle),
+            reason='RGB role-relative coarse approach',wheel_center_px=center.tolist(),image_error=gap.tolist(),heading=heading)

@@ -210,7 +210,7 @@ def run(args):
         # a loaded formation through a known insufficient static clearance.
         scene.bindings.check_route()
         scene.start_solo()
-        pair=BoundPairSkill(scene,scene.bindings,skill,grasp,stages,grasp_root,reference)
+        pair=BoundPairSkill(scene,scene.bindings,skill,grasp,stages,grasp_root,reference,identity)
         result['phase']='APPROACH';result['pair_approach']=pair.approach()
         while not scene.bindings.permission('beam','GRASP'):scene.step(.2)
         result['phase']='GRASP';result['pair_grasp']=pair.finish_grasp(predict_student,grasp)

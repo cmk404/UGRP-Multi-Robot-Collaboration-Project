@@ -50,7 +50,13 @@ def lane_heading(top_jpeg, rid):
     it cannot recognize reversed robots or arbitrary headings. Keep the near
     learned estimator for precise docking, and reject ambiguous wheel shapes.
     """
-    yellow = lane_yellow(top_jpeg, rid)
+    return wheel_heading(lane_yellow(top_jpeg, rid))
+
+
+def wheel_heading(yellow, *, pixel_tolerance=0.):
+    """Existing four-corner heading gate on an explicitly selected RGB mask."""
+    if not 0 <= pixel_tolerance <= 1.:
+        raise ValueError("wheel mask tolerance must be at most one pixel")
     h, w = yellow.shape
     ys, xs = np.nonzero(yellow)
     if len(xs) < 80 or len(xs) > 700:
@@ -60,7 +66,8 @@ def lane_heading(top_jpeg, rid):
     if a < b:
         angle += 90
     angle = (angle + 90) % 180 - 90
-    if not (.05*w <= long <= .075*w and .045*h <= short <= .07*h
+    if not (.05*w-pixel_tolerance <= long <= .075*w+pixel_tolerance
+            and .045*h-pixel_tolerance <= short <= .07*h+pixel_tolerance
             and 1.12 <= long/short <= 1.65 and abs(angle) <= 18):
         return None
     # All four wheel corners must contribute; a partial silhouette is not

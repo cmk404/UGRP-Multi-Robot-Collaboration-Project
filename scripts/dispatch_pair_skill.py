@@ -5,7 +5,7 @@ model slots, remapped at the driver boundary using the committed plan.
 """
 from __future__ import annotations
 from pathlib import Path
-from harness.dispatch_skill_binding import canonical_pair_top, beam_feature
+from harness.dispatch_skill_binding import canonical_pair_top, beam_feature, PairCoarsePixels
 from harness.camera_goal_transport import coarse_approach, dock_command, preclose_supported, own_payload
 from harness.camera_varied_start_student import predict_stage
 from harness.grasp_student_inference import predict_student
@@ -20,7 +20,7 @@ class BoundPairSkill:
     finish_grasp = ApproachScene.finish_grasp
     place = ShortTransportScene.place
 
-    def __init__(self,io,bindings,skill,grasp,stages,model_root,reference):
+    def __init__(self,io,bindings,skill,grasp,stages,model_root,reference,identity=None):
         self.io,self.bindings=io,bindings
         self.skill,self.grasp_models,self.stage_models=skill,grasp,stages
         self.models_root=Path(model_root);self.reference=reference
@@ -28,6 +28,7 @@ class BoundPairSkill:
         self.commands={r:{int(c):int(v) for c,v in p.items()} for r,p in self.commands.items()}
         self.trace=[];self.evaluation_samples=[];self.grasp_report={};self.phase='APPROACH'
         self.last_capture=None;self.count=0;self.calls=[]
+        self.coarse=PairCoarsePixels(identity,bindings,reference) if identity is not None else None
 
     def time(self):return self.io.time()
     def tick(self,seconds):self.io.step(seconds)
@@ -77,10 +78,11 @@ class BoundPairSkill:
         report={'coarse_calls':[]}
         for index in range(120):
             frames=self.capture('coarse')
-            decisions={r:coarse_approach(frames[r]['top_bytes'],self.reference,r) for r in ROBOTS}
+            decisions={r:(self.coarse.decide(self.io.last_frames['r1']['top_bytes'],r) if self.coarse is not None
+                          else coarse_approach(frames[r]['top_bytes'],self.reference,r)) for r in ROBOTS}
             report['coarse_calls'].append(decisions);self.calls.append({'kind':'coarse','decisions':decisions})
             if not all(d['ok'] for d in decisions.values()):raise RuntimeError('coarse RGB model convention unresolved')
-            self.drive_mecanum({r:dict(forward=d['forward'],left=0.,turn=d['turn']) for r,d in decisions.items()})
+            self.drive_mecanum({r:dict(forward=d['forward'],left=d.get('left',0.),turn=d['turn']) for r,d in decisions.items()})
             if all(d['ready'] for d in decisions.values()):self.stop_dwell();break
         else:raise RuntimeError('coarse RGB approach budget exhausted')
         report.update(run_approach(self,self.stage_models,reacquire_on_settle=True,final_refinement_steps=40))
