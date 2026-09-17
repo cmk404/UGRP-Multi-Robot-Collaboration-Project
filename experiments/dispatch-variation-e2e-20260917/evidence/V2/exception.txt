@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/scripts/run_dispatch_skills.py", line 244, in run
+    result['phase']='TRANSIT';pair.carry(ImageRoute(scene.bindings,'beam'))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/scripts/dispatch_pair_skill.py", line 116, in carry
+    frames=self.capture('carry')
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/scripts/dispatch_pair_skill.py", line 47, in capture
+    top, transform=canonical_pair_top(frames['r1']['top_bytes'],self.reference,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/harness/dispatch_skill_binding.py", line 38, in canonical_pair_top
+    current, anchor = beam_feature(jpeg,hue_upper=hue_upper), beam_feature(reference)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/harness/dispatch_skill_binding.py", line 24, in beam_feature
+    raise ValueError('dispatch beam unresolved or ambiguous in RGB')
+ValueError: dispatch beam unresolved or ambiguous in RGB

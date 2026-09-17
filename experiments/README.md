@@ -1,5 +1,6 @@
 # 실험 인덱스
 
+- [2026-09-17 목적지·지형 확대 E2E: 기본 A 성공, B 영상 인식 실패, 4개 지형 실행 거부](dispatch-variation-e2e-20260917/README.md)
 - [2026-09-17 공동 출하 스킬 통합: 실제 새 LLM 계획부터 두 화물 방출까지](dispatch-skill-integration-20260917/README.md)
 
 | ID | 코드 연결 | 범위 | 결과 |

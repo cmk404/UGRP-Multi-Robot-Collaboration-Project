@@ -1,0 +1,74 @@
+{
+  "experiment_source_sha": "43e60e09ffa85a2334b0ef2acdb5144109b83818",
+  "source_and_models_frozen_for_all_six": true,
+  "environment": {
+    "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+    "platform": "macOS-27.2-arm64-arm-64bit",
+    "mujoco": "3.12.0"
+  },
+  "model_provenance": {
+    "grasp_manifest_sha256": "b244293aa1a5dd2efda1a0d6e8b15582d8a12a3e4d151d46cf679321535e0970",
+    "grasp_models": {
+      "r1": {
+        "path": "r1-model.json",
+        "sha256": "c6995cac23ccf2fd168fb222c2332b518507d7ea66921aaf0c231bc460598e45"
+      },
+      "r3": {
+        "path": "r3-model.json",
+        "sha256": "8349e10ed659abf4bc62f6fcc62bf22d22ca95fe05d954b42b3883b0d070861d"
+      }
+    },
+    "stage_manifest_sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a",
+    "stage_models": {
+      "r1": {
+        "forward": {
+          "path": "model-r1-forward.json",
+          "sha256": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45"
+        },
+        "lateral": {
+          "path": "model-r1-lateral.json",
+          "sha256": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869"
+        },
+        "yaw": {
+          "path": "model-r1-yaw.json",
+          "sha256": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374"
+        }
+      },
+      "r3": {
+        "forward": {
+          "path": "model-r3-forward.json",
+          "sha256": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+        },
+        "lateral": {
+          "path": "model-r3-lateral.json",
+          "sha256": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f"
+        },
+        "yaw": {
+          "path": "model-r3-yaw.json",
+          "sha256": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8"
+        }
+      }
+    },
+    "reference_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+  },
+  "all_camera_geometry_unchanged": true,
+  "all_weld_steps": 0,
+  "all_obstacle_contact_steps": 0,
+  "V3_V4_actor_missions_and_maps_identical": true,
+  "unexpected_obstacle_scope": "V4 obstacle exists before initial planning; no mid-execution insertion or online replanning was tested.",
+  "total_usage": {
+    "prompt_tokens": 689539,
+    "completion_tokens": 19087,
+    "total_tokens": 741438
+  },
+  "llm_request_attempts": 75,
+  "llm_responses": 72,
+  "planning_requests_reconstructed": 75,
+  "llm_wires_reconstructed": 75,
+  "total_trial_wall_s": 820.1996852489992,
+  "cost_usd": null,
+  "cost_note": "Provider usage aggregated verbatim; timeout calls can have unreported usage; no verified monetary tariff.",
+  "raw_storage": "Local outputs only; Git stores summaries, selected evidence, and hashes. No raw remote backup or Drive upload.",
+  "raw_files": 5867,
+  "raw_bytes": 493485518
+}

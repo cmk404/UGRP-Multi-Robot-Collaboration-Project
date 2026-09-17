@@ -1,0 +1,30 @@
+{
+  "proposal_id": "dispatch-82bbd4f38793-plan-v2",
+  "version": 2,
+  "plan_hash": "991a23d1e0fe2fc7c16759abe69bf48dfde5658c200146a9cf63ab0a7bd80b3e",
+  "plan": {
+    "dock": "dock_a",
+    "tasks": [
+      {
+        "after": [],
+        "id": "beam_job",
+        "object": "beam",
+        "participants": [
+          "r1",
+          "r3"
+        ],
+        "route": "north"
+      },
+      {
+        "after": [],
+        "id": "box_job",
+        "object": "box",
+        "participants": [
+          "r2"
+        ],
+        "route": "north"
+      }
+    ]
+  },
+  "proposer": "r2"
+}

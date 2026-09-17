@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/scripts/run_dispatch_skills.py", line 235, in run
+    scene.bindings.check_route()
+  File "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/harness/dispatch_skill_binding.py", line 111, in check_route
+    raise RuntimeError('PAIR_ROUTE_TOO_NARROW: agreed '+route+
+RuntimeError: PAIR_ROUTE_TOO_NARROW: agreed north route needs a rotation/regrasp skill; parallel formation is unsupported

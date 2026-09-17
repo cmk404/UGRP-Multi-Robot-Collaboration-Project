@@ -1,0 +1,24 @@
+import json, subprocess, time
+from pathlib import Path
+root=Path.cwd()
+out=root/'outputs/dispatch-variation-20260917'
+protocol=json.loads((root/'experiments/dispatch-variation-e2e-20260917/protocol.json').read_text())
+sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+rows=[]
+for case in protocol['cases']:
+    assert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==sha
+    assert not subprocess.check_output(['git','status','--porcelain'],text=True).strip()
+    dest=out/case['id']
+    cmd=['/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython','scripts/run_dispatch_e2e.py','--executor','skills','--variant',case['variant'],'--seed',str(case['seed']),'--required-dock',case['required_dock'],'--grasp-model-dir',protocol['grasp_model_dir'],'--stage-model-dir',protocol['stage_model_dir'],'--output',str(dest),'--max-wall-s',str(protocol['max_wall_s']),'--max-input-tokens',str(protocol['max_input_tokens'])]
+    row={'case':case,'source_sha':sha,'command':cmd,'started_unix':time.time()}
+    rows.append(row)
+    (out/'cohort.json').write_text(json.dumps(rows,indent=2))
+    print(json.dumps({'start':case}),flush=True)
+    with (out/(case['id']+'.log')).open('w') as log:
+        row['exit_code']=subprocess.run(cmd,stdout=log,stderr=subprocess.STDOUT,cwd=root).returncode
+    row['finished_unix']=time.time()
+    if (dest/'result.json').exists():
+        result=json.loads((dest/'result.json').read_text())
+        row['summary']={k:result.get(k) for k in ['phase','error','plan_committed','protocol_complete','physical_success','wall_s','llm_calls','usage']}
+    (out/'cohort.json').write_text(json.dumps(rows,indent=2))
+    print(json.dumps(row),flush=True)
