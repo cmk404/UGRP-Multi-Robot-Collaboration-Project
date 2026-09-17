@@ -17,12 +17,15 @@ from harness.camera_goal_transport import decode
 
 
 def beam_feature(jpeg, *, hue_upper=24):
-    candidates = [b for b in extract_beams(jpeg, hue_upper=hue_upper) if not b['touches_border']
-                  and b['length_px'] / b['width_px'] >= 3.5
-                  and 65 <= b['length_px'] <= 180 and b['width_px'] <= 25]
-    if len(candidates) != 1:
-        raise ValueError('dispatch beam unresolved or ambiguous in RGB')
-    return candidates[0]
+    # The original mask remains first, preserving the learned image convention.
+    # Yellow floor paint can merge with the carried beam. Its lower saturation
+    # permits a second segmentation, still subject to every shaft shape gate.
+    for saturation in (105,150):
+        candidates = [b for b in extract_beams(jpeg, hue_upper=hue_upper,min_saturation=saturation)
+                      if not b['touches_border'] and b['length_px'] / b['width_px'] >= 3.5
+                      and 65 <= b['length_px'] <= 180 and b['width_px'] <= 25]
+        if len(candidates)==1:return candidates[0]
+    raise ValueError('dispatch beam unresolved or ambiguous in RGB')
 
 
 def canonical_pair_top(jpeg, reference, *, translation_px=None, hue_upper=24):

@@ -1,0 +1,33 @@
+{
+  "baseline_source": "43e60e09ffa85a2334b0ef2acdb5144109b83818",
+  "baseline_records": "experiments/dispatch-variation-e2e-20260917",
+  "objective": "Repair destination B RGB failure, connect collision-aware pair motion and feasibility/replanning to actual dispatch execution, then validate the frozen final candidate from fresh peer agreement.",
+  "invariants": [
+    "fixed actual cameras and FOV",
+    "unchanged robot/cargo appearance",
+    "weld OFF",
+    "same local_contact profile unless a separately recorded diagnosis requires change",
+    "student uses RGB, authored static map, own issued commands and peer claims only; evaluation output only"
+  ],
+  "diagnostics": [
+    {
+      "id": "R1",
+      "scope": "recorded-plan physical diagnostic, not fresh LLM E2E",
+      "variant": "open",
+      "dock": "dock_b",
+      "seed": 11,
+      "change": "second RGB saturation segmentation with unchanged shaft geometry gates",
+      "plan_replay": "outputs/dispatch-variation-20260917/V2/committed-plan.json"
+    }
+  ],
+  "freeze": "Commit before each physical diagnosis. After repairs freeze source/models and run the complete six-condition fresh-LLM comparison. Preserve failures.",
+  "final_cases": [
+    "open/dock_a",
+    "open/dock_b",
+    "shared_crossing/dock_a",
+    "north_blocked/dock_a",
+    "narrow_south/dock_a",
+    "rough_south/dock_a"
+  ],
+  "cost": "Save wall time, action counts, provider requests/usage; monetary cost null when unknown."
+}
