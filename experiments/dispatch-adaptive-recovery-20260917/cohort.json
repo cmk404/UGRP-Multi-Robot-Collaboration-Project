@@ -1,1 +1,320 @@
-[]
+[
+  {
+    "case": {
+      "id": "F1",
+      "variant": "open",
+      "required_dock": "dock_a",
+      "seed": 11
+    },
+    "source_sha": "e099a4a38c8da094c8c1946ffca2e7ab02f16a83",
+    "working_directory": "/Users/changmin/projects/ugrp-worktrees/dispatch-release-validation",
+    "command": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+      "scripts/run_dispatch_e2e.py",
+      "--executor",
+      "skills",
+      "--variant",
+      "open",
+      "--seed",
+      "11",
+      "--required-dock",
+      "dock_a",
+      "--grasp-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+      "--stage-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+      "--output",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1",
+      "--reference-top",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/tests/fixtures/camera_goal_transport/reference-top.jpg",
+      "--max-wall-s",
+      "2400",
+      "--max-input-tokens",
+      "600000"
+    ],
+    "started_unix": 1789664442.78119,
+    "scope": "fresh actual LLM agreement through physical release; no fixture or replay",
+    "exit_code": 0,
+    "finished_unix": 1789665014.318818,
+    "source_unchanged": true,
+    "summary": {
+      "phase": "FINISHED",
+      "error": null,
+      "plan_committed": true,
+      "protocol_complete": true,
+      "physical_success": true,
+      "wall_s": 570.0353371669989,
+      "llm_calls": 12,
+      "usage": {
+        "prompt_tokens": 120518,
+        "completion_tokens": 3355,
+        "total_tokens": 124842
+      }
+    }
+  },
+  {
+    "case": {
+      "id": "F2",
+      "variant": "open",
+      "required_dock": "dock_b",
+      "seed": 11
+    },
+    "source_sha": "e099a4a38c8da094c8c1946ffca2e7ab02f16a83",
+    "working_directory": "/Users/changmin/projects/ugrp-worktrees/dispatch-release-validation",
+    "command": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+      "scripts/run_dispatch_e2e.py",
+      "--executor",
+      "skills",
+      "--variant",
+      "open",
+      "--seed",
+      "11",
+      "--required-dock",
+      "dock_b",
+      "--grasp-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+      "--stage-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+      "--output",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F2",
+      "--reference-top",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/tests/fixtures/camera_goal_transport/reference-top.jpg",
+      "--max-wall-s",
+      "2400",
+      "--max-input-tokens",
+      "600000"
+    ],
+    "started_unix": 1789662728.377861,
+    "scope": "fresh actual LLM agreement through physical release; no fixture or replay",
+    "exit_code": 0,
+    "finished_unix": 1789663447.752845,
+    "source_unchanged": true,
+    "summary": {
+      "phase": "FINISHED",
+      "error": null,
+      "plan_committed": true,
+      "protocol_complete": true,
+      "physical_success": true,
+      "wall_s": 717.8828868339988,
+      "llm_calls": 12,
+      "usage": {
+        "prompt_tokens": 114991,
+        "completion_tokens": 3039,
+        "total_tokens": 124508
+      }
+    }
+  },
+  {
+    "case": {
+      "id": "F3",
+      "variant": "shared_crossing",
+      "required_dock": "dock_a",
+      "seed": 11
+    },
+    "source_sha": "e099a4a38c8da094c8c1946ffca2e7ab02f16a83",
+    "working_directory": "/Users/changmin/projects/ugrp-worktrees/dispatch-release-validation",
+    "command": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+      "scripts/run_dispatch_e2e.py",
+      "--executor",
+      "skills",
+      "--variant",
+      "shared_crossing",
+      "--seed",
+      "11",
+      "--required-dock",
+      "dock_a",
+      "--grasp-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+      "--stage-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+      "--output",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3",
+      "--reference-top",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/tests/fixtures/camera_goal_transport/reference-top.jpg",
+      "--max-wall-s",
+      "2400",
+      "--max-input-tokens",
+      "600000"
+    ],
+    "started_unix": 1789663450.191743,
+    "scope": "fresh actual LLM agreement through physical release; no fixture or replay",
+    "exit_code": 0,
+    "finished_unix": 1789664721.114914,
+    "source_unchanged": true,
+    "summary": {
+      "phase": "FINISHED",
+      "error": null,
+      "plan_committed": true,
+      "protocol_complete": true,
+      "physical_success": true,
+      "wall_s": 1268.4636936249954,
+      "llm_calls": 18,
+      "usage": {
+        "prompt_tokens": 184204,
+        "completion_tokens": 4718,
+        "total_tokens": 195103
+      }
+    }
+  },
+  {
+    "case": {
+      "id": "F4",
+      "variant": "north_blocked",
+      "required_dock": "dock_a",
+      "seed": 11
+    },
+    "source_sha": "e099a4a38c8da094c8c1946ffca2e7ab02f16a83",
+    "working_directory": "/Users/changmin/projects/ugrp-worktrees/dispatch-release-validation",
+    "command": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+      "scripts/run_dispatch_e2e.py",
+      "--executor",
+      "skills",
+      "--variant",
+      "north_blocked",
+      "--seed",
+      "11",
+      "--required-dock",
+      "dock_a",
+      "--grasp-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+      "--stage-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+      "--output",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F4",
+      "--reference-top",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/tests/fixtures/camera_goal_transport/reference-top.jpg",
+      "--max-wall-s",
+      "2400",
+      "--max-input-tokens",
+      "600000"
+    ],
+    "started_unix": 1789661509.408113,
+    "scope": "fresh actual LLM agreement through physical release; no fixture or replay",
+    "exit_code": 0,
+    "finished_unix": 1789662726.294632,
+    "source_unchanged": true,
+    "summary": {
+      "phase": "FINISHED",
+      "error": null,
+      "plan_committed": true,
+      "protocol_complete": true,
+      "physical_success": true,
+      "wall_s": 1215.2599658749969,
+      "llm_calls": 18,
+      "usage": {
+        "prompt_tokens": 187932,
+        "completion_tokens": 4938,
+        "total_tokens": 195920
+      }
+    }
+  },
+  {
+    "case": {
+      "id": "F5",
+      "variant": "narrow_south",
+      "required_dock": "dock_a",
+      "seed": 11
+    },
+    "source_sha": "e099a4a38c8da094c8c1946ffca2e7ab02f16a83",
+    "working_directory": "/Users/changmin/projects/ugrp-worktrees/dispatch-release-validation",
+    "command": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+      "scripts/run_dispatch_e2e.py",
+      "--executor",
+      "skills",
+      "--variant",
+      "narrow_south",
+      "--seed",
+      "11",
+      "--required-dock",
+      "dock_a",
+      "--grasp-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+      "--stage-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+      "--output",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F5",
+      "--reference-top",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/tests/fixtures/camera_goal_transport/reference-top.jpg",
+      "--max-wall-s",
+      "2400",
+      "--max-input-tokens",
+      "600000"
+    ],
+    "started_unix": 1789662172.203118,
+    "scope": "fresh actual LLM agreement through physical release; no fixture or replay",
+    "exit_code": 0,
+    "finished_unix": 1789663252.221026,
+    "source_unchanged": true,
+    "summary": {
+      "phase": "FINISHED",
+      "error": null,
+      "plan_committed": true,
+      "protocol_complete": true,
+      "physical_success": true,
+      "wall_s": 1078.249480790997,
+      "llm_calls": 18,
+      "usage": {
+        "prompt_tokens": 176391,
+        "completion_tokens": 4751,
+        "total_tokens": 203587
+      }
+    }
+  },
+  {
+    "case": {
+      "id": "F6",
+      "variant": "rough_south",
+      "required_dock": "dock_a",
+      "seed": 11
+    },
+    "source_sha": "e099a4a38c8da094c8c1946ffca2e7ab02f16a83",
+    "working_directory": "/Users/changmin/projects/ugrp-worktrees/dispatch-release-validation",
+    "command": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+      "scripts/run_dispatch_e2e.py",
+      "--executor",
+      "skills",
+      "--variant",
+      "rough_south",
+      "--seed",
+      "11",
+      "--required-dock",
+      "dock_a",
+      "--grasp-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+      "--stage-model-dir",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+      "--output",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F6",
+      "--reference-top",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/tests/fixtures/camera_goal_transport/reference-top.jpg",
+      "--max-wall-s",
+      "2400",
+      "--max-input-tokens",
+      "600000"
+    ],
+    "started_unix": 1789663254.662142,
+    "scope": "fresh actual LLM agreement through physical release; no fixture or replay",
+    "exit_code": 0,
+    "finished_unix": 1789664429.987369,
+    "source_unchanged": true,
+    "summary": {
+      "phase": "FINISHED",
+      "error": null,
+      "plan_committed": true,
+      "protocol_complete": true,
+      "physical_success": true,
+      "wall_s": 1173.4476972499979,
+      "llm_calls": 24,
+      "usage": {
+        "prompt_tokens": 250868,
+        "completion_tokens": 6618,
+        "total_tokens": 271030
+      }
+    }
+  }
+]

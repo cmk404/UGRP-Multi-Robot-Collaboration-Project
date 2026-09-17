@@ -81,5 +81,19 @@
     "subtests": 160,
     "wall_s": 75.96,
     "log": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/ci-subpulse-final.log"
+  },
+  "physical_followup": {
+    "before_run": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final18-20260918/F5",
+    "after_run": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F5",
+    "same_scene_xml": true,
+    "same_independently_negotiated_plan_hash": true,
+    "plan_replay": null,
+    "before_error": "RuntimeError: solo SIM budget exhausted",
+    "after_error": null,
+    "before_box_max_lift_m": 0.0,
+    "after_box_max_lift_m": 0.06889148241299972,
+    "after_physical_success": true,
+    "after_protocol_complete": true,
+    "scope": "Separate fresh-LLM trials independently produced the same exact plan and scene. The source difference is the fractional servo fix and regression test. One matched pair, not a success rate."
   }
 }

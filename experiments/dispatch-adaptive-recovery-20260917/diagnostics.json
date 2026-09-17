@@ -5581,5 +5581,152 @@
         }
       }
     }
+  },
+  {
+    "source_sha": "cbe4710e12e7af9ac235b6d2ada4898d18af3ee9",
+    "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
+    "phase": "RELEASE",
+    "error": "RuntimeError: solo SIM budget exhausted",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 1180.078261583003,
+    "usage": {
+      "prompt_tokens": 184777,
+      "completion_tokens": 4841,
+      "total_tokens": 194231
+    },
+    "llm_calls": 18,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07772326989097464,
+          "displacement_m": 1.68642981678346,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "carry_clearance": {
+            "sampled_continuous_clearance": true,
+            "samples": 628,
+            "floor_contact_samples": 0,
+            "window_s": [
+              57.46000000018335,
+              120.25999999888893
+            ],
+            "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+            "max_sample_gap_s": 0.10000000000047748,
+            "first_floor_contact_s": null
+          },
+          "physical_success": true
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "carry_clearance": {
+            "sampled_continuous_clearance": false,
+            "samples": 0,
+            "floor_contact_samples": 0,
+            "window_s": null,
+            "scope": "Post-run referee samples only; never actor input. No claim about contact between samples."
+          },
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 3.241969413573329,
+        "r2": 0.029218580078773548,
+        "r3": 3.620197395330036
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 4272,
+      "stable_window_s": 0.9999999999763531
+    },
+    "id": "candidate18-F5",
+    "e2e_success": false,
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final18-20260918/F5",
+    "carry_clearance": {
+      "cargo": {
+        "beam": {
+          "sampled_continuous_clearance": true,
+          "samples": 628,
+          "floor_contact_samples": 0,
+          "window_s": [
+            57.46000000018335,
+            120.25999999888893
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.10000000000047748,
+          "first_floor_contact_s": null
+        },
+        "box": {
+          "sampled_continuous_clearance": false,
+          "samples": 0,
+          "floor_contact_samples": 0,
+          "window_s": null,
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples."
+        }
+      },
+      "sampled_continuous_clearance": false,
+      "complete_e2e_with_clearance": false
+    },
+    "cohort": {
+      "case": {
+        "id": "F5",
+        "variant": "narrow_south",
+        "required_dock": "dock_a",
+        "seed": 11
+      },
+      "source_sha": "cbe4710e12e7af9ac235b6d2ada4898d18af3ee9",
+      "working_directory": "/Users/changmin/projects/ugrp-worktrees/dispatch-temporal-hold",
+      "command": [
+        "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "scripts/run_dispatch_e2e.py",
+        "--executor",
+        "skills",
+        "--variant",
+        "narrow_south",
+        "--seed",
+        "11",
+        "--required-dock",
+        "dock_a",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+        "--stage-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+        "--output",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final18-20260918/F5",
+        "--reference-top",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/tests/fixtures/camera_goal_transport/reference-top.jpg",
+        "--max-wall-s",
+        "2400",
+        "--max-input-tokens",
+        "600000"
+      ],
+      "started_unix": 1789660979.755311,
+      "scope": "fresh actual LLM agreement through physical release; no fixture or replay",
+      "exit_code": 1,
+      "finished_unix": 1789662162.942826,
+      "source_unchanged": true,
+      "summary": {
+        "phase": "RELEASE",
+        "error": "RuntimeError: solo SIM budget exhausted",
+        "plan_committed": true,
+        "protocol_complete": false,
+        "physical_success": false,
+        "wall_s": 1180.078261583003,
+        "llm_calls": 18,
+        "usage": {
+          "prompt_tokens": 184777,
+          "completion_tokens": 4841,
+          "total_tokens": 194231
+        }
+      }
+    }
   }
 ]
