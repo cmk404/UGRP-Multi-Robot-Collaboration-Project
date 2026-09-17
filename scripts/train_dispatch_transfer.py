@@ -88,10 +88,14 @@ def main():
                 restore(folded)
                 pos=target[s].copy();pos[0]-=distance;pos[1]+=lateral
                 w.controllers[rid].set_base_pose_for_test(tuple(pos),math.radians(yaw));settle(.3)
-                own,top=capture(f'approach-{s}-{i:04d}',s)
+                try:
+                    own,top=capture(f'approach-{s}-{i:04d}',s)
+                except ValueError as exc:
+                    teacher_rows.append({'sample_id':f'approach-{s}-{i:04d}','excluded':str(exc)})
+                    continue
                 actual=w.controllers[rid].base_xyz();angle=float(w.controllers[rid].base_rpy()[2])
                 errors={'forward':target[s][0]-float(actual[0]),'lateral':target[s][1]-float(actual[1]),'yaw':-angle}
-                row={'own_jpeg':own,'top_jpeg':top,'case_id':f'pose-{i:04d}','errors':errors}
+                row={'own_jpeg':own,'top_jpeg':top,'case_id':f'pose-{i:04d}','errors':errors,'broad':i<45}
                 datasets[s].append(row);teacher_rows.append({'sample_id':f'approach-{s}-{i:04d}','privileged_errors':errors})
                 if i%40==0:print(json.dumps({'teacher':'approach','slot':s,'sample':i,'total':len(cases)}),flush=True)
         write(out/'actor-samples.json',actor_rows);write(out/'teacher-labels-only.json',teacher_rows)
@@ -102,7 +106,7 @@ def main():
             manifest['models'][s]={}
             for axis in ('yaw','lateral','forward'):
                 print(json.dumps({'fit':axis,'slot':s,'samples':len(datasets[s])}),flush=True)
-                selected=datasets[s][:45] if axis=='yaw' else datasets[s]
+                selected=[r for r in datasets[s] if r['broad']] if axis=='yaw' else datasets[s]
                 rows=[{**r,'error':r['errors'][axis],'command':0.,'ready':False} for r in selected]
                 m=fit_pose_stage_model(*refs[s],rows,s,axis)
                 path=stage_out/f'model-{s}-{axis}.json';write(path,m)
