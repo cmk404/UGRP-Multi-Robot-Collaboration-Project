@@ -23,6 +23,7 @@ if str(ROOT) not in sys.path:sys.path.insert(0,str(ROOT))
 from harness.camera_motion_identity import ImageMotionIdentity
 from harness.dispatch_plan import build_dispatch_request, validate_dispatch_plan, validate_dispatch_reply
 from harness.dispatch_skill_binding import SkillBindings, ImageRoute
+from harness.dispatch_feasibility import negotiate_executable
 from harness.three_robot_plan import ROBOTS, TeamAgreement, images
 from harness.solo_box_transport import SoloBoxTransport
 from harness.grasp_student_inference import predict_student
@@ -201,7 +202,7 @@ def run(args):
             identity[rid]={'claim':tracker.update(after['top_bytes'],probe),'images':evidence}
         write(args.output/'identity-evidence.json',identity)
         task=actor_task(scene.config['static_map'],required_dock=getattr(args,'required_dock',None))
-        task['capability_scope']='Existing RGB pair approach/grasp with image-convention adapter; existing VisualBoxSkill. Role binding follows your plan. Route transfer remains experimental; no raw-action fallback.'
+        task['capability_scope']='RGB pair approach/grasp plus loaded rotation and complete-footprint path checking; existing VisualBoxSkill. Parallel envelope 0.94m; rotated envelope 0.45m. Loaded terrain is unvalidated and avoided. In clutter, pickup preparation is exclusive so waiting robots do not obstruct a loaded turn. Role binding and routes follow your plan. All skills remain experimental; no raw-action fallback.'
         write(args.output/'actor-mission.json',task)
         run_id=opaque_run_id()
         def planner(rid,**kwargs):
@@ -221,11 +222,8 @@ def run(args):
             roles_fixed_by_skill=False,planning_only=False,max_wall_s=args.max_wall_s)
         scene.team=team;frames=scene.capture('planning')
         result['phase']='NEGOTIATE'
-        for turn in range(8):
-            if sum((c.get('usage') or {}).get('prompt_tokens',0) for c in team.calls)>=args.max_input_tokens:
-                raise RuntimeError('planning input token budget exhausted')
-            if team.negotiate(frames,scene.command_history,turn,scene.time()):break
-        if not team.agreement.committed:raise RuntimeError('no valid unanimous dispatch plan')
+        result['plan_feasibility']=negotiate_executable(team,frames,scene.command_history,task,
+            scene.config['static_map'],scene.time(),max_tokens=args.max_input_tokens)
         scene.bindings=SkillBindings(team.agreement.committed,scene.config['static_map'])
         result.update(plan_committed=True,plan=scene.bindings.plan,bindings=scene.bindings.capabilities())
         write(args.output/'committed-plan.json',team.agreement.committed)

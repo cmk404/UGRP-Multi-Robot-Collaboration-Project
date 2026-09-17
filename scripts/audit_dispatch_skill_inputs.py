@@ -21,7 +21,7 @@ def audit(p,*,replay_solo=False):
   for rid in inbox:
    request_id=f"{team['run_id']}-{rid}-plan-{row['turn']}"
    ref=row['images'][rid]
-   request=build_dispatch_request(rid,task=mission,request_id=request_id,own_rgb=image(ref['own']),top_rgb=image(ref['top']),agreement=row['agreement'],inbox=inbox[rid],own_history=row['own_history'][rid],execution_pilot=True,identity_evidence=identity[rid])
+   request=build_dispatch_request(rid,task=row.get('task_snapshot',mission),request_id=request_id,own_rgb=image(ref['own']),top_rgb=image(ref['top']),agreement=row['agreement'],inbox=inbox[rid],own_history=row['own_history'][rid],execution_pilot=True,identity_evidence=identity[rid])
    saved=json.loads((p/'team'/rid/(request_id+'-request.json')).read_text());assert saved==request,('request reconstruction',request_id);count+=1
   for rid,reply in row['replies'].items():
    if reply and reply['message']:

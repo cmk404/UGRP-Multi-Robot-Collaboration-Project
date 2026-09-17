@@ -1,4 +1,5 @@
 import copy,math
+import pytest
 from pathlib import Path
 import numpy as np
 from harness.dispatch_skill_binding import SkillBindings
@@ -13,8 +14,9 @@ def bindings(variant='shared_crossing',route='north'):
     plan=fixture_plan(dock='dock_a',route=route)
     return SkillBindings({'plan':plan,'plan_hash':digest(plan),'version':1},authored_map(variant))
 
-def test_actual_carry_image_finds_both_wheel_envelopes_and_payload():
-    raw=(ROOT/'carry-anchor.jpg').read_bytes();v=PairVision(navigation_map(bindings(),raw))
+@pytest.mark.parametrize('image',['carry-anchor.jpg','clutter-carry-anchor.jpg'])
+def test_actual_carry_image_finds_both_wheel_envelopes_and_payload(image):
+    raw=(ROOT/image).read_bytes();v=PairVision(navigation_map(bindings(),raw))
     obs=v.observe(raw,raw)
     assert np.allclose(obs['r1']['center_uv'],[275,354],atol=3)
     assert np.allclose(obs['r3']['center_uv'],[274,169],atol=3)
