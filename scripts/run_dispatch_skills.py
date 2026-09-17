@@ -148,7 +148,7 @@ def run(args):
         raise RuntimeError('commit and freeze source before a trial')
     import mujoco
     from scripts.probe_dual_grasp_sync import Video
-    grasp_root=prepare_grasp_models(args.grasp_model_dir,args.output.with_name(args.output.name+'-grasp-models'))
+    grasp_root=prepare_grasp_models(args.grasp_model_dir,args.output.with_name(args.output.name+'-grasp-models')).resolve()
     skill,grasp=models(grasp_root,'student-skill.json')
     stage_skill,stages=load_stage_models(args.stage_model_dir)
     reference=args.reference_top.read_bytes()
