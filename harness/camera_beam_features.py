@@ -24,7 +24,7 @@ def _ordered_corners(points: np.ndarray, center: tuple[float, float]) -> list[li
     return ordered[start:] + ordered[:start]
 
 
-def extract_beams(jpeg: bytes, robust_shaft: bool = False) -> list[dict[str, Any]]:
+def extract_beams(jpeg: bytes, robust_shaft: bool = False, *, hue_upper: int = 24) -> list[dict[str, Any]]:
     """Return orange connected components described only by their image pixels.
 
     Coordinates are normalized by image width and height. By default,
@@ -41,7 +41,9 @@ def extract_beams(jpeg: bytes, robust_shaft: bool = False) -> list[dict[str, Any
 
     height, width = frame.shape[:2]
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    mask = cv2.inRange(hsv, _ORANGE_LOW, _ORANGE_HIGH)
+    if hue_upper not in (24, 35):
+        raise ValueError("unsupported beam hue calibration")
+    mask = cv2.inRange(hsv, _ORANGE_LOW, np.array((hue_upper, 255, 255), np.uint8))
     kernel = np.ones((3, 3), dtype=np.uint8)
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)

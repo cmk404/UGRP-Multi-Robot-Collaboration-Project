@@ -16,8 +16,8 @@ from harness.camera_beam_features import extract_beams
 from harness.camera_goal_transport import decode
 
 
-def beam_feature(jpeg):
-    candidates = [b for b in extract_beams(jpeg) if not b['touches_border']
+def beam_feature(jpeg, *, hue_upper=24):
+    candidates = [b for b in extract_beams(jpeg, hue_upper=hue_upper) if not b['touches_border']
                   and b['length_px'] / b['width_px'] >= 3.5
                   and 65 <= b['length_px'] <= 180 and b['width_px'] <= 25]
     if len(candidates) != 1:
@@ -25,7 +25,7 @@ def beam_feature(jpeg):
     return candidates[0]
 
 
-def canonical_pair_top(jpeg, reference, *, translation_px=None):
+def canonical_pair_top(jpeg, reference, *, translation_px=None, hue_upper=24):
     """Translate observed pixels to the saved beam-centred image convention.
 
     This is image preprocessing, not a changed camera or world reset. Retain
@@ -35,7 +35,7 @@ def canonical_pair_top(jpeg, reference, *, translation_px=None):
     frame, ref = decode(jpeg), decode(reference)
     if frame.shape != ref.shape:
         raise ValueError('pair reference and live TOP dimensions differ')
-    current, anchor = beam_feature(jpeg), beam_feature(reference)
+    current, anchor = beam_feature(jpeg,hue_upper=hue_upper), beam_feature(reference)
     h, w = frame.shape[:2]
     shift = (np.array(anchor['center']) - current['center']) * [w, h] if translation_px is None else np.asarray(translation_px,dtype=float)
     if shift.shape!=(2,) or not np.isfinite(shift).all():raise ValueError('invalid image translation')
@@ -45,7 +45,7 @@ def canonical_pair_top(jpeg, reference, *, translation_px=None):
     return data, {'source_sha256':hashlib.sha256(jpeg).hexdigest(),
         'reference_sha256':hashlib.sha256(reference).hexdigest(),
         'translation_px':shift.tolist(),'observed_beam':current,
-        'fixed_from_prior_rgb':translation_px is not None,
+        'fixed_from_prior_rgb':translation_px is not None,'hue_upper':hue_upper,
         'method':'RGB translation only; black padding; unchanged own RGB'}
 
 
@@ -131,7 +131,7 @@ class ImageRoute:
     def observe(self,jpeg):
         frame=decode(jpeg);h,w=frame.shape[:2]
         if self.obj=='beam':
-            feature=beam_feature(jpeg)
+            feature=beam_feature(jpeg,hue_upper=35)
             center=np.array(feature['center'])*[w,h]
             bounds=np.array(feature['corners4'])*[w,h]
         else:

@@ -29,7 +29,7 @@ class BoundPairSkill:
         self.commands={r:{int(c):int(v) for c,v in p.items()} for r,p in self.commands.items()}
         self.trace=[];self.evaluation_samples=[];self.grasp_report={};self.phase='APPROACH'
         self.last_capture=None;self.count=0;self.calls=[]
-        self.grasp_translation=None;self.latest_translation=None
+        self.grasp_translation=None;self.latest_translation=None;self.transport_started=False
         self.coarse=PairCoarsePixels(identity,bindings,reference) if identity is not None else None
 
     def time(self):return self.io.time()
@@ -43,7 +43,8 @@ class BoundPairSkill:
         self.count+=1
         frames=self.io.capture('pair-'+str(self.count)+'-'+tag)
         top, transform=canonical_pair_top(frames['r1']['top_bytes'],self.reference,
-            translation_px=self.grasp_translation if self.phase.startswith('grasp') else None)
+            translation_px=self.grasp_translation if self.phase.startswith('grasp') else None,
+            hue_upper=35 if self.transport_started else 24)
         self.latest_translation=transform['translation_px']
         top_ref=image_record(self.out/'rgb'/f'pair-{self.count}-canonical-top.jpg',self.out,top)
         mapped={slot:{**frames[rid], 'top_bytes':top,'shared_top_rgb':top_ref,
@@ -106,7 +107,7 @@ class BoundPairSkill:
         raise RuntimeError('fine docking confirmation budget exhausted')
 
     def carry(self,navigator):
-        self.phase='TRANSIT'
+        self.phase='TRANSIT';self.transport_started=True
         anchor=self.capture('carry-anchor')
         policy=PairCarryPolicy('dispatch-'+self.bindings.committed['plan_hash'][:12])
         for index in range(900):
@@ -121,7 +122,10 @@ class BoundPairSkill:
                 decisions[r]={'ok':held,'held_estimate':held,'ready':evidence['done'],
                               'forward':abs(motion['forward']),'current_own_rgb_features':current,'anchor_own_rgb_features':initial,
                               'appearance':'orange-to-yellow beam hue 3..35; same shape/consistency gates'}
-            control=policy.step(decisions,payload_skew(frames['r1']['top_bytes']),
+            beam=beam_feature(raw,hue_upper=35)
+            upper,lower=sorted(beam['endpoints'],key=lambda p:p[1])
+            skew=(lower[0]-upper[0])*beam['image_size'][0]
+            control=policy.step(decisions,skew,
                 {r:f['frame_id'] for r,f in frames.items()},self.time())
             self.calls.append({'kind':'carry','decisions':decisions,'control':control,'route':evidence})
             if control['abort']:raise RuntimeError('existing pair carry guard stopped: '+control['mode'])
@@ -140,7 +144,7 @@ class BoundPairSkill:
         samples=[]
         for index in range(2):
             frames=self.capture('placement-confirmation')
-            b=beam_feature(frames['r1']['raw_top_bytes'])
+            b=beam_feature(frames['r1']['raw_top_bytes'],hue_upper=35)
             w,h=b['image_size'];corners=np.array(b['corners4'])*[w,h]
             a=pixel_from_map(np.array(slot['center_m'])-slot['half_extents_m'],self.bindings.static_map,(h,w))
             z=pixel_from_map(np.array(slot['center_m'])+slot['half_extents_m'],self.bindings.static_map,(h,w))

@@ -119,3 +119,13 @@ def test_dispatch_carry_preserves_shape_under_observed_orange_yellow_lighting():
     assert .25<=current[0]/anchor[0]<=4 and math.dist(current[1:],anchor[1:])<=.15
     blank=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))[1].tobytes()
     assert own_payload(blank,hue_upper=35) is None
+
+
+def test_loaded_top_lighting_keeps_shaft_geometry_and_rejects_floor():
+    raw=(Path(__file__).parent/'fixtures/dispatch_skill_transfer/beam-top-lit.jpg').read_bytes()
+    with pytest.raises(ValueError):beam_feature(raw)
+    beam=beam_feature(raw,hue_upper=35)
+    assert 90<beam['length_px']<120 and beam['width_px']<25
+    assert beam['center'][0]<.4
+    transformed,record=canonical_pair_top(raw,(Path(__file__).parent/"fixtures/camera_goal_transport/reference-top.jpg").read_bytes(),hue_upper=35)
+    assert record['hue_upper']==35 and record['observed_beam']==beam
