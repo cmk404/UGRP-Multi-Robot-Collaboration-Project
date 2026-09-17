@@ -23,7 +23,7 @@ class CarriedBeamTracker:
         from harness.dispatch_skill_binding import beam_feature
         anchor=self.previous or beam_feature(jpeg,hue_upper=35)
         rows=[]
-        for saturation in (105,120,130,140,150,160,170,180,190):
+        for saturation in range(105,191,5):
             for b in extract_beams(jpeg,robust_shaft=True,hue_upper=35,min_saturation=saturation):
                 movement=np.linalg.norm((np.array(b['center'])-anchor['center'])*b['image_size'])
                 aligned=abs(float(self._axis(b)@self._axis(anchor)))>=math.cos(math.radians(15))
@@ -34,7 +34,10 @@ class CarriedBeamTracker:
         for saturation,b in rows:
             group=[(s,c) for s,c in rows if self.same_shaft(b,c)]
             count=len({s for s,_ in group})
-            if count>=3:supported.append((count,saturation,b,group))
+            # Sample narrow usable contrast bands without reducing the required
+            # contrast range: adjacent cuts alone cannot establish a shaft.
+            contrast_span=max(s for s,_ in group)-min(s for s,_ in group)
+            if count>=3 and contrast_span>=20:supported.append((count,saturation,b,group))
         if not supported:raise ValueError('carried shaft lacks consistent RGB support')
         best=max(supported,key=lambda row:(row[0],-np.linalg.norm((np.array(row[2]['center'])-anchor['center'])*anchor['image_size'])))
         if any(not self.same_shaft(best[2],r[2]) and r[0]>=best[0]-1 for r in supported):

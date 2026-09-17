@@ -128,7 +128,19 @@ def test_translation_centerline_excludes_adjacent_yellow_apron():
     beam=json.loads((root/'translation-apron-contamination.json').read_text())
     skew,evidence=translation_skew((root/'translation-apron-contamination.jpg').read_bytes(),beam)
     assert abs(skew)<1.6
-    assert evidence['min_saturation']==150
+    assert evidence['min_saturation']>=150
+    assert len(evidence['consensus_saturations'])>=4
+
+
+def test_contrast_consensus_rejects_the_aprons_single_cut_slope():
+    import json
+    from harness.dispatch_translation_skew import translation_skew
+    root=Path('tests/fixtures/dispatch_adaptive')
+    beam=json.loads((root/'shaft-narrow-contrast-prior.json').read_text())
+    skew,e=translation_skew((root/'translation-low-contrast-bias.jpg').read_bytes(),beam)
+    assert abs(skew)<1.5
+    assert len(e['consensus_saturations'])>=4
+    assert next(r['skew_px'] for r in e['contrast_fits'] if r['min_saturation']==150)<-3
 
 
 def test_exact_vertical_half_pixel_shaft_keeps_its_visible_row_coverage():

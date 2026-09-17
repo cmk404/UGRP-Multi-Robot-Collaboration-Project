@@ -5,14 +5,13 @@ import numpy as np
 from harness.camera_goal_transport import decode
 
 
-def translation_skew(jpeg, beam):
+def _centerline(frame, hsv, beam, saturation):
     """Exclude shaded edge lobes before measuring bottom-minus-top skew.
 
     The tracked visible shaft supplies the search region, not its noisy PCA
     direction as the final answer. Fit current central cross-section medians.
     No temporal smoothing, issued movement or referee pose supplies the angle.
     """
-    frame=decode(jpeg);hsv=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
     endpoints=np.array(beam['endpoints'])*beam['image_size']
     axis=endpoints[1]-endpoints[0];axis/=np.linalg.norm(axis)
     if axis[1]<0:axis=-axis
@@ -23,7 +22,7 @@ def translation_skew(jpeg, beam):
     y0,y1=max(0,cy-radius),min(frame.shape[0],cy+radius+1)
     # The weakly saturated yellow apron can enter this shaft-sized window.
     # Retain the saturated cargo face rather than fitting those floor pixels.
-    mask=cv2.inRange(hsv[y0:y1,x0:x1],np.array([3,150,45],np.uint8),np.array([35,255,255],np.uint8))
+    mask=cv2.inRange(hsv[y0:y1,x0:x1],np.array([3,saturation,45],np.uint8),np.array([35,255,255],np.uint8))
     yy,xx=np.where(mask);points=np.column_stack((xx+x0,yy+y0))
     axial=(points-center)@axis;lateral=(points-center)@normal
     selected=(abs(axial)<beam['length_px']*.35)&(abs(lateral)<beam['width_px']*.75)
@@ -50,4 +49,27 @@ def translation_skew(jpeg, beam):
         'skew_px':skew,'direction_xy':direction.tolist(),'supported_sections':len(sections),
         'support_span_px':float(np.ptp(points[:,0])),
         'residual_p95_px':float(np.quantile(residual,.95)),
-        'tracked_visible_length_px':beam['length_px'],'min_saturation':150,'uses_issued_motion':False}
+        'tracked_visible_length_px':beam['length_px'],'min_saturation':saturation,'uses_issued_motion':False}
+
+
+def translation_skew(jpeg, beam):
+    """Require the current shaft slope to agree across colour contrast cuts."""
+    frame=decode(jpeg);hsv=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
+    fits=[]
+    for saturation in range(150,191,5):
+        try:fits.append(_centerline(frame,hsv,beam,saturation))
+        except ValueError:pass
+    groups=[]
+    for value,_ in fits:
+        group=[row for row in fits if abs(row[0]-value)<=1.5]
+        cuts=[e['min_saturation'] for _,e in group]
+        if len(group)>=4 and max(cuts)-min(cuts)>=15:groups.append(group)
+    if not groups:
+        raise ValueError('translation shaft centerline lacks current RGB support across contrast cuts')
+    group=max(groups,key=len)
+    median=float(np.median([v for v,_ in group]))
+    _,evidence=min(group,key=lambda row:abs(row[0]-median))
+    evidence={**evidence,'method':'current RGB cross-section line with contrast consensus',
+        'skew_px':median,'contrast_fits':[{'min_saturation':e['min_saturation'],'skew_px':v} for v,e in fits],
+        'consensus_saturations':[e['min_saturation'] for _,e in group]}
+    return median,evidence

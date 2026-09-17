@@ -230,16 +230,41 @@ def test_box_delivery_uses_the_padded_region_before_point_chasing_hits_the_beam(
     _,evidence=wrong.observe(raw);assert not evidence['ready'] and not evidence['done']
 
 
-def test_dim_box_keeps_prior_rgb_and_requires_its_full_uncertainty_inside_slot():
+def test_dim_box_reacquires_visible_silhouette_before_chasing_the_slot_center():
     from harness.dispatch_skill_binding import ImageRoute
     from harness.camera_goal_transport import decode
     raw=(ROOT/'box-inside-slot-stalled.jpg').read_bytes();route=ImageRoute(bindings(),'box')
     route.box_center=np.array([847.,179.]);route.box_previous=decode(raw)
     route.observe(raw);route.index=len(route.points)-1
     action,evidence=route.observe(raw)
-    assert evidence['tracking']['consistent_features']>=3
-    assert not evidence['ready'] and not evidence['destination_region']['inside']
-    assert action['forward']<0  # Move the uncertain right edge fully into the slot.
+    assert evidence['tracking']['method']=='cyan component'
+    assert evidence['ready'] and evidence['destination_region']['inside']
+    assert all(action[k]==0 for k in ['forward','left','turn'])
+
+
+def test_small_dim_cargo_fragment_preserves_colour_identity_during_motion():
+    import json
+    from harness.dispatch_skill_binding import ImageRoute
+    from harness.camera_goal_transport import decode
+    prior=json.loads((ROOT/'dim-moving-box-prior.json').read_text())
+    route=ImageRoute(bindings(),'box')
+    route.box_center=np.array(prior['center']);route.box_delta=np.array(prior['delta'])
+    route.box_previous=decode((ROOT/'dim-moving-box-prior.jpg').read_bytes())
+    route.points=[np.array([841.87,176.93])]  # Route already selected before carrying.
+    _,e=route.observe((ROOT/'dim-moving-box.jpg').read_bytes())
+    assert e['tracking']['method']=='cyan component'
+    assert np.allclose(e['cargo_center_px'],[463.5,130.],atol=2.)
+
+
+def test_visible_shaft_survives_a_narrow_consistent_contrast_band():
+    import json
+    from harness.dispatch_beam_tracker import CarriedBeamTracker
+    tracker=CarriedBeamTracker()
+    tracker.previous=json.loads((ROOT/'shaft-narrow-contrast-prior.json').read_text())
+    b=tracker.observe((ROOT/'shaft-narrow-contrast.jpg').read_bytes())
+    assert b['tracking']['threshold_support']>=3
+    assert 78<=b['length_px']<=83 and b['width_px']<=20
+    assert np.allclose(np.array(b['center'])*b['image_size'],[636,407],atol=3)
 
 
 def test_persistent_rgb_span_error_increases_recovery_with_bounded_memory():

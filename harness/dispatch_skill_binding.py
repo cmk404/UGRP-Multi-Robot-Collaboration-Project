@@ -202,25 +202,26 @@ class ImageRoute:
             bounds=np.array(feature['corners4'])*[w,h]
         else:
             hsv=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
-            # Keep the acquired cargo's saturation boundary during tracking.
-            # Relaxing it after acquisition admits tiny painted-floor regions
-            # near the prediction and silently switches the target identity.
-            mask=cv2.inRange(hsv,np.array((80,125,35),np.uint8),np.array((102,255,255),np.uint8))
-            if self.box_center is None:
-                mask=cv2.morphologyEx(mask,cv2.MORPH_OPEN,np.ones((3,3),np.uint8))
-            n,_,stats,centers=cv2.connectedComponentsWithStats(mask)
-            choices=[i for i in range(1,n) if 25 <= stats[i,4] <= 600
-                     and max(stats[i,2:4]) < 40]
-            if self.box_center is not None:
-                predicted=self.box_center+np.clip(self.box_delta,-15,15)
-                # Reacquisition must agree with observed recent motion. An
-                # unrelated floor fragment 10--25px away must not replace the
-                # target; retain the existing RGB flow fallback in that case.
-                choices=sorted((i for i in choices if np.linalg.norm(centers[i]-predicted)<=8),
-                               key=lambda i:np.linalg.norm(centers[i]-predicted))
-                if len(choices)>1 and np.linalg.norm(centers[choices[1]]-predicted)-np.linalg.norm(centers[choices[0]]-predicted)>5:
-                    choices=choices[:1]
-            tracking={'method':'cyan component'}
+            # Preserve the strongest usable cargo colour first. Only an already
+            # acquired target may use dimmer/smaller visible fragments, and each
+            # candidate must match its prior RGB motion within eight pixels.
+            # Otherwise gripper flow at a different height accumulates drift.
+            levels=[125] if self.box_center is None else [125,105,90,70]
+            for saturation in levels:
+                mask=cv2.inRange(hsv,np.array((80,saturation,35),np.uint8),np.array((102,255,255),np.uint8))
+                if self.box_center is None:
+                    mask=cv2.morphologyEx(mask,cv2.MORPH_OPEN,np.ones((3,3),np.uint8))
+                n,_,stats,centers=cv2.connectedComponentsWithStats(mask)
+                choices=[i for i in range(1,n) if (25 if self.box_center is None else 8) <= stats[i,4] <= 600
+                         and max(stats[i,2:4]) < 40]
+                if self.box_center is not None:
+                    predicted=self.box_center+np.clip(self.box_delta,-15,15)
+                    choices=sorted((i for i in choices if np.linalg.norm(centers[i]-predicted)<=8),
+                                   key=lambda i:np.linalg.norm(centers[i]-predicted))
+                    if len(choices)>1 and np.linalg.norm(centers[choices[1]]-predicted)-np.linalg.norm(centers[choices[0]]-predicted)>5:
+                        choices=choices[:1]
+                if choices:break
+            tracking={'method':'cyan component','min_saturation':saturation}
             if len(choices)==1:
                 i=choices[0];center=centers[i];x,y,bw,bh=stats[i,:4]
                 bounds=np.array([[x,y],[x+bw,y+bh]])
