@@ -285,7 +285,7 @@ def main():
     p.add_argument('--max-quiet-rounds',type=int,default=4)
     p.add_argument('--plan-replay',type=Path,help='diagnostic only: replay a saved agreed plan with fixture votes')
     p.add_argument('--executor',choices=('skills','raw'),default='skills')
-    p.add_argument('--contact-profile',choices=('legacy','global_noslip','local_friction'),default='local_friction',help='skills only: explicit simulation contact solver profile')
+    p.add_argument('--contact-profile',choices=('legacy','global_noslip','local_contact'),default='local_contact',help='skills only: explicit simulation contact solver profile')
     p.add_argument('--grasp-model-dir',type=Path)
     p.add_argument('--stage-model-dir',type=Path)
     p.add_argument('--reference-top',type=Path,default=ROOT/'tests/fixtures/camera_goal_transport/reference-top.jpg')

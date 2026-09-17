@@ -1,7 +1,7 @@
 """Static contact solver profiles for the dispatch laboratory.
 
 The reduced mecanum model already owns tyre traction. Global NoSlip also changes
-that calibrated drive response. Limit stronger friction damping to declared
+that calibrated drive response. Limit stronger contact impedance to declared
 finger/cargo pairs while preserving their mixed normal parameters, friction cone,
 masses, actuators, collision geometry, and zero adhesion. This is a simulation
 profile, not a calibrated hardware claim. See experiments/dispatch-skill-integration-20260917.
@@ -9,14 +9,14 @@ profile, not a calibrated hardware claim. See experiments/dispatch-skill-integra
 from __future__ import annotations
 import xml.etree.ElementTree as ET
 
-PROFILES=('legacy','global_noslip','local_friction')
+PROFILES=('legacy','global_noslip','local_contact')
 
 
 def contact_profile(xml,profile):
     if profile not in PROFILES:raise ValueError('unknown contact solver profile')
     root=ET.fromstring(xml)
     if profile=='global_noslip':root.find('option').set('noslip_iterations','4')
-    if profile=='local_friction':
+    if profile=='local_contact':
         contact=root.find('contact')
         if contact is None:contact=ET.SubElement(root,'contact')
         def geom(name):return root.find(f'.//geom[@name="{name}"]')
@@ -44,10 +44,10 @@ def contact_profile(xml,profile):
                         'condim':str(max(int(a.get('condim','3')),int(b.get('condim','3')))),
                         'friction':' '.join(map(str,friction)),
                         'solref':' '.join(map(str,solref)),
-                        'solimp':' '.join(map(str,mixed('solimp','.9 .95 .001 .5 2'))),
-                        # Direct-format damping in tangential dimensions only.
-                        # Unlike a weld it remains bounded by the existing Coulomb cone.
-                        'solreffriction':'0 -10000','adhesion':'0',
+                        'solimp':' .995 .995 .002 .5 2',
+                        # Reduce soft-contact creep locally, with the existing normal
+                        # time constant and unchanged Coulomb friction cone.
+                        'solreffriction':'0 0','adhesion':'0',
                         'margin':str(float(a.get('margin','0'))+float(b.get('margin','0'))),
                         'gap':str(float(a.get('gap','0'))+float(b.get('gap','0')))}
                     ET.SubElement(contact,'pair',**attrs)

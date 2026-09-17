@@ -20,7 +20,7 @@ def main():
     import mujoco
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--source-run',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
-    p.add_argument('--profiles',nargs='+',default=['legacy','global_noslip','local_friction'])
+    p.add_argument('--profiles',nargs='+',default=['legacy','global_noslip','local_contact'])
     args=p.parse_args()
     if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip():raise RuntimeError('commit source first')
     args.output.mkdir(parents=True,exist_ok=False)
