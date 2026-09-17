@@ -7,3 +7,5 @@
 `box-top-held.jpg`: S8 source 6e349db, solo-121-top; raw shared camera with held box and cyan floor distractors.
 
 `box-transit-274/275.jpg`: S13 source 273da1b, raw solo-274/275-top. Transition into changed illumination during actual carrying.
+
+`box-own-158/159.jpg`: Q1 source 71900de; unchanged cargo grip while cyan floor joined old segmentation. Raw owned camera, 640x480 same-FOV resize.

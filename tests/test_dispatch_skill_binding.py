@@ -197,3 +197,13 @@ def test_box_tracking_survives_observed_lighting_change_without_global_reacquisi
     assert 3<np.linalg.norm(np.array(first['cargo_center_px'])-second['cargo_center_px'])<15
     with pytest.raises(RuntimeError):
         route.observe((root/'box-top-held.jpg').read_bytes())
+
+
+def test_dispatch_attachment_does_not_merge_cyan_floor_with_held_box():
+    import base64
+    from harness.visual_attachment import compare_box_comotion
+    root=Path('tests/fixtures/dispatch_skill_transfer')
+    a,b=[base64.b64encode((root/f'box-own-{i}.jpg').read_bytes()).decode() for i in (158,159)]
+    assert not compare_box_comotion(a,b)['attached']
+    calibrated=compare_box_comotion(a,b,min_saturation=150)
+    assert calibrated['attached'] and calibrated['thresholds']['min_iou']==.88

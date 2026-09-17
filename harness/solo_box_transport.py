@@ -27,7 +27,7 @@ def solo_top_features(jpeg):
 
 class SoloBoxTransport:
     """Skill-bound curriculum, not a general route planner or raw-action LLM."""
-    def __init__(self, goal=None, *, robot_id='r2', navigator=None):
+    def __init__(self, goal=None, *, robot_id='r2', navigator=None, attachment_min_saturation=65):
         if robot_id not in ('r1','r2','r3'):
             raise ValueError('unknown solo robot')
         if navigator is None and goal not in GOALS:
@@ -35,7 +35,7 @@ class SoloBoxTransport:
         self.goal = goal
         self.navigator = navigator
         self.box = VisualBoxSkill(task='external_navigation', robot_id=robot_id,
-                                  attachment_home_reference='previous_endpoint')
+                                  attachment_home_reference='previous_endpoint',attachment_min_saturation=attachment_min_saturation)
         self.initialized = False
         self.target = None
         self.done = False

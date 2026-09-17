@@ -100,7 +100,7 @@ class SkillScene(DispatchScene):
         # This helper reads its issued-command cache, not measured joints.
         self.world._team_joint_move_servos(targets,duration,settle_s=settle)
     def start_solo(self):
-        self.solo=SoloBoxTransport(robot_id=self.bindings.solo,navigator=ImageRoute(self.bindings,'box'))
+        self.solo=SoloBoxTransport(robot_id=self.bindings.solo,navigator=ImageRoute(self.bindings,'box'),attachment_min_saturation=150)
         self.solo_executor=VisualMacroExecutor(self.ports[self.bindings.solo],
             log_callback=self.solo_raw.append,drive_settle_by_phase={'carry':0.})
         self.solo_started=self.time()
@@ -135,7 +135,8 @@ class SkillScene(DispatchScene):
             evidence={**evidence,'waiting_for_resource':True}
         self.solo_rows.append({'index':index,'sim_time_s':now,'robot_id':self.bindings.solo,
             'phase_before':before,'phase_after':self.solo.phase,'observation':{k:v for k,v in obs.items() if k!='image'},
-            'images':refs,'action':action,'top_evidence':evidence})
+            'images':refs,'action':action,'top_evidence':evidence,
+            'own_attachment_evidence':copy.deepcopy(self.solo.box.last_attachment)})
         if self.video:self.video.stage='PAIR '+self.pair_phase+' | '+self.bindings.solo+' '+self.solo.phase
         if action['kind']=='mecanum':
             self.raw(self.bindings.solo,action,'TRANSIT');self.solo_lease=now+action['duration_s']
