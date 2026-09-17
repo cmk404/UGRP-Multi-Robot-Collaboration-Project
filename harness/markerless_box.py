@@ -248,7 +248,7 @@ def _polygon_iou(contour, projected, image_shape):
     return float(np.count_nonzero(om & pm) / union) if union else 0.0
 
 
-def _fit_floor_cuboid(component, origin, axes, k, d, dimensions, image_shape):
+def _fit_floor_cuboid(component, origin, axes, k, d, dimensions, image_shape, *, refine_position=False):
     contour = component["contour"].reshape(-1, 2)
     max_y = float(np.max(contour[:, 1]))
     band = contour[contour[:, 1] >= max_y-max(2.0, component["bbox"][3]*0.08)]
@@ -319,11 +319,31 @@ def _fit_floor_cuboid(component, origin, axes, k, d, dimensions, image_shape):
                     refined.append((iou, center, yaw, pixels,
                                     radial_delta, lateral_delta))
     best = max(refined, key=lambda item: item[0])
+    if refine_position:
+        # Near-field floor contact seeding can bias XY by a centimetre even
+        # though the full visible silhouette supplies a much better fit.
+        # Bounded image-projection optimization; no measured joints/pose.
+        initial_center=best[1].copy()
+        best=best[:4]
+        for step,angle in ((.003,3),(.001,1),(.0005,.5)):
+            for _ in range(15):
+                previous=best
+                for dx in (-step,0,step):
+                    for dy in (-step,0,step):
+                        center=previous[1]+[dx,dy]
+                        if np.linalg.norm(center-initial_center)>.03:continue
+                        for da in (-angle,0,angle):
+                            yaw=previous[2]+math.radians(da)
+                            pixels=_project_points(_cuboid_corners(center,yaw,dimensions),origin,axes,k,d)
+                            if pixels is None:continue
+                            iou=_polygon_iou(component['contour'],pixels,image_shape)
+                            if iou>best[0]:best=(iou,center,yaw,pixels)
+                if best is previous:break
     return best[:4]
 
 
 def observe_ground_box(image, servo_pose: Mapping[int | str, int | float],
-                       target_id: str = "small_box_01") -> dict[str, Any]:
+                       target_id: str = "small_box_01", *, refine_position=False) -> dict[str, Any]:
     """Estimate one upright cyan cuboid center conditional on a floor hypothesis.
 
     ``target_id`` selects known catalog dimensions; cyan pixels do not decode
@@ -332,6 +352,8 @@ def observe_ground_box(image, servo_pose: Mapping[int | str, int | float],
     """
     if target_id not in BOX_TOP_DIMS_M or target_id not in BOX_HEIGHT_M:
         raise ValueError("UNKNOWN_BOX_ID")
+    from functools import partial
+    fit_floor = partial(_fit_floor_cuboid,refine_position=True) if refine_position else _fit_floor_cuboid
     frame = _decode_jpeg(image)
     height, width = frame.shape[:2]
     components, clipped = _cyan_components(frame)
@@ -345,7 +367,7 @@ def observe_ground_box(image, servo_pose: Mapping[int | str, int | float],
     dimensions = (a, b, box_height)
     plausible_components = []
     for candidate in components:
-        candidate_fit = _fit_floor_cuboid(
+        candidate_fit = fit_floor(
             candidate, origin, axes, k, d, dimensions, frame.shape)
         if candidate_fit is not None and candidate_fit[0] >= _MIN_PROJECTION_IOU:
             plausible_components.append((candidate, candidate_fit))
@@ -356,7 +378,7 @@ def observe_ground_box(image, servo_pose: Mapping[int | str, int | float],
         component, fit = plausible_components[0]
     else:
         component = components[0] if len(components) == 1 else None
-        fit = (_fit_floor_cuboid(component, origin, axes, k, d, dimensions, frame.shape)
+        fit = (fit_floor(component, origin, axes, k, d, dimensions, frame.shape)
                if component is not None else None)
     iou = fit[0] if fit is not None else 0.0
     top_fit, top_count = _observe_floor_top_face(frame, origin, axes, k, d, dimensions)
@@ -386,7 +408,7 @@ def observe_ground_box(image, servo_pose: Mapping[int | str, int | float],
                 # projection. The small tolerance is rasterization only.
                 if cv2.pointPolygonTest(envelope, tuple(candidate_centroid), True) >= -2.0:
                     continue
-                candidate_fit = _fit_floor_cuboid(
+                candidate_fit = fit_floor(
                     candidate, origin, axes, k, d, dimensions, frame.shape)
                 if candidate_fit is not None and candidate_fit[0] >= _MIN_PROJECTION_IOU:
                     other_plausible += 1

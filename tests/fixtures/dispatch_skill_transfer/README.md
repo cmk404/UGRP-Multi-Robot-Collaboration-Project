@@ -19,3 +19,5 @@
 `box-shadow-237/238.jpg`: Q5 source cbfc38a, raw TOP; held cargo retains silhouette while cyan edge has 14 pixels.
 
 `box-apron-303/304.jpg`: Q6 source dea5d27, raw TOP. Background boundary changes template correlation; foreground corner flow retains 10 mutually consistent moving features.
+
+`box-release-426/427.jpg`: Q7 source f688973, own RGB after physical release. Full silhouette projection fit improves from .678/.870 to .975/.980 with bounded XY refinement; 1 cm stationarity threshold unchanged.

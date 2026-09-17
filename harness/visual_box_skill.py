@@ -35,11 +35,12 @@ class VisualBoxSkill:
 
     def __init__(self, task="short_transfer", destination_zone="B", robot_id="r1", cargo_id="small_box_01",
                  near_field_reacquisition=False, perception_mode="markerless",
-                 attachment_home_reference="anchor", attachment_min_saturation=65):
+                 attachment_home_reference="anchor", attachment_min_saturation=65, release_refine_ground_fit=False):
         if task not in {"short_transfer", "destination_zone", "external_navigation"}:
             raise ValueError("unsupported visual box task")
         if destination_zone not in {"A", "B", "C"}:
             raise ValueError("destination_zone must be A, B, or C")
+        self.release_refine_ground_fit=bool(release_refine_ground_fit)
         self.task = task
         self.destination_zone = destination_zone
         self.robot_id = str(robot_id)
@@ -114,7 +115,8 @@ class VisualBoxSkill:
             # A floor hypothesis is only appropriate before pickup or after
             # opening/retracting. Never manufacture a ground-height estimate
             # while the object is carried.
-            box = (observe_ground_box(obs["image"], pose, self.cargo_id)
+            ground_options={"refine_position":True} if self.release_refine_ground_fit and self.phase!="approach" else {}
+            box = (observe_ground_box(obs["image"], pose, self.cargo_id,**ground_options)
                    if ground_phase else {"visible": False, "reason": "GROUND_ESTIMATE_NOT_APPLICABLE_WHILE_HELD"})
         else:
             box = self.tracker.observe(obs["image"])

@@ -12,7 +12,7 @@ from harness.gemini_proxy import _to_gemini_multi_image_messages
 from scripts.run_camera_varied_start_student import load_stage_models
 from scripts.run_camera_approach_student import models
 
-def audit(p):
+def audit(p,*,replay_solo=False):
  p=Path(p);result=json.loads((p/'result.json').read_text());team=json.loads((p/'team/team.json').read_text());mission=json.loads((p/'actor-mission.json').read_text());identity=json.loads((p/'identity-evidence.json').read_text())
  def image(ref):
   f=(p/ref['path']).resolve();assert f.is_relative_to(p.resolve());b=f.read_bytes();assert hashlib.sha256(b).hexdigest()==ref['sha256'];return b
@@ -55,6 +55,40 @@ def audit(p):
   assert obs['robot_id']==result['bindings']['solo_robot'] and obs['sha256']==hashlib.sha256(own).hexdigest()
   assert set(obs['actuator_state'])=={'motor_commands','servo_pulses'}
  report={'passed':True,'scope':'saved input reconstruction and exact model prediction replay; not physical success', 'run':str(p.resolve()),'planning_requests':count,'actual_llm_wires':wire,'pair_image_bindings':transforms,'learned_approach_predictions':approach,'grasp_predictions':grasp_count,'solo_own_command_observations':len(solo)}
+ if replay_solo:
+  setup=json.loads((p/'episode-setup-only.json').read_text())
+  report['solo_decision_replay']=audit_solo_replay(p,json.loads((p/'committed-plan.json').read_text()),setup['static_map'])
  (p/'input-audit.json').write_text(json.dumps(report,indent=2));print(report)
+def audit_solo_replay(p,committed,static_map):
+ import copy,base64,json,hashlib
+ from harness.dispatch_skill_binding import SkillBindings,ImageRoute
+ from harness.solo_box_transport import SoloBoxTransport
+ bindings=SkillBindings(committed,static_map)
+ policy=SoloBoxTransport(robot_id=bindings.solo,navigator=ImageRoute(bindings,'box'),attachment_min_saturation=150,release_refine_ground_fit=True)
+ rows=json.loads((p/'solo-decisions.json').read_text())
+ for row in rows:
+  obs=copy.deepcopy(row['observation']);raw=(p/row['images']['own']['path']).read_bytes();top=(p/row['images']['top']['path']).read_bytes()
+  assert hashlib.sha256(raw).hexdigest()==obs['sha256']
+  assert hashlib.sha256(top).hexdigest()==row['images']['top']['sha256']
+  obs['image']=base64.b64encode(raw).decode()
+  assert policy.phase==row['phase_before'],row['index']
+  backup=copy.deepcopy(policy.box) if policy.phase=='approach' else None
+  action,evidence=policy.decide(obs,top)
+  if row['top_evidence'].get('waiting_before_grasp'):
+   assert backup is not None and policy.phase=='lower'
+   policy.box=backup;action={'kind':'wait','duration':.3}
+  if row['top_evidence'].get('waiting_for_resource'):
+   assert action['kind']=='mecanum'
+   action={'kind':'wait','duration':.1}
+  # JSON normalizes integer servo channel keys exactly as the archived wire.
+  assert json.loads(json.dumps(action))==row['action'],('solo action',row['index'])
+  assert policy.phase==row['phase_after'],('solo phase',row['index'])
+ return {'actions_replayed':len(rows),'source':'archived own RGB + TOP RGB + own command state + recorded resource wait signals','scope':'controller decision replay; resource ownership checked separately, not physical success'}
+
 if __name__=='__main__':
- for p in sys.argv[1:]:audit(p)
+ import argparse
+ parser=argparse.ArgumentParser(description=__doc__)
+ parser.add_argument('runs',nargs='+')
+ parser.add_argument('--replay-solo',action='store_true',help='exact solo action replay using this source revision')
+ args=parser.parse_args()
+ for run_path in args.runs:audit(run_path,replay_solo=args.replay_solo)

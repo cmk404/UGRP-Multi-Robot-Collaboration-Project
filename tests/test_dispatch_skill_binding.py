@@ -259,3 +259,18 @@ def test_cargo_motion_separates_stationary_floor_corners_at_boundary():
     _,e=route.observe((root/'box-apron-304.jpg').read_bytes())
     assert np.allclose(e['cargo_center_px'],[850.6,351.7],atol=1)
     assert e['tracking']['consistent_features']>=6
+
+
+def test_release_projection_refinement_removes_contact_seed_bias():
+    import base64
+    from harness.markerless_box import observe_ground_box
+    root=Path('tests/fixtures/dispatch_skill_transfer');old=[];new=[]
+    for i,pan in ((426,1465),(427,1525)):
+        raw=base64.b64encode((root/f'box-release-{i}.jpg').read_bytes()).decode()
+        pose={1:2000,3:500,4:2472,5:1320,6:pan}
+        old.append(observe_ground_box(raw,pose)['estimated_box_center_base_m'])
+        fit=observe_ground_box(raw,pose,refine_position=True)
+        assert fit['floor_hypothesis_projection_iou']>.97
+        new.append(fit['estimated_box_center_base_m'])
+    assert np.linalg.norm(np.array(old[0])-old[1])>.010
+    assert np.linalg.norm(np.array(new[0])-new[1])<.001

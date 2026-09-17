@@ -100,7 +100,7 @@ class SkillScene(DispatchScene):
         # This helper reads its issued-command cache, not measured joints.
         self.world._team_joint_move_servos(targets,duration,settle_s=settle)
     def start_solo(self):
-        self.solo=SoloBoxTransport(robot_id=self.bindings.solo,navigator=ImageRoute(self.bindings,'box'),attachment_min_saturation=150)
+        self.solo=SoloBoxTransport(robot_id=self.bindings.solo,navigator=ImageRoute(self.bindings,'box'),attachment_min_saturation=150,release_refine_ground_fit=True)
         self.solo_executor=VisualMacroExecutor(self.ports[self.bindings.solo],
             log_callback=self.solo_raw.append,drive_settle_by_phase={'carry':0.})
         self.solo_started=self.time()
