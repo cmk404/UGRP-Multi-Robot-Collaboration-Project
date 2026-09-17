@@ -143,14 +143,14 @@
     },
     {
       "id": "candidate3-F3",
-      "scope": "fresh LLM physical failure; F3 placed beam then solo centre chasing contacted it; F4 compressed formation stalled and own view changed abruptly",
+      "scope": "fresh LLM physical failure; F3 placed beam then solo centre chasing contacted it; F4 visual spacing error stalled progress and own view changed abruptly",
       "source_sha": "4f612220416cbf72e8ce9f5892f8d845060bc7a7",
       "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final3-20260917/F3",
       "error": "RuntimeError: solo RGB decision budget exhausted"
     },
     {
       "id": "candidate3-F4",
-      "scope": "fresh LLM physical failure; F3 placed beam then solo centre chasing contacted it; F4 compressed formation stalled and own view changed abruptly",
+      "scope": "fresh LLM physical failure; F3 placed beam then solo centre chasing contacted it; F4 visual spacing error stalled progress and own view changed abruptly",
       "source_sha": "4f612220416cbf72e8ce9f5892f8d845060bc7a7",
       "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final3-20260917/F4",
       "error": "RuntimeError: paired navigation stopped: {'r1': 'track', 'r3': 'track'}"
@@ -167,5 +167,6 @@
   ],
   "cost": "Save wall time, action counts, provider requests/usage; monetary cost null when unknown.",
   "concurrency": "R8 and R9 overlapped; subsequent independent trials may use up to two worker processes. Preserve per-run wall time; do not claim speedup relative to serial baseline.",
-  "current_candidate_change": "Preserve previous RGB body and own-view corrections. Add bounded integral spacing feedback to remove a persistent compressed equilibrium while keeping gain, damping and all stop boundaries. Prefer placement inside the beam slot away from the adjacent box slot; declare box arrival by padded RGB containment in its destination region. Physical cohort pending."
+  "current_candidate_change": "Preserve previous RGB body and own-view corrections. Add bounded integral spacing feedback to reduce persistent visually observed spacing error while keeping gain, damping and all stop boundaries. Prefer placement inside the beam slot away from the adjacent box slot; declare box arrival by padded RGB containment in its destination region. Frozen source 49f2b629cb11ee36a917d029c5dd752d56cb3bca; final cohort results are recorded separately.",
+  "next_candidate_change": "Only the legacy nonrotating carry skew measurement is replaced with current RGB central cross-section medians. Ambiguous observations hold/reobserve through the existing policy; all recovery thresholds and budgets remain unchanged. Rotating navigation is unchanged. Run a new complete frozen six-case comparison."
 }

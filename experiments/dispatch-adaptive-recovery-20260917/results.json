@@ -1,0 +1,1705 @@
+{
+  "source_sha": "49f2b629cb11ee36a917d029c5dd752d56cb3bca",
+  "expected_cases": 6,
+  "completed_cases": 3,
+  "physical_successes": 2,
+  "cases": [
+    {
+      "source_sha": "49f2b629cb11ee36a917d029c5dd752d56cb3bca",
+      "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
+      "plan_committed": true,
+      "protocol_complete": false,
+      "physical_success": false,
+      "error": "RuntimeError: existing pair carry guard stopped: ABORT",
+      "phase": "TRANSIT",
+      "wall_s": 545.2051324580025,
+      "llm_calls": 12,
+      "usage": {
+        "prompt_tokens": 114859,
+        "completion_tokens": 3176,
+        "total_tokens": 127703
+      },
+      "cost_usd": null,
+      "plan": {
+        "dock": "dock_b",
+        "tasks": [
+          {
+            "after": [
+              "box_job"
+            ],
+            "id": "beam_job",
+            "object": "beam",
+            "participants": [
+              "r1",
+              "r3"
+            ],
+            "route": "north"
+          },
+          {
+            "after": [],
+            "id": "box_job",
+            "object": "box",
+            "participants": [
+              "r2"
+            ],
+            "route": "south"
+          }
+        ]
+      },
+      "environment": {
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+        "platform": "macOS-27.2-arm64-arm-64bit",
+        "mujoco": "3.12.0"
+      },
+      "model_provenance": {
+        "grasp_manifest_sha256": "372ecd9eed79627f64664a88ddeb7ba57975ecd824d079c34b03a6f847941933",
+        "grasp_models": {
+          "r1": {
+            "path": "r1-model.json",
+            "sha256": "1b2e6d6c3d010f4425fec605a197a1d758a3455e596b4a2e7b3be2bb63ae05a2"
+          },
+          "r3": {
+            "path": "r3-model.json",
+            "sha256": "fd7da785c3a9d25ebd35ccd8f087fa007b91406aa9470e684ddd057b55d7ecff"
+          }
+        },
+        "stage_manifest_sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a",
+        "stage_models": {
+          "r1": {
+            "forward": {
+              "path": "model-r1-forward.json",
+              "sha256": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45"
+            },
+            "lateral": {
+              "path": "model-r1-lateral.json",
+              "sha256": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869"
+            },
+            "yaw": {
+              "path": "model-r1-yaw.json",
+              "sha256": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374"
+            }
+          },
+          "r3": {
+            "forward": {
+              "path": "model-r3-forward.json",
+              "sha256": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+            },
+            "lateral": {
+              "path": "model-r3-lateral.json",
+              "sha256": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f"
+            },
+            "yaw": {
+              "path": "model-r3-yaw.json",
+              "sha256": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8"
+            }
+          }
+        },
+        "reference_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+      },
+      "camera_geometry_unchanged": true,
+      "obstacle_contact_steps": 0,
+      "evaluation": {
+        "physical_success": false,
+        "cargo": {
+          "beam": {
+            "max_lift_m": 0.07756454632419647,
+            "displacement_m": 1.4483528568809938,
+            "lift_observed_by_referee": true,
+            "inside_slot_at_end": false,
+            "released_supported_stable": false,
+            "physical_success": false
+          },
+          "box": {
+            "max_lift_m": 0.06878816418771212,
+            "displacement_m": 2.004412384520239,
+            "lift_observed_by_referee": true,
+            "inside_slot_at_end": true,
+            "released_supported_stable": true,
+            "physical_success": true
+          }
+        },
+        "robot_path_length_m": {
+          "r1": 3.202123890341851,
+          "r2": 5.60341569031201,
+          "r3": 3.1581018679510713
+        },
+        "all_three_body_motion_sim_s": 0.4999999999988347,
+        "weld_steps": 0,
+        "samples": 2196,
+        "stable_window_s": 0.9999999999763531
+      },
+      "planning_models": [
+        "gemini-3.8-flash"
+      ],
+      "agreement_events": [
+        {
+          "event": "PROPOSED",
+          "turn": 0,
+          "proposal_id": "dispatch-fe13e055a66c-plan-v1",
+          "version": 1,
+          "plan_hash": "01cfc534016fee141134ac7111ac311aa2cb2bf400ea388743917c49360d339e",
+          "plan": {
+            "dock": "dock_b",
+            "tasks": [
+              {
+                "after": [
+                  "box_job"
+                ],
+                "id": "beam_job",
+                "object": "beam",
+                "participants": [
+                  "r1",
+                  "r2"
+                ],
+                "route": "north"
+              },
+              {
+                "after": [],
+                "id": "box_job",
+                "object": "box",
+                "participants": [
+                  "r3"
+                ],
+                "route": "south"
+              }
+            ]
+          },
+          "proposer": "r1"
+        },
+        {
+          "event": "REJECTED",
+          "turn": 1,
+          "proposal_id": "dispatch-fe13e055a66c-plan-v1",
+          "version": 1,
+          "plan_hash": "01cfc534016fee141134ac7111ac311aa2cb2bf400ea388743917c49360d339e",
+          "plan": {
+            "dock": "dock_b",
+            "tasks": [
+              {
+                "after": [
+                  "box_job"
+                ],
+                "id": "beam_job",
+                "object": "beam",
+                "participants": [
+                  "r1",
+                  "r2"
+                ],
+                "route": "north"
+              },
+              {
+                "after": [],
+                "id": "box_job",
+                "object": "box",
+                "participants": [
+                  "r3"
+                ],
+                "route": "south"
+              }
+            ]
+          },
+          "proposer": "r1"
+        },
+        {
+          "event": "PROPOSED",
+          "turn": 2,
+          "proposal_id": "dispatch-fe13e055a66c-plan-v2",
+          "version": 2,
+          "plan_hash": "dbb86285f4de975b65e92d392e1db09f4dc144a93efeed20114e4612472f69f1",
+          "plan": {
+            "dock": "dock_b",
+            "tasks": [
+              {
+                "after": [
+                  "box_job"
+                ],
+                "id": "beam_job",
+                "object": "beam",
+                "participants": [
+                  "r1",
+                  "r3"
+                ],
+                "route": "north"
+              },
+              {
+                "after": [],
+                "id": "box_job",
+                "object": "box",
+                "participants": [
+                  "r2"
+                ],
+                "route": "south"
+              }
+            ]
+          },
+          "proposer": "r2"
+        },
+        {
+          "event": "COMMITTED",
+          "turn": 3,
+          "proposal_id": "dispatch-fe13e055a66c-plan-v2",
+          "version": 2,
+          "plan_hash": "dbb86285f4de975b65e92d392e1db09f4dc144a93efeed20114e4612472f69f1",
+          "plan": {
+            "dock": "dock_b",
+            "tasks": [
+              {
+                "after": [
+                  "box_job"
+                ],
+                "id": "beam_job",
+                "object": "beam",
+                "participants": [
+                  "r1",
+                  "r3"
+                ],
+                "route": "north"
+              },
+              {
+                "after": [],
+                "id": "box_job",
+                "object": "box",
+                "participants": [
+                  "r2"
+                ],
+                "route": "south"
+              }
+            ]
+          },
+          "proposer": "r2"
+        }
+      ],
+      "execution_events": [],
+      "feasibility_attempts": [
+        {
+          "feasible": true,
+          "chosen_beam_route": "north",
+          "beam_routes": {
+            "north": {
+              "feasible": true,
+              "reason": "open-map translation adapter; current RGB guards still required"
+            },
+            "south": {
+              "feasible": true,
+              "reason": "open-map translation adapter; current RGB guards still required"
+            }
+          },
+          "chosen_box_route": "south",
+          "box_routes": {
+            "north": {
+              "feasible": true,
+              "gate_m": [
+                0.6,
+                -1.18
+              ]
+            },
+            "south": {
+              "feasible": true,
+              "gate_m": [
+                0.6,
+                -2.82
+              ]
+            }
+          },
+          "other_robot_rgb_observation": null,
+          "source": "authored static geometry + current TOP RGB + declared loaded footprint; not physical passage proof",
+          "plan_hash": "dbb86285f4de975b65e92d392e1db09f4dc144a93efeed20114e4612472f69f1",
+          "input_sha256": "94718d051d4f27300f6bbbff25dc4bf946bc19265ebd89f7997919b308b1c4e1"
+        }
+      ],
+      "id": "F2",
+      "variant": "open",
+      "dock": "dock_b",
+      "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F2",
+      "action_counts": {
+        "issued-commands.json": {
+          "r1": 442,
+          "r2": 398,
+          "r3": 442
+        },
+        "solo-decisions.json": 392,
+        "solo-raw-actions.json": 2081,
+        "solo-yield.json": 148,
+        "pair_decision_kinds": {
+          "image_binding": 432,
+          "coarse": 50,
+          "learned_approach": 1,
+          "dock": 5,
+          "preclose": 1,
+          "carry": 235
+        }
+      },
+      "input_audit": {
+        "passed": true,
+        "scope": "saved input reconstruction and exact model prediction replay; not physical success",
+        "run": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F2",
+        "planning_requests": 12,
+        "actual_llm_wires": 12,
+        "pair_image_bindings": 432,
+        "learned_approach_predictions": 242,
+        "grasp_predictions": 32,
+        "solo_own_command_observations": 392,
+        "prior_rgb_grasp_anchors_verified": 18,
+        "solo_decision_replay": {
+          "actions_replayed": 392,
+          "source": "archived own RGB + TOP RGB + own command state + recorded resource wait signals",
+          "scope": "controller decision replay; resource ownership checked separately, not physical success"
+        },
+        "yield_replay": {
+          "actions_replayed": 148,
+          "visually_cleared_bay": true,
+          "source": "current RGB and authored staging goals; no referee input"
+        },
+        "navigation_replay": {
+          "rgb_rotation_decisions_replayed": 0,
+          "source": "archived RGB + authored map + exact plan; no referee input"
+        }
+      },
+      "planning_input_audit": null,
+      "video_qa": null
+    },
+    {
+      "source_sha": "49f2b629cb11ee36a917d029c5dd752d56cb3bca",
+      "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
+      "plan_committed": true,
+      "protocol_complete": true,
+      "physical_success": true,
+      "error": null,
+      "phase": "FINISHED",
+      "wall_s": 867.513078750002,
+      "llm_calls": 12,
+      "usage": {
+        "prompt_tokens": 115772,
+        "completion_tokens": 3005,
+        "total_tokens": 122520
+      },
+      "cost_usd": null,
+      "plan": {
+        "dock": "dock_a",
+        "tasks": [
+          {
+            "id": "beam_job",
+            "object": "beam",
+            "participants": [
+              "r1",
+              "r3"
+            ],
+            "route": "north",
+            "after": []
+          },
+          {
+            "id": "box_job",
+            "object": "box",
+            "participants": [
+              "r2"
+            ],
+            "route": "south",
+            "after": [
+              "beam_job"
+            ]
+          }
+        ]
+      },
+      "environment": {
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+        "platform": "macOS-27.2-arm64-arm-64bit",
+        "mujoco": "3.12.0"
+      },
+      "model_provenance": {
+        "grasp_manifest_sha256": "372ecd9eed79627f64664a88ddeb7ba57975ecd824d079c34b03a6f847941933",
+        "grasp_models": {
+          "r1": {
+            "path": "r1-model.json",
+            "sha256": "1b2e6d6c3d010f4425fec605a197a1d758a3455e596b4a2e7b3be2bb63ae05a2"
+          },
+          "r3": {
+            "path": "r3-model.json",
+            "sha256": "fd7da785c3a9d25ebd35ccd8f087fa007b91406aa9470e684ddd057b55d7ecff"
+          }
+        },
+        "stage_manifest_sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a",
+        "stage_models": {
+          "r1": {
+            "forward": {
+              "path": "model-r1-forward.json",
+              "sha256": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45"
+            },
+            "lateral": {
+              "path": "model-r1-lateral.json",
+              "sha256": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869"
+            },
+            "yaw": {
+              "path": "model-r1-yaw.json",
+              "sha256": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374"
+            }
+          },
+          "r3": {
+            "forward": {
+              "path": "model-r3-forward.json",
+              "sha256": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+            },
+            "lateral": {
+              "path": "model-r3-lateral.json",
+              "sha256": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f"
+            },
+            "yaw": {
+              "path": "model-r3-yaw.json",
+              "sha256": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8"
+            }
+          }
+        },
+        "reference_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+      },
+      "camera_geometry_unchanged": true,
+      "obstacle_contact_steps": 0,
+      "evaluation": {
+        "physical_success": true,
+        "cargo": {
+          "beam": {
+            "max_lift_m": 0.07763320402667646,
+            "displacement_m": 1.6972273882476103,
+            "lift_observed_by_referee": true,
+            "inside_slot_at_end": true,
+            "released_supported_stable": true,
+            "physical_success": true
+          },
+          "box": {
+            "max_lift_m": 0.06846421901745987,
+            "displacement_m": 2.383708888724883,
+            "lift_observed_by_referee": true,
+            "inside_slot_at_end": true,
+            "released_supported_stable": true,
+            "physical_success": true
+          }
+        },
+        "robot_path_length_m": {
+          "r1": 3.1091367060546173,
+          "r2": 4.237780920238181,
+          "r3": 3.32391294235647
+        },
+        "all_three_body_motion_sim_s": 0,
+        "weld_steps": 0,
+        "samples": 2717,
+        "stable_window_s": 0.9999999999763531
+      },
+      "planning_models": [
+        "gemini-3.8-flash"
+      ],
+      "agreement_events": [
+        {
+          "event": "PROPOSED",
+          "turn": 0,
+          "proposal_id": "dispatch-8258c7cf0edd-plan-v1",
+          "version": 1,
+          "plan_hash": "f4c17fb3102f1d31ee1eed63179bec3e397c5f215457d392a88851229fcf99ee",
+          "plan": {
+            "dock": "dock_a",
+            "tasks": [
+              {
+                "id": "beam_job",
+                "object": "beam",
+                "participants": [
+                  "r1",
+                  "r2"
+                ],
+                "route": "north",
+                "after": []
+              },
+              {
+                "id": "box_job",
+                "object": "box",
+                "participants": [
+                  "r3"
+                ],
+                "route": "south",
+                "after": [
+                  "beam_job"
+                ]
+              }
+            ]
+          },
+          "proposer": "r1"
+        },
+        {
+          "event": "REJECTED",
+          "turn": 1,
+          "proposal_id": "dispatch-8258c7cf0edd-plan-v1",
+          "version": 1,
+          "plan_hash": "f4c17fb3102f1d31ee1eed63179bec3e397c5f215457d392a88851229fcf99ee",
+          "plan": {
+            "dock": "dock_a",
+            "tasks": [
+              {
+                "id": "beam_job",
+                "object": "beam",
+                "participants": [
+                  "r1",
+                  "r2"
+                ],
+                "route": "north",
+                "after": []
+              },
+              {
+                "id": "box_job",
+                "object": "box",
+                "participants": [
+                  "r3"
+                ],
+                "route": "south",
+                "after": [
+                  "beam_job"
+                ]
+              }
+            ]
+          },
+          "proposer": "r1"
+        },
+        {
+          "event": "PROPOSED",
+          "turn": 2,
+          "proposal_id": "dispatch-8258c7cf0edd-plan-v2",
+          "version": 2,
+          "plan_hash": "e6c059e6b92dae95c292dc349c3b134697dbeea64725f89dd4311fed7d314476",
+          "plan": {
+            "dock": "dock_a",
+            "tasks": [
+              {
+                "id": "beam_job",
+                "object": "beam",
+                "participants": [
+                  "r1",
+                  "r3"
+                ],
+                "route": "north",
+                "after": []
+              },
+              {
+                "id": "box_job",
+                "object": "box",
+                "participants": [
+                  "r2"
+                ],
+                "route": "south",
+                "after": [
+                  "beam_job"
+                ]
+              }
+            ]
+          },
+          "proposer": "r2"
+        },
+        {
+          "event": "COMMITTED",
+          "turn": 3,
+          "proposal_id": "dispatch-8258c7cf0edd-plan-v2",
+          "version": 2,
+          "plan_hash": "e6c059e6b92dae95c292dc349c3b134697dbeea64725f89dd4311fed7d314476",
+          "plan": {
+            "dock": "dock_a",
+            "tasks": [
+              {
+                "id": "beam_job",
+                "object": "beam",
+                "participants": [
+                  "r1",
+                  "r3"
+                ],
+                "route": "north",
+                "after": []
+              },
+              {
+                "id": "box_job",
+                "object": "box",
+                "participants": [
+                  "r2"
+                ],
+                "route": "south",
+                "after": [
+                  "beam_job"
+                ]
+              }
+            ]
+          },
+          "proposer": "r2"
+        }
+      ],
+      "execution_events": [],
+      "feasibility_attempts": [
+        {
+          "feasible": true,
+          "chosen_beam_route": "north",
+          "beam_routes": {
+            "north": {
+              "feasible": true,
+              "route": [
+                [
+                  -0.15917861510373799,
+                  -1.6584790944463572,
+                  0.0
+                ],
+                [
+                  -0.09917861510373799,
+                  -1.2984790944463573,
+                  1.5707963267948966
+                ],
+                [
+                  1.280821384896262,
+                  -1.2984790944463573,
+                  1.5707963267948966
+                ],
+                [
+                  1.400821384896262,
+                  -1.4184790944463572,
+                  0.7853981633974483
+                ],
+                [
+                  1.44436,
+                  -1.36376,
+                  0.0
+                ]
+              ],
+              "reason": "swept footprint path found",
+              "observed_barriers": [
+                {
+                  "id": "rgb_box_0",
+                  "center_m": [
+                    -0.16029126619756284,
+                    -2.632258735711769
+                  ],
+                  "half_extents_m": [
+                    0.05,
+                    0.06
+                  ],
+                  "height_m": 0.1,
+                  "source": "current cyan cargo RGB with conservative projection bound"
+                },
+                {
+                  "id": "rgb_other_robot",
+                  "center_m": [
+                    -0.7376732634006784,
+                    -2.7370576599980985
+                  ],
+                  "half_extents_m": [
+                    0.14,
+                    0.14
+                  ],
+                  "height_m": 0.35,
+                  "source": "current wheel-envelope RGB observation"
+                }
+              ],
+              "after_box_delivery_and_yield_feasible": false,
+              "conditional_on_box_delivery_and_yield": false
+            },
+            "south": {
+              "feasible": false,
+              "route": null,
+              "reason": "no swept footprint path in authored map plus RGB obstacles",
+              "observed_barriers": [
+                {
+                  "id": "rgb_box_0",
+                  "center_m": [
+                    -0.16029126619756284,
+                    -2.632258735711769
+                  ],
+                  "half_extents_m": [
+                    0.05,
+                    0.06
+                  ],
+                  "height_m": 0.1,
+                  "source": "current cyan cargo RGB with conservative projection bound"
+                },
+                {
+                  "id": "rgb_other_robot",
+                  "center_m": [
+                    -0.7376732634006784,
+                    -2.7370576599980985
+                  ],
+                  "half_extents_m": [
+                    0.14,
+                    0.14
+                  ],
+                  "height_m": 0.35,
+                  "source": "current wheel-envelope RGB observation"
+                }
+              ],
+              "after_box_delivery_and_yield_feasible": true,
+              "conditional_on_box_delivery_and_yield": false
+            }
+          },
+          "chosen_box_route": "south",
+          "box_routes": {
+            "north": {
+              "feasible": true,
+              "gate_m": [
+                0.6,
+                -1.18
+              ]
+            },
+            "south": {
+              "feasible": true,
+              "gate_m": [
+                0.6,
+                -2.82
+              ]
+            }
+          },
+          "other_robot_rgb_observation": {
+            "center_px": [
+              109.99998474121094,
+              570.9999389648438
+            ],
+            "xy_m": [
+              -0.7376732634006784,
+              -2.7370576599980985
+            ],
+            "heading_rad": 0.0,
+            "tracking": {
+              "method": "own-motion/last-cargo RGB hint plus current four-wheel geometry"
+            },
+            "source": "current RGB; nominal fixed camera feature plane, not simulator pose"
+          },
+          "source": "authored static geometry + current TOP RGB + declared loaded footprint; not physical passage proof",
+          "plan_hash": "e6c059e6b92dae95c292dc349c3b134697dbeea64725f89dd4311fed7d314476",
+          "input_sha256": "26507613af0d624dce9b5eb59040fa8e0ece3b9ec3a97630199df6d0be80f4a1"
+        }
+      ],
+      "id": "F3",
+      "variant": "shared_crossing",
+      "dock": "dock_a",
+      "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F3",
+      "action_counts": {
+        "issued-commands.json": {
+          "r1": 645,
+          "r2": 244,
+          "r3": 645
+        },
+        "solo-decisions.json": 387,
+        "solo-raw-actions.json": 2041,
+        "solo-yield.json": 0,
+        "pair_decision_kinds": {
+          "image_binding": 637,
+          "coarse": 50,
+          "learned_approach": 1,
+          "dock": 5,
+          "preclose": 1,
+          "navigation_map": 1,
+          "rotating_carry": 435,
+          "visual_placement": 1
+        }
+      },
+      "input_audit": {
+        "passed": true,
+        "scope": "saved input reconstruction and exact model prediction replay; not physical success",
+        "run": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F3",
+        "planning_requests": 12,
+        "actual_llm_wires": 12,
+        "pair_image_bindings": 637,
+        "learned_approach_predictions": 242,
+        "grasp_predictions": 32,
+        "solo_own_command_observations": 387,
+        "prior_rgb_grasp_anchors_verified": 18,
+        "solo_decision_replay": {
+          "actions_replayed": 387,
+          "source": "archived own RGB + TOP RGB + own command state + recorded resource wait signals",
+          "scope": "controller decision replay; resource ownership checked separately, not physical success"
+        },
+        "yield_replay": {
+          "actions_replayed": 0
+        },
+        "navigation_replay": {
+          "rgb_rotation_decisions_replayed": 435,
+          "source": "archived RGB + authored map + exact plan; no referee input"
+        }
+      },
+      "planning_input_audit": {
+        "passed": true,
+        "planning_requests_reconstructed": 12,
+        "actual_llm_wires_reconstructed": 12,
+        "scope": "archived own/TOP RGB, authored map/mission, issued-command history, peer claims; no physical-success claim"
+      },
+      "video_qa": {
+        "reported_frames": 2716,
+        "decoded_frames": 2716,
+        "fps": 10.0,
+        "duration_s": 271.6,
+        "all_reported_frames_decoded": true,
+        "extracted_frames": [
+          0,
+          679,
+          1358,
+          2037,
+          2715
+        ],
+        "manual_review": {
+          "reviewed_video_frames": [
+            1358,
+            2715
+          ],
+          "reviewed_rgb": [
+            "rgb/final-top.jpg"
+          ],
+          "scope": "Selected frames inspected for real carrying, obstacle clearance and final cargo placement; not an exhaustive visual inspection of every decoded frame."
+        }
+      }
+    },
+    {
+      "source_sha": "49f2b629cb11ee36a917d029c5dd752d56cb3bca",
+      "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
+      "plan_committed": true,
+      "protocol_complete": true,
+      "physical_success": true,
+      "error": null,
+      "phase": "FINISHED",
+      "wall_s": 1054.7434653329983,
+      "llm_calls": 18,
+      "usage": {
+        "prompt_tokens": 184510,
+        "completion_tokens": 4720,
+        "total_tokens": 195290
+      },
+      "cost_usd": null,
+      "plan": {
+        "dock": "dock_a",
+        "tasks": [
+          {
+            "after": [
+              "box_job"
+            ],
+            "id": "beam_job",
+            "object": "beam",
+            "participants": [
+              "r1",
+              "r3"
+            ],
+            "route": "south"
+          },
+          {
+            "after": [],
+            "id": "box_job",
+            "object": "box",
+            "participants": [
+              "r2"
+            ],
+            "route": "south"
+          }
+        ]
+      },
+      "environment": {
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+        "platform": "macOS-27.2-arm64-arm-64bit",
+        "mujoco": "3.12.0"
+      },
+      "model_provenance": {
+        "grasp_manifest_sha256": "372ecd9eed79627f64664a88ddeb7ba57975ecd824d079c34b03a6f847941933",
+        "grasp_models": {
+          "r1": {
+            "path": "r1-model.json",
+            "sha256": "1b2e6d6c3d010f4425fec605a197a1d758a3455e596b4a2e7b3be2bb63ae05a2"
+          },
+          "r3": {
+            "path": "r3-model.json",
+            "sha256": "fd7da785c3a9d25ebd35ccd8f087fa007b91406aa9470e684ddd057b55d7ecff"
+          }
+        },
+        "stage_manifest_sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a",
+        "stage_models": {
+          "r1": {
+            "forward": {
+              "path": "model-r1-forward.json",
+              "sha256": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45"
+            },
+            "lateral": {
+              "path": "model-r1-lateral.json",
+              "sha256": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869"
+            },
+            "yaw": {
+              "path": "model-r1-yaw.json",
+              "sha256": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374"
+            }
+          },
+          "r3": {
+            "forward": {
+              "path": "model-r3-forward.json",
+              "sha256": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+            },
+            "lateral": {
+              "path": "model-r3-lateral.json",
+              "sha256": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f"
+            },
+            "yaw": {
+              "path": "model-r3-yaw.json",
+              "sha256": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8"
+            }
+          }
+        },
+        "reference_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+      },
+      "camera_geometry_unchanged": true,
+      "obstacle_contact_steps": 0,
+      "evaluation": {
+        "physical_success": true,
+        "cargo": {
+          "beam": {
+            "max_lift_m": 0.07730965599627945,
+            "displacement_m": 1.6859373854179123,
+            "lift_observed_by_referee": true,
+            "inside_slot_at_end": true,
+            "released_supported_stable": true,
+            "physical_success": true
+          },
+          "box": {
+            "max_lift_m": 0.06878816418771132,
+            "displacement_m": 2.388080002864406,
+            "lift_observed_by_referee": true,
+            "inside_slot_at_end": true,
+            "released_supported_stable": true,
+            "physical_success": true
+          }
+        },
+        "robot_path_length_m": {
+          "r1": 5.112501084358536,
+          "r2": 5.639918372171906,
+          "r3": 4.268780191587728
+        },
+        "all_three_body_motion_sim_s": 0,
+        "weld_steps": 0,
+        "samples": 3255,
+        "stable_window_s": 0.9999999999763531
+      },
+      "planning_models": [
+        "gemini-3.8-flash"
+      ],
+      "agreement_events": [
+        {
+          "event": "PROPOSED",
+          "turn": 0,
+          "proposal_id": "dispatch-606ef47ef26d-plan-v1",
+          "version": 1,
+          "plan_hash": "f032a23aa0a4070e637cb8055413af2eb7c0e2172eb3d7c09a764bcb16ba86f0",
+          "plan": {
+            "dock": "dock_a",
+            "tasks": [
+              {
+                "id": "beam_job",
+                "object": "beam",
+                "participants": [
+                  "r1",
+                  "r2"
+                ],
+                "route": "south",
+                "after": []
+              },
+              {
+                "id": "box_job",
+                "object": "box",
+                "participants": [
+                  "r3"
+                ],
+                "route": "south",
+                "after": [
+                  "beam_job"
+                ]
+              }
+            ]
+          },
+          "proposer": "r1"
+        },
+        {
+          "event": "REJECTED",
+          "turn": 1,
+          "proposal_id": "dispatch-606ef47ef26d-plan-v1",
+          "version": 1,
+          "plan_hash": "f032a23aa0a4070e637cb8055413af2eb7c0e2172eb3d7c09a764bcb16ba86f0",
+          "plan": {
+            "dock": "dock_a",
+            "tasks": [
+              {
+                "id": "beam_job",
+                "object": "beam",
+                "participants": [
+                  "r1",
+                  "r2"
+                ],
+                "route": "south",
+                "after": []
+              },
+              {
+                "id": "box_job",
+                "object": "box",
+                "participants": [
+                  "r3"
+                ],
+                "route": "south",
+                "after": [
+                  "beam_job"
+                ]
+              }
+            ]
+          },
+          "proposer": "r1"
+        },
+        {
+          "event": "PROPOSED",
+          "turn": 2,
+          "proposal_id": "dispatch-606ef47ef26d-plan-v2",
+          "version": 2,
+          "plan_hash": "40a0f0807cbcdcde47a74a6a21751c599ca6fa811a7ea4e3b708533ed26fe418",
+          "plan": {
+            "dock": "dock_a",
+            "tasks": [
+              {
+                "after": [],
+                "id": "beam_job",
+                "object": "beam",
+                "participants": [
+                  "r1",
+                  "r3"
+                ],
+                "route": "south"
+              },
+              {
+                "after": [
+                  "beam_job"
+                ],
+                "id": "box_job",
+                "object": "box",
+                "participants": [
+                  "r2"
+                ],
+                "route": "south"
+              }
+            ]
+          },
+          "proposer": "r2"
+        },
+        {
+          "event": "COMMITTED",
+          "turn": 3,
+          "proposal_id": "dispatch-606ef47ef26d-plan-v2",
+          "version": 2,
+          "plan_hash": "40a0f0807cbcdcde47a74a6a21751c599ca6fa811a7ea4e3b708533ed26fe418",
+          "plan": {
+            "dock": "dock_a",
+            "tasks": [
+              {
+                "after": [],
+                "id": "beam_job",
+                "object": "beam",
+                "participants": [
+                  "r1",
+                  "r3"
+                ],
+                "route": "south"
+              },
+              {
+                "after": [
+                  "beam_job"
+                ],
+                "id": "box_job",
+                "object": "box",
+                "participants": [
+                  "r2"
+                ],
+                "route": "south"
+              }
+            ]
+          },
+          "proposer": "r2"
+        },
+        {
+          "event": "INVALIDATED",
+          "version": 2,
+          "reason": "RGB/map capability rejected the committed plan"
+        },
+        {
+          "event": "PROPOSED",
+          "turn": 4,
+          "proposal_id": "dispatch-606ef47ef26d-plan-v3",
+          "version": 3,
+          "plan_hash": "eecc601ae32fc13bda722dd6b7c4b0824ebf95743f2db77c19f6b14647b4203b",
+          "plan": {
+            "dock": "dock_a",
+            "tasks": [
+              {
+                "after": [
+                  "box_job"
+                ],
+                "id": "beam_job",
+                "object": "beam",
+                "participants": [
+                  "r1",
+                  "r3"
+                ],
+                "route": "south"
+              },
+              {
+                "after": [],
+                "id": "box_job",
+                "object": "box",
+                "participants": [
+                  "r2"
+                ],
+                "route": "south"
+              }
+            ]
+          },
+          "proposer": "r3"
+        },
+        {
+          "event": "COMMITTED",
+          "turn": 5,
+          "proposal_id": "dispatch-606ef47ef26d-plan-v3",
+          "version": 3,
+          "plan_hash": "eecc601ae32fc13bda722dd6b7c4b0824ebf95743f2db77c19f6b14647b4203b",
+          "plan": {
+            "dock": "dock_a",
+            "tasks": [
+              {
+                "after": [
+                  "box_job"
+                ],
+                "id": "beam_job",
+                "object": "beam",
+                "participants": [
+                  "r1",
+                  "r3"
+                ],
+                "route": "south"
+              },
+              {
+                "after": [],
+                "id": "box_job",
+                "object": "box",
+                "participants": [
+                  "r2"
+                ],
+                "route": "south"
+              }
+            ]
+          },
+          "proposer": "r3"
+        }
+      ],
+      "execution_events": [
+        {
+          "event": "REPLAN_REQUIRED",
+          "sim_time_s": 5.199999999999838,
+          "wall_s": 46.1411075420001,
+          "reason": {
+            "feasible": false,
+            "chosen_beam_route": "south",
+            "beam_routes": {
+              "north": {
+                "feasible": false,
+                "route": null,
+                "reason": "no swept footprint path in authored map plus RGB obstacles",
+                "observed_barriers": [
+                  {
+                    "id": "rgb_barrier_0",
+                    "center_m": [
+                      0.6060332589135561,
+                      -1.1319363679601522
+                    ],
+                    "half_extents_m": [
+                      0.1646019584865962,
+                      0.37563044165297244
+                    ],
+                    "height_m": 0.25,
+                    "source": "conservative TOP RGB projection; unknown actual height",
+                    "bbox_px": [
+                      455,
+                      21,
+                      80,
+                      181
+                    ],
+                    "image_sha256": "e3a666846ed16e3b7ec807355b94e76ae0ad9471a6acc2a0ad9fd1082fde26f9"
+                  },
+                  {
+                    "id": "rgb_box_0",
+                    "center_m": [
+                      -0.16029126619756284,
+                      -2.632258735711769
+                    ],
+                    "half_extents_m": [
+                      0.05,
+                      0.06
+                    ],
+                    "height_m": 0.1,
+                    "source": "current cyan cargo RGB with conservative projection bound"
+                  },
+                  {
+                    "id": "rgb_other_robot",
+                    "center_m": [
+                      -0.7376732634006784,
+                      -2.7370576599980985
+                    ],
+                    "half_extents_m": [
+                      0.14,
+                      0.14
+                    ],
+                    "height_m": 0.35,
+                    "source": "current wheel-envelope RGB observation"
+                  }
+                ],
+                "after_box_delivery_and_yield_feasible": false,
+                "conditional_on_box_delivery_and_yield": false
+              },
+              "south": {
+                "feasible": false,
+                "route": null,
+                "reason": "no swept footprint path in authored map plus RGB obstacles",
+                "observed_barriers": [
+                  {
+                    "id": "rgb_barrier_0",
+                    "center_m": [
+                      0.6060332589135561,
+                      -1.1319363679601522
+                    ],
+                    "half_extents_m": [
+                      0.1646019584865962,
+                      0.37563044165297244
+                    ],
+                    "height_m": 0.25,
+                    "source": "conservative TOP RGB projection; unknown actual height",
+                    "bbox_px": [
+                      455,
+                      21,
+                      80,
+                      181
+                    ],
+                    "image_sha256": "e3a666846ed16e3b7ec807355b94e76ae0ad9471a6acc2a0ad9fd1082fde26f9"
+                  },
+                  {
+                    "id": "rgb_box_0",
+                    "center_m": [
+                      -0.16029126619756284,
+                      -2.632258735711769
+                    ],
+                    "half_extents_m": [
+                      0.05,
+                      0.06
+                    ],
+                    "height_m": 0.1,
+                    "source": "current cyan cargo RGB with conservative projection bound"
+                  },
+                  {
+                    "id": "rgb_other_robot",
+                    "center_m": [
+                      -0.7376732634006784,
+                      -2.7370576599980985
+                    ],
+                    "half_extents_m": [
+                      0.14,
+                      0.14
+                    ],
+                    "height_m": 0.35,
+                    "source": "current wheel-envelope RGB observation"
+                  }
+                ],
+                "after_box_delivery_and_yield_feasible": true,
+                "conditional_on_box_delivery_and_yield": false
+              }
+            },
+            "chosen_box_route": "south",
+            "box_routes": {
+              "north": {
+                "feasible": false,
+                "reason": "BOX_ROUTE_UNSUPPORTED: north lacks 0.32m conservative clearance or crosses unvalidated terrain"
+              },
+              "south": {
+                "feasible": true,
+                "gate_m": [
+                  0.6,
+                  -2.82
+                ]
+              }
+            },
+            "other_robot_rgb_observation": {
+              "center_px": [
+                109.99998474121094,
+                570.9999389648438
+              ],
+              "xy_m": [
+                -0.7376732634006784,
+                -2.7370576599980985
+              ],
+              "heading_rad": 0.0,
+              "tracking": {
+                "method": "own-motion/last-cargo RGB hint plus current four-wheel geometry"
+              },
+              "source": "current RGB; nominal fixed camera feature plane, not simulator pose"
+            },
+            "source": "authored static geometry + current TOP RGB + declared loaded footprint; not physical passage proof",
+            "plan_hash": "40a0f0807cbcdcde47a74a6a21751c599ca6fa811a7ea4e3b708533ed26fe418",
+            "input_sha256": "e3a666846ed16e3b7ec807355b94e76ae0ad9471a6acc2a0ad9fd1082fde26f9"
+          },
+          "stopped_before_execution": true
+        }
+      ],
+      "feasibility_attempts": [
+        {
+          "feasible": false,
+          "chosen_beam_route": "south",
+          "beam_routes": {
+            "north": {
+              "feasible": false,
+              "route": null,
+              "reason": "no swept footprint path in authored map plus RGB obstacles",
+              "observed_barriers": [
+                {
+                  "id": "rgb_barrier_0",
+                  "center_m": [
+                    0.6060332589135561,
+                    -1.1319363679601522
+                  ],
+                  "half_extents_m": [
+                    0.1646019584865962,
+                    0.37563044165297244
+                  ],
+                  "height_m": 0.25,
+                  "source": "conservative TOP RGB projection; unknown actual height",
+                  "bbox_px": [
+                    455,
+                    21,
+                    80,
+                    181
+                  ],
+                  "image_sha256": "e3a666846ed16e3b7ec807355b94e76ae0ad9471a6acc2a0ad9fd1082fde26f9"
+                },
+                {
+                  "id": "rgb_box_0",
+                  "center_m": [
+                    -0.16029126619756284,
+                    -2.632258735711769
+                  ],
+                  "half_extents_m": [
+                    0.05,
+                    0.06
+                  ],
+                  "height_m": 0.1,
+                  "source": "current cyan cargo RGB with conservative projection bound"
+                },
+                {
+                  "id": "rgb_other_robot",
+                  "center_m": [
+                    -0.7376732634006784,
+                    -2.7370576599980985
+                  ],
+                  "half_extents_m": [
+                    0.14,
+                    0.14
+                  ],
+                  "height_m": 0.35,
+                  "source": "current wheel-envelope RGB observation"
+                }
+              ],
+              "after_box_delivery_and_yield_feasible": false,
+              "conditional_on_box_delivery_and_yield": false
+            },
+            "south": {
+              "feasible": false,
+              "route": null,
+              "reason": "no swept footprint path in authored map plus RGB obstacles",
+              "observed_barriers": [
+                {
+                  "id": "rgb_barrier_0",
+                  "center_m": [
+                    0.6060332589135561,
+                    -1.1319363679601522
+                  ],
+                  "half_extents_m": [
+                    0.1646019584865962,
+                    0.37563044165297244
+                  ],
+                  "height_m": 0.25,
+                  "source": "conservative TOP RGB projection; unknown actual height",
+                  "bbox_px": [
+                    455,
+                    21,
+                    80,
+                    181
+                  ],
+                  "image_sha256": "e3a666846ed16e3b7ec807355b94e76ae0ad9471a6acc2a0ad9fd1082fde26f9"
+                },
+                {
+                  "id": "rgb_box_0",
+                  "center_m": [
+                    -0.16029126619756284,
+                    -2.632258735711769
+                  ],
+                  "half_extents_m": [
+                    0.05,
+                    0.06
+                  ],
+                  "height_m": 0.1,
+                  "source": "current cyan cargo RGB with conservative projection bound"
+                },
+                {
+                  "id": "rgb_other_robot",
+                  "center_m": [
+                    -0.7376732634006784,
+                    -2.7370576599980985
+                  ],
+                  "half_extents_m": [
+                    0.14,
+                    0.14
+                  ],
+                  "height_m": 0.35,
+                  "source": "current wheel-envelope RGB observation"
+                }
+              ],
+              "after_box_delivery_and_yield_feasible": true,
+              "conditional_on_box_delivery_and_yield": false
+            }
+          },
+          "chosen_box_route": "south",
+          "box_routes": {
+            "north": {
+              "feasible": false,
+              "reason": "BOX_ROUTE_UNSUPPORTED: north lacks 0.32m conservative clearance or crosses unvalidated terrain"
+            },
+            "south": {
+              "feasible": true,
+              "gate_m": [
+                0.6,
+                -2.82
+              ]
+            }
+          },
+          "other_robot_rgb_observation": {
+            "center_px": [
+              109.99998474121094,
+              570.9999389648438
+            ],
+            "xy_m": [
+              -0.7376732634006784,
+              -2.7370576599980985
+            ],
+            "heading_rad": 0.0,
+            "tracking": {
+              "method": "own-motion/last-cargo RGB hint plus current four-wheel geometry"
+            },
+            "source": "current RGB; nominal fixed camera feature plane, not simulator pose"
+          },
+          "source": "authored static geometry + current TOP RGB + declared loaded footprint; not physical passage proof",
+          "plan_hash": "40a0f0807cbcdcde47a74a6a21751c599ca6fa811a7ea4e3b708533ed26fe418",
+          "input_sha256": "e3a666846ed16e3b7ec807355b94e76ae0ad9471a6acc2a0ad9fd1082fde26f9"
+        },
+        {
+          "feasible": true,
+          "chosen_beam_route": "south",
+          "beam_routes": {
+            "north": {
+              "feasible": false,
+              "route": null,
+              "reason": "no swept footprint path in authored map plus RGB obstacles",
+              "observed_barriers": [
+                {
+                  "id": "rgb_barrier_0",
+                  "center_m": [
+                    0.6060332589135561,
+                    -1.1319363679601522
+                  ],
+                  "half_extents_m": [
+                    0.1646019584865962,
+                    0.37563044165297244
+                  ],
+                  "height_m": 0.25,
+                  "source": "conservative TOP RGB projection; unknown actual height",
+                  "bbox_px": [
+                    455,
+                    21,
+                    80,
+                    181
+                  ],
+                  "image_sha256": "e3a666846ed16e3b7ec807355b94e76ae0ad9471a6acc2a0ad9fd1082fde26f9"
+                }
+              ],
+              "after_box_delivery_and_yield_feasible": false,
+              "conditional_on_box_delivery_and_yield": true
+            },
+            "south": {
+              "feasible": true,
+              "route": [
+                [
+                  -0.15917861510373799,
+                  -1.6584790944463572,
+                  0.0
+                ],
+                [
+                  -0.15917861510373799,
+                  -2.2584790944463573,
+                  1.5707963267948966
+                ],
+                [
+                  -0.09917861510373799,
+                  -2.6784790944463572,
+                  1.5707963267948966
+                ],
+                [
+                  -0.03917861510373799,
+                  -2.7384790944463573,
+                  1.5707963267948966
+                ],
+                [
+                  1.280821384896262,
+                  -2.7384790944463573,
+                  1.5707963267948966
+                ],
+                [
+                  1.340821384896262,
+                  -2.4384790944463575,
+                  0.0
+                ],
+                [
+                  1.44436,
+                  -1.36376,
+                  0.0
+                ]
+              ],
+              "reason": "swept footprint path found",
+              "observed_barriers": [
+                {
+                  "id": "rgb_barrier_0",
+                  "center_m": [
+                    0.6060332589135561,
+                    -1.1319363679601522
+                  ],
+                  "half_extents_m": [
+                    0.1646019584865962,
+                    0.37563044165297244
+                  ],
+                  "height_m": 0.25,
+                  "source": "conservative TOP RGB projection; unknown actual height",
+                  "bbox_px": [
+                    455,
+                    21,
+                    80,
+                    181
+                  ],
+                  "image_sha256": "e3a666846ed16e3b7ec807355b94e76ae0ad9471a6acc2a0ad9fd1082fde26f9"
+                }
+              ],
+              "after_box_delivery_and_yield_feasible": true,
+              "conditional_on_box_delivery_and_yield": true
+            }
+          },
+          "chosen_box_route": "south",
+          "box_routes": {
+            "north": {
+              "feasible": false,
+              "reason": "BOX_ROUTE_UNSUPPORTED: north lacks 0.32m conservative clearance or crosses unvalidated terrain"
+            },
+            "south": {
+              "feasible": true,
+              "gate_m": [
+                0.6,
+                -2.82
+              ]
+            }
+          },
+          "other_robot_rgb_observation": {
+            "center_px": [
+              109.99998474121094,
+              570.9999389648438
+            ],
+            "xy_m": [
+              -0.7376732634006784,
+              -2.7370576599980985
+            ],
+            "heading_rad": 0.0,
+            "tracking": {
+              "method": "own-motion/last-cargo RGB hint plus current four-wheel geometry"
+            },
+            "source": "current RGB; nominal fixed camera feature plane, not simulator pose"
+          },
+          "source": "authored static geometry + current TOP RGB + declared loaded footprint; not physical passage proof",
+          "plan_hash": "eecc601ae32fc13bda722dd6b7c4b0824ebf95743f2db77c19f6b14647b4203b",
+          "input_sha256": "e3a666846ed16e3b7ec807355b94e76ae0ad9471a6acc2a0ad9fd1082fde26f9"
+        }
+      ],
+      "id": "F4",
+      "variant": "north_blocked",
+      "dock": "dock_a",
+      "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F4",
+      "action_counts": {
+        "issued-commands.json": {
+          "r1": 751,
+          "r2": 405,
+          "r3": 751
+        },
+        "solo-decisions.json": 391,
+        "solo-raw-actions.json": 2081,
+        "solo-yield.json": 156,
+        "pair_decision_kinds": {
+          "image_binding": 743,
+          "coarse": 58,
+          "learned_approach": 1,
+          "dock": 4,
+          "preclose": 1,
+          "navigation_map": 1,
+          "rotating_carry": 529,
+          "visual_placement": 1
+        }
+      },
+      "input_audit": {
+        "passed": true,
+        "scope": "saved input reconstruction and exact model prediction replay; not physical success",
+        "run": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F4",
+        "planning_requests": 18,
+        "actual_llm_wires": 18,
+        "pair_image_bindings": 743,
+        "learned_approach_predictions": 252,
+        "grasp_predictions": 32,
+        "solo_own_command_observations": 391,
+        "prior_rgb_grasp_anchors_verified": 18,
+        "solo_decision_replay": {
+          "actions_replayed": 391,
+          "source": "archived own RGB + TOP RGB + own command state + recorded resource wait signals",
+          "scope": "controller decision replay; resource ownership checked separately, not physical success"
+        },
+        "yield_replay": {
+          "actions_replayed": 156,
+          "visually_cleared_bay": true,
+          "source": "current RGB and authored staging goals; no referee input"
+        },
+        "navigation_replay": {
+          "rgb_rotation_decisions_replayed": 529,
+          "source": "archived RGB + authored map + exact plan; no referee input"
+        }
+      },
+      "planning_input_audit": {
+        "passed": true,
+        "planning_requests_reconstructed": 18,
+        "actual_llm_wires_reconstructed": 18,
+        "scope": "archived own/TOP RGB, authored map/mission, issued-command history, peer claims; no physical-success claim"
+      },
+      "video_qa": {
+        "reported_frames": 3254,
+        "decoded_frames": 3254,
+        "fps": 10.0,
+        "duration_s": 325.4,
+        "all_reported_frames_decoded": true,
+        "extracted_frames": [
+          0,
+          813,
+          1627,
+          2440,
+          3253
+        ],
+        "manual_review": {
+          "reviewed_video_frames": [
+            813,
+            2440,
+            3253
+          ],
+          "reviewed_rgb": [
+            "rgb/final-top.jpg"
+          ],
+          "scope": "Selected frames inspected for real carrying, obstacle clearance and final cargo placement; not an exhaustive visual inspection of every decoded frame."
+        }
+      }
+    }
+  ],
+  "counting_note": "Decision types and command types have different granularity; not combined into an invented action count."
+}

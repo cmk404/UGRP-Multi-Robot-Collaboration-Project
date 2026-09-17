@@ -1,0 +1,835 @@
+[
+  {
+    "id": "R1",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r1",
+    "source_sha": "74994b984f12add471a181d958d5373b9971d8b2",
+    "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+    "phase": "TRANSIT",
+    "error": "ValueError: dispatch beam unresolved or ambiguous in RGB",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 165.42287954200037,
+    "usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    },
+    "llm_calls": 0,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07755395242726539,
+          "displacement_m": 1.3026890151691424,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 2.8569724969126122,
+        "r2": 0.4354121204244023,
+        "r3": 2.8099997045691474
+      },
+      "all_three_body_motion_sim_s": 0.4999999999988347,
+      "weld_steps": 0,
+      "samples": 834,
+      "stable_window_s": 1.0000000000047748
+    }
+  },
+  {
+    "id": "R2",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r2",
+    "source_sha": "06a4b8c9d231f6f6ec10fc48b80eb321edcbf605",
+    "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+    "phase": "TRANSIT",
+    "error": "ValueError: dispatch beam unresolved or ambiguous in RGB",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 154.75871120900047,
+    "usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    },
+    "llm_calls": 0,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07755395242726539,
+          "displacement_m": 1.267171597884978,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 2.6163624404365775,
+        "r2": 0.4354121201897127,
+        "r3": 2.5694858417434636
+      },
+      "all_three_body_motion_sim_s": 0.4999999999988347,
+      "weld_steps": 0,
+      "samples": 806,
+      "stable_window_s": 1.0000000000047748
+    }
+  },
+  {
+    "id": "R3",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r3",
+    "source_sha": "1a306224cf4a6e8b8006d1f8cfd35368c3e78338",
+    "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+    "phase": "FINISHED",
+    "error": null,
+    "physical_success": true,
+    "protocol_complete": true,
+    "wall_s": 300.6900696249977,
+    "usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    },
+    "llm_calls": 0,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": true,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07755395242726539,
+          "displacement_m": 1.942248977639007,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": true
+        },
+        "box": {
+          "max_lift_m": 0.06881219020054286,
+          "displacement_m": 1.979338151187313,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": true
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 3.9536279130380034,
+        "r2": 4.33763869833951,
+        "r3": 3.8995997420272572
+      },
+      "all_three_body_motion_sim_s": 0.4999999999988347,
+      "weld_steps": 0,
+      "samples": 1826,
+      "stable_window_s": 0.9999999999763531
+    }
+  },
+  {
+    "id": "R4",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r4",
+    "source_sha": "371b73e2a139d420f47f49b6df9e803d0df54da6",
+    "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+    "phase": "GRASP",
+    "error": "RuntimeError: preclose RGB outside learned grasp support",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 85.44987266599856,
+    "usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    },
+    "llm_calls": 0,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 1.1889794704345036e-14,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 0.6632133336676954,
+        "r2": 0.026568418262440385,
+        "r3": 0.616865526137327
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 540,
+      "stable_window_s": 1.0000000000047748
+    }
+  },
+  {
+    "id": "R5",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r5",
+    "source_sha": "a08074b21230b3d3c1aa24a15a0fe52ad987f41b",
+    "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+    "phase": "TRANSIT",
+    "error": "RuntimeError: paired navigation stopped: {'r1': 'vision_stop', 'r3': 'vision_stop'}",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 91.80022958299742,
+    "usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    },
+    "llm_calls": 0,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07763320402667646,
+          "displacement_m": 0.001945365165024052,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 0.6741501345834394,
+        "r2": 0.026568418281983086,
+        "r3": 0.6273047031943814
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 580,
+      "stable_window_s": 1.0000000000047748
+    }
+  },
+  {
+    "id": "R6",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r6",
+    "source_sha": "bfb5bfd6360df9151e970dcf48c47532218bfa7e",
+    "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+    "phase": "TRANSIT",
+    "error": "RuntimeError: paired navigation stopped: {'r1': 'vision_stop', 'r3': 'vision_stop'}",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 122.99592929199935,
+    "usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    },
+    "llm_calls": 0,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07763320402667646,
+          "displacement_m": 0.1599526365369089,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 0.9021930953053678,
+        "r2": 0.026568418350621292,
+        "r3": 0.977951216499082
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 720,
+      "stable_window_s": 1.0000000000047748
+    }
+  },
+  {
+    "id": "R7",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r7",
+    "source_sha": "4e6f3cea5019bf943782ef49c6fadccc3d67ff5b",
+    "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+    "phase": "TRANSIT",
+    "error": "RuntimeError: paired navigation stopped: {'r1': 'payload_decoupled', 'r3': 'payload_decoupled'}",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 267.80249616700166,
+    "usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    },
+    "llm_calls": 0,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07763320402667646,
+          "displacement_m": 1.4798874302286613,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 2.7583686344751017,
+        "r2": 0.02656841866524562,
+        "r3": 2.905212871547598
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 1362,
+      "stable_window_s": 0.9999999999763531
+    }
+  },
+  {
+    "id": "R8",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r8",
+    "source_sha": "c7b3564afc927f58b640d7bb3b39dfd6175ac260",
+    "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+    "phase": "TRANSIT",
+    "error": "RuntimeError: paired navigation stopped: {'r1': 'payload_decoupled', 'r3': 'payload_decoupled'}",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 294.3628159580003,
+    "usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    },
+    "llm_calls": 0,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07763320402667646,
+          "displacement_m": 1.489622536591849,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 2.784911491286368,
+        "r2": 0.026568418672103467,
+        "r3": 2.931667222049442
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 1376,
+      "stable_window_s": 0.9999999999763531
+    }
+  },
+  {
+    "id": "R9",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r9",
+    "source_sha": "c7b3564afc927f58b640d7bb3b39dfd6175ac260",
+    "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
+    "phase": "TRANSIT",
+    "error": "ValueError: dispatch beam unresolved or ambiguous in RGB",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 398.4520697919979,
+    "usage": {
+      "prompt_tokens": 115462,
+      "completion_tokens": 3118,
+      "total_tokens": 122787
+    },
+    "llm_calls": 12,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07763320402667646,
+          "displacement_m": 1.1079003387832858,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.00028408330486545674,
+          "displacement_m": 0.021130034363632175,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 2.348683192017961,
+        "r2": 0.026568418823041506,
+        "r3": 1.7472457389769234
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 1684,
+      "stable_window_s": 0.9999999999763531
+    }
+  },
+  {
+    "id": "R10",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r10",
+    "source_sha": "1694dc7f4973f0d50686e2707593a31e7a9c593c",
+    "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+    "phase": "TRANSIT",
+    "error": "RuntimeError: paired navigation stopped: {'r1': 'payload_decoupled', 'r3': 'payload_decoupled'}",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 422.649770541997,
+    "usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    },
+    "llm_calls": 0,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07763320402667646,
+          "displacement_m": 1.5053942017508133,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 2.8521403888461876,
+        "r2": 0.026568418697552998,
+        "r3": 2.998520669611367
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 1428,
+      "stable_window_s": 0.9999999999763531
+    }
+  },
+  {
+    "id": "R11",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r11",
+    "source_sha": "1694dc7f4973f0d50686e2707593a31e7a9c593c",
+    "scope": "fixture-initialized recovery diagnostic; actual LLM re-negotiation after capability rejection, not fresh initial LLM E2E",
+    "phase": "TRANSIT",
+    "error": "RuntimeError: paired navigation stopped: {'r1': 'no_route', 'r3': 'no_route'}",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 372.8146066249974,
+    "usage": {
+      "prompt_tokens": 90202,
+      "completion_tokens": 2381,
+      "total_tokens": 94789
+    },
+    "llm_calls": 9,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07735388723086298,
+          "displacement_m": 0.034599041177806454,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.06878816418771132,
+          "displacement_m": 2.3756584124303686,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": true
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 0.7058917855370018,
+        "r2": 5.603066498560401,
+        "r3": 0.6652036190798299
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 2148,
+      "stable_window_s": 0.9999999999763531
+    }
+  },
+  {
+    "id": "candidate1-F3",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final-20260917/F3",
+    "source_sha": "0eb7c155b9bd7b24aa3956d59efbed1150c1ca11",
+    "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
+    "phase": "TRANSIT",
+    "error": "RuntimeError: paired navigation stopped: {'r1': 'payload_decoupled', 'r3': 'payload_decoupled'}",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 603.135981792002,
+    "usage": {
+      "prompt_tokens": 115765,
+      "completion_tokens": 3043,
+      "total_tokens": 122017
+    },
+    "llm_calls": 12,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07763320402667646,
+          "displacement_m": 1.6135956840518535,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 2.860819344744185,
+        "r2": 0.026568418822041195,
+        "r3": 3.2641941759403252
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 1682,
+      "stable_window_s": 0.9999999999763531
+    }
+  },
+  {
+    "id": "candidate1-F4",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final-20260917/F4",
+    "source_sha": "0eb7c155b9bd7b24aa3956d59efbed1150c1ca11",
+    "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
+    "phase": "TRANSIT",
+    "error": "RuntimeError: paired navigation stopped: {'r1': 'payload_decoupled', 'r3': 'payload_decoupled'}",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 851.1555637920028,
+    "usage": {
+      "prompt_tokens": 184649,
+      "completion_tokens": 4793,
+      "total_tokens": 197976
+    },
+    "llm_calls": 18,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07735388723086298,
+          "displacement_m": 1.6949619556899123,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.06878816418771132,
+          "displacement_m": 2.3756584170596593,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": true
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 5.017581938676181,
+        "r2": 5.603066503839533,
+        "r3": 3.643364639020719
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 3216,
+      "stable_window_s": 0.9999999999763531
+    }
+  },
+  {
+    "id": "candidate2-F3",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final2-20260917/F3",
+    "source_sha": "b9c9e07748d2b23a53d0d3816d030f03a9b48962",
+    "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
+    "phase": "TRANSIT",
+    "error": "RuntimeError: paired navigation stopped: {'r1': 'track', 'r3': 'track'}",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 586.4236605840015,
+    "usage": {
+      "prompt_tokens": 115893,
+      "completion_tokens": 3074,
+      "total_tokens": 120996
+    },
+    "llm_calls": 12,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07763320402667646,
+          "displacement_m": 1.6733985625492138,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 2.9281737368309777,
+        "r2": 0.026568418715141706,
+        "r3": 3.3176848426380454
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 1464,
+      "stable_window_s": 0.9999999999763531
+    }
+  },
+  {
+    "id": "candidate2-F4",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final2-20260917/F4",
+    "source_sha": "b9c9e07748d2b23a53d0d3816d030f03a9b48962",
+    "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
+    "phase": "TRANSIT",
+    "error": "RuntimeError: paired navigation stopped: {'r1': 'formation_span_abort', 'r3': 'formation_span_abort'}",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 908.1925030419989,
+    "usage": {
+      "prompt_tokens": 184200,
+      "completion_tokens": 4350,
+      "total_tokens": 189397
+    },
+    "llm_calls": 18,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07735388723086298,
+          "displacement_m": 1.6823977706196183,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.06878816418771132,
+          "displacement_m": 2.3756584170420263,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": true
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 5.157241110207727,
+        "r2": 5.603066503819759,
+        "r3": 3.996673472751953
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 3212,
+      "stable_window_s": 0.9999999999763531
+    }
+  },
+  {
+    "id": "candidate3-F3",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final3-20260917/F3",
+    "source_sha": "4f612220416cbf72e8ce9f5892f8d845060bc7a7",
+    "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
+    "phase": "RELEASE",
+    "error": "RuntimeError: solo RGB decision budget exhausted",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 947.9314347500003,
+    "usage": {
+      "prompt_tokens": 85272,
+      "completion_tokens": 1971,
+      "total_tokens": 88895
+    },
+    "llm_calls": 9,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07763320402667646,
+          "displacement_m": 1.7486036353999626,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.06846421901873828,
+          "displacement_m": 2.385206854436684,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 3.158320425009925,
+        "r2": 4.22871772490964,
+        "r3": 3.263298148430091
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 3110,
+      "stable_window_s": 0.9999999999763531
+    }
+  },
+  {
+    "id": "candidate3-F4",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final3-20260917/F4",
+    "source_sha": "4f612220416cbf72e8ce9f5892f8d845060bc7a7",
+    "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
+    "phase": "TRANSIT",
+    "error": "RuntimeError: paired navigation stopped: {'r1': 'track', 'r3': 'track'}",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 1186.314455290998,
+    "usage": {
+      "prompt_tokens": 184157,
+      "completion_tokens": 4851,
+      "total_tokens": 198963
+    },
+    "llm_calls": 18,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07735388723086298,
+          "displacement_m": 1.6993247021497238,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.06878816418771132,
+          "displacement_m": 2.3756584173069424,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": true
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 5.049302306582871,
+        "r2": 5.60306650411625,
+        "r3": 4.227757385087806
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 3272,
+      "stable_window_s": 0.9999999999763531
+    }
+  }
+]
