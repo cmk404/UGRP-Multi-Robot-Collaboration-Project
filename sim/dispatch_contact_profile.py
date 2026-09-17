@@ -44,7 +44,7 @@ def contact_profile(xml,profile):
                         'condim':str(max(int(a.get('condim','3')),int(b.get('condim','3')))),
                         'friction':' '.join(map(str,friction)),
                         'solref':' '.join(map(str,solref)),
-                        'solimp':' .995 .995 .002 .5 2',
+                        'solimp':' .9999 .9999 .002 .5 2',
                         # Reduce soft-contact creep locally, with the existing normal
                         # time constant and unchanged Coulomb friction cone.
                         'solreffriction':'0 0','adhesion':'0',
