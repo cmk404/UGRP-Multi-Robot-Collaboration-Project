@@ -119,6 +119,7 @@ def audit_navigation(p,calls,committed,static_map,*,yield_vision=None,identity=N
  from harness.dispatch_skill_binding import SkillBindings,BeamContinuity
  from harness.pair_carry_sync import PairCarrySync
  from harness.camera_goal_transport import own_payload
+ from harness.dispatch_own_hold import OwnHoldContinuity
  import copy,math,json,hashlib
  bindings=SkillBindings(committed,static_map);continuity=BeamContinuity()
  agents=sync=None;last=None;anchor=None;count=0
@@ -147,16 +148,15 @@ def audit_navigation(p,calls,committed,static_map,*,yield_vision=None,identity=N
    data=navigation_map(bindings,top,other_robot_center_px=other['center_px'] if other else None);assert data==call['map']
    agents={r:PairNavigator(data,r) for r in bindings.pair}
    sync=PairCarrySync('dispatch-'+bindings.committed['plan_hash']);anchor=copy.deepcopy(last['own'])
+   own_guards={r:OwnHoldContinuity(raw(anchor[r])) for r in bindings.pair}
   elif call['kind']=='rotating_carry':
    assert agents is not None
    decisions={}
    for r in agents:
     own=raw(call['images'][r]['own']);top=raw(call['images'][r]['top'])
     value=agents[r].decide(own,top)
-    current,initial=own_payload(own,hue_upper=35),own_payload(raw(anchor[r]),hue_upper=35)
-    held=bool(current and initial and .25<=current[0]/initial[0]<=4 and math.dist(current[1:],initial[1:])<=.15)
-    value['own_attachment']={'held_estimate':held,'current':current,'anchor':initial}
-    value['ready']=value['ready'] and held;decisions[r]=value
+    value['own_attachment']=own_guards[r].observe(own)
+    value['ready']=value['ready'] and value['own_attachment']['held_estimate'];decisions[r]=value
     assert json.loads(json.dumps(value))==call['decisions'][r],('rotation RGB replay',count,r)
    if 'frame_ids' in call:
     permission=authorize_pair(sync,decisions,call['frame_ids'],count)

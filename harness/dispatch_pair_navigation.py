@@ -149,37 +149,43 @@ def plan_route(start, goal, data):
     return None
 
 
-def track_wheel_motion(previous,current,center,angle,template):
-    """Bidirectional RGB feature motion of the observed rigid wheel envelope.
+def track_wheel_motion(previous,current,center,angle,template,*,chassis_only=False):
+    """Bidirectional RGB motion of the rigid chassis inside the wheel envelope.
 
-    Paint can merge with yellow wheels; it cannot define this motion estimate.
-    Features are seeded on the prior observed body silhouette. An inlier fit
-    must span multiple wheel quadrants and agree in forward/backward images.
+    Rolling tread is not body translation, especially when a carrier is held
+    by the payload. The central chassis patch excludes the four rolling wheel
+    corners and the extended gripper. Its features must span both image axes.
     """
     old=cv2.cvtColor(previous,cv2.COLOR_BGR2GRAY);new=cv2.cvtColor(current,cv2.COLOR_BGR2GRAY)
     matrix=cv2.getRotationMatrix2D((30,30),angle,1.)
     matrix[:,2]+=np.asarray(center)-30
-    mask=cv2.warpAffine((template>20).astype(np.uint8)*255,matrix,(old.shape[1],old.shape[0]))
-    mask=cv2.dilate(mask,np.ones((5,5),np.uint8))
-    points=cv2.goodFeaturesToTrack(old,80,.01,3,mask=mask)
-    if points is None or len(points)<8:raise ValueError('wheel RGB features missing')
+    if chassis_only:
+        yy,xx=np.indices((61,61));u,v=xx-30,yy-30
+        core=((abs(u)<=24)&(abs(v)<=23)&((abs(u)<=10)|(abs(v)<=10))).astype(np.uint8)*255
+        mask=cv2.warpAffine(core,matrix,(old.shape[1],old.shape[0]),flags=cv2.INTER_NEAREST)
+    else:
+        # Preserve the already validated short post-release solo-yield observer.
+        mask=cv2.warpAffine((template>20).astype(np.uint8)*255,matrix,(old.shape[1],old.shape[0]))
+        mask=cv2.dilate(mask,np.ones((5,5),np.uint8))
+    points=cv2.goodFeaturesToTrack(old,80,.005 if chassis_only else .01,2 if chassis_only else 3,mask=mask)
+    if points is None or len(points)<8:raise ValueError('rigid chassis RGB features missing')
     forward,ok,errors=cv2.calcOpticalFlowPyrLK(old,new,points,None,winSize=(15,15),maxLevel=2)
     backward,back_ok,_=cv2.calcOpticalFlowPyrLK(new,old,forward,None,winSize=(15,15),maxLevel=2)
     cycle=np.linalg.norm(backward-points,axis=2).ravel()
     good=(ok.ravel()>0)&(back_ok.ravel()>0)&(cycle<.7)&(errors.ravel()<30)
     a=points.reshape(-1,2)[good];b=forward.reshape(-1,2)[good]
-    if len(a)<8:raise ValueError('wheel bidirectional RGB motion unresolved')
+    if len(a)<8:raise ValueError('chassis bidirectional RGB motion unresolved')
     transform,inliers=cv2.estimateAffinePartial2D(a,b,method=cv2.RANSAC,ransacReprojThreshold=1.,maxIters=1000,confidence=.99)
     if transform is None:raise ValueError('wheel rigid RGB motion unresolved')
     keep=inliers.ravel().astype(bool);fraction=float(keep.mean())
-    if keep.sum()<8 or fraction<.65 or min(np.ptp(a[keep],axis=0))<25:
-        raise ValueError('wheel rigid feature coverage lost')
+    if keep.sum()<8 or fraction<(.70 if chassis_only else .65) or min(np.ptp(a[keep],axis=0))<(18 if chassis_only else 25):
+        raise ValueError('rigid chassis feature coverage lost')
     scale=float(np.hypot(transform[0,0],transform[0,1]))
     turn=math.degrees(math.atan2(transform[0,1],transform[0,0]))
     next_center=transform[:,:2]@np.asarray(center)+transform[:,2]
     if not .97<=scale<=1.03 or abs(turn)>5 or np.linalg.norm(next_center-center)>17:
         raise ValueError('implausible wheel RGB motion')
-    return tuple(map(float,next_center)),angle+turn,{'method':'bidirectional RGB rigid feature motion',
+    return tuple(map(float,next_center)),angle+turn,{'method':('bidirectional RGB rigid chassis motion; rolling tread excluded' if chassis_only else 'bidirectional RGB rigid feature motion'),
         'inlier_fraction':fraction,'features':int(len(a)),'inliers':int(keep.sum()),
         'scale':scale,'turn_deg':turn,'max_cycle_error_px':float(cycle[good][keep].max())}
 
@@ -230,36 +236,81 @@ def reanchor_wheels(mask,template,center,angle):
     observed=np.array([x-extent+u+42,y-extent+v+42],dtype=float)
     delta=observed-np.asarray(center)
     correction=delta*min(.25,1./max(np.linalg.norm(delta),1e-9))
-    return tuple(np.asarray(center)+correction),angle+.15*(candidate-angle),{
+    return tuple(np.asarray(center)+correction),angle,{
         'accepted':True,'score':float(score),'corner_pixels':counts,'observed_center_px':observed.tolist(),
-        'correction_px':correction.tolist(),'heading_correction_deg':.15*(candidate-angle)}
+        'correction_px':correction.tolist(),'heading_correction_deg':0.,'heading_source':'rigid chassis RGB motion'}
 
 
-def rigid_pair_commands(positions,headings,reference,observed_turn,velocity,omega):
+def reanchor_wheel_geometry(mask,center,angle):
+    """Current four-corner wheel geometry bounds RGB motion drift when visible.
+
+    Wheel stripe texture rolls, but the four complete wheel clusters retain
+    their chassis arrangement. Reject painted/occluded or asymmetric corners.
+    """
+    radius=40;x,y=np.rint(center).astype(int)
+    if min(x-radius,y-radius)<0 or x+radius>=mask.shape[1] or y+radius>=mask.shape[0]:
+        return center,angle,{'accepted':False,'reason':'wheel search outside camera'}
+    yy,xx=np.where(mask[y-radius:y+radius+1,x-radius:x+radius+1]>0)
+    points=np.column_stack((xx+x-radius,yy+y-radius)).astype(float)
+    a=math.radians(angle);c,s=math.cos(a),math.sin(a)
+    rotation=np.array([[c,-s],[s,c]]);estimate=np.array(center,dtype=float)
+    for _ in range(2):
+        local=(points-estimate)@rotation.T;corners=[];counts=[]
+        for sx,sy in ((-1,-1),(1,-1),(1,1),(-1,1)):
+            selected=((local[:,0]*sx>10)&(local[:,1]*sy>10)&(local[:,0]*sx<29)&(local[:,1]*sy<29))
+            count=int(selected.sum())
+            if not 8<=count<=150:
+                return center,angle,{'accepted':False,'reason':'four distinct wheel corners not supported','pixels':count}
+            corners.append(points[selected].mean(axis=0));counts.append(count)
+        corners=np.array(corners);estimate=corners.mean(axis=0)
+    horizontal=(corners[1]-corners[0]+corners[2]-corners[3])/2
+    vertical=(corners[3]-corners[0]+corners[2]-corners[1])/2
+    raw=math.atan2(-(horizontal[1]-vertical[0]),horizontal[0]+vertical[1])
+    raw=a+wrap(raw-a)
+    lengths=np.linalg.norm(np.roll(corners,-1,axis=0)-corners,axis=1)
+    diagonal=float(np.linalg.norm((corners[0]+corners[2]-corners[1]-corners[3])/2))
+    if lengths.min()<28 or lengths.max()>46 or diagonal>4 or abs(raw-a)>math.radians(9) or np.linalg.norm(estimate-center)>8:
+        return center,angle,{'accepted':False,'reason':'wheel corner geometry inconsistent'}
+    delta=estimate-np.asarray(center);correction=delta*min(.5,1.5/max(np.linalg.norm(delta),1e-9))
+    heading_correction=.5*math.degrees(raw-a)
+    return tuple(np.asarray(center)+correction),angle+heading_correction,{'accepted':True,
+        'corner_pixels':counts,'corners_px':corners.tolist(),'observed_center_px':estimate.tolist(),
+        'correction_px':correction.tolist(),'heading_correction_deg':heading_correction,
+        'source':'current four wheel cluster arrangement; texture motion is not chassis heading'}
+
+
+def rigid_pair_commands(positions,headings,reference,observed_turn,velocity,omega,*,target_span=None,span_rate=0.):
     """One observed formation twist, independently converted by each endpoint.
 
     Correcting two absolute chassis targets separately can twist a held beam
     when their visual headings differ. A common translation and angular rate
-    rotates the current observed offsets without commanding radial convergence.
+    rotates the observed offsets. A bounded, damped radial correction preserves
+    the original visually observed span when unequal motion compresses it.
     """
     center=sum(np.asarray(p) for p in positions.values())/len(positions)
     translation=np.asarray(velocity)+.9*(np.asarray(reference[:2])-center)
     angular=float(omega+.9*wrap(reference[2]-observed_turn))
+    line=np.asarray(positions['r1'])-positions['r3'];span=float(np.linalg.norm(line))
+    error=0. if target_span is None else float(target_span-span)
+    position_error=0. if abs(error)<=.01 else error-math.copysign(.01,error)
+    correction=0. if target_span is None else float(np.clip(2.*position_error-.25*span_rate,-.025,.025))
     commands={};world={}
     for rid,position in positions.items():
         offset=np.asarray(position)-center
         world[rid]=translation+angular*np.array([-offset[1],offset[0]])
+        world[rid]+=correction*(1 if rid=='r1' else -1)*line/span
         local=rotate(world[rid],-headings[rid])
         commands[rid]={'kind':'mecanum','forward':float(np.clip(local[0]/1.57,-.05,.08)),
             'left':float(np.clip(local[1]/1.18,-.08,.08)),
             'turn':float(np.clip(angular/1.5,-.10,.10)),'duration_s':.2}
     return commands,{'center_xy_m':center.tolist(),'common_translation_m_s':translation.tolist(),
         'common_angular_rad_s':angular,'world_velocity_m_s':{r:v.tolist() for r,v in world.items()},
-        'source':'current RGB formation, authored route and own action calibration; no independent inward pose correction'}
+        'observed_span_m':span,'target_span_m':target_span,'span_rate_m_s':span_rate,'radial_correction_m_s':correction,
+        'source':'current RGB formation, authored route and own action calibration; common turn with bounded span correction'}
 
 
 class PairVision:
-    """Track unchanged wheel color templates; headings are image rotations.
+    """Track rigid body motion and reanchor with current four-wheel geometry.
 
     At initialization the long orange component identifies the beam. Robot
     roles are assigned by the declared lower/upper start sides, not live poses.
@@ -352,8 +403,8 @@ class PairVision:
             center,angle=self.centers[rid],self.angles[rid]
             tracking={'method':'initial RGB wheel template'}
             if previous is not None:
-                center,angle,tracking=track_wheel_motion(previous,frame,center,angle,self.templates[rid])
-                center,angle,tracking['current_wheel_reanchor']=reanchor_wheels(mask,self.templates[rid],center,angle)
+                center,angle,tracking=track_wheel_motion(previous,frame,center,angle,self.templates[rid],chassis_only=True)
+                center,angle,tracking['current_wheel_geometry']=reanchor_wheel_geometry(mask,center,angle)
             point=pixel_to_world(center,frame.shape,self.map['top_camera'])
             observations[rid]={'xy_m':list(point),'relative_yaw_rad':math.radians(angle),
                 'confidence':tracking.get('inlier_fraction',1.),'center_uv':list(center),
@@ -419,6 +470,7 @@ class PairNavigator:
                 self.offsets = {r: positions[r]-center for r in ROBOTS}
                 line=positions['r1']-positions['r3']
                 self.anchor_line_angle=math.atan2(line[1],line[0])
+                self.target_span=float(np.linalg.norm(line));self.previous_span=self.target_span;self.span_rate=0.
                 self.anchor_yaws = {r: obs[r]['relative_yaw_rad'] for r in ROBOTS}
                 self.anchor_payload = dict(self.vision.payload)
                 self.reference = np.array([*center, 0.])
@@ -441,6 +493,8 @@ class PairNavigator:
             payload_angle = payload['relative_yaw_rad']-self.anchor_payload['relative_yaw_rad']
             line=positions['r1']-positions['r3']
             span=float(np.linalg.norm(line))
+            self.span_rate=.5*self.span_rate+.5*(span-self.previous_span)/.2
+            self.previous_span=span
             observed_turn=wrap(math.atan2(line[1],line[0])-self.anchor_line_angle)
             if not .60<=span<=.70:
                 return {'action':zero,'status':'formation_span_abort','ready':False,'done':False,
@@ -464,12 +518,13 @@ class PairNavigator:
                         'observations': obs, 'formation_errors': formation_errors}
             # Both local participants see the same RGB and hold the common
             # reference while either member catches up; commands are not poses.
-            if max(e[0] for e in formation_errors.values()) > .020 or max(e[1] for e in formation_errors.values()) > .10:
+            if (max(e[0] for e in formation_errors.values()) > .020 or max(e[1] for e in formation_errors.values()) > .10
+                    or abs(span-self.target_span)>.02):
                 velocity, omega = np.zeros(2), 0.
             self.reference[:2] += velocity*.2
             self.reference[2] += omega*.2
             headings={r:self.heading+obs[r]['relative_yaw_rad']-self.anchor_yaws[r] for r in ROBOTS}
-            commands,self.last_twist=rigid_pair_commands(positions,headings,self.reference,observed_turn,velocity,omega)
+            commands,self.last_twist=rigid_pair_commands(positions,headings,self.reference,observed_turn,velocity,omega,target_span=self.target_span,span_rate=self.span_rate)
             action=commands[self.rid]
             if np.linalg.norm(target[:2]-self.reference[:2]) < .002 and abs(wrap(target[2]-self.reference[2])) < .005:
                 reached = (max(e[0] for e in formation_errors.values()) < .012

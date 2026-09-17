@@ -7,6 +7,25 @@ from harness.camera_beam_features import extract_beams
 from harness.dispatch_skill_binding import BeamContinuity
 
 
+def test_rotating_own_view_uses_recent_continuity_and_still_rejects_loss():
+    import math
+    from harness.dispatch_own_hold import OwnHoldContinuity
+    from harness.camera_goal_transport import own_payload
+    root=Path('tests/fixtures/dispatch_adaptive')
+    anchor=(root/'own-hold-anchor.jpg').read_bytes()
+    previous=(root/'own-hold-prior.jpg').read_bytes()
+    current=(root/'own-hold-failure.jpg').read_bytes()
+    guard=OwnHoldContinuity(anchor)
+    # State fixture comes from the immediately previous actual own RGB.
+    guard.previous=own_payload(previous,hue_upper=35)
+    evidence=guard.observe(current)
+    assert math.dist(evidence['current'][1:],evidence['anchor'][1:])>.15
+    assert evidence['held_estimate'] and evidence['temporal_motion_norm']<.01
+    black=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))[1].tobytes()
+    assert not guard.observe(black)['held_estimate']
+    assert not OwnHoldContinuity(anchor).observe(current)['held_estimate']
+
+
 def test_actual_destination_b_failure_separates_beam_from_floor_paint():
     raw=Path('tests/fixtures/dispatch_adaptive/beam-floor-303.jpg').read_bytes()
     old=[b for b in extract_beams(raw,hue_upper=35)

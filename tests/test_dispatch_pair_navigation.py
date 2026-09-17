@@ -168,3 +168,48 @@ def test_shared_heading_is_not_changed_by_one_wheel_appearance_bias():
     positions={'r1':np.array([0.,-.325]),'r3':np.array([0.,.325])}
     actions,_=rigid_pair_commands(positions,{'r1':0.,'r3':.12},[0.,0.,0.],0.,[0.,0.],0.)
     assert all(a['turn']==a['forward']==a['left']==0. for a in actions.values())
+
+
+def test_span_recovery_pushes_apart_when_one_carrier_catches_the_other():
+    from harness.dispatch_pair_navigation import rigid_pair_commands,rotate
+    positions={'r1':np.array([0.,-.31]),'r3':np.array([0.,.31])}
+    headings={'r1':0.,'r3':0.}
+    actions,evidence=rigid_pair_commands(positions,headings,[0.,0.,0.],0.,[0.,0.],0.,target_span=.65)
+    assert actions['r1']['left']<0 and actions['r3']['left']>0
+    assert actions['r1']['turn']==actions['r3']['turn']==0.
+    assert evidence['radial_correction_m_s']<=.025
+    nominal={r:p*(.644/.62) for r,p in positions.items()}
+    quiet,evidence=rigid_pair_commands(nominal,headings,[0.,0.,0.],0.,[0.,0.],0.,target_span=.65)
+    assert all(a['forward']==a['left']==a['turn']==0. for a in quiet.values())
+    damping,evidence=rigid_pair_commands(nominal,headings,[0.,0.,0.],0.,[0.,0.],0.,target_span=.65,span_rate=-.02)
+    assert damping['r1']['left']<0 and damping['r3']['left']>0
+
+
+def test_current_body_direction_comes_from_complete_wheel_arrangement():
+    import cv2
+    from harness.dispatch_pair_navigation import reanchor_wheel_geometry
+    frame=cv2.imread(str(ROOT/'compressed-pair-top.jpg'))
+    mask=PairVision._mask(None,frame)
+    # Pixel estimates deliberately biased from the visible upper chassis.
+    center,angle,evidence=reanchor_wheel_geometry(mask,[744.,161.],5.)
+    assert evidence['accepted'] and angle<5.
+    assert abs(evidence['observed_center_px'][0]-742)<4
+    assert all(8<=n<=150 for n in evidence['corner_pixels'])
+    for unsupported in (np.zeros_like(mask),np.full_like(mask,255)):
+        _,_,evidence=reanchor_wheel_geometry(unsupported,[744.,161.],5.)
+        assert not evidence['accepted']
+
+
+def test_chassis_motion_survives_paint_without_tracking_tread():
+    import cv2,json
+    from harness.dispatch_pair_navigation import track_wheel_motion
+    before=cv2.imread(str(ROOT/'pair-267-rotate-carry-top.jpg'))
+    after=cv2.imread(str(ROOT/'pair-268-rotate-carry-top.jpg'))
+    prior=json.loads((ROOT/'wheel-prior.json').read_text())
+    template=cv2.imread(str(ROOT/'wheel-prior-template.png'),0)
+    center,angle,evidence=track_wheel_motion(before,after,prior['center'],prior['angle_deg'],template,chassis_only=True)
+    assert np.linalg.norm(np.asarray(center)-prior['center'])<3
+    assert 0<angle-prior['angle_deg']<2
+    assert evidence['inlier_fraction']>.9
+    with pytest.raises(ValueError):
+        track_wheel_motion(before,np.zeros_like(after),prior['center'],prior['angle_deg'],template,chassis_only=True)

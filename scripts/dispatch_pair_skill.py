@@ -150,11 +150,13 @@ class BoundPairSkill:
         from harness.dispatch_navigation_map import navigation_map
         from harness.dispatch_pair_navigation import PairNavigator,authorize_pair
         from harness.pair_carry_sync import PairCarrySync
+        from harness.dispatch_own_hold import OwnHoldContinuity
         self.phase='TRANSIT';self.transport_started=True
         anchor=self.capture('carry-anchor')
         other,other_source=self.io.other_robot_observation(anchor['r1']['raw_top_bytes'])
         data=navigation_map(self.bindings,anchor['r1']['raw_top_bytes'],other_robot_center_px=other['center_px'])
         agents={r:PairNavigator(data,r) for r in ROBOTS}
+        own_guards={r:OwnHoldContinuity(anchor[r]['own_bytes']) for r in ROBOTS}
         sync=PairCarrySync('dispatch-'+self.bindings.committed['plan_hash'])
         self.calls.append({'kind':'navigation_map','map':data,'other_robot_observation':other,'other_robot_source':other_source})
         for index in range(1200):
@@ -162,11 +164,8 @@ class BoundPairSkill:
             decisions={}
             for r in ROBOTS:
                 decision=agents[r].decide(frames[r]['own_bytes'],frames[r]['raw_top_bytes'])
-                current,initial=own_payload(frames[r]['own_bytes'],hue_upper=35),own_payload(anchor[r]['own_bytes'],hue_upper=35)
-                held=bool(current and initial and .25<=current[0]/initial[0]<=4
-                    and math.dist(current[1:],initial[1:])<=.15)
-                decision['own_attachment']={'held_estimate':held,'current':current,'anchor':initial}
-                decision['ready']=decision['ready'] and held
+                decision['own_attachment']=own_guards[r].observe(frames[r]['own_bytes'])
+                decision['ready']=decision['ready'] and decision['own_attachment']['held_estimate']
                 decisions[r]=decision
             permission=authorize_pair(sync,decisions,{r:f['frame_id'] for r,f in frames.items()},index)
             self.calls.append({'kind':'rotating_carry','decisions':decisions,'permission':permission,
