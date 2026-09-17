@@ -77,7 +77,48 @@ def audit(p,*,replay_solo=False):
  yield_vision,yield_report=audit_yield(p,mission['static_map'])
  report['yield_replay']=yield_report
  report['navigation_replay']=audit_navigation(p,calls,json.loads((p/'committed-plan.json').read_text()),mission['static_map'],yield_vision=yield_vision,identity=identity)
+ report['translation_replay']=audit_translation(p,calls,json.loads((p/'committed-plan.json').read_text()),mission['static_map'])
  (p/'input-audit.json').write_text(json.dumps(report,indent=2));print(report)
+
+def audit_translation(p,calls,committed,static_map):
+ from harness.dispatch_skill_binding import SkillBindings,ImageRoute
+ from harness.dispatch_translation_skew import translation_skew
+ from harness.camera_goal_transport import own_payload
+ from harness.pair_carry_policy import PairCarryPolicy
+ import math
+ bindings=SkillBindings(committed,static_map);route=ImageRoute(bindings,'beam')
+ policy=PairCarryPolicy('dispatch-'+bindings.committed['plan_hash'][:12])
+ anchor=None;last=None;count=0;legacy=0
+ def raw(ref):
+  value=(p/ref['path']).read_bytes();assert hashlib.sha256(value).hexdigest()==ref['sha256'];return value
+ for call in calls:
+  if call['kind']=='image_binding':
+   last=call
+   if call['raw_top']['path'].endswith('-carry-anchor-top.jpg'):
+    anchor={r:own_payload(raw(ref),hue_upper=35) for r,ref in call['own'].items()}
+  elif call['kind']=='carry':
+   if 'skew_evidence' not in call:
+    legacy+=1;continue
+   assert anchor is not None
+   top=raw(last['raw_top']);motion,evidence=route.observe(top)
+   assert json.loads(json.dumps(evidence))==call['route']
+   decisions={}
+   for r,ref in last['own'].items():
+    current=own_payload(raw(ref),hue_upper=35);initial=anchor[r]
+    held=bool(current and initial and .25<=current[0]/initial[0]<=4 and math.dist(current[1:],initial[1:])<=.15)
+    decisions[r]={'ok':held,'held_estimate':held,'ready':evidence['done'],
+        'forward':abs(motion['forward']),'current_own_rgb_features':current,'anchor_own_rgb_features':initial,
+        'appearance':'orange-to-yellow beam hue 3..35; same shape/consistency gates'}
+   assert json.loads(json.dumps(decisions))==call['decisions']
+   try:skew,measurement=translation_skew(top,last['transform']['observed_beam'])
+   except ValueError as error:
+    skew=None;measurement={'unresolved':str(error)}
+   assert measurement==call['skew_evidence']
+   control=policy.step(decisions,skew,call['frame_ids'],call['sim_time_s'])
+   assert control==call['control'],('translation policy replay',count)
+   count+=1
+ return {'rgb_translation_decisions_replayed':count,'legacy_unreplayed_decisions':legacy,
+     'source':'archived current own/TOP RGB, authored map, control clock and report ids; no referee input'}
 def audit_solo_replay(p,committed,static_map,*,return_policy=False):
  import copy,base64,json,hashlib
  from harness.dispatch_skill_binding import SkillBindings,ImageRoute

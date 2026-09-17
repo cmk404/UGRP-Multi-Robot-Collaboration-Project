@@ -92,3 +92,28 @@ def test_input_audit_rejects_a_changed_frozen_grasp_translation():
     tampered=copy.deepcopy(calls);tampered[2]['transform']['translation_px'][0]+=1
     with pytest.raises(AssertionError,match='prior RGB anchor'):audit_translation_history(tampered)
     with pytest.raises(AssertionError,match='prior RGB anchor'):audit_translation_history(calls[1:])
+
+
+@pytest.mark.parametrize('frame',[252,259])
+def test_translation_centerline_does_not_turn_shaded_edges_into_skew(frame):
+    import json
+    from harness.dispatch_translation_skew import translation_skew
+    root=Path('tests/fixtures/dispatch_adaptive')
+    beam=json.loads((root/f'translation-skew-{frame}.json').read_text())
+    upper,lower=sorted(beam['endpoints'],key=lambda p:p[1])
+    assert abs((lower[0]-upper[0])*960)>2.8
+    skew,evidence=translation_skew((root/f'translation-skew-{frame}.jpg').read_bytes(),beam)
+    assert abs(skew)<.3
+    assert evidence['supported_sections']>=40
+
+
+def test_translation_centerline_keeps_actual_skew_and_rejects_missing_beam():
+    import json
+    from harness.dispatch_translation_skew import translation_skew
+    root=Path('tests/fixtures/dispatch_adaptive')
+    beam=json.loads((root/'translation-skew-378.json').read_text())
+    skew,_=translation_skew((root/'translation-skew-378.jpg').read_bytes(),beam)
+    assert skew < -3.5
+    blank=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))[1].tobytes()
+    with pytest.raises(ValueError,match='lacks current RGB support'):
+        translation_skew(blank,beam)

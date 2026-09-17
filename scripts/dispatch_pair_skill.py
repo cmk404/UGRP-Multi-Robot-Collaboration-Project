@@ -131,11 +131,16 @@ class BoundPairSkill:
                               'forward':abs(motion['forward']),'current_own_rgb_features':current,'anchor_own_rgb_features':initial,
                               'appearance':'orange-to-yellow beam hue 3..35; same shape/consistency gates'}
             beam=self.carried_beam.previous
-            upper,lower=sorted(beam['endpoints'],key=lambda p:p[1])
-            skew=(lower[0]-upper[0])*beam['image_size'][0]
+            from harness.dispatch_translation_skew import translation_skew
+            try:skew,skew_evidence=translation_skew(raw,beam)
+            except ValueError as error:
+                skew=None;skew_evidence={'unresolved':str(error)}
+            now=self.time()
             control=policy.step(decisions,skew,
-                {r:f['frame_id'] for r,f in frames.items()},self.time())
-            self.calls.append({'kind':'carry','decisions':decisions,'control':control,'route':evidence})
+                {r:f['frame_id'] for r,f in frames.items()},now)
+            self.calls.append({'kind':'carry','decisions':decisions,'control':control,'route':evidence,
+                'skew_evidence':skew_evidence,'sim_time_s':now,
+                'frame_ids':{r:f['frame_id'] for r,f in frames.items()}})
             if control['abort']:raise RuntimeError('existing pair carry guard stopped: '+control['mode'])
             if control['done']:return
             moving=control['mode']=='CRUISE' and control['valid']
