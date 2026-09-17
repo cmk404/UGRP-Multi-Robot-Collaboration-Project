@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np
 from harness.dispatch_skill_binding import SkillBindings
 from harness.dispatch_navigation_map import navigation_map,visual_barriers
-from harness.dispatch_pair_navigation import PairVision,plan_route,swept_clear,payload_coupled
+from harness.dispatch_pair_navigation import PairVision,plan_route,plan_placement_route,swept_clear,payload_coupled
 from harness.dispatch_plan import fixture_plan
 from harness.three_robot_plan import digest
 from sim.research_dispatch_arena import authored_map
@@ -40,7 +40,7 @@ def test_unannounced_barrier_comes_from_rgb_and_blocks_only_north():
     assert not visual_barriers((ROOT/'carry-anchor.jpg').read_bytes(),authored_map())
     for route,possible in [('north',False),('south',True)]:
         data=navigation_map(bindings(route=route),raw,planned_box_completion=True)
-        result=plan_route([-.18,-1.65,0],[*data['goal']['center_m'],0],data)
+        result=plan_placement_route([-.18,-1.65,0],[*data['goal']['center_m'],0],data)
         assert bool(result)==possible
 
 def test_pickup_resource_prevents_solo_from_waiting_in_pair_turn_space():
@@ -93,7 +93,7 @@ def test_waiting_cargo_remains_an_obstacle_until_dependency_is_completed():
     future=navigation_map(bindings(route='south'),raw,planned_box_completion=True)
     assert all(o['id']!='rgb_other_robot' for o in future['obstacles'])
     assert any(o['id']=='planned_yield_pose' for o in future['obstacles'])
-    assert plan_route([-.18,-1.65,0],[*future['goal']['center_m'],0],future)
+    assert plan_placement_route([-.18,-1.65,0],[*future['goal']['center_m'],0],future)
 
 
 def test_box_first_reserves_pickup_until_visual_yield_completion():
@@ -120,3 +120,32 @@ def test_release_yield_observes_real_wheels_and_does_not_assume_a_command_moved_
     import cv2
     black=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))[1].tobytes()
     with pytest.raises(ValueError):policy.decide(black)
+
+
+def test_current_wheel_pixels_bound_accumulated_motion_drift():
+    from harness.dispatch_pair_navigation import reanchor_wheels
+    import cv2
+    raw=(ROOT/'wheel-drift-anchor.jpg').read_bytes();v=PairVision(navigation_map(bindings(),raw));v.observe(raw,raw)
+    mask=v._mask(cv2.imread(str(ROOT/'wheel-drift-top.jpg')))
+    center=np.array([785.10121516,214.11153672])
+    new,angle,evidence=reanchor_wheels(mask,v.templates['r1'],center,57.800334088)
+    assert evidence['accepted'] and min(evidence['corner_pixels'])>=8
+    assert new[0]<center[0] and new[1]>center[1]
+    assert np.linalg.norm(np.array(new)-center)<=1.000001
+    _,_,missing=reanchor_wheels(np.zeros_like(mask),v.templates['r1'],center,57.8)
+    assert not missing['accepted']
+
+
+def test_placement_can_shift_inside_slot_without_shrinking_loaded_envelope():
+    from harness.dispatch_pair_navigation import plan_placement_route,footprint_clear
+    raw=(ROOT/'north-barrier.jpg').read_bytes();data=navigation_map(bindings(route='south'),raw,planned_box_completion=True)
+    start=[-.1274098649,-1.6584060607,.0027581691]
+    goal=[1.5239043417,-1.3846056692,.0027581691]
+    box=next(o for o in data['obstacles'] if o['id']=='planned_box_slot')
+    box['center_m']=[1.7845643765,-1.3856339014]
+    assert not footprint_clear(goal,data)
+    route=plan_placement_route(start,goal,data)
+    assert route and abs(route[-1][0]-goal[0])<=.06
+    assert abs(route[-1][1]-goal[1])<=.015
+    assert all(swept_clear(a,b,data) for a,b in zip(route,route[1:]))
+    assert data['footprint']=={'half_forward_m':.20,'half_lateral_m':.445,'margin_m':.025}

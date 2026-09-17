@@ -41,12 +41,13 @@ def navigation_map(bindings,jpeg,*,other_robot_center_px=None,planned_box_comple
         'bounds_m':copy.deepcopy(static['bounds_m']),'footprint':dict(FOOTPRINT),
         'obstacles':copy.deepcopy(static['obstacles']),'grid_m':.06,
         'goal':{'center_m':copy.deepcopy(static['docks'][bindings.plan['dock']]['slots']['beam']['center_m']),
-                'relative_yaw_deg':0.},'route_name':bindings.tasks['beam']['route'],
+                'relative_yaw_deg':0.,'placement_tolerance_m':[.06,.015]},'route_name':bindings.tasks['beam']['route'],
         'source_map_sha256':hashlib.sha256(__import__('json').dumps(static,sort_keys=True).encode()).hexdigest()}
     # Retain wall boxes: the bounds describe wall centres, not free interior.
     data['obstacles']+=visual_barriers(jpeg,static)
     if planned_box_completion:
-        data['obstacles'].append({'id':'planned_box_slot','center_m':static['docks'][bindings.plan['dock']]['slots']['box']['center_m'][:],
+        slot_pixel=pixel_from_map(static['docks'][bindings.plan['dock']]['slots']['box']['center_m'],static,decode(jpeg).shape)
+        data['obstacles'].append({'id':'planned_box_slot','center_m':list(pixel_to_world(slot_pixel,decode(jpeg).shape,static['top_camera'])),
             'half_extents_m':[.05,.06],'height_m':.10,'source':'conditional authored destination; fresh RGB validation required after box job'})
         data['obstacles'].append({'id':'planned_yield_pose','center_m':[static['bounds_m'][1]-.22,static['regions']['dispatch_apron']['center_m'][1]],
             'half_extents_m':[.14,.14],'height_m':.35,'source':'conditional yield goal; not an observed position'})

@@ -184,6 +184,57 @@ def track_wheel_motion(previous,current,center,angle,template):
         'scale':scale,'turn_deg':turn,'max_cycle_error_px':float(cycle[good][keep].max())}
 
 
+def plan_placement_route(start,goal,data):
+    """Choose the nearest collision-free placement inside the authored slot.
+
+    The allowed offset leaves a 0.45m shaft and clearance inside the slot.
+    Final image-based slot inclusion and independent release QA still apply.
+    """
+    limits=data['goal'].get('placement_tolerance_m',[0.,0.])
+    candidates=[(x,y) for x in (0.,-.02,.02,-.04,.04,-.06,.06)
+        for y in (0.,-.015,.015) if abs(x)<=limits[0]+1e-9 and abs(y)<=limits[1]+1e-9]
+    for dx,dy in sorted(candidates,key=lambda d:math.hypot(*d)):
+        target=[goal[0]+dx,goal[1]+dy,goal[2]]
+        route=plan_route(start,target,data)
+        if route is not None:return route
+    return None
+
+
+def reanchor_wheels(mask,template,center,angle):
+    """Bound optical-flow drift using independently visible current wheel pixels.
+
+    Rolling tread and arm motion are not chassis displacement. Only a supported
+    four-corner appearance may correct the estimate; paint/occlusion keeps the
+    bidirectional motion estimate, never a command-integrated fallback.
+    """
+    yy,xx=np.indices(template.shape)
+    wheels=template.copy();wheels[(abs(xx-30)<10)|(abs(yy-30)<10)]=0
+    x,y=np.rint(center).astype(int);extent=54
+    if min(x-extent,y-extent)<0 or x+extent>=mask.shape[1] or y+extent>=mask.shape[0]:
+        return center,angle,{'accepted':False,'reason':'search outside camera'}
+    crop=cv2.GaussianBlur(mask[y-extent:y+extent+1,x-extent:x+extent+1],(3,3),.7)
+    padded=np.pad(wheels,12);best=None
+    for candidate in np.arange(angle-4,angle+4.01,1.):
+        matrix=cv2.getRotationMatrix2D((42,42),float(candidate),1.)
+        target=cv2.warpAffine(padded,matrix,(85,85))
+        scores=cv2.matchTemplate(crop,target,cv2.TM_CCOEFF_NORMED)
+        _,score,_,location=cv2.minMaxLoc(scores)
+        if best is None or score>best[0]:best=(score,location,float(candidate),target)
+    score,(u,v),candidate,target=best
+    if score<.55:return center,angle,{'accepted':False,'score':float(score)}
+    patch=crop[v:v+85,u:u+85]
+    inverse=cv2.getRotationMatrix2D((42,42),-candidate,1.)
+    overlap=cv2.warpAffine(((patch>50)&(cv2.dilate(target,np.ones((3,3),np.uint8))>50)).astype(np.uint8),inverse,(85,85))
+    counts=[int(overlap[sy,sx].sum()) for sy in (slice(0,32),slice(52,85)) for sx in (slice(0,32),slice(52,85))]
+    if min(counts)<8:return center,angle,{'accepted':False,'score':float(score),'corner_pixels':counts}
+    observed=np.array([x-extent+u+42,y-extent+v+42],dtype=float)
+    delta=observed-np.asarray(center)
+    correction=delta*min(.25,1./max(np.linalg.norm(delta),1e-9))
+    return tuple(np.asarray(center)+correction),angle+.15*(candidate-angle),{
+        'accepted':True,'score':float(score),'corner_pixels':counts,'observed_center_px':observed.tolist(),
+        'correction_px':correction.tolist(),'heading_correction_deg':.15*(candidate-angle)}
+
+
 class PairVision:
     """Track unchanged wheel color templates; headings are image rotations.
 
@@ -279,6 +330,7 @@ class PairVision:
             tracking={'method':'initial RGB wheel template'}
             if previous is not None:
                 center,angle,tracking=track_wheel_motion(previous,frame,center,angle,self.templates[rid])
+                center,angle,tracking['current_wheel_reanchor']=reanchor_wheels(mask,self.templates[rid],center,angle)
             point=pixel_to_world(center,frame.shape,self.map['top_camera'])
             observations[rid]={'xy_m':list(point),'relative_yaw_rad':math.radians(angle),
                 'confidence':tracking.get('inlier_fraction',1.),'center_uv':list(center),
@@ -350,7 +402,7 @@ class PairNavigator:
                 # Footprint orientation follows initial visual heading plus turn.
                 start_pose = [*center, self.heading]
                 goal_pose = [*goal[:2], self.heading+goal[2]]
-                absolute = plan_route(start_pose, goal_pose, self.map)
+                absolute = plan_placement_route(start_pose, goal_pose, self.map)
                 if absolute is None:
                     self.phase = 'no_route'
                 else:

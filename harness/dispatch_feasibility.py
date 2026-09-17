@@ -4,7 +4,7 @@ import numpy as np
 from harness.camera_goal_transport import decode
 from harness.dispatch_skill_binding import SkillBindings,beam_feature
 from harness.dispatch_navigation_map import navigation_map,solo_gate
-from harness.dispatch_pair_navigation import plan_route
+from harness.dispatch_pair_navigation import plan_placement_route
 from harness.known_map_navigation import pixel_to_world
 from harness.three_robot_plan import digest
 
@@ -35,9 +35,9 @@ def inspect_routes(committed,static_map,top_rgb,identity=None):
             if bindings.cluttered:
                 data=navigation_map(bindings,top_rgb,other_robot_center_px=other['center_px'] if other else None,
                     planned_box_completion=box_first)
-                route=plan_route([*center,heading],[*data['goal']['center_m'],heading],data)
+                route=plan_placement_route([*center,heading],[*data['goal']['center_m'],heading],data)
                 future=navigation_map(bindings,top_rgb,planned_box_completion=True)
-                future_route=plan_route([*center,heading],[*future['goal']['center_m'],heading],future)
+                future_route=plan_placement_route([*center,heading],[*future['goal']['center_m'],heading],future)
                 routes[name]={'feasible':route is not None,'route':route,
                     'reason':'swept footprint path found' if route else 'no swept footprint path in authored map plus RGB obstacles',
                     'observed_barriers':[o for o in data['obstacles'] if o['id'].startswith('rgb_')],
