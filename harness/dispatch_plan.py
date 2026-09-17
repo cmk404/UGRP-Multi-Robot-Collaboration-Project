@@ -57,7 +57,7 @@ def validate_dispatch_reply(raw, request_id, agreement):
 
 
 def build_dispatch_request(rid, *, task, request_id, own_rgb, top_rgb, agreement,
-                           inbox=(), own_history=()):
+                           inbox=(), own_history=(), execution_pilot=False, identity_evidence=None):
     if rid not in ROBOTS:
         raise ValueError('unknown robot')
     p = agreement['proposal']
@@ -101,8 +101,19 @@ after may contain the OTHER job ID if a full-job dependency is needed; no cycle.
 Beam participant order assigns end_a/end_b. Dock A is the upper-right floor bay;
 Dock B is lower-right. Both contain a green beam slot and a magenta box slot.
 North is the upper passage around the central island; south is the lower one.'''
+    if execution_pilot:
+        prompt = prompt.replace('This run tests\nPLANNING ONLY; the new arena\'s physical transport is not validated.',
+            'This is a bounded physical execution pilot after unanimous agreement.\nThe new arena\'s transport skills are experimental, not validated.')
+    extra = []
+    if identity_evidence:
+        context['own_motion_identity'] = copy.deepcopy(identity_evidence['claim'])
+        prompt += ('\nAdditional BEFORE/AFTER images show ONLY YOUR issued identification motion. '
+                   'Infer your own body from that change; the motion anchor is a fallible pixel '
+                   'estimate, not a body pose. Other robot IDs cannot be inferred from ordering. '
+                   'Share your observed image location with peers. Use their claims to assign roles.')
+        extra = copy.deepcopy(identity_evidence['images'])
     return {'request_id':request_id,'messages':[{'role':'system','content':prompt},
-        {'role':'user','content':json.dumps(context,sort_keys=True)}], 'images':images(own_rgb,top_rgb)}
+        {'role':'user','content':json.dumps(context,sort_keys=True)}], 'images':images(own_rgb,top_rgb)+extra}
 
 
 def compile_programs(plan, static_map):

@@ -29,10 +29,11 @@ class ThreeRobotRuntime:
                  agreement=None, request_builder=build_plan_request,
                  reply_validator=validate_plan_reply, plan_fixture=None,
                  request_timeout=30., max_tokens=950,
-                 roles_fixed_by_skill=True, planning_only=False):
+                 roles_fixed_by_skill=True, planning_only=False, max_wall_s=600.):
         self.output, self.mode, self.fixture_timing = output, mode, fixture_timing
         self.roles_fixed_by_skill = roles_fixed_by_skill
         self.planning_only = planning_only
+        self.max_wall_s = max_wall_s
         self.agreement = agreement or TeamAgreement(run_id)
         self.request_builder, self.reply_validator = request_builder, reply_validator
         self.plan_fixture = plan_fixture
@@ -78,7 +79,7 @@ class ThreeRobotRuntime:
             write(self.output/rid/f'{request["request_id"]}-decision.json', row)
         reply, stop = request_with_recovery(self.clients[rid], lambda attempt, retry: request,
             validate, record, max_attempts=1,
-            can_request=lambda: time.monotonic() - self.started < 600.)
+            can_request=lambda: time.monotonic() - self.started < self.max_wall_s)
         return reply, stop, records
 
     def negotiate(self, frames, own_history, turn, sim_time):
@@ -162,7 +163,7 @@ class ThreeRobotRuntime:
                 'execution_events': self.execution_events,
                 'transport_roles_fixed_by_skill': self.roles_fixed_by_skill,
                 'inspection_has_no_motor_permission': self.planning_only or self.plan_fixture is None,
-                'physical_task_plan': not self.planning_only and self.plan_fixture is not None,
+                'physical_task_plan': not self.planning_only and self.agreement.committed is not None,
                 'planning_only': self.planning_only,
                 'cost_usd': None, 'cost_note': 'provider billing unavailable'}
 
