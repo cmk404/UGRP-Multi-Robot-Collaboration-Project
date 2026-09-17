@@ -31,3 +31,9 @@ def test_shaft_survives_brightness_change_over_painted_apron():
     tracker=BeamContinuity();tracker.observe(beam)
     moved={**beam,'center':[beam['center'][0]+.1,beam['center'][1]]}
     with pytest.raises(ValueError,match='continuity'):tracker.observe(moved)
+
+
+def test_occluded_end_keeps_the_same_shaft_across_thresholds():
+    b=beam_feature(Path('tests/fixtures/dispatch_adaptive/beam-floor-r2-311.jpg').read_bytes(),hue_upper=35)
+    assert np.allclose(np.array(b['center'])*[960,720],[633.5,276],atol=3)
+    assert 90<b['length_px']<105

@@ -29,17 +29,27 @@ def beam_feature(jpeg, *, hue_upper=24):
     # A stable shaft must survive several thresholds, not one lucky cut through
     # a painted floor region. Prefer the widest supported silhouette to retain
     # the same image convention while its low-saturation surroundings vanish.
-    levels=[candidates(s) for s in range(130,191,10)]
+    def same_shaft(a,b):
+        size=np.array(a['image_size'])
+        axis=(np.array(a['endpoints'][1])-a['endpoints'][0])*size
+        axis=axis/np.linalg.norm(axis)
+        other=(np.array(b['endpoints'][1])-b['endpoints'][0])*size
+        other=other/np.linalg.norm(other)
+        delta=(np.array(b['center'])-a['center'])*size
+        return (abs(float(axis@other))>math.cos(math.radians(5))
+            and abs(float(delta@np.array([-axis[1],axis[0]])))<4
+            and abs(float(delta@axis))<.2*min(a['length_px'],b['length_px']))
+    levels=[candidates(s) for s in range(130,191,5)]
     stable=[]
     for i,level in enumerate(levels):
         for b in level:
-            support=sum(any(math.dist(b['center'],c['center'])*960<4
+            support=sum(any(same_shaft(b,c)
                 and abs(c['length_px']/b['length_px']-1)<.15 for c in other)
                 for other in levels[i:])
             if support>=3:stable.append(b)
     if stable:
         first=stable[0]
-        if all(math.dist(first['center'],b['center'])*960<6 for b in stable):return first
+        if all(same_shaft(first,b) for b in stable):return first
     raise ValueError('dispatch beam unresolved or ambiguous in RGB')
 
 
