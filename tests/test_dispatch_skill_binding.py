@@ -106,3 +106,16 @@ def test_grasp_retains_prior_image_alignment_when_visible_tip_changes():
     _,after=canonical_pair_top(changed,ref,translation_px=meta['translation_px'])
     assert after['translation_px']==meta['translation_px']
     assert after['fixed_from_prior_rgb']
+
+
+def test_dispatch_carry_preserves_shape_under_observed_orange_yellow_lighting():
+    import math
+    from harness.camera_goal_transport import own_payload
+    root=Path('tests/fixtures/dispatch_skill_transfer')
+    a,b=(root/'beam-anchor.jpg').read_bytes(),(root/'beam-lit.jpg').read_bytes()
+    old_a,old_b=own_payload(a),own_payload(b)
+    assert math.dist(old_a[1:],old_b[1:])>.15
+    current,anchor=own_payload(b,hue_upper=35),own_payload(a,hue_upper=35)
+    assert .25<=current[0]/anchor[0]<=4 and math.dist(current[1:],anchor[1:])<=.15
+    blank=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))[1].tobytes()
+    assert own_payload(blank,hue_upper=35) is None

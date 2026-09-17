@@ -120,10 +120,11 @@ def coarse_approach(top_jpeg, reference_top, rid):
                 image_gap=error, features=current, heading=heading)
 
 
-def own_payload(jpeg):
+def own_payload(jpeg, *, hue_upper=24):
     frame = decode(jpeg)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    mask = cv2.inRange(hsv, np.array((3,105,45), np.uint8), np.array((24,255,255), np.uint8))
+    if hue_upper not in (24,35):raise ValueError("unsupported beam appearance calibration")
+    mask = cv2.inRange(hsv, np.array((3,105,45), np.uint8), np.array((hue_upper,255,255), np.uint8))
     ys, xs = np.nonzero(mask)
     if len(xs) < 50:
         return None

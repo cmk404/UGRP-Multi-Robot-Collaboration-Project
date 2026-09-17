@@ -115,11 +115,12 @@ class BoundPairSkill:
             motion,evidence=navigator.observe(raw)
             decisions={}
             for r in ROBOTS:
-                current,initial=own_payload(frames[r]['own_bytes']),own_payload(anchor[r]['own_bytes'])
+                current,initial=own_payload(frames[r]['own_bytes'],hue_upper=35),own_payload(anchor[r]['own_bytes'],hue_upper=35)
                 held=bool(current and initial and .25<=current[0]/initial[0]<=4
                           and math.dist(current[1:],initial[1:])<=.15)
                 decisions[r]={'ok':held,'held_estimate':held,'ready':evidence['done'],
-                              'forward':abs(motion['forward'])}
+                              'forward':abs(motion['forward']),'current_own_rgb_features':current,'anchor_own_rgb_features':initial,
+                              'appearance':'orange-to-yellow beam hue 3..35; same shape/consistency gates'}
             control=policy.step(decisions,payload_skew(frames['r1']['top_bytes']),
                 {r:f['frame_id'] for r,f in frames.items()},self.time())
             self.calls.append({'kind':'carry','decisions':decisions,'control':control,'route':evidence})
