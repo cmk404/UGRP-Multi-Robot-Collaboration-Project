@@ -1,0 +1,70 @@
+{
+  "schema": "ugrp.pick_match_raw_replay.v1",
+  "source_episode": "/Users/changmin/projects/ugrp-worktrees/skill-vs-semantic-pick/outputs/pick-match-cohort-v1/skill-41",
+  "source_git_sha": "c692d5c45138e3e77157dd2854b80449a3f0f5b1",
+  "seed": 41,
+  "scope": "evaluation_only_command_replay_not_actor_input_not_new_model_success",
+  "model_calls": 0,
+  "computer_vision_policy_calls": 0,
+  "truth_guided_corrections": 0,
+  "raw_actions": 1379,
+  "provenance": {
+    "replay_git_sha": "42e448bc97a61ea10d2ae89d2871db4ca5d04938",
+    "source_git_sha": "c692d5c45138e3e77157dd2854b80449a3f0f5b1",
+    "sim_harness_tree_matches_source": true,
+    "critical_file_hashes": {
+      "sim/camera_robot_port.py": {
+        "working_tree_sha256": "1b7313526fb6b520f5094a5e7f259db49f7a2c26548db1ba519ca1a2a3dab52f",
+        "source_git_sha256": "1b7313526fb6b520f5094a5e7f259db49f7a2c26548db1ba519ca1a2a3dab52f",
+        "matches": true
+      },
+      "sim/multi_masterpi_production.py": {
+        "working_tree_sha256": "36030d18c5d75e70b80d3f8b87aabe1de94ebec24ce5e0726b8913c04987c132",
+        "source_git_sha256": "36030d18c5d75e70b80d3f8b87aabe1de94ebec24ce5e0726b8913c04987c132",
+        "matches": true
+      }
+    }
+  },
+  "source_files": {
+    "config.json": "7d50bfef69e79bffca886064ff88942766739bca50c895c96b39177c52802196",
+    "raw-commands.jsonl": "e46e2ac21e0c463abe1edc3e6b5d62ce03e4b06c6383b67139b4d17639906b22",
+    "evaluation-only.jsonl": "cadae5baefbf97f799930a9fc911cd13a0b66782dc283be603b7856d33e5a2ff"
+  },
+  "comparison": {
+    "accepted": true,
+    "reason": "CLOSE_TRAJECTORY_MATCH",
+    "reference_samples": 1201,
+    "replay_samples": 1201,
+    "max_position_error_m": 5.314269267697735e-10,
+    "max_lift_error_m": 5.314269302392205e-10,
+    "max_time_error_s": 0.0,
+    "position_rmse_m": 1.5334585881046343e-11,
+    "lift_rmse_m": 5.312056381394931e-10,
+    "position_tolerance_m": 0.0002,
+    "lift_tolerance_m": 0.0002,
+    "all_target_welds_off": true,
+    "all_raw_actions_reissued": true,
+    "fixture_unchanged": true,
+    "diagnostic_accepted": true
+  },
+  "fixture": {
+    "initial_qpos_sha256": "ff13f3adcc29849437e4416d00677c145febef2fc30a47292bc80c9e996c234b",
+    "camera_parameters_sha256": "44e6c4c2e693a08fff25c6e4e40fec206ada2c7f9f6ae5d903819780faaab75e",
+    "geometry_sha256": "3abecc40d95dee1949a655092abecb7486914a40b5e5bb5d2f3e48b8d1d05db6",
+    "final_camera_parameters_sha256": "44e6c4c2e693a08fff25c6e4e40fec206ada2c7f9f6ae5d903819780faaab75e",
+    "final_geometry_sha256": "3abecc40d95dee1949a655092abecb7486914a40b5e5bb5d2f3e48b8d1d05db6"
+  },
+  "cleanup_errors": [],
+  "observer_video": {
+    "type": "fixed_free_evaluation_camera",
+    "lookat": [
+      0.14817251142801197,
+      1.5424874569388671,
+      0.12
+    ],
+    "distance": 1.15,
+    "azimuth": 145.0,
+    "elevation": -24.0,
+    "actor_input": false
+  }
+}

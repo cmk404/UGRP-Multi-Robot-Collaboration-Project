@@ -1,0 +1,754 @@
+[
+  {
+    "call": 1,
+    "sim_time_s": 0.0,
+    "own_sha256": "9c083a2496451858ef4264800f7a0cd35273382d765f9dadbd98a70564a7adfd",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is located ahead on the green surface. Move the mobile base forward to get within arm reach.",
+      "action": {
+        "kind": "semantic",
+        "unit": "BASE_FWD"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "BASE_FWD"
+    },
+    "response": "{\"reason\":\"The cyan box is located ahead on the green surface. Move the mobile base forward to get within arm reach.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"BASE_FWD\"}}",
+    "usage": {
+      "prompt_tokens": 2506,
+      "completion_tokens": 39,
+      "total_tokens": 2918
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3972.3662920005154
+  },
+  {
+    "call": 2,
+    "sim_time_s": 0.8000000000000005,
+    "own_sha256": "d5d7923f5fc73da01234c3030ab87683bddc48ea927011096f546397617546e4",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is directly ahead on the green mat but still out of arm reach. Move base forward to approach it.",
+      "action": {
+        "kind": "semantic",
+        "unit": "BASE_FWD"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "BASE_FWD"
+    },
+    "response": "{\"reason\":\"The cyan box is directly ahead on the green mat but still out of arm reach. Move base forward to approach it.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"BASE_FWD\"}}",
+    "usage": {
+      "prompt_tokens": 2517,
+      "completion_tokens": 41,
+      "total_tokens": 2662
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3055.9828750119777
+  },
+  {
+    "call": 3,
+    "sim_time_s": 1.6000000000000012,
+    "own_sha256": "5c3648f19b038e34aa569d10b26ed5f927b09c0c007dc5da67db353459727ee8",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is centered ahead. Moving the base forward one more step to bring it within reach of the arm.",
+      "action": {
+        "kind": "semantic",
+        "unit": "BASE_FWD"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "BASE_FWD"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is centered ahead. Moving the base forward one more step to bring it within reach of the arm.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"BASE_FWD\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2528,
+      "completion_tokens": 45,
+      "total_tokens": 2762
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3662.0276250032475
+  },
+  {
+    "call": 4,
+    "sim_time_s": 2.399999999999924,
+    "own_sha256": "f02953d6884fa27a2083d6fe8d5b3c754816349b5d39892cb66dad9071004b27",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is centered in the camera view but still approximately 20-30 cm ahead. Moving the base forward brings it within arm reach.",
+      "action": {
+        "kind": "semantic",
+        "unit": "BASE_FWD"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "BASE_FWD"
+    },
+    "response": "{\"reason\":\"The cyan box is centered in the camera view but still approximately 20-30 cm ahead. Moving the base forward brings it within arm reach.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"BASE_FWD\"}}",
+    "usage": {
+      "prompt_tokens": 2539,
+      "completion_tokens": 48,
+      "total_tokens": 3113
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 4851.416541001527
+  },
+  {
+    "call": 5,
+    "sim_time_s": 3.199999999999836,
+    "own_sha256": "2d56ccb47b5a77f283cca9a7e1113ee621dde15069535db9e9e0643494f938dd",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is in front of the robot. Opening the gripper to prepare for approaching and grasping the box.",
+      "action": {
+        "kind": "semantic",
+        "unit": "RELEASE"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "RELEASE"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is in front of the robot. Opening the gripper to prepare for approaching and grasping the box.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"RELEASE\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2550,
+      "completion_tokens": 41,
+      "total_tokens": 2980
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 4150.408790999791
+  },
+  {
+    "call": 6,
+    "sim_time_s": 3.5299999999997995,
+    "own_sha256": "0087dd75e420a2515ee25465d5378c2d571e07f2e875c2a1cf6c61affdd1cd5a",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "Pitch the gripper downward to orient towards the cyan box directly ahead.",
+      "action": {
+        "kind": "semantic",
+        "unit": "PITCH_DOWN"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "PITCH_DOWN"
+    },
+    "response": "{\"action\":{\"kind\":\"semantic\",\"unit\":\"PITCH_DOWN\"},\"reason\":\"Pitch the gripper downward to orient towards the cyan box directly ahead.\"}",
+    "usage": {
+      "prompt_tokens": 2547,
+      "completion_tokens": 31,
+      "total_tokens": 2713
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3109.3509580095997
+  },
+  {
+    "call": 7,
+    "sim_time_s": 3.8799999999997614,
+    "own_sha256": "e0e8fc7bd38c15d7fb25ca74eb6f261786312873df7c0f233c7d6400caff5d19",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is directly ahead but still requires the base to advance closer before reaching down with the arm.",
+      "action": {
+        "kind": "semantic",
+        "unit": "BASE_FWD"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "BASE_FWD"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is directly ahead but still requires the base to advance closer before reaching down with the arm.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"BASE_FWD\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2547,
+      "completion_tokens": 43,
+      "total_tokens": 3026
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3261.4087499969173
+  },
+  {
+    "call": 8,
+    "sim_time_s": 4.679999999999674,
+    "own_sha256": "cafd3ddd796852bad8a75f9ea2fb40615e95aeb985e3d92189892ba235719a04",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is centered in the wrist camera view. Move the end-effector downward and forward to approach the grasp position.",
+      "action": {
+        "kind": "semantic",
+        "unit": "MV_DOWN"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "MV_DOWN"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is centered in the wrist camera view. Move the end-effector downward and forward to approach the grasp position.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"MV_DOWN\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2547,
+      "completion_tokens": 46,
+      "total_tokens": 2813
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3065.508291008882
+  },
+  {
+    "call": 9,
+    "sim_time_s": 5.07399999999963,
+    "own_sha256": "c8018324b893b49f1fb6627f2b97d806e63e1e41a31b4e748a590aee9b4015d5",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is centered ahead in the wrist camera view; moving the end-effector forward to approach it for grasping.",
+      "action": {
+        "kind": "semantic",
+        "unit": "MV_FWD"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "MV_FWD"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is centered ahead in the wrist camera view; moving the end-effector forward to approach it for grasping.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"MV_FWD\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2546,
+      "completion_tokens": 46,
+      "total_tokens": 2910
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 4351.258958005928
+  },
+  {
+    "call": 10,
+    "sim_time_s": 5.403999999999594,
+    "own_sha256": "322ed58ed93e5a2d853a7f8cb8c6497240ed9a83e6efefeba92156cddf0d2808",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is in front of the robot on the green mat, but still beyond arm reach. Advance the mobile base forward.",
+      "action": {
+        "kind": "semantic",
+        "unit": "BASE_FWD"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "BASE_FWD"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is in front of the robot on the green mat, but still beyond arm reach. Advance the mobile base forward.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"BASE_FWD\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2549,
+      "completion_tokens": 48,
+      "total_tokens": 3305
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 5207.582708011614
+  },
+  {
+    "call": 11,
+    "sim_time_s": 6.203999999999506,
+    "own_sha256": "a44dbb8345d12e4aec4570c505d0404f299b3d685c8227840dbac934611ea2e1",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The robot needs to get closer to the cyan box; continuing forward base motion.",
+      "action": {
+        "kind": "semantic",
+        "unit": "BASE_FWD"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "BASE_FWD"
+    },
+    "response": "```json\n{\"reason\":\"The robot needs to get closer to the cyan box; continuing forward base motion.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"BASE_FWD\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2549,
+      "completion_tokens": 38,
+      "total_tokens": 2648
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3279.692750002141
+  },
+  {
+    "call": 12,
+    "sim_time_s": 7.003999999999418,
+    "own_sha256": "ec1f24778d1ecf497832cf16a19e10af6cc39304e1a24c6a34b220564bdda709",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is directly in front of the robot on the green platform. Moving the arm down and forward to position the gripper closer for grasping. Let's move the arm forward first.",
+      "action": {
+        "kind": "semantic",
+        "unit": "MV_FWD"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "MV_FWD"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is directly in front of the robot on the green platform. Moving the arm down and forward to position the gripper closer for grasping. Let's move the arm forward first.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"MV_FWD\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2549,
+      "completion_tokens": 60,
+      "total_tokens": 2609
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 2450.602708006045
+  },
+  {
+    "call": 13,
+    "sim_time_s": 7.3339999999993815,
+    "own_sha256": "13f92a024a6abca35f63731a75d4778f030d904d40ac9b61cd69414b4287132d",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is directly in front of the wrist camera. Moving the end-effector down brings the gripper closer to grasping height.",
+      "action": {
+        "kind": "semantic",
+        "unit": "MV_DOWN"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "MV_DOWN"
+    },
+    "response": "```json\n{\"reason\": \"The cyan box is directly in front of the wrist camera. Moving the end-effector down brings the gripper closer to grasping height.\", \"action\": {\"kind\": \"semantic\", \"unit\": \"MV_DOWN\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2550,
+      "completion_tokens": 52,
+      "total_tokens": 2714
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3496.580915991217
+  },
+  {
+    "call": 14,
+    "sim_time_s": 7.683999999999343,
+    "own_sha256": "31c17890b21bb61b2f04fa1e9f9a0a96c36b6289d515e117fe76d75567da9a68",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is located right below the gripper in OWN_CAMERA, slightly forward and down. Moving the end-effector down will position the gripper around the box for grasping.",
+      "action": {
+        "kind": "semantic",
+        "unit": "MV_DOWN"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "MV_DOWN"
+    },
+    "dispatch_rejected": "SEMANTIC_TARGET_UNREACHABLE",
+    "response": "```json\n{\"reason\":\"The cyan box is located right below the gripper in OWN_CAMERA, slightly forward and down. Moving the end-effector down will position the gripper around the box for grasping.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"MV_DOWN\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2549,
+      "completion_tokens": 56,
+      "total_tokens": 2605
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 2874.239459008095
+  },
+  {
+    "call": 15,
+    "sim_time_s": 7.983999999999436,
+    "own_sha256": "34942a6baf8c0575d7a99a1b6edbda28c721032be68f8c711de02ab16cf15135",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is centered in the lower field of view. Moving the end-effector forward and down towards the box to position the gripper around it.",
+      "action": {
+        "kind": "semantic",
+        "unit": "MV_FWD"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "MV_FWD"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is centered in the lower field of view. Moving the end-effector forward and down towards the box to position the gripper around it.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"MV_FWD\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2549,
+      "completion_tokens": 52,
+      "total_tokens": 2601
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 2430.473250002251
+  },
+  {
+    "call": 16,
+    "sim_time_s": 8.313999999999545,
+    "own_sha256": "d1e0ced92504c660043e1993e2d974d5c89c0670f305b40bf597dc14d70f3d50",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is centered below the wrist camera. Lowering the arm will bring the gripper closer to grasping height.",
+      "action": {
+        "kind": "semantic",
+        "unit": "MV_DOWN"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "MV_DOWN"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is centered below the wrist camera. Lowering the arm will bring the gripper closer to grasping height.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"MV_DOWN\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2549,
+      "completion_tokens": 44,
+      "total_tokens": 2709
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 2775.657250007498
+  },
+  {
+    "call": 17,
+    "sim_time_s": 8.643999999999656,
+    "own_sha256": "1904b01f4b6715dadd78f41233801d10f3897240042ada03143997ab22b5398a",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is centered at the bottom of the wrist camera view; moving forward to position the gripper over it.",
+      "action": {
+        "kind": "semantic",
+        "unit": "MV_FWD"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "MV_FWD"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is centered at the bottom of the wrist camera view; moving forward to position the gripper over it.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"MV_FWD\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2548,
+      "completion_tokens": 45,
+      "total_tokens": 2699
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 2697.3672089952743
+  },
+  {
+    "call": 18,
+    "sim_time_s": 8.973999999999766,
+    "own_sha256": "64c3eef0faf6b69da9584d821a087137215de3a5ad54706b0f95fa5b697364e3",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is centered below the gripper; continuing to lower the arm towards grasping height.",
+      "action": {
+        "kind": "semantic",
+        "unit": "MV_DOWN"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "MV_DOWN"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is centered below the gripper; continuing to lower the arm towards grasping height.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"MV_DOWN\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2548,
+      "completion_tokens": 39,
+      "total_tokens": 2684
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 2919.137082993984
+  },
+  {
+    "call": 19,
+    "sim_time_s": 9.303999999999876,
+    "own_sha256": "863c2b427b25f6e6e319f824a8e282b033e969869756c58cd3a810b508c3c80f",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is centered in the wrist camera view; moving forward to position the gripper directly over it before final descent.",
+      "action": {
+        "kind": "semantic",
+        "unit": "MV_FWD"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "MV_FWD"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is centered in the wrist camera view; moving forward to position the gripper directly over it before final descent.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"MV_FWD\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2548,
+      "completion_tokens": 46,
+      "total_tokens": 2672
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 2339.3022079981165
+  },
+  {
+    "call": 20,
+    "sim_time_s": 9.633999999999986,
+    "own_sha256": "329218a247d5ed5af1cef7ee0affb8187d29d79e86e0466e0e7bfecca4809a44",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is in front and slightly below the camera view; continuing to lower and move forward toward the box to position the gripper around it. Moving down further.",
+      "action": {
+        "kind": "semantic",
+        "unit": "MV_DOWN"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "MV_DOWN"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is in front and slightly below the camera view; continuing to lower and move forward toward the box to position the gripper around it. Moving down further.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"MV_DOWN\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2548,
+      "completion_tokens": 54,
+      "total_tokens": 2602
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 2474.7994579956867
+  },
+  {
+    "call": 21,
+    "sim_time_s": 9.964000000000096,
+    "own_sha256": "cb3e38cf5f895e780ac26297371a93ded2dd99014f732a5dc6aaac3fbc39e701",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is directly below the gripper; lowering further brings the gripper into grasp position.",
+      "action": {
+        "kind": "semantic",
+        "unit": "MV_DOWN"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "MV_DOWN"
+    },
+    "dispatch_rejected": "SEMANTIC_TARGET_UNREACHABLE",
+    "response": "```json\n{\"reason\":\"The cyan box is directly below the gripper; lowering further brings the gripper into grasp position.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"MV_DOWN\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2548,
+      "completion_tokens": 39,
+      "total_tokens": 2711
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3255.0024170050165
+  },
+  {
+    "call": 22,
+    "sim_time_s": 10.264000000000197,
+    "own_sha256": "1cf274b0024413279affbda66b18689fa19f217089756e2cf274843bdb740bad",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is directly in front of the wrist camera; moving forward brings the gripper closer to grasping position.",
+      "action": {
+        "kind": "semantic",
+        "unit": "MV_FWD"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "MV_FWD"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is directly in front of the wrist camera; moving forward brings the gripper closer to grasping position.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"MV_FWD\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2548,
+      "completion_tokens": 44,
+      "total_tokens": 2670
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 2568.8051670003915
+  },
+  {
+    "call": 23,
+    "sim_time_s": 10.594000000000307,
+    "own_sha256": "649df81fed4ff962848dd5618d9eb1e97e7f9488e806e37c0f912ea4fab2f390",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "Move gripper closer to the cyan box to prepare for grasp.",
+      "action": {
+        "kind": "semantic",
+        "unit": "MV_DOWN"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "MV_DOWN"
+    },
+    "response": "```json\n{\"reason\":\"Move gripper closer to the cyan box to prepare for grasp.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"MV_DOWN\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2548,
+      "completion_tokens": 33,
+      "total_tokens": 2696
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 2463.01512500213
+  },
+  {
+    "call": 24,
+    "sim_time_s": 10.924000000000417,
+    "own_sha256": "71da87ca91ab5235162a49e4df9e75e579dad204140bc94faaabe5949d980905",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is directly in front and below the wrist camera. Continuing forward approach to position the gripper around the target.",
+      "action": {
+        "kind": "semantic",
+        "unit": "MV_FWD"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "MV_FWD"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is directly in front and below the wrist camera. Continuing forward approach to position the gripper around the target.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"MV_FWD\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2548,
+      "completion_tokens": 46,
+      "total_tokens": 2686
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3867.6695419999305
+  },
+  {
+    "call": 25,
+    "sim_time_s": 11.254000000000527,
+    "own_sha256": "3dfbf1c128cb43b4ceef647f197f280f9e15130479ad36d44ccd538dc8bb581c",
+    "top_sha256": "645c772e93ab0e13dffcac11598a62fb503ef2919c246fee6f67831912d0301a",
+    "decision": {
+      "reason": "The cyan box is centered in the wrist camera view; moving down to approach grasp height.",
+      "action": {
+        "kind": "semantic",
+        "unit": "MV_DOWN"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "MV_DOWN"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is centered in the wrist camera view; moving down to approach grasp height.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"MV_DOWN\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2548,
+      "completion_tokens": 39,
+      "total_tokens": 2669
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 2846.209124996676
+  },
+  {
+    "call": 26,
+    "sim_time_s": 11.584000000000637,
+    "own_sha256": "cc75081a0eb5359f97dd462a54d4891c6b9a5df9a9106960bd8a285326c36462",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is centered in the lower view; moving forward to position the gripper directly around it before grasping.",
+      "action": {
+        "kind": "semantic",
+        "unit": "MV_FWD"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "MV_FWD"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is centered in the lower view; moving forward to position the gripper directly around it before grasping.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"MV_FWD\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2548,
+      "completion_tokens": 44,
+      "total_tokens": 2677
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3797.350125008961
+  },
+  {
+    "call": 27,
+    "sim_time_s": 11.938000000000756,
+    "own_sha256": "097e306681b308b0e4417739fab0a1e64cdfab22e2898bb55242e543da52dd58",
+    "top_sha256": "d5e4ea304b50c90a0413843f58a5d60ad2b6d67eb4b2110e2467deceb785e9b7",
+    "decision": {
+      "reason": "The cyan box is centered in the lower field of view; lowering the gripper closer to the object to achieve grasp height.",
+      "action": {
+        "kind": "semantic",
+        "unit": "MV_DOWN"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "MV_DOWN"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is centered in the lower field of view; lowering the gripper closer to the object to achieve grasp height.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"MV_DOWN\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2548,
+      "completion_tokens": 45,
+      "total_tokens": 2701
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 2478.565790996072
+  },
+  {
+    "call": 28,
+    "sim_time_s": 12.268000000000866,
+    "own_sha256": "37dc978b11da4dddc34bed70ff7fc227918bf7b62fd510de340cc8c3472d345f",
+    "top_sha256": "645c772e93ab0e13dffcac11598a62fb503ef2919c246fee6f67831912d0301a",
+    "decision": {
+      "reason": "The cyan box is directly in front of the gripper. Lowering the arm further will position the gripper at the appropriate height for grasping.",
+      "action": {
+        "kind": "semantic",
+        "unit": "MV_DOWN"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "MV_DOWN"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is directly in front of the gripper. Lowering the arm further will position the gripper at the appropriate height for grasping.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"MV_DOWN\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2548,
+      "completion_tokens": 48,
+      "total_tokens": 2596
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 2716.841708999709
+  },
+  {
+    "call": 29,
+    "sim_time_s": 12.598000000000976,
+    "own_sha256": "d2a512f77cd0b8cb7f4d97e21ed615bb8833d77b26612875d91774b45a247921",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is directly in front and below the gripper; continuing to lower the end-effector to align for grasping.",
+      "action": {
+        "kind": "semantic",
+        "unit": "MV_DOWN"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "MV_DOWN"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is directly in front and below the gripper; continuing to lower the end-effector to align for grasping.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"MV_DOWN\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2547,
+      "completion_tokens": 45,
+      "total_tokens": 2680
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3759.0895000030287
+  },
+  {
+    "call": 30,
+    "sim_time_s": 12.928000000001086,
+    "own_sha256": "c82d742119bbce7eaf04d5c4fa27d2099ccc55f9c888a04a43777e6738206e34",
+    "top_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+    "decision": {
+      "reason": "The cyan box is centered in the wrist camera view; lowering the end-effector further towards grasp height.",
+      "action": {
+        "kind": "semantic",
+        "unit": "MV_DOWN"
+      }
+    },
+    "action": {
+      "kind": "semantic",
+      "unit": "MV_DOWN"
+    },
+    "response": "```json\n{\"reason\":\"The cyan box is centered in the wrist camera view; lowering the end-effector further towards grasp height.\",\"action\":{\"kind\":\"semantic\",\"unit\":\"MV_DOWN\"}}\n```",
+    "usage": {
+      "prompt_tokens": 2547,
+      "completion_tokens": 42,
+      "total_tokens": 2755
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 2984.959333000006
+  }
+]

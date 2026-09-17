@@ -1,0 +1,297 @@
+{
+  "schema": "ugrp.pick_match_independent_rescore.v2",
+  "review_scope": "raw_referee_only; physical positives still require evaluation-only replay/video support exclusion",
+  "criterion": "contiguous samples with lift>=0.04m, bilateral contact true, all registered target weld flags false, duration>=2.0s; gaps >0.151s break hold",
+  "episodes": [
+    {
+      "episode": "skill-41",
+      "condition": "skill",
+      "seed": 41,
+      "review_scope": "raw_referee_only_pending_visual_support_exclusion_replay",
+      "computed": {
+        "physics_grasp_success": true,
+        "max_lift_m": 0.06779410124020041,
+        "longest_continuous_hold_s": 33.99999999992076,
+        "first_sustained_hold_sample_s": 88.09999999997538,
+        "last_continuous_hold": {
+          "start_s": 85.99999999998028,
+          "end_s": 119.99999999990104,
+          "duration_s": 33.99999999992076
+        },
+        "final_passing_state": true,
+        "final_lift_m": 0.06150632046083121,
+        "final_bilateral_contact": true,
+        "all_registered_target_weld_flags_off": true,
+        "total_samples": 1201
+      },
+      "saved_result_evaluation": {
+        "physics_grasp_success": true,
+        "max_lift_m": 0.06779410124020041,
+        "longest_bilateral_hold_s": 33.99999999992076,
+        "first_2s_hold_sim_s": 88.09999999997538,
+        "constraint_free": true,
+        "visual_review_required_for_positive": true
+      },
+      "core_comparisons": {
+        "physics_grasp_success": true,
+        "max_lift_m": true,
+        "longest_hold_s": true,
+        "first_sustained_hold": true,
+        "constraint_free": true
+      },
+      "all_core_outputs_match": true
+    },
+    {
+      "episode": "semantic-41",
+      "condition": "semantic",
+      "seed": 41,
+      "review_scope": "raw_referee_only_pending_visual_support_exclusion_replay",
+      "computed": {
+        "physics_grasp_success": false,
+        "max_lift_m": 7.252473583491126e-09,
+        "longest_continuous_hold_s": 0.0,
+        "first_sustained_hold_sample_s": null,
+        "last_continuous_hold": null,
+        "final_passing_state": false,
+        "final_lift_m": 7.2524173264088e-09,
+        "final_bilateral_contact": false,
+        "all_registered_target_weld_flags_off": true,
+        "total_samples": 1201
+      },
+      "saved_result_evaluation": {
+        "physics_grasp_success": false,
+        "max_lift_m": 7.252473583491126e-09,
+        "longest_bilateral_hold_s": 0.0,
+        "first_2s_hold_sim_s": null,
+        "constraint_free": true,
+        "visual_review_required_for_positive": true
+      },
+      "core_comparisons": {
+        "physics_grasp_success": true,
+        "max_lift_m": true,
+        "longest_hold_s": true,
+        "first_sustained_hold": true,
+        "constraint_free": true
+      },
+      "all_core_outputs_match": true
+    },
+    {
+      "episode": "skill-42",
+      "condition": "skill",
+      "seed": 42,
+      "review_scope": "raw_referee_only_pending_visual_support_exclusion_replay",
+      "computed": {
+        "physics_grasp_success": true,
+        "max_lift_m": 0.06793901575952443,
+        "longest_continuous_hold_s": 35.3999999999175,
+        "first_sustained_hold_sample_s": 86.69999999997864,
+        "last_continuous_hold": {
+          "start_s": 84.59999999998354,
+          "end_s": 119.99999999990104,
+          "duration_s": 35.3999999999175
+        },
+        "final_passing_state": true,
+        "final_lift_m": 0.061388845595232985,
+        "final_bilateral_contact": true,
+        "all_registered_target_weld_flags_off": true,
+        "total_samples": 1201
+      },
+      "saved_result_evaluation": {
+        "physics_grasp_success": true,
+        "max_lift_m": 0.06793901575952443,
+        "longest_bilateral_hold_s": 35.3999999999175,
+        "first_2s_hold_sim_s": 86.69999999997864,
+        "constraint_free": true,
+        "visual_review_required_for_positive": true
+      },
+      "core_comparisons": {
+        "physics_grasp_success": true,
+        "max_lift_m": true,
+        "longest_hold_s": true,
+        "first_sustained_hold": true,
+        "constraint_free": true
+      },
+      "all_core_outputs_match": true
+    },
+    {
+      "episode": "semantic-42",
+      "condition": "semantic",
+      "seed": 42,
+      "review_scope": "raw_referee_only_pending_visual_support_exclusion_replay",
+      "computed": {
+        "physics_grasp_success": false,
+        "max_lift_m": 7.252473583491126e-09,
+        "longest_continuous_hold_s": 0.0,
+        "first_sustained_hold_sample_s": null,
+        "last_continuous_hold": null,
+        "final_passing_state": false,
+        "final_lift_m": 7.2524173264088e-09,
+        "final_bilateral_contact": false,
+        "all_registered_target_weld_flags_off": true,
+        "total_samples": 1201
+      },
+      "saved_result_evaluation": {
+        "physics_grasp_success": false,
+        "max_lift_m": 7.252473583491126e-09,
+        "longest_bilateral_hold_s": 0.0,
+        "first_2s_hold_sim_s": null,
+        "constraint_free": true,
+        "visual_review_required_for_positive": true
+      },
+      "core_comparisons": {
+        "physics_grasp_success": true,
+        "max_lift_m": true,
+        "longest_hold_s": true,
+        "first_sustained_hold": true,
+        "constraint_free": true
+      },
+      "all_core_outputs_match": true
+    },
+    {
+      "episode": "skill-43",
+      "condition": "skill",
+      "seed": 43,
+      "review_scope": "raw_referee_only_pending_visual_support_exclusion_replay",
+      "computed": {
+        "physics_grasp_success": true,
+        "max_lift_m": 0.06823026082720884,
+        "longest_continuous_hold_s": 83.99999999990263,
+        "first_sustained_hold_sample_s": 38.000000000000846,
+        "last_continuous_hold": {
+          "start_s": 35.9999999999984,
+          "end_s": 119.99999999990104,
+          "duration_s": 83.99999999990263
+        },
+        "final_passing_state": true,
+        "final_lift_m": 0.057806090264954244,
+        "final_bilateral_contact": true,
+        "all_registered_target_weld_flags_off": true,
+        "total_samples": 1201
+      },
+      "saved_result_evaluation": {
+        "physics_grasp_success": true,
+        "max_lift_m": 0.06823026082720884,
+        "longest_bilateral_hold_s": 83.99999999990263,
+        "first_2s_hold_sim_s": 38.000000000000846,
+        "constraint_free": true,
+        "visual_review_required_for_positive": true
+      },
+      "core_comparisons": {
+        "physics_grasp_success": true,
+        "max_lift_m": true,
+        "longest_hold_s": true,
+        "first_sustained_hold": true,
+        "constraint_free": true
+      },
+      "all_core_outputs_match": true
+    },
+    {
+      "episode": "semantic-43",
+      "condition": "semantic",
+      "seed": 43,
+      "review_scope": "raw_referee_only_pending_visual_support_exclusion_replay",
+      "computed": {
+        "physics_grasp_success": false,
+        "max_lift_m": 7.252473583491126e-09,
+        "longest_continuous_hold_s": 0.0,
+        "first_sustained_hold_sample_s": null,
+        "last_continuous_hold": null,
+        "final_passing_state": false,
+        "final_lift_m": 7.2524173264088e-09,
+        "final_bilateral_contact": false,
+        "all_registered_target_weld_flags_off": true,
+        "total_samples": 1201
+      },
+      "saved_result_evaluation": {
+        "physics_grasp_success": false,
+        "max_lift_m": 7.252473583491126e-09,
+        "longest_bilateral_hold_s": 0.0,
+        "first_2s_hold_sim_s": null,
+        "constraint_free": true,
+        "visual_review_required_for_positive": true
+      },
+      "core_comparisons": {
+        "physics_grasp_success": true,
+        "max_lift_m": true,
+        "longest_hold_s": true,
+        "first_sustained_hold": true,
+        "constraint_free": true
+      },
+      "all_core_outputs_match": true
+    }
+  ],
+  "seed_pair_first_image_equality": [
+    {
+      "seed": 41,
+      "images": {
+        "own": {
+          "exact_bytes_equal": true,
+          "skill_sha256": "ae2f28de10934451c3dceda49ebfef8044abf12e52dce0ae834cd99eec59e1ce",
+          "semantic_sha256": "ae2f28de10934451c3dceda49ebfef8044abf12e52dce0ae834cd99eec59e1ce",
+          "skill_bytes": 20907,
+          "semantic_bytes": 20907
+        },
+        "top": {
+          "exact_bytes_equal": true,
+          "skill_sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051",
+          "semantic_sha256": "09dc383a472c37c47aa28fe6b688341ec53d50e30b2a582fb47f3d0b6a508051",
+          "skill_bytes": 20100,
+          "semantic_bytes": 20100
+        }
+      },
+      "both_first_images_exactly_equal": true
+    },
+    {
+      "seed": 42,
+      "images": {
+        "own": {
+          "exact_bytes_equal": true,
+          "skill_sha256": "9c083a2496451858ef4264800f7a0cd35273382d765f9dadbd98a70564a7adfd",
+          "semantic_sha256": "9c083a2496451858ef4264800f7a0cd35273382d765f9dadbd98a70564a7adfd",
+          "skill_bytes": 19615,
+          "semantic_bytes": 19615
+        },
+        "top": {
+          "exact_bytes_equal": true,
+          "skill_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+          "semantic_sha256": "53f404999ade69ccf4c88f72795c7ff6c5bd2b8a9f137c32846fac601daa400e",
+          "skill_bytes": 20824,
+          "semantic_bytes": 20824
+        }
+      },
+      "both_first_images_exactly_equal": true
+    },
+    {
+      "seed": 43,
+      "images": {
+        "own": {
+          "exact_bytes_equal": true,
+          "skill_sha256": "d9240731df1d27ef07ed775add9be144bbd4f3e87c2928d16c6eeae37f9f4f34",
+          "semantic_sha256": "d9240731df1d27ef07ed775add9be144bbd4f3e87c2928d16c6eeae37f9f4f34",
+          "skill_bytes": 23238,
+          "semantic_bytes": 23238
+        },
+        "top": {
+          "exact_bytes_equal": true,
+          "skill_sha256": "e4c29e5cc93553655156f5e33563bd93bd3a4734b64dc87ddff137b3a95d4a5e",
+          "semantic_sha256": "e4c29e5cc93553655156f5e33563bd93bd3a4734b64dc87ddff137b3a95d4a5e",
+          "skill_bytes": 20190,
+          "semantic_bytes": 20190
+        }
+      },
+      "both_first_images_exactly_equal": true
+    }
+  ],
+  "aggregate": {
+    "skill_successes": 3,
+    "semantic_successes": 0,
+    "all_core_outputs_match": true,
+    "all_seed_first_image_pairs_exact": true
+  },
+  "weld_inventory_assessment": {
+    "target_registered_flags": "small_box_01 r1/r2/r3 warehouse weld flags were present and false in every referee sample",
+    "other_equalities": "legacy color-block welds bind red/blue/yellow_block bodies; beam welds bind cooperative beam endpoints, not small_box_01",
+    "activation_path": "runner explicitly disables every warehouse_weld_id and raw controller dispatch exposes only arm/look/drive/wait; no grasp activation API is called",
+    "scope": "raw referee and source-binding assessment only"
+  }
+}
