@@ -21,7 +21,22 @@ def beam_feature(jpeg, *, hue_upper=24):
     # Yellow floor paint can merge with the carried beam. Its lower saturation
     # permits a second segmentation, still subject to every shaft shape gate.
     def candidates(saturation):
-        return [b for b in extract_beams(jpeg, hue_upper=hue_upper,min_saturation=saturation)
+        beams=extract_beams(jpeg,hue_upper=hue_upper,min_saturation=saturation)
+        refined=None
+        selected=[]
+        for b in beams:
+            # A 0.45m beam projects to at most about 130 pixels at the fixed
+            # nominal carry plane. A longer thin component includes a gripper
+            # or wheel bridge; fit its stable-width core instead of accepting
+            # an impossible visible shaft. Ordinary silhouettes stay unchanged.
+            if hue_upper==35 and 130<b['length_px']<=180 and b['width_px']<=25:
+                if refined is None:refined=extract_beams(jpeg,robust_shaft=True,hue_upper=hue_upper,min_saturation=saturation)
+                near=[r for r in refined if np.linalg.norm((np.array(r['center'])-b['center'])*b['image_size'])<.4*b['length_px']
+                      and 65<=r['length_px']<=130 and r['width_px']<=25]
+                if len(near)!=1:continue
+                b=near[0]
+            selected.append(b)
+        return [b for b in selected
                       if not b['touches_border'] and b['length_px'] / b['width_px'] >= 3.5
                       and 65 <= b['length_px'] <= 180 and b['width_px'] <= 25]
     initial=candidates(105)

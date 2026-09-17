@@ -166,6 +166,7 @@ class BoundPairSkill:
                 decisions[r]=decision
             permission=authorize_pair(sync,decisions,{r:f['frame_id'] for r,f in frames.items()},index)
             self.calls.append({'kind':'rotating_carry','decisions':decisions,'permission':permission,
+                'frame_ids':{r:f['frame_id'] for r,f in frames.items()},
                 'images':{r:{'own':f['own_rgb'],'top':f['raw_top_rgb']} for r,f in frames.items()}})
             if permission['phase']!='GO':
                 raise RuntimeError('paired navigation stopped: '+str({r:d.get('status') for r,d in decisions.items()}))

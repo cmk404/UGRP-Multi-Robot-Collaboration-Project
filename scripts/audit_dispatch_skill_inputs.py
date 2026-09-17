@@ -58,6 +58,8 @@ def audit(p,*,replay_solo=False):
  if replay_solo:
   setup=json.loads((p/'episode-setup-only.json').read_text())
   report['solo_decision_replay']=audit_solo_replay(p,json.loads((p/'committed-plan.json').read_text()),setup['static_map'])
+ setup=json.loads((p/'episode-setup-only.json').read_text())
+ report['navigation_replay']=audit_navigation(p,calls,json.loads((p/'committed-plan.json').read_text()),setup['static_map'])
  (p/'input-audit.json').write_text(json.dumps(report,indent=2));print(report)
 def audit_solo_replay(p,committed,static_map):
  import copy,base64,json,hashlib
@@ -84,6 +86,42 @@ def audit_solo_replay(p,committed,static_map):
   assert json.loads(json.dumps(action))==row['action'],('solo action',row['index'])
   assert policy.phase==row['phase_after'],('solo phase',row['index'])
  return {'actions_replayed':len(rows),'source':'archived own RGB + TOP RGB + own command state + recorded resource wait signals','scope':'controller decision replay; resource ownership checked separately, not physical success'}
+
+def audit_navigation(p,calls,committed,static_map):
+ from harness.dispatch_navigation_map import navigation_map
+ from harness.dispatch_pair_navigation import PairNavigator,authorize_pair
+ from harness.dispatch_skill_binding import SkillBindings,BeamContinuity
+ from harness.pair_carry_sync import PairCarrySync
+ from harness.camera_goal_transport import own_payload
+ import copy,math,json,hashlib
+ bindings=SkillBindings(committed,static_map);continuity=BeamContinuity()
+ agents=sync=None;last=None;anchor=None;count=0
+ def raw(ref):
+  value=(p/ref['path']).read_bytes();assert hashlib.sha256(value).hexdigest()==ref['sha256'];return value
+ for call in calls:
+  if call['kind']=='image_binding':
+   last=call
+   if call['transform']['hue_upper']==35:continuity.observe(call['transform']['observed_beam'])
+  elif call['kind']=='navigation_map':
+   data=navigation_map(bindings,raw(last['raw_top']));assert data==call['map']
+   agents={r:PairNavigator(data,r) for r in bindings.pair}
+   sync=PairCarrySync('dispatch-'+bindings.committed['plan_hash']);anchor=copy.deepcopy(last['own'])
+  elif call['kind']=='rotating_carry':
+   assert agents is not None
+   decisions={}
+   for r in agents:
+    own=raw(call['images'][r]['own']);top=raw(call['images'][r]['top'])
+    value=agents[r].decide(own,top)
+    current,initial=own_payload(own,hue_upper=35),own_payload(raw(anchor[r]),hue_upper=35)
+    held=bool(current and initial and .25<=current[0]/initial[0]<=4 and math.dist(current[1:],initial[1:])<=.15)
+    value['own_attachment']={'held_estimate':held,'current':current,'anchor':initial}
+    value['ready']=value['ready'] and held;decisions[r]=value
+    assert json.loads(json.dumps(value))==call['decisions'][r],('rotation RGB replay',count,r)
+   if 'frame_ids' in call:
+    permission=authorize_pair(sync,decisions,call['frame_ids'],count)
+    assert permission==call['permission'],('rotation sync',count)
+   count+=1
+ return {'rgb_rotation_decisions_replayed':count,'source':'archived RGB + authored map + exact plan; no referee input'}
 
 if __name__=='__main__':
  import argparse

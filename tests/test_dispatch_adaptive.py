@@ -37,3 +37,12 @@ def test_occluded_end_keeps_the_same_shaft_across_thresholds():
     b=beam_feature(Path('tests/fixtures/dispatch_adaptive/beam-floor-r2-311.jpg').read_bytes(),hue_upper=35)
     assert np.allclose(np.array(b['center'])*[960,720],[633.5,276],atol=3)
     assert 90<b['length_px']<105
+
+
+def test_attached_gripper_pixels_are_not_treated_as_a_longer_beam():
+    raw=Path('tests/fixtures/dispatch_adaptive/beam-gripper-bridge.jpg').read_bytes()
+    original=extract_beams(raw,hue_upper=35)
+    assert any(140<b['length_px']<155 and b['width_px']<25 for b in original)
+    actual=beam_feature(raw,hue_upper=35)
+    assert 75<actual['length_px']<110
+    assert np.allclose(np.array(actual['center'])*[960,720],[689,174],atol=4)
