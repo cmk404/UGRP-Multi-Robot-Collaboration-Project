@@ -1,0 +1,168 @@
+{
+  "source_sha": "4ffae7bfb4bd367bd5c29c5c69a25aa6f6b4a643",
+  "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+  "executable": "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/python",
+  "platform": "macOS-27.2-arm64-arm-64bit",
+  "packages": {
+    "mujoco": "3.12.0",
+    "numpy": "2.5.2",
+    "opencv-python-headless": "5.0.0.93",
+    "Pillow": "12.3.0",
+    "pytest": "9.1.1",
+    "cv2_runtime": "5.0.0"
+  },
+  "physics_options": {
+    "timestep": ".0005",
+    "gravity": "0 0 -9.81",
+    "integrator": "implicitfast",
+    "cone": "elliptic",
+    "iterations": "80"
+  },
+  "explicit_contact_pairs": [
+    {
+      "geom1": "r1__left_finger",
+      "geom2": "team_beam_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.03 0.002 0.002",
+      "solref": "0.007 1.0",
+      "solimp": "0.91 0.975 0.002 0.5 2.0",
+      "solreffriction": "0 -3000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r1__left_finger",
+      "geom2": "dispatch_box_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.2 0.01 0.01",
+      "solref": "0.013000000000000001 1.0",
+      "solimp": "0.9 0.96 0.0015 0.5 2.0",
+      "solreffriction": "0 -3000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r1__right_finger",
+      "geom2": "team_beam_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.03 0.002 0.002",
+      "solref": "0.007 1.0",
+      "solimp": "0.91 0.975 0.002 0.5 2.0",
+      "solreffriction": "0 -3000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r1__right_finger",
+      "geom2": "dispatch_box_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.2 0.01 0.01",
+      "solref": "0.013000000000000001 1.0",
+      "solimp": "0.9 0.96 0.0015 0.5 2.0",
+      "solreffriction": "0 -3000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r2__left_finger",
+      "geom2": "team_beam_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.03 0.002 0.002",
+      "solref": "0.007 1.0",
+      "solimp": "0.91 0.975 0.002 0.5 2.0",
+      "solreffriction": "0 -3000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r2__left_finger",
+      "geom2": "dispatch_box_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.2 0.01 0.01",
+      "solref": "0.013000000000000001 1.0",
+      "solimp": "0.9 0.96 0.0015 0.5 2.0",
+      "solreffriction": "0 -3000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r2__right_finger",
+      "geom2": "team_beam_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.03 0.002 0.002",
+      "solref": "0.007 1.0",
+      "solimp": "0.91 0.975 0.002 0.5 2.0",
+      "solreffriction": "0 -3000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r2__right_finger",
+      "geom2": "dispatch_box_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.2 0.01 0.01",
+      "solref": "0.013000000000000001 1.0",
+      "solimp": "0.9 0.96 0.0015 0.5 2.0",
+      "solreffriction": "0 -3000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r3__left_finger",
+      "geom2": "team_beam_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.03 0.002 0.002",
+      "solref": "0.007 1.0",
+      "solimp": "0.91 0.975 0.002 0.5 2.0",
+      "solreffriction": "0 -3000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r3__left_finger",
+      "geom2": "dispatch_box_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.2 0.01 0.01",
+      "solref": "0.013000000000000001 1.0",
+      "solimp": "0.9 0.96 0.0015 0.5 2.0",
+      "solreffriction": "0 -3000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r3__right_finger",
+      "geom2": "team_beam_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.03 0.002 0.002",
+      "solref": "0.007 1.0",
+      "solimp": "0.91 0.975 0.002 0.5 2.0",
+      "solreffriction": "0 -3000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r3__right_finger",
+      "geom2": "dispatch_box_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.2 0.01 0.01",
+      "solref": "0.013000000000000001 1.0",
+      "solimp": "0.9 0.96 0.0015 0.5 2.0",
+      "solreffriction": "0 -3000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    }
+  ],
+  "scope": "Versions from the actual simulation interpreter and physics options from generated F2 XML; scene geometry varies by authored condition. No hardware calibration claim."
+}

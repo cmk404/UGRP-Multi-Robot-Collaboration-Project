@@ -194,6 +194,14 @@
       "physical_success": false,
       "error": "RuntimeError: existing pair carry guard stopped: ABORT",
       "scope": "intermediate fresh-LLM candidate; preserved separately from final comparison"
+    },
+    {
+      "id": "candidate6-F2",
+      "source_sha": "4ffae7bfb4bd367bd5c29c5c69a25aa6f6b4a643",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final6-20260917/F2",
+      "physical_success": false,
+      "error": "RuntimeError: existing pair carry guard stopped: ABORT",
+      "cause": "Bankers rounding merged alternate shaft rows at an exact half-pixel centre; observed cargo was incorrectly declared unsupported."
     }
   ],
   "freeze": "Commit before each physical diagnosis. After repairs freeze source/models and run the complete six-condition fresh-LLM comparison. Preserve failures.",
@@ -207,5 +215,5 @@
   ],
   "cost": "Save wall time, action counts, provider requests/usage; monetary cost null when unknown.",
   "concurrency": "R8 and R9 overlapped; subsequent independent trials may use up to two worker processes. Preserve per-run wall time; do not claim speedup relative to serial baseline.",
-  "current_candidate_change": "Keep rotating navigation unchanged. Translation skew uses current saturated shaft cross-section medians, excluding the weakly saturated yellow apron. Restore only bright narrow-hue cyan cargo pixels that clip at V=255; keep dark floor excluded and all comotion thresholds unchanged. Freeze this source and run six fresh-LLM cases."
+  "current_candidate_change": "Preserve saturated-shaft and bright-cyan segmentation. Replace rounding with floor bins for one-pixel shaft cross-sections, so exact vertical half-pixel centres do not alias rows. Same physical and control thresholds. Final fresh-LLM six-case cohort follows."
 }

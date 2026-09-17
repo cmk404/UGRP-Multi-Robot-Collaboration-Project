@@ -45,52 +45,67 @@
     "manual_review": "Compressed formation reached a persistent error; abrupt own RGB change and visible shaft change stopped the run. Not labelled success or merely false alarm."
   },
   {
-    "case": "F3",
-    "file": "qa/F3-1358.jpg",
+    "case": "candidate4-F3",
+    "file": "qa/candidate4-F3-1358.jpg",
     "source": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F3/qa-frame-1358.jpg",
     "sha256": "f14603bded25a788c9cb7c8d4615b82cd6668e31d748a7e03e68247b2dd479f3",
     "scope": "Selected frames inspected for real carrying, obstacle clearance and final cargo placement; not an exhaustive visual inspection of every decoded frame."
   },
   {
-    "case": "F3",
-    "file": "qa/F3-2715.jpg",
+    "case": "candidate4-F3",
+    "file": "qa/candidate4-F3-2715.jpg",
     "source": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F3/qa-frame-2715.jpg",
     "sha256": "42703be2c6b26e5c2f3fad79074b0ad08803d09082332fe040350d4027a2dae3",
     "scope": "Selected frames inspected for real carrying, obstacle clearance and final cargo placement; not an exhaustive visual inspection of every decoded frame."
   },
   {
-    "case": "F3",
-    "file": "qa/F3-final-top.jpg",
+    "case": "candidate4-F3",
+    "file": "qa/candidate4-F3-final-top.jpg",
     "source": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F3/rgb/final-top.jpg",
     "sha256": "83dd1139013d6d40d8dee310cba0f56cfdd0c956d234f6c6c256fb265a6e8137",
     "scope": "Manual final TOP review; referee separately proves release and stability."
   },
   {
-    "case": "F4",
-    "file": "qa/F4-0813.jpg",
+    "case": "candidate4-F4",
+    "file": "qa/candidate4-F4-0813.jpg",
     "source": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F4/qa-frame-0813.jpg",
     "sha256": "662fc90583fe4c4412192c12ec17475deccb42916a4ae9bb9399c05f387b6690",
     "scope": "Selected frames inspected for real carrying, obstacle clearance and final cargo placement; not an exhaustive visual inspection of every decoded frame."
   },
   {
-    "case": "F4",
-    "file": "qa/F4-2440.jpg",
+    "case": "candidate4-F4",
+    "file": "qa/candidate4-F4-2440.jpg",
     "source": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F4/qa-frame-2440.jpg",
     "sha256": "6648cd0c8ac27b758bda4a8a2cee6399e8ea5e0aa8b868a6dbf4b17f8234344c",
     "scope": "Selected frames inspected for real carrying, obstacle clearance and final cargo placement; not an exhaustive visual inspection of every decoded frame."
   },
   {
-    "case": "F4",
-    "file": "qa/F4-3253.jpg",
+    "case": "candidate4-F4",
+    "file": "qa/candidate4-F4-3253.jpg",
     "source": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F4/qa-frame-3253.jpg",
     "sha256": "98e34647fa6bfc46952719f3ce44c886880ea0ecee014ddcc0bc949a87514298",
     "scope": "Selected frames inspected for real carrying, obstacle clearance and final cargo placement; not an exhaustive visual inspection of every decoded frame."
   },
   {
-    "case": "F4",
-    "file": "qa/F4-final-top.jpg",
+    "case": "candidate4-F4",
+    "file": "qa/candidate4-F4-final-top.jpg",
     "source": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F4/rgb/final-top.jpg",
     "sha256": "b9573417a9b048d7e5b671d8e80b625d667eb659e10214857058bdf6ebb6bf8f",
     "scope": "Manual final TOP review; referee separately proves release and stability."
+  },
+  {
+    "file": "qa/candidate4-F2.jpg",
+    "source": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F2/rgb/final-top.jpg",
+    "manual_review": "Stopped during B carry; box delivered; beam still held."
+  },
+  {
+    "file": "qa/candidate4-F5.jpg",
+    "source": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F5/rgb/final-top.jpg",
+    "manual_review": "Beam delivered; box still held on the north route after probe-mask inconsistency."
+  },
+  {
+    "file": "qa/candidate5-F2.jpg",
+    "source": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final5-20260917/F2/rgb/final-top.jpg",
+    "manual_review": "Small actual beam yaw; false centreline skew over the painted apron caused repeated recovery stops."
   }
 ]
