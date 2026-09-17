@@ -7,6 +7,7 @@ ROOT=Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:sys.path.insert(0,str(ROOT))
 from scripts.camera_approach_scene import ApproachScene,ROBOTS,MAX_APPROACH_ROUNDS
 from scripts.run_camera_approach_cohort import load_cases
+from scripts.approach_speed_teacher import teacher_command
 def write(p,v):p.write_text(json.dumps(v,indent=2,sort_keys=True,allow_nan=False)+'\n')
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def load_models(root):
@@ -25,11 +26,13 @@ def aggregate(out,cases):
   labels.extend(json.loads((out/'cases'/cid/'privileged_labels.json').read_text()))
  write(out/'actor_samples.json',actors);write(out/'privileged_labels.json',labels)
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--grasp-model-dir',type=Path,required=True);p.add_argument('--cases-json',type=Path,required=True);p.add_argument('--out-dir',type=Path,required=True);a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--grasp-model-dir',type=Path,required=True);p.add_argument('--cases-json',type=Path,required=True);p.add_argument('--out-dir',type=Path,required=True);p.add_argument('--speed-multiplier',type=float,choices=(1.,2.),default=1.);a=p.parse_args()
  cp=a.cases_json.resolve();cases=load_cases(cp);gr=a.grasp_model_dir.resolve();models,skillhash,modelhashes=load_models(gr)
  import mujoco
  out=a.out_dir.resolve();out.mkdir(parents=True,exist_ok=False);started=time.monotonic()
  report={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'cases_sha256':sha(cp),'grasp_skill_sha256':skillhash,'grasp_model_sha256':modelhashes,'environment':{'python':sys.version,'platform':platform.platform(),'mujoco':mujoco.__version__},'config':{'seed':11,'weld':False,'slice_s':.2,'stop_dwell_s':.25,'teacher_forward_gain_per_m':.2,'teacher_min_moving_forward':.01,'max_rounds':MAX_APPROACH_ROUNDS},'successful_cases':[],'excluded_cases':[],'goal_references':{},'cases':[],'complete':False};write(out/'report.json',report)
+ report['config']['speed_multiplier']=a.speed_multiplier
+ report['config']['scaling']='min(0.15, multiplier * original forward); same 0.2s control period and 4mm readiness'
  ref=ApproachScene(out/'reference',gr)
  try:
   ref.open({r:0 for r in ROBOTS});ref.stop_dwell();frames=ref.capture('goal')
@@ -43,7 +46,7 @@ def main():
    for i in range(MAX_APPROACH_ROUNDS):
     frames=scene.capture(f'approach-{i:03d}');speeds={};both=True
     for rid in ROBOTS:
-     remaining=goals[rid]-float(scene.world.controllers[rid].base_xyz()[0]);stop=abs(remaining)<=.004;forward=0. if stop else (min(.15,max(.01,.2*remaining)) if remaining>0 else 0.);both&=stop;sid=f'{cid}:{i:03d}:{rid}';actors.append({'id':sid,'case_id':cid,'robot_id':rid,'observations':{'own_rgb':frames[rid]['own_rgb'],'shared_top_rgb':frames[rid]['shared_top_rgb']},'own_command_history':list(hist[rid])});labels.append({'sample_id':sid,'case_id':cid,'robot_id':rid,'forward':forward,'stop':bool(stop)});speeds[rid]=forward
+     remaining=goals[rid]-float(scene.world.controllers[rid].base_xyz()[0]);decision=teacher_command(remaining,a.speed_multiplier);stop=decision['ready'];forward=decision['forward'];both&=stop;sid=f'{cid}:{i:03d}:{rid}';actors.append({'id':sid,'case_id':cid,'robot_id':rid,'observations':{'own_rgb':frames[rid]['own_rgb'],'shared_top_rgb':frames[rid]['shared_top_rgb']},'own_command_history':list(hist[rid])});labels.append({'sample_id':sid,'case_id':cid,'robot_id':rid,'forward':forward,'stop':bool(stop)});speeds[rid]=forward
     if both:rec['approach_ok']=True;break
     for rid in ROBOTS:hist[rid].append({'kind':'drive','forward':speeds[rid],'turn':0.,'duration_s':.2})
     scene.drive(speeds)
@@ -52,9 +55,9 @@ def main():
     for rid in ROBOTS:hist[rid].append({'kind':'drive','forward':0.,'turn':0.,'duration_s':.25})
     frames=scene.capture(f'stationary-{confirm}')
     for rid in ROBOTS:
-     remaining=goals[rid]-float(scene.world.controllers[rid].base_xyz()[0]);stop=abs(remaining)<=.004;sid=f'{cid}:stationary-{confirm}:{rid}'
+     remaining=goals[rid]-float(scene.world.controllers[rid].base_xyz()[0]);decision=teacher_command(remaining,a.speed_multiplier);stop=decision['ready'];sid=f'{cid}:stationary-{confirm}:{rid}'
      actors.append({'id':sid,'case_id':cid,'robot_id':rid,'observations':{'own_rgb':frames[rid]['own_rgb'],'shared_top_rgb':frames[rid]['shared_top_rgb']},'own_command_history':list(hist[rid])})
-     labels.append({'sample_id':sid,'case_id':cid,'robot_id':rid,'forward':0. if stop else (min(.15,max(.01,.2*remaining)) if remaining>0 else 0.),'stop':bool(stop)})
+     labels.append({'sample_id':sid,'case_id':cid,'robot_id':rid,'forward':decision['forward'],'stop':bool(stop)})
      rec['approach_ok']=bool(rec['approach_ok'] and stop)
     if confirm==0:scene.stop_dwell()
    rec['approach_end_state']=scene.evaluation_snapshot()
@@ -63,7 +66,7 @@ def main():
     from harness.grasp_student_inference import predict_student
     scene.finish_grasp(predict_student,models,rounds=16)
    from scripts.run_camera_pair_transport import evaluate_grasp_samples
-   rec['evaluation']=evaluate_grasp_samples(scene.evaluation_samples);rec['grasp_success']=bool(rec['evaluation']['grasp_success']);rec['approach_payload_contact_steps']=scene.approach_payload_contact_steps;good=rec['approach_ok'] and rec['grasp_success'] and not rec['approach_payload_contact_steps'];(report['successful_cases'] if good else report['excluded_cases']).append(cid)
+   rec['evaluation']=evaluate_grasp_samples(scene.evaluation_samples);rec['grasp_success']=bool(rec['evaluation']['grasp_success']);rec['final_physics']=scene.evaluation_snapshot();rec['approach_payload_contact_steps']=scene.approach_payload_contact_steps;good=rec['approach_ok'] and rec['grasp_success'] and not rec['approach_payload_contact_steps'];(report['successful_cases'] if good else report['excluded_cases']).append(cid)
   except Exception as e:rec['error']=f'{type(e).__name__}: {e}';rec['traceback']=traceback.format_exc();report['excluded_cases'].append(cid)
   finally:
    scene.close();caseout.mkdir(parents=True,exist_ok=True);video=caseout/'motion.mp4';rec['video_sha256']=sha(video) if video.is_file() else None;write(caseout/'actor_samples.json',actors);write(caseout/'privileged_labels.json',labels);write(caseout/'result.json',rec);report['cases'].append(rec);aggregate(out,cases[:len(report['cases'])]);write(out/'report.json',report)

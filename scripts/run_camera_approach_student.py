@@ -15,7 +15,7 @@ import traceback
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
-from scripts.camera_approach_scene import ApproachScene, ROBOTS, MAX_APPROACH_ROUNDS
+from scripts.camera_approach_scene import ApproachScene, ROBOTS, MAX_APPROACH_ROUNDS, validate_start_poses
 from scripts.run_camera_pair_transport import evaluate_grasp_samples
 
 
@@ -69,17 +69,25 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--grasp-model-dir', type=Path, required=True)
     p.add_argument('--approach-model-dir', type=Path, required=True)
-    p.add_argument('--distance', type=float, nargs=2, required=True, metavar=('R1', 'R3'))
+    starts = p.add_mutually_exclusive_group(required=True)
+    starts.add_argument('--distance', type=float, nargs=2, metavar=('R1', 'R3'))
+    starts.add_argument('--start-poses-json', type=Path, help='evaluation fixture only; never passed to student')
     p.add_argument('--condition', choices=('visual', 'playback'), required=True)
     p.add_argument('--playback-seconds', type=float, default=1.0)
     p.add_argument('--out-dir', type=Path, required=True)
     p.add_argument('--act-python', type=Path, help='optional isolated LeRobot Python')
     p.add_argument('--act-model-dir', type=Path, help='comparison directory containing r1/act and r3/act')
+    p.add_argument('--teacher-reference-dir', type=Path, help='explicit privileged comparator only')
+    p.add_argument('--teacher-speed', type=float, choices=(1., 2.), default=2.)
     args = p.parse_args()
     if bool(args.act_python) != bool(args.act_model_dir) or (args.act_python and args.condition != 'visual'):
         p.error('ACT requires both --act-python and --act-model-dir, with --condition visual')
-    if any(not math.isfinite(x) or not .2 <= x <= .3 for x in args.distance):
+    if args.teacher_reference_dir and (args.act_python or args.condition != 'visual'):
+        p.error('privileged teacher cannot be combined with ACT or playback')
+    start_poses = validate_start_poses(json.loads(args.start_poses_json.read_text())) if args.start_poses_json else None
+    if args.distance and any(not math.isfinite(x) or not .2 <= x <= .3 for x in args.distance):
         p.error('distance must be 0.20..0.30 m')
+    distances = {r: start_poses[r]['distance_m'] for r in ROBOTS} if start_poses else dict(zip(ROBOTS, args.distance))
     if not math.isfinite(args.playback_seconds) or not 0 < args.playback_seconds <= 20:
         p.error('playback seconds must be positive and <=20')
     grasp_root, approach_root = args.grasp_model_dir.resolve(), args.approach_model_dir.resolve()
@@ -91,7 +99,7 @@ def main():
     started = time.monotonic()
     scene = ApproachScene(out, grasp_root)
     report = {'source_sha': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
-              'config': {'condition': args.condition, 'distance': dict(zip(ROBOTS, args.distance)),
+              'config': {'condition': args.condition, 'distance': distances, 'start_poses': start_poses,
                          'playback_seconds': args.playback_seconds, 'max_rounds': MAX_APPROACH_ROUNDS,
                          'slice_s': .2, 'confirmation_dwell_s': .25, 'seed': scene.fixture['seed'], 'weld': False},
               'approach_skill_sha256': sha(approach_root / 'approach-skill.json'),
@@ -118,16 +126,31 @@ def main():
                 if (model_dir / 'adapter.json').exists():
                     report['act_checkpoint_sha256'][rid]['adapter.json'] = sha(model_dir / 'adapter.json')
                 act_clients[rid] = ActClient(args.act_python, model_dir)
+        elif args.teacher_reference_dir:
+            from scripts.approach_speed_teacher import teacher_command
+            reference_path = args.teacher_reference_dir.resolve() / 'report.json'
+            references = json.loads(reference_path.read_text())['goal_references']
+            teacher_goals = {r: float(references[r]['base_x']) for r in ROBOTS}
+            report['approach_policy'] = 'privileged_x_teacher'
+            report['input_boundary'] = 'PRIVILEGED TEACHER ONLY: true base x and fixed goal x; shared RGB grasp skill'
+            report['teacher_reference_sha256'] = sha(reference_path)
+            report['teacher_speed'] = args.teacher_speed
+            report['teacher_observations'] = []
         else:
             report['approach_policy'] = 'existing_kernel'
-        scene.open(dict(zip(ROBOTS, args.distance)))
+        scene.open(distances, start_poses=start_poses)
         report['evaluation_initial_state'] = scene.evaluation_snapshot()
         approach_start = scene.time()
         history = {r: [] for r in ROBOTS}
         phase, cruise_index = 'cruise', 0
         for index in range(MAX_APPROACH_ROUNDS + 2):
             frames = scene.capture(f'approach-{index:03d}')
-            decisions = {r: (act_clients[r].predict(frames[r]['own_bytes'], frames[r]['top_bytes'])
+            if args.teacher_reference_dir:
+                remaining = {r: teacher_goals[r] - float(scene.world.controllers[r].base_xyz()[0]) for r in ROBOTS}
+                report['teacher_observations'].append({'index': index, 'remaining_m': remaining})
+                decisions = {r: teacher_command(remaining[r], args.teacher_speed) for r in ROBOTS}
+            else:
+                decisions = {r: (act_clients[r].predict(frames[r]['own_bytes'], frames[r]['top_bytes'])
                              if act_clients else predict_approach(approach_models[r], frames[r]['own_bytes'], frames[r]['top_bytes']))
                          for r in ROBOTS}
             control = choose_actions(decisions, args.condition, phase, cruise_index, args.playback_seconds)
