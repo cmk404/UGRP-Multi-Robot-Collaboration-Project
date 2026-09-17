@@ -108,6 +108,16 @@ def test_raw_action_boundaries_and_binding_reject_unsafe_or_stale_values():
         with pytest.raises(ValueError):validate_reply(json.dumps(x),'req',plan_hash=v['plan_hash'],stage='APPROACH')
 
 
+def test_optional_identity_echo_must_match_actual_endpoint():
+    g=gate();v=reply(g,'r1');v['robot_id']='r1'
+    kwargs={'plan_hash':v['plan_hash'],'stage':'APPROACH','robot_id':'r1'}
+    assert validate_reply(json.dumps(v),'req',**kwargs)['robot_id']=='r1'
+    v['robot_id']='r2'
+    with pytest.raises(ValueError,match='endpoint'):validate_reply(json.dumps(v),'req',**kwargs)
+    v['robot_id']='r1';v['new_field']='not allowed'
+    with pytest.raises(ValueError,match='fields'):validate_reply(json.dumps(v),'req',**kwargs)
+
+
 def test_execution_request_only_contains_allowlisted_own_observations():
     g=gate();own=[{'command_id':'own'}];inbox=[{'message':'claim'}]
     request=build_request('r1',request_id='opaque',committed=g.committed,program=g.current('r1'),

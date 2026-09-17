@@ -205,7 +205,7 @@ def run(args):
                     own_history=scene.command_history[rid],inbox=team.inbox[rid],
                     identity=identity[rid]['claim'],feedback=gate.feedback[rid])
                 futures[rid] = team.pool.submit(team._invoke,rid,req,
-                    partial(validate_reply,plan_hash=committed['plan_hash'],stage=row['stage']))
+                    partial(validate_reply,plan_hash=committed['plan_hash'],stage=row['stage'],robot_id=rid))
             batch = {r:f.result() for r,f in futures.items()}
             replies = {r:v[0] for r,v in batch.items()}
             for reply,stop,records in batch.values():team.calls.extend(records)

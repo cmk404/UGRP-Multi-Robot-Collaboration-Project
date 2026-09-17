@@ -58,3 +58,19 @@ semantics before agreement, and spells out normalized probe coordinates as image
 percentages from the top-left. This readout derives only from the original RGB
 difference, never from robot IDs, seed, spawns or referee positions. Same physical
 scene, seed, raw executor and budgets; D1 remains in the record as a failure.
+
+## D2 finding and D3 change
+
+D2 corrected the initially proposed robot assignment through peer rejection,
+committed r1/r3 beam plus r2 box, and moved all three during cargo approach.
+It stopped at the input-token budget after 16 execution rounds without grasp.
+Repeated provider replies echoed a correct robot_id field and were rejected by
+the exact-key validator. D3 permits only this known optional identity echo when
+it equals the trusted request endpoint; wrong IDs and all other extras still
+fail closed. No generated command or visual verdict is repaired.
+
+D3 retains the same scene, seed and 24-round/1200-second limits, and raises the
+input-token stopping threshold to 800,000 so the 24-round physical attempt can
+finish. Budgets are checked between concurrent batches, so a final batch may
+exceed the stopping threshold. This is a diagnostic continuation, not a controlled
+statistical comparison or a success-rate estimate.

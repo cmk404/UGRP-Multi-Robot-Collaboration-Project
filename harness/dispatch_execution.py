@@ -52,12 +52,18 @@ def validate_action(action, stage):
     return copy.deepcopy(action)
 
 
-def validate_reply(raw, request_id, *, plan_hash, stage):
+def validate_reply(raw, request_id, *, plan_hash, stage, robot_id=None):
     text = raw.strip()
     fence = re.fullmatch(r'```(?:json)?\s*\n([\s\S]*?)\n```',text,re.I)
     value = json.loads(fence.group(1) if fence else text)
     fields = {'request_id','plan_hash','stage','status','confidence','checks','command_id','action','reason','message'}
-    if not isinstance(value,dict) or set(value) != fields:raise ValueError('invalid reply fields')
+    if not isinstance(value,dict):raise ValueError('reply object required')
+    # Some providers echo robot_id from context. Accept only this known optional
+    # field, and bind it to the trusted endpoint; never discard arbitrary extras.
+    if 'robot_id' in value:
+        if robot_id is None or value['robot_id'] != robot_id:raise ValueError('robot endpoint mismatch')
+        fields = fields | {'robot_id'}
+    if set(value) != fields:raise ValueError('invalid reply fields')
     if (value['request_id'],value['plan_hash'],value['stage']) != (request_id,plan_hash,stage):
         raise ValueError('stale request, plan or stage')
     if value['status'] not in ('READY','WORKING','DONE','UNCERTAIN','BLOCKED'):raise ValueError('invalid status')
