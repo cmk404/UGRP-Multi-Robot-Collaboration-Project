@@ -154,6 +154,46 @@
       "source_sha": "4f612220416cbf72e8ce9f5892f8d845060bc7a7",
       "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final3-20260917/F4",
       "error": "RuntimeError: paired navigation stopped: {'r1': 'track', 'r3': 'track'}"
+    },
+    {
+      "id": "candidate4-F2",
+      "source_sha": "49f2b629cb11ee36a917d029c5dd752d56cb3bca",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F2",
+      "physical_success": false,
+      "error": "RuntimeError: existing pair carry guard stopped: ABORT",
+      "scope": "intermediate fresh-LLM candidate; preserved separately from final comparison"
+    },
+    {
+      "id": "candidate4-F3",
+      "source_sha": "49f2b629cb11ee36a917d029c5dd752d56cb3bca",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F3",
+      "physical_success": true,
+      "error": null,
+      "scope": "intermediate fresh-LLM candidate; preserved separately from final comparison"
+    },
+    {
+      "id": "candidate4-F4",
+      "source_sha": "49f2b629cb11ee36a917d029c5dd752d56cb3bca",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F4",
+      "physical_success": true,
+      "error": null,
+      "scope": "intermediate fresh-LLM candidate; preserved separately from final comparison"
+    },
+    {
+      "id": "candidate4-F5",
+      "source_sha": "49f2b629cb11ee36a917d029c5dd752d56cb3bca",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F5",
+      "physical_success": false,
+      "error": "RuntimeError: solo stopped: VISUAL_ATTACHMENT_UNCONFIRMED",
+      "scope": "intermediate fresh-LLM candidate; preserved separately from final comparison"
+    },
+    {
+      "id": "candidate5-F2",
+      "source_sha": "8bc776a8ffb3aebb563f40d699efe4fb18b034ff",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final5-20260917/F2",
+      "physical_success": false,
+      "error": "RuntimeError: existing pair carry guard stopped: ABORT",
+      "scope": "intermediate fresh-LLM candidate; preserved separately from final comparison"
     }
   ],
   "freeze": "Commit before each physical diagnosis. After repairs freeze source/models and run the complete six-condition fresh-LLM comparison. Preserve failures.",
@@ -167,6 +207,5 @@
   ],
   "cost": "Save wall time, action counts, provider requests/usage; monetary cost null when unknown.",
   "concurrency": "R8 and R9 overlapped; subsequent independent trials may use up to two worker processes. Preserve per-run wall time; do not claim speedup relative to serial baseline.",
-  "current_candidate_change": "Preserve previous RGB body and own-view corrections. Add bounded integral spacing feedback to reduce persistent visually observed spacing error while keeping gain, damping and all stop boundaries. Prefer placement inside the beam slot away from the adjacent box slot; declare box arrival by padded RGB containment in its destination region. Frozen source 49f2b629cb11ee36a917d029c5dd752d56cb3bca; final cohort results are recorded separately.",
-  "next_candidate_change": "Only the legacy nonrotating carry skew measurement is replaced with current RGB central cross-section medians. Ambiguous observations hold/reobserve through the existing policy; all recovery thresholds and budgets remain unchanged. Rotating navigation is unchanged. Run a new complete frozen six-case comparison."
+  "current_candidate_change": "Keep rotating navigation unchanged. Translation skew uses current saturated shaft cross-section medians, excluding the weakly saturated yellow apron. Restore only bright narrow-hue cyan cargo pixels that clip at V=255; keep dark floor excluded and all comotion thresholds unchanged. Freeze this source and run six fresh-LLM cases."
 }

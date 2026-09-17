@@ -21,7 +21,9 @@ def translation_skew(jpeg, beam):
     radius=math.ceil(beam['length_px']*.65);cx,cy=np.rint(center).astype(int)
     x0,x1=max(0,cx-radius),min(frame.shape[1],cx+radius+1)
     y0,y1=max(0,cy-radius),min(frame.shape[0],cy+radius+1)
-    mask=cv2.inRange(hsv[y0:y1,x0:x1],np.array([3,105,45],np.uint8),np.array([35,255,255],np.uint8))
+    # The weakly saturated yellow apron can enter this shaft-sized window.
+    # Retain the saturated cargo face rather than fitting those floor pixels.
+    mask=cv2.inRange(hsv[y0:y1,x0:x1],np.array([3,150,45],np.uint8),np.array([35,255,255],np.uint8))
     yy,xx=np.where(mask);points=np.column_stack((xx+x0,yy+y0))
     axial=(points-center)@axis;lateral=(points-center)@normal
     selected=(abs(axial)<beam['length_px']*.35)&(abs(lateral)<beam['width_px']*.75)
@@ -46,4 +48,4 @@ def translation_skew(jpeg, beam):
         'skew_px':skew,'direction_xy':direction.tolist(),'supported_sections':len(sections),
         'support_span_px':float(np.ptp(points[:,0])),
         'residual_p95_px':float(np.quantile(residual,.95)),
-        'tracked_visible_length_px':beam['length_px'],'uses_issued_motion':False}
+        'tracked_visible_length_px':beam['length_px'],'min_saturation':150,'uses_issued_motion':False}

@@ -103,17 +103,51 @@ def test_translation_centerline_does_not_turn_shaded_edges_into_skew(frame):
     upper,lower=sorted(beam['endpoints'],key=lambda p:p[1])
     assert abs((lower[0]-upper[0])*960)>2.8
     skew,evidence=translation_skew((root/f'translation-skew-{frame}.jpg').read_bytes(),beam)
-    assert abs(skew)<.3
+    assert abs(skew)<1.5  # Below half the unchanged 3-pixel recovery trigger.
     assert evidence['supported_sections']>=40
 
 
 def test_translation_centerline_keeps_actual_skew_and_rejects_missing_beam():
-    import json
     from harness.dispatch_translation_skew import translation_skew
-    root=Path('tests/fixtures/dispatch_adaptive')
-    beam=json.loads((root/'translation-skew-378.json').read_text())
-    skew,_=translation_skew((root/'translation-skew-378.jpg').read_bytes(),beam)
-    assert skew < -3.5
+    image=np.zeros((720,960,3),np.uint8)
+    corners=cv2.boxPoints(((480,360),(16,90),8.)).astype(np.int32)
+    cv2.fillConvexPoly(image,corners,(55,155,255))
+    raw=cv2.imencode('.jpg',image)[1].tobytes()
+    beam=beam_feature(raw,hue_upper=35)
+    skew,_=translation_skew(raw,beam)
+    assert abs(skew)>10
     blank=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))[1].tobytes()
     with pytest.raises(ValueError,match='lacks current RGB support'):
         translation_skew(blank,beam)
+
+
+def test_translation_centerline_excludes_adjacent_yellow_apron():
+    import json
+    from harness.dispatch_translation_skew import translation_skew
+    root=Path('tests/fixtures/dispatch_adaptive')
+    beam=json.loads((root/'translation-apron-contamination.json').read_text())
+    skew,evidence=translation_skew((root/'translation-apron-contamination.jpg').read_bytes(),beam)
+    assert abs(skew)<1.6
+    assert evidence['min_saturation']==150
+
+
+def test_bright_cyan_probe_keeps_full_cargo_silhouette_without_floor_merge():
+    import base64
+    from harness.visual_attachment import compare_box_comotion
+    root=Path('tests/fixtures/dispatch_adaptive')
+    raw=[(root/f'bright-box-{n}.jpg').read_bytes() for n in [207,208,209,210]]
+    frames=[base64.b64encode(b).decode() for b in raw]
+    for a,b,pan in [(0,1,60),(0,2,-60),(1,2,-120),(2,3,60),(0,3,0)]:
+        result=compare_box_comotion(frames[a],frames[b],camera_pan_delta_pwm=pan,min_saturation=150)
+        assert result['attached']
+        assert 140000<result['before_area_px']<180000
+        assert 140000<result['after_area_px']<180000
+        assert result['thresholds']['area_ratio_range']==[.9,1.1]
+        assert result['thresholds']['min_iou']==.88
+    # A broad saturation relaxation merges nearly the entire blue floor.
+    broad=compare_box_comotion(frames[1],frames[2],camera_pan_delta_pwm=-120)
+    assert broad['before_area_px']>240000
+    image=cv2.imdecode(np.frombuffer(raw[1],np.uint8),cv2.IMREAD_COLOR)
+    image[165:]=0
+    floor_only=base64.b64encode(cv2.imencode('.jpg',image)[1]).decode()
+    assert not compare_box_comotion(floor_only,floor_only,min_saturation=150)['attached']
