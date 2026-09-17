@@ -1,0 +1,126 @@
+{
+  "scope": "Post-run check distinguishes final placement from continuous carried transport. Earlier completion labels retained, with this stricter output-only check reported separately.",
+  "results": [
+    {
+      "candidate": 11,
+      "case": "F5",
+      "scope": "Output-only sampled referee evidence during issued beam TRANSIT window; never actor input. Release lowering excluded. Samples cannot prove between-sample absence of contact.",
+      "window_s": [
+        57.860000000094246,
+        144.6600000000399
+      ],
+      "samples": 868,
+      "floor_contact_samples": 19,
+      "first_floor_contact_s": 142.80050000007915,
+      "minimum_center_height_m": 0.05009458544061677,
+      "sampled_continuous_clearance": false,
+      "complete_e2e_with_clearance": false
+    },
+    {
+      "candidate": 12,
+      "case": "F5",
+      "scope": "Output-only sampled referee evidence during issued beam TRANSIT window; never actor input. Release lowering excluded. Samples cannot prove between-sample absence of contact.",
+      "window_s": [
+        57.860000000094246,
+        144.6600000000399
+      ],
+      "samples": 868,
+      "floor_contact_samples": 19,
+      "first_floor_contact_s": 142.80050000007915,
+      "minimum_center_height_m": 0.05005264524527627,
+      "sampled_continuous_clearance": false,
+      "complete_e2e_with_clearance": false
+    },
+    {
+      "candidate": 14,
+      "case": "F4",
+      "scope": "Output-only sampled referee evidence during issued beam TRANSIT window; never actor input. Release lowering excluded. Samples cannot prove between-sample absence of contact.",
+      "window_s": [
+        207.65999999854543,
+        293.65999999651655
+      ],
+      "samples": 860,
+      "floor_contact_samples": 0,
+      "first_floor_contact_s": null,
+      "minimum_center_height_m": 0.07320434399405273,
+      "sampled_continuous_clearance": true,
+      "complete_e2e_with_clearance": false
+    },
+    {
+      "candidate": 14,
+      "case": "F5",
+      "scope": "Output-only sampled referee evidence during issued beam TRANSIT window; never actor input. Release lowering excluded. Samples cannot prove between-sample absence of contact.",
+      "window_s": [
+        57.860000000094246,
+        148.45999999995004
+      ],
+      "samples": 906,
+      "floor_contact_samples": 57,
+      "first_floor_contact_s": 142.80050000007915,
+      "minimum_center_height_m": 0.04950833974706165,
+      "sampled_continuous_clearance": false,
+      "complete_e2e_with_clearance": false
+    }
+  ],
+  "causal_correction": "For candidate14 F5, yaw disagreement was under 2 degrees immediately before the first floor contact at 142.8005s; large divergence followed loss. Heading mismatch alone is therefore not established as the root cause. Slow vertical creep preceded release of one endpoint.",
+  "candidate15_heading_only": [
+    {
+      "case": "F4",
+      "cargo": {
+        "box": {
+          "sampled_continuous_clearance": true,
+          "samples": 500,
+          "floor_contact_samples": 0,
+          "window_s": [
+            67.99850000014266,
+            117.99850000038045
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.10000000000047748,
+          "first_floor_contact_s": null
+        },
+        "beam": {
+          "sampled_continuous_clearance": false,
+          "samples": 1088,
+          "floor_contact_samples": 229,
+          "window_s": [
+            207.65999999854543,
+            316.4599999959774
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999766374,
+          "first_floor_contact_s": 293.60049999651324
+        }
+      },
+      "sampled_continuous_clearance": false,
+      "complete_e2e_with_clearance": false
+    },
+    {
+      "case": "F5",
+      "cargo": {
+        "beam": {
+          "sampled_continuous_clearance": false,
+          "samples": 910,
+          "floor_contact_samples": 62,
+          "window_s": [
+            57.860000000094246,
+            148.85999999994058
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.10000000000047748,
+          "first_floor_contact_s": 142.70050000008152
+        },
+        "box": {
+          "sampled_continuous_clearance": false,
+          "samples": 0,
+          "floor_contact_samples": 0,
+          "window_s": null,
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples."
+        }
+      },
+      "sampled_continuous_clearance": false,
+      "complete_e2e_with_clearance": false
+    }
+  ],
+  "candidate16_hypothesis": "Reduce time under load by changing only reference pacing (0.04 to 0.06 m/s; 0.055 to 0.08 rad/s). Keep physical profile, saved grasp and all actuator/observation guard limits. Await full comparison; no claim that numerical creep itself is eliminated."
+}

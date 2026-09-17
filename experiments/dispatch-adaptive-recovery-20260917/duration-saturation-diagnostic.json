@@ -1,0 +1,89 @@
+{
+  "scope": "Offline timing of an already archived RGB/static-map route. Nominal reference duration excludes observed lag, synchronization holds and motor saturation; not a physical success prediction.",
+  "route_source": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final15-20260917/F4/pair-decisions.json",
+  "route": [
+    [
+      -0.12344604621324073,
+      -1.6547048213430715,
+      0.0
+    ],
+    [
+      -0.12344604621324073,
+      -2.6147048213430715,
+      0.7853981633974483
+    ],
+    [
+      0.5965539537867592,
+      -2.7347048213430716,
+      1.5707963267948966
+    ],
+    [
+      1.2565539537867592,
+      -2.7347048213430716,
+      1.5707963267948966
+    ],
+    [
+      1.3165539537867592,
+      -2.6147048213430715,
+      0.7853981633974483
+    ],
+    [
+      1.459167039904795,
+      -1.380895392878752,
+      0.0
+    ]
+  ],
+  "timing": [
+    {
+      "reference_m_s": 0.04,
+      "reference_rad_s": 0.055,
+      "segment_s": [
+        24.0,
+        18.24828759089466,
+        16.499999999999996,
+        14.279966607226333,
+        31.0506058525792
+      ],
+      "nominal_total_s": 104.07886005070019
+    },
+    {
+      "reference_m_s": 0.06,
+      "reference_rad_s": 0.08,
+      "segment_s": [
+        16.0,
+        12.16552506059644,
+        10.999999999999998,
+        9.817477042468104,
+        20.70040390171947
+      ],
+      "nominal_total_s": 69.68340600478402
+    },
+    {
+      "reference_m_s": 0.06,
+      "reference_rad_s": 0.1,
+      "segment_s": [
+        16.0,
+        12.16552506059644,
+        10.999999999999998,
+        7.853981633974483,
+        20.70040390171947
+      ],
+      "nominal_total_s": 67.71991059629039
+    },
+    {
+      "reference_m_s": 0.075,
+      "reference_rad_s": 0.1,
+      "segment_s": [
+        12.8,
+        9.732420048477152,
+        8.799999999999999,
+        7.853981633974483,
+        16.560323121375575
+      ],
+      "nominal_total_s": 55.746724803827206
+    }
+  ],
+  "observation": "Candidate16 F5 completed both cargo jobs with sampled continuous clearance; F4 reached the destination approach but beam touched the floor before placement. F4 and ongoing F2 were then interrupted by coordinator cleanup, explicitly preserved as interrupted rather than normal final verdicts.",
+  "candidate17": "Reference rates 0.075 m/s and 0.10 rad/s; shared scaling at existing motor bounds preserves a common twist instead of independently clipping each axis. Existing RGB hold/pose/span gates and physical profile unchanged.",
+  "regression_scope": "Saturated kinematic common-twist and span invariants, followed by a fresh frozen physical cohort."
+}

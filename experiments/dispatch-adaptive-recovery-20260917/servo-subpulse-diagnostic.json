@@ -1,0 +1,85 @@
+{
+  "trigger": "candidate18-F4 fine timestep .00025s, solo approach TARGET_NOT_VISIBLE at decision40",
+  "source_before": "cbe4710e12e7af9ac235b6d2ada4898d18af3ee9",
+  "root_cause": "CameraRobotPort._advance_servos rounded its accumulator every tick. 2000 PWM/s * .00025s = .5 PWM per tick; nearest-even/floating rounding stalled some commands. Issued target cache changed while applied setpoint stalled; using the target as achieved camera pose then drifted the estimate.",
+  "fix": "Keep fractional command interpolation internally; quantize only emitted setpoints. A hold discards fractional remainder and pending targets at the last emitted integer command. No measured joints or simulator state added to actor inputs.",
+  "isolated_regression": {
+    "timesteps_s": [
+      0.0005,
+      0.00025,
+      0.0001
+    ],
+    "targets": [
+      1403,
+      1597
+    ],
+    "start": 1500,
+    "rate_pwm_s": 2000,
+    "before_failures": 4,
+    "before_log": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/servo-subpulse-before.log",
+    "test": "CameraRobotPortTests.test_servo_rate_is_independent_of_subpulse_tick_size"
+  },
+  "archived_observation_replay": {
+    "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final18-20260918/F4-approach-observations.json",
+    "sha256": "e9a5f77cd12e889f0c831b8c09f3a2354e063babc951938826cc6218babb6cdb"
+  },
+  "scope": "Unit regression proves emitted-command scheduling, not physical motion. New full E2E must confirm actual camera response and transport.",
+  "own_images": [
+    {
+      "file": "qa/candidate18-F4-servo-stall-10.jpg",
+      "sha256": "5e490a586dee5234411345222dd6278fab8175cbf3a52459f5a27fdf70bbce2b",
+      "command": {
+        "kind": "pose",
+        "pulses": {
+          "6": 1412
+        }
+      },
+      "issued_servo_state": {
+        "1": 2000,
+        "3": 740,
+        "4": 2320,
+        "5": 1320,
+        "6": 1447
+      }
+    },
+    {
+      "file": "qa/candidate18-F4-servo-stall-25.jpg",
+      "sha256": "e08d25cf7f52944b081b20f2345e6223236a7f74f81e259a814c25b5e6ec95f1",
+      "command": {
+        "kind": "pose",
+        "pulses": {
+          "3": 704
+        }
+      },
+      "issued_servo_state": {
+        "1": 2000,
+        "3": 776,
+        "4": 2320,
+        "5": 1320,
+        "6": 1100
+      }
+    },
+    {
+      "file": "qa/candidate18-F4-servo-stall-40.jpg",
+      "sha256": "89c136ec0fc2c224b5c1a7026a5c34c68dfc3a2ba5ef20dfb3f022ed07971aa2",
+      "command": {
+        "kind": "finish",
+        "reason": "TARGET_NOT_VISIBLE"
+      },
+      "issued_servo_state": {
+        "1": 2000,
+        "3": 620,
+        "4": 2320,
+        "5": 1320,
+        "6": 1100
+      }
+    }
+  ],
+  "source_after": "e099a4a38c8da094c8c1946ffca2e7ab02f16a83",
+  "local_suite": {
+    "passed": 884,
+    "subtests": 160,
+    "wall_s": 75.96,
+    "log": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/ci-subpulse-final.log"
+  }
+}

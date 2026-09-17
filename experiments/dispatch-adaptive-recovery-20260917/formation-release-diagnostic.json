@@ -1,0 +1,43 @@
+{
+  "scope": "Archived actor RGB estimates, authored map, own RGB and issued PWM only; no referee used to repair observations. New physical cohort remains separately scored.",
+  "formation": {
+    "failed_source": "3e7a38a3cdd99e01b68babbb06584b593e995ebc",
+    "motion_response_heading_rad": 0.09890752524844233,
+    "rgb_formation_heading_rad": 0.004774316401579215,
+    "same_swept_footprint_and_obstacles": true,
+    "old_heading_route_found": false,
+    "formation_heading_route_found": true,
+    "route_nodes": 6,
+    "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/release-route-followup.log",
+    "sha256": "36053234a2d1d60be4198bb4a31aa192086edb557e1f58222075553b189bf8fa"
+  },
+  "release": {
+    "failed_source": "d7595d6e78ed82f557e679a565dd47af493ae4d3",
+    "problem": "Low-saturation cyan mask merged floor into a border-clipped component.",
+    "old_visible": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "stronger_bound_visible": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "constraints_unchanged": [
+      "known cuboid projection",
+      "expected drop neighbourhood",
+      "all-pairs 1cm stationarity across own pan"
+    ],
+    "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/release-mask-followup.log",
+    "sha256": "1d5c24f3dfc19629c1bba3740ad80b0fb4710665278045b8577bd7c109e42c78"
+  }
+}

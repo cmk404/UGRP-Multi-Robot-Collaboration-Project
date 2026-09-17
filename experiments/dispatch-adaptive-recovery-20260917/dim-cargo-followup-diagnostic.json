@@ -1,0 +1,396 @@
+{
+  "scope": "Offline replay of prior failed images. Separate referee projections only score the resulting estimates; not actor input and not a new physical success.",
+  "variants": [
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-adaptive-c6-F5.json",
+      "sha256": "a4d12d64f14dbc4d9b921595c00b86f623bb74db3e8c36fa79e14a07ae18399d",
+      "variant": "125",
+      "replayed_frames": 470,
+      "last_frame": 599,
+      "error_px_quantiles": {
+        "median": 3.0577175701526893,
+        "p90": 4.420909379517445,
+        "p99": 6.368932499365436,
+        "max": 11.375324787866555
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-adaptive-c8-F5.json",
+      "sha256": "9228b1cf82a42aae6bb6024c0aa46a8a590c70cc446026c9c73917ecb07604f6",
+      "variant": "125",
+      "replayed_frames": 470,
+      "last_frame": 599,
+      "error_px_quantiles": {
+        "median": 10.045853911850337,
+        "p90": 15.023827245946402,
+        "p99": 22.96982075116145,
+        "max": 23.755224202892204
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-adaptive-radius-c6-F5.json",
+      "sha256": "1584484e221fe1ce6d2d20a69a0283244a27e77d16dc27437fb888c5954dcf9c",
+      "variant": "8",
+      "replayed_frames": 470,
+      "last_frame": 599,
+      "error_px_quantiles": {
+        "median": 3.0577175701526893,
+        "p90": 4.420909379517445,
+        "p99": 6.368932499365436,
+        "max": 11.392834404278743
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-adaptive-radius-c6-F5.json",
+      "sha256": "1584484e221fe1ce6d2d20a69a0283244a27e77d16dc27437fb888c5954dcf9c",
+      "variant": "10",
+      "replayed_frames": 470,
+      "last_frame": 599,
+      "error_px_quantiles": {
+        "median": 3.0577175701526893,
+        "p90": 4.420909379517445,
+        "p99": 6.368932499365436,
+        "max": 11.392834404278743
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-adaptive-radius-c6-F5.json",
+      "sha256": "1584484e221fe1ce6d2d20a69a0283244a27e77d16dc27437fb888c5954dcf9c",
+      "variant": "12",
+      "replayed_frames": 470,
+      "last_frame": 599,
+      "error_px_quantiles": {
+        "median": 3.0577175701526893,
+        "p90": 4.420909379517445,
+        "p99": 6.368932499365436,
+        "max": 11.36905945685055
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-adaptive-radius-c6-F5.json",
+      "sha256": "1584484e221fe1ce6d2d20a69a0283244a27e77d16dc27437fb888c5954dcf9c",
+      "variant": "14",
+      "replayed_frames": 470,
+      "last_frame": 599,
+      "error_px_quantiles": {
+        "median": 3.0577175701526893,
+        "p90": 4.420909379517445,
+        "p99": 6.368932499365436,
+        "max": 11.338925511671087
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-adaptive-radius-c8-F5.json",
+      "sha256": "de1903714c5451847679246b5f865c814a16f17307662022221d071425862f1c",
+      "variant": "8",
+      "replayed_frames": 191,
+      "last_frame": 316,
+      "error_px_quantiles": {
+        "median": 4.051542776442362,
+        "p90": 5.950170388926466,
+        "p99": 6.555637782961394,
+        "max": 6.776970128842129
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-adaptive-radius-c8-F5.json",
+      "sha256": "de1903714c5451847679246b5f865c814a16f17307662022221d071425862f1c",
+      "variant": "10",
+      "replayed_frames": 257,
+      "last_frame": 382,
+      "error_px_quantiles": {
+        "median": 4.68615680046818,
+        "p90": 8.67590526381166,
+        "p99": 11.915293739294327,
+        "max": 12.447097075389093
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-adaptive-radius-c8-F5.json",
+      "sha256": "de1903714c5451847679246b5f865c814a16f17307662022221d071425862f1c",
+      "variant": "12",
+      "replayed_frames": 257,
+      "last_frame": 382,
+      "error_px_quantiles": {
+        "median": 4.703176797919182,
+        "p90": 8.784932343992256,
+        "p99": 11.909781971309288,
+        "max": 12.366214494281214
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-adaptive-radius-c8-F5.json",
+      "sha256": "de1903714c5451847679246b5f865c814a16f17307662022221d071425862f1c",
+      "variant": "14",
+      "replayed_frames": 285,
+      "last_frame": 410,
+      "error_px_quantiles": {
+        "median": 4.889466698119527,
+        "p90": 11.14133476959834,
+        "p99": 12.539506063281108,
+        "max": 23.755224202892204
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-flow-radius-c6-F5.json",
+      "sha256": "937eb97e68d1371ecaf4dfc296b238acb28c2eb683ea3d4047dbe19e6ae63abd",
+      "variant": "8",
+      "replayed_frames": 151,
+      "last_frame": 276,
+      "error_px_quantiles": {
+        "median": 3.698826598493083,
+        "p90": 5.223801758563726,
+        "p99": 6.434653724053042,
+        "max": 6.698610852881134
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-flow-radius-c6-F5.json",
+      "sha256": "937eb97e68d1371ecaf4dfc296b238acb28c2eb683ea3d4047dbe19e6ae63abd",
+      "variant": "10",
+      "replayed_frames": 151,
+      "last_frame": 276,
+      "error_px_quantiles": {
+        "median": 3.698826598493083,
+        "p90": 5.296011877230426,
+        "p99": 6.434653724053042,
+        "max": 6.698610852881134
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-flow-radius-c6-F5.json",
+      "sha256": "937eb97e68d1371ecaf4dfc296b238acb28c2eb683ea3d4047dbe19e6ae63abd",
+      "variant": "12",
+      "replayed_frames": 470,
+      "last_frame": 599,
+      "error_px_quantiles": {
+        "median": 3.0726534476367577,
+        "p90": 4.436566432694588,
+        "p99": 6.117656859409258,
+        "max": 6.698610852881134
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-flow-radius-c6-F5.json",
+      "sha256": "937eb97e68d1371ecaf4dfc296b238acb28c2eb683ea3d4047dbe19e6ae63abd",
+      "variant": "14",
+      "replayed_frames": 470,
+      "last_frame": 599,
+      "error_px_quantiles": {
+        "median": 3.0726534476367577,
+        "p90": 4.451931486034571,
+        "p99": 6.1320374115046175,
+        "max": 6.698610852881134
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-flow-radius-c8-F5.json",
+      "sha256": "39cac0c66ef9dea8827025be2c41a5958a2ee56bcdb3c23b33c521ad3ca6a56c",
+      "variant": "8",
+      "replayed_frames": 163,
+      "last_frame": 288,
+      "error_px_quantiles": {
+        "median": 4.003933426355898,
+        "p90": 7.072022980501836,
+        "p99": 9.103552472987543,
+        "max": 9.189183365995088
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-flow-radius-c8-F5.json",
+      "sha256": "39cac0c66ef9dea8827025be2c41a5958a2ee56bcdb3c23b33c521ad3ca6a56c",
+      "variant": "10",
+      "replayed_frames": 188,
+      "last_frame": 313,
+      "error_px_quantiles": {
+        "median": 4.32244318829259,
+        "p90": 8.958057218275469,
+        "p99": 9.448970753167742,
+        "max": 9.619881824558497
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-flow-radius-c8-F5.json",
+      "sha256": "39cac0c66ef9dea8827025be2c41a5958a2ee56bcdb3c23b33c521ad3ca6a56c",
+      "variant": "12",
+      "replayed_frames": 185,
+      "last_frame": 310,
+      "error_px_quantiles": {
+        "median": 4.2726993086825065,
+        "p90": 9.115982689022465,
+        "p99": 9.609312239879168,
+        "max": 9.708251145261023
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-flow-radius-c8-F5.json",
+      "sha256": "39cac0c66ef9dea8827025be2c41a5958a2ee56bcdb3c23b33c521ad3ca6a56c",
+      "variant": "14",
+      "replayed_frames": 260,
+      "last_frame": 385,
+      "error_px_quantiles": {
+        "median": 6.2744928326083675,
+        "p90": 12.9742256243555,
+        "p99": 17.58538736323009,
+        "max": 18.09535913835241
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-identity-gated-c6-F5.json",
+      "sha256": "1f7ff54a21bac1a234789cbfcd3feea646776dc0d7223a06d8d2332792641fbc",
+      "variant": "70",
+      "replayed_frames": 470,
+      "last_frame": 599,
+      "error_px_quantiles": {
+        "median": 3.0414028766892676,
+        "p90": 17.30543229409309,
+        "p99": 19.60666284142772,
+        "max": 19.957523356886227
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-identity-gated-c6-F5.json",
+      "sha256": "1f7ff54a21bac1a234789cbfcd3feea646776dc0d7223a06d8d2332792641fbc",
+      "variant": "90",
+      "replayed_frames": 168,
+      "last_frame": 293,
+      "error_px_quantiles": {
+        "median": 4.633930722742684,
+        "p90": 11.934112600425577,
+        "p99": 13.844653752022042,
+        "max": 14.145820716545703
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-identity-gated-c6-F5.json",
+      "sha256": "1f7ff54a21bac1a234789cbfcd3feea646776dc0d7223a06d8d2332792641fbc",
+      "variant": "105",
+      "replayed_frames": 168,
+      "last_frame": 293,
+      "error_px_quantiles": {
+        "median": 6.355079496399819,
+        "p90": 13.627677302905914,
+        "p99": 13.991778552803124,
+        "max": 14.301017787106044
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-identity-gated-c6-F5.json",
+      "sha256": "1f7ff54a21bac1a234789cbfcd3feea646776dc0d7223a06d8d2332792641fbc",
+      "variant": "115",
+      "replayed_frames": 168,
+      "last_frame": 293,
+      "error_px_quantiles": {
+        "median": 12.6971242227918,
+        "p90": 15.270469185891693,
+        "p99": 17.72109403561729,
+        "max": 18.302705053037805
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-identity-gated-c6-F5.json",
+      "sha256": "1f7ff54a21bac1a234789cbfcd3feea646776dc0d7223a06d8d2332792641fbc",
+      "variant": "125",
+      "replayed_frames": 470,
+      "last_frame": 599,
+      "error_px_quantiles": {
+        "median": 3.0726534476367577,
+        "p90": 4.478080869461665,
+        "p99": 6.30593967876762,
+        "max": 6.698610852881134
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-identity-gated-c8-F5.json",
+      "sha256": "3100a71b9813b8b51f3aed5bcfeb3bb4ea2a0f065cf0a586a9122350172a7c79",
+      "variant": "70",
+      "replayed_frames": 470,
+      "last_frame": 599,
+      "error_px_quantiles": {
+        "median": 12.089896328027459,
+        "p90": 23.964895641411882,
+        "p99": 25.660120985538093,
+        "max": 25.774723394107493
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-identity-gated-c8-F5.json",
+      "sha256": "3100a71b9813b8b51f3aed5bcfeb3bb4ea2a0f065cf0a586a9122350172a7c79",
+      "variant": "90",
+      "replayed_frames": 470,
+      "last_frame": 599,
+      "error_px_quantiles": {
+        "median": 10.7961115525552,
+        "p90": 16.49994854567963,
+        "p99": 17.671023105723382,
+        "max": 18.42655492037773
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-identity-gated-c8-F5.json",
+      "sha256": "3100a71b9813b8b51f3aed5bcfeb3bb4ea2a0f065cf0a586a9122350172a7c79",
+      "variant": "105",
+      "replayed_frames": 282,
+      "last_frame": 407,
+      "error_px_quantiles": {
+        "median": 17.326451363770975,
+        "p90": 26.13241873316892,
+        "p99": 27.719412359479527,
+        "max": 27.76209631784077
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-identity-gated-c8-F5.json",
+      "sha256": "3100a71b9813b8b51f3aed5bcfeb3bb4ea2a0f065cf0a586a9122350172a7c79",
+      "variant": "115",
+      "replayed_frames": 470,
+      "last_frame": 599,
+      "error_px_quantiles": {
+        "median": 19.72925977795044,
+        "p90": 106.96717304121917,
+        "p99": 107.64084838201383,
+        "max": 108.06055512098627
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-identity-gated-c8-F5.json",
+      "sha256": "3100a71b9813b8b51f3aed5bcfeb3bb4ea2a0f065cf0a586a9122350172a7c79",
+      "variant": "125",
+      "replayed_frames": 470,
+      "last_frame": 599,
+      "error_px_quantiles": {
+        "median": 13.851991498224553,
+        "p90": 16.668944761021855,
+        "p99": 18.71342131161566,
+        "max": 18.78021250236927
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-small-c6-F5.json",
+      "sha256": "265549e60bf6eed5be5706a91fe5499d88038f6b295899df2fdb9f169deae65a",
+      "variant": "125",
+      "replayed_frames": 470,
+      "last_frame": 599,
+      "error_px_quantiles": {
+        "median": 2.9923382463891843,
+        "p90": 4.4074103858804925,
+        "p99": 6.34123713952121,
+        "max": 6.698610852881134
+      }
+    },
+    {
+      "file": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-small-c8-F5.json",
+      "sha256": "ed3a3990f3005cb491ff2a08dda38bcb6240e641580d4e6cfc05c2b7ab020737",
+      "variant": "125",
+      "replayed_frames": 470,
+      "last_frame": 599,
+      "error_px_quantiles": {
+        "median": 3.663768370828378,
+        "p90": 10.212688545703253,
+        "p99": 14.87053406917367,
+        "max": 14.974245444895882
+      }
+    }
+  ],
+  "adopted": "box-small: strongest available colour first, smaller fragments only after identity acquisition, 8px motion gate. Constant lower saturation and reduced optical-flow radii were not adopted. Preserved old failing-path replay maximum error is about 15px, so this is not proof of universally accurate tracking."
+}
