@@ -29,6 +29,12 @@ python scripts/ugrp_session.py run dispatch-smoke -- \
 python scripts/ugrp_session.py run dispatch-plan -- \
   .venv-sim-worker-mac/bin/mjpython scripts/run_research_dispatch.py \
   --output outputs/dispatch-plan-NEW --variant shared_crossing --planner llm
+
+# 실제 모델 + 물리 E2E 진단: 운반 성공을 보장하는 실행기가 아니다.
+python scripts/ugrp_session.py run dispatch-e2e -- \
+  .venv-sim-worker-mac/bin/mjpython scripts/run_dispatch_e2e.py \
+  --output outputs/dispatch-e2e-NEW --variant shared_crossing --seed 11 \
+  --rounds 24 --max-wall-s 1200 --max-input-tokens 800000
 ```
 
 `--variant`는 `open`, `shared_crossing`, `north_blocked`, `narrow_south`, `rough_south` 중 하나다.
@@ -45,20 +51,25 @@ python scripts/ugrp_session.py run dispatch-plan -- \
 | 정적 지도와 물리 환경 연결 | 지도/scene/로봇 XML hash 기록 |
 | 실제 세 LLM의 공동 계획 | 기본/북쪽 장애물 조건에서 실행 기록 |
 | 계획 → 로봇별 담당/목적지/순서 | 프로그램 생성 및 계약 검사 |
-| 단계·자원 허가 | `DispatchCoordinator` 계약 검사; 물리 포트 미연결 |
-| 새 환경의 로봇별 운반 스킬 | 미연결: 모든 프로그램에 `unbound_new_arena_skill` 명시 |
-| 실제 운반 E2E·실시간 비동기·실물·재계획 성능 | 아직 검증하지 않음 |
+| 단계·자원 허가 | `DispatchExecution`의 최신 RGB·명령 참조·팀 장벽·자원 계약과 물리 포트 연결; 후반 단계는 계약 검사만 통과 |
+| 새 환경의 로봇별 운반 스킬 | 실험용 RGB raw-action 정책 연결; 학습된 범용 접근/파지 스킬은 미연결 |
+| 실제 운반 E2E | 3회 진단, 최종 24회 행동 판단 후 APPROACH 종료. 화물 이동·파지·운반 성공 없음 |
+| 실시간 비동기·실물·주행 중 재계획 성능 | 아직 검증하지 않음 |
 
 기존 #62의 고정 역할 운반은 별도 기준선으로 보존했다. 새 환경을 기존 고정 레인 학생에
 몰래 투입하거나 좌표로 보정하지 않는다. 현재의 협의 결과는 물리적인 운반 성공이 아니며,
 모델이 상대 로봇 위치를 잘못 추정해도 형식상 합의는 가능하다. 합의와 지각 정확도를 분리해서 평가한다.
 
-`harness/dispatch_plan.py`는 계획/프로그램/상위 자원 계약을 담당한다. 실제 파지 단계의
-관측 최신성·하중 지지·명령 허가는 기존 `TaskStageSync`/`TaskStageExecution`에 연결해야 한다.
+`harness/dispatch_plan.py`는 계획/프로그램/상위 자원 계약을 담당한다. 계획 전용 실행기는
+계속 `unbound_new_arena_skill`을 출력한다. `run_dispatch_e2e.py`만 별도 실험용
+`DispatchExecution`을 포트에 연결하며 `experimental_rgb_raw_actions_v1`을 명시한다.
+기존 `TaskStageSync`/`TaskStageExecution` 기반 검증된 로컬 스킬의 통합은 아직 후속 작업이다.
+E2E 진단은 추론 중 SIM이 정지한다. 독립 작업 허가를 실시간 분산 실행 성능으로 해석하지 않는다.
 이 환경 작업은 팀원의 로컬 제어/계획 역할을 완료했다고 표시하지 않는다.
 
 ## 자료
 
+- [E2E 진단 결과·실패 원인·후속 연결 지점](../experiments/dispatch-e2e-20260917/README.md)
 - [실제 환경·카메라·합의 결과 뷰어](../experiments/research-dispatch-arena-20260917/index.html)
 - [검증 결과](../experiments/research-dispatch-arena-20260917/README.md)
 - [통제 조건과 후속 비교 실험](../experiments/research-dispatch-arena-20260917/protocol.md)

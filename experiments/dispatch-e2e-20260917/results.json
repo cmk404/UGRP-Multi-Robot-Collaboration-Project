@@ -1,0 +1,347 @@
+[
+  {
+    "source_sha": "c3f8d5f67db497f4166aa8a4e61bbda3f4802265",
+    "scope": "three live RGB agents and raw-action physical execution pilot",
+    "error": null,
+    "stop_reason": "visual_replan_required",
+    "plan_committed": true,
+    "protocol_complete": false,
+    "physical_success": false,
+    "cost_usd": null,
+    "clock": "SIM pauses during parallel inference; independent job gates, not real-time distributed control",
+    "plan": {
+      "dock": "dock_b",
+      "tasks": [
+        {
+          "after": [],
+          "id": "beam_job",
+          "object": "beam",
+          "participants": [
+            "r3",
+            "r1"
+          ],
+          "route": "north"
+        },
+        {
+          "after": [],
+          "id": "box_job",
+          "object": "box",
+          "participants": [
+            "r2"
+          ],
+          "route": "south"
+        }
+      ]
+    },
+    "camera_geometry_unchanged": true,
+    "obstacle_contact_steps": 0,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 1.5269729924938247e-13,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 4.203928871682194e-14,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 0.026584854987382226,
+        "r2": 0.026584855977133393,
+        "r3": 0.026584854070115547
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 56,
+      "stable_window_s": 0.9999999999998899
+    },
+    "final_stages": {
+      "r1": "APPROACH",
+      "r2": "APPROACH",
+      "r3": "APPROACH"
+    },
+    "retained_resources": {},
+    "wall_seconds": 65.1874813750037,
+    "model_attempts": 12,
+    "usage": {
+      "prompt_tokens": 99502,
+      "completion_tokens": 2548,
+      "total_tokens": 115392
+    },
+    "id": "d1",
+    "raw_directory": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-e2e-d1",
+    "config": {
+      "output": "outputs/dispatch-e2e-d1",
+      "variant": "shared_crossing",
+      "seed": 11,
+      "rounds": 24,
+      "timeout": 60.0,
+      "max_wall_s": 1200.0,
+      "max_input_tokens": 500000,
+      "max_quiet_rounds": 4
+    },
+    "planning_rounds": 3,
+    "execution_rounds": 1,
+    "model_errors": {},
+    "task_action_count": 0,
+    "action_kinds": {},
+    "approach_path_excluding_identity_probe_m": {
+      "r1": 1.0465041617081594e-09,
+      "r2": 1.0280645436749091e-09,
+      "r3": 7.762392487962376e-05
+    }
+  },
+  {
+    "source_sha": "71f69b6a029bf04f054e9b6c16bd947e747a1b64",
+    "scope": "three live RGB agents and raw-action physical execution pilot",
+    "error": null,
+    "stop_reason": "input_token_budget",
+    "plan_committed": true,
+    "protocol_complete": false,
+    "physical_success": false,
+    "cost_usd": null,
+    "clock": "SIM pauses during parallel inference; independent job gates, not real-time distributed control",
+    "plan": {
+      "dock": "dock_a",
+      "tasks": [
+        {
+          "after": [],
+          "id": "beam_job",
+          "object": "beam",
+          "participants": [
+            "r1",
+            "r3"
+          ],
+          "route": "north"
+        },
+        {
+          "after": [
+            "beam_job"
+          ],
+          "id": "box_job",
+          "object": "box",
+          "participants": [
+            "r2"
+          ],
+          "route": "south"
+        }
+      ]
+    },
+    "camera_geometry_unchanged": true,
+    "obstacle_contact_steps": 0,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 1.5273546316585396e-13,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 5.6430554673525535e-14,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 0.34870144814584547,
+        "r2": 0.2750080545002007,
+        "r3": 0.25507889145347473
+      },
+      "all_three_body_motion_sim_s": 3.5000000000001474,
+      "weld_steps": 0,
+      "samples": 151,
+      "stable_window_s": 1.0000000000001528
+    },
+    "final_stages": {
+      "r1": "APPROACH",
+      "r2": "APPROACH",
+      "r3": "APPROACH"
+    },
+    "retained_resources": {},
+    "wall_seconds": 264.1094874590053,
+    "model_attempts": 60,
+    "usage": {
+      "prompt_tokens": 501055,
+      "completion_tokens": 14194,
+      "total_tokens": 534826
+    },
+    "id": "d2",
+    "raw_directory": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-e2e-d2",
+    "config": {
+      "output": "outputs/dispatch-e2e-d2",
+      "variant": "shared_crossing",
+      "seed": 11,
+      "rounds": 24,
+      "timeout": 60.0,
+      "max_wall_s": 1200.0,
+      "max_input_tokens": 500000,
+      "max_quiet_rounds": 4
+    },
+    "planning_rounds": 4,
+    "execution_rounds": 16,
+    "model_errors": {
+      "ValueError: invalid reply fields": 12
+    },
+    "task_action_count": 36,
+    "action_kinds": {
+      "drive": 32,
+      "mecanum": 4
+    },
+    "approach_path_excluding_identity_probe_m": {
+      "r1": 0.32211655949488355,
+      "r2": 0.24842315607473123,
+      "r3": 0.2285715687975179
+    }
+  },
+  {
+    "source_sha": "993b08f5fd87c6157a537dfa85b7a722339ff8cc",
+    "scope": "three live RGB agents and raw-action physical execution pilot",
+    "error": null,
+    "stop_reason": "decision_round_budget",
+    "plan_committed": true,
+    "protocol_complete": false,
+    "physical_success": false,
+    "cost_usd": null,
+    "clock": "SIM pauses during parallel inference; independent job gates, not real-time distributed control",
+    "plan": {
+      "dock": "dock_b",
+      "tasks": [
+        {
+          "after": [],
+          "id": "beam_job",
+          "object": "beam",
+          "participants": [
+            "r1",
+            "r3"
+          ],
+          "route": "north"
+        },
+        {
+          "after": [],
+          "id": "box_job",
+          "object": "box",
+          "participants": [
+            "r2"
+          ],
+          "route": "south"
+        }
+      ]
+    },
+    "camera_geometry_unchanged": true,
+    "obstacle_contact_steps": 0,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 1.630084955905886e-13,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 5.6430554673525535e-14,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 0.4081873640469247,
+        "r2": 0.44974670138659767,
+        "r3": 0.37357130576165465
+      },
+      "all_three_body_motion_sim_s": 7.7000000000010616,
+      "weld_steps": 0,
+      "samples": 189,
+      "stable_window_s": 0.9999999999994458
+    },
+    "final_stages": {
+      "r1": "APPROACH",
+      "r2": "APPROACH",
+      "r3": "APPROACH"
+    },
+    "retained_resources": {},
+    "wall_seconds": 512.640405040991,
+    "model_attempts": 81,
+    "usage": {
+      "prompt_tokens": 708270,
+      "completion_tokens": 19178,
+      "total_tokens": 748187
+    },
+    "id": "d3",
+    "raw_directory": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-e2e-d3",
+    "config": {
+      "output": "outputs/dispatch-e2e-d3",
+      "variant": "shared_crossing",
+      "seed": 11,
+      "rounds": 24,
+      "timeout": 60.0,
+      "max_wall_s": 1200.0,
+      "max_input_tokens": 800000,
+      "max_quiet_rounds": 4
+    },
+    "planning_rounds": 3,
+    "execution_rounds": 24,
+    "model_errors": {
+      "ValueError: invalid reply fields": 1
+    },
+    "task_action_count": 71,
+    "action_kinds": {
+      "mecanum": 68,
+      "drive": 1,
+      "arm": 2
+    },
+    "approach_path_excluding_identity_probe_m": {
+      "r1": 0.38160248120137596,
+      "r2": 0.42316181167260747,
+      "r3": 0.34706398891335594
+    },
+    "video_review": {
+      "decoded_frames": 188,
+      "fps": 10,
+      "selected_frames": [
+        0,
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70,
+        80,
+        90,
+        100,
+        110,
+        120,
+        130,
+        140,
+        150,
+        160,
+        170,
+        180
+      ],
+      "scope": "all frames decoded; one-second contact sheet and final OWN/TOP reviewed separately"
+    }
+  }
+]
