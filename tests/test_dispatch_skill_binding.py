@@ -1,0 +1,84 @@
+import copy
+import itertools
+from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import Mock
+import cv2
+import numpy as np
+import pytest
+from harness.dispatch_skill_binding import SkillBindings, canonical_pair_top, beam_feature
+from harness.dispatch_plan import validate_dispatch_plan
+from harness.three_robot_plan import digest
+from harness.solo_box_transport import SoloBoxTransport
+from sim.research_dispatch_arena import authored_map
+from scripts.dispatch_pair_skill import BoundPairSkill
+
+
+def committed(order=('r1','r3','r2'),after=False):
+    plan=validate_dispatch_plan({'dock':'dock_b','tasks':[
+        {'id':'beam_job','object':'beam','participants':list(order[:2]),'route':'north','after':['box_job'] if after else []},
+        {'id':'box_job','object':'box','participants':[order[2]],'route':'south','after':[]}]})
+    return {'plan':plan,'plan_hash':digest(plan),'proposal_id':'plan-test','version':1}
+
+
+@pytest.mark.parametrize('order',list(itertools.permutations(('r1','r2','r3'))))
+def test_every_allocation_reaches_its_physical_endpoints(order):
+    c=committed(order);b=SkillBindings(c,authored_map('open'))
+    io=SimpleNamespace(out=Path('/tmp/unused'),pair_drive=Mock(),pair_arm=Mock())
+    skill={'initialization_replay':[{'targets':{'r1':{1:2000},'r3':{1:2000}}}]}
+    pair=BoundPairSkill(io,b,skill,{}, {},Path('/tmp/models'),b'')
+    pair.drive({'r1':.04,'r3':.08})
+    commands=io.pair_drive.call_args.args[0]
+    assert commands[order[1]]['forward']==.04
+    assert commands[order[0]]['forward']==.08
+    assert order[2] not in commands
+    pair.replay([{'targets':{'r1':{6:2500},'r3':{6:500}},'duration_s':1.}], 'initialization')
+    assert io.pair_arm.call_args.args[0]=={order[1]:{6:2500},order[0]:{6:500}}
+    solo=SoloBoxTransport(robot_id=b.solo,navigator=Mock())
+    assert solo.box.robot_id==order[2]
+    assert b.programs[order[0]][0]['role']=='end_a'
+    assert b.programs[order[1]][0]['model_slot']=='r1'
+
+
+def test_no_silent_route_change_or_revoked_plan_execution():
+    c=committed();b=SkillBindings(c,authored_map('shared_crossing'))
+    with pytest.raises(RuntimeError,match='PAIR_ROUTE_TOO_NARROW'):b.check_route()
+    assert b.committed==c
+    changed=copy.deepcopy(c);changed['plan']['dock']='dock_a'
+    with pytest.raises(RuntimeError,match='replaced'):b.authorize(changed)
+    b.revoked=True
+    assert not b.permission('beam','APPROACH')
+
+
+def test_task_dependencies_and_resource_occupancy_persist_on_revoke():
+    b=SkillBindings(committed(after=True),authored_map('open'))
+    assert b.permission('beam','APPROACH')
+    assert not b.permission('beam','GRASP')
+    assert b.permission('box','TRANSIT')
+    b.finish('box')
+    assert b.permission('beam','GRASP') and b.permission('beam','TRANSIT')
+    locks=copy.deepcopy(b.locks);b.revoked=True
+    assert not b.permission('box','TRANSIT') and b.locks==locks
+
+
+def test_rgb_transform_preserves_pixels_without_reference_substitution():
+    reference=Path('tests/fixtures/camera_goal_transport/reference-top.jpg').read_bytes()
+    image=cv2.imdecode(np.frombuffer(reference,np.uint8),cv2.IMREAD_COLOR)
+    shifted=cv2.warpAffine(image,np.float32([[1,0,-150],[0,1,-80]]),(960,720))
+    # Novelty must survive preprocessing rather than being filled from the model.
+    shifted[400:440,100:140]=(255,0,255)
+    raw=cv2.imencode('.jpg',shifted)[1].tobytes()
+    aligned,evidence=canonical_pair_top(raw,reference)
+    assert np.allclose(evidence['translation_px'],[150,80],atol=2)
+    decoded=cv2.imdecode(np.frombuffer(aligned,np.uint8),cv2.IMREAD_COLOR)
+    assert decoded[495,265,0]>220 and decoded[495,265,2]>220
+    assert np.allclose(beam_feature(aligned)['center'],beam_feature(reference)['center'],atol=.003)
+
+
+def test_solo_navigation_cannot_skip_existing_attachment_failure():
+    navigator=Mock();skill=SoloBoxTransport(robot_id='r3',navigator=navigator)
+    skill.initialized=True;skill.box.phase='carry'
+    skill.box.decide=Mock(return_value={'kind':'finish','reason':'VISUAL_LOAD_DROPPED_OR_OCCLUDED'})
+    action,_=skill.decide({},b'')
+    assert action['kind']=='finish' and skill.done
+    navigator.observe.assert_not_called()

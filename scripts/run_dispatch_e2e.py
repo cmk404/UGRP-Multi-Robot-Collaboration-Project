@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Three live RGB peers: identity -> common plan -> bounded physical dispatch.
 
-Experimental raw local actions, not the trained fixed-lane baseline. Physics
+Default: actual saved RGB skills. --executor raw retains the earlier diagnostic. Physics
 pauses during parallel LLM requests. Output-only referee never gates commands.
 """
 from __future__ import annotations
@@ -137,7 +137,7 @@ def run(args):
     started = time.monotonic()
     result = {'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         'scope':'three live RGB agents and raw-action physical execution pilot',
-        'config':vars(args)|{'output':str(args.output)},'error':None,'stop_reason':None,
+        'config':{k:str(v) if isinstance(v,Path) else v for k,v in vars(args).items()},'error':None,'stop_reason':None,
         'plan_committed':False,'protocol_complete':False,'turns':[],
         'physical_success':False,'cost_usd':None,
         'clock':'SIM pauses during parallel inference; independent job gates, not real-time distributed control',
@@ -283,9 +283,18 @@ def main():
     p.add_argument('--max-wall-s',type=float,default=1200.)
     p.add_argument('--max-input-tokens',type=int,default=500000)
     p.add_argument('--max-quiet-rounds',type=int,default=4)
+    p.add_argument('--executor',choices=('skills','raw'),default='skills')
+    p.add_argument('--grasp-model-dir',type=Path)
+    p.add_argument('--stage-model-dir',type=Path)
+    p.add_argument('--reference-top',type=Path,default=ROOT/'tests/fixtures/camera_goal_transport/reference-top.jpg')
     args = p.parse_args()
     if args.output.exists():p.error('output exists; choose a new directory')
     if min(args.rounds,args.timeout,args.max_wall_s,args.max_input_tokens,args.max_quiet_rounds)<=0:p.error('positive budgets required')
+    if args.executor=='skills':
+        if not args.grasp_model_dir or not args.stage_model_dir:
+            p.error('skills execution requires --grasp-model-dir and --stage-model-dir; raw diagnostics require explicit --executor raw')
+        from scripts.run_dispatch_skills import run as run_skills
+        return run_skills(args)
     return run(args)
 
 
