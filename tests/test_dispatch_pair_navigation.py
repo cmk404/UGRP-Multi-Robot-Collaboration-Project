@@ -294,3 +294,23 @@ def test_persistent_rgb_span_error_increases_recovery_with_bounded_memory():
     assert abs(bias)<1e-6
     for _ in range(20):bias=update_span_bias(bias,.659,.639)
     assert bias==pytest.approx(-.025)
+
+
+def test_release_yield_recovers_four_corners_when_last_cargo_hint_clips_the_chassis():
+    import json,cv2
+    from harness.dispatch_yield import SoloYield,acquire_wheel_geometry
+    raw=(ROOT/'yield-offset-cargo-hint.jpg').read_bytes()
+    hint=json.loads((ROOT/'yield-offset-cargo-hint.json').read_text())['cargo_hint_px']
+    policy=SoloYield(authored_map(),hint)
+    action,evidence=policy.decide(raw)
+    obs=evidence['observation']
+    assert action['forward']<0 and not policy.done
+    assert 770<obs['center_px'][0]<781 and 195<obs['center_px'][1]<205
+    assert obs['tracking']['candidate_count']>=4
+    again=policy.decide(raw)[1]['observation']
+    assert np.allclose(again['center_px'],obs['center_px'],atol=.01)
+    frame=cv2.imdecode(np.frombuffer(raw,np.uint8),cv2.IMREAD_COLOR)
+    mask=PairVision._mask(None,frame)
+    # Removing a complete lower row of wheels must not turn the arm into a base.
+    mask[205:]=0
+    with pytest.raises(ValueError):acquire_wheel_geometry(mask,np.array(hint)-[50,0])

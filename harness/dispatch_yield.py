@@ -3,8 +3,40 @@ import math
 import cv2
 import numpy as np
 from harness.camera_goal_transport import decode,wheel_heading
-from harness.dispatch_pair_navigation import PairVision,track_wheel_motion,rotate
+from harness.dispatch_pair_navigation import PairVision,track_wheel_motion,rotate,reanchor_wheel_geometry
 from harness.known_map_navigation import pixel_to_world
+
+def acquire_wheel_geometry(mask,hint):
+    """Resolve a nearby chassis from four current wheel corners, not cargo pose.
+
+    A released cargo fragment is only a rough search hint: its height and
+    occlusion can move its apparent centre. Arm pixels must not define the
+    chassis rectangle. Keep the existing strict corner geometry gates and
+    reject a search that supports multiple spatially distinct chassis.
+    """
+    fits=[]
+    for dx in range(-30,31,6):
+        for dy in range(-30,31,6):
+            for angle in range(-18,19,6):
+                _,_,e=reanchor_wheel_geometry(mask,np.asarray(hint)+[dx,dy],angle)
+                if e.get('accepted'):
+                    center=np.array(e['observed_center_px']);refined=angle+2*e['heading_correction_deg']
+                    for _ in range(6):
+                        _,_,e=reanchor_wheel_geometry(mask,center,refined)
+                        if not e.get('accepted'):break
+                        center=np.array(e['observed_center_px']);refined+=2*e['heading_correction_deg']
+                    if e.get('accepted'):fits.append([*center,refined])
+    if len(fits)<4:raise ValueError('yield robot wheel geometry unresolved in RGB')
+    fits=np.asarray(fits);observed=np.median(fits,axis=0)
+    if np.linalg.norm(fits[:,:2]-observed[:2],axis=1).max()>8 or abs(fits[:,2]-observed[2]).max()>9:
+        raise ValueError('yield robot wheel geometry ambiguous in RGB')
+    center=observed[:2];angle=observed[2]
+    for _ in range(6):
+        _,_,e=reanchor_wheel_geometry(mask,center,angle)
+        if not e.get('accepted'):raise ValueError('yield robot wheel geometry refinement unresolved in RGB')
+        center=np.array(e['observed_center_px']);angle+=2*e['heading_correction_deg']
+    return center,math.radians(angle),{'method':'current four-wheel corner consensus around last cargo RGB hint',
+        'search_hint_px':list(map(float,hint)),'candidate_count':len(fits),'corner_geometry':e}
 
 class WheelObserver:
     def __init__(self,static_map,hint_px):
@@ -20,15 +52,17 @@ class WheelObserver:
                 selected[(abs(xx-self.hint[0])>extent)|(abs(yy-self.hint[1])>35)]=0
                 heading=wheel_heading(selected,pixel_tolerance=2.)
                 if heading is not None:break
-            if heading is None:raise ValueError('yield robot wheel geometry unresolved in RGB')
-            ys,xs=np.nonzero(selected)
-            (x,y),_,_=cv2.minAreaRect(np.column_stack((xs,ys)).astype(np.float32))
-            self.center=np.array([x,y]);self.initial_heading=-math.radians(heading['angle_deg'])
+            if heading is None:
+                self.center,self.initial_heading,evidence=acquire_wheel_geometry(mask,self.hint)
+            else:
+                ys,xs=np.nonzero(selected)
+                (x,y),_,_=cv2.minAreaRect(np.column_stack((xs,ys)).astype(np.float32))
+                self.center=np.array([x,y]);self.initial_heading=-math.radians(heading['angle_deg'])
+                evidence={'method':'own-motion/last-cargo RGB hint plus current four-wheel geometry'}
             px,py=np.rint(self.center).astype(int)
             crop=mask[py-30:py+31,px-30:px+31]
             if crop.shape!=(61,61):raise ValueError('yield wheel envelope outside camera')
             self.template=cv2.GaussianBlur(crop,(3,3),.7)
-            evidence={'method':'own-motion/last-cargo RGB hint plus current four-wheel geometry'}
         else:
             center,self.angle,evidence=track_wheel_motion(self.previous,frame,self.center,self.angle,self.template)
             self.center=np.array(center)
