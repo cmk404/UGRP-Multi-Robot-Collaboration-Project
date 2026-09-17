@@ -12,6 +12,19 @@ from harness.gemini_proxy import _to_gemini_multi_image_messages
 from scripts.run_camera_varied_start_student import load_stage_models
 from scripts.run_camera_approach_student import models
 
+def audit_translation_history(calls):
+ previous=None;frozen=None;count=0
+ for call in calls:
+  if call['kind']!='image_binding':continue
+  meta=call['transform'];shift=meta['translation_px']
+  if meta['fixed_from_prior_rgb']:
+   if frozen is None:frozen=previous
+   assert frozen is not None and shift==frozen,'grasp image transform differs from prior RGB anchor'
+   count+=1
+  else:frozen=None
+  previous=shift
+ return count
+
 def audit(p,*,replay_solo=False):
  p=Path(p);result=json.loads((p/'result.json').read_text());team=json.loads((p/'team/team.json').read_text());mission=json.loads((p/'actor-mission.json').read_text());identity=json.loads((p/'identity-evidence.json').read_text())
  def image(ref):
@@ -31,7 +44,7 @@ def audit(p,*,replay_solo=False):
   if call.get('wire_index'):
    saved=json.loads((p/'team'/call['request']).read_text());w=json.loads((p/'team'/call['robot_id']/f"wire-{call['wire_index']:03d}.json").read_text())
    assert w['messages']==_to_gemini_multi_image_messages(saved['messages'],saved['images']);wire+=1
- calls=json.loads((p/'pair-decisions.json').read_text());bindings=result['bindings']['pair_model_slots'];reference=Path(result['config']['reference_top']).read_bytes()
+ calls=json.loads((p/'pair-decisions.json').read_text());anchored=audit_translation_history(calls);bindings=result['bindings']['pair_model_slots'];reference=Path(result['config']['reference_top']).read_bytes()
  _,stage=load_stage_models(Path(result['config']['stage_model_dir']));_,grasp=models(p.with_name(p.name+'-grasp-models').resolve(),'student-skill.json')
  transforms=approach=grasp_count=0
  from harness.dispatch_beam_tracker import CarriedBeamTracker
@@ -58,13 +71,12 @@ def audit(p,*,replay_solo=False):
   assert obs['robot_id']==result['bindings']['solo_robot'] and obs['sha256']==hashlib.sha256(own).hexdigest()
   assert set(obs['actuator_state'])=={'motor_commands','servo_pulses'}
  report={'passed':True,'scope':'saved input reconstruction and exact model prediction replay; not physical success', 'run':str(p.resolve()),'planning_requests':count,'actual_llm_wires':wire,'pair_image_bindings':transforms,'learned_approach_predictions':approach,'grasp_predictions':grasp_count,'solo_own_command_observations':len(solo)}
+ report['prior_rgb_grasp_anchors_verified']=anchored
  if replay_solo:
-  setup=json.loads((p/'episode-setup-only.json').read_text())
-  report['solo_decision_replay']=audit_solo_replay(p,json.loads((p/'committed-plan.json').read_text()),setup['static_map'])
- setup=json.loads((p/'episode-setup-only.json').read_text())
- yield_vision,yield_report=audit_yield(p,setup['static_map'])
+  report['solo_decision_replay']=audit_solo_replay(p,json.loads((p/'committed-plan.json').read_text()),mission['static_map'])
+ yield_vision,yield_report=audit_yield(p,mission['static_map'])
  report['yield_replay']=yield_report
- report['navigation_replay']=audit_navigation(p,calls,json.loads((p/'committed-plan.json').read_text()),setup['static_map'],yield_vision=yield_vision,identity=identity)
+ report['navigation_replay']=audit_navigation(p,calls,json.loads((p/'committed-plan.json').read_text()),mission['static_map'],yield_vision=yield_vision,identity=identity)
  (p/'input-audit.json').write_text(json.dumps(report,indent=2));print(report)
 def audit_solo_replay(p,committed,static_map,*,return_policy=False):
  import copy,base64,json,hashlib

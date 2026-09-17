@@ -80,3 +80,15 @@ def test_temporal_shaft_tracks_actual_failed_frames_and_rejects_missing_cargo(ru
     assert feature['tracking']['uses_issued_motion'] is False
     blank=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))[1].tobytes()
     with pytest.raises(ValueError,match='consistent RGB support'):tracker.observe(blank)
+
+
+def test_input_audit_rejects_a_changed_frozen_grasp_translation():
+    import copy
+    from scripts.audit_dispatch_skill_inputs import audit_translation_history
+    calls=[{'kind':'image_binding','transform':{'translation_px':[12.,-6.],'fixed_from_prior_rgb':False}},
+           {'kind':'image_binding','transform':{'translation_px':[12.,-6.],'fixed_from_prior_rgb':True}},
+           {'kind':'image_binding','transform':{'translation_px':[12.,-6.],'fixed_from_prior_rgb':True}}]
+    assert audit_translation_history(calls)==2
+    tampered=copy.deepcopy(calls);tampered[2]['transform']['translation_px'][0]+=1
+    with pytest.raises(AssertionError,match='prior RGB anchor'):audit_translation_history(tampered)
+    with pytest.raises(AssertionError,match='prior RGB anchor'):audit_translation_history(calls[1:])
