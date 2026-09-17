@@ -9,6 +9,7 @@ from sim.research_dispatch_arena import authored_map
 RAW=Path('tests/fixtures/dispatch_adaptive/north-barrier.jpg').read_bytes()
 def commit(route):
  p=fixture_plan(dock='dock_a',route=route)
+ if route=='south':p['tasks'][1]['route']='south'
  return {'plan':p,'plan_hash':digest(p),'version':1,'proposal_id':'test'}
 
 def test_same_prior_map_has_different_feasibility_from_actual_rgb():
@@ -28,6 +29,7 @@ def test_rejected_route_requires_new_plan_and_three_new_exact_votes(tmp_path):
   def negotiate(self,frames,history,turn,sim_time):
    ctx=agreement.context();pending=ctx['proposal']
    proposal=fixture_plan(dock='dock_a',route='south' if 'execution_feedback' in task else 'north')
+   if 'execution_feedback' in task:proposal['tasks'][1]['route']='south'
    replies={rid:{'request_id':f'feedback-{rid}-plan-{turn}','proposal_id':pending['proposal_id'] if pending else None,
       'plan_hash':pending['plan_hash'] if pending else None,'accept':True,'plan':pending['plan'] if pending else proposal,
       'reason':'protocol test policy','message':''} for rid in ('r1','r2','r3')}

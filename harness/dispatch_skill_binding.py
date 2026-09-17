@@ -240,6 +240,9 @@ class ImageRoute:
             # The open arena permits the original parallel formation. Avoid
             # shifting it into a wall merely to hit a narrow symbolic gate.
             gate=self.map['regions'][self.task['route']+'_gate']['center_m'][:]
+            if self.obj=='box':
+                from harness.dispatch_navigation_map import solo_gate
+                gate=solo_gate(self.map,self.task['route'],jpeg)
             margin=.48 if self.obj=='beam' else .18
             ymin,ymax=self.map['bounds_m'][2:]
             gate[1]=max(ymin+margin,min(ymax-margin,gate[1]))

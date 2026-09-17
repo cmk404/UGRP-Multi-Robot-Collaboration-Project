@@ -149,6 +149,41 @@ def plan_route(start, goal, data):
     return None
 
 
+def track_wheel_motion(previous,current,center,angle,template):
+    """Bidirectional RGB feature motion of the observed rigid wheel envelope.
+
+    Paint can merge with yellow wheels; it cannot define this motion estimate.
+    Features are seeded on the prior observed body silhouette. An inlier fit
+    must span multiple wheel quadrants and agree in forward/backward images.
+    """
+    old=cv2.cvtColor(previous,cv2.COLOR_BGR2GRAY);new=cv2.cvtColor(current,cv2.COLOR_BGR2GRAY)
+    matrix=cv2.getRotationMatrix2D((30,30),angle,1.)
+    matrix[:,2]+=np.asarray(center)-30
+    mask=cv2.warpAffine((template>20).astype(np.uint8)*255,matrix,(old.shape[1],old.shape[0]))
+    mask=cv2.dilate(mask,np.ones((5,5),np.uint8))
+    points=cv2.goodFeaturesToTrack(old,80,.01,3,mask=mask)
+    if points is None or len(points)<8:raise ValueError('wheel RGB features missing')
+    forward,ok,errors=cv2.calcOpticalFlowPyrLK(old,new,points,None,winSize=(15,15),maxLevel=2)
+    backward,back_ok,_=cv2.calcOpticalFlowPyrLK(new,old,forward,None,winSize=(15,15),maxLevel=2)
+    cycle=np.linalg.norm(backward-points,axis=2).ravel()
+    good=(ok.ravel()>0)&(back_ok.ravel()>0)&(cycle<.7)&(errors.ravel()<30)
+    a=points.reshape(-1,2)[good];b=forward.reshape(-1,2)[good]
+    if len(a)<8:raise ValueError('wheel bidirectional RGB motion unresolved')
+    transform,inliers=cv2.estimateAffinePartial2D(a,b,method=cv2.RANSAC,ransacReprojThreshold=1.,maxIters=1000,confidence=.99)
+    if transform is None:raise ValueError('wheel rigid RGB motion unresolved')
+    keep=inliers.ravel().astype(bool);fraction=float(keep.mean())
+    if keep.sum()<8 or fraction<.65 or min(np.ptp(a[keep],axis=0))<25:
+        raise ValueError('wheel rigid feature coverage lost')
+    scale=float(np.hypot(transform[0,0],transform[0,1]))
+    turn=math.degrees(math.atan2(transform[0,1],transform[0,0]))
+    next_center=transform[:,:2]@np.asarray(center)+transform[:,2]
+    if not .97<=scale<=1.03 or abs(turn)>5 or np.linalg.norm(next_center-center)>17:
+        raise ValueError('implausible wheel RGB motion')
+    return tuple(map(float,next_center)),angle+turn,{'method':'bidirectional RGB rigid feature motion',
+        'inlier_fraction':fraction,'features':int(len(a)),'inliers':int(keep.sum()),
+        'scale':scale,'turn_deg':turn,'max_cycle_error_px':float(cycle[good][keep].max())}
+
+
 class PairVision:
     """Track unchanged wheel color templates; headings are image rotations.
 
@@ -236,32 +271,21 @@ class PairVision:
                 self.templates[rid] = cv2.GaussianBlur(template, (3, 3), .7)
                 self.centers[rid] = (float(px), float(py))
         observations = {}
+        previous=getattr(self,'previous_frame',None)
+        updated={}
         for rid in ROBOTS:
-            px, py = self.centers[rid]
-            x, y = int(round(px)), int(round(py))
-            extent = 52
-            if x-extent < 0 or y-extent < 0 or x+extent >= w or y+extent >= h:
-                raise ValueError('robot outside fixed camera tracking margin')
-            crop = cv2.GaussianBlur(mask[y-extent:y+extent+1, x-extent:x+extent+1], (3, 3), .7)
-            best = None
-            for angle in np.arange(self.angles[rid]-5, self.angles[rid]+5.01, .5):
-                matrix = cv2.getRotationMatrix2D((30, 30), angle, 1.)
-                template = cv2.warpAffine(self.templates[rid], matrix, (61, 61))
-                score = cv2.matchTemplate(crop, template, cv2.TM_CCOEFF_NORMED)
-                _, peak, _, loc = cv2.minMaxLoc(score)
-                if best is None or peak > best[0]:
-                    best = (peak, angle, loc)
-            peak, angle, (u, v) = best
-            if peak < .48:
-                raise ValueError(f'{rid} wheel template lost ({peak:.3f})')
-            center = (float(x-extent+u+30), float(y-extent+v+30))
-            if math.dist(center, self.centers[rid]) > 17:
-                raise ValueError('implausible visual tracking jump')
-            self.centers[rid], self.angles[rid] = center, float(angle)
-            point = pixel_to_world(center, frame.shape, self.map['top_camera'])
-            observations[rid] = {'xy_m': list(point), 'relative_yaw_rad': math.radians(angle),
-                                 'confidence': float(peak), 'center_uv': list(center),
-                                 'feature_plane_height_m': .09}
+            center,angle=self.centers[rid],self.angles[rid]
+            tracking={'method':'initial RGB wheel template'}
+            if previous is not None:
+                center,angle,tracking=track_wheel_motion(previous,frame,center,angle,self.templates[rid])
+            point=pixel_to_world(center,frame.shape,self.map['top_camera'])
+            observations[rid]={'xy_m':list(point),'relative_yaw_rad':math.radians(angle),
+                'confidence':tracking.get('inlier_fraction',1.),'center_uv':list(center),
+                'feature_plane_height_m':.09,'tracking':tracking}
+            updated[rid]=(center,angle)
+        for rid,(center,angle) in updated.items():self.centers[rid],self.angles[rid]=center,angle
+        self.previous_frame=frame.copy()
+
         return observations
 
 

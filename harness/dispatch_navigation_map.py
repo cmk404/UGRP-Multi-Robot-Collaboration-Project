@@ -57,3 +57,32 @@ def navigation_map(bindings,jpeg):
     pixel=pixel_from_map(data['goal']['center_m'],static,decode(jpeg).shape)
     data['goal']['center_m']=list(pixel_to_world(pixel,decode(jpeg).shape,static['top_camera']))
     return data
+
+def solo_gate(static,route,jpeg):
+    """Fit the fixed-heading solo envelope into the selected corridor.
+
+    Uses authored geometry and conservative image-only obstacle projections.
+    A ridge is treated as unvalidated terrain, never silently assumed passable.
+    """
+    gate=static['regions'][route+'_gate']['center_m'][:]
+    island=next((o for o in static['obstacles'] if o['id']=='service_island'),None)
+    if island is None:return gate
+    ymin,ymax=static['bounds_m'][2:]
+    cy=island['center_m'][1];hy=island['half_extents_m'][1]
+    intervals=[(cy+hy,ymax-.025)] if route=='north' else [(ymin+.025,cy-hy)]
+    blockers=[o for o in static['obstacles'] if not o['id'].startswith('wall') and o['id']!='service_island']
+    blockers+=static['terrain']+visual_barriers(jpeg,static)
+    for o in blockers:
+        if abs(o['center_m'][0]-gate[0])>o['half_extents_m'][0]+.32:continue
+        a=o['center_m'][1]-o['half_extents_m'][1];b=o['center_m'][1]+o['half_extents_m'][1]
+        remaining=[]
+        for lo,hi in intervals:
+            if b<=lo or a>=hi:remaining.append((lo,hi))
+            else:
+                if lo<a:remaining.append((lo,a))
+                if b<hi:remaining.append((b,hi))
+        intervals=remaining
+    intervals=[(lo,hi) for lo,hi in intervals if hi-lo>=.32]
+    if not intervals:raise RuntimeError('BOX_ROUTE_UNSUPPORTED: '+route+' lacks 0.32m conservative clearance or crosses unvalidated terrain')
+    lo,hi=max(intervals,key=lambda x:x[1]-x[0]);gate[1]=max(lo+.16,min(hi-.16,gate[1]))
+    return gate

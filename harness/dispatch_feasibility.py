@@ -3,7 +3,7 @@ import copy,math
 import numpy as np
 from harness.camera_goal_transport import decode
 from harness.dispatch_skill_binding import SkillBindings,beam_feature
-from harness.dispatch_navigation_map import navigation_map
+from harness.dispatch_navigation_map import navigation_map,solo_gate
 from harness.dispatch_pair_navigation import plan_route
 from harness.known_map_navigation import pixel_to_world
 from harness.three_robot_plan import digest
@@ -31,8 +31,14 @@ def inspect_routes(committed,static_map,top_rgb):
                     'observed_barriers':[o for o in data['obstacles'] if o['id'].startswith('rgb_')]}
             else:routes[name]={'feasible':True,'reason':'open-map translation adapter; current RGB guards still required'}
         except RuntimeError as error:routes[name]={'feasible':False,'reason':str(error)}
+    box_routes={}
+    for name in ('north','south'):
+        try:box_routes[name]={'feasible':True,'gate_m':solo_gate(static_map,name,top_rgb)}
+        except RuntimeError as error:box_routes[name]={'feasible':False,'reason':str(error)}
+    box_chosen=next(t['route'] for t in committed['plan']['tasks'] if t['object']=='box')
     chosen=next(t['route'] for t in committed['plan']['tasks'] if t['object']=='beam')
-    return {'feasible':routes[chosen]['feasible'],'chosen_beam_route':chosen,'beam_routes':routes,
+    return {'feasible':routes[chosen]['feasible'] and box_routes[box_chosen]['feasible'],
+        'chosen_beam_route':chosen,'beam_routes':routes,'chosen_box_route':box_chosen,'box_routes':box_routes,
         'source':'authored static geometry + current TOP RGB + declared loaded footprint; not physical passage proof',
         'plan_hash':committed['plan_hash'],'input_sha256':__import__('hashlib').sha256(top_rgb).hexdigest()}
 

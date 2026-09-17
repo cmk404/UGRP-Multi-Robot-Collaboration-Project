@@ -47,3 +47,27 @@ def test_pickup_resource_prevents_solo_from_waiting_in_pair_turn_space():
     b=bindings();assert b.permission('beam','APPROACH')
     assert not b.permission('box','APPROACH')
     b.finish('beam');assert b.permission('box','APPROACH')
+
+
+def test_actual_painted_floor_does_not_erase_wheel_motion():
+    import cv2,json
+    from harness.dispatch_pair_navigation import track_wheel_motion
+    before=cv2.imread(str(ROOT/'pair-267-rotate-carry-top.jpg'))
+    after=cv2.imread(str(ROOT/'pair-268-rotate-carry-top.jpg'))
+    prior=json.loads((ROOT/'wheel-prior.json').read_text())
+    template=cv2.imread(str(ROOT/'wheel-prior-template.png'),0)
+    center,angle,evidence=track_wheel_motion(before,after,prior['center'],prior['angle_deg'],template)
+    assert np.linalg.norm(np.array(center)-prior['center'])<3
+    assert .1<angle-prior['angle_deg']<2
+    assert evidence['inlier_fraction']>.9 and evidence['max_cycle_error_px']<.2
+    with pytest.raises(ValueError):
+        track_wheel_motion(before,np.zeros_like(after),prior['center'],prior['angle_deg'],template)
+
+
+def test_solo_corridor_respects_new_chicane_and_unvalidated_ridge():
+    from harness.dispatch_navigation_map import solo_gate
+    raw=(ROOT/'carry-anchor.jpg').read_bytes()
+    gate=solo_gate(authored_map('narrow_south'),'south',raw)
+    assert -2.70<=gate[1]<=-2.63
+    with pytest.raises(RuntimeError,match='unvalidated terrain'):
+        solo_gate(authored_map('rough_south'),'south',raw)
