@@ -136,7 +136,8 @@ class ImageRoute:
             bounds=np.array(feature['corners4'])*[w,h]
         else:
             hsv=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
-            mask=cv2.inRange(hsv,np.array((80,70,35),np.uint8),np.array((105,255,255),np.uint8))
+            mask=cv2.inRange(hsv,np.array((80,125,35),np.uint8),np.array((102,255,255),np.uint8))
+            mask=cv2.morphologyEx(mask,cv2.MORPH_OPEN,np.ones((3,3),np.uint8))
             n,_,stats,centers=cv2.connectedComponentsWithStats(mask)
             choices=[i for i in range(1,n) if 25 <= stats[i,4] <= 600
                      and max(stats[i,2:4]) < 40]

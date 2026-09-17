@@ -129,3 +129,12 @@ def test_loaded_top_lighting_keeps_shaft_geometry_and_rejects_floor():
     assert beam['center'][0]<.4
     transformed,record=canonical_pair_top(raw,(Path(__file__).parent/"fixtures/camera_goal_transport/reference-top.jpg").read_bytes(),hue_upper=35)
     assert record['hue_upper']==35 and record['observed_beam']==beam
+
+
+def test_dispatch_box_route_rejects_cyan_floor_distractors():
+    from harness.dispatch_skill_binding import ImageRoute
+    raw=(Path(__file__).parent/'fixtures/dispatch_skill_transfer/box-top-held.jpg').read_bytes()
+    route=ImageRoute(SkillBindings(committed(),authored_map('open')),'box')
+    action,evidence=route.observe(raw)
+    assert np.allclose(evidence['cargo_center_px'],[274,545],atol=2)
+    assert not evidence['done'] and action['kind']=='mecanum'

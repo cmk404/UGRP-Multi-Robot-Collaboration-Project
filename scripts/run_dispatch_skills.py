@@ -124,6 +124,9 @@ class SkillScene(DispatchScene):
               'top':image_record(self.out/'rgb'/f'solo-{index}-top.jpg',self.out,top)}
         before=self.solo.phase
         action,evidence=self.solo.decide(obs,top)
+        if action['kind']=='mecanum' and not self.bindings.permission('box','TRANSIT'):
+            action={'kind':'wait','duration':.1}
+            evidence={**evidence,'waiting_for_resource':True}
         self.solo_rows.append({'index':index,'sim_time_s':now,'robot_id':self.bindings.solo,
             'phase_before':before,'phase_after':self.solo.phase,'observation':{k:v for k,v in obs.items() if k!='image'},
             'images':refs,'action':action,'top_evidence':evidence})
