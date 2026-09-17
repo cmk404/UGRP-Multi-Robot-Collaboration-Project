@@ -20,12 +20,44 @@ def beam_feature(jpeg, *, hue_upper=24):
     # The original mask remains first, preserving the learned image convention.
     # Yellow floor paint can merge with the carried beam. Its lower saturation
     # permits a second segmentation, still subject to every shaft shape gate.
-    for saturation in (105,150):
-        candidates = [b for b in extract_beams(jpeg, hue_upper=hue_upper,min_saturation=saturation)
+    def candidates(saturation):
+        return [b for b in extract_beams(jpeg, hue_upper=hue_upper,min_saturation=saturation)
                       if not b['touches_border'] and b['length_px'] / b['width_px'] >= 3.5
                       and 65 <= b['length_px'] <= 180 and b['width_px'] <= 25]
-        if len(candidates)==1:return candidates[0]
+    initial=candidates(105)
+    if len(initial)==1:return initial[0]
+    # A stable shaft must survive several thresholds, not one lucky cut through
+    # a painted floor region. Prefer the widest supported silhouette to retain
+    # the same image convention while its low-saturation surroundings vanish.
+    levels=[candidates(s) for s in range(130,191,10)]
+    stable=[]
+    for i,level in enumerate(levels):
+        for b in level:
+            support=sum(any(math.dist(b['center'],c['center'])*960<4
+                and abs(c['length_px']/b['length_px']-1)<.15 for c in other)
+                for other in levels[i:])
+            if support>=3:stable.append(b)
+    if stable:
+        first=stable[0]
+        if all(math.dist(first['center'],b['center'])*960<6 for b in stable):return first
     raise ValueError('dispatch beam unresolved or ambiguous in RGB')
+
+
+class BeamContinuity:
+    """Reject switching to a different colored object while carrying a beam."""
+    def __init__(self):self.previous=None
+    def observe(self,feature):
+        if self.previous:
+            a,b=self.previous,feature
+            movement=np.linalg.norm((np.array(a['center'])-b['center'])*b['image_size'])
+            def angle(f):
+                v=(np.array(f['endpoints'][1])-f['endpoints'][0])*f['image_size']
+                return math.atan2(v[1],v[0])
+            turn=abs((angle(b)-angle(a)+math.pi/2)%math.pi-math.pi/2)
+            if movement>24 or turn>math.radians(15):
+                raise ValueError('carried beam visual continuity lost')
+        self.previous=copy.deepcopy(feature)
+        return feature
 
 
 def canonical_pair_top(jpeg, reference, *, translation_px=None, hue_upper=24):

@@ -5,7 +5,7 @@ model slots, remapped at the driver boundary using the committed plan.
 """
 from __future__ import annotations
 from pathlib import Path
-from harness.dispatch_skill_binding import canonical_pair_top, beam_feature, PairCoarsePixels, pixel_from_map
+from harness.dispatch_skill_binding import canonical_pair_top, beam_feature, PairCoarsePixels, pixel_from_map, BeamContinuity
 from harness.camera_goal_transport import coarse_approach, dock_command, preclose_supported, own_payload
 from harness.camera_varied_start_student import predict_stage
 from harness.grasp_student_inference import predict_student
@@ -30,6 +30,7 @@ class BoundPairSkill:
         self.trace=[];self.evaluation_samples=[];self.grasp_report={};self.phase='APPROACH'
         self.last_capture=None;self.count=0;self.calls=[]
         self.grasp_translation=None;self.latest_translation=None;self.transport_started=False
+        self.beam_continuity=BeamContinuity()
         self.coarse=PairCoarsePixels(identity,bindings,reference) if identity is not None else None
 
     def time(self):return self.io.time()
@@ -47,6 +48,7 @@ class BoundPairSkill:
         top, transform=canonical_pair_top(frames['r1']['top_bytes'],self.reference,
             translation_px=self.grasp_translation if self.phase.startswith('grasp') else None,
             hue_upper=35 if self.transport_started else 24)
+        if self.transport_started:self.beam_continuity.observe(transform['observed_beam'])
         self.latest_translation=transform['translation_px']
         top_ref=image_record(self.out/'rgb'/f'pair-{self.count}-canonical-top.jpg',self.out,top)
         mapped={slot:{**frames[rid], 'top_bytes':top,'shared_top_rgb':top_ref,

@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 from harness.dispatch_skill_binding import beam_feature
 from harness.camera_beam_features import extract_beams
+from harness.dispatch_skill_binding import BeamContinuity
 
 
 def test_actual_destination_b_failure_separates_beam_from_floor_paint():
@@ -20,3 +21,13 @@ def test_actual_destination_b_failure_separates_beam_from_floor_paint():
     image[175:289,616:650]=0
     with pytest.raises(ValueError,match='unresolved'):
         beam_feature(cv2.imencode('.jpg',image)[1].tobytes(),hue_upper=35)
+
+
+def test_shaft_survives_brightness_change_over_painted_apron():
+    raw=Path('tests/fixtures/dispatch_adaptive/beam-floor-r1-325.jpg').read_bytes()
+    beam=beam_feature(raw,hue_upper=35)
+    assert np.allclose(np.array(beam['center'])*[960,720],[633.5,345.5],atol=3)
+    assert 85<beam['length_px']<110 and beam['width_px']<25
+    tracker=BeamContinuity();tracker.observe(beam)
+    moved={**beam,'center':[beam['center'][0]+.1,beam['center'][1]]}
+    with pytest.raises(ValueError,match='continuity'):tracker.observe(moved)

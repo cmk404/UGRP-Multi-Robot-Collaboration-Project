@@ -44,7 +44,7 @@ def extract_beams(jpeg: bytes, robust_shaft: bool = False, *, hue_upper: int = 2
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     if hue_upper not in (24, 35):
         raise ValueError("unsupported beam hue calibration")
-    if min_saturation not in (105, 150):
+    if isinstance(min_saturation,bool) or not isinstance(min_saturation,int) or not 0<=min_saturation<=255:
         raise ValueError("unsupported beam saturation calibration")
     low = _ORANGE_LOW.copy(); low[1] = min_saturation
     mask = cv2.inRange(hsv, low, np.array((hue_upper, 255, 255), np.uint8))
