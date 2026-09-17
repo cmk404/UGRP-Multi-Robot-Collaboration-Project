@@ -65,6 +65,12 @@ def navigation_map(bindings,jpeg,*,other_robot_center_px=None,planned_box_comple
     # plane. This is a calibration transform, not a live measured height.
     pixel=pixel_from_map(data['goal']['center_m'],static,decode(jpeg).shape)
     data['goal']['center_m']=list(pixel_to_world(pixel,decode(jpeg).shape,static['top_camera']))
+    # Use the permitted placement region to leave room for the adjacent solo
+    # carrier. Exact-centre placement can obstruct that carrier's rear wheels.
+    slots=static['docks'][bindings.plan['dock']]['slots']
+    direction=math.copysign(1.,slots['box']['center_m'][0]-slots['beam']['center_m'][0])
+    data['goal']['preferred_offset_m']=[-direction*data['goal']['placement_tolerance_m'][0],0.]
+    data['goal']['placement_preference']='leave clearance toward adjacent authored box slot'
     return data
 
 def solo_gate(static,route,jpeg):

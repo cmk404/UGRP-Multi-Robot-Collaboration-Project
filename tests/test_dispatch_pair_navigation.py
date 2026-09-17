@@ -145,8 +145,8 @@ def test_placement_can_shift_inside_slot_without_shrinking_loaded_envelope():
     box['center_m']=[1.7845643765,-1.3856339014]
     assert not footprint_clear(goal,data)
     route=plan_placement_route(start,goal,data)
-    assert route and abs(route[-1][0]-goal[0])<=.06
-    assert abs(route[-1][1]-goal[1])<=.015
+    assert route and abs(route[-1][0]-goal[0])<=.06+1e-9
+    assert abs(route[-1][1]-goal[1])<=.015+1e-9
     assert all(swept_clear(a,b,data) for a,b in zip(route,route[1:]))
     assert data['footprint']=={'half_forward_m':.20,'half_lateral_m':.47,'margin_m':.025}
 
@@ -177,7 +177,7 @@ def test_span_recovery_pushes_apart_when_one_carrier_catches_the_other():
     actions,evidence=rigid_pair_commands(positions,headings,[0.,0.,0.],0.,[0.,0.],0.,target_span=.65)
     assert actions['r1']['left']<0 and actions['r3']['left']>0
     assert actions['r1']['turn']==actions['r3']['turn']==0.
-    assert evidence['radial_correction_m_s']<=.025
+    assert evidence['radial_correction_m_s']<=.05
     nominal={r:p*(.644/.62) for r,p in positions.items()}
     quiet,evidence=rigid_pair_commands(nominal,headings,[0.,0.,0.],0.,[0.,0.],0.,target_span=.65)
     assert all(a['forward']==a['left']==a['turn']==0. for a in quiet.values())
@@ -213,3 +213,29 @@ def test_chassis_motion_survives_paint_without_tracking_tread():
     assert evidence['inlier_fraction']>.9
     with pytest.raises(ValueError):
         track_wheel_motion(before,np.zeros_like(after),prior['center'],prior['angle_deg'],template,chassis_only=True)
+
+
+def test_box_delivery_uses_the_padded_region_before_point_chasing_hits_the_beam():
+    from harness.dispatch_skill_binding import ImageRoute,pixel_from_map
+    raw=(ROOT/'box-inside-slot-stalled.jpg').read_bytes();route=ImageRoute(bindings(),'box')
+    route.box_center=np.array([847.,179.]);route.observe(raw);route.index=len(route.points)-1
+    action,evidence=route.observe(raw)
+    assert max(abs(e) for e in evidence['error_px'])>4
+    assert evidence['ready'] and evidence['destination_region']['inside']
+    assert all(action[k]==0 for k in ['forward','left','turn'])
+    _,confirmed=route.observe(raw);assert confirmed['done']
+    # The same image is outside a different authored destination.
+    wrong=ImageRoute(bindings(),'box');wrong.dock='dock_b';wrong.box_center=np.array([847.,179.])
+    wrong.observe(raw);wrong.index=len(wrong.points)-1
+    _,evidence=wrong.observe(raw);assert not evidence['ready'] and not evidence['done']
+
+
+def test_persistent_rgb_span_error_increases_recovery_with_bounded_memory():
+    from harness.dispatch_pair_navigation import update_span_bias
+    bias=0.
+    for _ in range(20):bias=update_span_bias(bias,.619,.639)
+    assert bias==pytest.approx(.025)
+    for _ in range(20):bias=update_span_bias(bias,.639,.639)
+    assert abs(bias)<1e-6
+    for _ in range(20):bias=update_span_bias(bias,.659,.639)
+    assert bias==pytest.approx(-.025)

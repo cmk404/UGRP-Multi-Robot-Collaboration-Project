@@ -284,6 +284,27 @@ class ImageRoute:
         error=self.points[self.index]-center
         tolerance=4 if self.index==len(self.points)-1 else 6
         ready=float(np.max(np.abs(error))) <= tolerance
+        slot_evidence=None
+        if self.obj=='box' and self.index==len(self.points)-1:
+            # Delivery is containment in an authored floor region. Continuing
+            # toward its exact centre can push the carrier into released cargo.
+            # Pad the observed silhouette for occluded edges and segmentation
+            # error; own attachment and post-release visual QA remain required.
+            slot=self.map['docks'][self.dock]['slots']['box']
+            a=pixel_from_map(np.array(slot['center_m'])-slot['half_extents_m'],self.map,frame.shape)
+            b=pixel_from_map(np.array(slot['center_m'])+slot['half_extents_m'],self.map,frame.shape)
+            lo=np.minimum(a,b)+2.;hi=np.maximum(a,b)-2.
+            lower=bounds.min(axis=0)-4.;upper=bounds.max(axis=0)+4.
+            ready=bool(np.all(lower>=lo) and np.all(upper<=hi))
+            minimum_center=lo-(lower-center);maximum_center=hi-(upper-center)
+            if np.any(minimum_center>maximum_center):
+                raise RuntimeError('observed box envelope does not fit destination region')
+            guided=np.clip(self.points[self.index],minimum_center,maximum_center)
+            error=guided-center;tolerance=.5
+            slot_evidence={'source':'current RGB silhouette plus authored slot; not measured cargo pose',
+                'slot_interior_px':[lo.tolist(),hi.tolist()],
+                'padded_cargo_bounds_px':[lower.tolist(),upper.tolist()],
+                'occlusion_padding_px':4.,'floor_margin_px':2.,'inside':ready,'guided_center_px':guided.tolist()}
         self.confirmations=self.confirmations+1 if ready else 0
         done=self.index==len(self.points)-1 and self.confirmations>=2
         evidence={'source':'TOP RGB + authored map', 'cargo_center_px':center.tolist(),
@@ -291,6 +312,7 @@ class ImageRoute:
                   'waypoints_px':[p.tolist() for p in self.points],
                   'error_px':error.tolist(),'ready':ready,'done':done}
         if self.obj=='box':evidence['tracking']=tracking
+        if slot_evidence is not None:evidence['destination_region']=slot_evidence
         if ready and self.confirmations>=2 and not done:
             self.index+=1;self.confirmations=0
         control=np.clip(error*.002,-.08,.08)

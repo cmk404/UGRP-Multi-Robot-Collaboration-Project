@@ -191,15 +191,17 @@ def track_wheel_motion(previous,current,center,angle,template,*,chassis_only=Fal
 
 
 def plan_placement_route(start,goal,data):
-    """Choose the nearest collision-free placement inside the authored slot.
+    """Choose a collision-free placement inside the authored slot.
 
+    Prefer room for the adjacent job when requested by the authored map adapter.
     The allowed offset leaves a 0.45m shaft and clearance inside the slot.
     Final image-based slot inclusion and independent release QA still apply.
     """
     limits=data['goal'].get('placement_tolerance_m',[0.,0.])
     candidates=[(x,y) for x in (0.,-.02,.02,-.04,.04,-.06,.06)
         for y in (0.,-.015,.015) if abs(x)<=limits[0]+1e-9 and abs(y)<=limits[1]+1e-9]
-    for dx,dy in sorted(candidates,key=lambda d:math.hypot(*d)):
+    preferred=data['goal'].get('preferred_offset_m',[0.,0.])
+    for dx,dy in sorted(candidates,key=lambda d:math.dist(d,preferred)):
         target=[goal[0]+dx,goal[1]+dy,goal[2]]
         route=plan_route(start,target,data)
         if route is not None:return route
@@ -279,7 +281,15 @@ def reanchor_wheel_geometry(mask,center,angle):
         'source':'current four wheel cluster arrangement; texture motion is not chassis heading'}
 
 
-def rigid_pair_commands(positions,headings,reference,observed_turn,velocity,omega,*,target_span=None,span_rate=0.):
+def update_span_bias(previous,span,target):
+    """Bounded integral of observed spacing error; commands are never feedback."""
+    error=target-span
+    if abs(error)<.008:return previous*.5
+    excess=0. if abs(error)<=.01 else error-math.copysign(.01,error)
+    return float(np.clip(previous+excess*.2,-.025,.025))
+
+
+def rigid_pair_commands(positions,headings,reference,observed_turn,velocity,omega,*,target_span=None,span_rate=0.,span_bias=0.):
     """One observed formation twist, independently converted by each endpoint.
 
     Correcting two absolute chassis targets separately can twist a held beam
@@ -293,7 +303,9 @@ def rigid_pair_commands(positions,headings,reference,observed_turn,velocity,omeg
     line=np.asarray(positions['r1'])-positions['r3'];span=float(np.linalg.norm(line))
     error=0. if target_span is None else float(target_span-span)
     position_error=0. if abs(error)<=.01 else error-math.copysign(.01,error)
-    correction=0. if target_span is None else float(np.clip(2.*position_error-.25*span_rate,-.025,.025))
+    # Accumulate only persistent RGB error: a fixed weak correction can leave
+    # a loaded carrier stuck while the other endpoint compresses the grasp.
+    correction=0. if target_span is None else float(np.clip(2.*position_error-.25*span_rate+span_bias,-.05,.05))
     commands={};world={}
     for rid,position in positions.items():
         offset=np.asarray(position)-center
@@ -305,7 +317,7 @@ def rigid_pair_commands(positions,headings,reference,observed_turn,velocity,omeg
             'turn':float(np.clip(angular/1.5,-.10,.10)),'duration_s':.2}
     return commands,{'center_xy_m':center.tolist(),'common_translation_m_s':translation.tolist(),
         'common_angular_rad_s':angular,'world_velocity_m_s':{r:v.tolist() for r,v in world.items()},
-        'observed_span_m':span,'target_span_m':target_span,'span_rate_m_s':span_rate,'radial_correction_m_s':correction,
+        'observed_span_m':span,'target_span_m':target_span,'span_rate_m_s':span_rate,'span_bias_m_s':span_bias,'radial_correction_m_s':correction,
         'source':'current RGB formation, authored route and own action calibration; common turn with bounded span correction'}
 
 
@@ -470,7 +482,7 @@ class PairNavigator:
                 self.offsets = {r: positions[r]-center for r in ROBOTS}
                 line=positions['r1']-positions['r3']
                 self.anchor_line_angle=math.atan2(line[1],line[0])
-                self.target_span=float(np.linalg.norm(line));self.previous_span=self.target_span;self.span_rate=0.
+                self.target_span=float(np.linalg.norm(line));self.previous_span=self.target_span;self.span_rate=0.;self.span_bias=0.
                 self.anchor_yaws = {r: obs[r]['relative_yaw_rad'] for r in ROBOTS}
                 self.anchor_payload = dict(self.vision.payload)
                 self.reference = np.array([*center, 0.])
@@ -499,6 +511,7 @@ class PairNavigator:
             if not .60<=span<=.70:
                 return {'action':zero,'status':'formation_span_abort','ready':False,'done':False,
                     'observations':obs,'observed_span_m':span}
+            self.span_bias=update_span_bias(self.span_bias,span,self.target_span)
             if not payload_coupled(payload, center, observed_turn, self.anchor_payload['relative_yaw_rad']):
                 return {'action': zero, 'status': 'payload_decoupled', 'ready': False, 'done': False,
                         'observations': obs, 'payload': dict(payload)}
@@ -524,7 +537,7 @@ class PairNavigator:
             self.reference[:2] += velocity*.2
             self.reference[2] += omega*.2
             headings={r:self.heading+obs[r]['relative_yaw_rad']-self.anchor_yaws[r] for r in ROBOTS}
-            commands,self.last_twist=rigid_pair_commands(positions,headings,self.reference,observed_turn,velocity,omega,target_span=self.target_span,span_rate=self.span_rate)
+            commands,self.last_twist=rigid_pair_commands(positions,headings,self.reference,observed_turn,velocity,omega,target_span=self.target_span,span_rate=self.span_rate,span_bias=self.span_bias)
             action=commands[self.rid]
             if np.linalg.norm(target[:2]-self.reference[:2]) < .002 and abs(wrap(target[2]-self.reference[2])) < .005:
                 reached = (max(e[0] for e in formation_errors.values()) < .012
