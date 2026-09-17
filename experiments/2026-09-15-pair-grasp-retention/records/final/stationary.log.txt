@@ -1,0 +1,80 @@
+{
+  "success": true,
+  "error": null,
+  "evaluation": {
+    "success": true,
+    "checkpoints": {
+      "180": {
+        "passed": true,
+        "gates": {
+          "duration_completed": true,
+          "full_grasp_stable": true,
+          "bilateral_every_sample": true,
+          "lifted_every_sample": true,
+          "level_every_sample": true,
+          "spacing_preserved": true,
+          "height_retained": true,
+          "continuous_samples": true,
+          "within_authored_bounds": true,
+          "collision_free": true,
+          "weld_off": true,
+          "invariants_unchanged": true
+        },
+        "last_sample_s": 179.94824999997374,
+        "max_beam_drop_m": 0.004133999999999999,
+        "finger_height_change_m": {
+          "r1": 0.000663265657396106,
+          "r3": 0.0006634974591677723
+        },
+        "beam_relative_to_finger_change_m": {
+          "r1": -0.004797265657396105,
+          "r3": -0.004797497459167771
+        }
+      },
+      "300": {
+        "passed": true,
+        "gates": {
+          "duration_completed": true,
+          "full_grasp_stable": true,
+          "bilateral_every_sample": true,
+          "lifted_every_sample": true,
+          "level_every_sample": true,
+          "spacing_preserved": true,
+          "height_retained": true,
+          "continuous_samples": true,
+          "within_authored_bounds": true,
+          "collision_free": true,
+          "weld_off": true,
+          "invariants_unchanged": true
+        },
+        "last_sample_s": 299.94149999997376,
+        "max_beam_drop_m": 0.006908000000000011,
+        "finger_height_change_m": {
+          "r1": 0.0006798357398303811,
+          "r3": 0.0006805804407989113
+        },
+        "beam_relative_to_finger_change_m": {
+          "r1": -0.0075878357398303925,
+          "r3": -0.007588580440798923
+        }
+      }
+    },
+    "grasp_stability": {
+      "success": true,
+      "gates": {
+        "full_grasp_samples": true,
+        "grasp_spacing_preserved": true,
+        "grasp_bilateral_through_lift_hold": true,
+        "grasp_hold_lifted_every_sample": true
+      },
+      "anchor_spacing_m": 0.6503777267147035,
+      "final_spacing_m": 0.6479525392605073,
+      "max_spacing_change_m": 0.011840345939445274,
+      "nonbilateral_samples": 0,
+      "samples": 112,
+      "max_sample_gap_s": 0.09925000000000139
+    },
+    "released_on_floor": true
+  },
+  "wall_seconds": 692.5695822919952
+}

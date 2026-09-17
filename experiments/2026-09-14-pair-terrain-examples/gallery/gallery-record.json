@@ -1,0 +1,1823 @@
+{
+  "schema": "ugrp.pair_terrain_gallery.v1",
+  "source_sha": "6e92a36c836665a446e664c857dda71ac2669a80",
+  "catalog_sha256": "380a555cf7212513660cdc6b01dedfe06ae1c350e8e24ffd8d6e0953e34827fd",
+  "environment": {
+    "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "mujoco": "3.12.0"
+  },
+  "geometry_only": false,
+  "physical_navigation_tested": false,
+  "external_model_calls": 0,
+  "cost_usd": 0,
+  "entries": [
+    {
+      "id": "narrow-door",
+      "number": 1,
+      "title_ko": "좁은 문·통로",
+      "title_en": "Narrow doorway",
+      "description_ko": "폭 56 cm 문을 지나려면 공동 하중의 방향을 바꿔야 합니다.",
+      "map": "maps/narrow-door.json",
+      "expected_geometric_route": true,
+      "physical_navigation_tested": false,
+      "map_sha256": "eda65e0ca2fca28602955da1e76737d82fbab696a06a726ba8a84ff89570bcb4",
+      "geometry": {
+        "scope": "Static geometry only, never observed robot state or physical success",
+        "nominal_start_m_rad": [
+          0.62,
+          -2.0,
+          0.0
+        ],
+        "goal_pose_m_rad": [
+          -0.52,
+          -2,
+          0.0
+        ],
+        "direct_swept_clear": false,
+        "route_found": true,
+        "route_m_rad": [
+          [
+            0.62,
+            -2.0,
+            0.0
+          ],
+          [
+            0.74,
+            -2.0,
+            0.7853981633974483
+          ],
+          [
+            0.74,
+            -2.0,
+            1.5707963267948966
+          ],
+          [
+            -0.4600000000000001,
+            -2.0,
+            1.5707963267948966
+          ],
+          [
+            -0.52,
+            -2,
+            0.0
+          ]
+        ],
+        "nearby_planning_starts": [
+          {
+            "nominal_pose_m_rad": [
+              0.6,
+              -2.01,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.6,
+              -2.0,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.6,
+              -1.99,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.62,
+              -2.01,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.62,
+              -2.0,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.62,
+              -1.99,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.64,
+              -2.01,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.64,
+              -2.0,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.64,
+              -1.99,
+              0.0
+            ],
+            "route_found": true
+          }
+        ],
+        "fixed_probe_envelope_clear": true
+      },
+      "scene": {
+        "compiled_walls": [
+          {
+            "id": "door_lower",
+            "position_m": [
+              0.15,
+              -2.5895,
+              0.15
+            ],
+            "half_extents_m": [
+              0.04,
+              0.3095,
+              0.15
+            ]
+          },
+          {
+            "id": "door_upper",
+            "position_m": [
+              0.15,
+              -1.4355,
+              0.15
+            ],
+            "half_extents_m": [
+              0.04,
+              0.2845,
+              0.15
+            ]
+          }
+        ],
+        "initial_wall_robot_or_payload_contacts": [],
+        "invariants": {
+          "policy_cameras": {
+            "cctv_top": {
+              "position": [
+                0.55,
+                -2.0,
+                2.5
+              ],
+              "quaternion": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "fov_y_deg": 55.0
+            },
+            "r1__robot_cam": {
+              "position": [
+                0.067,
+                0.0,
+                0.0136
+              ],
+              "quaternion": [
+                0.466417262018992,
+                0.531464897891391,
+                -0.531464897891391,
+                -0.466417262018992
+              ],
+              "fov_y_deg": 42.18818995586325
+            },
+            "r3__robot_cam": {
+              "position": [
+                0.067,
+                0.0,
+                0.0136
+              ],
+              "quaternion": [
+                0.466417262018992,
+                0.531464897891391,
+                -0.531464897891391,
+                -0.466417262018992
+              ],
+              "fov_y_deg": 42.18818995586325
+            }
+          },
+          "geometry_sha256": {
+            "geom_size": "90c44787ff65bcca8112941437011a275cae390c1e6448060babfd62ec9bcc42",
+            "geom_pos": "b0e99ee0a80d66d3813aca5cdc9fe7039200525bf3b7bcddc369ec500ec24813",
+            "geom_quat": "abf3c1234e95a1773de4f2d419a276d8a5f9a42fcf68f0e838e188154c403d95",
+            "geom_rgba": "9765e5d5866f7497547eb54a6cfbdddc153b93302267dbfb025de27ac58ccbaf",
+            "geom_friction": "8f4bf44db9eeeba20fb154fda44fad4b3d5650cdcf32fe67fdb4e7d1b0e6729d",
+            "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+            "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf"
+          },
+          "contact_solver": {
+            "impratio": 1.0,
+            "cone": 1.0,
+            "solver": 2.0,
+            "iterations": 80.0,
+            "tolerance": 1e-08,
+            "noslip_iterations": 0.0,
+            "timestep": 0.002
+          }
+        },
+        "original_geoms_sha256": "d3fa423957cc21c473c48b9b69737a2ae2175bfd29c12d7869676a07a5b3364c",
+        "scene_xml_sha256": "ae515d069b4a7f4e9f5cb309682d13cb54d5e6053c89c37f3a888892cb6cea95",
+        "setup_sim_seconds": 0.9000000000000007,
+        "weld_off": true,
+        "grasp_or_navigation_executed": false,
+        "scope": "Static scene after unchanged folded-arm setup, not physical passage validation"
+      }
+    },
+    {
+      "id": "l-corner",
+      "number": 2,
+      "title_ko": "L자 모퉁이",
+      "title_en": "L-shaped corner",
+      "description_ko": "안쪽 모서리를 돌아 위쪽 통로로 들어갑니다.",
+      "map": "maps/l-corner.json",
+      "expected_geometric_route": true,
+      "physical_navigation_tested": false,
+      "map_sha256": "2c4ebc3a72cefd570e7e18b1194b086ed52fd19d0aea2f19c9c7c69a818bc270",
+      "geometry": {
+        "scope": "Static geometry only, never observed robot state or physical success",
+        "nominal_start_m_rad": [
+          0.62,
+          -2.0,
+          0.0
+        ],
+        "goal_pose_m_rad": [
+          -0.52,
+          -1.49,
+          1.5707963267948966
+        ],
+        "direct_swept_clear": false,
+        "route_found": true,
+        "route_m_rad": [
+          [
+            0.62,
+            -2.0,
+            0.0
+          ],
+          [
+            0.07999999999999996,
+            -1.7,
+            1.5707963267948966
+          ],
+          [
+            -0.52,
+            -1.49,
+            1.5707963267948966
+          ]
+        ],
+        "nearby_planning_starts": [
+          {
+            "nominal_pose_m_rad": [
+              0.6,
+              -2.01,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.6,
+              -2.0,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.6,
+              -1.99,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.62,
+              -2.01,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.62,
+              -2.0,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.62,
+              -1.99,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.64,
+              -2.01,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.64,
+              -2.0,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.64,
+              -1.99,
+              0.0
+            ],
+            "route_found": true
+          }
+        ],
+        "fixed_probe_envelope_clear": true
+      },
+      "scene": {
+        "compiled_walls": [
+          {
+            "id": "inside_corner",
+            "position_m": [
+              -0.4895,
+              -2.4395,
+              0.15
+            ],
+            "half_extents_m": [
+              0.5895,
+              0.4595,
+              0.15
+            ]
+          },
+          {
+            "id": "entry_wall",
+            "position_m": [
+              1.46,
+              -2.025,
+              0.15
+            ],
+            "half_extents_m": [
+              0.04,
+              0.874,
+              0.15
+            ]
+          }
+        ],
+        "initial_wall_robot_or_payload_contacts": [],
+        "invariants": {
+          "policy_cameras": {
+            "cctv_top": {
+              "position": [
+                0.55,
+                -2.0,
+                2.5
+              ],
+              "quaternion": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "fov_y_deg": 55.0
+            },
+            "r1__robot_cam": {
+              "position": [
+                0.067,
+                0.0,
+                0.0136
+              ],
+              "quaternion": [
+                0.466417262018992,
+                0.531464897891391,
+                -0.531464897891391,
+                -0.466417262018992
+              ],
+              "fov_y_deg": 42.18818995586325
+            },
+            "r3__robot_cam": {
+              "position": [
+                0.067,
+                0.0,
+                0.0136
+              ],
+              "quaternion": [
+                0.466417262018992,
+                0.531464897891391,
+                -0.531464897891391,
+                -0.466417262018992
+              ],
+              "fov_y_deg": 42.18818995586325
+            }
+          },
+          "geometry_sha256": {
+            "geom_size": "6fe25d57998aa5d4f47a28955a5cd65a4f9094f238efc1bc83935e556efe773c",
+            "geom_pos": "ba33316b4709ebafa85d35cb2aa69500308249c4701f7013d9c885f509fc7274",
+            "geom_quat": "abf3c1234e95a1773de4f2d419a276d8a5f9a42fcf68f0e838e188154c403d95",
+            "geom_rgba": "9765e5d5866f7497547eb54a6cfbdddc153b93302267dbfb025de27ac58ccbaf",
+            "geom_friction": "8f4bf44db9eeeba20fb154fda44fad4b3d5650cdcf32fe67fdb4e7d1b0e6729d",
+            "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+            "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf"
+          },
+          "contact_solver": {
+            "impratio": 1.0,
+            "cone": 1.0,
+            "solver": 2.0,
+            "iterations": 80.0,
+            "tolerance": 1e-08,
+            "noslip_iterations": 0.0,
+            "timestep": 0.002
+          }
+        },
+        "original_geoms_sha256": "d3fa423957cc21c473c48b9b69737a2ae2175bfd29c12d7869676a07a5b3364c",
+        "scene_xml_sha256": "ffada6fe9871bebb619b490b81c86c0256e988dd115e48f44b315815cf4ac30b",
+        "setup_sim_seconds": 0.9000000000000007,
+        "weld_off": true,
+        "grasp_or_navigation_executed": false,
+        "scope": "Static scene after unchanged folded-arm setup, not physical passage validation"
+      }
+    },
+    {
+      "id": "s-bends",
+      "number": 3,
+      "title_ko": "S자 연속 굴곡",
+      "title_en": "S-bends",
+      "description_ko": "위·아래로 엇갈린 벽 사이에서 이동 방향을 연속으로 바꿉니다. 차체 회전은 강제하지 않습니다.",
+      "map": "maps/s-bends.json",
+      "expected_geometric_route": true,
+      "physical_navigation_tested": false,
+      "map_sha256": "368a11bac3e33ee42b3fe2f6e76fb6fcd9348bc0ed6b410ae3f3d5dd822fdac1",
+      "geometry": {
+        "scope": "Static geometry only, never observed robot state or physical success",
+        "nominal_start_m_rad": [
+          0.62,
+          -2.0,
+          0.0
+        ],
+        "goal_pose_m_rad": [
+          -0.84,
+          -2,
+          0.0
+        ],
+        "direct_swept_clear": false,
+        "route_found": true,
+        "route_m_rad": [
+          [
+            0.62,
+            -2.0,
+            0.0
+          ],
+          [
+            0.44,
+            -2.3,
+            0.0
+          ],
+          [
+            -0.039999999999999925,
+            -2.3,
+            0.0
+          ],
+          [
+            -0.21999999999999997,
+            -2.06,
+            0.0
+          ],
+          [
+            -0.21999999999999997,
+            -1.76,
+            0.0
+          ],
+          [
+            -0.4600000000000001,
+            -1.7,
+            0.0
+          ],
+          [
+            -0.82,
+            -1.76,
+            0.0
+          ],
+          [
+            -0.84,
+            -2,
+            0.0
+          ]
+        ],
+        "nearby_planning_starts": [
+          {
+            "nominal_pose_m_rad": [
+              0.6,
+              -2.01,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.6,
+              -2.0,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.6,
+              -1.99,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.62,
+              -2.01,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.62,
+              -2.0,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.62,
+              -1.99,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.64,
+              -2.01,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.64,
+              -2.0,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.64,
+              -1.99,
+              0.0
+            ],
+            "route_found": true
+          }
+        ],
+        "fixed_probe_envelope_clear": true
+      },
+      "scene": {
+        "compiled_walls": [
+          {
+            "id": "top_baffle",
+            "position_m": [
+              0.18,
+              -1.4305,
+              0.15
+            ],
+            "half_extents_m": [
+              0.035,
+              0.2795,
+              0.15
+            ]
+          },
+          {
+            "id": "bottom_baffle",
+            "position_m": [
+              -0.5,
+              -2.5945,
+              0.15
+            ],
+            "half_extents_m": [
+              0.035,
+              0.3045,
+              0.15
+            ]
+          }
+        ],
+        "initial_wall_robot_or_payload_contacts": [],
+        "invariants": {
+          "policy_cameras": {
+            "cctv_top": {
+              "position": [
+                0.55,
+                -2.0,
+                2.5
+              ],
+              "quaternion": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "fov_y_deg": 55.0
+            },
+            "r1__robot_cam": {
+              "position": [
+                0.067,
+                0.0,
+                0.0136
+              ],
+              "quaternion": [
+                0.466417262018992,
+                0.531464897891391,
+                -0.531464897891391,
+                -0.466417262018992
+              ],
+              "fov_y_deg": 42.18818995586325
+            },
+            "r3__robot_cam": {
+              "position": [
+                0.067,
+                0.0,
+                0.0136
+              ],
+              "quaternion": [
+                0.466417262018992,
+                0.531464897891391,
+                -0.531464897891391,
+                -0.466417262018992
+              ],
+              "fov_y_deg": 42.18818995586325
+            }
+          },
+          "geometry_sha256": {
+            "geom_size": "51d44016915fe52359e3f93845dfc0126e00a191b29a49736a4be0475065048e",
+            "geom_pos": "471b8a6ebe53076a9641366dcbf95ddc6e24f6c3e45d4e7545e28e241e5543fc",
+            "geom_quat": "abf3c1234e95a1773de4f2d419a276d8a5f9a42fcf68f0e838e188154c403d95",
+            "geom_rgba": "9765e5d5866f7497547eb54a6cfbdddc153b93302267dbfb025de27ac58ccbaf",
+            "geom_friction": "8f4bf44db9eeeba20fb154fda44fad4b3d5650cdcf32fe67fdb4e7d1b0e6729d",
+            "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+            "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf"
+          },
+          "contact_solver": {
+            "impratio": 1.0,
+            "cone": 1.0,
+            "solver": 2.0,
+            "iterations": 80.0,
+            "tolerance": 1e-08,
+            "noslip_iterations": 0.0,
+            "timestep": 0.002
+          }
+        },
+        "original_geoms_sha256": "d3fa423957cc21c473c48b9b69737a2ae2175bfd29c12d7869676a07a5b3364c",
+        "scene_xml_sha256": "79f74e6776b6eba19e39dac6f20cfd5b1ecff6dcd5cb07064205f79d4010bf86",
+        "setup_sim_seconds": 0.9000000000000007,
+        "weld_off": true,
+        "grasp_or_navigation_executed": false,
+        "scope": "Static scene after unchanged folded-arm setup, not physical passage validation"
+      }
+    },
+    {
+      "id": "staggered-obstacles",
+      "number": 4,
+      "title_ko": "엇갈린 장애물",
+      "title_en": "Staggered obstacles",
+      "description_ko": "서로 어긋난 두 기둥 사이를 공동 하중 전체가 지나도록 배치했습니다.",
+      "map": "maps/staggered-obstacles.json",
+      "expected_geometric_route": true,
+      "physical_navigation_tested": false,
+      "map_sha256": "f5c7c96acb3a7729d83a8174fb53342ebf85dbbcaeddde1317c1f52f8c175aee",
+      "geometry": {
+        "scope": "Static geometry only, never observed robot state or physical success",
+        "nominal_start_m_rad": [
+          0.62,
+          -2.0,
+          0.0
+        ],
+        "goal_pose_m_rad": [
+          -0.62,
+          -2,
+          0.0
+        ],
+        "direct_swept_clear": false,
+        "route_found": true,
+        "route_m_rad": [
+          [
+            0.62,
+            -2.0,
+            0.0
+          ],
+          [
+            0.5,
+            -2.3,
+            0.0
+          ],
+          [
+            0.5,
+            -2.3,
+            0.7853981633974483
+          ],
+          [
+            0.44,
+            -2.36,
+            0.7853981633974483
+          ],
+          [
+            0.26,
+            -2.36,
+            0.7853981633974483
+          ],
+          [
+            -0.4,
+            -1.76,
+            0.7853981633974483
+          ],
+          [
+            -0.58,
+            -1.76,
+            0.0
+          ],
+          [
+            -0.62,
+            -2,
+            0.0
+          ]
+        ],
+        "nearby_planning_starts": [
+          {
+            "nominal_pose_m_rad": [
+              0.6,
+              -2.01,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.6,
+              -2.0,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.6,
+              -1.99,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.62,
+              -2.01,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.62,
+              -2.0,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.62,
+              -1.99,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.64,
+              -2.01,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.64,
+              -2.0,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.64,
+              -1.99,
+              0.0
+            ],
+            "route_found": true
+          }
+        ],
+        "fixed_probe_envelope_clear": true
+      },
+      "scene": {
+        "compiled_walls": [
+          {
+            "id": "near_pillar",
+            "position_m": [
+              0.11,
+              -1.75,
+              0.15
+            ],
+            "half_extents_m": [
+              0.07,
+              0.07,
+              0.15
+            ]
+          },
+          {
+            "id": "far_pillar",
+            "position_m": [
+              -0.27,
+              -2.4,
+              0.15
+            ],
+            "half_extents_m": [
+              0.07,
+              0.07,
+              0.15
+            ]
+          }
+        ],
+        "initial_wall_robot_or_payload_contacts": [],
+        "invariants": {
+          "policy_cameras": {
+            "cctv_top": {
+              "position": [
+                0.55,
+                -2.0,
+                2.5
+              ],
+              "quaternion": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "fov_y_deg": 55.0
+            },
+            "r1__robot_cam": {
+              "position": [
+                0.067,
+                0.0,
+                0.0136
+              ],
+              "quaternion": [
+                0.466417262018992,
+                0.531464897891391,
+                -0.531464897891391,
+                -0.466417262018992
+              ],
+              "fov_y_deg": 42.18818995586325
+            },
+            "r3__robot_cam": {
+              "position": [
+                0.067,
+                0.0,
+                0.0136
+              ],
+              "quaternion": [
+                0.466417262018992,
+                0.531464897891391,
+                -0.531464897891391,
+                -0.466417262018992
+              ],
+              "fov_y_deg": 42.18818995586325
+            }
+          },
+          "geometry_sha256": {
+            "geom_size": "5ba369d8e4cf22960878f136cff4560a21299fbff817116295e6ae762af66839",
+            "geom_pos": "b3dc607f3961bbd5791bae0c7cf18226a112e68c68dd5196591731cd2d222adb",
+            "geom_quat": "abf3c1234e95a1773de4f2d419a276d8a5f9a42fcf68f0e838e188154c403d95",
+            "geom_rgba": "9765e5d5866f7497547eb54a6cfbdddc153b93302267dbfb025de27ac58ccbaf",
+            "geom_friction": "8f4bf44db9eeeba20fb154fda44fad4b3d5650cdcf32fe67fdb4e7d1b0e6729d",
+            "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+            "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf"
+          },
+          "contact_solver": {
+            "impratio": 1.0,
+            "cone": 1.0,
+            "solver": 2.0,
+            "iterations": 80.0,
+            "tolerance": 1e-08,
+            "noslip_iterations": 0.0,
+            "timestep": 0.002
+          }
+        },
+        "original_geoms_sha256": "d3fa423957cc21c473c48b9b69737a2ae2175bfd29c12d7869676a07a5b3364c",
+        "scene_xml_sha256": "efe5f35d1ef5e537f0f8f25c1dcf6650e255b5e924ff069406b3bd0c289a0ec7",
+        "setup_sim_seconds": 0.9000000000000007,
+        "weld_off": true,
+        "grasp_or_navigation_executed": false,
+        "scope": "Static scene after unchanged folded-arm setup, not physical passage validation"
+      }
+    },
+    {
+      "id": "blocked-branch",
+      "number": 5,
+      "title_ko": "막힌 길·우회 분기",
+      "title_en": "Blocked branch with detour",
+      "description_ko": "위쪽 출구는 막혀 있으며 아래쪽으로 우회하는 경로를 남겼습니다.",
+      "map": "maps/blocked-branch.json",
+      "expected_geometric_route": true,
+      "physical_navigation_tested": false,
+      "map_sha256": "dab4c4cb8e0b981b1571e4174f3949dc7d5b2621a2bae3506c01bfb21de5d97d",
+      "geometry": {
+        "scope": "Static geometry only, never observed robot state or physical success",
+        "nominal_start_m_rad": [
+          0.62,
+          -2.0,
+          0.0
+        ],
+        "goal_pose_m_rad": [
+          -0.52,
+          -2,
+          1.5707963267948966
+        ],
+        "direct_swept_clear": false,
+        "route_found": true,
+        "route_m_rad": [
+          [
+            0.62,
+            -2.0,
+            0.0
+          ],
+          [
+            0.74,
+            -2.36,
+            0.7853981633974483
+          ],
+          [
+            0.6799999999999999,
+            -2.48,
+            1.5707963267948966
+          ],
+          [
+            0.62,
+            -2.54,
+            1.5707963267948966
+          ],
+          [
+            -0.4600000000000001,
+            -2.54,
+            1.5707963267948966
+          ],
+          [
+            -0.5199999999999999,
+            -2.36,
+            1.5707963267948966
+          ],
+          [
+            -0.52,
+            -2,
+            1.5707963267948966
+          ]
+        ],
+        "nearby_planning_starts": [
+          {
+            "nominal_pose_m_rad": [
+              0.6,
+              -2.01,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.6,
+              -2.0,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.6,
+              -1.99,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.62,
+              -2.01,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.62,
+              -2.0,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.62,
+              -1.99,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.64,
+              -2.01,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.64,
+              -2.0,
+              0.0
+            ],
+            "route_found": true
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.64,
+              -1.99,
+              0.0
+            ],
+            "route_found": true
+          }
+        ],
+        "fixed_probe_envelope_clear": true
+      },
+      "scene": {
+        "compiled_walls": [
+          {
+            "id": "junction",
+            "position_m": [
+              0.1,
+              -2.0,
+              0.15
+            ],
+            "half_extents_m": [
+              0.04,
+              0.26,
+              0.15
+            ]
+          },
+          {
+            "id": "dead_end_cap",
+            "position_m": [
+              -0.4695,
+              -1.64,
+              0.15
+            ],
+            "half_extents_m": [
+              0.6095,
+              0.06,
+              0.15
+            ]
+          }
+        ],
+        "initial_wall_robot_or_payload_contacts": [],
+        "invariants": {
+          "policy_cameras": {
+            "cctv_top": {
+              "position": [
+                0.55,
+                -2.0,
+                2.5
+              ],
+              "quaternion": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "fov_y_deg": 55.0
+            },
+            "r1__robot_cam": {
+              "position": [
+                0.067,
+                0.0,
+                0.0136
+              ],
+              "quaternion": [
+                0.466417262018992,
+                0.531464897891391,
+                -0.531464897891391,
+                -0.466417262018992
+              ],
+              "fov_y_deg": 42.18818995586325
+            },
+            "r3__robot_cam": {
+              "position": [
+                0.067,
+                0.0,
+                0.0136
+              ],
+              "quaternion": [
+                0.466417262018992,
+                0.531464897891391,
+                -0.531464897891391,
+                -0.466417262018992
+              ],
+              "fov_y_deg": 42.18818995586325
+            }
+          },
+          "geometry_sha256": {
+            "geom_size": "57e1f62d2f85c4ba3762334c460ed0d26c72247b0e876332951f0b9a6efeccbc",
+            "geom_pos": "a593e842df71f7d213e7b9437cc450c16f2f2844480dfedae92f922bee96a363",
+            "geom_quat": "abf3c1234e95a1773de4f2d419a276d8a5f9a42fcf68f0e838e188154c403d95",
+            "geom_rgba": "9765e5d5866f7497547eb54a6cfbdddc153b93302267dbfb025de27ac58ccbaf",
+            "geom_friction": "8f4bf44db9eeeba20fb154fda44fad4b3d5650cdcf32fe67fdb4e7d1b0e6729d",
+            "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+            "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf"
+          },
+          "contact_solver": {
+            "impratio": 1.0,
+            "cone": 1.0,
+            "solver": 2.0,
+            "iterations": 80.0,
+            "tolerance": 1e-08,
+            "noslip_iterations": 0.0,
+            "timestep": 0.002
+          }
+        },
+        "original_geoms_sha256": "d3fa423957cc21c473c48b9b69737a2ae2175bfd29c12d7869676a07a5b3364c",
+        "scene_xml_sha256": "950b48df64a1de005ffe41b7027af81170e749958d86c95b970e26050158e946",
+        "setup_sim_seconds": 0.9000000000000007,
+        "weld_off": true,
+        "grasp_or_navigation_executed": false,
+        "scope": "Static scene after unchanged folded-arm setup, not physical passage validation"
+      }
+    },
+    {
+      "id": "fully-blocked",
+      "number": 6,
+      "title_ko": "완전 차단 대조",
+      "title_en": "Fully blocked control",
+      "description_ko": "5번 지형의 아래쪽 우회로까지 막은 대조 배치입니다.",
+      "map": "maps/fully-blocked.json",
+      "expected_geometric_route": false,
+      "physical_navigation_tested": false,
+      "map_sha256": "da1f449e1b4ee26faef45cd9060060cb9a93b3e07c771916f247c8e567306427",
+      "geometry": {
+        "scope": "Static geometry only, never observed robot state or physical success",
+        "nominal_start_m_rad": [
+          0.62,
+          -2.0,
+          0.0
+        ],
+        "goal_pose_m_rad": [
+          -0.52,
+          -2,
+          1.5707963267948966
+        ],
+        "direct_swept_clear": false,
+        "route_found": false,
+        "route_m_rad": null,
+        "nearby_planning_starts": [
+          {
+            "nominal_pose_m_rad": [
+              0.6,
+              -2.01,
+              0.0
+            ],
+            "route_found": false
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.6,
+              -2.0,
+              0.0
+            ],
+            "route_found": false
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.6,
+              -1.99,
+              0.0
+            ],
+            "route_found": false
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.62,
+              -2.01,
+              0.0
+            ],
+            "route_found": false
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.62,
+              -2.0,
+              0.0
+            ],
+            "route_found": false
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.62,
+              -1.99,
+              0.0
+            ],
+            "route_found": false
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.64,
+              -2.01,
+              0.0
+            ],
+            "route_found": false
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.64,
+              -2.0,
+              0.0
+            ],
+            "route_found": false
+          },
+          {
+            "nominal_pose_m_rad": [
+              0.64,
+              -1.99,
+              0.0
+            ],
+            "route_found": false
+          }
+        ],
+        "fixed_probe_envelope_clear": true
+      },
+      "scene": {
+        "compiled_walls": [
+          {
+            "id": "junction",
+            "position_m": [
+              0.1,
+              -2.0,
+              0.15
+            ],
+            "half_extents_m": [
+              0.04,
+              0.26,
+              0.15
+            ]
+          },
+          {
+            "id": "dead_end_cap",
+            "position_m": [
+              -0.4695,
+              -1.64,
+              0.15
+            ],
+            "half_extents_m": [
+              0.6095,
+              0.06,
+              0.15
+            ]
+          },
+          {
+            "id": "lower_seal",
+            "position_m": [
+              0.1,
+              -2.5795,
+              0.15
+            ],
+            "half_extents_m": [
+              0.04,
+              0.3195,
+              0.15
+            ]
+          }
+        ],
+        "initial_wall_robot_or_payload_contacts": [],
+        "invariants": {
+          "policy_cameras": {
+            "cctv_top": {
+              "position": [
+                0.55,
+                -2.0,
+                2.5
+              ],
+              "quaternion": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "fov_y_deg": 55.0
+            },
+            "r1__robot_cam": {
+              "position": [
+                0.067,
+                0.0,
+                0.0136
+              ],
+              "quaternion": [
+                0.466417262018992,
+                0.531464897891391,
+                -0.531464897891391,
+                -0.466417262018992
+              ],
+              "fov_y_deg": 42.18818995586325
+            },
+            "r3__robot_cam": {
+              "position": [
+                0.067,
+                0.0,
+                0.0136
+              ],
+              "quaternion": [
+                0.466417262018992,
+                0.531464897891391,
+                -0.531464897891391,
+                -0.466417262018992
+              ],
+              "fov_y_deg": 42.18818995586325
+            }
+          },
+          "geometry_sha256": {
+            "geom_size": "e196df2f13f3149e1042ebfe679f5ccd17e8f94f4bd4a38f0605d9fe4d818adb",
+            "geom_pos": "fa5878c42ea9a73c9c45f997f4bd4189ce56456c52b7b99cca30797c7fb8f5b0",
+            "geom_quat": "e44732ca3ca3e28b9eb571e7f86f1282e112cc7587c4a51018b9193e6a200589",
+            "geom_rgba": "40e15889d71d9eafcbedd63de9366cea03e51edb07085405a5e1ce1df790c9e9",
+            "geom_friction": "b37f9fe91b1b2706d691c21160f10fdc2472191de4d3d334630d1245ee6afee1",
+            "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+            "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf"
+          },
+          "contact_solver": {
+            "impratio": 1.0,
+            "cone": 1.0,
+            "solver": 2.0,
+            "iterations": 80.0,
+            "tolerance": 1e-08,
+            "noslip_iterations": 0.0,
+            "timestep": 0.002
+          }
+        },
+        "original_geoms_sha256": "d3fa423957cc21c473c48b9b69737a2ae2175bfd29c12d7869676a07a5b3364c",
+        "scene_xml_sha256": "d9c6398dd9ae7d4a9ca35f0ec421f18fbc238a18b1a6bdec44d09d2766824e84",
+        "setup_sim_seconds": 0.9000000000000007,
+        "weld_off": true,
+        "grasp_or_navigation_executed": false,
+        "scope": "Static scene after unchanged folded-arm setup, not physical passage validation"
+      }
+    }
+  ],
+  "model_archive_sha256": "d6d421c2d35ed448c4492592220b3e3141d346f5e576ebbdf5a7a3c787b7e635",
+  "no_added_walls_reference": {
+    "compiled_walls": [],
+    "initial_wall_robot_or_payload_contacts": [],
+    "invariants": {
+      "policy_cameras": {
+        "cctv_top": {
+          "position": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "fov_y_deg": 55.0
+        },
+        "r1__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov_y_deg": 42.18818995586325
+        },
+        "r3__robot_cam": {
+          "position": [
+            0.067,
+            0.0,
+            0.0136
+          ],
+          "quaternion": [
+            0.466417262018992,
+            0.531464897891391,
+            -0.531464897891391,
+            -0.466417262018992
+          ],
+          "fov_y_deg": 42.18818995586325
+        }
+      },
+      "geometry_sha256": {
+        "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b",
+        "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+        "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+        "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+        "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+        "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+        "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf"
+      },
+      "contact_solver": {
+        "impratio": 1.0,
+        "cone": 1.0,
+        "solver": 2.0,
+        "iterations": 80.0,
+        "tolerance": 1e-08,
+        "noslip_iterations": 0.0,
+        "timestep": 0.002
+      }
+    },
+    "original_geoms_sha256": "d3fa423957cc21c473c48b9b69737a2ae2175bfd29c12d7869676a07a5b3364c",
+    "scene_xml_sha256": "3aa6ef1c7aca6078260d0af2f2df4f8c27ba251a796deda535087d7040a0b48a",
+    "setup_sim_seconds": 0.9000000000000007,
+    "weld_off": true,
+    "grasp_or_navigation_executed": false,
+    "scope": "Static scene after unchanged folded-arm setup, not physical passage validation"
+  },
+  "original_geometry_and_cameras_equal_across_examples": true,
+  "mass_inertia_and_solver_equal_across_examples": true,
+  "elapsed_wall_seconds": 6.120059790991945,
+  "navigation_actions": 0,
+  "files": [
+    {
+      "path": "_baseline/evaluation-only.jsonl",
+      "bytes": 1246,
+      "sha256": "af0d4854740609d30c9612358bababa1f5e9d72ec97015f4ff4238e68ee6051e"
+    },
+    {
+      "path": "_baseline/execution-trace.json",
+      "bytes": 925,
+      "sha256": "4d7b5bd7f9758504c158ed8905d947f51ec79dabdef9e6c8c6f2eb5dfa051dd7"
+    },
+    {
+      "path": "_baseline/motion.mp4",
+      "bytes": 43006,
+      "sha256": "a3d5ceb017b9f5fbc5df56c2186e7a21bf6da945b5e8368b87f98b228d9d7115"
+    },
+    {
+      "path": "_baseline/observer.jpg",
+      "bytes": 85089,
+      "sha256": "46f08c88f02805970b4480c6a725e5feeac8d75f2d4dece93d821edf273ff3f1"
+    },
+    {
+      "path": "_baseline/rgb/preview-r1-own.jpg",
+      "bytes": 28973,
+      "sha256": "f2e30405ea1db77ff4b7371b9b6fe5764792a817414c6526ff4e056660fc472b"
+    },
+    {
+      "path": "_baseline/rgb/preview-r3-own.jpg",
+      "bytes": 37715,
+      "sha256": "8e92ee6a941069bd4a1db996c6e17ade09946d1f3dec5529575558483ff5e483"
+    },
+    {
+      "path": "_baseline/rgb/preview-top.jpg",
+      "bytes": 71401,
+      "sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+    },
+    {
+      "path": "_baseline/scene.xml",
+      "bytes": 110841,
+      "sha256": "3aa6ef1c7aca6078260d0af2f2df4f8c27ba251a796deda535087d7040a0b48a"
+    },
+    {
+      "path": "_setup_metadata/evaluation-fixture.json",
+      "bytes": 467,
+      "sha256": "c2183ad250ea16606d652f91d117e4abb085f9c88b2ab0115de0ba93e1bc5f3f"
+    },
+    {
+      "path": "_setup_metadata/student-skill.json",
+      "bytes": 9460,
+      "sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049"
+    },
+    {
+      "path": "blocked-branch/evaluation-only.jsonl",
+      "bytes": 1246,
+      "sha256": "af0d4854740609d30c9612358bababa1f5e9d72ec97015f4ff4238e68ee6051e"
+    },
+    {
+      "path": "blocked-branch/execution-trace.json",
+      "bytes": 925,
+      "sha256": "4d7b5bd7f9758504c158ed8905d947f51ec79dabdef9e6c8c6f2eb5dfa051dd7"
+    },
+    {
+      "path": "blocked-branch/motion.mp4",
+      "bytes": 44460,
+      "sha256": "923c193bb6bc0e3136eb81726a2c0459cd0af466453209b7bd66ca2b708bc8e3"
+    },
+    {
+      "path": "blocked-branch/observer.jpg",
+      "bytes": 85986,
+      "sha256": "f04983bce2372affc49b4ddbbcad72a54c3251abb5662937df6a939a68725a06"
+    },
+    {
+      "path": "blocked-branch/rgb/preview-r1-own.jpg",
+      "bytes": 28973,
+      "sha256": "f2e30405ea1db77ff4b7371b9b6fe5764792a817414c6526ff4e056660fc472b"
+    },
+    {
+      "path": "blocked-branch/rgb/preview-r3-own.jpg",
+      "bytes": 37715,
+      "sha256": "8e92ee6a941069bd4a1db996c6e17ade09946d1f3dec5529575558483ff5e483"
+    },
+    {
+      "path": "blocked-branch/rgb/preview-top.jpg",
+      "bytes": 74894,
+      "sha256": "6ca4c292daaa04780eb72313ff7b995a3943a0ac744b33ca99c88830d5defc79"
+    },
+    {
+      "path": "blocked-branch/scene.xml",
+      "bytes": 111080,
+      "sha256": "950b48df64a1de005ffe41b7027af81170e749958d86c95b970e26050158e946"
+    },
+    {
+      "path": "fully-blocked/evaluation-only.jsonl",
+      "bytes": 1246,
+      "sha256": "af0d4854740609d30c9612358bababa1f5e9d72ec97015f4ff4238e68ee6051e"
+    },
+    {
+      "path": "fully-blocked/execution-trace.json",
+      "bytes": 925,
+      "sha256": "4d7b5bd7f9758504c158ed8905d947f51ec79dabdef9e6c8c6f2eb5dfa051dd7"
+    },
+    {
+      "path": "fully-blocked/motion.mp4",
+      "bytes": 44419,
+      "sha256": "5ea4e1914a01ffc392ce07076be0de3acecea0e23d903873a2e1d62414f153db"
+    },
+    {
+      "path": "fully-blocked/observer.jpg",
+      "bytes": 86197,
+      "sha256": "32c9ef09c8b70fb1598434d4196567bdefe74fd7e43ba2937d2e1c531e9f8122"
+    },
+    {
+      "path": "fully-blocked/rgb/preview-r1-own.jpg",
+      "bytes": 28973,
+      "sha256": "f2e30405ea1db77ff4b7371b9b6fe5764792a817414c6526ff4e056660fc472b"
+    },
+    {
+      "path": "fully-blocked/rgb/preview-r3-own.jpg",
+      "bytes": 37715,
+      "sha256": "8e92ee6a941069bd4a1db996c6e17ade09946d1f3dec5529575558483ff5e483"
+    },
+    {
+      "path": "fully-blocked/rgb/preview-top.jpg",
+      "bytes": 75707,
+      "sha256": "f236b866442e84a2cc41b396e17859a4c3956cd27b095d9e9dc7ca6e6df3aaf9"
+    },
+    {
+      "path": "fully-blocked/scene.xml",
+      "bytes": 111202,
+      "sha256": "d9c6398dd9ae7d4a9ca35f0ec421f18fbc238a18b1a6bdec44d09d2766824e84"
+    },
+    {
+      "path": "index.html",
+      "bytes": 3182,
+      "sha256": "7caf28d8f9171c0a85757c4c2c1181f03a10a63ab3c67158a978130297a99546"
+    },
+    {
+      "path": "l-corner/evaluation-only.jsonl",
+      "bytes": 1246,
+      "sha256": "af0d4854740609d30c9612358bababa1f5e9d72ec97015f4ff4238e68ee6051e"
+    },
+    {
+      "path": "l-corner/execution-trace.json",
+      "bytes": 925,
+      "sha256": "4d7b5bd7f9758504c158ed8905d947f51ec79dabdef9e6c8c6f2eb5dfa051dd7"
+    },
+    {
+      "path": "l-corner/motion.mp4",
+      "bytes": 42842,
+      "sha256": "f32683dbd209040774524b821aab3b884fbd761ce46469ac9d79b9d1651ef972"
+    },
+    {
+      "path": "l-corner/observer.jpg",
+      "bytes": 84608,
+      "sha256": "5488ffa81089c7c27583e57c21a0638ffa0c8bc70f4d5f15d8e534d9fd07e52b"
+    },
+    {
+      "path": "l-corner/rgb/preview-r1-own.jpg",
+      "bytes": 32884,
+      "sha256": "11874d4822ebb1a98e8f7661ae7ea2df83eab004af05f879ba2683a3648126de"
+    },
+    {
+      "path": "l-corner/rgb/preview-r3-own.jpg",
+      "bytes": 39429,
+      "sha256": "0d5c71bac762cea888ebeedeeb315b63a5ad59a0f15a2370f07d3753a9d9b413"
+    },
+    {
+      "path": "l-corner/rgb/preview-top.jpg",
+      "bytes": 72520,
+      "sha256": "6aa09cca5e9d0ecc8d05ceb66c227422d51f97eb2ad1fb0ff7e7a5840298ccf4"
+    },
+    {
+      "path": "l-corner/scene.xml",
+      "bytes": 111093,
+      "sha256": "ffada6fe9871bebb619b490b81c86c0256e988dd115e48f44b315815cf4ac30b"
+    },
+    {
+      "path": "narrow-door/evaluation-only.jsonl",
+      "bytes": 1246,
+      "sha256": "af0d4854740609d30c9612358bababa1f5e9d72ec97015f4ff4238e68ee6051e"
+    },
+    {
+      "path": "narrow-door/execution-trace.json",
+      "bytes": 925,
+      "sha256": "4d7b5bd7f9758504c158ed8905d947f51ec79dabdef9e6c8c6f2eb5dfa051dd7"
+    },
+    {
+      "path": "narrow-door/motion.mp4",
+      "bytes": 43549,
+      "sha256": "a5878165ce8c16f5eb0c01188ea39fde34715a2b6c1bac44700c8a02a6bbe563"
+    },
+    {
+      "path": "narrow-door/observer.jpg",
+      "bytes": 86507,
+      "sha256": "a5428c8a5ead7a3c0e7f47ac1dd841f993513b3f4d0f6d958744a89f89905052"
+    },
+    {
+      "path": "narrow-door/rgb/preview-r1-own.jpg",
+      "bytes": 28973,
+      "sha256": "f2e30405ea1db77ff4b7371b9b6fe5764792a817414c6526ff4e056660fc472b"
+    },
+    {
+      "path": "narrow-door/rgb/preview-r3-own.jpg",
+      "bytes": 37715,
+      "sha256": "8e92ee6a941069bd4a1db996c6e17ade09946d1f3dec5529575558483ff5e483"
+    },
+    {
+      "path": "narrow-door/rgb/preview-top.jpg",
+      "bytes": 74142,
+      "sha256": "f908865280f991f3924431cae3bb1b83aa095be9d482240b51516a40ed972db4"
+    },
+    {
+      "path": "narrow-door/scene.xml",
+      "bytes": 111087,
+      "sha256": "ae515d069b4a7f4e9f5cb309682d13cb54d5e6053c89c37f3a888892cb6cea95"
+    },
+    {
+      "path": "overview.png",
+      "bytes": 84091,
+      "sha256": "8bf9668cfd3407f2268a5128a8dd6ce161a2d207bedb5f9d6dd39784e51f2dda"
+    },
+    {
+      "path": "plans/blocked-branch.png",
+      "bytes": 17090,
+      "sha256": "31f14dd0082adae05aef38ad201ab843d388cf31636ed0eeb4d6a6deb2edb6aa"
+    },
+    {
+      "path": "plans/fully-blocked.png",
+      "bytes": 16453,
+      "sha256": "dbc4fda83c43cad1168bf17258c886acce0c0a3abc9f93fa38b65ef75303bc5a"
+    },
+    {
+      "path": "plans/l-corner.png",
+      "bytes": 15881,
+      "sha256": "9ee9b6c02dacb276c23facd46487fa0dda7766f6365b1bb18f004d9c4a6cb063"
+    },
+    {
+      "path": "plans/narrow-door.png",
+      "bytes": 15639,
+      "sha256": "d54c640324fed0537a18521753193c3b3fa228146f0e1098e02b7e7e466c9f5f"
+    },
+    {
+      "path": "plans/s-bends.png",
+      "bytes": 17028,
+      "sha256": "ee9ed4f765280a70be799de8fa708e48ed385e27d6a65bdb622a301dc5382d9a"
+    },
+    {
+      "path": "plans/staggered-obstacles.png",
+      "bytes": 17605,
+      "sha256": "e758d0d98b6bc71bc3cb38bdea17065b7d4c56476c1e2ceab717bcf0edf40010"
+    },
+    {
+      "path": "s-bends/evaluation-only.jsonl",
+      "bytes": 1246,
+      "sha256": "af0d4854740609d30c9612358bababa1f5e9d72ec97015f4ff4238e68ee6051e"
+    },
+    {
+      "path": "s-bends/execution-trace.json",
+      "bytes": 925,
+      "sha256": "4d7b5bd7f9758504c158ed8905d947f51ec79dabdef9e6c8c6f2eb5dfa051dd7"
+    },
+    {
+      "path": "s-bends/motion.mp4",
+      "bytes": 43747,
+      "sha256": "e337acc06a8650b98d06a7fa8fde901f8ca317f8e963a3898983c58cd1f7e3d4"
+    },
+    {
+      "path": "s-bends/observer.jpg",
+      "bytes": 86638,
+      "sha256": "df67a3b2f8d9ed10928e5a7d4a2601b67bb6f5a3b59f0c0304b849b51406268a"
+    },
+    {
+      "path": "s-bends/rgb/preview-r1-own.jpg",
+      "bytes": 28973,
+      "sha256": "f2e30405ea1db77ff4b7371b9b6fe5764792a817414c6526ff4e056660fc472b"
+    },
+    {
+      "path": "s-bends/rgb/preview-r3-own.jpg",
+      "bytes": 37715,
+      "sha256": "8e92ee6a941069bd4a1db996c6e17ade09946d1f3dec5529575558483ff5e483"
+    },
+    {
+      "path": "s-bends/rgb/preview-top.jpg",
+      "bytes": 73749,
+      "sha256": "d6f82972d369f911bac20ebd7e869c950e3a2dba2fc0a01b9fc3b0064a9b24dc"
+    },
+    {
+      "path": "s-bends/scene.xml",
+      "bytes": 111092,
+      "sha256": "79f74e6776b6eba19e39dac6f20cfd5b1ecff6dcd5cb07064205f79d4010bf86"
+    },
+    {
+      "path": "simulator-overview.jpg",
+      "bytes": 303946,
+      "sha256": "b27e6bb12daec3814e118723e527a63b01bd6285b5941200a5ad26a1b382147d"
+    },
+    {
+      "path": "staggered-obstacles/evaluation-only.jsonl",
+      "bytes": 1246,
+      "sha256": "af0d4854740609d30c9612358bababa1f5e9d72ec97015f4ff4238e68ee6051e"
+    },
+    {
+      "path": "staggered-obstacles/execution-trace.json",
+      "bytes": 925,
+      "sha256": "4d7b5bd7f9758504c158ed8905d947f51ec79dabdef9e6c8c6f2eb5dfa051dd7"
+    },
+    {
+      "path": "staggered-obstacles/motion.mp4",
+      "bytes": 43464,
+      "sha256": "6a9e7f8605c6be08d42ec0d3447a2591adfc27cf17979386a8d6956cbc3e5af3"
+    },
+    {
+      "path": "staggered-obstacles/observer.jpg",
+      "bytes": 86109,
+      "sha256": "beaf91b4a260a7725a4230829fb68961cbda903573f61d3693d46b9d83b39751"
+    },
+    {
+      "path": "staggered-obstacles/rgb/preview-r1-own.jpg",
+      "bytes": 28973,
+      "sha256": "f2e30405ea1db77ff4b7371b9b6fe5764792a817414c6526ff4e056660fc472b"
+    },
+    {
+      "path": "staggered-obstacles/rgb/preview-r3-own.jpg",
+      "bytes": 37715,
+      "sha256": "8e92ee6a941069bd4a1db996c6e17ade09946d1f3dec5529575558483ff5e483"
+    },
+    {
+      "path": "staggered-obstacles/rgb/preview-top.jpg",
+      "bytes": 72395,
+      "sha256": "b040405a22a903ba3a2fd719312eab531f2a0089c910d2eed383813bad76bcfe"
+    },
+    {
+      "path": "staggered-obstacles/scene.xml",
+      "bytes": 111080,
+      "sha256": "efe5f35d1ef5e537f0f8f25c1dcf6650e255b5e924ff069406b3bd0c289a0ec7"
+    }
+  ]
+}

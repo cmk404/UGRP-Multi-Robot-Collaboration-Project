@@ -1,0 +1,511 @@
+{
+  "appearance_manifest_sha256": "5d61c5bcac5750b552e24ed656ba6367e80386f8e7d185c34e3e584629e50a7b",
+  "arrived": false,
+  "budget": 750,
+  "close_command_override": 1600,
+  "contact_impratio": 10,
+  "cost_usd": 0,
+  "environment": {
+    "mujoco": "3.12.0",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+  },
+  "error": null,
+  "evaluation": {
+    "reason": "no navigation samples",
+    "success": false
+  },
+  "external_model_calls": 0,
+  "grasp_only": true,
+  "grasp_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+  "grasp_spacing": "visual",
+  "grasp_stability": {
+    "anchor_spacing_m": 0.6505937001159792,
+    "final_spacing_m": 0.6492980828319981,
+    "gates": {
+      "full_grasp_samples": true,
+      "grasp_bilateral_through_lift_hold": true,
+      "grasp_hold_lifted_every_sample": true,
+      "grasp_spacing_preserved": true
+    },
+    "max_sample_gap_s": 0.10000000000000142,
+    "max_spacing_change_m": 0.00613684043512619,
+    "nonbilateral_samples": 0,
+    "samples": 111,
+    "success": true
+  },
+  "invariants_final": {
+    "contact_solver": {
+      "cone": 1.0,
+      "impratio": 10.0,
+      "iterations": 80.0,
+      "noslip_iterations": 0.0,
+      "solver": 2.0,
+      "timestep": 0.002,
+      "tolerance": 1e-08
+    },
+    "geometry_sha256": {
+      "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+      "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+      "geom_friction": "8f4bf44db9eeeba20fb154fda44fad4b3d5650cdcf32fe67fdb4e7d1b0e6729d",
+      "geom_pos": "b0e99ee0a80d66d3813aca5cdc9fe7039200525bf3b7bcddc369ec500ec24813",
+      "geom_quat": "abf3c1234e95a1773de4f2d419a276d8a5f9a42fcf68f0e838e188154c403d95",
+      "geom_rgba": "9765e5d5866f7497547eb54a6cfbdddc153b93302267dbfb025de27ac58ccbaf",
+      "geom_size": "90c44787ff65bcca8112941437011a275cae390c1e6448060babfd62ec9bcc42"
+    },
+    "policy_cameras": {
+      "cctv_top": {
+        "fov_y_deg": 55.0,
+        "position": [
+          0.55,
+          -2.0,
+          2.5
+        ],
+        "quaternion": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "r1__robot_cam": {
+        "fov_y_deg": 42.18818995586325,
+        "position": [
+          0.067,
+          0.0,
+          0.0136
+        ],
+        "quaternion": [
+          0.466417262018992,
+          0.531464897891391,
+          -0.531464897891391,
+          -0.466417262018992
+        ]
+      },
+      "r3__robot_cam": {
+        "fov_y_deg": 42.18818995586325,
+        "position": [
+          0.067,
+          0.0,
+          0.0136
+        ],
+        "quaternion": [
+          0.466417262018992,
+          0.531464897891391,
+          -0.531464897891391,
+          -0.466417262018992
+        ]
+      }
+    }
+  },
+  "invariants_initial": {
+    "contact_solver": {
+      "cone": 1.0,
+      "impratio": 10.0,
+      "iterations": 80.0,
+      "noslip_iterations": 0.0,
+      "solver": 2.0,
+      "timestep": 0.002,
+      "tolerance": 1e-08
+    },
+    "geometry_sha256": {
+      "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+      "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+      "geom_friction": "8f4bf44db9eeeba20fb154fda44fad4b3d5650cdcf32fe67fdb4e7d1b0e6729d",
+      "geom_pos": "b0e99ee0a80d66d3813aca5cdc9fe7039200525bf3b7bcddc369ec500ec24813",
+      "geom_quat": "abf3c1234e95a1773de4f2d419a276d8a5f9a42fcf68f0e838e188154c403d95",
+      "geom_rgba": "9765e5d5866f7497547eb54a6cfbdddc153b93302267dbfb025de27ac58ccbaf",
+      "geom_size": "90c44787ff65bcca8112941437011a275cae390c1e6448060babfd62ec9bcc42"
+    },
+    "policy_cameras": {
+      "cctv_top": {
+        "fov_y_deg": 55.0,
+        "position": [
+          0.55,
+          -2.0,
+          2.5
+        ],
+        "quaternion": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "r1__robot_cam": {
+        "fov_y_deg": 42.18818995586325,
+        "position": [
+          0.067,
+          0.0,
+          0.0136
+        ],
+        "quaternion": [
+          0.466417262018992,
+          0.531464897891391,
+          -0.531464897891391,
+          -0.466417262018992
+        ]
+      },
+      "r3__robot_cam": {
+        "fov_y_deg": 42.18818995586325,
+        "position": [
+          0.067,
+          0.0,
+          0.0136
+        ],
+        "quaternion": [
+          0.466417262018992,
+          0.531464897891391,
+          -0.531464897891391,
+          -0.466417262018992
+        ]
+      }
+    }
+  },
+  "map": {
+    "bounds_m": [
+      -1.08,
+      1.85,
+      -2.9,
+      -1.15
+    ],
+    "footprint": {
+      "half_forward_m": 0.2,
+      "half_lateral_m": 0.51,
+      "margin_m": 0.025
+    },
+    "goal": {
+      "center_m": [
+        -0.52,
+        -2
+      ],
+      "relative_yaw_deg": 0
+    },
+    "grid_m": 0.06,
+    "map_id": "narrow-door",
+    "obstacles": [
+      {
+        "center_m": [
+          0.15,
+          -2.5895
+        ],
+        "half_extents_m": [
+          0.04,
+          0.3095
+        ],
+        "height_m": 0.3,
+        "id": "door_lower"
+      },
+      {
+        "center_m": [
+          0.15,
+          -1.4355
+        ],
+        "half_extents_m": [
+          0.04,
+          0.2845
+        ],
+        "height_m": 0.3,
+        "id": "door_upper"
+      }
+    ],
+    "schema": "ugrp.pair_navigation_map.v1",
+    "start_zone": {
+      "center_m": [
+        0.58,
+        -2.0
+      ],
+      "radius_m": 0.25
+    },
+    "top_camera": {
+      "fov_y_deg": 55.0,
+      "name": "cctv_top",
+      "position_m": [
+        0.55,
+        -2.0,
+        2.5
+      ],
+      "quaternion_wxyz": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "map_sha256": "eda65e0ca2fca28602955da1e76737d82fbab696a06a726ba8a84ff89570bcb4",
+  "post_grasp_settle_s": 8.0,
+  "scene_xml_sha256": "fb8f0a48c8fbb496d836add38560519b922aba033f24164247710c237832f354",
+  "schema": "ugrp.pair_navigation_trial.v1",
+  "scope": "Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay",
+  "sim_seconds": 24.559999999997267,
+  "source_sha": "52b84c8319206ec105ca69d83d29902e69fd0275",
+  "success": true,
+  "unexpected_contact_ticks": 0,
+  "vision_mode": "robust",
+  "wall_contact_ticks": 0,
+  "wall_seconds": 19.909431500011124,
+  "weld_active_ticks": 0,
+  "input_audit": {
+    "passed": true,
+    "steps": 0,
+    "spacing_steps": 104,
+    "grasp": {
+      "ok": true,
+      "condition": "visual",
+      "rounds": 16,
+      "calls": 32,
+      "models": {
+        "r1": "2a5a19e323d6353ee8ca0342a3a9341a0736d3d35ba9a7df11d45071f5d15a43",
+        "r3": "e55bb7d0ac473dc79d6eab9c1f4dadb2b5dff068329a8c8714d1fd076e5ecfed"
+      },
+      "calls_source": "result.json:calls",
+      "replay": [
+        {
+          "round": 0,
+          "robot_id": "r1",
+          "own_sha256": "d13291c42ff9be8ec5fce816139a2403f1efcf0e3d109cc0795a7166edfee67d",
+          "top_sha256": "1309f042e6bdffabdb36d05124b38518622a947020173f46e351e0785930215d",
+          "actions": []
+        },
+        {
+          "round": 0,
+          "robot_id": "r3",
+          "own_sha256": "ce3d8b497ad3b7e9bf49a3f363426b475f463e91b0f657416bb8bb66a1a332d6",
+          "top_sha256": "1309f042e6bdffabdb36d05124b38518622a947020173f46e351e0785930215d",
+          "actions": []
+        },
+        {
+          "round": 1,
+          "robot_id": "r1",
+          "own_sha256": "1f8b4b5c1044f4f8ea7c6141d0b8bbb6a3cf457ee7167773225f5a01241e7198",
+          "top_sha256": "30d0edf08ebbbeebc126af895fd11922b904ca50844df9d5d7ecfba9b8c47116",
+          "actions": []
+        },
+        {
+          "round": 1,
+          "robot_id": "r3",
+          "own_sha256": "a341e9b7445a56a0744a873cfcfe5ac3fd8d1ddc849c0f0e0249cab1f16dbea2",
+          "top_sha256": "30d0edf08ebbbeebc126af895fd11922b904ca50844df9d5d7ecfba9b8c47116",
+          "actions": []
+        },
+        {
+          "round": 2,
+          "robot_id": "r1",
+          "own_sha256": "0a6f88e9799a738ec02ae3ca4f5c89067d8ae8ca87cad7e8a870d208b8f55306",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 2,
+          "robot_id": "r3",
+          "own_sha256": "8df436401429f7ec95ae368246fffe58c031d502767a1424c8fe2825149d5fc5",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 3,
+          "robot_id": "r1",
+          "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 3,
+          "robot_id": "r3",
+          "own_sha256": "8004155a2797ee80c8a7ab6b10a31d70955007a4dd83069d9edb3e5bcc495364",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 4,
+          "robot_id": "r1",
+          "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 4,
+          "robot_id": "r3",
+          "own_sha256": "8004155a2797ee80c8a7ab6b10a31d70955007a4dd83069d9edb3e5bcc495364",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 5,
+          "robot_id": "r1",
+          "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 5,
+          "robot_id": "r3",
+          "own_sha256": "8004155a2797ee80c8a7ab6b10a31d70955007a4dd83069d9edb3e5bcc495364",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 6,
+          "robot_id": "r1",
+          "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 6,
+          "robot_id": "r3",
+          "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 7,
+          "robot_id": "r1",
+          "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 7,
+          "robot_id": "r3",
+          "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 8,
+          "robot_id": "r1",
+          "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 8,
+          "robot_id": "r3",
+          "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 9,
+          "robot_id": "r1",
+          "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 9,
+          "robot_id": "r3",
+          "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 10,
+          "robot_id": "r1",
+          "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 10,
+          "robot_id": "r3",
+          "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 11,
+          "robot_id": "r1",
+          "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 11,
+          "robot_id": "r3",
+          "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 12,
+          "robot_id": "r1",
+          "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 12,
+          "robot_id": "r3",
+          "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 13,
+          "robot_id": "r1",
+          "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 13,
+          "robot_id": "r3",
+          "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+          "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+          "actions": []
+        },
+        {
+          "round": 14,
+          "robot_id": "r1",
+          "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+          "top_sha256": "b20064a9ab08dfd0eb2e6d58f1d4c7a66bb4883215cc74a53e2a00d55c73aa1b",
+          "actions": []
+        },
+        {
+          "round": 14,
+          "robot_id": "r3",
+          "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+          "top_sha256": "b20064a9ab08dfd0eb2e6d58f1d4c7a66bb4883215cc74a53e2a00d55c73aa1b",
+          "actions": []
+        },
+        {
+          "round": 15,
+          "robot_id": "r1",
+          "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+          "top_sha256": "b20064a9ab08dfd0eb2e6d58f1d4c7a66bb4883215cc74a53e2a00d55c73aa1b",
+          "actions": []
+        },
+        {
+          "round": 15,
+          "robot_id": "r3",
+          "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+          "top_sha256": "b20064a9ab08dfd0eb2e6d58f1d4c7a66bb4883215cc74a53e2a00d55c73aa1b",
+          "actions": []
+        }
+      ],
+      "checked": "skill/model and RGB hashes; exact RGB-only correction, condition-specific pulse deltas, raw arm actions, and own-command history; evaluator data unused"
+    },
+    "physical_success": false,
+    "grasp_stability": {
+      "success": true,
+      "gates": {
+        "full_grasp_samples": true,
+        "grasp_spacing_preserved": true,
+        "grasp_bilateral_through_lift_hold": true,
+        "grasp_hold_lifted_every_sample": true
+      },
+      "anchor_spacing_m": 0.6505937001159792,
+      "final_spacing_m": 0.6492980828319981,
+      "max_spacing_change_m": 0.00613684043512619,
+      "nonbilateral_samples": 0,
+      "samples": 111,
+      "max_sample_gap_s": 0.10000000000000142
+    },
+    "refused_no_route": false,
+    "scope": "Exact RGB/command replay and output-only scoring; no actual physics rerun"
+  },
+  "raw_directory": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-spacing/outputs/pair-spacing-1600-short-2026-09-14"
+}

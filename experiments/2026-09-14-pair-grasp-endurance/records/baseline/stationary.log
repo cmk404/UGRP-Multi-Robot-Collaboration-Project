@@ -1,0 +1,79 @@
+{
+  "success": false,
+  "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/scripts/run_pair_grasp_endurance.py\", line 79, in run\n    if not all(d['ready'] for d in decisions.values()):raise RuntimeError('RGB endurance stopped: '+str({r:d.get('error') for r,d in decisions.items()}))\n                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: RGB endurance stopped: {'r1': 'own-camera beam silhouette changed or disappeared', 'r3': 'own-camera beam silhouette changed or disappeared'}\n",
+  "evaluation": {
+    "success": false,
+    "checkpoints": {
+      "180": {
+        "passed": false,
+        "gates": {
+          "duration_completed": false,
+          "full_grasp_stable": true,
+          "bilateral_every_sample": false,
+          "lifted_every_sample": false,
+          "level_every_sample": false,
+          "spacing_preserved": true,
+          "height_retained": false,
+          "continuous_samples": true,
+          "within_authored_bounds": true,
+          "collision_free": false,
+          "weld_off": true,
+          "invariants_unchanged": true
+        },
+        "last_sample_s": 93.94000000000273,
+        "max_beam_drop_m": 0.07109299999999999,
+        "finger_height_change_m": {
+          "r1": 0.006291292912652985,
+          "r3": 0.0061320551058787615
+        },
+        "beam_relative_to_finger_change_m": {
+          "r1": -0.07738429291265297,
+          "r3": -0.07722505510587875
+        }
+      },
+      "300": {
+        "passed": false,
+        "gates": {
+          "duration_completed": false,
+          "full_grasp_stable": true,
+          "bilateral_every_sample": false,
+          "lifted_every_sample": false,
+          "level_every_sample": false,
+          "spacing_preserved": true,
+          "height_retained": false,
+          "continuous_samples": true,
+          "within_authored_bounds": true,
+          "collision_free": false,
+          "weld_off": true,
+          "invariants_unchanged": true
+        },
+        "last_sample_s": 93.94000000000273,
+        "max_beam_drop_m": 0.07109299999999999,
+        "finger_height_change_m": {
+          "r1": 0.006291292912652985,
+          "r3": 0.0061320551058787615
+        },
+        "beam_relative_to_finger_change_m": {
+          "r1": -0.07738429291265297,
+          "r3": -0.07722505510587875
+        }
+      }
+    },
+    "grasp_stability": {
+      "success": true,
+      "gates": {
+        "full_grasp_samples": true,
+        "grasp_spacing_preserved": true,
+        "grasp_bilateral_through_lift_hold": true,
+        "grasp_hold_lifted_every_sample": true
+      },
+      "anchor_spacing_m": 0.6505937001159792,
+      "final_spacing_m": 0.6492980828319981,
+      "max_spacing_change_m": 0.00613684043512619,
+      "nonbilateral_samples": 0,
+      "samples": 111,
+      "max_sample_gap_s": 0.10000000000000142
+    }
+  },
+  "wall_seconds": 153.4013596669829
+}

@@ -1,0 +1,7 @@
+id,success,expected_blocked_stop_passed,final_status,decision_rounds,navigation_sim_seconds,min_lift_m,wall_contact_ticks,unexpected_contact_ticks,goal_position_error_m,goal_yaw_error_deg,wall_seconds,vision_hold_rounds,vision_recovery_episodes,vision_recovery_resumes,memory_wheel_observations
+narrow-door,True,False,done,452,91.30000000000001,0.056069,0,0,0.022901435500858852,0.12796559567004226,103.4729488749872,0,0,0,1
+l-corner,False,False,payload_decoupled,92,18.299999999999997,0.074508,0,0,0.8932264697718043,38.37087988921973,25.516764583007898,0,0,0,0
+s-bends,False,False,track,750,149.9,-5.6e-05,0,11873,0.6425339241487565,0.45987483998401546,161.1428385830077,6,1,1,0
+staggered-obstacles,False,False,track,750,149.9,0.025263,0,11528,1.1109424731506128,45.75113928842194,161.86371712500113,0,0,0,0
+blocked-branch,False,False,vision_stop,374,74.69999999999999,0.060351,0,0,0.34465035098342767,0.6409902177061253,83.7325609580148,24,1,0,9
+fully-blocked,False,True,no_route,10,1.8999999999999986,0.078431,0,0,1.1381780098842182,90.09675535251317,12.194578959024511,0,0,0,0

@@ -1,0 +1,88 @@
+{
+  "baseline-stationary": {
+    "r1": {
+      "frames_reviewed": 23,
+      "alert": {
+        "frame": "endurance-0022-r1-own.jpg",
+        "command_elapsed_s": 2.2,
+        "reason": "own-camera sustained downward beam-edge drift",
+        "observation": {
+          "wide_beam_fraction": 1.0,
+          "orange_fraction": 0.5798467741935484,
+          "uncertain_frames": 0,
+          "continuation_supported": true,
+          "beam_lower_edge_fraction": 0.5680555555555555,
+          "beam_edge_rate_per_s": 0.020016339869281037,
+          "beam_edge_shift_fraction": 0.0444444444444444,
+          "slip_suspected": true
+        }
+      }
+    },
+    "r3": {
+      "frames_reviewed": 23,
+      "alert": {
+        "frame": "endurance-0022-r3-own.jpg",
+        "command_elapsed_s": 2.2,
+        "reason": "own-camera sustained downward beam-edge drift",
+        "observation": {
+          "wide_beam_fraction": 1.0,
+          "orange_fraction": 0.5801895161290322,
+          "uncertain_frames": 0,
+          "continuation_supported": true,
+          "beam_lower_edge_fraction": 0.5680555555555555,
+          "beam_edge_rate_per_s": 0.019607843137254895,
+          "beam_edge_shift_fraction": 0.0444444444444444,
+          "slip_suspected": true
+        }
+      }
+    }
+  },
+  "baseline-shuttle": {
+    "r1": {
+      "frames_reviewed": 23,
+      "alert": {
+        "frame": "endurance-0022-r1-own.jpg",
+        "command_elapsed_s": 2.2,
+        "reason": "own-camera sustained downward beam-edge drift",
+        "observation": {
+          "wide_beam_fraction": 1.0,
+          "orange_fraction": 0.5798346774193548,
+          "uncertain_frames": 0,
+          "continuation_supported": true,
+          "beam_lower_edge_fraction": 0.5680555555555555,
+          "beam_edge_rate_per_s": 0.020016339869281037,
+          "beam_edge_shift_fraction": 0.0444444444444444,
+          "slip_suspected": true
+        }
+      }
+    },
+    "r3": {
+      "frames_reviewed": 23,
+      "alert": {
+        "frame": "endurance-0022-r3-own.jpg",
+        "command_elapsed_s": 2.2,
+        "reason": "own-camera sustained downward beam-edge drift",
+        "observation": {
+          "wide_beam_fraction": 1.0,
+          "orange_fraction": 0.580266129032258,
+          "uncertain_frames": 0,
+          "continuation_supported": true,
+          "beam_lower_edge_fraction": 0.5680555555555555,
+          "beam_edge_rate_per_s": 0.019607843137254895,
+          "beam_edge_shift_fraction": 0.0444444444444444,
+          "slip_suspected": true
+        }
+      }
+    }
+  },
+  "retention-30s": {
+    "r1": {
+      "frames_reviewed": 301,
+      "alert": null
+    },
+    "r3": {
+      "frames_reviewed": 301,
+      "alert": null
+    }
+  }
+}

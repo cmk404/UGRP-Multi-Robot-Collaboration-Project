@@ -1,0 +1,411 @@
+[
+  {
+    "source_sha": "dd54bf666cf4a0701b1a8b17ee7b4f5e7442aad8",
+    "error": null,
+    "mode": "stationary",
+    "duration_s": 30,
+    "wall_seconds": 74.42182987500564,
+    "sim_seconds": 59.81000000002713,
+    "noslip_iterations": 0,
+    "tracked_lift": false,
+    "finger_damping": null,
+    "timestep": null,
+    "diagexact": null,
+    "formation_integral": null,
+    "lateral_limit": null,
+    "environment": {
+      "mujoco": "3.12.0",
+      "platform": "macOS-27.0-arm64-arm-64bit",
+      "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+    },
+    "raw_directory": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/outputs/retention-diagnosis-20260915/baseline",
+    "group": "retention-diagnosis-20260915",
+    "name": "baseline",
+    "evaluation": {
+      "checkpoints": {},
+      "grasp_stability": {
+        "anchor_spacing_m": 0.6505937001159792,
+        "final_spacing_m": 0.6492980828319981,
+        "gates": {
+          "full_grasp_samples": true,
+          "grasp_bilateral_through_lift_hold": true,
+          "grasp_hold_lifted_every_sample": true,
+          "grasp_spacing_preserved": true
+        },
+        "max_sample_gap_s": 0.10000000000000142,
+        "max_spacing_change_m": 0.00613684043512619,
+        "nonbilateral_samples": 0,
+        "samples": 111,
+        "success": true
+      },
+      "released_on_floor": true,
+      "success": false
+    }
+  },
+  {
+    "source_sha": "dd54bf666cf4a0701b1a8b17ee7b4f5e7442aad8",
+    "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_grasp_endurance.py\", line 87, in run\n    if not all(d['ready'] for d in decisions.values()):raise RuntimeError('RGB endurance stopped: '+str({r:d.get('error') for r,d in decisions.items()}))\n                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: RGB endurance stopped: {'r1': 'own-camera beam silhouette changed or disappeared', 'r3': None}\n",
+    "mode": "stationary",
+    "duration_s": 30,
+    "wall_seconds": 62.551791750011034,
+    "sim_seconds": 43.760000000007516,
+    "noslip_iterations": 1,
+    "tracked_lift": false,
+    "finger_damping": null,
+    "timestep": null,
+    "diagexact": null,
+    "formation_integral": null,
+    "lateral_limit": null,
+    "environment": {
+      "mujoco": "3.12.0",
+      "platform": "macOS-27.0-arm64-arm-64bit",
+      "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+    },
+    "raw_directory": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/outputs/retention-diagnosis-20260915/noslip1",
+    "group": "retention-diagnosis-20260915",
+    "name": "noslip1",
+    "evaluation": {
+      "checkpoints": {},
+      "grasp_stability": {
+        "anchor_spacing_m": 0.6505829976368752,
+        "final_spacing_m": 0.6475062861077562,
+        "gates": {
+          "full_grasp_samples": true,
+          "grasp_bilateral_through_lift_hold": true,
+          "grasp_hold_lifted_every_sample": true,
+          "grasp_spacing_preserved": true
+        },
+        "max_sample_gap_s": 0.10000000000000142,
+        "max_spacing_change_m": 0.006628203757787388,
+        "nonbilateral_samples": 0,
+        "samples": 111,
+        "success": true
+      },
+      "released_on_floor": false,
+      "success": false
+    }
+  },
+  {
+    "source_sha": "dd54bf666cf4a0701b1a8b17ee7b4f5e7442aad8",
+    "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_grasp_endurance.py\", line 76, in run\n    scene.hold_spacing(8.);scene.finish_spacing();report['endurance_start_s']=scene.time()\n                           ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_navigation.py\", line 106, in finish_spacing\n    raise RuntimeError('grasp spacing did not visually settle before departure')\nRuntimeError: grasp spacing did not visually settle before departure\n",
+    "mode": "stationary",
+    "duration_s": 30,
+    "wall_seconds": 20.73013816701132,
+    "sim_seconds": 24.559999999997267,
+    "noslip_iterations": 3,
+    "tracked_lift": false,
+    "finger_damping": null,
+    "timestep": null,
+    "diagexact": null,
+    "formation_integral": null,
+    "lateral_limit": null,
+    "environment": {
+      "mujoco": "3.12.0",
+      "platform": "macOS-27.0-arm64-arm-64bit",
+      "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+    },
+    "raw_directory": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/outputs/retention-diagnosis-20260915/noslip3",
+    "group": "retention-diagnosis-20260915",
+    "name": "noslip3",
+    "evaluation": {
+      "grasp_stability": {
+        "anchor_spacing_m": 0.6505884294185231,
+        "final_spacing_m": 0.6358961661195461,
+        "gates": {
+          "full_grasp_samples": true,
+          "grasp_bilateral_through_lift_hold": false,
+          "grasp_hold_lifted_every_sample": true,
+          "grasp_spacing_preserved": true
+        },
+        "max_sample_gap_s": 0.10000000000000142,
+        "max_spacing_change_m": 0.014692263298976993,
+        "nonbilateral_samples": 1,
+        "samples": 111,
+        "success": false
+      },
+      "reason": "no endurance samples",
+      "success": false
+    }
+  },
+  {
+    "source_sha": "dd54bf666cf4a0701b1a8b17ee7b4f5e7442aad8",
+    "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_grasp_endurance.py\", line 76, in run\n    scene.hold_spacing(8.);scene.finish_spacing();report['endurance_start_s']=scene.time()\n    ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_navigation.py\", line 100, in hold_spacing\n    self.spacing_frame()\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_navigation.py\", line 90, in spacing_frame\n    raise RuntimeError('grasp spacing stopped: '+json.dumps({r:d.get('error') for r,d in decisions.items()}))\nRuntimeError: grasp spacing stopped: {\"r1\": \"visual grasp formation exceeded recovery envelope\", \"r3\": \"visual grasp formation exceeded recovery envelope\"}\n",
+    "mode": "stationary",
+    "duration_s": 30,
+    "wall_seconds": 27.860070750000887,
+    "sim_seconds": 23.9599999999976,
+    "noslip_iterations": 3,
+    "tracked_lift": true,
+    "finger_damping": null,
+    "timestep": null,
+    "diagexact": null,
+    "formation_integral": null,
+    "lateral_limit": null,
+    "environment": {
+      "mujoco": "3.12.0",
+      "platform": "macOS-27.0-arm64-arm-64bit",
+      "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+    },
+    "raw_directory": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/outputs/retention-diagnosis-20260915/noslip3-tracked",
+    "group": "retention-diagnosis-20260915",
+    "name": "noslip3-tracked",
+    "evaluation": {
+      "grasp_stability": {
+        "anchor_spacing_m": 0.6505884294185231,
+        "final_spacing_m": 0.6185006974605867,
+        "gates": {
+          "full_grasp_samples": false,
+          "grasp_bilateral_through_lift_hold": false,
+          "grasp_hold_lifted_every_sample": true,
+          "grasp_spacing_preserved": false
+        },
+        "max_sample_gap_s": 0.10000000000000142,
+        "max_spacing_change_m": 0.03208773195793646,
+        "nonbilateral_samples": 2,
+        "samples": 105,
+        "success": false
+      },
+      "reason": "no endurance samples",
+      "success": false
+    }
+  },
+  {
+    "source_sha": "95724937fb319c83b20422d443ed5b27f3a3cd04",
+    "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_grasp_endurance.py\", line 76, in run\n    scene.hold_spacing(8.);scene.finish_spacing();report['endurance_start_s']=scene.time()\n    ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_navigation.py\", line 104, in hold_spacing\n    self.spacing_frame()\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_navigation.py\", line 94, in spacing_frame\n    raise RuntimeError('grasp spacing stopped: '+json.dumps({r:d.get('error') for r,d in decisions.items()}))\nRuntimeError: grasp spacing stopped: {\"r1\": \"visual grasp formation exceeded recovery envelope\", \"r3\": \"visual grasp formation exceeded recovery envelope\"}\n",
+    "mode": "stationary",
+    "duration_s": 30,
+    "wall_seconds": 15.86209974999656,
+    "sim_seconds": 21.259999999999096,
+    "noslip_iterations": 0,
+    "tracked_lift": false,
+    "finger_damping": 0,
+    "timestep": 0.002,
+    "diagexact": true,
+    "formation_integral": null,
+    "lateral_limit": null,
+    "environment": {
+      "mujoco": "3.12.0",
+      "platform": "macOS-27.0-arm64-arm-64bit",
+      "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+    },
+    "raw_directory": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/outputs/retention-local-contact-20260915/exact",
+    "group": "retention-local-contact-20260915",
+    "name": "exact",
+    "evaluation": {
+      "grasp_stability": {
+        "anchor_spacing_m": 0.650586937367572,
+        "final_spacing_m": 0.6171299765810794,
+        "gates": {
+          "full_grasp_samples": false,
+          "grasp_bilateral_through_lift_hold": true,
+          "grasp_hold_lifted_every_sample": true,
+          "grasp_spacing_preserved": false
+        },
+        "max_sample_gap_s": 0.10000000000000142,
+        "max_spacing_change_m": 0.03345696078649263,
+        "nonbilateral_samples": 0,
+        "samples": 78,
+        "success": false
+      },
+      "reason": "no endurance samples",
+      "success": false
+    }
+  },
+  {
+    "source_sha": "95724937fb319c83b20422d443ed5b27f3a3cd04",
+    "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_grasp_endurance.py\", line 75, in run\n    scene.finish_grasp(predict_student,gm,after_close=scene.anchor_spacing,hold=scene.hold_spacing,close_pulse=1600)\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/camera_approach_scene.py\", line 276, in finish_grasp\n    after_close()\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_navigation.py\", line 100, in anchor_spacing\n    self.spacing_frame(execute=False)\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_navigation.py\", line 94, in spacing_frame\n    raise RuntimeError('grasp spacing stopped: '+json.dumps({r:d.get('error') for r,d in decisions.items()}))\nRuntimeError: grasp spacing stopped: {\"r1\": \"initial own-camera beam silhouette unsupported\", \"r3\": \"initial own-camera beam silhouette unsupported\"}\n",
+    "mode": "stationary",
+    "duration_s": 30,
+    "wall_seconds": 5.052041165996343,
+    "sim_seconds": 0.4860000000000004,
+    "noslip_iterations": 0,
+    "tracked_lift": false,
+    "finger_damping": 3000,
+    "timestep": 0.002,
+    "diagexact": true,
+    "formation_integral": null,
+    "lateral_limit": null,
+    "environment": {
+      "mujoco": "3.12.0",
+      "platform": "macOS-27.0-arm64-arm-64bit",
+      "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+    },
+    "raw_directory": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/outputs/retention-local-contact-20260915/exact-local",
+    "group": "retention-local-contact-20260915",
+    "name": "exact-local",
+    "evaluation": {
+      "grasp_stability": {
+        "gates": {
+          "full_grasp_samples": false
+        },
+        "reason": "complete close/lift/hold samples required",
+        "success": false
+      },
+      "reason": "no endurance samples",
+      "success": false
+    }
+  },
+  {
+    "source_sha": "95724937fb319c83b20422d443ed5b27f3a3cd04",
+    "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_grasp_endurance.py\", line 75, in run\n    scene.finish_grasp(predict_student,gm,after_close=scene.anchor_spacing,hold=scene.hold_spacing,close_pulse=1600)\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/camera_approach_scene.py\", line 276, in finish_grasp\n    after_close()\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_navigation.py\", line 100, in anchor_spacing\n    self.spacing_frame(execute=False)\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_navigation.py\", line 94, in spacing_frame\n    raise RuntimeError('grasp spacing stopped: '+json.dumps({r:d.get('error') for r,d in decisions.items()}))\nRuntimeError: grasp spacing stopped: {\"r1\": \"initial own-camera beam silhouette unsupported\", \"r3\": \"initial own-camera beam silhouette unsupported\"}\n",
+    "mode": "stationary",
+    "duration_s": 30,
+    "wall_seconds": 5.748694749985589,
+    "sim_seconds": 0.32600000000000023,
+    "noslip_iterations": 0,
+    "tracked_lift": false,
+    "finger_damping": 3000,
+    "timestep": 0.001,
+    "diagexact": false,
+    "formation_integral": null,
+    "lateral_limit": null,
+    "environment": {
+      "mujoco": "3.12.0",
+      "platform": "macOS-27.0-arm64-arm-64bit",
+      "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+    },
+    "raw_directory": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/outputs/retention-local-contact-20260915/local-1ms",
+    "group": "retention-local-contact-20260915",
+    "name": "local-1ms",
+    "evaluation": {
+      "grasp_stability": {
+        "gates": {
+          "full_grasp_samples": false
+        },
+        "reason": "complete close/lift/hold samples required",
+        "success": false
+      },
+      "reason": "no endurance samples",
+      "success": false
+    }
+  },
+  {
+    "source_sha": "10b106eb1418cf2511f8718eefaae83c1183b79c",
+    "error": null,
+    "mode": "stationary",
+    "duration_s": 30,
+    "wall_seconds": 110.8617723750067,
+    "sim_seconds": 59.81000000019457,
+    "noslip_iterations": 0,
+    "tracked_lift": false,
+    "finger_damping": 3000,
+    "timestep": 0.00025,
+    "diagexact": false,
+    "formation_integral": 0.0,
+    "lateral_limit": 0.1,
+    "environment": {
+      "mujoco": "3.12.0",
+      "platform": "macOS-27.0-arm64-arm-64bit",
+      "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+    },
+    "raw_directory": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/outputs/retention-bounded-control-20260915/local-025ms",
+    "group": "retention-bounded-control-20260915",
+    "name": "local-025ms",
+    "evaluation": {
+      "checkpoints": {},
+      "grasp_stability": {
+        "anchor_spacing_m": 0.6503777267147035,
+        "final_spacing_m": 0.6479525392605073,
+        "gates": {
+          "full_grasp_samples": true,
+          "grasp_bilateral_through_lift_hold": true,
+          "grasp_hold_lifted_every_sample": true,
+          "grasp_spacing_preserved": true
+        },
+        "max_sample_gap_s": 0.09925000000000139,
+        "max_spacing_change_m": 0.011840345939445274,
+        "nonbilateral_samples": 0,
+        "samples": 112,
+        "success": true
+      },
+      "released_on_floor": true,
+      "success": false
+    }
+  },
+  {
+    "source_sha": "10b106eb1418cf2511f8718eefaae83c1183b79c",
+    "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_grasp_endurance.py\", line 87, in run\n    if not all(d['ready'] for d in decisions.values()):raise RuntimeError('RGB endurance stopped: '+str({r:d.get('error') for r,d in decisions.items()}))\n                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: RGB endurance stopped: {'r1': 'own-camera beam silhouette changed or disappeared', 'r3': None}\n",
+    "mode": "stationary",
+    "duration_s": 30,
+    "wall_seconds": 51.498529625008814,
+    "sim_seconds": 41.66000000000495,
+    "noslip_iterations": 1,
+    "tracked_lift": false,
+    "finger_damping": 0,
+    "timestep": 0.002,
+    "diagexact": false,
+    "formation_integral": 2.0,
+    "lateral_limit": 0.3,
+    "environment": {
+      "mujoco": "3.12.0",
+      "platform": "macOS-27.0-arm64-arm-64bit",
+      "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+    },
+    "raw_directory": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/outputs/retention-bounded-control-20260915/noslip1-effort",
+    "group": "retention-bounded-control-20260915",
+    "name": "noslip1-effort",
+    "evaluation": {
+      "checkpoints": {},
+      "grasp_stability": {
+        "anchor_spacing_m": 0.6505829976368752,
+        "final_spacing_m": 0.6477394783629228,
+        "gates": {
+          "full_grasp_samples": true,
+          "grasp_bilateral_through_lift_hold": true,
+          "grasp_hold_lifted_every_sample": true,
+          "grasp_spacing_preserved": true
+        },
+        "max_sample_gap_s": 0.10000000000000142,
+        "max_spacing_change_m": 0.006628203757787388,
+        "nonbilateral_samples": 0,
+        "samples": 111,
+        "success": true
+      },
+      "released_on_floor": false,
+      "success": false
+    }
+  },
+  {
+    "source_sha": "10b106eb1418cf2511f8718eefaae83c1183b79c",
+    "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_grasp_endurance.py\", line 87, in run\n    if not all(d['ready'] for d in decisions.values()):raise RuntimeError('RGB endurance stopped: '+str({r:d.get('error') for r,d in decisions.items()}))\n                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: RGB endurance stopped: {'r1': 'own-camera beam silhouette changed or disappeared', 'r3': None}\n",
+    "mode": "stationary",
+    "duration_s": 30,
+    "wall_seconds": 49.6229450830142,
+    "sim_seconds": 41.66000000000495,
+    "noslip_iterations": 1,
+    "tracked_lift": false,
+    "finger_damping": 0,
+    "timestep": 0.002,
+    "diagexact": false,
+    "formation_integral": 2.0,
+    "lateral_limit": 0.1,
+    "environment": {
+      "mujoco": "3.12.0",
+      "platform": "macOS-27.0-arm64-arm-64bit",
+      "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+    },
+    "raw_directory": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/outputs/retention-bounded-control-20260915/noslip1-integral",
+    "group": "retention-bounded-control-20260915",
+    "name": "noslip1-integral",
+    "evaluation": {
+      "checkpoints": {},
+      "grasp_stability": {
+        "anchor_spacing_m": 0.6505829976368752,
+        "final_spacing_m": 0.6477394783629228,
+        "gates": {
+          "full_grasp_samples": true,
+          "grasp_bilateral_through_lift_hold": true,
+          "grasp_hold_lifted_every_sample": true,
+          "grasp_spacing_preserved": true
+        },
+        "max_sample_gap_s": 0.10000000000000142,
+        "max_spacing_change_m": 0.006628203757787388,
+        "nonbilateral_samples": 0,
+        "samples": 111,
+        "success": true
+      },
+      "released_on_floor": false,
+      "success": false
+    }
+  }
+]

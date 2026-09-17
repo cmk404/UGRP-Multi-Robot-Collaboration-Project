@@ -1,0 +1,24 @@
+{
+  "success": false,
+  "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/scripts/run_pair_grasp_endurance.py\", line 76, in run\n    scene.hold_spacing(8.);scene.finish_spacing();report['endurance_start_s']=scene.time()\n                           ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/scripts/run_pair_navigation.py\", line 77, in finish_spacing\n    raise RuntimeError('grasp spacing did not visually settle before departure')\nRuntimeError: grasp spacing did not visually settle before departure\n",
+  "evaluation": {
+    "success": false,
+    "reason": "no endurance samples",
+    "grasp_stability": {
+      "success": false,
+      "gates": {
+        "full_grasp_samples": true,
+        "grasp_spacing_preserved": true,
+        "grasp_bilateral_through_lift_hold": false,
+        "grasp_hold_lifted_every_sample": true
+      },
+      "anchor_spacing_m": 0.6505884294185231,
+      "final_spacing_m": 0.6358961661195461,
+      "max_spacing_change_m": 0.014692263298976993,
+      "nonbilateral_samples": 1,
+      "samples": 111,
+      "max_sample_gap_s": 0.10000000000000142
+    }
+  },
+  "wall_seconds": 19.22650895800325
+}

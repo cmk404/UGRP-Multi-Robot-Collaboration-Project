@@ -1,0 +1,4064 @@
+{
+  "execution_sha": "13b1a4995c3b7d40990c49fa3c57396cec7b5fa8",
+  "scope": "One fixed-start temporal vision trial per terrain; impratio=10; zero LLM calls",
+  "feasible_successes": 1,
+  "feasible_trials": 5,
+  "blocked_stop_passed": true,
+  "runs": [
+    {
+      "appearance_manifest_sha256": "5d61c5bcac5750b552e24ed656ba6367e80386f8e7d185c34e3e584629e50a7b",
+      "arrived": true,
+      "budget": 750,
+      "contact_impratio": 10,
+      "cost_usd": 0,
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "error": null,
+      "evaluation": {
+        "bilateral_fraction": 1.0,
+        "gates": {
+          "actor_arrived": true,
+          "bilateral_every_sample": true,
+          "cameras_geometry_unchanged": true,
+          "continuous_samples": true,
+          "goal_orientation": true,
+          "goal_position": true,
+          "grasp_stable_before_departure": true,
+          "level_payload": true,
+          "lifted_every_sample": true,
+          "other_collision_free": true,
+          "released_on_floor": true,
+          "wall_contact_free": true,
+          "weld_off": true,
+          "within_authored_bounds": true
+        },
+        "goal_position_error_m": 0.022901435500858852,
+        "goal_yaw_error_deg": 0.12796559567004226,
+        "lifted_fraction": 1.0,
+        "min_lift_m": 0.056069,
+        "navigation_sim_seconds": 91.30000000000001,
+        "payload_turn_deg": 0.12796559567004226,
+        "sample_gap_max_s": 0.10000000000000853,
+        "samples": 914,
+        "success": true,
+        "unexpected_contact_ticks": 0,
+        "wall_contact_ticks": 0
+      },
+      "external_model_calls": 0,
+      "grasp_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+      "invariants_final": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "8f4bf44db9eeeba20fb154fda44fad4b3d5650cdcf32fe67fdb4e7d1b0e6729d",
+          "geom_pos": "b0e99ee0a80d66d3813aca5cdc9fe7039200525bf3b7bcddc369ec500ec24813",
+          "geom_quat": "abf3c1234e95a1773de4f2d419a276d8a5f9a42fcf68f0e838e188154c403d95",
+          "geom_rgba": "9765e5d5866f7497547eb54a6cfbdddc153b93302267dbfb025de27ac58ccbaf",
+          "geom_size": "90c44787ff65bcca8112941437011a275cae390c1e6448060babfd62ec9bcc42"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "8f4bf44db9eeeba20fb154fda44fad4b3d5650cdcf32fe67fdb4e7d1b0e6729d",
+          "geom_pos": "b0e99ee0a80d66d3813aca5cdc9fe7039200525bf3b7bcddc369ec500ec24813",
+          "geom_quat": "abf3c1234e95a1773de4f2d419a276d8a5f9a42fcf68f0e838e188154c403d95",
+          "geom_rgba": "9765e5d5866f7497547eb54a6cfbdddc153b93302267dbfb025de27ac58ccbaf",
+          "geom_size": "90c44787ff65bcca8112941437011a275cae390c1e6448060babfd62ec9bcc42"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "map": {
+        "bounds_m": [
+          -1.08,
+          1.85,
+          -2.9,
+          -1.15
+        ],
+        "footprint": {
+          "half_forward_m": 0.2,
+          "half_lateral_m": 0.51,
+          "margin_m": 0.025
+        },
+        "goal": {
+          "center_m": [
+            -0.52,
+            -2
+          ],
+          "relative_yaw_deg": 0
+        },
+        "grid_m": 0.06,
+        "map_id": "narrow-door",
+        "obstacles": [
+          {
+            "center_m": [
+              0.15,
+              -2.5895
+            ],
+            "half_extents_m": [
+              0.04,
+              0.3095
+            ],
+            "height_m": 0.3,
+            "id": "door_lower"
+          },
+          {
+            "center_m": [
+              0.15,
+              -1.4355
+            ],
+            "half_extents_m": [
+              0.04,
+              0.2845
+            ],
+            "height_m": 0.3,
+            "id": "door_upper"
+          }
+        ],
+        "schema": "ugrp.pair_navigation_map.v1",
+        "start_zone": {
+          "center_m": [
+            0.58,
+            -2.0
+          ],
+          "radius_m": 0.25
+        },
+        "top_camera": {
+          "fov_y_deg": 55.0,
+          "name": "cctv_top",
+          "position_m": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion_wxyz": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "map_sha256": "eda65e0ca2fca28602955da1e76737d82fbab696a06a726ba8a84ff89570bcb4",
+      "post_grasp_settle_s": 8.0,
+      "scene_xml_sha256": "fb8f0a48c8fbb496d836add38560519b922aba033f24164247710c237832f354",
+      "schema": "ugrp.pair_navigation_trial.v1",
+      "scope": "Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay",
+      "sim_seconds": 121.20999999989891,
+      "source_sha": "13b1a4995c3b7d40990c49fa3c57396cec7b5fa8",
+      "success": true,
+      "unexpected_contact_ticks": 0,
+      "vision_mode": "temporal",
+      "wall_contact_ticks": 0,
+      "wall_seconds": 103.4729488749872,
+      "weld_active_ticks": 0,
+      "id": "narrow-door",
+      "title_ko": "좁은 문·통로",
+      "expected_geometric_route": true,
+      "expected_blocked_stop_passed": false,
+      "decision_rounds": 452,
+      "robot_decision_commands": 904,
+      "final_decisions": {
+        "r1": {
+          "action": {
+            "duration_s": 0.2,
+            "forward": 0.0,
+            "kind": "mecanum",
+            "left": 0.0,
+            "turn": 0.0
+          },
+          "done": true,
+          "heading_rad": 0.0,
+          "observations": {
+            "r1": {
+              "anchor_confidence": 0.6655359864234924,
+              "appearance_source": "initial",
+              "center_uv": [
+                173.0,
+                437.0
+              ],
+              "confidence": 0.6655359864234924,
+              "feature_plane_height_m": 0.09,
+              "relative_yaw_rad": 0.017453292519943188,
+              "xy_m": [
+                -0.5181240566550156,
+                -2.2700803079633403
+              ]
+            },
+            "r3": {
+              "anchor_confidence": 0.5386126041412354,
+              "appearance_source": "initial",
+              "center_uv": [
+                172.0,
+                282.0
+              ],
+              "confidence": 0.5386126041412354,
+              "feature_plane_height_m": 0.09,
+              "relative_yaw_rad": -0.0261799387799106,
+              "xy_m": [
+                -0.5216089638545427,
+                -1.72991969203666
+              ]
+            }
+          },
+          "payload": {
+            "axis_xy": [
+              -0.011163558448736842,
+              -0.9999376855398349
+            ],
+            "center_projection_interval_m": [
+              1.8976300193815359,
+              2.107069694766194
+            ],
+            "feature_area_px": 912,
+            "feature_plane_height_m": 0.09,
+            "relative_yaw_rad": 0.00041160813415630493,
+            "xy_is_visible_fragment_centroid": true,
+            "xy_m": [
+              -0.5440354116111477,
+              -1.9960145195075567
+            ]
+          },
+          "plan_hash": "633f5c1508ab1755fa5b95dfce009650d941071fea320f1095963da4dce14e08",
+          "ready": true,
+          "reference": [
+            -0.52,
+            -2.0,
+            -2.1510571102112408e-16
+          ],
+          "route": [
+            [
+              0.6144707831912489,
+              -2.0017424535997637,
+              0.0
+            ],
+            [
+              0.7344707831912489,
+              -2.0017424535997637,
+              0.7853981633974483
+            ],
+            [
+              0.7344707831912489,
+              -2.0017424535997637,
+              1.5707963267948966
+            ],
+            [
+              -0.4055292168087511,
+              -2.0017424535997637,
+              1.5707963267948966
+            ],
+            [
+              -0.52,
+              -2,
+              0.0
+            ]
+          ],
+          "segment": 4,
+          "status": "done"
+        },
+        "r3": {
+          "action": {
+            "duration_s": 0.2,
+            "forward": 0.0,
+            "kind": "mecanum",
+            "left": 0.0,
+            "turn": 0.0
+          },
+          "done": true,
+          "heading_rad": 0.0,
+          "observations": {
+            "r1": {
+              "anchor_confidence": 0.6655359864234924,
+              "appearance_source": "initial",
+              "center_uv": [
+                173.0,
+                437.0
+              ],
+              "confidence": 0.6655359864234924,
+              "feature_plane_height_m": 0.09,
+              "relative_yaw_rad": 0.017453292519943188,
+              "xy_m": [
+                -0.5181240566550156,
+                -2.2700803079633403
+              ]
+            },
+            "r3": {
+              "anchor_confidence": 0.5386126041412354,
+              "appearance_source": "initial",
+              "center_uv": [
+                172.0,
+                282.0
+              ],
+              "confidence": 0.5386126041412354,
+              "feature_plane_height_m": 0.09,
+              "relative_yaw_rad": -0.0261799387799106,
+              "xy_m": [
+                -0.5216089638545427,
+                -1.72991969203666
+              ]
+            }
+          },
+          "payload": {
+            "axis_xy": [
+              -0.011163558448736842,
+              -0.9999376855398349
+            ],
+            "center_projection_interval_m": [
+              1.8976300193815359,
+              2.107069694766194
+            ],
+            "feature_area_px": 912,
+            "feature_plane_height_m": 0.09,
+            "relative_yaw_rad": 0.00041160813415630493,
+            "xy_is_visible_fragment_centroid": true,
+            "xy_m": [
+              -0.5440354116111477,
+              -1.9960145195075567
+            ]
+          },
+          "plan_hash": "633f5c1508ab1755fa5b95dfce009650d941071fea320f1095963da4dce14e08",
+          "ready": true,
+          "reference": [
+            -0.52,
+            -2.0,
+            -2.1510571102112408e-16
+          ],
+          "route": [
+            [
+              0.6144707831912489,
+              -2.0017424535997637,
+              0.0
+            ],
+            [
+              0.7344707831912489,
+              -2.0017424535997637,
+              0.7853981633974483
+            ],
+            [
+              0.7344707831912489,
+              -2.0017424535997637,
+              1.5707963267948966
+            ],
+            [
+              -0.4055292168087511,
+              -2.0017424535997637,
+              1.5707963267948966
+            ],
+            [
+              -0.52,
+              -2,
+              0.0
+            ]
+          ],
+          "segment": 4,
+          "status": "done"
+        }
+      },
+      "input_audit": {
+        "passed": true,
+        "steps": 452,
+        "grasp": {
+          "ok": true,
+          "condition": "visual",
+          "rounds": 16,
+          "calls": 32,
+          "models": {
+            "r1": "2a5a19e323d6353ee8ca0342a3a9341a0736d3d35ba9a7df11d45071f5d15a43",
+            "r3": "e55bb7d0ac473dc79d6eab9c1f4dadb2b5dff068329a8c8714d1fd076e5ecfed"
+          },
+          "calls_source": "result.json:calls",
+          "replay": [
+            {
+              "round": 0,
+              "robot_id": "r1",
+              "own_sha256": "d13291c42ff9be8ec5fce816139a2403f1efcf0e3d109cc0795a7166edfee67d",
+              "top_sha256": "1309f042e6bdffabdb36d05124b38518622a947020173f46e351e0785930215d",
+              "actions": []
+            },
+            {
+              "round": 0,
+              "robot_id": "r3",
+              "own_sha256": "ce3d8b497ad3b7e9bf49a3f363426b475f463e91b0f657416bb8bb66a1a332d6",
+              "top_sha256": "1309f042e6bdffabdb36d05124b38518622a947020173f46e351e0785930215d",
+              "actions": []
+            },
+            {
+              "round": 1,
+              "robot_id": "r1",
+              "own_sha256": "1f8b4b5c1044f4f8ea7c6141d0b8bbb6a3cf457ee7167773225f5a01241e7198",
+              "top_sha256": "30d0edf08ebbbeebc126af895fd11922b904ca50844df9d5d7ecfba9b8c47116",
+              "actions": []
+            },
+            {
+              "round": 1,
+              "robot_id": "r3",
+              "own_sha256": "a341e9b7445a56a0744a873cfcfe5ac3fd8d1ddc849c0f0e0249cab1f16dbea2",
+              "top_sha256": "30d0edf08ebbbeebc126af895fd11922b904ca50844df9d5d7ecfba9b8c47116",
+              "actions": []
+            },
+            {
+              "round": 2,
+              "robot_id": "r1",
+              "own_sha256": "0a6f88e9799a738ec02ae3ca4f5c89067d8ae8ca87cad7e8a870d208b8f55306",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 2,
+              "robot_id": "r3",
+              "own_sha256": "8df436401429f7ec95ae368246fffe58c031d502767a1424c8fe2825149d5fc5",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 3,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 3,
+              "robot_id": "r3",
+              "own_sha256": "8004155a2797ee80c8a7ab6b10a31d70955007a4dd83069d9edb3e5bcc495364",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 4,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 4,
+              "robot_id": "r3",
+              "own_sha256": "8004155a2797ee80c8a7ab6b10a31d70955007a4dd83069d9edb3e5bcc495364",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 5,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 5,
+              "robot_id": "r3",
+              "own_sha256": "8004155a2797ee80c8a7ab6b10a31d70955007a4dd83069d9edb3e5bcc495364",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 6,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 6,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 7,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 7,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 8,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 8,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 9,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 9,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 10,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 10,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 11,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 11,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 12,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 12,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 13,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 13,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "ae5dee77774f7500c23e8680fd16dbface63af1ca3272d2a182cd233d18272fc",
+              "actions": []
+            },
+            {
+              "round": 14,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "b20064a9ab08dfd0eb2e6d58f1d4c7a66bb4883215cc74a53e2a00d55c73aa1b",
+              "actions": []
+            },
+            {
+              "round": 14,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "b20064a9ab08dfd0eb2e6d58f1d4c7a66bb4883215cc74a53e2a00d55c73aa1b",
+              "actions": []
+            },
+            {
+              "round": 15,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "b20064a9ab08dfd0eb2e6d58f1d4c7a66bb4883215cc74a53e2a00d55c73aa1b",
+              "actions": []
+            },
+            {
+              "round": 15,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "b20064a9ab08dfd0eb2e6d58f1d4c7a66bb4883215cc74a53e2a00d55c73aa1b",
+              "actions": []
+            }
+          ],
+          "checked": "skill/model and RGB hashes; exact RGB-only correction, condition-specific pulse deltas, raw arm actions, and own-command history; evaluator data unused"
+        },
+        "physical_success": true,
+        "refused_no_route": false,
+        "scope": "Exact RGB/command replay and output-only scoring; no actual physics rerun"
+      },
+      "raw_directory": "/Users/changmin/projects/ugrp-worktrees/pair-vision-recovery/outputs/pair-vision-recovery-2026-09-14/narrow-door",
+      "raw_result_sha256": "0dd712ee2ad9558fd2345a370a45a0787ec082b0d1cba6605464f70ae78c0e90",
+      "vision_hold_rounds": 0,
+      "vision_hold_sim_seconds": 0.0,
+      "vision_recovery_episodes": 0,
+      "vision_recovery_resumes": 0,
+      "memory_wheel_observations": 1
+    },
+    {
+      "appearance_manifest_sha256": "5d61c5bcac5750b552e24ed656ba6367e80386f8e7d185c34e3e584629e50a7b",
+      "arrived": false,
+      "budget": 750,
+      "contact_impratio": 10,
+      "cost_usd": 0,
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-vision-recovery/scripts/run_pair_navigation.py\", line 206, in run\n    raise RuntimeError('policy stopped: '+json.dumps({r: d['status'] for r,d in decisions.items()}))\nRuntimeError: policy stopped: {\"r1\": \"payload_decoupled\", \"r3\": \"payload_decoupled\"}\n",
+      "evaluation": {
+        "bilateral_fraction": 1.0,
+        "gates": {
+          "actor_arrived": false,
+          "bilateral_every_sample": true,
+          "cameras_geometry_unchanged": true,
+          "continuous_samples": true,
+          "goal_orientation": false,
+          "goal_position": false,
+          "grasp_stable_before_departure": true,
+          "level_payload": true,
+          "lifted_every_sample": true,
+          "other_collision_free": true,
+          "released_on_floor": false,
+          "wall_contact_free": true,
+          "weld_off": true,
+          "within_authored_bounds": true
+        },
+        "goal_position_error_m": 0.8932264697718043,
+        "goal_yaw_error_deg": 38.37087988921973,
+        "lifted_fraction": 1.0,
+        "min_lift_m": 0.074508,
+        "navigation_sim_seconds": 18.299999999999997,
+        "payload_turn_deg": 51.62912011078027,
+        "sample_gap_max_s": 0.10000000000000142,
+        "samples": 184,
+        "success": false,
+        "unexpected_contact_ticks": 0,
+        "wall_contact_ticks": 0
+      },
+      "external_model_calls": 0,
+      "grasp_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+      "invariants_final": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "8f4bf44db9eeeba20fb154fda44fad4b3d5650cdcf32fe67fdb4e7d1b0e6729d",
+          "geom_pos": "ba33316b4709ebafa85d35cb2aa69500308249c4701f7013d9c885f509fc7274",
+          "geom_quat": "abf3c1234e95a1773de4f2d419a276d8a5f9a42fcf68f0e838e188154c403d95",
+          "geom_rgba": "9765e5d5866f7497547eb54a6cfbdddc153b93302267dbfb025de27ac58ccbaf",
+          "geom_size": "6fe25d57998aa5d4f47a28955a5cd65a4f9094f238efc1bc83935e556efe773c"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "8f4bf44db9eeeba20fb154fda44fad4b3d5650cdcf32fe67fdb4e7d1b0e6729d",
+          "geom_pos": "ba33316b4709ebafa85d35cb2aa69500308249c4701f7013d9c885f509fc7274",
+          "geom_quat": "abf3c1234e95a1773de4f2d419a276d8a5f9a42fcf68f0e838e188154c403d95",
+          "geom_rgba": "9765e5d5866f7497547eb54a6cfbdddc153b93302267dbfb025de27ac58ccbaf",
+          "geom_size": "6fe25d57998aa5d4f47a28955a5cd65a4f9094f238efc1bc83935e556efe773c"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "map": {
+        "bounds_m": [
+          -1.08,
+          1.85,
+          -2.9,
+          -1.15
+        ],
+        "footprint": {
+          "half_forward_m": 0.2,
+          "half_lateral_m": 0.51,
+          "margin_m": 0.025
+        },
+        "goal": {
+          "center_m": [
+            -0.52,
+            -1.49
+          ],
+          "relative_yaw_deg": 90
+        },
+        "grid_m": 0.06,
+        "map_id": "l-corner",
+        "obstacles": [
+          {
+            "center_m": [
+              -0.4895,
+              -2.4395
+            ],
+            "half_extents_m": [
+              0.5895,
+              0.4595
+            ],
+            "height_m": 0.3,
+            "id": "inside_corner"
+          },
+          {
+            "center_m": [
+              1.46,
+              -2.025
+            ],
+            "half_extents_m": [
+              0.04,
+              0.874
+            ],
+            "height_m": 0.3,
+            "id": "entry_wall"
+          }
+        ],
+        "schema": "ugrp.pair_navigation_map.v1",
+        "start_zone": {
+          "center_m": [
+            0.58,
+            -2.0
+          ],
+          "radius_m": 0.25
+        },
+        "top_camera": {
+          "fov_y_deg": 55.0,
+          "name": "cctv_top",
+          "position_m": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion_wxyz": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "map_sha256": "2c4ebc3a72cefd570e7e18b1194b086ed52fd19d0aea2f19c9c7c69a818bc270",
+      "post_grasp_settle_s": 8.0,
+      "scene_xml_sha256": "c61e56e1d14de1e34a1cacfee2198c34428cca19cb0702d0a4d5736ab419b316",
+      "schema": "ugrp.pair_navigation_trial.v1",
+      "scope": "Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay",
+      "sim_seconds": 42.96000000000654,
+      "source_sha": "13b1a4995c3b7d40990c49fa3c57396cec7b5fa8",
+      "success": false,
+      "unexpected_contact_ticks": 0,
+      "vision_mode": "temporal",
+      "wall_contact_ticks": 0,
+      "wall_seconds": 25.516764583007898,
+      "weld_active_ticks": 0,
+      "id": "l-corner",
+      "title_ko": "L자 모퉁이",
+      "expected_geometric_route": true,
+      "expected_blocked_stop_passed": false,
+      "decision_rounds": 92,
+      "robot_decision_commands": 184,
+      "final_decisions": {
+        "r1": {
+          "action": {
+            "duration_s": 0.2,
+            "forward": 0.0,
+            "kind": "mecanum",
+            "left": 0.0,
+            "turn": 0.0
+          },
+          "done": false,
+          "observations": {
+            "r1": {
+              "anchor_confidence": 0.7734134197235107,
+              "appearance_source": "initial",
+              "center_uv": [
+                471.0,
+                360.0
+              ],
+              "confidence": 0.7734134197235107,
+              "feature_plane_height_m": 0.09,
+              "relative_yaw_rad": 0.8988445647770802,
+              "xy_m": [
+                0.5203782888040208,
+                -2.0017424535997637
+              ]
+            },
+            "r3": {
+              "anchor_confidence": 0.8400475978851318,
+              "appearance_source": "initial",
+              "center_uv": [
+                351.0,
+                264.0
+              ],
+              "confidence": 0.8400475978851318,
+              "feature_plane_height_m": 0.09,
+              "relative_yaw_rad": 0.8901179185171084,
+              "xy_m": [
+                0.10218942486078458,
+                -1.6671913624451746
+              ]
+            }
+          },
+          "payload": {
+            "axis_xy": [
+              0.8421957205336628,
+              -0.5391719283445537
+            ],
+            "center_projection_interval_m": [
+              1.1045670666647307,
+              1.4150866507607085
+            ],
+            "feature_area_px": 510,
+            "feature_plane_height_m": 0.09,
+            "relative_yaw_rad": 1.0129181551476298,
+            "xy_is_visible_fragment_centroid": true,
+            "xy_m": [
+              0.3237748575397266,
+              -1.8466367506153294
+            ]
+          },
+          "ready": false,
+          "status": "payload_decoupled"
+        },
+        "r3": {
+          "action": {
+            "duration_s": 0.2,
+            "forward": 0.0,
+            "kind": "mecanum",
+            "left": 0.0,
+            "turn": 0.0
+          },
+          "done": false,
+          "observations": {
+            "r1": {
+              "anchor_confidence": 0.7734134197235107,
+              "appearance_source": "initial",
+              "center_uv": [
+                471.0,
+                360.0
+              ],
+              "confidence": 0.7734134197235107,
+              "feature_plane_height_m": 0.09,
+              "relative_yaw_rad": 0.8988445647770802,
+              "xy_m": [
+                0.5203782888040208,
+                -2.0017424535997637
+              ]
+            },
+            "r3": {
+              "anchor_confidence": 0.8400475978851318,
+              "appearance_source": "initial",
+              "center_uv": [
+                351.0,
+                264.0
+              ],
+              "confidence": 0.8400475978851318,
+              "feature_plane_height_m": 0.09,
+              "relative_yaw_rad": 0.8901179185171084,
+              "xy_m": [
+                0.10218942486078458,
+                -1.6671913624451746
+              ]
+            }
+          },
+          "payload": {
+            "axis_xy": [
+              0.8421957205336628,
+              -0.5391719283445537
+            ],
+            "center_projection_interval_m": [
+              1.1045670666647307,
+              1.4150866507607085
+            ],
+            "feature_area_px": 510,
+            "feature_plane_height_m": 0.09,
+            "relative_yaw_rad": 1.0129181551476298,
+            "xy_is_visible_fragment_centroid": true,
+            "xy_m": [
+              0.3237748575397266,
+              -1.8466367506153294
+            ]
+          },
+          "ready": false,
+          "status": "payload_decoupled"
+        }
+      },
+      "input_audit": {
+        "passed": true,
+        "steps": 92,
+        "grasp": {
+          "ok": true,
+          "condition": "visual",
+          "rounds": 16,
+          "calls": 32,
+          "models": {
+            "r1": "2a5a19e323d6353ee8ca0342a3a9341a0736d3d35ba9a7df11d45071f5d15a43",
+            "r3": "e55bb7d0ac473dc79d6eab9c1f4dadb2b5dff068329a8c8714d1fd076e5ecfed"
+          },
+          "calls_source": "result.json:calls",
+          "replay": [
+            {
+              "round": 0,
+              "robot_id": "r1",
+              "own_sha256": "d13291c42ff9be8ec5fce816139a2403f1efcf0e3d109cc0795a7166edfee67d",
+              "top_sha256": "befbe5542b3d52b8b7b28a03bdf41baa198fd2f00c70411fb9def7c53ceaee51",
+              "actions": []
+            },
+            {
+              "round": 0,
+              "robot_id": "r3",
+              "own_sha256": "ce3d8b497ad3b7e9bf49a3f363426b475f463e91b0f657416bb8bb66a1a332d6",
+              "top_sha256": "befbe5542b3d52b8b7b28a03bdf41baa198fd2f00c70411fb9def7c53ceaee51",
+              "actions": []
+            },
+            {
+              "round": 1,
+              "robot_id": "r1",
+              "own_sha256": "1f8b4b5c1044f4f8ea7c6141d0b8bbb6a3cf457ee7167773225f5a01241e7198",
+              "top_sha256": "b2430141e5b420413f9c77f327d5b8f711fca1a8fb54be3f36b54e78cdff2ac5",
+              "actions": []
+            },
+            {
+              "round": 1,
+              "robot_id": "r3",
+              "own_sha256": "a341e9b7445a56a0744a873cfcfe5ac3fd8d1ddc849c0f0e0249cab1f16dbea2",
+              "top_sha256": "b2430141e5b420413f9c77f327d5b8f711fca1a8fb54be3f36b54e78cdff2ac5",
+              "actions": []
+            },
+            {
+              "round": 2,
+              "robot_id": "r1",
+              "own_sha256": "0a6f88e9799a738ec02ae3ca4f5c89067d8ae8ca87cad7e8a870d208b8f55306",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 2,
+              "robot_id": "r3",
+              "own_sha256": "8df436401429f7ec95ae368246fffe58c031d502767a1424c8fe2825149d5fc5",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 3,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 3,
+              "robot_id": "r3",
+              "own_sha256": "8004155a2797ee80c8a7ab6b10a31d70955007a4dd83069d9edb3e5bcc495364",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 4,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 4,
+              "robot_id": "r3",
+              "own_sha256": "8004155a2797ee80c8a7ab6b10a31d70955007a4dd83069d9edb3e5bcc495364",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 5,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 5,
+              "robot_id": "r3",
+              "own_sha256": "8004155a2797ee80c8a7ab6b10a31d70955007a4dd83069d9edb3e5bcc495364",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 6,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 6,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 7,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 7,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 8,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 8,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 9,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 9,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 10,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 10,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 11,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 11,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 12,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 12,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 13,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 13,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "ec4d0fd43bb7619118332e5e121d40683cdeaba0d571df1827ec3edacf1792bd",
+              "actions": []
+            },
+            {
+              "round": 14,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "26346a51ca4da33c4c6961bdf988be2befa16cb7f1d103b43908b57c1b4be45d",
+              "actions": []
+            },
+            {
+              "round": 14,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "26346a51ca4da33c4c6961bdf988be2befa16cb7f1d103b43908b57c1b4be45d",
+              "actions": []
+            },
+            {
+              "round": 15,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "26346a51ca4da33c4c6961bdf988be2befa16cb7f1d103b43908b57c1b4be45d",
+              "actions": []
+            },
+            {
+              "round": 15,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "26346a51ca4da33c4c6961bdf988be2befa16cb7f1d103b43908b57c1b4be45d",
+              "actions": []
+            }
+          ],
+          "checked": "skill/model and RGB hashes; exact RGB-only correction, condition-specific pulse deltas, raw arm actions, and own-command history; evaluator data unused"
+        },
+        "physical_success": false,
+        "refused_no_route": false,
+        "scope": "Exact RGB/command replay and output-only scoring; no actual physics rerun"
+      },
+      "raw_directory": "/Users/changmin/projects/ugrp-worktrees/pair-vision-recovery/outputs/pair-vision-recovery-2026-09-14/l-corner",
+      "raw_result_sha256": "2de33a2135577c61ff1a6076689c0de5908696ede0fd49c0646e94c1f5e10af6",
+      "vision_hold_rounds": 0,
+      "vision_hold_sim_seconds": 0.0,
+      "vision_recovery_episodes": 0,
+      "vision_recovery_resumes": 0,
+      "memory_wheel_observations": 0
+    },
+    {
+      "appearance_manifest_sha256": "5d61c5bcac5750b552e24ed656ba6367e80386f8e7d185c34e3e584629e50a7b",
+      "arrived": false,
+      "budget": 750,
+      "contact_impratio": 10,
+      "cost_usd": 0,
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-vision-recovery/scripts/run_pair_navigation.py\", line 211, in run\n    raise RuntimeError('RGB navigation budget exhausted')\nRuntimeError: RGB navigation budget exhausted\n",
+      "evaluation": {
+        "bilateral_fraction": 0.836,
+        "gates": {
+          "actor_arrived": false,
+          "bilateral_every_sample": false,
+          "cameras_geometry_unchanged": true,
+          "continuous_samples": true,
+          "goal_orientation": true,
+          "goal_position": false,
+          "grasp_stable_before_departure": true,
+          "level_payload": false,
+          "lifted_every_sample": false,
+          "other_collision_free": false,
+          "released_on_floor": false,
+          "wall_contact_free": true,
+          "weld_off": true,
+          "within_authored_bounds": true
+        },
+        "goal_position_error_m": 0.6425339241487565,
+        "goal_yaw_error_deg": 0.45987483998401546,
+        "lifted_fraction": 0.8413333333333334,
+        "min_lift_m": -5.6e-05,
+        "navigation_sim_seconds": 149.9,
+        "payload_turn_deg": 0.45987483998401546,
+        "sample_gap_max_s": 0.10000000000002274,
+        "samples": 1500,
+        "success": false,
+        "unexpected_contact_ticks": 11873,
+        "wall_contact_ticks": 0
+      },
+      "external_model_calls": 0,
+      "grasp_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+      "invariants_final": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "8f4bf44db9eeeba20fb154fda44fad4b3d5650cdcf32fe67fdb4e7d1b0e6729d",
+          "geom_pos": "471b8a6ebe53076a9641366dcbf95ddc6e24f6c3e45d4e7545e28e241e5543fc",
+          "geom_quat": "abf3c1234e95a1773de4f2d419a276d8a5f9a42fcf68f0e838e188154c403d95",
+          "geom_rgba": "9765e5d5866f7497547eb54a6cfbdddc153b93302267dbfb025de27ac58ccbaf",
+          "geom_size": "51d44016915fe52359e3f93845dfc0126e00a191b29a49736a4be0475065048e"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "8f4bf44db9eeeba20fb154fda44fad4b3d5650cdcf32fe67fdb4e7d1b0e6729d",
+          "geom_pos": "471b8a6ebe53076a9641366dcbf95ddc6e24f6c3e45d4e7545e28e241e5543fc",
+          "geom_quat": "abf3c1234e95a1773de4f2d419a276d8a5f9a42fcf68f0e838e188154c403d95",
+          "geom_rgba": "9765e5d5866f7497547eb54a6cfbdddc153b93302267dbfb025de27ac58ccbaf",
+          "geom_size": "51d44016915fe52359e3f93845dfc0126e00a191b29a49736a4be0475065048e"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "map": {
+        "bounds_m": [
+          -1.08,
+          1.85,
+          -2.9,
+          -1.15
+        ],
+        "footprint": {
+          "half_forward_m": 0.2,
+          "half_lateral_m": 0.51,
+          "margin_m": 0.025
+        },
+        "goal": {
+          "center_m": [
+            -0.84,
+            -2
+          ],
+          "relative_yaw_deg": 0
+        },
+        "grid_m": 0.06,
+        "map_id": "s-bends",
+        "obstacles": [
+          {
+            "center_m": [
+              0.18,
+              -1.4305
+            ],
+            "half_extents_m": [
+              0.035,
+              0.2795
+            ],
+            "height_m": 0.3,
+            "id": "top_baffle"
+          },
+          {
+            "center_m": [
+              -0.5,
+              -2.5945
+            ],
+            "half_extents_m": [
+              0.035,
+              0.3045
+            ],
+            "height_m": 0.3,
+            "id": "bottom_baffle"
+          }
+        ],
+        "schema": "ugrp.pair_navigation_map.v1",
+        "start_zone": {
+          "center_m": [
+            0.58,
+            -2.0
+          ],
+          "radius_m": 0.25
+        },
+        "top_camera": {
+          "fov_y_deg": 55.0,
+          "name": "cctv_top",
+          "position_m": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion_wxyz": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "map_sha256": "368a11bac3e33ee42b3fe2f6e76fb6fcd9348bc0ed6b410ae3f3d5dd822fdac1",
+      "post_grasp_settle_s": 8.0,
+      "scene_xml_sha256": "b331fbb78cf1bf43cdf8987a7c8919be5867d819f694691fad23883ca97180d6",
+      "schema": "ugrp.pair_navigation_trial.v1",
+      "scope": "Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay",
+      "sim_seconds": 174.5600000001054,
+      "source_sha": "13b1a4995c3b7d40990c49fa3c57396cec7b5fa8",
+      "success": false,
+      "unexpected_contact_ticks": 11873,
+      "vision_mode": "temporal",
+      "wall_contact_ticks": 0,
+      "wall_seconds": 161.1428385830077,
+      "weld_active_ticks": 0,
+      "id": "s-bends",
+      "title_ko": "S자 연속 굴곡",
+      "expected_geometric_route": true,
+      "expected_blocked_stop_passed": false,
+      "decision_rounds": 750,
+      "robot_decision_commands": 1500,
+      "final_decisions": {
+        "r1": {
+          "action": {
+            "duration_s": 0.2,
+            "forward": -0.011553512851550568,
+            "kind": "mecanum",
+            "left": 0.009892536245592515,
+            "turn": 0.00523598775598293
+          },
+          "done": false,
+          "heading_rad": 0.0,
+          "observations": {
+            "r1": {
+              "anchor_confidence": 0.6824648380279541,
+              "appearance_source": "initial",
+              "center_uv": [
+                254.0,
+                369.0
+              ],
+              "confidence": 0.6824648380279541,
+              "feature_plane_height_m": 0.09,
+              "relative_yaw_rad": -0.026179938779914928,
+              "xy_m": [
+                -0.23584657349333138,
+                -2.033106618395506
+              ]
+            },
+            "r3": {
+              "anchor_confidence": 0.6101840138435364,
+              "appearance_source": "initial",
+              "center_uv": [
+                252.0,
+                212.0
+              ],
+              "confidence": 0.6101840138435364,
+              "feature_plane_height_m": 0.09,
+              "relative_yaw_rad": 0.03490658503988659,
+              "xy_m": [
+                -0.24281638789238524,
+                -1.4859761880697722
+              ]
+            }
+          },
+          "payload": {
+            "axis_xy": [
+              -0.01587013639168413,
+              -0.9998740614551961
+            ],
+            "center_projection_interval_m": [
+              1.759547688274898,
+              1.8288557466567787
+            ],
+            "feature_area_px": 1528,
+            "feature_plane_height_m": 0.09,
+            "relative_yaw_rad": -0.004295404173495276,
+            "xy_is_visible_fragment_centroid": true,
+            "xy_m": [
+              -0.2248878175419391,
+              -1.798986082562364
+            ]
+          },
+          "plan_hash": "24ee1c2197679e53428dc3078df019d6fb28050868e479bd3d7a0b657d91cf6e",
+          "ready": true,
+          "reference": [
+            -0.2558870823463675,
+            -1.751623165087225,
+            0.0
+          ],
+          "route": [
+            [
+              0.6144707831912489,
+              -2.0017424535997637,
+              0.0
+            ],
+            [
+              0.43447078319124893,
+              -2.3017424535997635,
+              0.0
+            ],
+            [
+              -0.10552921680875105,
+              -2.2417424535997634,
+              0.0
+            ],
+            [
+              -0.22552921680875104,
+              -1.7617424535997637,
+              0.0
+            ],
+            [
+              -0.4055292168087511,
+              -1.7017424535997636,
+              0.0
+            ],
+            [
+              -0.7055292168087509,
+              -1.7017424535997636,
+              0.0
+            ],
+            [
+              -0.765529216808751,
+              -1.7617424535997637,
+              0.0
+            ],
+            [
+              -0.84,
+              -2,
+              0.0
+            ]
+          ],
+          "segment": 4,
+          "status": "track"
+        },
+        "r3": {
+          "action": {
+            "duration_s": 0.2,
+            "forward": -0.007464692544529376,
+            "kind": "mecanum",
+            "left": 0.002226037564448318,
+            "turn": -0.01047197551196586
+          },
+          "done": false,
+          "heading_rad": 0.0,
+          "observations": {
+            "r1": {
+              "anchor_confidence": 0.6824648380279541,
+              "appearance_source": "initial",
+              "center_uv": [
+                254.0,
+                369.0
+              ],
+              "confidence": 0.6824648380279541,
+              "feature_plane_height_m": 0.09,
+              "relative_yaw_rad": -0.026179938779914928,
+              "xy_m": [
+                -0.23584657349333138,
+                -2.033106618395506
+              ]
+            },
+            "r3": {
+              "anchor_confidence": 0.6101840138435364,
+              "appearance_source": "initial",
+              "center_uv": [
+                252.0,
+                212.0
+              ],
+              "confidence": 0.6101840138435364,
+              "feature_plane_height_m": 0.09,
+              "relative_yaw_rad": 0.03490658503988659,
+              "xy_m": [
+                -0.24281638789238524,
+                -1.4859761880697722
+              ]
+            }
+          },
+          "payload": {
+            "axis_xy": [
+              -0.01587013639168413,
+              -0.9998740614551961
+            ],
+            "center_projection_interval_m": [
+              1.759547688274898,
+              1.8288557466567787
+            ],
+            "feature_area_px": 1528,
+            "feature_plane_height_m": 0.09,
+            "relative_yaw_rad": -0.004295404173495276,
+            "xy_is_visible_fragment_centroid": true,
+            "xy_m": [
+              -0.2248878175419391,
+              -1.798986082562364
+            ]
+          },
+          "plan_hash": "24ee1c2197679e53428dc3078df019d6fb28050868e479bd3d7a0b657d91cf6e",
+          "ready": true,
+          "reference": [
+            -0.2558870823463675,
+            -1.751623165087225,
+            0.0
+          ],
+          "route": [
+            [
+              0.6144707831912489,
+              -2.0017424535997637,
+              0.0
+            ],
+            [
+              0.43447078319124893,
+              -2.3017424535997635,
+              0.0
+            ],
+            [
+              -0.10552921680875105,
+              -2.2417424535997634,
+              0.0
+            ],
+            [
+              -0.22552921680875104,
+              -1.7617424535997637,
+              0.0
+            ],
+            [
+              -0.4055292168087511,
+              -1.7017424535997636,
+              0.0
+            ],
+            [
+              -0.7055292168087509,
+              -1.7017424535997636,
+              0.0
+            ],
+            [
+              -0.765529216808751,
+              -1.7617424535997637,
+              0.0
+            ],
+            [
+              -0.84,
+              -2,
+              0.0
+            ]
+          ],
+          "segment": 4,
+          "status": "track"
+        }
+      },
+      "input_audit": {
+        "passed": true,
+        "steps": 750,
+        "grasp": {
+          "ok": true,
+          "condition": "visual",
+          "rounds": 16,
+          "calls": 32,
+          "models": {
+            "r1": "2a5a19e323d6353ee8ca0342a3a9341a0736d3d35ba9a7df11d45071f5d15a43",
+            "r3": "e55bb7d0ac473dc79d6eab9c1f4dadb2b5dff068329a8c8714d1fd076e5ecfed"
+          },
+          "calls_source": "result.json:calls",
+          "replay": [
+            {
+              "round": 0,
+              "robot_id": "r1",
+              "own_sha256": "d13291c42ff9be8ec5fce816139a2403f1efcf0e3d109cc0795a7166edfee67d",
+              "top_sha256": "5fd1efc8ddca9923f5fbacce09872804381bfdfae138db5e1ef869748a0602e3",
+              "actions": []
+            },
+            {
+              "round": 0,
+              "robot_id": "r3",
+              "own_sha256": "ce3d8b497ad3b7e9bf49a3f363426b475f463e91b0f657416bb8bb66a1a332d6",
+              "top_sha256": "5fd1efc8ddca9923f5fbacce09872804381bfdfae138db5e1ef869748a0602e3",
+              "actions": []
+            },
+            {
+              "round": 1,
+              "robot_id": "r1",
+              "own_sha256": "1f8b4b5c1044f4f8ea7c6141d0b8bbb6a3cf457ee7167773225f5a01241e7198",
+              "top_sha256": "c46f450bb711c51433a976fbd453be64891114e885748e86094b8b36729e559d",
+              "actions": []
+            },
+            {
+              "round": 1,
+              "robot_id": "r3",
+              "own_sha256": "a341e9b7445a56a0744a873cfcfe5ac3fd8d1ddc849c0f0e0249cab1f16dbea2",
+              "top_sha256": "c46f450bb711c51433a976fbd453be64891114e885748e86094b8b36729e559d",
+              "actions": []
+            },
+            {
+              "round": 2,
+              "robot_id": "r1",
+              "own_sha256": "0a6f88e9799a738ec02ae3ca4f5c89067d8ae8ca87cad7e8a870d208b8f55306",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 2,
+              "robot_id": "r3",
+              "own_sha256": "8df436401429f7ec95ae368246fffe58c031d502767a1424c8fe2825149d5fc5",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 3,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 3,
+              "robot_id": "r3",
+              "own_sha256": "8004155a2797ee80c8a7ab6b10a31d70955007a4dd83069d9edb3e5bcc495364",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 4,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 4,
+              "robot_id": "r3",
+              "own_sha256": "8004155a2797ee80c8a7ab6b10a31d70955007a4dd83069d9edb3e5bcc495364",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 5,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 5,
+              "robot_id": "r3",
+              "own_sha256": "8004155a2797ee80c8a7ab6b10a31d70955007a4dd83069d9edb3e5bcc495364",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 6,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 6,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 7,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 7,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 8,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 8,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 9,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 9,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 10,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 10,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 11,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 11,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 12,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 12,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 13,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 13,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "8a180764d1ff077fe11c7ed6359570cec08bd2c3d6c8aa5895a739030d9736a1",
+              "actions": []
+            },
+            {
+              "round": 14,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "0bd85a5184d10d582b0fd13fe5a5f037e7cee237a2a576b55d9aa4d1d909ad92",
+              "actions": []
+            },
+            {
+              "round": 14,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "0bd85a5184d10d582b0fd13fe5a5f037e7cee237a2a576b55d9aa4d1d909ad92",
+              "actions": []
+            },
+            {
+              "round": 15,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "0bd85a5184d10d582b0fd13fe5a5f037e7cee237a2a576b55d9aa4d1d909ad92",
+              "actions": []
+            },
+            {
+              "round": 15,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "0bd85a5184d10d582b0fd13fe5a5f037e7cee237a2a576b55d9aa4d1d909ad92",
+              "actions": []
+            }
+          ],
+          "checked": "skill/model and RGB hashes; exact RGB-only correction, condition-specific pulse deltas, raw arm actions, and own-command history; evaluator data unused"
+        },
+        "physical_success": false,
+        "refused_no_route": false,
+        "scope": "Exact RGB/command replay and output-only scoring; no actual physics rerun"
+      },
+      "raw_directory": "/Users/changmin/projects/ugrp-worktrees/pair-vision-recovery/outputs/pair-vision-recovery-2026-09-14/s-bends",
+      "raw_result_sha256": "87703c8c283e6afea5ae4423033a781f08376220dca33040de99c2de25a70765",
+      "vision_hold_rounds": 6,
+      "vision_hold_sim_seconds": 1.2000000000000002,
+      "vision_recovery_episodes": 1,
+      "vision_recovery_resumes": 1,
+      "memory_wheel_observations": 0
+    },
+    {
+      "appearance_manifest_sha256": "5d61c5bcac5750b552e24ed656ba6367e80386f8e7d185c34e3e584629e50a7b",
+      "arrived": false,
+      "budget": 750,
+      "contact_impratio": 10,
+      "cost_usd": 0,
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-vision-recovery/scripts/run_pair_navigation.py\", line 211, in run\n    raise RuntimeError('RGB navigation budget exhausted')\nRuntimeError: RGB navigation budget exhausted\n",
+      "evaluation": {
+        "bilateral_fraction": 0.8333333333333334,
+        "gates": {
+          "actor_arrived": false,
+          "bilateral_every_sample": false,
+          "cameras_geometry_unchanged": true,
+          "continuous_samples": true,
+          "goal_orientation": false,
+          "goal_position": false,
+          "grasp_stable_before_departure": true,
+          "level_payload": true,
+          "lifted_every_sample": false,
+          "other_collision_free": false,
+          "released_on_floor": false,
+          "wall_contact_free": true,
+          "weld_off": true,
+          "within_authored_bounds": true
+        },
+        "goal_position_error_m": 1.1109424731506128,
+        "goal_yaw_error_deg": 45.75113928842194,
+        "lifted_fraction": 0.846,
+        "min_lift_m": 0.025263,
+        "navigation_sim_seconds": 149.9,
+        "payload_turn_deg": 45.75113928842194,
+        "sample_gap_max_s": 0.10000000000002274,
+        "samples": 1500,
+        "success": false,
+        "unexpected_contact_ticks": 11528,
+        "wall_contact_ticks": 0
+      },
+      "external_model_calls": 0,
+      "grasp_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+      "invariants_final": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "8f4bf44db9eeeba20fb154fda44fad4b3d5650cdcf32fe67fdb4e7d1b0e6729d",
+          "geom_pos": "b3dc607f3961bbd5791bae0c7cf18226a112e68c68dd5196591731cd2d222adb",
+          "geom_quat": "abf3c1234e95a1773de4f2d419a276d8a5f9a42fcf68f0e838e188154c403d95",
+          "geom_rgba": "9765e5d5866f7497547eb54a6cfbdddc153b93302267dbfb025de27ac58ccbaf",
+          "geom_size": "5ba369d8e4cf22960878f136cff4560a21299fbff817116295e6ae762af66839"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "8f4bf44db9eeeba20fb154fda44fad4b3d5650cdcf32fe67fdb4e7d1b0e6729d",
+          "geom_pos": "b3dc607f3961bbd5791bae0c7cf18226a112e68c68dd5196591731cd2d222adb",
+          "geom_quat": "abf3c1234e95a1773de4f2d419a276d8a5f9a42fcf68f0e838e188154c403d95",
+          "geom_rgba": "9765e5d5866f7497547eb54a6cfbdddc153b93302267dbfb025de27ac58ccbaf",
+          "geom_size": "5ba369d8e4cf22960878f136cff4560a21299fbff817116295e6ae762af66839"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "map": {
+        "bounds_m": [
+          -1.08,
+          1.85,
+          -2.9,
+          -1.15
+        ],
+        "footprint": {
+          "half_forward_m": 0.2,
+          "half_lateral_m": 0.51,
+          "margin_m": 0.025
+        },
+        "goal": {
+          "center_m": [
+            -0.62,
+            -2
+          ],
+          "relative_yaw_deg": 0
+        },
+        "grid_m": 0.06,
+        "map_id": "staggered-obstacles",
+        "obstacles": [
+          {
+            "center_m": [
+              0.11,
+              -1.75
+            ],
+            "half_extents_m": [
+              0.07,
+              0.07
+            ],
+            "height_m": 0.3,
+            "id": "near_pillar"
+          },
+          {
+            "center_m": [
+              -0.27,
+              -2.4
+            ],
+            "half_extents_m": [
+              0.07,
+              0.07
+            ],
+            "height_m": 0.3,
+            "id": "far_pillar"
+          }
+        ],
+        "schema": "ugrp.pair_navigation_map.v1",
+        "start_zone": {
+          "center_m": [
+            0.58,
+            -2.0
+          ],
+          "radius_m": 0.25
+        },
+        "top_camera": {
+          "fov_y_deg": 55.0,
+          "name": "cctv_top",
+          "position_m": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion_wxyz": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "map_sha256": "f5c7c96acb3a7729d83a8174fb53342ebf85dbbcaeddde1317c1f52f8c175aee",
+      "post_grasp_settle_s": 8.0,
+      "scene_xml_sha256": "1435a4ae811a172a14bd2fb4656e03230b6144385b6dcfe66374497d29b078b4",
+      "schema": "ugrp.pair_navigation_trial.v1",
+      "scope": "Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay",
+      "sim_seconds": 174.5600000001054,
+      "source_sha": "13b1a4995c3b7d40990c49fa3c57396cec7b5fa8",
+      "success": false,
+      "unexpected_contact_ticks": 11528,
+      "vision_mode": "temporal",
+      "wall_contact_ticks": 0,
+      "wall_seconds": 161.86371712500113,
+      "weld_active_ticks": 0,
+      "id": "staggered-obstacles",
+      "title_ko": "엇갈린 장애물",
+      "expected_geometric_route": true,
+      "expected_blocked_stop_passed": false,
+      "decision_rounds": 750,
+      "robot_decision_commands": 1500,
+      "final_decisions": {
+        "r1": {
+          "action": {
+            "duration_s": 0.2,
+            "forward": -0.011153587897855614,
+            "kind": "mecanum",
+            "left": 0.011788877090761096,
+            "turn": 0.005235987755982663
+          },
+          "done": false,
+          "heading_rad": 0.0,
+          "observations": {
+            "r1": {
+              "anchor_confidence": 0.6998227834701538,
+              "appearance_source": "initial",
+              "center_uv": [
+                501.0,
+                517.0
+              ],
+              "confidence": 0.6998227834701538,
+              "feature_plane_height_m": 0.09,
+              "relative_yaw_rad": 0.7592182246175337,
+              "xy_m": [
+                0.6249255047898299,
+                -2.5488728839254975
+              ]
+            },
+            "r3": {
+              "anchor_confidence": 0.7309498190879822,
+              "appearance_source": "initial",
+              "center_uv": [
+                387.0,
+                412.0
+              ],
+              "confidence": 0.7309498190879822,
+              "feature_plane_height_m": 0.09,
+              "relative_yaw_rad": 0.7941248096574207,
+              "xy_m": [
+                0.22764608404375547,
+                -2.1829576279751657
+              ]
+            }
+          },
+          "payload": {
+            "axis_xy": [
+              0.7195836656482902,
+              -0.6944057517994574
+            ],
+            "center_projection_interval_m": [
+              1.8222591528584,
+              2.087078489454369
+            ],
+            "feature_area_px": 791,
+            "feature_plane_height_m": 0.09,
+            "relative_yaw_rad": 0.8147779761317062,
+            "xy_is_visible_fragment_centroid": true,
+            "xy_m": [
+              0.433885623644586,
+              -2.364168396652458
+            ]
+          },
+          "plan_hash": "0ef38838b5a54da7396fce2ccfc5bf3614973d707b823b0a3c3afb8f496a4814",
+          "ready": true,
+          "reference": [
+            0.4104707831912489,
+            -2.3617424535997635,
+            0.7853981633974482
+          ],
+          "route": [
+            [
+              0.6144707831912489,
+              -2.0017424535997637,
+              0.0
+            ],
+            [
+              0.49447078319124893,
+              -2.3017424535997635,
+              0.0
+            ],
+            [
+              0.49447078319124893,
+              -2.3017424535997635,
+              0.7853981633974483
+            ],
+            [
+              0.43447078319124893,
+              -2.3617424535997635,
+              0.7853981633974483
+            ],
+            [
+              0.25447078319124894,
+              -2.3617424535997635,
+              0.7853981633974483
+            ],
+            [
+              -0.4055292168087511,
+              -1.7617424535997637,
+              0.7853981633974483
+            ],
+            [
+              -0.585529216808751,
+              -1.7617424535997637,
+              0.0
+            ],
+            [
+              -0.62,
+              -2,
+              0.0
+            ]
+          ],
+          "segment": 4,
+          "status": "track"
+        },
+        "r3": {
+          "action": {
+            "duration_s": 0.2,
+            "forward": 0.0015742538456862505,
+            "kind": "mecanum",
+            "left": 0.009660321096336619,
+            "turn": 0.005235987755982397
+          },
+          "done": false,
+          "heading_rad": 0.0,
+          "observations": {
+            "r1": {
+              "anchor_confidence": 0.6998227834701538,
+              "appearance_source": "initial",
+              "center_uv": [
+                501.0,
+                517.0
+              ],
+              "confidence": 0.6998227834701538,
+              "feature_plane_height_m": 0.09,
+              "relative_yaw_rad": 0.7592182246175337,
+              "xy_m": [
+                0.6249255047898299,
+                -2.5488728839254975
+              ]
+            },
+            "r3": {
+              "anchor_confidence": 0.7309498190879822,
+              "appearance_source": "initial",
+              "center_uv": [
+                387.0,
+                412.0
+              ],
+              "confidence": 0.7309498190879822,
+              "feature_plane_height_m": 0.09,
+              "relative_yaw_rad": 0.7941248096574207,
+              "xy_m": [
+                0.22764608404375547,
+                -2.1829576279751657
+              ]
+            }
+          },
+          "payload": {
+            "axis_xy": [
+              0.7195836656482902,
+              -0.6944057517994574
+            ],
+            "center_projection_interval_m": [
+              1.8222591528584,
+              2.087078489454369
+            ],
+            "feature_area_px": 791,
+            "feature_plane_height_m": 0.09,
+            "relative_yaw_rad": 0.8147779761317062,
+            "xy_is_visible_fragment_centroid": true,
+            "xy_m": [
+              0.433885623644586,
+              -2.364168396652458
+            ]
+          },
+          "plan_hash": "0ef38838b5a54da7396fce2ccfc5bf3614973d707b823b0a3c3afb8f496a4814",
+          "ready": true,
+          "reference": [
+            0.4104707831912489,
+            -2.3617424535997635,
+            0.7853981633974482
+          ],
+          "route": [
+            [
+              0.6144707831912489,
+              -2.0017424535997637,
+              0.0
+            ],
+            [
+              0.49447078319124893,
+              -2.3017424535997635,
+              0.0
+            ],
+            [
+              0.49447078319124893,
+              -2.3017424535997635,
+              0.7853981633974483
+            ],
+            [
+              0.43447078319124893,
+              -2.3617424535997635,
+              0.7853981633974483
+            ],
+            [
+              0.25447078319124894,
+              -2.3617424535997635,
+              0.7853981633974483
+            ],
+            [
+              -0.4055292168087511,
+              -1.7617424535997637,
+              0.7853981633974483
+            ],
+            [
+              -0.585529216808751,
+              -1.7617424535997637,
+              0.0
+            ],
+            [
+              -0.62,
+              -2,
+              0.0
+            ]
+          ],
+          "segment": 4,
+          "status": "track"
+        }
+      },
+      "input_audit": {
+        "passed": true,
+        "steps": 750,
+        "grasp": {
+          "ok": true,
+          "condition": "visual",
+          "rounds": 16,
+          "calls": 32,
+          "models": {
+            "r1": "2a5a19e323d6353ee8ca0342a3a9341a0736d3d35ba9a7df11d45071f5d15a43",
+            "r3": "e55bb7d0ac473dc79d6eab9c1f4dadb2b5dff068329a8c8714d1fd076e5ecfed"
+          },
+          "calls_source": "result.json:calls",
+          "replay": [
+            {
+              "round": 0,
+              "robot_id": "r1",
+              "own_sha256": "d13291c42ff9be8ec5fce816139a2403f1efcf0e3d109cc0795a7166edfee67d",
+              "top_sha256": "37cd94eca9a2e2b372f594c71bbb92ae4761d01e19266a615a35e82a41dfc563",
+              "actions": []
+            },
+            {
+              "round": 0,
+              "robot_id": "r3",
+              "own_sha256": "ce3d8b497ad3b7e9bf49a3f363426b475f463e91b0f657416bb8bb66a1a332d6",
+              "top_sha256": "37cd94eca9a2e2b372f594c71bbb92ae4761d01e19266a615a35e82a41dfc563",
+              "actions": []
+            },
+            {
+              "round": 1,
+              "robot_id": "r1",
+              "own_sha256": "1f8b4b5c1044f4f8ea7c6141d0b8bbb6a3cf457ee7167773225f5a01241e7198",
+              "top_sha256": "3bbdde3b237370938116e24b9920693f8687192ba251c4410f9a99dde7cf1d2b",
+              "actions": []
+            },
+            {
+              "round": 1,
+              "robot_id": "r3",
+              "own_sha256": "a341e9b7445a56a0744a873cfcfe5ac3fd8d1ddc849c0f0e0249cab1f16dbea2",
+              "top_sha256": "3bbdde3b237370938116e24b9920693f8687192ba251c4410f9a99dde7cf1d2b",
+              "actions": []
+            },
+            {
+              "round": 2,
+              "robot_id": "r1",
+              "own_sha256": "0a6f88e9799a738ec02ae3ca4f5c89067d8ae8ca87cad7e8a870d208b8f55306",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 2,
+              "robot_id": "r3",
+              "own_sha256": "8df436401429f7ec95ae368246fffe58c031d502767a1424c8fe2825149d5fc5",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 3,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 3,
+              "robot_id": "r3",
+              "own_sha256": "8004155a2797ee80c8a7ab6b10a31d70955007a4dd83069d9edb3e5bcc495364",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 4,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 4,
+              "robot_id": "r3",
+              "own_sha256": "8004155a2797ee80c8a7ab6b10a31d70955007a4dd83069d9edb3e5bcc495364",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 5,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 5,
+              "robot_id": "r3",
+              "own_sha256": "8004155a2797ee80c8a7ab6b10a31d70955007a4dd83069d9edb3e5bcc495364",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 6,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 6,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 7,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 7,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 8,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 8,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 9,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 9,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 10,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 10,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 11,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 11,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 12,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 12,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 13,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 13,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "47d67aea31b1d20cfc97f4937e5746a871d2f143ad776842ef01d392d83c8661",
+              "actions": []
+            },
+            {
+              "round": 14,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "72df6e28ce23a0c91c4ec69e90ae6a60a4948228ec99a7996bc7992e9fec8c39",
+              "actions": []
+            },
+            {
+              "round": 14,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "72df6e28ce23a0c91c4ec69e90ae6a60a4948228ec99a7996bc7992e9fec8c39",
+              "actions": []
+            },
+            {
+              "round": 15,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "72df6e28ce23a0c91c4ec69e90ae6a60a4948228ec99a7996bc7992e9fec8c39",
+              "actions": []
+            },
+            {
+              "round": 15,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "72df6e28ce23a0c91c4ec69e90ae6a60a4948228ec99a7996bc7992e9fec8c39",
+              "actions": []
+            }
+          ],
+          "checked": "skill/model and RGB hashes; exact RGB-only correction, condition-specific pulse deltas, raw arm actions, and own-command history; evaluator data unused"
+        },
+        "physical_success": false,
+        "refused_no_route": false,
+        "scope": "Exact RGB/command replay and output-only scoring; no actual physics rerun"
+      },
+      "raw_directory": "/Users/changmin/projects/ugrp-worktrees/pair-vision-recovery/outputs/pair-vision-recovery-2026-09-14/staggered-obstacles",
+      "raw_result_sha256": "25073ee010aeae8f2632cf1bf49a9935f659d541f702ef3a3ed30fbb1c0c468b",
+      "vision_hold_rounds": 0,
+      "vision_hold_sim_seconds": 0.0,
+      "vision_recovery_episodes": 0,
+      "vision_recovery_resumes": 0,
+      "memory_wheel_observations": 0
+    },
+    {
+      "appearance_manifest_sha256": "5d61c5bcac5750b552e24ed656ba6367e80386f8e7d185c34e3e584629e50a7b",
+      "arrived": false,
+      "budget": 750,
+      "contact_impratio": 10,
+      "cost_usd": 0,
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-vision-recovery/scripts/run_pair_navigation.py\", line 206, in run\n    raise RuntimeError('policy stopped: '+json.dumps({r: d['status'] for r,d in decisions.items()}))\nRuntimeError: policy stopped: {\"r1\": \"vision_stop\", \"r3\": \"vision_stop\"}\n",
+      "evaluation": {
+        "bilateral_fraction": 1.0,
+        "gates": {
+          "actor_arrived": false,
+          "bilateral_every_sample": true,
+          "cameras_geometry_unchanged": true,
+          "continuous_samples": true,
+          "goal_orientation": true,
+          "goal_position": false,
+          "grasp_stable_before_departure": true,
+          "level_payload": true,
+          "lifted_every_sample": true,
+          "other_collision_free": true,
+          "released_on_floor": false,
+          "wall_contact_free": true,
+          "weld_off": true,
+          "within_authored_bounds": true
+        },
+        "goal_position_error_m": 0.34465035098342767,
+        "goal_yaw_error_deg": 0.6409902177061253,
+        "lifted_fraction": 1.0,
+        "min_lift_m": 0.060351,
+        "navigation_sim_seconds": 74.69999999999999,
+        "payload_turn_deg": 90.64099021770612,
+        "sample_gap_max_s": 0.10000000000000853,
+        "samples": 748,
+        "success": false,
+        "unexpected_contact_ticks": 0,
+        "wall_contact_ticks": 0
+      },
+      "external_model_calls": 0,
+      "grasp_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+      "invariants_final": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "8f4bf44db9eeeba20fb154fda44fad4b3d5650cdcf32fe67fdb4e7d1b0e6729d",
+          "geom_pos": "a593e842df71f7d213e7b9437cc450c16f2f2844480dfedae92f922bee96a363",
+          "geom_quat": "abf3c1234e95a1773de4f2d419a276d8a5f9a42fcf68f0e838e188154c403d95",
+          "geom_rgba": "9765e5d5866f7497547eb54a6cfbdddc153b93302267dbfb025de27ac58ccbaf",
+          "geom_size": "57e1f62d2f85c4ba3762334c460ed0d26c72247b0e876332951f0b9a6efeccbc"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "8f4bf44db9eeeba20fb154fda44fad4b3d5650cdcf32fe67fdb4e7d1b0e6729d",
+          "geom_pos": "a593e842df71f7d213e7b9437cc450c16f2f2844480dfedae92f922bee96a363",
+          "geom_quat": "abf3c1234e95a1773de4f2d419a276d8a5f9a42fcf68f0e838e188154c403d95",
+          "geom_rgba": "9765e5d5866f7497547eb54a6cfbdddc153b93302267dbfb025de27ac58ccbaf",
+          "geom_size": "57e1f62d2f85c4ba3762334c460ed0d26c72247b0e876332951f0b9a6efeccbc"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "map": {
+        "bounds_m": [
+          -1.08,
+          1.85,
+          -2.9,
+          -1.15
+        ],
+        "footprint": {
+          "half_forward_m": 0.2,
+          "half_lateral_m": 0.51,
+          "margin_m": 0.025
+        },
+        "goal": {
+          "center_m": [
+            -0.52,
+            -2
+          ],
+          "relative_yaw_deg": 90
+        },
+        "grid_m": 0.06,
+        "map_id": "blocked-branch",
+        "obstacles": [
+          {
+            "center_m": [
+              0.1,
+              -2.0
+            ],
+            "half_extents_m": [
+              0.04,
+              0.26
+            ],
+            "height_m": 0.3,
+            "id": "junction"
+          },
+          {
+            "center_m": [
+              -0.4695,
+              -1.64
+            ],
+            "half_extents_m": [
+              0.6095,
+              0.06
+            ],
+            "height_m": 0.3,
+            "id": "dead_end_cap"
+          }
+        ],
+        "schema": "ugrp.pair_navigation_map.v1",
+        "start_zone": {
+          "center_m": [
+            0.58,
+            -2.0
+          ],
+          "radius_m": 0.25
+        },
+        "top_camera": {
+          "fov_y_deg": 55.0,
+          "name": "cctv_top",
+          "position_m": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion_wxyz": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "map_sha256": "dab4c4cb8e0b981b1571e4174f3949dc7d5b2621a2bae3506c01bfb21de5d97d",
+      "post_grasp_settle_s": 8.0,
+      "scene_xml_sha256": "6ede66b0e792d6b981f1b645b6ef796daec671cac548c98d2330d90fafe26542",
+      "schema": "ugrp.pair_navigation_trial.v1",
+      "scope": "Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay",
+      "sim_seconds": 99.35999999994984,
+      "source_sha": "13b1a4995c3b7d40990c49fa3c57396cec7b5fa8",
+      "success": false,
+      "unexpected_contact_ticks": 0,
+      "vision_mode": "temporal",
+      "wall_contact_ticks": 0,
+      "wall_seconds": 83.7325609580148,
+      "weld_active_ticks": 0,
+      "id": "blocked-branch",
+      "title_ko": "막힌 길·우회 분기",
+      "expected_geometric_route": true,
+      "expected_blocked_stop_passed": false,
+      "decision_rounds": 374,
+      "robot_decision_commands": 748,
+      "final_decisions": {
+        "r1": {
+          "action": {
+            "duration_s": 0.2,
+            "forward": 0.0,
+            "kind": "mecanum",
+            "left": 0.0,
+            "turn": 0.0
+          },
+          "done": false,
+          "error": "r3 wheel appearance uncertain (0.566, anchor 0.469)",
+          "plan_hash": "4beddd29ed61402d4dd3903193f3dbef9a229d4a2978fd3a73676b6f9b5c3a27",
+          "ready": false,
+          "recovery_frames": 25,
+          "retryable": false,
+          "status": "vision_stop"
+        },
+        "r3": {
+          "action": {
+            "duration_s": 0.2,
+            "forward": 0.0,
+            "kind": "mecanum",
+            "left": 0.0,
+            "turn": 0.0
+          },
+          "done": false,
+          "error": "r3 wheel appearance uncertain (0.566, anchor 0.469)",
+          "plan_hash": "4beddd29ed61402d4dd3903193f3dbef9a229d4a2978fd3a73676b6f9b5c3a27",
+          "ready": false,
+          "recovery_frames": 25,
+          "retryable": false,
+          "status": "vision_stop"
+        }
+      },
+      "input_audit": {
+        "passed": true,
+        "steps": 374,
+        "grasp": {
+          "ok": true,
+          "condition": "visual",
+          "rounds": 16,
+          "calls": 32,
+          "models": {
+            "r1": "2a5a19e323d6353ee8ca0342a3a9341a0736d3d35ba9a7df11d45071f5d15a43",
+            "r3": "e55bb7d0ac473dc79d6eab9c1f4dadb2b5dff068329a8c8714d1fd076e5ecfed"
+          },
+          "calls_source": "result.json:calls",
+          "replay": [
+            {
+              "round": 0,
+              "robot_id": "r1",
+              "own_sha256": "d13291c42ff9be8ec5fce816139a2403f1efcf0e3d109cc0795a7166edfee67d",
+              "top_sha256": "b21a3ac298f370221173ad967d01c91b3235414fbef1eaa10efa870ade21fee8",
+              "actions": []
+            },
+            {
+              "round": 0,
+              "robot_id": "r3",
+              "own_sha256": "ce3d8b497ad3b7e9bf49a3f363426b475f463e91b0f657416bb8bb66a1a332d6",
+              "top_sha256": "b21a3ac298f370221173ad967d01c91b3235414fbef1eaa10efa870ade21fee8",
+              "actions": []
+            },
+            {
+              "round": 1,
+              "robot_id": "r1",
+              "own_sha256": "1f8b4b5c1044f4f8ea7c6141d0b8bbb6a3cf457ee7167773225f5a01241e7198",
+              "top_sha256": "6ee4979857ccbe207284c15dcdf29ef002dc609ac863ad7555d8b3fadd3b53fa",
+              "actions": []
+            },
+            {
+              "round": 1,
+              "robot_id": "r3",
+              "own_sha256": "a341e9b7445a56a0744a873cfcfe5ac3fd8d1ddc849c0f0e0249cab1f16dbea2",
+              "top_sha256": "6ee4979857ccbe207284c15dcdf29ef002dc609ac863ad7555d8b3fadd3b53fa",
+              "actions": []
+            },
+            {
+              "round": 2,
+              "robot_id": "r1",
+              "own_sha256": "0a6f88e9799a738ec02ae3ca4f5c89067d8ae8ca87cad7e8a870d208b8f55306",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 2,
+              "robot_id": "r3",
+              "own_sha256": "8df436401429f7ec95ae368246fffe58c031d502767a1424c8fe2825149d5fc5",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 3,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 3,
+              "robot_id": "r3",
+              "own_sha256": "8004155a2797ee80c8a7ab6b10a31d70955007a4dd83069d9edb3e5bcc495364",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 4,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 4,
+              "robot_id": "r3",
+              "own_sha256": "8004155a2797ee80c8a7ab6b10a31d70955007a4dd83069d9edb3e5bcc495364",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 5,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 5,
+              "robot_id": "r3",
+              "own_sha256": "8004155a2797ee80c8a7ab6b10a31d70955007a4dd83069d9edb3e5bcc495364",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 6,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 6,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 7,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 7,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 8,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 8,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 9,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 9,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 10,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 10,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 11,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 11,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 12,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 12,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 13,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 13,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "74a738a1285604decbd65c7089d36dc936312e2ba3ecfa2e99e191c3b9d78561",
+              "actions": []
+            },
+            {
+              "round": 14,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "f6ca7c4abf1d42d8dff3c3aed84e7204a05e99cec781d4cbaabeeeef17c4fc60",
+              "actions": []
+            },
+            {
+              "round": 14,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "f6ca7c4abf1d42d8dff3c3aed84e7204a05e99cec781d4cbaabeeeef17c4fc60",
+              "actions": []
+            },
+            {
+              "round": 15,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "f6ca7c4abf1d42d8dff3c3aed84e7204a05e99cec781d4cbaabeeeef17c4fc60",
+              "actions": []
+            },
+            {
+              "round": 15,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "f6ca7c4abf1d42d8dff3c3aed84e7204a05e99cec781d4cbaabeeeef17c4fc60",
+              "actions": []
+            }
+          ],
+          "checked": "skill/model and RGB hashes; exact RGB-only correction, condition-specific pulse deltas, raw arm actions, and own-command history; evaluator data unused"
+        },
+        "physical_success": false,
+        "refused_no_route": false,
+        "scope": "Exact RGB/command replay and output-only scoring; no actual physics rerun"
+      },
+      "raw_directory": "/Users/changmin/projects/ugrp-worktrees/pair-vision-recovery/outputs/pair-vision-recovery-2026-09-14/blocked-branch",
+      "raw_result_sha256": "90e7b862e76c175984711cbbfbd2e1060bdc001755d117e3631e751435dcc31d",
+      "vision_hold_rounds": 24,
+      "vision_hold_sim_seconds": 4.800000000000001,
+      "vision_recovery_episodes": 1,
+      "vision_recovery_resumes": 0,
+      "memory_wheel_observations": 9
+    },
+    {
+      "appearance_manifest_sha256": "5d61c5bcac5750b552e24ed656ba6367e80386f8e7d185c34e3e584629e50a7b",
+      "arrived": false,
+      "budget": 750,
+      "contact_impratio": 10,
+      "cost_usd": 0,
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "error": null,
+      "evaluation": {
+        "bilateral_fraction": 1.0,
+        "gates": {
+          "actor_arrived": false,
+          "bilateral_every_sample": true,
+          "cameras_geometry_unchanged": true,
+          "continuous_samples": true,
+          "goal_orientation": false,
+          "goal_position": false,
+          "grasp_stable_before_departure": true,
+          "level_payload": true,
+          "lifted_every_sample": true,
+          "other_collision_free": true,
+          "released_on_floor": false,
+          "wall_contact_free": true,
+          "weld_off": true,
+          "within_authored_bounds": true
+        },
+        "goal_position_error_m": 1.1381780098842182,
+        "goal_yaw_error_deg": 90.09675535251317,
+        "lifted_fraction": 1.0,
+        "min_lift_m": 0.078431,
+        "navigation_sim_seconds": 1.8999999999999986,
+        "payload_turn_deg": -0.09675535251317749,
+        "sample_gap_max_s": 0.10000000000000142,
+        "samples": 20,
+        "success": false,
+        "unexpected_contact_ticks": 0,
+        "wall_contact_ticks": 0
+      },
+      "external_model_calls": 0,
+      "grasp_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+      "invariants_final": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "b37f9fe91b1b2706d691c21160f10fdc2472191de4d3d334630d1245ee6afee1",
+          "geom_pos": "fa5878c42ea9a73c9c45f997f4bd4189ce56456c52b7b99cca30797c7fb8f5b0",
+          "geom_quat": "e44732ca3ca3e28b9eb571e7f86f1282e112cc7587c4a51018b9193e6a200589",
+          "geom_rgba": "40e15889d71d9eafcbedd63de9366cea03e51edb07085405a5e1ce1df790c9e9",
+          "geom_size": "e196df2f13f3149e1042ebfe679f5ccd17e8f94f4bd4a38f0605d9fe4d818adb"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "b37f9fe91b1b2706d691c21160f10fdc2472191de4d3d334630d1245ee6afee1",
+          "geom_pos": "fa5878c42ea9a73c9c45f997f4bd4189ce56456c52b7b99cca30797c7fb8f5b0",
+          "geom_quat": "e44732ca3ca3e28b9eb571e7f86f1282e112cc7587c4a51018b9193e6a200589",
+          "geom_rgba": "40e15889d71d9eafcbedd63de9366cea03e51edb07085405a5e1ce1df790c9e9",
+          "geom_size": "e196df2f13f3149e1042ebfe679f5ccd17e8f94f4bd4a38f0605d9fe4d818adb"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "map": {
+        "bounds_m": [
+          -1.08,
+          1.85,
+          -2.9,
+          -1.15
+        ],
+        "footprint": {
+          "half_forward_m": 0.2,
+          "half_lateral_m": 0.51,
+          "margin_m": 0.025
+        },
+        "goal": {
+          "center_m": [
+            -0.52,
+            -2
+          ],
+          "relative_yaw_deg": 90
+        },
+        "grid_m": 0.06,
+        "map_id": "fully-blocked",
+        "obstacles": [
+          {
+            "center_m": [
+              0.1,
+              -2.0
+            ],
+            "half_extents_m": [
+              0.04,
+              0.26
+            ],
+            "height_m": 0.3,
+            "id": "junction"
+          },
+          {
+            "center_m": [
+              -0.4695,
+              -1.64
+            ],
+            "half_extents_m": [
+              0.6095,
+              0.06
+            ],
+            "height_m": 0.3,
+            "id": "dead_end_cap"
+          },
+          {
+            "center_m": [
+              0.1,
+              -2.5795
+            ],
+            "half_extents_m": [
+              0.04,
+              0.3195
+            ],
+            "height_m": 0.3,
+            "id": "lower_seal"
+          }
+        ],
+        "schema": "ugrp.pair_navigation_map.v1",
+        "start_zone": {
+          "center_m": [
+            0.58,
+            -2.0
+          ],
+          "radius_m": 0.25
+        },
+        "top_camera": {
+          "fov_y_deg": 55.0,
+          "name": "cctv_top",
+          "position_m": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion_wxyz": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "map_sha256": "da1f449e1b4ee26faef45cd9060060cb9a93b3e07c771916f247c8e567306427",
+      "post_grasp_settle_s": 8.0,
+      "refused_no_route": true,
+      "scene_xml_sha256": "031166f609f4d8375be238eba6c27529534a0360e7576f2413cd5b57edf79db2",
+      "schema": "ugrp.pair_navigation_trial.v1",
+      "scope": "Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay",
+      "sim_seconds": 26.55999999999616,
+      "source_sha": "13b1a4995c3b7d40990c49fa3c57396cec7b5fa8",
+      "success": false,
+      "unexpected_contact_ticks": 0,
+      "vision_mode": "temporal",
+      "wall_contact_ticks": 0,
+      "wall_seconds": 12.194578959024511,
+      "weld_active_ticks": 0,
+      "id": "fully-blocked",
+      "title_ko": "완전 차단 대조",
+      "expected_geometric_route": false,
+      "expected_blocked_stop_passed": true,
+      "decision_rounds": 10,
+      "robot_decision_commands": 20,
+      "final_decisions": {
+        "r1": {
+          "action": {
+            "duration_s": 0.2,
+            "forward": 0.0,
+            "kind": "mecanum",
+            "left": 0.0,
+            "turn": 0.0
+          },
+          "done": false,
+          "heading_rad": 0.0,
+          "observations": {
+            "r1": {
+              "anchor_confidence": 0.9027050733566284,
+              "appearance_source": "initial",
+              "center_uv": [
+                498.0,
+                437.0
+              ],
+              "confidence": 0.9027050733566284,
+              "feature_plane_height_m": 0.09,
+              "relative_yaw_rad": -0.017453292519943295,
+              "xy_m": [
+                0.6144707831912489,
+                -2.2700803079633403
+              ]
+            },
+            "r3": {
+              "anchor_confidence": 0.8935348391532898,
+              "appearance_source": "initial",
+              "center_uv": [
+                498.0,
+                283.0
+              ],
+              "confidence": 0.8935348391532898,
+              "feature_plane_height_m": 0.09,
+              "relative_yaw_rad": 0.017453292519943295,
+              "xy_m": [
+                0.6144707831912489,
+                -1.733404599236187
+              ]
+            }
+          },
+          "payload": {
+            "axis_xy": [
+              -0.01554318384734402,
+              -0.9998791974213123
+            ],
+            "center_projection_interval_m": [
+              1.8543869602610656,
+              2.1259198316136714
+            ],
+            "feature_area_px": 702,
+            "feature_plane_height_m": 0.09,
+            "relative_yaw_rad": -0.003968411290772966,
+            "xy_is_visible_fragment_centroid": true,
+            "xy_m": [
+              0.6176081925218762,
+              -1.9999205719156776
+            ]
+          },
+          "plan_hash": null,
+          "ready": false,
+          "reference": [
+            0.6144707831912489,
+            -2.0017424535997637,
+            0.0
+          ],
+          "route": null,
+          "segment": 1,
+          "status": "no_route"
+        },
+        "r3": {
+          "action": {
+            "duration_s": 0.2,
+            "forward": 0.0,
+            "kind": "mecanum",
+            "left": 0.0,
+            "turn": 0.0
+          },
+          "done": false,
+          "heading_rad": 0.0,
+          "observations": {
+            "r1": {
+              "anchor_confidence": 0.9027050733566284,
+              "appearance_source": "initial",
+              "center_uv": [
+                498.0,
+                437.0
+              ],
+              "confidence": 0.9027050733566284,
+              "feature_plane_height_m": 0.09,
+              "relative_yaw_rad": -0.017453292519943295,
+              "xy_m": [
+                0.6144707831912489,
+                -2.2700803079633403
+              ]
+            },
+            "r3": {
+              "anchor_confidence": 0.8935348391532898,
+              "appearance_source": "initial",
+              "center_uv": [
+                498.0,
+                283.0
+              ],
+              "confidence": 0.8935348391532898,
+              "feature_plane_height_m": 0.09,
+              "relative_yaw_rad": 0.017453292519943295,
+              "xy_m": [
+                0.6144707831912489,
+                -1.733404599236187
+              ]
+            }
+          },
+          "payload": {
+            "axis_xy": [
+              -0.01554318384734402,
+              -0.9998791974213123
+            ],
+            "center_projection_interval_m": [
+              1.8543869602610656,
+              2.1259198316136714
+            ],
+            "feature_area_px": 702,
+            "feature_plane_height_m": 0.09,
+            "relative_yaw_rad": -0.003968411290772966,
+            "xy_is_visible_fragment_centroid": true,
+            "xy_m": [
+              0.6176081925218762,
+              -1.9999205719156776
+            ]
+          },
+          "plan_hash": null,
+          "ready": false,
+          "reference": [
+            0.6144707831912489,
+            -2.0017424535997637,
+            0.0
+          ],
+          "route": null,
+          "segment": 1,
+          "status": "no_route"
+        }
+      },
+      "input_audit": {
+        "passed": true,
+        "steps": 10,
+        "grasp": {
+          "ok": true,
+          "condition": "visual",
+          "rounds": 16,
+          "calls": 32,
+          "models": {
+            "r1": "2a5a19e323d6353ee8ca0342a3a9341a0736d3d35ba9a7df11d45071f5d15a43",
+            "r3": "e55bb7d0ac473dc79d6eab9c1f4dadb2b5dff068329a8c8714d1fd076e5ecfed"
+          },
+          "calls_source": "result.json:calls",
+          "replay": [
+            {
+              "round": 0,
+              "robot_id": "r1",
+              "own_sha256": "d13291c42ff9be8ec5fce816139a2403f1efcf0e3d109cc0795a7166edfee67d",
+              "top_sha256": "3f0f9a3b0a982a636ca96c862579e8fde6bf2ecc89836b4e96d1e6032f82671b",
+              "actions": []
+            },
+            {
+              "round": 0,
+              "robot_id": "r3",
+              "own_sha256": "ce3d8b497ad3b7e9bf49a3f363426b475f463e91b0f657416bb8bb66a1a332d6",
+              "top_sha256": "3f0f9a3b0a982a636ca96c862579e8fde6bf2ecc89836b4e96d1e6032f82671b",
+              "actions": []
+            },
+            {
+              "round": 1,
+              "robot_id": "r1",
+              "own_sha256": "1f8b4b5c1044f4f8ea7c6141d0b8bbb6a3cf457ee7167773225f5a01241e7198",
+              "top_sha256": "f1b34fc669bcc4811b80a2393fb35b7d91175589ef71a09ccb126dec2992cd05",
+              "actions": []
+            },
+            {
+              "round": 1,
+              "robot_id": "r3",
+              "own_sha256": "a341e9b7445a56a0744a873cfcfe5ac3fd8d1ddc849c0f0e0249cab1f16dbea2",
+              "top_sha256": "f1b34fc669bcc4811b80a2393fb35b7d91175589ef71a09ccb126dec2992cd05",
+              "actions": []
+            },
+            {
+              "round": 2,
+              "robot_id": "r1",
+              "own_sha256": "0a6f88e9799a738ec02ae3ca4f5c89067d8ae8ca87cad7e8a870d208b8f55306",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 2,
+              "robot_id": "r3",
+              "own_sha256": "8df436401429f7ec95ae368246fffe58c031d502767a1424c8fe2825149d5fc5",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 3,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 3,
+              "robot_id": "r3",
+              "own_sha256": "8004155a2797ee80c8a7ab6b10a31d70955007a4dd83069d9edb3e5bcc495364",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 4,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 4,
+              "robot_id": "r3",
+              "own_sha256": "8004155a2797ee80c8a7ab6b10a31d70955007a4dd83069d9edb3e5bcc495364",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 5,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 5,
+              "robot_id": "r3",
+              "own_sha256": "8004155a2797ee80c8a7ab6b10a31d70955007a4dd83069d9edb3e5bcc495364",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 6,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 6,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 7,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 7,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 8,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 8,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 9,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 9,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 10,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 10,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 11,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 11,
+              "robot_id": "r3",
+              "own_sha256": "c49fee1674168804cfcdc43d3679604289c0e0ee6997a3a65b8af35c9b1fd3d0",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 12,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 12,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 13,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 13,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "fc62c83e4cd3d0d2fb788f48492c11b5a50657d5112349e263b842a6b1367637",
+              "actions": []
+            },
+            {
+              "round": 14,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "fc1ce9ca54288bd2a06b2a5bf07764198cffc6ee6dc28acbeebe91638f20f320",
+              "actions": []
+            },
+            {
+              "round": 14,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "fc1ce9ca54288bd2a06b2a5bf07764198cffc6ee6dc28acbeebe91638f20f320",
+              "actions": []
+            },
+            {
+              "round": 15,
+              "robot_id": "r1",
+              "own_sha256": "ecfef33422cf7af255bf49402ec7eb3f75098f093f11c421d19a8ff6f99cb3ca",
+              "top_sha256": "fc1ce9ca54288bd2a06b2a5bf07764198cffc6ee6dc28acbeebe91638f20f320",
+              "actions": []
+            },
+            {
+              "round": 15,
+              "robot_id": "r3",
+              "own_sha256": "c78b02614ae2aae5e43b63b9e43c6587523e9b687bbe92b6d677e5ec00b33418",
+              "top_sha256": "fc1ce9ca54288bd2a06b2a5bf07764198cffc6ee6dc28acbeebe91638f20f320",
+              "actions": []
+            }
+          ],
+          "checked": "skill/model and RGB hashes; exact RGB-only correction, condition-specific pulse deltas, raw arm actions, and own-command history; evaluator data unused"
+        },
+        "physical_success": false,
+        "refused_no_route": true,
+        "scope": "Exact RGB/command replay and output-only scoring; no actual physics rerun"
+      },
+      "raw_directory": "/Users/changmin/projects/ugrp-worktrees/pair-vision-recovery/outputs/pair-vision-recovery-2026-09-14/fully-blocked",
+      "raw_result_sha256": "f1b471431c869dcbe056b5b5844d2e1da8fec1a22805bf51f0f88ebd7e262ab5",
+      "vision_hold_rounds": 0,
+      "vision_hold_sim_seconds": 0.0,
+      "vision_recovery_episodes": 0,
+      "vision_recovery_resumes": 0,
+      "memory_wheel_observations": 0
+    }
+  ]
+}

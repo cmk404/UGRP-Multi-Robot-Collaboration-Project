@@ -1,0 +1,48 @@
+{
+  "passed": true,
+  "base_sha": "d3ab17dddb8211c727711fb7fdd5432b4d708964",
+  "execution_sha": "593ccf15fde3900c5e4e5078b1bedf4811bece8e",
+  "unchanged_files": {
+    "harness/pair_grasp_spacing.py": true,
+    "harness/pair_navigation.py": true,
+    "scripts/run_pair_navigation.py": true,
+    "scripts/camera_approach_scene.py": true,
+    "scripts/camera_short_transport_scene.py": true,
+    "scripts/audit_pair_navigation.py": true,
+    "experiments/2026-09-14-pair-grasp-spacing/run_cohort.py": true
+  },
+  "baseline_reproduction": [
+    {
+      "mode": "stationary",
+      "checks": {
+        "scene_xml_sha256": true,
+        "grasp_model_files": true,
+        "invariants_initial": true,
+        "invariants_final": true,
+        "steps": true,
+        "spacing_steps": true,
+        "sync_events": true,
+        "spacing_sync_events": true,
+        "all_physical_evaluation_samples": true
+      },
+      "passed": true,
+      "last_sample_s": 93.94000000000273
+    },
+    {
+      "mode": "shuttle",
+      "checks": {
+        "scene_xml_sha256": true,
+        "grasp_model_files": true,
+        "invariants_initial": true,
+        "invariants_final": true,
+        "steps": true,
+        "spacing_steps": true,
+        "sync_events": true,
+        "spacing_sync_events": true,
+        "all_physical_evaluation_samples": true
+      },
+      "passed": true,
+      "last_sample_s": 94.24000000000274
+    }
+  ]
+}
