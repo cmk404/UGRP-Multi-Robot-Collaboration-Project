@@ -76,7 +76,8 @@ def prepare_grasp_models(source, target, *, background_band=True, top_roi=None):
     write(target/'provenance.json',{'source':str(source.resolve()),
         'constant_background_top_roi':top_roi,
         'source_skill_sha256':hashlib.sha256((source/'student-skill.json').read_bytes()).hexdigest(),
-        'change':('constant TOP background band only; own RGB, learned weights, support and limits unchanged'
+        'change':('constant TOP background window only; own RGB, learned weights, support and limits unchanged' if top_roi else
+                  'constant TOP background band only; own RGB, learned weights, support and limits unchanged'
                   if background_band else 'native model contents unchanged; no additional background mask')})
     return target
 

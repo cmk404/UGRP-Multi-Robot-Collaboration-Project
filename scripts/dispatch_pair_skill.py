@@ -31,6 +31,8 @@ class BoundPairSkill:
         self.last_capture=None;self.count=0;self.calls=[]
         self.grasp_translation=None;self.latest_translation=None;self.transport_started=False
         self.beam_continuity=BeamContinuity()
+        from harness.dispatch_beam_tracker import CarriedBeamTracker
+        self.carried_beam=CarriedBeamTracker()
         self.coarse=PairCoarsePixels(identity,bindings,reference) if identity is not None else None
 
     def time(self):return self.io.time()
@@ -47,7 +49,8 @@ class BoundPairSkill:
         frames=self.io.capture('pair-'+str(self.count)+'-'+tag)
         top, transform=canonical_pair_top(frames['r1']['top_bytes'],self.reference,
             translation_px=self.grasp_translation if self.phase.startswith('grasp') else None,
-            hue_upper=35 if self.transport_started else 24)
+            hue_upper=35 if self.transport_started else 24,
+            observed_beam=self.carried_beam.observe(frames['r1']['top_bytes']) if self.transport_started else None)
         if self.transport_started:self.beam_continuity.observe(transform['observed_beam'])
         self.latest_translation=transform['translation_px']
         top_ref=image_record(self.out/'rgb'/f'pair-{self.count}-canonical-top.jpg',self.out,top)
@@ -127,7 +130,7 @@ class BoundPairSkill:
                 decisions[r]={'ok':held,'held_estimate':held,'ready':evidence['done'],
                               'forward':abs(motion['forward']),'current_own_rgb_features':current,'anchor_own_rgb_features':initial,
                               'appearance':'orange-to-yellow beam hue 3..35; same shape/consistency gates'}
-            beam=beam_feature(raw,hue_upper=35)
+            beam=self.carried_beam.previous
             upper,lower=sorted(beam['endpoints'],key=lambda p:p[1])
             skew=(lower[0]-upper[0])*beam['image_size'][0]
             control=policy.step(decisions,skew,
@@ -149,10 +152,11 @@ class BoundPairSkill:
         from harness.pair_carry_sync import PairCarrySync
         self.phase='TRANSIT';self.transport_started=True
         anchor=self.capture('carry-anchor')
-        data=navigation_map(self.bindings,anchor['r1']['raw_top_bytes'])
+        other,other_source=self.io.other_robot_observation(anchor['r1']['raw_top_bytes'])
+        data=navigation_map(self.bindings,anchor['r1']['raw_top_bytes'],other_robot_center_px=other['center_px'])
         agents={r:PairNavigator(data,r) for r in ROBOTS}
         sync=PairCarrySync('dispatch-'+self.bindings.committed['plan_hash'])
-        self.calls.append({'kind':'navigation_map','map':data})
+        self.calls.append({'kind':'navigation_map','map':data,'other_robot_observation':other,'other_robot_source':other_source})
         for index in range(1200):
             frames=self.capture('rotate-carry')
             decisions={}
@@ -181,7 +185,7 @@ class BoundPairSkill:
         samples=[]
         for index in range(2):
             frames=self.capture('placement-confirmation')
-            b=beam_feature(frames['r1']['raw_top_bytes'],hue_upper=35)
+            b=self.carried_beam.previous
             w,h=b['image_size'];corners=np.array(b['corners4'])*[w,h]
             a=pixel_from_map(np.array(slot['center_m'])-slot['half_extents_m'],self.bindings.static_map,(h,w))
             z=pixel_from_map(np.array(slot['center_m'])+slot['half_extents_m'],self.bindings.static_map,(h,w))

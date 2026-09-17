@@ -39,7 +39,7 @@ def test_unannounced_barrier_comes_from_rgb_and_blocks_only_north():
     assert len(obstacles)==1 and obstacles[0]['source'].startswith('conservative TOP RGB')
     assert not visual_barriers((ROOT/'carry-anchor.jpg').read_bytes(),authored_map())
     for route,possible in [('north',False),('south',True)]:
-        data=navigation_map(bindings(route=route),raw)
+        data=navigation_map(bindings(route=route),raw,planned_box_completion=True)
         result=plan_route([-.18,-1.65,0],[*data['goal']['center_m'],0],data)
         assert bool(result)==possible
 
@@ -71,3 +71,52 @@ def test_solo_corridor_respects_new_chicane_and_unvalidated_ridge():
     assert -2.70<=gate[1]<=-2.63
     with pytest.raises(RuntimeError,match='unvalidated terrain'):
         solo_gate(authored_map('rough_south'),'south',raw)
+
+
+def test_navigation_uses_original_jpeg_without_lossy_second_encoding(monkeypatch):
+    import cv2
+    raw=(ROOT/'carry-anchor.jpg').read_bytes()
+    data=navigation_map(bindings(),raw)
+    monkeypatch.setattr(cv2,'imencode',lambda *a,**k:(_ for _ in ()).throw(AssertionError('raw actor image re-encoded')))
+    obs=PairVision(data).observe(raw,raw)
+    assert set(obs)=={'r1','r3'}
+
+
+def test_waiting_cargo_remains_an_obstacle_until_dependency_is_completed():
+    from harness.dispatch_navigation_map import visual_boxes
+    raw=(ROOT/'north-barrier.jpg').read_bytes()
+    boxes=visual_boxes(raw,authored_map())
+    assert len(boxes)==1 and boxes[0]['center_m'][0]<0
+    data=navigation_map(bindings(route='south'),raw,other_robot_center_px=[110,571])
+    assert any(o['id']=='rgb_other_robot' for o in data['obstacles'])
+    assert plan_route([-.18,-1.65,0],[*data['goal']['center_m'],0],data) is None
+    future=navigation_map(bindings(route='south'),raw,planned_box_completion=True)
+    assert all(o['id']!='rgb_other_robot' for o in future['obstacles'])
+    assert any(o['id']=='planned_yield_pose' for o in future['obstacles'])
+    assert plan_route([-.18,-1.65,0],[*future['goal']['center_m'],0],future)
+
+
+def test_box_first_reserves_pickup_until_visual_yield_completion():
+    plan=fixture_plan(dock='dock_a',route='south')
+    plan['tasks'][0]['after']=['box_job'];plan['tasks'][1]['after']=[]
+    b=SkillBindings({'plan':plan,'plan_hash':digest(plan),'version':1},authored_map())
+    assert not b.permission('beam','APPROACH')
+    assert b.permission('box','APPROACH')
+    assert not b.permission('beam','APPROACH')
+    b.finish('box')
+    assert b.permission('beam','APPROACH')
+
+
+def test_release_yield_observes_real_wheels_and_does_not_assume_a_command_moved_them():
+    from harness.dispatch_yield import SoloYield
+    raw=(ROOT/'box-released-top.jpg').read_bytes()
+    policy=SoloYield(authored_map(),[838.09,544.42])
+    first,evidence=policy.decide(raw)
+    assert first['forward']<0 and not policy.done
+    for _ in range(4):
+        action,again=policy.decide(raw)
+        assert np.allclose(again['observation']['center_px'],evidence['observation']['center_px'],atol=.01)
+        assert again['index']==0 and not policy.done
+    import cv2
+    black=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))[1].tobytes()
+    with pytest.raises(ValueError):policy.decide(black)

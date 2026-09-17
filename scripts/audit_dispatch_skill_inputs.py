@@ -34,11 +34,14 @@ def audit(p,*,replay_solo=False):
  calls=json.loads((p/'pair-decisions.json').read_text());bindings=result['bindings']['pair_model_slots'];reference=Path(result['config']['reference_top']).read_bytes()
  _,stage=load_stage_models(Path(result['config']['stage_model_dir']));_,grasp=models(p.with_name(p.name+'-grasp-models').resolve(),'student-skill.json')
  transforms=approach=grasp_count=0
+ from harness.dispatch_beam_tracker import CarriedBeamTracker
+ shaft=CarriedBeamTracker()
  for call in calls:
   if call['kind']=='image_binding':
    assert call['pair_binding']==bindings
    for slot,rid in bindings.items():assert call['own'][slot]['path'].endswith('-'+rid+'.jpg');image(call['own'][slot])
-   meta=call['transform'];data,new=canonical_pair_top(image(call['raw_top']),reference,translation_px=meta['translation_px'] if meta['fixed_from_prior_rgb'] else None,hue_upper=meta.get('hue_upper',24))
+   meta=call['transform'];observed=shaft.observe(image(call['raw_top'])) if meta.get('tracked_carried_shaft') else None
+   data,new=canonical_pair_top(image(call['raw_top']),reference,translation_px=meta['translation_px'] if meta['fixed_from_prior_rgb'] else None,hue_upper=meta.get('hue_upper',24),observed_beam=observed)
    assert data==image(call['derived_top']);assert new['translation_px']==meta['translation_px'];transforms+=1
   if call['kind']=='learned_approach':
    for a in call['report']['approach_calls']:
@@ -59,9 +62,11 @@ def audit(p,*,replay_solo=False):
   setup=json.loads((p/'episode-setup-only.json').read_text())
   report['solo_decision_replay']=audit_solo_replay(p,json.loads((p/'committed-plan.json').read_text()),setup['static_map'])
  setup=json.loads((p/'episode-setup-only.json').read_text())
- report['navigation_replay']=audit_navigation(p,calls,json.loads((p/'committed-plan.json').read_text()),setup['static_map'])
+ yield_vision,yield_report=audit_yield(p,setup['static_map'])
+ report['yield_replay']=yield_report
+ report['navigation_replay']=audit_navigation(p,calls,json.loads((p/'committed-plan.json').read_text()),setup['static_map'],yield_vision=yield_vision,identity=identity)
  (p/'input-audit.json').write_text(json.dumps(report,indent=2));print(report)
-def audit_solo_replay(p,committed,static_map):
+def audit_solo_replay(p,committed,static_map,*,return_policy=False):
  import copy,base64,json,hashlib
  from harness.dispatch_skill_binding import SkillBindings,ImageRoute
  from harness.solo_box_transport import SoloBoxTransport
@@ -85,9 +90,30 @@ def audit_solo_replay(p,committed,static_map):
   # JSON normalizes integer servo channel keys exactly as the archived wire.
   assert json.loads(json.dumps(action))==row['action'],('solo action',row['index'])
   assert policy.phase==row['phase_after'],('solo phase',row['index'])
+ if return_policy:return policy
  return {'actions_replayed':len(rows),'source':'archived own RGB + TOP RGB + own command state + recorded resource wait signals','scope':'controller decision replay; resource ownership checked separately, not physical success'}
 
-def audit_navigation(p,calls,committed,static_map):
+def audit_yield(p,static_map):
+ from harness.dispatch_yield import SoloYield
+ rows=json.loads((p/'solo-yield.json').read_text()) if (p/'solo-yield.json').exists() else []
+ if not rows:return None,{'actions_replayed':0}
+ committed=json.loads((p/'committed-plan.json').read_text())
+ solo=audit_solo_replay(p,committed,static_map,return_policy=True)
+ assert solo.done and solo.reason=='VISUAL_RELEASE_CONFIRMED'
+ policy=SoloYield(static_map,solo.navigator.box_center)
+ for index,row in enumerate(rows):
+  for ref in row['images'].values():assert hashlib.sha256((p/ref['path']).read_bytes()).hexdigest()==ref['sha256']
+  if index==0:
+   assert row['action']=={'kind':'pose','pulses':{'1':2000,'3':740,'4':2320,'5':1320,'6':1500}}
+  else:
+   action,evidence=policy.decide((p/row['images']['top']['path']).read_bytes())
+   evidence['initial_cargo_center_px']=solo.navigator.box_center.tolist()
+   assert json.loads(json.dumps(action))==row['action'],('yield action',index)
+   assert json.loads(json.dumps(evidence))==row['evidence'],('yield RGB evidence',index)
+  assert row['box_job_finished']==policy.done
+ return policy.vision,{'actions_replayed':len(rows),'visually_cleared_bay':policy.done,'source':'current RGB and authored staging goals; no referee input'}
+
+def audit_navigation(p,calls,committed,static_map,*,yield_vision=None,identity=None):
  from harness.dispatch_navigation_map import navigation_map
  from harness.dispatch_pair_navigation import PairNavigator,authorize_pair
  from harness.dispatch_skill_binding import SkillBindings,BeamContinuity
@@ -103,7 +129,22 @@ def audit_navigation(p,calls,committed,static_map):
    last=call
    if call['transform']['hue_upper']==35:continuity.observe(call['transform']['observed_beam'])
   elif call['kind']=='navigation_map':
-   data=navigation_map(bindings,raw(last['raw_top']));assert data==call['map']
+   top=raw(last['raw_top']);other=None
+   if 'other_robot_observation' in call:
+    from harness.dispatch_yield import WheelObserver
+    from harness.camera_goal_transport import decode
+    import numpy as np
+    source=call['other_robot_source']
+    if source['source']=='solo_yield_history':
+     assert yield_vision is not None
+     other=yield_vision.observe(top)
+    else:
+     frame=decode(top);claim=identity[bindings.solo]['claim'];assert claim['valid']
+     hint=np.array(claim['center'])*[frame.shape[1]-1,frame.shape[0]-1]
+     assert hint.tolist()==source['hint_px']
+     other=WheelObserver(static_map,hint).observe(top)
+    assert json.loads(json.dumps(other))==call['other_robot_observation']
+   data=navigation_map(bindings,top,other_robot_center_px=other['center_px'] if other else None);assert data==call['map']
    agents={r:PairNavigator(data,r) for r in bindings.pair}
    sync=PairCarrySync('dispatch-'+bindings.committed['plan_hash']);anchor=copy.deepcopy(last['own'])
   elif call['kind']=='rotating_carry':

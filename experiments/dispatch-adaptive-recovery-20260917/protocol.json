@@ -18,6 +18,100 @@
       "seed": 11,
       "change": "second RGB saturation segmentation with unchanged shaft geometry gates",
       "plan_replay": "outputs/dispatch-variation-20260917/V2/committed-plan.json"
+    },
+    {
+      "id": "R2",
+      "source_sha": "06a4b8c9d231f6f6ec10fc48b80eb321edcbf605",
+      "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+      "variant": "open",
+      "dock": "dock_b",
+      "seed": 11,
+      "plan_replay": "outputs/dispatch-variation-20260917/V2/committed-plan.json",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r2"
+    },
+    {
+      "id": "R3",
+      "source_sha": "1a306224cf4a6e8b8006d1f8cfd35368c3e78338",
+      "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+      "variant": "open",
+      "dock": "dock_b",
+      "seed": 11,
+      "plan_replay": "outputs/dispatch-variation-20260917/V2/committed-plan.json",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r3"
+    },
+    {
+      "id": "R4",
+      "source_sha": "371b73e2a139d420f47f49b6df9e803d0df54da6",
+      "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+      "variant": "shared_crossing",
+      "dock": "dock_a",
+      "seed": 11,
+      "plan_replay": "outputs/dispatch-variation-20260917/V3/committed-plan.json",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r4"
+    },
+    {
+      "id": "R5",
+      "source_sha": "a08074b21230b3d3c1aa24a15a0fe52ad987f41b",
+      "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+      "variant": "shared_crossing",
+      "dock": "dock_a",
+      "seed": 11,
+      "plan_replay": "outputs/dispatch-variation-20260917/V3/committed-plan.json",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r5"
+    },
+    {
+      "id": "R6",
+      "source_sha": "bfb5bfd6360df9151e970dcf48c47532218bfa7e",
+      "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+      "variant": "shared_crossing",
+      "dock": "dock_a",
+      "seed": 11,
+      "plan_replay": "outputs/dispatch-variation-20260917/V3/committed-plan.json",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r6"
+    },
+    {
+      "id": "R7",
+      "source_sha": "4e6f3cea5019bf943782ef49c6fadccc3d67ff5b",
+      "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+      "variant": "shared_crossing",
+      "dock": "dock_a",
+      "seed": 11,
+      "plan_replay": "outputs/dispatch-variation-20260917/V3/committed-plan.json",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r7"
+    },
+    {
+      "id": "R8",
+      "source_sha": "c7b3564afc927f58b640d7bb3b39dfd6175ac260",
+      "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+      "variant": "shared_crossing",
+      "dock": "dock_a",
+      "seed": 11,
+      "plan_replay": "outputs/dispatch-variation-20260917/V3/committed-plan.json",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r8"
+    },
+    {
+      "id": "R9",
+      "source_sha": "c7b3564afc927f58b640d7bb3b39dfd6175ac260",
+      "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
+      "variant": "north_blocked",
+      "dock": "dock_a",
+      "seed": 11,
+      "plan_replay": null,
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r9"
+    },
+    {
+      "id": "R10",
+      "scope": "recorded-plan shared-crossing physical diagnosis of the unified temporal shaft observer",
+      "variant": "shared_crossing",
+      "dock": "dock_a",
+      "seed": 11
+    },
+    {
+      "id": "R11",
+      "scope": "fixture-initialized blocked north plan, then actual LLM re-negotiation and physical execution; not fresh initial LLM E2E",
+      "variant": "north_blocked",
+      "dock": "dock_a",
+      "seed": 11
     }
   ],
   "freeze": "Commit before each physical diagnosis. After repairs freeze source/models and run the complete six-condition fresh-LLM comparison. Preserve failures.",
@@ -29,5 +123,6 @@
     "narrow_south/dock_a",
     "rough_south/dock_a"
   ],
-  "cost": "Save wall time, action counts, provider requests/usage; monetary cost null when unknown."
+  "cost": "Save wall time, action counts, provider requests/usage; monetary cost null when unknown.",
+  "concurrency": "R8 and R9 overlapped; subsequent independent trials may use up to two worker processes. Preserve per-run wall time; do not claim speedup relative to serial baseline."
 }

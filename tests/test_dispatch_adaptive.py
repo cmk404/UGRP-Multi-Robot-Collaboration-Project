@@ -46,3 +46,18 @@ def test_attached_gripper_pixels_are_not_treated_as_a_longer_beam():
     actual=beam_feature(raw,hue_upper=35)
     assert 75<actual['length_px']<110
     assert np.allclose(np.array(actual['center'])*[960,720],[689,174],atol=4)
+
+
+@pytest.mark.parametrize('run',['r8','r9'])
+def test_temporal_shaft_tracks_actual_failed_frames_and_rejects_missing_cargo(run):
+    import json
+    from harness.dispatch_beam_tracker import CarriedBeamTracker
+    root=Path('tests/fixtures/dispatch_adaptive')
+    tracker=CarriedBeamTracker()
+    tracker.previous=json.loads((root/f'temporal-{run}-prior.json').read_text())['previous']
+    raw=(root/f'temporal-{run}-failure.jpg').read_bytes()
+    feature=tracker.observe(raw)
+    assert feature['tracking']['threshold_support']>=3
+    assert feature['tracking']['uses_issued_motion'] is False
+    blank=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))[1].tobytes()
+    with pytest.raises(ValueError,match='consistent RGB support'):tracker.observe(blank)

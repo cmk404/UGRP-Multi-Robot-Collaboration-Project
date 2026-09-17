@@ -85,7 +85,7 @@ class BeamContinuity:
         return feature
 
 
-def canonical_pair_top(jpeg, reference, *, translation_px=None, hue_upper=24):
+def canonical_pair_top(jpeg, reference, *, translation_px=None, hue_upper=24, observed_beam=None):
     """Translate observed pixels to the saved beam-centred image convention.
 
     This is image preprocessing, not a changed camera or world reset. Retain
@@ -95,7 +95,7 @@ def canonical_pair_top(jpeg, reference, *, translation_px=None, hue_upper=24):
     frame, ref = decode(jpeg), decode(reference)
     if frame.shape != ref.shape:
         raise ValueError('pair reference and live TOP dimensions differ')
-    current, anchor = beam_feature(jpeg,hue_upper=hue_upper), beam_feature(reference)
+    current, anchor = (observed_beam if observed_beam is not None else beam_feature(jpeg,hue_upper=hue_upper)), beam_feature(reference)
     h, w = frame.shape[:2]
     shift = (np.array(anchor['center']) - current['center']) * [w, h] if translation_px is None else np.asarray(translation_px,dtype=float)
     if shift.shape!=(2,) or not np.isfinite(shift).all():raise ValueError('invalid image translation')
@@ -106,6 +106,7 @@ def canonical_pair_top(jpeg, reference, *, translation_px=None, hue_upper=24):
         'reference_sha256':hashlib.sha256(reference).hexdigest(),
         'translation_px':shift.tolist(),'observed_beam':current,
         'fixed_from_prior_rgb':translation_px is not None,'hue_upper':hue_upper,
+        'tracked_carried_shaft':observed_beam is not None,
         'method':'RGB translation only; black padding; unchanged own RGB'}
 
 
@@ -154,22 +155,22 @@ class SkillBindings:
 
     def capabilities(self):
         # Conservative authored envelope of the demonstrated parallel formation:
-        # 0.65 m centre separation plus 0.24 m chassis envelope and 0.04 m margin.
+        # 0.65 m centre separation plus 0.24 m chassis envelope and 0.05 m margin.
         # A capability bound, not a runtime pose or claimed passage measurement.
-        width = .65+.24+.04
+        width = .65+.24+.05
         narrow = []
         if any(o['id']=='service_island' for o in self.static_map['obstacles']):
             for name, route in self.static_map['routes'].items():
                 if route['declared_min_width_m'] < .45:narrow.append(name)
         return {'pair_model_slots':self.pair, 'solo_robot':self.solo,
-            'parallel_pair_envelope_m':width,'unsupported_parallel_pair_routes':narrow,
+            'parallel_pair_envelope_m':width,'unsupported_pair_routes':narrow,
             'pair_rotation_skill_available':True,'rotated_pair_envelope_m':.45,
             'route_execution':'RGB wheel/shaft tracking and swept full-load SE2 search when cluttered; experimental',
             'model_support':'unchanged learned support thresholds; fail closed on novelty'}
 
     def check_route(self):
         route = self.tasks['beam']['route']
-        if route in self.capabilities()['unsupported_parallel_pair_routes']:
+        if route in self.capabilities()['unsupported_pair_routes']:
             raise RuntimeError('PAIR_ROUTE_TOO_NARROW: agreed '+route+
                 ' route is narrower than the rotated loaded footprint')
 
@@ -190,11 +191,13 @@ class ImageRoute:
         self.task=bindings.tasks[obj];self.dock=bindings.plan['dock']
         self.points=None;self.index=0;self.confirmations=0
         self.box_center=None;self.box_delta=np.zeros(2);self.box_previous=None
+        from harness.dispatch_beam_tracker import CarriedBeamTracker
+        self.beam_tracker=CarriedBeamTracker()
 
     def observe(self,jpeg):
         frame=decode(jpeg);h,w=frame.shape[:2]
         if self.obj=='beam':
-            feature=beam_feature(jpeg,hue_upper=35)
+            feature=self.beam_tracker.observe(jpeg)
             center=np.array(feature['center'])*[w,h]
             bounds=np.array(feature['corners4'])*[w,h]
         else:

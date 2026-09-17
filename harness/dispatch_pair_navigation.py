@@ -197,6 +197,8 @@ class PairVision:
         self.centers = {}
         self.angles = {r: 0. for r in ROBOTS}
         self.payload = None
+        from harness.dispatch_beam_tracker import CarriedBeamTracker
+        self.shaft_tracker=CarriedBeamTracker()
         self.payload_origin_angle = None
         self.payload_angle = None
         root = Path(__file__).parent/'assets'/'dispatch_pair_navigation'
@@ -210,10 +212,9 @@ class PairVision:
                 raise ValueError('wheel appearance model hash mismatch')
             self.initial_templates[rid] = cv2.imdecode(np.frombuffer(raw, np.uint8), cv2.IMREAD_GRAYSCALE)
 
-    def _payload(self, frame):
+    def _payload(self, frame, raw):
         from harness.dispatch_skill_binding import beam_feature
-        raw=cv2.imencode('.jpg',frame,[cv2.IMWRITE_JPEG_QUALITY,95])[1].tobytes()
-        b=beam_feature(raw,hue_upper=35)
+        b=self.shaft_tracker.observe(raw)
         endpoints=np.array(b['endpoints'])*b['image_size']
         points=np.array([pixel_to_world(p,frame.shape,self.map['top_camera']) for p in endpoints])
         axis=points[1]-points[0];axis/=np.linalg.norm(axis)
@@ -241,7 +242,7 @@ class PairVision:
         frame = _decode_jpeg(top_rgb, 'shared_top_rgb')
         if frame.shape != (720, 960, 3):
             raise ValueError('wheel appearance requires the calibrated 960x720 top camera')
-        self._payload(frame)
+        self._payload(frame,top_rgb)
         mask = self._mask(frame)
         h, w = mask.shape
         if not self.templates:

@@ -35,7 +35,7 @@ def visual_barriers(jpeg,static):
             'bbox_px':[x,y,bw,bh],'image_sha256':hashlib.sha256(jpeg).hexdigest()})
     return result
 
-def navigation_map(bindings,jpeg):
+def navigation_map(bindings,jpeg,*,other_robot_center_px=None,planned_box_completion=False):
     static=bindings.static_map
     data={'schema':'ugrp.dispatch_pair_navigation.v1','top_camera':copy.deepcopy(static['top_camera']),
         'bounds_m':copy.deepcopy(static['bounds_m']),'footprint':dict(FOOTPRINT),
@@ -45,6 +45,14 @@ def navigation_map(bindings,jpeg):
         'source_map_sha256':hashlib.sha256(__import__('json').dumps(static,sort_keys=True).encode()).hexdigest()}
     # Retain wall boxes: the bounds describe wall centres, not free interior.
     data['obstacles']+=visual_barriers(jpeg,static)
+    if planned_box_completion:
+        data['obstacles'].append({'id':'planned_box_slot','center_m':static['docks'][bindings.plan['dock']]['slots']['box']['center_m'][:],
+            'half_extents_m':[.05,.06],'height_m':.10,'source':'conditional authored destination; fresh RGB validation required after box job'})
+        data['obstacles'].append({'id':'planned_yield_pose','center_m':[static['bounds_m'][1]-.22,static['regions']['dispatch_apron']['center_m'][1]],
+            'half_extents_m':[.14,.14],'height_m':.35,'source':'conditional yield goal; not an observed position'})
+    else:
+        data['obstacles']+=visual_boxes(jpeg,static)
+        if other_robot_center_px is not None:data['obstacles'].append(occupied_robot(other_robot_center_px,static))
     for terrain in static['terrain']:
         data['obstacles'].append({**copy.deepcopy(terrain),'id':'unvalidated_'+terrain['id']})
     if any(o['id']=='service_island' for o in static['obstacles']):
@@ -86,3 +94,24 @@ def solo_gate(static,route,jpeg):
     if not intervals:raise RuntimeError('BOX_ROUTE_UNSUPPORTED: '+route+' lacks 0.32m conservative clearance or crosses unvalidated terrain')
     lo,hi=max(intervals,key=lambda x:x[1]-x[0]);gate[1]=max(lo+.16,min(hi-.16,gate[1]))
     return gate
+
+
+def visual_boxes(jpeg,static):
+    frame=decode(jpeg);hsv=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
+    mask=cv2.inRange(hsv,np.array([80,125,35],np.uint8),np.array([102,255,255],np.uint8))
+    mask=cv2.morphologyEx(mask,cv2.MORPH_OPEN,np.ones((3,3),np.uint8))
+    n,_,stats,centers=cv2.connectedComponentsWithStats(mask)
+    objects=[]
+    for i in range(1,n):
+        x,y,w,h,area=map(int,stats[i])
+        if not (50<=area<=600 and 5<=min(w,h) and max(w,h)<40 and .4<=w/h<=2.5):continue
+        xy=pixel_to_world(centers[i],frame.shape,static['top_camera'])
+        # Bound a small visible cargo plus nominal-plane projection uncertainty.
+        objects.append({'id':'rgb_box_'+str(len(objects)),'center_m':list(xy),
+            'half_extents_m':[.05,.06],'height_m':.10,'source':'current cyan cargo RGB with conservative projection bound'})
+    return objects
+
+
+def occupied_robot(center_px,static,shape=(720,960,3)):
+    return {'id':'rgb_other_robot','center_m':list(pixel_to_world(center_px,shape,static['top_camera'])),
+        'half_extents_m':[.14,.14],'height_m':.35,'source':'current wheel-envelope RGB observation'}
