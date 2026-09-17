@@ -137,7 +137,7 @@ def audit(root):
         same(decisions,row['decisions'],'carry RGB decision')
         skew=payload_skew(_image(root,row['images']['r1']['top']))
         same(skew,row['skew'],'carry skew')
-        control=policy.step(decisions,skew,row['frame_ids'],row['sim_time_s'])
+        control=policy.step(decisions,skew,row['frame_ids'],row['sim_time_s'],delivered=row.get('delivered',ROBOTS))
         same(control,row['control'],'paired carry barrier')
         expected.append({r:dict(kind='drive',forward=control['forwards'][r],turn=0.,duration_s=control['duration_s']) for r in ROBOTS})
     trace=json.loads((root/'execution-trace.json').read_text())
@@ -194,7 +194,7 @@ def audit_llm(root,report):
                 saved=json.loads((root/'llm'/row['request']).read_text())
                 request=build_skill_request(rid,event['skill'],request_id=row['request_id'],own_rgb=own,top_rgb=top,
                     previous=previous[rid],own_commands=event['own_commands'][rid],
-                    peer_claims=inbox[rid][-4:],retry=retry)
+                    peer_claims=inbox[rid][-4:],retry=retry,team_plan=records.get('team_plan'))
                 same(request,saved,'LLM allowed request reconstruction')
                 wire=json.loads((root/'llm'/rid/f'wire-{row["wire_index"]:03d}.json').read_text())
                 same(wire['messages'],_to_gemini_multi_image_messages(request['messages'],request['images']),'exact model wire')
@@ -212,7 +212,9 @@ def audit_llm(root,report):
                 else:
                     retry=dict(kind=row['error_kind'],detail='Previous inference attempt failed; return a fresh reply for this request.')
             previous[rid]=(own,top)
-        same(pair_skill_ready(replies,event['skill']),event['ready'],'LLM paired permission')
+        delivered=event.get('delivered',ROBOTS)
+        require(len(set(delivered))==len(delivered) and set(delivered)<=set(ROBOTS),'invalid delivery set')
+        same(pair_skill_ready({r:replies[r] for r in delivered if r in replies},event['skill']),event['ready'],'LLM paired permission')
         for rid,reply in replies.items():
             peer='r3' if rid=='r1' else 'r1'
             inbox[peer].append(dict(from_robot=rid,skill=event['skill'],message=reply['message']))

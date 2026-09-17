@@ -12,12 +12,14 @@ from harness.research_execution_recovery import request_with_recovery
 
 
 class CameraSkillGate:
-    def __init__(self, output, *, model='gemini-3.8-flash', timeout=30.):
+    def __init__(self, output, *, model='gemini-3.8-flash', timeout=30., delivery_filter=None, team_plan=None):
         self.output=output
         self.previous={r:None for r in ('r1','r3')}
         self.inbox={r:[] for r in self.previous}
         self.calls=[]
         self.events=[]
+        self.delivery_filter=delivery_filter
+        self.team_plan=team_plan
         self.completers={}
         self.wires={r:0 for r in self.previous}
         for rid in self.previous:
@@ -41,7 +43,7 @@ class CameraSkillGate:
                 req=build_skill_request(rid,skill,request_id=request_id,
                     own_rgb=frames[rid]['own_bytes'],top_rgb=frames[rid]['top_bytes'],
                     previous=self.previous[rid],own_commands=own_commands[rid],
-                    peer_claims=self.inbox[rid][-4:],retry=retry)
+                    peer_claims=self.inbox[rid][-4:],retry=retry,team_plan=self.team_plan)
                 path=f'{rid}/{index:03d}-a{attempt}-request.json'
                 (self.output/path).write_text(json.dumps(req,ensure_ascii=False,indent=2)+'\n')
                 return req
@@ -60,8 +62,11 @@ class CameraSkillGate:
         for rid,(reply,stop,records) in batch.items():
             self.calls.extend(records)
             self.previous[rid]=(frames[rid]['own_bytes'],frames[rid]['top_bytes'])
-        ready=pair_skill_ready(replies,skill)
-        event=dict(index=index,skill=skill,ready=ready,replies=replies,
+        delivered=tuple(self.previous) if self.delivery_filter is None else tuple(self.delivery_filter(skill, self.events))
+        if len(set(delivered)) != len(delivered) or not set(delivered) <= set(self.previous):
+            raise ValueError('invalid report delivery set')
+        ready=pair_skill_ready({r:replies[r] for r in delivered},skill)
+        event=dict(index=index,skill=skill,ready=ready,replies=replies,delivered=list(delivered),
             stops={r:v[1] for r,v in batch.items()},own_commands=own_commands,
             images={r:dict(own=frames[r]['own_rgb'],top=frames[r]['shared_top_rgb']) for r in frames})
         self.events.append(event)
@@ -69,6 +74,6 @@ class CameraSkillGate:
             if reply:
                 peer='r3' if rid=='r1' else 'r1'
                 self.inbox[peer].append(dict(from_robot=rid,skill=skill,message=reply['message']))
-        (self.output/'gate.json').write_text(json.dumps(dict(calls=self.calls,events=self.events),ensure_ascii=False,indent=2)+'\n')
+        (self.output/'gate.json').write_text(json.dumps(dict(calls=self.calls,events=self.events,team_plan=self.team_plan),ensure_ascii=False,indent=2)+'\n')
         print(json.dumps(dict(llm_stage=skill,ready=ready,replies=replies)),flush=True)
         return ready

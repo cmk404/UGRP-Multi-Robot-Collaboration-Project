@@ -218,6 +218,20 @@ def predict_recovery(model: dict[str, Any], own_jpeg: bytes, top_jpeg: bytes,
         raise ValueError("max_step must be an integer in 1..100")
     reference, components, support, alpha, bandwidth, residual_limit, diagnostics = _validated(model)
     difference = _compact(encode_views(own_jpeg, top_jpeg)) - reference
+    band = model.get('constant_background_top_band')
+    if band is not None:
+        # Optional task-local transfer of an existing model: discard only TOP
+        # pixels that were constant in every learned direction. Never suppress
+        # own-camera novelty or a varying/trained feature to pass a support gate.
+        if band != [6, 19]:
+            raise ValueError('unsupported constant-background feature band')
+        mask = np.ones(len(difference), dtype=bool)
+        own_count = 2 * (OWN_SIZE[0]//POOL) * (OWN_SIZE[1]//POOL)
+        rows = np.arange(TOP_SIZE[1]//POOL)
+        mask[own_count:] = np.tile(np.repeat((rows>=band[0]) & (rows<band[1]), TOP_SIZE[0]//POOL), 2)
+        if np.max(np.abs(components[:,~mask])) > 1e-8:
+            raise ValueError('background band removes a learned visual direction')
+        difference[~mask] = 0.
     feature_error = float(np.linalg.norm(difference) / math.sqrt(len(difference)))
     coordinate = difference @ components.T
     orthogonal_residual = float(np.linalg.norm(difference - coordinate @ components))

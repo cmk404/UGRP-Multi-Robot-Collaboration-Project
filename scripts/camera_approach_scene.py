@@ -105,6 +105,7 @@ class ApproachScene:
                           _plain_beam_xml(production.build_multi_robot_xml)):
             self.world = production.MultiMasterPiProductionV2(
                 seed=int(self.fixture['seed']), width=960, height=720, render=True)
+        self.configure_world_setup()
         offsets = ({r: starts[r]['distance_m'] for r in ROBOTS} if starts is not None
                    else base_offsets or {r: 0.0 for r in ROBOTS})
         for rid in ROBOTS:
@@ -122,6 +123,7 @@ class ApproachScene:
         mujoco.mj_forward(self.world.model, self.world.data)
         # Observer video only; policy own/top cameras remain unchanged.
         _camera_look_at(self.world, approach_distance=max(map(float, offsets.values())))
+        self.configure_observer_camera()
         self.replay([self.skill['initialization_replay'][0]], 'folded_setup')
         self.ports = {r: CameraRobotPort(self.world, r, allow_reverse=starts is not None,
                                          allow_mecanum=starts is not None) for r in ROBOTS}
@@ -139,6 +141,14 @@ class ApproachScene:
         self.video.stage = self.phase
         self.video.capture(force=True)
         return self
+
+    def configure_world_setup(self):
+        """Optional authored scene setup, before any task motion or observation."""
+        pass
+
+    def configure_observer_camera(self):
+        """Optional presentation-only camera setup before recording begins."""
+        pass
 
     def time(self):
         return float(self.world.data.time)

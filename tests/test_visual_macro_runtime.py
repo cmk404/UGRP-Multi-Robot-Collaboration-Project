@@ -47,6 +47,22 @@ def observation(**pulses):
 
 
 class VisualMacroExecutorTests(unittest.TestCase):
+    def test_continuous_carry_still_expires_without_fresh_submission(self):
+        port = Port('r2')
+        executor = VisualMacroExecutor(port, drive_settle_by_phase={'carry':0.0})
+        action = {'kind':'drive','fwd':.1,'turn':0.,'duration':.25}
+        executor.submit(action, observation(), 'carry', 0.)
+        executor.tick(.25)
+        self.assertTrue(executor.idle)
+        self.assertEqual(len(port.stops), 1)
+        executor.tick(.5)
+        self.assertEqual(len(port.applied), 1)
+        executor.submit(action, observation(), 'approach', .5)
+        executor.tick(.75)
+        self.assertFalse(executor.idle)
+        executor.tick(.95)
+        self.assertTrue(executor.idle)
+
     def test_guarded_four_second_drive_uses_fresh_guard_for_each_slice(self):
         port = Port("r1")
         checks = []

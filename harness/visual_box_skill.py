@@ -34,7 +34,8 @@ class VisualBoxSkill:
     """
 
     def __init__(self, task="short_transfer", destination_zone="B", robot_id="r1", cargo_id="small_box_01",
-                 near_field_reacquisition=False, perception_mode="markerless"):
+                 near_field_reacquisition=False, perception_mode="markerless",
+                 attachment_home_reference="anchor"):
         if task not in {"short_transfer", "destination_zone", "external_navigation"}:
             raise ValueError("unsupported visual box task")
         if destination_zone not in {"A", "B", "C"}:
@@ -49,6 +50,11 @@ class VisualBoxSkill:
         if perception_mode not in {"markerless", "fiducial"}:
             raise ValueError("unsupported perception_mode")
         self.perception_mode = perception_mode
+        if attachment_home_reference not in {'anchor', 'previous_endpoint'}:
+            raise ValueError('unsupported attachment home reference')
+        self.attachment_home_reference = attachment_home_reference
+        self._probe_last_image = None
+        self._probe_last_pan = None
         self.tracker = CameraBoxTracker(target_id=cargo_id) if perception_mode == "fiducial" else None
         self._face_aligner = MarkerlessFaceAligner() if perception_mode == "markerless" else None
         self.last_face_alignment = None
@@ -178,6 +184,17 @@ class VisualBoxSkill:
             pan_delta = int(pose["6"]) - int(self._attachment_pan)
             self.last_attachment = compare_box_comotion(
                 self._attachment_image, obs["image"], camera_pan_delta_pwm=pan_delta)
+            if (self.attachment_home_reference == 'previous_endpoint'
+                    and self.phase in {'attachment_home','carry_probe_home'}):
+                # All three fresh interventions must show comotion. Compare
+                # home to the immediately preceding endpoint so slow grip
+                # compliance does not accumulate across the entire sweep.
+                # Opposite endpoints must still pass the independent 120-PWM
+                # test below; a stationary floor box cannot pass that test.
+                anchor_metrics = self.last_attachment
+                self.last_attachment = compare_box_comotion(self._probe_last_image,
+                    obs['image'], camera_pan_delta_pwm=int(pose['6'])-self._probe_last_pan)
+                self.last_attachment['initial_anchor_metrics'] = anchor_metrics
             self._probe_results.append(bool(self.last_attachment["attached"]))
             is_carry_probe = self.phase.startswith("carry_probe")
             if self.phase == "attachment_left":
@@ -192,18 +209,22 @@ class VisualBoxSkill:
                 self._probe_side_pair = compare_box_comotion(
                     self._probe_side_image, obs["image"], camera_pan_delta_pwm=-120)
                 self.phase = "attachment_home"
+                self._probe_last_image, self._probe_last_pan = obs['image'], int(pose['6'])
                 return _pose({6: self._attachment_pan, 1: 1500})
             if self.phase == "carry_probe_right":
                 self._probe_side_pair = compare_box_comotion(
                     self._probe_side_image, obs["image"], camera_pan_delta_pwm=-120)
                 self.phase = "carry_probe_home"
+                self._probe_last_image, self._probe_last_pan = obs['image'], int(pose['6'])
                 return _pose({6: self._attachment_pan, 1: 1500})
             # Require the box to remain camera-relative across the complete
             # left-to-right sweep and to recover at home.  Either endpoint can
             # move more than its one-sided bound while a compliant held box
             # yaws, but a detached box traverses far across the two endpoints.
             self.last_attachment["side_pair_metrics"] = self._probe_side_pair
-            if not self.last_attachment["attached"] or not self._probe_side_pair["attached"]:
+            sequential_failed = (self.attachment_home_reference == 'previous_endpoint'
+                                 and not all(self._probe_results))
+            if sequential_failed or not self.last_attachment["attached"] or not self._probe_side_pair["attached"]:
                 return self._finish("VISUAL_LOAD_DROPPED_OR_OCCLUDED" if is_carry_probe
                                     else "VISUAL_ATTACHMENT_UNCONFIRMED")
             if self._probe_origin_phase == "surface_low_height":

@@ -33,6 +33,18 @@ class GoalScene(ShortTransportScene):
     gate=None
     grasp_check=None
 
+    def configure_run(self, args, report):
+        if args.planner == 'llm':
+            from scripts.camera_skill_gate import CameraSkillGate
+            self.gate = CameraSkillGate(self.out/'llm')
+            report['scope'] = 'two independent LLM visual skill permissions; RGB wheels; demonstrated arm sequence plus RGB correction; fixed workflow, not raw-action LLM control'
+
+    def delivered_reports(self, index):
+        return ROBOTS
+
+    def extra_report(self):
+        return {}
+
     def checkpoint(self,skill):
         if self.gate is None: return
         for attempt in range(3):
@@ -84,7 +96,7 @@ def setup_poses(distance, lateral, yaw_deg):
     return starts
 
 
-def run(args):
+def run(args, *, scene_factory=GoalScene):
     if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip():
         raise RuntimeError('commit and freeze source before physical experiments')
     starts=setup_poses(args.distance,args.lateral,args.yaw_deg)
@@ -93,7 +105,7 @@ def run(args):
     skill, grasp=models(args.grasp_model_dir.resolve(),'student-skill.json')
     stage_skill, stages=load_stage_models(args.stage_model_dir.resolve())
     reference=args.reference_top.read_bytes()
-    scene=GoalScene(out,args.grasp_model_dir.resolve(),fps=10)
+    scene=scene_factory(out,args.grasp_model_dir.resolve(),fps=10)
     report=dict(schema='ugrp.camera_goal_transport.v1',
         source_sha=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         scope='local RGB wheel feedback; demonstrated arm sequence plus learned RGB recovery; no LLM',
@@ -114,10 +126,7 @@ def run(args):
         scene.open(start_poses=starts,max_start_distance_m=.7)
         scene.ports={r:CameraRobotPort(scene.world,r,allow_reverse=True,allow_mecanum=True) for r in ROBOTS}
         report['invariants_initial']=scene.invariant_record()
-        if args.planner=='llm':
-            from scripts.camera_skill_gate import CameraSkillGate
-            scene.gate=CameraSkillGate(out/'llm')
-            report['scope']='two independent LLM visual skill permissions; RGB wheels; demonstrated arm sequence plus RGB correction; fixed workflow, not raw-action LLM control'
+        scene.configure_run(args, report)
         # Reference pixels were produced offline, before this run. No teacher
         # state or live evaluation result can enter either controller.
         (out/'reference-top.jpg').write_bytes(reference)
@@ -160,9 +169,10 @@ def run(args):
             frames=anchor if index==0 else scene.capture(f'carry-{index:03d}')
             decisions={r:goal_carry(frames[r]['own_bytes'],frames[r]['top_bytes'],anchor[r]['own_bytes'],anchor[r]['top_bytes']) for r in ROBOTS}
             skew=payload_skew(frames['r1']['top_bytes'])
-            control=policy.step(decisions,skew,{r:frames[r]['frame_id'] for r in ROBOTS},scene.time())
+            delivered=scene.delivered_reports(index)
+            control=policy.step(decisions,skew,{r:frames[r]['frame_id'] for r in ROBOTS},scene.time(),delivered=delivered)
             report['carry_calls'].append(dict(index=index,decisions=decisions,skew=skew,control=control,
-                frame_ids={r:frames[r]['frame_id'] for r in ROBOTS},sim_time_s=scene.time(),
+                frame_ids={r:frames[r]['frame_id'] for r in ROBOTS},sim_time_s=scene.time(),delivered=list(delivered),
                 images={r:dict(own=frames[r]['own_rgb'],top=frames[r]['shared_top_rgb']) for r in ROBOTS}))
             scene.carry_drive(control['forwards'],control['duration_s'],stage='carry' if any(control['forwards'].values()) else 'carry_stop')
             if index%10==0 or control['abort'] or control['done']:
@@ -198,6 +208,7 @@ def run(args):
             and report['goal_stable_at_end'] and scene.approach_payload_contact_steps==0
             and scene.weld_active_ticks==0 and report['invariants_initial']==report['invariants_final'])
         scene.close()
+        report.update(scene.extra_report())
         if scene.grasp_report is not None:
             write(out/'grasp-result.json',scene.grasp_report)
         if out.exists(): write(out/'result.json',report)
@@ -205,7 +216,7 @@ def run(args):
     return 0 if report['success'] else 1
 
 
-def main():
+def build_parser():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--grasp-model-dir',type=Path,required=True)
     p.add_argument('--stage-model-dir',type=Path,required=True)
@@ -215,6 +226,11 @@ def main():
     p.add_argument('--lateral',type=float,nargs=2,default=(0.,0.),help='setup-only world y offsets in m, r1/r3')
     p.add_argument('--yaw-deg',type=float,nargs=2,default=(0.,0.),help='setup-only headings in degrees, r1/r3')
     p.add_argument('--planner',choices=('local','llm'),default='local')
+    return p
+
+
+def main():
+    p=build_parser()
     a=p.parse_args()
     try: setup_poses(a.distance,a.lateral,a.yaw_deg)
     except ValueError as exc: p.error(str(exc))

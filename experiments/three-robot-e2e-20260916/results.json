@@ -1,0 +1,5018 @@
+{
+  "schema": "ugrp.three_robot_e2e_experiment.v1",
+  "final_source_sha": "d79c97d8f03c6ea7a8e067c4e4c06519d4b19b82",
+  "final_live_successes": 3,
+  "final_live_runs": 3,
+  "limitations": [
+    "one trial per condition; not robustness rate or communication benefit",
+    "fixed r1/r3 transport skill; r2 stationary RGB observation",
+    "shared-process SIM; pair LLM inference pauses physics",
+    "injected report delivery loss, not real network/process failures",
+    "automatic route replanning and arbitrary transport teams not implemented"
+  ],
+  "runs": [
+    {
+      "id": "three-robot-fixture-v1",
+      "category": "fixture_connection",
+      "source_sha": "b3888574c85c63f4d8db00d2a36fcb5953054805",
+      "raw_root": "/Users/changmin/projects/ugrp-worktrees/three-robot-e2e/outputs/three-robot-fixture-v1",
+      "success": true,
+      "error": null,
+      "config": {
+        "coarse_control": "rgb-wheel-heading-v1",
+        "final_refinement_steps": 40,
+        "planner": "local",
+        "reacquire_on_settle": true,
+        "start_distance_m": {
+          "r1": 0.6,
+          "r3": 0.6
+        },
+        "start_poses_setup_only": {
+          "r1": {
+            "distance_m": 0.6,
+            "lateral_m": 0.0,
+            "yaw_deg": 0.0
+          },
+          "r3": {
+            "distance_m": 0.6,
+            "lateral_m": 0.0,
+            "yaw_deg": 0.0
+          }
+        },
+        "team_fault": "none",
+        "team_planner": "fixture",
+        "weld": false
+      },
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "assets": {
+        "grasp_skill": {
+          "path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/goal-e2e-portable-models-20260916/models/grasp",
+          "sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049"
+        },
+        "reference_top": {
+          "path": "/Users/changmin/projects/ugrp-worktrees/three-robot-e2e/tests/fixtures/camera_goal_transport/reference-top.jpg",
+          "sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+        },
+        "stage_skill": {
+          "path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/goal-e2e-portable-models-20260916/models/varied",
+          "sha256": "b89e6fce188efe7ab025d08826bdf269b515c353b81f9b3184f9351ac8bf5f84"
+        }
+      },
+      "wall_s": 75.6275611660094,
+      "sim_s": 48.36000000001314,
+      "evaluation": {
+        "gates": {
+          "carry_continuity": true,
+          "carry_progress": true,
+          "grasp_hold": true,
+          "lateral_drift": true,
+          "release_continuity": true,
+          "release_grounded_clear": true,
+          "release_stable": true,
+          "required_phases": true,
+          "transport_endpoint": true,
+          "valid_samples": true,
+          "weld_off": true
+        },
+        "metrics": {
+          "carry_start_to_end_progress_m": 0.48297199999999985,
+          "displacement_error_m": -0.01706799999999986,
+          "final_displacement_m": 0.48293200000000014,
+          "grasp_hold_duration_s": 2.1000000000000014,
+          "lateral_drift_m": 0.0007110000000001282,
+          "max_sample_gap_s": 0.15,
+          "minimum_hold_s": 2.0,
+          "release_hold_duration_s": 2.0999999999999943,
+          "release_position_span_3d_m": 0.0,
+          "release_stable_s": 1.0,
+          "sample_count": 475,
+          "target_distance_m": 0.5,
+          "tolerance_m": 0.03
+        },
+        "reasons": [],
+        "scope": "sampled referee continuity only",
+        "success": true
+      },
+      "goal_stable_at_end": true,
+      "weld_active_ticks": 0,
+      "approach_payload_contact_steps": 0,
+      "invariants_match": true,
+      "plan_rounds": 2,
+      "committed_plan": {
+        "plan": {
+          "inspection": {
+            "region": "green_zone",
+            "robot_id": "r2",
+            "skill": "inspect_goal_rgb_v1",
+            "timing": "during_approach"
+          },
+          "transport": {
+            "goal": "green_zone",
+            "object": "orange_beam",
+            "participants": {
+              "r1": "bottom_end",
+              "r3": "top_end"
+            },
+            "skill": "rgb_pair_goal_v1"
+          }
+        },
+        "plan_hash": "c088546215f7b79c993eac917915dd072aac12303bf278e971f687be39469c8d",
+        "proposal_id": "9c8415137ee3-plan-v1",
+        "proposer": "r1",
+        "version": 1
+      },
+      "inspection_reports": [
+        {
+          "images": {
+            "frame_id": 3,
+            "own": {
+              "path": "rgb/team-inspection-0-r2-own.jpg",
+              "sha256": "9e7cf177ef6859e04e26ccd0dae6b0b5377c2945d02848615638e689688bd7f8"
+            },
+            "top": {
+              "path": "rgb/team-inspection-0-top.jpg",
+              "sha256": "9d5da38baf96170f6ed257112c8b24a1f01522af4504ca4f4d8ad23dddaeb0ac"
+            }
+          },
+          "index": 0,
+          "observed_at_sim_s": 1.1000000000000008,
+          "received_at_sim_s": 1.1000000000000008,
+          "received_wall_s": 1.0785415420250501,
+          "reply": {
+            "confidence": 0.0,
+            "message": "",
+            "reason": "scripted fixture; no visual inspection claim",
+            "request_id": "9c8415137ee3-r2-inspect-0",
+            "status": "UNCERTAIN"
+          },
+          "request_id": "9c8415137ee3-r2-inspect-0",
+          "started_wall_s": 1.0767939170182217,
+          "stop": null
+        }
+      ],
+      "inspection_overlap_with_approach_execution_window_wall_s": [],
+      "model_requests": 0,
+      "usage": null,
+      "unknown_usage_calls": null,
+      "model_ids": [
+        "scripted-fixture-not-llm"
+      ],
+      "request_errors": [],
+      "wheel_batches": 125,
+      "arm_batches": 31,
+      "stage_permissions": [],
+      "carry_report_holds": [],
+      "audit": {
+        "ok": true,
+        "source_sha": "b3888574c85c63f4d8db00d2a36fcb5953054805",
+        "pair": {
+          "ok": true,
+          "source_sha": "b3888574c85c63f4d8db00d2a36fcb5953054805",
+          "physical_success": true,
+          "coarse_decisions": 34,
+          "fine_decisions": 146,
+          "dock_decisions": 10,
+          "grasp": {
+            "ok": true,
+            "condition": "visual",
+            "rounds": 16,
+            "calls": 32,
+            "models": {
+              "r1": "2a5a19e323d6353ee8ca0342a3a9341a0736d3d35ba9a7df11d45071f5d15a43",
+              "r3": "e55bb7d0ac473dc79d6eab9c1f4dadb2b5dff068329a8c8714d1fd076e5ecfed"
+            },
+            "calls_source": "result.json:calls",
+            "replay": [
+              {
+                "round": 0,
+                "robot_id": "r1",
+                "own_sha256": "4e8d6389aa6d063fd37d8164f7ae5e9724661e1d8c58f0e79bdc29d9dea1d764",
+                "top_sha256": "8663d840dd49afb2ba190917b46bad544046198dee14a22d6d74e7a6ada0fbb4",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1194
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1924
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2489
+                  }
+                ]
+              },
+              {
+                "round": 0,
+                "robot_id": "r3",
+                "own_sha256": "366d3fb47f6e018cc2c2fd24de7cfd798bbee16c3e041dd068f1e497fee9af94",
+                "top_sha256": "8663d840dd49afb2ba190917b46bad544046198dee14a22d6d74e7a6ada0fbb4",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1194
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1929
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2486
+                  }
+                ]
+              },
+              {
+                "round": 1,
+                "robot_id": "r1",
+                "own_sha256": "79f77170b1237e5ea2a632b4f88529099a7cf8712f6997ad193a30cf259a764a",
+                "top_sha256": "d63aec66c71877f0a9fb1ec09d074254a56cab246b744f799ec9d646e9d7d0dc",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1198
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1918
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2494
+                  }
+                ]
+              },
+              {
+                "round": 1,
+                "robot_id": "r3",
+                "own_sha256": "6e783b0e91c6b9773f188f007352d1367abe5e041b9ec211445eac0bfae4303c",
+                "top_sha256": "d63aec66c71877f0a9fb1ec09d074254a56cab246b744f799ec9d646e9d7d0dc",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1928
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2487
+                  }
+                ]
+              },
+              {
+                "round": 2,
+                "robot_id": "r1",
+                "own_sha256": "6e9b36a2a7ff986de96657be963ad412d21db403096d50adaa82ce8788f3b5a4",
+                "top_sha256": "f401cf17f48257a9d79763d5b1f04b4052f787b75cb4153d6dde52af72f6caa0",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1206
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1909
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 2,
+                "robot_id": "r3",
+                "own_sha256": "10bfa0054453ba74b030ed5f9ef6dfef8c4afba6123b7609115860ae54bbe03e",
+                "top_sha256": "f401cf17f48257a9d79763d5b1f04b4052f787b75cb4153d6dde52af72f6caa0",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1195
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1930
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2486
+                  }
+                ]
+              },
+              {
+                "round": 3,
+                "robot_id": "r1",
+                "own_sha256": "53eec22b77eb8e1c3f1f7f925ae0127774a6da86ede62922774a5e21fdb5652f",
+                "top_sha256": "ee6d68ba8fe6eae9294b0d7f0b7c6266cddac3a339d13afb60c9ef98435fbbfd",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1231
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1927
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 3,
+                "robot_id": "r3",
+                "own_sha256": "2342193ce44f96101adaafef873f93be823426df5c213a59c00fb37e258930c0",
+                "top_sha256": "ee6d68ba8fe6eae9294b0d7f0b7c6266cddac3a339d13afb60c9ef98435fbbfd",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1196
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1933
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2485
+                  }
+                ]
+              },
+              {
+                "round": 4,
+                "robot_id": "r1",
+                "own_sha256": "36e9e8c7bc908557a9fa6af1a42f9d660ebb963fdae911b17c3c1aa71c7a8078",
+                "top_sha256": "629273e48aa528e2491f84632a204eb42d9d0f50b42425cfa26b5688a93aec48",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1243
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1916
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 4,
+                "robot_id": "r3",
+                "own_sha256": "935b98915d823a932eb40af9c325baccd435f7d6fb6707fd9e7f220b52cf633f",
+                "top_sha256": "629273e48aa528e2491f84632a204eb42d9d0f50b42425cfa26b5688a93aec48",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1195
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1940
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2479
+                  }
+                ]
+              },
+              {
+                "round": 5,
+                "robot_id": "r1",
+                "own_sha256": "cde841064f85486498542ed37a69c546c91c3a15c126bfffc3ae8354763bf69b",
+                "top_sha256": "7c1dc00d1fe8a21cba81dfd8ff07ac2101a7dd4e0d1a2f3a1a9109233a8534a1",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1218
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1917
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 5,
+                "robot_id": "r3",
+                "own_sha256": "2c57b5180e16fe6a5f4847790f8c5eb948c44b0989f5a2b4110c2968c0e0b004",
+                "top_sha256": "7c1dc00d1fe8a21cba81dfd8ff07ac2101a7dd4e0d1a2f3a1a9109233a8534a1",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1198
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1939
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2481
+                  }
+                ]
+              },
+              {
+                "round": 6,
+                "robot_id": "r1",
+                "own_sha256": "54a7aedcd1090e7531c91096c367a2d0e89c8e47fd67c58203348cb817912f77",
+                "top_sha256": "d65f7b8ed438214a357d4848d635555b62b82f911178749d89c0d1df79f25157",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1237
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1915
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 6,
+                "robot_id": "r3",
+                "own_sha256": "5efc4309da3b7c767787c7c65fdd3d2809717847a994f4767607eccac7116e32",
+                "top_sha256": "d65f7b8ed438214a357d4848d635555b62b82f911178749d89c0d1df79f25157",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1200
+                  }
+                ]
+              },
+              {
+                "round": 7,
+                "robot_id": "r1",
+                "own_sha256": "97bee2532d127846c58f097e038097e8561cc792148da583239a3dccbcf0be4b",
+                "top_sha256": "60f67570e26ddef1b56fe032ac79923c4e5296ab876e1f9b334539b89f96fc21",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1212
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1898
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 7,
+                "robot_id": "r3",
+                "own_sha256": "20756f90456fe46381e8b8392a5d4c0061ab5b125ec5b82091a561bdf318521f",
+                "top_sha256": "60f67570e26ddef1b56fe032ac79923c4e5296ab876e1f9b334539b89f96fc21",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1202
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1943
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2479
+                  }
+                ]
+              },
+              {
+                "round": 8,
+                "robot_id": "r1",
+                "own_sha256": "20ad8c0115366627d094165db7878df6c94bef4f44bcfd234da05079644328f6",
+                "top_sha256": "194126cf77cceca840465be3e2859620f516e912c09cdfc7985206807542d2e2",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1189
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 8,
+                "robot_id": "r3",
+                "own_sha256": "31f0a8d72cc6ad0e7ba94c36dbe1961248a84dc9c548917fc60f205dad06bd6e",
+                "top_sha256": "194126cf77cceca840465be3e2859620f516e912c09cdfc7985206807542d2e2",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1208
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1946
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2480
+                  }
+                ]
+              },
+              {
+                "round": 9,
+                "robot_id": "r1",
+                "own_sha256": "509f08c288a87ad3c92a34d0d9cef90933656cce3591518328a468c14a46789b",
+                "top_sha256": "71c1d3e017c26c89af3bacc29030540da7e8803885ccf06697ace03d6ba92ed5",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1214
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1923
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2499
+                  }
+                ]
+              },
+              {
+                "round": 9,
+                "robot_id": "r3",
+                "own_sha256": "de6cfe05c2fd426ec8c9a93b0f8e4f4f3a802616fdaadaa37771b6b9f28070d9",
+                "top_sha256": "71c1d3e017c26c89af3bacc29030540da7e8803885ccf06697ace03d6ba92ed5",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1207
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2479
+                  }
+                ]
+              },
+              {
+                "round": 10,
+                "robot_id": "r1",
+                "own_sha256": "8a8e40ebba589cfb41b3399a91c8517384289ce373311e1d82884f64b645e716",
+                "top_sha256": "eb7af7e544f5b1c3a4473328e67129d9082a7c3912552908bcf59e40419d7005",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1222
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1928
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2498
+                  }
+                ]
+              },
+              {
+                "round": 10,
+                "robot_id": "r3",
+                "own_sha256": "62b24819140a5d4fd4205c203e4ee83c5f7cefee3c0e533b0c31eaea699cac9f",
+                "top_sha256": "eb7af7e544f5b1c3a4473328e67129d9082a7c3912552908bcf59e40419d7005",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1949
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2477
+                  }
+                ]
+              },
+              {
+                "round": 11,
+                "robot_id": "r1",
+                "own_sha256": "e20d4ada4a5ea89aa92675a3da8546510c3092dd8e659434502c412b8e7c954f",
+                "top_sha256": "733e06694ca5868aaf540e10e28d194cea984707b2befaec76e14bbbdaf83109",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1229
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1929
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2499
+                  }
+                ]
+              },
+              {
+                "round": 11,
+                "robot_id": "r3",
+                "own_sha256": "8b97e514a04e64cf73b326f43a44f5c0552f8c648bd80f59b2bb526b1ba60221",
+                "top_sha256": "733e06694ca5868aaf540e10e28d194cea984707b2befaec76e14bbbdaf83109",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1209
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1953
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2475
+                  }
+                ]
+              },
+              {
+                "round": 12,
+                "robot_id": "r1",
+                "own_sha256": "f8ebae55492d9f3e03eaf19c1697ad35e2dc40afd1e41994d513df0bb872f57f",
+                "top_sha256": "bb83f1d0040849d910eea70f326976392e02764aa9a16471abf8941073080f29",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1234
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1921
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 12,
+                "robot_id": "r3",
+                "own_sha256": "d92fbca1cdd2a730e5c3cdeed16b1849bb97a37eb4e7507127d879c674e93a38",
+                "top_sha256": "bb83f1d0040849d910eea70f326976392e02764aa9a16471abf8941073080f29",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1214
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1956
+                  }
+                ]
+              },
+              {
+                "round": 13,
+                "robot_id": "r1",
+                "own_sha256": "8f0e37b3ebc04bc4a48ca0408cf9aafa7cf204378f1d02e966ff9ec8f4359dfc",
+                "top_sha256": "b8f42b547b9c5be5762ef177a991c6694abe2d89f960aeedc2e566f264be8687",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1259
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1946
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2498
+                  }
+                ]
+              },
+              {
+                "round": 13,
+                "robot_id": "r3",
+                "own_sha256": "3505ce48818b428ab756d5c613bdfc35e06dc34b9707908fb9152b7f73173f67",
+                "top_sha256": "b8f42b547b9c5be5762ef177a991c6694abe2d89f960aeedc2e566f264be8687",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1213
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1957
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2474
+                  }
+                ]
+              },
+              {
+                "round": 14,
+                "robot_id": "r1",
+                "own_sha256": "5933efa336161c6481f30078d8bf68f77ca6b746324da9f8a4a8ab2c6856f8de",
+                "top_sha256": "fcd72eae75c57dee3737c592b638c46986524aee3c129980fd092a1ccf32ca90",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1272
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1930
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 14,
+                "robot_id": "r3",
+                "own_sha256": "09460150b7c2238b07328877ee7eb5697178447625d5df395d2b567b758c6485",
+                "top_sha256": "fcd72eae75c57dee3737c592b638c46986524aee3c129980fd092a1ccf32ca90",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1959
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2472
+                  }
+                ]
+              },
+              {
+                "round": 15,
+                "robot_id": "r1",
+                "own_sha256": "427b53b92ebeae4f8078b3ededce6672cfcdec7e575b5aad7b62e47e1dea9a61",
+                "top_sha256": "a81c7ecdc28d9b3f123c30c409d5c167808c6c31119e837af213343e5078bc16",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1247
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1936
+                  }
+                ]
+              },
+              {
+                "round": 15,
+                "robot_id": "r3",
+                "own_sha256": "17729b3164181b410ebd41280e2744d7b617061e880096edd63372769cd45903",
+                "top_sha256": "a81c7ecdc28d9b3f123c30c409d5c167808c6c31119e837af213343e5078bc16",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1219
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1960
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2474
+                  }
+                ]
+              }
+            ],
+            "checked": "skill/model and RGB hashes; exact RGB-only correction, condition-specific pulse deltas, raw arm actions, and own-command history; evaluator data unused"
+          },
+          "carry_decisions": 54,
+          "llm": null,
+          "replayed_wheel_batches": 125,
+          "scope": "saved input/command replay, not OS isolation"
+        },
+        "team_wire_requests": 0,
+        "team_mode": "fixture",
+        "plan_rounds": 2,
+        "inspection_reports": 1,
+        "stage_injected_holds": 0,
+        "carry_injected_holds": 0,
+        "scope": "saved input/ACK/command replay; not OS isolation, real network faults or general planning"
+      },
+      "cost_usd": null
+    },
+    {
+      "id": "three-robot-live-normal-v1",
+      "category": "development_failure",
+      "source_sha": "5c1680b74dc615ec98852b73525be9d5832f91cd",
+      "raw_root": "/Users/changmin/projects/ugrp-worktrees/three-robot-e2e/outputs/three-robot-live-normal-v1",
+      "success": false,
+      "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/three-robot-e2e/scripts/run_camera_goal_transport.py\", line 129, in run\n    scene.configure_run(args, report)\n  File \"/Users/changmin/projects/ugrp-worktrees/three-robot-e2e/scripts/run_three_robot_e2e.py\", line 61, in configure_run\n    raise RuntimeError('three-peer plan not committed; no task actuation allowed')\nRuntimeError: three-peer plan not committed; no task actuation allowed\n",
+      "config": {
+        "coarse_control": "rgb-wheel-heading-v1",
+        "final_refinement_steps": 40,
+        "planner": "llm",
+        "reacquire_on_settle": true,
+        "start_distance_m": {
+          "r1": 0.6,
+          "r3": 0.6
+        },
+        "start_poses_setup_only": {
+          "r1": {
+            "distance_m": 0.6,
+            "lateral_m": 0.0,
+            "yaw_deg": 0.0
+          },
+          "r3": {
+            "distance_m": 0.6,
+            "lateral_m": 0.0,
+            "yaw_deg": 0.0
+          }
+        },
+        "team_fault": "none",
+        "team_planner": "llm",
+        "weld": false
+      },
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "assets": {
+        "grasp_skill": {
+          "path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/goal-e2e-portable-models-20260916/models/grasp",
+          "sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049"
+        },
+        "reference_top": {
+          "path": "/Users/changmin/projects/ugrp-worktrees/three-robot-e2e/tests/fixtures/camera_goal_transport/reference-top.jpg",
+          "sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+        },
+        "stage_skill": {
+          "path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/goal-e2e-portable-models-20260916/models/varied",
+          "sha256": "b89e6fce188efe7ab025d08826bdf269b515c353b81f9b3184f9351ac8bf5f84"
+        }
+      },
+      "wall_s": 41.17187216700404,
+      "sim_s": 2.0999999999999903,
+      "evaluation": {
+        "gates": {
+          "carry_continuity": false,
+          "carry_progress": false,
+          "grasp_hold": false,
+          "lateral_drift": false,
+          "release_continuity": false,
+          "release_grounded_clear": false,
+          "release_stable": false,
+          "required_phases": false,
+          "transport_endpoint": false,
+          "valid_samples": true,
+          "weld_off": true
+        },
+        "metrics": {
+          "carry_start_to_end_progress_m": null,
+          "displacement_error_m": null,
+          "final_displacement_m": null,
+          "grasp_hold_duration_s": null,
+          "lateral_drift_m": null,
+          "max_sample_gap_s": 0.15,
+          "minimum_hold_s": 2.0,
+          "release_hold_duration_s": null,
+          "release_position_span_3d_m": null,
+          "release_stable_s": 1.0,
+          "sample_count": 13,
+          "target_distance_m": 0.5,
+          "tolerance_m": 0.03
+        },
+        "reasons": [
+          "missing required phases: grasp_hold, carry, carry_stop, place_lower, place_open, place_retract, release_hold",
+          "grasp_hold is not continuous, long enough, lifted, bilateral, and weld-free",
+          "carry samples are missing, discontinuous, unlifted, non-bilateral, or welded",
+          "carry start-to-end progress is below 0.15 m",
+          "final displacement is outside target tolerance",
+          "final lateral drift exceeds 0.03 m",
+          "final release_hold is not contiguous and long enough",
+          "release_hold is not grounded and clear of robots/fingers",
+          "release position span exceeds 0.005 m"
+        ],
+        "scope": "sampled referee continuity only",
+        "success": false
+      },
+      "goal_stable_at_end": false,
+      "weld_active_ticks": 0,
+      "approach_payload_contact_steps": 0,
+      "invariants_match": true,
+      "plan_rounds": 6,
+      "committed_plan": null,
+      "inspection_reports": [],
+      "inspection_overlap_with_approach_execution_window_wall_s": [],
+      "model_requests": 18,
+      "usage": {
+        "prompt_tokens": 50248,
+        "completion_tokens": 3067,
+        "total_tokens": 59657
+      },
+      "unknown_usage_calls": 0,
+      "model_ids": [
+        "gemini-3.8-flash"
+      ],
+      "request_errors": [
+        {
+          "request_id": "e28145285b76-r2-plan-0",
+          "error": "ValueError: plan requires transport and inspection only",
+          "error_kind": "reply_schema"
+        },
+        {
+          "request_id": "e28145285b76-r3-plan-0",
+          "error": "ValueError: plan requires transport and inspection only",
+          "error_kind": "reply_schema"
+        },
+        {
+          "request_id": "e28145285b76-r2-plan-1",
+          "error": "ValueError: plan requires transport and inspection only",
+          "error_kind": "reply_schema"
+        },
+        {
+          "request_id": "e28145285b76-r3-plan-1",
+          "error": "ValueError: plan requires transport and inspection only",
+          "error_kind": "reply_schema"
+        },
+        {
+          "request_id": "e28145285b76-r2-plan-2",
+          "error": "ValueError: plan requires transport and inspection only",
+          "error_kind": "reply_schema"
+        },
+        {
+          "request_id": "e28145285b76-r3-plan-2",
+          "error": "ValueError: plan requires transport and inspection only",
+          "error_kind": "reply_schema"
+        },
+        {
+          "request_id": "e28145285b76-r2-plan-3",
+          "error": "ValueError: plan requires transport and inspection only",
+          "error_kind": "reply_schema"
+        },
+        {
+          "request_id": "e28145285b76-r3-plan-3",
+          "error": "ValueError: plan requires transport and inspection only",
+          "error_kind": "reply_schema"
+        },
+        {
+          "request_id": "e28145285b76-r2-plan-4",
+          "error": "ValueError: plan requires transport and inspection only",
+          "error_kind": "reply_schema"
+        },
+        {
+          "request_id": "e28145285b76-r3-plan-4",
+          "error": "ValueError: plan requires transport and inspection only",
+          "error_kind": "reply_schema"
+        },
+        {
+          "request_id": "e28145285b76-r2-plan-5",
+          "error": "ValueError: plan requires transport and inspection only",
+          "error_kind": "reply_schema"
+        },
+        {
+          "request_id": "e28145285b76-r3-plan-5",
+          "error": "ValueError: plan requires transport and inspection only",
+          "error_kind": "reply_schema"
+        }
+      ],
+      "wheel_batches": 0,
+      "arm_batches": 1,
+      "stage_permissions": [],
+      "carry_report_holds": [],
+      "audit": null,
+      "cost_usd": null,
+      "failure_verification": "18 model attempts; no task motion after folded setup; nonproposer deferral was rejected by the old schema"
+    },
+    {
+      "id": "three-robot-live-normal-v2",
+      "category": "final_live",
+      "source_sha": "d79c97d8f03c6ea7a8e067c4e4c06519d4b19b82",
+      "raw_root": "/Users/changmin/projects/ugrp-worktrees/three-robot-e2e/outputs/three-robot-live-normal-v2",
+      "success": true,
+      "error": null,
+      "config": {
+        "coarse_control": "rgb-wheel-heading-v1",
+        "final_refinement_steps": 40,
+        "planner": "llm",
+        "reacquire_on_settle": true,
+        "start_distance_m": {
+          "r1": 0.6,
+          "r3": 0.6
+        },
+        "start_poses_setup_only": {
+          "r1": {
+            "distance_m": 0.6,
+            "lateral_m": 0.0,
+            "yaw_deg": 0.0
+          },
+          "r3": {
+            "distance_m": 0.6,
+            "lateral_m": 0.0,
+            "yaw_deg": 0.0
+          }
+        },
+        "team_fault": "none",
+        "team_planner": "llm",
+        "weld": false
+      },
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "assets": {
+        "grasp_skill": {
+          "path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/goal-e2e-portable-models-20260916/models/grasp",
+          "sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049"
+        },
+        "reference_top": {
+          "path": "/Users/changmin/projects/ugrp-worktrees/three-robot-e2e/tests/fixtures/camera_goal_transport/reference-top.jpg",
+          "sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+        },
+        "stage_skill": {
+          "path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/goal-e2e-portable-models-20260916/models/varied",
+          "sha256": "b89e6fce188efe7ab025d08826bdf269b515c353b81f9b3184f9351ac8bf5f84"
+        }
+      },
+      "wall_s": 125.47692529202322,
+      "sim_s": 48.36000000001314,
+      "evaluation": {
+        "gates": {
+          "carry_continuity": true,
+          "carry_progress": true,
+          "grasp_hold": true,
+          "lateral_drift": true,
+          "release_continuity": true,
+          "release_grounded_clear": true,
+          "release_stable": true,
+          "required_phases": true,
+          "transport_endpoint": true,
+          "valid_samples": true,
+          "weld_off": true
+        },
+        "metrics": {
+          "carry_start_to_end_progress_m": 0.48297199999999985,
+          "displacement_error_m": -0.01706799999999986,
+          "final_displacement_m": 0.48293200000000014,
+          "grasp_hold_duration_s": 2.1000000000000014,
+          "lateral_drift_m": 0.0007110000000001282,
+          "max_sample_gap_s": 0.15,
+          "minimum_hold_s": 2.0,
+          "release_hold_duration_s": 2.0999999999999943,
+          "release_position_span_3d_m": 0.0,
+          "release_stable_s": 1.0,
+          "sample_count": 475,
+          "target_distance_m": 0.5,
+          "tolerance_m": 0.03
+        },
+        "reasons": [],
+        "scope": "sampled referee continuity only",
+        "success": true
+      },
+      "goal_stable_at_end": true,
+      "weld_active_ticks": 0,
+      "approach_payload_contact_steps": 0,
+      "invariants_match": true,
+      "plan_rounds": 2,
+      "committed_plan": {
+        "plan": {
+          "inspection": {
+            "region": "green_zone",
+            "robot_id": "r2",
+            "skill": "inspect_goal_rgb_v1",
+            "timing": "during_approach"
+          },
+          "transport": {
+            "goal": "green_zone",
+            "object": "orange_beam",
+            "participants": {
+              "r1": "bottom_end",
+              "r3": "top_end"
+            },
+            "skill": "rgb_pair_goal_v1"
+          }
+        },
+        "plan_hash": "c088546215f7b79c993eac917915dd072aac12303bf278e971f687be39469c8d",
+        "proposal_id": "1623b2cacc47-plan-v1",
+        "proposer": "r1",
+        "version": 1
+      },
+      "inspection_reports": [
+        {
+          "completed_wall_s": 23.497178333986085,
+          "images": {
+            "frame_id": 3,
+            "own": {
+              "path": "rgb/team-inspection-0-r2-own.jpg",
+              "sha256": "9e7cf177ef6859e04e26ccd0dae6b0b5377c2945d02848615638e689688bd7f8"
+            },
+            "top": {
+              "path": "rgb/team-inspection-0-top.jpg",
+              "sha256": "9d5da38baf96170f6ed257112c8b24a1f01522af4504ca4f4d8ad23dddaeb0ac"
+            }
+          },
+          "index": 0,
+          "observed_at_sim_s": 1.1000000000000008,
+          "received_at_sim_s": 21.89999999999874,
+          "received_wall_s": 56.30034349998459,
+          "reply": {
+            "confidence": 0.95,
+            "message": "OWN camera cannot view the green destination zone. Shared TOP view confirms the green destination zone is fully clear of any obstacles.",
+            "reason": "The green destination zone is not visible in OWN RGB view, but clearly visible in shared TOP RGB. The green zone next to the blue zone containing the orange beam is completely empty and clear of obstructions.",
+            "request_id": "1623b2cacc47-r2-inspect-0",
+            "status": "VISIBLE_CLEAR"
+          },
+          "request_id": "1623b2cacc47-r2-inspect-0",
+          "started_wall_s": 19.877312750002602,
+          "stop": null
+        }
+      ],
+      "inspection_overlap_with_approach_execution_window_wall_s": [
+        3.3653508340066765
+      ],
+      "model_requests": 25,
+      "usage": {
+        "prompt_tokens": 118601,
+        "completion_tokens": 3726,
+        "total_tokens": 124670
+      },
+      "unknown_usage_calls": 0,
+      "model_ids": [
+        "gemini-3.8-flash"
+      ],
+      "request_errors": [],
+      "wheel_batches": 125,
+      "arm_batches": 31,
+      "stage_permissions": [
+        {
+          "skill": "APPROACH",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "PREPARE_GRASP",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "CLOSE",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "LIFT",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "CARRY",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "LOWER",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "RELEASE",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "RETRACT",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "FINISH",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        }
+      ],
+      "carry_report_holds": [],
+      "audit": {
+        "ok": true,
+        "source_sha": "d79c97d8f03c6ea7a8e067c4e4c06519d4b19b82",
+        "pair": {
+          "ok": true,
+          "source_sha": "d79c97d8f03c6ea7a8e067c4e4c06519d4b19b82",
+          "physical_success": true,
+          "coarse_decisions": 34,
+          "fine_decisions": 146,
+          "dock_decisions": 10,
+          "grasp": {
+            "ok": true,
+            "condition": "visual",
+            "rounds": 16,
+            "calls": 32,
+            "models": {
+              "r1": "2a5a19e323d6353ee8ca0342a3a9341a0736d3d35ba9a7df11d45071f5d15a43",
+              "r3": "e55bb7d0ac473dc79d6eab9c1f4dadb2b5dff068329a8c8714d1fd076e5ecfed"
+            },
+            "calls_source": "result.json:calls",
+            "replay": [
+              {
+                "round": 0,
+                "robot_id": "r1",
+                "own_sha256": "4e8d6389aa6d063fd37d8164f7ae5e9724661e1d8c58f0e79bdc29d9dea1d764",
+                "top_sha256": "8663d840dd49afb2ba190917b46bad544046198dee14a22d6d74e7a6ada0fbb4",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1194
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1924
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2489
+                  }
+                ]
+              },
+              {
+                "round": 0,
+                "robot_id": "r3",
+                "own_sha256": "366d3fb47f6e018cc2c2fd24de7cfd798bbee16c3e041dd068f1e497fee9af94",
+                "top_sha256": "8663d840dd49afb2ba190917b46bad544046198dee14a22d6d74e7a6ada0fbb4",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1194
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1929
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2486
+                  }
+                ]
+              },
+              {
+                "round": 1,
+                "robot_id": "r1",
+                "own_sha256": "79f77170b1237e5ea2a632b4f88529099a7cf8712f6997ad193a30cf259a764a",
+                "top_sha256": "d63aec66c71877f0a9fb1ec09d074254a56cab246b744f799ec9d646e9d7d0dc",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1198
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1918
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2494
+                  }
+                ]
+              },
+              {
+                "round": 1,
+                "robot_id": "r3",
+                "own_sha256": "6e783b0e91c6b9773f188f007352d1367abe5e041b9ec211445eac0bfae4303c",
+                "top_sha256": "d63aec66c71877f0a9fb1ec09d074254a56cab246b744f799ec9d646e9d7d0dc",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1928
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2487
+                  }
+                ]
+              },
+              {
+                "round": 2,
+                "robot_id": "r1",
+                "own_sha256": "6e9b36a2a7ff986de96657be963ad412d21db403096d50adaa82ce8788f3b5a4",
+                "top_sha256": "f401cf17f48257a9d79763d5b1f04b4052f787b75cb4153d6dde52af72f6caa0",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1206
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1909
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 2,
+                "robot_id": "r3",
+                "own_sha256": "10bfa0054453ba74b030ed5f9ef6dfef8c4afba6123b7609115860ae54bbe03e",
+                "top_sha256": "f401cf17f48257a9d79763d5b1f04b4052f787b75cb4153d6dde52af72f6caa0",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1195
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1930
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2486
+                  }
+                ]
+              },
+              {
+                "round": 3,
+                "robot_id": "r1",
+                "own_sha256": "53eec22b77eb8e1c3f1f7f925ae0127774a6da86ede62922774a5e21fdb5652f",
+                "top_sha256": "ee6d68ba8fe6eae9294b0d7f0b7c6266cddac3a339d13afb60c9ef98435fbbfd",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1231
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1927
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 3,
+                "robot_id": "r3",
+                "own_sha256": "2342193ce44f96101adaafef873f93be823426df5c213a59c00fb37e258930c0",
+                "top_sha256": "ee6d68ba8fe6eae9294b0d7f0b7c6266cddac3a339d13afb60c9ef98435fbbfd",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1196
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1933
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2485
+                  }
+                ]
+              },
+              {
+                "round": 4,
+                "robot_id": "r1",
+                "own_sha256": "36e9e8c7bc908557a9fa6af1a42f9d660ebb963fdae911b17c3c1aa71c7a8078",
+                "top_sha256": "629273e48aa528e2491f84632a204eb42d9d0f50b42425cfa26b5688a93aec48",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1243
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1916
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 4,
+                "robot_id": "r3",
+                "own_sha256": "935b98915d823a932eb40af9c325baccd435f7d6fb6707fd9e7f220b52cf633f",
+                "top_sha256": "629273e48aa528e2491f84632a204eb42d9d0f50b42425cfa26b5688a93aec48",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1195
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1940
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2479
+                  }
+                ]
+              },
+              {
+                "round": 5,
+                "robot_id": "r1",
+                "own_sha256": "cde841064f85486498542ed37a69c546c91c3a15c126bfffc3ae8354763bf69b",
+                "top_sha256": "7c1dc00d1fe8a21cba81dfd8ff07ac2101a7dd4e0d1a2f3a1a9109233a8534a1",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1218
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1917
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 5,
+                "robot_id": "r3",
+                "own_sha256": "2c57b5180e16fe6a5f4847790f8c5eb948c44b0989f5a2b4110c2968c0e0b004",
+                "top_sha256": "7c1dc00d1fe8a21cba81dfd8ff07ac2101a7dd4e0d1a2f3a1a9109233a8534a1",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1198
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1939
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2481
+                  }
+                ]
+              },
+              {
+                "round": 6,
+                "robot_id": "r1",
+                "own_sha256": "54a7aedcd1090e7531c91096c367a2d0e89c8e47fd67c58203348cb817912f77",
+                "top_sha256": "d65f7b8ed438214a357d4848d635555b62b82f911178749d89c0d1df79f25157",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1237
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1915
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 6,
+                "robot_id": "r3",
+                "own_sha256": "5efc4309da3b7c767787c7c65fdd3d2809717847a994f4767607eccac7116e32",
+                "top_sha256": "d65f7b8ed438214a357d4848d635555b62b82f911178749d89c0d1df79f25157",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1200
+                  }
+                ]
+              },
+              {
+                "round": 7,
+                "robot_id": "r1",
+                "own_sha256": "97bee2532d127846c58f097e038097e8561cc792148da583239a3dccbcf0be4b",
+                "top_sha256": "60f67570e26ddef1b56fe032ac79923c4e5296ab876e1f9b334539b89f96fc21",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1212
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1898
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 7,
+                "robot_id": "r3",
+                "own_sha256": "20756f90456fe46381e8b8392a5d4c0061ab5b125ec5b82091a561bdf318521f",
+                "top_sha256": "60f67570e26ddef1b56fe032ac79923c4e5296ab876e1f9b334539b89f96fc21",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1202
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1943
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2479
+                  }
+                ]
+              },
+              {
+                "round": 8,
+                "robot_id": "r1",
+                "own_sha256": "20ad8c0115366627d094165db7878df6c94bef4f44bcfd234da05079644328f6",
+                "top_sha256": "194126cf77cceca840465be3e2859620f516e912c09cdfc7985206807542d2e2",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1189
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 8,
+                "robot_id": "r3",
+                "own_sha256": "31f0a8d72cc6ad0e7ba94c36dbe1961248a84dc9c548917fc60f205dad06bd6e",
+                "top_sha256": "194126cf77cceca840465be3e2859620f516e912c09cdfc7985206807542d2e2",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1208
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1946
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2480
+                  }
+                ]
+              },
+              {
+                "round": 9,
+                "robot_id": "r1",
+                "own_sha256": "509f08c288a87ad3c92a34d0d9cef90933656cce3591518328a468c14a46789b",
+                "top_sha256": "71c1d3e017c26c89af3bacc29030540da7e8803885ccf06697ace03d6ba92ed5",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1214
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1923
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2499
+                  }
+                ]
+              },
+              {
+                "round": 9,
+                "robot_id": "r3",
+                "own_sha256": "de6cfe05c2fd426ec8c9a93b0f8e4f4f3a802616fdaadaa37771b6b9f28070d9",
+                "top_sha256": "71c1d3e017c26c89af3bacc29030540da7e8803885ccf06697ace03d6ba92ed5",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1207
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2479
+                  }
+                ]
+              },
+              {
+                "round": 10,
+                "robot_id": "r1",
+                "own_sha256": "8a8e40ebba589cfb41b3399a91c8517384289ce373311e1d82884f64b645e716",
+                "top_sha256": "eb7af7e544f5b1c3a4473328e67129d9082a7c3912552908bcf59e40419d7005",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1222
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1928
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2498
+                  }
+                ]
+              },
+              {
+                "round": 10,
+                "robot_id": "r3",
+                "own_sha256": "62b24819140a5d4fd4205c203e4ee83c5f7cefee3c0e533b0c31eaea699cac9f",
+                "top_sha256": "eb7af7e544f5b1c3a4473328e67129d9082a7c3912552908bcf59e40419d7005",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1949
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2477
+                  }
+                ]
+              },
+              {
+                "round": 11,
+                "robot_id": "r1",
+                "own_sha256": "e20d4ada4a5ea89aa92675a3da8546510c3092dd8e659434502c412b8e7c954f",
+                "top_sha256": "733e06694ca5868aaf540e10e28d194cea984707b2befaec76e14bbbdaf83109",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1229
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1929
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2499
+                  }
+                ]
+              },
+              {
+                "round": 11,
+                "robot_id": "r3",
+                "own_sha256": "8b97e514a04e64cf73b326f43a44f5c0552f8c648bd80f59b2bb526b1ba60221",
+                "top_sha256": "733e06694ca5868aaf540e10e28d194cea984707b2befaec76e14bbbdaf83109",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1209
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1953
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2475
+                  }
+                ]
+              },
+              {
+                "round": 12,
+                "robot_id": "r1",
+                "own_sha256": "f8ebae55492d9f3e03eaf19c1697ad35e2dc40afd1e41994d513df0bb872f57f",
+                "top_sha256": "bb83f1d0040849d910eea70f326976392e02764aa9a16471abf8941073080f29",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1234
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1921
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 12,
+                "robot_id": "r3",
+                "own_sha256": "d92fbca1cdd2a730e5c3cdeed16b1849bb97a37eb4e7507127d879c674e93a38",
+                "top_sha256": "bb83f1d0040849d910eea70f326976392e02764aa9a16471abf8941073080f29",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1214
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1956
+                  }
+                ]
+              },
+              {
+                "round": 13,
+                "robot_id": "r1",
+                "own_sha256": "8f0e37b3ebc04bc4a48ca0408cf9aafa7cf204378f1d02e966ff9ec8f4359dfc",
+                "top_sha256": "b8f42b547b9c5be5762ef177a991c6694abe2d89f960aeedc2e566f264be8687",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1259
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1946
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2498
+                  }
+                ]
+              },
+              {
+                "round": 13,
+                "robot_id": "r3",
+                "own_sha256": "3505ce48818b428ab756d5c613bdfc35e06dc34b9707908fb9152b7f73173f67",
+                "top_sha256": "b8f42b547b9c5be5762ef177a991c6694abe2d89f960aeedc2e566f264be8687",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1213
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1957
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2474
+                  }
+                ]
+              },
+              {
+                "round": 14,
+                "robot_id": "r1",
+                "own_sha256": "5933efa336161c6481f30078d8bf68f77ca6b746324da9f8a4a8ab2c6856f8de",
+                "top_sha256": "fcd72eae75c57dee3737c592b638c46986524aee3c129980fd092a1ccf32ca90",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1272
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1930
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 14,
+                "robot_id": "r3",
+                "own_sha256": "09460150b7c2238b07328877ee7eb5697178447625d5df395d2b567b758c6485",
+                "top_sha256": "fcd72eae75c57dee3737c592b638c46986524aee3c129980fd092a1ccf32ca90",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1959
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2472
+                  }
+                ]
+              },
+              {
+                "round": 15,
+                "robot_id": "r1",
+                "own_sha256": "427b53b92ebeae4f8078b3ededce6672cfcdec7e575b5aad7b62e47e1dea9a61",
+                "top_sha256": "a81c7ecdc28d9b3f123c30c409d5c167808c6c31119e837af213343e5078bc16",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1247
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1936
+                  }
+                ]
+              },
+              {
+                "round": 15,
+                "robot_id": "r3",
+                "own_sha256": "17729b3164181b410ebd41280e2744d7b617061e880096edd63372769cd45903",
+                "top_sha256": "a81c7ecdc28d9b3f123c30c409d5c167808c6c31119e837af213343e5078bc16",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1219
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1960
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2474
+                  }
+                ]
+              }
+            ],
+            "checked": "skill/model and RGB hashes; exact RGB-only correction, condition-specific pulse deltas, raw arm actions, and own-command history; evaluator data unused"
+          },
+          "carry_decisions": 54,
+          "llm": {
+            "wire_requests": 18,
+            "events": 9
+          },
+          "replayed_wheel_batches": 125,
+          "scope": "saved input/command replay, not OS isolation"
+        },
+        "team_wire_requests": 7,
+        "team_mode": "llm",
+        "plan_rounds": 2,
+        "inspection_reports": 1,
+        "stage_injected_holds": 0,
+        "carry_injected_holds": 0,
+        "scope": "saved input/ACK/command replay; not OS isolation, real network faults or general planning"
+      },
+      "cost_usd": null
+    },
+    {
+      "id": "three-robot-ready-delay-v2",
+      "category": "final_live",
+      "source_sha": "d79c97d8f03c6ea7a8e067c4e4c06519d4b19b82",
+      "raw_root": "/Users/changmin/projects/ugrp-worktrees/three-robot-e2e/outputs/three-robot-ready-delay-v2",
+      "success": true,
+      "error": null,
+      "config": {
+        "coarse_control": "rgb-wheel-heading-v1",
+        "final_refinement_steps": 40,
+        "planner": "llm",
+        "reacquire_on_settle": true,
+        "start_distance_m": {
+          "r1": 0.6,
+          "r3": 0.6
+        },
+        "start_poses_setup_only": {
+          "r1": {
+            "distance_m": 0.6,
+            "lateral_m": 0.0,
+            "yaw_deg": 0.0
+          },
+          "r3": {
+            "distance_m": 0.6,
+            "lateral_m": 0.0,
+            "yaw_deg": 0.0
+          }
+        },
+        "team_fault": "ready_delay",
+        "team_planner": "llm",
+        "weld": false
+      },
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "assets": {
+        "grasp_skill": {
+          "path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/goal-e2e-portable-models-20260916/models/grasp",
+          "sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049"
+        },
+        "reference_top": {
+          "path": "/Users/changmin/projects/ugrp-worktrees/three-robot-e2e/tests/fixtures/camera_goal_transport/reference-top.jpg",
+          "sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+        },
+        "stage_skill": {
+          "path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/goal-e2e-portable-models-20260916/models/varied",
+          "sha256": "b89e6fce188efe7ab025d08826bdf269b515c353b81f9b3184f9351ac8bf5f84"
+        }
+      },
+      "wall_s": 129.56376491699484,
+      "sim_s": 48.760000000013626,
+      "evaluation": {
+        "gates": {
+          "carry_continuity": true,
+          "carry_progress": true,
+          "grasp_hold": true,
+          "lateral_drift": true,
+          "release_continuity": true,
+          "release_grounded_clear": true,
+          "release_stable": true,
+          "required_phases": true,
+          "transport_endpoint": true,
+          "valid_samples": true,
+          "weld_off": true
+        },
+        "metrics": {
+          "carry_start_to_end_progress_m": 0.48297099999999993,
+          "displacement_error_m": -0.017068000000000083,
+          "final_displacement_m": 0.4829319999999999,
+          "grasp_hold_duration_s": 2.1000000000000014,
+          "lateral_drift_m": 0.0006109999999999172,
+          "max_sample_gap_s": 0.15,
+          "minimum_hold_s": 2.0,
+          "release_hold_duration_s": 2.1000000000000014,
+          "release_position_span_3d_m": 0.0,
+          "release_stable_s": 1.0,
+          "sample_count": 479,
+          "target_distance_m": 0.5,
+          "tolerance_m": 0.03
+        },
+        "reasons": [],
+        "scope": "sampled referee continuity only",
+        "success": true
+      },
+      "goal_stable_at_end": true,
+      "weld_active_ticks": 0,
+      "approach_payload_contact_steps": 0,
+      "invariants_match": true,
+      "plan_rounds": 2,
+      "committed_plan": {
+        "plan": {
+          "inspection": {
+            "region": "green_zone",
+            "robot_id": "r2",
+            "skill": "inspect_goal_rgb_v1",
+            "timing": "during_approach"
+          },
+          "transport": {
+            "goal": "green_zone",
+            "object": "orange_beam",
+            "participants": {
+              "r1": "bottom_end",
+              "r3": "top_end"
+            },
+            "skill": "rgb_pair_goal_v1"
+          }
+        },
+        "plan_hash": "c088546215f7b79c993eac917915dd072aac12303bf278e971f687be39469c8d",
+        "proposal_id": "bb3ff77ef657-plan-v1",
+        "proposer": "r1",
+        "version": 1
+      },
+      "inspection_reports": [
+        {
+          "completed_wall_s": 17.88268245800282,
+          "images": {
+            "frame_id": 3,
+            "own": {
+              "path": "rgb/team-inspection-0-r2-own.jpg",
+              "sha256": "9e7cf177ef6859e04e26ccd0dae6b0b5377c2945d02848615638e689688bd7f8"
+            },
+            "top": {
+              "path": "rgb/team-inspection-0-top.jpg",
+              "sha256": "9d5da38baf96170f6ed257112c8b24a1f01522af4504ca4f4d8ad23dddaeb0ac"
+            }
+          },
+          "index": 0,
+          "observed_at_sim_s": 1.1000000000000008,
+          "received_at_sim_s": 21.89999999999874,
+          "received_wall_s": 53.78388500001165,
+          "reply": {
+            "confidence": 0.95,
+            "message": "OWN view does not capture the green zone. TOP RGB view shows both green destination areas clear of obstacles.",
+            "reason": "OWN camera does not see the green destination zones directly, but shared TOP view clearly shows the green zone targets completely unobstructed.",
+            "request_id": "bb3ff77ef657-r2-inspect-0",
+            "status": "VISIBLE_CLEAR"
+          },
+          "request_id": "bb3ff77ef657-r2-inspect-0",
+          "started_wall_s": 15.592617332993541,
+          "stop": null
+        }
+      ],
+      "inspection_overlap_with_approach_execution_window_wall_s": [
+        2.0843716250092257
+      ],
+      "model_requests": 29,
+      "usage": {
+        "prompt_tokens": 141895,
+        "completion_tokens": 4143,
+        "total_tokens": 149468
+      },
+      "unknown_usage_calls": 0,
+      "model_ids": [
+        "gemini-3.8-flash"
+      ],
+      "request_errors": [],
+      "wheel_batches": 125,
+      "arm_batches": 31,
+      "stage_permissions": [
+        {
+          "skill": "APPROACH",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "PREPARE_GRASP",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "CLOSE",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "LIFT",
+          "ready": false,
+          "delivered": [
+            "r1"
+          ]
+        },
+        {
+          "skill": "LIFT",
+          "ready": false,
+          "delivered": [
+            "r1"
+          ]
+        },
+        {
+          "skill": "LIFT",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "CARRY",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "LOWER",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "RELEASE",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "RETRACT",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "FINISH",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        }
+      ],
+      "carry_report_holds": [],
+      "audit": {
+        "ok": true,
+        "source_sha": "d79c97d8f03c6ea7a8e067c4e4c06519d4b19b82",
+        "pair": {
+          "ok": true,
+          "source_sha": "d79c97d8f03c6ea7a8e067c4e4c06519d4b19b82",
+          "physical_success": true,
+          "coarse_decisions": 34,
+          "fine_decisions": 146,
+          "dock_decisions": 10,
+          "grasp": {
+            "ok": true,
+            "condition": "visual",
+            "rounds": 16,
+            "calls": 32,
+            "models": {
+              "r1": "2a5a19e323d6353ee8ca0342a3a9341a0736d3d35ba9a7df11d45071f5d15a43",
+              "r3": "e55bb7d0ac473dc79d6eab9c1f4dadb2b5dff068329a8c8714d1fd076e5ecfed"
+            },
+            "calls_source": "result.json:calls",
+            "replay": [
+              {
+                "round": 0,
+                "robot_id": "r1",
+                "own_sha256": "4e8d6389aa6d063fd37d8164f7ae5e9724661e1d8c58f0e79bdc29d9dea1d764",
+                "top_sha256": "8663d840dd49afb2ba190917b46bad544046198dee14a22d6d74e7a6ada0fbb4",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1194
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1924
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2489
+                  }
+                ]
+              },
+              {
+                "round": 0,
+                "robot_id": "r3",
+                "own_sha256": "366d3fb47f6e018cc2c2fd24de7cfd798bbee16c3e041dd068f1e497fee9af94",
+                "top_sha256": "8663d840dd49afb2ba190917b46bad544046198dee14a22d6d74e7a6ada0fbb4",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1194
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1929
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2486
+                  }
+                ]
+              },
+              {
+                "round": 1,
+                "robot_id": "r1",
+                "own_sha256": "79f77170b1237e5ea2a632b4f88529099a7cf8712f6997ad193a30cf259a764a",
+                "top_sha256": "d63aec66c71877f0a9fb1ec09d074254a56cab246b744f799ec9d646e9d7d0dc",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1198
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1918
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2494
+                  }
+                ]
+              },
+              {
+                "round": 1,
+                "robot_id": "r3",
+                "own_sha256": "6e783b0e91c6b9773f188f007352d1367abe5e041b9ec211445eac0bfae4303c",
+                "top_sha256": "d63aec66c71877f0a9fb1ec09d074254a56cab246b744f799ec9d646e9d7d0dc",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1928
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2487
+                  }
+                ]
+              },
+              {
+                "round": 2,
+                "robot_id": "r1",
+                "own_sha256": "6e9b36a2a7ff986de96657be963ad412d21db403096d50adaa82ce8788f3b5a4",
+                "top_sha256": "f401cf17f48257a9d79763d5b1f04b4052f787b75cb4153d6dde52af72f6caa0",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1206
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1909
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 2,
+                "robot_id": "r3",
+                "own_sha256": "10bfa0054453ba74b030ed5f9ef6dfef8c4afba6123b7609115860ae54bbe03e",
+                "top_sha256": "f401cf17f48257a9d79763d5b1f04b4052f787b75cb4153d6dde52af72f6caa0",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1195
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1930
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2486
+                  }
+                ]
+              },
+              {
+                "round": 3,
+                "robot_id": "r1",
+                "own_sha256": "53eec22b77eb8e1c3f1f7f925ae0127774a6da86ede62922774a5e21fdb5652f",
+                "top_sha256": "ee6d68ba8fe6eae9294b0d7f0b7c6266cddac3a339d13afb60c9ef98435fbbfd",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1231
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1927
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 3,
+                "robot_id": "r3",
+                "own_sha256": "2342193ce44f96101adaafef873f93be823426df5c213a59c00fb37e258930c0",
+                "top_sha256": "ee6d68ba8fe6eae9294b0d7f0b7c6266cddac3a339d13afb60c9ef98435fbbfd",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1196
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1933
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2485
+                  }
+                ]
+              },
+              {
+                "round": 4,
+                "robot_id": "r1",
+                "own_sha256": "36e9e8c7bc908557a9fa6af1a42f9d660ebb963fdae911b17c3c1aa71c7a8078",
+                "top_sha256": "629273e48aa528e2491f84632a204eb42d9d0f50b42425cfa26b5688a93aec48",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1243
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1916
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 4,
+                "robot_id": "r3",
+                "own_sha256": "935b98915d823a932eb40af9c325baccd435f7d6fb6707fd9e7f220b52cf633f",
+                "top_sha256": "629273e48aa528e2491f84632a204eb42d9d0f50b42425cfa26b5688a93aec48",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1195
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1940
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2479
+                  }
+                ]
+              },
+              {
+                "round": 5,
+                "robot_id": "r1",
+                "own_sha256": "cde841064f85486498542ed37a69c546c91c3a15c126bfffc3ae8354763bf69b",
+                "top_sha256": "7c1dc00d1fe8a21cba81dfd8ff07ac2101a7dd4e0d1a2f3a1a9109233a8534a1",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1218
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1917
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 5,
+                "robot_id": "r3",
+                "own_sha256": "2c57b5180e16fe6a5f4847790f8c5eb948c44b0989f5a2b4110c2968c0e0b004",
+                "top_sha256": "7c1dc00d1fe8a21cba81dfd8ff07ac2101a7dd4e0d1a2f3a1a9109233a8534a1",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1198
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1939
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2481
+                  }
+                ]
+              },
+              {
+                "round": 6,
+                "robot_id": "r1",
+                "own_sha256": "54a7aedcd1090e7531c91096c367a2d0e89c8e47fd67c58203348cb817912f77",
+                "top_sha256": "d65f7b8ed438214a357d4848d635555b62b82f911178749d89c0d1df79f25157",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1237
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1915
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 6,
+                "robot_id": "r3",
+                "own_sha256": "5efc4309da3b7c767787c7c65fdd3d2809717847a994f4767607eccac7116e32",
+                "top_sha256": "d65f7b8ed438214a357d4848d635555b62b82f911178749d89c0d1df79f25157",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1200
+                  }
+                ]
+              },
+              {
+                "round": 7,
+                "robot_id": "r1",
+                "own_sha256": "97bee2532d127846c58f097e038097e8561cc792148da583239a3dccbcf0be4b",
+                "top_sha256": "60f67570e26ddef1b56fe032ac79923c4e5296ab876e1f9b334539b89f96fc21",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1212
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1898
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 7,
+                "robot_id": "r3",
+                "own_sha256": "20756f90456fe46381e8b8392a5d4c0061ab5b125ec5b82091a561bdf318521f",
+                "top_sha256": "60f67570e26ddef1b56fe032ac79923c4e5296ab876e1f9b334539b89f96fc21",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1202
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1943
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2479
+                  }
+                ]
+              },
+              {
+                "round": 8,
+                "robot_id": "r1",
+                "own_sha256": "20ad8c0115366627d094165db7878df6c94bef4f44bcfd234da05079644328f6",
+                "top_sha256": "194126cf77cceca840465be3e2859620f516e912c09cdfc7985206807542d2e2",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1189
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 8,
+                "robot_id": "r3",
+                "own_sha256": "31f0a8d72cc6ad0e7ba94c36dbe1961248a84dc9c548917fc60f205dad06bd6e",
+                "top_sha256": "194126cf77cceca840465be3e2859620f516e912c09cdfc7985206807542d2e2",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1208
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1946
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2480
+                  }
+                ]
+              },
+              {
+                "round": 9,
+                "robot_id": "r1",
+                "own_sha256": "509f08c288a87ad3c92a34d0d9cef90933656cce3591518328a468c14a46789b",
+                "top_sha256": "71c1d3e017c26c89af3bacc29030540da7e8803885ccf06697ace03d6ba92ed5",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1214
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1923
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2499
+                  }
+                ]
+              },
+              {
+                "round": 9,
+                "robot_id": "r3",
+                "own_sha256": "de6cfe05c2fd426ec8c9a93b0f8e4f4f3a802616fdaadaa37771b6b9f28070d9",
+                "top_sha256": "71c1d3e017c26c89af3bacc29030540da7e8803885ccf06697ace03d6ba92ed5",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1207
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2479
+                  }
+                ]
+              },
+              {
+                "round": 10,
+                "robot_id": "r1",
+                "own_sha256": "8a8e40ebba589cfb41b3399a91c8517384289ce373311e1d82884f64b645e716",
+                "top_sha256": "eb7af7e544f5b1c3a4473328e67129d9082a7c3912552908bcf59e40419d7005",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1222
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1928
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2498
+                  }
+                ]
+              },
+              {
+                "round": 10,
+                "robot_id": "r3",
+                "own_sha256": "62b24819140a5d4fd4205c203e4ee83c5f7cefee3c0e533b0c31eaea699cac9f",
+                "top_sha256": "eb7af7e544f5b1c3a4473328e67129d9082a7c3912552908bcf59e40419d7005",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1949
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2477
+                  }
+                ]
+              },
+              {
+                "round": 11,
+                "robot_id": "r1",
+                "own_sha256": "e20d4ada4a5ea89aa92675a3da8546510c3092dd8e659434502c412b8e7c954f",
+                "top_sha256": "733e06694ca5868aaf540e10e28d194cea984707b2befaec76e14bbbdaf83109",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1229
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1929
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2499
+                  }
+                ]
+              },
+              {
+                "round": 11,
+                "robot_id": "r3",
+                "own_sha256": "8b97e514a04e64cf73b326f43a44f5c0552f8c648bd80f59b2bb526b1ba60221",
+                "top_sha256": "733e06694ca5868aaf540e10e28d194cea984707b2befaec76e14bbbdaf83109",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1209
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1953
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2475
+                  }
+                ]
+              },
+              {
+                "round": 12,
+                "robot_id": "r1",
+                "own_sha256": "f8ebae55492d9f3e03eaf19c1697ad35e2dc40afd1e41994d513df0bb872f57f",
+                "top_sha256": "bb83f1d0040849d910eea70f326976392e02764aa9a16471abf8941073080f29",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1234
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1921
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 12,
+                "robot_id": "r3",
+                "own_sha256": "d92fbca1cdd2a730e5c3cdeed16b1849bb97a37eb4e7507127d879c674e93a38",
+                "top_sha256": "bb83f1d0040849d910eea70f326976392e02764aa9a16471abf8941073080f29",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1214
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1956
+                  }
+                ]
+              },
+              {
+                "round": 13,
+                "robot_id": "r1",
+                "own_sha256": "8f0e37b3ebc04bc4a48ca0408cf9aafa7cf204378f1d02e966ff9ec8f4359dfc",
+                "top_sha256": "b8f42b547b9c5be5762ef177a991c6694abe2d89f960aeedc2e566f264be8687",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1259
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1946
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2498
+                  }
+                ]
+              },
+              {
+                "round": 13,
+                "robot_id": "r3",
+                "own_sha256": "3505ce48818b428ab756d5c613bdfc35e06dc34b9707908fb9152b7f73173f67",
+                "top_sha256": "b8f42b547b9c5be5762ef177a991c6694abe2d89f960aeedc2e566f264be8687",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1213
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1957
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2474
+                  }
+                ]
+              },
+              {
+                "round": 14,
+                "robot_id": "r1",
+                "own_sha256": "5933efa336161c6481f30078d8bf68f77ca6b746324da9f8a4a8ab2c6856f8de",
+                "top_sha256": "fcd72eae75c57dee3737c592b638c46986524aee3c129980fd092a1ccf32ca90",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1272
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1930
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 14,
+                "robot_id": "r3",
+                "own_sha256": "09460150b7c2238b07328877ee7eb5697178447625d5df395d2b567b758c6485",
+                "top_sha256": "fcd72eae75c57dee3737c592b638c46986524aee3c129980fd092a1ccf32ca90",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1959
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2472
+                  }
+                ]
+              },
+              {
+                "round": 15,
+                "robot_id": "r1",
+                "own_sha256": "427b53b92ebeae4f8078b3ededce6672cfcdec7e575b5aad7b62e47e1dea9a61",
+                "top_sha256": "a81c7ecdc28d9b3f123c30c409d5c167808c6c31119e837af213343e5078bc16",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1247
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1936
+                  }
+                ]
+              },
+              {
+                "round": 15,
+                "robot_id": "r3",
+                "own_sha256": "17729b3164181b410ebd41280e2744d7b617061e880096edd63372769cd45903",
+                "top_sha256": "a81c7ecdc28d9b3f123c30c409d5c167808c6c31119e837af213343e5078bc16",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1219
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1960
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2474
+                  }
+                ]
+              }
+            ],
+            "checked": "skill/model and RGB hashes; exact RGB-only correction, condition-specific pulse deltas, raw arm actions, and own-command history; evaluator data unused"
+          },
+          "carry_decisions": 54,
+          "llm": {
+            "wire_requests": 22,
+            "events": 11
+          },
+          "replayed_wheel_batches": 125,
+          "scope": "saved input/command replay, not OS isolation"
+        },
+        "team_wire_requests": 7,
+        "team_mode": "llm",
+        "plan_rounds": 2,
+        "inspection_reports": 1,
+        "stage_injected_holds": 2,
+        "carry_injected_holds": 0,
+        "scope": "saved input/ACK/command replay; not OS isolation, real network faults or general planning"
+      },
+      "cost_usd": null
+    },
+    {
+      "id": "three-robot-carry-loss-v2",
+      "category": "final_live",
+      "source_sha": "d79c97d8f03c6ea7a8e067c4e4c06519d4b19b82",
+      "raw_root": "/Users/changmin/projects/ugrp-worktrees/three-robot-e2e/outputs/three-robot-carry-loss-v2",
+      "success": true,
+      "error": null,
+      "config": {
+        "coarse_control": "rgb-wheel-heading-v1",
+        "final_refinement_steps": 40,
+        "planner": "llm",
+        "reacquire_on_settle": true,
+        "start_distance_m": {
+          "r1": 0.6,
+          "r3": 0.6
+        },
+        "start_poses_setup_only": {
+          "r1": {
+            "distance_m": 0.6,
+            "lateral_m": 0.0,
+            "yaw_deg": 0.0
+          },
+          "r3": {
+            "distance_m": 0.6,
+            "lateral_m": 0.0,
+            "yaw_deg": 0.0
+          }
+        },
+        "team_fault": "carry_report_loss",
+        "team_planner": "llm",
+        "weld": false
+      },
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "assets": {
+        "grasp_skill": {
+          "path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/goal-e2e-portable-models-20260916/models/grasp",
+          "sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049"
+        },
+        "reference_top": {
+          "path": "/Users/changmin/projects/ugrp-worktrees/three-robot-e2e/tests/fixtures/camera_goal_transport/reference-top.jpg",
+          "sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+        },
+        "stage_skill": {
+          "path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/goal-e2e-portable-models-20260916/models/varied",
+          "sha256": "b89e6fce188efe7ab025d08826bdf269b515c353b81f9b3184f9351ac8bf5f84"
+        }
+      },
+      "wall_s": 102.72057591599878,
+      "sim_s": 50.560000000015826,
+      "evaluation": {
+        "gates": {
+          "carry_continuity": true,
+          "carry_progress": true,
+          "grasp_hold": true,
+          "lateral_drift": true,
+          "release_continuity": true,
+          "release_grounded_clear": true,
+          "release_stable": true,
+          "required_phases": true,
+          "transport_endpoint": true,
+          "valid_samples": true,
+          "weld_off": true
+        },
+        "metrics": {
+          "carry_start_to_end_progress_m": 0.48121499999999984,
+          "displacement_error_m": -0.01880599999999988,
+          "final_displacement_m": 0.4811940000000001,
+          "grasp_hold_duration_s": 2.1000000000000014,
+          "lateral_drift_m": 0.0006559999999999899,
+          "max_sample_gap_s": 0.15,
+          "minimum_hold_s": 2.0,
+          "release_hold_duration_s": 2.1000000000000014,
+          "release_position_span_3d_m": 0.0,
+          "release_stable_s": 1.0,
+          "sample_count": 497,
+          "target_distance_m": 0.5,
+          "tolerance_m": 0.03
+        },
+        "reasons": [],
+        "scope": "sampled referee continuity only",
+        "success": true
+      },
+      "goal_stable_at_end": true,
+      "weld_active_ticks": 0,
+      "approach_payload_contact_steps": 0,
+      "invariants_match": true,
+      "plan_rounds": 2,
+      "committed_plan": {
+        "plan": {
+          "inspection": {
+            "region": "green_zone",
+            "robot_id": "r2",
+            "skill": "inspect_goal_rgb_v1",
+            "timing": "during_approach"
+          },
+          "transport": {
+            "goal": "green_zone",
+            "object": "orange_beam",
+            "participants": {
+              "r1": "bottom_end",
+              "r3": "top_end"
+            },
+            "skill": "rgb_pair_goal_v1"
+          }
+        },
+        "plan_hash": "c088546215f7b79c993eac917915dd072aac12303bf278e971f687be39469c8d",
+        "proposal_id": "93f2246187d2-plan-v1",
+        "proposer": "r1",
+        "version": 1
+      },
+      "inspection_reports": [
+        {
+          "completed_wall_s": 20.618576666980516,
+          "images": {
+            "frame_id": 3,
+            "own": {
+              "path": "rgb/team-inspection-0-r2-own.jpg",
+              "sha256": "9e7cf177ef6859e04e26ccd0dae6b0b5377c2945d02848615638e689688bd7f8"
+            },
+            "top": {
+              "path": "rgb/team-inspection-0-top.jpg",
+              "sha256": "9d5da38baf96170f6ed257112c8b24a1f01522af4504ca4f4d8ad23dddaeb0ac"
+            }
+          },
+          "index": 0,
+          "observed_at_sim_s": 1.1000000000000008,
+          "received_at_sim_s": 21.89999999999874,
+          "received_wall_s": 44.00350691698259,
+          "reply": {
+            "confidence": 0.95,
+            "message": "OWN camera cannot see the green destination zone. According to shared TOP RGB, the green target area is completely unobstructed.",
+            "reason": "The green destination zone is not visible in OWN RGB view, but TOP RGB clearly shows the green zone adjacent to the blue area is entirely clear of obstacles.",
+            "request_id": "93f2246187d2-r2-inspect-0",
+            "status": "VISIBLE_CLEAR"
+          },
+          "request_id": "93f2246187d2-r2-inspect-0",
+          "started_wall_s": 17.013471624988597,
+          "stop": null
+        }
+      ],
+      "inspection_overlap_with_approach_execution_window_wall_s": [
+        3.4780018749879673
+      ],
+      "model_requests": 25,
+      "usage": {
+        "prompt_tokens": 118561,
+        "completion_tokens": 3541,
+        "total_tokens": 124797
+      },
+      "unknown_usage_calls": 0,
+      "model_ids": [
+        "gemini-3.8-flash"
+      ],
+      "request_errors": [],
+      "wheel_batches": 136,
+      "arm_batches": 31,
+      "stage_permissions": [
+        {
+          "skill": "APPROACH",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "PREPARE_GRASP",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "CLOSE",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "LIFT",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "CARRY",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "LOWER",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "RELEASE",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "RETRACT",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        },
+        {
+          "skill": "FINISH",
+          "ready": true,
+          "delivered": [
+            "r1",
+            "r3"
+          ]
+        }
+      ],
+      "carry_report_holds": [
+        {
+          "index": 12,
+          "sim_time_s": 39.96000000000287,
+          "delivered": [
+            "r1"
+          ],
+          "control": {
+            "abort": false,
+            "done": false,
+            "duration_s": 0.2,
+            "forwards": {
+              "r1": 0.0,
+              "r3": 0.0
+            },
+            "mode": "CRUISE",
+            "permission": {
+              "epoch": 1,
+              "phase": "HOLD",
+              "reason": "fresh_pair_report_missing"
+            },
+            "recovery_count": 0,
+            "skew_error_px": null,
+            "valid": false
+          }
+        },
+        {
+          "index": 13,
+          "sim_time_s": 40.160000000003116,
+          "delivered": [
+            "r1"
+          ],
+          "control": {
+            "abort": false,
+            "done": false,
+            "duration_s": 0.2,
+            "forwards": {
+              "r1": 0.0,
+              "r3": 0.0
+            },
+            "mode": "CRUISE",
+            "permission": {
+              "epoch": 1,
+              "phase": "HOLD",
+              "reason": "fresh_pair_report_missing"
+            },
+            "recovery_count": 0,
+            "skew_error_px": null,
+            "valid": false
+          }
+        },
+        {
+          "index": 14,
+          "sim_time_s": 40.36000000000336,
+          "delivered": [
+            "r1"
+          ],
+          "control": {
+            "abort": false,
+            "done": false,
+            "duration_s": 0.2,
+            "forwards": {
+              "r1": 0.0,
+              "r3": 0.0
+            },
+            "mode": "CRUISE",
+            "permission": {
+              "epoch": 1,
+              "phase": "HOLD",
+              "reason": "fresh_pair_report_missing"
+            },
+            "recovery_count": 0,
+            "skew_error_px": null,
+            "valid": false
+          }
+        },
+        {
+          "index": 15,
+          "sim_time_s": 40.560000000003605,
+          "delivered": [
+            "r1"
+          ],
+          "control": {
+            "abort": false,
+            "done": false,
+            "duration_s": 0.2,
+            "forwards": {
+              "r1": 0.0,
+              "r3": 0.0
+            },
+            "mode": "CRUISE",
+            "permission": {
+              "epoch": 1,
+              "phase": "HOLD",
+              "reason": "fresh_pair_report_missing"
+            },
+            "recovery_count": 0,
+            "skew_error_px": null,
+            "valid": false
+          }
+        },
+        {
+          "index": 16,
+          "sim_time_s": 40.76000000000385,
+          "delivered": [
+            "r1"
+          ],
+          "control": {
+            "abort": false,
+            "done": false,
+            "duration_s": 0.2,
+            "forwards": {
+              "r1": 0.0,
+              "r3": 0.0
+            },
+            "mode": "CRUISE",
+            "permission": {
+              "epoch": 1,
+              "phase": "HOLD",
+              "reason": "fresh_pair_report_missing"
+            },
+            "recovery_count": 0,
+            "skew_error_px": null,
+            "valid": false
+          }
+        }
+      ],
+      "audit": {
+        "ok": true,
+        "source_sha": "d79c97d8f03c6ea7a8e067c4e4c06519d4b19b82",
+        "pair": {
+          "ok": true,
+          "source_sha": "d79c97d8f03c6ea7a8e067c4e4c06519d4b19b82",
+          "physical_success": true,
+          "coarse_decisions": 34,
+          "fine_decisions": 146,
+          "dock_decisions": 10,
+          "grasp": {
+            "ok": true,
+            "condition": "visual",
+            "rounds": 16,
+            "calls": 32,
+            "models": {
+              "r1": "2a5a19e323d6353ee8ca0342a3a9341a0736d3d35ba9a7df11d45071f5d15a43",
+              "r3": "e55bb7d0ac473dc79d6eab9c1f4dadb2b5dff068329a8c8714d1fd076e5ecfed"
+            },
+            "calls_source": "result.json:calls",
+            "replay": [
+              {
+                "round": 0,
+                "robot_id": "r1",
+                "own_sha256": "4e8d6389aa6d063fd37d8164f7ae5e9724661e1d8c58f0e79bdc29d9dea1d764",
+                "top_sha256": "8663d840dd49afb2ba190917b46bad544046198dee14a22d6d74e7a6ada0fbb4",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1194
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1924
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2489
+                  }
+                ]
+              },
+              {
+                "round": 0,
+                "robot_id": "r3",
+                "own_sha256": "366d3fb47f6e018cc2c2fd24de7cfd798bbee16c3e041dd068f1e497fee9af94",
+                "top_sha256": "8663d840dd49afb2ba190917b46bad544046198dee14a22d6d74e7a6ada0fbb4",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1194
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1929
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2486
+                  }
+                ]
+              },
+              {
+                "round": 1,
+                "robot_id": "r1",
+                "own_sha256": "79f77170b1237e5ea2a632b4f88529099a7cf8712f6997ad193a30cf259a764a",
+                "top_sha256": "d63aec66c71877f0a9fb1ec09d074254a56cab246b744f799ec9d646e9d7d0dc",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1198
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1918
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2494
+                  }
+                ]
+              },
+              {
+                "round": 1,
+                "robot_id": "r3",
+                "own_sha256": "6e783b0e91c6b9773f188f007352d1367abe5e041b9ec211445eac0bfae4303c",
+                "top_sha256": "d63aec66c71877f0a9fb1ec09d074254a56cab246b744f799ec9d646e9d7d0dc",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1928
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2487
+                  }
+                ]
+              },
+              {
+                "round": 2,
+                "robot_id": "r1",
+                "own_sha256": "6e9b36a2a7ff986de96657be963ad412d21db403096d50adaa82ce8788f3b5a4",
+                "top_sha256": "f401cf17f48257a9d79763d5b1f04b4052f787b75cb4153d6dde52af72f6caa0",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1206
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1909
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 2,
+                "robot_id": "r3",
+                "own_sha256": "10bfa0054453ba74b030ed5f9ef6dfef8c4afba6123b7609115860ae54bbe03e",
+                "top_sha256": "f401cf17f48257a9d79763d5b1f04b4052f787b75cb4153d6dde52af72f6caa0",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1195
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1930
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2486
+                  }
+                ]
+              },
+              {
+                "round": 3,
+                "robot_id": "r1",
+                "own_sha256": "53eec22b77eb8e1c3f1f7f925ae0127774a6da86ede62922774a5e21fdb5652f",
+                "top_sha256": "ee6d68ba8fe6eae9294b0d7f0b7c6266cddac3a339d13afb60c9ef98435fbbfd",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1231
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1927
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 3,
+                "robot_id": "r3",
+                "own_sha256": "2342193ce44f96101adaafef873f93be823426df5c213a59c00fb37e258930c0",
+                "top_sha256": "ee6d68ba8fe6eae9294b0d7f0b7c6266cddac3a339d13afb60c9ef98435fbbfd",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1196
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1933
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2485
+                  }
+                ]
+              },
+              {
+                "round": 4,
+                "robot_id": "r1",
+                "own_sha256": "36e9e8c7bc908557a9fa6af1a42f9d660ebb963fdae911b17c3c1aa71c7a8078",
+                "top_sha256": "629273e48aa528e2491f84632a204eb42d9d0f50b42425cfa26b5688a93aec48",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1243
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1916
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 4,
+                "robot_id": "r3",
+                "own_sha256": "935b98915d823a932eb40af9c325baccd435f7d6fb6707fd9e7f220b52cf633f",
+                "top_sha256": "629273e48aa528e2491f84632a204eb42d9d0f50b42425cfa26b5688a93aec48",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1195
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1940
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2479
+                  }
+                ]
+              },
+              {
+                "round": 5,
+                "robot_id": "r1",
+                "own_sha256": "cde841064f85486498542ed37a69c546c91c3a15c126bfffc3ae8354763bf69b",
+                "top_sha256": "7c1dc00d1fe8a21cba81dfd8ff07ac2101a7dd4e0d1a2f3a1a9109233a8534a1",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1218
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1917
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 5,
+                "robot_id": "r3",
+                "own_sha256": "2c57b5180e16fe6a5f4847790f8c5eb948c44b0989f5a2b4110c2968c0e0b004",
+                "top_sha256": "7c1dc00d1fe8a21cba81dfd8ff07ac2101a7dd4e0d1a2f3a1a9109233a8534a1",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1198
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1939
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2481
+                  }
+                ]
+              },
+              {
+                "round": 6,
+                "robot_id": "r1",
+                "own_sha256": "54a7aedcd1090e7531c91096c367a2d0e89c8e47fd67c58203348cb817912f77",
+                "top_sha256": "d65f7b8ed438214a357d4848d635555b62b82f911178749d89c0d1df79f25157",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1237
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1915
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 6,
+                "robot_id": "r3",
+                "own_sha256": "5efc4309da3b7c767787c7c65fdd3d2809717847a994f4767607eccac7116e32",
+                "top_sha256": "d65f7b8ed438214a357d4848d635555b62b82f911178749d89c0d1df79f25157",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1200
+                  }
+                ]
+              },
+              {
+                "round": 7,
+                "robot_id": "r1",
+                "own_sha256": "97bee2532d127846c58f097e038097e8561cc792148da583239a3dccbcf0be4b",
+                "top_sha256": "60f67570e26ddef1b56fe032ac79923c4e5296ab876e1f9b334539b89f96fc21",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1212
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1898
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 7,
+                "robot_id": "r3",
+                "own_sha256": "20756f90456fe46381e8b8392a5d4c0061ab5b125ec5b82091a561bdf318521f",
+                "top_sha256": "60f67570e26ddef1b56fe032ac79923c4e5296ab876e1f9b334539b89f96fc21",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1202
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1943
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2479
+                  }
+                ]
+              },
+              {
+                "round": 8,
+                "robot_id": "r1",
+                "own_sha256": "20ad8c0115366627d094165db7878df6c94bef4f44bcfd234da05079644328f6",
+                "top_sha256": "194126cf77cceca840465be3e2859620f516e912c09cdfc7985206807542d2e2",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1189
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 8,
+                "robot_id": "r3",
+                "own_sha256": "31f0a8d72cc6ad0e7ba94c36dbe1961248a84dc9c548917fc60f205dad06bd6e",
+                "top_sha256": "194126cf77cceca840465be3e2859620f516e912c09cdfc7985206807542d2e2",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1208
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1946
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2480
+                  }
+                ]
+              },
+              {
+                "round": 9,
+                "robot_id": "r1",
+                "own_sha256": "509f08c288a87ad3c92a34d0d9cef90933656cce3591518328a468c14a46789b",
+                "top_sha256": "71c1d3e017c26c89af3bacc29030540da7e8803885ccf06697ace03d6ba92ed5",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1214
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1923
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2499
+                  }
+                ]
+              },
+              {
+                "round": 9,
+                "robot_id": "r3",
+                "own_sha256": "de6cfe05c2fd426ec8c9a93b0f8e4f4f3a802616fdaadaa37771b6b9f28070d9",
+                "top_sha256": "71c1d3e017c26c89af3bacc29030540da7e8803885ccf06697ace03d6ba92ed5",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1207
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2479
+                  }
+                ]
+              },
+              {
+                "round": 10,
+                "robot_id": "r1",
+                "own_sha256": "8a8e40ebba589cfb41b3399a91c8517384289ce373311e1d82884f64b645e716",
+                "top_sha256": "eb7af7e544f5b1c3a4473328e67129d9082a7c3912552908bcf59e40419d7005",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1222
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1928
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2498
+                  }
+                ]
+              },
+              {
+                "round": 10,
+                "robot_id": "r3",
+                "own_sha256": "62b24819140a5d4fd4205c203e4ee83c5f7cefee3c0e533b0c31eaea699cac9f",
+                "top_sha256": "eb7af7e544f5b1c3a4473328e67129d9082a7c3912552908bcf59e40419d7005",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1949
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2477
+                  }
+                ]
+              },
+              {
+                "round": 11,
+                "robot_id": "r1",
+                "own_sha256": "e20d4ada4a5ea89aa92675a3da8546510c3092dd8e659434502c412b8e7c954f",
+                "top_sha256": "733e06694ca5868aaf540e10e28d194cea984707b2befaec76e14bbbdaf83109",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1229
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1929
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2499
+                  }
+                ]
+              },
+              {
+                "round": 11,
+                "robot_id": "r3",
+                "own_sha256": "8b97e514a04e64cf73b326f43a44f5c0552f8c648bd80f59b2bb526b1ba60221",
+                "top_sha256": "733e06694ca5868aaf540e10e28d194cea984707b2befaec76e14bbbdaf83109",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1209
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1953
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2475
+                  }
+                ]
+              },
+              {
+                "round": 12,
+                "robot_id": "r1",
+                "own_sha256": "f8ebae55492d9f3e03eaf19c1697ad35e2dc40afd1e41994d513df0bb872f57f",
+                "top_sha256": "bb83f1d0040849d910eea70f326976392e02764aa9a16471abf8941073080f29",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1234
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1921
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 12,
+                "robot_id": "r3",
+                "own_sha256": "d92fbca1cdd2a730e5c3cdeed16b1849bb97a37eb4e7507127d879c674e93a38",
+                "top_sha256": "bb83f1d0040849d910eea70f326976392e02764aa9a16471abf8941073080f29",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1214
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1956
+                  }
+                ]
+              },
+              {
+                "round": 13,
+                "robot_id": "r1",
+                "own_sha256": "8f0e37b3ebc04bc4a48ca0408cf9aafa7cf204378f1d02e966ff9ec8f4359dfc",
+                "top_sha256": "b8f42b547b9c5be5762ef177a991c6694abe2d89f960aeedc2e566f264be8687",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1259
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1946
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2498
+                  }
+                ]
+              },
+              {
+                "round": 13,
+                "robot_id": "r3",
+                "own_sha256": "3505ce48818b428ab756d5c613bdfc35e06dc34b9707908fb9152b7f73173f67",
+                "top_sha256": "b8f42b547b9c5be5762ef177a991c6694abe2d89f960aeedc2e566f264be8687",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1213
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1957
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2474
+                  }
+                ]
+              },
+              {
+                "round": 14,
+                "robot_id": "r1",
+                "own_sha256": "5933efa336161c6481f30078d8bf68f77ca6b746324da9f8a4a8ab2c6856f8de",
+                "top_sha256": "fcd72eae75c57dee3737c592b638c46986524aee3c129980fd092a1ccf32ca90",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1272
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1930
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 14,
+                "robot_id": "r3",
+                "own_sha256": "09460150b7c2238b07328877ee7eb5697178447625d5df395d2b567b758c6485",
+                "top_sha256": "fcd72eae75c57dee3737c592b638c46986524aee3c129980fd092a1ccf32ca90",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1959
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2472
+                  }
+                ]
+              },
+              {
+                "round": 15,
+                "robot_id": "r1",
+                "own_sha256": "427b53b92ebeae4f8078b3ededce6672cfcdec7e575b5aad7b62e47e1dea9a61",
+                "top_sha256": "a81c7ecdc28d9b3f123c30c409d5c167808c6c31119e837af213343e5078bc16",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1247
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1936
+                  }
+                ]
+              },
+              {
+                "round": 15,
+                "robot_id": "r3",
+                "own_sha256": "17729b3164181b410ebd41280e2744d7b617061e880096edd63372769cd45903",
+                "top_sha256": "a81c7ecdc28d9b3f123c30c409d5c167808c6c31119e837af213343e5078bc16",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1219
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1960
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2474
+                  }
+                ]
+              }
+            ],
+            "checked": "skill/model and RGB hashes; exact RGB-only correction, condition-specific pulse deltas, raw arm actions, and own-command history; evaluator data unused"
+          },
+          "carry_decisions": 76,
+          "llm": {
+            "wire_requests": 18,
+            "events": 9
+          },
+          "replayed_wheel_batches": 136,
+          "scope": "saved input/command replay, not OS isolation"
+        },
+        "team_wire_requests": 7,
+        "team_mode": "llm",
+        "plan_rounds": 2,
+        "inspection_reports": 1,
+        "stage_injected_holds": 0,
+        "carry_injected_holds": 5,
+        "scope": "saved input/ACK/command replay; not OS isolation, real network faults or general planning"
+      },
+      "cost_usd": null
+    },
+    {
+      "id": "three-robot-before-carry-v2",
+      "category": "fixture_connection",
+      "source_sha": "d79c97d8f03c6ea7a8e067c4e4c06519d4b19b82",
+      "raw_root": "/Users/changmin/projects/ugrp-worktrees/three-robot-e2e/outputs/three-robot-before-carry-v2",
+      "success": true,
+      "error": null,
+      "config": {
+        "coarse_control": "rgb-wheel-heading-v1",
+        "final_refinement_steps": 40,
+        "planner": "local",
+        "reacquire_on_settle": true,
+        "start_distance_m": {
+          "r1": 0.6,
+          "r3": 0.6
+        },
+        "start_poses_setup_only": {
+          "r1": {
+            "distance_m": 0.6,
+            "lateral_m": 0.0,
+            "yaw_deg": 0.0
+          },
+          "r3": {
+            "distance_m": 0.6,
+            "lateral_m": 0.0,
+            "yaw_deg": 0.0
+          }
+        },
+        "team_fault": "none",
+        "team_planner": "fixture",
+        "weld": false
+      },
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "assets": {
+        "grasp_skill": {
+          "path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/goal-e2e-portable-models-20260916/models/grasp",
+          "sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049"
+        },
+        "reference_top": {
+          "path": "/Users/changmin/projects/ugrp-worktrees/three-robot-e2e/tests/fixtures/camera_goal_transport/reference-top.jpg",
+          "sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+        },
+        "stage_skill": {
+          "path": "/Users/changmin/projects/ugrp-worktrees/research-e2e-bottleneck/outputs/goal-e2e-portable-models-20260916/models/varied",
+          "sha256": "b89e6fce188efe7ab025d08826bdf269b515c353b81f9b3184f9351ac8bf5f84"
+        }
+      },
+      "wall_s": 43.39375629200367,
+      "sim_s": 48.36000000001314,
+      "evaluation": {
+        "gates": {
+          "carry_continuity": true,
+          "carry_progress": true,
+          "grasp_hold": true,
+          "lateral_drift": true,
+          "release_continuity": true,
+          "release_grounded_clear": true,
+          "release_stable": true,
+          "required_phases": true,
+          "transport_endpoint": true,
+          "valid_samples": true,
+          "weld_off": true
+        },
+        "metrics": {
+          "carry_start_to_end_progress_m": 0.48297199999999985,
+          "displacement_error_m": -0.01706799999999986,
+          "final_displacement_m": 0.48293200000000014,
+          "grasp_hold_duration_s": 2.1000000000000014,
+          "lateral_drift_m": 0.0007110000000001282,
+          "max_sample_gap_s": 0.15,
+          "minimum_hold_s": 2.0,
+          "release_hold_duration_s": 2.0999999999999943,
+          "release_position_span_3d_m": 0.0,
+          "release_stable_s": 1.0,
+          "sample_count": 475,
+          "target_distance_m": 0.5,
+          "tolerance_m": 0.03
+        },
+        "reasons": [],
+        "scope": "sampled referee continuity only",
+        "success": true
+      },
+      "goal_stable_at_end": true,
+      "weld_active_ticks": 0,
+      "approach_payload_contact_steps": 0,
+      "invariants_match": true,
+      "plan_rounds": 2,
+      "committed_plan": {
+        "plan": {
+          "inspection": {
+            "region": "green_zone",
+            "robot_id": "r2",
+            "skill": "inspect_goal_rgb_v1",
+            "timing": "before_carry"
+          },
+          "transport": {
+            "goal": "green_zone",
+            "object": "orange_beam",
+            "participants": {
+              "r1": "bottom_end",
+              "r3": "top_end"
+            },
+            "skill": "rgb_pair_goal_v1"
+          }
+        },
+        "plan_hash": "0f6d5751828a45373d2e734f62b8c51c462e0e2ce3441b464a0e31be88c587cb",
+        "proposal_id": "f615a8a9e349-plan-v1",
+        "proposer": "r1",
+        "version": 1
+      },
+      "inspection_reports": [
+        {
+          "completed_wall_s": 35.12459683298948,
+          "images": {
+            "frame_id": 3,
+            "own": {
+              "path": "rgb/team-inspection-0-r2-own.jpg",
+              "sha256": "9e7cf177ef6859e04e26ccd0dae6b0b5377c2945d02848615638e689688bd7f8"
+            },
+            "top": {
+              "path": "rgb/team-inspection-0-top.jpg",
+              "sha256": "dec25ae20ebfb34949eb9b4fd5c19ec8d9976413debceb5151966572930d8aed"
+            }
+          },
+          "index": 0,
+          "observed_at_sim_s": 37.55999999999994,
+          "received_at_sim_s": 37.55999999999994,
+          "received_wall_s": 35.12461470798007,
+          "reply": {
+            "confidence": 0.0,
+            "message": "",
+            "reason": "scripted fixture; no visual inspection claim",
+            "request_id": "f615a8a9e349-r2-inspect-0",
+            "status": "UNCERTAIN"
+          },
+          "request_id": "f615a8a9e349-r2-inspect-0",
+          "started_wall_s": 35.123606249981094,
+          "stop": null
+        }
+      ],
+      "inspection_overlap_with_approach_execution_window_wall_s": [
+        0.0
+      ],
+      "model_requests": 0,
+      "usage": null,
+      "unknown_usage_calls": null,
+      "model_ids": [
+        "scripted-fixture-not-llm"
+      ],
+      "request_errors": [],
+      "wheel_batches": 125,
+      "arm_batches": 31,
+      "stage_permissions": [],
+      "carry_report_holds": [],
+      "audit": {
+        "ok": true,
+        "source_sha": "d79c97d8f03c6ea7a8e067c4e4c06519d4b19b82",
+        "pair": {
+          "ok": true,
+          "source_sha": "d79c97d8f03c6ea7a8e067c4e4c06519d4b19b82",
+          "physical_success": true,
+          "coarse_decisions": 34,
+          "fine_decisions": 146,
+          "dock_decisions": 10,
+          "grasp": {
+            "ok": true,
+            "condition": "visual",
+            "rounds": 16,
+            "calls": 32,
+            "models": {
+              "r1": "2a5a19e323d6353ee8ca0342a3a9341a0736d3d35ba9a7df11d45071f5d15a43",
+              "r3": "e55bb7d0ac473dc79d6eab9c1f4dadb2b5dff068329a8c8714d1fd076e5ecfed"
+            },
+            "calls_source": "result.json:calls",
+            "replay": [
+              {
+                "round": 0,
+                "robot_id": "r1",
+                "own_sha256": "4e8d6389aa6d063fd37d8164f7ae5e9724661e1d8c58f0e79bdc29d9dea1d764",
+                "top_sha256": "8663d840dd49afb2ba190917b46bad544046198dee14a22d6d74e7a6ada0fbb4",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1194
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1924
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2489
+                  }
+                ]
+              },
+              {
+                "round": 0,
+                "robot_id": "r3",
+                "own_sha256": "366d3fb47f6e018cc2c2fd24de7cfd798bbee16c3e041dd068f1e497fee9af94",
+                "top_sha256": "8663d840dd49afb2ba190917b46bad544046198dee14a22d6d74e7a6ada0fbb4",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1194
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1929
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2486
+                  }
+                ]
+              },
+              {
+                "round": 1,
+                "robot_id": "r1",
+                "own_sha256": "79f77170b1237e5ea2a632b4f88529099a7cf8712f6997ad193a30cf259a764a",
+                "top_sha256": "d63aec66c71877f0a9fb1ec09d074254a56cab246b744f799ec9d646e9d7d0dc",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1198
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1918
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2494
+                  }
+                ]
+              },
+              {
+                "round": 1,
+                "robot_id": "r3",
+                "own_sha256": "6e783b0e91c6b9773f188f007352d1367abe5e041b9ec211445eac0bfae4303c",
+                "top_sha256": "d63aec66c71877f0a9fb1ec09d074254a56cab246b744f799ec9d646e9d7d0dc",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1928
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2487
+                  }
+                ]
+              },
+              {
+                "round": 2,
+                "robot_id": "r1",
+                "own_sha256": "6e9b36a2a7ff986de96657be963ad412d21db403096d50adaa82ce8788f3b5a4",
+                "top_sha256": "f401cf17f48257a9d79763d5b1f04b4052f787b75cb4153d6dde52af72f6caa0",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1206
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1909
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 2,
+                "robot_id": "r3",
+                "own_sha256": "10bfa0054453ba74b030ed5f9ef6dfef8c4afba6123b7609115860ae54bbe03e",
+                "top_sha256": "f401cf17f48257a9d79763d5b1f04b4052f787b75cb4153d6dde52af72f6caa0",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1195
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1930
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2486
+                  }
+                ]
+              },
+              {
+                "round": 3,
+                "robot_id": "r1",
+                "own_sha256": "53eec22b77eb8e1c3f1f7f925ae0127774a6da86ede62922774a5e21fdb5652f",
+                "top_sha256": "ee6d68ba8fe6eae9294b0d7f0b7c6266cddac3a339d13afb60c9ef98435fbbfd",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1231
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1927
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 3,
+                "robot_id": "r3",
+                "own_sha256": "2342193ce44f96101adaafef873f93be823426df5c213a59c00fb37e258930c0",
+                "top_sha256": "ee6d68ba8fe6eae9294b0d7f0b7c6266cddac3a339d13afb60c9ef98435fbbfd",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1196
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1933
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2485
+                  }
+                ]
+              },
+              {
+                "round": 4,
+                "robot_id": "r1",
+                "own_sha256": "36e9e8c7bc908557a9fa6af1a42f9d660ebb963fdae911b17c3c1aa71c7a8078",
+                "top_sha256": "629273e48aa528e2491f84632a204eb42d9d0f50b42425cfa26b5688a93aec48",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1243
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1916
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 4,
+                "robot_id": "r3",
+                "own_sha256": "935b98915d823a932eb40af9c325baccd435f7d6fb6707fd9e7f220b52cf633f",
+                "top_sha256": "629273e48aa528e2491f84632a204eb42d9d0f50b42425cfa26b5688a93aec48",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1195
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1940
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2479
+                  }
+                ]
+              },
+              {
+                "round": 5,
+                "robot_id": "r1",
+                "own_sha256": "cde841064f85486498542ed37a69c546c91c3a15c126bfffc3ae8354763bf69b",
+                "top_sha256": "7c1dc00d1fe8a21cba81dfd8ff07ac2101a7dd4e0d1a2f3a1a9109233a8534a1",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1218
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1917
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 5,
+                "robot_id": "r3",
+                "own_sha256": "2c57b5180e16fe6a5f4847790f8c5eb948c44b0989f5a2b4110c2968c0e0b004",
+                "top_sha256": "7c1dc00d1fe8a21cba81dfd8ff07ac2101a7dd4e0d1a2f3a1a9109233a8534a1",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1198
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1939
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2481
+                  }
+                ]
+              },
+              {
+                "round": 6,
+                "robot_id": "r1",
+                "own_sha256": "54a7aedcd1090e7531c91096c367a2d0e89c8e47fd67c58203348cb817912f77",
+                "top_sha256": "d65f7b8ed438214a357d4848d635555b62b82f911178749d89c0d1df79f25157",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1237
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1915
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 6,
+                "robot_id": "r3",
+                "own_sha256": "5efc4309da3b7c767787c7c65fdd3d2809717847a994f4767607eccac7116e32",
+                "top_sha256": "d65f7b8ed438214a357d4848d635555b62b82f911178749d89c0d1df79f25157",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1200
+                  }
+                ]
+              },
+              {
+                "round": 7,
+                "robot_id": "r1",
+                "own_sha256": "97bee2532d127846c58f097e038097e8561cc792148da583239a3dccbcf0be4b",
+                "top_sha256": "60f67570e26ddef1b56fe032ac79923c4e5296ab876e1f9b334539b89f96fc21",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1212
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1898
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 7,
+                "robot_id": "r3",
+                "own_sha256": "20756f90456fe46381e8b8392a5d4c0061ab5b125ec5b82091a561bdf318521f",
+                "top_sha256": "60f67570e26ddef1b56fe032ac79923c4e5296ab876e1f9b334539b89f96fc21",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1202
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1943
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2479
+                  }
+                ]
+              },
+              {
+                "round": 8,
+                "robot_id": "r1",
+                "own_sha256": "20ad8c0115366627d094165db7878df6c94bef4f44bcfd234da05079644328f6",
+                "top_sha256": "194126cf77cceca840465be3e2859620f516e912c09cdfc7985206807542d2e2",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1189
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 8,
+                "robot_id": "r3",
+                "own_sha256": "31f0a8d72cc6ad0e7ba94c36dbe1961248a84dc9c548917fc60f205dad06bd6e",
+                "top_sha256": "194126cf77cceca840465be3e2859620f516e912c09cdfc7985206807542d2e2",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1208
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1946
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2480
+                  }
+                ]
+              },
+              {
+                "round": 9,
+                "robot_id": "r1",
+                "own_sha256": "509f08c288a87ad3c92a34d0d9cef90933656cce3591518328a468c14a46789b",
+                "top_sha256": "71c1d3e017c26c89af3bacc29030540da7e8803885ccf06697ace03d6ba92ed5",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1214
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1923
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2499
+                  }
+                ]
+              },
+              {
+                "round": 9,
+                "robot_id": "r3",
+                "own_sha256": "de6cfe05c2fd426ec8c9a93b0f8e4f4f3a802616fdaadaa37771b6b9f28070d9",
+                "top_sha256": "71c1d3e017c26c89af3bacc29030540da7e8803885ccf06697ace03d6ba92ed5",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1207
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2479
+                  }
+                ]
+              },
+              {
+                "round": 10,
+                "robot_id": "r1",
+                "own_sha256": "8a8e40ebba589cfb41b3399a91c8517384289ce373311e1d82884f64b645e716",
+                "top_sha256": "eb7af7e544f5b1c3a4473328e67129d9082a7c3912552908bcf59e40419d7005",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1222
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1928
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2498
+                  }
+                ]
+              },
+              {
+                "round": 10,
+                "robot_id": "r3",
+                "own_sha256": "62b24819140a5d4fd4205c203e4ee83c5f7cefee3c0e533b0c31eaea699cac9f",
+                "top_sha256": "eb7af7e544f5b1c3a4473328e67129d9082a7c3912552908bcf59e40419d7005",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1949
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2477
+                  }
+                ]
+              },
+              {
+                "round": 11,
+                "robot_id": "r1",
+                "own_sha256": "e20d4ada4a5ea89aa92675a3da8546510c3092dd8e659434502c412b8e7c954f",
+                "top_sha256": "733e06694ca5868aaf540e10e28d194cea984707b2befaec76e14bbbdaf83109",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1229
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1929
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2499
+                  }
+                ]
+              },
+              {
+                "round": 11,
+                "robot_id": "r3",
+                "own_sha256": "8b97e514a04e64cf73b326f43a44f5c0552f8c648bd80f59b2bb526b1ba60221",
+                "top_sha256": "733e06694ca5868aaf540e10e28d194cea984707b2befaec76e14bbbdaf83109",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1209
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1953
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2475
+                  }
+                ]
+              },
+              {
+                "round": 12,
+                "robot_id": "r1",
+                "own_sha256": "f8ebae55492d9f3e03eaf19c1697ad35e2dc40afd1e41994d513df0bb872f57f",
+                "top_sha256": "bb83f1d0040849d910eea70f326976392e02764aa9a16471abf8941073080f29",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1234
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1921
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 12,
+                "robot_id": "r3",
+                "own_sha256": "d92fbca1cdd2a730e5c3cdeed16b1849bb97a37eb4e7507127d879c674e93a38",
+                "top_sha256": "bb83f1d0040849d910eea70f326976392e02764aa9a16471abf8941073080f29",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1214
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1956
+                  }
+                ]
+              },
+              {
+                "round": 13,
+                "robot_id": "r1",
+                "own_sha256": "8f0e37b3ebc04bc4a48ca0408cf9aafa7cf204378f1d02e966ff9ec8f4359dfc",
+                "top_sha256": "b8f42b547b9c5be5762ef177a991c6694abe2d89f960aeedc2e566f264be8687",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1259
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1946
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2498
+                  }
+                ]
+              },
+              {
+                "round": 13,
+                "robot_id": "r3",
+                "own_sha256": "3505ce48818b428ab756d5c613bdfc35e06dc34b9707908fb9152b7f73173f67",
+                "top_sha256": "b8f42b547b9c5be5762ef177a991c6694abe2d89f960aeedc2e566f264be8687",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1213
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1957
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2474
+                  }
+                ]
+              },
+              {
+                "round": 14,
+                "robot_id": "r1",
+                "own_sha256": "5933efa336161c6481f30078d8bf68f77ca6b746324da9f8a4a8ab2c6856f8de",
+                "top_sha256": "fcd72eae75c57dee3737c592b638c46986524aee3c129980fd092a1ccf32ca90",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1272
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1930
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2500
+                  }
+                ]
+              },
+              {
+                "round": 14,
+                "robot_id": "r3",
+                "own_sha256": "09460150b7c2238b07328877ee7eb5697178447625d5df395d2b567b758c6485",
+                "top_sha256": "fcd72eae75c57dee3737c592b638c46986524aee3c129980fd092a1ccf32ca90",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1959
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2472
+                  }
+                ]
+              },
+              {
+                "round": 15,
+                "robot_id": "r1",
+                "own_sha256": "427b53b92ebeae4f8078b3ededce6672cfcdec7e575b5aad7b62e47e1dea9a61",
+                "top_sha256": "a81c7ecdc28d9b3f123c30c409d5c167808c6c31119e837af213343e5078bc16",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1247
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1936
+                  }
+                ]
+              },
+              {
+                "round": 15,
+                "robot_id": "r3",
+                "own_sha256": "17729b3164181b410ebd41280e2744d7b617061e880096edd63372769cd45903",
+                "top_sha256": "a81c7ecdc28d9b3f123c30c409d5c167808c6c31119e837af213343e5078bc16",
+                "actions": [
+                  {
+                    "kind": "arm",
+                    "servo_id": 3,
+                    "pulse": 1219
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 4,
+                    "pulse": 1960
+                  },
+                  {
+                    "kind": "arm",
+                    "servo_id": 5,
+                    "pulse": 2474
+                  }
+                ]
+              }
+            ],
+            "checked": "skill/model and RGB hashes; exact RGB-only correction, condition-specific pulse deltas, raw arm actions, and own-command history; evaluator data unused"
+          },
+          "carry_decisions": 54,
+          "llm": null,
+          "replayed_wheel_batches": 125,
+          "scope": "saved input/command replay, not OS isolation"
+        },
+        "team_wire_requests": 0,
+        "team_mode": "fixture",
+        "plan_rounds": 2,
+        "inspection_reports": 1,
+        "stage_injected_holds": 0,
+        "carry_injected_holds": 0,
+        "scope": "saved input/ACK/command replay; not OS isolation, real network faults or general planning"
+      },
+      "cost_usd": null
+    }
+  ],
+  "raw_total_bytes": 172389593,
+  "raw_total_files": 2787
+}

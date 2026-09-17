@@ -15,10 +15,14 @@ class VisualMacroExecutor:
         port: Any,
         log_callback: Callable[[dict[str, Any]], None] | None = None,
         drive_guard: Callable[[Mapping[str, Any], float], Mapping[str, Any]] | None = None,
+        drive_settle_by_phase: Mapping[str, float] | None = None,
     ):
         self.port = port
         self._log_callback = log_callback
         self._drive_guard = drive_guard
+        self._drive_settle_by_phase = {
+            str(phase): _bounded("drive settle", value, 0.0, 1.0)
+            for phase, value in (drive_settle_by_phase or {}).items()}
         self._events: list[tuple[float, dict[str, Any] | None]] = []
         self._completion_time: float | None = None
         self._source_hash = ""
@@ -83,7 +87,7 @@ class VisualMacroExecutor:
                         "duration_s": slice_duration,
                     }))
                     offset += slice_duration
-            completion = timestamp + duration + 0.2
+            completion = timestamp + duration + self._drive_settle_by_phase.get(str(phase), 0.2)
             events.append((completion, None))
         elif kind == "pose":
             _exact_fields(action, {"kind", "pulses"})
