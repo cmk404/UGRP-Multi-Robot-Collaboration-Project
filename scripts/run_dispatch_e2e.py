@@ -70,6 +70,8 @@ class Referee:
         end = samples[-1]['sim_time_s']
         tail = [s for s in samples if s['sim_time_s'] >= end-1.05]
         stable_window = len(tail)>1 and tail[-1]['sim_time_s']-tail[0]['sim_time_s']>=.99
+        from harness.dispatch_evaluation import carry_clearance
+        clearance = carry_clearance(samples, self.scene.command_history, plan)
         results = {}
         for obj in self.geoms:
             initial = np.array(samples[0]['cargo'][obj]['position'])
@@ -87,7 +89,10 @@ class Referee:
                  'inside_slot_at_end':inside(samples[-1]),
                  'released_supported_stable':bool(retained and all(inside(s) and s['cargo'][obj]['floor_contact']
                      and not s['cargo'][obj]['robot_contact'] for s in tail))}
-            r['physical_success'] = bool(lifted and r['released_supported_stable'] and not any(s['weld'] for s in samples))
+            r['carry_clearance'] = clearance.get(obj, {'sampled_continuous_clearance': False})
+            r['physical_success'] = bool(lifted and r['released_supported_stable']
+                and r['carry_clearance']['sampled_continuous_clearance']
+                and not any(s['weld'] for s in samples))
             results[obj] = r
         distance = {r:sum(np.linalg.norm(np.array(b['robots'][r])[:2]-np.array(a['robots'][r])[:2])
                          for a,b in zip(samples,samples[1:])) for r in ROBOTS}

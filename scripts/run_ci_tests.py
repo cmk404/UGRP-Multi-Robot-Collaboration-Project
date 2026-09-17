@@ -30,6 +30,7 @@ TEST_PATTERNS = (
     "tests/test_dispatch_skill_binding.py",
     "tests/test_dispatch_adaptive.py",
     "tests/test_dispatch_pair_navigation.py",
+    "tests/test_dispatch_evaluation.py",
     "tests/test_dispatch_feasibility.py",
     "tests/test_camera_action_learning.py",
     "tests/test_camera_local_servo.py",
