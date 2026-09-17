@@ -1,0 +1,171 @@
+{
+  "artifacts": {
+    "approach-skill.json": "0e2e79255feff7888650aba1ea33b1a549876bba8e9574d82ab292eb36d1fb33",
+    "environment-freeze.txt": "41d61f07cb830e478bd02e76681bf464f9dd8aaaea1539cf0c29cb3693f9fe06",
+    "r1/act-heldout.json": "d052cb6f6b3a83f6553ae41580fd482c29fc37df1cf7845a10d44c068acc9aad",
+    "r1/act/config.json": "b8466086225b5f76d499d390f94c3b4c0636564ae602fd963b38b6a611bea7e4",
+    "r1/act/model.safetensors": "80480253a83763720f931a8c4ce9e2d78cea61bdd46cdae0d0bffe4a0f2c0610",
+    "r1/kernel-heldout.json": "ea7b25edf948ed80fa426c9e227d632face839d0933a4c99a1b5236c9cdd61d6",
+    "r1/kernel.json": "762b44f676b37b7f2b6334236836e83b792648be0e1ab9233b8e80d9c40fb1d9",
+    "r1/training-inputs.json": "a6e6fa9083897969c02cc4caee1f680a7248e3e24c718b4c0c529632889a8902",
+    "r1/training-progress.json": "288c8498234df508c5b6bc10c1e62886cf5de19d5ea54b1e81822bc4cdab66b5",
+    "r3/act-heldout.json": "dbc3e43e6bcdb69b749472ed86d0b0f959019e17b3939e23715c13d07139860f",
+    "r3/act/config.json": "b8466086225b5f76d499d390f94c3b4c0636564ae602fd963b38b6a611bea7e4",
+    "r3/act/model.safetensors": "ee203ec9012ddfd107bb7f6ae1268a720401d9955071c74e58fd95529234e356",
+    "r3/kernel-heldout.json": "42987c31b04ba654d00f45b2dc974b73a9218d375556115d0afbc765172991ea",
+    "r3/kernel.json": "faee1ea5776d82bc5eb857c7d669883572f56bf8f4346d41f0afda65c842de5c",
+    "r3/training-inputs.json": "d8fd67a8b7bf38ec40dc371472bfa4097fb1adad050c3884b056dbc6b9f75497",
+    "r3/training-progress.json": "f39153b5022246affaf541891eaa704b7bb42bd7afc97882ecd1710588ccc87f"
+  },
+  "complete": true,
+  "environment": {
+    "lerobot": "0.6.2",
+    "numpy": "2.2.6",
+    "opencv-python-headless": "4.13.0.92",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "python": "3.12.12 (main, Feb  4 2026, 01:57:59) [Clang 21.1.4 ]",
+    "torch": "2.11.0",
+    "torchvision": "0.26.0"
+  },
+  "excluded_teacher_cases": [],
+  "external_model_calls": 0,
+  "external_model_tokens": 0,
+  "heldout_cases": [
+    "train-05",
+    "train-10",
+    "train-15",
+    "train-20",
+    "train-25"
+  ],
+  "input_hashes": {
+    "actor_samples.json": "f758b8cd2a029fc7a3cb9a0d355f351262dfa1f8a577b1e41b3ecde8abe7bcb9",
+    "privileged_labels.json": "aaa09747d30ae8d49b99623ef19ef4b955f5e7259b7a946a6cdb4ab057ecd411",
+    "report.json": "ee130941576a3c047648178f6536c8017f91a97c92d118c66e96a93fcb794b4f"
+  },
+  "protocol": {
+    "batch_size": 16,
+    "claim": "Small-preset integration pilot; no architecture ranking, no original-paper reproduction.",
+    "heldout_cases": [
+      "train-05",
+      "train-10",
+      "train-15",
+      "train-20",
+      "train-25"
+    ],
+    "learning_rate": 0.0001,
+    "physical_pilot_conditions": [
+      "kernel",
+      "act"
+    ],
+    "physical_pilot_distances": [
+      [
+        0.205,
+        0.205
+      ],
+      [
+        0.255,
+        0.225
+      ],
+      [
+        0.295,
+        0.275
+      ]
+    ],
+    "schema": "ugrp.reference_act_approach_comparison.v1",
+    "seed": 20260916,
+    "selection_rule": "Keep the existing default. Record every declared case and failure. Do not tune on held-out cases.",
+    "steps": 300,
+    "threads": 2
+  },
+  "robots": {
+    "r1": {
+      "act_training_s": 182.09149641598924,
+      "checkpoint_readback_identical": true,
+      "goal_anchors": 1,
+      "heldout": {
+        "act": {
+          "false_ready": 0,
+          "forward_mae": 0.006359260331526746,
+          "mean_inference_wall_s": 0.023903799440274175,
+          "missed_ready": 21,
+          "moving_samples": 269,
+          "samples": 290,
+          "stop_samples": 21,
+          "unsupported_samples": 0
+        },
+        "kernel": {
+          "false_ready": 0,
+          "forward_mae": 0.0030597123937612493,
+          "mean_inference_wall_s": 0.008310666110402713,
+          "missed_ready": 6,
+          "moving_samples": 269,
+          "samples": 290,
+          "stop_samples": 21,
+          "unsupported_samples": 16
+        }
+      },
+      "kernel_training_s": 11.309530583996093,
+      "trainable_parameters": 11418898,
+      "training_samples": 1146
+    },
+    "r3": {
+      "act_training_s": 178.97377425001469,
+      "checkpoint_readback_identical": true,
+      "goal_anchors": 1,
+      "heldout": {
+        "act": {
+          "false_ready": 0,
+          "forward_mae": 0.004347473699172551,
+          "mean_inference_wall_s": 0.01719051032369266,
+          "missed_ready": 15,
+          "moving_samples": 275,
+          "samples": 290,
+          "stop_samples": 15,
+          "unsupported_samples": 0
+        },
+        "kernel": {
+          "false_ready": 0,
+          "forward_mae": 0.005441810481804957,
+          "mean_inference_wall_s": 0.006206559196038268,
+          "missed_ready": 15,
+          "moving_samples": 275,
+          "samples": 290,
+          "stop_samples": 15,
+          "unsupported_samples": 25
+        }
+      },
+      "kernel_training_s": 13.797001500002807,
+      "trainable_parameters": 11418898,
+      "training_samples": 1146
+    }
+  },
+  "scope": "offline held-out teacher predictions, not physical task success",
+  "source_sha": "f0ee14dadb0f285273f926b8d7fbab445c395c11",
+  "teacher_root": "/Users/changmin/projects/ugrp/outputs/rgb-approach-teacher-20260910-v1",
+  "teacher_source_sha": "360e747fe8d126d0b42693276f0632b4d8989b3d",
+  "train_cases": [
+    "train-01",
+    "train-02",
+    "train-03",
+    "train-04",
+    "train-06",
+    "train-07",
+    "train-08",
+    "train-09",
+    "train-11",
+    "train-12",
+    "train-13",
+    "train-14",
+    "train-16",
+    "train-17",
+    "train-18",
+    "train-19",
+    "train-21",
+    "train-22",
+    "train-23",
+    "train-24"
+  ],
+  "upstream_modeling_act_sha256": "2ea0acbdf210acee9d08f1f306afbda1e935bce0604b3b67b8d87c57c3f79a19",
+  "upstream_sha": "89236ea0f4f81a81ca566081e20dd1ff5f823cbe",
+  "wall_elapsed_s": 418.03223158299807
+}

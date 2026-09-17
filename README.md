@@ -69,6 +69,7 @@
 - [실제 RGB·LLM 연구 E2E 병목 파일럿](experiments/research-e2e-20260916/README.md) — 역할 합의·접근까지 실행, 공동 파지 이후는 미도달; 자연어 합의 진동·모델 오류·짧은 원시 명령 반복을 분리 기록
 - [실험 목록과 증거 관리](experiments/README.md)
 - [연구 비교 조건과 관측 경계](docs/warehouse_research_contract.md)
+- [레퍼런스 차이표와 공식 ACT 비교 경로](docs/reference_alignment.md) — RGB 전용 소규모 비교; 기본 제어기 변경 아님
 - [현재 아키텍처 상세 기록](docs/current_architecture_todo.md) — 각 항목의 기록 날짜를 확인한다.
 - [실물 로봇 trace 진단](docs/real_trace_system.md)
 - [결정 이력](docs/decision_log.md)

@@ -73,7 +73,11 @@ def main():
     p.add_argument('--condition', choices=('visual', 'playback'), required=True)
     p.add_argument('--playback-seconds', type=float, default=1.0)
     p.add_argument('--out-dir', type=Path, required=True)
+    p.add_argument('--act-python', type=Path, help='optional isolated LeRobot Python')
+    p.add_argument('--act-model-dir', type=Path, help='comparison directory containing r1/act and r3/act')
     args = p.parse_args()
+    if bool(args.act_python) != bool(args.act_model_dir) or (args.act_python and args.condition != 'visual'):
+        p.error('ACT requires both --act-python and --act-model-dir, with --condition visual')
     if any(not math.isfinite(x) or not .2 <= x <= .3 for x in args.distance):
         p.error('distance must be 0.20..0.30 m')
     if not math.isfinite(args.playback_seconds) or not 0 < args.playback_seconds <= 20:
@@ -97,11 +101,23 @@ def main():
               'input_boundary': 'own RGB, fixed top RGB, saved models, own issued command and controller history only',
               'approach_calls': [], 'goal_confirmation': {r: [] for r in ROBOTS}, 'calls': [],
               'approach_ok': False, 'grasp_success': False, 'evaluation': None, 'error': None}
+    act_clients = {}
     try:
         import mujoco
         from harness.camera_approach_student import predict_approach
         from harness.grasp_student_inference import predict_student
         report['environment'] = {'python': sys.version, 'platform': platform.platform(), 'mujoco': mujoco.__version__}
+        if args.act_python:
+            from harness.reference_act_client import ActClient
+            report['approach_policy'] = 'upstream_act_small_rgb_preset'
+            report['act_checkpoint_sha256'] = {}
+            for rid in ROBOTS:
+                model_dir = args.act_model_dir.resolve() / rid / 'act'
+                report['act_checkpoint_sha256'][rid] = {
+                    name: sha(model_dir / name) for name in ('config.json', 'model.safetensors')}
+                act_clients[rid] = ActClient(args.act_python, model_dir)
+        else:
+            report['approach_policy'] = 'existing_kernel'
         scene.open(dict(zip(ROBOTS, args.distance)))
         report['evaluation_initial_state'] = scene.evaluation_snapshot()
         approach_start = scene.time()
@@ -109,7 +125,9 @@ def main():
         phase, cruise_index = 'cruise', 0
         for index in range(MAX_APPROACH_ROUNDS + 2):
             frames = scene.capture(f'approach-{index:03d}')
-            decisions = {r: predict_approach(approach_models[r], frames[r]['own_bytes'], frames[r]['top_bytes']) for r in ROBOTS}
+            decisions = {r: (act_clients[r].predict(frames[r]['own_bytes'], frames[r]['top_bytes'])
+                             if act_clients else predict_approach(approach_models[r], frames[r]['own_bytes'], frames[r]['top_bytes']))
+                         for r in ROBOTS}
             control = choose_actions(decisions, args.condition, phase, cruise_index, args.playback_seconds)
             for rid in ROBOTS:
                 call = {'index': index, 'cruise_index': cruise_index, 'phase': phase,
@@ -158,7 +176,11 @@ def main():
         report['error'] = f'{type(exc).__name__}: {exc}'
         report['traceback'] = traceback.format_exc()
     finally:
-        scene.close()
+        try:
+            scene.close()
+        finally:
+            for client in act_clients.values():
+                client.close()
         report.setdefault('success', False)
         report['wall_elapsed_s'] = time.monotonic() - started
         out.mkdir(parents=True, exist_ok=True)
