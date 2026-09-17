@@ -9,7 +9,7 @@ from harness.camera_goal_transport import decode
 from harness.dispatch_skill_binding import beam_feature,pixel_from_map
 from harness.known_map_navigation import pixel_to_world
 
-FOOTPRINT={'half_forward_m':.20,'half_lateral_m':.445,'margin_m':.025}
+FOOTPRINT={'half_forward_m':.20,'half_lateral_m':.47,'margin_m':.025}
 
 def visual_barriers(jpeg,static):
     frame=decode(jpeg);hsv=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)

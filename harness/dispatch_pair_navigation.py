@@ -53,7 +53,7 @@ def validate_map(data):
     if data.get('schema')!='ugrp.dispatch_pair_navigation.v1' or data['top_camera']!=CAMERA:
         raise ValueError('invalid dispatch navigation map or changed camera')
     f=data['footprint']
-    if f != {'half_forward_m':.20,'half_lateral_m':.445,'margin_m':.025}:
+    if f != {'half_forward_m':.20,'half_lateral_m':.47,'margin_m':.025}:
         raise ValueError('loaded footprint contract changed')
     if data['grid_m']!=.06:raise ValueError('unsupported search grid')
     values=list(data['bounds_m'])+list(data['goal']['center_m'])
@@ -235,6 +235,29 @@ def reanchor_wheels(mask,template,center,angle):
         'correction_px':correction.tolist(),'heading_correction_deg':.15*(candidate-angle)}
 
 
+def rigid_pair_commands(positions,headings,reference,observed_turn,velocity,omega):
+    """One observed formation twist, independently converted by each endpoint.
+
+    Correcting two absolute chassis targets separately can twist a held beam
+    when their visual headings differ. A common translation and angular rate
+    rotates the current observed offsets without commanding radial convergence.
+    """
+    center=sum(np.asarray(p) for p in positions.values())/len(positions)
+    translation=np.asarray(velocity)+.9*(np.asarray(reference[:2])-center)
+    angular=float(omega+.9*wrap(reference[2]-observed_turn))
+    commands={};world={}
+    for rid,position in positions.items():
+        offset=np.asarray(position)-center
+        world[rid]=translation+angular*np.array([-offset[1],offset[0]])
+        local=rotate(world[rid],-headings[rid])
+        commands[rid]={'kind':'mecanum','forward':float(np.clip(local[0]/1.57,-.05,.08)),
+            'left':float(np.clip(local[1]/1.18,-.08,.08)),
+            'turn':float(np.clip(angular/1.5,-.10,.10)),'duration_s':.2}
+    return commands,{'center_xy_m':center.tolist(),'common_translation_m_s':translation.tolist(),
+        'common_angular_rad_s':angular,'world_velocity_m_s':{r:v.tolist() for r,v in world.items()},
+        'source':'current RGB formation, authored route and own action calibration; no independent inward pose correction'}
+
+
 class PairVision:
     """Track unchanged wheel color templates; headings are image rotations.
 
@@ -394,6 +417,8 @@ class PairNavigator:
             self.confirmations += 1
             if self.confirmations >= 3:
                 self.offsets = {r: positions[r]-center for r in ROBOTS}
+                line=positions['r1']-positions['r3']
+                self.anchor_line_angle=math.atan2(line[1],line[0])
                 self.anchor_yaws = {r: obs[r]['relative_yaw_rad'] for r in ROBOTS}
                 self.anchor_payload = dict(self.vision.payload)
                 self.reference = np.array([*center, 0.])
@@ -414,7 +439,12 @@ class PairNavigator:
         elif self.phase == 'track':
             payload = self.vision.payload
             payload_angle = payload['relative_yaw_rad']-self.anchor_payload['relative_yaw_rad']
-            observed_turn = sum(obs[r]['relative_yaw_rad']-self.anchor_yaws[r] for r in ROBOTS)/2
+            line=positions['r1']-positions['r3']
+            span=float(np.linalg.norm(line))
+            observed_turn=wrap(math.atan2(line[1],line[0])-self.anchor_line_angle)
+            if not .60<=span<=.70:
+                return {'action':zero,'status':'formation_span_abort','ready':False,'done':False,
+                    'observations':obs,'observed_span_m':span}
             if not payload_coupled(payload, center, observed_turn, self.anchor_payload['relative_yaw_rad']):
                 return {'action': zero, 'status': 'payload_decoupled', 'ready': False, 'done': False,
                         'observations': obs, 'payload': dict(payload)}
@@ -425,9 +455,10 @@ class PairNavigator:
             velocity, omega = error_xy/delta, error_yaw/delta
             formation_errors = {}
             for r in ROBOTS:
-                expected = self.reference[:2]+rotate(self.offsets[r], self.reference[2])
                 yaw = obs[r]['relative_yaw_rad']-self.anchor_yaws[r]
-                formation_errors[r] = (float(np.linalg.norm(expected-positions[r])), abs(wrap(self.reference[2]-yaw)))
+                if abs(wrap(yaw-observed_turn))>.30:
+                    return {'action':zero,'status':'individual_heading_abort','ready':False,'done':False,'observations':obs}
+                formation_errors[r] = (float(np.linalg.norm(self.reference[:2]-center)), abs(wrap(self.reference[2]-observed_turn)))
             if max(e[0] for e in formation_errors.values()) > .055 or max(e[1] for e in formation_errors.values()) > .30:
                 return {'action': zero, 'status': 'formation_abort', 'ready': False, 'done': False,
                         'observations': obs, 'formation_errors': formation_errors}
@@ -437,17 +468,9 @@ class PairNavigator:
                 velocity, omega = np.zeros(2), 0.
             self.reference[:2] += velocity*.2
             self.reference[2] += omega*.2
-            offset = rotate(self.offsets[self.rid], self.reference[2])
-            desired = self.reference[:2]+offset
-            observed_yaw = obs[self.rid]['relative_yaw_rad']-self.anchor_yaws[self.rid]
-            world_velocity = velocity+omega*np.array([-offset[1], offset[0]]) + .9*(desired-positions[self.rid])
-            local = rotate(world_velocity, -(self.heading+observed_yaw))
-            angular = omega+.9*wrap(self.reference[2]-observed_yaw)
-            # Nominal fixed gains, with actual progress corrected by RGB. These
-            # are controller tuning constants, never reads from a live body.
-            action.update(forward=float(np.clip(local[0]/1.57, -.05, .08)),
-                          left=float(np.clip(local[1]/1.18, -.08, .08)),
-                          turn=float(np.clip(angular/1.5, -.10, .10)))
+            headings={r:self.heading+obs[r]['relative_yaw_rad']-self.anchor_yaws[r] for r in ROBOTS}
+            commands,self.last_twist=rigid_pair_commands(positions,headings,self.reference,observed_turn,velocity,omega)
+            action=commands[self.rid]
             if np.linalg.norm(target[:2]-self.reference[:2]) < .002 and abs(wrap(target[2]-self.reference[2])) < .005:
                 reached = (max(e[0] for e in formation_errors.values()) < .012
                            and max(e[1] for e in formation_errors.values()) < .045
@@ -465,6 +488,7 @@ class PairNavigator:
                   'route': self.route, 'reference': None if self.reference is None else self.reference.tolist(),
                   'heading_rad': self.heading, 'segment': self.segment}
         result['payload'] = dict(self.vision.payload)
+        if hasattr(self,'last_twist'):result['common_formation_twist']=self.last_twist
         return result
 
 

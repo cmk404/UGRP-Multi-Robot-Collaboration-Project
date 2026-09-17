@@ -112,6 +112,20 @@
       "variant": "north_blocked",
       "dock": "dock_a",
       "seed": 11
+    },
+    {
+      "id": "candidate1-F3",
+      "scope": "fresh-LLM candidate validation, failed physical retention; not included as final-candidate success",
+      "source_sha": "0eb7c155b9bd7b24aa3956d59efbed1150c1ca11",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final-20260917/F3",
+      "error": "RuntimeError: paired navigation stopped: {'r1': 'payload_decoupled', 'r3': 'payload_decoupled'}"
+    },
+    {
+      "id": "candidate1-F4",
+      "scope": "fresh-LLM candidate validation, failed physical retention; not included as final-candidate success",
+      "source_sha": "0eb7c155b9bd7b24aa3956d59efbed1150c1ca11",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final-20260917/F4",
+      "error": "RuntimeError: paired navigation stopped: {'r1': 'payload_decoupled', 'r3': 'payload_decoupled'}"
     }
   ],
   "freeze": "Commit before each physical diagnosis. After repairs freeze source/models and run the complete six-condition fresh-LLM comparison. Preserve failures.",
@@ -124,5 +138,6 @@
     "rough_south/dock_a"
   ],
   "cost": "Save wall time, action counts, provider requests/usage; monetary cost null when unknown.",
-  "concurrency": "R8 and R9 overlapped; subsequent independent trials may use up to two worker processes. Preserve per-run wall time; do not claim speedup relative to serial baseline."
+  "concurrency": "R8 and R9 overlapped; subsequent independent trials may use up to two worker processes. Preserve per-run wall time; do not claim speedup relative to serial baseline.",
+  "current_candidate_change": "Shared RGB formation twist avoids conflicting independent pose correction. Observed span bound 0.60..0.70m expands the conservative parallel footprint to 0.99m. Existing payload attachment guards remain."
 }

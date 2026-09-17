@@ -148,4 +148,23 @@ def test_placement_can_shift_inside_slot_without_shrinking_loaded_envelope():
     assert route and abs(route[-1][0]-goal[0])<=.06
     assert abs(route[-1][1]-goal[1])<=.015
     assert all(swept_clear(a,b,data) for a,b in zip(route,route[1:]))
-    assert data['footprint']=={'half_forward_m':.20,'half_lateral_m':.445,'margin_m':.025}
+    assert data['footprint']=={'half_forward_m':.20,'half_lateral_m':.47,'margin_m':.025}
+
+
+def test_common_twist_does_not_pull_two_carriers_together_or_counter_rotate():
+    from harness.dispatch_pair_navigation import rigid_pair_commands,rotate
+    positions={'r1':np.array([1.49,-1.69]),'r3':np.array([1.31,-1.05])}
+    headings={'r1':.346,'r3':.412}
+    actions,evidence=rigid_pair_commands(positions,headings,[1.41,-1.36,.35],.32,[0.,0.],0.)
+    assert actions['r1']['turn']==actions['r3']['turn']
+    world={r:rotate([a['forward']*1.57,a['left']*1.18],headings[r]) for r,a in actions.items()}
+    line=positions['r1']-positions['r3']
+    assert abs(float((world['r1']-world['r3'])@line))<1e-10
+    assert np.allclose(sum(world.values())/2,evidence['common_translation_m_s'])
+
+
+def test_shared_heading_is_not_changed_by_one_wheel_appearance_bias():
+    from harness.dispatch_pair_navigation import rigid_pair_commands
+    positions={'r1':np.array([0.,-.325]),'r3':np.array([0.,.325])}
+    actions,_=rigid_pair_commands(positions,{'r1':0.,'r3':.12},[0.,0.,0.],0.,[0.,0.],0.)
+    assert all(a['turn']==a['forward']==a['left']==0. for a in actions.values())

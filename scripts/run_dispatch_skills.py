@@ -243,7 +243,7 @@ def run(args):
         write(args.output/'identity-evidence.json',identity)
         scene.identity=identity
         task=actor_task(scene.config['static_map'],required_dock=getattr(args,'required_dock',None))
-        task['capability_scope']='RGB pair approach/grasp plus loaded rotation and complete-footprint path checking; existing VisualBoxSkill. Parallel envelope 0.94m; rotated envelope 0.45m. Loaded terrain is unvalidated and avoided. In clutter, pickup preparation is exclusive. Waiting cargo and robots remain occupied space. If you select beam.after=[box_job] and box.after=[], the box executor releases its cargo and visually clears the unloading bay before finishing box_job. Role binding, routes and task dependencies follow your plan. All skills remain experimental; no raw-action fallback.'
+        task['capability_scope']='RGB pair approach/grasp plus loaded rotation and complete-footprint path checking; existing VisualBoxSkill. Parallel envelope 0.99m; rotated envelope 0.45m. Loaded terrain is unvalidated and avoided. In clutter, pickup preparation is exclusive. Waiting cargo and robots remain occupied space. If you select beam.after=[box_job] and box.after=[], the box executor releases its cargo and visually clears the unloading bay before finishing box_job. Role binding, routes and task dependencies follow your plan. All skills remain experimental; no raw-action fallback.'
         write(args.output/'actor-mission.json',task)
         run_id=opaque_run_id()
         def planner(rid,**kwargs):

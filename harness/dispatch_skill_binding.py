@@ -155,9 +155,9 @@ class SkillBindings:
 
     def capabilities(self):
         # Conservative authored envelope of the demonstrated parallel formation:
-        # 0.65 m centre separation plus 0.24 m chassis envelope and 0.05 m margin.
+        # 0.70 m maximum observed centre span plus 0.24 m chassis and 0.05 m margin.
         # A capability bound, not a runtime pose or claimed passage measurement.
-        width = .65+.24+.05
+        width = .70+.24+.05
         narrow = []
         if any(o['id']=='service_island' for o in self.static_map['obstacles']):
             for name, route in self.static_map['routes'].items():
