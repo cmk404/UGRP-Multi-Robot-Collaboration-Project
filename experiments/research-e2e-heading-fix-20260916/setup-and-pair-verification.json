@@ -1,0 +1,674 @@
+{
+  "setups": [
+    {
+      "case_id": "baseline",
+      "planner": "local",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422709785813004e-06,
+          "yaw_difference_deg": 1.3676957555114606e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.422709785810194e-06,
+          "yaw_difference_deg": 1.3676957519061749e-09
+        }
+      }
+    },
+    {
+      "case_id": "baseline",
+      "planner": "llm",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422709785813004e-06,
+          "yaw_difference_deg": 1.3676957555114606e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.422709785810194e-06,
+          "yaw_difference_deg": 1.3676957519061749e-09
+        }
+      }
+    },
+    {
+      "case_id": "distance-30",
+      "planner": "local",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422709785955251e-06,
+          "yaw_difference_deg": 1.367695750920081e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.4227097859524408e-06,
+          "yaw_difference_deg": 1.3676957610346901e-09
+        }
+      }
+    },
+    {
+      "case_id": "distance-30",
+      "planner": "llm",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422709785955251e-06,
+          "yaw_difference_deg": 1.367695750920081e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.4227097859524408e-06,
+          "yaw_difference_deg": 1.3676957610346901e-09
+        }
+      }
+    },
+    {
+      "case_id": "distance-45",
+      "planner": "local",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.42270978564994e-06,
+          "yaw_difference_deg": 1.3676958239316382e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.42270978564713e-06,
+          "yaw_difference_deg": 1.3676958172861126e-09
+        }
+      }
+    },
+    {
+      "case_id": "distance-45",
+      "planner": "llm",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.42270978564994e-06,
+          "yaw_difference_deg": 1.3676958239316382e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.42270978564713e-06,
+          "yaw_difference_deg": 1.3676958172861126e-09
+        }
+      }
+    },
+    {
+      "case_id": "distance-70",
+      "planner": "local",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422709785719329e-06,
+          "yaw_difference_deg": 1.36769575646767e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.4227097857303966e-06,
+          "yaw_difference_deg": 1.3676957616697853e-09
+        }
+      }
+    },
+    {
+      "case_id": "distance-70",
+      "planner": "llm",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422709785719329e-06,
+          "yaw_difference_deg": 1.36769575646767e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.4227097857303966e-06,
+          "yaw_difference_deg": 1.3676957616697853e-09
+        }
+      }
+    },
+    {
+      "case_id": "distance-asymmetric",
+      "planner": "local",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422709785955251e-06,
+          "yaw_difference_deg": 1.367695750920081e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.4227097857303966e-06,
+          "yaw_difference_deg": 1.3676957616697853e-09
+        }
+      }
+    },
+    {
+      "case_id": "distance-asymmetric",
+      "planner": "llm",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422709785955251e-06,
+          "yaw_difference_deg": 1.367695750920081e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.4227097857303966e-06,
+          "yaw_difference_deg": 1.3676957616697853e-09
+        }
+      }
+    },
+    {
+      "case_id": "yaw-plus5",
+      "planner": "local",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422710145803706e-06,
+          "yaw_difference_deg": 1.3698961964792034e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.4227101456990145e-06,
+          "yaw_difference_deg": 1.3698961964792034e-09
+        }
+      }
+    },
+    {
+      "case_id": "yaw-plus5",
+      "planner": "llm",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422710145803706e-06,
+          "yaw_difference_deg": 1.3698961964792034e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.4227101456990145e-06,
+          "yaw_difference_deg": 1.3698961964792034e-09
+        }
+      }
+    },
+    {
+      "case_id": "yaw-minus5",
+      "planner": "local",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.4227099834261475e-06,
+          "yaw_difference_deg": 1.363828161515812e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.4227099835588153e-06,
+          "yaw_difference_deg": 1.363828161515812e-09
+        }
+      }
+    },
+    {
+      "case_id": "yaw-minus5",
+      "planner": "llm",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.4227099834261475e-06,
+          "yaw_difference_deg": 1.363828161515812e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.4227099835588153e-06,
+          "yaw_difference_deg": 1.363828161515812e-09
+        }
+      }
+    },
+    {
+      "case_id": "yaw-opposed10",
+      "planner": "local",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.4227098033550008e-06,
+          "yaw_difference_deg": 1.365975776934647e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.42271016576631e-06,
+          "yaw_difference_deg": 1.363295254463992e-09
+        }
+      }
+    },
+    {
+      "case_id": "yaw-opposed10",
+      "planner": "llm",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.4227098033550008e-06,
+          "yaw_difference_deg": 1.365975776934647e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.42271016576631e-06,
+          "yaw_difference_deg": 1.363295254463992e-09
+        }
+      }
+    },
+    {
+      "case_id": "yaw-reversed10",
+      "planner": "local",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422710165905288e-06,
+          "yaw_difference_deg": 1.363295254463992e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.422709802799413e-06,
+          "yaw_difference_deg": 1.365975776934647e-09
+        }
+      }
+    },
+    {
+      "case_id": "yaw-reversed10",
+      "planner": "llm",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422710165905288e-06,
+          "yaw_difference_deg": 1.363295254463992e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.422709802799413e-06,
+          "yaw_difference_deg": 1.365975776934647e-09
+        }
+      }
+    },
+    {
+      "case_id": "lateral-plus3",
+      "planner": "local",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422709785813004e-06,
+          "yaw_difference_deg": 1.367695745783296e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.422709785810194e-06,
+          "yaw_difference_deg": 1.3676957462743182e-09
+        }
+      }
+    },
+    {
+      "case_id": "lateral-plus3",
+      "planner": "llm",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422709785813004e-06,
+          "yaw_difference_deg": 1.367695745783296e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.422709785810194e-06,
+          "yaw_difference_deg": 1.3676957462743182e-09
+        }
+      }
+    },
+    {
+      "case_id": "lateral-minus3",
+      "planner": "local",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.4227097858095345e-06,
+          "yaw_difference_deg": 1.3676957600509174e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.422709785810194e-06,
+          "yaw_difference_deg": 1.367695764408328e-09
+        }
+      }
+    },
+    {
+      "case_id": "lateral-minus3",
+      "planner": "llm",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.4227097858095345e-06,
+          "yaw_difference_deg": 1.3676957600509174e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.422709785810194e-06,
+          "yaw_difference_deg": 1.367695764408328e-09
+        }
+      }
+    },
+    {
+      "case_id": "lateral-opposed6",
+      "planner": "local",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422709785813004e-06,
+          "yaw_difference_deg": 1.3676957529034782e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.422709785810194e-06,
+          "yaw_difference_deg": 1.3676957471124126e-09
+        }
+      }
+    },
+    {
+      "case_id": "lateral-opposed6",
+      "planner": "llm",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422709785813004e-06,
+          "yaw_difference_deg": 1.3676957529034782e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.422709785810194e-06,
+          "yaw_difference_deg": 1.3676957471124126e-09
+        }
+      }
+    },
+    {
+      "case_id": "lateral-reversed6",
+      "planner": "local",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422709785813004e-06,
+          "yaw_difference_deg": 1.3676957561347133e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.422709785810194e-06,
+          "yaw_difference_deg": 1.367695752394716e-09
+        }
+      }
+    },
+    {
+      "case_id": "lateral-reversed6",
+      "planner": "llm",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422709785813004e-06,
+          "yaw_difference_deg": 1.3676957561347133e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.422709785810194e-06,
+          "yaw_difference_deg": 1.367695752394716e-09
+        }
+      }
+    },
+    {
+      "case_id": "mixed-near-mild",
+      "planner": "local",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422710145254251e-06,
+          "yaw_difference_deg": 1.3698961964792034e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.4227099836832597e-06,
+          "yaw_difference_deg": 1.363828161515812e-09
+        }
+      }
+    },
+    {
+      "case_id": "mixed-near-mild",
+      "planner": "llm",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422710145254251e-06,
+          "yaw_difference_deg": 1.3698961964792034e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.4227099836832597e-06,
+          "yaw_difference_deg": 1.363828161515812e-09
+        }
+      }
+    },
+    {
+      "case_id": "mixed-mid-mild",
+      "planner": "local",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422709983550592e-06,
+          "yaw_difference_deg": 1.363828161515812e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.4227101456990145e-06,
+          "yaw_difference_deg": 1.3698961964792034e-09
+        }
+      }
+    },
+    {
+      "case_id": "mixed-mid-mild",
+      "planner": "llm",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422709983550592e-06,
+          "yaw_difference_deg": 1.363828161515812e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.4227101456990145e-06,
+          "yaw_difference_deg": 1.3698961964792034e-09
+        }
+      }
+    },
+    {
+      "case_id": "mixed-far-mild",
+      "planner": "local",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422710145807162e-06,
+          "yaw_difference_deg": 1.3698961964792034e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.4227099835588153e-06,
+          "yaw_difference_deg": 1.363828161515812e-09
+        }
+      }
+    },
+    {
+      "case_id": "mixed-far-mild",
+      "planner": "llm",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.422710145807162e-06,
+          "yaw_difference_deg": 1.3698961964792034e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.4227099835588153e-06,
+          "yaw_difference_deg": 1.363828161515812e-09
+        }
+      }
+    },
+    {
+      "case_id": "mixed-near-wide",
+      "planner": "local",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.4227098037033964e-06,
+          "yaw_difference_deg": 1.365975776934647e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.422710165732132e-06,
+          "yaw_difference_deg": 1.363295254463992e-09
+        }
+      }
+    },
+    {
+      "case_id": "mixed-near-wide",
+      "planner": "llm",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.4227098037033964e-06,
+          "yaw_difference_deg": 1.365975776934647e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.422710165732132e-06,
+          "yaw_difference_deg": 1.363295254463992e-09
+        }
+      }
+    },
+    {
+      "case_id": "mixed-far-wide",
+      "planner": "local",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.4227101658164243e-06,
+          "yaw_difference_deg": 1.363295254463992e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.4227098028711412e-06,
+          "yaw_difference_deg": 1.365975776934647e-09
+        }
+      }
+    },
+    {
+      "case_id": "mixed-far-wide",
+      "planner": "llm",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.4227101658164243e-06,
+          "yaw_difference_deg": 1.363295254463992e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.4227098028711412e-06,
+          "yaw_difference_deg": 1.365975776934647e-09
+        }
+      }
+    },
+    {
+      "case_id": "mixed-asymmetric",
+      "planner": "local",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.4227098037033964e-06,
+          "yaw_difference_deg": 1.365975776934647e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.4227101656774466e-06,
+          "yaw_difference_deg": 1.363295254463992e-09
+        }
+      }
+    },
+    {
+      "case_id": "mixed-asymmetric",
+      "planner": "llm",
+      "difference": {
+        "r1": {
+          "xy_difference_m": 3.4227098037033964e-06,
+          "yaw_difference_deg": 1.365975776934647e-09
+        },
+        "r3": {
+          "xy_difference_m": 3.4227101656774466e-06,
+          "yaw_difference_deg": 1.363295254463992e-09
+        }
+      }
+    }
+  ],
+  "pairs": [
+    {
+      "case_id": "baseline",
+      "initial_rgb_equal": true,
+      "commands_equal": true,
+      "physical_evaluation_equal": true,
+      "same_success": true
+    },
+    {
+      "case_id": "distance-30",
+      "initial_rgb_equal": true,
+      "commands_equal": true,
+      "physical_evaluation_equal": true,
+      "same_success": true
+    },
+    {
+      "case_id": "distance-45",
+      "initial_rgb_equal": true,
+      "commands_equal": true,
+      "physical_evaluation_equal": true,
+      "same_success": true
+    },
+    {
+      "case_id": "distance-70",
+      "initial_rgb_equal": true,
+      "commands_equal": true,
+      "physical_evaluation_equal": true,
+      "same_success": true
+    },
+    {
+      "case_id": "distance-asymmetric",
+      "initial_rgb_equal": true,
+      "commands_equal": true,
+      "physical_evaluation_equal": true,
+      "same_success": true
+    },
+    {
+      "case_id": "yaw-plus5",
+      "initial_rgb_equal": true,
+      "commands_equal": true,
+      "physical_evaluation_equal": true,
+      "same_success": true
+    },
+    {
+      "case_id": "yaw-minus5",
+      "initial_rgb_equal": true,
+      "commands_equal": true,
+      "physical_evaluation_equal": true,
+      "same_success": true
+    },
+    {
+      "case_id": "yaw-opposed10",
+      "initial_rgb_equal": true,
+      "commands_equal": true,
+      "physical_evaluation_equal": true,
+      "same_success": true
+    },
+    {
+      "case_id": "yaw-reversed10",
+      "initial_rgb_equal": true,
+      "commands_equal": true,
+      "physical_evaluation_equal": true,
+      "same_success": true
+    },
+    {
+      "case_id": "lateral-plus3",
+      "initial_rgb_equal": true,
+      "commands_equal": true,
+      "physical_evaluation_equal": true,
+      "same_success": true
+    },
+    {
+      "case_id": "lateral-minus3",
+      "initial_rgb_equal": true,
+      "commands_equal": true,
+      "physical_evaluation_equal": true,
+      "same_success": true
+    },
+    {
+      "case_id": "lateral-opposed6",
+      "initial_rgb_equal": true,
+      "commands_equal": true,
+      "physical_evaluation_equal": true,
+      "same_success": true
+    },
+    {
+      "case_id": "lateral-reversed6",
+      "initial_rgb_equal": true,
+      "commands_equal": true,
+      "physical_evaluation_equal": true,
+      "same_success": true
+    },
+    {
+      "case_id": "mixed-near-mild",
+      "initial_rgb_equal": false,
+      "commands_equal": true,
+      "physical_evaluation_equal": true,
+      "same_success": true
+    },
+    {
+      "case_id": "mixed-mid-mild",
+      "initial_rgb_equal": true,
+      "commands_equal": true,
+      "physical_evaluation_equal": true,
+      "same_success": true
+    },
+    {
+      "case_id": "mixed-far-mild",
+      "initial_rgb_equal": true,
+      "commands_equal": true,
+      "physical_evaluation_equal": true,
+      "same_success": true
+    },
+    {
+      "case_id": "mixed-near-wide",
+      "initial_rgb_equal": true,
+      "commands_equal": true,
+      "physical_evaluation_equal": true,
+      "same_success": true
+    },
+    {
+      "case_id": "mixed-far-wide",
+      "initial_rgb_equal": true,
+      "commands_equal": true,
+      "physical_evaluation_equal": true,
+      "same_success": true
+    },
+    {
+      "case_id": "mixed-asymmetric",
+      "initial_rgb_equal": true,
+      "commands_equal": true,
+      "physical_evaluation_equal": true,
+      "same_success": true
+    }
+  ],
+  "policy_camera_and_geometry_equal_across_all_runs": true,
+  "max_initial_xy_difference_m": 3.422710165905288e-06,
+  "max_initial_yaw_difference_deg": 1.3698961964792034e-09
+}

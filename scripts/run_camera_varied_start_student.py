@@ -61,7 +61,28 @@ def choose_stage_actions(decisions, stage, confirming=False):
             'duration_s': .25 if confirming or enter_confirmation or not valid else .2}
 
 
-def run_approach(scene, stage_models, *, condition='visual', straight_models=None):
+def choose_alignment_refinement(decisions, confirming=False):
+    """Recheck every image-derived axis after coupled final corrections."""
+    valid = all(d['ok'] and d.get('precision', 'fine') == 'fine'
+                for axes in decisions.values() for d in axes.values())
+    ready = {r: all(d.get('stationary_ready', d['ready']) if confirming else d['ready']
+                    for d in decisions[r].values()) for r in ROBOTS}
+    commands = {r: dict(forward=0., left=0., turn=0.) for r in ROBOTS}
+    axis = None
+    if valid and not confirming:
+        axis = next((s for s in ('yaw', 'lateral', 'forward')
+                     if not all(decisions[r][s]['ready'] for r in ROBOTS)), None)
+        if axis is not None:
+            for r in ROBOTS:
+                if not decisions[r][axis]['ready']:
+                    commands[r][AXES[axis]] = float(decisions[r][axis]['command'])
+    return dict(valid=valid, ready=ready, commands=commands, axis=axis,
+                enter_confirmation=valid and all(ready.values()),
+                duration_s=.25 if confirming or axis is None or not valid else .2)
+
+
+def run_approach(scene, stage_models, *, condition='visual', straight_models=None,
+                 reacquire_on_settle=False, final_refinement_steps=0):
     """Run the RGB-only wheel approach and return output-only audit data."""
     from harness.camera_varied_start_student import predict_stage
     from harness.camera_approach_student import predict_approach
@@ -70,6 +91,10 @@ def run_approach(scene, stage_models, *, condition='visual', straight_models=Non
         raise ValueError(f'unsupported approach condition: {condition}')
     if condition == 'straight' and straight_models is None:
         raise ValueError('straight baseline requires old models')
+
+    if (isinstance(final_refinement_steps, bool) or not isinstance(final_refinement_steps, int)
+            or not 0 <= final_refinement_steps <= 40):
+        raise ValueError('final refinement budget must be 0..40 slices')
 
     result = {'approach_calls': [], 'stage_results': [], 'approach_ok': False}
     approach_start = scene.time()
@@ -112,6 +137,12 @@ def run_approach(scene, stage_models, *, condition='visual', straight_models=Non
                 if confirmations >= 4:
                     record['reason'] = 'stationary RGB confirmation budget exhausted'
                     break
+                if reacquire_on_settle and not all(control['ready'].values()):
+                    # The current slice remains stationary. Resume correction
+                    # only after another fresh image, under the same movement
+                    # and total confirmation budgets. Never relax readiness.
+                    confirming = False
+                    record['reacquisitions'] = record.get('reacquisitions', 0) + 1
             elif control['enter_confirmation']:
                 confirming = True
             else:
@@ -135,6 +166,37 @@ def run_approach(scene, stage_models, *, condition='visual', straight_models=Non
             result['approach_ok'] &= all(d['ok'] and d.get('stationary_ready', d['ready']) and d.get('precision', 'fine') == 'fine'
                                          for stages in checks.values() for d in stages.values())
             scene.stop_dwell()
+        if not result['approach_ok'] and final_refinement_steps:
+            # A later forward correction can invalidate an earlier lateral
+            # confirmation. Do not loosen its tolerance or proceed to grasp:
+            # reacquire the joint ready set from new RGB under a hard budget.
+            result['alignment_refinement_calls'] = []
+            result['alignment_refinement_reason'] = 'bounded refinement budget exhausted'
+            confirming, consecutive = False, 0
+            for index in range(final_refinement_steps):
+                frames = scene.capture(f'alignment-refine-{index:03d}')
+                checks = {r: {s: predict_stage(stage_models[r][s], frames[r]['own_bytes'], frames[r]['top_bytes']) for s in AXES} for r in ROBOTS}
+                control = choose_alignment_refinement(checks, confirming)
+                result['alignment_refinement_calls'].append(dict(index=index, stationary=confirming,
+                    frame_ids={r: frames[r]['frame_id'] for r in ROBOTS},
+                    images={r: dict(own=frames[r]['own_rgb'], top=frames[r]['shared_top_rgb']) for r in ROBOTS},
+                    decisions=checks, control=control))
+                scene.drive_mecanum(control['commands'], control['duration_s'])
+                if not control['valid']:
+                    result['alignment_refinement_reason'] = 'RGB outside fine alignment support'
+                    break
+                if confirming:
+                    consecutive = consecutive + 1 if all(control['ready'].values()) else 0
+                    if consecutive >= 2:
+                        result['approach_ok'] = True
+                        result['alignment_refinement_reason'] = 'two fresh stationary confirmations of all axes'
+                        break
+                    if not all(control['ready'].values()):
+                        confirming = False
+                elif control['enter_confirmation']:
+                    confirming = True
+            if not result['approach_ok']:
+                scene.stop_dwell()
     result['approach_elapsed_sim_s'] = scene.time() - approach_start
     result['approach_end_state'] = scene.evaluation_snapshot()
     return result

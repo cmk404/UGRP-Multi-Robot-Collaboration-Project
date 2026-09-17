@@ -1,0 +1,383 @@
+{
+  "scope": "output-only post-run diagnosis, never used for action selection",
+  "rows": [
+    {
+      "case_id": "yaw-opposed10",
+      "observations": [
+        {
+          "stage": "initial",
+          "sim_time_s": 0.9,
+          "robots": {
+            "r1": {
+              "lateral_cm": 6.004406722937006e-05,
+              "yaw_deg": 10.000000001365976
+            },
+            "r3": {
+              "lateral_cm": -5.882524058975491e-05,
+              "yaw_deg": -9.999999998636705
+            }
+          }
+        },
+        {
+          "stage": "coarse_end",
+          "sim_time_s": 4.5,
+          "robots": {
+            "r1": {
+              "lateral_cm": 7.245908778454924,
+              "yaw_deg": 10.000005756684647
+            },
+            "r3": {
+              "lateral_cm": -7.205842368554638,
+              "yaw_deg": -9.999994017079466
+            }
+          }
+        },
+        {
+          "stage": "stop",
+          "sim_time_s": 15.1,
+          "robots": {
+            "r1": {
+              "lateral_cm": 7.275917751263927,
+              "yaw_deg": -0.05606114811218363
+            },
+            "r3": {
+              "lateral_cm": -7.235332277459916,
+              "yaw_deg": -0.18781792302722894
+            }
+          }
+        }
+      ],
+      "last_predictions": [
+        {
+          "robot_id": "r1",
+          "stage": "lateral",
+          "decision": {
+            "command": 0.0,
+            "diagnostics": {
+              "nearest_support_distance": 13.413096576620063,
+              "orthogonal_residual": 27.99546614522636,
+              "support_count": 760
+            },
+            "ok": false,
+            "ready": false,
+            "ready_score": 0.0,
+            "reason": "rgb_pose_outside_support"
+          }
+        },
+        {
+          "robot_id": "r3",
+          "stage": "lateral",
+          "decision": {
+            "command": 0.02046425122973258,
+            "diagnostics": {
+              "image_derived_error": 0.05846928922780737,
+              "nearest_support_distance": 4.256858701270742,
+              "orthogonal_residual": 5.998952035425479,
+              "support_count": 760
+            },
+            "ok": true,
+            "precision": "fine",
+            "ready": false,
+            "ready_score": 0.0,
+            "reason": "visual_pose_command",
+            "stationary_ready": false
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "mixed-far-mild",
+      "observations": [
+        {
+          "stage": "initial",
+          "sim_time_s": 0.9,
+          "robots": {
+            "r1": {
+              "lateral_cm": 3.0000304473440043,
+              "yaw_deg": 5.000000001369896
+            },
+            "r3": {
+              "lateral_cm": -3.000029214370681,
+              "yaw_deg": -4.999999998636172
+            }
+          }
+        },
+        {
+          "stage": "coarse_end",
+          "sim_time_s": 4.9,
+          "robots": {
+            "r1": {
+              "lateral_cm": 7.313560731391133,
+              "yaw_deg": 5.000005747597919
+            },
+            "r3": {
+              "lateral_cm": -6.375788547395134,
+              "yaw_deg": -4.99999400753027
+            }
+          }
+        },
+        {
+          "stage": "stop",
+          "sim_time_s": 14.1,
+          "robots": {
+            "r1": {
+              "lateral_cm": 7.331771290018496,
+              "yaw_deg": 0.045817116559981844
+            },
+            "r3": {
+              "lateral_cm": -6.393799699599767,
+              "yaw_deg": -0.09226202839844899
+            }
+          }
+        }
+      ],
+      "last_predictions": [
+        {
+          "robot_id": "r1",
+          "stage": "lateral",
+          "decision": {
+            "command": 0.0,
+            "diagnostics": {
+              "nearest_support_distance": 17.984554468246564,
+              "orthogonal_residual": 29.578712959590394,
+              "support_count": 760
+            },
+            "ok": false,
+            "ready": false,
+            "ready_score": 0.0,
+            "reason": "rgb_pose_outside_support"
+          }
+        },
+        {
+          "robot_id": "r3",
+          "stage": "lateral",
+          "decision": {
+            "command": 0.02049599463334374,
+            "diagnostics": {
+              "image_derived_error": 0.0585599846666964,
+              "nearest_support_distance": 8.382157164779171,
+              "orthogonal_residual": 8.55320721219928,
+              "support_count": 760
+            },
+            "ok": true,
+            "precision": "fine",
+            "ready": false,
+            "ready_score": 0.0,
+            "reason": "visual_pose_command",
+            "stationary_ready": false
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "mixed-near-wide",
+      "observations": [
+        {
+          "stage": "initial",
+          "sim_time_s": 0.9,
+          "robots": {
+            "r1": {
+              "lateral_cm": 6.000060044067235,
+              "yaw_deg": 10.000000001365976
+            },
+            "r3": {
+              "lateral_cm": -6.000058825240595,
+              "yaw_deg": -9.999999998636705
+            }
+          }
+        },
+        {
+          "stage": "coarse_end",
+          "sim_time_s": 2.9,
+          "robots": {
+            "r1": {
+              "lateral_cm": 7.926128891907469,
+              "yaw_deg": 9.999992223285881
+            },
+            "r3": {
+              "lateral_cm": -7.552226622219749,
+              "yaw_deg": -10.000001151749345
+            }
+          }
+        },
+        {
+          "stage": "stop",
+          "sim_time_s": 3.2,
+          "robots": {
+            "r1": {
+              "lateral_cm": 7.926404185683955,
+              "yaw_deg": 9.999992227034165
+            },
+            "r3": {
+              "lateral_cm": -7.552250850070363,
+              "yaw_deg": -10.000001149587009
+            }
+          }
+        }
+      ],
+      "last_predictions": [
+        {
+          "robot_id": "r1",
+          "stage": "yaw",
+          "decision": {
+            "command": 0.0,
+            "diagnostics": {
+              "attempts": [
+                {
+                  "method": "soft_yellow",
+                  "ok": false,
+                  "reason": "outside_training_domain"
+                },
+                {
+                  "method": "full_delta",
+                  "ok": false,
+                  "reason": "outside_training_domain"
+                }
+              ],
+              "method": null,
+              "precision": "unavailable",
+              "reason": "heading_registration_unsupported"
+            },
+            "ok": false,
+            "ready": false,
+            "ready_score": 0.0,
+            "reason": "rgb_pose_outside_support"
+          }
+        },
+        {
+          "robot_id": "r3",
+          "stage": "yaw",
+          "decision": {
+            "command": 0.0,
+            "diagnostics": {
+              "attempts": [
+                {
+                  "method": "soft_yellow",
+                  "ok": false,
+                  "reason": "outside_training_domain"
+                },
+                {
+                  "method": "full_delta",
+                  "ok": false,
+                  "reason": "outside_training_domain"
+                }
+              ],
+              "method": null,
+              "precision": "unavailable",
+              "reason": "heading_registration_unsupported"
+            },
+            "ok": false,
+            "ready": false,
+            "ready_score": 0.0,
+            "reason": "rgb_pose_outside_support"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "mixed-far-wide",
+      "observations": [
+        {
+          "stage": "initial",
+          "sim_time_s": 0.9,
+          "robots": {
+            "r1": {
+              "lateral_cm": -6.000058825240684,
+              "yaw_deg": -9.999999998636705
+            },
+            "r3": {
+              "lateral_cm": 6.000060044066924,
+              "yaw_deg": 10.000000001365976
+            }
+          }
+        },
+        {
+          "stage": "coarse_end",
+          "sim_time_s": 5.1,
+          "robots": {
+            "r1": {
+              "lateral_cm": -14.578913010209948,
+              "yaw_deg": -9.999994259000038
+            },
+            "r3": {
+              "lateral_cm": 15.088938486074044,
+              "yaw_deg": 10.000005750980199
+            }
+          }
+        },
+        {
+          "stage": "stop",
+          "sim_time_s": 5.4,
+          "robots": {
+            "r1": {
+              "lateral_cm": -14.578939483070563,
+              "yaw_deg": -9.999994260294494
+            },
+            "r3": {
+              "lateral_cm": 15.089230337253422,
+              "yaw_deg": 10.000005748227517
+            }
+          }
+        }
+      ],
+      "last_predictions": [
+        {
+          "robot_id": "r1",
+          "stage": "yaw",
+          "decision": {
+            "command": 0.0,
+            "diagnostics": {
+              "attempts": [
+                {
+                  "method": "soft_yellow",
+                  "ok": false,
+                  "reason": "outside_training_domain"
+                },
+                {
+                  "method": "full_delta",
+                  "ok": false,
+                  "reason": "outside_training_domain"
+                }
+              ],
+              "method": null,
+              "precision": "unavailable",
+              "reason": "heading_registration_unsupported"
+            },
+            "ok": false,
+            "ready": false,
+            "ready_score": 0.0,
+            "reason": "rgb_pose_outside_support"
+          }
+        },
+        {
+          "robot_id": "r3",
+          "stage": "yaw",
+          "decision": {
+            "command": 0.0,
+            "diagnostics": {
+              "attempts": [
+                {
+                  "method": "soft_yellow",
+                  "ok": false,
+                  "reason": "outside_training_domain"
+                },
+                {
+                  "method": "full_delta",
+                  "ok": false,
+                  "reason": "outside_training_domain"
+                }
+              ],
+              "method": null,
+              "precision": "unavailable",
+              "reason": "heading_registration_unsupported"
+            },
+            "ok": false,
+            "ready": false,
+            "ready_score": 0.0,
+            "reason": "rgb_pose_outside_support"
+          }
+        }
+      ]
+    }
+  ]
+}

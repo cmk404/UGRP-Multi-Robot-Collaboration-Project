@@ -1,0 +1,116 @@
+[
+  {
+    "name": "false-prepare-r1",
+    "robot_id": "r1",
+    "phase": "PREPARE",
+    "roles": {
+      "r1": "bottom_end",
+      "r3": "top_end"
+    },
+    "expected_supported": false,
+    "source": "990fe976717cea370a1873a646f3001e040b5ed3 live failed E2E; no finger contact; frames inspected",
+    "current": {
+      "own_rgb": "false-prepare-r1-current-own_rgb.jpg",
+      "top_rgb": "false-prepare-r1-current-top_rgb.jpg"
+    },
+    "previous": {
+      "own_rgb": "false-prepare-r1-previous-own_rgb.jpg",
+      "top_rgb": "false-prepare-r1-previous-top_rgb.jpg"
+    }
+  },
+  {
+    "name": "false-grasp-r1",
+    "robot_id": "r1",
+    "phase": "GRASP",
+    "roles": {
+      "r1": "bottom_end",
+      "r3": "top_end"
+    },
+    "expected_supported": false,
+    "source": "990fe976717cea370a1873a646f3001e040b5ed3 live failed E2E; no finger contact; frames inspected",
+    "current": {
+      "own_rgb": "false-grasp-r1-current-own_rgb.jpg",
+      "top_rgb": "false-grasp-r1-current-top_rgb.jpg"
+    },
+    "previous": {
+      "own_rgb": "false-grasp-r1-previous-own_rgb.jpg",
+      "top_rgb": "false-grasp-r1-previous-top_rgb.jpg"
+    }
+  },
+  {
+    "name": "false-prepare-r3",
+    "robot_id": "r3",
+    "phase": "PREPARE",
+    "roles": {
+      "r1": "bottom_end",
+      "r3": "top_end"
+    },
+    "expected_supported": false,
+    "source": "990fe976717cea370a1873a646f3001e040b5ed3 live failed E2E; no finger contact; frames inspected",
+    "current": {
+      "own_rgb": "false-prepare-r3-current-own_rgb.jpg",
+      "top_rgb": "false-prepare-r3-current-top_rgb.jpg"
+    },
+    "previous": {
+      "own_rgb": "false-prepare-r3-previous-own_rgb.jpg",
+      "top_rgb": "false-prepare-r3-previous-top_rgb.jpg"
+    }
+  },
+  {
+    "name": "false-grasp-r3",
+    "robot_id": "r3",
+    "phase": "GRASP",
+    "roles": {
+      "r1": "bottom_end",
+      "r3": "top_end"
+    },
+    "expected_supported": false,
+    "source": "990fe976717cea370a1873a646f3001e040b5ed3 live failed E2E; no finger contact; frames inspected",
+    "current": {
+      "own_rgb": "false-grasp-r3-current-own_rgb.jpg",
+      "top_rgb": "false-grasp-r3-current-top_rgb.jpg"
+    },
+    "previous": {
+      "own_rgb": "false-grasp-r3-previous-own_rgb.jpg",
+      "top_rgb": "false-grasp-r3-previous-top_rgb.jpg"
+    }
+  },
+  {
+    "name": "positive-prepare-r1",
+    "robot_id": "r1",
+    "phase": "PREPARE",
+    "roles": {
+      "r1": "bottom_end",
+      "r3": "top_end"
+    },
+    "expected_supported": true,
+    "source": "short-transport-teacher-20260913-v1 preclose RGB, actual subsequent bilateral grasp; teacher initialized, classification only",
+    "current": {
+      "own_rgb": "positive-prepare-r1-current-own_rgb.jpg",
+      "top_rgb": "positive-prepare-r1-current-top_rgb.jpg"
+    },
+    "previous": {
+      "own_rgb": "positive-prepare-r1-previous-own_rgb.jpg",
+      "top_rgb": "positive-prepare-r1-previous-top_rgb.jpg"
+    }
+  },
+  {
+    "name": "positive-prepare-r3",
+    "robot_id": "r3",
+    "phase": "PREPARE",
+    "roles": {
+      "r1": "bottom_end",
+      "r3": "top_end"
+    },
+    "expected_supported": true,
+    "source": "short-transport-teacher-20260913-v1 preclose RGB, actual subsequent bilateral grasp; teacher initialized, classification only",
+    "current": {
+      "own_rgb": "positive-prepare-r3-current-own_rgb.jpg",
+      "top_rgb": "positive-prepare-r3-current-top_rgb.jpg"
+    },
+    "previous": {
+      "own_rgb": "positive-prepare-r3-previous-own_rgb.jpg",
+      "top_rgb": "positive-prepare-r3-previous-top_rgb.jpg"
+    }
+  }
+]

@@ -1,0 +1,38 @@
+{
+  "case_id": "mixed-near-mild",
+  "scope": "saved initial JPEG comparison; all issued commands and physical evaluation equal",
+  "views": [
+    {
+      "robot": "r1",
+      "view": "own",
+      "differing_pixels": 0,
+      "pixel_count": 691200,
+      "max_channel_difference": 0,
+      "mean_absolute_channel_difference": 0.0
+    },
+    {
+      "robot": "r1",
+      "view": "top",
+      "differing_pixels": 52,
+      "pixel_count": 691200,
+      "max_channel_difference": 22,
+      "mean_absolute_channel_difference": 0.00021122685185185185
+    },
+    {
+      "robot": "r3",
+      "view": "own",
+      "differing_pixels": 0,
+      "pixel_count": 691200,
+      "max_channel_difference": 0,
+      "mean_absolute_channel_difference": 0.0
+    },
+    {
+      "robot": "r3",
+      "view": "top",
+      "differing_pixels": 52,
+      "pixel_count": 691200,
+      "max_channel_difference": 22,
+      "mean_absolute_channel_difference": 0.00021122685185185185
+    }
+  ]
+}
