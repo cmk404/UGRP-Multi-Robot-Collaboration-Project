@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "scope": "saved input reconstruction and exact model prediction replay; not physical success",
+  "run": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-final-f1",
+  "planning_requests": 12,
+  "actual_llm_wires": 12,
+  "pair_image_bindings": 323,
+  "learned_approach_predictions": 242,
+  "grasp_predictions": 32,
+  "solo_own_command_observations": 517,
+  "solo_decision_replay": {
+    "actions_replayed": 517,
+    "source": "archived own RGB + TOP RGB + own command state + recorded resource wait signals",
+    "scope": "controller decision replay; resource ownership checked separately, not physical success"
+  }
+}

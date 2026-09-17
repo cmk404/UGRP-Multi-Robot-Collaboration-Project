@@ -1,0 +1,272 @@
+{
+  "mission_id": "dispatch_one_kit",
+  "instruction": "Deliver the orange beam AND the cyan box to their marked slots in ONE common dispatch dock, A or B. Choose that dock, the pair, the solo carrier, routes and dependencies together. Independent preparation may overlap. Shared passages and the unloading apron require coordination.",
+  "objects": {
+    "beam": {
+      "appearance": "orange plain beam",
+      "carriers": 2
+    },
+    "box": {
+      "appearance": "small cyan box",
+      "carriers": 1
+    }
+  },
+  "robots": [
+    "r1",
+    "r2",
+    "r3"
+  ],
+  "static_map": {
+    "schema": "ugrp.dispatch_map.v1",
+    "map_id": "dispatch_open",
+    "version": 1,
+    "frame": "warehouse_xy_m",
+    "bounds_m": [
+      -1.02,
+      2.12,
+      -3.18,
+      -0.82
+    ],
+    "top_camera": {
+      "name": "cctv_top",
+      "position_m": [
+        0.55,
+        -2.0,
+        2.5
+      ],
+      "quaternion_wxyz": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fov_y_deg": 55
+    },
+    "obstacles": [
+      {
+        "id": "wall_north",
+        "center_m": [
+          0.55,
+          -0.82
+        ],
+        "half_extents_m": [
+          1.57,
+          0.025
+        ],
+        "height_m": 0.1,
+        "kind": "wall"
+      },
+      {
+        "id": "wall_south",
+        "center_m": [
+          0.55,
+          -3.18
+        ],
+        "half_extents_m": [
+          1.57,
+          0.025
+        ],
+        "height_m": 0.1,
+        "kind": "wall"
+      },
+      {
+        "id": "wall_west",
+        "center_m": [
+          -1.02,
+          -2.0
+        ],
+        "half_extents_m": [
+          0.025,
+          1.18
+        ],
+        "height_m": 0.1,
+        "kind": "wall"
+      },
+      {
+        "id": "wall_east",
+        "center_m": [
+          2.12,
+          -2.0
+        ],
+        "half_extents_m": [
+          0.025,
+          1.18
+        ],
+        "height_m": 0.1,
+        "kind": "wall"
+      }
+    ],
+    "terrain": [],
+    "regions": {
+      "pickup": {
+        "center_m": [
+          -0.35,
+          -2.0
+        ],
+        "half_extents_m": [
+          0.45,
+          0.96
+        ],
+        "rgba": ".12 .36 .70 .14"
+      },
+      "wait_west": {
+        "center_m": [
+          0.18,
+          -2.0
+        ],
+        "half_extents_m": [
+          0.16,
+          0.29
+        ],
+        "rgba": ".95 .70 .16 .22"
+      },
+      "wait_east": {
+        "center_m": [
+          1.02,
+          -2.0
+        ],
+        "half_extents_m": [
+          0.16,
+          0.29
+        ],
+        "rgba": ".95 .70 .16 .22"
+      },
+      "north_gate": {
+        "center_m": [
+          0.6,
+          -1.18
+        ],
+        "half_extents_m": [
+          0.32,
+          0.29
+        ],
+        "rgba": ".22 .65 .75 .15"
+      },
+      "south_gate": {
+        "center_m": [
+          0.6,
+          -2.82
+        ],
+        "half_extents_m": [
+          0.32,
+          0.29
+        ],
+        "rgba": ".22 .65 .75 .15"
+      },
+      "dispatch_apron": {
+        "center_m": [
+          1.48,
+          -2.0
+        ],
+        "half_extents_m": [
+          0.38,
+          0.2
+        ],
+        "rgba": ".95 .70 .16 .18"
+      },
+      "dock_a": {
+        "center_m": [
+          1.59,
+          -1.34
+        ],
+        "half_extents_m": [
+          0.37,
+          0.38
+        ],
+        "rgba": ".14 .55 .40 .14"
+      },
+      "dock_b": {
+        "center_m": [
+          1.59,
+          -2.66
+        ],
+        "half_extents_m": [
+          0.37,
+          0.38
+        ],
+        "rgba": ".14 .55 .40 .14"
+      }
+    },
+    "routes": {
+      "north": {
+        "resource": "north_gate",
+        "regions": [
+          "pickup",
+          "north_gate",
+          "dispatch_apron"
+        ],
+        "declared_min_width_m": 0.685,
+        "loaded_passage": "unvalidated"
+      },
+      "south": {
+        "resource": "south_gate",
+        "regions": [
+          "pickup",
+          "south_gate",
+          "dispatch_apron"
+        ],
+        "declared_min_width_m": 0.685,
+        "loaded_passage": "unvalidated"
+      }
+    },
+    "docks": {
+      "dock_a": {
+        "slots": {
+          "beam": {
+            "center_m": [
+              1.54,
+              -1.34
+            ],
+            "half_extents_m": [
+              0.14,
+              0.27
+            ]
+          },
+          "box": {
+            "center_m": [
+              1.82,
+              -1.34
+            ],
+            "half_extents_m": [
+              0.1,
+              0.12
+            ]
+          }
+        }
+      },
+      "dock_b": {
+        "slots": {
+          "beam": {
+            "center_m": [
+              1.54,
+              -2.66
+            ],
+            "half_extents_m": [
+              0.14,
+              0.27
+            ]
+          },
+          "box": {
+            "center_m": [
+              1.82,
+              -2.66
+            ],
+            "half_extents_m": [
+              0.1,
+              0.12
+            ]
+          }
+        }
+      }
+    },
+    "resource_rules": {
+      "north_gate": "one transport team at a time",
+      "south_gate": "one transport team at a time",
+      "dispatch_apron": "one transport team at a time"
+    },
+    "completion": "Both cargo footprints fully inside the same selected dock slots, released and stable; referee output only."
+  },
+  "static_map_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+  "input_boundary": "own RGB + shared fixed TOP RGB + authored map + own issued commands + peer claims",
+  "capability_scope": "Existing RGB pair approach/grasp with image-convention adapter; existing VisualBoxSkill. Role binding follows your plan. Route transfer remains experimental; no raw-action fallback."
+}

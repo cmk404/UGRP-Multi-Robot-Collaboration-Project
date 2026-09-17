@@ -30,11 +30,16 @@ python scripts/ugrp_session.py run dispatch-plan -- \
   .venv-sim-worker-mac/bin/mjpython scripts/run_research_dispatch.py \
   --output outputs/dispatch-plan-NEW --variant shared_crossing --planner llm
 
-# 실제 모델 + 물리 E2E 진단: 운반 성공을 보장하는 실행기가 아니다.
+# 검증된 모델 번들 복원 (저장소에 포함, 교사 raw 자료 불필요)
+unzip experiments/dispatch-skill-integration-20260917/models.zip -d outputs/dispatch-models
+
+# 실제 세 LLM 합의 + 기존 RGB 스킬 + 물리 E2E
 python scripts/ugrp_session.py run dispatch-e2e -- \
   .venv-sim-worker-mac/bin/mjpython scripts/run_dispatch_e2e.py \
-  --output outputs/dispatch-e2e-NEW --variant shared_crossing --seed 11 \
-  --rounds 24 --max-wall-s 1200 --max-input-tokens 800000
+  --executor skills --variant open --seed 11 \
+  --grasp-model-dir outputs/dispatch-models/models/grasp \
+  --stage-model-dir outputs/dispatch-models/models/varied \
+  --output outputs/dispatch-e2e-NEW --max-wall-s 900
 ```
 
 `--variant`는 `open`, `shared_crossing`, `north_blocked`, `narrow_south`, `rough_south` 중 하나다.
@@ -47,27 +52,35 @@ python scripts/ugrp_session.py run dispatch-e2e -- \
 
 | 부분 | 상태 |
 |---|---|
-| 실제 충돌 지형·동적 화물·3대 로봇·RGB | 구현 및 로딩/이동 진단 검증 |
-| 정적 지도와 물리 환경 연결 | 지도/scene/로봇 XML hash 기록 |
-| 실제 세 LLM의 공동 계획 | 기본/북쪽 장애물 조건에서 실행 기록 |
-| 계획 → 로봇별 담당/목적지/순서 | 프로그램 생성 및 계약 검사 |
-| 단계·자원 허가 | `DispatchExecution`의 최신 RGB·명령 참조·팀 장벽·자원 계약과 물리 포트 연결; 후반 단계는 계약 검사만 통과 |
-| 새 환경의 로봇별 운반 스킬 | 실험용 RGB raw-action 정책 연결; 학습된 범용 접근/파지 스킬은 미연결 |
-| 실제 운반 E2E | 3회 진단, 최종 24회 행동 판단 후 APPROACH 종료. 화물 이동·파지·운반 성공 없음 |
-| 실시간 비동기·실물·주행 중 재계획 성능 | 아직 검증하지 않음 |
+| 실제 충돌 지형·동적 화물·3대 로봇·RGB | 다섯 환경의 로딩/이동 진단 검증 |
+| 지도와 물리 환경 연결 | 정적 지도/최종 scene/로봇 XML hash 및 접촉 프로필 기록 |
+| 세 LLM 공동 계획 → 실제 담당 로봇 | 새 F1 합의에서 R1/R3 빔, R2 상자, dock_a 및 선행 작업을 실제 포트에 연결 |
+| 단계·자원 허가 | 접근 병행, 집기 전 운반 자원 예약, 선행 작업·계획 hash 검사, 공동 운반 RGB 동기화 |
+| 운반 스킬 | 기존 접근/파지 학습기·시연 팔 동작·VisualBoxSkill/VisualMacroExecutor 재사용. 새 배경은 승인된 교사 자료로 재학습 |
+| 새 환경 실제 E2E | open/seed11 최종 1회 완주: 빔 1.702m·상자 2.369m, 둘 다 슬롯 내 방출·안정 |
+| 좁은 통로·미지 배치·실시간 비동기·주행 중 재계획·실물 | 미검증. 0.685m 통로는 기존 0.93m 평행 대형의 한계 때문에 진입 거부 |
 
-기존 #62의 고정 역할 운반은 별도 기준선으로 보존했다. 새 환경을 기존 고정 레인 학생에
-몰래 투입하거나 좌표로 보정하지 않는다. 현재의 협의 결과는 물리적인 운반 성공이 아니며,
-모델이 상대 로봇 위치를 잘못 추정해도 형식상 합의는 가능하다. 합의와 지각 정확도를 분리해서 평가한다.
+기본 E2E 실행기는 `--executor skills`이며 모델 디렉터리를 요구한다. `--executor raw`로만
+이전 저수준 LLM 진단을 선택한다. `--plan-replay`는 기록 계획을 사용하는 명시적인 fixture 진단이다.
+계획 전용 `run_research_dispatch.py`가 출력하는 `unbound_new_arena_skill`은 실행기를 연결하지 않는
+그 경로의 범위를 뜻한다. 실제 연결은 `run_dispatch_skills.py`와 `dispatch_pair_skill.py`에 있다.
 
-`harness/dispatch_plan.py`는 계획/프로그램/상위 자원 계약을 담당한다. 계획 전용 실행기는
-계속 `unbound_new_arena_skill`을 출력한다. `run_dispatch_e2e.py`만 별도 실험용
-`DispatchExecution`을 포트에 연결하며 `experimental_rgb_raw_actions_v1`을 명시한다.
-기존 `TaskStageSync`/`TaskStageExecution` 기반 검증된 로컬 스킬의 통합은 아직 후속 작업이다.
-E2E 진단은 추론 중 SIM이 정지한다. 독립 작업 허가를 실시간 분산 실행 성능으로 해석하지 않는다.
-이 환경 작업은 팀원의 로컬 제어/계획 역할을 완료했다고 표시하지 않는다.
+`--contact-profile local_contact`는 집게/화물 접촉의 마찰 방향 계산을 0.5ms 간격으로 해석한다.
+질량·형상·기존 마찰계수·모터 힘·법선 접촉 파라미터·카메라는 유지하며 weld/접착력은 사용하지 않는다.
+이 수치 프로필은 실물 보정 결과가 아니다. 과거 물리 조건은 `legacy`, 전역 NoSlip은 별도 비교 진단이다.
+수정 후보와 제외한 불안정 조건을 [전체 기록](../experiments/dispatch-skill-integration-20260917/README.md)에 남겼다.
+
+학생 입력은 자기 RGB, 공용 TOP RGB, 승인된 정적 지도, 자기 발행 명령과 동료 메시지다.
+영상에서 추정한 위치·모양과 실제 평가 좌표를 구분하며, 접촉/관절 측정/평가 성공으로 제어를 보정하지 않는다.
+자기 명령은 실제 이동·관절 상태의 증명이 아니다. 최종 요청 재구성과 상자 517개 결정 재실행을 확인했다.
+교사 시연 성공과 학생의 독립 실행 성공은 별도로 기록한다.
+
+LLM 추론 중에는 SIM이 정지한다. 이 결과를 실시간 분산 성능, 자유로운 재계획 성능이나
+모든 역할 조합의 물리 일반화로 해석하지 않는다. 팀원의 연구 비교/계획/로컬 제어 역할이 완료됐다는 뜻도 아니다.
 
 ## 자료
+
+- [최신 스킬 통합 E2E·재현 모델·전체 실패 기록](../experiments/dispatch-skill-integration-20260917/README.md)
 
 - [E2E 진단 결과·실패 원인·후속 연결 지점](../experiments/dispatch-e2e-20260917/README.md)
 - [실제 환경·카메라·합의 결과 뷰어](../experiments/research-dispatch-arena-20260917/index.html)

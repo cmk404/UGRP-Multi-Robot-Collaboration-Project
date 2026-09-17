@@ -1,0 +1,1479 @@
+[
+  {
+    "id": "dispatch-skill-baseline",
+    "scope": "three RGB agents agree on two physical cargo tasks and a selected box destination; concurrent r1/r3 pair and r2 solo; skill-constrained roles, RGB local control, not arbitrary role/route planning",
+    "source_sha": "d1c36124e1a925ea02a857d9e55cc7be68b59de8",
+    "note": null,
+    "phase": null,
+    "error": null,
+    "physical_success": true,
+    "protocol_complete": null,
+    "solo_evaluation": {
+      "final_box_position": [
+        0.916545424469296,
+        -3.0012288739566357,
+        0.01589224457978395
+      ],
+      "max_lift_m": 0.06283222308862665,
+      "released_stable_inside": true,
+      "robot_displacement_m": 0.7515958628339752,
+      "selected_goal": "near_magenta",
+      "success": true,
+      "transported_while_lifted": true
+    },
+    "teacher_complete": null,
+    "wall_s": 85.93573470800038,
+    "llm_calls": null,
+    "usage": null,
+    "cost_usd": null,
+    "evaluation": {
+      "gates": {
+        "carry_continuity": true,
+        "carry_progress": true,
+        "grasp_hold": true,
+        "lateral_drift": true,
+        "release_continuity": true,
+        "release_grounded_clear": true,
+        "release_stable": true,
+        "required_phases": true,
+        "transport_endpoint": true,
+        "valid_samples": true,
+        "weld_off": true
+      },
+      "metrics": {
+        "carry_start_to_end_progress_m": 0.48297199999999985,
+        "displacement_error_m": -0.01706799999999986,
+        "final_displacement_m": 0.48293200000000014,
+        "grasp_hold_duration_s": 2.1000000000000014,
+        "lateral_drift_m": 0.0007110000000001282,
+        "max_sample_gap_s": 0.15,
+        "minimum_hold_s": 2.0,
+        "release_hold_duration_s": 53.099999999999994,
+        "release_position_span_3d_m": 0.0,
+        "release_stable_s": 1.0,
+        "sample_count": 985,
+        "target_distance_m": 0.5,
+        "tolerance_m": 0.03
+      },
+      "reasons": [],
+      "scope": "sampled referee continuity only",
+      "success": true
+    },
+    "cases": null,
+    "raw_report_sha256": "c3fa287bff8183dea27c75af3ed62f1513af2d6531c3cfce855a88e847012c03",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-skill-baseline"
+  },
+  {
+    "id": "dispatch-skills-s1",
+    "scope": null,
+    "source_sha": "02a0400",
+    "note": "Model root path check failed before physics; fixed resolve.",
+    "phase": "MODEL_LOAD",
+    "error": "model path/hash mismatch",
+    "physical_success": false,
+    "protocol_complete": null,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": null,
+    "llm_calls": null,
+    "usage": null,
+    "cost_usd": null,
+    "evaluation": {},
+    "cases": null,
+    "raw_report_sha256": "bba341f7a744438db9e3405751421d501f3a0b04a60d2304780446e815860b7a",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-skills-s1"
+  },
+  {
+    "id": "dispatch-skills-s2",
+    "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
+    "source_sha": "a94ee2505b35dbdcee6f442808199927b7583118",
+    "note": "Live agreement succeeded; new yellow paint confused wheel mask.",
+    "phase": "APPROACH",
+    "error": "RuntimeError: coarse RGB model convention unresolved",
+    "physical_success": false,
+    "protocol_complete": false,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": 30.68899883299946,
+    "llm_calls": 9,
+    "usage": {
+      "prompt_tokens": 84180,
+      "completion_tokens": 2106,
+      "total_tokens": 86919
+    },
+    "cost_usd": null,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 1.5269729924938247e-13,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 4.203928871682194e-14,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 0.026740859638909605,
+        "r2": 0.02674085916901553,
+        "r3": 0.026740858969643868
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 53,
+      "stable_window_s": 0.9999999999998899
+    },
+    "cases": null,
+    "raw_report_sha256": "cabbf1d8696da5ec45b61528d129be896e92bd31314387a75e710c812f555d53",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-skills-s2"
+  },
+  {
+    "id": "dispatch-skills-s3",
+    "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
+    "source_sha": "ddaa6e2e3fc98589b2b6f1a2a082340d148ba210",
+    "note": "Live agreement succeeded; coarse mask 2 px outside size bound.",
+    "phase": "APPROACH",
+    "error": "RuntimeError: coarse RGB model convention unresolved",
+    "physical_success": false,
+    "protocol_complete": false,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": 86.54640616600045,
+    "llm_calls": 18,
+    "usage": {
+      "prompt_tokens": 172628,
+      "completion_tokens": 7038,
+      "total_tokens": 187302
+    },
+    "cost_usd": null,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 1.5269729924938247e-13,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 4.5706494145036913e-14,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 0.027453332362825086,
+        "r2": 0.026740859578205805,
+        "r3": 0.042649402702070155
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 59,
+      "stable_window_s": 0.9999999999998899
+    },
+    "cases": null,
+    "raw_report_sha256": "f3cbc8c99447edc1737c512704822759417f89a83a8a7b79033a2b34896d9f3d",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-skills-s3"
+  },
+  {
+    "id": "dispatch-skills-s4",
+    "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+    "source_sha": "a4969b297807d3b872f776171d6bdb9bf4060883",
+    "note": "Actual old model invoked; new background outside heading support.",
+    "phase": "APPROACH",
+    "error": "RuntimeError: fine RGB alignment outside saved skill support",
+    "physical_success": false,
+    "protocol_complete": false,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": 28.693622959000095,
+    "llm_calls": 6,
+    "usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    },
+    "cost_usd": null,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 1.5273546316585396e-13,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 5.6430554673525535e-14,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 0.44987106649458547,
+        "r2": 0.16484394728656013,
+        "r3": 0.3934258827553663
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 166,
+      "stable_window_s": 0.9999999999994458
+    },
+    "cases": null,
+    "raw_report_sha256": "aaa696fda981289500efd015f8f1d8fda45aa9c1a0a2d04a0693a1461b08eb21",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-skills-s4"
+  },
+  {
+    "id": "dispatch-skills-s5",
+    "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+    "source_sha": "f32475edf5558dd719902a221db46488cd944a4e",
+    "note": "Approach passed; preclose outside support; frozen RGB transform and handoff jitter added.",
+    "phase": "GRASP",
+    "error": "RuntimeError: preclose RGB outside learned grasp support",
+    "physical_success": false,
+    "protocol_complete": false,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": 92.42090300000018,
+    "llm_calls": 6,
+    "usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    },
+    "cost_usd": null,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 1.630084955905886e-13,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 5.6430554673525535e-14,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 0.6628147354105686,
+        "r2": 0.4384322824998668,
+        "r3": 0.6179565474232651
+      },
+      "all_three_body_motion_sim_s": 1.0999999999997456,
+      "weld_steps": 0,
+      "samples": 566,
+      "stable_window_s": 1.0000000000012221
+    },
+    "cases": null,
+    "raw_report_sha256": "7bd2e6097ed43717a95267cd712cf29bc5125cf1b629d0b89de97999625f025a",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-skills-s5"
+  },
+  {
+    "id": "dispatch-skills-s6",
+    "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+    "source_sha": "47a71bcea739e56021410bddb3178b769917b17d",
+    "note": "Grasp succeeded; own RGB hue guard rejected beam under bright yellow lighting.",
+    "phase": "TRANSIT",
+    "error": "RuntimeError: existing pair carry guard stopped: ABORT",
+    "physical_success": false,
+    "protocol_complete": false,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": 103.9919513750001,
+    "llm_calls": 0,
+    "usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    },
+    "cost_usd": null,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07675138449529603,
+          "displacement_m": 0.15102852095480743,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.054851177621282964,
+          "displacement_m": 0.002206984566359788,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 0.8253667442506787,
+        "r2": 0.44300714313001577,
+        "r3": 0.7803480222562683
+      },
+      "all_three_body_motion_sim_s": 1.0999999999997456,
+      "weld_steps": 0,
+      "samples": 640,
+      "stable_window_s": 0.9999999999976694
+    },
+    "cases": null,
+    "raw_report_sha256": "1855c3108cb1e68bcf531b0c32676f7eae8e2c2c0e58ae94176ccaa1d1f406e1",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-skills-s6"
+  },
+  {
+    "id": "dispatch-skills-s7",
+    "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+    "source_sha": "ca11f79d419fb9e4b0c786b7e4c8342548472169",
+    "note": "Own guard fixed; TOP hue mask lost bright beam.",
+    "phase": "TRANSIT",
+    "error": "ValueError: dispatch beam unresolved or ambiguous in RGB",
+    "physical_success": false,
+    "protocol_complete": false,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": 111.11533662500005,
+    "llm_calls": 0,
+    "usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    },
+    "cost_usd": null,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07675138449529603,
+          "displacement_m": 0.20340326091030336,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.06338602080471822,
+          "displacement_m": 0.0018004805754256133,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 0.8776400623564062,
+        "r2": 0.44307609404216064,
+        "r3": 0.8326831416247484
+      },
+      "all_three_body_motion_sim_s": 1.0999999999997456,
+      "weld_steps": 0,
+      "samples": 650,
+      "stable_window_s": 0.9999999999976694
+    },
+    "cases": null,
+    "raw_report_sha256": "bf0fff67586a3efb56ef179e83a00b2b46e0a72c2dd6a01e4a0d99e4d31a3b96",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-skills-s7"
+  },
+  {
+    "id": "dispatch-skills-s8",
+    "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+    "source_sha": "6e349db3e8e929908147c378b4750596c72f0420",
+    "note": "TOP beam fixed; box detector accepted cyan floor fragments; beam later fell.",
+    "phase": "TRANSIT",
+    "error": "RuntimeError: dispatch box unresolved or ambiguous in TOP RGB",
+    "physical_success": false,
+    "protocol_complete": false,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": 111.96364566600005,
+    "llm_calls": 0,
+    "usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    },
+    "cost_usd": null,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07675138449529603,
+          "displacement_m": 0.3177804828234667,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.06338602080471822,
+          "displacement_m": 0.002101385234408006,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 1.0370822110913154,
+        "r2": 0.44580012088434284,
+        "r3": 0.9812710718897392
+      },
+      "all_three_body_motion_sim_s": 1.0999999999997456,
+      "weld_steps": 0,
+      "samples": 678,
+      "stable_window_s": 0.9999999999976694
+    },
+    "cases": null,
+    "raw_report_sha256": "b5ce66ea37d04cea825a402a0d1a89c207ca99bf7329826e5fb91c7fb3f23a3d",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-skills-s8"
+  },
+  {
+    "id": "dispatch-skills-s9",
+    "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+    "source_sha": "79415cb2652d64f3d262b046cc69ce30b7743924",
+    "note": "Box detector fixed; long beam retention failed. Short baseline did not establish long retention.",
+    "phase": "TRANSIT",
+    "error": "RuntimeError: existing pair carry guard stopped: ABORT",
+    "physical_success": false,
+    "protocol_complete": false,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": 114.47719162499925,
+    "llm_calls": 0,
+    "usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    },
+    "cost_usd": null,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07675138449529603,
+          "displacement_m": 0.318388298793075,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.06338602080471822,
+          "displacement_m": 0.001882979136789713,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 1.0725721811607394,
+        "r2": 0.44580105931252306,
+        "r3": 1.0131492902654566
+      },
+      "all_three_body_motion_sim_s": 1.0999999999997456,
+      "weld_steps": 0,
+      "samples": 710,
+      "stable_window_s": 0.9999999999976694
+    },
+    "cases": null,
+    "raw_report_sha256": "1b2d191f4a82012452ee17848b511df54e08bd44e9f59f587b138b5740aaa0fa",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-skills-s9"
+  },
+  {
+    "id": "dispatch-skills-s10",
+    "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+    "source_sha": "2ae96df0106b0cf3e6e0ef1461518f9e00efabec",
+    "note": "Global NoSlip changes reduced-mecanum response; coarse heading support fails. Rejected candidate.",
+    "phase": "APPROACH",
+    "error": "RuntimeError: coarse RGB model convention unresolved",
+    "physical_success": false,
+    "protocol_complete": false,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": 7.697936541999297,
+    "llm_calls": 0,
+    "usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    },
+    "cost_usd": null,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.0,
+          "displacement_m": 1.148292811457537e-13,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 4.541506060107281e-14,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 0.03577719112452094,
+        "r2": 0.02692706409144947,
+        "r3": 0.13138263200651287
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 67,
+      "stable_window_s": 0.9999999999998899
+    },
+    "cases": null,
+    "raw_report_sha256": "335ae69a02c643e62e5a2aface0a73c93b444bc2715d268110490e88342e0df1",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-skills-s10"
+  },
+  {
+    "id": "dispatch-skills-s11",
+    "scope": "recorded-plan diagnostic; interrupted at confirmed waypoint deadlock",
+    "source_sha": "9bb41be",
+    "note": "Interrupted diagnostic: RGB waypoint deadzone mismatch produced stationary commands. Group interrupt killed encoder and prevented final in-memory logs; raw RGB, partial video and referee retained. Not complete audit.",
+    "phase": "TRANSIT",
+    "error": "Manually interrupted after repeated unchanged waypoint RGB. Group interrupt closed ffmpeg before final cleanup; raw RGB, partial video and referee stream retained; in-memory model/command logs were not flushed. No complete input-audit claim for S11.",
+    "physical_success": false,
+    "protocol_complete": false,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": null,
+    "llm_calls": null,
+    "usage": null,
+    "cost_usd": null,
+    "evaluation": {},
+    "cases": null,
+    "raw_report_sha256": "9ec935fb6da2ffa92daa0afa2905cb522e20035c7fd7e13985b720599052e044",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-skills-s11"
+  },
+  {
+    "id": "dispatch-skills-s12",
+    "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+    "source_sha": "d64bf7760eed7b31f931ea12355b44e0d120b55f",
+    "note": "Beam delivered and released (1.7019m). Box attachment false alarm after loaded resource wait. Actual box held; changed to wait before grasp.",
+    "phase": "RELEASE",
+    "error": "RuntimeError: solo stopped: VISUAL_LOAD_DROPPED_OR_OCCLUDED",
+    "physical_success": false,
+    "protocol_complete": false,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": 161.9393367090015,
+    "llm_calls": 0,
+    "usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    },
+    "cost_usd": null,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07755395242726539,
+          "displacement_m": 1.7018765291848845,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": true
+        },
+        "box": {
+          "max_lift_m": 0.06878816418771212,
+          "displacement_m": 0.0014791684148721595,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 2.6802135255814044,
+        "r2": 0.44060736011344465,
+        "r3": 2.633539751216847
+      },
+      "all_three_body_motion_sim_s": 0.4999999999988347,
+      "weld_steps": 0,
+      "samples": 884,
+      "stable_window_s": 1.0000000000047748
+    },
+    "cases": null,
+    "raw_report_sha256": "333e54649a32735ef1300958f818a0d4c82cb9b685e55957d6ca1cd968877f46",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-skills-s12"
+  },
+  {
+    "id": "dispatch-skills-s13",
+    "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+    "source_sha": "273da1ba388a06ca86161056a79118f9705b4211",
+    "note": "Beam delivered and released. Box pregrasp waiting worked, but TOP cyan saturation mask lost cargo in changed lighting.",
+    "phase": "RELEASE",
+    "error": "RuntimeError: dispatch box unresolved or ambiguous in TOP RGB",
+    "physical_success": false,
+    "protocol_complete": false,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": 204.4670112499989,
+    "llm_calls": 0,
+    "usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    },
+    "cost_usd": null,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07755395242726539,
+          "displacement_m": 1.7018765273156322,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": true
+        },
+        "box": {
+          "max_lift_m": 0.06881219026055813,
+          "displacement_m": 0.33205604010792006,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 2.6802136486405135,
+        "r2": 0.8748289511838053,
+        "r3": 2.633539756684424
+      },
+      "all_three_body_motion_sim_s": 0.4999999999988347,
+      "weld_steps": 0,
+      "samples": 1112,
+      "stable_window_s": 1.0000000000047748
+    },
+    "cases": null,
+    "raw_report_sha256": "755a5918430567dbd54fde757992d728beb2ef696d98ef81531fd9d1b015aa84",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-skills-s13"
+  },
+  {
+    "id": "dispatch-transfer-t1",
+    "scope": null,
+    "source_sha": "fc8e8e8ccf71f95aa5674d5e6acb80150cbd41a4",
+    "note": "Teacher collection aborted on unobservable beam; preserved raw.",
+    "phase": null,
+    "error": "dispatch beam unresolved or ambiguous in RGB",
+    "physical_success": null,
+    "protocol_complete": null,
+    "solo_evaluation": null,
+    "teacher_complete": false,
+    "wall_s": 2.4618052919995534,
+    "llm_calls": null,
+    "usage": null,
+    "cost_usd": null,
+    "evaluation": {},
+    "cases": null,
+    "raw_report_sha256": "3a45a4ce47d7db0e04798423a010a40ebd54419c8053055e4e9bf7a6afc6c417",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t1"
+  },
+  {
+    "id": "dispatch-transfer-t2",
+    "scope": null,
+    "source_sha": "d3b0cf466e9d1d157eee235552db2f1def7151fd",
+    "note": "Approach export complete (323 accepted); grasp stage failed visible aspect filter.",
+    "phase": null,
+    "error": "dispatch beam unresolved or ambiguous in RGB",
+    "physical_success": null,
+    "protocol_complete": null,
+    "solo_evaluation": null,
+    "teacher_complete": false,
+    "wall_s": 86.62083841700041,
+    "llm_calls": null,
+    "usage": null,
+    "cost_usd": null,
+    "evaluation": {},
+    "cases": null,
+    "raw_report_sha256": "a10d079474b458d8c577d942a6eedcba48f16bd5395a2d222cb977fe69eae3bc",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t2"
+  },
+  {
+    "id": "dispatch-transfer-t3",
+    "scope": null,
+    "source_sha": "f32475edf5558dd719902a221db46488cd944a4e",
+    "note": "180/180 teacher recoveries; superseded because live grasp transform followed occluded endpoint.",
+    "phase": null,
+    "error": null,
+    "physical_success": null,
+    "protocol_complete": null,
+    "solo_evaluation": null,
+    "teacher_complete": true,
+    "wall_s": 92.29382341600012,
+    "llm_calls": null,
+    "usage": null,
+    "cost_usd": null,
+    "evaluation": {},
+    "cases": null,
+    "raw_report_sha256": "336b1cd85720ee4e151f1ce008343836597cf5abd849a66bb51fdd23f5da05b6",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t3"
+  },
+  {
+    "id": "dispatch-transfer-t4",
+    "scope": null,
+    "source_sha": "8d74e7ce95a2b9be9f47c9a9a70a181fb91d9ea1",
+    "note": "Final teacher RGB models, 180/180 recoveries; not student E2E success.",
+    "phase": null,
+    "error": null,
+    "physical_success": null,
+    "protocol_complete": null,
+    "solo_evaluation": null,
+    "teacher_complete": true,
+    "wall_s": 96.78233570900011,
+    "llm_calls": null,
+    "usage": null,
+    "cost_usd": null,
+    "evaluation": {},
+    "cases": null,
+    "raw_report_sha256": "2c0b52a1be21729e5c90f6835282af239ab1936114a9c31409b0412f4b21f930",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4"
+  },
+  {
+    "id": "dispatch-retention-r1",
+    "scope": null,
+    "source_sha": "1a1bbee94b06367ee87fc145b3ff27f5aedad765",
+    "note": "Static isolates drift; moving path reaches boundary and is not a clean route validation.",
+    "phase": null,
+    "error": null,
+    "physical_success": null,
+    "protocol_complete": null,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": null,
+    "llm_calls": null,
+    "usage": null,
+    "cost_usd": null,
+    "evaluation": {},
+    "cases": [
+      {
+        "noslip_iterations": 0,
+        "moving": false,
+        "final_height": 0.01995142505239946,
+        "min_height": 0.019054438574518648,
+        "weld_steps": 0,
+        "wall_s": 4.036249958000553
+      },
+      {
+        "noslip_iterations": 0,
+        "moving": true,
+        "final_height": 0.01995142505239948,
+        "min_height": 0.018620376156369575,
+        "weld_steps": 0,
+        "wall_s": 3.9455671249997977
+      },
+      {
+        "noslip_iterations": 4,
+        "moving": false,
+        "final_height": 0.09387747063471727,
+        "min_height": 0.09363127528962015,
+        "weld_steps": 0,
+        "wall_s": 7.155241041999034
+      },
+      {
+        "noslip_iterations": 4,
+        "moving": true,
+        "final_height": 0.1039269588744257,
+        "min_height": 0.09783253088427414,
+        "weld_steps": 0,
+        "wall_s": 6.438900541999828
+      }
+    ],
+    "raw_report_sha256": "98cf83b1252fbdcf6cff43d2641f5546d332f1498489bf17d0f18faa47564c11",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-retention-r1"
+  },
+  {
+    "id": "dispatch-retention-r2",
+    "scope": null,
+    "source_sha": "2ae96df0106b0cf3e6e0ef1461518f9e00efabec",
+    "note": "Static confirms effect; moving cases report obstacle contact and are confounded.",
+    "phase": null,
+    "error": null,
+    "physical_success": null,
+    "protocol_complete": null,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": null,
+    "llm_calls": null,
+    "usage": null,
+    "cost_usd": null,
+    "evaluation": {},
+    "cases": [
+      {
+        "noslip_iterations": 0,
+        "moving": false,
+        "final_height": 0.01995142505239946,
+        "min_height": 0.019054438574518648,
+        "weld_steps": 0,
+        "obstacle_contact_steps": 0,
+        "wall_s": 3.856618540999989
+      },
+      {
+        "noslip_iterations": 0,
+        "moving": true,
+        "final_height": 0.01995142505239946,
+        "min_height": 0.01887625235742607,
+        "weld_steps": 0,
+        "obstacle_contact_steps": 861,
+        "wall_s": 3.798233874998914
+      },
+      {
+        "noslip_iterations": 4,
+        "moving": false,
+        "final_height": 0.09387747063471727,
+        "min_height": 0.09363127528962015,
+        "weld_steps": 0,
+        "obstacle_contact_steps": 0,
+        "wall_s": 6.899118041999827
+      },
+      {
+        "noslip_iterations": 4,
+        "moving": true,
+        "final_height": 0.09921368110974334,
+        "min_height": 0.09397708315409212,
+        "weld_steps": 0,
+        "obstacle_contact_steps": 4012,
+        "wall_s": 6.434382667001046
+      }
+    ],
+    "raw_report_sha256": "54410ce6add5833ecc85060abeceb95c4c3d1fdc6780561f8373dd21a9f9cb02",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-retention-r2"
+  },
+  {
+    "id": "dispatch-retention-r3",
+    "scope": null,
+    "source_sha": "b44d96f",
+    "note": "Diagnostic release helper bug; no valid final result.",
+    "phase": null,
+    "error": "AttributeError: DispatchScene has no hold method; diagnostic final release did not execute",
+    "physical_success": null,
+    "protocol_complete": null,
+    "solo_evaluation": null,
+    "teacher_complete": false,
+    "wall_s": null,
+    "llm_calls": null,
+    "usage": null,
+    "cost_usd": null,
+    "evaluation": {},
+    "cases": [],
+    "raw_report_sha256": "d1f1f87be1f159c931d79cb7b9b99774e198aba635d5a2bf54d184689b351279",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-retention-r3"
+  },
+  {
+    "id": "dispatch-retention-r4",
+    "scope": null,
+    "source_sha": "4c8222b4b79a48238f6a9bcdf25d801d17d6ed34",
+    "note": "Direct friction damping -10000 at dt=.002 produced QACC instability and automatic physics reset. Invalid physics; candidate rejected.",
+    "phase": null,
+    "error": null,
+    "physical_success": null,
+    "protocol_complete": null,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": null,
+    "llm_calls": null,
+    "usage": null,
+    "cost_usd": null,
+    "evaluation": {},
+    "cases": [
+      {
+        "contact_solver_profile": "legacy",
+        "moving": false,
+        "opened_release_height": 0.01995142505239946,
+        "final_height": 0.01995142505239946,
+        "min_height": 0.019054438574518648,
+        "weld_steps": 0,
+        "obstacle_contact_steps": 0,
+        "wall_s": 5.717625958999633
+      },
+      {
+        "contact_solver_profile": "legacy",
+        "moving": true,
+        "opened_release_height": 0.019951425052399458,
+        "final_height": 0.01995142505239946,
+        "min_height": 0.01887625235742607,
+        "weld_steps": 0,
+        "obstacle_contact_steps": 0,
+        "wall_s": 4.472293834000084
+      },
+      {
+        "contact_solver_profile": "local_friction",
+        "moving": false,
+        "opened_release_height": 0.019951425053269793,
+        "final_height": 0.019951425053163184,
+        "min_height": 0.019951425053106507,
+        "weld_steps": 0,
+        "obstacle_contact_steps": 0,
+        "wall_s": 3.881709082999805
+      },
+      {
+        "contact_solver_profile": "local_friction",
+        "moving": true,
+        "opened_release_height": 0.019951425053269793,
+        "final_height": 0.019951425053163184,
+        "min_height": 0.019951425053106507,
+        "weld_steps": 0,
+        "obstacle_contact_steps": 0,
+        "wall_s": 4.151414250000016
+      }
+    ],
+    "raw_report_sha256": "e7c849b7742c8757d30bd1afb2ec736e37f9d371c18b5a745e49860a779f4ee2",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-retention-r4"
+  },
+  {
+    "id": "dispatch-retention-r5",
+    "scope": null,
+    "source_sha": "3156d10411077ee864eb059b7f154357421235b6",
+    "note": "Higher normal impedance .995 held only one end; moving dropped. Rejected candidate.",
+    "phase": null,
+    "error": null,
+    "physical_success": null,
+    "protocol_complete": null,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": null,
+    "llm_calls": null,
+    "usage": null,
+    "cost_usd": null,
+    "evaluation": {},
+    "cases": [
+      {
+        "contact_solver_profile": "local_contact",
+        "moving": false,
+        "opened_release_height": 0.04531805903305506,
+        "final_height": 0.06508554176293008,
+        "min_height": 0.06508554176293008,
+        "weld_steps": 0,
+        "obstacle_contact_steps": 0,
+        "wall_s": 5.065466165999169
+      },
+      {
+        "contact_solver_profile": "local_contact",
+        "moving": true,
+        "opened_release_height": 0.019951425052399458,
+        "final_height": 0.01995142505239946,
+        "min_height": 0.01986691497281599,
+        "weld_steps": 0,
+        "obstacle_contact_steps": 0,
+        "wall_s": 4.3969857079991925
+      }
+    ],
+    "raw_report_sha256": "3129b039cd5906709353ec9858f9f2d90b8298d535ed60c0eba5afd5a2dad18d",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-retention-r5"
+  },
+  {
+    "id": "dispatch-retention-r6",
+    "scope": null,
+    "source_sha": "e2eb83ba3bf72871bca84f27e77ab1da8448d34a",
+    "note": "Higher normal impedance .9999 dropped. Rejected candidate.",
+    "phase": null,
+    "error": null,
+    "physical_success": null,
+    "protocol_complete": null,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": null,
+    "llm_calls": null,
+    "usage": null,
+    "cost_usd": null,
+    "evaluation": {},
+    "cases": [
+      {
+        "contact_solver_profile": "local_contact",
+        "moving": false,
+        "opened_release_height": 0.019951425052399472,
+        "final_height": 0.019951425052399475,
+        "min_height": 0.019927178029523398,
+        "weld_steps": 0,
+        "obstacle_contact_steps": 0,
+        "wall_s": 4.682441499999186
+      },
+      {
+        "contact_solver_profile": "local_contact",
+        "moving": true,
+        "opened_release_height": 0.024951425052399508,
+        "final_height": 0.02495142505239948,
+        "min_height": 0.024012479625412104,
+        "weld_steps": 0,
+        "obstacle_contact_steps": 0,
+        "wall_s": 4.812820582999848
+      }
+    ],
+    "raw_report_sha256": "e6b101e35e6f779d50c68d6fdc8f51de5f0338089b17ceab539e4d65034c3e2d",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-retention-r6"
+  },
+  {
+    "id": "dispatch-retention-r7",
+    "scope": null,
+    "source_sha": "9bb41be94d77b4e8bcf7a32c720ea70cdcde9b31",
+    "note": "Unchanged normal/friction/mass/actuator values; local tangential damping -3000 resolved with dt=.0005. Static and 1.329m path both retained for 31s, released on opening, zero wall/weld contacts.",
+    "phase": null,
+    "error": null,
+    "physical_success": null,
+    "protocol_complete": null,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": null,
+    "llm_calls": null,
+    "usage": null,
+    "cost_usd": null,
+    "evaluation": {},
+    "cases": [
+      {
+        "contact_solver_profile": "local_contact",
+        "moving": false,
+        "opened_release_height": 0.019951425052399482,
+        "final_height": 0.09107029525312875,
+        "min_height": 0.09107029525312875,
+        "weld_steps": 0,
+        "obstacle_contact_steps": 0,
+        "wall_s": 13.840291667000201
+      },
+      {
+        "contact_solver_profile": "local_contact",
+        "moving": true,
+        "opened_release_height": 0.01995142505239948,
+        "final_height": 0.091070544542029,
+        "min_height": 0.091070544542029,
+        "weld_steps": 0,
+        "obstacle_contact_steps": 0,
+        "wall_s": 13.574466332998782
+      }
+    ],
+    "raw_report_sha256": "bec2ba0af8989a25dd69528d2147019cbf477c15e2ca019626ab2e1ce5243d70",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-retention-r7"
+  },
+  {
+    "id": "dispatch-solo-q1",
+    "scope": "solo fixture diagnostic; beam preplaced and peers parked, not full E2E",
+    "source_sha": "71900deb091716e2f70c81d490cb3cc9dd285897",
+    "note": "Isolated solo fixture: cargo actually held but own cyan floor joined old attachment mask. Changed dispatch saturation calibration only, strict attachment gates unchanged.",
+    "phase": null,
+    "error": "RuntimeError: solo stopped: VISUAL_LOAD_DROPPED_OR_OCCLUDED",
+    "physical_success": false,
+    "protocol_complete": null,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": 84.30485595800019,
+    "llm_calls": null,
+    "usage": null,
+    "cost_usd": null,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 1.1889794704345036e-14,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.06868868079264745,
+          "displacement_m": 0.37751328227894637,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 5.9878790814593685e-09,
+        "r2": 0.9186127970977216,
+        "r3": 5.987929929673896e-09
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 730,
+      "stable_window_s": 1.0000000000047748
+    },
+    "cases": null,
+    "raw_report_sha256": "a601cc9dd2642a978cee81eea6987cbc16d3ff642759b435213450b8bd7d7973",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-solo-q1"
+  },
+  {
+    "id": "dispatch-solo-q2",
+    "scope": "solo fixture diagnostic; beam preplaced and peers parked, not full E2E",
+    "source_sha": "18474aa7d67c728acdcc68dd1d011ce48a204337",
+    "note": "Isolated solo fixture: own attachment passed. TOP cyan cargo merged with cyan floor at 0.466m displacement.",
+    "phase": null,
+    "error": "RuntimeError: dispatch box unresolved or ambiguous in TOP RGB",
+    "physical_success": false,
+    "protocol_complete": null,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": 74.4051138750001,
+    "llm_calls": null,
+    "usage": null,
+    "cost_usd": null,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 1.1889794704345036e-14,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.06868868079264745,
+          "displacement_m": 0.46595875738055076,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 6.053731738120405e-09,
+        "r2": 1.0098564245275028,
+        "r3": 6.053778811576649e-09
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 738,
+      "stable_window_s": 1.0000000000047748
+    },
+    "cases": null,
+    "raw_report_sha256": "ac70f0a0895a3fa9583e9e4aa4558b7653605493c05d4e268dbfe29c05a89cc0",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-solo-q2"
+  },
+  {
+    "id": "dispatch-solo-q3",
+    "scope": "solo fixture diagnostic; beam preplaced and peers parked, not full E2E",
+    "source_sha": "2e5f20b49501faacac19a9217437a0130f913608",
+    "note": "Prior background subtraction only survived two additional frames. Tiny remaining visible cyan region over same-colour floor required actual previous RGB appearance tracking.",
+    "phase": null,
+    "error": "RuntimeError: dispatch box unresolved or ambiguous in TOP RGB",
+    "physical_success": false,
+    "protocol_complete": null,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": 78.06714741699943,
+    "llm_calls": null,
+    "usage": null,
+    "cost_usd": null,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 1.1889794704345036e-14,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.06868868079264745,
+          "displacement_m": 0.5106931468768916,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 6.08663586199043e-09,
+        "r2": 1.0556185365175799,
+        "r3": 6.086681159089835e-09
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 742,
+      "stable_window_s": 1.0000000000047748
+    },
+    "cases": null,
+    "raw_report_sha256": "d555ea00345edf3079f780de1ea3238bdd5c1555b10e5fbd499ca46af781fef2",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-solo-q3"
+  },
+  {
+    "id": "dispatch-solo-q4",
+    "scope": "solo fixture diagnostic; beam preplaced and peers parked, not full E2E",
+    "source_sha": "6c7a9413bdea4cbf6aa1389751138a33e7ccbda3",
+    "note": "Prior RGB appearance carried box 1.101m. Integer tracking accumulated drift and morphology erased thin colour component on leaving floor. Fixed subpixel motion and tracked-component preservation; entire 70-frame saved carry sequence replays.",
+    "phase": null,
+    "error": "RuntimeError: dispatch box unresolved or ambiguous in TOP RGB",
+    "physical_success": false,
+    "protocol_complete": null,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": 85.07205274999978,
+    "llm_calls": null,
+    "usage": null,
+    "cost_usd": null,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 1.1889794704345036e-14,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.06868868079264745,
+          "displacement_m": 1.100716121330783,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 6.514378814159727e-09,
+        "r2": 1.6516812880158789,
+        "r3": 6.51439924226338e-09
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 794,
+      "stable_window_s": 1.0000000000047748
+    },
+    "cases": null,
+    "raw_report_sha256": "cdc96ac04e4fb1b11b0ecac7ca90c7b3b8ca135e6758035a11eda442e6724683",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-solo-q4"
+  },
+  {
+    "id": "dispatch-solo-q5",
+    "scope": "solo fixture diagnostic; beam preplaced and peers parked, not full E2E",
+    "source_sha": "cbfc38a96fbe85a568e555907dd2765003283f68",
+    "note": "Box reached staging and travelled north (1.271m). Current TOP silhouette matched at .94 but cyan edge shrank to 14 pixels. Replaced colour persistence requirement with bidirectional RGB correspondence while own attachment guard remains mandatory.",
+    "phase": null,
+    "error": "RuntimeError: dispatch box unresolved or ambiguous in TOP RGB",
+    "physical_success": false,
+    "protocol_complete": null,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": 96.10363604200029,
+    "llm_calls": null,
+    "usage": null,
+    "cost_usd": null,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 1.1889794704345036e-14,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.06868868079264745,
+          "displacement_m": 1.270957466798607,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 7.287537462374871e-09,
+        "r2": 2.2404616768298435,
+        "r3": 7.287518144494243e-09
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 888,
+      "stable_window_s": 1.0000000000047748
+    },
+    "cases": null,
+    "raw_report_sha256": "ff859fac753ddc94fc86f4db0edee0e6a6dd7647ffe9910ce286546b3123cdcb",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-solo-q5"
+  },
+  {
+    "id": "dispatch-solo-q6",
+    "scope": "solo fixture diagnostic; beam preplaced and peers parked, not full E2E",
+    "source_sha": "dea5d273b9abe29d7033d713cfc81e092f087d2e",
+    "note": "Box carried 2.097m into dispatch apron. Template correlation changed with background boundary despite physical foreground motion. Bidirectional feature flow separates consistent moving corners from stationary floor; entire Q1-Q6 RGB carry sequences replay under the new tracker.",
+    "phase": null,
+    "error": "RuntimeError: dispatch box unresolved or ambiguous in TOP RGB",
+    "physical_success": false,
+    "protocol_complete": null,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": 118.29369120799856,
+    "llm_calls": null,
+    "usage": null,
+    "cost_usd": null,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 1.1889794704345036e-14,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.06868868079264745,
+          "displacement_m": 2.096787266765118,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 8.373474358336352e-09,
+        "r2": 3.4043825337659395,
+        "r3": 8.373527204952325e-09
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 1020,
+      "stable_window_s": 1.0000000000047748
+    },
+    "cases": null,
+    "raw_report_sha256": "8aaa2c3d7e96ba734453aa80c24033810b0f6f7bf7e637dfc30b097e8f11f816",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-solo-q6"
+  },
+  {
+    "id": "dispatch-solo-q7",
+    "scope": "solo fixture diagnostic; beam preplaced and peers parked, not full E2E",
+    "source_sha": "f688973957c357752ac3a1ae58857eafadce364f",
+    "note": "Isolated solo physical transport/release success (2.379m) with weld off. Own final release claim failed due image cuboid fit seed bias (.678 IoU); bounded RGB-only XY refinement raises it to .975 and keeps 1cm stationarity gate.",
+    "phase": null,
+    "error": "RuntimeError: solo stopped: RELEASE_OBJECT_NOT_GROUND_STATIONARY",
+    "physical_success": false,
+    "protocol_complete": null,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": 156.2738387920017,
+    "llm_calls": null,
+    "usage": null,
+    "cost_usd": null,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 1.436628064211895e-05,
+          "displacement_m": 0.00069332260387377,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.06868868079264745,
+          "displacement_m": 2.378706150529269,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": true
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 1.0775508263449751e-08,
+        "r2": 4.290627507046208,
+        "r3": 0.006334231965223157
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 1312,
+      "stable_window_s": 0.9999999999763531
+    },
+    "cases": null,
+    "raw_report_sha256": "e971e3a94184bed4bf051f64a5a0ef855603b56b8398345c371df56d88c5a8bd",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-solo-q7"
+  },
+  {
+    "id": "dispatch-final-f1",
+    "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
+    "source_sha": "509c2b2885c8e0023ed9151a38a092be63391b78",
+    "note": "Fresh three-peer LLM agreement, no plan replay. Both cargo lift/transport/release/stability and protocol completion succeeded. Open seed11 only, local_contact profile; input reconstruction and all 517 solo decisions replayed.",
+    "phase": "FINISHED",
+    "error": null,
+    "physical_success": true,
+    "protocol_complete": true,
+    "solo_evaluation": null,
+    "teacher_complete": null,
+    "wall_s": 330.3237608750005,
+    "llm_calls": 12,
+    "usage": {
+      "prompt_tokens": 113816,
+      "completion_tokens": 3151,
+      "total_tokens": 122547
+    },
+    "cost_usd": null,
+    "evaluation": {
+      "physical_success": true,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07755395242726539,
+          "displacement_m": 1.7018765229540906,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": true
+        },
+        "box": {
+          "max_lift_m": 0.06881219026055813,
+          "displacement_m": 2.3692092152433815,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": true
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 2.6802139357733017,
+        "r2": 4.310120646999269,
+        "r3": 2.633539769442169
+      },
+      "all_three_body_motion_sim_s": 0.4999999999988347,
+      "weld_steps": 0,
+      "samples": 1644,
+      "stable_window_s": 0.9999999999763531
+    },
+    "cases": null,
+    "raw_report_sha256": "8b896c883a1dd9895e1676359c446597c9b4c9fa0c54afe77b64e114477146ff",
+    "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-final-f1"
+  }
+]
