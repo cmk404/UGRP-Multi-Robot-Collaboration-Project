@@ -18,7 +18,7 @@ from harness.camera_goal_transport import decode
 
 def beam_feature(jpeg):
     candidates = [b for b in extract_beams(jpeg) if not b['touches_border']
-                  and b['length_px'] / b['width_px'] >= 5
+                  and b['length_px'] / b['width_px'] >= 3.5
                   and 65 <= b['length_px'] <= 180 and b['width_px'] <= 25]
     if len(candidates) != 1:
         raise ValueError('dispatch beam unresolved or ambiguous in RGB')

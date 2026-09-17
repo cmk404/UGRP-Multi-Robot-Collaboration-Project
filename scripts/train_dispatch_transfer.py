@@ -35,6 +35,7 @@ def main():
     p.add_argument('--base-grasp',type=Path,required=True)
     p.add_argument('--reference-top',type=Path,default=ROOT/'tests/fixtures/camera_goal_transport/reference-top.jpg')
     p.add_argument('--approach-only',action='store_true')
+    p.add_argument('--approach-models',type=Path,help='reuse an integrity-checked completed approach export')
     args=p.parse_args()
     if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip():raise RuntimeError('commit source first')
     out=args.output.resolve();out.mkdir(parents=True,exist_ok=False)
@@ -76,42 +77,50 @@ def main():
                                'raw_rgb_root':'teacher-scene','raw_top':f['shared_top_rgb']})
             return f['own_bytes'],top
         settle(.4);folded=snapshot()
-        refs={s:capture('approach-reference-'+s,s) for s in pair}
-        datasets={s:[] for s in pair}
-        rng=np.random.default_rng(704)
-        # Broad camera foreground/background variation plus dense final docking
-        # samples. Error labels are measured after settling, in teacher only.
-        cases=[(d,l,y) for d,l,y in itertools.product((0.,.04,.12,.22,.32),(-.055,0.,.055),(-9.,0.,9.))]
-        cases += [(float(rng.uniform(-.009,.018)),float(rng.uniform(-.006,.006)),float(rng.uniform(-1.2,1.2))) for _ in range(120)]
-        for s,rid in pair.items():
-            for i,(distance,lateral,yaw) in enumerate(cases):
-                restore(folded)
-                pos=target[s].copy();pos[0]-=distance;pos[1]+=lateral
-                w.controllers[rid].set_base_pose_for_test(tuple(pos),math.radians(yaw));settle(.3)
-                try:
-                    own,top=capture(f'approach-{s}-{i:04d}',s)
-                except ValueError as exc:
-                    teacher_rows.append({'sample_id':f'approach-{s}-{i:04d}','excluded':str(exc)})
-                    continue
-                actual=w.controllers[rid].base_xyz();angle=float(w.controllers[rid].base_rpy()[2])
-                errors={'forward':target[s][0]-float(actual[0]),'lateral':target[s][1]-float(actual[1]),'yaw':-angle}
-                row={'own_jpeg':own,'top_jpeg':top,'case_id':f'pose-{i:04d}','errors':errors,'broad':i<45}
-                datasets[s].append(row);teacher_rows.append({'sample_id':f'approach-{s}-{i:04d}','privileged_errors':errors})
-                if i%40==0:print(json.dumps({'teacher':'approach','slot':s,'sample':i,'total':len(cases)}),flush=True)
-        write(out/'actor-samples.json',actor_rows);write(out/'teacher-labels-only.json',teacher_rows)
-        # Fit without an active simulator, preserving saved RGB references.
-        stage_out=out/'models'/'varied';stage_out.mkdir(parents=True)
-        manifest={'schema':'ugrp.varied_start_skill.v1','models':{},'source':'offline dispatch RGB teacher'}
-        for s in pair:
-            manifest['models'][s]={}
-            for axis in ('yaw','lateral','forward'):
-                print(json.dumps({'fit':axis,'slot':s,'samples':len(datasets[s])}),flush=True)
-                selected=[r for r in datasets[s] if r['broad']] if axis=='yaw' else datasets[s]
-                rows=[{**r,'error':r['errors'][axis],'command':0.,'ready':False} for r in selected]
-                m=fit_pose_stage_model(*refs[s],rows,s,axis)
-                path=stage_out/f'model-{s}-{axis}.json';write(path,m)
-                manifest['models'][s][axis]={'path':path.name,'sha256':sha(path)}
-        write(stage_out/'varied-start-skill.json',manifest)
+        if args.approach_models:
+            from scripts.run_camera_varied_start_student import load_stage_models
+            load_stage_models(args.approach_models)
+            (out/'models').mkdir()
+            shutil.copytree(args.approach_models,out/'models'/'varied')
+            report['approach_models_source']=str(args.approach_models.resolve())
+            report['approach_models_manifest_sha256']=sha(args.approach_models/'varied-start-skill.json')
+        else:
+            refs={s:capture('approach-reference-'+s,s) for s in pair}
+            datasets={s:[] for s in pair}
+            rng=np.random.default_rng(704)
+            # Broad camera foreground/background variation plus dense final docking
+            # samples. Error labels are measured after settling, in teacher only.
+            cases=[(d,l,y) for d,l,y in itertools.product((0.,.04,.12,.22,.32),(-.055,0.,.055),(-9.,0.,9.))]
+            cases += [(float(rng.uniform(-.009,.018)),float(rng.uniform(-.006,.006)),float(rng.uniform(-1.2,1.2))) for _ in range(120)]
+            for s,rid in pair.items():
+                for i,(distance,lateral,yaw) in enumerate(cases):
+                    restore(folded)
+                    pos=target[s].copy();pos[0]-=distance;pos[1]+=lateral
+                    w.controllers[rid].set_base_pose_for_test(tuple(pos),math.radians(yaw));settle(.3)
+                    try:
+                        own,top=capture(f'approach-{s}-{i:04d}',s)
+                    except ValueError as exc:
+                        teacher_rows.append({'sample_id':f'approach-{s}-{i:04d}','excluded':str(exc)})
+                        continue
+                    actual=w.controllers[rid].base_xyz();angle=float(w.controllers[rid].base_rpy()[2])
+                    errors={'forward':target[s][0]-float(actual[0]),'lateral':target[s][1]-float(actual[1]),'yaw':-angle}
+                    row={'own_jpeg':own,'top_jpeg':top,'case_id':f'pose-{i:04d}','errors':errors,'broad':i<45}
+                    datasets[s].append(row);teacher_rows.append({'sample_id':f'approach-{s}-{i:04d}','privileged_errors':errors})
+                    if i%40==0:print(json.dumps({'teacher':'approach','slot':s,'sample':i,'total':len(cases)}),flush=True)
+            write(out/'actor-samples.json',actor_rows);write(out/'teacher-labels-only.json',teacher_rows)
+            # Fit without an active simulator, preserving saved RGB references.
+            stage_out=out/'models'/'varied';stage_out.mkdir(parents=True)
+            manifest={'schema':'ugrp.varied_start_skill.v1','models':{},'source':'offline dispatch RGB teacher'}
+            for s in pair:
+                manifest['models'][s]={}
+                for axis in ('yaw','lateral','forward'):
+                    print(json.dumps({'fit':axis,'slot':s,'samples':len(datasets[s])}),flush=True)
+                    selected=[r for r in datasets[s] if r['broad']] if axis=='yaw' else datasets[s]
+                    rows=[{**r,'error':r['errors'][axis],'command':0.,'ready':False} for r in selected]
+                    m=fit_pose_stage_model(*refs[s],rows,s,axis)
+                    path=stage_out/f'model-{s}-{axis}.json';write(path,m)
+                    manifest['models'][s][axis]={'path':path.name,'sha256':sha(path)}
+            write(stage_out/'varied-start-skill.json',manifest)
         if args.approach_only:
             report['complete']=True;report['scope']='approach transfer only; no new grasp model'
             return 0
@@ -144,6 +153,7 @@ def main():
         grasp_manifest=copy.deepcopy(skill);grasp_manifest['models']={}
         grasp_manifest['task_domain']='dispatch_open_v1'
         grasp_manifest.pop('constant_background_top_band',None)
+        rng=np.random.default_rng(705)
         for s in pair:
             rows=[]
             perturbations=[tuple(int(x) for x in v) for v in rng.integers(-50,51,size=(90,3))]
