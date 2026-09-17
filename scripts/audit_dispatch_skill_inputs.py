@@ -136,10 +136,10 @@ def audit_solo_replay(p,committed,static_map,*,return_policy=False):
   action,evidence=policy.decide(obs,top)
   if row['top_evidence'].get('waiting_before_grasp'):
    assert backup is not None and policy.phase=='lower'
-   policy.box=backup;action={'kind':'wait','duration':.3}
+   policy.box=backup;policy.steps-=1;action={'kind':'wait','duration':.3}
   if row['top_evidence'].get('waiting_for_resource'):
    assert action['kind']=='mecanum'
-   action={'kind':'wait','duration':.1}
+   policy.steps-=1;action={'kind':'wait','duration':.1}
   # JSON normalizes integer servo channel keys exactly as the archived wire.
   assert json.loads(json.dumps(action))==row['action'],('solo action',row['index'])
   assert policy.phase==row['phase_after'],('solo phase',row['index'])

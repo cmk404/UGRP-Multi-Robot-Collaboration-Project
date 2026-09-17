@@ -62,6 +62,48 @@ def test_task_dependencies_and_resource_occupancy_persist_on_revoke():
     assert not b.permission('box','TRANSIT') and b.locks==locks
 
 
+def test_resource_queue_does_not_exhaust_remaining_skill_decision(tmp_path):
+    import base64
+    from scripts.run_dispatch_skills import SkillScene
+    class ReadyBox:
+        phase='approach'
+        last_attachment=None
+        def decide(self, observation):
+            self.phase='lower'
+            return {'kind':'pose','pulses':{3:689}}
+    raw=cv2.imencode('.jpg',np.zeros((480,640,3),np.uint8))[1].tobytes()
+    b=SkillBindings(committed(),authored_map('open'))
+    assert b.permission('beam','GRASP')
+    solo=SoloBoxTransport(robot_id=b.solo,navigator=Mock())
+    solo.initialized=True;solo.steps=599;solo.box=ReadyBox()
+    scene=SkillScene.__new__(SkillScene)
+    scene.solo=solo;scene.bindings=b;scene.solo_lease=0.;scene.solo_started=None
+    scene.solo_rows=[];scene.out=tmp_path;scene.video=None
+    scene.authorize=lambda:None;scene.time=lambda:1.
+    scene.solo_executor=SimpleNamespace(idle=True,tick=Mock(),submit=Mock())
+    scene.world=SimpleNamespace(render_team_jpeg=lambda **kw:raw)
+    scene.ports={b.solo:SimpleNamespace(capture=lambda:{'image':base64.b64encode(raw).decode()})}
+    for _ in range(3):scene._solo_tick()
+    assert solo.steps==599 and solo.phase=='approach'
+    assert all(r['top_evidence']['waiting_before_grasp'] for r in scene.solo_rows)
+    b.finish('beam');scene._solo_tick()
+    assert solo.steps==600 and solo.phase=='lower'
+    with pytest.raises(RuntimeError,match='decision budget exhausted'):
+        solo.decide({},raw)
+
+
+def test_open_dock_b_does_not_drop_from_floor_plane_alignment():
+    from harness.dispatch_skill_binding import ImageRoute
+    raw=Path('tests/fixtures/dispatch_adaptive/dock-b-premature-carry-done.jpg').read_bytes()
+    route=ImageRoute(SkillBindings(committed(),authored_map('open')),'beam')
+    route.observe(raw);route.index=len(route.points)-1
+    action,evidence=route.observe(raw)
+    assert not evidence['ready'] and not evidence['done']
+    # The failed carry stopped here. Continue south into the slot and west to
+    # leave room for the box carrier; all evidence comes from this RGB frame.
+    assert action['left']<0 and action['forward']<0
+
+
 def test_rgb_transform_preserves_pixels_without_reference_substitution():
     reference=Path('tests/fixtures/camera_goal_transport/reference-top.jpg').read_bytes()
     image=cv2.imdecode(np.frombuffer(reference,np.uint8),cv2.IMREAD_COLOR)

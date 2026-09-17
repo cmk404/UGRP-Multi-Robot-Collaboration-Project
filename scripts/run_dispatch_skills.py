@@ -170,10 +170,12 @@ class SkillScene(DispatchScene):
             # Stay at the pregrasp visual boundary and reobserve after waiting.
             # Never hold a lifted cargo merely to queue for the apron.
             self.solo.box=approach_state
+            self.solo.steps-=1  # Resource waiting is not an executed skill decision.
             action={'kind':'wait','duration':.3}
             evidence={**evidence,'waiting_before_grasp':True}
         if action['kind']=='mecanum' and not self.bindings.permission('box','TRANSIT'):
             action={'kind':'wait','duration':.1}
+            self.solo.steps-=1
             evidence={**evidence,'waiting_for_resource':True}
         self.solo_rows.append({'index':index,'sim_time_s':now,'robot_id':self.bindings.solo,
             'phase_before':before,'phase_after':self.solo.phase,'observation':{k:v for k,v in obs.items() if k!='image'},

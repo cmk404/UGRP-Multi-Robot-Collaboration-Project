@@ -270,10 +270,19 @@ class ImageRoute:
             margin=.48 if self.obj=='beam' else .18
             ymin,ymax=self.map['bounds_m'][2:]
             gate[1]=max(ymin+margin,min(ymax-margin,gate[1]))
-            destination=self.map['docks'][self.dock]['slots'][self.obj]['center_m']
+            slots=self.map['docks'][self.dock]['slots']
+            destination=list(slots[self.obj]['center_m'])
+            if self.obj=='beam':
+                # Match the rotated navigator's clearance preference even in
+                # the open arena. Leave space for the adjacent box carrier.
+                direction=math.copysign(1.,slots['box']['center_m'][0]-destination[0])
+                destination[0]-=direction*.06
             gate_px=pixel_from_map(gate,self.map,frame.shape)
             east_px=pixel_from_map([1.12,gate[1]],self.map,frame.shape)
-            goal_px=pixel_from_map(destination,self.map,frame.shape)
+            # A lifted shaft is viewed above the floor. Use the same authored
+            # 9cm nominal feature plane as the map navigator, never live height.
+            goal_px=pixel_from_map(destination,self.map,frame.shape,
+                                   height=.09 if self.obj=='beam' else 0.)
             self.points=[np.array([center[0],gate_px[1]]),east_px,
                          np.array([east_px[0],goal_px[1]]),goal_px]
             if self.obj=='box':
