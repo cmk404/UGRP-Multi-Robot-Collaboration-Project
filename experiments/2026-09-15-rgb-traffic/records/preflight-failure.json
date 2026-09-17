@@ -1,0 +1,8 @@
+{
+  "source_sha": "6343df4",
+  "stage": "environment metadata before scene.open",
+  "physics_started": false,
+  "error": "importlib.metadata.PackageNotFoundError: No package metadata was found for opencv-python",
+  "fix": "Record cv2.__version__ to support the already installed opencv-python-headless package",
+  "raw_output": "outputs/traffic-pilot-crossing"
+}

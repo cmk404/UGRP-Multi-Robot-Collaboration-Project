@@ -1,0 +1,102 @@
+[
+  {
+    "event": "REQUEST",
+    "unit_id": "r1",
+    "clock_s": 0.0,
+    "coordinator_epoch": 1,
+    "identity": [
+      "traffic_blocked_exit:r1",
+      1,
+      1
+    ],
+    "route": [
+      [
+        -0.5773674790469742,
+        -1.9982575464002366
+      ],
+      [
+        1.7,
+        -2.0
+      ]
+    ]
+  },
+  {
+    "event": "REQUEST",
+    "unit_id": "r3",
+    "clock_s": 0.0,
+    "coordinator_epoch": 1,
+    "identity": [
+      "traffic_blocked_exit:r3",
+      1,
+      1
+    ],
+    "route": [
+      [
+        1.4700155006751197,
+        -2.0
+      ],
+      [
+        1.45,
+        -2.0
+      ]
+    ]
+  },
+  {
+    "event": "GRANT",
+    "unit_id": "r3",
+    "clock_s": 0.0,
+    "coordinator_epoch": 1,
+    "generation": 1,
+    "identity": [
+      "traffic_blocked_exit:r3",
+      1,
+      1
+    ],
+    "occupancy": "possibly occupied until RGB CLEAR, without TTL"
+  },
+  {
+    "event": "HOLD",
+    "unit_id": "r1",
+    "clock_s": 0.0,
+    "coordinator_epoch": 1,
+    "reason": "peer_occupies_route:r3",
+    "generation": null
+  },
+  {
+    "event": "GO",
+    "unit_id": "r3",
+    "clock_s": 0.0,
+    "coordinator_epoch": 1,
+    "reason": "reserved_route_ready",
+    "generation": 1
+  },
+  {
+    "event": "ENTER",
+    "unit_id": "r3",
+    "clock_s": 0.6,
+    "coordinator_epoch": 1,
+    "generation": 1,
+    "evidence": "RGB displacement; not command acknowledgement"
+  },
+  {
+    "event": "HOLD",
+    "unit_id": "r1",
+    "clock_s": 0.6,
+    "coordinator_epoch": 1,
+    "reason": "reserved_route:r3",
+    "generation": null
+  },
+  {
+    "event": "EXTEND",
+    "unit_id": "r3",
+    "clock_s": 2.4,
+    "coordinator_epoch": 1,
+    "generation": 2,
+    "identity": [
+      "traffic_blocked_exit:r3",
+      1,
+      2
+    ],
+    "retained_route_count": 2
+  }
+]

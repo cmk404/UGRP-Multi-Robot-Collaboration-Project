@@ -56,6 +56,7 @@ TEST_PATTERNS = (
     "tests/test_camera_varied_start*.py",
     "tests/test_camera_short_transport*.py",
     "tests/test_known_map*.py",
+    "tests/test_rgb_traffic*.py",
     "tests/test_markerless*.py",
     "tests/test_visual_attachment*.py",
     "tests/test_placement_guidance.py",
