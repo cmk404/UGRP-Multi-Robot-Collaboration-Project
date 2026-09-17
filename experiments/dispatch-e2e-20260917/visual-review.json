@@ -1,0 +1,43 @@
+{
+  "run": "d3",
+  "video": "outputs/dispatch-e2e-d3/execution.mp4",
+  "all_frames_decoded": 189,
+  "visually_reviewed_frames": [
+    0,
+    10,
+    20,
+    30,
+    40,
+    50,
+    60,
+    70,
+    80,
+    90,
+    100,
+    110,
+    120,
+    130,
+    140,
+    150,
+    160,
+    170,
+    180
+  ],
+  "reviewed_original_final_views": [
+    "top",
+    "r1",
+    "r2",
+    "r3"
+  ],
+  "findings": [
+    "three robots approach under committed plan",
+    "neither cargo translated or lifted",
+    "no arm alignment; two gripper-open commands only",
+    "cargo near lower image edges or absent in final OWN; TOP still shows cargo"
+  ],
+  "pure_execution_gate_replay": {
+    "batches": 24,
+    "exact_command_match": true
+  },
+  "limits": "contact-sheet samples and final cameras visually inspected; continuous-frame semantic review not claimed; no physical tests after APPROACH"
+}

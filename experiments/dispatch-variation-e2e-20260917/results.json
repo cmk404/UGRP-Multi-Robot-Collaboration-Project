@@ -1,0 +1,619 @@
+[
+  {
+    "id": "V1",
+    "variant": "open",
+    "required_dock": "dock_a",
+    "seed": 11,
+    "source_sha": "43e60e09ffa85a2334b0ef2acdb5144109b83818",
+    "plan": {
+      "dock": "dock_a",
+      "tasks": [
+        {
+          "after": [],
+          "id": "beam_job",
+          "object": "beam",
+          "participants": [
+            "r1",
+            "r3"
+          ],
+          "route": "north"
+        },
+        {
+          "after": [
+            "beam_job"
+          ],
+          "id": "box_job",
+          "object": "box",
+          "participants": [
+            "r2"
+          ],
+          "route": "south"
+        }
+      ]
+    },
+    "phase": "FINISHED",
+    "error": null,
+    "protocol_complete": true,
+    "physical_success": true,
+    "wall_s": 299.32044754100025,
+    "evaluation": {
+      "physical_success": true,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07755395242726539,
+          "displacement_m": 1.7018765229540906,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": true
+        },
+        "box": {
+          "max_lift_m": 0.06881219026055813,
+          "displacement_m": 2.3692092152433815,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": true
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 2.6802139357733017,
+        "r2": 4.310120646999269,
+        "r3": 2.633539769442169
+      },
+      "all_three_body_motion_sim_s": 0.4999999999988347,
+      "weld_steps": 0,
+      "samples": 1644,
+      "stable_window_s": 0.9999999999763531
+    },
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "scene_action_entries_including_identity": {
+      "r1": 300,
+      "r2": 255,
+      "r3": 300
+    },
+    "scene_action_entries_excluding_setup_identity": {
+      "r1": 299,
+      "r2": 254,
+      "r3": 299
+    },
+    "scene_servo_command_entries": {
+      "r1": 30,
+      "r2": 0,
+      "r3": 30
+    },
+    "solo_macro_submissions": 262,
+    "solo_raw_command_events": 1838,
+    "action_count_scope": "Scene commands and solo macro logs are separate granularities; do not add them as a single action total.",
+    "solo_decisions": 517,
+    "llm_request_attempts": 12,
+    "llm_responses": 12,
+    "request_errors": [],
+    "usage": {
+      "prompt_tokens": 113916,
+      "completion_tokens": 3215,
+      "total_tokens": 122676
+    },
+    "cost_usd": null,
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-variation-20260917/V1",
+    "video_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-variation-20260917/V1/execution.mp4",
+    "exit_code": 0
+  },
+  {
+    "id": "V2",
+    "variant": "open",
+    "required_dock": "dock_b",
+    "seed": 11,
+    "source_sha": "43e60e09ffa85a2334b0ef2acdb5144109b83818",
+    "plan": {
+      "dock": "dock_b",
+      "tasks": [
+        {
+          "after": [],
+          "id": "beam_job",
+          "object": "beam",
+          "participants": [
+            "r1",
+            "r3"
+          ],
+          "route": "north"
+        },
+        {
+          "after": [],
+          "id": "box_job",
+          "object": "box",
+          "participants": [
+            "r2"
+          ],
+          "route": "south"
+        }
+      ]
+    },
+    "phase": "TRANSIT",
+    "error": "ValueError: dispatch beam unresolved or ambiguous in RGB",
+    "protocol_complete": false,
+    "physical_success": false,
+    "wall_s": 190.9185832919993,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07755395242726539,
+          "displacement_m": 1.2670542665960536,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 2.4797261004600366,
+        "r2": 0.43541212005565166,
+        "r3": 2.4328443168455265
+      },
+      "all_three_body_motion_sim_s": 0.4999999999988347,
+      "weld_steps": 0,
+      "samples": 790,
+      "stable_window_s": 1.0000000000047748
+    },
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "scene_action_entries_including_identity": {
+      "r1": 285,
+      "r2": 1,
+      "r3": 285
+    },
+    "scene_action_entries_excluding_setup_identity": {
+      "r1": 284,
+      "r2": 0,
+      "r3": 284
+    },
+    "scene_servo_command_entries": {
+      "r1": 27,
+      "r2": 0,
+      "r3": 27
+    },
+    "solo_macro_submissions": 173,
+    "solo_raw_command_events": 381,
+    "action_count_scope": "Scene commands and solo macro logs are separate granularities; do not add them as a single action total.",
+    "solo_decisions": 173,
+    "llm_request_attempts": 12,
+    "llm_responses": 12,
+    "request_errors": [],
+    "usage": {
+      "prompt_tokens": 114071,
+      "completion_tokens": 3026,
+      "total_tokens": 123605
+    },
+    "cost_usd": null,
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-variation-20260917/V2",
+    "video_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-variation-20260917/V2/execution.mp4",
+    "exit_code": 1
+  },
+  {
+    "id": "V3",
+    "variant": "shared_crossing",
+    "required_dock": "dock_a",
+    "seed": 11,
+    "source_sha": "43e60e09ffa85a2334b0ef2acdb5144109b83818",
+    "plan": {
+      "dock": "dock_a",
+      "tasks": [
+        {
+          "after": [],
+          "id": "beam_job",
+          "object": "beam",
+          "participants": [
+            "r1",
+            "r3"
+          ],
+          "route": "north"
+        },
+        {
+          "after": [],
+          "id": "box_job",
+          "object": "box",
+          "participants": [
+            "r2"
+          ],
+          "route": "south"
+        }
+      ]
+    },
+    "phase": "NEGOTIATE",
+    "error": "RuntimeError: PAIR_ROUTE_TOO_NARROW: agreed north route needs a rotation/regrasp skill; parallel formation is unsupported",
+    "protocol_complete": false,
+    "physical_success": false,
+    "wall_s": 94.58451979099846,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 6.29704621779581e-15,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 0.026568417921578047,
+        "r2": 0.026568418023687146,
+        "r3": 0.026607362922716597
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 53,
+      "stable_window_s": 0.9999999999994458
+    },
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "scene_action_entries_including_identity": {
+      "r1": 1,
+      "r2": 1,
+      "r3": 1
+    },
+    "scene_action_entries_excluding_setup_identity": {
+      "r1": 0,
+      "r2": 0,
+      "r3": 0
+    },
+    "scene_servo_command_entries": {
+      "r1": 0,
+      "r2": 0,
+      "r3": 0
+    },
+    "solo_macro_submissions": 0,
+    "solo_raw_command_events": 0,
+    "action_count_scope": "Scene commands and solo macro logs are separate granularities; do not add them as a single action total.",
+    "solo_decisions": 0,
+    "llm_request_attempts": 15,
+    "llm_responses": 14,
+    "request_errors": [
+      {
+        "robot_id": "r2",
+        "error": "Gemini \ud504\ub85d\uc2dc \uc694\uccad \uc2dc\uac04\uc774 \ucd08\uacfc\ub418\uc5c8\uc2b5\ub2c8\ub2e4.",
+        "latency_ms": 60009.12183299988
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 134637,
+      "completion_tokens": 3748,
+      "total_tokens": 142088
+    },
+    "cost_usd": null,
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-variation-20260917/V3",
+    "video_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-variation-20260917/V3/execution.mp4",
+    "exit_code": 1
+  },
+  {
+    "id": "V4",
+    "variant": "north_blocked",
+    "required_dock": "dock_a",
+    "seed": 11,
+    "source_sha": "43e60e09ffa85a2334b0ef2acdb5144109b83818",
+    "plan": {
+      "dock": "dock_a",
+      "tasks": [
+        {
+          "id": "beam_job",
+          "object": "beam",
+          "participants": [
+            "r1",
+            "r3"
+          ],
+          "route": "south",
+          "after": []
+        },
+        {
+          "id": "box_job",
+          "object": "box",
+          "participants": [
+            "r2"
+          ],
+          "route": "south",
+          "after": [
+            "beam_job"
+          ]
+        }
+      ]
+    },
+    "phase": "NEGOTIATE",
+    "error": "RuntimeError: PAIR_ROUTE_TOO_NARROW: agreed south route needs a rotation/regrasp skill; parallel formation is unsupported",
+    "protocol_complete": false,
+    "physical_success": false,
+    "wall_s": 153.01047462499992,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 6.29704621779581e-15,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 0.026568417921578047,
+        "r2": 0.026568418023687146,
+        "r3": 0.026607362922716597
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 53,
+      "stable_window_s": 0.9999999999994458
+    },
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "scene_action_entries_including_identity": {
+      "r1": 1,
+      "r2": 1,
+      "r3": 1
+    },
+    "scene_action_entries_excluding_setup_identity": {
+      "r1": 0,
+      "r2": 0,
+      "r3": 0
+    },
+    "scene_servo_command_entries": {
+      "r1": 0,
+      "r2": 0,
+      "r3": 0
+    },
+    "solo_macro_submissions": 0,
+    "solo_raw_command_events": 0,
+    "action_count_scope": "Scene commands and solo macro logs are separate granularities; do not add them as a single action total.",
+    "solo_decisions": 0,
+    "llm_request_attempts": 12,
+    "llm_responses": 10,
+    "request_errors": [
+      {
+        "robot_id": "r2",
+        "error": "Gemini \ud504\ub85d\uc2dc \uc694\uccad \uc2dc\uac04\uc774 \ucd08\uacfc\ub418\uc5c8\uc2b5\ub2c8\ub2e4.",
+        "latency_ms": 60044.71729200122
+      },
+      {
+        "robot_id": "r1",
+        "error": "Gemini \ud504\ub85d\uc2dc \uc694\uccad \uc2dc\uac04\uc774 \ucd08\uacfc\ub418\uc5c8\uc2b5\ub2c8\ub2e4.",
+        "latency_ms": 60004.259999999704
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 95719,
+      "completion_tokens": 2904,
+      "total_tokens": 104953
+    },
+    "cost_usd": null,
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-variation-20260917/V4",
+    "video_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-variation-20260917/V4/execution.mp4",
+    "exit_code": 1
+  },
+  {
+    "id": "V5",
+    "variant": "narrow_south",
+    "required_dock": "dock_a",
+    "seed": 11,
+    "source_sha": "43e60e09ffa85a2334b0ef2acdb5144109b83818",
+    "plan": {
+      "dock": "dock_a",
+      "tasks": [
+        {
+          "after": [],
+          "id": "beam_job",
+          "object": "beam",
+          "participants": [
+            "r1",
+            "r3"
+          ],
+          "route": "north"
+        },
+        {
+          "after": [
+            "beam_job"
+          ],
+          "id": "box_job",
+          "object": "box",
+          "participants": [
+            "r2"
+          ],
+          "route": "north"
+        }
+      ]
+    },
+    "phase": "NEGOTIATE",
+    "error": "RuntimeError: PAIR_ROUTE_TOO_NARROW: agreed north route needs a rotation/regrasp skill; parallel formation is unsupported",
+    "protocol_complete": false,
+    "physical_success": false,
+    "wall_s": 37.08715020800082,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 6.29704621779581e-15,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 0.026568417921578047,
+        "r2": 0.026568418023687146,
+        "r3": 0.026607362922716597
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 53,
+      "stable_window_s": 0.9999999999994458
+    },
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "scene_action_entries_including_identity": {
+      "r1": 1,
+      "r2": 1,
+      "r3": 1
+    },
+    "scene_action_entries_excluding_setup_identity": {
+      "r1": 0,
+      "r2": 0,
+      "r3": 0
+    },
+    "scene_servo_command_entries": {
+      "r1": 0,
+      "r2": 0,
+      "r3": 0
+    },
+    "solo_macro_submissions": 0,
+    "solo_raw_command_events": 0,
+    "action_count_scope": "Scene commands and solo macro logs are separate granularities; do not add them as a single action total.",
+    "solo_decisions": 0,
+    "llm_request_attempts": 12,
+    "llm_responses": 12,
+    "request_errors": [],
+    "usage": {
+      "prompt_tokens": 115459,
+      "completion_tokens": 3043,
+      "total_tokens": 121217
+    },
+    "cost_usd": null,
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-variation-20260917/V5",
+    "video_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-variation-20260917/V5/execution.mp4",
+    "exit_code": 1
+  },
+  {
+    "id": "V6",
+    "variant": "rough_south",
+    "required_dock": "dock_a",
+    "seed": 11,
+    "source_sha": "43e60e09ffa85a2334b0ef2acdb5144109b83818",
+    "plan": {
+      "dock": "dock_a",
+      "tasks": [
+        {
+          "after": [],
+          "id": "beam_job",
+          "object": "beam",
+          "participants": [
+            "r1",
+            "r3"
+          ],
+          "route": "north"
+        },
+        {
+          "after": [],
+          "id": "box_job",
+          "object": "box",
+          "participants": [
+            "r2"
+          ],
+          "route": "north"
+        }
+      ]
+    },
+    "phase": "NEGOTIATE",
+    "error": "RuntimeError: PAIR_ROUTE_TOO_NARROW: agreed north route needs a rotation/regrasp skill; parallel formation is unsupported",
+    "protocol_complete": false,
+    "physical_success": false,
+    "wall_s": 45.27850979200048,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 6.29704621779581e-15,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 0.026568417921578047,
+        "r2": 0.026568418023687146,
+        "r3": 0.026607362922716597
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 53,
+      "stable_window_s": 0.9999999999994458
+    },
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "scene_action_entries_including_identity": {
+      "r1": 1,
+      "r2": 1,
+      "r3": 1
+    },
+    "scene_action_entries_excluding_setup_identity": {
+      "r1": 0,
+      "r2": 0,
+      "r3": 0
+    },
+    "scene_servo_command_entries": {
+      "r1": 0,
+      "r2": 0,
+      "r3": 0
+    },
+    "solo_macro_submissions": 0,
+    "solo_raw_command_events": 0,
+    "action_count_scope": "Scene commands and solo macro logs are separate granularities; do not add them as a single action total.",
+    "solo_decisions": 0,
+    "llm_request_attempts": 12,
+    "llm_responses": 12,
+    "request_errors": [],
+    "usage": {
+      "prompt_tokens": 115737,
+      "completion_tokens": 3151,
+      "total_tokens": 126899
+    },
+    "cost_usd": null,
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-variation-20260917/V6",
+    "video_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-variation-20260917/V6/execution.mp4",
+    "exit_code": 1
+  }
+]

@@ -23,6 +23,8 @@ TEST_PATTERNS = (
     "tests/test_three_robot_mission.py",
     "tests/test_three_robot_physical_controls.py",
     "tests/test_dispatch_research.py",
+    "tests/test_dispatch_execution.py",
+    "tests/test_dispatch_skill_binding.py",
     "tests/test_camera_action_learning.py",
     "tests/test_camera_local_servo.py",
     "tests/test_camera_visual_observer.py",

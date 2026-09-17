@@ -63,9 +63,11 @@ def episode(variant='shared_crossing', seed=11):
                 'height_m':.16, 'kind':'barrier'}] if variant=='north_blocked' else [])}}
 
 
-def actor_task(static):
+def actor_task(static, *, required_dock=None):
     """Detached allowlist; no seed, spawns, event schedule, truth or goal label."""
-    return {'mission_id':'dispatch_one_kit',
+    if required_dock is not None and required_dock not in static['docks']:
+        raise ValueError('unknown required dock')
+    task = {'mission_id':'dispatch_one_kit',
         'instruction':('Deliver the orange beam AND the cyan box to their marked slots '
           'in ONE common dispatch dock, A or B. Choose that dock, the pair, the solo '
           'carrier, routes and dependencies together. Independent preparation may '
@@ -76,6 +78,13 @@ def actor_task(static):
         'static_map_sha256':digest(static),
         'input_boundary':'own RGB + shared fixed TOP RGB + authored map + own issued commands + peer claims',
         'capability_scope':'Planning contract for interchangeable robots; loaded execution in this arena is not yet validated.'}
+    if required_dock is not None:
+        task['required_dock'] = required_dock
+        task['instruction'] = ('Deliver the orange beam AND the cyan box to their marked slots in '
+            + required_dock + '. This destination is a mission constraint. Choose the pair, solo carrier, '
+            'routes and dependencies together. Independent preparation may overlap. '
+            'Shared passages and the unloading apron require coordination.')
+    return task
 
 
 def _geom(world, name, center, half, height, rgba, *, collision=True, z=None):

@@ -1,0 +1,49 @@
+{
+  "bundle": {
+    "zip_sha256": "e78a5a5777f5bc48daf1bd5e03d2058705083a38505ed959159d5903526b83f1",
+    "zip_bytes": 2242770,
+    "grasp_slots": [
+      "r1",
+      "r3"
+    ],
+    "approach_slots": [
+      "r1",
+      "r3"
+    ],
+    "passed": true,
+    "scope": "load and hash checks after separate extraction; not a separate physics run"
+  },
+  "teacher_grasp": {
+    "approach_models_manifest_sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a",
+    "approach_models_source": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t2/models/varied",
+    "base_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+    "camera_geometry_unchanged": true,
+    "complete": true,
+    "error": null,
+    "model_provenance": "offline new-arena teacher; existing backend retraining; no online teacher correction",
+    "source_sha": "8d74e7ce95a2b9be9f47c9a9a70a181fb91d9ea1",
+    "student_inputs": [
+      "own_rgb",
+      "fixed_top_rgb"
+    ],
+    "teacher_nominal_grasp_success": true,
+    "teacher_only": true,
+    "wall_s": 96.78233570900011
+  },
+  "teacher_approach": {
+    "base_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+    "camera_geometry_unchanged": true,
+    "complete": false,
+    "error": "dispatch beam unresolved or ambiguous in RGB",
+    "model_provenance": "offline new-arena teacher; existing backend retraining; no online teacher correction",
+    "source_sha": "d3b0cf466e9d1d157eee235552db2f1def7151fd",
+    "student_inputs": [
+      "own_rgb",
+      "fixed_top_rgb"
+    ],
+    "teacher_only": true,
+    "wall_s": 86.62083841700041
+  },
+  "student_run_source_sha": "509c2b2885c8e0023ed9151a38a092be63391b78",
+  "teacher_is_not_student": "teacher privileged data only offline; student receives RGB, authored map and own commands; cameras unchanged, weld off"
+}

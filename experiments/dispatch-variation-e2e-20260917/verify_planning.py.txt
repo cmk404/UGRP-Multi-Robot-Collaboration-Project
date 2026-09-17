@@ -1,0 +1,32 @@
+"""Read-only audit of actual planning requests and wire images, including early stops."""
+import hashlib,json,sys
+from pathlib import Path
+sys.path.insert(0,str(Path.cwd()))
+from harness.dispatch_plan import build_dispatch_request
+from harness.gemini_proxy import _to_gemini_multi_image_messages
+
+def audit(p):
+ p=Path(p);team=json.loads((p/'team/team.json').read_text())
+ task=json.loads((p/'actor-mission.json').read_text());identity=json.loads((p/'identity-evidence.json').read_text())
+ def image(ref):
+  f=(p/ref['path']).resolve();assert f.is_relative_to(p.resolve())
+  b=f.read_bytes();assert hashlib.sha256(b).hexdigest()==ref['sha256'];return b
+ inbox={r:[] for r in ('r1','r2','r3')};count=wire=0
+ for row in team['rounds']:
+  for rid in inbox:
+   reqid=f"{team['run_id']}-{rid}-plan-{row['turn']}";ref=row['images'][rid]
+   rebuilt=build_dispatch_request(rid,task=task,request_id=reqid,own_rgb=image(ref['own']),top_rgb=image(ref['top']),agreement=row['agreement'],inbox=inbox[rid],own_history=row['own_history'][rid],execution_pilot=True,identity_evidence=identity[rid])
+   assert rebuilt==json.loads((p/'team'/rid/(reqid+'-request.json')).read_text());count+=1
+  for rid,reply in row['replies'].items():
+   if reply and reply['message']:
+    for peer in inbox:
+     if peer!=rid:inbox[peer].append({'from_robot':rid,'turn':row['turn'],'message':reply['message']})
+ for c in team['calls']:
+  if c.get('wire_index'):
+   saved=json.loads((p/'team'/c['request']).read_text())
+   actual=json.loads((p/'team'/c['robot_id']/f"wire-{c['wire_index']:03d}.json").read_text())
+   assert actual['messages']==_to_gemini_multi_image_messages(saved['messages'],saved['images']);wire+=1
+ report={'passed':True,'planning_requests_reconstructed':count,'actual_llm_wires_reconstructed':wire,'scope':'archived own/TOP RGB, authored map/mission, issued-command history, peer claims; no physical-success claim'}
+ (p/'planning-input-audit.json').write_text(json.dumps(report,indent=2)+'\n');print(p.name,report)
+if __name__=='__main__':
+ for arg in sys.argv[1:]:audit(arg)

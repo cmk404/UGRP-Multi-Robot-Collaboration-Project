@@ -1,0 +1,290 @@
+[
+  {
+    "case": {
+      "id": "V1",
+      "variant": "open",
+      "required_dock": "dock_a",
+      "seed": 11
+    },
+    "source_sha": "43e60e09ffa85a2334b0ef2acdb5144109b83818",
+    "command": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+      "scripts/run_dispatch_e2e.py",
+      "--executor",
+      "skills",
+      "--variant",
+      "open",
+      "--seed",
+      "11",
+      "--required-dock",
+      "dock_a",
+      "--grasp-model-dir",
+      "outputs/dispatch-transfer-t4/models/grasp",
+      "--stage-model-dir",
+      "outputs/dispatch-transfer-t4/models/varied",
+      "--output",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-variation-20260917/V1",
+      "--max-wall-s",
+      "900",
+      "--max-input-tokens",
+      "250000"
+    ],
+    "started_unix": 1789630696.262603,
+    "exit_code": 0,
+    "finished_unix": 1789630996.7269518,
+    "summary": {
+      "phase": "FINISHED",
+      "error": null,
+      "plan_committed": true,
+      "protocol_complete": true,
+      "physical_success": true,
+      "wall_s": 299.32044754100025,
+      "llm_calls": 12,
+      "usage": {
+        "prompt_tokens": 113916,
+        "completion_tokens": 3215,
+        "total_tokens": 122676
+      }
+    }
+  },
+  {
+    "case": {
+      "id": "V2",
+      "variant": "open",
+      "required_dock": "dock_b",
+      "seed": 11
+    },
+    "source_sha": "43e60e09ffa85a2334b0ef2acdb5144109b83818",
+    "command": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+      "scripts/run_dispatch_e2e.py",
+      "--executor",
+      "skills",
+      "--variant",
+      "open",
+      "--seed",
+      "11",
+      "--required-dock",
+      "dock_b",
+      "--grasp-model-dir",
+      "outputs/dispatch-transfer-t4/models/grasp",
+      "--stage-model-dir",
+      "outputs/dispatch-transfer-t4/models/varied",
+      "--output",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-variation-20260917/V2",
+      "--max-wall-s",
+      "900",
+      "--max-input-tokens",
+      "250000"
+    ],
+    "started_unix": 1789630996.815341,
+    "exit_code": 1,
+    "finished_unix": 1789631189.0817652,
+    "summary": {
+      "phase": "TRANSIT",
+      "error": "ValueError: dispatch beam unresolved or ambiguous in RGB",
+      "plan_committed": true,
+      "protocol_complete": false,
+      "physical_success": false,
+      "wall_s": 190.9185832919993,
+      "llm_calls": 12,
+      "usage": {
+        "prompt_tokens": 114071,
+        "completion_tokens": 3026,
+        "total_tokens": 123605
+      }
+    }
+  },
+  {
+    "case": {
+      "id": "V3",
+      "variant": "shared_crossing",
+      "required_dock": "dock_a",
+      "seed": 11
+    },
+    "source_sha": "43e60e09ffa85a2334b0ef2acdb5144109b83818",
+    "command": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+      "scripts/run_dispatch_e2e.py",
+      "--executor",
+      "skills",
+      "--variant",
+      "shared_crossing",
+      "--seed",
+      "11",
+      "--required-dock",
+      "dock_a",
+      "--grasp-model-dir",
+      "outputs/dispatch-transfer-t4/models/grasp",
+      "--stage-model-dir",
+      "outputs/dispatch-transfer-t4/models/varied",
+      "--output",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-variation-20260917/V3",
+      "--max-wall-s",
+      "900",
+      "--max-input-tokens",
+      "250000"
+    ],
+    "started_unix": 1789631189.1406798,
+    "exit_code": 1,
+    "finished_unix": 1789631284.651962,
+    "summary": {
+      "phase": "NEGOTIATE",
+      "error": "RuntimeError: PAIR_ROUTE_TOO_NARROW: agreed north route needs a rotation/regrasp skill; parallel formation is unsupported",
+      "plan_committed": true,
+      "protocol_complete": false,
+      "physical_success": false,
+      "wall_s": 94.58451979099846,
+      "llm_calls": 15,
+      "usage": {
+        "prompt_tokens": 134637,
+        "completion_tokens": 3748,
+        "total_tokens": 142088
+      }
+    }
+  },
+  {
+    "case": {
+      "id": "V4",
+      "variant": "north_blocked",
+      "required_dock": "dock_a",
+      "seed": 11
+    },
+    "source_sha": "43e60e09ffa85a2334b0ef2acdb5144109b83818",
+    "command": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+      "scripts/run_dispatch_e2e.py",
+      "--executor",
+      "skills",
+      "--variant",
+      "north_blocked",
+      "--seed",
+      "11",
+      "--required-dock",
+      "dock_a",
+      "--grasp-model-dir",
+      "outputs/dispatch-transfer-t4/models/grasp",
+      "--stage-model-dir",
+      "outputs/dispatch-transfer-t4/models/varied",
+      "--output",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-variation-20260917/V4",
+      "--max-wall-s",
+      "900",
+      "--max-input-tokens",
+      "250000"
+    ],
+    "started_unix": 1789631284.738423,
+    "exit_code": 1,
+    "finished_unix": 1789631438.5792482,
+    "summary": {
+      "phase": "NEGOTIATE",
+      "error": "RuntimeError: PAIR_ROUTE_TOO_NARROW: agreed south route needs a rotation/regrasp skill; parallel formation is unsupported",
+      "plan_committed": true,
+      "protocol_complete": false,
+      "physical_success": false,
+      "wall_s": 153.01047462499992,
+      "llm_calls": 12,
+      "usage": {
+        "prompt_tokens": 95719,
+        "completion_tokens": 2904,
+        "total_tokens": 104953
+      }
+    }
+  },
+  {
+    "case": {
+      "id": "V5",
+      "variant": "narrow_south",
+      "required_dock": "dock_a",
+      "seed": 11
+    },
+    "source_sha": "43e60e09ffa85a2334b0ef2acdb5144109b83818",
+    "command": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+      "scripts/run_dispatch_e2e.py",
+      "--executor",
+      "skills",
+      "--variant",
+      "narrow_south",
+      "--seed",
+      "11",
+      "--required-dock",
+      "dock_a",
+      "--grasp-model-dir",
+      "outputs/dispatch-transfer-t4/models/grasp",
+      "--stage-model-dir",
+      "outputs/dispatch-transfer-t4/models/varied",
+      "--output",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-variation-20260917/V5",
+      "--max-wall-s",
+      "900",
+      "--max-input-tokens",
+      "250000"
+    ],
+    "started_unix": 1789631438.623708,
+    "exit_code": 1,
+    "finished_unix": 1789631476.541825,
+    "summary": {
+      "phase": "NEGOTIATE",
+      "error": "RuntimeError: PAIR_ROUTE_TOO_NARROW: agreed north route needs a rotation/regrasp skill; parallel formation is unsupported",
+      "plan_committed": true,
+      "protocol_complete": false,
+      "physical_success": false,
+      "wall_s": 37.08715020800082,
+      "llm_calls": 12,
+      "usage": {
+        "prompt_tokens": 115459,
+        "completion_tokens": 3043,
+        "total_tokens": 121217
+      }
+    }
+  },
+  {
+    "case": {
+      "id": "V6",
+      "variant": "rough_south",
+      "required_dock": "dock_a",
+      "seed": 11
+    },
+    "source_sha": "43e60e09ffa85a2334b0ef2acdb5144109b83818",
+    "command": [
+      "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+      "scripts/run_dispatch_e2e.py",
+      "--executor",
+      "skills",
+      "--variant",
+      "rough_south",
+      "--seed",
+      "11",
+      "--required-dock",
+      "dock_a",
+      "--grasp-model-dir",
+      "outputs/dispatch-transfer-t4/models/grasp",
+      "--stage-model-dir",
+      "outputs/dispatch-transfer-t4/models/varied",
+      "--output",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-variation-20260917/V6",
+      "--max-wall-s",
+      "900",
+      "--max-input-tokens",
+      "250000"
+    ],
+    "started_unix": 1789631476.589153,
+    "exit_code": 1,
+    "finished_unix": 1789631522.689117,
+    "summary": {
+      "phase": "NEGOTIATE",
+      "error": "RuntimeError: PAIR_ROUTE_TOO_NARROW: agreed north route needs a rotation/regrasp skill; parallel formation is unsupported",
+      "plan_committed": true,
+      "protocol_complete": false,
+      "physical_success": false,
+      "wall_s": 45.27850979200048,
+      "llm_calls": 12,
+      "usage": {
+        "prompt_tokens": 115737,
+        "completion_tokens": 3151,
+        "total_tokens": 126899
+      }
+    }
+  }
+]

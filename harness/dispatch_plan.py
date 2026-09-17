@@ -14,11 +14,13 @@ from harness.three_robot_plan import ROBOTS, images, validate_plan_reply, digest
 STAGES = ('APPROACH','GRASP','LIFT','TRANSIT','LOWER','RELEASE')
 
 
-def validate_dispatch_plan(value):
+def validate_dispatch_plan(value, *, required_dock=None):
     if not isinstance(value,dict) or set(value) != {'dock','tasks'}:
         raise ValueError('plan requires dock and tasks')
     if value['dock'] not in ('dock_a','dock_b') or not isinstance(value['tasks'],list) or len(value['tasks']) != 2:
         raise ValueError('one common dock and exactly two cargo tasks required')
+    if required_dock is not None and value['dock'] != required_dock:
+        raise ValueError('mission requires destination '+required_dock)
     tasks = value['tasks']
     used, objects, ids = [], [], []
     for task in tasks:
@@ -57,7 +59,7 @@ def validate_dispatch_reply(raw, request_id, agreement):
 
 
 def build_dispatch_request(rid, *, task, request_id, own_rgb, top_rgb, agreement,
-                           inbox=(), own_history=()):
+                           inbox=(), own_history=(), execution_pilot=False, identity_evidence=None):
     if rid not in ROBOTS:
         raise ValueError('unknown robot')
     p = agreement['proposal']
@@ -98,11 +100,35 @@ message. Keep reason/message brief (under 240 characters each). Plan is exactly:
 {"id":"box_job","object":"box","participants":["remaining robot"],
 "route":"north OR south","after":[]}]}
 after may contain the OTHER job ID if a full-job dependency is needed; no cycle.
-Beam participant order assigns end_a/end_b. Dock A is the upper-right floor bay;
+Beam participant order has EXACT execution semantics: participant[0] is end_a,
+the UPPER beam endpoint in the TOP image at pickup; participant[1] is end_b,
+the LOWER endpoint. Before ACK, verify your assigned end against your own probe
+images and own camera. Reject an inverted assignment NOW, before execution.
+Dock A is the upper-right floor bay;
 Dock B is lower-right. Both contain a green beam slot and a magenta box slot.
 North is the upper passage around the central island; south is the lower one.'''
+    if execution_pilot:
+        prompt = prompt.replace('This run tests\nPLANNING ONLY; the new arena\'s physical transport is not validated.',
+            'This is a bounded physical execution pilot after unanimous agreement.\nThe new arena\'s transport skills are experimental, not validated.')
+    extra = []
+    if identity_evidence:
+        context['own_motion_identity'] = copy.deepcopy(identity_evidence['claim'])
+        anchor = identity_evidence['claim'].get('center')
+        if anchor and identity_evidence['claim'].get('valid'):
+            context['own_probe_image_readout'] = {
+                'source':'image difference after own issued probe; not simulator pose',
+                'horizontal_percent_from_left':round(100*anchor[0],1),
+                'vertical_percent_from_top':round(100*anchor[1],1)}
+        prompt += ('\nAdditional BEFORE/AFTER images show ONLY YOUR issued identification motion. '
+                   'Infer your own body from that change; the motion anchor is a fallible pixel '
+                   'estimate, not a body pose. Other robot IDs cannot be inferred from ordering. '
+                   'Normalized image coordinates have origin TOP LEFT: small y is upper, '
+                   'y=0.5 middle, large y lower. Check own_probe_image_readout against the images. '
+                   'Do not replace your own probe evidence with a contradictory peer identity claim. '
+                   'Share your observed image location with peers. Use their claims to assign roles.')
+        extra = copy.deepcopy(identity_evidence['images'])
     return {'request_id':request_id,'messages':[{'role':'system','content':prompt},
-        {'role':'user','content':json.dumps(context,sort_keys=True)}], 'images':images(own_rgb,top_rgb)}
+        {'role':'user','content':json.dumps(context,sort_keys=True)}], 'images':images(own_rgb,top_rgb)+extra}
 
 
 def compile_programs(plan, static_map):

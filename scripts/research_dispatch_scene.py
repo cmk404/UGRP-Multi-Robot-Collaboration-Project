@@ -26,6 +26,12 @@ class DispatchScene:
         def builder(*args,**kwargs):
             kwargs['navigation_camera']=False
             xml,self.manifest=build_scene_xml(original(*args,**kwargs),self.config)
+            profile=self.config.get('contact_solver_profile')
+            if profile is not None:
+                from sim.dispatch_contact_profile import contact_profile
+                xml=contact_profile(xml,profile)
+                self.manifest['scene_xml_sha256']=hashlib.sha256(xml.encode()).hexdigest()
+                self.manifest['contact_solver_profile']=profile
             self.xml=xml
             return xml
         self.out.mkdir(parents=True,exist_ok=False)

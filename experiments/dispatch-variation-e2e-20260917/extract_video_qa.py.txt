@@ -1,0 +1,16 @@
+import cv2,json,sys
+from pathlib import Path
+for arg in sys.argv[1:]:
+ p=Path(arg);cap=cv2.VideoCapture(str(p/'execution.mp4'))
+ reported=int(cap.get(cv2.CAP_PROP_FRAME_COUNT));fps=cap.get(cv2.CAP_PROP_FPS)
+ chosen=sorted(set([0,reported//4,reported//2,3*reported//4,reported-1]))
+ frames=[];count=0
+ while True:
+  ok,frame=cap.read()
+  if not ok:break
+  if count in chosen:
+   f=p/f'qa-frame-{count:04d}.jpg';cv2.imwrite(str(f),frame);frames.append(str(f))
+  count+=1
+ cap.release()
+ report={'reported_frames':reported,'decoded_frames':count,'fps':fps,'duration_s':count/fps if fps else None,'all_reported_frames_decoded':count==reported,'extracted_frames':chosen,'manual_review':'pending; decoded does not mean visually inspected'}
+ (p/'video-qa.json').write_text(json.dumps(report,indent=2)+'\n');print(p.name,report)

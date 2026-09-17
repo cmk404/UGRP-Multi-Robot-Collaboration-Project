@@ -35,11 +35,12 @@ class VisualBoxSkill:
 
     def __init__(self, task="short_transfer", destination_zone="B", robot_id="r1", cargo_id="small_box_01",
                  near_field_reacquisition=False, perception_mode="markerless",
-                 attachment_home_reference="anchor"):
+                 attachment_home_reference="anchor", attachment_min_saturation=65, release_refine_ground_fit=False):
         if task not in {"short_transfer", "destination_zone", "external_navigation"}:
             raise ValueError("unsupported visual box task")
         if destination_zone not in {"A", "B", "C"}:
             raise ValueError("destination_zone must be A, B, or C")
+        self.release_refine_ground_fit=bool(release_refine_ground_fit)
         self.task = task
         self.destination_zone = destination_zone
         self.robot_id = str(robot_id)
@@ -52,6 +53,8 @@ class VisualBoxSkill:
         self.perception_mode = perception_mode
         if attachment_home_reference not in {'anchor', 'previous_endpoint'}:
             raise ValueError('unsupported attachment home reference')
+        if attachment_min_saturation not in (65,150):raise ValueError('unsupported attachment calibration')
+        self.attachment_min_saturation=attachment_min_saturation
         self.attachment_home_reference = attachment_home_reference
         self._probe_last_image = None
         self._probe_last_pan = None
@@ -96,6 +99,10 @@ class VisualBoxSkill:
         self._hashes: list[str] = []
         self._history: list[dict[str, Any]] = []
 
+    def _compare_attachment(self,*args,**kwargs):
+        if self.attachment_min_saturation!=65:kwargs['min_saturation']=self.attachment_min_saturation
+        return compare_box_comotion(*args,**kwargs)
+
     @property
     def history(self) -> tuple[dict[str, Any], ...]:
         """Bounded metadata history; images and privileged state are not kept."""
@@ -108,7 +115,8 @@ class VisualBoxSkill:
             # A floor hypothesis is only appropriate before pickup or after
             # opening/retracting. Never manufacture a ground-height estimate
             # while the object is carried.
-            box = (observe_ground_box(obs["image"], pose, self.cargo_id)
+            ground_options={"refine_position":True} if self.release_refine_ground_fit and self.phase!="approach" else {}
+            box = (observe_ground_box(obs["image"], pose, self.cargo_id,**ground_options)
                    if ground_phase else {"visible": False, "reason": "GROUND_ESTIMATE_NOT_APPLICABLE_WHILE_HELD"})
         else:
             box = self.tracker.observe(obs["image"])
@@ -169,7 +177,7 @@ class VisualBoxSkill:
             self.phase = "verify_lift"
             return _wait(0.05)
         if self.phase == "verify_lift":
-            self.last_attachment = compare_box_comotion(obs["image"], obs["image"])
+            self.last_attachment = self._compare_attachment(obs["image"], obs["image"])
             if not self.last_attachment["attached"]:
                 return self._finish("VISUAL_LIFT_UNCONFIRMED")
             self._attachment_image = obs["image"]
@@ -182,7 +190,7 @@ class VisualBoxSkill:
         if self.phase in {"attachment_left", "attachment_right", "attachment_home",
                           "carry_probe_left", "carry_probe_right", "carry_probe_home"}:
             pan_delta = int(pose["6"]) - int(self._attachment_pan)
-            self.last_attachment = compare_box_comotion(
+            self.last_attachment = self._compare_attachment(
                 self._attachment_image, obs["image"], camera_pan_delta_pwm=pan_delta)
             if (self.attachment_home_reference == 'previous_endpoint'
                     and self.phase in {'attachment_home','carry_probe_home'}):
@@ -192,7 +200,7 @@ class VisualBoxSkill:
                 # Opposite endpoints must still pass the independent 120-PWM
                 # test below; a stationary floor box cannot pass that test.
                 anchor_metrics = self.last_attachment
-                self.last_attachment = compare_box_comotion(self._probe_last_image,
+                self.last_attachment = self._compare_attachment(self._probe_last_image,
                     obs['image'], camera_pan_delta_pwm=int(pose['6'])-self._probe_last_pan)
                 self.last_attachment['initial_anchor_metrics'] = anchor_metrics
             self._probe_results.append(bool(self.last_attachment["attached"]))
@@ -206,13 +214,13 @@ class VisualBoxSkill:
                 self.phase = "carry_probe_right"
                 return _pose({6: self._attachment_pan - 60, 1: 1500})
             if self.phase == "attachment_right":
-                self._probe_side_pair = compare_box_comotion(
+                self._probe_side_pair = self._compare_attachment(
                     self._probe_side_image, obs["image"], camera_pan_delta_pwm=-120)
                 self.phase = "attachment_home"
                 self._probe_last_image, self._probe_last_pan = obs['image'], int(pose['6'])
                 return _pose({6: self._attachment_pan, 1: 1500})
             if self.phase == "carry_probe_right":
-                self._probe_side_pair = compare_box_comotion(
+                self._probe_side_pair = self._compare_attachment(
                     self._probe_side_image, obs["image"], camera_pan_delta_pwm=-120)
                 self.phase = "carry_probe_home"
                 self._probe_last_image, self._probe_last_pan = obs['image'], int(pose['6'])
@@ -413,8 +421,8 @@ class VisualBoxSkill:
     def _carry(self, obs, pose):
         # During travel, track between fresh frames while retaining an anchor.
         # Small contact compliance or illumination drift is not itself a drop.
-        self.last_attachment = compare_box_comotion(self._carry_previous_image, obs["image"])
-        anchor = compare_box_comotion(self._attachment_image, obs["image"])
+        self.last_attachment = self._compare_attachment(self._carry_previous_image, obs["image"])
+        anchor = self._compare_attachment(self._attachment_image, obs["image"])
         self.last_attachment["carry_anchor_metrics"] = anchor
         if not self.last_attachment["attached"]:
             if self.task == "external_navigation":

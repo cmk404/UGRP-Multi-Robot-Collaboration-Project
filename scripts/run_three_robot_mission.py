@@ -53,21 +53,27 @@ def mission_xml(builder):
     return build
 
 
-def prepare_grasp_models(source, target):
+def prepare_grasp_models(source, target, *, background_band=True):
     """Copy learned weights unchanged; scope only constant TOP background."""
-    target.mkdir(parents=True,exist_ok=False)
+    source=source.resolve()
     skill=json.loads((source/'student-skill.json').read_text())
+    for entry in skill['models'].values():
+        original=(source/entry['path']).resolve()
+        if not original.is_relative_to(source) or hashlib.sha256(original.read_bytes()).hexdigest()!=entry['sha256']:
+            raise ValueError('source model path/hash mismatch')
+    target.mkdir(parents=True,exist_ok=False)
     for rid in ('r1','r3'):
         entry=skill['models'][rid]
         model=json.loads((source/entry['path']).read_text())
-        model['constant_background_top_band']=[6,19]
+        if background_band:model['constant_background_top_band']=[6,19]
         write(target/entry['path'],model)
         entry['sha256']=hashlib.sha256((target/entry['path']).read_bytes()).hexdigest()
     write(target/'student-skill.json',skill)
     (target/'evaluation-fixture.json').write_bytes((source/'evaluation-fixture.json').read_bytes())
     write(target/'provenance.json',{'source':str(source.resolve()),
         'source_skill_sha256':hashlib.sha256((source/'student-skill.json').read_bytes()).hexdigest(),
-        'change':'constant TOP background band only; own RGB, learned weights, support and limits unchanged'})
+        'change':('constant TOP background band only; own RGB, learned weights, support and limits unchanged'
+                  if background_band else 'native model contents unchanged; no additional background mask')})
     return target
 
 

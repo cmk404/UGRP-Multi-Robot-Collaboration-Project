@@ -22,14 +22,14 @@ PAN_CENTROID_QUANTIZATION_PX = 0.5
 AREA_RATIO_RANGE = (.90, 1.10)
 
 
-def _cyan_object_mask(frame):
+def _cyan_object_mask(frame, *, min_saturation=65):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     # Saved held-box JPEGs put the cyan cargo at H=89--94. The green floor
     # reaches H=74; keep a margin above it so it cannot merge into the cargo.
     # The blue floor starts joining at H=106; stop two hue units below it.
     # Color remains segmentation only: caller-established prior target
     # identity is still required by compare_box_comotion().
-    mask = cv2.inRange(hsv, np.asarray((80, 65, 45)), np.asarray((104, 255, 255)))
+    mask = cv2.inRange(hsv, np.asarray((80, min_saturation, 45)), np.asarray((104, 255, 255)))
     kernel = np.ones((5, 5), np.uint8)
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
@@ -48,7 +48,7 @@ def _cyan_object_mask(frame):
     return owned, area, centroid
 
 
-def compare_box_comotion(before_image, after_image, *, camera_pan_delta_pwm=0):
+def compare_box_comotion(before_image, after_image, *, camera_pan_delta_pwm=0, min_saturation=65):
     """Compare two controlled-arm RGB frames for relative attachment evidence.
 
     The cyan color does not identify a box. The caller must have established
@@ -61,19 +61,20 @@ def compare_box_comotion(before_image, after_image, *, camera_pan_delta_pwm=0):
     pan_delta = abs(float(camera_pan_delta_pwm))
     if not np.isfinite(pan_delta) or pan_delta > 120:
         raise ValueError("camera_pan_delta_pwm outside calibrated range")
+    if min_saturation not in (65,150):raise ValueError('unsupported cyan saturation calibration')
     before = _decode_jpeg(before_image)
     after = _decode_jpeg(after_image)
     if before.shape != after.shape:
         raise ValueError("CAMERA_FRAME_SIZE_CHANGED")
-    before_mask, before_area, before_centroid = _cyan_object_mask(before)
-    after_mask, after_area, after_centroid = _cyan_object_mask(after)
+    before_mask, before_area, before_centroid = _cyan_object_mask(before,min_saturation=min_saturation)
+    after_mask, after_area, after_centroid = _cyan_object_mask(after,min_saturation=min_saturation)
     base = {
         "evidence": "visual_attachment",
         "attached": False,
         "identity_source": "caller_prior_visual_target_binding_required",
         "color_is_identity_evidence": False,
         "provenance": "two_own_rgb_jpegs+controlled_arm_intervention+cyan_mask_comotion",
-        "thresholds": {"min_close_area_px": MIN_CLOSE_AREA_PX, "min_iou": MIN_IOU,
+        "thresholds": {"min_saturation":min_saturation, "min_close_area_px": MIN_CLOSE_AREA_PX, "min_iou": MIN_IOU,
             "max_centroid_delta_px": MAX_CENTROID_DELTA_PX,
             "pan_centroid_px_per_pwm": MAX_PAN_CENTROID_PX_PER_PWM,
             "area_ratio_range": list(AREA_RATIO_RANGE)},
