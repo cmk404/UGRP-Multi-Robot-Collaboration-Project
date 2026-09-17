@@ -79,3 +79,5 @@ python scripts/ugrp_session.py run dispatch-e2e -- \
 - `environment.json`: 실행 환경, 보관 범위, 비용 집계의 한계. USD 비용은 확인할 수 없어 null이며 호출·토큰 수를 보존한다.
 - `models.zip`: 접근/파지 모델과 기존 시연 명령. `model-provenance.json`에서 교사 소스와 번들 해시를 확인한다.
 - 입력 감사는 저장된 LLM 요청·실제 전송 메시지·모델 예측을 재구성한다. 최종 학생의 상자 결정도 같은 원본 RGB·자기 명령 이력과 기록된 자원 대기로 다시 실행한다. 이것은 물리 성공 판정을 대신하지 않는다.
+
+S4/S5의 당시 최종 보고서는 fixture 투표 6회를 LLM 호출로 잘못 셌다. `full-reports.json.gz`는 원본을 보존하며 `results.json`은 실제 `scripted-fixture-not-llm` 레이블을 확인해 각각 0회로 정정하고 원래 값을 함께 남긴다. 실제 모델 호출은 S2 9회, S3 18회, F1 12회(총 39회)다.
