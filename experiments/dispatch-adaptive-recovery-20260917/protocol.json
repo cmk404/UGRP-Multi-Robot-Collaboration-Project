@@ -12,147 +12,121 @@
   "diagnostics": [
     {
       "id": "R1",
-      "scope": "recorded-plan physical diagnostic, not fresh LLM E2E",
-      "variant": "open",
-      "dock": "dock_b",
-      "seed": 11,
-      "change": "second RGB saturation segmentation with unchanged shaft geometry gates",
-      "plan_replay": "outputs/dispatch-variation-20260917/V2/committed-plan.json"
+      "source_sha": "74994b984f12add471a181d958d5373b9971d8b2",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r1",
+      "physical_success": false,
+      "error": "ValueError: dispatch beam unresolved or ambiguous in RGB"
     },
     {
       "id": "R2",
       "source_sha": "06a4b8c9d231f6f6ec10fc48b80eb321edcbf605",
-      "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
-      "variant": "open",
-      "dock": "dock_b",
-      "seed": 11,
-      "plan_replay": "outputs/dispatch-variation-20260917/V2/committed-plan.json",
-      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r2"
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r2",
+      "physical_success": false,
+      "error": "ValueError: dispatch beam unresolved or ambiguous in RGB"
     },
     {
       "id": "R3",
       "source_sha": "1a306224cf4a6e8b8006d1f8cfd35368c3e78338",
-      "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
-      "variant": "open",
-      "dock": "dock_b",
-      "seed": 11,
-      "plan_replay": "outputs/dispatch-variation-20260917/V2/committed-plan.json",
-      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r3"
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r3",
+      "physical_success": true,
+      "error": null
     },
     {
       "id": "R4",
       "source_sha": "371b73e2a139d420f47f49b6df9e803d0df54da6",
-      "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
-      "variant": "shared_crossing",
-      "dock": "dock_a",
-      "seed": 11,
-      "plan_replay": "outputs/dispatch-variation-20260917/V3/committed-plan.json",
-      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r4"
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r4",
+      "physical_success": false,
+      "error": "RuntimeError: preclose RGB outside learned grasp support"
     },
     {
       "id": "R5",
       "source_sha": "a08074b21230b3d3c1aa24a15a0fe52ad987f41b",
-      "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
-      "variant": "shared_crossing",
-      "dock": "dock_a",
-      "seed": 11,
-      "plan_replay": "outputs/dispatch-variation-20260917/V3/committed-plan.json",
-      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r5"
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r5",
+      "physical_success": false,
+      "error": "RuntimeError: paired navigation stopped: {'r1': 'vision_stop', 'r3': 'vision_stop'}"
     },
     {
       "id": "R6",
       "source_sha": "bfb5bfd6360df9151e970dcf48c47532218bfa7e",
-      "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
-      "variant": "shared_crossing",
-      "dock": "dock_a",
-      "seed": 11,
-      "plan_replay": "outputs/dispatch-variation-20260917/V3/committed-plan.json",
-      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r6"
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r6",
+      "physical_success": false,
+      "error": "RuntimeError: paired navigation stopped: {'r1': 'vision_stop', 'r3': 'vision_stop'}"
     },
     {
       "id": "R7",
       "source_sha": "4e6f3cea5019bf943782ef49c6fadccc3d67ff5b",
-      "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
-      "variant": "shared_crossing",
-      "dock": "dock_a",
-      "seed": 11,
-      "plan_replay": "outputs/dispatch-variation-20260917/V3/committed-plan.json",
-      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r7"
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r7",
+      "physical_success": false,
+      "error": "RuntimeError: paired navigation stopped: {'r1': 'payload_decoupled', 'r3': 'payload_decoupled'}"
     },
     {
       "id": "R8",
       "source_sha": "c7b3564afc927f58b640d7bb3b39dfd6175ac260",
-      "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
-      "variant": "shared_crossing",
-      "dock": "dock_a",
-      "seed": 11,
-      "plan_replay": "outputs/dispatch-variation-20260917/V3/committed-plan.json",
-      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r8"
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r8",
+      "physical_success": false,
+      "error": "RuntimeError: paired navigation stopped: {'r1': 'payload_decoupled', 'r3': 'payload_decoupled'}"
     },
     {
       "id": "R9",
       "source_sha": "c7b3564afc927f58b640d7bb3b39dfd6175ac260",
-      "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
-      "variant": "north_blocked",
-      "dock": "dock_a",
-      "seed": 11,
-      "plan_replay": null,
-      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r9"
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r9",
+      "physical_success": false,
+      "error": "ValueError: dispatch beam unresolved or ambiguous in RGB"
     },
     {
       "id": "R10",
-      "scope": "recorded-plan shared-crossing physical diagnosis of the unified temporal shaft observer",
-      "variant": "shared_crossing",
-      "dock": "dock_a",
-      "seed": 11
+      "source_sha": "1694dc7f4973f0d50686e2707593a31e7a9c593c",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r10",
+      "physical_success": false,
+      "error": "RuntimeError: paired navigation stopped: {'r1': 'payload_decoupled', 'r3': 'payload_decoupled'}"
     },
     {
       "id": "R11",
-      "scope": "fixture-initialized blocked north plan, then actual LLM re-negotiation and physical execution; not fresh initial LLM E2E",
-      "variant": "north_blocked",
-      "dock": "dock_a",
-      "seed": 11
+      "source_sha": "1694dc7f4973f0d50686e2707593a31e7a9c593c",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-r11",
+      "physical_success": false,
+      "error": "RuntimeError: paired navigation stopped: {'r1': 'no_route', 'r3': 'no_route'}"
     },
     {
       "id": "candidate1-F3",
-      "scope": "fresh-LLM candidate validation, failed physical retention; not included as final-candidate success",
       "source_sha": "0eb7c155b9bd7b24aa3956d59efbed1150c1ca11",
       "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final-20260917/F3",
+      "physical_success": false,
       "error": "RuntimeError: paired navigation stopped: {'r1': 'payload_decoupled', 'r3': 'payload_decoupled'}"
     },
     {
       "id": "candidate1-F4",
-      "scope": "fresh-LLM candidate validation, failed physical retention; not included as final-candidate success",
       "source_sha": "0eb7c155b9bd7b24aa3956d59efbed1150c1ca11",
       "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final-20260917/F4",
+      "physical_success": false,
       "error": "RuntimeError: paired navigation stopped: {'r1': 'payload_decoupled', 'r3': 'payload_decoupled'}"
     },
     {
       "id": "candidate2-F3",
-      "scope": "fresh LLM candidate physical failure; retained in full",
-      "source_sha": "b9c9e07",
+      "source_sha": "b9c9e07748d2b23a53d0d3816d030f03a9b48962",
       "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final2-20260917/F3",
+      "physical_success": false,
       "error": "RuntimeError: paired navigation stopped: {'r1': 'track', 'r3': 'track'}"
     },
     {
       "id": "candidate2-F4",
-      "scope": "fresh LLM candidate physical failure; retained in full",
-      "source_sha": "b9c9e07",
+      "source_sha": "b9c9e07748d2b23a53d0d3816d030f03a9b48962",
       "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final2-20260917/F4",
+      "physical_success": false,
       "error": "RuntimeError: paired navigation stopped: {'r1': 'formation_span_abort', 'r3': 'formation_span_abort'}"
     },
     {
       "id": "candidate3-F3",
-      "scope": "fresh LLM physical failure; F3 placed beam then solo centre chasing contacted it; F4 visual spacing error stalled progress and own view changed abruptly",
       "source_sha": "4f612220416cbf72e8ce9f5892f8d845060bc7a7",
       "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final3-20260917/F3",
+      "physical_success": false,
       "error": "RuntimeError: solo RGB decision budget exhausted"
     },
     {
       "id": "candidate3-F4",
-      "scope": "fresh LLM physical failure; F3 placed beam then solo centre chasing contacted it; F4 visual spacing error stalled progress and own view changed abruptly",
       "source_sha": "4f612220416cbf72e8ce9f5892f8d845060bc7a7",
       "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final3-20260917/F4",
+      "physical_success": false,
       "error": "RuntimeError: paired navigation stopped: {'r1': 'track', 'r3': 'track'}"
     },
     {
@@ -160,56 +134,84 @@
       "source_sha": "49f2b629cb11ee36a917d029c5dd752d56cb3bca",
       "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F2",
       "physical_success": false,
-      "error": "RuntimeError: existing pair carry guard stopped: ABORT",
-      "scope": "intermediate fresh-LLM candidate; preserved separately from final comparison"
+      "error": "RuntimeError: existing pair carry guard stopped: ABORT"
     },
     {
       "id": "candidate4-F3",
       "source_sha": "49f2b629cb11ee36a917d029c5dd752d56cb3bca",
       "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F3",
       "physical_success": true,
-      "error": null,
-      "scope": "intermediate fresh-LLM candidate; preserved separately from final comparison"
+      "error": null
     },
     {
       "id": "candidate4-F4",
       "source_sha": "49f2b629cb11ee36a917d029c5dd752d56cb3bca",
       "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F4",
       "physical_success": true,
-      "error": null,
-      "scope": "intermediate fresh-LLM candidate; preserved separately from final comparison"
+      "error": null
     },
     {
       "id": "candidate4-F5",
       "source_sha": "49f2b629cb11ee36a917d029c5dd752d56cb3bca",
       "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final4-20260917/F5",
       "physical_success": false,
-      "error": "RuntimeError: solo stopped: VISUAL_ATTACHMENT_UNCONFIRMED",
-      "scope": "intermediate fresh-LLM candidate; preserved separately from final comparison"
+      "error": "RuntimeError: solo stopped: VISUAL_ATTACHMENT_UNCONFIRMED"
     },
     {
       "id": "candidate5-F2",
       "source_sha": "8bc776a8ffb3aebb563f40d699efe4fb18b034ff",
       "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final5-20260917/F2",
       "physical_success": false,
-      "error": "RuntimeError: existing pair carry guard stopped: ABORT",
-      "scope": "intermediate fresh-LLM candidate; preserved separately from final comparison"
+      "error": "RuntimeError: existing pair carry guard stopped: ABORT"
     },
     {
       "id": "candidate6-F2",
       "source_sha": "4ffae7bfb4bd367bd5c29c5c69a25aa6f6b4a643",
       "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final6-20260917/F2",
       "physical_success": false,
-      "error": "RuntimeError: existing pair carry guard stopped: ABORT",
-      "cause": "Bankers rounding merged alternate shaft rows at an exact half-pixel centre; observed cargo was incorrectly declared unsupported."
+      "error": "RuntimeError: existing pair carry guard stopped: ABORT"
     },
     {
       "id": "candidate6-F5",
       "source_sha": "4ffae7bfb4bd367bd5c29c5c69a25aa6f6b4a643",
       "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final6-20260917/F5",
       "physical_success": false,
-      "error": "RuntimeError: solo RGB decision budget exhausted",
-      "cause": "TOP tracker relaxed saturation after acquisition and switched from the moving cargo to a static painted-floor fragment. Continued movement caused obstacle contacts; full run failed."
+      "error": "RuntimeError: solo RGB decision budget exhausted"
+    },
+    {
+      "id": "candidate8-F2",
+      "source_sha": "5874bed504d75451ed8da51274d8be93589a3e4d",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final8-20260917/F2",
+      "physical_success": false,
+      "error": "RuntimeError: solo RGB decision budget exhausted"
+    },
+    {
+      "id": "candidate8-F5",
+      "source_sha": "5874bed504d75451ed8da51274d8be93589a3e4d",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final8-20260917/F5",
+      "physical_success": false,
+      "error": "RuntimeError: solo RGB decision budget exhausted"
+    },
+    {
+      "id": "candidate9-F2",
+      "source_sha": "3a41126a44f5f0adc00124b0f753ff381820612d",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final9-20260917/F2",
+      "physical_success": false,
+      "error": "ValueError: carried shaft lacks consistent RGB support"
+    },
+    {
+      "id": "candidate10-F5",
+      "source_sha": "18ef84233a758f89f2caeabb2c7d5d842ab47ffb",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final10-20260917/F5",
+      "physical_success": false,
+      "error": "RuntimeError: coarse RGB model convention unresolved"
+    },
+    {
+      "id": "candidate10-F2",
+      "source_sha": "18ef84233a758f89f2caeabb2c7d5d842ab47ffb",
+      "raw": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final10-20260917/F2",
+      "physical_success": true,
+      "error": null
     }
   ],
   "freeze": "Commit before each physical diagnosis. After repairs freeze source/models and run the complete six-condition fresh-LLM comparison. Preserve failures.",
@@ -223,5 +225,6 @@
   ],
   "cost": "Save wall time, action counts, provider requests/usage; monetary cost null when unknown.",
   "concurrency": "R8 and R9 overlapped; subsequent independent trials may use up to two worker processes. Preserve per-run wall time; do not claim speedup relative to serial baseline.",
-  "current_candidate_change": "Preserve saturated shaft/bright cyan fixes and exact vertical row bins. Keep the acquired TOP cargo saturation boundary unchanged during tracking, so weakly saturated floor fragments cannot replace target identity. All physical and success criteria unchanged. Run a new frozen six-case fresh-LLM cohort."
+  "current_candidate_change": "Preserve prior fixes. Resolve already acquired dim cargo through strongest usable colour cuts and an 8px RGB motion gate; retain smaller visible fragments rather than integrating gripper-plane flow forever. Shaft identity uses finer contrast samples with 20-point support span; translation skew requires 4 consistent cross-section estimates spanning 15 contrast points. Open-arena placement uses nominal 9cm feature-plane calibration and the same 6cm adjacent-slot clearance preference. Resource waits do not spend executed-skill decision budget; original time/action/success guards remain. Admit role assignments only when their current image-bound coarse pickup paths do not cross another robot; otherwise require a new exact unanimous plan. This is conservative supported-skill admission, not a new arbitrary pickup parking policy.",
+  "final_execution_source": "ad2034b8aa7f39f49000dcc90eb3d4b3d3fc15b7"
 }

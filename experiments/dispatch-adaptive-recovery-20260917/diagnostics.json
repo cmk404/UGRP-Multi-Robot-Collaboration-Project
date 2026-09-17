@@ -1125,5 +1125,299 @@
     },
     "id": "candidate6-F2",
     "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final6-20260917/F2"
+  },
+  {
+    "source_sha": "4ffae7bfb4bd367bd5c29c5c69a25aa6f6b4a643",
+    "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
+    "phase": "RELEASE",
+    "error": "RuntimeError: solo RGB decision budget exhausted",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 815.0028967500002,
+    "usage": {
+      "prompt_tokens": 116368,
+      "completion_tokens": 3158,
+      "total_tokens": 127611
+    },
+    "llm_calls": 12,
+    "obstacle_contact_steps": 126804,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07763320402667646,
+          "displacement_m": 1.6972273916590257,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": true
+        },
+        "box": {
+          "max_lift_m": 0.06846421901745987,
+          "displacement_m": 2.74814992796725,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 3.6386851777865323,
+        "r2": 4.1339773226199785,
+        "r3": 3.3239133442200632
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 3130,
+      "stable_window_s": 0.9999999999763531
+    },
+    "id": "candidate6-F5",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final6-20260917/F5"
+  },
+  {
+    "source_sha": "5874bed504d75451ed8da51274d8be93589a3e4d",
+    "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
+    "phase": "RELEASE",
+    "error": "RuntimeError: solo RGB decision budget exhausted",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 503.86190020900176,
+    "usage": {
+      "prompt_tokens": 114689,
+      "completion_tokens": 3123,
+      "total_tokens": 123462
+    },
+    "llm_calls": 12,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07755395242726539,
+          "displacement_m": 1.9370974383640285,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.06881219019741644,
+          "displacement_m": 1.9676086750776243,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 3.9073833978636046,
+        "r2": 4.314858295745809,
+        "r3": 3.8689784515092205
+      },
+      "all_three_body_motion_sim_s": 0.4999999999988347,
+      "weld_steps": 0,
+      "samples": 1824,
+      "stable_window_s": 0.9999999999763531
+    },
+    "id": "candidate8-F2",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final8-20260917/F2"
+  },
+  {
+    "source_sha": "5874bed504d75451ed8da51274d8be93589a3e4d",
+    "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
+    "phase": "RELEASE",
+    "error": "RuntimeError: solo RGB decision budget exhausted",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 835.4852127079976,
+    "usage": {
+      "prompt_tokens": 116573,
+      "completion_tokens": 3046,
+      "total_tokens": 124422
+    },
+    "llm_calls": 12,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07763320402667646,
+          "displacement_m": 1.6954984272724138,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.06846421901745987,
+          "displacement_m": 2.3449782815080473,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 3.109137368912264,
+        "r2": 5.495939717571402,
+        "r3": 3.3239133442200632
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 3130,
+      "stable_window_s": 0.9999999999763531
+    },
+    "id": "candidate8-F5",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final8-20260917/F5"
+  },
+  {
+    "source_sha": "3a41126a44f5f0adc00124b0f753ff381820612d",
+    "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
+    "phase": "TRANSIT",
+    "error": "ValueError: carried shaft lacks consistent RGB support",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 435.88892362499973,
+    "usage": {
+      "prompt_tokens": 114703,
+      "completion_tokens": 2989,
+      "total_tokens": 120822
+    },
+    "llm_calls": 12,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07757000744271138,
+          "displacement_m": 1.3690410858211794,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.06878816418771212,
+          "displacement_m": 1.9211449911206744,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": true
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 3.0340074110627016,
+        "r2": 5.534919115279796,
+        "r3": 2.994229732214733
+      },
+      "all_three_body_motion_sim_s": 0.4999999999988347,
+      "weld_steps": 0,
+      "samples": 2000,
+      "stable_window_s": 0.9999999999763531
+    },
+    "id": "candidate9-F2",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final9-20260917/F2"
+  },
+  {
+    "source_sha": "18ef84233a758f89f2caeabb2c7d5d842ab47ffb",
+    "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
+    "phase": "APPROACH",
+    "error": "RuntimeError: coarse RGB model convention unresolved",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 52.04346012499445,
+    "usage": {
+      "prompt_tokens": 47963,
+      "completion_tokens": 1394,
+      "total_tokens": 56182
+    },
+    "llm_calls": 6,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 1.0651202142497596e-14,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 0.04468086215826553,
+        "r2": 0.03274726135106101,
+        "r3": 0.026607362978681496
+      },
+      "all_three_body_motion_sim_s": 0,
+      "weld_steps": 0,
+      "samples": 67,
+      "stable_window_s": 0.9999999999994458
+    },
+    "id": "candidate10-F5",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final10-20260917/F5"
+  },
+  {
+    "source_sha": "18ef84233a758f89f2caeabb2c7d5d842ab47ffb",
+    "scope": "three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute",
+    "phase": "FINISHED",
+    "error": null,
+    "physical_success": true,
+    "protocol_complete": true,
+    "wall_s": 415.7561521669995,
+    "usage": {
+      "prompt_tokens": 85149,
+      "completion_tokens": 2176,
+      "total_tokens": 91125
+    },
+    "llm_calls": 9,
+    "obstacle_contact_steps": 0,
+    "camera_geometry_unchanged": true,
+    "evaluation": {
+      "physical_success": true,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07755395242726539,
+          "displacement_m": 1.922713241899111,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": true
+        },
+        "box": {
+          "max_lift_m": 0.06881219024858584,
+          "displacement_m": 2.0035158676786193,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": true
+        }
+      },
+      "robot_path_length_m": {
+        "r1": 3.9053561433775372,
+        "r2": 4.283046527294584,
+        "r3": 3.8585726971411844
+      },
+      "all_three_body_motion_sim_s": 0.4999999999988347,
+      "weld_steps": 0,
+      "samples": 1792,
+      "stable_window_s": 0.9999999999763531
+    },
+    "id": "candidate10-F2",
+    "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final10-20260917/F2"
   }
 ]
