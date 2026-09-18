@@ -1,0 +1,7 @@
+# Pre-rerun contract repair
+
+The first cohort (execution source e987d4a) was ended after a software contract error in ACT seed18 / turn-minus: the decoder allowed forward down to -0.15, but the unchanged executor accepts -0.05..0.15. Lateral decoding likewise allowed +/-0.15 instead of the existing +/-0.1. This is distinct from learned placement/coordination failures. All completed and interrupted raw outputs remain under `outputs/experiment-v1`; `termination.json` inventories them. The cohort is not the final candidate comparison.
+
+The decoder now clips to the existing executor limits: forward -0.05..0.15, left -0.1..0.1, turn -0.15..0.15. Normalization remains unchanged. A test passes 125 decoded extreme/interior action combinations through the real TRANSIT validator, and the actual previously rejected model input is replayed through the native model and validator.
+
+The rerun uses identical frozen seed18/seed19 weights, dataset, development evidence, checkpoint selection, stop threshold and physics. No test-driven retraining or threshold tuning occurs. `--reuse-training` validates the prior dataset/protocol/model hashes, preserves the original training source SHA, and reruns all four cases for all three conditions. The rerun has a new execution source SHA and `final-freeze.json`; previously completed comparisons are not substituted into its final results. Its output is `outputs/experiment-v2`.

@@ -3,6 +3,7 @@ import math
 
 AXES = ('forward', 'left', 'turn')
 SCALES = (.15, .15, .15)
+ACTION_BOUNDS = ((-.05, .15), (-.1, .1), (-.15, .15))
 CONTEXT_SIZE = 8
 
 def context(goal, route, slot, previous):
@@ -19,7 +20,9 @@ def context(goal, route, slot, previous):
 def decode(values):
     if len(values)!=4 or not all(math.isfinite(v) for v in values):
         raise ValueError('four finite policy outputs required')
-    actions={k: max(-s,min(s,float(v)*s)) for k,v,s in zip(AXES,values,SCALES)}
+    # Normalization scales are not the executor's asymmetric command limits.
+    actions={k: max(lo,min(hi,float(v)*s))
+             for k,v,s,(lo,hi) in zip(AXES,values,SCALES,ACTION_BOUNDS)}
     score=max(0.,min(1.,float(values[3])))
     # This threshold is fixed before the final evaluation; no truth gate.
     done=score>=.65
