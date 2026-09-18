@@ -1,0 +1,756 @@
+{
+  "complete": false,
+  "source_sha": "e987d4a7f5bea5d08fd4100f23be6fce9b1251f0",
+  "protocol_sha256": "7f9764634f73025db46ef76cd65904e2bea66c545a5ec2c6f35c76bb1e4cca1a",
+  "protocol": {
+    "scope": "bounded feasibility: learned local carry inside unchanged plan/approach/grasp/release pipeline; recorded-plan physical evaluation, not fresh LLM E2E",
+    "train": [
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F2",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F4",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F5",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F6"
+    ],
+    "development": [
+      {
+        "id": "dev-open",
+        "teacher_case": "F1",
+        "variant": "open",
+        "offset": [
+          0.005,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "dev-turn",
+        "teacher_case": "F3",
+        "variant": "shared_crossing",
+        "offset": [
+          -0.005,
+          0,
+          0
+        ]
+      }
+    ],
+    "test": [
+      {
+        "id": "open-minus",
+        "teacher_case": "F1",
+        "variant": "open",
+        "offset": [
+          -0.01,
+          0.004,
+          0
+        ]
+      },
+      {
+        "id": "open-plus",
+        "teacher_case": "F1",
+        "variant": "open",
+        "offset": [
+          0.01,
+          -0.004,
+          0
+        ]
+      },
+      {
+        "id": "turn-minus",
+        "teacher_case": "F3",
+        "variant": "shared_crossing",
+        "offset": [
+          -0.01,
+          0.004,
+          0
+        ]
+      },
+      {
+        "id": "turn-plus",
+        "teacher_case": "F3",
+        "variant": "shared_crossing",
+        "offset": [
+          0.01,
+          -0.004,
+          0
+        ]
+      }
+    ],
+    "training": {
+      "steps": 8000,
+      "seeds": [
+        20260918,
+        20260919
+      ],
+      "batch": 32,
+      "chunk": 8,
+      "backbone": "ImageNet ResNet18 frozen, 128px",
+      "shared_weights": true
+    },
+    "constraints": {
+      "weld": false,
+      "camera_unchanged": true,
+      "contact_profile": "local_contact_fine",
+      "teacher_runtime_correction": false,
+      "worker_inputs": [
+        "own_rgb",
+        "top_rgb",
+        "static goal and route, model slot, own previous issued motion"
+      ],
+      "max_carry_steps": 900
+    },
+    "metrics": [
+      "beam strict physical success after actual grasp/carry/release",
+      "whole mission physical success",
+      "prerequisite approach/grasp failure",
+      "learned arrival vs post-run physical arrival",
+      "carry SIM time",
+      "action count",
+      "no contact/weld",
+      "per-seed results"
+    ],
+    "interpretation": "Six nominal success episodes are a small feasibility corpus, not broad recovery coverage. New initial spawns do not guarantee different loaded states after scripted approach. Measure actual carry-entry RGB/physics, and do not claim unseen carry generalization if approach converges to the same state. Seed only changes spawn permutation, so perturbations are explicit setup-only offsets. No heldout test tuning."
+  },
+  "runs": [
+    {
+      "name": "development-teacher-dev-open",
+      "command": [
+        "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/scripts/run_dispatch_e2e.py",
+        "--executor",
+        "skills",
+        "--variant",
+        "open",
+        "--seed",
+        "11",
+        "--required-dock",
+        "dock_a",
+        "--plan-replay",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1/committed-plan.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+        "--stage-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+        "--output",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open",
+        "--max-wall-s",
+        "2400",
+        "--video-fps",
+        "4",
+        "--spawn-offset",
+        "0.005",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "wall_s": 372.56090807914734,
+      "log": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development-teacher-dev-open.log",
+      "case": {
+        "id": "dev-open",
+        "teacher_case": "F1",
+        "variant": "open",
+        "offset": [
+          0.005,
+          0,
+          0
+        ]
+      },
+      "condition": "teacher",
+      "phase": "development",
+      "output": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open",
+      "summary": {
+        "physical_success": true,
+        "protocol_complete": true,
+        "phase": "FINISHED",
+        "error": null,
+        "wall_s": 370.6710149999999,
+        "carry_model_sha256": null
+      }
+    },
+    {
+      "name": "development-teacher-dev-turn",
+      "command": [
+        "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/scripts/run_dispatch_e2e.py",
+        "--executor",
+        "skills",
+        "--variant",
+        "shared_crossing",
+        "--seed",
+        "11",
+        "--required-dock",
+        "dock_a",
+        "--plan-replay",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3/committed-plan.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+        "--stage-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+        "--output",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-turn",
+        "--max-wall-s",
+        "2400",
+        "--video-fps",
+        "4",
+        "--spawn-offset",
+        "-0.005",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "wall_s": 716.8118741512299,
+      "log": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development-teacher-dev-turn.log",
+      "case": {
+        "id": "dev-turn",
+        "teacher_case": "F3",
+        "variant": "shared_crossing",
+        "offset": [
+          -0.005,
+          0,
+          0
+        ]
+      },
+      "condition": "teacher",
+      "phase": "development",
+      "output": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-turn",
+      "summary": {
+        "physical_success": true,
+        "protocol_complete": true,
+        "phase": "FINISHED",
+        "error": null,
+        "wall_s": 715.0702233749907,
+        "carry_model_sha256": null
+      }
+    },
+    {
+      "name": "final-20260918-open-minus",
+      "command": [
+        "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/scripts/run_dispatch_e2e.py",
+        "--executor",
+        "skills",
+        "--variant",
+        "open",
+        "--seed",
+        "11",
+        "--required-dock",
+        "dock_a",
+        "--plan-replay",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1/committed-plan.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+        "--stage-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+        "--output",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final/20260918/open-minus",
+        "--max-wall-s",
+        "2400",
+        "--video-fps",
+        "4",
+        "--spawn-offset",
+        "-0.01",
+        "0.004",
+        "0",
+        "--carry-act-model",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/model-20260918/act",
+        "--carry-act-python",
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python",
+        "--carry-act-max-steps",
+        "900"
+      ],
+      "exit_code": 0,
+      "wall_s": 362.30788683891296,
+      "log": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final-20260918-open-minus.log",
+      "case": {
+        "id": "open-minus",
+        "teacher_case": "F1",
+        "variant": "open",
+        "offset": [
+          -0.01,
+          0.004,
+          0
+        ]
+      },
+      "condition": "20260918",
+      "phase": "final",
+      "output": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final/20260918/open-minus",
+      "summary": {
+        "physical_success": true,
+        "protocol_complete": true,
+        "phase": "FINISHED",
+        "error": null,
+        "wall_s": 360.7232784580119,
+        "carry_model_sha256": "ddf79d3577b9d66aa53e16fbe387bbe1039a5ddb0b4cc3caeb7292dc81dcd90e"
+      }
+    },
+    {
+      "name": "final-teacher-open-minus",
+      "command": [
+        "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/scripts/run_dispatch_e2e.py",
+        "--executor",
+        "skills",
+        "--variant",
+        "open",
+        "--seed",
+        "11",
+        "--required-dock",
+        "dock_a",
+        "--plan-replay",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1/committed-plan.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+        "--stage-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+        "--output",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final/teacher/open-minus",
+        "--max-wall-s",
+        "2400",
+        "--video-fps",
+        "4",
+        "--spawn-offset",
+        "-0.01",
+        "0.004",
+        "0"
+      ],
+      "exit_code": 0,
+      "wall_s": 428.134076833725,
+      "log": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final-teacher-open-minus.log",
+      "case": {
+        "id": "open-minus",
+        "teacher_case": "F1",
+        "variant": "open",
+        "offset": [
+          -0.01,
+          0.004,
+          0
+        ]
+      },
+      "condition": "teacher",
+      "phase": "final",
+      "output": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final/teacher/open-minus",
+      "summary": {
+        "physical_success": true,
+        "protocol_complete": true,
+        "phase": "FINISHED",
+        "error": null,
+        "wall_s": 426.5053428340034,
+        "carry_model_sha256": null
+      }
+    },
+    {
+      "name": "final-teacher-open-plus",
+      "command": [
+        "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/scripts/run_dispatch_e2e.py",
+        "--executor",
+        "skills",
+        "--variant",
+        "open",
+        "--seed",
+        "11",
+        "--required-dock",
+        "dock_a",
+        "--plan-replay",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1/committed-plan.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+        "--stage-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+        "--output",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final/teacher/open-plus",
+        "--max-wall-s",
+        "2400",
+        "--video-fps",
+        "4",
+        "--spawn-offset",
+        "0.01",
+        "-0.004",
+        "0"
+      ],
+      "exit_code": 0,
+      "wall_s": 425.6946048736572,
+      "log": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final-teacher-open-plus.log",
+      "case": {
+        "id": "open-plus",
+        "teacher_case": "F1",
+        "variant": "open",
+        "offset": [
+          0.01,
+          -0.004,
+          0
+        ]
+      },
+      "condition": "teacher",
+      "phase": "final",
+      "output": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final/teacher/open-plus",
+      "summary": {
+        "physical_success": true,
+        "protocol_complete": true,
+        "phase": "FINISHED",
+        "error": null,
+        "wall_s": 423.94607133298996,
+        "carry_model_sha256": null
+      }
+    },
+    {
+      "name": "final-20260919-open-minus",
+      "command": [
+        "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/scripts/run_dispatch_e2e.py",
+        "--executor",
+        "skills",
+        "--variant",
+        "open",
+        "--seed",
+        "11",
+        "--required-dock",
+        "dock_a",
+        "--plan-replay",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1/committed-plan.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+        "--stage-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+        "--output",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final/20260919/open-minus",
+        "--max-wall-s",
+        "2400",
+        "--video-fps",
+        "4",
+        "--spawn-offset",
+        "-0.01",
+        "0.004",
+        "0",
+        "--carry-act-model",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/model-20260919/act",
+        "--carry-act-python",
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python",
+        "--carry-act-max-steps",
+        "900"
+      ],
+      "exit_code": 1,
+      "wall_s": 556.864218711853,
+      "log": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final-20260919-open-minus.log",
+      "case": {
+        "id": "open-minus",
+        "teacher_case": "F1",
+        "variant": "open",
+        "offset": [
+          -0.01,
+          0.004,
+          0
+        ]
+      },
+      "condition": "20260919",
+      "phase": "final",
+      "output": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final/20260919/open-minus",
+      "summary": {
+        "physical_success": false,
+        "protocol_complete": false,
+        "phase": "RELEASE",
+        "error": "RuntimeError: visual placement confirmation failed",
+        "wall_s": 554.7842284999933,
+        "carry_model_sha256": "0023b1cb3c016c6ea20c7c42f402adf5b39b5df4a99089439833c00323364199"
+      }
+    },
+    {
+      "name": "final-20260918-open-plus",
+      "command": [
+        "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/scripts/run_dispatch_e2e.py",
+        "--executor",
+        "skills",
+        "--variant",
+        "open",
+        "--seed",
+        "11",
+        "--required-dock",
+        "dock_a",
+        "--plan-replay",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1/committed-plan.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+        "--stage-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+        "--output",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final/20260918/open-plus",
+        "--max-wall-s",
+        "2400",
+        "--video-fps",
+        "4",
+        "--spawn-offset",
+        "0.01",
+        "-0.004",
+        "0",
+        "--carry-act-model",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/model-20260918/act",
+        "--carry-act-python",
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python",
+        "--carry-act-max-steps",
+        "900"
+      ],
+      "exit_code": 1,
+      "wall_s": 400.12224817276,
+      "log": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final-20260918-open-plus.log",
+      "case": {
+        "id": "open-plus",
+        "teacher_case": "F1",
+        "variant": "open",
+        "offset": [
+          0.01,
+          -0.004,
+          0
+        ]
+      },
+      "condition": "20260918",
+      "phase": "final",
+      "output": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final/20260918/open-plus",
+      "summary": {
+        "physical_success": false,
+        "protocol_complete": true,
+        "phase": "FINISHED",
+        "error": null,
+        "wall_s": 398.07774208299816,
+        "carry_model_sha256": "ddf79d3577b9d66aa53e16fbe387bbe1039a5ddb0b4cc3caeb7292dc81dcd90e"
+      }
+    },
+    {
+      "name": "final-20260919-open-plus",
+      "command": [
+        "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/scripts/run_dispatch_e2e.py",
+        "--executor",
+        "skills",
+        "--variant",
+        "open",
+        "--seed",
+        "11",
+        "--required-dock",
+        "dock_a",
+        "--plan-replay",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1/committed-plan.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+        "--stage-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+        "--output",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final/20260919/open-plus",
+        "--max-wall-s",
+        "2400",
+        "--video-fps",
+        "4",
+        "--spawn-offset",
+        "0.01",
+        "-0.004",
+        "0",
+        "--carry-act-model",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/model-20260919/act",
+        "--carry-act-python",
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python",
+        "--carry-act-max-steps",
+        "900"
+      ],
+      "exit_code": 1,
+      "wall_s": 892.9698679447174,
+      "log": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final-20260919-open-plus.log",
+      "case": {
+        "id": "open-plus",
+        "teacher_case": "F1",
+        "variant": "open",
+        "offset": [
+          0.01,
+          -0.004,
+          0
+        ]
+      },
+      "condition": "20260919",
+      "phase": "final",
+      "output": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final/20260919/open-plus",
+      "summary": {
+        "physical_success": false,
+        "protocol_complete": false,
+        "phase": "TRANSIT",
+        "error": "RuntimeError: ACT carry RGB attachment guard stopped",
+        "wall_s": 891.5393249579938,
+        "carry_model_sha256": "0023b1cb3c016c6ea20c7c42f402adf5b39b5df4a99089439833c00323364199"
+      }
+    },
+    {
+      "name": "final-20260918-turn-minus",
+      "command": [
+        "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/scripts/run_dispatch_e2e.py",
+        "--executor",
+        "skills",
+        "--variant",
+        "shared_crossing",
+        "--seed",
+        "11",
+        "--required-dock",
+        "dock_a",
+        "--plan-replay",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3/committed-plan.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+        "--stage-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+        "--output",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final/20260918/turn-minus",
+        "--max-wall-s",
+        "2400",
+        "--video-fps",
+        "4",
+        "--spawn-offset",
+        "-0.01",
+        "0.004",
+        "0",
+        "--carry-act-model",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/model-20260918/act",
+        "--carry-act-python",
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python",
+        "--carry-act-max-steps",
+        "900"
+      ],
+      "exit_code": 1,
+      "wall_s": 372.22547698020935,
+      "log": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final-20260918-turn-minus.log",
+      "case": {
+        "id": "turn-minus",
+        "teacher_case": "F3",
+        "variant": "shared_crossing",
+        "offset": [
+          -0.01,
+          0.004,
+          0
+        ]
+      },
+      "condition": "20260918",
+      "phase": "final",
+      "output": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final/20260918/turn-minus",
+      "summary": {
+        "physical_success": false,
+        "protocol_complete": false,
+        "phase": "TRANSIT",
+        "error": "ValueError: forward must be between -0.05 and 0.15",
+        "wall_s": 370.50967975000094,
+        "carry_model_sha256": "ddf79d3577b9d66aa53e16fbe387bbe1039a5ddb0b4cc3caeb7292dc81dcd90e"
+      }
+    },
+    {
+      "name": "final-teacher-turn-minus",
+      "command": [
+        "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/scripts/run_dispatch_e2e.py",
+        "--executor",
+        "skills",
+        "--variant",
+        "shared_crossing",
+        "--seed",
+        "11",
+        "--required-dock",
+        "dock_a",
+        "--plan-replay",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3/committed-plan.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+        "--stage-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+        "--output",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final/teacher/turn-minus",
+        "--max-wall-s",
+        "2400",
+        "--video-fps",
+        "4",
+        "--spawn-offset",
+        "-0.01",
+        "0.004",
+        "0"
+      ],
+      "exit_code": 0,
+      "wall_s": 963.6114962100983,
+      "log": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final-teacher-turn-minus.log",
+      "case": {
+        "id": "turn-minus",
+        "teacher_case": "F3",
+        "variant": "shared_crossing",
+        "offset": [
+          -0.01,
+          0.004,
+          0
+        ]
+      },
+      "condition": "teacher",
+      "phase": "final",
+      "output": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/final/teacher/turn-minus",
+      "summary": {
+        "physical_success": true,
+        "protocol_complete": true,
+        "phase": "FINISHED",
+        "error": null,
+        "wall_s": 961.4768021670025,
+        "carry_model_sha256": null
+      }
+    }
+  ],
+  "dataset_build": {
+    "name": "dataset",
+    "command": [
+      "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/python",
+      "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/scripts/build_carry_act_data.py",
+      "--train",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F2",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F4",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F5",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F6",
+      "--development",
+      "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open",
+      "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-turn",
+      "--out",
+      "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/dataset.json"
+    ],
+    "exit_code": 0,
+    "wall_s": 2.691620111465454,
+    "log": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/dataset.log"
+  },
+  "training": [
+    {
+      "name": "train-20260918",
+      "command": [
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/scripts/train_carry_act.py",
+        "--dataset",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/dataset.json",
+        "--out",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/model-20260918",
+        "--steps",
+        "8000",
+        "--seed",
+        "20260918"
+      ],
+      "exit_code": 0,
+      "wall_s": 293.2478120326996,
+      "log": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/train-20260918.log"
+    },
+    {
+      "name": "train-20260919",
+      "command": [
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/scripts/train_carry_act.py",
+        "--dataset",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/dataset.json",
+        "--out",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/model-20260919",
+        "--steps",
+        "8000",
+        "--seed",
+        "20260919"
+      ],
+      "exit_code": 0,
+      "wall_s": 295.0689308643341,
+      "log": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/train-20260919.log"
+    }
+  ]
+}

@@ -1,0 +1,307 @@
+{
+  "scope": "Post-run referee analysis only; never actor input. Negative slot margin means corners outside target. Initial offsets do not imply equally large loaded-state changes.",
+  "rows": [
+    {
+      "condition": "20260918",
+      "case": "open-minus",
+      "minimum_beam_slot_margin_m": 0.011201602484696815,
+      "final_beam_center_error_m": [
+        -0.08033200722042122,
+        -0.033229377658385184
+      ],
+      "cost_usd": null,
+      "external_llm_calls": 0,
+      "commands_all_robots": 886,
+      "all_robots_carry_commands": 446,
+      "pair_carry_commands": 206,
+      "wall_s": 324.3617057920055,
+      "decision_rounds": 104,
+      "one_robot_done_rounds": 1,
+      "both_done_rounds": 3,
+      "any_pause_rounds": 4,
+      "last_permission": {
+        "phase": "GO",
+        "epoch": 0,
+        "reason": "all_participants_ready"
+      },
+      "carry_entry_beam_difference_from_training_m": 0.0002855283734868088,
+      "carry_entry_robot_differences_from_training_m": {
+        "r1": 0.0007244833365337029,
+        "r2": 0.003165538030167075,
+        "r3": 0.0005503401917143747
+      },
+      "source_train_case": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1"
+    },
+    {
+      "condition": "teacher",
+      "case": "open-minus",
+      "minimum_beam_slot_margin_m": 0.02724214064938124,
+      "final_beam_center_error_m": [
+        -0.0656014444028612,
+        -0.017739124387669003
+      ],
+      "cost_usd": null,
+      "external_llm_calls": 0,
+      "commands_all_robots": 916,
+      "all_robots_carry_commands": 476,
+      "pair_carry_commands": 236,
+      "wall_s": 389.18274483400455,
+      "carry_entry_beam_difference_from_training_m": 0.0002820211473918754,
+      "carry_entry_robot_differences_from_training_m": {
+        "r1": 0.000727486066567852,
+        "r2": 0.003165538030167075,
+        "r3": 0.0005393854369728222
+      },
+      "source_train_case": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1"
+    },
+    {
+      "condition": "teacher",
+      "case": "open-plus",
+      "minimum_beam_slot_margin_m": 0.025392058598159295,
+      "final_beam_center_error_m": [
+        -0.06492061405634719,
+        -0.01960279943099419
+      ],
+      "cost_usd": null,
+      "external_llm_calls": 0,
+      "commands_all_robots": 911,
+      "all_robots_carry_commands": 463,
+      "pair_carry_commands": 226,
+      "wall_s": 417.3241808340099,
+      "carry_entry_beam_difference_from_training_m": 0.00039329025876856384,
+      "carry_entry_robot_differences_from_training_m": {
+        "r1": 0.0003809016850548274,
+        "r2": 0.003130507213080669,
+        "r3": 0.0001751132370304984
+      },
+      "source_train_case": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1"
+    },
+    {
+      "condition": "20260919",
+      "case": "open-minus",
+      "minimum_beam_slot_margin_m": -0.02267894823807315,
+      "final_beam_center_error_m": [
+        -0.10088783673816337,
+        0.06684561427067592
+      ],
+      "cost_usd": null,
+      "external_llm_calls": 0,
+      "commands_all_robots": 1418,
+      "all_robots_carry_commands": 978,
+      "pair_carry_commands": 978,
+      "wall_s": 548.9409503750067,
+      "decision_rounds": 490,
+      "one_robot_done_rounds": 81,
+      "both_done_rounds": 3,
+      "any_pause_rounds": 84,
+      "last_permission": {
+        "phase": "GO",
+        "epoch": 0,
+        "reason": "all_participants_ready"
+      },
+      "carry_entry_beam_difference_from_training_m": 0.00028574839466340856,
+      "carry_entry_robot_differences_from_training_m": {
+        "r1": 0.0007190263349766677,
+        "r2": 0.003165538030167075,
+        "r3": 0.0005553307852100772
+      },
+      "source_train_case": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1"
+    },
+    {
+      "condition": "20260918",
+      "case": "open-plus",
+      "minimum_beam_slot_margin_m": -0.021663755087678593,
+      "final_beam_center_error_m": [
+        -0.08388819846413043,
+        -0.06624749671287566
+      ],
+      "cost_usd": null,
+      "external_llm_calls": 0,
+      "commands_all_robots": 889,
+      "all_robots_carry_commands": 441,
+      "pair_carry_commands": 204,
+      "wall_s": 359.1023363340064,
+      "decision_rounds": 103,
+      "one_robot_done_rounds": 1,
+      "both_done_rounds": 3,
+      "any_pause_rounds": 4,
+      "last_permission": {
+        "phase": "GO",
+        "epoch": 0,
+        "reason": "all_participants_ready"
+      },
+      "carry_entry_beam_difference_from_training_m": 0.0003959289510448654,
+      "carry_entry_robot_differences_from_training_m": {
+        "r1": 0.00037166159660665,
+        "r2": 0.003130507213080669,
+        "r3": 0.00017705232047188115
+      },
+      "source_train_case": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1"
+    },
+    {
+      "condition": "20260919",
+      "case": "open-plus",
+      "minimum_beam_slot_margin_m": 0.016093111716386832,
+      "final_beam_center_error_m": [
+        -0.09585104686975066,
+        0.012955603492929235
+      ],
+      "cost_usd": null,
+      "external_llm_calls": 0,
+      "commands_all_robots": 2226,
+      "all_robots_carry_commands": 1784,
+      "pair_carry_commands": 1784,
+      "wall_s": 767.0862001250061,
+      "decision_rounds": 893,
+      "one_robot_done_rounds": 660,
+      "both_done_rounds": 3,
+      "any_pause_rounds": 663,
+      "last_permission": {
+        "phase": "HOLD",
+        "epoch": 1,
+        "reason": "not_ready:r1"
+      },
+      "carry_entry_beam_difference_from_training_m": 0.00039552881897338935,
+      "carry_entry_robot_differences_from_training_m": {
+        "r1": 0.0003640626952273189,
+        "r2": 0.003130507213080669,
+        "r3": 0.00017657541251670284
+      },
+      "source_train_case": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1"
+    },
+    {
+      "condition": "teacher",
+      "case": "turn-minus",
+      "minimum_beam_slot_margin_m": 0.021915333572996465,
+      "final_beam_center_error_m": [
+        -0.0632884875666988,
+        -0.022943483132501274
+      ],
+      "cost_usd": null,
+      "external_llm_calls": 0,
+      "commands_all_robots": 1626,
+      "all_robots_carry_commands": 1078,
+      "pair_carry_commands": 836,
+      "wall_s": 911.8051209999976,
+      "carry_entry_beam_difference_from_training_m": 0.003002186527675341,
+      "carry_entry_robot_differences_from_training_m": {
+        "r1": 0.0008396200251849064,
+        "r2": 0.0031013498026271416,
+        "r3": 0.0016150979304858236
+      },
+      "source_train_case": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3"
+    },
+    {
+      "condition": "20260918",
+      "case": "turn-minus",
+      "minimum_beam_slot_margin_m": -0.1958555208661572,
+      "final_beam_center_error_m": [
+        0.10965378801599801,
+        -0.24225487791910894
+      ],
+      "cost_usd": null,
+      "external_llm_calls": 0,
+      "commands_all_robots": 2584,
+      "all_robots_carry_commands": 2042,
+      "pair_carry_commands": 1800,
+      "wall_s": 934.0294878750137,
+      "decision_rounds": 900,
+      "one_robot_done_rounds": 0,
+      "both_done_rounds": 0,
+      "any_pause_rounds": 0,
+      "last_permission": {
+        "phase": "GO",
+        "epoch": 0,
+        "reason": "all_participants_ready"
+      },
+      "carry_entry_beam_difference_from_training_m": 0.003001557099620742,
+      "carry_entry_robot_differences_from_training_m": {
+        "r1": 0.0008391987215708765,
+        "r2": 0.0031013498026271416,
+        "r3": 0.001613572206856214
+      },
+      "source_train_case": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3"
+    },
+    {
+      "condition": "teacher",
+      "case": "turn-plus",
+      "minimum_beam_slot_margin_m": -1.605,
+      "final_beam_center_error_m": [
+        -1.72,
+        -0.30999999999999983
+      ],
+      "cost_usd": null,
+      "external_llm_calls": 0,
+      "commands_all_robots": 749,
+      "all_robots_carry_commands": 237,
+      "pair_carry_commands": 0,
+      "wall_s": 627.3259696250025,
+      "source_train_case": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3"
+    },
+    {
+      "condition": "20260919",
+      "case": "turn-minus",
+      "minimum_beam_slot_margin_m": -1.477620923554486,
+      "final_beam_center_error_m": [
+        0.14975713539516722,
+        -1.7217221873998245
+      ],
+      "cost_usd": null,
+      "external_llm_calls": 0,
+      "commands_all_robots": 2584,
+      "all_robots_carry_commands": 2042,
+      "pair_carry_commands": 1800,
+      "wall_s": 1266.6284808749915,
+      "decision_rounds": 900,
+      "one_robot_done_rounds": 0,
+      "both_done_rounds": 0,
+      "any_pause_rounds": 0,
+      "last_permission": {
+        "phase": "GO",
+        "epoch": 0,
+        "reason": "all_participants_ready"
+      },
+      "carry_entry_beam_difference_from_training_m": 0.003001731464088571,
+      "carry_entry_robot_differences_from_training_m": {
+        "r1": 0.0008394758036542959,
+        "r2": 0.0031013498026271416,
+        "r3": 0.001611103473509698
+      },
+      "source_train_case": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3"
+    },
+    {
+      "condition": "20260918",
+      "case": "turn-plus",
+      "minimum_beam_slot_margin_m": -1.605,
+      "final_beam_center_error_m": [
+        -1.72,
+        -0.30999999999999983
+      ],
+      "cost_usd": null,
+      "external_llm_calls": 0,
+      "commands_all_robots": 749,
+      "all_robots_carry_commands": 237,
+      "pair_carry_commands": 0,
+      "wall_s": 796.1622422079963,
+      "source_train_case": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3"
+    },
+    {
+      "condition": "20260919",
+      "case": "turn-plus",
+      "minimum_beam_slot_margin_m": -1.605,
+      "final_beam_center_error_m": [
+        -1.72,
+        -0.30999999999999983
+      ],
+      "cost_usd": null,
+      "external_llm_calls": 0,
+      "commands_all_robots": 749,
+      "all_robots_carry_commands": 237,
+      "pair_carry_commands": 0,
+      "wall_s": 759.5035378750035,
+      "source_train_case": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3"
+    }
+  ],
+  "report_sha256": "4a24b88ec384c3c5ba94e3d52f408ec35a5cd7e5e3b094ea4f9d50875532fa37",
+  "audit_sha256": "b75aeb89ef8e20c347498ac807102ac50074bad03f8928f09ed8b0edf4ad68b4"
+}
