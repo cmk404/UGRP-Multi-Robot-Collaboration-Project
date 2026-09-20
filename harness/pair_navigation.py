@@ -678,9 +678,9 @@ class PairNavigator:
         return result
 
 
-def authorize_pair(sync, reports, frames, index):
+def authorize_pair(sync, reports, frames, index, *, interval_s=.2):
     """Renew GO only for two fresh reports accepting exactly the same route."""
-    now = index*.2
+    now = index*interval_s
     hashes = [reports[r].get('plan_hash') for r in ROBOTS]
     versions = [reports[r].get('plan_version',sync.plan_version) for r in ROBOTS]
     if versions[0] == versions[1] and versions[0] > sync.plan_version and hashes[0] == hashes[1]:

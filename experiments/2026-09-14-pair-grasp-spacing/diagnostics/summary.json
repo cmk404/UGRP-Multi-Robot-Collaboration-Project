@@ -1,0 +1,206 @@
+[
+  {
+    "id": "pair-spacing-diagnostic",
+    "source_sha": "594c096c35743275984c116c344a4d2822161ad0",
+    "grasp_spacing": "visual",
+    "close_command_override": null,
+    "grasp_only": true,
+    "success": false,
+    "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-spacing/scripts/run_pair_navigation.py\", line 226, in run\n    (scene.hold_spacing if grasp_spacing=='visual' else scene.tick)(8.)\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-spacing/scripts/run_pair_navigation.py\", line 69, in hold_spacing\n    self.spacing_frame()\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-spacing/scripts/run_pair_navigation.py\", line 57, in spacing_frame\n    for r in ROBOTS:self.ports[r].apply(actions[r],self.time())\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-spacing/sim/camera_robot_port.py\", line 119, in apply\n    left = _bounded_number(\"left\", action[\"left\"], -0.10, 0.10)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-spacing/sim/camera_robot_port.py\", line 220, in _bounded_number\n    raise ValueError(f\"{name} must be between {lower} and {upper}\")\nValueError: left must be between -0.1 and 0.1\n",
+    "wall_seconds": 13.4284978749929,
+    "grasp_stability": {
+      "anchor_spacing_m": 0.6505950048223926,
+      "final_spacing_m": 0.6262765572742959,
+      "gates": {
+        "full_grasp_samples": false,
+        "grasp_bilateral_through_lift_hold": false,
+        "grasp_hold_lifted_every_sample": true,
+        "grasp_spacing_preserved": false
+      },
+      "max_sample_gap_s": 0.10000000000000142,
+      "max_spacing_change_m": 0.024318447548096755,
+      "nonbilateral_samples": 2,
+      "samples": 70,
+      "success": false
+    },
+    "manifest": {
+      "raw_root": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-spacing/outputs/pair-spacing-diagnostic-2026-09-14",
+      "raw_remote_backup": false,
+      "files": 247,
+      "bytes": 11474934,
+      "hash_index": "raw-hashes.jsonl.gz",
+      "hash_index_sha256": "b066c27cebe557beebc0f3456a4711bc447a31e7f0c68d735621df8e51069a57"
+    },
+    "input_audit_passed": null
+  },
+  {
+    "id": "pair-spacing-diagnostic2",
+    "source_sha": "9336e5db08b9256d14a86973d78881c55fb9f840",
+    "grasp_spacing": "visual",
+    "close_command_override": null,
+    "grasp_only": true,
+    "success": false,
+    "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-spacing/scripts/run_pair_navigation.py\", line 226, in run\n    (scene.hold_spacing if grasp_spacing=='visual' else scene.tick)(8.)\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-spacing/scripts/run_pair_navigation.py\", line 69, in hold_spacing\n    self.spacing_frame()\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-spacing/scripts/run_pair_navigation.py\", line 59, in spacing_frame\n    raise RuntimeError('grasp spacing stopped: '+json.dumps({r:d.get('error') for r,d in decisions.items()}))\nRuntimeError: grasp spacing stopped: {\"r1\": \"visual grasp formation exceeded recovery envelope\", \"r3\": \"visual grasp formation exceeded recovery envelope\"}\n",
+    "wall_seconds": 15.47000112500973,
+    "grasp_stability": {
+      "anchor_spacing_m": 0.6505950048223926,
+      "final_spacing_m": 0.6185896464554983,
+      "gates": {
+        "full_grasp_samples": false,
+        "grasp_bilateral_through_lift_hold": false,
+        "grasp_hold_lifted_every_sample": true,
+        "grasp_spacing_preserved": false
+      },
+      "max_sample_gap_s": 0.10000000000000142,
+      "max_spacing_change_m": 0.03200535836689433,
+      "nonbilateral_samples": 2,
+      "samples": 71,
+      "success": false
+    },
+    "manifest": {
+      "raw_root": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-spacing/outputs/pair-spacing-diagnostic2-2026-09-14",
+      "raw_remote_backup": false,
+      "files": 250,
+      "bytes": 11612110,
+      "hash_index": "raw-hashes.jsonl.gz",
+      "hash_index_sha256": "02cbe2dac784ffa6968ffde786871dbb320493db3bef16599a0a2fcbd5778819"
+    },
+    "input_audit_passed": null
+  },
+  {
+    "id": "pair-spacing-diagnostic3",
+    "source_sha": "b7426bcd7299569e8e25d4f76f27d7dc85f68676",
+    "grasp_spacing": "visual",
+    "close_command_override": 1700,
+    "grasp_only": true,
+    "success": true,
+    "error": null,
+    "wall_seconds": 22.047624334023567,
+    "grasp_stability": {
+      "anchor_spacing_m": 0.6505918846035863,
+      "final_spacing_m": 0.6492996283153897,
+      "gates": {
+        "full_grasp_samples": true,
+        "grasp_bilateral_through_lift_hold": true,
+        "grasp_hold_lifted_every_sample": true,
+        "grasp_spacing_preserved": true
+      },
+      "max_sample_gap_s": 0.10000000000000142,
+      "max_spacing_change_m": 0.005685386773926493,
+      "nonbilateral_samples": 0,
+      "samples": 111,
+      "success": true
+    },
+    "manifest": {
+      "raw_root": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-spacing/outputs/pair-spacing-diagnostic3-2026-09-14",
+      "raw_remote_backup": false,
+      "files": 371,
+      "bytes": 17243510,
+      "hash_index": "raw-hashes.jsonl.gz",
+      "hash_index_sha256": "50abc12b3b266c7f205636d130449ed1fb0ad14c2f340fcd88c86df236877c63"
+    },
+    "input_audit_passed": true
+  },
+  {
+    "id": "pair-spacing-passive1700",
+    "source_sha": "b7426bcd7299569e8e25d4f76f27d7dc85f68676",
+    "grasp_spacing": "passive",
+    "close_command_override": 1700,
+    "grasp_only": true,
+    "success": true,
+    "error": null,
+    "wall_seconds": 7.494769500015536,
+    "grasp_stability": {
+      "anchor_spacing_m": 0.6505918846035863,
+      "final_spacing_m": 0.6491650763937884,
+      "gates": {
+        "full_grasp_samples": true,
+        "grasp_bilateral_through_lift_hold": true,
+        "grasp_hold_lifted_every_sample": true,
+        "grasp_spacing_preserved": true
+      },
+      "max_sample_gap_s": 0.10000000000000142,
+      "max_spacing_change_m": 0.005685386773926493,
+      "nonbilateral_samples": 0,
+      "samples": 111,
+      "success": true
+    },
+    "manifest": {
+      "raw_root": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-spacing/outputs/pair-spacing-passive1700-2026-09-14",
+      "raw_remote_backup": false,
+      "files": 59,
+      "bytes": 2790992,
+      "hash_index": "raw-hashes.jsonl.gz",
+      "hash_index_sha256": "2df459dc28e84a01e4c191635c96512814036dc69ed4a747cf02377346772854"
+    },
+    "input_audit_passed": true
+  },
+  {
+    "id": "pair-spacing-1600-short",
+    "source_sha": "52b84c8319206ec105ca69d83d29902e69fd0275",
+    "grasp_spacing": "visual",
+    "close_command_override": 1600,
+    "grasp_only": true,
+    "success": true,
+    "error": null,
+    "wall_seconds": 19.909431500011124,
+    "grasp_stability": {
+      "anchor_spacing_m": 0.6505937001159792,
+      "final_spacing_m": 0.6492980828319981,
+      "gates": {
+        "full_grasp_samples": true,
+        "grasp_bilateral_through_lift_hold": true,
+        "grasp_hold_lifted_every_sample": true,
+        "grasp_spacing_preserved": true
+      },
+      "max_sample_gap_s": 0.10000000000000142,
+      "max_spacing_change_m": 0.00613684043512619,
+      "nonbilateral_samples": 0,
+      "samples": 111,
+      "success": true
+    },
+    "manifest": {
+      "raw_root": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-spacing/outputs/pair-spacing-1600-short-2026-09-14",
+      "raw_remote_backup": false,
+      "files": 371,
+      "bytes": 17252861,
+      "hash_index": "raw-hashes.jsonl.gz",
+      "hash_index_sha256": "0f675053a4367ccb92459c3e09a210061c8a7d408a17a44c64c69813e7451355"
+    },
+    "input_audit_passed": true
+  },
+  {
+    "id": "pair-spacing-1600-long",
+    "source_sha": "52b84c8319206ec105ca69d83d29902e69fd0275",
+    "grasp_spacing": "visual",
+    "close_command_override": 1600,
+    "grasp_only": false,
+    "success": true,
+    "error": null,
+    "wall_seconds": 103.73034033397562,
+    "grasp_stability": {
+      "anchor_spacing_m": 0.6505937001159792,
+      "final_spacing_m": 0.6492980828319981,
+      "gates": {
+        "full_grasp_samples": true,
+        "grasp_bilateral_through_lift_hold": true,
+        "grasp_hold_lifted_every_sample": true,
+        "grasp_spacing_preserved": true
+      },
+      "max_sample_gap_s": 0.10000000000000142,
+      "max_spacing_change_m": 0.00613684043512619,
+      "nonbilateral_samples": 0,
+      "samples": 111,
+      "success": true
+    },
+    "manifest": {
+      "raw_root": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-spacing/outputs/pair-spacing-1600-long-2026-09-14/narrow-door",
+      "raw_remote_backup": false,
+      "files": 1730,
+      "bytes": 86836059,
+      "hash_index": "raw-hashes.jsonl.gz",
+      "hash_index_sha256": "fa990ab80078b8a44e32c60bb9a4ca07b2cd041c48697eafc59b74b2387ba7f3"
+    },
+    "input_audit_passed": true
+  }
+]
