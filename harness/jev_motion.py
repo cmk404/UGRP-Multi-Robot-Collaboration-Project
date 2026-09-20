@@ -13,7 +13,7 @@ from harness.dispatch_pair_navigation import PairVision
 from harness.known_map_navigation import pixel_to_world
 
 DURATION = .2
-GOAL = {'range_m': [.26, .30], 'absolute_bearing_deg_max': 6.,
+GOAL = {'range_m': [.27, .28], 'absolute_bearing_deg_max': 3.,
         'description': 'Approach the cyan box, face its center, stop without touching it. No grasp.'}
 # Values are issued motor command units, not measured speed.
 VECTORS = {'forward': (.10, 0., 0.), 'backward': (-.05, 0., 0.),
@@ -75,8 +75,10 @@ class RGBObserver:
         if np.linalg.norm(displacement) < .018:
             raise ValueError('own_forward_probe_not_visually_resolved')
         measured = math.atan2(displacement[1], displacement[0])
-        # Calibrate wheel-appearance angular bias from observed forward translation.
-        self.heading_bias = wrap(measured - last['heading_rad'])
+        # Motion resolves front/back only; its small displacement is too noisy for yaw calibration.
+        self.heading_bias = math.pi if abs(wrap(measured-last['heading_rad'])) > math.pi/2 else 0.
+        if abs(wrap(measured-last['heading_rad']-self.heading_bias)) > math.radians(20):
+            raise ValueError('visual_heading_and_motion_disagree')
         self.probe_evidence = {'source': 'consecutive RGB and own issued forward probe',
                                'observed_displacement_m': displacement.tolist(),
                                'wheel_heading_bias_rad': self.heading_bias}

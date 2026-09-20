@@ -21,7 +21,7 @@ from harness.camera_motion_identity import ImageMotionIdentity
 from scripts.research_dispatch_scene import DispatchScene
 from sim.research_dispatch_arena import episode
 
-CASES = {'dev':[-.80,-2.65,0.], 'straight':[-.86,-2.65,0.],
+CASES = {'dev':[-.80,-2.65,0.], 'dev_yaw':[-.78,-2.70,8.], 'straight':[-.86,-2.65,0.],
          'left_offset':[-.84,-2.75,12.], 'right_offset':[-.76,-2.55,-12.]}
 
 def write(path, value):
