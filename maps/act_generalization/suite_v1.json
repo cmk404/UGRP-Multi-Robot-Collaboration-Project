@@ -1,0 +1,24 @@
+{
+  "schema": "ugrp.act_map_suite.v1",
+  "suite_id": "local-pair-map-v1",
+  "physics_initialization_seeds": [11, 29],
+  "include_legacy_regression": true,
+  "cases": [
+    {"id":"train-open-1","split":"train","family":"open","map_seed":1101,"goal_yaw_deg":0},
+    {"id":"train-open-2","split":"train","family":"open","map_seed":1102,"goal_yaw_deg":90},
+    {"id":"train-door-1","split":"train","family":"door","map_seed":1201,"goal_yaw_deg":0},
+    {"id":"train-door-2","split":"train","family":"door","map_seed":1202,"goal_yaw_deg":90},
+    {"id":"train-corner-1","split":"train","family":"corner","map_seed":1301,"goal_yaw_deg":90},
+    {"id":"train-corner-2","split":"train","family":"corner","map_seed":1302,"goal_yaw_deg":90},
+    {"id":"dev-open","split":"dev","family":"open","map_seed":2101,"goal_yaw_deg":90},
+    {"id":"dev-door","split":"dev","family":"door","map_seed":2201,"goal_yaw_deg":0},
+    {"id":"dev-corner","split":"dev","family":"corner","map_seed":2301,"goal_yaw_deg":90},
+    {"id":"test-a-open","split":"test_a","family":"open","map_seed":3101,"goal_yaw_deg":90},
+    {"id":"test-a-door","split":"test_a","family":"door","map_seed":3201,"goal_yaw_deg":0},
+    {"id":"test-a-corner","split":"test_a","family":"corner","map_seed":3301,"goal_yaw_deg":90},
+    {"id":"test-b-double-1","split":"test_b","family":"double_door","map_seed":4101,"goal_yaw_deg":0},
+    {"id":"test-b-double-2","split":"test_b","family":"double_door","map_seed":4102,"goal_yaw_deg":0},
+    {"id":"control-narrow","split":"control","family":"too_narrow","map_seed":5101,"goal_yaw_deg":0},
+    {"id":"control-blocked","split":"control","family":"blocked","map_seed":5102,"goal_yaw_deg":0}
+  ]
+}
