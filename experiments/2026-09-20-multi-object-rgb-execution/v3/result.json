@@ -1,0 +1,83 @@
+{
+  "source_sha": "42024aa53c2e5d0fee3db37edddebd2684132a78",
+  "case": "staging_three",
+  "error": null,
+  "stop_reason": "model_budget",
+  "transport_success": false,
+  "clock": "paused SIM during inference; not real-time control",
+  "model": "gemini-3.8-flash",
+  "limits": {
+    "turns": 10,
+    "calls": 24,
+    "input_tokens": 220000,
+    "wall_s": 240.0
+  },
+  "environment": {
+    "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+    "platform": "macOS-27.2-arm64-arm-64bit",
+    "mujoco": "3.12.0"
+  },
+  "cost_usd": null,
+  "scope": "experimental RGB raw-action execution, not ACT or teacher replay",
+  "protocol": {
+    "objects": 3,
+    "tasks": 5,
+    "completed_task_claims": 0,
+    "final_object_claims": 0,
+    "whole_mission_claimed": false,
+    "physical_success": "separate_evaluation_only",
+    "motor_execution": "bounded robot-local ports with five-stage permission",
+    "identity_hold": false,
+    "issued_task_commands": 11
+  },
+  "issued_commands": 11,
+  "evaluation": {
+    "objects": {
+      "object_01": {
+        "center_m": [
+          -0.24000000003351554,
+          -2.42999999984236,
+          0.019951425052399455
+        ],
+        "inside_final_slot": false,
+        "on_floor": true,
+        "touching_robot": false,
+        "final_placement": false
+      },
+      "object_02": {
+        "center_m": [
+          0.36,
+          -2.75,
+          0.015892244581658253
+        ],
+        "inside_final_slot": false,
+        "on_floor": true,
+        "touching_robot": false,
+        "final_placement": false
+      },
+      "object_03": {
+        "center_m": [
+          0.36,
+          -2.0,
+          0.015892244581658253
+        ],
+        "inside_final_slot": false,
+        "on_floor": true,
+        "touching_robot": false,
+        "final_placement": false
+      }
+    },
+    "final_objects": 0,
+    "whole_mission_final_placement": false,
+    "scope": "terminal placement only; required intermediate jobs need independent trajectory evidence"
+  },
+  "camera_geometry_unchanged": true,
+  "weld_steps": 0,
+  "model_calls": 20,
+  "usage": {
+    "prompt_tokens": 189259,
+    "completion_tokens": 5702,
+    "total_tokens": 211037
+  },
+  "wall_s": 91.2439873330004
+}

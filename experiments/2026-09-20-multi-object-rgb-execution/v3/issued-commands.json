@@ -1,0 +1,360 @@
+{
+  "r1": [
+    {
+      "stage": "SETUP",
+      "issued_servo_targets": {
+        "1": 2000,
+        "3": 740,
+        "4": 2320,
+        "5": 1320,
+        "6": 1500
+      },
+      "meaning": "issued commands only"
+    },
+    {
+      "stage": "IDENTIFY",
+      "action": {
+        "kind": "drive",
+        "forward": 0.1,
+        "turn": 0.0,
+        "duration_s": 0.2
+      },
+      "repetitions": 3,
+      "duration_s": 0.2
+    },
+    {
+      "command_id": "stage_02-r1-000001-command",
+      "action": {
+        "kind": "drive",
+        "forward": 0.15,
+        "turn": 0.0,
+        "duration_s": 0.2
+      },
+      "duration_s": 0.2,
+      "task_id": "stage_02",
+      "object_id": "object_02",
+      "plan_version": 1,
+      "plan_hash": "487d6c217d053d6690438d7e2bd9028e3bcc6706bb491f7d07104028059cddd2",
+      "stage": "APPROACH",
+      "frame_id": 8,
+      "issued_at_s": 3.999999999999781,
+      "own_rgb": {
+        "path": "rgb/execution-000-r1.jpg",
+        "sha256": "c9db3f82466210e5aebb3edbf6b664f9cd9946934d7d1e12ee02ce770ead63d3"
+      },
+      "top_rgb": {
+        "path": "rgb/execution-000-top.jpg",
+        "sha256": "0cd9c4007de3d43face8a972718be3989b24412e80e9651b5fda990a1be214d9"
+      },
+      "meaning": "issued command, not measured state or execution success"
+    },
+    {
+      "command_id": "stage_02-r1-000003-command",
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "duration_s": 0.2,
+      "task_id": "stage_02",
+      "object_id": "object_02",
+      "plan_version": 1,
+      "plan_hash": "487d6c217d053d6690438d7e2bd9028e3bcc6706bb491f7d07104028059cddd2",
+      "stage": "APPROACH",
+      "frame_id": 9,
+      "issued_at_s": 4.249999999999754,
+      "own_rgb": {
+        "path": "rgb/execution-001-r1.jpg",
+        "sha256": "95ed4979be51f959e12b78a26920abfa111a8bae1fb0de7325efd54d5d35c0ad"
+      },
+      "top_rgb": {
+        "path": "rgb/execution-001-top.jpg",
+        "sha256": "756fe8bd321e89133b912b8a5e25314a92ed28e601fb49fb76f5f8380dc57260"
+      },
+      "meaning": "issued command, not measured state or execution success"
+    },
+    {
+      "command_id": "stage_02-r1-000005-command",
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "duration_s": 0.2,
+      "task_id": "stage_02",
+      "object_id": "object_02",
+      "plan_version": 1,
+      "plan_hash": "487d6c217d053d6690438d7e2bd9028e3bcc6706bb491f7d07104028059cddd2",
+      "stage": "APPROACH",
+      "frame_id": 10,
+      "issued_at_s": 4.499999999999726,
+      "own_rgb": {
+        "path": "rgb/execution-002-r1.jpg",
+        "sha256": "2ed39b39db3390e229bb3acaa91f099cdc39767c54efb1d260b4660a7ac136c7"
+      },
+      "top_rgb": {
+        "path": "rgb/execution-002-top.jpg",
+        "sha256": "a5554a6c04461a1a3d4688f52e24dc7760009d70333b255ecf90fe480b28fab5"
+      },
+      "meaning": "issued command, not measured state or execution success"
+    },
+    {
+      "command_id": "stage_02-r1-000009-command",
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "duration_s": 0.2,
+      "task_id": "stage_02",
+      "object_id": "object_02",
+      "plan_version": 1,
+      "plan_hash": "487d6c217d053d6690438d7e2bd9028e3bcc6706bb491f7d07104028059cddd2",
+      "stage": "APPROACH",
+      "frame_id": 12,
+      "issued_at_s": 4.999999999999671,
+      "own_rgb": {
+        "path": "rgb/execution-004-r1.jpg",
+        "sha256": "f83430fa06a919c3cd8c50a5bf27450837573b68381dd14cc231cbfb35c26f93"
+      },
+      "top_rgb": {
+        "path": "rgb/execution-004-top.jpg",
+        "sha256": "c2b8e64f3bb2d30690cb1c980e6c45ac7db603de4a2003af1f2979bf4c9c27e1"
+      },
+      "meaning": "issued command, not measured state or execution success"
+    }
+  ],
+  "r2": [
+    {
+      "stage": "SETUP",
+      "issued_servo_targets": {
+        "1": 2000,
+        "3": 740,
+        "4": 2320,
+        "5": 1320,
+        "6": 1500
+      },
+      "meaning": "issued commands only"
+    },
+    {
+      "stage": "IDENTIFY",
+      "action": {
+        "kind": "drive",
+        "forward": 0.1,
+        "turn": 0.0,
+        "duration_s": 0.2
+      },
+      "repetitions": 3,
+      "duration_s": 0.2
+    },
+    {
+      "command_id": "stage_03-r2-000002-command",
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "duration_s": 0.2,
+      "task_id": "stage_03",
+      "object_id": "object_03",
+      "plan_version": 1,
+      "plan_hash": "487d6c217d053d6690438d7e2bd9028e3bcc6706bb491f7d07104028059cddd2",
+      "stage": "APPROACH",
+      "frame_id": 8,
+      "issued_at_s": 3.999999999999781,
+      "own_rgb": {
+        "path": "rgb/execution-000-r2.jpg",
+        "sha256": "5cdb559c34fcdaf2221b6daff2746c3da3d6f1269b120dd1062f25df0b5118cd"
+      },
+      "top_rgb": {
+        "path": "rgb/execution-000-top.jpg",
+        "sha256": "0cd9c4007de3d43face8a972718be3989b24412e80e9651b5fda990a1be214d9"
+      },
+      "meaning": "issued command, not measured state or execution success"
+    },
+    {
+      "command_id": "stage_03-r2-000004-command",
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "duration_s": 0.2,
+      "task_id": "stage_03",
+      "object_id": "object_03",
+      "plan_version": 1,
+      "plan_hash": "487d6c217d053d6690438d7e2bd9028e3bcc6706bb491f7d07104028059cddd2",
+      "stage": "APPROACH",
+      "frame_id": 9,
+      "issued_at_s": 4.249999999999754,
+      "own_rgb": {
+        "path": "rgb/execution-001-r2.jpg",
+        "sha256": "dd37eff230f3e0b80196ada21d894eaa723d18484fc18923c9c0f6681ddb0113"
+      },
+      "top_rgb": {
+        "path": "rgb/execution-001-top.jpg",
+        "sha256": "756fe8bd321e89133b912b8a5e25314a92ed28e601fb49fb76f5f8380dc57260"
+      },
+      "meaning": "issued command, not measured state or execution success"
+    },
+    {
+      "command_id": "stage_03-r2-000006-command",
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "duration_s": 0.2,
+      "task_id": "stage_03",
+      "object_id": "object_03",
+      "plan_version": 1,
+      "plan_hash": "487d6c217d053d6690438d7e2bd9028e3bcc6706bb491f7d07104028059cddd2",
+      "stage": "APPROACH",
+      "frame_id": 10,
+      "issued_at_s": 4.499999999999726,
+      "own_rgb": {
+        "path": "rgb/execution-002-r2.jpg",
+        "sha256": "d835995f5db1683f9be03cf48895ca17433ef3a0ad24cbfd8915fcb4aaaf388f"
+      },
+      "top_rgb": {
+        "path": "rgb/execution-002-top.jpg",
+        "sha256": "a5554a6c04461a1a3d4688f52e24dc7760009d70333b255ecf90fe480b28fab5"
+      },
+      "meaning": "issued command, not measured state or execution success"
+    },
+    {
+      "command_id": "stage_03-r2-000008-command",
+      "action": {
+        "kind": "drive",
+        "forward": 0.15,
+        "turn": 0.0,
+        "duration_s": 0.2
+      },
+      "duration_s": 0.2,
+      "task_id": "stage_03",
+      "object_id": "object_03",
+      "plan_version": 1,
+      "plan_hash": "487d6c217d053d6690438d7e2bd9028e3bcc6706bb491f7d07104028059cddd2",
+      "stage": "APPROACH",
+      "frame_id": 11,
+      "issued_at_s": 4.749999999999699,
+      "own_rgb": {
+        "path": "rgb/execution-003-r2.jpg",
+        "sha256": "4e294e3dff1c077fdd1eb7cb53686c0c97a9ba73e72f6bc306e76a659632a0fa"
+      },
+      "top_rgb": {
+        "path": "rgb/execution-003-top.jpg",
+        "sha256": "f66e27728d31337fbd1da773cfeaf15662ec655e7782c4667098cd2c9bcb3309"
+      },
+      "meaning": "issued command, not measured state or execution success"
+    },
+    {
+      "command_id": "stage_03-r2-000010-command",
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "duration_s": 0.2,
+      "task_id": "stage_03",
+      "object_id": "object_03",
+      "plan_version": 1,
+      "plan_hash": "487d6c217d053d6690438d7e2bd9028e3bcc6706bb491f7d07104028059cddd2",
+      "stage": "APPROACH",
+      "frame_id": 12,
+      "issued_at_s": 4.999999999999671,
+      "own_rgb": {
+        "path": "rgb/execution-004-r2.jpg",
+        "sha256": "e61571dc9f2702946637df4cb9cbb33f34c123d87c82a152d7749b6c3ac552cc"
+      },
+      "top_rgb": {
+        "path": "rgb/execution-004-top.jpg",
+        "sha256": "c2b8e64f3bb2d30690cb1c980e6c45ac7db603de4a2003af1f2979bf4c9c27e1"
+      },
+      "meaning": "issued command, not measured state or execution success"
+    },
+    {
+      "command_id": "stage_03-r2-000012-command",
+      "action": {
+        "kind": "drive",
+        "forward": 0.15,
+        "turn": 0.0,
+        "duration_s": 0.2
+      },
+      "duration_s": 0.2,
+      "task_id": "stage_03",
+      "object_id": "object_03",
+      "plan_version": 1,
+      "plan_hash": "487d6c217d053d6690438d7e2bd9028e3bcc6706bb491f7d07104028059cddd2",
+      "stage": "APPROACH",
+      "frame_id": 13,
+      "issued_at_s": 5.249999999999644,
+      "own_rgb": {
+        "path": "rgb/execution-005-r2.jpg",
+        "sha256": "05525ddea2fd0ffca87de557dd5657f8f72d15aeb6fdc06b52b5780614baff58"
+      },
+      "top_rgb": {
+        "path": "rgb/execution-005-top.jpg",
+        "sha256": "33995d96c0229dd072a62f36cf090935b6f51e7bd366e5fd501c1bcc14ed8d75"
+      },
+      "meaning": "issued command, not measured state or execution success"
+    },
+    {
+      "command_id": "stage_03-r2-000014-command",
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "duration_s": 0.2,
+      "task_id": "stage_03",
+      "object_id": "object_03",
+      "plan_version": 1,
+      "plan_hash": "487d6c217d053d6690438d7e2bd9028e3bcc6706bb491f7d07104028059cddd2",
+      "stage": "APPROACH",
+      "frame_id": 14,
+      "issued_at_s": 5.499999999999616,
+      "own_rgb": {
+        "path": "rgb/execution-006-r2.jpg",
+        "sha256": "e308f84745e9b228c7bc68e4de24a9b4e3d35602672b712337ba47e72d2e78ae"
+      },
+      "top_rgb": {
+        "path": "rgb/execution-006-top.jpg",
+        "sha256": "aa789eb2cb89ebbba75d72a47a84c22521e03cde6eb2b49bb5ce08855ab1bae4"
+      },
+      "meaning": "issued command, not measured state or execution success"
+    }
+  ],
+  "r3": [
+    {
+      "stage": "SETUP",
+      "issued_servo_targets": {
+        "1": 2000,
+        "3": 740,
+        "4": 2320,
+        "5": 1320,
+        "6": 1500
+      },
+      "meaning": "issued commands only"
+    },
+    {
+      "stage": "IDENTIFY",
+      "action": {
+        "kind": "drive",
+        "forward": 0.1,
+        "turn": 0.0,
+        "duration_s": 0.2
+      },
+      "repetitions": 3,
+      "duration_s": 0.2
+    }
+  ]
+}

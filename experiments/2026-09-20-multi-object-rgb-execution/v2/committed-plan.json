@@ -1,0 +1,62 @@
+{
+  "proposal_id": "multi-1789913626076448000-plan-v1",
+  "version": 1,
+  "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+  "plan": {
+    "schema": "ugrp.multi_object_plan.v1",
+    "mission_sha256": "6ab9c19cd95af8dd1cfdd77de1ce558f65fa20ce02694e80f70ccff4a3009f15",
+    "tasks": [
+      {
+        "task_id": "stage_02",
+        "participants": {
+          "r1": "solo"
+        },
+        "route_id": "lane_a",
+        "after": []
+      },
+      {
+        "task_id": "stage_03",
+        "participants": {
+          "r2": "solo"
+        },
+        "route_id": "lane_b",
+        "after": []
+      },
+      {
+        "task_id": "deliver_01",
+        "participants": {
+          "r1": "end_a",
+          "r3": "end_b"
+        },
+        "route_id": "lane_a",
+        "after": [
+          "stage_02",
+          "stage_03"
+        ]
+      },
+      {
+        "task_id": "deliver_02",
+        "participants": {
+          "r2": "solo"
+        },
+        "route_id": "lane_b",
+        "after": [
+          "stage_02",
+          "deliver_01"
+        ]
+      },
+      {
+        "task_id": "deliver_03",
+        "participants": {
+          "r3": "solo"
+        },
+        "route_id": "lane_a",
+        "after": [
+          "stage_03",
+          "deliver_01"
+        ]
+      }
+    ]
+  },
+  "proposer": "r1"
+}

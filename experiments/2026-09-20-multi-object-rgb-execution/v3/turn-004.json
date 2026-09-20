@@ -1,0 +1,55 @@
+{
+  "turn": 4,
+  "at_s": 4.999999999999671,
+  "tasks": {
+    "stage_02": "APPROACH",
+    "stage_03": "APPROACH"
+  },
+  "replies": {
+    "r1": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.85,
+      "message": "Continuing forward approach toward target object_02 along lane_a.",
+      "plan_hash": "487d6c217d053d6690438d7e2bd9028e3bcc6706bb491f7d07104028059cddd2",
+      "reason": "Target object_02 clearly tracked ahead; driving forward along lane_a.",
+      "request_id": "stage_02-r1-000009",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "r2": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.9,
+      "message": "Advancing toward target object_03 along lane_b.",
+      "plan_hash": "487d6c217d053d6690438d7e2bd9028e3bcc6706bb491f7d07104028059cddd2",
+      "reason": "Target object_03 is clearly visible ahead; continuing approach.",
+      "request_id": "stage_03-r2-000010",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    }
+  },
+  "protocol": {
+    "objects": 3,
+    "tasks": 5,
+    "completed_task_claims": 0,
+    "final_object_claims": 0,
+    "whole_mission_claimed": false,
+    "physical_success": "separate_evaluation_only",
+    "motor_execution": "bounded robot-local ports with five-stage permission",
+    "identity_hold": false,
+    "issued_task_commands": 9
+  }
+}

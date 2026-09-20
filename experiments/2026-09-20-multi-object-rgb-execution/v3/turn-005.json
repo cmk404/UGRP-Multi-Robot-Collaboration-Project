@@ -1,0 +1,52 @@
+{
+  "turn": 5,
+  "at_s": 5.249999999999644,
+  "tasks": {
+    "stage_02": "APPROACH",
+    "stage_03": "APPROACH"
+  },
+  "replies": {
+    "r1": {
+      "request_id": "stage_02-r1-000011",
+      "plan_hash": "487d6c217d053d6690438d7e2bd9028e3bcc6706bb491f7d07104028059cddd2",
+      "stage": "APPROACH",
+      "status": "UNCERTAIN",
+      "confidence": 0.5,
+      "checks": [],
+      "command_id": null,
+      "action": {
+        "kind": "wait"
+      },
+      "reason": "target_not_visible",
+      "message": "Target object_02 is not visible in own camera view; waiting to reobserve without inflating confidence."
+    },
+    "r2": {
+      "request_id": "stage_03-r2-000012",
+      "plan_hash": "487d6c217d053d6690438d7e2bd9028e3bcc6706bb491f7d07104028059cddd2",
+      "stage": "APPROACH",
+      "status": "WORKING",
+      "confidence": 0.9,
+      "checks": [],
+      "command_id": null,
+      "action": {
+        "kind": "drive",
+        "forward": 0.15,
+        "turn": 0.0,
+        "duration_s": 0.2
+      },
+      "reason": "Approaching target cyan box object_03 along lane_b",
+      "message": "Continuing forward drive toward object_03"
+    }
+  },
+  "protocol": {
+    "objects": 3,
+    "tasks": 5,
+    "completed_task_claims": 0,
+    "final_object_claims": 0,
+    "whole_mission_claimed": false,
+    "physical_success": "separate_evaluation_only",
+    "motor_execution": "bounded robot-local ports with five-stage permission",
+    "identity_hold": false,
+    "issued_task_commands": 10
+  }
+}

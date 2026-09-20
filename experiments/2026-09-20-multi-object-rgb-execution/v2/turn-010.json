@@ -1,0 +1,53 @@
+{
+  "turn": 10,
+  "at_s": 5.999999999999561,
+  "tasks": {
+    "stage_02": "APPROACH",
+    "stage_03": "APPROACH"
+  },
+  "replies": {
+    "r1": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.1,
+        "kind": "drive",
+        "turn": -0.15
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.7,
+      "message": "Turning right toward object_02 in lane_a",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Approaching object_02 (cyan box near bottom); need to orient toward the target",
+      "request_id": "stage_02-r1-000021",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "r2": {
+      "request_id": "stage_03-r2-000022",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "stage": "APPROACH",
+      "status": "WORKING",
+      "confidence": 0.9,
+      "checks": [],
+      "command_id": null,
+      "action": {
+        "kind": "drive",
+        "forward": 0.15,
+        "turn": 0.0,
+        "duration_s": 0.2
+      },
+      "reason": "Approaching target cyan box along lane_b; box is centered ahead in view.",
+      "message": "Driving forward toward target box object_03."
+    }
+  },
+  "protocol": {
+    "objects": 3,
+    "tasks": 5,
+    "completed_task_claims": 0,
+    "final_object_claims": 0,
+    "whole_mission_claimed": false,
+    "physical_success": "not_evaluated",
+    "motor_execution": "unsupported"
+  }
+}
