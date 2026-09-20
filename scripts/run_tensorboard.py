@@ -31,7 +31,7 @@ def main():
     try:
         child=subprocess.Popen([sys.executable,'-m','tensorboard.main','--logdir',str(args.logdir.resolve()),
             '--host','127.0.0.1','--port',str(args.port),'--reload_interval','5',
-            '--samples_per_plugin','scalars=0,images=100,tensors=200'])
+            '--samples_per_plugin','scalars=10000,images=100,tensors=200'])
         print(f'TensorBoard http://127.0.0.1:{args.port} · Original video links: 127.0.0.1:{args.media_port}',flush=True)
         return child.wait()
     except KeyboardInterrupt: return 0
