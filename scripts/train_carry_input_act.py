@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 import numpy as np
 import torch
-from harness.carry_input_act import InputCarryAct, make_policy, image_tensor, metadata
+from harness.carry_input_act import InputCarryAct, make_policy, image_tensor, metadata, actor_batch
 from harness.carry_input_history import window_indices
 from harness.act_training import frozen_features
 from harness.pair_carry_act import CONTEXT_KEY
@@ -85,6 +85,34 @@ def frames_at(rows, indices):
              'context': rows[i]['context']} for i in indices]
 
 
+@torch.no_grad()
+def verify_cache(policy, rows, windows, cache, size, history):
+    """Compare separately batched CNN execution and the complete action chunk.
+
+    Float32 CNN kernels need not be bit-identical across batch sizes. Keep a
+    bounded feature tolerance AND a stricter check of actual policy outputs.
+    Run again on the selected checkpoint, not just random initial weights.
+    """
+    policy.eval()
+    result = {'feature_atol': 5e-4, 'feature_rtol': 1e-5,
+              'action_atol': 1e-5, 'action_rtol': 1e-5, 'probes': []}
+    for i in sorted({0, min(4, len(rows)-1), len(rows)-1}):
+        native = actor_batch(frames_at(rows, windows[i].tolist()), size, history)
+        cached = batch_at(cache, windows[i:i+1])
+        errors = {}
+        for key in IMAGE_KEYS:
+            actual = policy.model.backbone(native[key])['feature_map']
+            torch.testing.assert_close(actual, cached[key], rtol=result['feature_rtol'], atol=result['feature_atol'])
+            errors[key] = float((actual-cached[key]).abs().max())
+        expected = policy.predict_action_chunk(native)
+        with frozen_features(policy):
+            actual = policy.predict_action_chunk(cached)
+        torch.testing.assert_close(actual, expected, rtol=result['action_rtol'], atol=result['action_atol'])
+        result['probes'].append({'id': rows[i]['id'], 'feature_max_abs': errors,
+                                'action_chunk_max_abs': float((actual-expected).abs().max())})
+    return result
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--dataset', type=Path, required=True)
@@ -124,14 +152,8 @@ def main():
     write(a.out/'report.json', report)
     cache = cache_images(policy, rows, a.size); dcache = cache_images(policy, dev, a.size)
     report['feature_cache_wall_s'] = time.monotonic()-started
-    # Verify deployment preprocessing matches cached training input before updates.
-    from harness.carry_input_act import actor_batch
-    for i in (0, min(4, len(rows)-1), len(rows)-1):
-        native = actor_batch(frames_at(rows, windows[i].tolist()), a.size, a.history)
-        cached = batch_at(cache, windows[i:i+1])
-        with torch.no_grad():
-            for key in IMAGE_KEYS:
-                torch.testing.assert_close(policy.model.backbone(native[key])['feature_map'], cached[key], rtol=1e-5, atol=1e-5)
+    report['initial_cache_verification'] = verify_cache(policy, rows, windows, cache, a.size, a.history)
+    write(a.out/'report.json', report)
     groups = [3 if r['done'] else int(np.argmax(np.abs(r['action'][:3]))) for r in rows]
     counts = {g: groups.count(g) for g in set(groups)}
     report['groups'] = counts
@@ -158,6 +180,9 @@ def main():
                 state = {k: v.detach().cpu().clone() for k, v in policy.state_dict().items()}
             write(a.out/'report.json', report); print(json.dumps(event), flush=True)
     policy.load_state_dict(state)
+    report['selected_cache_verification'] = {
+        'train': verify_cache(policy, rows, windows, cache, a.size, a.history),
+        'development': verify_cache(policy, dev, dwindows, dcache, a.size, a.history)}
     actor = InputCarryAct(policy, a.size, a.history); actor.save(a.out/'act')
     restored = InputCarryAct.load(a.out/'act')
     report['readback'] = []
