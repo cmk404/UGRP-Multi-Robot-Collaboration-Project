@@ -146,7 +146,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--dataset', type=Path, required=True)
     p.add_argument('--out', type=Path, required=True)
-    p.add_argument('--size', type=int, choices=(128, 256), required=True)
+    p.add_argument('--size', type=int, choices=(128, 256, 512), required=True)
     p.add_argument('--history', type=int, choices=(1, 4), required=True)
     p.add_argument('--steps', type=int, default=8000)
     p.add_argument('--seed', type=int, default=20260921)

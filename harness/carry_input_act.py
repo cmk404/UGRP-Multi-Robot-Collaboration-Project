@@ -24,7 +24,7 @@ from harness.reference_act import IMAGE_KEYS
 
 
 def metadata(size, history):
-    if size not in (128, 256) or history not in (1, 4):
+    if size not in (128, 256, 512) or history not in (1, 4):
         raise ValueError('unsupported resolution/history')
     return {'version': 1, 'kind': 'carry_input_ablation', 'size': size, 'history': history,
             'order': 'oldest_to_current', 'padding': 'repeat_first_robot_local_frame',

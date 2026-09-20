@@ -43,6 +43,8 @@ def source_identity(root=ROOT):
 
 def pack(output, protocol_path=ROOT/PROTOCOL):
     source_sha = source_identity()
+    protocol_path = Path(protocol_path).resolve()
+    protocol_relative = str(protocol_path.relative_to(ROOT.resolve()))
     protocol = json.loads(protocol_path.read_text())
     dataset = Path(protocol['dataset']); canonical = json.loads(dataset.read_text())
     if digest(dataset) != protocol['dataset_sha256']: raise ValueError('canonical dataset changed')
@@ -52,7 +54,7 @@ def pack(output, protocol_path=ROOT/PROTOCOL):
     for name in source_files:
         if name.endswith(('.py','.txt')):
             path = confined(ROOT,name);members['source/'+name] = path;source_manifest['files'][name]=digest(path)
-    source_manifest['files'][PROTOCOL]=digest(protocol_path);members['source/'+PROTOCOL]=protocol_path
+    source_manifest['files'][protocol_relative]=digest(protocol_path);members['source/'+protocol_relative]=protocol_path
     roots = {}
     for split in ('train','development'):
         for i,e in enumerate(canonical[split]):
@@ -70,7 +72,7 @@ def pack(output, protocol_path=ROOT/PROTOCOL):
                 if digest(path)!=sha: raise ValueError('source hash mismatch: '+name)
                 members[portable+'/'+name]=path
     manifest={'schema':'ugrp.colab-carry.v1','source_sha':source_sha,'dataset_sha256':digest(dataset),
-              'protocol_sha256':digest(protocol_path),'roots':roots,'files':{n:digest(p) for n,p in members.items()}}
+              'protocol_sha256':digest(protocol_path),'protocol_path':protocol_relative,'roots':roots,'files':{n:digest(p) for n,p in members.items()}}
     output=Path(output)
     output.parent.mkdir(parents=True,exist_ok=True)
     with zipfile.ZipFile(output,'x',compression=zipfile.ZIP_DEFLATED,compresslevel=1) as z:
@@ -138,7 +140,7 @@ def verify_dataset(path):
 
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__);sub=p.add_subparsers(dest='command',required=True)
-    a=sub.add_parser('pack');a.add_argument('--output',type=Path,required=True)
+    a=sub.add_parser('pack');a.add_argument('--output',type=Path,required=True);a.add_argument('--protocol',type=Path,default=ROOT/PROTOCOL)
     a=sub.add_parser('unpack');a.add_argument('--archive',type=Path,required=True);a.add_argument('--output',type=Path,required=True);a.add_argument('--sha256',required=True)
     args=p.parse_args()
-    print(json.dumps(pack(args.output) if args.command=='pack' else unpack(args.archive,args.output,args.sha256),indent=2))
+    print(json.dumps(pack(args.output,args.protocol) if args.command=='pack' else unpack(args.archive,args.output,args.sha256),indent=2))

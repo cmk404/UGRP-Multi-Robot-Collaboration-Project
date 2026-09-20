@@ -18,7 +18,7 @@ def frames(count):
     return result
 
 
-@pytest.mark.parametrize('size,history', [(128,1),(128,4),(256,1),(256,4)])
+@pytest.mark.parametrize('size,history', [(128,1),(128,4),(256,1),(256,4),(512,1),(512,4)])
 def test_real_training_cache_and_checkpoint(tmp_path, size, history):
     torch.set_num_threads(2); torch.manual_seed(21)
     p = make_policy(size, history)
@@ -42,7 +42,7 @@ def test_real_training_cache_and_checkpoint(tmp_path, size, history):
     actor = InputCarryAct(p,size,history); actor.save(tmp_path/'act')
     before = actor.predict(fs)
     assert InputCarryAct.load(tmp_path/'act').predict(fs) == before
-    if size == 128 and history == 4:
+    if size in (128, 512) and history == 4:
         client = InputCarryClient(sys.executable, tmp_path/'act')
         try:
             assert client.predict(fs) == before
@@ -58,9 +58,10 @@ def test_history_indices_reset_at_robot_and_episode_boundaries():
     assert history_indices(entries,4).tolist() == [[0,0,0,0],[0,0,0,1],[2,2,2,2],[2,2,2,3],[4,4,4,4],[4,4,4,5]]
 
 
-def test_arms_have_identical_initial_weights_and_parameter_count():
+@pytest.mark.parametrize('size,history', [(256,4),(512,1),(512,4)])
+def test_arms_have_identical_initial_weights_and_parameter_count(size, history):
     torch.manual_seed(21);a=make_policy(128,1)
-    torch.manual_seed(21);b=make_policy(256,4)
+    torch.manual_seed(21);b=make_policy(size,history)
     assert sum(p.numel() for p in a.parameters())==sum(p.numel() for p in b.parameters())
     assert all(torch.equal(value,b.state_dict()[key]) for key,value in a.state_dict().items())
 

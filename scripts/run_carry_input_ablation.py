@@ -49,8 +49,9 @@ def main():
     p.add_argument('--stages', type=Path, required=True)
     p.add_argument('--training-only', action='store_true')
     p.add_argument('--reuse-training', type=Path)
+    p.add_argument('--protocol', type=Path, default=ROOT/'experiments/2026-09-21-carry-input-ablation/protocol.json')
     a = p.parse_args(); a.out = a.out.resolve(); a.out.mkdir(parents=True, exist_ok=False)
-    protocol_path = ROOT/'experiments/2026-09-21-carry-input-ablation/protocol.json'
+    protocol_path = a.protocol
     protocol = json.loads(protocol_path.read_text())
     source = subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
     report = {'complete':False, 'source_sha':source, 'protocol_sha256':sha(protocol_path),

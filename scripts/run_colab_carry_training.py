@@ -1,4 +1,4 @@
-"""Run the predeclared eight ACT models on CUDA, resuming trusted checkpoints."""
+"""Run a predeclared ACT protocol on CUDA, resuming trusted checkpoints."""
 import argparse
 import json
 from pathlib import Path
@@ -18,20 +18,25 @@ def validate_report(report, protocol, arm, seed, source_sha, directory):
         raise ValueError('cohort arm mismatch')
     if report.get('complete') and digest(directory/'act/model.safetensors')!=report['model_sha256']:
         raise ValueError('completed checkpoint changed')
+    if report.get('complete') and report.get('completed_steps') != protocol['training']['steps']:
+        raise ValueError('completed checkpoint has wrong update count')
 
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--dataset',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--resume',action='store_true')
+    p.add_argument('--protocol',type=Path,default=ROOT/PROTOCOL)
     p.add_argument('--diagnostic',action='store_true',help='Only 2/8000 steps of the largest arm; not a cohort result')
-    a=p.parse_args();protocol=json.loads((ROOT/PROTOCOL).read_text());source_sha=source_identity()
+    a=p.parse_args();protocol=json.loads(a.protocol.read_text());source_sha=source_identity()
     provenance=verify_dataset(a.dataset)
     if provenance['dataset_sha256']!=protocol['dataset_sha256']:raise ValueError('fixed data mismatch')
     import torch
     if not torch.cuda.is_available():raise RuntimeError('select a Colab GPU runtime first')
     a.out.mkdir(parents=True,exist_ok=a.resume)
-    summary={'complete':False,'diagnostic':a.diagnostic,'source_sha':source_sha,'dataset':provenance,'models':[]}
+    expected=len(protocol['arms'])*len(protocol['training']['seeds'])
+    summary={'complete':False,'diagnostic':a.diagnostic,'source_sha':source_sha,'dataset':provenance,
+             'protocol_sha256':digest(a.protocol),'expected_models':expected,'models':[]}
     arms=protocol['arms'][-1:] if a.diagnostic else protocol['arms']
     seeds=protocol['training']['seeds'][:1] if a.diagnostic else protocol['training']['seeds']
     for arm in arms:
@@ -45,7 +50,8 @@ def main():
                 report=json.loads((directory/'report.json').read_text())
                 validate_report(report,protocol,arm,seed,source_sha,directory)
                 if report.get('complete'):
-                    summary['models'].append({'directory':directory.name,'model_sha256':report['model_sha256']});continue
+                    summary['models'].append({'directory':directory.name,'complete':True,
+                                              'completed_steps':report['completed_steps'],'model_sha256':report['model_sha256']});continue
                 cmd.append('--resume')
             if a.diagnostic:cmd.extend(['--stop-after-step','2'])
             subprocess.run(cmd,check=True,cwd=ROOT)
@@ -54,7 +60,7 @@ def main():
             summary['models'].append({'directory':directory.name,'complete':report['complete'],
                                       'model_sha256':report.get('model_sha256'),'completed_steps':report['completed_steps']})
             write(a.out/'cohort.json',summary)
-    summary['complete']=not a.diagnostic and len(summary['models'])==8
+    summary['complete']=not a.diagnostic and len(summary['models'])==expected and all(m['complete'] for m in summary['models'])
     write(a.out/'cohort.json',summary)
 
 if __name__=='__main__':main()
