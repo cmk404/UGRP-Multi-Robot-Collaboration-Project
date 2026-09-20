@@ -99,13 +99,81 @@
     "local_unpack_and_full_hash_verification": true
   },
   "runtime_observation": {
-    "last_verified": "2026-09-21 01:28 KST",
+    "last_verified": "2026-09-21 01:50 KST",
     "wrapper_pid": 5819,
     "session": "colab-carry-cohort",
-    "first_model": "model-r128-h1-s20260921",
-    "last_report_completed_steps": 0,
-    "phase": "feature cache preparation",
-    "later_status": "Mac locked; Chrome UI inaccessible; no stop command sent",
-    "final_models_retrieved": 0
+    "cloud_completed_models": 3,
+    "next_model": "model-r128-h4-s20260922",
+    "next_completed_steps": 7000,
+    "phase": "training",
+    "final_models_retrieved": 4,
+    "collector": "colab-carry-results; complete at 8 verified models, 3 consecutive errors, or 2 hours; local outputs only",
+    "retrieval_verified": "2026-09-21 01:51 KST"
+  },
+  "cli_transition": {
+    "account": "kcm0127@gmail.com",
+    "cli_version": "0.6.0",
+    "kernel_client_version": "0.8.0",
+    "kernel_client_source": "https://github.com/googlecolab/jupyter-kernel-client.git",
+    "kernel_client_commit": "f18e982c3265df5e923aa9def101ab3fd737e139",
+    "verified": [
+      "existing T4 assignment registered without allocating a VM",
+      "existing kernel retained; fullproc variable and live PID accessible",
+      "remote file listing",
+      "cohort.json downloaded via CLI"
+    ],
+    "failed_dependency": "PyPI jupyter-kernel-client 1.0.2 lacks KernelClient; fixed using official CLI uv.lock fork",
+    "session_name": "ugrp-carry",
+    "new_drive_use": false,
+    "new_vm": false,
+    "kernel_restart": false
+  },
+  "partial_recovery": {
+    "models": 2,
+    "directory": "/Users/changmin/.codex/worktrees/colab-carry-training/ugrp/outputs/colab-results/recovery-2-1789922566",
+    "archive_sha256": "20e5b282459e22db28d5378225fa511063bf5dd8b19a9a7d66374c091c22b11a",
+    "mac_cpu_probe_count": 8,
+    "max_abs": 3.7550926208496094e-06,
+    "atol": 0.0001,
+    "rtol": 0.0001,
+    "physics_evaluation": false
+  },
+  "ci": {
+    "sha": "b464b74c4658467279cadfcaf9a15ab8838d0914",
+    "checks": "all 8 push/PR checks passed"
+  },
+  "cli_partial_recovery": {
+    "complete": false,
+    "models": [
+      {
+        "model": "model-r128-h1-s20260921",
+        "sha256": "8cebac23f2058c2916fb9b08eecbd16b37fbacfd6f171377288223d94baf6875",
+        "source_sha": "9aef6bb0fb7d05e6b419b2f79b361ebd29099948",
+        "wall_s": 308.53470781300007
+      },
+      {
+        "model": "model-r128-h1-s20260922",
+        "sha256": "1b189bf66ef1609dfba4c33924eb5595b8c6f53856dad32673ca67caf4a51e0f",
+        "source_sha": "9aef6bb0fb7d05e6b419b2f79b361ebd29099948",
+        "wall_s": 309.62488057099995
+      },
+      {
+        "model": "model-r128-h4-s20260921",
+        "sha256": "14e924d03a62d3ac54062440c77931f0f6d5616bddfef8c893e6dfb644c4c863",
+        "source_sha": "9aef6bb0fb7d05e6b419b2f79b361ebd29099948",
+        "wall_s": 373.8033595469999
+      },
+      {
+        "model": "model-r128-h4-s20260922",
+        "sha256": "d88393bb3168d37275146ad5e329f55be82195406c211aa7f73bf28e83f32c20",
+        "source_sha": "9aef6bb0fb7d05e6b419b2f79b361ebd29099948",
+        "wall_s": 372.61646265299987
+      }
+    ],
+    "expected": 8,
+    "observed_unix": 1789923145.23195,
+    "source_sha": "9aef6bb0fb7d05e6b419b2f79b361ebd29099948",
+    "transport": "official google-colab-cli ContentsClient; existing runtime only",
+    "physics_evaluation": false
   }
 }

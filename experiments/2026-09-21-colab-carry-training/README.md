@@ -84,3 +84,38 @@ Colab VM이 종료되기 전에 회수해야 하며 자동 영구 백업은 아�
 01:28 KST 마지막 확인은 첫 모델 feature cache 준비 중(프로세스 생존)이었다.
 이후 Mac 잠금으로 Chrome 접근이 막혀 후속 진행률은 확인하지 못했다.
 중지 명령은 보내지 않았으며 최종 모델 회수는 아직 0개다.
+
+
+## CLI 전환 및 첫 결과 회수
+
+Mac 잠금 해제 후 `google-colab-cli 0.6.0`을 kcm0127 계정의 기존 T4 런타임에 연결했다.
+새 VM 생성·학습 재시작·Drive 조회/마운트 없이 기존 커널의 `fullproc`과 파일을 확인했다.
+PyPI 기본 의존성 `jupyter-kernel-client 1.0.2`에는 CLI가 요구하는 `KernelClient`가 없어
+첫 `exec`는 실패했다. 공식 저장소 `uv.lock`의 Google Colab fork를 고정해 해결했다.
+
+```sh
+uv tool install google-colab-cli==0.6.0 --with 'jupyter-kernel-client @ git+https://github.com/googlecolab/jupyter-kernel-client.git@f18e982c3265df5e923aa9def101ab3fd737e139'
+colab sessions
+colab ls -s ugrp-carry /content/carry-training
+colab download -s ugrp-carry /content/carry-training/cohort.json /tmp/ugrp-cohort.json
+```
+
+`ugrp-carry`는 이 Mac의 로컬 CLI 세션 이름이며 새 설치에서 자동 생성되지 않는다.
+0.6.0에는 웹 런타임 attach 명령이 없어 공식 패키지의 `Client.list_assignments()`에서
+조회한 기존 assignment를 `StateStore`에 등록하고 Jupyter의 기존 kernel ID를 연결했다.
+프록시 자격증명은 CLI의 사용자 설정에만 저장하며 Git·실험 기록에는 포함하지 않는다.
+새 런타임의 경우 이름을 재사용하기 전에 계정과 endpoint를 다시 확인한다.
+
+128px/1시점 두 seed 모델을 먼저 Mac으로 회수했다. ZIP·내부 12파일·모델 해시와
+원본 데이터/소스/seed/8000step/batch32/adapter를 대조했다. Mac CPU에서 각 모델의
+train/dev 처음·마지막 4표본 예측을 Colab 출력과 비교했고, 8개 검사 모두
+atol/rtol 1e-4 이내(최대 3.7551e-6)였다. 이는 전송·모델 로드 검증이며 물리 성공률이 아니다.
+원본과 `mac-verification.json`은 `outputs/colab-results/recovery-2-1789922566/`에 있다.
+
+01:50 KST CLI 확인 시 3개 학습 완료, 네 번째 모델 7000/8000step으로 기존 프로세스가 살아 있었다.
+남은 결과는 `colab-carry-results` 소유 세션에서 공식 CLI 파일 API로 회수한다.
+종료점은 8개 모델의 해시·설정 및 최종 cohort 검증 완료, 연속 오류 3회, 또는 2시간이다.
+상태는 `outputs/colab-results/collection-status.json`, 결과는
+`outputs/colab-results/carry-training/`에 저장한다. 이 기록 시점에는 8개 전체 회수와 물리 평가는 미완료다.
+
+01:51 KST CLI 회수기가 128px 두 history × 두 seed, 총 4개 모델의 다운로드와 해시·설정 검증을 완료했다. 나머지 256px 4개 모델을 기다리며 계속 실행 중이다.
