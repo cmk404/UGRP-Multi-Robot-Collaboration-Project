@@ -1,0 +1,92 @@
+{
+  "source_sha": "9aef6bb0fb7d05e6b419b2f79b361ebd29099948",
+  "interrupted_resume_model_sha256": "3d26e97c68fb1a0a311648a8c8695f924ce1b90bbdeef93e5d78b2b9e2ab00de",
+  "same_losses": true,
+  "final_step_export_recovery": true,
+  "preserved_previous_exports": 1,
+  "deployment_max_abs": {
+    "train": [
+      0.0,
+      0.0
+    ],
+    "development": [
+      0.0,
+      0.0
+    ]
+  },
+  "scope": "128/h4, train/dev8rows,4steps CPU diagnostic only",
+  "local_optional_tests": {
+    "passed": 13,
+    "scope": "bundle integrity + exact optimizer/RNG resume + native ACT"
+  },
+  "integrated_offline_tests": {
+    "source_sha": "4cc67ebf008d0a3814d78a822a88ab8bbdfd7209",
+    "passed": 1004,
+    "skipped": 3,
+    "subtests": 184,
+    "wall_s": 62.81
+  },
+  "data_bundle": {
+    "path": "/Users/changmin/.codex/worktrees/colab-carry-training/ugrp/outputs/colab/carry.zip",
+    "sha256": "28f27dcd365bdd4b87a600019e4b9a1a36839b16899c025d1ca91e1845b5fc9e",
+    "bytes": 347132400,
+    "source_sha": "1172894810830dee79e59f537568c0a7b7edd10c",
+    "dataset_sha256": "3db730eaf9d827a40b355d7b53188993e14b75d10fd10b9b213a67f830fba167",
+    "files": 7445
+  },
+  "final_source_bundle": {
+    "source_sha": "9aef6bb0fb7d05e6b419b2f79b361ebd29099948",
+    "archive_sha256": "a89255907e645e1f9a1514fbd2f6f2c6fd76a651c6a188a1df054de81aca565d",
+    "bytes": 1285825
+  },
+  "raw_directory": "/Users/changmin/.codex/worktrees/colab-carry-training/ugrp/outputs/colab-verification",
+  "failures_preserved": [
+    {
+      "case": "upload hash check before browser upload completed",
+      "resolution": "after full byte count 347132400, archive SHA matched and extraction succeeded"
+    },
+    {
+      "case": "interrupted export destination existed",
+      "resolution": "save verified candidate then preserve previous export; exact recovery verified"
+    },
+    {
+      "case": "fresh Colab LeRobot lacks existing two-line device compatibility patch",
+      "error": "KeyError: observation.state",
+      "resolution": "same hash-checked patch as local; no added observation state"
+    }
+  ],
+  "gpu_status": "T4 full-data r256-h4 2-step diagnostic passed; full 8-model cohort started; no completed cohort result yet",
+  "simulation_scope": "feasibility review only; no Colab simulation run",
+  "storage": "local git records; VM direct transfer; no Google Drive",
+  "gpu_diagnostic": {
+    "source_sha": "9aef6bb0fb7d05e6b419b2f79b361ebd29099948",
+    "environment": {
+      "python": "3.12.3 (main, Jul 15 2026, 23:46:41) [GCC 13.3.0]",
+      "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+      "device": "cuda",
+      "cuda": "12.8",
+      "upstream_modeling_sha256": "2ea0acbdf210acee9d08f1f306afbda1e935bce0604b3b67b8d87c57c3f79a19",
+      "gpu": "Tesla T4",
+      "torch": "2.11.0+cu128",
+      "torchvision": "0.26.0+cu128",
+      "lerobot": "0.6.2",
+      "numpy": "2.2.6"
+    },
+    "steps": 2,
+    "feature_max_abs": 0.0001590251922607422,
+    "action_max_abs": 2.2649765014648438e-06,
+    "deployment_max_abs": {
+      "train": [
+        4.6938657760620117e-07,
+        6.556510925292969e-07
+      ],
+      "development": [
+        8.046627044677734e-07,
+        7.897615432739258e-07
+      ]
+    },
+    "wall_s": 122.78935353599991,
+    "archive_sha256": "f8faf2bdbf3ec77591581da2d43ee64f9f846ec958cad584eecce41bf4b88cdd",
+    "local_audit_directory": "/Users/changmin/.codex/worktrees/colab-carry-training/ugrp/outputs/colab-verification/gpu-audit"
+  }
+}

@@ -45,3 +45,36 @@ macOS `mjpython` 실행 경로, OpenGL/EGL 또는 OSMesa 설정, 런타임 시�
 
 참고: https://mujoco.readthedocs.io/en/stable/python.html ,
 https://research.google.com/colaboratory/faq.html
+
+## 2026-09-21 실행 상태
+
+실행 소스 `9aef6bb0fb7d05e6b419b2f79b361ebd29099948`을 별도 ZIP으로 고정했다.
+Colab Tesla T4에서 전체 고정 데이터의 256px/4시점 2-update 진단이 통과했다.
+feature cache/native 최대 차이 1.5903e-4, 전체 action chunk 최대 차이 2.2650e-6,
+GPU→CPU 최대 차이 8.0466e-7(train/dev 각 2표본)이다.
+로컬과 같은 ACT 패치 파일 해시 `2ea0acbdf210acee9d08f1f306afbda1e935bce0604b3b67b8d87c57c3f79a19`를 확인했다.
+진단·실패 로그·설치 버전·manifest를 로컬로 내려받아 ZIP 해시까지 대조했다.
+
+본 학습은 같은 소스로 01:26 KST에 시작했으며 `colab-carry-cohort` 세션의 종료점은
+8개 모델 각 8000 step 완료 또는 첫 오류다. 아직 전체 학습 완료나 물리 평가 성공을 뜻하지 않는다.
+실행 소스는 Colab `/content/ugrp-source-v3`, 데이터는 `/content/ugrp-carry/data/dataset.json`,
+출력은 `/content/carry-training`, 로그는 `/content/carry-training.log`다.
+`verification.json`에 검증 범위와 원본 위치를 기록했다.
+
+Colab을 다시 확인할 때는 **강 / kcm0127@gmail.com**의 이미 열린 scratchpad 탭을 사용한다.
+새로고침하지 않고 다음 셀로 상태를 읽을 수 있다.
+
+```python
+from pathlib import Path
+import json
+print([(p.parent.name, json.loads(p.read_text()).get('completed_steps', 0),
+        json.loads(p.read_text()).get('complete', False))
+       for p in Path('/content/carry-training').glob('model-*/report.json')])
+print(Path('/content/carry-training.log').read_text()[-2000:])
+```
+
+끝난 모델과 report·예측 파일·cohort.json·로그를 내려받아 검증한 뒤
+로컬 물리 평가 작업에 전달한다. 실행 중인 체크포인트는 `resume.pt`가 atomic rename으로
+저장되므로 파일 복사 시 온전한 이전/최신 checkpoint 중 하나를 얻는다.
+Colab VM이 종료되기 전에 회수해야 하며 자동 영구 백업은 아니다.
+명시적인 중지 요청 때만 `/content/act-env/bin/python /content/ugrp-source-v3/scripts/ugrp_session.py stop colab-carry-cohort`로 이 세션을 정리한다.
