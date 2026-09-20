@@ -1,0 +1,25 @@
+{
+  "success": false,
+  "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_grasp_endurance.py\", line 87, in run\n    if not all(d['ready'] for d in decisions.values()):raise RuntimeError('RGB endurance stopped: '+str({r:d.get('error') for r,d in decisions.items()}))\n                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: RGB endurance stopped: {'r1': 'own-camera beam silhouette changed or disappeared', 'r3': None}\n",
+  "evaluation": {
+    "success": false,
+    "checkpoints": {},
+    "grasp_stability": {
+      "success": true,
+      "gates": {
+        "full_grasp_samples": true,
+        "grasp_spacing_preserved": true,
+        "grasp_bilateral_through_lift_hold": true,
+        "grasp_hold_lifted_every_sample": true
+      },
+      "anchor_spacing_m": 0.6505829976368752,
+      "final_spacing_m": 0.6477394783629228,
+      "max_spacing_change_m": 0.006628203757787388,
+      "nonbilateral_samples": 0,
+      "samples": 111,
+      "max_sample_gap_s": 0.10000000000000142
+    },
+    "released_on_floor": false
+  },
+  "wall_seconds": 51.498529625008814
+}

@@ -1,0 +1,191 @@
+{
+  "source_sha": "2db7acb0e7832d17e8e46bfa0214cdf29421eeac",
+  "trials": [
+    {
+      "mode": "stationary",
+      "command": [
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/scripts/run_pair_grasp_endurance.py",
+        "--map",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/maps/pair_navigation/narrow-door.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-loaded-navigation/outputs/pair-navigation/runtime/models/grasp",
+        "--out-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/outputs/pair-endurance-baseline-2026-09-14/stationary",
+        "--mode",
+        "stationary"
+      ],
+      "returncode": 1,
+      "wall_seconds": 154.49008541699732,
+      "success": false,
+      "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/scripts/run_pair_grasp_endurance.py\", line 79, in run\n    if not all(d['ready'] for d in decisions.values()):raise RuntimeError('RGB endurance stopped: '+str({r:d.get('error') for r,d in decisions.items()}))\n                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: RGB endurance stopped: {'r1': 'own-camera beam silhouette changed or disappeared', 'r3': 'own-camera beam silhouette changed or disappeared'}\n",
+      "evaluation": {
+        "checkpoints": {
+          "180": {
+            "beam_relative_to_finger_change_m": {
+              "r1": -0.07738429291265297,
+              "r3": -0.07722505510587875
+            },
+            "finger_height_change_m": {
+              "r1": 0.006291292912652985,
+              "r3": 0.0061320551058787615
+            },
+            "gates": {
+              "bilateral_every_sample": false,
+              "collision_free": false,
+              "continuous_samples": true,
+              "duration_completed": false,
+              "full_grasp_stable": true,
+              "height_retained": false,
+              "invariants_unchanged": true,
+              "level_every_sample": false,
+              "lifted_every_sample": false,
+              "spacing_preserved": true,
+              "weld_off": true,
+              "within_authored_bounds": true
+            },
+            "last_sample_s": 93.94000000000273,
+            "max_beam_drop_m": 0.07109299999999999,
+            "passed": false
+          },
+          "300": {
+            "beam_relative_to_finger_change_m": {
+              "r1": -0.07738429291265297,
+              "r3": -0.07722505510587875
+            },
+            "finger_height_change_m": {
+              "r1": 0.006291292912652985,
+              "r3": 0.0061320551058787615
+            },
+            "gates": {
+              "bilateral_every_sample": false,
+              "collision_free": false,
+              "continuous_samples": true,
+              "duration_completed": false,
+              "full_grasp_stable": true,
+              "height_retained": false,
+              "invariants_unchanged": true,
+              "level_every_sample": false,
+              "lifted_every_sample": false,
+              "spacing_preserved": true,
+              "weld_off": true,
+              "within_authored_bounds": true
+            },
+            "last_sample_s": 93.94000000000273,
+            "max_beam_drop_m": 0.07109299999999999,
+            "passed": false
+          }
+        },
+        "grasp_stability": {
+          "anchor_spacing_m": 0.6505937001159792,
+          "final_spacing_m": 0.6492980828319981,
+          "gates": {
+            "full_grasp_samples": true,
+            "grasp_bilateral_through_lift_hold": true,
+            "grasp_hold_lifted_every_sample": true,
+            "grasp_spacing_preserved": true
+          },
+          "max_sample_gap_s": 0.10000000000000142,
+          "max_spacing_change_m": 0.00613684043512619,
+          "nonbilateral_samples": 0,
+          "samples": 111,
+          "success": true
+        },
+        "success": false
+      }
+    },
+    {
+      "mode": "shuttle",
+      "command": [
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/scripts/run_pair_grasp_endurance.py",
+        "--map",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/maps/pair_navigation/narrow-door.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-loaded-navigation/outputs/pair-navigation/runtime/models/grasp",
+        "--out-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/outputs/pair-endurance-baseline-2026-09-14/shuttle",
+        "--mode",
+        "shuttle"
+      ],
+      "returncode": 1,
+      "wall_seconds": 179.26582275002147,
+      "success": false,
+      "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/scripts/run_pair_grasp_endurance.py\", line 79, in run\n    if not all(d['ready'] for d in decisions.values()):raise RuntimeError('RGB endurance stopped: '+str({r:d.get('error') for r,d in decisions.items()}))\n                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: RGB endurance stopped: {'r1': 'own-camera beam silhouette changed or disappeared', 'r3': 'own-camera beam silhouette changed or disappeared'}\n",
+      "evaluation": {
+        "checkpoints": {
+          "180": {
+            "beam_relative_to_finger_change_m": {
+              "r1": -0.07531514721359926,
+              "r3": -0.07638216182817804
+            },
+            "finger_height_change_m": {
+              "r1": 0.003700147213599264,
+              "r3": 0.004767161828178046
+            },
+            "gates": {
+              "bilateral_every_sample": false,
+              "collision_free": false,
+              "continuous_samples": true,
+              "duration_completed": false,
+              "full_grasp_stable": true,
+              "height_retained": false,
+              "invariants_unchanged": true,
+              "level_every_sample": false,
+              "lifted_every_sample": false,
+              "spacing_preserved": true,
+              "weld_off": true,
+              "within_authored_bounds": true
+            },
+            "last_sample_s": 94.24000000000274,
+            "max_beam_drop_m": 0.071615,
+            "passed": false
+          },
+          "300": {
+            "beam_relative_to_finger_change_m": {
+              "r1": -0.07531514721359926,
+              "r3": -0.07638216182817804
+            },
+            "finger_height_change_m": {
+              "r1": 0.003700147213599264,
+              "r3": 0.004767161828178046
+            },
+            "gates": {
+              "bilateral_every_sample": false,
+              "collision_free": false,
+              "continuous_samples": true,
+              "duration_completed": false,
+              "full_grasp_stable": true,
+              "height_retained": false,
+              "invariants_unchanged": true,
+              "level_every_sample": false,
+              "lifted_every_sample": false,
+              "spacing_preserved": true,
+              "weld_off": true,
+              "within_authored_bounds": true
+            },
+            "last_sample_s": 94.24000000000274,
+            "max_beam_drop_m": 0.071615,
+            "passed": false
+          }
+        },
+        "grasp_stability": {
+          "anchor_spacing_m": 0.6505937001159792,
+          "final_spacing_m": 0.6492980828319981,
+          "gates": {
+            "full_grasp_samples": true,
+            "grasp_bilateral_through_lift_hold": true,
+            "grasp_hold_lifted_every_sample": true,
+            "grasp_spacing_preserved": true
+          },
+          "max_sample_gap_s": 0.10000000000000142,
+          "max_spacing_change_m": 0.00613684043512619,
+          "nonbilateral_samples": 0,
+          "samples": 111,
+          "success": true
+        },
+        "success": false
+      }
+    }
+  ]
+}

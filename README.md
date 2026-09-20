@@ -53,6 +53,8 @@
 | [20cm 공동 운반과 내려놓기](experiments/2026-09-13-rgb-short-transport/README.md) | 고정 조건 10/10, 다양한 시작 6/10 | 내려놓기는 시연 명령; 일부 운반 영상은 학습 범위 밖 |
 | [두 로봇 운반 동기화](experiments/2026-09-13-pair-carry-sync/README.md) | 비교군 20/26 → 동기화 26/26 | 고정 fixture의 지연·보고 누락 비교; 일반 협업 증명 아님 |
 | [방향을 돌린 뒤 지도 주행](experiments/2026-09-13-heading-map-navigation/README.md) | 통행 가능 4/4 도착, 좁은 통로 2/2 진입 거부 | 무부하 로봇1대; 명시적으로 제공한 정적 지도 사용 |
+| [공동 파지 유지·미끄러짐 회복](experiments/2026-09-15-pair-grasp-retention/README.md) | 제자리·왕복 각각 300초 유지, 지형 5/5 운반·1/1 차단 정지 | 접촉 수치 처리 수정; 고정 조건·시연 파지, 한 번 재파지 후 재발 시 내려놓기 |
+| [두 로봇 통로 예약·양보](experiments/2026-09-15-rgb-traffic/README.md) | 정상/지연/누락/재시작 6조건 도착, 막힌 출구 1조건 안전 대기 | 무부하 2대·중앙 전체 경로 예약; 고정 시작, 각 조건 1회 |
 
 학생은 자기 RGB·공용 top RGB와 자기 발행 명령을 사용한다. 교사 정답은 학습 데이터 생성에만 허용되며, 실행 중 평가 좌표·접촉·관절 측정으로 행동을 보정하지 않는다. 정적 지도는 승인된 지도 주행 경로의 선택적 입력이다. 실제 카메라 배치/FOV와 weld OFF를 유지한다.
 
@@ -68,6 +70,7 @@
 - [동기화 담당: 공동 파지부터 해제까지 입출력 계약과 실행 예제](docs/task_stage_sync_contract.md) — 프로토콜 검증, 실제 로봇 연결은 후속 작업
 - [실제 RGB·LLM 연구 E2E 병목 파일럿](experiments/research-e2e-20260916/README.md) — 역할 합의·접근까지 실행, 공동 파지 이후는 미도달; 자연어 합의 진동·모델 오류·짧은 원시 명령 반복을 분리 기록
 - [실험 목록과 증거 관리](experiments/README.md)
+- [실행용 지도 목록과 예시 지형 선택](maps/README.md)
 - [연구 비교 조건과 관측 경계](docs/warehouse_research_contract.md)
 - [레퍼런스 차이표와 공식 ACT 비교 경로](docs/reference_alignment.md) — RGB 전용 소규모 비교; 기본 제어기 변경 아님
 - [현재 아키텍처 상세 기록](docs/current_architecture_todo.md) — 각 항목의 기록 날짜를 확인한다.
@@ -80,6 +83,7 @@
 |---|---|
 | `harness/` | 모델 입력, 행동 실행, 카메라 기반 인식과 판정 |
 | `sim/` | MuJoCo 환경과 평가 |
+| `maps/` | 단독 주행·공동 운반용 정적 지도와 지형 목록 |
 | `scripts/` | 실행·기록·검증·프로세스 정리 |
 | `tests/` | 자동 회귀검사와 포터블 영상 fixture |
 | `experiments/` | 커밋에 연결한 실험 설정·결과·원본 식별값 |

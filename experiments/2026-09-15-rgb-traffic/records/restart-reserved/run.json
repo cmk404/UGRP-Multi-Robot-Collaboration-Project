@@ -1,0 +1,41 @@
+{
+  "source_sha": "ca1ed29fcb4c75f82d18099d170952ef3a95cd72",
+  "scenario": "restart",
+  "coordinated": true,
+  "private_setup": {
+    "r1": {
+      "start_xy_m": [
+        -0.6,
+        -2.0
+      ],
+      "start_yaw_deg": 0.0
+    },
+    "r3": {
+      "start_xy_m": [
+        0.55,
+        -2.8
+      ],
+      "start_yaw_deg": 90.0
+    }
+  },
+  "max_steps": 300,
+  "input_boundary": [
+    "own RGB",
+    "common top RGB",
+    "authored static maps",
+    "issued command history",
+    "reports derived from these inputs",
+    "monotonic issued-command clock"
+  ],
+  "own_rgb_usage": "required, decoded and archived; top RGB controls localization/navigation",
+  "scope": "two unloaded robots, centralized whole-route reservation, no LLM; no loaded-team claim",
+  "environment": {
+    "python": "3.12.13",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "opencv_imported": "5.0.0",
+    "mujoco": "3.12.0",
+    "numpy": "2.5.2"
+  },
+  "model_calls": 0,
+  "model_cost_usd": 0
+}

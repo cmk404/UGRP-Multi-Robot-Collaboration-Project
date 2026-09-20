@@ -1,0 +1,80 @@
+{
+  "schema": "ugrp.authored_navigation_map.v1",
+  "map_id": "staggered_obstacles",
+  "version": 1,
+  "frame": "warehouse_xy_m",
+  "bounds_m": [
+    -1.08,
+    1.85,
+    -2.9,
+    -1.15
+  ],
+  "grid_resolution_m": 0.025,
+  "top_camera": {
+    "name": "cctv_top",
+    "position_m": [
+      0.55,
+      -2.0,
+      2.5
+    ],
+    "quaternion_wxyz": [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "fov_y_deg": 55.0
+  },
+  "footprint": {
+    "unloaded_radius_m": 0.18,
+    "safety_margin_m": 0.04
+  },
+  "zones": {
+    "start": {
+      "center_m": [
+        0.58,
+        -2.0
+      ],
+      "radius_m": 0.25
+    },
+    "goal": {
+      "center_m": [
+        -0.62,
+        -2
+      ],
+      "radius_m": 0.18
+    }
+  },
+  "obstacles": [
+    {
+      "id": "near_pillar",
+      "center_m": [
+        0.11,
+        -1.75
+      ],
+      "half_extents_m": [
+        0.07,
+        0.07
+      ],
+      "height_m": 0.3,
+      "kind": "wall",
+      "traversable": false,
+      "cost_multiplier": 1
+    },
+    {
+      "id": "far_pillar",
+      "center_m": [
+        -0.27,
+        -2.4
+      ],
+      "half_extents_m": [
+        0.07,
+        0.07
+      ],
+      "height_m": 0.3,
+      "kind": "wall",
+      "traversable": false,
+      "cost_multiplier": 1
+    }
+  ]
+}

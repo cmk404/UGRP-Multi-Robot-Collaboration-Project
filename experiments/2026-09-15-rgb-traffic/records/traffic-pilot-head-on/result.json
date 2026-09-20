@@ -1,0 +1,38 @@
+{
+  "source_sha": "57b6027653d12216233454e00e01f3f3fd5097a2",
+  "scenario": "head_on",
+  "coordinated": true,
+  "statuses": {
+    "r1": "navigating_forward",
+    "r3": "calibrating_forward"
+  },
+  "decision_rounds": 300,
+  "command_clock_s": 84.44153475137331,
+  "wall_elapsed_s": 74.24902599997586,
+  "evaluation": {
+    "success": false,
+    "gates": {
+      "both_rgb_arrived": false,
+      "both_truth_goals": false,
+      "zero_collisions": true,
+      "weld_off": true,
+      "inside_map": true,
+      "upright": true,
+      "invariants": true
+    },
+    "goal_distances_m": {
+      "r1": 1.2332423314989902,
+      "r3": 2.2499967727910337
+    },
+    "sampled_min_center_separation_m": 1.293499595181922,
+    "sampled_min_circle_clearance_m": 0.9334995951819219,
+    "collision_steps": 0,
+    "peer_collision_steps": 0,
+    "weld_steps": 0,
+    "max_tilt_rad": 9.593060492471127e-05,
+    "sim_elapsed_s": 84.44599999998132
+  },
+  "error": null,
+  "model_calls": 0,
+  "model_cost_usd": 0
+}

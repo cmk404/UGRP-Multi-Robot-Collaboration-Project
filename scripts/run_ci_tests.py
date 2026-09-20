@@ -28,6 +28,8 @@ TEST_PATTERNS = (
     "tests/test_dispatch_research.py",
     "tests/test_dispatch_execution.py",
     "tests/test_dispatch_skill_binding.py",
+    "tests/test_pair_navigation*.py",
+    "tests/test_pair_transport*.py",
     "tests/test_camera_action_learning.py",
     "tests/test_camera_local_servo.py",
     "tests/test_camera_visual_observer.py",
@@ -54,6 +56,7 @@ TEST_PATTERNS = (
     "tests/test_camera_varied_start*.py",
     "tests/test_camera_short_transport*.py",
     "tests/test_known_map*.py",
+    "tests/test_rgb_traffic*.py",
     "tests/test_markerless*.py",
     "tests/test_visual_attachment*.py",
     "tests/test_placement_guidance.py",
@@ -65,6 +68,9 @@ TEST_PATTERNS = (
     "tests/test_navigation_temporal.py",
     "tests/test_ugrp_session.py",
     "tests/test_seed_validation_model.py",
+    "tests/test_semantic_pick_policy.py",
+    "tests/test_pick_match*.py",
+    "tests/test_replay_pick_match.py",
 )
 
 

@@ -1,0 +1,18 @@
+WARNING: Nan, Inf or huge value in QACC at DOF 32. The simulation is unstable. Time = 13.1740.
+
+{
+  "success": false,
+  "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/scripts/run_pair_grasp_endurance.py\", line 75, in run\n    scene.finish_grasp(predict_student,gm,after_close=scene.anchor_spacing,hold=scene.hold_spacing,close_pulse=1600)\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/scripts/camera_approach_scene.py\", line 276, in finish_grasp\n    after_close()\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/scripts/run_pair_navigation.py\", line 68, in anchor_spacing\n    self.spacing_frame(execute=False)\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/scripts/run_pair_navigation.py\", line 62, in spacing_frame\n    raise RuntimeError('grasp spacing stopped: '+json.dumps({r:d.get('error') for r,d in decisions.items()}))\nRuntimeError: grasp spacing stopped: {\"r1\": \"initial own-camera beam silhouette unsupported\", \"r3\": \"initial own-camera beam silhouette unsupported\"}\n",
+  "evaluation": {
+    "success": false,
+    "reason": "no endurance samples",
+    "grasp_stability": {
+      "success": false,
+      "reason": "complete close/lift/hold samples required",
+      "gates": {
+        "full_grasp_samples": false
+      }
+    }
+  },
+  "wall_seconds": 5.745502957986901
+}

@@ -1,0 +1,158 @@
+[
+  {
+    "event": "REQUEST",
+    "unit_id": "r1",
+    "clock_s": 0.0,
+    "coordinator_epoch": 1,
+    "identity": [
+      "traffic_following:r1",
+      1,
+      1
+    ],
+    "route": [
+      [
+        0.2642376096387886,
+        -1.9982575464002366
+      ],
+      [
+        1.7,
+        -2.0
+      ]
+    ]
+  },
+  {
+    "event": "REQUEST",
+    "unit_id": "r3",
+    "clock_s": 0.0,
+    "coordinator_epoch": 1,
+    "identity": [
+      "traffic_following:r3",
+      1,
+      1
+    ],
+    "route": [
+      [
+        -0.6348684478391691,
+        -2.0
+      ],
+      [
+        0.95,
+        -2.0
+      ]
+    ]
+  },
+  {
+    "event": "GRANT",
+    "unit_id": "r1",
+    "clock_s": 0.0,
+    "coordinator_epoch": 1,
+    "generation": 1,
+    "identity": [
+      "traffic_following:r1",
+      1,
+      1
+    ],
+    "occupancy": "possibly occupied until RGB CLEAR, without TTL"
+  },
+  {
+    "event": "GO",
+    "unit_id": "r1",
+    "clock_s": 0.0,
+    "coordinator_epoch": 1,
+    "reason": "reserved_route_ready",
+    "generation": 1
+  },
+  {
+    "event": "HOLD",
+    "unit_id": "r3",
+    "clock_s": 0.0,
+    "coordinator_epoch": 1,
+    "reason": "reserved_route:r1",
+    "generation": null
+  },
+  {
+    "event": "ENTER",
+    "unit_id": "r1",
+    "clock_s": 0.6,
+    "coordinator_epoch": 1,
+    "generation": 1,
+    "evidence": "RGB displacement; not command acknowledgement"
+  },
+  {
+    "event": "CLEAR",
+    "unit_id": "r1",
+    "clock_s": 14.213792659445444,
+    "coordinator_epoch": 1,
+    "generation": 1,
+    "sequence": 45,
+    "top_sha256": "be12ac268068a09f0deef4de863442553fae2935038d4f758220e5cd774e9401"
+  },
+  {
+    "event": "RELEASE",
+    "unit_id": "r1",
+    "clock_s": 14.213792659445444,
+    "coordinator_epoch": 1,
+    "generation": 1
+  },
+  {
+    "event": "GRANT",
+    "unit_id": "r3",
+    "clock_s": 14.213792659445444,
+    "coordinator_epoch": 1,
+    "generation": 2,
+    "identity": [
+      "traffic_following:r3",
+      1,
+      1
+    ],
+    "occupancy": "possibly occupied until RGB CLEAR, without TTL"
+  },
+  {
+    "event": "HOLD",
+    "unit_id": "r1",
+    "clock_s": 14.213792659445444,
+    "coordinator_epoch": 1,
+    "reason": "completed_or_waiting",
+    "generation": null
+  },
+  {
+    "event": "GO",
+    "unit_id": "r3",
+    "clock_s": 14.213792659445444,
+    "coordinator_epoch": 1,
+    "reason": "reserved_route_ready",
+    "generation": 2
+  },
+  {
+    "event": "ENTER",
+    "unit_id": "r3",
+    "clock_s": 14.813792659445443,
+    "coordinator_epoch": 1,
+    "generation": 2,
+    "evidence": "RGB displacement; not command acknowledgement"
+  },
+  {
+    "event": "CLEAR",
+    "unit_id": "r3",
+    "clock_s": 29.5222067843008,
+    "coordinator_epoch": 1,
+    "generation": 2,
+    "sequence": 94,
+    "top_sha256": "b6befd9a8cc46c83a25e2ecdfa636bd90e76f3f91eee689b7f5c6ea6bd241d02"
+  },
+  {
+    "event": "RELEASE",
+    "unit_id": "r3",
+    "clock_s": 29.5222067843008,
+    "coordinator_epoch": 1,
+    "generation": 2
+  },
+  {
+    "event": "HOLD",
+    "unit_id": "r3",
+    "clock_s": 29.5222067843008,
+    "coordinator_epoch": 1,
+    "reason": "completed_or_waiting",
+    "generation": null
+  }
+]

@@ -1,0 +1,282 @@
+[
+  {
+    "event": "REQUEST",
+    "unit_id": "r1",
+    "clock_s": 0.0,
+    "coordinator_epoch": 1,
+    "identity": [
+      "traffic_head_on:r1",
+      1,
+      1
+    ],
+    "route": [
+      [
+        -0.5895646542453185,
+        -2.439098307140398
+      ],
+      [
+        -0.04999999999999993,
+        -2.0
+      ],
+      [
+        1.2,
+        -2.0
+      ],
+      [
+        1.65,
+        -2.45
+      ]
+    ]
+  },
+  {
+    "event": "REQUEST",
+    "unit_id": "r3",
+    "clock_s": 0.0,
+    "coordinator_epoch": 1,
+    "identity": [
+      "traffic_head_on:r3",
+      1,
+      1
+    ],
+    "route": [
+      [
+        1.6372910462524142,
+        -1.5591592392598386
+      ],
+      [
+        1.2500000000000002,
+        -1.95
+      ],
+      [
+        1.2,
+        -2.0
+      ],
+      [
+        -0.1499999999999999,
+        -2.0
+      ],
+      [
+        -0.6,
+        -1.55
+      ]
+    ]
+  },
+  {
+    "event": "GRANT",
+    "unit_id": "r1",
+    "clock_s": 0.0,
+    "coordinator_epoch": 1,
+    "generation": 1,
+    "identity": [
+      "traffic_head_on:r1",
+      1,
+      1
+    ],
+    "occupancy": "possibly occupied until RGB CLEAR, without TTL"
+  },
+  {
+    "event": "GO",
+    "unit_id": "r1",
+    "clock_s": 0.0,
+    "coordinator_epoch": 1,
+    "reason": "reserved_route_ready",
+    "generation": 1
+  },
+  {
+    "event": "HOLD",
+    "unit_id": "r3",
+    "clock_s": 0.0,
+    "coordinator_epoch": 1,
+    "reason": "reserved_route:r1",
+    "generation": null
+  },
+  {
+    "event": "ENTER",
+    "unit_id": "r1",
+    "clock_s": 0.6,
+    "coordinator_epoch": 1,
+    "generation": 1,
+    "evidence": "RGB displacement; not command acknowledgement"
+  },
+  {
+    "event": "EXTEND",
+    "unit_id": "r1",
+    "clock_s": 3.4,
+    "coordinator_epoch": 1,
+    "generation": 2,
+    "identity": [
+      "traffic_head_on:r1",
+      1,
+      2
+    ],
+    "retained_route_count": 2
+  },
+  {
+    "event": "EXTEND",
+    "unit_id": "r1",
+    "clock_s": 21.100274236807397,
+    "coordinator_epoch": 1,
+    "generation": 3,
+    "identity": [
+      "traffic_head_on:r1",
+      1,
+      3
+    ],
+    "retained_route_count": 3
+  },
+  {
+    "event": "EXTEND",
+    "unit_id": "r1",
+    "clock_s": 23.450585465232134,
+    "coordinator_epoch": 1,
+    "generation": 4,
+    "identity": [
+      "traffic_head_on:r1",
+      1,
+      4
+    ],
+    "retained_route_count": 4
+  },
+  {
+    "event": "EXTEND",
+    "unit_id": "r1",
+    "clock_s": 25.499053619394864,
+    "coordinator_epoch": 1,
+    "generation": 5,
+    "identity": [
+      "traffic_head_on:r1",
+      1,
+      5
+    ],
+    "retained_route_count": 5
+  },
+  {
+    "event": "EXTEND",
+    "unit_id": "r1",
+    "clock_s": 39.84401158996773,
+    "coordinator_epoch": 1,
+    "generation": 6,
+    "identity": [
+      "traffic_head_on:r1",
+      1,
+      6
+    ],
+    "retained_route_count": 6
+  },
+  {
+    "event": "CLEAR",
+    "unit_id": "r1",
+    "clock_s": 43.37930762881355,
+    "coordinator_epoch": 1,
+    "generation": 6,
+    "sequence": 110,
+    "top_sha256": "955717b6b2faf609ae96bc8e352ab1f20747b24cf022b43c6cbc410a92cff4f1"
+  },
+  {
+    "event": "RELEASE",
+    "unit_id": "r1",
+    "clock_s": 43.37930762881355,
+    "coordinator_epoch": 1,
+    "generation": 6
+  },
+  {
+    "event": "GRANT",
+    "unit_id": "r3",
+    "clock_s": 43.37930762881355,
+    "coordinator_epoch": 1,
+    "generation": 7,
+    "identity": [
+      "traffic_head_on:r3",
+      1,
+      1
+    ],
+    "occupancy": "possibly occupied until RGB CLEAR, without TTL"
+  },
+  {
+    "event": "HOLD",
+    "unit_id": "r1",
+    "clock_s": 43.37930762881355,
+    "coordinator_epoch": 1,
+    "reason": "completed_or_waiting",
+    "generation": null
+  },
+  {
+    "event": "GO",
+    "unit_id": "r3",
+    "clock_s": 43.37930762881355,
+    "coordinator_epoch": 1,
+    "reason": "reserved_route_ready",
+    "generation": 7
+  },
+  {
+    "event": "ENTER",
+    "unit_id": "r3",
+    "clock_s": 43.97930762881355,
+    "coordinator_epoch": 1,
+    "generation": 7,
+    "evidence": "RGB displacement; not command acknowledgement"
+  },
+  {
+    "event": "EXTEND",
+    "unit_id": "r3",
+    "clock_s": 45.97930762881355,
+    "coordinator_epoch": 1,
+    "generation": 8,
+    "identity": [
+      "traffic_head_on:r3",
+      1,
+      2
+    ],
+    "retained_route_count": 2
+  },
+  {
+    "event": "EXTEND",
+    "unit_id": "r3",
+    "clock_s": 63.73417501319754,
+    "coordinator_epoch": 1,
+    "generation": 9,
+    "identity": [
+      "traffic_head_on:r3",
+      1,
+      3
+    ],
+    "retained_route_count": 3
+  },
+  {
+    "event": "EXTEND",
+    "unit_id": "r3",
+    "clock_s": 74.12764469070355,
+    "coordinator_epoch": 1,
+    "generation": 10,
+    "identity": [
+      "traffic_head_on:r3",
+      1,
+      4
+    ],
+    "retained_route_count": 4
+  },
+  {
+    "event": "CLEAR",
+    "unit_id": "r3",
+    "clock_s": 78.68146323769827,
+    "coordinator_epoch": 1,
+    "generation": 10,
+    "sequence": 206,
+    "top_sha256": "35f06dd0e82964900c30de60b7970faf72acf308b0e9a2f85078c23d7161c6d4"
+  },
+  {
+    "event": "RELEASE",
+    "unit_id": "r3",
+    "clock_s": 78.68146323769827,
+    "coordinator_epoch": 1,
+    "generation": 10
+  },
+  {
+    "event": "HOLD",
+    "unit_id": "r3",
+    "clock_s": 78.68146323769827,
+    "coordinator_epoch": 1,
+    "reason": "completed_or_waiting",
+    "generation": null
+  }
+]

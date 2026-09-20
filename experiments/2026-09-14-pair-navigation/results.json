@@ -1,0 +1,5104 @@
+{
+  "execution_sha": "13d833964335b04766cc8c7c8b72ddc5b70f4192",
+  "final_scope": "Three feasible fixed maps, one impossible map, one default-physics negative comparison, one hold/release diagnostic; one run each",
+  "historical_scoring": "Development and previous-final results retain their contemporaneous gates. In particular dev-wall-impratio10 passed older carry gates but failed later pre-departure stability review. Do not pool success rates.",
+  "external_model_calls_all_runs": 0,
+  "external_model_cost_usd_all_runs": 0,
+  "runs": [
+    {
+      "diagnostic_only": true,
+      "error": null,
+      "final": {
+        "arm_joints": {
+          "r1": {
+            "elbow": -0.2630394495427434,
+            "shoulder": 0.6269934853780216,
+            "wrist": -1.2482060335264975,
+            "yaw": 1.5707963271522651
+          },
+          "r3": {
+            "elbow": -0.22057998288389813,
+            "shoulder": 0.6064954970081421,
+            "wrist": -1.2686349261580105,
+            "yaw": -1.5707963271546392
+          }
+        },
+        "base_rpy": {
+          "r1": [
+            -0.0003055962306144753,
+            -1.3219939298827666e-08,
+            4.0608398703165304e-06
+          ],
+          "r3": [
+            0.0003067438569332539,
+            -1.322041147045597e-08,
+            -5.184651276511202e-07
+          ]
+        },
+        "base_yaw_rad": {
+          "r1": 4.0608398703165304e-06,
+          "r3": -5.184651276511202e-07
+        },
+        "bases": {
+          "r1": [
+            0.5799990234864144,
+            -2.3241863331956267,
+            0.03235533261593935
+          ],
+          "r3": [
+            0.579997546359113,
+            -1.674973495558472,
+            0.03235533478290385
+          ]
+        },
+        "constraints_active": {
+          "r1": false,
+          "r3": false
+        },
+        "contacts": {
+          "r1": {
+            "bilateral": false,
+            "contact_geom": "team_beam_geom",
+            "left": false,
+            "left_force_n": 0.0,
+            "right": false,
+            "right_force_n": 0.0
+          },
+          "r3": {
+            "bilateral": false,
+            "contact_geom": "team_beam_geom",
+            "left": false,
+            "left_force_n": 0.0,
+            "right": false,
+            "right_force_n": 0.0
+          }
+        },
+        "height_above_start_m": -4.9e-05,
+        "payload_floor_contact": true,
+        "payload_robot_contact": false,
+        "phase": "carry_stop",
+        "position_m": [
+          0.579998,
+          -2.008772,
+          0.019951
+        ],
+        "sim_time_s": 32.5,
+        "tilt_deg": 0.0,
+        "yaw_rad": 2.357887602148274e-06
+      },
+      "first_failure_s": 8.899999999999999,
+      "initial": {
+        "arm_joints": {
+          "r1": {
+            "elbow": -0.2815529760945579,
+            "shoulder": 0.6036794929240696,
+            "wrist": -1.2636944190559252,
+            "yaw": 1.5707965929524095
+          },
+          "r3": {
+            "elbow": -0.23913756595881924,
+            "shoulder": 0.5830047502872985,
+            "wrist": -1.2842278189310383,
+            "yaw": -1.5707968155988392
+          }
+        },
+        "base_rpy": {
+          "r1": [
+            -0.0007527255161001527,
+            -1.1506323244206571e-08,
+            -1.6685341956701359e-06
+          ],
+          "r3": [
+            0.0007572043738779548,
+            -1.7380082208745844e-08,
+            1.1488535480343112e-06
+          ]
+        },
+        "base_yaw_rad": {
+          "r1": -1.6685341956701359e-06,
+          "r3": 1.1488535480343112e-06
+        },
+        "bases": {
+          "r1": [
+            0.5799977133884102,
+            -2.324435114417454,
+            0.032344407832043745
+          ],
+          "r3": [
+            0.5799978960627957,
+            -1.6754844483477818,
+            0.03234436472342191
+          ]
+        },
+        "constraints_active": {
+          "r1": false,
+          "r3": false
+        },
+        "contacts": {
+          "r1": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 11.667304875776633,
+            "right": true,
+            "right_force_n": 11.667269334965654
+          },
+          "r3": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 11.667304109190287,
+            "right": true,
+            "right_force_n": 11.667270101626528
+          }
+        },
+        "height_above_start_m": 0.071216,
+        "payload_floor_contact": false,
+        "payload_robot_contact": true,
+        "phase": "carry_stop",
+        "position_m": [
+          0.579998,
+          -1.999763,
+          0.091216
+        ],
+        "sim_time_s": 16.6,
+        "tilt_deg": 0.0377,
+        "yaw_rad": -3.406318481272774e-07
+      },
+      "invariants_final": {
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "source_sha": "5f705f1c3bbdd592c9d4ec29f4f2eb42e9c207af",
+      "success": false,
+      "wrist_delta": 0,
+      "recorded_success": false,
+      "case": "dev-hold-01",
+      "cohort": "development",
+      "raw_directory": "outputs/pair-navigation/dev-hold-01",
+      "decision_rounds": 0,
+      "decision_robot_commands": 0,
+      "decision_command_scope": "Both robots, including decision-loop zero commands; excludes grasp, post-arrival stop and placement",
+      "grasp_prediction_calls": 32
+    },
+    {
+      "diagnostic_only": true,
+      "error": null,
+      "final": {
+        "arm_joints": {
+          "r1": {
+            "elbow": -0.2807725723851465,
+            "shoulder": 0.6044889769926294,
+            "wrist": -1.2629071598531851,
+            "yaw": 1.570799013416747
+          },
+          "r3": {
+            "elbow": -0.2373739167158934,
+            "shoulder": 0.5849393424686495,
+            "wrist": -1.28239398660056,
+            "yaw": -1.5707561172053202
+          }
+        },
+        "base_rpy": {
+          "r1": [
+            -0.0007523380367142942,
+            6.996186974111357e-07,
+            0.00022841012098678414
+          ],
+          "r3": [
+            0.0007409283497253371,
+            1.4738333775276868e-07,
+            -8.84965053854802e-05
+          ]
+        },
+        "base_yaw_rad": {
+          "r1": 0.00022841012098678414,
+          "r3": -8.84965053854802e-05
+        },
+        "bases": {
+          "r1": [
+            0.5800023681083747,
+            -2.271033745355065,
+            0.03234424189958563
+          ],
+          "r3": [
+            0.5799545823180894,
+            -1.7289384177430331,
+            0.03234444391399221
+          ]
+        },
+        "constraints_active": {
+          "r1": false,
+          "r3": false
+        },
+        "contacts": {
+          "r1": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 11.547571003256202,
+            "right": true,
+            "right_force_n": 11.546206466090402
+          },
+          "r3": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 11.546864419723814,
+            "right": true,
+            "right_force_n": 11.546912295966495
+          }
+        },
+        "height_above_start_m": 0.068577,
+        "payload_floor_contact": false,
+        "payload_robot_contact": true,
+        "phase": "carry_stop",
+        "position_m": [
+          0.579953,
+          -1.999988,
+          0.088577
+        ],
+        "sim_time_s": 76.5,
+        "tilt_deg": 0.0108,
+        "yaw_rad": 8.032398540659742e-05
+      },
+      "first_failure_s": 1.8999999999999986,
+      "impratio": 10,
+      "initial": {
+        "arm_joints": {
+          "r1": {
+            "elbow": -0.2819140738075917,
+            "shoulder": 0.6033978694026744,
+            "wrist": -1.2643438741850253,
+            "yaw": 1.5708733884395025
+          },
+          "r3": {
+            "elbow": -0.23952578728735047,
+            "shoulder": 0.582693816419286,
+            "wrist": -1.2849139258001514,
+            "yaw": -1.5707205419736465
+          }
+        },
+        "base_rpy": {
+          "r1": [
+            -0.000756434568797853,
+            -1.7217398097115454e-06,
+            -8.318396064458991e-06
+          ],
+          "r3": [
+            0.0007614692213920625,
+            1.670560190667426e-06,
+            1.3632291369356974e-07
+          ]
+        },
+        "base_yaw_rad": {
+          "r1": -8.318396064458991e-06,
+          "r3": 1.3632291369356974e-07
+        },
+        "bases": {
+          "r1": [
+            0.5799954916444043,
+            -2.324313461049168,
+            0.03234442756483427
+          ],
+          "r3": [
+            0.5799985832625513,
+            -1.6756042062647134,
+            0.03234437855920297
+          ]
+        },
+        "constraints_active": {
+          "r1": false,
+          "r3": false
+        },
+        "contacts": {
+          "r1": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 11.505914773157162,
+            "right": true,
+            "right_force_n": 11.587999879336248
+          },
+          "r3": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 11.505937173168215,
+            "right": true,
+            "right_force_n": 11.587975450304707
+          }
+        },
+        "height_above_start_m": 0.077771,
+        "payload_floor_contact": false,
+        "payload_robot_contact": true,
+        "phase": "carry_stop",
+        "position_m": [
+          0.579998,
+          -1.99976,
+          0.097771
+        ],
+        "sim_time_s": 16.6,
+        "tilt_deg": 0.0419,
+        "yaw_rad": 0.00014596803070051698
+      },
+      "invariants_final": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "seconds": 60,
+      "source_sha": "f80385664f91c81cf10e1db2fe011092547b0ca4",
+      "success": false,
+      "wrist_delta": 0,
+      "recorded_success": false,
+      "case": "dev-hold-impratio10",
+      "cohort": "development",
+      "raw_directory": "outputs/pair-navigation/dev-hold-impratio10",
+      "decision_rounds": 0,
+      "decision_robot_commands": 0,
+      "decision_command_scope": "Both robots, including decision-loop zero commands; excludes grasp, post-arrival stop and placement",
+      "grasp_prediction_calls": 32
+    },
+    {
+      "diagnostic_only": true,
+      "error": null,
+      "final": {
+        "arm_joints": {
+          "r1": {
+            "elbow": -0.3151646342331973,
+            "shoulder": 0.5802563245935888,
+            "wrist": -1.0875589581712102,
+            "yaw": 1.568292911254638
+          },
+          "r3": {
+            "elbow": -0.2255305538414306,
+            "shoulder": 0.5940407371123178,
+            "wrist": -1.2629416728345146,
+            "yaw": -1.5614641604415134
+          }
+        },
+        "base_rpy": {
+          "r1": [
+            -0.0007799494481361147,
+            -5.0908784167713776e-05,
+            -0.016093444291240103
+          ],
+          "r3": [
+            0.0006454658209946986,
+            6.756565315525243e-05,
+            0.013135913154844817
+          ]
+        },
+        "base_yaw_rad": {
+          "r1": -0.016093444291240103,
+          "r3": 0.013135913154844817
+        },
+        "bases": {
+          "r1": [
+            0.5801107202973785,
+            -2.271666425208494,
+            0.032343434792863945
+          ],
+          "r3": [
+            0.5798686892704227,
+            -1.7281264391050555,
+            0.032345113514491694
+          ]
+        },
+        "constraints_active": {
+          "r1": false,
+          "r3": false
+        },
+        "contacts": {
+          "r1": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 11.502419569117206,
+            "right": true,
+            "right_force_n": 11.620917503979182
+          },
+          "r3": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 11.828243280445642,
+            "right": true,
+            "right_force_n": 11.328290203684222
+          }
+        },
+        "height_above_start_m": 0.081829,
+        "payload_floor_contact": false,
+        "payload_robot_contact": true,
+        "phase": "carry_stop",
+        "position_m": [
+          0.583816,
+          -2.000116,
+          0.101829
+        ],
+        "sim_time_s": 76.5,
+        "tilt_deg": 2.8852,
+        "yaw_rad": -0.0025972313322790994
+      },
+      "first_failure_s": 0.09999999999999787,
+      "impratio": 100,
+      "initial": {
+        "arm_joints": {
+          "r1": {
+            "elbow": -0.3216049797433446,
+            "shoulder": 0.571472049322662,
+            "wrist": -1.0984600155986042,
+            "yaw": 1.5829216503583985
+          },
+          "r3": {
+            "elbow": -0.2404279517678421,
+            "shoulder": 0.5785744620288349,
+            "wrist": -1.2850905846331544,
+            "yaw": -1.5909515000542431
+          }
+        },
+        "base_rpy": {
+          "r1": [
+            -0.0006388254111486916,
+            -0.0021435077252708666,
+            0.0021093002151240797
+          ],
+          "r3": [
+            0.0005879365374915057,
+            0.0008220518161611769,
+            -0.004133557156452472
+          ]
+        },
+        "base_yaw_rad": {
+          "r1": 0.0021093002151240797,
+          "r3": -0.004133557156452472
+        },
+        "bases": {
+          "r1": [
+            0.5802801271121698,
+            -2.295849368504965,
+            0.03249595339737606
+          ],
+          "r3": [
+            0.5797886105446572,
+            -1.7039796455406429,
+            0.03244122150530386
+          ]
+        },
+        "constraints_active": {
+          "r1": false,
+          "r3": false
+        },
+        "contacts": {
+          "r1": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 0.0,
+            "right": true,
+            "right_force_n": 9.504567786176704
+          },
+          "r3": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 1.8858035837314073,
+            "right": true,
+            "right_force_n": 6.520960187073809
+          }
+        },
+        "height_above_start_m": 0.078107,
+        "payload_floor_contact": false,
+        "payload_robot_contact": true,
+        "phase": "carry_stop",
+        "position_m": [
+          0.581084,
+          -1.999482,
+          0.098107
+        ],
+        "sim_time_s": 16.6,
+        "tilt_deg": 0.6755,
+        "yaw_rad": 0.005095727759848434
+      },
+      "invariants_final": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 100.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 100.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "seconds": 60,
+      "source_sha": "f80385664f91c81cf10e1db2fe011092547b0ca4",
+      "success": false,
+      "wrist_delta": 0,
+      "recorded_success": false,
+      "case": "dev-hold-impratio100",
+      "cohort": "development",
+      "raw_directory": "outputs/pair-navigation/dev-hold-impratio100",
+      "decision_rounds": 0,
+      "decision_robot_commands": 0,
+      "decision_command_scope": "Both robots, including decision-loop zero commands; excludes grasp, post-arrival stop and placement",
+      "grasp_prediction_calls": 32
+    },
+    {
+      "diagnostic_only": true,
+      "error": null,
+      "final": {
+        "arm_joints": {
+          "r1": {
+            "elbow": -0.26351617541957384,
+            "shoulder": 0.6265824004993381,
+            "wrist": -1.0919400499317395,
+            "yaw": 1.570796327161081
+          },
+          "r3": {
+            "elbow": -0.2210562005765793,
+            "shoulder": 0.6060849209434584,
+            "wrist": -1.112367868889763,
+            "yaw": -1.5707963271683012
+          }
+        },
+        "base_rpy": {
+          "r1": [
+            -0.0003137079088686325,
+            -1.3263739251027166e-08,
+            -3.0877451299621377e-06
+          ],
+          "r3": [
+            0.0003148453155185396,
+            -1.3263305745067464e-08,
+            -1.8366076711627857e-06
+          ]
+        },
+        "base_yaw_rad": {
+          "r1": -3.0877451299621377e-06,
+          "r3": -1.8366076711627857e-06
+        },
+        "bases": {
+          "r1": [
+            0.5799973001135679,
+            -2.3351076400354125,
+            0.032355344535340655
+          ],
+          "r3": [
+            0.579998555237108,
+            -1.6643706539695713,
+            0.032355346744333546
+          ]
+        },
+        "constraints_active": {
+          "r1": false,
+          "r3": false
+        },
+        "contacts": {
+          "r1": {
+            "bilateral": false,
+            "contact_geom": "team_beam_geom",
+            "left": false,
+            "left_force_n": 0.0,
+            "right": false,
+            "right_force_n": 0.0
+          },
+          "r3": {
+            "bilateral": false,
+            "contact_geom": "team_beam_geom",
+            "left": false,
+            "left_force_n": 0.0,
+            "right": false,
+            "right_force_n": 0.0
+          }
+        },
+        "height_above_start_m": -4.9e-05,
+        "payload_floor_contact": true,
+        "payload_robot_contact": false,
+        "phase": "carry_stop",
+        "position_m": [
+          0.579998,
+          -2.00955,
+          0.019951
+        ],
+        "sim_time_s": 33.2,
+        "tilt_deg": 0.0,
+        "yaw_rad": -1.535165766338303e-06
+      },
+      "first_failure_s": 7.800000000000001,
+      "initial": {
+        "arm_joints": {
+          "r1": {
+            "elbow": -0.2836089362881691,
+            "shoulder": 0.6019260663701,
+            "wrist": -1.1102046872613807,
+            "yaw": 1.5707964992023695
+          },
+          "r3": {
+            "elbow": -0.24119662684734516,
+            "shoulder": 0.5812536127967687,
+            "wrist": -1.1307396944105272,
+            "yaw": -1.5707964957542229
+          }
+        },
+        "base_rpy": {
+          "r1": [
+            -0.0007966735836187206,
+            -1.447206386829969e-08,
+            -9.02232471691942e-07
+          ],
+          "r3": [
+            0.000801049045861489,
+            -1.4090428866547119e-08,
+            3.578832305312331e-07
+          ]
+        },
+        "base_yaw_rad": {
+          "r1": -9.02232471691942e-07,
+          "r3": 3.578832305312331e-07
+        },
+        "bases": {
+          "r1": [
+            0.5799977145954076,
+            -2.3353470520318713,
+            0.03234464185289848
+          ],
+          "r3": [
+            0.579997898167244,
+            -1.664573660686758,
+            0.0323446013087902
+          ]
+        },
+        "constraints_active": {
+          "r1": false,
+          "r3": false
+        },
+        "contacts": {
+          "r1": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 11.66728788618854,
+            "right": true,
+            "right_force_n": 11.667286324475839
+          },
+          "r3": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 11.667287442754795,
+            "right": true,
+            "right_force_n": 11.667286767915005
+          }
+        },
+        "height_above_start_m": 0.078805,
+        "payload_floor_contact": false,
+        "payload_robot_contact": true,
+        "phase": "carry_stop",
+        "position_m": [
+          0.579998,
+          -1.999759,
+          0.098805
+        ],
+        "sim_time_s": 17.3,
+        "tilt_deg": 0.039,
+        "yaw_rad": -2.7648000588029515e-07
+      },
+      "invariants_final": {
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "source_sha": "5f705f1c3bbdd592c9d4ec29f4f2eb42e9c207af",
+      "success": false,
+      "wrist_delta": 100,
+      "recorded_success": false,
+      "case": "dev-hold-wrist100",
+      "cohort": "development",
+      "raw_directory": "outputs/pair-navigation/dev-hold-wrist100",
+      "decision_rounds": 0,
+      "decision_robot_commands": 0,
+      "decision_command_scope": "Both robots, including decision-loop zero commands; excludes grasp, post-arrival stop and placement",
+      "grasp_prediction_calls": 32
+    },
+    {
+      "diagnostic_only": true,
+      "error": null,
+      "final": {
+        "arm_joints": {
+          "r1": {
+            "elbow": -0.2625050908138861,
+            "shoulder": 0.627454269277072,
+            "wrist": -1.4043736626723118,
+            "yaw": 1.5707963271423677
+          },
+          "r3": {
+            "elbow": -0.22004599663885943,
+            "shoulder": 0.6069558805654572,
+            "wrist": -1.4248034222980477,
+            "yaw": -1.5707963271446563
+          }
+        },
+        "base_rpy": {
+          "r1": [
+            -0.000296503150260025,
+            -1.3224195073225281e-08,
+            -1.1333337041420312e-06
+          ],
+          "r3": [
+            0.0002976588734757213,
+            -1.3256809405563004e-08,
+            -8.218014408987978e-08
+          ]
+        },
+        "base_yaw_rad": {
+          "r1": -1.1333337041420312e-06,
+          "r3": -8.218014408987978e-08
+        },
+        "bases": {
+          "r1": [
+            0.5799976735148047,
+            -2.311761005965047,
+            0.032355319624786556
+          ],
+          "r3": [
+            0.5799980051385932,
+            -1.687382671245245,
+            0.032355321738945474
+          ]
+        },
+        "constraints_active": {
+          "r1": false,
+          "r3": false
+        },
+        "contacts": {
+          "r1": {
+            "bilateral": false,
+            "contact_geom": "team_beam_geom",
+            "left": false,
+            "left_force_n": 0.0,
+            "right": false,
+            "right_force_n": 0.0
+          },
+          "r3": {
+            "bilateral": false,
+            "contact_geom": "team_beam_geom",
+            "left": false,
+            "left_force_n": 0.0,
+            "right": false,
+            "right_force_n": 0.0
+          }
+        },
+        "height_above_start_m": -4.9e-05,
+        "payload_floor_contact": true,
+        "payload_robot_contact": false,
+        "phase": "carry_stop",
+        "position_m": [
+          0.579998,
+          -2.006224,
+          0.019951
+        ],
+        "sim_time_s": 33.2,
+        "tilt_deg": 0.0,
+        "yaw_rad": -5.318084810465662e-07
+      },
+      "first_failure_s": 8.5,
+      "initial": {
+        "arm_joints": {
+          "r1": {
+            "elbow": -0.27957900659067253,
+            "shoulder": 0.6052303876896531,
+            "wrist": -1.417145481133408,
+            "yaw": 1.5707964944310637
+          },
+          "r3": {
+            "elbow": -0.2371666765786886,
+            "shoulder": 0.5845481736598593,
+            "wrist": -1.4376785393845681,
+            "yaw": -1.570796479118494
+          }
+        },
+        "base_rpy": {
+          "r1": [
+            -0.0007189193234341572,
+            -1.4692500164536965e-08,
+            -9.263312773261095e-07
+          ],
+          "r3": [
+            0.0007236502639769884,
+            -1.3867991620538017e-08,
+            3.768473778992333e-07
+          ]
+        },
+        "base_yaw_rad": {
+          "r1": -9.263312773261095e-07,
+          "r3": 3.768473778992333e-07
+        },
+        "bases": {
+          "r1": [
+            0.5799977206838193,
+            -2.312064935940812,
+            0.03234422732157613
+          ],
+          "r3": [
+            0.5799978914402283,
+            -1.6878533065506556,
+            0.03234417938560981
+          ]
+        },
+        "constraints_active": {
+          "r1": false,
+          "r3": false
+        },
+        "contacts": {
+          "r1": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 11.546882311156118,
+            "right": true,
+            "right_force_n": 11.546893728761184
+          },
+          "r3": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 11.546881972400241,
+            "right": true,
+            "right_force_n": 11.546894067492271
+          }
+        },
+        "height_above_start_m": 0.061932,
+        "payload_floor_contact": false,
+        "payload_robot_contact": true,
+        "phase": "carry_stop",
+        "position_m": [
+          0.579998,
+          -1.999765,
+          0.081932
+        ],
+        "sim_time_s": 17.3,
+        "tilt_deg": 0.0322,
+        "yaw_rad": -2.5248827841118283e-07
+      },
+      "invariants_final": {
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "source_sha": "5f705f1c3bbdd592c9d4ec29f4f2eb42e9c207af",
+      "success": false,
+      "wrist_delta": -100,
+      "recorded_success": false,
+      "case": "dev-hold-wristminus100",
+      "cohort": "development",
+      "raw_directory": "outputs/pair-navigation/dev-hold-wristminus100",
+      "decision_rounds": 0,
+      "decision_robot_commands": 0,
+      "decision_command_scope": "Both robots, including decision-loop zero commands; excludes grasp, post-arrival stop and placement",
+      "grasp_prediction_calls": 32
+    },
+    {
+      "arrived": true,
+      "budget": 500,
+      "cost_usd": 0,
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "error": null,
+      "evaluation": {
+        "bilateral_fraction": 0.278125,
+        "gates": {
+          "actor_arrived": true,
+          "bilateral_every_sample": false,
+          "cameras_geometry_unchanged": true,
+          "goal_orientation": false,
+          "goal_position": true,
+          "lifted_every_sample": false,
+          "wall_contact_free": true,
+          "weld_off": true
+        },
+        "goal_position_error_m": 0.0034572406627252287,
+        "goal_yaw_error_deg": 66.6987205378665,
+        "lifted_fraction": 0.28125,
+        "min_lift_m": -9e-05,
+        "navigation_sim_seconds": 31.9,
+        "payload_turn_deg": 23.301279462133497,
+        "sample_gap_max_s": 0.10000000000000142,
+        "samples": 320,
+        "success": false,
+        "wall_contact_ticks": 0
+      },
+      "external_model_calls": 0,
+      "grasp_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+      "invariants_final": {
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "map": {
+        "bounds_m": [
+          -1.08,
+          1.85,
+          -2.9,
+          -1.15
+        ],
+        "footprint": {
+          "half_forward_m": 0.2,
+          "half_lateral_m": 0.51,
+          "margin_m": 0.025
+        },
+        "goal": {
+          "center_m": [
+            0.62,
+            -2.0
+          ],
+          "relative_yaw_deg": 90
+        },
+        "grid_m": 0.06,
+        "map_id": "open-left-90",
+        "obstacles": [],
+        "schema": "ugrp.pair_navigation_map.v1",
+        "start_zone": {
+          "center_m": [
+            0.58,
+            -2.0
+          ],
+          "radius_m": 0.25
+        },
+        "top_camera": {
+          "fov_y_deg": 55.0,
+          "name": "cctv_top",
+          "position_m": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion_wxyz": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "map_sha256": "5ce63177e459415e98fec4ba68ae36843a38de3e9e013a9f4aa9a256ca14ba40",
+      "scene_xml_sha256": "1a13c011b90c644ef1368c7918d7dee2e501be6b771f9552e78bb1e42f9271de",
+      "schema": "ugrp.pair_navigation_trial.v1",
+      "scope": "Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay",
+      "sim_seconds": 53.8100000000198,
+      "source_sha": "173e930b2d74b8925159d23c24d43c02ff063d61",
+      "wall_seconds": 32.794849958008854,
+      "weld_active_ticks": 0,
+      "recorded_success": false,
+      "case": "dev-left-01",
+      "cohort": "development",
+      "raw_directory": "outputs/pair-navigation/dev-left-01",
+      "decision_rounds": 155,
+      "decision_robot_commands": 310,
+      "decision_command_scope": "Both robots, including decision-loop zero commands; excludes grasp, post-arrival stop and placement",
+      "final_actor_status": {
+        "r1": "done",
+        "r3": "done"
+      },
+      "grasp_prediction_calls": 32
+    },
+    {
+      "arrived": false,
+      "budget": 500,
+      "contact_impratio": 10,
+      "cost_usd": 0,
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-loaded-navigation/scripts/run_pair_navigation.py\", line 180, in run\n    raise RuntimeError('policy stopped: '+json.dumps({r: d['status'] for r,d in decisions.items()}))\nRuntimeError: policy stopped: {\"r1\": \"vision_stop\", \"r3\": \"vision_stop\"}\n",
+      "evaluation": {
+        "bilateral_fraction": 1.0,
+        "gates": {
+          "actor_arrived": false,
+          "bilateral_every_sample": true,
+          "cameras_geometry_unchanged": true,
+          "goal_orientation": false,
+          "goal_position": true,
+          "lifted_every_sample": true,
+          "wall_contact_free": true,
+          "weld_off": true
+        },
+        "goal_position_error_m": 0.04632900674523463,
+        "goal_yaw_error_deg": 90.03962547492327,
+        "lifted_fraction": 1.0,
+        "min_lift_m": 0.083205,
+        "navigation_sim_seconds": 0.09999999999999787,
+        "payload_turn_deg": -0.039625474923265354,
+        "sample_gap_max_s": 0.09999999999999787,
+        "samples": 2,
+        "success": false,
+        "wall_contact_ticks": 0
+      },
+      "external_model_calls": 0,
+      "grasp_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+      "invariants_final": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "map": {
+        "bounds_m": [
+          -1.08,
+          1.85,
+          -2.9,
+          -1.15
+        ],
+        "footprint": {
+          "half_forward_m": 0.2,
+          "half_lateral_m": 0.51,
+          "margin_m": 0.025
+        },
+        "goal": {
+          "center_m": [
+            0.62,
+            -2.0
+          ],
+          "relative_yaw_deg": 90
+        },
+        "grid_m": 0.06,
+        "map_id": "open-left-90",
+        "obstacles": [],
+        "schema": "ugrp.pair_navigation_map.v1",
+        "start_zone": {
+          "center_m": [
+            0.58,
+            -2.0
+          ],
+          "radius_m": 0.25
+        },
+        "top_camera": {
+          "fov_y_deg": 55.0,
+          "name": "cctv_top",
+          "position_m": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion_wxyz": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "map_sha256": "5ce63177e459415e98fec4ba68ae36843a38de3e9e013a9f4aa9a256ca14ba40",
+      "post_grasp_settle_s": 5.0,
+      "scene_xml_sha256": "42ce55eaaba3e8a76f2104af9fa0e987cffb59e733eacc8043bea186555031ba",
+      "schema": "ugrp.pair_navigation_trial.v1",
+      "scope": "Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay",
+      "sim_seconds": 21.75999999999882,
+      "source_sha": "f9c19b3a43cf4d1d9be3e987b1a434b7e5c6e0bb",
+      "wall_seconds": 7.633786584003246,
+      "weld_active_ticks": 0,
+      "recorded_success": false,
+      "case": "dev-left-impratio10",
+      "cohort": "development",
+      "raw_directory": "outputs/pair-navigation/dev-left-impratio10",
+      "decision_rounds": 1,
+      "decision_robot_commands": 2,
+      "decision_command_scope": "Both robots, including decision-loop zero commands; excludes grasp, post-arrival stop and placement",
+      "final_actor_status": {
+        "r1": "vision_stop",
+        "r3": "vision_stop"
+      },
+      "grasp_prediction_calls": 32
+    },
+    {
+      "arrived": true,
+      "budget": 500,
+      "contact_impratio": 10,
+      "cost_usd": 0,
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "error": null,
+      "evaluation": {
+        "bilateral_fraction": 1.0,
+        "gates": {
+          "actor_arrived": true,
+          "bilateral_every_sample": true,
+          "cameras_geometry_unchanged": true,
+          "goal_orientation": true,
+          "goal_position": true,
+          "lifted_every_sample": true,
+          "wall_contact_free": true,
+          "weld_off": true
+        },
+        "goal_position_error_m": 0.0011185821382446407,
+        "goal_yaw_error_deg": 0.4343046576917321,
+        "lifted_fraction": 1.0,
+        "min_lift_m": 0.07407,
+        "navigation_sim_seconds": 32.1,
+        "payload_turn_deg": 90.43430465769173,
+        "sample_gap_max_s": 0.10000000000000142,
+        "samples": 322,
+        "success": true,
+        "wall_contact_ticks": 0
+      },
+      "external_model_calls": 0,
+      "grasp_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+      "invariants_final": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "map": {
+        "bounds_m": [
+          -1.08,
+          1.85,
+          -2.9,
+          -1.15
+        ],
+        "footprint": {
+          "half_forward_m": 0.2,
+          "half_lateral_m": 0.51,
+          "margin_m": 0.025
+        },
+        "goal": {
+          "center_m": [
+            0.62,
+            -2.0
+          ],
+          "relative_yaw_deg": 90
+        },
+        "grid_m": 0.06,
+        "map_id": "open-left-90",
+        "obstacles": [],
+        "schema": "ugrp.pair_navigation_map.v1",
+        "start_zone": {
+          "center_m": [
+            0.58,
+            -2.0
+          ],
+          "radius_m": 0.25
+        },
+        "top_camera": {
+          "fov_y_deg": 55.0,
+          "name": "cctv_top",
+          "position_m": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion_wxyz": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "map_sha256": "5ce63177e459415e98fec4ba68ae36843a38de3e9e013a9f4aa9a256ca14ba40",
+      "post_grasp_settle_s": 5.0,
+      "scene_xml_sha256": "42ce55eaaba3e8a76f2104af9fa0e987cffb59e733eacc8043bea186555031ba",
+      "schema": "ugrp.pair_navigation_trial.v1",
+      "scope": "Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay",
+      "sim_seconds": 59.01000000002615,
+      "source_sha": "2aaf4c43cf3e4e9f8d49ee05471872eb24377c24",
+      "wall_seconds": 35.82840391699574,
+      "weld_active_ticks": 0,
+      "recorded_success": true,
+      "case": "dev-left-impratio10-v2",
+      "cohort": "development",
+      "raw_directory": "outputs/pair-navigation/dev-left-impratio10-v2",
+      "decision_rounds": 156,
+      "decision_robot_commands": 312,
+      "decision_command_scope": "Both robots, including decision-loop zero commands; excludes grasp, post-arrival stop and placement",
+      "final_actor_status": {
+        "r1": "done",
+        "r3": "done"
+      },
+      "grasp_prediction_calls": 32
+    },
+    {
+      "arrived": true,
+      "budget": 500,
+      "contact_impratio": 10,
+      "cost_usd": 0,
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "error": null,
+      "evaluation": {
+        "bilateral_fraction": 1.0,
+        "gates": {
+          "actor_arrived": true,
+          "bilateral_every_sample": true,
+          "cameras_geometry_unchanged": true,
+          "goal_orientation": true,
+          "goal_position": true,
+          "lifted_every_sample": true,
+          "wall_contact_free": true,
+          "weld_off": true
+        },
+        "goal_position_error_m": 0.0031339216646241053,
+        "goal_yaw_error_deg": 0.12234638275228277,
+        "lifted_fraction": 1.0,
+        "min_lift_m": 0.074162,
+        "navigation_sim_seconds": 32.1,
+        "payload_turn_deg": -89.87765361724773,
+        "sample_gap_max_s": 0.10000000000000142,
+        "samples": 322,
+        "success": true,
+        "wall_contact_ticks": 0
+      },
+      "external_model_calls": 0,
+      "grasp_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+      "invariants_final": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "map": {
+        "bounds_m": [
+          -1.08,
+          1.85,
+          -2.9,
+          -1.15
+        ],
+        "footprint": {
+          "half_forward_m": 0.2,
+          "half_lateral_m": 0.51,
+          "margin_m": 0.025
+        },
+        "goal": {
+          "center_m": [
+            0.62,
+            -2.0
+          ],
+          "relative_yaw_deg": -90
+        },
+        "grid_m": 0.06,
+        "map_id": "open-right-90",
+        "obstacles": [],
+        "schema": "ugrp.pair_navigation_map.v1",
+        "start_zone": {
+          "center_m": [
+            0.58,
+            -2.0
+          ],
+          "radius_m": 0.25
+        },
+        "top_camera": {
+          "fov_y_deg": 55.0,
+          "name": "cctv_top",
+          "position_m": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion_wxyz": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "map_sha256": "23e71bfc94db619709ace474b40f1157d6a0709580abb72eae99f97803b42240",
+      "post_grasp_settle_s": 5.0,
+      "scene_xml_sha256": "42ce55eaaba3e8a76f2104af9fa0e987cffb59e733eacc8043bea186555031ba",
+      "schema": "ugrp.pair_navigation_trial.v1",
+      "scope": "Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay",
+      "sim_seconds": 59.01000000002615,
+      "source_sha": "2aaf4c43cf3e4e9f8d49ee05471872eb24377c24",
+      "wall_seconds": 39.852676333001,
+      "weld_active_ticks": 0,
+      "recorded_success": true,
+      "case": "dev-right-impratio10",
+      "cohort": "development",
+      "raw_directory": "outputs/pair-navigation/dev-right-impratio10",
+      "decision_rounds": 156,
+      "decision_robot_commands": 312,
+      "decision_command_scope": "Both robots, including decision-loop zero commands; excludes grasp, post-arrival stop and placement",
+      "final_actor_status": {
+        "r1": "done",
+        "r3": "done"
+      },
+      "grasp_prediction_calls": 32
+    },
+    {
+      "diagnostic_only": true,
+      "error": null,
+      "final": {
+        "arm_joints": {
+          "r1": {
+            "elbow": -0.2707349994726141,
+            "shoulder": 0.6135552407700952,
+            "wrist": -1.2489132672608736,
+            "yaw": 1.5732414223716131
+          },
+          "r3": {
+            "elbow": -0.2769071565855068,
+            "shoulder": 0.6081117770137048,
+            "wrist": -1.257652961856935,
+            "yaw": -1.5707612989999935
+          }
+        },
+        "base_rpy": {
+          "r1": [
+            -0.0006609562348260285,
+            -5.032704880557715e-05,
+            0.005272912085490854
+          ],
+          "r3": [
+            0.0007042979241067432,
+            4.629476346634282e-05,
+            -0.006321640958600972
+          ]
+        },
+        "base_yaw_rad": {
+          "r1": 0.005272912085490854,
+          "r3": -0.006321640958600972
+        },
+        "bases": {
+          "r1": [
+            0.579982205998557,
+            -2.2710892161970344,
+            0.03234442475436785
+          ],
+          "r3": [
+            0.579988625872765,
+            -1.7288389658929177,
+            0.032343823935888465
+          ]
+        },
+        "constraints_active": {
+          "r1": false,
+          "r3": false
+        },
+        "contacts": {
+          "r1": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 11.645565847299181,
+            "right": true,
+            "right_force_n": 11.458481451814201
+          },
+          "r3": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 11.551379711144499,
+            "right": true,
+            "right_force_n": 11.54585705610884
+          }
+        },
+        "height_above_start_m": 0.078462,
+        "payload_floor_contact": false,
+        "payload_robot_contact": true,
+        "phase": "carry_stop",
+        "position_m": [
+          0.57871,
+          -1.999921,
+          0.098462
+        ],
+        "sim_time_s": 32.5,
+        "tilt_deg": 0.5453,
+        "yaw_rad": -0.001835057189371737
+      },
+      "first_failure_s": 4.5,
+      "impratio": 10,
+      "initial": {
+        "arm_joints": {
+          "r1": {
+            "elbow": -0.28197982230986013,
+            "shoulder": 0.6033298047330392,
+            "wrist": -1.2644190778496953,
+            "yaw": 1.5707962453811766
+          },
+          "r3": {
+            "elbow": -0.2819798125662683,
+            "shoulder": 0.6033298211678685,
+            "wrist": -1.2644190729413258,
+            "yaw": -1.5707980628695948
+          }
+        },
+        "base_rpy": {
+          "r1": [
+            -0.0007571241168254737,
+            3.0873946820524705e-08,
+            -5.286247053089002e-06
+          ],
+          "r3": [
+            0.0007567336981160619,
+            -6.055155751701192e-08,
+            4.816149713972731e-06
+          ]
+        },
+        "base_yaw_rad": {
+          "r1": -5.286247053089002e-06,
+          "r3": 4.816149713972731e-06
+        },
+        "bases": {
+          "r1": [
+            0.5799967174528264,
+            -2.3245389133432233,
+            0.032344395967170605
+          ],
+          "r3": [
+            0.579996866436107,
+            -1.6754610066905447,
+            0.03234439582323746
+          ]
+        },
+        "constraints_active": {
+          "r1": false,
+          "r3": false
+        },
+        "contacts": {
+          "r1": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 11.546819824563112,
+            "right": true,
+            "right_force_n": 11.546956252681694
+          },
+          "r3": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 11.54681706093539,
+            "right": true,
+            "right_force_n": 11.546959006229816
+          }
+        },
+        "height_above_start_m": 0.077632,
+        "payload_floor_contact": false,
+        "payload_robot_contact": true,
+        "phase": "carry_stop",
+        "position_m": [
+          0.579998,
+          -2.0,
+          0.097632
+        ],
+        "sim_time_s": 16.6,
+        "tilt_deg": 0.0002,
+        "yaw_rad": -3.2350237370358454e-08
+      },
+      "invariants_final": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "247e99ffa0369710e4394816d91a768fc91b82f3d70ebb2df1dd926247eecd49",
+          "geom_pos": "f0ead2b7304f81cf7e8e61e27bbc109517af82d2c6c3f9ecc8a43fbf7e6b7211",
+          "geom_quat": "011bbfc83c313539f780307fc2a28570074a86f80d7f90eb8c3210ae8a3e3106",
+          "geom_rgba": "be7090af1bb084297fd20a916466e0b48a5190da12d82a8e11f3c65e23f917b6",
+          "geom_size": "783080573f74e6bdb3a59247792d4335720571827d62b483ad9aaca5d72fb8f7"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "247e99ffa0369710e4394816d91a768fc91b82f3d70ebb2df1dd926247eecd49",
+          "geom_pos": "f0ead2b7304f81cf7e8e61e27bbc109517af82d2c6c3f9ecc8a43fbf7e6b7211",
+          "geom_quat": "011bbfc83c313539f780307fc2a28570074a86f80d7f90eb8c3210ae8a3e3106",
+          "geom_rgba": "be7090af1bb084297fd20a916466e0b48a5190da12d82a8e11f3c65e23f917b6",
+          "geom_size": "783080573f74e6bdb3a59247792d4335720571827d62b483ad9aaca5d72fb8f7"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "post_grasp_settle_s": 0.0,
+      "seconds": 16,
+      "source_sha": "2aaf4c43cf3e4e9f8d49ee05471872eb24377c24",
+      "success": false,
+      "wrist_delta": 0,
+      "recorded_success": false,
+      "case": "dev-wall-hold",
+      "cohort": "development",
+      "raw_directory": "outputs/pair-navigation/dev-wall-hold",
+      "decision_rounds": 0,
+      "decision_robot_commands": 0,
+      "decision_command_scope": "Both robots, including decision-loop zero commands; excludes grasp, post-arrival stop and placement",
+      "grasp_prediction_calls": 32
+    },
+    {
+      "arrived": true,
+      "budget": 650,
+      "contact_impratio": 10,
+      "cost_usd": 0,
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "error": null,
+      "evaluation": {
+        "bilateral_fraction": 1.0,
+        "gates": {
+          "actor_arrived": true,
+          "bilateral_every_sample": true,
+          "cameras_geometry_unchanged": true,
+          "goal_orientation": true,
+          "goal_position": true,
+          "lifted_every_sample": true,
+          "wall_contact_free": true,
+          "weld_off": true
+        },
+        "goal_position_error_m": 0.023681787960371598,
+        "goal_yaw_error_deg": 0.1195002543964374,
+        "lifted_fraction": 1.0,
+        "min_lift_m": 0.059333,
+        "navigation_sim_seconds": 79.9,
+        "payload_turn_deg": -0.1195002543964374,
+        "sample_gap_max_s": 0.10000000000000853,
+        "samples": 800,
+        "success": true,
+        "wall_contact_ticks": 0
+      },
+      "external_model_calls": 0,
+      "grasp_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+      "invariants_final": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "247e99ffa0369710e4394816d91a768fc91b82f3d70ebb2df1dd926247eecd49",
+          "geom_pos": "f0ead2b7304f81cf7e8e61e27bbc109517af82d2c6c3f9ecc8a43fbf7e6b7211",
+          "geom_quat": "011bbfc83c313539f780307fc2a28570074a86f80d7f90eb8c3210ae8a3e3106",
+          "geom_rgba": "be7090af1bb084297fd20a916466e0b48a5190da12d82a8e11f3c65e23f917b6",
+          "geom_size": "783080573f74e6bdb3a59247792d4335720571827d62b483ad9aaca5d72fb8f7"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "247e99ffa0369710e4394816d91a768fc91b82f3d70ebb2df1dd926247eecd49",
+          "geom_pos": "f0ead2b7304f81cf7e8e61e27bbc109517af82d2c6c3f9ecc8a43fbf7e6b7211",
+          "geom_quat": "011bbfc83c313539f780307fc2a28570074a86f80d7f90eb8c3210ae8a3e3106",
+          "geom_rgba": "be7090af1bb084297fd20a916466e0b48a5190da12d82a8e11f3c65e23f917b6",
+          "geom_size": "783080573f74e6bdb3a59247792d4335720571827d62b483ad9aaca5d72fb8f7"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "map": {
+        "bounds_m": [
+          -1.08,
+          1.85,
+          -2.9,
+          -1.15
+        ],
+        "footprint": {
+          "half_forward_m": 0.2,
+          "half_lateral_m": 0.51,
+          "margin_m": 0.025
+        },
+        "goal": {
+          "center_m": [
+            -0.5,
+            -2.0
+          ],
+          "relative_yaw_deg": 0
+        },
+        "grid_m": 0.06,
+        "map_id": "wall-detour",
+        "obstacles": [
+          {
+            "center_m": [
+              0.1,
+              -2.0
+            ],
+            "half_extents_m": [
+              0.05,
+              0.1
+            ],
+            "height_m": 0.3,
+            "id": "detour"
+          }
+        ],
+        "schema": "ugrp.pair_navigation_map.v1",
+        "start_zone": {
+          "center_m": [
+            0.58,
+            -2.0
+          ],
+          "radius_m": 0.25
+        },
+        "top_camera": {
+          "fov_y_deg": 55.0,
+          "name": "cctv_top",
+          "position_m": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion_wxyz": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "map_sha256": "85b18664347a67fc98c1a702a8679ecfe592e2f304acd53ac7bed3ae2a21942d",
+      "post_grasp_settle_s": 5.0,
+      "scene_xml_sha256": "cfe56137f93233ae1b4ae826c7d33ac74fd719841856967cc0f265714d1dcde7",
+      "schema": "ugrp.pair_navigation_trial.v1",
+      "scope": "Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay",
+      "sim_seconds": 106.80999999993247,
+      "source_sha": "2aaf4c43cf3e4e9f8d49ee05471872eb24377c24",
+      "wall_seconds": 93.06948429200565,
+      "weld_active_ticks": 0,
+      "recorded_success": true,
+      "case": "dev-wall-impratio10",
+      "cohort": "development",
+      "raw_directory": "outputs/pair-navigation/dev-wall-impratio10",
+      "decision_rounds": 395,
+      "decision_robot_commands": 790,
+      "decision_command_scope": "Both robots, including decision-loop zero commands; excludes grasp, post-arrival stop and placement",
+      "final_actor_status": {
+        "r1": "done",
+        "r3": "done"
+      },
+      "grasp_prediction_calls": 32
+    },
+    {
+      "appearance_manifest_sha256": "5d61c5bcac5750b552e24ed656ba6367e80386f8e7d185c34e3e584629e50a7b",
+      "arrived": false,
+      "budget": 500,
+      "contact_impratio": 10,
+      "cost_usd": 0,
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "error": null,
+      "evaluation": {
+        "bilateral_fraction": 1.0,
+        "gates": {
+          "actor_arrived": false,
+          "bilateral_every_sample": true,
+          "cameras_geometry_unchanged": true,
+          "continuous_samples": true,
+          "goal_orientation": true,
+          "goal_position": false,
+          "grasp_stable_before_departure": true,
+          "level_payload": true,
+          "lifted_every_sample": true,
+          "other_collision_free": true,
+          "released_on_floor": false,
+          "wall_contact_free": true,
+          "weld_off": true,
+          "within_authored_bounds": true
+        },
+        "goal_position_error_m": 1.11817801006101,
+        "goal_yaw_error_deg": 0.09675535251317749,
+        "lifted_fraction": 1.0,
+        "min_lift_m": 0.078431,
+        "navigation_sim_seconds": 1.8999999999999986,
+        "payload_turn_deg": -0.09675535251317749,
+        "sample_gap_max_s": 0.10000000000000142,
+        "samples": 20,
+        "success": false,
+        "unexpected_contact_ticks": 0,
+        "wall_contact_ticks": 0
+      },
+      "external_model_calls": 0,
+      "grasp_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+      "invariants_final": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "247e99ffa0369710e4394816d91a768fc91b82f3d70ebb2df1dd926247eecd49",
+          "geom_pos": "f0ead2b7304f81cf7e8e61e27bbc109517af82d2c6c3f9ecc8a43fbf7e6b7211",
+          "geom_quat": "011bbfc83c313539f780307fc2a28570074a86f80d7f90eb8c3210ae8a3e3106",
+          "geom_rgba": "be7090af1bb084297fd20a916466e0b48a5190da12d82a8e11f3c65e23f917b6",
+          "geom_size": "78c1879705b9b44ff7b6e6529d19354aed4401d95addf4ecce4feb4ab8d50d6f"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "247e99ffa0369710e4394816d91a768fc91b82f3d70ebb2df1dd926247eecd49",
+          "geom_pos": "f0ead2b7304f81cf7e8e61e27bbc109517af82d2c6c3f9ecc8a43fbf7e6b7211",
+          "geom_quat": "011bbfc83c313539f780307fc2a28570074a86f80d7f90eb8c3210ae8a3e3106",
+          "geom_rgba": "be7090af1bb084297fd20a916466e0b48a5190da12d82a8e11f3c65e23f917b6",
+          "geom_size": "78c1879705b9b44ff7b6e6529d19354aed4401d95addf4ecce4feb4ab8d50d6f"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "map": {
+        "bounds_m": [
+          -1.08,
+          1.85,
+          -2.9,
+          -1.15
+        ],
+        "footprint": {
+          "half_forward_m": 0.2,
+          "half_lateral_m": 0.51,
+          "margin_m": 0.025
+        },
+        "goal": {
+          "center_m": [
+            -0.5,
+            -2.0
+          ],
+          "relative_yaw_deg": 0
+        },
+        "grid_m": 0.06,
+        "map_id": "blocked-passage",
+        "obstacles": [
+          {
+            "center_m": [
+              0.1,
+              -2.0
+            ],
+            "half_extents_m": [
+              0.05,
+              0.6
+            ],
+            "height_m": 0.3,
+            "id": "detour"
+          }
+        ],
+        "schema": "ugrp.pair_navigation_map.v1",
+        "start_zone": {
+          "center_m": [
+            0.58,
+            -2.0
+          ],
+          "radius_m": 0.25
+        },
+        "top_camera": {
+          "fov_y_deg": 55.0,
+          "name": "cctv_top",
+          "position_m": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion_wxyz": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "map_sha256": "d0f6bbc7f6e125965bd1aa49da0ab8665c0b1c8b622d80dcc3e50846f3e47a71",
+      "post_grasp_settle_s": 8.0,
+      "refused_no_route": true,
+      "scene_xml_sha256": "7e56b846c0bcb919edf649f48b5294ab4df2ad3bc3228b89fe0ea227a6aff657",
+      "schema": "ugrp.pair_navigation_trial.v1",
+      "scope": "Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay",
+      "sim_seconds": 26.55999999999616,
+      "source_sha": "13d833964335b04766cc8c7c8b72ddc5b70f4192",
+      "success": false,
+      "unexpected_contact_ticks": 0,
+      "wall_contact_ticks": 0,
+      "wall_seconds": 9.681293499990716,
+      "weld_active_ticks": 0,
+      "recorded_success": false,
+      "case": "final-blocked-v2",
+      "cohort": "final",
+      "raw_directory": "outputs/pair-navigation/final-blocked-v2",
+      "decision_rounds": 10,
+      "decision_robot_commands": 20,
+      "decision_command_scope": "Both robots, including decision-loop zero commands; excludes grasp, post-arrival stop and placement",
+      "final_actor_status": {
+        "r1": "no_route",
+        "r3": "no_route"
+      },
+      "input_audit": {
+        "passed": true,
+        "steps": 10,
+        "physical_success": false,
+        "refused_no_route": true,
+        "scope": "Exact RGB/command replay and output-only scoring; no actual physics rerun"
+      },
+      "grasp_input_audit_ok": true,
+      "grasp_prediction_calls": 32,
+      "archived_scene_xml_sha256": "7e56b846c0bcb919edf649f48b5294ab4df2ad3bc3228b89fe0ea227a6aff657"
+    },
+    {
+      "appearance_manifest_sha256": "5d61c5bcac5750b552e24ed656ba6367e80386f8e7d185c34e3e584629e50a7b",
+      "arrived": false,
+      "budget": 500,
+      "contact_impratio": 1,
+      "cost_usd": 0,
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-loaded-navigation/scripts/run_pair_navigation.py\", line 203, in run\n    raise RuntimeError('policy stopped: '+json.dumps({r: d['status'] for r,d in decisions.items()}))\nRuntimeError: policy stopped: {\"r1\": \"payload_decoupled\", \"r3\": \"payload_decoupled\"}\n",
+      "evaluation": {
+        "bilateral_fraction": 0.4090909090909091,
+        "gates": {
+          "actor_arrived": false,
+          "bilateral_every_sample": false,
+          "cameras_geometry_unchanged": true,
+          "continuous_samples": true,
+          "goal_orientation": false,
+          "goal_position": true,
+          "grasp_stable_before_departure": true,
+          "level_payload": false,
+          "lifted_every_sample": false,
+          "other_collision_free": false,
+          "released_on_floor": false,
+          "wall_contact_free": true,
+          "weld_off": true,
+          "within_authored_bounds": true
+        },
+        "goal_position_error_m": 0.056750723695826136,
+        "goal_yaw_error_deg": 89.52163542939891,
+        "lifted_fraction": 0.45454545454545453,
+        "min_lift_m": 0.00487,
+        "navigation_sim_seconds": 2.099999999999998,
+        "payload_turn_deg": 179.5216354293989,
+        "sample_gap_max_s": 0.10000000000000142,
+        "samples": 22,
+        "success": false,
+        "unexpected_contact_ticks": 613,
+        "wall_contact_ticks": 0
+      },
+      "external_model_calls": 0,
+      "grasp_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+      "invariants_final": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 1.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 1.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "map": {
+        "bounds_m": [
+          -1.08,
+          1.85,
+          -2.9,
+          -1.15
+        ],
+        "footprint": {
+          "half_forward_m": 0.2,
+          "half_lateral_m": 0.51,
+          "margin_m": 0.025
+        },
+        "goal": {
+          "center_m": [
+            0.62,
+            -2.0
+          ],
+          "relative_yaw_deg": 90
+        },
+        "grid_m": 0.06,
+        "map_id": "open-left-90",
+        "obstacles": [],
+        "schema": "ugrp.pair_navigation_map.v1",
+        "start_zone": {
+          "center_m": [
+            0.58,
+            -2.0
+          ],
+          "radius_m": 0.25
+        },
+        "top_camera": {
+          "fov_y_deg": 55.0,
+          "name": "cctv_top",
+          "position_m": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion_wxyz": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "map_sha256": "5ce63177e459415e98fec4ba68ae36843a38de3e9e013a9f4aa9a256ca14ba40",
+      "post_grasp_settle_s": 8.0,
+      "scene_xml_sha256": "3aa6ef1c7aca6078260d0af2f2df4f8c27ba251a796deda535087d7040a0b48a",
+      "schema": "ugrp.pair_navigation_trial.v1",
+      "scope": "Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay",
+      "sim_seconds": 26.759999999996047,
+      "source_sha": "13d833964335b04766cc8c7c8b72ddc5b70f4192",
+      "success": false,
+      "unexpected_contact_ticks": 613,
+      "wall_contact_ticks": 0,
+      "wall_seconds": 11.266572416992858,
+      "weld_active_ticks": 0,
+      "recorded_success": false,
+      "case": "final-default-v2",
+      "cohort": "final",
+      "raw_directory": "outputs/pair-navigation/final-default-v2",
+      "decision_rounds": 11,
+      "decision_robot_commands": 22,
+      "decision_command_scope": "Both robots, including decision-loop zero commands; excludes grasp, post-arrival stop and placement",
+      "final_actor_status": {
+        "r1": "payload_decoupled",
+        "r3": "payload_decoupled"
+      },
+      "input_audit": {
+        "passed": true,
+        "steps": 11,
+        "physical_success": false,
+        "refused_no_route": false,
+        "scope": "Exact RGB/command replay and output-only scoring; no actual physics rerun"
+      },
+      "grasp_input_audit_ok": true,
+      "grasp_prediction_calls": 32,
+      "archived_scene_xml_sha256": "3aa6ef1c7aca6078260d0af2f2df4f8c27ba251a796deda535087d7040a0b48a"
+    },
+    {
+      "appearance_manifest_sha256": "4b7eeb164c8730dccf293d002868c3636d8547660e2e64e3c2b0a0631221179d",
+      "arrived": true,
+      "budget": 500,
+      "contact_impratio": 10,
+      "cost_usd": 0,
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "error": null,
+      "evaluation": {
+        "bilateral_fraction": 1.0,
+        "gates": {
+          "actor_arrived": true,
+          "bilateral_every_sample": true,
+          "cameras_geometry_unchanged": true,
+          "continuous_samples": true,
+          "goal_orientation": true,
+          "goal_position": true,
+          "grasp_stable_before_departure": true,
+          "level_payload": true,
+          "lifted_every_sample": true,
+          "other_collision_free": true,
+          "released_on_floor": true,
+          "wall_contact_free": true,
+          "weld_off": true,
+          "within_authored_bounds": true
+        },
+        "goal_position_error_m": 0.0010862527330229832,
+        "goal_yaw_error_deg": 0.1265698475131318,
+        "lifted_fraction": 1.0,
+        "min_lift_m": 0.073336,
+        "navigation_sim_seconds": 32.1,
+        "payload_turn_deg": 90.12656984751312,
+        "sample_gap_max_s": 0.10000000000000142,
+        "samples": 322,
+        "success": true,
+        "unexpected_contact_ticks": 0,
+        "wall_contact_ticks": 0
+      },
+      "external_model_calls": 0,
+      "grasp_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+      "invariants_final": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "map": {
+        "bounds_m": [
+          -1.08,
+          1.85,
+          -2.9,
+          -1.15
+        ],
+        "footprint": {
+          "half_forward_m": 0.2,
+          "half_lateral_m": 0.51,
+          "margin_m": 0.025
+        },
+        "goal": {
+          "center_m": [
+            0.62,
+            -2.0
+          ],
+          "relative_yaw_deg": 90
+        },
+        "grid_m": 0.06,
+        "map_id": "open-left-90",
+        "obstacles": [],
+        "schema": "ugrp.pair_navigation_map.v1",
+        "start_zone": {
+          "center_m": [
+            0.58,
+            -2.0
+          ],
+          "radius_m": 0.25
+        },
+        "top_camera": {
+          "fov_y_deg": 55.0,
+          "name": "cctv_top",
+          "position_m": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion_wxyz": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "map_sha256": "5ce63177e459415e98fec4ba68ae36843a38de3e9e013a9f4aa9a256ca14ba40",
+      "post_grasp_settle_s": 8.0,
+      "scene_xml_sha256": "554d9b620d1224dd26a38eb9102a705ea80ac45ae8d11f6fabf8284b81432210",
+      "schema": "ugrp.pair_navigation_trial.v1",
+      "scope": "Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay",
+      "sim_seconds": 62.01000000002982,
+      "source_sha": "89cee623eede570af3c6b3bba9d5a0864a0d3d35",
+      "success": true,
+      "unexpected_contact_ticks": 0,
+      "wall_contact_ticks": 0,
+      "wall_seconds": 45.55879170799744,
+      "weld_active_ticks": 0,
+      "recorded_success": true,
+      "case": "final-left",
+      "cohort": "previous_final_candidate",
+      "raw_directory": "outputs/pair-navigation/final-left",
+      "decision_rounds": 156,
+      "decision_robot_commands": 312,
+      "decision_command_scope": "Both robots, including decision-loop zero commands; excludes grasp, post-arrival stop and placement",
+      "final_actor_status": {
+        "r1": "done",
+        "r3": "done"
+      },
+      "grasp_prediction_calls": 32,
+      "archived_scene_xml_sha256": "554d9b620d1224dd26a38eb9102a705ea80ac45ae8d11f6fabf8284b81432210"
+    },
+    {
+      "appearance_manifest_sha256": "5d61c5bcac5750b552e24ed656ba6367e80386f8e7d185c34e3e584629e50a7b",
+      "arrived": true,
+      "budget": 500,
+      "contact_impratio": 10,
+      "cost_usd": 0,
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "error": null,
+      "evaluation": {
+        "bilateral_fraction": 1.0,
+        "gates": {
+          "actor_arrived": true,
+          "bilateral_every_sample": true,
+          "cameras_geometry_unchanged": true,
+          "continuous_samples": true,
+          "goal_orientation": true,
+          "goal_position": true,
+          "grasp_stable_before_departure": true,
+          "level_payload": true,
+          "lifted_every_sample": true,
+          "other_collision_free": true,
+          "released_on_floor": true,
+          "wall_contact_free": true,
+          "weld_off": true,
+          "within_authored_bounds": true
+        },
+        "goal_position_error_m": 0.0010862527330229832,
+        "goal_yaw_error_deg": 0.1265698475131318,
+        "lifted_fraction": 1.0,
+        "min_lift_m": 0.073336,
+        "navigation_sim_seconds": 32.1,
+        "payload_turn_deg": 90.12656984751312,
+        "sample_gap_max_s": 0.10000000000000142,
+        "samples": 322,
+        "success": true,
+        "unexpected_contact_ticks": 0,
+        "wall_contact_ticks": 0
+      },
+      "external_model_calls": 0,
+      "grasp_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+      "invariants_final": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "map": {
+        "bounds_m": [
+          -1.08,
+          1.85,
+          -2.9,
+          -1.15
+        ],
+        "footprint": {
+          "half_forward_m": 0.2,
+          "half_lateral_m": 0.51,
+          "margin_m": 0.025
+        },
+        "goal": {
+          "center_m": [
+            0.62,
+            -2.0
+          ],
+          "relative_yaw_deg": 90
+        },
+        "grid_m": 0.06,
+        "map_id": "open-left-90",
+        "obstacles": [],
+        "schema": "ugrp.pair_navigation_map.v1",
+        "start_zone": {
+          "center_m": [
+            0.58,
+            -2.0
+          ],
+          "radius_m": 0.25
+        },
+        "top_camera": {
+          "fov_y_deg": 55.0,
+          "name": "cctv_top",
+          "position_m": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion_wxyz": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "map_sha256": "5ce63177e459415e98fec4ba68ae36843a38de3e9e013a9f4aa9a256ca14ba40",
+      "post_grasp_settle_s": 8.0,
+      "scene_xml_sha256": "554d9b620d1224dd26a38eb9102a705ea80ac45ae8d11f6fabf8284b81432210",
+      "schema": "ugrp.pair_navigation_trial.v1",
+      "scope": "Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay",
+      "sim_seconds": 62.01000000002982,
+      "source_sha": "13d833964335b04766cc8c7c8b72ddc5b70f4192",
+      "success": true,
+      "unexpected_contact_ticks": 0,
+      "wall_contact_ticks": 0,
+      "wall_seconds": 47.30944562499644,
+      "weld_active_ticks": 0,
+      "recorded_success": true,
+      "case": "final-left-v2",
+      "cohort": "final",
+      "raw_directory": "outputs/pair-navigation/final-left-v2",
+      "decision_rounds": 156,
+      "decision_robot_commands": 312,
+      "decision_command_scope": "Both robots, including decision-loop zero commands; excludes grasp, post-arrival stop and placement",
+      "final_actor_status": {
+        "r1": "done",
+        "r3": "done"
+      },
+      "input_audit": {
+        "passed": true,
+        "steps": 156,
+        "physical_success": true,
+        "refused_no_route": false,
+        "scope": "Exact RGB/command replay and output-only scoring; no actual physics rerun"
+      },
+      "grasp_input_audit_ok": true,
+      "grasp_prediction_calls": 32,
+      "archived_scene_xml_sha256": "554d9b620d1224dd26a38eb9102a705ea80ac45ae8d11f6fabf8284b81432210"
+    },
+    {
+      "air_release_final": {
+        "arm_joints": {
+          "r1": {
+            "elbow": -0.2630393354559228,
+            "shoulder": 0.6269936298040051,
+            "wrist": -1.2482059573518238,
+            "yaw": 1.570796586816855
+          },
+          "r3": {
+            "elbow": -0.22057998285842745,
+            "shoulder": 0.6064954970448686,
+            "wrist": -1.2686349261395369,
+            "yaw": -1.5707963270917398
+          }
+        },
+        "base_rpy": {
+          "r1": [
+            -0.00030470224237989763,
+            4.1940486488030914e-07,
+            0.00023000019216185891
+          ],
+          "r3": [
+            0.00030674396054120083,
+            -1.3288090634936518e-08,
+            9.8075924011294e-05
+          ]
+        },
+        "base_yaw_rad": {
+          "r1": 0.00023000019216185891,
+          "r3": 9.8075924011294e-05
+        },
+        "bases": {
+          "r1": [
+            0.5800084496208998,
+            -2.2756589795636364,
+            0.03235534618008588
+          ],
+          "r3": [
+            0.5799529701218761,
+            -1.7243279574992783,
+            0.0323553347829208
+          ]
+        },
+        "constraints_active": {
+          "r1": false,
+          "r3": false
+        },
+        "contacts": {
+          "r1": {
+            "bilateral": false,
+            "contact_geom": "team_beam_geom",
+            "left": false,
+            "left_force_n": 0.0,
+            "right": false,
+            "right_force_n": 0.0
+          },
+          "r3": {
+            "bilateral": false,
+            "contact_geom": "team_beam_geom",
+            "left": false,
+            "left_force_n": 0.0,
+            "right": false,
+            "right_force_n": 0.0
+          }
+        },
+        "height_above_start_m": -4.9e-05,
+        "payload_floor_contact": true,
+        "payload_robot_contact": false,
+        "phase": "air_release_hold",
+        "position_m": [
+          0.580312,
+          -1.999961,
+          0.019951
+        ],
+        "sim_time_s": 87.51,
+        "tilt_deg": 0.0,
+        "within_authored_bounds": true,
+        "yaw_rad": -0.00044596539028223854
+      },
+      "air_release_success": true,
+      "diagnostic_only": true,
+      "drop_test": true,
+      "error": null,
+      "final": {
+        "arm_joints": {
+          "r1": {
+            "elbow": -0.2813639036086493,
+            "shoulder": 0.6037016505837421,
+            "wrist": -1.2631281448021248,
+            "yaw": 1.5707975610975289
+          },
+          "r3": {
+            "elbow": -0.23804626861314446,
+            "shoulder": 0.584205934478542,
+            "wrist": -1.2832021560802238,
+            "yaw": -1.5707787229774892
+          }
+        },
+        "base_rpy": {
+          "r1": [
+            -0.0007498801492975356,
+            -5.135813826805304e-07,
+            0.0002262061605278849
+          ],
+          "r3": [
+            0.0007433360946313302,
+            3.0556172272746757e-07,
+            2.438262649004984e-06
+          ]
+        },
+        "base_yaw_rad": {
+          "r1": 0.0002262061605278849,
+          "r3": 2.438262649004984e-06
+        },
+        "bases": {
+          "r1": [
+            0.5800102134666109,
+            -2.2710471168382016,
+            0.032344309189610704
+          ],
+          "r3": [
+            0.5799450606817231,
+            -1.728940800945451,
+            0.03234441993572058
+          ]
+        },
+        "constraints_active": {
+          "r1": false,
+          "r3": false
+        },
+        "contacts": {
+          "r1": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 11.546382710210274,
+            "right": true,
+            "right_force_n": 11.547393427909267
+          },
+          "r3": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 11.546496326855749,
+            "right": true,
+            "right_force_n": 11.547281035314647
+          }
+        },
+        "height_above_start_m": 0.066416,
+        "payload_floor_contact": false,
+        "payload_robot_contact": true,
+        "phase": "carry_stop",
+        "position_m": [
+          0.579959,
+          -1.999987,
+          0.086416
+        ],
+        "sim_time_s": 84.5,
+        "tilt_deg": 0.0032,
+        "within_authored_bounds": true,
+        "yaw_rad": 0.00011853916713526969
+      },
+      "first_failure_s": null,
+      "impratio": 10,
+      "initial": {
+        "arm_joints": {
+          "r1": {
+            "elbow": -0.2697886652953934,
+            "shoulder": 0.6088705276550114,
+            "wrist": -1.2390410861263843,
+            "yaw": 1.5763358376767937
+          },
+          "r3": {
+            "elbow": -0.22163170283299677,
+            "shoulder": 0.5994198727375754,
+            "wrist": -1.2603486872689345,
+            "yaw": -1.577653073697853
+          }
+        },
+        "base_rpy": {
+          "r1": [
+            -0.0007628475241638293,
+            4.1248761633922314e-05,
+            0.027851363328054157
+          ],
+          "r3": [
+            0.0005774901259585573,
+            -6.232506241938217e-05,
+            -0.0276973740640231
+          ]
+        },
+        "base_yaw_rad": {
+          "r1": 0.027851363328054157,
+          "r3": -0.0276973740640231
+        },
+        "bases": {
+          "r1": [
+            0.5800074119902179,
+            -2.271046550095502,
+            0.032342845210678255
+          ],
+          "r3": [
+            0.5800972562425183,
+            -1.728893781079218,
+            0.03234538147855082
+          ]
+        },
+        "constraints_active": {
+          "r1": false,
+          "r3": false
+        },
+        "contacts": {
+          "r1": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 11.796119044276825,
+            "right": true,
+            "right_force_n": 11.409626222441796
+          },
+          "r3": {
+            "bilateral": true,
+            "contact_geom": "team_beam_geom",
+            "left": true,
+            "left_force_n": 11.344087345195149,
+            "right": true,
+            "right_force_n": 11.886725787215108
+          }
+        },
+        "height_above_start_m": 0.083089,
+        "payload_floor_contact": false,
+        "payload_robot_contact": true,
+        "phase": "carry_stop",
+        "position_m": [
+          0.573857,
+          -2.000028,
+          0.103089
+        ],
+        "sim_time_s": 24.6,
+        "tilt_deg": 1.3903,
+        "within_authored_bounds": true,
+        "yaw_rad": 0.0014772338640048504
+      },
+      "invariants_final": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "post_grasp_settle_s": 8.0,
+      "seconds": 60,
+      "source_sha": "13d833964335b04766cc8c7c8b72ddc5b70f4192",
+      "success": true,
+      "wrist_delta": 0,
+      "recorded_success": true,
+      "case": "final-release-v2",
+      "cohort": "final",
+      "raw_directory": "outputs/pair-navigation/final-release-v2",
+      "decision_rounds": 0,
+      "decision_robot_commands": 0,
+      "decision_command_scope": "Both robots, including decision-loop zero commands; excludes grasp, post-arrival stop and placement",
+      "diagnostic_audit": {
+        "grasp_input_ok": true,
+        "hold_samples": 600,
+        "hold_all_bilateral": true,
+        "min_hold_lift_m": 0.066416,
+        "reported_hold_success": true,
+        "air_release_success": true,
+        "last_10_release_floor_and_clear": true,
+        "fall_from_hold_m": 0.06646500000000001,
+        "weld_off_all_samples": true,
+        "invariants_unchanged": true,
+        "source_sha": "13d833964335b04766cc8c7c8b72ddc5b70f4192",
+        "scope": "Posthoc independent hold/release calculation and archived grasp input replay; no navigation decision rows in this diagnostic"
+      },
+      "grasp_prediction_calls": 32,
+      "archived_scene_xml_sha256": "554d9b620d1224dd26a38eb9102a705ea80ac45ae8d11f6fabf8284b81432210"
+    },
+    {
+      "appearance_manifest_sha256": "5d61c5bcac5750b552e24ed656ba6367e80386f8e7d185c34e3e584629e50a7b",
+      "arrived": true,
+      "budget": 500,
+      "contact_impratio": 10,
+      "cost_usd": 0,
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "error": null,
+      "evaluation": {
+        "bilateral_fraction": 1.0,
+        "gates": {
+          "actor_arrived": true,
+          "bilateral_every_sample": true,
+          "cameras_geometry_unchanged": true,
+          "continuous_samples": true,
+          "goal_orientation": true,
+          "goal_position": true,
+          "grasp_stable_before_departure": true,
+          "level_payload": true,
+          "lifted_every_sample": true,
+          "other_collision_free": true,
+          "released_on_floor": true,
+          "wall_contact_free": true,
+          "weld_off": true,
+          "within_authored_bounds": true
+        },
+        "goal_position_error_m": 0.003469666410478097,
+        "goal_yaw_error_deg": 0.46031914250158334,
+        "lifted_fraction": 1.0,
+        "min_lift_m": 0.073424,
+        "navigation_sim_seconds": 31.9,
+        "payload_turn_deg": -90.46031914250159,
+        "sample_gap_max_s": 0.10000000000000142,
+        "samples": 320,
+        "success": true,
+        "unexpected_contact_ticks": 0,
+        "wall_contact_ticks": 0
+      },
+      "external_model_calls": 0,
+      "grasp_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+      "invariants_final": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "2574ee5fcee4b3483b07f4aaa5a82d9af0f1afd16c962fd539e2cba8db8f21af",
+          "geom_pos": "3ea8b0aa88732db87af634b7509fd6e063105ec35e7e9e55afd672c2c635f8d1",
+          "geom_quat": "753c5b2841f7643b19ae47efff668d609c6e2d49302f8fd194ed498361f8bb4c",
+          "geom_rgba": "d758f67c7411834bd45880e1efa9ca8bfa4ea24c98ecf86c838223dcc7aa9290",
+          "geom_size": "1af0bd887f88e4d938ca5e8048220f689b96ac0d5e121713e14cfd2fe4a91c1b"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "map": {
+        "bounds_m": [
+          -1.08,
+          1.85,
+          -2.9,
+          -1.15
+        ],
+        "footprint": {
+          "half_forward_m": 0.2,
+          "half_lateral_m": 0.51,
+          "margin_m": 0.025
+        },
+        "goal": {
+          "center_m": [
+            0.62,
+            -2.0
+          ],
+          "relative_yaw_deg": -90
+        },
+        "grid_m": 0.06,
+        "map_id": "open-right-90",
+        "obstacles": [],
+        "schema": "ugrp.pair_navigation_map.v1",
+        "start_zone": {
+          "center_m": [
+            0.58,
+            -2.0
+          ],
+          "radius_m": 0.25
+        },
+        "top_camera": {
+          "fov_y_deg": 55.0,
+          "name": "cctv_top",
+          "position_m": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion_wxyz": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "map_sha256": "23e71bfc94db619709ace474b40f1157d6a0709580abb72eae99f97803b42240",
+      "post_grasp_settle_s": 8.0,
+      "scene_xml_sha256": "554d9b620d1224dd26a38eb9102a705ea80ac45ae8d11f6fabf8284b81432210",
+      "schema": "ugrp.pair_navigation_trial.v1",
+      "scope": "Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay",
+      "sim_seconds": 61.810000000029575,
+      "source_sha": "13d833964335b04766cc8c7c8b72ddc5b70f4192",
+      "success": true,
+      "unexpected_contact_ticks": 0,
+      "wall_contact_ticks": 0,
+      "wall_seconds": 37.37344524999207,
+      "weld_active_ticks": 0,
+      "recorded_success": true,
+      "case": "final-right-v2",
+      "cohort": "final",
+      "raw_directory": "outputs/pair-navigation/final-right-v2",
+      "decision_rounds": 155,
+      "decision_robot_commands": 310,
+      "decision_command_scope": "Both robots, including decision-loop zero commands; excludes grasp, post-arrival stop and placement",
+      "final_actor_status": {
+        "r1": "done",
+        "r3": "done"
+      },
+      "input_audit": {
+        "passed": true,
+        "steps": 155,
+        "physical_success": true,
+        "refused_no_route": false,
+        "scope": "Exact RGB/command replay and output-only scoring; no actual physics rerun"
+      },
+      "grasp_input_audit_ok": true,
+      "grasp_prediction_calls": 32,
+      "archived_scene_xml_sha256": "554d9b620d1224dd26a38eb9102a705ea80ac45ae8d11f6fabf8284b81432210"
+    },
+    {
+      "appearance_manifest_sha256": "4b7eeb164c8730dccf293d002868c3636d8547660e2e64e3c2b0a0631221179d",
+      "arrived": false,
+      "budget": 650,
+      "contact_impratio": 10,
+      "cost_usd": 0,
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-loaded-navigation/scripts/run_pair_navigation.py\", line 203, in run\n    raise RuntimeError('policy stopped: '+json.dumps({r: d['status'] for r,d in decisions.items()}))\nRuntimeError: policy stopped: {\"r1\": \"payload_decoupled\", \"r3\": \"payload_decoupled\"}\n",
+      "evaluation": {
+        "bilateral_fraction": 1.0,
+        "gates": {
+          "actor_arrived": false,
+          "bilateral_every_sample": true,
+          "cameras_geometry_unchanged": true,
+          "continuous_samples": true,
+          "goal_orientation": false,
+          "goal_position": false,
+          "grasp_stable_before_departure": true,
+          "level_payload": true,
+          "lifted_every_sample": true,
+          "other_collision_free": true,
+          "released_on_floor": false,
+          "wall_contact_free": true,
+          "weld_off": true,
+          "within_authored_bounds": true
+        },
+        "goal_position_error_m": 0.3726274046953605,
+        "goal_yaw_error_deg": 89.41479059362693,
+        "lifted_fraction": 1.0,
+        "min_lift_m": 0.065294,
+        "navigation_sim_seconds": 55.300000000000004,
+        "payload_turn_deg": -89.41479059362693,
+        "sample_gap_max_s": 0.10000000000000853,
+        "samples": 554,
+        "success": false,
+        "unexpected_contact_ticks": 0,
+        "wall_contact_ticks": 0
+      },
+      "external_model_calls": 0,
+      "grasp_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+      "invariants_final": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "247e99ffa0369710e4394816d91a768fc91b82f3d70ebb2df1dd926247eecd49",
+          "geom_pos": "f0ead2b7304f81cf7e8e61e27bbc109517af82d2c6c3f9ecc8a43fbf7e6b7211",
+          "geom_quat": "011bbfc83c313539f780307fc2a28570074a86f80d7f90eb8c3210ae8a3e3106",
+          "geom_rgba": "be7090af1bb084297fd20a916466e0b48a5190da12d82a8e11f3c65e23f917b6",
+          "geom_size": "783080573f74e6bdb3a59247792d4335720571827d62b483ad9aaca5d72fb8f7"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "247e99ffa0369710e4394816d91a768fc91b82f3d70ebb2df1dd926247eecd49",
+          "geom_pos": "f0ead2b7304f81cf7e8e61e27bbc109517af82d2c6c3f9ecc8a43fbf7e6b7211",
+          "geom_quat": "011bbfc83c313539f780307fc2a28570074a86f80d7f90eb8c3210ae8a3e3106",
+          "geom_rgba": "be7090af1bb084297fd20a916466e0b48a5190da12d82a8e11f3c65e23f917b6",
+          "geom_size": "783080573f74e6bdb3a59247792d4335720571827d62b483ad9aaca5d72fb8f7"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "map": {
+        "bounds_m": [
+          -1.08,
+          1.85,
+          -2.9,
+          -1.15
+        ],
+        "footprint": {
+          "half_forward_m": 0.2,
+          "half_lateral_m": 0.51,
+          "margin_m": 0.025
+        },
+        "goal": {
+          "center_m": [
+            -0.5,
+            -2.0
+          ],
+          "relative_yaw_deg": 0
+        },
+        "grid_m": 0.06,
+        "map_id": "wall-detour",
+        "obstacles": [
+          {
+            "center_m": [
+              0.1,
+              -2.0
+            ],
+            "half_extents_m": [
+              0.05,
+              0.1
+            ],
+            "height_m": 0.3,
+            "id": "detour"
+          }
+        ],
+        "schema": "ugrp.pair_navigation_map.v1",
+        "start_zone": {
+          "center_m": [
+            0.58,
+            -2.0
+          ],
+          "radius_m": 0.25
+        },
+        "top_camera": {
+          "fov_y_deg": 55.0,
+          "name": "cctv_top",
+          "position_m": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion_wxyz": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "map_sha256": "85b18664347a67fc98c1a702a8679ecfe592e2f304acd53ac7bed3ae2a21942d",
+      "post_grasp_settle_s": 8.0,
+      "scene_xml_sha256": "e59ef4eea8d5b56d294197b0fd7bae89cea79991b7b606bf0cda2e0710b7e573",
+      "schema": "ugrp.pair_navigation_trial.v1",
+      "scope": "Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay",
+      "sim_seconds": 79.95999999999505,
+      "source_sha": "89cee623eede570af3c6b3bba9d5a0864a0d3d35",
+      "success": false,
+      "unexpected_contact_ticks": 0,
+      "wall_contact_ticks": 0,
+      "wall_seconds": 65.71459862499614,
+      "weld_active_ticks": 0,
+      "recorded_success": false,
+      "case": "final-wall",
+      "cohort": "previous_final_candidate",
+      "raw_directory": "outputs/pair-navigation/final-wall",
+      "decision_rounds": 277,
+      "decision_robot_commands": 554,
+      "decision_command_scope": "Both robots, including decision-loop zero commands; excludes grasp, post-arrival stop and placement",
+      "final_actor_status": {
+        "r1": "payload_decoupled",
+        "r3": "payload_decoupled"
+      },
+      "grasp_prediction_calls": 32,
+      "archived_scene_xml_sha256": "e59ef4eea8d5b56d294197b0fd7bae89cea79991b7b606bf0cda2e0710b7e573"
+    },
+    {
+      "appearance_manifest_sha256": "5d61c5bcac5750b552e24ed656ba6367e80386f8e7d185c34e3e584629e50a7b",
+      "arrived": true,
+      "budget": 650,
+      "contact_impratio": 10,
+      "cost_usd": 0,
+      "environment": {
+        "mujoco": "3.12.0",
+        "platform": "macOS-27.0-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]"
+      },
+      "error": null,
+      "evaluation": {
+        "bilateral_fraction": 1.0,
+        "gates": {
+          "actor_arrived": true,
+          "bilateral_every_sample": true,
+          "cameras_geometry_unchanged": true,
+          "continuous_samples": true,
+          "goal_orientation": true,
+          "goal_position": true,
+          "grasp_stable_before_departure": true,
+          "level_payload": true,
+          "lifted_every_sample": true,
+          "other_collision_free": true,
+          "released_on_floor": true,
+          "wall_contact_free": true,
+          "weld_off": true,
+          "within_authored_bounds": true
+        },
+        "goal_position_error_m": 0.022206533993399266,
+        "goal_yaw_error_deg": 0.46836746804042945,
+        "lifted_fraction": 1.0,
+        "min_lift_m": 0.054764,
+        "navigation_sim_seconds": 96.69999999999999,
+        "payload_turn_deg": 0.46836746804042945,
+        "sample_gap_max_s": 0.10000000000000853,
+        "samples": 968,
+        "success": true,
+        "unexpected_contact_ticks": 0,
+        "wall_contact_ticks": 0
+      },
+      "external_model_calls": 0,
+      "grasp_skill_sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+      "invariants_final": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "247e99ffa0369710e4394816d91a768fc91b82f3d70ebb2df1dd926247eecd49",
+          "geom_pos": "f0ead2b7304f81cf7e8e61e27bbc109517af82d2c6c3f9ecc8a43fbf7e6b7211",
+          "geom_quat": "011bbfc83c313539f780307fc2a28570074a86f80d7f90eb8c3210ae8a3e3106",
+          "geom_rgba": "be7090af1bb084297fd20a916466e0b48a5190da12d82a8e11f3c65e23f917b6",
+          "geom_size": "783080573f74e6bdb3a59247792d4335720571827d62b483ad9aaca5d72fb8f7"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "invariants_initial": {
+        "contact_solver": {
+          "cone": 1.0,
+          "impratio": 10.0,
+          "iterations": 80.0,
+          "noslip_iterations": 0.0,
+          "solver": 2.0,
+          "timestep": 0.002,
+          "tolerance": 1e-08
+        },
+        "geometry_sha256": {
+          "body_inertia": "a9a4129f2ae9e2f272ece0716b03a11a5c6920bbf87b46e486ab00ef62c053cf",
+          "body_mass": "36506ca1897267d0c06b9041098fe59f0068b3e65ecff995a891a0e8f6de070a",
+          "geom_friction": "247e99ffa0369710e4394816d91a768fc91b82f3d70ebb2df1dd926247eecd49",
+          "geom_pos": "f0ead2b7304f81cf7e8e61e27bbc109517af82d2c6c3f9ecc8a43fbf7e6b7211",
+          "geom_quat": "011bbfc83c313539f780307fc2a28570074a86f80d7f90eb8c3210ae8a3e3106",
+          "geom_rgba": "be7090af1bb084297fd20a916466e0b48a5190da12d82a8e11f3c65e23f917b6",
+          "geom_size": "783080573f74e6bdb3a59247792d4335720571827d62b483ad9aaca5d72fb8f7"
+        },
+        "policy_cameras": {
+          "cctv_top": {
+            "fov_y_deg": 55.0,
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "r1__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          },
+          "r3__robot_cam": {
+            "fov_y_deg": 42.18818995586325,
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ]
+          }
+        }
+      },
+      "map": {
+        "bounds_m": [
+          -1.08,
+          1.85,
+          -2.9,
+          -1.15
+        ],
+        "footprint": {
+          "half_forward_m": 0.2,
+          "half_lateral_m": 0.51,
+          "margin_m": 0.025
+        },
+        "goal": {
+          "center_m": [
+            -0.5,
+            -2.0
+          ],
+          "relative_yaw_deg": 0
+        },
+        "grid_m": 0.06,
+        "map_id": "wall-detour",
+        "obstacles": [
+          {
+            "center_m": [
+              0.1,
+              -2.0
+            ],
+            "half_extents_m": [
+              0.05,
+              0.1
+            ],
+            "height_m": 0.3,
+            "id": "detour"
+          }
+        ],
+        "schema": "ugrp.pair_navigation_map.v1",
+        "start_zone": {
+          "center_m": [
+            0.58,
+            -2.0
+          ],
+          "radius_m": 0.25
+        },
+        "top_camera": {
+          "fov_y_deg": 55.0,
+          "name": "cctv_top",
+          "position_m": [
+            0.55,
+            -2.0,
+            2.5
+          ],
+          "quaternion_wxyz": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "map_sha256": "85b18664347a67fc98c1a702a8679ecfe592e2f304acd53ac7bed3ae2a21942d",
+      "post_grasp_settle_s": 8.0,
+      "scene_xml_sha256": "e59ef4eea8d5b56d294197b0fd7bae89cea79991b7b606bf0cda2e0710b7e573",
+      "schema": "ugrp.pair_navigation_trial.v1",
+      "scope": "Fixed-grasp classical RGB pair navigation; zero LLM calls; placement is demonstration replay",
+      "sim_seconds": 126.60999999988633,
+      "source_sha": "13d833964335b04766cc8c7c8b72ddc5b70f4192",
+      "success": true,
+      "unexpected_contact_ticks": 0,
+      "wall_contact_ticks": 0,
+      "wall_seconds": 105.87743012499413,
+      "weld_active_ticks": 0,
+      "recorded_success": true,
+      "case": "final-wall-v2",
+      "cohort": "final",
+      "raw_directory": "outputs/pair-navigation/final-wall-v2",
+      "decision_rounds": 479,
+      "decision_robot_commands": 958,
+      "decision_command_scope": "Both robots, including decision-loop zero commands; excludes grasp, post-arrival stop and placement",
+      "final_actor_status": {
+        "r1": "done",
+        "r3": "done"
+      },
+      "input_audit": {
+        "passed": true,
+        "steps": 479,
+        "physical_success": true,
+        "refused_no_route": false,
+        "scope": "Exact RGB/command replay and output-only scoring; no actual physics rerun"
+      },
+      "grasp_input_audit_ok": true,
+      "grasp_prediction_calls": 32,
+      "archived_scene_xml_sha256": "e59ef4eea8d5b56d294197b0fd7bae89cea79991b7b606bf0cda2e0710b7e573"
+    }
+  ]
+}

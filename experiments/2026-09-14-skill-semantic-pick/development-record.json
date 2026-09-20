@@ -1,0 +1,70 @@
+[
+  {
+    "path": "/Users/changmin/projects/ugrp-worktrees/skill-vs-semantic-pick/outputs/pick-match-dev40-grounding",
+    "git_sha": "9da62c0f189346ddf1c8c0d8f90a5c52c0460ab7",
+    "reason": "SCRIPTED_GROUNDING_ONLY",
+    "error": null,
+    "cleanup_errors": [
+      "score_grasp: missing/invalid constraint samples"
+    ],
+    "calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "result_sha256": "44f1abb71e5d7c6c2e14e828ff7b40e656c68cd6eb2d848023f483a59ca5b4eb"
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp-worktrees/skill-vs-semantic-pick/outputs/pick-match-dev40-grounding-v2",
+    "git_sha": "608be47de9db2d1ec4dbccbc15ec71c9ed4cc65d",
+    "reason": "SCRIPTED_GROUNDING_ONLY",
+    "error": null,
+    "cleanup_errors": [],
+    "calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "result_sha256": "8b600dc424ce2932d195fa99d7188c6c9a100be5fc78f9f549aa0253c37dd749"
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp-worktrees/skill-vs-semantic-pick/outputs/pick-match-dev40-live-semantic",
+    "git_sha": "608be47de9db2d1ec4dbccbc15ec71c9ed4cc65d",
+    "reason": "MODEL_ERROR",
+    "error": "ValueError: INVALID_PICK_RESPONSE:Expecting value: line 1 column 1 (char 0)",
+    "cleanup_errors": [],
+    "calls": 1,
+    "input_tokens": 2506,
+    "output_tokens": 42,
+    "result_sha256": "353b97c1a2ccee718a06dc9abd8811d6f6b1d0822d365c94c7ad4c0640cad66d"
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp-worktrees/skill-vs-semantic-pick/outputs/pick-match-dev40-live-skill",
+    "git_sha": "608be47de9db2d1ec4dbccbc15ec71c9ed4cc65d",
+    "reason": "MODEL_ERROR",
+    "error": "ValueError: INVALID_PICK_RESPONSE:Expecting value: line 1 column 1 (char 0)",
+    "cleanup_errors": [],
+    "calls": 1,
+    "input_tokens": 2359,
+    "output_tokens": 43,
+    "result_sha256": "46164c6a947d40d85695b27deb38a8d99f3d5623272a27e2b93fce1870007402"
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp-worktrees/skill-vs-semantic-pick/outputs/pick-match-dev40-live-v2-semantic",
+    "git_sha": "c692d5c45138e3e77157dd2854b80449a3f0f5b1",
+    "reason": "CALL_OR_REPORTED_INPUT_BUDGET",
+    "error": null,
+    "cleanup_errors": [],
+    "calls": 2,
+    "input_tokens": 5023,
+    "output_tokens": 75,
+    "result_sha256": "a34e6e3f5d87e86f99c98ab425af3b5f8590c1a180c00eb6646c7b8b5e43e652"
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp-worktrees/skill-vs-semantic-pick/outputs/pick-match-dev40-live-v2-skill",
+    "git_sha": "c692d5c45138e3e77157dd2854b80449a3f0f5b1",
+    "reason": "SIM_BUDGET",
+    "error": null,
+    "cleanup_errors": [],
+    "calls": 1,
+    "input_tokens": 2359,
+    "output_tokens": 32,
+    "result_sha256": "5e108f90bd4bf6324145bc4fa19f6d9b975937588b2330d41d86f46ec3ba38ff"
+  }
+]

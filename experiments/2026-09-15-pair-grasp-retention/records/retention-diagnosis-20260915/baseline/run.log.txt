@@ -1,0 +1,25 @@
+{
+  "success": false,
+  "error": null,
+  "evaluation": {
+    "success": false,
+    "checkpoints": {},
+    "grasp_stability": {
+      "success": true,
+      "gates": {
+        "full_grasp_samples": true,
+        "grasp_spacing_preserved": true,
+        "grasp_bilateral_through_lift_hold": true,
+        "grasp_hold_lifted_every_sample": true
+      },
+      "anchor_spacing_m": 0.6505937001159792,
+      "final_spacing_m": 0.6492980828319981,
+      "max_spacing_change_m": 0.00613684043512619,
+      "nonbilateral_samples": 0,
+      "samples": 111,
+      "max_sample_gap_s": 0.10000000000000142
+    },
+    "released_on_floor": true
+  },
+  "wall_seconds": 74.42182987500564
+}

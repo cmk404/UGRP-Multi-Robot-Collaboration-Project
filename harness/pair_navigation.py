@@ -1,0 +1,710 @@
+"""RGB-only paired load navigation on an authored static map.
+
+No simulator imports or measured state enter this module. The color/template
+observer is a classical fixed-scene student, not an LLM or a grasp sensor.
+"""
+from __future__ import annotations
+
+import hashlib
+import copy
+import heapq
+import json
+import math
+from pathlib import Path
+
+import cv2
+import numpy as np
+
+from harness.known_map_navigation import _decode_jpeg, pixel_to_world
+from harness.pair_carry_sync import PairCarrySync
+
+ROBOTS = ('r1', 'r3')
+CAMERA = {'name': 'cctv_top', 'position_m': [.55, -2., 2.5],
+          'quaternion_wxyz': [1., 0., 0., 0.], 'fov_y_deg': 55.}
+
+
+def digest(value):
+    return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(',', ':'),
+                                     allow_nan=False).encode()).hexdigest()
+
+
+def wrap(angle):
+    return (angle + math.pi) % (2 * math.pi) - math.pi
+
+
+def rotate(point, angle):
+    c, s = math.cos(angle), math.sin(angle)
+    return np.array([c * point[0] - s * point[1], s * point[0] + c * point[1]])
+
+
+def payload_coupled(payload, robot_center, robot_turn, anchor_turn):
+    """Occluded shaft pixels identify a line and a center interval, not a point."""
+    angle_error = abs(wrap(payload['relative_yaw_rad']-anchor_turn-robot_turn))
+    axis = np.array(payload['axis_xy'])
+    normal = np.array([-axis[1], axis[0]])
+    lateral = abs(float(np.dot(np.array(payload['xy_m'])-robot_center, normal)))
+    along = float(np.dot(robot_center, axis))
+    lower, upper = payload['center_projection_interval_m']
+    return angle_error <= .12 and lateral <= .04 and lower-.04 <= along <= upper+.04
+
+
+def validate_map(data):
+    required = {'schema', 'map_id', 'top_camera', 'bounds_m', 'start_zone',
+                'goal', 'obstacles', 'footprint', 'grid_m'}
+    if set(data) != required or data['schema'] != 'ugrp.pair_navigation_map.v1':
+        raise ValueError('invalid pair map schema')
+    if data['top_camera'] != CAMERA:
+        raise ValueError('the approved actor camera must remain fixed')
+    if not isinstance(data['map_id'], str) or not data['map_id']:
+        raise ValueError('map_id required')
+    def vector(values, count):
+        if not isinstance(values, list) or len(values) != count or any(
+            isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) for v in values):
+            raise ValueError('finite map coordinates required')
+        return values
+    xmin, xmax, ymin, ymax = vector(data['bounds_m'], 4)
+    if not xmin < xmax or not ymin < ymax:
+        raise ValueError('empty map bounds')
+    if not (-1.2 <= xmin < xmax <= 2.3 and -3.35 <= ymin < ymax <= -.65):
+        raise ValueError('map exceeds fixed camera coverage')
+    if set(data['start_zone']) != {'center_m', 'radius_m'}:
+        raise ValueError('invalid start zone')
+    vector(data['start_zone']['center_m'], 2)
+    if not .1 <= data['start_zone']['radius_m'] <= .8:
+        raise ValueError('invalid start radius')
+    if set(data['goal']) != {'center_m', 'relative_yaw_deg'}:
+        raise ValueError('invalid goal')
+    gx, gy = vector(data['goal']['center_m'], 2)
+    if not (xmin <= gx <= xmax and ymin <= gy <= ymax):
+        raise ValueError('goal outside map')
+    vector([data['goal']['relative_yaw_deg']], 1)
+    if abs(data['goal']['relative_yaw_deg']) > 180:
+        raise ValueError('goal yaw out of range')
+    if set(data['footprint']) != {'half_forward_m', 'half_lateral_m', 'margin_m'}:
+        raise ValueError('invalid loaded footprint')
+    f = data['footprint']
+    vector(list(f.values()), 3)
+    if not (.18 <= f['half_forward_m'] <= .4 and .49 <= f['half_lateral_m'] <= .7
+            and .02 <= f['margin_m'] <= .1):
+        raise ValueError('footprint must include both chassis, arms and beam')
+    if isinstance(data['grid_m'], bool) or not .03 <= data['grid_m'] <= .1:
+        raise ValueError('invalid grid size')
+    ids = set()
+    for box in data['obstacles']:
+        if set(box) != {'id', 'center_m', 'half_extents_m', 'height_m'}:
+            raise ValueError('invalid static wall')
+        if not isinstance(box['id'], str) or not box['id'].replace('_', '').isalnum() or box['id'] in ids:
+            raise ValueError('invalid/duplicate wall id')
+        ids.add(box['id'])
+        x, y = vector(box['center_m'], 2)
+        hx, hy = vector(box['half_extents_m'], 2)
+        vector([box['height_m']], 1)
+        if min(hx, hy, box['height_m']) <= 0 or not (xmin <= x-hx < x+hx <= xmax and ymin <= y-hy < y+hy <= ymax):
+            raise ValueError('wall outside map')
+    return data
+
+
+def footprint_clear(pose, data):
+    """Separating-axis test for an oriented complete-load rectangle vs walls."""
+    x, y, angle = pose
+    f = data['footprint']
+    hx, hy = f['half_forward_m'] + f['margin_m'], f['half_lateral_m'] + f['margin_m']
+    c, s = math.cos(angle), math.sin(angle)
+    ex, ey = abs(c)*hx + abs(s)*hy, abs(s)*hx + abs(c)*hy
+    xmin, xmax, ymin, ymax = data['bounds_m']
+    if not (xmin <= x-ex and x+ex <= xmax and ymin <= y-ey and y+ey <= ymax):
+        return False
+    for box in data['obstacles']:
+        dx, dy = box['center_m'][0]-x, box['center_m'][1]-y
+        bx, by = box['half_extents_m']
+        if (abs(dx) > ex+bx or abs(dy) > ey+by or
+            abs(c*dx+s*dy) > hx+abs(c)*bx+abs(s)*by or
+            abs(-s*dx+c*dy) > hy+abs(s)*bx+abs(c)*by):
+            continue
+        return False
+    return True
+
+
+def swept_clear(start, end, data):
+    distance = math.dist(start[:2], end[:2])
+    delta = wrap(end[2]-start[2])
+    count = max(1, math.ceil(distance/.012), math.ceil(abs(delta)/math.radians(2)))
+    # The margin also bounds the sub-sample swept corner motion (< 0.012 m).
+    return all(footprint_clear((start[0]+(end[0]-start[0])*t/count,
+                               start[1]+(end[1]-start[1])*t/count,
+                               start[2]+delta*t/count), data) for t in range(count+1))
+
+
+def plan_route(start, goal, data):
+    """SE(2) lattice search. Every translation/rotation edge checks swept load."""
+    validate_map(data)
+    start, goal = tuple(start), tuple(goal)
+    if not footprint_clear(start, data) or not footprint_clear(goal, data):
+        return None
+    if swept_clear(start, goal, data):
+        return [list(start), list(goal)]
+    grid, bins = data['grid_m'], 8
+    origin = np.array(start[:2])
+    def pose(node):
+        return (origin[0]+node[0]*grid, origin[1]+node[1]*grid, start[2]+node[2]*2*math.pi/bins)
+    def heuristic(p):
+        return math.dist(p[:2], goal[:2]) + .18*abs(wrap(p[2]-goal[2]))
+    initial = (0, 0, 0)
+    frontier, costs, parent = [(heuristic(start), 0., initial)], {initial: 0.}, {}
+    moves = [(dx, dy, 0) for dx in (-1, 0, 1) for dy in (-1, 0, 1) if dx or dy] + [(0, 0, 1), (0, 0, -1)]
+    closed = set()
+    while frontier:
+        _, cost, node = heapq.heappop(frontier)
+        if node in closed:
+            continue
+        closed.add(node)
+        p = pose(node)
+        if math.dist(p[:2], goal[:2]) <= grid*1.5 and abs(wrap(p[2]-goal[2])) < .05 and swept_clear(p, goal, data):
+            nodes = [node]
+            while nodes[-1] != initial:
+                nodes.append(parent[nodes[-1]])
+            route = [list(pose(n)) for n in reversed(nodes)] + [list(goal)]
+            # Greedy shortcuts retain the same complete swept-footprint test.
+            smooth = [route[0]]
+            index = 0
+            while index < len(route)-1:
+                last = len(route)-1
+                while last > index+1 and not swept_clear(route[index], route[last], data):
+                    last -= 1
+                smooth.append(route[last]); index = last
+            return smooth
+        for dx, dy, da in moves:
+            nxt = (node[0]+dx, node[1]+dy, (node[2]+da) % bins)
+            if nxt in closed:
+                continue
+            q = pose(nxt)
+            step = math.hypot(dx, dy)*grid + abs(da)*.18*2*math.pi/bins
+            new = cost+step
+            if new >= costs.get(nxt, math.inf) or not swept_clear(p, q, data):
+                continue
+            costs[nxt], parent[nxt] = new, node
+            heapq.heappush(frontier, (new+heuristic(q), new, nxt))
+    return None
+
+
+class PairVision:
+    """Track unchanged wheel color templates; headings are image rotations.
+
+    At initialization the long orange component identifies the beam. Robot
+    roles are assigned by the declared lower/upper start sides, not live poses.
+    A shared forward probe subsequently resolves the initial heading sign.
+    """
+    def __init__(self, data):
+        self.map = validate_map(data)
+        self.templates = {}
+        self.centers = {}
+        self.angles = {r: 0. for r in ROBOTS}
+        self.payload = None
+        self.payload_origin_angle = None
+        self.payload_angle = None
+        root = Path(__file__).parent/'assets'/'pair_navigation'
+        metadata = json.loads((root/'manifest.json').read_text())
+        self.payload_length_m = float(metadata['payload_length_m'])
+        self.initial_templates = {}
+        for rid in ROBOTS:
+            rec = metadata['templates'][rid]
+            raw = (root/rec['path']).read_bytes()
+            if hashlib.sha256(raw).hexdigest() != rec['sha256']:
+                raise ValueError('wheel appearance model hash mismatch')
+            self.initial_templates[rid] = cv2.imdecode(np.frombuffer(raw, np.uint8), cv2.IMREAD_GRAYSCALE)
+
+    def _payload(self, frame):
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        mask = cv2.inRange(hsv, np.array([10, 100, 70], np.uint8), np.array([16, 255, 255], np.uint8))
+        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
+        count, labels, stats, centers = cv2.connectedComponentsWithStats(mask, 8)
+        reference = self.map['start_zone']['center_m'] if self.payload is None else self.payload['xy_m']
+        candidates = []
+        for i in range(1, count):
+            if stats[i, cv2.CC_STAT_AREA] < 400: continue
+            yy, xx = np.where(labels == i)
+            eig, vectors = np.linalg.eigh(np.cov(np.column_stack([xx, yy]).T))
+            if eig[1] < 150 or eig[1]/max(eig[0], 1) < 10: continue
+            point = pixel_to_world(centers[i], frame.shape, self.map['top_camera'])
+            if math.dist(point, reference) > (.25 if self.payload is None else .10): continue
+            axis = vectors[:, -1]
+            angle = math.atan2(-axis[1], axis[0])
+            axis_world = np.array([axis[0], -axis[1]])
+            scale = 2*(2.5-.09)*math.tan(math.radians(55)/2)/frame.shape[0]
+            pixels_world = np.column_stack([.55+(xx-(frame.shape[1]-1)/2)*scale,
+                                            -2-(yy-(frame.shape[0]-1)/2)*scale])
+            projections = pixels_world @ axis_world
+            interval = [float(projections.max()-self.payload_length_m/2),
+                        float(projections.min()+self.payload_length_m/2)]
+            candidates.append((point, angle, int(stats[i, cv2.CC_STAT_AREA]), axis_world, interval))
+        if len(candidates) != 1:
+            raise ValueError('orange payload missing/ambiguous')
+        point, raw, area, axis_world, interval = candidates[0]
+        if self.payload_origin_angle is None:
+            self.payload_origin_angle = self.payload_angle = raw
+        else:
+            self.payload_angle += (raw-self.payload_angle+math.pi/2) % math.pi-math.pi/2
+        self.payload = {'xy_m': list(point), 'relative_yaw_rad': self.payload_angle-self.payload_origin_angle,
+                        'feature_area_px': area, 'feature_plane_height_m': .09,
+                        'xy_is_visible_fragment_centroid': True, 'axis_xy': axis_world.tolist(),
+                        'center_projection_interval_m': interval}
+
+    def _mask(self, image):
+        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        return cv2.inRange(hsv, np.array([16, 80, 55], np.uint8), np.array([38, 255, 255], np.uint8))
+
+    def observe(self, own_rgb, top_rgb):
+        # Own RGB is validated and archived, but this initial classical motion
+        # observer uses the common camera; it does not claim own-camera grasp QA.
+        _decode_jpeg(own_rgb, 'own_rgb')
+        frame = _decode_jpeg(top_rgb, 'shared_top_rgb')
+        if frame.shape != (720, 960, 3):
+            raise ValueError('wheel appearance requires the calibrated 960x720 top camera')
+        self._payload(frame)
+        mask = self._mask(frame)
+        h, w = mask.shape
+        if not self.templates:
+            scale = 2*(2.5-.09)*math.tan(math.radians(55)/2)/h
+            point = self.payload['xy_m']
+            center = np.array([(point[0]-.55)/scale+(w-1)/2, (-2-point[1])/scale+(h-1)/2])
+            for rid, sign in (('r1', 1), ('r3', -1)):
+                expected = center+np.array([0, sign*.30/scale])
+                x, y = np.round(expected).astype(int)
+                extent = 70
+                if min(x-extent, y-extent) < 0 or x+extent >= w or y+extent >= h:
+                    raise ValueError('start-side search outside fixed camera')
+                crop = cv2.GaussianBlur(mask[y-extent:y+extent+1, x-extent:x+extent+1], (3,3), .7)
+                best = None
+                for angle in range(-15, 16):
+                    matrix = cv2.getRotationMatrix2D((30,30), angle, 1.)
+                    template = cv2.warpAffine(self.initial_templates[rid], matrix, (61,61))
+                    score = cv2.matchTemplate(crop, template, cv2.TM_CCOEFF_NORMED)
+                    _, peak, _, loc = cv2.minMaxLoc(score)
+                    if best is None or peak > best[0]: best = (peak, loc)
+                peak, (u,v) = best
+                if peak < .55: raise ValueError('initial wheel appearance not recognized')
+                px, py = x-extent+u+30, y-extent+v+30
+                template = mask[py-30:py+31, px-30:px+31].copy()
+                if template.shape != (61, 61):
+                    raise ValueError('robot template outside fixed camera')
+                self.templates[rid] = cv2.GaussianBlur(template, (3, 3), .7)
+                self.centers[rid] = (float(px), float(py))
+        observations = {}
+        for rid in ROBOTS:
+            px, py = self.centers[rid]
+            x, y = int(round(px)), int(round(py))
+            extent = 52
+            if x-extent < 0 or y-extent < 0 or x+extent >= w or y+extent >= h:
+                raise ValueError('robot outside fixed camera tracking margin')
+            crop = cv2.GaussianBlur(mask[y-extent:y+extent+1, x-extent:x+extent+1], (3, 3), .7)
+            best = None
+            for angle in np.arange(self.angles[rid]-5, self.angles[rid]+5.01, .5):
+                matrix = cv2.getRotationMatrix2D((30, 30), angle, 1.)
+                template = cv2.warpAffine(self.templates[rid], matrix, (61, 61))
+                score = cv2.matchTemplate(crop, template, cv2.TM_CCOEFF_NORMED)
+                _, peak, _, loc = cv2.minMaxLoc(score)
+                if best is None or peak > best[0]:
+                    best = (peak, angle, loc)
+            peak, angle, (u, v) = best
+            if peak < .48:
+                raise ValueError(f'{rid} wheel template lost ({peak:.3f})')
+            center = (float(x-extent+u+30), float(y-extent+v+30))
+            if math.dist(center, self.centers[rid]) > 17:
+                raise ValueError('implausible visual tracking jump')
+            self.centers[rid], self.angles[rid] = center, float(angle)
+            point = pixel_to_world(center, frame.shape, self.map['top_camera'])
+            observations[rid] = {'xy_m': list(point), 'relative_yaw_rad': math.radians(angle),
+                                 'confidence': float(peak), 'center_uv': list(center),
+                                 'feature_plane_height_m': .09}
+        return observations
+
+
+class VisionUncertain(ValueError):
+    """A valid fresh image is insufficient; hold both robots and look again."""
+
+
+class TemporalPairVision(PairVision):
+    """RGB-only temporal association, with bounded appearance memory.
+
+    Initialization retains the strict legacy detector. Tracking may use a
+    partial shaft if it agrees with the previous visible line and known beam
+    length. Wheel memory is added only after both robots and the beam pass;
+    the original appearance remains an independent acceptance check.
+    """
+    def __init__(self, data, *, edge_axis=False):
+        super().__init__(data)
+        self.edge_axis = edge_axis
+        self.appearance = {r: [] for r in ROBOTS}
+
+    def _track_payload(self, frame):
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        mask = cv2.inRange(hsv, np.array([10,100,70],np.uint8), np.array([16,255,255],np.uint8))
+        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((3,3),np.uint8))
+        count, labels, stats, centers = cv2.connectedComponentsWithStats(mask, 8)
+        previous = np.array(self.payload['xy_m'])
+        previous_axis = np.array(self.payload['axis_xy'])
+        scale = 2*(2.5-.09)*math.tan(math.radians(55)/2)/frame.shape[0]
+        clouds = []
+        for i in range(1,count):
+            if stats[i,cv2.CC_STAT_AREA] < 100: continue
+            point = np.array(pixel_to_world(centers[i],frame.shape,self.map['top_camera']))
+            if np.linalg.norm(point-previous) > .10: continue
+            yy,xx = np.where(labels==i)
+            cloud = np.column_stack([.55+(xx-(frame.shape[1]-1)/2)*scale,
+                                     -2-(yy-(frame.shape[0]-1)/2)*scale])
+            normal = np.array([-previous_axis[1],previous_axis[0]])
+            if abs(float((point-previous)@normal)) > .025: continue
+            clouds.append(cloud)
+        if not clouds: raise VisionUncertain('no temporally associated beam pixels')
+        cloud = np.concatenate(clouds)
+        if len(cloud) < 200: raise VisionUncertain('insufficient visible beam area')
+        point = cloud.mean(axis=0)
+        eig,vectors = np.linalg.eigh(np.cov(cloud.T))
+        axis = vectors[:,-1]
+        if self.edge_axis:
+            # Occlusion can remove one corner and bias the pixel covariance.
+            # The visible long edges still bound the unchanged straight shaft.
+            box = cv2.boxPoints(cv2.minAreaRect(cloud.astype(np.float32)))
+            edge = max((box[(j+1)%4]-box[j] for j in range(4)),key=np.linalg.norm)
+            axis = edge/np.linalg.norm(edge)
+        if axis@previous_axis < 0: axis = -axis
+        raw = math.atan2(axis[1],axis[0])
+        delta = (raw-self.payload_angle+math.pi/2)%math.pi-math.pi/2
+        along = cloud@axis
+        across = cloud@np.array([-axis[1],axis[0]])
+        span, width = float(np.ptp(along)), float(np.ptp(across))
+        # Reject a blob, unrelated parallel objects, implausible orientation
+        # changes, or pixels that cannot belong to one unchanged physical beam.
+        if (abs(delta) > .12 or not .055 <= span <= self.payload_length_m
+                or width > .075 or eig[1]/max(eig[0],1e-12) < 3):
+            raise VisionUncertain('partial beam geometry/continuity ambiguous')
+        angle = self.payload_angle+delta
+        return {'xy_m':point.tolist(), 'relative_yaw_rad':angle-self.payload_origin_angle,
+                'feature_area_px':len(cloud), 'feature_plane_height_m':.09,
+                'xy_is_visible_fragment_centroid':True, 'axis_xy':axis.tolist(),
+                'center_projection_interval_m':[float(along.max()-self.payload_length_m/2),
+                                                float(along.min()+self.payload_length_m/2)]}, angle
+
+    @staticmethod
+    def _match(crop, template, origin_angle, angles):
+        best = None
+        for angle in angles:
+            matrix = cv2.getRotationMatrix2D((30,30), float(angle-origin_angle), 1.)
+            rotated = cv2.warpAffine(template,matrix,(61,61))
+            scores = cv2.matchTemplate(crop,rotated,cv2.TM_CCOEFF_NORMED)
+            _,peak,_,loc = cv2.minMaxLoc(scores)
+            if best is None or peak > best[0]: best = (peak,float(angle),loc)
+        return best
+
+    def observe(self, own_rgb, top_rgb):
+        _decode_jpeg(own_rgb,'own_rgb')
+        frame = _decode_jpeg(top_rgb,'shared_top_rgb')
+        if frame.shape != (720,960,3):
+            raise ValueError('wheel appearance requires the calibrated 960x720 top camera')
+        if not self.templates:
+            # Legacy initialization updates fields incrementally. Roll it back
+            # on failure so a half-observed frame cannot seed a later retry.
+            before = copy.deepcopy(self.__dict__)
+            try:
+                return super().observe(own_rgb,top_rgb)
+            except ValueError as error:
+                self.__dict__.clear(); self.__dict__.update(before)
+                raise VisionUncertain(str(error)) from error
+        payload, payload_angle = self._track_payload(frame)
+        mask = self._mask(frame)
+        observations, additions = {}, {}
+        h,w = mask.shape
+        for rid in ROBOTS:
+            px,py = self.centers[rid]
+            x,y = int(round(px)),int(round(py))
+            extent = 52
+            if x-extent < 0 or y-extent < 0 or x+extent >= w or y+extent >= h:
+                raise VisionUncertain('robot outside fixed camera tracking margin')
+            crop = cv2.GaussianBlur(mask[y-extent:y+extent+1,x-extent:x+extent+1],(3,3),.7)
+            angles = np.arange(self.angles[rid]-5,self.angles[rid]+5.01,.5)
+            anchor = self._match(crop,self.templates[rid],0.,angles)
+            best, source = anchor, 'initial'
+            for entry in self.appearance[rid] if anchor[0] < .48 else ():
+                candidate = self._match(crop,entry['image'],entry['angle'],angles)
+                if candidate[0] > best[0]: best,source = candidate,'memory'
+            peak,angle,(u,v) = best
+            if source == 'memory':
+                # Both appearances must agree spatially; memory cannot pull
+                # a weak original match onto another nearby yellow object.
+                accepted = peak >= .55 and anchor[0] >= .35 and math.dist(best[2],anchor[2]) <= 5
+            else: accepted = peak >= .48
+            if not accepted:
+                raise VisionUncertain(f'{rid} wheel appearance uncertain ({peak:.3f}, anchor {anchor[0]:.3f})')
+            center = (float(x-extent+u+30),float(y-extent+v+30))
+            if math.dist(center,self.centers[rid]) > 17:
+                raise VisionUncertain('implausible visual tracking jump')
+            observations[rid] = {'xy_m':list(pixel_to_world(center,frame.shape,self.map['top_camera'])),
+                                 'relative_yaw_rad':math.radians(angle), 'confidence':float(peak),
+                                 'center_uv':list(center), 'feature_plane_height_m':.09,
+                                 'appearance_source':source,'anchor_confidence':float(anchor[0])}
+            memory = self.appearance[rid]
+            distinct = (not memory or math.dist(center,memory[-1]['center']) >= 15
+                        or abs(angle-memory[-1]['angle']) >= 10)
+            if peak >= .65 and anchor[0] >= .48 and distinct:
+                cx,cy = map(int,center)
+                additions[rid] = {'image':cv2.GaussianBlur(mask[cy-30:cy+31,cx-30:cx+31].copy(),(3,3),.7),
+                                  'angle':angle,'center':center}
+        # Atomic commit: a failed second robot leaves every track unchanged.
+        self.payload,self.payload_angle = payload,payload_angle
+        for rid in ROBOTS:
+            self.centers[rid] = tuple(observations[rid]['center_uv'])
+            self.angles[rid] = math.degrees(observations[rid]['relative_yaw_rad'])
+            if rid in additions:
+                self.appearance[rid] = (self.appearance[rid]+[additions[rid]])[-4:]
+        return observations
+
+
+class PairNavigator:
+    """A common geometric plan with independent own-command/RGB instances."""
+    def __init__(self, data, robot_id, task_id='pair-navigation', *, vision_mode='legacy', slip_guard=False):
+        self.map, self.rid = validate_map(data), robot_id
+        if robot_id not in ROBOTS: raise ValueError('invalid robot')
+        if vision_mode not in ('legacy','temporal','temporal-edges','robust'): raise ValueError('unknown vision mode')
+        self.vision_mode = vision_mode
+        self.slip_guard = slip_guard
+        self.vision = (PairVision(data) if vision_mode == 'legacy' else
+                       TemporalPairVision(data,edge_axis=vision_mode=='temporal-edges'))
+        if vision_mode == 'robust':
+            from harness.pair_transport_vision import GeometryPairVision
+            self.vision = GeometryPairVision(data, slip_guard=slip_guard, interval_s=.2)
+        self.plan_version = 1
+        self.motion_terminal = None
+        self.progress_segment = None
+        self.progress_best = math.inf
+        self.progress_stale = 0
+        self.progress_age = 0
+        self.replans = 0
+        self.recovery_frames = 0
+        self.recovery_confirmations = 0
+        self.vision_terminal = False
+        self.sequence = 0
+        self.phase = 'probe'
+        self.probe_origin = None
+        self.probe_steps = 0
+        self.heading = None
+        self.route = None
+        self.reference = None
+        self.segment = 1
+        self.confirmations = 0
+        self.plan_hash = None
+
+    def after_regrasp(self):
+        # Preserve the route, orientation reference and goal. Fresh RGB must
+        # pass the normal formation/visibility checks before another GO.
+        from harness.pair_transport_vision import OwnCarryMonitor
+        self.motion_terminal = None
+        self.vision.carry_monitor = OwnCarryMonitor(slip_guard=self.slip_guard, interval_s=.2)
+        self.confirmations = 0
+
+    def decide(self, own_rgb, top_rgb):
+        self.sequence += 1
+        zero = {'kind': 'mecanum', 'forward': 0., 'left': 0., 'turn': 0., 'duration_s': .2}
+        if self.motion_terminal:
+            return {'action':zero,'status':self.motion_terminal,'ready':False,'done':False}
+        if self.vision_terminal:
+            return {'action':zero,'status':'vision_stop','error':'visual recovery timed out',
+                    'ready':False,'done':False}
+        if self.recovery_frames: self.recovery_frames += 1
+        try:
+            obs = self.vision.observe(own_rgb, top_rgb)
+        except VisionUncertain as error:
+            self.recovery_frames = self.recovery_frames or 1
+            self.recovery_confirmations = self.confirmations = 0
+            self.vision_terminal = self.recovery_frames >= 25
+            return {'action':zero,'status':'vision_stop' if self.vision_terminal else 'vision_hold',
+                    'error':str(error),'ready':False,'done':False,'retryable':not self.vision_terminal,
+                    'recovery_frames':self.recovery_frames,'plan_hash':self.plan_hash}
+        except ValueError as error:
+            if self.vision_mode == 'robust':
+                from harness.pair_transport_vision import GripUncertain
+                if isinstance(error,GripUncertain):
+                    self.motion_terminal = 'grip_stop'
+                    return {'action':zero,'status':'grip_stop','error':str(error),'ready':False,'done':False,
+                            'own_carry_observation':self.vision.carry_monitor.last}
+            return {'action': zero, 'status': 'vision_stop', 'error': str(error), 'ready': False, 'done': False}
+        if self.recovery_frames:
+            self.recovery_confirmations += 1
+            if self.recovery_confirmations < 3:
+                self.vision_terminal = self.recovery_frames >= 25
+                return {'action':zero,'status':'vision_stop' if self.vision_terminal else 'vision_hold',
+                        'ready':False,'done':False,'retryable':not self.vision_terminal,
+                        'recovery_frames':self.recovery_frames,'confirmations':self.recovery_confirmations,
+                        'plan_hash':self.plan_hash,'observations':obs}
+            self.recovery_frames = self.recovery_confirmations = 0
+        positions = {r: np.array(obs[r]['xy_m']) for r in ROBOTS}
+        center = (positions['r1']+positions['r3'])/2
+        if self.probe_origin is None:
+            self.probe_origin = center.copy()
+        action = dict(zero)
+        status = self.phase
+        if self.phase == 'probe':
+            # The fixed-start appearance recognizer only accepts headings near
+            # its canonical orientation. Check that entire bounded probe envelope
+            # before issuing the small movement that resolves heading direction.
+            for angle in np.linspace(-math.pi/12, math.pi/12, 7):
+                target = center+rotate((.065, 0.), angle)
+                if not swept_clear((*center, angle), (*target, angle), self.map):
+                    return {'action': zero, 'status': 'no_route', 'ready': False, 'done': False,
+                            'observations': obs, 'reason': 'probe_envelope_blocked'}
+            displacement = center-self.probe_origin
+            if np.linalg.norm(displacement) >= .03:
+                self.heading = math.atan2(displacement[1], displacement[0])
+                if self.vision_mode == 'robust':
+                    # Short translation resolves forward/backward ambiguity;
+                    # the wheel rectangle supplies the angle, avoiding a large
+                    # heading error from subpixel drift over a 3 cm probe.
+                    directions = list(self.vision.geometry_angles.values())
+                    heading = math.atan2(sum(math.sin(a) for a in directions),
+                                         sum(math.cos(a) for a in directions))
+                    if abs(wrap(heading-self.heading)) > math.pi/2:
+                        heading = wrap(heading+math.pi)
+                    self.heading = heading
+                self.phase = 'probe_settle'
+            elif self.probe_steps < 20:
+                action['forward'] = .045
+                self.probe_steps += 1
+            else:
+                return {'action': zero, 'status': 'probe_failed', 'ready': False, 'done': False, 'observations': obs}
+        elif self.phase == 'probe_settle':
+            self.confirmations += 1
+            if self.confirmations >= 3:
+                self.offsets = {r: positions[r]-center for r in ROBOTS}
+                self.anchor_yaws = {r: obs[r]['relative_yaw_rad'] for r in ROBOTS}
+                self.anchor_payload = dict(self.vision.payload)
+                self.reference = np.array([*center, 0.])
+                goal = [*self.map['goal']['center_m'], math.radians(self.map['goal']['relative_yaw_deg'])]
+                # Footprint orientation follows initial visual heading plus turn.
+                start_pose = [*center, self.heading]
+                goal_pose = [*goal[:2], self.heading+goal[2]]
+                absolute = plan_route(start_pose, goal_pose, self.map)
+                if absolute is None:
+                    self.phase = 'no_route'
+                else:
+                    self.route = [[p[0], p[1], wrap(p[2]-self.heading)] for p in absolute]
+                    self.plan_hash = digest({'map_sha256': digest(self.map), 'route': self.route,
+                                             'offsets': {r: self.offsets[r].tolist() for r in ROBOTS}})
+                    self.phase = 'track'
+                self.confirmations = 0
+        elif self.phase == 'track':
+            payload = self.vision.payload
+            payload_angle = payload['relative_yaw_rad']-self.anchor_payload['relative_yaw_rad']
+            observed_turn = sum(obs[r]['relative_yaw_rad']-self.anchor_yaws[r] for r in ROBOTS)/2
+            if not payload_coupled(payload, center, observed_turn, self.anchor_payload['relative_yaw_rad']):
+                return {'action': zero, 'status': 'payload_decoupled', 'ready': False, 'done': False,
+                        'observations': obs, 'payload': dict(payload)}
+            target = np.array(self.route[self.segment])
+            if self.vision_mode == 'robust':
+                # Measure observed motion, not advancement of the reference.
+                progress = np.linalg.norm(target[:2]-center)+.2*abs(wrap(target[2]-observed_turn))
+                if self.progress_segment != self.segment:
+                    self.progress_segment = self.segment
+                    self.progress_best = math.inf
+                    self.progress_stale = self.progress_age = 0
+                self.progress_age += 1
+                if progress < self.progress_best-.005:
+                    self.progress_best = progress
+                    self.progress_stale = 0
+                else:
+                    self.progress_stale += 1
+                if self.progress_stale >= 50 or self.progress_age >= 180:
+                    if self.replans >= 2:
+                        self.motion_terminal = 'motion_stalled'
+                        return {'action':zero,'status':'motion_stalled','ready':False,'done':False,
+                                'observations':obs,'reason':'bounded visual progress recovery exhausted'}
+                    goal = [*self.map['goal']['center_m'],self.heading+math.radians(self.map['goal']['relative_yaw_deg'])]
+                    absolute = plan_route([*center,self.heading+observed_turn],goal,self.map)
+                    if absolute is None:
+                        self.motion_terminal = 'motion_stalled'
+                        return {'action':zero,'status':'motion_stalled','ready':False,'done':False,
+                                'observations':obs,'reason':'no clear route from current visual pose'}
+                    self.route = [[p[0],p[1],wrap(p[2]-self.heading)] for p in absolute]
+                    self.reference = np.array([*center,observed_turn])
+                    self.segment = 1
+                    self.confirmations = 0
+                    self.progress_segment = None
+                    self.replans += 1
+                    self.plan_version += 1
+                    self.plan_hash = digest({'map_sha256':digest(self.map),'route':self.route,
+                                            'offsets':{r:self.offsets[r].tolist() for r in ROBOTS}})
+                    return {'action':zero,'status':'replan_hold','ready':False,'done':False,'retryable':True,
+                            'observations':obs,'route':self.route,'reference':self.reference.tolist(),
+                            'segment':self.segment,'plan_hash':self.plan_hash,'plan_version':self.plan_version,
+                            'replans':self.replans}
+            error_xy = target[:2]-self.reference[:2]
+            error_yaw = wrap(target[2]-self.reference[2])
+            delta = max(np.linalg.norm(error_xy)/.04, abs(error_yaw)/.055, .2)
+            velocity, omega = error_xy/delta, error_yaw/delta
+            formation_errors = {}
+            for r in ROBOTS:
+                expected = self.reference[:2]+rotate(self.offsets[r], self.reference[2])
+                yaw = obs[r]['relative_yaw_rad']-self.anchor_yaws[r]
+                formation_errors[r] = (float(np.linalg.norm(expected-positions[r])), abs(wrap(self.reference[2]-yaw)))
+            if max(e[0] for e in formation_errors.values()) > .055 or max(e[1] for e in formation_errors.values()) > .30:
+                return {'action': zero, 'status': 'formation_abort', 'ready': False, 'done': False,
+                        'observations': obs, 'formation_errors': formation_errors}
+            # Both local participants see the same RGB and hold the common
+            # reference while either member catches up; commands are not poses.
+            if max(e[0] for e in formation_errors.values()) > .020 or max(e[1] for e in formation_errors.values()) > .10:
+                velocity, omega = np.zeros(2), 0.
+            self.reference[:2] += velocity*.2
+            self.reference[2] += omega*.2
+            offset = rotate(self.offsets[self.rid], self.reference[2])
+            desired = self.reference[:2]+offset
+            observed_yaw = obs[self.rid]['relative_yaw_rad']-self.anchor_yaws[self.rid]
+            world_velocity = velocity+omega*np.array([-offset[1], offset[0]]) + .9*(desired-positions[self.rid])
+            local = rotate(world_velocity, -(self.heading+observed_yaw))
+            angular = omega+.9*wrap(self.reference[2]-observed_yaw)
+            # Nominal fixed gains, with actual progress corrected by RGB. These
+            # are controller tuning constants, never reads from a live body.
+            action.update(forward=float(np.clip(local[0]/1.57, -.05, .08)),
+                          left=float(np.clip(local[1]/1.18, -.08, .08)),
+                          turn=float(np.clip(angular/1.5, -.10, .10)))
+            if np.linalg.norm(target[:2]-self.reference[:2]) < .002 and abs(wrap(target[2]-self.reference[2])) < .005:
+                reached = (max(e[0] for e in formation_errors.values()) < .012
+                           and max(e[1] for e in formation_errors.values()) < .045
+                           and abs(wrap(payload_angle-target[2])) < .045)
+                self.confirmations = self.confirmations+1 if reached else 0
+                if self.confirmations >= 3:
+                    self.confirmations = 0
+                    if self.segment == len(self.route)-1:
+                        self.phase = 'done'
+                        action = zero
+                    else:
+                        self.segment += 1
+        result = {'action': action, 'status': self.phase, 'ready': self.phase not in ('no_route',),
+                  'done': self.phase == 'done', 'observations': obs, 'plan_hash': self.plan_hash,
+                  'route': self.route, 'reference': None if self.reference is None else self.reference.tolist(),
+                  'heading_rad': self.heading, 'segment': self.segment}
+        result['payload'] = dict(self.vision.payload)
+        if self.vision_mode == 'robust':
+            result.update(plan_version=self.plan_version,replans=self.replans,
+                          own_carry_observation=self.vision.carry_monitor.last)
+        return result
+
+
+def authorize_pair(sync, reports, frames, index, *, interval_s=.2):
+    """Renew GO only for two fresh reports accepting exactly the same route."""
+    now = index*interval_s
+    hashes = [reports[r].get('plan_hash') for r in ROBOTS]
+    versions = [reports[r].get('plan_version',sync.plan_version) for r in ROBOTS]
+    if versions[0] == versions[1] and versions[0] > sync.plan_version and hashes[0] == hashes[1]:
+        sync.update_plan(versions[0],now,'visual_progress_replan')
+    agree = hashes[0] == hashes[1] and all(v == sync.plan_version for v in versions)
+    for rid in ROBOTS:
+        sync.report(rid, plan_version=sync.plan_version, epoch=sync.epoch,
+                    sequence=index+1, ready=bool(reports[rid]['ready'] and agree and len(set(versions))==1),
+                    observed_at_s=now, received_at_s=now, frame_id=str(frames[rid]),
+                    reason='' if agree else 'plan_mismatch')
+    return sync.authorize(now_s=now)
+
+
+def retryable_visual_hold(reports):
+    """Only explicit visual/replanning holds may keep a stopped trial alive."""
+    return (any(d['status'] in ('vision_hold','replan_hold') for d in reports.values())
+            and all(d['ready'] or (d['status'] in ('vision_hold','replan_hold') and d.get('retryable') is True)
+                    for d in reports.values()))

@@ -1,0 +1,59 @@
+{
+  "schema": "ugrp.pair_navigation_map.v1",
+  "map_id": "wall-detour",
+  "top_camera": {
+    "name": "cctv_top",
+    "position_m": [
+      0.55,
+      -2.0,
+      2.5
+    ],
+    "quaternion_wxyz": [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "fov_y_deg": 55.0
+  },
+  "bounds_m": [
+    -1.08,
+    1.85,
+    -2.9,
+    -1.15
+  ],
+  "start_zone": {
+    "center_m": [
+      0.58,
+      -2.0
+    ],
+    "radius_m": 0.25
+  },
+  "goal": {
+    "center_m": [
+      -0.5,
+      -2.0
+    ],
+    "relative_yaw_deg": 0
+  },
+  "obstacles": [
+    {
+      "id": "detour",
+      "center_m": [
+        0.1,
+        -2.0
+      ],
+      "half_extents_m": [
+        0.05,
+        0.1
+      ],
+      "height_m": 0.3
+    }
+  ],
+  "footprint": {
+    "half_forward_m": 0.2,
+    "half_lateral_m": 0.51,
+    "margin_m": 0.025
+  },
+  "grid_m": 0.06
+}

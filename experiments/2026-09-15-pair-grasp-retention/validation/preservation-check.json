@@ -1,0 +1,109 @@
+{
+  "passed": true,
+  "baseline_raw": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-spacing/outputs/pair-spacing-final1600-2026-09-14",
+  "cases": [
+    {
+      "id": "narrow-door",
+      "checks": {
+        "map_sha256": true,
+        "appearance_manifest_sha256": true,
+        "grasp_skill_sha256": true,
+        "close_command_override": true,
+        "policy_cameras": true,
+        "geometry_sha256": true,
+        "grasp_initialization": true,
+        "grasp_pre_recovery_settle": true,
+        "grasp_rgb_recovery": true,
+        "grasp_close": true,
+        "grasp_lift": true
+      },
+      "passed": true
+    },
+    {
+      "id": "l-corner",
+      "checks": {
+        "map_sha256": true,
+        "appearance_manifest_sha256": true,
+        "grasp_skill_sha256": true,
+        "close_command_override": true,
+        "policy_cameras": true,
+        "geometry_sha256": true,
+        "grasp_initialization": true,
+        "grasp_pre_recovery_settle": true,
+        "grasp_rgb_recovery": true,
+        "grasp_close": true,
+        "grasp_lift": true
+      },
+      "passed": true
+    },
+    {
+      "id": "s-bends",
+      "checks": {
+        "map_sha256": true,
+        "appearance_manifest_sha256": true,
+        "grasp_skill_sha256": true,
+        "close_command_override": true,
+        "policy_cameras": true,
+        "geometry_sha256": true,
+        "grasp_initialization": true,
+        "grasp_pre_recovery_settle": true,
+        "grasp_rgb_recovery": true,
+        "grasp_close": true,
+        "grasp_lift": true
+      },
+      "passed": true
+    },
+    {
+      "id": "staggered-obstacles",
+      "checks": {
+        "map_sha256": true,
+        "appearance_manifest_sha256": true,
+        "grasp_skill_sha256": true,
+        "close_command_override": true,
+        "policy_cameras": true,
+        "geometry_sha256": true,
+        "grasp_initialization": true,
+        "grasp_pre_recovery_settle": true,
+        "grasp_rgb_recovery": true,
+        "grasp_close": true,
+        "grasp_lift": true
+      },
+      "passed": true
+    },
+    {
+      "id": "blocked-branch",
+      "checks": {
+        "map_sha256": true,
+        "appearance_manifest_sha256": true,
+        "grasp_skill_sha256": true,
+        "close_command_override": true,
+        "policy_cameras": true,
+        "geometry_sha256": true,
+        "grasp_initialization": true,
+        "grasp_pre_recovery_settle": true,
+        "grasp_rgb_recovery": true,
+        "grasp_close": true,
+        "grasp_lift": true
+      },
+      "passed": true
+    },
+    {
+      "id": "fully-blocked",
+      "checks": {
+        "map_sha256": true,
+        "appearance_manifest_sha256": true,
+        "grasp_skill_sha256": true,
+        "close_command_override": true,
+        "policy_cameras": true,
+        "geometry_sha256": true,
+        "grasp_initialization": true,
+        "grasp_pre_recovery_settle": true,
+        "grasp_rgb_recovery": true,
+        "grasp_close": true,
+        "grasp_lift": true
+      },
+      "passed": true
+    }
+  ],
+  "scope": "Map, appearance, cameras, geometry/mass/friction, fixed grasp and lift commands. Numerical contact profile changes intentionally."
+}

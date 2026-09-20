@@ -1,0 +1,85 @@
+{
+  "source_sha": "863bbaedd6683694b22a76326e612efdfa3a634e",
+  "trials": [
+    {
+      "mode": "stationary",
+      "command": [
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/scripts/run_pair_grasp_endurance.py",
+        "--map",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/maps/pair_navigation/narrow-door.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-loaded-navigation/outputs/pair-navigation/runtime/models/grasp",
+        "--out-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/outputs/pair-endurance-noslip3-2026-09-14/stationary",
+        "--mode",
+        "stationary",
+        "--noslip-iterations",
+        "3"
+      ],
+      "returncode": 1,
+      "wall_seconds": 20.162100291985553,
+      "success": false,
+      "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/scripts/run_pair_grasp_endurance.py\", line 76, in run\n    scene.hold_spacing(8.);scene.finish_spacing();report['endurance_start_s']=scene.time()\n                           ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/scripts/run_pair_navigation.py\", line 77, in finish_spacing\n    raise RuntimeError('grasp spacing did not visually settle before departure')\nRuntimeError: grasp spacing did not visually settle before departure\n",
+      "evaluation": {
+        "grasp_stability": {
+          "anchor_spacing_m": 0.6505884294185231,
+          "final_spacing_m": 0.6358961661195461,
+          "gates": {
+            "full_grasp_samples": true,
+            "grasp_bilateral_through_lift_hold": false,
+            "grasp_hold_lifted_every_sample": true,
+            "grasp_spacing_preserved": true
+          },
+          "max_sample_gap_s": 0.10000000000000142,
+          "max_spacing_change_m": 0.014692263298976993,
+          "nonbilateral_samples": 1,
+          "samples": 111,
+          "success": false
+        },
+        "reason": "no endurance samples",
+        "success": false
+      }
+    },
+    {
+      "mode": "shuttle",
+      "command": [
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/scripts/run_pair_grasp_endurance.py",
+        "--map",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/maps/pair_navigation/narrow-door.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-loaded-navigation/outputs/pair-navigation/runtime/models/grasp",
+        "--out-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/outputs/pair-endurance-noslip3-2026-09-14/shuttle",
+        "--mode",
+        "shuttle",
+        "--noslip-iterations",
+        "3"
+      ],
+      "returncode": 1,
+      "wall_seconds": 20.911533957987558,
+      "success": false,
+      "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/scripts/run_pair_grasp_endurance.py\", line 76, in run\n    scene.hold_spacing(8.);scene.finish_spacing();report['endurance_start_s']=scene.time()\n                           ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-endurance/scripts/run_pair_navigation.py\", line 77, in finish_spacing\n    raise RuntimeError('grasp spacing did not visually settle before departure')\nRuntimeError: grasp spacing did not visually settle before departure\n",
+      "evaluation": {
+        "grasp_stability": {
+          "anchor_spacing_m": 0.6505884294185231,
+          "final_spacing_m": 0.6358961661195461,
+          "gates": {
+            "full_grasp_samples": true,
+            "grasp_bilateral_through_lift_hold": false,
+            "grasp_hold_lifted_every_sample": true,
+            "grasp_spacing_preserved": true
+          },
+          "max_sample_gap_s": 0.10000000000000142,
+          "max_spacing_change_m": 0.014692263298976993,
+          "nonbilateral_samples": 1,
+          "samples": 111,
+          "success": false
+        },
+        "reason": "no endurance samples",
+        "success": false
+      }
+    }
+  ]
+}

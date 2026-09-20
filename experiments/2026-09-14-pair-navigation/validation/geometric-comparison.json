@@ -1,0 +1,62 @@
+{
+  "scope": "Posthoc geometric comparison only; neither naive baseline was executed in physics. No success-rate or communication-benefit comparison is implied.",
+  "execution_sha": "13d833964335b04766cc8c7c8b72ddc5b70f4192",
+  "wall_straight_path": {
+    "swept_clear": false,
+    "selected_segment_swept_clear": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "selected_route": [
+      [
+        0.6144707831912489,
+        -2.0017424535997637,
+        0.0
+      ],
+      [
+        0.25447078319124894,
+        -2.3617424535997635,
+        -1.5707963267948966
+      ],
+      [
+        -0.46552921680875115,
+        -2.3617424535997635,
+        -1.5707963267948966
+      ],
+      [
+        -0.525529216808751,
+        -2.3017424535997635,
+        0.0
+      ],
+      [
+        -0.5,
+        -2.0,
+        0.0
+      ]
+    ],
+    "rgb_heading_rad": 0.0
+  },
+  "rotate_chassis_in_place": {
+    "common_center": [
+      0.6144707831912489,
+      -2.0017424535997637
+    ],
+    "rgb_anchor_offsets": {
+      "r1": [
+        0.0,
+        -0.2683378543635766
+      ],
+      "r3": [
+        0.0,
+        0.2683378543635766
+      ]
+    },
+    "body_center_error_vs_rigid_pair_90deg_m": {
+      "r1": 0.37948703293906644,
+      "r3": 0.37948703293906644
+    },
+    "meaning": "Turning each chassis about its own unchanged center cannot follow this rigid pair rotation; actual grip outcome was not tested for this naive baseline."
+  }
+}

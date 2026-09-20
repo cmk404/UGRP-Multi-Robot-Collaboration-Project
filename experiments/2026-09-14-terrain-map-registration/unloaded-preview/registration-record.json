@@ -1,0 +1,674 @@
+{
+  "schema": "ugrp.terrain_map_registration.v1",
+  "catalog_sha256": "6aa2ae41f07d8f9db75fec94d82bd26cb20ec6479ace444fa8fe3e3de3767693",
+  "source_sha": "045ba7d9b5310290323c931d98da8e06fadacfe6",
+  "environment": {
+    "python": "3.12.13",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "mujoco": "3.12.0"
+  },
+  "scope": "Registered map parity and static setup only; no physical passage or actor decisions",
+  "rendered": true,
+  "navigation_actions": 0,
+  "model_calls": 0,
+  "model_cost_usd": 0,
+  "entries": [
+    {
+      "id": "narrow-door",
+      "title_ko": "좁은 문·통로",
+      "pair_file": "maps/pair_navigation/narrow-door.json",
+      "pair_sha256": "a5fcf3e1b8f2dd2b56c7470a5870c923c6c9594e74bcc5024d67e70a2f6b50d4",
+      "source_file": "experiments/2026-09-14-pair-terrain-examples/maps/narrow-door.json",
+      "unloaded_file": "maps/navigation/narrow-door.json",
+      "unloaded_sha256": "f6743baafca34e39ffcda1588b338dd91b079fec9e80841401563e9fdc99a8dc",
+      "unloaded_map_sha256": "307dca07225553b01244bacc3fd1f3e07a196767eb958ade98c4653e738086ee",
+      "source_and_registered_geometry_equal": true,
+      "unloaded_route_m": [
+        [
+          0.58,
+          -2.0
+        ],
+        [
+          0.56,
+          -2.02
+        ],
+        [
+          -0.4800000000000001,
+          -2.02
+        ],
+        [
+          -0.52,
+          -2.0
+        ]
+      ],
+      "unloaded_route_found": true,
+      "scene": {
+        "invariants": {
+          "actor_cameras": {
+            "r1__robot_cam": {
+              "position": [
+                0.067,
+                0.0,
+                0.0136
+              ],
+              "quaternion": [
+                0.466417262018992,
+                0.531464897891391,
+                -0.531464897891391,
+                -0.466417262018992
+              ],
+              "fovy": 42.18818995586325
+            },
+            "cctv_top": {
+              "position": [
+                0.55,
+                -2.0,
+                2.5
+              ],
+              "quaternion": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "fovy": 55.0
+            }
+          },
+          "robot_geometry_sha256": "278e7c68ca37ca459c6234d51fdd171fe4f1645923177529665bc542283e82e7",
+          "scene_xml_sha256": "d4e19b94269547c8acd8cce14b73434c4f13d086c5b68a9b821aca9f74e28138",
+          "robot_xml_sha256": {
+            "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+            "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+            "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+          },
+          "map_sha256": "307dca07225553b01244bacc3fd1f3e07a196767eb958ade98c4653e738086ee",
+          "added_navigation_camera": false
+        },
+        "setup_sim_seconds": 1.400000000000001,
+        "initial_map_collisions": 0,
+        "weld_off": true,
+        "compiled_walls_match": true
+      }
+    },
+    {
+      "id": "l-corner",
+      "title_ko": "L자 모퉁이",
+      "pair_file": "maps/pair_navigation/l-corner.json",
+      "pair_sha256": "33525b26e56aed87af7d52fa685b9a2c2b904682d501696a4e8a54e67a4f3402",
+      "source_file": "experiments/2026-09-14-pair-terrain-examples/maps/l-corner.json",
+      "unloaded_file": "maps/navigation/l-corner.json",
+      "unloaded_sha256": "65d3e88428a3957dee597c228724e75c4d76189dfc17e558ab8681539fa839d1",
+      "unloaded_map_sha256": "8f4701a1815829d8223bada6fc32f02533d05aee9d2fb27fffcfb887d08fab13",
+      "source_and_registered_geometry_equal": true,
+      "unloaded_route_m": [
+        [
+          0.58,
+          -2.0
+        ],
+        [
+          0.56,
+          -2.02
+        ],
+        [
+          0.32000000000000006,
+          -2.02
+        ],
+        [
+          0.32000000000000006,
+          -1.74
+        ],
+        [
+          -0.52,
+          -1.74
+        ],
+        [
+          -0.52,
+          -1.49
+        ]
+      ],
+      "unloaded_route_found": true,
+      "scene": {
+        "invariants": {
+          "actor_cameras": {
+            "r1__robot_cam": {
+              "position": [
+                0.067,
+                0.0,
+                0.0136
+              ],
+              "quaternion": [
+                0.466417262018992,
+                0.531464897891391,
+                -0.531464897891391,
+                -0.466417262018992
+              ],
+              "fovy": 42.18818995586325
+            },
+            "cctv_top": {
+              "position": [
+                0.55,
+                -2.0,
+                2.5
+              ],
+              "quaternion": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "fovy": 55.0
+            }
+          },
+          "robot_geometry_sha256": "278e7c68ca37ca459c6234d51fdd171fe4f1645923177529665bc542283e82e7",
+          "scene_xml_sha256": "12339a28bab805f94168fb7614d1f13df60f73184b1e6320b342d0189074bf6c",
+          "robot_xml_sha256": {
+            "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+            "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+            "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+          },
+          "map_sha256": "8f4701a1815829d8223bada6fc32f02533d05aee9d2fb27fffcfb887d08fab13",
+          "added_navigation_camera": false
+        },
+        "setup_sim_seconds": 1.400000000000001,
+        "initial_map_collisions": 0,
+        "weld_off": true,
+        "compiled_walls_match": true
+      }
+    },
+    {
+      "id": "s-bends",
+      "title_ko": "S자 연속 굴곡",
+      "pair_file": "maps/pair_navigation/s-bends.json",
+      "pair_sha256": "c3f0506238df38bf40270d88386f440674969aa6b88d62369f3539f67685f5c9",
+      "source_file": "experiments/2026-09-14-pair-terrain-examples/maps/s-bends.json",
+      "unloaded_file": "maps/navigation/s-bends.json",
+      "unloaded_sha256": "3867236e5332d517a2361a5a743f1cabe729c4102147823394c55d2dc875780a",
+      "unloaded_map_sha256": "1481c924d6cd7f0646e7eb5f9fa4c585efa8b663c887db3b98c283bbdef556b4",
+      "source_and_registered_geometry_equal": true,
+      "unloaded_route_m": [
+        [
+          0.58,
+          -2.0
+        ],
+        [
+          0.56,
+          -2.02
+        ],
+        [
+          -0.8,
+          -2.02
+        ],
+        [
+          -0.84,
+          -2.0
+        ]
+      ],
+      "unloaded_route_found": true,
+      "scene": {
+        "invariants": {
+          "actor_cameras": {
+            "r1__robot_cam": {
+              "position": [
+                0.067,
+                0.0,
+                0.0136
+              ],
+              "quaternion": [
+                0.466417262018992,
+                0.531464897891391,
+                -0.531464897891391,
+                -0.466417262018992
+              ],
+              "fovy": 42.18818995586325
+            },
+            "cctv_top": {
+              "position": [
+                0.55,
+                -2.0,
+                2.5
+              ],
+              "quaternion": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "fovy": 55.0
+            }
+          },
+          "robot_geometry_sha256": "278e7c68ca37ca459c6234d51fdd171fe4f1645923177529665bc542283e82e7",
+          "scene_xml_sha256": "193ad535bc693573f839eda8741fcf7fe871b8e0d4932bedc63c746889419ffd",
+          "robot_xml_sha256": {
+            "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+            "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+            "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+          },
+          "map_sha256": "1481c924d6cd7f0646e7eb5f9fa4c585efa8b663c887db3b98c283bbdef556b4",
+          "added_navigation_camera": false
+        },
+        "setup_sim_seconds": 1.400000000000001,
+        "initial_map_collisions": 0,
+        "weld_off": true,
+        "compiled_walls_match": true
+      }
+    },
+    {
+      "id": "staggered-obstacles",
+      "title_ko": "엇갈린 장애물",
+      "pair_file": "maps/pair_navigation/staggered-obstacles.json",
+      "pair_sha256": "353c38f09e6b03235d3a6fb30bf22c05a8e2249a7e605d73b3e711504883c794",
+      "source_file": "experiments/2026-09-14-pair-terrain-examples/maps/staggered-obstacles.json",
+      "unloaded_file": "maps/navigation/staggered-obstacles.json",
+      "unloaded_sha256": "c61fc96d79db81fcc4f288495d912a31739d1378435e5eeaaded7cfbbde8e0f6",
+      "unloaded_map_sha256": "c5511145aef365949972d63943dfcd8483aeebd31d3bd1cebb15c0b1415f9395",
+      "source_and_registered_geometry_equal": true,
+      "unloaded_route_m": [
+        [
+          0.58,
+          -2.0
+        ],
+        [
+          0.56,
+          -2.02
+        ],
+        [
+          0.43999999999999995,
+          -2.02
+        ],
+        [
+          0.43999999999999995,
+          -2.06
+        ],
+        [
+          -0.6000000000000001,
+          -2.06
+        ],
+        [
+          -0.62,
+          -2.0
+        ]
+      ],
+      "unloaded_route_found": true,
+      "scene": {
+        "invariants": {
+          "actor_cameras": {
+            "r1__robot_cam": {
+              "position": [
+                0.067,
+                0.0,
+                0.0136
+              ],
+              "quaternion": [
+                0.466417262018992,
+                0.531464897891391,
+                -0.531464897891391,
+                -0.466417262018992
+              ],
+              "fovy": 42.18818995586325
+            },
+            "cctv_top": {
+              "position": [
+                0.55,
+                -2.0,
+                2.5
+              ],
+              "quaternion": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "fovy": 55.0
+            }
+          },
+          "robot_geometry_sha256": "278e7c68ca37ca459c6234d51fdd171fe4f1645923177529665bc542283e82e7",
+          "scene_xml_sha256": "69405f07eb930a5e1f2a23e82611eeebfdff091fc57b89ca15e84a8766e8a04a",
+          "robot_xml_sha256": {
+            "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+            "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+            "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+          },
+          "map_sha256": "c5511145aef365949972d63943dfcd8483aeebd31d3bd1cebb15c0b1415f9395",
+          "added_navigation_camera": false
+        },
+        "setup_sim_seconds": 1.400000000000001,
+        "initial_map_collisions": 0,
+        "weld_off": true,
+        "compiled_walls_match": true
+      }
+    },
+    {
+      "id": "blocked-branch",
+      "title_ko": "막힌 길·우회 분기",
+      "pair_file": "maps/pair_navigation/blocked-branch.json",
+      "pair_sha256": "061a6e6923182cd3a1aa62012a80e90b182f06ed06c5455460f69b62b75d9317",
+      "source_file": "experiments/2026-09-14-pair-terrain-examples/maps/blocked-branch.json",
+      "unloaded_file": "maps/navigation/blocked-branch.json",
+      "unloaded_sha256": "6e20cb7787abc82d32152cd7c4cd0a880f403c203bf37e582f4805ff337e4a91",
+      "unloaded_map_sha256": "099cc53aad65077b8f72f9453da6fdf9864fa7b20609257e808df7de51d64ec2",
+      "source_and_registered_geometry_equal": true,
+      "unloaded_route_m": [
+        [
+          0.58,
+          -2.0
+        ],
+        [
+          0.56,
+          -2.02
+        ],
+        [
+          0.3999999999999999,
+          -2.02
+        ],
+        [
+          0.3999999999999999,
+          -2.5
+        ],
+        [
+          -0.52,
+          -2.5
+        ],
+        [
+          -0.52,
+          -2.0
+        ]
+      ],
+      "unloaded_route_found": true,
+      "scene": {
+        "invariants": {
+          "actor_cameras": {
+            "r1__robot_cam": {
+              "position": [
+                0.067,
+                0.0,
+                0.0136
+              ],
+              "quaternion": [
+                0.466417262018992,
+                0.531464897891391,
+                -0.531464897891391,
+                -0.466417262018992
+              ],
+              "fovy": 42.18818995586325
+            },
+            "cctv_top": {
+              "position": [
+                0.55,
+                -2.0,
+                2.5
+              ],
+              "quaternion": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "fovy": 55.0
+            }
+          },
+          "robot_geometry_sha256": "278e7c68ca37ca459c6234d51fdd171fe4f1645923177529665bc542283e82e7",
+          "scene_xml_sha256": "7c8bec4e4f701753a6e9751e7da633a56d39eb3fcfaa4581b3e8bf6e34e6417f",
+          "robot_xml_sha256": {
+            "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+            "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+            "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+          },
+          "map_sha256": "099cc53aad65077b8f72f9453da6fdf9864fa7b20609257e808df7de51d64ec2",
+          "added_navigation_camera": false
+        },
+        "setup_sim_seconds": 1.400000000000001,
+        "initial_map_collisions": 0,
+        "weld_off": true,
+        "compiled_walls_match": true
+      }
+    },
+    {
+      "id": "fully-blocked",
+      "title_ko": "완전 차단 대조",
+      "pair_file": "maps/pair_navigation/fully-blocked.json",
+      "pair_sha256": "d5b5e9ce67a5e706505320dcfb530c5c88fd6b74ffcbf71c367e61451d355843",
+      "source_file": "experiments/2026-09-14-pair-terrain-examples/maps/fully-blocked.json",
+      "unloaded_file": "maps/navigation/fully-blocked.json",
+      "unloaded_sha256": "fa535ec3e0e393963801b583bf3995f5b71f2ef1b1c62426dd785f7e8f3a3e2d",
+      "unloaded_map_sha256": "62b4c666ea9329576babfd11c5a9745f5521d41c39f285926c7f38662522474e",
+      "source_and_registered_geometry_equal": true,
+      "unloaded_route_m": null,
+      "unloaded_route_found": false,
+      "scene": {
+        "invariants": {
+          "actor_cameras": {
+            "r1__robot_cam": {
+              "position": [
+                0.067,
+                0.0,
+                0.0136
+              ],
+              "quaternion": [
+                0.466417262018992,
+                0.531464897891391,
+                -0.531464897891391,
+                -0.466417262018992
+              ],
+              "fovy": 42.18818995586325
+            },
+            "cctv_top": {
+              "position": [
+                0.55,
+                -2.0,
+                2.5
+              ],
+              "quaternion": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "fovy": 55.0
+            }
+          },
+          "robot_geometry_sha256": "278e7c68ca37ca459c6234d51fdd171fe4f1645923177529665bc542283e82e7",
+          "scene_xml_sha256": "0397df485beccf87aa8d4f02a583cfefe738d0c070f2311295750b3862fc55a5",
+          "robot_xml_sha256": {
+            "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+            "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+            "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+          },
+          "map_sha256": "62b4c666ea9329576babfd11c5a9745f5521d41c39f285926c7f38662522474e",
+          "added_navigation_camera": false
+        },
+        "setup_sim_seconds": 1.400000000000001,
+        "initial_map_collisions": 0,
+        "weld_off": true,
+        "compiled_walls_match": true
+      }
+    }
+  ],
+  "elapsed_wall_seconds": 2.8569853749941103,
+  "files": [
+    {
+      "path": "blocked-branch/evaluation-only.jsonl",
+      "bytes": 273,
+      "sha256": "3a4e3f05e6294a07e0e40dc8683b81204d63b4a7fa8cee4f42264d06dbe9a361"
+    },
+    {
+      "path": "blocked-branch/motion.mp4",
+      "bytes": 26097,
+      "sha256": "491533c3d64b22976ff68a824d57589443cbfc6333e2da2101fb26384de0c477"
+    },
+    {
+      "path": "blocked-branch/observer.jpg",
+      "bytes": 72466,
+      "sha256": "6c980c484ba24a0d04b383ce425284f1bce5fa91d4c4b4b3114498c5d7042dac"
+    },
+    {
+      "path": "blocked-branch/rgb/0000-own.jpg",
+      "bytes": 32212,
+      "sha256": "3c340f5e7b4605629c0977e51d633836fe49d6bb867ec950d34efaf6e377da2e"
+    },
+    {
+      "path": "blocked-branch/rgb/0000-top.jpg",
+      "bytes": 68567,
+      "sha256": "8acb6c1e224b0b1a5ac617008b27107393ef88dacaaf39e1563667f507757176"
+    },
+    {
+      "path": "blocked-branch/scene.xml",
+      "bytes": 110774,
+      "sha256": "ef82310bc00147990b23db2643766a64c206f2d0cde8f0ae623c129e71473bfe"
+    },
+    {
+      "path": "fully-blocked/evaluation-only.jsonl",
+      "bytes": 273,
+      "sha256": "3a4e3f05e6294a07e0e40dc8683b81204d63b4a7fa8cee4f42264d06dbe9a361"
+    },
+    {
+      "path": "fully-blocked/motion.mp4",
+      "bytes": 26185,
+      "sha256": "7237b690569b22abce23ea7344b9088f3a77e562c699b01272656c6041726b54"
+    },
+    {
+      "path": "fully-blocked/observer.jpg",
+      "bytes": 72782,
+      "sha256": "030a72b3c6a0be88733350dd67ec09098ac13bd146549a07402e4a095d7a7b7a"
+    },
+    {
+      "path": "fully-blocked/rgb/0000-own.jpg",
+      "bytes": 32212,
+      "sha256": "3c340f5e7b4605629c0977e51d633836fe49d6bb867ec950d34efaf6e377da2e"
+    },
+    {
+      "path": "fully-blocked/rgb/0000-top.jpg",
+      "bytes": 69381,
+      "sha256": "7d59f8c49d3ae8c98182bff159db751f9d8fe89a1ad34d8b5e21c8ad9697475e"
+    },
+    {
+      "path": "fully-blocked/scene.xml",
+      "bytes": 110920,
+      "sha256": "ccfdd0fe692bdea14a89a33eb34989e25456a7852383e47784346d86f0ccb18d"
+    },
+    {
+      "path": "l-corner/evaluation-only.jsonl",
+      "bytes": 273,
+      "sha256": "3a4e3f05e6294a07e0e40dc8683b81204d63b4a7fa8cee4f42264d06dbe9a361"
+    },
+    {
+      "path": "l-corner/motion.mp4",
+      "bytes": 25717,
+      "sha256": "f214dc935c8fc8bbba125f8ba396b04292cfb3edb37770b2c47f04f3342cae0f"
+    },
+    {
+      "path": "l-corner/observer.jpg",
+      "bytes": 71462,
+      "sha256": "69147ad6cf539aae47f623c53db5fa0d2947f11a669f249aa50a99200ed29881"
+    },
+    {
+      "path": "l-corner/rgb/0000-own.jpg",
+      "bytes": 37824,
+      "sha256": "1f8245e686b1f3010a5f5ceb9c6e796dbbc0caa9f191a1d3b35bb3f16d31ea1e"
+    },
+    {
+      "path": "l-corner/rgb/0000-top.jpg",
+      "bytes": 66409,
+      "sha256": "de7ca1e46fa7728c634fa2b1b81df3d84000a99c83f77b8bf36d7765265a7db2"
+    },
+    {
+      "path": "l-corner/scene.xml",
+      "bytes": 110790,
+      "sha256": "c8932d0883a246e1004f5b42061928a09191102c228323bafff38215866a9dc3"
+    },
+    {
+      "path": "narrow-door/evaluation-only.jsonl",
+      "bytes": 273,
+      "sha256": "3a4e3f05e6294a07e0e40dc8683b81204d63b4a7fa8cee4f42264d06dbe9a361"
+    },
+    {
+      "path": "narrow-door/motion.mp4",
+      "bytes": 26541,
+      "sha256": "802b5085c64a20b49b492d1066516db11fa3f21666c6b4ae4cf27f5c2fcbfb6b"
+    },
+    {
+      "path": "narrow-door/observer.jpg",
+      "bytes": 73190,
+      "sha256": "731b6ada1ac7790fff9f88b35bcb26d3a9cf78f4d4ff1aced6cbb0c18c09b79d"
+    },
+    {
+      "path": "narrow-door/rgb/0000-own.jpg",
+      "bytes": 32215,
+      "sha256": "2440bf8a0d73923a4e576476f3adbaf39d3557f76f85ffd2792015c41d7088ed"
+    },
+    {
+      "path": "narrow-door/rgb/0000-top.jpg",
+      "bytes": 67882,
+      "sha256": "d47420d9a812a9202a3812ff80061fabdccb88111e19191a9c65992de5a59b9a"
+    },
+    {
+      "path": "narrow-door/scene.xml",
+      "bytes": 110781,
+      "sha256": "49ecde2bb88f74ad028c69dae99dcff2c98827581d90bdef456e5e21c4a4c27c"
+    },
+    {
+      "path": "navigation-overview.jpg",
+      "bytes": 285304,
+      "sha256": "9f47b39f4eb6d80c33de793ee31d309cb88fc3cf18498c36134f69517bcedf94"
+    },
+    {
+      "path": "s-bends/evaluation-only.jsonl",
+      "bytes": 273,
+      "sha256": "3a4e3f05e6294a07e0e40dc8683b81204d63b4a7fa8cee4f42264d06dbe9a361"
+    },
+    {
+      "path": "s-bends/motion.mp4",
+      "bytes": 26302,
+      "sha256": "b2fd4f5d7d9651b34f44fe182506dd0bd1061f8e120bdea879f339d17adbd2f5"
+    },
+    {
+      "path": "s-bends/observer.jpg",
+      "bytes": 73245,
+      "sha256": "32fed407344f87387923c6f3dc77a3772c6332b5701aaddaf3027ef929dab615"
+    },
+    {
+      "path": "s-bends/rgb/0000-own.jpg",
+      "bytes": 32215,
+      "sha256": "2440bf8a0d73923a4e576476f3adbaf39d3557f76f85ffd2792015c41d7088ed"
+    },
+    {
+      "path": "s-bends/rgb/0000-top.jpg",
+      "bytes": 67319,
+      "sha256": "c6249ade5f255b2cba09336cc45abe166496723d7c4cbf05330e27bc303bd497"
+    },
+    {
+      "path": "s-bends/scene.xml",
+      "bytes": 110786,
+      "sha256": "44456e057b95ea56c85a8cdfb1648d41f66cc55135ab2789c476733ca531143a"
+    },
+    {
+      "path": "staggered-obstacles/evaluation-only.jsonl",
+      "bytes": 273,
+      "sha256": "3a4e3f05e6294a07e0e40dc8683b81204d63b4a7fa8cee4f42264d06dbe9a361"
+    },
+    {
+      "path": "staggered-obstacles/motion.mp4",
+      "bytes": 26682,
+      "sha256": "4e5858b5dad56435132481890bee94707d1532b43e98286763ff210f63a10deb"
+    },
+    {
+      "path": "staggered-obstacles/observer.jpg",
+      "bytes": 72581,
+      "sha256": "6c34e785dd4a7bd61111d99a8e7356dd60a3d64ce7cad3373d8e50939db912b2"
+    },
+    {
+      "path": "staggered-obstacles/rgb/0000-own.jpg",
+      "bytes": 32212,
+      "sha256": "3c340f5e7b4605629c0977e51d633836fe49d6bb867ec950d34efaf6e377da2e"
+    },
+    {
+      "path": "staggered-obstacles/rgb/0000-top.jpg",
+      "bytes": 66084,
+      "sha256": "55660130b14c1cb7d7db7b2100288ac048fc7c6c10c9f31ec481aba6927a0533"
+    },
+    {
+      "path": "staggered-obstacles/scene.xml",
+      "bytes": 110774,
+      "sha256": "7b9e19edef4baf1af7eca6b63f1da0c13c8731dfa54579cfc486e5033fc91145"
+    }
+  ]
+}

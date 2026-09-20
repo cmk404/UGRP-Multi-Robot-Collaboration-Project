@@ -1,0 +1,58 @@
+{
+  "scope": "Root visual inspection of sampled actual actor frames and matched command-replay frames; full 0.1s support-log review separate. Not a frame-by-frame visual review of the whole videos.",
+  "actor_timeline_reviews": [
+    "skill-41",
+    "skill-42",
+    "skill-43",
+    "semantic-42"
+  ],
+  "other_actor_review": "semantic-41 final own image; semantic-43 no grasp command and independently checked full referee log",
+  "observer_timeline_reviews": {
+    "skill-41": [
+      0,
+      12,
+      75,
+      80,
+      87,
+      100
+    ],
+    "semantic-41": [
+      0,
+      12,
+      75,
+      80,
+      87,
+      100
+    ],
+    "skill-42": [
+      0,
+      25,
+      35,
+      76,
+      90,
+      119
+    ],
+    "skill-43": [
+      0,
+      25,
+      35,
+      76,
+      90,
+      119
+    ]
+  },
+  "findings": "All positive observer sequences show approach, lowering to the box and lifting it at the fingers; sampled held views show clearance from the floor and chassis. The matched failure replay leaves the box on the floor. The full qualifying contact streams show only both fingers, no third support.",
+  "comparison_clip": {
+    "path": "comparison-seed41-8x.mp4",
+    "source_replays": [
+      "skill-41",
+      "semantic-41"
+    ],
+    "frame_selection": "Every eighth synchronized frame from 10fps evaluation replays, output 10fps; resized equally, headers added",
+    "output_frames": 151,
+    "duration_s": 15.1,
+    "speed": "8x SIM time, not measured wall time",
+    "qa_frame_at_video_seconds": 11,
+    "sha256": "2f3d36dd17f6b86db7f4e5e57ddeb295d01a709d2e26afe90055e95879e6dabe"
+  }
+}

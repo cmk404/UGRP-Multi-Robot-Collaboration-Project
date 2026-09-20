@@ -1,0 +1,796 @@
+{
+  "source_sha": "cdeee5fb22fe7ccbbb90b0bde424e7692a94aa16",
+  "cases": [
+    {
+      "id": "shuttle",
+      "mode": "shuttle",
+      "duration": 300,
+      "profile": "retention",
+      "expected": "continuous_hold"
+    },
+    {
+      "id": "stationary",
+      "mode": "stationary",
+      "duration": 300,
+      "profile": "retention",
+      "expected": "continuous_hold"
+    },
+    {
+      "id": "narrow-door",
+      "map": "narrow-door.json",
+      "expected": "delivery"
+    },
+    {
+      "id": "l-corner",
+      "map": "l-corner.json",
+      "expected": "delivery"
+    },
+    {
+      "id": "s-bends",
+      "map": "s-bends.json",
+      "expected": "delivery"
+    },
+    {
+      "id": "staggered-obstacles",
+      "map": "staggered-obstacles.json",
+      "expected": "delivery"
+    },
+    {
+      "id": "blocked-branch",
+      "map": "blocked-branch.json",
+      "expected": "delivery"
+    },
+    {
+      "id": "fully-blocked",
+      "map": "fully-blocked.json",
+      "expected": "no_route"
+    },
+    {
+      "id": "baseline-recovery",
+      "mode": "stationary",
+      "duration": 60,
+      "profile": "baseline",
+      "expected": "one_regrasp_then_place_stop"
+    }
+  ],
+  "trials": [
+    {
+      "id": "shuttle",
+      "expected": "continuous_hold",
+      "command": [
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_grasp_endurance.py",
+        "--map",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/maps/pair_navigation/narrow-door.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-loaded-navigation/outputs/pair-navigation/runtime/models/grasp",
+        "--out-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/outputs/retention-final-20260915/shuttle",
+        "--mode",
+        "shuttle",
+        "--duration",
+        "300",
+        "--contact-profile",
+        "retention"
+      ],
+      "returncode": 0,
+      "wall_seconds": 710.3189770840108,
+      "success": true,
+      "error": null,
+      "refused_no_route": false,
+      "evaluation": {
+        "checkpoints": {
+          "180": {
+            "beam_relative_to_finger_change_m": {
+              "r1": -0.004796642897529638,
+              "r3": -0.004797942976993277
+            },
+            "finger_height_change_m": {
+              "r1": 0.0006616428975296379,
+              "r3": 0.0006629429769932776
+            },
+            "gates": {
+              "bilateral_every_sample": true,
+              "collision_free": true,
+              "continuous_samples": true,
+              "duration_completed": true,
+              "full_grasp_stable": true,
+              "height_retained": true,
+              "invariants_unchanged": true,
+              "level_every_sample": true,
+              "lifted_every_sample": true,
+              "spacing_preserved": true,
+              "weld_off": true,
+              "within_authored_bounds": true
+            },
+            "last_sample_s": 179.94824999997374,
+            "max_beam_drop_m": 0.004135,
+            "passed": true
+          },
+          "300": {
+            "beam_relative_to_finger_change_m": {
+              "r1": -0.007587754146141171,
+              "r3": -0.007588914676174327
+            },
+            "finger_height_change_m": {
+              "r1": 0.0006797541461411594,
+              "r3": 0.0006809146761743157
+            },
+            "gates": {
+              "bilateral_every_sample": true,
+              "collision_free": true,
+              "continuous_samples": true,
+              "duration_completed": true,
+              "full_grasp_stable": true,
+              "height_retained": true,
+              "invariants_unchanged": true,
+              "level_every_sample": true,
+              "lifted_every_sample": true,
+              "spacing_preserved": true,
+              "weld_off": true,
+              "within_authored_bounds": true
+            },
+            "last_sample_s": 299.94149999997376,
+            "max_beam_drop_m": 0.006908000000000011,
+            "passed": true
+          }
+        },
+        "grasp_stability": {
+          "anchor_spacing_m": 0.6503777267147035,
+          "final_spacing_m": 0.6479525392605073,
+          "gates": {
+            "full_grasp_samples": true,
+            "grasp_bilateral_through_lift_hold": true,
+            "grasp_hold_lifted_every_sample": true,
+            "grasp_spacing_preserved": true
+          },
+          "max_sample_gap_s": 0.09925000000000139,
+          "max_spacing_change_m": 0.011840345939445274,
+          "nonbilateral_samples": 0,
+          "samples": 112,
+          "success": true
+        },
+        "released_on_floor": true,
+        "success": true
+      },
+      "recovery_evaluation": {
+        "events": [],
+        "scope": "Recovery handling, separate from uninterrupted endurance or task success",
+        "success": false
+      },
+      "expected_outcome_passed": true
+    },
+    {
+      "id": "stationary",
+      "expected": "continuous_hold",
+      "command": [
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_grasp_endurance.py",
+        "--map",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/maps/pair_navigation/narrow-door.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-loaded-navigation/outputs/pair-navigation/runtime/models/grasp",
+        "--out-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/outputs/retention-final-20260915/stationary",
+        "--mode",
+        "stationary",
+        "--duration",
+        "300",
+        "--contact-profile",
+        "retention"
+      ],
+      "returncode": 0,
+      "wall_seconds": 694.1274857090029,
+      "success": true,
+      "error": null,
+      "refused_no_route": false,
+      "evaluation": {
+        "checkpoints": {
+          "180": {
+            "beam_relative_to_finger_change_m": {
+              "r1": -0.004797265657396105,
+              "r3": -0.004797497459167771
+            },
+            "finger_height_change_m": {
+              "r1": 0.000663265657396106,
+              "r3": 0.0006634974591677723
+            },
+            "gates": {
+              "bilateral_every_sample": true,
+              "collision_free": true,
+              "continuous_samples": true,
+              "duration_completed": true,
+              "full_grasp_stable": true,
+              "height_retained": true,
+              "invariants_unchanged": true,
+              "level_every_sample": true,
+              "lifted_every_sample": true,
+              "spacing_preserved": true,
+              "weld_off": true,
+              "within_authored_bounds": true
+            },
+            "last_sample_s": 179.94824999997374,
+            "max_beam_drop_m": 0.004133999999999999,
+            "passed": true
+          },
+          "300": {
+            "beam_relative_to_finger_change_m": {
+              "r1": -0.0075878357398303925,
+              "r3": -0.007588580440798923
+            },
+            "finger_height_change_m": {
+              "r1": 0.0006798357398303811,
+              "r3": 0.0006805804407989113
+            },
+            "gates": {
+              "bilateral_every_sample": true,
+              "collision_free": true,
+              "continuous_samples": true,
+              "duration_completed": true,
+              "full_grasp_stable": true,
+              "height_retained": true,
+              "invariants_unchanged": true,
+              "level_every_sample": true,
+              "lifted_every_sample": true,
+              "spacing_preserved": true,
+              "weld_off": true,
+              "within_authored_bounds": true
+            },
+            "last_sample_s": 299.94149999997376,
+            "max_beam_drop_m": 0.006908000000000011,
+            "passed": true
+          }
+        },
+        "grasp_stability": {
+          "anchor_spacing_m": 0.6503777267147035,
+          "final_spacing_m": 0.6479525392605073,
+          "gates": {
+            "full_grasp_samples": true,
+            "grasp_bilateral_through_lift_hold": true,
+            "grasp_hold_lifted_every_sample": true,
+            "grasp_spacing_preserved": true
+          },
+          "max_sample_gap_s": 0.09925000000000139,
+          "max_spacing_change_m": 0.011840345939445274,
+          "nonbilateral_samples": 0,
+          "samples": 112,
+          "success": true
+        },
+        "released_on_floor": true,
+        "success": true
+      },
+      "recovery_evaluation": {
+        "events": [],
+        "scope": "Recovery handling, separate from uninterrupted endurance or task success",
+        "success": false
+      },
+      "expected_outcome_passed": true
+    },
+    {
+      "id": "narrow-door",
+      "expected": "delivery",
+      "command": [
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_navigation.py",
+        "--map",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/maps/pair_navigation/narrow-door.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-loaded-navigation/outputs/pair-navigation/runtime/models/grasp",
+        "--out-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/outputs/retention-final-20260915/narrow-door",
+        "--budget",
+        "750",
+        "--impratio",
+        "10",
+        "--vision-mode",
+        "robust",
+        "--grasp-spacing",
+        "visual",
+        "--close-pulse",
+        "1600",
+        "--contact-profile",
+        "retention"
+      ],
+      "returncode": 0,
+      "wall_seconds": 169.99391433299752,
+      "success": true,
+      "error": null,
+      "refused_no_route": false,
+      "evaluation": {
+        "bilateral_fraction": 1.0,
+        "gates": {
+          "actor_arrived": true,
+          "bilateral_every_sample": true,
+          "cameras_geometry_unchanged": true,
+          "carry_spacing_preserved": true,
+          "continuous_samples": true,
+          "full_grasp_samples": true,
+          "goal_orientation": true,
+          "goal_position": true,
+          "grasp_bilateral_through_lift_hold": true,
+          "grasp_hold_lifted_every_sample": true,
+          "grasp_spacing_preserved": true,
+          "grasp_stable_before_departure": true,
+          "level_payload": true,
+          "lifted_every_sample": true,
+          "other_collision_free": true,
+          "released_on_floor": true,
+          "wall_contact_free": true,
+          "weld_off": true,
+          "within_authored_bounds": true
+        },
+        "goal_position_error_m": 0.02609340472226644,
+        "goal_yaw_error_deg": 0.3498124463261171,
+        "lifted_fraction": 1.0,
+        "min_lift_m": 0.075725,
+        "navigation_sim_seconds": 90.69149999999999,
+        "payload_turn_deg": -0.3498124463261171,
+        "sample_gap_max_s": 0.09925000000001205,
+        "samples": 916,
+        "success": true,
+        "unexpected_contact_ticks": 0,
+        "wall_contact_ticks": 0
+      },
+      "recovery_evaluation": {
+        "events": [],
+        "scope": "Recovery handling, separate from uninterrupted endurance or task success",
+        "success": false
+      },
+      "expected_outcome_passed": true
+    },
+    {
+      "id": "l-corner",
+      "expected": "delivery",
+      "command": [
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_navigation.py",
+        "--map",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/maps/pair_navigation/l-corner.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-loaded-navigation/outputs/pair-navigation/runtime/models/grasp",
+        "--out-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/outputs/retention-final-20260915/l-corner",
+        "--budget",
+        "750",
+        "--impratio",
+        "10",
+        "--vision-mode",
+        "robust",
+        "--grasp-spacing",
+        "visual",
+        "--close-pulse",
+        "1600",
+        "--contact-profile",
+        "retention"
+      ],
+      "returncode": 0,
+      "wall_seconds": 111.80047162499977,
+      "success": true,
+      "error": null,
+      "refused_no_route": false,
+      "evaluation": {
+        "bilateral_fraction": 1.0,
+        "gates": {
+          "actor_arrived": true,
+          "bilateral_every_sample": true,
+          "cameras_geometry_unchanged": true,
+          "carry_spacing_preserved": true,
+          "continuous_samples": true,
+          "full_grasp_samples": true,
+          "goal_orientation": true,
+          "goal_position": true,
+          "grasp_bilateral_through_lift_hold": true,
+          "grasp_hold_lifted_every_sample": true,
+          "grasp_spacing_preserved": true,
+          "grasp_stable_before_departure": true,
+          "level_payload": true,
+          "lifted_every_sample": true,
+          "other_collision_free": true,
+          "released_on_floor": true,
+          "wall_contact_free": true,
+          "weld_off": true,
+          "within_authored_bounds": true
+        },
+        "goal_position_error_m": 0.02736374258028306,
+        "goal_yaw_error_deg": 0.03161245404810943,
+        "lifted_fraction": 1.0,
+        "min_lift_m": 0.076733,
+        "navigation_sim_seconds": 53.67124999999999,
+        "payload_turn_deg": 89.96838754595188,
+        "sample_gap_max_s": 0.09925000000001205,
+        "samples": 543,
+        "success": true,
+        "unexpected_contact_ticks": 0,
+        "wall_contact_ticks": 0
+      },
+      "recovery_evaluation": {
+        "events": [],
+        "scope": "Recovery handling, separate from uninterrupted endurance or task success",
+        "success": false
+      },
+      "expected_outcome_passed": true
+    },
+    {
+      "id": "s-bends",
+      "expected": "delivery",
+      "command": [
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_navigation.py",
+        "--map",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/maps/pair_navigation/s-bends.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-loaded-navigation/outputs/pair-navigation/runtime/models/grasp",
+        "--out-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/outputs/retention-final-20260915/s-bends",
+        "--budget",
+        "750",
+        "--impratio",
+        "10",
+        "--vision-mode",
+        "robust",
+        "--grasp-spacing",
+        "visual",
+        "--close-pulse",
+        "1600",
+        "--contact-profile",
+        "retention"
+      ],
+      "returncode": 0,
+      "wall_seconds": 140.608371624985,
+      "success": true,
+      "error": null,
+      "refused_no_route": false,
+      "evaluation": {
+        "bilateral_fraction": 1.0,
+        "gates": {
+          "actor_arrived": true,
+          "bilateral_every_sample": true,
+          "cameras_geometry_unchanged": true,
+          "carry_spacing_preserved": true,
+          "continuous_samples": true,
+          "full_grasp_samples": true,
+          "goal_orientation": true,
+          "goal_position": true,
+          "grasp_bilateral_through_lift_hold": true,
+          "grasp_hold_lifted_every_sample": true,
+          "grasp_spacing_preserved": true,
+          "grasp_stable_before_departure": true,
+          "level_payload": true,
+          "lifted_every_sample": true,
+          "other_collision_free": true,
+          "released_on_floor": true,
+          "wall_contact_free": true,
+          "weld_off": true,
+          "within_authored_bounds": true
+        },
+        "goal_position_error_m": 0.036572341379791484,
+        "goal_yaw_error_deg": 0.46345832464392966,
+        "lifted_fraction": 1.0,
+        "min_lift_m": 0.076327,
+        "navigation_sim_seconds": 68.75725,
+        "payload_turn_deg": 0.46345832464392966,
+        "sample_gap_max_s": 0.09925000000001205,
+        "samples": 695,
+        "success": true,
+        "unexpected_contact_ticks": 0,
+        "wall_contact_ticks": 0
+      },
+      "recovery_evaluation": {
+        "events": [],
+        "scope": "Recovery handling, separate from uninterrupted endurance or task success",
+        "success": false
+      },
+      "expected_outcome_passed": true
+    },
+    {
+      "id": "staggered-obstacles",
+      "expected": "delivery",
+      "command": [
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_navigation.py",
+        "--map",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/maps/pair_navigation/staggered-obstacles.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-loaded-navigation/outputs/pair-navigation/runtime/models/grasp",
+        "--out-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/outputs/retention-final-20260915/staggered-obstacles",
+        "--budget",
+        "750",
+        "--impratio",
+        "10",
+        "--vision-mode",
+        "robust",
+        "--grasp-spacing",
+        "visual",
+        "--close-pulse",
+        "1600",
+        "--contact-profile",
+        "retention"
+      ],
+      "returncode": 0,
+      "wall_seconds": 165.82244266700582,
+      "success": true,
+      "error": null,
+      "refused_no_route": false,
+      "evaluation": {
+        "bilateral_fraction": 1.0,
+        "gates": {
+          "actor_arrived": true,
+          "bilateral_every_sample": true,
+          "cameras_geometry_unchanged": true,
+          "carry_spacing_preserved": true,
+          "continuous_samples": true,
+          "full_grasp_samples": true,
+          "goal_orientation": true,
+          "goal_position": true,
+          "grasp_bilateral_through_lift_hold": true,
+          "grasp_hold_lifted_every_sample": true,
+          "grasp_spacing_preserved": true,
+          "grasp_stable_before_departure": true,
+          "level_payload": true,
+          "lifted_every_sample": true,
+          "other_collision_free": true,
+          "released_on_floor": true,
+          "wall_contact_free": true,
+          "weld_off": true,
+          "within_authored_bounds": true
+        },
+        "goal_position_error_m": 0.03121455508252517,
+        "goal_yaw_error_deg": 0.3711528920991295,
+        "lifted_fraction": 1.0,
+        "min_lift_m": 0.075887,
+        "navigation_sim_seconds": 84.7365,
+        "payload_turn_deg": 0.3711528920991295,
+        "sample_gap_max_s": 0.09925000000001205,
+        "samples": 856,
+        "success": true,
+        "unexpected_contact_ticks": 0,
+        "wall_contact_ticks": 0
+      },
+      "recovery_evaluation": {
+        "events": [],
+        "scope": "Recovery handling, separate from uninterrupted endurance or task success",
+        "success": false
+      },
+      "expected_outcome_passed": true
+    },
+    {
+      "id": "blocked-branch",
+      "expected": "delivery",
+      "command": [
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_navigation.py",
+        "--map",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/maps/pair_navigation/blocked-branch.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-loaded-navigation/outputs/pair-navigation/runtime/models/grasp",
+        "--out-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/outputs/retention-final-20260915/blocked-branch",
+        "--budget",
+        "750",
+        "--impratio",
+        "10",
+        "--vision-mode",
+        "robust",
+        "--grasp-spacing",
+        "visual",
+        "--close-pulse",
+        "1600",
+        "--contact-profile",
+        "retention"
+      ],
+      "returncode": 0,
+      "wall_seconds": 154.21476895801607,
+      "success": true,
+      "error": null,
+      "refused_no_route": false,
+      "evaluation": {
+        "bilateral_fraction": 1.0,
+        "gates": {
+          "actor_arrived": true,
+          "bilateral_every_sample": true,
+          "cameras_geometry_unchanged": true,
+          "carry_spacing_preserved": true,
+          "continuous_samples": true,
+          "full_grasp_samples": true,
+          "goal_orientation": true,
+          "goal_position": true,
+          "grasp_bilateral_through_lift_hold": true,
+          "grasp_hold_lifted_every_sample": true,
+          "grasp_spacing_preserved": true,
+          "grasp_stable_before_departure": true,
+          "level_payload": true,
+          "lifted_every_sample": true,
+          "other_collision_free": true,
+          "released_on_floor": true,
+          "wall_contact_free": true,
+          "weld_off": true,
+          "within_authored_bounds": true
+        },
+        "goal_position_error_m": 0.024052537267406957,
+        "goal_yaw_error_deg": 0.06723220635331113,
+        "lifted_fraction": 1.0,
+        "min_lift_m": 0.076079,
+        "navigation_sim_seconds": 77.68975,
+        "payload_turn_deg": 90.06723220635331,
+        "sample_gap_max_s": 0.09925000000001205,
+        "samples": 785,
+        "success": true,
+        "unexpected_contact_ticks": 0,
+        "wall_contact_ticks": 0
+      },
+      "recovery_evaluation": {
+        "events": [],
+        "scope": "Recovery handling, separate from uninterrupted endurance or task success",
+        "success": false
+      },
+      "expected_outcome_passed": true
+    },
+    {
+      "id": "fully-blocked",
+      "expected": "no_route",
+      "command": [
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_navigation.py",
+        "--map",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/maps/pair_navigation/fully-blocked.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-loaded-navigation/outputs/pair-navigation/runtime/models/grasp",
+        "--out-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/outputs/retention-final-20260915/fully-blocked",
+        "--budget",
+        "750",
+        "--impratio",
+        "10",
+        "--vision-mode",
+        "robust",
+        "--grasp-spacing",
+        "visual",
+        "--close-pulse",
+        "1600",
+        "--contact-profile",
+        "retention"
+      ],
+      "returncode": 0,
+      "wall_seconds": 32.7270979169989,
+      "success": false,
+      "error": null,
+      "refused_no_route": true,
+      "evaluation": {
+        "bilateral_fraction": 1.0,
+        "gates": {
+          "actor_arrived": false,
+          "bilateral_every_sample": true,
+          "cameras_geometry_unchanged": true,
+          "carry_spacing_preserved": true,
+          "continuous_samples": true,
+          "full_grasp_samples": true,
+          "goal_orientation": false,
+          "goal_position": false,
+          "grasp_bilateral_through_lift_hold": true,
+          "grasp_hold_lifted_every_sample": true,
+          "grasp_spacing_preserved": true,
+          "grasp_stable_before_departure": true,
+          "level_payload": true,
+          "lifted_every_sample": true,
+          "other_collision_free": true,
+          "released_on_floor": false,
+          "wall_contact_free": true,
+          "weld_off": true,
+          "within_authored_bounds": true
+        },
+        "goal_position_error_m": 1.1367020000158354,
+        "goal_yaw_error_deg": 89.85874169067006,
+        "lifted_fraction": 1.0,
+        "min_lift_m": 0.077612,
+        "navigation_sim_seconds": 1.8810000000000002,
+        "payload_turn_deg": 0.1412583093299382,
+        "sample_gap_max_s": 0.0990000000000002,
+        "samples": 20,
+        "success": false,
+        "unexpected_contact_ticks": 0,
+        "wall_contact_ticks": 0
+      },
+      "recovery_evaluation": {
+        "events": [],
+        "scope": "Recovery handling, separate from uninterrupted endurance or task success",
+        "success": false
+      },
+      "expected_outcome_passed": true
+    },
+    {
+      "id": "baseline-recovery",
+      "expected": "one_regrasp_then_place_stop",
+      "command": [
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_grasp_endurance.py",
+        "--map",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/maps/pair_navigation/narrow-door.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-loaded-navigation/outputs/pair-navigation/runtime/models/grasp",
+        "--out-dir",
+        "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/outputs/retention-final-20260915/baseline-recovery",
+        "--mode",
+        "stationary",
+        "--duration",
+        "60",
+        "--contact-profile",
+        "baseline"
+      ],
+      "returncode": 1,
+      "wall_seconds": 47.694640208006604,
+      "success": false,
+      "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_grasp_endurance.py\", line 96, in run\n    if not retry:raise RuntimeError('slip recurred after one regrasp; placed and stopped')\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: slip recurred after one regrasp; placed and stopped\n",
+      "refused_no_route": false,
+      "evaluation": {
+        "checkpoints": {},
+        "grasp_stability": {
+          "anchor_spacing_m": 0.657804976514023,
+          "final_spacing_m": 0.6564930915638508,
+          "gates": {
+            "full_grasp_samples": false,
+            "grasp_bilateral_through_lift_hold": true,
+            "grasp_hold_lifted_every_sample": true,
+            "grasp_spacing_preserved": true
+          },
+          "max_sample_gap_s": 20.200000000000003,
+          "max_spacing_change_m": 0.013348116833170054,
+          "nonbilateral_samples": 0,
+          "samples": 222,
+          "success": false
+        },
+        "released_on_floor": true,
+        "success": false
+      },
+      "recovery_evaluation": {
+        "events": [
+          {
+            "command_error": null,
+            "grasp_stability": {
+              "anchor_spacing_m": 0.657804976514023,
+              "final_spacing_m": 0.6564930915638508,
+              "gates": {
+                "full_grasp_samples": true,
+                "grasp_bilateral_through_lift_hold": true,
+                "grasp_hold_lifted_every_sample": true,
+                "grasp_spacing_preserved": true
+              },
+              "max_sample_gap_s": 0.10000000000000142,
+              "max_spacing_change_m": 0.006480271110940294,
+              "nonbilateral_samples": 0,
+              "samples": 111,
+              "success": true
+            },
+            "handled": true,
+            "index": 1,
+            "released_on_floor": true,
+            "resumed_with_fresh_rgb": true
+          },
+          {
+            "command_error": null,
+            "handled": true,
+            "index": 2,
+            "released_on_floor": true
+          }
+        ],
+        "scope": "Recovery handling, separate from uninterrupted endurance or task success",
+        "success": true
+      },
+      "expected_outcome_passed": true
+    }
+  ],
+  "model_files": {
+    "evaluation-fixture.json": "c2183ad250ea16606d652f91d117e4abb085f9c88b2ab0115de0ba93e1bc5f3f",
+    "r1-goal-own.jpg": "6d3adf4a69d416c605e03ebaf684dcf9fbc7906cf4a71730a82545232ea4f9f6",
+    "r1-goal-top.jpg": "c4c75ff88902cc4c8910a1ac68b52047d0a5dbf60305c8491d0449b71bf36f35",
+    "r1-model.json": "2a5a19e323d6353ee8ca0342a3a9341a0736d3d35ba9a7df11d45071f5d15a43",
+    "r3-goal-own.jpg": "e78251d402a1484caf66432b74dfe8e4639d0e07793c8f7c3cd63d60d8805bc8",
+    "r3-goal-top.jpg": "c4c75ff88902cc4c8910a1ac68b52047d0a5dbf60305c8491d0449b71bf36f35",
+    "r3-model.json": "e55bb7d0ac473dc79d6eab9c1f4dadb2b5dff068329a8c8714d1fd076e5ecfed",
+    "student-skill.json": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049",
+    "training-report.json": "17fba08c94dbe770fdd138d32d1f4094ec9177051041a3d47338345dd0e2be6b"
+  },
+  "external_model_calls": 0,
+  "cost_usd": 0,
+  "complete": true
+}

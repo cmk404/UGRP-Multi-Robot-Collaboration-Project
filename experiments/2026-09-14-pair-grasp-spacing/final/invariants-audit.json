@@ -1,0 +1,188 @@
+{
+  "passed": true,
+  "scope": "Output-only exact scene/map/camera/grasp-model and fixed arm command comparison; actual fixed closure differs intentionally",
+  "baseline_source_sha": "a1a6f3353a4c5b378f611267bd43c5820f776917",
+  "candidate_source_sha": "f8deb28f5f321893cb11a3ab17ee5b6623dcac79",
+  "cases": [
+    {
+      "id": "narrow-door",
+      "unchanged": {
+        "scene_xml_sha256": true,
+        "map_sha256": true,
+        "appearance_manifest_sha256": true,
+        "grasp_skill_sha256": true,
+        "invariants_initial": true,
+        "invariants_final": true,
+        "grasp_initialization_commands": true,
+        "grasp_pre_recovery_settle_commands": true,
+        "grasp_rgb_recovery_commands": true,
+        "grasp_lift_commands": true
+      },
+      "actual_close_command": [
+        {
+          "targets": {
+            "r1": {
+              "1": 1600
+            },
+            "r3": {
+              "1": 1600
+            }
+          },
+          "duration_s": 0.65,
+          "settle_s": 0.18
+        }
+      ],
+      "source_sha": "f8deb28f5f321893cb11a3ab17ee5b6623dcac79"
+    },
+    {
+      "id": "l-corner",
+      "unchanged": {
+        "scene_xml_sha256": true,
+        "map_sha256": true,
+        "appearance_manifest_sha256": true,
+        "grasp_skill_sha256": true,
+        "invariants_initial": true,
+        "invariants_final": true,
+        "grasp_initialization_commands": true,
+        "grasp_pre_recovery_settle_commands": true,
+        "grasp_rgb_recovery_commands": true,
+        "grasp_lift_commands": true
+      },
+      "actual_close_command": [
+        {
+          "targets": {
+            "r1": {
+              "1": 1600
+            },
+            "r3": {
+              "1": 1600
+            }
+          },
+          "duration_s": 0.65,
+          "settle_s": 0.18
+        }
+      ],
+      "source_sha": "f8deb28f5f321893cb11a3ab17ee5b6623dcac79"
+    },
+    {
+      "id": "s-bends",
+      "unchanged": {
+        "scene_xml_sha256": true,
+        "map_sha256": true,
+        "appearance_manifest_sha256": true,
+        "grasp_skill_sha256": true,
+        "invariants_initial": true,
+        "invariants_final": true,
+        "grasp_initialization_commands": true,
+        "grasp_pre_recovery_settle_commands": true,
+        "grasp_rgb_recovery_commands": true,
+        "grasp_lift_commands": true
+      },
+      "actual_close_command": [
+        {
+          "targets": {
+            "r1": {
+              "1": 1600
+            },
+            "r3": {
+              "1": 1600
+            }
+          },
+          "duration_s": 0.65,
+          "settle_s": 0.18
+        }
+      ],
+      "source_sha": "f8deb28f5f321893cb11a3ab17ee5b6623dcac79"
+    },
+    {
+      "id": "staggered-obstacles",
+      "unchanged": {
+        "scene_xml_sha256": true,
+        "map_sha256": true,
+        "appearance_manifest_sha256": true,
+        "grasp_skill_sha256": true,
+        "invariants_initial": true,
+        "invariants_final": true,
+        "grasp_initialization_commands": true,
+        "grasp_pre_recovery_settle_commands": true,
+        "grasp_rgb_recovery_commands": true,
+        "grasp_lift_commands": true
+      },
+      "actual_close_command": [
+        {
+          "targets": {
+            "r1": {
+              "1": 1600
+            },
+            "r3": {
+              "1": 1600
+            }
+          },
+          "duration_s": 0.65,
+          "settle_s": 0.18
+        }
+      ],
+      "source_sha": "f8deb28f5f321893cb11a3ab17ee5b6623dcac79"
+    },
+    {
+      "id": "blocked-branch",
+      "unchanged": {
+        "scene_xml_sha256": true,
+        "map_sha256": true,
+        "appearance_manifest_sha256": true,
+        "grasp_skill_sha256": true,
+        "invariants_initial": true,
+        "invariants_final": true,
+        "grasp_initialization_commands": true,
+        "grasp_pre_recovery_settle_commands": true,
+        "grasp_rgb_recovery_commands": true,
+        "grasp_lift_commands": true
+      },
+      "actual_close_command": [
+        {
+          "targets": {
+            "r1": {
+              "1": 1600
+            },
+            "r3": {
+              "1": 1600
+            }
+          },
+          "duration_s": 0.65,
+          "settle_s": 0.18
+        }
+      ],
+      "source_sha": "f8deb28f5f321893cb11a3ab17ee5b6623dcac79"
+    },
+    {
+      "id": "fully-blocked",
+      "unchanged": {
+        "scene_xml_sha256": true,
+        "map_sha256": true,
+        "appearance_manifest_sha256": true,
+        "grasp_skill_sha256": true,
+        "invariants_initial": true,
+        "invariants_final": true,
+        "grasp_initialization_commands": true,
+        "grasp_pre_recovery_settle_commands": true,
+        "grasp_rgb_recovery_commands": true,
+        "grasp_lift_commands": true
+      },
+      "actual_close_command": [
+        {
+          "targets": {
+            "r1": {
+              "1": 1600
+            },
+            "r3": {
+              "1": 1600
+            }
+          },
+          "duration_s": 0.65,
+          "settle_s": 0.18
+        }
+      ],
+      "source_sha": "f8deb28f5f321893cb11a3ab17ee5b6623dcac79"
+    }
+  ]
+}

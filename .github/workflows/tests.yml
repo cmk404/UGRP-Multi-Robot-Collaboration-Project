@@ -107,6 +107,13 @@ jobs:
           python scripts/ugrp_session.py run quickstart -- python -m scripts.sim_quickstart --output outputs/quickstart-ci
           test ! -e "$UGRP_SESSION_DIR/quickstart.json"
 
+      - name: Two unloaded robots yield using RGB and clear reservations
+        run: |
+          python scripts/ugrp_session.py run rgb-traffic-ci -- python -m scripts.run_rgb_traffic --scenario crossing --out-dir outputs/rgb-traffic-ci
+          python -m scripts.audit_rgb_traffic outputs/rgb-traffic-ci
+          python -c "import json; r=json.load(open('outputs/rgb-traffic-ci/result.json')); assert r['error'] is None and r['evaluation']['success'], r"
+          test ! -e "$UGRP_SESSION_DIR/rgb-traffic-ci.json"
+
       - name: Keep demo evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -141,6 +148,15 @@ jobs:
         with:
           name: dispatch-arena-physics
           path: outputs/dispatch-arena-ci/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Keep RGB traffic smoke evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ubuntu-rgb-traffic
+          path: outputs/rgb-traffic-ci/
           if-no-files-found: warn
           retention-days: 14
 

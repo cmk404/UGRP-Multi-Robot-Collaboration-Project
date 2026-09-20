@@ -1,0 +1,64 @@
+{
+  "final_input_audits": {
+    "final-left-v2": {
+      "passed": true,
+      "steps": 156,
+      "physical_success": true,
+      "refused_no_route": false,
+      "scope": "Exact RGB/command replay and output-only scoring; no actual physics rerun"
+    },
+    "final-right-v2": {
+      "passed": true,
+      "steps": 155,
+      "physical_success": true,
+      "refused_no_route": false,
+      "scope": "Exact RGB/command replay and output-only scoring; no actual physics rerun"
+    },
+    "final-wall-v2": {
+      "passed": true,
+      "steps": 479,
+      "physical_success": true,
+      "refused_no_route": false,
+      "scope": "Exact RGB/command replay and output-only scoring; no actual physics rerun"
+    },
+    "final-blocked-v2": {
+      "passed": true,
+      "steps": 10,
+      "physical_success": false,
+      "refused_no_route": true,
+      "scope": "Exact RGB/command replay and output-only scoring; no actual physics rerun"
+    },
+    "final-default-v2": {
+      "passed": true,
+      "steps": 11,
+      "physical_success": false,
+      "refused_no_route": false,
+      "scope": "Exact RGB/command replay and output-only scoring; no actual physics rerun"
+    }
+  },
+  "default_vs_profile10": {
+    "geometry_hashes_equal": true,
+    "policy_cameras_equal": true,
+    "solver_differences": {
+      "impratio": [
+        10.0,
+        1.0
+      ]
+    }
+  },
+  "grasp_model_archive_sha256": "d6d421c2d35ed448c4492592220b3e3141d346f5e576ebbdf5a7a3c787b7e635",
+  "release_diagnostic": {
+    "grasp_input_ok": true,
+    "hold_samples": 600,
+    "hold_all_bilateral": true,
+    "min_hold_lift_m": 0.066416,
+    "reported_hold_success": true,
+    "air_release_success": true,
+    "last_10_release_floor_and_clear": true,
+    "fall_from_hold_m": 0.06646500000000001,
+    "weld_off_all_samples": true,
+    "invariants_unchanged": true,
+    "source_sha": "13d833964335b04766cc8c7c8b72ddc5b70f4192",
+    "scope": "Posthoc independent hold/release calculation and archived grasp input replay; no navigation decision rows in this diagnostic"
+  }
+}

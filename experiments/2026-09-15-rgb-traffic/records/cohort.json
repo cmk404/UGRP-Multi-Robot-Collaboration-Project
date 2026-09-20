@@ -1,0 +1,333 @@
+{
+  "source_sha": "ca1ed29fcb4c75f82d18099d170952ef3a95cd72",
+  "results": [
+    {
+      "source_sha": "ca1ed29fcb4c75f82d18099d170952ef3a95cd72",
+      "scenario": "crossing",
+      "coordinated": false,
+      "statuses": {
+        "r1": "localization_lost",
+        "r3": "localization_lost"
+      },
+      "decision_rounds": 37,
+      "command_clock_s": 13.149589867861943,
+      "wall_elapsed_s": 8.1527514999907,
+      "evaluation": {
+        "success": false,
+        "gates": {
+          "both_rgb_arrived": false,
+          "both_truth_goals": false,
+          "zero_collisions": true,
+          "weld_off": true,
+          "inside_map": true,
+          "upright": true,
+          "invariants": true
+        },
+        "goal_distances_m": {
+          "r1": 1.5377977940686296,
+          "r3": 0.9328634858867549
+        },
+        "sampled_min_center_separation_m": 0.40992854662911415,
+        "sampled_min_circle_clearance_m": 0.04992854662911417,
+        "collision_steps": 0,
+        "peer_collision_steps": 0,
+        "weld_steps": 0,
+        "max_tilt_rad": 9.627192786012371e-05,
+        "sim_elapsed_s": 13.146000000001527
+      },
+      "error": null,
+      "model_calls": 0,
+      "model_cost_usd": 0,
+      "label": "crossing-independent",
+      "process_returncode": 0,
+      "wrapper_wall_s": 8.947416584007442
+    },
+    {
+      "source_sha": "ca1ed29fcb4c75f82d18099d170952ef3a95cd72",
+      "scenario": "crossing",
+      "coordinated": true,
+      "statuses": {
+        "r1": "arrived",
+        "r3": "arrived"
+      },
+      "decision_rounds": 115,
+      "command_clock_s": 34.49586979123329,
+      "wall_elapsed_s": 21.863647624995792,
+      "evaluation": {
+        "success": true,
+        "gates": {
+          "both_rgb_arrived": true,
+          "both_truth_goals": true,
+          "zero_collisions": true,
+          "weld_off": true,
+          "inside_map": true,
+          "upright": true,
+          "invariants": true
+        },
+        "goal_distances_m": {
+          "r1": 0.0712157886533875,
+          "r3": 0.06578951306776974
+        },
+        "sampled_min_center_separation_m": 0.7999937370598147,
+        "sampled_min_circle_clearance_m": 0.4399937370598147,
+        "collision_steps": 0,
+        "peer_collision_steps": 0,
+        "weld_steps": 0,
+        "max_tilt_rad": 9.646535852577965e-05,
+        "sim_elapsed_s": 34.477999999997884
+      },
+      "error": null,
+      "model_calls": 0,
+      "model_cost_usd": 0,
+      "label": "crossing-reserved",
+      "process_returncode": 0,
+      "wrapper_wall_s": 22.45704675000161
+    },
+    {
+      "source_sha": "ca1ed29fcb4c75f82d18099d170952ef3a95cd72",
+      "scenario": "head_on",
+      "coordinated": true,
+      "statuses": {
+        "r1": "arrived",
+        "r3": "arrived"
+      },
+      "decision_rounds": 207,
+      "command_clock_s": 78.93146323769827,
+      "wall_elapsed_s": 65.92550962499809,
+      "evaluation": {
+        "success": true,
+        "gates": {
+          "both_rgb_arrived": true,
+          "both_truth_goals": true,
+          "zero_collisions": true,
+          "weld_off": true,
+          "inside_map": true,
+          "upright": true,
+          "invariants": true
+        },
+        "goal_distances_m": {
+          "r1": 0.05878993907167774,
+          "r3": 0.05144622408930088
+        },
+        "sampled_min_center_separation_m": 0.5719134366915746,
+        "sampled_min_circle_clearance_m": 0.21191343669157459,
+        "collision_steps": 0,
+        "peer_collision_steps": 0,
+        "weld_steps": 0,
+        "max_tilt_rad": 9.638485630246436e-05,
+        "sim_elapsed_s": 78.95599999999412
+      },
+      "error": null,
+      "model_calls": 0,
+      "model_cost_usd": 0,
+      "label": "head_on-reserved",
+      "process_returncode": 0,
+      "wrapper_wall_s": 66.70723624998936
+    },
+    {
+      "source_sha": "ca1ed29fcb4c75f82d18099d170952ef3a95cd72",
+      "scenario": "following",
+      "coordinated": true,
+      "statuses": {
+        "r1": "arrived",
+        "r3": "arrived"
+      },
+      "decision_rounds": 95,
+      "command_clock_s": 29.7722067843008,
+      "wall_elapsed_s": 19.05178608300048,
+      "evaluation": {
+        "success": true,
+        "gates": {
+          "both_rgb_arrived": true,
+          "both_truth_goals": true,
+          "zero_collisions": true,
+          "weld_off": true,
+          "inside_map": true,
+          "upright": true,
+          "invariants": true
+        },
+        "goal_distances_m": {
+          "r1": 0.06123508822548624,
+          "r3": 0.04835137008581518
+        },
+        "sampled_min_center_separation_m": 0.7371162818416426,
+        "sampled_min_circle_clearance_m": 0.3771162818416426,
+        "collision_steps": 0,
+        "peer_collision_steps": 0,
+        "weld_steps": 0,
+        "max_tilt_rad": 9.646532828799201e-05,
+        "sim_elapsed_s": 29.775999999993598
+      },
+      "error": null,
+      "model_calls": 0,
+      "model_cost_usd": 0,
+      "label": "following-reserved",
+      "process_returncode": 0,
+      "wrapper_wall_s": 19.779362958011916
+    },
+    {
+      "source_sha": "ca1ed29fcb4c75f82d18099d170952ef3a95cd72",
+      "scenario": "delayed_owner",
+      "coordinated": true,
+      "statuses": {
+        "r1": "arrived",
+        "r3": "arrived"
+      },
+      "decision_rounds": 130,
+      "command_clock_s": 38.284936409047056,
+      "wall_elapsed_s": 24.923256665992085,
+      "evaluation": {
+        "success": true,
+        "gates": {
+          "both_rgb_arrived": true,
+          "both_truth_goals": true,
+          "zero_collisions": true,
+          "weld_off": true,
+          "inside_map": true,
+          "upright": true,
+          "invariants": true
+        },
+        "goal_distances_m": {
+          "r1": 0.07823951910305463,
+          "r3": 0.06578951642924352
+        },
+        "sampled_min_center_separation_m": 0.8000063957800806,
+        "sampled_min_circle_clearance_m": 0.4400063957800806,
+        "collision_steps": 0,
+        "peer_collision_steps": 0,
+        "weld_steps": 0,
+        "max_tilt_rad": 9.646532333785618e-05,
+        "sim_elapsed_s": 38.22800000000247
+      },
+      "error": null,
+      "model_calls": 0,
+      "model_cost_usd": 0,
+      "label": "delayed_owner-reserved",
+      "process_returncode": 0,
+      "wrapper_wall_s": 25.69374349998543
+    },
+    {
+      "source_sha": "ca1ed29fcb4c75f82d18099d170952ef3a95cd72",
+      "scenario": "report_gap",
+      "coordinated": true,
+      "statuses": {
+        "r1": "arrived",
+        "r3": "arrived"
+      },
+      "decision_rounds": 123,
+      "command_clock_s": 36.52343032826763,
+      "wall_elapsed_s": 24.354074125003535,
+      "evaluation": {
+        "success": true,
+        "gates": {
+          "both_rgb_arrived": true,
+          "both_truth_goals": true,
+          "zero_collisions": true,
+          "weld_off": true,
+          "inside_map": true,
+          "upright": true,
+          "invariants": true
+        },
+        "goal_distances_m": {
+          "r1": 0.07823950755121149,
+          "r3": 0.06578951499048365
+        },
+        "sampled_min_center_separation_m": 0.8000063947239062,
+        "sampled_min_circle_clearance_m": 0.44000639472390624,
+        "collision_steps": 0,
+        "peer_collision_steps": 0,
+        "weld_steps": 0,
+        "max_tilt_rad": 9.646532324764923e-05,
+        "sim_elapsed_s": 36.47800000000033
+      },
+      "error": null,
+      "model_calls": 0,
+      "model_cost_usd": 0,
+      "label": "report_gap-reserved",
+      "process_returncode": 0,
+      "wrapper_wall_s": 25.0819514169998
+    },
+    {
+      "source_sha": "ca1ed29fcb4c75f82d18099d170952ef3a95cd72",
+      "scenario": "restart",
+      "coordinated": true,
+      "statuses": {
+        "r1": "arrived",
+        "r3": "arrived"
+      },
+      "decision_rounds": 115,
+      "command_clock_s": 34.49586979123329,
+      "wall_elapsed_s": 23.515126499987673,
+      "evaluation": {
+        "success": true,
+        "gates": {
+          "both_rgb_arrived": true,
+          "both_truth_goals": true,
+          "zero_collisions": true,
+          "weld_off": true,
+          "inside_map": true,
+          "upright": true,
+          "invariants": true
+        },
+        "goal_distances_m": {
+          "r1": 0.0712157886533875,
+          "r3": 0.06578951306776974
+        },
+        "sampled_min_center_separation_m": 0.7999937370598147,
+        "sampled_min_circle_clearance_m": 0.4399937370598147,
+        "collision_steps": 0,
+        "peer_collision_steps": 0,
+        "weld_steps": 0,
+        "max_tilt_rad": 9.646535852577965e-05,
+        "sim_elapsed_s": 34.477999999997884
+      },
+      "error": null,
+      "model_calls": 0,
+      "model_cost_usd": 0,
+      "label": "restart-reserved",
+      "process_returncode": 0,
+      "wrapper_wall_s": 24.197741959011182
+    },
+    {
+      "source_sha": "ca1ed29fcb4c75f82d18099d170952ef3a95cd72",
+      "scenario": "blocked_exit",
+      "coordinated": true,
+      "statuses": {
+        "r1": "calibrating_forward",
+        "r3": "arrived"
+      },
+      "decision_rounds": 71,
+      "command_clock_s": 20.95,
+      "wall_elapsed_s": 14.87679837498581,
+      "evaluation": {
+        "success": false,
+        "gates": {
+          "both_rgb_arrived": false,
+          "both_truth_goals": false,
+          "zero_collisions": true,
+          "weld_off": true,
+          "inside_map": true,
+          "upright": true,
+          "invariants": true
+        },
+        "goal_distances_m": {
+          "r1": 2.299996720301626,
+          "r3": 0.06343705677389606
+        },
+        "sampled_min_center_separation_m": 2.049999999999997,
+        "sampled_min_circle_clearance_m": 1.6899999999999973,
+        "collision_steps": 0,
+        "peer_collision_steps": 0,
+        "weld_steps": 0,
+        "max_tilt_rad": 8.180792908695532e-05,
+        "sim_elapsed_s": 20.94999999999849
+      },
+      "error": null,
+      "model_calls": 0,
+      "model_cost_usd": 0,
+      "label": "blocked_exit-reserved",
+      "process_returncode": 0,
+      "wrapper_wall_s": 15.589873999997508
+    }
+  ]
+}

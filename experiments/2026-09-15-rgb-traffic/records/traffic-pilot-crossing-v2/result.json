@@ -1,0 +1,38 @@
+{
+  "source_sha": "57b6027653d12216233454e00e01f3f3fd5097a2",
+  "scenario": "crossing",
+  "coordinated": true,
+  "statuses": {
+    "r1": "arrived",
+    "r3": "arrived"
+  },
+  "decision_rounds": 115,
+  "command_clock_s": 34.49586979123329,
+  "wall_elapsed_s": 21.765834041987546,
+  "evaluation": {
+    "success": true,
+    "gates": {
+      "both_rgb_arrived": true,
+      "both_truth_goals": true,
+      "zero_collisions": true,
+      "weld_off": true,
+      "inside_map": true,
+      "upright": true,
+      "invariants": true
+    },
+    "goal_distances_m": {
+      "r1": 0.0712157886533875,
+      "r3": 0.06578951306776974
+    },
+    "sampled_min_center_separation_m": 0.8000092315186486,
+    "sampled_min_circle_clearance_m": 0.44000923151864857,
+    "collision_steps": 0,
+    "peer_collision_steps": 0,
+    "weld_steps": 0,
+    "max_tilt_rad": 0.00010529595233471445,
+    "sim_elapsed_s": 34.477999999997884
+  },
+  "error": null,
+  "model_calls": 0,
+  "model_cost_usd": 0
+}

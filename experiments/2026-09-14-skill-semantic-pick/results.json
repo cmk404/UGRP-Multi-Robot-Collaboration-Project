@@ -1,0 +1,579 @@
+{
+  "execution_git_sha": "c692d5c45138e3e77157dd2854b80449a3f0f5b1",
+  "trial_order": [
+    "skill-41",
+    "semantic-41",
+    "semantic-42",
+    "skill-42",
+    "skill-43",
+    "semantic-43"
+  ],
+  "episodes": [
+    {
+      "condition": "skill",
+      "seed": 41,
+      "git_sha": "c692d5c45138e3e77157dd2854b80449a3f0f5b1",
+      "reason": "SKILL_carrying:RUNNING",
+      "error": null,
+      "cleanup_errors": [],
+      "sim_seconds": 119.99999999990104,
+      "wall_seconds": 74.79120954099926,
+      "calls": 2,
+      "wire_requests": 2,
+      "macro_count": 206,
+      "blocked_commands": [],
+      "evaluation": {
+        "physics_grasp_success": true,
+        "max_lift_m": 0.06779410124020041,
+        "longest_bilateral_hold_s": 33.99999999992076,
+        "first_2s_hold_sim_s": 88.09999999997538,
+        "constraint_free": true,
+        "visual_review_required_for_positive": true
+      },
+      "usage_records": 2,
+      "input_tokens": 4722,
+      "output_tokens": 76,
+      "billing_amount": null,
+      "actor_state": "carrying",
+      "scripted_steps": [],
+      "raw_storage": "local_only",
+      "frame_count": 597,
+      "episode": "skill-41",
+      "model_latency_seconds": 4.608564958005445,
+      "last_model_call_sim_s": 75.59200000000453,
+      "reported_total_tokens": 4927,
+      "action_counts": {
+        "approach": 1,
+        "pick": 1
+      },
+      "response_models": [
+        "gemini-3.8-flash"
+      ],
+      "raw_path": "/Users/changmin/projects/ugrp-worktrees/skill-vs-semantic-pick/outputs/pick-match-cohort-v1/skill-41"
+    },
+    {
+      "condition": "semantic",
+      "seed": 41,
+      "git_sha": "c692d5c45138e3e77157dd2854b80449a3f0f5b1",
+      "reason": "CALL_OR_REPORTED_INPUT_BUDGET",
+      "error": null,
+      "cleanup_errors": [],
+      "sim_seconds": 119.99999999990104,
+      "wall_seconds": 162.36737095800345,
+      "calls": 30,
+      "wire_requests": 30,
+      "macro_count": 30,
+      "blocked_commands": [
+        {
+          "call": 11,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "PITCH_DOWN"
+          }
+        },
+        {
+          "call": 12,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "PITCH_DOWN"
+          }
+        },
+        {
+          "call": 13,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "PITCH_DOWN"
+          }
+        },
+        {
+          "call": 14,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "PITCH_DOWN"
+          }
+        },
+        {
+          "call": 15,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "PITCH_DOWN"
+          }
+        },
+        {
+          "call": 16,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "PITCH_DOWN"
+          }
+        },
+        {
+          "call": 17,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "PITCH_DOWN"
+          }
+        },
+        {
+          "call": 18,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "PITCH_DOWN"
+          }
+        },
+        {
+          "call": 20,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "PITCH_DOWN"
+          }
+        },
+        {
+          "call": 22,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "PITCH_DOWN"
+          }
+        },
+        {
+          "call": 23,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "PITCH_DOWN"
+          }
+        },
+        {
+          "call": 24,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "PITCH_DOWN"
+          }
+        },
+        {
+          "call": 26,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "PITCH_DOWN"
+          }
+        }
+      ],
+      "evaluation": {
+        "physics_grasp_success": false,
+        "max_lift_m": 7.252473583491126e-09,
+        "longest_bilateral_hold_s": 0.0,
+        "first_2s_hold_sim_s": null,
+        "constraint_free": true,
+        "visual_review_required_for_positive": true
+      },
+      "usage_records": 30,
+      "input_tokens": 76362,
+      "output_tokens": 1412,
+      "billing_amount": null,
+      "actor_state": "idle",
+      "scripted_steps": [],
+      "raw_storage": "local_only",
+      "frame_count": 597,
+      "episode": "semantic-41",
+      "model_latency_seconds": 109.36245229300403,
+      "last_model_call_sim_s": 13.45000000000126,
+      "reported_total_tokens": 83192,
+      "action_counts": {
+        "MV_FWD": 4,
+        "BASE_FWD": 8,
+        "PITCH_DOWN": 15,
+        "RELEASE": 1,
+        "MV_DOWN": 2
+      },
+      "response_models": [
+        "gemini-3.8-flash"
+      ],
+      "raw_path": "/Users/changmin/projects/ugrp-worktrees/skill-vs-semantic-pick/outputs/pick-match-cohort-v1/semantic-41"
+    },
+    {
+      "condition": "semantic",
+      "seed": 42,
+      "git_sha": "c692d5c45138e3e77157dd2854b80449a3f0f5b1",
+      "reason": "CALL_OR_REPORTED_INPUT_BUDGET",
+      "error": null,
+      "cleanup_errors": [],
+      "sim_seconds": 119.99999999990104,
+      "wall_seconds": 153.53597091700067,
+      "calls": 30,
+      "wire_requests": 30,
+      "macro_count": 30,
+      "blocked_commands": [
+        {
+          "call": 14,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_DOWN"
+          }
+        },
+        {
+          "call": 21,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_DOWN"
+          }
+        }
+      ],
+      "evaluation": {
+        "physics_grasp_success": false,
+        "max_lift_m": 7.252473583491126e-09,
+        "longest_bilateral_hold_s": 0.0,
+        "first_2s_hold_sim_s": null,
+        "constraint_free": true,
+        "visual_review_required_for_positive": true
+      },
+      "usage_records": 30,
+      "input_tokens": 76341,
+      "output_tokens": 1339,
+      "billing_amount": null,
+      "actor_state": "idle",
+      "scripted_steps": [],
+      "raw_storage": "local_only",
+      "frame_count": 597,
+      "episode": "semantic-42",
+      "model_latency_seconds": 97.16267191406223,
+      "last_model_call_sim_s": 12.928000000001086,
+      "reported_total_tokens": 82586,
+      "action_counts": {
+        "BASE_FWD": 7,
+        "RELEASE": 1,
+        "PITCH_DOWN": 1,
+        "MV_DOWN": 13,
+        "MV_FWD": 8
+      },
+      "response_models": [
+        "gemini-3.8-flash"
+      ],
+      "raw_path": "/Users/changmin/projects/ugrp-worktrees/skill-vs-semantic-pick/outputs/pick-match-cohort-v1/semantic-42"
+    },
+    {
+      "condition": "skill",
+      "seed": 42,
+      "git_sha": "c692d5c45138e3e77157dd2854b80449a3f0f5b1",
+      "reason": "SKILL_carrying:RUNNING",
+      "error": null,
+      "cleanup_errors": [],
+      "sim_seconds": 119.99999999990104,
+      "wall_seconds": 68.12835387499945,
+      "calls": 2,
+      "wire_requests": 2,
+      "macro_count": 204,
+      "blocked_commands": [],
+      "evaluation": {
+        "physics_grasp_success": true,
+        "max_lift_m": 0.06793901575952443,
+        "longest_bilateral_hold_s": 35.3999999999175,
+        "first_2s_hold_sim_s": 86.69999999997864,
+        "constraint_free": true,
+        "visual_review_required_for_positive": true
+      },
+      "usage_records": 2,
+      "input_tokens": 4722,
+      "output_tokens": 80,
+      "billing_amount": null,
+      "actor_state": "carrying",
+      "scripted_steps": [],
+      "raw_storage": "local_only",
+      "frame_count": 597,
+      "episode": "skill-42",
+      "model_latency_seconds": 4.741914249010733,
+      "last_model_call_sim_s": 74.26000000000764,
+      "reported_total_tokens": 4923,
+      "action_counts": {
+        "approach": 1,
+        "pick": 1
+      },
+      "response_models": [
+        "gemini-3.8-flash"
+      ],
+      "raw_path": "/Users/changmin/projects/ugrp-worktrees/skill-vs-semantic-pick/outputs/pick-match-cohort-v1/skill-42"
+    },
+    {
+      "condition": "skill",
+      "seed": 43,
+      "git_sha": "c692d5c45138e3e77157dd2854b80449a3f0f5b1",
+      "reason": "SKILL_carrying:RUNNING",
+      "error": null,
+      "cleanup_errors": [],
+      "sim_seconds": 119.99999999990104,
+      "wall_seconds": 70.9690466250031,
+      "calls": 2,
+      "wire_requests": 2,
+      "macro_count": 98,
+      "blocked_commands": [],
+      "evaluation": {
+        "physics_grasp_success": true,
+        "max_lift_m": 0.06823026082720884,
+        "longest_bilateral_hold_s": 83.99999999990263,
+        "first_2s_hold_sim_s": 38.000000000000846,
+        "constraint_free": true,
+        "visual_review_required_for_positive": true
+      },
+      "usage_records": 2,
+      "input_tokens": 4722,
+      "output_tokens": 75,
+      "billing_amount": null,
+      "actor_state": "carrying",
+      "scripted_steps": [],
+      "raw_storage": "local_only",
+      "frame_count": 597,
+      "episode": "skill-43",
+      "model_latency_seconds": 4.430395707997377,
+      "last_model_call_sim_s": 25.58999999999653,
+      "reported_total_tokens": 4930,
+      "action_counts": {
+        "approach": 1,
+        "pick": 1
+      },
+      "response_models": [
+        "gemini-3.8-flash"
+      ],
+      "raw_path": "/Users/changmin/projects/ugrp-worktrees/skill-vs-semantic-pick/outputs/pick-match-cohort-v1/skill-43"
+    },
+    {
+      "condition": "semantic",
+      "seed": 43,
+      "git_sha": "c692d5c45138e3e77157dd2854b80449a3f0f5b1",
+      "reason": "CALL_OR_REPORTED_INPUT_BUDGET",
+      "error": null,
+      "cleanup_errors": [],
+      "sim_seconds": 119.99999999990104,
+      "wall_seconds": 145.31876558301155,
+      "calls": 30,
+      "wire_requests": 30,
+      "macro_count": 30,
+      "blocked_commands": [
+        {
+          "call": 8,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        },
+        {
+          "call": 9,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        },
+        {
+          "call": 10,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        },
+        {
+          "call": 11,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        },
+        {
+          "call": 12,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        },
+        {
+          "call": 13,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        },
+        {
+          "call": 14,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        },
+        {
+          "call": 15,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        },
+        {
+          "call": 16,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        },
+        {
+          "call": 17,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        },
+        {
+          "call": 18,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        },
+        {
+          "call": 19,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        },
+        {
+          "call": 20,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        },
+        {
+          "call": 21,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_DOWN"
+          }
+        },
+        {
+          "call": 22,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        },
+        {
+          "call": 23,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        },
+        {
+          "call": 24,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        },
+        {
+          "call": 25,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        },
+        {
+          "call": 26,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        },
+        {
+          "call": 27,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        },
+        {
+          "call": 28,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        },
+        {
+          "call": 29,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        },
+        {
+          "call": 30,
+          "reason": "SEMANTIC_TARGET_UNREACHABLE",
+          "action": {
+            "kind": "semantic",
+            "unit": "MV_FWD"
+          }
+        }
+      ],
+      "evaluation": {
+        "physics_grasp_success": false,
+        "max_lift_m": 7.252473583491126e-09,
+        "longest_bilateral_hold_s": 0.0,
+        "first_2s_hold_sim_s": null,
+        "constraint_free": true,
+        "visual_review_required_for_positive": true
+      },
+      "usage_records": 30,
+      "input_tokens": 76378,
+      "output_tokens": 1288,
+      "billing_amount": null,
+      "actor_state": "idle",
+      "scripted_steps": [],
+      "raw_storage": "local_only",
+      "frame_count": 597,
+      "episode": "semantic-43",
+      "model_latency_seconds": 87.64106049797556,
+      "last_model_call_sim_s": 9.215999999999847,
+      "reported_total_tokens": 82123,
+      "action_counts": {
+        "RELEASE": 1,
+        "MV_FWD": 28,
+        "MV_DOWN": 1
+      },
+      "response_models": [
+        "gemini-3.8-flash"
+      ],
+      "raw_path": "/Users/changmin/projects/ugrp-worktrees/skill-vs-semantic-pick/outputs/pick-match-cohort-v1/semantic-43"
+    }
+  ]
+}
