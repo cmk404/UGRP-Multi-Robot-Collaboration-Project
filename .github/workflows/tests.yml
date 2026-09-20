@@ -60,6 +60,18 @@ jobs:
       - name: Exercise the task-stage JSON contract with fixture robot ports
         run: python scripts/demo_task_stage_sync.py --output outputs/task-stage-sync-ci
 
+      - name: Exercise variable-cargo mission protocol fixtures
+        run: python scripts/prepare_multi_object_pilot.py --output outputs/multi-object-pilot-ci
+
+      - name: Keep variable-cargo protocol evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: multi-object-protocol
+          path: outputs/multi-object-pilot-ci/
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Keep task-stage protocol evidence
         if: always()
         uses: actions/upload-artifact@v4
