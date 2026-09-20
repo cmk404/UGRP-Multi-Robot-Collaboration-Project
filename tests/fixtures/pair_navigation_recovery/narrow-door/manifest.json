@@ -1,0 +1,50 @@
+{
+  "map": "maps/pair_navigation/narrow-door.json",
+  "baseline_source_sha": "f4da89ec53fed15c9efcea2e8bee19b99de31dfc",
+  "source_run": "/Users/changmin/projects/ugrp-worktrees/pair-terrain-examples/outputs/pair-terrain-trials-2026-09-14/narrow-door",
+  "state_scope": "Observer memory derived only from preceding recorded RGB; no simulator state",
+  "state_before_index": 394,
+  "frames": [
+    {
+      "index": 394,
+      "own": "stop-own.jpg",
+      "top": "stop-top.jpg",
+      "source": {
+        "own": {
+          "path": "rgb/nav-0394-r1-own.jpg",
+          "sha256": "3f0dc1cb6c6fb46eb5d6a810a2f2c4f43c7c845f28fde2df7b5bc24ad5cfa84a"
+        },
+        "top": {
+          "path": "rgb/nav-0394-top.jpg",
+          "sha256": "30462bfb023f0ac5530afb40cd189f45ba53f8ad1030ac794cea470ab04118eb"
+        }
+      },
+      "wheel_labels_uv": {
+        "r1": [
+          234,
+          422
+        ],
+        "r3": [
+          144,
+          298
+        ]
+      }
+    }
+  ],
+  "files": {
+    "state.json": "921cd31f65f8e3e050391124349c5f71dcd1a6ca48b0a14a59c0885c75c801d4",
+    "r3-initial.png": "1e13bd1eeeb1122618456f15ec192d5980853706eb6b274560bb2642d815351c",
+    "stop-top.jpg": "30462bfb023f0ac5530afb40cd189f45ba53f8ad1030ac794cea470ab04118eb",
+    "r3-memory-2.png": "810e7d3a575ee3bb22b4ed2dfaecb4544a5d6eae2fc578f7d6d64eabce97c16b",
+    "r3-memory-3.png": "2c67b7791906a278fa0f42ac6fa387f3f899ad53559301462723358545e038f7",
+    "r3-memory-1.png": "f5eee076643d967ee566c8ec5ec621be26f6ce8d6f65a41190a80df09eb9dbd0",
+    "r3-memory-0.png": "b7621b32f73cf31c792acec8f5c7ddfd1721e3be55b542f32a58bd5052cfb1aa",
+    "r1-memory-2.png": "3d3eee3702052129402dfa9b2585bddd7e6617e77a7d47776e4da2ea4196270e",
+    "r1-memory-3.png": "d86926f1dc2055c63731e6e22653bbb01695b2f41a591ae7d9e5ac653b88b8f6",
+    "r1-memory-1.png": "287e9da6d92b4966d98caa537725453c4922df8e528089276bb9f6ba26d3dfc2",
+    "r1-memory-0.png": "29a05cd41c70a25b5c7b32ccd86868c185d39b548e5258f9e56f60901427613e",
+    "stop-own.jpg": "3f0dc1cb6c6fb46eb5d6a810a2f2c4f43c7c845f28fde2df7b5bc24ad5cfa84a",
+    "r1-initial.png": "330a6cba5b391b3366da48e16d9a034b3eb845bf1281f2acadcf997ddfe0f13f"
+  },
+  "label_scope": "Manually reviewed wheel-envelope centers on a 40 px image grid; tolerance 8 px; no simulator poses"
+}
