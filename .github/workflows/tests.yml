@@ -193,11 +193,13 @@ jobs:
           sudo apt-get install -y libosmesa6 libgl1 libglfw3 fonts-noto-cjk
           python -m pip install -r requirements-sim.txt -r requirements-test.txt
       - name: Check physical replicas and geometry regressions
-        run: python -m pytest -q tests/test_multi_object_scene.py
+        run: python -m pytest -q tests/test_multi_object_scene.py tests/test_multi_object_execution.py
       - name: Render all twelve static multi-object scenes
         run: |
           python scripts/ugrp_session.py run multi-object-scenes -- python scripts/prepare_multi_object_scenes.py --render --require-static-candidates --output outputs/multi-object-scenes-ci
           test ! -e "$UGRP_SESSION_DIR/multi-object-scenes.json"
+      - name: Bind all cargo from RGB only
+        run: python scripts/audit_multi_object_rgb.py --input outputs/multi-object-scenes-ci --output outputs/multi-object-scenes-ci/rgb-binding-audit.json
       - name: Keep static scene evidence
         if: always()
         uses: actions/upload-artifact@v4

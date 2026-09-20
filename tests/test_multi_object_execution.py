@@ -197,3 +197,36 @@ def test_initial_proposer_instruction_matches_agreement_wire_contract():
     request=plan_request('r1',task=task,identity={'r1':{'claim':{},'images':[]}},
         request_id='test',own_rgb=jpeg(),top_rgb=jpeg(),agreement={},inbox=[],own_history=[])
     assert 'plan with accept=true' in request['messages'][0]['content']
+
+
+def test_low_confidence_feedback_does_not_create_motion(tmp_path):
+    e,w=setup(tmp_path);q=observe(e,1,0.);r=next(iter(q));v=reply(q[r]);v['confidence']=.75
+    e.batch({r:v},now_s=0.)
+    assert not e.history[r]
+    nextq=observe(e,2,.21)[r]
+    assert nextq['execution_feedback']['reason']=='approach_visual_evidence_unresolved'
+    assert nextq['execution_feedback']['reported_confidence']==.75
+    assert e.summary()['issued_task_commands']==0
+
+
+def test_missing_partner_blocks_coupled_commands(tmp_path):
+    e,w=setup(tmp_path);now=0.;i=0
+    while not 'deliver_01' in e.active:
+        i+=1;q=observe(e,i,now)
+        done=all(v['last_command'] and v['last_command']['stage']==v['stage'] for v in q.values())
+        e.batch({r:reply(v,'DONE' if done else 'READY') for r,v in q.items()},now_s=now)
+        now=round(now+.21,8)
+    assert set(q)=={'r1','r3'}
+    before={r:len(e.history[r]) for r in q}
+    i+=1;q=observe(e,i,now)
+    e.batch({'r1':reply(q['r1'])},now_s=now)
+    assert {r:len(e.history[r]) for r in q}==before
+    assert all(w.robots[r].motor_calls[-1]==[0.,0.,0.,0.] for r in q)
+
+
+def test_stage_action_wrong_kind_cannot_bypass_grasp(tmp_path):
+    e,w=setup(tmp_path);q=observe(e,1,0.);e.batch({r:reply(v) for r,v in q.items()},now_s=0.)
+    q=observe(e,2,.21);e.batch({r:reply(v,'DONE') for r,v in q.items()},now_s=.21)
+    q=observe(e,3,.42);r=next(iter(q));v=reply(q[r]);v['action']={'kind':'drive','forward':.1,'turn':0.,'duration_s':.2}
+    n=len(e.history[r]);e.batch({r:v},now_s=.42)
+    assert len(e.history[r])==n and e.active['stage_02']['stage'].sync.stage=='GRASP'

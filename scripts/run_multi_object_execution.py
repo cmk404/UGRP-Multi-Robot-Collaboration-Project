@@ -184,9 +184,9 @@ def run(args):
                 program={**row,'stage':req['stage'],**gate._meta(tid)}
                 model_request=build_request(rid,request_id=req['request_id'],committed=team.agreement.committed,
                     program=program,task=task,frame=frames[rid],previous=previous[rid],own_history=gate.history[rid],
-                    inbox=team.inbox[rid],identity=identity[rid]['claim'],feedback={'target_rgb_binding':req['target'],
+                    inbox=team.inbox[rid],identity=identity[rid]['claim'],feedback={**req['execution_feedback'],'target_rgb_binding':req['target'],
                     'visual_inventory':req['visual_inventory'],'last_issued_command':req['last_command']})
-                model_request['messages'][0]['content']+='\nMULTI-OBJECT OVERRIDE: the current object_id is bound to target_rgb_binding, an RGB estimate. Other same-color cargo is NOT your target. Follow this exact target continuously. Reobserve or BLOCKED on ambiguity. All drive/mecanum commands are exactly .2 seconds. Goal is the destination_id of this task in the authored static map. Keep task dependencies. Do not declare completion from issued commands. No learned grasp or ACT model is being executed.'
+                model_request['messages'][0]['content']+='\nMULTI-OBJECT OVERRIDE: the current object_id is bound to target_rgb_binding, an RGB estimate. Other same-color cargo is NOT your target. Follow this exact target continuously. Reobserve or BLOCKED on ambiguity. All drive/mecanum commands are exactly .2 seconds. APPROACH also requires confidence >= .8 to issue a command. Reobserve rather than inflating confidence to pass this gate. Goal is the destination_id of this task in the authored static map. Keep task dependencies. Do not declare completion from issued commands. No learned grasp or ACT model is being executed.'
                 futures[rid]=team.pool.submit(team._invoke,rid,model_request,
                     partial(validate_reply,plan_hash=req['plan_hash'],stage=req['stage'],robot_id=rid))
             batch={r:f.result() for r,f in futures.items()};replies={r:v[0] for r,v in batch.items()}
@@ -194,13 +194,13 @@ def run(args):
             gate.batch(replies,now_s=scene.time());team.save()
             previous=frames
             row={'turn':turn,'at_s':scene.time(),'tasks':{tid:j['phase'] if j['phase']=='APPROACH' else j['stage'].sync.stage for tid,j in gate.active.items()},
-                 'replies':replies,'protocol':gate.protocol.summary()}
+                 'replies':replies,'protocol':gate.summary()}
             write(args.output/f'turn-{turn:03}.json',row)
             print(json.dumps({'turn':turn,'tasks':row['tasks'],'statuses':{r:v['status'] if v else None for r,v in replies.items()},'calls':len(team.calls)}),flush=True)
             if len(gate.protocol.completed)==len(gate.protocol.tasks):result['stop_reason']='all_jobs_claimed';break
             quiet=quiet+1 if not replies or all(not v or v['status'] in ('UNCERTAIN','BLOCKED') for v in replies.values()) else 0
             if quiet>=3:result['stop_reason']='unresolved_visual_evidence';break
-            scene.step(.2)
+            scene.step(.25)
         else:result['stop_reason']='turn_budget'
     except (Exception,KeyboardInterrupt) as e:
         result['error']=f'{type(e).__name__}: {e}'
@@ -208,7 +208,7 @@ def run(args):
     finally:
         try:
             if gate:
-                result['protocol']=gate.protocol.summary();result['issued_commands']=sum(len(h) for h in gate.history.values())
+                result['protocol']=gate.summary();result['issued_commands']=result['protocol']['issued_task_commands']
                 gate.close(now_s=scene.time());scene.execution=None
             if scene.world:
                 scene.hold();scene.step(1.3);scene.capture('final')

@@ -38,6 +38,7 @@ class MultiObjectExecution:
         self.identity, self.frames, self.active = {}, {}, {}
         self.history = {r:[] for r in ports}
         self.events, self.pending = [], {}
+        self.feedback = {r:{'reason':'awaiting_first_observation'} for r in ports}
         self.sequence = 0
         self.now = now_s
 
@@ -123,6 +124,7 @@ class MultiObjectExecution:
                          'target':copy.deepcopy(self.identity[rid]['tracks'][self.protocol.jobs[tid]['object_id']]),
                          'visual_inventory':copy.deepcopy(self.identity[rid]),
                          'own_issued_commands':copy.deepcopy(self.history[rid][-20:]),
+                         'execution_feedback':copy.deepcopy(self.feedback[rid]),
                          'last_command':copy.deepcopy(job['last'].get(rid)),
                          'own_rgb':copy.deepcopy(f['own_rgb']),'top_rgb':copy.deepcopy(f['shared_top_rgb'])}
                 self.pending[rid]=request
@@ -142,7 +144,8 @@ class MultiObjectExecution:
                 if reply['action'].get('duration_s',.2) > .2:
                     raise ValueError('multi-object pilot commands limited to .2 seconds')
                 accepted[rid]=reply
-            except (ValueError,TypeError):
+            except (ValueError,TypeError) as error:
+                self.feedback[rid]={'reason':'reply_rejected','detail':str(error)}
                 job['stage'].hold('missing_or_invalid_reply',now_s=now_s)
                 for r in self.protocol.tasks[tid]['participants']: self.ports[r].hold(now_s)
         pending=self.pending; self.pending={}
@@ -164,7 +167,11 @@ class MultiObjectExecution:
                     job['done'][r]=done
                     if not done and reply['status'] in ('WORKING','READY') and reply['confidence']>=.8:
                         self._issue_approach(tid,r,reply['action'],req,now_s)
-                    else: self.ports[r].hold(now_s)
+                    else:
+                        self.ports[r].hold(now_s)
+                        self.feedback[r]={'reason':'holding_approach_done' if done else 'approach_visual_evidence_unresolved',
+                                          'minimum_confidence':.8,'reported_confidence':reply['confidence'],
+                                          'instruction':'Reobserve; do not raise confidence without additional image evidence.'}
                 if complete:
                     job['phase']='STAGES'
                     for r in people: self.ports[r].hold(now_s)
@@ -178,6 +185,7 @@ class MultiObjectExecution:
                 ex.receive(r,{'request_id':camera['request_id'],'status':status,
                     'confidence':reply['confidence'],'checks':reply['checks'],'command_id':reply['command_id'],
                     'reason':reply['reason'],'decided_at_s':now_s},now_s=now_s)
+                self.feedback[r]={'reason':'stage_report_received','stage_status':ex.sync.status(now_s=now_s)}
             if ex.advance(now_s=now_s):
                 self.events.append({'event':'STAGE_ADVANCED',**self._meta(tid),'at_s':now_s,
                                     'status':ex.sync.status(now_s=now_s)})
@@ -201,6 +209,7 @@ class MultiObjectExecution:
              'issued_at_s':now_s,'own_rgb':req['own_rgb'],'top_rgb':req['top_rgb'],
              'meaning':'issued command, not measured state or execution success'}
         self.history[r].append(row); self.active[tid]['last'][r]=row
+        self.feedback[r]={'reason':'bounded_command_issued','command_id':c['command_id']}
         self.events.append({'event':'LOCAL_COMMAND','robot_id':r,**row})
 
     def _issue_approach(self,tid,r,action,req,now_s):
@@ -217,3 +226,8 @@ class MultiObjectExecution:
             write(self.output/'events.json',self.events)
             write(self.output/'mission-events.json',self.protocol.events)
             write(self.output/'issued-commands.json',self.history)
+
+    def summary(self):
+        return {**self.protocol.summary(),'motor_execution':'bounded robot-local ports with five-stage permission',
+                'physical_success':'separate_evaluation_only','identity_hold':any(not x.get('valid') for x in self.identity.values()),
+                'issued_task_commands':sum('task_id' in row for h in self.history.values() for row in h)}
