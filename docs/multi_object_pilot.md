@@ -4,6 +4,9 @@
 현재 검증 범위는 **오프라인 프로토콜 fixture**다. 물리 장면·모델 협상·실제 운반은 아직 실행하지 않았다.
 기존 봉 1개+상자 1개 dispatch와 ACT 체크포인트의 의미는 그대로 유지한다.
 
+[실행 기록](../experiments/2026-09-20-multi-object-protocol/README.md): 36/36 합성 trace 완료,
+관련 테스트 55개와 전체 회귀 1,065개 통과(별도 184 subtests, 1 skip).
+
 ## 대표 조건
 
 [파일럿 설정](../maps/act_generalization/multi_object_pilot_v1.json)을 단일 기준으로 사용한다.

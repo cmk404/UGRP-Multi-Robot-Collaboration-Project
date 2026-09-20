@@ -1,0 +1,163 @@
+{
+  "schema": "ugrp.multi_object_pilot_manifest.v1",
+  "source_sha": "7f4211e6c4b7b9aa9027ad298969437de54a25ae",
+  "spec_sha256": "b244f5a2addc9c1be56c3f355ee169ec5552cbf81d245b2dafbbdf34249c1125",
+  "cases": [
+    {
+      "id": "single_box",
+      "configuration": {
+        "id": "single_box",
+        "beams": 0,
+        "boxes": 1,
+        "pattern": "independent"
+      },
+      "objects": 1,
+      "tasks": 1,
+      "mission_sha256": "084e93d3300ffafcdb5797ce1d403c8abb1c90af1b966fe8c49a1803bd8b48af",
+      "physical_admission": "not_run"
+    },
+    {
+      "id": "single_beam",
+      "configuration": {
+        "id": "single_beam",
+        "beams": 1,
+        "boxes": 0,
+        "pattern": "independent"
+      },
+      "objects": 1,
+      "tasks": 1,
+      "mission_sha256": "f480c01572a8fb3beb9af3ab6ce31c27892edd943ede8f8696889bb4755aa99f",
+      "physical_admission": "not_run"
+    },
+    {
+      "id": "mixed_pair",
+      "configuration": {
+        "id": "mixed_pair",
+        "beams": 1,
+        "boxes": 1,
+        "pattern": "independent"
+      },
+      "objects": 2,
+      "tasks": 2,
+      "mission_sha256": "451ff2fdee05f5288711472eda7cc913d55ea6e1c8fa4dcfe3fadff522a67185",
+      "physical_admission": "not_run"
+    },
+    {
+      "id": "three_boxes",
+      "configuration": {
+        "id": "three_boxes",
+        "beams": 0,
+        "boxes": 3,
+        "pattern": "independent"
+      },
+      "objects": 3,
+      "tasks": 3,
+      "mission_sha256": "0e9e0b9e3672bd5a696ad7aa2370f9a08b9af1434e5bb1d3af974a5bbfccd8da",
+      "physical_admission": "not_run"
+    },
+    {
+      "id": "two_beams",
+      "configuration": {
+        "id": "two_beams",
+        "beams": 2,
+        "boxes": 0,
+        "pattern": "shared_gate"
+      },
+      "objects": 2,
+      "tasks": 2,
+      "mission_sha256": "7a10adae60c661656103bb089d8c5e939e46a9b76c153504fd3c1e235e81d6aa",
+      "physical_admission": "not_run"
+    },
+    {
+      "id": "three_beams",
+      "configuration": {
+        "id": "three_beams",
+        "beams": 3,
+        "boxes": 0,
+        "pattern": "shared_gate"
+      },
+      "objects": 3,
+      "tasks": 3,
+      "mission_sha256": "614bfaa2abb2ae11e338df3142ee739d2a22c97859970b417e864c6937aaa30a",
+      "physical_admission": "not_run"
+    },
+    {
+      "id": "mixed_four",
+      "configuration": {
+        "id": "mixed_four",
+        "beams": 1,
+        "boxes": 3,
+        "pattern": "independent"
+      },
+      "objects": 4,
+      "tasks": 4,
+      "mission_sha256": "af768a4e746a633a6f2378bccd33b71127ca3ee41bd19fbd87c3e401a4c6f80e",
+      "physical_admission": "not_run"
+    },
+    {
+      "id": "box_heavy_five",
+      "configuration": {
+        "id": "box_heavy_five",
+        "beams": 1,
+        "boxes": 4,
+        "pattern": "independent"
+      },
+      "objects": 5,
+      "tasks": 5,
+      "mission_sha256": "a957af42c995f19ce6bebab3f7b007b7f2de02f4bf32b1aa24e6257195703028",
+      "physical_admission": "not_run"
+    },
+    {
+      "id": "beam_heavy_four",
+      "configuration": {
+        "id": "beam_heavy_four",
+        "beams": 3,
+        "boxes": 1,
+        "pattern": "clear_first"
+      },
+      "objects": 4,
+      "tasks": 4,
+      "mission_sha256": "63c0472e8d09248866cf519c8a9dfb32138e93bf0a43288416ddb5937bb38a3c",
+      "physical_admission": "not_run"
+    },
+    {
+      "id": "six_boxes",
+      "configuration": {
+        "id": "six_boxes",
+        "beams": 0,
+        "boxes": 6,
+        "pattern": "shared_gate"
+      },
+      "objects": 6,
+      "tasks": 6,
+      "mission_sha256": "275b19a6b1b74f6806011c4833cfe8c68ae3a2d1bc689a2018bafb899466fdc5",
+      "physical_admission": "not_run"
+    },
+    {
+      "id": "mixed_eight",
+      "configuration": {
+        "id": "mixed_eight",
+        "beams": 2,
+        "boxes": 6,
+        "pattern": "shared_gate"
+      },
+      "objects": 8,
+      "tasks": 8,
+      "mission_sha256": "1bbf15f2131393cc0a00b06ad480bdf8a16d1447d359539e8a75a3779ff34374",
+      "physical_admission": "not_run"
+    },
+    {
+      "id": "staging_three",
+      "configuration": {
+        "id": "staging_three",
+        "beams": 1,
+        "boxes": 2,
+        "pattern": "stage_then_deliver"
+      },
+      "objects": 3,
+      "tasks": 5,
+      "mission_sha256": "6ab9c19cd95af8dd1cfdd77de1ce558f65fa20ce02694e80f70ccff4a3009f15",
+      "physical_admission": "not_run"
+    }
+  ]
+}
