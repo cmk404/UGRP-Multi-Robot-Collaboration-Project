@@ -89,3 +89,14 @@ CPU feature cache는 미리 할당해 chunk 목록과 concatenate 결과를 동�
 문제를 weakref 회귀 테스트로 재현했다. `new=callable`로 바꿔 호출 기록 없이 같은 계산을 수행한다.
 encoder 재계산 연결에도 같은 변경을 적용한다. `cache-retention-diagnostic.json`에 중단과 원본 해시를 보존한다.
 종료 코드143은 이 작업의 명시적 중단이며 OOM으로 보고하지 않는다. 수정 후 전체 export는 별도 검증한다.
+
+## 자동 실행 위치
+
+실행 소스는 `8cabd8e072b1545e6509765b7aae96a96f08f85c`로 고정했고, 별도 물리 체크아웃도 같은 SHA다.
+실행 소스의 코드/프로토콜 해시를 포함한 source-only bundle을 Colab에서 검증한다.
+`execution.json`은 시작 시점 기록이며 최신 상태는 그 안의 `live_status`와 `live_log`를 확인한다.
+소유 세션 `carry-resolution-search`는 진단 artifact 회수·원래512 첫-update 일치·Mac native probe를
+통과한 뒤 4모델 본 학습을 시작한다. 회수한 모델이 모두 검증되면 Colab을 종료하고, 기존36개
+평가/감사를 기다려 추가20개 물리 평가와 필요 시 신규 오프셋 확인을 이어서 실행한다.
+진단·본 학습·로컬 후속 실행의 종료 한도를 명시했고, 소유 caffeinate와 자식 프로세스도 함께 정리한다.
+중간 실패는 기록 후 중단한다. 아직 완료 모델/최적 조건을 기록하지 않는다.
