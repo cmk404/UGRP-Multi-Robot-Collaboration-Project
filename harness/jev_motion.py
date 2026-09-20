@@ -9,7 +9,8 @@ import urllib.error
 import cv2
 import numpy as np
 from harness.camera_goal_transport import decode
-from harness.dispatch_yield import WheelObserver
+from harness.dispatch_yield import acquire_wheel_geometry
+from harness.dispatch_pair_navigation import PairVision
 from harness.known_map_navigation import pixel_to_world
 
 DURATION = .2
@@ -68,25 +69,34 @@ class RGBObserver:
     """Track own wheels after a visible own-motion probe, and one cyan box."""
     def __init__(self, static_map, before_top, after_top, motion_anchor):
         self.camera = dict(static_map['top_camera'])
-        self.wheels = WheelObserver(static_map, motion_anchor)
-        a = self.wheels.observe(before_top)
-        b = self.wheels.observe(after_top)
-        displacement = np.array(b['xy_m']) - np.array(a['xy_m'])
+        self.center = np.array(motion_anchor, dtype=float)
+        first = self._wheel_observation(before_top)
+        last = self._wheel_observation(after_top)
+        displacement = np.array(last['xy_m']) - np.array(first['xy_m'])
         if np.linalg.norm(displacement) < .018:
             raise ValueError('own_forward_probe_not_visually_resolved')
         measured = math.atan2(displacement[1], displacement[0])
-        # Wheel geometry has a 180-degree ambiguity; resolve with observed movement.
-        if abs(wrap(b['heading_rad'] - measured)) > math.pi / 2:
-            self.wheels.initial_heading = wrap(self.wheels.initial_heading + math.pi)
-        if abs(wrap(self.wheels.initial_heading + math.radians(self.wheels.angle) - measured)) > math.radians(20):
-            raise ValueError('wheel_heading_disagrees_with_own_motion')
+        # Calibrate wheel-appearance angular bias from observed forward translation.
+        self.heading_bias = wrap(measured - last['heading_rad'])
         self.probe_evidence = {'source': 'consecutive RGB and own issued forward probe',
-                               'observed_displacement_m': displacement.tolist()}
+                               'observed_displacement_m': displacement.tolist(),
+                               'wheel_heading_bias_rad': self.heading_bias}
         self.last_box = None
+
+    def _wheel_observation(self, jpeg):
+        frame = decode(jpeg)
+        center, heading, evidence = acquire_wheel_geometry(PairVision._mask(None, frame), self.center)
+        if np.linalg.norm(center - self.center) > 30:
+            raise ValueError('own_robot_identity_jump')
+        self.center = center
+        return {'center_px': center.tolist(),
+                'xy_m': list(pixel_to_world(center, frame.shape, self.camera)),
+                'heading_rad': wrap(heading + getattr(self, 'heading_bias', 0.)),
+                'tracking': evidence, 'source': 'current four-wheel RGB geometry'}
 
     def observe(self, own_jpeg, top_jpeg):
         own, top = decode(own_jpeg), decode(top_jpeg)
-        robot = self.wheels.observe(top_jpeg)
+        robot = self._wheel_observation(top_jpeg)
         center, area = detect_box(top)
         if self.last_box is not None and np.linalg.norm(center - self.last_box) > 12:
             raise ValueError('target_identity_jump')
