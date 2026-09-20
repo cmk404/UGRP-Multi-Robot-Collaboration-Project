@@ -7,6 +7,8 @@ from pathlib import Path
 import platform
 import sys
 import time
+import tempfile
+import uuid
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 import numpy as np
@@ -26,7 +28,9 @@ def sha(path):
 
 
 def write(path, value):
-    path.write_text(json.dumps(value, indent=2, allow_nan=False) + '\n')
+    temp = path.with_suffix(path.suffix + '.tmp')
+    temp.write_text(json.dumps(value, indent=2, allow_nan=False) + '\n')
+    temp.replace(path)
 
 
 def history_indices(entries, history):
@@ -189,11 +193,13 @@ def main():
                               'gpu': torch.cuda.get_device_name() if a.device == 'cuda' else None,
                               **{k: importlib.metadata.version(k) for k in ('torch', 'torchvision', 'lerobot', 'numpy')}},
               'external_model_calls': 0, 'progress': []}
-    write(a.out/'report.json', report)
+    if not a.resume:
+        write(a.out/'report.json', report)
     cache = cache_images(policy, rows, a.size); dcache = cache_images(policy, dev, a.size)
     report['feature_cache_wall_s'] = time.monotonic()-started
     report['initial_cache_verification'] = verify_cache(policy, rows, windows, cache, a.size, a.history)
-    write(a.out/'report.json', report)
+    if not a.resume:
+        write(a.out/'report.json', report)
     groups = [3 if r['done'] else int(np.argmax(np.abs(r['action'][:3]))) for r in rows]
     counts = {g: groups.count(g) for g in set(groups)}
     report['groups'] = counts
@@ -250,8 +256,9 @@ def main():
         'train': verify_cpu_deployment(policy, rows, windows, a.size, a.history),
         'development': verify_cpu_deployment(policy, dev, dwindows, a.size, a.history)}
     policy.cpu()
-    actor = InputCarryAct(policy, a.size, a.history); actor.save(a.out/'act')
-    restored = InputCarryAct.load(a.out/'act')
+    export = Path(tempfile.mkdtemp(prefix='.act-export-', dir=a.out))/'act'
+    actor = InputCarryAct(policy, a.size, a.history); actor.save(export)
+    restored = InputCarryAct.load(export)
     report['readback'] = []
     for rs, ws in ((rows, windows), (dev, dwindows)):
         for i in (0, len(rs)-1):
@@ -262,6 +269,12 @@ def main():
     for name, rs, cs, ws in (('train', rows, cache, windows), ('development', dev, dcache, dwindows)):
         metrics, pred = evaluate(policy, cs, ws, rs); report[name+'_metrics'] = metrics
         write(a.out/(name+'-predictions.json'), [{'id': r['id'], 'target': r['action'], 'prediction': v} for r, v in zip(rs, pred)])
+    # A crash can leave a partial/previous export. Preserve it before publishing
+    # the verified candidate; repeated finalization does not destroy evidence.
+    if (a.out/'act').exists():
+        (a.out/'act').rename(a.out/('act-interrupted-'+uuid.uuid4().hex[:8]))
+    export.rename(a.out/'act')
+    export.parent.rmdir()
     report.update(complete=True, wall_s=elapsed_before+time.monotonic()-started, model_sha256=sha(a.out/'act/model.safetensors'))
     write(a.out/'report.json', report)
 
