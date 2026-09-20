@@ -409,9 +409,15 @@ class SkillController:
             cmd=bounded_command(forward=-.018*cautious)
         elif self.path:
             xy=np.array(o['xy_m'])
-            while len(self.path)>1 and math.dist(xy,self.path[0])<.035:self.path.pop(0)
+            obstacles=[x for x in self.map['obstacles'] if x['kind']!='wall']+o['obstacles']
+            while len(self.path)>1 and math.dist(xy,self.path[0])<.035:
+                # Proximity alone can cut the inflated corner and invalidate
+                # the route on the next frame. Complete the turn only when
+                # its next segment is clear from the current RGB estimate.
+                if not segment_clear(xy,self.path[1],obstacles,self.map['bounds_m']):break
+                self.path.pop(0)
             delta=np.array(self.path[0])-xy
-            if np.linalg.norm(delta)<.03:
+            if len(self.path)==1 and np.linalg.norm(delta)<.03:
                 self.path=[];self.active=None
                 return bounded_command(),'waypoint_reached'
             heading=o['heading_rad']

@@ -156,3 +156,21 @@ class TestSkillMotion(unittest.TestCase):
         self.assertFalse(state['observation']['goal_alignment_edge'])
         self.assertFalse(state['observation']['goal_distance_edge'])
         self.assertEqual(state['recent_issued'][-1]['progress'],'no_motion')
+
+    def test_waypoint_transition_does_not_cut_blocked_corner(self):
+        # Reduced from saved RGB estimates at dev-v4/dev_blocked Jev tick 55.
+        c=SkillController(episode('open')['static_map'])
+        obstacle={'center_m':[-.42,-2.65],'half_extents_m':[.06,.11]}
+        o=self.observation(xy_m=[-.7775,-2.4132],target_xy_m=[.1,-2.65],
+                           range_m=.908,obstacles=[obstacle])
+        c.active='north';c.path=[[-.7752,-2.3799],[-.1751,-2.3799],[-.1751,-2.65]]
+        first=c.path[0].copy()
+        cmd,_=c.command(o)
+        self.assertEqual(c.path[0],first)
+        self.assertGreater(cmd['left'],0.)
+        self.assertLess(abs(cmd['forward']),.01)
+        # At the clear corner the same next segment becomes eligible.
+        o['xy_m']=[-.7752,-2.3900]
+        cmd,_=c.command(o)
+        self.assertEqual(len(c.path),2)
+        self.assertGreater(cmd['forward'],.05)
