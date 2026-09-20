@@ -9,6 +9,7 @@ import pytest
 from sim.act_map_suite import (load_suite, generate_case, manifest, student_task, scene_config,
                                validate_splits, layout_digest, geometry_check, load_prepared_map,
                                require_frozen_protocol)
+from sim.act_map_suite import camera_coverage
 from sim.research_dispatch_arena import build_scene_xml, digest, FIXED_TOP
 from harness.pair_navigation import footprint_clear, swept_clear
 
@@ -144,6 +145,18 @@ def test_new_route_cannot_silently_enter_old_act_or_dispatch_contract():
     plan = fixture_plan(); plan['tasks'][0]['route'] = 'double_door'
     with pytest.raises(ValueError, match='route'):
         validate_dispatch_plan(plan)
+
+
+def test_new_instances_fit_fixed_top_and_legacy_clipping_is_explicit():
+    _, cases = load_suite()
+    for case in cases:
+        visible = all(r['inside_top_frustum'] for r in camera_coverage(scene_config(case)))
+        assert visible == (case['split'] != 'regression')
+    # An otherwise valid map cannot hide an elevated wall outside the frustum.
+    config = scene_config(cases[0])
+    config['static_map']['obstacles'].append({'id':'high_wall','center_m':[-1,-2],
+                                             'half_extents_m':[.01,.1],'height_m':.5})
+    assert not camera_coverage(config)[-1]['inside_top_frustum']
 
 
 def final_protocol():

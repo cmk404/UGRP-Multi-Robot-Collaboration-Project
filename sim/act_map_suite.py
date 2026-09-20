@@ -68,8 +68,17 @@ def generate_case(row):
         data['obstacles'][0]['half_extents_m'][1] = round(.4595+shift/2, 6)
         data['goal']['center_m'][0] = sample(-.545, -.495)
         data['goal']['relative_yaw_deg'] = row['goal_yaw_deg']
-        nominal = [.62, -2., 0.]
+        # The legacy tall left wall clips the fixed camera frustum. Translate
+        # the NEW instance rigidly, preserving local geometry and camera/FOV.
+        translation = .14
+        data['bounds_m'][:2] = [round(x+translation, 6) for x in data['bounds_m'][:2]]
+        for box in data['obstacles']:
+            box['center_m'][0] = round(box['center_m'][0]+translation, 6)
+        for region in ('start_zone', 'goal'):
+            data[region]['center_m'][0] = round(data[region]['center_m'][0]+translation, 6)
+        nominal = [.76, -2., 0.]
         parameters = {'inside_corner_top_shift_m': shift,
+                      'rigid_translation_m': [translation, 0.],
                       'source': str(source.relative_to(ROOT)), 'source_sha256': digest(read_json(source))}
     else:
         # Small boundary changes produce distinct layouts even for open rooms.
@@ -255,6 +264,19 @@ def load_prepared_map(directory):
             or digest(task) != row['task_sha256'] or read_json(directory/'student-task.json') != task):
         raise ValueError('map/task hash mismatch')
     return data, task
+
+
+def camera_coverage(config):
+    """Analytic fixed-TOP obstacle-top coverage; not an occlusion test."""
+    cx, cy, cz = FIXED_TOP['position_m']
+    checks = []
+    for box in config['static_map']['obstacles']:
+        span_y = (cz-box['height_m'])*math.tan(math.radians(FIXED_TOP['fov_y_deg']/2))
+        span_x = span_y*960/720
+        checks.append({'id': box['id'], 'inside_top_frustum':
+                       abs(box['center_m'][0]-cx)+box['half_extents_m'][0] <= span_x and
+                       abs(box['center_m'][1]-cy)+box['half_extents_m'][1] <= span_y})
+    return checks
 
 
 def require_frozen_protocol(protocol):

@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from sim.act_map_suite import SPEC, load_suite, manifest, geometry_check, scene_config, student_task
+from sim.act_map_suite import SPEC, load_suite, manifest, geometry_check, scene_config, student_task, camera_coverage
 from sim.research_dispatch_arena import digest, FIXED_TOP
 
 
@@ -102,14 +102,11 @@ def render_case(case, config, out):
                 or camera['fovy'] != FIXED_TOP['fov_y_deg'] or invariants['weld_active']):
             raise ValueError('camera or weld invariant failed')
         # Floor and obstacle tops must fit the unchanged TOP projection at 960x720.
-        cx, cy, cz = FIXED_TOP['position_m']; fov_checks = []
-        for box in config['static_map']['obstacles']:
-            span_y = (cz-box['height_m'])*math.tan(math.radians(FIXED_TOP['fov_y_deg']/2))
-            span_x = span_y*960/720
-            visible = (abs(box['center_m'][0]-cx)+box['half_extents_m'][0] <= span_x and
-                       abs(box['center_m'][1]-cy)+box['half_extents_m'][1] <= span_y)
-            fov_checks.append({'id': box['id'], 'inside_top_frustum': visible})
-        if not all(x['inside_top_frustum'] for x in fov_checks):
+        fov_checks = camera_coverage(config)
+        fully_visible = all(x['inside_top_frustum'] for x in fov_checks)
+        # Do not change historical assets or claim that their clipped wall tops
+        # are fully visible. Only NEW instances must meet the expansion gate.
+        if not fully_visible and case['split'] != 'regression':
             raise ValueError('geometry extends outside fixed TOP frustum')
         beam_gid = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_GEOM, 'team_beam_geom')
         moving = scene.robot_ids | {beam_gid}
@@ -124,6 +121,8 @@ def render_case(case, config, out):
                 'dispatch_map_sha256': config['static_map_sha256'],
                 'scene_xml_sha256': file_sha(out/'scene.xml'),
                 'invariants': invariants, 'compiled_obstacles': compiled, 'fov_checks': fov_checks,
+                'fixed_top_full_geometry_visible': fully_visible,
+                'legacy_fov_limitation': not fully_visible and case['split'] == 'regression',
                 'initial_obstacle_contacts': contacts,
                 'preview_setup_clear': not contacts,
                 'rgb': {r: {k: v for k, v in f.items() if not k.endswith('_bytes')} for r, f in frames.items()},
@@ -190,6 +189,8 @@ def build(args):
     summary = {'source_sha': source_sha, 'manifest_sha256': file_sha(args.output/'manifest.json'),
                'cases': len(cases), 'geometric_candidates': sum(r['geometry']['route_found'] for r in results),
                'render_errors': sum(r['error'] is not None for r in results),
+               'preview_setup_collisions': sum(bool(r['render'] and not r['render']['preview_setup_clear']) for r in results),
+               'legacy_fov_limitations': sum(bool(r['render'] and r['render']['legacy_fov_limitation']) for r in results),
                'wall_seconds': time.monotonic()-started, 'policy_calls': 0, 'api_cost_usd': 0,
                'transport_attempts': 0, 'transport_success_rate': None,
                'storage': 'raw evidence local only; not remotely backed up'}
@@ -197,7 +198,7 @@ def build(args):
     write(args.output/'artifact-hashes.json', {str(p.relative_to(args.output)): file_sha(p)
           for p in sorted(args.output.rglob('*')) if p.is_file()})
     print(json.dumps(summary), flush=True)
-    return 1 if summary['render_errors'] else 0
+    return 1 if summary['render_errors'] or summary['preview_setup_collisions'] else 0
 
 
 def main():
