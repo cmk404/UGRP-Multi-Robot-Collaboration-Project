@@ -20,6 +20,11 @@ def validate_report(report, protocol, arm, seed, source_sha, directory):
         raise ValueError('completed checkpoint changed')
     if report.get('complete') and report.get('completed_steps') != protocol['training']['steps']:
         raise ValueError('completed checkpoint has wrong update count')
+    execution = protocol.get('execution', {})
+    if report.get('activation_checkpointing', False) != execution.get('checkpoint_encoder', False):
+        raise ValueError('activation checkpointing mode differs')
+    if report.get('cpu_evaluation_batch_size', 32) != execution.get('cpu_evaluation_batch_size', 32):
+        raise ValueError('CPU export batch differs')
 
 
 def main():
@@ -45,6 +50,11 @@ def main():
             cmd=[sys.executable,str(ROOT/'scripts/train_carry_input_act.py'),'--dataset',str(a.dataset),
                  '--out',str(directory),'--size',str(arm['size']),'--history',str(arm['history']),
                  '--steps',str(protocol['training']['steps']),'--seed',str(seed),'--device','cuda']
+            execution = protocol.get('execution', {})
+            if execution.get('checkpoint_encoder'):
+                cmd.append('--checkpoint-encoder')
+            if 'cpu_evaluation_batch_size' in execution:
+                cmd.extend(['--cpu-evaluation-batch-size', str(execution['cpu_evaluation_batch_size'])])
             if directory.exists():
                 if not a.resume:raise ValueError('existing model needs --resume')
                 report=json.loads((directory/'report.json').read_text())

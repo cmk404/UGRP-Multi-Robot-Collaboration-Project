@@ -15,7 +15,7 @@ import numpy as np
 import torch
 from harness.carry_input_act import InputCarryAct, make_policy, image_tensor, metadata, actor_batch
 from harness.carry_input_history import window_indices
-from harness.act_training import frozen_features
+from harness.act_training import frozen_features, checkpoint_encoder
 from harness.pair_carry_act import CONTEXT_KEY
 from harness.reference_act import IMAGE_KEYS, UPSTREAM_SHA
 from scripts.train_carry_act import load
@@ -70,12 +70,12 @@ def batch_at(cache, windows, device="cpu"):
 
 
 @torch.no_grad()
-def evaluate(policy, cache, windows, rows):
+def evaluate(policy, cache, windows, rows, batch_size=32):
     policy.eval()
     pred = []
     with frozen_features(policy):
-        for i in range(0, len(rows), 32):
-            pred.extend(policy.predict_action_chunk(batch_at(cache, windows[i:i+32], next(policy.parameters()).device))[:, 0].tolist())
+        for i in range(0, len(rows), batch_size):
+            pred.extend(policy.predict_action_chunk(batch_at(cache, windows[i:i+batch_size], next(policy.parameters()).device))[:, 0].tolist())
     target = np.array([r['action'] for r in rows]); values = np.array(pred)
     done, ready = target[:, 3] > .5, values[:, 3] >= .65
     groups = np.array([3 if r['done'] else int(np.argmax(np.abs(r['action'][:3]))) for r in rows])
@@ -152,6 +152,8 @@ def main():
     p.add_argument('--seed', type=int, default=20260921)
     p.add_argument('--device', choices=('cpu', 'cuda'), default='cpu')
     p.add_argument('--resume', action='store_true')
+    p.add_argument('--checkpoint-encoder', action='store_true', help='Recompute encoder activations; keep the full training batch and RNG')
+    p.add_argument('--cpu-evaluation-batch-size', type=int, default=32, choices=(8, 32), help='Only final CPU prediction export; training/development selection stay batch32')
     p.add_argument('--stop-after-step', type=int, help='Pause at this step without changing the full scheduler budget')
     a = p.parse_args()
     source_sha = source_identity()
@@ -189,6 +191,8 @@ def main():
     report = {'complete': False, 'source_sha': source_sha,
               'adapter': metadata(a.size, a.history), **provenance, 'dataset_path': str(a.dataset.resolve()),
               'seed': a.seed, 'steps': a.steps, 'batch_size': 32, 'samples': len(rows),
+              'activation_checkpointing': a.checkpoint_encoder,
+              'cpu_evaluation_batch_size': a.cpu_evaluation_batch_size,
               'train_episodes': [e['root'] for e in data['train']], 'development_episodes': [e['root'] for e in data['development']],
               'selection': 'original missed_done + false_done + mean direction-group MAE, development only',
               'trainable_parameters': sum(v.numel() for v in policy.parameters() if v.requires_grad),
@@ -213,7 +217,7 @@ def main():
     generator = torch.Generator().manual_seed(a.seed)
     optimizer = torch.optim.AdamW([v for v in policy.parameters() if v.requires_grad], lr=1e-4, weight_decay=1e-4)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, a.steps, eta_min=1e-5)
-    signature = {k: report[k] for k in ('source_sha', 'dataset_sha256', 'adapter', 'seed', 'steps', 'batch_size', 'upstream_sha', 'environment')}
+    signature = {k: report[k] for k in ('source_sha', 'dataset_sha256', 'adapter', 'seed', 'steps', 'batch_size', 'upstream_sha', 'environment', 'activation_checkpointing')}
     best, state, start_step, elapsed_before = float('inf'), None, 0, 0.0
     if a.resume:
         saved = restore_checkpoint(a.out/'resume.pt', signature=signature, policy=policy, optimizer=optimizer, scheduler=scheduler, generator=generator)
@@ -228,11 +232,13 @@ def main():
         idx = torch.multinomial(weights, 32, replacement=True, generator=generator)
         batch = batch_at(cache, windows[idx], a.device); batch.update(action=targets[idx].to(a.device), action_is_pad=padding[idx].to(a.device))
         policy.train(); optimizer.zero_grad()
-        with frozen_features(policy):
+        with frozen_features(policy), checkpoint_encoder(policy, a.checkpoint_encoder):
             loss, _ = policy(batch)
-        if not torch.isfinite(loss):
-            raise ValueError('nonfinite training loss')
-        loss.backward(); torch.nn.utils.clip_grad_norm_(policy.parameters(), 1); optimizer.step(); scheduler.step()
+            if not torch.isfinite(loss):
+                raise ValueError('nonfinite training loss')
+            # Backbone/encoder patches must remain active during recomputation.
+            loss.backward()
+        torch.nn.utils.clip_grad_norm_(policy.parameters(), 1); optimizer.step(); scheduler.step()
         if step == 1 or step % 500 == 0 or step == a.steps:
             metrics, _ = evaluate(policy, dcache, dwindows, dev)
             event = {'step': step, 'loss': float(loss.detach()), 'development': metrics, 'elapsed_s': elapsed_before+time.monotonic()-started}
@@ -273,7 +279,7 @@ def main():
                 raise ValueError('checkpoint readback mismatch')
             report['readback'].append({'id': rs[i]['id'], 'history_ids': [rs[j]['id'] for j in ws[i]], 'decision': decision})
     for name, rs, cs, ws in (('train', rows, cache, windows), ('development', dev, dcache, dwindows)):
-        metrics, pred = evaluate(policy, cs, ws, rs); report[name+'_metrics'] = metrics
+        metrics, pred = evaluate(policy, cs, ws, rs, batch_size=a.cpu_evaluation_batch_size); report[name+'_metrics'] = metrics
         write(a.out/(name+'-predictions.json'), [{'id': r['id'], 'target': r['action'], 'prediction': v} for r, v in zip(rs, pred)])
     # A crash can leave a partial/previous export. Preserve it before publishing
     # the verified candidate; repeated finalization does not destroy evidence.

@@ -50,3 +50,24 @@ python scripts/run_colab_carry_training.py --dataset /content/ugrp-resolution/da
 실패 로그·report·환경·자원 추적 파일의 ZIP과 내부 해시를 Mac에서 확인했고
 `t4-diagnostic.json`에 기록했다. 배치32/float32와 8000-update 조건을 유지하기 위해
 더 큰 GPU의 할당 가능 여부를 확인한다. 신규 GPU의 기종과 수치 오차도 별도로 기록한다.
+
+
+## T4 메모리 절약 실행
+
+A100과 L4 할당은 계정 quota/entitlement 사유로 backend에서 거절됐다. 배치·정밀도·학습량을
+바꾸지 않고 `torch.utils.checkpoint`의 non-reentrant encoder 재계산을 추가했다.
+학습 중 각 encoder layer의 activation만 재계산하며, module/state_dict·추론 경로·optimizer·
+학습/개발 평가 batch32를 유지한다. 활성화 여부는 report와 resume signature에 기록한다.
+CPU의 실제 ACT 배치32 두 update에서 loss·모든 gradient·가중치·RNG가 기존 방식과 정확히 일치했다.
+CUDA에서도 동일 검사를 한 뒤 큰 조건을 재검증한다. CPU 검증만으로 CUDA 일치를 주장하지 않는다.
+
+최종 CPU 예측 파일 생성은 batch8로 나눠 같은 전체 표본을 처리한다. 학습/개발 선택에는 영향을
+주지 않으며, CPU batch32/8 출력 차이를 검사했다. report에 이 실행 설정을 남긴다.
+새 프로토콜의 `execution`은 자원 처리 설정이고, 기존 `training`의 batch32·8000 updates는 그대로다.
+
+
+추가 메모리 진단은 학습 종료 뒤 전체 train/dev CPU 예측 파일 생성까지 실행하는 **별도 2-step 기능 점검**도 포함한다.
+이 진단은 scheduler 총 2 step이며 본 8000-step 코호트나 성능 결과에 재사용하지 않는다.
+본 코호트는 두 seed 각각 처음부터 8000 update로 실행한다. 첫 update의 모델/optimizer moment/RNG는
+기존 T4 batch32 첫 update와 비교하되, 총 scheduler 길이가 다른 진단의 학습률·scheduler 상태는
+동일성 대상에서 제외하고 명시한다. 별도 CPU/CUDA 두-update parity 검사는 같은 scheduler 조건을 사용한다.

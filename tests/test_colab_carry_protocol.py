@@ -9,10 +9,13 @@ from scripts import run_colab_carry_training as runner
 from scripts.colab_carry_bundle import digest
 
 
-def test_four_model_extension_and_completed_resume(tmp_path, monkeypatch):
+@pytest.mark.parametrize('memory_saving', [False, True])
+def test_four_model_extension_and_completed_resume(tmp_path, monkeypatch, memory_saving):
     protocol = {'dataset_sha256': 'data', 'training': {'steps': 8000, 'batch': 32, 'seeds': [1, 2]},
                 'arms': [{'id': 'r512-h1', 'size': 512, 'history': 1},
                          {'id': 'r512-h4', 'size': 512, 'history': 4}]}
+    if memory_saving:
+        protocol['execution'] = {'checkpoint_encoder': True, 'cpu_evaluation_batch_size': 8}
     path = tmp_path/'protocol.json'; path.write_text(json.dumps(protocol))
     out = tmp_path/'results'
     monkeypatch.setitem(sys.modules, 'torch', SimpleNamespace(cuda=SimpleNamespace(is_available=lambda: True)))
@@ -22,12 +25,14 @@ def test_four_model_extension_and_completed_resume(tmp_path, monkeypatch):
 
     def train(cmd, **kwargs):
         calls.append(cmd)
-        args = dict(zip(cmd[2::2], cmd[3::2]))
+        args = {name: cmd[cmd.index(name)+1] for name in ('--out', '--size', '--history', '--seed')}
         directory = Path(args['--out']); (directory/'act').mkdir(parents=True)
         (directory/'act/model.safetensors').write_bytes(b'model')
         report = {'complete': True, 'completed_steps': 8000, 'steps': 8000, 'batch_size': 32,
                   'dataset_sha256': 'data', 'source_sha': 'fixed-source', 'seed': int(args['--seed']),
                   'adapter': {'size': int(args['--size']), 'history': int(args['--history'])},
+                  'activation_checkpointing': '--checkpoint-encoder' in cmd,
+                  'cpu_evaluation_batch_size': int(cmd[cmd.index('--cpu-evaluation-batch-size')+1]) if '--cpu-evaluation-batch-size' in cmd else 32,
                   'model_sha256': digest(directory/'act/model.safetensors')}
         (directory/'report.json').write_text(json.dumps(report))
 

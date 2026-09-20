@@ -94,5 +94,10 @@
     "commands",
     "inference latency",
     "local training time; external calls zero"
-  ]
+  ],
+  "execution": {
+    "checkpoint_encoder": true,
+    "cpu_evaluation_batch_size": 8,
+    "reason": "T4 512/h4 second backward OOM at fixed batch32; recompute identical encoder activations instead of changing optimization batch or precision. Only final CPU export uses smaller batches; development checkpoint selection remains batch32."
+  }
 }
