@@ -30,7 +30,7 @@ def write(path, value):
 class Scene(DispatchScene):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
-        self.video=None;self.samples=[];self.next_sample=0.;self.contacts=0
+        self.video=None;self.samples=[];self.next_sample=0.;self.contacts=0;self.peer_contacts=0
     def sample(self):
         # Output-only evaluator. No sampled field reaches perception or policy.
         import mujoco
@@ -49,10 +49,12 @@ class Scene(DispatchScene):
         import mujoco
         w=self.world
         gid=mujoco.mj_name2id(w.model,mujoco.mjtObj.mjOBJ_GEOM,'dispatch_box_geom')
+        own={g for g in self.robot_ids if (mujoco.mj_id2name(w.model,mujoco.mjtObj.mjOBJ_GEOM,g) or '').startswith('r2__')}
         for _ in range(round(seconds/w.model.opt.timestep)):
             super().step(float(w.model.opt.timestep))
             self.contacts+=any((int(c.geom1)==gid and int(c.geom2) in self.robot_ids)
                 or (int(c.geom2)==gid and int(c.geom1) in self.robot_ids) for c in w.data.contact[:w.data.ncon] if c.dist<0)
+            self.peer_contacts+=any((int(c.geom1) in own and int(c.geom2) in self.robot_ids-own) or (int(c.geom2) in own and int(c.geom1) in self.robot_ids-own) for c in w.data.contact[:w.data.ncon] if c.dist<0)
             if float(w.data.time)>=self.next_sample:
                 self.sample();self.next_sample=float(w.data.time)+.05
             if self.video:self.video.capture()
@@ -84,7 +86,7 @@ def trial(args, policy, case, key, source):
         scene.video=Video(scene.world,out/'motion.mp4',8);scene.video.stage=policy+' / '+case
         scene.sample()
         before=scene.capture('probe-before')['r2']
-        for _ in range(3):scene.execute('forward')
+        for _ in range(6):scene.execute('forward')
         scene.step(.25)
         after=scene.capture('probe-after')['r2']
         identity=ImageMotionIdentity();identity.update(before['top_bytes'],None)
@@ -143,14 +145,15 @@ def trial(args, policy, case, key, source):
             result['camera_geometry_unchanged']=scene.invariants()==scene.initial_invariants
             result['weld_steps']=scene.weld_steps
             result['cargo_contact_steps']=scene.contacts
+            result['peer_contact_steps']=scene.peer_contacts
             result['obstacle_contact_steps']=scene.obstacle_contact_steps
             write(out/'referee-only.json',scene.samples)
             if scene.samples:
                 tail=[s for s in scene.samples if s['sim_s']>=scene.samples[-1]['sim_s']-.4]
-                physical=all(.26<=s['range_m']<=.30 and abs(s['bearing_deg'])<=6 for s in tail)
+                physical=(tail[-1]['sim_s']-tail[0]['sim_s'] >= .35) and all(.26<=s['range_m']<=.30 and abs(s['bearing_deg'])<=6 for s in tail)
                 result['final_evaluation']=scene.samples[-1]
                 result['success']=bool(result['stop_reason']=='RGB_goal_confirmed' and physical and not scene.contacts
-                    and not scene.obstacle_contact_steps and not scene.weld_steps and result['camera_geometry_unchanged'])
+                    and not scene.obstacle_contact_steps and not scene.peer_contacts and not scene.weld_steps and result['camera_geometry_unchanged'])
             result['sim_s']=float(scene.world.data.time)
             result['commands']=len(scene.command_history['r2'])
         scene.close();result['wall_s']=time.perf_counter()-started;result['turns']=len(rows)
@@ -178,10 +181,14 @@ def main():
     if 'jev' in args.policies:
         key=getpass.getpass('Jev API key (hidden): ') if args.prompt_key else os.environ.get('TYPESAFE_API_KEY')
         if not key:p.error('Jev key missing')
+    import mujoco, cv2
     args.output.mkdir(parents=True)
     write(args.output/'protocol.json',{'source_sha':source,'cases':args.cases,'policies':args.policies,
         'max_steps':args.max_steps,'max_input_tokens_per_episode':args.max_input_tokens,'max_wall_s_per_episode':args.max_wall_s,
-        'case_setup':CASES,'goal':GOAL,'environment':{'python':sys.version,'platform':platform.platform()},
+        'case_setup':CASES,'goal':GOAL,'environment':{'python':sys.version,'platform':platform.platform(),'mujoco':mujoco.__version__,'opencv':cv2.__version__},
+        'jev_model':args.jev_model,'gemini_model':args.gemini_model,'request_timeout_s':args.timeout,
+        'probe_commands':6,'probe_duration_each_s':.2,'action_duration_s':.2,
+        'evaluation_goal':{'range_m':[.26,.30],'absolute_bearing_deg_max':6,'stable_tail_min_s':.35,'zero_contacts_and_weld':True},
         'no_model_confidence_actuation_threshold':True,'model_confidence_scope':'recorded only, not safety probability'})
     results=[]
     for case in args.cases:
