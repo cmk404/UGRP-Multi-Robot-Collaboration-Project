@@ -28,6 +28,33 @@ def test_wire_roundtrip_and_boundary():
         decode_request(wire_request([frame()], 1), 4)
 
 
+@pytest.mark.parametrize('mismatch', [None, 'seed', 'steps', 'batch_size', 'dataset_sha256', 'history', 'model', 'verification'])
+def test_reused_model_must_match_fixed_protocol(tmp_path, mismatch):
+    import json
+    from scripts.run_carry_input_ablation import sha, validate_training
+    root = tmp_path/'model'; (root/'act').mkdir(parents=True)
+    (root/'act/model.safetensors').write_bytes(b'checkpoint-fixture')
+    adapter = {'kind': 'carry_input_ablation', 'size': 128, 'history': 4}
+    protocol = {'dataset_sha256': 'data-hash', 'training': {'steps': 8000, 'batch': 32}}
+    report = {'complete': True, 'dataset_sha256': 'data-hash', 'seed': 20260921,
+              'steps': 8000, 'batch_size': 32, 'adapter': adapter,
+              'model_sha256': sha(root/'act/model.safetensors'),
+              'initial_cache_verification': {'probes': [1]},
+              'selected_cache_verification': {'train': {}, 'development': {}}}
+    if mismatch in ('seed', 'steps', 'batch_size'):
+        report[mismatch] += 1
+    elif mismatch == 'dataset_sha256': report[mismatch] = 'other-data'
+    elif mismatch == 'history': adapter['history'] = 1
+    elif mismatch == 'model': (root/'act/model.safetensors').write_bytes(b'different')
+    elif mismatch == 'verification': del report['selected_cache_verification']
+    (root/'report.json').write_text(json.dumps(report))
+    (root/'act/adapter.json').write_text(json.dumps(adapter))
+    args = (root, {'size': 128, 'history': 4}, 20260921, protocol)
+    if mismatch is None: assert validate_training(*args) == report
+    else:
+        with pytest.raises(ValueError): validate_training(*args)
+
+
 def test_runtime_preserves_robot_windows_and_executed_pause_context(tmp_path,monkeypatch):
     import json
     from types import SimpleNamespace

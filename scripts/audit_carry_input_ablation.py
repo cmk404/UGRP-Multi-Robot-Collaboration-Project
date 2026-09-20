@@ -13,6 +13,7 @@ from harness.carry_input_client import InputCarryClient
 from harness.pair_carry_act_contract import context,AXES
 from scripts.run_dispatch_e2e import Referee
 from scripts.build_carry_act_data import extract
+from scripts.run_carry_input_ablation import validate_training
 
 
 def read(p):return json.loads(p.read_text())
@@ -30,8 +31,8 @@ def main():
         for episode in data[split]:assert extract(Path(episode['root']))==episode
     for name,model in freeze['models'].items():
         assert sha(Path(model['path'])/'model.safetensors')==model['sha256']
-        training=read(Path(model['path']).parent/'report.json')
-        assert training['complete'] and training['dataset_sha256']==sha(out/'dataset.json')
+        training=validate_training(Path(model['path']).parent,model['arm'],model['seed'],report['protocol'])
+        assert training['source_sha']==model['source_sha']
     rows=[];initials={};entries={};checked_wires=checked_refs=native_replays=0
     image_hashes={}
     def image(root,ref):

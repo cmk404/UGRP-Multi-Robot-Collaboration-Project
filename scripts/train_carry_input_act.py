@@ -208,6 +208,7 @@ def main():
         best, state, start_step = saved['best'], saved['best_state'], saved['step']
         report['progress'], report['selected'] = saved['progress'], saved['selected']
         elapsed_before = saved['elapsed_s']
+        report.update(completed_steps=start_step, wall_s=elapsed_before)
     end_step = a.stop_after_step or a.steps
     if end_step < start_step:
         raise ValueError('stop step precedes saved checkpoint')
@@ -235,7 +236,9 @@ def main():
             write(a.out/'report.json', report)
     if end_step < a.steps:
         report['paused_cache_verification'] = verify_cache(policy, rows, windows, cache, a.size, a.history)
-        report['deployment_max_abs'] = verify_cpu_deployment(policy, rows, windows, a.size, a.history)
+        report['deployment_max_abs'] = {
+            'train': verify_cpu_deployment(policy, rows, windows, a.size, a.history),
+            'development': verify_cpu_deployment(policy, dev, dwindows, a.size, a.history)}
         report['paused'] = True
         write(a.out/'report.json', report)
         return
@@ -243,7 +246,9 @@ def main():
     report['selected_cache_verification'] = {
         'train': verify_cache(policy, rows, windows, cache, a.size, a.history),
         'development': verify_cache(policy, dev, dwindows, dcache, a.size, a.history)}
-    report['deployment_max_abs'] = verify_cpu_deployment(policy, rows, windows, a.size, a.history)
+    report['deployment_max_abs'] = {
+        'train': verify_cpu_deployment(policy, rows, windows, a.size, a.history),
+        'development': verify_cpu_deployment(policy, dev, dwindows, a.size, a.history)}
     policy.cpu()
     actor = InputCarryAct(policy, a.size, a.history); actor.save(a.out/'act')
     restored = InputCarryAct.load(a.out/'act')

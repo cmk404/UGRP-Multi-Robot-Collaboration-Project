@@ -21,3 +21,24 @@
 로컬 256px/4시점 2-update 진단은 첫 학습 update 전 CNN 특징 비교의 `atol=rtol=1e-5`에서 중단됐다. 배치32로 계산한 캐시와 배치4의 배포 경로 사이 float32 수치 오차였다. 원본 첫 32행과 네 조건의 3개 창을 확인한 결과 feature 최대 절대 차이는 0.000341, 전체 action chunk 차이는 0.00000453이었다. 별도 기록은 `numerical-diagnostic.json`에 있다. 실패 원본과 진단 스크립트/출력은 기록된 로컬 경로에 보존하며 백업을 주장하지 않는다.
 
 검증은 feature `atol=5e-4, rtol=1e-5`와 action chunk `atol=rtol=1e-5`를 함께 적용하며 실제 오차를 기록한다. 초기 모델뿐 아니라 개발 점수로 선택한 최종 모델의 train/development 표본에도 적용한다. 임의의 잘못된 캐시를 통과시키지 않는 회귀검사를 포함한다. 이 수치 허용 범위는 모든 GPU·학습 완료 모델의 동등성을 미리 보장하지 않으므로 Colab에서도 실제 검증을 수행해야 한다. 학습량·데이터·입력·카메라·모델 구조는 바꾸지 않았다.
+
+후속 준비 검증(`f7a5c4c`, `readiness.json`): 첫 train/dev 궤적에서 로봇별 16행만 취한 별도 진단 데이터로 256px/4시점 2-update 학습·개발 선택·모델 저장·재로딩·최종 native/cache 비교를 완료했다. 이 작은 진단 모델로 새 MuJoCo 실행에서 파지 후 운반 단계에 진입해 로봇당 2회 판단했다. 총 4개 실제 요청의 전체 RGB/명령 이력·wire 해시·native 추론 재생·실제 발행 명령을 모두 대조했고 사후 평가도 재계산해 일치했다. 카메라 형상 불변, weld 0회, 외부 모델 호출 0회다. 2회 판단 제한으로 의도한 예산 초과 종료이며 성공률 자료가 아니다. 진단용 영상 마지막 프레임도 확인했고 소유 프로세스는 모두 종료됐다.
+
+Colab 회수 모델은 `model-<arm>-s<seed>/report.json`과 `act/{model.safetensors,config.json,adapter.json}` 구조로 보관한다. 로컬 평가기는 dataset·model hash, arm·seed·8,000 update·batch32, native/cache 검증 존재를 확인한다. 경로 재배치 데이터는 원본 manifest 및 파일 해시와의 일치 증거를 별도로 보존해야 한다. 원본 JSON을 바꿔 놓고 해시만 덮어쓰면 안 된다. 학습 SHA와 물리 실행 SHA는 각각 기록한다.
+
+```sh
+# 실제 전체 학습 모델 8개를 회수·검증한 뒤 실행. tiny-smoke 모델은 사용하지 않는다.
+python scripts/ugrp_session.py run carry-input-final -- python scripts/run_carry_input_ablation.py \
+  --out outputs/ablation-final-NEW \
+  --reuse-training /absolute/path/to/verified-training \
+  --act-python /Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python \
+  --mjpython /Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython \
+  --grasp /Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp \
+  --stages /Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied
+python scripts/audit_carry_input_ablation.py --out outputs/ablation-final-NEW \
+  --act-python /Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python
+```
+
+위 `python`은 기존 `.venv-sim-worker-mac/bin/python`이다. 실행 전에 작업 트리와 학습 provenance를 확인하고 소스를 커밋한다. 본 결과가 없으므로 고해상도나 이력의 유효성을 아직 판정하지 않는다. 향후 해상도만 개선되면 공간 정보 손실, 이력만 개선되면 현재 프레임의 상태 식별 부족을 지지한다. 둘 다 개선되지 않아도 정보 충분성이 증명되는 것은 아니며 데이터 다양성·frozen encoder·종료/협업 구조 등의 대안 원인이 남는다. 두 seed와 같은 장면 계열 네 조건은 광범위한 일반화나 강한 통계적 결론에 충분하지 않다.
+
+계산 비용 참고: 256px/4시점 tiny 모델의 실제 CPU worker 추론은 로봇별 0.161–0.230초, 두 로봇 합계 0.368/0.419초였다(두 라운드만 측정, worker 초기 시작 시간 제외). 환경의 0.2 SIM초 행동 간격은 wall-clock 실시간 처리 보장이 아니다. 성공률 개선과 더불어 추론 지연·전체 wall 시간의 증가를 비교해야 하며, 이 표본으로 안정적인 p95나 배포 실시간성을 주장하지 않는다.
