@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "profile": "imagenet128",
+  "context": [
+    "authored_goal_x/3",
+    "authored_goal_y/3",
+    "route_north",
+    "route_south",
+    "model_slot_r3",
+    "own_previous_forward/.15",
+    "own_previous_left/.15",
+    "own_previous_turn/.15"
+  ],
+  "outputs": [
+    "forward",
+    "left",
+    "turn",
+    "done"
+  ]
+}

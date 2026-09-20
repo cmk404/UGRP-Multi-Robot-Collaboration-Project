@@ -1,0 +1,25 @@
+{
+  "condition": "20260919/open-minus",
+  "compared_to": "../experiment-v1/final/20260919/open-minus",
+  "same_model_weights": true,
+  "first_different_act_round": 302,
+  "own_rgb_identical_at_first_difference": true,
+  "top_rgb_difference_bbox": [
+    680,
+    40,
+    688,
+    48
+  ],
+  "decoded_changed_pixels": 49,
+  "decoded_max_channel_difference": 3,
+  "first_different_referee_sample_s": 119.9002499988927,
+  "carry_rounds": [
+    480,
+    490
+  ],
+  "outcomes": [
+    "placement_failure",
+    "placement_failure"
+  ],
+  "scope": "Post-run observation, not controlled causal ablation. Small initial image differences preceded differing actions; do not claim bitwise reproducibility or estimate stochastic robustness from two runs."
+}

@@ -1,0 +1,441 @@
+{
+  "complete": true,
+  "source_sha": "e987d4a7f5bea5d08fd4100f23be6fce9b1251f0",
+  "dataset_path": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/dataset.json",
+  "dataset_sha256": "3db730eaf9d827a40b355d7b53188993e14b75d10fd10b9b213a67f830fba167",
+  "seed": 20260919,
+  "steps": 8000,
+  "upstream_sha": "89236ea0f4f81a81ca566081e20dd1ff5f823cbe",
+  "train_episodes": [
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F2",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F4",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F5",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F6"
+  ],
+  "development_episodes": [
+    "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open",
+    "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-turn"
+  ],
+  "samples": 3590,
+  "groups": {
+    "0": 558,
+    "1": 1828,
+    "2": 1192,
+    "3": 12
+  },
+  "selection": "missed_done_rate + false_done_rate + mean direction-group normalized MAE; no test results",
+  "environment": {
+    "python": "3.12.12 (main, Feb  4 2026, 01:57:59) [Clang 21.1.4 ]",
+    "platform": "macOS-27.2-arm64-arm-64bit",
+    "torch": "2.11.0",
+    "torchvision": "0.26.0",
+    "lerobot": "0.6.2",
+    "numpy": "2.2.6"
+  },
+  "progress": [
+    {
+      "step": 1,
+      "loss": 1.9060306549072266,
+      "development": {
+        "missed_done_rate": 1.0,
+        "false_done_rate": 0.0,
+        "group_normalized_mae": {
+          "0": 0.56272328713991,
+          "1": 0.6144688358579801,
+          "2": 0.5686033589911714,
+          "3": 0.5713811138023933
+        },
+        "selection_score": 1.5792941489478638,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "elapsed_s": 112.73717970799771
+    },
+    {
+      "step": 500,
+      "loss": 0.07333094626665115,
+      "development": {
+        "missed_done_rate": 1.0,
+        "false_done_rate": 0.0,
+        "group_normalized_mae": {
+          "0": 0.07709254581527873,
+          "1": 0.08687607520775495,
+          "2": 0.10118472547116925,
+          "3": 0.03994150925427675
+        },
+        "selection_score": 1.07627371393712,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "elapsed_s": 123.81579537499056
+    },
+    {
+      "step": 1000,
+      "loss": 0.07680355757474899,
+      "development": {
+        "missed_done_rate": 1.0,
+        "false_done_rate": 0.0,
+        "group_normalized_mae": {
+          "0": 0.04808171347592049,
+          "1": 0.07382950704590033,
+          "2": 0.07513144766755674,
+          "3": 0.032696750946342945
+        },
+        "selection_score": 1.05743485478393,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "elapsed_s": 134.92479195799388
+    },
+    {
+      "step": 1500,
+      "loss": 0.04800206422805786,
+      "development": {
+        "missed_done_rate": 1.0,
+        "false_done_rate": 0.0,
+        "group_normalized_mae": {
+          "0": 0.03553394635335716,
+          "1": 0.06596410406440818,
+          "2": 0.07963364182474539,
+          "3": 0.03478476901849111
+        },
+        "selection_score": 1.0539791153152505,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "elapsed_s": 146.0389077909931
+    },
+    {
+      "step": 2000,
+      "loss": 0.04105641320347786,
+      "development": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.04537037037037037,
+        "group_normalized_mae": {
+          "0": 0.03454659399024967,
+          "1": 0.06574573784537713,
+          "2": 0.08301055337736692,
+          "3": 0.028693925589323044
+        },
+        "selection_score": 0.09836957307094957,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "elapsed_s": 157.28852391599503
+    },
+    {
+      "step": 2500,
+      "loss": 0.04443097859621048,
+      "development": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.024074074074074074,
+        "group_normalized_mae": {
+          "0": 0.035662124384043044,
+          "1": 0.06941304026542262,
+          "2": 0.08613131355111238,
+          "3": 0.03161814156919718
+        },
+        "selection_score": 0.07978022901651788,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "elapsed_s": 168.41391337499954
+    },
+    {
+      "step": 3000,
+      "loss": 0.051250968128442764,
+      "development": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.037037037037037035,
+        "group_normalized_mae": {
+          "0": 0.040081558620901,
+          "1": 0.07341041225101512,
+          "2": 0.08543080037646743,
+          "3": 0.04406003716091315
+        },
+        "selection_score": 0.0977827391393612,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "elapsed_s": 179.5908274579997
+    },
+    {
+      "step": 3500,
+      "loss": 0.04171048104763031,
+      "development": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.03888888888888889,
+        "group_normalized_mae": {
+          "0": 0.033010464909530704,
+          "1": 0.06227074910554129,
+          "2": 0.0773442755057107,
+          "3": 0.02546749108781417
+        },
+        "selection_score": 0.08841213404103812,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "elapsed_s": 190.70413862499117
+    },
+    {
+      "step": 4000,
+      "loss": 0.042568646371364594,
+      "development": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.037037037037037035,
+        "group_normalized_mae": {
+          "0": 0.029567512814144572,
+          "1": 0.06000121093587576,
+          "2": 0.07862364024431101,
+          "3": 0.023664430404702824
+        },
+        "selection_score": 0.08500123563679557,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "elapsed_s": 201.8102176659886
+    },
+    {
+      "step": 4500,
+      "loss": 0.04267289489507675,
+      "development": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.025925925925925925,
+        "group_normalized_mae": {
+          "0": 0.032079917671849256,
+          "1": 0.057824225795078316,
+          "2": 0.08087297037886955,
+          "3": 0.022309100876251858
+        },
+        "selection_score": 0.07419747960643817,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "elapsed_s": 212.87725429098646
+    },
+    {
+      "step": 5000,
+      "loss": 0.034644998610019684,
+      "development": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.025,
+        "group_normalized_mae": {
+          "0": 0.027792831530817724,
+          "1": 0.05806733481445233,
+          "2": 0.08151425041848137,
+          "3": 0.02133894121895234
+        },
+        "selection_score": 0.07217833949567594,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "elapsed_s": 224.00189695799781
+    },
+    {
+      "step": 5500,
+      "loss": 0.03643316030502319,
+      "development": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.019444444444444445,
+        "group_normalized_mae": {
+          "0": 0.027907280840773152,
+          "1": 0.05775123038801428,
+          "2": 0.08163646512074041,
+          "3": 0.019779525076349575
+        },
+        "selection_score": 0.06621306980091379,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "elapsed_s": 235.1817292909982
+    },
+    {
+      "step": 6000,
+      "loss": 0.04115738347172737,
+      "development": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.018518518518518517,
+        "group_normalized_mae": {
+          "0": 0.027073054383417602,
+          "1": 0.058951492814815,
+          "2": 0.08160508671348023,
+          "3": 0.02134170290082693
+        },
+        "selection_score": 0.06576135272165345,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "elapsed_s": 246.30609233299037
+    },
+    {
+      "step": 6500,
+      "loss": 0.030468182638287544,
+      "development": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.014814814814814815,
+        "group_normalized_mae": {
+          "0": 0.028162117662163227,
+          "1": 0.05750283722410586,
+          "2": 0.08051370452035046,
+          "3": 0.02448483183979988
+        },
+        "selection_score": 0.06248068762641967,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "elapsed_s": 257.4016564159974
+    },
+    {
+      "step": 7000,
+      "loss": 0.0304742231965065,
+      "development": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.017592592592592594,
+        "group_normalized_mae": {
+          "0": 0.02757273856886862,
+          "1": 0.05757776796579696,
+          "2": 0.08031582559281937,
+          "3": 0.020911782359083492
+        },
+        "selection_score": 0.06418712121423471,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "elapsed_s": 268.5485294579994
+    },
+    {
+      "step": 7500,
+      "loss": 0.03729671612381935,
+      "development": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.017592592592592594,
+        "group_normalized_mae": {
+          "0": 0.02750125684612392,
+          "1": 0.05753543190782637,
+          "2": 0.08004701001308955,
+          "3": 0.02113803445051114
+        },
+        "selection_score": 0.06414802589698033,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "elapsed_s": 279.62401649999083
+    },
+    {
+      "step": 8000,
+      "loss": 0.031053971499204636,
+      "development": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.017592592592592594,
+        "group_normalized_mae": {
+          "0": 0.02641888783834286,
+          "1": 0.058207689693804576,
+          "2": 0.08095180069802015,
+          "3": 0.02193321039279302
+        },
+        "selection_score": 0.06447048974833275,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "elapsed_s": 290.8332527909952
+    }
+  ],
+  "selected": {
+    "step": 6500,
+    "loss": 0.030468182638287544,
+    "development": {
+      "missed_done_rate": 0.0,
+      "false_done_rate": 0.014814814814814815,
+      "group_normalized_mae": {
+        "0": 0.028162117662163227,
+        "1": 0.05750283722410586,
+        "2": 0.08051370452035046,
+        "3": 0.02448483183979988
+      },
+      "selection_score": 0.06248068762641967,
+      "samples": 1084,
+      "done_samples": 4
+    },
+    "elapsed_s": 257.4016564159974
+  },
+  "readback": [
+    {
+      "id": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r1:0",
+      "decision": {
+        "action": {
+          "forward": 0.05198476910591125,
+          "left": 0.013836047798395156,
+          "turn": -0.002279679849743843
+        },
+        "done": false,
+        "stop_score": 0.0
+      }
+    },
+    {
+      "id": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F6:r3:314",
+      "decision": {
+        "action": {
+          "forward": 0.0,
+          "left": 0.0,
+          "turn": 0.0
+        },
+        "done": true,
+        "stop_score": 0.9524383544921875
+      }
+    },
+    {
+      "id": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open:r1:0",
+      "decision": {
+        "action": {
+          "forward": 0.04579251855611801,
+          "left": 0.014411093294620514,
+          "turn": -0.001084449514746666
+        },
+        "done": false,
+        "stop_score": 0.0010592788457870483
+      }
+    },
+    {
+      "id": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-turn:r3:422",
+      "decision": {
+        "action": {
+          "forward": 0.0,
+          "left": 0.0,
+          "turn": 0.0
+        },
+        "done": true,
+        "stop_score": 0.7589065432548523
+      }
+    }
+  ],
+  "train_metrics": {
+    "missed_done_rate": 0.0,
+    "false_done_rate": 0.010899944102850754,
+    "group_normalized_mae": {
+      "0": 0.0297031929593143,
+      "1": 0.043613588542954704,
+      "2": 0.0420122971525444,
+      "3": 0.005603070681293805
+    },
+    "selection_score": 0.041132981436877554,
+    "samples": 3590,
+    "done_samples": 12
+  },
+  "development_metrics": {
+    "missed_done_rate": 0.0,
+    "false_done_rate": 0.014814814814814815,
+    "group_normalized_mae": {
+      "0": 0.028162117662163227,
+      "1": 0.05750283722410586,
+      "2": 0.08051370452035046,
+      "3": 0.02448483183979988
+    },
+    "selection_score": 0.06248068762641967,
+    "samples": 1084,
+    "done_samples": 4
+  },
+  "wall_s": 292.7914548749977,
+  "model_sha256": "0023b1cb3c016c6ea20c7c42f402adf5b39b5df4a99089439833c00323364199"
+}

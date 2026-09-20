@@ -211,6 +211,11 @@ def run(args):
     reference=args.reference_top.read_bytes()
     config=episode(args.variant,args.seed)
     config['contact_solver_profile']=args.contact_profile
+    import math
+    dx,dy,yaw=getattr(args,'spawn_offset',[0.,0.,0.])
+    if max(abs(dx),abs(dy))>.03 or abs(yaw)>3:raise ValueError('bounded spawn perturbation')
+    for pose in config['setup_only']['spawns'].values():
+        pose[0]+=dx;pose[1]+=dy;pose[3]+=math.radians(yaw)
     scene=SkillScene(config,args.output)
     started=time.monotonic();pair=team=None
     result={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
@@ -227,7 +232,7 @@ def run(args):
         scene.open();scene.deadline=started+args.max_wall_s
         write(args.output/'episode-setup-only.json',scene.config)
         write(args.output/'scene-manifest.json',scene.manifest)
-        scene.video=Video(scene.world,args.output/'execution.mp4',10)
+        scene.video=Video(scene.world,args.output/'execution.mp4',getattr(args,'video_fps',10))
         scene.referee=Referee(scene);scene.referee.sample()
         identity={}
         for rid in ROBOTS:
@@ -287,7 +292,13 @@ def run(args):
         pair.grasp_report.pop('evaluation',None)
         pair.grasp_report['evaluation_source']='separate referee-only.jsonl after control ends'
         while not scene.bindings.permission('beam','TRANSIT'):scene.step(.2)
-        result['phase']='TRANSIT';pair.carry(ImageRoute(scene.bindings,'beam'))
+        result['phase']='TRANSIT'
+        if getattr(args,'carry_act_model',None):
+            from scripts.dispatch_act_carry import carry
+            result['carry_policy']='ACT own RGB + raw top RGB + static task + own last issued motion'
+            result['carry_model_sha256']=sha(args.carry_act_model/'model.safetensors')
+            carry(pair,args.carry_act_python,args.carry_act_model,args.carry_act_max_steps)
+        else:pair.carry(ImageRoute(scene.bindings,'beam'))
         result['phase']='RELEASE';pair.place();pair.verify_placement();scene.bindings.finish('beam')
         while scene.bindings.tasks['box']['id'] not in scene.bindings.finished:scene.step(.2)
         result['protocol_complete']=True;result['phase']='FINISHED'
