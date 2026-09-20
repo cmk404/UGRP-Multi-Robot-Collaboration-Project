@@ -4,6 +4,11 @@
 
 현재 범위는 평평한 바닥의 정적 벽, 접은 팔, 짐을 들지 않은 로봇 한 대다. r1/r3는 각각 별도 실행한다. 두 카메라 원본을 저장하지만 현재 위치 추정과 제어에는 공용 top RGB를 사용한다. 로봇 자기 카메라에 의한 장애물 판독, LLM 판단, 경사로·턱 통과, 동적 장애물과 여러 로봇의 공동 운반은 별도 후속 검증 대상이다.
 
+[지도 목록](../maps/README.md)에 기존 open/slalom/narrow와 새 예시 지형 6개가 있다.
+새 예시는 `maps/navigation/narrow-door.json`, `l-corner.json`, `s-bends.json`,
+`staggered-obstacles.json`, `blocked-branch.json`, `fully-blocked.json`으로 선택한다.
+같은 배치의 공동 운반용 파일은 `maps/pair_navigation/`에 있고 별도 실행기를 사용한다.
+
 ## 지도와 판단
 
 - `bounds_m`: 지도 범위. 카메라가 볼 수 있는 영역 안에 구성한다.

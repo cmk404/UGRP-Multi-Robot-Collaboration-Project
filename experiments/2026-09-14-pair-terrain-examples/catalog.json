@@ -1,0 +1,72 @@
+{
+  "schema": "ugrp.pair_terrain_examples.v1",
+  "nominal_planning_start_m_rad": [
+    0.62,
+    -2.0,
+    0.0
+  ],
+  "nominal_start_scope": "Authored diagram/planner check only; never a runtime robot observation. Actual actors estimate positions from RGB.",
+  "entry_initialization": "Unchanged grasp fixture, folded-arm setup only; no grasp or navigation in preview.",
+  "entries": [
+    {
+      "id": "narrow-door",
+      "number": 1,
+      "title_ko": "좁은 문·통로",
+      "title_en": "Narrow doorway",
+      "description_ko": "폭 56 cm 문을 지나려면 공동 하중의 방향을 바꿔야 합니다.",
+      "map": "maps/narrow-door.json",
+      "expected_geometric_route": true,
+      "physical_navigation_tested": false
+    },
+    {
+      "id": "l-corner",
+      "number": 2,
+      "title_ko": "L자 모퉁이",
+      "title_en": "L-shaped corner",
+      "description_ko": "안쪽 모서리를 돌아 위쪽 통로로 들어갑니다.",
+      "map": "maps/l-corner.json",
+      "expected_geometric_route": true,
+      "physical_navigation_tested": false
+    },
+    {
+      "id": "s-bends",
+      "number": 3,
+      "title_ko": "S자 연속 굴곡",
+      "title_en": "S-bends",
+      "description_ko": "위·아래로 엇갈린 벽 사이에서 이동 방향을 연속으로 바꿉니다. 차체 회전은 강제하지 않습니다.",
+      "map": "maps/s-bends.json",
+      "expected_geometric_route": true,
+      "physical_navigation_tested": false
+    },
+    {
+      "id": "staggered-obstacles",
+      "number": 4,
+      "title_ko": "엇갈린 장애물",
+      "title_en": "Staggered obstacles",
+      "description_ko": "서로 어긋난 두 기둥 사이를 공동 하중 전체가 지나도록 배치했습니다.",
+      "map": "maps/staggered-obstacles.json",
+      "expected_geometric_route": true,
+      "physical_navigation_tested": false
+    },
+    {
+      "id": "blocked-branch",
+      "number": 5,
+      "title_ko": "막힌 길·우회 분기",
+      "title_en": "Blocked branch with detour",
+      "description_ko": "위쪽 출구는 막혀 있으며 아래쪽으로 우회하는 경로를 남겼습니다.",
+      "map": "maps/blocked-branch.json",
+      "expected_geometric_route": true,
+      "physical_navigation_tested": false
+    },
+    {
+      "id": "fully-blocked",
+      "number": 6,
+      "title_ko": "완전 차단 대조",
+      "title_en": "Fully blocked control",
+      "description_ko": "5번 지형의 아래쪽 우회로까지 막은 대조 배치입니다.",
+      "map": "maps/fully-blocked.json",
+      "expected_geometric_route": false,
+      "physical_navigation_tested": false
+    }
+  ]
+}

@@ -31,6 +31,7 @@
 
 - [설치·테스트·실험 재현과 PR 절차](CONTRIBUTING.md)
 - [실험 목록과 증거 관리](experiments/README.md)
+- [실행용 지도 목록과 예시 지형 선택](maps/README.md)
 - [연구 비교 조건과 관측 경계](docs/warehouse_research_contract.md)
 - [현재 아키텍처 상세 기록](docs/current_architecture_todo.md) — 각 항목의 기록 날짜를 확인한다.
 - [실물 로봇 trace 진단](docs/real_trace_system.md)
@@ -42,6 +43,7 @@
 |---|---|
 | `harness/` | 모델 입력, 행동 실행, 카메라 기반 인식과 판정 |
 | `sim/` | MuJoCo 환경과 평가 |
+| `maps/` | 단독 주행·공동 운반용 정적 지도와 지형 목록 |
 | `scripts/` | 실행·기록·검증·프로세스 정리 |
 | `tests/` | 자동 회귀검사와 포터블 영상 fixture |
 | `experiments/` | 커밋에 연결한 실험 설정·결과·원본 식별값 |
