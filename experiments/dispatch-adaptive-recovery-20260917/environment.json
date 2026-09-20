@@ -1,0 +1,184 @@
+{
+  "source_sha": "e099a4a38c8da094c8c1946ffca2e7ab02f16a83",
+  "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+  "executable": "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/python",
+  "platform": "macOS-27.2-arm64-arm-64bit",
+  "packages": {
+    "mujoco": "3.12.0",
+    "numpy": "2.5.2",
+    "opencv-python-headless": "5.0.0.93",
+    "Pillow": "12.3.0",
+    "pytest": "9.1.1",
+    "cv2_runtime": "5.0.0"
+  },
+  "physics_options": {
+    "timestep": ".00025",
+    "gravity": "0 0 -9.81",
+    "integrator": "implicitfast",
+    "cone": "elliptic",
+    "iterations": "80"
+  },
+  "explicit_contact_pairs": [
+    {
+      "geom1": "r1__left_finger",
+      "geom2": "team_beam_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.03 0.002 0.002",
+      "solref": "0.007 1.0",
+      "solimp": "0.91 0.975 0.002 0.5 2.0",
+      "solreffriction": "0 -6000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r1__left_finger",
+      "geom2": "dispatch_box_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.2 0.01 0.01",
+      "solref": "0.013000000000000001 1.0",
+      "solimp": "0.9 0.96 0.0015 0.5 2.0",
+      "solreffriction": "0 -6000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r1__right_finger",
+      "geom2": "team_beam_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.03 0.002 0.002",
+      "solref": "0.007 1.0",
+      "solimp": "0.91 0.975 0.002 0.5 2.0",
+      "solreffriction": "0 -6000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r1__right_finger",
+      "geom2": "dispatch_box_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.2 0.01 0.01",
+      "solref": "0.013000000000000001 1.0",
+      "solimp": "0.9 0.96 0.0015 0.5 2.0",
+      "solreffriction": "0 -6000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r2__left_finger",
+      "geom2": "team_beam_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.03 0.002 0.002",
+      "solref": "0.007 1.0",
+      "solimp": "0.91 0.975 0.002 0.5 2.0",
+      "solreffriction": "0 -6000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r2__left_finger",
+      "geom2": "dispatch_box_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.2 0.01 0.01",
+      "solref": "0.013000000000000001 1.0",
+      "solimp": "0.9 0.96 0.0015 0.5 2.0",
+      "solreffriction": "0 -6000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r2__right_finger",
+      "geom2": "team_beam_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.03 0.002 0.002",
+      "solref": "0.007 1.0",
+      "solimp": "0.91 0.975 0.002 0.5 2.0",
+      "solreffriction": "0 -6000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r2__right_finger",
+      "geom2": "dispatch_box_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.2 0.01 0.01",
+      "solref": "0.013000000000000001 1.0",
+      "solimp": "0.9 0.96 0.0015 0.5 2.0",
+      "solreffriction": "0 -6000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r3__left_finger",
+      "geom2": "team_beam_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.03 0.002 0.002",
+      "solref": "0.007 1.0",
+      "solimp": "0.91 0.975 0.002 0.5 2.0",
+      "solreffriction": "0 -6000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r3__left_finger",
+      "geom2": "dispatch_box_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.2 0.01 0.01",
+      "solref": "0.013000000000000001 1.0",
+      "solimp": "0.9 0.96 0.0015 0.5 2.0",
+      "solreffriction": "0 -6000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r3__right_finger",
+      "geom2": "team_beam_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.03 0.002 0.002",
+      "solref": "0.007 1.0",
+      "solimp": "0.91 0.975 0.002 0.5 2.0",
+      "solreffriction": "0 -6000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    },
+    {
+      "geom1": "r3__right_finger",
+      "geom2": "dispatch_box_geom",
+      "condim": "3",
+      "friction": "3.4 3.4 0.2 0.01 0.01",
+      "solref": "0.013000000000000001 1.0",
+      "solimp": "0.9 0.96 0.0015 0.5 2.0",
+      "solreffriction": "0 -6000",
+      "adhesion": "0",
+      "margin": "0.0",
+      "gap": "0.0"
+    }
+  ],
+  "scope": "Actual interpreter versions; current XML physics options and all 12 finger/cargo contact pairs verified unchanged. Latest candidate changes RGB motion reference pacing and shared motor scaling; previous candidate added output-only carry evaluation. Not hardware calibration.",
+  "previous_xml_verification": {
+    "path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final17-20260917/F5/scene.xml",
+    "source_sha": "fb793c6fa3d9434ee24c363733ec995f0058f9af",
+    "sha256": "0002affc6fe4da6e375a9dbce4124c9f7adc3165cf2fbb636a92010377b85d2c",
+    "physics_options_equal": true,
+    "explicit_contact_pairs_equal": true,
+    "identical_to_previous_same_variant_xml": true,
+    "previous_same_variant_xml": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final16-20260917/F5/scene.xml"
+  },
+  "latest_xml_verification": {
+    "path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F4/scene.xml",
+    "sha256": "a6f91c8741de34c166da26b8bb6510219840522448f59fa90dc214a1db19c2ce",
+    "source_sha": "e099a4a38c8da094c8c1946ffca2e7ab02f16a83",
+    "profile": "local_contact_fine",
+    "identical_to_candidate18_same_variant": true
+  }
+}

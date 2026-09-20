@@ -164,6 +164,22 @@ class CameraRobotPortTests(unittest.TestCase):
         self.assertEqual(self.world.robots["r1"].motor_calls, [[0.0] * 4, [0.0] * 4])
         self.assertEqual(self.world.robots["r2"].motor_calls, [])
 
+    def test_servo_rate_is_independent_of_subpulse_tick_size(self):
+        for dt in (.0005, .00025, .0001):
+            for target in (1403, 1597):
+                with self.subTest(dt=dt, target=target):
+                    world = _WorldSpy()
+                    port = CameraRobotPort(world, "r1")
+                    port.apply({"kind": "look", "pan_pulse": target}, 0.)
+                    for i in range(1, round(.06 / dt) + 1):
+                        now = i * dt
+                        port.tick(now)
+                        issued = world.robots["r1"].servo_calls[-1][6]
+                        direction = 1 if target > 1500 else -1
+                        expected = 1500 + direction * min(97., 2000. * now)
+                        self.assertLessEqual(abs(issued - expected), .500001)
+                    self.assertEqual(world.robots["r1"].servo_calls[-1][6], target)
+
     def test_rejects_unknown_missing_nonfinite_and_out_of_range_fields(self):
         bad = [
             ({"kind": "drive", "forward": 0.1, "turn": 0.0, "duration_s": 0.2, "cargo": "red"}, 0.0),

@@ -30,6 +30,13 @@ def _cyan_object_mask(frame, *, min_saturation=65):
     # Color remains segmentation only: caller-established prior target
     # identity is still required by compare_box_comotion().
     mask = cv2.inRange(hsv, np.asarray((80, min_saturation, 45)), np.asarray((104, 255, 255)))
+    if min_saturation == 150:
+        # Dispatch's bright cyan face clips at V=255: small JPEG/lighting
+        # changes move its S across 150 without moving the object. Restore
+        # those pixels only in the narrow cyan hue/high-value band. Lowering
+        # S globally would merge the darker blue/cyan floor into the cargo.
+        bright = cv2.inRange(hsv, np.asarray((80, 120, 200)), np.asarray((98, 255, 255)))
+        mask = cv2.bitwise_or(mask, bright)
     kernel = np.ones((5, 5), np.uint8)
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
@@ -82,6 +89,8 @@ def compare_box_comotion(before_image, after_image, *, camera_pan_delta_pwm=0, m
         "before_area_px": before_area,
         "after_area_px": after_area,
     }
+    if min_saturation==150:
+        base['bright_cyan_segmentation']={'hue_range':[80,98],'min_saturation':120,'min_value':200}
     if before_centroid is None or after_centroid is None or min(before_area, after_area) < MIN_CLOSE_AREA_PX:
         return {**base, "reason": "CLOSE_CYAN_OBJECT_NOT_VISIBLE_IN_BOTH_FRAMES"}
     intersection = int(np.count_nonzero((before_mask > 0) & (after_mask > 0)))

@@ -1,0 +1,91 @@
+{
+  "failed_source": "4f6a70c1a1300cee15fa4e6d07bb923996d189b7",
+  "scope": "Actual one-end ground contact in output-only referee; observed carrier yaw disagreement from archived RGB. Referee is not an actor input.",
+  "cases": [
+    {
+      "case": "F4",
+      "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final14-20260917/F4",
+      "stop": "track",
+      "body_turns_deg": {
+        "r1": 33.199515767431016,
+        "r3": 39.03889664618189
+      },
+      "body_heading_difference_deg": 5.83938087875087,
+      "output_only_referee_at_stop": {
+        "position": [
+          1.3663953018260344,
+          -2.340578755160531,
+          0.053438102246448974
+        ],
+        "floor_contact": true,
+        "robot_contact": true
+      },
+      "last_actor_images": {
+        "r1": {
+          "own": {
+            "path": "rgb/pair-633-rotate-carry-r3.jpg",
+            "sha256": "371185f66df1032cd9563a30424dcf4c5272a500c6ba0c9d7e310492deb9dd1f"
+          },
+          "top": {
+            "path": "rgb/pair-633-rotate-carry-top.jpg",
+            "sha256": "bb7ec7de3a8c0bf44eb2aada62960d1910f7898f31b876f0dd9199a1f0909e13"
+          }
+        },
+        "r3": {
+          "own": {
+            "path": "rgb/pair-633-rotate-carry-r1.jpg",
+            "sha256": "78d052305bec8eed003cbafc09e4b0e7155efef532fad16c1dc8ca3afc7e8500"
+          },
+          "top": {
+            "path": "rgb/pair-633-rotate-carry-top.jpg",
+            "sha256": "bb7ec7de3a8c0bf44eb2aada62960d1910f7898f31b876f0dd9199a1f0909e13"
+          }
+        }
+      }
+    },
+    {
+      "case": "F5",
+      "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final14-20260917/F5",
+      "stop": "payload_decoupled",
+      "body_turns_deg": {
+        "r1": 18.03680113483525,
+        "r3": 32.50329274998849
+      },
+      "body_heading_difference_deg": 14.466491615153236,
+      "output_only_referee_at_stop": {
+        "position": [
+          1.4866777338920483,
+          -1.3726586771994853,
+          0.05258657967488672
+        ],
+        "floor_contact": true,
+        "robot_contact": true
+      },
+      "last_actor_images": {
+        "r1": {
+          "own": {
+            "path": "rgb/pair-651-rotate-carry-r3.jpg",
+            "sha256": "9bb28f8b98beb800d54e7bb29d94f722bfd095230779f3d60806bf9233ecfe7c"
+          },
+          "top": {
+            "path": "rgb/pair-651-rotate-carry-top.jpg",
+            "sha256": "7ed44d57d75a353689979b81b4ca7feb802153fd089fbae7fe0029523e746d67"
+          }
+        },
+        "r3": {
+          "own": {
+            "path": "rgb/pair-651-rotate-carry-r1.jpg",
+            "sha256": "c0834b671928a43f70f7ebe95fe19dfe4eb5a446a89de771579f12d6465a0917"
+          },
+          "top": {
+            "path": "rgb/pair-651-rotate-carry-top.jpg",
+            "sha256": "7ed44d57d75a353689979b81b4ca7feb802153fd089fbae7fe0029523e746d67"
+          }
+        }
+      }
+    }
+  ],
+  "repair": "Keep common orbital velocity and span control. Apply bounded individual angular correction from RGB body yaw relative to observed formation turn; pause reference advancement above 0.10 rad heading error. Existing drop/continuity and .30 rad abort gates remain.",
+  "regression_scope": "Unequal-response kinematic test, not physical success; complete physical comparison required.",
+  "causal_correction": "Time alignment shows F5 yaw disagreement below 2 degrees immediately before first ground contact at 142.8005s; divergence increased AFTER one-end loss. Heading synchronization is a bounded safeguard, not a demonstrated cure for the preceding slow vertical creep. See continuous-carry-followup.json."
+}

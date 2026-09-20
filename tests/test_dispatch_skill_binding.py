@@ -41,7 +41,8 @@ def test_every_allocation_reaches_its_physical_endpoints(order):
 
 
 def test_no_silent_route_change_or_revoked_plan_execution():
-    c=committed();b=SkillBindings(c,authored_map('shared_crossing'))
+    c=committed();c['plan']['tasks'][0]['route']='south';c['plan_hash']=digest(c['plan'])
+    b=SkillBindings(c,authored_map('narrow_south'))
     with pytest.raises(RuntimeError,match='PAIR_ROUTE_TOO_NARROW'):b.check_route()
     assert b.committed==c
     changed=copy.deepcopy(c);changed['plan']['dock']='dock_a'
@@ -59,6 +60,48 @@ def test_task_dependencies_and_resource_occupancy_persist_on_revoke():
     assert b.permission('beam','GRASP') and b.permission('beam','TRANSIT')
     locks=copy.deepcopy(b.locks);b.revoked=True
     assert not b.permission('box','TRANSIT') and b.locks==locks
+
+
+def test_resource_queue_does_not_exhaust_remaining_skill_decision(tmp_path):
+    import base64
+    from scripts.run_dispatch_skills import SkillScene
+    class ReadyBox:
+        phase='approach'
+        last_attachment=None
+        def decide(self, observation):
+            self.phase='lower'
+            return {'kind':'pose','pulses':{3:689}}
+    raw=cv2.imencode('.jpg',np.zeros((480,640,3),np.uint8))[1].tobytes()
+    b=SkillBindings(committed(),authored_map('open'))
+    assert b.permission('beam','GRASP')
+    solo=SoloBoxTransport(robot_id=b.solo,navigator=Mock())
+    solo.initialized=True;solo.steps=599;solo.box=ReadyBox()
+    scene=SkillScene.__new__(SkillScene)
+    scene.solo=solo;scene.bindings=b;scene.solo_lease=0.;scene.solo_started=None
+    scene.solo_rows=[];scene.out=tmp_path;scene.video=None
+    scene.authorize=lambda:None;scene.time=lambda:1.
+    scene.solo_executor=SimpleNamespace(idle=True,tick=Mock(),submit=Mock())
+    scene.world=SimpleNamespace(render_team_jpeg=lambda **kw:raw)
+    scene.ports={b.solo:SimpleNamespace(capture=lambda:{'image':base64.b64encode(raw).decode()})}
+    for _ in range(3):scene._solo_tick()
+    assert solo.steps==599 and solo.phase=='approach'
+    assert all(r['top_evidence']['waiting_before_grasp'] for r in scene.solo_rows)
+    b.finish('beam');scene._solo_tick()
+    assert solo.steps==600 and solo.phase=='lower'
+    with pytest.raises(RuntimeError,match='decision budget exhausted'):
+        solo.decide({},raw)
+
+
+def test_open_dock_b_does_not_drop_from_floor_plane_alignment():
+    from harness.dispatch_skill_binding import ImageRoute
+    raw=Path('tests/fixtures/dispatch_adaptive/dock-b-premature-carry-done.jpg').read_bytes()
+    route=ImageRoute(SkillBindings(committed(),authored_map('open')),'beam')
+    route.observe(raw);route.index=len(route.points)-1
+    action,evidence=route.observe(raw)
+    assert not evidence['ready'] and not evidence['done']
+    # The failed carry stopped here. Continue south into the slot and west to
+    # leave room for the box carrier; all evidence comes from this RGB frame.
+    assert action['left']<0 and action['forward']<0
 
 
 def test_rgb_transform_preserves_pixels_without_reference_substitution():
@@ -166,6 +209,12 @@ def test_contact_profile_preserves_robot_cargo_physics_and_cameras():
         assert np.array_equal(getattr(old,attr),getattr(new,attr)),attr
     assert new.opt.noslip_iterations==0 and new.opt.timestep==.0005
     assert new.npair-old.npair==12 and np.all(new.pair_solreffriction[:,1]==-3000)
+    fine=mujoco.MjModel.from_xml_string(contact_profile(xml,'local_contact_fine'))
+    for attr in ('geom_friction','body_mass','geom_size','geom_pos','cam_pos','cam_quat','cam_fovy',
+                 'actuator_gainprm','actuator_forcerange','pair_friction','pair_solref','pair_solimp','pair_margin','pair_gap'):
+        assert np.array_equal(getattr(new,attr),getattr(fine,attr)),attr
+    assert fine.opt.noslip_iterations==0 and fine.opt.timestep==.00025
+    assert fine.npair==new.npair and np.all(fine.pair_solreffriction[:,1]==-6000)
 
 
 def test_grasp_reserves_transport_before_a_load_is_lifted():
@@ -219,14 +268,15 @@ def test_box_tracking_uses_actual_prior_appearance_over_same_colour_floor():
     route.observe((root/'box-floor-162.jpg').read_bytes())
     _,e=route.observe((root/'box-floor-163.jpg').read_bytes())
     assert np.allclose(e['cargo_center_px'],[402.,575.],atol=3)
-    assert e['tracking']['consistent_features']>=3
+    assert e['tracking']['method'] in {'cyan component','bidirectional RGB feature motion; own attachment independently required'}
+    if 'consistent_features' in e['tracking']:assert e['tracking']['consistent_features']>=3
     _,after=route.observe((root/'box-floor-165.jpg').read_bytes())
     assert 409<after['cargo_center_px'][0]<423
     blank=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))[1].tobytes()
     with pytest.raises(RuntimeError):route.observe(blank)
 
 
-def test_tracked_thin_cargo_reacquires_after_leaving_cyan_floor():
+def test_tracked_thin_cargo_keeps_identity_after_leaving_cyan_floor():
     from harness.dispatch_skill_binding import ImageRoute
     root=Path('tests/fixtures/dispatch_skill_transfer')
     route=ImageRoute(SkillBindings(committed(),authored_map('open')),'box')
@@ -235,6 +285,7 @@ def test_tracked_thin_cargo_reacquires_after_leaving_cyan_floor():
     _,e=route.observe((root/'box-edge-191.jpg').read_bytes())
     assert np.allclose(e['cargo_center_px'],[583.,573.],atol=2)
     assert e['tracking']['method']=='cyan component'
+    assert e['tracking']['min_saturation']<=125
 
 
 def test_shadowed_cargo_requires_bidirectional_rgb_match():

@@ -1,0 +1,1855 @@
+{
+  "passed": true,
+  "source_sha": "92b984e9d518fbdd878d0e1260b527cb5aad6a1a",
+  "training_source_sha": "e987d4a7f5bea5d08fd4100f23be6fce9b1251f0",
+  "dataset_raw_provenance_verified": true,
+  "rows": [
+    {
+      "condition": "teacher",
+      "case": "dev-open",
+      "phase": "development",
+      "whole_success": true,
+      "beam_success": true,
+      "physical_only_whole_success": true,
+      "protocol_complete": true,
+      "error": null,
+      "phase_at_end": "FINISHED",
+      "obstacle_contact_steps": 0,
+      "weld_steps": 0,
+      "beam_displacement_m": 1.680675719276237,
+      "carry_window": [
+        61.660000000203404,
+        85.35999999971538
+      ],
+      "carry_entered": true,
+      "prerequisite_failure": false,
+      "carry_decisions": 0,
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open",
+      "source_sha": "e987d4a7f5bea5d08fd4100f23be6fce9b1251f0",
+      "carry_sim_s": 23.69999999951198,
+      "arrival_declared": false,
+      "file_hashes": {
+        "result.json": "b78baa51cf18be43e5d609c51aa09c33cdb1c0d3ef337d2774c30e58d305280f",
+        "issued-commands.json": "f968da674f54ceffef0e55f0e16f724da69d8cef9d5510cd70834be00a37e71b",
+        "pair-decisions.json": "da09bb2f216b4f3d1f16012293b12573559477542f75ce9320ed54667096c65c",
+        "referee-only.jsonl": "e64584f284ddb03117dc4f95623c968de49371d9fd44d83aad3a6aafe2ea3e85",
+        "episode-setup-only.json": "6c0653b325559bfda859a3b235248fb02e41e3209fc6b47c79fe3a2ef8df91bd",
+        "execution.mp4": "af0cfb89c25968e97c2d07d862ebb81189e5f37c60b03b912ba280c6a5ca0668"
+      }
+    },
+    {
+      "condition": "teacher",
+      "case": "dev-turn",
+      "phase": "development",
+      "whole_success": true,
+      "beam_success": true,
+      "physical_only_whole_success": true,
+      "protocol_complete": true,
+      "error": null,
+      "phase_at_end": "FINISHED",
+      "obstacle_contact_steps": 0,
+      "weld_steps": 0,
+      "beam_displacement_m": 1.6806078081536733,
+      "carry_window": [
+        205.1599999968766,
+        289.5599999948855
+      ],
+      "carry_entered": true,
+      "prerequisite_failure": false,
+      "carry_decisions": 0,
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-turn",
+      "source_sha": "e987d4a7f5bea5d08fd4100f23be6fce9b1251f0",
+      "carry_sim_s": 84.39999999800892,
+      "arrival_declared": false,
+      "file_hashes": {
+        "result.json": "15f29fe9c1360e50cfb33775473630bbcae8688360b8390c29aa669f67549060",
+        "issued-commands.json": "37aea7ca592aab665f8b38721a9243ecb231f922994d35e728d9d2d0ccb43ca0",
+        "pair-decisions.json": "1d72be7e0347b1d4e59ce2aace5c0a0d11a37402abfacb95a975e8f7021e4932",
+        "referee-only.jsonl": "e39dcdcacf5c4cdbc319230168fc1cf4739b76e6dc8c7915bc75daace31b9b1c",
+        "episode-setup-only.json": "6fc75280f67b9b536f138a46f85be0feceef43347f897060ceeb9d5d15732ee1",
+        "execution.mp4": "e292d33aed8c90825e3911959b8400795478a225d2f874822ec8549303c09d1d"
+      }
+    },
+    {
+      "condition": "20260918",
+      "case": "open-minus",
+      "phase": "final",
+      "whole_success": true,
+      "beam_success": true,
+      "physical_only_whole_success": true,
+      "protocol_complete": true,
+      "error": null,
+      "phase_at_end": "FINISHED",
+      "obstacle_contact_steps": 0,
+      "weld_steps": 0,
+      "beam_displacement_m": 1.6628629239769517,
+      "carry_window": [
+        59.4600000001929,
+        80.05999999983953
+      ],
+      "carry_entered": true,
+      "prerequisite_failure": false,
+      "carry_decisions": 104,
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260918/open-minus",
+      "source_sha": "92b984e9d518fbdd878d0e1260b527cb5aad6a1a",
+      "carry_sim_s": 20.599999999646634,
+      "arrival_declared": true,
+      "last_stop_scores": {
+        "r1": 0.7344416975975037,
+        "r3": 0.8628566861152649
+      },
+      "file_hashes": {
+        "result.json": "ef13f7527c953ec6167e13e72a549c713f1f73fbe8432e90a3b691780c45dd63",
+        "issued-commands.json": "f83563529468688d9aa0c08df12b1401d1b0572c0687524d41acd6810459e715",
+        "pair-decisions.json": "eb66b9ccec3328a520af73b697f5be8d2c0e077c00f6f847a892a841c5042468",
+        "referee-only.jsonl": "9cb999bd59ce5cfd4070d4377de7f7d20ee3fa09faf1c9d627b37567719ca8b9",
+        "episode-setup-only.json": "e7d2c493aea24e897d5e2a7e627f74674cbd61ae87c7d6f44456598eb6b13ba9",
+        "execution.mp4": "6672ac19d23a8f3027b1f78b74c7f88bdd90e78ae7e36628fab07cae05e2a7e0"
+      }
+    },
+    {
+      "condition": "teacher",
+      "case": "open-minus",
+      "phase": "final",
+      "whole_success": true,
+      "beam_success": true,
+      "physical_only_whole_success": true,
+      "protocol_complete": true,
+      "error": null,
+      "phase_at_end": "FINISHED",
+      "obstacle_contact_steps": 0,
+      "weld_steps": 0,
+      "beam_displacement_m": 1.680015178555118,
+      "carry_window": [
+        59.4600000001929,
+        83.15999999976741
+      ],
+      "carry_entered": true,
+      "prerequisite_failure": false,
+      "carry_decisions": 0,
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/teacher/open-minus",
+      "source_sha": "92b984e9d518fbdd878d0e1260b527cb5aad6a1a",
+      "carry_sim_s": 23.69999999957451,
+      "arrival_declared": false,
+      "file_hashes": {
+        "result.json": "5666855cbe0329bd3a73369edfbd3762533dbb7586e137754df59ef276919629",
+        "issued-commands.json": "f8916b53b1f699964fb1756a02ee0da89ec910ff41627c9294f1168048619aa3",
+        "pair-decisions.json": "921a10fea2a6930f5fa43c9c5488e2aea500be50144ad9ee077994b14e67189a",
+        "referee-only.jsonl": "96f1b22f7340d99fc0295e5bdb4c7523fbcff8a3a47edf58a50d28eddbd4e662",
+        "episode-setup-only.json": "e7d2c493aea24e897d5e2a7e627f74674cbd61ae87c7d6f44456598eb6b13ba9",
+        "execution.mp4": "b60ed69113558698ae20930b646ef750e38c25a30a3f4963a605ba1f35ea1629"
+      }
+    },
+    {
+      "condition": "teacher",
+      "case": "open-plus",
+      "phase": "final",
+      "whole_success": true,
+      "beam_success": true,
+      "physical_only_whole_success": true,
+      "protocol_complete": true,
+      "error": null,
+      "phase_at_end": "FINISHED",
+      "obstacle_contact_steps": 0,
+      "weld_steps": 0,
+      "beam_displacement_m": 1.6803625525088133,
+      "carry_window": [
+        60.26000000019672,
+        82.95999999977214
+      ],
+      "carry_entered": true,
+      "prerequisite_failure": false,
+      "carry_decisions": 0,
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/teacher/open-plus",
+      "source_sha": "92b984e9d518fbdd878d0e1260b527cb5aad6a1a",
+      "carry_sim_s": 22.699999999575418,
+      "arrival_declared": false,
+      "file_hashes": {
+        "result.json": "95b4ab46b4d69327a8fa836c2e4b7e8b824cc5199a0f014ce3aa08884e1f4b5d",
+        "issued-commands.json": "8e7573f03c731f62bc108aec3c14162c477dee7f0898d4951c79303bc98778e5",
+        "pair-decisions.json": "5370b98634913a1561831a4127a1212098b7c2f92ce29d11edafd48aa8cce5d2",
+        "referee-only.jsonl": "5ba955cfdcf39c2a042420af4d2705441f9870391854f50ca2f59fce1dbb90bd",
+        "episode-setup-only.json": "47aa1eaefb192f01d3aa9a5da4b854ddb406eeb242515c5afaf8208d81592f8b",
+        "execution.mp4": "230bcdfe061b95eccb2489cb1701871521d929ed149cf8fdc6bb8d809413fa1b"
+      }
+    },
+    {
+      "condition": "20260919",
+      "case": "open-minus",
+      "phase": "final",
+      "whole_success": false,
+      "beam_success": false,
+      "physical_only_whole_success": false,
+      "protocol_complete": false,
+      "error": "RuntimeError: visual placement confirmation failed",
+      "phase_at_end": "RELEASE",
+      "obstacle_contact_steps": 131229,
+      "weld_steps": 0,
+      "beam_displacement_m": 1.6623888877809148,
+      "carry_window": [
+        59.4600000001929,
+        157.259999998014
+      ],
+      "carry_entered": true,
+      "prerequisite_failure": false,
+      "carry_decisions": 490,
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260919/open-minus",
+      "source_sha": "92b984e9d518fbdd878d0e1260b527cb5aad6a1a",
+      "carry_sim_s": 97.79999999782109,
+      "arrival_declared": true,
+      "last_stop_scores": {
+        "r1": 0.8494428396224976,
+        "r3": 0.8588558435440063
+      },
+      "file_hashes": {
+        "result.json": "0075dc358ed31e2ce7f0dc426c4da1d527d2ce1e1cd81e9de16c7810520d4f2e",
+        "issued-commands.json": "9badf45b0759df5e998959920aa089fe8bfa33a96558fdf02bde3d6f9a130cc3",
+        "pair-decisions.json": "7394a58efa3e402cac81f12f3ca58f671548cc76995293cd6ca780a5807cb903",
+        "referee-only.jsonl": "ab71790a335894a572dc041ccf7b0f1eeaa3b7cf8c90498673686919695a5dc5",
+        "episode-setup-only.json": "e7d2c493aea24e897d5e2a7e627f74674cbd61ae87c7d6f44456598eb6b13ba9",
+        "execution.mp4": "f80e9709ec75f9fadfbf26ff254c028277b3b300f027a7c17a4afbae2dd24df7"
+      }
+    },
+    {
+      "condition": "20260918",
+      "case": "open-plus",
+      "phase": "final",
+      "whole_success": false,
+      "beam_success": false,
+      "physical_only_whole_success": false,
+      "protocol_complete": true,
+      "error": null,
+      "phase_at_end": "FINISHED",
+      "obstacle_contact_steps": 0,
+      "weld_steps": 0,
+      "beam_displacement_m": 1.6541696134265338,
+      "carry_window": [
+        60.26000000019672,
+        80.65999999982535
+      ],
+      "carry_entered": true,
+      "prerequisite_failure": false,
+      "carry_decisions": 103,
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260918/open-plus",
+      "source_sha": "92b984e9d518fbdd878d0e1260b527cb5aad6a1a",
+      "carry_sim_s": 20.399999999628626,
+      "arrival_declared": true,
+      "last_stop_scores": {
+        "r1": 0.8448134660720825,
+        "r3": 0.9314305186271667
+      },
+      "file_hashes": {
+        "result.json": "b30b58c71c44e383b71b6af8dd84ab7e879179a0ea277351e572876892228154",
+        "issued-commands.json": "ef66c51d7c9475802f4a0e5d8214c8cfa67734a334c102378cbdf9502fecea45",
+        "pair-decisions.json": "0a47fafd33e42963021a0802a2f3ae0db3e2b9c991a0bba3ff68156f5f2ec854",
+        "referee-only.jsonl": "f914275969a37a7d7151f4c18ce6927821c5c2de229db0f730864ec25210f1dc",
+        "episode-setup-only.json": "47aa1eaefb192f01d3aa9a5da4b854ddb406eeb242515c5afaf8208d81592f8b",
+        "execution.mp4": "31da0f25e59598d2110e66785c4eece5d231a6b39b5125b8d01378f71d7de152"
+      }
+    },
+    {
+      "condition": "20260919",
+      "case": "open-plus",
+      "phase": "final",
+      "whole_success": false,
+      "beam_success": false,
+      "physical_only_whole_success": false,
+      "protocol_complete": false,
+      "error": "RuntimeError: ACT carry RGB attachment guard stopped",
+      "phase_at_end": "TRANSIT",
+      "obstacle_contact_steps": 0,
+      "weld_steps": 0,
+      "beam_displacement_m": 1.655946902464438,
+      "carry_window": [
+        60.26000000019672,
+        238.65999999608914
+      ],
+      "carry_entered": true,
+      "prerequisite_failure": false,
+      "carry_decisions": 893,
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260919/open-plus",
+      "source_sha": "92b984e9d518fbdd878d0e1260b527cb5aad6a1a",
+      "carry_sim_s": 178.39999999589241,
+      "arrival_declared": false,
+      "last_stop_scores": {
+        "r1": 0.0244433730840683,
+        "r3": 0.08595936000347137
+      },
+      "file_hashes": {
+        "result.json": "5809f16bf57044eefd46802cf2e2ee76982a3f419dd090ac565b7da6752d2869",
+        "issued-commands.json": "50b1bbd71356a1120c350f668634bf67d2783513e1ec9dc0b341ad35a5b5cb36",
+        "pair-decisions.json": "caf03f48dbfe3f0357d5db289ce59400ff5a5c950590fede730712268ace120b",
+        "referee-only.jsonl": "b57157791e38d66d40ec5673b36da33d025aa6b482a8d4d37b4cd4a8f354f524",
+        "episode-setup-only.json": "47aa1eaefb192f01d3aa9a5da4b854ddb406eeb242515c5afaf8208d81592f8b",
+        "execution.mp4": "08d5a753140dd965d845cbcb4a43c1e0775bd46c2f9589ea7919a94d0a6c843d"
+      }
+    },
+    {
+      "condition": "teacher",
+      "case": "turn-minus",
+      "phase": "final",
+      "whole_success": true,
+      "beam_success": true,
+      "physical_only_whole_success": true,
+      "protocol_complete": true,
+      "error": null,
+      "phase_at_end": "FINISHED",
+      "obstacle_contact_steps": 0,
+      "weld_steps": 0,
+      "beam_displacement_m": 1.6813965859680864,
+      "carry_window": [
+        207.65999999681748,
+        291.2599999948453
+      ],
+      "carry_entered": true,
+      "prerequisite_failure": false,
+      "carry_decisions": 0,
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/teacher/turn-minus",
+      "source_sha": "92b984e9d518fbdd878d0e1260b527cb5aad6a1a",
+      "carry_sim_s": 83.59999999802784,
+      "arrival_declared": false,
+      "file_hashes": {
+        "result.json": "2cb782202ca526f0d4f21e9dc40edb0fa399adade09f609a01be199fcba913a1",
+        "issued-commands.json": "aeb25c2995b0188983d842f2e23752e4ceb9ba7390c7bc417e7d350fc3f895ba",
+        "pair-decisions.json": "8de4c11c8fc1e1f6ff666f6559d344e904c41c3b994f51024f7f9ed977daeb3b",
+        "referee-only.jsonl": "e5dcc21efbbc9418290709edcda180191545a4aa4f7c66ff0bf9be6914a7dca0",
+        "episode-setup-only.json": "e85a8b1cc962996280e89cf409ac48446c7b0e969fdad2912b11883870dbdcb5",
+        "execution.mp4": "0bf5b6c25c0fd0726fa4cc84321a7cce631738952d76f13699f81017c57bf351"
+      }
+    },
+    {
+      "condition": "20260918",
+      "case": "turn-minus",
+      "phase": "final",
+      "whole_success": false,
+      "beam_success": false,
+      "physical_only_whole_success": false,
+      "protocol_complete": false,
+      "error": "RuntimeError: ACT carry decision budget exhausted",
+      "phase_at_end": "TRANSIT",
+      "obstacle_contact_steps": 988,
+      "weld_steps": 0,
+      "beam_displacement_m": 1.8309075305888731,
+      "carry_window": [
+        207.65999999681748,
+        387.65999999256576
+      ],
+      "carry_entered": true,
+      "prerequisite_failure": false,
+      "carry_decisions": 900,
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260918/turn-minus",
+      "source_sha": "92b984e9d518fbdd878d0e1260b527cb5aad6a1a",
+      "carry_sim_s": 179.99999999574828,
+      "arrival_declared": false,
+      "last_stop_scores": {
+        "r1": 0.005919734016060829,
+        "r3": 0.0
+      },
+      "file_hashes": {
+        "result.json": "468b73afd65bc615cc41a418a873e7f2f662c90221cc5099eb8ce6eee6b4d5fa",
+        "issued-commands.json": "8d2de739a624459ad88ed278b4f9a9af25dbae661b377654f7d3a49124bbf741",
+        "pair-decisions.json": "355fc51bc4ffefde143ffc844e04535930df09f58b3f1b6592cd00ae93f54e5b",
+        "referee-only.jsonl": "a8803ae1729c9627bd68aa5fde5545d8de979bba5ff740129df7a09e4856c13c",
+        "episode-setup-only.json": "e85a8b1cc962996280e89cf409ac48446c7b0e969fdad2912b11883870dbdcb5",
+        "execution.mp4": "dd567cbed68a729ae64e8d7131a996454a9e64b643a100fa33b97cdb8f2a5bc7"
+      }
+    },
+    {
+      "condition": "teacher",
+      "case": "turn-plus",
+      "phase": "final",
+      "whole_success": false,
+      "beam_success": false,
+      "physical_only_whole_success": false,
+      "protocol_complete": false,
+      "error": "RuntimeError: fine docking outside saved support",
+      "phase_at_end": "APPROACH",
+      "obstacle_contact_steps": 0,
+      "weld_steps": 0,
+      "beam_displacement_m": 0.0,
+      "carry_window": null,
+      "carry_entered": false,
+      "prerequisite_failure": true,
+      "carry_decisions": 0,
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/teacher/turn-plus",
+      "source_sha": "92b984e9d518fbdd878d0e1260b527cb5aad6a1a",
+      "arrival_declared": false,
+      "file_hashes": {
+        "result.json": "3a1c9c2a4487da966b9487ee620ef72a3563b1b072acc32c034e7ca0e6de4bf1",
+        "issued-commands.json": "152f7783a54d3aad5563e49a7bc28409f627581437a9e3efd64e3c082f4f4e7e",
+        "pair-decisions.json": "704bc83bb80f19a5a09fc1b6c304ac06a81f318a9480fe97fa53cf4cd78162cf",
+        "referee-only.jsonl": "95bf58126860673306503afb30d95b01618c09bb1429af3416be663a021e5c6c",
+        "episode-setup-only.json": "3307d6117a5c1c2cff3d28f561f5a857ae043d52e67a7e548565559201ccf5c0",
+        "execution.mp4": "c6fc189bb9ecbc76767e0f79c0bc0f156811ee4eee1c1c7b896ff2ee9768385f"
+      }
+    },
+    {
+      "condition": "20260919",
+      "case": "turn-minus",
+      "phase": "final",
+      "whole_success": false,
+      "beam_success": false,
+      "physical_only_whole_success": false,
+      "protocol_complete": false,
+      "error": "RuntimeError: ACT carry decision budget exhausted",
+      "phase_at_end": "TRANSIT",
+      "obstacle_contact_steps": 439366,
+      "weld_steps": 0,
+      "beam_displacement_m": 2.342851100637445,
+      "carry_window": [
+        207.65999999681748,
+        387.65999999256576
+      ],
+      "carry_entered": true,
+      "prerequisite_failure": false,
+      "carry_decisions": 900,
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260919/turn-minus",
+      "source_sha": "92b984e9d518fbdd878d0e1260b527cb5aad6a1a",
+      "carry_sim_s": 179.99999999574828,
+      "arrival_declared": false,
+      "last_stop_scores": {
+        "r1": 0.0020179003477096558,
+        "r3": 0.016420230269432068
+      },
+      "file_hashes": {
+        "result.json": "ccc36df7c550243bcdb372c15849858c31d7733a03176985e8978207ffe63035",
+        "issued-commands.json": "751afe678bf9abc3996dc27e694c9fd8b1833421919d4da039755fefe081a4aa",
+        "pair-decisions.json": "42c7c1dc1ddc8800a35521e824ba320f3701b606a7e31522c55f8add0a276cdb",
+        "referee-only.jsonl": "641448bfbab690da77e3ec4faaf75c90b0312347aced8f9300df51de6670286f",
+        "episode-setup-only.json": "e85a8b1cc962996280e89cf409ac48446c7b0e969fdad2912b11883870dbdcb5",
+        "execution.mp4": "f3833063a8ad863d801d413432c223939cf6ea972866b1dea9c56e0280dedf31"
+      }
+    },
+    {
+      "condition": "20260918",
+      "case": "turn-plus",
+      "phase": "final",
+      "whole_success": false,
+      "beam_success": false,
+      "physical_only_whole_success": false,
+      "protocol_complete": false,
+      "error": "RuntimeError: fine docking outside saved support",
+      "phase_at_end": "APPROACH",
+      "obstacle_contact_steps": 0,
+      "weld_steps": 0,
+      "beam_displacement_m": 0.0,
+      "carry_window": null,
+      "carry_entered": false,
+      "prerequisite_failure": true,
+      "carry_decisions": 0,
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260918/turn-plus",
+      "source_sha": "92b984e9d518fbdd878d0e1260b527cb5aad6a1a",
+      "arrival_declared": false,
+      "file_hashes": {
+        "result.json": "71dc7ee6ee17499867e2d08d7d0343cd5f62b1ffd77fec6ac77f089f7d0a110a",
+        "issued-commands.json": "152f7783a54d3aad5563e49a7bc28409f627581437a9e3efd64e3c082f4f4e7e",
+        "pair-decisions.json": "704bc83bb80f19a5a09fc1b6c304ac06a81f318a9480fe97fa53cf4cd78162cf",
+        "referee-only.jsonl": "95bf58126860673306503afb30d95b01618c09bb1429af3416be663a021e5c6c",
+        "episode-setup-only.json": "3307d6117a5c1c2cff3d28f561f5a857ae043d52e67a7e548565559201ccf5c0",
+        "execution.mp4": "c6fc189bb9ecbc76767e0f79c0bc0f156811ee4eee1c1c7b896ff2ee9768385f"
+      }
+    },
+    {
+      "condition": "20260919",
+      "case": "turn-plus",
+      "phase": "final",
+      "whole_success": false,
+      "beam_success": false,
+      "physical_only_whole_success": false,
+      "protocol_complete": false,
+      "error": "RuntimeError: fine docking outside saved support",
+      "phase_at_end": "APPROACH",
+      "obstacle_contact_steps": 0,
+      "weld_steps": 0,
+      "beam_displacement_m": 0.0,
+      "carry_window": null,
+      "carry_entered": false,
+      "prerequisite_failure": true,
+      "carry_decisions": 0,
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260919/turn-plus",
+      "source_sha": "92b984e9d518fbdd878d0e1260b527cb5aad6a1a",
+      "arrival_declared": false,
+      "file_hashes": {
+        "result.json": "5cf936351f0db32c801e2d9f9d7a4eeebaf9e8e47a83f23f2528edf83f940a68",
+        "issued-commands.json": "152f7783a54d3aad5563e49a7bc28409f627581437a9e3efd64e3c082f4f4e7e",
+        "pair-decisions.json": "704bc83bb80f19a5a09fc1b6c304ac06a81f318a9480fe97fa53cf4cd78162cf",
+        "referee-only.jsonl": "95bf58126860673306503afb30d95b01618c09bb1429af3416be663a021e5c6c",
+        "episode-setup-only.json": "3307d6117a5c1c2cff3d28f561f5a857ae043d52e67a7e548565559201ccf5c0",
+        "execution.mp4": "c6fc189bb9ecbc76767e0f79c0bc0f156811ee4eee1c1c7b896ff2ee9768385f"
+      }
+    }
+  ],
+  "initial_pairs_verified": 4,
+  "carry_entry": {
+    "open-minus": {
+      "20260918": {
+        "referee_at_entry": {
+          "sim_time_s": 59.50025000019309,
+          "robots": {
+            "r1": [
+              -0.1805971970866132,
+              -1.3263535871507888,
+              0.03234468224882143
+            ],
+            "r2": [
+              -0.33679896137513615,
+              -2.6892101511100126,
+              0.03235511627687886
+            ],
+            "r3": [
+              -0.18023647032308984,
+              -1.9743056466283604,
+              0.03234434003614896
+            ]
+          },
+          "weld": false,
+          "cargo": {
+            "beam": {
+              "position": [
+                -0.18024339342615647,
+                -1.6519569520920745,
+                0.09735166648979719
+              ],
+              "corners": [
+                [
+                  -0.2051104315079165,
+                  -1.8770087470653576,
+                  0.0777731068812973
+                ],
+                [
+                  -0.20514032126546405,
+                  -1.8769305312873186,
+                  0.11777301924238202
+                ],
+                [
+                  -0.20534644475068586,
+                  -1.4270096696055015,
+                  0.07689300289453878
+                ],
+                [
+                  -0.20537633450823342,
+                  -1.4269314538274624,
+                  0.11689291525562351
+                ],
+                [
+                  -0.15511045234407952,
+                  -1.8769824503566865,
+                  0.07781041772397088
+                ],
+                [
+                  -0.15514034210162708,
+                  -1.8769042345786475,
+                  0.1178103300850556
+                ],
+                [
+                  -0.1553464655868489,
+                  -1.4269833728968304,
+                  0.07693031373721236
+                ],
+                [
+                  -0.15537635534439645,
+                  -1.4269051571187914,
+                  0.11693022609829709
+                ]
+              ],
+              "robot_contact": true,
+              "floor_contact": false
+            },
+            "box": {
+              "position": [
+                -0.18,
+                -2.65,
+                0.015892244568126206
+              ],
+              "corners": [
+                [
+                  -0.197,
+                  -2.67,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.197,
+                  -2.67,
+                  0.031892244568126206
+                ],
+                [
+                  -0.197,
+                  -2.63,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.197,
+                  -2.63,
+                  0.031892244568126206
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.67,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.67,
+                  0.031892244568126206
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.63,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.63,
+                  0.031892244568126206
+                ]
+              ],
+              "robot_contact": false,
+              "floor_contact": true
+            }
+          }
+        },
+        "rgb_sha256": {
+          "r1": {
+            "own": "d33bcb4487d3d55a3da0440a52a59a8d3452d80f0b5903f3cd21f1aacc5893dc",
+            "top": "c0334c58862748897ccf2898dcc7ec291d2d947e129e3703103996fd24ab88ab"
+          },
+          "r3": {
+            "own": "6a2aa914717254ceb60e3a031d2057847ac2d903dddc95047fcd89adb54557f3",
+            "top": "c0334c58862748897ccf2898dcc7ec291d2d947e129e3703103996fd24ab88ab"
+          }
+        }
+      },
+      "teacher": {
+        "referee_at_entry": {
+          "sim_time_s": 59.50025000019309,
+          "robots": {
+            "r1": [
+              -0.18060621802758756,
+              -1.326344317062187,
+              0.03234470486940478
+            ],
+            "r2": [
+              -0.33679896137513615,
+              -2.6892101511100126,
+              0.03235511627687886
+            ],
+            "r3": [
+              -0.18024529197019812,
+              -1.9742990352783387,
+              0.03234436018459584
+            ]
+          },
+          "weld": false,
+          "cargo": {
+            "beam": {
+              "position": [
+                -0.1802503764595484,
+                -1.6519515323545666,
+                0.09735011264486111
+              ],
+              "corners": [
+                [
+                  -0.20511735258541253,
+                  -1.877003554334483,
+                  0.07777408390799055
+                ],
+                [
+                  -0.2051472207548422,
+                  -1.8769248911262704,
+                  0.1177739954077942
+                ],
+                [
+                  -0.20535351133976637,
+                  -1.4270044868237313,
+                  0.07688894635029929
+                ],
+                [
+                  -0.20538337950919608,
+                  -1.4269258236155187,
+                  0.11688885785010293
+                ],
+                [
+                  -0.1551173734099007,
+                  -1.8769772410936145,
+                  0.07781136743961929
+                ],
+                [
+                  -0.1551472415793304,
+                  -1.876898577885402,
+                  0.11781127893942293
+                ],
+                [
+                  -0.15535353216425457,
+                  -1.4269781735828628,
+                  0.07692622988192803
+                ],
+                [
+                  -0.15538340033368425,
+                  -1.4268995103746502,
+                  0.11692614138173167
+                ]
+              ],
+              "robot_contact": true,
+              "floor_contact": false
+            },
+            "box": {
+              "position": [
+                -0.18,
+                -2.65,
+                0.015892244568126206
+              ],
+              "corners": [
+                [
+                  -0.197,
+                  -2.67,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.197,
+                  -2.67,
+                  0.031892244568126206
+                ],
+                [
+                  -0.197,
+                  -2.63,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.197,
+                  -2.63,
+                  0.031892244568126206
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.67,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.67,
+                  0.031892244568126206
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.63,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.63,
+                  0.031892244568126206
+                ]
+              ],
+              "robot_contact": false,
+              "floor_contact": true
+            }
+          }
+        },
+        "rgb_sha256": {
+          "r1": {
+            "own": "d33bcb4487d3d55a3da0440a52a59a8d3452d80f0b5903f3cd21f1aacc5893dc",
+            "top": "c0334c58862748897ccf2898dcc7ec291d2d947e129e3703103996fd24ab88ab"
+          },
+          "r3": {
+            "own": "6a2aa914717254ceb60e3a031d2057847ac2d903dddc95047fcd89adb54557f3",
+            "top": "c0334c58862748897ccf2898dcc7ec291d2d947e129e3703103996fd24ab88ab"
+          }
+        }
+      },
+      "20260919": {
+        "referee_at_entry": {
+          "sim_time_s": 59.50025000019309,
+          "robots": {
+            "r1": [
+              -0.18058941813804338,
+              -1.3263558311275094,
+              0.03234468007525622
+            ],
+            "r2": [
+              -0.33679896137513615,
+              -2.6892101511100126,
+              0.03235511627687886
+            ],
+            "r3": [
+              -0.18023124072410715,
+              -1.9743073618435933,
+              0.032344340989886554
+            ]
+          },
+          "weld": false,
+          "cargo": {
+            "beam": {
+              "position": [
+                -0.18023835037408262,
+                -1.6519583072770025,
+                0.0973519753640372
+              ],
+              "corners": [
+                [
+                  -0.20510618365099653,
+                  -1.8770099591800984,
+                  0.07777278120801222
+                ],
+                [
+                  -0.2051360908597586,
+                  -1.876931854118391,
+                  0.11777269377239413
+                ],
+                [
+                  -0.20534058912931163,
+                  -1.4270108784434108,
+                  0.07689392387735808
+                ],
+                [
+                  -0.2053704963380737,
+                  -1.4269327733817034,
+                  0.11689383644173999
+                ],
+                [
+                  -0.15510620441009154,
+                  -1.8769838411723017,
+                  0.0778101142863344
+                ],
+                [
+                  -0.1551361116188536,
+                  -1.8769057361105943,
+                  0.11781002685071632
+                ],
+                [
+                  -0.15534060988840664,
+                  -1.426984760435614,
+                  0.07693125695568026
+                ],
+                [
+                  -0.1553705170971687,
+                  -1.4269066553739067,
+                  0.11693116952006218
+                ]
+              ],
+              "robot_contact": true,
+              "floor_contact": false
+            },
+            "box": {
+              "position": [
+                -0.18,
+                -2.65,
+                0.015892244568126206
+              ],
+              "corners": [
+                [
+                  -0.197,
+                  -2.67,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.197,
+                  -2.67,
+                  0.031892244568126206
+                ],
+                [
+                  -0.197,
+                  -2.63,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.197,
+                  -2.63,
+                  0.031892244568126206
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.67,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.67,
+                  0.031892244568126206
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.63,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.63,
+                  0.031892244568126206
+                ]
+              ],
+              "robot_contact": false,
+              "floor_contact": true
+            }
+          }
+        },
+        "rgb_sha256": {
+          "r1": {
+            "own": "d33bcb4487d3d55a3da0440a52a59a8d3452d80f0b5903f3cd21f1aacc5893dc",
+            "top": "c0334c58862748897ccf2898dcc7ec291d2d947e129e3703103996fd24ab88ab"
+          },
+          "r3": {
+            "own": "6a2aa914717254ceb60e3a031d2057847ac2d903dddc95047fcd89adb54557f3",
+            "top": "c0334c58862748897ccf2898dcc7ec291d2d947e129e3703103996fd24ab88ab"
+          }
+        }
+      }
+    },
+    "open-plus": {
+      "teacher": {
+        "referee_at_entry": {
+          "sim_time_s": 60.30025000019691,
+          "robots": {
+            "r1": [
+              -0.18035867646471393,
+              -1.3259933152493704,
+              0.03234473472404735
+            ],
+            "r2": [
+              -0.33620609162195386,
+              -2.6914104821832563,
+              0.03235511627907084
+            ],
+            "r3": [
+              -0.18071815146506542,
+              -1.9740842576240307,
+              0.032344332054014484
+            ]
+          },
+          "weld": false,
+          "cargo": {
+            "beam": {
+              "position": [
+                -0.18031738709373943,
+                -1.6520472348541362,
+                0.09737743649668668
+              ],
+              "corners": [
+                [
+                  -0.2054178442091011,
+                  -1.8770793359728428,
+                  0.07787050135299778
+                ],
+                [
+                  -0.20545608033930082,
+                  -1.8769874168413214,
+                  0.11787037746370102
+                ],
+                [
+                  -0.20517866394177595,
+                  -1.427080587172001,
+                  0.07683663942969646
+                ],
+                [
+                  -0.20521690007197566,
+                  -1.4269886680404795,
+                  0.1168365155403997
+                ],
+                [
+                  -0.1554178741155032,
+                  -1.8771058016677928,
+                  0.07791835745297365
+                ],
+                [
+                  -0.1554561102457029,
+                  -1.8770138825362714,
+                  0.1179182335636769
+                ],
+                [
+                  -0.15517869384817803,
+                  -1.427107052866951,
+                  0.07688449552967233
+                ],
+                [
+                  -0.15521692997837774,
+                  -1.4270151337354295,
+                  0.11688437164037557
+                ]
+              ],
+              "robot_contact": true,
+              "floor_contact": false
+            },
+            "box": {
+              "position": [
+                -0.18,
+                -2.65,
+                0.015892244568126206
+              ],
+              "corners": [
+                [
+                  -0.197,
+                  -2.67,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.197,
+                  -2.67,
+                  0.031892244568126206
+                ],
+                [
+                  -0.197,
+                  -2.63,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.197,
+                  -2.63,
+                  0.031892244568126206
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.67,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.67,
+                  0.031892244568126206
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.63,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.63,
+                  0.031892244568126206
+                ]
+              ],
+              "robot_contact": false,
+              "floor_contact": true
+            }
+          }
+        },
+        "rgb_sha256": {
+          "r1": {
+            "own": "b2114529a102293b3f1631d5ab09736519ace3188797875906079be2003fb7bd",
+            "top": "0e342ce6e8b52fe758579d1b350b9fec5587973954c970e23b6d33b44bd02102"
+          },
+          "r3": {
+            "own": "5dfa855e19900db9a1a5f948977efb3be76318d444e1cb49a83ce7aaf1975e74",
+            "top": "0e342ce6e8b52fe758579d1b350b9fec5587973954c970e23b6d33b44bd02102"
+          }
+        }
+      },
+      "20260918": {
+        "referee_at_entry": {
+          "sim_time_s": 60.30025000019691,
+          "robots": {
+            "r1": [
+              -0.18034889912999022,
+              -1.3260027651740451,
+              0.03234471151208051
+            ],
+            "r2": [
+              -0.33620609162195386,
+              -2.6914104821832563,
+              0.03235511627907084
+            ],
+            "r3": [
+              -0.1807091065362125,
+              -1.9740907453585252,
+              0.03234431168704973
+            ]
+          },
+          "weld": false,
+          "cargo": {
+            "beam": {
+              "position": [
+                -0.18031001565436353,
+                -1.6520526585822335,
+                0.0973791617432203
+              ],
+              "corners": [
+                [
+                  -0.2054107146286259,
+                  -1.877084512448619,
+                  0.07786968567487793
+                ],
+                [
+                  -0.20544897376858184,
+                  -1.8769930423503636,
+                  0.11786956279293087
+                ],
+                [
+                  -0.20517102757628014,
+                  -1.427085752338361,
+                  0.07684087599978393
+                ],
+                [
+                  -0.20520928671623606,
+                  -1.4269942822401056,
+                  0.11684075311783687
+                ],
+                [
+                  -0.155410744592491,
+                  -1.8771110349243614,
+                  0.07791757036860372
+                ],
+                [
+                  -0.1554490037324469,
+                  -1.8770195648261059,
+                  0.11791744748665667
+                ],
+                [
+                  -0.1551710575401452,
+                  -1.4271122748141034,
+                  0.07688876069350972
+                ],
+                [
+                  -0.15520931668010116,
+                  -1.427020804715848,
+                  0.11688863781156267
+                ]
+              ],
+              "robot_contact": true,
+              "floor_contact": false
+            },
+            "box": {
+              "position": [
+                -0.18,
+                -2.65,
+                0.015892244568126206
+              ],
+              "corners": [
+                [
+                  -0.197,
+                  -2.67,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.197,
+                  -2.67,
+                  0.031892244568126206
+                ],
+                [
+                  -0.197,
+                  -2.63,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.197,
+                  -2.63,
+                  0.031892244568126206
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.67,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.67,
+                  0.031892244568126206
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.63,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.63,
+                  0.031892244568126206
+                ]
+              ],
+              "robot_contact": false,
+              "floor_contact": true
+            }
+          }
+        },
+        "rgb_sha256": {
+          "r1": {
+            "own": "b2114529a102293b3f1631d5ab09736519ace3188797875906079be2003fb7bd",
+            "top": "0e342ce6e8b52fe758579d1b350b9fec5587973954c970e23b6d33b44bd02102"
+          },
+          "r3": {
+            "own": "5dfa855e19900db9a1a5f948977efb3be76318d444e1cb49a83ce7aaf1975e74",
+            "top": "0e342ce6e8b52fe758579d1b350b9fec5587973954c970e23b6d33b44bd02102"
+          }
+        }
+      },
+      "20260919": {
+        "referee_at_entry": {
+          "sim_time_s": 60.30025000019691,
+          "robots": {
+            "r1": [
+              -0.18034112923437862,
+              -1.3260048544721872,
+              0.03234470995512931
+            ],
+            "r2": [
+              -0.33620609162195386,
+              -2.6914104821832563,
+              0.03235511627907084
+            ],
+            "r3": [
+              -0.1807037955990875,
+              -1.974092475180878,
+              0.03234431271244555
+            ]
+          },
+          "weld": false,
+          "cargo": {
+            "beam": {
+              "position": [
+                -0.18030494697704597,
+                -1.652053963415316,
+                0.09737936684228884
+              ],
+              "corners": [
+                [
+                  -0.2054064120892939,
+                  -1.8770856786061219,
+                  0.07786927695262899
+                ],
+                [
+                  -0.20544468885764425,
+                  -1.8769943154826683,
+                  0.11786915429829942
+                ],
+                [
+                  -0.20516517501947146,
+                  -1.4270869165706852,
+                  0.0768416723347656
+                ],
+                [
+                  -0.2052034517878218,
+                  -1.4269955534472316,
+                  0.11684154968043603
+                ],
+                [
+                  -0.15540644216627014,
+                  -1.8771123733834003,
+                  0.07791718400414166
+                ],
+                [
+                  -0.15544471893462047,
+                  -1.8770210102599467,
+                  0.11791706134981209
+                ],
+                [
+                  -0.15516520509644768,
+                  -1.4271136113479637,
+                  0.07688957938627827
+                ],
+                [
+                  -0.15520348186479804,
+                  -1.42702224822451,
+                  0.1168894567319487
+                ]
+              ],
+              "robot_contact": true,
+              "floor_contact": false
+            },
+            "box": {
+              "position": [
+                -0.18,
+                -2.65,
+                0.015892244568126206
+              ],
+              "corners": [
+                [
+                  -0.197,
+                  -2.67,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.197,
+                  -2.67,
+                  0.031892244568126206
+                ],
+                [
+                  -0.197,
+                  -2.63,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.197,
+                  -2.63,
+                  0.031892244568126206
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.67,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.67,
+                  0.031892244568126206
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.63,
+                  -0.00010775543187379472
+                ],
+                [
+                  -0.16299999999999998,
+                  -2.63,
+                  0.031892244568126206
+                ]
+              ],
+              "robot_contact": false,
+              "floor_contact": true
+            }
+          }
+        },
+        "rgb_sha256": {
+          "r1": {
+            "own": "b2114529a102293b3f1631d5ab09736519ace3188797875906079be2003fb7bd",
+            "top": "0e342ce6e8b52fe758579d1b350b9fec5587973954c970e23b6d33b44bd02102"
+          },
+          "r3": {
+            "own": "5dfa855e19900db9a1a5f948977efb3be76318d444e1cb49a83ce7aaf1975e74",
+            "top": "0e342ce6e8b52fe758579d1b350b9fec5587973954c970e23b6d33b44bd02102"
+          }
+        }
+      }
+    },
+    "turn-minus": {
+      "teacher": {
+        "referee_at_entry": {
+          "sim_time_s": 207.70024999681652,
+          "robots": {
+            "r1": [
+              -0.18013147797371235,
+              -1.325143409713292,
+              0.03234441616836113
+            ],
+            "r2": [
+              1.9159251978860086,
+              -1.993228818771267,
+              0.03235512084546976
+            ],
+            "r3": [
+              -0.17971900618741418,
+              -1.9755463654075145,
+              0.03234456882491612
+            ]
+          },
+          "weld": false,
+          "cargo": {
+            "beam": {
+              "position": [
+                -0.1799553376028721,
+                -1.6493145550848252,
+                0.09693009537256309
+              ],
+              "corners": [
+                [
+                  -0.2048238733439117,
+                  -1.8743236981686189,
+                  0.07686915175583663
+                ],
+                [
+                  -0.2048196391424124,
+                  -1.8743349999606254,
+                  0.11686914993509953
+                ],
+                [
+                  -0.20509102697195666,
+                  -1.424323795439895,
+                  0.0769963251737713
+                ],
+                [
+                  -0.20508679277045738,
+                  -1.4243350972319015,
+                  0.1169963233530342
+                ],
+                [
+                  -0.15482388243528683,
+                  -1.8742940129377488,
+                  0.07686386739209197
+                ],
+                [
+                  -0.15481964823378755,
+                  -1.8743053147297553,
+                  0.11686386557135488
+                ],
+                [
+                  -0.1550910360633318,
+                  -1.424294110209025,
+                  0.07699104081002664
+                ],
+                [
+                  -0.15508680186183252,
+                  -1.4243054120010314,
+                  0.11699103898928954
+                ]
+              ],
+              "robot_contact": true,
+              "floor_contact": false
+            },
+            "box": {
+              "position": [
+                1.7703277376508033,
+                -1.4210674950730695,
+                0.01589224457978404
+              ],
+              "corners": [
+                [
+                  1.7560821992572402,
+                  -1.4431143687291013,
+                  -0.00010775535373118775
+                ],
+                [
+                  1.7560821993813598,
+                  -1.4431143687128014,
+                  0.03189224464626878
+                ],
+                [
+                  1.7508638488721067,
+                  -1.4034562192607012,
+                  -0.00010775535369132033
+                ],
+                [
+                  1.7508638489962263,
+                  -1.4034562192444011,
+                  0.031892244646308646
+                ],
+                [
+                  1.7897916263053804,
+                  -1.438678770901738,
+                  -0.00010775548674056903
+                ],
+                [
+                  1.7897916264295,
+                  -1.4386787708854378,
+                  0.0318922445132594
+                ],
+                [
+                  1.7845732759202468,
+                  -1.3990206214333376,
+                  -0.00010775548670070162
+                ],
+                [
+                  1.7845732760443664,
+                  -1.3990206214170378,
+                  0.031892244513299264
+                ]
+              ],
+              "robot_contact": false,
+              "floor_contact": true
+            }
+          }
+        },
+        "rgb_sha256": {
+          "r1": {
+            "own": "4fea476d63c06f8e69b88fd8a1e712e49332c691df5ff20fb5a6607e43665259",
+            "top": "ed2e35128de3aa3a01a0dedb1ce5718f85986db60e7b3106c26ee2845935a485"
+          },
+          "r3": {
+            "own": "b181666e9531a0c373230f0d4edea3070adc857031be5c47768246c03e3fa629",
+            "top": "ed2e35128de3aa3a01a0dedb1ce5718f85986db60e7b3106c26ee2845935a485"
+          }
+        }
+      },
+      "20260918": {
+        "referee_at_entry": {
+          "sim_time_s": 207.70024999681652,
+          "robots": {
+            "r1": [
+              -0.18013683625311203,
+              -1.325143755049321,
+              0.032344415319911494
+            ],
+            "r2": [
+              1.9159251978860086,
+              -1.993228818771267,
+              0.03235512084546976
+            ],
+            "r3": [
+              -0.1797237612496291,
+              -1.975547116953907,
+              0.03234456912571244
+            ]
+          },
+          "weld": false,
+          "cargo": {
+            "beam": {
+              "position": [
+                -0.17995925739387356,
+                -1.649314931300638,
+                0.09692984152057092
+              ],
+              "corners": [
+                [
+                  -0.2048276126861229,
+                  -1.8743240797833929,
+                  0.07686873476835149
+                ],
+                [
+                  -0.20482336459789954,
+                  -1.8743354121062978,
+                  0.11686873293750394
+                ],
+                [
+                  -0.20509514107189405,
+                  -1.4243241773745468,
+                  0.07699625179132649
+                ],
+                [
+                  -0.2050908929836707,
+                  -1.4243355096974517,
+                  0.11699624996047894
+                ],
+                [
+                  -0.15482762180407642,
+                  -1.8742943529038245,
+                  0.0768634330806629
+                ],
+                [
+                  -0.15482337371585306,
+                  -1.8743056852267295,
+                  0.11686343124981535
+                ],
+                [
+                  -0.15509515018984757,
+                  -1.4242944504949784,
+                  0.0769909501036379
+                ],
+                [
+                  -0.1550909021016242,
+                  -1.4243057828178833,
+                  0.11699094827279036
+                ]
+              ],
+              "robot_contact": true,
+              "floor_contact": false
+            },
+            "box": {
+              "position": [
+                1.7703277376508033,
+                -1.4210674950730695,
+                0.01589224457978404
+              ],
+              "corners": [
+                [
+                  1.7560821992572402,
+                  -1.4431143687291013,
+                  -0.00010775535373118775
+                ],
+                [
+                  1.7560821993813598,
+                  -1.4431143687128014,
+                  0.03189224464626878
+                ],
+                [
+                  1.7508638488721067,
+                  -1.4034562192607012,
+                  -0.00010775535369132033
+                ],
+                [
+                  1.7508638489962263,
+                  -1.4034562192444011,
+                  0.031892244646308646
+                ],
+                [
+                  1.7897916263053804,
+                  -1.438678770901738,
+                  -0.00010775548674056903
+                ],
+                [
+                  1.7897916264295,
+                  -1.4386787708854378,
+                  0.0318922445132594
+                ],
+                [
+                  1.7845732759202468,
+                  -1.3990206214333376,
+                  -0.00010775548670070162
+                ],
+                [
+                  1.7845732760443664,
+                  -1.3990206214170378,
+                  0.031892244513299264
+                ]
+              ],
+              "robot_contact": false,
+              "floor_contact": true
+            }
+          }
+        },
+        "rgb_sha256": {
+          "r1": {
+            "own": "4fea476d63c06f8e69b88fd8a1e712e49332c691df5ff20fb5a6607e43665259",
+            "top": "ed2e35128de3aa3a01a0dedb1ce5718f85986db60e7b3106c26ee2845935a485"
+          },
+          "r3": {
+            "own": "b181666e9531a0c373230f0d4edea3070adc857031be5c47768246c03e3fa629",
+            "top": "ed2e35128de3aa3a01a0dedb1ce5718f85986db60e7b3106c26ee2845935a485"
+          }
+        }
+      },
+      "20260919": {
+        "referee_at_entry": {
+          "sim_time_s": 207.70024999681652,
+          "robots": {
+            "r1": [
+              -0.1801395977336595,
+              -1.3251434521376337,
+              0.03234441450463089
+            ],
+            "r2": [
+              1.9159251978860086,
+              -1.993228818771267,
+              0.03235512084546976
+            ],
+            "r3": [
+              -0.17972740916041371,
+              -1.9755462231305307,
+              0.032344567261810404
+            ]
+          },
+          "weld": false,
+          "cargo": {
+            "beam": {
+              "position": [
+                -0.1799617447408698,
+                -1.6493145178671367,
+                0.09693018005405997
+              ],
+              "corners": [
+                [
+                  -0.20483035944663122,
+                  -1.8743236548505715,
+                  0.0768692659027476
+                ],
+                [
+                  -0.20482610219266578,
+                  -1.8743349539539575,
+                  0.11686926408032325
+                ],
+                [
+                  -0.2050973782035345,
+                  -1.4243237520332905,
+                  0.07699640921334719
+                ],
+                [
+                  -0.20509312094956905,
+                  -1.4243350511366766,
+                  0.11699640739092282
+                ],
+                [
+                  -0.15483036853217053,
+                  -1.8742939845975968,
+                  0.07686395271719712
+                ],
+                [
+                  -0.1548261112782051,
+                  -1.8743052837009828,
+                  0.11686395089477275
+                ],
+                [
+                  -0.1550973872890738,
+                  -1.4242940817803158,
+                  0.07699109602779669
+                ],
+                [
+                  -0.15509313003510836,
+                  -1.4243053808837018,
+                  0.11699109420537233
+                ]
+              ],
+              "robot_contact": true,
+              "floor_contact": false
+            },
+            "box": {
+              "position": [
+                1.7703277376508033,
+                -1.4210674950730695,
+                0.01589224457978404
+              ],
+              "corners": [
+                [
+                  1.7560821992572402,
+                  -1.4431143687291013,
+                  -0.00010775535373118775
+                ],
+                [
+                  1.7560821993813598,
+                  -1.4431143687128014,
+                  0.03189224464626878
+                ],
+                [
+                  1.7508638488721067,
+                  -1.4034562192607012,
+                  -0.00010775535369132033
+                ],
+                [
+                  1.7508638489962263,
+                  -1.4034562192444011,
+                  0.031892244646308646
+                ],
+                [
+                  1.7897916263053804,
+                  -1.438678770901738,
+                  -0.00010775548674056903
+                ],
+                [
+                  1.7897916264295,
+                  -1.4386787708854378,
+                  0.0318922445132594
+                ],
+                [
+                  1.7845732759202468,
+                  -1.3990206214333376,
+                  -0.00010775548670070162
+                ],
+                [
+                  1.7845732760443664,
+                  -1.3990206214170378,
+                  0.031892244513299264
+                ]
+              ],
+              "robot_contact": false,
+              "floor_contact": true
+            }
+          }
+        },
+        "rgb_sha256": {
+          "r1": {
+            "own": "4fea476d63c06f8e69b88fd8a1e712e49332c691df5ff20fb5a6607e43665259",
+            "top": "ed2e35128de3aa3a01a0dedb1ce5718f85986db60e7b3106c26ee2845935a485"
+          },
+          "r3": {
+            "own": "b181666e9531a0c373230f0d4edea3070adc857031be5c47768246c03e3fa629",
+            "top": "ed2e35128de3aa3a01a0dedb1ce5718f85986db60e7b3106c26ee2845935a485"
+          }
+        }
+      }
+    },
+    "turn-plus": {
+      "teacher": {
+        "referee_at_entry": null
+      },
+      "20260918": {
+        "referee_at_entry": null
+      },
+      "20260919": {
+        "referee_at_entry": null
+      }
+    }
+  },
+  "image_references_verified": 13560,
+  "wire_requests_verified": 6780,
+  "native_decisions_replayed": 164,
+  "training": {
+    "20260918": {
+      "seed": 20260918,
+      "steps": 8000,
+      "samples": 3590,
+      "groups": {
+        "0": 558,
+        "1": 1828,
+        "2": 1192,
+        "3": 12
+      },
+      "selected": {
+        "step": 7500,
+        "loss": 0.040993429720401764,
+        "development": {
+          "missed_done_rate": 0.0,
+          "false_done_rate": 0.016666666666666666,
+          "group_normalized_mae": {
+            "0": 0.02890214817136983,
+            "1": 0.057333979506179626,
+            "2": 0.08176447224802987,
+            "3": 0.02399247876989345
+          },
+          "selection_score": 0.06466493634053486,
+          "samples": 1084,
+          "done_samples": 4
+        },
+        "elapsed_s": 277.08314837499347
+      },
+      "train_metrics": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.011179429849077696,
+        "group_normalized_mae": {
+          "0": 0.03197769397863305,
+          "1": 0.04077270113081772,
+          "2": 0.03884078111161007,
+          "3": 0.0026722735104461512
+        },
+        "selection_score": 0.03974529228195445,
+        "samples": 3590,
+        "done_samples": 12
+      },
+      "development_metrics": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.016666666666666666,
+        "group_normalized_mae": {
+          "0": 0.02890214817136983,
+          "1": 0.057333979506179626,
+          "2": 0.08176447224802987,
+          "3": 0.02399247876989345
+        },
+        "selection_score": 0.06466493634053486,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "wall_s": 290.6872583749937,
+      "model_sha256": "ddf79d3577b9d66aa53e16fbe387bbe1039a5ddb0b4cc3caeb7292dc81dcd90e"
+    },
+    "20260919": {
+      "seed": 20260919,
+      "steps": 8000,
+      "samples": 3590,
+      "groups": {
+        "0": 558,
+        "1": 1828,
+        "2": 1192,
+        "3": 12
+      },
+      "selected": {
+        "step": 6500,
+        "loss": 0.030468182638287544,
+        "development": {
+          "missed_done_rate": 0.0,
+          "false_done_rate": 0.014814814814814815,
+          "group_normalized_mae": {
+            "0": 0.028162117662163227,
+            "1": 0.05750283722410586,
+            "2": 0.08051370452035046,
+            "3": 0.02448483183979988
+          },
+          "selection_score": 0.06248068762641967,
+          "samples": 1084,
+          "done_samples": 4
+        },
+        "elapsed_s": 257.4016564159974
+      },
+      "train_metrics": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.010899944102850754,
+        "group_normalized_mae": {
+          "0": 0.0297031929593143,
+          "1": 0.043613588542954704,
+          "2": 0.0420122971525444,
+          "3": 0.005603070681293805
+        },
+        "selection_score": 0.041132981436877554,
+        "samples": 3590,
+        "done_samples": 12
+      },
+      "development_metrics": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.014814814814814815,
+        "group_normalized_mae": {
+          "0": 0.028162117662163227,
+          "1": 0.05750283722410586,
+          "2": 0.08051370452035046,
+          "3": 0.02448483183979988
+        },
+        "selection_score": 0.06248068762641967,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "wall_s": 292.7914548749977,
+      "model_sha256": "0023b1cb3c016c6ea20c7c42f402adf5b39b5df4a99089439833c00323364199"
+    }
+  },
+  "scope": "All final actor wires/context/issued commands and referee outcomes audited; native ACT decisions sampled. Six successful nominal teacher episodes: limited feasibility evidence, no recovery generalization claim."
+}

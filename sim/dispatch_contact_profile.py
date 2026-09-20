@@ -9,15 +9,19 @@ profile, not a calibrated hardware claim. See experiments/dispatch-skill-integra
 from __future__ import annotations
 import xml.etree.ElementTree as ET
 
-PROFILES=('legacy','global_noslip','local_contact')
+PROFILES=('legacy','global_noslip','local_contact','local_contact_fine')
 
 
 def contact_profile(xml,profile):
     if profile not in PROFILES:raise ValueError('unknown contact solver profile')
     root=ET.fromstring(xml)
     if profile=='global_noslip':root.find('option').set('noslip_iterations','4')
-    if profile=='local_contact':
-        root.find('option').set('timestep','.0005')
+    if profile in ('local_contact','local_contact_fine'):
+        # The finer profile doubles tangential damping and resolves its
+        # time scale with half the step. Normal contact and force limits stay
+        # identical; finite soft-contact drift is not an adhesion constraint.
+        fine=profile=='local_contact_fine'
+        root.find('option').set('timestep','.00025' if fine else '.0005')
         contact=root.find('contact')
         if contact is None:contact=ET.SubElement(root,'contact')
         def geom(name):return root.find(f'.//geom[@name="{name}"]')
@@ -48,7 +52,7 @@ def contact_profile(xml,profile):
                         'solimp':' '.join(map(str,mixed('solimp','.9 .95 .001 .5 2'))),
                         # Refine friction damping within the existing Coulomb cone.
                         # The smaller physics step resolves this fast time scale.
-                        'solreffriction':'0 -3000','adhesion':'0',
+                        'solreffriction':'0 -6000' if fine else '0 -3000','adhesion':'0',
                         'margin':str(float(a.get('margin','0'))+float(b.get('margin','0'))),
                         'gap':str(float(a.get('gap','0'))+float(b.get('gap','0')))}
                     ET.SubElement(contact,'pair',**attrs)

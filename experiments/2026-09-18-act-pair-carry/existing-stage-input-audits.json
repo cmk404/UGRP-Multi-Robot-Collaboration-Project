@@ -1,0 +1,481 @@
+{
+  "scope": "Full existing planning request, approach/grasp, solo and teacher carry replay for every final run and the two reused development runs. Native ACT is separately audited in audit.json.",
+  "runs": [
+    {
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open/input-audit.json",
+      "sha256": "3d0bc1e655e5d2eb1ed93824d20f5c3956d459d37292fbbd5c15eb9263ef1f87",
+      "report": {
+        "passed": true,
+        "scope": "saved input reconstruction and exact model prediction replay; not physical success",
+        "run": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open",
+        "planning_requests": 6,
+        "actual_llm_wires": 0,
+        "pair_image_bindings": 340,
+        "learned_approach_predictions": 262,
+        "grasp_predictions": 32,
+        "solo_own_command_observations": 511,
+        "prior_rgb_grasp_anchors_verified": 18,
+        "solo_decision_replay": {
+          "actions_replayed": 511,
+          "source": "archived own RGB + TOP RGB + own command state + recorded resource wait signals",
+          "scope": "controller decision replay; resource ownership checked separately, not physical success"
+        },
+        "yield_replay": {
+          "actions_replayed": 0
+        },
+        "navigation_replay": {
+          "rgb_rotation_decisions_replayed": 0,
+          "source": "archived RGB + authored map + exact plan; no referee input"
+        },
+        "translation_replay": {
+          "rgb_translation_decisions_replayed": 119,
+          "legacy_unreplayed_decisions": 0,
+          "source": "archived current own/TOP RGB, authored map, control clock and report ids; no referee input"
+        }
+      }
+    },
+    {
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-turn/input-audit.json",
+      "sha256": "4bef2e0eef9802c1986bf720c3466124a024a93c9dd2ed02ce94f742748bc00c",
+      "report": {
+        "passed": true,
+        "scope": "saved input reconstruction and exact model prediction replay; not physical success",
+        "run": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-turn",
+        "planning_requests": 6,
+        "actual_llm_wires": 0,
+        "pair_image_bindings": 625,
+        "learned_approach_predictions": 244,
+        "grasp_predictions": 32,
+        "solo_own_command_observations": 385,
+        "prior_rgb_grasp_anchors_verified": 18,
+        "solo_decision_replay": {
+          "actions_replayed": 385,
+          "source": "archived own RGB + TOP RGB + own command state + recorded resource wait signals",
+          "scope": "controller decision replay; resource ownership checked separately, not physical success"
+        },
+        "yield_replay": {
+          "actions_replayed": 131,
+          "visually_cleared_bay": true,
+          "source": "current RGB and authored staging goals; no referee input"
+        },
+        "navigation_replay": {
+          "rgb_rotation_decisions_replayed": 423,
+          "source": "archived RGB + authored map + exact plan; no referee input"
+        },
+        "translation_replay": {
+          "rgb_translation_decisions_replayed": 0,
+          "legacy_unreplayed_decisions": 0,
+          "source": "archived current own/TOP RGB, authored map, control clock and report ids; no referee input"
+        }
+      }
+    },
+    {
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260918/open-minus/input-audit.json",
+      "sha256": "323414dc01ffa7af2e329d7d521e645e1118f62ee68215996c9ac21279c753e9",
+      "report": {
+        "passed": true,
+        "scope": "saved input reconstruction and exact model prediction replay; not physical success",
+        "run": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260918/open-minus",
+        "planning_requests": 6,
+        "actual_llm_wires": 0,
+        "pair_image_bindings": 209,
+        "learned_approach_predictions": 266,
+        "grasp_predictions": 32,
+        "solo_own_command_observations": 493,
+        "prior_rgb_grasp_anchors_verified": 18,
+        "solo_decision_replay": {
+          "actions_replayed": 493,
+          "source": "archived own RGB + TOP RGB + own command state + recorded resource wait signals",
+          "scope": "controller decision replay; resource ownership checked separately, not physical success"
+        },
+        "yield_replay": {
+          "actions_replayed": 0
+        },
+        "navigation_replay": {
+          "rgb_rotation_decisions_replayed": 0,
+          "source": "archived RGB + authored map + exact plan; no referee input"
+        },
+        "translation_replay": {
+          "rgb_translation_decisions_replayed": 0,
+          "legacy_unreplayed_decisions": 0,
+          "source": "archived current own/TOP RGB, authored map, control clock and report ids; no referee input"
+        }
+      }
+    },
+    {
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/teacher/open-minus/input-audit.json",
+      "sha256": "79488910d6c9a10700b631efe6ab8e2a92893e6f7ffa53de5102012945a26d3f",
+      "report": {
+        "passed": true,
+        "scope": "saved input reconstruction and exact model prediction replay; not physical success",
+        "run": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/teacher/open-minus",
+        "planning_requests": 6,
+        "actual_llm_wires": 0,
+        "pair_image_bindings": 329,
+        "learned_approach_predictions": 266,
+        "grasp_predictions": 32,
+        "solo_own_command_observations": 503,
+        "prior_rgb_grasp_anchors_verified": 18,
+        "solo_decision_replay": {
+          "actions_replayed": 503,
+          "source": "archived own RGB + TOP RGB + own command state + recorded resource wait signals",
+          "scope": "controller decision replay; resource ownership checked separately, not physical success"
+        },
+        "yield_replay": {
+          "actions_replayed": 0
+        },
+        "navigation_replay": {
+          "rgb_rotation_decisions_replayed": 0,
+          "source": "archived RGB + authored map + exact plan; no referee input"
+        },
+        "translation_replay": {
+          "rgb_translation_decisions_replayed": 119,
+          "legacy_unreplayed_decisions": 0,
+          "source": "archived current own/TOP RGB, authored map, control clock and report ids; no referee input"
+        }
+      }
+    },
+    {
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/teacher/open-plus/input-audit.json",
+      "sha256": "6813af20fae7ea64e0b62748926a9ae08b28bba99b07008e07743faccd123980",
+      "report": {
+        "passed": true,
+        "scope": "saved input reconstruction and exact model prediction replay; not physical success",
+        "run": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/teacher/open-plus",
+        "planning_requests": 6,
+        "actual_llm_wires": 0,
+        "pair_image_bindings": 328,
+        "learned_approach_predictions": 260,
+        "grasp_predictions": 32,
+        "solo_own_command_observations": 506,
+        "prior_rgb_grasp_anchors_verified": 18,
+        "solo_decision_replay": {
+          "actions_replayed": 506,
+          "source": "archived own RGB + TOP RGB + own command state + recorded resource wait signals",
+          "scope": "controller decision replay; resource ownership checked separately, not physical success"
+        },
+        "yield_replay": {
+          "actions_replayed": 0
+        },
+        "navigation_replay": {
+          "rgb_rotation_decisions_replayed": 0,
+          "source": "archived RGB + authored map + exact plan; no referee input"
+        },
+        "translation_replay": {
+          "rgb_translation_decisions_replayed": 114,
+          "legacy_unreplayed_decisions": 0,
+          "source": "archived current own/TOP RGB, authored map, control clock and report ids; no referee input"
+        }
+      }
+    },
+    {
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260919/open-minus/input-audit.json",
+      "sha256": "f2cf6a6a03740e66e8c0a17a459919e4f4f139010aa3f1e05a6aade1dfab6021",
+      "report": {
+        "passed": true,
+        "scope": "saved input reconstruction and exact model prediction replay; not physical success",
+        "run": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260919/open-minus",
+        "planning_requests": 6,
+        "actual_llm_wires": 0,
+        "pair_image_bindings": 209,
+        "learned_approach_predictions": 266,
+        "grasp_predictions": 32,
+        "solo_own_command_observations": 451,
+        "prior_rgb_grasp_anchors_verified": 18,
+        "solo_decision_replay": {
+          "actions_replayed": 451,
+          "source": "archived own RGB + TOP RGB + own command state + recorded resource wait signals",
+          "scope": "controller decision replay; resource ownership checked separately, not physical success"
+        },
+        "yield_replay": {
+          "actions_replayed": 0
+        },
+        "navigation_replay": {
+          "rgb_rotation_decisions_replayed": 0,
+          "source": "archived RGB + authored map + exact plan; no referee input"
+        },
+        "translation_replay": {
+          "rgb_translation_decisions_replayed": 0,
+          "legacy_unreplayed_decisions": 0,
+          "source": "archived current own/TOP RGB, authored map, control clock and report ids; no referee input"
+        }
+      }
+    },
+    {
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260918/open-plus/input-audit.json",
+      "sha256": "03480589036c253b7e463dec3ad980f437e3cbc42e24c593d8abdbc577029366",
+      "report": {
+        "passed": true,
+        "scope": "saved input reconstruction and exact model prediction replay; not physical success",
+        "run": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260918/open-plus",
+        "planning_requests": 6,
+        "actual_llm_wires": 0,
+        "pair_image_bindings": 213,
+        "learned_approach_predictions": 260,
+        "grasp_predictions": 32,
+        "solo_own_command_observations": 499,
+        "prior_rgb_grasp_anchors_verified": 18,
+        "solo_decision_replay": {
+          "actions_replayed": 499,
+          "source": "archived own RGB + TOP RGB + own command state + recorded resource wait signals",
+          "scope": "controller decision replay; resource ownership checked separately, not physical success"
+        },
+        "yield_replay": {
+          "actions_replayed": 0
+        },
+        "navigation_replay": {
+          "rgb_rotation_decisions_replayed": 0,
+          "source": "archived RGB + authored map + exact plan; no referee input"
+        },
+        "translation_replay": {
+          "rgb_translation_decisions_replayed": 0,
+          "legacy_unreplayed_decisions": 0,
+          "source": "archived current own/TOP RGB, authored map, control clock and report ids; no referee input"
+        }
+      }
+    },
+    {
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260919/open-plus/input-audit.json",
+      "sha256": "930184acdc508f54fbd5145b0211ad13c1ed1dba283df9d4dbe173d2b49e0d65",
+      "report": {
+        "passed": true,
+        "scope": "saved input reconstruction and exact model prediction replay; not physical success",
+        "run": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260919/open-plus",
+        "planning_requests": 6,
+        "actual_llm_wires": 0,
+        "pair_image_bindings": 208,
+        "learned_approach_predictions": 260,
+        "grasp_predictions": 32,
+        "solo_own_command_observations": 708,
+        "prior_rgb_grasp_anchors_verified": 18,
+        "solo_decision_replay": {
+          "actions_replayed": 708,
+          "source": "archived own RGB + TOP RGB + own command state + recorded resource wait signals",
+          "scope": "controller decision replay; resource ownership checked separately, not physical success"
+        },
+        "yield_replay": {
+          "actions_replayed": 0
+        },
+        "navigation_replay": {
+          "rgb_rotation_decisions_replayed": 0,
+          "source": "archived RGB + authored map + exact plan; no referee input"
+        },
+        "translation_replay": {
+          "rgb_translation_decisions_replayed": 0,
+          "legacy_unreplayed_decisions": 0,
+          "source": "archived current own/TOP RGB, authored map, control clock and report ids; no referee input"
+        }
+      }
+    },
+    {
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/teacher/turn-minus/input-audit.json",
+      "sha256": "2d63b4e368f12c8b7b747e1cd424b327dded636da62796e70c920c7918fba49d",
+      "report": {
+        "passed": true,
+        "scope": "saved input reconstruction and exact model prediction replay; not physical success",
+        "run": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/teacher/turn-minus",
+        "planning_requests": 6,
+        "actual_llm_wires": 0,
+        "pair_image_bindings": 618,
+        "learned_approach_predictions": 238,
+        "grasp_predictions": 32,
+        "solo_own_command_observations": 393,
+        "prior_rgb_grasp_anchors_verified": 18,
+        "solo_decision_replay": {
+          "actions_replayed": 393,
+          "source": "archived own RGB + TOP RGB + own command state + recorded resource wait signals",
+          "scope": "controller decision replay; resource ownership checked separately, not physical success"
+        },
+        "yield_replay": {
+          "actions_replayed": 131,
+          "visually_cleared_bay": true,
+          "source": "current RGB and authored staging goals; no referee input"
+        },
+        "navigation_replay": {
+          "rgb_rotation_decisions_replayed": 419,
+          "source": "archived RGB + authored map + exact plan; no referee input"
+        },
+        "translation_replay": {
+          "rgb_translation_decisions_replayed": 0,
+          "legacy_unreplayed_decisions": 0,
+          "source": "archived current own/TOP RGB, authored map, control clock and report ids; no referee input"
+        }
+      }
+    },
+    {
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260918/turn-minus/input-audit.json",
+      "sha256": "1fa38098060a4672f67bcd365e1cc8b25cfa114c426580a6ec99e7eef8b33093",
+      "report": {
+        "passed": true,
+        "scope": "saved input reconstruction and exact model prediction replay; not physical success",
+        "run": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260918/turn-minus",
+        "planning_requests": 6,
+        "actual_llm_wires": 0,
+        "pair_image_bindings": 193,
+        "learned_approach_predictions": 238,
+        "grasp_predictions": 32,
+        "solo_own_command_observations": 393,
+        "prior_rgb_grasp_anchors_verified": 18,
+        "solo_decision_replay": {
+          "actions_replayed": 393,
+          "source": "archived own RGB + TOP RGB + own command state + recorded resource wait signals",
+          "scope": "controller decision replay; resource ownership checked separately, not physical success"
+        },
+        "yield_replay": {
+          "actions_replayed": 131,
+          "visually_cleared_bay": true,
+          "source": "current RGB and authored staging goals; no referee input"
+        },
+        "navigation_replay": {
+          "rgb_rotation_decisions_replayed": 0,
+          "source": "archived RGB + authored map + exact plan; no referee input"
+        },
+        "translation_replay": {
+          "rgb_translation_decisions_replayed": 0,
+          "legacy_unreplayed_decisions": 0,
+          "source": "archived current own/TOP RGB, authored map, control clock and report ids; no referee input"
+        }
+      }
+    },
+    {
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/teacher/turn-plus/input-audit.json",
+      "sha256": "111702dbbcf39ed880f773f582f3f69a669a78ce3bc9a922c3062d5473b8c0ff",
+      "report": {
+        "passed": true,
+        "scope": "saved input reconstruction and exact model prediction replay; not physical success",
+        "run": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/teacher/turn-plus",
+        "planning_requests": 6,
+        "actual_llm_wires": 0,
+        "pair_image_bindings": 188,
+        "learned_approach_predictions": 260,
+        "grasp_predictions": 0,
+        "solo_own_command_observations": 378,
+        "prior_rgb_grasp_anchors_verified": 0,
+        "solo_decision_replay": {
+          "actions_replayed": 378,
+          "source": "archived own RGB + TOP RGB + own command state + recorded resource wait signals",
+          "scope": "controller decision replay; resource ownership checked separately, not physical success"
+        },
+        "yield_replay": {
+          "actions_replayed": 131,
+          "visually_cleared_bay": true,
+          "source": "current RGB and authored staging goals; no referee input"
+        },
+        "navigation_replay": {
+          "rgb_rotation_decisions_replayed": 0,
+          "source": "archived RGB + authored map + exact plan; no referee input"
+        },
+        "translation_replay": {
+          "rgb_translation_decisions_replayed": 0,
+          "legacy_unreplayed_decisions": 0,
+          "source": "archived current own/TOP RGB, authored map, control clock and report ids; no referee input"
+        }
+      }
+    },
+    {
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260919/turn-minus/input-audit.json",
+      "sha256": "cc724be5971661a8d49c0d1d1d986bddebec3f273c139e9cc1f156d724f6a118",
+      "report": {
+        "passed": true,
+        "scope": "saved input reconstruction and exact model prediction replay; not physical success",
+        "run": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260919/turn-minus",
+        "planning_requests": 6,
+        "actual_llm_wires": 0,
+        "pair_image_bindings": 193,
+        "learned_approach_predictions": 238,
+        "grasp_predictions": 32,
+        "solo_own_command_observations": 393,
+        "prior_rgb_grasp_anchors_verified": 18,
+        "solo_decision_replay": {
+          "actions_replayed": 393,
+          "source": "archived own RGB + TOP RGB + own command state + recorded resource wait signals",
+          "scope": "controller decision replay; resource ownership checked separately, not physical success"
+        },
+        "yield_replay": {
+          "actions_replayed": 131,
+          "visually_cleared_bay": true,
+          "source": "current RGB and authored staging goals; no referee input"
+        },
+        "navigation_replay": {
+          "rgb_rotation_decisions_replayed": 0,
+          "source": "archived RGB + authored map + exact plan; no referee input"
+        },
+        "translation_replay": {
+          "rgb_translation_decisions_replayed": 0,
+          "legacy_unreplayed_decisions": 0,
+          "source": "archived current own/TOP RGB, authored map, control clock and report ids; no referee input"
+        }
+      }
+    },
+    {
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260918/turn-plus/input-audit.json",
+      "sha256": "daceddfaf8bf16ffce808c448effd56c66521d69701552b04c56a24b6356ee3e",
+      "report": {
+        "passed": true,
+        "scope": "saved input reconstruction and exact model prediction replay; not physical success",
+        "run": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260918/turn-plus",
+        "planning_requests": 6,
+        "actual_llm_wires": 0,
+        "pair_image_bindings": 188,
+        "learned_approach_predictions": 260,
+        "grasp_predictions": 0,
+        "solo_own_command_observations": 378,
+        "prior_rgb_grasp_anchors_verified": 0,
+        "solo_decision_replay": {
+          "actions_replayed": 378,
+          "source": "archived own RGB + TOP RGB + own command state + recorded resource wait signals",
+          "scope": "controller decision replay; resource ownership checked separately, not physical success"
+        },
+        "yield_replay": {
+          "actions_replayed": 131,
+          "visually_cleared_bay": true,
+          "source": "current RGB and authored staging goals; no referee input"
+        },
+        "navigation_replay": {
+          "rgb_rotation_decisions_replayed": 0,
+          "source": "archived RGB + authored map + exact plan; no referee input"
+        },
+        "translation_replay": {
+          "rgb_translation_decisions_replayed": 0,
+          "legacy_unreplayed_decisions": 0,
+          "source": "archived current own/TOP RGB, authored map, control clock and report ids; no referee input"
+        }
+      }
+    },
+    {
+      "raw": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260919/turn-plus/input-audit.json",
+      "sha256": "25a100a0e33c306b6a98c0609c855b167166a10c6271729ff56b86fc428d0169",
+      "report": {
+        "passed": true,
+        "scope": "saved input reconstruction and exact model prediction replay; not physical success",
+        "run": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260919/turn-plus",
+        "planning_requests": 6,
+        "actual_llm_wires": 0,
+        "pair_image_bindings": 188,
+        "learned_approach_predictions": 260,
+        "grasp_predictions": 0,
+        "solo_own_command_observations": 378,
+        "prior_rgb_grasp_anchors_verified": 0,
+        "solo_decision_replay": {
+          "actions_replayed": 378,
+          "source": "archived own RGB + TOP RGB + own command state + recorded resource wait signals",
+          "scope": "controller decision replay; resource ownership checked separately, not physical success"
+        },
+        "yield_replay": {
+          "actions_replayed": 131,
+          "visually_cleared_bay": true,
+          "source": "current RGB and authored staging goals; no referee input"
+        },
+        "navigation_replay": {
+          "rgb_rotation_decisions_replayed": 0,
+          "source": "archived RGB + authored map + exact plan; no referee input"
+        },
+        "translation_replay": {
+          "rgb_translation_decisions_replayed": 0,
+          "legacy_unreplayed_decisions": 0,
+          "source": "archived current own/TOP RGB, authored map, control clock and report ids; no referee input"
+        }
+      }
+    }
+  ]
+}

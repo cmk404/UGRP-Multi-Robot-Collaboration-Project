@@ -23,6 +23,8 @@ if str(ROOT) not in sys.path:sys.path.insert(0,str(ROOT))
 from harness.camera_motion_identity import ImageMotionIdentity
 from harness.dispatch_plan import build_dispatch_request, validate_dispatch_plan, validate_dispatch_reply
 from harness.dispatch_skill_binding import SkillBindings, ImageRoute
+from harness.dispatch_feasibility import negotiate_executable
+from harness.dispatch_yield import SoloYield,WheelObserver
 from harness.three_robot_plan import ROBOTS, TeamAgreement, images
 from harness.solo_box_transport import SoloBoxTransport
 from harness.grasp_student_inference import predict_student
@@ -45,6 +47,8 @@ class SkillScene(DispatchScene):
         self.video=self.referee=self.bindings=self.team=None
         self.solo=self.solo_executor=None;self.solo_lease=0.
         self.solo_rows=[];self.solo_raw=[];self.next_sample=0.;self.pair_phase='SETUP'
+        self.yield_rows=[];self.yield_policy=None;self.yield_folded=False
+        self.identity=None
         self.original_step=None;self.deadline=None;self.last_frames=None
 
     def time(self):return float(self.world.data.time)
@@ -104,15 +108,52 @@ class SkillScene(DispatchScene):
         self.solo=SoloBoxTransport(robot_id=self.bindings.solo,navigator=ImageRoute(self.bindings,'box'),attachment_min_saturation=150,release_refine_ground_fit=True)
         self.solo_executor=VisualMacroExecutor(self.ports[self.bindings.solo],
             log_callback=self.solo_raw.append,drive_settle_by_phase={'carry':0.})
-        self.solo_started=self.time()
+        self.solo_started=None
+    def other_robot_observation(self,top):
+        if self.yield_policy:
+            return self.yield_policy.vision.observe(top),{'source':'solo_yield_history'}
+        frame=cv2.imdecode(np.frombuffer(top,np.uint8),cv2.IMREAD_COLOR)
+        claim=self.identity[self.bindings.solo]['claim']
+        if not claim['valid']:raise RuntimeError('waiting robot identity unresolved')
+        hint=np.array(claim['center'])*[frame.shape[1]-1,frame.shape[0]-1]
+        return WheelObserver(self.bindings.static_map,hint).observe(top),{'source':'own_identity_probe','hint_px':hint.tolist()}
+    def _yield_tick(self,now):
+        if self.bindings.tasks['beam']['id'] in self.bindings.finished:
+            self.bindings.finish('box');return
+        obs=self.ports[self.bindings.solo].capture()
+        own=base64.b64decode(obs['image'])
+        top=self.world.render_team_jpeg(camera='cctv_top',quality=95)
+        index=len(self.yield_rows)
+        refs={'own':image_record(self.out/'rgb'/f'yield-{index}-own.jpg',self.out,own),
+              'top':image_record(self.out/'rgb'/f'yield-{index}-top.jpg',self.out,top)}
+        if not self.yield_folded:
+            action={'kind':'pose','pulses':{1:2000,3:740,4:2320,5:1320,6:1500}}
+            evidence={'phase':'fold_open_arm_after_visual_release'}
+            self.solo_executor.submit(action,obs,'yield_fold',now);self.yield_folded=True
+        else:
+            if self.yield_policy is None:
+                self.yield_policy=SoloYield(self.bindings.static_map,self.solo.navigator.box_center)
+            action,evidence=self.yield_policy.decide(top)
+            evidence['initial_cargo_center_px']=self.solo.navigator.box_center.tolist()
+            self.raw(self.bindings.solo,action,'YIELD');self.solo_lease=now+action['duration_s']
+            if self.yield_policy.done:self.bindings.finish('box')
+        self.yield_rows.append({'index':index,'sim_time_s':now,'robot_id':self.bindings.solo,
+            'images':refs,'observation':{k:v for k,v in obs.items() if k!='image'},
+            'action':action,'evidence':evidence,'box_job_finished':self.bindings.tasks['box']['id'] in self.bindings.finished})
+        if index%25==0 or self.yield_policy and self.yield_policy.done:
+            print(json.dumps({'solo_yield_step':index,'evidence':evidence}),flush=True)
     def _solo_tick(self):
         if self.solo is None:return
         self.authorize();now=self.time()
-        if now-self.solo_started>300:raise RuntimeError('solo SIM budget exhausted')
         self.solo_executor.tick(now)
-        if self.solo.done or not self.solo_executor.idle or now<self.solo_lease:return
+        if self.bindings.tasks['box']['id'] in self.bindings.finished:return
+        if not self.solo_executor.idle or now<self.solo_lease:return
+        if self.solo.done:
+            self._yield_tick(now);return
         stage='APPROACH' if self.solo.phase=='approach' else 'TRANSIT' if self.solo.phase=='carry' else 'GRASP'
         if not self.bindings.permission('box',stage):return
+        if self.solo_started is None:self.solo_started=now
+        if now-self.solo_started>300:raise RuntimeError('solo SIM budget exhausted')
         obs=self.ports[self.bindings.solo].capture()
         native=base64.b64decode(obs['image'])
         decoded=cv2.imdecode(np.frombuffer(native,np.uint8),cv2.IMREAD_COLOR)
@@ -129,10 +170,12 @@ class SkillScene(DispatchScene):
             # Stay at the pregrasp visual boundary and reobserve after waiting.
             # Never hold a lifted cargo merely to queue for the apron.
             self.solo.box=approach_state
+            self.solo.steps-=1  # Resource waiting is not an executed skill decision.
             action={'kind':'wait','duration':.3}
             evidence={**evidence,'waiting_before_grasp':True}
         if action['kind']=='mecanum' and not self.bindings.permission('box','TRANSIT'):
             action={'kind':'wait','duration':.1}
+            self.solo.steps-=1
             evidence={**evidence,'waiting_for_resource':True}
         self.solo_rows.append({'index':index,'sim_time_s':now,'robot_id':self.bindings.solo,
             'phase_before':before,'phase_after':self.solo.phase,'observation':{k:v for k,v in obs.items() if k!='image'},
@@ -146,7 +189,7 @@ class SkillScene(DispatchScene):
             print(json.dumps({'solo_step':index,'robot':self.bindings.solo,'phase':self.solo.phase,'action':action}),flush=True)
         if self.solo.done:
             if self.solo.reason!='VISUAL_RELEASE_CONFIRMED':raise RuntimeError('solo stopped: '+str(self.solo.reason))
-            self.bindings.finish('box')
+            if self.bindings.tasks['beam']['id'] in self.bindings.finished:self.bindings.finish('box')
     def close(self):
         if self.world:
             if self.solo_executor:self.solo_executor.cancel(self.time(),'trial_end')
@@ -161,12 +204,18 @@ def run(args):
     from scripts.probe_dual_grasp_sync import Video
     source_skill=json.loads((args.grasp_model_dir/'student-skill.json').read_text())
     grasp_root=prepare_grasp_models(args.grasp_model_dir,args.output.with_name(args.output.name+'-grasp-models'),
-        background_band=source_skill.get('task_domain')!='dispatch_open_v1').resolve()
+        background_band=source_skill.get('task_domain')!='dispatch_open_v1',
+        top_roi=[12,6,20,19] if source_skill.get('task_domain')=='dispatch_open_v1' else None).resolve()
     skill,grasp=models(grasp_root,'student-skill.json')
     stage_skill,stages=load_stage_models(args.stage_model_dir)
     reference=args.reference_top.read_bytes()
     config=episode(args.variant,args.seed)
     config['contact_solver_profile']=args.contact_profile
+    import math
+    dx,dy,yaw=getattr(args,'spawn_offset',[0.,0.,0.])
+    if max(abs(dx),abs(dy))>.03 or abs(yaw)>3:raise ValueError('bounded spawn perturbation')
+    for pose in config['setup_only']['spawns'].values():
+        pose[0]+=dx;pose[1]+=dy;pose[3]+=math.radians(yaw)
     scene=SkillScene(config,args.output)
     started=time.monotonic();pair=team=None
     result={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
@@ -183,7 +232,7 @@ def run(args):
         scene.open();scene.deadline=started+args.max_wall_s
         write(args.output/'episode-setup-only.json',scene.config)
         write(args.output/'scene-manifest.json',scene.manifest)
-        scene.video=Video(scene.world,args.output/'execution.mp4',10)
+        scene.video=Video(scene.world,args.output/'execution.mp4',getattr(args,'video_fps',10))
         scene.referee=Referee(scene);scene.referee.sample()
         identity={}
         for rid in ROBOTS:
@@ -199,8 +248,9 @@ def run(args):
                 evidence += [{'label':label+'_'+i['label'],'image':i['image']} for i in images(f['own_bytes'],f['top_bytes'])]
             identity[rid]={'claim':tracker.update(after['top_bytes'],probe),'images':evidence}
         write(args.output/'identity-evidence.json',identity)
+        scene.identity=identity
         task=actor_task(scene.config['static_map'],required_dock=getattr(args,'required_dock',None))
-        task['capability_scope']='Existing RGB pair approach/grasp with image-convention adapter; existing VisualBoxSkill. Role binding follows your plan. Route transfer remains experimental; no raw-action fallback.'
+        task['capability_scope']='RGB pair approach/grasp plus loaded rotation and complete-footprint path checking; existing VisualBoxSkill. Parallel envelope 0.99m; rotated envelope 0.45m. Loaded terrain is unvalidated and avoided. In clutter, pickup preparation is exclusive. Waiting cargo and robots remain occupied space. If you select beam.after=[box_job] and box.after=[], the box executor releases its cargo and visually clears the unloading bay before finishing box_job. Role binding, routes and task dependencies follow your plan. All skills remain experimental; no raw-action fallback.'
         write(args.output/'actor-mission.json',task)
         run_id=opaque_run_id()
         def planner(rid,**kwargs):
@@ -212,6 +262,8 @@ def run(args):
             replay_plan=saved['plan']
             result['scope']='recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E'
             result['plan_replay_sha256']=sha(args.plan_replay)
+            if getattr(args,'live_replan',False):
+                result['scope']='fixture-initialized recovery diagnostic; actual LLM re-negotiation after capability rejection, not fresh initial LLM E2E'
         team=ThreeRobotRuntime(args.output/'team',run_id=run_id,mode='fixture' if replay_plan else 'llm',
             plan_fixture=replay_plan,
             agreement=TeamAgreement(run_id,plan_validator=partial(validate_dispatch_plan,
@@ -220,11 +272,9 @@ def run(args):
             roles_fixed_by_skill=False,planning_only=False,max_wall_s=args.max_wall_s)
         scene.team=team;frames=scene.capture('planning')
         result['phase']='NEGOTIATE'
-        for turn in range(8):
-            if sum((c.get('usage') or {}).get('prompt_tokens',0) for c in team.calls)>=args.max_input_tokens:
-                raise RuntimeError('planning input token budget exhausted')
-            if team.negotiate(frames,scene.command_history,turn,scene.time()):break
-        if not team.agreement.committed:raise RuntimeError('no valid unanimous dispatch plan')
+        result['plan_feasibility']=negotiate_executable(team,frames,scene.command_history,task,
+            scene.config['static_map'],scene.time(),max_tokens=args.max_input_tokens,
+            live_replan=getattr(args,'live_replan',False),identity=identity,reference_top=reference)
         scene.bindings=SkillBindings(team.agreement.committed,scene.config['static_map'])
         result.update(plan_committed=True,plan=scene.bindings.plan,bindings=scene.bindings.capabilities())
         write(args.output/'committed-plan.json',team.agreement.committed)
@@ -235,15 +285,22 @@ def run(args):
         scene.bindings.check_route()
         scene.start_solo()
         pair=BoundPairSkill(scene,scene.bindings,skill,grasp,stages,grasp_root,reference,identity)
+        while not scene.bindings.permission('beam','APPROACH'):scene.step(.2)
         result['phase']='APPROACH';result['pair_approach']=pair.approach()
         while not scene.bindings.permission('beam','GRASP'):scene.step(.2)
         result['phase']='GRASP';result['pair_grasp']=pair.finish_grasp(predict_student,grasp)
         pair.grasp_report.pop('evaluation',None)
         pair.grasp_report['evaluation_source']='separate referee-only.jsonl after control ends'
         while not scene.bindings.permission('beam','TRANSIT'):scene.step(.2)
-        result['phase']='TRANSIT';pair.carry(ImageRoute(scene.bindings,'beam'))
+        result['phase']='TRANSIT'
+        if getattr(args,'carry_act_model',None):
+            from scripts.dispatch_act_carry import carry
+            result['carry_policy']='ACT own RGB + raw top RGB + static task + own last issued motion'
+            result['carry_model_sha256']=sha(args.carry_act_model/'model.safetensors')
+            carry(pair,args.carry_act_python,args.carry_act_model,args.carry_act_max_steps)
+        else:pair.carry(ImageRoute(scene.bindings,'beam'))
         result['phase']='RELEASE';pair.place();pair.verify_placement();scene.bindings.finish('beam')
-        while not scene.solo.done:scene.step(.2)
+        while scene.bindings.tasks['box']['id'] not in scene.bindings.finished:scene.step(.2)
         result['protocol_complete']=True;result['phase']='FINISHED'
     except (Exception,KeyboardInterrupt) as exc:
         result['error']=f'{type(exc).__name__}: {exc}'
@@ -267,6 +324,7 @@ def run(args):
                     write(args.output/'evaluation-only.json',result['evaluation'])
                 write(args.output/'issued-commands.json',scene.command_history)
                 write(args.output/'solo-decisions.json',scene.solo_rows);write(args.output/'solo-raw-actions.json',scene.solo_raw)
+                write(args.output/'solo-yield.json',scene.yield_rows)
                 if pair:
                     write(args.output/'pair-decisions.json',pair.calls)
                     write(args.output/'pair-grasp.json',pair.grasp_report)

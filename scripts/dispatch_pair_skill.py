@@ -5,7 +5,7 @@ model slots, remapped at the driver boundary using the committed plan.
 """
 from __future__ import annotations
 from pathlib import Path
-from harness.dispatch_skill_binding import canonical_pair_top, beam_feature, PairCoarsePixels, pixel_from_map
+from harness.dispatch_skill_binding import canonical_pair_top, beam_feature, PairCoarsePixels, pixel_from_map, BeamContinuity
 from harness.camera_goal_transport import coarse_approach, dock_command, preclose_supported, own_payload
 from harness.camera_varied_start_student import predict_stage
 from harness.grasp_student_inference import predict_student
@@ -30,6 +30,9 @@ class BoundPairSkill:
         self.trace=[];self.evaluation_samples=[];self.grasp_report={};self.phase='APPROACH'
         self.last_capture=None;self.count=0;self.calls=[]
         self.grasp_translation=None;self.latest_translation=None;self.transport_started=False
+        self.beam_continuity=BeamContinuity()
+        from harness.dispatch_beam_tracker import CarriedBeamTracker
+        self.carried_beam=CarriedBeamTracker()
         self.coarse=PairCoarsePixels(identity,bindings,reference) if identity is not None else None
 
     def time(self):return self.io.time()
@@ -46,7 +49,9 @@ class BoundPairSkill:
         frames=self.io.capture('pair-'+str(self.count)+'-'+tag)
         top, transform=canonical_pair_top(frames['r1']['top_bytes'],self.reference,
             translation_px=self.grasp_translation if self.phase.startswith('grasp') else None,
-            hue_upper=35 if self.transport_started else 24)
+            hue_upper=35 if self.transport_started else 24,
+            observed_beam=self.carried_beam.observe(frames['r1']['top_bytes']) if self.transport_started else None)
+        if self.transport_started:self.beam_continuity.observe(transform['observed_beam'])
         self.latest_translation=transform['translation_px']
         top_ref=image_record(self.out/'rgb'/f'pair-{self.count}-canonical-top.jpg',self.out,top)
         mapped={slot:{**frames[rid], 'top_bytes':top,'shared_top_rgb':top_ref,
@@ -109,6 +114,7 @@ class BoundPairSkill:
         raise RuntimeError('fine docking confirmation budget exhausted')
 
     def carry(self,navigator):
+        if self.bindings.cluttered:return self.carry_with_rotation()
         self.phase='TRANSIT';self.transport_started=True
         anchor=self.capture('carry-anchor')
         policy=PairCarryPolicy('dispatch-'+self.bindings.committed['plan_hash'][:12])
@@ -124,12 +130,17 @@ class BoundPairSkill:
                 decisions[r]={'ok':held,'held_estimate':held,'ready':evidence['done'],
                               'forward':abs(motion['forward']),'current_own_rgb_features':current,'anchor_own_rgb_features':initial,
                               'appearance':'orange-to-yellow beam hue 3..35; same shape/consistency gates'}
-            beam=beam_feature(raw,hue_upper=35)
-            upper,lower=sorted(beam['endpoints'],key=lambda p:p[1])
-            skew=(lower[0]-upper[0])*beam['image_size'][0]
+            beam=self.carried_beam.previous
+            from harness.dispatch_translation_skew import translation_skew
+            try:skew,skew_evidence=translation_skew(raw,beam)
+            except ValueError as error:
+                skew=None;skew_evidence={'unresolved':str(error)}
+            now=self.time()
             control=policy.step(decisions,skew,
-                {r:f['frame_id'] for r,f in frames.items()},self.time())
-            self.calls.append({'kind':'carry','decisions':decisions,'control':control,'route':evidence})
+                {r:f['frame_id'] for r,f in frames.items()},now)
+            self.calls.append({'kind':'carry','decisions':decisions,'control':control,'route':evidence,
+                'skew_evidence':skew_evidence,'sim_time_s':now,
+                'frame_ids':{r:f['frame_id'] for r,f in frames.items()}})
             if control['abort']:raise RuntimeError('existing pair carry guard stopped: '+control['mode'])
             if control['done']:return
             moving=control['mode']=='CRUISE' and control['valid']
@@ -140,13 +151,45 @@ class BoundPairSkill:
             self.drive_mecanum(commands,control['duration_s'])
         raise RuntimeError('pair route decision budget exhausted')
 
+    def carry_with_rotation(self):
+        from harness.dispatch_navigation_map import navigation_map
+        from harness.dispatch_pair_navigation import PairNavigator,authorize_pair
+        from harness.pair_carry_sync import PairCarrySync
+        from harness.dispatch_own_hold import OwnHoldContinuity
+        self.phase='TRANSIT';self.transport_started=True
+        anchor=self.capture('carry-anchor')
+        other,other_source=self.io.other_robot_observation(anchor['r1']['raw_top_bytes'])
+        data=navigation_map(self.bindings,anchor['r1']['raw_top_bytes'],other_robot_center_px=other['center_px'])
+        agents={r:PairNavigator(data,r) for r in ROBOTS}
+        own_guards={r:OwnHoldContinuity(anchor[r]['own_bytes']) for r in ROBOTS}
+        sync=PairCarrySync('dispatch-'+self.bindings.committed['plan_hash'])
+        self.calls.append({'kind':'navigation_map','map':data,'other_robot_observation':other,'other_robot_source':other_source})
+        for index in range(1200):
+            frames=self.capture('rotate-carry')
+            decisions={}
+            for r in ROBOTS:
+                decision=agents[r].decide(frames[r]['own_bytes'],frames[r]['raw_top_bytes'])
+                decision['own_attachment']=own_guards[r].observe(frames[r]['own_bytes'])
+                decision['ready']=decision['ready'] and decision['own_attachment']['held_estimate']
+                decisions[r]=decision
+            permission=authorize_pair(sync,decisions,{r:f['frame_id'] for r,f in frames.items()},index)
+            self.calls.append({'kind':'rotating_carry','decisions':decisions,'permission':permission,
+                'frame_ids':{r:f['frame_id'] for r,f in frames.items()},
+                'images':{r:{'own':f['own_rgb'],'top':f['raw_top_rgb']} for r,f in frames.items()}})
+            if permission['phase']!='GO':
+                raise RuntimeError('paired navigation stopped: '+str({r:d.get('status') for r,d in decisions.items()}))
+            if all(d['done'] for d in decisions.values()):return
+            self.drive_mecanum({r:{k:d['action'][k] for k in ('forward','left','turn')}
+                for r,d in decisions.items()},.2)
+        raise RuntimeError('rotating pair route decision budget exhausted')
+
     def verify_placement(self):
         """Fresh visual slot/stability claim; physical release stays referee-only."""
         slot=self.bindings.static_map['docks'][self.bindings.plan['dock']]['slots']['beam']
         samples=[]
         for index in range(2):
             frames=self.capture('placement-confirmation')
-            b=beam_feature(frames['r1']['raw_top_bytes'],hue_upper=35)
+            b=self.carried_beam.previous
             w,h=b['image_size'];corners=np.array(b['corners4'])*[w,h]
             a=pixel_from_map(np.array(slot['center_m'])-slot['half_extents_m'],self.bindings.static_map,(h,w))
             z=pixel_from_map(np.array(slot['center_m'])+slot['half_extents_m'],self.bindings.static_map,(h,w))

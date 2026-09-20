@@ -1,0 +1,190 @@
+{
+  "passed": true,
+  "scope": "Existing detached-object RGB fixture with the dispatch bright-cyan segmentation; complete probe still rejected.",
+  "rows": [
+    {
+      "before": "anchor",
+      "after": "left",
+      "measurement": {
+        "evidence": "visual_attachment",
+        "attached": true,
+        "identity_source": "caller_prior_visual_target_binding_required",
+        "color_is_identity_evidence": false,
+        "provenance": "two_own_rgb_jpegs+controlled_arm_intervention+cyan_mask_comotion",
+        "thresholds": {
+          "min_saturation": 150,
+          "min_close_area_px": 6000,
+          "min_iou": 0.88,
+          "max_centroid_delta_px": 8.0,
+          "pan_centroid_px_per_pwm": 0.1,
+          "area_ratio_range": [
+            0.9,
+            1.1
+          ]
+        },
+        "camera_pan_delta_pwm": 60.0,
+        "before_area_px": 184421.5,
+        "after_area_px": 200243.5,
+        "bright_cyan_segmentation": {
+          "hue_range": [
+            80,
+            98
+          ],
+          "min_saturation": 120,
+          "min_value": 200
+        },
+        "mask_iou": 0.9185901001112347,
+        "centroid_delta_px": 13.168255338114296,
+        "area_ratio": 1.0857926001035672,
+        "before_centroid_px": [
+          328.7394745189688,
+          282.7273013179049
+        ],
+        "after_centroid_px": [
+          327.3839159157059,
+          269.6290033550818
+        ],
+        "effective_centroid_limit_px": 14.5,
+        "reason": "VISUAL_ATTACHMENT_SUPPORTED"
+      }
+    },
+    {
+      "before": "anchor",
+      "after": "right",
+      "measurement": {
+        "evidence": "visual_attachment",
+        "attached": false,
+        "identity_source": "caller_prior_visual_target_binding_required",
+        "color_is_identity_evidence": false,
+        "provenance": "two_own_rgb_jpegs+controlled_arm_intervention+cyan_mask_comotion",
+        "thresholds": {
+          "min_saturation": 150,
+          "min_close_area_px": 6000,
+          "min_iou": 0.88,
+          "max_centroid_delta_px": 8.0,
+          "pan_centroid_px_per_pwm": 0.1,
+          "area_ratio_range": [
+            0.9,
+            1.1
+          ]
+        },
+        "camera_pan_delta_pwm": -60.0,
+        "before_area_px": 184421.5,
+        "after_area_px": 180318.5,
+        "bright_cyan_segmentation": {
+          "hue_range": [
+            80,
+            98
+          ],
+          "min_saturation": 120,
+          "min_value": 200
+        },
+        "mask_iou": 0.7784028033935817,
+        "centroid_delta_px": 57.059843571295254,
+        "area_ratio": 0.9777520516859477,
+        "before_centroid_px": [
+          328.7394745189688,
+          282.7273013179049
+        ],
+        "after_centroid_px": [
+          272.0090099832611,
+          276.60519857918075
+        ],
+        "effective_centroid_limit_px": 14.5,
+        "reason": "CYAN_OBJECT_DID_NOT_COMOVE_WITH_CAMERA"
+      }
+    },
+    {
+      "before": "left",
+      "after": "right",
+      "measurement": {
+        "evidence": "visual_attachment",
+        "attached": false,
+        "identity_source": "caller_prior_visual_target_binding_required",
+        "color_is_identity_evidence": false,
+        "provenance": "two_own_rgb_jpegs+controlled_arm_intervention+cyan_mask_comotion",
+        "thresholds": {
+          "min_saturation": 150,
+          "min_close_area_px": 6000,
+          "min_iou": 0.88,
+          "max_centroid_delta_px": 8.0,
+          "pan_centroid_px_per_pwm": 0.1,
+          "area_ratio_range": [
+            0.9,
+            1.1
+          ]
+        },
+        "camera_pan_delta_pwm": -120.0,
+        "before_area_px": 200243.5,
+        "after_area_px": 180318.5,
+        "bright_cyan_segmentation": {
+          "hue_range": [
+            80,
+            98
+          ],
+          "min_saturation": 120,
+          "min_value": 200
+        },
+        "mask_iou": 0.7473156371847673,
+        "centroid_delta_px": 55.8126106434008,
+        "area_ratio": 0.9004961459423152,
+        "before_centroid_px": [
+          327.3839159157059,
+          269.6290033550818
+        ],
+        "after_centroid_px": [
+          272.0090099832611,
+          276.60519857918075
+        ],
+        "effective_centroid_limit_px": 20.5,
+        "reason": "CYAN_OBJECT_DID_NOT_COMOVE_WITH_CAMERA"
+      }
+    },
+    {
+      "before": "right",
+      "after": "home",
+      "measurement": {
+        "evidence": "visual_attachment",
+        "attached": false,
+        "identity_source": "caller_prior_visual_target_binding_required",
+        "color_is_identity_evidence": false,
+        "provenance": "two_own_rgb_jpegs+controlled_arm_intervention+cyan_mask_comotion",
+        "thresholds": {
+          "min_saturation": 150,
+          "min_close_area_px": 6000,
+          "min_iou": 0.88,
+          "max_centroid_delta_px": 8.0,
+          "pan_centroid_px_per_pwm": 0.1,
+          "area_ratio_range": [
+            0.9,
+            1.1
+          ]
+        },
+        "camera_pan_delta_pwm": 60.0,
+        "before_area_px": 180318.5,
+        "after_area_px": 211948.0,
+        "bright_cyan_segmentation": {
+          "hue_range": [
+            80,
+            98
+          ],
+          "min_saturation": 120,
+          "min_value": 200
+        },
+        "mask_iou": 0.814376303828247,
+        "centroid_delta_px": 39.03306846442792,
+        "area_ratio": 1.175409067843843,
+        "before_centroid_px": [
+          272.0090099832611,
+          276.60519857918075
+        ],
+        "after_centroid_px": [
+          309.73345742037355,
+          266.58289847824307
+        ],
+        "effective_centroid_limit_px": 14.5,
+        "reason": "CYAN_OBJECT_DID_NOT_COMOVE_WITH_CAMERA"
+      }
+    }
+  ]
+}

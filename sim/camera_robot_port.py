@@ -214,6 +214,7 @@ class CameraRobotPort:
         self._set_motors(_STOP)
         self._servo_targets.clear()
         self._servo_pulses = {servo: int(round(pulse)) for servo, pulse in self._servo_applied.items()}
+        self._servo_applied = {servo: float(pulse) for servo, pulse in self._servo_pulses.items()}
         self._servo_tick_time = now
         self._command_expires_at = None
         self._busy_until = now
@@ -245,9 +246,12 @@ class CameraRobotPort:
             delta = float(target) - current
             moved = current + max(-allowance, min(allowance, delta))
             pulse = int(round(moved))
-            self._servo_applied[servo] = float(pulse)
+            # Preserve fractional command progress. Rounding the accumulator
+            # each physics tick can stall a servo when dt allows <=0.5 PWM.
+            # Only the issued hardware setpoint is integer; no joint is read.
+            self._servo_applied[servo] = moved
             updates[servo] = pulse
-            if pulse == target:
+            if abs(moved - target) < 1e-9:
                 self._servo_targets.pop(servo, None)
         if updates:
             # No forward_only: MuJoCo's physical position actuators own qpos.

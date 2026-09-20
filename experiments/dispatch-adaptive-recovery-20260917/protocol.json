@@ -1,0 +1,33 @@
+{
+  "baseline_source": "43e60e09ffa85a2334b0ef2acdb5144109b83818",
+  "baseline_records": "experiments/dispatch-variation-e2e-20260917",
+  "objective": "Repair destination B RGB failure, connect collision-aware pair motion and feasibility/replanning to actual dispatch execution, then validate the frozen final candidate from fresh peer agreement.",
+  "invariants": [
+    "fixed actual cameras and FOV",
+    "unchanged robot/cargo appearance",
+    "weld OFF",
+    "same local_contact profile unless a separately recorded diagnosis requires change",
+    "student uses RGB, authored static map, own issued commands and peer claims only; evaluation output only"
+  ],
+  "diagnostics": {
+    "records": "diagnostics.json",
+    "full_reports": "diagnostic-full-reports.json.gz",
+    "attempt_count": 48,
+    "scope": "Heterogeneous development attempts, including interrupted runs. Not a pooled success rate. Final-source cohort counted separately."
+  },
+  "freeze": "Commit before each physical diagnosis. After repairs freeze source/models and run the complete six-condition fresh-LLM comparison. Preserve failures.",
+  "final_cases": [
+    "open/dock_a",
+    "open/dock_b",
+    "shared_crossing/dock_a",
+    "north_blocked/dock_a",
+    "narrow_south/dock_a",
+    "rough_south/dock_a"
+  ],
+  "cost": "Save wall time, action counts, provider requests/usage; monetary cost null when unknown.",
+  "concurrency": "R8 and R9 overlapped; subsequent independent trials may use up to two worker processes. Preserve per-run wall time; do not claim speedup relative to serial baseline.",
+  "current_candidate_change": "Preserve prior fixes. Resolve already acquired dim cargo through strongest usable colour cuts and an 8px RGB motion gate; retain smaller visible fragments rather than integrating gripper-plane flow forever. Shaft identity uses finer contrast samples with 20-point support span; translation skew requires 4 consistent cross-section estimates spanning 15 contrast points. Open-arena placement uses nominal 9cm feature-plane calibration and the same 6cm adjacent-slot clearance preference. Resource waits do not spend executed-skill decision budget; original time/action/success guards remain. Admit role assignments only when their current image-bound coarse pickup paths do not cross another robot; otherwise require a new exact unanimous plan. This is conservative supported-skill admission, not a new arbitrary pickup parking policy. Initial carry TOP RGB memory suppresses static floor impostors. Post-release chassis acquisition searches a bounded neighbourhood and requires consistent current four-wheel corner geometry, without treating cargo fragment centre or commands as robot pose. Formation footprint orientation follows current RGB chassis axis, independently of probe motion direction used for motor conversion. Released-floor silhouette uses the dispatch cargo saturation boundary while all projection/stationarity gates remain unchanged. Added bounded individual RGB yaw correction; time alignment did not establish yaw disagreement as the original drop cause. Increased reference speed from 0.04 to 0.06 m/s and angular rate from 0.055 to 0.08 rad/s without changing actuator caps or stop gates, to reduce finite-route holding duration. Added continuous sampled carry clearance to post-run verdict. Candidate17 raises reference rates to 0.075 m/s and 0.10 rad/s and scales all endpoint motor commands together at the original actuator limits. Preserve common twist at saturation. No change to physical contact settings or observation guards. STOP_SCHEDULING ends only future scheduling and waits for owned children. Candidate18 uses local_contact_fine after isolated stationary 150s and moving 31s teacher comparisons: step .00025s, tangential damping -6000; coefficients, normal contact, force caps, geometry, camera, weld OFF unchanged. Full E2E wall budget 2400s instead of1500s because numerical integration requires about1.8-1.9x wall time in teacher probe; same LLM budget. All six cases must be fresh under this source. Candidate19 repairs CameraRobotPort fractional interpolation exposed by fine dt. Subpulse command progress is accumulated without joint reads; only emitted integer setpoints are quantized. Same fine profile and budgets; all six fresh cases restarted.",
+  "final_execution_source": "e099a4a38c8da094c8c1946ffca2e7ab02f16a83",
+  "success_counting": "Full E2E requires physical success, protocol completion, no error, no sampled floor contact throughout both cargo TRANSIT windows, and sample coverage gaps at most 0.11s. Final placement alone is insufficient. Evaluation is output-only; no live actor correction.",
+  "contact_diagnostic": "contact-resolution-diagnostic.json"
+}
