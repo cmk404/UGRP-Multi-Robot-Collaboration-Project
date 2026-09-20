@@ -116,5 +116,6 @@
     "scope": "same scene families with new small offsets; not general scene or physical robot evidence",
     "interpretation": "Report screening selection and confirmation separately; a failed confirmation does not trigger tuning on these held-out cases."
   },
-  "cost": "Record measured GPU/RAM peak, setup/training/evaluation wall time, per-decision latency, model hashes and unavailable compute-unit charges. No data/model/camera changes to rescue an arm during this screen."
+  "cost": "Record measured GPU/RAM peak, setup/training/evaluation wall time, per-decision latency, model hashes and unavailable compute-unit charges. No data/model/camera changes to rescue an arm during this screen.",
+  "cost_interpretation": "Inference timings are observed under the fixed two-worker cohort and shared Mac load, not an isolated real-time guarantee. Latency is only a secondary tie-breaker after physical outcomes."
 }
