@@ -11,6 +11,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 TEST_PATTERNS = (
+    "tests/test_tensorboard_export.py",
     "tests/test_act_speed_generalization.py",
     "tests/test_act_recovery.py", "tests/test_recovery_commands.py",
     "tests/test_reference_approach_data.py",

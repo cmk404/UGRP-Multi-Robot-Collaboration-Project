@@ -15,6 +15,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  tensorboard-export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-observability.txt
+      - name: Install optional TensorBoard tooling
+        run: python -m pip install -r requirements-observability.txt pytest==9.1.1
+      - name: Verify event readback and local original-video serving
+        run: python -m pytest -q tests/test_tensorboard_export.py
+
   reference-act-smoke:
     runs-on: ubuntu-24.04
     timeout-minutes: 10

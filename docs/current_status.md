@@ -11,6 +11,7 @@
 | 공동 운반 ACT 비교 | [ACT 운반 보고서](../experiments/2026-09-18-act-pair-carry/README.md), [레퍼런스 차이표](reference_alignment.md) | `scripts/run_carry_act_experiment.py` |
 | 로봇별 단계·허가·동기화 | [계약](task_stage_sync_contract.md), [연결 진단](task_stage_execution.md) | `harness/task_stage_sync.py`, `scripts/demo_task_stage_sync.py` |
 | 지도와 지형 선택 | [지도 목록](../maps/README.md), [지도 주행](known_map_navigation.md) | `maps/`, `sim/` |
+| 학습·실험 기록 시각화 | [TensorBoard 안내](tensorboard.md) | `scripts/export_tensorboard.py`, `scripts/run_tensorboard.py` |
 | 실물 연결·기록 | [네트워크 runbook](masterpi_network_runbook.md), [trace](real_trace_system.md) | 현재 로컬 네트워크·장치 상태를 별도 확인 |
 
 ## main에 포함된 후속 결과
