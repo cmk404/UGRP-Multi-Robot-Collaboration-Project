@@ -8,7 +8,7 @@ import urllib.error
 
 import cv2
 import numpy as np
-from harness.camera_goal_transport import decode, wheel_heading
+from harness.camera_goal_transport import decode
 from harness.dispatch_pair_navigation import PairVision
 from harness.known_map_navigation import pixel_to_world
 
@@ -64,6 +64,25 @@ def box_pixel_xy(pixel, shape, camera):
                      cy - (pixel[1] - (h - 1) / 2) * span / h])
 
 
+def wheel_envelope(mask):
+    """Existing four-corner RGB shape gate with a two-pixel measurement interval."""
+    h,w=mask.shape;y,x=np.nonzero(mask)
+    if not 80 <= len(x) <= 700:return None
+    (cx,cy),(a,b),angle=cv2.minAreaRect(np.column_stack((x,y)).astype(np.float32))
+    long,short=max(a,b),min(a,b)
+    if a < b:angle+=90
+    angle=(angle+90)%180-90
+    if not (.05*w-2 <= long <= .075*w+2 and .045*h-2 <= short <= .07*h+2
+            and (long+2)/max(short-2,1) >= 1.12 and (long-2)/(short+2) <= 1.65
+            and abs(angle) <= 20):return None
+    theta=math.radians(angle);dx,dy=x-cx,y-cy
+    u=dx*math.cos(theta)+dy*math.sin(theta);v=-dx*math.sin(theta)+dy*math.cos(theta)
+    corners=[int(np.sum((u*s>.15*long)&(v*t>.15*short))) for s in (-1,1) for t in (-1,1)]
+    if min(corners)<5:return None
+    return {'angle_deg':float(angle),'wheel_pixels':len(x),'corner_pixels':corners,
+            'shape_measurement_tolerance_px':2,'nominal_heading_domain_deg':18,'heading_pixel_tolerance_deg':2}
+
+
 class RGBObserver:
     """Track own wheels after a visible own-motion probe, and one cyan box."""
     def __init__(self, static_map, before_top, after_top, motion_anchor):
@@ -89,7 +108,7 @@ class RGBObserver:
         mask = PairVision._mask(None, frame)
         yy, xx = np.indices(mask.shape)
         mask[(abs(xx-self.center[0]) > 43) | (abs(yy-self.center[1]) > 40)] = 0
-        evidence = wheel_heading(mask, pixel_tolerance=2.)
+        evidence = wheel_envelope(mask)
         if evidence is None:
             raise ValueError('four_wheel_envelope_unresolved')
         y, x = np.nonzero(mask)
@@ -167,7 +186,7 @@ def validate_jev(body):
     # The live API serializes probabilities rounded to two decimal places.
     rounded = all(abs(v*100-round(v*100)) < 1e-8 for v in p.values())
     sum_tolerance = .005*len(p)+1e-9 if rounded else .001
-    if abs(sum(p.values())-1) > sum_tolerance or p[a['choice']] < max(p.values())-1e-6:
+    if abs(sum(p.values())-1) > sum_tolerance:
         raise ValueError('invalid Jev distribution')
     return a['choice']
 

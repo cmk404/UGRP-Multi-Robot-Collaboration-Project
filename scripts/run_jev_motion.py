@@ -128,6 +128,9 @@ def trial(args, policy, case, key, source):
                 result['output_tokens']+=u.get('output_tokens',u.get('completion_tokens',0))
                 result['model']=b.get('model')
                 name=validate_jev(b) if policy=='jev' else validate_gemini(b)
+                if policy=='jev':
+                    a=b['answers']['action']
+                    row['choice_probability_mismatch']=a['probabilities'][name] < max(a['probabilities'].values())-1e-6
                 row['decision_source']=policy
             row['action']=name;row['observation_to_issue_wall_s']=time.perf_counter()-round_start
             scene.execute(name)

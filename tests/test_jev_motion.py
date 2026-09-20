@@ -32,7 +32,7 @@ class TestJevMotion(unittest.TestCase):
         p={k:float(k=='forward') for k in OPTIONS}
         body={'answers':{'action':{'type':'choice','choice':'forward','probabilities':p,'confidence':.4}}}
         self.assertEqual(validate_jev(body),'forward')
-        for mutate in (lambda a:a.update(choice='stop'),lambda a:a['probabilities'].update(forward=float('nan')),lambda a:a['probabilities'].update(extra=0)):
+        for mutate in (lambda a:a.update(choice='teleport'),lambda a:a['probabilities'].update(forward=float('nan')),lambda a:a['probabilities'].update(extra=0)):
             b=copy.deepcopy(body);mutate(b['answers']['action'])
             with self.assertRaises(ValueError):validate_jev(b)
         with self.assertRaises(ValueError):validate_gemini({'choices':[{'message':{'content':'{"action":"forward","duration":10}'}}]})
@@ -64,3 +64,20 @@ class TestJevMotion(unittest.TestCase):
         self.assertAlmostEqual(a['range_m'],b['range_m'],places=4)
         ok,blank=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))
         with self.assertRaises(ValueError):observer.observe(own,blank.tobytes())
+
+    def test_nonmaximal_valid_choice_is_preserved_not_replaced(self):
+        p={k:0. for k in OPTIONS};p.update(forward=.4,stop=.6)
+        body={'answers':{'action':{'type':'choice','choice':'forward','probabilities':p,'confidence':.2}}}
+        self.assertEqual(validate_jev(body),'forward')
+
+    def test_wheel_pixel_uncertainty_regression(self):
+        from harness.jev_motion import wheel_envelope
+        from harness.dispatch_pair_navigation import PairVision
+        from harness.camera_goal_transport import decode
+        root=Path(__file__).parent/'fixtures/jev_motion'
+        im=decode((root/'negative-yaw-boundary.jpg').read_bytes());mask=PairVision._mask(None,im)
+        yy,xx=np.indices(mask.shape);mask[(abs(xx-179)>43)|(abs(yy-530)>40)]=0
+        result=wheel_envelope(mask)
+        self.assertIsNotNone(result);self.assertLess(abs(result['angle_deg']-11.3),1)
+        mask[yy<530]=0
+        self.assertIsNone(wheel_envelope(mask))
