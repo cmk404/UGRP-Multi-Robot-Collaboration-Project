@@ -11,6 +11,15 @@ from sim.research_dispatch_arena import episode
 
 
 class TestSkillMotion(unittest.TestCase):
+    def test_arm_fragment_does_not_force_permanent_uncertainty(self):
+        import cv2
+        from harness.jev_skill_motion import fit_wheels
+        root=Path(__file__).parent/'fixtures/jev_skill_motion'
+        meta=json.loads((root/'provenance.json').read_text())
+        image=cv2.imread(str(root/'arm-fragment-top.jpg'))
+        _,_,fit=fit_wheels(image,np.array(meta['rgb_anchor']),meta['rgb_prior_heading_rad'])
+        self.assertLess(fit['rms_px'],1.)
+
     def observation(self,**changes):
         o={'valid':True,'range_m':.5,'bearing_deg':0.,'raw_range_m':.5,'raw_bearing_deg':0.,
            'xy_m':[-.7,-2.65],'target_xy_m':[-.2,-2.65],'heading_rad':0.,

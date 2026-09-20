@@ -226,7 +226,7 @@ def main():
     p.add_argument('--policy',choices=['rule','jev','gemini'],default='rule')
     p.add_argument('--arm',choices=['full','always','primitive','single'],default='full')
     p.add_argument('--execute',action='store_true');p.add_argument('--stdin-key',action='store_true')
-    p.add_argument('--max-sim-s',type=float,default=60);p.add_argument('--max-wall-s',type=float,default=600)
+    p.add_argument('--max-sim-s',type=float,default=90);p.add_argument('--max-wall-s',type=float,default=600)
     p.add_argument('--max-calls',type=int,default=100);p.add_argument('--max-input-tokens',type=int,default=240000)
     p.add_argument('--gemini-url',default='http://127.0.0.1:8391/v1/chat/completions')
     args=p.parse_args()

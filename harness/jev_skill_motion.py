@@ -70,7 +70,13 @@ def fit_wheels(frame, anchor, prior_heading):
             use = errors < 4.5
             if sum(use) < 3 or len(set(matches[use])) != sum(use):
                 continue
-            score = float(np.mean(np.minimum(errors, 7)**2) - 3*sum(use))
+            # One wheel may be occluded/fragmented while an arm fragment sits
+            # near its expected corner. Use the best three correspondences;
+            # a fourth noisy point must not rotate an otherwise tight fit.
+            order = np.argsort(errors)
+            use = np.zeros(4, dtype=bool)
+            use[order[:3]] = True
+            score = float(np.mean(errors[order[:3]]**2)+.03*min(errors[order[3]]**2,49))
             if best is None or score < best[0]:
                 best = (score, corners[use], points[matches[use]], len(matches[use]))
     if best is None:
@@ -210,7 +216,7 @@ def semantic_state(o, candidate_descriptions, history, active, age, stalls):
     """Explicit allowlist excludes referee data and environment event schedule."""
     if not o.get('valid'): raise ValueError('invalid observation')
     distance=o['range_m']; angle=o['bearing_deg']
-    return {'task':'Reach a stable pose 0.27–0.28 m west of the cyan target, face it, without contact. No grasp.',
+    return {'task':'Reach a stable pose 0.27–0.28 m from the cyan target, face it, without contact. No grasp.',
             'observation':{'distance':'too_close' if distance<.27 else 'inside' if distance<=.28 else 'near' if distance<.36 else 'far',
             'target_side':'left' if angle>0 else 'right' if angle<0 else 'ahead',
             'alignment':'aligned' if abs(angle)<=3 else 'small_error' if abs(angle)<=8 else 'large_error',
@@ -218,6 +224,8 @@ def semantic_state(o, candidate_descriptions, history, active, age, stalls):
             'near_boundary':min(abs(distance-.27),abs(distance-.28))<.003 or abs(abs(angle)-3)<1,
             'stationary_evidence':o['range_spread_m']<.003 and o['bearing_spread_deg']<1.5},
             'active_skill':active,'skill_age_ticks':age,'no_progress_ticks':stalls,
+            'persistent_stall':stalls>=4,
+            'detour_note':'A detour can temporarily increase straight-line target distance while following a clear route.',
             'recent_issued':[{'skill':h['skill'],'progress':h['progress']} for h in history[-3:]],
             'candidates':candidate_descriptions,
             'input_boundary':'RGB, fixed calibration/prior map, and own issued commands. Commands are not measured motion.'}
