@@ -1,0 +1,39 @@
+{
+  "out": "/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/outputs/retention-final-20260915/fully-blocked",
+  "evaluation": {
+    "success": false,
+    "gates": {
+      "actor_arrived": false,
+      "grasp_stable_before_departure": true,
+      "bilateral_every_sample": true,
+      "lifted_every_sample": true,
+      "continuous_samples": true,
+      "level_payload": true,
+      "wall_contact_free": true,
+      "other_collision_free": true,
+      "within_authored_bounds": true,
+      "weld_off": true,
+      "cameras_geometry_unchanged": true,
+      "goal_position": false,
+      "goal_orientation": false,
+      "released_on_floor": false,
+      "full_grasp_samples": true,
+      "grasp_spacing_preserved": true,
+      "grasp_bilateral_through_lift_hold": true,
+      "grasp_hold_lifted_every_sample": true,
+      "carry_spacing_preserved": true
+    },
+    "samples": 20,
+    "bilateral_fraction": 1.0,
+    "lifted_fraction": 1.0,
+    "min_lift_m": 0.077612,
+    "payload_turn_deg": 0.1412583093299382,
+    "goal_position_error_m": 1.1367020000158354,
+    "goal_yaw_error_deg": 89.85874169067006,
+    "wall_contact_ticks": 0,
+    "unexpected_contact_ticks": 0,
+    "navigation_sim_seconds": 1.8810000000000002,
+    "sample_gap_max_s": 0.0990000000000002
+  },
+  "error": null
+}

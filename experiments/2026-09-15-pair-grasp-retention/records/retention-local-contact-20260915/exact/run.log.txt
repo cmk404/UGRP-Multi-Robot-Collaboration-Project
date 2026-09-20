@@ -1,0 +1,24 @@
+{
+  "success": false,
+  "error": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_grasp_endurance.py\", line 76, in run\n    scene.hold_spacing(8.);scene.finish_spacing();report['endurance_start_s']=scene.time()\n    ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_navigation.py\", line 104, in hold_spacing\n    self.spacing_frame()\n  File \"/Users/changmin/projects/ugrp-worktrees/pair-grasp-retention/scripts/run_pair_navigation.py\", line 94, in spacing_frame\n    raise RuntimeError('grasp spacing stopped: '+json.dumps({r:d.get('error') for r,d in decisions.items()}))\nRuntimeError: grasp spacing stopped: {\"r1\": \"visual grasp formation exceeded recovery envelope\", \"r3\": \"visual grasp formation exceeded recovery envelope\"}\n",
+  "evaluation": {
+    "success": false,
+    "reason": "no endurance samples",
+    "grasp_stability": {
+      "success": false,
+      "gates": {
+        "full_grasp_samples": false,
+        "grasp_spacing_preserved": false,
+        "grasp_bilateral_through_lift_hold": true,
+        "grasp_hold_lifted_every_sample": true
+      },
+      "anchor_spacing_m": 0.650586937367572,
+      "final_spacing_m": 0.6171299765810794,
+      "max_spacing_change_m": 0.03345696078649263,
+      "nonbilateral_samples": 0,
+      "samples": 78,
+      "max_sample_gap_s": 0.10000000000000142
+    }
+  },
+  "wall_seconds": 15.86209974999656
+}

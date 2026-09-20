@@ -11,11 +11,12 @@ from harness.pair_transport_vision import GeometryPairVision
 DT = .1
 
 class EnduranceActor:
-    def __init__(self, data, rid, mode):
+    def __init__(self, data, rid, mode, *, slip_guard=False):
         if rid not in ROBOTS or mode not in ('stationary','shuttle'):
             raise ValueError('invalid endurance actor configuration')
         self.data,self.rid,self.mode=data,rid,mode
-        self.vision=GeometryPairVision(data)
+        self.slip_guard=slip_guard
+        self.vision=GeometryPairVision(data,slip_guard=slip_guard,interval_s=DT)
         self.anchor=self.previous=self.anchor_angles=None
         self.velocity={r:np.zeros(2) for r in ROBOTS}
         self.sequence=0;self.terminal=None;self.plan_hash=None
@@ -24,7 +25,8 @@ class EnduranceActor:
         action={'kind':'mecanum','forward':0.,'left':0.,'turn':0.,'duration_s':DT}
         if self.terminal:
             return {'action':action,'status':'endurance_stop','ready':False,'done':False,
-                    'error':self.terminal,'plan_hash':self.plan_hash}
+                    'error':self.terminal,'plan_hash':self.plan_hash,
+                    **({'own_carry_observation':self.vision.carry_monitor.last} if self.slip_guard else {})}
         try:obs=self.vision.observe(own_rgb,top_rgb)
         except ValueError as e:
             self.terminal=str(e);return self.decide(own_rgb,top_rgb)
@@ -56,3 +58,11 @@ class EnduranceActor:
         return {'action':action,'status':'endurance_'+self.mode,'ready':True,'done':False,'plan_hash':self.plan_hash,
                 'observations':obs,'elapsed_command_s':elapsed,'target_offset_m':offset.tolist(),
                 'own_carry_observation':self.vision.carry_monitor.last}
+
+    def after_regrasp(self):
+        """Keep the original path/command clock; require fresh RGB before GO."""
+        from harness.pair_transport_vision import OwnCarryMonitor
+        self.terminal=None
+        self.previous=None
+        self.velocity={r:np.zeros(2) for r in ROBOTS}
+        self.vision.carry_monitor=OwnCarryMonitor(slip_guard=self.slip_guard,interval_s=DT)

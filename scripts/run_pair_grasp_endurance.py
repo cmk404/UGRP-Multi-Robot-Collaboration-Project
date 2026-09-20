@@ -11,6 +11,7 @@ from harness.pair_grasp_endurance import EnduranceActor,DT
 from harness.pair_navigation import ROBOTS,authorize_pair,digest
 from harness.pair_carry_sync import PairCarrySync
 from scripts.evaluate_pair_navigation import evaluate_grasp_stability
+from scripts.pair_grasp_recovery import recover_pair,slip_requested
 
 class EnduranceScene(PairNavigationScene):
     def evaluation_snapshot(self,*,full_state=True):
@@ -58,22 +59,24 @@ def evaluate_endurance(rows, report):
         result['success'] &= released
     return result
 
-def run(data,grasp_root,out,mode,duration_s=300):
+def run(data,grasp_root,out,mode,duration_s=300, *, contact_profile='retention', slip_guard=True, recovery=True):
     if out.exists():raise FileExistsError(out)
     if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip():raise RuntimeError('commit execution source and protocol first')
-    skill,gm=models(grasp_root,'student-skill.json');scene=EnduranceScene(out,grasp_root,data,impratio=10)
-    actors={r:EnduranceActor(data,r,mode) for r in ROBOTS};sync=PairCarrySync(data['map_id']+'-endurance')
+    skill,gm=models(grasp_root,'student-skill.json');scene=EnduranceScene(out,grasp_root,data,impratio=10,contact_profile=contact_profile)
+    actors={r:EnduranceActor(data,r,mode,slip_guard=slip_guard) for r in ROBOTS};sync=PairCarrySync(data['map_id']+'-endurance')
     report={'schema':'ugrp.pair_grasp_endurance.v1','source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         'map':data,'map_sha256':digest(data),'mode':mode,'duration_s':duration_s,'close_pulse':1600,'impratio':10,'noslip_iterations':0,'endurance_trace_version':1,'release_check_required':True,
+        'contact_profile':contact_profile,'slip_guard':slip_guard,'recovery_enabled':recovery,'recoveries':[],
         'grasp_model_files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(grasp_root.iterdir()) if p.is_file()},
         'environment':{'python':sys.version,'platform':platform.platform()},'steps':[],'error':None,'external_model_calls':0,'cost_usd':0,'scope':'Fixed-start RGB guarded endurance, 180/300s checkpoints from the same trajectory'}
-    started=time.monotonic()
+    started=time.monotonic();initial_grasp=None
     try:
         import mujoco
         report['environment']['mujoco']=mujoco.__version__
         scene.open();report['scene_xml_sha256']=scene.xml_sha;report['invariants_initial']=scene.invariant_record()
         scene.finish_grasp(predict_student,gm,after_close=scene.anchor_spacing,hold=scene.hold_spacing,close_pulse=1600)
         scene.hold_spacing(8.);scene.finish_spacing();report['endurance_start_s']=scene.time()
+        initial_grasp=scene.grasp_report
         for i in range(round(duration_s/DT)):
             frames=scene.capture(f'endurance-{i:04d}')
             decisions={r:actors[r].decide(frames[r]['own_bytes'],frames[r]['top_bytes']) for r in ROBOTS}
@@ -84,7 +87,16 @@ def run(data,grasp_root,out,mode,duration_s=300):
             report['steps'].append({'index':i,'images':{r:{'own':frames[r]['own_rgb'],'top':frames[r]['shared_top_rgb']} for r in ROBOTS},
                 'frame_ids':{r:frames[r]['frame_id'] for r in ROBOTS},'decisions':decisions,'permission':permission,'issued_actions':actions,'sim_time_s':scene.time()})
             scene.execute_endurance(actions)
-            if not all(d['ready'] for d in decisions.values()):raise RuntimeError('RGB endurance stopped: '+str({r:d.get('error') for r,d in decisions.items()}))
+            if not all(d['ready'] for d in decisions.values()):
+                if recovery and slip_requested(decisions):
+                    retry=len(report['recoveries'])==0
+                    rec=recover_pair(scene,gm,len(report['recoveries'])+1,regrasp=retry)
+                    rec['trigger_index']=i;report['recoveries'].append(rec)
+                    if rec['error']:raise RuntimeError('RGB recovery stopped: '+rec['error'])
+                    if not retry:raise RuntimeError('slip recurred after one regrasp; placed and stopped')
+                    for actor in actors.values():actor.after_regrasp()
+                    continue
+                raise RuntimeError('RGB endurance stopped: '+str({r:d.get('error') for r,d in decisions.items()}))
         for port in scene.ports.values():port.stop()
         scene.capture('endurance-finished')
         scene.place()  # Fixed timer completion, never gated by evaluation/contact state.
@@ -94,9 +106,11 @@ def run(data,grasp_root,out,mode,duration_s=300):
             report.update(invariants_final=scene.invariant_record(),weld_active_ticks=scene.weld_active_ticks,wall_contact_ticks=scene.wall_contact_ticks,
                 unexpected_contact_ticks=scene.unexpected_contact_ticks,sim_seconds=scene.time())
             report['evaluation']=evaluate_endurance(scene.evaluation_samples,report)
+            from scripts.evaluate_pair_grasp_recovery import evaluate_recoveries
+            report['recovery_evaluation']=evaluate_recoveries(scene.evaluation_samples,report)
         report.update(spacing_steps=scene.spacing_steps,spacing_sync_events=scene.spacing_sync.events,sync_events=sync.events,wall_seconds=time.monotonic()-started)
         report['success']=not report['error'] and report.get('evaluation',{}).get('success',False)
-        write(out/'grasp-result.json',scene.grasp_report);write(out/'contact-events-evaluation-only.json',scene.contact_events)
+        write(out/'grasp-result.json',initial_grasp or scene.grasp_report);write(out/'contact-events-evaluation-only.json',scene.contact_events)
         try:scene.close()
         except Exception:report['cleanup_error']=traceback.format_exc();report['success']=False
         finally:
@@ -107,6 +121,10 @@ def run(data,grasp_root,out,mode,duration_s=300):
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--map',type=Path,required=True);p.add_argument('--grasp-model-dir',type=Path,required=True)
     p.add_argument('--out-dir',type=Path,required=True);p.add_argument('--mode',choices=('stationary','shuttle'),required=True)
-    a=p.parse_args();r=run(json.loads(a.map.read_text()),a.grasp_model_dir.resolve(),a.out_dir.resolve(),a.mode)
+    p.add_argument('--duration',type=int,choices=(30,60,300),default=300)
+    p.add_argument('--contact-profile',choices=('baseline','retention'),default='retention')
+    p.add_argument('--no-slip-guard',action='store_true');p.add_argument('--no-recovery',action='store_true')
+    a=p.parse_args();r=run(json.loads(a.map.read_text()),a.grasp_model_dir.resolve(),a.out_dir.resolve(),a.mode,a.duration,
+        contact_profile=a.contact_profile,slip_guard=not a.no_slip_guard,recovery=not a.no_recovery)
     return int(not r['success'])
 if __name__=='__main__':raise SystemExit(main())
