@@ -221,3 +221,59 @@ class TestSkillMotion(unittest.TestCase):
                 self.assertIs(latest,initial)
                 scene.issue.assert_not_called()
                 observer.observe.assert_not_called()
+
+    def test_continuous_deadline_does_not_take_an_extra_step_for_roundoff(self):
+        from types import SimpleNamespace
+        from unittest.mock import MagicMock,patch
+        from scripts.run_jev_skill_motion import post_continuous,continuous_disposition
+        scene=MagicMock();scene.world.data.time=1.-1e-12
+        control=SimpleNamespace(done=False)
+        future=MagicMock();future.done.return_value=False
+        future.result.return_value={'status':'timeout','body':None}
+        with patch('scripts.run_jev_skill_motion.concurrent.futures.ThreadPoolExecutor') as pool:
+            pool.return_value.__enter__.return_value.submit.return_value=future
+            response,latest=post_continuous(scene,MagicMock(),control,{},'unused',None,[],'0',1.)
+        scene.issue.assert_not_called()
+        self.assertIsNone(latest);self.assertEqual(response['status'],'timeout')
+        self.assertEqual(continuous_disposition(control,None,{},1.-1e-12,0.,1.),'budget')
+
+    def test_RGB_completion_ends_physics_even_when_delayed_response_is_an_error(self):
+        from types import SimpleNamespace
+        from unittest.mock import MagicMock,patch
+        from scripts.run_jev_skill_motion import post_continuous,continuous_disposition
+        scene=MagicMock();scene.world.data.time=0.;scene.out=Path('/unused')
+        frames={'own_rgb':{},'shared_top_rgb':{},'own_bytes':b'x','top_bytes':b'y'}
+        scene.capture.return_value={'r2':frames}
+        o=self.observation(range_m=.275,bearing_deg=0.)
+        observer=MagicMock();observer.observe.return_value=o
+        control=SimpleNamespace(done=False,gate=MagicMock())
+        control.gate.update.return_value=True
+        future=MagicMock();future.done.return_value=False
+        future.result.return_value={'status':'timeout','body':None}
+        rows=[]
+        with patch('scripts.run_jev_skill_motion.concurrent.futures.ThreadPoolExecutor') as pool, \
+             patch('scripts.run_jev_skill_motion.write'),patch('scripts.run_jev_skill_motion.time.sleep'):
+            pool.return_value.__enter__.return_value.submit.return_value=future
+            response,latest=post_continuous(scene,observer,control,{},'unused',None,rows,'0',90.)
+        scene.issue.assert_called_once_with(bounded_command())
+        self.assertEqual(response['status'],'timeout');self.assertEqual(len(rows),1)
+        # Completion is independent of age, incompatible origin, and deadline.
+        self.assertEqual(continuous_disposition(control,latest,{'stale':True},90.,0.,90.),'complete')
+        self.assertEqual(continuous_disposition(control,None,{},90.,0.,90.),'budget')
+
+    def test_unused_completion_replays_without_applying_a_model_choice(self):
+        from scripts.audit_jev_skill_cohort import replay_control
+        setup=episode('open');c=SkillController(setup['static_map'])
+        o=self.observation(range_m=.281,bearing_deg=0.)
+        c.observe_progress(o);state=c.state(o)
+        origin={'tick':0,'observation':o,'state':state,'execution_source':'request_only',
+                'query_reason':c.need_query(state),'response_unused_reason':'RGB_completion'}
+        rows=[origin]
+        goal=self.observation(range_m=.275,bearing_deg=0.,stationary=True)
+        for _ in range(3):
+            c.done=c.gate.update(goal)
+            rows.append({'observation':goal,'command':bounded_command(),'execution_source':'inference_brake'})
+        self.assertTrue(c.done)
+        rows.append({'tick':0,'request_origin_tick':0,'observation':goal,'state':c.state(goal),
+                     'command':bounded_command(),'execution_source':'RGB_completion'})
+        self.assertEqual(replay_control(rows,setup,{'policy':'jev','arm':'full'}),4)

@@ -61,6 +61,8 @@ def main():
   contribution[key]={'chosen_skills':dict(choices),'moving_candidate_keys_per_request':dict(optioncounts),
       'execution_counts':dict(collections.Counter(r.get('execution_source',r.get('decision_source')) for r in rows)),
       'discarded_responses':sum('discard_reason' in r for r in rows),
+      'unused_response_reasons':dict(collections.Counter(r['response_unused_reason'] for r in rows if 'response_unused_reason' in r)),
+      'response_statuses':dict(collections.Counter(r.get('response',{}).get('status','missing') for r in requests)),
       'identical_consecutive_request_pairs':sum(x['request']==y['request'] for r in rs for seq in [[x for x in archive[(r['partition'],r['trial_id'])] if 'request' in x]] for x,y in zip(seq,seq[1:]))}
  report={'protocols':protocols,'complete':not incomplete,'missing':incomplete,'results':results,
     'summary':{k:summarize(v) for k,v in groups.items()},'families':{k:summarize(v) for k,v in families.items()},

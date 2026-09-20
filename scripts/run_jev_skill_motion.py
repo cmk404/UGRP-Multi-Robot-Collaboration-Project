@@ -156,6 +156,15 @@ class ChallengeScene(Scene):
         self.update_environment()
 
 
+def continuous_disposition(control,latest,state,now,observed_at,deadline):
+    """Local RGB completion wins over an unused delayed model decision."""
+    if latest is not None and control.done:return 'complete'
+    if now+DT>deadline+1e-9:return 'budget'
+    fresh=control.state(latest[1]) if latest else None
+    if fresh is None or now-observed_at>4. or not request_compatible(state,fresh):return 'discard'
+    return 'execute'
+
+
 def post_continuous(scene,observer,control,body,url,key,rows,label,sim_deadline,initial=None):
     """Keep physics and RGB alive while one network request is outstanding.
 
@@ -168,7 +177,8 @@ def post_continuous(scene,observer,control,body,url,key,rows,label,sim_deadline,
     with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
         pending=pool.submit(post,body,url,key,30)
         i=0
-        while not pending.done() and float(scene.world.data.time)<sim_deadline:
+        while (not pending.done() and not control.done
+               and float(scene.world.data.time)+DT<=sim_deadline+1e-9):
             start=time.monotonic()
             scene.issue(bounded_command())
             frames=scene.capture(f'{label}-wait-{i:03}')['r2']
@@ -182,7 +192,7 @@ def post_continuous(scene,observer,control,body,url,key,rows,label,sim_deadline,
                 row['observation']=o
             except ValueError as exc:
                 row['observation']={'valid':False,'reason':str(exc)}
-                observer.recent.clear();control.gate.count=0;latest=None
+                observer.recent.clear();control.gate.count=0;control.done=False;latest=None
             rows.append(row);write(scene.out/'turns.json',rows)
             i+=1
             time.sleep(max(0.,DT-(time.monotonic()-start)))
@@ -218,7 +228,7 @@ def run_trial(args,case,policy,key,source):
         start_sim=float(scene.world.data.time);lost=0
         for tick in range(math.ceil(args.max_sim_s/DT)):
             if time.monotonic()-started>args.max_wall_s:result['stop_reason']='wall_budget';break
-            if float(scene.world.data.time)-start_sim>=args.max_sim_s:result['stop_reason']='sim_budget';break
+            if float(scene.world.data.time)+DT>start_sim+args.max_sim_s+1e-9:result['stop_reason']='sim_budget';break
             frames=scene.capture(f'{tick:03}')['r2']
             row={'tick':tick,'observed_at_sim_s':float(scene.world.data.time),
                  'images':{k:frames[k] for k in ('own_rgb','shared_top_rgb')}}
@@ -259,12 +269,28 @@ def run_trial(args,case,policy,key,source):
                         latest=None
                     row['response']=response;write(out/f'{tick:03}-response.json',response)
                     result['model_calls']+=1
+                    b=response.get('body') or {};usage=b.get('usage',{}) if isinstance(b,dict) else {}
+                    result['input_tokens']+=usage.get('input_tokens',usage.get('prompt_tokens',0))
+                    result['output_tokens']+=usage.get('output_tokens',usage.get('completion_tokens',0))
+                    if getattr(args,'clock','paused')=='continuous':
+                        now=float(scene.world.data.time)
+                        origin['response_received_sim_s']=now
+                        disposition=continuous_disposition(control,latest,state,now,origin['observed_at_sim_s'],start_sim+args.max_sim_s)
+                        if disposition in ('complete','budget'):
+                            origin['response_unused_reason']='RGB_completion' if disposition=='complete' else 'sim_budget'
+                            if disposition=='complete':
+                                frames,o,observed=latest
+                                rows.append({'tick':tick,'observed_at_sim_s':observed,
+                                    'images':{k:frames[k] for k in ('own_rgb','shared_top_rgb')},
+                                    'observation':o,'state':control.state(o),'command':bounded_command(),
+                                    'execution_source':'RGB_completion','request_origin_tick':origin['tick'],
+                                    'response_age_sim_s':now-origin['observed_at_sim_s']})
+                            write(out/'turns.json',rows)
+                            result['stop_reason']='RGB_goal_confirmed' if disposition=='complete' else 'sim_budget'
+                            break
                     if response['status']!='ok':
                         if not any(row is saved for saved in rows):rows.append(row)
                         raise RuntimeError('model_'+response['status'])
-                    b=response['body'];usage=b.get('usage',{})
-                    result['input_tokens']+=usage.get('input_tokens',usage.get('prompt_tokens',0))
-                    result['output_tokens']+=usage.get('output_tokens',usage.get('completion_tokens',0))
                     answers,confidence=parse_answer(b,policy,state,decomposed=args.arm!='single')
                     row['answers']=answers;row['confidence']=confidence;chosen=answers['action']
                     row['decision_source']=policy
@@ -272,7 +298,7 @@ def run_trial(args,case,policy,key,source):
                         fresh=control.state(latest[1]) if latest else None
                         age=float(scene.world.data.time)-origin['observed_at_sim_s']
                         origin['response_received_sim_s']=float(scene.world.data.time)
-                        if fresh is None or age>4. or not request_compatible(state,fresh):
+                        if disposition=='discard':
                             origin['discard_reason']='missing_changed_or_expired_RGB_context'
                             control.active=None;control.path=[]
                             write(out/'turns.json',rows)
@@ -281,9 +307,6 @@ def run_trial(args,case,policy,key,source):
                         row={'tick':tick,'observed_at_sim_s':observed,'images':{k:frames[k] for k in ('own_rgb','shared_top_rgb')},
                              'observation':o,'state':state,'answers':answers,'confidence':confidence,
                              'decision_source':policy,'request_origin_tick':origin['tick'],'response_age_sim_s':age}
-                        if control.done:
-                            row.update(command=bounded_command(),execution_source='RGB_completion')
-                            rows.append(row);scene.issue(bounded_command());result['stop_reason']='RGB_goal_confirmed';break
                     if answers.get('evidence')=='observe_again' and args.arm!='primitive':
                         chosen='hold_and_observe';row['decision_source']='model_requested_reobserve'
                 control.select(chosen,o,confidence if args.arm!='no_confidence' else None)

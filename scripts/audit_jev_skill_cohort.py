@@ -19,7 +19,7 @@ def replay_control(rows,setup,job):
         o=row['observation']
         if row.get('execution_source')=='inference_brake':
             if o.get('valid'):c.done=c.gate.update(o)
-            else:c.gate.count=0
+            else:c.gate.count=0;c.done=False
             assert row['command']==bounded_command()
             verified+=1
             continue
@@ -36,6 +36,10 @@ def replay_control(rows,setup,job):
         state=c.state(o)
         assert state==row['state'],(row['tick'],'state mismatch')
         if c.done:
+            if fresh:
+                assert pending and pending['tick']==row['request_origin_tick']
+                assert pending.get('response_unused_reason')=='RGB_completion'
+                pending=None
             assert row['command']==bounded_command()
             verified+=1
             continue
@@ -113,19 +117,24 @@ def audit(root,*,replay=True):
      request_rows[row['tick']]=row
      if row.get('response'):
       response=row['response'];latencies.append(response['latency_s'])
-      if response['status']=='ok':
+      if response['status']=='ok' and not row.get('response_unused_reason'):
        try:
         answers,confidence=parse_answer(response['body'],job['policy'],row['state'],decomposed=job['arm']!='single')
         assert row.get('answers',answers)==answers
        except (ValueError,KeyError,TypeError) as exc:
         assert result['stop_reason']=='error' and result['error']['type']==type(exc).__name__
         rejected+=1
-       usage=response['body'].get('usage',{});tokens_in+=usage.get('input_tokens',usage.get('prompt_tokens',0));tokens_out+=usage.get('output_tokens',usage.get('completion_tokens',0))
+      body=response.get('body') or {};usage=body.get('usage',{}) if isinstance(body,dict) else {}
+      tokens_in+=usage.get('input_tokens',usage.get('prompt_tokens',0));tokens_out+=usage.get('output_tokens',usage.get('completion_tokens',0))
      if 'discard_reason' in row:discarded+=1
     if 'request_origin_tick' in row:
      origin=request_rows[row['request_origin_tick']]
-     assert request_compatible(origin['state'],row['state'])
-     assert row['response_age_sim_s']<=4.
+     if row.get('execution_source')=='RGB_completion':
+      assert origin.get('response_unused_reason')=='RGB_completion'
+      assert row['command']==bounded_command()
+     else:
+      assert request_compatible(origin['state'],row['state'])
+      assert row['response_age_sim_s']<=4.
    assert calls==len(list(p.glob('*-request.json')))
    controlled=replay_control(rows,setup,{**job,'error':result['error']})
    assert calls==result['model_calls'],('calls',calls,result['model_calls'])
