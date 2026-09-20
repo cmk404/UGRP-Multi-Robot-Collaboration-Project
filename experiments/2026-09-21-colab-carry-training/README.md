@@ -29,7 +29,7 @@
 - `resume.pt`는 모델·optimizer·scheduler·샘플러·CPU/CUDA RNG·최선 checkpoint·진행 이력을
   원자적으로 저장한다. 1/500 step, 완료/진단 중지 지점에서 저장한다.
 - Colab 연결 해제와 VM 삭제는 다르다. VM 삭제 시 다운로드하지 않은 체크포인트는 사라진다.
-  자동 keepalive/재접속이나 Drive 백업을 구현하지 않는다.
+  자체 keepalive/자동 VM 복구나 Drive 백업을 구현하지 않는다. 이후 공식 CLI의 세션 유지 기능을 사용했지만 VM 보존을 보장하지 않는다.
 - CUDA TF32/혼합정밀도를 사용하지 않는다. CPU와 GPU의 부동소수점 비트 동일성을 주장하지 않는다.
   native/cache feature 오차와 action chunk 오차, GPU→CPU 배포 오차를 실제 측정하고 제한을 넘으면 실패시킨다.
 - 데이터 이동은 **episode root만 치환**한다. 원래 manifest를 그대로 보존하고
@@ -46,7 +46,7 @@ macOS `mjpython` 실행 경로, OpenGL/EGL 또는 OSMesa 설정, 런타임 시�
 참고: https://mujoco.readthedocs.io/en/stable/python.html ,
 https://research.google.com/colaboratory/faq.html
 
-## 2026-09-21 실행 상태
+## 2026-09-21 초기 실행 기록 (01:26–01:51 KST)
 
 실행 소스 `9aef6bb0fb7d05e6b419b2f79b361ebd29099948`을 별도 ZIP으로 고정했다.
 Colab Tesla T4에서 전체 고정 데이터의 256px/4시점 2-update 진단이 통과했다.
@@ -61,7 +61,7 @@ GPU→CPU 최대 차이 8.0466e-7(train/dev 각 2표본)이다.
 출력은 `/content/carry-training`, 로그는 `/content/carry-training.log`다.
 `verification.json`에 검증 범위와 원본 위치를 기록했다.
 
-Colab을 다시 확인할 때는 **강 / kcm0127@gmail.com**의 이미 열린 scratchpad 탭을 사용한다.
+초기 실행은 **강 / kcm0127@gmail.com**의 scratchpad 탭에서 확인했다. 이후 실행은 아래 CLI로 전환했다.
 새로고침하지 않고 다음 셀로 상태를 읽을 수 있다.
 
 ```python
@@ -119,3 +119,46 @@ atol/rtol 1e-4 이내(최대 3.7551e-6)였다. 이는 전송·모델 로드 검�
 `outputs/colab-results/carry-training/`에 저장한다. 이 기록 시점에는 8개 전체 회수와 물리 평가는 미완료다.
 
 01:51 KST CLI 회수기가 128px 두 history × 두 seed, 총 4개 모델의 다운로드와 해시·설정 검증을 완료했다. 나머지 256px 4개 모델을 기다리며 계속 실행 중이다.
+
+
+## CLI 런타임 복구 (02:03 KST 이후)
+
+최초 T4 assignment가 서버 목록에서 사라져 회수기가 중지됐다. 종료 원인은 확인되지 않았다.
+이미 Mac에 회수한 5개 모델은 해시가 일치했고, 해당 모델의 train/dev 처음·마지막
+20개 native 예측 검사도 통과했다(최대 차이 5.1260e-6).
+
+같은 kcm0127 계정에 CLI 세션 `ugrp-carry-recovery`를 생성해 T4를 다시 할당했다.
+소스 `9aef6bb`, canonical 데이터, 전체 설치 패키지 freeze가 최초 런타임과 일치한다.
+소스/데이터 ZIP과 5개 완성 모델 ZIP을 업로드해 원격 해시를 대조한 뒤 복구했다.
+CLI의 큰 파일 단일 업로드는 HTTP 400으로 실패했고, Jupyter Contents API의
+4 MiB 순차 chunk 업로드가 성공했다. 나머지 3개 모델은 기존 seed에서 다시 학습했다.
+사라진 VM의 미회수 optimizer 상태를 이어받았다고 주장하지 않는다.
+
+마지막 `r256-h4 / seed 20260922`는 8000 update를 완료한 뒤 최종 평가/저장 중
+SIGKILL로 종료됐다. cgroup의 oom/oom_kill 카운터는 0이어서 원인은 미확정이다.
+8000-step 체크포인트, 저장 후보, 실패 로그를 ZIP으로 보존하고 Mac에서 모든 파일 해시와
+`torch.load(weights_only=True)`를 검증했다. ZIP SHA256은
+`f51c9b3a150126cf46f670e10d7ecb57053ece0c8109cd9879c457da487d5826`이다.
+같은 소스의 `--resume`으로 추가 update 없이 최종 검증·저장을 완료했다.
+프로세스 종료 코드는 0이며, 중단 전 저장 후보와 복구된 최종 모델의 SHA256이
+`58abfd79305554332af9a490b3e0c4cbdfeb4d3d511def7e2e60ea59bd711baf`로 동일하다.
+
+원본은 로컬 `outputs/colab-results/`와 `outputs/colab-verification/runtime-recovery.json`에
+보관한다. Drive나 원격 raw 백업을 사용하지 않았다. 물리 평가는 별도 고정 checkout
+`/Users/changmin/.codex/worktrees/carry-input-physics/ugrp`의 소스
+`e00435b82470e722196858728bc22c1123ef730c`에서 기존 36-run 프로토콜을 사용한다.
+8개 모델의 전체 회수·해시 및 Mac native 검증을 통과해야 시작하며, 시작 전 소유 Colab VM을 종료한다.
+
+
+## 8개 모델 회수 및 Mac 검증 완료
+
+전체 8개 모델이 각 8000 update를 완료했다. `cohort.json`, 학습 로그와 모델별
+6파일, 총 50파일의 SHA256을 최종 manifest와 대조했다. Mac CPU에서 train/dev
+처음·마지막 native 출력 32개를 대조했고 최대 절대 차이는 **5.6625e-6**이었다
+(atol/rtol 1e-4). 8개 모델 모두 파라미터 수 **11,421,588** 및 동결 backbone
+state 해시가 같았다. 모델별 선택 step·오차·시간·환경·해시는 `training-results.json`에 기록했다.
+
+검증 뒤 `ugrp-carry-recovery`의 정상 종료 코드 0을 확인하고 해당 Colab VM을
+`colab stop`으로 정리했다. 고정 소스 e00435b의 Mac 36-run 물리 비교가 시작됐다.
+이 절의 완료 범위는 **학습·파일 회수·배포 일치 검사**이며 물리 성공률은 후속 audit에서 판정한다.
+원시 모델·영상·로그는 로컬에만 보관되며 Git의 기록/해시가 원시 자료의 원격 백업을 의미하지 않는다.

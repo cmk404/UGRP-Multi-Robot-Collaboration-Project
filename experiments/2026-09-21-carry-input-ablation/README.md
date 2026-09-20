@@ -42,3 +42,15 @@ python scripts/audit_carry_input_ablation.py --out outputs/ablation-final-NEW \
 위 `python`은 기존 `.venv-sim-worker-mac/bin/python`이다. 실행 전에 작업 트리와 학습 provenance를 확인하고 소스를 커밋한다. 본 결과가 없으므로 고해상도나 이력의 유효성을 아직 판정하지 않는다. 향후 해상도만 개선되면 공간 정보 손실, 이력만 개선되면 현재 프레임의 상태 식별 부족을 지지한다. 둘 다 개선되지 않아도 정보 충분성이 증명되는 것은 아니며 데이터 다양성·frozen encoder·종료/협업 구조 등의 대안 원인이 남는다. 두 seed와 같은 장면 계열 네 조건은 광범위한 일반화나 강한 통계적 결론에 충분하지 않다.
 
 계산 비용 참고: 256px/4시점 tiny 모델의 실제 CPU worker 추론은 로봇별 0.161–0.230초, 두 로봇 합계 0.368/0.419초였다(두 라운드만 측정, worker 초기 시작 시간 제외). 환경의 0.2 SIM초 행동 간격은 wall-clock 실시간 처리 보장이 아니다. 성공률 개선과 더불어 추론 지연·전체 wall 시간의 증가를 비교해야 하며, 이 표본으로 안정적인 p95나 배포 실시간성을 주장하지 않는다.
+
+
+## Colab 회수 후 최종 물리 비교 시작
+
+[Colab 학습 기록](../2026-09-21-colab-carry-training/README.md)의 소스 `9aef6bb`로
+8개 × 8000 update 학습과 결과 회수가 완료됐다. Mac native 32개 예측 비교가
+통과했고, 모델별 SHA/선택 step/오차/환경은 해당 기록의 `training-results.json`에 있다.
+
+물리 실행은 별도 깨끗한 checkout의 `e00435b82470e722196858728bc22c1123ef730c`를
+고정하고 기존 36회 프로토콜 그대로 진행한다. 원본은
+`/Users/changmin/.codex/worktrees/carry-input-physics/ugrp/outputs/colab-input-final-20260921`,
+소유 세션은 `carry-input-final-pipeline`이다. 전체 실행과 독립 audit 전 성공률을 확정하지 않는다.

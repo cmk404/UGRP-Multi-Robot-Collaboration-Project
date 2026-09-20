@@ -3,7 +3,8 @@
 현재 코드의 진입점은 [현재 상태](../docs/current_status.md)를 참고한다. 아래는 실행 SHA별 보존 기록이며 과거 실패와 후속 결과를 함께 남긴다. 필요한 ID만 골라 읽는다.
 
 - [공동 출하 복구: 목적지·장애물 6조건 새 LLM 계획과 물리 E2E 성공](dispatch-adaptive-recovery-20260917/README.md) — 이전 1/6 이후의 최종 비교, 조건당 1회.
-- [2026-09-21 ACT 입력 해상도·이력 2×2 비교](2026-09-21-carry-input-ablation/README.md) — 구현·학습/물리 연결 진단 완료, 본 학습·성능 비교는 Colab 결과 회수 대기.
+- [2026-09-21 Colab ACT 학습·CLI 복구](2026-09-21-colab-carry-training/README.md) — 8개 × 8000 updates, 50파일 해시 및 Mac native 32개 대조 통과.
+- [2026-09-21 ACT 입력 해상도·이력 2×2 비교](2026-09-21-carry-input-ablation/README.md) — 8개 Colab 학습 모델 회수·Mac 검증 완료, 고정 36-run 물리 비교 진행 중.
 - [2026-09-18 ACT 공동 운반 비교](2026-09-18-act-pair-carry/README.md) — 운반 진입 조건 교사 3/3, ACT 1/3·0/3, 네 번째 조건 접근 중단.
 
 - [2026-09-17 목적지·지형 확대 E2E: 기본 A 성공, B 영상 인식 실패, 4개 지형 실행 거부](dispatch-variation-e2e-20260917/README.md)

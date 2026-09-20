@@ -55,7 +55,7 @@
       "resolution": "same hash-checked patch as local; no added observation state"
     }
   ],
-  "gpu_status": "T4 full-data r256-h4 2-step diagnostic passed; full 8-model cohort started; no completed cohort result yet",
+  "gpu_status": "8/8 models complete and locally recovered; all source/data/config/model hashes and 32 Mac native probes passed",
   "simulation_scope": "feasibility review only; no Colab simulation run",
   "storage": "local git records; VM direct transfer; no Google Drive",
   "gpu_diagnostic": {
@@ -139,7 +139,7 @@
     "physics_evaluation": false
   },
   "ci": {
-    "sha": "b464b74c4658467279cadfcaf9a15ab8838d0914",
+    "sha": "e00435b82470e722196858728bc22c1123ef730c",
     "checks": "all 8 push/PR checks passed"
   },
   "cli_partial_recovery": {
@@ -175,5 +175,79 @@
     "source_sha": "9aef6bb0fb7d05e6b419b2f79b361ebd29099948",
     "transport": "official google-colab-cli ContentsClient; existing runtime only",
     "physics_evaluation": false
+  },
+  "runtime_recovery": {
+    "failure_explanation": "previous assignment disappeared from server list; termination cause unknown; missing models cannot be recovered from the vanished VM",
+    "preserved_models": 5,
+    "recovery_session": "ugrp-carry-recovery",
+    "bundles": {
+      "carry-final": {
+        "path": "/Users/changmin/.codex/worktrees/colab-carry-training/ugrp/outputs/colab/carry-final.zip",
+        "sha256": "cdac063cd38e167b39e4bff5ba64a29fbaa22059ac6b23b5d0801e91ed0660cd",
+        "source_sha": "9aef6bb0fb7d05e6b419b2f79b361ebd29099948",
+        "dataset_sha256": "3db730eaf9d827a40b355d7b53188993e14b75d10fd10b9b213a67f830fba167",
+        "bytes": 347133589,
+        "files": 7445
+      },
+      "completed-five": {
+        "bytes": 214962342,
+        "sha256": "668328e0ee3069311502974ae10c6e6ed78c0d50578be47628c98fe963249ed7",
+        "models": 5
+      }
+    },
+    "initial_single_uploads": "400 Bad Request for both large ZIPs; 4MiB sequential Jupyter Contents chunks succeeded",
+    "training_boundary": "same frozen source and dataset, 5 completed outputs reused; remaining 3 start from original seeds without a recovered optimizer state",
+    "full_package_freeze_equal": true,
+    "finalization_failure": {
+      "model": "model-r256-h4-s20260922",
+      "signal": "SIGKILL 9",
+      "stage": "after step 8000, during final prediction evaluation/export",
+      "cause": "unconfirmed; cgroup memory.events oom and oom_kill both 0",
+      "checkpoint": {
+        "step": 8000,
+        "selected_step": 4000,
+        "selected_score": 0.048393810221170605,
+        "archive_sha256": "f51c9b3a150126cf46f670e10d7ecb57053ece0c8109cd9879c457da487d5826",
+        "all_files_verified": true,
+        "safe_torch_load": true,
+        "scope": "final-step checkpoint, interrupted export and failure log preserved; zero further training updates needed"
+      },
+      "retry": {
+        "source_unchanged": true,
+        "resume_step": 8000,
+        "additional_updates": 0,
+        "started_unix": 1789926836.11463,
+        "wrapper_pid": 13882,
+        "status": "complete",
+        "exit_code": 0,
+        "model_sha256": "58abfd79305554332af9a490b3e0c4cbdfeb4d3d511def7e2e60ea59bd711baf",
+        "candidate_model_sha256_unchanged": true
+      }
+    }
+  },
+  "final_recovery": {
+    "models": 8,
+    "steps_per_model": 8000,
+    "files_verified": 50,
+    "manifest": "/Users/changmin/.codex/worktrees/colab-carry-training/ugrp/outputs/colab-results/carry-training/recovery-manifest.json",
+    "mac_native_probes": 32,
+    "mac_max_abs": 5.662441253662109e-06,
+    "parameter_count": 11421588,
+    "backbone_sha256": "b76b2b92d7f466de22f5a98f772a97b08f4f47d4076a216a40af3408d08d1af6",
+    "environment": {
+      "platform": "macOS-27.2-arm64-arm-64bit",
+      "python": "3.12.12 (main, Feb  4 2026, 01:57:59) [Clang 21.1.4 ]",
+      "torch": "2.11.0",
+      "upstream_modeling_sha256": "2ea0acbdf210acee9d08f1f306afbda1e935bce0604b3b67b8d87c57c3f79a19"
+    },
+    "colab_process_exit_code": 0,
+    "owned_colab_runtime_stopped": true,
+    "physics": {
+      "phase": "running_36_local_physics_trials",
+      "observed_unix": 1789927166.578141,
+      "physics_source_sha": "e00435b82470e722196858728bc22c1123ef730c",
+      "output": "/Users/changmin/.codex/worktrees/carry-input-physics/ugrp/outputs/colab-input-final-20260921",
+      "mac_models_verified": 8
+    }
   }
 }
