@@ -49,11 +49,16 @@ def cache_images(policy, rows, size):
     result = {}
     policy.eval()
     for key, field in zip(IMAGE_KEYS, ('own_jpeg', 'top_jpeg')):
-        parts = []
+        cached = None
         for i in range(0, len(rows), 32):
             t = torch.stack([image_tensor(r[field], size) for r in rows[i:i+32]])
-            parts.append(policy.model.backbone.native(t.to(next(policy.parameters()).device))['feature_map'].detach().cpu())
-        result[key] = torch.cat(parts)
+            features = policy.model.backbone.native(t.to(next(policy.parameters()).device))['feature_map'].detach().cpu()
+            if cached is None:
+                cached = torch.empty((len(rows), *features.shape[1:]), dtype=features.dtype)
+            cached[i:i+len(features)].copy_(features)
+        if cached is None:
+            raise ValueError('feature cache requires nonempty rows')
+        result[key] = cached
     result[CONTEXT_KEY] = torch.tensor([r['context'] for r in rows], dtype=torch.float32)
     return result
 
@@ -153,7 +158,7 @@ def main():
     p.add_argument('--device', choices=('cpu', 'cuda'), default='cpu')
     p.add_argument('--resume', action='store_true')
     p.add_argument('--checkpoint-encoder', action='store_true', help='Recompute encoder activations; keep the full training batch and RNG')
-    p.add_argument('--cpu-evaluation-batch-size', type=int, default=32, choices=(8, 32), help='Only final CPU prediction export; training/development selection stay batch32')
+    p.add_argument('--cpu-evaluation-batch-size', type=int, default=32, choices=(1, 8, 32), help='Only final CPU prediction export; training/development selection stay batch32')
     p.add_argument('--stop-after-step', type=int, help='Pause at this step without changing the full scheduler budget')
     a = p.parse_args()
     source_sha = source_identity()
@@ -261,6 +266,11 @@ def main():
         write(a.out/'report.json', report)
         return
     policy.load_state_dict(state)
+    # Training has ended; release its tensors before CPU deployment/export.
+    optimizer.zero_grad(set_to_none=True)
+    del optimizer, scheduler, state
+    if end_step > start_step:
+        del batch, loss
     report['selected_cache_verification'] = {
         'train': verify_cache(policy, rows, windows, cache, a.size, a.history),
         'development': verify_cache(policy, dev, dwindows, dcache, a.size, a.history)}
@@ -278,6 +288,7 @@ def main():
             if restored.predict(frames) != decision:
                 raise ValueError('checkpoint readback mismatch')
             report['readback'].append({'id': rs[i]['id'], 'history_ids': [rs[j]['id'] for j in ws[i]], 'decision': decision})
+    del restored
     for name, rs, cs, ws in (('train', rows, cache, windows), ('development', dev, dcache, dwindows)):
         metrics, pred = evaluate(policy, cs, ws, rs, batch_size=a.cpu_evaluation_batch_size); report[name+'_metrics'] = metrics
         write(a.out/(name+'-predictions.json'), [{'id': r['id'], 'target': r['action'], 'prediction': v} for r, v in zip(rs, pred)])

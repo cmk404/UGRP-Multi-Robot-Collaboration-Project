@@ -122,7 +122,8 @@ def test_activation_recomputation_preserves_two_full_batch_updates_and_rng(devic
     assert all(torch.equal(a, b) for a, b in zip(results[0][3], results[1][3]))
 
 
-def test_cpu_export_batching_preserves_predictions_and_metrics():
+@pytest.mark.parametrize('export_batch', [1, 8])
+def test_cpu_export_batching_preserves_predictions_and_metrics(export_batch):
     from scripts.train_carry_input_act import cache_images, history_indices, evaluate
     torch.set_num_threads(2); torch.manual_seed(21)
     policy = make_policy(128, 4)
@@ -133,7 +134,21 @@ def test_cpu_export_batching_preserves_predictions_and_metrics():
     cache = cache_images(policy, rows, 128)
     for parameter in policy.model.backbone.parameters(): parameter.requires_grad_(False)
     before, values_before = evaluate(policy, cache, windows, rows, 32)
-    after, values_after = evaluate(policy, cache, windows, rows, 8)
+    after, values_after = evaluate(policy, cache, windows, rows, export_batch)
     torch.testing.assert_close(torch.tensor(values_before), torch.tensor(values_after), atol=1e-5, rtol=1e-5)
     assert before['missed_done_rate'] == after['missed_done_rate'] and before['false_done_rate'] == after['false_done_rate']
     assert abs(before['selection_score'] - after['selection_score']) < 1e-5
+
+
+def test_preallocated_cache_matches_concatenated_cnn_batches_exactly():
+    from scripts.train_carry_input_act import cache_images, image_tensor
+    torch.set_num_threads(2); torch.manual_seed(21)
+    policy = make_policy(128, 4)
+    fs = frames(4) * 9  # Includes a partial final cache batch.
+    rows = [{'own_jpeg': f['own_rgb'], 'top_jpeg': f['top_rgb'], 'context': f['context']} for f in fs]
+    actual = cache_images(policy, rows, 128)
+    with torch.no_grad():
+        for key, field in zip(IMAGE_KEYS, ('own_jpeg', 'top_jpeg')):
+            expected = torch.cat([policy.model.backbone.native(torch.stack([image_tensor(r[field], 128)
+                                  for r in rows[i:i+32]]))['feature_map'] for i in range(0, len(rows), 32)])
+            torch.testing.assert_close(actual[key], expected, atol=0, rtol=0)

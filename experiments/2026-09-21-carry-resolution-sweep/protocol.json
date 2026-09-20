@@ -97,7 +97,7 @@
   ],
   "execution": {
     "checkpoint_encoder": true,
-    "cpu_evaluation_batch_size": 8,
-    "reason": "T4 512/h4 second backward OOM at fixed batch32; recompute identical encoder activations instead of changing optimization batch or precision. Only final CPU export uses smaller batches; development checkpoint selection remains batch32."
+    "cpu_evaluation_batch_size": 1,
+    "reason": "Preserve full batch32 float32 training and development selection; recompute encoder activations, preallocate CPU caches, and export CPU predictions one at a time to fit T4 host memory."
   }
 }

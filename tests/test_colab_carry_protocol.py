@@ -2,7 +2,6 @@
 import json
 from pathlib import Path
 import sys
-from types import SimpleNamespace
 
 import pytest
 from scripts import run_colab_carry_training as runner
@@ -18,7 +17,7 @@ def test_four_model_extension_and_completed_resume(tmp_path, monkeypatch, memory
         protocol['execution'] = {'checkpoint_encoder': True, 'cpu_evaluation_batch_size': 8}
     path = tmp_path/'protocol.json'; path.write_text(json.dumps(protocol))
     out = tmp_path/'results'
-    monkeypatch.setitem(sys.modules, 'torch', SimpleNamespace(cuda=SimpleNamespace(is_available=lambda: True)))
+    monkeypatch.setattr(runner, 'require_cuda', lambda: None)
     monkeypatch.setattr(runner, 'source_identity', lambda: 'fixed-source')
     monkeypatch.setattr(runner, 'verify_dataset', lambda _: {'dataset_sha256': 'data'})
     calls = []

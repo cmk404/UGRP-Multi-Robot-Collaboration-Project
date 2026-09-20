@@ -59,10 +59,13 @@ A100과 L4 할당은 계정 quota/entitlement 사유로 backend에서 거절됐�
 학습 중 각 encoder layer의 activation만 재계산하며, module/state_dict·추론 경로·optimizer·
 학습/개발 평가 batch32를 유지한다. 활성화 여부는 report와 resume signature에 기록한다.
 CPU의 실제 ACT 배치32 두 update에서 loss·모든 gradient·가중치·RNG가 기존 방식과 정확히 일치했다.
-CUDA에서도 동일 검사를 한 뒤 큰 조건을 재검증한다. CPU 검증만으로 CUDA 일치를 주장하지 않는다.
+T4 CUDA에서도 같은 두-update loss·gradient·가중치·RNG 정확 일치를 확인했다.
 
-최종 CPU 예측 파일 생성은 batch8로 나눠 같은 전체 표본을 처리한다. 학습/개발 선택에는 영향을
-주지 않으며, CPU batch32/8 출력 차이를 검사했다. report에 이 실행 설정을 남긴다.
+최종 CPU 예측 파일 생성은 batch1로 나눠 같은 전체 표본을 처리한다. 학습/개발 선택에는 영향을
+주지 않으며, CPU batch32/8/1 출력 차이를 1e-5 이내로 검사했다. report에 이 실행 설정을 남긴다.
+CPU feature cache는 미리 할당해 chunk 목록과 concatenate 결과를 동시에 보유하지 않는다.
+실제 CNN의 부분 마지막 배치를 포함한 캐시 값이 기존 concatenate 결과와 정확히 같은지 검증했다.
+종료 후 optimizer·gradient·readback 모델을 해제하고, 코호트 부모는 Torch를 별도 자식에서 확인한다.
 새 프로토콜의 `execution`은 자원 처리 설정이고, 기존 `training`의 batch32·8000 updates는 그대로다.
 
 
@@ -71,3 +74,8 @@ CUDA에서도 동일 검사를 한 뒤 큰 조건을 재검증한다. CPU 검증
 본 코호트는 두 seed 각각 처음부터 8000 update로 실행한다. 첫 update의 모델/optimizer moment/RNG는
 기존 T4 batch32 첫 update와 비교하되, 총 scheduler 길이가 다른 진단의 학습률·scheduler 상태는
 동일성 대상에서 제외하고 명시한다. 별도 CPU/CUDA 두-update parity 검사는 같은 scheduler 조건을 사용한다.
+
+512/h4 재계산 진단은 두 update를 통과했지만 CPU batch8 export 중 API 응답을 잃었다.
+마지막 관찰에서 host available RAM은 약 0.8 GB였으나 OOM 로그는 회수되지 않아 원인을 확정하지 않는다.
+`fit-diagnostic.json`에 실패와 회수 한계를 남겼고, 응답하지 않는 소유 진단 런타임만 종료했다.
+본 학습은 batch1 export를 포함한 새 전체 기능 검증이 끝난 뒤 시작한다.

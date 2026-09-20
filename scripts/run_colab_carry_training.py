@@ -10,6 +10,14 @@ sys.path.insert(0,str(ROOT))
 from scripts.colab_carry_bundle import PROTOCOL, digest, source_identity, verify_dataset, write
 
 
+def require_cuda():
+    # The orchestration process must not retain another full PyTorch runtime
+    # while a 512px trainer is close to the Colab host RAM limit.
+    subprocess.run([sys.executable, '-c',
+                    'import torch; assert torch.cuda.is_available(), "select a Colab GPU runtime first"'],
+                   check=True, timeout=60)
+
+
 def validate_report(report, protocol, arm, seed, source_sha, directory):
     expected={'source_sha':source_sha,'dataset_sha256':protocol['dataset_sha256'],
               'seed':seed,'steps':protocol['training']['steps'],'batch_size':protocol['training']['batch']}
@@ -36,8 +44,7 @@ def main():
     a=p.parse_args();protocol=json.loads(a.protocol.read_text());source_sha=source_identity()
     provenance=verify_dataset(a.dataset)
     if provenance['dataset_sha256']!=protocol['dataset_sha256']:raise ValueError('fixed data mismatch')
-    import torch
-    if not torch.cuda.is_available():raise RuntimeError('select a Colab GPU runtime first')
+    require_cuda()
     a.out.mkdir(parents=True,exist_ok=a.resume)
     expected=len(protocol['arms'])*len(protocol['training']['seeds'])
     summary={'complete':False,'diagnostic':a.diagnostic,'source_sha':source_sha,'dataset':provenance,
