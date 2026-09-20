@@ -1,0 +1,82 @@
+{
+  "source_sha": "64c79057c790493d6ef20ec35c43e36e0dd75cc0",
+  "device": {
+    "python": "3.12.3 (main, Jul 15 2026, 23:46:41) [GCC 13.3.0]",
+    "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+    "device": "cuda",
+    "cuda": "12.8",
+    "upstream_modeling_sha256": "2ea0acbdf210acee9d08f1f306afbda1e935bce0604b3b67b8d87c57c3f79a19",
+    "gpu": "Tesla T4",
+    "torch": "2.11.0+cu128",
+    "torchvision": "0.26.0+cu128",
+    "lerobot": "0.6.2",
+    "numpy": "2.2.6"
+  },
+  "completed_steps": 1,
+  "failure": "torch.OutOfMemoryError on second update backward; 2.01 GiB request exceeded available T4 memory",
+  "feature_cache_wall_s": 223.22362367900007,
+  "initial_cache_verification": {
+    "feature_atol": 0.0005,
+    "feature_rtol": 1e-05,
+    "action_atol": 1e-05,
+    "action_rtol": 1e-05,
+    "probes": [
+      {
+        "id": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r1:0",
+        "feature_max_abs": {
+          "observation.images.own": 8.612871170043945e-05,
+          "observation.images.top": 0.00015425682067871094
+        },
+        "action_chunk_max_abs": 1.0728836059570312e-06
+      },
+      {
+        "id": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r1:4",
+        "feature_max_abs": {
+          "observation.images.own": 7.200241088867188e-05,
+          "observation.images.top": 0.00012874603271484375
+        },
+        "action_chunk_max_abs": 4.172325134277344e-07
+      },
+      {
+        "id": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F6:r3:314",
+        "feature_max_abs": {
+          "observation.images.own": 0.0,
+          "observation.images.top": 0.0
+        },
+        "action_chunk_max_abs": 0.0
+      }
+    ]
+  },
+  "progress": [
+    {
+      "step": 1,
+      "loss": 3.023982524871826,
+      "development": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.23425925925925925,
+        "group_normalized_mae": {
+          "0": 0.4111669239512077,
+          "1": 0.3492965246548111,
+          "2": 0.4217038023701093,
+          "3": 0.3006861638277769
+        },
+        "selection_score": 0.6049726129602355,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "elapsed_s": 237.4790436940001
+    }
+  ],
+  "peak_sampled_process_tree_rss_bytes": 8230854656,
+  "peak_sampled_gpu_mib": 14753,
+  "archive_sha256": "47eaa4010725a62fc7de1cd75af807906c27dcf429ca7e587b2896dc90e93f15",
+  "archive_members_verified": 6,
+  "raw": "/Users/changmin/.codex/worktrees/carry-resolution-sweep/ugrp/outputs/resolution-sweep/t4-512-diagnostic",
+  "decision": "preserve fixed batch32/float32; check larger Colab GPU availability before any training change",
+  "checkpoint": {
+    "step": 1,
+    "sha256": "200db2ceb1d4c73fbe7ea8451c1109458b3f2d6142f89cfec45957b61b7db9c4",
+    "remote_local_hash_match": true,
+    "safe_torch_load": true
+  }
+}

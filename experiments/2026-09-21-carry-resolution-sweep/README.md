@@ -39,3 +39,14 @@ python scripts/run_colab_carry_training.py --dataset /content/ugrp-resolution/da
 ```
 
 아직 512px의 학습 완료·성능 개선·최적 조건을 주장하지 않는다.
+
+
+## T4의 512px/4프레임 자원 진단
+
+소스 `64c79057c790493d6ef20ec35c43e36e0dd75cc0`의 전체 데이터 진단에서 1 update 및
+개발 평가를 완료했으나 2번째 backward가 CUDA OOM으로 중단됐다. 2.01 GiB 추가 할당을
+요청할 때 T4 가용 메모리는 약 160 MiB였다. 샘플링한 GPU 사용량 최고치는 14,753 MiB,
+프로세스 트리 RSS 최고치는 약 7.67 GiB다. 본 학습 모델이나 성능 비교 완료를 뜻하지 않는다.
+실패 로그·report·환경·자원 추적 파일의 ZIP과 내부 해시를 Mac에서 확인했고
+`t4-diagnostic.json`에 기록했다. 배치32/float32와 8000-update 조건을 유지하기 위해
+더 큰 GPU의 할당 가능 여부를 확인한다. 신규 GPU의 기종과 수치 오차도 별도로 기록한다.
