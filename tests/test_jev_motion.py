@@ -9,6 +9,27 @@ import cv2
 import numpy as np
 
 class TestJevMotion(unittest.TestCase):
+    def test_output_evaluation_accepts_actual_clock_roundoff(self):
+        from scripts.run_jev_motion import physical_goal_confirmed
+        # Actual saved new09-r0/r2 Jev semantic timestamps; 350ms became just less.
+        times=[17.70000000000107,17.75200000000104,17.80400000000101,
+               17.856000000000982,17.908000000000953,17.960000000000925,
+               18.012000000000896,18.050000000000875]
+        rows=[dict(sim_s=t,range_m=.2885879199,bearing_deg=4.39682415) for t in times]
+        self.assertLess(times[-1]-times[0],.35)
+        self.assertTrue(physical_goal_confirmed(rows))
+
+    def test_output_evaluation_keeps_physical_limits(self):
+        from scripts.run_jev_motion import physical_goal_confirmed
+        rows=[dict(sim_s=t,range_m=.28,bearing_deg=0.) for t in (0.,.348)]
+        self.assertFalse(physical_goal_confirmed(rows))
+        rows[-1]['sim_s']=.35
+        self.assertTrue(physical_goal_confirmed(rows))
+        for key,value in [('range_m',.300001),('range_m',.259999),('bearing_deg',6.000001)]:
+            invalid=copy.deepcopy(rows);invalid[0][key]=value
+            self.assertFalse(physical_goal_confirmed(invalid))
+        self.assertFalse(physical_goal_confirmed([]))
+
     def observation(self):
         return dict(valid=True,range_m=.4,bearing_deg=10.,target_forward_m=.39,target_left_m=.07,
                     own_view_cyan_fraction=.01,top_target_area_px=150,truth={'qpos':[1]},evidence={'private':'excluded'})

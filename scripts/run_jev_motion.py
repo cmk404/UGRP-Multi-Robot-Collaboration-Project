@@ -40,6 +40,16 @@ def model_request(state, policy, variant, model):
 def write(path, value):
     path.write_text(json.dumps(value,ensure_ascii=False,indent=2,allow_nan=False)+'\n')
 
+def physical_goal_confirmed(samples):
+    """Output-only evaluator; never used by observation, policy, or stopping."""
+    if not samples:return False
+    tail=[s for s in samples if s['sim_s']>=samples[-1]['sim_s']-.4]
+    duration=tail[-1]['sim_s']-tail[0]['sim_s']
+    # MuJoCo's accumulated clock can represent 0.350s as 0.349999999999806.
+    # One nanosecond handles roundoff, far below the unchanged 2ms physics step.
+    stable=duration>=.35 or math.isclose(duration,.35,rel_tol=0.,abs_tol=1e-9)
+    return stable and all(.26<=s['range_m']<=.30 and abs(s['bearing_deg'])<=6 for s in tail)
+
 class Scene(DispatchScene):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
@@ -166,8 +176,7 @@ def trial(args, policy, case, key, source):
             result['obstacle_contact_steps']=scene.obstacle_contact_steps
             write(out/'referee-only.json',scene.samples)
             if scene.samples:
-                tail=[s for s in scene.samples if s['sim_s']>=scene.samples[-1]['sim_s']-.4]
-                physical=(tail[-1]['sim_s']-tail[0]['sim_s'] >= .35) and all(.26<=s['range_m']<=.30 and abs(s['bearing_deg'])<=6 for s in tail)
+                physical=physical_goal_confirmed(scene.samples)
                 result['final_evaluation']=scene.samples[-1]
                 result['success']=bool(result['stop_reason']=='RGB_goal_confirmed' and physical and not scene.contacts
                     and not scene.obstacle_contact_steps and not scene.peer_contacts and not scene.weld_steps and result['camera_geometry_unchanged'])
