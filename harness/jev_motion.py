@@ -8,8 +8,7 @@ import urllib.error
 
 import cv2
 import numpy as np
-from harness.camera_goal_transport import decode
-from harness.dispatch_yield import acquire_wheel_geometry
+from harness.camera_goal_transport import decode, wheel_heading
 from harness.dispatch_pair_navigation import PairVision
 from harness.known_map_navigation import pixel_to_world
 
@@ -85,7 +84,15 @@ class RGBObserver:
 
     def _wheel_observation(self, jpeg):
         frame = decode(jpeg)
-        center, heading, evidence = acquire_wheel_geometry(PairVision._mask(None, frame), self.center)
+        mask = PairVision._mask(None, frame)
+        yy, xx = np.indices(mask.shape)
+        mask[(abs(xx-self.center[0]) > 43) | (abs(yy-self.center[1]) > 40)] = 0
+        evidence = wheel_heading(mask, pixel_tolerance=2.)
+        if evidence is None:
+            raise ValueError('four_wheel_envelope_unresolved')
+        y, x = np.nonzero(mask)
+        center = np.array(cv2.minAreaRect(np.column_stack((x,y)).astype(np.float32))[0])
+        heading = -math.radians(evidence['angle_deg'])
         if np.linalg.norm(center - self.center) > 30:
             raise ValueError('own_robot_identity_jump')
         self.center = center
