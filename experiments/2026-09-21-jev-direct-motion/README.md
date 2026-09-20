@@ -41,3 +41,50 @@ After final-v2 ends, 12 archived states are compared with `jev-1.13.0`: eight fr
 3. Variant 2 plus explicit per-action applicability descriptions. This encodes the reference rule's controller knowledge in the criteria.
 
 The metric is agreement with the existing rule, not optimal-action accuracy or autonomous task success. Several actions may be useful; the rule is only a diagnostic reference. Variant 2 changes representation and wording together, so it cannot isolate a single wording effect. Variant 3 deliberately tests an explicit controller specification and must not be advertised as newly learned planning. Selection includes observed failures; none is a fresh holdout. Simulator truth and referee files are not read by this diagnostic.
+
+## 최종 결과
+
+실행 소스 `49311961d37d6ebea66aceaaa4f5efc2e9175ae3`, raw `/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-final-v2`. 위 프로토콜은 추론 중 SIM을 멈추는 단일 물체 접근·정렬 시험이다.
+
+| 정책 | straight | left_offset | right_offset | 실제 경과 합계 | API 중앙 / p95 | 모델 호출 / 입력 토큰 |
+|---|---|---|---|---:|---:|---:|
+| 규칙 | 성공 | 성공 | 성공 | 46.49초 | 해당 없음 | 0 / 0 |
+| Gemini | 성공 | 성공 | 성공 | 375.80초 | 1.999 / 7.531초 | 116 / 60,821 |
+| Jev | 실패 | 실패 | 실패 | 133.69초 | 0.551 / 0.765초 | 138 / 117,419 |
+
+정책별 SIM 시간 합계는 각각 42.65 / 42.65 / 44.40초, 발행 명령 수는 146 / 146 / 157이다. 모델 비용의 실제 청구액은 확인하지 않아 null로 남긴다. 성공 수가 다른 조건의 총 시간을 성능 우위로 해석하지 않는다.
+
+- Jev 직선: 39회 전진 뒤 31회 정지. 후반 RGB 거리는 0.2832m로 목표 상한 바로 밖이다. 사후 물리 위치만 보면 도착 범위에 있었으나 RGB 완료가 없어 `step_budget` 실패다.
+- Jev 좌측 시작: 목표가 자기 오른쪽인 장면에서 반대 회전을 반복. 좌회전 23회/우회전 7회 뒤 `four_wheel_envelope_unresolved`로 종료했다. 실제 이동은 거의 없었다.
+- Jev 우측 시작: 접근 뒤 주로 반대쪽 정렬을 선택해 방향 오차가 커졌다. 전진 28회/우회전 9회/좌회전 1회 후 같은 관측 오류로 종료했다.
+- 9회 모두 화물·장애물·상대 접촉과 weld 사용이 없었고 카메라/형상 불변 검사를 통과했다. 지연은 이 환경에서의 관측값이며 일반적인 서비스 성능 보장이 아니다.
+
+## 입력 표현 진단 결과
+
+소스 `aed309c7e8f8695aaf77e3335180405810581a4f`, raw `/Users/changmin/projects/ugrp/outputs/jev-representation-20260921`. 72회 모두 응답을 기록했으며 입력 63,944토큰, 실제 경과 40.22초였다. 실제 청구액은 미확인이다.
+
+| 구성 | 규칙 일치 | 같은 상태 2회 선택 일치 |
+|---|---:|---:|
+| 원래 숫자 입력 | 13/24 | 11/12 |
+| 의미 상태와 질문 | 24/24 | 12/12 |
+| 의미 상태 + 명시적 조건 | 24/24 | 12/12 |
+
+동일 관측에서 입력 구성이 판단을 바꾼다는 증거다. 관측 표현과 질문 문구가 함께 달라졌으며, 알려진 실패 장면을 포함한다. 개선된 하네스로 새로운 주행을 했다는 결과는 아니다. 다음 비교와 외부 코드 검토는 [Jev 제어 설계 검토](../../docs/jev_control_design_review.md)에 정리했다.
+
+## 검증·재현·보관
+
+- 실행 소스 4931196: 전체 오프라인 검사 **997 passed, 1 skipped, 184 subtests passed**. 이후 표현 진단의 경계 검사를 포함한 관련 파일 **10 passed**.
+- `scripts/audit_jev_motion.py`로 최종 388개 의사결정을 원본 RGB에서 다시 계산하고 이미지 해시·실제 모델 요청/응답·선택 행동·별도 물리 성공을 검증했다. 정책 입력을 정답으로 보정하지 않았다.
+- 9개 원본 주행 영상과 비교 영상 전체를 ffmpeg로 디코딩해 오류 없음을 확인했다. 비교 영상은 결정 단계로 정렬하며 실시간 비교가 아니다. 시작·중간·종료 프레임을 직접 검토했다. 화면 표시용 확대만 적용했고 모델 입력 카메라는 그대로다.
+- 비교 영상: `/Users/changmin/projects/ugrp/outputs/jev-motion-review-20260921/comparison.mp4`.
+- `report.json`: 최종 9회 결과와 감사. `prior-attempt-results.json`: 첫 비교 9회와 개발 실패 포함, 최종 성공률에 합산하지 않음.
+- `protocol.json`, `final-turns.json.gz`: 최종 환경/계약과 388개 의사결정. `representation-*.json`, `representation-api.json.gz`: 진단의 사전 고정 순서·전 상태·72개 실제 요청/응답.
+- `raw-manifest.json.gz`: 로컬 원시 자료·검토 자료의 원본 경로, 크기, SHA256. 원본 RGB/영상은 로컬 보관이며 Git 원격 백업이 아니다. `reviewed-source-manifest.json`은 읽기 전용 조사에 사용한 외부 코드 버전을 고정한다.
+- 실행한 `jev-motion-final`, `jev-representation` 세션은 완료 후 종료됐다. PR #80은 검토용이며 main에 병합하지 않았다.
+
+```sh
+python scripts/audit_jev_motion.py /absolute/raw/final-v2 /new/report-output
+python scripts/render_jev_motion.py /absolute/raw/final-v2 /new/video-output
+```
+
+감사는 source 4931196 이후 동일한 관측 로직을 사용하는 체크아웃에서 수행해야 한다. 원본 데이터가 없는 새 clone에서는 해시 목록만으로 영상을 재생성할 수 없다.

@@ -1,0 +1,74 @@
+{
+  "source_sha": "49311961d37d6ebea66aceaaa4f5efc2e9175ae3",
+  "cases": [
+    "straight",
+    "left_offset",
+    "right_offset"
+  ],
+  "policies": [
+    "rule",
+    "gemini",
+    "jev"
+  ],
+  "max_steps": 70,
+  "max_input_tokens_per_episode": 180000,
+  "max_wall_s_per_episode": 360,
+  "case_setup": {
+    "dev": [
+      -0.8,
+      -2.65,
+      0.0
+    ],
+    "dev_yaw": [
+      -0.78,
+      -2.7,
+      8.0
+    ],
+    "straight": [
+      -0.86,
+      -2.65,
+      0.0
+    ],
+    "left_offset": [
+      -0.84,
+      -2.75,
+      12.0
+    ],
+    "right_offset": [
+      -0.76,
+      -2.55,
+      -12.0
+    ]
+  },
+  "goal": {
+    "range_m": [
+      0.27,
+      0.28
+    ],
+    "absolute_bearing_deg_max": 3.0,
+    "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+  },
+  "environment": {
+    "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+    "platform": "macOS-27.2-arm64-arm-64bit",
+    "mujoco": "3.12.0",
+    "opencv": "5.0.0"
+  },
+  "jev_model": "jev-1.13.0",
+  "gemini_model": "gemini-3.8-flash",
+  "request_timeout_s": 30,
+  "probe_commands": 6,
+  "probe_duration_each_s": 0.2,
+  "action_duration_s": 0.2,
+  "evaluation_goal": {
+    "range_m": [
+      0.26,
+      0.3
+    ],
+    "absolute_bearing_deg_max": 6,
+    "stable_tail_min_s": 0.35,
+    "zero_contacts_and_weld": true
+  },
+  "no_model_confidence_actuation_threshold": true,
+  "model_confidence_scope": "recorded only, not safety probability"
+}

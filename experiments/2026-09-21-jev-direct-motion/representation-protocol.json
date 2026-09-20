@@ -1,0 +1,1006 @@
+{
+  "source_sha": "aed309c7e8f8695aaf77e3335180405810581a4f",
+  "samples": [
+    {
+      "id": "dev-v5/rule-dev/000",
+      "partition": "development",
+      "source": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-dev-v5/rule-dev/turns.json",
+      "source_sha256": "e1bed304c742046aadb48b5dc8857d517f3437eb025c0d97e15e9b8bff497b70",
+      "images": {
+        "own_rgb": {
+          "path": "rgb/000-r2.jpg",
+          "sha256": "97a3de6b47ed1d4ee9f809f9e88c527e1ba8550dce695e6f51ed1290e5bb9ae5"
+        },
+        "shared_top_rgb": {
+          "path": "rgb/000-top.jpg",
+          "sha256": "e8f8c40b1f1a87b73672ca6d44c6c81208853a3806fe626dec2802ab0c216a6f"
+        }
+      },
+      "state": {
+        "goal": {
+          "range_m": [
+            0.27,
+            0.28
+          ],
+          "absolute_bearing_deg_max": 3.0,
+          "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+        },
+        "observation": {
+          "valid": true,
+          "range_m": 0.5653,
+          "bearing_deg": -0.97,
+          "target_forward_m": 0.5653,
+          "target_left_m": -0.0095,
+          "own_view_cyan_fraction": 0.046871,
+          "top_target_area_px": 157
+        },
+        "recent_history": []
+      },
+      "reference_rule_action": "forward"
+    },
+    {
+      "id": "dev-v5/rule-dev/020",
+      "partition": "development",
+      "source": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-dev-v5/rule-dev/turns.json",
+      "source_sha256": "e1bed304c742046aadb48b5dc8857d517f3437eb025c0d97e15e9b8bff497b70",
+      "images": {
+        "own_rgb": {
+          "path": "rgb/020-r2.jpg",
+          "sha256": "f9b47fb1b1829f1e16fac11a89f07e0f9c09f8ed6f3a6914d79f64dd93aa403a"
+        },
+        "shared_top_rgb": {
+          "path": "rgb/020-top.jpg",
+          "sha256": "e5b4b0807b0b5e4f400118517f18ca7d23a859a6d2cb440d7bbfdac76b735704"
+        }
+      },
+      "state": {
+        "goal": {
+          "range_m": [
+            0.27,
+            0.28
+          ],
+          "absolute_bearing_deg_max": 3.0,
+          "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+        },
+        "observation": {
+          "valid": true,
+          "range_m": 0.3911,
+          "bearing_deg": -1.4,
+          "target_forward_m": 0.391,
+          "target_left_m": -0.0095,
+          "own_view_cyan_fraction": 0.078206,
+          "top_target_area_px": 157
+        },
+        "recent_history": [
+          {
+            "action": "forward",
+            "range_m": 0.4277,
+            "bearing_deg": -1.28
+          },
+          {
+            "action": "forward",
+            "range_m": 0.4191,
+            "bearing_deg": -1.54
+          },
+          {
+            "action": "forward",
+            "range_m": 0.412,
+            "bearing_deg": -1.33
+          },
+          {
+            "action": "forward",
+            "range_m": 0.4034,
+            "bearing_deg": -1.6
+          }
+        ]
+      },
+      "reference_rule_action": "forward"
+    },
+    {
+      "id": "dev-v5/rule-dev/033",
+      "partition": "development",
+      "source": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-dev-v5/rule-dev/turns.json",
+      "source_sha256": "e1bed304c742046aadb48b5dc8857d517f3437eb025c0d97e15e9b8bff497b70",
+      "images": {
+        "own_rgb": {
+          "path": "rgb/033-r2.jpg",
+          "sha256": "85ca2e5713d467ea9d1f02c0c37ca825e566909a84fc03af46b4e88498be26d3"
+        },
+        "shared_top_rgb": {
+          "path": "rgb/033-top.jpg",
+          "sha256": "f9fbd84756524dfae3e033c489defe41741304584837bfa76fa099fc35db4d01"
+        }
+      },
+      "state": {
+        "goal": {
+          "range_m": [
+            0.27,
+            0.28
+          ],
+          "absolute_bearing_deg_max": 3.0,
+          "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+        },
+        "observation": {
+          "valid": true,
+          "range_m": 0.2779,
+          "bearing_deg": -1.97,
+          "target_forward_m": 0.2778,
+          "target_left_m": -0.0095,
+          "own_view_cyan_fraction": 0.107582,
+          "top_target_area_px": 157
+        },
+        "recent_history": [
+          {
+            "action": "forward",
+            "range_m": 0.3128,
+            "bearing_deg": -1.75
+          },
+          {
+            "action": "forward",
+            "range_m": 0.304,
+            "bearing_deg": -1.8
+          },
+          {
+            "action": "forward",
+            "range_m": 0.2936,
+            "bearing_deg": -1.86
+          },
+          {
+            "action": "forward",
+            "range_m": 0.2849,
+            "bearing_deg": -1.92
+          }
+        ]
+      },
+      "reference_rule_action": "stop"
+    },
+    {
+      "id": "dev-v5/rule-dev/035",
+      "partition": "development",
+      "source": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-dev-v5/rule-dev/turns.json",
+      "source_sha256": "e1bed304c742046aadb48b5dc8857d517f3437eb025c0d97e15e9b8bff497b70",
+      "images": {
+        "own_rgb": {
+          "path": "rgb/035-r2.jpg",
+          "sha256": "d95c3f69c85b001ff870e6249cad90d941402ef2231e03ce7f4cff4befcd1ac5"
+        },
+        "shared_top_rgb": {
+          "path": "rgb/035-top.jpg",
+          "sha256": "de179c19d5f21fe04e23dad3bf88ff8712c883d0575851bc3cc2e332751bcaa5"
+        }
+      },
+      "state": {
+        "goal": {
+          "range_m": [
+            0.27,
+            0.28
+          ],
+          "absolute_bearing_deg_max": 3.0,
+          "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+        },
+        "observation": {
+          "valid": true,
+          "range_m": 0.2744,
+          "bearing_deg": -1.99,
+          "target_forward_m": 0.2743,
+          "target_left_m": -0.0095,
+          "own_view_cyan_fraction": 0.107487,
+          "top_target_area_px": 157
+        },
+        "recent_history": [
+          {
+            "action": "forward",
+            "range_m": 0.2936,
+            "bearing_deg": -1.86
+          },
+          {
+            "action": "forward",
+            "range_m": 0.2849,
+            "bearing_deg": -1.92
+          },
+          {
+            "action": "stop",
+            "range_m": 0.2779,
+            "bearing_deg": -1.97
+          },
+          {
+            "action": "stop",
+            "range_m": 0.2744,
+            "bearing_deg": -1.99
+          }
+        ]
+      },
+      "reference_rule_action": "stop"
+    },
+    {
+      "id": "dev-v5/rule-dev_yaw/000",
+      "partition": "development",
+      "source": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-dev-v5/rule-dev_yaw/turns.json",
+      "source_sha256": "d8a395465677114e76ac750ffc72aec734f0a87caa87d7e48212002afb1fe719",
+      "images": {
+        "own_rgb": {
+          "path": "rgb/000-r2.jpg",
+          "sha256": "2ad8242f44790059b26bcdc6b859c47892fa8c05e035471b3187574bcd7fd587"
+        },
+        "shared_top_rgb": {
+          "path": "rgb/000-top.jpg",
+          "sha256": "37c73158964019172cc51288d5c21ceb6bc4468e68d18832f599f6a0b579b0b5"
+        }
+      },
+      "state": {
+        "goal": {
+          "range_m": [
+            0.27,
+            0.28
+          ],
+          "absolute_bearing_deg_max": 3.0,
+          "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+        },
+        "observation": {
+          "valid": true,
+          "range_m": 0.5485,
+          "bearing_deg": -4.7,
+          "target_forward_m": 0.5466,
+          "target_left_m": -0.045,
+          "own_view_cyan_fraction": 0.049656,
+          "top_target_area_px": 157
+        },
+        "recent_history": []
+      },
+      "reference_rule_action": "turn_right"
+    },
+    {
+      "id": "dev-v5/rule-dev_yaw/004",
+      "partition": "development",
+      "source": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-dev-v5/rule-dev_yaw/turns.json",
+      "source_sha256": "d8a395465677114e76ac750ffc72aec734f0a87caa87d7e48212002afb1fe719",
+      "images": {
+        "own_rgb": {
+          "path": "rgb/004-r2.jpg",
+          "sha256": "3faa6015290b5fe16a945f2e614de2a770d29e92a4fa3633f6b6755193a058e7"
+        },
+        "shared_top_rgb": {
+          "path": "rgb/004-top.jpg",
+          "sha256": "4994cb19f4aa04aaca93cfb1acfe8e79edf40ddca9df9bb3f480322872ef22db"
+        }
+      },
+      "state": {
+        "goal": {
+          "range_m": [
+            0.27,
+            0.28
+          ],
+          "absolute_bearing_deg_max": 3.0,
+          "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+        },
+        "observation": {
+          "valid": true,
+          "range_m": 0.5496,
+          "bearing_deg": -2.45,
+          "target_forward_m": 0.5491,
+          "target_left_m": -0.0235,
+          "own_view_cyan_fraction": 0.049698,
+          "top_target_area_px": 157
+        },
+        "recent_history": [
+          {
+            "action": "turn_right",
+            "range_m": 0.5485,
+            "bearing_deg": -4.7
+          },
+          {
+            "action": "turn_right",
+            "range_m": 0.5486,
+            "bearing_deg": -4.16
+          },
+          {
+            "action": "turn_right",
+            "range_m": 0.5491,
+            "bearing_deg": -3.5
+          },
+          {
+            "action": "turn_right",
+            "range_m": 0.5493,
+            "bearing_deg": -3.08
+          }
+        ]
+      },
+      "reference_rule_action": "forward"
+    },
+    {
+      "id": "dev-v5/rule-dev_yaw/020",
+      "partition": "development",
+      "source": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-dev-v5/rule-dev_yaw/turns.json",
+      "source_sha256": "d8a395465677114e76ac750ffc72aec734f0a87caa87d7e48212002afb1fe719",
+      "images": {
+        "own_rgb": {
+          "path": "rgb/020-r2.jpg",
+          "sha256": "fb20d3da5c01faac6a68193bd6a5d3e402bc6ce1df829583f5603bc3249b7b41"
+        },
+        "shared_top_rgb": {
+          "path": "rgb/020-top.jpg",
+          "sha256": "fd9470f7fa1b47cb3eca15d12ee740de8dc951a5c1c362a6e479fc482d50fd9d"
+        }
+      },
+      "state": {
+        "goal": {
+          "range_m": [
+            0.27,
+            0.28
+          ],
+          "absolute_bearing_deg_max": 3.0,
+          "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+        },
+        "observation": {
+          "valid": true,
+          "range_m": 0.421,
+          "bearing_deg": -2.09,
+          "target_forward_m": 0.4207,
+          "target_left_m": -0.0154,
+          "own_view_cyan_fraction": 0.072057,
+          "top_target_area_px": 157
+        },
+        "recent_history": [
+          {
+            "action": "forward",
+            "range_m": 0.4567,
+            "bearing_deg": -1.99
+          },
+          {
+            "action": "forward",
+            "range_m": 0.4468,
+            "bearing_deg": -0.87
+          },
+          {
+            "action": "forward",
+            "range_m": 0.4389,
+            "bearing_deg": -0.71
+          },
+          {
+            "action": "forward",
+            "range_m": 0.4298,
+            "bearing_deg": -1.53
+          }
+        ]
+      },
+      "reference_rule_action": "forward"
+    },
+    {
+      "id": "dev-v5/rule-dev_yaw/037",
+      "partition": "development",
+      "source": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-dev-v5/rule-dev_yaw/turns.json",
+      "source_sha256": "d8a395465677114e76ac750ffc72aec734f0a87caa87d7e48212002afb1fe719",
+      "images": {
+        "own_rgb": {
+          "path": "rgb/037-r2.jpg",
+          "sha256": "8a4f3f690e9851712118d38fb8ad4b4b358f5828d8d788d3fc1360afccfe1ed0"
+        },
+        "shared_top_rgb": {
+          "path": "rgb/037-top.jpg",
+          "sha256": "932c2cfd4933c9131c7018e7be585d305a143751eb9feb47787ef41d3f179bf2"
+        }
+      },
+      "state": {
+        "goal": {
+          "range_m": [
+            0.27,
+            0.28
+          ],
+          "absolute_bearing_deg_max": 3.0,
+          "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+        },
+        "observation": {
+          "valid": true,
+          "range_m": 0.2796,
+          "bearing_deg": -2.76,
+          "target_forward_m": 0.2793,
+          "target_left_m": -0.0135,
+          "own_view_cyan_fraction": 0.108111,
+          "top_target_area_px": 157
+        },
+        "recent_history": [
+          {
+            "action": "forward",
+            "range_m": 0.3146,
+            "bearing_deg": -2.3
+          },
+          {
+            "action": "forward",
+            "range_m": 0.3075,
+            "bearing_deg": -2.26
+          },
+          {
+            "action": "forward",
+            "range_m": 0.2985,
+            "bearing_deg": -2.74
+          },
+          {
+            "action": "forward",
+            "range_m": 0.2895,
+            "bearing_deg": -2.31
+          }
+        ]
+      },
+      "reference_rule_action": "stop"
+    },
+    {
+      "id": "final-v2/jev-straight/039",
+      "partition": "observed_failure",
+      "source": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-final-v2/jev-straight/turns.json",
+      "source_sha256": "db0230304835687ee5b7bc1c2be44bef29bba3f0bdf6d746b398c2b3436553e2",
+      "images": {
+        "own_rgb": {
+          "path": "rgb/039-r2.jpg",
+          "sha256": "28d4ed63f83c690d7f7f0c5c7fd7c265106cb1365ae1301c4bc6031af0e07721"
+        },
+        "shared_top_rgb": {
+          "path": "rgb/039-top.jpg",
+          "sha256": "83b11d3610ad783082a249c2905ee624339700d75fffe5acaeec36efcaa563d8"
+        }
+      },
+      "state": {
+        "goal": {
+          "range_m": [
+            0.27,
+            0.28
+          ],
+          "absolute_bearing_deg_max": 3.0,
+          "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+        },
+        "observation": {
+          "valid": true,
+          "range_m": 0.2815,
+          "bearing_deg": -2.3,
+          "target_forward_m": 0.2812,
+          "target_left_m": -0.0113,
+          "own_view_cyan_fraction": 0.107755,
+          "top_target_area_px": 157
+        },
+        "recent_history": [
+          {
+            "action": "forward",
+            "range_m": 0.3215,
+            "bearing_deg": -2.01
+          },
+          {
+            "action": "forward",
+            "range_m": 0.311,
+            "bearing_deg": -1.76
+          },
+          {
+            "action": "forward",
+            "range_m": 0.3023,
+            "bearing_deg": -1.81
+          },
+          {
+            "action": "forward",
+            "range_m": 0.2936,
+            "bearing_deg": -1.86
+          }
+        ]
+      },
+      "reference_rule_action": "forward"
+    },
+    {
+      "id": "final-v2/jev-straight/060",
+      "partition": "observed_failure",
+      "source": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-final-v2/jev-straight/turns.json",
+      "source_sha256": "db0230304835687ee5b7bc1c2be44bef29bba3f0bdf6d746b398c2b3436553e2",
+      "images": {
+        "own_rgb": {
+          "path": "rgb/060-r2.jpg",
+          "sha256": "9e470456d132edfc4ecf6a3098143e418f978c6e91c19641fd04d7abb3bb9981"
+        },
+        "shared_top_rgb": {
+          "path": "rgb/060-top.jpg",
+          "sha256": "dc5d2f5e2bf6ac4381f63bdcc12ad2d1fca4c7e5740383edde0ffb8c5766597c"
+        }
+      },
+      "state": {
+        "goal": {
+          "range_m": [
+            0.27,
+            0.28
+          ],
+          "absolute_bearing_deg_max": 3.0,
+          "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+        },
+        "observation": {
+          "valid": true,
+          "range_m": 0.2832,
+          "bearing_deg": -1.93,
+          "target_forward_m": 0.283,
+          "target_left_m": -0.0095,
+          "own_view_cyan_fraction": 0.10795,
+          "top_target_area_px": 157
+        },
+        "recent_history": [
+          {
+            "action": "stop",
+            "range_m": 0.2832,
+            "bearing_deg": -1.93
+          },
+          {
+            "action": "stop",
+            "range_m": 0.2832,
+            "bearing_deg": -1.93
+          },
+          {
+            "action": "stop",
+            "range_m": 0.2832,
+            "bearing_deg": -1.93
+          },
+          {
+            "action": "stop",
+            "range_m": 0.2832,
+            "bearing_deg": -1.93
+          }
+        ]
+      },
+      "reference_rule_action": "forward"
+    },
+    {
+      "id": "final-v2/jev-left_offset/000",
+      "partition": "observed_failure",
+      "source": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-final-v2/jev-left_offset/turns.json",
+      "source_sha256": "44093f99dc6d3d8c4c299d04c1b058c69284a01d0485ed842534bd20b69efe7a",
+      "images": {
+        "own_rgb": {
+          "path": "rgb/000-r2.jpg",
+          "sha256": "ed68018a4f57e41f057a1f526c827c3049911425cb04d5c5fc6166f6a0a733c9"
+        },
+        "shared_top_rgb": {
+          "path": "rgb/000-top.jpg",
+          "sha256": "a2be7a814e5b6cf0d4bf29ce8ac860e9b0cc8d78d2e1ef06ad5d7477f398193b"
+        }
+      },
+      "state": {
+        "goal": {
+          "range_m": [
+            0.27,
+            0.28
+          ],
+          "absolute_bearing_deg_max": 3.0,
+          "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+        },
+        "observation": {
+          "valid": true,
+          "range_m": 0.6148,
+          "bearing_deg": -3.59,
+          "target_forward_m": 0.6136,
+          "target_left_m": -0.0385,
+          "own_view_cyan_fraction": 0.042449,
+          "top_target_area_px": 157
+        },
+        "recent_history": []
+      },
+      "reference_rule_action": "turn_right"
+    },
+    {
+      "id": "final-v2/jev-left_offset/010",
+      "partition": "observed_failure",
+      "source": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-final-v2/jev-left_offset/turns.json",
+      "source_sha256": "44093f99dc6d3d8c4c299d04c1b058c69284a01d0485ed842534bd20b69efe7a",
+      "images": {
+        "own_rgb": {
+          "path": "rgb/010-r2.jpg",
+          "sha256": "d462f2b64e7e422c59d383112796b182b363c812b894b359bada5147fefe3f5c"
+        },
+        "shared_top_rgb": {
+          "path": "rgb/010-top.jpg",
+          "sha256": "26ff7bfec4af497583c07d8111dbd56cda066d0c76ffb68613fe08eddc5fe704"
+        }
+      },
+      "state": {
+        "goal": {
+          "range_m": [
+            0.27,
+            0.28
+          ],
+          "absolute_bearing_deg_max": 3.0,
+          "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+        },
+        "observation": {
+          "valid": true,
+          "range_m": 0.6151,
+          "bearing_deg": -7.07,
+          "target_forward_m": 0.6104,
+          "target_left_m": -0.0757,
+          "own_view_cyan_fraction": 0.042096,
+          "top_target_area_px": 157
+        },
+        "recent_history": [
+          {
+            "action": "turn_left",
+            "range_m": 0.6146,
+            "bearing_deg": -5.9
+          },
+          {
+            "action": "turn_left",
+            "range_m": 0.615,
+            "bearing_deg": -5.9
+          },
+          {
+            "action": "turn_left",
+            "range_m": 0.6156,
+            "bearing_deg": -6.24
+          },
+          {
+            "action": "turn_left",
+            "range_m": 0.6153,
+            "bearing_deg": -6.94
+          }
+        ]
+      },
+      "reference_rule_action": "turn_right"
+    }
+  ],
+  "order": [
+    [
+      10,
+      "semantic_state_explicit_criteria",
+      1
+    ],
+    [
+      11,
+      "semantic_state",
+      0
+    ],
+    [
+      3,
+      "semantic_state_explicit_criteria",
+      0
+    ],
+    [
+      4,
+      "original",
+      1
+    ],
+    [
+      9,
+      "original",
+      0
+    ],
+    [
+      2,
+      "original",
+      1
+    ],
+    [
+      11,
+      "semantic_state",
+      1
+    ],
+    [
+      1,
+      "semantic_state_explicit_criteria",
+      1
+    ],
+    [
+      2,
+      "semantic_state_explicit_criteria",
+      0
+    ],
+    [
+      4,
+      "original",
+      0
+    ],
+    [
+      5,
+      "semantic_state",
+      0
+    ],
+    [
+      10,
+      "semantic_state",
+      1
+    ],
+    [
+      8,
+      "semantic_state",
+      1
+    ],
+    [
+      3,
+      "semantic_state",
+      0
+    ],
+    [
+      1,
+      "semantic_state",
+      0
+    ],
+    [
+      0,
+      "semantic_state",
+      1
+    ],
+    [
+      3,
+      "original",
+      1
+    ],
+    [
+      3,
+      "original",
+      0
+    ],
+    [
+      1,
+      "original",
+      0
+    ],
+    [
+      7,
+      "original",
+      1
+    ],
+    [
+      6,
+      "semantic_state_explicit_criteria",
+      1
+    ],
+    [
+      7,
+      "semantic_state_explicit_criteria",
+      0
+    ],
+    [
+      5,
+      "semantic_state",
+      1
+    ],
+    [
+      7,
+      "original",
+      0
+    ],
+    [
+      5,
+      "semantic_state_explicit_criteria",
+      1
+    ],
+    [
+      9,
+      "semantic_state",
+      0
+    ],
+    [
+      2,
+      "semantic_state",
+      1
+    ],
+    [
+      2,
+      "original",
+      0
+    ],
+    [
+      6,
+      "semantic_state_explicit_criteria",
+      0
+    ],
+    [
+      6,
+      "semantic_state",
+      0
+    ],
+    [
+      2,
+      "semantic_state_explicit_criteria",
+      1
+    ],
+    [
+      1,
+      "semantic_state_explicit_criteria",
+      0
+    ],
+    [
+      4,
+      "semantic_state_explicit_criteria",
+      1
+    ],
+    [
+      9,
+      "semantic_state_explicit_criteria",
+      0
+    ],
+    [
+      7,
+      "semantic_state",
+      1
+    ],
+    [
+      0,
+      "semantic_state_explicit_criteria",
+      1
+    ],
+    [
+      9,
+      "original",
+      1
+    ],
+    [
+      0,
+      "original",
+      1
+    ],
+    [
+      9,
+      "semantic_state_explicit_criteria",
+      1
+    ],
+    [
+      1,
+      "original",
+      1
+    ],
+    [
+      5,
+      "original",
+      1
+    ],
+    [
+      5,
+      "semantic_state_explicit_criteria",
+      0
+    ],
+    [
+      11,
+      "semantic_state_explicit_criteria",
+      1
+    ],
+    [
+      8,
+      "original",
+      1
+    ],
+    [
+      4,
+      "semantic_state_explicit_criteria",
+      0
+    ],
+    [
+      6,
+      "semantic_state",
+      1
+    ],
+    [
+      4,
+      "semantic_state",
+      0
+    ],
+    [
+      7,
+      "semantic_state_explicit_criteria",
+      1
+    ],
+    [
+      9,
+      "semantic_state",
+      1
+    ],
+    [
+      0,
+      "semantic_state",
+      0
+    ],
+    [
+      7,
+      "semantic_state",
+      0
+    ],
+    [
+      8,
+      "semantic_state_explicit_criteria",
+      0
+    ],
+    [
+      2,
+      "semantic_state",
+      0
+    ],
+    [
+      8,
+      "original",
+      0
+    ],
+    [
+      10,
+      "semantic_state",
+      0
+    ],
+    [
+      1,
+      "semantic_state",
+      1
+    ],
+    [
+      0,
+      "semantic_state_explicit_criteria",
+      0
+    ],
+    [
+      11,
+      "original",
+      0
+    ],
+    [
+      6,
+      "original",
+      1
+    ],
+    [
+      10,
+      "semantic_state_explicit_criteria",
+      0
+    ],
+    [
+      11,
+      "original",
+      1
+    ],
+    [
+      0,
+      "original",
+      0
+    ],
+    [
+      8,
+      "semantic_state",
+      0
+    ],
+    [
+      5,
+      "original",
+      0
+    ],
+    [
+      3,
+      "semantic_state_explicit_criteria",
+      1
+    ],
+    [
+      10,
+      "original",
+      0
+    ],
+    [
+      4,
+      "semantic_state",
+      1
+    ],
+    [
+      10,
+      "original",
+      1
+    ],
+    [
+      6,
+      "original",
+      0
+    ],
+    [
+      11,
+      "semantic_state_explicit_criteria",
+      0
+    ],
+    [
+      8,
+      "semantic_state_explicit_criteria",
+      1
+    ],
+    [
+      3,
+      "semantic_state",
+      1
+    ]
+  ],
+  "max_calls": 72,
+  "max_input_tokens": 150000,
+  "max_wall_s": 360,
+  "scope": "diagnostic archived-state API replay; not new autonomous execution or optimality proof",
+  "metric": "agreement with existing explicit rule, not unique optimal-action correctness",
+  "confounds": "semantic_state changes representation and question wording; explicit_criteria encodes the reference controller"
+}

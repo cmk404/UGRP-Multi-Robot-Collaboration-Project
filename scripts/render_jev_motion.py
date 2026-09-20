@@ -35,7 +35,7 @@ for i in range(count):
    else:detail=f"step {i} | RGB {row['observation']['range_m']:.3f}m / {row['observation']['bearing_deg']:+.1f}deg"
    label(canvas,detail,(x0+12,y0+316),.51)
  label(canvas,'Display-only TOP crop. Last observed frames held after episode end. Approach only; no grasp/carry or real-time claim.',(18,1080),.57)
- if i in (0,count//2,count-9):cv2.imwrite(str(out/f'preview-{i:03d}.png'),canvas)
+ if i in (0,count//2,count-1):cv2.imwrite(str(out/f'preview-{i:03d}.png'),canvas)
  proc.stdin.write(canvas.tobytes())
 proc.stdin.close()
 if proc.wait()!=0:raise RuntimeError('ffmpeg failed')
