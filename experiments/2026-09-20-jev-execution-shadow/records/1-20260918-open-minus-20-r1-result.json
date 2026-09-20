@@ -1,0 +1,40 @@
+{
+  "http_status": 200,
+  "latency_ms": 491.33854199317284,
+  "raw_response": "{\"model\":\"jev-1.13.0\",\"answers\":{\"action\":{\"type\":\"choice\",\"choice\":\"continue\",\"confidence\":0.54,\"probabilities\":{\"reobserve\":0.34,\"continue\":0.66,\"request_recovery\":0.0,\"hold_and_escalate\":0.0}}},\"usage\":{\"input_tokens\":1701,\"output_tokens\":54}}",
+  "status": "ok",
+  "response": {
+    "model": "jev-1.13.0",
+    "answers": {
+      "action": {
+        "type": "choice",
+        "choice": "continue",
+        "confidence": 0.54,
+        "probabilities": {
+          "reobserve": 0.34,
+          "continue": 0.66,
+          "request_recovery": 0.0,
+          "hold_and_escalate": 0.0
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 1701,
+      "output_tokens": 54
+    }
+  },
+  "decision": {
+    "type": "choice",
+    "choice": "continue",
+    "confidence": 0.54,
+    "probabilities": {
+      "reobserve": 0.34,
+      "continue": 0.66,
+      "request_recovery": 0.0,
+      "hold_and_escalate": 0.0
+    }
+  },
+  "case_id": "20260918-open-minus-20-r1",
+  "repeat": 1,
+  "rule": "continue"
+}

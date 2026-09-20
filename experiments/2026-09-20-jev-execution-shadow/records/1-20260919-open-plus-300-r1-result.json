@@ -1,0 +1,40 @@
+{
+  "http_status": 200,
+  "latency_ms": 596.9878339965362,
+  "raw_response": "{\"model\":\"jev-1.13.0\",\"answers\":{\"action\":{\"type\":\"choice\",\"choice\":\"reobserve\",\"confidence\":0.56,\"probabilities\":{\"request_recovery\":0.01,\"continue\":0.32,\"reobserve\":0.67,\"hold_and_escalate\":0.0}}},\"usage\":{\"input_tokens\":1497,\"output_tokens\":56}}",
+  "status": "ok",
+  "response": {
+    "model": "jev-1.13.0",
+    "answers": {
+      "action": {
+        "type": "choice",
+        "choice": "reobserve",
+        "confidence": 0.56,
+        "probabilities": {
+          "request_recovery": 0.01,
+          "continue": 0.32,
+          "reobserve": 0.67,
+          "hold_and_escalate": 0.0
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 1497,
+      "output_tokens": 56
+    }
+  },
+  "decision": {
+    "type": "choice",
+    "choice": "reobserve",
+    "confidence": 0.56,
+    "probabilities": {
+      "request_recovery": 0.01,
+      "continue": 0.32,
+      "reobserve": 0.67,
+      "hold_and_escalate": 0.0
+    }
+  },
+  "case_id": "20260919-open-plus-300-r1",
+  "repeat": 1,
+  "rule": "reobserve"
+}
