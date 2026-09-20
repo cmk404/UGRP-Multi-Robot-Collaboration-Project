@@ -23,13 +23,13 @@ def plan(phase,policies=('rule','jev','gemini'),dev_cases=None):
     if phase=='development':groups=[('full',dev_cases or list(DEVELOPMENT),1,policies)]
     elif phase=='holdout':groups=[('full',list(HOLDOUT),3,policies)]
     elif phase=='regression':groups=[('full',[k for k in setup if k.startswith('legacy-')],1,policies)]
-    elif phase=='continuous':groups=[('full',['open01','known01','occluded01','temporary01'],2,[p for p in policies if p!='rule'])]
+    elif phase=='continuous':groups=[('full',['open03','known03','occluded03','temporary03'],2,[p for p in policies if p!='rule'])]
     elif phase=='ablation':
         models=[p for p in policies if p!='rule']
-        groups=[('primitive',['open01','open02','yaw01','yaw02'],2,models),
-                ('always',['open01','open02','yaw01','yaw02','unknown01','occluded01','temporary01'],2,models),
-                ('single',['yaw01','unknown01','occluded01','temporary01'],2,models),
-                ('no_confidence',['yaw01','unknown01','occluded01','temporary01'],2,[p for p in models if p=='jev'])]
+        groups=[('primitive',['open03','open04','yaw03','yaw04'],2,models),
+                ('always',['open03','open04','yaw03','yaw04','unknown03','occluded03','temporary03'],2,models),
+                ('single',['yaw03','unknown03','occluded03','temporary03'],2,models),
+                ('no_confidence',['yaw03','unknown03','occluded03','temporary03'],2,[p for p in models if p=='jev'])]
     else:raise ValueError('unknown phase')
     for arm,cases,repeats,actors in groups:
         for case in cases:

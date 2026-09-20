@@ -142,7 +142,7 @@ class TestSkillMotion(unittest.TestCase):
 
     def test_case_future_event_does_not_enter_static_prior(self):
         from scripts.run_jev_skill_motion import configuration,HOLDOUT
-        c=configuration(HOLDOUT['temporary01'])
+        c=configuration(HOLDOUT['temporary03'])
         self.assertNotIn('barrier_window',json.dumps(c['static_map']))
         self.assertNotIn('motion_barrier',json.dumps(c['static_map']))
         self.assertIn('motion_barrier',json.dumps(c['setup_only']))

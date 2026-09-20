@@ -33,8 +33,8 @@ DEVELOPMENT={
  'dev_unknown':{'pose':[-.83,-2.65,0],'target':[.10,-2.65],'barrier':[-.42,-2.67,.06,.10]},
  'dev_occlusion':{'pose':[-.81,-2.65,0],'target':[.04,-2.65],'occlusion':[6.,8.]},
 }
-# Unused while developing; frozen before any new-condition run.
-HOLDOUT={
+# Qualification v1 was demoted after a common RGB association defect.
+QUALIFICATION={
  'open01':{'pose':[-.85,-2.66,4],'target':[-.02,-2.65]},
  'open02':{'pose':[-.78,-2.61,-4],'target':[.03,-2.63]},
  'yaw01':{'pose':[-.84,-2.71,31],'target':[.02,-2.65]},
@@ -49,6 +49,41 @@ HOLDOUT={
  'temporary02':{'pose':[-.81,-2.63,0],'target':[.25,-2.65],'barrier':[-.30,-2.63,.07,.11],'barrier_window':[6.,14.]},
 }
 
+
+DEVELOPMENT.update({f'qualification_{name}':copy.deepcopy(QUALIFICATION[name])
+                    for name in ('known02','temporary02')})
+# Replacement evaluation was drawn with seed 210923 before repairing the
+# qualification defects. The literal layouts stay frozen for the whole cohort.
+HOLDOUT={'open03': {'pose': [-0.8316, -2.6513, 6.182], 'target': [-0.0195, -2.6431]},
+ 'open04': {'pose': [-0.7821, -2.6155, -3.767], 'target': [0.0158, -2.6227]},
+ 'yaw03': {'pose': [-0.835, -2.6945, 32.782], 'target': [0.0137, -2.6359]},
+ 'yaw04': {'pose': [-0.8275, -2.5731, -31.329], 'target': [-0.0026, -2.6383]},
+ 'known03': {'pose': [-0.8474, -2.6559, 2.191],
+             'target': [0.1794, -2.6462],
+             'barrier': [-0.3906, -2.6562, 0.0645, 0.1029],
+             'known': True},
+ 'known04': {'pose': [-0.8351, -2.6885, -0.546],
+             'target': [0.2083, -2.672],
+             'barrier': [-0.3617, -2.662, 0.0716, 0.101],
+             'known': True},
+ 'unknown03': {'pose': [-0.8492, -2.6113, 6.01],
+               'target': [0.1448, -2.6304],
+               'barrier': [-0.3952, -2.6404, 0.0586, 0.1203]},
+ 'unknown04': {'pose': [-0.812, -2.6977, -7.479],
+               'target': [0.2375, -2.6597],
+               'barrier': [-0.3025, -2.6597, 0.0811, 0.0867]},
+ 'occluded03': {'pose': [-0.85, -2.6768, 5.028], 'target': [0.0717, -2.6407], 'occlusion': [6.915, 9.528]},
+ 'occluded04': {'pose': [-0.7915, -2.5979, -4.778],
+                'target': [0.1062, -2.6368],
+                'occlusion': [7.806, 10.955]},
+ 'temporary03': {'pose': [-0.85, -2.6369, -1.724],
+                 'target': [0.2077, -2.6385],
+                 'barrier': [-0.3323, -2.6385, 0.061, 0.1023],
+                 'barrier_window': [4.767, 11.817]},
+ 'temporary04': {'pose': [-0.797, -2.6383, 1.029],
+                 'target': [0.2483, -2.6417],
+                 'barrier': [-0.3017, -2.6217, 0.0663, 0.1076],
+                 'barrier_window': [5.933, 14.062]}}
 
 def configuration(case):
     c=episode('open',11)
