@@ -1,0 +1,761 @@
+<mujoco model="ugrp_masterpi_multi_v2">
+  <compiler angle="radian"/>
+
+  <option impratio="100" integrator="implicitfast" cone="elliptic" iterations="80"/>
+
+  <visual>
+    <global offwidth="1280" offheight="720"/>
+    <map znear="0.002"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" colorspace="auto" builtin="gradient" rgb1="0.08 0.09 0.11" rgb2="0.2 0.22 0.26" width="512" height="3072"/>
+    <texture type="2d" colorspace="auto" name="ground" builtin="checker" rgb1="0.2 0.22 0.24" rgb2="0.27 0.29 0.31" width="256" height="256"/>
+    <material name="groundmat" texture="ground" texrepeat="14 14" reflectance="0.035"/>
+    <material name="aluminum" rgba="0.48 0.5 0.52 1"/>
+    <material name="dark" rgba="0.055 0.06 0.068 1"/>
+    <material name="black" rgba="0.018 0.02 0.024 1"/>
+    <material name="orange" rgba="0.95 0.6 0.03 1"/>
+    <material name="hub" rgba="0.28 0.3 0.32 1"/>
+    <material name="redmat" rgba="0.88 0.04 0.04 1"/>
+    <material name="blumat" rgba="0.04 0.18 0.88 1"/>
+    <material name="yellowmat" rgba="0.95 0.72 0.05 1"/>
+  </asset>
+
+  <worldbody>
+    <geom name="floor" size="3 3 0.1" type="plane" material="groundmat"/>
+    <geom name="team_beam_start_zone" size="0.16 0.3 0.004" pos="0.58 -2 0.002" type="box" contype="0" conaffinity="0" group="4" rgba="0.1 0.4 0.95 0.3" mass="0"/>
+    <geom name="team_beam_goal_zone" size="0.16 0.3 0.004" pos="1.08 -2 0.002" type="box" contype="0" conaffinity="0" group="4" rgba="0.15 0.85 0.35 0.3" mass="0"/>
+    <geom name="warehouse_zone_a" size="0.28 1.45 0.004" pos="1.05 0 0.002" type="box" contype="0" conaffinity="0" group="4" rgba="0.1 0.35 0.95 0.28" mass="0"/>
+    <geom name="warehouse_zone_b" size="0.28 1.45 0.004" pos="1.85 0 0.002" type="box" contype="0" conaffinity="0" group="4" rgba="0.12 0.82 0.3 0.28" mass="0"/>
+    <geom name="warehouse_zone_c" size="0.28 1.45 0.004" pos="2.65 0 0.002" type="box" contype="0" conaffinity="0" group="4" rgba="0.95 0.72 0.08 0.3" mass="0"/>
+    <geom name="mixed_event_barrier" size="0.06 0.09 0.06" pos="-9 -9 0.06" type="box" conaffinity="3" rgba="0.9 0.15 0.1 1"/>
+    <geom name="procedural_mound_01" size="0.179862 0.169159 0.006718" pos="1.46935 0.536946 0" type="ellipsoid" conaffinity="3" friction="1.1 0.08 0.006" rgba="0.34 0.25 0.12 1" mass="0"/>
+    <geom name="procedural_barrier_01" size="0.061994 0.098244 0.04538" pos="1.46452 -0.639663 0.04538" type="box" conaffinity="3" friction="1.1 0.08 0.006" rgba="0.93 0.48 0.06 1" mass="0"/>
+    <geom name="procedural_gate_north" size="0.074117 0.225443 0.050148" pos="2.25308 1.49756 0.050148" type="box" conaffinity="3" friction="1.1 0.08 0.006" rgba="0.2 0.22 0.26 1" mass="0"/>
+    <geom name="procedural_gate_south" size="0.064907 0.225443 0.069265" pos="2.24391 -1.49756 0.069265" type="box" conaffinity="3" friction="1.1 0.08 0.006" rgba="0.2 0.22 0.26 1" mass="0"/>
+    <geom name="pair_wall_door_lower" size="0.04 0.3095 0.15" pos="0.15 -2.5895 0.15" type="box" rgba="0.35 0.38 0.42 1"/>
+    <geom name="pair_wall_door_upper" size="0.04 0.2845 0.15" pos="0.15 -1.4355 0.15" type="box" rgba="0.35 0.38 0.42 1"/>
+    <camera name="cctv_front_left" quat="0.767198 0.488075 -0.22338 -0.351129" pos="-0.45 -0.95 0.78" fovy="50"/>
+    <camera name="cctv_front_right" quat="0.80616 0.47048 0.180864 0.309908" pos="1.48 -0.92 0.8" fovy="50"/>
+    <camera name="cctv_rear_left" quat="-0.335808 -0.206352 0.481167 0.783027" pos="-0.38 0.98 0.82" fovy="50"/>
+    <camera name="cctv_top" pos="0.55 -2 2.5" fovy="55"/>
+    <camera name="cctv_warehouse" quat="0.941 0.338407 0 0" pos="0.25 -3.9 2.4" fovy="55"/>
+    <light pos="0 -1.3 2.4" dir="0 0.242536 -0.970143" ambient="0.34 0.34 0.34" diffuse="1 1 1" specular="0.22 0.22 0.22"/>
+    <light pos="-1 1.7 1.7" dir="0.268328 -0.357771 -0.894427" ambient="0.22 0.22 0.22" specular="0.12 0.12 0.12"/>
+    <light pos="1.4 -0.2 2" dir="-0.481457 0.0437688 -0.875376" ambient="0.18 0.18 0.18" diffuse="0.58 0.58 0.58" specular="0.08 0.08 0.08"/>
+    <body name="r1__robot" pos="-0.18 -0.42 0.0325">
+      <inertial pos="0 0 0.042" mass="0.735" diaginertia="0.002 0.0027 0.0032"/>
+      <joint name="r1__base_free" type="free"/>
+      <geom name="r1__base_lower_collision" size="0.058 0.045 0.015" pos="0 0 -0.0005" type="box" contype="2" conaffinity="3" friction="0.55 0.01 0.001" rgba="0 0 0 0"/>
+      <geom name="r1__base_top" size="0.06 0.048 0.002" pos="0 0 0.0165" type="box" contype="2" conaffinity="3" material="dark"/>
+      <geom name="r1__left_side_panel_visual" size="0.056 0.0015 0.015" pos="0 0.0465 -0.0005" type="box" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+      <geom name="r1__right_side_panel_visual" size="0.056 0.0015 0.015" pos="0 -0.0465 -0.0005" type="box" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+      <geom name="r1__front_plate" size="0.0015 0.045 0.015" pos="0.06 0 -0.0005" type="box" contype="2" conaffinity="3" material="aluminum"/>
+      <geom name="r1__rear_plate_visual" size="0.0015 0.045 0.015" pos="-0.06 0 -0.0005" type="box" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+      <geom name="r1__left_chassis_hole_front" size="0.0045 0.0005" pos="0.035 0.0482 -0.0005" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r1__left_chassis_hole_mid" size="0.004 0.0005" pos="0 0.0482 -0.0005" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r1__left_chassis_hole_rear" size="0.0045 0.0005" pos="-0.035 0.0482 -0.0005" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r1__right_chassis_hole_front" size="0.0045 0.0005" pos="0.035 -0.0482 -0.0005" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r1__right_chassis_hole_mid" size="0.004 0.0005" pos="0 -0.0482 -0.0005" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r1__right_chassis_hole_rear" size="0.0045 0.0005" pos="-0.035 -0.0482 -0.0005" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r1__motor_fl_gearbox_visual" size="0.018 0.018 0.01" pos="0.06 0.037 0" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+      <geom name="r1__motor_fr_gearbox_visual" size="0.018 0.018 0.01" pos="0.06 -0.037 0" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+      <geom name="r1__motor_rl_gearbox_visual" size="0.018 0.018 0.01" pos="-0.06 0.037 0" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+      <geom name="r1__motor_rr_gearbox_visual" size="0.018 0.018 0.01" pos="-0.06 -0.037 0" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+      <geom name="r1__motor_fl_can_visual" size="0.011 0.012" pos="0.06 0.014 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.18 0.19 0.2 1" mass="0"/>
+      <geom name="r1__motor_fr_can_visual" size="0.011 0.012" pos="0.06 -0.014 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.18 0.19 0.2 1" mass="0"/>
+      <geom name="r1__motor_rl_can_visual" size="0.011 0.012" pos="-0.06 0.014 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.18 0.19 0.2 1" mass="0"/>
+      <geom name="r1__motor_rr_can_visual" size="0.011 0.012" pos="-0.06 -0.014 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.18 0.19 0.2 1" mass="0"/>
+      <geom name="r1__rear_cage_collision" size="0.032 0.046 0.025" pos="-0.028 0 0.0435" type="box" contype="2" conaffinity="3" rgba="0 0 0 0"/>
+      <geom name="r1__pi_board_visual" size="0.028 0.0425 0.002" pos="-0.028 0 0.0275" type="box" contype="0" conaffinity="0" rgba="0.035 0.23 0.09 1" mass="0"/>
+      <geom name="r1__pi_heatsink_visual" size="0.012 0.014 0.003" pos="-0.034 0 0.0345" type="box" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r1__expansion_board_visual" size="0.028 0.0425 0.0015" pos="-0.028 0 0.0415" type="box" contype="0" conaffinity="0" rgba="0.1 0.11 0.12 1" mass="0"/>
+      <geom name="r1__electronics_left_side_visual" size="0.032 0.0014 0.025" pos="-0.028 0.046 0.0435" type="box" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+      <geom name="r1__electronics_right_side_visual" size="0.032 0.0014 0.025" pos="-0.028 -0.046 0.0435" type="box" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+      <geom name="r1__electronics_top_cover_visual" size="0.032 0.046 0.0012" pos="-0.028 0 0.0673" type="box" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+      <geom name="r1__top_cover_slot_1" size="0.009 0.003 0.00015" pos="-0.046 0.025 0.06855" type="box" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r1__top_cover_slot_2" size="0.009 0.003 0.00015" pos="-0.046 0.01 0.06855" type="box" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r1__top_cover_slot_3" size="0.009 0.003 0.00015" pos="-0.046 -0.005 0.06855" type="box" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r1__top_cover_slot_4" size="0.009 0.003 0.00015" pos="-0.046 -0.02 0.06855" type="box" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r1__cage_front_left_standoff" size="0.002 0.0235" pos="0.001 0.043 0.042" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" rgba="0.72 0.42 0.16 1" mass="0"/>
+      <geom name="r1__cage_front_right_standoff" size="0.002 0.0235" pos="0.001 -0.043 0.042" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" rgba="0.72 0.42 0.16 1" mass="0"/>
+      <geom name="r1__cage_rear_left_standoff" size="0.002 0.0235" pos="-0.057 0.043 0.042" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" rgba="0.72 0.42 0.16 1" mass="0"/>
+      <geom name="r1__cage_rear_right_standoff" size="0.002 0.0235" pos="-0.057 -0.043 0.042" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" rgba="0.72 0.42 0.16 1" mass="0"/>
+      <geom name="r1__cage_mid_left_standoff" size="0.002 0.0235" pos="-0.028 0.043 0.042" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" rgba="0.72 0.42 0.16 1" mass="0"/>
+      <geom name="r1__cage_mid_right_standoff" size="0.002 0.0235" pos="-0.028 -0.043 0.042" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" rgba="0.72 0.42 0.16 1" mass="0"/>
+      <geom name="r1__ultrasonic_bracket" size="0.004 0.03 0.013" pos="0.074 0 0.0215" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+      <geom name="r1__ultrasonic_left" size="0.01 0.006" pos="0.078 0.017 0.0215" quat="0.707105 0 0.707108 0" type="cylinder" contype="0" conaffinity="0" rgba="0.72 0.76 0.8 1" mass="0"/>
+      <geom name="r1__ultrasonic_right" size="0.01 0.006" pos="0.078 -0.017 0.0215" quat="0.707105 0 0.707108 0" type="cylinder" contype="0" conaffinity="0" rgba="0.72 0.76 0.8 1" mass="0"/>
+      <body name="r1__wheel_fl_body" pos="0.06 0.0655 0">
+        <inertial pos="0 0 0" mass="0.05" diaginertia="1.8e-05 2.9e-05 1.8e-05"/>
+        <joint name="r1__wheel_fl_joint" armature="2e-05" damping="0.0015" axis="0 1 0"/>
+        <geom name="r1__wheel_fl" size="0.0325 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="2" conaffinity="3" condim="4" priority="1" friction="0.001 0.0001 1e-05" rgba="0 0 0 0"/>
+        <geom name="r1__wheel_fl_hub_visual" size="0.009 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_fl_hub_spoke_0" size="0.0024 0.0073875" pos="0.0143875 0 0" quat="0.707107 0 -0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_fl_hub_spoke_1" size="0.0024 0.00738714" pos="0.0101735 0 0.0101735" quat="0.382683 0 -0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_fl_hub_spoke_2" size="0.0024 0.0073875" pos="0 0 0.0143875" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_fl_hub_spoke_3" size="0.0024 0.00738714" pos="-0.0101735 0 0.0101735" quat="0.382683 0 0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_fl_hub_spoke_4" size="0.0024 0.0073875" pos="-0.0143875 0 0" quat="0.707107 0 0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_fl_hub_spoke_5" size="0.0024 0.00738714" pos="-0.0101735 0 -0.0101735" quat="0.92388 0 0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_fl_hub_spoke_6" size="0.0024 0.0073875" pos="0 0 -0.0143875" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_fl_hub_spoke_7" size="0.0024 0.00738714" pos="0.0101735 0 -0.0101735" quat="0.92388 0 -0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_fl_roller_0" size="0.0042 0.0124997" pos="0.0273 0 0" quat="0.193672 0.981066 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_fl_roller_1" size="0.0042 0.0125003" pos="0.019304 0 0.019304" quat="0.415893 0.456839 0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_fl_roller_2" size="0.0042 0.0124997" pos="0 0 0.0273" quat="0.707107 0.268707 0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_fl_roller_3" size="0.0042 0.0125003" pos="-0.019304 0 0.019304" quat="0.909414 0.208922 0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_fl_roller_4" size="0.0042 0.0124997" pos="-0.0273 0 0" quat="0.981066 0.193672 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_fl_roller_5" size="0.0042 0.0125003" pos="-0.019304 0 -0.019304" quat="0.909414 0.208922 -0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_fl_roller_6" size="0.0042 0.0124997" pos="0 0 -0.0273" quat="0.707107 0.268707 -0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_fl_roller_7" size="0.0042 0.0125003" pos="0.019304 0 -0.019304" quat="0.415893 0.456839 -0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+      </body>
+      <body name="r1__wheel_fr_body" pos="0.06 -0.0655 0">
+        <inertial pos="0 0 0" mass="0.05" diaginertia="1.8e-05 2.9e-05 1.8e-05"/>
+        <joint name="r1__wheel_fr_joint" armature="2e-05" damping="0.0015" axis="0 1 0"/>
+        <geom name="r1__wheel_fr" size="0.0325 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="2" conaffinity="3" condim="4" priority="1" friction="0.001 0.0001 1e-05" rgba="0 0 0 0"/>
+        <geom name="r1__wheel_fr_hub_visual" size="0.009 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_fr_hub_spoke_0" size="0.0024 0.0073875" pos="0.0143875 0 0" quat="0.707107 0 -0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_fr_hub_spoke_1" size="0.0024 0.00738714" pos="0.0101735 0 0.0101735" quat="0.382683 0 -0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_fr_hub_spoke_2" size="0.0024 0.0073875" pos="0 0 0.0143875" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_fr_hub_spoke_3" size="0.0024 0.00738714" pos="-0.0101735 0 0.0101735" quat="0.382683 0 0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_fr_hub_spoke_4" size="0.0024 0.0073875" pos="-0.0143875 0 0" quat="0.707107 0 0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_fr_hub_spoke_5" size="0.0024 0.00738714" pos="-0.0101735 0 -0.0101735" quat="0.92388 0 0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_fr_hub_spoke_6" size="0.0024 0.0073875" pos="0 0 -0.0143875" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_fr_hub_spoke_7" size="0.0024 0.00738714" pos="0.0101735 0 -0.0101735" quat="0.92388 0 -0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_fr_roller_0" size="0.0042 0.0124997" pos="0.0273 0 0" quat="0.981066 0.193672 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_fr_roller_1" size="0.0042 0.0125003" pos="0.019304 0 0.019304" quat="0.909414 0.208922 -0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_fr_roller_2" size="0.0042 0.0124997" pos="0 0 0.0273" quat="0.707107 0.268707 -0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_fr_roller_3" size="0.0042 0.0125003" pos="-0.019304 0 0.019304" quat="0.415893 0.456839 -0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_fr_roller_4" size="0.0042 0.0124997" pos="-0.0273 0 0" quat="0.193672 0.981066 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_fr_roller_5" size="0.0042 0.0125003" pos="-0.019304 0 -0.019304" quat="0.415893 0.456839 0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_fr_roller_6" size="0.0042 0.0124997" pos="0 0 -0.0273" quat="0.707107 0.268707 0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_fr_roller_7" size="0.0042 0.0125003" pos="0.019304 0 -0.019304" quat="0.909414 0.208922 0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+      </body>
+      <body name="r1__wheel_rl_body" pos="-0.06 0.0655 0">
+        <inertial pos="0 0 0" mass="0.05" diaginertia="1.8e-05 2.9e-05 1.8e-05"/>
+        <joint name="r1__wheel_rl_joint" armature="2e-05" damping="0.0015" axis="0 1 0"/>
+        <geom name="r1__wheel_rl" size="0.0325 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="2" conaffinity="3" condim="4" priority="1" friction="0.001 0.0001 1e-05" rgba="0 0 0 0"/>
+        <geom name="r1__wheel_rl_hub_visual" size="0.009 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_rl_hub_spoke_0" size="0.0024 0.0073875" pos="0.0143875 0 0" quat="0.707107 0 -0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_rl_hub_spoke_1" size="0.0024 0.00738714" pos="0.0101735 0 0.0101735" quat="0.382683 0 -0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_rl_hub_spoke_2" size="0.0024 0.0073875" pos="0 0 0.0143875" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_rl_hub_spoke_3" size="0.0024 0.00738714" pos="-0.0101735 0 0.0101735" quat="0.382683 0 0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_rl_hub_spoke_4" size="0.0024 0.0073875" pos="-0.0143875 0 0" quat="0.707107 0 0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_rl_hub_spoke_5" size="0.0024 0.00738714" pos="-0.0101735 0 -0.0101735" quat="0.92388 0 0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_rl_hub_spoke_6" size="0.0024 0.0073875" pos="0 0 -0.0143875" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_rl_hub_spoke_7" size="0.0024 0.00738714" pos="0.0101735 0 -0.0101735" quat="0.92388 0 -0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_rl_roller_0" size="0.0042 0.0124997" pos="0.0273 0 0" quat="0.981066 0.193672 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_rl_roller_1" size="0.0042 0.0125003" pos="0.019304 0 0.019304" quat="0.909414 0.208922 -0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_rl_roller_2" size="0.0042 0.0124997" pos="0 0 0.0273" quat="0.707107 0.268707 -0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_rl_roller_3" size="0.0042 0.0125003" pos="-0.019304 0 0.019304" quat="0.415893 0.456839 -0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_rl_roller_4" size="0.0042 0.0124997" pos="-0.0273 0 0" quat="0.193672 0.981066 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_rl_roller_5" size="0.0042 0.0125003" pos="-0.019304 0 -0.019304" quat="0.415893 0.456839 0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_rl_roller_6" size="0.0042 0.0124997" pos="0 0 -0.0273" quat="0.707107 0.268707 0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_rl_roller_7" size="0.0042 0.0125003" pos="0.019304 0 -0.019304" quat="0.909414 0.208922 0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+      </body>
+      <body name="r1__wheel_rr_body" pos="-0.06 -0.0655 0">
+        <inertial pos="0 0 0" mass="0.05" diaginertia="1.8e-05 2.9e-05 1.8e-05"/>
+        <joint name="r1__wheel_rr_joint" armature="2e-05" damping="0.0015" axis="0 1 0"/>
+        <geom name="r1__wheel_rr" size="0.0325 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="2" conaffinity="3" condim="4" priority="1" friction="0.001 0.0001 1e-05" rgba="0 0 0 0"/>
+        <geom name="r1__wheel_rr_hub_visual" size="0.009 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_rr_hub_spoke_0" size="0.0024 0.0073875" pos="0.0143875 0 0" quat="0.707107 0 -0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_rr_hub_spoke_1" size="0.0024 0.00738714" pos="0.0101735 0 0.0101735" quat="0.382683 0 -0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_rr_hub_spoke_2" size="0.0024 0.0073875" pos="0 0 0.0143875" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_rr_hub_spoke_3" size="0.0024 0.00738714" pos="-0.0101735 0 0.0101735" quat="0.382683 0 0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_rr_hub_spoke_4" size="0.0024 0.0073875" pos="-0.0143875 0 0" quat="0.707107 0 0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_rr_hub_spoke_5" size="0.0024 0.00738714" pos="-0.0101735 0 -0.0101735" quat="0.92388 0 0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_rr_hub_spoke_6" size="0.0024 0.0073875" pos="0 0 -0.0143875" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_rr_hub_spoke_7" size="0.0024 0.00738714" pos="0.0101735 0 -0.0101735" quat="0.92388 0 -0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r1__wheel_rr_roller_0" size="0.0042 0.0124997" pos="0.0273 0 0" quat="0.193672 0.981066 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_rr_roller_1" size="0.0042 0.0125003" pos="0.019304 0 0.019304" quat="0.415893 0.456839 0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_rr_roller_2" size="0.0042 0.0124997" pos="0 0 0.0273" quat="0.707107 0.268707 0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_rr_roller_3" size="0.0042 0.0125003" pos="-0.019304 0 0.019304" quat="0.909414 0.208922 0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_rr_roller_4" size="0.0042 0.0124997" pos="-0.0273 0 0" quat="0.981066 0.193672 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_rr_roller_5" size="0.0042 0.0125003" pos="-0.019304 0 -0.019304" quat="0.909414 0.208922 -0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_rr_roller_6" size="0.0042 0.0124997" pos="0 0 -0.0273" quat="0.707107 0.268707 -0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__wheel_rr_roller_7" size="0.0042 0.0125003" pos="0.019304 0 -0.019304" quat="0.415893 0.456839 -0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+      </body>
+      <body name="r1__arm_base" pos="0 0 0.0625">
+        <inertial pos="0 0 0.012" mass="0.03" diaginertia="2.5e-05 2.5e-05 2e-05"/>
+        <joint name="r1__arm_yaw" range="-1.75 1.75" damping="0.025"/>
+        <geom name="r1__base_yaw_servo_visual" size="0.02 0.01 0.02025" pos="0 0 -0.002" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+        <geom name="r1__base_yaw_bearing_visual" size="0.024 0.004" pos="0 0 -0.021" type="cylinder" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+        <geom name="r1__arm_pedestal_collision" size="0.025 0.02" pos="0 0 -0.002" type="cylinder" contype="2" conaffinity="3" rgba="0 0 0 0"/>
+        <geom name="r1__shoulder_mount_plate_left" size="0.021 0.001 0.01925" pos="0 0.0125 0.01525" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r1__shoulder_mount_plate_right" size="0.021 0.001 0.01925" pos="0 -0.0125 0.01525" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <body name="r1__shoulder_link" pos="0 0 0.0305">
+          <inertial pos="0.0325 0 0" mass="0.05" diaginertia="2e-05 3e-05 3e-05"/>
+          <joint name="r1__shoulder" range="-0.15 2.8" damping="0.035" axis="0 -1 0"/>
+          <geom name="r1__shoulder_servo_visual" size="0.02 0.01 0.02025" pos="0.004 0 0" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+          <geom name="r1__shoulder_horn_outer" size="0.018 0.0015" pos="0 0.0145 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="orange"/>
+          <geom name="r1__shoulder_horn_center" size="0.006 0.0012" pos="0 0.0165 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.82 0.84 0.86 1" mass="0"/>
+          <geom name="r1__upper_arm_plate_left" size="0.0325 0.001 0.0032" pos="0.0325 0.0125 0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+          <geom name="r1__upper_arm_plate_left_lower" size="0.0325 0.001 0.0032" pos="0.0325 0.0125 -0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+          <geom name="r1__upper_arm_plate_right" size="0.0325 0.001 0.0032" pos="0.0325 -0.0125 0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+          <geom name="r1__upper_arm_plate_right_lower" size="0.0325 0.001 0.0032" pos="0.0325 -0.0125 -0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+          <geom name="r1__upper_arm_collision" size="0.011 0.0325" pos="0.0325 0 0" quat="0.707107 0 -0.707107 0" type="capsule" contype="2" conaffinity="3" rgba="0 0 0 0"/>
+          <body name="r1__elbow_link" pos="0.065 0 0">
+            <inertial pos="0.031 0 0" mass="0.04" diaginertia="1.6e-05 2.2e-05 2.2e-05"/>
+            <joint name="r1__elbow" range="-1.8 1.8" damping="0.03" axis="0 -1 0"/>
+            <geom name="r1__elbow_servo_visual" size="0.02 0.01 0.02025" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+            <geom name="r1__elbow_horn_outer" size="0.018 0.0015" pos="0 0.0145 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="orange"/>
+            <geom name="r1__elbow_horn_center" size="0.006 0.0012" pos="0 0.0165 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.82 0.84 0.86 1" mass="0"/>
+            <geom name="r1__forearm_plate_left" size="0.031 0.001 0.0032" pos="0.031 0.0125 0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+            <geom name="r1__forearm_plate_left_lower" size="0.031 0.001 0.0032" pos="0.031 0.0125 -0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+            <geom name="r1__forearm_plate_right" size="0.031 0.001 0.0032" pos="0.031 -0.0125 0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+            <geom name="r1__forearm_plate_right_lower" size="0.031 0.001 0.0032" pos="0.031 -0.0125 -0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+            <geom name="r1__forearm_collision" size="0.01 0.031" pos="0.031 0 0" quat="0.707107 0 -0.707107 0" type="capsule" contype="2" conaffinity="3" rgba="0 0 0 0"/>
+            <body name="r1__wrist_link" pos="0.062 0 0">
+              <inertial pos="0.035 0 0" mass="0.025" diaginertia="1e-05 1.8e-05 1.8e-05"/>
+              <joint name="r1__wrist_pitch" range="-1.8 1.8" damping="0.02" axis="0 -1 0"/>
+              <geom name="r1__wrist_servo_visual" size="0.02 0.01 0.02025" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+              <geom name="r1__wrist_horn_outer" size="0.017 0.003" pos="0 0.022 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="orange"/>
+              <geom name="r1__wrist_horn_center" size="0.006 0.0012" pos="0 0.0165 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.82 0.84 0.86 1" mass="0"/>
+              <geom name="r1__wrist_plate_left" size="0.027 0.001 0.003" pos="0.027 0.0125 0.009" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+              <geom name="r1__wrist_plate_left_lower" size="0.027 0.001 0.003" pos="0.027 0.0125 -0.009" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+              <geom name="r1__wrist_plate_right" size="0.027 0.001 0.003" pos="0.027 -0.0125 0.009" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+              <geom name="r1__wrist_plate_right_lower" size="0.027 0.001 0.003" pos="0.027 -0.0125 -0.009" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+              <geom name="r1__wrist_collision" size="0.009 0.0275" pos="0.0275 0 0" quat="0.707107 0 -0.707107 0" type="capsule" contype="2" conaffinity="3" rgba="0 0 0 0"/>
+              <body name="r1__gripper">
+                <inertial pos="0.065 0 0.006" mass="0.01" diaginertia="1e-05 1.7e-05 1.7e-05"/>
+                <geom name="r1__gripper_servo_visual" size="0.01115 0.006 0.0116" pos="0.03 0 -0.003" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+                <geom name="r1__gripper_crossbar_visual" size="0.024 0.034 0.0035" pos="0.052 0 -0.012" type="box" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+                <geom name="r1__camera_bracket" size="0.019 0.026 0.005" pos="0.036 0 0.018" type="box" contype="2" conaffinity="3" material="aluminum"/>
+                <geom name="r1__camera_body" size="0.016 0.022 0.014" pos="0.05 0 0.025" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+                <geom name="r1__camera_lens_visual" size="0.009 0.003" pos="0.067 0 0.025" quat="0.707105 0 0.707108 0" type="cylinder" contype="0" conaffinity="0" rgba="0.02 0.02 0.025 1" mass="0"/>
+                <site name="r1__camera_axis_site" size="0.001" pos="0.07 0 0" rgba="0 0 0 0"/>
+                <site name="r1__grip_site" size="0.001" pos="0.1 0 0" rgba="0 0 0 0"/>
+                <camera name="r1__robot_cam" quat="0.466417 0.531465 -0.531465 -0.466417" resolution="960 720" pos="0.067 0 0.0136" sensorsize="640 480" focalpixel="619.519 622.165" principalpixel="32.3109 21.3031"/>
+                <body name="r1__left_jaw" pos="0 0.035 0">
+                  <inertial pos="0.095 0 -0.018" mass="0.005" diaginertia="2e-06 6e-06 6e-06"/>
+                  <joint name="r1__left_gripper_close" type="slide" range="0 0.016" damping="1.2" axis="0 -1 0"/>
+                  <geom name="r1__left_jaw_link_visual" size="0.0022 0.0256759" pos="0.0645 0 -0.003" quat="0.664514 0 -0.747275 0" type="capsule" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+                  <geom name="r1__left_jaw_link_upper_visual" size="0.0016 0.021095" pos="0.068 0 0.002" quat="0.739868 0 -0.672752 0" type="capsule" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+                  <geom name="r1__left_jaw_pivot_visual" size="0.005 0.0015" pos="0.043 0 -0.002" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+                  <geom name="r1__left_finger_pad_visual" size="0.015 0.004 0.0022" pos="0.1 0 0" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+                  <geom name="r1__left_finger" size="0.014 0.0045 0.0035" pos="0.1 0 0" type="box" contype="2" conaffinity="3" friction="3.4 0.03 0.002" solref="0.006" solimp="0.9 0.97 0.002" rgba="0 0 0 0"/>
+                </body>
+                <body name="r1__right_jaw" pos="0 -0.035 0">
+                  <inertial pos="0.095 0 -0.018" mass="0.005" diaginertia="2e-06 6e-06 6e-06"/>
+                  <joint name="r1__right_gripper_close" type="slide" range="0 0.016" damping="1.2" axis="0 1 0"/>
+                  <geom name="r1__right_jaw_link_visual" size="0.0022 0.0256759" pos="0.0645 0 -0.003" quat="0.664514 0 -0.747275 0" type="capsule" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+                  <geom name="r1__right_jaw_link_upper_visual" size="0.0016 0.021095" pos="0.068 0 0.002" quat="0.739868 0 -0.672752 0" type="capsule" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+                  <geom name="r1__right_jaw_pivot_visual" size="0.005 0.0015" pos="0.043 0 -0.002" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+                  <geom name="r1__right_finger_pad_visual" size="0.015 0.004 0.0022" pos="0.1 0 0" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+                  <geom name="r1__right_finger" size="0.014 0.0045 0.0035" pos="0.1 0 0" type="box" contype="2" conaffinity="3" friction="3.4 0.03 0.002" solref="0.006" solimp="0.9 0.97 0.002" rgba="0 0 0 0"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+    <body name="r2__robot" pos="-0.18 0 0.0325">
+      <inertial pos="0 0 0.042" mass="0.735" diaginertia="0.002 0.0027 0.0032"/>
+      <joint name="r2__base_free" type="free"/>
+      <geom name="r2__base_lower_collision" size="0.058 0.045 0.015" pos="0 0 -0.0005" type="box" contype="2" conaffinity="3" friction="0.55 0.01 0.001" rgba="0 0 0 0"/>
+      <geom name="r2__base_top" size="0.06 0.048 0.002" pos="0 0 0.0165" type="box" contype="2" conaffinity="3" material="dark"/>
+      <geom name="r2__left_side_panel_visual" size="0.056 0.0015 0.015" pos="0 0.0465 -0.0005" type="box" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+      <geom name="r2__right_side_panel_visual" size="0.056 0.0015 0.015" pos="0 -0.0465 -0.0005" type="box" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+      <geom name="r2__front_plate" size="0.0015 0.045 0.015" pos="0.06 0 -0.0005" type="box" contype="2" conaffinity="3" material="aluminum"/>
+      <geom name="r2__rear_plate_visual" size="0.0015 0.045 0.015" pos="-0.06 0 -0.0005" type="box" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+      <geom name="r2__left_chassis_hole_front" size="0.0045 0.0005" pos="0.035 0.0482 -0.0005" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r2__left_chassis_hole_mid" size="0.004 0.0005" pos="0 0.0482 -0.0005" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r2__left_chassis_hole_rear" size="0.0045 0.0005" pos="-0.035 0.0482 -0.0005" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r2__right_chassis_hole_front" size="0.0045 0.0005" pos="0.035 -0.0482 -0.0005" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r2__right_chassis_hole_mid" size="0.004 0.0005" pos="0 -0.0482 -0.0005" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r2__right_chassis_hole_rear" size="0.0045 0.0005" pos="-0.035 -0.0482 -0.0005" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r2__motor_fl_gearbox_visual" size="0.018 0.018 0.01" pos="0.06 0.037 0" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+      <geom name="r2__motor_fr_gearbox_visual" size="0.018 0.018 0.01" pos="0.06 -0.037 0" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+      <geom name="r2__motor_rl_gearbox_visual" size="0.018 0.018 0.01" pos="-0.06 0.037 0" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+      <geom name="r2__motor_rr_gearbox_visual" size="0.018 0.018 0.01" pos="-0.06 -0.037 0" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+      <geom name="r2__motor_fl_can_visual" size="0.011 0.012" pos="0.06 0.014 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.18 0.19 0.2 1" mass="0"/>
+      <geom name="r2__motor_fr_can_visual" size="0.011 0.012" pos="0.06 -0.014 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.18 0.19 0.2 1" mass="0"/>
+      <geom name="r2__motor_rl_can_visual" size="0.011 0.012" pos="-0.06 0.014 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.18 0.19 0.2 1" mass="0"/>
+      <geom name="r2__motor_rr_can_visual" size="0.011 0.012" pos="-0.06 -0.014 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.18 0.19 0.2 1" mass="0"/>
+      <geom name="r2__rear_cage_collision" size="0.032 0.046 0.025" pos="-0.028 0 0.0435" type="box" contype="2" conaffinity="3" rgba="0 0 0 0"/>
+      <geom name="r2__pi_board_visual" size="0.028 0.0425 0.002" pos="-0.028 0 0.0275" type="box" contype="0" conaffinity="0" rgba="0.035 0.23 0.09 1" mass="0"/>
+      <geom name="r2__pi_heatsink_visual" size="0.012 0.014 0.003" pos="-0.034 0 0.0345" type="box" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r2__expansion_board_visual" size="0.028 0.0425 0.0015" pos="-0.028 0 0.0415" type="box" contype="0" conaffinity="0" rgba="0.1 0.11 0.12 1" mass="0"/>
+      <geom name="r2__electronics_left_side_visual" size="0.032 0.0014 0.025" pos="-0.028 0.046 0.0435" type="box" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+      <geom name="r2__electronics_right_side_visual" size="0.032 0.0014 0.025" pos="-0.028 -0.046 0.0435" type="box" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+      <geom name="r2__electronics_top_cover_visual" size="0.032 0.046 0.0012" pos="-0.028 0 0.0673" type="box" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+      <geom name="r2__top_cover_slot_1" size="0.009 0.003 0.00015" pos="-0.046 0.025 0.06855" type="box" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r2__top_cover_slot_2" size="0.009 0.003 0.00015" pos="-0.046 0.01 0.06855" type="box" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r2__top_cover_slot_3" size="0.009 0.003 0.00015" pos="-0.046 -0.005 0.06855" type="box" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r2__top_cover_slot_4" size="0.009 0.003 0.00015" pos="-0.046 -0.02 0.06855" type="box" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r2__cage_front_left_standoff" size="0.002 0.0235" pos="0.001 0.043 0.042" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" rgba="0.72 0.42 0.16 1" mass="0"/>
+      <geom name="r2__cage_front_right_standoff" size="0.002 0.0235" pos="0.001 -0.043 0.042" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" rgba="0.72 0.42 0.16 1" mass="0"/>
+      <geom name="r2__cage_rear_left_standoff" size="0.002 0.0235" pos="-0.057 0.043 0.042" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" rgba="0.72 0.42 0.16 1" mass="0"/>
+      <geom name="r2__cage_rear_right_standoff" size="0.002 0.0235" pos="-0.057 -0.043 0.042" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" rgba="0.72 0.42 0.16 1" mass="0"/>
+      <geom name="r2__cage_mid_left_standoff" size="0.002 0.0235" pos="-0.028 0.043 0.042" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" rgba="0.72 0.42 0.16 1" mass="0"/>
+      <geom name="r2__cage_mid_right_standoff" size="0.002 0.0235" pos="-0.028 -0.043 0.042" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" rgba="0.72 0.42 0.16 1" mass="0"/>
+      <geom name="r2__ultrasonic_bracket" size="0.004 0.03 0.013" pos="0.074 0 0.0215" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+      <geom name="r2__ultrasonic_left" size="0.01 0.006" pos="0.078 0.017 0.0215" quat="0.707105 0 0.707108 0" type="cylinder" contype="0" conaffinity="0" rgba="0.72 0.76 0.8 1" mass="0"/>
+      <geom name="r2__ultrasonic_right" size="0.01 0.006" pos="0.078 -0.017 0.0215" quat="0.707105 0 0.707108 0" type="cylinder" contype="0" conaffinity="0" rgba="0.72 0.76 0.8 1" mass="0"/>
+      <body name="r2__wheel_fl_body" pos="0.06 0.0655 0">
+        <inertial pos="0 0 0" mass="0.05" diaginertia="1.8e-05 2.9e-05 1.8e-05"/>
+        <joint name="r2__wheel_fl_joint" armature="2e-05" damping="0.0015" axis="0 1 0"/>
+        <geom name="r2__wheel_fl" size="0.0325 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="2" conaffinity="3" condim="4" priority="1" friction="0.001 0.0001 1e-05" rgba="0 0 0 0"/>
+        <geom name="r2__wheel_fl_hub_visual" size="0.009 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_fl_hub_spoke_0" size="0.0024 0.0073875" pos="0.0143875 0 0" quat="0.707107 0 -0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_fl_hub_spoke_1" size="0.0024 0.00738714" pos="0.0101735 0 0.0101735" quat="0.382683 0 -0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_fl_hub_spoke_2" size="0.0024 0.0073875" pos="0 0 0.0143875" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_fl_hub_spoke_3" size="0.0024 0.00738714" pos="-0.0101735 0 0.0101735" quat="0.382683 0 0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_fl_hub_spoke_4" size="0.0024 0.0073875" pos="-0.0143875 0 0" quat="0.707107 0 0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_fl_hub_spoke_5" size="0.0024 0.00738714" pos="-0.0101735 0 -0.0101735" quat="0.92388 0 0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_fl_hub_spoke_6" size="0.0024 0.0073875" pos="0 0 -0.0143875" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_fl_hub_spoke_7" size="0.0024 0.00738714" pos="0.0101735 0 -0.0101735" quat="0.92388 0 -0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_fl_roller_0" size="0.0042 0.0124997" pos="0.0273 0 0" quat="0.193672 0.981066 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_fl_roller_1" size="0.0042 0.0125003" pos="0.019304 0 0.019304" quat="0.415893 0.456839 0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_fl_roller_2" size="0.0042 0.0124997" pos="0 0 0.0273" quat="0.707107 0.268707 0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_fl_roller_3" size="0.0042 0.0125003" pos="-0.019304 0 0.019304" quat="0.909414 0.208922 0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_fl_roller_4" size="0.0042 0.0124997" pos="-0.0273 0 0" quat="0.981066 0.193672 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_fl_roller_5" size="0.0042 0.0125003" pos="-0.019304 0 -0.019304" quat="0.909414 0.208922 -0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_fl_roller_6" size="0.0042 0.0124997" pos="0 0 -0.0273" quat="0.707107 0.268707 -0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_fl_roller_7" size="0.0042 0.0125003" pos="0.019304 0 -0.019304" quat="0.415893 0.456839 -0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+      </body>
+      <body name="r2__wheel_fr_body" pos="0.06 -0.0655 0">
+        <inertial pos="0 0 0" mass="0.05" diaginertia="1.8e-05 2.9e-05 1.8e-05"/>
+        <joint name="r2__wheel_fr_joint" armature="2e-05" damping="0.0015" axis="0 1 0"/>
+        <geom name="r2__wheel_fr" size="0.0325 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="2" conaffinity="3" condim="4" priority="1" friction="0.001 0.0001 1e-05" rgba="0 0 0 0"/>
+        <geom name="r2__wheel_fr_hub_visual" size="0.009 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_fr_hub_spoke_0" size="0.0024 0.0073875" pos="0.0143875 0 0" quat="0.707107 0 -0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_fr_hub_spoke_1" size="0.0024 0.00738714" pos="0.0101735 0 0.0101735" quat="0.382683 0 -0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_fr_hub_spoke_2" size="0.0024 0.0073875" pos="0 0 0.0143875" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_fr_hub_spoke_3" size="0.0024 0.00738714" pos="-0.0101735 0 0.0101735" quat="0.382683 0 0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_fr_hub_spoke_4" size="0.0024 0.0073875" pos="-0.0143875 0 0" quat="0.707107 0 0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_fr_hub_spoke_5" size="0.0024 0.00738714" pos="-0.0101735 0 -0.0101735" quat="0.92388 0 0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_fr_hub_spoke_6" size="0.0024 0.0073875" pos="0 0 -0.0143875" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_fr_hub_spoke_7" size="0.0024 0.00738714" pos="0.0101735 0 -0.0101735" quat="0.92388 0 -0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_fr_roller_0" size="0.0042 0.0124997" pos="0.0273 0 0" quat="0.981066 0.193672 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_fr_roller_1" size="0.0042 0.0125003" pos="0.019304 0 0.019304" quat="0.909414 0.208922 -0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_fr_roller_2" size="0.0042 0.0124997" pos="0 0 0.0273" quat="0.707107 0.268707 -0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_fr_roller_3" size="0.0042 0.0125003" pos="-0.019304 0 0.019304" quat="0.415893 0.456839 -0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_fr_roller_4" size="0.0042 0.0124997" pos="-0.0273 0 0" quat="0.193672 0.981066 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_fr_roller_5" size="0.0042 0.0125003" pos="-0.019304 0 -0.019304" quat="0.415893 0.456839 0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_fr_roller_6" size="0.0042 0.0124997" pos="0 0 -0.0273" quat="0.707107 0.268707 0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_fr_roller_7" size="0.0042 0.0125003" pos="0.019304 0 -0.019304" quat="0.909414 0.208922 0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+      </body>
+      <body name="r2__wheel_rl_body" pos="-0.06 0.0655 0">
+        <inertial pos="0 0 0" mass="0.05" diaginertia="1.8e-05 2.9e-05 1.8e-05"/>
+        <joint name="r2__wheel_rl_joint" armature="2e-05" damping="0.0015" axis="0 1 0"/>
+        <geom name="r2__wheel_rl" size="0.0325 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="2" conaffinity="3" condim="4" priority="1" friction="0.001 0.0001 1e-05" rgba="0 0 0 0"/>
+        <geom name="r2__wheel_rl_hub_visual" size="0.009 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_rl_hub_spoke_0" size="0.0024 0.0073875" pos="0.0143875 0 0" quat="0.707107 0 -0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_rl_hub_spoke_1" size="0.0024 0.00738714" pos="0.0101735 0 0.0101735" quat="0.382683 0 -0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_rl_hub_spoke_2" size="0.0024 0.0073875" pos="0 0 0.0143875" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_rl_hub_spoke_3" size="0.0024 0.00738714" pos="-0.0101735 0 0.0101735" quat="0.382683 0 0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_rl_hub_spoke_4" size="0.0024 0.0073875" pos="-0.0143875 0 0" quat="0.707107 0 0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_rl_hub_spoke_5" size="0.0024 0.00738714" pos="-0.0101735 0 -0.0101735" quat="0.92388 0 0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_rl_hub_spoke_6" size="0.0024 0.0073875" pos="0 0 -0.0143875" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_rl_hub_spoke_7" size="0.0024 0.00738714" pos="0.0101735 0 -0.0101735" quat="0.92388 0 -0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_rl_roller_0" size="0.0042 0.0124997" pos="0.0273 0 0" quat="0.981066 0.193672 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_rl_roller_1" size="0.0042 0.0125003" pos="0.019304 0 0.019304" quat="0.909414 0.208922 -0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_rl_roller_2" size="0.0042 0.0124997" pos="0 0 0.0273" quat="0.707107 0.268707 -0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_rl_roller_3" size="0.0042 0.0125003" pos="-0.019304 0 0.019304" quat="0.415893 0.456839 -0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_rl_roller_4" size="0.0042 0.0124997" pos="-0.0273 0 0" quat="0.193672 0.981066 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_rl_roller_5" size="0.0042 0.0125003" pos="-0.019304 0 -0.019304" quat="0.415893 0.456839 0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_rl_roller_6" size="0.0042 0.0124997" pos="0 0 -0.0273" quat="0.707107 0.268707 0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_rl_roller_7" size="0.0042 0.0125003" pos="0.019304 0 -0.019304" quat="0.909414 0.208922 0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+      </body>
+      <body name="r2__wheel_rr_body" pos="-0.06 -0.0655 0">
+        <inertial pos="0 0 0" mass="0.05" diaginertia="1.8e-05 2.9e-05 1.8e-05"/>
+        <joint name="r2__wheel_rr_joint" armature="2e-05" damping="0.0015" axis="0 1 0"/>
+        <geom name="r2__wheel_rr" size="0.0325 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="2" conaffinity="3" condim="4" priority="1" friction="0.001 0.0001 1e-05" rgba="0 0 0 0"/>
+        <geom name="r2__wheel_rr_hub_visual" size="0.009 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_rr_hub_spoke_0" size="0.0024 0.0073875" pos="0.0143875 0 0" quat="0.707107 0 -0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_rr_hub_spoke_1" size="0.0024 0.00738714" pos="0.0101735 0 0.0101735" quat="0.382683 0 -0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_rr_hub_spoke_2" size="0.0024 0.0073875" pos="0 0 0.0143875" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_rr_hub_spoke_3" size="0.0024 0.00738714" pos="-0.0101735 0 0.0101735" quat="0.382683 0 0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_rr_hub_spoke_4" size="0.0024 0.0073875" pos="-0.0143875 0 0" quat="0.707107 0 0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_rr_hub_spoke_5" size="0.0024 0.00738714" pos="-0.0101735 0 -0.0101735" quat="0.92388 0 0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_rr_hub_spoke_6" size="0.0024 0.0073875" pos="0 0 -0.0143875" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_rr_hub_spoke_7" size="0.0024 0.00738714" pos="0.0101735 0 -0.0101735" quat="0.92388 0 -0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r2__wheel_rr_roller_0" size="0.0042 0.0124997" pos="0.0273 0 0" quat="0.193672 0.981066 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_rr_roller_1" size="0.0042 0.0125003" pos="0.019304 0 0.019304" quat="0.415893 0.456839 0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_rr_roller_2" size="0.0042 0.0124997" pos="0 0 0.0273" quat="0.707107 0.268707 0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_rr_roller_3" size="0.0042 0.0125003" pos="-0.019304 0 0.019304" quat="0.909414 0.208922 0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_rr_roller_4" size="0.0042 0.0124997" pos="-0.0273 0 0" quat="0.981066 0.193672 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_rr_roller_5" size="0.0042 0.0125003" pos="-0.019304 0 -0.019304" quat="0.909414 0.208922 -0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_rr_roller_6" size="0.0042 0.0124997" pos="0 0 -0.0273" quat="0.707107 0.268707 -0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__wheel_rr_roller_7" size="0.0042 0.0125003" pos="0.019304 0 -0.019304" quat="0.415893 0.456839 -0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+      </body>
+      <body name="r2__arm_base" pos="0 0 0.0625">
+        <inertial pos="0 0 0.012" mass="0.03" diaginertia="2.5e-05 2.5e-05 2e-05"/>
+        <joint name="r2__arm_yaw" range="-1.75 1.75" damping="0.025"/>
+        <geom name="r2__base_yaw_servo_visual" size="0.02 0.01 0.02025" pos="0 0 -0.002" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+        <geom name="r2__base_yaw_bearing_visual" size="0.024 0.004" pos="0 0 -0.021" type="cylinder" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+        <geom name="r2__arm_pedestal_collision" size="0.025 0.02" pos="0 0 -0.002" type="cylinder" contype="2" conaffinity="3" rgba="0 0 0 0"/>
+        <geom name="r2__shoulder_mount_plate_left" size="0.021 0.001 0.01925" pos="0 0.0125 0.01525" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r2__shoulder_mount_plate_right" size="0.021 0.001 0.01925" pos="0 -0.0125 0.01525" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <body name="r2__shoulder_link" pos="0 0 0.0305">
+          <inertial pos="0.0325 0 0" mass="0.05" diaginertia="2e-05 3e-05 3e-05"/>
+          <joint name="r2__shoulder" range="-0.15 2.8" damping="0.035" axis="0 -1 0"/>
+          <geom name="r2__shoulder_servo_visual" size="0.02 0.01 0.02025" pos="0.004 0 0" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+          <geom name="r2__shoulder_horn_outer" size="0.018 0.0015" pos="0 0.0145 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="orange"/>
+          <geom name="r2__shoulder_horn_center" size="0.006 0.0012" pos="0 0.0165 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.82 0.84 0.86 1" mass="0"/>
+          <geom name="r2__upper_arm_plate_left" size="0.0325 0.001 0.0032" pos="0.0325 0.0125 0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+          <geom name="r2__upper_arm_plate_left_lower" size="0.0325 0.001 0.0032" pos="0.0325 0.0125 -0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+          <geom name="r2__upper_arm_plate_right" size="0.0325 0.001 0.0032" pos="0.0325 -0.0125 0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+          <geom name="r2__upper_arm_plate_right_lower" size="0.0325 0.001 0.0032" pos="0.0325 -0.0125 -0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+          <geom name="r2__upper_arm_collision" size="0.011 0.0325" pos="0.0325 0 0" quat="0.707107 0 -0.707107 0" type="capsule" contype="2" conaffinity="3" rgba="0 0 0 0"/>
+          <body name="r2__elbow_link" pos="0.065 0 0">
+            <inertial pos="0.031 0 0" mass="0.04" diaginertia="1.6e-05 2.2e-05 2.2e-05"/>
+            <joint name="r2__elbow" range="-1.8 1.8" damping="0.03" axis="0 -1 0"/>
+            <geom name="r2__elbow_servo_visual" size="0.02 0.01 0.02025" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+            <geom name="r2__elbow_horn_outer" size="0.018 0.0015" pos="0 0.0145 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="orange"/>
+            <geom name="r2__elbow_horn_center" size="0.006 0.0012" pos="0 0.0165 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.82 0.84 0.86 1" mass="0"/>
+            <geom name="r2__forearm_plate_left" size="0.031 0.001 0.0032" pos="0.031 0.0125 0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+            <geom name="r2__forearm_plate_left_lower" size="0.031 0.001 0.0032" pos="0.031 0.0125 -0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+            <geom name="r2__forearm_plate_right" size="0.031 0.001 0.0032" pos="0.031 -0.0125 0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+            <geom name="r2__forearm_plate_right_lower" size="0.031 0.001 0.0032" pos="0.031 -0.0125 -0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+            <geom name="r2__forearm_collision" size="0.01 0.031" pos="0.031 0 0" quat="0.707107 0 -0.707107 0" type="capsule" contype="2" conaffinity="3" rgba="0 0 0 0"/>
+            <body name="r2__wrist_link" pos="0.062 0 0">
+              <inertial pos="0.035 0 0" mass="0.025" diaginertia="1e-05 1.8e-05 1.8e-05"/>
+              <joint name="r2__wrist_pitch" range="-1.8 1.8" damping="0.02" axis="0 -1 0"/>
+              <geom name="r2__wrist_servo_visual" size="0.02 0.01 0.02025" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+              <geom name="r2__wrist_horn_outer" size="0.017 0.003" pos="0 0.022 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="orange"/>
+              <geom name="r2__wrist_horn_center" size="0.006 0.0012" pos="0 0.0165 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.82 0.84 0.86 1" mass="0"/>
+              <geom name="r2__wrist_plate_left" size="0.027 0.001 0.003" pos="0.027 0.0125 0.009" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+              <geom name="r2__wrist_plate_left_lower" size="0.027 0.001 0.003" pos="0.027 0.0125 -0.009" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+              <geom name="r2__wrist_plate_right" size="0.027 0.001 0.003" pos="0.027 -0.0125 0.009" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+              <geom name="r2__wrist_plate_right_lower" size="0.027 0.001 0.003" pos="0.027 -0.0125 -0.009" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+              <geom name="r2__wrist_collision" size="0.009 0.0275" pos="0.0275 0 0" quat="0.707107 0 -0.707107 0" type="capsule" contype="2" conaffinity="3" rgba="0 0 0 0"/>
+              <body name="r2__gripper">
+                <inertial pos="0.065 0 0.006" mass="0.01" diaginertia="1e-05 1.7e-05 1.7e-05"/>
+                <geom name="r2__gripper_servo_visual" size="0.01115 0.006 0.0116" pos="0.03 0 -0.003" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+                <geom name="r2__gripper_crossbar_visual" size="0.024 0.034 0.0035" pos="0.052 0 -0.012" type="box" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+                <geom name="r2__camera_bracket" size="0.019 0.026 0.005" pos="0.036 0 0.018" type="box" contype="2" conaffinity="3" material="aluminum"/>
+                <geom name="r2__camera_body" size="0.016 0.022 0.014" pos="0.05 0 0.025" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+                <geom name="r2__camera_lens_visual" size="0.009 0.003" pos="0.067 0 0.025" quat="0.707105 0 0.707108 0" type="cylinder" contype="0" conaffinity="0" rgba="0.02 0.02 0.025 1" mass="0"/>
+                <site name="r2__camera_axis_site" size="0.001" pos="0.07 0 0" rgba="0 0 0 0"/>
+                <site name="r2__grip_site" size="0.001" pos="0.1 0 0" rgba="0 0 0 0"/>
+                <camera name="r2__robot_cam" quat="0.466417 0.531465 -0.531465 -0.466417" resolution="960 720" pos="0.067 0 0.0136" sensorsize="640 480" focalpixel="619.519 622.165" principalpixel="32.3109 21.3031"/>
+                <body name="r2__left_jaw" pos="0 0.035 0">
+                  <inertial pos="0.095 0 -0.018" mass="0.005" diaginertia="2e-06 6e-06 6e-06"/>
+                  <joint name="r2__left_gripper_close" type="slide" range="0 0.016" damping="1.2" axis="0 -1 0"/>
+                  <geom name="r2__left_jaw_link_visual" size="0.0022 0.0256759" pos="0.0645 0 -0.003" quat="0.664514 0 -0.747275 0" type="capsule" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+                  <geom name="r2__left_jaw_link_upper_visual" size="0.0016 0.021095" pos="0.068 0 0.002" quat="0.739868 0 -0.672752 0" type="capsule" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+                  <geom name="r2__left_jaw_pivot_visual" size="0.005 0.0015" pos="0.043 0 -0.002" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+                  <geom name="r2__left_finger_pad_visual" size="0.015 0.004 0.0022" pos="0.1 0 0" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+                  <geom name="r2__left_finger" size="0.014 0.0045 0.0035" pos="0.1 0 0" type="box" contype="2" conaffinity="3" friction="3.4 0.03 0.002" solref="0.006" solimp="0.9 0.97 0.002" rgba="0 0 0 0"/>
+                </body>
+                <body name="r2__right_jaw" pos="0 -0.035 0">
+                  <inertial pos="0.095 0 -0.018" mass="0.005" diaginertia="2e-06 6e-06 6e-06"/>
+                  <joint name="r2__right_gripper_close" type="slide" range="0 0.016" damping="1.2" axis="0 1 0"/>
+                  <geom name="r2__right_jaw_link_visual" size="0.0022 0.0256759" pos="0.0645 0 -0.003" quat="0.664514 0 -0.747275 0" type="capsule" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+                  <geom name="r2__right_jaw_link_upper_visual" size="0.0016 0.021095" pos="0.068 0 0.002" quat="0.739868 0 -0.672752 0" type="capsule" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+                  <geom name="r2__right_jaw_pivot_visual" size="0.005 0.0015" pos="0.043 0 -0.002" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+                  <geom name="r2__right_finger_pad_visual" size="0.015 0.004 0.0022" pos="0.1 0 0" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+                  <geom name="r2__right_finger" size="0.014 0.0045 0.0035" pos="0.1 0 0" type="box" contype="2" conaffinity="3" friction="3.4 0.03 0.002" solref="0.006" solimp="0.9 0.97 0.002" rgba="0 0 0 0"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+    <body name="r3__robot" pos="-0.18 0.42 0.0325">
+      <inertial pos="0 0 0.042" mass="0.735" diaginertia="0.002 0.0027 0.0032"/>
+      <joint name="r3__base_free" type="free"/>
+      <geom name="r3__base_lower_collision" size="0.058 0.045 0.015" pos="0 0 -0.0005" type="box" contype="2" conaffinity="3" friction="0.55 0.01 0.001" rgba="0 0 0 0"/>
+      <geom name="r3__base_top" size="0.06 0.048 0.002" pos="0 0 0.0165" type="box" contype="2" conaffinity="3" material="dark"/>
+      <geom name="r3__left_side_panel_visual" size="0.056 0.0015 0.015" pos="0 0.0465 -0.0005" type="box" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+      <geom name="r3__right_side_panel_visual" size="0.056 0.0015 0.015" pos="0 -0.0465 -0.0005" type="box" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+      <geom name="r3__front_plate" size="0.0015 0.045 0.015" pos="0.06 0 -0.0005" type="box" contype="2" conaffinity="3" material="aluminum"/>
+      <geom name="r3__rear_plate_visual" size="0.0015 0.045 0.015" pos="-0.06 0 -0.0005" type="box" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+      <geom name="r3__left_chassis_hole_front" size="0.0045 0.0005" pos="0.035 0.0482 -0.0005" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r3__left_chassis_hole_mid" size="0.004 0.0005" pos="0 0.0482 -0.0005" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r3__left_chassis_hole_rear" size="0.0045 0.0005" pos="-0.035 0.0482 -0.0005" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r3__right_chassis_hole_front" size="0.0045 0.0005" pos="0.035 -0.0482 -0.0005" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r3__right_chassis_hole_mid" size="0.004 0.0005" pos="0 -0.0482 -0.0005" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r3__right_chassis_hole_rear" size="0.0045 0.0005" pos="-0.035 -0.0482 -0.0005" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r3__motor_fl_gearbox_visual" size="0.018 0.018 0.01" pos="0.06 0.037 0" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+      <geom name="r3__motor_fr_gearbox_visual" size="0.018 0.018 0.01" pos="0.06 -0.037 0" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+      <geom name="r3__motor_rl_gearbox_visual" size="0.018 0.018 0.01" pos="-0.06 0.037 0" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+      <geom name="r3__motor_rr_gearbox_visual" size="0.018 0.018 0.01" pos="-0.06 -0.037 0" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+      <geom name="r3__motor_fl_can_visual" size="0.011 0.012" pos="0.06 0.014 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.18 0.19 0.2 1" mass="0"/>
+      <geom name="r3__motor_fr_can_visual" size="0.011 0.012" pos="0.06 -0.014 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.18 0.19 0.2 1" mass="0"/>
+      <geom name="r3__motor_rl_can_visual" size="0.011 0.012" pos="-0.06 0.014 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.18 0.19 0.2 1" mass="0"/>
+      <geom name="r3__motor_rr_can_visual" size="0.011 0.012" pos="-0.06 -0.014 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.18 0.19 0.2 1" mass="0"/>
+      <geom name="r3__rear_cage_collision" size="0.032 0.046 0.025" pos="-0.028 0 0.0435" type="box" contype="2" conaffinity="3" rgba="0 0 0 0"/>
+      <geom name="r3__pi_board_visual" size="0.028 0.0425 0.002" pos="-0.028 0 0.0275" type="box" contype="0" conaffinity="0" rgba="0.035 0.23 0.09 1" mass="0"/>
+      <geom name="r3__pi_heatsink_visual" size="0.012 0.014 0.003" pos="-0.034 0 0.0345" type="box" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r3__expansion_board_visual" size="0.028 0.0425 0.0015" pos="-0.028 0 0.0415" type="box" contype="0" conaffinity="0" rgba="0.1 0.11 0.12 1" mass="0"/>
+      <geom name="r3__electronics_left_side_visual" size="0.032 0.0014 0.025" pos="-0.028 0.046 0.0435" type="box" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+      <geom name="r3__electronics_right_side_visual" size="0.032 0.0014 0.025" pos="-0.028 -0.046 0.0435" type="box" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+      <geom name="r3__electronics_top_cover_visual" size="0.032 0.046 0.0012" pos="-0.028 0 0.0673" type="box" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+      <geom name="r3__top_cover_slot_1" size="0.009 0.003 0.00015" pos="-0.046 0.025 0.06855" type="box" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r3__top_cover_slot_2" size="0.009 0.003 0.00015" pos="-0.046 0.01 0.06855" type="box" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r3__top_cover_slot_3" size="0.009 0.003 0.00015" pos="-0.046 -0.005 0.06855" type="box" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r3__top_cover_slot_4" size="0.009 0.003 0.00015" pos="-0.046 -0.02 0.06855" type="box" contype="0" conaffinity="0" mass="0" material="dark"/>
+      <geom name="r3__cage_front_left_standoff" size="0.002 0.0235" pos="0.001 0.043 0.042" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" rgba="0.72 0.42 0.16 1" mass="0"/>
+      <geom name="r3__cage_front_right_standoff" size="0.002 0.0235" pos="0.001 -0.043 0.042" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" rgba="0.72 0.42 0.16 1" mass="0"/>
+      <geom name="r3__cage_rear_left_standoff" size="0.002 0.0235" pos="-0.057 0.043 0.042" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" rgba="0.72 0.42 0.16 1" mass="0"/>
+      <geom name="r3__cage_rear_right_standoff" size="0.002 0.0235" pos="-0.057 -0.043 0.042" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" rgba="0.72 0.42 0.16 1" mass="0"/>
+      <geom name="r3__cage_mid_left_standoff" size="0.002 0.0235" pos="-0.028 0.043 0.042" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" rgba="0.72 0.42 0.16 1" mass="0"/>
+      <geom name="r3__cage_mid_right_standoff" size="0.002 0.0235" pos="-0.028 -0.043 0.042" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" rgba="0.72 0.42 0.16 1" mass="0"/>
+      <geom name="r3__ultrasonic_bracket" size="0.004 0.03 0.013" pos="0.074 0 0.0215" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+      <geom name="r3__ultrasonic_left" size="0.01 0.006" pos="0.078 0.017 0.0215" quat="0.707105 0 0.707108 0" type="cylinder" contype="0" conaffinity="0" rgba="0.72 0.76 0.8 1" mass="0"/>
+      <geom name="r3__ultrasonic_right" size="0.01 0.006" pos="0.078 -0.017 0.0215" quat="0.707105 0 0.707108 0" type="cylinder" contype="0" conaffinity="0" rgba="0.72 0.76 0.8 1" mass="0"/>
+      <body name="r3__wheel_fl_body" pos="0.06 0.0655 0">
+        <inertial pos="0 0 0" mass="0.05" diaginertia="1.8e-05 2.9e-05 1.8e-05"/>
+        <joint name="r3__wheel_fl_joint" armature="2e-05" damping="0.0015" axis="0 1 0"/>
+        <geom name="r3__wheel_fl" size="0.0325 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="2" conaffinity="3" condim="4" priority="1" friction="0.001 0.0001 1e-05" rgba="0 0 0 0"/>
+        <geom name="r3__wheel_fl_hub_visual" size="0.009 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_fl_hub_spoke_0" size="0.0024 0.0073875" pos="0.0143875 0 0" quat="0.707107 0 -0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_fl_hub_spoke_1" size="0.0024 0.00738714" pos="0.0101735 0 0.0101735" quat="0.382683 0 -0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_fl_hub_spoke_2" size="0.0024 0.0073875" pos="0 0 0.0143875" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_fl_hub_spoke_3" size="0.0024 0.00738714" pos="-0.0101735 0 0.0101735" quat="0.382683 0 0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_fl_hub_spoke_4" size="0.0024 0.0073875" pos="-0.0143875 0 0" quat="0.707107 0 0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_fl_hub_spoke_5" size="0.0024 0.00738714" pos="-0.0101735 0 -0.0101735" quat="0.92388 0 0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_fl_hub_spoke_6" size="0.0024 0.0073875" pos="0 0 -0.0143875" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_fl_hub_spoke_7" size="0.0024 0.00738714" pos="0.0101735 0 -0.0101735" quat="0.92388 0 -0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_fl_roller_0" size="0.0042 0.0124997" pos="0.0273 0 0" quat="0.193672 0.981066 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_fl_roller_1" size="0.0042 0.0125003" pos="0.019304 0 0.019304" quat="0.415893 0.456839 0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_fl_roller_2" size="0.0042 0.0124997" pos="0 0 0.0273" quat="0.707107 0.268707 0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_fl_roller_3" size="0.0042 0.0125003" pos="-0.019304 0 0.019304" quat="0.909414 0.208922 0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_fl_roller_4" size="0.0042 0.0124997" pos="-0.0273 0 0" quat="0.981066 0.193672 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_fl_roller_5" size="0.0042 0.0125003" pos="-0.019304 0 -0.019304" quat="0.909414 0.208922 -0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_fl_roller_6" size="0.0042 0.0124997" pos="0 0 -0.0273" quat="0.707107 0.268707 -0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_fl_roller_7" size="0.0042 0.0125003" pos="0.019304 0 -0.019304" quat="0.415893 0.456839 -0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+      </body>
+      <body name="r3__wheel_fr_body" pos="0.06 -0.0655 0">
+        <inertial pos="0 0 0" mass="0.05" diaginertia="1.8e-05 2.9e-05 1.8e-05"/>
+        <joint name="r3__wheel_fr_joint" armature="2e-05" damping="0.0015" axis="0 1 0"/>
+        <geom name="r3__wheel_fr" size="0.0325 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="2" conaffinity="3" condim="4" priority="1" friction="0.001 0.0001 1e-05" rgba="0 0 0 0"/>
+        <geom name="r3__wheel_fr_hub_visual" size="0.009 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_fr_hub_spoke_0" size="0.0024 0.0073875" pos="0.0143875 0 0" quat="0.707107 0 -0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_fr_hub_spoke_1" size="0.0024 0.00738714" pos="0.0101735 0 0.0101735" quat="0.382683 0 -0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_fr_hub_spoke_2" size="0.0024 0.0073875" pos="0 0 0.0143875" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_fr_hub_spoke_3" size="0.0024 0.00738714" pos="-0.0101735 0 0.0101735" quat="0.382683 0 0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_fr_hub_spoke_4" size="0.0024 0.0073875" pos="-0.0143875 0 0" quat="0.707107 0 0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_fr_hub_spoke_5" size="0.0024 0.00738714" pos="-0.0101735 0 -0.0101735" quat="0.92388 0 0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_fr_hub_spoke_6" size="0.0024 0.0073875" pos="0 0 -0.0143875" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_fr_hub_spoke_7" size="0.0024 0.00738714" pos="0.0101735 0 -0.0101735" quat="0.92388 0 -0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_fr_roller_0" size="0.0042 0.0124997" pos="0.0273 0 0" quat="0.981066 0.193672 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_fr_roller_1" size="0.0042 0.0125003" pos="0.019304 0 0.019304" quat="0.909414 0.208922 -0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_fr_roller_2" size="0.0042 0.0124997" pos="0 0 0.0273" quat="0.707107 0.268707 -0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_fr_roller_3" size="0.0042 0.0125003" pos="-0.019304 0 0.019304" quat="0.415893 0.456839 -0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_fr_roller_4" size="0.0042 0.0124997" pos="-0.0273 0 0" quat="0.193672 0.981066 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_fr_roller_5" size="0.0042 0.0125003" pos="-0.019304 0 -0.019304" quat="0.415893 0.456839 0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_fr_roller_6" size="0.0042 0.0124997" pos="0 0 -0.0273" quat="0.707107 0.268707 0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_fr_roller_7" size="0.0042 0.0125003" pos="0.019304 0 -0.019304" quat="0.909414 0.208922 0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+      </body>
+      <body name="r3__wheel_rl_body" pos="-0.06 0.0655 0">
+        <inertial pos="0 0 0" mass="0.05" diaginertia="1.8e-05 2.9e-05 1.8e-05"/>
+        <joint name="r3__wheel_rl_joint" armature="2e-05" damping="0.0015" axis="0 1 0"/>
+        <geom name="r3__wheel_rl" size="0.0325 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="2" conaffinity="3" condim="4" priority="1" friction="0.001 0.0001 1e-05" rgba="0 0 0 0"/>
+        <geom name="r3__wheel_rl_hub_visual" size="0.009 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_rl_hub_spoke_0" size="0.0024 0.0073875" pos="0.0143875 0 0" quat="0.707107 0 -0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_rl_hub_spoke_1" size="0.0024 0.00738714" pos="0.0101735 0 0.0101735" quat="0.382683 0 -0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_rl_hub_spoke_2" size="0.0024 0.0073875" pos="0 0 0.0143875" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_rl_hub_spoke_3" size="0.0024 0.00738714" pos="-0.0101735 0 0.0101735" quat="0.382683 0 0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_rl_hub_spoke_4" size="0.0024 0.0073875" pos="-0.0143875 0 0" quat="0.707107 0 0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_rl_hub_spoke_5" size="0.0024 0.00738714" pos="-0.0101735 0 -0.0101735" quat="0.92388 0 0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_rl_hub_spoke_6" size="0.0024 0.0073875" pos="0 0 -0.0143875" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_rl_hub_spoke_7" size="0.0024 0.00738714" pos="0.0101735 0 -0.0101735" quat="0.92388 0 -0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_rl_roller_0" size="0.0042 0.0124997" pos="0.0273 0 0" quat="0.981066 0.193672 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_rl_roller_1" size="0.0042 0.0125003" pos="0.019304 0 0.019304" quat="0.909414 0.208922 -0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_rl_roller_2" size="0.0042 0.0124997" pos="0 0 0.0273" quat="0.707107 0.268707 -0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_rl_roller_3" size="0.0042 0.0125003" pos="-0.019304 0 0.019304" quat="0.415893 0.456839 -0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_rl_roller_4" size="0.0042 0.0124997" pos="-0.0273 0 0" quat="0.193672 0.981066 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_rl_roller_5" size="0.0042 0.0125003" pos="-0.019304 0 -0.019304" quat="0.415893 0.456839 0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_rl_roller_6" size="0.0042 0.0124997" pos="0 0 -0.0273" quat="0.707107 0.268707 0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_rl_roller_7" size="0.0042 0.0125003" pos="0.019304 0 -0.019304" quat="0.909414 0.208922 0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+      </body>
+      <body name="r3__wheel_rr_body" pos="-0.06 -0.0655 0">
+        <inertial pos="0 0 0" mass="0.05" diaginertia="1.8e-05 2.9e-05 1.8e-05"/>
+        <joint name="r3__wheel_rr_joint" armature="2e-05" damping="0.0015" axis="0 1 0"/>
+        <geom name="r3__wheel_rr" size="0.0325 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="2" conaffinity="3" condim="4" priority="1" friction="0.001 0.0001 1e-05" rgba="0 0 0 0"/>
+        <geom name="r3__wheel_rr_hub_visual" size="0.009 0.0155" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_rr_hub_spoke_0" size="0.0024 0.0073875" pos="0.0143875 0 0" quat="0.707107 0 -0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_rr_hub_spoke_1" size="0.0024 0.00738714" pos="0.0101735 0 0.0101735" quat="0.382683 0 -0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_rr_hub_spoke_2" size="0.0024 0.0073875" pos="0 0 0.0143875" quat="0 1 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_rr_hub_spoke_3" size="0.0024 0.00738714" pos="-0.0101735 0 0.0101735" quat="0.382683 0 0.92388 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_rr_hub_spoke_4" size="0.0024 0.0073875" pos="-0.0143875 0 0" quat="0.707107 0 0.707107 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_rr_hub_spoke_5" size="0.0024 0.00738714" pos="-0.0101735 0 -0.0101735" quat="0.92388 0 0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_rr_hub_spoke_6" size="0.0024 0.0073875" pos="0 0 -0.0143875" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_rr_hub_spoke_7" size="0.0024 0.00738714" pos="0.0101735 0 -0.0101735" quat="0.92388 0 -0.382683 0" type="capsule" contype="0" conaffinity="0" mass="0" material="hub"/>
+        <geom name="r3__wheel_rr_roller_0" size="0.0042 0.0124997" pos="0.0273 0 0" quat="0.193672 0.981066 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_rr_roller_1" size="0.0042 0.0125003" pos="0.019304 0 0.019304" quat="0.415893 0.456839 0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_rr_roller_2" size="0.0042 0.0124997" pos="0 0 0.0273" quat="0.707107 0.268707 0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_rr_roller_3" size="0.0042 0.0125003" pos="-0.019304 0 0.019304" quat="0.909414 0.208922 0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_rr_roller_4" size="0.0042 0.0124997" pos="-0.0273 0 0" quat="0.981066 0.193672 0 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_rr_roller_5" size="0.0042 0.0125003" pos="-0.019304 0 -0.019304" quat="0.909414 0.208922 -0.359609 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_rr_roller_6" size="0.0042 0.0124997" pos="0 0 -0.0273" quat="0.707107 0.268707 -0.654062 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__wheel_rr_roller_7" size="0.0042 0.0125003" pos="0.019304 0 -0.019304" quat="0.415893 0.456839 -0.78634 0" type="capsule" contype="0" conaffinity="0" mass="0" material="orange"/>
+      </body>
+      <body name="r3__arm_base" pos="0 0 0.0625">
+        <inertial pos="0 0 0.012" mass="0.03" diaginertia="2.5e-05 2.5e-05 2e-05"/>
+        <joint name="r3__arm_yaw" range="-1.75 1.75" damping="0.025"/>
+        <geom name="r3__base_yaw_servo_visual" size="0.02 0.01 0.02025" pos="0 0 -0.002" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+        <geom name="r3__base_yaw_bearing_visual" size="0.024 0.004" pos="0 0 -0.021" type="cylinder" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+        <geom name="r3__arm_pedestal_collision" size="0.025 0.02" pos="0 0 -0.002" type="cylinder" contype="2" conaffinity="3" rgba="0 0 0 0"/>
+        <geom name="r3__shoulder_mount_plate_left" size="0.021 0.001 0.01925" pos="0 0.0125 0.01525" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <geom name="r3__shoulder_mount_plate_right" size="0.021 0.001 0.01925" pos="0 -0.0125 0.01525" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+        <body name="r3__shoulder_link" pos="0 0 0.0305">
+          <inertial pos="0.0325 0 0" mass="0.05" diaginertia="2e-05 3e-05 3e-05"/>
+          <joint name="r3__shoulder" range="-0.15 2.8" damping="0.035" axis="0 -1 0"/>
+          <geom name="r3__shoulder_servo_visual" size="0.02 0.01 0.02025" pos="0.004 0 0" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+          <geom name="r3__shoulder_horn_outer" size="0.018 0.0015" pos="0 0.0145 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="orange"/>
+          <geom name="r3__shoulder_horn_center" size="0.006 0.0012" pos="0 0.0165 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.82 0.84 0.86 1" mass="0"/>
+          <geom name="r3__upper_arm_plate_left" size="0.0325 0.001 0.0032" pos="0.0325 0.0125 0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+          <geom name="r3__upper_arm_plate_left_lower" size="0.0325 0.001 0.0032" pos="0.0325 0.0125 -0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+          <geom name="r3__upper_arm_plate_right" size="0.0325 0.001 0.0032" pos="0.0325 -0.0125 0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+          <geom name="r3__upper_arm_plate_right_lower" size="0.0325 0.001 0.0032" pos="0.0325 -0.0125 -0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+          <geom name="r3__upper_arm_collision" size="0.011 0.0325" pos="0.0325 0 0" quat="0.707107 0 -0.707107 0" type="capsule" contype="2" conaffinity="3" rgba="0 0 0 0"/>
+          <body name="r3__elbow_link" pos="0.065 0 0">
+            <inertial pos="0.031 0 0" mass="0.04" diaginertia="1.6e-05 2.2e-05 2.2e-05"/>
+            <joint name="r3__elbow" range="-1.8 1.8" damping="0.03" axis="0 -1 0"/>
+            <geom name="r3__elbow_servo_visual" size="0.02 0.01 0.02025" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+            <geom name="r3__elbow_horn_outer" size="0.018 0.0015" pos="0 0.0145 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="orange"/>
+            <geom name="r3__elbow_horn_center" size="0.006 0.0012" pos="0 0.0165 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.82 0.84 0.86 1" mass="0"/>
+            <geom name="r3__forearm_plate_left" size="0.031 0.001 0.0032" pos="0.031 0.0125 0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+            <geom name="r3__forearm_plate_left_lower" size="0.031 0.001 0.0032" pos="0.031 0.0125 -0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+            <geom name="r3__forearm_plate_right" size="0.031 0.001 0.0032" pos="0.031 -0.0125 0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+            <geom name="r3__forearm_plate_right_lower" size="0.031 0.001 0.0032" pos="0.031 -0.0125 -0.0095" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+            <geom name="r3__forearm_collision" size="0.01 0.031" pos="0.031 0 0" quat="0.707107 0 -0.707107 0" type="capsule" contype="2" conaffinity="3" rgba="0 0 0 0"/>
+            <body name="r3__wrist_link" pos="0.062 0 0">
+              <inertial pos="0.035 0 0" mass="0.025" diaginertia="1e-05 1.8e-05 1.8e-05"/>
+              <joint name="r3__wrist_pitch" range="-1.8 1.8" damping="0.02" axis="0 -1 0"/>
+              <geom name="r3__wrist_servo_visual" size="0.02 0.01 0.02025" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+              <geom name="r3__wrist_horn_outer" size="0.017 0.003" pos="0 0.022 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="orange"/>
+              <geom name="r3__wrist_horn_center" size="0.006 0.0012" pos="0 0.0165 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.82 0.84 0.86 1" mass="0"/>
+              <geom name="r3__wrist_plate_left" size="0.027 0.001 0.003" pos="0.027 0.0125 0.009" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+              <geom name="r3__wrist_plate_left_lower" size="0.027 0.001 0.003" pos="0.027 0.0125 -0.009" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+              <geom name="r3__wrist_plate_right" size="0.027 0.001 0.003" pos="0.027 -0.0125 0.009" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+              <geom name="r3__wrist_plate_right_lower" size="0.027 0.001 0.003" pos="0.027 -0.0125 -0.009" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+              <geom name="r3__wrist_collision" size="0.009 0.0275" pos="0.0275 0 0" quat="0.707107 0 -0.707107 0" type="capsule" contype="2" conaffinity="3" rgba="0 0 0 0"/>
+              <body name="r3__gripper">
+                <inertial pos="0.065 0 0.006" mass="0.01" diaginertia="1e-05 1.7e-05 1.7e-05"/>
+                <geom name="r3__gripper_servo_visual" size="0.01115 0.006 0.0116" pos="0.03 0 -0.003" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+                <geom name="r3__gripper_crossbar_visual" size="0.024 0.034 0.0035" pos="0.052 0 -0.012" type="box" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+                <geom name="r3__camera_bracket" size="0.019 0.026 0.005" pos="0.036 0 0.018" type="box" contype="2" conaffinity="3" material="aluminum"/>
+                <geom name="r3__camera_body" size="0.016 0.022 0.014" pos="0.05 0 0.025" type="box" contype="0" conaffinity="0" mass="0" material="black"/>
+                <geom name="r3__camera_lens_visual" size="0.009 0.003" pos="0.067 0 0.025" quat="0.707105 0 0.707108 0" type="cylinder" contype="0" conaffinity="0" rgba="0.02 0.02 0.025 1" mass="0"/>
+                <site name="r3__camera_axis_site" size="0.001" pos="0.07 0 0" rgba="0 0 0 0"/>
+                <site name="r3__grip_site" size="0.001" pos="0.1 0 0" rgba="0 0 0 0"/>
+                <camera name="r3__robot_cam" quat="0.466417 0.531465 -0.531465 -0.466417" resolution="960 720" pos="0.067 0 0.0136" sensorsize="640 480" focalpixel="619.519 622.165" principalpixel="32.3109 21.3031"/>
+                <body name="r3__left_jaw" pos="0 0.035 0">
+                  <inertial pos="0.095 0 -0.018" mass="0.005" diaginertia="2e-06 6e-06 6e-06"/>
+                  <joint name="r3__left_gripper_close" type="slide" range="0 0.016" damping="1.2" axis="0 -1 0"/>
+                  <geom name="r3__left_jaw_link_visual" size="0.0022 0.0256759" pos="0.0645 0 -0.003" quat="0.664514 0 -0.747275 0" type="capsule" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+                  <geom name="r3__left_jaw_link_upper_visual" size="0.0016 0.021095" pos="0.068 0 0.002" quat="0.739868 0 -0.672752 0" type="capsule" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+                  <geom name="r3__left_jaw_pivot_visual" size="0.005 0.0015" pos="0.043 0 -0.002" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+                  <geom name="r3__left_finger_pad_visual" size="0.015 0.004 0.0022" pos="0.1 0 0" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+                  <geom name="r3__left_finger" size="0.014 0.0045 0.0035" pos="0.1 0 0" type="box" contype="2" conaffinity="3" friction="3.4 0.03 0.002" solref="0.006" solimp="0.9 0.97 0.002" rgba="0 0 0 0"/>
+                </body>
+                <body name="r3__right_jaw" pos="0 -0.035 0">
+                  <inertial pos="0.095 0 -0.018" mass="0.005" diaginertia="2e-06 6e-06 6e-06"/>
+                  <joint name="r3__right_gripper_close" type="slide" range="0 0.016" damping="1.2" axis="0 1 0"/>
+                  <geom name="r3__right_jaw_link_visual" size="0.0022 0.0256759" pos="0.0645 0 -0.003" quat="0.664514 0 -0.747275 0" type="capsule" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+                  <geom name="r3__right_jaw_link_upper_visual" size="0.0016 0.021095" pos="0.068 0 0.002" quat="0.739868 0 -0.672752 0" type="capsule" contype="0" conaffinity="0" mass="0" material="aluminum"/>
+                  <geom name="r3__right_jaw_pivot_visual" size="0.005 0.0015" pos="0.043 0 -0.002" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" mass="0" material="dark"/>
+                  <geom name="r3__right_finger_pad_visual" size="0.015 0.004 0.0022" pos="0.1 0 0" type="box" contype="0" conaffinity="0" mass="0" material="orange"/>
+                  <geom name="r3__right_finger" size="0.014 0.0045 0.0035" pos="0.1 0 0" type="box" contype="2" conaffinity="3" friction="3.4 0.03 0.002" solref="0.006" solimp="0.9 0.97 0.002" rgba="0 0 0 0"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+    <body name="red_block" pos="0.55 0.07 0.015">
+      <joint name="red_free" type="free"/>
+      <geom name="red_block_geom" size="0.015 0.015 0.015" type="box" friction="1 0.01 0.001" solimp="0.99 0.999" mass="0.005" material="redmat"/>
+    </body>
+    <body name="blue_block" pos="0.7 -0.2 0.015">
+      <joint name="blue_free" type="free"/>
+      <geom name="blue_block_geom" size="0.015 0.015 0.015" type="box" friction="1 0.01 0.001" solimp="0.99 0.999" mass="0.005" material="blumat"/>
+    </body>
+    <body name="yellow_block" pos="0.82 0.23 0.015">
+      <joint name="yellow_free" type="free"/>
+      <geom name="yellow_block_geom" size="0.015 0.015 0.015" type="box" friction="1 0.01 0.001" solimp="0.99 0.999" mass="0.005" material="yellowmat"/>
+    </body>
+    <body name="team_beam" pos="0.58 -2 0.02">
+      <joint name="team_beam_free" type="free"/>
+      <geom name="team_beam_geom" size="0.025 0.225 0.02" type="box" conaffinity="3" friction="1.2 0.02 0.002" solref="0.008" solimp="0.92 0.98 0.002" rgba="0.9 0.46 0.08 1" mass="0.196"/>
+      <body name="team_beam_r1_endpoint" pos="0 -0.2 0"/>
+      <body name="team_beam_r3_endpoint" pos="0 0.2 0"/>
+    </body>
+    <body name="warehouse_oak_plank" pos="1.04382 -0.993445 0.016932">
+      <joint name="warehouse_oak_plank_free" type="free" damping="0.08"/>
+      <geom name="warehouse_oak_plank_geom" size="0.031676 0.189691 0.016932" type="box" conaffinity="3" friction="1.2 0.2 0.01" rgba="0.56 0.29 0.09 1" mass="0.201"/>
+      <geom name="warehouse_oak_plank_grain_l" size="0.003 0.19 0.0015" pos="-0.02 0 0.019" type="box" contype="0" conaffinity="0" rgba="0.78 0.51 0.2 1" mass="0"/>
+      <geom name="warehouse_oak_plank_grain_r" size="0.003 0.19 0.0015" pos="0.02 0 0.019" type="box" contype="0" conaffinity="0" rgba="0.78 0.51 0.2 1" mass="0"/>
+      <geom name="warehouse_oak_plank_red_label" size="0.031 0.025 0.0015" pos="0 0 0.0205" type="box" contype="0" conaffinity="0" rgba="0.85 0.08 0.06 1" mass="0"/>
+    </body>
+    <body name="warehouse_steel_pipe" pos="1.01857 -0.018563 0.023208">
+      <joint name="warehouse_steel_pipe_free" type="free" damping="0.08"/>
+      <geom name="warehouse_steel_pipe_geom" size="0.026922 0.197222 0.023208" type="box" conaffinity="3" friction="1.3 0.2 0.01" rgba="0 0 0 0" mass="0.1603"/>
+      <geom name="warehouse_steel_pipe_visual" size="0.0232 0.197" quat="0.707107 0.707107 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.55 0.59 0.63 1" mass="0"/>
+      <geom name="warehouse_steel_pipe_blue_band" size="0.028 0.025" quat="0.707107 0.707107 0 0" type="cylinder" contype="0" conaffinity="0" rgba="0.06 0.24 0.9 1" mass="0"/>
+    </body>
+    <body name="warehouse_wood_crate" pos="1.06957 1.01714 0.020997">
+      <joint name="warehouse_wood_crate_free" type="free" damping="0.08"/>
+      <geom name="warehouse_wood_crate_geom" size="0.026591 0.18804 0.020997" type="box" conaffinity="3" friction="1.2 0.2 0.01" rgba="0.45 0.24 0.08 1" mass="0.3106"/>
+      <geom name="warehouse_wood_crate_slat_m0_135" size="0.002 0.025 0.018" pos="0.0285 -0.135 0" type="box" contype="0" conaffinity="0" rgba="0.72 0.43 0.15 1" mass="0"/>
+      <geom name="warehouse_wood_crate_slat_0_0" size="0.002 0.025 0.018" pos="0.0285 0 0" type="box" contype="0" conaffinity="0" rgba="0.72 0.43 0.15 1" mass="0"/>
+      <geom name="warehouse_wood_crate_slat_0_135" size="0.002 0.025 0.018" pos="0.0285 0.135 0" type="box" contype="0" conaffinity="0" rgba="0.72 0.43 0.15 1" mass="0"/>
+      <geom name="warehouse_wood_crate_yellow_label" size="0.0025 0.032 0.01" pos="0.03 0 0.006" type="box" contype="0" conaffinity="0" rgba="0.95 0.72 0.05 1" mass="0"/>
+    </body>
+  </worldbody>
+
+  <equality>
+    <weld name="r1__grasp_red" body1="r1__gripper" body2="red_block" relpose="0.603 0.49 -0.1105 1 0 0 0" active="false"/>
+    <weld name="r1__grasp_blue" body1="r1__gripper" body2="blue_block" relpose="0.753 0.22 -0.1105 1 0 0 0" active="false"/>
+    <weld name="r1__grasp_yellow" body1="r1__gripper" body2="yellow_block" relpose="0.873 0.65 -0.1105 1 0 0 0" active="false"/>
+    <weld name="r2__grasp_red" body1="r2__gripper" body2="red_block" relpose="0.603 0.07 -0.1105 1 0 0 0" active="false"/>
+    <weld name="r2__grasp_blue" body1="r2__gripper" body2="blue_block" relpose="0.753 -0.2 -0.1105 1 0 0 0" active="false"/>
+    <weld name="r2__grasp_yellow" body1="r2__gripper" body2="yellow_block" relpose="0.873 0.23 -0.1105 1 0 0 0" active="false"/>
+    <weld name="r3__grasp_red" body1="r3__gripper" body2="red_block" relpose="0.603 -0.35 -0.1105 1 0 0 0" active="false"/>
+    <weld name="r3__grasp_blue" body1="r3__gripper" body2="blue_block" relpose="0.753 -0.62 -0.1105 1 0 0 0" active="false"/>
+    <weld name="r3__grasp_yellow" body1="r3__gripper" body2="yellow_block" relpose="0.873 -0.19 -0.1105 1 0 0 0" active="false"/>
+    <weld name="r1__beam_grasp" body1="r1__gripper" body2="team_beam_r1_endpoint" relpose="0.633 -1.78 -0.1055 1 0 0 0" active="false" solref="0.01"/>
+    <weld name="r3__beam_grasp" body1="r3__gripper" body2="team_beam_r3_endpoint" relpose="0.633 -2.22 -0.1055 1 0 0 0" active="false" solref="0.01"/>
+    <weld name="r1__oak_plank_01_grasp" body1="r1__gripper" body2="warehouse_oak_plank" relpose="1.09682 -0.573445 -0.108568 1 0 0 0" active="false" solref="0.01"/>
+    <weld name="r2__oak_plank_01_grasp" body1="r2__gripper" body2="warehouse_oak_plank" relpose="1.09682 -0.993445 -0.108568 1 0 0 0" active="false" solref="0.01"/>
+    <weld name="r3__oak_plank_01_grasp" body1="r3__gripper" body2="warehouse_oak_plank" relpose="1.09682 -1.41345 -0.108568 1 0 0 0" active="false" solref="0.01"/>
+    <weld name="r1__steel_pipe_01_grasp" body1="r1__gripper" body2="warehouse_steel_pipe" relpose="1.07157 0.401437 -0.102292 1 0 0 0" active="false" solref="0.01"/>
+    <weld name="r2__steel_pipe_01_grasp" body1="r2__gripper" body2="warehouse_steel_pipe" relpose="1.07157 -0.018563 -0.102292 1 0 0 0" active="false" solref="0.01"/>
+    <weld name="r3__steel_pipe_01_grasp" body1="r3__gripper" body2="warehouse_steel_pipe" relpose="1.07157 -0.438563 -0.102292 1 0 0 0" active="false" solref="0.01"/>
+    <weld name="r1__wood_crate_01_grasp" body1="r1__gripper" body2="warehouse_wood_crate" relpose="1.12257 1.43714 -0.104503 1 0 0 0" active="false" solref="0.01"/>
+    <weld name="r2__wood_crate_01_grasp" body1="r2__gripper" body2="warehouse_wood_crate" relpose="1.12257 1.01714 -0.104503 1 0 0 0" active="false" solref="0.01"/>
+    <weld name="r3__wood_crate_01_grasp" body1="r3__gripper" body2="warehouse_wood_crate" relpose="1.12257 0.597139 -0.104503 1 0 0 0" active="false" solref="0.01"/>
+  </equality>
+
+  <actuator>
+    <general name="r1__wheel_fl_drive" joint="r1__wheel_fl_joint" ctrlrange="-12 12" ctrllimited="true" forcelimited="true" forcerange="-0.002 0.002" biastype="affine" gainprm="0.001" biasprm="0 0 -0.001"/>
+    <general name="r1__wheel_fr_drive" joint="r1__wheel_fr_joint" ctrlrange="-12 12" ctrllimited="true" forcelimited="true" forcerange="-0.002 0.002" biastype="affine" gainprm="0.001" biasprm="0 0 -0.001"/>
+    <general name="r1__wheel_rl_drive" joint="r1__wheel_rl_joint" ctrlrange="-12 12" ctrllimited="true" forcelimited="true" forcerange="-0.002 0.002" biastype="affine" gainprm="0.001" biasprm="0 0 -0.001"/>
+    <general name="r1__wheel_rr_drive" joint="r1__wheel_rr_joint" ctrlrange="-12 12" ctrllimited="true" forcelimited="true" forcerange="-0.002 0.002" biastype="affine" gainprm="0.001" biasprm="0 0 -0.001"/>
+    <general name="r1__servo_arm_yaw" joint="r1__arm_yaw" forcelimited="true" forcerange="-1.2 1.2" biastype="affine" gainprm="4" biasprm="0 -4"/>
+    <general name="r1__servo_shoulder" joint="r1__shoulder" forcelimited="true" forcerange="-2.2 2.2" biastype="affine" gainprm="7" biasprm="0 -7"/>
+    <general name="r1__servo_elbow" joint="r1__elbow" forcelimited="true" forcerange="-1.8 1.8" biastype="affine" gainprm="6" biasprm="0 -6"/>
+    <general name="r1__servo_wrist" joint="r1__wrist_pitch" forcelimited="true" forcerange="-1 1" biastype="affine" gainprm="3.5" biasprm="0 -3.5"/>
+    <general name="r1__servo_gripper_left" joint="r1__left_gripper_close" forcelimited="true" forcerange="-18 18" biastype="affine" gainprm="1200" biasprm="0 -1200"/>
+    <general name="r1__servo_gripper_right" joint="r1__right_gripper_close" forcelimited="true" forcerange="-18 18" biastype="affine" gainprm="1200" biasprm="0 -1200"/>
+    <general name="r2__wheel_fl_drive" joint="r2__wheel_fl_joint" ctrlrange="-12 12" ctrllimited="true" forcelimited="true" forcerange="-0.002 0.002" biastype="affine" gainprm="0.001" biasprm="0 0 -0.001"/>
+    <general name="r2__wheel_fr_drive" joint="r2__wheel_fr_joint" ctrlrange="-12 12" ctrllimited="true" forcelimited="true" forcerange="-0.002 0.002" biastype="affine" gainprm="0.001" biasprm="0 0 -0.001"/>
+    <general name="r2__wheel_rl_drive" joint="r2__wheel_rl_joint" ctrlrange="-12 12" ctrllimited="true" forcelimited="true" forcerange="-0.002 0.002" biastype="affine" gainprm="0.001" biasprm="0 0 -0.001"/>
+    <general name="r2__wheel_rr_drive" joint="r2__wheel_rr_joint" ctrlrange="-12 12" ctrllimited="true" forcelimited="true" forcerange="-0.002 0.002" biastype="affine" gainprm="0.001" biasprm="0 0 -0.001"/>
+    <general name="r2__servo_arm_yaw" joint="r2__arm_yaw" forcelimited="true" forcerange="-1.2 1.2" biastype="affine" gainprm="4" biasprm="0 -4"/>
+    <general name="r2__servo_shoulder" joint="r2__shoulder" forcelimited="true" forcerange="-2.2 2.2" biastype="affine" gainprm="7" biasprm="0 -7"/>
+    <general name="r2__servo_elbow" joint="r2__elbow" forcelimited="true" forcerange="-1.8 1.8" biastype="affine" gainprm="6" biasprm="0 -6"/>
+    <general name="r2__servo_wrist" joint="r2__wrist_pitch" forcelimited="true" forcerange="-1 1" biastype="affine" gainprm="3.5" biasprm="0 -3.5"/>
+    <general name="r2__servo_gripper_left" joint="r2__left_gripper_close" forcelimited="true" forcerange="-18 18" biastype="affine" gainprm="1200" biasprm="0 -1200"/>
+    <general name="r2__servo_gripper_right" joint="r2__right_gripper_close" forcelimited="true" forcerange="-18 18" biastype="affine" gainprm="1200" biasprm="0 -1200"/>
+    <general name="r3__wheel_fl_drive" joint="r3__wheel_fl_joint" ctrlrange="-12 12" ctrllimited="true" forcelimited="true" forcerange="-0.002 0.002" biastype="affine" gainprm="0.001" biasprm="0 0 -0.001"/>
+    <general name="r3__wheel_fr_drive" joint="r3__wheel_fr_joint" ctrlrange="-12 12" ctrllimited="true" forcelimited="true" forcerange="-0.002 0.002" biastype="affine" gainprm="0.001" biasprm="0 0 -0.001"/>
+    <general name="r3__wheel_rl_drive" joint="r3__wheel_rl_joint" ctrlrange="-12 12" ctrllimited="true" forcelimited="true" forcerange="-0.002 0.002" biastype="affine" gainprm="0.001" biasprm="0 0 -0.001"/>
+    <general name="r3__wheel_rr_drive" joint="r3__wheel_rr_joint" ctrlrange="-12 12" ctrllimited="true" forcelimited="true" forcerange="-0.002 0.002" biastype="affine" gainprm="0.001" biasprm="0 0 -0.001"/>
+    <general name="r3__servo_arm_yaw" joint="r3__arm_yaw" forcelimited="true" forcerange="-1.2 1.2" biastype="affine" gainprm="4" biasprm="0 -4"/>
+    <general name="r3__servo_shoulder" joint="r3__shoulder" forcelimited="true" forcerange="-2.2 2.2" biastype="affine" gainprm="7" biasprm="0 -7"/>
+    <general name="r3__servo_elbow" joint="r3__elbow" forcelimited="true" forcerange="-1.8 1.8" biastype="affine" gainprm="6" biasprm="0 -6"/>
+    <general name="r3__servo_wrist" joint="r3__wrist_pitch" forcelimited="true" forcerange="-1 1" biastype="affine" gainprm="3.5" biasprm="0 -3.5"/>
+    <general name="r3__servo_gripper_left" joint="r3__left_gripper_close" forcelimited="true" forcerange="-18 18" biastype="affine" gainprm="1200" biasprm="0 -1200"/>
+    <general name="r3__servo_gripper_right" joint="r3__right_gripper_close" forcelimited="true" forcerange="-18 18" biastype="affine" gainprm="1200" biasprm="0 -1200"/>
+  </actuator>
+</mujoco>
