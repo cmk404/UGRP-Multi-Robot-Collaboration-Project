@@ -81,3 +81,19 @@ class TestJevMotion(unittest.TestCase):
         self.assertIsNotNone(result);self.assertLess(abs(result['angle_deg']-11.3),1)
         mask[yy<530]=0
         self.assertIsNone(wheel_envelope(mask))
+
+    def test_representation_diagnostic_preserves_actions_and_excludes_truth(self):
+        from scripts.probe_jev_motion_representation import request, semantic, VARIANTS
+        state=policy_state(self.observation(),[]); original=copy.deepcopy(state)
+        for variant in VARIANTS:
+            body=request(state,variant)
+            self.assertEqual(set(body['questions']['action']['criteria']),set(OPTIONS))
+            self.assertNotIn('qpos',json.dumps(body));self.assertNotIn('private',json.dumps(body))
+        self.assertEqual(state,original)
+        # Original observed failures: numeric goal boundary and negative bearing.
+        a=semantic(dict(range_m=.2832,bearing_deg=-1.93))
+        self.assertEqual(a['distance_to_goal_band'],'too_far');self.assertFalse(a['goal_satisfied'])
+        b=semantic(dict(range_m=.6148,bearing_deg=-3.59))
+        self.assertEqual(b['target_side'],'right');self.assertEqual(b['heading_alignment'],'outside_tolerance')
+        for distance in (.27,.28):
+            self.assertTrue(semantic(dict(range_m=distance,bearing_deg=3.))['goal_satisfied'])

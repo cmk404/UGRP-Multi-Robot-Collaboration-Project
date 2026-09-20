@@ -12,7 +12,7 @@ Issue #78. Single r2 robot approaches the existing cyan box in the open dispatch
 - Output-only physical success: terminal stable tail ≥0.35s within 0.26–0.30m and ±6 degrees; RGB completion claim; no cargo/obstacle/peer contacts, weld use or camera/geometry changes. Approach alignment does not certify a grasp-ready arm pose. Evaluator never supplies policy observations, commands or termination.
 - Inference pauses SIM, including API latency. No real-time hardware/distributed-control claim. Local command expiry remains active for each SIM step. 70 post-probe steps, 180k input tokens (5k reserved before each call), 360 wall seconds per episode; request timeout 30s, no automatic retries. Raw provider body/request and model version saved. HTTP errors or invalid responses stop that episode and preserve failure; later independent episodes still run.
 - Jev's live serialized probabilities can sum to 0.99/1.01. Validator allows only the accumulated half-unit rounding error for seven two-decimal values, while checking bounds, candidate set; raw values stay unchanged.
-- Development failures are preserved separately: optical-flow coverage, wheel-corner support, premature RGB completion and weak probe displacement. No final pose is used for tuning. Development API attempt stopped on rounded probabilities; Gemini development completed. Source is committed before each run and fixed throughout each cohort.
+- Development failures are preserved separately: optical-flow coverage, wheel-corner support, premature RGB completion and weak probe displacement. Development precedes the first comparison; observer diagnosis from the first comparison is disclosed below. Development API attempt stopped on rounded probabilities; Gemini development completed. Source is committed before each run and fixed throughout each cohort.
 
 ## Run
 
@@ -31,3 +31,13 @@ API: https://docs.typesafe.ai/api and https://docs.typesafe.ai/primitives/choice
 The first cohort at dfca6d7 completed all 9 episodes: rule 2/3, Gemini 2/3, Jev 0/3 under the strict combined completion criterion. A shared negative-yaw observation failed at a wheel aspect ratio of 1.117 vs the old 1.12 cutoff. The final observer now applies a declared two-pixel interval to aspect ratio and a two-degree image-angle tolerance, preserving four-corner visibility gates. A regression includes the original failed RGB.
 
 The Jev response sometimes has a valid `choice` whose serialized probability is not maximal (e.g. backward 0.25 vs stop 0.26). Final-v2 executes the API's actual valid discrete choice and records the mismatch; it does not silently replace it with argmax. Candidate/number/distribution/lease validation remains. Probabilities are diagnostic and never safety evidence. No prompts, goal thresholds, speeds, action candidates or budgets were tuned after this cohort. Final-v2 reruns all policies/cases from the same starts and is kept separate from the first attempt.
+
+## Archived-state representation diagnostic (predeclared)
+
+After final-v2 ends, 12 archived states are compared with `jev-1.13.0`: eight from the separate development poses and four known failure states from final-v2. The exact indices and randomized balanced request order are frozen in `scripts/probe_jev_motion_representation.py` before execution. There are three variants, two repeats each: 72 calls maximum, 150k input-token and 360-second limits; no automatic retries or physical actuation.
+
+1. Original numeric state and instructions.
+2. Named range/alignment relations computed from those same RGB values, plus matching literal question wording; unchanged seven motor candidates.
+3. Variant 2 plus explicit per-action applicability descriptions. This encodes the reference rule's controller knowledge in the criteria.
+
+The metric is agreement with the existing rule, not optimal-action accuracy or autonomous task success. Several actions may be useful; the rule is only a diagnostic reference. Variant 2 changes representation and wording together, so it cannot isolate a single wording effect. Variant 3 deliberately tests an explicit controller specification and must not be advertised as newly learned planning. Selection includes observed failures; none is a fresh holdout. Simulator truth and referee files are not read by this diagnostic.
