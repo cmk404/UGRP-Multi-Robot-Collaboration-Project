@@ -127,7 +127,7 @@ class TestSkillMotion(unittest.TestCase):
 
     def test_frozen_cohorts_are_unique_and_repeatable(self):
         from scripts.run_jev_skill_cohort import plan
-        for phase,count in [('holdout',108),('regression',36),('ablation',48),('continuous',16)]:
+        for phase,count in [('holdout',108),('regression',36),('ablation',56),('continuous',16)]:
             jobs,_=plan(phase)
             self.assertEqual(len(jobs),count)
             self.assertEqual(len({j['trial_id'] for j in jobs}),count)

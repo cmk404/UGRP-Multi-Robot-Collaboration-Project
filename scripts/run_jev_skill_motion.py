@@ -248,7 +248,7 @@ def run_trial(args,case,policy,key,source):
                             rows.append(row);scene.issue(bounded_command());result['stop_reason']='RGB_goal_confirmed';break
                     if answers.get('evidence')=='observe_again' and args.arm!='primitive':
                         chosen='hold_and_observe';row['decision_source']='model_requested_reobserve'
-                control.select(chosen,o,confidence if args.arm!='single' else None)
+                control.select(chosen,o,confidence if args.arm!='no_confidence' else None)
                 if policy!='rule' and answers.get('progress')=='reconsider':control.cautious=True
                 row['chosen_skill']=chosen
             command,execution=control.command(o)
@@ -286,7 +286,7 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--output',type=Path,required=True);p.add_argument('--case',choices=list(DEVELOPMENT)+list(HOLDOUT),default='dev_open')
     p.add_argument('--policy',choices=['rule','jev','gemini'],default='rule')
-    p.add_argument('--arm',choices=['full','always','primitive','single'],default='full')
+    p.add_argument('--arm',choices=['full','always','primitive','single','no_confidence'],default='full')
     p.add_argument('--clock',choices=['paused','continuous'],default='paused')
     p.add_argument('--execute',action='store_true');p.add_argument('--stdin-key',action='store_true')
     p.add_argument('--max-sim-s',type=float,default=90);p.add_argument('--max-wall-s',type=float,default=600)
