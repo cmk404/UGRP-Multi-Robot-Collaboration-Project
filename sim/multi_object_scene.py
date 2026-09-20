@@ -217,11 +217,15 @@ def geometry_admission(config):
             # Include the target cargo when probing unloaded approach clearance.
             approach_obstacles = obstacles + [{'id': oid, 'center_m': positions[oid],
                                                'half_extents_m': inventory[oid]['half_extents_m'][:2]}]
-            unloaded = _map(config, approach_obstacles, g['unloaded_footprint'])
             targets = [[start[0]-.06, start[1]+dy] for dy in ((-.34,.34) if kind == 'beam' else (0.,))]
             paths = {}
             for end, point in enumerate(targets):
                 for rid, spawn in config['setup_only']['spawns'].items():
+                    f = g['unloaded_footprint']
+                    peers = [{'id': 'parked_'+other, 'center_m': pose[:2],
+                              'half_extents_m': [f['half_forward_m'], f['half_lateral_m']]}
+                             for other,pose in config['setup_only']['spawns'].items() if other != rid]
+                    unloaded = _map(config, approach_obstacles+peers, f)
                     path = translation_path(spawn[:2], point, unloaded, grid=g['grid_m'], budget=g['route_node_budget'])
                     if path is not None: paths[end,rid] = path
             assignment = next((robots for robots in itertools.permutations(config['setup_only']['spawns'], len(targets))
@@ -231,6 +235,7 @@ def geometry_admission(config):
             row = {'task_id': tid, 'object_id': oid, 'obstacle_object_ids': sorted(set(positions)-{oid}),
                    'loaded_path_m_rad': route, 'nominal_carrier_assignment': list(assignment),
                    'independent_approach_paths': {rid: paths[end,rid] for end,rid in enumerate(assignment)},
+                   'approach_peer_model': 'all other robots stationary at authored parking poses',
                    'start_quarter_turn_clear': swept_clear([*start,0.], [*start,math.pi/2], data),
                    'goal_quarter_turn_clear': swept_clear([*goal,0.], [*goal,math.pi/2], data)}
             result = search(done|{tid}, {**positions, oid: list(target)}, trace+[row])

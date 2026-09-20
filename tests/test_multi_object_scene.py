@@ -94,6 +94,17 @@ def test_translation_search_checks_whole_footprint_and_continuous_sweeps():
     assert translation_path([.5,1.5],[2.5,1.5],data) is None
 
 
+def test_approach_paths_do_not_cross_other_parked_robots():
+    c=config('single_beam'); result=geometry_admission(c)
+    assert result['complete_placement_order_found']
+    f=c['geometry_parameters']['unloaded_footprint']
+    for rid,path in result['trace'][0]['independent_approach_paths'].items():
+        obstacles=[{'center_m':pose[:2],'half_extents_m':[f['half_forward_m'],f['half_lateral_m']]}
+                   for other,pose in c['setup_only']['spawns'].items() if other!=rid]
+        data={'bounds_m':c['static_map']['bounds_m'],'obstacles':obstacles,'footprint':f}
+        assert all(swept_clear(a,b,data) for a,b in zip(path,path[1:]))
+
+
 def test_geometry_reports_overlapping_slots_without_changing_counts():
     c=config('mixed_pair')
     slots=list(c['static_map']['destinations'].values()); slots[1]['center_m']=list(slots[0]['center_m'])
