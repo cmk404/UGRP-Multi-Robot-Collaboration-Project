@@ -171,3 +171,29 @@ def test_blue_wall_is_not_a_cyan_box():
     hsv=np.uint8([[[104,80,90]]]);color=cv2.cvtColor(hsv,cv2.COLOR_HSV2BGR)[0,0].tolist()
     cv2.rectangle(image,(30,80),(45,95),color,-1)
     assert len([d for d in detections(cv2.imencode('.jpg',image)[1].tobytes()) if d['kind']=='box'])==2
+
+
+def test_decode_error_stops_active_motion(tmp_path):
+    e,w=setup(tmp_path);q=observe(e,1,0.);e.batch({r:reply(v) for r,v in q.items()},now_s=0.)
+    with pytest.raises(ValueError):observe(e,2,.1,b'not a JPEG')
+    assert not e.identity
+    assert w.robots['r2'].motor_calls[-1]==[0.,0.,0.,0.]
+
+
+def test_old_stage_replies_cannot_start_new_stage(tmp_path):
+    e,w=setup(tmp_path);q=observe(e,1,0.)
+    e.batch({r:reply(v) for r,v in q.items()},now_s=0.)
+    q=observe(e,2,.21);old={r:reply(v,'DONE') for r,v in q.items()}
+    e.batch(old,now_s=.21)
+    assert e.active['stage_02']['phase']=='STAGES'
+    observe(e,3,.42);before=len(e.history['r2']);e.batch(old,now_s=.42)
+    assert len(e.history['r2'])==before
+    assert e.active['stage_02']['stage'].sync.stage=='GRASP'
+
+
+def test_initial_proposer_instruction_matches_agreement_wire_contract():
+    from scripts.run_multi_object_execution import plan_request
+    task=static_task(configuration(next(c for c in CASES if c['id']=='staging_three')))
+    request=plan_request('r1',task=task,identity={'r1':{'claim':{},'images':[]}},
+        request_id='test',own_rgb=jpeg(),top_rgb=jpeg(),agreement={},inbox=[],own_history=[])
+    assert 'plan with accept=true' in request['messages'][0]['content']

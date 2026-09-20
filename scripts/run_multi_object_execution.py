@@ -78,7 +78,11 @@ Pick robots yourself. Keep all required dependencies; extra ordering is permitte
 lane_a/lane_b are logical resource reservations on this open-map pilot; they do
 not establish a collision-free motor path. Inspect all cargo, peers and obstacles.
 Copy a pending proposal exactly to accept. Before one exists, propose a complete
-plan or reject with plan null. All three peers must ACK the same proposal.
+plan with accept=true (this means you endorse your own proposal), or reject with
+accept=false and plan=null. There is no separate propose flag. The designated
+proposer must use accept=true to create a proposal. Other peers may wait with
+accept=false and plan=null until it exists. All three peers must then return
+accept=true and the exact pending plan/proposal_id/plan_hash to commit it.
 Return only {request_id,proposal_id,plan_hash,accept,plan,reason,message}.
 Copy proposal_id/plan_hash from pending proposal; both null before proposal.
 This is an experimental raw-action executor, not a demonstrated grasp skill.'''
@@ -159,8 +163,9 @@ def run(args):
             request_timeout=args.timeout,max_tokens=1800,roles_fixed_by_skill=False,max_wall_s=args.max_wall_s)
         for client in team.clients.values():client.model_name=args.model
         def budget(extra):
+            reserve=max([12000]+[int((c.get('usage') or {}).get('prompt_tokens',0)*1.5) for c in team.calls])
             return (len(team.calls)+extra<=args.max_calls and time.monotonic()-started<args.max_wall_s and
-                    sum((c.get('usage') or {}).get('prompt_tokens',0) for c in team.calls)<args.max_input_tokens)
+                    sum((c.get('usage') or {}).get('prompt_tokens',0) for c in team.calls)+extra*reserve<=args.max_input_tokens)
         frames=scene.capture('planning')
         for turn in range(6):
             if not budget(3):break
