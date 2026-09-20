@@ -63,3 +63,21 @@ def test_arms_have_identical_initial_weights_and_parameter_count():
     torch.manual_seed(21);b=make_policy(256,4)
     assert sum(p.numel() for p in a.parameters())==sum(p.numel() for p in b.parameters())
     assert all(torch.equal(value,b.state_dict()[key]) for key,value in a.state_dict().items())
+
+
+def test_cache_verification_uses_separately_batched_frames_and_rejects_corruption():
+    from scripts.train_carry_input_act import cache_images, history_indices, verify_cache
+    torch.set_num_threads(2); torch.manual_seed(21)
+    policy = make_policy(256, 4)
+    for parameter in policy.model.backbone.parameters():
+        parameter.requires_grad_(False)
+    fs = frames(4) * 8
+    rows = [{'id': str(i), 'own_jpeg': f['own_rgb'], 'top_jpeg': f['top_rgb'],
+             'context': f['context']} for i, f in enumerate(fs)]
+    windows = history_indices([{'sequences': {'r1': rows}}], 4)
+    cache = cache_images(policy, rows, 256)
+    checked = verify_cache(policy, rows, windows, cache, 256, 4)
+    assert len(checked['probes']) == 3
+    cache[IMAGE_KEYS[0]][0, 0, 0, 0] += .01
+    with pytest.raises(AssertionError):
+        verify_cache(policy, rows, windows, cache, 256, 4)
