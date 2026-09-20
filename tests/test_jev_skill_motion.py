@@ -88,12 +88,13 @@ class TestSkillMotion(unittest.TestCase):
         c.select('direct',o);o['range_m']=.33
         self.assertIsNotNone(c.need_query(c.state(o)))
 
-    def test_low_confidence_does_not_silently_use_rule(self):
+    def test_low_confidence_shortens_commitment_without_rule_substitution(self):
         c=SkillController(episode('open')['static_map']);o=self.observation()
         c.state(o);c.select('direct',o,.1)
         cmd,source=c.command(o)
-        self.assertEqual(source,'low_confidence_reobserve')
-        self.assertEqual(cmd,bounded_command());self.assertIsNone(c.active)
+        self.assertEqual(source,'selected_skill_feedback')
+        self.assertGreater(cmd['forward'],0);self.assertEqual(c.active,'direct')
+        c.command(o);self.assertEqual(c.need_query(c.state(o)),'decision_expired')
 
     def test_fine_action_smaller_than_coarse_and_port_valid(self):
         from sim.camera_robot_port import CameraRobotPort
@@ -102,8 +103,17 @@ class TestSkillMotion(unittest.TestCase):
         cmd,_=c.command(o);self.assertLess(cmd['forward'],.1)
         p=object.__new__(CameraRobotPort);p._allow_reverse=True;p._allow_mecanum=True
         p.validate_bounded(cmd,.2)
-        for key in ('align_left','align_right','backoff_fine','hold_and_observe'):
-            c.select(key,o);p.validate_bounded(c.command(o)[0],.2)
+        for key,obs in [('align_target',self.observation(range_m=.3,bearing_deg=8.)),
+                        ('backoff_fine',self.observation(range_m=.265)),('hold_and_observe',o)]:
+            c.select(key,obs);p.validate_bounded(c.command(obs)[0],.2)
+
+    def test_already_satisfied_skills_are_not_reoffered(self):
+        c=SkillController(episode('open')['static_map'])
+        candidates=c.describe(self.observation())
+        self.assertNotIn('align_target',candidates)
+        self.assertNotIn('align_left',candidates)
+        candidates=c.describe(self.observation(range_m=.275,bearing_deg=0.))
+        self.assertEqual(set(candidates),{'hold_and_observe'})
 
     def test_primitive_ablation_really_uses_fixed_motor_action(self):
         c=SkillController(episode('open')['static_map'],primitive=True)

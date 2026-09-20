@@ -156,7 +156,7 @@ class SkillObserver:
         return {'valid':True, 'range_m':round(float(distance),4), 'bearing_deg':round(float(bearing),2),
                 'raw_range_m':raw_range, 'raw_bearing_deg':raw_bearing,
                 'xy_m':xy.tolist(), 'target_xy_m':target.tolist(), 'heading_rad':heading,
-                'range_trend':trend, 'quality':'clear' if fit['rms_px']<2 else 'uncertain',
+                'range_trend':trend, 'quality':'clear' if fit['rms_px']<2 else 'bounded_fit',
                 'range_spread_m':float(np.ptp(np.array(self.recent)[:,0])),
                 'bearing_spread_deg':float(np.ptp(np.array(self.recent)[:,1])),
                 'obstacles':obstacles, 'evidence':{'center_px':center.tolist(), 'target_px':target_px.tolist(),
@@ -236,15 +236,16 @@ def questions(candidates, decomposed=True):
         'Choose ONE available short skill making useful progress toward the task. '
         'Use its stated effect, current observation and progress. '
         'A skill is interrupted by fresh RGB and has a bounded duration. Holding is not task completion. '
-        'Avoid reversing a productive choice merely because another observation arrived.',
+        'Prefer the shortest clear route when starting. Avoid restarting a detour or reversing a productive '
+        'choice merely because another observation arrived. All listed skills meet their execution preconditions.',
         'criteria':candidates}}
     if decomposed:
         result['evidence']={'type':'choice','instructions':'Judge only whether the provided RGB observation is usable for a short skill choice.',
-            'criteria':{'usable':'Current RGB quality is clear; ordinary small boundary variation is acceptable.',
-                        'observe_again':'RGB quality is uncertain; obtain a stopped fresh observation before moving.'}}
+            'criteria':{'usable':'Current RGB quality is clear or bounded_fit; ordinary small boundary variation is acceptable. Bounded fits use shorter commitments.',
+                        'observe_again':'The supplied evidence conflicts or is insufficient even for a short bounded skill; obtain stopped fresh RGB.'}}
         result['progress']={'type':'choice','instructions':'Judge only whether the recent issued skill is making visual progress.',
-            'criteria':{'continue':'Progress is visible or the skill has just begun.',
-                        'reconsider':'Several observations show no useful progress or increasing task error.'}}
+            'criteria':{'continue':'Image motion is visible or the skill has just begun; detours may increase target distance.',
+                        'reconsider':'Persistent stall evidence shows that the issued skill is not producing useful image motion.'}}
     return result
 
 
@@ -299,6 +300,7 @@ class SkillController:
         self.primitive=primitive
         self.active=None; self.path=[]; self.age=0; self.stalls=0
         self.history=[]; self.last_xy=None; self.last_signature=None
+        self.last_heading=None
         self.gate=CompletionGate(); self.done=False; self.low_confidence_holds=0
 
     def describe(self,o):
@@ -321,14 +323,13 @@ class SkillController:
                                  ('short' if value['length_m']<.45 else 'medium' if value['length_m']<.9 else 'long')+
                                  '. Locally align and follow these waypoints; stop if RGB becomes unreliable or the route is blocked.')
         else:
-            candidates.update({
-                'approach_fine':'Small forward approach toward the distance band; stop on reaching the band. Does not fix heading.',
-                'backoff_fine':'Small backward movement to increase target distance; stop on reaching the band.',
-            })
-        candidates.update({
-            'align_left':'Small counterclockwise alignment toward a target on the left; stop at heading tolerance.',
-            'align_right':'Small clockwise alignment toward a target on the right; stop at heading tolerance.',
-            'hold_and_observe':'Brake, wait briefly, and obtain new RGB evidence. This does not claim completion.'})
+            if abs(o['bearing_deg'])>3:
+                candidates['align_target']='Use RGB feedback to face the target with small signed corrections; stop at heading tolerance.'
+            elif o['range_m']>.28:
+                candidates['approach_fine']='Small forward approach toward the distance band; stop on reaching the band.'
+            elif o['range_m']<.27:
+                candidates['backoff_fine']='Small backward movement to increase target distance; stop on reaching the band.'
+        candidates['hold_and_observe']='Brake, wait briefly, and obtain new RGB evidence. This does not claim completion.'
         return candidates
 
     def state(self,o):
@@ -337,9 +338,14 @@ class SkillController:
 
     def observe_progress(self,o):
         xy=np.array(o['xy_m'])
-        if self.last_xy is not None and self.active not in (None,'hold_and_observe','align_left','align_right'):
-            self.stalls=self.stalls+1 if np.linalg.norm(xy-self.last_xy)<.001 else 0
+        if self.last_xy is not None:
+            moved=np.linalg.norm(xy-self.last_xy)>=.001
+            turned=abs(wrap(o['heading_rad']-self.last_heading))>=math.radians(.15)
+            if self.history:
+                self.history[-1]['progress']='moving' if moved else 'turning' if turned else 'no_motion'
+                if self.history[-1]['skill']!='hold_and_observe':self.stalls=0 if moved or turned else self.stalls+1
         self.last_xy=xy
+        self.last_heading=o['heading_rad']
         self.done=self.gate.update(o)
 
     def need_query(self,state):
@@ -350,7 +356,7 @@ class SkillController:
         if self.active is None:reason='initial_or_interrupted'
         elif self.always_query or self.primitive:reason='every_observation_ablation'
         elif self.active not in state['candidates'] and not (self.path and 'continue_route' in state['candidates']):reason='skill_finished_or_blocked'
-        elif self.age>=MAX_HOLD_TICKS:reason='decision_expired'
+        elif self.age>=(2 if getattr(self,'cautious',False) else MAX_HOLD_TICKS):reason='decision_expired'
         elif signature!=self.last_signature:reason='semantic_state_changed'
         elif self.active=='hold_and_observe' and self.age>=2:reason='fresh_observation_after_hold'
         if reason:self.last_signature=signature
@@ -358,35 +364,31 @@ class SkillController:
 
     def select(self,name,o,confidence=None):
         if name not in self.describe(o):raise ValueError('unavailable skill')
-        self.history.append({'skill':self.active,'progress':o['range_trend']})
+        self.history.append({'skill':name,'progress':'pending_visual_observation'})
         self.age=0;self.active=name
         if name in self.proposals:self.path=list(self.proposals[name]['waypoints'])
         elif name!='hold_and_observe':self.path=[]
         # A provisional, predeclared engineering threshold, not calibrated safety.
-        self.cautious=confidence is not None and confidence<.45
-        self.defer=confidence is not None and confidence<.25
-        if self.defer:self.low_confidence_holds+=1
-        else:self.low_confidence_holds=0
+        # Ambiguous choice between feasible routes is not evidence of danger.
+        # Shorten the commitment; do not endlessly hold or substitute a rule.
+        self.cautious=(confidence is not None and confidence<.45) or o['quality']=='bounded_fit'
 
     def command(self,o):
         self.age+=1
         if self.done:return bounded_command(),'RGB_completion'
-        if getattr(self,'defer',False):
-            self.active=None
-            return bounded_command(),'low_confidence_reobserve'
         if self.active in (None,'hold_and_observe'):
             return bounded_command(),'selected_hold'
         if .27<=o['range_m']<=.28 and abs(o['bearing_deg'])<=3:
             return bounded_command(),'RGB_goal_settling'
         if self.primitive:
             return action(self.active),'selected_primitive'
-        cautious=.5 if getattr(self,'cautious',False) else 1.
+        cautious=1.  # Confidence controls duration, not uncalibrated motor torque.
         distance=o['range_m'];angle=o['bearing_deg']
-        if self.active.startswith('align_'):
+        if self.active=='align_target':
             if abs(angle)<=2.0:
                 self.active=None
                 return bounded_command(),'alignment_reached'
-            sign=1 if self.active=='align_left' else -1
+            sign=1 if angle>0 else -1
             return bounded_command(turn=sign*(.065 if abs(angle)>8 else .025)*cautious),'selected_alignment'
         if self.active=='approach_fine':
             if distance<=.276:
@@ -438,11 +440,11 @@ def reference_choice(state):
         if o['distance'] in ('near','far'):return 'forward'
         if o['distance']=='too_close':return 'backward'
         return 'stop'
-    if o['quality']!='clear':return 'hold_and_observe'
+    if o['quality'] not in ('clear','bounded_fit'):return 'hold_and_observe'
     if 'continue_route' in c:return 'continue_route'
     for key in ('direct','north','south'):
         if key in c:return key
-    if o['alignment']!='aligned':return 'align_left' if o['target_side']=='left' else 'align_right'
+    if 'align_target' in c:return 'align_target'
     if o['distance'] in ('near','far') and 'approach_fine' in c:return 'approach_fine'
     if o['distance']=='too_close' and 'backoff_fine' in c:return 'backoff_fine'
     return 'hold_and_observe'

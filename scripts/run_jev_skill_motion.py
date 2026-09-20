@@ -166,7 +166,8 @@ def run_trial(args,case,policy,key,source):
                 row.update(command=bounded_command(),decision_source='RGB_completion')
                 rows.append(row);write(out/'turns.json',rows);scene.issue(row['command'])
                 result['stop_reason']='RGB_goal_confirmed';break
-            reason=control.need_query(state)
+            inside=.27<=o['range_m']<=.28 and abs(o['bearing_deg'])<=3
+            reason=None if inside else control.need_query(state)
             if reason:
                 row['query_reason']=reason
                 if policy=='rule':
@@ -189,8 +190,8 @@ def run_trial(args,case,policy,key,source):
                     row['decision_source']=policy
                     if answers.get('evidence')=='observe_again' and args.arm!='primitive':
                         chosen='hold_and_observe';row['decision_source']='model_requested_reobserve'
-                    if answers.get('progress')=='reconsider':control.age=6
                 control.select(chosen,o,confidence if args.arm!='single' else None)
+                if policy!='rule' and answers.get('progress')=='reconsider':control.cautious=True
                 row['chosen_skill']=chosen
             command,execution=control.command(o)
             row['command']=command;row['execution_source']=execution;row['active_skill']=control.active
@@ -199,6 +200,9 @@ def run_trial(args,case,policy,key,source):
             if tick%25==0:print(json.dumps({'case':args.case,'policy':policy,'tick':tick,'calls':result['model_calls'],'range':o['range_m'],'angle':o['bearing_deg'],'skill':control.active,'execution':execution}),flush=True)
         else:result['stop_reason']='sim_budget'
         scene.issue(bounded_command());scene.step(.5);scene.sample()
+    except KeyboardInterrupt:
+        result['stop_reason']='diagnostic_interrupted'
+        raise
     except Exception as exc:
         result['error']={'type':type(exc).__name__,'message':str(exc) if not key else str(exc).replace(key,'[REDACTED]')}
         result['stop_reason']='error'
