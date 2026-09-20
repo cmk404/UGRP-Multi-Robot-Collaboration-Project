@@ -119,7 +119,21 @@ def test_staging_layout_can_unload_boxes_after_beam_with_full_footprint():
     # Previous goal centers blocked the box chassis after the beam was placed.
     old=copy.deepcopy(c)
     for slot in old['static_map']['destinations'].values():
-        if slot['center_m'][0]==1.68: slot['center_m'][0]=1.55
+        if slot['center_m'][0]==1.9: slot['center_m'][0]=1.55
+    assert not geometry_admission(old)['complete_placement_order_found']
+
+
+@pytest.mark.parametrize('name',['box_heavy_five','six_boxes','mixed_eight'])
+def test_dense_layout_can_fill_far_slots_before_near_slots(name):
+    c=config(name); result=geometry_admission(c)
+    assert result['complete_placement_order_found']
+    assert len(result['trace'])==len(c['mission']['tasks'])
+    # The old assignment filled the near destination column first, preventing
+    # the second source column from being unloaded with the full chassis.
+    old=copy.deepcopy(c)
+    for slot in old['static_map']['destinations'].values():
+        if slot['center_m'][0]==1.9: slot['center_m'][0]=1.68
+        elif slot['center_m'][0]==1.68: slot['center_m'][0]=1.9
     assert not geometry_admission(old)['complete_placement_order_found']
 
 

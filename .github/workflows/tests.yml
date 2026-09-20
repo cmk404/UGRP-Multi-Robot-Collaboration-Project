@@ -172,6 +172,41 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+  multi-object-scenes:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      MUJOCO_GL: osmesa
+      UGRP_SESSION_DIR: ${{ github.workspace }}/outputs/.multi-object-sessions
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements-sim.txt
+            requirements-test.txt
+      - name: Install simulator and fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libosmesa6 libgl1 libglfw3 fonts-noto-cjk
+          python -m pip install -r requirements-sim.txt -r requirements-test.txt
+      - name: Check physical replicas and geometry regressions
+        run: python -m pytest -q tests/test_multi_object_scene.py
+      - name: Render all twelve static multi-object scenes
+        run: |
+          python scripts/ugrp_session.py run multi-object-scenes -- python scripts/prepare_multi_object_scenes.py --render --require-static-candidates --output outputs/multi-object-scenes-ci
+          test ! -e "$UGRP_SESSION_DIR/multi-object-scenes.json"
+      - name: Keep static scene evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: multi-object-static-scenes
+          path: outputs/multi-object-scenes-ci/
+          if-no-files-found: warn
+          retention-days: 14
+
   individual-proxy-bootstrap:
     runs-on: ubuntu-24.04
     timeout-minutes: 5

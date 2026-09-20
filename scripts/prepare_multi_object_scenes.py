@@ -87,8 +87,10 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--render',action='store_true')
+    p.add_argument('--require-static-candidates',action='store_true',help='CI gate: fail if any rendered case fails static admission')
     p.add_argument('--case',choices=[c['id'] for c in load_pilot()[1]])
     args = p.parse_args()
+    if args.require_static_candidates and not args.render: p.error('static admission gate requires --render')
     if args.output.exists(): p.error('output exists; choose a new path')
     if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip():
         p.error('commit source and configuration before running a cohort')
@@ -151,7 +153,7 @@ def main():
     write(args.output/'manifest.json',manifest); write(args.output/'results.json',results); write(args.output/'summary.json',summary)
     write(args.output/'artifact-hashes.json',{str(p.relative_to(args.output)):file_sha(p) for p in sorted(args.output.rglob('*')) if p.is_file()})
     print(json.dumps(summary),flush=True)
-    return int(summary['errors']>0)
+    return int(summary['errors']>0 or (args.require_static_candidates and summary['static_candidates']!=len(cases)))
 
 
 if __name__=='__main__':
