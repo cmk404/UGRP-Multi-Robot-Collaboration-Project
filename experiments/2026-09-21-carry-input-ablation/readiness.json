@@ -1,0 +1,230 @@
+{
+  "status": "local readiness verified; full cohort awaiting separately requested Colab training",
+  "source_sha": "f7a5c4cba63687a9cee77e2b90bbf0188b600eaa",
+  "training_smoke": {
+    "scope": "First 16 rows per robot in first train and development episode only; 2 updates; diagnostic fixture, no performance conclusion",
+    "raw": "/Users/changmin/.codex/worktrees/carry-input-ablation/ugrp/outputs/ablation-tiny-smoke-r256-h4",
+    "complete": true,
+    "wall_s": 22.298796582996147,
+    "source_sha": "f7a5c4cba63687a9cee77e2b90bbf0188b600eaa",
+    "report_sha256": "d651e2205d26499b294b44988604b47e9aa235708c0874282254254bc034e4b9",
+    "dataset_sha256": "504da9ad9a65ebc2962270123e43689d14624d19e3d139845ecfd84727232a7d",
+    "model_sha256": "7c4449c97304261cd63e59df13633d2fdb95b3f1444499676bd95e2f9846db5a",
+    "initial_cache_verification": {
+      "feature_atol": 0.0005,
+      "feature_rtol": 1e-05,
+      "action_atol": 1e-05,
+      "action_rtol": 1e-05,
+      "probes": [
+        {
+          "id": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r1:0",
+          "feature_max_abs": {
+            "observation.images.own": 0.000102996826171875,
+            "observation.images.top": 0.00017499923706054688
+          },
+          "action_chunk_max_abs": 2.9802322387695312e-06
+        },
+        {
+          "id": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r1:4",
+          "feature_max_abs": {
+            "observation.images.own": 9.632110595703125e-05,
+            "observation.images.top": 0.00024050474166870117
+          },
+          "action_chunk_max_abs": 2.205371856689453e-06
+        },
+        {
+          "id": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r3:15",
+          "feature_max_abs": {
+            "observation.images.own": 0.0001068115234375,
+            "observation.images.top": 0.00027239322662353516
+          },
+          "action_chunk_max_abs": 1.9073486328125e-06
+        }
+      ]
+    },
+    "selected_cache_verification": {
+      "train": {
+        "feature_atol": 0.0005,
+        "feature_rtol": 1e-05,
+        "action_atol": 1e-05,
+        "action_rtol": 1e-05,
+        "probes": [
+          {
+            "id": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r1:0",
+            "feature_max_abs": {
+              "observation.images.own": 0.000102996826171875,
+              "observation.images.top": 0.00017499923706054688
+            },
+            "action_chunk_max_abs": 3.159046173095703e-06
+          },
+          {
+            "id": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r1:4",
+            "feature_max_abs": {
+              "observation.images.own": 9.632110595703125e-05,
+              "observation.images.top": 0.00024050474166870117
+            },
+            "action_chunk_max_abs": 1.9073486328125e-06
+          },
+          {
+            "id": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r3:15",
+            "feature_max_abs": {
+              "observation.images.own": 0.0001068115234375,
+              "observation.images.top": 0.00027239322662353516
+            },
+            "action_chunk_max_abs": 1.5497207641601562e-06
+          }
+        ]
+      },
+      "development": {
+        "feature_atol": 0.0005,
+        "feature_rtol": 1e-05,
+        "action_atol": 1e-05,
+        "action_rtol": 1e-05,
+        "probes": [
+          {
+            "id": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open:r1:0",
+            "feature_max_abs": {
+              "observation.images.own": 5.91278076171875e-05,
+              "observation.images.top": 0.00014257431030273438
+            },
+            "action_chunk_max_abs": 1.9073486328125e-06
+          },
+          {
+            "id": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open:r1:4",
+            "feature_max_abs": {
+              "observation.images.own": 9.72747802734375e-05,
+              "observation.images.top": 0.0002351999282836914
+            },
+            "action_chunk_max_abs": 1.6391277313232422e-06
+          },
+          {
+            "id": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open:r3:15",
+            "feature_max_abs": {
+              "observation.images.own": 5.91278076171875e-05,
+              "observation.images.top": 0.00023102760314941406
+            },
+            "action_chunk_max_abs": 1.519918441772461e-06
+          }
+        ]
+      }
+    },
+    "readback": [
+      {
+        "id": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r1:0",
+        "history_ids": [
+          "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r1:0",
+          "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r1:0",
+          "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r1:0",
+          "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r1:0"
+        ],
+        "decision": {
+          "action": {
+            "forward": -0.022234381735324858,
+            "left": 0.09192862808704376,
+            "turn": 0.012364348769187928
+          },
+          "done": false,
+          "stop_score": 0.03662382811307907
+        }
+      },
+      {
+        "id": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r3:15",
+        "history_ids": [
+          "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r3:12",
+          "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r3:13",
+          "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r3:14",
+          "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r3:15"
+        ],
+        "decision": {
+          "action": {
+            "forward": -0.032008919119834896,
+            "left": 0.08213474750518798,
+            "turn": 0.003394876420497894
+          },
+          "done": false,
+          "stop_score": 0.010565318167209625
+        }
+      },
+      {
+        "id": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open:r1:0",
+        "history_ids": [
+          "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open:r1:0",
+          "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open:r1:0",
+          "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open:r1:0",
+          "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open:r1:0"
+        ],
+        "decision": {
+          "action": {
+            "forward": -0.027958743274211884,
+            "left": 0.09444154500961303,
+            "turn": 0.019089742004871367
+          },
+          "done": false,
+          "stop_score": 0.08366231620311737
+        }
+      },
+      {
+        "id": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open:r3:15",
+        "history_ids": [
+          "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open:r3:12",
+          "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open:r3:13",
+          "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open:r3:14",
+          "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open:r3:15"
+        ],
+        "decision": {
+          "action": {
+            "forward": -0.031177242100238797,
+            "left": 0.08305329680442809,
+            "turn": 0.00528700053691864
+          },
+          "done": false,
+          "stop_score": 0.01886763423681259
+        }
+      }
+    ]
+  },
+  "physics_smoke": {
+    "passed": true,
+    "source_sha": "f7a5c4cba63687a9cee77e2b90bbf0188b600eaa",
+    "scope": "Tiny diagnostic model; 2 carry decisions per robot, intentional decision-budget termination; NOT trained-policy or physical success",
+    "wires_reconstructed_and_native_replayed": 4,
+    "evaluator_reconstructed": true,
+    "camera_geometry_unchanged": true,
+    "weld_steps": 0,
+    "external_model_calls": 0,
+    "wall_s": 159.66542679199483,
+    "inference_wall_s": [
+      0.20702258398523554,
+      0.16107862500939518,
+      0.18879941699560732,
+      0.2303677919844631
+    ],
+    "raw": "/Users/changmin/.codex/worktrees/carry-input-ablation/ugrp/outputs/ablation-physics-wiring-smoke",
+    "raw_sha256": {
+      "result.json": "1965cc9a0cd36e5f7055b980f33e075d735030fe3f5951b4c32d9c7177ee5fef",
+      "pair-decisions.json": "0f3faaffb57aa845f49875d022bc2c0f18d00468f9005a89a0ec68e744f94461",
+      "issued-commands.json": "e1ce3f90a0c7fed0cd52197ee251dd708aa9882f892a12d434ec1f4001433c6c",
+      "referee-only.jsonl": "4b788d0ffcc5a19da0637552213a564189ab5a29d6fda024092cd804a0c08c9e",
+      "execution.mp4": "052c1d2269578e9f80181f4017b58892458afe97f251b4768221156d25ebcb6d"
+    }
+  },
+  "visual_review": {
+    "video": "960x720 H.264, 62 frames at 1fps; decoded final frame inspected",
+    "finding": "Pair in TRANSIT holding beam; no arrival/success conclusion; diagnostic overlay is evaluation output only",
+    "frame_sha256": "4b16dd6d1b2164f8bce14bee9b8cb30cd07703ae79b4a7666e97f40433df1d23"
+  },
+  "verification_script": {
+    "path": "/Users/changmin/.codex/worktrees/carry-input-ablation/ugrp/outputs/verify-physics-smoke.py",
+    "sha256": "95c67a7aa26b310cf6410196cac579833bc8f1257c2159c1056b013259899a09"
+  },
+  "cleanup": "owned smoke processes exited and session managers reported stopped; PID checks found no remaining parents",
+  "storage": "All raw files and checkpoints remain local, ignored by Git; committed hashes are not backup",
+  "automated_tests": {
+    "optional_act_and_runtime": "18 passed",
+    "offline_result": "999 passed, 2 skipped, 184 subtests passed in 99.77s (0:01:39)",
+    "offline_log": "/Users/changmin/.codex/worktrees/carry-input-ablation/ugrp/outputs/ablation-final-offline-tests.log",
+    "offline_log_sha256": "afc74b25549c9980acc0a8eb48a4fb1d28b817ea8b3c7163c7d22b0168d16b27",
+    "diff_check": "passed",
+    "py_compile": "passed"
+  }
+}

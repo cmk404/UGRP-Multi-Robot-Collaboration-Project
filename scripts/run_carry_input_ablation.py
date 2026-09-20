@@ -19,6 +19,27 @@ def write(p, value):
     p.write_text(json.dumps(value, indent=2, allow_nan=False)+'\n')
 
 
+def validate_training(root, arm, seed, protocol):
+    """Reject a complete but wrong-arm/seed/budget checkpoint before physics."""
+    report = json.loads((root/'report.json').read_text())
+    expected = {'complete': True, 'dataset_sha256': protocol['dataset_sha256'],
+                'seed': seed, 'steps': protocol['training']['steps'],
+                'batch_size': protocol['training']['batch']}
+    for key, value in expected.items():
+        if report.get(key) != value:
+            raise ValueError(f'training {key} mismatch: {root}')
+    adapter = json.loads((root/'act/adapter.json').read_text())
+    if (adapter != report.get('adapter') or adapter.get('kind') != 'carry_input_ablation'
+            or adapter.get('size') != arm['size'] or adapter.get('history') != arm['history']):
+        raise ValueError(f'training arm mismatch: {root}')
+    if sha(root/'act/model.safetensors') != report.get('model_sha256'):
+        raise ValueError(f'training model hash mismatch: {root}')
+    if (not report.get('initial_cache_verification')
+            or set(report.get('selected_cache_verification', {})) != {'train', 'development'}):
+        raise ValueError(f'missing native/cache validation: {root}')
+    return report
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--out', type=Path, required=True)
@@ -60,9 +81,7 @@ def main():
             output=a.out/('model-'+name)
             if a.reuse_training:
                 origin=a.reuse_training/('model-'+name)
-                old=json.loads((origin/'report.json').read_text())
-                if not old['complete'] or old['dataset_sha256']!=protocol['dataset_sha256'] or sha(origin/'act/model.safetensors')!=old['model_sha256']:
-                    raise ValueError('invalid reusable model')
+                old=validate_training(origin,arm,seed,protocol)
                 # Keep raw provenance without duplicating large checkpoints.
                 output.symlink_to(origin.resolve(),target_is_directory=True)
                 row={'name':name,'reused':str(origin),'training_source_sha':old['source_sha']}
@@ -72,9 +91,7 @@ def main():
                          '--seed',seed,'--steps',protocol['training']['steps']], 'train-'+name)
                 if row['exit_code']:
                     report['training'].append(row);report['blocked']='training process failed';write(a.out/'report.json',report);return 1
-            mr=json.loads((output/'report.json').read_text())
-            if not mr['complete']:
-                raise ValueError('incomplete model')
+            mr=validate_training(output,arm,seed,protocol)
             models[name]={'path':str(output/'act'),'sha256':sha(output/'act/model.safetensors'),
                           'source_sha':mr['source_sha'],'arm':arm,'seed':seed}
             row['model']=models[name];report['training'].append(row);write(a.out/'report.json',report)
