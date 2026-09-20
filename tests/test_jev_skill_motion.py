@@ -127,7 +127,7 @@ class TestSkillMotion(unittest.TestCase):
 
     def test_frozen_cohorts_are_unique_and_repeatable(self):
         from scripts.run_jev_skill_cohort import plan
-        for phase,count in [('holdout',108),('regression',36),('ablation',56),('continuous',16)]:
+        for phase,count in [('holdout',108),('regression',36),('ablation',68),('continuous',16)]:
             jobs,_=plan(phase)
             self.assertEqual(len(jobs),count)
             self.assertEqual(len({j['trial_id'] for j in jobs}),count)
@@ -146,3 +146,13 @@ class TestSkillMotion(unittest.TestCase):
         self.assertNotIn('barrier_window',json.dumps(c['static_map']))
         self.assertNotIn('motion_barrier',json.dumps(c['static_map']))
         self.assertIn('motion_barrier',json.dumps(c['setup_only']))
+
+    def test_repeated_hold_reports_no_progress_and_far_heading_is_not_goal_edge(self):
+        c=SkillController(episode('open')['static_map']);o=self.observation(bearing_deg=2.8)
+        c.observe_progress(o);c.state(o);c.select('hold_and_observe',o)
+        for _ in range(4):c.observe_progress(o)
+        state=c.state(o)
+        self.assertTrue(state['persistent_stall'])
+        self.assertFalse(state['observation']['goal_alignment_edge'])
+        self.assertFalse(state['observation']['goal_distance_edge'])
+        self.assertEqual(state['recent_issued'][-1]['progress'],'no_motion')

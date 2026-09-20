@@ -27,7 +27,7 @@ def plan(phase,policies=('rule','jev','gemini'),dev_cases=None):
     elif phase=='ablation':
         models=[p for p in policies if p!='rule']
         groups=[('primitive',['open01','open02','yaw01','yaw02'],2,models),
-                ('always',['yaw01','unknown01','occluded01','temporary01'],2,models),
+                ('always',['open01','open02','yaw01','yaw02','unknown01','occluded01','temporary01'],2,models),
                 ('single',['yaw01','unknown01','occluded01','temporary01'],2,models),
                 ('no_confidence',['yaw01','unknown01','occluded01','temporary01'],2,[p for p in models if p=='jev'])]
     else:raise ValueError('unknown phase')

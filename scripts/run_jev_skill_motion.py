@@ -223,7 +223,8 @@ def run_trial(args,case,policy,key,source):
                     row['response']=response;write(out/f'{tick:03}-response.json',response)
                     result['model_calls']+=1
                     if response['status']!='ok':
-                        rows.append(row);raise RuntimeError('model_'+response['status'])
+                        if not any(row is saved for saved in rows):rows.append(row)
+                        raise RuntimeError('model_'+response['status'])
                     b=response['body'];usage=b.get('usage',{})
                     result['input_tokens']+=usage.get('input_tokens',usage.get('prompt_tokens',0))
                     result['output_tokens']+=usage.get('output_tokens',usage.get('completion_tokens',0))
@@ -262,6 +263,7 @@ def run_trial(args,case,policy,key,source):
         result['stop_reason']='diagnostic_interrupted'
         raise
     except Exception as exc:
+        if 'row' in locals() and not any(row is saved for saved in rows):rows.append(row)
         result['error']={'type':type(exc).__name__,'message':str(exc) if not key else str(exc).replace(key,'[REDACTED]')}
         result['stop_reason']='error'
     finally:

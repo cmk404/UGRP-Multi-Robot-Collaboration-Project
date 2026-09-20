@@ -20,13 +20,15 @@
 | 새 조건 | open, yaw, known barrier, unknown barrier, physical target cover, temporary barrier 각각 2배치 × 3 API 반복 × rule/Jev/Gemini | 108 |
 | 회귀 | 앞선 비교의 시작 자세 12개 × rule/Jev/Gemini | 36 |
 | 고정 모터 행동 | open01/02, yaw01/02 × 2 반복 × Jev/Gemini | 16 |
-| 매 관측 질의 | yaw01, unknown01, occluded01, temporary01 × 2 반복 × Jev/Gemini | 16 |
+| 매 관측 질의 | open01/02, yaw01/02, unknown01, occluded01, temporary01 × 2 반복 × Jev/Gemini | 28 |
 | action 질문만 | 같은 4개 × 2 반복 × Jev/Gemini; Jev confidence 유지 | 16 |
 | confidence 무시 | 같은 4개 × 2 반복 × Jev; 질문 분해 유지 | 8 |
 | 연속 시간 | open01, known01, occluded01, temporary01 × 2 반복 × Jev/Gemini | 16 |
-| 합계 | 개발 진단 제외 | 216 |
+| 합계 | 개발 진단 제외 | 228 |
 
 연속 시간 조건은 API 대기 중 physics/RGB를 계속 갱신하되 만료된 스킬을 제동한다. 4 SIM초보다 오래됐거나 의미 상태/후보가 바뀐 응답은 버린다. 계속 움직이는 비동기 제어를 검증했다는 뜻은 아니다. 공유 Mac의 동시 실행 때문에 벽시계는 독립 장비 지연 측정이 아니며 API 자체 지연도 함께 보고한다.
+
+고정 모터 행동과 스킬 행동은 동일한 매 관측 질의 조건(open01/02, yaw01/02)에서 직접 비교한다. 호출 빈도의 효과는 full과 always의 같은 배치·반복을 맞춰 비교한다. 초기 216회 안에서 두 효과가 섞이는 것을 방지하려고 본 시험 전 always 12회를 추가했다.
 
 ## 분석 원칙
 

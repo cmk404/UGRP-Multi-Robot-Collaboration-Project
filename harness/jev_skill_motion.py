@@ -221,7 +221,8 @@ def semantic_state(o, candidate_descriptions, history, active, age, stalls):
             'target_side':'left' if angle>0 else 'right' if angle<0 else 'ahead',
             'alignment':'aligned' if abs(angle)<=3 else 'small_error' if abs(angle)<=8 else 'large_error',
             'range_trend':o['range_trend'],'quality':o['quality'],
-            'near_boundary':min(abs(distance-.27),abs(distance-.28))<.003 or abs(abs(angle)-3)<1,
+            'goal_distance_edge':min(abs(distance-.27),abs(distance-.28))<.003,
+            'goal_alignment_edge':distance<.36 and abs(abs(angle)-3)<1,
             'stationary_evidence':o['range_spread_m']<.003 and o['bearing_spread_deg']<1.5},
             'active_skill':active,'skill_age_ticks':age,'no_progress_ticks':stalls,
             'persistent_stall':stalls>=4,
@@ -237,7 +238,10 @@ def questions(candidates, decomposed=True):
         'Use its stated effect, current observation and progress. '
         'A skill is interrupted by fresh RGB and has a bounded duration. Holding is not task completion. '
         'Prefer the shortest clear route when starting. Avoid restarting a detour or reversing a productive '
-        'choice merely because another observation arrived. All listed skills meet their execution preconditions.',
+        'choice merely because another observation arrived. All listed skills meet their execution preconditions. '
+        'If feasible routes tie, either is acceptable: pick one. Their local feedback handles heading errors. '
+        'Do not hold solely because routes tie or the heading is near its tolerance. '
+        'After repeated holds with usable RGB and no motion, make progress with a feasible moving skill.',
         'criteria':candidates}}
     if decomposed:
         result['evidence']={'type':'choice','instructions':'Judge only whether the provided RGB observation is usable for a short skill choice.',
@@ -317,10 +321,12 @@ class SkillController:
                     'length_m':sum(math.dist(a,b) for a,b in zip(points,points[1:])),
                     'effect':'continue the selected route without restarting its detour','relation':'continue'}
         candidates={}
+        shortest=min((v['length_m'] for v in self.proposals.values()),default=0.)
         if not near:
             for key,value in self.proposals.items():
                 candidates[key]=(value['effect']+'. RGB-estimated remaining route '+
                                  ('short' if value['length_m']<.45 else 'medium' if value['length_m']<.9 else 'long')+
+                                 (', tied shortest available' if abs(value['length_m']-shortest)<.03 else ', longer than another available route')+
                                  '. Locally align and follow these waypoints; stop if RGB becomes unreliable or the route is blocked.')
         else:
             if abs(o['bearing_deg'])>3:
@@ -329,7 +335,7 @@ class SkillController:
                 candidates['approach_fine']='Small forward approach toward the distance band; stop on reaching the band.'
             elif o['range_m']<.27:
                 candidates['backoff_fine']='Small backward movement to increase target distance; stop on reaching the band.'
-        candidates['hold_and_observe']='Brake, wait briefly, and obtain new RGB evidence. This does not claim completion.'
+        candidates['hold_and_observe']='Brake briefly to resolve conflicting evidence or a temporary blockage. Repeated holding with usable evidence and a feasible route does not make task progress. This does not claim completion.'
         return candidates
 
     def state(self,o):
@@ -343,7 +349,7 @@ class SkillController:
             turned=abs(wrap(o['heading_rad']-self.last_heading))>=math.radians(.15)
             if self.history:
                 self.history[-1]['progress']='moving' if moved else 'turning' if turned else 'no_motion'
-                if self.history[-1]['skill']!='hold_and_observe':self.stalls=0 if moved or turned else self.stalls+1
+                self.stalls=0 if moved or turned else self.stalls+1
         self.last_xy=xy
         self.last_heading=o['heading_rad']
         self.done=self.gate.update(o)
