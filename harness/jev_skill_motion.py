@@ -21,6 +21,7 @@ DT = .25
 ROBOT_RADIUS = .14
 WHEEL_PLANE = .058  # nominal visible wheel surface from the unchanged geometry
 MAX_HOLD_TICKS = 6
+MAX_WHEEL_RMS_PX = 3.5
 MODEL_NAMES = {'jev': 'jev-1.13.0', 'gemini': 'gemini-3.8-flash'}
 
 
@@ -67,7 +68,9 @@ def fit_wheels(frame, anchor, prior_heading):
             distances = np.linalg.norm(expected[:, None, :]-points[None, :, :], axis=2)
             matches = distances.argmin(axis=1)
             errors = distances[np.arange(4), matches]
-            use = errors < 4.5
+            # Association is provisional: allow a wider search before the
+            # three-point refit. Acceptance still uses the unchanged RMS gate.
+            use = errors < math.sqrt(3)*MAX_WHEEL_RMS_PX
             if sum(use) < 3 or len(set(matches[use])) != sum(use):
                 continue
             # One wheel may be occluded/fragmented while an arm fragment sits
@@ -91,7 +94,7 @@ def fit_wheels(frame, anchor, prior_heading):
     center = measured.mean(axis=0)-reference.mean(axis=0)@rotation
     angle = math.atan2(rotation[0, 1], rotation[0, 0])
     residual = float(np.sqrt(np.mean(np.sum((reference@rotation+center-measured)**2, axis=1))))
-    if residual > 3.5 or np.linalg.norm(center-anchor) > 35:
+    if residual > MAX_WHEEL_RMS_PX or np.linalg.norm(center-anchor) > 35:
         raise ValueError('wheel_fit_uncertain')
     return center, wrap(-angle), {'matched_wheels':count, 'rms_px':residual,
                                   'method':'RGB component rigid fit', 'feature_plane_m':WHEEL_PLANE}
@@ -332,9 +335,9 @@ class SkillController:
             if abs(o['bearing_deg'])>3:
                 candidates['align_target']='Use RGB feedback to face the target with small signed corrections; stop at heading tolerance.'
             elif o['range_m']>.28:
-                candidates['approach_fine']='Small forward approach toward the distance band; stop on reaching the band.'
+                candidates['approach_fine']='Small forward approach toward the distance band while maintaining RGB heading; stop on reaching the band.'
             elif o['range_m']<.27:
-                candidates['backoff_fine']='Small backward movement to increase target distance; stop on reaching the band.'
+                candidates['backoff_fine']='Small backward movement to increase target distance while maintaining RGB heading; stop on reaching the band.'
         candidates['hold_and_observe']='Brake briefly to resolve conflicting evidence or a temporary blockage. Repeated holding with usable evidence and a feasible route does not make task progress. This does not claim completion.'
         return candidates
 
@@ -401,12 +404,12 @@ class SkillController:
                 self.active=None
                 return bounded_command(),'distance_reached'
             speed=.045 if distance>.30 else .022 if distance>.285 else .012
-            cmd=bounded_command(forward=speed*cautious)
+            cmd=bounded_command(forward=speed*cautious,turn=float(np.clip(math.radians(angle)*.8,-.025,.025)))
         elif self.active=='backoff_fine':
             if distance>=.274:
                 self.active=None
                 return bounded_command(),'distance_reached'
-            cmd=bounded_command(forward=-.018*cautious)
+            cmd=bounded_command(forward=-.018*cautious,turn=float(np.clip(math.radians(angle)*.8,-.025,.025)))
         elif self.path:
             xy=np.array(o['xy_m'])
             obstacles=[x for x in self.map['obstacles'] if x['kind']!='wall']+o['obstacles']

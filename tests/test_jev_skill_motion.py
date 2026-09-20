@@ -174,3 +174,50 @@ class TestSkillMotion(unittest.TestCase):
         cmd,_=c.command(o)
         self.assertEqual(len(c.path),2)
         self.assertGreater(cmd['forward'],.05)
+
+    def test_association_does_not_reject_an_acceptable_three_wheel_fit(self):
+        import cv2
+        from harness.jev_skill_motion import fit_wheels
+        root=Path(__file__).parent/'fixtures/jev_skill_motion'
+        meta=json.loads((root/'association-gate-provenance.json').read_text())
+        frame=cv2.imread(str(root/'association-gate-top.jpg'))
+        _,_,fit=fit_wheels(frame,np.array(meta['rgb_anchor']),meta['rgb_prior_heading_rad'])
+        self.assertLessEqual(fit['rms_px'],3.5)
+        self.assertGreaterEqual(fit['matched_wheels'],3)
+
+    def test_fine_translation_corrects_heading_without_changing_goal(self):
+        c=SkillController(episode('open')['static_map'])
+        for skill,distance,speed_sign in [('approach_fine',.283,1),('backoff_fine',.265,-1)]:
+            for angle in [-2.5,2.5]:
+                o=self.observation(range_m=distance,bearing_deg=angle)
+                c.state(o);c.select(skill,o);cmd,_=c.command(o)
+                self.assertGreater(cmd['forward']*speed_sign,0.)
+                self.assertGreater(cmd['turn']*angle,0.)
+                self.assertLessEqual(abs(cmd['turn']),.025)
+
+    def test_instant_continuous_response_keeps_current_RGB_but_lost_RGB_does_not(self):
+        from types import SimpleNamespace
+        from unittest.mock import MagicMock,patch
+        from scripts.run_jev_skill_motion import post_continuous
+        response={'status':'ok','body':{}}
+        initial=({'own_rgb':{},'shared_top_rgb':{}},self.observation(),0.)
+        for lost in [False,True]:
+            scene=MagicMock();scene.world.data.time=0.;scene.out=Path('/unused')
+            scene.capture.return_value={'r2':{'own_rgb':{},'shared_top_rgb':{},'own_bytes':b'x','top_bytes':b'y'}}
+            observer=MagicMock();observer.observe.side_effect=ValueError('RGB_lost')
+            control=SimpleNamespace(gate=SimpleNamespace(count=1),done=False)
+            future=MagicMock();future.done.side_effect=[False,True] if lost else [True]
+            future.result.return_value=response;rows=[]
+            with patch('scripts.run_jev_skill_motion.concurrent.futures.ThreadPoolExecutor') as pool, \
+                 patch('scripts.run_jev_skill_motion.write'),patch('scripts.run_jev_skill_motion.time.sleep'):
+                pool.return_value.__enter__.return_value.submit.return_value=future
+                actual,latest=post_continuous(scene,observer,control,{},'unused',None,rows,'0',90.,initial=initial)
+            self.assertEqual(actual,response)
+            if lost:
+                self.assertIsNone(latest)
+                self.assertFalse(rows[-1]['observation']['valid'])
+                self.assertEqual(control.gate.count,0)
+            else:
+                self.assertIs(latest,initial)
+                scene.issue.assert_not_called()
+                observer.observe.assert_not_called()

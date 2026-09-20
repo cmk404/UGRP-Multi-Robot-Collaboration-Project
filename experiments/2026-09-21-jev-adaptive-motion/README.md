@@ -13,22 +13,22 @@
 
 ## 코호트
 
-`run_jev_skill_motion.py`의 DEVELOPMENT 6개만 수정·진단에 사용한다. HOLDOUT 12개는 본 시험 전에 고정하며, 본 결과를 본 뒤 후보를 수정해 같은 조건의 결과를 최종 독립 시험이라고 부르지 않는다. `run_jev_skill_cohort.py`는 seed 210922로 열거한 trial을 섞어 4 worker에 배정한다.
+`run_jev_skill_motion.py`의 기본 DEVELOPMENT 6개와 진단에서 승격한 2개만 수정·진단에 사용한다. HOLDOUT 12개는 본 시험 전에 고정하며, 본 결과를 본 뒤 후보를 수정해 같은 조건의 결과를 최종 독립 시험이라고 부르지 않는다. `run_jev_skill_cohort.py`는 seed 210922로 열거한 trial을 섞어 4 worker에 배정한다.
 
 | 구분 | 조건 | 횟수 |
 |---|---|---:|
 | 새 조건 | open, yaw, known barrier, unknown barrier, physical target cover, temporary barrier 각각 2배치 × 3 API 반복 × rule/Jev/Gemini | 108 |
 | 회귀 | 앞선 비교의 시작 자세 12개 × rule/Jev/Gemini | 36 |
-| 고정 모터 행동 | open01/02, yaw01/02 × 2 반복 × Jev/Gemini | 16 |
-| 매 관측 질의 | open01/02, yaw01/02, unknown01, occluded01, temporary01 × 2 반복 × Jev/Gemini | 28 |
+| 고정 모터 행동 | open03/04, yaw03/04 × 2 반복 × Jev/Gemini | 16 |
+| 매 관측 질의 | open03/04, yaw03/04, unknown03, occluded03, temporary03 × 2 반복 × Jev/Gemini | 28 |
 | action 질문만 | 같은 4개 × 2 반복 × Jev/Gemini; Jev confidence 유지 | 16 |
 | confidence 무시 | 같은 4개 × 2 반복 × Jev; 질문 분해 유지 | 8 |
-| 연속 시간 | open01, known01, occluded01, temporary01 × 2 반복 × Jev/Gemini | 16 |
+| 연속 시간 | open03, known03, occluded03, temporary03 × 2 반복 × Jev/Gemini | 16 |
 | 합계 | 개발 진단 제외 | 228 |
 
 연속 시간 조건은 API 대기 중 physics/RGB를 계속 갱신하되 만료된 스킬을 제동한다. 4 SIM초보다 오래됐거나 의미 상태/후보가 바뀐 응답은 버린다. 계속 움직이는 비동기 제어를 검증했다는 뜻은 아니다. 공유 Mac의 동시 실행 때문에 벽시계는 독립 장비 지연 측정이 아니며 API 자체 지연도 함께 보고한다.
 
-고정 모터 행동과 스킬 행동은 동일한 매 관측 질의 조건(open01/02, yaw01/02)에서 직접 비교한다. 호출 빈도의 효과는 full과 always의 같은 배치·반복을 맞춰 비교한다. 초기 216회 안에서 두 효과가 섞이는 것을 방지하려고 본 시험 전 always 12회를 추가했다.
+고정 모터 행동과 스킬 행동은 동일한 매 관측 질의 조건(open03/04, yaw03/04)에서 직접 비교한다. 호출 빈도의 효과는 full과 always의 같은 배치·반복을 맞춰 비교한다. 초기 216회 안에서 두 효과가 섞이는 것을 방지하려고 본 시험 전 always 12회를 추가했다.
 
 ## 분석 원칙
 
@@ -58,3 +58,5 @@
 - known02/Gemini/r2: 최종 RGB 거리 0.2788m, 방위 -3.35°에서 90 SIM초에 도달했다. 기존 미세 전진은 방향을 함께 보정하지 않아 경계에서 정렬/접근을 반복했다. 목표 기준을 넓히지 않고 미세 이동에 RGB 방향 피드백을 추가한다.
 
 수정 전에 seed 210923으로 새 12조건을 뽑아 [replacement-holdout-predeclared.json](replacement-holdout-predeclared.json)에 고정했다. 이전 01/02 조건은 진단 자료이며 본 평가/구성요소 비교의 대응 조건은 같은 계열의 03/04다. 원래 명시한 228회 구성과 예산을 유지한다. 별도 미지 경기장 토폴로지 평가라는 뜻은 아니다.
+
+후속 수정은 후보 검색 반경을 넓히고 최종 RMS 3.5px·최대 중심 이동·방향 연속성 검사는 유지한다. 허용 목표 거리/각도도 유지한다. 미세 이동은 전진/후진과 함께 목표를 향한 제한된 RGB 방향 보정을 수행한다. 연속 시간의 즉시 응답은 physics가 아직 진행되지 않았으면 현재 관측을 유지하며, 이후 RGB가 상실된 경우 그 이전 관측으로 되돌아가지 않는다. 세 항목 모두 별도 회귀검사로 검증한다.

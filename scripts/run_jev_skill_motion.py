@@ -156,13 +156,15 @@ class ChallengeScene(Scene):
         self.update_environment()
 
 
-def post_continuous(scene,observer,control,body,url,key,rows,label,sim_deadline):
+def post_continuous(scene,observer,control,body,url,key,rows,label,sim_deadline,initial=None):
     """Keep physics and RGB alive while one network request is outstanding.
 
     An expired decision is braked during inference; this is a continuous-clock
     stress test, not a claim of uninterrupted high-rate autonomous driving.
     """
-    latest=None
+    # A response can finish before the first physics step. In that case the
+    # original RGB is still current; an invalid later frame must erase it.
+    latest=initial
     with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
         pending=pool.submit(post,body,url,key,30)
         i=0
@@ -251,7 +253,7 @@ def run_trial(args,case,policy,key,source):
                     if getattr(args,'clock','paused')=='continuous':
                         origin['execution_source']='request_only';rows.append(origin)
                         response,latest=post_continuous(scene,observer,control,body,url,key if policy=='jev' else None,
-                            rows,f'{tick:03}',start_sim+args.max_sim_s)
+                            rows,f'{tick:03}',start_sim+args.max_sim_s,initial=(frames,o,origin['observed_at_sim_s']))
                     else:
                         response=post(body,url,key if policy=='jev' else None,30)
                         latest=None
