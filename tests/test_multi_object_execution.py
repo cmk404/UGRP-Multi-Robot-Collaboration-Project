@@ -230,3 +230,11 @@ def test_stage_action_wrong_kind_cannot_bypass_grasp(tmp_path):
     q=observe(e,3,.42);r=next(iter(q));v=reply(q[r]);v['action']={'kind':'drive','forward':.1,'turn':0.,'duration_s':.2}
     n=len(e.history[r]);e.batch({r:v},now_s=.42)
     assert len(e.history[r])==n and e.active['stage_02']['stage'].sync.stage=='GRASP'
+
+
+def test_execution_peer_messages_exclude_private_inputs():
+    from scripts.run_multi_object_execution import relay_messages
+    inbox={r:[] for r in ROBOTS}
+    relay_messages(inbox,{'r1':{'message':'target is occluded'},'r2':None},7)
+    assert not inbox['r1']
+    assert inbox['r2']==inbox['r3']==[{'from_robot':'r1','message':'target is occluded','turn':7}]

@@ -93,6 +93,15 @@ This is an experimental raw-action executor, not a demonstrated grasp skill.'''
             'images':images(own_rgb,top_rgb)+identity[rid]['images']}
 
 
+def relay_messages(inbox,replies,turn):
+    """Forward validated peer claims, never private images or actuator history."""
+    for sender,reply in replies.items():
+        if reply and reply['message']:
+            for receiver in ROBOTS:
+                if receiver!=sender:
+                    inbox[receiver].append({'from_robot':sender,'message':reply['message'],'turn':turn})
+
+
 def evaluate(scene):
     """Call after decisions are disabled. Output only, independent of claims."""
     import mujoco
@@ -191,7 +200,7 @@ def run(args):
                     partial(validate_reply,plan_hash=req['plan_hash'],stage=req['stage'],robot_id=rid))
             batch={r:f.result() for r,f in futures.items()};replies={r:v[0] for r,v in batch.items()}
             for reply,stop,records in batch.values():team.calls.extend(records)
-            gate.batch(replies,now_s=scene.time());team.save()
+            gate.batch(replies,now_s=scene.time());relay_messages(team.inbox,replies,turn);team.save()
             previous=frames
             row={'turn':turn,'at_s':scene.time(),'tasks':{tid:j['phase'] if j['phase']=='APPROACH' else j['stage'].sync.stage for tid,j in gate.active.items()},
                  'replies':replies,'protocol':gate.summary()}
