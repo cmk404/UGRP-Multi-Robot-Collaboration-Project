@@ -1,0 +1,33 @@
+{
+  "source": "candidate5 failed B trial and candidate4 failed north-box trial; read-only diagnosis",
+  "translation": {
+    "old_mask_saturation": 105,
+    "revised_mask_saturation": 150,
+    "candidate5_last_measured_skew_px": 3.5871616256100207,
+    "same_rgb_revised_skew_px": 1.411014798935285,
+    "reference_only_actual_beam_axis_deg": 0.40380392235285606,
+    "reference_only_time_s": 97.86,
+    "referee_used_for_control": false
+  },
+  "box": {
+    "old_high_saturation_mask_area_ratio": 1.1291642216447313,
+    "unchanged_allowed_area_ratio": [
+      0.9,
+      1.1
+    ],
+    "bright_face_hsv_saturation_range": [
+      143,
+      157
+    ],
+    "bright_face_value_range": [
+      253,
+      255
+    ],
+    "background_top_value_range": [
+      135,
+      163
+    ],
+    "change": "restore narrow-hue bright cyan pixels while keeping dark floor excluded; no threshold relaxation or failed-probe acceptance"
+  },
+  "scope": "Offline measurements diagnose segmentation, not physical success. Final frozen cohort is separate."
+}

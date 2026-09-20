@@ -1,0 +1,272 @@
+{
+  "playback_speed": 4,
+  "alignment": "Original SIM timestamp OCR, validated against referee clock; stream sample-and-hold, no interpolation. Each source freezes after beam release or actual end, with a label. Cropped to loaded carry; original complete videos retained.",
+  "cases": [
+    {
+      "case": "open-minus",
+      "path": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/video-v2/open-minus-comparison-4x.mp4",
+      "sha256": "d618258681f3b29782f82b0a714131154ed505c80d1ab6599be6f81e3e4a7598",
+      "duration_s": 26.75,
+      "start_sim_s": 58.9600000001929,
+      "end_sim_s": 161.60999999795962,
+      "sources": [
+        {
+          "condition": "teacher",
+          "video_sha256": "b60ed69113558698ae20930b646ef750e38c25a30a3f4963a605ba1f35ea1629",
+          "source": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/teacher/open-minus/execution.mp4",
+          "freeze_sim_s": 87.50999999971184
+        },
+        {
+          "condition": "20260918",
+          "video_sha256": "6672ac19d23a8f3027b1f78b74c7f88bdd90e78ae7e36628fab07cae05e2a7e0",
+          "source": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260918/open-minus/execution.mp4",
+          "freeze_sim_s": 84.40999999978514
+        },
+        {
+          "condition": "20260919",
+          "video_sha256": "f80e9709ec75f9fadfbf26ff254c028277b3b300f027a7c17a4afbae2dd24df7",
+          "source": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260919/open-minus/execution.mp4",
+          "freeze_sim_s": 161.60999999795962
+        }
+      ],
+      "qa": [
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/video-v2/open-minus-qa-0000.jpg",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/video-v2/open-minus-qa-0080.jpg",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/video-v2/open-minus-qa-0160.jpg",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/video-v2/open-minus-qa-0320.jpg"
+      ],
+      "qa_timestamp_checks": [
+        {
+          "frame": 0,
+          "condition": "teacher",
+          "observed_sim_s": 58.8,
+          "expected_sim_s": 58.8,
+          "raw_frame_index": 230,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 0,
+          "condition": "20260918",
+          "observed_sim_s": 58.8,
+          "expected_sim_s": 58.8,
+          "raw_frame_index": 230,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 0,
+          "condition": "20260919",
+          "observed_sim_s": 58.8,
+          "expected_sim_s": 58.8,
+          "raw_frame_index": 230,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 80,
+          "condition": "teacher",
+          "observed_sim_s": 85.55,
+          "expected_sim_s": 85.55,
+          "raw_frame_index": 337,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 80,
+          "condition": "20260918",
+          "observed_sim_s": 84.3,
+          "expected_sim_s": 84.3,
+          "raw_frame_index": 332,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 80,
+          "condition": "20260919",
+          "observed_sim_s": 85.55,
+          "expected_sim_s": 85.55,
+          "raw_frame_index": 337,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 160,
+          "condition": "teacher",
+          "observed_sim_s": 87.3,
+          "expected_sim_s": 87.3,
+          "raw_frame_index": 344,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 160,
+          "condition": "20260918",
+          "observed_sim_s": 84.3,
+          "expected_sim_s": 84.3,
+          "raw_frame_index": 332,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 160,
+          "condition": "20260919",
+          "observed_sim_s": 112.05,
+          "expected_sim_s": 112.05,
+          "raw_frame_index": 443,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 320,
+          "condition": "teacher",
+          "observed_sim_s": 87.3,
+          "expected_sim_s": 87.3,
+          "raw_frame_index": 344,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 320,
+          "condition": "20260918",
+          "observed_sim_s": 84.3,
+          "expected_sim_s": 84.3,
+          "raw_frame_index": 332,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 320,
+          "condition": "20260919",
+          "observed_sim_s": 161.55,
+          "expected_sim_s": 161.55,
+          "raw_frame_index": 641,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        }
+      ],
+      "decoded_entire_video": true
+    },
+    {
+      "case": "turn-minus",
+      "path": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/video-v2/turn-minus-comparison-4x.mp4",
+      "sha256": "b490e3420e1f8e696ac68e96ecf0d5a6432b924a2037703ea1192d77fac66296",
+      "duration_s": 46.5,
+      "start_sim_s": 207.15999999681748,
+      "end_sim_s": 388.8,
+      "sources": [
+        {
+          "condition": "teacher",
+          "video_sha256": "0bf5b6c25c0fd0726fa4cc84321a7cce631738952d76f13699f81017c57bf351",
+          "source": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/teacher/turn-minus/execution.mp4",
+          "freeze_sim_s": 295.60999999479094
+        },
+        {
+          "condition": "20260918",
+          "video_sha256": "dd567cbed68a729ae64e8d7131a996454a9e64b643a100fa33b97cdb8f2a5bc7",
+          "source": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260918/turn-minus/execution.mp4",
+          "freeze_sim_s": 388.8
+        },
+        {
+          "condition": "20260919",
+          "video_sha256": "f3833063a8ad863d801d413432c223939cf6ea972866b1dea9c56e0280dedf31",
+          "source": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260919/turn-minus/execution.mp4",
+          "freeze_sim_s": 388.8
+        }
+      ],
+      "qa": [
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/video-v2/turn-minus-qa-0000.jpg",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/video-v2/turn-minus-qa-0139.jpg",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/video-v2/turn-minus-qa-0279.jpg",
+        "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/video-v2/turn-minus-qa-0557.jpg"
+      ],
+      "qa_timestamp_checks": [
+        {
+          "frame": 0,
+          "condition": "teacher",
+          "observed_sim_s": 207.05,
+          "expected_sim_s": 207.05,
+          "raw_frame_index": 823,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 0,
+          "condition": "20260918",
+          "observed_sim_s": 207.05,
+          "expected_sim_s": 207.05,
+          "raw_frame_index": 823,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 0,
+          "condition": "20260919",
+          "observed_sim_s": 207.05,
+          "expected_sim_s": 207.05,
+          "raw_frame_index": 823,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 139,
+          "condition": "teacher",
+          "observed_sim_s": 253.3,
+          "expected_sim_s": 253.3,
+          "raw_frame_index": 1008,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 139,
+          "condition": "20260918",
+          "observed_sim_s": 253.3,
+          "expected_sim_s": 253.3,
+          "raw_frame_index": 1008,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 139,
+          "condition": "20260919",
+          "observed_sim_s": 253.3,
+          "expected_sim_s": 253.3,
+          "raw_frame_index": 1008,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 279,
+          "condition": "teacher",
+          "observed_sim_s": 295.55,
+          "expected_sim_s": 295.55,
+          "raw_frame_index": 1177,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 279,
+          "condition": "20260918",
+          "observed_sim_s": 300.05,
+          "expected_sim_s": 300.05,
+          "raw_frame_index": 1195,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 279,
+          "condition": "20260919",
+          "observed_sim_s": 300.05,
+          "expected_sim_s": 300.05,
+          "raw_frame_index": 1195,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 557,
+          "condition": "teacher",
+          "observed_sim_s": 295.55,
+          "expected_sim_s": 295.55,
+          "raw_frame_index": 1177,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 557,
+          "condition": "20260918",
+          "observed_sim_s": 388.8,
+          "expected_sim_s": 388.8,
+          "raw_frame_index": 1550,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        },
+        {
+          "frame": 557,
+          "condition": "20260919",
+          "observed_sim_s": 388.8,
+          "expected_sim_s": 388.8,
+          "raw_frame_index": 1550,
+          "verification": "Original selected frame header OCR before display resize; large panel time uses same timestamp."
+        }
+      ],
+      "decoded_entire_video": true
+    }
+  ]
+}

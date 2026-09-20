@@ -1,0 +1,38 @@
+{
+  "scope": "Offline archived RGB replay and output-only referee comparison; not new physical success. Projection error includes feature-plane/occlusion bias.",
+  "background_memory": "First carry TOP frame suppresses unchanged floor pixels only outside initial occupied patch.",
+  "offline_replay": [
+    {
+      "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-background-c11-F4.json",
+      "sha256": "5a022b71be92de0cdc26df2677893b00fed74cf079d752a3a6004ef96c495792",
+      "frames": 150,
+      "median_error_px": 4.3091529393391825,
+      "max_error_px": 8.494325667027097
+    },
+    {
+      "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-background-c11-F5.json",
+      "sha256": "1f0a0c52ac2b2afbf09b5037b8a10a3a8748183425eb096bf2d6748f0f858115",
+      "frames": 323,
+      "median_error_px": 6.046047060007702,
+      "max_error_px": 15.031638347002769
+    },
+    {
+      "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-background-c11-F2.json",
+      "sha256": "d30cc535022bc042a1aa9328fc5a6ef98f8ba1429a1c56c8e0231a483e91ae07",
+      "frames": 250,
+      "median_error_px": 5.554454155435975,
+      "max_error_px": 13.488385585059875
+    },
+    {
+      "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/box-background-c6-F5.json",
+      "sha256": "49d87aeb874c38e71c5940e3c8bbebf1b3530e58c1e56687f4c9310ea74810d9",
+      "frames": 470,
+      "median_error_px": 2.949452207201939,
+      "max_error_px": 6.782903795939362
+    }
+  ],
+  "physical_followup": "Candidate12 F4 box released stably inside slot, obstacle contacts zero; E2E stopped at chassis acquisition after release. Preserved as failure.",
+  "yield_root_cause": "Cargo fragment centre is a rough and biased chassis hint. Tight axis-aligned crop cut off a wheel row and included arm pixels.",
+  "yield_repair": "Keep strict four-corner geometry and require spatial/heading consensus after refinement in bounded neighbourhood. Commands are not a pose estimate.",
+  "negative_test": "Removing complete lower wheel row rejects acquisition. Unchanged repeated frame does not move observed chassis."
+}

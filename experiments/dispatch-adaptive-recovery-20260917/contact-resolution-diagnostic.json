@@ -1,0 +1,156 @@
+{
+  "teacher_only": true,
+  "source_sha": "ce3bc9578175d84fc22b86570a79f989109fbc49",
+  "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-contact-resolution-20260918",
+  "scope": "Privileged pose fixture and archived grasp commands; separate from student RGB-only E2E. Four bounded runs, not statistical confidence or hardware calibration.",
+  "change": {
+    "timestep_s": [
+      0.0005,
+      0.00025
+    ],
+    "pair_solreffriction": [
+      "0 -3000",
+      "0 -6000"
+    ],
+    "unchanged": [
+      "friction coefficients and cones",
+      "normal contact parameters",
+      "geometry and masses",
+      "actuator force limits and grasp commands",
+      "camera pose and FOV",
+      "weld OFF",
+      "global NoSlip OFF"
+    ]
+  },
+  "cases": [
+    {
+      "contact_solver_profile": "local_contact",
+      "moving": false,
+      "hold_s": 150.0,
+      "hold_start_sim_s": 14.760000000006547,
+      "opened_release_height": 0.019951425052399472,
+      "final_height": 0.019951425052399472,
+      "min_height": 0.01895706833938949,
+      "floor_contact_samples": 619,
+      "clock_continuous": true,
+      "weld_steps": 0,
+      "obstacle_contact_steps": 0,
+      "physics_warnings": {},
+      "wall_s": 60.85558591700101,
+      "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-contact-resolution-20260918/baseline/local_contact-move-0/teacher-only.json",
+      "sha256": "90f35ed4863ca32ebb253095ec90f8ee6742ba533544e8b44c8be9f0aa099c77",
+      "first_floor_contact_held_s": 88.2,
+      "final_bilateral_contacts": {
+        "r3": false,
+        "r1": false
+      },
+      "heights_at_s": {
+        "2.2": 0.09763128273897827,
+        "10": 0.0958643023762724,
+        "50": 0.08639993557205086,
+        "100": 0.051535793957145,
+        "150": 0.019951425052399472
+      }
+    },
+    {
+      "contact_solver_profile": "local_contact_fine",
+      "moving": false,
+      "hold_s": 150.0,
+      "hold_start_sim_s": 14.759999999988276,
+      "opened_release_height": 0.019951425052399312,
+      "final_height": 0.08039943269637188,
+      "min_height": 0.08039943269637188,
+      "floor_contact_samples": 0,
+      "clock_continuous": true,
+      "weld_steps": 0,
+      "obstacle_contact_steps": 0,
+      "physics_warnings": {},
+      "wall_s": 117.18746045899752,
+      "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-contact-resolution-20260918/fine/local_contact_fine-move-0/teacher-only.json",
+      "sha256": "f8bb20d4ead98ba76e34c3095b44f8e4b76fe20187a87086eab8962267bfb4ed",
+      "first_floor_contact_held_s": null,
+      "final_bilateral_contacts": {
+        "r3": true,
+        "r1": true
+      },
+      "heights_at_s": {
+        "2.2": 0.0974464255841101,
+        "10": 0.09717922406905646,
+        "50": 0.09256659689906724,
+        "100": 0.08650960160101454,
+        "150": 0.08039943269637188
+      }
+    },
+    {
+      "contact_solver_profile": "local_contact",
+      "moving": true,
+      "hold_s": 31.0,
+      "hold_start_sim_s": 14.760000000006547,
+      "opened_release_height": 0.019951425052399455,
+      "final_height": 0.09107365230308617,
+      "min_height": 0.09107365230308617,
+      "floor_contact_samples": 0,
+      "clock_continuous": true,
+      "weld_steps": 0,
+      "obstacle_contact_steps": 0,
+      "physics_warnings": {},
+      "wall_s": 16.10003329099709,
+      "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-contact-resolution-20260918/moving/local_contact-move-1/teacher-only.json",
+      "sha256": "e701637de7e1b20a5f6acd1f26d31c0332c7038e8b27c696e3844d87ff663a0f",
+      "first_floor_contact_held_s": null,
+      "final_bilateral_contacts": {
+        "r3": true,
+        "r1": true
+      },
+      "heights_at_s": {
+        "2.2": 0.09767530021649944,
+        "10": 0.09586321663757341,
+        "31": 0.09107365230308617
+      },
+      "beam_xy_displacement_first_to_13_5_s_m": 1.1058012493919176
+    },
+    {
+      "contact_solver_profile": "local_contact_fine",
+      "moving": true,
+      "hold_s": 31.0,
+      "hold_start_sim_s": 14.759999999988276,
+      "opened_release_height": 0.01995142505239928,
+      "final_height": 0.09472667123342693,
+      "min_height": 0.09361961314760585,
+      "floor_contact_samples": 0,
+      "clock_continuous": true,
+      "weld_steps": 0,
+      "obstacle_contact_steps": 0,
+      "physics_warnings": {},
+      "wall_s": 28.43736708399956,
+      "raw_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-contact-resolution-20260918/moving/local_contact_fine-move-1/teacher-only.json",
+      "sha256": "c5b3696118d3735f590f5853a9652bee2e06ba6d51f6036c6841318cbe52647c",
+      "first_floor_contact_held_s": null,
+      "final_bilateral_contacts": {
+        "r3": true,
+        "r1": true
+      },
+      "heights_at_s": {
+        "2.2": 0.0975159276750298,
+        "10": 0.09719499202609655,
+        "31": 0.09472667123342693
+      },
+      "beam_xy_displacement_first_to_13_5_s_m": 1.1057387222619173
+    }
+  ],
+  "interpretation": "Stationary baseline first contacted floor at 88.2 s. Fine profile held 150 s without floor contact and released on opening. Both moving profiles displaced the beam about 1.106 m with no floor contact. Fine profile reduces finite soft-contact creep; this does not prove indefinite retention or contact between recorded samples.",
+  "reference": "https://mujoco.readthedocs.io/en/latest/modeling.html#preventing-slip",
+  "decision": "Validate local_contact_fine as the next full E2E candidate; do not reuse earlier local_contact successes as final evidence.",
+  "manual_visual_review": [
+    {
+      "path": "qa/teacher-fine-hold-1499.jpg",
+      "sha256": "39ccb914c78cb425b1228c6e47a0adeefa630b19cf2c646fa82ec70cbe47f492",
+      "scope": "Selected overview inspected; contact/height evidence separately from teacher output."
+    },
+    {
+      "path": "qa/teacher-fine-opened-release.jpg",
+      "sha256": "0e914f7944d7b11e6af08c149d69ab1ac948f18bcb686643a8b7d2c53611aea2",
+      "scope": "Selected overview inspected; contact/height evidence separately from teacher output."
+    }
+  ]
+}

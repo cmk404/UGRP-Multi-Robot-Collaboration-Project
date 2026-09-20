@@ -32,14 +32,14 @@ def _invisible(target_id: str, reason: str, image_size=None, **details):
     return result
 
 
-def _cyan_components(frame: np.ndarray):
+def _cyan_components(frame: np.ndarray, *, min_saturation=65):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     # Saved seed-46 release views put the cyan cargo at H>=73.  Exact-H72
     # pixels occur along the dark lower/reflection boundary and change the
     # fitted silhouette with camera pan.  Exclude that measured edge while
     # retaining the existing H104 blue-floor boundary. Projection, ambiguity,
     # and ground-stationarity checks remain independent and unchanged.
-    mask = cv2.inRange(hsv, np.asarray((73, 65, 45)), np.asarray((104, 255, 245)))
+    mask = cv2.inRange(hsv, np.asarray((73, min_saturation, 45)), np.asarray((104, 255, 245)))
     kernel = np.ones((3, 3), np.uint8)
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
@@ -343,7 +343,7 @@ def _fit_floor_cuboid(component, origin, axes, k, d, dimensions, image_shape, *,
 
 
 def observe_ground_box(image, servo_pose: Mapping[int | str, int | float],
-                       target_id: str = "small_box_01", *, refine_position=False) -> dict[str, Any]:
+                       target_id: str = "small_box_01", *, refine_position=False, min_saturation=65) -> dict[str, Any]:
     """Estimate one upright cyan cuboid center conditional on a floor hypothesis.
 
     ``target_id`` selects known catalog dimensions; cyan pixels do not decode
@@ -356,7 +356,8 @@ def observe_ground_box(image, servo_pose: Mapping[int | str, int | float],
     fit_floor = partial(_fit_floor_cuboid,refine_position=True) if refine_position else _fit_floor_cuboid
     frame = _decode_jpeg(image)
     height, width = frame.shape[:2]
-    components, clipped = _cyan_components(frame)
+    if not 65 <= min_saturation <= 150:raise ValueError("unsupported floor silhouette saturation")
+    components, clipped = _cyan_components(frame,min_saturation=min_saturation)
     origin, axes = camera_extrinsics(servo_pose)
     origin = np.asarray(origin, np.float64)
     axes = np.asarray(axes, np.float64)

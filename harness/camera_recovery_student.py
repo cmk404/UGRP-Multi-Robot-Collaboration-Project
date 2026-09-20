@@ -232,6 +232,20 @@ def predict_recovery(model: dict[str, Any], own_jpeg: bytes, top_jpeg: bytes,
         if np.max(np.abs(components[:,~mask])) > 1e-8:
             raise ValueError('background band removes a learned visual direction')
         difference[~mask] = 0.
+    roi=model.get('constant_background_top_roi')
+    if roi is not None:
+        # Dispatch's task-local window includes the complete learned shaft and
+        # both grippers, plus a two-cell horizontal guard band. Far scenery is
+        # used by navigation, not by this local inverse arm model. Keep own RGB
+        # and every learned direction; the novelty limits remain unchanged.
+        if roi != [12,6,20,19]:raise ValueError('unsupported constant-background TOP window')
+        own_count=2*(OWN_SIZE[0]//POOL)*(OWN_SIZE[1]//POOL)
+        yy,xx=np.indices((TOP_SIZE[1]//POOL,TOP_SIZE[0]//POOL))
+        keep=(xx>=roi[0])&(xx<roi[2])&(yy>=roi[1])&(yy<roi[3])
+        mask=np.r_[np.ones(own_count,dtype=bool),np.tile(keep.ravel(),2)]
+        if np.max(np.abs(components[:,~mask]))>1e-8:
+            raise ValueError('background window removes a learned visual direction')
+        difference[~mask]=0.
     feature_error = float(np.linalg.norm(difference) / math.sqrt(len(difference)))
     coordinate = difference @ components.T
     orthogonal_residual = float(np.linalg.norm(difference - coordinate @ components))

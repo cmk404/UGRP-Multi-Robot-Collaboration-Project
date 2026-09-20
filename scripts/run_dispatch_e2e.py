@@ -70,6 +70,8 @@ class Referee:
         end = samples[-1]['sim_time_s']
         tail = [s for s in samples if s['sim_time_s'] >= end-1.05]
         stable_window = len(tail)>1 and tail[-1]['sim_time_s']-tail[0]['sim_time_s']>=.99
+        from harness.dispatch_evaluation import carry_clearance
+        clearance = carry_clearance(samples, self.scene.command_history, plan)
         results = {}
         for obj in self.geoms:
             initial = np.array(samples[0]['cargo'][obj]['position'])
@@ -87,7 +89,10 @@ class Referee:
                  'inside_slot_at_end':inside(samples[-1]),
                  'released_supported_stable':bool(retained and all(inside(s) and s['cargo'][obj]['floor_contact']
                      and not s['cargo'][obj]['robot_contact'] for s in tail))}
-            r['physical_success'] = bool(lifted and r['released_supported_stable'] and not any(s['weld'] for s in samples))
+            r['carry_clearance'] = clearance.get(obj, {'sampled_continuous_clearance': False})
+            r['physical_success'] = bool(lifted and r['released_supported_stable']
+                and r['carry_clearance']['sampled_continuous_clearance']
+                and not any(s['weld'] for s in samples))
             results[obj] = r
         distance = {r:sum(np.linalg.norm(np.array(b['robots'][r])[:2]-np.array(a['robots'][r])[:2])
                          for a,b in zip(samples,samples[1:])) for r in ROBOTS}
@@ -285,12 +290,21 @@ def main():
     p.add_argument('--max-input-tokens',type=int,default=500000)
     p.add_argument('--max-quiet-rounds',type=int,default=4)
     p.add_argument('--plan-replay',type=Path,help='diagnostic only: replay a saved agreed plan with fixture votes')
+    p.add_argument('--live-replan',action='store_true',help='diagnostic only: after rejecting a fixture plan, require actual LLM re-negotiation')
     p.add_argument('--executor',choices=('skills','raw'),default='skills')
-    p.add_argument('--contact-profile',choices=('legacy','global_noslip','local_contact'),default='local_contact',help='skills only: explicit simulation contact solver profile')
+    p.add_argument('--contact-profile',choices=('legacy','global_noslip','local_contact','local_contact_fine'),default='local_contact_fine',help='skills only: explicit simulation contact solver profile')
     p.add_argument('--grasp-model-dir',type=Path)
     p.add_argument('--stage-model-dir',type=Path)
+    p.add_argument('--carry-act-model',type=Path,help='replace loaded beam motion only')
+    p.add_argument('--carry-act-python',type=Path)
+    p.add_argument('--carry-act-max-steps',type=int,default=900)
+    p.add_argument('--spawn-offset',type=float,nargs=3,default=[0.,0.,0.],metavar=('DX','DY','YAW_DEG'),help='setup-only paired comparison perturbation; never actor input')
+    p.add_argument('--video-fps',type=int,default=10)
     p.add_argument('--reference-top',type=Path,default=ROOT/'tests/fixtures/camera_goal_transport/reference-top.jpg')
     args = p.parse_args()
+    if args.carry_act_model and not args.carry_act_python:p.error('ACT interpreter required')
+    if args.live_replan and (not args.plan_replay or args.executor!='skills'):
+        p.error('--live-replan requires a skills --plan-replay diagnostic')
     if args.output.exists():p.error('output exists; choose a new directory')
     if min(args.rounds,args.timeout,args.max_wall_s,args.max_input_tokens,args.max_quiet_rounds)<=0:p.error('positive budgets required')
     if args.executor=='skills':
