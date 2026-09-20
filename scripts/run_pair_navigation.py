@@ -246,8 +246,8 @@ def main():
     parser.add_argument('--grasp-model-dir', type=Path, required=True)
     parser.add_argument('--out-dir', type=Path, required=True)
     parser.add_argument('--budget', type=int, default=750)
-    parser.add_argument('--vision-mode', choices=('legacy','temporal','temporal-edges'), default='legacy',
-                        help='explicit temporal tracking/recovery comparison; legacy remains reproducible')
+    parser.add_argument('--vision-mode', choices=('legacy','temporal','temporal-edges','robust'), default='legacy',
+                        help='explicit vision/control comparison; robust adds wheel geometry and own-view carry guard')
     parser.add_argument('--impratio', type=int, choices=(1, 10, 100), default=1,
                         help='explicit friction impedance comparison; default preserves main')
     args = parser.parse_args()
