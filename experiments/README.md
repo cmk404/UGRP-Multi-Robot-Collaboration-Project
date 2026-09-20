@@ -1,5 +1,10 @@
 # 실험 인덱스
 
+현재 코드의 진입점은 [현재 상태](../docs/current_status.md)를 참고한다. 아래는 실행 SHA별 보존 기록이며 과거 실패와 후속 결과를 함께 남긴다. 필요한 ID만 골라 읽는다.
+
+- [공동 출하 복구: 목적지·장애물 6조건 새 LLM 계획과 물리 E2E 성공](dispatch-adaptive-recovery-20260917/README.md) — 이전 1/6 이후의 최종 비교, 조건당 1회.
+- [2026-09-18 ACT 공동 운반 비교](2026-09-18-act-pair-carry/README.md) — 운반 진입 조건 교사 3/3, ACT 1/3·0/3, 네 번째 조건 접근 중단.
+
 - [2026-09-17 목적지·지형 확대 E2E: 기본 A 성공, B 영상 인식 실패, 4개 지형 실행 거부](dispatch-variation-e2e-20260917/README.md)
 - [2026-09-17 공동 출하 스킬 통합: 실제 새 LLM 계획부터 두 화물 방출까지](dispatch-skill-integration-20260917/README.md)
 
