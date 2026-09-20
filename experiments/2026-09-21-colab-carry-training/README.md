@@ -78,3 +78,9 @@ print(Path('/content/carry-training.log').read_text()[-2000:])
 저장되므로 파일 복사 시 온전한 이전/최신 checkpoint 중 하나를 얻는다.
 Colab VM이 종료되기 전에 회수해야 하며 자동 영구 백업은 아니다.
 명시적인 중지 요청 때만 `/content/act-env/bin/python /content/ugrp-source-v3/scripts/ugrp_session.py stop colab-carry-cohort`로 이 세션을 정리한다.
+
+최종 재현 번들은 로컬 `outputs/colab/carry-final.zip` 및 `carry-final.manifest.json`이다.
+실행 소스9aef6bb와 원본 데이터를 함께 묶고 다시 풀어 전체 해시를 검증했다.
+01:28 KST 마지막 확인은 첫 모델 feature cache 준비 중(프로세스 생존)이었다.
+이후 Mac 잠금으로 Chrome 접근이 막혀 후속 진행률은 확인하지 못했다.
+중지 명령은 보내지 않았으며 최종 모델 회수는 아직 0개다.
