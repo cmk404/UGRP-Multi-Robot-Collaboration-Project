@@ -3,6 +3,7 @@
 from __future__ import annotations
 import argparse
 import copy
+import concurrent.futures
 import hashlib
 import json
 import math
@@ -19,7 +20,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from harness.jev_motion import post
 from harness.jev_skill_motion import (SkillObserver,SkillController,request,parse_answer,
-    reference_choice,bounded_command,DT)
+    reference_choice,bounded_command,request_compatible,DT)
 from harness.camera_motion_identity import ImageMotionIdentity
 from scripts.run_jev_motion import Scene,write,physical_goal_confirmed
 from sim.research_dispatch_arena import episode,digest
@@ -91,6 +92,8 @@ class ChallengeScene(Scene):
                 gid=mujoco.mj_name2id(w.model,mujoco.mjtObj.mjOBJ_GEOM,name)
                 self.event_geoms[name]=(gid,window,w.model.geom_pos[gid].copy(),int(w.model.geom_contype[gid]),int(w.model.geom_conaffinity[gid]))
         self.update_environment()
+
+
         return self
 
     def update_environment(self):
@@ -118,6 +121,37 @@ class ChallengeScene(Scene):
         self.update_environment()
 
 
+def post_continuous(scene,observer,control,body,url,key,rows,label,sim_deadline):
+    """Keep physics and RGB alive while one network request is outstanding.
+
+    An expired decision is braked during inference; this is a continuous-clock
+    stress test, not a claim of uninterrupted high-rate autonomous driving.
+    """
+    latest=None
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+        pending=pool.submit(post,body,url,key,30)
+        i=0
+        while not pending.done() and float(scene.world.data.time)<sim_deadline:
+            start=time.monotonic()
+            scene.issue(bounded_command())
+            frames=scene.capture(f'{label}-wait-{i:03}')['r2']
+            row={'tick':label,'wait_index':i,'observed_at_sim_s':float(scene.world.data.time),
+                 'images':{k:frames[k] for k in ('own_rgb','shared_top_rgb')},
+                 'command':bounded_command(),'decision_source':'inference_brake','execution_source':'inference_brake'}
+            try:
+                o=observer.observe(frames['own_bytes'],frames['top_bytes'])
+                control.done=control.gate.update(o)
+                latest=(frames,o,float(scene.world.data.time))
+                row['observation']=o
+            except ValueError as exc:
+                row['observation']={'valid':False,'reason':str(exc)}
+                observer.recent.clear();control.gate.count=0;latest=None
+            rows.append(row);write(scene.out/'turns.json',rows)
+            i+=1
+            time.sleep(max(0.,DT-(time.monotonic()-start)))
+        response=pending.result()
+    return response,latest
+
 def run_trial(args,case,policy,key,source):
     import cv2
     import numpy as np
@@ -128,7 +162,7 @@ def run_trial(args,case,policy,key,source):
     rows=[];started=time.monotonic()
     result={'source_sha':source,'policy':policy,'arm':args.arm,'case':args.case,'success':False,
         'stop_reason':None,'error':None,'model_calls':0,'input_tokens':0,'output_tokens':0,'cost_usd':None,
-        'clock':'paused SIM during inference','scope':'RGB approach, route selection and recovery; no grasp/carry',
+        'clock':getattr(args,'clock','paused'),'scope':'RGB approach, route selection and recovery; no grasp/carry',
         'interventions':{},'limits':{'sim_s':args.max_sim_s,'calls':args.max_calls,'wall_s':args.max_wall_s,'input_tokens':args.max_input_tokens}}
     try:
         scene.open();write(out/'setup-only.json',config);write(out/'case-setup-only.json',case)
@@ -177,7 +211,15 @@ def run_trial(args,case,policy,key,source):
                     if result['input_tokens']+6000>args.max_input_tokens:result['stop_reason']='input_budget';break
                     body=request(state,policy,decomposed=args.arm!='single')
                     row['request']=body;write(out/f'{tick:03}-request.json',body)
-                    response=post(body,'https://api.typesafe.ai/v1/systemone' if policy=='jev' else args.gemini_url,key if policy=='jev' else None,30)
+                    url='https://api.typesafe.ai/v1/systemone' if policy=='jev' else args.gemini_url
+                    origin=row
+                    if getattr(args,'clock','paused')=='continuous':
+                        origin['execution_source']='request_only';rows.append(origin)
+                        response,latest=post_continuous(scene,observer,control,body,url,key if policy=='jev' else None,
+                            rows,f'{tick:03}',start_sim+args.max_sim_s)
+                    else:
+                        response=post(body,url,key if policy=='jev' else None,30)
+                        latest=None
                     row['response']=response;write(out/f'{tick:03}-response.json',response)
                     result['model_calls']+=1
                     if response['status']!='ok':
@@ -188,6 +230,22 @@ def run_trial(args,case,policy,key,source):
                     answers,confidence=parse_answer(b,policy,state,decomposed=args.arm!='single')
                     row['answers']=answers;row['confidence']=confidence;chosen=answers['action']
                     row['decision_source']=policy
+                    if getattr(args,'clock','paused')=='continuous':
+                        fresh=control.state(latest[1]) if latest else None
+                        age=float(scene.world.data.time)-origin['observed_at_sim_s']
+                        origin['response_received_sim_s']=float(scene.world.data.time)
+                        if fresh is None or age>4. or not request_compatible(state,fresh):
+                            origin['discard_reason']='missing_changed_or_expired_RGB_context'
+                            control.active=None;control.path=[]
+                            write(out/'turns.json',rows)
+                            continue
+                        frames,o,observed=latest;state=fresh
+                        row={'tick':tick,'observed_at_sim_s':observed,'images':{k:frames[k] for k in ('own_rgb','shared_top_rgb')},
+                             'observation':o,'state':state,'answers':answers,'confidence':confidence,
+                             'decision_source':policy,'request_origin_tick':origin['tick'],'response_age_sim_s':age}
+                        if control.done:
+                            row.update(command=bounded_command(),execution_source='RGB_completion')
+                            rows.append(row);scene.issue(bounded_command());result['stop_reason']='RGB_goal_confirmed';break
                     if answers.get('evidence')=='observe_again' and args.arm!='primitive':
                         chosen='hold_and_observe';row['decision_source']='model_requested_reobserve'
                 control.select(chosen,o,confidence if args.arm!='single' else None)
@@ -229,6 +287,7 @@ def main():
     p.add_argument('--output',type=Path,required=True);p.add_argument('--case',choices=list(DEVELOPMENT)+list(HOLDOUT),default='dev_open')
     p.add_argument('--policy',choices=['rule','jev','gemini'],default='rule')
     p.add_argument('--arm',choices=['full','always','primitive','single'],default='full')
+    p.add_argument('--clock',choices=['paused','continuous'],default='paused')
     p.add_argument('--execute',action='store_true');p.add_argument('--stdin-key',action='store_true')
     p.add_argument('--max-sim-s',type=float,default=90);p.add_argument('--max-wall-s',type=float,default=600)
     p.add_argument('--max-calls',type=int,default=100);p.add_argument('--max-input-tokens',type=int,default=240000)

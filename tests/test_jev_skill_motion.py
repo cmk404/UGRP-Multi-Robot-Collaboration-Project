@@ -115,6 +115,24 @@ class TestSkillMotion(unittest.TestCase):
         candidates=c.describe(self.observation(range_m=.275,bearing_deg=0.))
         self.assertEqual(set(candidates),{'hold_and_observe'})
 
+    def test_stale_decision_rejected_on_goal_or_route_change(self):
+        from harness.jev_skill_motion import request_compatible
+        c=SkillController(episode('open')['static_map'])
+        old=c.state(self.observation());new=copy.deepcopy(old)
+        self.assertTrue(request_compatible(old,new))
+        new['observation']['distance']='near'
+        self.assertFalse(request_compatible(old,new))
+        new=copy.deepcopy(old);new['candidates'].pop('direct')
+        self.assertFalse(request_compatible(old,new))
+
+    def test_frozen_cohorts_are_unique_and_repeatable(self):
+        from scripts.run_jev_skill_cohort import plan
+        for phase,count in [('holdout',108),('regression',36),('ablation',48),('continuous',16)]:
+            jobs,_=plan(phase)
+            self.assertEqual(len(jobs),count)
+            self.assertEqual(len({j['trial_id'] for j in jobs}),count)
+            self.assertEqual(jobs,plan(phase)[0])
+
     def test_primitive_ablation_really_uses_fixed_motor_action(self):
         c=SkillController(episode('open')['static_map'],primitive=True)
         o=self.observation(range_m=.283);state=c.state(o)

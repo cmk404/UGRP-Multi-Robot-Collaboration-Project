@@ -23,6 +23,7 @@ def plan(phase,policies=('rule','jev','gemini'),dev_cases=None):
     if phase=='development':groups=[('full',dev_cases or list(DEVELOPMENT),1,policies)]
     elif phase=='holdout':groups=[('full',list(HOLDOUT),3,policies)]
     elif phase=='regression':groups=[('full',[k for k in setup if k.startswith('legacy-')],1,policies)]
+    elif phase=='continuous':groups=[('full',['open01','known01','occluded01','temporary01'],2,[p for p in policies if p!='rule'])]
     elif phase=='ablation':
         models=[p for p in policies if p!='rule']
         groups=[('primitive',['open01','open02','yaw01','yaw02'],2,models),
@@ -55,7 +56,7 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--output',type=Path,required=True);p.add_argument('--mjpython',type=Path)
     p.add_argument('--worker',type=int);p.add_argument('--workers',type=int,default=4,choices=range(1,5))
-    p.add_argument('--phase',choices=['development','holdout','ablation','regression'],default='development')
+    p.add_argument('--phase',choices=['development','holdout','ablation','regression','continuous'],default='development')
     p.add_argument('--policies',nargs='+',choices=['rule','jev','gemini'],default=['rule','jev','gemini'])
     p.add_argument('--dev-cases',nargs='+',choices=list(DEVELOPMENT))
     p.add_argument('--execute',action='store_true')
@@ -68,8 +69,10 @@ def main():
     jobs,cases=plan(args.phase,args.policies,args.dev_cases)
     protocol={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         'phase':args.phase,'jobs':jobs,'case_setup':cases,'workers':args.workers,
-        'limits':{'max_sim_s':90.,'max_wall_s':600.,'max_calls':120,'max_input_tokens':240000},
-        'clock':'paused SIM during inference','repeats':'identical physics; fresh API repeats, not independent layouts',
+        'limits':{'max_sim_s':90.,'max_wall_s':1200.,'max_calls':400,'max_input_tokens':1000000,
+                  'clock':'continuous' if args.phase=='continuous' else 'paused'},
+        'clock':'continuous with expired-skill braking' if args.phase=='continuous' else 'paused SIM during inference',
+        'repeats':'identical physics; fresh API repeats, not independent layouts',
         'failures':'all enumerated jobs retained; no retries or holdout filtering',
         'cost_usd':None,'boundary':'RGB-only control, authored prior map, own commands; referee and event schedule output-only'}
     args.output.mkdir(parents=True);write(args.output/'protocol.json',protocol)

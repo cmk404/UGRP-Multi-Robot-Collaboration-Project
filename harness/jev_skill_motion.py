@@ -448,3 +448,12 @@ def reference_choice(state):
     if o['distance'] in ('near','far') and 'approach_fine' in c:return 'approach_fine'
     if o['distance']=='too_close' and 'backoff_fine' in c:return 'backoff_fine'
     return 'hold_and_observe'
+
+
+def request_compatible(old,new):
+    """Whether a delayed choice still has the same bounded decision context."""
+    a,b=old['observation'],new['observation']
+    keys=('distance','alignment','quality')
+    if any(a[k]!=b[k] for k in keys):return False
+    if a['alignment']!='aligned' and a['target_side']!=b['target_side']:return False
+    return set(old['candidates'])==set(new['candidates'])
