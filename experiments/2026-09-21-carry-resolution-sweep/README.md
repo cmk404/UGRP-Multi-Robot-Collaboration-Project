@@ -79,3 +79,13 @@ CPU feature cache는 미리 할당해 chunk 목록과 concatenate 결과를 동�
 마지막 관찰에서 host available RAM은 약 0.8 GB였으나 OOM 로그는 회수되지 않아 원인을 확정하지 않는다.
 `fit-diagnostic.json`에 실패와 회수 한계를 남겼고, 응답하지 않는 소유 진단 런타임만 종료했다.
 본 학습은 batch1 export를 포함한 새 전체 기능 검증이 끝난 뒤 시작한다.
+
+## 캐시 호출 기록의 텐서 보유 수정
+
+소스 `14a8cfa`의 512/h4 첫 update는 기존 T4 실행과 모델·optimizer moment·RNG·loss·개발 지표가
+정확히 같았다(scheduler 총 길이가 다른 진단이므로 scheduled LR/scheduler는 제외).
+그러나 CPU export batch1에서도 RSS가 계속 증가해 해당 진단만 의도적으로 종료했다.
+`frozen_features`의 Mock `side_effect`가 전체 평가 중 모든 batch의 입력을 호출 기록으로 보유하는
+문제를 weakref 회귀 테스트로 재현했다. `new=callable`로 바꿔 호출 기록 없이 같은 계산을 수행한다.
+encoder 재계산 연결에도 같은 변경을 적용한다. `cache-retention-diagnostic.json`에 중단과 원본 해시를 보존한다.
+종료 코드143은 이 작업의 명시적 중단이며 OOM으로 보고하지 않는다. 수정 후 전체 export는 별도 검증한다.

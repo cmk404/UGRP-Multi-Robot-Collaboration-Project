@@ -23,7 +23,7 @@ def checkpoint_encoder(policy, enabled=False):
                 def forward(*args, _native=native, **kwargs):
                     return checkpoint(_native, *args, use_reentrant=False, preserve_rng_state=True, **kwargs)
 
-                stack.enter_context(patch.object(layer, 'forward', side_effect=forward))
+                stack.enter_context(patch.object(layer, 'forward', new=forward))
         yield
 
 
@@ -47,7 +47,10 @@ def frozen_features(policy):
     """
     if any(p.requires_grad for p in policy.model.backbone.parameters()):
         raise ValueError('feature cache requires every backbone parameter frozen')
-    with patch.object(policy.model.backbone, 'forward', side_effect=lambda value: {'feature_map': value}):
+    # A Mock side_effect records every argument and retains the full dataset's
+    # feature tensors while evaluate() keeps this context open across batches.
+    # Install a plain callable instead; outputs and autograd remain identical.
+    with patch.object(policy.model.backbone, 'forward', new=lambda value: {'feature_map': value}):
         yield
 
 
