@@ -24,6 +24,19 @@ from sim.research_dispatch_arena import episode
 CASES = {'dev':[-.80,-2.65,0.], 'dev_yaw':[-.78,-2.70,8.], 'straight':[-.86,-2.65,0.],
          'left_offset':[-.84,-2.75,12.], 'right_offset':[-.76,-2.55,-12.]}
 
+def model_request(state, policy, variant, model):
+    if variant == 'numeric':
+        return jev_request(state,model) if policy=='jev' else gemini_request(state,model)
+    if variant != 'semantic': raise ValueError('unknown state variant')
+    # Reuse exactly the successful archived-state condition, without explicit rule criteria.
+    from scripts.probe_jev_motion_representation import request
+    body=request(state,'semantic_state');body['model']=model
+    if policy=='jev':return body
+    result=gemini_request(body['state'],model)
+    question=body['questions']['action']
+    result['messages'][0]['content']=question['instructions']+'\nReturn only a JSON object with one key action and one of these choices: '+json.dumps(question['criteria'])
+    return result
+
 def write(path, value):
     path.write_text(json.dumps(value,ensure_ascii=False,indent=2,allow_nan=False)+'\n')
 
@@ -73,12 +86,13 @@ class Scene(DispatchScene):
 def trial(args, policy, case, key, source):
     from scripts.probe_dual_grasp_sync import Video
     config=episode('open',11)
-    x,y,deg=CASES[case]
+    x,y,deg=getattr(args,'case_setup',CASES)[case]
     config['setup_only']['spawns']['r2']=[x,y,.032355118817659255,math.radians(deg)]
     # Other robots and beam retain their authored parked positions; only r2 acts.
-    out=args.output/(policy+'-'+case)
+    variant=getattr(args,'state_variant','numeric')
+    out=args.output/getattr(args,'trial_id',policy+'-'+case)
     scene=Scene(config,out);started=time.perf_counter();rows=[];history=[]
-    result={'source_sha':source,'policy':policy,'case':case,'goal':GOAL,'success':False,
+    result={'source_sha':source,'policy':policy,'case':case,'state_variant':variant,'goal':GOAL,'success':False,
             'clock':'paused SIM during inference; not real-time control','scope':'single robot approach and alignment, no grasp or carry',
             'stop_reason':None,'error':None,'model_calls':0,'input_tokens':0,'output_tokens':0,'cost_usd':None}
     try:
@@ -115,7 +129,7 @@ def trial(args, policy, case, key, source):
                 # Reserve a bounded request before sending; never silently overshoot by a batch.
                 if result['input_tokens']+5000>args.max_input_tokens:
                     result['stop_reason']='input_budget';break
-                body=jev_request(state,args.jev_model) if policy=='jev' else gemini_request(state,args.gemini_model)
+                body=model_request(state,policy,variant,args.jev_model if policy=='jev' else args.gemini_model)
                 row['request']=body
                 write(out/f'{turn:03d}-request.json',body)
                 response=post(body,'https://api.typesafe.ai/v1/systemone' if policy=='jev' else args.gemini_url,

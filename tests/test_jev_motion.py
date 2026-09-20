@@ -97,3 +97,17 @@ class TestJevMotion(unittest.TestCase):
         self.assertEqual(b['target_side'],'right');self.assertEqual(b['heading_alignment'],'outside_tolerance')
         for distance in (.27,.28):
             self.assertTrue(semantic(dict(range_m=distance,bearing_deg=3.))['goal_satisfied'])
+
+    def test_live_variants_share_the_exact_semantic_contract(self):
+        from scripts.run_jev_motion import model_request
+        from scripts.probe_jev_motion_representation import request
+        from scripts.run_jev_semantic_cohort import plan,NEW_CASES,CASES
+        state=policy_state(self.observation(),[])
+        j=model_request(state,'jev','semantic','jev-1.13.0')
+        self.assertEqual(j,request(state,'semantic_state'))
+        g=model_request(state,'gemini','semantic','gemini-3.8-flash')
+        self.assertEqual(json.loads(g['messages'][1]['content']),j['state'])
+        self.assertTrue(g['messages'][0]['content'].startswith(j['questions']['action']['instructions']))
+        self.assertEqual(j['questions']['action']['criteria'],OPTIONS)
+        jobs=plan();self.assertEqual(len(jobs),195);self.assertEqual(len({x['trial_id'] for x in jobs}),195)
+        self.assertEqual(jobs,plan());self.assertTrue(all(v not in CASES.values() for v in NEW_CASES.values()))
