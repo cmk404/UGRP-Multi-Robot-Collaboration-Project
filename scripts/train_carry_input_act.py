@@ -21,6 +21,8 @@ from harness.reference_act import IMAGE_KEYS, UPSTREAM_SHA
 from scripts.train_carry_act import load
 from scripts.colab_carry_bundle import source_identity, verify_dataset
 from harness.carry_training_checkpoint import save_checkpoint, restore_checkpoint
+from scripts.patch_reference_act import BEFORE, AFTER, ORIGINAL_SHA256
+import lerobot.policies.act.modeling_act as upstream_act
 
 
 def sha(path):
@@ -163,6 +165,9 @@ def main():
     direct = json.loads(importlib.metadata.distribution('lerobot').read_text('direct_url.json'))
     if direct['vcs_info']['commit_id'] != UPSTREAM_SHA:
         raise ValueError('wrong upstream ACT revision')
+    upstream_source = Path(upstream_act.__file__).read_text()
+    if BEFORE in upstream_source or upstream_source.count(AFTER) != 2 or hashlib.sha256(upstream_source.replace(AFTER, BEFORE).encode()).hexdigest() != ORIGINAL_SHA256:
+        raise ValueError('apply scripts/patch_reference_act.py to the pinned ACT environment first')
     torch.set_num_threads(2); torch.manual_seed(a.seed); np.random.seed(a.seed)
     if a.resume and not (a.out/'resume.pt').is_file():
         raise ValueError('resume.pt is required for resume')
@@ -190,6 +195,7 @@ def main():
               'parameters': sum(v.numel() for v in policy.parameters()), 'upstream_sha': UPSTREAM_SHA,
               'environment': {'python': sys.version, 'platform': platform.platform(),
                               'device': a.device, 'cuda': torch.version.cuda,
+                              'upstream_modeling_sha256': sha(Path(upstream_act.__file__)),
                               'gpu': torch.cuda.get_device_name() if a.device == 'cuda' else None,
                               **{k: importlib.metadata.version(k) for k in ('torch', 'torchvision', 'lerobot', 'numpy')}},
               'external_model_calls': 0, 'progress': []}

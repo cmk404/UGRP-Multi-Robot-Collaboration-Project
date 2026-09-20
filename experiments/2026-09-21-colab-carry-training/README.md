@@ -11,7 +11,9 @@
 2. `notebooks/carry_input_colab.ipynb`의 셀을 Colab 임시 노트북에 복사한다.
    Chrome **강 / kcm0127@gmail.com**, T4 GPU를 사용한다. Drive에 복사하지 않는다.
 3. ZIP과 manifest를 런타임에 직접 업로드한다. Python 3.12 별도 연구 환경과
-   기존 pinned LeRobot/PyTorch 의존성을 설치한다.
+   기존 pinned LeRobot/PyTorch 의존성을 설치한다. 이어서 `scripts/patch_reference_act.py`로
+   로컬에서도 사용하는 두 줄 device 호환 패치를 적용한다. 원본/패치 해시를 검증하며
+   관절 상태 입력을 추가하지 않는다. 누락 시 학습 전에 거부한다.
 4. `--diagnostic`으로 256px/4시점 조건의 2 update, CNN cache 오차 및 CPU 배포 오차를 확인한다.
    이 실행은 8000-step scheduler를 유지하지만 완성된 모델이나 비교 결과가 아니다.
 5. 새 출력 폴더에서 전체 4조건 × 2seed 학습을 실행한다. 각 모델 8000 step, batch32,
