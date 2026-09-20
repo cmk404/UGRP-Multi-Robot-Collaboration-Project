@@ -2,6 +2,7 @@ import copy
 import json
 import math
 import unittest
+from pathlib import Path
 from harness.jev_motion import (policy_state, action, at_goal, rule, OPTIONS,
                                validate_jev, validate_gemini, detect_box)
 import cv2
@@ -41,3 +42,25 @@ class TestJevMotion(unittest.TestCase):
         xy,_=detect_box(frame);self.assertLess(np.linalg.norm(xy-[46,56]),1)
         cv2.rectangle(frame,(100,50),(112,62),(255,255,0),-1)
         with self.assertRaises(ValueError):detect_box(frame)
+
+    def test_live_rounded_probabilities(self):
+        probabilities=dict(zip(('turn_left','turn_right','backward','stop','left','forward','right'),(.13,.08,.09,.04,.05,.55,.05)))
+        body={'answers':{'action':{'type':'choice','choice':'forward','probabilities':probabilities,'confidence':.48}}}
+        self.assertEqual(validate_jev(body),'forward')
+        body['answers']['action']['probabilities']['forward']=.85
+        with self.assertRaises(ValueError):validate_jev(body)
+
+    def test_real_rgb_observer_without_truth_or_command_integration(self):
+        from harness.jev_motion import RGBObserver
+        from sim.research_dispatch_arena import FIXED_TOP
+        root=Path(__file__).parent/'fixtures/jev_motion'
+        identity=json.loads((root/'identity.json').read_text())
+        observer=RGBObserver({'top_camera':FIXED_TOP},(root/'probe-before-top.jpg').read_bytes(),
+            (root/'probe-after-top.jpg').read_bytes(),np.array(identity['claim']['center'])*[959,719])
+        own=(root/'000-r2.jpg').read_bytes();top=(root/'000-top.jpg').read_bytes()
+        a=observer.observe(own,top);b=observer.observe(own,top)
+        self.assertGreater(a['range_m'],.5);self.assertLess(a['range_m'],.6)
+        self.assertLess(abs(a['bearing_deg']),10)
+        self.assertAlmostEqual(a['range_m'],b['range_m'],places=4)
+        ok,blank=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))
+        with self.assertRaises(ValueError):observer.observe(own,blank.tobytes())

@@ -164,7 +164,10 @@ def validate_jev(body):
         raise ValueError('invalid Jev options')
     if any(type(v) not in (int,float) or not math.isfinite(v) or not 0 <= v <= 1 for v in [*p.values(),a['confidence']]):
         raise ValueError('invalid Jev probability')
-    if abs(sum(p.values())-1) > .001 or p[a['choice']] < max(p.values())-1e-6:
+    # The live API serializes probabilities rounded to two decimal places.
+    rounded = all(abs(v*100-round(v*100)) < 1e-8 for v in p.values())
+    sum_tolerance = .005*len(p)+1e-9 if rounded else .001
+    if abs(sum(p.values())-1) > sum_tolerance or p[a['choice']] < max(p.values())-1e-6:
         raise ValueError('invalid Jev distribution')
     return a['choice']
 
