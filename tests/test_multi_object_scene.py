@@ -110,6 +110,19 @@ def test_geometry_keeps_delivered_and_remaining_objects_in_placement_ledger():
     assert result['grasp_and_transport']=='not_run' and result['joint_robot_trajectory']=='not_planned'
 
 
+def test_staging_layout_can_unload_boxes_after_beam_with_full_footprint():
+    c=config('staging_three'); result=geometry_admission(c)
+    assert result['complete_placement_order_found'] and len(result['trace'])==5
+    order=[r['task_id'] for r in result['trace']]
+    assert max(order.index('stage_02'),order.index('stage_03')) < order.index('deliver_01')
+    assert order.index('deliver_01') < min(order.index('deliver_02'),order.index('deliver_03'))
+    # Previous goal centers blocked the box chassis after the beam was placed.
+    old=copy.deepcopy(c)
+    for slot in old['static_map']['destinations'].values():
+        if slot['center_m'][0]==1.68: slot['center_m'][0]=1.55
+    assert not geometry_admission(old)['complete_placement_order_found']
+
+
 @pytest.mark.parametrize('name',['single_box','mixed_eight'])
 def test_production_scene_compiles_with_exact_cargo_and_inactive_welds(name,tmp_path):
     pytest.importorskip('mujoco')
