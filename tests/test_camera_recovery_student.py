@@ -133,3 +133,28 @@ def test_local_top_window_excludes_distant_scenery_but_preserves_novelty_guards(
     model['pca_components'][0][-1]=.001
     with pytest.raises(ValueError,match='removes a learned'):
         predict_recovery(model,own,top)
+
+
+def test_fresh_dispatch_model_keeps_full_rgb_support_through_export(tmp_path):
+    import hashlib
+    from scripts.run_dispatch_skills import grasp_transfer_options
+    from scripts.run_three_robot_mission import prepare_grasp_models
+    reference = _views()
+    model = fit_recovery_model(*reference, _training())
+    # A new scene may learn features outside the legacy TOP window.
+    model['pca_components'][0][-1] = .001
+    source = tmp_path/'source'; source.mkdir()
+    raw = json.dumps(model).encode()
+    (source/'model.json').write_bytes(raw)
+    skill = {'task_domain': 'dispatch_open_v1',
+             'rgb_support_scope': 'full_calibrated_views',
+             'models': {slot: {'path': 'model.json', 'sha256': hashlib.sha256(raw).hexdigest()}
+                        for slot in ('r1', 'r3')}}
+    (source/'student-skill.json').write_text(json.dumps(skill))
+    (source/'evaluation-fixture.json').write_text('{}')
+    target = prepare_grasp_models(source, tmp_path/'export', **grasp_transfer_options(skill))
+    exported = json.loads((target/'model.json').read_text())
+    assert exported == model
+    assert predict_recovery(exported, *reference)['observable']
+    changed = cv2.imencode('.png', np.full((192,256,3),255,np.uint8))[1].tobytes()
+    assert not predict_recovery(exported, reference[0], changed)['observable']

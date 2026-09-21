@@ -155,6 +155,7 @@ def main():
         grasp_out=out/'models'/'grasp';grasp_out.mkdir(parents=True)
         grasp_manifest=copy.deepcopy(skill);grasp_manifest['models']={}
         grasp_manifest['task_domain']='dispatch_open_v1'
+        grasp_manifest['rgb_support_scope']='full_calibrated_views'
         grasp_manifest.pop('constant_background_top_band',None)
         rng=np.random.default_rng(705)
         for s in pair:
@@ -178,9 +179,9 @@ def main():
                 if ok:rows.append({'own_jpeg':own,'top_jpeg':top,'case_id':f'grasp-{i:04d}','correction_pulses':[-d for d in delta]})
                 if i%15==0:print(json.dumps({'teacher':'grasp','slot':s,'sample':i,'accepted':len(rows)}),flush=True)
             model=fit_recovery_model(*grasp_refs[s],rows)
-            # The original transfer rule only ignores TOP rows that carry no
-            # learned direction; own-camera novelty remains fully checked.
-            model['constant_background_top_band']=[6,19]
+            # Fresh scene calibration learns from every RGB feature, including
+            # the base-pose jitter. A legacy transfer mask can remove those
+            # learned directions; retain the fitted model's full RGB support.
             from harness.camera_recovery_student import predict_recovery
             predict_recovery(model,*grasp_refs[s])
             path=grasp_out/f'{s}-model.json';write(path,model)
