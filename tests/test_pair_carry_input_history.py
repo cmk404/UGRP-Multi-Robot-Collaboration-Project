@@ -89,7 +89,8 @@ def test_runtime_preserves_robot_windows_and_executed_pause_context(tmp_path,mon
                 return {'center':[.5,.5]}
             self.carried_beam=SimpleNamespace(observe=observe)
         def time(self):return self.now
-        def capture(self,label):
+        def capture(self,label,**kwargs):
+            assert kwargs=={'own_robots':('r0','r1'),'overview':False}
             return {r:{'own_bytes':r.encode(),'top_bytes':b'top','own_rgb':{'path':r},'shared_top_rgb':{'path':'top'},'frame_id':int(self.now*100)} for r in ('r0','r1')}
         def drive_mecanum(self,actions,dt):
             if self.now==0:assert all(v==0 for a in actions.values() for v in a.values())

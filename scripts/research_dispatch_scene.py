@@ -87,18 +87,23 @@ class DispatchScene:
                 'weld_active':bool(w.data.eq_active.any()),
                 'solver':{'impratio':float(w.model.opt.impratio),'noslip_iterations':int(w.model.opt.noslip_iterations)}}
 
-    def capture(self,label):
+    def capture(self,label,*,own_robots=None,overview=True):
         from scripts.camera_approach_scene import image_record
+        selected=set(ROBOTS if own_robots is None else own_robots)
+        if not selected or not selected.issubset(ROBOTS):
+            raise ValueError('capture requires known robot cameras')
         self.sequence+=1
         top=self.world.render_team_jpeg(camera='cctv_top',quality=95)
         top_ref=image_record(self.out/'rgb'/f'{label}-top.jpg',self.out,top)
         frames={}
         for rid in ROBOTS:
-            own=self.world.render_jpeg(robot_id=rid,camera='robot_cam',quality=95)
-            frames[rid]={'own_bytes':own,'top_bytes':top,'frame_id':self.sequence,
-                'own_rgb':image_record(self.out/'rgb'/f'{label}-{rid}.jpg',self.out,own),
-                'shared_top_rgb':top_ref}
-        (self.out/f'{label}-overview.jpg').write_bytes(self.world.render_team_jpeg(camera='cctv_warehouse',quality=95))
+            frames[rid]={'top_bytes':top,'frame_id':self.sequence,'shared_top_rgb':top_ref}
+            if rid in selected:
+                own=self.world.render_jpeg(robot_id=rid,camera='robot_cam',quality=95)
+                frames[rid].update(own_bytes=own,
+                    own_rgb=image_record(self.out/'rgb'/f'{label}-{rid}.jpg',self.out,own))
+        if overview:
+            (self.out/f'{label}-overview.jpg').write_bytes(self.world.render_team_jpeg(camera='cctv_warehouse',quality=95))
         return frames
 
     def step(self,seconds):

@@ -50,6 +50,7 @@ class SkillScene(DispatchScene):
         self.yield_rows=[];self.yield_policy=None;self.yield_folded=False
         self.identity=None
         self.original_step=None;self.deadline=None;self.last_frames=None
+        self.efficient_capture=False
 
     def time(self):return float(self.world.data.time)
     def open(self):
@@ -78,8 +79,9 @@ class SkillScene(DispatchScene):
             self.world._physics_step_for(self.world.controllers['r1'])
     def hold(self):
         for p in self.ports.values():p.hold(self.time())
-    def capture(self,label):
-        self.last_frames=super().capture(label)
+    def capture(self,label,*,own_robots=None,overview=True):
+        if not self.efficient_capture:own_robots,overview=None,True
+        self.last_frames=super().capture(label,own_robots=own_robots,overview=overview)
         return self.last_frames
     def authorize(self):
         if self.bindings:self.bindings.authorize(self.team.agreement.committed)
@@ -223,6 +225,7 @@ def run(args):
     for pose in config['setup_only']['spawns'].values():
         pose[0]+=dx;pose[1]+=dy;pose[3]+=math.radians(yaw)
     scene=SkillScene(config,args.output)
+    scene.efficient_capture=getattr(args,'efficient_capture',False)
     started=time.monotonic();pair=team=None
     result={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         'scope':'three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute',

@@ -46,7 +46,8 @@ class BoundPairSkill:
 
     def capture(self,tag):
         self.count+=1
-        frames=self.io.capture('pair-'+str(self.count)+'-'+tag)
+        frames=self.io.capture('pair-'+str(self.count)+'-'+tag,
+            own_robots=tuple(self.bindings.pair.values()),overview=False)
         top, transform=canonical_pair_top(frames['r1']['top_bytes'],self.reference,
             translation_px=self.grasp_translation if self.phase.startswith('grasp') else None,
             hue_upper=35 if self.transport_started else 24,

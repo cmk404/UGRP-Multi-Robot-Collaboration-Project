@@ -20,7 +20,7 @@ def carry(pair,python,model_dir,max_steps=900):
     pair.phase='TRANSIT';pair.transport_started=True
     # ACT still receives raw fixed cameras. The shared release stage needs a
     # continuous RGB identity; its estimate never enters the model or steering.
-    anchor=pair.io.capture('act-carry-anchor')
+    anchor=pair.io.capture('act-carry-anchor',own_robots=tuple(pair.bindings.pair.values()),overview=False)
     track_release_rgb(pair,anchor)
     own_guards={slot:OwnHoldContinuity(anchor[rid]['own_bytes']) for slot,rid in pair.bindings.pair.items()}
     goal=pair.bindings.static_map['docks'][pair.bindings.plan['dock']]['slots']['beam']['center_m']
@@ -35,7 +35,8 @@ def carry(pair,python,model_dir,max_steps=900):
     histories={s:deque(maxlen=client.history if temporal else 1) for s in pair.bindings.pair}
     try:
         for index in range(max_steps):
-            frames=pair.io.capture('act-carry-'+str(index));decisions={};actor_inputs={}
+            frames=pair.io.capture('act-carry-'+str(index),
+                own_robots=tuple(pair.bindings.pair.values()),overview=False);decisions={};actor_inputs={}
             release_tracking=track_release_rgb(pair,frames)
             for slot,rid in pair.bindings.pair.items():
                 f=frames[rid];ctx=context(goal,route,slot,previous[slot])

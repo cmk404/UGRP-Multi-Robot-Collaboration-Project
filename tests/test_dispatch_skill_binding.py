@@ -14,6 +14,38 @@ from sim.research_dispatch_arena import authored_map
 from scripts.dispatch_pair_skill import BoundPairSkill
 
 
+def test_efficient_pair_capture_preserves_consumed_images_and_default(tmp_path):
+    from scripts.run_dispatch_skills import SkillScene
+    scene=SkillScene({},tmp_path)
+    (tmp_path/'rgb').mkdir()
+    scene.world=SimpleNamespace(
+        render_team_jpeg=Mock(side_effect=lambda **kw:kw['camera'].encode()),
+        render_jpeg=Mock(side_effect=lambda **kw:kw['robot_id'].encode()))
+    selection={'own_robots':('r2','r3'),'overview':False}
+    baseline=scene.capture('baseline',**selection)
+    assert scene.world.render_team_jpeg.call_count==2
+    assert scene.world.render_jpeg.call_count==3
+    assert (tmp_path/'baseline-overview.jpg').exists()
+    scene.world.render_team_jpeg.reset_mock();scene.world.render_jpeg.reset_mock()
+    scene.efficient_capture=True
+    optimized=scene.capture('optimized',**selection)
+    assert scene.world.render_team_jpeg.call_count==1
+    assert scene.world.render_jpeg.call_count==2
+    assert not (tmp_path/'optimized-overview.jpg').exists()
+    for rid in ('r2','r3'):
+        for key in ('own_bytes','top_bytes'):
+            assert optimized[rid][key]==baseline[rid][key]
+        for key in ('own_rgb','shared_top_rgb'):
+            assert optimized[rid][key]['sha256']==baseline[rid][key]['sha256']
+    # Existing TOP-only consumers use r1 even when r1 is not in the pair.
+    assert optimized['r1']['top_bytes']==baseline['r1']['top_bytes']
+    assert 'own_bytes' not in optimized['r1']
+    assert all(frame['frame_id']==2 for frame in optimized.values())
+    scene.world.render_jpeg.reset_mock()
+    assert all('own_bytes' in frame for frame in scene.capture('planning').values())
+    assert scene.world.render_jpeg.call_count==3
+
+
 def committed(order=('r1','r3','r2'),after=False):
     plan=validate_dispatch_plan({'dock':'dock_b','tasks':[
         {'id':'beam_job','object':'beam','participants':list(order[:2]),'route':'north','after':['box_job'] if after else []},

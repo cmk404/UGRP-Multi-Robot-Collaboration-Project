@@ -301,6 +301,7 @@ def main():
     p.add_argument('--carry-max-steps',type=int,help='common loaded-motion decision cap for RGB and ACT')
     p.add_argument('--spawn-offset',type=float,nargs=3,default=[0.,0.,0.],metavar=('DX','DY','YAW_DEG'),help='setup-only paired comparison perturbation; never actor input')
     p.add_argument('--video-fps',type=int,default=10)
+    p.add_argument('--efficient-capture',action='store_true',help='omit unused pair camera and duplicate overview JPEG; actor inputs/video unchanged')
     p.add_argument('--reference-top',type=Path,default=ROOT/'tests/fixtures/camera_goal_transport/reference-top.jpg')
     args = p.parse_args()
     if args.carry_act_model and not args.carry_act_python:p.error('ACT interpreter required')
