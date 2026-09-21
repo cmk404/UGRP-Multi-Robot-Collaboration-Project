@@ -1,0 +1,103 @@
+{
+  "scope": "512px extension of fixed-data resolution/history screening; compare with preserved 128/256 cohort; not a new final holdout",
+  "dataset": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/dataset.json",
+  "dataset_sha256": "3db730eaf9d827a40b355d7b53188993e14b75d10fd10b9b213a67f830fba167",
+  "training": {
+    "steps": 8000,
+    "seeds": [
+      20260921,
+      20260922
+    ],
+    "batch": 32,
+    "frozen_backbone": "ImageNet ResNet18",
+    "dim_model": 64,
+    "chunk": 8,
+    "selection": "original development loss; no final trial selection"
+  },
+  "arms": [
+    {
+      "id": "r512-h1",
+      "size": 512,
+      "history": 1
+    },
+    {
+      "id": "r512-h4",
+      "size": 512,
+      "history": 4
+    }
+  ],
+  "controls": {
+    "parameter_count": "all arms use 32 context dimensions; h1 repeats current 8-vector four times",
+    "history": "oldest-to-current, pad first, never crosses robot/episode; independent CNN maps concatenated spatially before positional encoding",
+    "context": "only static goal/route/role and each past own issued command; no measured state",
+    "camera": "unchanged pose/FOV; original RGB; no crop",
+    "action_interval_sim_s": 0.2,
+    "max_carry_steps": 900,
+    "contact_profile": "local_contact_fine",
+    "weld": false,
+    "max_wall_s": 2400,
+    "plan_replay": true,
+    "workers": 2
+  },
+  "test": [
+    {
+      "id": "open-minus",
+      "variant": "open",
+      "teacher_case": "F1",
+      "offset": [
+        -0.008,
+        0.003,
+        0.0
+      ]
+    },
+    {
+      "id": "open-plus",
+      "variant": "open",
+      "teacher_case": "F1",
+      "offset": [
+        0.008,
+        -0.003,
+        0.0
+      ]
+    },
+    {
+      "id": "shared_crossing-minus",
+      "variant": "shared_crossing",
+      "teacher_case": "F3",
+      "offset": [
+        -0.008,
+        0.003,
+        0.0
+      ]
+    },
+    {
+      "id": "shared_crossing-plus",
+      "variant": "shared_crossing",
+      "teacher_case": "F3",
+      "offset": [
+        0.008,
+        -0.003,
+        0.0
+      ]
+    }
+  ],
+  "interpretation": "New small setup offsets, same scene families as training; approach may remove most variation. Not unseen-task/general-scene evidence. Two model seeds are not independent environments. Every final arm and teacher is rerun. All prerequisite failures remain in whole-task denominator; report carry-conditional separately. No recovery data added during this cohort. These cases are selection/screening conditions after 128/256 results were observed. Fresh confirmation is required before promoting a selected condition.",
+  "metrics": [
+    "strict beam/whole success",
+    "carry entry and prerequisite failure",
+    "false done",
+    "one-sided done rounds",
+    "contact and drop",
+    "goal margin",
+    "carry SIM duration",
+    "wall duration",
+    "commands",
+    "inference latency",
+    "local training time; external calls zero"
+  ],
+  "execution": {
+    "checkpoint_encoder": true,
+    "cpu_evaluation_batch_size": 1,
+    "reason": "Preserve full batch32 float32 training and development selection; recompute encoder activations, preallocate CPU caches, and export CPU predictions one at a time to fit T4 host memory."
+  }
+}

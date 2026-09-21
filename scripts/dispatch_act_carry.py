@@ -1,5 +1,8 @@
 """ACT replaces only loaded motion. Existing task grants and RGB guards remain."""
 import json
+import time
+from pathlib import Path
+from collections import deque
 from harness.pair_carry_act_contract import context,AXES
 from harness.pair_carry_act_client import CarryClient
 from harness.dispatch_own_hold import OwnHoldContinuity
@@ -14,16 +17,31 @@ def carry(pair,python,model_dir,max_steps=900):
     goal=pair.bindings.static_map['docks'][pair.bindings.plan['dock']]['slots']['beam']['center_m']
     route=pair.bindings.tasks['beam']['route'];previous={r:[0.,0.,0.] for r in pair.bindings.pair}
     sync=PairCarrySync('act-'+pair.bindings.committed['plan_hash']);ready_count=0
-    client=CarryClient(python,model_dir)
+    adapter=json.loads((Path(model_dir)/'adapter.json').read_text())
+    temporal=adapter.get('kind')=='carry_input_ablation'
+    if temporal:
+        from harness.carry_input_client import InputCarryClient
+        client=InputCarryClient(python,model_dir)
+    else:client=CarryClient(python,model_dir)
+    histories={s:deque(maxlen=client.history if temporal else 1) for s in pair.bindings.pair}
     try:
         for index in range(max_steps):
             frames=pair.io.capture('act-carry-'+str(index));decisions={};actor_inputs={}
             for slot,rid in pair.bindings.pair.items():
                 f=frames[rid];ctx=context(goal,route,slot,previous[slot])
-                d=client.predict(f['own_bytes'],f['top_bytes'],ctx)
+                began=time.monotonic()
+                if temporal:
+                    current={'own_rgb':f['own_bytes'],'top_rgb':f['top_bytes'],'context':ctx}
+                    record={'images':{'own':f['own_rgb'],'top':f['shared_top_rgb']},'context':ctx,'sim_time_s':pair.time(),'frame_id':f['frame_id']}
+                    histories[slot].append((current,record))
+                    padded=[histories[slot][0]]*(client.history-len(histories[slot]))+list(histories[slot])
+                    d=client.predict([v[0] for v in padded])
+                else:d=client.predict(f['own_bytes'],f['top_bytes'],ctx)
+                inference_wall_s=time.monotonic()-began
                 held=own_guards[slot].observe(f['own_bytes'])
                 decisions[slot]={**d,'ready':held['held_estimate'],'own_attachment':held,'plan_hash':pair.bindings.committed['plan_hash']}
                 actor_inputs[slot]={'images':{'own':f['own_rgb'],'top':f['shared_top_rgb']},'context':ctx,'wire_sha256':client.last_request_sha256,'physical_robot_id':rid}
+                if temporal:actor_inputs[slot].update(history=[v[1] for v in padded],inference_wall_s=inference_wall_s)
             permission=authorize_pair(sync,decisions,{s:frames[r]['frame_id'] for s,r in pair.bindings.pair.items()},index)
             ready_count=ready_count+1 if all(d['done'] for d in decisions.values()) else 0
             # Hold BOTH if either proposes arrival. Never let the partner drag it.

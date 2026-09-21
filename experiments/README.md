@@ -8,6 +8,8 @@
 - [2026-09-21 Jev 의미 상태 폐루프 195회](2026-09-21-jev-semantic-motion/README.md): 새 자세 Jev 5/36 → 35/36(원판정 33/36), Gemini 32/36 → 36/36. 시간 반올림 검산과 원판정 모두 보존.
 - [2026-09-21 Jev 직접 이동·표현 진단](2026-09-21-jev-direct-motion/README.md): 동일 RGB 접근 9회, 저장 상태 표현 비교 72회, 공개 제어 설계 검토. 후속 폐루프 195회는 위 별도 기록에서 검증.
 - [공동 출하 복구: 목적지·장애물 6조건 새 LLM 계획과 물리 E2E 성공](dispatch-adaptive-recovery-20260917/README.md) — 이전 1/6 이후의 최종 비교, 조건당 1회.
+- [2026-09-21 Colab ACT 학습·CLI 복구](2026-09-21-colab-carry-training/README.md) — 8개 × 8000 updates, 50파일 해시 및 Mac native 32개 대조 통과.
+- [2026-09-21 ACT 입력 해상도·이력 2×2 비교](2026-09-21-carry-input-ablation/README.md) — 8개 Colab 학습 모델 회수·Mac 검증 완료, 고정 36-run 물리 비교 진행 중.
 - [2026-09-18 ACT 공동 운반 비교](2026-09-18-act-pair-carry/README.md) — 운반 진입 조건 교사 3/3, ACT 1/3·0/3, 네 번째 조건 접근 중단.
 
 - [2026-09-17 목적지·지형 확대 E2E: 기본 A 성공, B 영상 인식 실패, 4개 지형 실행 거부](dispatch-variation-e2e-20260917/README.md)

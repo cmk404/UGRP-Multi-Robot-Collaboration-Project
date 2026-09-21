@@ -1,0 +1,121 @@
+{
+  "candidate_resolutions": [
+    128,
+    256,
+    512
+  ],
+  "candidate_histories": [
+    1,
+    4
+  ],
+  "seeds": [
+    20260921,
+    20260922
+  ],
+  "training_updates": 8000,
+  "batch": 32,
+  "screening_cases": [
+    {
+      "id": "open-minus",
+      "variant": "open",
+      "teacher_case": "F1",
+      "offset": [
+        -0.008,
+        0.003,
+        0.0
+      ]
+    },
+    {
+      "id": "open-plus",
+      "variant": "open",
+      "teacher_case": "F1",
+      "offset": [
+        0.008,
+        -0.003,
+        0.0
+      ]
+    },
+    {
+      "id": "shared_crossing-minus",
+      "variant": "shared_crossing",
+      "teacher_case": "F3",
+      "offset": [
+        -0.008,
+        0.003,
+        0.0
+      ]
+    },
+    {
+      "id": "shared_crossing-plus",
+      "variant": "shared_crossing",
+      "teacher_case": "F3",
+      "offset": [
+        0.008,
+        -0.003,
+        0.0
+      ]
+    }
+  ],
+  "prior_physics_source_sha": "e00435b82470e722196858728bc22c1123ef730c",
+  "prior_training_source_sha": "9aef6bb0fb7d05e6b419b2f79b361ebd29099948",
+  "observed_before_declaration": "8/36 prior trials complete; first open-minus teacher successful and first seven student trials unsuccessful",
+  "ranking": [
+    "higher minimum whole-task successes across the two seeds",
+    "higher total whole-task successes",
+    "higher total beam successes",
+    "fewer false-done trials",
+    "fewer trials with obstacle contact",
+    "lower median per-trial p95 inference wall time",
+    "lower resolution then shorter history on exact tie"
+  ],
+  "no_success_rule": "If every student has zero whole-task successes, report no usable optimum; do not promote the least-bad failure as a solution.",
+  "confirmation": {
+    "cases": [
+      {
+        "id": "open-minus-confirm",
+        "variant": "open",
+        "teacher_case": "F1",
+        "offset": [
+          -0.012,
+          -0.006,
+          0.0
+        ]
+      },
+      {
+        "id": "open-plus-confirm",
+        "variant": "open",
+        "teacher_case": "F1",
+        "offset": [
+          0.012,
+          0.006,
+          0.0
+        ]
+      },
+      {
+        "id": "shared_crossing-minus-confirm",
+        "variant": "shared_crossing",
+        "teacher_case": "F3",
+        "offset": [
+          -0.012,
+          -0.006,
+          0.0
+        ]
+      },
+      {
+        "id": "shared_crossing-plus-confirm",
+        "variant": "shared_crossing",
+        "teacher_case": "F3",
+        "offset": [
+          0.012,
+          0.006,
+          0.0
+        ]
+      }
+    ],
+    "conditions": "teacher, selected arm at both training seeds, 128-h1 baseline at both training seeds; deduplicate if selected baseline",
+    "scope": "same scene families with new small offsets; not general scene or physical robot evidence",
+    "interpretation": "Report screening selection and confirmation separately; a failed confirmation does not trigger tuning on these held-out cases."
+  },
+  "cost": "Record measured GPU/RAM peak, setup/training/evaluation wall time, per-decision latency, model hashes and unavailable compute-unit charges. No data/model/camera changes to rescue an arm during this screen.",
+  "cost_interpretation": "Inference timings are observed under the fixed two-worker cohort and shared Mac load, not an isolated real-time guarantee. Latency is only a secondary tie-breaker after physical outcomes."
+}

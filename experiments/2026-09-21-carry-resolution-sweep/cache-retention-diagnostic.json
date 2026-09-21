@@ -1,0 +1,47 @@
+{
+  "source_sha": "14a8cfa72ac938552bbd8737c04e585dfd9fff81",
+  "completed_updates": 2,
+  "complete": false,
+  "exit_code": 143,
+  "termination": "Owned diagnostic deliberately stopped after observing continued CPU RSS growth; no OOM termination asserted",
+  "peak_sampled_process_tree_rss_bytes": 11565711360,
+  "first_update_parity": {
+    "passed": true,
+    "step": 1,
+    "actual_resolution": 512,
+    "history": 4,
+    "batch": 32,
+    "exact": [
+      "model",
+      "best_state",
+      "optimizer moments",
+      "generator",
+      "CPU RNG",
+      "CUDA RNG",
+      "loss",
+      "development metrics"
+    ],
+    "excluded": [
+      "scheduled LR and scheduler state because diagnostic has2 steps vs8000",
+      "elapsed wall time",
+      "source SHA and activation-checkpointing flag"
+    ],
+    "old_sha256": "200db2ceb1d4c73fbe7ea8451c1109458b3f2d6142f89cfec45957b61b7db9c4",
+    "new_sha256": "b9ed1171f3703c31e118e0d42aaaad116cda76cea41bc3a56645878df3fe5263"
+  },
+  "root_cause": "Mock side_effect in frozen_features retains every batch argument until the full evaluation context exits; plain callable replacement avoids call recording. Regression reproduces retained tensor with weakref while context remains active.",
+  "scope": "Training cache and activation-recomputation adapters only; inference unchanged",
+  "raw": "/Users/changmin/.codex/worktrees/carry-resolution-sweep/ugrp/outputs/resolution-sweep/host-fit-recovery",
+  "files": {
+    "diagnostic-stopped.log": "6d9eaf9c08c11d0ca5a1ec17ccd8b554746cd0f7a90b66568520664abd7e6075",
+    "resources.json": "8845ff00a32d73c80eec3852f6903e757d35aa541a6c7baa213854ca8e00dd42",
+    "resume-step1.pt": "b9ed1171f3703c31e118e0d42aaaad116cda76cea41bc3a56645878df3fe5263",
+    "resume-step1.json": "7d8abf2396da111797a7cedb3665fe552674ba94d9ed6b1e8bcaa7278a28ce48",
+    "report-stopped.json": "fb24b41b6b98bcd129ee98e8adc60a38b91df665b7dd0fdb4218d32ee2cf4c7f",
+    "environment.txt": "9e199cf7c616e34ef1ec1925f85f8f7057d87c331e97282a27219b8062da2431",
+    "launch.json": "6ccc1f52b135b7e6fcccc5af7b5dd913a4d98896e0e4c003ed1179934e35dfcd",
+    "diagnostic.log": "6d9eaf9c08c11d0ca5a1ec17ccd8b554746cd0f7a90b66568520664abd7e6075",
+    "observed-report.json": "fb24b41b6b98bcd129ee98e8adc60a38b91df665b7dd0fdb4218d32ee2cf4c7f",
+    "resources-stopped.json": "8845ff00a32d73c80eec3852f6903e757d35aa541a6c7baa213854ca8e00dd42"
+  }
+}

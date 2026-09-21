@@ -1,0 +1,83 @@
+{
+  "observed_unix": 1789934541.770716,
+  "implementation_source_sha": "8cabd8e072b1545e6509765b7aae96a96f08f85c",
+  "source_bundle": {
+    "source_sha": "8cabd8e072b1545e6509765b7aae96a96f08f85c",
+    "sha256": "3478603066a22f1b47e75215a1407cbaf3befa35494a8fd0e04f52ed9d1c36a0",
+    "bytes": 1444552
+  },
+  "data_bundle": {
+    "path": "/Users/changmin/.codex/worktrees/carry-resolution-sweep/ugrp/outputs/resolution-sweep/carry-512.zip",
+    "sha256": "5025b3f5a72ecb45430d037d3ac03e1d7985cff21bcd9afd2c5b2d418f34e9b9",
+    "bytes": 347133614,
+    "source_sha": "64c79057c790493d6ef20ec35c43e36e0dd75cc0",
+    "dataset_sha256": "3db730eaf9d827a40b355d7b53188993e14b75d10fd10b9b213a67f830fba167",
+    "files": 7445
+  },
+  "environment": "kcm0127 Colab T4, Python3.12.3 and pinned optional ACT environment; official google-colab-cli; no Drive",
+  "tests": {
+    "latest_cache_act_checkpoint_selection_protocol": {
+      "passed": 26,
+      "skipped": 1,
+      "skip": "CUDA unavailable on Mac; repeated CUDA parity is part of remote gate"
+    },
+    "regression": "Feature tensor weakref remains alive before fix and is released within active context after fix",
+    "previous_integrated": {
+      "passed": 1004,
+      "skipped": 3,
+      "subtests": 184
+    },
+    "actual512_first_update_parity_before_call_recording_fix": "/Users/changmin/.codex/worktrees/carry-resolution-sweep/ugrp/outputs/resolution-sweep/first-update-parity.json",
+    "current_full_export_gate": "in progress; no full model or success claim"
+  },
+  "gate": {
+    "phase": "recovering_full_512_diagnostic",
+    "source_sha": "8cabd8e072b1545e6509765b7aae96a96f08f85c",
+    "observed_unix": 1789934445.9942589,
+    "started_unix": 1789934445.9901912
+  },
+  "owned_session": "carry-resolution-search",
+  "raw": "/Users/changmin/.codex/worktrees/carry-resolution-sweep/ugrp/outputs/resolution-sweep",
+  "live_log": "/Users/changmin/.codex/worktrees/carry-resolution-sweep/ugrp/outputs/resolution-sweep/search.log",
+  "live_status": "/Users/changmin/.codex/worktrees/carry-resolution-sweep/ugrp/outputs/resolution-sweep/gate-status.json",
+  "physics_checkout": "/Users/changmin/.codex/worktrees/carry-resolution-physics/ugrp",
+  "physics_source_sha": "8cabd8e072b1545e6509765b7aae96a96f08f85c",
+  "pipeline": "Full diagnostic -> hash/first-update parity/native Mac probes -> four fresh8000-update models -> recover/hash/Mac probes -> stop owned Colab -> await original36 audit -> additional20 physics trials -> rank6 arms -> fresh-offset confirmation only if a student succeeds",
+  "endpoints": {
+    "diagnostic_retrieval_hours": 2,
+    "remote_training_max_hours": 20,
+    "downstream_search_max_hours": 40
+  },
+  "helpers_sha256": {
+    "gate_and_start.py": "c71c6e9e3ccfd873019f95cb9eb0d9f98449c1c7c359f968f060ae0dc958e678",
+    "supervise_search.py": "97cd22aa7e50b5698dcaa2059f51581d34f5aa693c61d0b456f03eb2bd851bd7",
+    "collect_results.py": "4e455cc26c484cf187ce51eea439a59a138747f4fa8d662bd98e43ca26cfc986",
+    "finish_pipeline.py": "70d3289613f67a67a2126409bfa88fcadd133b9867f7a70a69dd33a2832bb79d",
+    "verify_mac_models.py": "1e3791b77f5ccd537c86c5550df6a2685cc71bcb0febd75d08fd013e0404ca13",
+    "start-full-training.py": "dd73a6a7899a646fefafa9d3f9488a55bd4195b5a4c2c574e12c50af43ab72cb",
+    "start-cache-fix-diagnostic.py": "0d55f5ca830cddd137d54707b02f2cc34125050cb1556f3b960370bd9f717b0d",
+    "recover_cache_diagnostic.py": "695735b222bff18df2e0c62ad9d12619acdca905838de89bf88f76b88fb7ac73",
+    "compare_cache_fix_update.py": "b05247f3743246efbef2b9f8a76ee35120a362082f63e985a23ca1f53be00ce2",
+    "verify_cache_diagnostic.py": "62bb89afb5ce1fcc92734e1c5d0f96b538defa24e46651b665da6eb9e14b26ba"
+  },
+  "allocation": {
+    "attempts": [
+      {
+        "gpu": "A100",
+        "status": "rejected",
+        "message": "Backend rejected accelerator; quota or entitlement may be unavailable",
+        "observed_unix": 1789931787.7693498
+      },
+      {
+        "gpu": "L4",
+        "status": "rejected",
+        "message": "Backend rejected accelerator; quota or entitlement may be unavailable",
+        "observed_unix": 1789932014.5372999
+      }
+    ],
+    "no_subscription_or_purchase_changes": true
+  },
+  "optimal_condition": null,
+  "full512_models_completed": 0,
+  "original128_256": "Eight models completed and Mac native probes passed; original physical cohort remains running and is not modified"
+}

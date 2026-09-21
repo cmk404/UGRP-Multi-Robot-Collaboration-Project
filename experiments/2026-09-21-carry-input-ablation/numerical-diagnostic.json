@@ -1,0 +1,143 @@
+{
+  "source_sha": "ab534347d1813c547f077ddf446ee780d140a31d",
+  "scope": "Pretrained backbone and untrained ACT head; actual first 32 original train rows, 3 sampled windows per arm; not final policy performance",
+  "rows": [
+    {
+      "size": 128,
+      "history": 1,
+      "row": 0,
+      "feature_max_abs": {
+        "observation.images.own": 6.16312026977539e-05,
+        "observation.images.top": 6.008148193359375e-05
+      },
+      "action_chunk_max_abs": 3.0994415283203125e-06
+    },
+    {
+      "size": 128,
+      "history": 1,
+      "row": 1,
+      "feature_max_abs": {
+        "observation.images.own": 6.246566772460938e-05,
+        "observation.images.top": 5.361437797546387e-05
+      },
+      "action_chunk_max_abs": 4.5299530029296875e-06
+    },
+    {
+      "size": 128,
+      "history": 1,
+      "row": 2,
+      "feature_max_abs": {
+        "observation.images.own": 5.316734313964844e-05,
+        "observation.images.top": 6.580352783203125e-05
+      },
+      "action_chunk_max_abs": 4.470348358154297e-06
+    },
+    {
+      "size": 128,
+      "history": 4,
+      "row": 0,
+      "feature_max_abs": {
+        "observation.images.own": 6.16312026977539e-05,
+        "observation.images.top": 6.008148193359375e-05
+      },
+      "action_chunk_max_abs": 3.635883331298828e-06
+    },
+    {
+      "size": 128,
+      "history": 4,
+      "row": 1,
+      "feature_max_abs": {
+        "observation.images.own": 7.903575897216797e-05,
+        "observation.images.top": 6.914138793945312e-05
+      },
+      "action_chunk_max_abs": 2.0265579223632812e-06
+    },
+    {
+      "size": 128,
+      "history": 4,
+      "row": 2,
+      "feature_max_abs": {
+        "observation.images.own": 6.890296936035156e-05,
+        "observation.images.top": 6.580352783203125e-05
+      },
+      "action_chunk_max_abs": 1.9073486328125e-06
+    },
+    {
+      "size": 256,
+      "history": 1,
+      "row": 0,
+      "feature_max_abs": {
+        "observation.images.own": 0.000102996826171875,
+        "observation.images.top": 0.00017499923706054688
+      },
+      "action_chunk_max_abs": 2.86102294921875e-06
+    },
+    {
+      "size": 256,
+      "history": 1,
+      "row": 1,
+      "feature_max_abs": {
+        "observation.images.own": 5.745887756347656e-05,
+        "observation.images.top": 0.00024050474166870117
+      },
+      "action_chunk_max_abs": 3.7550926208496094e-06
+    },
+    {
+      "size": 256,
+      "history": 1,
+      "row": 2,
+      "feature_max_abs": {
+        "observation.images.own": 0.0001049041748046875,
+        "observation.images.top": 0.0001652836799621582
+      },
+      "action_chunk_max_abs": 3.337860107421875e-06
+    },
+    {
+      "size": 256,
+      "history": 4,
+      "row": 0,
+      "feature_max_abs": {
+        "observation.images.own": 0.000102996826171875,
+        "observation.images.top": 0.00017499923706054688
+      },
+      "action_chunk_max_abs": 2.9802322387695312e-06
+    },
+    {
+      "size": 256,
+      "history": 4,
+      "row": 1,
+      "feature_max_abs": {
+        "observation.images.own": 9.632110595703125e-05,
+        "observation.images.top": 0.00024050474166870117
+      },
+      "action_chunk_max_abs": 2.205371856689453e-06
+    },
+    {
+      "size": 256,
+      "history": 4,
+      "row": 2,
+      "feature_max_abs": {
+        "observation.images.own": 0.0001049041748046875,
+        "observation.images.top": 0.0003407597541809082
+      },
+      "action_chunk_max_abs": 2.2649765014648438e-06
+    }
+  ],
+  "feature_max_abs": 0.0003407597541809082,
+  "action_chunk_max_abs": 4.5299530029296875e-06,
+  "raw": "/Users/changmin/.codex/worktrees/carry-input-ablation/ugrp/outputs/numerical-cache-diagnostic",
+  "files_sha256": {
+    "stdout-frozen.log": "0d86765704e1275a98dbaa9ead36f2bd3ac398a31da76381b1f171e9fc87a1dd",
+    "check.py": "9e9e5a6078b698a144e9f78e0a8ca51260cd5e9aaa31d1e37b3c254fbb184834",
+    "result.json": "31b9c2aae20a2b91bbd3fbe49c92cde4de818ba5c5deedc7e9fb96782aab63fe",
+    "stdout.log": "cd4f96d0630e2c7d13268376405097853d0a94e42777314cadb726b849cd04e4",
+    "check-frozen.py": "9fdadb43f064342c1eabfe9053058d305c88750fd0d4d8002dd5ef4f0c330e95"
+  },
+  "smoke": {
+    "source_sha": "ab534347d1813c547f077ddf446ee780d140a31d",
+    "output": "/Users/changmin/.codex/worktrees/carry-input-ablation/ugrp/outputs/ablation-smoke-r256-h4",
+    "outcome": "Failed original 1e-5 feature tolerance before any training updates; process exited, owned session cleaned",
+    "feature_max_abs_at_failure": 9.059906005859375e-05
+  },
+  "optimizations": "No attention patch, GPU switch or feature cache reuse applied to this source. CPU/MPS timings were diagnostics only."
+}
