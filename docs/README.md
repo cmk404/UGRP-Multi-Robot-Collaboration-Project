@@ -5,7 +5,7 @@
 | 종류 | 문서 | 읽는 시점 |
 |---|---|---|
 | 현재 규칙·개발 절차 | [AGENTS](../AGENTS.md), [CONTRIBUTING](../CONTRIBUTING.md) | 작업 시작, 설치·검증·Git 작업 |
-| 설치·모델 연결 | [Ubuntu](ubuntu_quickstart.md), [Gemini 프록시](gemini_subscription_proxy.md) | 환경 준비 |
+| 설치·모델 연결 | [Colab](colab_simulation.md), [Ubuntu](ubuntu_quickstart.md), [Gemini 프록시](gemini_subscription_proxy.md) | 환경 준비 |
 | 출하·협업·동기화 | [출하 환경](research_dispatch_arena.md), [3대 실행](three_robot_e2e.md), [단계 계약](task_stage_sync_contract.md), [단계 연결](task_stage_execution.md) | 관련 구현 작업; 각 문서의 검증 날짜 확인 |
 | 연구 설계·학습 | [관측·비교 계약](warehouse_research_contract.md), [레퍼런스 비교](reference_alignment.md), [하네스 설계](research/show_harness_camera_pair_design.md) | 연구 질문·비교 조건 검토 |
 | 실험 증거 | [실험 인덱스](../experiments/README.md) | 관련 ID의 설정·성공/실패·원본 확인 |

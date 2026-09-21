@@ -4,6 +4,8 @@
 
 ## 시작하기
 
+- **[Colab 시뮬레이션·평가](docs/colab_simulation.md)** — 2026-09-21 요청에 따른 기본 실행 대상; 실제 런타임 검증 상태는 안내 참조
+
 - **[현재 상태와 실행 경로](docs/current_status.md)** — main에 포함된 결과·제약과 작업별 진입점
 - **[Ubuntu 설치·무료 데모](docs/ubuntu_quickstart.md)** — 새 팀원은 여기서 시작
 - [개발·테스트·실험·PR 절차](CONTRIBUTING.md) · [로봇 입력과 작업 규칙](AGENTS.md)

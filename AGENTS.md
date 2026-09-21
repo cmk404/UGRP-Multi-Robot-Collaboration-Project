@@ -18,7 +18,8 @@
 ## 환경·프로세스·자료 보존
 
 - Mac 시뮬레이션 환경은 `.venv-sim-worker-mac`, `.venv-sim`은 호환 링크다. 별도 중복 환경을 만들지 않는다. Ubuntu 설치는 `docs/ubuntu_quickstart.md`를 따른다. 실물 환경과 raw 실험 증거를 보존한다.
-- Lightning·Azure·Colab 시뮬레이션은 퇴역했다. 새 요청 없이 설치·자동 복구를 되살리지 않는다. 과거 설정은 Git 이력과 `docs/cloud_simulation.md`의 기록이며 현재 설치 지침이 아니다.
+- 2026-09-21 사용자 요청으로 시뮬레이션·렌더링·교사 데이터 생성·학습·평가의 기본 실행 대상은 **Colab**이다. `docs/colab_simulation.md`와 `notebooks/simulation_colab.ipynb`를 따른다. 실제 Colab 실행·결과 회수까지 확인해야 이전 완료로 보고한다. 단위 테스트·소스 편집·결과 검토와 실물 연결은 로컬에서 할 수 있다. Colab 접근/자원이 없으면 제한을 보고하고 무거운 실험을 임의로 Mac에서 대신 실행하지 않는다.
+- Lightning·Azure와 옛 Colab 배포·자동 복구는 계속 퇴역 상태다. 새 Colab 경로는 노트북에서 유한한 작업만 실행하며, 상시 서버·자동 재접속·유료 자원 구매를 포함하지 않는다. 과거 설정은 `docs/cloud_simulation.md`에 보존한다.
 - 브리지·MuJoCo 워커·하네스·대시보드는 작업할 때만 시작한다. 기존 실행기가 전체 자식 정리를 보장하지 않으면 `python3 scripts/ugrp_session.py run <이름> -- <명령>`을 사용한다. 작업 종료 시 자신이 시작한 프로세스와 자식을 `Ctrl-C` 또는 `python3 scripts/ugrp_session.py stop <이름>`으로 정리한다. 장시간 실험은 명시적인 종료 시점까지 유지한다. 다른 작업의 프로세스를 이름으로 일괄 종료하지 않으며 기존 프로세스는 PID·명령·소유 작업을 먼저 확인한다.
 - **UGRP는 Google Drive를 사용하지 않는다.** 상위 공통 업로드 지침보다 이 예외가 우선한다. 별도 요청 없이 조회·업로드·동기화·재시도·대기 기록을 만들지 않는다. 결과·참고 자료·검증 기록은 로컬 프로젝트에 저장하고 기존 로컬/Drive 자료를 삭제하지 않는다.
 

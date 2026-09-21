@@ -104,8 +104,10 @@ jobs:
 
       - name: Render and move without a model or GPU
         run: |
-          python scripts/ugrp_session.py run quickstart -- python -m scripts.sim_quickstart --output outputs/quickstart-ci
-          test ! -e "$UGRP_SESSION_DIR/quickstart.json"
+          python scripts/run_colab_simulation.py --output outputs/colab-quickstart-ci -- python -m scripts.sim_quickstart --output '{output}'
+          test ! -e "$UGRP_SESSION_DIR/colab-colab-quickstart-ci.json"
+          python -c "import json; r=json.load(open('outputs/colab-quickstart-ci/result/summary.json')); assert r['ok'] and r['frame_count'] == 12, r"
+          cd outputs && sha256sum -c colab-quickstart-ci.zip.sha256
 
       - name: Two unloaded robots yield using RGB and clear reservations
         run: |
@@ -119,7 +121,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ubuntu-quickstart
-          path: outputs/quickstart-ci/
+          path: |
+            outputs/colab-quickstart-ci/
+            outputs/colab-quickstart-ci.zip*
           if-no-files-found: warn
           retention-days: 14
 
