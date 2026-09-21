@@ -7,7 +7,7 @@ import shutil
 import subprocess
 
 
-def inventory():
+def inventory(*, env=None):
     candidates = [shutil.which('nvidia-smi'), '/usr/local/nvidia/bin/nvidia-smi', '/usr/bin/nvidia-smi']
     executable = next((p for p in candidates if p and Path(p).is_file()), None)
     report = {'nvidia_smi': executable, 'devices': glob.glob('/dev/nvidia*'),
@@ -21,7 +21,7 @@ def inventory():
     if executable:
         try:
             result = subprocess.run([executable, '--query-gpu=name,driver_version', '--format=csv,noheader'],
-                                    capture_output=True, text=True, timeout=20)
+                                    capture_output=True, text=True, timeout=20, env=env)
             report.update(nvidia_smi_exit=result.returncode, gpus=result.stdout, nvidia_smi_error=result.stderr)
         except Exception as exc:
             report['nvidia_smi_error'] = type(exc).__name__

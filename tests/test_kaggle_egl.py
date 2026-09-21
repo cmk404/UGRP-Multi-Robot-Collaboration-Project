@@ -7,6 +7,7 @@ from scripts.setup_kaggle_egl import configure
 
 def test_selects_existing_vendor_and_checks_actual_renderer(tmp_path,monkeypatch):
     libs=tmp_path/'libs';libs.mkdir();(libs/'libEGL_nvidia.so.0').write_bytes(b'library')
+    monkeypatch.setenv('LD_LIBRARY_PATH','/offline/mesa')
     calls=[]
     def run(args,**kwargs):
         calls.append((args,kwargs))
@@ -17,6 +18,8 @@ def test_selects_existing_vendor_and_checks_actual_renderer(tmp_path,monkeypatch
     assert json.loads(vendor.read_text())['ICD']['library_path']==str(libs/'libEGL_nvidia.so.0')
     assert calls[-1][1]['env']['__EGL_VENDOR_LIBRARY_FILENAMES']==str(vendor)
     assert gpu['renderer']=='T4'
+    assert env['LD_LIBRARY_PATH']==str(libs)+':/offline/mesa'
+    assert calls[-1][1]['env']['LD_LIBRARY_PATH']==env['LD_LIBRARY_PATH']
 
 
 def test_software_renderer_is_preserved_as_failure_evidence(tmp_path,monkeypatch):
