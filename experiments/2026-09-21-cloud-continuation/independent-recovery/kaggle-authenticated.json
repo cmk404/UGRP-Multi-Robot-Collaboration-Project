@@ -1,5 +1,5 @@
 {
-  "observed_at": "2026-09-21T06:39:48.711450+00:00",
+  "observed_at": "2026-09-21T06:45:58.118238+00:00",
   "scope": "Kaggle authentication and GPU renderer verified; full ACT cohort still gated by RGB handoff diagnostic. No 512px.",
   "gpu_probe": {
     "kernel": "changmin2026/ugrp-verified-gpu-probe-20260921",
@@ -34,10 +34,18 @@
     "asset_dataset": "changmin2026/ugrp-act-assets-d821ea4cd3e7",
     "timeout_seconds": 14400,
     "remote_state": "running",
-    "last_verified_phase": "handoff_diagnostic",
+    "last_verified_phase": "grasp_calibration",
     "renderer": "NVIDIA Corporation / Tesla T4/PCIe/SSE2",
     "dependencies_installed": true,
-    "approach_calibration_complete": true
+    "approach_calibration_complete": true,
+    "diagnostic_approach": {
+      "error": "RuntimeError: fine RGB alignment outside saved skill support",
+      "exit_code": 1,
+      "physical_success": false,
+      "protocol_complete": false
+    },
+    "progress_scope": "Live remote progress only; final archive not yet recovered",
+    "progress_sha256": "ead977c07f25608f4f59187a15f3d01031cc28d448e4c85093c7806d7fba034f"
   },
   "fix": "Freshly calibrated grasp exports declare full RGB support; training and dispatch preserve learned directions. Novelty guards unchanged. Legacy transfer masks remain available for legacy models.",
   "verification": {
