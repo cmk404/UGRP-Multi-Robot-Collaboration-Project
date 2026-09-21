@@ -1,0 +1,38 @@
+{
+  "interruption": {
+    "observed_unix": 1789980361.8733618,
+    "reason": "Server assignment absent; cause unknown",
+    "last_collection_success_unix": 1789979695.1873343,
+    "completed_trials_preserved": 110,
+    "remaining": 121,
+    "model_requests": 1356,
+    "delivered": 1355,
+    "unconfirmed_deliveries": 1,
+    "interrupted_trial_count": "unknown; no final checkpoint; preserved as infrastructure interruption",
+    "original_deadline_unix": 1789988792.8254676
+  },
+  "actor_source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+  "control_source_sha": "b0288f09890eb881028139a4aabe67484c9e9b93",
+  "snapshot_sha256": "0defaf858521a9c7467a9009b609d293a559db4be65a0ffc660718dfc861ef60",
+  "snapshot_local": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/relay-performance-20260921/snapshot",
+  "gpu_allocation_failures": [
+    {
+      "session": "ugrp-resume-20260921-e",
+      "http_status": 503,
+      "actor_started": false
+    },
+    {
+      "session": "ugrp-resume-20260921-f",
+      "http_status": 503,
+      "actor_started": false
+    }
+  ],
+  "cpu_io_runtime_stopped": true,
+  "validation": {
+    "passed": 1237,
+    "skipped": 3,
+    "subtests": 191
+  },
+  "deployment_status": "Code installed on relay host; GPU comparison did not start due to allocation 503. New transport not used by any robot trial.",
+  "kaggle_status": "04832043e57f RUNNING; existing 108-trial ACT job unchanged"
+}
