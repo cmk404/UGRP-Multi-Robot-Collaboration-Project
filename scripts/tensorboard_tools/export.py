@@ -23,6 +23,7 @@ MAX_BYTES = 64 * 1024 * 1024
 HP_METRICS = ('process/exit_code', 'result/wall_s', 'result/sim_s', 'result/commands', 'result/model_calls',
               'result/input_tokens', 'result/output_tokens', 'result/cost_usd',
               'evaluation/reported_success', 'claims/protocol_complete',
+              'evaluation/simultaneous_loaded_motion_s', 'evaluation/robot_robot_contact_samples',
               'claims/completed_task_claims', 'claims/tasks', 'claims/final_object_claims',
               'training/final_loss', 'development/final_selection_score')
 SECRET = re.compile(r'authorization|cookie|password|secret|api.?key|access.?token|refresh.?token', re.I)
@@ -246,6 +247,9 @@ def export_execution(src, w, result, max_images):
                     for history in issued.values() for command in rows(history))
                 meta['commands_source'] = 'issued-commands.json; excludes initial SETUP target snapshot'
     success_field = next((k for k in ('success', 'transport_success', 'physical_success') if type(result.get(k)) is bool), None)
+    evaluation=obj(result.get('evaluation'))
+    metrics['evaluation/simultaneous_loaded_motion_s']=obj(evaluation.get('concurrent_transport')).get('simultaneous_loaded_motion_s')
+    metrics['evaluation/robot_robot_contact_samples']=evaluation.get('robot_robot_contact_samples')
     if success_field: metrics['evaluation/reported_success'] = int(result[success_field])
     meta['success_source_field'] = success_field
     meta['outcome'] = str(result[success_field]) if success_field else 'unrecorded'

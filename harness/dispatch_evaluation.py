@@ -34,3 +34,35 @@ def carry_clearance(samples, command_history, plan):
                               len(window) >= 2 and max_gap <= .11 and not floor))
         results[obj] = report
     return results
+
+
+def concurrent_transport(samples, command_history, plan):
+    """Require both carried objects AND all carriers to move on the same clock.
+
+    A TRANSIT label, process overlap, settling jitter or lifted-but-stationary
+    cargo alone does not count. This is sampled post-run evidence only.
+    """
+    import math
+    tasks={t['object']:t for t in (plan or {}).get('tasks',[])}
+    report={'simultaneous_loaded_motion_s':0.,'intervals_s':[],
+            'minimum_displacement_per_sample_m':.001,
+            'max_sample_gap_s':.11,'scope':'referee-only sampled physical motion during issued TRANSIT; not controller input'}
+    if set(tasks)!={'beam','box'}:return report
+    windows={obj:[(c['issued_at_s'],c['issued_at_s']+c.get('action',{}).get('duration_s',c.get('duration_s',0.)))
+                  for rid in task['participants'] for c in command_history.get(rid,[])
+                  if c.get('stage')=='TRANSIT' and 'issued_at_s' in c]
+             for obj,task in tasks.items()}
+    for a,b in zip(samples,samples[1:]):
+        start,end=a['sim_time_s'],b['sim_time_s']
+        if not 0<end-start<=.110001:continue
+        if a.get('weld') or b.get('weld'):continue
+        if not all(any(lo<=start+1e-8 and hi>=end-1e-8 for lo,hi in windows[obj])
+                   and all(not s['cargo'][obj]['floor_contact'] and s['cargo'][obj]['robot_contact'] for s in (a,b))
+                   and math.dist(a['cargo'][obj]['position'][:2],b['cargo'][obj]['position'][:2])>.001
+                   and all(math.dist(a['robots'][rid][:2],b['robots'][rid][:2])>.001 for rid in task['participants'])
+                   for obj,task in tasks.items()):continue
+        report['simultaneous_loaded_motion_s']+=end-start
+        if report['intervals_s'] and abs(report['intervals_s'][-1][1]-start)<1e-8:
+            report['intervals_s'][-1][1]=end
+        else:report['intervals_s'].append([start,end])
+    return report

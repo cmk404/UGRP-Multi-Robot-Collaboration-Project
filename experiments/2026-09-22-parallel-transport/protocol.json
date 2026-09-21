@@ -1,0 +1,65 @@
+{
+  "scope": "Two reference validation trials of authored independent-route scheduling. Preserved successful calibration and original start. This is not fresh LLM negotiation, a model ranking, or final map generalization.",
+  "controls": {
+    "efficient_capture": true,
+    "route_overlap": true,
+    "max_wall_s": 2400,
+    "max_carry_steps": 900,
+    "video_fps": 4,
+    "min_free_gib": 8
+  },
+  "conditions": {
+    "RGB": {
+      "model": null
+    },
+    "ACT-original": {
+      "model": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/model-20260918/act"
+    }
+  },
+  "grasp": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+  "stages": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+  "test": [
+    {
+      "id": "open-original",
+      "variant": "open",
+      "seed": 11,
+      "dock": "dock_a",
+      "offset": [
+        -0.01,
+        0.004,
+        0.0
+      ],
+      "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+    }
+  ],
+  "evaluation": {
+    "repeats": 1
+  },
+  "asset_sha256": {
+    "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied/model-r3-yaw.json": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied/model-r3-forward.json": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied/model-r1-lateral.json": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied/model-r3-lateral.json": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied/model-r1-yaw.json": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied/model-r1-forward.json": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied/varied-start-skill.json": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp/student-skill.json": "b244293aa1a5dd2efda1a0d6e8b15582d8a12a3e4d151d46cf679321535e0970",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp/r3-model.json": "8349e10ed659abf4bc62f6fcc62bf22d22ca95fe05d954b42b3883b0d070861d",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp/evaluation-fixture.json": "c2183ad250ea16606d652f91d117e4abb085f9c88b2ab0115de0ba93e1bc5f3f",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp/r1-model.json": "c6995cac23ccf2fd168fb222c2332b518507d7ea66921aaf0c231bc460598e45",
+    "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/model-20260918/act/model.safetensors": "ddf79d3577b9d66aa53e16fbe387bbe1039a5ddb0b4cc3caeb7292dc81dcd90e",
+    "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/model-20260918/act/config.json": "2a923ed3a16197841fd599301ed157bc2e3518e35a8fc99563f45d73f8089665",
+    "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/model-20260918/act/adapter.json": "6da54d883574929010bf4a79d2419cd6cdf1d719e5e8cf060be6e4212b3f6b2b"
+  },
+  "baseline_plan": {
+    "path": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/assets/verified-data/data/episodes/train-0/committed-plan.json",
+    "sha256": "2153ca63e64457d8495a8c215dad40e154cde9ffc45a710ac4f396aa90357548"
+  },
+  "acceptance": [
+    "whole physical success",
+    "no obstacle contacts or sampled inter-robot contacts",
+    "strict simultaneous loaded motion >0s",
+    "video review of both carried objects and all three robots"
+  ]
+}

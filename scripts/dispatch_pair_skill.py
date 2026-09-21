@@ -66,6 +66,8 @@ class BoundPairSkill:
         return mapped
 
     def drive_mecanum(self,commands,duration_s=.2):
+        if self.transport_started and self.carried_beam.previous is not None:
+            self.bindings.reserve_beam_apron(self.carried_beam.previous)
         self.io.pair_drive({self.bindings.pair[r]:dict(kind='mecanum',**c,duration_s=duration_s)
                             for r,c in commands.items()},duration_s,self.phase)
     def drive(self,forwards,duration_s=.2):

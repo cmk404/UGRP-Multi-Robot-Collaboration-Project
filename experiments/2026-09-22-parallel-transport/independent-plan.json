@@ -1,0 +1,30 @@
+{
+  "proposal_id": "authored-independent-route-diagnostic",
+  "version": 1,
+  "plan_hash": "c2f420b7d1eb537334502b0eebe14161ffc0468f058bb5230e3d31c39281e45c",
+  "plan": {
+    "dock": "dock_a",
+    "tasks": [
+      {
+        "after": [],
+        "id": "beam_job",
+        "object": "beam",
+        "participants": [
+          "r1",
+          "r3"
+        ],
+        "route": "north"
+      },
+      {
+        "after": [],
+        "id": "box_job",
+        "object": "box",
+        "participants": [
+          "r2"
+        ],
+        "route": "south"
+      }
+    ]
+  },
+  "proposer": "r2"
+}

@@ -94,6 +94,8 @@ class SkillScene(DispatchScene):
         self.authorize();self.pair_phase=stage
         if set(commands)!=set(self.bindings.pair.values()):raise ValueError('pair endpoint mismatch')
         for r,a in commands.items():self.ports[r].validate_action(a)
+        if stage=='TRANSIT' and any(any(abs(a.get(k,0.))>0 for k in ('forward','left','turn')) for a in commands.values()):
+            self.bindings.note_transit_command('beam')
         for r,a in commands.items():self.raw(r,a,stage)
         self.step(duration)
     def pair_arm(self,targets,duration,settle,stage):
@@ -168,6 +170,7 @@ class SkillScene(DispatchScene):
         before=self.solo.phase
         approach_state=copy.deepcopy(self.solo.box) if before=='approach' else None
         action,evidence=self.solo.decide(obs,top)
+        if evidence.get('waiting_for_resource'):self.solo.steps-=1
         if before=='approach' and self.solo.phase=='lower' and not self.bindings.permission('box','GRASP'):
             # Stay at the pregrasp visual boundary and reobserve after waiting.
             # Never hold a lifted cargo merely to queue for the apron.
@@ -284,7 +287,8 @@ def run(args):
         result['plan_feasibility']=negotiate_executable(team,frames,scene.command_history,task,
             scene.config['static_map'],scene.time(),max_tokens=args.max_input_tokens,
             live_replan=getattr(args,'live_replan',False),identity=identity,reference_top=reference)
-        scene.bindings=SkillBindings(team.agreement.committed,scene.config['static_map'])
+        scene.bindings=SkillBindings(team.agreement.committed,scene.config['static_map'],
+                                    route_overlap=getattr(args,'route_overlap',False))
         result.update(plan_committed=True,plan=scene.bindings.plan,bindings=scene.bindings.capabilities())
         write(args.output/'committed-plan.json',team.agreement.committed)
         write(args.output/'robot-programs.json',scene.bindings.programs)
@@ -310,6 +314,8 @@ def run(args):
             carry(pair,args.carry_act_python,args.carry_act_model,
                   args.carry_act_max_steps if carry_steps is None else carry_steps)
         else:pair.carry(ImageRoute(scene.bindings,'beam'),max_steps=carry_steps)
+        if scene.bindings.route_overlap and not scene.bindings.permission('beam','UNLOAD'):
+            raise RuntimeError('shared unload resource unavailable')
         result['phase']='RELEASE';pair.place();pair.verify_placement();scene.bindings.finish('beam')
         while scene.bindings.tasks['box']['id'] not in scene.bindings.finished:scene.step(.2)
         result['protocol_complete']=True;result['phase']='FINISHED'
@@ -322,6 +328,7 @@ def run(args):
                 # Freeze decisions before final referee-only settling.
                 if scene.solo_executor:scene.solo_executor.cancel(scene.time(),'trial_end')
                 if scene.solo:result['solo_status']={'phase':scene.solo.phase,'reason':scene.solo.reason,'done':scene.solo.done}
+                if scene.bindings:result['resource_events']=scene.bindings.resource_events
                 scene.solo=None;scene.deadline=None;scene.hold()
                 try:
                     scene.step(1.3);scene.capture('final')

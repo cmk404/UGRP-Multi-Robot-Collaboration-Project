@@ -111,7 +111,7 @@ def canonical_pair_top(jpeg, reference, *, translation_px=None, hue_upper=24, ob
 
 
 class SkillBindings:
-    def __init__(self, committed, static_map):
+    def __init__(self, committed, static_map, *, route_overlap=False):
         if not committed or committed.get('plan_hash') != digest(committed.get('plan')):
             raise ValueError('exact committed plan required')
         self.committed = copy.deepcopy(committed)
@@ -131,6 +131,30 @@ class SkillBindings:
         self.locks = {}
         self.revoked = False
         self.cluttered=any(o['id']=='service_island' for o in static_map['obstacles'])
+        self.route_overlap=route_overlap
+        self.transit_started=set()
+        self.resource_events=[]
+        if route_overlap:
+            if self.cluttered:
+                raise ValueError('route overlap requires open-map translation; moving-obstacle rotation is not validated')
+            if any(t['after'] for t in self.tasks.values()):
+                raise ValueError('route overlap requires an explicitly agreed independent plan; dependencies are never removed')
+            if self.tasks['beam']['route']==self.tasks['box']['route']:
+                raise ValueError('route overlap requires distinct routes')
+
+    def note_transit_command(self,obj):
+        """Peer stage claim from issued commands, never measured completion."""
+        self.transit_started.add(obj)
+
+    def reserve_beam_apron(self,feature):
+        """Reserve before the RGB-observed formation reaches the common bay."""
+        if not self.route_overlap:return
+        region=self.static_map['regions']['dispatch_apron']
+        west=region['center_m'][0]-region['half_extents_m'][0]
+        w,h=feature['image_size']
+        edge=pixel_from_map([west-.30,region['center_m'][1]],self.static_map,(h,w),height=.09)[0]
+        if feature['center'][0]*w>=edge and not self.permission('beam','UNLOAD'):
+            raise RuntimeError('shared unload resource unavailable before RGB boundary')
 
     def authorize(self, committed):
         if self.revoked or committed != self.committed:
@@ -139,6 +163,21 @@ class SkillBindings:
     def permission(self, obj, stage):
         if self.revoked:return False
         task = self.tasks[obj]
+        if self.route_overlap:
+            # The pair leaves pickup first. The box may lift and use its own
+            # route while the beam is moving, but queues before the shared bay.
+            if obj=='box' and stage=='GRASP' and 'beam' not in self.transit_started:return False
+            if stage=='UNLOAD':
+                if obj=='box' and self.tasks['beam']['id'] not in self.finished:return False
+                resources=['dispatch_apron']
+            elif stage in ('GRASP','TRANSIT'):
+                resources=[self.static_map['routes'][task['route']]['resource']]
+            else:resources=[]
+            if any(self.locks.get(r,task['id'])!=task['id'] for r in resources):return False
+            for r in resources:
+                if r not in self.locks:self.resource_events.append({'event':'acquire','object':obj,'resource':r,'stage':stage})
+                self.locks[r]=task['id']
+            return True
         if (stage != 'APPROACH' or self.cluttered) and any(dep not in self.finished for dep in task['after']):
             return False
         if stage in ('GRASP','TRANSIT') or (stage=='APPROACH' and self.cluttered):
@@ -151,6 +190,7 @@ class SkillBindings:
     def finish(self,obj):
         task_id = self.tasks[obj]['id']
         self.finished.add(task_id)
+        if self.route_overlap:self.resource_events.append({'event':'finish','object':obj,'released':[r for r,t in self.locks.items() if t==task_id]})
         self.locks = {r:t for r,t in self.locks.items() if t!=task_id}
 
     def capabilities(self):
@@ -187,6 +227,7 @@ def pixel_from_map(xy, static_map, shape, *, height=0.):
 class ImageRoute:
     """Plan-selected authored waypoints with current cargo position from RGB."""
     def __init__(self, bindings, obj):
+        self.bindings=bindings
         self.map=bindings.static_map;self.obj=obj
         self.task=bindings.tasks[obj];self.dock=bindings.plan['dock']
         self.points=None;self.index=0;self.confirmations=0
@@ -326,6 +367,11 @@ class ImageRoute:
                     pixel_from_map([1.12,apron_y],self.map,frame.shape),
                     pixel_from_map([east_clear,apron_y],self.map,frame.shape),
                     pixel_from_map([east_clear,destination[1]],self.map,frame.shape),goal_px]
+                if self.bindings.route_overlap:
+                    # A separate south/north staging point stays west of the
+                    # shared apron, including the authored chassis margin.
+                    west=self.map['regions']['dispatch_apron']['center_m'][0]-self.map['regions']['dispatch_apron']['half_extents_m'][0]
+                    self.points.insert(1,pixel_from_map([west-.20,gate[1]],self.map,frame.shape))
         error=self.points[self.index]-center
         tolerance=4 if self.index==len(self.points)-1 else 6
         ready=float(np.max(np.abs(error))) <= tolerance
@@ -356,6 +402,11 @@ class ImageRoute:
                   'cargo_bounds_px':bounds.tolist(),'waypoint_index':self.index,
                   'waypoints_px':[p.tolist() for p in self.points],
                   'error_px':error.tolist(),'ready':ready,'done':done}
+        if (self.obj=='box' and self.bindings.route_overlap and self.index==1 and ready
+                and not self.bindings.permission('box','UNLOAD')):
+            self.confirmations=0
+            evidence.update(waiting_for_resource=True,resource='dispatch_apron',done=False)
+            return {'kind':'mecanum','forward':0.,'left':0.,'turn':0.,'duration_s':.2},evidence
         if self.obj=='box':evidence['tracking']=tracking
         if slot_evidence is not None:evidence['destination_region']=slot_evidence
         if ready and self.confirmations>=2 and not done:

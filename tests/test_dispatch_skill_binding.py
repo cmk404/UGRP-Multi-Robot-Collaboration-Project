@@ -94,6 +94,48 @@ def test_task_dependencies_and_resource_occupancy_persist_on_revoke():
     assert not b.permission('box','TRANSIT') and b.locks==locks
 
 
+def test_route_overlap_has_independent_travel_and_exclusive_unload():
+    b=SkillBindings(committed(),authored_map('open'),route_overlap=True)
+    assert b.permission('beam','GRASP')
+    assert not b.permission('box','GRASP')
+    b.note_transit_command('beam')
+    assert b.permission('box','GRASP') and b.permission('box','TRANSIT')
+    assert b.permission('beam','TRANSIT')
+    assert set(b.locks)=={'north_gate','south_gate'}
+    assert not b.permission('box','UNLOAD')
+    assert b.permission('beam','UNLOAD')
+    locks=copy.deepcopy(b.locks);b.revoked=True
+    assert not b.permission('box','UNLOAD') and b.locks==locks
+    b.revoked=False;b.finish('beam')
+    assert b.permission('box','UNLOAD')
+    assert b.locks=={'south_gate':'box_job','dispatch_apron':'box_job'}
+
+
+def test_route_overlap_does_not_remove_agreed_dependencies_or_assume_moving_obstacles():
+    with pytest.raises(ValueError,match='dependencies are never removed'):
+        SkillBindings(committed(after=True),authored_map('open'),route_overlap=True)
+    with pytest.raises(ValueError,match='moving-obstacle'):
+        SkillBindings(committed(),authored_map('shared_crossing'),route_overlap=True)
+
+
+def test_route_overlap_queue_is_at_rgb_staging_point_before_unload():
+    from harness.dispatch_skill_binding import ImageRoute,pixel_from_map
+    b=SkillBindings(committed(),authored_map('open'),route_overlap=True)
+    raw=Path('tests/fixtures/dispatch_skill_transfer/box-top-held.jpg').read_bytes()
+    route=ImageRoute(b,'box');_,e=route.observe(raw)
+    assert len(route.points)==7
+    west=b.static_map['regions']['dispatch_apron']['center_m'][0]-b.static_map['regions']['dispatch_apron']['half_extents_m'][0]
+    assert route.points[1][0]==pytest.approx(pixel_from_map([west-.20,0],b.static_map,(720,960))[0])
+    route.index=1;route.points[1]=np.array(e['cargo_center_px'])
+    for _ in range(4):
+        action,e=route.observe(raw)
+        assert e['waiting_for_resource'] and route.index==1
+        assert action['forward']==action['left']==0.
+    b.finish('beam')
+    route.observe(raw);route.observe(raw)
+    assert route.index==2 and b.locks['dispatch_apron']=='box_job'
+
+
 def test_resource_queue_does_not_exhaust_remaining_skill_decision(tmp_path):
     import base64
     from scripts.run_dispatch_skills import SkillScene
