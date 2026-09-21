@@ -72,6 +72,6 @@ Linux wheel을 재사용하려면 `prepare --wheelhouse <폴더>`를 지정한�
 
 ## 현재 검증 범위
 
-로컬 24개 관련 테스트를 통과했다. 계정 `changmin2026` 인증과 private Dataset/kernel 제출을 확인했다. 첫 원격 실행은 패키지 서버 DNS 실패로 설치 단계에서 종료했다. 읽기 전용 런타임 진단으로 Python 3.12, Ubuntu 22.04 및 OSMesa 부재를 확인하여 오프라인 의존성 방식으로 수정했으며, 실제 물리·렌더링 재검증을 진행 중이다. 실패 로그와 소스는 로컬 outputs에 보존한다.
+로컬 관련 테스트 **25개**를 통과했다. 계정 `changmin2026`에서 private Dataset·CPU kernel을 만들고 **인터넷 OFF** 상태로 Python 3.12/OSMesa 설치·실행·결과 회수까지 확인했다. 최종 후보는 **0.138548m 이동·1.5 SIM초·12프레임**, 종료 코드 0이다. ZIP 및 내부 모든 해시와 대표 3프레임을 확인했다. [실행 SHA·앞선 실패·원본 위치·검토 범위](../experiments/2026-09-21-kaggle-cli-smoke/README.md)를 기록했다. 기본 이미지의 비치명적인 sitecustomize/wrapt 경고는 raw 로그에 보존한다. GPU 학습·외부 LLM·전체 운반 실험은 별도 검증 대상이다.
 
 참고: [공식 kernels 명령](https://github.com/Kaggle/kaggle-cli/blob/main/docs/kernels.md), [Dataset 메타데이터와 라이선스](https://github.com/Kaggle/kaggle-cli/blob/main/docs/datasets_metadata.md), [kernel 메타데이터](https://github.com/Kaggle/kaggle-cli/blob/main/docs/kernels_metadata.md). 실제 플래그는 설치된 `kaggle <명령> --help`를 우선한다.

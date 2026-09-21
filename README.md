@@ -4,7 +4,7 @@
 
 ## 시작하기
 
-- **[Kaggle CLI 배치 실행](docs/kaggle_simulation.md)** — 비공개 소스 제출·상태 확인·결과 검증; 최초 계정 인증 필요
+- **[Kaggle CLI 배치 실행](docs/kaggle_simulation.md)** — 비공개 CPU·오프라인 실행·결과 회수 검증 완료; 신규 계정은 최초 인증 필요
 - **[Colab CLI 시뮬레이션·평가](docs/colab_simulation.md)** — 2026-09-21 요청에 따른 기본 실행 대상; 실제 런타임 검증 상태는 안내 참조
 
 - **[현재 상태와 실행 경로](docs/current_status.md)** — main에 포함된 결과·제약과 작업별 진입점

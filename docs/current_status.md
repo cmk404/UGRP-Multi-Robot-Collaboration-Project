@@ -4,7 +4,7 @@
 
 ## 실행 환경 변경 — 2026-09-21
 
-시뮬레이션·렌더링·학습·평가의 기본 실행 대상은 Colab CLI다. [CLI 실행·결과 회수 안내](colab_simulation.md)를 따른다. [실제 CLI CPU 데모와 결과 회수](../experiments/2026-09-21-colab-cli-smoke/README.md)를 확인했다. 기존 실험 전체를 Colab에서 재검증했다는 뜻은 아니다. 실물 연결은 로컬에서 수행한다. [Kaggle CLI](kaggle_simulation.md)의 비공개 배치 제출·회수 실행기도 추가했으며 실제 원격 검증은 계정 인증 후 진행한다.
+시뮬레이션·렌더링·학습·평가의 기본 실행 대상은 Colab CLI다. [CLI 실행·결과 회수 안내](colab_simulation.md)를 따른다. [실제 CLI CPU 데모와 결과 회수](../experiments/2026-09-21-colab-cli-smoke/README.md)를 확인했다. 기존 실험 전체를 Colab에서 재검증했다는 뜻은 아니다. 실물 연결은 로컬에서 수행한다. [Kaggle CLI](kaggle_simulation.md)도 비공개 CPU·인터넷 OFF 배치 실행과 결과 회수를 [실제 검증](../experiments/2026-09-21-kaggle-cli-smoke/README.md)했다. 기본 물리·카메라 데모 범위이며 GPU/전체 운반 검증은 아니다.
 
 ## 목적별로 읽기
 
