@@ -130,3 +130,7 @@ Colab에서 36회 평가를 재개했다(source `04f129c`). 재학습은 없고 
 `/home/ubuntu/ugrp-jobs/recovery-20260921/{colab-c,act-colab-b,rule}`이며 `act-queue.json`은 GPU 인계 대기 상태다. 이 문서 작성 뒤의 진행은 실제 상태 JSON을 다시 확인해야 한다.
 
 추가 검증: 최신 수정의 전체 오프라인 회귀 1218 passed, 3 skipped, 191 subtests passed(73.02초). 관련 클라우드/중계/TensorBoard 검사 29 passed. 기존 push의 GitHub CI 여섯 종류는 모두 성공했으며, 이후 커밋의 CI는 별도 재확인 대상이다.
+
+### Kaggle GPU 미배정 원인 확인 — 14:58 KST
+
+강 프로필의 기존 Google 계정으로 Kaggle `changmin2026`에 로그인해 실제 Notebook Session options를 확인했다. **전화번호 미인증으로 GPU/TPU·인터넷 접근이 잠겨 있다.** `Internet off`는 disabled였고 `Get phone verified` 안내가 표시됐다. 진단 노트북의 GPU 요청 메타데이터와 실제 CPU 실행이 다른 이유를 설명하는 계정 차원의 차단이다. 본인 인증 폼만 열었으며 전화번호·문자 코드 입력이나 CAPTCHA 처리, 새 계정 생성은 하지 않았다. 사용자에게 인증 완료를 요청했다. Draft Session은 off이며 별도 브라우저 실행은 시작하지 않았다. 인증 전에는 Kaggle GPU 재제출을 반복하지 않는다. Colab 비교와 이후 ACT 인계는 이 인증과 독립적으로 진행한다.
