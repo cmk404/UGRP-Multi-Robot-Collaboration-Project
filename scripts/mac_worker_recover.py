@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Recover the UGRP MuJoCo worker on Changmin's Mac through Tailscale SSH."""
+"""Recover a configured UGRP MuJoCo worker on macOS through SSH/Tailscale."""
 from __future__ import annotations
 
 import json
@@ -14,9 +14,12 @@ ROOT = Path(__file__).resolve().parents[1]
 TOKEN_FILE = ROOT / ".sim_bridge_token"
 HEALTH = os.environ.get("UGRP_SIM_HEALTH", "http://127.0.0.1:8091/health")
 SPEED_URL = os.environ.get("UGRP_SIM_SPEED_URL", "http://127.0.0.1:8091/sim/speed")
-WS_URL = os.environ.get("UGRP_SIM_WS_URL", "wss://instance-20260627-1243.taileb87bd.ts.net:8443")
-MAC_HOST = os.environ.get("UGRP_MAC_SIM_HOST", "changmin@100.98.90.69").strip()
-MAC_ROOT = os.environ.get("UGRP_MAC_SIM_ROOT", "/Users/changmin/projects/ugrp").strip()
+
+# Deployment-specific network and host values must come from untracked local
+# configuration (for example .env.gpu, which is excluded by .gitignore).
+WS_URL = os.environ.get("UGRP_SIM_WS_URL", "").strip()
+MAC_HOST = os.environ.get("UGRP_MAC_SIM_HOST", "").strip()
+MAC_ROOT = os.environ.get("UGRP_MAC_SIM_ROOT", "").strip()
 MAC_PYTHON = os.environ.get("UGRP_MAC_SIM_PYTHON", ".venv-sim-worker-mac/bin/python").strip()
 LOCAL_MODE = os.environ.get("UGRP_MAC_SIM_LOCAL", "").strip().lower() in {"1", "true", "yes", "on"}
 REMOTE_TOKEN = "/tmp/ugrp_sim_bridge_token"
@@ -169,6 +172,15 @@ def main() -> int:
     if bridge_connected():
         print("mac recovery: worker already connected", flush=True)
         return 0
+    if not WS_URL:
+        print("mac recovery: set UGRP_SIM_WS_URL in local untracked configuration", flush=True)
+        return 2
+    if not LOCAL_MODE and (not MAC_HOST or not MAC_ROOT):
+        print(
+            "mac recovery: set UGRP_MAC_SIM_HOST and UGRP_MAC_SIM_ROOT in local untracked configuration",
+            flush=True,
+        )
+        return 2
     if not mac_ready():
         print("mac recovery: Mac worker runtime unavailable", flush=True)
         return 2
