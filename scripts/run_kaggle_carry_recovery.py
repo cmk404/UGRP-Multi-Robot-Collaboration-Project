@@ -48,6 +48,7 @@ def main():
                 path=Path(name)
                 if path.is_absolute() or '..' in path.parts:raise ValueError('unsafe model member')
             bundle.extractall(assets)
+        state['phase']='act_environment';save()
         act=ROOT.parent/'act-env'
         subprocess.run([sys.executable,'-m','pip','install','uv'],check=True)
         subprocess.run([sys.executable,'-m','uv','venv','--seed','--python',sys.executable,str(act)],check=True)
