@@ -16,7 +16,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from scripts.cloud_collection import digest,write_json
 from scripts.colab_carry_bundle import unpack
-from scripts.setup_colab_egl import PROBE
+from scripts.setup_kaggle_egl import configure
 
 
 def main():
@@ -33,9 +33,8 @@ def main():
     env={**os.environ,'MUJOCO_GL':'egl','PYOPENGL_PLATFORM':'egl','OMP_NUM_THREADS':'1','OPENBLAS_NUM_THREADS':'1','PYTHONPATH':str(ROOT)}
     save()
     try:
-        probe=subprocess.run([sys.executable,'-c',PROBE],env=env,capture_output=True,text=True,timeout=45,check=True)
-        gpu=json.loads(probe.stdout)
-        if 'NVIDIA' not in gpu['vendor']:raise RuntimeError('actual NVIDIA rendering is required')
+        gpu,render_environment=configure(sys.executable,out/'renderer')
+        env.update(render_environment)
         state['renderer']=gpu;save()
         def asset(name,sha):
             paths=list(Path('/kaggle/input').rglob(name))
