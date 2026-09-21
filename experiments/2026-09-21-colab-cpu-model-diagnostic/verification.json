@@ -1,0 +1,233 @@
+{
+  "source_sha": "8baa01f39a15321d33847a7d6c402f42b2d561b8",
+  "archive_sha256": "eb694bf75f90dcbcbe8e863e9bf4acb2469fb205a8b2d42dd01dea6c32c1ad01",
+  "verified_files": 186,
+  "archive_verified": true,
+  "trials": {
+    "scope": "CPU/OSMesa execution diagnostic only; excluded from all failure-rate and GPU timing cohorts",
+    "source_sha": "8baa01f39a15321d33847a7d6c402f42b2d561b8",
+    "started_unix": 1789986148.3375902,
+    "complete": true,
+    "ready": true,
+    "trials": [
+      {
+        "policy": "rule",
+        "ready": true,
+        "checks": {
+          "process": true,
+          "no_trial_error": true,
+          "rgb_pairs_saved": true,
+          "commands_issued": true,
+          "model_response_parsed": true,
+          "camera_unchanged": true,
+          "weld_off": true,
+          "video_saved": true
+        },
+        "process": {
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_s": 168.924694801
+        },
+        "task_success": false,
+        "stop_reason": "wall_budget",
+        "error": null,
+        "wall_s": 165.89303511400004,
+        "sim_s": 5.549999999999611,
+        "commands": 14,
+        "model_calls": 0,
+        "rgb_pair_count": 7,
+        "model_latency_s": [],
+        "provider_latency_s": []
+      },
+      {
+        "policy": "jev",
+        "ready": true,
+        "checks": {
+          "process": true,
+          "no_trial_error": true,
+          "rgb_pairs_saved": true,
+          "commands_issued": true,
+          "model_response_parsed": true,
+          "camera_unchanged": true,
+          "weld_off": true,
+          "video_saved": true
+        },
+        "process": {
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_s": 166.508557258
+        },
+        "task_success": false,
+        "stop_reason": "wall_budget",
+        "error": null,
+        "wall_s": 165.62767553100002,
+        "sim_s": 5.549999999999611,
+        "commands": 14,
+        "model_calls": 2,
+        "rgb_pair_count": 7,
+        "model_latency_s": [
+          4.519980557999929,
+          2.161936165000043
+        ],
+        "provider_latency_s": [
+          0.4273916109232232,
+          0.5370350980665535
+        ]
+      },
+      {
+        "policy": "gemini",
+        "ready": true,
+        "checks": {
+          "process": true,
+          "no_trial_error": true,
+          "rgb_pairs_saved": true,
+          "commands_issued": true,
+          "model_response_parsed": true,
+          "camera_unchanged": true,
+          "weld_off": true,
+          "video_saved": true
+        },
+        "process": {
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_s": 170.7991812429999
+        },
+        "task_success": false,
+        "stop_reason": "wall_budget",
+        "error": null,
+        "wall_s": 169.90834672300002,
+        "sim_s": 5.549999999999611,
+        "commands": 14,
+        "model_calls": 2,
+        "rgb_pair_count": 7,
+        "model_latency_s": [
+          4.975373728000022,
+          5.931020416000024
+        ],
+        "provider_latency_s": [
+          4.370786153012887,
+          5.407466975972056
+        ]
+      }
+    ],
+    "finished_unix": 1789986654.6057782
+  },
+  "videos": [
+    {
+      "policy": "rule",
+      "video": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/colab-cpu-model-20260921/verified/result/rule/motion.mp4",
+      "sha256": "73495a5e8a3d23ac3674c64976504d91b1064723e30402507468e1cb96118ab5",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 960,
+            "height": 720,
+            "nb_frames": "34"
+          }
+        ],
+        "format": {
+          "duration": "4.250000"
+        }
+      }
+    },
+    {
+      "policy": "jev",
+      "video": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/colab-cpu-model-20260921/verified/result/jev/motion.mp4",
+      "sha256": "9b7a311cad5880cdc469826527eacd8d1459eeda477ab502b9fc9f0eee6f4934",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 960,
+            "height": 720,
+            "nb_frames": "34"
+          }
+        ],
+        "format": {
+          "duration": "4.250000"
+        }
+      }
+    },
+    {
+      "policy": "gemini",
+      "video": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/colab-cpu-model-20260921/verified/result/gemini/motion.mp4",
+      "sha256": "5ae172a8dc87cd5b6a1b3adbd1287484c08af3fb161304dcb84603d97da15a3e",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 960,
+            "height": 720,
+            "nb_frames": "34"
+          }
+        ],
+        "format": {
+          "duration": "4.250000"
+        }
+      }
+    }
+  ],
+  "run_wall_s": 506.9520025253296,
+  "model_preflight": {
+    "valid": true,
+    "logical_requests": 6,
+    "http_attempts": 6,
+    "first_attempt_failures": 0
+  },
+  "controller": {
+    "stage": "collected",
+    "started_unix": 1789986073.362098,
+    "source_sha": "8baa01f39a15321d33847a7d6c402f42b2d561b8",
+    "session": "ugrp-cpu-model-20260921",
+    "complete": true,
+    "relay_pid": 2790884,
+    "proxy_pid": 2790729,
+    "diagnostic_exit_code": 0,
+    "stop_exit_code": 0,
+    "cleanup_complete": true,
+    "ended_unix": 1789986662.840704
+  },
+  "relay": {
+    "calls": 4,
+    "api_calls": 4,
+    "delivered": 4,
+    "errors": 0,
+    "started_unix": 1789986098.7762892,
+    "complete": true,
+    "transport_version": "pooled_parallel_v1",
+    "inherited_requests": 0,
+    "retry_policy": "none",
+    "http_max_attempts": 1,
+    "predecessor": null,
+    "pending": 0,
+    "draining": false,
+    "last_observed_unix": 1789986636.3234482,
+    "first_attempt_failures": 0,
+    "recovered_requests": 0,
+    "retry_calls": 0,
+    "ended_unix": 1789986636.3261719
+  },
+  "raw_local": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/colab-cpu-model-20260921/verified",
+  "raw_remote": "/home/ubuntu/ugrp-jobs/recovery-20260921/cpu-model-20260921/run",
+  "suitable_for_large_cohort": false,
+  "reason": "All three trials reached the wall budget before the requested 4-second control horizon; preserve as diagnostics only.",
+  "active_colab_assignments_after": 0,
+  "proxy_port_8391_after": "not listening",
+  "local_tests": {
+    "passed": 14,
+    "subtests": 7
+  },
+  "source_ci": {
+    "head": "8baa01f39a15321d33847a7d6c402f42b2d561b8",
+    "all_six_job_types_passed": true,
+    "push_and_pr_instances": 12
+  },
+  "dashboard_evidence": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/colab-cpu-model-20260921/tensorboard.json"
+}
