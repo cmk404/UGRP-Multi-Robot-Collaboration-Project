@@ -20,3 +20,7 @@ it does not establish an end-to-end speedup or new model success rate.
 Execution source is committed before measurement. Raw files remain local under
 `outputs/render-speed/`; measured results and source SHA are recorded after the
 finite benchmark completes. A complete mission must separately verify behavior.
+
+Measured at source `4beb670e1f8ac0faab82c095474863bbb097e92f`: all eight pairs preserved the actor JPEG hashes and physical state. Capture median was 0.748671 seconds for five images and 0.471948 seconds for three images (1.586x throughput, 36.96% less capture time). Other Mac jobs were active, so paired alternating timings are recorded individually. These are not whole-mission wall times.
+
+Next validation: the original ACT seed18/open-minus successful mission, original calibration and plan, 900 carry decisions, 2400-second wall cap, 4 fps video, with only `--efficient-capture` enabled. Compare full actor request hashes, ACT commands, and physical success against the repaired reference. Run this one job serially after the current revalidation finishes; preserve both full outputs.

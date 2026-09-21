@@ -1,0 +1,18 @@
+{
+  "scope": "capture only, no mission speedup claim",
+  "raw": "/Users/changmin/.codex/worktrees/act-render-speed/ugrp/outputs/render-speed/paired-v1",
+  "benchmark_sha256": "5d0db90577759e33ceb0bd32537976df39f14e5f8bda466ea9e169a9a2defb80",
+  "tensorboard_exports": [
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-render-speed/ugrp/outputs/render-speed/capture-summary-baseline",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-ACT\uc601\uc0c1\uc18d\ub3c4/RGB5\uc7a5-\uad00\uce21\uc911\uc559\uac12",
+      "manifest_sha256": "bb10dc496374641f0c9fe7b3f2d603fb09da48b8df3e477116e1c862d5a033c0"
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-render-speed/ugrp/outputs/render-speed/capture-summary-efficient",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-ACT\uc601\uc0c1\uc18d\ub3c4/RGB3\uc7a5-\uad00\uce21\uc911\uc559\uac12",
+      "manifest_sha256": "725d695e36682d469cd3738a77fcb6520aa2e3eafbc049e8d4f2261f1452dc22"
+    }
+  ],
+  "unit_tests": "40 passed in 7.79s; full regressions pending"
+}
