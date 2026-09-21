@@ -49,7 +49,7 @@ def outcome(output, exit_code, timed_out=False):
         d.get('kind') in ('act_carry', 'carry', 'rotating_carry') for d in decisions))
     if success:
         kind = None
-    elif timed_out or 'budget' in stop or 'timeout' in str(error).lower():
+    elif timed_out or 'budget' in stop.lower() or any(term in str(error).lower() for term in ('timeout', 'budget exhausted')):
         kind = 'timeout'
     elif any(x in str(error) for x in ('model_http_error', 'model_transport_error')):
         kind = 'model_transport'

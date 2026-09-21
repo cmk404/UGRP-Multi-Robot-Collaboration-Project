@@ -117,6 +117,11 @@ def main():
     dataset=json.loads(data.read_text())
 
     def trial(job):
+        minimum = protocol['controls'].get('min_free_gib', 0)
+        available = shutil.disk_usage(a.out).free / 2**30
+        if available < minimum:
+            return {**job, 'not_attempted': True, 'reason': 'disk_reserve',
+                    'free_gib': available, 'min_free_gib': minimum}
         case,condition,repeat=job['case'],job['condition'],job['repeat']
         root_map=provenance.get('relocation_provenance',{}).get('root_map',{})
         original_roots={v:k for k,v in root_map.items()}
@@ -153,12 +158,18 @@ def main():
     with concurrent.futures.ThreadPoolExecutor(max_workers=protocol['controls']['workers']) as pool:
         futures=[pool.submit(trial,task) for task in tasks]
         for future in concurrent.futures.as_completed(futures):
-            row=future.result();report['runs'].append(row)
+            row=future.result()
+            if row.get('not_attempted'):
+                report.setdefault('not_attempted', []).append(row)
+                write(a.out/'report.json', report)
+                emit('evaluation_not_attempted', trial_id=row['trial_id'], phase=row['reason'])
+                continue
+            report['runs'].append(row)
             report['failure_estimates']=aggregate(tasks,report['runs']);write(a.out/'report.json',report)
             progress()
             print(json.dumps({'event':'trial','case':row['case']['id'],'condition':row['condition'],'summary':row.get('summary'),'exit_code':row['exit_code']}),flush=True)
     report['complete']=report['failure_estimates']['complete'];write(a.out/'report.json',report)
-    return 0
+    return 0 if report['complete'] else 2
 
 
 if __name__=='__main__':
