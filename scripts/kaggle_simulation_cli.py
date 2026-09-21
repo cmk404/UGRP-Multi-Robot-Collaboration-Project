@@ -67,7 +67,8 @@ try:
     output = source/'outputs'/('kaggle-'+{job_id!r})
     job['status'] = 'running'
     save()
-    run = subprocess.run([py, str(source/'scripts/run_colab_simulation.py'), '--output', str(output), '--', py, '-m', {module!r}, *{arguments!r}], cwd=source, env=env)
+    arguments = [arg.replace('{{python}}', py) for arg in {arguments!r}]
+    run = subprocess.run([py, str(source/'scripts/run_colab_simulation.py'), '--output', str(output), '--', py, '-m', {module!r}, *arguments], cwd=source, env=env)
     job['exit_code'] = run.returncode
     job['status'] = 'complete' if run.returncode == 0 else 'failed'
     for suffix in ('.zip', '.zip.sha256'):

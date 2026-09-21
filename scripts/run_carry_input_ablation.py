@@ -49,6 +49,7 @@ def main():
     p.add_argument('--stages', type=Path, required=True)
     p.add_argument('--training-only', action='store_true')
     p.add_argument('--reuse-training', type=Path)
+    p.add_argument('--dataset', type=Path, help='Hash-verified portable dataset; canonical protocol remains unchanged')
     p.add_argument('--protocol', type=Path, default=ROOT/'experiments/2026-09-21-carry-input-ablation/protocol.json')
     a = p.parse_args(); a.out = a.out.resolve(); a.out.mkdir(parents=True, exist_ok=False)
     protocol_path = a.protocol
@@ -71,9 +72,12 @@ def main():
         return {'name':name,'command':list(map(str,cmd)),'exit_code':proc.returncode,
                 'wall_s':time.monotonic()-started,'log':str(log)}
 
-    data=Path(protocol['dataset'])
-    if sha(data)!=protocol['dataset_sha256']:
+    from scripts.colab_carry_bundle import verify_dataset
+    data=a.dataset or Path(protocol['dataset'])
+    provenance=verify_dataset(data)
+    if provenance['dataset_sha256']!=protocol['dataset_sha256']:
         raise ValueError('original dataset changed')
+    report['dataset_provenance']=provenance
     shutil.copyfile(data,a.out/'dataset.json')
     models={}
     for seed in protocol['training']['seeds']:
@@ -103,7 +107,10 @@ def main():
     dataset=json.loads(data.read_text())
 
     def trial(case, condition):
-        base=next(Path(e['root']) for e in dataset['train'] if Path(e['root']).name==case['teacher_case'])
+        root_map=provenance.get('relocation_provenance',{}).get('root_map',{})
+        original_roots={v:k for k,v in root_map.items()}
+        base=next(Path(e['root']) for e in dataset['train']
+                  if Path(original_roots.get(e['root'],e['root'])).name==case['teacher_case'])
         output=a.out/'final'/condition/case['id']
         cmd=[a.mjpython,ROOT/'scripts/run_dispatch_e2e.py','--executor','skills','--variant',case['variant'],
              '--seed','11','--required-dock','dock_a','--plan-replay',base/'committed-plan.json',
