@@ -75,6 +75,30 @@ ACT의 `requirements-reference-act.txt`는 시뮬레이션과 NumPy/OpenCV 버�
 
 실제 LLM 운반에는 Colab에서 접근 가능한 인증된 모델 endpoint와 입력 가중치/데이터가 필요하다. Mac `127.0.0.1`은 원격에서 접근할 수 없다. endpoint·인증을 임의로 공개하거나 키를 로그에 기록하지 않는다. 기본 CLI 전송·무료 데모는 GitHub 키와 모델 키가 필요 없다. 모델 호출·학습·EGL·전체 코호트는 별도 실행 검증 대상이다.
 
+## 별도 CPU 모델 진단
+
+GPU 배정이 막힌 경우 `scripts.run_cpu_model_diagnostic`으로 **새 CPU 진단**을
+실행할 수 있다. 기존 GPU 코호트를 CPU 결과로 채우지 않는다. 같은 `dev_open`
+장면의 rule/Jev/Gemini를 각각 시뮬레이션 4초·모델 최대 2회·시행 프로세스
+최대 180초로 실행한다. 실패/시간 초과도 보존하며 다음 방식을 계속 확인한다.
+짧은 예산 안의 목표 미달은 실행 준비 판정과 구분하고 성공률 추정에 넣지 않는다.
+
+먼저 호스트의 기존 비공개 Gemini 프록시와 Jev 자격 증명으로 모델 사전 검사를
+완료하고, 같은 CPU 세션의 `/content/<진단ID>/mailbox`를 대상으로 유한한 relay를
+실행한다(`--max-calls 4 --http-attempts 1`). 모델 키는 Colab에 전달하지 않는다.
+
+```sh
+python scripts/colab_simulation_cli.py --session <소유CPU세션> \
+  --output outputs/cpu-model-<진단ID> --timeout 650 \
+  --module scripts.run_cpu_model_diagnostic -- \
+  --output '{output}' --model-mailbox /content/<진단ID>/mailbox
+```
+
+`cpu-diagnostic.json`은 RGB 파일·해시, 응답 파싱, 명령 발행, 카메라 불변,
+weld OFF, 영상 저장을 검증한다. `cpu-renderer.json`에 실제 OpenGL 정보를 남긴다.
+회수 ZIP·내부 해시와 영상 내용도 확인한 뒤 소유 세션/relay/프록시를 정리한다.
+CPU 시간과 기존 GPU 시간은 별도 보고한다.
+
 ## Kaggle CLI 병행
 
 [전용 Kaggle CLI 실행 안내](kaggle_simulation.md)를 따른다. `scripts/kaggle_simulation_cli.py`의 prepare → submit → status → collect가 private Dataset/CPU kernel 제출과 결과 검증을 담당한다. CLI 설치·로컬 테스트와 실제 Kaggle 인증/원격 실행은 구분한다.
