@@ -1,0 +1,246 @@
+{
+  "source_sha": "b21b9c20f68dd810397c39907af75cc6bdcc826c",
+  "scope": "Three reference reproduction trials and one release regression; not a matched failure-rate estimate or retraining.",
+  "complete": true,
+  "runs": [
+    {
+      "condition": "ACT-original-seed18",
+      "case": "open-minus",
+      "calibration": "original",
+      "outcome": {
+        "whole_success": true,
+        "robot_result_available": true,
+        "failure_kind": null,
+        "failure_phase": "FINISHED",
+        "error": null,
+        "stop_reason": "",
+        "carry_entered": true,
+        "act_carry_entered": true,
+        "beam_success": true,
+        "wall_s": 814.8079285829954
+      },
+      "raw": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/revalidation-v1/ACT-original-seed18/open-minus",
+      "files": {
+        "result.json": {
+          "sha256": "dfeb4a3b8c9c535afbc176492659f3a380c6508eb22c1b534ff961b64766f0ce",
+          "bytes": 3410980
+        },
+        "pair-decisions.json": {
+          "sha256": "438d902f7c62983f5f2ad933b85a23b98cc016eac101eb0e55afda4eaab68b69",
+          "bytes": 4635795
+        },
+        "issued-commands.json": {
+          "sha256": "f83563529468688d9aa0c08df12b1401d1b0572c0687524d41acd6810459e715",
+          "bytes": 289286
+        },
+        "evaluation-only.json": {
+          "sha256": "6601819ded5c8ea4cba03d048633d6ec242a1c1c1d276c72f9a86c2ded21b69b",
+          "bytes": 1659
+        },
+        "execution.mp4": {
+          "sha256": "6672ac19d23a8f3027b1f78b74c7f88bdd90e78ae7e36628fab07cae05e2a7e0",
+          "bytes": 1053326
+        },
+        "scene.xml": {
+          "sha256": "90c279d1c8fbd4b30c41fcbfd28254610f0aa8ac9357fe65898cba127a05a674",
+          "bytes": 112929
+        }
+      },
+      "video_and_events_verified": true
+    },
+    {
+      "condition": "RGB-original",
+      "case": "open-minus",
+      "calibration": "original",
+      "outcome": {
+        "whole_success": true,
+        "robot_result_available": true,
+        "failure_kind": null,
+        "failure_phase": "FINISHED",
+        "error": null,
+        "stop_reason": "",
+        "carry_entered": true,
+        "act_carry_entered": false,
+        "beam_success": true,
+        "wall_s": 904.2860658749996
+      },
+      "raw": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/revalidation-v1/RGB-original/open-minus",
+      "files": {
+        "result.json": {
+          "sha256": "96ab469c7a9e26cea92ff00a36851e35ef5789e32d6dfbaf5396ed6d438588f3",
+          "bytes": 3410634
+        },
+        "pair-decisions.json": {
+          "sha256": "921a10fea2a6930f5fa43c9c5488e2aea500be50144ad9ee077994b14e67189a",
+          "bytes": 4905314
+        },
+        "issued-commands.json": {
+          "sha256": "f8916b53b1f699964fb1756a02ee0da89ec910ff41627c9294f1168048619aa3",
+          "bytes": 289036
+        },
+        "evaluation-only.json": {
+          "sha256": "5fb7fdb3917dbac3c57c4784552ca8e021171109681a23b5641f20123038512a",
+          "bytes": 1657
+        },
+        "execution.mp4": {
+          "sha256": "b60ed69113558698ae20930b646ef750e38c25a30a3f4963a605ba1f35ea1629",
+          "bytes": 1069578
+        },
+        "scene.xml": {
+          "sha256": "90c279d1c8fbd4b30c41fcbfd28254610f0aa8ac9357fe65898cba127a05a674",
+          "bytes": 112929
+        }
+      },
+      "video_and_events_verified": true
+    },
+    {
+      "condition": "r128-h1-s20260921",
+      "case": "open-plus",
+      "calibration": "native",
+      "outcome": {
+        "whole_success": false,
+        "robot_result_available": true,
+        "failure_kind": "execution_error",
+        "failure_phase": "RELEASE",
+        "error": "RuntimeError: visual placement confirmation failed",
+        "stop_reason": "",
+        "carry_entered": true,
+        "act_carry_entered": true,
+        "beam_success": false,
+        "wall_s": 1458.3318774159998
+      },
+      "raw": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/revalidation-v1/r128-h1-s20260921/open-plus",
+      "files": {
+        "result.json": {
+          "sha256": "a22992dfddf923bd00ab10db14104b4edb44f6cc64326c619527b4cec3acd5c2",
+          "bytes": 3021754
+        },
+        "pair-decisions.json": {
+          "sha256": "3e9bb7fbe82fbd496447653c5f055b9a8328639c61d43f331060db66a1141620",
+          "bytes": 6588050
+        },
+        "issued-commands.json": {
+          "sha256": "c10f1228dedf926771ca7bdfa9ed5a119c2b3a86f8838c4707917fb16346f01a",
+          "bytes": 462179
+        },
+        "evaluation-only.json": {
+          "sha256": "490fa84777a844ecc99732e5256a201cc5b89a845cb8b698cef109c1e7b8259d",
+          "bytes": 1484
+        },
+        "execution.mp4": {
+          "sha256": "c9e8f27560448fac3723b11558474e1cc0b98ad01d96a85322ad5771c8d1fbb9",
+          "bytes": 1230015
+        },
+        "scene.xml": {
+          "sha256": "90c279d1c8fbd4b30c41fcbfd28254610f0aa8ac9357fe65898cba127a05a674",
+          "bytes": 112929
+        }
+      },
+      "video_and_events_verified": true
+    },
+    {
+      "condition": "RGB-original",
+      "case": "turn-minus",
+      "calibration": "original",
+      "outcome": {
+        "whole_success": true,
+        "robot_result_available": true,
+        "failure_kind": null,
+        "failure_phase": "FINISHED",
+        "error": null,
+        "stop_reason": "",
+        "carry_entered": true,
+        "act_carry_entered": false,
+        "beam_success": true,
+        "wall_s": 1802.1558796669997
+      },
+      "raw": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/revalidation-v1/RGB-original/turn-minus",
+      "files": {
+        "result.json": {
+          "sha256": "426d991556114c50ae2f2da06590450d4a037cc21682c081ceb3075a6a7302e4",
+          "bytes": 2801648
+        },
+        "pair-decisions.json": {
+          "sha256": "8de4c11c8fc1e1f6ff666f6559d344e904c41c3b994f51024f7f9ed977daeb3b",
+          "bytes": 11109067
+        },
+        "issued-commands.json": {
+          "sha256": "aeb25c2995b0188983d842f2e23752e4ceb9ba7390c7bc417e7d350fc3f895ba",
+          "bytes": 553782
+        },
+        "evaluation-only.json": {
+          "sha256": "4819082c8df0c7f72b83b24beeb3c0fd1ed88b3f5369748a9d8680f4a1dac18d",
+          "bytes": 1643
+        },
+        "execution.mp4": {
+          "sha256": "0bf5b6c25c0fd0726fa4cc84321a7cce631738952d76f13699f81017c57bf351",
+          "bytes": 1801135
+        },
+        "scene.xml": {
+          "sha256": "1b964a5b8d71bd93894d466aa9bf1689149f51da76b36dea7e11c99a85240062",
+          "bytes": 113089
+        }
+      },
+      "video_and_events_verified": true
+    }
+  ],
+  "tensorboard_exports": [
+    {
+      "condition": "ACT-original-seed18",
+      "case": "open-minus",
+      "source": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/revalidation-v1/ACT-original-seed18/open-minus",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-ACT\uc7ac\uac80\uc99d-01/open-minus-ACT128\uc6d0\ubcf8",
+      "manifest_sha256": "da95f70d8943cef4ce3f1c1d9317a2912c0f042214c5e9311e8cdb1cc2a16a71",
+      "videos_range_verified": [
+        "369c4034fa97aa6d7293"
+      ],
+      "success": true,
+      "wall_s": 814.8079285829954,
+      "act_rounds": 104,
+      "release_tracking_rounds": 104
+    },
+    {
+      "condition": "RGB-original",
+      "case": "open-minus",
+      "source": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/revalidation-v1/RGB-original/open-minus",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-ACT\uc7ac\uac80\uc99d-02/open-minus-RGB\uc6d0\ubcf8",
+      "manifest_sha256": "410a22f0b5db4aa15f9cae027253f9cfc972f5d46a53a5ca4d7f46e12e575bd8",
+      "videos_range_verified": [
+        "66330e2d10db41c66d91"
+      ],
+      "success": true,
+      "wall_s": 904.2860658749996,
+      "act_rounds": 0,
+      "release_tracking_rounds": 0
+    },
+    {
+      "condition": "r128-h1-s20260921",
+      "case": "open-plus",
+      "source": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/revalidation-v1/r128-h1-s20260921/open-plus",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-ACT\uc7ac\uac80\uc99d-03/open-plus-ACT128\uc218\uc815-native",
+      "manifest_sha256": "12292dfcac6f936741ee4a70b07156acb69fefbe5611f72504fa734656471421",
+      "videos_range_verified": [
+        "54eba90ea4f1cd4d81ee"
+      ],
+      "success": false,
+      "wall_s": 1458.3318774159998,
+      "act_rounds": 443,
+      "release_tracking_rounds": 443
+    },
+    {
+      "condition": "RGB-original",
+      "case": "turn-minus",
+      "source": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/revalidation-v1/RGB-original/turn-minus",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-ACT\uc7ac\uac80\uc99d-04/turn-minus-RGB\uc6d0\ubcf8",
+      "manifest_sha256": "c5d00ff4d9aac62424c9f1a92267ccd06505dad7ddd0d35196f16981e54b27bc",
+      "videos_range_verified": [
+        "0c8e5c1a73dd0147c4d8"
+      ],
+      "success": true,
+      "wall_s": 1802.1558796669997,
+      "act_rounds": 0,
+      "release_tracking_rounds": 0
+    }
+  ],
+  "raw_backup": "local only"
+}
