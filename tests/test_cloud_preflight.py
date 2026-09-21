@@ -36,6 +36,13 @@ def test_recovery_respects_retry_after_deadline_and_global_call_budget():
     assert r['http_attempt_count']==0
 
 
+def test_frozen_comparison_retains_original_single_attempt_policy():
+    calls=[]
+    r=post_with_recovery({},'fixture',max_attempts=1,call=lambda *a:calls.append(a) or
+                         {'status':'http_error','http_status':503})
+    assert len(calls)==1 and r['retry_policy']=='none' and r['first_attempt_failed']
+
+
 def test_live_progress_crosses_child_log_without_forwarding_raw_text(tmp_path,capsys):
     code='import json;print("private raw log");print('+repr(PREFIX)+'+json.dumps({"schema":"ugrp.progress.v1","unix":10,"event":"evaluation_progress","planned":2,"attempted":1,"failures":1,"pending":1}),flush=True)'
     result=run_logged([sys.executable,'-c',code],tmp_path/'raw.log',name='fixture',timeout=3)

@@ -28,6 +28,8 @@ def main():
     p.add_argument('--resume-relay',type=Path,help='Stopped, fully drained predecessor audit directory')
     p.add_argument('--seconds',type=float,default=14400)
     p.add_argument('--max-calls',type=int,default=8000)
+    p.add_argument('--http-attempts',type=int,choices=(1,2,3),default=1,
+                   help='Freeze per cohort; existing comparisons used 1. Recovery cohorts may explicitly choose 3.')
     a=p.parse_args()
     if not a.remote.startswith('/content/') or '..' in Path(a.remote).parts:p.error('invalid remote root')
     if not 0<a.seconds<=14400 or not 0<a.max_calls<=50000:p.error('invalid finite budget')
@@ -44,7 +46,8 @@ def main():
     deadline=time.time()+a.seconds;pending={};lock=threading.RLock();draining=threading.Event()
     stats={'calls':0,'api_calls':0,'delivered':0,'errors':0,'started_unix':time.time(),'complete':False,
            'transport_version':'pooled_parallel_v1','inherited_requests':len(seen),
-           'retry_policy':'explicit_http_rejection_v1',
+           'retry_policy':'explicit_http_rejection_v1' if a.http_attempts>1 else 'none',
+           'http_max_attempts':a.http_attempts,
            'predecessor':str(a.resume_relay) if a.resume_relay else None}
     def save():
         with lock:atomic_json(a.output/'status.json',stats)
@@ -61,7 +64,7 @@ def main():
             with lock:
                 if stats['api_calls']>=a.max_calls:return False
                 stats['api_calls']+=1;save();return True
-        result=post_with_recovery(row['body'],ENDPOINTS[row['provider']],key if row['provider']=='jev' else None,min(30,remaining),admit=admit)
+        result=post_with_recovery(row['body'],ENDPOINTS[row['provider']],key if row['provider']=='jev' else None,min(30,remaining),max_attempts=a.http_attempts,admit=admit)
         with lock:
             for field,value in [('first_attempt_failures',int(result['first_attempt_failed'])),
                                 ('recovered_requests',int(result['recovered'])),('retry_calls',result['retry_count'])]:

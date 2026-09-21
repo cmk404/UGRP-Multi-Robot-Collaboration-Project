@@ -46,7 +46,7 @@ def main():
     if manifest['actor_source_sha']!=record['source_sha']:raise ValueError('resume actor mismatch')
     state={'started_unix':time.time(),'stage':'create','complete':False,'session':a.session,
            'source_sha':record['source_sha'],'control_source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
-           'model_preflight_sha256':digest(a.model_preflight)}
+           'model_preflight_sha256':digest(a.model_preflight),'http_max_attempts':1}
     deadline=time.monotonic()+a.seconds;children=[];allowed_cleanup=False;session=None
     assignment_loss=AssignmentLoss();lost=False
     def save():write_json(out/'controller-status.json',state)
@@ -90,7 +90,7 @@ def main():
         foreground=out/'foreground.py';foreground.write_text('import subprocess;subprocess.run(["python","/content/recovery-bootstrap.py"],check=True)\n')
         execution=spawn(['colab','exec','-s',a.session,'-f',foreground,'--timeout',str(a.seconds)],'execution')
         spawn([sys.executable,a.proxy_script],'proxy')
-        spawn([sys.executable,a.relay_script,'--session',a.session,'--remote',base+'/mailbox','--keychain-helper',a.keychain_helper,'--output',out/'relay','--seconds',str(a.seconds),'--max-calls','16000'],'relay')
+        spawn([sys.executable,a.relay_script,'--session',a.session,'--remote',base+'/mailbox','--keychain-helper',a.keychain_helper,'--output',out/'relay','--seconds',str(a.seconds),'--max-calls','16000','--http-attempts','1'],'relay')
         collector=spawn([sys.executable,ROOT/'scripts/collect_colab_cohort.py','--session',a.session,'--remote',base,'--source-sha',record['source_sha'],'--output',out/'collected','--seconds',str(a.seconds)],'collector')
         state['stage']='running';save()
         while True:

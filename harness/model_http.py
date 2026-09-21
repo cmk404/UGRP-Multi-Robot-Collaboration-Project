@@ -57,4 +57,4 @@ def post_with_recovery(body, url, key=None, timeout=30, *, max_attempts=3,
             'http_attempt_count':len(attempts),'retry_count':max(0,len(attempts)-1),
             'first_attempt_failed':bool(attempts and attempts[0].get('status')!='ok'),
             'recovered':bool(len(attempts)>1 and result.get('status')=='ok'),
-            'retry_policy':'explicit_http_rejection_v1'}
+            'retry_policy':'explicit_http_rejection_v1' if max_attempts>1 else 'none'}
