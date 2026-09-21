@@ -1,4 +1,4 @@
-"""Finite GPU-only ACT recovery: calibrate RGB, validate handoff, then fixed cohort.
+"""Finite GPU-only ACT evaluation: freeze calibration, count all planned trials.
 
 No model credentials or online teacher correction. All resets and truth labels
 remain inside the offline calibration program. 512px is deliberately excluded.
@@ -24,9 +24,10 @@ def main():
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--input-root',type=Path,default=Path('/kaggle/input'))
     p.add_argument('--data-sha',required=True);p.add_argument('--assets-sha',required=True)
+    p.add_argument('--protocol',type=Path,default=ROOT/'experiments/2026-09-21-carry-failure-estimation/protocol.json')
     a=p.parse_args();out=a.output.resolve();out.mkdir(parents=True,exist_ok=False)
     state={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
-           'complete':False,'phase':'setup','scope':'RGB recalibration diagnostics followed by fixed 128/256 evaluation; no 512px'}
+           'complete':False,'phase':'setup','scope':'Fixed 128/256 repeated failure measurement; task failures do not stop the cohort; no 512px'}
     def save():write_json(out/'recovery-status.json',state)
     def run(command,name,timeout):
         with (out/(name+'.log')).open('w') as stream:
@@ -59,27 +60,15 @@ def main():
         calibration=out/'approach-calibration'
         if run([sys.executable,'-m','scripts.train_dispatch_transfer','--output',calibration,'--base-grasp',assets/'grasp','--approach-only'],'approach-calibration',1800):raise RuntimeError('RGB calibration failed')
         stages=calibration/'models/varied';grasp=assets/'grasp'
-        plan=Path(data).parent/'episodes/train-0/committed-plan.json'
-        # Locate the relocated training episode using the verified dataset itself.
-        dataset=json.loads(Path(data).read_text());plan=Path(dataset['train'][0]['root'])/'committed-plan.json'
-        def diagnostic(name):
-            output=out/name
-            code=run([sys.executable,'-m','scripts.run_dispatch_e2e','--executor','skills','--variant','open','--seed','11','--required-dock','dock_a',
-                '--plan-replay',plan,'--grasp-model-dir',grasp,'--stage-model-dir',stages,'--output',output,'--max-wall-s','1500','--video-fps','4','--spawn-offset','-.008','.003','0'],name,1560)
-            result=json.loads((output/'result.json').read_text())
-            state[name]={'exit_code':code,'physical_success':result.get('evaluation',{}).get('physical_success'),
-                'protocol_complete':result.get('protocol_complete'),'error':result.get('error')};save()
-            return bool(result.get('protocol_complete') and result.get('evaluation',{}).get('physical_success'))
-        state['phase']='handoff_diagnostic';save()
-        if not diagnostic('diagnostic-approach'):
-            state['phase']='grasp_calibration';save()
-            transfer=out/'grasp-calibration'
-            if run([sys.executable,'-m','scripts.train_dispatch_transfer','--output',transfer,'--base-grasp',assets/'grasp','--approach-models',stages],'grasp-calibration',3600):raise RuntimeError('grasp calibration failed')
-            grasp=transfer/'models/grasp';stages=transfer/'models/varied'
-            if not diagnostic('diagnostic-grasp'):raise RuntimeError('handoff remains invalid; full ACT cohort not started')
+        # Calibration is fixed before evaluation, never selected by a successful test.
+        state['phase']='grasp_calibration';save()
+        transfer=out/'grasp-calibration'
+        if run([sys.executable,'-m','scripts.train_dispatch_transfer','--output',transfer,'--base-grasp',assets/'grasp','--approach-models',stages],'grasp-calibration',3600):raise RuntimeError('grasp calibration failed')
+        grasp=transfer/'models/grasp';stages=transfer/'models/varied'
+        state['diagnostic_success_required']=False
         state['phase']='physics128256';save()
         code=run([sys.executable,'-m','scripts.run_carry_input_ablation','--out',out/'physics128256','--act-python',actpy,'--mjpython',sys.executable,
-            '--grasp',grasp,'--stages',stages,'--reuse-training',assets/'training','--dataset',data],'physics128256',7200)
+            '--grasp',grasp,'--stages',stages,'--reuse-training',assets/'training','--dataset',data,'--protocol',a.protocol],'physics128256',12600)
         state.update(complete=code==0,exit_code=code)
         return code
     except Exception as exc:

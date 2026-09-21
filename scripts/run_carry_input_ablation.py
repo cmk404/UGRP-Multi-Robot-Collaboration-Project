@@ -5,12 +5,15 @@ import hashlib
 import json
 from pathlib import Path
 import shutil
+import os
+import signal
 import subprocess
 import sys
 import time
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+from scripts.carry_failure_metrics import schedule, outcome, aggregate
 
 
 def sha(p):
@@ -65,14 +68,31 @@ def main():
         if subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()!=source or subprocess.check_output(['git','status','--porcelain'],cwd=ROOT):
             raise RuntimeError('cohort source changed')
 
-    def run(cmd, name):
+    def run(cmd, name, timeout=None):
         frozen(); started=time.monotonic()
         log=a.out/(name+'.log')
+        timed_out=False
         with log.open('w') as stream:
-            proc=subprocess.run(list(map(str,cmd)),cwd=ROOT,stdout=stream,stderr=subprocess.STDOUT)
+            try:
+                proc=subprocess.Popen(list(map(str,cmd)),cwd=ROOT,stdout=stream,stderr=subprocess.STDOUT,start_new_session=True)
+                try:
+                    proc.wait(timeout=timeout)
+                except subprocess.TimeoutExpired:
+                    timed_out=True
+                    try: os.killpg(proc.pid,signal.SIGTERM)
+                    except ProcessLookupError: pass
+                    try: proc.wait(timeout=10)
+                    except subprocess.TimeoutExpired:
+                        try: os.killpg(proc.pid,signal.SIGKILL)
+                        except ProcessLookupError: pass
+                        proc.wait()
+                exit_code=proc.returncode
+            except OSError as exc:
+                stream.write(f'Process launch failed: {type(exc).__name__}\n')
+                exit_code=127
         frozen()
-        return {'name':name,'command':list(map(str,cmd)),'exit_code':proc.returncode,
-                'wall_s':time.monotonic()-started,'log':str(log)}
+        return {'name':name,'command':list(map(str,cmd)),'exit_code':exit_code,
+                'wall_s':time.monotonic()-started,'log':str(log),'timed_out':timed_out}
 
     from scripts.colab_carry_bundle import verify_dataset
     data=a.dataset or Path(protocol['dataset'])
@@ -108,12 +128,13 @@ def main():
         report['training_complete']=True;write(a.out/'report.json',report);return 0
     dataset=json.loads(data.read_text())
 
-    def trial(case, condition):
+    def trial(job):
+        case,condition,repeat=job['case'],job['condition'],job['repeat']
         root_map=provenance.get('relocation_provenance',{}).get('root_map',{})
         original_roots={v:k for k,v in root_map.items()}
         base=next(Path(e['root']) for e in dataset['train']
                   if Path(original_roots.get(e['root'],e['root'])).name==case['teacher_case'])
-        output=a.out/'final'/condition/case['id']
+        output=a.out/'final'/condition/f"{case['id']}-r{repeat}"
         cmd=[a.mjpython,ROOT/'scripts/run_dispatch_e2e.py','--executor','skills','--variant',case['variant'],
              '--seed','11','--required-dock','dock_a','--plan-replay',base/'committed-plan.json',
              '--grasp-model-dir',a.grasp,'--stage-model-dir',a.stages,'--output',output,
@@ -121,24 +142,28 @@ def main():
         if condition!='teacher':
             cmd+=['--carry-act-model',models[condition]['path'],'--carry-act-python',a.act_python,
                   '--carry-act-max-steps',protocol['controls']['max_carry_steps']]
-        row=run(cmd,'final-'+condition+'-'+case['id'])
-        row.update(phase='final',condition=condition,case=case,output=str(output))
+        row=run(cmd,'final-'+job['trial_id'],timeout=protocol['controls']['max_wall_s']+60)
+        row.update(job,phase='final',output=str(output))
         if (output/'result.json').exists():
-            result=json.loads((output/'result.json').read_text())
-            row['summary']={k:result.get(k) for k in ('physical_success','protocol_complete','phase','error','wall_s')}
+            try:
+                result=json.loads((output/'result.json').read_text())
+                row['summary']={k:result.get(k) for k in ('physical_success','protocol_complete','phase','error','wall_s')}
+            except (OSError,ValueError,AttributeError):pass
+        row['outcome']=outcome(output,row['exit_code'],row['timed_out'])
         return row
 
-    tasks=[]
     names=['teacher',*models]
-    for i,case in enumerate(protocol['test']):
-        order=names[i:]+names[:i]
-        tasks.extend((case,name) for name in order)
+    tasks=schedule(protocol,names)
+    report['evaluation_jobs']=tasks
+    report['failure_estimates']=aggregate(tasks,[])
+    write(a.out/'report.json',report)
     with concurrent.futures.ThreadPoolExecutor(max_workers=protocol['controls']['workers']) as pool:
-        futures=[pool.submit(trial,*task) for task in tasks]
+        futures=[pool.submit(trial,task) for task in tasks]
         for future in concurrent.futures.as_completed(futures):
-            row=future.result();report['runs'].append(row);write(a.out/'report.json',report)
+            row=future.result();report['runs'].append(row)
+            report['failure_estimates']=aggregate(tasks,report['runs']);write(a.out/'report.json',report)
             print(json.dumps({'event':'trial','case':row['case']['id'],'condition':row['condition'],'summary':row.get('summary'),'exit_code':row['exit_code']}),flush=True)
-    report['complete']=True;write(a.out/'report.json',report)
+    report['complete']=report['failure_estimates']['complete'];write(a.out/'report.json',report)
     return 0
 
 
