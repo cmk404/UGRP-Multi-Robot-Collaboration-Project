@@ -66,6 +66,17 @@ def test_missing_startup_dependency_blocks_even_with_zero_exit(monkeypatch):
     with pytest.raises(RuntimeError,match='simulation not started'):require_ready(report)
 
 
+def test_cpu_only_act_is_blocked_even_if_nvidia_inventory_passes(monkeypatch):
+    import scripts.cloud_environment_preflight as preflight
+    monkeypatch.setattr(preflight,'probe_python',lambda *a,**k:{'ready':True})
+    monkeypatch.setattr('scripts.setup_kaggle_egl.nvidia_environment',lambda **k:(k['base_env'],[]))
+    monkeypatch.setattr('scripts.probe_kaggle_gpu.inventory',lambda **k:{'nvidia_smi_exit':0,'gpus':'Tesla T4'})
+    monkeypatch.setattr(preflight.subprocess,'run',lambda *a,**k:SimpleNamespace(returncode=0,stdout='{"available":false,"devices":0,"tiny_sum":null}',stderr=''))
+    report=preflight.inspect_environment(require_gpu=True,act_python='fixture')
+    assert report['checks']['gpu_assignment']['ready'] and not report['checks']['act_cuda']['ready']
+    assert not report['ready']
+
+
 def test_progress_distinguishes_uninstrumented_and_stale():
     assert summarize_log('running')['attempted'] is None
     line=PREFIX+json.dumps({'schema':'ugrp.progress.v1','unix':10,'event':'phase'})

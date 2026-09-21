@@ -7,17 +7,26 @@ from scripts.setup_colab_egl import PROBE
 from scripts.probe_kaggle_gpu import inventory
 
 
-def configure(python, output, *, search_roots=None):
-    output=Path(output);output.mkdir(parents=True,exist_ok=False)
+def nvidia_environment(*, search_roots=None, base_env=None):
+    """Find mounted driver libraries without initializing a renderer or simulator."""
     roots=search_roots or [Path('/usr/lib/x86_64-linux-gnu'),Path('/usr/lib64-nvidia'),
                           Path('/usr/local/nvidia'),Path('/usr/lib64')]
-    libraries=sorted({str(p.resolve()) for root in roots if root.exists()
-                      for p in root.rglob('libEGL_nvidia.so*') if p.is_file()})
-    env={**os.environ,'MUJOCO_GL':'egl','PYOPENGL_PLATFORM':'egl'}
+    driver_libraries=sorted({str(p.resolve()) for root in roots if root.exists()
+                      for pattern in ('libEGL_nvidia.so*','libnvidia-ml.so*','libcuda.so*')
+                      for p in root.rglob(pattern) if p.is_file()})
+    libraries=[p for p in driver_libraries if Path(p).name.startswith('libEGL_nvidia.so')]
+    env=dict(os.environ if base_env is None else base_env)
     # The offline CPU dependency path must not hide mounted NVIDIA libraries.
-    directories=list(dict.fromkeys(str(Path(path).parent) for path in libraries))
+    directories=list(dict.fromkeys(str(Path(path).parent) for path in driver_libraries))
     existing=env.get('LD_LIBRARY_PATH','')
     env['LD_LIBRARY_PATH']=':'.join([*directories,*([existing] if existing else [])])
+    return env,libraries
+
+
+def configure(python, output, *, search_roots=None):
+    output=Path(output);output.mkdir(parents=True,exist_ok=False)
+    env,libraries=nvidia_environment(search_roots=search_roots)
+    env.update(MUJOCO_GL='egl',PYOPENGL_PLATFORM='egl')
     report=inventory(env=env);report['egl_libraries']=libraries
     report['library_search_path']=env['LD_LIBRARY_PATH']
     (output/'report.json').write_text(json.dumps(report,indent=2)+'\n')

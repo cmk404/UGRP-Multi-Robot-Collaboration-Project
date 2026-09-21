@@ -25,6 +25,9 @@ def probe_python(python, modules, *, env=None):
 
 def inspect_environment(*, python=sys.executable, require_gpu=False, act_python=None):
     env={**os.environ,'PYTHONPATH':str(ROOT),'PYTHONUNBUFFERED':'1'}
+    if require_gpu:
+        from scripts.setup_kaggle_egl import nvidia_environment
+        env,_=nvidia_environment(base_env=env)
     modules=['numpy','cv2','mujoco','PIL','OpenGL']
     if Path('/kaggle').is_dir():modules.append('wrapt')
     checks={'sim_imports':probe_python(python,modules,env=env)}
@@ -33,6 +36,13 @@ def inspect_environment(*, python=sys.executable, require_gpu=False, act_python=
                             'detail':(packages.stdout+packages.stderr)[-4000:]}
     if act_python:
         checks['act_imports']=probe_python(act_python,['torch','torchvision','lerobot.policies.act.modeling_act'],env=env)
+        if require_gpu:
+            code='import torch,json; available=torch.cuda.is_available(); print(json.dumps({"available":available,"devices":torch.cuda.device_count(),"tiny_sum":torch.ones(2,device="cuda").sum().item() if available else None}))'
+            probe=subprocess.run([str(act_python),'-c',code],env=env,capture_output=True,text=True,timeout=60)
+            try:device=json.loads(probe.stdout)
+            except ValueError:device={}
+            checks['act_cuda']={'ready':probe.returncode==0 and device.get('available') is True and device.get('tiny_sum')==2,
+                                'device':device,'exit_code':probe.returncode,'stderr':probe.stderr[-4000:]}
     if require_gpu:
         from scripts.probe_kaggle_gpu import inventory
         device=inventory(env=env)

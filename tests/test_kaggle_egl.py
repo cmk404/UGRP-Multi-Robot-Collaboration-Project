@@ -2,7 +2,14 @@ import json
 from pathlib import Path
 from types import SimpleNamespace
 import pytest
-from scripts.setup_kaggle_egl import configure
+from scripts.setup_kaggle_egl import configure,nvidia_environment
+
+
+def test_inventory_can_find_nvml_without_creating_a_renderer(tmp_path,monkeypatch):
+    libs=tmp_path/'nvidia';libs.mkdir();(libs/'libnvidia-ml.so.1').write_bytes(b'library')
+    monkeypatch.setattr('scripts.setup_kaggle_egl.subprocess.run',lambda *a,**k:pytest.fail('discovery must not initialize graphics'))
+    env,egl=nvidia_environment(search_roots=[libs],base_env={'LD_LIBRARY_PATH':'/offline/mesa'})
+    assert env['LD_LIBRARY_PATH']==str(libs)+':/offline/mesa' and egl==[]
 
 
 def test_selects_existing_vendor_and_checks_actual_renderer(tmp_path,monkeypatch):

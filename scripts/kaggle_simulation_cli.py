@@ -146,6 +146,8 @@ def prepare(output, owner=None, *, root=ROOT, module='scripts.sim_quickstart', a
 def reuse_inputs(previous, output, *, module, arguments, refresh_source=False):
     """New kernel using a verified private input dataset; no upload or mutation."""
     original = json.loads((previous/'job.json').read_text())
+    if original.get('execution_kind')=='gpu_preflight' and (module!='scripts.cloud_environment_preflight' or arguments!=['--output','{output}','--require-gpu','--with-act']):
+        raise ValueError('GPU preflight reuse permits environment checks only')
     validate(previous, original)
     if original.get('dataset_private_verified') is not True:
         raise ValueError('previous dataset privacy was not verified')
