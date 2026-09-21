@@ -1,0 +1,40 @@
+{
+  "http_status": 200,
+  "latency_ms": 540.3438750072382,
+  "raw_response": "{\"model\":\"jev-1.13.0\",\"answers\":{\"action\":{\"type\":\"choice\",\"choice\":\"hold_and_escalate\",\"confidence\":0.53,\"probabilities\":{\"reobserve\":0.32,\"request_recovery\":0.03,\"hold_and_escalate\":0.64,\"continue\":0.01}}},\"usage\":{\"input_tokens\":1738,\"output_tokens\":58}}",
+  "status": "ok",
+  "response": {
+    "model": "jev-1.13.0",
+    "answers": {
+      "action": {
+        "type": "choice",
+        "choice": "hold_and_escalate",
+        "confidence": 0.53,
+        "probabilities": {
+          "reobserve": 0.32,
+          "request_recovery": 0.03,
+          "hold_and_escalate": 0.64,
+          "continue": 0.01
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 1738,
+      "output_tokens": 58
+    }
+  },
+  "decision": {
+    "type": "choice",
+    "choice": "hold_and_escalate",
+    "confidence": 0.53,
+    "probabilities": {
+      "reobserve": 0.32,
+      "request_recovery": 0.03,
+      "hold_and_escalate": 0.64,
+      "continue": 0.01
+    }
+  },
+  "case_id": "20260919-open-plus-892-r1",
+  "repeat": 0,
+  "rule": "hold_and_escalate"
+}

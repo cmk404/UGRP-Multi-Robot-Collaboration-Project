@@ -1,0 +1,950 @@
+[
+  {
+    "id": "20260918-open-minus-20-r1",
+    "state": {
+      "task": "Two robots jointly carry a beam to a fixed goal.",
+      "observation": "Five historical own/top RGB-derived observations, spaced 0.2 simulation seconds apart. No images sent to this API.",
+      "limitations": "Pixel change is global appearance change, not displacement or goal progress. Estimates are from the archived ACT and RGB guard, not a new perception model. No contact, measured joints, dynamic true pose, evaluation labels or partner private state.",
+      "history": [
+        {
+          "relative_observation_step": -4,
+          "own_previous_issued_command": [
+            0.0899781584739685,
+            0.34698793292045593,
+            -0.025140466168522835
+          ],
+          "own_rgb_policy_done_estimate": false,
+          "own_rgb_policy_stop_score_uncalibrated": 0.0027884487062692642,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.9981511231263535,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": null,
+            "top": null
+          }
+        },
+        {
+          "relative_observation_step": -3,
+          "own_previous_issued_command": [
+            0.1573161631822586,
+            0.28321418166160583,
+            -0.019898833706974983
+          ],
+          "own_rgb_policy_done_estimate": false,
+          "own_rgb_policy_stop_score_uncalibrated": 0.00010978616774082184,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.9980502752968818,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.003225923278261922,
+            "top": 0.0019737559761558946
+          }
+        },
+        {
+          "relative_observation_step": -2,
+          "own_previous_issued_command": [
+            0.20774994790554047,
+            0.25927063822746277,
+            -0.015813471749424934
+          ],
+          "own_rgb_policy_done_estimate": false,
+          "own_rgb_policy_stop_score_uncalibrated": 0.0,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.9979812741504013,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.0033984091321713865,
+            "top": 0.0020575337388041635
+          }
+        },
+        {
+          "relative_observation_step": -1,
+          "own_previous_issued_command": [
+            0.26696908473968506,
+            0.21552923321723938,
+            -0.01707378216087818
+          ],
+          "own_rgb_policy_done_estimate": false,
+          "own_rgb_policy_stop_score_uncalibrated": 0.0,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.9978733492802649,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.0031508468742435245,
+            "top": 0.002158600747397724
+          }
+        },
+        {
+          "relative_observation_step": 0,
+          "own_previous_issued_command": [
+            0.3319425582885742,
+            0.17471379041671753,
+            -0.020714344456791878
+          ],
+          "own_rgb_policy_done_estimate": false,
+          "own_rgb_policy_stop_score_uncalibrated": 0.0,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.9978096559142828,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.0029545925623335753,
+            "top": 0.0023255700042362623
+          }
+        }
+      ]
+    },
+    "provenance": {
+      "source": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260918/open-minus/pair-decisions.json",
+      "source_sha256": "eb66b9ccec3328a520af73b697f5be8d2c0e077c00f6f847a892a841c5042468",
+      "slot": "r1",
+      "physical_robot_id": "r3",
+      "images": [
+        {
+          "index": 16,
+          "camera": "own",
+          "path": "rgb/act-carry-16-r3.jpg",
+          "sha256": "912e77b6fc783e7bc877c1b83d60e1c28c1648672706ae0eca6f483dab60c180"
+        },
+        {
+          "index": 16,
+          "camera": "top",
+          "path": "rgb/act-carry-16-top.jpg",
+          "sha256": "a79d485b1f3144a2e1b4e0ed02db202232fe1c1596c918353a2647a96d6ac05c"
+        },
+        {
+          "index": 17,
+          "camera": "own",
+          "path": "rgb/act-carry-17-r3.jpg",
+          "sha256": "ad5c4887513e4b7c2ff03dfb6831954e4f2b7a0cf94ae7ff8b7e7dc435daba69"
+        },
+        {
+          "index": 17,
+          "camera": "top",
+          "path": "rgb/act-carry-17-top.jpg",
+          "sha256": "4e668c507eae1b8b781222b9f2c9de36f76e80cc2e8e37e2572f211d59cfb10c"
+        },
+        {
+          "index": 18,
+          "camera": "own",
+          "path": "rgb/act-carry-18-r3.jpg",
+          "sha256": "8c4342358482352bf76b7dc63616700881106c4dbeb4ff7181e53d5288a17caa"
+        },
+        {
+          "index": 18,
+          "camera": "top",
+          "path": "rgb/act-carry-18-top.jpg",
+          "sha256": "50b1b65f5f42dafc188d007494600ca96ec923292245e69927d18ee34c09a094"
+        },
+        {
+          "index": 19,
+          "camera": "own",
+          "path": "rgb/act-carry-19-r3.jpg",
+          "sha256": "bcfc722cbf8e7efa3880382127c8d91c698fff31dd41820410eaa97167d86f62"
+        },
+        {
+          "index": 19,
+          "camera": "top",
+          "path": "rgb/act-carry-19-top.jpg",
+          "sha256": "ff7185bd584bf52f332dd6b5caba2f44ac615e5330794ae05a88ee591ac20dc5"
+        },
+        {
+          "index": 20,
+          "camera": "own",
+          "path": "rgb/act-carry-20-r3.jpg",
+          "sha256": "a7429739d2832bc093ff8683a3f3cfc7b6f983cb145ed69c9b91ee1192650d40"
+        },
+        {
+          "index": 20,
+          "camera": "top",
+          "path": "rgb/act-carry-20-top.jpg",
+          "sha256": "74a21c7636ee2c3a4c5cd0d76c0bea013986b0a397f9ea1c10698d4bbee175ae"
+        }
+      ]
+    }
+  },
+  {
+    "id": "20260918-open-minus-80-r1",
+    "state": {
+      "task": "Two robots jointly carry a beam to a fixed goal.",
+      "observation": "Five historical own/top RGB-derived observations, spaced 0.2 simulation seconds apart. No images sent to this API.",
+      "limitations": "Pixel change is global appearance change, not displacement or goal progress. Estimates are from the archived ACT and RGB guard, not a new perception model. No contact, measured joints, dynamic true pose, evaluation labels or partner private state.",
+      "history": [
+        {
+          "relative_observation_step": -4,
+          "own_previous_issued_command": [
+            0.29855936765670776,
+            -0.044907618314027786,
+            -0.020370693877339363
+          ],
+          "own_rgb_policy_done_estimate": false,
+          "own_rgb_policy_stop_score_uncalibrated": 0.0,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.9931741942789204,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": null,
+            "top": null
+          }
+        },
+        {
+          "relative_observation_step": -3,
+          "own_previous_issued_command": [
+            0.24704371392726895,
+            -0.04579215124249458,
+            -0.022214161232113838
+          ],
+          "own_rgb_policy_done_estimate": false,
+          "own_rgb_policy_stop_score_uncalibrated": 0.0,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.9930645001486179,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.0031395602608327283,
+            "top": 0.00245864727063665
+          }
+        },
+        {
+          "relative_observation_step": -2,
+          "own_previous_issued_command": [
+            0.2427358478307724,
+            -0.06137020513415337,
+            -0.0219974834471941
+          ],
+          "own_rgb_policy_done_estimate": false,
+          "own_rgb_policy_stop_score_uncalibrated": 0.0,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.9929689600996447,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.00337637489409344,
+            "top": 0.002327563316993464
+          }
+        },
+        {
+          "relative_observation_step": -1,
+          "own_previous_issued_command": [
+            0.31140416860580444,
+            -0.05009213462471962,
+            -0.0398336797952652
+          ],
+          "own_rgb_policy_done_estimate": false,
+          "own_rgb_policy_stop_score_uncalibrated": 0.0,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.9929052667336628,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.003185920857540547,
+            "top": 0.0022372912127814086
+          }
+        },
+        {
+          "relative_observation_step": 0,
+          "own_previous_issued_command": [
+            0.4260432720184326,
+            -0.05065523460507393,
+            -0.0368146151304245
+          ],
+          "own_rgb_policy_done_estimate": false,
+          "own_rgb_policy_stop_score_uncalibrated": 0.0,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.9927442640585413,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.0031498294147906075,
+            "top": 0.002205035100459937
+          }
+        }
+      ]
+    },
+    "provenance": {
+      "source": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260918/open-minus/pair-decisions.json",
+      "source_sha256": "eb66b9ccec3328a520af73b697f5be8d2c0e077c00f6f847a892a841c5042468",
+      "slot": "r1",
+      "physical_robot_id": "r3",
+      "images": [
+        {
+          "index": 76,
+          "camera": "own",
+          "path": "rgb/act-carry-76-r3.jpg",
+          "sha256": "9ae63982ef626f8fe010b82d696c733cb3029740619eaa3658de848fc9dbe5a5"
+        },
+        {
+          "index": 76,
+          "camera": "top",
+          "path": "rgb/act-carry-76-top.jpg",
+          "sha256": "becddb17fb3ec6d9ccfbdc318e58c793d5cdcab1b34ba94419d65bd9d0cfcc49"
+        },
+        {
+          "index": 77,
+          "camera": "own",
+          "path": "rgb/act-carry-77-r3.jpg",
+          "sha256": "89e7b1ba3d115dbbe7b0c1db194a8ef2c8ace3a5f28bf74dc152a6d4c19c9c3e"
+        },
+        {
+          "index": 77,
+          "camera": "top",
+          "path": "rgb/act-carry-77-top.jpg",
+          "sha256": "83e1bb09751f0661257ce089d011629920c19fb2bc4a490aa1148ff513a952a4"
+        },
+        {
+          "index": 78,
+          "camera": "own",
+          "path": "rgb/act-carry-78-r3.jpg",
+          "sha256": "94cf97d8f4c76b4013ede5abf1cd8e28beef02c51952b95151b5a32aec6f594c"
+        },
+        {
+          "index": 78,
+          "camera": "top",
+          "path": "rgb/act-carry-78-top.jpg",
+          "sha256": "873dfdeff6b5460a4edcf0f979a738b3f8b3e82fa74061822b47d527470203f9"
+        },
+        {
+          "index": 79,
+          "camera": "own",
+          "path": "rgb/act-carry-79-r3.jpg",
+          "sha256": "10d63b16ffb82278f08e1d2bc1e7f4988d45290eb0b1b0587013eab1aeb2b639"
+        },
+        {
+          "index": 79,
+          "camera": "top",
+          "path": "rgb/act-carry-79-top.jpg",
+          "sha256": "548e723e0944df0a738abe760a71700bfedbf4a2ceca0cc5044f61c6f33a6ae8"
+        },
+        {
+          "index": 80,
+          "camera": "own",
+          "path": "rgb/act-carry-80-r3.jpg",
+          "sha256": "0f6001f2bb569df790b24bc7115932bf6fb9041b16aa9fa163a6e84258812580"
+        },
+        {
+          "index": 80,
+          "camera": "top",
+          "path": "rgb/act-carry-80-top.jpg",
+          "sha256": "b23f31591f3aaf3acdb87cd72a8f34352ef8fda97d3e1368540d59d1f50eccc5"
+        }
+      ]
+    }
+  },
+  {
+    "id": "20260919-open-plus-100-r1",
+    "state": {
+      "task": "Two robots jointly carry a beam to a fixed goal.",
+      "observation": "Five historical own/top RGB-derived observations, spaced 0.2 simulation seconds apart. No images sent to this API.",
+      "limitations": "Pixel change is global appearance change, not displacement or goal progress. Estimates are from the archived ACT and RGB guard, not a new perception model. No contact, measured joints, dynamic true pose, evaluation labels or partner private state.",
+      "history": [
+        {
+          "relative_observation_step": -4,
+          "own_previous_issued_command": [
+            0.19100770354270935,
+            0.3339399993419647,
+            -0.0177246555685997
+          ],
+          "own_rgb_policy_done_estimate": false,
+          "own_rgb_policy_stop_score_uncalibrated": 0.03581790626049042,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.9893154091916219,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": null,
+            "top": null
+          }
+        },
+        {
+          "relative_observation_step": -3,
+          "own_previous_issued_command": [
+            0.13543838262557983,
+            0.3402670919895172,
+            -0.03612916171550751
+          ],
+          "own_rgb_policy_done_estimate": false,
+          "own_rgb_policy_stop_score_uncalibrated": 0.0353236049413681,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.9891043073642606,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.002282585179133382,
+            "top": 0.0016426826131687243
+          }
+        },
+        {
+          "relative_observation_step": -2,
+          "own_previous_issued_command": [
+            0.06888004392385483,
+            0.3572594225406647,
+            -0.06699279695749283
+          ],
+          "own_rgb_policy_done_estimate": false,
+          "own_rgb_policy_stop_score_uncalibrated": 0.05373905599117279,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.9889127191511933,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.0016329184065601548,
+            "top": 0.0016179269547325103
+          }
+        },
+        {
+          "relative_observation_step": -1,
+          "own_previous_issued_command": [
+            0.006639622151851654,
+            0.33313992619514465,
+            -0.0848657563328743
+          ],
+          "own_rgb_policy_done_estimate": false,
+          "own_rgb_policy_stop_score_uncalibrated": 0.18492071330547333,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.988730000762805,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.0016813195957395303,
+            "top": 0.0015574467441297507
+          }
+        },
+        {
+          "relative_observation_step": 0,
+          "own_previous_issued_command": [
+            -0.02982119470834732,
+            0.2837885022163391,
+            -0.09097550064325333
+          ],
+          "own_rgb_policy_done_estimate": false,
+          "own_rgb_policy_stop_score_uncalibrated": 0.18303339183330536,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.9885863096030044,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.0014989938876785282,
+            "top": 0.0014546133654078917
+          }
+        }
+      ]
+    },
+    "provenance": {
+      "source": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260919/open-plus/pair-decisions.json",
+      "source_sha256": "caf03f48dbfe3f0357d5db289ce59400ff5a5c950590fede730712268ace120b",
+      "slot": "r1",
+      "physical_robot_id": "r3",
+      "images": [
+        {
+          "index": 96,
+          "camera": "own",
+          "path": "rgb/act-carry-96-r3.jpg",
+          "sha256": "5dacdc59e807fd7d7d8d7887b77bfa210e1762c0af37ca7554208f8d2428a581"
+        },
+        {
+          "index": 96,
+          "camera": "top",
+          "path": "rgb/act-carry-96-top.jpg",
+          "sha256": "d5067d9ac039a35a4f873f2d337c52d98a104aa93605afdffaea7f987f641143"
+        },
+        {
+          "index": 97,
+          "camera": "own",
+          "path": "rgb/act-carry-97-r3.jpg",
+          "sha256": "bc97b6fb6779208450f19da35d2a6ab8eb891c97c2377b5dfa6832db098597d4"
+        },
+        {
+          "index": 97,
+          "camera": "top",
+          "path": "rgb/act-carry-97-top.jpg",
+          "sha256": "ced34e88f0c03d38a8c1fa73cbddfb9b166e6ca02d93acebe2e958ac86b8d9cf"
+        },
+        {
+          "index": 98,
+          "camera": "own",
+          "path": "rgb/act-carry-98-r3.jpg",
+          "sha256": "3c7bb1252bbb8154b95b18a7c1b70f84014bcfe80bf3fe2cf6a98063061ae5f2"
+        },
+        {
+          "index": 98,
+          "camera": "top",
+          "path": "rgb/act-carry-98-top.jpg",
+          "sha256": "e806fcdc7ccfe88dd32d3403ff53bd11ad33153b6ea3d83d2573d629edf4a2f3"
+        },
+        {
+          "index": 99,
+          "camera": "own",
+          "path": "rgb/act-carry-99-r3.jpg",
+          "sha256": "8a5c977b7f0b318771bb884389bd14638c6de5995660cc6265a4a494e712b7e9"
+        },
+        {
+          "index": 99,
+          "camera": "top",
+          "path": "rgb/act-carry-99-top.jpg",
+          "sha256": "1329e30eea4ba9c144b2b1f3483fec256d76199dfda2dd62698fb15429071aa4"
+        },
+        {
+          "index": 100,
+          "camera": "own",
+          "path": "rgb/act-carry-100-r3.jpg",
+          "sha256": "bdc9cd0d7a38aa107f850e9ca4c311a9f07efe50f7b8219e68432a3a11f4bbe9"
+        },
+        {
+          "index": 100,
+          "camera": "top",
+          "path": "rgb/act-carry-100-top.jpg",
+          "sha256": "81fc4bf50fa9f7e797725fc4cd24c0a4a6ff667fec5d71203a05e5826346df54"
+        }
+      ]
+    }
+  },
+  {
+    "id": "20260919-open-plus-300-r1",
+    "state": {
+      "task": "Two robots jointly carry a beam to a fixed goal.",
+      "observation": "Five historical own/top RGB-derived observations, spaced 0.2 simulation seconds apart. No images sent to this API.",
+      "limitations": "Pixel change is global appearance change, not displacement or goal progress. Estimates are from the archived ACT and RGB guard, not a new perception model. No contact, measured joints, dynamic true pose, evaluation labels or partner private state.",
+      "history": [
+        {
+          "relative_observation_step": -4,
+          "own_previous_issued_command": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "own_rgb_policy_done_estimate": true,
+          "own_rgb_policy_stop_score_uncalibrated": 0.892555296421051,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.9543097591133015,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": null,
+            "top": null
+          }
+        },
+        {
+          "relative_observation_step": -3,
+          "own_previous_issued_command": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "own_rgb_policy_done_estimate": true,
+          "own_rgb_policy_stop_score_uncalibrated": 0.9071779251098633,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.9540826916015179,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.00024273027112079398,
+            "top": 4.6101503873154204e-05
+          }
+        },
+        {
+          "relative_observation_step": -2,
+          "own_previous_issued_command": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "own_rgb_policy_done_estimate": true,
+          "own_rgb_policy_stop_score_uncalibrated": 0.906101644039154,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.9538361104754404,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.0002420721374969741,
+            "top": 3.5690510772210116e-05
+          }
+        },
+        {
+          "relative_observation_step": -1,
+          "own_previous_issued_command": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "own_rgb_policy_done_estimate": true,
+          "own_rgb_policy_stop_score_uncalibrated": 0.9146221280097961,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.953635652437694,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.00025252284555797626,
+            "top": 3.656423989348826e-05
+          }
+        },
+        {
+          "relative_observation_step": 0,
+          "own_previous_issued_command": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "own_rgb_policy_done_estimate": true,
+          "own_rgb_policy_stop_score_uncalibrated": 0.9227484464645386,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.9534085849259103,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.00024376664245945293,
+            "top": 3.545978576615832e-05
+          }
+        }
+      ]
+    },
+    "provenance": {
+      "source": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260919/open-plus/pair-decisions.json",
+      "source_sha256": "caf03f48dbfe3f0357d5db289ce59400ff5a5c950590fede730712268ace120b",
+      "slot": "r1",
+      "physical_robot_id": "r3",
+      "images": [
+        {
+          "index": 296,
+          "camera": "own",
+          "path": "rgb/act-carry-296-r3.jpg",
+          "sha256": "2ab1607cc05ef07441fe5ede5079318b23092048a0fefab9a64b053b90cbd17e"
+        },
+        {
+          "index": 296,
+          "camera": "top",
+          "path": "rgb/act-carry-296-top.jpg",
+          "sha256": "b566ea39279b32b34873bd57f1011d8f767832a8f73d3f271d9a0600de3fb305"
+        },
+        {
+          "index": 297,
+          "camera": "own",
+          "path": "rgb/act-carry-297-r3.jpg",
+          "sha256": "abc2aab1a2b410c67dc83a32f264ed7a29f787908b434828ad59f4f468619bbb"
+        },
+        {
+          "index": 297,
+          "camera": "top",
+          "path": "rgb/act-carry-297-top.jpg",
+          "sha256": "df3535d3dabb28e3e6200f81d863c47c8f6ae2339b51c19130b6fae889250480"
+        },
+        {
+          "index": 298,
+          "camera": "own",
+          "path": "rgb/act-carry-298-r3.jpg",
+          "sha256": "9606b4f07fa5b1dc974ee71b7ce8962cb544f709c856d7f60de3124dcf487b4e"
+        },
+        {
+          "index": 298,
+          "camera": "top",
+          "path": "rgb/act-carry-298-top.jpg",
+          "sha256": "b7c752f9797719ce7bf41aad7d88bb94bd6245212ef80718c58c11c37d01c20f"
+        },
+        {
+          "index": 299,
+          "camera": "own",
+          "path": "rgb/act-carry-299-r3.jpg",
+          "sha256": "42bd47c9aab1b8696c277d5ddc5ea8a8395cc06ac33a6f1fee40e8f02a88710b"
+        },
+        {
+          "index": 299,
+          "camera": "top",
+          "path": "rgb/act-carry-299-top.jpg",
+          "sha256": "110940069080d25a42ed193775d04c2fd03ee7eb1875cfe27815689365d94e23"
+        },
+        {
+          "index": 300,
+          "camera": "own",
+          "path": "rgb/act-carry-300-r3.jpg",
+          "sha256": "654f616f65bb9349edf708a7a10c0757549eebc43a17ed681e8c833ef0c7811e"
+        },
+        {
+          "index": 300,
+          "camera": "top",
+          "path": "rgb/act-carry-300-top.jpg",
+          "sha256": "60c8ce22c2544ee37103afa6d7db8f9b220708c12fc1b2654f3fd75b14f463ef"
+        }
+      ]
+    }
+  },
+  {
+    "id": "20260919-open-plus-600-r1",
+    "state": {
+      "task": "Two robots jointly carry a beam to a fixed goal.",
+      "observation": "Five historical own/top RGB-derived observations, spaced 0.2 simulation seconds apart. No images sent to this API.",
+      "limitations": "Pixel change is global appearance change, not displacement or goal progress. Estimates are from the archived ACT and RGB guard, not a new perception model. No contact, measured joints, dynamic true pose, evaluation labels or partner private state.",
+      "history": [
+        {
+          "relative_observation_step": -4,
+          "own_previous_issued_command": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "own_rgb_policy_done_estimate": true,
+          "own_rgb_policy_stop_score_uncalibrated": 0.7758168578147888,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.8779991094696022,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": null,
+            "top": null
+          }
+        },
+        {
+          "relative_observation_step": -3,
+          "own_previous_issued_command": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "own_rgb_policy_done_estimate": true,
+          "own_rgb_policy_stop_score_uncalibrated": 0.7740538120269775,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.8776957614655789,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.0003007803044057129,
+            "top": 9.981693294601793e-06
+          }
+        },
+        {
+          "relative_observation_step": -2,
+          "own_previous_issued_command": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "own_rgb_policy_done_estimate": true,
+          "own_rgb_policy_stop_score_uncalibrated": 0.7752834558486938,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.877415475005721,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.0003029078915516824,
+            "top": 1.2184927983539095e-05
+          }
+        },
+        {
+          "relative_observation_step": -1,
+          "own_previous_issued_command": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "own_rgb_policy_done_estimate": true,
+          "own_rgb_policy_stop_score_uncalibrated": 0.7671210169792175,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.8771280926861199,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.00030919987593802954,
+            "top": 1.4051531106269669e-05
+          }
+        },
+        {
+          "relative_observation_step": 0,
+          "own_previous_issued_command": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "own_rgb_policy_done_estimate": true,
+          "own_rgb_policy_stop_score_uncalibrated": 0.7850531339645386,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.8768336145067757,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.0003099109628419269,
+            "top": 7.99027172597434e-06
+          }
+        }
+      ]
+    },
+    "provenance": {
+      "source": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260919/open-plus/pair-decisions.json",
+      "source_sha256": "caf03f48dbfe3f0357d5db289ce59400ff5a5c950590fede730712268ace120b",
+      "slot": "r1",
+      "physical_robot_id": "r3",
+      "images": [
+        {
+          "index": 596,
+          "camera": "own",
+          "path": "rgb/act-carry-596-r3.jpg",
+          "sha256": "26a7881fddca724210d45e563dab6ef0c47e0af3003920d16065ecd89201154f"
+        },
+        {
+          "index": 596,
+          "camera": "top",
+          "path": "rgb/act-carry-596-top.jpg",
+          "sha256": "31ac73563b2765dc809c05a05c3cc2768dcb98b5851943a7aabe69a8c43c111c"
+        },
+        {
+          "index": 597,
+          "camera": "own",
+          "path": "rgb/act-carry-597-r3.jpg",
+          "sha256": "d3d65aa1f755ed875803193125f13d5de33a284cdcbb23d81dc7763786657d9f"
+        },
+        {
+          "index": 597,
+          "camera": "top",
+          "path": "rgb/act-carry-597-top.jpg",
+          "sha256": "a5378b10a50912587c9400e46d35d7311b71ab048a83e357a9c7a387024a225c"
+        },
+        {
+          "index": 598,
+          "camera": "own",
+          "path": "rgb/act-carry-598-r3.jpg",
+          "sha256": "261a333d8d1ebbcfce467e1944d1831717aed4dcd44babf30cd6e910b6b7abe5"
+        },
+        {
+          "index": 598,
+          "camera": "top",
+          "path": "rgb/act-carry-598-top.jpg",
+          "sha256": "16a41b4022274cae79c1080c93a22145c3935e10ee8c746f065725e96033b22b"
+        },
+        {
+          "index": 599,
+          "camera": "own",
+          "path": "rgb/act-carry-599-r3.jpg",
+          "sha256": "608fa1bccf85d31696572ddec91bbf40183900bafd3054b7748328f09a0d8e10"
+        },
+        {
+          "index": 599,
+          "camera": "top",
+          "path": "rgb/act-carry-599-top.jpg",
+          "sha256": "a6ab6890d67cebb1977b8dc4f52d94c71438072815c01412c2e15c3789948b98"
+        },
+        {
+          "index": 600,
+          "camera": "own",
+          "path": "rgb/act-carry-600-r3.jpg",
+          "sha256": "235f80991fdc6f823be71b75bce1fb723a6dded299885d31e4a95a5de4e2939d"
+        },
+        {
+          "index": 600,
+          "camera": "top",
+          "path": "rgb/act-carry-600-top.jpg",
+          "sha256": "c3a79b0dbee001498a4ebd2621aca716f22f91d67a7c23b4be4258f2d73ab313"
+        }
+      ]
+    }
+  },
+  {
+    "id": "20260919-open-plus-892-r1",
+    "state": {
+      "task": "Two robots jointly carry a beam to a fixed goal.",
+      "observation": "Five historical own/top RGB-derived observations, spaced 0.2 simulation seconds apart. No images sent to this API.",
+      "limitations": "Pixel change is global appearance change, not displacement or goal progress. Estimates are from the archived ACT and RGB guard, not a new perception model. No contact, measured joints, dynamic true pose, evaluation labels or partner private state.",
+      "history": [
+        {
+          "relative_observation_step": -4,
+          "own_previous_issued_command": [
+            0.0375136062502861,
+            0.32289135456085205,
+            0.2372772693634033
+          ],
+          "own_rgb_policy_done_estimate": false,
+          "own_rgb_policy_stop_score_uncalibrated": 0.026188120245933533,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.43013327798562734,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": null,
+            "top": null
+          }
+        },
+        {
+          "relative_observation_step": -3,
+          "own_previous_issued_command": [
+            0.04008292406797409,
+            0.3630163371562958,
+            0.2373931109905243
+          ],
+          "own_rgb_policy_done_estimate": false,
+          "own_rgb_policy_stop_score_uncalibrated": 0.021867021918296814,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.4338497345261474,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.007317339551561365,
+            "top": 0.000572939360929557
+          }
+        },
+        {
+          "relative_observation_step": -2,
+          "own_previous_issued_command": [
+            0.033452682197093964,
+            0.37705543637275696,
+            0.23859959840774533
+          ],
+          "own_rgb_policy_done_estimate": false,
+          "own_rgb_policy_stop_score_uncalibrated": 0.015239819884300232,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.4380983805474101,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.008120353349673202,
+            "top": 0.0006375177771725975
+          }
+        },
+        {
+          "relative_observation_step": -1,
+          "own_previous_issued_command": [
+            0.0011972114443778992,
+            0.3735960125923157,
+            0.2411206662654877
+          ],
+          "own_rgb_policy_done_estimate": false,
+          "own_rgb_policy_stop_score_uncalibrated": 0.015182718634605408,
+          "own_rgb_attachment_estimate": true,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.44313466700017207,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.00942176152868555,
+            "top": 0.0006788591594045026
+          }
+        },
+        {
+          "relative_observation_step": 0,
+          "own_previous_issued_command": [
+            -0.007816620171070099,
+            0.3900587260723114,
+            0.24452504515647885
+          ],
+          "own_rgb_policy_done_estimate": false,
+          "own_rgb_policy_stop_score_uncalibrated": 0.0244433730840683,
+          "own_rgb_attachment_estimate": false,
+          "own_rgb_attachment_area_ratio_to_anchor": 0.44400213585378273,
+          "mean_rgb_pixel_change_0_to_1": {
+            "own": 0.029651769774267735,
+            "top": 0.0005985763132413459
+          }
+        }
+      ]
+    },
+    "provenance": {
+      "source": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/final/20260919/open-plus/pair-decisions.json",
+      "source_sha256": "caf03f48dbfe3f0357d5db289ce59400ff5a5c950590fede730712268ace120b",
+      "slot": "r1",
+      "physical_robot_id": "r3",
+      "images": [
+        {
+          "index": 888,
+          "camera": "own",
+          "path": "rgb/act-carry-888-r3.jpg",
+          "sha256": "73465211c4d8d740cc7557a9b85d6974becf82b7be6c80332a2b32f45226edbb"
+        },
+        {
+          "index": 888,
+          "camera": "top",
+          "path": "rgb/act-carry-888-top.jpg",
+          "sha256": "9f944b4f9764667759b74901ca85405d889827eb2a92dad81d8e172d0950ef18"
+        },
+        {
+          "index": 889,
+          "camera": "own",
+          "path": "rgb/act-carry-889-r3.jpg",
+          "sha256": "8c8232443ca65b4ba25064781c3682bfbe72cfb4f9bfbae9c498041a3ca2155d"
+        },
+        {
+          "index": 889,
+          "camera": "top",
+          "path": "rgb/act-carry-889-top.jpg",
+          "sha256": "c3c28f3b41c7afe835b940055696e16cbfd13d7135a7238e75b629393d7d01cb"
+        },
+        {
+          "index": 890,
+          "camera": "own",
+          "path": "rgb/act-carry-890-r3.jpg",
+          "sha256": "96916aa8770d08f36a652315dcc3d9ca1201cd2e8d69e7814b1b77ae21744c9c"
+        },
+        {
+          "index": 890,
+          "camera": "top",
+          "path": "rgb/act-carry-890-top.jpg",
+          "sha256": "29b570fea7fb6b9193d9bd6aa58db37d955acded766e0cf3e33351fb88df3cf9"
+        },
+        {
+          "index": 891,
+          "camera": "own",
+          "path": "rgb/act-carry-891-r3.jpg",
+          "sha256": "fb9b4937c0f415992ee27d25731e234446db6811cf955fe76536241729ccf047"
+        },
+        {
+          "index": 891,
+          "camera": "top",
+          "path": "rgb/act-carry-891-top.jpg",
+          "sha256": "fb8a52f6993ed6ea484455bbfffd4249bdbd81a3ce9b234b163d40d6cd4156bf"
+        },
+        {
+          "index": 892,
+          "camera": "own",
+          "path": "rgb/act-carry-892-r3.jpg",
+          "sha256": "dad938567b52a224ad5b4422add58e98956b3ddac18d207a5115294d42780378"
+        },
+        {
+          "index": 892,
+          "camera": "top",
+          "path": "rgb/act-carry-892-top.jpg",
+          "sha256": "b2c732a18695fea30f18fd7eabd665b5c2c45f072b4b7333594c2cface70ab21"
+        }
+      ]
+    }
+  }
+]
