@@ -15,6 +15,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from scripts.run_jev_skill_motion import DEVELOPMENT,HOLDOUT,run_trial,write
 from scripts.run_jev_semantic_cohort import NEW_CASES
+from scripts.cloud_collection import checkpoint_trial
 
 
 def plan(phase,policies=('rule','jev','gemini'),dev_cases=None):
@@ -50,6 +51,7 @@ def worker(output,index):
         result=run_trial(args,protocol['case_setup'][job['case']],job['policy'],key if job['policy']=='jev' else None,protocol['source_sha'])
         result.update(repeat=job['repeat'],trial_id=job['trial_id'],partition=protocol['phase'])
         write(args.output/'result.json',result)
+        checkpoint_trial(args.output, output/'checkpoints', protocol['source_sha'])
     return 0
 
 

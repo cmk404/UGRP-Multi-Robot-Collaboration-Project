@@ -26,6 +26,8 @@ def write(path, value):
 
 
 def cli(*args):
+    from scripts.kaggle_cli_auth import refresh_existing_oauth
+    refresh_existing_oauth()
     result = subprocess.run(['kaggle', *map(str, args)], text=True, capture_output=True)
     if result.returncode:
         raise RuntimeError(result.stderr.strip() or result.stdout.strip() or 'Kaggle CLI failed')
