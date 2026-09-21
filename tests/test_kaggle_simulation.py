@@ -19,7 +19,12 @@ def snapshot_repo(tmp_path):
 
 
 @pytest.fixture
-def prepared(tmp_path):
+def prepared(tmp_path, monkeypatch):
+    def dependencies(root, output, wheelhouse):
+        cache = output/'dependencies'; cache.mkdir()
+        (cache/'fake.whl').write_bytes(b'wheel')
+        return {'files': {'fake.whl': k.digest(cache/'fake.whl')}}
+    monkeypatch.setattr(k, 'prepare_dependencies', dependencies)
     output = tmp_path/'job'
     state = k.prepare(output, 'testowner', root=snapshot_repo(tmp_path))
     return output, state
@@ -32,7 +37,7 @@ def test_preparation_is_private_cpu_and_preserves_rights(prepared):
     assert meta['enable_gpu'] is False
     assert meta['dataset_sources'] == [state['dataset']]
     assert json.loads((output/'dataset/dataset-metadata.json').read_text())['licenses'] == [{'name':'other'}]
-    assert len(list((output/'dataset').iterdir())) == 3
+    assert len(list((output/'dataset').iterdir())) == 5
     compile((output/'kernel/run.py').read_text(), 'kaggle-run.py', 'exec')
     k.validate(output, state)
 
@@ -137,3 +142,10 @@ def test_private_dataset_indexing_403_is_not_resubmitted(prepared, monkeypatch):
     assert k.submit(output)==2
     assert len([c for c in calls if c[:2]==('datasets','create')])==1
     assert not [c for c in calls if c[:2]==('kernels','push')]
+
+
+def test_dependency_tampering_is_rejected(prepared):
+    output,state=prepared
+    (output/'dataset/fake.whl').write_bytes(b'changed')
+    with pytest.raises(ValueError,match='dependency changed'):
+        k.validate(output,state)

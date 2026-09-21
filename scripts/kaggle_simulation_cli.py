@@ -14,7 +14,8 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
-from scripts.colab_simulation_cli import pack, digest, setup_code
+from scripts.colab_simulation_cli import pack, digest
+from scripts.kaggle_offline_dependencies import prepare_dependencies
 
 
 def write(path, value):
@@ -28,11 +29,10 @@ def cli(*args):
     return result.stdout
 
 
-def driver(record, job_id, module, arguments):
+def driver(record, job_id, module, arguments, dependencies_sha256):
     remote = '/kaggle/temp/ugrp-' + job_id
-    setup = setup_code(remote, record['sha256']).replace('UGRP_COLAB_SETUP_OK', 'UGRP_KAGGLE_SETUP_OK')
     return f'''from pathlib import Path
-import json, os, shutil, subprocess, sys, traceback
+import hashlib, json, os, shutil, subprocess, sys, tarfile, traceback
 working = Path('/kaggle/working')
 working.mkdir(exist_ok=True)
 base = Path({remote!r})
@@ -45,19 +45,25 @@ try:
     if len(candidates) != 1:
         raise RuntimeError('expected exactly one source bundle input')
     base.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(candidates[0], str(base)+'.tar.gz')
-    setup_file = base.parent/({job_id!r}+'-setup.py')
-    setup_file.write_text({setup!r})
-    # Use Python 3.12 even if the Kaggle image's kernel changes version.
-    subprocess.run([sys.executable, '-m', 'pip', 'install', 'uv'], check=True)
-    bootstrap = base.parent/({job_id!r}+'-bootstrap')
-    subprocess.run([sys.executable, '-m', 'uv', 'venv', '--seed', '--python', '3.12', str(bootstrap)], check=True)
+    archive = candidates[0]
+    inputs = archive.parent
+    manifest_file = inputs/'dependencies-manifest.json'
+    if hashlib.sha256(manifest_file.read_bytes()).hexdigest() != {dependencies_sha256!r}:
+        raise ValueError('dependency manifest hash mismatch')
+    if hashlib.sha256(archive.read_bytes()).hexdigest() != {record['sha256']!r}:
+        raise ValueError('source archive hash mismatch')
+    base.mkdir(exist_ok=False)
+    with tarfile.open(archive) as bundle:
+        for member in bundle.getmembers():
+            if member.issym() or member.islnk():
+                raise ValueError('source archive links are forbidden')
+        bundle.extractall(base, filter='data')
     with (working/'setup.log').open('w') as log:
-        subprocess.run([str(bootstrap/'bin/python'), str(setup_file)], stdout=log, stderr=subprocess.STDOUT, check=True)
+        subprocess.run([sys.executable, str(base/'source/scripts/setup_kaggle_offline.py'), str(base), str(inputs), str(manifest_file)], stdout=log, stderr=subprocess.STDOUT, check=True)
     source = base/'source'
     py = str(base/'sim-env/bin/python')
     env = os.environ.copy()
-    env.update(MUJOCO_GL='osmesa', PYOPENGL_PLATFORM='osmesa', PYTHONPATH=str(source))
+    env.update(MUJOCO_GL='osmesa', PYOPENGL_PLATFORM='osmesa', PYTHONPATH=str(source), LD_LIBRARY_PATH=str(base/'system/usr/lib/x86_64-linux-gnu'))
     output = source/'outputs'/('kaggle-'+{job_id!r})
     job['status'] = 'running'
     save()
@@ -79,7 +85,7 @@ if job['exit_code']:
 '''
 
 
-def prepare(output, owner=None, *, root=ROOT, module='scripts.sim_quickstart', arguments=None, include=()):
+def prepare(output, owner=None, *, root=ROOT, module='scripts.sim_quickstart', arguments=None, include=(), wheelhouse=None):
     if owner is not None and not re.fullmatch(r'[A-Za-z0-9_-]+', owner):
         raise ValueError('invalid Kaggle username')
     record = pack(root, output, include)
@@ -90,6 +96,7 @@ def prepare(output, owner=None, *, root=ROOT, module='scripts.sim_quickstart', a
         owner = json.loads((kernel/'kernel-metadata.json').read_text())['id'].split('/')[0]
         if not re.fullmatch(r'[A-Za-z0-9_-]+', owner):
             raise ValueError('Kaggle CLI did not return a valid authenticated username')
+    dependencies = prepare_dependencies(root, output, wheelhouse)
     job_id = uuid.uuid4().hex[:12]
     dataset_slug = 'ugrp-source-' + job_id
     kernel_slug = 'ugrp-simulation-' + job_id
@@ -97,29 +104,41 @@ def prepare(output, owner=None, *, root=ROOT, module='scripts.sim_quickstart', a
     data.mkdir()
     shutil.copyfile(output/'source.tar.gz', data/('ugrp-source-'+job_id+'.bin'))
     write(data/'source-manifest.json', record)
+    write(data/'dependencies-manifest.json', dependencies)
+    for name in dependencies['files']:
+        shutil.copyfile(output/'dependencies'/name, data/name)
+    dependencies_sha256 = digest(data/'dependencies-manifest.json')
     write(data/'dataset-metadata.json', {'id': owner+'/'+dataset_slug, 'title': dataset_slug,
           'licenses': [{'name': 'other'}],
           'description': 'Private execution copy only. Original copyright notices and licenses remain applicable; no additional redistribution license is granted.'})
     metadata = {'id': owner+'/'+kernel_slug, 'title': kernel_slug, 'code_file': 'run.py', 'language': 'python',
                 'kernel_type': 'script', 'is_private': True, 'enable_gpu': False, 'enable_tpu': False,
-                'enable_internet': True, 'dataset_sources': [owner+'/'+dataset_slug],
+                'enable_internet': False, 'dataset_sources': [owner+'/'+dataset_slug],
                 'competition_sources': [], 'kernel_sources': [], 'model_sources': []}
     write(kernel/'kernel-metadata.json', metadata)
-    (kernel/'run.py').write_text(driver(record, job_id, module, arguments or ['--output', '{output}']))
+    (kernel/'run.py').write_text(driver(record, job_id, module, arguments or ['--output', '{output}'], dependencies_sha256))
     state = {'job_id': job_id, 'source_sha': record['source_sha'], 'source_sha256': record['sha256'],
              'dataset': owner+'/'+dataset_slug, 'kernel': owner+'/'+kernel_slug, 'stage': 'prepared',
-             'driver_sha256': digest(kernel/'run.py'), 'cpu_only': True}
+             'driver_sha256': digest(kernel/'run.py'), 'cpu_only': True,
+             'dependencies_sha256': dependencies_sha256}
     write(output/'job.json', state)
     return state
 
 
 def validate(output, state):
-    expected_files = {'dataset-metadata.json', 'source-manifest.json', 'ugrp-source-'+state['job_id']+'.bin'}
+    manifest_file = output/'dataset/dependencies-manifest.json'
+    if digest(manifest_file) != state['dependencies_sha256']:
+        raise ValueError('dependency manifest changed since preparation')
+    dependencies = json.loads(manifest_file.read_text())
+    for name, expected in dependencies['files'].items():
+        if Path(name).name != name or digest(output/'dataset'/name) != expected:
+            raise ValueError('dependency changed since preparation')
+    expected_files = set(dependencies['files']) | {'dependencies-manifest.json', 'dataset-metadata.json', 'source-manifest.json', 'ugrp-source-'+state['job_id']+'.bin'}
     files = list((output/'dataset').iterdir())
     if {p.name for p in files} != expected_files or any(not p.is_file() or p.is_symlink() for p in files):
         raise ValueError('unexpected file in dataset upload directory')
     metadata = json.loads((output/'kernel/kernel-metadata.json').read_text())
-    if metadata['is_private'] is not True or metadata['enable_gpu'] is not False or metadata.get('enable_tpu') is not False:
+    if metadata['is_private'] is not True or metadata['enable_gpu'] is not False or metadata.get('enable_tpu') is not False or metadata.get('enable_internet') is not False:
         raise ValueError('this runner requires a private CPU kernel')
     if metadata['id'] != state['kernel'] or metadata['dataset_sources'] != [state['dataset']]:
         raise ValueError('kernel identity/input changed since preparation')
@@ -228,6 +247,10 @@ def collect(output):
     if privacy is not True and privacy != 'true':
         raise ValueError('remote kernel is not private')
     # Failure logs remain available even when setup never produced a result ZIP.
+    if not (downloaded/'result.zip').exists():
+        state.update(stage='remote_failed', downloaded=str(downloaded), kernel_private_verified=True)
+        write(output/'job.json', state)
+        raise RuntimeError('Remote setup produced no result ZIP; failure evidence saved in '+str(downloaded))
     result = verify(output, downloaded)
     state.update(stage='collected', downloaded=str(downloaded), exit_code=result, kernel_private_verified=True)
     write(output/'job.json', state)
@@ -243,6 +266,7 @@ def main():
     p.add_argument('--owner', help='omit to read the authenticated username via kaggle kernels init')
     p.add_argument('--include', action='append', default=[])
     p.add_argument('--module', default='scripts.sim_quickstart')
+    p.add_argument('--wheelhouse', type=Path, help='reuse Linux CPython 3.12 wheels, including pip 26.2.1')
     p.add_argument('args', nargs=argparse.REMAINDER)
     for name in ('submit', 'status', 'collect'):
         q = sub.add_parser(name)
@@ -251,7 +275,7 @@ def main():
     output = args.output.resolve()
     if args.action == 'prepare':
         arguments = args.args[1:] if args.args[:1] == ['--'] else args.args
-        print(json.dumps(prepare(output, args.owner, module=args.module, arguments=arguments, include=args.include)))
+        print(json.dumps(prepare(output, args.owner, module=args.module, arguments=arguments, include=args.include, wheelhouse=args.wheelhouse)))
         return 0
     if args.action == 'status':
         status(output)

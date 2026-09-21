@@ -1,0 +1,30 @@
+{
+  "libedit2": {
+    "Package": "libedit2",
+    "Version": "3.1-20210910-1build1",
+    "Filename": "pool/main/libe/libedit/libedit2_3.1-20210910-1build1_amd64.deb",
+    "SHA256": "fb8783bdf0a59aaabf4e9b29192170f6cc17aa2eb94bc672c15add37ff39525b",
+    "Depends": "libbsd0 (>= 0.1.3), libc6 (>= 2.33), libtinfo6 (>= 6)"
+  },
+  "libglapi-mesa": {
+    "Package": "libglapi-mesa",
+    "Version": "23.2.1-1ubuntu3.1~22.04.4",
+    "Filename": "pool/main/m/mesa/libglapi-mesa_23.2.1-1ubuntu3.1~22.04.4_amd64.deb",
+    "SHA256": "bb9b515ea17ca816f878501d3b862c4bdfc3501482f96c9bbd8263bb402bc498",
+    "Depends": "libc6 (>= 2.34)"
+  },
+  "libosmesa6": {
+    "Package": "libosmesa6",
+    "Version": "23.2.1-1ubuntu3.1~22.04.4",
+    "Filename": "pool/main/m/mesa/libosmesa6_23.2.1-1ubuntu3.1~22.04.4_amd64.deb",
+    "SHA256": "d961bee304d032b7a3f626239366bbe36c4481adb5699813389cdbd08d682269",
+    "Depends": "libc6 (>= 2.34), libdrm2 (>= 2.4.25), libgcc-s1 (>= 3.4), libglapi-mesa (= 23.2.1-1ubuntu3.1~22.04.4), libllvm15, libstdc++6 (>= 11), libzstd1 (>= 1.4.0), zlib1g (>= 1:1.1.4)"
+  },
+  "libllvm15": {
+    "Package": "libllvm15",
+    "Version": "1:15.0.7-0ubuntu0.22.04.3",
+    "Filename": "pool/main/l/llvm-toolchain-15/libllvm15_15.0.7-0ubuntu0.22.04.3_amd64.deb",
+    "SHA256": "96798f618e4071f7fa684037bd0bb88f15b4e8f2c80cbb64267aa39fe8a8a5ec",
+    "Depends": "libc6 (>= 2.34), libedit2 (>= 2.11-20080614-0), libffi8 (>= 3.4), libgcc-s1 (>= 3.3), libstdc++6 (>= 12), libtinfo6 (>= 6), libxml2 (>= 2.7.4), zlib1g (>= 1:1.2.0)"
+  }
+}
