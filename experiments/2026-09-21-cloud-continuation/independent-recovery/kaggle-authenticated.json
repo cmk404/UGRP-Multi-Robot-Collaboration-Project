@@ -1,0 +1,51 @@
+{
+  "observed_at": "2026-09-21T06:39:48.711450+00:00",
+  "scope": "Kaggle authentication and GPU renderer verified; full ACT cohort still gated by RGB handoff diagnostic. No 512px.",
+  "gpu_probe": {
+    "kernel": "changmin2026/ugrp-verified-gpu-probe-20260921",
+    "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/kaggle-verified-gpu-probe-20260921/result/gpu-inventory.json",
+    "sha256": "531b071d0432ca7fb863f008260cce861949d06b7f22d6e7b8a6c668f34fe9cc",
+    "gpu_count": 2,
+    "gpu": "Tesla T4",
+    "cuda_available": true,
+    "internet_http_status": 200
+  },
+  "attempt_c": {
+    "kernel": "changmin2026/ugrp-simulation-ad22699b441a",
+    "failure": "offline CPU LD_LIBRARY_PATH hid mounted NVIDIA libraries",
+    "fix_commit": "d2e7f11"
+  },
+  "attempt_d": {
+    "kernel": "changmin2026/ugrp-simulation-3d881200b927",
+    "source_sha": "eb3bb05427ebd9d29bb49645f39a36aaf727a895",
+    "gpu_renderer": "NVIDIA Corporation / Tesla T4/PCIe/SSE2",
+    "dependencies_installed": true,
+    "approach_calibration_complete": true,
+    "diagnostic_error": "fine docking outside saved support",
+    "grasp_calibration_error": "background band removes a learned visual direction",
+    "raw_root": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/kaggle-act-nvidia-20260921/remote/extracted",
+    "archive_sha256": "0b25e7e2d1a58e5b38e0c93d67d26638dc8f64bd49d69d8d5cba12d46978edd1",
+    "act_cohort_started": false
+  },
+  "attempt_e": {
+    "kernel": "changmin2026/ugrp-simulation-82c7d6468fe3",
+    "source_sha": "feae35e09c441f438f87da6cf7d8f4acc4fef024",
+    "driver_sha256": "8d3f69234da0ebb7f511008617f23239e2765670e5c958910ebeb1cde738911a",
+    "asset_dataset": "changmin2026/ugrp-act-assets-d821ea4cd3e7",
+    "timeout_seconds": 14400
+  },
+  "fix": "Freshly calibrated grasp exports declare full RGB support; training and dispatch preserve learned directions. Novelty guards unchanged. Legacy transfer masks remain available for legacy models.",
+  "verification": {
+    "focused_tests_passed": 37,
+    "ci_tests_passed": 1220,
+    "ci_skipped": 3,
+    "ci_subtests_passed": 191
+  },
+  "colab_act_queue": "cancelled before allocation; replaced by verified Kaggle GPU to avoid duplicate ACT work",
+  "pending": [
+    "New Kaggle diagnostic and full 128/256 cohort if diagnostic passes",
+    "Colab Jev/Gemini comparison remains running; no final ranking",
+    "Kaggle CPU rule cohort remains running"
+  ],
+  "dashboard": "http://127.0.0.1:6006/#hparams"
+}

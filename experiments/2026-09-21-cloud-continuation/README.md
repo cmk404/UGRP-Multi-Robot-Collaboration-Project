@@ -136,3 +136,10 @@ Colab에서 36회 평가를 재개했다(source `04f129c`). 재학습은 없고 
 강 프로필의 기존 Google 계정으로 Kaggle `changmin2026`에 로그인해 실제 Notebook Session options를 확인했다. **전화번호 미인증으로 GPU/TPU·인터넷 접근이 잠겨 있다.** `Internet off`는 disabled였고 `Get phone verified` 안내가 표시됐다. 진단 노트북의 GPU 요청 메타데이터와 실제 CPU 실행이 다른 이유를 설명하는 계정 차원의 차단이다. 본인 인증 폼만 열었으며 전화번호·문자 코드 입력이나 CAPTCHA 처리, 새 계정 생성은 하지 않았다. 사용자에게 인증 완료를 요청했다. Draft Session은 off이며 별도 브라우저 실행은 시작하지 않았다. 인증 전에는 Kaggle GPU 재제출을 반복하지 않는다. Colab 비교와 이후 ACT 인계는 이 인증과 독립적으로 진행한다.
 
 15:00 KST 보고용 스냅샷: 전송 수정 후 개발 3회와 본 평가 6회를 회수해 모두 접근/정렬 성공을 확인했다. 기존 전송 실패였던 Jev 네 조건과 Gemini 가림 조건도 여기에 포함된다. 전체 108회 holdout 완료나 ACT 운반 성공은 아니다. 개발 중 relay 교체가 있어 개발 시간은 성능 순위에 쓰지 않는다. 새 9개 원본/해시·영상 HTTP 206·native TensorBoard 전체 40행과 비교 열을 확인했으며 `independent-recovery/comparison-checkpoint.json`에 고정했다. Kaggle 인증 화면은 사용자가 완료하도록 열어 두었다.
+
+## Kaggle 인증 이후 GPU 검증 및 RGB 보정 복구
+
+- `kaggle-authenticated.json`에 실제 T4 2개·CUDA·인터넷 확인과 실패/수정 이력을 보존했다. GPU 설치 오류와 학생의 물리 실패는 분리한다.
+- NVIDIA 라이브러리 경로 수정 후 GPU 렌더링과 ACT 의존성 설치·접근 보정 완료를 확인했다. 접근 진단은 지원 범위 이탈로 실패했고, 파지 보정은 새 모델에 이전 마스크를 적용하던 오류로 중단됐다.
+- 새 파지 보정 모델은 학습한 전체 RGB 특징을 유지하도록 수정했다. 입력 범위 검사·교사/학생 경계는 유지한다. 관련 37개, 전체 1,220개 테스트 및 191개 하위 검사 통과(3개 건너뜀).
+- `feae35e09c441f438f87da6cf7d8f4acc4fef024` 소스로 비공개 Kaggle 재실행을 제출했다. 전체 ACT 평가 시작·완료나 모델 우열을 아직 주장하지 않는다. 512px는 제외한다.
