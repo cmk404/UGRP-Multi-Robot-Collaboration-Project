@@ -188,3 +188,23 @@ def test_media_registry_ranges_and_changed_video(tmp_path):
 def test_unfinished_manifest_and_external_media_ignored(tmp_path):
     put(tmp_path,'manifest.json',{'schema':'ugrp.tensorboard-export.v1','complete':False,'source':str(tmp_path)})
     assert media_registry(tmp_path)=={}
+
+
+def test_media_discovers_later_completed_export_without_restart(tmp_path):
+    exports=tmp_path/'export';exports.mkdir()
+    server=make_server(exports,0)
+    thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
+    ident='b'*20;url=f'http://127.0.0.1:{server.server_port}/raw/{ident}'
+    try:
+        with pytest.raises(HTTPError) as error:urlopen(url)
+        assert error.value.code==404
+        source=tmp_path/'source';source.mkdir();video=source/'execution.mp4';video.write_bytes(b'new-video')
+        st=video.stat()
+        record={'schema':'ugrp.tensorboard-export.v1','complete':False,'source':str(source),
+            'videos':[{'id':ident,'path':str(video),'size':st.st_size,'mtime_ns':st.st_mtime_ns}]}
+        put(exports/'later','manifest.json',record)
+        with pytest.raises(HTTPError) as error:urlopen(url)
+        assert error.value.code==404
+        record['complete']=True;put(exports/'later','manifest.json',record)
+        with urlopen(url) as response:assert response.read()==b'new-video'
+    finally:server.shutdown();server.server_close();thread.join()

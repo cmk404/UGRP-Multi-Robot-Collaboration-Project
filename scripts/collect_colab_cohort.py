@@ -26,12 +26,19 @@ def main():
     client=ContentsClient(StateStore().get(a.session))
     health=RemoteHealth();state={'started_unix':time.time(),'complete':False,'trials':{},'source_sha':a.source_sha}
     deadline=time.monotonic()+a.seconds
+    state.update(health.state)
+    write_json(a.output/'collection-status.json',state)
     while time.monotonic()<deadline:
         try:
             client.download(a.remote+'/state-model-v4.json',str(a.output/'remote-state.json'))
             remote=json.loads((a.output/'remote-state.json').read_text())
             if remote['source_sha']!=a.source_sha:raise ValueError('remote source mismatch')
-            for phase in ('development','holdout','regression','ablation','continuous'):
+            health.success('terminal' if remote['complete'] else 'running')
+            state.update(health.state,remote=remote)
+            write_json(a.output/'collection-status.json',state)
+            phases=set(remote.get('exports',{})) | ({remote['phase']} if remote.get('phase') else set())
+            for phase in sorted(phases):
+                if phase not in ('development','holdout','regression','ablation','continuous'):raise ValueError('unknown phase')
                 root=a.remote+'/source/outputs/gpu-'+phase+'/result'
                 try:entries=client.list_dir(root+'/checkpoints')['content']
                 except FileNotFoundError:continue
@@ -55,7 +62,10 @@ def main():
             state.update(health.state,remote=remote)
             if remote['complete']:
                 client.download('/content/model_v4_supervisor.log',str(a.output/'remote.log'))
-                state.update(complete=True,ended_unix=time.time())
+                planned=sum(len(json.loads(p.read_text())['jobs']) for p in a.output.glob('*/protocol.json'))
+                state.update(complete=True,collection_complete=True,ended_unix=time.time(),planned_trials=planned,
+                    cohort_complete=not remote.get('stop_reason') and not remote.get('error_type')
+                    and len(phases)==5 and len(state['trials'])==planned)
             write_json(a.output/'collection-status.json',state)
             if state['complete']:return 0
         except Exception as exc:
