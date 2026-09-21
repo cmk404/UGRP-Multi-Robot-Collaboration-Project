@@ -134,3 +134,5 @@ Colab에서 36회 평가를 재개했다(source `04f129c`). 재학습은 없고 
 ### Kaggle GPU 미배정 원인 확인 — 14:58 KST
 
 강 프로필의 기존 Google 계정으로 Kaggle `changmin2026`에 로그인해 실제 Notebook Session options를 확인했다. **전화번호 미인증으로 GPU/TPU·인터넷 접근이 잠겨 있다.** `Internet off`는 disabled였고 `Get phone verified` 안내가 표시됐다. 진단 노트북의 GPU 요청 메타데이터와 실제 CPU 실행이 다른 이유를 설명하는 계정 차원의 차단이다. 본인 인증 폼만 열었으며 전화번호·문자 코드 입력이나 CAPTCHA 처리, 새 계정 생성은 하지 않았다. 사용자에게 인증 완료를 요청했다. Draft Session은 off이며 별도 브라우저 실행은 시작하지 않았다. 인증 전에는 Kaggle GPU 재제출을 반복하지 않는다. Colab 비교와 이후 ACT 인계는 이 인증과 독립적으로 진행한다.
+
+15:00 KST 보고용 스냅샷: 전송 수정 후 개발 3회와 본 평가 6회를 회수해 모두 접근/정렬 성공을 확인했다. 기존 전송 실패였던 Jev 네 조건과 Gemini 가림 조건도 여기에 포함된다. 전체 108회 holdout 완료나 ACT 운반 성공은 아니다. 개발 중 relay 교체가 있어 개발 시간은 성능 순위에 쓰지 않는다. 새 9개 원본/해시·영상 HTTP 206·native TensorBoard 전체 40행과 비교 열을 확인했으며 `independent-recovery/comparison-checkpoint.json`에 고정했다. Kaggle 인증 화면은 사용자가 완료하도록 열어 두었다.
