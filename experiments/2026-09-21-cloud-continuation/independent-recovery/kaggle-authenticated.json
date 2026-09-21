@@ -32,7 +32,12 @@
     "source_sha": "feae35e09c441f438f87da6cf7d8f4acc4fef024",
     "driver_sha256": "8d3f69234da0ebb7f511008617f23239e2765670e5c958910ebeb1cde738911a",
     "asset_dataset": "changmin2026/ugrp-act-assets-d821ea4cd3e7",
-    "timeout_seconds": 14400
+    "timeout_seconds": 14400,
+    "remote_state": "running",
+    "last_verified_phase": "handoff_diagnostic",
+    "renderer": "NVIDIA Corporation / Tesla T4/PCIe/SSE2",
+    "dependencies_installed": true,
+    "approach_calibration_complete": true
   },
   "fix": "Freshly calibrated grasp exports declare full RGB support; training and dispatch preserve learned directions. Novelty guards unchanged. Legacy transfer masks remain available for legacy models.",
   "verification": {
@@ -47,5 +52,15 @@
     "Colab Jev/Gemini comparison remains running; no final ranking",
     "Kaggle CPU rule cohort remains running"
   ],
-  "dashboard": "http://127.0.0.1:6006/#hparams"
+  "dashboard": "http://127.0.0.1:6006/#hparams",
+  "dashboard_verification": {
+    "native_hparams_rows": 70,
+    "selected_columns": [
+      "outcome",
+      "result/wall_s",
+      "result/commands",
+      "result/model_calls"
+    ],
+    "new_videos_range_verified": 26
+  }
 }
