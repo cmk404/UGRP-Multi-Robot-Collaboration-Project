@@ -21,6 +21,7 @@ TEST_PATTERNS = (
     "tests/test_kaggle_egl.py",
     "tests/test_cloud_collection.py",
     "tests/test_colab_recovery.py",
+    "tests/test_colab_relay_pipeline.py",
     "tests/test_colab_egl.py",
     "tests/test_multi_object_plan.py",
     "tests/test_multi_object_scene.py",

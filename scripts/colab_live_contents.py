@@ -28,7 +28,11 @@ class LiveContentsClient:
             raise RuntimeAssignmentMissing('the owned runtime is not assigned')
         info = matches[0].runtime_proxy_info
         updated = self.session.model_copy(update={'token': info.token, 'url': info.url})
+        old = self.client
         self.client = self.factory(updated)
+        close = getattr(old, 'close', None)
+        if callable(close):
+            close()
         self.refreshed_at = self.clock()
         self.refresh_at = self.refreshed_at + max(1, min(300, info.token_expires_in_seconds / 2))
         self.refresh_count += 1
@@ -65,3 +69,8 @@ class LiveContentsClient:
 
     def list_dir(self, path):
         return self._request('GET', path)
+
+    def close(self):
+        close = getattr(self.client, 'close', None)
+        if callable(close):
+            close()

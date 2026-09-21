@@ -2,6 +2,8 @@
 
 현재 코드의 진입점은 [현재 상태](../docs/current_status.md)를 참고한다. 아래는 실행 SHA별 보존 기록이며 과거 실패와 후속 결과를 함께 남긴다. 필요한 ID만 골라 읽는다.
 
+- [2026-09-21 Colab 중계 최적화](2026-09-21-relay-performance/README.md) — 연결 재사용·4슬롯 독립 전달, 중단 기록 보존과 남은 시행 재개.
+
 - [2026-09-21 반복 실패 측정](2026-09-21-carry-failure-estimation/README.md) — ACT 108회 고정 평가 제출, 단일 진단 성공 전제 제거. 별도 Colab RGB 비교는 17:07 KST 스냅샷 90/231건이며 미완료·오류를 구분해 보존.
 
 - [2026-09-21 Kaggle CLI CPU 실행·결과 회수](2026-09-21-kaggle-cli-smoke/README.md) — private·인터넷 OFF, 최종 물리·카메라 데모 1/1, 앞선 setup 실패 3회 별도 보존.

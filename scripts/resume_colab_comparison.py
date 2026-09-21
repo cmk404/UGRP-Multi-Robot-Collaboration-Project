@@ -16,7 +16,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from scripts.cloud_collection import digest,write_json
 from scripts.colab_live_contents import LiveContentsClient
-from scripts.colab_job_lifecycle import cleanup_ready
+from scripts.colab_job_lifecycle import AssignmentLoss,cleanup_ready
 from scripts.colab_simulation_cli import setup_code
 
 
@@ -29,6 +29,7 @@ def main():
     p.add_argument('--relay-script',type=Path,required=True)
     p.add_argument('--keychain-helper',type=Path,required=True)
     p.add_argument('--seconds',type=int,default=14400)
+    p.add_argument('--benchmark-relay',action='store_true')
     a=p.parse_args()
     if not 1200 <= a.seconds <= 14400:p.error('finite budget must be 1200..14400 seconds')
     from colab_cli.state import StateStore
@@ -41,6 +42,7 @@ def main():
     state={'started_unix':time.time(),'stage':'create','complete':False,'session':a.session,
            'source_sha':record['source_sha'],'control_source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()}
     deadline=time.monotonic()+a.seconds;children=[];allowed_cleanup=False;session=None
+    assignment_loss=AssignmentLoss();lost=False
     def save():write_json(out/'controller-status.json',state)
     def command(args,name,timeout=180):
         with (out/(name+'.log')).open('w') as log:
@@ -55,6 +57,12 @@ def main():
         if StateStore().get(a.session) is not None:raise ValueError('session name already exists')
         command(['colab','new','-s',a.session,'--gpu','T4'],'create')
         session=StateStore().get(a.session);client=LiveContentsClient(session)
+        if a.benchmark_relay:
+            from scripts.benchmark_colab_relay import benchmark
+            state['stage']='relay_benchmark';save()
+            try:benchmark(session,out/'relay-benchmark.json')
+            except Exception as exc:
+                write_json(out/'relay-benchmark.json',{'verified':False,'error_type':type(exc).__name__})
         parts=[]
         with (a.actor_bundle/'source.tar.gz').open('rb') as stream:
             while block:=stream.read(4*1024*1024):
@@ -89,26 +97,35 @@ def main():
                          collection_complete=collection.get('collection_complete',False),
                          collection_health=collection.get('remote_state','starting'),
                          recovered_trials=len(collection.get('trials',{})),last_observed_unix=time.time())
+            # A failed download alone never authorizes stopping a runtime.
+            # Confirm assignment loss independently, without allocating a replacement.
+            if state['collection_health']=='unreachable':
+                from colab_cli.common import state as colab_state
+                try:present=any(item.endpoint==session.endpoint for item in colab_state.client.list_assignments())
+                except Exception:present=None
+                lost=assignment_loss.observe(present,time.monotonic())
+            else:assignment_loss.observe(True,time.monotonic())
+            state['confirmed_assignment_lost']=lost
             allowed_cleanup=cleanup_ready(deadline_reached=time.monotonic()>=deadline,
                 remote_complete=state['remote_complete'],collection_complete=state['collection_complete'])
             save()
-            if allowed_cleanup:break
+            if allowed_cleanup or lost:break
             time.sleep(10)
         state.update(complete=bool(state['remote_complete'] and state['collection_complete']),
-                     stage='collected' if state['collection_complete'] else 'deadline')
+                     stage='assignment_lost' if lost else ('collected' if state['collection_complete'] else 'deadline'))
     except Exception as exc:
         state.update(stage='controller_error',error_type=type(exc).__name__)
         raise
     finally:
         # Never use a collector exception/exit to authorize runtime termination.
-        if allowed_cleanup:
+        if allowed_cleanup or lost:
             for child in children:
                 if child.poll() is None:child.terminate()
             for child in children:
                 try:child.wait(timeout=10)
                 except subprocess.TimeoutExpired:child.kill();child.wait()
             current=StateStore().get(a.session)
-            if session and current and current.endpoint==session.endpoint:
+            if not lost and session and current and current.endpoint==session.endpoint:
                 try:command(['colab','stop','-s',a.session],'stop',60)
                 except Exception as exc:state['cleanup_error_type']=type(exc).__name__
         state.update(ended_unix=time.time(),cleanup_authorized=allowed_cleanup);save()

@@ -5,7 +5,7 @@ from unittest.mock import Mock
 import pytest
 
 from scripts.colab_live_contents import LiveContentsClient, RuntimeAssignmentMissing
-from scripts.colab_job_lifecycle import cleanup_ready
+from scripts.colab_job_lifecycle import AssignmentLoss,cleanup_ready
 from scripts.run_frozen_skill_resume import remaining_protocol
 
 
@@ -96,3 +96,16 @@ def test_cleanup_requires_both_completion_checks_or_explicit_deadline():
     assert not cleanup_ready(deadline_reached=False,remote_complete=False,collection_complete=True)
     assert cleanup_ready(deadline_reached=False,remote_complete=True,collection_complete=True)
     assert cleanup_ready(deadline_reached=True,remote_complete=False,collection_complete=False)
+
+
+def test_assignment_loss_requires_repeated_authoritative_absence():
+    loss=AssignmentLoss()
+    assert not loss.observe(False,0)
+    assert not loss.observe(False,30)
+    assert loss.observe(False,60)
+    assert not loss.observe(True,70)
+    assert not loss.observe(False,80)
+    assert not loss.observe(None,110)  # A network error is not server confirmation.
+    assert not loss.observe(False,120)
+    assert not loss.observe(False,150)
+    assert loss.observe(False,180)
