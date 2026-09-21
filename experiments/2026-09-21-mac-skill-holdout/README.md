@@ -25,7 +25,7 @@ through the existing local Gemini proxy and macOS Keychain credential helper.
 Credentials travel only through anonymous stdin pipes, never arguments or records.
 The cohort actor retains its original single HTTP attempt policy.
 
-Raw output: `outputs/mac-skill-holdout-20260921`. Each completed attempt retains
+Raw output: `outputs/mac-skill-holdout-20260921-v2`. Each completed attempt retains
 RGB, requests, responses, output-only referee, video and an independently verified
 immutable checkpoint ZIP. `status.json` records active trial and separate failure
 counts. `report.json` appears when the finite cohort stops. Raw data are local,
@@ -36,3 +36,9 @@ worker crash, deadline pending counts, source changes, preserving malformed outp
 forbidding overwrites and passing credentials without command-line exposure.
 Native execution and final cohort results must be checked separately. No success
 rate or completed experiment is claimed by this protocol declaration.
+
+Initial startup at source `474bbab` completed six model connectivity checks but
+stopped before any simulation because the environment uses a different OpenCV
+distribution name. Version inventory now reads the installed `cv2` module directly.
+The original preflight and startup log remain at `outputs/mac-skill-holdout-20260921`
+and its adjacent supervisor log. This is setup failure, not a robot trial.

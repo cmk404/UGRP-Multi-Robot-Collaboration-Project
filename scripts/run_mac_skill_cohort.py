@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import argparse
-import importlib.metadata
+import importlib
 import json
 import os
 from pathlib import Path
@@ -163,8 +163,8 @@ def main():
                            'max_input_tokens': 1000000, 'clock': 'paused'},
                 'hardware': {'system': platform.platform(), 'machine': platform.machine(),
                              'python': sys.version, 'mjpython': str(a.mjpython.resolve()),
-                             'packages': {name: importlib.metadata.version(name)
-                                          for name in ('mujoco', 'numpy', 'opencv-python')}},
+                             'packages': {name: importlib.import_module(name).__version__
+                                          for name in ('mujoco', 'numpy', 'cv2')}},
                 'repeats': 'identical fixed layouts; fresh API responses, not independent maps',
                 'failures': 'one attempt per trial; no retries; infrastructure and task failures separate',
                 'scope': 'RGB approach/route/recovery; not grasp/carry; separate Mac cohort',
