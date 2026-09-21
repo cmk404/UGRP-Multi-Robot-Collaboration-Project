@@ -98,7 +98,7 @@ def released_beam_envelope(jpeg,prior,static_map):
     axis=np.diff(np.array(prior['endpoints']),axis=0)[0]*[w,h];axis/=np.linalg.norm(axis)
     origin=np.array(prior['center'])*[w,h];candidates=[]
     for saturation in range(105,191,5):
-        for b in extract_beams(jpeg,hue_upper=35,min_saturation=saturation):
+        for b in extract_beams(jpeg,hue_upper=35,min_saturation=saturation,include_contour=True):
             v=np.diff(np.array(b['endpoints']),axis=0)[0]*[w,h];v/=np.linalg.norm(v)
             if (not b['touches_border'] and .9*length<=b['length_px']<=1.1*length
                     and b['width_px']<=2*width and b['length_px']/b['width_px']>=3.5
@@ -108,16 +108,22 @@ def released_beam_envelope(jpeg,prior,static_map):
     levels={s for s,_,_ in candidates}
     if len(levels)<3 or max(levels)-min(levels)<20:
         raise ValueError('released full beam silhouette lacks RGB support')
-    corners=[]
-    for _,b,v in candidates:
-        center=np.array(b['center'])*[w,h];normal=np.array([-v[1],v[0]])
-        half_length=b['length_px']/2+max(0.,length-b['length_px'])+1.
-        half_width=b['width_px']/2+max(0.,width-b['width_px'])+1.
-        corners.extend(center+a*v*half_length+c*normal*half_width for a in (-1,1) for c in (-1,1))
-    return {'corners_px':np.array(corners).tolist(),'nominal_feature_height_m':.04,
+    # Minimum-area rectangles include empty corners when a same-colored
+    # gripper joins the beam. Bound actual supported contour pixels instead.
+    # Higher saturation masks are eroded subsets; their missing pixels must
+    # not independently enlarge the union beyond the already visible extent.
+    pixels=np.concatenate([np.array(b['contour_px']) for _,b,_ in candidates])
+    normal=np.array([-axis[1],axis[0]])
+    missing_length=max(0.,length-float(np.ptp(pixels@axis)))
+    missing_width=max(0.,width-float(np.ptp(pixels@normal)))
+    padding=np.abs(axis)*missing_length+np.abs(normal)*missing_width+1.
+    lower,upper=pixels.min(axis=0)-padding,pixels.max(axis=0)+padding
+    corners=[[x,y] for x in (lower[0],upper[0]) for y in (lower[1],upper[1])]
+    return {'corners_px':corners,'nominal_feature_height_m':.04,
             'expected_length_px':length,'threshold_support':len(levels),
+            'missing_length_px':missing_length,'missing_width_px':missing_width,
             'visible_lengths_px':[b['length_px'] for _,b,_ in candidates],
-            'source':'fresh untrimmed RGB components, prior RGB identity, authored fixed dimensions; one-pixel quantization margin'}
+            'source':'union of fresh untrimmed RGB contour pixels, prior RGB identity and axis, authored fixed dimensions; missing-span uncertainty and one-pixel quantization margin'}
 
 
 def canonical_pair_top(jpeg, reference, *, translation_px=None, hue_upper=24, observed_beam=None):

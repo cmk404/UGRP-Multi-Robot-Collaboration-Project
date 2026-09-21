@@ -147,7 +147,7 @@ def test_route_overlap_queue_is_at_rgb_staging_point_before_unload():
     assert route.index==2 and b.locks['dispatch_apron']=='box_job'
 
 
-@pytest.mark.parametrize('name,expected',[('inside',True),('outside',False)])
+@pytest.mark.parametrize('name,expected',[('inside',True),('outside',False),('inside-act-serial',True),('inside-act-parallel',True)])
 def test_full_release_outline_rejects_trimmed_core_false_completion(name,expected):
     import json,hashlib
     from harness.dispatch_skill_binding import released_beam_envelope,pixel_from_map
