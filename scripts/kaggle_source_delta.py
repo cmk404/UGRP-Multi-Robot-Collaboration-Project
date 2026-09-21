@@ -13,6 +13,8 @@ def apply_source_delta(source, delta):
     base = subprocess.check_output(['git','rev-parse','HEAD'],cwd=source,text=True).strip()
     if base != delta['base_sha']:
         raise ValueError('source delta base mismatch')
+    if subprocess.check_output(['git','status','--porcelain'],cwd=source).strip():
+        raise ValueError('source delta requires a clean disposable snapshot')
     bundle.write_bytes(content)
     subprocess.run(['git','index-pack','--stdin'],input=content,cwd=source,check=True,stdout=subprocess.DEVNULL)
     paths = delta['included']
@@ -26,7 +28,11 @@ def apply_source_delta(source, delta):
     sparse.parent.mkdir(parents=True, exist_ok=True)
     sparse.write_text(patterns)
     (source/'.git/shallow').write_text(delta['target_sha']+'\n')
-    subprocess.run(['git','checkout','--detach',delta['target_sha']],cwd=source,check=True)
+    # The disposable upload checkout can contain index entries for omitted old
+    # blobs. Build its index directly from the verified target tree so checkout
+    # never attempts to refresh unavailable base-tree files.
+    subprocess.run(['git','read-tree','--reset','-u',delta['target_sha']],cwd=source,check=True)
+    subprocess.run(['git','update-ref','--no-deref','HEAD',delta['target_sha']],cwd=source,check=True)
     if subprocess.check_output(['git','status','--porcelain'],cwd=source).strip():
         raise ValueError('patched source is dirty')
 

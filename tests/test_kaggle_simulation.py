@@ -242,9 +242,13 @@ def test_git_delta_reproduces_exact_committed_source_and_rejects_tampering(tmp_p
     from scripts.colab_simulation_cli import pack
     from scripts.kaggle_source_delta import apply_source_delta, object_delta
     root=snapshot_repo(tmp_path)
+    (root/'docs').mkdir();(root/'docs/omitted.md').write_text('omitted old object')
+    subprocess.run(['git','add','.'],cwd=root,check=True)
+    subprocess.run(['git','-c','user.name=Test','-c','user.email=test@example.invalid','commit','-qm','omitted file'],cwd=root,check=True)
     base=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()
     old=tmp_path/'old';pack(root,old)
     (root/'README.md').write_text('updated source')
+    (root/'docs/omitted.md').write_text('omitted new object')
     (root/'harness').mkdir();(root/'harness/new.py').write_text('fixed = True\n')
     subprocess.run(['git','add','.'],cwd=root,check=True)
     subprocess.run(['git','-c','user.name=Test','-c','user.email=test@example.invalid','commit','-qm','update'],cwd=root,check=True)
@@ -256,4 +260,5 @@ def test_git_delta_reproduces_exact_committed_source_and_rejects_tampering(tmp_p
     with pytest.raises(ValueError,match='hash'):apply_source_delta(old/'source',{**delta,'sha256':'0'*64})
     apply_source_delta(old/'source',delta)
     assert (old/'source/harness/new.py').read_text()=='fixed = True\n'
+    assert (old/'source/README.md').read_text()=='updated source'
     assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=old/'source',text=True).strip()==record['source_sha']

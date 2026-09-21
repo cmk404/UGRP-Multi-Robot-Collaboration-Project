@@ -17,6 +17,8 @@ sys.path.insert(0,str(ROOT))
 from scripts.cloud_collection import digest,write_json
 from scripts.colab_carry_bundle import unpack
 from scripts.setup_kaggle_egl import configure
+from scripts.cloud_progress import emit,run_logged
+from scripts.cloud_environment_preflight import inspect_environment,require_ready
 
 
 def main():
@@ -28,13 +30,17 @@ def main():
     a=p.parse_args();out=a.output.resolve();out.mkdir(parents=True,exist_ok=False)
     state={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
            'complete':False,'phase':'setup','scope':'Fixed 128/256 repeated failure measurement; task failures do not stop the cohort; no 512px'}
-    def save():write_json(out/'recovery-status.json',state)
+    def save():
+        write_json(out/'recovery-status.json',state)
+        emit('phase',phase=state['phase'])
     def run(command,name,timeout):
-        with (out/(name+'.log')).open('w') as stream:
-            return subprocess.run(list(map(str,command)),cwd=ROOT,env=env,stdout=stream,stderr=subprocess.STDOUT,timeout=timeout).returncode
+        result=run_logged(command,out/(name+'.log'),name=name,cwd=ROOT,env=env,timeout=timeout)
+        return 124 if result['timed_out'] else result['exit_code']
     env={**os.environ,'MUJOCO_GL':'egl','PYOPENGL_PLATFORM':'egl','OMP_NUM_THREADS':'1','OPENBLAS_NUM_THREADS':'1','PYTHONPATH':str(ROOT)}
     save()
     try:
+        state['phase']='environment_preflight';save()
+        check=inspect_environment(require_gpu=True);write_json(out/'sim-preflight.json',check);require_ready(check)
         gpu,render_environment=configure(sys.executable,out/'renderer')
         env.update(render_environment)
         state['renderer']=gpu;save()
@@ -54,8 +60,9 @@ def main():
         subprocess.run([sys.executable,'-m','pip','install','uv'],check=True)
         subprocess.run([sys.executable,'-m','uv','venv','--seed','--python',sys.executable,str(act)],check=True)
         actpy=act/'bin/python'
-        if run([actpy,'-m','pip','install','-r',ROOT/'requirements-reference-act.txt'],'act-install',1500):raise RuntimeError('ACT dependencies failed')
+        if run([actpy,'-m','pip','install','-r',ROOT/'requirements-reference-act.txt','wrapt==2.2.2'],'act-install',1500):raise RuntimeError('ACT dependencies failed')
         if run([actpy,ROOT/'scripts/patch_reference_act.py'],'act-patch',60):raise RuntimeError('ACT compatibility patch failed')
+        check=inspect_environment(require_gpu=True,act_python=actpy);write_json(out/'act-preflight.json',check);require_ready(check)
         state['phase']='approach_calibration';save()
         calibration=out/'approach-calibration'
         if run([sys.executable,'-m','scripts.train_dispatch_transfer','--output',calibration,'--base-grasp',assets/'grasp','--approach-only'],'approach-calibration',1800):raise RuntimeError('RGB calibration failed')

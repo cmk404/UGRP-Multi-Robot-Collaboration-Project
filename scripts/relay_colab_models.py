@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Finite, four-slot Colab relay with persistent independent transfer pipelines.
 
-No new endpoint, credential upload, model retry or robot input changes.
+No new endpoint, credential upload or robot input changes. Explicit temporary
+HTTP rejection recovery is bounded and preserves every first attempt failure.
 """
 from __future__ import annotations
 import argparse
@@ -15,7 +16,7 @@ import threading
 import time
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from harness.model_mailbox import ENDPOINTS,MAX_BYTES
-from harness.model_http import post
+from harness.model_http import post_with_recovery
 from scripts.colab_relay_pipeline import Pipeline,atomic_json,drained_seen
 
 
@@ -41,8 +42,9 @@ def main():
     seen=drained_seen(a.resume_relay) if a.resume_relay else set()
     a.output.mkdir(parents=True,exist_ok=False)
     deadline=time.time()+a.seconds;pending={};lock=threading.RLock();draining=threading.Event()
-    stats={'calls':0,'delivered':0,'errors':0,'started_unix':time.time(),'complete':False,
+    stats={'calls':0,'api_calls':0,'delivered':0,'errors':0,'started_unix':time.time(),'complete':False,
            'transport_version':'pooled_parallel_v1','inherited_requests':len(seen),
+           'retry_policy':'explicit_http_rejection_v1',
            'predecessor':str(a.resume_relay) if a.resume_relay else None}
     def save():
         with lock:atomic_json(a.output/'status.json',stats)
@@ -55,7 +57,17 @@ def main():
     def execute(row,until):
         remaining=until-time.time()
         if remaining<=0:return {'status':'transport_error','error_type':'ExpiredRequest','latency_s':0}
-        return post(row['body'],ENDPOINTS[row['provider']],key if row['provider']=='jev' else None,min(30,remaining))
+        def admit():
+            with lock:
+                if stats['api_calls']>=a.max_calls:return False
+                stats['api_calls']+=1;save();return True
+        result=post_with_recovery(row['body'],ENDPOINTS[row['provider']],key if row['provider']=='jev' else None,min(30,remaining),admit=admit)
+        with lock:
+            for field,value in [('first_attempt_failures',int(result['first_attempt_failed'])),
+                                ('recovered_requests',int(result['recovered'])),('retry_calls',result['retry_count'])]:
+                stats[field]=stats.get(field,0)+value
+            save()
+        return result
     pipeline=Pipeline(factory,execute,a.remote,a.output,deadline,event=event)
     signal.signal(signal.SIGTERM,lambda *_:draining.set())
     signal.signal(signal.SIGINT,lambda *_:draining.set())
@@ -70,7 +82,7 @@ def main():
                 with lock:
                     stats.update(pending=len(pending),draining=draining.is_set(),last_observed_unix=time.time())
                     save()
-                exhausted=stats['calls']>=a.max_calls or time.time()>=deadline or draining.is_set()
+                exhausted=stats['api_calls']>=a.max_calls or time.time()>=deadline or draining.is_set()
                 if exhausted:
                     if not pending:break
                     time.sleep(.05);continue

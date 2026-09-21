@@ -98,7 +98,10 @@ if job['exit_code']:
 '''
 
 
-def prepare(output, owner=None, *, root=ROOT, module='scripts.sim_quickstart', arguments=None, include=(), wheelhouse=None):
+def prepare(output, owner=None, *, root=ROOT, module='scripts.sim_quickstart', arguments=None, include=(), wheelhouse=None, gpu_preflight=False):
+    if gpu_preflight:
+        if module!='scripts.cloud_environment_preflight' or arguments!=['--output','{output}','--require-gpu','--with-act']:
+            raise ValueError('GPU preflight permits only environment checks, never a simulation module')
     if owner is not None and not re.fullmatch(r'[A-Za-z0-9_-]+', owner):
         raise ValueError('invalid Kaggle username')
     record = pack(root, output, include)
@@ -125,14 +128,16 @@ def prepare(output, owner=None, *, root=ROOT, module='scripts.sim_quickstart', a
           'licenses': [{'name': 'other'}],
           'description': 'Private execution copy only. Original copyright notices and licenses remain applicable; no additional redistribution license is granted.'})
     metadata = {'id': owner+'/'+kernel_slug, 'title': kernel_slug, 'code_file': 'run.py', 'language': 'python',
-                'kernel_type': 'script', 'is_private': True, 'enable_gpu': False, 'enable_tpu': False,
-                'enable_internet': False, 'dataset_sources': [owner+'/'+dataset_slug],
+                'kernel_type': 'script', 'is_private': True, 'enable_gpu': gpu_preflight, 'enable_tpu': False,
+                'enable_internet': gpu_preflight, 'dataset_sources': [owner+'/'+dataset_slug],
                 'competition_sources': [], 'kernel_sources': [], 'model_sources': []}
+    if gpu_preflight:metadata['machine_shape']='NvidiaTeslaT4'
     write(kernel/'kernel-metadata.json', metadata)
     (kernel/'run.py').write_text(driver(record, job_id, module, arguments or ['--output', '{output}'], dependencies_sha256))
     state = {'job_id': job_id, 'source_sha': record['source_sha'], 'source_sha256': record['sha256'],
              'dataset': owner+'/'+dataset_slug, 'kernel': owner+'/'+kernel_slug, 'stage': 'prepared',
-             'driver_sha256': digest(kernel/'run.py'), 'cpu_only': True,
+             'driver_sha256': digest(kernel/'run.py'), 'cpu_only': not gpu_preflight,
+             'execution_kind':'gpu_preflight' if gpu_preflight else 'cpu_job',
              'dependencies_sha256': dependencies_sha256}
     write(output/'job.json', state)
     return state
@@ -198,7 +203,8 @@ def validate(output, state):
     if {p.name for p in files} != expected_files or any(not p.is_file() or p.is_symlink() for p in files):
         raise ValueError('unexpected file in dataset upload directory')
     metadata = json.loads((output/'kernel/kernel-metadata.json').read_text())
-    if metadata['is_private'] is not True or metadata['enable_gpu'] is not False or metadata.get('enable_tpu') is not False or metadata.get('enable_internet') is not False:
+    gpu_preflight=state.get('execution_kind')=='gpu_preflight'
+    if metadata['is_private'] is not True or metadata['enable_gpu'] is not gpu_preflight or metadata.get('enable_tpu') is not False or metadata.get('enable_internet') is not gpu_preflight:
         raise ValueError('this runner requires a private CPU kernel')
     if metadata['id'] != state['kernel'] or metadata['dataset_sources'] != [state['dataset']]:
         raise ValueError('kernel identity/input changed since preparation')
@@ -216,6 +222,8 @@ def submit(output, timeout_seconds=1800):
         raise ValueError('kernel timeout must be between 60 and 43200 seconds')
     state = json.loads((output/'job.json').read_text())
     validate(output, state)
+    if state.get('execution_kind')=='gpu_preflight' and timeout_seconds>900:
+        raise ValueError('GPU preflight is limited to 900 seconds')
     if state['stage'] == 'prepared':
         state['stage'] = 'dataset_create_requested'
         write(output/'job.json', state)
@@ -330,6 +338,7 @@ def main():
     p.add_argument('--include', action='append', default=[])
     p.add_argument('--module', default='scripts.sim_quickstart')
     p.add_argument('--wheelhouse', type=Path, help='reuse Linux CPython 3.12 wheels, including pip 26.2.1')
+    p.add_argument('--gpu-preflight',action='store_true',help='Explicit finite dependency/GPU checks only')
     p.add_argument('args', nargs=argparse.REMAINDER)
     p = sub.add_parser('reuse')
     p.add_argument('--from-output', required=True, type=Path)
@@ -350,7 +359,7 @@ def main():
         return 0
     if args.action == 'prepare':
         arguments = args.args[1:] if args.args[:1] == ['--'] else args.args
-        print(json.dumps(prepare(output, args.owner, module=args.module, arguments=arguments, include=args.include, wheelhouse=args.wheelhouse)))
+        print(json.dumps(prepare(output, args.owner, module=args.module, arguments=arguments, include=args.include, wheelhouse=args.wheelhouse,gpu_preflight=args.gpu_preflight)))
         return 0
     if args.action == 'status':
         status(output)

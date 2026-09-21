@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 from scripts.carry_failure_metrics import schedule, outcome, aggregate
+from scripts.cloud_progress import emit,run_logged
 
 
 def sha(p):
@@ -71,25 +72,12 @@ def main():
     def run(cmd, name, timeout=None):
         frozen(); started=time.monotonic()
         log=a.out/(name+'.log')
-        timed_out=False
-        with log.open('w') as stream:
-            try:
-                proc=subprocess.Popen(list(map(str,cmd)),cwd=ROOT,stdout=stream,stderr=subprocess.STDOUT,start_new_session=True)
-                try:
-                    proc.wait(timeout=timeout)
-                except subprocess.TimeoutExpired:
-                    timed_out=True
-                    try: os.killpg(proc.pid,signal.SIGTERM)
-                    except ProcessLookupError: pass
-                    try: proc.wait(timeout=10)
-                    except subprocess.TimeoutExpired:
-                        try: os.killpg(proc.pid,signal.SIGKILL)
-                        except ProcessLookupError: pass
-                        proc.wait()
-                exit_code=proc.returncode
-            except OSError as exc:
-                stream.write(f'Process launch failed: {type(exc).__name__}\n')
-                exit_code=127
+        try:
+            result=run_logged(cmd,log,name=name,cwd=ROOT,timeout=timeout)
+            exit_code,timed_out=result['exit_code'],result['timed_out']
+        except OSError as exc:
+            log.write_text(f'Process launch failed: {type(exc).__name__}\n')
+            exit_code,timed_out=127,False
         frozen()
         return {'name':name,'command':list(map(str,cmd)),'exit_code':exit_code,
                 'wall_s':time.monotonic()-started,'log':str(log),'timed_out':timed_out}
@@ -157,11 +145,17 @@ def main():
     report['evaluation_jobs']=tasks
     report['failure_estimates']=aggregate(tasks,[])
     write(a.out/'report.json',report)
+    def progress():
+        failures=sum(not r['outcome']['whole_success'] for r in report['runs'])
+        emit('evaluation_progress',phase='physics128256',planned=len(tasks),attempted=len(report['runs']),
+             successes=len(report['runs'])-failures,failures=failures,pending=len(tasks)-len(report['runs']))
+    progress()
     with concurrent.futures.ThreadPoolExecutor(max_workers=protocol['controls']['workers']) as pool:
         futures=[pool.submit(trial,task) for task in tasks]
         for future in concurrent.futures.as_completed(futures):
             row=future.result();report['runs'].append(row)
             report['failure_estimates']=aggregate(tasks,report['runs']);write(a.out/'report.json',report)
+            progress()
             print(json.dumps({'event':'trial','case':row['case']['id'],'condition':row['condition'],'summary':row.get('summary'),'exit_code':row['exit_code']}),flush=True)
     report['complete']=report['failure_estimates']['complete'];write(a.out/'report.json',report)
     return 0

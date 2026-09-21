@@ -84,3 +84,29 @@ Linux wheel을 재사용하려면 `prepare --wheelhouse <폴더>`를 지정한�
 `submit --output <prepared-output> --timeout-seconds 14400`은 최대 4시간으로
 제출하며 해당 값을 `job.json`에 기록한다. 이는 완료 예상 시간이 아니며,
 Kaggle의 실제 할당·실행 상태와 결과 회수는 별도로 검증한다.
+
+## 평가 전에 환경과 진행률 확인
+
+`requirements-kaggle.txt`는 기본 이미지의 `sitecustomize`가 요구하는 `wrapt`도
+격리 환경에 설치한다. 기존 wheelhouse를 재사용할 때 이 wheel이 포함되어야 한다.
+`cloud_environment_preflight.py`는 시작 오류·필수 import·pip 의존성·GPU 장치만
+검사한다. ACT 평가 실행기는 기본 환경 검사와 ACT 환경 검사를 통과하기 전에
+교사 보정이나 평가를 시작하지 않는다.
+
+```sh
+python scripts/kaggle_simulation_cli.py prepare --output outputs/preflight-NEW \
+  --gpu-preflight --module scripts.cloud_environment_preflight \
+  -- --output '{output}' --require-gpu --with-act
+python scripts/kaggle_simulation_cli.py submit --output outputs/preflight-NEW --timeout-seconds 900
+```
+
+이 명시적 검사는 private GPU/인터넷 ON이며 고정 ACT 의존성 설치에만 인터넷을
+쓴다. 일반 CPU/offline 기본값은 그대로다. 시뮬레이션·렌더링·학습은 실행하지
+않으며 900초를 초과하는 제출을 거부한다. 설치된 가상환경은 결과 ZIP 밖에 둔다.
+
+`UGRP_PROGRESS` 메시지는 단계·실행 중 프로세스·완료/실패/미완료 시행 수를
+중첩 로그에서 Kaggle 로그까지 전달한다. 원시 모델 요청이나 일반 로그 전체를
+공개하지 않는다. 수집기의 `progress.visibility`는 `live`, `stale`, `unavailable`
+중 하나다. 이전 실행처럼 진행 메시지가 없으면 시행 수는 알 수 없다고 기록한다.
+일시적인 조회 오류로 실행이나 수집을 종료하지 않으며 원래 정한 수집 한도와
+무결성 오류 차단은 유지한다.

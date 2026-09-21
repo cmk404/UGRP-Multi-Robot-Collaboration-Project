@@ -62,16 +62,14 @@ def test_entire_cohort_finishes_when_every_robot_trial_fails(tmp_path, monkeypat
     monkeypatch.setattr(runner, 'validate_training', lambda *a: {'source_sha': 'training-source', 'wall_s': 1, 'development_metrics': {}})
     monkeypatch.setattr(runner.subprocess, 'check_output', lambda cmd, **kw: '' if cmd[1] == 'status' else 'frozen-source')
     calls = []
-    class Child:
-        returncode = 1
-        def __init__(self, cmd, **kw):
-            calls.append(cmd)
-            output = Path(cmd[cmd.index('--output')+1]);output.mkdir(parents=True)
-            (output/'result.json').write_text(json.dumps({'physical_success': False, 'protocol_complete': False,
-                'phase': 'APPROACH', 'error': 'fixture approach failure'}))
-            (output/'pair-decisions.json').write_text('[]')
-        def wait(self, timeout=None):return 1
-    monkeypatch.setattr(runner.subprocess, 'Popen', Child)
+    def failed_child(cmd,log,**kw):
+        calls.append(cmd)
+        output = Path(cmd[cmd.index('--output')+1]);output.mkdir(parents=True)
+        (output/'result.json').write_text(json.dumps({'physical_success': False, 'protocol_complete': False,
+            'phase': 'APPROACH', 'error': 'fixture approach failure'}))
+        (output/'pair-decisions.json').write_text('[]')
+        return {'exit_code':1,'timed_out':False}
+    monkeypatch.setattr(runner, 'run_logged', failed_child)
     output = tmp_path/'out'
     monkeypatch.setattr(runner.sys, 'argv', ['cohort', '--out', str(output), '--act-python', 'python',
         '--mjpython', 'python', '--grasp', str(tmp_path), '--stages', str(tmp_path),

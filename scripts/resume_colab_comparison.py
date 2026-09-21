@@ -18,6 +18,7 @@ from scripts.cloud_collection import digest,write_json
 from scripts.colab_live_contents import LiveContentsClient
 from scripts.colab_job_lifecycle import AssignmentLoss,cleanup_ready
 from scripts.colab_simulation_cli import setup_code
+from scripts.model_connectivity_preflight import validate_report
 
 
 def main():
@@ -28,10 +29,14 @@ def main():
     p.add_argument('--proxy-script',type=Path,required=True)
     p.add_argument('--relay-script',type=Path,required=True)
     p.add_argument('--keychain-helper',type=Path,required=True)
+    p.add_argument('--model-preflight',type=Path,required=True,help='Fresh successful connectivity report; simulation cannot bypass it')
     p.add_argument('--seconds',type=int,default=14400)
     p.add_argument('--benchmark-relay',action='store_true')
     a=p.parse_args()
     if not 1200 <= a.seconds <= 14400:p.error('finite budget must be 1200..14400 seconds')
+    connectivity=json.loads(a.model_preflight.read_text())
+    if not validate_report(connectivity):
+        p.error('fresh Jev/Gemini preflight required before allocating a simulation runtime')
     from colab_cli.state import StateStore
     out=a.output.resolve();out.mkdir(parents=True,exist_ok=False)
     base='/content/'+a.session;py=base+'/sim-env/bin/python'
@@ -40,7 +45,8 @@ def main():
     manifest=json.loads(a.resume_manifest.read_text())
     if manifest['actor_source_sha']!=record['source_sha']:raise ValueError('resume actor mismatch')
     state={'started_unix':time.time(),'stage':'create','complete':False,'session':a.session,
-           'source_sha':record['source_sha'],'control_source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()}
+           'source_sha':record['source_sha'],'control_source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
+           'model_preflight_sha256':digest(a.model_preflight)}
     deadline=time.monotonic()+a.seconds;children=[];allowed_cleanup=False;session=None
     assignment_loss=AssignmentLoss();lost=False
     def save():write_json(out/'controller-status.json',state)

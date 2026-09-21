@@ -108,3 +108,18 @@ python scripts/setup_colab_egl.py --python /content/ugrp-repair/sim-env/bin/pyth
 NVIDIA인 것을 확인한 후 같은 소스·조건으로 새 코호트를 시작한다. CPU/OSMesa
 결과와 NVIDIA 결과는 렌더러가 다른 진단으로 구분한다. GPU 영상에도 다른 JPEG
 색 무늬가 있으므로 이전 CPU 프레임 재생만으로 GPU 제어 검증을 대신하지 않는다.
+
+## 모델 연결 사전 검사와 실패 보존
+
+비교 런타임 생성 전 `scripts/model_connectivity_preflight.py`로 Jev/Gemini 각각
+3번의 고정 연결/응답 형식 검사를 수행한다. 실제 모델 호출이 발생하지만 로봇
+관측·행동은 없다. `resume_colab_comparison.py --model-preflight <report.json>`은
+성공한 보고서가 최근 5분 이내인 경우에만 시작한다. 실행기/모델 주소가 바뀌면
+다시 검증하며 짧은 검사 통과를 장시간 무오류 보장으로 사용하지 않는다.
+
+새 중계 정책은 명시적 429/503/529 거절만 총 30초·최대 3번 안에서 복구한다.
+`Retry-After` 대기를 존중하고 추가 호출도 전체 API 호출 한도에 포함한다.
+시간 초과·502/504처럼 원 처리 여부가 불확실한 응답, 인증 오류·잘못된 JSON은
+재전송하지 않는다. `http_attempts`, `first_attempt_failed`, `retry_count`, `recovered`
+필드를 원본 응답에 남겨 최초 오류율과 복구 후 오류율을 구분한다. 응답 파일
+업로드 재시도는 모델을 호출하지 않으며 과거 실패 시행을 다시 실행하지 않는다.

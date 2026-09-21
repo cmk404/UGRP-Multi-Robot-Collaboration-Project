@@ -1,4 +1,4 @@
-"""Independent request pipelines; a delivery retry never repeats a model call."""
+"""Independent pipelines; delivery retries never repeat the provider policy."""
 import base64
 import json
 from pathlib import Path
@@ -77,7 +77,8 @@ class Pipeline:
         atomic_json(self.output/(identity+'-request.json'), row)
         self.event('model_start')
         began = self.clock()
-        # Exactly one provider call. Even an uncertain timeout is not replayed.
+        # Execute the bounded provider policy once. Upload retries below never
+        # invoke it again; uncertain provider timeouts are not replayed by it.
         try:
             response = self.execute(row, min(row['expires_unix'], self.deadline))
         except Exception as exc:
