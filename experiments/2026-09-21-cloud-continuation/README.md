@@ -46,3 +46,5 @@ Colab에서는 이미 회수·검증한 128/256px 8모델+교사 36회 평가를
 전환 첫 시도는 trial 시작 전 `ModuleNotFoundError: scripts`로 종료됐다. 원격 launcher가 기존 stage의 `PYTHONPATH`/OSMesa 환경을 전달하지 않은 것이 원인이다. 실패 원본은 `outputs/cloud-priority`에 유지하고 환경을 복원한 별도 `outputs/cloud-priority-v2`에서 같은 실행 SHA/프로토콜로 시작한다. 평가 entrypoint 자체도 저장소 루트를 import 경로에 추가하도록 보완해 격리 Python의 직접 실행 import를 검증했다. 기존 모델이나 평가 로직은 변경하지 않았다.
 
 512px 중단 원본은 로컬 `outputs/cloud-resume/collected/diagnostic/result.zip`으로 회수했다. 압축본 SHA `34443c4161dcc7951bdbd292ef76913c5cb9d509f8f10b01e9516bb78addc781`, 내부 8파일과 source SHA를 검증했다. exit143은 비용 우선순위에 따른 명시적 중지다. 최신 평가 수집기는 `priority-v2-collection-status.json`을 사용한다.
+
+2026-09-21 11:50 KST: Colab kernel exec 응답이 두 번 없어 출력 디렉터리 부재를 확인하고, 동일 생성 가드가 있는 launcher를 CLI의 piped console에서 실행했다. 새 supervisor PID10103/평가 부모 PID10105의 실행과 8개 기존 모델 검증을 확인했다. 새 환경은 PYTHONPATH·OSMesa·OMP_NUM_THREADS=2를 명시한다. 원격 평가 소스 SHA는 계속 `d13cda2`로 고정되어 있다.
