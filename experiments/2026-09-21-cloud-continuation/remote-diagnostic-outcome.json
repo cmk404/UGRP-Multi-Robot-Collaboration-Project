@@ -1,0 +1,59 @@
+{
+  "checked_unix": 1789961756.6658251,
+  "colab": [
+    {
+      "policy": "jev",
+      "case": "dev_open",
+      "success": false,
+      "stop_reason": "vision_recovery_exhausted",
+      "model_calls": 0,
+      "wall_s": 1135.214852026,
+      "commands": 31,
+      "source_sha": "b5ca7ca6d494dab76cf926c7af3f22dd2146ad08"
+    },
+    {
+      "policy": "rule",
+      "case": "dev_open",
+      "success": false,
+      "stop_reason": "vision_recovery_exhausted",
+      "model_calls": 0,
+      "wall_s": 1135.2297086610001,
+      "commands": 31,
+      "source_sha": "b5ca7ca6d494dab76cf926c7af3f22dd2146ad08"
+    },
+    {
+      "policy": "gemini",
+      "case": "dev_open",
+      "success": false,
+      "stop_reason": "vision_recovery_exhausted",
+      "model_calls": 0,
+      "wall_s": 1137.46801603,
+      "commands": 31,
+      "source_sha": "b5ca7ca6d494dab76cf926c7af3f22dd2146ad08"
+    }
+  ],
+  "kaggle": [
+    {
+      "policy": "rule",
+      "case": "dev_open",
+      "success": false,
+      "stop_reason": "vision_recovery_exhausted",
+      "model_calls": 0,
+      "wall_s": 202.45599886599996,
+      "commands": 31,
+      "source_sha": "06c4150364ea14f70cc10c9802446ed278723dde"
+    }
+  ],
+  "kaggle_invalid_observations": {
+    "result/dev_open-r0-rule-full/turns.json": {
+      "cyan_target_missing_or_ambiguous": 24
+    }
+  },
+  "kaggle_archive": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/kaggle-rule-reuse-20260921/download-ef4afb61/result.zip",
+  "kaggle_archive_sha256": "ccc08fb4459d491a476704ed4c1a55c0e2e3b5466266454df453dde9a7e8a5df",
+  "kaggle_zip_verified": true,
+  "interpretation": "All remote development trials stopped at RGB perception before any controller model request. API transport probes were separate. Full holdout did not start.",
+  "act_128_256": "new cloud evaluation interrupted with no retrieved new results; earlier partial evaluation remains historical",
+  "act_512": "deferred by user; no full training",
+  "active_comparison_runs": 0
+}
