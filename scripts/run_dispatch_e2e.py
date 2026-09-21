@@ -312,6 +312,7 @@ def main():
     p.add_argument('--video-fps',type=int,default=10)
     p.add_argument('--efficient-capture',action='store_true',help='omit unused pair camera and duplicate overview JPEG; actor inputs/video unchanged')
     p.add_argument('--route-overlap',action='store_true',help='open-map independent routes: overlap loaded travel, queue the box before the shared unload bay')
+    p.add_argument('--overlap-start',choices=('transit','grasp'),default='transit',help='issued pair stage that admits the box grasp on independent open-map routes')
     p.add_argument('--reference-top',type=Path,default=ROOT/'tests/fixtures/camera_goal_transport/reference-top.jpg')
     args = p.parse_args()
     if args.carry_act_model and not args.carry_act_python:p.error('ACT interpreter required')

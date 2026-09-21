@@ -131,12 +131,12 @@ def test_revalidation_requires_reference_success_before_candidate(tmp_path,monke
     assert all(('--efficient-capture' in c)==efficient_capture for c in commands)
 
 
-@pytest.mark.parametrize('error', ['RuntimeError: skill wall budget exhausted',
-                                  'RuntimeError: ACT carry decision budget exhausted'])
-def test_controller_budget_failure_is_classified_as_timeout(tmp_path, error):
+@pytest.mark.parametrize('error,expected', [('RuntimeError: skill wall budget exhausted','timeout'),
+                                  ('RuntimeError: ACT carry decision budget exhausted','decision_budget')])
+def test_wall_timeout_and_decision_exhaustion_remain_distinct(tmp_path, error,expected):
     (tmp_path/'result.json').write_text(json.dumps({'physical_success':False,
         'protocol_complete':False,'phase':'TRANSIT','error':error}))
     (tmp_path/'pair-decisions.json').write_text(json.dumps([{'kind':'act_carry'}]))
     row=outcome(tmp_path,1)
-    assert row['failure_kind']=='timeout' and row['act_carry_entered']
+    assert row['failure_kind']==expected and row['act_carry_entered']
     assert row['error']==error

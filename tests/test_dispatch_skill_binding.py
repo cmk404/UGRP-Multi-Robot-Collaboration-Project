@@ -118,6 +118,17 @@ def test_route_overlap_does_not_remove_agreed_dependencies_or_assume_moving_obst
         SkillBindings(committed(),authored_map('shared_crossing'),route_overlap=True)
 
 
+def test_open_pickup_overlap_waits_for_issued_pair_grasp_then_admits_box():
+    b=SkillBindings(committed(),authored_map('open'),route_overlap=True,overlap_start='grasp')
+    assert not b.permission('box','GRASP')
+    assert b.permission('beam','GRASP')
+    assert not b.permission('box','GRASP')  # Grant alone is not an issued command.
+    b.note_grasp_command('beam')
+    assert b.permission('box','GRASP') and b.permission('box','TRANSIT')
+    assert not b.permission('box','UNLOAD')
+    assert b.transit_started==set()
+
+
 def test_route_overlap_queue_is_at_rgb_staging_point_before_unload():
     from harness.dispatch_skill_binding import ImageRoute,pixel_from_map
     b=SkillBindings(committed(),authored_map('open'),route_overlap=True)
@@ -134,6 +145,26 @@ def test_route_overlap_queue_is_at_rgb_staging_point_before_unload():
     b.finish('beam')
     route.observe(raw);route.observe(raw)
     assert route.index==2 and b.locks['dispatch_apron']=='box_job'
+
+
+@pytest.mark.parametrize('name,expected',[('inside',True),('outside',False)])
+def test_full_release_outline_rejects_trimmed_core_false_completion(name,expected):
+    import json,hashlib
+    from harness.dispatch_skill_binding import released_beam_envelope,pixel_from_map
+    root=Path('tests/fixtures/dispatch_release_boundary');record=json.loads((root/(name+'.json')).read_text())
+    raw=(root/(name+'.jpg')).read_bytes();assert hashlib.sha256(raw).hexdigest()==record['source_sha256']
+    m=authored_map('open');slot=m['docks']['dock_a']['slots']['beam'];b=record['prior']
+    lo=pixel_from_map(np.array(slot['center_m'])-slot['half_extents_m'],m,(720,960),height=.04)
+    hi=pixel_from_map(np.array(slot['center_m'])+slot['half_extents_m'],m,(720,960),height=.04)
+    lower,upper=np.minimum(lo,hi),np.maximum(lo,hi)
+    # Both old trimmed cores fit, including the physically outside beam.
+    old=np.array(b['corners4'])*[960,720]
+    assert np.all(old>=lower) and np.all(old<=upper)
+    envelope=released_beam_envelope(raw,b,m)
+    corners=np.array(envelope['corners_px'])
+    assert bool(np.all(corners>=lower) and np.all(corners<=upper))==expected
+    blank=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))[1].tobytes()
+    with pytest.raises(ValueError,match='silhouette lacks RGB support'):released_beam_envelope(blank,b,m)
 
 
 def test_resource_queue_does_not_exhaust_remaining_skill_decision(tmp_path):

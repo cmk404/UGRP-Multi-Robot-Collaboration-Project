@@ -32,9 +32,10 @@ def outcome(output, exit_code, timed_out=False):
     error = result.get('error')
     stop = str(result.get('stop_reason') or '')
     phase = str(result.get('phase') or 'unknown')
+    robot_contacts=result.get('evaluation',{}).get('robot_robot_contact_samples')
     success = (exit_code == 0 and not timed_out and result.get('physical_success') is True
                and result.get('protocol_complete') is True and not error
-               and result.get('obstacle_contact_steps', 0) == 0)
+               and result.get('obstacle_contact_steps', 0) == 0 and robot_contacts in (None,0))
     decisions = None
     try:
         decisions = json.loads((output/'pair-decisions.json').read_text())
@@ -49,18 +50,25 @@ def outcome(output, exit_code, timed_out=False):
         d.get('kind') in ('act_carry', 'carry', 'rotating_carry') for d in decisions))
     if success:
         kind = None
-    elif timed_out or 'budget' in stop.lower() or any(term in str(error).lower() for term in ('timeout', 'budget exhausted')):
+    elif 'decision budget exhausted' in str(error).lower():
+        kind = 'decision_budget'
+    elif timed_out or 'budget' in stop.lower() or any(term in str(error).lower() for term in ('timeout', 'wall budget exhausted')):
         kind = 'timeout'
     elif any(x in str(error) for x in ('model_http_error', 'model_transport_error')):
         kind = 'model_transport'
     elif error:
         kind = 'execution_error'
+    elif robot_contacts or result.get('obstacle_contact_steps',0):
+        kind = 'collision'
+    elif result.get('protocol_complete') is True and result.get('physical_success') is False:
+        kind = 'false_completion'
     else:
         kind = 'task_incomplete'
     return {'whole_success': success, 'robot_result_available': True,
             'failure_kind': kind, 'failure_phase': phase, 'error': error,
             'stop_reason': stop, 'carry_entered': entered, 'act_carry_entered': act_entered,
             'beam_success': beam.get('physical_success') is True,
+            'robot_robot_contact_samples':robot_contacts,
             'wall_s': result.get('wall_s', result.get('wall_seconds'))}
 
 

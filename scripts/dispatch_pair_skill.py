@@ -5,7 +5,7 @@ model slots, remapped at the driver boundary using the committed plan.
 """
 from __future__ import annotations
 from pathlib import Path
-from harness.dispatch_skill_binding import canonical_pair_top, beam_feature, PairCoarsePixels, pixel_from_map, BeamContinuity
+from harness.dispatch_skill_binding import canonical_pair_top, beam_feature, PairCoarsePixels, pixel_from_map, BeamContinuity, released_beam_envelope
 from harness.camera_goal_transport import coarse_approach, dock_command, preclose_supported, own_payload
 from harness.camera_varied_start_student import predict_stage
 from harness.grasp_student_inference import predict_student
@@ -193,11 +193,12 @@ class BoundPairSkill:
         for index in range(2):
             frames=self.capture('placement-confirmation')
             b=self.carried_beam.previous
-            w,h=b['image_size'];corners=np.array(b['corners4'])*[w,h]
-            a=pixel_from_map(np.array(slot['center_m'])-slot['half_extents_m'],self.bindings.static_map,(h,w))
-            z=pixel_from_map(np.array(slot['center_m'])+slot['half_extents_m'],self.bindings.static_map,(h,w))
+            envelope=released_beam_envelope(frames['r1']['raw_top_bytes'],b,self.bindings.static_map)
+            w,h=b['image_size'];corners=np.array(envelope['corners_px'])
+            a=pixel_from_map(np.array(slot['center_m'])-slot['half_extents_m'],self.bindings.static_map,(h,w),height=.04)
+            z=pixel_from_map(np.array(slot['center_m'])+slot['half_extents_m'],self.bindings.static_map,(h,w),height=.04)
             inside=bool(np.all(corners>=np.minimum(a,z)) and np.all(corners<=np.maximum(a,z)))
-            samples.append({'frame_id':frames['r1']['frame_id'],'beam':b,'inside_visible_slot':inside})
+            samples.append({'frame_id':frames['r1']['frame_id'],'beam':b,'released_envelope':envelope,'inside_visible_slot':inside})
             self.tick(.5)
         stable=math.dist(samples[0]['beam']['center'],samples[1]['beam']['center'])<.003
         self.calls.append({'kind':'visual_placement','samples':samples,'stable':stable,

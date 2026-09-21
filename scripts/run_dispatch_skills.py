@@ -101,6 +101,7 @@ class SkillScene(DispatchScene):
     def pair_arm(self,targets,duration,settle,stage):
         self.authorize();self.pair_phase=stage
         if not set(targets)<=set(self.bindings.pair.values()):raise ValueError('pair arm endpoint mismatch')
+        if stage.startswith('grasp'):self.bindings.note_grasp_command('beam')
         for r,p in targets.items():
             self.command_history[r].append({'stage':stage,'issued_servo_targets':p,
                 'duration_s':duration,'settle_s':settle,'issued_at_s':self.time(),
@@ -288,7 +289,8 @@ def run(args):
             scene.config['static_map'],scene.time(),max_tokens=args.max_input_tokens,
             live_replan=getattr(args,'live_replan',False),identity=identity,reference_top=reference)
         scene.bindings=SkillBindings(team.agreement.committed,scene.config['static_map'],
-                                    route_overlap=getattr(args,'route_overlap',False))
+                                    route_overlap=getattr(args,'route_overlap',False),
+                                    overlap_start=getattr(args,'overlap_start','transit'))
         result.update(plan_committed=True,plan=scene.bindings.plan,bindings=scene.bindings.capabilities())
         write(args.output/'committed-plan.json',team.agreement.committed)
         write(args.output/'robot-programs.json',scene.bindings.programs)

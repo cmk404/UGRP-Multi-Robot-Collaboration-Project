@@ -30,7 +30,8 @@ def command(protocol,job,output,mjpython,act_python):
          '--max-wall-s',controls['max_wall_s'],'--carry-max-steps',controls['max_carry_steps'],
          '--video-fps',controls['video_fps'],'--spawn-offset',*case['offset']]
     if controls.get('efficient_capture'):cmd.append('--efficient-capture')
-    if controls.get('route_overlap'):cmd.append('--route-overlap')
+    if case.get('route_overlap',controls.get('route_overlap')):cmd.append('--route-overlap')
+    if 'overlap_start' in controls:cmd+=['--overlap-start',controls['overlap_start']]
     if arm.get('model'):cmd+=['--carry-act-model',arm['model'],'--carry-act-python',act_python]
     return list(map(str,cmd))
 
