@@ -23,7 +23,7 @@ GitHub PR의 **Files changed → Review changes → Approve → Submit review**�
 
 ## 자동 테스트
 
-Python 3.12를 사용한다. 로컬의 검증된 MuJoCo 환경은 `.venv-sim-worker-mac`이다. `.venv-sim`은 이 환경의 호환 링크다. 예전 클라우드 배포 환경은 [퇴역 기록](docs/cloud_simulation.md)으로 남기고 제거했으며, 새 Colab 노트북 경로와 구분한다. 새 자동 테스트 환경은 다음과 같이 만든다.
+Python 3.12를 사용한다. 로컬의 검증된 MuJoCo 환경은 `.venv-sim-worker-mac`이다. `.venv-sim`은 이 환경의 호환 링크다. 예전 클라우드 배포 환경은 [퇴역 기록](docs/cloud_simulation.md)으로 남기고 제거했으며, 새 Colab CLI 경로와 구분한다. 새 자동 테스트 환경은 다음과 같이 만든다.
 
 ```sh
 python3.12 -m venv .venv-test

@@ -53,11 +53,16 @@ def test_rejects_dirty_source_and_outside_output(repo):
     assert not (repo / 'outputs' / 'dirty').exists()
 
 
-def test_notebook_code_compiles_and_has_no_saved_outputs():
-    root = Path(__file__).resolve().parents[1]
-    notebook = json.loads((root / 'notebooks/simulation_colab.ipynb').read_text())
-    for index, cell in enumerate(notebook['cells']):
-        if cell['cell_type'] == 'code':
-            compile(''.join(cell['source']), f'cell-{index}', 'exec')
-            assert cell['outputs'] == []
-            assert cell['execution_count'] is None
+
+def test_cli_snapshot_preserves_real_source_and_excludes_untracked(repo):
+    from scripts.colab_simulation_cli import pack, setup_code, job_code
+    (repo/'private.env').write_text('untracked credentials stay local')
+    record = pack(repo, repo.parent/'bundle')
+    snapshot = repo.parent/'bundle/source'
+    assert record['source_sha'] == subprocess.check_output(['git', '-C', str(snapshot), 'rev-parse', 'HEAD'], text=True).strip()
+    assert not (snapshot/'private.env').exists()
+    assert (snapshot/'scripts/ugrp_session.py').exists()
+    assert subprocess.check_output(['git', '-C', str(snapshot), 'status', '--porcelain']) == b''
+    assert subprocess.check_output(['git', '-C', str(snapshot), 'remote']) == b''
+    compile(setup_code('/content/ugrp-test', record['sha256']), 'setup.py', 'exec')
+    compile(job_code('/content/ugrp-test', 'scripts.sim_quickstart', ['--output', '{output}']), 'job.py', 'exec')
