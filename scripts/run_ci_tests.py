@@ -22,6 +22,7 @@ TEST_PATTERNS = (
     "tests/test_tensorboard_export.py",
     "tests/test_colab_carry_bundle.py",
     "tests/test_carry_training_checkpoint_optional.py",
+    "tests/test_jev_skill_motion.py",
     "tests/test_act_speed_generalization.py",
     "tests/test_act_recovery.py", "tests/test_recovery_commands.py",
     "tests/test_reference_approach_data.py",
