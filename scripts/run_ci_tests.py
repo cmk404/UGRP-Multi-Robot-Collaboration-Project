@@ -15,6 +15,7 @@ TEST_PATTERNS = (
     "tests/test_model_mailbox.py",
     "tests/test_kaggle_simulation.py",
     "tests/test_kaggle_cli_auth.py",
+    "tests/test_kaggle_gpu_recovery.py",
     "tests/test_cloud_collection.py",
     "tests/test_colab_egl.py",
     "tests/test_multi_object_plan.py",
