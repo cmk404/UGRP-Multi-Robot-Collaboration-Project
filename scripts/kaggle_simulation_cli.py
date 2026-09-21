@@ -1,0 +1,248 @@
+"""Prepare, submit and recover private Kaggle CPU simulation jobs through its CLI."""
+from __future__ import annotations
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import re
+import shutil
+import subprocess
+import sys
+import uuid
+import zipfile
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from scripts.colab_simulation_cli import pack, digest, setup_code
+
+
+def write(path, value):
+    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n')
+
+
+def cli(*args):
+    result = subprocess.run(['kaggle', *map(str, args)], text=True, capture_output=True)
+    if result.returncode:
+        raise RuntimeError(result.stderr.strip() or result.stdout.strip() or 'Kaggle CLI failed')
+    return result.stdout
+
+
+def driver(record, job_id, module, arguments):
+    remote = '/kaggle/temp/ugrp-' + job_id
+    setup = setup_code(remote, record['sha256']).replace('UGRP_COLAB_SETUP_OK', 'UGRP_KAGGLE_SETUP_OK')
+    return f'''from pathlib import Path
+import json, os, shutil, subprocess, sys, traceback
+working = Path('/kaggle/working')
+working.mkdir(exist_ok=True)
+base = Path({remote!r})
+job = {{'job_id': {job_id!r}, 'source_sha': {record['source_sha']!r}, 'provider': 'kaggle', 'status': 'setup', 'exit_code': None}}
+def save():
+    (working/'remote-job.json').write_text(json.dumps(job, indent=2)+'\\n')
+save()
+try:
+    candidates = list(Path('/kaggle/input').rglob({('ugrp-source-' + job_id + '.bin')!r}))
+    if len(candidates) != 1:
+        raise RuntimeError('expected exactly one source bundle input')
+    base.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(candidates[0], str(base)+'.tar.gz')
+    setup_file = base.parent/({job_id!r}+'-setup.py')
+    setup_file.write_text({setup!r})
+    # Use Python 3.12 even if the Kaggle image's kernel changes version.
+    subprocess.run([sys.executable, '-m', 'pip', 'install', 'uv'], check=True)
+    bootstrap = base.parent/({job_id!r}+'-bootstrap')
+    subprocess.run([sys.executable, '-m', 'uv', 'venv', '--seed', '--python', '3.12', str(bootstrap)], check=True)
+    with (working/'setup.log').open('w') as log:
+        subprocess.run([str(bootstrap/'bin/python'), str(setup_file)], stdout=log, stderr=subprocess.STDOUT, check=True)
+    source = base/'source'
+    py = str(base/'sim-env/bin/python')
+    env = os.environ.copy()
+    env.update(MUJOCO_GL='osmesa', PYOPENGL_PLATFORM='osmesa', PYTHONPATH=str(source))
+    output = source/'outputs'/('kaggle-'+{job_id!r})
+    job['status'] = 'running'
+    save()
+    run = subprocess.run([py, str(source/'scripts/run_colab_simulation.py'), '--output', str(output), '--', py, '-m', {module!r}, *{arguments!r}], cwd=source, env=env)
+    job['exit_code'] = run.returncode
+    job['status'] = 'complete' if run.returncode == 0 else 'failed'
+    for suffix in ('.zip', '.zip.sha256'):
+        artifact = output.with_suffix(suffix)
+        if artifact.exists():
+            shutil.copyfile(artifact, working/('result'+suffix))
+except Exception:
+    job['status'] = 'setup_or_transport_failed'
+    (working/'failure.txt').write_text(traceback.format_exc())
+    raise
+finally:
+    save()
+if job['exit_code']:
+    raise SystemExit(job['exit_code'])
+'''
+
+
+def prepare(output, owner=None, *, root=ROOT, module='scripts.sim_quickstart', arguments=None, include=()):
+    if owner is not None and not re.fullmatch(r'[A-Za-z0-9_-]+', owner):
+        raise ValueError('invalid Kaggle username')
+    record = pack(root, output, include)
+    kernel = output/'kernel'
+    kernel.mkdir()
+    if owner is None:
+        cli('kernels', 'init', '-p', kernel)
+        owner = json.loads((kernel/'kernel-metadata.json').read_text())['id'].split('/')[0]
+        if not re.fullmatch(r'[A-Za-z0-9_-]+', owner):
+            raise ValueError('Kaggle CLI did not return a valid authenticated username')
+    job_id = uuid.uuid4().hex[:12]
+    dataset_slug = 'ugrp-source-' + job_id
+    kernel_slug = 'ugrp-simulation-' + job_id
+    data = output/'dataset'
+    data.mkdir()
+    shutil.copyfile(output/'source.tar.gz', data/('ugrp-source-'+job_id+'.bin'))
+    write(data/'source-manifest.json', record)
+    write(data/'dataset-metadata.json', {'id': owner+'/'+dataset_slug, 'title': dataset_slug,
+          'licenses': [{'name': 'copyright-authors'}],
+          'description': 'Private UGRP execution source snapshot. Rights remain with the original authors.'})
+    metadata = {'id': owner+'/'+kernel_slug, 'title': kernel_slug, 'code_file': 'run.py', 'language': 'python',
+                'kernel_type': 'script', 'is_private': True, 'enable_gpu': False, 'enable_tpu': False,
+                'enable_internet': True, 'dataset_sources': [owner+'/'+dataset_slug],
+                'competition_sources': [], 'kernel_sources': [], 'model_sources': []}
+    write(kernel/'kernel-metadata.json', metadata)
+    (kernel/'run.py').write_text(driver(record, job_id, module, arguments or ['--output', '{output}']))
+    state = {'job_id': job_id, 'source_sha': record['source_sha'], 'source_sha256': record['sha256'],
+             'dataset': owner+'/'+dataset_slug, 'kernel': owner+'/'+kernel_slug, 'stage': 'prepared',
+             'driver_sha256': digest(kernel/'run.py'), 'cpu_only': True}
+    write(output/'job.json', state)
+    return state
+
+
+def validate(output, state):
+    expected_files = {'dataset-metadata.json', 'source-manifest.json', 'ugrp-source-'+state['job_id']+'.bin'}
+    files = list((output/'dataset').iterdir())
+    if {p.name for p in files} != expected_files or any(not p.is_file() or p.is_symlink() for p in files):
+        raise ValueError('unexpected file in dataset upload directory')
+    metadata = json.loads((output/'kernel/kernel-metadata.json').read_text())
+    if metadata['is_private'] is not True or metadata['enable_gpu'] is not False or metadata.get('enable_tpu') is not False:
+        raise ValueError('this runner requires a private CPU kernel')
+    if metadata['id'] != state['kernel'] or metadata['dataset_sources'] != [state['dataset']]:
+        raise ValueError('kernel identity/input changed since preparation')
+    data = json.loads((output/'dataset/dataset-metadata.json').read_text())
+    if data['id'] != state['dataset'] or data['licenses'] != [{'name': 'copyright-authors'}]:
+        raise ValueError('dataset identity or source rights metadata changed')
+    if digest(output/'kernel/run.py') != state['driver_sha256']:
+        raise ValueError('remote driver changed since preparation')
+    if digest(output/'dataset'/('ugrp-source-'+state['job_id']+'.bin')) != state['source_sha256']:
+        raise ValueError('source bundle changed since preparation')
+
+
+def submit(output):
+    state = json.loads((output/'job.json').read_text())
+    validate(output, state)
+    if state['stage'] == 'prepared':
+        state['stage'] = 'dataset_create_requested'
+        write(output/'job.json', state)
+        # Omit --public: official CLI creates a private dataset by default.
+        (output/'dataset-create.log').write_text(cli('datasets', 'create', '-p', output/'dataset', '--keep-tabular'))
+        state['stage'] = 'dataset_submitted'
+        write(output/'job.json', state)
+    if state['stage'] not in {'dataset_submitted', 'dataset_create_requested'}:
+        raise ValueError('submission already attempted; use status/collect instead of starting another run')
+    status = json.loads(cli('datasets', 'status', state['dataset'], '--format', 'json'))
+    write(output/'dataset-status.json', status)
+    if str(status['status']).lower().split('.')[-1] not in {'ready', 'complete'}:
+        print('Dataset indexing is not ready. Run submit again later; it will not create another dataset.')
+        return 2
+    remote_meta = output/'dataset-remote-metadata'
+    remote_meta.mkdir(exist_ok=True)
+    cli('datasets', 'metadata', state['dataset'], '-p', remote_meta)
+    observed = json.loads((remote_meta/'dataset-metadata.json').read_text())
+    private = observed.get('isPrivate', observed.get('is_private'))
+    if private is not True:
+        raise ValueError('remote dataset privacy was not confirmed; kernel will not be submitted')
+    state['dataset_private_verified'] = True
+    state['stage'] = 'kernel_submit_requested'
+    write(output/'job.json', state)
+    response = cli('kernels', 'push', '-p', output/'kernel', '--timeout', '1800')
+    (output/'kernel-push.log').write_text(response)
+    match = re.search(r'Kernel version (\d+) successfully pushed', response)
+    if not match or 'not valid' in response or 'error:' in response.lower():
+        raise RuntimeError('Kaggle did not confirm kernel submission; inspect kernel-push.log before retrying')
+    state.update(stage='submitted', kernel_version=int(match.group(1)))
+    write(output/'job.json', state)
+    print(response.strip())
+    return 0
+
+
+def status(output):
+    state = json.loads((output/'job.json').read_text())
+    response = cli('kernels', 'status', state['kernel'])
+    (output/'kernel-status.log').write_text(response)
+    print(response.strip())
+    match = re.search(r'has status "([^"]+)"', response)
+    return match.group(1).lower().split('.')[-1] if match else 'unknown'
+
+
+def verify(output, downloaded):
+    state = json.loads((output/'job.json').read_text())
+    remote = json.loads((downloaded/'remote-job.json').read_text())
+    if remote['job_id'] != state['job_id'] or remote['source_sha'] != state['source_sha']:
+        raise ValueError('downloaded result identity mismatch')
+    archive = downloaded/'result.zip'
+    if digest(archive) != (downloaded/'result.zip.sha256').read_text().split()[0]:
+        raise ValueError('downloaded ZIP hash mismatch')
+    with zipfile.ZipFile(archive) as bundle:
+        report = json.loads(bundle.read('run.json'))
+        if report['source_sha'] != state['source_sha'] or report['exit_code'] != remote['exit_code']:
+            raise ValueError('result source/exit status mismatch')
+        for name, expected in report['artifacts'].items():
+            if hashlib.sha256(bundle.read(name)).hexdigest() != expected:
+                raise ValueError('result member hash mismatch: '+name)
+    write(output/'verified-result.json', report)
+    return report['exit_code']
+
+
+def collect(output):
+    current = status(output)
+    if current not in {'complete', 'error', 'failed', 'cancelled', 'cancelacknowledged'}:
+        raise ValueError('kernel is not terminal; leave it running and collect later')
+    state = json.loads((output/'job.json').read_text())
+    downloaded = output/('download-'+uuid.uuid4().hex[:8])
+    downloaded.mkdir()
+    (downloaded/'download.log').write_text(cli('kernels', 'output', state['kernel'], '-p', downloaded))
+    metadata = downloaded/'kernel-metadata'
+    metadata.mkdir()
+    cli('kernels', 'pull', state['kernel'], '-p', metadata, '--metadata')
+    privacy = json.loads((metadata/'kernel-metadata.json').read_text())['is_private']
+    if privacy is not True and privacy != 'true':
+        raise ValueError('remote kernel is not private')
+    # Failure logs remain available even when setup never produced a result ZIP.
+    result = verify(output, downloaded)
+    state.update(stage='collected', downloaded=str(downloaded), exit_code=result, kernel_private_verified=True)
+    write(output/'job.json', state)
+    print(json.dumps({'verified_download': str(downloaded), 'exit_code': result}))
+    return result
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    sub = parser.add_subparsers(dest='action', required=True)
+    p = sub.add_parser('prepare')
+    p.add_argument('--output', required=True, type=Path)
+    p.add_argument('--owner', help='omit to read the authenticated username via kaggle kernels init')
+    p.add_argument('--include', action='append', default=[])
+    p.add_argument('--module', default='scripts.sim_quickstart')
+    p.add_argument('args', nargs=argparse.REMAINDER)
+    for name in ('submit', 'status', 'collect'):
+        q = sub.add_parser(name)
+        q.add_argument('--output', required=True, type=Path)
+    args = parser.parse_args()
+    output = args.output.resolve()
+    if args.action == 'prepare':
+        arguments = args.args[1:] if args.args[:1] == ['--'] else args.args
+        print(json.dumps(prepare(output, args.owner, module=args.module, arguments=arguments, include=args.include)))
+        return 0
+    if args.action == 'status':
+        status(output)
+        return 0
+    return submit(output) if args.action == 'submit' else collect(output)
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

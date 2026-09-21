@@ -57,22 +57,7 @@ ACT의 `requirements-reference-act.txt`는 시뮬레이션과 NumPy/OpenCV 버�
 
 ## Kaggle CLI 병행
 
-이 Mac에 `kaggle 2.2.4`를 독립 uv tool로 설치했다. 계정 인증과 원격 실행은 아직 확인하지 않았다. CLI 로그인 진입점은 다음과 같다. 로그인 URL의 사용자 계정 인증은 사용자가 완료하며 토큰을 채팅이나 저장소에 붙여 넣지 않는다.
-
-```sh
-kaggle auth login --no-launch-browser
-kaggle quota
-kaggle kernels init -p outputs/kaggle-작업ID
-kaggle kernels push -p outputs/kaggle-작업ID
-kaggle kernels status 계정/실험이름
-kaggle kernels output 계정/실험이름 -p outputs/kaggle-results-작업ID
-```
-
-`kernels push`는 Python 스크립트 또는 ipynb를 올려 배치 실행한다. `kernel-metadata.json`은 **`is_private: true`**로 설정하며 GPU/인터넷은 필요한 경우에만 활성화한다. 입력 코드는 기본으로 파일 하나만 전달되므로 저장소·학습 데이터는 비공개 Dataset 등의 입력 자료로 따로 제공하고 해시를 검증해야 한다. Colab용 실행기를 그대로 Kaggle API에 연결했다고 주장하지 않는다. Kaggle 계정 인증 후 별도 private kernel의 설치·물리·결과 회수 진단을 먼저 수행한다. 공개 업로드는 이 작업의 범위가 아니다.
-
-Kaggle은 여러 조건을 묶은 배치 실행에, Colab CLI는 같은 세션에서 반복 진단하는 작업에 쓰는 운영 구성이 적합하다. GPU 종류/할당량은 계정의 실제 `quota`와 제출 결과로 확인한다. 설치된 2.2.4의 `kernels push --help`에는 웹 문서의 `--no-run`이 없으므로 이를 사용하지 않는다.
-
-참고: [Kaggle 공식 CLI](https://github.com/Kaggle/kaggle-cli), [실행·상태·결과 명령](https://github.com/Kaggle/kaggle-cli/blob/main/docs/kernels.md), [private kernel 메타데이터](https://github.com/Kaggle/kaggle-cli/blob/main/docs/kernels_metadata.md).
+[전용 Kaggle CLI 실행 안내](kaggle_simulation.md)를 따른다. `scripts/kaggle_simulation_cli.py`의 prepare → submit → status → collect가 private Dataset/CPU kernel 제출과 결과 검증을 담당한다. CLI 설치·로컬 테스트와 실제 Kaggle 인증/원격 실행은 구분한다.
 
 ## 검증 범위
 
