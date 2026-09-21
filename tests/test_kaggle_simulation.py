@@ -149,3 +149,47 @@ def test_dependency_tampering_is_rejected(prepared):
     (output/'dataset/fake.whl').write_bytes(b'changed')
     with pytest.raises(ValueError,match='dependency changed'):
         k.validate(output,state)
+
+
+def test_remote_setup_rejects_dependency_before_install(tmp_path, monkeypatch):
+    from scripts import setup_kaggle_offline as offline
+    monkeypatch.setattr(offline.sys, 'version_info', (3, 12))
+    monkeypatch.setattr(offline.platform, 'machine', lambda: 'x86_64')
+    calls=[]
+    monkeypatch.setattr(offline.subprocess, 'run', lambda *a, **kw: calls.append(a))
+    (tmp_path/'package.whl').write_bytes(b'tampered')
+    with pytest.raises(ValueError, match='dependency hash'):
+        offline.setup(tmp_path/'base', tmp_path, {'files': {'package.whl': '0'*64}})
+    assert calls == []
+
+
+def test_remote_setup_installs_offline_in_isolated_directory(tmp_path, monkeypatch):
+    from scripts import setup_kaggle_offline as offline
+    monkeypatch.setattr(offline.sys, 'version_info', (3, 12))
+    monkeypatch.setattr(offline.platform, 'machine', lambda: 'x86_64')
+    calls=[]
+    monkeypatch.setattr(offline.subprocess, 'run', lambda command, **kw: calls.append(command))
+    manifest={'files': {}}
+    for name in ('pip-26.2.1-py3-none-any.whl', 'osmesa.deb'):
+        path=tmp_path/name;path.write_bytes(b'package');manifest['files'][name]=k.digest(path)
+    offline.setup(tmp_path/'base', tmp_path, manifest)
+    install=next(c for c in calls if 'install' in c)
+    assert '--no-index' in install and '--find-links' in install
+    assert install[install.index('--python')+1] == str(tmp_path/'base/sim-env/bin/python')
+    assert calls[0] == ['dpkg-deb', '-x', str(tmp_path/'osmesa.deb'), str(tmp_path/'base/system')]
+
+
+def test_deb_transport_names_survive_kaggle_normalization(tmp_path, monkeypatch):
+    from scripts import kaggle_offline_dependencies as deps
+    root=tmp_path/'repo';(root/'configs').mkdir(parents=True)
+    payload=b'deb package'
+    k.write(root/'configs/kaggle-jammy-packages.json', {'libosmesa6': {
+        'Package':'libosmesa6', 'Filename':'pool/libosmesa6_23~22.04.deb',
+        'SHA256':hashlib.sha256(payload).hexdigest()}})
+    wheelhouse=tmp_path/'wheels';wheelhouse.mkdir()
+    (wheelhouse/'pip-26.2.1-py3-none-any.whl').write_bytes(b'pip')
+    output=tmp_path/'out';output.mkdir()
+    monkeypatch.setattr(deps.urllib.request,'urlretrieve',lambda url,path:path.write_bytes(payload))
+    manifest=deps.prepare_dependencies(root,output,wheelhouse)
+    assert 'libosmesa6.deb' in manifest['files']
+    assert all('~' not in name for name in manifest['files'])

@@ -27,7 +27,8 @@ def prepare_dependencies(root, output, wheelhouse=None):
             raise ValueError('wheelhouse must include pip')
     packages = json.loads((root/'configs/kaggle-jammy-packages.json').read_text())
     for package in packages.values():
-        path = cache/Path(package['Filename']).name
+        # Kaggle strips '~' from uploaded names; use a stable transport name.
+        path = cache/(package['Package']+'.deb')
         urllib.request.urlretrieve('https://archive.ubuntu.com/ubuntu/'+package['Filename'], path)
         if digest(path) != package['SHA256']:
             raise ValueError('Ubuntu package hash mismatch: '+path.name)
