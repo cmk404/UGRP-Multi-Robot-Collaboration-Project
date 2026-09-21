@@ -298,11 +298,13 @@ def main():
     p.add_argument('--carry-act-model',type=Path,help='replace loaded beam motion only')
     p.add_argument('--carry-act-python',type=Path)
     p.add_argument('--carry-act-max-steps',type=int,default=900)
+    p.add_argument('--carry-max-steps',type=int,help='common loaded-motion decision cap for RGB and ACT')
     p.add_argument('--spawn-offset',type=float,nargs=3,default=[0.,0.,0.],metavar=('DX','DY','YAW_DEG'),help='setup-only paired comparison perturbation; never actor input')
     p.add_argument('--video-fps',type=int,default=10)
     p.add_argument('--reference-top',type=Path,default=ROOT/'tests/fixtures/camera_goal_transport/reference-top.jpg')
     args = p.parse_args()
     if args.carry_act_model and not args.carry_act_python:p.error('ACT interpreter required')
+    if args.carry_max_steps is not None and args.carry_max_steps<=0:p.error('positive carry-max-steps required')
     if args.live_replan and (not args.plan_replay or args.executor!='skills'):
         p.error('--live-replan requires a skills --plan-replay diagnostic')
     if args.output.exists():p.error('output exists; choose a new directory')

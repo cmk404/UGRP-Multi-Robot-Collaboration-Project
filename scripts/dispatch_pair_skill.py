@@ -113,12 +113,12 @@ class BoundPairSkill:
             if ready_count>=2:return report
         raise RuntimeError('fine docking confirmation budget exhausted')
 
-    def carry(self,navigator):
-        if self.bindings.cluttered:return self.carry_with_rotation()
+    def carry(self,navigator,max_steps=None):
+        if self.bindings.cluttered:return self.carry_with_rotation(max_steps)
         self.phase='TRANSIT';self.transport_started=True
         anchor=self.capture('carry-anchor')
         policy=PairCarryPolicy('dispatch-'+self.bindings.committed['plan_hash'][:12])
-        for index in range(900):
+        for index in range(900 if max_steps is None else max_steps):
             frames=self.capture('carry')
             raw=self.io.last_frames['r1']['top_bytes']
             motion,evidence=navigator.observe(raw)
@@ -151,7 +151,7 @@ class BoundPairSkill:
             self.drive_mecanum(commands,control['duration_s'])
         raise RuntimeError('pair route decision budget exhausted')
 
-    def carry_with_rotation(self):
+    def carry_with_rotation(self,max_steps=None):
         from harness.dispatch_navigation_map import navigation_map
         from harness.dispatch_pair_navigation import PairNavigator,authorize_pair
         from harness.pair_carry_sync import PairCarrySync
@@ -164,7 +164,7 @@ class BoundPairSkill:
         own_guards={r:OwnHoldContinuity(anchor[r]['own_bytes']) for r in ROBOTS}
         sync=PairCarrySync('dispatch-'+self.bindings.committed['plan_hash'])
         self.calls.append({'kind':'navigation_map','map':data,'other_robot_observation':other,'other_robot_source':other_source})
-        for index in range(1200):
+        for index in range(1200 if max_steps is None else max_steps):
             frames=self.capture('rotate-carry')
             decisions={}
             for r in ROBOTS:

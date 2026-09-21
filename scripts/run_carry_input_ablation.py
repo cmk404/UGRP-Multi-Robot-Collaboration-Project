@@ -131,7 +131,9 @@ def main():
         cmd=[a.mjpython,ROOT/'scripts/run_dispatch_e2e.py','--executor','skills','--variant',case['variant'],
              '--seed','11','--required-dock','dock_a','--plan-replay',base/'committed-plan.json',
              '--grasp-model-dir',a.grasp,'--stage-model-dir',a.stages,'--output',output,
-             '--max-wall-s',protocol['controls']['max_wall_s'],'--video-fps','4','--spawn-offset',*case['offset']]
+             '--max-wall-s',protocol['controls']['max_wall_s'],
+             '--carry-max-steps',protocol['controls']['max_carry_steps'],
+             '--video-fps','4','--spawn-offset',*case['offset']]
         if condition!='teacher':
             cmd+=['--carry-act-model',models[condition]['path'],'--carry-act-python',a.act_python,
                   '--carry-act-max-steps',protocol['controls']['max_carry_steps']]

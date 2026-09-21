@@ -1,0 +1,92 @@
+{
+  "recorded_at": "2026-09-22T00:04:01.497707+09:00",
+  "reason": "User authorized fixing confirmed ACT release integration defect and unequal 900s/2400s wall protocol. Preserve completed outcomes; interrupted and unstarted jobs are not model failures.",
+  "source_sha": "88e5b2f4996fa14e0b767de822c39c0023a80732",
+  "completed_before_stop": [
+    {
+      "path": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/first-wave-30/final/r128-h1-s20260921/open-plus-r0/result.json",
+      "phase": "RELEASE",
+      "error": "ValueError: dispatch beam unresolved or ambiguous in RGB",
+      "success": false,
+      "wall_s": 730.3881719580022
+    },
+    {
+      "path": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/first-wave-30/final/r128-h1-s20260921/open-plus-r1/result.json",
+      "phase": "RELEASE",
+      "error": "ValueError: dispatch beam unresolved or ambiguous in RGB",
+      "success": false,
+      "wall_s": 755.289484957997
+    },
+    {
+      "path": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/first-wave-30/final/r128-h1-s20260921/shared_crossing-plus-r0/result.json",
+      "phase": "TRANSIT",
+      "error": "RuntimeError: skill wall budget exhausted",
+      "success": false,
+      "wall_s": 903.4330666669994
+    },
+    {
+      "path": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/first-wave-30/final/r128-h4-s20260921/open-plus-r0/result.json",
+      "phase": "TRANSIT",
+      "error": "RuntimeError: skill wall budget exhausted",
+      "success": false,
+      "wall_s": 902.7395924169978
+    },
+    {
+      "path": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/first-wave-30/final/r128-h4-s20260921/open-plus-r1/result.json",
+      "phase": "TRANSIT",
+      "error": "RuntimeError: skill wall budget exhausted",
+      "success": false,
+      "wall_s": 903.3038172909946
+    },
+    {
+      "path": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/first-wave-30/final/r128-h4-s20260921/shared_crossing-plus-r0/result.json",
+      "phase": "TRANSIT",
+      "error": "RuntimeError: skill wall budget exhausted",
+      "success": false,
+      "wall_s": 904.0861654999972
+    },
+    {
+      "path": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/first-wave-30/final/r256-h1-s20260921/open-plus-r0/result.json",
+      "phase": "TRANSIT",
+      "error": "RuntimeError: skill wall budget exhausted",
+      "success": false,
+      "wall_s": 902.7301702920013
+    },
+    {
+      "path": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/first-wave-30/final/r256-h1-s20260921/shared_crossing-plus-r0/result.json",
+      "phase": "TRANSIT",
+      "error": "RuntimeError: skill wall budget exhausted",
+      "success": false,
+      "wall_s": 903.5476240410062
+    },
+    {
+      "path": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/first-wave-30/final/r256-h4-s20260921/open-plus-r0/result.json",
+      "phase": "TRANSIT",
+      "error": "RuntimeError: skill wall budget exhausted",
+      "success": false,
+      "wall_s": 904.7133819999945
+    },
+    {
+      "path": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/first-wave-30/final/r256-h4-s20260921/shared_crossing-plus-r0/result.json",
+      "phase": "TRANSIT",
+      "error": "RuntimeError: skill wall budget exhausted",
+      "success": false,
+      "wall_s": 904.0546329159988
+    },
+    {
+      "path": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/first-wave-30/final/teacher/open-plus-r0/result.json",
+      "phase": "FINISHED",
+      "error": null,
+      "success": true,
+      "wall_s": 658.6617997499998
+    },
+    {
+      "path": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/first-wave-30/final/teacher/shared_crossing-plus-r0/result.json",
+      "phase": "TRANSIT",
+      "error": "RuntimeError: skill wall budget exhausted",
+      "success": false,
+      "wall_s": 903.9124845419938
+    }
+  ],
+  "valid_scope": "900-second capped diagnostic; not comparable to original 2400-second teacher reproduction."
+}

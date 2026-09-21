@@ -299,12 +299,14 @@ def run(args):
         pair.grasp_report['evaluation_source']='separate referee-only.jsonl after control ends'
         while not scene.bindings.permission('beam','TRANSIT'):scene.step(.2)
         result['phase']='TRANSIT'
+        carry_steps=getattr(args,'carry_max_steps',None)
         if getattr(args,'carry_act_model',None):
             from scripts.dispatch_act_carry import carry
             result['carry_policy']='ACT own RGB + raw top RGB + static task + own last issued motion'
             result['carry_model_sha256']=sha(args.carry_act_model/'model.safetensors')
-            carry(pair,args.carry_act_python,args.carry_act_model,args.carry_act_max_steps)
-        else:pair.carry(ImageRoute(scene.bindings,'beam'))
+            carry(pair,args.carry_act_python,args.carry_act_model,
+                  args.carry_act_max_steps if carry_steps is None else carry_steps)
+        else:pair.carry(ImageRoute(scene.bindings,'beam'),max_steps=carry_steps)
         result['phase']='RELEASE';pair.place();pair.verify_placement();scene.bindings.finish('beam')
         while scene.bindings.tasks['box']['id'] not in scene.bindings.finished:scene.step(.2)
         result['protocol_complete']=True;result['phase']='FINISHED'
