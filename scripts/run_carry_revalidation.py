@@ -61,6 +61,7 @@ def main():
              '--stage-model-dir',root/'varied','--output',output,
              '--max-wall-s',controls['max_wall_s'],'--carry-max-steps',controls['max_carry_steps'],
              '--video-fps',controls['video_fps'],'--spawn-offset',*case['offset']]
+        if controls.get('efficient_capture',False):cmd.append('--efficient-capture')
         if not job['condition'].startswith('RGB'):
             model=original if job['condition']=='ACT-original-seed18' else candidate
             cmd+=['--carry-act-model',model,'--carry-act-python',args.act_python]

@@ -134,6 +134,7 @@ def main():
              '--max-wall-s',protocol['controls']['max_wall_s'],
              '--carry-max-steps',protocol['controls']['max_carry_steps'],
              '--video-fps','4','--spawn-offset',*case['offset']]
+        if protocol['controls'].get('efficient_capture',False):cmd.append('--efficient-capture')
         if condition!='teacher':
             cmd+=['--carry-act-model',models[condition]['path'],'--carry-act-python',a.act_python,
                   '--carry-act-max-steps',protocol['controls']['max_carry_steps']]

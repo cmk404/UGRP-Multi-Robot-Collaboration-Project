@@ -44,7 +44,8 @@ def test_carry_conditional_denominator_excludes_prerequisite_failures(tmp_path):
 
 
 @pytest.mark.parametrize('low_disk', [False, True])
-def test_cohort_keeps_failures_but_does_not_count_disk_skips(tmp_path, monkeypatch, low_disk):
+@pytest.mark.parametrize('efficient_capture', [False, True])
+def test_cohort_keeps_failures_but_does_not_count_disk_skips(tmp_path, monkeypatch, low_disk, efficient_capture):
     """Exercise the runner, including failed child processes and all repeat slots."""
     import scripts.run_carry_input_ablation as runner
     import scripts.colab_carry_bundle as bundles
@@ -58,7 +59,7 @@ def test_cohort_keeps_failures_but_does_not_count_disk_skips(tmp_path, monkeypat
                 'arms': [{'id': 'r128-h1', 'size': 128, 'history': 1}],
                 'test': [{'id': 'open', 'teacher_case': 'F1', 'variant': 'open', 'offset': [0,0,0]}],
                 'evaluation': {'repeats': 3}, 'controls': {'max_wall_s': 1, 'max_carry_steps': 2, 'workers': 2,
-                                                       'min_free_gib': 8}}
+                                                       'min_free_gib': 8,'efficient_capture':efficient_capture}}
     plan = tmp_path/'protocol.json';plan.write_text(json.dumps(protocol))
     monkeypatch.setattr(bundles, 'verify_dataset', lambda _: {'dataset_sha256': 'data'})
     monkeypatch.setattr(runner, 'validate_training', lambda *a: {'source_sha': 'training-source', 'wall_s': 1, 'development_metrics': {}})
@@ -87,19 +88,22 @@ def test_cohort_keeps_failures_but_does_not_count_disk_skips(tmp_path, monkeypat
         return
     assert report['complete'] and len(calls) == len(report['runs']) == 6
     assert all(cmd[cmd.index('--carry-max-steps')+1]==2 for cmd in calls)
+    assert all(('--efficient-capture' in cmd)==efficient_capture for cmd in calls)
     assert all(c['failures'] == 3 and c['carry_failure_fraction'] is None
                for c in report['failure_estimates']['conditions'].values())
 
 
 @pytest.mark.parametrize('reference_ok',[True,False])
-def test_revalidation_requires_reference_success_before_candidate(tmp_path,monkeypatch,reference_ok):
+@pytest.mark.parametrize('efficient_capture',[False,True])
+def test_revalidation_requires_reference_success_before_candidate(tmp_path,monkeypatch,reference_ok,efficient_capture):
     import scripts.run_carry_revalidation as runner
     case={'id':'open-minus','variant':'open','offset':[0,0,0],'teacher_case':'F1'}
     jobs=[{'case':'open-minus','condition':name,'calibration':'original'}
           for name in ('RGB-original','ACT-original-seed18','RGB-turn')]
     regression={**case,'case':'open-plus','condition':'candidate','calibration':'native'}
     protocol={'controls':{'min_free_gib':8,'workers':2,'max_wall_s':2400,
-                         'max_carry_steps':900,'video_fps':4,'process_timeout_s':2460},
+                         'max_carry_steps':900,'video_fps':4,'process_timeout_s':2460,
+                         'efficient_capture':efficient_capture},
               'original_act_model':str(tmp_path),'original_act_model_sha256':'hash',
               'candidate_act_model':str(tmp_path),'candidate_act_model_sha256':'hash',
               'original_calibration':str(tmp_path),'original_calibration_sha256':{},
@@ -124,6 +128,7 @@ def test_revalidation_requires_reference_success_before_candidate(tmp_path,monke
     assert report['complete']==reference_ok
     assert len(commands)==(4 if reference_ok else 2)
     assert all(c[c.index('--max-wall-s')+1]==2400 and c[c.index('--carry-max-steps')+1]==900 for c in commands)
+    assert all(('--efficient-capture' in c)==efficient_capture for c in commands)
 
 
 @pytest.mark.parametrize('error', ['RuntimeError: skill wall budget exhausted',

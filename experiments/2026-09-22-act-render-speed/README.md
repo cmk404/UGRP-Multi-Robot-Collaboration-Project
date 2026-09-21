@@ -17,6 +17,10 @@ invariants, every actor image hash, unchanged physical-state hashes and simulati
 time, and individual/median wall times. This measures capture throughput only;
 it does not establish an end-to-end speedup or new model success rate.
 
+For a new repeat/revalidation protocol, `controls.efficient_capture: true`
+forwards the same option to both teacher and ACT trials. Omission preserves old
+protocol behavior. Completed or active protocols are never rewritten in place.
+
 Execution source is committed before measurement. Raw files remain local under
 `outputs/render-speed/`; measured results and source SHA are recorded after the
 finite benchmark completes. A complete mission must separately verify behavior.
