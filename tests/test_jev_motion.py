@@ -76,6 +76,16 @@ class TestJevMotion(unittest.TestCase):
         missing=frame.copy();missing[530:555,298:323]=0
         with self.assertRaises(ValueError):detect_box(missing)
 
+    def test_nvidia_floor_blocks_are_not_another_target(self):
+        frame=cv2.imread(str(Path(__file__).parent/'fixtures/jev_motion/nvidia-floor-blocks-top.jpg'))
+        xy,area=detect_box(frame)
+        np.testing.assert_allclose(xy,[309.1496598639456,540.7142857142857],atol=1e-8)
+        self.assertEqual(area,147)
+        duplicate=frame.copy();duplicate[400:425,450:475]=frame[530:555,298:323]
+        with self.assertRaises(ValueError):detect_box(duplicate)
+        missing=frame.copy();missing[530:555,298:323]=0
+        with self.assertRaises(ValueError):detect_box(missing)
+
     def test_live_rounded_probabilities(self):
         probabilities=dict(zip(('turn_left','turn_right','backward','stop','left','forward','right'),(.13,.08,.09,.04,.05,.55,.05)))
         body={'answers':{'action':{'type':'choice','choice':'forward','probabilities':probabilities,'confidence':.48}}}

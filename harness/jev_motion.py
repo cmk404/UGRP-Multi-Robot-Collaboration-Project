@@ -52,9 +52,14 @@ def detect_box(top):
     # Software-rendered floor/JPEG speckles can pass area/aspect gates.
     # Require a solid 3x3 interior, while preserving the original RGB centroid.
     interior = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
+    # NVIDIA rendering can make dim floor texture form solid cyan JPEG blocks.
+    # The target's bright cyan interior must be present as well. Keep the
+    # original mask for its centroid; insufficient color evidence still holds.
+    bright = cv2.inRange(hsv, np.array((80, 125, 125), np.uint8), np.array((100, 255, 255), np.uint8))
     found = [i for i in range(1, n) if 25 <= stats[i, 4] <= 600
              and .35 <= stats[i, 2] / max(1, stats[i, 3]) <= 2.8
-             and np.count_nonzero(interior[labels == i]) >= 25]
+             and np.count_nonzero(interior[labels == i]) >= 25
+             and np.count_nonzero(bright[labels == i]) >= 25]
     if len(found) != 1:
         raise ValueError('cyan_target_missing_or_ambiguous')
     return centers[found[0]], int(stats[found[0], 4])
