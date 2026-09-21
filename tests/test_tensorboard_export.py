@@ -95,6 +95,20 @@ def test_missing_success_is_not_zero(tmp_path,export_api):
     assert 'evaluation/reported_success' not in EA(str(tmp_path/'export')).Reload().Tags()['scalars']
 
 
+def test_postrun_concurrency_audit_keeps_original_and_checks_every_hash(tmp_path,export_api):
+    convert,EA=export_api;src=tmp_path/'source';src.mkdir()
+    original=put(src,'result.json',{'physical_success':True,'evaluation':{'concurrent_transport':{'simultaneous_loaded_motion_s':0}}}).read_bytes()
+    put(src,'issued-commands.json',{});(src/'referee-only.jsonl').write_text('{}\n')
+    put(src,'concurrency-audit.json',{'source_files_sha256':{n:hashlib.sha256((src/n).read_bytes()).hexdigest()
+        for n in ('result.json','issued-commands.json','referee-only.jsonl')},'concurrent_transport':{'simultaneous_loaded_motion_s':2.5}})
+    m=convert(src,tmp_path/'export')
+    assert EA(str(tmp_path/'export')).Reload().Scalars('evaluation/simultaneous_loaded_motion_s')[0].value==2.5
+    assert (src/'result.json').read_bytes()==original
+    assert 'concurrency-audit.json' in m['source_files']
+    (src/'referee-only.jsonl').write_text('{"changed":true}\n')
+    with pytest.raises(ValueError,match='source hash mismatch'):convert(src,tmp_path/'bad-export')
+
+
 def test_images_and_sim_time_are_recoverable(tmp_path,export_api):
     convert,EA=export_api
     from PIL import Image

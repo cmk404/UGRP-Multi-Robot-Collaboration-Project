@@ -248,7 +248,21 @@ def export_execution(src, w, result, max_images):
                 meta['commands_source'] = 'issued-commands.json; excludes initial SETUP target snapshot'
     success_field = next((k for k in ('success', 'transport_success', 'physical_success') if type(result.get(k)) is bool), None)
     evaluation=obj(result.get('evaluation'))
-    metrics['evaluation/simultaneous_loaded_motion_s']=obj(evaluation.get('concurrent_transport')).get('simultaneous_loaded_motion_s')
+    concurrency=obj(evaluation.get('concurrent_transport'))
+    audit=src.read('concurrency-audit.json')
+    if audit is not None:
+        expected=obj(audit.get('source_files_sha256'))
+        if set(expected)!={'result.json','issued-commands.json','referee-only.jsonl'}:
+            raise ValueError('concurrency audit requires all original source hashes')
+        for name,digest in expected.items():
+            path=inside(src.root,name)
+            if path is None or sha(path.read_bytes())!=digest:
+                raise ValueError('concurrency audit source hash mismatch')
+            src.files[name]={'sha256':digest,'size':path.stat().st_size,'mtime_s':path.stat().st_mtime}
+        concurrency=obj(audit.get('concurrent_transport'))
+        meta['concurrency_evaluation_source']='concurrency-audit.json; original result preserved'
+        w.text('evaluation/concurrency_audit',audit)
+    metrics['evaluation/simultaneous_loaded_motion_s']=concurrency.get('simultaneous_loaded_motion_s')
     metrics['evaluation/robot_robot_contact_samples']=evaluation.get('robot_robot_contact_samples')
     if success_field: metrics['evaluation/reported_success'] = int(result[success_field])
     meta['success_source_field'] = success_field

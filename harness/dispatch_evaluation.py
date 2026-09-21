@@ -48,15 +48,25 @@ def concurrent_transport(samples, command_history, plan):
             'minimum_displacement_per_sample_m':.001,
             'max_sample_gap_s':.11,'scope':'referee-only sampled physical motion during issued TRANSIT; not controller input'}
     if set(tasks)!={'beam','box'}:return report
-    windows={obj:[(c['issued_at_s'],c['issued_at_s']+c.get('action',{}).get('duration_s',c.get('duration_s',0.)))
-                  for rid in task['participants'] for c in command_history.get(rid,[])
+    windows={rid:[(c['issued_at_s'],c['issued_at_s']+c.get('action',{}).get('duration_s',c.get('duration_s',0.)))
+                  for c in command_history.get(rid,[])
                   if c.get('stage')=='TRANSIT' and 'issued_at_s' in c]
-             for obj,task in tasks.items()}
+             for task in tasks.values() for rid in task['participants']}
+    # Actors renew independent leases at different phases of the sample clock.
+    # A sample may cross a renewal while transport remains continuously active.
+    # Merge only adjoining intervals; actual lease gaps must remain excluded.
+    for rid,intervals in windows.items():
+        merged=[]
+        for lo,hi in sorted(intervals):
+            if hi<=lo:continue
+            if merged and lo<=merged[-1][1]+1e-8:merged[-1][1]=max(merged[-1][1],hi)
+            else:merged.append([lo,hi])
+        windows[rid]=merged
     for a,b in zip(samples,samples[1:]):
         start,end=a['sim_time_s'],b['sim_time_s']
         if not 0<end-start<=.110001:continue
         if a.get('weld') or b.get('weld'):continue
-        if not all(any(lo<=start+1e-8 and hi>=end-1e-8 for lo,hi in windows[obj])
+        if not all(all(any(lo<=start+1e-8 and hi>=end-1e-8 for lo,hi in windows[rid]) for rid in task['participants'])
                    and all(not s['cargo'][obj]['floor_contact'] and s['cargo'][obj]['robot_contact'] for s in (a,b))
                    and math.dist(a['cargo'][obj]['position'][:2],b['cargo'][obj]['position'][:2])>.001
                    and all(math.dist(a['robots'][rid][:2],b['robots'][rid][:2])>.001 for rid in task['participants'])
