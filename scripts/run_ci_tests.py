@@ -12,6 +12,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 TEST_PATTERNS = (
     "tests/test_carry_failure_measurement.py",
+    "tests/test_repeated_skill_summary.py",
     "tests/test_colab_simulation.py",
     "tests/test_model_mailbox.py",
     "tests/test_kaggle_simulation.py",

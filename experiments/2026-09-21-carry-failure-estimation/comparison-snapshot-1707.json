@@ -1,0 +1,979 @@
+{
+  "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+  "snapshot_unix": 1789978017.1055765,
+  "planned": 231,
+  "attempted": 90,
+  "pending": 141,
+  "complete": false,
+  "groups": [
+    {
+      "phase": "ablation",
+      "policy": "gemini",
+      "arm": "always",
+      "planned": 14,
+      "attempted": 0,
+      "pending": 14,
+      "successes": 0,
+      "failures": 0,
+      "failure_fraction_attempted": null,
+      "failure_reasons": {},
+      "by_case": {
+        "occluded03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "open03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "open04": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "temporary03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "unknown03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "yaw03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "yaw04": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        }
+      }
+    },
+    {
+      "phase": "ablation",
+      "policy": "gemini",
+      "arm": "primitive",
+      "planned": 8,
+      "attempted": 0,
+      "pending": 8,
+      "successes": 0,
+      "failures": 0,
+      "failure_fraction_attempted": null,
+      "failure_reasons": {},
+      "by_case": {
+        "open03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "open04": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "yaw03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "yaw04": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        }
+      }
+    },
+    {
+      "phase": "ablation",
+      "policy": "gemini",
+      "arm": "single",
+      "planned": 8,
+      "attempted": 0,
+      "pending": 8,
+      "successes": 0,
+      "failures": 0,
+      "failure_fraction_attempted": null,
+      "failure_reasons": {},
+      "by_case": {
+        "occluded03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "temporary03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "unknown03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "yaw03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        }
+      }
+    },
+    {
+      "phase": "ablation",
+      "policy": "jev",
+      "arm": "always",
+      "planned": 14,
+      "attempted": 0,
+      "pending": 14,
+      "successes": 0,
+      "failures": 0,
+      "failure_fraction_attempted": null,
+      "failure_reasons": {},
+      "by_case": {
+        "occluded03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "open03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "open04": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "temporary03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "unknown03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "yaw03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "yaw04": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        }
+      }
+    },
+    {
+      "phase": "ablation",
+      "policy": "jev",
+      "arm": "no_confidence",
+      "planned": 8,
+      "attempted": 0,
+      "pending": 8,
+      "successes": 0,
+      "failures": 0,
+      "failure_fraction_attempted": null,
+      "failure_reasons": {},
+      "by_case": {
+        "occluded03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "temporary03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "unknown03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "yaw03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        }
+      }
+    },
+    {
+      "phase": "ablation",
+      "policy": "jev",
+      "arm": "primitive",
+      "planned": 8,
+      "attempted": 0,
+      "pending": 8,
+      "successes": 0,
+      "failures": 0,
+      "failure_fraction_attempted": null,
+      "failure_reasons": {},
+      "by_case": {
+        "open03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "open04": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "yaw03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "yaw04": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        }
+      }
+    },
+    {
+      "phase": "ablation",
+      "policy": "jev",
+      "arm": "single",
+      "planned": 8,
+      "attempted": 0,
+      "pending": 8,
+      "successes": 0,
+      "failures": 0,
+      "failure_fraction_attempted": null,
+      "failure_reasons": {},
+      "by_case": {
+        "occluded03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "temporary03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "unknown03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "yaw03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        }
+      }
+    },
+    {
+      "phase": "continuous",
+      "policy": "gemini",
+      "arm": "full",
+      "planned": 8,
+      "attempted": 0,
+      "pending": 8,
+      "successes": 0,
+      "failures": 0,
+      "failure_fraction_attempted": null,
+      "failure_reasons": {},
+      "by_case": {
+        "known03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "occluded03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "open03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "temporary03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        }
+      }
+    },
+    {
+      "phase": "continuous",
+      "policy": "jev",
+      "arm": "full",
+      "planned": 8,
+      "attempted": 0,
+      "pending": 8,
+      "successes": 0,
+      "failures": 0,
+      "failure_fraction_attempted": null,
+      "failure_reasons": {},
+      "by_case": {
+        "known03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "occluded03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "open03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "temporary03": {
+          "planned": 2,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        }
+      }
+    },
+    {
+      "phase": "development",
+      "policy": "gemini",
+      "arm": "full",
+      "planned": 1,
+      "attempted": 1,
+      "pending": 0,
+      "successes": 1,
+      "failures": 0,
+      "failure_fraction_attempted": 0.0,
+      "failure_reasons": {},
+      "by_case": {
+        "dev_open": {
+          "planned": 1,
+          "attempted": 1,
+          "successes": 1,
+          "failures": 0
+        }
+      }
+    },
+    {
+      "phase": "development",
+      "policy": "jev",
+      "arm": "full",
+      "planned": 1,
+      "attempted": 1,
+      "pending": 0,
+      "successes": 1,
+      "failures": 0,
+      "failure_fraction_attempted": 0.0,
+      "failure_reasons": {},
+      "by_case": {
+        "dev_open": {
+          "planned": 1,
+          "attempted": 1,
+          "successes": 1,
+          "failures": 0
+        }
+      }
+    },
+    {
+      "phase": "development",
+      "policy": "rule",
+      "arm": "full",
+      "planned": 1,
+      "attempted": 1,
+      "pending": 0,
+      "successes": 1,
+      "failures": 0,
+      "failure_fraction_attempted": 0.0,
+      "failure_reasons": {},
+      "by_case": {
+        "dev_open": {
+          "planned": 1,
+          "attempted": 1,
+          "successes": 1,
+          "failures": 0
+        }
+      }
+    },
+    {
+      "phase": "holdout",
+      "policy": "gemini",
+      "arm": "full",
+      "planned": 36,
+      "attempted": 30,
+      "pending": 6,
+      "successes": 30,
+      "failures": 0,
+      "failure_fraction_attempted": 0.0,
+      "failure_reasons": {},
+      "by_case": {
+        "known03": {
+          "planned": 3,
+          "attempted": 2,
+          "successes": 2,
+          "failures": 0
+        },
+        "known04": {
+          "planned": 3,
+          "attempted": 3,
+          "successes": 3,
+          "failures": 0
+        },
+        "occluded03": {
+          "planned": 3,
+          "attempted": 2,
+          "successes": 2,
+          "failures": 0
+        },
+        "occluded04": {
+          "planned": 3,
+          "attempted": 2,
+          "successes": 2,
+          "failures": 0
+        },
+        "open03": {
+          "planned": 3,
+          "attempted": 3,
+          "successes": 3,
+          "failures": 0
+        },
+        "open04": {
+          "planned": 3,
+          "attempted": 3,
+          "successes": 3,
+          "failures": 0
+        },
+        "temporary03": {
+          "planned": 3,
+          "attempted": 2,
+          "successes": 2,
+          "failures": 0
+        },
+        "temporary04": {
+          "planned": 3,
+          "attempted": 3,
+          "successes": 3,
+          "failures": 0
+        },
+        "unknown03": {
+          "planned": 3,
+          "attempted": 2,
+          "successes": 2,
+          "failures": 0
+        },
+        "unknown04": {
+          "planned": 3,
+          "attempted": 2,
+          "successes": 2,
+          "failures": 0
+        },
+        "yaw03": {
+          "planned": 3,
+          "attempted": 3,
+          "successes": 3,
+          "failures": 0
+        },
+        "yaw04": {
+          "planned": 3,
+          "attempted": 3,
+          "successes": 3,
+          "failures": 0
+        }
+      }
+    },
+    {
+      "phase": "holdout",
+      "policy": "jev",
+      "arm": "full",
+      "planned": 36,
+      "attempted": 29,
+      "pending": 7,
+      "successes": 20,
+      "failures": 9,
+      "failure_fraction_attempted": 0.3103448275862069,
+      "failure_reasons": {
+        "model_http_error": 7,
+        "model_transport_error": 2
+      },
+      "by_case": {
+        "known03": {
+          "planned": 3,
+          "attempted": 3,
+          "successes": 2,
+          "failures": 1
+        },
+        "known04": {
+          "planned": 3,
+          "attempted": 1,
+          "successes": 1,
+          "failures": 0
+        },
+        "occluded03": {
+          "planned": 3,
+          "attempted": 3,
+          "successes": 1,
+          "failures": 2
+        },
+        "occluded04": {
+          "planned": 3,
+          "attempted": 2,
+          "successes": 2,
+          "failures": 0
+        },
+        "open03": {
+          "planned": 3,
+          "attempted": 2,
+          "successes": 1,
+          "failures": 1
+        },
+        "open04": {
+          "planned": 3,
+          "attempted": 3,
+          "successes": 3,
+          "failures": 0
+        },
+        "temporary03": {
+          "planned": 3,
+          "attempted": 3,
+          "successes": 1,
+          "failures": 2
+        },
+        "temporary04": {
+          "planned": 3,
+          "attempted": 3,
+          "successes": 3,
+          "failures": 0
+        },
+        "unknown03": {
+          "planned": 3,
+          "attempted": 2,
+          "successes": 1,
+          "failures": 1
+        },
+        "unknown04": {
+          "planned": 3,
+          "attempted": 1,
+          "successes": 0,
+          "failures": 1
+        },
+        "yaw03": {
+          "planned": 3,
+          "attempted": 3,
+          "successes": 3,
+          "failures": 0
+        },
+        "yaw04": {
+          "planned": 3,
+          "attempted": 3,
+          "successes": 2,
+          "failures": 1
+        }
+      }
+    },
+    {
+      "phase": "holdout",
+      "policy": "rule",
+      "arm": "full",
+      "planned": 36,
+      "attempted": 28,
+      "pending": 8,
+      "successes": 28,
+      "failures": 0,
+      "failure_fraction_attempted": 0.0,
+      "failure_reasons": {},
+      "by_case": {
+        "known03": {
+          "planned": 3,
+          "attempted": 2,
+          "successes": 2,
+          "failures": 0
+        },
+        "known04": {
+          "planned": 3,
+          "attempted": 2,
+          "successes": 2,
+          "failures": 0
+        },
+        "occluded03": {
+          "planned": 3,
+          "attempted": 2,
+          "successes": 2,
+          "failures": 0
+        },
+        "occluded04": {
+          "planned": 3,
+          "attempted": 3,
+          "successes": 3,
+          "failures": 0
+        },
+        "open03": {
+          "planned": 3,
+          "attempted": 2,
+          "successes": 2,
+          "failures": 0
+        },
+        "open04": {
+          "planned": 3,
+          "attempted": 3,
+          "successes": 3,
+          "failures": 0
+        },
+        "temporary03": {
+          "planned": 3,
+          "attempted": 2,
+          "successes": 2,
+          "failures": 0
+        },
+        "temporary04": {
+          "planned": 3,
+          "attempted": 3,
+          "successes": 3,
+          "failures": 0
+        },
+        "unknown03": {
+          "planned": 3,
+          "attempted": 2,
+          "successes": 2,
+          "failures": 0
+        },
+        "unknown04": {
+          "planned": 3,
+          "attempted": 2,
+          "successes": 2,
+          "failures": 0
+        },
+        "yaw03": {
+          "planned": 3,
+          "attempted": 2,
+          "successes": 2,
+          "failures": 0
+        },
+        "yaw04": {
+          "planned": 3,
+          "attempted": 3,
+          "successes": 3,
+          "failures": 0
+        }
+      }
+    },
+    {
+      "phase": "regression",
+      "policy": "gemini",
+      "arm": "full",
+      "planned": 12,
+      "attempted": 0,
+      "pending": 12,
+      "successes": 0,
+      "failures": 0,
+      "failure_fraction_attempted": null,
+      "failure_reasons": {},
+      "by_case": {
+        "legacy-new01": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new02": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new03": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new04": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new05": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new06": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new07": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new08": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new09": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new10": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new11": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new12": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        }
+      }
+    },
+    {
+      "phase": "regression",
+      "policy": "jev",
+      "arm": "full",
+      "planned": 12,
+      "attempted": 0,
+      "pending": 12,
+      "successes": 0,
+      "failures": 0,
+      "failure_fraction_attempted": null,
+      "failure_reasons": {},
+      "by_case": {
+        "legacy-new01": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new02": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new03": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new04": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new05": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new06": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new07": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new08": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new09": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new10": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new11": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new12": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        }
+      }
+    },
+    {
+      "phase": "regression",
+      "policy": "rule",
+      "arm": "full",
+      "planned": 12,
+      "attempted": 0,
+      "pending": 12,
+      "successes": 0,
+      "failures": 0,
+      "failure_fraction_attempted": null,
+      "failure_reasons": {},
+      "by_case": {
+        "legacy-new01": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new02": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new03": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new04": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new05": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new06": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new07": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new08": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new09": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new10": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new11": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        },
+        "legacy-new12": {
+          "planned": 1,
+          "attempted": 0,
+          "successes": 0,
+          "failures": 0
+        }
+      }
+    }
+  ],
+  "scope": "RGB approach/route/recovery only, not grasp/carry. Phase, policy and arm have separate denominators. All failed attempts retained; pending is not failure. Partial unmatched groups do not establish a model ranking. Repeated fixed scenes are not independent new environments.",
+  "snapshot_archive_sha256": "ca54ca2c301dbde8556bb999a03a3e3a35831575aa4af79d24ece6fd354b090e",
+  "original_index_sha256": "ea7cb1c34569ed680cd2e5176b38595ef6f3630af65a6134daf3157251fe2875",
+  "raw_snapshot": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/repeated-evaluation-review-20260921/snapshot",
+  "kaggle_act": {
+    "kernel": "changmin2026/ugrp-simulation-04832043e57f",
+    "source_sha": "491eaa334070b78431aa7f4ff5512603ee8877b1",
+    "status": "running",
+    "planned": 108,
+    "attempted": null,
+    "scope": "Kaggle reports running; current driver writes trial logs to the result archive, so completed trial counts are unavailable until output recovery."
+  }
+}
