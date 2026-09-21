@@ -62,3 +62,11 @@ ACT의 `requirements-reference-act.txt`는 시뮬레이션과 NumPy/OpenCV 버�
 ## 검증 범위
 
 로컬 관련 테스트 12개와 최초 CI 4개 job이 통과했다. CLI 경로 수정 후 검증은 PR의 최신 head와 연결된 CI 및 로컬 `outputs/` 기록을 따른다. 세션 조회·생성·원격 Python 출력은 실제 Colab CLI에서 확인했다. [실제 Colab CPU 진단](../experiments/2026-09-21-colab-cli-smoke/README.md)에서 물리 이동 0.138548m·카메라 12프레임·결과 다운로드·전체 파일 해시가 확인되었고 소유 세션도 종료했다. 교사/학생·정적 지도 경계, 카메라 FOV와 weld OFF는 기존 지침을 유지한다.
+
+## Mac 모델 연결을 사용하는 비공개 Colab 비교
+
+`run_jev_skill_cohort.py --model-mailbox /content/<작업>/mailbox`는 인증된 Colab Contents 파일 전송으로 모델 요청/응답만 전달한다. Mac의 `relay_colab_models.py`가 고정된 Jev API와 기존 loopback Gemini 서비스에 호출한다. 외부 공개 포트·터널은 만들지 않는다. Jev 키는 Mac 키체인(`ugrp.typesafe.ai` / `jev`)에서 프로세스 메모리로만 읽으며 원격 소스·큐·로그에 넣지 않는다. `scripts/macos_model_keychain.swift`로 빌드한 helper의 읽기 출력은 relay가 직접 캡처한다. 터미널에서 helper의 읽기 출력을 표시하지 않는다.
+
+relay는 Colab CLI가 설치된 Python에서 `--session`, `--remote`, `--keychain-helper`, `--output`, `--seconds`를 지정해 `ugrp_session.py run`으로 실행한다. 최대 4시간/지정 호출 수까지만 동작하며 종료 시 해당 소유 세션을 정리한다. 요청마다 30초 한도와 고유 ID를 사용하고, 응답 전송 재시도 시 모델 호출을 반복하지 않는다. 임의 URL·모델·만료된 요청을 거부한다.
+
+`latency_s`는 파일 전송을 포함한 실제 대기 시간이며 `provider_latency_s`가 API 응답 시간이다. 이 경로의 continuous 결과를 직접 HTTP 경로의 지연 성능과 합쳐 비교하지 않는다. 동일 소스·동일 Colab 환경에서 rule/Jev/Gemini를 함께 실행하며, 다른 Kaggle/과거 Mac 결과는 별도 실험으로 둔다.

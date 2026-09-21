@@ -46,7 +46,7 @@ def worker(output,index):
     key=json.load(sys.stdin)['key']
     for job in protocol['jobs'][index::protocol['workers']]:
         args=SimpleNamespace(**job,**protocol['limits'],output=output/job['trial_id'],
-            gemini_url='http://127.0.0.1:8391/v1/chat/completions')
+            gemini_url='http://127.0.0.1:8391/v1/chat/completions',model_mailbox=protocol.get('model_mailbox'))
         result=run_trial(args,protocol['case_setup'][job['case']],job['policy'],key if job['policy']=='jev' else None,protocol['source_sha'])
         result.update(repeat=job['repeat'],trial_id=job['trial_id'],partition=protocol['phase'])
         write(args.output/'result.json',result)
@@ -61,6 +61,7 @@ def main():
     p.add_argument('--policies',nargs='+',choices=['rule','jev','gemini'],default=['rule','jev','gemini'])
     p.add_argument('--dev-cases',nargs='+',choices=list(DEVELOPMENT))
     p.add_argument('--execute',action='store_true')
+    p.add_argument('--model-mailbox',type=Path,help='Private Colab file relay; credentials remain on the Mac')
     args=p.parse_args()
     if args.worker is not None:return worker(args.output,args.worker)
     if not args.execute or not args.mjpython:p.error('--execute and --mjpython required')
@@ -69,6 +70,7 @@ def main():
     if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip():p.error('commit source before experiments')
     jobs,cases=plan(args.phase,args.policies,args.dev_cases)
     protocol={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
+        'model_mailbox':str(args.model_mailbox.resolve()) if args.model_mailbox else None,
         'phase':args.phase,'jobs':jobs,'case_setup':cases,'workers':args.workers,
         'limits':{'max_sim_s':90.,'max_wall_s':1200.,'max_calls':400,'max_input_tokens':1000000,
                   'clock':'continuous' if args.phase=='continuous' else 'paused'},
@@ -77,7 +79,7 @@ def main():
         'failures':'all enumerated jobs retained; no retries or holdout filtering',
         'cost_usd':None,'boundary':'RGB-only control, authored prior map, own commands; referee and event schedule output-only'}
     args.output.mkdir(parents=True);write(args.output/'protocol.json',protocol)
-    key=getpass.getpass('Jev API key (hidden): ') if 'jev' in args.policies else None
+    key=getpass.getpass('Jev API key (hidden): ') if 'jev' in args.policies and not args.model_mailbox else None
     def launch(i):
         with (args.output/f'worker-{i}.log').open('w') as log:
             proc=subprocess.Popen([str(args.mjpython),str(Path(__file__).resolve()),'--output',str(args.output),'--worker',str(i)],

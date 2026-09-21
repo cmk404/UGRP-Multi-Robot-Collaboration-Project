@@ -1,0 +1,37 @@
+{
+  "time_unix": 1789959739.493781,
+  "scope": "synthetic semantic-state API check, not simulation",
+  "models": [
+    {
+      "provider": "jev",
+      "model": "jev-1.13.0",
+      "status": "ok",
+      "http_status": 200,
+      "latency_s": 0.7099787919996743,
+      "answer": {
+        "action": "direct",
+        "evidence": "usable",
+        "progress": "continue"
+      },
+      "confidence": 0.91
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "status": "ok",
+      "http_status": 200,
+      "latency_s": 2.1581148330005817,
+      "answer": {
+        "evidence": "usable",
+        "progress": "continue",
+        "action": "direct"
+      },
+      "confidence": null
+    }
+  ],
+  "credential_storage": "macOS Keychain; value excluded",
+  "old_jobs": {
+    "colab": "server session absent at live recheck",
+    "kaggle": "CANCEL_ACKNOWLEDGED; no collected result"
+  }
+}

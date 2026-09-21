@@ -165,7 +165,7 @@ def continuous_disposition(control,latest,state,now,observed_at,deadline):
     return 'execute'
 
 
-def post_continuous(scene,observer,control,body,url,key,rows,label,sim_deadline,initial=None):
+def post_continuous(scene,observer,control,body,url,key,rows,label,sim_deadline,initial=None,transport=None):
     """Keep physics and RGB alive while one network request is outstanding.
 
     An expired decision is braked during inference; this is a continuous-clock
@@ -175,7 +175,7 @@ def post_continuous(scene,observer,control,body,url,key,rows,label,sim_deadline,
     # original RGB is still current; an invalid later frame must erase it.
     latest=initial
     with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
-        pending=pool.submit(post,body,url,key,30)
+        pending=pool.submit(transport or post,body,url,key,30)
         i=0
         while (not pending.done() and not control.done
                and float(scene.world.data.time)+DT<=sim_deadline+1e-9):
@@ -203,12 +203,15 @@ def run_trial(args,case,policy,key,source):
     import cv2
     import numpy as np
     import mujoco
+    from harness.model_mailbox import MailboxTransport
+    transport=MailboxTransport(args.model_mailbox) if getattr(args,"model_mailbox",None) else post
     from scripts.probe_dual_grasp_sync import Video
     config=configuration(case);out=Path(args.output)
     scene=ChallengeScene(config,out,case)
     rows=[];started=time.monotonic()
     result={'source_sha':source,'policy':policy,'arm':args.arm,'case':args.case,'success':False,
         'stop_reason':None,'error':None,'model_calls':0,'input_tokens':0,'output_tokens':0,'cost_usd':None,
+        'transport':'colab_private_mailbox' if getattr(args,'model_mailbox',None) else 'direct',
         'clock':getattr(args,'clock','paused'),'scope':'RGB approach, route selection and recovery; no grasp/carry',
         'interventions':{},'limits':{'sim_s':args.max_sim_s,'calls':args.max_calls,'wall_s':args.max_wall_s,'input_tokens':args.max_input_tokens}}
     try:
@@ -263,9 +266,9 @@ def run_trial(args,case,policy,key,source):
                     if getattr(args,'clock','paused')=='continuous':
                         origin['execution_source']='request_only';rows.append(origin)
                         response,latest=post_continuous(scene,observer,control,body,url,key if policy=='jev' else None,
-                            rows,f'{tick:03}',start_sim+args.max_sim_s,initial=(frames,o,origin['observed_at_sim_s']))
+                            rows,f'{tick:03}',start_sim+args.max_sim_s,initial=(frames,o,origin['observed_at_sim_s']),transport=transport)
                     else:
-                        response=post(body,url,key if policy=='jev' else None,30)
+                        response=transport(body,url,key if policy=='jev' else None,30)
                         latest=None
                     row['response']=response;write(out/f'{tick:03}-response.json',response)
                     result['model_calls']+=1

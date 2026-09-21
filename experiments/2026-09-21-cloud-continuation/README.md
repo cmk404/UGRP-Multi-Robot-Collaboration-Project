@@ -48,3 +48,9 @@ Colab에서는 이미 회수·검증한 128/256px 8모델+교사 36회 평가를
 512px 중단 원본은 로컬 `outputs/cloud-resume/collected/diagnostic/result.zip`으로 회수했다. 압축본 SHA `34443c4161dcc7951bdbd292ef76913c5cb9d509f8f10b01e9516bb78addc781`, 내부 8파일과 source SHA를 검증했다. exit143은 비용 우선순위에 따른 명시적 중지다. 최신 평가 수집기는 `priority-v2-collection-status.json`을 사용한다.
 
 2026-09-21 11:50 KST: Colab kernel exec 응답이 두 번 없어 출력 디렉터리 부재를 확인하고, 동일 생성 가드가 있는 launcher를 CLI의 piped console에서 실행했다. 새 supervisor PID10103/평가 부모 PID10105의 실행과 8개 기존 모델 검증을 확인했다. 새 환경은 PYTHONPATH·OSMesa·OMP_NUM_THREADS=2를 명시한다. 원격 평가 소스 SHA는 계속 `d13cda2`로 고정되어 있다.
+
+## 모델 연결 후속
+
+사용자가 제공한 Jev 키를 Mac 키체인에 저장하고 read-back을 확인했다. 실제 합성 의미 상태 입력으로 Jev 1.13.0 HTTP 200/0.710s, 기존 Gemini 3.8 Flash loopback HTTP 200/2.158s 및 스킬 응답 형식 검증이 통과했다. 이는 로봇 성공 결과가 아니다. 원본 요청/응답은 로컬 `outputs/cloud-resume/model-probe.json`, 비밀 제외 요약은 `model-connectivity.json`에 있다.
+
+이 시점 재조회에서 기존 ACT Colab 세션은 서버에서 사라졌고 Kaggle rule 코호트는 CANCEL_ACKNOWLEDGED다. 기존 ACT collector를 종료했으며 이 둘을 계속 실행 중으로 보고하지 않는다. 미회수 결과·취소 원인은 확인되지 않았다. 새 CPU Colab 세션 `ugrp-model-compare-20260921`은 생성/IDLE을 확인했다. 비공개 파일 중계로 같은 Colab에서 세 정책을 비교하도록 준비한다. 512 학습은 계속 보류한다.
