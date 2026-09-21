@@ -1,0 +1,52 @@
+{
+  "target": "Ubuntu 22.04 x86_64 / CPython 3.12",
+  "ubuntu_packages": {
+    "libedit2": {
+      "Package": "libedit2",
+      "Version": "3.1-20210910-1build1",
+      "Filename": "pool/main/libe/libedit/libedit2_3.1-20210910-1build1_amd64.deb",
+      "SHA256": "fb8783bdf0a59aaabf4e9b29192170f6cc17aa2eb94bc672c15add37ff39525b",
+      "Depends": "libbsd0 (>= 0.1.3), libc6 (>= 2.33), libtinfo6 (>= 6)"
+    },
+    "libglapi-mesa": {
+      "Package": "libglapi-mesa",
+      "Version": "23.2.1-1ubuntu3.1~22.04.4",
+      "Filename": "pool/main/m/mesa/libglapi-mesa_23.2.1-1ubuntu3.1~22.04.4_amd64.deb",
+      "SHA256": "bb9b515ea17ca816f878501d3b862c4bdfc3501482f96c9bbd8263bb402bc498",
+      "Depends": "libc6 (>= 2.34)"
+    },
+    "libosmesa6": {
+      "Package": "libosmesa6",
+      "Version": "23.2.1-1ubuntu3.1~22.04.4",
+      "Filename": "pool/main/m/mesa/libosmesa6_23.2.1-1ubuntu3.1~22.04.4_amd64.deb",
+      "SHA256": "d961bee304d032b7a3f626239366bbe36c4481adb5699813389cdbd08d682269",
+      "Depends": "libc6 (>= 2.34), libdrm2 (>= 2.4.25), libgcc-s1 (>= 3.4), libglapi-mesa (= 23.2.1-1ubuntu3.1~22.04.4), libllvm15, libstdc++6 (>= 11), libzstd1 (>= 1.4.0), zlib1g (>= 1:1.1.4)"
+    },
+    "libllvm15": {
+      "Package": "libllvm15",
+      "Version": "1:15.0.7-0ubuntu0.22.04.3",
+      "Filename": "pool/main/l/llvm-toolchain-15/libllvm15_15.0.7-0ubuntu0.22.04.3_amd64.deb",
+      "SHA256": "96798f618e4071f7fa684037bd0bb88f15b4e8f2c80cbb64267aa39fe8a8a5ec",
+      "Depends": "libc6 (>= 2.34), libedit2 (>= 2.11-20080614-0), libffi8 (>= 3.4), libgcc-s1 (>= 3.3), libstdc++6 (>= 12), libtinfo6 (>= 6), libxml2 (>= 2.7.4), zlib1g (>= 1:1.2.0)"
+    }
+  },
+  "files": {
+    "absl_py-2.5.0-py3-none-any.whl": "0f17b89f2a4eaaedc4f28c622998aa690564b3012a396a4ffad0821007fe03ba",
+    "etils-1.14.0-py3-none-any.whl": "b5df7341f54dbe1405a4450b2741207b4a8c279780402b45f87202b94dfc52b4",
+    "fsspec-2026.9.0-py3-none-any.whl": "8dd6e646e99ea382bd85f97a45e6b526a442d79423a7dc673f1e2756d05fcb5f",
+    "glfw-2.10.2-py2.py3-none-manylinux_2_28_x86_64.whl": "b860de3ca0686182483f98f3ddd12e660acf25b3e0d521450ec9a3f999f72a65",
+    "libedit2.deb": "fb8783bdf0a59aaabf4e9b29192170f6cc17aa2eb94bc672c15add37ff39525b",
+    "libglapi-mesa.deb": "bb9b515ea17ca816f878501d3b862c4bdfc3501482f96c9bbd8263bb402bc498",
+    "libllvm15.deb": "96798f618e4071f7fa684037bd0bb88f15b4e8f2c80cbb64267aa39fe8a8a5ec",
+    "libosmesa6.deb": "d961bee304d032b7a3f626239366bbe36c4481adb5699813389cdbd08d682269",
+    "mujoco-3.12.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl": "7ec16ce408871a0a9157cc556958ab66cd34db9fc1dccd3ef07717170163a4e0",
+    "numpy-2.5.2-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl": "3cdec01fa790a186d430433fdd4d4ffb70eed6f0eeb4bf05c8dbe2dce0a9bcb8",
+    "opencv_python_headless-5.0.0.93-cp37-abi3-manylinux_2_28_x86_64.whl": "ed709fdf9aa0bd1f2ed8549e71d19449b03a675bb581eb292285f6861953be37",
+    "pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl": "78cb2c6865a35ab8ff8b75fd122f6033b92a62c82801110e48ddd6c936a45d91",
+    "pip-26.2.1-py3-none-any.whl": "71138adf1f4ca900cdb7d289c21b7494329f2332b6d85f0e1c42108c0384ed3e",
+    "pyopengl-3.1.10-py3-none-any.whl": "794a943daced39300879e4e47bd94525280685f42dbb5a998d336cfff151d74f",
+    "typing_extensions-4.16.0-py3-none-any.whl": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8",
+    "websockets-15.0.1-cp312-cp312-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl": "64dee438fed052b52e4f98f76c5790513235efaa1ef7f3f2192c392cd7c91b65",
+    "zipp-4.1.0-py3-none-any.whl": "25ad4e16390cd314347dd8f1de67a2ac538ae658ed4ab9db16029c07c188e97f"
+  }
+}

@@ -17,9 +17,13 @@ GitHub PR의 **Files changed → Review changes → Approve → Submit review**�
 
 작은 문서 수정에는 전체 시뮬레이션이 필요 없다. CI는 외부 모델 호출이나 하드웨어 검증을 대신하지 않는다.
 
+## Colab에서 시뮬레이션 실행
+
+2026-09-21부터 무거운 시뮬레이션·학습·평가의 기본 대상은 [Colab](docs/colab_simulation.md)이다. 로컬 단위 테스트와 GitHub CI는 계속 사용한다. 아래 Mac 환경은 기존 호환·재현 경로이며 새 실험을 임의로 로컬에서 시작하지 않는다.
+
 ## 자동 테스트
 
-Python 3.12를 사용한다. 로컬의 검증된 MuJoCo 환경은 `.venv-sim-worker-mac`이다. `.venv-sim`은 이 환경의 호환 링크다. 예전 클라우드 배포 환경은 [퇴역 기록](docs/cloud_simulation.md)으로 남기고 제거했다. 새 자동 테스트 환경은 다음과 같이 만든다.
+Python 3.12를 사용한다. 로컬의 검증된 MuJoCo 환경은 `.venv-sim-worker-mac`이다. `.venv-sim`은 이 환경의 호환 링크다. 예전 클라우드 배포 환경은 [퇴역 기록](docs/cloud_simulation.md)으로 남기고 제거했으며, 새 Colab CLI 경로와 구분한다. 새 자동 테스트 환경은 다음과 같이 만든다.
 
 ```sh
 python3.12 -m venv .venv-test

@@ -1,10 +1,12 @@
 # 클라우드 시뮬레이션 퇴역 기록
 
+> 아래 내용은 2026-09-09의 이력이다. 2026-09-21 사용자 요청에 따른 새 [Colab 실행 경로](colab_simulation.md)가 우선한다. Lightning·Azure·옛 자동 복구는 되살리지 않는다.
+
 2026-09-09 사용자 요청으로 프로젝트 안의 클라우드 시뮬레이션 배포 코드와 옛 실행 환경을 정리했다. 웹사이트의 서버·계정·환경 삭제는 요청 범위에 포함하지 않는다.
 
 이전에는 Lightning T4/L4, Colab T4, Azure A10을 시도했다. 2026-09-02 기록에서는 네트워크 지연과 운영 비용 때문에 Mac 실행으로 전환했다고 보고했지만, 배포·복구 코드가 참고용으로 남아 있었다. 이번에 그 실행 코드를 제거하고 이 요약만 유지한다. 당시 원문과 코드는 Git 커밋 `76aeba36461ddae2044e8b732adb00b8365dde67`에서 확인할 수 있다. 과거 문서의 서버 삭제·성능 수치는 이번에 재검증한 현재 사실이 아니다.
 
-현재 기준은 Mac의 `.venv-sim-worker-mac`와 표식 없는 상자 운반 코드다. [실행 절차](../CONTRIBUTING.md), [N7 기준](../experiments/2026-09-09-markerless-n7/README.md)을 따른다. Mac 워커와 브리지 사이의 통신 기능은 클라우드 GPU 배포와 별개다.
+퇴역 당시 기준은 Mac의 `.venv-sim-worker-mac`와 표식 없는 상자 운반 코드다. [실행 절차](../CONTRIBUTING.md), [N7 기준](../experiments/2026-09-09-markerless-n7/README.md)을 따른다. Mac 워커와 브리지 사이의 통신 기능은 클라우드 GPU 배포와 별개다.
 
 옛 Linux `.venv-sim`, `.venv-lightning`과 중복 Mac `.venv-sim-mac` 설치를 제거했다. [구성 기록](retired_sim_environments_20260909.json)에 Python·패키지 목록과 삭제 전 크기를 남겼다. `.venv-sim` 이름은 기존 실행기 호환을 위해 현재 워커 환경을 가리키는 작은 링크로만 유지한다. `.venv-real-mac`은 실물 로봇용이므로 보존한다.
 
