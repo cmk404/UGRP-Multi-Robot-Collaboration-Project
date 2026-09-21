@@ -16,11 +16,13 @@ from scripts.cloud_progress import summarize_log
 def progress(output):
     kernel=json.loads((output/'job.json').read_text())['kernel']
     try:
-        response=subprocess.run(['kaggle','kernels','logs',kernel,'--follow'],capture_output=True,timeout=3)
+        response=subprocess.run(['kaggle','kernels','logs',kernel,'--follow'],capture_output=True,timeout=10)
         raw=response.stdout
     except subprocess.TimeoutExpired as exc:raw=exc.stdout or b''
     text=raw.decode(errors='replace')[-2_000_000:]
-    (output/'live-progress.log').write_text(text)
+    saved=output/'live-progress.log'
+    if text:saved.write_text(text)
+    elif saved.exists():text=saved.read_text()
     return summarize_log(text)
 
 

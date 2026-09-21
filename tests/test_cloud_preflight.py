@@ -83,6 +83,18 @@ def test_progress_distinguishes_uninstrumented_and_stale():
     assert summarize_log(line,now=200)['visibility']=='stale'
 
 
+def test_empty_log_poll_preserves_last_known_counts_and_marks_them_stale(tmp_path,monkeypatch):
+    import scripts.collect_kaggle_job as collector
+    (tmp_path/'job.json').write_text('{"kernel":"test/preflight"}')
+    original=PREFIX+json.dumps({'schema':'ugrp.progress.v1','unix':1,'event':'evaluation_progress','planned':2,'attempted':1})
+    (tmp_path/'live-progress.log').write_text(original)
+    def timeout(*a,**k):raise subprocess.TimeoutExpired('kaggle',10)
+    monkeypatch.setattr(collector.subprocess,'run',timeout)
+    report=collector.progress(tmp_path)
+    assert report['visibility']=='stale' and report['attempted']==1
+    assert (tmp_path/'live-progress.log').read_text()==original
+
+
 def test_collector_keeps_trying_after_three_transient_errors(tmp_path,monkeypatch):
     import scripts.collect_kaggle_job as collector
     now=[0];attempts=[]
