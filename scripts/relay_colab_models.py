@@ -25,7 +25,7 @@ def main():
     if not a.remote.startswith('/content/') or '..' in Path(a.remote).parts:p.error('invalid remote root')
     if not 0<a.seconds<=14400 or not 0<a.max_calls<=50000:p.error('invalid finite budget')
     import requests
-    from colab_cli.contents import ContentsClient
+    from scripts.colab_live_contents import LiveContentsClient as ContentsClient
     from colab_cli.state import StateStore
     original=requests.request
     def bounded(*args,**kwargs):
