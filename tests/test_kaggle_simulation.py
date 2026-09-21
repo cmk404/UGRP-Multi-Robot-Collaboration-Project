@@ -59,7 +59,7 @@ def test_submit_never_public_and_does_not_duplicate_dataset(prepared, monkeypatc
     def fake(*args):
         calls.append(args)
         if args[:2] == ('datasets','metadata'):
-            k.write(Path(args[-1])/'dataset-metadata.json', {'isPrivate': True})
+            k.write(Path(args[-1])/'dataset-metadata.json', {'info': {'isPrivate': True}})
         if args[:2] == ('datasets','status'):
             return json.dumps({'status': 'processing' if indexing[0] else 'ready'})
         if args[:2] == ('kernels','push'):
@@ -123,3 +123,17 @@ def test_dataset_error_at_exit_zero_stops_before_status(prepared, monkeypatch):
         k.submit(output)
     assert len(calls)==1
     assert json.loads((output/'job.json').read_text())['stage']=='dataset_create_failed'
+
+
+def test_private_dataset_indexing_403_is_not_resubmitted(prepared, monkeypatch):
+    output,_=prepared
+    calls=[]
+    def fake(*args):
+        calls.append(args)
+        if args[:2]==('datasets','status'):raise RuntimeError('403 Forbidden')
+        return 'Your private Dataset is being created'
+    monkeypatch.setattr(k,'cli',fake)
+    assert k.submit(output)==2
+    assert k.submit(output)==2
+    assert len([c for c in calls if c[:2]==('datasets','create')])==1
+    assert not [c for c in calls if c[:2]==('kernels','push')]

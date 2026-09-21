@@ -149,7 +149,16 @@ def submit(output):
         write(output/'job.json', state)
     if state['stage'] not in {'dataset_submitted', 'dataset_create_requested'}:
         raise ValueError('submission already attempted; use status/collect instead of starting another run')
-    status = json.loads(cli('datasets', 'status', state['dataset'], '--format', 'json'))
+    try:
+        status = json.loads(cli('datasets', 'status', state['dataset'], '--format', 'json'))
+    except RuntimeError as error:
+        # Newly created private datasets can return 403 until indexing finishes.
+        # Preserve uncertainty; never treat this response as ready or recreate.
+        if '403' not in str(error):
+            raise
+        (output/'dataset-status-error.log').write_text(str(error)+'\n')
+        print('Dataset status is not accessible yet (403). Check login/creation log and retry submit later; no new upload was started.')
+        return 2
     write(output/'dataset-status.json', status)
     if str(status['status']).lower().split('.')[-1] not in {'ready', 'complete'}:
         print('Dataset indexing is not ready. Run submit again later; it will not create another dataset.')
@@ -158,6 +167,7 @@ def submit(output):
     remote_meta.mkdir(exist_ok=True)
     cli('datasets', 'metadata', state['dataset'], '-p', remote_meta)
     observed = json.loads((remote_meta/'dataset-metadata.json').read_text())
+    observed = observed.get('info', observed)
     private = observed.get('isPrivate', observed.get('is_private'))
     if private is not True:
         raise ValueError('remote dataset privacy was not confirmed; kernel will not be submitted')
