@@ -98,8 +98,8 @@ def prepare(output, owner=None, *, root=ROOT, module='scripts.sim_quickstart', a
     shutil.copyfile(output/'source.tar.gz', data/('ugrp-source-'+job_id+'.bin'))
     write(data/'source-manifest.json', record)
     write(data/'dataset-metadata.json', {'id': owner+'/'+dataset_slug, 'title': dataset_slug,
-          'licenses': [{'name': 'copyright-authors'}],
-          'description': 'Private UGRP execution source snapshot. Rights remain with the original authors.'})
+          'licenses': [{'name': 'other'}],
+          'description': 'Private execution copy only. Original copyright notices and licenses remain applicable; no additional redistribution license is granted.'})
     metadata = {'id': owner+'/'+kernel_slug, 'title': kernel_slug, 'code_file': 'run.py', 'language': 'python',
                 'kernel_type': 'script', 'is_private': True, 'enable_gpu': False, 'enable_tpu': False,
                 'enable_internet': True, 'dataset_sources': [owner+'/'+dataset_slug],
@@ -124,7 +124,7 @@ def validate(output, state):
     if metadata['id'] != state['kernel'] or metadata['dataset_sources'] != [state['dataset']]:
         raise ValueError('kernel identity/input changed since preparation')
     data = json.loads((output/'dataset/dataset-metadata.json').read_text())
-    if data['id'] != state['dataset'] or data['licenses'] != [{'name': 'copyright-authors'}]:
+    if data['id'] != state['dataset'] or data['licenses'] != [{'name': 'other'}]:
         raise ValueError('dataset identity or source rights metadata changed')
     if digest(output/'kernel/run.py') != state['driver_sha256']:
         raise ValueError('remote driver changed since preparation')
@@ -139,7 +139,12 @@ def submit(output):
         state['stage'] = 'dataset_create_requested'
         write(output/'job.json', state)
         # Omit --public: official CLI creates a private dataset by default.
-        (output/'dataset-create.log').write_text(cli('datasets', 'create', '-p', output/'dataset', '--keep-tabular'))
+        response = cli('datasets', 'create', '-p', output/'dataset', '--keep-tabular')
+        (output/'dataset-create.log').write_text(response)
+        if 'Dataset creation error:' in response:
+            state['stage'] = 'dataset_create_failed'
+            write(output/'job.json', state)
+            raise RuntimeError(response.strip())
         state['stage'] = 'dataset_submitted'
         write(output/'job.json', state)
     if state['stage'] not in {'dataset_submitted', 'dataset_create_requested'}:

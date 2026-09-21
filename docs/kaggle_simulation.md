@@ -31,7 +31,7 @@ Colab과 같은 shallow sparse Git snapshot을 사용하여 실제 커밋 SHA를
 - `kernel/`: 원격 `run.py`와 비공개·CPU 메타데이터. 인터넷은 의존성 설치에 사용한다.
 - `job.json`: 고유 작업 ID·소스 SHA·Dataset/kernel 식별자·제출 단계. 기존 작업의 slug를 재사용하거나 덮어쓰지 않는다.
 
-Dataset의 라이선스는 `copyright-authors`로 원저작자 권리를 보존한다. 공개 배포/CC0로 바꾸지 않는다.
+Dataset의 라이선스 필드는 `other`이며 설명에 기존 저작권·라이선스를 유지하고 추가 재배포 허락을 부여하지 않는 비공개 실행 사본임을 명시한다. 문서에 나열된 `copyright-authors`는 실제 서버에서 거부되어 사용하지 않는다. 공개 배포/CC0로 바꾸지 않는다.
 
 ## 3. 제출·상태 확인
 
@@ -70,6 +70,6 @@ python3 scripts/kaggle_simulation_cli.py collect --output outputs/kaggle-demo-01
 
 ## 현재 검증 범위
 
-로컬 19개 관련 테스트에서 private/CPU 설정, source SHA 보존, 권리 메타데이터, 중복 제출 방지, CLI의 오류 응답, 성공·실패 결과 검증, 변조 및 예상 밖 업로드 파일 차단, 기존 Colab/세션 기능을 확인했다. Kaggle 계정은 아직 인증되지 않았으며 `kaggle quota --format json`이 Authentication required로 종료했다. 실제 Dataset 업로드·Kaggle VM 설치·물리 렌더링·결과 회수는 미검증이다. Colab의 기존 성공을 Kaggle 성공으로 대신 보고하지 않는다.
+로컬 20개 관련 테스트에서 private/CPU 설정, source SHA 보존, 권리 메타데이터, 중복 제출 방지, CLI의 오류 응답, 성공·실패 결과 검증, 변조 및 예상 밖 업로드 파일 차단, 기존 Colab/세션 기능을 확인했다. Kaggle 계정은 아직 인증되지 않았으며 `kaggle quota --format json`이 Authentication required로 종료했다. 실제 Dataset 업로드·Kaggle VM 설치·물리 렌더링·결과 회수는 미검증이다. Colab의 기존 성공을 Kaggle 성공으로 대신 보고하지 않는다.
 
 참고: [공식 kernels 명령](https://github.com/Kaggle/kaggle-cli/blob/main/docs/kernels.md), [Dataset 메타데이터와 라이선스](https://github.com/Kaggle/kaggle-cli/blob/main/docs/datasets_metadata.md), [kernel 메타데이터](https://github.com/Kaggle/kaggle-cli/blob/main/docs/kernels_metadata.md). 실제 플래그는 설치된 `kaggle <명령> --help`를 우선한다.

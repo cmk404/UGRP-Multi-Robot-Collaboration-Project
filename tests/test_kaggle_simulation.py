@@ -31,7 +31,7 @@ def test_preparation_is_private_cpu_and_preserves_rights(prepared):
     assert meta['is_private'] is True
     assert meta['enable_gpu'] is False
     assert meta['dataset_sources'] == [state['dataset']]
-    assert json.loads((output/'dataset/dataset-metadata.json').read_text())['licenses'] == [{'name':'copyright-authors'}]
+    assert json.loads((output/'dataset/dataset-metadata.json').read_text())['licenses'] == [{'name':'other'}]
     assert len(list((output/'dataset').iterdir())) == 3
     compile((output/'kernel/run.py').read_text(), 'kaggle-run.py', 'exec')
     k.validate(output, state)
@@ -110,3 +110,16 @@ def test_refuses_extra_dataset_files(prepared):
     (output/'dataset/unexpected.txt').write_text('do not upload')
     with pytest.raises(ValueError,match='unexpected file'):
         k.validate(output,state)
+
+
+def test_dataset_error_at_exit_zero_stops_before_status(prepared, monkeypatch):
+    output,_=prepared
+    calls=[]
+    def fake(*args):
+        calls.append(args)
+        return 'Dataset creation error: Please select a valid license'
+    monkeypatch.setattr(k,'cli',fake)
+    with pytest.raises(RuntimeError,match='valid license'):
+        k.submit(output)
+    assert len(calls)==1
+    assert json.loads((output/'job.json').read_text())['stage']=='dataset_create_failed'
