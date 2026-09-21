@@ -54,3 +54,9 @@ Colab에서는 이미 회수·검증한 128/256px 8모델+교사 36회 평가를
 사용자가 제공한 Jev 키를 Mac 키체인에 저장하고 read-back을 확인했다. 실제 합성 의미 상태 입력으로 Jev 1.13.0 HTTP 200/0.710s, 기존 Gemini 3.8 Flash loopback HTTP 200/2.158s 및 스킬 응답 형식 검증이 통과했다. 이는 로봇 성공 결과가 아니다. 원본 요청/응답은 로컬 `outputs/cloud-resume/model-probe.json`, 비밀 제외 요약은 `model-connectivity.json`에 있다.
 
 이 시점 재조회에서 기존 ACT Colab 세션은 서버에서 사라졌고 Kaggle rule 코호트는 CANCEL_ACKNOWLEDGED다. 기존 ACT collector를 종료했으며 이 둘을 계속 실행 중으로 보고하지 않는다. 미회수 결과·취소 원인은 확인되지 않았다. 새 CPU Colab 세션 `ugrp-model-compare-20260921`은 생성/IDLE을 확인했다. 비공개 파일 중계로 같은 Colab에서 세 정책을 비교하도록 준비한다. 512 학습은 계속 보류한다.
+
+### Colab 왕복 확인 및 비교 시작
+
+실행 SHA `b5ca7ca6d494dab76cf926c7af3f22dd2146ad08`. 새 Colab CPU에서 합성 의미 상태 요청을 비공개 mailbox로 보내 두 모델 모두 HTTP 200을 회수했다. Jev 총 2.897s/API 0.875s, Gemini 총 4.624s/API 2.617s였다. `colab-model-connectivity.json`에 원본 위치·해시를 기록했다. 키는 Mac 키체인에만 있고 원격에 업로드하지 않았다.
+
+동일 Colab에서 dev_open의 rule/Jev/Gemini 3회 진단을 시작했다. 작성 시점에는 초기 물리 처리 중이며 완료한 로봇 trial은 0회다. 진단의 모델 전송에 실패가 없으면 108회 holdout으로 이어지되 두 단계 합계 3.5시간으로 제한한다. 실제 과제 성공 여부로 조건을 선별하지 않는다. 결과 collector는 중간 결과 JSON/turns와 종료 단계 ZIP을 회수하고 SHA·내부 파일 해시를 검사한 후 이 작업의 relay와 Colab만 종료한다. 로컬 상태: `outputs/cloud-model-compare/collection-status.json`, 중계 기록: `outputs/cloud-model-compare/relay/status.json`. 전체 로컬 검사 1199 passed / 3 skipped / 191 subtests passed. 모델 연결 성공과 로봇 성공률은 별개다.
