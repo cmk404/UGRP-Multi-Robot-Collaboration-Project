@@ -49,7 +49,8 @@ def main():
                 if path.is_absolute() or '..' in path.parts:raise ValueError('unsafe model member')
             bundle.extractall(assets)
         act=ROOT.parent/'act-env'
-        subprocess.run([sys.executable,'-m','venv',str(act)],check=True)
+        subprocess.run([sys.executable,'-m','pip','install','uv'],check=True)
+        subprocess.run([sys.executable,'-m','uv','venv','--seed','--python',sys.executable,str(act)],check=True)
         actpy=act/'bin/python'
         if run([actpy,'-m','pip','install','-r',ROOT/'requirements-reference-act.txt'],'act-install',1500):raise RuntimeError('ACT dependencies failed')
         if run([actpy,ROOT/'scripts/patch_reference_act.py'],'act-patch',60):raise RuntimeError('ACT compatibility patch failed')
