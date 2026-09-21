@@ -10,6 +10,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tarfile
 import uuid
 import zipfile
 
@@ -156,11 +157,17 @@ def reuse_inputs(previous, output, *, module, arguments, refresh_source=False):
     delta = None
     if refresh_source:
         snapshot = pack(ROOT, output/'updated-source')
-        bundle = output/'source-update.bundle'
-        subprocess.run(['git','bundle','create',str(bundle.resolve()),'HEAD','^'+original['source_sha']],cwd=ROOT,check=True)
+        from scripts.kaggle_source_delta import object_delta, apply_source_delta
+        base_copy = output/'base-source';base_copy.mkdir()
+        with tarfile.open(output/'dataset'/filename) as archive:
+            if any(m.issym() or m.islnk() for m in archive.getmembers()):raise ValueError('source links forbidden')
+            archive.extractall(base_copy,filter='data')
+        bundle = output/'source-update.pack'
+        bundle.write_bytes(object_delta(base_copy/'source', output/'updated-source/source'))
         delta = {'base_sha':original['source_sha'],'target_sha':snapshot['source_sha'],
                  'included':snapshot['included'],'sha256':digest(bundle),
                  'content':base64.b64encode(bundle.read_bytes()).decode()}
+        apply_source_delta(base_copy/'source', delta)
         record = {**record, 'source_sha':snapshot['source_sha']}
     (folder/'run.py').write_text(driver(record, job_id, module, arguments,
                                        original['dependencies_sha256'], filename, delta))
