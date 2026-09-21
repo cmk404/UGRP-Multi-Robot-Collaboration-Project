@@ -31,6 +31,7 @@ class MailboxTests(unittest.TestCase):
             until=time.monotonic()+1
             while not list((Path(d)/'requests').glob('*.json')) and time.monotonic()<until:time.sleep(.01)
             path=next((Path(d)/'requests').glob('*.json'));row=json.loads(path.read_text())
+            self.assertGreater(row['expires_unix']-time.time(),80)
             response={'status':'ok','body':{'answer':'x'},'latency_s':.001}
             (Path(d)/'responses'/path.name).write_text(json.dumps({'id':row['id'],'response':response}))
             result=future.result()
@@ -39,6 +40,6 @@ class MailboxTests(unittest.TestCase):
 
     def test_timeout_cleans_pending_request_without_fallback(self):
         with tempfile.TemporaryDirectory() as d:
-            result=MailboxTransport(d)({'model':'jev-1.13.0'},ENDPOINTS['jev'],None,.03)
+            result=MailboxTransport(d,transport_grace_s=0)({'model':'jev-1.13.0'},ENDPOINTS['jev'],None,.03)
             self.assertEqual(result['error_type'],'MailboxTimeout')
             self.assertEqual(list((Path(d)/'requests').iterdir()),[])

@@ -19,7 +19,7 @@ def validate_request(data, now=None):
         raise ValueError('invalid request identity')
     if data['provider'] not in MODELS or data['body'].get('model') != MODELS[data['provider']]:
         raise ValueError('unapproved provider/model')
-    if not now < data['expires_unix'] <= now + 35:
+    if not now < data['expires_unix'] <= now + 125:
         raise ValueError('expired or excessive deadline')
     if len(json.dumps(data,allow_nan=False).encode()) > MAX_BYTES:
         raise ValueError('oversized request')
@@ -27,7 +27,9 @@ def validate_request(data, now=None):
 
 
 class MailboxTransport:
-    def __init__(self, root):
+    def __init__(self, root, *, transport_grace_s=90):
+        if not 0 <= transport_grace_s <= 90: raise ValueError("invalid transport grace")
+        self.transport_grace_s = transport_grace_s
         self.root = Path(root)
         for name in ('requests','responses'):
             (self.root/name).mkdir(parents=True,exist_ok=True)
@@ -38,14 +40,15 @@ class MailboxTransport:
         provider = next((p for p,u in ENDPOINTS.items() if u == url), None)
         start = time.monotonic()
         identity = uuid.uuid4().hex
+        budget = min(timeout,30) + self.transport_grace_s
         request = validate_request({'id':identity,'provider':provider,'body':body,
-                                    'expires_unix':time.time()+min(timeout,30)})
+                                    'expires_unix':time.time()+budget})
         path = self.root/'requests'/f'{identity}.json'
         tmp = path.with_suffix('.tmp')
         tmp.write_text(json.dumps(request,allow_nan=False));tmp.replace(path)
         result_path = self.root/'responses'/path.name
         try:
-            while time.monotonic()-start < min(timeout,30):
+            while time.monotonic()-start < budget:
                 if result_path.exists():
                     # Contents API may expose a file during upload; wait for complete JSON.
                     try: reply = json.loads(result_path.read_text())

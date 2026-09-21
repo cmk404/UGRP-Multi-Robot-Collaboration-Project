@@ -36,7 +36,7 @@ def main():
     if not key:raise ValueError('empty Keychain credential')
     a.output.mkdir(parents=True,exist_ok=False)
     deadline=time.monotonic()+a.seconds
-    seen=set();pending={};stats={'calls':0,'delivered':0,'errors':0,'started_unix':time.time(),'complete':False}
+    seen=set();pending={};expirations={};stats={'calls':0,'delivered':0,'errors':0,'started_unix':time.time(),'complete':False}
     def save():
         tmp=a.output/'status.tmp';tmp.write_text(json.dumps(stats,indent=2)+'\n');tmp.replace(a.output/'status.json')
     def execute(row):
@@ -54,6 +54,9 @@ def main():
                     payload=json.dumps(value,allow_nan=False)
                     (a.output/f'{identity}-response.json').write_text(payload+'\n')
                     path=a.remote+'/responses/'+identity+'.json'
+                    if time.time() >= expirations[identity]:
+                        stats['expired_deliveries']=stats.get('expired_deliveries',0)+1
+                        del pending[identity];save();continue
                     try:
                         client._request('PUT',path,json_data={'type':'file','format':'text','content':payload})
                     except Exception as exc:
@@ -78,7 +81,7 @@ def main():
                         row=validate_request(json.loads(raw))
                         if row['id']!=identity:raise ValueError('identity mismatch')
                         (a.output/(identity+'-request.json')).write_text(json.dumps(row)+'\n')
-                        seen.add(identity);pending[identity]=pool.submit(execute,row);stats['calls']+=1;save()
+                        seen.add(identity);expirations[identity]=row['expires_unix'];pending[identity]=pool.submit(execute,row);stats['calls']+=1;save()
                 except FileNotFoundError:pass
                 except Exception as exc:
                     stats['last_error_type']=type(exc).__name__;stats['errors']+=1;save()
