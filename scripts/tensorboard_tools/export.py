@@ -303,6 +303,23 @@ def export_cloud_job(src, w, data):
             'success_source_field': None}, metrics
 
 
+def export_hardware_probe(src, w, data):
+    torch = obj(data.get('torch'))
+    if type(torch.get('available')) is not bool or type(torch.get('count')) is not int:
+        raise ValueError('No completed GPU inventory evidence')
+    metrics = {'hardware/gpu_count': torch['count'],
+               'hardware/cuda_available': int(torch['available']),
+               'hardware/internet_http_status': data.get('internet_http_status')}
+    for name, value in metrics.items(): w.scalar(name, value)
+    w.text('hardware/inventory', data)
+    provenance = src.read('probe-provenance.json')
+    if provenance: w.text('hardware/provenance', provenance)
+    return {'family':'hardware-probe', 'policy':'environment',
+            'outcome':'gpu_available' if torch['available'] else 'gpu_unavailable',
+            'scope':'Observed cloud devices and connectivity; no robot evaluation',
+            'success_source_field':None}, metrics
+
+
 def convert(source, output, *, max_images=8, media_port=6007):
     """Export one source once. Existing destinations are rejected (no duplicate steps)."""
     source, output = Path(source).resolve(), Path(output).resolve()
@@ -314,6 +331,8 @@ def convert(source, output, *, max_images=8, media_port=6007):
     if isinstance(training, dict) and rows(training.get('progress')):
         kind, data = 'training', training
     elif isinstance(result, dict): kind, data = 'execution', result
+    elif (source / 'gpu-inventory.json').exists():
+        kind, data = 'hardware-probe', src.read('gpu-inventory.json', required=True)
     elif (source / 'run.json').exists():
         kind, data = 'cloud-job', src.read('run.json', required=True)
     elif (source / 'progress.json').exists():
@@ -327,6 +346,7 @@ def convert(source, output, *, max_images=8, media_port=6007):
     try:
         if kind == 'training': meta, metrics = export_training(src, w, data)
         elif kind == 'cloud-job': meta, metrics = export_cloud_job(src, w, data)
+        elif kind == 'hardware-probe': meta, metrics = export_hardware_probe(src, w, data)
         else: meta, metrics = export_execution(src, w, data, max_images)
         videos = []
         for name in ('motion.mp4', 'execution.mp4'):

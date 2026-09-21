@@ -231,3 +231,15 @@ def test_running_cloud_job_is_not_exported_as_complete(tmp_path, export_api):
     with pytest.raises(ValueError, match='terminal process evidence'):
         convert(src, tmp_path/'export')
     assert not list((tmp_path/'export').glob('events.*'))
+
+
+def test_gpu_probe_reports_devices_without_robot_success(tmp_path, export_api):
+    convert, EA = export_api
+    src = tmp_path/'source'; src.mkdir()
+    put(src, 'gpu-inventory.json', {'torch':{'available':True, 'count':2}, 'internet_http_status':200})
+    manifest = convert(src, tmp_path/'export')
+    events = EA(str(tmp_path/'export')).Reload()
+    assert events.Scalars('hardware/gpu_count')[0].value == 2
+    assert events.Scalars('hardware/internet_http_status')[0].value == 200
+    assert 'evaluation/reported_success' not in events.Tags()['scalars']
+    assert manifest['metadata']['outcome'] == 'gpu_available'
