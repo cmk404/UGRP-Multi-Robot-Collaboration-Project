@@ -19,7 +19,12 @@ def apply_source_delta(source, delta):
     if any(Path(p).is_absolute() or '..' in Path(p).parts or '\n' in p for p in paths):
         raise ValueError('unsafe sparse path')
     patterns=''.join('/'+p.replace(' ','\\ ').replace('[','\\[').replace('*','\\*').replace('?','\\?')+'\n' for p in paths)
-    subprocess.run(['git','sparse-checkout','set','--no-cone','--stdin'],input=patterns,text=True,cwd=source,check=True)
+    # Updating patterns through sparse-checkout first re-applies them to the
+    # old shallow tree, whose newly requested blobs need not exist. The base
+    # is already sparse; write its patterns before checking out the new tree.
+    sparse = source/'.git/info/sparse-checkout'
+    sparse.parent.mkdir(parents=True, exist_ok=True)
+    sparse.write_text(patterns)
     (source/'.git/shallow').write_text(delta['target_sha']+'\n')
     subprocess.run(['git','checkout','--detach',delta['target_sha']],cwd=source,check=True)
     if subprocess.check_output(['git','status','--porcelain'],cwd=source).strip():

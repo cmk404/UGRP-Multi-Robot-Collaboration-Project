@@ -79,3 +79,8 @@ Linux wheel을 재사용하려면 `prepare --wheelhouse <폴더>`를 지정한�
 ## 검증된 private Dataset 재사용
 
 새 자료 업로드 없이 동일한 고정 소스를 다른 유한 실행에 쓰려면 `reuse --from-output <이전 출력> --output <새 출력> --module <모듈> -- <인자>`로 새 kernel을 준비한 뒤 `submit --output <새 출력>`을 사용한다. 입력의 전체 해시와 private 설정을 다시 검사하며 기존 kernel/결과를 덮어쓰지 않는다. 실행 SHA는 이전 자료의 SHA이고 새 원격 driver 해시는 별도로 기록한다. `CANCEL_ACKNOWLEDGED`를 포함한 취소 종료도 collect 대상으로 처리한다.
+
+전체 코호트가 기본 30분을 넘는다면 제출 전에 유한한 시간을 지정한다.
+`submit --output <prepared-output> --timeout-seconds 14400`은 최대 4시간으로
+제출하며 해당 값을 `job.json`에 기록한다. 이는 완료 예상 시간이 아니며,
+Kaggle의 실제 할당·실행 상태와 결과 회수는 별도로 검증한다.

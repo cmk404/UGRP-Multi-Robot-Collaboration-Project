@@ -70,3 +70,21 @@ ACT의 `requirements-reference-act.txt`는 시뮬레이션과 NumPy/OpenCV 버�
 relay는 Colab CLI가 설치된 Python에서 `--session`, `--remote`, `--keychain-helper`, `--output`, `--seconds`를 지정해 `ugrp_session.py run`으로 실행한다. 최대 4시간/지정 호출 수까지만 동작하며 종료 시 해당 소유 세션을 정리한다. 요청마다 30초 한도와 고유 ID를 사용하고, 응답 전송 재시도 시 모델 호출을 반복하지 않는다. 임의 URL·모델·만료된 요청을 거부한다.
 
 `latency_s`는 파일 전송을 포함한 실제 대기 시간이며 `provider_latency_s`가 API 응답 시간이다. 이 경로의 continuous 결과를 직접 HTTP 경로의 지연 성능과 합쳐 비교하지 않는다. 동일 소스·동일 Colab 환경에서 rule/Jev/Gemini를 함께 실행하며, 다른 Kaggle/과거 Mac 결과는 별도 실험으로 둔다.
+
+### T4가 배정됐지만 실제 렌더러가 llvmpipe인 경우
+
+`nvidia-smi`의 GPU 배정은 MuJoCo 렌더링 사용 증거가 아니다. Colab의 기존
+`/usr/lib64-nvidia` 라이브러리와 GLVND 등록이 누락된 경우에만 다음 명령으로
+등록하고 새 프로세스의 실제 OpenGL vendor/renderer를 확인한다. 기존의 다른
+등록 내용은 덮어쓰지 않는다. 드라이버 설치나 실행 중 실험 변경은 하지 않는다.
+
+```sh
+python scripts/setup_colab_egl.py --python /content/ugrp-repair/sim-env/bin/python \
+  --output /content/egl-verification-NEW.json
+```
+
+검증된 새 실행에만 출력의 `environment` 세 값(`MUJOCO_GL`,
+`PYOPENGL_PLATFORM`, `__EGL_VENDOR_LIBRARY_FILENAMES`)을 적용한다. renderer가
+NVIDIA인 것을 확인한 후 같은 소스·조건으로 새 코호트를 시작한다. CPU/OSMesa
+결과와 NVIDIA 결과는 렌더러가 다른 진단으로 구분한다. GPU 영상에도 다른 JPEG
+색 무늬가 있으므로 이전 CPU 프레임 재생만으로 GPU 제어 검증을 대신하지 않는다.
