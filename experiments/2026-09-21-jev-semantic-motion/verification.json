@@ -1,0 +1,121 @@
+{
+  "execution_source_sha": "3d45a71c3553f3c2c9b6fb754adf9b541992a63a",
+  "offline_tests": {
+    "command": "python -m pytest -q",
+    "result": "2243 passed, 4 skipped, 229 subtests passed in 257.60s (0:04:17)",
+    "log": {
+      "path": "/Users/changmin/projects/ugrp/outputs/jev-semantic-motion-final-tests.log",
+      "bytes": 2588,
+      "sha256": "e72e1c99fec578c0326d7c60e69d69ec9446b7a44d05839b63d4435e892bfd8d"
+    }
+  },
+  "rgb_decisions_reconstructed": 9115,
+  "control_image_hashes": 18230,
+  "episodes_audited": 195,
+  "raw_videos_fully_decoded": 195,
+  "comparison_video": {
+    "path": "/Users/changmin/projects/ugrp/outputs/jev-semantic-motion-review-20260921/comparison.mp4",
+    "bytes": 2990889,
+    "sha256": "1165feb7f16af3e56e5d7f6175bb7f9a8f50d063d533bc1d57deb3528155c4c8",
+    "codec_name": "h264",
+    "width": 2000,
+    "height": 990,
+    "duration": "78.000000",
+    "nb_frames": "312",
+    "full_decode": "passed",
+    "scope": "all 12 new starts, repeat 0 only, five arms; decision-step clock"
+  },
+  "visual_qa": {
+    "previews": [
+      {
+        "path": "/Users/changmin/projects/ugrp/outputs/jev-semantic-motion-review-20260921/preview-g0-000.jpg",
+        "bytes": 346974,
+        "sha256": "304e672855076b2fc4b34b3e40be6b405385c294e255a658e46be6020ffd1409"
+      },
+      {
+        "path": "/Users/changmin/projects/ugrp/outputs/jev-semantic-motion-review-20260921/preview-g0-039.jpg",
+        "bytes": 341595,
+        "sha256": "ed506647073fb5d9a2c8dffe343d664fede749c83c5a100df48249bb2022e8da"
+      },
+      {
+        "path": "/Users/changmin/projects/ugrp/outputs/jev-semantic-motion-review-20260921/preview-g0-077.jpg",
+        "bytes": 336483,
+        "sha256": "017097a757ca3e9660d0551377b34569932a2be040931714001c21ef827c3ba3"
+      },
+      {
+        "path": "/Users/changmin/projects/ugrp/outputs/jev-semantic-motion-review-20260921/preview-g1-000.jpg",
+        "bytes": 349429,
+        "sha256": "a2dd94039d08b0fe9f72d0bdf861982ac91674ea2ac5cc3882aab25cf76cfa07"
+      },
+      {
+        "path": "/Users/changmin/projects/ugrp/outputs/jev-semantic-motion-review-20260921/preview-g1-039.jpg",
+        "bytes": 349293,
+        "sha256": "962441721929b48db475f6295174924549f414102d6ef3baaf3b2ce5a56e27cf"
+      },
+      {
+        "path": "/Users/changmin/projects/ugrp/outputs/jev-semantic-motion-review-20260921/preview-g1-077.jpg",
+        "bytes": 337697,
+        "sha256": "13a2d317e751724e493d871aefa3f7fa22f1ba9754ee03e23a0eb508f8248a68"
+      },
+      {
+        "path": "/Users/changmin/projects/ugrp/outputs/jev-semantic-motion-review-20260921/preview-g2-000.jpg",
+        "bytes": 349664,
+        "sha256": "f2d7c850490c87211568e9ca6848897030baa30a8b20ade9cab4906d1cc6ca8f"
+      },
+      {
+        "path": "/Users/changmin/projects/ugrp/outputs/jev-semantic-motion-review-20260921/preview-g2-039.jpg",
+        "bytes": 348443,
+        "sha256": "6945ef9fa36d00a4ed3f190d55b5fc53059e0ed30a445e031e5f2e2927d38f2b"
+      },
+      {
+        "path": "/Users/changmin/projects/ugrp/outputs/jev-semantic-motion-review-20260921/preview-g2-077.jpg",
+        "bytes": 337459,
+        "sha256": "638fbcf6d5e8ad77730323bd4846478388a9ada5e12d1437b12862e5b12472a7"
+      },
+      {
+        "path": "/Users/changmin/projects/ugrp/outputs/jev-semantic-motion-review-20260921/preview-g3-000.jpg",
+        "bytes": 351413,
+        "sha256": "f7e17a17988c376e33c7606a42496c28d3d724aec6999281fe4677371228ebf7"
+      },
+      {
+        "path": "/Users/changmin/projects/ugrp/outputs/jev-semantic-motion-review-20260921/preview-g3-039.jpg",
+        "bytes": 349889,
+        "sha256": "7bd12317d46684fa22aeab85d4d820f0c379d34f2e44d1ff451435f65645f068"
+      },
+      {
+        "path": "/Users/changmin/projects/ugrp/outputs/jev-semantic-motion-review-20260921/preview-g3-077.jpg",
+        "bytes": 336985,
+        "sha256": "5c5834e9e76f4fb32386a0c7733d82d2bc7499176467ffc27febbda34740e2e1"
+      }
+    ],
+    "scope": "start, middle and end of all four comparison pages; both result matrices; not all 195 videos watched in full",
+    "result": "labels, all robots and target visible; PASS* marks only output-time roundoff corrections"
+  },
+  "postrun_only_evaluation_fix": {
+    "abs_tolerance_s": 1e-09,
+    "raw_verdicts_retained": true,
+    "all_195_recomputed": true,
+    "no_new_model_calls_or_reexecuted_trajectories": true
+  },
+  "contact_or_weld_violations": 0,
+  "camera_geometry_changes": 0,
+  "owned_process_group_remaining": 0,
+  "tools": [
+    {
+      "path": "/Users/changmin/.codex/worktrees/jev-direct-motion/ugrp/scripts/audit_jev_semantic_cohort.py",
+      "bytes": 9804,
+      "sha256": "1482b9a9ddf3a84b4092a83d3a06532208c15c15559fa92abdbec24bc8e5a5bb"
+    },
+    {
+      "path": "/Users/changmin/.codex/worktrees/jev-direct-motion/ugrp/scripts/render_jev_semantic_cohort.py",
+      "bytes": 2992,
+      "sha256": "4a387d656924eaccb92cc0c701b11b68362e0183863428575c7200b8162fa0ad"
+    },
+    {
+      "path": "/Users/changmin/.codex/worktrees/jev-direct-motion/ugrp/scripts/plot_jev_semantic_cohort.py",
+      "bytes": 2416,
+      "sha256": "3341878016a722e0cd4f2ad3e03646b6d406db7c3d62ff392824c538dd3fa745"
+    }
+  ],
+  "raw_storage": "local only; compressed request/turn records and SHA manifest committed"
+}

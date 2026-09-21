@@ -1,0 +1,896 @@
+[
+  {
+    "path": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-dev-v1/rule-dev/result.json",
+    "source_sha": "5a7caebe91a99712d12c21034547a115c1318f86",
+    "policy": "rule",
+    "case": "dev",
+    "goal": {
+      "range_m": [
+        0.26,
+        0.3
+      ],
+      "absolute_bearing_deg_max": 6.0,
+      "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+    },
+    "success": false,
+    "clock": "paused SIM during inference; not real-time control",
+    "scope": "single robot approach and alignment, no grasp or carry",
+    "stop_reason": "error",
+    "error": {
+      "type": "ValueError",
+      "message": "rigid chassis feature coverage lost"
+    },
+    "model_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": null,
+    "camera_geometry_unchanged": true,
+    "weld_steps": 0,
+    "cargo_contact_steps": 0,
+    "obstacle_contact_steps": 0,
+    "final_evaluation": {
+      "sim_s": 2.2639999999999723,
+      "position": [
+        -0.7811093040018618,
+        -2.6499999938744088,
+        0.03235512943604566
+      ],
+      "heading_deg": 3.7039574968330224e-07,
+      "range_m": 0.6011093040018618,
+      "bearing_deg": -9.542671389669264e-07,
+      "box_position": [
+        -0.18,
+        -2.65,
+        0.015892244581553732
+      ]
+    },
+    "sim_s": 2.2999999999999683,
+    "commands": 3,
+    "wall_s": 1.8101200419769157,
+    "turns": 0
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-dev-v2/rule-dev/result.json",
+    "source_sha": "7a927f63580b08be8e7a8d16a05468c512f25752",
+    "policy": "rule",
+    "case": "dev",
+    "goal": {
+      "range_m": [
+        0.26,
+        0.3
+      ],
+      "absolute_bearing_deg_max": 6.0,
+      "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+    },
+    "success": false,
+    "clock": "paused SIM during inference; not real-time control",
+    "scope": "single robot approach and alignment, no grasp or carry",
+    "stop_reason": "error",
+    "error": {
+      "type": "ValueError",
+      "message": "yield robot wheel geometry unresolved in RGB"
+    },
+    "model_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": null,
+    "camera_geometry_unchanged": true,
+    "weld_steps": 0,
+    "cargo_contact_steps": 0,
+    "obstacle_contact_steps": 0,
+    "final_evaluation": {
+      "sim_s": 4.291999999999749,
+      "position": [
+        -0.7183608775911265,
+        -2.649999994069353,
+        0.03235599505521898
+      ],
+      "heading_deg": 1.4804545947091947e-06,
+      "range_m": 0.5383608775911267,
+      "bearing_deg": -2.111631675895637e-06,
+      "box_position": [
+        -0.18,
+        -2.65,
+        0.015892244581616883
+      ]
+    },
+    "sim_s": 4.2999999999997485,
+    "commands": 11,
+    "wall_s": 4.701095583994174,
+    "turns": 8
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-dev-v3/rule-dev/result.json",
+    "source_sha": "bd054ace1c244133f78dd154297a21ed278780ca",
+    "policy": "rule",
+    "case": "dev",
+    "goal": {
+      "range_m": [
+        0.26,
+        0.3
+      ],
+      "absolute_bearing_deg_max": 6.0,
+      "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+    },
+    "success": false,
+    "clock": "paused SIM during inference; not real-time control",
+    "scope": "single robot approach and alignment, no grasp or carry",
+    "stop_reason": "RGB_goal_confirmed",
+    "error": null,
+    "model_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": null,
+    "camera_geometry_unchanged": true,
+    "weld_steps": 0,
+    "cargo_contact_steps": 0,
+    "obstacle_contact_steps": 0,
+    "final_evaluation": {
+      "sim_s": 13.300000000001111,
+      "position": [
+        -0.48581552570813413,
+        -2.66040840107141,
+        0.03235512084543335
+      ],
+      "heading_deg": -2.2391869891092675,
+      "range_m": 0.30599259889253166,
+      "bearing_deg": 4.188490717180632,
+      "box_position": [
+        -0.18,
+        -2.65,
+        0.01589224458164871
+      ]
+    },
+    "sim_s": 13.300000000001111,
+    "commands": 45,
+    "wall_s": 14.856777332985075,
+    "turns": 41
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-dev-v4/rule-dev/result.json",
+    "source_sha": "281476d02ad9422ec922fe79d75857357489071c",
+    "policy": "rule",
+    "case": "dev",
+    "goal": {
+      "range_m": [
+        0.27,
+        0.28
+      ],
+      "absolute_bearing_deg_max": 3.0,
+      "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+    },
+    "success": true,
+    "clock": "paused SIM during inference; not real-time control",
+    "scope": "single robot approach and alignment, no grasp or carry",
+    "stop_reason": "RGB_goal_confirmed",
+    "error": null,
+    "model_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": null,
+    "camera_geometry_unchanged": true,
+    "weld_steps": 0,
+    "cargo_contact_steps": 0,
+    "obstacle_contact_steps": 0,
+    "final_evaluation": {
+      "sim_s": 12.800000000000944,
+      "position": [
+        -0.4659130938290266,
+        -2.649999990596378,
+        0.03235512084517092
+      ],
+      "heading_deg": 4.913688020993564e-07,
+      "range_m": 0.2859130938290268,
+      "bearing_deg": -2.3758150106251097e-06,
+      "box_position": [
+        -0.18,
+        -2.65,
+        0.015892244581674445
+      ]
+    },
+    "sim_s": 12.800000000000944,
+    "commands": 43,
+    "wall_s": 14.289945791999344,
+    "turns": 39
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-dev-v4/rule-dev_yaw/result.json",
+    "source_sha": "281476d02ad9422ec922fe79d75857357489071c",
+    "policy": "rule",
+    "case": "dev_yaw",
+    "goal": {
+      "range_m": [
+        0.27,
+        0.28
+      ],
+      "absolute_bearing_deg_max": 3.0,
+      "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+    },
+    "success": false,
+    "clock": "paused SIM during inference; not real-time control",
+    "scope": "single robot approach and alignment, no grasp or carry",
+    "stop_reason": "error",
+    "error": {
+      "type": "ValueError",
+      "message": "own_forward_probe_not_visually_resolved"
+    },
+    "model_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": null,
+    "camera_geometry_unchanged": true,
+    "weld_steps": 0,
+    "cargo_contact_steps": 0,
+    "obstacle_contact_steps": 0,
+    "final_evaluation": {
+      "sim_s": 2.2639999999999723,
+      "position": [
+        -0.761293147838357,
+        -2.6973709172058475,
+        0.032355129436045654
+      ],
+      "heading_deg": 8.000000355816042,
+      "range_m": 0.5832201364157013,
+      "bearing_deg": -3.34113032138781,
+      "box_position": [
+        -0.18,
+        -2.65,
+        0.015892244581553732
+      ]
+    },
+    "sim_s": 2.2999999999999683,
+    "commands": 3,
+    "wall_s": 1.1387190829846077,
+    "turns": 0
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-dev-v5/rule-dev/result.json",
+    "source_sha": "b000b12262a15baa7c879a6f59aebfc69aada498",
+    "policy": "rule",
+    "case": "dev",
+    "goal": {
+      "range_m": [
+        0.27,
+        0.28
+      ],
+      "absolute_bearing_deg_max": 3.0,
+      "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+    },
+    "success": true,
+    "clock": "paused SIM during inference; not real-time control",
+    "scope": "single robot approach and alignment, no grasp or carry",
+    "stop_reason": "RGB_goal_confirmed",
+    "error": null,
+    "model_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": null,
+    "camera_geometry_unchanged": true,
+    "weld_steps": 0,
+    "cargo_contact_steps": 0,
+    "peer_contact_steps": 0,
+    "obstacle_contact_steps": 0,
+    "final_evaluation": {
+      "sim_s": 12.800000000000944,
+      "position": [
+        -0.46658542668834596,
+        -2.6499999833219454,
+        0.03235512084516428
+      ],
+      "heading_deg": 1.8430428602251287e-06,
+      "range_m": 0.28658542668834647,
+      "bearing_deg": -5.1774138534569225e-06,
+      "box_position": [
+        -0.18,
+        -2.65,
+        0.015892244581674445
+      ]
+    },
+    "sim_s": 12.800000000000944,
+    "commands": 43,
+    "wall_s": 13.682331082993187,
+    "turns": 36
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-dev-v5/rule-dev_yaw/result.json",
+    "source_sha": "b000b12262a15baa7c879a6f59aebfc69aada498",
+    "policy": "rule",
+    "case": "dev_yaw",
+    "goal": {
+      "range_m": [
+        0.27,
+        0.28
+      ],
+      "absolute_bearing_deg_max": 3.0,
+      "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+    },
+    "success": true,
+    "clock": "paused SIM during inference; not real-time control",
+    "scope": "single robot approach and alignment, no grasp or carry",
+    "stop_reason": "RGB_goal_confirmed",
+    "error": null,
+    "model_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": null,
+    "camera_geometry_unchanged": true,
+    "weld_steps": 0,
+    "cargo_contact_steps": 0,
+    "peer_contact_steps": 0,
+    "obstacle_contact_steps": 0,
+    "final_evaluation": {
+      "sim_s": 13.800000000001278,
+      "position": [
+        -0.4685300382514898,
+        -2.6700295174911743,
+        0.03235512084542483
+      ],
+      "heading_deg": 4.583758986894929,
+      "range_m": 0.28922441899731677,
+      "bearing_deg": -0.6127038785117092,
+      "box_position": [
+        -0.18,
+        -2.65,
+        0.015892244581663585
+      ]
+    },
+    "sim_s": 13.800000000001278,
+    "commands": 47,
+    "wall_s": 14.861157250008546,
+    "turns": 40
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-final-v1/gemini-left_offset/result.json",
+    "source_sha": "dfca6d7ad889054c4350049610abee2489895f47",
+    "policy": "gemini",
+    "case": "left_offset",
+    "goal": {
+      "range_m": [
+        0.27,
+        0.28
+      ],
+      "absolute_bearing_deg_max": 3.0,
+      "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+    },
+    "success": true,
+    "clock": "paused SIM during inference; not real-time control",
+    "scope": "single robot approach and alignment, no grasp or carry",
+    "stop_reason": "RGB_goal_confirmed",
+    "error": null,
+    "model_calls": 50,
+    "input_tokens": 26360,
+    "output_tokens": 520,
+    "cost_usd": null,
+    "model": "gemini-3.8-flash",
+    "camera_geometry_unchanged": true,
+    "weld_steps": 0,
+    "cargo_contact_steps": 0,
+    "peer_contact_steps": 0,
+    "obstacle_contact_steps": 0,
+    "final_evaluation": {
+      "sim_s": 17.05000000000143,
+      "position": [
+        -0.4648997444925118,
+        -2.6870302332860923,
+        0.03235512084493117
+      ],
+      "heading_deg": 7.920746166459329,
+      "range_m": 0.2872961931337082,
+      "bearing_deg": -0.5151657010730629,
+      "box_position": [
+        -0.18,
+        -2.65,
+        0.01589224458163786
+      ]
+    },
+    "sim_s": 17.05000000000143,
+    "commands": 60,
+    "wall_s": 155.05184283299604,
+    "turns": 53
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-final-v1/gemini-right_offset/result.json",
+    "source_sha": "dfca6d7ad889054c4350049610abee2489895f47",
+    "policy": "gemini",
+    "case": "right_offset",
+    "goal": {
+      "range_m": [
+        0.27,
+        0.28
+      ],
+      "absolute_bearing_deg_max": 3.0,
+      "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+    },
+    "success": false,
+    "clock": "paused SIM during inference; not real-time control",
+    "scope": "single robot approach and alignment, no grasp or carry",
+    "stop_reason": "error",
+    "error": {
+      "type": "ValueError",
+      "message": "four_wheel_envelope_unresolved"
+    },
+    "model_calls": 25,
+    "input_tokens": 12993,
+    "output_tokens": 262,
+    "cost_usd": null,
+    "model": "gemini-3.8-flash",
+    "camera_geometry_unchanged": true,
+    "weld_steps": 0,
+    "cargo_contact_steps": 0,
+    "peer_contact_steps": 0,
+    "obstacle_contact_steps": 0,
+    "final_evaluation": {
+      "sim_s": 9.28399999999977,
+      "position": [
+        -0.5137309090023674,
+        -2.601156706777051,
+        0.03235601697857097
+      ],
+      "heading_deg": -11.415348759968039,
+      "range_m": 0.3372862091998565,
+      "bearing_deg": 3.088921280672851,
+      "box_position": [
+        -0.18,
+        -2.65,
+        0.015892244581698984
+      ]
+    },
+    "sim_s": 9.299999999999775,
+    "commands": 31,
+    "wall_s": 61.07708370799082,
+    "turns": 25
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-final-v1/gemini-straight/result.json",
+    "source_sha": "dfca6d7ad889054c4350049610abee2489895f47",
+    "policy": "gemini",
+    "case": "straight",
+    "goal": {
+      "range_m": [
+        0.27,
+        0.28
+      ],
+      "absolute_bearing_deg_max": 3.0,
+      "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+    },
+    "success": true,
+    "clock": "paused SIM during inference; not real-time control",
+    "scope": "single robot approach and alignment, no grasp or carry",
+    "stop_reason": "RGB_goal_confirmed",
+    "error": null,
+    "model_calls": 40,
+    "input_tokens": 20955,
+    "output_tokens": 400,
+    "cost_usd": null,
+    "model": "gemini-3.8-flash",
+    "camera_geometry_unchanged": true,
+    "weld_steps": 0,
+    "cargo_contact_steps": 0,
+    "peer_contact_steps": 0,
+    "obstacle_contact_steps": 0,
+    "final_evaluation": {
+      "sim_s": 14.550000000001528,
+      "position": [
+        -0.4654211826880936,
+        -2.6499999810773445,
+        0.03235512084472814
+      ],
+      "heading_deg": 1.8040788744044303e-06,
+      "range_m": 0.2854211826880943,
+      "bearing_deg": -5.602634702040568e-06,
+      "box_position": [
+        -0.18,
+        -2.65,
+        0.01589224458164462
+      ]
+    },
+    "sim_s": 14.550000000001528,
+    "commands": 50,
+    "wall_s": 108.69964354098192,
+    "turns": 43
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-final-v1/jev-left_offset/result.json",
+    "source_sha": "dfca6d7ad889054c4350049610abee2489895f47",
+    "policy": "jev",
+    "case": "left_offset",
+    "goal": {
+      "range_m": [
+        0.27,
+        0.28
+      ],
+      "absolute_bearing_deg_max": 3.0,
+      "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+    },
+    "success": false,
+    "clock": "paused SIM during inference; not real-time control",
+    "scope": "single robot approach and alignment, no grasp or carry",
+    "stop_reason": "error",
+    "error": {
+      "type": "ValueError",
+      "message": "four_wheel_envelope_unresolved"
+    },
+    "model_calls": 24,
+    "input_tokens": 20358,
+    "output_tokens": 1680,
+    "cost_usd": null,
+    "model": "jev-1.13.0",
+    "camera_geometry_unchanged": true,
+    "weld_steps": 0,
+    "cargo_contact_steps": 0,
+    "peer_contact_steps": 0,
+    "obstacle_contact_steps": 0,
+    "final_evaluation": {
+      "sim_s": 9.033999999999686,
+      "position": [
+        -0.7951290992368321,
+        -2.740608709728049,
+        0.032355365520462254
+      ],
+      "heading_deg": 17.904175229356532,
+      "range_m": 0.6217666338800261,
+      "bearing_deg": -9.52474606342678,
+      "box_position": [
+        -0.18,
+        -2.65,
+        0.015892244581613875
+      ]
+    },
+    "sim_s": 9.049999999999692,
+    "commands": 30,
+    "wall_s": 22.858141791977687,
+    "turns": 24
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-final-v1/jev-right_offset/result.json",
+    "source_sha": "dfca6d7ad889054c4350049610abee2489895f47",
+    "policy": "jev",
+    "case": "right_offset",
+    "goal": {
+      "range_m": [
+        0.27,
+        0.28
+      ],
+      "absolute_bearing_deg_max": 3.0,
+      "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+    },
+    "success": false,
+    "clock": "paused SIM during inference; not real-time control",
+    "scope": "single robot approach and alignment, no grasp or carry",
+    "stop_reason": "error",
+    "error": {
+      "type": "ValueError",
+      "message": "four_wheel_envelope_unresolved"
+    },
+    "model_calls": 19,
+    "input_tokens": 15882,
+    "output_tokens": 1311,
+    "cost_usd": null,
+    "model": "jev-1.13.0",
+    "camera_geometry_unchanged": true,
+    "weld_steps": 0,
+    "cargo_contact_steps": 0,
+    "peer_contact_steps": 0,
+    "obstacle_contact_steps": 0,
+    "final_evaluation": {
+      "sim_s": 7.775999999999366,
+      "position": [
+        -0.5568670852125377,
+        -2.5931772212541233,
+        0.032356222215014184
+      ],
+      "heading_deg": -11.999997328610188,
+      "range_m": 0.38112678743562095,
+      "bearing_deg": 3.4257138166382384,
+      "box_position": [
+        -0.18,
+        -2.65,
+        0.015892244581642685
+      ]
+    },
+    "sim_s": 7.799999999999363,
+    "commands": 25,
+    "wall_s": 19.177399292006157,
+    "turns": 19
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-final-v1/jev-straight/result.json",
+    "source_sha": "dfca6d7ad889054c4350049610abee2489895f47",
+    "policy": "jev",
+    "case": "straight",
+    "goal": {
+      "range_m": [
+        0.27,
+        0.28
+      ],
+      "absolute_bearing_deg_max": 3.0,
+      "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+    },
+    "success": false,
+    "clock": "paused SIM during inference; not real-time control",
+    "scope": "single robot approach and alignment, no grasp or carry",
+    "stop_reason": "error",
+    "error": {
+      "type": "ValueError",
+      "message": "invalid Jev distribution"
+    },
+    "model_calls": 65,
+    "input_tokens": 55433,
+    "output_tokens": 4486,
+    "cost_usd": null,
+    "model": "jev-1.13.0",
+    "camera_geometry_unchanged": true,
+    "weld_steps": 0,
+    "cargo_contact_steps": 0,
+    "peer_contact_steps": 0,
+    "obstacle_contact_steps": 0,
+    "final_evaluation": {
+      "sim_s": 19.000000000000348,
+      "position": [
+        -0.47415893166050027,
+        -2.649999981414769,
+        0.032355120844702885
+      ],
+      "heading_deg": 1.8025766579616164e-06,
+      "range_m": 0.2941589316605009,
+      "bearing_deg": -5.422576555191495e-06,
+      "box_position": [
+        -0.18,
+        -2.65,
+        0.015892244581616397
+      ]
+    },
+    "sim_s": 19.05000000000032,
+    "commands": 70,
+    "wall_s": 61.13655966700753,
+    "turns": 64
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-final-v1/rule-left_offset/result.json",
+    "source_sha": "dfca6d7ad889054c4350049610abee2489895f47",
+    "policy": "rule",
+    "case": "left_offset",
+    "goal": {
+      "range_m": [
+        0.27,
+        0.28
+      ],
+      "absolute_bearing_deg_max": 3.0,
+      "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+    },
+    "success": true,
+    "clock": "paused SIM during inference; not real-time control",
+    "scope": "single robot approach and alignment, no grasp or carry",
+    "stop_reason": "RGB_goal_confirmed",
+    "error": null,
+    "model_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": null,
+    "camera_geometry_unchanged": true,
+    "weld_steps": 0,
+    "cargo_contact_steps": 0,
+    "peer_contact_steps": 0,
+    "obstacle_contact_steps": 0,
+    "final_evaluation": {
+      "sim_s": 16.050000000001983,
+      "position": [
+        -0.4629612755619428,
+        -2.687758507024392,
+        0.03235512084491301
+      ],
+      "heading_deg": 8.048341541187018,
+      "range_m": 0.2854694174869749,
+      "bearing_deg": -0.4476627390777449,
+      "box_position": [
+        -0.18,
+        -2.65,
+        0.015892244581562732
+      ]
+    },
+    "sim_s": 16.050000000001983,
+    "commands": 56,
+    "wall_s": 16.786212000006344,
+    "turns": 49
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-final-v1/rule-right_offset/result.json",
+    "source_sha": "dfca6d7ad889054c4350049610abee2489895f47",
+    "policy": "rule",
+    "case": "right_offset",
+    "goal": {
+      "range_m": [
+        0.27,
+        0.28
+      ],
+      "absolute_bearing_deg_max": 3.0,
+      "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+    },
+    "success": false,
+    "clock": "paused SIM during inference; not real-time control",
+    "scope": "single robot approach and alignment, no grasp or carry",
+    "stop_reason": "error",
+    "error": {
+      "type": "ValueError",
+      "message": "four_wheel_envelope_unresolved"
+    },
+    "model_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": null,
+    "camera_geometry_unchanged": true,
+    "weld_steps": 0,
+    "cargo_contact_steps": 0,
+    "peer_contact_steps": 0,
+    "obstacle_contact_steps": 0,
+    "final_evaluation": {
+      "sim_s": 9.28399999999977,
+      "position": [
+        -0.5137309090023674,
+        -2.601156706777051,
+        0.03235601697857097
+      ],
+      "heading_deg": -11.415348759968039,
+      "range_m": 0.3372862091998565,
+      "bearing_deg": 3.088921280672851,
+      "box_position": [
+        -0.18,
+        -2.65,
+        0.015892244581698984
+      ]
+    },
+    "sim_s": 9.299999999999775,
+    "commands": 31,
+    "wall_s": 9.691172791994177,
+    "turns": 25
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-final-v1/rule-straight/result.json",
+    "source_sha": "dfca6d7ad889054c4350049610abee2489895f47",
+    "policy": "rule",
+    "case": "straight",
+    "goal": {
+      "range_m": [
+        0.27,
+        0.28
+      ],
+      "absolute_bearing_deg_max": 3.0,
+      "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+    },
+    "success": true,
+    "clock": "paused SIM during inference; not real-time control",
+    "scope": "single robot approach and alignment, no grasp or carry",
+    "stop_reason": "RGB_goal_confirmed",
+    "error": null,
+    "model_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": null,
+    "camera_geometry_unchanged": true,
+    "weld_steps": 0,
+    "cargo_contact_steps": 0,
+    "peer_contact_steps": 0,
+    "obstacle_contact_steps": 0,
+    "final_evaluation": {
+      "sim_s": 14.550000000001528,
+      "position": [
+        -0.4654211826880936,
+        -2.6499999810773445,
+        0.03235512084472814
+      ],
+      "heading_deg": 1.8040788744044303e-06,
+      "range_m": 0.2854211826880943,
+      "bearing_deg": -5.602634702040568e-06,
+      "box_position": [
+        -0.18,
+        -2.65,
+        0.01589224458164462
+      ]
+    },
+    "sim_s": 14.550000000001528,
+    "commands": 50,
+    "wall_s": 16.56874262500787,
+    "turns": 43
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-model-dev-v1/gemini-dev/result.json",
+    "source_sha": "b000b12262a15baa7c879a6f59aebfc69aada498",
+    "policy": "gemini",
+    "case": "dev",
+    "goal": {
+      "range_m": [
+        0.27,
+        0.28
+      ],
+      "absolute_bearing_deg_max": 3.0,
+      "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+    },
+    "success": true,
+    "clock": "paused SIM during inference; not real-time control",
+    "scope": "single robot approach and alignment, no grasp or carry",
+    "stop_reason": "RGB_goal_confirmed",
+    "error": null,
+    "model_calls": 33,
+    "input_tokens": 17250,
+    "output_tokens": 353,
+    "cost_usd": null,
+    "model": "gemini-3.8-flash",
+    "camera_geometry_unchanged": true,
+    "weld_steps": 0,
+    "cargo_contact_steps": 0,
+    "peer_contact_steps": 0,
+    "obstacle_contact_steps": 0,
+    "final_evaluation": {
+      "sim_s": 12.800000000000944,
+      "position": [
+        -0.46658542668834596,
+        -2.6499999833219454,
+        0.03235512084516428
+      ],
+      "heading_deg": 1.8430428602251287e-06,
+      "range_m": 0.28658542668834647,
+      "bearing_deg": -5.1774138534569225e-06,
+      "box_position": [
+        -0.18,
+        -2.65,
+        0.015892244581674445
+      ]
+    },
+    "sim_s": 12.800000000000944,
+    "commands": 43,
+    "wall_s": 107.75669174999348,
+    "turns": 36
+  },
+  {
+    "path": "/Users/changmin/projects/ugrp/outputs/jev-direct-motion-20260921-model-dev-v1/jev-dev/result.json",
+    "source_sha": "b000b12262a15baa7c879a6f59aebfc69aada498",
+    "policy": "jev",
+    "case": "dev",
+    "goal": {
+      "range_m": [
+        0.27,
+        0.28
+      ],
+      "absolute_bearing_deg_max": 3.0,
+      "description": "Approach the cyan box, face its center, stop without touching it. No grasp."
+    },
+    "success": false,
+    "clock": "paused SIM during inference; not real-time control",
+    "scope": "single robot approach and alignment, no grasp or carry",
+    "stop_reason": "error",
+    "error": {
+      "type": "ValueError",
+      "message": "invalid Jev distribution"
+    },
+    "model_calls": 29,
+    "input_tokens": 24574,
+    "output_tokens": 2003,
+    "cost_usd": null,
+    "model": "jev-1.13.0",
+    "camera_geometry_unchanged": true,
+    "weld_steps": 0,
+    "cargo_contact_steps": 0,
+    "peer_contact_steps": 0,
+    "obstacle_contact_steps": 0,
+    "final_evaluation": {
+      "sim_s": 10.03400000000002,
+      "position": [
+        -0.5308696455246231,
+        -2.6500711515088122,
+        0.032356016488488896
+      ],
+      "heading_deg": -0.01733086128598831,
+      "range_m": 0.35086965273889376,
+      "bearing_deg": 0.02894965235854808,
+      "box_position": [
+        -0.18,
+        -2.65,
+        0.015892244581667367
+      ]
+    },
+    "sim_s": 10.050000000000026,
+    "commands": 34,
+    "wall_s": 28.563541791023454,
+    "turns": 28
+  }
+]

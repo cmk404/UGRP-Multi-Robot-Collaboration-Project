@@ -18,6 +18,7 @@ TEST_PATTERNS = (
     "tests/test_multi_object_execution.py",
     "tests/test_act_map_suite.py",
     "tests/test_jev_execution_shadow.py",
+    "tests/test_jev_motion.py",
     "tests/test_act_speed_generalization.py",
     "tests/test_act_recovery.py", "tests/test_recovery_commands.py",
     "tests/test_reference_approach_data.py",

@@ -1,0 +1,2162 @@
+[
+  {
+    "seq": 0,
+    "sample": "final-v2/jev-left_offset/000",
+    "partition": "observed_failure",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 1,
+    "choice": "turn_right",
+    "reference_rule_action": "turn_right",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "turn_right",
+      "confidence": 1.0,
+      "probabilities": {
+        "turn_right": 1.0,
+        "turn_left": 0.0,
+        "right": 0.0,
+        "backward": 0.0,
+        "left": 0.0,
+        "forward": 0.0,
+        "stop": 0.0
+      }
+    },
+    "latency_s": 0.5428635419812053,
+    "usage": {
+      "input_tokens": 827,
+      "output_tokens": 70
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 1,
+    "sample": "final-v2/jev-left_offset/010",
+    "partition": "observed_failure",
+    "variant": "semantic_state",
+    "repeat": 0,
+    "choice": "turn_right",
+    "reference_rule_action": "turn_right",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "turn_right",
+      "confidence": 0.64,
+      "probabilities": {
+        "left": 0.01,
+        "backward": 0.0,
+        "forward": 0.12,
+        "stop": 0.02,
+        "right": 0.06,
+        "turn_left": 0.1,
+        "turn_right": 0.69
+      }
+    },
+    "latency_s": 0.4790040839870926,
+    "usage": {
+      "input_tokens": 889,
+      "output_tokens": 70
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 2,
+    "sample": "dev-v5/rule-dev/035",
+    "partition": "development",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 0,
+    "choice": "stop",
+    "reference_rule_action": "stop",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 1.0,
+      "probabilities": {
+        "turn_right": 0.0,
+        "stop": 1.0,
+        "forward": 0.0,
+        "right": 0.0,
+        "backward": 0.0,
+        "turn_left": 0.0,
+        "left": 0.0
+      }
+    },
+    "latency_s": 0.48976095800753683,
+    "usage": {
+      "input_tokens": 1075,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 3,
+    "sample": "dev-v5/rule-dev_yaw/000",
+    "partition": "development",
+    "variant": "original",
+    "repeat": 1,
+    "choice": "turn_left",
+    "reference_rule_action": "turn_right",
+    "agrees_with_rule": false,
+    "answer": {
+      "type": "choice",
+      "choice": "turn_left",
+      "confidence": 0.33,
+      "probabilities": {
+        "backward": 0.03,
+        "forward": 0.13,
+        "turn_left": 0.43,
+        "turn_right": 0.33,
+        "left": 0.05,
+        "right": 0.03,
+        "stop": 0.0
+      }
+    },
+    "latency_s": 0.6249724160006735,
+    "usage": {
+      "input_tokens": 727,
+      "output_tokens": 70
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 4,
+    "sample": "final-v2/jev-straight/060",
+    "partition": "observed_failure",
+    "variant": "original",
+    "repeat": 0,
+    "choice": "stop",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": false,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 0.17,
+      "probabilities": {
+        "right": 0.05,
+        "forward": 0.01,
+        "left": 0.07,
+        "turn_left": 0.19,
+        "turn_right": 0.13,
+        "stop": 0.29,
+        "backward": 0.26
+      }
+    },
+    "latency_s": 0.5395243330276571,
+    "usage": {
+      "input_tokens": 858,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 5,
+    "sample": "dev-v5/rule-dev/033",
+    "partition": "development",
+    "variant": "original",
+    "repeat": 1,
+    "choice": "stop",
+    "reference_rule_action": "stop",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 0.77,
+      "probabilities": {
+        "backward": 0.0,
+        "turn_right": 0.03,
+        "turn_left": 0.07,
+        "right": 0.04,
+        "left": 0.04,
+        "forward": 0.02,
+        "stop": 0.8
+      }
+    },
+    "latency_s": 0.5305107089807279,
+    "usage": {
+      "input_tokens": 858,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 6,
+    "sample": "final-v2/jev-left_offset/010",
+    "partition": "observed_failure",
+    "variant": "semantic_state",
+    "repeat": 1,
+    "choice": "turn_right",
+    "reference_rule_action": "turn_right",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "turn_right",
+      "confidence": 0.66,
+      "probabilities": {
+        "turn_left": 0.11,
+        "forward": 0.12,
+        "backward": 0.0,
+        "right": 0.05,
+        "stop": 0.01,
+        "turn_right": 0.71,
+        "left": 0.0
+      }
+    },
+    "latency_s": 0.49288408301072195,
+    "usage": {
+      "input_tokens": 889,
+      "output_tokens": 70
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 7,
+    "sample": "dev-v5/rule-dev/020",
+    "partition": "development",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 1,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 0.99,
+      "probabilities": {
+        "stop": 0.0,
+        "turn_left": 0.0,
+        "forward": 1.0,
+        "turn_right": 0.0,
+        "right": 0.0,
+        "left": 0.0,
+        "backward": 0.0
+      }
+    },
+    "latency_s": 0.49272675000247546,
+    "usage": {
+      "input_tokens": 1078,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 8,
+    "sample": "dev-v5/rule-dev/033",
+    "partition": "development",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 0,
+    "choice": "stop",
+    "reference_rule_action": "stop",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 1.0,
+      "probabilities": {
+        "turn_left": 0.0,
+        "left": 0.0,
+        "turn_right": 0.0,
+        "forward": 0.0,
+        "right": 0.0,
+        "backward": 0.0,
+        "stop": 1.0
+      }
+    },
+    "latency_s": 0.5404076660051942,
+    "usage": {
+      "input_tokens": 1077,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 9,
+    "sample": "dev-v5/rule-dev_yaw/000",
+    "partition": "development",
+    "variant": "original",
+    "repeat": 0,
+    "choice": "turn_left",
+    "reference_rule_action": "turn_right",
+    "agrees_with_rule": false,
+    "answer": {
+      "type": "choice",
+      "choice": "turn_left",
+      "confidence": 0.32,
+      "probabilities": {
+        "right": 0.03,
+        "backward": 0.06,
+        "turn_right": 0.33,
+        "turn_left": 0.41,
+        "stop": 0.01,
+        "forward": 0.1,
+        "left": 0.06
+      }
+    },
+    "latency_s": 0.6442611250095069,
+    "usage": {
+      "input_tokens": 727,
+      "output_tokens": 70
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 10,
+    "sample": "dev-v5/rule-dev_yaw/004",
+    "partition": "development",
+    "variant": "semantic_state",
+    "repeat": 0,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 0.98,
+      "probabilities": {
+        "left": 0.0,
+        "right": 0.01,
+        "turn_left": 0.0,
+        "stop": 0.0,
+        "forward": 0.99,
+        "backward": 0.0,
+        "turn_right": 0.0
+      }
+    },
+    "latency_s": 0.5541277079901192,
+    "usage": {
+      "input_tokens": 889,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 11,
+    "sample": "final-v2/jev-left_offset/000",
+    "partition": "observed_failure",
+    "variant": "semantic_state",
+    "repeat": 1,
+    "choice": "turn_right",
+    "reference_rule_action": "turn_right",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "turn_right",
+      "confidence": 0.44,
+      "probabilities": {
+        "left": 0.01,
+        "stop": 0.0,
+        "turn_left": 0.09,
+        "turn_right": 0.52,
+        "backward": 0.0,
+        "forward": 0.16,
+        "right": 0.22
+      }
+    },
+    "latency_s": 0.5834628749871626,
+    "usage": {
+      "input_tokens": 634,
+      "output_tokens": 70
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 12,
+    "sample": "final-v2/jev-straight/039",
+    "partition": "observed_failure",
+    "variant": "semantic_state",
+    "repeat": 1,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 0.94,
+      "probabilities": {
+        "stop": 0.01,
+        "left": 0.0,
+        "forward": 0.95,
+        "turn_left": 0.0,
+        "backward": 0.0,
+        "right": 0.04,
+        "turn_right": 0.0
+      }
+    },
+    "latency_s": 0.5669155410141684,
+    "usage": {
+      "input_tokens": 885,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 13,
+    "sample": "dev-v5/rule-dev/035",
+    "partition": "development",
+    "variant": "semantic_state",
+    "repeat": 0,
+    "choice": "stop",
+    "reference_rule_action": "stop",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 1.0,
+      "probabilities": {
+        "left": 0.0,
+        "forward": 0.0,
+        "stop": 1.0,
+        "turn_right": 0.0,
+        "backward": 0.0,
+        "right": 0.0,
+        "turn_left": 0.0
+      }
+    },
+    "latency_s": 0.5180275829916354,
+    "usage": {
+      "input_tokens": 882,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 14,
+    "sample": "dev-v5/rule-dev/020",
+    "partition": "development",
+    "variant": "semantic_state",
+    "repeat": 0,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 0.93,
+      "probabilities": {
+        "turn_right": 0.01,
+        "stop": 0.01,
+        "right": 0.04,
+        "forward": 0.94,
+        "backward": 0.0,
+        "left": 0.0,
+        "turn_left": 0.0
+      }
+    },
+    "latency_s": 0.6234495419776067,
+    "usage": {
+      "input_tokens": 885,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 15,
+    "sample": "dev-v5/rule-dev/000",
+    "partition": "development",
+    "variant": "semantic_state",
+    "repeat": 1,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 0.72,
+      "probabilities": {
+        "turn_right": 0.01,
+        "left": 0.0,
+        "right": 0.22,
+        "forward": 0.77,
+        "turn_left": 0.0,
+        "backward": 0.0,
+        "stop": 0.0
+      }
+    },
+    "latency_s": 0.5638400000170805,
+    "usage": {
+      "input_tokens": 634,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 16,
+    "sample": "dev-v5/rule-dev/035",
+    "partition": "development",
+    "variant": "original",
+    "repeat": 1,
+    "choice": "stop",
+    "reference_rule_action": "stop",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 0.88,
+      "probabilities": {
+        "backward": 0.0,
+        "stop": 0.91,
+        "turn_right": 0.02,
+        "turn_left": 0.04,
+        "forward": 0.0,
+        "left": 0.02,
+        "right": 0.01
+      }
+    },
+    "latency_s": 0.5593962499988265,
+    "usage": {
+      "input_tokens": 860,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 17,
+    "sample": "dev-v5/rule-dev/035",
+    "partition": "development",
+    "variant": "original",
+    "repeat": 0,
+    "choice": "stop",
+    "reference_rule_action": "stop",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 0.9,
+      "probabilities": {
+        "stop": 0.92,
+        "backward": 0.0,
+        "left": 0.01,
+        "forward": 0.0,
+        "turn_left": 0.04,
+        "right": 0.01,
+        "turn_right": 0.02
+      }
+    },
+    "latency_s": 0.6910803749924526,
+    "usage": {
+      "input_tokens": 860,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 18,
+    "sample": "dev-v5/rule-dev/020",
+    "partition": "development",
+    "variant": "original",
+    "repeat": 0,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 0.49,
+      "probabilities": {
+        "stop": 0.03,
+        "right": 0.07,
+        "backward": 0.01,
+        "forward": 0.57,
+        "turn_right": 0.11,
+        "left": 0.04,
+        "turn_left": 0.17
+      }
+    },
+    "latency_s": 0.569596959016053,
+    "usage": {
+      "input_tokens": 856,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 19,
+    "sample": "dev-v5/rule-dev_yaw/037",
+    "partition": "development",
+    "variant": "original",
+    "repeat": 1,
+    "choice": "stop",
+    "reference_rule_action": "stop",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 0.85,
+      "probabilities": {
+        "forward": 0.02,
+        "turn_right": 0.02,
+        "right": 0.02,
+        "turn_left": 0.04,
+        "backward": 0.0,
+        "stop": 0.87,
+        "left": 0.03
+      }
+    },
+    "latency_s": 0.5429584170051385,
+    "usage": {
+      "input_tokens": 859,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 20,
+    "sample": "dev-v5/rule-dev_yaw/020",
+    "partition": "development",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 1,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 1.0,
+      "probabilities": {
+        "left": 0.0,
+        "backward": 0.0,
+        "forward": 1.0,
+        "turn_left": 0.0,
+        "right": 0.0,
+        "stop": 0.0,
+        "turn_right": 0.0
+      }
+    },
+    "latency_s": 0.5356328749912791,
+    "usage": {
+      "input_tokens": 1078,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 21,
+    "sample": "dev-v5/rule-dev_yaw/037",
+    "partition": "development",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 0,
+    "choice": "stop",
+    "reference_rule_action": "stop",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 1.0,
+      "probabilities": {
+        "turn_left": 0.0,
+        "turn_right": 0.0,
+        "stop": 1.0,
+        "backward": 0.0,
+        "left": 0.0,
+        "forward": 0.0,
+        "right": 0.0
+      }
+    },
+    "latency_s": 0.5109248329827096,
+    "usage": {
+      "input_tokens": 1077,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 22,
+    "sample": "dev-v5/rule-dev_yaw/004",
+    "partition": "development",
+    "variant": "semantic_state",
+    "repeat": 1,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 0.99,
+      "probabilities": {
+        "turn_right": 0.0,
+        "stop": 0.0,
+        "backward": 0.0,
+        "right": 0.01,
+        "turn_left": 0.0,
+        "forward": 0.99,
+        "left": 0.0
+      }
+    },
+    "latency_s": 0.5276050000102259,
+    "usage": {
+      "input_tokens": 889,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 23,
+    "sample": "dev-v5/rule-dev_yaw/037",
+    "partition": "development",
+    "variant": "original",
+    "repeat": 0,
+    "choice": "stop",
+    "reference_rule_action": "stop",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 0.81,
+      "probabilities": {
+        "turn_left": 0.05,
+        "left": 0.04,
+        "turn_right": 0.02,
+        "forward": 0.02,
+        "right": 0.02,
+        "backward": 0.01,
+        "stop": 0.84
+      }
+    },
+    "latency_s": 0.5398060000152327,
+    "usage": {
+      "input_tokens": 859,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 24,
+    "sample": "dev-v5/rule-dev_yaw/004",
+    "partition": "development",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 1,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 1.0,
+      "probabilities": {
+        "stop": 0.0,
+        "left": 0.0,
+        "turn_right": 0.0,
+        "right": 0.0,
+        "backward": 0.0,
+        "turn_left": 0.0,
+        "forward": 1.0
+      }
+    },
+    "latency_s": 0.5881172090012114,
+    "usage": {
+      "input_tokens": 1082,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 25,
+    "sample": "final-v2/jev-straight/060",
+    "partition": "observed_failure",
+    "variant": "semantic_state",
+    "repeat": 0,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 0.93,
+      "probabilities": {
+        "forward": 0.95,
+        "right": 0.05,
+        "left": 0.0,
+        "turn_right": 0.0,
+        "turn_left": 0.0,
+        "stop": 0.0,
+        "backward": 0.0
+      }
+    },
+    "latency_s": 0.5757635000045411,
+    "usage": {
+      "input_tokens": 885,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 26,
+    "sample": "dev-v5/rule-dev/033",
+    "partition": "development",
+    "variant": "semantic_state",
+    "repeat": 1,
+    "choice": "stop",
+    "reference_rule_action": "stop",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 1.0,
+      "probabilities": {
+        "turn_right": 0.0,
+        "backward": 0.0,
+        "turn_left": 0.0,
+        "left": 0.0,
+        "stop": 1.0,
+        "forward": 0.0,
+        "right": 0.0
+      }
+    },
+    "latency_s": 0.49753824999788776,
+    "usage": {
+      "input_tokens": 884,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 27,
+    "sample": "dev-v5/rule-dev/033",
+    "partition": "development",
+    "variant": "original",
+    "repeat": 0,
+    "choice": "stop",
+    "reference_rule_action": "stop",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 0.78,
+      "probabilities": {
+        "backward": 0.01,
+        "turn_left": 0.06,
+        "right": 0.03,
+        "turn_right": 0.03,
+        "left": 0.04,
+        "forward": 0.02,
+        "stop": 0.81
+      }
+    },
+    "latency_s": 0.6012308750068769,
+    "usage": {
+      "input_tokens": 858,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 28,
+    "sample": "dev-v5/rule-dev_yaw/020",
+    "partition": "development",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 0,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 0.99,
+      "probabilities": {
+        "right": 0.0,
+        "stop": 0.0,
+        "forward": 1.0,
+        "turn_right": 0.0,
+        "backward": 0.0,
+        "left": 0.0,
+        "turn_left": 0.0
+      }
+    },
+    "latency_s": 0.501070250000339,
+    "usage": {
+      "input_tokens": 1078,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 29,
+    "sample": "dev-v5/rule-dev_yaw/020",
+    "partition": "development",
+    "variant": "semantic_state",
+    "repeat": 0,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 0.95,
+      "probabilities": {
+        "turn_right": 0.0,
+        "backward": 0.0,
+        "right": 0.03,
+        "forward": 0.96,
+        "turn_left": 0.0,
+        "stop": 0.01,
+        "left": 0.0
+      }
+    },
+    "latency_s": 0.6110334999975748,
+    "usage": {
+      "input_tokens": 885,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 30,
+    "sample": "dev-v5/rule-dev/033",
+    "partition": "development",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 1,
+    "choice": "stop",
+    "reference_rule_action": "stop",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 1.0,
+      "probabilities": {
+        "turn_right": 0.0,
+        "forward": 0.0,
+        "left": 0.0,
+        "turn_left": 0.0,
+        "stop": 1.0,
+        "backward": 0.0,
+        "right": 0.0
+      }
+    },
+    "latency_s": 0.506536667002365,
+    "usage": {
+      "input_tokens": 1077,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 31,
+    "sample": "dev-v5/rule-dev/020",
+    "partition": "development",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 0,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 0.99,
+      "probabilities": {
+        "backward": 0.0,
+        "turn_left": 0.0,
+        "right": 0.0,
+        "turn_right": 0.0,
+        "left": 0.0,
+        "forward": 1.0,
+        "stop": 0.0
+      }
+    },
+    "latency_s": 0.6028653749963269,
+    "usage": {
+      "input_tokens": 1078,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 32,
+    "sample": "dev-v5/rule-dev_yaw/000",
+    "partition": "development",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 1,
+    "choice": "turn_right",
+    "reference_rule_action": "turn_right",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "turn_right",
+      "confidence": 1.0,
+      "probabilities": {
+        "turn_right": 1.0,
+        "left": 0.0,
+        "turn_left": 0.0,
+        "right": 0.0,
+        "stop": 0.0,
+        "forward": 0.0,
+        "backward": 0.0
+      }
+    },
+    "latency_s": 0.5546499580086675,
+    "usage": {
+      "input_tokens": 827,
+      "output_tokens": 70
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 33,
+    "sample": "final-v2/jev-straight/060",
+    "partition": "observed_failure",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 0,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 1.0,
+      "probabilities": {
+        "turn_right": 0.0,
+        "right": 0.0,
+        "backward": 0.0,
+        "stop": 0.0,
+        "left": 0.0,
+        "forward": 1.0,
+        "turn_left": 0.0
+      }
+    },
+    "latency_s": 0.6284902499755844,
+    "usage": {
+      "input_tokens": 1078,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 34,
+    "sample": "dev-v5/rule-dev_yaw/037",
+    "partition": "development",
+    "variant": "semantic_state",
+    "repeat": 1,
+    "choice": "stop",
+    "reference_rule_action": "stop",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 1.0,
+      "probabilities": {
+        "forward": 0.0,
+        "right": 0.0,
+        "left": 0.0,
+        "turn_right": 0.0,
+        "turn_left": 0.0,
+        "stop": 1.0,
+        "backward": 0.0
+      }
+    },
+    "latency_s": 0.534687874984229,
+    "usage": {
+      "input_tokens": 884,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 35,
+    "sample": "dev-v5/rule-dev/000",
+    "partition": "development",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 1,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 1.0,
+      "probabilities": {
+        "turn_left": 0.0,
+        "backward": 0.0,
+        "turn_right": 0.0,
+        "left": 0.0,
+        "stop": 0.0,
+        "forward": 1.0,
+        "right": 0.0
+      }
+    },
+    "latency_s": 0.4793254579999484,
+    "usage": {
+      "input_tokens": 827,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 36,
+    "sample": "final-v2/jev-straight/060",
+    "partition": "observed_failure",
+    "variant": "original",
+    "repeat": 1,
+    "choice": "stop",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": false,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 0.19,
+      "probabilities": {
+        "turn_right": 0.15,
+        "left": 0.05,
+        "backward": 0.26,
+        "stop": 0.3,
+        "right": 0.05,
+        "forward": 0.02,
+        "turn_left": 0.17
+      }
+    },
+    "latency_s": 0.6132420419889968,
+    "usage": {
+      "input_tokens": 858,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 37,
+    "sample": "dev-v5/rule-dev/000",
+    "partition": "development",
+    "variant": "original",
+    "repeat": 1,
+    "choice": "turn_right",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": false,
+    "answer": {
+      "type": "choice",
+      "choice": "turn_right",
+      "confidence": 0.18,
+      "probabilities": {
+        "forward": 0.3,
+        "stop": 0.01,
+        "turn_right": 0.29,
+        "right": 0.04,
+        "left": 0.04,
+        "backward": 0.08,
+        "turn_left": 0.24
+      }
+    },
+    "latency_s": 0.5875039999955334,
+    "usage": {
+      "input_tokens": 729,
+      "output_tokens": 70
+    },
+    "choice_probability_mismatch": true
+  },
+  {
+    "seq": 38,
+    "sample": "final-v2/jev-straight/060",
+    "partition": "observed_failure",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 1,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 1.0,
+      "probabilities": {
+        "left": 0.0,
+        "right": 0.0,
+        "forward": 1.0,
+        "stop": 0.0,
+        "backward": 0.0,
+        "turn_left": 0.0,
+        "turn_right": 0.0
+      }
+    },
+    "latency_s": 0.5486251669935882,
+    "usage": {
+      "input_tokens": 1078,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 39,
+    "sample": "dev-v5/rule-dev/020",
+    "partition": "development",
+    "variant": "original",
+    "repeat": 1,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 0.57,
+      "probabilities": {
+        "turn_right": 0.07,
+        "turn_left": 0.15,
+        "left": 0.04,
+        "backward": 0.02,
+        "right": 0.06,
+        "stop": 0.03,
+        "forward": 0.63
+      }
+    },
+    "latency_s": 0.5186796250054613,
+    "usage": {
+      "input_tokens": 856,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 40,
+    "sample": "dev-v5/rule-dev_yaw/004",
+    "partition": "development",
+    "variant": "original",
+    "repeat": 1,
+    "choice": "turn_left",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": false,
+    "answer": {
+      "type": "choice",
+      "choice": "turn_left",
+      "confidence": 0.51,
+      "probabilities": {
+        "forward": 0.21,
+        "stop": 0.05,
+        "turn_left": 0.57,
+        "left": 0.03,
+        "turn_right": 0.11,
+        "right": 0.01,
+        "backward": 0.02
+      }
+    },
+    "latency_s": 0.6176779169763904,
+    "usage": {
+      "input_tokens": 862,
+      "output_tokens": 70
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 41,
+    "sample": "dev-v5/rule-dev_yaw/004",
+    "partition": "development",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 0,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 1.0,
+      "probabilities": {
+        "stop": 0.0,
+        "turn_left": 0.0,
+        "backward": 0.0,
+        "forward": 1.0,
+        "turn_right": 0.0,
+        "left": 0.0,
+        "right": 0.0
+      }
+    },
+    "latency_s": 0.5748460419999901,
+    "usage": {
+      "input_tokens": 1082,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 42,
+    "sample": "final-v2/jev-left_offset/010",
+    "partition": "observed_failure",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 1,
+    "choice": "turn_right",
+    "reference_rule_action": "turn_right",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "turn_right",
+      "confidence": 1.0,
+      "probabilities": {
+        "turn_right": 1.0,
+        "backward": 0.0,
+        "turn_left": 0.0,
+        "right": 0.0,
+        "left": 0.0,
+        "forward": 0.0,
+        "stop": 0.0
+      }
+    },
+    "latency_s": 0.4690159999881871,
+    "usage": {
+      "input_tokens": 1082,
+      "output_tokens": 70
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 43,
+    "sample": "final-v2/jev-straight/039",
+    "partition": "observed_failure",
+    "variant": "original",
+    "repeat": 1,
+    "choice": "stop",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": false,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 0.5,
+      "probabilities": {
+        "right": 0.04,
+        "stop": 0.58,
+        "turn_right": 0.06,
+        "forward": 0.1,
+        "turn_left": 0.08,
+        "left": 0.05,
+        "backward": 0.09
+      }
+    },
+    "latency_s": 0.5249370000092313,
+    "usage": {
+      "input_tokens": 858,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 44,
+    "sample": "dev-v5/rule-dev_yaw/000",
+    "partition": "development",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 0,
+    "choice": "turn_right",
+    "reference_rule_action": "turn_right",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "turn_right",
+      "confidence": 1.0,
+      "probabilities": {
+        "turn_right": 1.0,
+        "backward": 0.0,
+        "right": 0.0,
+        "stop": 0.0,
+        "turn_left": 0.0,
+        "forward": 0.0,
+        "left": 0.0
+      }
+    },
+    "latency_s": 0.5302535840019118,
+    "usage": {
+      "input_tokens": 827,
+      "output_tokens": 70
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 45,
+    "sample": "dev-v5/rule-dev_yaw/020",
+    "partition": "development",
+    "variant": "semantic_state",
+    "repeat": 1,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 0.94,
+      "probabilities": {
+        "turn_left": 0.0,
+        "stop": 0.01,
+        "backward": 0.0,
+        "forward": 0.94,
+        "left": 0.0,
+        "turn_right": 0.01,
+        "right": 0.04
+      }
+    },
+    "latency_s": 0.5746656249975786,
+    "usage": {
+      "input_tokens": 885,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 46,
+    "sample": "dev-v5/rule-dev_yaw/000",
+    "partition": "development",
+    "variant": "semantic_state",
+    "repeat": 0,
+    "choice": "turn_right",
+    "reference_rule_action": "turn_right",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "turn_right",
+      "confidence": 0.42,
+      "probabilities": {
+        "turn_right": 0.51,
+        "right": 0.22,
+        "backward": 0.0,
+        "turn_left": 0.09,
+        "left": 0.01,
+        "forward": 0.17,
+        "stop": 0.0
+      }
+    },
+    "latency_s": 0.5265989170002285,
+    "usage": {
+      "input_tokens": 634,
+      "output_tokens": 70
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 47,
+    "sample": "dev-v5/rule-dev_yaw/037",
+    "partition": "development",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 1,
+    "choice": "stop",
+    "reference_rule_action": "stop",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 1.0,
+      "probabilities": {
+        "turn_left": 0.0,
+        "right": 0.0,
+        "backward": 0.0,
+        "forward": 0.0,
+        "left": 0.0,
+        "turn_right": 0.0,
+        "stop": 1.0
+      }
+    },
+    "latency_s": 0.5019943329971284,
+    "usage": {
+      "input_tokens": 1077,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 48,
+    "sample": "final-v2/jev-straight/060",
+    "partition": "observed_failure",
+    "variant": "semantic_state",
+    "repeat": 1,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 0.96,
+      "probabilities": {
+        "stop": 0.0,
+        "backward": 0.0,
+        "left": 0.0,
+        "turn_left": 0.0,
+        "forward": 0.97,
+        "turn_right": 0.0,
+        "right": 0.03
+      }
+    },
+    "latency_s": 0.5385181669844314,
+    "usage": {
+      "input_tokens": 885,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 49,
+    "sample": "dev-v5/rule-dev/000",
+    "partition": "development",
+    "variant": "semantic_state",
+    "repeat": 0,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 0.8,
+      "probabilities": {
+        "forward": 0.84,
+        "left": 0.0,
+        "turn_left": 0.0,
+        "backward": 0.0,
+        "turn_right": 0.0,
+        "right": 0.16,
+        "stop": 0.0
+      }
+    },
+    "latency_s": 0.5644149579748046,
+    "usage": {
+      "input_tokens": 634,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 50,
+    "sample": "dev-v5/rule-dev_yaw/037",
+    "partition": "development",
+    "variant": "semantic_state",
+    "repeat": 0,
+    "choice": "stop",
+    "reference_rule_action": "stop",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 1.0,
+      "probabilities": {
+        "turn_right": 0.0,
+        "backward": 0.0,
+        "right": 0.0,
+        "stop": 1.0,
+        "forward": 0.0,
+        "turn_left": 0.0,
+        "left": 0.0
+      }
+    },
+    "latency_s": 0.6075444589951076,
+    "usage": {
+      "input_tokens": 884,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 51,
+    "sample": "final-v2/jev-straight/039",
+    "partition": "observed_failure",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 0,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 0.99,
+      "probabilities": {
+        "turn_left": 0.0,
+        "turn_right": 0.0,
+        "backward": 0.0,
+        "forward": 1.0,
+        "right": 0.0,
+        "left": 0.0,
+        "stop": 0.0
+      }
+    },
+    "latency_s": 0.5387406670197379,
+    "usage": {
+      "input_tokens": 1078,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 52,
+    "sample": "dev-v5/rule-dev/033",
+    "partition": "development",
+    "variant": "semantic_state",
+    "repeat": 0,
+    "choice": "stop",
+    "reference_rule_action": "stop",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 1.0,
+      "probabilities": {
+        "left": 0.0,
+        "backward": 0.0,
+        "forward": 0.0,
+        "stop": 1.0,
+        "right": 0.0,
+        "turn_left": 0.0,
+        "turn_right": 0.0
+      }
+    },
+    "latency_s": 0.6009980409871787,
+    "usage": {
+      "input_tokens": 884,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 53,
+    "sample": "final-v2/jev-straight/039",
+    "partition": "observed_failure",
+    "variant": "original",
+    "repeat": 0,
+    "choice": "stop",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": false,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 0.53,
+      "probabilities": {
+        "turn_right": 0.05,
+        "backward": 0.09,
+        "turn_left": 0.1,
+        "right": 0.04,
+        "left": 0.04,
+        "forward": 0.09,
+        "stop": 0.59
+      }
+    },
+    "latency_s": 0.726777999982005,
+    "usage": {
+      "input_tokens": 858,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 54,
+    "sample": "final-v2/jev-left_offset/000",
+    "partition": "observed_failure",
+    "variant": "semantic_state",
+    "repeat": 0,
+    "choice": "turn_right",
+    "reference_rule_action": "turn_right",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "turn_right",
+      "confidence": 0.41,
+      "probabilities": {
+        "left": 0.01,
+        "stop": 0.0,
+        "turn_left": 0.09,
+        "backward": 0.0,
+        "turn_right": 0.51,
+        "forward": 0.18,
+        "right": 0.21
+      }
+    },
+    "latency_s": 0.5790443750156555,
+    "usage": {
+      "input_tokens": 634,
+      "output_tokens": 70
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 55,
+    "sample": "dev-v5/rule-dev/020",
+    "partition": "development",
+    "variant": "semantic_state",
+    "repeat": 1,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 0.93,
+      "probabilities": {
+        "right": 0.04,
+        "backward": 0.0,
+        "turn_right": 0.01,
+        "stop": 0.01,
+        "left": 0.0,
+        "forward": 0.94,
+        "turn_left": 0.0
+      }
+    },
+    "latency_s": 0.5128667500102893,
+    "usage": {
+      "input_tokens": 885,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 56,
+    "sample": "dev-v5/rule-dev/000",
+    "partition": "development",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 0,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 1.0,
+      "probabilities": {
+        "stop": 0.0,
+        "backward": 0.0,
+        "turn_right": 0.0,
+        "forward": 1.0,
+        "turn_left": 0.0,
+        "right": 0.0,
+        "left": 0.0
+      }
+    },
+    "latency_s": 0.5201594160171226,
+    "usage": {
+      "input_tokens": 827,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 57,
+    "sample": "final-v2/jev-left_offset/010",
+    "partition": "observed_failure",
+    "variant": "original",
+    "repeat": 0,
+    "choice": "turn_right",
+    "reference_rule_action": "turn_right",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "turn_right",
+      "confidence": 0.45,
+      "probabilities": {
+        "backward": 0.03,
+        "stop": 0.01,
+        "forward": 0.09,
+        "turn_left": 0.27,
+        "turn_right": 0.53,
+        "left": 0.03,
+        "right": 0.04
+      }
+    },
+    "latency_s": 0.5891848329920322,
+    "usage": {
+      "input_tokens": 861,
+      "output_tokens": 70
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 58,
+    "sample": "dev-v5/rule-dev_yaw/020",
+    "partition": "development",
+    "variant": "original",
+    "repeat": 1,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 0.4,
+      "probabilities": {
+        "backward": 0.05,
+        "forward": 0.49,
+        "right": 0.06,
+        "left": 0.04,
+        "stop": 0.04,
+        "turn_left": 0.18000000000000002,
+        "turn_right": 0.14
+      }
+    },
+    "latency_s": 0.5800825000042096,
+    "usage": {
+      "input_tokens": 859,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 59,
+    "sample": "final-v2/jev-left_offset/000",
+    "partition": "observed_failure",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 0,
+    "choice": "turn_right",
+    "reference_rule_action": "turn_right",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "turn_right",
+      "confidence": 1.0,
+      "probabilities": {
+        "turn_right": 1.0,
+        "right": 0.0,
+        "forward": 0.0,
+        "stop": 0.0,
+        "backward": 0.0,
+        "turn_left": 0.0,
+        "left": 0.0
+      }
+    },
+    "latency_s": 0.5024859579862095,
+    "usage": {
+      "input_tokens": 827,
+      "output_tokens": 70
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 60,
+    "sample": "final-v2/jev-left_offset/010",
+    "partition": "observed_failure",
+    "variant": "original",
+    "repeat": 1,
+    "choice": "turn_right",
+    "reference_rule_action": "turn_right",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "turn_right",
+      "confidence": 0.42,
+      "probabilities": {
+        "right": 0.05,
+        "backward": 0.04,
+        "turn_right": 0.5,
+        "turn_left": 0.25,
+        "stop": 0.01,
+        "forward": 0.11,
+        "left": 0.04
+      }
+    },
+    "latency_s": 0.5168992500111926,
+    "usage": {
+      "input_tokens": 861,
+      "output_tokens": 70
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 61,
+    "sample": "dev-v5/rule-dev/000",
+    "partition": "development",
+    "variant": "original",
+    "repeat": 0,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 0.17,
+      "probabilities": {
+        "forward": 0.3,
+        "stop": 0.01,
+        "backward": 0.09,
+        "turn_left": 0.25,
+        "turn_right": 0.28,
+        "left": 0.03,
+        "right": 0.04
+      }
+    },
+    "latency_s": 0.5207149159978144,
+    "usage": {
+      "input_tokens": 729,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 62,
+    "sample": "final-v2/jev-straight/039",
+    "partition": "observed_failure",
+    "variant": "semantic_state",
+    "repeat": 0,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 0.94,
+      "probabilities": {
+        "turn_left": 0.0,
+        "stop": 0.01,
+        "turn_right": 0.0,
+        "right": 0.03,
+        "backward": 0.0,
+        "forward": 0.96,
+        "left": 0.0
+      }
+    },
+    "latency_s": 0.5582977500162087,
+    "usage": {
+      "input_tokens": 885,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 63,
+    "sample": "dev-v5/rule-dev_yaw/004",
+    "partition": "development",
+    "variant": "original",
+    "repeat": 0,
+    "choice": "turn_left",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": false,
+    "answer": {
+      "type": "choice",
+      "choice": "turn_left",
+      "confidence": 0.5,
+      "probabilities": {
+        "turn_left": 0.57,
+        "right": 0.02,
+        "left": 0.02,
+        "turn_right": 0.12,
+        "backward": 0.04,
+        "stop": 0.04,
+        "forward": 0.19
+      }
+    },
+    "latency_s": 0.5347870420082472,
+    "usage": {
+      "input_tokens": 862,
+      "output_tokens": 70
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 64,
+    "sample": "dev-v5/rule-dev/035",
+    "partition": "development",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 1,
+    "choice": "stop",
+    "reference_rule_action": "stop",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 1.0,
+      "probabilities": {
+        "turn_right": 0.0,
+        "backward": 0.0,
+        "right": 0.0,
+        "left": 0.0,
+        "turn_left": 0.0,
+        "forward": 0.0,
+        "stop": 1.0
+      }
+    },
+    "latency_s": 0.49715379197732545,
+    "usage": {
+      "input_tokens": 1075,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 65,
+    "sample": "final-v2/jev-left_offset/000",
+    "partition": "observed_failure",
+    "variant": "original",
+    "repeat": 0,
+    "choice": "turn_left",
+    "reference_rule_action": "turn_right",
+    "agrees_with_rule": false,
+    "answer": {
+      "type": "choice",
+      "choice": "turn_left",
+      "confidence": 0.4,
+      "probabilities": {
+        "turn_left": 0.49,
+        "left": 0.04,
+        "backward": 0.06,
+        "stop": 0.01,
+        "forward": 0.08,
+        "turn_right": 0.3,
+        "right": 0.02
+      }
+    },
+    "latency_s": 0.6156517089984845,
+    "usage": {
+      "input_tokens": 729,
+      "output_tokens": 70
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 66,
+    "sample": "dev-v5/rule-dev_yaw/000",
+    "partition": "development",
+    "variant": "semantic_state",
+    "repeat": 1,
+    "choice": "turn_right",
+    "reference_rule_action": "turn_right",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "turn_right",
+      "confidence": 0.44,
+      "probabilities": {
+        "turn_left": 0.07,
+        "right": 0.24,
+        "backward": 0.0,
+        "forward": 0.15,
+        "left": 0.01,
+        "turn_right": 0.53,
+        "stop": 0.0
+      }
+    },
+    "latency_s": 0.5062038750038482,
+    "usage": {
+      "input_tokens": 634,
+      "output_tokens": 70
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 67,
+    "sample": "final-v2/jev-left_offset/000",
+    "partition": "observed_failure",
+    "variant": "original",
+    "repeat": 1,
+    "choice": "turn_left",
+    "reference_rule_action": "turn_right",
+    "agrees_with_rule": false,
+    "answer": {
+      "type": "choice",
+      "choice": "turn_left",
+      "confidence": 0.32,
+      "probabilities": {
+        "right": 0.03,
+        "backward": 0.06,
+        "stop": 0.01,
+        "forward": 0.12,
+        "turn_left": 0.42,
+        "turn_right": 0.31,
+        "left": 0.05
+      }
+    },
+    "latency_s": 0.49124991698772646,
+    "usage": {
+      "input_tokens": 729,
+      "output_tokens": 70
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 68,
+    "sample": "dev-v5/rule-dev_yaw/020",
+    "partition": "development",
+    "variant": "original",
+    "repeat": 0,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 0.41,
+      "probabilities": {
+        "backward": 0.02,
+        "left": 0.04,
+        "turn_right": 0.17,
+        "stop": 0.03,
+        "right": 0.06,
+        "forward": 0.5,
+        "turn_left": 0.18
+      }
+    },
+    "latency_s": 0.5494302080187481,
+    "usage": {
+      "input_tokens": 859,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 69,
+    "sample": "final-v2/jev-left_offset/010",
+    "partition": "observed_failure",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 0,
+    "choice": "turn_right",
+    "reference_rule_action": "turn_right",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "turn_right",
+      "confidence": 1.0,
+      "probabilities": {
+        "turn_right": 1.0,
+        "backward": 0.0,
+        "turn_left": 0.0,
+        "stop": 0.0,
+        "left": 0.0,
+        "forward": 0.0,
+        "right": 0.0
+      }
+    },
+    "latency_s": 0.5684510830033105,
+    "usage": {
+      "input_tokens": 1082,
+      "output_tokens": 70
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 70,
+    "sample": "final-v2/jev-straight/039",
+    "partition": "observed_failure",
+    "variant": "semantic_state_explicit_criteria",
+    "repeat": 1,
+    "choice": "forward",
+    "reference_rule_action": "forward",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "forward",
+      "confidence": 1.0,
+      "probabilities": {
+        "turn_right": 0.0,
+        "backward": 0.0,
+        "forward": 1.0,
+        "right": 0.0,
+        "turn_left": 0.0,
+        "stop": 0.0,
+        "left": 0.0
+      }
+    },
+    "latency_s": 0.5901904579950497,
+    "usage": {
+      "input_tokens": 1078,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  },
+  {
+    "seq": 71,
+    "sample": "dev-v5/rule-dev/035",
+    "partition": "development",
+    "variant": "semantic_state",
+    "repeat": 1,
+    "choice": "stop",
+    "reference_rule_action": "stop",
+    "agrees_with_rule": true,
+    "answer": {
+      "type": "choice",
+      "choice": "stop",
+      "confidence": 1.0,
+      "probabilities": {
+        "turn_right": 0.0,
+        "forward": 0.0,
+        "right": 0.0,
+        "left": 0.0,
+        "turn_left": 0.0,
+        "backward": 0.0,
+        "stop": 1.0
+      }
+    },
+    "latency_s": 0.5189404589764308,
+    "usage": {
+      "input_tokens": 882,
+      "output_tokens": 69
+    },
+    "choice_probability_mismatch": false
+  }
+]
