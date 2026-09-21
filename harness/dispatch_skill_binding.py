@@ -192,8 +192,15 @@ class ImageRoute:
         self.points=None;self.index=0;self.confirmations=0
         self.box_center=None;self.box_delta=np.zeros(2);self.box_previous=None
         self.box_background=None;self.box_origin=None;self.box_background_sha=None
+        self.box_pan_frames={}
         from harness.dispatch_beam_tracker import CarriedBeamTracker
         self.beam_tracker=CarriedBeamTracker()
+
+    def record_attachment_top(self,phase,jpeg):
+        from harness.dispatch_box_identity import PAN_PHASES
+        if self.obj!='box' or phase not in PAN_PHASES:return
+        if phase=='verify_lift':self.box_pan_frames={}
+        self.box_pan_frames[phase]=jpeg
 
     def observe(self,jpeg):
         frame=decode(jpeg);h,w=frame.shape[:2]
@@ -203,6 +210,10 @@ class ImageRoute:
             bounds=np.array(feature['corners4'])*[w,h]
         else:
             hsv=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
+            binding=None
+            if self.box_center is None and self.box_pan_frames:
+                from harness.dispatch_box_identity import bind_attachment_pan
+                bound_center,binding=bind_attachment_pan(self.box_pan_frames)
             # Preserve the strongest usable cargo colour first. Only an already
             # acquired target may use dimmer/smaller visible fragments, and each
             # candidate must match its prior RGB motion within eight pixels.
@@ -225,6 +236,8 @@ class ImageRoute:
                 n,_,stats,centers=cv2.connectedComponentsWithStats(mask)
                 choices=[i for i in range(1,n) if (25 if self.box_center is None else 8) <= stats[i,4] <= 600
                          and max(stats[i,2:4]) < 40]
+                if binding is not None:
+                    choices=[i for i in choices if np.linalg.norm(centers[i]-bound_center)<1.]
                 if self.box_center is not None:
                     predicted=self.box_center+np.clip(self.box_delta,-15,15)
                     choices=sorted((i for i in choices if np.linalg.norm(centers[i]-predicted)<=8),
@@ -233,6 +246,7 @@ class ImageRoute:
                         choices=choices[:1]
                 if choices:break
             tracking={'method':'cyan component','min_saturation':saturation}
+            if binding is not None:tracking['initial_identity']=binding
             if len(choices)==1:
                 i=choices[0];center=centers[i];x,y,bw,bh=stats[i,:4]
                 bounds=np.array([[x,y],[x+bw,y+bh]])

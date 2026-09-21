@@ -158,3 +158,21 @@ def test_fresh_dispatch_model_keeps_full_rgb_support_through_export(tmp_path):
     assert predict_recovery(exported, *reference)['observable']
     changed = cv2.imencode('.png', np.full((192,256,3),255,np.uint8))[1].tobytes()
     assert not predict_recovery(exported, reference[0], changed)['observable']
+
+
+def test_trained_local_features_ignore_distant_motion_and_reject_local_novelty():
+    from harness.camera_recovery_student import GRASP_TOP_ROI
+    own, top = _views()
+    model = fit_recovery_model(own, top, _training(), top_roi=GRASP_TOP_ROI)
+    def altered(rect):
+        scene = cv2.imdecode(np.frombuffer(top, np.uint8), cv2.IMREAD_COLOR)
+        x0,y0,x1,y1 = rect; scene[y0:y1,x0:x1] = 255
+        return cv2.imencode('.png',scene)[1].tobytes()
+    assert predict_recovery(model, own, altered((10,160,70,190)))['observable']
+    assert not predict_recovery(model, own, altered((100,60,150,140)))['observable']
+    changed_own = cv2.imencode('.png', np.full((144,192,3),255,np.uint8))[1].tobytes()
+    assert not predict_recovery(model, changed_own, top)['observable']
+    # This representation cannot be retrofitted by changing model metadata.
+    model['pca_components'][0][-1] = .001
+    with pytest.raises(ValueError, match='fitted in that representation'):
+        predict_recovery(model, own, top)

@@ -198,7 +198,7 @@ class SkillScene(DispatchScene):
 
 
 def grasp_transfer_options(skill):
-    if skill.get('rgb_support_scope') == 'full_calibrated_views':
+    if skill.get('rgb_support_scope') in {'full_calibrated_views', 'local_grasp_top_v1'}:
         return {'background_band': False, 'top_roi': None}
     return {'background_band': skill.get('task_domain') != 'dispatch_open_v1',
             'top_roi': [12,6,20,19] if skill.get('task_domain') == 'dispatch_open_v1' else None}
