@@ -1,0 +1,53 @@
+{
+  "turn": 5,
+  "at_s": 4.999999999999671,
+  "tasks": {
+    "stage_02": "APPROACH",
+    "stage_03": "APPROACH"
+  },
+  "replies": {
+    "r1": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.1,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.7,
+      "message": "Approaching target object_02 along lane_a",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Target box object_02 is ahead; continuing forward approach",
+      "request_id": "stage_02-r1-000011",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "r2": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.75,
+      "message": "Approaching target box object_03 along lane_b",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Target box is centered ahead but still several grid squares away from grasp pose.",
+      "request_id": "stage_03-r2-000012",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    }
+  },
+  "protocol": {
+    "objects": 3,
+    "tasks": 5,
+    "completed_task_claims": 0,
+    "final_object_claims": 0,
+    "whole_mission_claimed": false,
+    "physical_success": "not_evaluated",
+    "motor_execution": "unsupported"
+  }
+}

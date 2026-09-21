@@ -1,0 +1,62 @@
+[
+  {
+    "iteration": 1,
+    "raw_path": "/Users/changmin/projects/ugrp/outputs/multi-object-rgb-20260920-v1",
+    "source_sha": "0614b90881aedf3574b5a9343a6de20b6c24f261",
+    "calls": 18,
+    "usage": {
+      "prompt_tokens": 161354,
+      "completion_tokens": 7629,
+      "total_tokens": 187461
+    },
+    "stop_reason": null,
+    "error": "RuntimeError: no unanimous executable plan within budget",
+    "task_commands": 0,
+    "completed_task_claims": 0,
+    "final_objects": 0,
+    "wall_s": 69.33705283400195,
+    "files_hash_verified": 121,
+    "actor_requests_audited": 18,
+    "forbidden_context_keys": []
+  },
+  {
+    "iteration": 2,
+    "raw_path": "/Users/changmin/projects/ugrp/outputs/multi-object-rgb-20260920-v2",
+    "source_sha": "fa52192b61debebc610ae1f142ad98d4e4e7d139",
+    "calls": 38,
+    "usage": {
+      "prompt_tokens": 367022,
+      "completion_tokens": 9668,
+      "total_tokens": 408939
+    },
+    "stop_reason": "model_budget",
+    "error": null,
+    "task_commands": 12,
+    "completed_task_claims": 0,
+    "final_objects": 0,
+    "wall_s": 181.2948734160018,
+    "files_hash_verified": 346,
+    "actor_requests_audited": 38,
+    "forbidden_context_keys": []
+  },
+  {
+    "iteration": 3,
+    "raw_path": "/Users/changmin/projects/ugrp/outputs/multi-object-rgb-20260920-v3",
+    "source_sha": "42024aa53c2e5d0fee3db37edddebd2684132a78",
+    "calls": 20,
+    "usage": {
+      "prompt_tokens": 189259,
+      "completion_tokens": 5702,
+      "total_tokens": 211037
+    },
+    "stop_reason": "model_budget",
+    "error": null,
+    "task_commands": 11,
+    "completed_task_claims": 0,
+    "final_objects": 0,
+    "wall_s": 91.2439873330004,
+    "files_hash_verified": 202,
+    "actor_requests_audited": 20,
+    "forbidden_context_keys": []
+  }
+]

@@ -1,0 +1,81 @@
+{
+  "source_sha": "fa52192b61debebc610ae1f142ad98d4e4e7d139",
+  "case": "staging_three",
+  "error": null,
+  "stop_reason": "model_budget",
+  "transport_success": false,
+  "clock": "paused SIM during inference; not real-time control",
+  "model": "gemini-3.8-flash",
+  "limits": {
+    "turns": 60,
+    "calls": 60,
+    "input_tokens": 400000,
+    "wall_s": 480.0
+  },
+  "environment": {
+    "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+    "platform": "macOS-27.2-arm64-arm-64bit",
+    "mujoco": "3.12.0"
+  },
+  "cost_usd": null,
+  "scope": "experimental RGB raw-action execution, not ACT or teacher replay",
+  "protocol": {
+    "objects": 3,
+    "tasks": 5,
+    "completed_task_claims": 0,
+    "final_object_claims": 0,
+    "whole_mission_claimed": false,
+    "physical_success": "not_evaluated",
+    "motor_execution": "unsupported"
+  },
+  "issued_commands": 18,
+  "evaluation": {
+    "objects": {
+      "object_01": {
+        "center_m": [
+          -0.24000000003351982,
+          -2.429999999804772,
+          0.019951425052399455
+        ],
+        "inside_final_slot": false,
+        "on_floor": true,
+        "touching_robot": false,
+        "final_placement": false
+      },
+      "object_02": {
+        "center_m": [
+          0.36,
+          -2.75,
+          0.015892244581581203
+        ],
+        "inside_final_slot": false,
+        "on_floor": true,
+        "touching_robot": false,
+        "final_placement": false
+      },
+      "object_03": {
+        "center_m": [
+          0.36,
+          -2.0,
+          0.015892244581581203
+        ],
+        "inside_final_slot": false,
+        "on_floor": true,
+        "touching_robot": false,
+        "final_placement": false
+      }
+    },
+    "final_objects": 0,
+    "whole_mission_final_placement": false,
+    "scope": "terminal placement only; required intermediate jobs need independent trajectory evidence"
+  },
+  "camera_geometry_unchanged": true,
+  "weld_steps": 0,
+  "model_calls": 38,
+  "usage": {
+    "prompt_tokens": 367022,
+    "completion_tokens": 9668,
+    "total_tokens": 408939
+  },
+  "wall_s": 181.2948734160018
+}

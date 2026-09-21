@@ -1,0 +1,153 @@
+{
+  "source_sha": "0fd836817ddb063d70d0ae31407295a0b823b295",
+  "layout_spec_file_sha256": "9476992310611b8b4e2f0695b0f7d590c5176fe0af5463de9a740a4f43acc1e2",
+  "scope": "static admission only",
+  "physical_map_instances": 1,
+  "split": "train",
+  "cases": [
+    {
+      "id": "staging_three",
+      "objects": 3,
+      "tasks": 5,
+      "source_map_id": "map_6136182a149d479a",
+      "source_map_sha256": "ec7f328d0ff0977ef1487eead27c3b78bf08f2d038089e10166761041ee41cb2",
+      "mission_sha256": "6ab9c19cd95af8dd1cfdd77de1ce558f65fa20ce02694e80f70ccff4a3009f15",
+      "static_map_sha256": "003bdcd0b247f126f9c333c2b4ec3c2190c7b3d51c6c9ff97d62da07a259b3b7",
+      "setup_file_sha256": "e67b31e8631a11a5d11ddc9c37649dd69c1df153ee15fbcff2db4dfd72afd20d",
+      "static_task_file_sha256": "a18b2a5f879ff085ad0525b8d7bf0196f8e2317ee11efeebb43f08936d007ef5",
+      "scene_xml_sha256": "946bbb9d804aada13a593a10664600e3a92dff5654d04f28a4dabcf26e922296"
+    },
+    {
+      "id": "single_beam",
+      "objects": 1,
+      "tasks": 1,
+      "source_map_id": "map_6136182a149d479a",
+      "source_map_sha256": "ec7f328d0ff0977ef1487eead27c3b78bf08f2d038089e10166761041ee41cb2",
+      "mission_sha256": "f480c01572a8fb3beb9af3ab6ce31c27892edd943ede8f8696889bb4755aa99f",
+      "static_map_sha256": "8e31c10a09131a886efa9fc572e63b353112d5be317d9d816b1693fc0516df65",
+      "setup_file_sha256": "24a7309b34325bb290c9a0d0736574a6872adf9a8dc064e1e1fd826fc928d235",
+      "static_task_file_sha256": "7f8bc70f17186c347acf3835b54c1d19d0ea6a9fa6988a4ea2e56887b3cc883f",
+      "scene_xml_sha256": "42dbc8349bd8f9b2176c28cf7a9a0be724afb103ae5290078b186d523cf507af"
+    },
+    {
+      "id": "single_box",
+      "objects": 1,
+      "tasks": 1,
+      "source_map_id": "map_6136182a149d479a",
+      "source_map_sha256": "ec7f328d0ff0977ef1487eead27c3b78bf08f2d038089e10166761041ee41cb2",
+      "mission_sha256": "084e93d3300ffafcdb5797ce1d403c8abb1c90af1b966fe8c49a1803bd8b48af",
+      "static_map_sha256": "6123b49fe8725de2936b853fbe9d2780b84827df5e05ddda48ae688b60a51f3c",
+      "setup_file_sha256": "03553e5c40a249b45f46e1509edf434db2b4a27735ece56835da1d96ade43595",
+      "static_task_file_sha256": "a432fa8e480c3cd68c00ca6d40131360908ecbd82d0680126f9f120d82539352",
+      "scene_xml_sha256": "7c96d4d31e1b00541b22b189de303190e7598a51a47a7f2c4d1d3d3ff9eced68"
+    },
+    {
+      "id": "mixed_pair",
+      "objects": 2,
+      "tasks": 2,
+      "source_map_id": "map_6136182a149d479a",
+      "source_map_sha256": "ec7f328d0ff0977ef1487eead27c3b78bf08f2d038089e10166761041ee41cb2",
+      "mission_sha256": "451ff2fdee05f5288711472eda7cc913d55ea6e1c8fa4dcfe3fadff522a67185",
+      "static_map_sha256": "b03b0c016daec4d1a17f4779602f4ed7f235063239b09fcc3f0ed4446258e282",
+      "setup_file_sha256": "c531752e5c4c93036d7313a0d3c4b335804d9612f157b53e288a4d6f4706a975",
+      "static_task_file_sha256": "09943e09eb84ae78c61a126a7794aaa78b7b9df6fd5e9429ceddb7e0b9f8d500",
+      "scene_xml_sha256": "6d35aca2ceaec4cbc7ad972ccc1fdd5d94715eddd2353e01ffbe54675832cd67"
+    },
+    {
+      "id": "two_beams",
+      "objects": 2,
+      "tasks": 2,
+      "source_map_id": "map_6136182a149d479a",
+      "source_map_sha256": "ec7f328d0ff0977ef1487eead27c3b78bf08f2d038089e10166761041ee41cb2",
+      "mission_sha256": "7a10adae60c661656103bb089d8c5e939e46a9b76c153504fd3c1e235e81d6aa",
+      "static_map_sha256": "afa58d07b1e1e07cde5fa4bb9da9b2245e8aaba2c1d9e65547de0d1400986ae8",
+      "setup_file_sha256": "947b37bc73ffb41a1557e327217021b4fa7a793959b78012dea48e43a9fd853b",
+      "static_task_file_sha256": "8be5ad13d8439d2c7e14732068c7906a940c448899f208565e46b3cdbb83b1d3",
+      "scene_xml_sha256": "e32eb8b2ff7d3c491b2f88b6b23fa131509c5b732ac330ed1efa778a252c6837"
+    },
+    {
+      "id": "three_beams",
+      "objects": 3,
+      "tasks": 3,
+      "source_map_id": "map_6136182a149d479a",
+      "source_map_sha256": "ec7f328d0ff0977ef1487eead27c3b78bf08f2d038089e10166761041ee41cb2",
+      "mission_sha256": "614bfaa2abb2ae11e338df3142ee739d2a22c97859970b417e864c6937aaa30a",
+      "static_map_sha256": "73e02460897e812166b78ad588ed6ce803df2e4c54881bec1016a0e6482727e8",
+      "setup_file_sha256": "267e8ac572a33306eb9eb84192fac7849bb95981571e23ffdbc9ad2208139e9c",
+      "static_task_file_sha256": "fb7a511851e927627b9a7951fc4090071e6c5ec8cc01a49b56b4e62503079657",
+      "scene_xml_sha256": "d01dc6d3a051ed29b56d90b39c62519cd9f963c55b685ad1431e28bf2909d8f7"
+    },
+    {
+      "id": "three_boxes",
+      "objects": 3,
+      "tasks": 3,
+      "source_map_id": "map_6136182a149d479a",
+      "source_map_sha256": "ec7f328d0ff0977ef1487eead27c3b78bf08f2d038089e10166761041ee41cb2",
+      "mission_sha256": "0e9e0b9e3672bd5a696ad7aa2370f9a08b9af1434e5bb1d3af974a5bbfccd8da",
+      "static_map_sha256": "2e7359b5df6d41b2d0cec10be7fc17dcf84b8246de96de8d885c585218b263db",
+      "setup_file_sha256": "fd3b7ce084349484651150454b4fe2cd6074340695d229d1b1337d040e4d44ce",
+      "static_task_file_sha256": "67cd512790245076c90baeac20f4b34488af3e6c2a3c5a96ea115bdd9cde78d1",
+      "scene_xml_sha256": "639e3e013e2654fd8dae52dccf9e8749c2de1203be5fee7826b7b45d2cdf9f4f"
+    },
+    {
+      "id": "beam_heavy_four",
+      "objects": 4,
+      "tasks": 4,
+      "source_map_id": "map_6136182a149d479a",
+      "source_map_sha256": "ec7f328d0ff0977ef1487eead27c3b78bf08f2d038089e10166761041ee41cb2",
+      "mission_sha256": "63c0472e8d09248866cf519c8a9dfb32138e93bf0a43288416ddb5937bb38a3c",
+      "static_map_sha256": "5e8d4d5adebba7a8548605df756d5c7cbd251f1e4452840a7457137f99cd34c1",
+      "setup_file_sha256": "83d21c64d1d9de80e5987fe7d2796d98f00f0752497fd89ddd5c494f021a9c8f",
+      "static_task_file_sha256": "ee20ef8ae891a32d1a0e370d36e2324d89e74597b83c43ae37c61f26c85d167c",
+      "scene_xml_sha256": "dab11b2a3fe68c1a3a400f6ed92f1a9bd3ce82120740adc2f486d710bcfa9b33"
+    },
+    {
+      "id": "mixed_four",
+      "objects": 4,
+      "tasks": 4,
+      "source_map_id": "map_6136182a149d479a",
+      "source_map_sha256": "ec7f328d0ff0977ef1487eead27c3b78bf08f2d038089e10166761041ee41cb2",
+      "mission_sha256": "af768a4e746a633a6f2378bccd33b71127ca3ee41bd19fbd87c3e401a4c6f80e",
+      "static_map_sha256": "e78ffcc5fca9b2158101c06c41e666d62af304289c6db6c58ee824255b3b3219",
+      "setup_file_sha256": "e056272ed8261ee04d9b7bd6b2b10fbb464ce1c2bf63d810b910b18b7e5728f4",
+      "static_task_file_sha256": "b4b16638f06f12f5485645989e8739d3bb90242114819375ce826c33cc3f09a2",
+      "scene_xml_sha256": "fd6c781484fa1ddfa9137ce74900b4023039f7d8707cfbab4394594bbd9ab98f"
+    },
+    {
+      "id": "box_heavy_five",
+      "objects": 5,
+      "tasks": 5,
+      "source_map_id": "map_6136182a149d479a",
+      "source_map_sha256": "ec7f328d0ff0977ef1487eead27c3b78bf08f2d038089e10166761041ee41cb2",
+      "mission_sha256": "a957af42c995f19ce6bebab3f7b007b7f2de02f4bf32b1aa24e6257195703028",
+      "static_map_sha256": "3cedacd6803fee681967f9e8abf8c89a427dfb65d13e4c51ddd487c83dd82164",
+      "setup_file_sha256": "90b00edd3b0c08f38214b019936ac2e021f60233ca76daa4ca255d3fb1fcaf72",
+      "static_task_file_sha256": "6697b435fd9d8f8b59aa436b141d3f21ad25e47373ebf9672b9a0f78b0d96b09",
+      "scene_xml_sha256": "99c1d121d048f92007cb2e32488bd347075475bdb020fa0005d848ad7580567c"
+    },
+    {
+      "id": "six_boxes",
+      "objects": 6,
+      "tasks": 6,
+      "source_map_id": "map_6136182a149d479a",
+      "source_map_sha256": "ec7f328d0ff0977ef1487eead27c3b78bf08f2d038089e10166761041ee41cb2",
+      "mission_sha256": "275b19a6b1b74f6806011c4833cfe8c68ae3a2d1bc689a2018bafb899466fdc5",
+      "static_map_sha256": "1bc7d8427f2e7068d2a16f29963dc7fb2ad312ea7763c2fc8fa78722ff3dd553",
+      "setup_file_sha256": "cfe75308b2511bc7941d4613b02908e9411272c02a853dfc2232f4a6eb9cd465",
+      "static_task_file_sha256": "3c26a67ad6c03afb408484a189c3df41f79a788d1663a28b87501241130ee2a2",
+      "scene_xml_sha256": "68bf0e77aa06a2dfd8b520299fe586763d8286817201f1fb4975253a9d18c87e"
+    },
+    {
+      "id": "mixed_eight",
+      "objects": 8,
+      "tasks": 8,
+      "source_map_id": "map_6136182a149d479a",
+      "source_map_sha256": "ec7f328d0ff0977ef1487eead27c3b78bf08f2d038089e10166761041ee41cb2",
+      "mission_sha256": "1bbf15f2131393cc0a00b06ad480bdf8a16d1447d359539e8a75a3779ff34374",
+      "static_map_sha256": "cbf81698cc72ce9a6edf86429da16e46790c98708dd12b95bfb16405a5617263",
+      "setup_file_sha256": "407101bdb552e64df590615a7405fa375fdd889b9e35dfd609bacc6583723d4a",
+      "static_task_file_sha256": "7788a51fcad45b2276042a93e5cc6243aaf063d6853ee8dee1eef24de379b917",
+      "scene_xml_sha256": "b17088cc3606ebf6d7eacd608cc58ee6163ab5c48717a244d4a8ff9e86d12eac"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+[
+  {
+    "event": "READY_CLAIM",
+    "task_id": "stage_02",
+    "robot_id": "r1",
+    "observed_at_s": 3.999999999999781,
+    "received_at_s": 3.999999999999781,
+    "sequence": 0,
+    "own_rgb_ref": "rgb/execution-000-r1.jpg",
+    "top_rgb_ref": "rgb/execution-000-top.jpg"
+  },
+  {
+    "event": "READY_CLAIM",
+    "task_id": "stage_03",
+    "robot_id": "r2",
+    "observed_at_s": 3.999999999999781,
+    "received_at_s": 3.999999999999781,
+    "sequence": 0,
+    "own_rgb_ref": "rgb/execution-000-r2.jpg",
+    "top_rgb_ref": "rgb/execution-000-top.jpg"
+  },
+  {
+    "event": "TASK_GRANTED",
+    "task_id": "stage_02",
+    "serial": 1,
+    "now_s": 3.999999999999781,
+    "resources": [
+      "object:object_02",
+      "robot:r1",
+      "route:lane_a",
+      "slot:staging_02"
+    ]
+  },
+  {
+    "event": "TASK_GRANTED",
+    "task_id": "stage_03",
+    "serial": 2,
+    "now_s": 3.999999999999781,
+    "resources": [
+      "object:object_03",
+      "robot:r2",
+      "route:lane_b",
+      "slot:staging_03"
+    ]
+  }
+]

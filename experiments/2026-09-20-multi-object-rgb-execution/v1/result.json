@@ -1,0 +1,71 @@
+{
+  "source_sha": "0614b90881aedf3574b5a9343a6de20b6c24f261",
+  "case": "staging_three",
+  "error": "RuntimeError: no unanimous executable plan within budget",
+  "stop_reason": null,
+  "transport_success": false,
+  "clock": "paused SIM during inference; not real-time control",
+  "model": "gemini-3.8-flash",
+  "limits": {
+    "turns": 30,
+    "calls": 40,
+    "input_tokens": 160000,
+    "wall_s": 480.0
+  },
+  "environment": {
+    "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+    "platform": "macOS-27.2-arm64-arm-64bit",
+    "mujoco": "3.12.0"
+  },
+  "cost_usd": null,
+  "scope": "experimental RGB raw-action execution, not ACT or teacher replay",
+  "evaluation": {
+    "objects": {
+      "object_01": {
+        "center_m": [
+          -0.24000000003343516,
+          -2.4299999998877966,
+          0.019951425052399455
+        ],
+        "inside_final_slot": false,
+        "on_floor": true,
+        "touching_robot": false,
+        "final_placement": false
+      },
+      "object_02": {
+        "center_m": [
+          0.36,
+          -2.75,
+          0.015892244581602284
+        ],
+        "inside_final_slot": false,
+        "on_floor": true,
+        "touching_robot": false,
+        "final_placement": false
+      },
+      "object_03": {
+        "center_m": [
+          0.36,
+          -2.0,
+          0.015892244581602284
+        ],
+        "inside_final_slot": false,
+        "on_floor": true,
+        "touching_robot": false,
+        "final_placement": false
+      }
+    },
+    "final_objects": 0,
+    "whole_mission_final_placement": false,
+    "scope": "terminal placement only; required intermediate jobs need independent trajectory evidence"
+  },
+  "camera_geometry_unchanged": true,
+  "weld_steps": 0,
+  "model_calls": 18,
+  "usage": {
+    "prompt_tokens": 161354,
+    "completion_tokens": 7629,
+    "total_tokens": 187461
+  },
+  "wall_s": 69.33705283400195
+}

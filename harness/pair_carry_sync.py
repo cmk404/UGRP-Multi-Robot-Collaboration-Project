@@ -32,9 +32,10 @@ class PairCarrySync:
         participants: Iterable[str] = ("r1", "r3"),
         plan_version: int = 1,
         report_ttl_s: float = 0.6,
+        *, allow_solo: bool = False,
     ) -> None:
         participant_tuple = tuple(participants)
-        if not task_id or len(participant_tuple) < 2:
+        if not task_id or len(participant_tuple) < (1 if allow_solo else 2):
             raise ValueError("task_id and at least two participants are required")
         if len(set(participant_tuple)) != len(participant_tuple) or any(not p for p in participant_tuple):
             raise ValueError("participants must be unique non-empty identifiers")
