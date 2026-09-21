@@ -73,7 +73,9 @@ def test_submit_never_public_and_does_not_duplicate_dataset(prepared, monkeypatc
     monkeypatch.setattr(k,'cli',fake)
     assert k.submit(output) == 2
     indexing[0]=False
-    assert k.submit(output) == 0
+    assert k.submit(output, timeout_seconds=14400) == 0
+    assert json.loads((output/'job.json').read_text())['timeout_seconds'] == 14400
+    assert [c for c in calls if c[:2] == ('kernels','push')][0][-2:] == ('--timeout', '14400')
     assert len([c for c in calls if c[:2] == ('datasets','create')]) == 1
     assert all('--public' not in c for c in calls)
     with pytest.raises(ValueError,match='already attempted'):

@@ -209,7 +209,9 @@ def validate(output, state):
         raise ValueError('source bundle changed since preparation')
 
 
-def submit(output):
+def submit(output, timeout_seconds=1800):
+    if not 60 <= timeout_seconds <= 43200:
+        raise ValueError('kernel timeout must be between 60 and 43200 seconds')
     state = json.loads((output/'job.json').read_text())
     validate(output, state)
     if state['stage'] == 'prepared':
@@ -250,8 +252,9 @@ def submit(output):
         raise ValueError('remote dataset privacy was not confirmed; kernel will not be submitted')
     state['dataset_private_verified'] = True
     state['stage'] = 'kernel_submit_requested'
+    state['timeout_seconds'] = timeout_seconds
     write(output/'job.json', state)
-    response = cli('kernels', 'push', '-p', output/'kernel', '--timeout', '1800')
+    response = cli('kernels', 'push', '-p', output/'kernel', '--timeout', str(timeout_seconds))
     (output/'kernel-push.log').write_text(response)
     match = re.search(r'Kernel version (\d+) successfully pushed', response)
     if not match or 'not valid' in response or 'error:' in response.lower():
@@ -335,6 +338,8 @@ def main():
     for name in ('submit', 'status', 'collect'):
         q = sub.add_parser(name)
         q.add_argument('--output', required=True, type=Path)
+        if name == 'submit':
+            q.add_argument('--timeout-seconds', type=int, default=1800)
     args = parser.parse_args()
     output = args.output.resolve()
     if args.action == 'reuse':
@@ -348,7 +353,7 @@ def main():
     if args.action == 'status':
         status(output)
         return 0
-    return submit(output) if args.action == 'submit' else collect(output)
+    return submit(output, args.timeout_seconds) if args.action == 'submit' else collect(output)
 
 
 if __name__ == '__main__':
