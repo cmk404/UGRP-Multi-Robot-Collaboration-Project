@@ -42,3 +42,7 @@
 Colab에서는 이미 회수·검증한 128/256px 8모델+교사 36회 평가를 먼저 수행하도록 전환한다. 학습·모델·프로토콜은 바꾸지 않고 새 출력 `outputs/cloud-priority/physics128256`을 사용한다. 이 평가의 실행 한도는 4시간, 수집 한도는 4.5시간이다. 이는 완료 예상이 아닌 중단 한도다. Kaggle 규칙 기준선은 그대로 유지한다.
 
 현재 상태는 로컬 `outputs/cloud-resume/priority-collection-status.json`, `physics128256-report.json`, `priority-intervention.json`을 확인한다. 이전 `collection-status.json`과 초기 실행 순서는 과거 기록이다. 512px 재시작은 현재 계획에 포함하지 않는다.
+
+전환 첫 시도는 trial 시작 전 `ModuleNotFoundError: scripts`로 종료됐다. 원격 launcher가 기존 stage의 `PYTHONPATH`/OSMesa 환경을 전달하지 않은 것이 원인이다. 실패 원본은 `outputs/cloud-priority`에 유지하고 환경을 복원한 별도 `outputs/cloud-priority-v2`에서 같은 실행 SHA/프로토콜로 시작한다. 평가 entrypoint 자체도 저장소 루트를 import 경로에 추가하도록 보완해 격리 Python의 직접 실행 import를 검증했다. 기존 모델이나 평가 로직은 변경하지 않았다.
+
+512px 중단 원본은 로컬 `outputs/cloud-resume/collected/diagnostic/result.zip`으로 회수했다. 압축본 SHA `34443c4161dcc7951bdbd292ef76913c5cb9d509f8f10b01e9516bb78addc781`, 내부 8파일과 source SHA를 검증했다. exit143은 비용 우선순위에 따른 명시적 중지다. 최신 평가 수집기는 `priority-v2-collection-status.json`을 사용한다.
