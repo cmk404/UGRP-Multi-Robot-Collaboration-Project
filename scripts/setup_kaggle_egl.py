@@ -4,6 +4,7 @@ import json
 import os
 import subprocess
 from scripts.setup_colab_egl import PROBE
+from scripts.probe_kaggle_gpu import inventory
 
 
 def configure(python, output, *, search_roots=None):
@@ -12,8 +13,8 @@ def configure(python, output, *, search_roots=None):
                           Path('/usr/local/nvidia'),Path('/usr/lib64')]
     libraries=sorted({str(p.resolve()) for root in roots if root.exists()
                       for p in root.rglob('libEGL_nvidia.so*') if p.is_file()})
-    smi=subprocess.run(['nvidia-smi','--query-gpu=name,driver_version','--format=csv,noheader'],capture_output=True,text=True,timeout=20)
-    report={'nvidia_smi_exit':smi.returncode,'gpus':smi.stdout.strip(),'egl_libraries':libraries}
+    report=inventory();report['egl_libraries']=libraries
+    (output/'report.json').write_text(json.dumps(report,indent=2)+'\n')
     env={**os.environ,'MUJOCO_GL':'egl','PYOPENGL_PLATFORM':'egl'}
     if libraries:
         vendor=output/'nvidia.json';vendor.write_text(json.dumps({'file_format_version':'1.0.0','ICD':{'library_path':libraries[0]}})+'\n')
