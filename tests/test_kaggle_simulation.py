@@ -210,3 +210,26 @@ def test_cancelled_enum_reaches_failure_evidence_collection(prepared, monkeypatc
     with pytest.raises(RuntimeError,match='no result ZIP'):k.collect(output)
     assert any(c[:2]==('kernels','output') for c in calls)
     assert json.loads((output/'job.json').read_text())['stage']=='remote_failed'
+
+
+def test_reuse_private_inputs_gets_new_run_identity_without_dataset_upload(prepared, monkeypatch):
+    old,original=prepared
+    original['dataset_private_verified']=True
+    k.write(old/'job.json',original)
+    new=old.parent/'reuse'
+    state=k.reuse_inputs(old,new,module='scripts.sim_quickstart',arguments=['--output','{output}'])
+    assert state['job_id']!=original['job_id'] and state['kernel']!=original['kernel']
+    assert state['dataset']==original['dataset']
+    assert state['source_filename']=='ugrp-source-'+original['job_id']+'.bin'
+    assert state['source_sha']==original['source_sha']
+    calls=[]
+    def fake(*args):
+        calls.append(args)
+        if args[:2]==('datasets','status'):return '{"status":"ready"}'
+        if args[:2]==('datasets','metadata'):
+            k.write(Path(args[-1])/'dataset-metadata.json',{'isPrivate':True})
+        if args[:2]==('kernels','push'):return 'Kernel version 1 successfully pushed'
+        return ''
+    monkeypatch.setattr(k,'cli',fake)
+    assert k.submit(new)==0
+    assert not any(c[:2]==('datasets','create') for c in calls)

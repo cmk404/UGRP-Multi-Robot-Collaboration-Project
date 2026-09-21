@@ -29,7 +29,7 @@ def cli(*args):
     return result.stdout
 
 
-def driver(record, job_id, module, arguments, dependencies_sha256):
+def driver(record, job_id, module, arguments, dependencies_sha256, source_filename=None):
     remote = '/kaggle/temp/ugrp-' + job_id
     return f'''from pathlib import Path
 import hashlib, json, os, shutil, subprocess, sys, tarfile, traceback
@@ -42,7 +42,7 @@ def save():
     print('UGRP_JOB_STATUS', json.dumps(job), flush=True)
 save()
 try:
-    candidates = list(Path('/kaggle/input').rglob({('ugrp-source-' + job_id + '.bin')!r}))
+    candidates = list(Path('/kaggle/input').rglob({(source_filename or 'ugrp-source-' + job_id + '.bin')!r}))
     if len(candidates) != 1:
         raise RuntimeError('expected exactly one source bundle input')
     base.parent.mkdir(parents=True, exist_ok=True)
@@ -127,6 +127,36 @@ def prepare(output, owner=None, *, root=ROOT, module='scripts.sim_quickstart', a
     return state
 
 
+def reuse_inputs(previous, output, *, module, arguments):
+    """New kernel using a verified private input dataset; no upload or mutation."""
+    original = json.loads((previous/'job.json').read_text())
+    validate(previous, original)
+    if original.get('dataset_private_verified') is not True:
+        raise ValueError('previous dataset privacy was not verified')
+    output.mkdir(parents=True, exist_ok=False)
+    shutil.copytree(previous/'dataset', output/'dataset')
+    shutil.copyfile(previous/'source-manifest.json', output/'source-manifest.json')
+    record = json.loads((output/'source-manifest.json').read_text())
+    job_id = uuid.uuid4().hex[:12]
+    owner = original['kernel'].split('/')[0]
+    kernel = owner+'/ugrp-simulation-'+job_id
+    folder = output/'kernel';folder.mkdir()
+    metadata = json.loads((previous/'kernel/kernel-metadata.json').read_text())
+    metadata.update(id=kernel, title='ugrp-simulation-'+job_id)
+    write(folder/'kernel-metadata.json', metadata)
+    filename = original.get('source_filename', 'ugrp-source-'+original['job_id']+'.bin')
+    (folder/'run.py').write_text(driver(record, job_id, module, arguments,
+                                       original['dependencies_sha256'], filename))
+    state = {**original, 'job_id':job_id, 'kernel':kernel, 'stage':'dataset_submitted',
+             'source_filename':filename, 'reused_dataset_from_kernel':original['kernel'],
+             'driver_sha256':digest(folder/'run.py')}
+    for key in ('kernel_version','downloaded','exit_code','kernel_private_verified'):
+        state.pop(key, None)
+    write(output/'job.json', state)
+    validate(output, state)
+    return state
+
+
 def validate(output, state):
     manifest_file = output/'dataset/dependencies-manifest.json'
     if digest(manifest_file) != state['dependencies_sha256']:
@@ -135,7 +165,7 @@ def validate(output, state):
     for name, expected in dependencies['files'].items():
         if Path(name).name != name or digest(output/'dataset'/name) != expected:
             raise ValueError('dependency changed since preparation')
-    expected_files = set(dependencies['files']) | {'dependencies-manifest.json', 'dataset-metadata.json', 'source-manifest.json', 'ugrp-source-'+state['job_id']+'.bin'}
+    expected_files = set(dependencies['files']) | {'dependencies-manifest.json', 'dataset-metadata.json', 'source-manifest.json', state.get('source_filename', 'ugrp-source-'+state['job_id']+'.bin')}
     files = list((output/'dataset').iterdir())
     if {p.name for p in files} != expected_files or any(not p.is_file() or p.is_symlink() for p in files):
         raise ValueError('unexpected file in dataset upload directory')
@@ -149,7 +179,7 @@ def validate(output, state):
         raise ValueError('dataset identity or source rights metadata changed')
     if digest(output/'kernel/run.py') != state['driver_sha256']:
         raise ValueError('remote driver changed since preparation')
-    if digest(output/'dataset'/('ugrp-source-'+state['job_id']+'.bin')) != state['source_sha256']:
+    if digest(output/'dataset'/(state.get('source_filename', 'ugrp-source-'+state['job_id']+'.bin'))) != state['source_sha256']:
         raise ValueError('source bundle changed since preparation')
 
 
@@ -270,11 +300,20 @@ def main():
     p.add_argument('--module', default='scripts.sim_quickstart')
     p.add_argument('--wheelhouse', type=Path, help='reuse Linux CPython 3.12 wheels, including pip 26.2.1')
     p.add_argument('args', nargs=argparse.REMAINDER)
+    p = sub.add_parser('reuse')
+    p.add_argument('--from-output', required=True, type=Path)
+    p.add_argument('--output', required=True, type=Path)
+    p.add_argument('--module', required=True)
+    p.add_argument('args', nargs=argparse.REMAINDER)
     for name in ('submit', 'status', 'collect'):
         q = sub.add_parser(name)
         q.add_argument('--output', required=True, type=Path)
     args = parser.parse_args()
     output = args.output.resolve()
+    if args.action == 'reuse':
+        arguments = args.args[1:] if args.args[:1] == ['--'] else args.args
+        print(json.dumps(reuse_inputs(args.from_output.resolve(), output, module=args.module, arguments=arguments)))
+        return 0
     if args.action == 'prepare':
         arguments = args.args[1:] if args.args[:1] == ['--'] else args.args
         print(json.dumps(prepare(output, args.owner, module=args.module, arguments=arguments, include=args.include, wheelhouse=args.wheelhouse)))
