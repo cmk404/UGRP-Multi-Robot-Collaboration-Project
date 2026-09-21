@@ -60,3 +60,7 @@ Colab에서는 이미 회수·검증한 128/256px 8모델+교사 36회 평가를
 실행 SHA `b5ca7ca6d494dab76cf926c7af3f22dd2146ad08`. 새 Colab CPU에서 합성 의미 상태 요청을 비공개 mailbox로 보내 두 모델 모두 HTTP 200을 회수했다. Jev 총 2.897s/API 0.875s, Gemini 총 4.624s/API 2.617s였다. `colab-model-connectivity.json`에 원본 위치·해시를 기록했다. 키는 Mac 키체인에만 있고 원격에 업로드하지 않았다.
 
 동일 Colab에서 dev_open의 rule/Jev/Gemini 3회 진단을 시작했다. 작성 시점에는 초기 물리 처리 중이며 완료한 로봇 trial은 0회다. 진단의 모델 전송에 실패가 없으면 108회 holdout으로 이어지되 두 단계 합계 3.5시간으로 제한한다. 실제 과제 성공 여부로 조건을 선별하지 않는다. 결과 collector는 중간 결과 JSON/turns와 종료 단계 ZIP을 회수하고 SHA·내부 파일 해시를 검사한 후 이 작업의 relay와 Colab만 종료한다. 로컬 상태: `outputs/cloud-model-compare/collection-status.json`, 중계 기록: `outputs/cloud-model-compare/relay/status.json`. 전체 로컬 검사 1199 passed / 3 skipped / 191 subtests passed. 모델 연결 성공과 로봇 성공률은 별개다.
+
+## Kaggle 재개 점검
+
+기존 rule36 작업의 서버 취소 원인은 로그에 기록되지 않았다. 로그에는 sitecustomize/wrapt 경고만 있으며 이것만으로 취소 원인으로 단정하지 않는다. `CANCEL_ACKNOWLEDGED`의 밑줄을 처리하지 못해 collector가 종료 상태를 거부한 버그를 수정했다. 실제 종료 작업의 다운로드·private 설정을 확인했으나 result ZIP은 없었다. 원본은 `outputs/kaggle-jev-rule-20260921/download-68fd6790`, 서버 로그는 같은 출력 폴더의 `execution-logs.txt`다. 관련 테스트 20개 통과. 신규 제출은 기존 기록을 덮어쓰지 않고 dev_open rule 1회부터 점검한다.

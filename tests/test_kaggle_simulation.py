@@ -193,3 +193,20 @@ def test_deb_transport_names_survive_kaggle_normalization(tmp_path, monkeypatch)
     manifest=deps.prepare_dependencies(root,output,wheelhouse)
     assert 'libosmesa6.deb' in manifest['files']
     assert all('~' not in name for name in manifest['files'])
+
+
+@pytest.mark.parametrize('raw', ['KernelWorkerStatus.CANCEL_ACKNOWLEDGED', 'cancelacknowledged', 'cancel_acknowledged'])
+def test_cancelled_enum_reaches_failure_evidence_collection(prepared, monkeypatch, raw):
+    output,state=prepared
+    calls=[]
+    def fake(*args):
+        calls.append(args)
+        if args[:2]==('kernels','status'):return f'kernel has status "{raw}"'
+        if args[:2]==('kernels','pull'):
+            target=Path(args[args.index('-p')+1])
+            k.write(target/'kernel-metadata.json', {'is_private':True})
+        return ''
+    monkeypatch.setattr(k,'cli',fake)
+    with pytest.raises(RuntimeError,match='no result ZIP'):k.collect(output)
+    assert any(c[:2]==('kernels','output') for c in calls)
+    assert json.loads((output/'job.json').read_text())['stage']=='remote_failed'

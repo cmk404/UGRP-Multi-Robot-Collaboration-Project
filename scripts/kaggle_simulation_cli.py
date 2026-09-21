@@ -39,6 +39,7 @@ base = Path({remote!r})
 job = {{'job_id': {job_id!r}, 'source_sha': {record['source_sha']!r}, 'provider': 'kaggle', 'status': 'setup', 'exit_code': None}}
 def save():
     (working/'remote-job.json').write_text(json.dumps(job, indent=2)+'\\n')
+    print('UGRP_JOB_STATUS', json.dumps(job), flush=True)
 save()
 try:
     candidates = list(Path('/kaggle/input').rglob({('ugrp-source-' + job_id + '.bin')!r}))
@@ -211,7 +212,7 @@ def status(output):
     (output/'kernel-status.log').write_text(response)
     print(response.strip())
     match = re.search(r'has status "([^"]+)"', response)
-    return match.group(1).lower().split('.')[-1] if match else 'unknown'
+    return re.sub(r'[^a-z]', '', match.group(1).lower().split('.')[-1]) if match else 'unknown'
 
 
 def verify(output, downloaded):
