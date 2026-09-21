@@ -233,3 +233,25 @@ def test_reuse_private_inputs_gets_new_run_identity_without_dataset_upload(prepa
     monkeypatch.setattr(k,'cli',fake)
     assert k.submit(new)==0
     assert not any(c[:2]==('datasets','create') for c in calls)
+
+
+def test_git_delta_reproduces_exact_committed_source_and_rejects_tampering(tmp_path):
+    import base64
+    from scripts.colab_simulation_cli import pack
+    from scripts.kaggle_source_delta import apply_source_delta
+    root=snapshot_repo(tmp_path)
+    base=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()
+    old=tmp_path/'old';pack(root,old)
+    (root/'README.md').write_text('updated source')
+    (root/'harness').mkdir();(root/'harness/new.py').write_text('fixed = True\n')
+    subprocess.run(['git','add','.'],cwd=root,check=True)
+    subprocess.run(['git','-c','user.name=Test','-c','user.email=test@example.invalid','commit','-qm','update'],cwd=root,check=True)
+    new=tmp_path/'new';record=pack(root,new)
+    bundle=tmp_path/'delta.bundle'
+    subprocess.run(['git','bundle','create',str(bundle),'HEAD','^'+base],cwd=root,check=True)
+    delta={'base_sha':base,'target_sha':record['source_sha'],'included':record['included'],
+           'sha256':k.digest(bundle),'content':base64.b64encode(bundle.read_bytes()).decode()}
+    with pytest.raises(ValueError,match='hash'):apply_source_delta(old/'source',{**delta,'sha256':'0'*64})
+    apply_source_delta(old/'source',delta)
+    assert (old/'source/harness/new.py').read_text()=='fixed = True\n'
+    assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=old/'source',text=True).strip()==record['source_sha']

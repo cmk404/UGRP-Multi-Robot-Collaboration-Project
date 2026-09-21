@@ -1,6 +1,8 @@
 """Prepare, submit and recover private Kaggle CPU simulation jobs through its CLI."""
 from __future__ import annotations
 import argparse
+import base64
+import inspect
 import hashlib
 import json
 from pathlib import Path
@@ -29,10 +31,13 @@ def cli(*args):
     return result.stdout
 
 
-def driver(record, job_id, module, arguments, dependencies_sha256, source_filename=None):
+def driver(record, job_id, module, arguments, dependencies_sha256, source_filename=None, source_delta=None):
     remote = '/kaggle/temp/ugrp-' + job_id
+    from scripts.kaggle_source_delta import apply_source_delta
+    delta_code = inspect.getsource(apply_source_delta) if source_delta else ''
     return f'''from pathlib import Path
-import hashlib, json, os, shutil, subprocess, sys, tarfile, traceback
+import base64, hashlib, json, os, shutil, subprocess, sys, tarfile, traceback
+{delta_code}
 working = Path('/kaggle/working')
 working.mkdir(exist_ok=True)
 base = Path({remote!r})
@@ -59,6 +64,9 @@ try:
             if member.issym() or member.islnk():
                 raise ValueError('source archive links are forbidden')
         bundle.extractall(base, filter='data')
+    source_delta = {source_delta!r}
+    if source_delta:
+        apply_source_delta(base/'source', source_delta)
     with (working/'setup.log').open('w') as log:
         subprocess.run([sys.executable, str(base/'source/scripts/setup_kaggle_offline.py'), str(base), str(inputs), str(manifest_file)], stdout=log, stderr=subprocess.STDOUT, check=True)
     source = base/'source'
@@ -127,7 +135,7 @@ def prepare(output, owner=None, *, root=ROOT, module='scripts.sim_quickstart', a
     return state
 
 
-def reuse_inputs(previous, output, *, module, arguments):
+def reuse_inputs(previous, output, *, module, arguments, refresh_source=False):
     """New kernel using a verified private input dataset; no upload or mutation."""
     original = json.loads((previous/'job.json').read_text())
     validate(previous, original)
@@ -145,11 +153,22 @@ def reuse_inputs(previous, output, *, module, arguments):
     metadata.update(id=kernel, title='ugrp-simulation-'+job_id)
     write(folder/'kernel-metadata.json', metadata)
     filename = original.get('source_filename', 'ugrp-source-'+original['job_id']+'.bin')
+    delta = None
+    if refresh_source:
+        snapshot = pack(ROOT, output/'updated-source')
+        bundle = output/'source-update.bundle'
+        subprocess.run(['git','bundle','create',str(bundle.resolve()),'HEAD','^'+original['source_sha']],cwd=ROOT,check=True)
+        delta = {'base_sha':original['source_sha'],'target_sha':snapshot['source_sha'],
+                 'included':snapshot['included'],'sha256':digest(bundle),
+                 'content':base64.b64encode(bundle.read_bytes()).decode()}
+        record = {**record, 'source_sha':snapshot['source_sha']}
     (folder/'run.py').write_text(driver(record, job_id, module, arguments,
-                                       original['dependencies_sha256'], filename))
+                                       original['dependencies_sha256'], filename, delta))
     state = {**original, 'job_id':job_id, 'kernel':kernel, 'stage':'dataset_submitted',
              'source_filename':filename, 'reused_dataset_from_kernel':original['kernel'],
              'driver_sha256':digest(folder/'run.py')}
+    if delta:
+        state.update(source_sha=delta['target_sha'],source_base_sha=delta['base_sha'],source_delta_sha256=delta['sha256'])
     for key in ('kernel_version','downloaded','exit_code','kernel_private_verified'):
         state.pop(key, None)
     write(output/'job.json', state)
@@ -302,6 +321,7 @@ def main():
     p.add_argument('args', nargs=argparse.REMAINDER)
     p = sub.add_parser('reuse')
     p.add_argument('--from-output', required=True, type=Path)
+    p.add_argument('--refresh-source', action='store_true', help='Embed a verified Git delta; reuse large private input bytes')
     p.add_argument('--output', required=True, type=Path)
     p.add_argument('--module', required=True)
     p.add_argument('args', nargs=argparse.REMAINDER)
@@ -312,7 +332,7 @@ def main():
     output = args.output.resolve()
     if args.action == 'reuse':
         arguments = args.args[1:] if args.args[:1] == ['--'] else args.args
-        print(json.dumps(reuse_inputs(args.from_output.resolve(), output, module=args.module, arguments=arguments)))
+        print(json.dumps(reuse_inputs(args.from_output.resolve(), output, module=args.module, arguments=arguments, refresh_source=args.refresh_source)))
         return 0
     if args.action == 'prepare':
         arguments = args.args[1:] if args.args[:1] == ['--'] else args.args

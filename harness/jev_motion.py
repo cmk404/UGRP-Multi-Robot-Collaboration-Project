@@ -48,9 +48,13 @@ def wrap(x):
 def detect_box(top):
     hsv = cv2.cvtColor(top, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv, np.array((80, 125, 35), np.uint8), np.array((100, 255, 255), np.uint8))
-    n, _, stats, centers = cv2.connectedComponentsWithStats(mask)
+    n, labels, stats, centers = cv2.connectedComponentsWithStats(mask)
+    # Software-rendered floor/JPEG speckles can pass area/aspect gates.
+    # Require a solid 3x3 interior, while preserving the original RGB centroid.
+    interior = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
     found = [i for i in range(1, n) if 25 <= stats[i, 4] <= 600
-             and .35 <= stats[i, 2] / max(1, stats[i, 3]) <= 2.8]
+             and .35 <= stats[i, 2] / max(1, stats[i, 3]) <= 2.8
+             and np.count_nonzero(interior[labels == i]) >= 25]
     if len(found) != 1:
         raise ValueError('cyan_target_missing_or_ambiguous')
     return centers[found[0]], int(stats[found[0], 4])
