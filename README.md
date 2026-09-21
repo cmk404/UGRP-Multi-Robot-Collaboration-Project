@@ -10,6 +10,7 @@
 - **[현재 상태와 실행 경로](docs/current_status.md)** — main에 포함된 결과·제약과 작업별 진입점
 - **[Ubuntu 설치·무료 데모](docs/ubuntu_quickstart.md)** — 새 팀원은 여기서 시작
 - [개발·테스트·실험·PR 절차](CONTRIBUTING.md) · [로봇 입력과 작업 규칙](AGENTS.md)
+- [TensorBoard로 학습·실험 기록 보기](docs/tensorboard.md)
 - [문서 찾아보기](docs/README.md) · [실험 인덱스](experiments/README.md) · [지도 목록](maps/README.md)
 
 ## 현재 검증 범위

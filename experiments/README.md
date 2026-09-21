@@ -5,7 +5,11 @@
 - [2026-09-21 Kaggle CLI CPU 실행·결과 회수](2026-09-21-kaggle-cli-smoke/README.md) — private·인터넷 OFF, 최종 물리·카메라 데모 1/1, 앞선 setup 실패 3회 별도 보존.
 - [2026-09-21 Colab CLI CPU 실행·결과 회수](2026-09-21-colab-cli-smoke/README.md) — 실제 원격 물리·카메라 데모 1/1, ZIP 회수와 전체 파일 해시 확인; 자율 운반 검증 아님.
 
+- [2026-09-21 Jev 의미 상태 폐루프 195회](2026-09-21-jev-semantic-motion/README.md): 새 자세 Jev 5/36 → 35/36(원판정 33/36), Gemini 32/36 → 36/36. 시간 반올림 검산과 원판정 모두 보존.
+- [2026-09-21 Jev 직접 이동·표현 진단](2026-09-21-jev-direct-motion/README.md): 동일 RGB 접근 9회, 저장 상태 표현 비교 72회, 공개 제어 설계 검토. 후속 폐루프 195회는 위 별도 기록에서 검증.
 - [공동 출하 복구: 목적지·장애물 6조건 새 LLM 계획과 물리 E2E 성공](dispatch-adaptive-recovery-20260917/README.md) — 이전 1/6 이후의 최종 비교, 조건당 1회.
+- [2026-09-21 Colab ACT 학습·CLI 복구](2026-09-21-colab-carry-training/README.md) — 8개 × 8000 updates, 50파일 해시 및 Mac native 32개 대조 통과.
+- [2026-09-21 ACT 입력 해상도·이력 2×2 비교](2026-09-21-carry-input-ablation/README.md) — 8개 Colab 학습 모델 회수·Mac 검증 완료, 고정 36-run 물리 비교 진행 중.
 - [2026-09-18 ACT 공동 운반 비교](2026-09-18-act-pair-carry/README.md) — 운반 진입 조건 교사 3/3, ACT 1/3·0/3, 네 번째 조건 접근 중단.
 
 - [2026-09-17 목적지·지형 확대 E2E: 기본 A 성공, B 영상 인식 실패, 4개 지형 실행 거부](dispatch-variation-e2e-20260917/README.md)
@@ -45,3 +49,5 @@
 | 성공 후 효율 분석 | [분석](../docs/markerless_success_analysis_20260909.md) | 접근 보정 반복과 운반 비용 |
 
 이 표는 기존 보고서의 탐색 경로를 보완한 것으로, 모든 과거 실험의 소스·환경·원본을 현재 형식으로 이관했다는 뜻은 아니다. 이전 후보의 커밋 연결 및 raw 원격 보관은 미완료다. 원본 복구 경로는 [이슈 #3](https://github.com/kcm0127-dotcom/ugrp/issues/3)에서 추적한다.
+
+- [2026-09-21 TensorBoard 기록 열람 검증](2026-09-21-tensorboard-review/README.md): 기존 24개 기록 변환, 이벤트·원본 해시·로컬 화면 확인. 새 로봇 실험 아님.

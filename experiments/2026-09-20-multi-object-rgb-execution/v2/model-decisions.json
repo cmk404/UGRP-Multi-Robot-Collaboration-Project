@@ -1,0 +1,1388 @@
+[
+  {
+    "attempt": 0,
+    "request_id": "multi-1789913626076448000-r1-plan-0",
+    "reply": {
+      "request_id": "multi-1789913626076448000-r1-plan-0",
+      "proposal_id": null,
+      "plan_hash": null,
+      "accept": true,
+      "plan": {
+        "schema": "ugrp.multi_object_plan.v1",
+        "mission_sha256": "6ab9c19cd95af8dd1cfdd77de1ce558f65fa20ce02694e80f70ccff4a3009f15",
+        "tasks": [
+          {
+            "task_id": "stage_02",
+            "participants": {
+              "r1": "solo"
+            },
+            "route_id": "lane_a",
+            "after": []
+          },
+          {
+            "task_id": "stage_03",
+            "participants": {
+              "r2": "solo"
+            },
+            "route_id": "lane_b",
+            "after": []
+          },
+          {
+            "task_id": "deliver_01",
+            "participants": {
+              "r1": "end_a",
+              "r3": "end_b"
+            },
+            "route_id": "lane_a",
+            "after": [
+              "stage_02",
+              "stage_03"
+            ]
+          },
+          {
+            "task_id": "deliver_02",
+            "participants": {
+              "r2": "solo"
+            },
+            "route_id": "lane_b",
+            "after": [
+              "stage_02",
+              "deliver_01"
+            ]
+          },
+          {
+            "task_id": "deliver_03",
+            "participants": {
+              "r3": "solo"
+            },
+            "route_id": "lane_a",
+            "after": [
+              "stage_03",
+              "deliver_01"
+            ]
+          }
+        ]
+      },
+      "reason": "Proposing initial multi-object transport plan respecting all staging and delivery dependencies.",
+      "message": "Proposed multi-object transport plan."
+    },
+    "usage": {
+      "prompt_tokens": 8904,
+      "completion_tokens": 549,
+      "total_tokens": 11977
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 9654.984083012096,
+    "request": "r1/multi-1789913626076448000-r1-plan-0-request.json",
+    "robot_id": "r1",
+    "wire_index": 1,
+    "returned_wall_s": 9.850825999994413
+  },
+  {
+    "attempt": 0,
+    "request_id": "multi-1789913626076448000-r2-plan-0",
+    "reply": {
+      "request_id": "multi-1789913626076448000-r2-plan-0",
+      "proposal_id": null,
+      "plan_hash": null,
+      "accept": false,
+      "plan": null,
+      "reason": "waiting for designated proposer r1 to propose plan",
+      "message": "waiting for r1"
+    },
+    "usage": {
+      "prompt_tokens": 8906,
+      "completion_tokens": 87,
+      "total_tokens": 8993
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3386.8909170123516,
+    "request": "r2/multi-1789913626076448000-r2-plan-0-request.json",
+    "robot_id": "r2",
+    "wire_index": 1,
+    "returned_wall_s": 3.583829583993065
+  },
+  {
+    "attempt": 0,
+    "request_id": "multi-1789913626076448000-r3-plan-0",
+    "reply": {
+      "request_id": "multi-1789913626076448000-r3-plan-0",
+      "proposal_id": null,
+      "plan_hash": null,
+      "accept": false,
+      "plan": null,
+      "reason": "waiting for proposal from designated proposer r1",
+      "message": "waiting for r1 to propose plan"
+    },
+    "usage": {
+      "prompt_tokens": 8905,
+      "completion_tokens": 106,
+      "total_tokens": 9287
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3891.9020000030287,
+    "request": "r3/multi-1789913626076448000-r3-plan-0-request.json",
+    "robot_id": "r3",
+    "wire_index": 1,
+    "returned_wall_s": 4.090109666998615
+  },
+  {
+    "attempt": 0,
+    "request_id": "multi-1789913626076448000-r1-plan-1",
+    "reply": {
+      "request_id": "multi-1789913626076448000-r1-plan-1",
+      "proposal_id": "multi-1789913626076448000-plan-v1",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "accept": true,
+      "plan": {
+        "schema": "ugrp.multi_object_plan.v1",
+        "mission_sha256": "6ab9c19cd95af8dd1cfdd77de1ce558f65fa20ce02694e80f70ccff4a3009f15",
+        "tasks": [
+          {
+            "task_id": "stage_02",
+            "participants": {
+              "r1": "solo"
+            },
+            "route_id": "lane_a",
+            "after": []
+          },
+          {
+            "task_id": "stage_03",
+            "participants": {
+              "r2": "solo"
+            },
+            "route_id": "lane_b",
+            "after": []
+          },
+          {
+            "task_id": "deliver_01",
+            "participants": {
+              "r1": "end_a",
+              "r3": "end_b"
+            },
+            "route_id": "lane_a",
+            "after": [
+              "stage_02",
+              "stage_03"
+            ]
+          },
+          {
+            "task_id": "deliver_02",
+            "participants": {
+              "r2": "solo"
+            },
+            "route_id": "lane_b",
+            "after": [
+              "stage_02",
+              "deliver_01"
+            ]
+          },
+          {
+            "task_id": "deliver_03",
+            "participants": {
+              "r3": "solo"
+            },
+            "route_id": "lane_a",
+            "after": [
+              "stage_03",
+              "deliver_01"
+            ]
+          }
+        ]
+      },
+      "reason": "accept proposal multi-1789913626076448000-plan-v1",
+      "message": "accepting proposal multi-1789913626076448000-plan-v1"
+    },
+    "usage": {
+      "prompt_tokens": 9375,
+      "completion_tokens": 673,
+      "total_tokens": 10048
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 4784.087291001924,
+    "request": "r1/multi-1789913626076448000-r1-plan-1-request.json",
+    "robot_id": "r1",
+    "wire_index": 2,
+    "returned_wall_s": 14.655975417001173
+  },
+  {
+    "attempt": 0,
+    "request_id": "multi-1789913626076448000-r2-plan-1",
+    "reply": {
+      "request_id": "multi-1789913626076448000-r2-plan-1",
+      "proposal_id": "multi-1789913626076448000-plan-v1",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "accept": true,
+      "plan": {
+        "schema": "ugrp.multi_object_plan.v1",
+        "mission_sha256": "6ab9c19cd95af8dd1cfdd77de1ce558f65fa20ce02694e80f70ccff4a3009f15",
+        "tasks": [
+          {
+            "task_id": "stage_02",
+            "participants": {
+              "r1": "solo"
+            },
+            "route_id": "lane_a",
+            "after": []
+          },
+          {
+            "task_id": "stage_03",
+            "participants": {
+              "r2": "solo"
+            },
+            "route_id": "lane_b",
+            "after": []
+          },
+          {
+            "task_id": "deliver_01",
+            "participants": {
+              "r1": "end_a",
+              "r3": "end_b"
+            },
+            "route_id": "lane_a",
+            "after": [
+              "stage_02",
+              "stage_03"
+            ]
+          },
+          {
+            "task_id": "deliver_02",
+            "participants": {
+              "r2": "solo"
+            },
+            "route_id": "lane_b",
+            "after": [
+              "stage_02",
+              "deliver_01"
+            ]
+          },
+          {
+            "task_id": "deliver_03",
+            "participants": {
+              "r3": "solo"
+            },
+            "route_id": "lane_a",
+            "after": [
+              "stage_03",
+              "deliver_01"
+            ]
+          }
+        ]
+      },
+      "reason": "accept proposed plan from r1",
+      "message": "accepting plan proposed by r1"
+    },
+    "usage": {
+      "prompt_tokens": 9379,
+      "completion_tokens": 629,
+      "total_tokens": 10593
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 5207.7175000013085,
+    "request": "r2/multi-1789913626076448000-r2-plan-1-request.json",
+    "robot_id": "r2",
+    "wire_index": 2,
+    "returned_wall_s": 15.077813500000047
+  },
+  {
+    "attempt": 0,
+    "request_id": "multi-1789913626076448000-r3-plan-1",
+    "reply": {
+      "request_id": "multi-1789913626076448000-r3-plan-1",
+      "proposal_id": "multi-1789913626076448000-plan-v1",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "accept": true,
+      "plan": {
+        "schema": "ugrp.multi_object_plan.v1",
+        "mission_sha256": "6ab9c19cd95af8dd1cfdd77de1ce558f65fa20ce02694e80f70ccff4a3009f15",
+        "tasks": [
+          {
+            "task_id": "stage_02",
+            "participants": {
+              "r1": "solo"
+            },
+            "route_id": "lane_a",
+            "after": []
+          },
+          {
+            "task_id": "stage_03",
+            "participants": {
+              "r2": "solo"
+            },
+            "route_id": "lane_b",
+            "after": []
+          },
+          {
+            "task_id": "deliver_01",
+            "participants": {
+              "r1": "end_a",
+              "r3": "end_b"
+            },
+            "route_id": "lane_a",
+            "after": [
+              "stage_02",
+              "stage_03"
+            ]
+          },
+          {
+            "task_id": "deliver_02",
+            "participants": {
+              "r2": "solo"
+            },
+            "route_id": "lane_b",
+            "after": [
+              "stage_02",
+              "deliver_01"
+            ]
+          },
+          {
+            "task_id": "deliver_03",
+            "participants": {
+              "r3": "solo"
+            },
+            "route_id": "lane_a",
+            "after": [
+              "stage_03",
+              "deliver_01"
+            ]
+          }
+        ]
+      },
+      "reason": "Proposal matches mission constraints and roles are valid.",
+      "message": "r3 accepts the proposed multi-object transport plan."
+    },
+    "usage": {
+      "prompt_tokens": 9375,
+      "completion_tokens": 520,
+      "total_tokens": 10702
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 7123.44199999643,
+    "request": "r3/multi-1789913626076448000-r3-plan-1-request.json",
+    "robot_id": "r3",
+    "wire_index": 2,
+    "returned_wall_s": 16.997158666999894
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_02-r1-000001",
+    "reply": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.7,
+      "message": "Approaching target object_02 along lane_a",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Moving forward to reach cargo object_02",
+      "request_id": "stage_02-r1-000001",
+      "robot_id": "r1",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "usage": {
+      "prompt_tokens": 6312,
+      "completion_tokens": 201,
+      "total_tokens": 6513
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3746.6974169947207,
+    "request": "r1/stage_02-r1-000001-request.json",
+    "robot_id": "r1",
+    "wire_index": 3,
+    "returned_wall_s": 21.160743542001
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_03-r2-000002",
+    "reply": {
+      "request_id": "stage_03-r2-000002",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "stage": "APPROACH",
+      "status": "WORKING",
+      "confidence": 0.9,
+      "checks": [],
+      "command_id": null,
+      "action": {
+        "kind": "drive",
+        "forward": 0.15,
+        "turn": 0.0,
+        "duration_s": 0.2
+      },
+      "reason": "Approaching target cyan box object_03 straight ahead.",
+      "message": "r2 driving forward toward object_03"
+    },
+    "usage": {
+      "prompt_tokens": 6332,
+      "completion_tokens": 226,
+      "total_tokens": 8236
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 7725.667541002622,
+    "request": "r2/stage_03-r2-000002-request.json",
+    "robot_id": "r2",
+    "wire_index": 3,
+    "returned_wall_s": 25.140099750002264
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_02-r1-000003",
+    "reply": {
+      "request_id": "stage_02-r1-000003",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "stage": "APPROACH",
+      "status": "WORKING",
+      "confidence": 0.9,
+      "checks": [],
+      "command_id": null,
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.1,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "reason": "Driving forward along lane to clear obstacles before navigating toward object_02.",
+      "message": "r1 driving forward toward object_02."
+    },
+    "usage": {
+      "prompt_tokens": 8461,
+      "completion_tokens": 228,
+      "total_tokens": 11025
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 10757.459707994713,
+    "request": "r1/stage_02-r1-000003-request.json",
+    "robot_id": "r1",
+    "wire_index": 4,
+    "returned_wall_s": 36.37448174999736
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_03-r2-000004",
+    "reply": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.75,
+      "message": "Approaching target object_03 along lane_b",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Target box object_03 is directly ahead but still several grid steps away; continuing forward approach.",
+      "request_id": "stage_03-r2-000004",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "usage": {
+      "prompt_tokens": 9260,
+      "completion_tokens": 203,
+      "total_tokens": 9463
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 5151.666250007111,
+    "request": "r2/stage_03-r2-000004-request.json",
+    "robot_id": "r2",
+    "wire_index": 4,
+    "returned_wall_s": 30.767716250004014
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_02-r1-000005",
+    "reply": {
+      "request_id": "stage_02-r1-000005",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "stage": "APPROACH",
+      "status": "WORKING",
+      "confidence": 0.7,
+      "checks": [],
+      "command_id": null,
+      "action": {
+        "kind": "drive",
+        "forward": 0.1,
+        "turn": 0.0,
+        "duration_s": 0.2
+      },
+      "reason": "Moving forward along lane toward cargo target coordinates",
+      "message": "Continuing approach toward object_02"
+    },
+    "usage": {
+      "prompt_tokens": 9248,
+      "completion_tokens": 220,
+      "total_tokens": 12159
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 12530.894208000973,
+    "request": "r1/stage_02-r1-000005-request.json",
+    "robot_id": "r1",
+    "wire_index": 5,
+    "returned_wall_s": 49.35271574999206
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_03-r2-000006",
+    "reply": {
+      "request_id": "stage_03-r2-000006",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "stage": "APPROACH",
+      "status": "WORKING",
+      "confidence": 0.9,
+      "checks": [],
+      "command_id": null,
+      "action": {
+        "kind": "drive",
+        "forward": 0.15,
+        "turn": 0.0,
+        "duration_s": 0.2
+      },
+      "reason": "Continuing approach toward target box object_03 along lane_b.",
+      "message": "Driving forward toward object_03."
+    },
+    "usage": {
+      "prompt_tokens": 9256,
+      "completion_tokens": 226,
+      "total_tokens": 9482
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3997.874458989827,
+    "request": "r2/stage_03-r2-000006-request.json",
+    "robot_id": "r2",
+    "wire_index": 5,
+    "returned_wall_s": 40.81904499999655
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_02-r1-000007",
+    "reply": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.1,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.7,
+      "message": "Advancing toward target box object_02",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Approaching object_02 in lane_a; continuing forward motion to close distance",
+      "request_id": "stage_02-r1-000007",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "usage": {
+      "prompt_tokens": 9247,
+      "completion_tokens": 197,
+      "total_tokens": 9444
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3438.7965829955647,
+    "request": "r1/stage_02-r1-000007-request.json",
+    "robot_id": "r1",
+    "wire_index": 6,
+    "returned_wall_s": 53.24830458400538
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_03-r2-000008",
+    "reply": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.9,
+      "message": "Continuing approach toward target box object_03 along lane_b.",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Target box object_03 is directly ahead and centered, continuing forward drive.",
+      "request_id": "stage_03-r2-000008",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "usage": {
+      "prompt_tokens": 9654,
+      "completion_tokens": 234,
+      "total_tokens": 9888
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 4460.2362499863375,
+    "request": "r2/stage_03-r2-000008-request.json",
+    "robot_id": "r2",
+    "wire_index": 6,
+    "returned_wall_s": 54.27042800000345
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_02-r1-000009",
+    "reply": {
+      "request_id": "stage_02-r1-000009",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "stage": "APPROACH",
+      "status": "BLOCKED",
+      "confidence": 0.95,
+      "checks": [],
+      "command_id": null,
+      "action": {
+        "kind": "wait"
+      },
+      "reason": "target object_02 is at bottom lane blocked by peers and beam; unreachable from lane_a",
+      "message": "Cannot approach object_02. Path blocked by r2, r3, and beam. Safe stop and replan required."
+    },
+    "usage": {
+      "prompt_tokens": 9254,
+      "completion_tokens": 220,
+      "total_tokens": 14472
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 19266.493125003763,
+    "request": "r1/stage_02-r1-000009-request.json",
+    "robot_id": "r1",
+    "wire_index": 7,
+    "returned_wall_s": 73.97109962499235
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_03-r2-000010",
+    "reply": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.9,
+      "message": "Approaching target box object_03 along lane_b.",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Target box is aligned ahead, closing distance.",
+      "request_id": "stage_03-r2-000010",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "usage": {
+      "prompt_tokens": 10060,
+      "completion_tokens": 192,
+      "total_tokens": 10458
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 5801.540458007366,
+    "request": "r2/stage_03-r2-000010-request.json",
+    "robot_id": "r2",
+    "wire_index": 7,
+    "returned_wall_s": 60.50549841699831
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_02-r1-000011",
+    "reply": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.1,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.7,
+      "message": "Approaching target object_02 along lane_a",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Target box object_02 is ahead; continuing forward approach",
+      "request_id": "stage_02-r1-000011",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "usage": {
+      "prompt_tokens": 9244,
+      "completion_tokens": 194,
+      "total_tokens": 9438
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3783.454165997682,
+    "request": "r1/stage_02-r1-000011-request.json",
+    "robot_id": "r1",
+    "wire_index": 8,
+    "returned_wall_s": 78.20881712499249
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_03-r2-000012",
+    "reply": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.75,
+      "message": "Approaching target box object_03 along lane_b",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Target box is centered ahead but still several grid squares away from grasp pose.",
+      "request_id": "stage_03-r2-000012",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "usage": {
+      "prompt_tokens": 10457,
+      "completion_tokens": 199,
+      "total_tokens": 10656
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 4098.664208999253,
+    "request": "r2/stage_03-r2-000012-request.json",
+    "robot_id": "r2",
+    "wire_index": 8,
+    "returned_wall_s": 78.52466612499848
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_02-r1-000013",
+    "reply": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.1,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.7,
+      "message": "Continuing approach toward target box object_02 along lane_a.",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Robot r1 is in APPROACH for object_02. Jaws are not yet straddling cargo; driving forward to close distance.",
+      "request_id": "stage_02-r1-000013",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "usage": {
+      "prompt_tokens": 9246,
+      "completion_tokens": 244,
+      "total_tokens": 9490
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 5960.043832994415,
+    "request": "r1/stage_02-r1-000013-request.json",
+    "robot_id": "r1",
+    "wire_index": 9,
+    "returned_wall_s": 84.97178550000535
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_03-r2-000014",
+    "reply": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.7,
+      "message": "Approaching target cyan box object_03 along lane_b.",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Target box object_03 is still ahead in front of r2, continuing approach drive.",
+      "request_id": "stage_03-r2-000014",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "usage": {
+      "prompt_tokens": 10459,
+      "completion_tokens": 237,
+      "total_tokens": 10696
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 4232.265250000637,
+    "request": "r2/stage_03-r2-000014-request.json",
+    "robot_id": "r2",
+    "wire_index": 9,
+    "returned_wall_s": 83.24466170900268
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_02-r1-000015",
+    "reply": {
+      "request_id": "stage_02-r1-000015",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "stage": "APPROACH",
+      "status": "WORKING",
+      "confidence": 0.7,
+      "checks": [],
+      "command_id": null,
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.08,
+        "kind": "drive",
+        "turn": -0.15
+      },
+      "reason": "turning right toward target object_02 location",
+      "message": "Turning right toward object_02 in lower half of arena"
+    },
+    "usage": {
+      "prompt_tokens": 9248,
+      "completion_tokens": 228,
+      "total_tokens": 12648
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 13104.6459999925,
+    "request": "r1/stage_02-r1-000015-request.json",
+    "robot_id": "r1",
+    "wire_index": 10,
+    "returned_wall_s": 98.56576299999142
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_03-r2-000016",
+    "reply": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.7,
+      "message": "Approaching object_03 along lane_b",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Target box object_03 is directly ahead but still several grid squares away. Continuing forward drive.",
+      "request_id": "stage_03-r2-000016",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "usage": {
+      "prompt_tokens": 10461,
+      "completion_tokens": 178,
+      "total_tokens": 10639
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 4647.589999993215,
+    "request": "r2/stage_03-r2-000016-request.json",
+    "robot_id": "r2",
+    "wire_index": 10,
+    "returned_wall_s": 90.1079144999967
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_02-r1-000017",
+    "reply": {
+      "request_id": "stage_02-r1-000017",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "stage": "APPROACH",
+      "status": "WORKING",
+      "confidence": 0.7,
+      "checks": [],
+      "command_id": null,
+      "action": {
+        "kind": "drive",
+        "forward": 0.1,
+        "turn": 0.0,
+        "duration_s": 0.2
+      },
+      "reason": "Advancing along lane towards target cargo.",
+      "message": "Continuing approach along lane_a."
+    },
+    "usage": {
+      "prompt_tokens": 9247,
+      "completion_tokens": 218,
+      "total_tokens": 12200
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 12055.657042001258,
+    "request": "r1/stage_02-r1-000017-request.json",
+    "robot_id": "r1",
+    "wire_index": 11,
+    "returned_wall_s": 111.11308254199685
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_03-r2-000018",
+    "reply": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.7,
+      "message": "Continuing approach toward object_03 along lane_b.",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Target box object_03 is directly ahead in own camera; continuing straight drive approach.",
+      "request_id": "stage_03-r2-000018",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "usage": {
+      "prompt_tokens": 10460,
+      "completion_tokens": 234,
+      "total_tokens": 10694
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3111.970083002234,
+    "request": "r2/stage_03-r2-000018-request.json",
+    "robot_id": "r2",
+    "wire_index": 11,
+    "returned_wall_s": 102.17004187499697
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_02-r1-000019",
+    "reply": {
+      "request_id": "stage_02-r1-000019",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "stage": "APPROACH",
+      "status": "WORKING",
+      "confidence": 0.75,
+      "checks": [],
+      "command_id": null,
+      "action": {
+        "kind": "drive",
+        "forward": 0.1,
+        "turn": 0.0,
+        "duration_s": 0.2
+      },
+      "reason": "Advancing along lane_a toward target object_02.",
+      "message": "Approaching along clear corridor in lane_a."
+    },
+    "usage": {
+      "prompt_tokens": 9250,
+      "completion_tokens": 226,
+      "total_tokens": 11031
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 8973.818166996352,
+    "request": "r1/stage_02-r1-000019-request.json",
+    "robot_id": "r1",
+    "wire_index": 12,
+    "returned_wall_s": 120.51825020900287
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_03-r2-000020",
+    "reply": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.9,
+      "message": "Continuing approach toward object_03",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Target object_03 is centered ahead; closing distance toward grasp pose",
+      "request_id": "stage_03-r2-000020",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "usage": {
+      "prompt_tokens": 10463,
+      "completion_tokens": 227,
+      "total_tokens": 11079
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 4807.685958992806,
+    "request": "r2/stage_03-r2-000020-request.json",
+    "robot_id": "r2",
+    "wire_index": 12,
+    "returned_wall_s": 116.35274983399722
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_02-r1-000021",
+    "reply": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.1,
+        "kind": "drive",
+        "turn": -0.15
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.7,
+      "message": "Turning right toward object_02 in lane_a",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Approaching object_02 (cyan box near bottom); need to orient toward the target",
+      "request_id": "stage_02-r1-000021",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "usage": {
+      "prompt_tokens": 9249,
+      "completion_tokens": 235,
+      "total_tokens": 9484
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 5432.513915991876,
+    "request": "r1/stage_02-r1-000021-request.json",
+    "robot_id": "r1",
+    "wire_index": 13,
+    "returned_wall_s": 126.42181124999479
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_03-r2-000022",
+    "reply": {
+      "request_id": "stage_03-r2-000022",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "stage": "APPROACH",
+      "status": "WORKING",
+      "confidence": 0.9,
+      "checks": [],
+      "command_id": null,
+      "action": {
+        "kind": "drive",
+        "forward": 0.15,
+        "turn": 0.0,
+        "duration_s": 0.2
+      },
+      "reason": "Approaching target cyan box along lane_b; box is centered ahead in view.",
+      "message": "Driving forward toward target box object_03."
+    },
+    "usage": {
+      "prompt_tokens": 10856,
+      "completion_tokens": 230,
+      "total_tokens": 12152
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 6874.847958999453,
+    "request": "r2/stage_03-r2-000022-request.json",
+    "robot_id": "r2",
+    "wire_index": 13,
+    "returned_wall_s": 127.8635484999977
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_02-r1-000023",
+    "reply": {
+      "request_id": "stage_02-r1-000023",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "stage": "APPROACH",
+      "status": "WORKING",
+      "confidence": 0.9,
+      "checks": [],
+      "command_id": null,
+      "action": {
+        "kind": "drive",
+        "forward": 0.1,
+        "turn": 0.0,
+        "duration_s": 0.2
+      },
+      "reason": "Advancing along lane toward target object_02",
+      "message": "r1 driving forward along lane_a toward object_02"
+    },
+    "usage": {
+      "prompt_tokens": 9249,
+      "completion_tokens": 228,
+      "total_tokens": 12068
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 10825.436208993779,
+    "request": "r1/stage_02-r1-000023-request.json",
+    "robot_id": "r1",
+    "wire_index": 14,
+    "returned_wall_s": 139.08648616699793
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_03-r2-000024",
+    "reply": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.9,
+      "message": "Continuing approach toward target object_03.",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Approaching target object_03 along lane_b.",
+      "request_id": "stage_03-r2-000024",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "usage": {
+      "prompt_tokens": 11256,
+      "completion_tokens": 224,
+      "total_tokens": 12089
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 5982.043750002049,
+    "request": "r2/stage_03-r2-000024-request.json",
+    "robot_id": "r2",
+    "wire_index": 14,
+    "returned_wall_s": 134.2437414169981
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_02-r1-000025",
+    "reply": {
+      "request_id": "stage_02-r1-000025",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "stage": "APPROACH",
+      "status": "WORKING",
+      "confidence": 0.7,
+      "checks": [],
+      "command_id": null,
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.1,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "reason": "Continuing along lane_a to clear obstacle and approach object_02",
+      "message": "Driving forward toward object_02"
+    },
+    "usage": {
+      "prompt_tokens": 9641,
+      "completion_tokens": 226,
+      "total_tokens": 13144
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 19240.258542005904,
+    "request": "r1/stage_02-r1-000025-request.json",
+    "robot_id": "r1",
+    "wire_index": 15,
+    "returned_wall_s": 158.79484375000175
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_03-r2-000026",
+    "reply": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.7,
+      "message": "Approaching object_03 along lane_b",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Target box is directly ahead in front camera view; continuing approach to reach grasp pose.",
+      "request_id": "stage_03-r2-000026",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "usage": {
+      "prompt_tokens": 11648,
+      "completion_tokens": 232,
+      "total_tokens": 11880
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 5068.105541999103,
+    "request": "r2/stage_03-r2-000026-request.json",
+    "robot_id": "r2",
+    "wire_index": 15,
+    "returned_wall_s": 144.62334291699517
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_02-r1-000027",
+    "reply": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.7,
+      "message": "Continuing approach along lane_a toward staging destination and target object_02.",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Target object_02 is directly ahead in lane_a; driving forward to close distance.",
+      "request_id": "stage_02-r1-000027",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "usage": {
+      "prompt_tokens": 9637,
+      "completion_tokens": 239,
+      "total_tokens": 9876
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 5040.591624987428,
+    "request": "r1/stage_02-r1-000027-request.json",
+    "robot_id": "r1",
+    "wire_index": 16,
+    "returned_wall_s": 164.33662066700344
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_03-r2-000028",
+    "reply": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.7,
+      "message": "Approaching target cyan box object_03 along lane_b.",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Target box object_03 is directly ahead but still several tiles away; continuing straight drive approach.",
+      "request_id": "stage_03-r2-000028",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "usage": {
+      "prompt_tokens": 11644,
+      "completion_tokens": 238,
+      "total_tokens": 11882
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3263.7359170039417,
+    "request": "r2/stage_03-r2-000028-request.json",
+    "robot_id": "r2",
+    "wire_index": 16,
+    "returned_wall_s": 162.56039179199433
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_02-r1-000029",
+    "reply": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.1,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.9,
+      "message": "Advancing along lane_a toward target object_02",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Approaching object_02 along lane_a; continuing straight driving motion.",
+      "request_id": "stage_02-r1-000029",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "usage": {
+      "prompt_tokens": 9640,
+      "completion_tokens": 232,
+      "total_tokens": 9872
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3456.102791999001,
+    "request": "r1/stage_02-r1-000029-request.json",
+    "robot_id": "r1",
+    "wire_index": 17,
+    "returned_wall_s": 168.22155983399716
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_03-r2-000030",
+    "reply": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.95,
+      "message": "Continuing approach toward object_03 along lane_b.",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "object_03 is centered ahead but still several decimeters away; continuing forward driving.",
+      "request_id": "stage_03-r2-000030",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "usage": {
+      "prompt_tokens": 11647,
+      "completion_tokens": 235,
+      "total_tokens": 11882
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3854.4919170089997,
+    "request": "r2/stage_03-r2-000030-request.json",
+    "robot_id": "r2",
+    "wire_index": 17,
+    "returned_wall_s": 168.62063345899514
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_02-r1-000031",
+    "reply": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.1,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.7,
+      "message": "Advancing toward target box along lane_a.",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Approaching object_02; still distant from grasp pose.",
+      "request_id": "stage_02-r1-000031",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "usage": {
+      "prompt_tokens": 10034,
+      "completion_tokens": 226,
+      "total_tokens": 10260
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 3542.7495000039926,
+    "request": "r1/stage_02-r1-000031-request.json",
+    "robot_id": "r1",
+    "wire_index": 18,
+    "returned_wall_s": 172.65226083400194
+  },
+  {
+    "attempt": 0,
+    "request_id": "stage_03-r2-000032",
+    "reply": {
+      "request_id": "stage_03-r2-000032",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "stage": "APPROACH",
+      "status": "WORKING",
+      "confidence": 0.95,
+      "checks": [],
+      "command_id": null,
+      "action": {
+        "kind": "drive",
+        "forward": 0.15,
+        "turn": 0.0,
+        "duration_s": 0.2
+      },
+      "reason": "Advancing toward target box object_03 along lane_b",
+      "message": "Continuing approach toward object_03"
+    },
+    "usage": {
+      "prompt_tokens": 12058,
+      "completion_tokens": 227,
+      "total_tokens": 13039
+    },
+    "model": "gemini-3.8-flash",
+    "latency_ms": 8342.554667004151,
+    "request": "r2/stage_03-r2-000032-request.json",
+    "robot_id": "r2",
+    "wire_index": 18,
+    "returned_wall_s": 177.452677209003
+  }
+]

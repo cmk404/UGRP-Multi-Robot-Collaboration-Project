@@ -8,6 +8,23 @@ from harness.reference_act import make_policy, actor_batch, IMAGE_KEYS, RGBAct
 from harness.act_training import frozen_features, sampling_weights, prediction_metrics
 
 
+def test_feature_cache_bypass_does_not_retain_completed_batch_tensors():
+    import weakref
+    from types import SimpleNamespace
+    backbone = torch.nn.Linear(2, 2)
+    for parameter in backbone.parameters(): parameter.requires_grad_(False)
+    policy = SimpleNamespace(model=SimpleNamespace(backbone=backbone))
+    with frozen_features(policy):
+        for _ in range(3):
+            value = torch.ones(4, 2); reference = weakref.ref(value)
+            output = backbone(value)['feature_map']
+            assert output is value
+            del output, value
+            # Check while the context is active: full-dataset evaluation keeps
+            # it open across every batch, so retained arguments exhaust RAM.
+            assert reference() is None
+
+
 def test_cached_frozen_cnn_preserves_predictions_gradients_and_restores(tmp_path):
     torch.set_num_threads(2); torch.manual_seed(42)
     stream=io.BytesIO(); Image.new('RGB',(128,128),'red').save(stream,format='JPEG')

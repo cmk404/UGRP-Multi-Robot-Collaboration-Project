@@ -1,0 +1,16 @@
+{
+  "source_sha": "8d4243e17c724bb2a5f3c7f24aa66a4467fce901",
+  "complete": false,
+  "completed_updates_observed": 2,
+  "cuda_parity": "Exact loss/gradients/weights/RNG for two full-batch 128px/h4 updates",
+  "first_512_loss": 3.023982524871826,
+  "first_512_development_score": 0.6049726129602355,
+  "last_observed_process_tree_rss_bytes": 11369762816,
+  "last_observed_host_available_bytes": 827166720,
+  "last_observed_gpu_mib": 14757,
+  "status": "Runtime Contents API and kernel API repeatedly timed out during final CPU export; management assignment still exists",
+  "cause": "Unconfirmed. Low host memory observed, but no OOM termination log recovered.",
+  "observed_unix": 1789933333.415327,
+  "recovery": "No final artifact recovered; three bounded read attempts failed; original source64 diagnostic and checkpoint remain preserved locally",
+  "next": "Preallocate feature cache, free training-only tensors, CPU export batch1; retain training and selection batch32"
+}

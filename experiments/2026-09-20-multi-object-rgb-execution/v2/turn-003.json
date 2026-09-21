@@ -1,0 +1,53 @@
+{
+  "turn": 3,
+  "at_s": 4.599999999999715,
+  "tasks": {
+    "stage_02": "APPROACH",
+    "stage_03": "APPROACH"
+  },
+  "replies": {
+    "r1": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.1,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.7,
+      "message": "Advancing toward target box object_02",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Approaching object_02 in lane_a; continuing forward motion to close distance",
+      "request_id": "stage_02-r1-000007",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "r2": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.9,
+      "message": "Continuing approach toward target box object_03 along lane_b.",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Target box object_03 is directly ahead and centered, continuing forward drive.",
+      "request_id": "stage_03-r2-000008",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    }
+  },
+  "protocol": {
+    "objects": 3,
+    "tasks": 5,
+    "completed_task_claims": 0,
+    "final_object_claims": 0,
+    "whole_mission_claimed": false,
+    "physical_success": "not_evaluated",
+    "motor_execution": "unsupported"
+  }
+}

@@ -1,0 +1,482 @@
+[
+  {
+    "http_status": 200,
+    "latency_ms": 544.5051249989774,
+    "raw_response": "{\"model\":\"jev-1.13.0\",\"answers\":{\"action\":{\"type\":\"choice\",\"choice\":\"continue\",\"confidence\":0.47,\"probabilities\":{\"reobserve\":0.39,\"continue\":0.61,\"request_recovery\":0.0,\"hold_and_escalate\":0.0}}},\"usage\":{\"input_tokens\":1701,\"output_tokens\":54}}",
+    "status": "ok",
+    "response": {
+      "model": "jev-1.13.0",
+      "answers": {
+        "action": {
+          "type": "choice",
+          "choice": "continue",
+          "confidence": 0.47,
+          "probabilities": {
+            "reobserve": 0.39,
+            "continue": 0.61,
+            "request_recovery": 0.0,
+            "hold_and_escalate": 0.0
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 1701,
+        "output_tokens": 54
+      }
+    },
+    "decision": {
+      "type": "choice",
+      "choice": "continue",
+      "confidence": 0.47,
+      "probabilities": {
+        "reobserve": 0.39,
+        "continue": 0.61,
+        "request_recovery": 0.0,
+        "hold_and_escalate": 0.0
+      }
+    },
+    "case_id": "20260918-open-minus-20-r1",
+    "repeat": 0,
+    "rule": "continue"
+  },
+  {
+    "http_status": 200,
+    "latency_ms": 546.6009999800008,
+    "raw_response": "{\"model\":\"jev-1.13.0\",\"answers\":{\"action\":{\"type\":\"choice\",\"choice\":\"continue\",\"confidence\":0.5,\"probabilities\":{\"continue\":0.63,\"reobserve\":0.37,\"request_recovery\":0.0,\"hold_and_escalate\":0.0}}},\"usage\":{\"input_tokens\":1661,\"output_tokens\":54}}",
+    "status": "ok",
+    "response": {
+      "model": "jev-1.13.0",
+      "answers": {
+        "action": {
+          "type": "choice",
+          "choice": "continue",
+          "confidence": 0.5,
+          "probabilities": {
+            "continue": 0.63,
+            "reobserve": 0.37,
+            "request_recovery": 0.0,
+            "hold_and_escalate": 0.0
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 1661,
+        "output_tokens": 54
+      }
+    },
+    "decision": {
+      "type": "choice",
+      "choice": "continue",
+      "confidence": 0.5,
+      "probabilities": {
+        "continue": 0.63,
+        "reobserve": 0.37,
+        "request_recovery": 0.0,
+        "hold_and_escalate": 0.0
+      }
+    },
+    "case_id": "20260918-open-minus-80-r1",
+    "repeat": 0,
+    "rule": "continue"
+  },
+  {
+    "http_status": 200,
+    "latency_ms": 517.3687080095988,
+    "raw_response": "{\"model\":\"jev-1.13.0\",\"answers\":{\"action\":{\"type\":\"choice\",\"choice\":\"reobserve\",\"confidence\":0.43,\"probabilities\":{\"request_recovery\":0.04,\"reobserve\":0.5599999999999999,\"continue\":0.39,\"hold_and_escalate\":0.01}}},\"usage\":{\"input_tokens\":1738,\"output_tokens\":56}}",
+    "status": "ok",
+    "response": {
+      "model": "jev-1.13.0",
+      "answers": {
+        "action": {
+          "type": "choice",
+          "choice": "reobserve",
+          "confidence": 0.43,
+          "probabilities": {
+            "request_recovery": 0.04,
+            "reobserve": 0.5599999999999999,
+            "continue": 0.39,
+            "hold_and_escalate": 0.01
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 1738,
+        "output_tokens": 56
+      }
+    },
+    "decision": {
+      "type": "choice",
+      "choice": "reobserve",
+      "confidence": 0.43,
+      "probabilities": {
+        "request_recovery": 0.04,
+        "reobserve": 0.5599999999999999,
+        "continue": 0.39,
+        "hold_and_escalate": 0.01
+      }
+    },
+    "case_id": "20260919-open-plus-100-r1",
+    "repeat": 0,
+    "rule": "continue"
+  },
+  {
+    "http_status": 200,
+    "latency_ms": 505.2652079903055,
+    "raw_response": "{\"model\":\"jev-1.13.0\",\"answers\":{\"action\":{\"type\":\"choice\",\"choice\":\"reobserve\",\"confidence\":0.51,\"probabilities\":{\"reobserve\":0.64,\"request_recovery\":0.01,\"continue\":0.35,\"hold_and_escalate\":0.0}}},\"usage\":{\"input_tokens\":1497,\"output_tokens\":56}}",
+    "status": "ok",
+    "response": {
+      "model": "jev-1.13.0",
+      "answers": {
+        "action": {
+          "type": "choice",
+          "choice": "reobserve",
+          "confidence": 0.51,
+          "probabilities": {
+            "reobserve": 0.64,
+            "request_recovery": 0.01,
+            "continue": 0.35,
+            "hold_and_escalate": 0.0
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 1497,
+        "output_tokens": 56
+      }
+    },
+    "decision": {
+      "type": "choice",
+      "choice": "reobserve",
+      "confidence": 0.51,
+      "probabilities": {
+        "reobserve": 0.64,
+        "request_recovery": 0.01,
+        "continue": 0.35,
+        "hold_and_escalate": 0.0
+      }
+    },
+    "case_id": "20260919-open-plus-300-r1",
+    "repeat": 0,
+    "rule": "reobserve"
+  },
+  {
+    "http_status": 200,
+    "latency_ms": 536.9532920012716,
+    "raw_response": "{\"model\":\"jev-1.13.0\",\"answers\":{\"action\":{\"type\":\"choice\",\"choice\":\"reobserve\",\"confidence\":0.57,\"probabilities\":{\"continue\":0.31,\"hold_and_escalate\":0.0,\"reobserve\":0.68,\"request_recovery\":0.01}}},\"usage\":{\"input_tokens\":1496,\"output_tokens\":56}}",
+    "status": "ok",
+    "response": {
+      "model": "jev-1.13.0",
+      "answers": {
+        "action": {
+          "type": "choice",
+          "choice": "reobserve",
+          "confidence": 0.57,
+          "probabilities": {
+            "continue": 0.31,
+            "hold_and_escalate": 0.0,
+            "reobserve": 0.68,
+            "request_recovery": 0.01
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 1496,
+        "output_tokens": 56
+      }
+    },
+    "decision": {
+      "type": "choice",
+      "choice": "reobserve",
+      "confidence": 0.57,
+      "probabilities": {
+        "continue": 0.31,
+        "hold_and_escalate": 0.0,
+        "reobserve": 0.68,
+        "request_recovery": 0.01
+      }
+    },
+    "case_id": "20260919-open-plus-600-r1",
+    "repeat": 0,
+    "rule": "reobserve"
+  },
+  {
+    "http_status": 200,
+    "latency_ms": 540.3438750072382,
+    "raw_response": "{\"model\":\"jev-1.13.0\",\"answers\":{\"action\":{\"type\":\"choice\",\"choice\":\"hold_and_escalate\",\"confidence\":0.53,\"probabilities\":{\"reobserve\":0.32,\"request_recovery\":0.03,\"hold_and_escalate\":0.64,\"continue\":0.01}}},\"usage\":{\"input_tokens\":1738,\"output_tokens\":58}}",
+    "status": "ok",
+    "response": {
+      "model": "jev-1.13.0",
+      "answers": {
+        "action": {
+          "type": "choice",
+          "choice": "hold_and_escalate",
+          "confidence": 0.53,
+          "probabilities": {
+            "reobserve": 0.32,
+            "request_recovery": 0.03,
+            "hold_and_escalate": 0.64,
+            "continue": 0.01
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 1738,
+        "output_tokens": 58
+      }
+    },
+    "decision": {
+      "type": "choice",
+      "choice": "hold_and_escalate",
+      "confidence": 0.53,
+      "probabilities": {
+        "reobserve": 0.32,
+        "request_recovery": 0.03,
+        "hold_and_escalate": 0.64,
+        "continue": 0.01
+      }
+    },
+    "case_id": "20260919-open-plus-892-r1",
+    "repeat": 0,
+    "rule": "hold_and_escalate"
+  },
+  {
+    "http_status": 200,
+    "latency_ms": 491.33854199317284,
+    "raw_response": "{\"model\":\"jev-1.13.0\",\"answers\":{\"action\":{\"type\":\"choice\",\"choice\":\"continue\",\"confidence\":0.54,\"probabilities\":{\"reobserve\":0.34,\"continue\":0.66,\"request_recovery\":0.0,\"hold_and_escalate\":0.0}}},\"usage\":{\"input_tokens\":1701,\"output_tokens\":54}}",
+    "status": "ok",
+    "response": {
+      "model": "jev-1.13.0",
+      "answers": {
+        "action": {
+          "type": "choice",
+          "choice": "continue",
+          "confidence": 0.54,
+          "probabilities": {
+            "reobserve": 0.34,
+            "continue": 0.66,
+            "request_recovery": 0.0,
+            "hold_and_escalate": 0.0
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 1701,
+        "output_tokens": 54
+      }
+    },
+    "decision": {
+      "type": "choice",
+      "choice": "continue",
+      "confidence": 0.54,
+      "probabilities": {
+        "reobserve": 0.34,
+        "continue": 0.66,
+        "request_recovery": 0.0,
+        "hold_and_escalate": 0.0
+      }
+    },
+    "case_id": "20260918-open-minus-20-r1",
+    "repeat": 1,
+    "rule": "continue"
+  },
+  {
+    "http_status": 200,
+    "latency_ms": 532.40083399578,
+    "raw_response": "{\"model\":\"jev-1.13.0\",\"answers\":{\"action\":{\"type\":\"choice\",\"choice\":\"continue\",\"confidence\":0.52,\"probabilities\":{\"reobserve\":0.35,\"request_recovery\":0.0,\"hold_and_escalate\":0.0,\"continue\":0.65}}},\"usage\":{\"input_tokens\":1661,\"output_tokens\":54}}",
+    "status": "ok",
+    "response": {
+      "model": "jev-1.13.0",
+      "answers": {
+        "action": {
+          "type": "choice",
+          "choice": "continue",
+          "confidence": 0.52,
+          "probabilities": {
+            "reobserve": 0.35,
+            "request_recovery": 0.0,
+            "hold_and_escalate": 0.0,
+            "continue": 0.65
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 1661,
+        "output_tokens": 54
+      }
+    },
+    "decision": {
+      "type": "choice",
+      "choice": "continue",
+      "confidence": 0.52,
+      "probabilities": {
+        "reobserve": 0.35,
+        "request_recovery": 0.0,
+        "hold_and_escalate": 0.0,
+        "continue": 0.65
+      }
+    },
+    "case_id": "20260918-open-minus-80-r1",
+    "repeat": 1,
+    "rule": "continue"
+  },
+  {
+    "http_status": 200,
+    "latency_ms": 550.6121669895947,
+    "raw_response": "{\"model\":\"jev-1.13.0\",\"answers\":{\"action\":{\"type\":\"choice\",\"choice\":\"reobserve\",\"confidence\":0.44,\"probabilities\":{\"reobserve\":0.58,\"request_recovery\":0.03,\"continue\":0.38,\"hold_and_escalate\":0.01}}},\"usage\":{\"input_tokens\":1738,\"output_tokens\":56}}",
+    "status": "ok",
+    "response": {
+      "model": "jev-1.13.0",
+      "answers": {
+        "action": {
+          "type": "choice",
+          "choice": "reobserve",
+          "confidence": 0.44,
+          "probabilities": {
+            "reobserve": 0.58,
+            "request_recovery": 0.03,
+            "continue": 0.38,
+            "hold_and_escalate": 0.01
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 1738,
+        "output_tokens": 56
+      }
+    },
+    "decision": {
+      "type": "choice",
+      "choice": "reobserve",
+      "confidence": 0.44,
+      "probabilities": {
+        "reobserve": 0.58,
+        "request_recovery": 0.03,
+        "continue": 0.38,
+        "hold_and_escalate": 0.01
+      }
+    },
+    "case_id": "20260919-open-plus-100-r1",
+    "repeat": 1,
+    "rule": "continue"
+  },
+  {
+    "http_status": 200,
+    "latency_ms": 596.9878339965362,
+    "raw_response": "{\"model\":\"jev-1.13.0\",\"answers\":{\"action\":{\"type\":\"choice\",\"choice\":\"reobserve\",\"confidence\":0.56,\"probabilities\":{\"request_recovery\":0.01,\"continue\":0.32,\"reobserve\":0.67,\"hold_and_escalate\":0.0}}},\"usage\":{\"input_tokens\":1497,\"output_tokens\":56}}",
+    "status": "ok",
+    "response": {
+      "model": "jev-1.13.0",
+      "answers": {
+        "action": {
+          "type": "choice",
+          "choice": "reobserve",
+          "confidence": 0.56,
+          "probabilities": {
+            "request_recovery": 0.01,
+            "continue": 0.32,
+            "reobserve": 0.67,
+            "hold_and_escalate": 0.0
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 1497,
+        "output_tokens": 56
+      }
+    },
+    "decision": {
+      "type": "choice",
+      "choice": "reobserve",
+      "confidence": 0.56,
+      "probabilities": {
+        "request_recovery": 0.01,
+        "continue": 0.32,
+        "reobserve": 0.67,
+        "hold_and_escalate": 0.0
+      }
+    },
+    "case_id": "20260919-open-plus-300-r1",
+    "repeat": 1,
+    "rule": "reobserve"
+  },
+  {
+    "http_status": 200,
+    "latency_ms": 672.6820830081124,
+    "raw_response": "{\"model\":\"jev-1.13.0\",\"answers\":{\"action\":{\"type\":\"choice\",\"choice\":\"reobserve\",\"confidence\":0.58,\"probabilities\":{\"reobserve\":0.6900000000000001,\"request_recovery\":0.0,\"hold_and_escalate\":0.0,\"continue\":0.31}}},\"usage\":{\"input_tokens\":1496,\"output_tokens\":56}}",
+    "status": "ok",
+    "response": {
+      "model": "jev-1.13.0",
+      "answers": {
+        "action": {
+          "type": "choice",
+          "choice": "reobserve",
+          "confidence": 0.58,
+          "probabilities": {
+            "reobserve": 0.6900000000000001,
+            "request_recovery": 0.0,
+            "hold_and_escalate": 0.0,
+            "continue": 0.31
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 1496,
+        "output_tokens": 56
+      }
+    },
+    "decision": {
+      "type": "choice",
+      "choice": "reobserve",
+      "confidence": 0.58,
+      "probabilities": {
+        "reobserve": 0.6900000000000001,
+        "request_recovery": 0.0,
+        "hold_and_escalate": 0.0,
+        "continue": 0.31
+      }
+    },
+    "case_id": "20260919-open-plus-600-r1",
+    "repeat": 1,
+    "rule": "reobserve"
+  },
+  {
+    "http_status": 200,
+    "latency_ms": 577.4357079935726,
+    "raw_response": "{\"model\":\"jev-1.13.0\",\"answers\":{\"action\":{\"type\":\"choice\",\"choice\":\"hold_and_escalate\",\"confidence\":0.55,\"probabilities\":{\"request_recovery\":0.02,\"reobserve\":0.3,\"hold_and_escalate\":0.67,\"continue\":0.01}}},\"usage\":{\"input_tokens\":1738,\"output_tokens\":58}}",
+    "status": "ok",
+    "response": {
+      "model": "jev-1.13.0",
+      "answers": {
+        "action": {
+          "type": "choice",
+          "choice": "hold_and_escalate",
+          "confidence": 0.55,
+          "probabilities": {
+            "request_recovery": 0.02,
+            "reobserve": 0.3,
+            "hold_and_escalate": 0.67,
+            "continue": 0.01
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 1738,
+        "output_tokens": 58
+      }
+    },
+    "decision": {
+      "type": "choice",
+      "choice": "hold_and_escalate",
+      "confidence": 0.55,
+      "probabilities": {
+        "request_recovery": 0.02,
+        "reobserve": 0.3,
+        "hold_and_escalate": 0.67,
+        "continue": 0.01
+      }
+    },
+    "case_id": "20260919-open-plus-892-r1",
+    "repeat": 1,
+    "rule": "hold_and_escalate"
+  }
+]

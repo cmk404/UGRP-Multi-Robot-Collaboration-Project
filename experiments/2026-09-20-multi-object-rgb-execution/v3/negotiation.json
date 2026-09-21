@@ -1,0 +1,434 @@
+[
+  {
+    "turn": 0,
+    "sim_time_s": 3.999999999999781,
+    "agreement": {
+      "run_id": "multi-1789914035012877000",
+      "version": 1,
+      "proposer": "r1",
+      "proposal": null
+    },
+    "replies": {
+      "r1": {
+        "request_id": "multi-1789914035012877000-r1-plan-0",
+        "proposal_id": null,
+        "plan_hash": null,
+        "accept": true,
+        "plan": {
+          "schema": "ugrp.multi_object_plan.v1",
+          "mission_sha256": "6ab9c19cd95af8dd1cfdd77de1ce558f65fa20ce02694e80f70ccff4a3009f15",
+          "tasks": [
+            {
+              "task_id": "stage_02",
+              "participants": {
+                "r1": "solo"
+              },
+              "route_id": "lane_a",
+              "after": []
+            },
+            {
+              "task_id": "stage_03",
+              "participants": {
+                "r2": "solo"
+              },
+              "route_id": "lane_b",
+              "after": []
+            },
+            {
+              "task_id": "deliver_01",
+              "participants": {
+                "r1": "end_a",
+                "r3": "end_b"
+              },
+              "route_id": "lane_a",
+              "after": [
+                "stage_02",
+                "stage_03"
+              ]
+            },
+            {
+              "task_id": "deliver_02",
+              "participants": {
+                "r2": "solo"
+              },
+              "route_id": "lane_b",
+              "after": [
+                "stage_02",
+                "deliver_01"
+              ]
+            },
+            {
+              "task_id": "deliver_03",
+              "participants": {
+                "r1": "solo"
+              },
+              "route_id": "lane_a",
+              "after": [
+                "stage_03",
+                "deliver_01"
+              ]
+            }
+          ]
+        },
+        "reason": "proposing multi-object plan",
+        "message": "Proposing initial plan coordinating staging and deliveries."
+      },
+      "r2": {
+        "request_id": "multi-1789914035012877000-r2-plan-0",
+        "proposal_id": null,
+        "plan_hash": null,
+        "accept": false,
+        "plan": null,
+        "reason": "waiting for designated proposer r1 to propose",
+        "message": "waiting for proposal from r1"
+      },
+      "r3": {
+        "request_id": "multi-1789914035012877000-r3-plan-0",
+        "proposal_id": null,
+        "plan_hash": null,
+        "accept": false,
+        "plan": null,
+        "reason": "waiting for designated proposer r1 to submit initial proposal",
+        "message": "Awaiting proposal from r1."
+      }
+    },
+    "stops": {
+      "r1": null,
+      "r2": null,
+      "r3": null
+    },
+    "committed": null
+  },
+  {
+    "turn": 1,
+    "sim_time_s": 3.999999999999781,
+    "agreement": {
+      "run_id": "multi-1789914035012877000",
+      "version": 1,
+      "proposer": "r1",
+      "proposal": {
+        "proposal_id": "multi-1789914035012877000-plan-v1",
+        "version": 1,
+        "plan_hash": "487d6c217d053d6690438d7e2bd9028e3bcc6706bb491f7d07104028059cddd2",
+        "plan": {
+          "schema": "ugrp.multi_object_plan.v1",
+          "mission_sha256": "6ab9c19cd95af8dd1cfdd77de1ce558f65fa20ce02694e80f70ccff4a3009f15",
+          "tasks": [
+            {
+              "task_id": "stage_02",
+              "participants": {
+                "r1": "solo"
+              },
+              "route_id": "lane_a",
+              "after": []
+            },
+            {
+              "task_id": "stage_03",
+              "participants": {
+                "r2": "solo"
+              },
+              "route_id": "lane_b",
+              "after": []
+            },
+            {
+              "task_id": "deliver_01",
+              "participants": {
+                "r1": "end_a",
+                "r3": "end_b"
+              },
+              "route_id": "lane_a",
+              "after": [
+                "stage_02",
+                "stage_03"
+              ]
+            },
+            {
+              "task_id": "deliver_02",
+              "participants": {
+                "r2": "solo"
+              },
+              "route_id": "lane_b",
+              "after": [
+                "stage_02",
+                "deliver_01"
+              ]
+            },
+            {
+              "task_id": "deliver_03",
+              "participants": {
+                "r1": "solo"
+              },
+              "route_id": "lane_a",
+              "after": [
+                "stage_03",
+                "deliver_01"
+              ]
+            }
+          ]
+        },
+        "proposer": "r1"
+      }
+    },
+    "replies": {
+      "r1": {
+        "request_id": "multi-1789914035012877000-r1-plan-1",
+        "proposal_id": "multi-1789914035012877000-plan-v1",
+        "plan_hash": "487d6c217d053d6690438d7e2bd9028e3bcc6706bb491f7d07104028059cddd2",
+        "accept": true,
+        "plan": {
+          "schema": "ugrp.multi_object_plan.v1",
+          "mission_sha256": "6ab9c19cd95af8dd1cfdd77de1ce558f65fa20ce02694e80f70ccff4a3009f15",
+          "tasks": [
+            {
+              "task_id": "stage_02",
+              "participants": {
+                "r1": "solo"
+              },
+              "route_id": "lane_a",
+              "after": []
+            },
+            {
+              "task_id": "stage_03",
+              "participants": {
+                "r2": "solo"
+              },
+              "route_id": "lane_b",
+              "after": []
+            },
+            {
+              "task_id": "deliver_01",
+              "participants": {
+                "r1": "end_a",
+                "r3": "end_b"
+              },
+              "route_id": "lane_a",
+              "after": [
+                "stage_02",
+                "stage_03"
+              ]
+            },
+            {
+              "task_id": "deliver_02",
+              "participants": {
+                "r2": "solo"
+              },
+              "route_id": "lane_b",
+              "after": [
+                "stage_02",
+                "deliver_01"
+              ]
+            },
+            {
+              "task_id": "deliver_03",
+              "participants": {
+                "r1": "solo"
+              },
+              "route_id": "lane_a",
+              "after": [
+                "stage_03",
+                "deliver_01"
+              ]
+            }
+          ]
+        },
+        "reason": "endorsing initial proposal",
+        "message": "Proposing and endorsing plan multi-1789914035012877000-plan-v1"
+      },
+      "r2": {
+        "request_id": "multi-1789914035012877000-r2-plan-1",
+        "proposal_id": "multi-1789914035012877000-plan-v1",
+        "plan_hash": "487d6c217d053d6690438d7e2bd9028e3bcc6706bb491f7d07104028059cddd2",
+        "accept": true,
+        "plan": {
+          "schema": "ugrp.multi_object_plan.v1",
+          "mission_sha256": "6ab9c19cd95af8dd1cfdd77de1ce558f65fa20ce02694e80f70ccff4a3009f15",
+          "tasks": [
+            {
+              "task_id": "stage_02",
+              "participants": {
+                "r1": "solo"
+              },
+              "route_id": "lane_a",
+              "after": []
+            },
+            {
+              "task_id": "stage_03",
+              "participants": {
+                "r2": "solo"
+              },
+              "route_id": "lane_b",
+              "after": []
+            },
+            {
+              "task_id": "deliver_01",
+              "participants": {
+                "r1": "end_a",
+                "r3": "end_b"
+              },
+              "route_id": "lane_a",
+              "after": [
+                "stage_02",
+                "stage_03"
+              ]
+            },
+            {
+              "task_id": "deliver_02",
+              "participants": {
+                "r2": "solo"
+              },
+              "route_id": "lane_b",
+              "after": [
+                "stage_02",
+                "deliver_01"
+              ]
+            },
+            {
+              "task_id": "deliver_03",
+              "participants": {
+                "r1": "solo"
+              },
+              "route_id": "lane_a",
+              "after": [
+                "stage_03",
+                "deliver_01"
+              ]
+            }
+          ]
+        },
+        "reason": "agree with proposal multi-1789914035012877000-plan-v1 from r1",
+        "message": "Accepting proposed transport plan."
+      },
+      "r3": {
+        "request_id": "multi-1789914035012877000-r3-plan-1",
+        "proposal_id": "multi-1789914035012877000-plan-v1",
+        "plan_hash": "487d6c217d053d6690438d7e2bd9028e3bcc6706bb491f7d07104028059cddd2",
+        "accept": true,
+        "plan": {
+          "schema": "ugrp.multi_object_plan.v1",
+          "mission_sha256": "6ab9c19cd95af8dd1cfdd77de1ce558f65fa20ce02694e80f70ccff4a3009f15",
+          "tasks": [
+            {
+              "task_id": "stage_02",
+              "participants": {
+                "r1": "solo"
+              },
+              "route_id": "lane_a",
+              "after": []
+            },
+            {
+              "task_id": "stage_03",
+              "participants": {
+                "r2": "solo"
+              },
+              "route_id": "lane_b",
+              "after": []
+            },
+            {
+              "task_id": "deliver_01",
+              "participants": {
+                "r1": "end_a",
+                "r3": "end_b"
+              },
+              "route_id": "lane_a",
+              "after": [
+                "stage_02",
+                "stage_03"
+              ]
+            },
+            {
+              "task_id": "deliver_02",
+              "participants": {
+                "r2": "solo"
+              },
+              "route_id": "lane_b",
+              "after": [
+                "stage_02",
+                "deliver_01"
+              ]
+            },
+            {
+              "task_id": "deliver_03",
+              "participants": {
+                "r1": "solo"
+              },
+              "route_id": "lane_a",
+              "after": [
+                "stage_03",
+                "deliver_01"
+              ]
+            }
+          ]
+        },
+        "reason": "r3 accepts the pending proposal from r1",
+        "message": "accepting plan proposal v1"
+      }
+    },
+    "stops": {
+      "r1": null,
+      "r2": null,
+      "r3": null
+    },
+    "committed": {
+      "proposal_id": "multi-1789914035012877000-plan-v1",
+      "version": 1,
+      "plan_hash": "487d6c217d053d6690438d7e2bd9028e3bcc6706bb491f7d07104028059cddd2",
+      "plan": {
+        "schema": "ugrp.multi_object_plan.v1",
+        "mission_sha256": "6ab9c19cd95af8dd1cfdd77de1ce558f65fa20ce02694e80f70ccff4a3009f15",
+        "tasks": [
+          {
+            "task_id": "stage_02",
+            "participants": {
+              "r1": "solo"
+            },
+            "route_id": "lane_a",
+            "after": []
+          },
+          {
+            "task_id": "stage_03",
+            "participants": {
+              "r2": "solo"
+            },
+            "route_id": "lane_b",
+            "after": []
+          },
+          {
+            "task_id": "deliver_01",
+            "participants": {
+              "r1": "end_a",
+              "r3": "end_b"
+            },
+            "route_id": "lane_a",
+            "after": [
+              "stage_02",
+              "stage_03"
+            ]
+          },
+          {
+            "task_id": "deliver_02",
+            "participants": {
+              "r2": "solo"
+            },
+            "route_id": "lane_b",
+            "after": [
+              "stage_02",
+              "deliver_01"
+            ]
+          },
+          {
+            "task_id": "deliver_03",
+            "participants": {
+              "r1": "solo"
+            },
+            "route_id": "lane_a",
+            "after": [
+              "stage_03",
+              "deliver_01"
+            ]
+          }
+        ]
+      },
+      "proposer": "r1"
+    }
+  }
+]

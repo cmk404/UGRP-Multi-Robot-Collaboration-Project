@@ -1,0 +1,54 @@
+{
+  "turn": 0,
+  "at_s": 3.999999999999781,
+  "tasks": {
+    "stage_02": "APPROACH",
+    "stage_03": "APPROACH"
+  },
+  "replies": {
+    "r1": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.7,
+      "message": "Approaching target object_02 along lane_a",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Moving forward to reach cargo object_02",
+      "request_id": "stage_02-r1-000001",
+      "robot_id": "r1",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "r2": {
+      "request_id": "stage_03-r2-000002",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "stage": "APPROACH",
+      "status": "WORKING",
+      "confidence": 0.9,
+      "checks": [],
+      "command_id": null,
+      "action": {
+        "kind": "drive",
+        "forward": 0.15,
+        "turn": 0.0,
+        "duration_s": 0.2
+      },
+      "reason": "Approaching target cyan box object_03 straight ahead.",
+      "message": "r2 driving forward toward object_03"
+    }
+  },
+  "protocol": {
+    "objects": 3,
+    "tasks": 5,
+    "completed_task_claims": 0,
+    "final_object_claims": 0,
+    "whole_mission_claimed": false,
+    "physical_success": "not_evaluated",
+    "motor_execution": "unsupported"
+  }
+}

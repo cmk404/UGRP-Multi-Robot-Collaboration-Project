@@ -1,0 +1,53 @@
+{
+  "turn": 8,
+  "at_s": 5.599999999999605,
+  "tasks": {
+    "stage_02": "APPROACH",
+    "stage_03": "APPROACH"
+  },
+  "replies": {
+    "r1": {
+      "request_id": "stage_02-r1-000017",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "stage": "APPROACH",
+      "status": "WORKING",
+      "confidence": 0.7,
+      "checks": [],
+      "command_id": null,
+      "action": {
+        "kind": "drive",
+        "forward": 0.1,
+        "turn": 0.0,
+        "duration_s": 0.2
+      },
+      "reason": "Advancing along lane towards target cargo.",
+      "message": "Continuing approach along lane_a."
+    },
+    "r2": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.7,
+      "message": "Continuing approach toward object_03 along lane_b.",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Target box object_03 is directly ahead in own camera; continuing straight drive approach.",
+      "request_id": "stage_03-r2-000018",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    }
+  },
+  "protocol": {
+    "objects": 3,
+    "tasks": 5,
+    "completed_task_claims": 0,
+    "final_object_claims": 0,
+    "whole_mission_claimed": false,
+    "physical_success": "not_evaluated",
+    "motor_execution": "unsupported"
+  }
+}

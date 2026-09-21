@@ -1,9 +1,30 @@
 """Training-only image feature cache and balanced sampling for frozen ACT vision."""
 from contextlib import contextmanager
 from unittest.mock import patch
+from contextlib import ExitStack
 
 import numpy as np
 import torch
+from torch.utils.checkpoint import checkpoint
+
+
+@contextmanager
+def checkpoint_encoder(policy, enabled=False):
+    """Recompute encoder activations in backward; preserve batch, weights and RNG.
+
+    This only changes training memory use. It does not wrap modules or alter
+    state_dict names, inference, attention semantics, precision or the optimizer.
+    """
+    with ExitStack() as stack:
+        if enabled:
+            for layer in policy.model.encoder.layers:
+                native = layer.forward
+
+                def forward(*args, _native=native, **kwargs):
+                    return checkpoint(_native, *args, use_reentrant=False, preserve_rng_state=True, **kwargs)
+
+                stack.enter_context(patch.object(layer, 'forward', new=forward))
+        yield
 
 
 def sampling_weights(rows, balanced, slow_threshold=.015):
@@ -26,7 +47,10 @@ def frozen_features(policy):
     """
     if any(p.requires_grad for p in policy.model.backbone.parameters()):
         raise ValueError('feature cache requires every backbone parameter frozen')
-    with patch.object(policy.model.backbone, 'forward', side_effect=lambda value: {'feature_map': value}):
+    # A Mock side_effect records every argument and retains the full dataset's
+    # feature tensors while evaluate() keeps this context open across batches.
+    # Install a plain callable instead; outputs and autograd remain identical.
+    with patch.object(policy.model.backbone, 'forward', new=lambda value: {'feature_map': value}):
         yield
 
 

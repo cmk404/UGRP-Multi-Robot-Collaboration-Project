@@ -1,0 +1,53 @@
+{
+  "original": {
+    "rule_agreement": 13,
+    "calls": 24,
+    "repeat_agreement_states": 11,
+    "unique_states": 12,
+    "latency_median_s": 0.5644966045074398,
+    "partitions": {
+      "development": {
+        "rule_agreement": 11,
+        "calls": 16
+      },
+      "observed_failure": {
+        "rule_agreement": 2,
+        "calls": 8
+      }
+    }
+  },
+  "semantic_state": {
+    "rule_agreement": 24,
+    "calls": 24,
+    "repeat_agreement_states": 12,
+    "unique_states": 12,
+    "latency_median_s": 0.556212729003164,
+    "partitions": {
+      "development": {
+        "rule_agreement": 16,
+        "calls": 16
+      },
+      "observed_failure": {
+        "rule_agreement": 8,
+        "calls": 8
+      }
+    }
+  },
+  "semantic_state_explicit_criteria": {
+    "rule_agreement": 24,
+    "calls": 24,
+    "repeat_agreement_states": 12,
+    "unique_states": 12,
+    "latency_median_s": 0.5329432294965954,
+    "partitions": {
+      "development": {
+        "rule_agreement": 16,
+        "calls": 16
+      },
+      "observed_failure": {
+        "rule_agreement": 8,
+        "calls": 8
+      }
+    }
+  }
+}

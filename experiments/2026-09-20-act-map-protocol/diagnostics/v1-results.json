@@ -1,0 +1,2611 @@
+[
+  {
+    "id": "control-blocked",
+    "split": "control",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": false,
+      "route_m_rad": null,
+      "classification": "geometric_impossible_control",
+      "barrier_width_proof": true,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": {
+      "scope": "static folded-arm initialization and real cameras; no grasp/carry/teacher/policy trial",
+      "source_pair_map_sha256": "ccedd11ec9302b7453fa1770916e6e3d40e41b43a9d6dc9ee12ac9da96469c96",
+      "dispatch_map_sha256": "b5e813b8a26b00bacf83aac1fa929fa6ea891a69e4f95a68b7624a80ac577c60",
+      "scene_xml_sha256": "b92dcf5db88f87d7ad13711fe6afaea224945b1fcf0a49d0e567b5e608db6848",
+      "invariants": {
+        "scene_xml_sha256": "b92dcf5db88f87d7ad13711fe6afaea224945b1fcf0a49d0e567b5e608db6848",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "b5e813b8a26b00bacf83aac1fa929fa6ea891a69e4f95a68b7624a80ac577c60",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "compiled_obstacles": [
+        "divider",
+        "bound_w",
+        "bound_e",
+        "bound_s",
+        "bound_n"
+      ],
+      "fov_checks": [
+        {
+          "id": "divider",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_w",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_e",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_s",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_n",
+          "inside_top_frustum": true
+        }
+      ],
+      "initial_obstacle_contacts": [],
+      "preview_setup_clear": true,
+      "rgb": {
+        "r1": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r1.jpg",
+            "sha256": "bf558a8a93db577feb5926872d8d77ce9d02e805e561a5f4a788b2a82dac43f5"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "49ba40343ae693466359bc3f3e8539af3866a68cd236ab7953f5d2adc22ca33f"
+          }
+        },
+        "r2": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r2.jpg",
+            "sha256": "ff795e2b345efd876121a1e5792892979cde6657430c243616283ecdba0a07a2"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "49ba40343ae693466359bc3f3e8539af3866a68cd236ab7953f5d2adc22ca33f"
+          }
+        },
+        "r3": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r3.jpg",
+            "sha256": "9257d7b41ea6be86784915e3a7d477aca0e68e9c468deea6a29603bbb34fba44"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "49ba40343ae693466359bc3f3e8539af3866a68cd236ab7953f5d2adc22ca33f"
+          }
+        }
+      },
+      "sim_seconds": 1.300000000000001,
+      "transport_success": null
+    },
+    "error": null,
+    "wall_seconds": 0.54972125000495
+  },
+  {
+    "id": "control-narrow",
+    "split": "control",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": false,
+      "route_m_rad": null,
+      "classification": "geometric_impossible_control",
+      "barrier_width_proof": true,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": {
+      "scope": "static folded-arm initialization and real cameras; no grasp/carry/teacher/policy trial",
+      "source_pair_map_sha256": "af58b32a3e53d80239e7abd5bf33b5cecd6575c74e4887a4c4382c30d8c9e7ac",
+      "dispatch_map_sha256": "23b4b26c4e0e5113a388b24d6461d64bf5cbb38476ac1d36a7196e8428ba2743",
+      "scene_xml_sha256": "7a8682968a7a2f16c7484eb0eb8583574e8f13f4a648626b73eb63c41417ea47",
+      "invariants": {
+        "scene_xml_sha256": "7a8682968a7a2f16c7484eb0eb8583574e8f13f4a648626b73eb63c41417ea47",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "23b4b26c4e0e5113a388b24d6461d64bf5cbb38476ac1d36a7196e8428ba2743",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "compiled_obstacles": [
+        "gate_0_lower",
+        "gate_0_upper",
+        "bound_w",
+        "bound_e",
+        "bound_s",
+        "bound_n"
+      ],
+      "fov_checks": [
+        {
+          "id": "gate_0_lower",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "gate_0_upper",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_w",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_e",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_s",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_n",
+          "inside_top_frustum": true
+        }
+      ],
+      "initial_obstacle_contacts": [],
+      "preview_setup_clear": true,
+      "rgb": {
+        "r1": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r1.jpg",
+            "sha256": "f51cc63fb897696299a4924a3c14627cfb30a659d88e4fe90f141c586bc5b374"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "e6600eb7fef858604bc7809e35c8d969383d54b789c992caa7011ce62e44859f"
+          }
+        },
+        "r2": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r2.jpg",
+            "sha256": "2138eb6166ed03ce6e60878779beae0686d943b7338561a994a52cd5b7f4433c"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "e6600eb7fef858604bc7809e35c8d969383d54b789c992caa7011ce62e44859f"
+          }
+        },
+        "r3": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r3.jpg",
+            "sha256": "09ead17b3f28b8f0e6425894fc5913cb2892a37e4a01656c022b8847530efad2"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "e6600eb7fef858604bc7809e35c8d969383d54b789c992caa7011ce62e44859f"
+          }
+        }
+      },
+      "sim_seconds": 1.300000000000001,
+      "transport_success": null
+    },
+    "error": null,
+    "wall_seconds": 0.6028777499886928
+  },
+  {
+    "id": "dev-corner",
+    "split": "dev",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": true,
+      "route_m_rad": [
+        [
+          0.62,
+          -2.0,
+          0.0
+        ],
+        [
+          0.14,
+          -1.7,
+          1.5707963267948966
+        ],
+        [
+          -0.534002,
+          -1.49,
+          1.5707963267948966
+        ]
+      ],
+      "classification": "geometric_candidate",
+      "barrier_width_proof": false,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": null,
+    "error": "ValueError: geometry extends outside fixed TOP frustum",
+    "wall_seconds": 0.547699916001875
+  },
+  {
+    "id": "dev-door",
+    "split": "dev",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": true,
+      "route_m_rad": [
+        [
+          -0.6,
+          -2.006358,
+          0.0
+        ],
+        [
+          0.0,
+          -2.006358,
+          1.5707963267948966
+        ],
+        [
+          1.02,
+          -2.006358,
+          1.5707963267948966
+        ],
+        [
+          1.465919,
+          -2.057233,
+          0.0
+        ]
+      ],
+      "classification": "geometric_candidate",
+      "barrier_width_proof": false,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": {
+      "scope": "static folded-arm initialization and real cameras; no grasp/carry/teacher/policy trial",
+      "source_pair_map_sha256": "478afc82f67684437cc952c6675e33022fc0756ce25fbf326a17465720611c13",
+      "dispatch_map_sha256": "5d72f4de1f00868ef051e3fa578c63cee8b44087134a9d53c0c42bf69a0ee172",
+      "scene_xml_sha256": "ecebd7e64b2fc46d7ed19ce5df2d16cd5f3fb94b47fb782bb1a780ae887b4948",
+      "invariants": {
+        "scene_xml_sha256": "ecebd7e64b2fc46d7ed19ce5df2d16cd5f3fb94b47fb782bb1a780ae887b4948",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "5d72f4de1f00868ef051e3fa578c63cee8b44087134a9d53c0c42bf69a0ee172",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "compiled_obstacles": [
+        "gate_0_lower",
+        "gate_0_upper",
+        "bound_w",
+        "bound_e",
+        "bound_s",
+        "bound_n"
+      ],
+      "fov_checks": [
+        {
+          "id": "gate_0_lower",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "gate_0_upper",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_w",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_e",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_s",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_n",
+          "inside_top_frustum": true
+        }
+      ],
+      "initial_obstacle_contacts": [],
+      "preview_setup_clear": true,
+      "rgb": {
+        "r1": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r1.jpg",
+            "sha256": "71372f066e7dad49e4390bd0a4cecf0ace2d8e6fb86d853972e26e4052eb2ec5"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "a32aa48942e87144c80a2a7b94fd7efcc770c9903b1b1c4b0b7408e6bf2531c8"
+          }
+        },
+        "r2": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r2.jpg",
+            "sha256": "a143894113e82238a6dec9e6841807127a19a68835dde436be539643039b9486"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "a32aa48942e87144c80a2a7b94fd7efcc770c9903b1b1c4b0b7408e6bf2531c8"
+          }
+        },
+        "r3": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r3.jpg",
+            "sha256": "0aaff87b41938e636b2075dcbc47ebab65c6f5632dfe1ec912afb93f0efc6082"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "a32aa48942e87144c80a2a7b94fd7efcc770c9903b1b1c4b0b7408e6bf2531c8"
+          }
+        }
+      },
+      "sim_seconds": 1.300000000000001,
+      "transport_success": null
+    },
+    "error": null,
+    "wall_seconds": 0.6492997919995105
+  },
+  {
+    "id": "dev-open",
+    "split": "dev",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": true,
+      "route_m_rad": [
+        [
+          -0.6,
+          -1.961142,
+          0.0
+        ],
+        [
+          1.455563,
+          -2.022229,
+          1.5707963267948966
+        ]
+      ],
+      "classification": "geometric_candidate",
+      "barrier_width_proof": false,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": {
+      "scope": "static folded-arm initialization and real cameras; no grasp/carry/teacher/policy trial",
+      "source_pair_map_sha256": "557bfc977561eba596fe857c67586e464ef90367a2e1efc923593528088f4fc1",
+      "dispatch_map_sha256": "3e8e54866d4eb5696454e2564e361e9f1013eb29ba993d0e63b06158b1f2b187",
+      "scene_xml_sha256": "6127b2dbf629c221653e114721a58de1a8809e1ea8e10e9f7d4711ebb2087dd3",
+      "invariants": {
+        "scene_xml_sha256": "6127b2dbf629c221653e114721a58de1a8809e1ea8e10e9f7d4711ebb2087dd3",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "3e8e54866d4eb5696454e2564e361e9f1013eb29ba993d0e63b06158b1f2b187",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "compiled_obstacles": [
+        "bound_w",
+        "bound_e",
+        "bound_s",
+        "bound_n"
+      ],
+      "fov_checks": [
+        {
+          "id": "bound_w",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_e",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_s",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_n",
+          "inside_top_frustum": true
+        }
+      ],
+      "initial_obstacle_contacts": [],
+      "preview_setup_clear": true,
+      "rgb": {
+        "r1": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r1.jpg",
+            "sha256": "27d5c644a1c02d3c751c991b8663aab3224f8816a2c50d209437348d3116eac6"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "fa4887cc3f7df8e81c97a79644eaf9a49af66ae5b628cc05b1c78ee5eaa65d5f"
+          }
+        },
+        "r2": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r2.jpg",
+            "sha256": "75317a98078ca07ce9acbf780925fd500fe1b99f65d646279a17aefc6699485a"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "fa4887cc3f7df8e81c97a79644eaf9a49af66ae5b628cc05b1c78ee5eaa65d5f"
+          }
+        },
+        "r3": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r3.jpg",
+            "sha256": "7d397e3b14f36c98758dc64b3ccdf676bcb116cfb4017fc13890dd31e0f4afa7"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "fa4887cc3f7df8e81c97a79644eaf9a49af66ae5b628cc05b1c78ee5eaa65d5f"
+          }
+        }
+      },
+      "sim_seconds": 1.300000000000001,
+      "transport_success": null
+    },
+    "error": null,
+    "wall_seconds": 0.6140193329920294
+  },
+  {
+    "id": "regression_blocked-branch",
+    "split": "regression",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": true,
+      "route_m_rad": [
+        [
+          0.62,
+          -2.0,
+          0.0
+        ],
+        [
+          0.74,
+          -2.36,
+          0.7853981633974483
+        ],
+        [
+          0.6799999999999999,
+          -2.48,
+          1.5707963267948966
+        ],
+        [
+          0.62,
+          -2.54,
+          1.5707963267948966
+        ],
+        [
+          -0.4600000000000001,
+          -2.54,
+          1.5707963267948966
+        ],
+        [
+          -0.5199999999999999,
+          -2.36,
+          1.5707963267948966
+        ],
+        [
+          -0.52,
+          -2,
+          1.5707963267948966
+        ]
+      ],
+      "classification": "geometric_candidate",
+      "barrier_width_proof": false,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": null,
+    "error": "ValueError: geometry extends outside fixed TOP frustum",
+    "wall_seconds": 0.5572959580022143
+  },
+  {
+    "id": "regression_fully-blocked",
+    "split": "regression",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": false,
+      "route_m_rad": null,
+      "classification": "no_lattice_path_unresolved",
+      "barrier_width_proof": false,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": null,
+    "error": "ValueError: geometry extends outside fixed TOP frustum",
+    "wall_seconds": 1.0894940409925766
+  },
+  {
+    "id": "regression_l-corner",
+    "split": "regression",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": true,
+      "route_m_rad": [
+        [
+          0.62,
+          -2.0,
+          0.0
+        ],
+        [
+          0.07999999999999996,
+          -1.7,
+          1.5707963267948966
+        ],
+        [
+          -0.52,
+          -1.49,
+          1.5707963267948966
+        ]
+      ],
+      "classification": "geometric_candidate",
+      "barrier_width_proof": false,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": null,
+    "error": "ValueError: geometry extends outside fixed TOP frustum",
+    "wall_seconds": 0.539657333996729
+  },
+  {
+    "id": "regression_narrow-door",
+    "split": "regression",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": true,
+      "route_m_rad": [
+        [
+          0.62,
+          -2.0,
+          0.0
+        ],
+        [
+          0.74,
+          -2.0,
+          0.7853981633974483
+        ],
+        [
+          0.74,
+          -2.0,
+          1.5707963267948966
+        ],
+        [
+          -0.4600000000000001,
+          -2.0,
+          1.5707963267948966
+        ],
+        [
+          -0.52,
+          -2,
+          0.0
+        ]
+      ],
+      "classification": "geometric_candidate",
+      "barrier_width_proof": false,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": null,
+    "error": "ValueError: geometry extends outside fixed TOP frustum",
+    "wall_seconds": 0.5225073750043521
+  },
+  {
+    "id": "regression_s-bends",
+    "split": "regression",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": true,
+      "route_m_rad": [
+        [
+          0.62,
+          -2.0,
+          0.0
+        ],
+        [
+          0.44,
+          -2.3,
+          0.0
+        ],
+        [
+          -0.039999999999999925,
+          -2.3,
+          0.0
+        ],
+        [
+          -0.21999999999999997,
+          -2.06,
+          0.0
+        ],
+        [
+          -0.21999999999999997,
+          -1.76,
+          0.0
+        ],
+        [
+          -0.4600000000000001,
+          -1.7,
+          0.0
+        ],
+        [
+          -0.82,
+          -1.76,
+          0.0
+        ],
+        [
+          -0.84,
+          -2,
+          0.0
+        ]
+      ],
+      "classification": "geometric_candidate",
+      "barrier_width_proof": false,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": null,
+    "error": "ValueError: geometry extends outside fixed TOP frustum",
+    "wall_seconds": 0.5340367919998243
+  },
+  {
+    "id": "regression_staggered-obstacles",
+    "split": "regression",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": true,
+      "route_m_rad": [
+        [
+          0.62,
+          -2.0,
+          0.0
+        ],
+        [
+          0.5,
+          -2.3,
+          0.0
+        ],
+        [
+          0.5,
+          -2.3,
+          0.7853981633974483
+        ],
+        [
+          0.44,
+          -2.36,
+          0.7853981633974483
+        ],
+        [
+          0.26,
+          -2.36,
+          0.7853981633974483
+        ],
+        [
+          -0.4,
+          -1.76,
+          0.7853981633974483
+        ],
+        [
+          -0.58,
+          -1.76,
+          0.0
+        ],
+        [
+          -0.62,
+          -2,
+          0.0
+        ]
+      ],
+      "classification": "geometric_candidate",
+      "barrier_width_proof": false,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": null,
+    "error": "ValueError: geometry extends outside fixed TOP frustum",
+    "wall_seconds": 0.5154302499868209
+  },
+  {
+    "id": "test-a-corner",
+    "split": "test_a",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": true,
+      "route_m_rad": [
+        [
+          0.62,
+          -2.0,
+          0.0
+        ],
+        [
+          0.2,
+          -1.76,
+          1.5707963267948966
+        ],
+        [
+          -0.534129,
+          -1.49,
+          1.5707963267948966
+        ]
+      ],
+      "classification": "geometric_candidate",
+      "barrier_width_proof": false,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": null,
+    "error": "ValueError: geometry extends outside fixed TOP frustum",
+    "wall_seconds": 0.6230625830066856
+  },
+  {
+    "id": "test-a-door",
+    "split": "test_a",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": true,
+      "route_m_rad": [
+        [
+          -0.6,
+          -2.019733,
+          0.0
+        ],
+        [
+          0.12,
+          -2.019733,
+          1.5707963267948966
+        ],
+        [
+          0.9600000000000001,
+          -2.019733,
+          1.5707963267948966
+        ],
+        [
+          1.467897,
+          -2.033954,
+          0.0
+        ]
+      ],
+      "classification": "geometric_candidate",
+      "barrier_width_proof": false,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": {
+      "scope": "static folded-arm initialization and real cameras; no grasp/carry/teacher/policy trial",
+      "source_pair_map_sha256": "1802900158ec39204d173f808925b633c63830fbd27a61d16f0f007a7392b568",
+      "dispatch_map_sha256": "a3be2c3c1c99015dcba7296ce5250a5bb95e169e272416a9e9684e6d35e35809",
+      "scene_xml_sha256": "2a8e3e30796a90ee2fab420c5740adcef841f9a332949cc49ac22282f0aca225",
+      "invariants": {
+        "scene_xml_sha256": "2a8e3e30796a90ee2fab420c5740adcef841f9a332949cc49ac22282f0aca225",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "a3be2c3c1c99015dcba7296ce5250a5bb95e169e272416a9e9684e6d35e35809",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "compiled_obstacles": [
+        "gate_0_lower",
+        "gate_0_upper",
+        "bound_w",
+        "bound_e",
+        "bound_s",
+        "bound_n"
+      ],
+      "fov_checks": [
+        {
+          "id": "gate_0_lower",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "gate_0_upper",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_w",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_e",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_s",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_n",
+          "inside_top_frustum": true
+        }
+      ],
+      "initial_obstacle_contacts": [],
+      "preview_setup_clear": true,
+      "rgb": {
+        "r1": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r1.jpg",
+            "sha256": "07409bfd9fd6d5730c427fa1293baafecf395dc081fe3f25e8d7394d3363baaa"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "99675f221e588449b51b308f4cbe55e83944bfde722fc243229ca688bb6292ff"
+          }
+        },
+        "r2": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r2.jpg",
+            "sha256": "a520f9f14c6b1a85a11283e81fc935bab5fd42e3d74c6e7fed6f033b9e71f7bb"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "99675f221e588449b51b308f4cbe55e83944bfde722fc243229ca688bb6292ff"
+          }
+        },
+        "r3": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r3.jpg",
+            "sha256": "ca679ab1251d8f48dec513bf6399dcacae4ba8d7ba5718dad35c9a9d8c3ef760"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "99675f221e588449b51b308f4cbe55e83944bfde722fc243229ca688bb6292ff"
+          }
+        }
+      },
+      "sim_seconds": 1.300000000000001,
+      "transport_success": null
+    },
+    "error": null,
+    "wall_seconds": 0.6624137909966521
+  },
+  {
+    "id": "test-a-open",
+    "split": "test_a",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": true,
+      "route_m_rad": [
+        [
+          -0.6,
+          -2.00627,
+          0.0
+        ],
+        [
+          1.435445,
+          -1.939964,
+          1.5707963267948966
+        ]
+      ],
+      "classification": "geometric_candidate",
+      "barrier_width_proof": false,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": {
+      "scope": "static folded-arm initialization and real cameras; no grasp/carry/teacher/policy trial",
+      "source_pair_map_sha256": "d14ad3ee4a7a59c51cc89e2e083fed9630fcb45af48d45873e42ec481c1a3350",
+      "dispatch_map_sha256": "dd4e1d7bee52d2f4e0308913916938e8b7eaf3c27e65fee88ac89bbae8de260e",
+      "scene_xml_sha256": "32f8190e506cd34db582a36f2ed87033ae5b3f5bbbcddcab1b5d3ddd332775fa",
+      "invariants": {
+        "scene_xml_sha256": "32f8190e506cd34db582a36f2ed87033ae5b3f5bbbcddcab1b5d3ddd332775fa",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "dd4e1d7bee52d2f4e0308913916938e8b7eaf3c27e65fee88ac89bbae8de260e",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "compiled_obstacles": [
+        "bound_w",
+        "bound_e",
+        "bound_s",
+        "bound_n"
+      ],
+      "fov_checks": [
+        {
+          "id": "bound_w",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_e",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_s",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_n",
+          "inside_top_frustum": true
+        }
+      ],
+      "initial_obstacle_contacts": [],
+      "preview_setup_clear": true,
+      "rgb": {
+        "r1": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r1.jpg",
+            "sha256": "de88bac4d4e2beda920713626ad0957bdf8282c4d6ac2bdeba10512fc99b7bae"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "bedea28d38e44f433e0c06d2d3ee375b3057fe51084ae79d8df8d5b4304db113"
+          }
+        },
+        "r2": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r2.jpg",
+            "sha256": "1004c9f06c8e4515510e3fff3ceba2f4de59a8e236d724472670812d6b38fe1e"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "bedea28d38e44f433e0c06d2d3ee375b3057fe51084ae79d8df8d5b4304db113"
+          }
+        },
+        "r3": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r3.jpg",
+            "sha256": "6ba85a934619c7c4f7655d0dd7cd796a95f0af0c0f404816818774ed09086ac9"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "bedea28d38e44f433e0c06d2d3ee375b3057fe51084ae79d8df8d5b4304db113"
+          }
+        }
+      },
+      "sim_seconds": 1.300000000000001,
+      "transport_success": null
+    },
+    "error": null,
+    "wall_seconds": 0.6813564580079401
+  },
+  {
+    "id": "test-b-double-1",
+    "split": "test_b",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": true,
+      "route_m_rad": [
+        [
+          -0.6,
+          -1.978092,
+          0.0
+        ],
+        [
+          -0.12,
+          -2.098092,
+          0.0
+        ],
+        [
+          0.5399999999999999,
+          -2.038092,
+          0.0
+        ],
+        [
+          0.7199999999999999,
+          -1.918092,
+          0.0
+        ],
+        [
+          1.1999999999999997,
+          -1.918092,
+          0.0
+        ],
+        [
+          1.423528,
+          -2.05997,
+          0.0
+        ]
+      ],
+      "classification": "geometric_candidate",
+      "barrier_width_proof": false,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": {
+      "scope": "static folded-arm initialization and real cameras; no grasp/carry/teacher/policy trial",
+      "source_pair_map_sha256": "f6ab38b60dacc7b76b86993c692c86219351ebcc8f8a50649770aef742544503",
+      "dispatch_map_sha256": "022b0015799974815222de238fc044adf09e0b45893b860c322a46cb22098abd",
+      "scene_xml_sha256": "84cd3179de85a3b43fd5badedd9e7123c6812a272051972e3aeb2c16b18a5bb1",
+      "invariants": {
+        "scene_xml_sha256": "84cd3179de85a3b43fd5badedd9e7123c6812a272051972e3aeb2c16b18a5bb1",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "022b0015799974815222de238fc044adf09e0b45893b860c322a46cb22098abd",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "compiled_obstacles": [
+        "gate_0_lower",
+        "gate_0_upper",
+        "gate_1_lower",
+        "gate_1_upper",
+        "bound_w",
+        "bound_e",
+        "bound_s",
+        "bound_n"
+      ],
+      "fov_checks": [
+        {
+          "id": "gate_0_lower",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "gate_0_upper",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "gate_1_lower",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "gate_1_upper",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_w",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_e",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_s",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_n",
+          "inside_top_frustum": true
+        }
+      ],
+      "initial_obstacle_contacts": [],
+      "preview_setup_clear": true,
+      "rgb": {
+        "r1": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r1.jpg",
+            "sha256": "5ecbda2b3f4359a27c8350a07b74762f02b68a467265e2bbc304c8f5f1c454a8"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "8979c61cc5ce162814f3001ab3c02bc09ea4208ed0c76d896aeb2b0654b0957c"
+          }
+        },
+        "r2": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r2.jpg",
+            "sha256": "bfb4e0edfd1d328cf39da047e80fb1565d9e047b5c69368dfe8392caf76d4f53"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "8979c61cc5ce162814f3001ab3c02bc09ea4208ed0c76d896aeb2b0654b0957c"
+          }
+        },
+        "r3": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r3.jpg",
+            "sha256": "00fa1a93b0b2d29bf9c0e7c59e4fad1010f350b9ab120aebb40d5aa944fe95cc"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "8979c61cc5ce162814f3001ab3c02bc09ea4208ed0c76d896aeb2b0654b0957c"
+          }
+        }
+      },
+      "sim_seconds": 1.300000000000001,
+      "transport_success": null
+    },
+    "error": null,
+    "wall_seconds": 0.5079140409943648
+  },
+  {
+    "id": "test-b-double-2",
+    "split": "test_b",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": true,
+      "route_m_rad": [
+        [
+          -0.6,
+          -1.99911,
+          0.0
+        ],
+        [
+          -0.24,
+          -2.05911,
+          0.0
+        ],
+        [
+          0.5399999999999999,
+          -2.05911,
+          0.0
+        ],
+        [
+          0.66,
+          -1.93911,
+          0.0
+        ],
+        [
+          1.410096,
+          -1.942691,
+          0.0
+        ]
+      ],
+      "classification": "geometric_candidate",
+      "barrier_width_proof": false,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": {
+      "scope": "static folded-arm initialization and real cameras; no grasp/carry/teacher/policy trial",
+      "source_pair_map_sha256": "9b81f6ebebea0ed76feb726b45233864e0180f1e15320ee1a7b3368fe95df21d",
+      "dispatch_map_sha256": "7a8dfb44ac8ff5b3416b7f55c74b1ae81dbdd580b473edf0fd8777ab9bae58d7",
+      "scene_xml_sha256": "ea90ec7293b9d53520cf98b582f51091a21341c60e1e4000cf23ac3185a327eb",
+      "invariants": {
+        "scene_xml_sha256": "ea90ec7293b9d53520cf98b582f51091a21341c60e1e4000cf23ac3185a327eb",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "7a8dfb44ac8ff5b3416b7f55c74b1ae81dbdd580b473edf0fd8777ab9bae58d7",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "compiled_obstacles": [
+        "gate_0_lower",
+        "gate_0_upper",
+        "gate_1_lower",
+        "gate_1_upper",
+        "bound_w",
+        "bound_e",
+        "bound_s",
+        "bound_n"
+      ],
+      "fov_checks": [
+        {
+          "id": "gate_0_lower",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "gate_0_upper",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "gate_1_lower",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "gate_1_upper",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_w",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_e",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_s",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_n",
+          "inside_top_frustum": true
+        }
+      ],
+      "initial_obstacle_contacts": [],
+      "preview_setup_clear": true,
+      "rgb": {
+        "r1": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r1.jpg",
+            "sha256": "90efac98ea535bedc88bc6b14e0d26c956feaae3e25ca7408bb04bc75d3a46cc"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "14f2c9400543abbe3dd76e386982204d330862d576bb8c99a70db4a46544c6bd"
+          }
+        },
+        "r2": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r2.jpg",
+            "sha256": "87ee43da9c5e2f85d9d7388a71675f2ebae18e917a0902719220973b53fe9f6c"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "14f2c9400543abbe3dd76e386982204d330862d576bb8c99a70db4a46544c6bd"
+          }
+        },
+        "r3": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r3.jpg",
+            "sha256": "0a309e4c99e30669176c1e4e2f3b083590fdf5558d44de2210297228b114e742"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "14f2c9400543abbe3dd76e386982204d330862d576bb8c99a70db4a46544c6bd"
+          }
+        }
+      },
+      "sim_seconds": 1.300000000000001,
+      "transport_success": null
+    },
+    "error": null,
+    "wall_seconds": 0.4818507909949403
+  },
+  {
+    "id": "train-corner-1",
+    "split": "train",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": true,
+      "route_m_rad": [
+        [
+          0.62,
+          -2.0,
+          0.0
+        ],
+        [
+          0.14,
+          -1.7,
+          1.5707963267948966
+        ],
+        [
+          -0.520091,
+          -1.49,
+          1.5707963267948966
+        ]
+      ],
+      "classification": "geometric_candidate",
+      "barrier_width_proof": false,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": null,
+    "error": "ValueError: geometry extends outside fixed TOP frustum",
+    "wall_seconds": 0.563807792001171
+  },
+  {
+    "id": "train-corner-2",
+    "split": "train",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": true,
+      "route_m_rad": [
+        [
+          0.62,
+          -2.0,
+          0.0
+        ],
+        [
+          0.14,
+          -1.7,
+          1.5707963267948966
+        ],
+        [
+          -0.538773,
+          -1.49,
+          1.5707963267948966
+        ]
+      ],
+      "classification": "geometric_candidate",
+      "barrier_width_proof": false,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": null,
+    "error": "ValueError: geometry extends outside fixed TOP frustum",
+    "wall_seconds": 0.530264792003436
+  },
+  {
+    "id": "train-door-1",
+    "split": "train",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": true,
+      "route_m_rad": [
+        [
+          -0.6,
+          -2.010587,
+          0.0
+        ],
+        [
+          0.0,
+          -2.010587,
+          1.5707963267948966
+        ],
+        [
+          1.02,
+          -2.010587,
+          1.5707963267948966
+        ],
+        [
+          1.402942,
+          -2.017875,
+          0.0
+        ]
+      ],
+      "classification": "geometric_candidate",
+      "barrier_width_proof": false,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": {
+      "scope": "static folded-arm initialization and real cameras; no grasp/carry/teacher/policy trial",
+      "source_pair_map_sha256": "dafb2c28852a065e97fa84426fb84353591d5a72ba206a1473f55b58f762702d",
+      "dispatch_map_sha256": "a29a57cff73d62246e83beadefe3b9b5c504a769cb9907bb0a07fa82ba4ba09d",
+      "scene_xml_sha256": "a3b7f283df7d15e3f1e161faf88959b2792ec461643561ccdf4481f602f31041",
+      "invariants": {
+        "scene_xml_sha256": "a3b7f283df7d15e3f1e161faf88959b2792ec461643561ccdf4481f602f31041",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "a29a57cff73d62246e83beadefe3b9b5c504a769cb9907bb0a07fa82ba4ba09d",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "compiled_obstacles": [
+        "gate_0_lower",
+        "gate_0_upper",
+        "bound_w",
+        "bound_e",
+        "bound_s",
+        "bound_n"
+      ],
+      "fov_checks": [
+        {
+          "id": "gate_0_lower",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "gate_0_upper",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_w",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_e",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_s",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_n",
+          "inside_top_frustum": true
+        }
+      ],
+      "initial_obstacle_contacts": [],
+      "preview_setup_clear": true,
+      "rgb": {
+        "r1": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r1.jpg",
+            "sha256": "aa87ac1f79c12bfef7bdd5d6d623b3cabf7e2734d4b3180f22589074e40dd238"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "8f8c8f4f9e9b43542c80ba5606e28abac9c6f9273e574cfbb319a5bb0c0b14c7"
+          }
+        },
+        "r2": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r2.jpg",
+            "sha256": "0683b67cf478269af9a3be586f733e1cb726ee0479f71eae2835746072627e72"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "8f8c8f4f9e9b43542c80ba5606e28abac9c6f9273e574cfbb319a5bb0c0b14c7"
+          }
+        },
+        "r3": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r3.jpg",
+            "sha256": "554c86dd1ceefe762928528a7085e6358272d3696e507e22ac81a02692caab9a"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "8f8c8f4f9e9b43542c80ba5606e28abac9c6f9273e574cfbb319a5bb0c0b14c7"
+          }
+        }
+      },
+      "sim_seconds": 1.300000000000001,
+      "transport_success": null
+    },
+    "error": null,
+    "wall_seconds": 0.5177674579899758
+  },
+  {
+    "id": "train-door-2",
+    "split": "train",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": true,
+      "route_m_rad": [
+        [
+          -0.6,
+          -2.002336,
+          0.0
+        ],
+        [
+          0.12,
+          -2.002336,
+          1.5707963267948966
+        ],
+        [
+          1.460484,
+          -1.939294,
+          1.5707963267948966
+        ]
+      ],
+      "classification": "geometric_candidate",
+      "barrier_width_proof": false,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": {
+      "scope": "static folded-arm initialization and real cameras; no grasp/carry/teacher/policy trial",
+      "source_pair_map_sha256": "ea664c50bf40819b0b77f96edb8fb67916c08d4e38586d19d4477334cb8bb2a5",
+      "dispatch_map_sha256": "b56e0507fd69b85481774cb6e1ffe29fcd19dee28a03080a136ff2f7856cf95c",
+      "scene_xml_sha256": "d89f282e01a4dc106c978ecd719bbc971c4d3ed6a05be295b37b78fe826004d9",
+      "invariants": {
+        "scene_xml_sha256": "d89f282e01a4dc106c978ecd719bbc971c4d3ed6a05be295b37b78fe826004d9",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "b56e0507fd69b85481774cb6e1ffe29fcd19dee28a03080a136ff2f7856cf95c",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "compiled_obstacles": [
+        "gate_0_lower",
+        "gate_0_upper",
+        "bound_w",
+        "bound_e",
+        "bound_s",
+        "bound_n"
+      ],
+      "fov_checks": [
+        {
+          "id": "gate_0_lower",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "gate_0_upper",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_w",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_e",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_s",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_n",
+          "inside_top_frustum": true
+        }
+      ],
+      "initial_obstacle_contacts": [],
+      "preview_setup_clear": true,
+      "rgb": {
+        "r1": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r1.jpg",
+            "sha256": "ff5021ee3dcd039c969aa261e55ebfbadd184b21b0ec96d25cb87dbd7a133945"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "e17ad80f66bd80c5f86e00f6a819a614d2cfa61b004f8728b6e6e650bcf6ea69"
+          }
+        },
+        "r2": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r2.jpg",
+            "sha256": "3d077d1ef1bc1489102617c0de4812d34971d717f8fea5f8682a655b4994e375"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "e17ad80f66bd80c5f86e00f6a819a614d2cfa61b004f8728b6e6e650bcf6ea69"
+          }
+        },
+        "r3": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r3.jpg",
+            "sha256": "04f09646e17a67b55f9e8d65c323a360981cdb1cc0d245e44378e956a389efd3"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "e17ad80f66bd80c5f86e00f6a819a614d2cfa61b004f8728b6e6e650bcf6ea69"
+          }
+        }
+      },
+      "sim_seconds": 1.300000000000001,
+      "transport_success": null
+    },
+    "error": null,
+    "wall_seconds": 0.5353662919951603
+  },
+  {
+    "id": "train-open-1",
+    "split": "train",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": true,
+      "route_m_rad": [
+        [
+          -0.6,
+          -1.960055,
+          0.0
+        ],
+        [
+          1.412294,
+          -2.021879,
+          0.0
+        ]
+      ],
+      "classification": "geometric_candidate",
+      "barrier_width_proof": false,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": {
+      "scope": "static folded-arm initialization and real cameras; no grasp/carry/teacher/policy trial",
+      "source_pair_map_sha256": "ec7f328d0ff0977ef1487eead27c3b78bf08f2d038089e10166761041ee41cb2",
+      "dispatch_map_sha256": "5cd662537c03efa80cc94e80dbc3386026546fee0181fb4e39c079e516f592b7",
+      "scene_xml_sha256": "64833aa84a0b4c2fa4b8fab6380bd3de585add65e270aa47a17076db47cdbe94",
+      "invariants": {
+        "scene_xml_sha256": "64833aa84a0b4c2fa4b8fab6380bd3de585add65e270aa47a17076db47cdbe94",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "5cd662537c03efa80cc94e80dbc3386026546fee0181fb4e39c079e516f592b7",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "compiled_obstacles": [
+        "bound_w",
+        "bound_e",
+        "bound_s",
+        "bound_n"
+      ],
+      "fov_checks": [
+        {
+          "id": "bound_w",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_e",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_s",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_n",
+          "inside_top_frustum": true
+        }
+      ],
+      "initial_obstacle_contacts": [],
+      "preview_setup_clear": true,
+      "rgb": {
+        "r1": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r1.jpg",
+            "sha256": "30c0d99f7842941624c91678e3370182d2f5020fbe0283ee78fa617c7f4ad393"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "3a8f191a6e761ad44a4dc8fea90c42448eae8bfe4d525b193a299b6d598f7163"
+          }
+        },
+        "r2": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r2.jpg",
+            "sha256": "95478421d93d68b54f40afe4054844964fa9a17cac11cd28b6ea88c52b0998ba"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "3a8f191a6e761ad44a4dc8fea90c42448eae8bfe4d525b193a299b6d598f7163"
+          }
+        },
+        "r3": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r3.jpg",
+            "sha256": "8d7c180bb6b3f95d6cbec0a5e2547ebf6efe37c65b0a9b5aa06d906ae2b579a3"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "3a8f191a6e761ad44a4dc8fea90c42448eae8bfe4d525b193a299b6d598f7163"
+          }
+        }
+      },
+      "sim_seconds": 1.300000000000001,
+      "transport_success": null
+    },
+    "error": null,
+    "wall_seconds": 1.0710212080011843
+  },
+  {
+    "id": "train-open-2",
+    "split": "train",
+    "geometry": {
+      "scope": "authored nominal pose and conservative complete-load geometry only",
+      "start_clear": true,
+      "goal_clear": true,
+      "route_found": true,
+      "route_m_rad": [
+        [
+          -0.6,
+          -2.029449,
+          0.0
+        ],
+        [
+          1.462243,
+          -1.969692,
+          1.5707963267948966
+        ]
+      ],
+      "classification": "geometric_candidate",
+      "barrier_width_proof": false,
+      "minimum_loaded_width_m": 0.45,
+      "teacher_passage": "not_run",
+      "student_passage": "not_run"
+    },
+    "render": {
+      "scope": "static folded-arm initialization and real cameras; no grasp/carry/teacher/policy trial",
+      "source_pair_map_sha256": "9cd3949153ac259da5d43ed545e32c72beb16f30406b87a035400c6b33ba877a",
+      "dispatch_map_sha256": "2b372467616566f8521fe7875b3b3fc1a0b9928e0008c3c7abfe68adfb88e1c3",
+      "scene_xml_sha256": "5019aa493feccb3057a4bc7276fa17725222a000a322ee5e52d0fd29e8811770",
+      "invariants": {
+        "scene_xml_sha256": "5019aa493feccb3057a4bc7276fa17725222a000a322ee5e52d0fd29e8811770",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "2b372467616566f8521fe7875b3b3fc1a0b9928e0008c3c7abfe68adfb88e1c3",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "compiled_obstacles": [
+        "bound_w",
+        "bound_e",
+        "bound_s",
+        "bound_n"
+      ],
+      "fov_checks": [
+        {
+          "id": "bound_w",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_e",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_s",
+          "inside_top_frustum": true
+        },
+        {
+          "id": "bound_n",
+          "inside_top_frustum": true
+        }
+      ],
+      "initial_obstacle_contacts": [],
+      "preview_setup_clear": true,
+      "rgb": {
+        "r1": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r1.jpg",
+            "sha256": "d71a657bf4c8602b8c68f60b3635b93e9c47e4448567d3f39539aa1e780d59b0"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "b1f6f71ce00a6de7bed411950eaa7e009b80600708019b156dd6ff3dfa9ff416"
+          }
+        },
+        "r2": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r2.jpg",
+            "sha256": "90838a03da367a2916fb81ddaa71f3c2604a4e396bf0a285c27c537d3520582c"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "b1f6f71ce00a6de7bed411950eaa7e009b80600708019b156dd6ff3dfa9ff416"
+          }
+        },
+        "r3": {
+          "frame_id": 1,
+          "own_rgb": {
+            "path": "rgb/preview-r3.jpg",
+            "sha256": "9f2b80d0e2645a96f753281f469416bb77d78d9e84e573530ec484a87019f680"
+          },
+          "shared_top_rgb": {
+            "path": "rgb/preview-top.jpg",
+            "sha256": "b1f6f71ce00a6de7bed411950eaa7e009b80600708019b156dd6ff3dfa9ff416"
+          }
+        }
+      },
+      "sim_seconds": 1.300000000000001,
+      "transport_success": null
+    },
+    "error": null,
+    "wall_seconds": 0.5036923750012647
+  }
+]

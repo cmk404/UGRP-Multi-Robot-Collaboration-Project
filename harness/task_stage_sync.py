@@ -68,11 +68,13 @@ class TaskPlan:
             raise ValueError("task, object, goal and static map identity are required")
         if not _integer(self.plan_version, 1):
             raise ValueError("plan_version must be a positive integer")
-        if (not isinstance(self.roles, tuple) or len(self.roles) < 2
+        if (not isinstance(self.roles, tuple) or not self.roles
                 or any(not isinstance(p, tuple) or len(p) != 2
                        or not all(_text(v) for v in p) for p in self.roles)
                 or len({p[0] for p in self.roles}) != len(self.roles)):
-            raise ValueError("at least two unique robot identities and roles are required")
+            raise ValueError("unique robot identities and explicit roles are required")
+        if len(self.roles) == 1 and self.roles[0][1] != 'solo':
+            raise ValueError("one participant requires the explicit solo role")
         if (not isinstance(self.map_sha256, str) or len(self.map_sha256) != 64
                 or any(c not in "0123456789abcdef" for c in self.map_sha256)):
             raise ValueError("map_sha256 must be a lowercase SHA256 digest")
@@ -203,7 +205,8 @@ class TaskStageSync:
         self.max_command_s = float(max_command_s)
         self.min_confidence = float(min_confidence)
         self.clock_domain = clock_domain
-        self._barrier = PairCarrySync(plan.task_id, plan.participants, plan.plan_version, report_ttl_s)
+        self._barrier = PairCarrySync(plan.task_id, plan.participants, plan.plan_version,
+                                     report_ttl_s, allow_solo=len(plan.participants) == 1)
         self._index = 0
         self._finished = False
         self._aborted = False

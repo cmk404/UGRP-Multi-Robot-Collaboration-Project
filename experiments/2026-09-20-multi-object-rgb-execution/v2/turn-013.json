@@ -1,0 +1,53 @@
+{
+  "turn": 13,
+  "at_s": 6.599999999999495,
+  "tasks": {
+    "stage_02": "APPROACH",
+    "stage_03": "APPROACH"
+  },
+  "replies": {
+    "r1": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.7,
+      "message": "Continuing approach along lane_a toward staging destination and target object_02.",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Target object_02 is directly ahead in lane_a; driving forward to close distance.",
+      "request_id": "stage_02-r1-000027",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    },
+    "r2": {
+      "action": {
+        "duration_s": 0.2,
+        "forward": 0.15,
+        "kind": "drive",
+        "turn": 0.0
+      },
+      "checks": [],
+      "command_id": null,
+      "confidence": 0.7,
+      "message": "Approaching target cyan box object_03 along lane_b.",
+      "plan_hash": "146b2e8d261d3102672545f4716eaf3a344f12b6284053be4cb506c75b8c12c3",
+      "reason": "Target box object_03 is directly ahead but still several tiles away; continuing straight drive approach.",
+      "request_id": "stage_03-r2-000028",
+      "stage": "APPROACH",
+      "status": "WORKING"
+    }
+  },
+  "protocol": {
+    "objects": 3,
+    "tasks": 5,
+    "completed_task_claims": 0,
+    "final_object_claims": 0,
+    "whole_mission_claimed": false,
+    "physical_success": "not_evaluated",
+    "motor_execution": "unsupported"
+  }
+}

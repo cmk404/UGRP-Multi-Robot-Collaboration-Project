@@ -1,0 +1,35 @@
+{
+  "schema": "ugrp.multi_object_pilot.v1",
+  "status": "protocol_fixture_only",
+  "selection": "12 representative templates, not a Cartesian product or physical feasibility claim",
+  "appearance": "replicas of existing plain orange beam and cyan box; no new labels, colors, cameras or FOV",
+  "cases": [
+    {"id": "single_box", "beams": 0, "boxes": 1, "pattern": "independent"},
+    {"id": "single_beam", "beams": 1, "boxes": 0, "pattern": "independent"},
+    {"id": "mixed_pair", "beams": 1, "boxes": 1, "pattern": "independent"},
+    {"id": "three_boxes", "beams": 0, "boxes": 3, "pattern": "independent"},
+    {"id": "two_beams", "beams": 2, "boxes": 0, "pattern": "shared_gate"},
+    {"id": "three_beams", "beams": 3, "boxes": 0, "pattern": "shared_gate"},
+    {"id": "mixed_four", "beams": 1, "boxes": 3, "pattern": "independent"},
+    {"id": "box_heavy_five", "beams": 1, "boxes": 4, "pattern": "independent"},
+    {"id": "beam_heavy_four", "beams": 3, "boxes": 1, "pattern": "clear_first"},
+    {"id": "six_boxes", "beams": 0, "boxes": 6, "pattern": "shared_gate"},
+    {"id": "mixed_eight", "beams": 2, "boxes": 6, "pattern": "shared_gate"},
+    {"id": "staging_three", "beams": 1, "boxes": 2, "pattern": "stage_then_deliver"}
+  ],
+  "physical_admission": {
+    "status": "not_run",
+    "required": ["bind each slot and route to an authored map and physical scene hash", "all cargo in unchanged fixed TOP FOV", "check occlusion in own and TOP images", "collision-free initial placement and free approach/grasp space", "whole-load turning and traversal clearance with other cargo present", "separate final slots and usable staging capacity", "teacher grasp lift carry align lower release with weld OFF", "RGB object identity continuity and ambiguity hold"],
+    "failure_rule": "retain rejected layouts and reasons; do not enlarge FOV, recolor objects or silently reduce counts"
+  },
+  "evaluation": {
+    "status": "pilot_design",
+    "split_rule": "Every object count, ordering, destination, rehandling and event variant of a physical map inherits its existing split; templates are development fixtures, never new held-out maps",
+    "comparisons": ["fixed order with fixed robot allocation", "joint task and partner allocation", "joint allocation with observed-event replanning"],
+    "pairing": ["map hash", "layout hash", "mission hash", "physics seed", "motor policy hash", "task and API budgets"],
+    "planning_metrics": ["valid plan rate", "unanimous agreement rate", "precedence violations", "identity switches", "duplicate jobs", "missing jobs", "resource conflicts", "deadlock", "replan count", "stale report rejection"],
+    "physical_metrics": ["final success per object", "whole mission success", "completed required tasks", "completion time", "robot idle time", "route wait time", "travel distance evaluation only", "grasp attempts", "drops", "collisions", "false completion", "API calls tokens and cost"],
+    "frozen_budgets": null,
+    "sample_counts_and_seeds": null
+  }
+}

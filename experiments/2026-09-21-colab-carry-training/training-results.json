@@ -1,0 +1,433 @@
+{
+  "source_sha": "9aef6bb0fb7d05e6b419b2f79b361ebd29099948",
+  "dataset_sha256": "3db730eaf9d827a40b355d7b53188993e14b75d10fd10b9b213a67f830fba167",
+  "complete_models": 8,
+  "rows": [
+    {
+      "name": "model-r128-h1-s20260921",
+      "arm": "r128-h1",
+      "seed": 20260921,
+      "selected_step": 3500,
+      "completed_steps": 8000,
+      "model_sha256": "8cebac23f2058c2916fb9b08eecbd16b37fbacfd6f171377288223d94baf6875",
+      "pipeline_wall_s": 308.53470781300007,
+      "feature_cache_wall_s": 94.25925483700007,
+      "train_metrics": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.01369480156512018,
+        "group_normalized_mae": {
+          "0": 0.03321835859221654,
+          "1": 0.04472741433909366,
+          "2": 0.04316548126585358,
+          "3": 0.008827585416535536
+        },
+        "selection_score": 0.04617951146854501,
+        "samples": 3590,
+        "done_samples": 12
+      },
+      "development_metrics": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.012962962962962963,
+        "group_normalized_mae": {
+          "0": 0.031687681151902826,
+          "1": 0.05773571711348882,
+          "2": 0.0787645674024119,
+          "3": 0.01783338887616992
+        },
+        "selection_score": 0.05946830159895632,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "maximum_feature_delta": 5.602836608886719e-05,
+      "maximum_action_chunk_delta": 3.3974647521972656e-06,
+      "maximum_gpu_cpu_delta": 1.1324882507324219e-06,
+      "environment": {
+        "python": "3.12.3 (main, Jul 15 2026, 23:46:41) [GCC 13.3.0]",
+        "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+        "device": "cuda",
+        "cuda": "12.8",
+        "upstream_modeling_sha256": "2ea0acbdf210acee9d08f1f306afbda1e935bce0604b3b67b8d87c57c3f79a19",
+        "gpu": "Tesla T4",
+        "torch": "2.11.0+cu128",
+        "torchvision": "0.26.0+cu128",
+        "lerobot": "0.6.2",
+        "numpy": "2.2.6"
+      }
+    },
+    {
+      "name": "model-r128-h1-s20260922",
+      "arm": "r128-h1",
+      "seed": 20260922,
+      "selected_step": 8000,
+      "completed_steps": 8000,
+      "model_sha256": "1b189bf66ef1609dfba4c33924eb5595b8c6f53856dad32673ca67caf4a51e0f",
+      "pipeline_wall_s": 309.62488057099995,
+      "feature_cache_wall_s": 92.97114477499986,
+      "train_metrics": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.01257685858021241,
+        "group_normalized_mae": {
+          "0": 0.0271931181803846,
+          "1": 0.04157704411419842,
+          "2": 0.03940939015951661,
+          "3": 0.0028205356146726343
+        },
+        "selection_score": 0.040326880597405475,
+        "samples": 3590,
+        "done_samples": 12
+      },
+      "development_metrics": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.019444444444444445,
+        "group_normalized_mae": {
+          "0": 0.025815812410322467,
+          "1": 0.057013890465227465,
+          "2": 0.07639320744562005,
+          "3": 0.03045466278369228
+        },
+        "selection_score": 0.06686383772066001,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "maximum_feature_delta": 5.602836608886719e-05,
+      "maximum_action_chunk_delta": 5.543231964111328e-06,
+      "maximum_gpu_cpu_delta": 2.5033950805664062e-06,
+      "environment": {
+        "python": "3.12.3 (main, Jul 15 2026, 23:46:41) [GCC 13.3.0]",
+        "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+        "device": "cuda",
+        "cuda": "12.8",
+        "upstream_modeling_sha256": "2ea0acbdf210acee9d08f1f306afbda1e935bce0604b3b67b8d87c57c3f79a19",
+        "gpu": "Tesla T4",
+        "torch": "2.11.0+cu128",
+        "torchvision": "0.26.0+cu128",
+        "lerobot": "0.6.2",
+        "numpy": "2.2.6"
+      }
+    },
+    {
+      "name": "model-r128-h4-s20260921",
+      "arm": "r128-h4",
+      "seed": 20260921,
+      "selected_step": 6500,
+      "completed_steps": 8000,
+      "model_sha256": "14e924d03a62d3ac54062440c77931f0f6d5616bddfef8c893e6dfb644c4c863",
+      "pipeline_wall_s": 373.8033595469999,
+      "feature_cache_wall_s": 88.13461725900015,
+      "train_metrics": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.006148686416992733,
+        "group_normalized_mae": {
+          "0": 0.028456624090869544,
+          "1": 0.040167203489618164,
+          "2": 0.04281094057103593,
+          "3": 0.00456132869132691
+        },
+        "selection_score": 0.03514771062770537,
+        "samples": 3590,
+        "done_samples": 12
+      },
+      "development_metrics": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.007407407407407408,
+        "group_normalized_mae": {
+          "0": 0.029628018102440413,
+          "1": 0.06005661487155255,
+          "2": 0.08341229516497262,
+          "3": 0.04003168363124132
+        },
+        "selection_score": 0.060689560349959135,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "maximum_feature_delta": 8.368492126464844e-05,
+      "maximum_action_chunk_delta": 3.606081008911133e-06,
+      "maximum_gpu_cpu_delta": 2.086162567138672e-06,
+      "environment": {
+        "python": "3.12.3 (main, Jul 15 2026, 23:46:41) [GCC 13.3.0]",
+        "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+        "device": "cuda",
+        "cuda": "12.8",
+        "upstream_modeling_sha256": "2ea0acbdf210acee9d08f1f306afbda1e935bce0604b3b67b8d87c57c3f79a19",
+        "gpu": "Tesla T4",
+        "torch": "2.11.0+cu128",
+        "torchvision": "0.26.0+cu128",
+        "lerobot": "0.6.2",
+        "numpy": "2.2.6"
+      }
+    },
+    {
+      "name": "model-r128-h4-s20260922",
+      "arm": "r128-h4",
+      "seed": 20260922,
+      "selected_step": 8000,
+      "completed_steps": 8000,
+      "model_sha256": "d88393bb3168d37275146ad5e329f55be82195406c211aa7f73bf28e83f32c20",
+      "pipeline_wall_s": 372.61646265299987,
+      "feature_cache_wall_s": 87.27205998799991,
+      "train_metrics": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.00810508664058133,
+        "group_normalized_mae": {
+          "0": 0.0328816853771978,
+          "1": 0.040124144925562655,
+          "2": 0.04234394447416304,
+          "3": 0.002383503804190291
+        },
+        "selection_score": 0.03753840628585978,
+        "samples": 3590,
+        "done_samples": 12
+      },
+      "development_metrics": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.010185185185185186,
+        "group_normalized_mae": {
+          "0": 0.03118593184107676,
+          "1": 0.05788423945532789,
+          "2": 0.07781795232242536,
+          "3": 0.019427261936167877
+        },
+        "selection_score": 0.056764031573934656,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "maximum_feature_delta": 8.368492126464844e-05,
+      "maximum_action_chunk_delta": 1.6689300537109375e-06,
+      "maximum_gpu_cpu_delta": 2.2649765014648438e-06,
+      "environment": {
+        "python": "3.12.3 (main, Jul 15 2026, 23:46:41) [GCC 13.3.0]",
+        "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+        "device": "cuda",
+        "cuda": "12.8",
+        "upstream_modeling_sha256": "2ea0acbdf210acee9d08f1f306afbda1e935bce0604b3b67b8d87c57c3f79a19",
+        "gpu": "Tesla T4",
+        "torch": "2.11.0+cu128",
+        "torchvision": "0.26.0+cu128",
+        "lerobot": "0.6.2",
+        "numpy": "2.2.6"
+      }
+    },
+    {
+      "name": "model-r256-h1-s20260921",
+      "arm": "r256-h1",
+      "seed": 20260921,
+      "selected_step": 5000,
+      "completed_steps": 8000,
+      "model_sha256": "455ed85dea015a3e4f737d87360f6e4978a80cb5a81e55ff9f7c5763c07f2af1",
+      "pipeline_wall_s": 377.7231782680001,
+      "feature_cache_wall_s": 124.30716245900021,
+      "train_metrics": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.00810508664058133,
+        "group_normalized_mae": {
+          "0": 0.02697386102871111,
+          "1": 0.044553334698467645,
+          "2": 0.0421021768377418,
+          "3": 0.008425639373146825
+        },
+        "selection_score": 0.03861883962509817,
+        "samples": 3590,
+        "done_samples": 12
+      },
+      "development_metrics": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.005555555555555556,
+        "group_normalized_mae": {
+          "0": 0.027574352621459797,
+          "1": 0.056850339029748904,
+          "2": 0.08284762462553369,
+          "3": 0.015940631739795208
+        },
+        "selection_score": 0.051358792559689954,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "maximum_feature_delta": 9.018182754516602e-05,
+      "maximum_action_chunk_delta": 2.384185791015625e-06,
+      "maximum_gpu_cpu_delta": 1.2516975402832031e-06,
+      "environment": {
+        "python": "3.12.3 (main, Jul 15 2026, 23:46:41) [GCC 13.3.0]",
+        "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+        "device": "cuda",
+        "cuda": "12.8",
+        "upstream_modeling_sha256": "2ea0acbdf210acee9d08f1f306afbda1e935bce0604b3b67b8d87c57c3f79a19",
+        "gpu": "Tesla T4",
+        "torch": "2.11.0+cu128",
+        "torchvision": "0.26.0+cu128",
+        "lerobot": "0.6.2",
+        "numpy": "2.2.6"
+      }
+    },
+    {
+      "name": "model-r256-h1-s20260922",
+      "arm": "r256-h1",
+      "seed": 20260922,
+      "selected_step": 5000,
+      "completed_steps": 8000,
+      "model_sha256": "83dd655f33a74a1777b8666d9925faa5ddb2cf950272e28d717a8a15fbe9015c",
+      "pipeline_wall_s": 374.9019462179999,
+      "feature_cache_wall_s": 120.97111761299993,
+      "train_metrics": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.007825600894354388,
+        "group_normalized_mae": {
+          "0": 0.03300204905563622,
+          "1": 0.04468747262121233,
+          "2": 0.04480609412228184,
+          "3": 0.006396666479607423
+        },
+        "selection_score": 0.04004867146403884,
+        "samples": 3590,
+        "done_samples": 12
+      },
+      "development_metrics": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.008333333333333333,
+        "group_normalized_mae": {
+          "0": 0.031211803991128367,
+          "1": 0.056534521951268284,
+          "2": 0.07985824905984584,
+          "3": 0.01593308166290323
+        },
+        "selection_score": 0.05421774749961976,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "maximum_feature_delta": 9.018182754516602e-05,
+      "maximum_action_chunk_delta": 4.0531158447265625e-06,
+      "maximum_gpu_cpu_delta": 1.6689300537109375e-06,
+      "environment": {
+        "python": "3.12.3 (main, Jul 15 2026, 23:46:41) [GCC 13.3.0]",
+        "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+        "device": "cuda",
+        "cuda": "12.8",
+        "upstream_modeling_sha256": "2ea0acbdf210acee9d08f1f306afbda1e935bce0604b3b67b8d87c57c3f79a19",
+        "gpu": "Tesla T4",
+        "torch": "2.11.0+cu128",
+        "torchvision": "0.26.0+cu128",
+        "lerobot": "0.6.2",
+        "numpy": "2.2.6"
+      }
+    },
+    {
+      "name": "model-r256-h4-s20260921",
+      "arm": "r256-h4",
+      "seed": 20260921,
+      "selected_step": 7500,
+      "completed_steps": 8000,
+      "model_sha256": "a9195951fe647d40b5a199c52f47e279eacac4b8ef6105999334a23b6c7310d1",
+      "pipeline_wall_s": 794.0300959969998,
+      "feature_cache_wall_s": 120.7400617159999,
+      "train_metrics": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.005310229178311906,
+        "group_normalized_mae": {
+          "0": 0.03177271680375826,
+          "1": 0.04100211866166281,
+          "2": 0.042064216643767624,
+          "3": 0.00313320719740457
+        },
+        "selection_score": 0.03480329400496022,
+        "samples": 3590,
+        "done_samples": 12
+      },
+      "development_metrics": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.001851851851851852,
+        "group_normalized_mae": {
+          "0": 0.02792369044066553,
+          "1": 0.06041139985713122,
+          "2": 0.07807039478090055,
+          "3": 0.010833761499573788
+        },
+        "selection_score": 0.046161663496419626,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "maximum_feature_delta": 0.0001590251922607422,
+      "maximum_action_chunk_delta": 2.0265579223632812e-06,
+      "maximum_gpu_cpu_delta": 2.3245811462402344e-06,
+      "environment": {
+        "python": "3.12.3 (main, Jul 15 2026, 23:46:41) [GCC 13.3.0]",
+        "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+        "device": "cuda",
+        "cuda": "12.8",
+        "upstream_modeling_sha256": "2ea0acbdf210acee9d08f1f306afbda1e935bce0604b3b67b8d87c57c3f79a19",
+        "gpu": "Tesla T4",
+        "torch": "2.11.0+cu128",
+        "torchvision": "0.26.0+cu128",
+        "lerobot": "0.6.2",
+        "numpy": "2.2.6"
+      }
+    },
+    {
+      "name": "model-r256-h4-s20260922",
+      "arm": "r256-h4",
+      "seed": 20260922,
+      "selected_step": 4000,
+      "completed_steps": 8000,
+      "model_sha256": "58abfd79305554332af9a490b3e0c4cbdfeb4d3d511def7e2e60ea59bd711baf",
+      "pipeline_wall_s": 907.0249316319996,
+      "feature_cache_wall_s": 118.88578253800006,
+      "train_metrics": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.006707657909446618,
+        "group_normalized_mae": {
+          "0": 0.034541282215174815,
+          "1": 0.04553993160297998,
+          "2": 0.049001196537587166,
+          "3": 0.0045802161201006835
+        },
+        "selection_score": 0.04012331452840728,
+        "samples": 3590,
+        "done_samples": 12
+      },
+      "development_metrics": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.004629629629629629,
+        "group_normalized_mae": {
+          "0": 0.030244203395301993,
+          "1": 0.055866646381117345,
+          "2": 0.08029647118763435,
+          "3": 0.00864938103283445
+        },
+        "selection_score": 0.048393805128851664,
+        "samples": 1084,
+        "done_samples": 4
+      },
+      "maximum_feature_delta": 0.0001590251922607422,
+      "maximum_action_chunk_delta": 1.8477439880371094e-06,
+      "maximum_gpu_cpu_delta": 9.5367431640625e-07,
+      "environment": {
+        "python": "3.12.3 (main, Jul 15 2026, 23:46:41) [GCC 13.3.0]",
+        "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+        "device": "cuda",
+        "cuda": "12.8",
+        "upstream_modeling_sha256": "2ea0acbdf210acee9d08f1f306afbda1e935bce0604b3b67b8d87c57c3f79a19",
+        "gpu": "Tesla T4",
+        "torch": "2.11.0+cu128",
+        "torchvision": "0.26.0+cu128",
+        "lerobot": "0.6.2",
+        "numpy": "2.2.6"
+      }
+    }
+  ],
+  "mac_native_probes": 32,
+  "maximum_mac_delta": 5.662441253662109e-06,
+  "manifest_sha256": "c65326c6804415ac22b4fd10025d9c31a32b51363cb698db10b2ae4ce02c2ff6",
+  "manifest_files": 50,
+  "local_models": "/Users/changmin/.codex/worktrees/colab-carry-training/ugrp/outputs/colab-results/carry-training",
+  "recovered_from_initial_vm": 5,
+  "trained_in_replacement_vm": 3,
+  "scope": "fixed-data training and artifact deployment checks only; no physics success claimed by this report",
+  "cost": "Colab compute-unit charges unavailable; per-model pipeline wall time excludes setup/transfers and lost partial training",
+  "parameter_count": 11421588,
+  "backbone_sha256": "b76b2b92d7f466de22f5a98f772a97b08f4f47d4076a216a40af3408d08d1af6",
+  "finalization_resume": {
+    "model": "model-r256-h4-s20260922",
+    "checkpoint_step": 8000,
+    "additional_updates": 0,
+    "candidate_hash_unchanged": true,
+    "note": "reported wall time includes resumed cache/export, excludes time after checkpoint before killed export and VM setup/transfers"
+  }
+}

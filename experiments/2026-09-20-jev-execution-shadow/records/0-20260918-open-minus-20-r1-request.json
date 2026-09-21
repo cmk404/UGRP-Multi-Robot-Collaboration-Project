@@ -1,0 +1,102 @@
+{
+  "model": "jev-latest",
+  "state": {
+    "task": "Two robots jointly carry a beam to a fixed goal.",
+    "observation": "Five historical own/top RGB-derived observations, spaced 0.2 simulation seconds apart. No images sent to this API.",
+    "limitations": "Pixel change is global appearance change, not displacement or goal progress. Estimates are from the archived ACT and RGB guard, not a new perception model. No contact, measured joints, dynamic true pose, evaluation labels or partner private state.",
+    "history": [
+      {
+        "relative_observation_step": -4,
+        "own_previous_issued_command": [
+          0.0899781584739685,
+          0.34698793292045593,
+          -0.025140466168522835
+        ],
+        "own_rgb_policy_done_estimate": false,
+        "own_rgb_policy_stop_score_uncalibrated": 0.0027884487062692642,
+        "own_rgb_attachment_estimate": true,
+        "own_rgb_attachment_area_ratio_to_anchor": 0.9981511231263535,
+        "mean_rgb_pixel_change_0_to_1": {
+          "own": null,
+          "top": null
+        }
+      },
+      {
+        "relative_observation_step": -3,
+        "own_previous_issued_command": [
+          0.1573161631822586,
+          0.28321418166160583,
+          -0.019898833706974983
+        ],
+        "own_rgb_policy_done_estimate": false,
+        "own_rgb_policy_stop_score_uncalibrated": 0.00010978616774082184,
+        "own_rgb_attachment_estimate": true,
+        "own_rgb_attachment_area_ratio_to_anchor": 0.9980502752968818,
+        "mean_rgb_pixel_change_0_to_1": {
+          "own": 0.003225923278261922,
+          "top": 0.0019737559761558946
+        }
+      },
+      {
+        "relative_observation_step": -2,
+        "own_previous_issued_command": [
+          0.20774994790554047,
+          0.25927063822746277,
+          -0.015813471749424934
+        ],
+        "own_rgb_policy_done_estimate": false,
+        "own_rgb_policy_stop_score_uncalibrated": 0.0,
+        "own_rgb_attachment_estimate": true,
+        "own_rgb_attachment_area_ratio_to_anchor": 0.9979812741504013,
+        "mean_rgb_pixel_change_0_to_1": {
+          "own": 0.0033984091321713865,
+          "top": 0.0020575337388041635
+        }
+      },
+      {
+        "relative_observation_step": -1,
+        "own_previous_issued_command": [
+          0.26696908473968506,
+          0.21552923321723938,
+          -0.01707378216087818
+        ],
+        "own_rgb_policy_done_estimate": false,
+        "own_rgb_policy_stop_score_uncalibrated": 0.0,
+        "own_rgb_attachment_estimate": true,
+        "own_rgb_attachment_area_ratio_to_anchor": 0.9978733492802649,
+        "mean_rgb_pixel_change_0_to_1": {
+          "own": 0.0031508468742435245,
+          "top": 0.002158600747397724
+        }
+      },
+      {
+        "relative_observation_step": 0,
+        "own_previous_issued_command": [
+          0.3319425582885742,
+          0.17471379041671753,
+          -0.020714344456791878
+        ],
+        "own_rgb_policy_done_estimate": false,
+        "own_rgb_policy_stop_score_uncalibrated": 0.0,
+        "own_rgb_attachment_estimate": true,
+        "own_rgb_attachment_area_ratio_to_anchor": 0.9978096559142828,
+        "mean_rgb_pixel_change_0_to_1": {
+          "own": 0.0029545925623335753,
+          "top": 0.0023255700042362623
+        }
+      }
+    ]
+  },
+  "questions": {
+    "action": {
+      "type": "choice",
+      "instructions": "Choose one execution-monitoring recommendation for this robot from the supplied local history. These are archived RGB-derived estimates, not contact sensors, true pose, force or success. Own completion estimates can be wrong; issued commands do not prove motion. An all-zero command history can reflect the joint hold protocol, not a jam. No partner private observations or completion estimates are available. No release or completion declaration is permitted. Consider continued execution, fresh observation, a recovery assessment or escalation. This is a shadow recommendation with no actuation.",
+      "criteria": {
+        "continue": "Request continuation of the existing carry policy, subject to unchanged joint permission and RGB guards.",
+        "reobserve": "Request fresh RGB evidence and completion/identity checking while maintaining the existing coordinated hold.",
+        "request_recovery": "Ask the supervisor to assess a validated loaded alignment recovery; do not execute a recovery or bypass joint permission.",
+        "hold_and_escalate": "Maintain coordinated hold and request supervisor help because visual attachment evidence is lost or the situation cannot be resolved locally."
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "schema": "ugrp.act_map_evaluation_protocol.v1",
+  "status": "pilot_design",
+  "suite_id": "local-pair-map-v1",
+  "scope": "A: map generation, split design and static camera/physics correspondence; no training or transport cohort",
+  "map_manifest_sha256": null,
+  "source_sha": null,
+  "policy_hashes": null,
+  "model_training_seeds": null,
+  "physics_initialization_seeds": [11, 29],
+  "max_sim_seconds": null,
+  "max_actions": null,
+  "max_api_cost_usd": null,
+  "success_tolerance_drop": null,
+  "required_time_improvement": null,
+  "required_cost_improvement": null,
+  "collision_rule": null,
+  "drop_rule": null,
+  "sample_period_s": null,
+  "inspection": {"policy_calls": 0, "api_cost_usd": 0, "initialization_only": true, "physics_seed": 11},
+  "seed_namespaces": ["map_generation", "physics_initialization", "model_training"],
+  "split_unit": "physical map instance; all trajectories, frames, start repetitions and event variants inherit that split",
+  "test_a": "unseen geometry parameters and goal combinations within train topology families",
+  "test_b": "entire double-door/offset-room connection sequence withheld from train/dev/test_a",
+  "regression": "six historical pair_navigation maps; never counted as new generalization",
+  "events": {
+    "implemented": ["none"],
+    "future_axes": ["observed_robot_occupancy", "peer_message_delay", "unannounced_obstacle"],
+    "boundary": "event schedule is setup/evaluation only; no actor prompt, task, route or filename may disclose an unobserved event",
+    "promotion": "implement scheduler and input audit before enabling any nonbaseline event; preserve same map and split"
+  },
+  "comparisons": {
+    "deployable": ["existing_rgb_carry", "current_act", "improved_act"],
+    "diagnostic_only": ["privileged_teacher"],
+    "pairing": ["map_instance", "physics_seed", "initial_state", "camera", "contact_profile", "task_budget"],
+    "runtime_prerequisite": "generalized route/heading contract must reach plan, unanimous agreement, executor and policy tensor together before a new route can execute"
+  },
+  "mandatory_results": [
+    "map_family", "topology_id", "map_seed", "physics_seed", "training_seed", "attempted", "success", "failure", "excluded_and_reason",
+    "whole_mission_success", "carry_entry", "strict_carry_success_given_entry", "final_position", "final_heading", "stable_release",
+    "drop", "collision", "false_done", "false_release", "missed_done", "one_sided_done_wait", "deadlock", "timeout",
+    "sim_seconds", "wall_seconds", "action_count", "recovery_count", "switch_count", "inference_latency_p50_p95", "communication_latency_p50_p95",
+    "api_calls", "tokens", "api_cost_usd", "local_compute_cost_or_unavailable", "unique_trajectories", "frames", "done_targets",
+    "input_audit", "continuous_video", "artifact_hashes", "source_sha", "environment", "review_scope"
+  ],
+  "analysis": "paired differences grouped by map with map-level confidence intervals; speed comparisons use successful matched cases and retain failed-attempt budgets; small N is inconclusive",
+  "timing_modes": ["paused_physics_diagnostic", "physics_running_during_inference_and_communication"],
+  "holdout_rule": "Geometry and static visual QA are permitted now. No teacher/student trajectories or checkpoint selection on test A/B. Tuning after holdout policy outcomes requires a new suite version and new holdout.",
+  "final_freeze": "After a train/dev-only pilot, fill every null field, pin exact policies/source/manifest, preregister counts and operational failure rules, then require_frozen_protocol before any final cohort. This file cannot authorize final evaluation."
+}
