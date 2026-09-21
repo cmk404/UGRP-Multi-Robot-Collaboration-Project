@@ -39,6 +39,7 @@ def command(protocol,job,output,mjpython,act_python):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     for name in ('protocol','out','mjpython','act-python'):p.add_argument('--'+name,type=Path,required=True)
+    p.add_argument('--tensorboard-dir',type=Path,help='new finite-cohort snapshot directory; export completed trials only')
     args=p.parse_args();protocol=json.loads(args.protocol.read_text())
     source=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
     def frozen():
@@ -54,7 +55,7 @@ def main():
     if len({j['trial_id'] for j in jobs})!=len(jobs):raise ValueError('duplicate trial IDs')
     args.out=args.out.resolve();args.out.mkdir(parents=True,exist_ok=False)
     report={'source_sha':source,'protocol_sha256':sha(args.protocol),'protocol':protocol,
-            'runs':[],'not_attempted':[],'complete':False,'jobs':jobs}
+            'runs':[],'not_attempted':[],'complete':False,'jobs':jobs,'tensorboard_exports':[]}
     def save():
         report['failure_estimates']=aggregate(jobs,report['runs'])
         report['complete']=report['failure_estimates']['complete']
@@ -76,6 +77,22 @@ def main():
         report['runs'].append({**job,**row,'output':str(output),'command':cmd,
                               'outcome':outcome(output,row['exit_code'],row['timed_out'])})
         save();print(json.dumps({'completed':len(report['runs']),'planned':len(jobs),'last':report['runs'][-1]['outcome']}),flush=True)
+        if args.tensorboard_dir and (output/'result.json').exists():
+            try:
+                from scripts.tensorboard_tools.export import convert
+                from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
+                dest=args.tensorboard_dir/job['trial_id']
+                manifest=convert(output,dest,max_images=3,media_port=6009)
+                if not manifest['complete'] or manifest['warnings']:raise RuntimeError('dashboard export incomplete or warned')
+                events=EventAccumulator(str(dest)).Reload()
+                result=json.loads((output/'result.json').read_text())
+                if events.Scalars('evaluation/reported_success')[0].value!=int(result['physical_success']):
+                    raise RuntimeError('dashboard success readback mismatch')
+                report['tensorboard_exports'].append({'trial_id':job['trial_id'],'snapshot':str(dest),
+                    'manifest_sha256':sha(dest/'manifest.json'),'event_readback':True,'native_ui_verified':False})
+            except Exception as error:
+                report['tensorboard_exports'].append({'trial_id':job['trial_id'],'export_error':type(error).__name__+': '+str(error)})
+            save()
     return 0 if report['complete'] else 2
 
 

@@ -51,8 +51,8 @@ def carry(pair,python,model_dir,max_steps=900):
                 inference_wall_s=time.monotonic()-began
                 held=own_guards[slot].observe(f['own_bytes'])
                 decisions[slot]={**d,'ready':held['held_estimate'],'own_attachment':held,'plan_hash':pair.bindings.committed['plan_hash']}
-                actor_inputs[slot]={'images':{'own':f['own_rgb'],'top':f['shared_top_rgb']},'context':ctx,'wire_sha256':client.last_request_sha256,'physical_robot_id':rid}
-                if temporal:actor_inputs[slot].update(history=[v[1] for v in padded],inference_wall_s=inference_wall_s)
+                actor_inputs[slot]={'images':{'own':f['own_rgb'],'top':f['shared_top_rgb']},'context':ctx,'wire_sha256':client.last_request_sha256,'physical_robot_id':rid,'inference_wall_s':inference_wall_s}
+                if temporal:actor_inputs[slot].update(history=[v[1] for v in padded])
             permission=authorize_pair(sync,decisions,{s:frames[r]['frame_id'] for s,r in pair.bindings.pair.items()},index)
             ready_count=ready_count+1 if all(d['done'] for d in decisions.values()) else 0
             # Hold BOTH if either proposes arrival. Never let the partner drag it.
