@@ -34,3 +34,11 @@
 - `run_cloud_carry_continuation.py`에 진단→학습→물리 평가 및 실패 보존을 연결했다.
 - 로컬 오프라인 CI: 1195 passed, 3 skipped, 184 subtests passed. 관련 묶음 51개, 경로/프로토콜 관련 추가 실행 23개와 18개 통과(중복 포함, 합산하지 않음).
 - actual GPU forward/export, 모델 학습 완료, 물리 결과 회수와 시각 검토는 각 상태/후속 기록에서 별도로 확인한다.
+
+## 비용 우선순위 변경 — 2026-09-21 11:45 KST 이후
+
+사용자의 512px 계산 비용 우려에 따라 512px 전체 학습과 이후 512px 평가는 보류했다. 앞서 제시한 10~20시간은 실제 512px 본 학습 속도를 측정한 예측이 아니므로 성능/시간 근거로 사용하지 않는다. 진단의 2-update는 완료했지만 export/cache 검증이 끝나지 않은 상태에서 중지했다. 본 8000-update 학습은 시작하지 않았다. 중지 시점 원본 및 체크포인트는 보존하고 별도 interruption manifest와 압축본을 만든다.
+
+Colab에서는 이미 회수·검증한 128/256px 8모델+교사 36회 평가를 먼저 수행하도록 전환한다. 학습·모델·프로토콜은 바꾸지 않고 새 출력 `outputs/cloud-priority/physics128256`을 사용한다. 이 평가의 실행 한도는 4시간, 수집 한도는 4.5시간이다. 이는 완료 예상이 아닌 중단 한도다. Kaggle 규칙 기준선은 그대로 유지한다.
+
+현재 상태는 로컬 `outputs/cloud-resume/priority-collection-status.json`, `physics128256-report.json`, `priority-intervention.json`을 확인한다. 이전 `collection-status.json`과 초기 실행 순서는 과거 기록이다. 512px 재시작은 현재 계획에 포함하지 않는다.
