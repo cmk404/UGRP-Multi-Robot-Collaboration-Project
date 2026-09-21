@@ -16,6 +16,7 @@ TEST_PATTERNS = (
     "tests/test_repeated_skill_summary.py",
     "tests/test_colab_simulation.py",
     "tests/test_cpu_model_diagnostic.py",
+    "tests/test_mac_skill_cohort.py",
     "tests/test_model_mailbox.py",
     "tests/test_kaggle_simulation.py",
     "tests/test_kaggle_cli_auth.py",

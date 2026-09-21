@@ -34,16 +34,22 @@ def copy_output(pipe, log):
         if parse_line(line) is not None:print(line.rstrip('\n'),flush=True)
 
 
-def run_logged(command, log_path, *, name, cwd=None, env=None, timeout=None, heartbeat_s=30):
+def run_logged(command, log_path, *, name, cwd=None, env=None, timeout=None, heartbeat_s=30,
+               stdin_text=None):
     """Own one child group, preserve all logs and forward only structured progress."""
     start=time.monotonic();timed_out=False
     env={**(os.environ if env is None else env),'PYTHONUNBUFFERED':'1'}
     emit('process_start',name=name)
     with Path(log_path).open('w') as log:
         child=subprocess.Popen(list(map(str,command)),cwd=cwd,env=env,stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT,text=True,start_new_session=True)
+                               stderr=subprocess.STDOUT,text=True,start_new_session=True,
+                               stdin=subprocess.PIPE if stdin_text is not None else subprocess.DEVNULL)
         reader=threading.Thread(target=copy_output,args=(child.stdout,log),daemon=True);reader.start()
         try:
+            if child.stdin is not None:
+                try:child.stdin.write(stdin_text)
+                except BrokenPipeError:pass
+                finally:child.stdin.close()
             while child.poll() is None:
                 remaining=None if timeout is None else timeout-(time.monotonic()-start)
                 if remaining is not None and remaining<=0:
