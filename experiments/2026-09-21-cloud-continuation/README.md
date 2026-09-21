@@ -72,3 +72,42 @@ Kaggle 새 자료 업로드가 12분 넘게 완료 응답 없이 머물러 그 �
 Colab dev_open 3회(Jev/Gemini/rule) 전부 `vision_recovery_exhausted`, 실제 주행 모델 호출 0회다. 24회 관측에서 모두 `cyan_target_missing_or_ambiguous`가 발생했다. 합성 상태 API 왕복 성공은 이 주행의 모델 성공 근거가 아니다. supervisor의 `development_transport_failure` 명칭은 정확하지 않다. 주행에서 모델 호출에 도달하지 못한 공통 RGB 관측 실패이며, 108회 holdout은 시작되지 않았다. 원본 ZIP 431개 파일 해시를 검증해 회수했고 relay/Colab을 종료했다.
 
 Kaggle 재개 dev_open rule 1회도 동일 관측 실패로 끝났다. wall 202.456초, 9.8 SIM초, 발행 명령 31개, 과제 성공 false다. 서버 COMPLETE 및 프로세스 exit0은 실행·회수 성공이며 과제 성공을 뜻하지 않는다. ZIP/내부 해시 검증을 완료했다. `remote-diagnostic-outcome.json`에 결과·원본 위치·해시를 기록했다. 현재 새 Colab/Kaggle 본 비교 실행은 없고, ACT 128/256 재평가와 Jev/Gemini holdout은 여전히 미완료다. 512는 사용자 요청대로 보류다.
+
+## 중단 복구와 실제 주행 재개 (2026-09-21, 후속)
+
+RGB 청록 목표 검출이 바닥의 JPEG 무늬를 두 번째 목표로 해석하는 원인을 재현했다.
+3×3 내부 검사와 밝은 청록 내부 확인을 추가하고 원래 중심 좌표·진짜 두 목표의
+모호성 거부를 유지했다. GPU 78장과 Kaggle 71장 재생은 모두 단일 목표로 검출됐다.
+T4가 배정됐지만 Mesa llvmpipe였던 EGL을 기존 NVIDIA 라이브러리 등록으로 복구했다.
+실제 새 context는 NVIDIA/Tesla T4로 확인했다. `setup_colab_egl.py`는 그 절차를
+명시적으로 재현하고 다른 기존 등록을 덮어쓰지 않는다.
+
+고정 소스 `9c6c36d`의 Colab dev_open은 rule/Jev/Gemini 각각 1/1 성공했다.
+시간은 rule 89.279초, Jev 123.335초, Gemini 177.037초이며 모두 명령 77개다.
+Jev/Gemini는 각각 실제 API 12회 호출했다. 접근·정렬 범위이며 파지/운반 성공이
+아니다. 한 개발 배치의 결과로 모델의 일반화 우열을 확정하지 않는다.
+결과 ZIP SHA256 `15bda218629efec87adc5c0daa35ba34ded0dbd3a445374735b176bc52443bf3`,
+내부 1168파일 해시를 검증했다. 이 고정 소스로 holdout 108회와 후속 단계가
+실행 중이다. 전체 3.5시간 상한은 완료 예상이 아니며 끝나지 않은 단계를 완료로
+표시하지 않는다.
+
+Kaggle 수정 진단(source `2761693`) rule 1/1 성공, 430.991초/명령76개다.
+기존 private Dataset을 재사용하는 Git object pack 경로를 실제 완료/회수로 검증했다.
+초기 Git bundle의 shallow prerequisite 오류도 실패 로그로 보존했다.
+Kaggle holdout rule36은 `b070939`로 고정해 새 private kernel에 제출했고 서버
+RUNNING을 확인했다. CPU/OSMesa와 Colab/NVIDIA의 시간을 동등 조건으로 합산하지
+않는다. `--timeout-seconds 14400`의 유한한 제한과 결과 회수를 별도로 기록한다.
+
+ACT 128/256은 기존 8000-step 가중치 8개와 canonical 데이터의 해시를 확인해
+Colab에서 36회 평가를 재개했다(source `04f129c`). 재학습은 없고 512는 보류다.
+현재 부분 결과에는 교사/학생 모두 APPROACH의 RGB support 거부가 있다.
+프레임과 저장된 배경을 비교하면 새 전경 영역이 학습 범위를 크게 벗어난다.
+지원을 임의로 넓히거나 정답 보정을 넣지 않았다. 아직 ACT 운반에 도달하지 않은
+실패를 ACT 운반 성공률로 해석하지 않는다. 전체 결과/영상 회수는 진행 중이다.
+
+`repair-20260921.json`은 원본 위치·결과 해시·비용 미기록·진행 상태를 보존한다.
+완료된 새/이전 실패 진단 11회를 기본 체크아웃 `outputs/tensorboard/0921-복구`에
+중복 해시 검사 후 변환했고 실제 이벤트 수치·이미지 로딩과 native HParams 표를
+확인했다. 기존 기준선 9회와 코호트를 나누었다. 고정 카드 5개와 저장된 HParams
+열을 화면에 적용했다. 다른 작업 소유 미디어 서버의 새 영상 등록은 미완료다.
+새 원본 MP4 11개와 manifest는 보존되어 있다.
