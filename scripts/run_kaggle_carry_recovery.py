@@ -22,6 +22,7 @@ from scripts.setup_kaggle_egl import configure
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--output',type=Path,required=True)
+    p.add_argument('--input-root',type=Path,default=Path('/kaggle/input'))
     p.add_argument('--data-sha',required=True);p.add_argument('--assets-sha',required=True)
     a=p.parse_args();out=a.output.resolve();out.mkdir(parents=True,exist_ok=False)
     state={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
@@ -37,7 +38,7 @@ def main():
         env.update(render_environment)
         state['renderer']=gpu;save()
         def asset(name,sha):
-            paths=list(Path('/kaggle/input').rglob(name))
+            paths=list(a.input_root.rglob(name))
             if len(paths)!=1 or digest(paths[0])!=sha:raise ValueError('input archive missing or changed: '+name)
             return paths[0]
         data=unpack(asset('carry-data.bin',a.data_sha),ROOT/'outputs/recovered-data',a.data_sha)

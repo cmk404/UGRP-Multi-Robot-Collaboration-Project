@@ -20,7 +20,7 @@ import shutil
 import subprocess
 
 MAX_BYTES = 64 * 1024 * 1024
-HP_METRICS = ('result/wall_s', 'result/sim_s', 'result/commands', 'result/model_calls',
+HP_METRICS = ('process/exit_code', 'result/wall_s', 'result/sim_s', 'result/commands', 'result/model_calls',
               'result/input_tokens', 'result/output_tokens', 'result/cost_usd',
               'evaluation/reported_success', 'claims/protocol_complete',
               'claims/completed_task_claims', 'claims/tasks', 'claims/final_object_claims',
@@ -283,6 +283,26 @@ def exporter_version():
     except (OSError, subprocess.SubprocessError): return {'sha': None, 'working_tree_dirty': None}
 
 
+def export_cloud_job(src, w, data):
+    """Process completion is distinct from robot success, including setup failures."""
+    if (data.get('status') not in {'complete', 'completed', 'failed'}
+            or type(data.get('exit_code')) is not int
+            or not finite(data.get('finished_at_unix'))):
+        raise ValueError('Cloud job has no terminal process evidence')
+    metrics = {'process/exit_code': data['exit_code']}
+    start, end = data.get('started_at_unix'), data['finished_at_unix']
+    if finite(start) and end >= start:
+        metrics['result/wall_s'] = end - start
+    for name, value in metrics.items(): w.scalar(name, value)
+    w.text('process/result', data)
+    recovery = src.read('result/recovery-status.json')
+    if recovery is not None: w.text('process/recovery', recovery)
+    return {'family': 'cloud-job', 'policy': 'environment',
+            'source_sha': data.get('source_sha'), 'scope': data.get('scope'),
+            'outcome': 'process_exit_' + str(data['exit_code']),
+            'success_source_field': None}, metrics
+
+
 def convert(source, output, *, max_images=8, media_port=6007):
     """Export one source once. Existing destinations are rejected (no duplicate steps)."""
     source, output = Path(source).resolve(), Path(output).resolve()
@@ -294,6 +314,8 @@ def convert(source, output, *, max_images=8, media_port=6007):
     if isinstance(training, dict) and rows(training.get('progress')):
         kind, data = 'training', training
     elif isinstance(result, dict): kind, data = 'execution', result
+    elif (source / 'run.json').exists():
+        kind, data = 'cloud-job', src.read('run.json', required=True)
     elif (source / 'progress.json').exists():
         kind, data = 'training', {'progress': src.read('progress.json', required=True)}
     else: raise ValueError('No complete result.json or supported training progress; source left untouched')
@@ -303,7 +325,9 @@ def convert(source, output, *, max_images=8, media_port=6007):
     manifest = {'schema': 'ugrp.tensorboard-export.v1', 'source': str(source), 'exported_at_s': at,
                 'event_wall_time': 'export time, not historical execution time', 'exporter': exporter_version(), 'complete': False}
     try:
-        meta, metrics = export_training(src, w, data) if kind == 'training' else export_execution(src, w, data, max_images)
+        if kind == 'training': meta, metrics = export_training(src, w, data)
+        elif kind == 'cloud-job': meta, metrics = export_cloud_job(src, w, data)
+        else: meta, metrics = export_execution(src, w, data, max_images)
         videos = []
         for name in ('motion.mp4', 'execution.mp4'):
             p = inside(source, name)

@@ -208,3 +208,26 @@ def test_media_discovers_later_completed_export_without_restart(tmp_path):
         record['complete']=True;put(exports/'later','manifest.json',record)
         with urlopen(url) as response:assert response.read()==b'new-video'
     finally:server.shutdown();server.server_close();thread.join()
+
+
+def test_cloud_setup_failure_is_not_robot_failure(tmp_path, export_api):
+    convert, EA = export_api
+    src = tmp_path/'source'; src.mkdir()
+    put(src, 'run.json', {'status':'failed', 'exit_code':1, 'started_at_unix':10., 'finished_at_unix':12., 'source_sha':'abc'})
+    put(src, 'result/recovery-status.json', {'phase':'setup', 'error':'GPU absent'})
+    manifest = convert(src, tmp_path/'export')
+    events = EA(str(tmp_path/'export')).Reload()
+    assert events.Scalars('process/exit_code')[0].value == 1
+    assert events.Scalars('result/wall_s')[0].value == 2
+    assert 'evaluation/reported_success' not in events.Tags()['scalars']
+    assert manifest['metadata']['outcome'] == 'process_exit_1'
+    assert 'result/recovery-status.json' in manifest['source_files']
+
+
+def test_running_cloud_job_is_not_exported_as_complete(tmp_path, export_api):
+    convert, _ = export_api
+    src = tmp_path/'source'; src.mkdir()
+    put(src, 'run.json', {'status':'running', 'started_at_unix':10.})
+    with pytest.raises(ValueError, match='terminal process evidence'):
+        convert(src, tmp_path/'export')
+    assert not list((tmp_path/'export').glob('events.*'))
