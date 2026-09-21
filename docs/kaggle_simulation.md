@@ -75,3 +75,7 @@ Linux wheel을 재사용하려면 `prepare --wheelhouse <폴더>`를 지정한�
 로컬 관련 테스트 **25개**를 통과했다. 계정 `changmin2026`에서 private Dataset·CPU kernel을 만들고 **인터넷 OFF** 상태로 Python 3.12/OSMesa 설치·실행·결과 회수까지 확인했다. 최종 후보는 **0.138548m 이동·1.5 SIM초·12프레임**, 종료 코드 0이다. ZIP 및 내부 모든 해시와 대표 3프레임을 확인했다. [실행 SHA·앞선 실패·원본 위치·검토 범위](../experiments/2026-09-21-kaggle-cli-smoke/README.md)를 기록했다. 기본 이미지의 비치명적인 sitecustomize/wrapt 경고는 raw 로그에 보존한다. GPU 학습·외부 LLM·전체 운반 실험은 별도 검증 대상이다.
 
 참고: [공식 kernels 명령](https://github.com/Kaggle/kaggle-cli/blob/main/docs/kernels.md), [Dataset 메타데이터와 라이선스](https://github.com/Kaggle/kaggle-cli/blob/main/docs/datasets_metadata.md), [kernel 메타데이터](https://github.com/Kaggle/kaggle-cli/blob/main/docs/kernels_metadata.md). 실제 플래그는 설치된 `kaggle <명령> --help`를 우선한다.
+
+## 검증된 private Dataset 재사용
+
+새 자료 업로드 없이 동일한 고정 소스를 다른 유한 실행에 쓰려면 `reuse --from-output <이전 출력> --output <새 출력> --module <모듈> -- <인자>`로 새 kernel을 준비한 뒤 `submit --output <새 출력>`을 사용한다. 입력의 전체 해시와 private 설정을 다시 검사하며 기존 kernel/결과를 덮어쓰지 않는다. 실행 SHA는 이전 자료의 SHA이고 새 원격 driver 해시는 별도로 기록한다. `CANCEL_ACKNOWLEDGED`를 포함한 취소 종료도 collect 대상으로 처리한다.

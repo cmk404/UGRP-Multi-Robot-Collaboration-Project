@@ -64,3 +64,5 @@ Colab에서는 이미 회수·검증한 128/256px 8모델+교사 36회 평가를
 ## Kaggle 재개 점검
 
 기존 rule36 작업의 서버 취소 원인은 로그에 기록되지 않았다. 로그에는 sitecustomize/wrapt 경고만 있으며 이것만으로 취소 원인으로 단정하지 않는다. `CANCEL_ACKNOWLEDGED`의 밑줄을 처리하지 못해 collector가 종료 상태를 거부한 버그를 수정했다. 실제 종료 작업의 다운로드·private 설정을 확인했으나 result ZIP은 없었다. 원본은 `outputs/kaggle-jev-rule-20260921/download-68fd6790`, 서버 로그는 같은 출력 폴더의 `execution-logs.txt`다. 관련 테스트 20개 통과. 신규 제출은 기존 기록을 덮어쓰지 않고 dev_open rule 1회부터 점검한다.
+
+Kaggle 새 자료 업로드가 12분 넘게 완료 응답 없이 머물러 그 로컬 업로드 프로세스만 중단했다. 원격 Dataset 생성 여부는 미확정으로 보존했고 중복 생성하지 않았다. 검증된 기존 private Dataset을 재사용하도록 별도 kernel/고유 작업 ID를 만드는 경로를 추가했다. 새 작업 `changmin2026/ugrp-simulation-cabb25fb9ad7` version 1 제출 및 RUNNING을 확인했다. 실제 실행 소스는 기존 고정 SHA `06c4150364ea14f70cc10c9802446ed278723dde`, 새 제출/회수 코드 `e81ff1c`다. dev_open rule 1회이며 정식 36회 재개 완료는 아니다. 관련 테스트 21개 통과. 서버 제한 1800초, 로컬 회수 감시는 최대 2400초 후 종료하며 결과 ZIP·내부 해시와 실패 로그를 구분한다. 원본·현재 상태는 `outputs/kaggle-rule-reuse-20260921`에 보존한다.
