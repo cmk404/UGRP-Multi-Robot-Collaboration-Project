@@ -9,6 +9,7 @@ import sys
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from scripts.carry_failure_metrics import aggregate, outcome
+from scripts.audit_saved_act_inputs import audit as audit_act_inputs
 
 
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -48,6 +49,9 @@ def assess(report_path):
                     and read_json(root/'evaluation-only.json',dict) is not None)
         decisions=decisions if decisions is not None and all(isinstance(d,dict) for d in decisions) else []
         act=[d for d in decisions if d.get('kind')=='act_carry']
+        try:input_audit=audit_act_inputs(root,decisions)
+        except (OSError,ValueError,KeyError,TypeError,IndexError,StopIteration) as error:
+            input_audit={'passed':False,'error':type(error).__name__+': '+str(error)}
         latency=[v['inference_wall_s'] for d in act for v in d.get('inputs',{}).values() if 'inference_wall_s' in v]
         rows.append({**saved,'outcome':verdict})
         evidence.append({'trial_id':saved['trial_id'],'condition':saved['condition'],
@@ -57,6 +61,7 @@ def assess(report_path):
             'outcome':verdict,'wall_s':result.get('wall_s'),
             'commands':sum(map(len,commands.values())) if commands is not None and all(isinstance(v,list) for v in commands.values()) else None,
             'act_model_calls':sum(len(d.get('inputs',{})) for d in act),
+            'act_input_audit':input_audit,
             'mean_act_inference_s':statistics.mean(latency) if latency else None,
             'external_llm_calls':result.get('llm_calls'),'cost_usd':result.get('cost_usd'),
             'simultaneous_loaded_motion_s':evaluation.get('concurrent_transport',{}).get('simultaneous_loaded_motion_s'),
@@ -69,7 +74,8 @@ def assess(report_path):
         trials=[e for e in evidence if e['condition']==name]
         qualified=(counts['complete'] and count['attempted']==count['planned'] and count['failures']==0
                    and matching and all(t['required_evidence_complete'] and t['artifact_json_valid'] and t['report_matches_readback']
-                   and t['source_physics_checks_pass'] for t in trials))
+                   and t['source_physics_checks_pass']
+                   and (t['act_input_audit'] is None or t['act_input_audit']['passed']) for t in trials))
         success_times=[t['wall_s'] for t in trials if t['outcome']['whole_success'] and t['wall_s'] is not None]
         conditions[name]={**count,'qualified_for_declared_cases':qualified,
             'successful_wall_s_median':statistics.median(success_times) if success_times else None}

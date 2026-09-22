@@ -46,6 +46,7 @@ TEST_PATTERNS = (
     "tests/test_research_camera_e2e.py",
     "tests/test_research_entry_stop.py",
     "tests/test_research_cohort_admission.py",
+    "tests/test_saved_act_inputs.py",
     "tests/test_carry_termination_audit.py",
     "tests/test_matched_carry_cohort.py",
     "tests/test_matched_carry_shards.py",

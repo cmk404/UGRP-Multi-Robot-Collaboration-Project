@@ -23,7 +23,7 @@
    병렬 상자 스킬의 오류로 빔 운반이 중단되면 전체 작업 실패는 유지하되, 빔 운반 모델의 조건부 실패율 분모에서는 중도 중단으로 구분한다. `failed_component`와 `carry_censored_by_other_component`를 확인한다.
 7. 성공과 실패의 원본, 입력 이미지, 발행 명령, 모델 응답, 평가 전용 자료, 영상 및 해시를 보존한다. 새 TensorBoard 스냅샷의 이벤트와 영상 링크, 실제 기본 화면을 확인한다.
 
-완료 후 `scripts/assess_research_cohort.py --report <cohort>/report.json --out <new-assessment.json>`으로 원본을 다시 읽어 조건별 사용 가능 여부를 확인한다. 종료 코드만 성공하거나 영상·접촉 측정·소스가 빠진 결과는 채택하지 않는다. 결과의 `qualified_for_declared_cases`는 지정된 시험 조건 안에서만 유효하다.
+완료 후 `scripts/assess_research_cohort.py --report <cohort>/report.json --out <new-assessment.json>`으로 원본을 다시 읽어 조건별 사용 가능 여부를 확인한다. 종료 코드만 성공하거나 영상·접촉 측정·소스가 빠진 결과는 채택하지 않는다. ACT가 호출된 경우 `audit_saved_act_inputs.py`로 모든 요청을 원본 JPEG·로봇별 인과적 기록·정적 목표와 직전 발행 명령에서 재구성하고 실제 요청 해시와 대조한다. 이 감사는 새 추론이나 시뮬레이션을 실행하지 않는다. 결과의 `qualified_for_declared_cases`는 지정된 시험 조건 안에서만 유효하다.
 
 이 세션의 Mac 실행은 사용자의 앞선 명시적 선택에 따른다. 일반 신규 실행 대상은 프로젝트의 Colab CLI 지침을 따른다. 실행 중 프로세스는 `ugrp_session.py`로 소유하며, 종료·중단 시 해당 세션과 자식만 정리한다. raw 자료는 로컬에 있고 해시·Git push가 raw 백업을 뜻하지 않는다.
 
