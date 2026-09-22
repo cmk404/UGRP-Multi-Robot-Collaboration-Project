@@ -361,6 +361,10 @@ def preflight(manifest: dict, *, root: Path, evidence_root: Path) -> dict:
         if stage != "physical_replay":
             if limits.max_calls_per_robot * 3 > budgets["model_calls"]:
                 blockers.append("runtime_budget_not_enforced:model_calls")
+            for attr, budget in (("max_messages_per_robot", "messages"),
+                                 ("max_message_bytes_per_robot", "message_bytes")):
+                if getattr(limits, attr, float("inf")) * 3 > budgets[budget]:
+                    blockers.append(f"runtime_budget_not_enforced:{budget}")
             for attr, budget in (("max_input_tokens", "input_tokens"),
                                  ("max_output_tokens", "output_tokens")):
                 if getattr(limits, attr, float("inf")) > budgets[budget]:
@@ -376,6 +380,23 @@ def preflight(manifest: dict, *, root: Path, evidence_root: Path) -> dict:
         checked.append({"environment": gate})
     except (ImportError, AttributeError, ContractError, KeyError, TypeError, ValueError) as exc:
         blockers.append(f"environment_evidence_invalid:{type(exc).__name__}")
+    try:
+        scenarios = importlib.import_module("harness.rgb_communication_scenarios")
+        boundary = read_json(checked_reference(evidence_root, config.get("offline_boundary_evidence")))
+        verifier = getattr(scenarios, "assess_offline_boundary", None)
+        if verifier is None:
+            blockers.append("offline_boundary_checker_unavailable")
+        else:
+            audit = verifier(boundary, expected_source_sha=state["git_sha"],
+                             expected_config_sha256=digest_json({k: v for k, v in config.items()
+                                                                 if k != "offline_boundary_evidence"}),
+                             expected_components=config.get("components", {}),
+                             artifact_root=evidence_root, source_root=root)
+            if not audit.get("ready"):
+                blockers.extend("offline_boundary:" + b for b in audit.get("blockers", ["not_ready"]))
+            checked.append({"offline_boundary": audit})
+    except (ImportError, AttributeError, ContractError, KeyError, TypeError, ValueError) as exc:
+        blockers.append(f"offline_boundary_evidence_invalid:{type(exc).__name__}")
     if stage != "physical_replay":
         try:
             runtime = importlib.import_module(RUNTIME_MODULE)
