@@ -19,6 +19,7 @@ from harness.rgb_communication_scenarios import (
     assess_readiness, canonical_sha256, load_scenarios, paired_schedule,
     summarize_episodes, validate_episode, validate_scenario, audit_exposure,
     validate_training_comparison, assess_environment_readiness, ENVIRONMENT_PREFLIGHT_CHECKS,
+    assess_offline_boundary,
 )
 from harness.rgb_execution_contract import SkillCapability
 from harness.rgb_execution_port import RGBExecutionPort
@@ -331,6 +332,16 @@ class ScenarioContractTests(unittest.TestCase):
                         "boundary_audit": audit, "physical_replays": replays, "visual_witnesses": [witness]}
             args = dict(expected_source_sha="9" * 40, artifact_root=root, source_root=root)
             self.assertTrue(assess_readiness(spec, evidence, **args)["ready"])
+            offline = {"schema_version": "rgb-offline-boundary-review.v1", "scope": "offline", "verdict": "pass",
+                       "independent_reviewer": "A2", "source_sha": "9" * 40, "source_files": source_files,
+                       "config_sha256": "c" * 64, "components": binding["components"],
+                       "cases": {case: "pass" for case in AUDIT_CASES}, "artifacts": [raw]}
+            offline_args = {**args, "expected_config_sha256": "c" * 64, "expected_components": binding["components"]}
+            offline_result = assess_offline_boundary(offline, **offline_args)
+            self.assertTrue(offline_result["ready"])
+            self.assertFalse(offline_result["live_readiness"])
+            offline["cases"]["slow_peer_progress"] = "not_checked"
+            self.assertFalse(assess_offline_boundary(offline, **offline_args)["ready"])
             (root / SOURCE_FILES[0]).write_text("changed after audit")
             report = assess_readiness(spec, evidence, **args)
             self.assertFalse(report["ready"])
@@ -503,6 +514,19 @@ class EnvironmentExposureTests(unittest.TestCase):
         self.assertTrue(report["valid"])
         self.assertEqual(report["effective_splits"]["dispatch_open"], "regression")
         self.assertEqual(report["lineage_maps"]["prompt"], ["dispatch_open"])
+
+    def test_unknown_local_training_origin_is_explicit_diagnostic_only(self):
+        provenance = self.provenance()
+        provenance["records"].append({"id": "old-local-checkpoint", "kind": "checkpoint",
+            "parents": [], "map_refs": [], "declared_splits": [], "origin": "unknown"})
+        self.assertFalse(audit_exposure(self.cases, provenance, [])["valid"])
+        report = audit_exposure(self.cases, provenance, [], allow_unknown_diagnostic_origins=True)
+        self.assertTrue(report["valid"])
+        self.assertIn("old-local-checkpoint", report["unknown_origins"])
+        self.assertTrue(report["diagnostic_only"])
+        self.assertFalse(report["heldout_claim_ready"])
+        with self.assertRaises(ScenarioError):
+            validate_training_comparison(self.training_plan(), report)
 
     def test_geometry_qa_is_distinct_from_policy_diagnosis_or_prompt_exposure(self):
         for use, valid in (("geometry_qa", True), ("policy_diagnosis", False), ("prompt_tuning", False)):

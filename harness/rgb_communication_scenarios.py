@@ -33,8 +33,9 @@ AUDIT_CASES = (
 SOURCE_FILES = (
     "harness/rgb_execution_contract.py", "harness/rgb_execution_port.py",
     "harness/rgb_skill_execution.py", "harness/rgb_communication_runtime.py",
+    "harness/rgb_communication_async.py",
     "harness/rgb_communication_planner.py", "harness/rgb_communication_study.py",
-    "scripts/run_rgb_communication_study.py",
+    "scripts/run_rgb_communication_study.py", "harness/rgb_communication_scenarios.py",
 )
 COMPONENT_KEYS = {"serializer_id", "backend_id", "scheduler_id"}
 PIN_KEYS = {"setup_sha256", "map_sha256", "physics_sha256", "camera_sha256"}
@@ -133,6 +134,44 @@ def _verified_file(ref: Any, root: Path, checked: list[str]) -> Path:
     _require(hashlib.sha256(path.read_bytes()).hexdigest() == ref["sha256"], f"artifact hash mismatch: {relative}")
     checked.append(str(relative))
     return path
+
+
+def assess_offline_boundary(evidence: Mapping[str, Any], *, expected_source_sha: str,
+                            expected_config_sha256: str, expected_components: Mapping[str, str],
+                            artifact_root: Path, source_root: Path) -> dict[str, Any]:
+    """A2's pre-physics source audit, without circular physical-pass prerequisites.
+
+    Config hash excludes only the offline_boundary_evidence reference itself,
+    avoiding a self-referential hash. D still pins the complete final manifest.
+    This verifier does not issue a review or promote offline tests to live proof.
+    """
+    checked: list[str] = []
+    blockers: list[str] = []
+    try:
+        _exact(evidence, {"schema_version", "scope", "verdict", "independent_reviewer",
+                           "source_sha", "source_files", "config_sha256", "components",
+                           "cases", "artifacts"}, "offline boundary review")
+        _require(evidence["schema_version"] == "rgb-offline-boundary-review.v1", "offline review schema mismatch")
+        _require(evidence["scope"] == "offline" and evidence["verdict"] == "pass"
+                 and evidence["independent_reviewer"] == "A2", "independent offline pass missing")
+        _require(_hex(expected_source_sha, 40) and evidence["source_sha"] == expected_source_sha, "offline source mismatch")
+        _require(_hex(expected_config_sha256) and evidence["config_sha256"] == expected_config_sha256, "offline config mismatch")
+        _exact(dict(expected_components), COMPONENT_KEYS, "expected components")
+        _require(all(_text(v) for v in expected_components.values())
+                 and evidence["components"] == expected_components, "offline component mismatch")
+        _require(isinstance(evidence["source_files"], dict) and set(SOURCE_FILES) <= set(evidence["source_files"]), "offline source coverage missing")
+        for path, sha in evidence["source_files"].items():
+            _verified_file({"path": path, "sha256": sha}, source_root, checked)
+        _require(isinstance(evidence["cases"], dict) and
+                 all(evidence["cases"].get(case) == "pass" for case in AUDIT_CASES), "offline boundary cases incomplete")
+        _require(isinstance(evidence["artifacts"], list) and evidence["artifacts"], "offline raw audit evidence missing")
+        for ref in evidence["artifacts"]:
+            _verified_file(ref, artifact_root, checked)
+    except (ValueError, TypeError, KeyError, OSError) as exc:
+        blockers.append(str(exc))
+    return {"schema_version": "rgb-offline-boundary-result.v1", "ready": not blockers,
+            "blockers": blockers, "checked_artifacts": checked, "live_readiness": False,
+            "scope": "pre-physics offline boundary only"}
 
 
 def assess_readiness(
@@ -484,7 +523,8 @@ def summarize_episodes(schedule: Sequence[Mapping[str, Any]], rows: Sequence[Map
 
 def audit_exposure(cases: Sequence[Mapping[str, Any]], provenance: Mapping[str, Any],
                    scenario_assignments: Sequence[Mapping[str, Any]], *,
-                   allow_legacy_dispatch_open: bool = False) -> dict[str, Any]:
+                   allow_legacy_dispatch_open: bool = False,
+                   allow_unknown_diagnostic_origins: bool = False) -> dict[str, Any]:
     """E0: reuse the suite split validator, then audit all transitive exposure.
 
     Authored geometry QA alone is not policy exposure. Diagnostics, training,
@@ -509,7 +549,7 @@ def audit_exposure(cases: Sequence[Mapping[str, Any]], provenance: Mapping[str, 
         _require(provenance["schema_version"] == "rgb-map-exposure.v1", "exposure schema mismatch")
         _require(type(provenance["freeze_order"]) is int and provenance["freeze_order"] >= 0, "freeze order required")
         records = provenance["records"]
-        _require(isinstance(records, list), "provenance records required")
+        _require(isinstance(records, list) and records, "nonempty provenance records required")
         by_id = {}
         for record in records:
             _exact(record, {"id", "kind", "parents", "map_refs", "declared_splits", "origin"}, "provenance record")
@@ -542,7 +582,9 @@ def audit_exposure(cases: Sequence[Mapping[str, Any]], provenance: Mapping[str, 
                 maps.update(ancestors(parent))
             _require(sorted(record["declared_splits"]) == sorted({by_map[mid]["split"] for mid in maps}),
                      "child must inherit every parent map split")
-            _require(maps or record["kind"] == "foundation_model" or record["parents"], "known artifact lacks provenance")
+            diagnostic_unknown = allow_unknown_diagnostic_origins and record["origin"] == "unknown"
+            _require(maps or record["kind"] == "foundation_model" or record["parents"] or diagnostic_unknown,
+                     "artifact lacks provenance; unknown local origin requires diagnostic-only admission")
             if record["origin"] == "unknown":
                 unknown.append(rid)
             visiting.remove(rid)
@@ -611,6 +653,8 @@ def audit_exposure(cases: Sequence[Mapping[str, Any]], provenance: Mapping[str, 
             "legacy_development_registry": ["dispatch_open"] if allow_legacy_dispatch_open else [],
             "lineage_maps": {rid: sorted(maps) for rid, maps in lineage.items()},
             "unknown_origins": sorted(set(unknown)),
+            "diagnostic_only": allow_unknown_diagnostic_origins,
+            "heldout_claim_ready": not blockers and not allow_unknown_diagnostic_origins,
             "uncontaminated_pretraining_claim": False,
             "provenance_sha256": canonical_sha256(provenance),
             "scope": "declared lineage/exposure integrity, not policy performance or exhaustive pretraining knowledge"}
@@ -621,6 +665,7 @@ def validate_training_comparison(plan: Mapping[str, Any], exposure_report: Mappi
     _exact(plan, {"schema_version", "arms", "fixed_test_ids", "training_seeds", "selection_rule_sha256"}, "training design")
     _require(plan["schema_version"] == "rgb-training-comparison.v1", "training design schema mismatch")
     _require(exposure_report.get("valid") is True, "invalid split/exposure audit")
+    _require(exposure_report.get("heldout_claim_ready") is True, "diagnostic unknown provenance cannot approve training comparison")
     _require(isinstance(plan["arms"], list), "training arms required")
     arms = {arm["id"]: arm for arm in plan["arms"]}
     _require(len(arms) == len(plan["arms"]) and set(arms) in ({"T1", "T2"}, {"T1", "T2", "T3"}), "T1/T2 and optional T3 required")

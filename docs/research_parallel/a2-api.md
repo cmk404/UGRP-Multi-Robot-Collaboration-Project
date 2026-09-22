@@ -81,6 +81,33 @@ planner_responded.payload.artifacts[".request.json"]을 실제로 열고 SHA·re
 E0의 분할·노출 및 환경 gate는 [a2-environment](a2-environment.md)를 따른다.
 `assess_readiness`와 E0, C provider 예산, D admission은 모두 독립 필수 gate다.
 
+## 물리 재생 전 경계 검사 (순환 의존 없음)
+
+`assess_offline_boundary(evidence, expected_source_sha=..., expected_config_sha256=...,
+expected_components=..., artifact_root=..., source_root=...)`는 물리/영상 성공 증거를
+요구하지 않는다. 고정 소스와 실제 오프라인 반례 검사 원본만으로 pre-physics gate를
+검증한다. ready=true여도 live_readiness=false이다.
+
+exact evidence fields: schema_version=`rgb-offline-boundary-review.v1`, scope=`offline`,
+verdict=`pass`, independent_reviewer=`A2`, source_sha/source_files/config_sha256/components/
+cases/artifacts. components는 앞의 3개 ID, cases는 모든 AUDIT_CASES ID→pass,
+artifacts는 검사 원본 `{path,sha256}` 목록이다. source_files는 최소 A/B/C/D 실행 모듈을
+포함하며 실제 final 감사에서는 import된 제어 모듈까지 포함한다.
+
+config_sha256는 자기 참조를 피하려고 config에서 `offline_boundary_evidence` 키만
+제외한 canonical_sha256다. D는 reference가 삽입된 전체 config/manifest도 따로 동결한다.
+독립 검사 전에는 pass JSON을 만들지 않는다. final 실행 helper:
+
+```sh
+python tests/fixtures/rgb_communication_scenarios/audit_final_path.py \
+  --source-root /ABS/FROZEN/CHECKOUT --expected-sha FULL_SHA
+```
+
+이는 frozen checkout에서 7개 A작성 seam probe를 재실행한다. B/C helper는 fake fixture
+생성만 재사용하며 실제 backend/provider는 만들지 않는다. source 불일치/dirty/미연결은
+NO-GO다. 성공해도 offline_subset_pass이며, D capsule/전체 required case 수동 검토와
+소스/설정 binding을 완료한 뒤에만 별도 offline boundary review를 작성한다.
+
 ```sh
 python -m harness.rgb_communication_scenarios \
   --catalog tests/fixtures/rgb_communication_scenarios/catalog.json

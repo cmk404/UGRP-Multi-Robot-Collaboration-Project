@@ -64,6 +64,13 @@ scenario_assignments는 `{scenario_id,parent_map_id,map_sha256,layout_sha256,spl
 dispatch_open을 별도 regression 부모로 추가한다. suite22의 맵 수/학습/시험에는
 합산하지 않으며 이 옵션은 development connection 진단용이다.
 
+기존 grasp/varied 모델이 dispatch_open에서 학습됐다는 근거가 없으면 부모를 추측하지
+않는다. D가 원본 모델/manifest 해시를 보존한 제한적 physical 진단에서만
+`allow_unknown_diagnostic_origins=True`로 origin=unknown, map_refs/parents/declared_splits=[]인
+dataset/checkpoint를 허용한다. 반환 diagnostic_only=true, heldout_claim_ready=false이며
+T1/T2 비교 승인에 사용할 수 없다. 기본 검사는 이 누락을 거부한다. foundation pretraining
+unknown과 알려지지 않은 로컬 학습 출처를 따로 기록한다.
+
 ## T1/T2/T3
 
 training_plan schema=`rgb-training-comparison.v1`, arms/fixed_test_ids/training_seeds/
