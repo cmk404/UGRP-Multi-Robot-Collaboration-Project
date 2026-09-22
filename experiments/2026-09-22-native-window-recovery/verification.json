@@ -1,0 +1,137 @@
+{
+  "records": [
+    {
+      "path": "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/sim-20260922-175734-504d3e/result.json",
+      "result_sha256": "5bc1e498888ee5ca1c92bd3dc90505a51f482f5cdea0c5071021a117f6c554c5",
+      "source_sha": "357e1f2e66dcae20c54f669711308ed18cf03966",
+      "source_dirty": false,
+      "protocol_complete": false,
+      "stop_reason": "error",
+      "sim_s": -1.298000000000001,
+      "wall_s": 69.18707533400084,
+      "runtime_events": [],
+      "error": "ValueError: sim_time must not move backwards"
+    },
+    {
+      "path": "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/native-exit-repro-v1/result.json",
+      "result_sha256": "4be79de7bb6cf64d6079d95b59d4a8b60d2e40bffba8cb4bb100e75d2da4e3e4",
+      "source_sha": "357e1f2e66dcae20c54f669711308ed18cf03966",
+      "source_dirty": false,
+      "protocol_complete": true,
+      "stop_reason": "sim_limit",
+      "sim_s": 89.99999999996862,
+      "wall_s": 6.03978350000034,
+      "runtime_events": [],
+      "error": null
+    },
+    {
+      "path": "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/native-exit-repro-viewer-v1/result.json",
+      "result_sha256": "47de561ff3d4993fe74335087b3d346e3d354ae42cdba2327882796c9051fc6d",
+      "source_sha": "357e1f2e66dcae20c54f669711308ed18cf03966",
+      "source_dirty": false,
+      "protocol_complete": true,
+      "stop_reason": "sim_limit",
+      "sim_s": 89.99999999996862,
+      "wall_s": 19.265272833999916,
+      "runtime_events": [],
+      "error": null
+    },
+    {
+      "path": "/Users/changmin/.codex/worktrees/native-simulation-recovery/ugrp/outputs/native-recovery-check-v1/external_reset/result.json",
+      "result_sha256": "b7573a86adb122a6a73b7c1cf9769916b072c8f506b8ec9e1743d3a6c01b8538",
+      "source_sha": "52e70e3af140e4f965076ecf4d3d3167dfc6a1e7",
+      "source_dirty": false,
+      "protocol_complete": false,
+      "stop_reason": "sim_limit",
+      "sim_s": 1.9999999999998572,
+      "wall_s": 11.161429042000236,
+      "runtime_events": [
+        {
+          "kind": "external_reset",
+          "episode": 0,
+          "at_s": 0.5000000000000004,
+          "world_time_s": 0.0,
+          "warnings": {}
+        }
+      ],
+      "error": null
+    },
+    {
+      "path": "/Users/changmin/.codex/worktrees/native-simulation-recovery/ugrp/outputs/native-recovery-check-v1/physics_instability/result.json",
+      "result_sha256": "ee2c2e7c44fb7da65a88ae60c1844004a5f11113a1049e658d58d05a165dcf1b",
+      "source_sha": "52e70e3af140e4f965076ecf4d3d3167dfc6a1e7",
+      "source_dirty": false,
+      "protocol_complete": false,
+      "stop_reason": "sim_limit",
+      "sim_s": 1.9999999999998572,
+      "wall_s": 10.495496582996566,
+      "runtime_events": [
+        {
+          "kind": "physics_instability",
+          "episode": 0,
+          "at_s": 0.5000000000000004,
+          "world_time_s": 0.002,
+          "warnings": {
+            "BADQVEL": 1
+          }
+        }
+      ],
+      "error": null
+    }
+  ],
+  "tensorboard": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-native-recovery",
+  "event_readback": [
+    {
+      "run": "outputs__native-exit-repro-viewer-v1__861a8c9c",
+      "metrics": {
+        "result/wall_s": 19.26527214050293,
+        "result/sim_s": 90.0,
+        "result/commands": 0.0,
+        "result/model_calls": 0.0,
+        "claims/protocol_complete": 1.0
+      }
+    },
+    {
+      "run": "native-recovery-check-v1__external_reset__e07a7ed3",
+      "metrics": {
+        "result/wall_s": 11.161429405212402,
+        "result/sim_s": 2.0,
+        "result/commands": 0.0,
+        "result/model_calls": 0.0,
+        "claims/protocol_complete": 0.0
+      }
+    },
+    {
+      "run": "native-recovery-check-v1__physics_instability__44b80312",
+      "metrics": {
+        "result/wall_s": 10.49549674987793,
+        "result/sim_s": 2.0,
+        "result/commands": 0.0,
+        "result/model_calls": 0.0,
+        "claims/protocol_complete": 0.0
+      }
+    },
+    {
+      "run": "outputs__native-exit-repro-v1__d065ffd3",
+      "metrics": {
+        "result/wall_s": 6.039783477783203,
+        "result/sim_s": 90.0,
+        "result/commands": 0.0,
+        "result/model_calls": 0.0,
+        "claims/protocol_complete": 1.0
+      }
+    },
+    {
+      "run": "outputs__sim-20260922-175734-504d3e__5f8af473",
+      "metrics": {
+        "result/wall_s": 69.18707275390625,
+        "result/sim_s": -1.2979999780654907,
+        "result/commands": 0.0,
+        "result/model_calls": 0.0,
+        "claims/protocol_complete": 0.0
+      }
+    }
+  ],
+  "native_recovery_scope": "Real viewer; injected resets/NaN and CLI key callbacks. Exact panel mouse clicks not automated.",
+  "robot_success_claim": false
+}
