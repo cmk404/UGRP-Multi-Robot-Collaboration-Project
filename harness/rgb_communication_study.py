@@ -161,7 +161,8 @@ def assess_environment(config: dict, evidence: dict, *, root: Path, evidence_roo
     assignments = evidence["scenario_assignments"]
     exposure = scenarios.audit_exposure(cases, provenance, assignments,
         allow_legacy_dispatch_open=config["stage"] == "physical_replay"
-            and evidence.get("map", {}).get("map_id") == "dispatch_open")
+            and evidence.get("map", {}).get("map_id") == "dispatch_open",
+        allow_unknown_diagnostic_origins=config["stage"] == "physical_replay")
     if not exposure.get("valid"):
         blockers.extend("exposure:" + value for value in exposure.get("blockers", ["invalid"]))
     # The map ID/version and authored geometry must match the actual builder,
@@ -589,7 +590,7 @@ def run_study(manifest: dict, *, root: Path, evidence_root: Path, output: Path,
                    "--run-id", trial["run_id"], "--output", str(trial_dir.resolve()),
                    "--evidence-root", str(evidence_root.resolve())]
         process = bounded_process(command, cwd=root, log_path=trial_dir / "process.log",
-                                  timeout_s=min(config["budgets"]["wall_time_s"], remaining - 5))
+                                  timeout_s=min(config["budgets"]["wall_time_s"], remaining) - 5)
         write_new_json(trial_dir / "process.json", process)
         if (trial_dir / "result.json").is_file():
             result = read_json(trial_dir / "result.json")

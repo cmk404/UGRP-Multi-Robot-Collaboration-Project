@@ -7,7 +7,8 @@ from harness.rgb_communication_evaluation import evaluate_run
 RUN_SCHEMA = "rgb-communication-trial-result.v2"
 EXTRA_METRICS = (
     "result/high_level_actions", "result/messages", "result/message_bytes", "result/message_tokens",
-    "result/model_response_time_s", "result/external_model_calls", "result/planner_decisions",
+    "result/model_response_time_s", "result/planner_response_time_s", "result/pending_planner_requests",
+    "result/external_model_calls", "result/planner_decisions",
     "evaluation/physical_mission_complete", "evaluation/false_finish_claim",
     "execution/issued_command_overlap_sim_s", "execution/independent_task_command_overlap_sim_s",
 )
@@ -33,7 +34,7 @@ def export_communication(src, writer, result):
                "evaluation/false_finish_claim": int(scored["false_finish_claim"])}
     for field in ("commands", "model_calls", "input_tokens", "output_tokens", "high_level_actions",
                   "messages", "message_bytes", "message_tokens", "model_response_time_s",
-                  "external_model_calls", "planner_decisions"):
+                  "external_model_calls", "planner_decisions", "planner_response_time_s", "pending_planner_requests"):
         metrics["result/" + field] = values.get(field)
     for field in ("issued_command_overlap_sim_s", "independent_task_command_overlap_sim_s"):
         metrics["execution/" + field] = scored["interactions"].get(field)
