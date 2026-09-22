@@ -59,7 +59,10 @@ class SkillScene(DispatchScene):
         self.world._physics_step_for=self._physics
         return self
     def _physics(self,active,commands=None):
-        self._solo_tick()
+        try:self._solo_tick()
+        except Exception as exc:
+            from harness.skill_errors import ComponentExecutionError
+            raise ComponentExecutionError('solo_box',exc) from exc
         now=self.time()
         for p in self.ports.values():p.tick(now)
         self.original_step(active,commands)
@@ -331,6 +334,8 @@ def run(args):
         result['protocol_complete']=True;result['phase']='FINISHED'
     except (Exception,KeyboardInterrupt) as exc:
         result['error']=f'{type(exc).__name__}: {exc}'
+        result['failed_component']=getattr(exc,'component',
+            'pair' if result['phase'] in ('APPROACH','GRASP','TRANSIT','RELEASE') else 'runtime')
         if args.output.exists():(args.output/'exception.txt').write_text(traceback.format_exc())
     finally:
         try:

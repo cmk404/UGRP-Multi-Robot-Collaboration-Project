@@ -48,6 +48,8 @@ def outcome(output, exit_code, timed_out=False):
     act_entered = None if decisions is None else any(d.get('kind') == 'act_carry' for d in decisions)
     entered = True if window else (None if decisions is None else any(
         d.get('kind') in ('act_carry', 'carry', 'rotating_carry') for d in decisions))
+    failed_component=result.get('failed_component')
+    carry_censored=bool(entered and failed_component=='solo_box' and not beam.get('physical_success'))
     if success:
         kind = None
     elif 'PrematureCarryStop:' in str(error):
@@ -69,6 +71,7 @@ def outcome(output, exit_code, timed_out=False):
     return {'whole_success': success, 'robot_result_available': True,
             'failure_kind': kind, 'failure_phase': phase, 'error': error,
             'stop_reason': stop, 'carry_entered': entered, 'act_carry_entered': act_entered,
+            'failed_component':failed_component,'carry_censored_by_other_component':carry_censored,
             'beam_success': beam.get('physical_success') is True,
             'robot_robot_contact_samples':robot_contacts,
             'wall_s': result.get('wall_s', result.get('wall_seconds'))}
@@ -84,6 +87,7 @@ def aggregate(jobs, rows):
         planned = [j for j in jobs if j['condition'] == condition]
         finished = [r['outcome'] for r in rows if r['condition'] == condition]
         entered = [r for r in finished if r['carry_entered'] is True]
+        assessed = [r for r in entered if not r.get('carry_censored_by_other_component',False)]
         failures = sum(not r['whole_success'] for r in finished)
         groups[condition] = {
             'planned': len(planned), 'attempted': len(finished),
@@ -96,8 +100,10 @@ def aggregate(jobs, rows):
             'carry_entry_unknown': sum(r['carry_entered'] is None for r in finished),
             'entry_failures_before_carry': sum(r['carry_entered'] is False and not r['whole_success'] for r in finished),
             'act_carry_entries': sum(r['act_carry_entered'] is True for r in finished),
-            'carry_failures': sum(not r['beam_success'] for r in entered),
-            'carry_failure_fraction': sum(not r['beam_success'] for r in entered)/len(entered) if entered else None,
+            'carry_assessable_entries':len(assessed),
+            'carry_censored_by_other_component':len(entered)-len(assessed),
+            'carry_failures': sum(not r['beam_success'] for r in assessed),
+            'carry_failure_fraction': sum(not r['beam_success'] for r in assessed)/len(assessed) if assessed else None,
             'by_case': {case: {'attempted': len(rs), 'failures': sum(not r['outcome']['whole_success'] for r in rs)}
                         for case in sorted({j['case']['id'] for j in planned})
                         for rs in [[r for r in rows if r['condition'] == condition and r['case']['id'] == case]]},

@@ -30,6 +30,18 @@ def test_approach_failure_is_counted_without_inventing_act_failure(tmp_path):
     assert row['robot_result_available']
 
 
+def test_box_failure_interrupts_act_but_does_not_establish_act_transport_failure(tmp_path):
+    (tmp_path/'result.json').write_text(json.dumps({'physical_success':False,'protocol_complete':False,
+        'phase':'TRANSIT','failed_component':'solo_box','error':'ComponentExecutionError: solo_box: attachment identity'}))
+    (tmp_path/'pair-decisions.json').write_text('[{"kind":"act_carry"}]')
+    row=outcome(tmp_path,1)
+    jobs=schedule({'test':[{'id':'case'}]},['ACT'])
+    group=aggregate(jobs,[{**jobs[0],'outcome':row}])['conditions']['ACT']
+    assert group['failures']==1 and group['act_carry_entries']==1
+    assert group['carry_censored_by_other_component']==1
+    assert group['carry_failures']==0 and group['carry_failure_fraction'] is None
+
+
 def test_carry_conditional_denominator_excludes_prerequisite_failures(tmp_path):
     jobs = schedule({'test': [{'id': 'open'}], 'evaluation': {'repeats': 3}}, ['act'])
     data = [dict(whole_success=False, robot_result_available=True, failure_kind='execution_error',

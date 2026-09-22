@@ -20,6 +20,7 @@
 4. 새 시험 조건과 모델/파지/설정 해시를 프로토콜에 먼저 고정한다. `expected_source_sha`가 실행 체크아웃과 같아야 한다. `run_matched_carry_cohort.py`는 매 실행 전후 소스·프로토콜·자료 해시를 확인한다.
 5. RGB 기준선, ACT-guarded, ACT-RGB-refined를 같은 배치와 교대 순서로 전부 실행한다. 실패가 발생해도 뒤의 사례는 계속한다. 누락/디스크 부족은 미실행으로 기록한다.
 6. 전체 작업 실패율과 운반 진입 이후의 조건부 실패율을 같이 확인한다. 기본 제어기로 채택하려면 해당 조건의 모든 사전 지정 사례가 물리 완료되고 충돌·허위 완료가 없어야 한다. 표본 수와 검증 지도 범위를 함께 명시한다.
+   병렬 상자 스킬의 오류로 빔 운반이 중단되면 전체 작업 실패는 유지하되, 빔 운반 모델의 조건부 실패율 분모에서는 중도 중단으로 구분한다. `failed_component`와 `carry_censored_by_other_component`를 확인한다.
 7. 성공과 실패의 원본, 입력 이미지, 발행 명령, 모델 응답, 평가 전용 자료, 영상 및 해시를 보존한다. 새 TensorBoard 스냅샷의 이벤트와 영상 링크, 실제 기본 화면을 확인한다.
 
 완료 후 `scripts/assess_research_cohort.py --report <cohort>/report.json --out <new-assessment.json>`으로 원본을 다시 읽어 조건별 사용 가능 여부를 확인한다. 종료 코드만 성공하거나 영상·접촉 측정·소스가 빠진 결과는 채택하지 않는다. 결과의 `qualified_for_declared_cases`는 지정된 시험 조건 안에서만 유효하다.

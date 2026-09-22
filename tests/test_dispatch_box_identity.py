@@ -49,3 +49,18 @@ def test_complete_reversible_motion_required():
     del frames['verify_lift']
     with pytest.raises(RuntimeError,match='complete'):
         bind_attachment_pan(frames)
+
+
+def test_asymmetric_real_pan_still_requires_reversal_and_return_home():
+    import json,hashlib
+    root=Path('tests/fixtures/dispatch_attachment_pan_asymmetric')
+    meta=json.loads((root/'provenance.json').read_text())
+    frames={phase:(root/(phase+'.jpg')).read_bytes() for phase in PAN_PHASES}
+    assert all(hashlib.sha256(raw).hexdigest()==meta[phase]['sha256'] for phase,raw in frames.items())
+    center,evidence=bind_attachment_pan(frames)
+    assert np.linalg.norm(center-[274.4,544.691])<.01
+    assert evidence['minimum_full_sweep_px']==4.
+    for positions in ([70,69,71,70],[70,67,71,75]):
+        with pytest.raises(RuntimeError,match='unresolved or ambiguous'):
+            bind_attachment_pan(sequence(positions))
+    assert np.allclose(bind_attachment_pan(sequence([70,67,71,70]))[0],[104,74])

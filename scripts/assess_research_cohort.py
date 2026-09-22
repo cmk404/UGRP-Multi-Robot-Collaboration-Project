@@ -22,7 +22,7 @@ def assess(report_path):
         root=Path(saved['output'])
         result=json.loads((root/'result.json').read_text())
         verdict=outcome(root,saved['exit_code'],saved.get('timed_out',False))
-        if verdict!=saved['outcome']:
+        if any(verdict.get(key)!=value for key,value in saved['outcome'].items()):
             # Old reports may predate extra classification fields. Keep the
             # fresh readback authoritative, while recording the disagreement.
             consistent=False
