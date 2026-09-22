@@ -1,0 +1,90 @@
+{
+  "schema_version": "a2-post-replay-audit.v1",
+  "source_sha": "bfe478f1209375d774b6dc2881300198f967f5ca",
+  "scope": "read-only recovered artifacts; no physical or model rerun",
+  "archive_sha256": "c708440c3ec2aa95076449c97b142c8b5e6c02d0ad71692917970a5749459ab7",
+  "recovered_file_hashes_verified": 69,
+  "rows": [
+    {
+      "run_id": "solo-physical-replay",
+      "source_sha": "bfe478f1209375d774b6dc2881300198f967f5ca",
+      "canonical_outcome": "invalid_artifact",
+      "canonical_reason": "evaluator snapshot predates the runtime terminal event",
+      "replay_goal_complete": null,
+      "runtime_outcome": "aborted",
+      "termination_reason": "RUNTIME_ERROR",
+      "runtime_terminal_sim_s": 0.8,
+      "evaluator_sim_s": 0.75,
+      "raw_mission_complete": false,
+      "external_model_calls": 0,
+      "local_command_count": 5,
+      "command_provenance_checked": 5,
+      "image_references_hash_verified": 10,
+      "skill_failures": [
+        {
+          "event": "SKILL_FAILED",
+          "robot_id": "r2",
+          "timestamp_s": 0.75,
+          "task_id": "solo-diagnostic",
+          "error_type": "ValueError",
+          "detail": "stale RGB worker result"
+        }
+      ],
+      "artifacts": {
+        "recovered/result/runs/solo-physical-replay/runtime.jsonl": "9a045b2cce1d324e33e2d16e1e8b91274a07754112cd21cca7d44ef5625de376",
+        "recovered/result/runs/solo-physical-replay/result.json": "2e97076c15b51ef72f7a376a5af7cdbf55cc74add81c23ad80766e6f01913f6a",
+        "recovered/result/runs/solo-physical-replay/evaluator.json": "70abbaf37b46020c0b44245e96729a610a8e8d459afff8b77d391c2214d37df5",
+        "recovered/result/runs/solo-physical-replay/backend/backend-evaluation.json": "db1215edd85bb528f8f0ecd19fe233689a2d8369fc4c77e1fc4ae00f3bcfdc6a",
+        "recovered/result/runs/solo-physical-replay/backend/skill-inputs.jsonl": "251bfce2f063863fc7f4bf06fea8a8a2d09bfd599bffa53cf729dd8d5fb10d3f",
+        "recovered/result/runs/solo-physical-replay/backend/execution.mp4": "ad23f915c22767a01b076df2a3703d2b3eecd26ace5e28e1d94e7272c69473ef"
+      }
+    },
+    {
+      "run_id": "joint-physical-replay",
+      "source_sha": "bfe478f1209375d774b6dc2881300198f967f5ca",
+      "canonical_outcome": "invalid_artifact",
+      "canonical_reason": "evaluator snapshot predates the runtime terminal event",
+      "replay_goal_complete": null,
+      "runtime_outcome": "aborted",
+      "termination_reason": "RUNTIME_ERROR",
+      "runtime_terminal_sim_s": 0.8,
+      "evaluator_sim_s": 0.75,
+      "raw_mission_complete": false,
+      "external_model_calls": 0,
+      "local_command_count": 0,
+      "command_provenance_checked": 0,
+      "image_references_hash_verified": 10,
+      "skill_failures": [
+        {
+          "event": "SKILL_FAILED",
+          "robot_id": "r1",
+          "timestamp_s": 0.25,
+          "task_id": "joint-diagnostic",
+          "error_type": "ValueError",
+          "detail": "stale RGB worker result"
+        },
+        {
+          "event": "SKILL_FAILED",
+          "robot_id": "r3",
+          "timestamp_s": 0.25,
+          "task_id": "joint-diagnostic",
+          "error_type": "ValueError",
+          "detail": "stale RGB worker result"
+        }
+      ],
+      "artifacts": {
+        "recovered/result/runs/joint-physical-replay/runtime.jsonl": "39c5e568db6b57016e4363a9a3a1e533eb442a30a52c4971a9e92e52e64ccb73",
+        "recovered/result/runs/joint-physical-replay/result.json": "20a2ccf5e1ef015e6b62ce0644c87d759ce22e779f1a3c0f5e154cb5a014bd55",
+        "recovered/result/runs/joint-physical-replay/evaluator.json": "b1bc12b920baca3d23efb5cb84fed046186cf22bb156f24fb32eb94685f83a40",
+        "recovered/result/runs/joint-physical-replay/backend/backend-evaluation.json": "4b8bd863c92355aacad45807b5e96bf55b2c78b7d3dcfe89d7992bfdfdd4abbe",
+        "recovered/result/runs/joint-physical-replay/backend/skill-inputs.jsonl": "e58a0589e41cb2429f8489a26924024b50f15fbb17a1875e5bd92cedca7ed293",
+        "recovered/result/runs/joint-physical-replay/backend/execution.mp4": "ad23f915c22767a01b076df2a3703d2b3eecd26ace5e28e1d94e7272c69473ef"
+      }
+    }
+  ],
+  "live_readiness": false,
+  "physical_pass": false,
+  "root_cause_proven": false,
+  "runtime_exception_detail_missing": true,
+  "video_semantic_review_complete": false
+}

@@ -19,12 +19,14 @@ import tempfile
 import shutil
 import subprocess
 
+from scripts.tensorboard_tools.rgb_communication import EXTRA_METRICS, RUN_SCHEMA, export_communication
+
 MAX_BYTES = 64 * 1024 * 1024
 HP_METRICS = ('result/wall_s', 'result/sim_s', 'result/commands', 'result/model_calls',
               'result/input_tokens', 'result/output_tokens', 'result/cost_usd',
               'evaluation/reported_success', 'claims/protocol_complete',
               'claims/completed_task_claims', 'claims/tasks', 'claims/final_object_claims',
-              'training/final_loss', 'development/final_selection_score')
+              'training/final_loss', 'development/final_selection_score') + EXTRA_METRICS
 SECRET = re.compile(r'authorization|cookie|password|secret|api.?key|access.?token|refresh.?token', re.I)
 
 
@@ -97,6 +99,15 @@ class Source:
             return None
         self.files[rel] = {'sha256': sha(data), 'size': len(data), 'mtime_s': p.stat().st_mtime}
         return data
+
+    def read_jsonl(self, relative):
+        p = inside(self.root, relative)
+        if not p or p.stat().st_size > MAX_BYTES:
+            raise ValueError('Missing or oversized JSONL: ' + relative)
+        data = p.read_bytes()
+        parsed = [json.loads(line) for line in data.decode().splitlines() if line.strip()]
+        self.files[relative] = {'sha256': sha(data), 'size': len(data), 'mtime_s': p.stat().st_mtime}
+        return parsed
 
 
 class Writer:
@@ -202,6 +213,8 @@ def export_training(src, w, data):
 
 
 def export_execution(src, w, result, max_images):
+    if result.get('schema_version') == RUN_SCHEMA:
+        return export_communication(src, w, result)
     cfg = obj(result.get('config')); usage = obj(result.get('usage'))
     if (src.root / 'turns.json').is_file(): family = 'jev-motion'
     elif (src.root / 'actor-static-task.json').is_file(): family = 'multi-object'
@@ -283,13 +296,17 @@ def exporter_version():
     except (OSError, subprocess.SubprocessError): return {'sha': None, 'working_tree_dirty': None}
 
 
-def convert(source, output, *, max_images=8, media_port=6007):
+def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=False):
     """Export one source once. Existing destinations are rejected (no duplicate steps)."""
     source, output = Path(source).resolve(), Path(output).resolve()
     if not source.is_dir(): raise ValueError(f'Not a source directory: {source}')
     if output == source or output.is_relative_to(source): raise ValueError('Export must be outside the source directory')
     src = Source(source)
     result = src.read('result.json')
+    if isinstance(result, dict) and result.get('schema_version') == RUN_SCHEMA:
+        if result.get('evidence_kind') not in {'deterministic_physical_replay', 'live_llm'}:
+            if not allow_synthetic or not output.is_relative_to(Path(tempfile.gettempdir()).resolve()):
+                raise ValueError('Synthetic communication evidence requires explicit temporary-logdir opt-in')
     training = src.read('report.json')
     if isinstance(training, dict) and rows(training.get('progress')):
         kind, data = 'training', training
@@ -305,7 +322,10 @@ def convert(source, output, *, max_images=8, media_port=6007):
     try:
         meta, metrics = export_training(src, w, data) if kind == 'training' else export_execution(src, w, data, max_images)
         videos = []
-        for name in ('motion.mp4', 'execution.mp4'):
+        video_names = ('motion.mp4', 'execution.mp4')
+        if isinstance(result, dict) and result.get('schema_version') == RUN_SCHEMA:
+            video_names += ('backend/execution.mp4',)
+        for name in video_names:
             p = inside(source, name)
             if p:
                 st = p.stat(); ident = sha(str(p).encode())[:20]
@@ -317,7 +337,7 @@ def convert(source, output, *, max_images=8, media_port=6007):
             'step_axis': 'training: recorded optimizer step; execution: recorded decision order',
             'source_metadata': meta, 'warnings': src.warnings,
             'limits': '선택한 실행들의 개별 기록입니다. 성공률 집계·조건 동등성·실물 성능을 자동 주장하지 않습니다. 미기록 비용/시각은 0으로 채우지 않습니다.'})
-        hp = {k: str(meta.get(k) if meta.get(k) is not None else 'unrecorded') for k in ('family', 'policy', 'case', 'source_sha', 'seed', 'outcome', 'clock', 'setup_sha256')}
+        hp = {k: str(meta.get(k) if meta.get(k) is not None else 'unrecorded') for k in ('family', 'policy', 'case', 'source_sha', 'seed', 'outcome', 'clock', 'setup_sha256', 'run_id', 'condition')}
         hp['condition_fingerprint'] = stable_digest({k: meta.get(k) for k in ('family','case','source_sha','seed','scope','clock','goal','spawn_offset','contact_profile','setup_sha256','limits')})
         w.hparams(hp, HP_METRICS)
         manifest.update(metadata=meta, source_files=src.files, warnings=src.warnings, videos=videos, counts=w.counts)

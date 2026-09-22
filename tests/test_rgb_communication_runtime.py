@@ -395,11 +395,14 @@ class RGBCommunicationRuntimeTests(unittest.TestCase):
             port, owned, condition="none", common_task=FIXTURE["static_context"]["task"],
             run_id="fixture-leak", limits=RuntimeLimits(max_ticks=1, max_calls_per_robot=1),
         )
-        self.assertEqual(result["outcome"], "failure")
+        self.assertEqual(result["outcome"], "aborted")
         self.assertEqual(result["termination_reason"], "RUNTIME_ERROR")
         self.assertEqual(result["error_type"], "ValueError")
         self.assertTrue(all(planner.requests == [] for planner in owned.values()))
-        self.assertEqual(port.closed_at_s, 0.0)
+        # Error-path close uses the backend's own clock when no actual-clock
+        # callback exists; a successful requested tick is not physical evidence.
+        self.assertIsNone(port.closed_at_s)
+        self.assertEqual(result["clock"]["terminal_time_status"], "unknown")
         self.assertEqual(sum(event["event_type"] == "run_finished"
                              for event in result["events"]), 1)
 

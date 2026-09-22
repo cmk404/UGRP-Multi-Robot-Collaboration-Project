@@ -11,6 +11,7 @@ from collections import Counter, defaultdict
 from copy import deepcopy
 import hashlib
 import json
+import math
 from pathlib import Path
 import random
 import re
@@ -37,12 +38,15 @@ REPORT_OUTCOMES = TERMINAL_OUTCOMES + (
     "missing_artifact",
     "invalid_artifact",
 )
+RUNTIME_OUTCOMES = TERMINAL_OUTCOMES + ("completed",)
 COUNT_METRICS = {
     "high_level_actions": "action_submitted",
     "messages": "message_sent",
     "model_calls": "planner_requested",
+    "planner_decisions": "planner_requested",
 }
 SUM_METRICS = {
+    "external_model_calls": ("planner_requested", "external_model_calls"),
     "message_bytes": ("message_sent", "bytes"),
     "message_tokens": ("message_sent", "token_count"),
     "input_tokens": ("planner_responded", "input_tokens"),
@@ -67,7 +71,7 @@ def _sha256(path: Path) -> str:
 
 
 def _is_number(value: Any) -> bool:
-    return isinstance(value, (int, float)) and not isinstance(value, bool)
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
 
 
 def _require_positive_number(value: Any, label: str) -> None:
@@ -398,7 +402,7 @@ def load_events(path: Path, plan: dict[str, Any]) -> list[dict[str, Any]]:
     if wall_times != sorted(wall_times):
         raise ContractError("runtime wall_time_s must be non-decreasing in JSONL order")
     terminal = [event for event in events if event["event_type"] == "run_finished"][0]
-    if terminal["payload"].get("outcome") not in TERMINAL_OUTCOMES:
+    if terminal["payload"].get("outcome") not in RUNTIME_OUTCOMES:
         raise ContractError("run_finished outcome is invalid")
     return events
 
@@ -426,7 +430,10 @@ def load_evaluator(path: Path, plan: dict[str, Any]) -> dict[str, Any]:
         raise ContractError("evaluator snapshot boundary declaration is missing")
     if snapshot.get("clock_domain") not in {"sim", "monotonic"}:
         raise ContractError("evaluator snapshot clock_domain is invalid")
-    if not _is_number(snapshot.get("timestamp_s")) or snapshot["timestamp_s"] < 0:
+    # Unknown actual clock is preserved as missing raw evidence, not invented
+    # from a request or last acknowledgement. Combined scoring rejects it below.
+    if snapshot["timestamp_s"] is not None and (
+            not _is_number(snapshot["timestamp_s"]) or snapshot["timestamp_s"] < 0):
         raise ContractError("evaluator snapshot timestamp_s is invalid")
     if not isinstance(snapshot.get("active_task_ids"), list) or not isinstance(
         snapshot.get("pending_task_ids"), list
@@ -447,11 +454,13 @@ def load_evaluator(path: Path, plan: dict[str, Any]) -> dict[str, Any]:
     for object_id, record in objects.items():
         if not isinstance(object_id, str) or not isinstance(record, dict):
             raise ContractError("evaluator object records are invalid")
-        if not isinstance(record.get("stages"), dict):
-            raise ContractError("each evaluator object requires stage booleans")
-        if not all(isinstance(stage, str) and isinstance(done, bool)
-                   for stage, done in record["stages"].items()):
-            raise ContractError("object stages must map strings to booleans")
+        if "stages" in record:
+            if not isinstance(record["stages"], dict) or not all(
+                isinstance(stage, str) and isinstance(done, bool) for stage, done in record["stages"].items()
+            ):
+                raise ContractError("object stages must map strings to booleans")
+        elif type(record.get("physical_success")) is not bool or type(record.get("attempted")) is not bool:
+            raise ContractError("each evaluator object requires stages or measured physical success/attempted")
     if set(objects) != set(plan["object_ids"]):
         raise ContractError("evaluator objects do not match the planned mission")
     recovery = external.get("recovery")
@@ -520,6 +529,36 @@ def extract_metrics(events: list[dict[str, Any]]) -> tuple[dict[str, Any], dict[
     else:
         metrics["model_response_time_s_mean"] = None
         statuses["model_response_time_s_mean"] = "not_measured"
+    terminal = next((event["payload"] for event in reversed(events)
+                     if event["event_type"] == "run_finished"), {})
+    if "external_model_calls" in declared:
+        actual = terminal.get("external_model_calls")
+        upper = terminal.get("external_model_call_upper_bound")
+        unknown = terminal.get("unknown_external_call_requests")
+        measured = type(actual) is int and actual >= 0 and unknown == []
+        metrics["external_model_calls"] = actual if measured else None
+        statuses["external_model_calls"] = "measured" if measured else "partially_measured"
+        metrics["external_model_call_upper_bound"] = upper if type(upper) is int else None
+        statuses["external_model_call_upper_bound"] = "bounded" if type(upper) is int else "not_measured"
+    tokens = terminal.get("tokens", {})
+    if isinstance(tokens, dict) and tokens:
+        for key in ("input_tokens", "output_tokens"):
+            value, unknown = tokens.get("measured_" + key), tokens.get("unknown_" + key + "_calls")
+            measured = type(value) is int and value >= 0 and unknown == 0
+            metrics[key] = value if measured else None
+            statuses[key] = "measured" if measured else "partially_measured"
+    evidence_kinds = next((event["payload"].get("evidence_kinds", {}) for event in events
+                           if event["event_type"] == "run_started"), {})
+    metrics["planner_response_time_s"] = metrics["model_response_time_s"]
+    statuses["planner_response_time_s"] = statuses["model_response_time_s"]
+    metrics["pending_planner_requests"] = len(terminal.get("pending_planner_requests", {})) \
+        if isinstance(terminal.get("pending_planner_requests"), dict) else None
+    if evidence_kinds and set(evidence_kinds.values()) == {"deterministic_physical_replay"}:
+        for key in ("model_response_time_s", "model_response_time_s_mean"):
+            metrics[key] = None
+            statuses[key] = "not_applicable_offline_replay"
+    elif terminal.get("pending_planner_requests"):
+        statuses["model_response_time_s_mean"] = "completed_responses_only_pending_excluded"
     return metrics, statuses
 
 
@@ -555,6 +594,130 @@ def extract_evaluator_metrics(evaluator: dict[str, Any]) -> tuple[dict[str, Any]
     return {"commands": len(command_ids)}, {"commands": "measured"}
 
 
+def score_termination(runtime_terminal: dict[str, Any], external: dict[str, Any]) -> dict[str, Any]:
+    """Score after shutdown without altering either actor or referee evidence.
+
+    A completed actor loop is only a claim.  Conversely a timeout/abort can
+    coexist with a positive referee measurement; that does not erase the
+    system termination.  Legacy success/failure fields remain readable.
+    """
+    runtime_outcome = runtime_terminal.get("outcome")
+    physical = external.get("mission_complete")
+    if runtime_outcome not in RUNTIME_OUTCOMES or type(physical) is not bool:
+        raise ContractError("invalid termination or evaluator verdict")
+    claims = runtime_terminal.get("actor_finish_claims", {})
+    if not isinstance(claims, dict) or not set(claims) <= set(ROBOTS) \
+            or any(type(value) is not bool for value in claims.values()):
+        raise ContractError("actor_finish_claims must map actor IDs to booleans")
+    normal = runtime_outcome in {"completed", "success", "failure"}
+    outcome = ("success" if physical else "failure") if normal else runtime_outcome
+    return {
+        "outcome": outcome,
+        "mission_complete": outcome == "success",
+        "physical_mission_complete": physical,
+        "runtime_outcome": runtime_outcome,
+        "runtime_termination": deepcopy(runtime_terminal),
+        "evaluator_verdict": deepcopy(external),
+        "actor_finish_claims": deepcopy(claims),
+        "false_finish_claim": not physical and (
+            runtime_outcome == "success" or any(claims.values())
+        ),
+        "false_finish_claim_by_robot": {rid: claim and not physical for rid, claim in claims.items()},
+        "termination_verdict_disagreement": (normal and runtime_outcome == "success" and not physical)
+            or (not normal and physical),
+    }
+
+
+def interaction_metrics(events: list[dict[str, Any]], snapshot: dict[str, Any]) -> dict[str, Any]:
+    """Measured command overlap and event-linked replanning, never causal proof."""
+    audit = snapshot.get("coordination_audit", [])
+    commands = [row for row in audit if row.get("event") == "LOCAL_COMMAND"]
+    intervals = []
+    for row in commands:
+        begin, duration = row.get("issued_at_s"), row.get("duration_s")
+        if _is_number(begin) and _is_number(duration) and duration >= 0:
+            intervals.append((begin, begin + duration, row["robot_id"], row.get("task_id")))
+    points = sorted({point for begin, end, _, _ in intervals for point in (begin, end)})
+    concurrent_robot_s = independent_task_s = 0.0
+    busy = {robot: 0.0 for robot in ROBOTS}
+    for left, right in zip(points, points[1:]):
+        active = [(robot, task) for begin, end, robot, task in intervals if begin <= left < end]
+        robots = {robot for robot, _ in active}
+        for robot in robots:
+            busy[robot] += right - left
+        if len(robots) >= 2:
+            concurrent_robot_s += right - left
+        if len({task for _, task in active}) >= 2:
+            independent_task_s += right - left
+    waits = {robot: 0 for robot in ROBOTS}
+    prior_actions: dict[str, Any] = {}
+    received_since_action: dict[str, set[str]] = {robot: set() for robot in ROBOTS}
+    linked_changes = []
+    for event in events:
+        robot = event["robot_id"]
+        if robot not in ROBOTS:
+            continue
+        payload, related = event["payload"], event["related_ids"]
+        if event["event_type"] == "message_received":
+            if related.get("message_id"):
+                received_since_action[robot].add(related["message_id"])
+        if event["event_type"] == "planner_responded":
+            action = payload.get("action")
+            if isinstance(action, dict) and action.get("kind") == "wait":
+                waits[robot] += 1
+            if action is not None and robot in prior_actions and action != prior_actions[robot] \
+                    and received_since_action[robot]:
+                linked_changes.append({"robot_id": robot, "decision_id": related.get("decision_id"),
+                                       "message_ids": sorted(received_since_action[robot]),
+                                       "before": prior_actions[robot], "after": deepcopy(action)})
+            if action is not None:
+                prior_actions[robot] = deepcopy(action)
+                received_since_action[robot].clear()
+    return {
+        "issued_command_overlap_sim_s": concurrent_robot_s,
+        "independent_task_command_overlap_sim_s": independent_task_s,
+        "issued_command_busy_sim_s_by_robot": busy,
+        "wait_decisions_by_robot": waits,
+        "message_preceded_action_changes": linked_changes,
+        "deadlock_observed": snapshot.get("external_evaluation", {}).get("deadlock_observed"),
+        "interpretation": "Issued command intervals are not measured motion; temporal message/action links are not causal effects.",
+    }
+
+
+def validate_terminal_clock(terminal: dict[str, Any], snapshot: dict[str, Any]) -> None:
+    """Validate new supervisor clocks without rewriting legacy evidence.
+
+    Requested time is never a substitute for actual time, including partial
+    progress. Backend numerical clock checks own tiny requested/actual roundoff.
+    """
+    clock = terminal["payload"].get("clock")
+    if "clock" not in terminal["payload"]:
+        return
+    fields = {"schema", "clock_domain", "requested_tick_s", "last_acknowledged_time_s",
+              "last_successful_requested_tick_s", "terminal_time_s", "terminal_time_status", "reason"}
+    if not isinstance(clock, dict) or set(clock) != fields:
+        raise ContractError("runtime terminal clock schema is invalid")
+    if (clock["schema"] != "rgb-runtime-clock.v1" or clock["clock_domain"] != "sim"
+            or snapshot["clock_domain"] != clock["clock_domain"]):
+        raise ContractError("runtime terminal clock domain or schema is invalid")
+    if clock["terminal_time_status"] != "verified":
+        raise ContractError("runtime terminal actual clock is unknown")
+    actual = clock["terminal_time_s"]
+    if (not _is_number(actual) or actual < 0 or actual != terminal["sim_time_s"]
+            or not isinstance(clock["reason"], str) or not clock["reason"]):
+        raise ContractError("runtime terminal actual clock is inconsistent")
+    for field in ("requested_tick_s", "last_acknowledged_time_s", "last_successful_requested_tick_s"):
+        if clock[field] is not None and (not _is_number(clock[field]) or clock[field] < 0):
+            raise ContractError("runtime terminal clock has invalid numeric metadata")
+    acknowledged = clock["last_acknowledged_time_s"]
+    requested = clock["requested_tick_s"]
+    successful_request = clock["last_successful_requested_tick_s"]
+    if acknowledged is not None and acknowledged > actual:
+        raise ContractError("runtime terminal actual clock precedes acknowledged clock")
+    if successful_request is not None and (requested is None or successful_request > requested):
+        raise ContractError("runtime terminal requested clock order is inconsistent")
+
+
 def evaluate_run(plan: dict[str, Any], artifact_root: Path) -> dict[str, Any]:
     run_dir = artifact_root / plan["artifact_relpath"]
     base = {
@@ -573,12 +736,19 @@ def evaluate_run(plan: dict[str, Any], artifact_root: Path) -> dict[str, Any]:
     required = plan["required_artifacts"]
     runtime_path = run_dir / required["runtime"]
     evaluator_path = run_dir / required["evaluator"]
+    if (not run_dir.resolve().is_relative_to(artifact_root.resolve()) or any(
+        path.is_symlink() or not path.resolve().is_relative_to(run_dir.resolve())
+        for path in (runtime_path, evaluator_path)
+    )):
+        return {**base, "outcome": "invalid_artifact", "reason": "artifact_path_escape_or_symlink",
+                "mission_complete": False, "artifacts": {}, "metrics": {}, "measurement_status": {}}
     present = {"runtime": runtime_path.is_file(), "evaluator": evaluator_path.is_file()}
     if not all(present.values()):
         return {**base, "outcome": "missing_artifact", "reason": "required_artifact_absent",
                 "mission_complete": False, "artifacts": present, "metrics": {},
                 "measurement_status": {}}
     try:
+        original_hashes = {"runtime": _sha256(runtime_path), "evaluator": _sha256(evaluator_path)}
         events = load_events(runtime_path, plan)
         evaluator = load_evaluator(evaluator_path, plan)
         terminal = [event for event in events if event["event_type"] == "run_finished"][0]
@@ -587,13 +757,19 @@ def evaluate_run(plan: dict[str, Any], artifact_root: Path) -> dict[str, Any]:
         metrics.update(evaluator_metrics)
         measurement_status.update(evaluator_status)
         external = evaluator["source_snapshot"]["external_evaluation"]
-        outcome = terminal["payload"]["outcome"]
+        score = score_termination(terminal["payload"], external)
         snapshot = evaluator["source_snapshot"]
+        validate_terminal_clock(terminal, snapshot)
+        if snapshot["timestamp_s"] is None:
+            raise ContractError("evaluator snapshot actual clock is unknown")
         if (snapshot["clock_domain"] == "sim" and terminal["sim_time_s"] is not None
                 and snapshot["timestamp_s"] < terminal["sim_time_s"]):
             raise ContractError("evaluator snapshot predates the runtime terminal event")
-        if (outcome == "success") != external["mission_complete"]:
-            raise ContractError("runtime success and evaluator mission_complete disagree")
+        if "clock" in terminal["payload"]:
+            metrics["sim_time_s"] = terminal["payload"]["clock"]["terminal_time_s"]
+            measurement_status["sim_time_s"] = "verified_supervisor_terminal_clock"
+        if original_hashes != {"runtime": _sha256(runtime_path), "evaluator": _sha256(evaluator_path)}:
+            raise ContractError("source artifact changed during evaluation")
     except ContractError as exc:
         return {**base, "outcome": "invalid_artifact", "reason": str(exc),
                 "mission_complete": False,
@@ -601,15 +777,15 @@ def evaluate_run(plan: dict[str, Any], artifact_root: Path) -> dict[str, Any]:
                 "metrics": {}, "measurement_status": {}}
     return {
         **base,
-        "outcome": outcome,
-        "reason": terminal["payload"].get("reason"),
-        "mission_complete": external["mission_complete"],
+        **score,
+        "reason": terminal["payload"].get("termination_reason", terminal["payload"].get("reason")),
         "objects": external["objects"],
         "recovery": external["recovery"],
         "metrics": metrics,
         "measurement_status": measurement_status,
-        "artifacts": {"runtime": _sha256(runtime_path), "evaluator": _sha256(evaluator_path)},
+        "artifacts": original_hashes,
         "evaluator_scope": evaluator.get("scope"),
+        "interactions": interaction_metrics(events, snapshot),
         "evaluator_snapshot_sha256": hashlib.sha256(
             _canonical_json(evaluator["source_snapshot"])
         ).hexdigest(),
@@ -646,7 +822,7 @@ def _stage_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
         (object_id, stage)
         for row in measured
         for object_id, record in row["objects"].items()
-        for stage in record["stages"]
+        for stage in record.get("stages", {})
     })
     for object_id, stage in keys:
         records = [row["objects"].get(object_id, {}).get("stages", {}).get(stage)

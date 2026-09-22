@@ -12,8 +12,11 @@ from harness.rgb_communication_evaluation import (
     EVENT_SCHEMA,
     build_manifest,
     evaluate_manifest,
+    evaluate_run,
     execution_blockers,
     finite_schedule,
+    interaction_metrics,
+    score_termination,
     validate_manifest,
 )
 
@@ -121,6 +124,78 @@ def materialize_fixture(root, value):
         write_artifacts(root, plan, outcomes[plan["scenario_id"]][plan["condition"]])
 
 
+def clock_artifacts(root, *, actual=.77, snapshot=.77, status="verified"):
+    plan = manifest()["schedule"][0]
+    write_artifacts(root, plan, "aborted", measured=False)
+    run = root / plan["artifact_relpath"]
+    rows = [json.loads(line) for line in (run / "runtime.jsonl").read_text().splitlines()]
+    rows[-1]["sim_time_s"] = actual
+    rows[-1]["payload"]["clock"] = {
+        "schema": "rgb-runtime-clock.v1", "clock_domain": "sim",
+        "requested_tick_s": .8, "last_acknowledged_time_s": .75,
+        "last_successful_requested_tick_s": .75,
+        "terminal_time_s": actual, "terminal_time_status": status, "reason": "tick_failed"}
+    evaluation = json.loads((run / "evaluator.json").read_text())
+    evaluation["source_snapshot"]["timestamp_s"] = snapshot
+    (run / "evaluator.json").write_text(json.dumps(evaluation))
+    return plan, run, rows
+
+
+def test_verified_partial_advance_preserves_actual_and_aborted_outcome(tmp_path):
+    plan, run, rows = clock_artifacts(tmp_path)
+    (run / "runtime.jsonl").write_text("".join(json.dumps(row) + "\n" for row in rows))
+    result = evaluate_run(plan, tmp_path)
+    assert result["outcome"] == "aborted"
+    assert result["metrics"]["sim_time_s"] == .77
+    assert result["runtime_termination"]["clock"]["last_acknowledged_time_s"] == .75
+
+
+@pytest.mark.parametrize("change", [
+    {"terminal_time_status": "unknown", "terminal_time_s": None},
+    {"schema": "wrong"}, {"clock_domain": "wall"},
+    {"last_acknowledged_time_s": .78}, {"terminal_time_s": .76},
+    {"requested_tick_s": float("nan")}, {"last_acknowledged_time_s": True},
+    {"last_successful_requested_tick_s": .85}, {"unreviewed": 1},
+])
+def test_new_clock_unknown_malformed_or_inconsistent_is_invalid(tmp_path, change):
+    plan, run, rows = clock_artifacts(tmp_path)
+    rows[-1]["payload"]["clock"].update(change)
+    if change.get("terminal_time_status") == "unknown":
+        rows[-1]["sim_time_s"] = None
+    (run / "runtime.jsonl").write_text("".join(json.dumps(row) + "\n" for row in rows))
+    result = evaluate_run(plan, tmp_path)
+    assert result["outcome"] == "invalid_artifact"
+    assert not result["mission_complete"]
+
+
+def test_new_clock_roundoff_is_not_replaced_by_requested_time(tmp_path):
+    actual = .8000000000000005
+    plan, run, rows = clock_artifacts(tmp_path, actual=actual, snapshot=actual)
+    (run / "runtime.jsonl").write_text("".join(json.dumps(row) + "\n" for row in rows))
+    result = evaluate_run(plan, tmp_path)
+    assert result["outcome"] == "aborted"
+    assert result["metrics"]["sim_time_s"] == actual
+
+
+def test_original_legacy_point_eight_vs_point_seven_five_stays_invalid(tmp_path):
+    plan, run, rows = clock_artifacts(tmp_path, actual=.8, snapshot=.75)
+    del rows[-1]["payload"]["clock"]
+    original = "".join(json.dumps(row) + "\n" for row in rows)
+    (run / "runtime.jsonl").write_text(original)
+    result = evaluate_run(plan, tmp_path)
+    assert result["outcome"] == "invalid_artifact"
+    assert result["reason"] == "evaluator snapshot predates the runtime terminal event"
+    assert (run / "runtime.jsonl").read_text() == original
+
+
+def test_unknown_evaluator_clock_cannot_confirm_even_verified_terminal(tmp_path):
+    plan, run, rows = clock_artifacts(tmp_path, snapshot=None)
+    (run / "runtime.jsonl").write_text("".join(json.dumps(row) + "\n" for row in rows))
+    result = evaluate_run(plan, tmp_path)
+    assert result["outcome"] == "invalid_artifact"
+    assert not result["mission_complete"]
+
+
 def test_manifest_is_a_complete_randomized_six_run_block_with_provenance():
     value = manifest()
     validate_manifest(value)
@@ -207,7 +282,7 @@ def test_absent_directory_is_unrun_but_partial_directory_is_missing_artifact(tmp
     assert report["mission_complete_numerator"] == 0
 
 
-def test_duplicate_event_and_success_truth_disagreement_are_invalid_artifacts(tmp_path):
+def test_duplicate_event_is_invalid_and_false_finish_claim_is_scored_without_rewriting(tmp_path):
     value = manifest()
     first, second = value["schedule"][:2]
     write_artifacts(tmp_path, first, "failure", duplicate_event=True)
@@ -219,8 +294,52 @@ def test_duplicate_event_and_success_truth_disagreement_are_invalid_artifacts(tm
     report = evaluate_manifest(value, tmp_path)
     outcomes = {row["run_id"]: row["outcome"] for row in report["run_rows"]}
     assert outcomes[first["run_id"]] == "invalid_artifact"
-    assert outcomes[second["run_id"]] == "invalid_artifact"
+    assert outcomes[second["run_id"]] == "failure"
+    scored = next(row for row in report["run_rows"] if row["run_id"] == second["run_id"])
+    assert scored["runtime_outcome"] == "success"
+    assert scored["runtime_termination"]["outcome"] == "success"
+    assert scored["evaluator_verdict"]["mission_complete"] is False
+    assert scored["false_finish_claim"] is True
     assert report["mission_complete_numerator"] == 0
+
+
+@pytest.mark.parametrize("runtime_outcome,physical,expected", [
+    ("completed", True, "success"), ("completed", False, "failure"),
+    ("timeout", True, "timeout"), ("aborted", True, "aborted"),
+    ("api_error", False, "api_error"),
+])
+def test_termination_and_physical_verdict_are_independent(runtime_outcome, physical, expected):
+    runtime = {"outcome": runtime_outcome, "termination_reason": "original",
+               "actor_finish_claims": {rid: True for rid in ("r1", "r2", "r3")}}
+    truth = {"mission_complete": physical, "extra_referee_measurement": 123}
+    original = copy.deepcopy((runtime, truth))
+    result = score_termination(runtime, truth)
+    assert result["outcome"] == expected
+    assert result["runtime_termination"] == runtime
+    assert result["evaluator_verdict"] == truth
+    assert result["physical_mission_complete"] is physical
+    assert result["mission_complete"] is (expected == "success")
+    assert (runtime, truth) == original
+
+
+def test_overlap_counts_interval_union_and_temporal_replanning_is_not_causal():
+    commands = [{"event": "LOCAL_COMMAND", "issued_at_s": start, "duration_s": duration,
+                 "robot_id": robot, "task_id": task}
+                for start, duration, robot, task in (
+                    (0, 3, "r1", "pair"), (1, 3, "r2", "pair"), (2, 3, "r3", "solo"))]
+    plan = manifest()["schedule"][0]
+    rows = [event(plan, "d1", "planner_responded", 0, robot_id="r1",
+                  payload={"action": {"kind": "wait"}}),
+            event(plan, "m", "message_received", 1, robot_id="r1",
+                  related_ids={"message_id": "help"}),
+            event(plan, "d2", "planner_responded", 2, robot_id="r1",
+                  related_ids={"decision_id": "changed"}, payload={"action": {"kind": "release"}})]
+    result = interaction_metrics(rows, {"coordination_audit": commands})
+    assert result["issued_command_overlap_sim_s"] == 3
+    assert result["independent_task_command_overlap_sim_s"] == 2
+    assert result["wait_decisions_by_robot"]["r1"] == 1
+    assert result["message_preceded_action_changes"][0]["message_ids"] == ["help"]
+    assert result["deadlock_observed"] is None
 
 
 def test_unmeasured_metrics_remain_null(tmp_path):

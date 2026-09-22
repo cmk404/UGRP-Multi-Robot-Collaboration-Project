@@ -1,0 +1,20 @@
+{
+  "schema_version": "rgb-scenario-baseline-audit.v1",
+  "source_sha": "936bf821b873c9a364a768c4beea7c3debf27dd7",
+  "scope": "offline integrated baseline characterization, not final-path compliance",
+  "verdict": "no_go",
+  "source_files": {
+    "harness/rgb_execution_contract.py": "afc9daf2595dcbdf4e1f4ca621b5113a4705a5dd0ae6878b716d3dbe1949ea26",
+    "harness/rgb_execution_port.py": "c087fbc27fea8126d2223fd66540ae201162e6128fcd7cbfefe269a3d3e372b0",
+    "harness/rgb_communication_runtime.py": "95758bc1338abb610dec542e4142894bcf4bd204baa902d179b466f5e819d807",
+    "harness/rgb_communication_evaluation.py": "9b467b5a78f688d520a2072f1d635236b39a5082b1a306a80e89e665e2dbd9a0"
+  },
+  "findings": [
+    {"id": "A2-01", "case": "queued_command_expiry", "verdict": "fail", "observation": "t0 request executes at t6 despite max_request_age_s=5 because queued commands are not revalidated at dispatch"},
+    {"id": "A2-02", "case": "cancelled_late_reply", "verdict": "partial", "observation": "active lease cancellation rejects later commands, but pending consent cannot be withdrawn without a lease"},
+    {"id": "A2-03", "case": "slow_peer_progress", "verdict": "fail", "observation": "r1 takes 2 wall seconds; r2 and r3 first requests start at wall2 despite rejected r1 late reply"},
+    {"id": "A2-04", "case": "request_decision_command_provenance", "verdict": "partial", "observation": "LOCAL_COMMAND retains command_id but drops originating decision_id and observation_id"}
+  ],
+  "regressions_verified": ["duplicate_joint_intent", "lease_expiry_and_reuse", "recipient_isolation", "delivered_ttl", "finish_claim_separation", "evaluator_noninterference"],
+  "live_readiness": false
+}
