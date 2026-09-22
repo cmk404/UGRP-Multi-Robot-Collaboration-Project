@@ -9,6 +9,7 @@ import queue
 import secrets
 import signal
 import subprocess
+import sys
 import threading
 import time
 from datetime import datetime
@@ -160,7 +161,7 @@ def make_server(state, port):
 
 class Playground:
     """The main thread exclusively owns physics, controls and rendering."""
-    def __init__(self, state, output, *, fps=4, duration=1800, world_factory=None):
+    def __init__(self, state, output, *, fps=4, duration=1800, world_factory=None, metadata=None):
         self.state, self.output = state, output
         self.fps, self.duration = fps, duration
         self.world_factory = world_factory
@@ -172,6 +173,7 @@ class Playground:
         self.command_count = 0
         self.total_sim_s = 0.
         self.log = None
+        self.metadata = metadata or {}
 
     def reset(self, seed):
         from sim.camera_robot_port import CameraRobotPort
@@ -274,14 +276,19 @@ class Playground:
         except Exception as exc:
             error, reason = f"{type(exc).__name__}: {exc}", "error"
             self.state.update(phase="error", error=error)
+            print(error, file=sys.stderr, flush=True)
         finally:
             self.log = None
             self.state.stop.set()
             try:
                 self.hold()
-            finally:
+            except Exception as exc:
+                error, reason = f"cleanup hold failed: {exc}", "error"
+            try:
                 if self.world is not None:
                     self.world.close()
+            except Exception as exc:
+                error, reason = f"cleanup close failed: {exc}", "error"
             self.state.update(phase="error" if error else "stopped", error=error)
             with self.state.cv:
                 frames = dict(self.state.frames)
@@ -290,8 +297,10 @@ class Playground:
             result = {"mode": "local_interactive_physics_viewer", "seed": self.seed,
                 "episodes": self.episode, "exit_reason": reason, "error": error,
                 "wall_s": round(time.monotonic() - start, 3),
-                "sim_time_s": round(self.total_sim_s, 3), "commands": self.command_count,
+                "sim_s": round(self.total_sim_s, 3), "commands": self.command_count,
                 "frame_batches": self.state.sequence, "model_calls": 0,
+                "policy": "manual browser controls", "case": "local viewer",
+                "source_sha": self.metadata.get("source_sha"),
                 "scope": "Manual camera/physics playground; not autonomous transport or communication evaluation."}
             (self.output / "result.json").write_text(json.dumps(result, indent=2) + "\n")
         return 1 if error else 0
@@ -333,7 +342,7 @@ def main():
     http.start()
     print(f"UGRP LIVE {metadata['url']}\n전체 장면과 R1/R2/R3 카메라 · 모델 계정 불필요\n종료: 화면의 종료 버튼 또는 Ctrl-C (최대 {a.duration:g}초)\n기록: {output}", flush=True)
     try:
-        return Playground(state, output, fps=a.fps, duration=a.duration).run()
+        return Playground(state, output, fps=a.fps, duration=a.duration, metadata=metadata).run()
     finally:
         server.shutdown()
         server.server_close()

@@ -62,7 +62,11 @@ def check(output):
             def frame(camera, name):
                 data = urlopen(url + "/frame/" + camera, timeout=3).read()
                 image = Image.open(io.BytesIO(data)).convert("RGB")
-                assert image.size == (384, 288), image.size
+                # The existing observer renderer has a separate 640x480 minimum.
+                if camera == "overview":
+                    assert image.width >= 640 and image.height >= 480, image.size
+                else:
+                    assert image.size == (384, 288), image.size
                 assert max(ImageStat.Stat(image).stddev) > 3, "blank camera"
                 (output / (name + ".jpg")).write_bytes(data)
                 return hashlib.sha256(data).hexdigest()
