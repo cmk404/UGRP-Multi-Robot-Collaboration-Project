@@ -271,6 +271,30 @@ class RGBCommunicationRuntimeTests(unittest.TestCase):
                             and event["payload"]["reason"] == "OWN_STATE_CHANGED"
                             for event in result["events"]))
 
+    def test_actor_finish_claim_is_not_repaired_with_supervisor_truth(self):
+        class FinishPlanner(FixturePlanner):
+            def decide(self, request: dict) -> dict:
+                self.requests.append(copy.deepcopy(request))
+                action = {"kind": "finish", "claim": "mission_complete"}
+                return {"action": action, "message": None,
+                        "raw_text": json.dumps(action, sort_keys=True)}
+
+        port = FixturePort(tick_secret="evaluator-says-failure")
+        owned = {robot_id: FinishPlanner(robot_id, "none") for robot_id in ROBOTS}
+        result = run_rgb_communication(
+            port, owned, condition="none", common_task=FIXTURE["static_context"]["task"],
+            run_id="fixture-false-done",
+            limits=RuntimeLimits(max_ticks=3, max_calls_per_robot=3,
+                                 max_actions_per_robot=3),
+        )
+        self.assertEqual(result["termination_reason"], "ALL_ACTORS_FINISHED")
+        self.assertEqual(port.submissions, [])
+        self.assertEqual(sum(event["event_type"] == "actor_finished"
+                             and event["payload"]["meaning"] == "unverified_actor_claim"
+                             for event in result["events"]), 3)
+        self.assertFalse(any("evaluator-says-failure" in json.dumps(event)
+                             for event in result["events"]))
+
         directory, _, owned_planners, result, _ = self.run_fixture(
             "structured", ttl_s=1.5, ticks=3)
         try:

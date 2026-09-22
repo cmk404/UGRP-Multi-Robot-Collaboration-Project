@@ -109,6 +109,7 @@ class _ActorState:
     actions: int = 0
     sent_messages: int = 0
     sent_message_bytes: int = 0
+    finished: bool = False
 
     def memory_snapshot(self) -> dict[str, Any]:
         return copy.deepcopy({
@@ -612,6 +613,11 @@ def _normalize_action(
         if set(proposal) != {"kind"}:
             raise ValueError("INVALID_WAIT_FIELDS")
         return {"kind": "wait"}
+    if proposal.get("kind") == "finish":
+        if (set(proposal) != {"kind", "claim"}
+                or proposal.get("claim") not in {"mission_complete", "cannot_continue"}):
+            raise ValueError("INVALID_FINISH_FIELDS")
+        return copy.deepcopy(dict(proposal))
     kind = proposal.get("kind")
     fields_by_kind = {
         "task_request": {
@@ -732,7 +738,7 @@ def run_rgb_communication(
 
             for robot_id in robot_ids:
                 actor = actors[robot_id]
-                if actor.calls >= limits.max_calls_per_robot:
+                if actor.finished or actor.calls >= limits.max_calls_per_robot:
                     continue
                 observation = _copy_allowlisted(
                     port.observe(robot_id), OBSERVATION_FIELDS,
@@ -942,6 +948,20 @@ def run_rgb_communication(
                     continue
                 if action.get("kind") == "wait":
                     continue
+                if action.get("kind") == "finish":
+                    actor.finished = True
+                    trace.emit(
+                        "actor_finished",
+                        robot_id=robot_id,
+                        sim_time_s=sim_time_s,
+                        related_ids={
+                            "decision_id": decision_id,
+                            "action_id": action_id,
+                            "observation_id": observation_id,
+                        },
+                        payload={"claim": action["claim"], "meaning": "unverified_actor_claim"},
+                    )
+                    continue
                 if actor.actions >= limits.max_actions_per_robot:
                     trace.emit(
                         "budget_exhausted",
@@ -977,7 +997,11 @@ def run_rgb_communication(
                     payload=result,
                 )
 
-            if all(actor.calls >= limits.max_calls_per_robot for actor in actors.values()):
+            if all(actor.finished for actor in actors.values()):
+                termination_reason = "ALL_ACTORS_FINISHED"
+                break
+            if all(actor.finished or actor.calls >= limits.max_calls_per_robot
+                   for actor in actors.values()):
                 termination_reason = "CALL_BUDGET_EXHAUSTED"
                 break
     except Exception as exc:
