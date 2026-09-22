@@ -1,0 +1,54 @@
+{
+  "static_context": {
+    "schema": "ugrp.rgb_static_context.v1",
+    "task": {
+      "description": "Move beam_01 with two independently consenting carriers while box_01 may move independently.",
+      "object_ids": ["beam_01", "box_01"],
+      "allowed_skills": ["pair_transport", "solo_transport"]
+    },
+    "static_map": {
+      "id": "fixture_map",
+      "version": "1",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "description": "Static lanes and destination B; no live robot or cargo pose."
+    },
+    "camera_calibration": {
+      "id": "fixture_camera",
+      "version": "1",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "description": "Fixed own-camera and common top-camera calibration."
+    }
+  },
+  "pair_requests": {
+    "r1": {
+      "kind": "task_request",
+      "request_id": "r1-beam",
+      "task_id": "beam-task",
+      "object_id": "beam_01",
+      "skill": "pair_transport",
+      "participants": ["r1", "r2"],
+      "resources": ["beam_01", "north_lane"],
+      "stage": "CARRY",
+      "own_role": "end_a",
+      "observation_id": "r1-000001",
+      "decision_id": "r1-decision-1",
+      "requested_at_s": 0.0,
+      "expires_at_s": 3.0
+    },
+    "r2": {
+      "kind": "task_request",
+      "request_id": "r2-beam",
+      "task_id": "beam-task",
+      "object_id": "beam_01",
+      "skill": "pair_transport",
+      "participants": ["r2", "r1"],
+      "resources": ["north_lane", "beam_01"],
+      "stage": "CARRY",
+      "own_role": "end_b",
+      "observation_id": "r2-000001",
+      "decision_id": "r2-decision-1",
+      "requested_at_s": 0.0,
+      "expires_at_s": 4.0
+    }
+  }
+}
