@@ -1,6 +1,6 @@
 # D handoff — R4/R6 pilot manifest and offline evaluation
 
-Status: implementation prepared on `codex/r4-r6-rgb-communication-evaluation`; no simulator, model, remote job, or physical robot was run. Base main is `120cc821b6a1d5c104aab8c8ef2260cf7f8c9a7b`. Source/test implementation commit is `d8fa21b2280f9d38716c5e0e975084002a0e7937`.
+Status: implementation prepared on `codex/r4-r6-rgb-communication-evaluation`; no simulator, model, remote job, or physical robot was run. Base main is `120cc821b6a1d5c104aab8c8ef2260cf7f8c9a7b`. Source/test implementation commit is `d8fa21b2280f9d38716c5e0e975084002a0e7937`; B-snapshot compatibility hardening is in `632a7415c30eecc0147396aca2364cda4a494145`.
 
 ## Scope and files
 
@@ -103,4 +103,4 @@ Local source-only verification at the time of handoff:
 
 CI ownership remains separate. `scripts/run_ci_tests.py` must add `tests/test_rgb_communication_evaluation.py` after review; no existing CI file was edited in this branch. C's committed exact trace and B PR #95's exact detached snapshot were consumed read-only as recorded above. The final integrated branch must keep those producer SHAs or rerun compatibility against their replacements. These compatibility checks do not authorize live execution.
 
-Implementation source commit: `d8fa21b2280f9d38716c5e0e975084002a0e7937`.
+Latest implementation code commit: `632a7415c30eecc0147396aca2364cda4a494145` (initial source/test commit `d8fa21b2280f9d38716c5e0e975084002a0e7937`).
