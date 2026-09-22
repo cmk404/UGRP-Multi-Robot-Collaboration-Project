@@ -143,3 +143,12 @@ unknown·잘못된 schema/domain/유한값/순서/종료 event 불일치는 inva
   계약과 static gate를 다시 확인해야 한다. 코드 파일의 존재만으로 gate를 열지 않는다.
 - 실제 Colab 실행/회수, 물리 성공, live LLM, Test A/B rollout, 실제 dashboard 결과는
   각각 별도 실험 기록에 증거를 남기기 전 완료가 아니다.
+
+
+## 로컬 진입점 추가 — 2026-09-22 후속
+
+이 문서 앞부분의 Colab 전용 실행 설명은 최초 D2 실행 당시를 기록한다. 사용자 요청에 따른
+로컬 CLI 후속 변경에서 `scripts.run_rgb_communication_study`의 `run/trial`은 Linux와 macOS를
+허용한다. source/evidence/readiness/clock/cost 검증 및 부모의 유한 subprocess 제한은 유지한다.
+새 소스 SHA로 동결한 manifest를 준비해야 한다. 기존 Colab 제출/회수 명령은 선택 경로로 보존한다.
+이 변경에서 로컬 실제 통신/운반 코호트나 live LLM admission을 새로 검증하지 않았다.

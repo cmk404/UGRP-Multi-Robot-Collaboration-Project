@@ -120,6 +120,20 @@
       "entry": "scripts/export_tensorboard.py",
       "docs": "docs/tensorboard.md",
       "requires": "optional observability dependencies; existing viewer"
+    },
+    {
+      "id": "communication-study",
+      "purpose": "같은 물리 실행기의 유한 통신 연구 prepare/check/run/trial",
+      "entry": "scripts/run_rgb_communication_study.py",
+      "docs": "docs/research_parallel/d2-study-runner.md",
+      "requires": "local Mac/Linux; fresh source-bound manifest, map/model evidence, all readiness and cost gates; stale evidence is rejected"
+    },
+    {
+      "id": "communication-cloud-submit",
+      "purpose": "명시적으로 선택하는 원격 통신 연구 제출",
+      "entry": "scripts/submit_rgb_communication_study.py",
+      "docs": "docs/research_parallel/d2-study-runner.md",
+      "requires": "explicit Colab allocation and evidence capsule; optional remote path, not invoked by local CLI"
     }
   ]
 }

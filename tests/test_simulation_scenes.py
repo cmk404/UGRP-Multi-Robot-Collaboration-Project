@@ -100,3 +100,36 @@ def test_workflow_entries_resolve_to_existing_source_and_documentation():
     assert len({r['id'] for r in rows}) == len(rows)
     for row in rows:
         assert (ROOT/row['entry']).is_file() and (ROOT/row['docs']).is_file()
+
+
+@pytest.mark.parametrize('host', ['Darwin', 'Linux'])
+@pytest.mark.parametrize('action', ['run', 'trial'])
+def test_existing_study_cli_accepts_local_hosts_and_preserves_runner_contract(tmp_path, monkeypatch, host, action):
+    from scripts import run_rgb_communication_study as cli
+    monkeypatch.setattr(cli.platform, 'system', lambda: host)
+    manifest = tmp_path/'manifest.json'
+    manifest.write_text('{"frozen_test_value": 1}')
+    calls = []
+    def runner(value, **kwargs):
+        calls.append((value, kwargs))
+        return {'ready': True}
+    monkeypatch.setattr(cli, 'run_study', runner)
+    monkeypatch.setattr(cli, 'run_trial', runner)
+    args = [action, '--manifest', str(manifest), '--evidence-root', str(tmp_path), '--output', str(tmp_path/'result')]
+    if action == 'trial': args += ['--run-id', 'test']
+    assert cli.main(args) == 0
+    assert calls[0][0] == {'frozen_test_value': 1}
+    assert calls[0][1]['evidence_root'] == tmp_path
+    assert calls[0][1]['output'] == tmp_path/'result'
+
+
+def test_local_study_cli_does_not_bypass_readiness_failure(tmp_path, monkeypatch):
+    from scripts import run_rgb_communication_study as cli
+    monkeypatch.setattr(cli.platform, 'system', lambda: 'Darwin')
+    manifest = tmp_path/'manifest.json';manifest.write_text('{}')
+    def blocked(*args, **kwargs):
+        raise cli.ContractError('source-bound evidence not ready')
+    monkeypatch.setattr(cli, 'run_study', blocked)
+    with pytest.raises(SystemExit) as error:
+        cli.main(['run', '--manifest', str(manifest), '--evidence-root', str(tmp_path), '--output', str(tmp_path/'out')])
+    assert error.value.code == 2 and not (tmp_path/'out').exists()

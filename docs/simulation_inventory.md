@@ -18,7 +18,7 @@
 | headless 시간 초과가 성공 종료 코드 | 미완료 wall limit은 종료 코드 2 |
 | start/end 캡처만 제공 | ffmpeg MP4와 프레임별 에피소드/SIM 시각, 관찰용 카메라 선택 |
 | 설치 안내와 로컬/클라우드 기본값이 서로 모순 | 로컬 시작 경로 통일, doctor로 현재 환경 확인 |
-| 기존 연구 스킬·학습·평가 경로를 새 사용자가 찾기 어려움 | workflows에서 17개 주요 진입점·필요 자료·범위 제공 |
+| 기존 연구 스킬·학습·평가 경로를 새 사용자가 찾기 어려움 | workflows에서 19개 주요 진입점·필요 자료·범위 제공 |
 
 ## 보존·연결한 자산
 
@@ -62,3 +62,16 @@ engine → 장면 XML/초기화 adapter → Simulation → CLI 순으로 구성�
 
 Mac·Ubuntu에서 58/58 장면 생성·reset을 통과했다. 실행·검증 범위와 소스 SHA는
 [검증 기록](../experiments/2026-09-22-simulation-scenes/README.md)에 남겼다.
+
+
+## 2026-09-22 main 후속 반영
+
+검토 중 병합된 #100–103의 시나리오/실행 포트/비동기 에이전트/연구 실행기도 보존했다.
+`workflows`에 `communication-study`와 명시적 원격 제출 경로를 추가했다.
+기존 연구 CLI의 `/content` 전용 실행 차단을 Linux/macOS 지원 검사로 바꿔 로컬에서도
+`prepare/check/run/trial`을 사용할 수 있게 했다. `run`은 같은 소유 subprocess·유한 예산,
+원본/모델/지도/clock/비용 readiness 검사를 그대로 거친다. 원격 제출기는 별도 선택이다.
+
+새 소스에 연결한 manifest와 증거가 필요하며 이전 SHA의 승인 자료를 그대로 재사용하지 않는다.
+새 통신 물리 코호트를 이 구성 검토에서 실행하지 않았다. 연구용 LLM admission은 기존 gate의
+미완료 사항이 해결되어야 하며, CLI의 로컬 지원을 admission 통과로 해석하지 않는다.

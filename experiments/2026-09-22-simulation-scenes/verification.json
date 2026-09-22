@@ -699,5 +699,14 @@
     "full controller/random/checkpoint replay not implemented",
     "model-dependent workflows require their artifacts; the CLI does not train or run the full research cohort",
     "raw Mac and retrieved Linux files are local; GitHub CI artifacts expire; local hashes are not a backup"
-  ]
+  ],
+  "main_integration": {
+    "main_sha": "39e04ae5b4424710ea4ed2eccd4a953c1b1928a0",
+    "merge_sha": "29c5e09",
+    "related_tests_passed": 125,
+    "native_runtime_diff_from_7dc11f6": [],
+    "workflow_entries": 19,
+    "local_study_entry_sha256": "6353c3e6b25f8c9587162c4f4f915528c2c3c62d685561a448742304f481d8f4",
+    "scope": "Local Linux/macOS CLI routing and unchanged admission rejection tests only; no new communication trial or model request"
+  }
 }

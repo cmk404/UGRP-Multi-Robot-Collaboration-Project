@@ -74,3 +74,16 @@ bash scripts/open_simulation.command run configs/simulation/local.json --sim-sec
 
 Mac은 기존 환경 Python 또는 자동 선택 launcher를 사용한다. Linux native는 데스크톱/GLFW,
 headless RGB는 설치한 OSMesa 설정을 사용한다. 출력 이름은 새로 정한다.
+
+
+## 최신 main과의 통합
+
+검토 중 승인 병합된 #100–103, main `39e04ae5b4424710ea4ed2eccd4a953c1b1928a0`을 반영했다.
+실험 인덱스의 동시 추가 충돌은 양쪽 기록을 모두 보존해 해결했다. native session/scene/recording/
+production·기존 XML helper·sim_cli 코드는 위 검증 소스 `7dc11f6`과 동일하다.
+`workflows`는 새 연구 실행/선택적 원격 제출을 포함해 19개다.
+
+새 연구 CLI의 Colab `/content` 검사만 Linux/macOS 지원 검사로 바꿨다. 기존 manifest/출처/
+readiness/clock/모델 비용 gate를 유지하고 Mac/Linux의 run/trial 호출 전달과 gate 거절을
+포함한 관련 테스트 125개를 통과했다. 실제 통신 물리 시행이나 live LLM admission을 추가로
+실행했다는 뜻은 아니다. 새로운 manifest는 새 소스/원본 해시로 준비해야 한다.

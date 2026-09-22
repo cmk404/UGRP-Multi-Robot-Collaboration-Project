@@ -177,3 +177,9 @@ headless에서 SIM 시간에 도달하지 못한 wall timeout은 종료 코드 2
 기존 버전 1 설정에서 `scene.layout`을 생략하면 호환성을 위해 `camera_team`이 유지된다.
 새 설정은 `init`으로 생성해 선택 장면을 명시한다. 원래 장애물/공 예제는
 `new DIR --template extensions-demo`로 생성할 수 있다.
+
+
+유한 통신 연구 실행도 `python -m scripts.run_rgb_communication_study prepare/check/run/trial`로
+로컬 Mac/Linux에서 호출할 수 있다. 인자는 해당 subcommand의 `--help`와
+[연구 실행기 계약](research_parallel/d2-study-runner.md)을 따른다. 출처가 동결된 manifest와
+증거·예산·모델 admission이 필요하며, native 장면을 연 것만으로 이 조건이 충족되지는 않는다.
