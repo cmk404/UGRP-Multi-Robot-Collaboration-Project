@@ -1,0 +1,81 @@
+{
+  "research_question": "Without a central role or mission planner, how do explicit peer communication modes affect three independent LLM robots' allocation, cooperative transport, recovery, time, and cost?",
+  "mission": {
+    "robots": ["r1", "r2", "r3"],
+    "cargo": [
+      {"object_id": "beam", "required_carriers": 2},
+      {"object_id": "box", "required_carriers": 1}
+    ],
+    "destination_candidate": "dock_a",
+    "id_permutation": "identity for first linkage only; counterbalance after pilot",
+    "weld": false,
+    "camera_fov_change": false
+  },
+  "scenarios": [
+    {
+      "id": "normal-supported-mission",
+      "status": "provisional",
+      "mission": "supported beam-one plus box-one dispatch task",
+      "intended_event": "normal completion path",
+      "admission_note": "R0 approval and current RGB runtime verification are still required"
+    },
+    {
+      "id": "local-visual-misalignment-recovery",
+      "status": "candidate-no-go",
+      "mission": "same supported mission with an own/top-RGB-observable local visual misalignment",
+      "intended_event": "recovery decision after one or more robots observe the mismatch in allowed RGB and own-command history",
+      "admission_note": "setup hash and observer set are not established; do not assume a private designated observer, and treat the case as public recovery if the saved inputs show no information difference"
+    }
+  ],
+  "seed": 11,
+  "repeat": 0,
+  "randomization_seed": 20260922,
+  "fixed_inputs": {
+    "model": {"id": "unresolved-fixed-model", "sha256": null},
+    "physics": {"id": "weld-off-current-physics", "sha256": null},
+    "map": {"id": "dispatch-beam-one-box-one", "sha256": null},
+    "calibration": {"id": "current-camera-and-motion-calibration", "sha256": null}
+  },
+  "budgets": {
+    "per_run": {
+      "wall_time_s": 900,
+      "sim_time_s": 180,
+      "request_wall_time_s": 30,
+      "commands": 6000,
+      "model_calls": 72,
+      "model_calls_per_robot": 24,
+      "input_tokens": 600000,
+      "output_tokens": 55296,
+      "output_tokens_per_call": 768,
+      "messages": 72,
+      "messages_per_robot": 24,
+      "message_bytes": 216000,
+      "message_bytes_per_robot": 72000,
+      "message_tokens": null
+    },
+    "cohort": {
+      "wall_time_s": 6900,
+      "model_calls": 432,
+      "total_tokens": 3931776,
+      "commands": 36000,
+      "provisioning_wall_time_s": 900,
+      "recovery_reserve_wall_time_s": 600
+    }
+  },
+  "readiness": {
+    "r0_design_approved": false,
+    "r1_boundary_audit_passed": false,
+    "r2_common_runtime_verified": false,
+    "r3_conditions_integrated": false,
+    "event_schema_agreed": false,
+    "single_submitter_named": false
+  },
+  "stop_conditions": [
+    "all actors declare local work finished; independent evaluator scores after runtime stops",
+    "trial simulation-time budget expires",
+    "trial wall-time budget expires",
+    "any safety stop or unrecoverable runtime error",
+    "any actor receives a forbidden oracle field"
+  ],
+  "statistical_claim": "none; integration and measurability check only"
+}

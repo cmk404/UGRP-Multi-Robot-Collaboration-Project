@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "source_sha": "120cc821b6a1d5c104aab8c8ef2260cf7f8c9a7b",
+  "audit_disposition": "no_go_for_live_pilot",
+  "scope": "current main characterization; passing tests reproduce strengths and known gaps, not pilot compliance",
+  "current_rgb_actor_observation_fields": [
+    "actuator_state",
+    "camera",
+    "frame_id",
+    "image",
+    "robot_id",
+    "sha256",
+    "sim_time"
+  ],
+  "required_modes": ["none", "structured", "natural"],
+  "allowed_robot_ids": ["r1", "r2", "r3"],
+  "allowed_cargo_ids": ["oak_plank_01", "small_box_01", "small_box_02"],
+  "forbidden_actor_fields": [
+    "cargo",
+    "coordinates",
+    "global_state",
+    "map",
+    "obstacle_positions",
+    "peer_positions",
+    "pose",
+    "seeded_layout",
+    "world_state"
+  ],
+  "current_rgb_action_kinds": ["arm", "drive", "look", "wait"],
+  "required_joint_adapter_capabilities": [
+    "independent_joint_request_without_peer_message",
+    "participant_only_matching_consent",
+    "bounded_hold_resume_and_revocation",
+    "local_rgb_completion_claim_distinct_from_evaluation"
+  ],
+  "minimum_sync_return_fields": [
+    "request_id",
+    "own_request_status",
+    "lease_expires_at",
+    "safety_state"
+  ],
+  "must_not_enter_minimum_sync": [
+    "peer_private_reason",
+    "peer_observation",
+    "peer_plan",
+    "role_table",
+    "shared_plan",
+    "supervisor_repair"
+  ],
+  "known_current_rgb_gaps": [
+    "no_joint_request_action",
+    "no_actor_completion_evidence",
+    "no_message_ttl_or_source_age",
+    "no_event_wakeup_on_delivery",
+    "observed_ids_are_unverified_sender_claims",
+    "own_robot_cam_only_no_public_top_rgb",
+    "semantic_oracle_keys_not_rejected_by_planner_blacklist",
+    "dispatch_shared_plan_is_an_additional_communication_channel"
+  ]
+}
