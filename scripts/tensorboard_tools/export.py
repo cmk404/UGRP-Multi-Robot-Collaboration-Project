@@ -18,6 +18,7 @@ import time
 import tempfile
 import shutil
 import subprocess
+from scripts.carry_failure_metrics import issued_command_count
 
 MAX_BYTES = 64 * 1024 * 1024
 HP_METRICS = ('process/exit_code', 'result/wall_s', 'result/sim_s', 'result/commands', 'result/model_calls',
@@ -243,10 +244,7 @@ def export_execution(src, w, result, max_images):
         if not finite(metrics['result/commands']):
             issued = src.read('issued-commands.json')
             if isinstance(issued, dict):
-                metrics['result/commands'] = sum(
-                    bool(obj(command.get('action'))) or
-                    (command.get('stage') != 'SETUP' and bool(obj(command.get('issued_servo_targets'))))
-                    for history in issued.values() for command in rows(history))
+                metrics['result/commands'] = issued_command_count(issued)
                 meta['commands_source'] = 'issued-commands.json; excludes initial SETUP target snapshot'
     success_field = next((k for k in ('success', 'transport_success', 'physical_success') if type(result.get(k)) is bool), None)
     evaluation=obj(result.get('evaluation'))

@@ -4,6 +4,17 @@ import json
 from pathlib import Path
 
 
+def issued_command_count(commands):
+    """Count actual issued actions, excluding initial SETUP target snapshots."""
+    if (not isinstance(commands,dict) or any(not isinstance(history,list)
+            or any(not isinstance(row,dict) for row in history) for history in commands.values())):
+        return None
+    def populated(value):return isinstance(value,dict) and bool(value)
+    return sum(populated(row.get('action')) or
+               (row.get('stage')!='SETUP' and populated(row.get('issued_servo_targets')))
+               for history in commands.values() for row in history)
+
+
 def schedule(protocol, conditions):
     repeats = protocol.get('evaluation', {}).get('repeats', 1)
     if type(repeats) is not int or repeats < 1:

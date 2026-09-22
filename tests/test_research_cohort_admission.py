@@ -34,6 +34,19 @@ def test_changed_result_or_missing_collision_measurement_cannot_pass(tmp_path):
     assert not assess(report)['conditions']['RGB']['qualified_for_declared_cases']
 
 
+def test_command_metric_excludes_setup_snapshot_and_rejects_malformed_history(tmp_path):
+    root,report=fixture(tmp_path)
+    p=root/'issued-commands.json'
+    p.write_text(json.dumps({'r1':[{'stage':'SETUP','issued_servo_targets':{'1':1500}},
+        {'stage':'TRANSIT','action':{'forward':.01}},
+        {'stage':'GRASP','issued_servo_targets':{'1':1400}}]}))
+    result=assess(report)
+    assert result['trials'][0]['commands']==2
+    assert result['conditions']['RGB']['qualified_for_declared_cases']
+    p.write_text(json.dumps({'r1':['corrupt command']}))
+    assert not assess(report)['conditions']['RGB']['qualified_for_declared_cases']
+
+
 def test_unattempted_trial_is_not_admitted_or_counted_as_failure(tmp_path):
     _,report=fixture(tmp_path);r=json.loads(report.read_text());r['runs']=[];report.write_text(json.dumps(r))
     s=assess(report);assert not s['complete']

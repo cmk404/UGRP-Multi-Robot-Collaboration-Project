@@ -37,6 +37,9 @@ def fixture(root, temporal=True):
             row['inputs'][slot] = inp
             row['actions'][slot] = dict(zip(AXES, [.01, 0., 0.]))
         calls.append(row)
+    put('issued-commands.json', {rid: [{'stage': 'TRANSIT', 'issued_at_s': row['sim_time_s'],
+        'action': row['actions'][slot]} for row in calls]
+        for slot, rid in [('r1', 'physical-a'), ('r3', 'physical-b')]})
     return calls
 
 
@@ -48,12 +51,15 @@ def test_reconstructs_every_request_without_worker_or_simulator(tmp_path, tempor
     assert audit(tmp_path, []) is None
 
 
-@pytest.mark.parametrize('damage', ['wire', 'image', 'history', 'context', 'binding'])
+@pytest.mark.parametrize('damage', ['wire', 'image', 'history', 'context', 'binding', 'issued'])
 def test_changed_inputs_cannot_be_admitted(tmp_path, damage):
     calls = fixture(tmp_path); inp = calls[-1]['inputs']['r1']
     if damage == 'wire': inp['wire_sha256'] = 'wrong'
     elif damage == 'image': (tmp_path/inp['images']['own']['path']).write_bytes(b'wrong')
     elif damage == 'history': inp['history'] = list(reversed(inp['history']))
     elif damage == 'context': inp['context'] = [0.]*8
-    else: inp['physical_robot_id'] = 'other'
+    elif damage == 'binding': inp['physical_robot_id'] = 'other'
+    else:
+        path = tmp_path/'issued-commands.json'; issued = json.loads(path.read_text())
+        issued['physical-a'][0]['action']['forward'] = .5; path.write_text(json.dumps(issued))
     with pytest.raises(ValueError): audit(tmp_path, calls)

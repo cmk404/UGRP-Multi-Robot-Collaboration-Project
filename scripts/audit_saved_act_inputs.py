@@ -15,6 +15,9 @@ def audit(root, decisions):
     setup = json.loads((root/'episode-setup-only.json').read_text())
     plan = json.loads((root/'committed-plan.json').read_text())['plan']
     bindings = json.loads((root/'skill-bindings.json').read_text())['pair_model_slots']
+    commands = json.loads((root/'issued-commands.json').read_text())
+    issued = {slot: {round(c['issued_at_s'], 6): c for c in commands[rid]
+                     if c['stage'] == 'TRANSIT'} for slot, rid in bindings.items()}
     goal = setup['static_map']['docks'][plan['dock']]['slots']['beam']['center_m']
     route = next(task['route'] for task in plan['tasks'] if task['object'] == 'beam')
     past = {slot: [] for slot in bindings}
@@ -61,6 +64,10 @@ def audit(root, decisions):
             request = wire_request(frames, length)
             payload = json.dumps(request if temporal else request['frames'][0]) + '\n'
             require(hashlib.sha256(payload.encode()).hexdigest() == inp['wire_sha256'], 'ACT wire hash mismatch')
+            if index < len(calls)-1:
+                command = issued[slot].get(round(row['sim_time_s'], 6), {}).get('action', {})
+                require(all(command.get(axis) == row['actions'][slot][axis] for axis in AXES),
+                        'ACT history action differs from issued command')
             previous[slot] = [row['actions'][slot][axis] for axis in AXES]
             requests += 1
     return {'passed': True, 'requests': requests, 'history': length,

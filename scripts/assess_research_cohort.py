@@ -8,7 +8,7 @@ import statistics
 import sys
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
-from scripts.carry_failure_metrics import aggregate, outcome
+from scripts.carry_failure_metrics import aggregate, outcome, issued_command_count
 from scripts.audit_saved_act_inputs import audit as audit_act_inputs
 
 
@@ -43,8 +43,9 @@ def assess(report_path):
         boundary=(result.get('source_sha')==report['source_sha'] and evaluation.get('weld_steps')==0
                   and result.get('obstacle_contact_steps')==0 and contacts==0)
         commands=read_json(root/'issued-commands.json',dict)
+        command_count=issued_command_count(commands)
         decisions=read_json(root/'pair-decisions.json',list)
-        valid_json=(bool(result) and commands is not None and all(isinstance(v,list) for v in commands.values())
+        valid_json=(bool(result) and command_count is not None
                     and decisions is not None and all(isinstance(d,dict) for d in decisions)
                     and read_json(root/'evaluation-only.json',dict) is not None)
         decisions=decisions if decisions is not None and all(isinstance(d,dict) for d in decisions) else []
@@ -59,7 +60,7 @@ def assess(report_path):
             'artifact_json_valid':valid_json,
             'report_matches_readback':consistent,'source_physics_checks_pass':boundary,
             'outcome':verdict,'wall_s':result.get('wall_s'),
-            'commands':sum(map(len,commands.values())) if commands is not None and all(isinstance(v,list) for v in commands.values()) else None,
+            'commands':command_count,'commands_scope':'Issued actions, excluding initial SETUP target snapshots; same as TensorBoard',
             'act_model_calls':sum(len(d.get('inputs',{})) for d in act),
             'act_input_audit':input_audit,
             'mean_act_inference_s':statistics.mean(latency) if latency else None,
