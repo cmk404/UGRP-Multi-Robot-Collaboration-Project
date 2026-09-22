@@ -17,7 +17,7 @@ from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
 
-from sim.session_config import DEFAULT_CONFIG, LAYOUTS, ROBOTS, load_config, validate_config
+from sim.session_config import LAYOUTS, ROBOTS, load_config, validate_config
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -67,7 +67,9 @@ def run(config, args):
     result = {**metadata, "seed": config["scene"]["seed"], "policy": "raw_commands",
               "case": config["scene"]["layout"], "scope": "simulation_runtime_check",
               "model_calls": 0, "protocol_complete": False, "stop_reason": "error"}
-    previous_term = signal.signal(signal.SIGTERM, lambda *_: (_ for _ in ()).throw(KeyboardInterrupt()))
+    def interrupted(*_):
+        raise KeyboardInterrupt
+    previous_term = signal.signal(signal.SIGTERM, interrupted)
     try:
         sim = Simulation(config, render=args.capture)
         mujoco.mj_saveModel(sim._world.model, str(output / "model.mjb"))
@@ -130,12 +132,17 @@ def run(config, args):
         signal.signal(signal.SIGTERM, previous_term)
         try:
             if sim is not None:
-                result["sim_s"] = sim.time
-                result["episodes"] = sim.episode + 1
-                result["commands"] = sum(row["event"] == "command" for row in sim.command_history)
-                (output / "commands.jsonl").write_text("".join(json.dumps(row) + "\n" for row in sim.command_history), encoding="utf-8")
-                write_json(output / "final-evaluation.json", sim.evaluation_state())
-                sim.close()
+                try:
+                    result["sim_s"] = sim.time
+                    result["episodes"] = sim.episode + 1
+                    result["commands"] = sum(row["event"] == "command" for row in sim.command_history)
+                    (output / "commands.jsonl").write_text("".join(json.dumps(row) + "\n" for row in sim.command_history), encoding="utf-8")
+                    write_json(output / "final-evaluation.json", sim.evaluation_state())
+                finally:
+                    sim.close()
+        except Exception as error:
+            result.update(protocol_complete=False, stop_reason="error", error=f"{type(error).__name__}: {error}")
+            raise
         finally:
             result["wall_s"] = time.monotonic() - started
             result["artifacts_sha256"] = {p.name: hashlib.sha256(p.read_bytes()).hexdigest()

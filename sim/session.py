@@ -9,6 +9,7 @@ import base64
 import copy
 import hashlib
 import math
+import time
 from contextlib import nullcontext
 
 from sim.camera_robot_port import CameraRobotPort
@@ -176,6 +177,16 @@ class Simulation:
         try:
             if self._viewer is not None:
                 self._viewer.close()
+                # MuJoCo 3.12 Handle.close() only signals exit. is_running()
+                # becomes false before the daemon render thread destroys GL.
+                # Wait for its weak owner to disappear before Python's atexit
+                # glfw.terminate; otherwise Linux can segfault during exit.
+                # Isolate this version-pinned lifecycle detail here.
+                deadline = time.monotonic() + 10.0
+                while self._viewer._sim() is not None:
+                    if time.monotonic() >= deadline:
+                        raise RuntimeError("MuJoCo viewer did not finish closing within 10 seconds")
+                    time.sleep(.01)
             for port in self._ports.values():
                 port.hold(float(self._world.data.time))
         finally:

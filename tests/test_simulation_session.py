@@ -1,4 +1,3 @@
-import copy
 import json
 from pathlib import Path
 from types import SimpleNamespace
@@ -125,3 +124,21 @@ def test_cli_init_inspect_and_refuse_overwrite(tmp_path, capsys):
 def test_config_examples_are_valid():
     for path in (Path(__file__).resolve().parents[1] / "configs/simulation").glob("*.json"):
         validate_config(json.loads(path.read_text()))
+
+
+def test_close_waits_for_native_render_owner_before_world_cleanup(monkeypatch):
+    order = []
+
+    class Viewer:
+        def close(self):
+            order.append("exit_requested")
+
+        def _sim(self):
+            return object() if "render_destroyed" not in order else None
+
+    sim = Simulation({"version": 1}, world_factory=World)
+    sim._viewer = Viewer()
+    monkeypatch.setattr("sim.session.time.sleep", lambda _: order.append("render_destroyed"))
+    sim._world.close = lambda: order.append("world_closed")
+    sim.close()
+    assert order == ["exit_requested", "render_destroyed", "world_closed"]

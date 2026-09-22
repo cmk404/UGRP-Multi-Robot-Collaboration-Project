@@ -134,9 +134,11 @@ jobs:
 
       - name: Run the native MuJoCo window on a virtual desktop
         run: |
-          MUJOCO_GL=glfw xvfb-run -a python scripts/ugrp_session.py run native-ci -- python -m scripts.sim_cli run configs/simulation/drive.json --sim-seconds 3 --wall-seconds 60 --output outputs/simulation-ci/native
-          test ! -e "$UGRP_SESSION_DIR/native-ci.json"
-          python -c "import json; r=json.load(open('outputs/simulation-ci/native/result.json')); assert r['protocol_complete'] and r['commands'] == 3, r"
+          for attempt in 1 2 3; do
+            MUJOCO_GL=glfw xvfb-run -a python scripts/ugrp_session.py run native-ci -- python -m scripts.sim_cli run configs/simulation/drive.json --sim-seconds 3 --wall-seconds 60 --output "outputs/simulation-ci/native-$attempt"
+            test ! -e "$UGRP_SESSION_DIR/native-ci.json"
+          done
+          python -c "import json,pathlib; rows=[json.loads(p.read_text()) for p in pathlib.Path('outputs/simulation-ci').glob('native-*/result.json')]; assert len(rows)==3 and all(r['protocol_complete'] and r['commands']==3 for r in rows), rows"
 
       - name: Keep simulator verification
         if: always()
