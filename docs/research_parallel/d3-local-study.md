@@ -18,6 +18,25 @@ ACT 소유자의 종료/자식 정리 확인과 최종 고정 source/config에 �
 전체 child 종료 뒤에만 부모가 원본 해시를 수집한다. 단순 `bundle.close()`를
 모든 파일 쓰기의 종료로 해석하지 않는다.
 
+로컬 부모 SIGTERM도 KeyboardInterrupt와 같은 소유 child TERM→5초→KILL→reap
+경로로 처리한다. exit130 뒤 다음 시행을 시작하지 않고 `unrun/study_interrupted`로
+분모에 남긴다. 바깥 launcher는 같은 `bounded_process`로 기존 study CLI를 직접
+감싼다(1790초+최대10초정리). 중첩 세션 wrapper의 동일 grace 경쟁은 추가하지 않는다.
+이 runner는 자신이 시작한 trial의 별도 process group을 회수한다. 기존 공유 viewer나
+ACT 프로세스를 종료 대상으로 검색하지 않는다.
+
+| 부모가 관찰한 종료 | 다음 배정 시행 |
+|---|---|
+| 정상 process exit0 + 물리 목표 실패/런타임 실패 기록 | 원래 배정된 다음 시행 진행(재시도 아님) |
+| 부모 SIGTERM/KeyboardInterrupt, child exit130 또는 signal exit | `unrun/study_interrupted` |
+| child wall timeout | `unrun/previous_trial_wall_timeout` |
+| 기타 child 비정상 exit, leader 종료 뒤 잔류 자식 정리 필요 | `unrun/previous_trial_process_failed` |
+| child reap 또는 process group 소멸 미확인 | `unrun/child_cleanup_unconfirmed`; raw 최종 해시 생성 금지 |
+
+리더 종료만으로 전체 그룹 종료를 추정하지 않는다. 정상·중단 모두 소유 PGID의 실제
+소멸을 검사하며 남은 자식은 같은 유한 cleanup 안에서 정리한다. TERM을 무시하면
+KILL로 올리고 drain 시간을 남긴다. 미확인 상태를 성공이나 완료된 회수로 바꾸지 않는다.
+
 ## 로컬 자산 참조 준비
 
 `scripts.prepare_rgb_communication_replay`의 명시적 `--asset-mode reference`는

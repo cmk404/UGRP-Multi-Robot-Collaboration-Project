@@ -20,6 +20,7 @@ import platform
 import signal
 import subprocess
 import sys
+import threading
 import time
 from typing import Any
 
@@ -586,32 +587,84 @@ def run_trial(manifest: dict, *, run_id: str, root: Path, evidence_root: Path, o
     return result
 
 
-def bounded_process(command: list[str], *, cwd: Path, log_path: Path, timeout_s: float) -> dict:
+def bounded_process(command: list[str], *, cwd: Path, log_path: Path, timeout_s: float,
+                    cleanup_grace_s: float = 5) -> dict:
     """Terminate only the child process group owned by this trial on timeout."""
+    if not finite(timeout_s, minimum=.001) or not finite(cleanup_grace_s, minimum=.001) \
+            or cleanup_grace_s > 10:
+        raise ContractError("finite timeout and cleanup grace <=10 seconds required")
     started = time.monotonic()
-    with log_path.open("x") as log:
-        child = subprocess.Popen(command, cwd=cwd, stdout=log, stderr=subprocess.STDOUT,
-                                 start_new_session=True)
-        timed_out = False
+    def group_alive(pid):
         try:
-            code = child.wait(timeout=timeout_s)
-        except (subprocess.TimeoutExpired, KeyboardInterrupt) as exc:
-            timed_out = isinstance(exc, subprocess.TimeoutExpired)
+            os.killpg(pid, 0)
+            return True
+        except ProcessLookupError:
+            return False
+        except PermissionError:
+            # A transient/denied probe is not evidence that a group is gone.
+            return True
+
+    def finalize(child):
+        deadline = time.monotonic() + cleanup_grace_s
+        if group_alive(child.pid):
             try:
                 os.killpg(child.pid, signal.SIGTERM)
-            except ProcessLookupError:
+            except (ProcessLookupError, PermissionError):
                 pass
+        # Reserve part of the existing grace for KILL and its actual drain.
+        soft_end = deadline - min(.5, cleanup_grace_s / 2)
+        while time.monotonic() < soft_end:
+            child.poll()
+            if not group_alive(child.pid):
+                break
+            time.sleep(.01)
+        if group_alive(child.pid):
             try:
-                child.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                try:
-                    os.killpg(child.pid, signal.SIGKILL)
-                except ProcessLookupError:
-                    pass
-                child.wait()
-            code = 124 if timed_out else 130
+                os.killpg(child.pid, signal.SIGKILL)
+            except (ProcessLookupError, PermissionError):
+                pass
+        while time.monotonic() < deadline:
+            child.poll()
+            if not group_alive(child.pid):
+                break
+            time.sleep(.01)
+        child.poll()
+        return child.returncode is not None, not group_alive(child.pid)
+
+    previous_term = None
+    if threading.current_thread() is threading.main_thread():
+        def interrupted(_signal, _frame):
+            raise KeyboardInterrupt
+        previous_term = signal.signal(signal.SIGTERM, interrupted)
+    try:
+        with log_path.open("x") as log:
+            child = subprocess.Popen(command, cwd=cwd, stdout=log, stderr=subprocess.STDOUT,
+                                     start_new_session=True)
+            timed_out = False
+            try:
+                code = child.wait(timeout=timeout_s)
+            except (subprocess.TimeoutExpired, KeyboardInterrupt) as exc:
+                timed_out = isinstance(exc, subprocess.TimeoutExpired)
+                # A second TERM must not interrupt our owned-child reap.
+                if previous_term is not None:
+                    signal.signal(signal.SIGTERM, signal.SIG_IGN)
+                reaped, group_gone = finalize(child)
+                code = 124 if timed_out else 130
+            else:
+                reaped, group_gone = True, not group_alive(child.pid)
+                if not group_gone:
+                    # A dead leader is not proof that its descendants stopped.
+                    if previous_term is not None:
+                        signal.signal(signal.SIGTERM, signal.SIG_IGN)
+                    reaped, group_gone = finalize(child)
+                    code = code or 125
+    finally:
+        if previous_term is not None:
+            signal.signal(signal.SIGTERM, previous_term)
     return {"exit_code": code, "timed_out": timed_out,
-            "wall_time_s": time.monotonic() - started, "process_group": child.pid}
+            "wall_time_s": time.monotonic() - started, "process_group": child.pid,
+            "cleanup_grace_s": cleanup_grace_s, "child_reaped": reaped,
+            "process_group_gone": group_gone}
 
 
 def run_study(manifest: dict, *, root: Path, evidence_root: Path, output: Path,
@@ -633,11 +686,14 @@ def run_study(manifest: dict, *, root: Path, evidence_root: Path, output: Path,
             raise ContractError("allocation can only reduce the frozen wall budget")
         allowed_wall = allocation_wall_s
     rows = []
+    halt_reason = None
+    finalized = True
     for index, trial in enumerate(config["trials"]):
         remaining = allowed_wall - (time.monotonic() - started)
         trial_dir = output / "runs" / trial["run_id"]
-        if remaining <= 5:
-            rows.append({"run_id": trial["run_id"], "outcome": "unrun", "reason": "job_wall_budget"})
+        if halt_reason or remaining <= 5:
+            rows.append({"run_id": trial["run_id"], "outcome": "unrun",
+                         "reason": halt_reason or "job_wall_budget"})
             continue
         trial_dir.mkdir(parents=True, exist_ok=False)
         command = [sys.executable, "-m", "scripts.run_rgb_communication_study", "trial",
@@ -646,8 +702,21 @@ def run_study(manifest: dict, *, root: Path, evidence_root: Path, output: Path,
                    "--evidence-root", str(evidence_root.resolve())]
         process = bounded_process(command, cwd=root, log_path=trial_dir / "process.log",
                                   timeout_s=min(config["budgets"]["wall_time_s"], remaining) - 5)
+        interrupted = process["exit_code"] == 130 or process["exit_code"] < 0
+        finalized = finalized and process.get("child_reaped") is True \
+            and process.get("process_group_gone") is True
+        if not finalized:
+            halt_reason = "child_cleanup_unconfirmed"
+        elif interrupted:
+            halt_reason = "study_interrupted"
+        elif process["timed_out"]:
+            halt_reason = "previous_trial_wall_timeout"
+        elif process["exit_code"]:
+            halt_reason = "previous_trial_process_failed"
         write_new_json(trial_dir / "process.json", process)
-        if (trial_dir / "result.json").is_file():
+        if not finalized:
+            result = {"outcome": "aborted", "reason": "child_cleanup_unconfirmed"}
+        elif (trial_dir / "result.json").is_file():
             result = read_json(trial_dir / "result.json")
             if result.get("run_id") != trial["run_id"] or result.get("schema_version") != TRIAL_SCHEMA:
                 result = {"outcome": "invalid_artifact", "reason": "run_identity_mismatch"}
@@ -664,8 +733,9 @@ def run_study(manifest: dict, *, root: Path, evidence_root: Path, output: Path,
                 result = {**result, "outcome": "aborted", "reason": "child_process_failed",
                           "child_outcome": result.get("outcome"), "mission_complete": False}
         else:
-            result = {"outcome": "timeout" if process["timed_out"] else "missing_artifact",
-                      "reason": "trial_did_not_produce_result"}
+            result = {"outcome": "timeout" if process["timed_out"] else
+                      "aborted" if process["exit_code"] else "missing_artifact",
+                      "reason": "study_interrupted" if interrupted else "trial_did_not_produce_result"}
         rows.append({"run_id": trial["run_id"], "condition": trial["condition"],
                      "process": process, "result": result, "outcome": result.get("outcome")})
         write_new_json(output / f"progress-{index + 1:03d}.json", {"run_rows": rows,
@@ -677,9 +747,11 @@ def run_study(manifest: dict, *, root: Path, evidence_root: Path, output: Path,
               "map_strata": stratified_report(rows, config["trials"]),
               "wall_s": time.monotonic() - started,
               "allocated_job_wall_s": allowed_wall,
+              "artifact_hashes_finalized": finalized,
               "scope": "physical replay is capability evidence; communication pilot is not a superiority test"}
     write_new_json(output / "report.json", report)
-    write_new_json(output / "artifact-hashes.json", {
-        str(path.relative_to(output)): digest_file(path) for path in sorted(output.rglob("*"))
-        if path.is_file() and not path.is_symlink()})
+    if finalized:
+        write_new_json(output / "artifact-hashes.json", {
+            str(path.relative_to(output)): digest_file(path) for path in sorted(output.rglob("*"))
+            if path.is_file() and not path.is_symlink()})
     return report
