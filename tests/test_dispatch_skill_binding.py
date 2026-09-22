@@ -223,6 +223,27 @@ def test_rgb_transform_preserves_pixels_without_reference_substitution():
     assert np.allclose(beam_feature(aligned)['center'],beam_feature(reference)['center'],atol=.003)
 
 
+def test_recorded_half_pixel_translation_does_not_create_unsupported_pose():
+    import gzip
+    import json
+    from harness.camera_varied_start_student import predict_stage
+    root=Path('tests/fixtures/dispatch_pixel_translation')
+    model=json.loads(gzip.decompress((root/'r1-forward.json.gz').read_bytes()))
+    reference=Path('tests/fixtures/camera_goal_transport/reference-top.jpg').read_bytes()
+    for name in ('pair-188-dock-top.jpg','pair-189-dock-top.jpg'):
+        raw=(root/name).read_bytes()
+        corrected,evidence=canonical_pair_top(raw,reference)
+        assert evidence['translation_px']==[212.,96.]
+        assert max(map(abs,evidence['translation_quantization_error_px']))<=.50005
+        assert predict_stage(model,b'',corrected)['ready']
+    # Reproduce the rejected frame with the former subpixel interpolation.
+    frame=cv2.imdecode(np.frombuffer(raw,np.uint8),cv2.IMREAD_COLOR)
+    shift=evidence['unquantized_translation_px']
+    blurred=cv2.warpAffine(frame,np.float32([[1,0,shift[0]],[0,1,shift[1]]]),(960,720),flags=cv2.INTER_LINEAR)
+    legacy=cv2.imencode('.jpg',blurred,[cv2.IMWRITE_JPEG_QUALITY,95])[1].tobytes()
+    assert not predict_stage(model,b'',legacy)['ok']
+
+
 def test_solo_navigation_cannot_skip_existing_attachment_failure():
     navigator=Mock();skill=SoloBoxTransport(robot_id='r3',navigator=navigator)
     skill.initialized=True;skill.box.phase='carry'

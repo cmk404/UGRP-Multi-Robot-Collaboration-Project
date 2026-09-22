@@ -140,15 +140,23 @@ def canonical_pair_top(jpeg, reference, *, translation_px=None, hue_upper=24, ob
     h, w = frame.shape[:2]
     shift = (np.array(anchor['center']) - current['center']) * [w, h] if translation_px is None else np.asarray(translation_px,dtype=float)
     if shift.shape!=(2,) or not np.isfinite(shift).all():raise ValueError('invalid image translation')
+    measured_shift=shift.copy()
+    # Half-pixel contour changes must not blend wheel colours and manufacture
+    # an out-of-support pose. Translate whole source pixels; retain the raw
+    # estimate and <=0.50005px quantization error for inspection. Rounding the
+    # minAreaRect float noise makes exact half-pixel ties deterministic.
+    shift=np.rint(np.round(shift,4))
     transformed = cv2.warpAffine(frame, np.float32([[1,0,shift[0]],[0,1,shift[1]]]),
-                                 (w,h), flags=cv2.INTER_LINEAR)
+                                 (w,h), flags=cv2.INTER_NEAREST)
     data = cv2.imencode('.jpg', transformed, [cv2.IMWRITE_JPEG_QUALITY,95])[1].tobytes()
     return data, {'source_sha256':hashlib.sha256(jpeg).hexdigest(),
         'reference_sha256':hashlib.sha256(reference).hexdigest(),
         'translation_px':shift.tolist(),'observed_beam':current,
+        'unquantized_translation_px':measured_shift.tolist(),
+        'translation_quantization_error_px':(shift-measured_shift).tolist(),
         'fixed_from_prior_rgb':translation_px is not None,'hue_upper':hue_upper,
         'tracked_carried_shaft':observed_beam is not None,
-        'method':'RGB translation only; black padding; unchanged own RGB'}
+        'method':'integer-pixel RGB translation only; black padding; unchanged own RGB'}
 
 
 class SkillBindings:
