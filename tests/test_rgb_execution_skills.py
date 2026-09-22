@@ -701,6 +701,7 @@ def test_readonly_descriptor_binds_models_map_camera_goal_and_reset(tmp_path):
     assert a["reset_sha256"] != b["reset_sha256"]
     assert a["camera_sha256"] == b["camera_sha256"]
     assert a["supervisor_clock_schema"] == "ugrp.execution_clock.v1"
+    assert a["skill_worker_wall_scope"] == "submission_to_consumption"
     assert a["goal_frame"] == "warehouse_xy_m"
     assert not Path(config["output_dir"]).exists()
     public = public_static_context(config)
@@ -720,6 +721,17 @@ def test_real_factory_wires_clock_only_callback_and_raw_snapshot_with_fixture_sc
     fixture_port, fixture_scene = build_dispatch_float_clock()
     fixture_port.close(None)
     events = []
+    fixture_scene.world.width, fixture_scene.world.height = 960, 720
+    fixture_scene.world.observer_width, fixture_scene.world.observer_height = 960, 720
+    render_calls = []
+    def own_rgb(*, robot_id, camera, quality):
+        render_calls.append((robot_id, camera, quality))
+        return b"\xff\xd8"+robot_id.encode()+b"\xff\xd9"
+    def top_rgb(*, camera, quality):
+        render_calls.append(("top", camera, quality))
+        return JPEG
+    fixture_scene.world.render_jpeg = own_rgb
+    fixture_scene.world.render_team_jpeg = top_rgb
     class FixtureScene(dispatch.DispatchScene):
         def open(self):
             self.world, self.ports = fixture_scene.world, fixture_scene.ports
@@ -738,7 +750,7 @@ def test_real_factory_wires_clock_only_callback_and_raw_snapshot_with_fixture_sc
         def sample(self):
             events.append("sample")
         def finish(self, plan):
-            return {"cargo": {}}
+            return {"cargo": {obj: {"physical_success": False} for obj in ("box", "beam")}}
     class Video:
         def __init__(self, *args):
             pass
@@ -760,6 +772,32 @@ def test_real_factory_wires_clock_only_callback_and_raw_snapshot_with_fixture_sc
         clock = bundle.clock_snapshot()
         assert clock["actual_time_s"] == fixture_scene.world.data.time-1.300000000000001
         assert events == before  # clock-only callback never samples or captures
+        first = bundle.actor_port.observe("r1")
+        again = bundle.actor_port.observe("r1")
+        other = bundle.actor_port.observe("r2")
+        assert first["images"]["own_rgb"]["sha256"] == again["images"]["own_rgb"]["sha256"]
+        assert first["observed_at_s"] == again["observed_at_s"] == .8
+        assert first["images"]["own_rgb"]["sha256"] != other["images"]["own_rgb"]["sha256"]
+        assert render_calls.count(("r1", "robot_cam", 95)) == 1
+        assert render_calls.count(("top", "cctv_top", 95)) == 1
+        bundle.actor_port.tick(.85)
+        refreshed = bundle.actor_port.observe("r1")
+        assert refreshed["observed_at_s"] == .85
+        assert render_calls.count(("r1", "robot_cam", 95)) == 2
+        assert render_calls.count(("top", "cctv_top", 95)) == 2
+        assert submit(bundle.actor_port, "r1")["status"] == "ACCEPTED"
+        revised = bundle.actor_port.observe("r1")
+        assert revised["own_revision"] > refreshed["own_revision"]
+        assert revised["observation_id"] != refreshed["observation_id"]
+        assert revised["observed_at_s"] == refreshed["observed_at_s"]
+        assert render_calls.count(("r1", "robot_cam", 95)) == 2
+        frame_rows = [row for row in map(json.loads, (tmp_path / "not-created" / "worker-timing.jsonl").read_text().splitlines())
+                      if row["event"] == "RGB_FRAME_READ"]
+        by_observation = {row["observation_id"]: row for row in frame_rows}
+        assert by_observation[first["observation_id"]]["captures"] == by_observation[again["observation_id"]]["captures"]
+        assert by_observation[revised["observation_id"]]["captures"]["own_rgb"]["sha256"] == revised["images"]["own_rgb"]["sha256"]
+        assert by_observation[revised["observation_id"]]["cache_hit"]["own_rgb"]
+        clock = bundle.clock_snapshot()
         bundle.actor_port.close(clock["actual_time_s"])
         assert bundle.evaluation_snapshot()["timestamp_s"] == clock["actual_time_s"]
         bundle.close()
