@@ -6,7 +6,7 @@
 bash scripts/open_simulation.command new outputs/my-experiment
 bash scripts/open_simulation.command inspect outputs/my-experiment/config.json
 bash scripts/open_simulation.command run outputs/my-experiment/config.json --paused
-# Space로 시작. 2 SIM초 후 종료되며, 길게 보려면 --sim-seconds 30을 추가한다.
+# Space로 시작. 기본 30 SIM초. --sim-seconds로 실행 시간을 바꾼다.
 
 # 파일을 교체하는 대신 같은 파일의 다른 factory를 선택할 수도 있다.
 bash scripts/open_simulation.command run outputs/my-experiment/config.json \
@@ -20,11 +20,11 @@ bash scripts/open_simulation.command run outputs/my-experiment/config.json \
 | `controller.py` | 로봇별 `act(observation)` 정책 및 상태 |
 | `actions.py` | 직접 이름 붙인 명령을 기존 구동 명령으로 변환 |
 
-`new`는 기존 폴더 덮어쓰기를 거부한다. `outputs/`는 Git에서 제외되므로 공유할 실험은 추후 자신의 작업 브랜치에 `examples/` 또는 별도 연구 패키지로 옮겨 커밋한다. 기본 예제는 짧은 전진/정지 동작을 보여주는 고정 정책이며 자율 주행 정책은 아니다.
+`new`는 기존 폴더 덮어쓰기를 거부한다. `outputs/`는 Git에서 제외되므로 공유할 실험은 추후 자신의 작업 브랜치에 `examples/` 또는 별도 연구 패키지로 옮겨 커밋한다. 기본값은 기존 공동 출하장과 정지 제어기다. `scene.py`는 빈 추가 목록을 반환하므로 기존 장면을 보존한다. `new DIR --scene multi_object/mixed_eight`로 다른 연구 장면에서 시작한다. 짧은 전진·장애물/공 데모는 `new DIR --template extensions-demo`로 별도 선택한다. 이 데모는 자율 주행 정책이 아니다.
 
 ## 환경
 
-`scene.builder: "scene.py:build_scene"` 함수는 `build_scene(*, seed, params) -> list[dict]` 계약이다. `scene.params`는 이 함수에만 전달한다. 반환 목록과 `scene.objects`의 직접 선언 목록을 합쳐 검증한 뒤 기존 MJCF에 추가하고 물리 모델을 한 번 컴파일한다. 예제의 `barrier_half_width_m`을 바꾸면 장애물 폭이 바뀐다. seed 기반 변형에는 `random.Random(seed)`를 쓴다.
+`scene.builder: "scene.py:build_scene"` 함수는 `build_scene(*, seed, params) -> list[dict]` 계약이다. `scene.params`는 이 함수에만 전달한다. 반환 목록과 `scene.objects`의 직접 선언 목록을 합쳐 검증한 뒤 기존 MJCF에 추가하고 물리 모델을 한 번 컴파일한다. `extensions-demo`의 `barrier_half_width_m`을 바꾸면 장애물 폭이 바뀐다. 연구 장면 변환을 마친 뒤 추가 형상을 붙이므로 기존 장면 생성기에 의해 추가 물체가 숨겨지지 않는다. seed 기반 변형에는 `random.Random(seed)`를 쓴다.
 
 ```python
 def build_scene(*, seed, params):

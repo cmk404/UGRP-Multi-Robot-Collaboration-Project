@@ -17,9 +17,9 @@ GitHub PR의 **Files changed → Review changes → Approve → Submit review**�
 
 작은 문서 수정에는 전체 시뮬레이션이 필요 없다. CI는 외부 모델 호출이나 하드웨어 검증을 대신하지 않는다.
 
-## Colab에서 시뮬레이션 실행
+## 실행 환경 선택
 
-2026-09-21부터 무거운 시뮬레이션·학습·평가의 기본 대상은 [Colab](docs/colab_simulation.md)이다. 2026-09-22 요청에 따른 [로컬 구성·native viewer·Python API](docs/local_simulation.md)와 그 검증은 로컬에서 실행한다. 로컬 단위 테스트와 GitHub CI도 계속 사용한다. 아래 Mac 환경은 기존 호환·재현 경로이며 새 실험을 임의로 로컬에서 시작하지 않는다.
+2026-09-22 요청에 따라 환경 구성·시뮬레이션·렌더링의 기본은 [로컬 CLI·native viewer·Python API](docs/local_simulation.md)다. Mac의 기존 환경과 Ubuntu 개발 환경을 사용한다. 대규모 학습·평가는 실행 예산과 자원을 먼저 정하고, Colab/Kaggle은 명시적으로 선택하는 배치 경로로 보존한다.
 
 ## 자동 테스트
 

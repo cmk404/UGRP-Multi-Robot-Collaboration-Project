@@ -131,30 +131,10 @@ def _plain_beam_contact(world: MultiMasterPiProductionV2, rid: str) -> dict[str,
 
 
 def _plain_beam_xml(original_builder: Any) -> Any:
-    """Wrap the production XML builder with the diagnostic's plain beam fixture."""
+    """Compatibility wrapper around the shared plain research beam fixture."""
+    from sim.research_scene_xml import plain_beam_xml
     def build(*args: Any, **kwargs: Any) -> str:
-        root = ET.fromstring(original_builder(*args, **kwargs))
-        beam = root.find(f".//body[@name='{BEAM_BODY_NAME}']")
-        if beam is None:
-            raise RuntimeError("beam body missing from generated model")
-        geom = beam.find(f"geom[@name='{BEAM_GEOM_NAME}']")
-        if geom is None:
-            raise RuntimeError("main beam geom missing from generated model")
-        geom.set(
-            "size",
-            f"{BEAM_WIDTH_M / 2:.6f} {BEAM_LENGTH_M / 2:.6f} {BEAM_HEIGHT_M / 2:.6f}",
-        )
-        # Preserve the prior fixture's complete 0.196 kg physical mass while
-        # consolidating it into the one uniform box (0.180 kg bar + 2x0.008 kg).
-        geom.set("mass", f"{PLAIN_BEAM_MASS_KG:.6f}")
-        for rid in BEAM_CARRIER_IDS:
-            anchor = beam.find(f"body[@name='{BEAM_BODY_NAME}_{rid}_endpoint']")
-            if anchor is None:
-                raise RuntimeError(f"{rid} weld coordinate anchor missing")
-            for child in list(anchor):
-                if child.tag in {"geom", "site"}:
-                    anchor.remove(child)
-        return ET.tostring(root, encoding="unicode")
+        return plain_beam_xml(original_builder(*args, **kwargs))
     return build
 
 

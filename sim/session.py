@@ -16,11 +16,13 @@ from contextlib import nullcontext
 from sim.camera_robot_port import CameraRobotPort
 from sim.session_config import ROBOTS, validate_config
 from sim.session_extensions import Extensions
+from sim.session_scenes import Scene
 
 
 class Simulation:
     def __init__(self, config, *, render=False, base_dir=".", decision_sink=None, world_factory=None):
         self.config = validate_config(config)
+        self.scene = Scene(self.config["scene"], base_dir)
         self.extensions = Extensions(self.config, base_dir)
         self.render = bool(render or self.config["controllers"])
         self.decision_sink = decision_sink
@@ -37,7 +39,9 @@ class Simulation:
         self._scheduled = [{**event, "raw": self.extensions.lower(event["command"])}
                            for event in self.config["actions"]]
         extra = {"scene_objects": self.extensions.objects} if self.extensions.objects else {}
-        self._world = world_factory(seed=scene["seed"], warehouse_layout=scene["layout"],
+        if self.scene.family != "legacy":
+            extra["xml_transform"] = self.scene.transform
+        self._world = world_factory(seed=scene["seed"], warehouse_layout=self.scene.engine_layout,
                                     warehouse_cargo_ids=scene["cargo_ids"],
                                     **self.config["camera"], render=self.render, **extra)
         try:
@@ -72,6 +76,7 @@ class Simulation:
         self._check_open()
         with self._lock():
             self._world.reset(seed=self.config["scene"]["seed"])
+            self.scene.setup(self._world)
             for rid, pose in self.config["scene"]["robots"].items():
                 self._world.robot(rid).set_base_pose_for_test(pose["xyz_m"], math.radians(pose["yaw_deg"]))
             # All assistance remains off; reset/setup poses are never actor observations.
@@ -205,7 +210,7 @@ class Simulation:
                 self._viewer.cam.type = mujoco.mjtCamera.mjCAMERA_FIXED
                 self._viewer.cam.fixedcamid = camera_id
             else:
-                xmin, xmax, ymin, ymax = self._world.warehouse_navigation_bounds
+                xmin, xmax, ymin, ymax = self.scene.bounds or self._world.warehouse_navigation_bounds
                 self._viewer.cam.lookat[:] = [(xmin + xmax) / 2, (ymin + ymax) / 2, 0.0]
                 self._viewer.cam.distance = max(xmax - xmin, ymax - ymin) * 1.2
                 self._viewer.cam.azimuth = 90

@@ -19,13 +19,15 @@ Ubuntu 24.04는 먼저 [설치 안내](ubuntu_quickstart.md)를 따른다. 창�
 
 ## 터미널에서 구성하기
 
-저장소 루트에서 실행한다. 인자 없는 실행은 `configs/simulation/local.json`을 읽는다.
+저장소 루트에서 실행한다. 인자 없는 실행은 `configs/simulation/local.json`의 **기존 공동 출하장(dispatch/shared_crossing, seed11)**을 연다. `init`과 `new`도 같은 연구 장면을 기본으로 사용한다. [전체 구성·누락 검토](simulation_inventory.md)에 기존 자산과 연결 범위를 정리했다.
 
 ```bash
 # 설정 생성 → 편집 → 오류/기본값 확인
-bash scripts/open_simulation.command init my-scene.json --layout camera_team --seed 42
+bash scripts/open_simulation.command init my-scene.json --scene dispatch/shared_crossing --seed 11
 bash scripts/open_simulation.command inspect my-scene.json
-bash scripts/open_simulation.command layouts
+bash scripts/open_simulation.command scenes
+bash scripts/open_simulation.command workflows
+bash scripts/open_simulation.command doctor
 
 # MuJoCo 기본 창. 마우스로 회전/이동/확대하며 물리를 관찰한다.
 bash scripts/open_simulation.command run my-scene.json --paused
@@ -107,7 +109,7 @@ with Simulation(config, render=True) as sim:
 
 ## 기록과 코드 위치
 
-CLI는 매번 `outputs/sim-<날짜>-<ID>/`를 만든다. `config.json`은 적용된 전체 설정, `session.json`은 소스 SHA/dirty 상태와 실행 환경, `model.mjb`는 컴파일된 모델, `physics.json`은 물리 설정·화물 목록, `commands.jsonl`은 초기화와 실제 발행 명령, `*-evaluation.json`은 별도 정답 진단, `result.json`은 종료 이유·시간·파일 해시다. `--capture`는 시작/종료의 실제 입력 RGB와 관측 JSON을 추가한다. `extensions.json`과 `extensions/`에는 실행한 확장 진입 파일·해시·최종 추가 형상을 보관한다. 제어기를 쓰면 `controller-decisions.jsonl`에 매 호출의 실제 RGB 입력·응답·발행 명령을 저장한다. 연속 영상 녹화나 전체 상태 replay는 아직 제공하지 않는다.
+CLI는 매번 `outputs/sim-<날짜>-<ID>/`를 만든다. `config.json`은 적용된 전체 설정, `session.json`은 소스 SHA/dirty 상태와 실행 환경, `model.mjb`는 컴파일된 모델, `physics.json`은 물리 설정·실제 선택 장면의 화물 목록, `commands.jsonl`은 초기화와 실제 발행 명령, `*-evaluation.json`은 별도 정답 진단, `result.json`은 종료 이유·시간·파일 해시다. `--capture`는 시작/종료의 실제 입력 RGB와 관측 JSON을 추가한다. `extensions.json`과 `extensions/`에는 실행한 확장 진입 파일·해시·최종 추가 형상을 보관한다. 제어기를 쓰면 `controller-decisions.jsonl`에 매 호출의 실제 RGB 입력·응답·발행 명령을 저장한다. `--video`는 ffmpeg로 관찰용 `video.mp4`를 녹화한다. `--video-camera cctv_top --video-fps 10`처럼 시점을 지정할 수 있다. `video-frames.jsonl`에 프레임별 에피소드/SIM 시각을 남기며 pause 시간은 생략한다. 전체 상태·제어기 기억의 checkpoint replay는 제공하지 않는다.
 
 | 파일 | 책임 |
 |---|---|
@@ -137,3 +139,41 @@ MuJoCo passive viewer의 스레드·macOS 실행 규칙은 [공식 Python 문서
 | Ubuntu 24.04 x64 · Python 3.12 · MuJoCo 3.12 | Xvfb에서 native 창 3회 연속 실행/종료, OSMesa RGB, 설정/API |
 
 두 OS에서 같은 JSON과 명령을 사용한다. Linux CI의 가상 디스플레이 검증은 각 PC의 그래픽 드라이버 확인을 대체하지 않는다. Mac 실제 창의 마우스/키보드 자동화는 도구 접근 시간 초과로 미확인이다. [검증 원본과 실패 기록](../experiments/2026-09-22-native-simulation/README.md)을 참조한다.
+
+
+## 기존 연구 맵 선택
+
+`scenes`는 기존 4개 엔진 예제, 출하장 5변형, 단독 지도 9개, 공동 운반 지도 6개,
+ACT 22조건(새 맵 16 + 기존 회귀 6), 다중 물건 12조건을 표시한다. 기존 JSON·생성기를 그대로
+사용한다. `layouts`도 같은 목록을 표시한다. 아래 명령은 외부 모델을 호출하지 않는다.
+
+```bash
+bash scripts/open_simulation.command init navigation.json --scene navigation/s-bends
+bash scripts/open_simulation.command init pair.json --scene pair_navigation/narrow-door
+bash scripts/open_simulation.command init act.json --scene act/train-open-1
+bash scripts/open_simulation.command init multi.json --scene multi_object/mixed_eight
+bash scripts/open_simulation.command run multi.json --paused --capture --video
+```
+
+새 지도는 기존 형식의 JSON을 복사/수정한 후 `--scene navigation/file --map-file my-map.json`
+또는 `pair_navigation/file`로 불러온다. `map_file`과 Python 확장 경로는 **설정 파일의 폴더** 기준이다.
+`inspect`는 지도 계약·고정 TOP 보정을 검사하고 설정과 장면 출처를 출력한다. Python 확장은 실행하지 않는다.
+
+출하장은 기존 빔/상자·로봇 배치·예고하지 않은 장애물까지 복원한다. 공동 운반 지도와 ACT 지도는
+기존 정적 미리보기처럼 빔을 바닥에 배치한다. 파지된 상태나 훈련된 ACT 제어기가 자동으로 생성되지 않는다.
+단독 지도는 r1을 시작 구역에 두고 r2/r3는 코스 밖에 주차한다. 원하는 시작점은 `scene.robots`로 명시한다.
+`R`/`reset()`은 선택한 장면의 로봇·화물·추가 물체를 같은 model/data에 복원한다.
+
+`scene.contact_profile`은 출하장에 한해 `legacy`, `global_noslip`, `local_contact`,
+`local_contact_fine`을 받는다. 기본은 기존 장면 생성기의 물리다. 특정 운반 결과를 재현하려면
+해당 실행의 프로필과 모델 파일을 함께 지정한다. weld는 계속 OFF다.
+
+`scene.json`에는 선택 항목·원래 지도/초기화·실제 화물·경계·확장 여부를, `scene-sources/`에는
+사용한 지도/프로토콜 원본과 해시를 저장한다. 이 초기화 기록은 평가 전용이다. `scene.xml`은 생성된
+XML이며 reset 시 적용한 카메라·배치까지 포함한 컴파일 상태는 `model.mjb`에 있다.
+예외로 종료해도 `result.json`에 오류를 남기고, 확장 실행 전 `input-files/`에 진입 소스를 보존한다.
+headless에서 SIM 시간에 도달하지 못한 wall timeout은 종료 코드 2를 반환한다.
+
+기존 버전 1 설정에서 `scene.layout`을 생략하면 호환성을 위해 `camera_team`이 유지된다.
+새 설정은 `init`으로 생성해 선택 장면을 명시한다. 원래 장애물/공 예제는
+`new DIR --template extensions-demo`로 생성할 수 있다.

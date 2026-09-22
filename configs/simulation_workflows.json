@@ -1,0 +1,125 @@
+{
+  "schema": "ugrp.local_workflow_catalog.v1",
+  "scope": "entry points; sim_cli does not silently launch models, hardware or training",
+  "workflows": [
+    {
+      "id": "local",
+      "purpose": "기본 창·설정·raw action·사용자 제어기",
+      "entry": "scripts/sim_cli.py",
+      "docs": "docs/local_simulation.md",
+      "requires": "simulator only; no model account or weights"
+    },
+    {
+      "id": "dispatch",
+      "purpose": "3대 LLM 계획·공동 출하·복구",
+      "entry": "scripts/run_dispatch_e2e.py",
+      "docs": "docs/research_dispatch_arena.md",
+      "requires": "model endpoint, full grasp model and stage policies; costs depend on planner"
+    },
+    {
+      "id": "dispatch-skills",
+      "purpose": "확정 계획의 RGB 스킬 실행",
+      "entry": "scripts/run_dispatch_skills.py",
+      "docs": "docs/research_dispatch_arena.md",
+      "requires": "saved agreement and complete grasp/stage policy artifacts"
+    },
+    {
+      "id": "communication",
+      "purpose": "동일 실행기 A/B/C 통신 연결·감사",
+      "entry": "scripts/evaluate_rgb_communication.py",
+      "docs": "docs/research_todo.md",
+      "requires": "offline prepare/admit/audit; not a live model launcher"
+    },
+    {
+      "id": "multi-object",
+      "purpose": "다중 물건 계획·RGB 식별·실행",
+      "entry": "scripts/run_multi_object_execution.py",
+      "docs": "docs/multi_object_pilot.md",
+      "requires": "model endpoint and declared physical adapters; not all cases are proven complete"
+    },
+    {
+      "id": "navigation",
+      "purpose": "정적 지도·RGB 단독 주행",
+      "entry": "scripts/run_known_map_navigation.py",
+      "docs": "docs/known_map_navigation.md",
+      "requires": "authored map and setup case"
+    },
+    {
+      "id": "pair-navigation",
+      "purpose": "RGB 공동 운반·지형 통과",
+      "entry": "scripts/run_pair_navigation.py",
+      "docs": "maps/README.md",
+      "requires": "full grasp model directory; profile and vision mode must match experiment"
+    },
+    {
+      "id": "camera-pair",
+      "purpose": "자기 RGB·TOP 기반 공동 운반",
+      "entry": "scripts/run_camera_pair_transport.py",
+      "docs": "docs/README.md",
+      "requires": "existing grasp policy artifacts and explicit cohort configuration"
+    },
+    {
+      "id": "rgb-traffic",
+      "purpose": "RGB 주행 양보·점유",
+      "entry": "scripts/run_rgb_traffic.py",
+      "docs": "docs/current_status.md",
+      "requires": "finite local scenario; no external model"
+    },
+    {
+      "id": "act",
+      "purpose": "교사·ACT 운반 비교",
+      "entry": "scripts/run_carry_act_experiment.py",
+      "docs": "docs/reference_alignment.md",
+      "requires": "optional ACT Python environment, weights, grasp/stage models; historical protocol"
+    },
+    {
+      "id": "teacher",
+      "purpose": "접근 교사 데이터 생성",
+      "entry": "scripts/collect_camera_approach_teacher.py",
+      "docs": "docs/README.md",
+      "requires": "privileged teacher only; never a student success"
+    },
+    {
+      "id": "act-training",
+      "purpose": "운반 학습",
+      "entry": "scripts/train_carry_act.py",
+      "docs": "docs/reference_alignment.md",
+      "requires": "teacher dataset and optional training dependencies"
+    },
+    {
+      "id": "jev",
+      "purpose": "Jev 표현·행동 보조 비교",
+      "entry": "scripts/run_jev_semantic_cohort.py",
+      "docs": "docs/research_todo.md",
+      "requires": "component evaluation, not the communication experiment"
+    },
+    {
+      "id": "stage-sync",
+      "purpose": "로봇별 단계·허가 동기화",
+      "entry": "scripts/demo_task_stage_sync.py",
+      "docs": "docs/task_stage_sync_contract.md",
+      "requires": "offline fixtures; live port integration audited separately"
+    },
+    {
+      "id": "physical",
+      "purpose": "실물 입력·기록 연결",
+      "entry": "scripts/analyze_real_trace.py",
+      "docs": "docs/masterpi_network_runbook.md",
+      "requires": "actual devices, networking, calibration and explicit hardware session"
+    },
+    {
+      "id": "worker",
+      "purpose": "기존 MuJoCo 워커 연결",
+      "entry": "scripts/run_mujoco_ws_worker.py",
+      "docs": "docs/README.md",
+      "requires": "existing bridge protocol; native CLI does not start a server"
+    },
+    {
+      "id": "tensorboard",
+      "purpose": "기록·영상 검토",
+      "entry": "scripts/export_tensorboard.py",
+      "docs": "docs/tensorboard.md",
+      "requires": "optional observability dependencies; existing viewer"
+    }
+  ]
+}

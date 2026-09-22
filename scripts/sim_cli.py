@@ -18,7 +18,8 @@ from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
 
-from sim.session_config import LAYOUTS, ROBOTS, load_config, validate_config
+from sim.session_config import ROBOTS, load_config, validate_config
+from sim.session_scenes import DEFAULT_SCENE, Scene, catalog
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -37,6 +38,7 @@ def source_info():
 
 
 def capture(sim, output, label):
+    (output / f"{label}-overview.jpg").write_bytes(sim._world.render_team_jpeg(camera="cctv_warehouse"))
     for rid in ROBOTS:
         observation = sim.observe(rid, include_top=rid == "r1")
         (output / f"{label}-{rid}.jpg").write_bytes(base64.b64decode(observation["image"]))
@@ -63,6 +65,7 @@ def run(config, args):
     print(f"Output: {output.resolve()}", flush=True)
     keys = queue.SimpleQueue()
     sim = None
+    video = None
     decisions = (output / "controller-decisions.jsonl").open("x", encoding="utf-8")
     def record_decision(record):
         decisions.write(json.dumps(record, ensure_ascii=False, allow_nan=False) + "\n")
@@ -78,7 +81,22 @@ def run(config, args):
         raise KeyboardInterrupt
     previous_term = signal.signal(signal.SIGTERM, interrupted)
     try:
-        sim = Simulation(config, render=args.capture, base_dir=args.config.resolve().parent,
+        # Record entry bytes before trusted Python can fail in a builder/factory.
+        # Successful construction also records the exact executed bytes below.
+        from sim.session_extensions import validate_reference
+        refs = list(config["action_plugins"].values()) + [v["factory"] for v in config["controllers"].values()]
+        if config["scene"]["builder"]:
+            refs.append(config["scene"]["builder"])
+        inputs = output / "input-files"
+        inputs.mkdir()
+        receipts = []
+        for index, path in enumerate(dict.fromkeys((args.config.resolve().parent / validate_reference(ref)[0]).resolve() for ref in refs)):
+            data = path.read_bytes()
+            saved = inputs / f"{index:02d}-{path.name}"
+            saved.write_bytes(data)
+            receipts.append({"path": str(path), "saved": str(saved.relative_to(output)), "sha256": hashlib.sha256(data).hexdigest()})
+        write_json(output / "input-files.json", receipts)
+        sim = Simulation(config, render=args.capture or args.video, base_dir=args.config.resolve().parent,
                          decision_sink=record_decision)
         source_dir = output / "extensions"
         source_dir.mkdir()
@@ -90,13 +108,27 @@ def run(config, args):
                                     "sha256": entry["sha256"]})
         write_json(output / "extensions.json", {"base_dir": str(sim.extensions.base_dir),
                    "entry_files": source_manifest, "resolved_objects": sim.extensions.objects})
+        map_dir = output / "scene-sources"
+        map_dir.mkdir()
+        map_manifest = []
+        for index, (path, entry) in enumerate(sim.scene.sources.items()):
+            saved = map_dir / f"{index:02d}-{Path(path).name}"
+            saved.write_bytes(entry["bytes"])
+            map_manifest.append({"path": path, "saved": str(saved.relative_to(output)), "sha256": entry["sha256"]})
+        (output / "scene.xml").write_text(sim._world.scene_xml, encoding="utf-8")
+        write_json(output / "scene.json", {**sim.scene.record(), "source_files": map_manifest,
+                   "scene_xml_sha256": hashlib.sha256(sim._world.scene_xml.encode()).hexdigest()})
         mujoco.mj_saveModel(sim._world.model, str(output / "model.mjb"))
         write_json(output / "physics.json", {"timestep_s": sim.timestep,
                    "dynamics": sim._world.dynamics, "calibration": sim._world.calibration_status,
-                   "cargo_ids": [spec.cargo_id for spec in sim._world.warehouse_specs]})
+                   "cargo_ids": sim.scene.inventory})
         write_json(output / "initial-evaluation.json", sim.evaluation_state())
         if args.capture:
             capture(sim, output, "initial")
+        if args.video:
+            from sim.session_recording import Video
+            video = Video(output, camera=args.video_camera, fps=args.video_fps)
+            video.frame(sim)
         viewer = None if args.headless else sim.launch_viewer(camera=args.camera, key_callback=keys.put)
         if viewer:
             print("MuJoCo: Space pause/resume | N one physics tick | R reset | close window to exit", flush=True)
@@ -130,6 +162,8 @@ def run(config, args):
                 steps = 1 if single_step else min(batch, max(1, math.ceil(remaining / sim.timestep - 1e-9)))
                 sim.step(steps)
                 advanced = steps * sim.timestep
+            if video is not None and advanced:
+                video.frame(sim)
             if viewer is not None:
                 sim.sync_viewer()
             if viewer is not None or paused:
@@ -139,7 +173,7 @@ def run(config, args):
         result["protocol_complete"] = result["stop_reason"] == "sim_limit"
         if args.capture:
             capture(sim, output, "final")
-        return 0
+        return 2 if args.headless and not result["protocol_complete"] else 0
     except KeyboardInterrupt:
         result["stop_reason"] = "interrupted"
         return 130
@@ -158,7 +192,11 @@ def run(config, args):
                     (output / "commands.jsonl").write_text("".join(json.dumps(row) + "\n" for row in sim.command_history), encoding="utf-8")
                     write_json(output / "final-evaluation.json", sim.evaluation_state())
                 finally:
-                    sim.close()
+                    try:
+                        if video is not None:
+                            result["video"] = video.close()
+                    finally:
+                        sim.close()
         except Exception as error:
             result.update(protocol_complete=False, stop_reason="error", error=f"{type(error).__name__}: {error}")
             raise
@@ -176,18 +214,29 @@ def main(argv=None):
     sub = parser.add_subparsers(dest="command", required=True)
     init = sub.add_parser("init", help="write a new editable JSON configuration")
     init.add_argument("path", type=Path)
-    init.add_argument("--layout", choices=LAYOUTS, default="camera_team")
-    init.add_argument("--seed", type=int, default=41)
+    init.add_argument("--scene", "--layout", dest="layout", default=DEFAULT_SCENE,
+                      help="scene ID from scenes, or navigation/file / pair_navigation/file")
+    init.add_argument("--map-file", help="authored map JSON, relative to the new config directory")
+    init.add_argument("--seed", type=int, default=11)
     new = sub.add_parser("new", help="create a standalone experiment with scene/controller/action files")
     new.add_argument("directory", type=Path)
+    new.add_argument("--scene", default=DEFAULT_SCENE)
+    new.add_argument("--template", choices=("research", "extensions-demo"), default="research")
     inspect = sub.add_parser("inspect", help="validate and print the resolved configuration (no MuJoCo needed)")
     inspect.add_argument("config", type=Path)
-    sub.add_parser("layouts", help="list built-in scene layouts")
+    sub.add_parser("layouts", help="alias of scenes")
+    scenes = sub.add_parser("scenes", help="list all existing research scenes and scope")
+    scenes.add_argument("--json", action="store_true")
+    sub.add_parser("workflows", help="list established planners, policies, training, evaluation and hardware entry points")
+    sub.add_parser("doctor", help="report local Python, MuJoCo, display and recorder availability")
     execute = sub.add_parser("run", help="run config in MuJoCo's native window")
     execute.add_argument("config", type=Path)
     execute.add_argument("--headless", action="store_true", help="same physics without a window, as fast as possible")
     execute.add_argument("--capture", action="store_true", help="save calibrated robot and top RGB at start/end")
     execute.add_argument("--paused", action="store_true")
+    execute.add_argument("--video", action="store_true", help="record an observer MP4, requires ffmpeg")
+    execute.add_argument("--video-camera", default="cctv_warehouse")
+    execute.add_argument("--video-fps", type=int, choices=range(1, 31), default=10)
     execute.add_argument("--camera", default="free", help="native view: free, cctv_top, cctv_warehouse, r1__robot_cam, ...")
     execute.add_argument("--controller", action="append", default=[], metavar="ROBOT=FILE.py:FACTORY",
                          help="replace/add a robot controller; paths relative to the config directory")
@@ -199,23 +248,54 @@ def main(argv=None):
     execute.add_argument("--output", type=Path)
     args = parser.parse_args(argv)
     try:
-        if args.command == "layouts":
-            print("\n".join(LAYOUTS))
+        if args.command in ("layouts", "scenes"):
+            rows = catalog()
+            print(json.dumps(rows, indent=2, ensure_ascii=False) if getattr(args, "json", False)
+                  else "\n".join(f"{row['id']:<44} {row['scope']}" for row in rows))
             return 0
+        if args.command == "workflows":
+            print((ROOT / "configs/simulation_workflows.json").read_text())
+            return 0
+        if args.command == "doctor":
+            from importlib.metadata import PackageNotFoundError, version
+            packages = {}
+            for name in ("mujoco", "numpy", "opencv-python-headless", "pillow", "glfw"):
+                try:
+                    packages[name] = version(name)
+                except PackageNotFoundError:
+                    packages[name] = None
+            print(json.dumps({"python": sys.executable, "version": platform.python_version(),
+                              "platform": platform.platform(), "packages": packages,
+                              "mjpython": str(Path(sys.executable).with_name("mjpython")),
+                              "display_available": sys.platform == "darwin" or bool(os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")),
+                              "ffmpeg": shutil.which("ffmpeg"), "scope": "dependency discovery, no rendering probe"}, indent=2))
+            return int(any(value is None for value in packages.values()))
         if args.command == "new":
+            if args.template == "research":
+                config = validate_config({"version": 1, "scene": {"layout": args.scene, "seed": 11,
+                    "builder": "scene.py:build_scene"},
+                    "action_plugins": {"nudge": "actions.py:nudge"},
+                    "controllers": {"r1": {"factory": "controller.py:create_idle_controller"}}})
+                Scene(config["scene"], args.directory)
             shutil.copytree(ROOT / "examples" / "simulation_extensions", args.directory,
                             ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+            if args.template == "research":
+                write_json(args.directory / "config.json", config)
+                (args.directory / "scene.py").write_text('"""Add geometry here; the selected research scene is preserved."""\ndef build_scene(*, seed, params):\n    return []\n')
             print(f"Created {args.directory.resolve()} (edit config.json, scene.py, controller.py, actions.py)")
             return 0
         if args.command == "init":
-            config = validate_config({"version": 1, "scene": {"layout": args.layout, "seed": args.seed}})
+            config = validate_config({"version": 1, "scene": {"layout": args.layout, "seed": args.seed, "map_file": args.map_file}})
+            Scene(config["scene"], args.path.resolve().parent)
             with args.path.open("x", encoding="utf-8") as stream:
                 stream.write(json.dumps(config, indent=2) + "\n")
             print(args.path.resolve())
             return 0
         config = load_config(args.config)
         if args.command == "inspect":
-            print(json.dumps(config, indent=2, ensure_ascii=False))
+            scene = Scene(config["scene"], args.config.resolve().parent)
+            print(json.dumps({"config": config, "scene": scene.record(), "source_files": {
+                path: entry["sha256"] for path, entry in scene.sources.items()}}, indent=2, ensure_ascii=False))
             return 0
         for override in args.controller:
             if "=" not in override:

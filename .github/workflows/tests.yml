@@ -98,7 +98,7 @@ jobs:
 
   ubuntu-simulation:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     env:
       MUJOCO_GL: osmesa
       UGRP_SESSION_DIR: ${{ github.workspace }}/outputs/.quickstart-sessions
@@ -145,6 +145,13 @@ jobs:
           python scripts/ugrp_session.py run extensions-ci -- python -m scripts.check_simulation_extensions --output outputs/simulation-ci/extensions
           UGRP_SIM_PYTHON="$(command -v python)" MUJOCO_GL=glfw xvfb-run -a bash scripts/open_simulation.command run examples/simulation_extensions/config.json --wall-seconds 60 --output outputs/simulation-ci/extensions-native
           python -c "import json; r=json.load(open('outputs/simulation-ci/extensions-native/result.json')); assert r['protocol_complete'] and r['controller_calls']==10, r"
+
+      - name: Preserve every research scene and record the native default
+        run: |
+          python scripts/ugrp_session.py run scenes-ci -- python -m scripts.check_simulation_scenes --output outputs/simulation-ci/research-scenes
+          MUJOCO_GL=glfw xvfb-run -a python scripts/ugrp_session.py run research-native -- python -m scripts.sim_cli run configs/simulation/local.json --sim-seconds 1 --wall-seconds 90 --video --capture --output outputs/simulation-ci/research-native
+          python -c "import json; r=json.load(open('outputs/simulation-ci/research-native/result.json')); assert r['protocol_complete'] and r['video']['frames'] >= 10, r"
+          ffprobe -v error -show_entries stream=width,height,nb_frames -of json outputs/simulation-ci/research-native/video.mp4
 
       - name: Keep simulator verification
         if: always()

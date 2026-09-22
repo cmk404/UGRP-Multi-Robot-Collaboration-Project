@@ -25,7 +25,7 @@ def main():
         from sim.session_config import load_config
 
         experiment = output / "experiment"
-        cli(["new", str(experiment)])
+        cli(["new", str(experiment), "--template", "extensions-demo"])
         config_path = experiment / "config.json"
         for name, width, controller in (("active", .35, "create_controller"),
                                          ("idle", .35, "create_idle_controller")):

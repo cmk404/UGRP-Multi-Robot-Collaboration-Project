@@ -15,7 +15,7 @@ from tests.test_simulation_session import World
 
 def scaffold(tmp_path):
     directory = tmp_path / "experiment"
-    assert main(["new", str(directory)]) == 0
+    assert main(["new", str(directory), "--template", "extensions-demo"]) == 0
     return directory, load_config(directory / "config.json")
 
 
@@ -52,7 +52,7 @@ def test_scaffold_and_inspect_do_not_execute_code_or_overwrite(tmp_path):
     (directory / "scene.py").write_text("raise AssertionError('must not execute on inspect')")
     assert main(["inspect", str(directory / "config.json")]) == 0
     with pytest.raises(SystemExit) as error:
-        main(["new", str(directory)])
+        main(["new", str(directory), "--template", "extensions-demo"])
     assert error.value.code == 2
     assert "must not execute" in (directory / "scene.py").read_text()
 

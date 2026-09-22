@@ -7,14 +7,15 @@ import math
 from pathlib import Path
 
 from sim.scene_objects import validate_objects
+from sim.session_scenes import ENGINE_LAYOUTS, validate_selection
 from sim.session_extensions import RAW_KINDS, validate_command, validate_reference
 
-LAYOUTS = ("standard", "mixed", "arena", "camera_team")
+LAYOUTS = ENGINE_LAYOUTS  # historical engine examples; use catalog() for all research scenes
 ROBOTS = ("r1", "r2", "r3")
 DEFAULT_CONFIG = {
     "version": 1,
     "scene": {"layout": "camera_team", "seed": 41, "cargo_ids": None, "robots": {},
-              "objects": [], "builder": None, "params": {}},
+              "objects": [], "builder": None, "params": {}, "map_file": None, "contact_profile": None},
     "camera": {"width": 384, "height": 288},
     "control": {"allow_reverse": True, "allow_mecanum": True},
     "run": {"sim_seconds": 30.0, "wall_seconds": 1800.0, "realtime_factor": 1.0},
@@ -46,8 +47,7 @@ def validate_config(value):
         _object(supplied, config[group], group)
         config[group].update(copy.deepcopy(supplied))
     scene = config["scene"]
-    if scene["layout"] not in LAYOUTS:
-        raise ValueError(f"scene.layout: choose from {LAYOUTS}")
+    validate_selection(scene)
     if type(scene["seed"]) is not int or not 0 <= scene["seed"] <= 1_000_000:
         raise ValueError("scene.seed: integer in [0, 1000000] required")
     ids = scene["cargo_ids"]

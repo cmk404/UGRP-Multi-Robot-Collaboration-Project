@@ -624,6 +624,7 @@ class MultiMasterPiProductionV2:
         warehouse_layout: str = "standard",
         warehouse_cargo_ids: Sequence[str] | None = None,
         scene_objects=(),
+        xml_transform=None,
     ):
         selected_cargo_ids = None
         if warehouse_cargo_ids is not None:
@@ -709,15 +710,24 @@ class MultiMasterPiProductionV2:
         self.calibration_parameters = dict(template.calibration_parameters)
         template.close()
 
-        self.model = mujoco.MjModel.from_xml_string(build_multi_robot_xml(
+        xml = build_multi_robot_xml(
             self.physical_params,
             warehouse_specs=self.warehouse_specs,
             warehouse_terrain=self.warehouse_terrain_specs,
             warehouse_zones=self.warehouse_zones,
             spawns=self.warehouse_spawns,
             navigation_camera=warehouse_layout == "camera_team",
-            scene_objects=scene_objects,
-        ))
+            scene_objects=(),
+        )
+        if xml_transform is not None:
+            xml = xml_transform(xml)
+        if scene_objects:
+            from sim.scene_objects import append_objects
+            root = ET.fromstring(xml)
+            append_objects(root.find('worldbody'), scene_objects)
+            xml = ET.tostring(root, encoding='unicode')
+        self.scene_xml = xml
+        self.model = mujoco.MjModel.from_xml_string(xml)
         self.data = mujoco.MjData(self.model)
         self.width = int(width); self.height = int(height)
         # The browser displays these views at roughly VGA size. Rendering every
