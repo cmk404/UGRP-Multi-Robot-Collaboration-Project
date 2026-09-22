@@ -4,6 +4,7 @@
 
 ## 시작하기
 
+- **[로컬 시뮬레이션 · 실시간 카메라](docs/local_simulation.md)** — 모델 계정 없이 실행하고 브라우저에서 세 로봇을 직접 조작
 - **[Kaggle CLI 배치 실행](docs/kaggle_simulation.md)** — 비공개 CPU·오프라인 실행·결과 회수 검증 완료; 신규 계정은 최초 인증 필요
 - **[Colab CLI 시뮬레이션·평가](docs/colab_simulation.md)** — 2026-09-21 요청에 따른 기본 실행 대상; 실제 런타임 검증 상태는 안내 참조
 

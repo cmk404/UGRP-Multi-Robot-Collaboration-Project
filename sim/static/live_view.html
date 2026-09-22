@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UGRP · Local Simulation</title>
+<style>
+:root{color-scheme:light;--ink:#18252c;--muted:#61717b;--line:#dbe3e6;--green:#147a59;--paper:#f4f6f5}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 system-ui,-apple-system,sans-serif}
+header{background:#172d31;color:#fff;padding:20px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px}header strong{font-size:20px;letter-spacing:.04em}header span{color:#b7cec9;font-size:13px}.badge{border:1px solid #53796f;border-radius:30px;padding:6px 12px;font-size:12px;white-space:nowrap}
+main{max-width:1380px;margin:auto;padding:28px 32px}.intro{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:22px}h1{font-size:27px;margin:0 0 6px;letter-spacing:-.04em}p{margin:0;color:var(--muted)}.layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:22px}.cameras{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.camera{margin:0;background:white;border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}.camera.overview{grid-column:1/-1}.picture{background:#17212a;aspect-ratio:4/3;position:relative}.overview .picture{aspect-ratio:2.15}.picture img{display:block;width:100%;height:100%;object-fit:contain}.placeholder{position:absolute;inset:0;display:grid;place-items:center;color:#a7b8c0;font-size:13px;pointer-events:none}.camera.has-frame .placeholder{display:none}figcaption{display:flex;justify-content:space-between;padding:10px 14px;font-size:13px}figcaption span{color:var(--muted);font-size:12px}
+aside{display:flex;flex-direction:column;gap:14px}.panel{background:white;border:1px solid var(--line);border-radius:10px;padding:18px}.panel h2{margin:0 0 14px;font-size:14px}button,select,input{font:inherit;border:1px solid #ccd6d8;border-radius:6px;padding:9px 11px;background:#fff;color:var(--ink)}button{cursor:pointer;transition:background .15s}button:hover:enabled{background:#edf4f1}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #76b8a2;outline-offset:2px}button:disabled{opacity:.4;cursor:wait}.primary{background:var(--green);border-color:var(--green);color:white}.primary:hover:enabled{background:#0b6548}.row{display:flex;gap:8px}.row>*{flex:1;min-width:0}.wide{width:100%;margin-top:10px}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:0}.metrics dt{font-size:12px;color:var(--muted)}.metrics dd{font-variant-numeric:tabular-nums;font-size:21px;margin:2px 0 0}.small{font-size:12px;color:var(--muted);margin-top:12px}label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}select{width:100%;margin-bottom:12px}.dpad{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.dpad button{padding:10px 3px}.dpad .forward{grid-column:2}.dpad .left{grid-column:1}.dpad .backward{grid-column:2}.danger{color:#a63838}.notice{border-left:3px solid #b8c8c4;padding-left:12px;font-size:12px;color:var(--muted);margin-top:20px}#message{min-height:24px;font-size:13px;color:var(--green);margin-top:14px}#state{font-size:14px;font-weight:600}#state[data-phase=error]{color:#a63838}footer{display:flex;justify-content:space-between;margin-top:20px;font-size:12px;color:var(--muted)}
+@media(max-width:850px){main{padding:20px 16px}header{padding:16px}.layout{grid-template-columns:1fr}aside{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.intro{align-items:flex-start}.overview .picture{aspect-ratio:4/3}}@media(max-width:500px){aside{display:flex}.cameras{gap:7px}figcaption{padding:7px;font-size:12px}figcaption span{display:none}.intro{display:block}.intro>div:last-child{margin-top:12px}header span{display:none}}
+</style>
+</head>
+<body>
+<header><div><strong>UGRP</strong> <span> / MULTI-ROBOT LAB</span></div><div class="badge">LOCAL SIMULATION · 모델 계정 없이 실행</div></header>
+<main>
+<div class="intro"><div><h1>로봇의 시점으로 둘러보기</h1><p>같은 공간의 세 로봇을 관찰하고, 짧은 이동으로 시뮬레이션을 시작하세요.</p></div><div id="state" role="status">시뮬레이션 준비 중…</div></div>
+<div class="layout"><section class="cameras" aria-label="실시간 카메라">
+<figure class="camera overview"><div class="picture"><img id="camera-overview" alt="창고 전체 장면"><div class="placeholder">전체 장면을 불러오는 중</div></div><figcaption>공용 전체 장면 <span>고정 카메라 · LIVE</span></figcaption></figure>
+<figure class="camera"><div class="picture"><img id="camera-r1" alt="R1 로봇 카메라"><div class="placeholder">R1 준비 중</div></div><figcaption>R1 <span>로봇 카메라</span></figcaption></figure>
+<figure class="camera"><div class="picture"><img id="camera-r2" alt="R2 로봇 카메라"><div class="placeholder">R2 준비 중</div></div><figcaption>R2 <span>로봇 카메라</span></figcaption></figure>
+<figure class="camera"><div class="picture"><img id="camera-r3" alt="R3 로봇 카메라"><div class="placeholder">R3 준비 중</div></div><figcaption>R3 <span>로봇 카메라</span></figcaption></figure>
+</section><aside>
+<section class="panel"><h2>시뮬레이션</h2><div class="row"><button class="primary" data-action="play" disabled>시작</button><button data-action="pause" disabled>일시정지</button></div><button class="wide" data-action="demo" disabled>R1 이동 데모</button><p class="small">데모는 R1에 1 SIM초 전진 명령을 보냅니다.</p><hr style="border:0;border-top:1px solid var(--line);margin:18px 0"><dl class="metrics"><div><dt>SIM 시간</dt><dd id="sim-time">—</dd></div><div><dt>화면 갱신</dt><dd id="frame-age">—</dd></div></dl></section>
+<section class="panel"><h2>직접 움직이기</h2><label for="robot">조작할 로봇</label><select id="robot"><option value="r1">R1</option><option value="r2">R2</option><option value="r3">R3</option></select><div class="dpad"><button class="forward" data-drive="forward" disabled>↑ 전진</button><button class="left" data-drive="left" disabled>↶ 회전</button data-action="stop_motion" disabled>정지</button><button data-drive="right" disabled>↷ 회전</button><button class="backward" data-drive="backward" disabled>↓ 후진</button></div><p class="small">클릭당 0.5 SIM초 이동합니다. 일시정지 중 이동을 누르면 시뮬레이션도 재개됩니다.</p></section>
+<section class="panel"><h2>새 장면</h2><label for="seed">배치 seed</label><div class="row"><input id="seed" type="number" min="0" max="1000000" value="41"><button id="reset" disabled>초기화</button></div><p class="small">같은 seed는 같은 초기 배치로 돌아갑니다.</p><button class="wide danger" data-action="shutdown" disabled>시뮬레이션 종료</button><p class="small" id="remaining">최대 30분 실행 · Ctrl-C로도 종료 가능</p></section>
+</aside></div>
+<div id="message" role="status" aria-live="polite"></div><p class="notice">직접 조작하는 물리·카메라 체험 환경입니다. 자율 협력 운반이나 LLM 실험은 실행하지 않습니다. 탭을 떠나면 15초 후 일시정지됩니다.</p>
+<footer><span>MuJoCo · MasterPi × 3</span><span>영상은 이 컴퓨터의 시뮬레이션에서 생성됩니다.</span></footer>
+</main>
+<script>
+const controlToken='__CONTROL_TOKEN__';
+const $=id=>document.getElementById(id);
+const buttons=[...document.querySelectorAll('button')];
+let ended=false, busy=false, ready=false, sequence=-1, pending=null;
+const names={starting:'시뮬레이션 준비 중…',resetting:'새 장면 준비 중…',paused:'일시정지',running:'● 실행 중',stopped:'종료됨',error:'실행 오류'};
+function enable(){buttons.forEach(b=>b.disabled=!ready||busy||ended)}
+async function control(command){
+  busy=true;enable();$('message').textContent='명령을 전달하고 있습니다…';
+  try{
+    const res=await fetch('/api/control',{method:'POST',headers:{'Content-Type':'application/json','X-UGRP-Control':controlToken},body:JSON.stringify(command),signal:AbortSignal.timeout(4000)});
+    const result=await res.json();if(!res.ok)throw Error(result.error);
+    pending=result.accepted;
+    if(command.action==='shutdown'){ended=true;ready=false;$('state').textContent='종료됨';$('message').textContent='시뮬레이션을 종료했습니다. 이 탭을 닫아도 됩니다.';}
+  }catch(e){$('message').textContent='명령을 실행하지 못했습니다: '+e.message}
+  finally{busy=false;enable()}
+}
+document.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>control({action:b.dataset.action}));
+document.querySelectorAll('[data-drive]').forEach(b=>b.onclick=()=>control({action:'drive',robot:$('robot').value,direction:b.dataset.drive}));
+$('reset').onclick=()=>{const seed=Number($('seed').value);if(!Number.isInteger(seed)||seed<0||seed>1000000){$('message').textContent='seed는 0~1000000의 정수로 입력하세요.';return;}control({action:'reset',seed})};
+const urls={};
+async function refreshCamera(camera){
+  try{
+    const response=await fetch('/frame/'+camera,{cache:'no-store',signal:AbortSignal.timeout(3000)});
+    if(!response.ok)return;
+    const url=URL.createObjectURL(await response.blob());const img=$('camera-'+camera);
+    img.src=url;img.closest('figure').classList.add('has-frame');
+    if(urls[camera])URL.revokeObjectURL(urls[camera]);urls[camera]=url;
+  }catch(e){/* Status polling reports a lost session; retain the last image. */}
+}
+async function poll(){
+  if(ended)return;
+  if(!document.hidden){
+    try{
+      const response=await fetch('/api/status',{cache:'no-store',signal:AbortSignal.timeout(4000)});if(!response.ok)throw Error('status');
+      const s=await response.json();ready=['paused','running'].includes(s.phase);
+      $('state').textContent=names[s.phase]||s.phase;$('state').dataset.phase=s.phase;
+      $('sim-time').textContent=s.sim_time_s.toFixed(1)+' s';
+      $('frame-age').textContent=s.frame_age_s===null?'—':s.frame_age_s.toFixed(1)+'초 전';
+      $('remaining').textContent=s.remaining_s===null?'장면을 준비하고 있습니다.':Math.ceil(s.remaining_s/60)+'분 후 자동 종료 · Ctrl-C로도 종료 가능';
+      if(document.activeElement!==$('seed'))$('seed').value=s.seed;
+      if(pending===s.last_command){$('message').textContent='명령을 적용했습니다.';pending=null}
+      if(s.error)$('message').textContent=s.error;
+      if(s.frame_sequence!==sequence){sequence=s.frame_sequence;await Promise.all(['overview','r1','r2','r3'].map(refreshCamera))}
+      if(['stopped','error'].includes(s.phase))ended=true;
+    }catch(e){ready=false;$('state').textContent='연결 끊김 · 마지막 화면';$('message').textContent='터미널의 실행 상태를 확인하세요. 종료했다면 실행 명령으로 다시 시작할 수 있습니다.'}
+    enable();
+  }
+  setTimeout(poll,250);
+}
+poll();
+</script>
+</body></html>

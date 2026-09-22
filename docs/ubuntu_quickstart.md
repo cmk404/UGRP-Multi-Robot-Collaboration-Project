@@ -32,6 +32,8 @@ python3.12 -m venv .venv-dev
 
 ## 2. 모델 비용 없이 시뮬레이션 확인
 
+브라우저에서 직접 움직이며 실시간으로 보려면 `bash scripts/open_simulation.command`를 실행하고 표시되는 localhost 주소를 연다. [로컬 카메라 뷰어](local_simulation.md)에 조작·종료 방법이 있다. 아래 GIF 경로는 설치 확인용 유한 실행이다.
+
 ```bash
 export MUJOCO_GL=osmesa
 .venv-dev/bin/python scripts/ugrp_session.py run quickstart -- \
