@@ -631,36 +631,54 @@ def bounded_process(command: list[str], *, cwd: Path, log_path: Path, timeout_s:
         child.poll()
         return child.returncode is not None, not group_alive(child.pid)
 
-    previous_term = None
-    if threading.current_thread() is threading.main_thread():
-        def interrupted(_signal, _frame):
-            raise KeyboardInterrupt
-        previous_term = signal.signal(signal.SIGTERM, interrupted)
+    if threading.current_thread() is not threading.main_thread():
+        raise ContractError("owned process supervision requires the main signal-handling thread")
+    requested_interrupt = False
+    child = None
+    reaped = group_gone = False
+
+    def interrupted(_signal, _frame):
+        nonlocal requested_interrupt
+        requested_interrupt = True
+        # Never raise asynchronously across Popen/handle assignment or cleanup.
+        # The bounded wait polls this flag; repeated INT/TERM cannot tear reap.
+
+    previous = {sig: signal.signal(sig, interrupted) for sig in (signal.SIGTERM, signal.SIGINT)}
     try:
         with log_path.open("x") as log:
             child = subprocess.Popen(command, cwd=cwd, stdout=log, stderr=subprocess.STDOUT,
                                      start_new_session=True)
             timed_out = False
             try:
-                code = child.wait(timeout=timeout_s)
+                deadline = started + timeout_s
+                while True:
+                    if requested_interrupt:
+                        raise KeyboardInterrupt
+                    remaining = deadline - time.monotonic()
+                    if remaining <= 0:
+                        raise subprocess.TimeoutExpired(command, timeout_s)
+                    try:
+                        code = child.wait(timeout=min(.1, remaining))
+                        break
+                    except subprocess.TimeoutExpired:
+                        continue
             except (subprocess.TimeoutExpired, KeyboardInterrupt) as exc:
                 timed_out = isinstance(exc, subprocess.TimeoutExpired)
-                # A second TERM must not interrupt our owned-child reap.
-                if previous_term is not None:
-                    signal.signal(signal.SIGTERM, signal.SIG_IGN)
                 reaped, group_gone = finalize(child)
                 code = 124 if timed_out else 130
             else:
                 reaped, group_gone = True, not group_alive(child.pid)
                 if not group_gone:
                     # A dead leader is not proof that its descendants stopped.
-                    if previous_term is not None:
-                        signal.signal(signal.SIGTERM, signal.SIG_IGN)
                     reaped, group_gone = finalize(child)
                     code = code or 125
     finally:
-        if previous_term is not None:
-            signal.signal(signal.SIGTERM, previous_term)
+        if child is not None and not reaped:
+            reaped, group_gone = finalize(child)
+        for sig, handler in previous.items():
+            signal.signal(sig, handler)
+    if requested_interrupt and code == 0:
+        code = 130
     return {"exit_code": code, "timed_out": timed_out,
             "wall_time_s": time.monotonic() - started, "process_group": child.pid,
             "cleanup_grace_s": cleanup_grace_s, "child_reaped": reaped,
@@ -747,11 +765,17 @@ def run_study(manifest: dict, *, root: Path, evidence_root: Path, output: Path,
               "map_strata": stratified_report(rows, config["trials"]),
               "wall_s": time.monotonic() - started,
               "allocated_job_wall_s": allowed_wall,
-              "artifact_hashes_finalized": finalized,
+              "child_cleanup_confirmed": finalized,
               "scope": "physical replay is capability evidence; communication pilot is not a superiority test"}
     write_new_json(output / "report.json", report)
     if finalized:
         write_new_json(output / "artifact-hashes.json", {
             str(path.relative_to(output)): digest_file(path) for path in sorted(output.rglob("*"))
             if path.is_file() and not path.is_symlink()})
-    return report
+        # Only this final receipt attests completed hashing. report.json does
+        # not predeclare success while the inventory may still be written.
+        write_new_json(output / "artifact-finalization.json", {
+            "schema": "rgb-study-artifact-finalization.v1", "complete": True,
+            "source_sha": manifest["source"]["git_sha"],
+            "inventory": {"path": "artifact-hashes.json", "sha256": digest_file(output / "artifact-hashes.json")}})
+    return {**report, "artifact_hashes_finalized": finalized}

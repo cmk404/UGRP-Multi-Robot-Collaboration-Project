@@ -37,6 +37,16 @@ ACT 프로세스를 종료 대상으로 검색하지 않는다.
 소멸을 검사하며 남은 자식은 같은 유한 cleanup 안에서 정리한다. TERM을 무시하면
 KILL로 올리고 drain 시간을 남긴다. 미확인 상태를 성공이나 완료된 회수로 바꾸지 않는다.
 
+A의 `755dca3` 독립 감사는 Popen 반환 직후 wait 보호 구간 전의 SIGTERM에서 남는
+자식을 재현해 해당 후보를 NO-GO로 판정했다. 후속은 INT/TERM handler가 예외를 던지지
+않고 요청 flag만 기록하며, 0.1초 이하의 유한 wait poll에서 이를 소비한다. 생성 중과
+cleanup 중 반복 신호도 같은 방식으로 처리한다. 과거 후보의 검사/입력은 보존한다.
+
+`report.json.child_cleanup_confirmed`는 자식 정리만 뜻한다. inventory 작성이 끝난 뒤
+별도 `artifact-finalization.json`에 그 inventory 해시를 기록한다. 회수 완료는 outer
+exit0·reap/group 소멸·이 receipt와 inventory의 실제 재해시를 모두 확인해야 한다.
+report만 존재하거나 inventory 쓰기 도중 종료된 실행은 해시 완료로 표시하지 않는다.
+
 ## 로컬 자산 참조 준비
 
 `scripts.prepare_rgb_communication_replay`의 명시적 `--asset-mode reference`는

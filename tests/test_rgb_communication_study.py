@@ -307,6 +307,68 @@ def test_exited_leader_does_not_leave_its_same_group_descendant_writing(tmp_path
         os.kill(int(marker.read_text()), 0)
 
 
+@pytest.mark.parametrize("signum", [signal.SIGTERM, signal.SIGINT])
+def test_signal_after_spawn_before_wait_cannot_escape_owned_cleanup(tmp_path, monkeypatch, signum):
+    original = subprocess.Popen
+    children = []
+    def spawn(*args, **kwargs):
+        child = original(*args, **kwargs)
+        children.append(child)
+        os.kill(os.getpid(), signum)  # real signal before Popen returns the handle
+        return child
+    monkeypatch.setattr(study.subprocess, "Popen", spawn)
+    try:
+        result = study.bounded_process([sys.executable, "-c", "import time; time.sleep(30)"],
+            cwd=tmp_path, log_path=tmp_path / "spawn-window.log", timeout_s=2)
+        assert result["exit_code"] == 130
+        assert result["child_reaped"] and result["process_group_gone"]
+        assert children[0].poll() is not None
+    finally:
+        for child in children:
+            if child.poll() is None:
+                os.killpg(child.pid, signal.SIGKILL)
+                child.wait()
+
+
+def test_repeat_interrupt_during_cleanup_does_not_escape_reap(tmp_path, monkeypatch):
+    original_killpg = os.killpg
+    injected = []
+    def killpg(pid, signum):
+        result = original_killpg(pid, signum)
+        if signum == signal.SIGTERM and not injected:
+            injected.append(True)
+            os.kill(os.getpid(), signal.SIGINT)
+            os.kill(os.getpid(), signal.SIGTERM)
+        return result
+    monkeypatch.setattr(study.os, "killpg", killpg)
+    result = study.bounded_process([sys.executable, "-c",
+        "import signal,time; signal.signal(signal.SIGTERM,signal.SIG_IGN); time.sleep(30)"],
+        cwd=tmp_path, log_path=tmp_path / "repeated-interrupt.log", timeout_s=.2, cleanup_grace_s=1)
+    assert injected and result["timed_out"]
+    assert result["child_reaped"] and result["process_group_gone"]
+
+
+def test_inventory_write_failure_cannot_publish_finalization_receipt(source, tmp_path, monkeypatch):
+    value = study.prepare_manifest(config(), source)
+    output = tmp_path / "interrupted-inventory"
+    monkeypatch.setattr(study, "preflight", lambda *a, **k: {"ready": True})
+    monkeypatch.setattr(study, "bounded_process", lambda *a, **k: {
+        "exit_code": 0, "timed_out": False, "child_reaped": True, "process_group_gone": True})
+    original_write = study.write_new_json
+    def write(path, value):
+        if path.name == "artifact-hashes.json":
+            path.write_text('{"incomplete":')
+            raise OSError("test-only interrupted inventory")
+        original_write(path, value)
+    monkeypatch.setattr(study, "write_new_json", write)
+    with pytest.raises(OSError, match="interrupted inventory"):
+        study.run_study(value, root=source, evidence_root=source, output=output)
+    report = study.read_json(output / "report.json")
+    assert report["child_cleanup_confirmed"] is True
+    assert "artifact_hashes_finalized" not in report
+    assert not (output / "artifact-finalization.json").exists()
+
+
 def test_strata_include_unrun_and_dont_use_failed_speed_or_guess_cause():
     trials = config()["trials"]
     rows = [{"run_id": "solo", "outcome": "failure", "result": {
