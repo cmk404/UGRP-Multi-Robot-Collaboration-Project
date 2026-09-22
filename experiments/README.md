@@ -2,6 +2,8 @@
 
 현재 코드의 진입점은 [현재 상태](../docs/current_status.md)를 참고한다. 아래는 실행 SHA별 보존 기록이며 과거 실패와 후속 결과를 함께 남긴다. 필요한 ID만 골라 읽는다.
 
+- [2026-09-22 RGB 통신 기반 최소 물리 재생](2026-09-22-rgb-communication-replay/README.md) — Colab 단독/공동 2회 회수, LLM 0회; 모두 종료·평가 clock 모순으로 invalid_artifact. 물리 성공·통신 효과 미입증.
+
 - [2026-09-21 Kaggle CLI CPU 실행·결과 회수](2026-09-21-kaggle-cli-smoke/README.md) — private·인터넷 OFF, 최종 물리·카메라 데모 1/1, 앞선 setup 실패 3회 별도 보존.
 - [2026-09-21 Colab CLI CPU 실행·결과 회수](2026-09-21-colab-cli-smoke/README.md) — 실제 원격 물리·카메라 데모 1/1, ZIP 회수와 전체 파일 해시 확인; 자율 운반 검증 아님.
 
