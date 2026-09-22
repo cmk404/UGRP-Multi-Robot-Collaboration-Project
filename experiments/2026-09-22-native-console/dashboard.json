@@ -1,0 +1,97 @@
+{
+  "scope": "Interactive console infrastructure only; 7 live model requests, no transport success or communication efficacy. Previous interactive window instability is a separate failure record. Latency is sum of individual request wall times, not round elapsed time.",
+  "url": "http://127.0.0.1:6006/?pinnedCards=%5B%7B%22plugin%22%3A+%22scalars%22%2C+%22tag%22%3A+%22claims%2Foperator_session_complete%22%7D%2C+%7B%22plugin%22%3A+%22scalars%22%2C+%22tag%22%3A+%22claims%2Fprotocol_complete%22%7D%2C+%7B%22plugin%22%3A+%22scalars%22%2C+%22tag%22%3A+%22result%2Fwall_s%22%7D%2C+%7B%22plugin%22%3A+%22scalars%22%2C+%22tag%22%3A+%22result%2Fcommands%22%7D%2C+%7B%22plugin%22%3A+%22scalars%22%2C+%22tag%22%3A+%22result%2Fmodel_calls%22%7D%2C+%7B%22plugin%22%3A+%22scalars%22%2C+%22tag%22%3A+%22result%2Fmodel_latency_s%22%7D%5D&smoothing=0&runFilter=%5E0922-native-console%2F#timeseries",
+  "run_filter": "^0922-native-console/",
+  "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-native-console",
+  "pinned_tags": [
+    "claims/operator_session_complete",
+    "claims/protocol_complete",
+    "result/wall_s",
+    "result/commands",
+    "result/model_calls",
+    "result/model_latency_s"
+  ],
+  "hparams_visible_columns": [
+    "policy",
+    "case",
+    "claims/protocol_complete",
+    "result/wall_s",
+    "result/commands",
+    "result/model_calls"
+  ],
+  "records": [
+    {
+      "name": "independent",
+      "source": "/Users/changmin/.codex/worktrees/native-simulation-console/ugrp/outputs/console-check-v1/independent",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-native-console/independent",
+      "manifest_sha256": "6cf36eda85184726b2737d3c18f48fd269917f141c838839c44eb805d27a5874",
+      "videos": [
+        {
+          "id": "c815b5def4bfdae22729",
+          "path": "/Users/changmin/.codex/worktrees/native-simulation-console/ugrp/outputs/console-check-v1/independent/motion.mp4",
+          "size": 29471,
+          "mtime_ns": 1790070065172314906
+        }
+      ]
+    },
+    {
+      "name": "manual",
+      "source": "/Users/changmin/.codex/worktrees/native-simulation-console/ugrp/outputs/console-check-v1/manual",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-native-console/manual",
+      "manifest_sha256": "96b8bc12bc8a5555ff86972537e9b959ae44325a5460427ddb56d149f8036b16",
+      "videos": [
+        {
+          "id": "db7320a43d529bb5e3fb",
+          "path": "/Users/changmin/.codex/worktrees/native-simulation-console/ugrp/outputs/console-check-v1/manual/motion.mp4",
+          "size": 31886,
+          "mtime_ns": 1790069980854690933
+        }
+      ]
+    },
+    {
+      "name": "peer",
+      "source": "/Users/changmin/.codex/worktrees/native-simulation-console/ugrp/outputs/console-check-v1/peer",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-native-console/peer",
+      "manifest_sha256": "1b1425178ba8e0168e6425929ebd499c3f17bfabd84d85a786da52fa27e6b675",
+      "videos": [
+        {
+          "id": "3acea31cddde1ab804bc",
+          "path": "/Users/changmin/.codex/worktrees/native-simulation-console/ugrp/outputs/console-check-v1/peer/motion.mp4",
+          "size": 29471,
+          "mtime_ns": 1790070115362466212
+        }
+      ]
+    },
+    {
+      "name": "previous-window-instability",
+      "source": "/Users/changmin/.codex/worktrees/native-simulation-recovery/ugrp/outputs/interactive-recovery-v1",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-native-console/previous-window-instability",
+      "manifest_sha256": "8443220c9f90c2f7e95c2fe1425b74b0f26c5be96761329d8d0a25cc73f337d0",
+      "videos": []
+    },
+    {
+      "name": "single",
+      "source": "/Users/changmin/.codex/worktrees/native-simulation-console/ugrp/outputs/console-check-v1/single",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-native-console/single",
+      "manifest_sha256": "5376c89f1ec0cd49c42de809464ab2b31cc1e41404d539a5e1af954e80a0ab98",
+      "videos": [
+        {
+          "id": "a48680c99c4a82f2bda1",
+          "path": "/Users/changmin/.codex/worktrees/native-simulation-console/ugrp/outputs/console-check-v1/single/motion.mp4",
+          "size": 28582,
+          "mtime_ns": 1790070008738456917
+        }
+      ]
+    },
+    {
+      "name": "terminal",
+      "source": "/Users/changmin/.codex/worktrees/native-simulation-console/ugrp/outputs/console-check-v1/terminal",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-native-console/terminal",
+      "manifest_sha256": "370b9e1e085ac28b896619d80e55ec9d4e991414f0e613c48b8c671549df1554",
+      "videos": []
+    }
+  ],
+  "event_readback_verified": true,
+  "ui_verified": false,
+  "media_port": 6011
+}

@@ -1,0 +1,249 @@
+{
+  "source_sha": "7fbfd8685e2588bcf6d4ed156802f3da7dd3162c",
+  "checks": {
+    "offline_tests": 1490,
+    "offline_skipped": 7,
+    "offline_subtests": 198,
+    "new_console_tests": 18,
+    "export_tests_after_latency_addition": 16,
+    "raw_artifact_hashes_verified": true,
+    "actor_wire_boundaries_verified": true,
+    "native_mac_sessions": 5,
+    "actual_model_requests": 7,
+    "all_owned_validation_processes_exited": true
+  },
+  "records": [
+    {
+      "case": "independent",
+      "source": "/Users/changmin/.codex/worktrees/native-simulation-console/ugrp/outputs/console-check-v1/independent",
+      "result_sha256": "2f9bcdcac2f57dcc99b8b7dff4bb21ef7ad0a7ac17deed80f016a48421d94a57",
+      "result": {
+        "source_sha": "7fbfd8685e2588bcf6d4ed156802f3da7dd3162c",
+        "source_dirty": false,
+        "python": "3.12.13",
+        "platform": "macOS-27.2-arm64-arm-64bit",
+        "mujoco": "3.12.0",
+        "policy": "llm-independent",
+        "case": "dispatch/shared_crossing",
+        "scope": "interactive_simulation",
+        "stop_reason": "console_quit",
+        "sim_s": 0.30000000000000027,
+        "wall_s": 11.794375624998793,
+        "commands": 3,
+        "model_calls": 3,
+        "model_latency_s": 17.117768834003073,
+        "console_errors": 0,
+        "operator_session_complete": true,
+        "protocol_complete": false,
+        "episodes": 1,
+        "input_tokens": 8331,
+        "output_tokens": 280,
+        "runtime_events": []
+      },
+      "requests": [
+        {
+          "request": "0001-r1.json",
+          "robot": "r1",
+          "actual_model": "gemini-3.8-flash",
+          "usage": {
+            "prompt_tokens": 2777,
+            "completion_tokens": 93,
+            "total_tokens": 3021
+          },
+          "latency_s": 6.915855083003407
+        },
+        {
+          "request": "0002-r2.json",
+          "robot": "r2",
+          "actual_model": "gemini-3.8-flash",
+          "usage": {
+            "prompt_tokens": 2777,
+            "completion_tokens": 93,
+            "total_tokens": 2995
+          },
+          "latency_s": 3.432443958998192
+        },
+        {
+          "request": "0003-r3.json",
+          "robot": "r3",
+          "actual_model": "gemini-3.8-flash",
+          "usage": {
+            "prompt_tokens": 2777,
+            "completion_tokens": 94,
+            "total_tokens": 2871
+          },
+          "latency_s": 6.769469792001473
+        }
+      ]
+    },
+    {
+      "case": "manual",
+      "source": "/Users/changmin/.codex/worktrees/native-simulation-console/ugrp/outputs/console-check-v1/manual",
+      "result_sha256": "c09a5ee6e4faf4d3ae5b4df98b2422e28e4f453811df0781cebb39d76ae4e3d1",
+      "result": {
+        "source_sha": "7fbfd8685e2588bcf6d4ed156802f3da7dd3162c",
+        "source_dirty": false,
+        "python": "3.12.13",
+        "platform": "macOS-27.2-arm64-arm-64bit",
+        "mujoco": "3.12.0",
+        "policy": "manual",
+        "case": "dispatch/shared_crossing",
+        "scope": "interactive_simulation",
+        "stop_reason": "console_quit",
+        "sim_s": 0.5000000000000004,
+        "wall_s": 4.815899917000934,
+        "commands": 1,
+        "model_calls": 0,
+        "model_latency_s": 0,
+        "console_errors": 0,
+        "operator_session_complete": true,
+        "protocol_complete": false,
+        "episodes": 1,
+        "input_tokens": null,
+        "output_tokens": null,
+        "runtime_events": []
+      },
+      "requests": []
+    },
+    {
+      "case": "peer",
+      "source": "/Users/changmin/.codex/worktrees/native-simulation-console/ugrp/outputs/console-check-v1/peer",
+      "result_sha256": "06380b1e9309545b59ee611073d0ec2f9ec1d5df790be4ccc92ef3327d2b4259",
+      "result": {
+        "source_sha": "7fbfd8685e2588bcf6d4ed156802f3da7dd3162c",
+        "source_dirty": false,
+        "python": "3.12.13",
+        "platform": "macOS-27.2-arm64-arm-64bit",
+        "mujoco": "3.12.0",
+        "policy": "llm-peer",
+        "case": "dispatch/shared_crossing",
+        "scope": "interactive_simulation",
+        "stop_reason": "console_quit",
+        "sim_s": 0.30000000000000027,
+        "wall_s": 8.854154291999293,
+        "commands": 3,
+        "model_calls": 3,
+        "model_latency_s": 12.78357345999757,
+        "console_errors": 0,
+        "operator_session_complete": true,
+        "protocol_complete": false,
+        "episodes": 1,
+        "input_tokens": 8367,
+        "output_tokens": 326,
+        "runtime_events": []
+      },
+      "requests": [
+        {
+          "request": "0001-r1.json",
+          "robot": "r1",
+          "actual_model": "gemini-3.8-flash",
+          "usage": {
+            "prompt_tokens": 2789,
+            "completion_tokens": 106,
+            "total_tokens": 3085
+          },
+          "latency_s": 4.199437208997551
+        },
+        {
+          "request": "0002-r2.json",
+          "robot": "r2",
+          "actual_model": "gemini-3.8-flash",
+          "usage": {
+            "prompt_tokens": 2789,
+            "completion_tokens": 110,
+            "total_tokens": 2899
+          },
+          "latency_s": 4.290515417000279
+        },
+        {
+          "request": "0003-r3.json",
+          "robot": "r3",
+          "actual_model": "gemini-3.8-flash",
+          "usage": {
+            "prompt_tokens": 2789,
+            "completion_tokens": 110,
+            "total_tokens": 3045
+          },
+          "latency_s": 4.293620833999739
+        }
+      ]
+    },
+    {
+      "case": "single",
+      "source": "/Users/changmin/.codex/worktrees/native-simulation-console/ugrp/outputs/console-check-v1/single",
+      "result_sha256": "5328a23398727c47a198abf99b3bc6c1da0a0a9ac3874526a644a004858ac34e",
+      "result": {
+        "source_sha": "7fbfd8685e2588bcf6d4ed156802f3da7dd3162c",
+        "source_dirty": false,
+        "python": "3.12.13",
+        "platform": "macOS-27.2-arm64-arm-64bit",
+        "mujoco": "3.12.0",
+        "policy": "llm-single",
+        "case": "dispatch/shared_crossing",
+        "scope": "interactive_simulation",
+        "stop_reason": "console_quit",
+        "sim_s": 0.30000000000000027,
+        "wall_s": 9.724963750002644,
+        "commands": 1,
+        "model_calls": 1,
+        "model_latency_s": 5.486348916001589,
+        "console_errors": 0,
+        "operator_session_complete": true,
+        "protocol_complete": false,
+        "episodes": 1,
+        "input_tokens": 2777,
+        "output_tokens": 89,
+        "runtime_events": []
+      },
+      "requests": [
+        {
+          "request": "0001-r1.json",
+          "robot": "r1",
+          "actual_model": "gemini-3.8-flash",
+          "usage": {
+            "prompt_tokens": 2777,
+            "completion_tokens": 89,
+            "total_tokens": 2991
+          },
+          "latency_s": 5.486348916001589
+        }
+      ]
+    },
+    {
+      "case": "terminal",
+      "source": "/Users/changmin/.codex/worktrees/native-simulation-console/ugrp/outputs/console-check-v1/terminal",
+      "result_sha256": "6a95c0e779be13a48c2ca25592581b2b68bb8459c939e5ef0ab7e42eecc00a43",
+      "result": {
+        "source_sha": "7fbfd8685e2588bcf6d4ed156802f3da7dd3162c",
+        "source_dirty": false,
+        "python": "3.12.13",
+        "platform": "macOS-27.2-arm64-arm-64bit",
+        "mujoco": "3.12.0",
+        "policy": "manual",
+        "case": "camera_team",
+        "scope": "interactive_simulation",
+        "stop_reason": "console_quit",
+        "sim_s": 0.0,
+        "wall_s": 35.909826374998374,
+        "commands": 4,
+        "model_calls": 0,
+        "model_latency_s": 0,
+        "console_errors": 0,
+        "operator_session_complete": true,
+        "protocol_complete": false,
+        "episodes": 5,
+        "input_tokens": null,
+        "output_tokens": null,
+        "runtime_events": []
+      },
+      "requests": []
+    }
+  ],
+  "limits": [
+    "Interactive raw action integration, not autonomous transport or communication efficacy.",
+    "Peer message delivery to next round verified with fixtures; live peer smoke used one round only.",
+    "Linux console validation pending PR110 CI.",
+    "Prior interactive window had BADQACC at 186.262 SIM s and stayed open until wall1800; its exact GUI trigger remains unknown.",
+    "Raw videos and model I/O are local only; this is not remote backup."
+  ]
+}
