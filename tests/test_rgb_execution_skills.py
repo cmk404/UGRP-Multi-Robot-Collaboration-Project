@@ -177,6 +177,20 @@ def test_slow_pair_image_worker_does_not_block_solo_or_clock():
         port.close(port._now_s)
 
 
+def test_completed_worker_result_still_requires_fresh_sim_observation():
+    port, world, _, _ = build()
+    try:
+        submit(port, "r2")
+        port.tick(0.)
+        port._runners["r2"].future.result(timeout=1.)
+        port._runners["r2"].observation["observed_at_s"] = -1.01
+        port.tick(0.)
+        assert port.local_status("r2")["own_skill_status"]["state"] == "STOPPED"
+        assert not any(any(c) for c in world.robots["r2"].motor_calls)
+    finally:
+        port.close(port._now_s)
+
+
 def test_none_independent_pair_consent_and_pause_resume_cleanup():
     port, world, _, controllers = build()
     try:

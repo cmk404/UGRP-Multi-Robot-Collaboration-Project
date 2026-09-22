@@ -63,7 +63,7 @@ config exact fields:
 ## clock, 수명, 오래된 답
 
 - scheduler가 소유한 SIM elapsed clock은 setup 종료 시 0으로 시작한다. 실제 world origin은 provenance에 보존한다. tick은 0~0.05초만 전진할 수 있고 180초를 넘을 수 없다. `DispatchScene.step` 한 곳만 post-setup 물리를 step하며 그 내부 각 물리 substep에서 모든 endpoint watchdog을 확인한다. 요청 시간과 실제 timestep grid가 다르면 중단한다.
-- 영상 판단은 robot별 worker에서 실행한다. worker에는 own RGB, common TOP, 자기 명령 cache와 자신의 스킬만 들어간다. world·port·평가 참조가 없고 완료 전에는 명령 권한도 없다. 다른 로봇/clock은 이 worker를 기다리지 않는다. 한 번의 판단은 wall 2초 한도이며 취소된 계산의 늦은 결과는 폐기한다.
+- 영상 판단은 robot별 worker에서 실행한다. worker에는 own RGB, common TOP, 자기 명령 cache와 자신의 스킬만 들어간다. world·port·평가 참조가 없고 완료 전에는 명령 권한도 없다. 다른 로봇/clock은 이 worker를 기다리지 않는다. 한 번의 판단은 wall 2초 한도이며 결과를 받았을 때도 원본 RGB가 SIM 1초 이내인지 검사한다. 취소된 계산의 늦은 결과는 폐기한다.
 - pose 보간/drive는 scheduler의 `MacroQueue`가 발행하고 raw duration은 최대 .1초다. 모든 명령은 전체 command cap 및 lease 만료로 제한한다. tick/모델을 정지해도 이미 발행한 endpoint 명령의 watchdog은 물리 owner가 확인한다.
 - `own_revision`은 high-level consent/task generation이다. 요청/승인/철회/중단/일시정지/재개/만료/종료 및 수동 명령 변경 시 증가한다. 같은 consent의 자동 RGB macro/servo pulse와 RUNNING phase 변화는 증가하지 않는다. C는 원본 명령 history/hash를 evidence에 보존하고 예상 micro pulse 변화 때문에 pause/interrupt 답을 영구 거절하지 않는다.
 - 실제 backend는 `expected_revision` 필수. 같은 로봇의 최근 64개 관측 ID, 당시 revision, 최대 5초 나이를 대조한다. 새 observe 호출만으로 이전의 여전히 유효한 관측을 무효화하지 않는다. 늦은 reply가 새 임무에 적용되지 않는다.
