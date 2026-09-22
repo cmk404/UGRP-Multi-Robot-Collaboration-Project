@@ -1,0 +1,30 @@
+{
+  "schema": "ugrp.rgb_communication_fixture.v1",
+  "fixture_id": "three-independent-robots",
+  "evidence_kind": "fixture",
+  "clock_domain": "sim",
+  "robot_ids": ["r1", "r2", "r3"],
+  "jpeg_base64": "/9j/2Q==",
+  "jpeg_sha256": "32461d5bd1773012acef0ba15636752949bd7c2ce50f9172159d9f56cf0dd9af",
+  "static_context": {
+    "schema": "ugrp.rgb_static_context.v1",
+    "task": {
+      "description": "Move cargo with independent robot choices.",
+      "object_ids": ["box-1", "plank-1"],
+      "allowed_skills": ["carry"]
+    },
+    "static_map": {
+      "id": "map-1",
+      "version": "1",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "description": "fixed fixture map"
+    },
+    "camera_calibration": {
+      "id": "camera-1",
+      "version": "1",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "description": "fixed fixture calibration"
+    }
+  },
+  "static_context_sha256": "d9e0cd7ff2e9a7be1a2ecbabb6aaa3e1ab74f097407507c1710c308dfed96d2f"
+}
