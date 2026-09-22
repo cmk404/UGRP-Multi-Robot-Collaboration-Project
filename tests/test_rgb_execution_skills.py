@@ -5,6 +5,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
+import sys
 import threading
 from types import SimpleNamespace
 
@@ -148,6 +149,12 @@ def test_accumulated_clock_through_full_180_second_budget_without_physics():
         assert all(p._servo_tick_time == scene.world.data.time for p in scene.ports.values())
         with pytest.raises(ValueError):
             port.tick(180.05)
+        # C supplies the verified raw actual value, including accumulation
+        # roundoff above the requested 180-second cap. Close never steps.
+        steps_before_close = scene.physics_steps
+        port.close(actual)
+        assert port._closed
+        assert scene.physics_steps == steps_before_close
     finally:
         port.close(None)
 
@@ -225,6 +232,21 @@ def test_meaningful_grid_mismatch_is_not_hidden_by_roundoff_bound():
     assert raised.value.__cause__.error_code == "SIM_CLOCK_MISMATCH"
     assert port.clock_snapshot()["last_acknowledged_time_s"] == 0.
     assert port.clock_snapshot()["actual_time_s"] == pytest.approx(.048)
+
+
+@pytest.mark.parametrize("claimed", [-1., math.nan, math.inf, .01, .2, 180.05])
+def test_close_rejects_invalid_or_unverified_clock_without_advancing(claimed):
+    port, scene = build_dispatch_float_clock()
+    port.tick(.05)
+    before = port.clock_snapshot()
+    steps = scene.physics_steps
+    try:
+        with pytest.raises(ValueError):
+            port.close(claimed)
+        assert not port._closed
+        assert port.clock_snapshot() == before and scene.physics_steps == steps
+    finally:
+        port.close(None)
 
 
 @pytest.mark.parametrize("kind", ["pause", "interrupt", "release", "expiry", "close"])
@@ -695,7 +717,6 @@ def test_real_factory_wires_clock_only_callback_and_raw_snapshot_with_fixture_sc
     import harness.rgb_skill_execution as skills
     import scripts.research_dispatch_scene as dispatch
     import scripts.run_dispatch_e2e as evaluation
-    import scripts.probe_dual_grasp_sync as media
     fixture_port, fixture_scene = build_dispatch_float_clock()
     fixture_port.close(None)
     events = []
@@ -727,7 +748,10 @@ def test_real_factory_wires_clock_only_callback_and_raw_snapshot_with_fixture_sc
             events.append("video_close")
     monkeypatch.setattr(dispatch, "DispatchScene", FixtureScene)
     monkeypatch.setattr(evaluation, "Referee", Referee)
-    monkeypatch.setattr(media, "Video", Video)
+    # Do not import the real Video module: its import-time MuJoCo dependency
+    # is deliberately absent in offline CI. Also deny it on rich local envs.
+    monkeypatch.setitem(sys.modules, "mujoco", None)
+    monkeypatch.setitem(sys.modules, "scripts.probe_dual_grasp_sync", SimpleNamespace(Video=Video))
     bundle = skills.build_rgb_skill_backend(write_assets(tmp_path))
     try:
         for i in range(17):

@@ -785,7 +785,14 @@ class RGBSkillExecutionPort(RGBExecutionPort):
         if not self._closed:
             if self._simulation_clock is not None:
                 if now_s is not None:
-                    self._simulation_clock.target(now_s)
+                    # C passes the raw actual elapsed value, which can be a
+                    # few accumulated ULPs above max_sim_s. This is a read-only
+                    # equality check, NOT a new requested tick or cap waiver.
+                    if not finite_number(now_s, minimum=0.):
+                        raise _SimulationClockError("SIM_CLOCK_INVALID")
+                    actual = self._simulation_clock.absolute()-self._simulation_clock.origin
+                    if abs(now_s-actual) > self._simulation_clock.roundoff_bound(actual):
+                        raise _SimulationClockError("SIM_CLOCK_MISMATCH")
                 # Closing never acknowledges or advances an attempted tick.
                 now_s = self._now_s
             elif now_s is None:
