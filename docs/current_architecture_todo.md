@@ -1,5 +1,7 @@
 > **과거 기록:** 현재 상태는 [현재 상태와 실행 경로](current_status.md)를 따른다. 아래 운영 구성·성공률·TODO는 각 기록 당시의 값이며 현재 입력 규칙을 대신하지 않는다.
 
+> 앞으로의 연구 순서와 완료 기준은 [연구 TODO (2026-09-22)](research_todo.md)를 따른다. 아래의 과거 TODO와 완료 표시는 당시 증거로 보존한다.
+
 > 2026-09-09 실행 기준: Mac 로컬 시뮬레이션. 이 문서의 이전 운영 구성은 역사적 기록이며, 최신 설치·실행은 [CONTRIBUTING.md](../CONTRIBUTING.md), 클라우드 퇴역은 [기록](cloud_simulation.md)을 따른다.
 
 > 현재 아레나 상태(2026-09-06): 구역 한 변0.82m. 실제 자연어3시드 전체완료0/3; 집기 접근 및 경로 실패 미해결. 아래 과거 성공 결과와 구분하며, 최신 근거는 `outputs/warehouse_research/coela-compact-video-01/report-ko.md` 참조.

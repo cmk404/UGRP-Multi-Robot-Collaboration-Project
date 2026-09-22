@@ -1,0 +1,34 @@
+{
+  "audited_git_sha": "120cc821b6a1d5c104aab8c8ef2260cf7f8c9a7b",
+  "files_sha256": {
+    "harness/camera_policy.py": "b2192e72c9cbf95a41f7c9b665607734e842d0e61c34454f50772809a579edfa",
+    "harness/camera_runtime.py": "61f1e75dbb97045cb336441b4e2ac7fb366878501dea664b8610e51065fa1b96",
+    "sim/camera_robot_port.py": "182628c96a6e2e6f3d17703173dd96384113c3006a1f91ebc4a2c8b92b0cca35",
+    "harness/coela_modules.py": "af8275de470d75ed4037f1be236f6572cde49abc0c597f1c2760795f7ba2706e",
+    "harness/coela_runtime.py": "a6fc5afa7d873281c4f008958f946bd9696d30b376a79a611e84b1a7fd8c75e3",
+    "sim/mixed_warehouse.py": "66b4f48fd06f24bdf58dd6a1906b9b721b95f02686fefed902e36b1c494239f2",
+    "harness/dispatch_plan.py": "eb23b29567a751379e0ea08b6612fa9b1cb6f790ec0d109322916b7b2c0f6407",
+    "harness/dispatch_execution.py": "680c594b438613ad30e4f36023ebc4bc10b0927137c250723ceb275302db735b",
+    "harness/three_robot_plan.py": "e48c4550425e0479b8ed878c458c6574a496750f41e357b8b1af2e3b3c2bdadd",
+    "harness/mixed_warehouse_protocol.py": "21dcce5eb992ddccdb6f68f92cda3df0330ec635c6a1719594ebba96232842f0",
+    "harness/mixed_warehouse_runtime.py": "a1e890c0a05621619f414421df859158d9d8afcf3074ff0341d90ab51b5ab93d"
+  },
+  "visually_inspected_existing_samples": {
+    "scope": "three existing frames only; no single-observer gripper evidence established",
+    "files_sha256": {
+      "tests/fixtures/research_visual_witness/false-grasp-r1-current-own_rgb.jpg": "b9a02b71fd1f6118584fe1ad38860b74e0d212edd32d05fc1aaca10c1757bf91",
+      "tests/fixtures/research_visual_witness/false-grasp-r3-current-own_rgb.jpg": "b73a924117e513742b2d35dd9ac10b0773ce186364a1a22b9f7e15a86697d8b7",
+      "tests/fixtures/research_visual_witness/false-grasp-r1-current-top_rgb.jpg": "bb703394b491f3690ad83405c679b9bbf5cf7aade4121c4e62d02ad7029c8388"
+    }
+  },
+  "recorded_request_sample": {
+    "execution_sha": "e099a4a38c8da094c8c1946ffca2e7ab02f16a83",
+    "path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1/team/r2/dispatch-56ac717bbe8e-r2-plan-3-request.json",
+    "sha256": "6a6c0c56697538a18d8f4241d22f9b2ddb7c29791f5306d97762f29c8e815221",
+    "inspected": "text context fields, full agreement plan, image labels; no new model call or image-inference replay",
+    "context_fields": ["agreement", "mission", "own_issued_commands", "own_motion_identity", "own_probe_image_readout", "peer_claims", "reply_binding", "reply_envelope", "request_id", "robot_id"],
+    "agreement_plan_hash": "e6c059e6b92dae95c292dc349c3b134697dbeea64725f89dd4311fed7d314476",
+    "image_labels": ["CURRENT OWN RGB", "CURRENT SHARED TOP RGB", "BEFORE_CURRENT OWN RGB", "BEFORE_CURRENT SHARED TOP RGB", "AFTER_CURRENT OWN RGB", "AFTER_CURRENT SHARED TOP RGB"],
+    "storage": "local original inspected; not copied or remotely backed up by this audit"
+  }
+}
