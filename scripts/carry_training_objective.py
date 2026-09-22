@@ -5,6 +5,8 @@ from scripts.audit_carry_termination import audit
 
 def sampling_groups(rows,objective='episode'):
     if objective not in ('legacy','episode'):raise ValueError('unknown termination objective')
+    if objective=='legacy':
+        return [3 if r['done'] else max(range(3),key=lambda k:abs(r['action'][k])) for r in rows]
     ends={}
     for row in rows:
         root,slot,index=row['id'].rsplit(':',2)
@@ -24,6 +26,10 @@ def sampling_groups(rows,objective='episode'):
 
 def selection(rows,predictions,mean_motion_mae,legacy_score,objective='episode'):
     if len(rows)!=len(predictions):raise ValueError('prediction count mismatch')
+    if objective not in ('legacy','episode'):raise ValueError('unknown termination objective')
+    if objective=='legacy':
+        if not math.isfinite(legacy_score):raise ValueError('nonfinite selection metric')
+        return {'selection_score':legacy_score,'termination_objective':'legacy'}
     samples=[{'id':r['id'],'target':r['action'],'prediction':p} for r,p in zip(rows,predictions)]
     result=audit(samples)
     premature=result['premature_pair_hold_episodes']/result['episodes']

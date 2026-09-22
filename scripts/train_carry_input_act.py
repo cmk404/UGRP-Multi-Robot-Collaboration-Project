@@ -76,7 +76,7 @@ def batch_at(cache, windows, device="cpu"):
 
 
 @torch.no_grad()
-def evaluate(policy, cache, windows, rows, batch_size=32, objective='episode'):
+def evaluate(policy, cache, windows, rows, batch_size=32, objective='legacy'):
     policy.eval()
     pred = []
     with frozen_features(policy):
