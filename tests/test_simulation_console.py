@@ -216,3 +216,17 @@ def test_partial_model_receipts_do_not_claim_complete_usage_or_latency():
     assert model_totals(responses, complete=False) == {"model_latency_s": None}
     assert model_totals(responses, complete=True) == {"model_latency_s": 1, "input_tokens": 10, "output_tokens": 5}
     assert model_totals([], complete=True) == {"model_latency_s": 0}
+
+
+def test_pause_run_preserves_pending_motion_but_stop_revokes_it(tmp_path):
+    with Simulation({"version": 1}, render=True, world_factory=World) as sim:
+        console = Console(sim, tmp_path, arguments())
+        console.command("r1 앞으로 1초")
+        sim.step(10)
+        console.command("/pause")
+        console.command("/run")
+        sim.step(10)
+        assert sim._world.robot("r1").motors == [.1] * 4
+        console.command("/stop")
+        assert sim._world.robot("r1").motors == [0.] * 4
+        console.close()

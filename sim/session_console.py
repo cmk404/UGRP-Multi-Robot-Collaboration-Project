@@ -253,7 +253,8 @@ class Console:
         elif verb == "/run":
             if self.sim._state_error:
                 raise ValueError("먼저 /reset 또는 MuJoCo 창의 R로 초기화하세요.")
-            self.sim.set_automation(self.mode == "script")
+            if self.sim.automation_enabled != (self.mode == "script"):
+                self.sim.set_automation(self.mode == "script")
             self.paused = False
         elif verb == "/step":
             if self.sim._state_error:
