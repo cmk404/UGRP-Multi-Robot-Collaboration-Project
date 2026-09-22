@@ -19,6 +19,14 @@ from sim.session_extensions import Extensions
 from sim.session_scenes import Scene
 
 
+class SimulationStateError(RuntimeError):
+    """A reset or invalid physics state requires an explicit new episode."""
+
+    def __init__(self, record):
+        self.record = record
+        super().__init__(record["kind"] + ": physics paused; reset the episode before continuing")
+
+
 class Simulation:
     def __init__(self, config, *, render=False, base_dir=".", decision_sink=None, world_factory=None):
         self.config = validate_config(config)
@@ -65,7 +73,35 @@ class Simulation:
     @property
     def time(self):
         """Episode-relative physics time; excludes the world's reset settling."""
+        if self._state_error is not None:
+            return self._last_world_time - self._start_time
         return float(self._world.data.time) - self._start_time
+
+    def _warnings(self):
+        if not hasattr(self._world.data, "warning"):
+            return {}
+        import mujoco
+        return {name: int(self._world.data.warning[getattr(mujoco.mjtWarning, "mjWARN_" + name)].number)
+                for name in ("BADQPOS", "BADQVEL", "BADQACC", "BADCTRL")}
+
+    def _check_state(self):
+        if self._state_error is not None:
+            raise self._state_error
+        now = float(self._world.data.time)
+        warnings = self._warnings()
+        new_warnings = {key: value for key, value in warnings.items()
+                        if value > self._warning_counts.get(key, 0)}
+        if new_warnings or not math.isfinite(now) or now < self._last_world_time:
+            record = {"kind": "physics_instability" if new_warnings or not math.isfinite(now) else "external_reset",
+                      "episode": self.episode, "at_s": self._last_world_time - self._start_time,
+                      "world_time_s": now if math.isfinite(now) else None, "warnings": new_warnings}
+            self._state_error = SimulationStateError(record)
+            # Cancel wheel commands without advancing a lease on a reset clock.
+            for port in self._ports.values():
+                port.stop()
+            raise self._state_error
+        self._last_world_time = now
+        self._warning_counts = warnings
 
     def reset(self):
         """Reset the same configured scene and command schedule, retaining viewer handles.
@@ -86,6 +122,9 @@ class Simulation:
                         self._world.data.eq_active[eid] = 0
             self._ports = {rid: CameraRobotPort(self._world, rid, **self.config["control"]) for rid in ROBOTS}
             self._start_time = float(self._world.data.time)
+            self._last_world_time = self._start_time
+            self._warning_counts = self._warnings()
+            self._state_error = None
             self._next_action = 0
             self._controllers = self.extensions.controllers()
             self._controller_ticks = {rid: 0 for rid in self._controllers}
@@ -104,6 +143,7 @@ class Simulation:
 
     def _apply_raw(self, robot, command, *, requested):
         with self._lock():
+            self._check_state()
             ack = self._ports[robot].apply(command, float(self._world.data.time))
             self.command_history.append({"event": "command", "episode": self.episode,
                                          "at_s": self.time, "robot": robot,
@@ -121,6 +161,8 @@ class Simulation:
         if type(steps) is not int or not 1 <= steps <= 1_000_000:
             raise ValueError("steps: integer in [1, 1000000] required")
         for _ in range(steps):
+            with self._lock():
+                self._check_state()
             actions = self._scheduled
             while self._next_action < len(actions) and actions[self._next_action]["at_s"] <= self.time + 1e-10:
                 event = actions[self._next_action]
@@ -131,6 +173,7 @@ class Simulation:
                 for port in self._ports.values():
                     port.tick(float(self._world.data.time))
                 self._world._physics_step_for(self._world.robot("r1"))
+                self._check_state()
                 for port in self._ports.values():
                     port.tick(float(self._world.data.time))
         return self.time
@@ -176,6 +219,8 @@ class Simulation:
             raise RuntimeError("observe() requires Simulation(config, render=True)")
         if robot not in self._ports:
             raise ValueError(f"unknown robot: {robot}")
+        with self._lock():
+            self._check_state()
         result = self._ports[robot].capture()
         if include_top:
             jpeg = self._world.render_team_jpeg(camera="cctv_top")
@@ -223,6 +268,8 @@ class Simulation:
         if self._viewer is not None:
             # Never hold viewer.lock(): MuJoCo sync acquires it internally.
             self._viewer.sync()
+            with self._lock():
+                self._check_state()
 
     def close(self):
         if self._closed:
@@ -241,7 +288,8 @@ class Simulation:
                         raise RuntimeError("MuJoCo viewer did not finish closing within 10 seconds")
                     time.sleep(.01)
             for port in self._ports.values():
-                port.hold(float(self._world.data.time))
+                now = float(self._world.data.time)
+                port.hold(max(now, self._last_world_time) if math.isfinite(now) else self._last_world_time)
         finally:
             self._world.close()
             self._closed = True
