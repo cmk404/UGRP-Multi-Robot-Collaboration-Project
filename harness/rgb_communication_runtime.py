@@ -17,11 +17,14 @@ import binascii
 import copy
 import hashlib
 import json
+import math
 from pathlib import Path
 import threading
 import time
 from typing import TYPE_CHECKING, Any, Callable, Mapping, Protocol, Sequence
 import uuid
+
+from harness.rgb_communication_clock import ExecutionClock, sanitized_error
 
 if TYPE_CHECKING:
     # B owns this public type.  The runtime remains structurally usable before
@@ -46,6 +49,7 @@ OBSERVATION_FIELDS = frozenset({
     "static_context",
     "static_context_sha256",
     "own_issued_commands",
+    "own_revision",
 })
 LOCAL_STATUS_FIELDS = frozenset({
     "schema",
@@ -55,6 +59,8 @@ LOCAL_STATUS_FIELDS = frozenset({
     "active",
     "pending",
     "own_submission_history",
+    "own_revision",
+    "own_skill_status",
 })
 
 
@@ -91,7 +97,10 @@ class RuntimeLimits:
             self.wall_timeout_s,
             self.tick_period_s,
         )
-        if any(value < 1 for value in integer_limits) or any(value <= 0 for value in time_limits):
+        if (any(not isinstance(value, int) or isinstance(value, bool) or value < 1
+                for value in integer_limits)
+                or any(not isinstance(value, (int, float)) or isinstance(value, bool)
+                       or not math.isfinite(value) or value <= 0 for value in time_limits)):
             raise ValueError("INVALID_RUNTIME_LIMITS")
 
 
@@ -110,6 +119,7 @@ class _ActorState:
     sent_messages: int = 0
     sent_message_bytes: int = 0
     finished: bool = False
+    finish_claim: str | None = None
 
     def memory_snapshot(self) -> dict[str, Any]:
         return copy.deepcopy({
@@ -250,6 +260,7 @@ class MessageChannel:
         if (
             not isinstance(recipients, list)
             or not recipients
+            or any(not isinstance(recipient, str) for recipient in recipients)
             or len(recipients) != len(set(recipients))
             or sender_id in recipients
             or any(recipient not in self._queues for recipient in recipients)
@@ -264,14 +275,16 @@ class MessageChannel:
                 "stage", "action", "reason_code", "observation_ids",
             }
             if (set(content) - allowed_fields or "message_type" not in content
+                    or not isinstance(content["message_type"], str)
                     or content["message_type"] not in {
                         "observation", "intent", "help_request", "accept", "reject",
-                        "recovery", "completed",
+                        "recovery", "completed", "retract", "partner_change",
                     }):
                 return self._reject(
                     sender_id, decision_id, trace_sim_time_s, "INVALID_STRUCTURED_CONTENT")
             if "participants" in content and (
                     not isinstance(content["participants"], list)
+                    or any(not isinstance(participant, str) for participant in content["participants"])
                     or any(participant not in self.robot_ids for participant in content["participants"])):
                 return self._reject(
                     sender_id, decision_id, trace_sim_time_s, "INVALID_MESSAGE_PARTICIPANTS")
@@ -280,12 +293,18 @@ class MessageChannel:
                     or any(not isinstance(item, str) or not item for item in content["observation_ids"])):
                 return self._reject(
                     sender_id, decision_id, trace_sim_time_s, "INVALID_MESSAGE_OBSERVATIONS")
+            if any(not isinstance(value, str) or not value.strip()
+                   for key, value in content.items()
+                   if key not in {"participants", "observation_ids"}):
+                return self._reject(sender_id, decision_id, trace_sim_time_s,
+                                    "INVALID_STRUCTURED_VALUE")
         if self.condition == "natural" and (not isinstance(content, str) or not content.strip()):
             return self._reject(sender_id, decision_id, trace_sim_time_s, "NATURAL_TEXT_REQUIRED")
         ttl_s = proposal.get("ttl_s", self.limits.max_message_ttl_s)
         if (
             not isinstance(ttl_s, (int, float))
             or isinstance(ttl_s, bool)
+            or not math.isfinite(ttl_s)
             or ttl_s <= 0
             or ttl_s > self.limits.max_message_ttl_s
         ):
@@ -298,16 +317,15 @@ class MessageChannel:
             "sent_at_s": float(clock_time_s),
             "expires_at_s": float(clock_time_s + ttl_s),
         }
+        message_id = self.ids.new("message")
+        wire = {"message_id": message_id, "condition": self.condition, **wire}
         size = len(json.dumps(wire, ensure_ascii=False, sort_keys=True).encode("utf-8"))
         if actor.sent_messages >= self.limits.max_messages_per_robot:
             return self._reject(sender_id, decision_id, trace_sim_time_s, "MESSAGE_COUNT_BUDGET_EXHAUSTED")
         if actor.sent_message_bytes + size > self.limits.max_message_bytes_per_robot:
             return self._reject(sender_id, decision_id, trace_sim_time_s, "MESSAGE_BYTE_BUDGET_EXHAUSTED")
 
-        message_id = self.ids.new("message")
         event = {
-            "message_id": message_id,
-            "condition": self.condition,
             **wire,
             "bytes": size,
         }
@@ -431,6 +449,10 @@ def _copy_allowlisted(
 def _clock_time(observation: Mapping[str, Any], status: Mapping[str, Any]) -> float:
     if observation["clock_domain"] != status["clock_domain"]:
         raise ValueError("MIXED_CLOCK_DOMAIN")
+    for value in (observation["observed_at_s"], status["timestamp_s"]):
+        if (not isinstance(value, (int, float)) or isinstance(value, bool)
+                or not math.isfinite(value) or value < 0):
+            raise ValueError("INVALID_ACTOR_CLOCK")
     observation_time = float(observation["observed_at_s"])
     status_time = float(status["timestamp_s"])
     if observation_time > status_time:
@@ -487,8 +509,15 @@ def _validate_observation(
         raise ValueError("INVALID_OBSERVATION_SCHEMA")
     if observation["robot_id"] != robot_id:
         raise ValueError("OBSERVATION_ROBOT_MISMATCH")
+    observation_id = observation["observation_id"]
+    if (not isinstance(observation_id, str) or not observation_id
+            or len(observation_id) > 160
+            or any(c not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.-"
+                   for c in observation_id) or observation_id in {".", ".."}):
+        raise ValueError("INVALID_OBSERVATION_ID")
     if observation["clock_domain"] not in {"sim", "monotonic"}:
         raise ValueError("INVALID_CLOCK_DOMAIN")
+    _validate_revision(observation)
     _validate_static_context(observation["static_context"])
     encoded = json.dumps(
         observation["static_context"], ensure_ascii=False, sort_keys=True,
@@ -503,7 +532,12 @@ def _validate_observation(
         "duration_s", "issued_at_s", "meaning",
     }
     for command in observation["own_issued_commands"]:
-        _exact_mapping(command, command_fields, "INVALID_OWN_COMMAND_FIELDS")
+        correlation_fields = {"observation_id", "decision_id", "skill_decision_id", "consent_observation_id"}
+        if (not isinstance(command, Mapping) or not command_fields <= set(command)
+                or set(command) - command_fields - correlation_fields
+                or any(not isinstance(command[name], str) or not command[name]
+                       for name in correlation_fields if name in command)):
+            raise ValueError("INVALID_OWN_COMMAND_FIELDS")
         if not isinstance(command["action"], Mapping):
             raise ValueError("INVALID_OWN_COMMAND_ACTION")
 
@@ -544,6 +578,15 @@ def _validate_local_status(status: Mapping[str, Any], *, robot_id: str) -> None:
         raise ValueError("STATUS_ROBOT_MISMATCH")
     if status["clock_domain"] not in {"sim", "monotonic"}:
         raise ValueError("INVALID_CLOCK_DOMAIN")
+    _validate_revision(status)
+    if "own_skill_status" in status:
+        skill = status["own_skill_status"]
+        if (not isinstance(skill, Mapping) or set(skill) - {
+                "task_id", "state", "phase", "reason", "meaning"}
+                or (skill and (not {"task_id", "state", "meaning"} <= set(skill)
+                    or skill["state"] not in {"RUNNING", "STOPPED", "FINISHED_UNVERIFIED"}))
+                or any(not isinstance(value, str) for value in skill.values())):
+            raise ValueError("INVALID_OWN_SKILL_STATUS")
     if not isinstance(status["active"], list) or not isinstance(status["pending"], list):
         raise ValueError("INVALID_LOCAL_STATUS_LISTS")
     active_fields = {
@@ -555,7 +598,12 @@ def _validate_local_status(status: Mapping[str, Any], *, robot_id: str) -> None:
         "own_role", "expires_at_s", "status",
     }
     for item in status["active"]:
-        _exact_mapping(item, active_fields, "INVALID_ACTIVE_STATUS_FIELDS")
+        if (not isinstance(item, Mapping) or not active_fields <= set(item)
+                or set(item) - active_fields - {"paused", "own_resume_pending"}):
+            raise ValueError("INVALID_ACTIVE_STATUS_FIELDS")
+        for name in ("paused", "own_resume_pending"):
+            if name in item and not isinstance(item[name], bool):
+                raise ValueError("INVALID_ACTIVE_LIFECYCLE_STATE")
     for item in status["pending"]:
         _exact_mapping(item, pending_fields, "INVALID_PENDING_STATUS_FIELDS")
         if item["status"] != "PENDING_CONSENT":
@@ -571,6 +619,12 @@ def _validate_local_status(status: Mapping[str, Any], *, robot_id: str) -> None:
         _validate_submission_result(
             item, expected_clock_domain=status["clock_domain"],
             required_fields=required_result_fields, optional_fields=optional_result_fields)
+
+
+def _validate_revision(payload: Mapping[str, Any]) -> None:
+    if "own_revision" in payload and (type(payload["own_revision"]) is not int
+                                      or payload["own_revision"] < 0):
+        raise ValueError("INVALID_OWN_REVISION")
 
 
 def _validate_submission_result(
@@ -629,20 +683,25 @@ def _normalize_action(
         },
         "interrupt": {"kind", "task_id", "lease_id", "reason"},
         "release": {"kind", "task_id", "lease_id", "reason"},
+        "pause": {"kind", "task_id", "lease_id", "reason"},
+        "resume": {"kind", "task_id", "lease_id", "reason"},
+        "cancel_pending": {"kind", "task_id", "reason"},
     }
-    if kind not in fields_by_kind or set(proposal) != fields_by_kind[kind]:
+    if not isinstance(kind, str) or kind not in fields_by_kind or set(proposal) != fields_by_kind[kind]:
         raise ValueError("INCOMPLETE_ACTION_REQUEST")
     if kind == "task_request":
         participants = proposal["participants"]
         if (
             not isinstance(participants, list)
+            or any(not isinstance(participant, str) for participant in participants)
             or robot_id not in participants
             or len(participants) != len(set(participants))
             or any(participant not in robot_ids for participant in participants)
         ):
             raise ValueError("INVALID_ACTION_PARTICIPANTS")
         expires_at_s = proposal["expires_at_s"]
-        if not isinstance(expires_at_s, (int, float)) or isinstance(expires_at_s, bool):
+        if (not isinstance(expires_at_s, (int, float)) or isinstance(expires_at_s, bool)
+                or not math.isfinite(expires_at_s)):
             raise ValueError("INVALID_ACTION_EXPIRY")
         if expires_at_s <= now_s:
             raise ValueError("ACTION_ALREADY_EXPIRED")
@@ -670,12 +729,13 @@ def run_rgb_communication(
     trace_path: str | Path | None = None,
     artifact_dir: str | Path | None = None,
     wall_clock: Callable[[], float] = time.monotonic,
+    clock_snapshot: Callable[[], dict] | None = None,
 ) -> dict[str, Any]:
     """Run one bounded, matched-condition fixture/replay/live-LLM episode.
 
-    ``planners`` must contain three distinct planner objects.  No evaluator or
-    supervisor snapshot is accepted, which prevents truth state from entering
-    actor inputs or wake-up decisions through this API.
+    ``planners`` must contain three distinct planner objects. No evaluator
+    snapshot is accepted. The optional clock-only supervisor callback
+    supplies terminal/close evidence, never actor inputs or wake-up decisions.
     """
 
     limits = limits or RuntimeLimits()
@@ -706,8 +766,9 @@ def run_rgb_communication(
     termination_reason = "MAX_TICKS"
     outcome = "aborted"
     runtime_error_type: str | None = None
+    primary_error = close_error = None
+    clock = ExecutionClock(getattr(port, "clock_domain", "monotonic"), clock_snapshot)
     tick_index = 0
-    now_s = 0.0
     trace.emit(
         "run_started",
         robot_id=None,
@@ -728,13 +789,13 @@ def run_rgb_communication(
 
     try:
         for tick_index in range(1, limits.max_ticks + 1):
-            now_s = (tick_index - 1) * limits.tick_period_s
             if wall_clock() - wall_started_s >= limits.wall_timeout_s:
                 termination_reason = "WALL_TIMEOUT"
                 break
             # Tick output is supervisor/audit material.  It is deliberately not
             # inspected for actor wake-up, planning input, or completion.
-            port.tick(now_s)
+            requested_tick_s = (tick_index - 1) * limits.tick_period_s
+            clock.tick(port, requested_tick_s)
 
             for robot_id in robot_ids:
                 actor = actors[robot_id]
@@ -950,6 +1011,7 @@ def run_rgb_communication(
                     continue
                 if action.get("kind") == "finish":
                     actor.finished = True
+                    actor.finish_claim = action["claim"]
                     trace.emit(
                         "actor_finished",
                         robot_id=robot_id,
@@ -999,6 +1061,7 @@ def run_rgb_communication(
 
             if all(actor.finished for actor in actors.values()):
                 termination_reason = "ALL_ACTORS_FINISHED"
+                outcome = "completed"
                 break
             if all(actor.finished or actor.calls >= limits.max_calls_per_robot
                    for actor in actors.values()):
@@ -1006,27 +1069,36 @@ def run_rgb_communication(
                 break
     except Exception as exc:
         termination_reason = "RUNTIME_ERROR"
-        outcome = "failure"
-        runtime_error_type = type(exc).__name__
+        outcome = "aborted"
+        primary_error = sanitized_error(exc)
+        runtime_error_type = primary_error["error_type"]
+        clock.refresh()
         trace.emit(
             "run_error",
             robot_id=None,
-            sim_time_s=_trace_sim_time(getattr(port, "clock_domain", "monotonic"), now_s),
-            payload={"reason": termination_reason, "error_type": runtime_error_type},
+            sim_time_s=clock.sim_time,
+            payload={"reason": termination_reason, "phase": "runtime",
+                     **primary_error, "clock": clock.payload()},
         )
     finally:
+        clock.refresh()
         try:
-            port.close(now_s)
+            port.close(clock.close_argument(failed=primary_error is not None))
         except Exception as exc:
-            termination_reason = "CLOSE_ERROR"
-            outcome = "failure"
-            runtime_error_type = type(exc).__name__
+            close_error = sanitized_error(exc)
+            if primary_error is None:
+                termination_reason = "CLOSE_ERROR"
+                outcome = "aborted"
+                runtime_error_type = close_error["error_type"]
+            clock.refresh()
             trace.emit(
                 "run_error",
                 robot_id=None,
-                sim_time_s=_trace_sim_time(getattr(port, "clock_domain", "monotonic"), now_s),
-                payload={"reason": termination_reason, "error_type": runtime_error_type},
+                sim_time_s=clock.sim_time,
+                payload={"reason": "CLOSE_ERROR", "phase": "close",
+                         **close_error, "clock": clock.payload()},
             )
+        clock.refresh()
 
     if termination_reason == "WALL_TIMEOUT":
         outcome = "timeout"
@@ -1036,6 +1108,11 @@ def run_rgb_communication(
         "condition": condition,
         "outcome": outcome,
         "termination_reason": termination_reason,
+        "clock": clock.payload(),
+        "primary_error": primary_error,
+        "close_error": close_error,
+        "actor_finish_claims": {rid: actors[rid].finish_claim == "mission_complete" for rid in robot_ids},
+        "actor_finish_details": {rid: actors[rid].finish_claim for rid in robot_ids},
         "ticks": tick_index,
         "calls": {rid: actors[rid].calls for rid in robot_ids},
         "actions": {rid: actors[rid].actions for rid in robot_ids},
@@ -1048,7 +1125,17 @@ def run_rgb_communication(
     trace.emit(
         "run_finished",
         robot_id=None,
-        sim_time_s=_trace_sim_time(getattr(port, "clock_domain", "monotonic"), now_s),
+        sim_time_s=clock.sim_time,
         payload=result,
     )
     return {**result, "events": copy.deepcopy(trace.events)}
+
+
+def run_rgb_communication_async(port, planners, **kwargs):
+    """Asynchronous path; the sequential entry point remains a separate baseline.
+
+    See ``rgb_communication_async.AsyncRuntimeLimits`` and the implementation's
+    explicit signature for the scheduler clock and cancellation contract.
+    """
+    from harness.rgb_communication_async import run_rgb_communication_async as run
+    return run(port, planners, **kwargs)
