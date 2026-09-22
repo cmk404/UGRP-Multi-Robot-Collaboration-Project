@@ -16,7 +16,11 @@ REQUEST_KIND = "task_request"
 COMMAND_KIND = "command"
 INTERRUPT_KIND = "interrupt"
 RELEASE_KIND = "release"
-SUBMISSION_KINDS = frozenset({REQUEST_KIND, COMMAND_KIND, INTERRUPT_KIND, RELEASE_KIND})
+PAUSE_KIND = "pause"
+RESUME_KIND = "resume"
+CANCEL_PENDING_KIND = "cancel_pending"
+SUBMISSION_KINDS = frozenset({REQUEST_KIND, COMMAND_KIND, INTERRUPT_KIND, RELEASE_KIND,
+                              PAUSE_KIND, RESUME_KIND, CANCEL_PENDING_KIND})
 
 
 def finite_number(value: Any, *, minimum: float | None = None) -> bool:
