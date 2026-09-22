@@ -156,6 +156,10 @@ jobs:
           python -c "import json; r=json.load(open('outputs/simulation-ci/research-native/result.json')); assert r['protocol_complete'] and r['video']['frames'] >= 10, r"
           ffprobe -v error -show_entries stream=width,height,nb_frames -of json outputs/simulation-ci/research-native/motion.mp4
 
+      - name: Exercise terminal commands in the native console
+        run: |
+          MUJOCO_GL=glfw xvfb-run -a python scripts/ugrp_session.py run console-ci -- python -m scripts.sim_cli console configs/simulation/local.json --mode manual --task 'r1 앞으로 0.5초' --exit-after-task --wall-seconds 60 --output outputs/simulation-ci/console
+          python -c "import json; r=json.load(open('outputs/simulation-ci/console/result.json')); assert r['operator_session_complete'] and r['commands']==1 and r['model_calls']==0 and not r['console_errors'], r"
       - name: Keep simulator verification
         if: always()
         uses: actions/upload-artifact@v4

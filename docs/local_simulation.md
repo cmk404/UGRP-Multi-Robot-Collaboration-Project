@@ -1,6 +1,6 @@
 # 로컬 시뮬레이션: 설정 파일 · CLI · Python API
 
-같은 설정을 터미널에서 실행하고 MuJoCo 기본 3D 창으로 확인한다. Python에서는 `Simulation`을 불러와 관측·명령·물리 스텝을 직접 제어한다. 별도 웹 서버나 모델 계정은 필요 없다.
+같은 설정을 터미널에서 실행하고 MuJoCo 기본 3D 창으로 확인한다. Python에서는 `Simulation`을 불러와 관측·명령·물리 스텝을 직접 제어한다. 수동·설정 실행에는 별도 웹 서버나 모델 계정이 필요 없다. 자연어 LLM 모드는 접근 가능한 모델 프록시를 사용한다.
 
 ## 설치와 첫 실행
 
@@ -19,7 +19,7 @@ Ubuntu 24.04는 먼저 [설치 안내](ubuntu_quickstart.md)를 따른다. 창�
 
 ## 터미널에서 구성하기
 
-저장소 루트에서 실행한다. 인자 없는 실행은 `configs/simulation/local.json`의 **기존 공동 출하장(dispatch/shared_crossing, seed11)**을 연다. `init`과 `new`도 같은 연구 장면을 기본으로 사용한다. [전체 구성·누락 검토](simulation_inventory.md)에 기존 자산과 연결 범위를 정리했다.
+저장소 루트에서 실행한다. 인자 없는 실행은 `configs/simulation/local.json`의 **기존 공동 출하장(dispatch/shared_crossing, seed11)**을 열고 터미널에서 작동 방식을 선택한다. `init`과 `new`도 같은 연구 장면을 기본으로 사용한다. [전체 구성·누락 검토](simulation_inventory.md)에 기존 자산과 연결 범위를 정리했다.
 
 ```bash
 # 설정 생성 → 편집 → 오류/기본값 확인
@@ -44,7 +44,7 @@ bash scripts/open_simulation.command run my-scene.json --seed 43 --sim-seconds 6
 
 `init`과 결과 저장은 기존 파일/폴더를 덮어쓰지 않는다. 설정 오타·잘못된 명령은 실행 전에 거부한다. 화물 ID가 실제 장면에 존재하는지는 세계 구성 때 확인한다. `--headless`는 가능한 속도로 진행하고, 창을 사용하는 실행은 `run.realtime_factor`에 맞춰 속도를 제한한다. 컴퓨터가 느리면 실제 시간보다 느려질 수 있다.
 
-MuJoCo 창에서 **Space**는 일시정지/재개, **N**은 정지 중 물리 한 스텝, **R**은 동일 설정으로 초기화 후 정지다. 정지는 물리 시간을 멈추므로 남은 명령도 재개 시 이어진다. 창 닫기 또는 터미널 Ctrl-C로 종료한다. 기본 SIM 30초 또는 실제 30분에 도달해도 종료한다. `--sim-seconds`, `--wall-seconds`로 변경할 수 있고 실제 시간 제한은 일시정지/초기화해도 초기화되지 않는다.
+MuJoCo 창에서 **Space**는 일시정지/재개, **N**은 정지 중 물리 한 스텝, **R**은 동일 설정으로 초기화 후 정지다. 정지는 물리 시간을 멈추므로 남은 명령도 재개 시 이어진다. 창 닫기 또는 터미널 Ctrl-C로 종료한다. `run`은 설정의 SIM 제한(기본 30초), `console`은 기본 SIM 30분이며 실제 시간 제한은 둘 다 기본 30분이다. `--sim-seconds`, `--wall-seconds`로 변경할 수 있고 실제 시간 제한은 일시정지/초기화해도 초기화되지 않는다.
 
 MuJoCo 패널은 표시 옵션 외에 물리·actuator 상태도 바꿀 수 있다. 패널의 초기화나
 수치 불안정으로 시간이 되돌아가면 창을 닫지 않고 물리를 정지하며 안내를 표시한다.
@@ -55,6 +55,57 @@ MuJoCo 패널은 표시 옵션 외에 물리·actuator 상태도 바꿀 수 있�
 집계하지 않는다(종료 코드 2). headless/API는 명확한 `SimulationStateError`로 중단한다.
 
 관찰 카메라는 `--camera cctv_top`, `--camera cctv_warehouse`, `--camera r1__robot_cam` 등으로 선택한다. 창의 Rendering 카메라 선택도 사용할 수 있다. 자유 시점과 물체 드래그는 사람이 장면을 살펴보는 도구다. GUI에서 물리를 조작한 실행은 무인 평가와 구분한다.
+
+## 명령 입력과 작동 방식 선택
+
+```bash
+bash scripts/open_simulation.command
+# 1 수동 / 2 설정 실행 / 3 LLM 한 대 / 4 LLM 세 대 개별 / 5 LLM 세 대 통신
+
+# 선택 화면을 건너뛰고 기존 연구 맵·모드 지정
+bash scripts/open_simulation.command console configs/simulation/local.json \
+  --scene dispatch/shared_crossing --mode llm-single --robot r1
+```
+
+**명령은 실행한 터미널에 입력하고, 결과는 MuJoCo 창에서 본다.** 기본 `local.json`에는 자동 동작이 없으므로 2번을 쓰려면 `drive.json`이나 자신의 controllers/actions 설정을 지정한다.
+
+| 모드 | 동작 |
+|---|---|
+| `manual` | 모델 없이 제한된 한국어 동작 또는 raw action을 즉시 발행 |
+| `script` | 설정 파일의 actions·Python controllers 실행 |
+| `llm-single` | 선택한 한 로봇이 영상과 자연어 지시로 다음 raw action 결정 |
+| `llm-independent` | 세 로봇이 자기 영상·자기 이력으로 각각 결정, 메시지 없음 |
+| `llm-peer` | 같은 개별 제어에 모델이 작성한 동료 메시지 전달 추가 |
+
+```text
+r1 앞으로 0.5초
+r2 왼쪽 0.3초
+r1 arm 1 1800
+/raw r1 {"kind":"wait"}
+/mode llm-single
+/robot r1
+앞에 장애물이 있는지 보고 조금씩 전진해
+정지
+초기화
+/mode llm-peer
+서로 상의해서 다른 로봇과 부딪히지 않게 조금씩 움직여
+/status
+종료
+```
+
+수동 모드의 `앞으로/뒤로/왼쪽/오른쪽`은 고정 문법이며, 왼쪽·오른쪽은 **제자리 회전**이다. 평행 이동은 `r1 mecanum 0 0.05 0 0.5`처럼 forward/left/turn/duration 순서다. `/raw`에는 등록한 사용자 action도 쓸 수 있다. 자유로운 자연어 해석은 LLM 모드에서 한다. `/help`에 전체 명령이 나온다.
+
+`/pause`는 물리만 일시정지하고 `/run`으로 이어간다. `/stop` 또는 `정지`는 현재 작업·남은 actuator 보간·모델 요청을 취소한다. `/reset` 또는 `초기화`는 같은 장면을 초기화한다. `/mode` 변경도 초기화하여 이전 모드의 행동과 기억이 섞이지 않게 한다. 모드 변경 직후에는 정지 상태다. script는 `/run`, LLM은 새 자연어 작업을 입력한다. 모델·제어 로봇은 `/model 이름`, `/robot r2`로 바꾼다. 실행 중 지도 변경은 종료 후 `--scene`으로 다시 연다.
+
+LLM은 기존 `GeminiProxyCompleter`를 사용한다. `GEMINI_PROXY_URL`에 본인의 OpenAI 호환 프록시 `/v1/chat/completions` 주소를 설정한다. 기본은 기존 로컬 주소 `http://127.0.0.1:8391/v1/chat/completions`, 모델은 `UGRP_SIM_MODEL` 또는 `--model`이며 기본 `gemini-3.8-flash`다. 계정·프록시 자동 설치나 서비스 시작은 하지 않는다. Linux에서도 접근 가능한 주소·모델을 직접 지정해야 한다. 연결/응답 실패는 터미널에 표시하고 작업을 정지한다.
+
+기본 한도는 세션 전체 60요청, 지시당 12라운드, 요청당 30초다. `--max-calls`, `--max-rounds`, `--model-timeout`으로 바꾼다. 한 라운드는 한 대 모드에서 1요청, 세 대 모드에서 최대 3요청이다. 남은 예산으로 전체 라운드를 시작할 수 없으면 호출하지 않는다. 모델 응답을 기다리는 동안 물리를 멈추고 창과 입력을 계속 처리한다. 취소는 이 실행이 시작한 요청 프로세스만 중지하며 이미 서버에 전달된 요청의 과금/서버 작업 취소를 보장하지 않는다.
+
+모델은 자기 RGB·공용 TOP RGB·자기 발행 명령/판단 이력만 받으며 peer 모드에서만 다음 라운드에 동료 메시지를 받는다. 실시간 좌표·측정 관절·접촉·평가 성공은 전달하지 않는다. 직접 쓰는 action은 drive/mecanum/arm/look/wait이며, **기존 ACT 정책·운반 skill을 자동 선택하는 기능은 아직 아니다.** 기존 연구 실행기는 `workflows`에 별도로 보존돼 있다. 이 console은 대화식 탐색 경로이며 통신 성능 비교 프로토콜이나 운반 성공 검증으로 간주하지 않는다.
+
+`console-events.jsonl`에는 사용자 입력·모드·모델 판단·오류를, `model-calls/`에는 각 모델의 실제 텍스트/이미지 요청·전송 본문·응답·가능한 사용량을 기록한다. 평가 자료는 기존 별도 파일에 남긴다. result의 `model_calls`는 전송을 시도한 요청 수이며 서버 완료 수가 아니다. 취소/오류 시 사용량은 미확인일 수 있다. `protocol_complete`는 console에서 항상 false이고 `model_claims`도 물리 성공 판정이 아니다. 오류가 한 번이라도 있으면 종료 코드 2다.
+
+유한한 재현 명령은 `--task 'r1 앞으로 0.5초' --exit-after-task --mode manual`처럼 사용한다. 자연어 LLM 작업에도 같은 옵션을 쓸 수 있으며 작업 종료 또는 호출 한도에서 끝난다. 원격 서버에서 이 옵션과 `--headless`를 함께 쓰면 stdin 없이 실행한다.
 
 ## 설정 계약 (version 1)
 

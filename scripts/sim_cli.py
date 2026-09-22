@@ -66,6 +66,8 @@ def run(config, args):
     keys = queue.SimpleQueue()
     sim = None
     video = None
+    console = None
+    interactive = args.command == "console"
     decisions = (output / "controller-decisions.jsonl").open("x", encoding="utf-8")
     def record_decision(record):
         decisions.write(json.dumps(record, ensure_ascii=False, allow_nan=False) + "\n")
@@ -98,7 +100,7 @@ def run(config, args):
             saved.write_bytes(data)
             receipts.append({"path": str(path), "saved": str(saved.relative_to(output)), "sha256": hashlib.sha256(data).hexdigest()})
         write_json(output / "input-files.json", receipts)
-        sim = Simulation(config, render=args.capture or args.video, base_dir=args.config.resolve().parent,
+        sim = Simulation(config, render=args.capture or args.video or interactive, base_dir=args.config.resolve().parent,
                          decision_sink=record_decision)
         source_dir = output / "extensions"
         source_dir.mkdir()
@@ -135,6 +137,11 @@ def run(config, args):
         viewer = None if args.headless else sim.launch_viewer(camera=args.camera, key_callback=keys.put)
         if viewer:
             print("MuJoCo: Space pause/resume | N one physics tick | R reset | close window to exit", flush=True)
+        if interactive:
+            from sim.session_console import Console
+            console = Console(sim, output, args)
+            result.update(scope="interactive_simulation", policy=args.mode)
+            paused = console.paused
         batch = max(1, round(.02 / sim.timestep))
         while True:
             tick_started = time.monotonic()
@@ -147,11 +154,35 @@ def run(config, args):
                     print("Paused" if paused else "Running", flush=True)
                 elif key in (ord("R"), ord("r")):
                     sim.reset()
+                    if console:
+                        console.reset(world=False)
                     state_error = None
                     paused = True
                     print(f"Reset episode {sim.episode}; paused", flush=True)
                 elif key in (ord("N"), ord("n")) and paused and state_error is None:
                     single_step = True
+            if console:
+                console.paused = paused
+                episode_before = sim.episode
+                try:
+                    console.poll()
+                except SimulationStateError as error:
+                    if state_error is None:
+                        state_error = error
+                        result["runtime_events"].append(error.record)
+                        write_json(output / "runtime-events.json", result["runtime_events"])
+                        print(f"Physics paused: {error}. Use /reset or R.", flush=True)
+                    console.fault()
+                    if viewer is None:
+                        raise
+                if sim.episode != episode_before:
+                    state_error = None
+                paused = console.paused
+                single_step = single_step or console.single_step
+                console.single_step = False
+                if console.quit:
+                    result["stop_reason"] = "console_quit"
+                    break
             if viewer is not None and not viewer.is_running():
                 result["stop_reason"] = "window_closed"
                 break
@@ -164,7 +195,7 @@ def run(config, args):
                 break
             advanced = 0.0
             try:
-                if not paused or single_step:
+                if (not paused or single_step) and not (console and console.waiting):
                     steps = 1 if single_step else min(batch, max(1, math.ceil(remaining / sim.timestep - 1e-9)))
                     sim.step(steps)
                     advanced = steps * sim.timestep
@@ -180,20 +211,23 @@ def run(config, args):
                     print(f"Physics paused: {error}. Press R to reset; Space cannot resume an invalid episode.", flush=True)
                 if viewer is None:
                     raise
+                if console:
+                    console.fault()
                 paused = True
                 advanced = 0.0
             if viewer is not None:
                 status = "Physics state changed / unstable. Press R to reset." if state_error else (
+                    console.status() if console else
                     "Paused: Space to run | N step | R reset" if paused else "Running: Space to pause | R reset")
                 viewer.set_texts((mujoco.mjtFont.mjFONT_NORMAL, mujoco.mjtGridPos.mjGRID_TOPLEFT, status, ""))
-            if viewer is not None or paused:
+            if viewer is not None or paused or (console and console.waiting):
                 delay = (advanced / config["run"]["realtime_factor"] if advanced else .02) - (time.monotonic() - tick_started)
                 if delay > 0:
                     time.sleep(delay)
-        result["protocol_complete"] = result["stop_reason"] == "sim_limit" and not result["runtime_events"]
+        result["protocol_complete"] = not interactive and result["stop_reason"] == "sim_limit" and not result["runtime_events"]
         if args.capture and state_error is None:
             capture(sim, output, "final")
-        return 2 if result["runtime_events"] or (args.headless and not result["protocol_complete"]) else 0
+        return 2 if result["runtime_events"] or (console and console.failures) or (args.headless and not interactive and not result["protocol_complete"]) else 0
     except KeyboardInterrupt:
         result["stop_reason"] = "interrupted"
         return 130
@@ -203,6 +237,24 @@ def run(config, args):
     finally:
         signal.signal(signal.SIGTERM, previous_term)
         try:
+            if console is not None:
+                console.close()
+                responses = []
+                for path in (output / "model-calls").glob("*.response.json"):
+                    try:
+                        response = json.loads(path.read_text())
+                        if isinstance(response, dict) and isinstance(response.get("wall_s"), (int, float)):
+                            responses.append(response)
+                    except (OSError, ValueError):
+                        pass  # Cancellation may interrupt a result write; preserve its bytes.
+                result.update(model_calls=len(list((output / "model-calls").glob("*.wire.json"))),
+                              model_requests_started=console.calls, console_errors=console.failures, final_mode=console.mode,
+                              operator_session_complete=result["stop_reason"] == "console_quit",
+                              model_claims=sum(e["kind"] == "model_reply" and e["reply"]["done"] for e in console.events),
+                              model_latency_s=sum(r["wall_s"] for r in responses))
+                for key, provider_key in (("input_tokens", "prompt_tokens"), ("output_tokens", "completion_tokens")):
+                    if responses and all(provider_key in (r.get("usage") or {}) for r in responses):
+                        result[key] = sum(r["usage"][provider_key] for r in responses)
             if sim is not None:
                 try:
                     result["sim_s"] = sim.time
@@ -266,6 +318,17 @@ def main(argv=None):
     execute.add_argument("--wall-seconds", type=float)
     execute.add_argument("--realtime-factor", type=float)
     execute.add_argument("--output", type=Path)
+    console = sub.add_parser("console", parents=[execute], add_help=False,
+                             help="terminal commands, mode selection and natural-language RGB control")
+    console.add_argument("--mode", help="manual, script, llm-single, llm-independent, llm-peer; interactive menu if omitted")
+    console.add_argument("--robot", choices=ROBOTS, default="r1")
+    console.add_argument("--model", default=os.environ.get("UGRP_SIM_MODEL", "gemini-3.8-flash"))
+    console.add_argument("--model-timeout", type=float, default=30)
+    console.add_argument("--max-calls", type=int, default=60)
+    console.add_argument("--max-rounds", type=int, default=12)
+    console.add_argument("--task", help="initial manual command or natural-language goal")
+    console.add_argument("--exit-after-task", action="store_true", help="finite single-task invocation, no stdin reader")
+    console.add_argument("--scene", help="select any scene from scenes without editing JSON")
     args = parser.parse_args(argv)
     try:
         if args.command in ("layouts", "scenes"):
@@ -317,6 +380,27 @@ def main(argv=None):
             print(json.dumps({"config": config, "scene": scene.record(), "source_files": {
                 path: entry["sha256"] for path, entry in scene.sources.items()}}, indent=2, ensure_ascii=False))
             return 0
+        if args.command == "console":
+            from sim.session_console import MODES, mode_name
+            if args.mode is None:
+                if sys.stdin.isatty():
+                    print("\n작동 방식을 선택하세요:")
+                    for index, (name, description) in enumerate(MODES.items(), 1):
+                        print(f" {index}. {description} [{name}]")
+                    args.mode = input("선택 [1]: ").strip() or "manual"
+                else:
+                    args.mode = "manual"
+            args.mode = mode_name(args.mode)
+            if not 1 <= args.max_calls <= 10000 or not 1 <= args.max_rounds <= 1000:
+                raise ValueError("max-calls: 1..10000, max-rounds: 1..1000")
+            if not math.isfinite(args.model_timeout) or not 1 <= args.model_timeout <= 120:
+                raise ValueError("model-timeout: 1..120 seconds")
+            if args.exit_after_task and not args.task:
+                raise ValueError("--exit-after-task requires --task")
+            if args.scene:
+                config["scene"]["layout"] = args.scene
+            if args.sim_seconds is None:
+                config["run"]["sim_seconds"] = 1800
         for override in args.controller:
             if "=" not in override:
                 raise ValueError("--controller requires ROBOT=FILE.py:FACTORY")
@@ -329,6 +413,8 @@ def main(argv=None):
         for flag in ("sim_seconds", "wall_seconds", "realtime_factor"):
             if getattr(args, flag) is not None:
                 config["run"][flag] = getattr(args, flag)
+        if args.command == "console" and args.mode == "script" and not (config["actions"] or config["controllers"]):
+            raise ValueError("script mode requires actions/controllers in the config")
         return run(validate_config(config), args)
     except (ValueError, OSError, RuntimeError) as error:
         parser.exit(2, f"sim: {error}\n")

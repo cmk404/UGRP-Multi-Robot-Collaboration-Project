@@ -35,6 +35,7 @@ class Simulation:
         self.render = bool(render or self.config["controllers"])
         self.decision_sink = decision_sink
         self.controller_calls = 0
+        self.automation_enabled = True
         self._viewer = None
         self._closed = False
         self.command_history = []
@@ -137,9 +138,25 @@ class Simulation:
         self._check_open()
         if robot not in self._ports:
             raise ValueError(f"unknown robot: {robot}")
-        if robot in self._controllers:
+        if self.automation_enabled and robot in self._controllers:
             raise ValueError(f"{robot} is owned by a configured controller")
         return self._apply_raw(robot, self.extensions.lower(command), requested=command)
+
+    def hold(self):
+        """Revoke pending actuator motion at the last issued setpoints."""
+        self._check_open()
+        with self._lock():
+            self._check_state()
+            for port in self._ports.values():
+                port.hold(float(self._world.data.time))
+
+    def set_automation(self, enabled):
+        """Enable configured schedules/controllers; console mode changes reset first."""
+        self._check_open()
+        if type(enabled) is not bool:
+            raise ValueError("automation flag must be boolean")
+        self.hold()
+        self.automation_enabled = enabled
 
     def _apply_raw(self, robot, command, *, requested):
         with self._lock():
@@ -164,11 +181,12 @@ class Simulation:
             with self._lock():
                 self._check_state()
             actions = self._scheduled
-            while self._next_action < len(actions) and actions[self._next_action]["at_s"] <= self.time + 1e-10:
+            while self.automation_enabled and self._next_action < len(actions) and actions[self._next_action]["at_s"] <= self.time + 1e-10:
                 event = actions[self._next_action]
                 self._apply_raw(event["robot"], event["raw"], requested=event["command"])
                 self._next_action += 1
-            self._act_controllers()
+            if self.automation_enabled:
+                self._act_controllers()
             with self._lock():
                 for port in self._ports.values():
                     port.tick(float(self._world.data.time))
