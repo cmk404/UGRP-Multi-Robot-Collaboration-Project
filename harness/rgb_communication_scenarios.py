@@ -30,6 +30,12 @@ AUDIT_CASES = (
     "duplicate_joint_intent", "lease_expiry_and_reuse", "queued_command_expiry",
     "finish_claim_separation", "request_decision_command_provenance",
 )
+A3_AUDIT_CASES = AUDIT_CASES + (
+    "worker_total_wall_and_sim_age_at_consumption", "completed_worker_cancel_and_revision",
+    "local_child_finalization_before_hashing", "scene_backend_definition_binding",
+    "asset_and_parent_map_exposure_integrity",
+    "observation_cache_capture_identity_and_isolation", "single_clock_service_fairness",
+)
 SOURCE_FILES = (
     "harness/rgb_execution_contract.py", "harness/rgb_execution_port.py",
     "harness/rgb_skill_execution.py", "harness/rgb_communication_runtime.py",
@@ -138,8 +144,9 @@ def _verified_file(ref: Any, root: Path, checked: list[str]) -> Path:
 
 def assess_offline_boundary(evidence: Mapping[str, Any], *, expected_source_sha: str,
                             expected_config_sha256: str, expected_components: Mapping[str, str],
-                            artifact_root: Path, source_root: Path) -> dict[str, Any]:
-    """A2's pre-physics source audit, without circular physical-pass prerequisites.
+                            artifact_root: Path, source_root: Path,
+                            required_schema: str | None = None) -> dict[str, Any]:
+    """Versioned pre-physics audit, without circular physical-pass prerequisites.
 
     Config hash excludes only the offline_boundary_evidence reference itself,
     avoiding a self-referential hash. D still pins the complete final manifest.
@@ -151,9 +158,14 @@ def assess_offline_boundary(evidence: Mapping[str, Any], *, expected_source_sha:
         _exact(evidence, {"schema_version", "scope", "verdict", "independent_reviewer",
                            "source_sha", "source_files", "config_sha256", "components",
                            "cases", "artifacts"}, "offline boundary review")
-        _require(evidence["schema_version"] == "rgb-offline-boundary-review.v1", "offline review schema mismatch")
+        versions = {"rgb-offline-boundary-review.v1": ("A2", AUDIT_CASES),
+                    "rgb-offline-boundary-review.v2": ("A3", A3_AUDIT_CASES)}
+        schema = evidence["schema_version"]
+        _require(schema in versions and (required_schema is None or schema == required_schema),
+                 "offline review schema mismatch")
+        reviewer, required_cases = versions[schema]
         _require(evidence["scope"] == "offline" and evidence["verdict"] == "pass"
-                 and evidence["independent_reviewer"] == "A2", "independent offline pass missing")
+                 and evidence["independent_reviewer"] == reviewer, "independent offline pass missing")
         _require(_hex(expected_source_sha, 40) and evidence["source_sha"] == expected_source_sha, "offline source mismatch")
         _require(_hex(expected_config_sha256) and evidence["config_sha256"] == expected_config_sha256, "offline config mismatch")
         _exact(dict(expected_components), COMPONENT_KEYS, "expected components")
@@ -163,7 +175,7 @@ def assess_offline_boundary(evidence: Mapping[str, Any], *, expected_source_sha:
         for path, sha in evidence["source_files"].items():
             _verified_file({"path": path, "sha256": sha}, source_root, checked)
         _require(isinstance(evidence["cases"], dict) and
-                 all(evidence["cases"].get(case) == "pass" for case in AUDIT_CASES), "offline boundary cases incomplete")
+                 all(evidence["cases"].get(case) == "pass" for case in required_cases), "offline boundary cases incomplete")
         _require(isinstance(evidence["artifacts"], list) and evidence["artifacts"], "offline raw audit evidence missing")
         for ref in evidence["artifacts"]:
             _verified_file(ref, artifact_root, checked)
@@ -694,6 +706,148 @@ def validate_training_comparison(plan: Mapping[str, Any], exposure_report: Mappi
     _require(isinstance(seeds, list) and len(seeds) >= 2 and len(set(seeds)) == len(seeds)
              and all(type(s) is int and s >= 0 for s in seeds), "repeated independent training seeds required")
     _require(_hex(plan["selection_rule_sha256"]), "development-only selection rule must be frozen")
+
+
+def scene_support_matrix(*, seed: int = 11) -> dict[str, Any]:
+    """Resolve native scene *definitions* without XML generation or physics.
+
+    This is an evaluator-side inventory, not an actor input or execution permit.
+    Geometry groups deliberately exclude goal/reset repetitions, but include
+    terrain and unexpected setup obstacles (unlike B's older map_group digest).
+    No catalogue entry is promoted to a transport or safe-stop success.
+    """
+    from sim.session_scenes import Scene, catalog
+    from sim.session_config import validate_config
+    from sim.act_map_suite import load_suite
+    from sim.research_dispatch_arena import digest
+    from harness.rgb_skill_execution import BACKEND_ID, SKILLS
+
+    _require(type(seed) is int and 0 <= seed <= 1_000_000, "invalid matrix reset seed")
+    root = Path(__file__).resolve().parents[1]
+    # Hash the complete finite definition dependency set, including assets that
+    # Scene.sources does not enumerate (e.g. generated corner source maps).
+    paths = {p for folder in ("harness", "sim", "scripts", "maps", "calibration") for p in (root/folder).rglob("*")
+             if p.is_file() and p.suffix in {".py", ".json", ".xml", ".png", ".stl", ".obj"}}
+    sources = {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest()
+               for p in sorted(paths)}
+    _, cases = load_suite()
+    case_by_id = {c["id"]: c for c in cases}
+    rows = []
+    for entry in catalog():
+        config = validate_config({"version": 1, "scene": {"layout": entry["id"], "seed": seed}})
+        resolved = Scene(config["scene"], root)
+        setup = resolved.config["setup_only"] if resolved.config else None
+        physical_map = resolved.config["static_map"] if resolved.config else resolved.map
+        parent_map = resolved.map if resolved.map is not None else physical_map
+        case = case_by_id.get(entry["id"].removeprefix("act/")) if resolved.family == "act" else None
+        if resolved.family == "multi_object":
+            from sim.act_map_suite import generate_case
+            layout = json.loads((root/"maps/act_generalization/multi_object_layout_v1.json").read_text())
+            case = generate_case(layout["source_case"])
+            parent_map = case["map"]
+        camera = physical_map["top_camera"] if physical_map else None
+        goals = ({"parent_goal": parent_map.get("goal"),
+                  **{key: physical_map[key] for key in ("frame", "docks", "zones", "destinations") if key in physical_map}}
+                 if physical_map else None)
+        geometry = ({key: physical_map.get(key, []) for key in
+                     ("bounds_m", "obstacles", "terrain")} if physical_map else None)
+        if geometry is not None:
+            geometry["unexpected_obstacles"] = (setup or {}).get("unexpected_obstacles", [])
+        supported = entry["id"] == "dispatch/open"
+        row = {
+            "selection": entry["id"], "family": entry["family"], "catalog_scope": entry["scope"],
+            "parent_case_id": case["id"] if case else None,
+            "declared_split": case["split"] if case else "unassigned_or_exposed_legacy",
+            "map_id": parent_map.get("map_id") if parent_map else None,
+            "parent_map_sha256": digest(parent_map) if parent_map else None,
+            "physical_map_sha256": digest(physical_map) if physical_map else None,
+            "physical_geometry_sha256": digest(geometry) if geometry else None,
+            "definition_sha256": digest({"selection": entry["id"], "scene": config["scene"],
+                                         "resolved_config": resolved.config, "parent_map": resolved.map}),
+            "reset_definition_sha256": digest(setup) if setup else None,
+            "top_camera_sha256": digest(camera) if camera else None,
+            "own_camera_source_sha256": canonical_sha256({p: sources[p] for p in (
+                "sim/masterpi_camera_profile.py", "sim/masterpi_scene_v2.xml",
+                "sim/masterpi_production_v2.py", "sim/multi_masterpi_production.py",
+                "sim/masterpi_dynamics_v2.py", "sim/masterpi_geometry.py", "harness/real_geometry.py")}),
+            "native_rgb_size": [config["camera"]["width"], config["camera"]["height"]],
+            "backend_rgb_size": [960, 720] if supported else None,
+            "goal_definition_sha256": digest(goals) if goals else None,
+            "definition_sources_sha256": canonical_sha256(sources),
+            "backend_id": BACKEND_ID,
+            "transport_support": "experimental_fixed_dispatch_routes" if supported else "unsupported",
+            "supported_skills": sorted(SKILLS) if supported else [],
+            "physical_safe_stop_support": "unverified",
+            "evaluator": "scripts.run_dispatch_e2e.Referee" if supported else None,
+            "evaluator_source_sha256": sources["scripts/run_dispatch_e2e.py"] if supported else None,
+            "runtime_scene_xml_sha256": None, "runtime_camera_invariants": None,
+            "physical_success": False,
+            "reason": ("matching map/reset definitions only; native and backend recordings/resolution differ"
+                       if supported else "native scene availability does not connect RGB transport or evaluator"),
+        }
+        rows.append(row)
+    groups: dict[str, list[str]] = {}
+    for row in rows:
+        if row["physical_geometry_sha256"]:
+            groups.setdefault(row["physical_geometry_sha256"], []).append(row["selection"])
+    return {"schema_version": "rgb-scene-support-matrix.v1", "seed": seed,
+            "entry_count": len(rows), "family_counts": dict(Counter(r["family"] for r in rows)),
+            "rows": rows, "definition_source_files": sources,
+            "repeated_physical_geometry_groups": [g for g in groups.values() if len(g) > 1],
+            "catalog_entries_are_independent_maps": False,
+            "physical_controls_verified": False, "execution_admission": False,
+            "scope": "read-only definitions; no reset, render, model or physical execution"}
+
+
+def assess_scene_backend_selection(selection: str, descriptor: Mapping[str, Any], *,
+                                   purpose: str = "connection_diagnostic") -> dict[str, Any]:
+    """A3 exact selection handshake. Never alias an unsupported map to open.
+
+    B's descriptor is independently recomputed by D against immutable assets;
+    this complementary gate binds its map/reset/camera/skills to native metadata.
+    Native contact/geometry/robot overrides are not inputs to this contract.
+    """
+    from sim.research_dispatch_arena import episode, digest
+    from harness.rgb_skill_execution import BACKEND_ID, SKILLS
+    blockers = []
+    binding = {}
+    try:
+        _require(purpose == "connection_diagnostic", "physical development/control admission is not implemented")
+        _require(selection == "dispatch/open", "unsupported native transport selection; no map substitution")
+        _require(isinstance(descriptor, Mapping), "backend descriptor must be an object")
+        _require(descriptor.get("schema") == "ugrp.rgb_skill_backend_descriptor.v1"
+                 and descriptor.get("backend_id") == BACKEND_ID, "backend identity mismatch")
+        seed = descriptor.get("seed")
+        _require(type(seed) is int and 0 <= seed <= 1_000_000, "invalid backend reset seed")
+        expected = episode("open", seed)
+        static = expected["static_map"]
+        binding = {"map_id": static["map_id"], "map_sha256": digest(static),
+                   "map_instance_sha256": digest(static),
+                   "map_group_sha256": digest({k: static[k] for k in ("bounds_m", "obstacles", "top_camera")}),
+                   "camera_sha256": digest(static["top_camera"]),
+                   "reset_sha256": digest(expected["setup_only"]), "goal_frame": static["frame"],
+                   "capabilities": SKILLS, "synthetic": False, "weld": False,
+                   "camera_fov_changed": False, "clock_owner": "single_simulator", "clock_domain": "sim",
+                   "skill_image_max_age_s": 1., "skill_worker_wall_limit_s": 2.}
+        _require(all(descriptor.get(k) == v for k, v in binding.items()), "scene/backend definition or boundary mismatch")
+        _require(all(descriptor.get(k) is False for k in ("synthetic", "weld", "camera_fov_changed")),
+                 "backend boundary flags must be booleans")
+        _require(all(_time(descriptor.get(k)) for k in ("skill_image_max_age_s", "skill_worker_wall_limit_s")),
+                 "backend timing limits must be finite numbers, not booleans")
+        _require(canonical_sha256(descriptor.get("capabilities")) == canonical_sha256(SKILLS),
+                 "backend skill definition type/value mismatch")
+        _require(isinstance(descriptor.get("map_to_scene"), Mapping), "map-to-scene binding must be an object")
+        _require(descriptor["map_to_scene"].get("source_map_sha256") == digest(static)
+                 and descriptor["map_to_scene"].get("builder") == "sim.research_dispatch_arena.build_scene_xml",
+                 "map-to-scene definition mismatch")
+    except (ValueError, TypeError, KeyError) as exc:
+        blockers.append(str(exc))
+    return {"schema_version": "rgb-scene-backend-selection.v1", "ready": not blockers,
+            "purpose": purpose, "selection": selection, "blockers": blockers,
+            "definition_binding_sha256": canonical_sha256(binding),
+            "requires_runtime_evidence": ["scene.xml", "initial_invariants", "RGB dimensions and original capture times",
+                                          "evaluator-only result", "post-child-exit artifact hashes"],
+            "physical_controls_verified": False, "execution_admission": False}
 
 
 ENVIRONMENT_CHECKS = (
