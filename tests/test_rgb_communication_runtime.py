@@ -395,7 +395,7 @@ class RGBCommunicationRuntimeTests(unittest.TestCase):
             port, owned, condition="none", common_task=FIXTURE["static_context"]["task"],
             run_id="fixture-leak", limits=RuntimeLimits(max_ticks=1, max_calls_per_robot=1),
         )
-        self.assertEqual(result["outcome"], "failure")
+        self.assertEqual(result["outcome"], "aborted")
         self.assertEqual(result["termination_reason"], "RUNTIME_ERROR")
         self.assertEqual(result["error_type"], "ValueError")
         self.assertTrue(all(planner.requests == [] for planner in owned.values()))
