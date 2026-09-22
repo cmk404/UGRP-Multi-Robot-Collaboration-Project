@@ -544,6 +544,18 @@ def extract_metrics(events: list[dict[str, Any]]) -> tuple[dict[str, Any], dict[
             measured = type(value) is int and value >= 0 and unknown == 0
             metrics[key] = value if measured else None
             statuses[key] = "measured" if measured else "partially_measured"
+    evidence_kinds = next((event["payload"].get("evidence_kinds", {}) for event in events
+                           if event["event_type"] == "run_started"), {})
+    metrics["planner_response_time_s"] = metrics["model_response_time_s"]
+    statuses["planner_response_time_s"] = statuses["model_response_time_s"]
+    metrics["pending_planner_requests"] = len(terminal.get("pending_planner_requests", {})) \
+        if isinstance(terminal.get("pending_planner_requests"), dict) else None
+    if evidence_kinds and set(evidence_kinds.values()) == {"deterministic_physical_replay"}:
+        for key in ("model_response_time_s", "model_response_time_s_mean"):
+            metrics[key] = None
+            statuses[key] = "not_applicable_offline_replay"
+    elif terminal.get("pending_planner_requests"):
+        statuses["model_response_time_s_mean"] = "completed_responses_only_pending_excluded"
     return metrics, statuses
 
 

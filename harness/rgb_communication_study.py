@@ -590,7 +590,7 @@ def run_study(manifest: dict, *, root: Path, evidence_root: Path, output: Path,
                    "--run-id", trial["run_id"], "--output", str(trial_dir.resolve()),
                    "--evidence-root", str(evidence_root.resolve())]
         process = bounded_process(command, cwd=root, log_path=trial_dir / "process.log",
-                                  timeout_s=min(config["budgets"]["wall_time_s"], remaining - 5))
+                                  timeout_s=min(config["budgets"]["wall_time_s"], remaining) - 5)
         write_new_json(trial_dir / "process.json", process)
         if (trial_dir / "result.json").is_file():
             result = read_json(trial_dir / "result.json")

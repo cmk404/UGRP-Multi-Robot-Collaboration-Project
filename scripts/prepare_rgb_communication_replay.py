@@ -136,6 +136,15 @@ def prepare(root: Path, assets: Path) -> dict:
         {"id": name, "kind": "dataset", "parents": [], "map_refs": [],
          "declared_splits": [], "origin": "unknown"} for name in ("legacy-grasp", "legacy-alignment")],
         "exposures": [], "freeze_order": 0, "final_test_ids": []}
+    for kind, parent in (("grasp", "legacy-grasp"), ("varied", "legacy-alignment")):
+        provenance["records"].append({"id": kind + "-checkpoint", "kind": "checkpoint",
+            "parents": [parent], "map_refs": [], "declared_splits": [], "origin": "unknown"})
+    provenance["records"].extend([
+        {"id": "diagnostic-scene", "kind": "scenario", "parents": [], "origin": "known",
+         "declared_splits": ["regression"], "map_refs": [{"map_id": "dispatch_open",
+          "map_sha256": descriptor["map_instance_sha256"], "layout_sha256": descriptor["map_group_sha256"]}]},
+        {"id": "fixed-replay-prompt", "kind": "prompt", "parents": ["diagnostic-scene"],
+         "map_refs": [], "declared_splits": ["regression"], "origin": "known"}])
     from sim.act_map_suite import load_suite
     _, cases = load_suite()
     provenance["final_test_ids"] = [c["id"] for c in cases if c["split"] in {"test_a", "test_b"}]
