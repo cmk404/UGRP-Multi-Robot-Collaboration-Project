@@ -102,8 +102,9 @@ def write_artifacts(root, plan, outcome, *, measured=True, duplicate_event=False
             "coordination_audit": [
                 {"event": "LOCAL_COMMAND", "robot_id": "r1", "timestamp_s": 1.2,
                  "task_id": "task-1", "lease_id": "lease-1", "command_id": "command-1",
-                 "stage": "APPROACH", "action": "drive", "duration_s": 0.2,
-                 "meaning": "issued command; not measured success"}
+                 "stage": "APPROACH", "action": {"kind": "drive"}, "duration_s": 0.2,
+                 "issued_at_s": 1.2,
+                 "meaning": "issued command, not measured state or success"}
             ],
             "active_task_ids": [],
             "pending_task_ids": [],

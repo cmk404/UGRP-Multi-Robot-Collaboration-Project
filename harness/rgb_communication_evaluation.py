@@ -415,8 +415,27 @@ def load_evaluator(path: Path, plan: dict[str, Any]) -> dict[str, Any]:
     snapshot = value.get("source_snapshot")
     if not isinstance(snapshot, dict) or snapshot.get("schema") != "ugrp.rgb_evaluation_snapshot.v1":
         raise ContractError("evaluator must preserve the B evaluation snapshot")
+    snapshot_fields = {
+        "schema", "clock_domain", "timestamp_s", "external_evaluation",
+        "coordination_audit", "active_task_ids", "pending_task_ids",
+        "resource_owners", "meaning",
+    }
+    if set(snapshot) != snapshot_fields:
+        raise ContractError("evaluator snapshot fields do not match the B contract")
     if snapshot.get("meaning") != "evaluation-only; forbidden as actor input or completion feedback":
         raise ContractError("evaluator snapshot boundary declaration is missing")
+    if snapshot.get("clock_domain") not in {"sim", "monotonic"}:
+        raise ContractError("evaluator snapshot clock_domain is invalid")
+    if not _is_number(snapshot.get("timestamp_s")) or snapshot["timestamp_s"] < 0:
+        raise ContractError("evaluator snapshot timestamp_s is invalid")
+    if not isinstance(snapshot.get("active_task_ids"), list) or not isinstance(
+        snapshot.get("pending_task_ids"), list
+    ) or not isinstance(snapshot.get("resource_owners"), dict):
+        raise ContractError("evaluator snapshot task/resource fields are invalid")
+    if snapshot["active_task_ids"] or snapshot["pending_task_ids"]:
+        raise ContractError("evaluator snapshot was captured before runtime tasks were closed")
+    if not isinstance(snapshot.get("coordination_audit"), list):
+        raise ContractError("evaluator snapshot coordination_audit must be a list")
     external = snapshot.get("external_evaluation")
     if not isinstance(external, dict):
         raise ContractError("evaluator snapshot requires external_evaluation")
@@ -517,6 +536,16 @@ def extract_evaluator_metrics(evaluator: dict[str, Any]) -> tuple[dict[str, Any]
             raise ContractError("coordination_audit events must be objects")
         if event.get("event") != "LOCAL_COMMAND":
             continue
+        required = {
+            "event", "robot_id", "timestamp_s", "task_id", "lease_id", "command_id",
+            "stage", "action", "duration_s", "issued_at_s", "meaning",
+        }
+        if not required <= set(event):
+            raise ContractError("LOCAL_COMMAND is missing issuance provenance")
+        if event.get("robot_id") not in ROBOTS:
+            raise ContractError("LOCAL_COMMAND robot_id is invalid")
+        if event.get("meaning") != "issued command, not measured state or success":
+            raise ContractError("LOCAL_COMMAND evidence boundary is invalid")
         command_id = event.get("command_id")
         if not isinstance(command_id, str) or not command_id:
             raise ContractError("LOCAL_COMMAND requires a unique command_id")
@@ -559,6 +588,10 @@ def evaluate_run(plan: dict[str, Any], artifact_root: Path) -> dict[str, Any]:
         measurement_status.update(evaluator_status)
         external = evaluator["source_snapshot"]["external_evaluation"]
         outcome = terminal["payload"]["outcome"]
+        snapshot = evaluator["source_snapshot"]
+        if (snapshot["clock_domain"] == "sim" and terminal["sim_time_s"] is not None
+                and snapshot["timestamp_s"] < terminal["sim_time_s"]):
+            raise ContractError("evaluator snapshot predates the runtime terminal event")
         if (outcome == "success") != external["mission_complete"]:
             raise ContractError("runtime success and evaluator mission_complete disagree")
     except ContractError as exc:
