@@ -1,0 +1,13 @@
+# Research controller qualification
+
+Repair the common coarse-entry failure, prevent unsupported learned completion from releasing a load, and explicitly distinguish the optional ACT + RGB final-alignment controller. Preserve the previous nine failures as diagnosed regression cases, not new held-out results.
+
+The initial candidate rounds the existing bounded pixel tolerance to complete pixel cells; colour/identity, four-corner support, size, ratio and angle gates remain. Default ACT completion requires an independent RGB destination estimate. A rejected proposal is a named model failure, with no silent steering replacement. `rgb_refined` is a separately labelled hybrid condition using the existing RGB final waypoint within the destination neighbourhood. Unassisted historical `learned` mode remains explicit.
+
+Offline evidence: the expanded checkpoint has premature unilateral stop predictions in all 3 development episodes. A low frame-level false-done percentage therefore does not qualify this model for unattended research use. No new model quality is claimed from these source repairs.
+
+Planned physical qualification: first reproduce the two known entry failures with RGB and the known ACT placement failure with the explicit hybrid. Then freeze the accepted source and evaluate RGB, ACT-guarded and ACT-RGB-refined on three preregistered new spawn offsets in the open-map family: `[-0.010, 0.004, -0.5]`, `[0.008, -0.004, 0.5]`, `[0.020, 0.003, -1.0]` (metres, metres, degrees). Seed 11 and dock_a remain fixed. Plans are replayed and external LLM calls are absent. This qualifies a narrow component environment, not arbitrary maps, seeds, physical robots or communication efficacy.
+
+Failures remain in their original records. If a candidate fails diagnosis, subsequent changes get a new SHA and output directory. Once inspected, a case is marked as diagnosed rather than unseen. Admission of a default controller requires all cases attempted, physical task completion, no obstacle/inter-robot contacts, and no false completion. ACT stop rejection is retained as a model failure rather than a successful delivery.
+
+The execution protocol, source SHA, artifacts, final denominators, videos, TensorBoard readback and remaining restrictions will be recorded here after the finite runs finish. See [the reusable validation procedure](../../docs/research_controller_validation.md).

@@ -312,9 +312,17 @@ def run(args):
         if getattr(args,'carry_act_model',None):
             from scripts.dispatch_act_carry import carry
             result['carry_policy']='ACT own RGB + raw top RGB + static task + own last issued motion'
+            result['carry_stop_mode']=getattr(args,'carry_act_stop_mode','rgb_guarded')
+            result['pure_act']=result['carry_stop_mode']=='learned'
+            result['act_motion_only']=result['carry_stop_mode']!='rgb_refined'
+            if result['carry_stop_mode']=='rgb_guarded':
+                result['carry_policy']='ACT motion with independent RGB stop admission'
+            elif result['carry_stop_mode']=='rgb_refined':
+                result['carry_policy']='ACT transit plus explicit RGB final alignment (hybrid)'
             result['carry_model_sha256']=sha(args.carry_act_model/'model.safetensors')
             carry(pair,args.carry_act_python,args.carry_act_model,
-                  args.carry_act_max_steps if carry_steps is None else carry_steps)
+                  args.carry_act_max_steps if carry_steps is None else carry_steps,
+                  stop_mode=result['carry_stop_mode'])
         else:pair.carry(ImageRoute(scene.bindings,'beam'),max_steps=carry_steps)
         if scene.bindings.route_overlap and not scene.bindings.permission('beam','UNLOAD'):
             raise RuntimeError('shared unload resource unavailable')

@@ -33,6 +33,9 @@ def command(protocol,job,output,mjpython,act_python):
     if case.get('route_overlap',controls.get('route_overlap')):cmd.append('--route-overlap')
     if 'overlap_start' in controls:cmd+=['--overlap-start',controls['overlap_start']]
     if arm.get('model'):cmd+=['--carry-act-model',arm['model'],'--carry-act-python',act_python]
+    if arm.get('stop_mode'):
+        if not arm.get('model'):raise ValueError('stop mode requires ACT model')
+        cmd+=['--carry-act-stop-mode',arm['stop_mode']]
     return list(map(str,cmd))
 
 
@@ -42,7 +45,11 @@ def main():
     p.add_argument('--tensorboard-dir',type=Path,help='new finite-cohort snapshot directory; export completed trials only')
     args=p.parse_args();protocol=json.loads(args.protocol.read_text())
     source=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
+    protocol_sha=sha(args.protocol)
+    if protocol.get('expected_source_sha',source)!=source:
+        raise ValueError('protocol source SHA does not match checkout')
     def frozen():
+        if sha(args.protocol)!=protocol_sha:raise RuntimeError('cohort protocol changed')
         if (subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()!=source
                 or subprocess.check_output(['git','status','--porcelain'],cwd=ROOT)):
             raise RuntimeError('cohort source changed')

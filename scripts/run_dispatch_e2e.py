@@ -307,6 +307,8 @@ def main():
     p.add_argument('--carry-act-model',type=Path,help='replace loaded beam motion only')
     p.add_argument('--carry-act-python',type=Path)
     p.add_argument('--carry-act-max-steps',type=int,default=900)
+    p.add_argument('--carry-act-stop-mode',choices=('learned','rgb_guarded','rgb_refined'),default='rgb_guarded',
+                   help='guard learned stop by RGB; explicit rgb_refined is a separate hybrid controller')
     p.add_argument('--carry-max-steps',type=int,help='common loaded-motion decision cap for RGB and ACT')
     p.add_argument('--spawn-offset',type=float,nargs=3,default=[0.,0.,0.],metavar=('DX','DY','YAW_DEG'),help='setup-only paired comparison perturbation; never actor input')
     p.add_argument('--video-fps',type=int,default=10)

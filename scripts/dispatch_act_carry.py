@@ -16,7 +16,9 @@ def track_release_rgb(pair, frames):
     return {'frame_id':frame['frame_id'],'image':frame['shared_top_rgb'],
             'center':feature['center'],'purpose':'release continuity only'}
 
-def carry(pair,python,model_dir,max_steps=900):
+def carry(pair,python,model_dir,max_steps=900,stop_mode='rgb_guarded'):
+    if stop_mode not in ('learned', 'rgb_guarded', 'rgb_refined'):
+        raise ValueError('unknown ACT stop mode')
     pair.phase='TRANSIT';pair.transport_started=True
     # ACT still receives raw fixed cameras. The shared release stage needs a
     # continuous RGB identity; its estimate never enters the model or steering.
@@ -61,7 +63,30 @@ def carry(pair,python,model_dir,max_steps=900):
             pair.calls.append({'kind':'act_carry','index':index,'sim_time_s':pair.time(),'inputs':actor_inputs,'decisions':decisions,'permission':permission,'actions':actions,'ready_count':ready_count,'release_tracking':release_tracking})
             if index%50==0:print(json.dumps({'act_carry_step':index,'sim_time_s':pair.time(),'stop_scores':{r:d['stop_score'] for r,d in decisions.items()},'actions':actions}),flush=True)
             if permission['phase']!='GO':raise RuntimeError('ACT carry RGB attachment guard stopped')
-            if ready_count>=3:return
+            if ready_count>=3:
+                if stop_mode=='learned':return
+                from harness.carry_arrival import arrival_evidence, PrematureCarryStop
+                evidence=arrival_evidence(pair.carried_beam.previous,pair.bindings.static_map,pair.bindings.plan['dock'])
+                pair.calls.append({'kind':'act_stop_admission','mode':stop_mode,
+                                   'model_requested_stop':True,'rgb':evidence})
+                if evidence['arrived']:return
+                if stop_mode=='rgb_refined':
+                    # Explicit hybrid condition: ACT transit plus the existing
+                    # RGB final approach, reported separately from ACT alone.
+                    from harness.dispatch_skill_binding import ImageRoute
+                    navigator=ImageRoute(pair.bindings,'beam')
+                    navigator.observe(frames[next(iter(pair.bindings.pair.values()))]['top_bytes'])
+                    # Only final alignment in the destination neighbourhood.
+                    # Do not silently repair an arbitrary incorrect route.
+                    if max(abs(v) for v in evidence['error_px']) > 80:
+                        raise PrematureCarryStop('ACT stop too far from destination for RGB refinement')
+                    navigator.index=len(navigator.points)-1
+                    navigator.confirmations=0
+                    pair.calls.append({'kind':'act_rgb_refinement','controller':'existing RGB final waypoint',
+                                       'counts_as_pure_act':False})
+                    pair.carry(navigator,max_steps=min(max_steps,160))
+                    return
+                raise PrematureCarryStop('ACT premature stop rejected by RGB arrival guard')
             pair.drive_mecanum(actions,.2)
             previous={s:[a[k] for k in AXES] for s,a in actions.items()}
         raise RuntimeError('ACT carry decision budget exhausted')

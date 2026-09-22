@@ -55,7 +55,8 @@ def test_reused_model_must_match_fixed_protocol(tmp_path, mismatch):
         with pytest.raises(ValueError): validate_training(*args)
 
 
-def test_runtime_preserves_robot_windows_and_executed_pause_context(tmp_path,monkeypatch):
+@pytest.mark.parametrize('stop_mode,arrived',[('learned',False),('rgb_guarded',True),('rgb_guarded',False)])
+def test_runtime_preserves_robot_windows_and_executed_pause_context(tmp_path,monkeypatch,stop_mode,arrived):
     import json
     from types import SimpleNamespace
     import scripts.dispatch_act_carry as runtime
@@ -77,6 +78,8 @@ def test_runtime_preserves_robot_windows_and_executed_pause_context(tmp_path,mon
     monkeypatch.setattr(clients,'InputCarryClient',Client)
     monkeypatch.setattr(runtime,'OwnHoldContinuity',lambda rgb:SimpleNamespace(observe=lambda rgb:{'held_estimate':True}))
     monkeypatch.setattr(runtime,'authorize_pair',lambda *args:{'phase':'GO'})
+    import harness.carry_arrival as arrival
+    monkeypatch.setattr(arrival,'arrival_evidence',lambda *args:{'arrived':arrived})
     class Pair:
         calls=[]
         now=0.
@@ -87,7 +90,7 @@ def test_runtime_preserves_robot_windows_and_executed_pause_context(tmp_path,mon
             def observe(rgb):
                 self.tracked.append(rgb)
                 return {'center':[.5,.5]}
-            self.carried_beam=SimpleNamespace(observe=observe)
+            self.carried_beam=SimpleNamespace(observe=observe,previous={})
         def time(self):return self.now
         def capture(self,label,**kwargs):
             assert kwargs=={'own_robots':('r0','r1'),'overview':False}
@@ -95,7 +98,13 @@ def test_runtime_preserves_robot_windows_and_executed_pause_context(tmp_path,mon
         def drive_mecanum(self,actions,dt):
             if self.now==0:assert all(v==0 for a in actions.values() for v in a.values())
             self.now+=dt
-    pair=Pair();runtime.carry(pair,None,tmp_path,10)
+    pair=Pair();pair.calls=[]
+    if stop_mode=='rgb_guarded' and not arrived:
+        with pytest.raises(arrival.PrematureCarryStop):runtime.carry(pair,None,tmp_path,10,stop_mode=stop_mode)
+    else:runtime.carry(pair,None,tmp_path,10,stop_mode=stop_mode)
+    admissions=[r for r in pair.calls if r['kind']=='act_stop_admission']
+    assert len(admissions)==int(stop_mode=='rgb_guarded')
+    pair.calls=[r for r in pair.calls if r['kind']=='act_carry']
     assert Client.closed and len(pair.calls)==5
     assert pair.calls[0]['inputs']['r1']['history']==[pair.calls[0]['inputs']['r1']['history'][0]]*4
     assert pair.calls[-1]['ready_count']==3

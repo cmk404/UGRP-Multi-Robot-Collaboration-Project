@@ -20,6 +20,15 @@ def test_matched_commands_change_only_declared_model():
     assert '--route-overlap' in rgb and '--efficient-capture' in rgb
 
 
+def test_hybrid_is_an_explicit_condition_and_cannot_be_applied_to_rgb():
+    p=protocol();p['conditions']['ACT']['stop_mode']='rgb_refined'
+    cmd=command(p,{'case':p['test'][0],'condition':'ACT'},'out','mjpython','act-python')
+    assert cmd[-2:]==['--carry-act-stop-mode','rgb_refined']
+    p['conditions']['RGB']['stop_mode']='rgb_refined'
+    with pytest.raises(ValueError,match='requires ACT'):
+        command(p,{'case':p['test'][0],'condition':'RGB'},'out','mjpython','act-python')
+
+
 @pytest.mark.parametrize('low_disk',[False,True])
 def test_failure_is_recorded_and_remaining_cases_run(tmp_path,monkeypatch,low_disk):
     import scripts.run_matched_carry_cohort as runner

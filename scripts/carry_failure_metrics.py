@@ -50,6 +50,8 @@ def outcome(output, exit_code, timed_out=False):
         d.get('kind') in ('act_carry', 'carry', 'rotating_carry') for d in decisions))
     if success:
         kind = None
+    elif 'PrematureCarryStop:' in str(error):
+        kind = 'premature_model_stop'
     elif 'decision budget exhausted' in str(error).lower():
         kind = 'decision_budget'
     elif timed_out or 'budget' in stop.lower() or any(term in str(error).lower() for term in ('timeout', 'wall budget exhausted')):
@@ -92,6 +94,7 @@ def aggregate(jobs, rows):
             'robot_results_missing': sum(not r['robot_result_available'] for r in finished),
             'carry_entries': len(entered),
             'carry_entry_unknown': sum(r['carry_entered'] is None for r in finished),
+            'entry_failures_before_carry': sum(r['carry_entered'] is False and not r['whole_success'] for r in finished),
             'act_carry_entries': sum(r['act_carry_entered'] is True for r in finished),
             'carry_failures': sum(not r['beam_success'] for r in entered),
             'carry_failure_fraction': sum(not r['beam_success'] for r in entered)/len(entered) if entered else None,
