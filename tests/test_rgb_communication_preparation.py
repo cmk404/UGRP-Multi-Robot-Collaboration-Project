@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 from harness.rgb_communication_study import ContractError, digest_file, read_json, verify_local_assets
+from scripts import prepare_rgb_communication_replay as preparation
 from scripts.prepare_rgb_communication_replay import prepare_assets
 
 
@@ -69,3 +70,12 @@ def test_preparation_rejects_changed_saved_model(tmp_path):
     (assets / "grasp/model.json").write_text('{"test_only":"tampered"}')
     with pytest.raises(ContractError, match="hash mismatch"):
         prepare_assets(root, assets, output, mode="reference")
+
+
+def test_d3_rejects_copy_before_any_output_or_asset_write(tmp_path, monkeypatch):
+    root, assets, _ = inputs(tmp_path)
+    output = root / "outputs/not-created"
+    monkeypatch.setattr(preparation, "source_state", lambda _: {"clean": True})
+    with pytest.raises(ContractError, match="read-only local assets"):
+        preparation.prepare(root, assets, output=output, asset_mode="copy", submitter="D3")
+    assert not output.exists()

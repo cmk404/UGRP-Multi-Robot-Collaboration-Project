@@ -24,6 +24,8 @@ ACT 소유자의 종료/자식 정리 확인과 최종 고정 source/config에 �
 기존 모델/학습 보고서/manifest와 고정 TOP 기준 이미지를 읽기전용으로 재사용한다.
 새 evidence 폴더에는 경로·해시를 담은 metadata만 만들며 모델 파일을 복사하지 않는다.
 기존 원격용 `copy` 모드는 별도 선택으로 보존한다.
+절대경로 descriptor 고정은 `reference`에만 적용해 원격 capsule의 경로 이동을 막지 않는다.
+D3는 `copy` 선택 자체를 거부한다. 기존 복사 모드는 D2의 상대경로 계약을 유지한다.
 
 ```sh
 python -m scripts.prepare_rgb_communication_replay \

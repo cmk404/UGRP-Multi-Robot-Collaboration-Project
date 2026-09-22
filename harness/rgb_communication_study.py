@@ -379,9 +379,9 @@ def preflight(manifest: dict, *, root: Path, evidence_root: Path) -> dict:
                 blockers.append("backend_descriptor_changed")
         except (ContractError, TypeError) as exc:
             blockers.append(f"backend_descriptor_evidence_invalid:{type(exc).__name__}")
-    if "local_assets" in config:
+    if "local_assets" in config or config.get("submitter") == "D3":
         try:
-            catalog = read_json(checked_reference(evidence_root, config["local_assets"]))
+            catalog = read_json(checked_reference(evidence_root, config.get("local_assets")))
             verify_local_assets(catalog, descriptor)
         except (ContractError, OSError, TypeError) as exc:
             blockers.append(f"local_assets_invalid:{type(exc).__name__}")

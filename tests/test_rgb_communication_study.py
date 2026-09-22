@@ -143,6 +143,15 @@ def test_preflight_compares_frozen_descriptor_not_just_manifest_internal_hashes(
     monkeypatch.setattr(study.importlib, "import_module", imported)
     result = study.preflight(study.prepare_manifest(conf, source), root=source, evidence_root=tmp_path)
     assert "backend_descriptor_changed" in result["blockers"]
+    # Legacy portable capsules do not carry a host-bound descriptor requirement.
+    conf.pop("backend_descriptor_evidence")
+    result = study.preflight(study.prepare_manifest(conf, source), root=source, evidence_root=tmp_path)
+    assert not any(b.startswith("backend_descriptor_") for b in result["blockers"])
+    # D3 cannot remove that binding to bypass the local asset requirement.
+    conf["submitter"] = "D3"
+    result = study.preflight(study.prepare_manifest(conf, source), root=source, evidence_root=tmp_path)
+    assert "backend_descriptor_evidence_invalid:ContractError" in result["blockers"]
+    assert "local_assets_invalid:ContractError" in result["blockers"]
 
 
 def test_d3_demands_a3_v2_even_when_old_verifier_would_accept(source, tmp_path, monkeypatch):

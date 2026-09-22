@@ -81,6 +81,8 @@ def prepare(root: Path, assets: Path, *, output: Path | None = None,
     state = source_state(root)
     if not state["clean"]:
         raise ContractError("commit preparation source before preparing evidence")
+    if submitter == "D3" and asset_mode != "reference":
+        raise ContractError("D3 requires existing read-only local assets, not a copied capsule")
     root = root.resolve()
     output = (output or root / "outputs/study-inputs").resolve()
     if not output.is_relative_to(root / "outputs"):
@@ -223,8 +225,10 @@ def prepare(root: Path, assets: Path, *, output: Path | None = None,
              "camera": "sim/multi_masterpi_production.py", "calibration": "tests/fixtures/camera_goal_transport/reference-top.jpg"}
     final_config = {"stage": "physical_replay", "claim_scope": "development_connection_smoke",
         "submitter": submitter, "backend_id": descriptor["backend_id"], "backend": backend,
-        "backend_descriptor_evidence": descriptor_ref,
-        **({"local_assets": asset_info["local_assets"]} if asset_mode == "reference" else {}),
+        # Absolute descriptor paths intentionally bind a local host. A portable
+        # D2 capsule keeps its previous relative-path contract after relocation.
+        **({"backend_descriptor_evidence": descriptor_ref,
+            "local_assets": asset_info["local_assets"]} if asset_mode == "reference" else {}),
         "components": {"serializer_id": "rgb-agent-request.v1", "backend_id": descriptor["backend_id"],
                        "scheduler_id": SCHEDULER_ID},
         "budgets": dict(PHYSICAL_BUDGETS), "runtime_limits": limits.__dict__,
