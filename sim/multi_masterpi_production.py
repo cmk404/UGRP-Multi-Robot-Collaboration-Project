@@ -165,6 +165,7 @@ def build_multi_robot_xml(
     warehouse_terrain=None,
     warehouse_zones=None,
     navigation_camera: bool = False,
+    scene_objects=(),
 ) -> str:
     """Clone the validated single-robot XML with deterministic name prefixes."""
     ids = tuple(str(x).strip().lower() for x in robot_ids)
@@ -281,6 +282,9 @@ def build_multi_robot_xml(
         for node in list(world):
             if node.get("name") in {"team_beam_start_zone", "team_beam_goal_zone"}:
                 world.remove(node)
+    if scene_objects:
+        from sim.scene_objects import append_objects
+        append_objects(world, list(scene_objects))
     return ET.tostring(root, encoding="unicode")
 
 
@@ -619,6 +623,7 @@ class MultiMasterPiProductionV2:
         use_calibration_manifest: bool = True,
         warehouse_layout: str = "standard",
         warehouse_cargo_ids: Sequence[str] | None = None,
+        scene_objects=(),
     ):
         selected_cargo_ids = None
         if warehouse_cargo_ids is not None:
@@ -711,6 +716,7 @@ class MultiMasterPiProductionV2:
             warehouse_zones=self.warehouse_zones,
             spawns=self.warehouse_spawns,
             navigation_camera=warehouse_layout == "camera_team",
+            scene_objects=scene_objects,
         ))
         self.data = mujoco.MjData(self.model)
         self.width = int(width); self.height = int(height)

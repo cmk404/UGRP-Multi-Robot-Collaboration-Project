@@ -59,6 +59,9 @@ MuJoCo 창에서 **Space**는 일시정지/재개, **N**은 정지 중 물리 �
 | `camera.width/height` | 자기 RGB 출력 해상도. 공용 top은 기존 관찰자 최소 해상도를 유지 |
 | `control.allow_reverse/allow_mecanum` | 허용할 저수준 명령 범위 |
 | `run` | `sim_seconds`, `wall_seconds`, `realtime_factor` |
+| `scene.objects/builder/params` | 추가 형상 목록 또는 독립 Python 장면 생성기와 인자 |
+| `controllers` | 로봇별 독립 Python 제어기 factory·period_s·params |
+| `action_plugins` | 사용자 action 이름 → 독립 Python 변환 함수 |
 | `actions` | `{at_s, robot, command}` 배열. 같은 시각은 파일 순서로 적용 |
 
 `configs/simulation/drive.json`은 3초 명령 스케줄 예제다. 다음은 직접 배치하고 한 로봇을 움직이는 설정 예시다. 배치의 충돌 여부와 적합성은 연구자가 창에서 확인한다.
@@ -77,7 +80,7 @@ MuJoCo 창에서 **Space**는 일시정지/재개, **N**은 정지 중 물리 �
 }
 ```
 
-로봇은 현재 기존 MasterPi 3대(r1/r2/r3)이며 임의 로봇 수·새 지형/MJCF를 JSON으로 정의하는 기능은 아니다. 장면 종류를 추가할 때는 `sim/session_config.py`의 계약과 `sim/session.py`의 생성기 연결을 확장한다. 기존 물리·지도 생성 코드를 복제하지 않는다.
+로봇은 현재 기존 MasterPi 3대(r1/r2/r3)다. 장애물·경사면·동적 물체, 제어기, 사용자 action은 실험 폴더의 파일로 추가한다. `bash scripts/open_simulation.command new outputs/my-experiment`로 시작하며 [확장 안내](simulation_extensions.md)를 따른다. 새 로봇 기종·로봇 수·관절/센서 자체를 바꾸는 것은 여전히 엔진 개발 범위다.
 
 ## 연구 코드에 붙이기
 
@@ -104,14 +107,14 @@ with Simulation(config, render=True) as sim:
 
 ## 기록과 코드 위치
 
-CLI는 매번 `outputs/sim-<날짜>-<ID>/`를 만든다. `config.json`은 적용된 전체 설정, `session.json`은 소스 SHA/dirty 상태와 실행 환경, `model.mjb`는 컴파일된 모델, `physics.json`은 물리 설정·화물 목록, `commands.jsonl`은 초기화와 실제 발행 명령, `*-evaluation.json`은 별도 정답 진단, `result.json`은 종료 이유·시간·파일 해시다. `--capture`는 시작/종료의 실제 입력 RGB와 관측 JSON을 추가한다. 연속 영상 녹화나 전체 상태 replay는 아직 제공하지 않는다.
+CLI는 매번 `outputs/sim-<날짜>-<ID>/`를 만든다. `config.json`은 적용된 전체 설정, `session.json`은 소스 SHA/dirty 상태와 실행 환경, `model.mjb`는 컴파일된 모델, `physics.json`은 물리 설정·화물 목록, `commands.jsonl`은 초기화와 실제 발행 명령, `*-evaluation.json`은 별도 정답 진단, `result.json`은 종료 이유·시간·파일 해시다. `--capture`는 시작/종료의 실제 입력 RGB와 관측 JSON을 추가한다. `extensions.json`과 `extensions/`에는 실행한 확장 진입 파일·해시·최종 추가 형상을 보관한다. 제어기를 쓰면 `controller-decisions.jsonl`에 매 호출의 실제 RGB 입력·응답·발행 명령을 저장한다. 연속 영상 녹화나 전체 상태 replay는 아직 제공하지 않는다.
 
 | 파일 | 책임 |
 |---|---|
 | `sim/session_config.py` | 설정 버전·기본값·검증 |
 | `sim/session.py` | 세계 수명·reset/step·명령·관측·native viewer 연결 |
 | `sim/camera_robot_port.py` | 기존 로봇별 RGB/발행 명령 경계 |
-| `scripts/sim_cli.py` | init/inspect/layouts/run과 실행 기록 |
+| `scripts/sim_cli.py` | new/init/inspect/layouts/run과 실행 기록 |
 | `scripts/open_simulation.command` | 기존 Python 환경 선택과 프로세스 세션 관리 |
 | `scripts/check_simulation.py` | 실제 물리·초기화·카메라·설정 통합 검사 |
 

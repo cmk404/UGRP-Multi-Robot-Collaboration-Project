@@ -8,18 +8,23 @@ from __future__ import annotations
 import base64
 import copy
 import hashlib
+import json
 import math
 import time
 from contextlib import nullcontext
 
 from sim.camera_robot_port import CameraRobotPort
 from sim.session_config import ROBOTS, validate_config
+from sim.session_extensions import Extensions
 
 
 class Simulation:
-    def __init__(self, config, *, render=False, world_factory=None):
+    def __init__(self, config, *, render=False, base_dir=".", decision_sink=None, world_factory=None):
         self.config = validate_config(config)
-        self.render = bool(render)
+        self.extensions = Extensions(self.config, base_dir)
+        self.render = bool(render or self.config["controllers"])
+        self.decision_sink = decision_sink
+        self.controller_calls = 0
         self._viewer = None
         self._closed = False
         self.command_history = []
@@ -28,9 +33,13 @@ class Simulation:
             from sim.multi_masterpi_production import MultiMasterPiProductionV2
             world_factory = MultiMasterPiProductionV2
         scene = self.config["scene"]
+        # Lower every scheduled custom command before constructing a world.
+        self._scheduled = [{**event, "raw": self.extensions.lower(event["command"])}
+                           for event in self.config["actions"]]
+        extra = {"scene_objects": self.extensions.objects} if self.extensions.objects else {}
         self._world = world_factory(seed=scene["seed"], warehouse_layout=scene["layout"],
                                     warehouse_cargo_ids=scene["cargo_ids"],
-                                    **self.config["camera"], render=self.render)
+                                    **self.config["camera"], render=self.render, **extra)
         try:
             self.reset()
         except BaseException:
@@ -73,20 +82,28 @@ class Simulation:
             self._ports = {rid: CameraRobotPort(self._world, rid, **self.config["control"]) for rid in ROBOTS}
             self._start_time = float(self._world.data.time)
             self._next_action = 0
+            self._controllers = self.extensions.controllers()
+            self._controller_ticks = {rid: 0 for rid in self._controllers}
             self.episode += 1
             self.command_history.append({"event": "reset", "episode": self.episode, "at_s": 0.0})
         return {"episode": self.episode, "time_s": self.time, "timestep_s": self.timestep}
 
     def apply(self, robot, command):
-        """Issue one raw actuator command without advancing physics; return an ACK."""
+        """Validate/lower one command without advancing physics; return an ACK."""
         self._check_open()
         if robot not in self._ports:
             raise ValueError(f"unknown robot: {robot}")
+        if robot in self._controllers:
+            raise ValueError(f"{robot} is owned by a configured controller")
+        return self._apply_raw(robot, self.extensions.lower(command), requested=command)
+
+    def _apply_raw(self, robot, command, *, requested):
         with self._lock():
             ack = self._ports[robot].apply(command, float(self._world.data.time))
             self.command_history.append({"event": "command", "episode": self.episode,
                                          "at_s": self.time, "robot": robot,
-                                         "command": copy.deepcopy(command), "ack": copy.deepcopy(ack)})
+                                         "command": copy.deepcopy(command), "requested": copy.deepcopy(requested),
+                                         "ack": copy.deepcopy(ack)})
         return ack
 
     def step(self, steps=1):
@@ -99,11 +116,12 @@ class Simulation:
         if type(steps) is not int or not 1 <= steps <= 1_000_000:
             raise ValueError("steps: integer in [1, 1000000] required")
         for _ in range(steps):
-            actions = self.config["actions"]
+            actions = self._scheduled
             while self._next_action < len(actions) and actions[self._next_action]["at_s"] <= self.time + 1e-10:
                 event = actions[self._next_action]
-                self.apply(event["robot"], event["command"])
+                self._apply_raw(event["robot"], event["raw"], requested=event["command"])
                 self._next_action += 1
+            self._act_controllers()
             with self._lock():
                 for port in self._ports.values():
                     port.tick(float(self._world.data.time))
@@ -111,6 +129,36 @@ class Simulation:
                 for port in self._ports.values():
                     port.tick(float(self._world.data.time))
         return self.time
+
+    def _act_controllers(self):
+        for rid, controller in self._controllers.items():
+            period = self.config["controllers"][rid]["period_s"]
+            if self.time + 1e-10 < self._controller_ticks[rid] * period:
+                continue
+            observation = self.observe(rid)
+            observation["command_history"] = [copy.deepcopy(row) for row in self.command_history
+                if row.get("robot") == rid and row["episode"] == self.episode]
+            record = {"robot": rid, "episode": self.episode, "at_s": self.time,
+                      "observation": copy.deepcopy(observation)}
+            self.controller_calls += 1
+            try:
+                requested = controller.act(observation)
+                try:
+                    json.dumps(requested, allow_nan=False)
+                except (TypeError, ValueError):
+                    record["invalid_response_repr"] = repr(requested)
+                    raise ValueError("controller response must be a finite JSON command") from None
+                record["response"] = copy.deepcopy(requested)
+                raw = self.extensions.lower(requested)
+                record["raw_command"] = raw
+                record["ack"] = self._apply_raw(rid, raw, requested=requested)
+            except Exception as error:
+                record["error"] = f"{type(error).__name__}: {error}"
+                raise
+            finally:
+                if self.decision_sink is not None:
+                    self.decision_sink(record)
+            self._controller_ticks[rid] += 1
 
     def observe(self, robot, *, include_top=True):
         """Copy own calibrated RGB, shared top RGB and own issued command state.

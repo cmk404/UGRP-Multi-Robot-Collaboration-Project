@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "scene": {
+    "layout": "camera_team",
+    "seed": 41,
+    "builder": "scene.py:build_scene",
+    "params": {"barrier_half_width_m": 0.35}
+  },
+  "camera": {"width": 160, "height": 120},
+  "run": {"sim_seconds": 2},
+  "action_plugins": {"nudge": "actions.py:nudge"},
+  "controllers": {
+    "r1": {"factory": "controller.py:create_controller", "period_s": 0.2,
+           "params": {"power": 0.08}}
+  },
+  "actions": [
+    {"at_s": 0, "robot": "r2", "command": {"kind": "look", "pan_pulse": 1700}}
+  ]
+}

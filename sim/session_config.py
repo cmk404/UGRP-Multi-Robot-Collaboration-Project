@@ -6,17 +6,21 @@ import json
 import math
 from pathlib import Path
 
-from sim.camera_robot_port import validate_raw_action
+from sim.scene_objects import validate_objects
+from sim.session_extensions import RAW_KINDS, validate_command, validate_reference
 
 LAYOUTS = ("standard", "mixed", "arena", "camera_team")
 ROBOTS = ("r1", "r2", "r3")
 DEFAULT_CONFIG = {
     "version": 1,
-    "scene": {"layout": "camera_team", "seed": 41, "cargo_ids": None, "robots": {}},
+    "scene": {"layout": "camera_team", "seed": 41, "cargo_ids": None, "robots": {},
+              "objects": [], "builder": None, "params": {}},
     "camera": {"width": 384, "height": 288},
     "control": {"allow_reverse": True, "allow_mecanum": True},
     "run": {"sim_seconds": 30.0, "wall_seconds": 1800.0, "realtime_factor": 1.0},
     "actions": [],
+    "action_plugins": {},
+    "controllers": {},
 }
 
 
@@ -58,6 +62,11 @@ def validate_config(value):
         for xyz in pose["xyz_m"]:
             number(xyz, f"{rid}.xyz_m", -100, 100)
         number(pose["yaw_deg"], f"{rid}.yaw_deg", -360, 360)
+    scene["objects"] = validate_objects(scene["objects"])
+    if scene["builder"] is not None:
+        validate_reference(scene["builder"])
+    if not isinstance(scene["params"], dict):
+        raise ValueError("scene.params: object required")
     for name, size in config["camera"].items():
         if type(size) is not int or not 32 <= size <= 2048:
             raise ValueError(f"camera.{name}: integer in [32, 2048] required")
@@ -67,6 +76,25 @@ def validate_config(value):
     number(config["run"]["sim_seconds"], "run.sim_seconds", .001, 86400)
     number(config["run"]["wall_seconds"], "run.wall_seconds", .1, 86400)
     number(config["run"]["realtime_factor"], "run.realtime_factor", .01, 100)
+    plugins = copy.deepcopy(value.get("action_plugins", {}))
+    if not isinstance(plugins, dict):
+        raise ValueError("action_plugins: name -> file.py:callable object required")
+    for name, ref in plugins.items():
+        if not isinstance(name, str) or not name.isidentifier() or name in RAW_KINDS:
+            raise ValueError("action_plugins: unique custom name; built-in names cannot be replaced")
+        validate_reference(ref)
+    config["action_plugins"] = plugins
+    controllers = copy.deepcopy(value.get("controllers", {}))
+    _object(controllers, ROBOTS, "controllers")
+    for rid, supplied in controllers.items():
+        _object(supplied, ("factory", "params", "period_s"), f"controllers.{rid}")
+        spec = {"params": {}, "period_s": .2, **supplied}
+        validate_reference(spec.get("factory"))
+        if not isinstance(spec["params"], dict):
+            raise ValueError(f"controllers.{rid}.params: object required")
+        number(spec["period_s"], f"controllers.{rid}.period_s", .01, 60)
+        controllers[rid] = spec
+    config["controllers"] = controllers
     actions = copy.deepcopy(value.get("actions", []))
     if not isinstance(actions, list):
         raise ValueError("actions: list required")
@@ -77,7 +105,9 @@ def validate_config(value):
         number(event["at_s"], "action.at_s", 0, config["run"]["sim_seconds"])
         if event["at_s"] >= config["run"]["sim_seconds"]:
             raise ValueError("action.at_s must be before run.sim_seconds")
-        validate_raw_action(event["command"], **config["control"])
+        if event["robot"] in controllers:
+            raise ValueError("scheduled actions and controller cannot own the same robot")
+        validate_command(event["command"], plugins, config["control"])
     config["actions"] = sorted(actions, key=lambda event: event["at_s"])
     return config
 

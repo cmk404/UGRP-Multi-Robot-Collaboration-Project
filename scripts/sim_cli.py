@@ -10,6 +10,7 @@ import os
 import platform
 import queue
 import signal
+import shutil
 import subprocess
 import sys
 import time
@@ -62,16 +63,33 @@ def run(config, args):
     print(f"Output: {output.resolve()}", flush=True)
     keys = queue.SimpleQueue()
     sim = None
+    decisions = (output / "controller-decisions.jsonl").open("x", encoding="utf-8")
+    def record_decision(record):
+        decisions.write(json.dumps(record, ensure_ascii=False, allow_nan=False) + "\n")
+        decisions.flush()
     started = time.monotonic()
     paused = args.paused
-    result = {**metadata, "seed": config["scene"]["seed"], "policy": "raw_commands",
+    result = {**metadata, "seed": config["scene"]["seed"], "policy": "local_controller" if config["controllers"] else "raw_commands",
               "case": config["scene"]["layout"], "scope": "simulation_runtime_check",
-              "model_calls": 0, "protocol_complete": False, "stop_reason": "error"}
+              "protocol_complete": False, "stop_reason": "error"}
+    if not config["controllers"]:
+        result["model_calls"] = 0
     def interrupted(*_):
         raise KeyboardInterrupt
     previous_term = signal.signal(signal.SIGTERM, interrupted)
     try:
-        sim = Simulation(config, render=args.capture)
+        sim = Simulation(config, render=args.capture, base_dir=args.config.resolve().parent,
+                         decision_sink=record_decision)
+        source_dir = output / "extensions"
+        source_dir.mkdir()
+        source_manifest = []
+        for index, (path, entry) in enumerate(sim.extensions.sources.items()):
+            saved = source_dir / f"{index:02d}-{Path(path).name}"
+            saved.write_bytes(entry["bytes"])
+            source_manifest.append({"path": path, "saved": str(saved.relative_to(output)),
+                                    "sha256": entry["sha256"]})
+        write_json(output / "extensions.json", {"base_dir": str(sim.extensions.base_dir),
+                   "entry_files": source_manifest, "resolved_objects": sim.extensions.objects})
         mujoco.mj_saveModel(sim._world.model, str(output / "model.mjb"))
         write_json(output / "physics.json", {"timestep_s": sim.timestep,
                    "dynamics": sim._world.dynamics, "calibration": sim._world.calibration_status,
@@ -135,6 +153,7 @@ def run(config, args):
                 try:
                     result["sim_s"] = sim.time
                     result["episodes"] = sim.episode + 1
+                    result["controller_calls"] = sim.controller_calls
                     result["commands"] = sum(row["event"] == "command" for row in sim.command_history)
                     (output / "commands.jsonl").write_text("".join(json.dumps(row) + "\n" for row in sim.command_history), encoding="utf-8")
                     write_json(output / "final-evaluation.json", sim.evaluation_state())
@@ -144,9 +163,10 @@ def run(config, args):
             result.update(protocol_complete=False, stop_reason="error", error=f"{type(error).__name__}: {error}")
             raise
         finally:
+            decisions.close()
             result["wall_s"] = time.monotonic() - started
-            result["artifacts_sha256"] = {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
-                                           for p in sorted(output.iterdir()) if p.is_file() and p.name != "result.json"}
+            result["artifacts_sha256"] = {str(p.relative_to(output)): hashlib.sha256(p.read_bytes()).hexdigest()
+                                           for p in sorted(output.rglob("*")) if p.is_file() and p.name != "result.json"}
             write_json(output / "result.json", result)
             print(f"Stopped: {result['stop_reason']} | {output.resolve() / 'result.json'}", flush=True)
 
@@ -158,6 +178,8 @@ def main(argv=None):
     init.add_argument("path", type=Path)
     init.add_argument("--layout", choices=LAYOUTS, default="camera_team")
     init.add_argument("--seed", type=int, default=41)
+    new = sub.add_parser("new", help="create a standalone experiment with scene/controller/action files")
+    new.add_argument("directory", type=Path)
     inspect = sub.add_parser("inspect", help="validate and print the resolved configuration (no MuJoCo needed)")
     inspect.add_argument("config", type=Path)
     sub.add_parser("layouts", help="list built-in scene layouts")
@@ -167,6 +189,9 @@ def main(argv=None):
     execute.add_argument("--capture", action="store_true", help="save calibrated robot and top RGB at start/end")
     execute.add_argument("--paused", action="store_true")
     execute.add_argument("--camera", default="free", help="native view: free, cctv_top, cctv_warehouse, r1__robot_cam, ...")
+    execute.add_argument("--controller", action="append", default=[], metavar="ROBOT=FILE.py:FACTORY",
+                         help="replace/add a robot controller; paths relative to the config directory")
+    execute.add_argument("--scene-builder", help="replace scene builder, relative to the config directory")
     execute.add_argument("--seed", type=int)
     execute.add_argument("--sim-seconds", type=float)
     execute.add_argument("--wall-seconds", type=float)
@@ -176,6 +201,11 @@ def main(argv=None):
     try:
         if args.command == "layouts":
             print("\n".join(LAYOUTS))
+            return 0
+        if args.command == "new":
+            shutil.copytree(ROOT / "examples" / "simulation_extensions", args.directory,
+                            ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+            print(f"Created {args.directory.resolve()} (edit config.json, scene.py, controller.py, actions.py)")
             return 0
         if args.command == "init":
             config = validate_config({"version": 1, "scene": {"layout": args.layout, "seed": args.seed}})
@@ -187,6 +217,13 @@ def main(argv=None):
         if args.command == "inspect":
             print(json.dumps(config, indent=2, ensure_ascii=False))
             return 0
+        for override in args.controller:
+            if "=" not in override:
+                raise ValueError("--controller requires ROBOT=FILE.py:FACTORY")
+            robot, ref = override.split("=", 1)
+            config["controllers"][robot] = {**config["controllers"].get(robot, {}), "factory": ref}
+        if args.scene_builder is not None:
+            config["scene"]["builder"] = args.scene_builder
         if args.seed is not None:
             config["scene"]["seed"] = args.seed
         for flag in ("sim_seconds", "wall_seconds", "realtime_factor"):

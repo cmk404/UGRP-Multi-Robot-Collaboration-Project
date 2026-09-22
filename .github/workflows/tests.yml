@@ -140,6 +140,12 @@ jobs:
           done
           python -c "import json,pathlib; rows=[json.loads(p.read_text()) for p in pathlib.Path('outputs/simulation-ci').glob('native-*/result.json')]; assert len(rows)==3 and all(r['protocol_complete'] and r['commands']==3 for r in rows), rows"
 
+      - name: Extend a copied scene, action and controller without core edits
+        run: |
+          python scripts/ugrp_session.py run extensions-ci -- python -m scripts.check_simulation_extensions --output outputs/simulation-ci/extensions
+          UGRP_SIM_PYTHON="$(command -v python)" MUJOCO_GL=glfw xvfb-run -a bash scripts/open_simulation.command run examples/simulation_extensions/config.json --wall-seconds 60 --output outputs/simulation-ci/extensions-native
+          python -c "import json; r=json.load(open('outputs/simulation-ci/extensions-native/result.json')); assert r['protocol_complete'] and r['controller_calls']==10, r"
+
       - name: Keep simulator verification
         if: always()
         uses: actions/upload-artifact@v4
