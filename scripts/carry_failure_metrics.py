@@ -21,13 +21,14 @@ def schedule(protocol, conditions):
 def outcome(output, exit_code, timed_out=False):
     """Missing result is an operational failure, not a made-up robot verdict."""
     output = Path(output)
+    interrupted=exit_code in (-1,-2,-15,129,130,143)
     try:
         result = json.loads((output/'result.json').read_text())
         if not isinstance(result, dict):
             raise ValueError('result is not an object')
     except (OSError, ValueError):
         return {'whole_success': False, 'robot_result_available': False,
-                'failure_kind': 'timeout' if timed_out else 'missing_or_invalid_result',
+                'failure_kind': 'timeout' if timed_out else 'interrupted' if interrupted else 'missing_or_invalid_result',
                 'carry_entered': None, 'act_carry_entered': None, 'beam_success': None}
     error = result.get('error')
     stop = str(result.get('stop_reason') or '')
@@ -52,6 +53,8 @@ def outcome(output, exit_code, timed_out=False):
     carry_censored=bool(entered and failed_component=='solo_box' and not beam.get('physical_success'))
     if success:
         kind = None
+    elif interrupted and not timed_out:
+        kind = 'interrupted'
     elif 'PrematureCarryStop:' in str(error):
         kind = 'premature_model_stop'
     elif 'decision budget exhausted' in str(error).lower():

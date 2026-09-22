@@ -35,7 +35,7 @@ def copy_output(pipe, log):
 
 
 def run_logged(command, log_path, *, name, cwd=None, env=None, timeout=None, heartbeat_s=30,
-               stdin_text=None):
+               stdin_text=None, termination_grace_s=10):
     """Own one child group, preserve all logs and forward only structured progress."""
     start=time.monotonic();timed_out=False
     env={**(os.environ if env is None else env),'PYTHONUNBUFFERED':'1'}
@@ -61,7 +61,7 @@ def run_logged(command, log_path, *, name, cwd=None, env=None, timeout=None, hea
             if child.poll() is None:
                 try:os.killpg(child.pid,signal.SIGTERM)
                 except ProcessLookupError:pass
-                try:child.wait(timeout=10)
+                try:child.wait(timeout=termination_grace_s)
                 except subprocess.TimeoutExpired:
                     try:os.killpg(child.pid,signal.SIGKILL)
                     except ProcessLookupError:pass

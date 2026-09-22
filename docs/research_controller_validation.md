@@ -50,3 +50,8 @@ python3 scripts/assess_research_cohort.py \
 ```
 
 실행기의 종료 코드 0은 예정한 실행을 모두 시도했다는 뜻이다. 제어기 성공은 `conditions.<조건>.qualified_for_declared_cases`와 각 원본 물리 판정을 확인한다. 디스크 부족·런타임 실행 실패와 물리 실패를 구분하고, 미완료 원본 위에 재실행하거나 기존 실패 기록을 덮어쓰지 않는다. 조건을 바꾸면 새 프로토콜·새 디렉터리로 시작한다. 중단은 `python3 scripts/ugrp_session.py stop research-cohort`로 자신이 시작한 세션에만 적용한다.
+
+
+독립 실행을 둘로 나눌 때는 전체 프로토콜을 먼저 저장하고 각 shard의 `conditions`만 분할한다. 소스·모델·환경·사례·반복 수는 같아야 한다. 이 세션은 동시에 실행 중인 시뮬레이터가 최대 두 개가 되도록 직접 배치하며, 기존 코호트가 끝난 뒤 빈 자리에 다음 shard를 시작한다. `scripts/combine_matched_carry_shards.py --protocol <전체> --report <첫 보고서> --report <둘째 보고서> --out <새 통합 보고서>`는 완료 여부·동일 설정·누락·중복을 확인하고 원본 해시를 보존한다. 통합 후 다시 `assess_research_cohort.py`로 원본 판정을 검증한다. 자원을 공유하므로 실행 시간을 통제된 속도 향상으로 해석하지 않는다.
+
+`run_matched_carry_cohort.py`는 SIGINT/TERM/HUP을 받으면 별도 프로세스 그룹의 실행 자식까지 정리하고, 중단된 시도를 `interrupted`로 기록하며 남은 사례를 미완료로 남긴다. 일반적인 모델/물리 실패는 예정한 다음 사례로 계속 진행한다. 따라서 명시적 중단과 평범한 실패의 동작을 구분한다.

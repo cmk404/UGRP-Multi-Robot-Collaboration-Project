@@ -52,3 +52,27 @@ def test_failure_is_recorded_and_remaining_cases_run(tmp_path,monkeypatch,low_di
     for group in report['failure_estimates']['conditions'].values():
         assert group['failures']==(0 if low_disk else 2)
         assert group['pending']==(2 if low_disk else 0)
+
+
+def test_requested_stop_records_interruption_and_stops_dispatch(tmp_path,monkeypatch):
+    import signal
+    import scripts.run_matched_carry_cohort as runner
+    p=tmp_path/'protocol.json';p.write_text(json.dumps(protocol()))
+    monkeypatch.setattr(runner.subprocess,'check_output',lambda cmd,**kw:'' if cmd[1]=='status' else 'source')
+    monkeypatch.setattr(runner.shutil,'disk_usage',lambda _:SimpleNamespace(free=12*2**30))
+    calls=[]
+    def child(*args,**kwargs):
+        calls.append(args)
+        assert kwargs['termination_grace_s']==2
+        raise runner.CohortInterrupted(signal.SIGTERM)
+    monkeypatch.setattr(runner,'run_logged',child)
+    monkeypatch.setattr(runner.sys,'argv',['runner','--protocol',str(p),'--out',str(tmp_path/'out'),
+                                        '--mjpython','mjpython','--act-python','act-python'])
+    previous=signal.getsignal(signal.SIGTERM)
+    assert runner.main()==143
+    assert signal.getsignal(signal.SIGTERM)==previous
+    report=json.loads((tmp_path/'out/report.json').read_text())
+    assert len(calls)==1 and len(report['runs'])==1 and not report['complete']
+    assert report['interrupted_signal']==signal.SIGTERM
+    assert report['failure_estimates']['attempted']==1
+    assert report['runs'][0]['outcome']['failure_kind']=='interrupted'

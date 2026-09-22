@@ -8,6 +8,7 @@ import hashlib
 import json
 from pathlib import Path
 import shutil
+import signal
 import subprocess
 import sys
 ROOT=Path(__file__).resolve().parents[1]
@@ -39,7 +40,11 @@ def command(protocol,job,output,mjpython,act_python):
     return list(map(str,cmd))
 
 
-def main():
+class CohortInterrupted(BaseException):
+    def __init__(self,signum):self.signum=signum
+
+
+def run():
     p=argparse.ArgumentParser(description=__doc__)
     for name in ('protocol','out','mjpython','act-python'):p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--tensorboard-dir',type=Path,help='new finite-cohort snapshot directory; export completed trials only')
@@ -77,13 +82,20 @@ def main():
         print(json.dumps({'trial':job['trial_id'],'state':'running'}),flush=True)
         try:
             row=run_logged(cmd,args.out/(job['trial_id']+'.log'),name=job['trial_id'],cwd=ROOT,
-                           timeout=protocol['controls']['max_wall_s']+60)
+                           timeout=protocol['controls']['max_wall_s']+60,termination_grace_s=2)
         except OSError as error:
             row={'exit_code':127,'timed_out':False,'launch_error':type(error).__name__}
+        except CohortInterrupted as error:
+            # run_logged's finally has already reaped its separate child group.
+            # Keep the interrupted attempt and leave remaining trials pending.
+            row={'exit_code':128+error.signum,'timed_out':False,'interrupted_signal':error.signum}
         frozen()
         report['runs'].append({**job,**row,'output':str(output),'command':cmd,
                               'outcome':outcome(output,row['exit_code'],row['timed_out'])})
         save();print(json.dumps({'completed':len(report['runs']),'planned':len(jobs),'last':report['runs'][-1]['outcome']}),flush=True)
+        if 'interrupted_signal' in row:
+            report['interrupted_signal']=row['interrupted_signal'];save()
+            return row['exit_code']
         if args.tensorboard_dir and (output/'result.json').exists():
             try:
                 from scripts.tensorboard_tools.export import convert
@@ -101,6 +113,17 @@ def main():
                 report['tensorboard_exports'].append({'trial_id':job['trial_id'],'export_error':type(error).__name__+': '+str(error)})
             save()
     return 0 if report['complete'] else 2
+
+
+def main():
+    # ugrp_session forwards TERM to this runner's group; physical subprocesses
+    # own separate groups. Unwind Python cleanup instead of orphaning them.
+    def interrupt(signum,frame):raise CohortInterrupted(signum)
+    previous={sig:signal.signal(sig,interrupt) for sig in (signal.SIGINT,signal.SIGTERM,signal.SIGHUP)}
+    try:return run()
+    except CohortInterrupted as error:return 128+error.signum
+    finally:
+        for sig,handler in previous.items():signal.signal(sig,handler)
 
 
 if __name__=='__main__':raise SystemExit(main())

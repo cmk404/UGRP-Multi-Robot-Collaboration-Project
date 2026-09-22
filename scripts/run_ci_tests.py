@@ -48,6 +48,7 @@ TEST_PATTERNS = (
     "tests/test_research_cohort_admission.py",
     "tests/test_carry_termination_audit.py",
     "tests/test_matched_carry_cohort.py",
+    "tests/test_matched_carry_shards.py",
     "tests/test_carry_failure_measurement.py",
     "tests/test_research_execution_recovery.py",
     "tests/test_research_visual_evidence.py",
