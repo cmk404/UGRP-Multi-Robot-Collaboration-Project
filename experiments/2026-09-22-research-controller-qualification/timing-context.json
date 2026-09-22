@@ -4,5 +4,11 @@
   "concurrent_diagnostic": "research-pixel-regression on 2480274; starts after primary case1 completed in all conditions",
   "each_cohort_sequential": true,
   "other_host_load": "OneDrive, fileproviderd and interactive applications remain running; their processes were not controlled",
-  "interpretation": "Wall times describe these attempts under variable host load. Do not infer a controlled speed improvement or compare training compute causally."
+  "interpretation": "Wall times describe these attempts under variable host load. Do not infer a controlled speed improvement or compare training compute causally.",
+  "additional_observed_host_load": [
+    "Separately owned python -m scripts.sim_cli run configs/simulation/local.json (PID55434 at observation)",
+    "Separately owned offline pytest suite (PID57093 at observation)"
+  ],
+  "our_simulation_concurrency_limit": 2,
+  "unrelated_processes_modified": false
 }

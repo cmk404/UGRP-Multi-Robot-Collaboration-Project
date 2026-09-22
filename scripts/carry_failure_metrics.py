@@ -15,6 +15,14 @@ def schedule(protocol, conditions):
             for condition in conditions[shift:] + conditions[:shift]:
                 jobs.append({'case': case, 'condition': condition, 'repeat': repeat,
                              'trial_id': f"{condition}--{case['id']}--r{repeat}"})
+    selected=protocol.get('trial_ids')
+    if selected is not None:
+        if (not isinstance(selected,list) or not selected
+                or any(not isinstance(t,str) for t in selected)
+                or len(set(selected))!=len(selected)
+                or not set(selected)<={j['trial_id'] for j in jobs}):
+            raise ValueError('trial_ids must be a nonempty unique subset of the declared schedule')
+        jobs=[j for j in jobs if j['trial_id'] in selected]
     return jobs
 
 

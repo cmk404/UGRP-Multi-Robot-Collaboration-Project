@@ -35,3 +35,23 @@ def test_incompatible_or_incomplete_shard_cannot_be_combined(tmp_path,change):
     else:r['runs'].pop()
     p.write_text(json.dumps(r))
     with pytest.raises(ValueError):combine(protocol,reports)
+
+
+def test_trial_partition_preserves_complete_plan_and_order(tmp_path):
+    protocol,reports=fixture(tmp_path);p=json.loads(protocol.read_text())
+    jobs=schedule(p,list(p['conditions']))
+    verdict=json.loads(reports[0].read_text())['runs'][0]['outcome']
+    for n,path in enumerate(reports):
+        ids=[j['trial_id'] for j in jobs[n::2]]
+        sub={**p,'trial_ids':ids};part=schedule(sub,list(sub['conditions']))
+        path.write_text(json.dumps({'source_sha':'frozen','protocol_sha256':str(n),
+            'protocol':sub,'complete':True,'jobs':part,'runs':[{**j,'outcome':verdict} for j in part]}))
+    result=combine(protocol,reports)
+    assert [r['trial_id'] for r in result['runs']]==[j['trial_id'] for j in jobs]
+    assert result['complete']
+
+
+@pytest.mark.parametrize('ids',[[],['missing'],['RGB--a--r0','RGB--a--r0'],[3],'RGB--a--r0'])
+def test_invalid_trial_partition_is_rejected(tmp_path,ids):
+    protocol,_=fixture(tmp_path);p=json.loads(protocol.read_text());p['trial_ids']=ids
+    with pytest.raises(ValueError,match='trial_ids'):schedule(p,list(p['conditions']))

@@ -1,4 +1,4 @@
-"""Join disjoint, completed condition shards without altering their raw reports."""
+"""Join disjoint, completed trial shards without altering their raw reports."""
 import argparse
 import hashlib
 import json

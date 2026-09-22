@@ -63,13 +63,21 @@ def carry(pair,python,model_dir,max_steps=900,stop_mode='rgb_guarded'):
             pair.calls.append({'kind':'act_carry','index':index,'sim_time_s':pair.time(),'inputs':actor_inputs,'decisions':decisions,'permission':permission,'actions':actions,'ready_count':ready_count,'release_tracking':release_tracking})
             if index%50==0:print(json.dumps({'act_carry_step':index,'sim_time_s':pair.time(),'stop_scores':{r:d['stop_score'] for r,d in decisions.items()},'actions':actions}),flush=True)
             if permission['phase']!='GO':raise RuntimeError('ACT carry RGB attachment guard stopped')
-            if ready_count>=3:
-                if stop_mode=='learned':return
+            if stop_mode=='learned' and ready_count>=3:return
+            if pause and stop_mode!='learned':
                 from harness.carry_arrival import arrival_evidence, PrematureCarryStop
                 evidence=arrival_evidence(pair.carried_beam.previous,pair.bindings.static_map,pair.bindings.plan['dock'])
                 pair.calls.append({'kind':'act_stop_admission','mode':stop_mode,
-                                   'model_requested_stop':True,'rgb':evidence})
-                if evidence['arrived']:return
+                                   'model_requested_stop':True,
+                                   'requesting_slots':[s for s,d in decisions.items() if d['done']],
+                                   'ready_count':ready_count,'rgb':evidence})
+                if evidence['arrived']:
+                    if stop_mode=='rgb_refined' or ready_count>=3:return
+                    # The strict condition still requires three joint votes.
+                    # A local stop outside the goal is rejected immediately.
+                    pair.drive_mecanum(actions,.2)
+                    previous={s:[a[k] for k in AXES] for s,a in actions.items()}
+                    continue
                 if stop_mode=='rgb_refined':
                     # Explicit hybrid condition: ACT transit plus the existing
                     # RGB final approach, reported separately from ACT alone.
