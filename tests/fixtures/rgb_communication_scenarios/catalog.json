@@ -1,0 +1,71 @@
+[
+  {
+    "schema_version": "rgb-communication-scenario.v1",
+    "scenario_id": "normal-supported-mission",
+    "family": "normal",
+    "pilot_candidate": true,
+    "selection_reason": "Baseline 2+1 mission: initial cargo/workspace is visible in the unchanged common top camera. Candidate only; current backend-specific RGB and physical witnesses are still required.",
+    "robot_ids": ["r1", "r2", "r3"],
+    "mission": {"beam": 1, "box": 1, "beam_carriers": 2, "box_carriers": 1},
+    "event": {
+      "event_id": "initial-mission-visible",
+      "trigger": "initial_scene",
+      "visibility": "public_top",
+      "recognition": "Actor identifies the initial beam/box work from its actual request RGB; this is not evidence of successful grasp or transport.",
+      "minimum_frames": 1,
+      "requires_revision": false,
+      "physical_injection": null
+    },
+    "execution": {
+      "components": {"serializer_id": null, "backend_id": null, "scheduler_id": null},
+      "pins": {"setup_sha256": null, "map_sha256": null, "physics_sha256": null, "camera_sha256": null},
+      "required_source_files": ["harness/rgb_execution_contract.py", "harness/rgb_execution_port.py", "harness/rgb_skill_execution.py", "harness/rgb_communication_runtime.py", "harness/rgb_communication_planner.py", "harness/rgb_communication_study.py", "scripts/run_rgb_communication_study.py"]
+    }
+  },
+  {
+    "schema_version": "rgb-communication-scenario.v1",
+    "scenario_id": "public-workspace-contention",
+    "family": "contention",
+    "pilot_candidate": true,
+    "selection_reason": "Approach overlap/corridor contention can be inspected from public top RGB without claiming privileged private knowledge. Duplicate role intent is established only by own intent and explicitly received peer reports, never inferred from evaluator roles. Naturally unreached contention remains in the denominator; agents are not assigned conflicting roles by the harness.",
+    "robot_ids": ["r1", "r2", "r3"],
+    "mission": {"beam": 1, "box": 1, "beam_carriers": 2, "box_carriers": 1},
+    "event": {
+      "event_id": "public-approach-contention",
+      "trigger": "competing_actor_intents",
+      "visibility": "public_top",
+      "recognition": "Actor describes visible simultaneous approach or blocked passage in top RGB; role duplication is only a received claim, not visually proven intent. A later changed choice must link to actual issued commands.",
+      "minimum_frames": 1,
+      "requires_revision": true,
+      "physical_injection": null
+    },
+    "execution": {
+      "components": {"serializer_id": null, "backend_id": null, "scheduler_id": null},
+      "pins": {"setup_sha256": null, "map_sha256": null, "physics_sha256": null, "camera_sha256": null},
+      "required_source_files": ["harness/rgb_execution_contract.py", "harness/rgb_execution_port.py", "harness/rgb_skill_execution.py", "harness/rgb_communication_runtime.py", "harness/rgb_communication_planner.py", "harness/rgb_communication_study.py", "scripts/run_rgb_communication_study.py"]
+    }
+  },
+  {
+    "schema_version": "rgb-communication-scenario.v1",
+    "scenario_id": "local-visual-misalignment-recovery",
+    "family": "recovery",
+    "pilot_candidate": false,
+    "selection_reason": "Deferred: previous own-camera images did not establish grasp failure, while public top showed alignment. Need same-actor before/after RGB plus issued command evidence under the final backend. No private observer or injected hidden failure is assumed.",
+    "robot_ids": ["r1", "r2", "r3"],
+    "mission": {"beam": 1, "box": 1, "beam_carriers": 2, "box_carriers": 1},
+    "event": {
+      "event_id": "visual-progress-stall",
+      "trigger": "command_without_visual_progress",
+      "visibility": "public_top",
+      "recognition": "After issuing a bounded command, the actor reports no visible progress in temporally distinct own-request RGB frames, optionally asks for help, cancels or revises its choice, and issues a changed command. This does not by itself prove contact failure or causality.",
+      "minimum_frames": 2,
+      "requires_revision": true,
+      "physical_injection": null
+    },
+    "execution": {
+      "components": {"serializer_id": null, "backend_id": null, "scheduler_id": null},
+      "pins": {"setup_sha256": null, "map_sha256": null, "physics_sha256": null, "camera_sha256": null},
+      "required_source_files": ["harness/rgb_execution_contract.py", "harness/rgb_execution_port.py", "harness/rgb_skill_execution.py", "harness/rgb_communication_runtime.py", "harness/rgb_communication_planner.py", "harness/rgb_communication_study.py", "scripts/run_rgb_communication_study.py"]
+    }
+  }
+]
