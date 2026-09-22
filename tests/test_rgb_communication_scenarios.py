@@ -7,6 +7,7 @@ APIs and report each gate independently (see a2-audit.md).
 from __future__ import annotations
 
 import copy
+import base64
 import hashlib
 import json
 from pathlib import Path
@@ -16,7 +17,8 @@ import unittest
 from harness.rgb_communication_scenarios import (
     AUDIT_CASES, READINESS_SCHEMA, SOURCE_FILES, ScenarioError,
     assess_readiness, canonical_sha256, load_scenarios, paired_schedule,
-    summarize_episodes, validate_episode, validate_scenario,
+    summarize_episodes, validate_episode, validate_scenario, audit_exposure,
+    validate_training_comparison, assess_environment_readiness, ENVIRONMENT_PREFLIGHT_CHECKS,
 )
 from harness.rgb_execution_contract import SkillCapability
 from harness.rgb_execution_port import RGBExecutionPort
@@ -244,6 +246,45 @@ class ScenarioContractTests(unittest.TestCase):
         with self.assertRaises(ScenarioError):
             validate_episode(self.specs[2], events, links, condition="structured")
 
+    def test_rejected_response_cannot_be_counted_as_recognition(self):
+        events, links = linked_fixture(self.specs[2])
+        events.append({"event_id": "rejection", "event_type": "planner_response_rejected", "robot_id": "r1",
+                       "condition": "structured", "related_ids": {"request_id": "req1"}, "payload": {"reason": "LATE_REPLY"}})
+        with self.assertRaisesRegex(ScenarioError, "rejected reply"):
+            validate_episode(self.specs[2], events, links, condition="structured")
+
+    def test_actual_wire_must_contain_old_frame_not_only_memory_hash(self):
+        events, links = linked_fixture(self.specs[2])
+        raw_images = {f"obs{i}": f"\xff\xd8frame{i}\xff\xd9".encode("latin-1") for i in range(2)}
+        def fix(value):
+            if isinstance(value, dict):
+                if value.get("observation_id") in raw_images and "images" in value:
+                    value["images"]["top_rgb"]["sha256"] = hashlib.sha256(raw_images[value["observation_id"]]).hexdigest()
+                for child in value.values():
+                    fix(child)
+            elif isinstance(value, list):
+                for child in value:
+                    fix(child)
+        fix(events)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / "wire.json"
+            for include_old in (False, True):
+                content = [{"type": "text", "text": json.dumps({"request_id": "req1", "robot_id": "r1"})}]
+                for oid in (["obs0", "obs1"] if include_old else ["obs1"]):
+                    content.append({"type": "image_url", "image_url": {
+                        "url": "data:image/jpeg;base64," + base64.b64encode(raw_images[oid]).decode()}})
+                path.write_text(json.dumps({"messages": [{"role": "user", "content": content}]}))
+                next(e for e in events if e["event_id"] == "decision1")["payload"]["artifacts"] = {
+                    ".request.json": {"path": str(path), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}}
+                args = dict(condition="structured", artifact_root=root, require_wire_images=True)
+                if include_old:
+                    report = validate_episode(self.specs[2], events, links, **args)
+                    self.assertTrue(report["model_image_exposure_verified"])
+                else:
+                    with self.assertRaisesRegex(ScenarioError, "not an image"):
+                        validate_episode(self.specs[2], events, links, **args)
+
     def test_synthetic_evidence_cannot_pass_live_gate(self):
         evidence = {"schema_version": READINESS_SCHEMA, "evidence_kind": "fixture", "source_sha": "9" * 40,
                     "scenario_sha256": canonical_sha256(self.specs[0]), "components": {}, "pins": {},
@@ -278,7 +319,8 @@ class ScenarioContractTests(unittest.TestCase):
             audit = save("audit.json", {**common, "scope": "offline", "independent_reviewer": "A2",
                                         "cases": {case: "pass" for case in AUDIT_CASES}, "artifacts": [raw]})
             replays = [save(kind + ".json", {**common, "scope": "physical", "kind": kind,
-                       "model_calls": 0, "weld_enabled": False, "mission_complete": True,
+                       "model_calls": 0, "weld_enabled": False, "mission_complete": False,
+                       "replay_goal_complete": True, "target_object_ids": ["box" if kind == "solo" else "beam"],
                        "artifacts": [raw]}) for kind in ("solo", "joint")]
             witness = {"event_id": spec["event"]["event_id"], "robot_id": "r1", "observation_id": "obs1",
                        "visibility": "public_top", "observed_at_s": 0.,
@@ -357,6 +399,12 @@ class IntegratedBoundaryRegressionTests(unittest.TestCase):
 class IntegrationBaseCharacterizationTests(unittest.TestCase):
     """GREEN HERE MEANS THE DOCUMENTED GAP EXISTS, NOT LIVE COMPLIANCE."""
 
+    def setUp(self):
+        frozen = json.loads((CATALOG.parent / "baseline_audit.json").read_text())
+        for path, expected in frozen["source_files"].items():
+            if hashlib.sha256((ROOT / path).read_bytes()).hexdigest() != expected:
+                self.skipTest("historical 936bf821 characterization only; run final-path independent audit")
+
     def test_characterization_queued_command_outlives_actor_request_age(self):
         port, endpoints = port_fixture()
         lease = pair(port, expiry=10.)
@@ -397,6 +445,156 @@ class IntegrationBaseCharacterizationTests(unittest.TestCase):
         self.assertEqual(len(commands), 2)
         self.assertTrue(all("decision_id" not in e and "observation_id" not in e for e in commands))
         port.close(0.)
+
+
+class EnvironmentExposureTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from sim.act_map_suite import load_suite
+        cls.cases = load_suite()[1]
+
+    def provenance(self, map_id="train-open-1"):
+        from sim.act_map_suite import layout_digest
+        from sim.research_dispatch_arena import digest
+        case = next(c for c in self.cases if c["id"] == map_id)
+        ref = {"map_id": map_id, "map_sha256": digest(case["map"]),
+               "layout_sha256": layout_digest(case["map"])}
+        records = [
+            {"id": "episode", "kind": "episode", "parents": [], "map_refs": [ref],
+             "declared_splits": [case["split"]], "origin": "known"},
+            {"id": "frame", "kind": "frame", "parents": ["episode"], "map_refs": [],
+             "declared_splits": [case["split"]], "origin": "known"},
+            {"id": "augmented", "kind": "augmentation", "parents": ["frame"], "map_refs": [],
+             "declared_splits": [case["split"]], "origin": "known"},
+            {"id": "model", "kind": "foundation_model", "parents": [], "map_refs": [],
+             "declared_splits": [], "origin": "unknown"},
+            {"id": "prompt", "kind": "prompt", "parents": ["augmented", "model"], "map_refs": [],
+             "declared_splits": [case["split"]], "origin": "known"}]
+        return {"schema_version": "rgb-map-exposure.v1", "records": records, "freeze_order": 10,
+                "exposures": [], "final_test_ids": [c["id"] for c in self.cases if c["split"] in {"test_a", "test_b"}]}
+
+    def test_existing_22_map_validator_and_unknown_pretraining_reused(self):
+        report = audit_exposure(self.cases, self.provenance(), [])
+        self.assertTrue(report["valid"])
+        self.assertEqual(len(report["effective_splits"]), 22)
+        self.assertEqual(report["unknown_origins"], ["model"])
+        self.assertFalse(report["uncontaminated_pretraining_claim"])
+        self.assertEqual(report["lineage_maps"]["prompt"], ["train-open-1"])
+
+    def test_frame_augmentation_cannot_escape_parent_split(self):
+        provenance = self.provenance("test-b-double-1")
+        provenance["records"][2]["declared_splits"] = ["train"]
+        report = audit_exposure(self.cases, provenance, [])
+        self.assertFalse(report["valid"])
+        self.assertIn("inherit", report["blockers"][0])
+
+    def test_geometry_qa_is_distinct_from_policy_diagnosis_or_prompt_exposure(self):
+        for use, valid in (("geometry_qa", True), ("policy_diagnosis", False), ("prompt_tuning", False)):
+            provenance = self.provenance("test-a-open")
+            provenance["exposures"] = [{"record_id": "prompt", "use": use, "order": 11,
+                                        "artifact_sha256": "a" * 64}]
+            report = audit_exposure(self.cases, provenance, [])
+            self.assertEqual(report["valid"], valid)
+            self.assertEqual(report["effective_splits"]["test-a-open"], "test_a" if valid else "regression")
+
+    def test_final_result_then_tuning_demotes_test_even_when_history_unsorted(self):
+        provenance = self.provenance("test-a-open")
+        provenance["exposures"] = [
+            {"record_id": "model", "use": "prompt_tuning", "order": 13, "artifact_sha256": "a" * 64},
+            {"record_id": "episode", "use": "final_evaluation", "order": 12, "artifact_sha256": "b" * 64}]
+        report = audit_exposure(self.cases, provenance, [])
+        self.assertFalse(report["valid"])
+        self.assertEqual(report["effective_splits"]["test-a-open"], "regression")
+
+    def test_no_posthoc_failed_test_exclusion_or_scenario_relabel(self):
+        provenance = self.provenance()
+        provenance["final_test_ids"].pop()
+        self.assertFalse(audit_exposure(self.cases, provenance, [])["valid"])
+        ref = self.provenance()["records"][0]["map_refs"][0]
+        assignment = {"scenario_id": "recovery", "parent_map_id": ref["map_id"],
+                      "map_sha256": ref["map_sha256"], "layout_sha256": ref["layout_sha256"], "split": "test_a"}
+        self.assertFalse(audit_exposure(self.cases, self.provenance(), [assignment])["valid"])
+
+    def test_cycles_hash_alias_and_repeated_layout_fail(self):
+        provenance = self.provenance()
+        provenance["records"][0]["parents"] = ["augmented"]
+        self.assertFalse(audit_exposure(self.cases, provenance, [])["valid"])
+        provenance = self.provenance()
+        provenance["records"][0]["map_refs"][0]["layout_sha256"] = "0" * 64
+        self.assertFalse(audit_exposure(self.cases, provenance, [])["valid"])
+        cases = copy.deepcopy(self.cases)
+        cases[1]["map"] = copy.deepcopy(cases[0]["map"])
+        cases[1]["map"]["map_id"] = "renamed"
+        self.assertFalse(audit_exposure(cases, self.provenance(), [])["valid"])
+
+    def training_plan(self):
+        common = {"episodes": 10, "transitions": 1000, "frames": 2000, "updates": 100,
+                  "batch_size": 4, "architecture_sha256": "a" * 64, "input_sha256": "b" * 64,
+                  "initial_checkpoint_sha256": "c" * 64, "device": "same GPU", "precision": "fp32"}
+        return {"schema_version": "rgb-training-comparison.v1", "arms": [
+            {"id": "T1", "map_ids": ["train-open-1"], **common},
+            {"id": "T2", "map_ids": ["train-open-1", "train-door-1", "train-corner-1"], **common}],
+            "fixed_test_ids": self.provenance()["final_test_ids"], "training_seeds": [17, 18],
+            "selection_rule_sha256": "d" * 64}
+
+    def test_t1_t2_same_amount_budget_and_test_t3_is_separate(self):
+        report = audit_exposure(self.cases, self.provenance(), [])
+        plan = self.training_plan()
+        validate_training_comparison(plan, report)
+        for field in ("episodes", "transitions", "frames", "updates", "device"):
+            changed = copy.deepcopy(plan)
+            changed["arms"][1][field] = "different" if field == "device" else 999
+            with self.subTest(field=field), self.assertRaises(ScenarioError):
+                validate_training_comparison(changed, report)
+        t3 = dict(plan["arms"][1], id="T3", episodes=20, transitions=2000, frames=4000, updates=200)
+        plan["arms"].append(t3)
+        validate_training_comparison(plan, report)
+        plan["fixed_test_ids"].pop()
+        with self.assertRaises(ScenarioError):
+            validate_training_comparison(plan, report)
+
+    def test_static_preflight_admits_only_diagnostic_scope_not_live_success(self):
+        from sim.act_map_suite import layout_digest
+        from sim.research_dispatch_arena import digest
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            def save(name, value):
+                path = root / name
+                path.write_text(json.dumps(value))
+                return {"path": name, "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+            raw = save("raw.json", {"test_only": True})
+            case = next(c for c in self.cases if c["id"] == "dev-open")
+            maps = [{"map_id": case["id"], "map_sha256": digest(case["map"]),
+                     "layout_sha256": layout_digest(case["map"]), "scene": raw, "camera": raw,
+                     "reset": raw, "evaluator_config": raw, "capability": "transport"}]
+            record = {"schema_version": "rgb-environment-readiness.v1", "source_sha": "9" * 40,
+                      "backend_id": "fixture-only", "scope": "static_reset_preflight", "maps": maps,
+                      "checks": {name: save(name + ".json", {"check_id": name, "verdict": "pass",
+                          "source_sha": "9" * 40, "backend_id": "fixture-only",
+                          "maps_sha256": canonical_sha256(maps), "evidence_kind": "static_contract_check",
+                          "artifacts": [raw]}) for name in ENVIRONMENT_PREFLIGHT_CHECKS}}
+            args = dict(artifact_root=root, expected_source_sha="9" * 40, expected_backend_id="fixture-only")
+            result = assess_environment_readiness(record, self.cases, purpose="physical_replay", **args)
+            self.assertTrue(result["ready"])
+            self.assertFalse(result["physical_controls_verified"])
+            self.assertFalse(result["heldout_policy_performance_verified"])
+            self.assertFalse(assess_environment_readiness(record, self.cases, **args)["ready"])
+            # Legacy dispatch is a separate diagnostic registry, not suite dev-open.
+            from sim.research_dispatch_arena import authored_map
+            legacy = authored_map("open")
+            record["maps"][0].update(map_id="dispatch_open", map_sha256=digest(legacy),
+                                     layout_sha256=layout_digest(legacy))
+            for name in ENVIRONMENT_PREFLIGHT_CHECKS:
+                record["checks"][name] = save(name + ".json", {"check_id": name, "verdict": "pass",
+                    "source_sha": "9" * 40, "backend_id": "fixture-only",
+                    "maps_sha256": canonical_sha256(record["maps"]), "evidence_kind": "static_contract_check", "artifacts": [raw]})
+            self.assertFalse(assess_environment_readiness(record, self.cases, purpose="physical_replay", **args)["ready"])
+            self.assertTrue(assess_environment_readiness(record, self.cases, purpose="physical_replay",
+                                                        allow_legacy_dispatch_open=True, **args)["ready"])
+            self.assertFalse(assess_environment_readiness(record, self.cases, allow_legacy_dispatch_open=True, **args)["ready"])
+            (root / "raw.json").write_text("tampered")
+            self.assertFalse(assess_environment_readiness(record, self.cases, purpose="physical_replay",
+                                                         allow_legacy_dispatch_open=True, **args)["ready"])
 
 
 if __name__ == "__main__":

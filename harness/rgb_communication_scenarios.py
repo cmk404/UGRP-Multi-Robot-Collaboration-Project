@@ -7,7 +7,8 @@ it cannot replace independently reviewing the referenced images and source.
 from __future__ import annotations
 
 import argparse
-from collections import Counter, defaultdict
+import base64
+from collections import Counter
 import hashlib
 import json
 import math
@@ -194,8 +195,11 @@ def assess_readiness(
             kinds.append(replay.get("kind"))
             _require(replay.get("model_calls") == 0 and type(replay.get("model_calls")) is int,
                      "physical replay must use zero model calls")
-            _require(replay.get("weld_enabled") is False and replay.get("mission_complete") is True,
-                     "physical replay needs real success with weld OFF")
+            _require(replay.get("weld_enabled") is False and replay.get("replay_goal_complete") is True
+                     and type(replay.get("mission_complete")) is bool,
+                     "physical replay needs target success, preserved raw mission verdict and weld OFF")
+            target = {"solo": ["box"], "joint": ["beam"]}.get(replay.get("kind"))
+            _require(replay.get("target_object_ids") == target, "replay goal must match solo/joint target")
             _require(isinstance(replay.get("artifacts"), list) and replay["artifacts"], "replay raw artifacts absent")
             for ref in replay["artifacts"]:
                 _verified_file(ref, artifact_root, checked)
@@ -234,7 +238,9 @@ def assess_readiness(
 
 
 def validate_episode(spec: Mapping[str, Any], events: Sequence[Mapping[str, Any]],
-                     links: Mapping[str, Any], *, condition: str) -> dict[str, Any]:
+                     links: Mapping[str, Any], *, condition: str,
+                     artifact_root: Path | None = None,
+                     require_wire_images: bool = False) -> dict[str, Any]:
     """Verify reviewer-labelled event→RGB→decision→report/revision→issued command.
 
     References are original runtime event IDs, not prose similarities. Physical
@@ -279,7 +285,50 @@ def validate_episode(spec: Mapping[str, Any], events: Sequence[Mapping[str, Any]
                     and e.get("robot_id") == robot and e.get("related_ids", {}).get("request_id") == request_id]
         _require(len(requests) == 1 and requests[0][0] < pos, "decision lacks unique prior request")
         _require(_text(row["related_ids"].get("decision_id")), "decision ID missing")
+        _require(not any(e.get("event_type") == "planner_response_rejected" and
+                         e.get("related_ids", {}).get("request_id") == request_id
+                         and e.get("robot_id") == robot for e in events), "rejected reply is not an accepted decision")
         return pos, row, *requests[0]
+
+    def transmitted_images(decision_row: Mapping[str, Any], request_row: Mapping[str, Any]) -> set[str]:
+        _require(artifact_root is not None, "wire inspection needs artifact_root")
+        artifact = decision_row["payload"].get("artifacts", {}).get(".request.json")
+        _require(isinstance(artifact, dict), "actual provider request archive missing")
+        # C archives absolute paths; accept only descendants of the supplied
+        # retrieved root, then apply the same strict hash/path verification.
+        path = Path(artifact.get("path", ""))
+        if path.is_absolute():
+            _require(path.resolve().is_relative_to(artifact_root.resolve()), "wire artifact escaped root")
+            path = path.resolve().relative_to(artifact_root.resolve())
+        ref = {"path": str(path), "sha256": artifact.get("sha256")}
+        body = json.loads(_verified_file(ref, artifact_root, []).read_text())
+        images = set()
+        request_matches = []
+
+        def walk(value):
+            if isinstance(value, dict):
+                # Gemini proxy accepts OpenAI image_url parts, converted by the
+                # existing project serializer. Hash strings elsewhere are not images.
+                if value.get("type") == "image_url":
+                    image_url = value.get("image_url", {})
+                    url = image_url.get("url") if isinstance(image_url, dict) else image_url
+                    if isinstance(url, str) and url.startswith("data:image/jpeg;base64,"):
+                        images.add(hashlib.sha256(base64.b64decode(url.split(",", 1)[1], validate=True)).hexdigest())
+                for child in value.values():
+                    walk(child)
+            elif isinstance(value, list):
+                for child in value:
+                    walk(child)
+            elif isinstance(value, str):
+                try:
+                    decoded = json.loads(value)
+                except ValueError:
+                    return
+                if isinstance(decoded, dict) and decoded.get("request_id") == request_row["related_ids"]["request_id"]:
+                    request_matches.append(decoded.get("robot_id") == request_row["robot_id"])
+        walk(body)
+        _require(request_matches and all(request_matches), "wire request/actor identity mismatch")
+        return images
 
     _require(isinstance(links["recognitions"], list), "recognitions must be a list")
     chains = []
@@ -293,6 +342,7 @@ def validate_episode(spec: Mapping[str, Any], events: Sequence[Mapping[str, Any]
         _require(link["decision_event_id"] not in seen_recognitions, "duplicate recognition decision")
         seen_recognitions.add(link["decision_event_id"])
         dpos, dec, reqpos, req = decision(link["decision_event_id"], robot)
+        wire_hashes = transmitted_images(dec, req) if require_wire_images else None
         obs_ids = link["observation_event_ids"]
         _require(isinstance(obs_ids, list) and len(set(obs_ids)) == len(obs_ids)
                  and len(obs_ids) >= spec["event"]["minimum_frames"], "insufficient distinct RGB observations")
@@ -310,6 +360,9 @@ def validate_episode(spec: Mapping[str, Any], events: Sequence[Mapping[str, Any]
             actual_image = seen_observations[key].get("images", {}).get(channel, {})
             _require(_hex(image.get("sha256")) and actual_image.get("sha256") == image["sha256"],
                      "model RGB evidence hash mismatch")
+            if wire_hashes is not None:
+                _require(image["sha256"] in wire_hashes,
+                         "historical RGB hash/ref was not an image in the actual provider request")
             _require(_time(obs["payload"].get("observed_at_s")), "observation time required")
             obs_times.append(obs["payload"]["observed_at_s"])
         if spec["family"] == "recovery":
@@ -326,7 +379,7 @@ def validate_episode(spec: Mapping[str, Any], events: Sequence[Mapping[str, Any]
         current_dec = dec
         current_pos = dpos
         if revised:
-            rpos, rev, _, revreq = decision(link["revision_event_id"], robot)
+            rpos, rev, revreqpos, revreq = decision(link["revision_event_id"], robot)
             _require(rpos > dpos and rev["related_ids"]["decision_id"] != dec["related_ids"]["decision_id"],
                      "revision must be a later distinct decision")
             _require(rev["payload"].get("action") != dec["payload"].get("action"), "revision has no action change")
@@ -336,13 +389,17 @@ def validate_episode(spec: Mapping[str, Any], events: Sequence[Mapping[str, Any]
                 mid = claim.get("message_id")
                 received = [(p, e) for p, e in index.values() if e.get("event_type") == "message_received"
                             and e.get("robot_id") == robot and e.get("related_ids", {}).get("message_id") == mid]
-                _require(len(received) == 1 and received[0][0] < rpos, "revision contains undelivered peer claim")
+                _require(len(received) == 1 and received[0][0] < revreqpos, "revision contains undelivered peer claim")
+                sent = [e for e in events if e.get("event_type") == "message_sent" and
+                        e.get("related_ids", {}).get("message_id") == mid]
+                _require(len(sent) == 1 and robot in sent[0]["payload"].get("recipients", []),
+                         "revision uses a message addressed to another robot")
                 now = revreq["payload"]["observation"]["observed_at_s"]
                 _require(_time(claim.get("expires_at_s")) and now < claim["expires_at_s"], "revision uses expired peer claim")
         cancelled = link["cancel_event_id"] is not None
         if cancelled:
             cpos, cancel = event(link["cancel_event_id"], "action_submitted", robot)
-            _require(dpos < cpos <= current_pos and cancel["payload"].get("kind") in {"interrupt", "cancel"},
+            _require(dpos < cpos <= current_pos and cancel["payload"].get("kind") in {"interrupt", "cancel_pending"},
                      "cancellation not between recognition and revised decision")
         changed_command = False
         if link["command_event_id"] is not None:
@@ -363,6 +420,7 @@ def validate_episode(spec: Mapping[str, Any], events: Sequence[Mapping[str, Any]
             "physical_event_reached": physical["reached"], "physical_recovered": physical["recovered"],
             "recognized_n": len(chains), "chains": chains,
             "complete_recovery_chain_n": sum(c["revised"] and c["issued_command_changed"] for c in chains),
+            "model_image_exposure_verified": require_wire_images and bool(chains),
             "causal_effect_established": False,
             "meaning": "ID/hash linkage of reviewer-labelled recognition; not proof of semantic correctness or causality"}
 
@@ -424,6 +482,248 @@ def summarize_episodes(schedule: Sequence[Mapping[str, Any]], rows: Sequence[Map
             "causal_effect_established": False, "raw_rows": list(rows)}
 
 
+def audit_exposure(cases: Sequence[Mapping[str, Any]], provenance: Mapping[str, Any],
+                   scenario_assignments: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    """E0: reuse the suite split validator, then audit all transitive exposure.
+
+    Authored geometry QA alone is not policy exposure. Diagnostics, training,
+    examples and tuning on a held-out map demote that map to regression. Unknown
+    foundation pretraining is disclosed, never certified uncontaminated.
+    """
+    from sim.act_map_suite import layout_digest, validate_splits
+    from sim.research_dispatch_arena import digest
+
+    blockers: list[str] = []
+    effective: dict[str, str] = {}
+    unknown: list[str] = []
+    lineage: dict[str, set[str]] = {}
+    try:
+        validate_splits(cases)
+        by_map = {case["id"]: case for case in cases}
+        effective = {mid: case["split"] for mid, case in by_map.items()}
+        _exact(provenance, {"schema_version", "records", "exposures", "freeze_order", "final_test_ids"}, "provenance")
+        _require(provenance["schema_version"] == "rgb-map-exposure.v1", "exposure schema mismatch")
+        _require(type(provenance["freeze_order"]) is int and provenance["freeze_order"] >= 0, "freeze order required")
+        records = provenance["records"]
+        _require(isinstance(records, list), "provenance records required")
+        by_id = {}
+        for record in records:
+            _exact(record, {"id", "kind", "parents", "map_refs", "declared_splits", "origin"}, "provenance record")
+            _require(_text(record["id"]) and record["id"] not in by_id, "duplicate/empty lineage id")
+            _require(record["kind"] in {"episode", "frame", "augmentation", "dataset", "checkpoint",
+                                         "prompt", "foundation_model", "scenario"}, "unknown provenance kind")
+            _require(record["origin"] in {"known", "unknown"}, "origin knowledge status required")
+            _require(isinstance(record["parents"], list) and all(_text(p) for p in record["parents"])
+                     and len(set(record["parents"])) == len(record["parents"]), "invalid lineage parents")
+            _require(isinstance(record["map_refs"], list), "map_refs required")
+            _require(isinstance(record["declared_splits"], list), "declared_splits required")
+            by_id[record["id"]] = record
+        visiting = set()
+
+        def ancestors(rid: str) -> set[str]:
+            _require(rid in by_id and rid not in visiting, "missing parent or cyclic provenance")
+            if rid in lineage:
+                return lineage[rid]
+            visiting.add(rid)
+            record = by_id[rid]
+            maps = set()
+            for ref in record["map_refs"]:
+                _exact(ref, {"map_id", "map_sha256", "layout_sha256"}, "parent map reference")
+                mid = ref["map_id"]
+                _require(mid in by_map, "unknown parent map")
+                _require(ref["map_sha256"] == digest(by_map[mid]["map"])
+                         and ref["layout_sha256"] == layout_digest(by_map[mid]["map"]), "parent map hash mismatch")
+                maps.add(mid)
+            for parent in record["parents"]:
+                maps.update(ancestors(parent))
+            _require(sorted(record["declared_splits"]) == sorted({by_map[mid]["split"] for mid in maps}),
+                     "child must inherit every parent map split")
+            _require(maps or record["kind"] == "foundation_model" or record["parents"], "known artifact lacks provenance")
+            if record["origin"] == "unknown":
+                unknown.append(rid)
+            visiting.remove(rid)
+            lineage[rid] = maps
+            return maps
+
+        for rid in by_id:
+            ancestors(rid)
+        _require(isinstance(provenance["exposures"], list), "exposure history required")
+        uses = {"geometry_qa", "training", "prompt_tuning", "checkpoint_selection", "demo",
+                "policy_diagnosis", "final_evaluation"}
+        test_seen_orders = []
+        for exposure in provenance["exposures"]:
+            _exact(exposure, {"record_id", "use", "order", "artifact_sha256"}, "exposure")
+            _require(exposure["record_id"] in by_id and exposure["use"] in uses, "invalid exposure source/use")
+            _require(type(exposure["order"]) is int and exposure["order"] >= 0
+                     and _hex(exposure["artifact_sha256"]), "exposure order/artifact hash required")
+            affected = lineage[exposure["record_id"]]
+            heldout = {mid for mid in affected if by_map[mid]["split"] in {"test_a", "test_b"}}
+            if exposure["use"] != "geometry_qa" and heldout:
+                test_seen_orders.append((exposure["order"], heldout))
+                if exposure["use"] != "final_evaluation" or exposure["order"] <= provenance["freeze_order"]:
+                    for mid in heldout:
+                        effective[mid] = "regression"
+            if exposure["use"] in {"training", "prompt_tuning", "checkpoint_selection", "demo"}:
+                # Looking at final outcomes then retuning anywhere invalidates that
+                # previously inspected test as an untouched comparison for the revision.
+                for order, mids in test_seen_orders:
+                    if order < exposure["order"]:
+                        for mid in mids:
+                            effective[mid] = "regression"
+        # History order must not change the result: repeat the temporal relation
+        # over all tuning events, including those listed before test observations.
+        tuning_orders = [e["order"] for e in provenance["exposures"] if e["use"] in
+                         {"training", "prompt_tuning", "checkpoint_selection", "demo"}]
+        for order, mids in test_seen_orders:
+            if any(t > order for t in tuning_orders):
+                for mid in mids:
+                    effective[mid] = "regression"
+        final = provenance["final_test_ids"]
+        _require(isinstance(final, list) and len(final) == len(set(final)) and
+                 all(mid in by_map and by_map[mid]["split"] in {"test_a", "test_b"} for mid in final),
+                 "invalid final test selection")
+        # Declared final test must be the whole frozen A/B suite, not success-filtered.
+        expected = {mid for mid, case in by_map.items() if case["split"] in {"test_a", "test_b"}}
+        _require(set(final) == expected, "final test silently excludes a held-out map")
+        contaminated = sorted(mid for mid in final if effective[mid] == "regression")
+        if contaminated:
+            blockers.append("exposed test maps require a new holdout: " + ", ".join(contaminated))
+        seen_assignments = set()
+        for assignment in scenario_assignments:
+            _exact(assignment, {"scenario_id", "parent_map_id", "map_sha256", "layout_sha256", "split"}, "scenario parent")
+            mid = assignment["parent_map_id"]
+            _require(_text(assignment["scenario_id"]) and mid in by_map, "scenario parent missing")
+            pair = (assignment["scenario_id"], mid)
+            _require(pair not in seen_assignments, "duplicate scenario parent assignment")
+            seen_assignments.add(pair)
+            _require(assignment["map_sha256"] == digest(by_map[mid]["map"])
+                     and assignment["layout_sha256"] == layout_digest(by_map[mid]["map"]), "scenario map hash mismatch")
+            _require(assignment["split"] == effective[mid], "scenario must inherit effective parent split")
+    except (ValueError, TypeError, KeyError) as exc:
+        blockers.append(str(exc))
+    return {"schema_version": "rgb-map-exposure-result.v1", "valid": not blockers,
+            "blockers": blockers, "effective_splits": effective,
+            "map_topologies": {case["id"]: case["topology_id"] for case in cases},
+            "lineage_maps": {rid: sorted(maps) for rid, maps in lineage.items()},
+            "unknown_origins": sorted(set(unknown)),
+            "uncontaminated_pretraining_claim": False,
+            "provenance_sha256": canonical_sha256(provenance),
+            "scope": "declared lineage/exposure integrity, not policy performance or exhaustive pretraining knowledge"}
+
+
+def validate_training_comparison(plan: Mapping[str, Any], exposure_report: Mapping[str, Any]) -> None:
+    """T1/T2 change distribution only; T3 is an explicitly separate size study."""
+    _exact(plan, {"schema_version", "arms", "fixed_test_ids", "training_seeds", "selection_rule_sha256"}, "training design")
+    _require(plan["schema_version"] == "rgb-training-comparison.v1", "training design schema mismatch")
+    _require(exposure_report.get("valid") is True, "invalid split/exposure audit")
+    _require(isinstance(plan["arms"], list), "training arms required")
+    arms = {arm["id"]: arm for arm in plan["arms"]}
+    _require(len(arms) == len(plan["arms"]) and set(arms) in ({"T1", "T2"}, {"T1", "T2", "T3"}), "T1/T2 and optional T3 required")
+    required = {"id", "map_ids", "episodes", "transitions", "frames", "updates", "batch_size",
+                "architecture_sha256", "input_sha256", "initial_checkpoint_sha256", "device", "precision"}
+    for arm in arms.values():
+        _exact(arm, required, "training arm")
+        _require(isinstance(arm["map_ids"], list) and arm["map_ids"] and len(set(arm["map_ids"])) == len(arm["map_ids"]), "training map IDs required")
+        _require(all(exposure_report["effective_splits"].get(mid) == "train" for mid in arm["map_ids"]), "non-training map in training arm")
+        _require(all(type(arm[k]) is int and arm[k] > 0 for k in
+                     ("episodes", "transitions", "frames", "updates", "batch_size")), "positive data/update counts required")
+        _require(all(_hex(arm[k]) for k in ("architecture_sha256", "input_sha256", "initial_checkpoint_sha256")), "training inputs must be pinned")
+        _require(_text(arm["device"]) and _text(arm["precision"]), "device/precision required")
+    same = required - {"id", "map_ids"}
+    _require(all(arms["T1"][k] == arms["T2"][k] for k in same), "T1/T2 data amount and training budget/config must match")
+    _require(set(arms["T1"]["map_ids"]) < set(arms["T2"]["map_ids"]), "T2 must expand map distribution, not repeat seeds")
+    if "T3" in arms:
+        _require(set(arms["T3"]["map_ids"]) == set(arms["T2"]["map_ids"]), "T3 keeps the diverse distribution")
+        _require(all(arms["T3"][k] == arms["T2"][k] for k in
+                     ("architecture_sha256", "input_sha256", "initial_checkpoint_sha256", "device", "precision", "batch_size")), "T3 changes amount/budget only")
+        _require(all(arms["T3"][k] > arms["T2"][k] for k in ("episodes", "transitions", "frames")), "T3 must disclose larger data amount")
+    heldout = {mid for mid, split in exposure_report["effective_splits"].items() if split in {"test_a", "test_b"}}
+    _require(isinstance(plan["fixed_test_ids"], list) and len(plan["fixed_test_ids"]) == len(heldout)
+             and set(plan["fixed_test_ids"]) == heldout, "same complete frozen test set required")
+    seeds = plan["training_seeds"]
+    _require(isinstance(seeds, list) and len(seeds) >= 2 and len(set(seeds)) == len(seeds)
+             and all(type(s) is int and s >= 0 for s in seeds), "repeated independent training seeds required")
+    _require(_hex(plan["selection_rule_sha256"]), "development-only selection rule must be frozen")
+
+
+ENVIRONMENT_CHECKS = (
+    "map_scene_goal_correspondence", "initial_nonpenetration", "loaded_clearance",
+    "fixed_camera_visibility", "reset_seed_consistency", "observation_timestamp_alignment",
+    "easy_development_success", "impossible_safe_stop", "single_physics_clock", "weld_off",
+)
+ENVIRONMENT_PREFLIGHT_CHECKS = (
+    "map_scene_goal_correspondence", "fixed_camera_configuration", "reset_seed_contract",
+    "single_physics_clock", "weld_off",
+)
+
+
+def assess_environment_readiness(record: Mapping[str, Any], cases: Sequence[Mapping[str, Any]], *,
+                                 artifact_root: Path, expected_source_sha: str,
+                                 expected_backend_id: str, purpose: str = "live",
+                                 allow_legacy_dispatch_open: bool = False) -> dict[str, Any]:
+    """Verify E0 artifact bindings; geometry alone never proves policy transport."""
+    from sim.act_map_suite import layout_digest, validate_splits
+    from sim.research_dispatch_arena import authored_map, digest
+    checked: list[str] = []
+    blockers: list[str] = []
+    try:
+        validate_splits(cases)
+        _require(purpose in {"live", "physical_replay"}, "invalid environment admission purpose")
+        diagnostic = purpose == "physical_replay"
+        _exact(record, {"schema_version", "source_sha", "backend_id", "scope", "maps", "checks"}, "environment review")
+        _require(record["schema_version"] == "rgb-environment-readiness.v1", "environment schema mismatch")
+        _require(_hex(expected_source_sha, 40) and record["source_sha"] == expected_source_sha,
+                 "environment source mismatch")
+        _require(_text(expected_backend_id) and record["backend_id"] == expected_backend_id, "environment backend mismatch")
+        scope = "static_reset_preflight" if diagnostic else "development_physical_controls"
+        _require(record["scope"] == scope, "environment scope does not match admission purpose")
+        _require(isinstance(record["maps"], list) and record["maps"], "environment maps required")
+        by_map = {case["id"]: case for case in cases}
+        if allow_legacy_dispatch_open:
+            _require(diagnostic, "legacy dispatch registry is physical-replay only, not live or heldout")
+            # Explicit legacy source definition, never an alias for a suite map.
+            # Its map/group digests are recomputed from the frozen source.
+            by_map["dispatch_open"] = {"id": "dispatch_open", "split": "regression",
+                                       "map": authored_map("open")}
+        seen = set()
+        for row in record["maps"]:
+            _exact(row, {"map_id", "map_sha256", "layout_sha256", "scene", "camera", "reset", "evaluator_config", "capability"}, "environment map")
+            mid = row["map_id"]
+            _require(mid in by_map and mid not in seen, "unknown/duplicate environment map")
+            seen.add(mid)
+            allowed = {"train", "dev", "control", "regression"} if diagnostic else {"dev", "control"}
+            _require(by_map[mid]["split"] in allowed, "readiness controls must not consume final test policies")
+            _require(row["map_sha256"] == digest(by_map[mid]["map"])
+                     and row["layout_sha256"] == layout_digest(by_map[mid]["map"]), "environment map identity mismatch")
+            _require(row["capability"] in {"transport", "safe_stop"}, "unsupported map cannot silently become an open map")
+            for key in ("scene", "camera", "reset", "evaluator_config"):
+                _verified_file(row[key], artifact_root, checked)
+        if not diagnostic:
+            _require(any(by_map[mid]["split"] == "dev" for mid in seen)
+                     and any(by_map[mid]["split"] == "control" for mid in seen), "easy and impossible controls required")
+        required_checks = ENVIRONMENT_PREFLIGHT_CHECKS if diagnostic else ENVIRONMENT_CHECKS
+        _exact(record["checks"], set(required_checks), "environment checks")
+        for name, ref in record["checks"].items():
+            path = _verified_file(ref, artifact_root, checked)
+            check = json.loads(path.read_text())
+            _require(check.get("check_id") == name and check.get("verdict") == "pass"
+                     and check.get("source_sha") == expected_source_sha
+                     and check.get("backend_id") == expected_backend_id
+                     and check.get("maps_sha256") == canonical_sha256(record["maps"]), "environment check binding/verdict mismatch")
+            kind = "static_contract_check" if diagnostic else "physical_diagnostic"
+            _require(check.get("evidence_kind") == kind, "check evidence level does not match admission purpose")
+            _require(isinstance(check.get("artifacts"), list) and check["artifacts"], "environment raw evidence missing")
+            for ref in check["artifacts"]:
+                _verified_file(ref, artifact_root, checked)
+    except (ValueError, TypeError, KeyError, OSError) as exc:
+        blockers.append(str(exc))
+    return {"schema_version": "rgb-environment-readiness-result.v1", "ready": not blockers,
+            "purpose": purpose, "blockers": blockers, "checked_artifacts": checked,
+            "legacy_development_registry": ["dispatch_open"] if allow_legacy_dispatch_open else [],
+            "physical_controls_verified": purpose == "live" and not blockers,
+            "heldout_policy_performance_verified": False}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--catalog", type=Path, required=True)
@@ -435,8 +735,8 @@ def main() -> int:
     args = parser.parse_args()
     specs = load_scenarios(args.catalog)
     if args.evidence:
-        parser.error("--scenario-id and --expected-source-sha are required with --evidence") if not (
-            args.scenario_id and args.expected_source_sha) else None
+        if not (args.scenario_id and args.expected_source_sha):
+            parser.error("--scenario-id and --expected-source-sha are required with --evidence")
         selected = [s for s in specs if s["scenario_id"] == args.scenario_id]
         if not selected:
             parser.error("scenario-id is not in catalog")

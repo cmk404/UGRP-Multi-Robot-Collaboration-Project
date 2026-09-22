@@ -45,7 +45,9 @@ evidence의 정확한 필드:
 - boundary scope=offline, independent_reviewer=A2, `cases`는 AUDIT_CASES의 모든 ID→pass,
   `artifacts`는 실제 오프라인 감사 원본 참조 목록이다. characterization green은 pass가 아니다.
 - replay scope=physical, kind=solo 또는 joint, model_calls=0, weld_enabled=false,
-  mission_complete=true, artifacts는 회수한 실행/평가/영상 원본 참조 목록이다.
+  replay_goal_complete=true, target_object_ids=solo `["box"]`/joint `["beam"]`.
+  raw mission_complete bool도 그대로 보존한다. 단일 목표 replay가 전체 2+1 임무를
+  완주했다는 뜻이 아니다. artifacts는 회수한 실행/평가/영상 원본 참조 목록이다.
 - image scope=visual, independent_reviewer=A2, criterion_visible=true,
   private_information_claim=false, `witness`는 review를 제외한 정확한 witness 사본이다.
 
@@ -68,6 +70,16 @@ decision_id, revised decision의 action 변경, command_issued의 decision_id/co
 관측 시간과 자기 명령 증거가 필요하다. 물리 사건에 도달했어도 recognition이 없을 수
 있으며 이를 정상적으로 기록한다. annotation의 의미 해석은 별도 영상/원문 리뷰다.
 이 연결 검사는 메시지의 인과 효과나 물리적 성공을 증명하지 않는다.
+
+`validate_episode(..., artifact_root=Path(...), require_wire_images=True)`는 C의
+planner_responded.payload.artifacts[".request.json"]을 실제로 열고 SHA·request_id·actor와
+전송된 image_url의 JPEG 해시를 검사한다. 과거 프레임의 hash/ref만 텍스트에 들어 있으면
+그 프레임을 본 것으로 세지 않는다. 기본 metadata 검사는 이 단계와 달라 결과의
+`model_image_exposure_verified`가 false다. live 사건 해석에는 strict 옵션이 필수다.
+거부된 late/cancelled reply는 planner_responded 기록이 있어도 인식 근거로 인정하지 않는다.
+
+E0의 분할·노출 및 환경 gate는 [a2-environment](a2-environment.md)를 따른다.
+`assess_readiness`와 E0, C provider 예산, D admission은 모두 독립 필수 gate다.
 
 ```sh
 python -m harness.rgb_communication_scenarios \
