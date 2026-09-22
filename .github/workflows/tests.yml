@@ -129,6 +129,18 @@ jobs:
       - name: Check demo input and output boundaries
         run: python -m pytest -q tests/test_sim_quickstart.py
 
+      - name: Verify local live cameras, controls, reset, and shutdown
+        run: python -m scripts.check_sim_live --output outputs/sim-live-ci
+
+      - name: Keep live viewer verification
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sim-live-verification
+          path: outputs/sim-live-ci/
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Render and move without a model or GPU
         run: |
           python scripts/run_colab_simulation.py --output outputs/colab-quickstart-ci -- python -m scripts.sim_quickstart --output '{output}'
