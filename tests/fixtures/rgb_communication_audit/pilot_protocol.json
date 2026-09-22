@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "status": "candidate_not_executed",
+  "execution_authority": "D frozen integrated manifest after all go/no-go gates; this fixture never authorizes execution",
+  "model_id": null,
+  "integrated_source_sha": null,
+  "setup_hashes": null,
+  "seed_candidate": 11,
+  "id_permutation": "identity for first linkage only; counterbalance after pilot",
+  "mission": {
+    "robots": ["r1", "r2", "r3"],
+    "cargo": [
+      {"object_id": "beam", "required_carriers": 2},
+      {"object_id": "box", "required_carriers": 1}
+    ],
+    "destination_candidate": "dock_a",
+    "weld": false,
+    "camera_fov_change": false
+  },
+  "modes": ["none", "structured", "natural"],
+  "scenarios": [
+    {
+      "id": "normal-supported-mission",
+      "purpose": "communication-not-needed control",
+      "scene_candidate": "open",
+      "injected_event": false
+    },
+    {
+      "id": "local-visual-misalignment-recovery",
+      "purpose": "observation-grounded information difference and recovery",
+      "scene_candidate": null,
+      "injected_event": false,
+      "admission_rule": "saved own and public-top RGB plus own issued-command histories must identify actual observers of misalignment or visual progress uncertainty; never assume a designated private observer or hide public-top evidence"
+    }
+  ],
+  "linked_trials": 6,
+  "budgets": {
+    "max_high_level_calls_per_robot": 24,
+    "max_output_tokens_per_call": 768,
+    "model_request_timeout_wall_s": 30,
+    "max_messages_per_robot": 24,
+    "max_message_bytes_per_robot": 72000,
+    "max_trial_sim_s": 180,
+    "max_trial_wall_s": 900,
+    "max_trial_input_tokens": 600000,
+    "max_trial_command_records": 6000,
+    "max_cohort_input_tokens": 3600000,
+    "max_cohort_output_tokens": 331776,
+    "max_cohort_model_calls": 432,
+    "max_cohort_command_records": 36000,
+    "max_cohort_trial_wall_s": 5400,
+    "max_remote_job_wall_s_including_setup_and_recovery": 6900
+  },
+  "stop_conditions": [
+    "all actors declare local work finished; independent evaluator scores after runtime stops",
+    "trial simulation-time budget expires",
+    "trial wall-time budget expires",
+    "any safety stop or unrecoverable runtime error",
+    "any actor receives a forbidden oracle field"
+  ],
+  "statistical_claim": "none; integration and measurability check only"
+}
