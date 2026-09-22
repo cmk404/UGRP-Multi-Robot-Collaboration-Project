@@ -369,6 +369,24 @@ def test_inventory_write_failure_cannot_publish_finalization_receipt(source, tmp
     assert not (output / "artifact-finalization.json").exists()
 
 
+def test_unconfirmed_reap_never_restarts_cleanup_grace(tmp_path, monkeypatch):
+    class UnreapableTestChild:
+        pid = 999999999
+        returncode = None
+        def wait(self, timeout=None):
+            raise subprocess.TimeoutExpired("test-only", timeout)
+        def poll(self):
+            return None
+    signals = []
+    monkeypatch.setattr(study.subprocess, "Popen", lambda *a, **k: UnreapableTestChild())
+    monkeypatch.setattr(study.os, "killpg", lambda pid, sig: signals.append(sig))
+    result = study.bounded_process(["test-only-not-executed"], cwd=tmp_path,
+        log_path=tmp_path / "unreapable.log", timeout_s=.001, cleanup_grace_s=.02)
+    assert not result["child_reaped"] and not result["process_group_gone"]
+    assert signals.count(signal.SIGTERM) == 1
+    assert signals.count(signal.SIGKILL) == 1
+
+
 def test_strata_include_unrun_and_dont_use_failed_speed_or_guess_cause():
     trials = config()["trials"]
     rows = [{"run_id": "solo", "outcome": "failure", "result": {

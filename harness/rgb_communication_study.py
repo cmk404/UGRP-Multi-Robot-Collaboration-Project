@@ -636,6 +636,7 @@ def bounded_process(command: list[str], *, cwd: Path, log_path: Path, timeout_s:
     requested_interrupt = False
     child = None
     reaped = group_gone = False
+    cleanup_attempted = False
 
     def interrupted(_signal, _frame):
         nonlocal requested_interrupt
@@ -664,16 +665,19 @@ def bounded_process(command: list[str], *, cwd: Path, log_path: Path, timeout_s:
                         continue
             except (subprocess.TimeoutExpired, KeyboardInterrupt) as exc:
                 timed_out = isinstance(exc, subprocess.TimeoutExpired)
+                cleanup_attempted = True
                 reaped, group_gone = finalize(child)
                 code = 124 if timed_out else 130
             else:
                 reaped, group_gone = True, not group_alive(child.pid)
                 if not group_gone:
                     # A dead leader is not proof that its descendants stopped.
+                    cleanup_attempted = True
                     reaped, group_gone = finalize(child)
                     code = code or 125
     finally:
-        if child is not None and not reaped:
+        if child is not None and not reaped and not cleanup_attempted:
+            cleanup_attempted = True
             reaped, group_gone = finalize(child)
         for sig, handler in previous.items():
             signal.signal(sig, handler)

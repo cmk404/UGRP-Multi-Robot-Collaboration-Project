@@ -46,6 +46,8 @@ cleanup 중 반복 신호도 같은 방식으로 처리한다. 과거 후보의 
 별도 `artifact-finalization.json`에 그 inventory 해시를 기록한다. 회수 완료는 outer
 exit0·reap/group 소멸·이 receipt와 inventory의 실제 재해시를 모두 확인해야 한다.
 report만 존재하거나 inventory 쓰기 도중 종료된 실행은 해시 완료로 표시하지 않는다.
+회수가 유예 시간 내 끝나지 않아도 cleanup 유예를 다시 시작하지 않는다. 단일 시도 후
+미확인 상태를 반환하며, 후속 시행·원본 해시 완료 판정은 계속 차단한다.
 
 ## 로컬 자산 참조 준비
 
