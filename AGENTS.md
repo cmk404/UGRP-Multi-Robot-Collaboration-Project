@@ -18,7 +18,7 @@
 ## 환경·프로세스·자료 보존
 
 - Mac 시뮬레이션 환경은 `.venv-sim-worker-mac`, `.venv-sim`은 호환 링크다. 별도 중복 환경을 만들지 않는다. Ubuntu 설치는 `docs/ubuntu_quickstart.md`를 따른다. 실물 환경과 raw 실험 증거를 보존한다.
-- 2026-09-22 사용자 요청으로 다른 참여자가 시뮬레이션을 켜고 실시간 영상을 보는 경로는 **로컬 실행**을 사용한다. `docs/local_simulation.md`와 `scripts/open_simulation.command`를 따른다. 이 수동 체험 경로에 Colab/Kaggle이나 모델 계정을 요구하지 않는다.
+- 2026-09-22 사용자 요청으로 다른 참여자가 설정 파일·CLI·저수준 Python API로 시뮬레이션을 구성하고 MuJoCo 자체 창에서 보는 경로는 **로컬 실행**을 사용한다. `docs/local_simulation.md`와 `scripts/open_simulation.command`를 따른다. 이 경로에 Colab/Kaggle·별도 웹 UI·모델 계정을 요구하지 않는다.
 - 2026-09-21 사용자 요청으로 시뮬레이션·렌더링·교사 데이터 생성·학습·평가의 기본 실행 대상은 **Colab CLI**이다. `docs/colab_simulation.md`와 `scripts/colab_simulation_cli.py`를 따른다. 브라우저 노트북·Secrets 설정을 기본 경로로 요구하지 않는다. Kaggle CLI의 비공개 배치 실행은 `docs/kaggle_simulation.md`와 `scripts/kaggle_simulation_cli.py`를 사용하며 인증·할당량·실제 실행·결과 회수를 따로 확인한다. 실제 Colab 실행·결과 회수까지 확인해야 이전 완료로 보고한다. 단위 테스트·소스 편집·결과 검토와 실물 연결은 로컬에서 할 수 있다. Colab 접근/자원이 없으면 제한을 보고하고 무거운 실험을 임의로 Mac에서 대신 실행하지 않는다.
 - Lightning·Azure와 옛 Colab 배포·자동 복구는 계속 퇴역 상태다. 새 Colab 경로는 CLI에서 유한한 작업만 실행하며, 상시 서버·자동 재접속·유료 자원 구매를 포함하지 않는다. 과거 설정은 `docs/cloud_simulation.md`에 보존한다.
 - 브리지·MuJoCo 워커·하네스·대시보드는 작업할 때만 시작한다. 기존 실행기가 전체 자식 정리를 보장하지 않으면 `python3 scripts/ugrp_session.py run <이름> -- <명령>`을 사용한다. 작업 종료 시 자신이 시작한 프로세스와 자식을 `Ctrl-C` 또는 `python3 scripts/ugrp_session.py stop <이름>`으로 정리한다. 장시간 실험은 명시적인 종료 시점까지 유지한다. 다른 작업의 프로세스를 이름으로 일괄 종료하지 않으며 기존 프로세스는 PID·명령·소유 작업을 먼저 확인한다.

@@ -19,7 +19,7 @@ GitHub PR의 **Files changed → Review changes → Approve → Submit review**�
 
 ## Colab에서 시뮬레이션 실행
 
-2026-09-21부터 무거운 시뮬레이션·학습·평가의 기본 대상은 [Colab](docs/colab_simulation.md)이다. 로컬 단위 테스트와 GitHub CI는 계속 사용한다. 아래 Mac 환경은 기존 호환·재현 경로이며 새 실험을 임의로 로컬에서 시작하지 않는다.
+2026-09-21부터 무거운 시뮬레이션·학습·평가의 기본 대상은 [Colab](docs/colab_simulation.md)이다. 2026-09-22 요청에 따른 [로컬 구성·native viewer·Python API](docs/local_simulation.md)와 그 검증은 로컬에서 실행한다. 로컬 단위 테스트와 GitHub CI도 계속 사용한다. 아래 Mac 환경은 기존 호환·재현 경로이며 새 실험을 임의로 로컬에서 시작하지 않는다.
 
 ## 자동 테스트
 

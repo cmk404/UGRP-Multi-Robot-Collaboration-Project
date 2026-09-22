@@ -4,7 +4,7 @@
 
 | 종류 | 문서 | 읽는 시점 |
 |---|---|---|
-| 첫 실행·실시간 카메라 | [로컬 시뮬레이션](local_simulation.md) | 모델 없이 세 로봇을 직접 조작하고 영상을 볼 때 |
+| 로컬 구성·실행 API | [로컬 시뮬레이션](local_simulation.md) | 설정 파일과 CLI/Python으로 세계를 구성하고 MuJoCo 창에서 확인할 때 |
 | 현재 규칙·개발 절차 | [AGENTS](../AGENTS.md), [CONTRIBUTING](../CONTRIBUTING.md) | 작업 시작, 설치·검증·Git 작업 |
 | 설치·모델 연결 | [Colab](colab_simulation.md), [Kaggle](kaggle_simulation.md), [Ubuntu](ubuntu_quickstart.md), [Gemini 프록시](gemini_subscription_proxy.md) | 환경 준비 |
 | 출하·협업·동기화 | [출하 환경](research_dispatch_arena.md), [3대 실행](three_robot_e2e.md), [단계 계약](task_stage_sync_contract.md), [단계 연결](task_stage_execution.md) | 관련 구현 작업; 각 문서의 검증 날짜 확인 |

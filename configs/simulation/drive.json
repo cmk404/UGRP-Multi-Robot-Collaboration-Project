@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "scene": {"layout": "camera_team", "seed": 41},
+  "run": {"sim_seconds": 3},
+  "actions": [
+    {"at_s": 0, "robot": "r1", "command": {"kind": "drive", "forward": 0.12, "turn": 0, "duration_s": 0.5}},
+    {"at_s": 1, "robot": "r2", "command": {"kind": "look", "pan_pulse": 1700}},
+    {"at_s": 2, "robot": "r3", "command": {"kind": "mecanum", "forward": 0, "left": 0.06, "turn": 0, "duration_s": 0.5}}
+  ]
+}

@@ -16,14 +16,20 @@ if [[ ! -x "$sim_python" ]]; then
   echo '기존 환경은 UGRP_SIM_PYTHON=/absolute/path/bin/python으로 지정할 수 있습니다.' >&2
   exit 1
 fi
-if [[ "$(uname -s)" == Linux ]]; then
-  export MUJOCO_GL="${MUJOCO_GL:-osmesa}"
-  if [[ "$MUJOCO_GL" == osmesa ]]; then export PYOPENGL_PLATFORM=osmesa; fi
-fi
 cd "$project_dir"
-if ! "$sim_python" -c 'import mujoco, numpy, cv2, PIL, websockets' >/dev/null; then
-  echo '의존성을 확인하세요: 선택한 Python으로 -m pip install -r requirements-sim.txt' >&2
-  exit 1
+# No arguments opens the editable default scene. Other invocations use CLI subcommands.
+if [[ $# -eq 0 ]]; then set -- run configs/simulation/local.json; fi
+runner="$sim_python"
+if [[ "$(uname -s)" == Darwin && "$1" == run ]]; then
+  headless=false
+  for arg in "$@"; do [[ "$arg" == --headless ]] && headless=true; done
+  if [[ "$headless" == false ]]; then
+    runner="$(dirname -- "$sim_python")/mjpython"
+    if [[ ! -x "$runner" ]]; then
+      echo 'MuJoCo macOS viewer needs mjpython next to the selected Python. Install requirements-sim.txt.' >&2
+      exit 1
+    fi
+  fi
 fi
-exec "$sim_python" scripts/ugrp_session.py run simulation-live -- \
-  "$sim_python" -m scripts.sim_live "$@"
+exec "$sim_python" scripts/ugrp_session.py run "simulation-native-$$" -- \
+  "$runner" -m scripts.sim_cli "$@"

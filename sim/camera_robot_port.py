@@ -25,6 +25,39 @@ _ACTION_FIELDS = {
 }
 
 
+def validate_raw_action(action: Mapping[str, Any], *, allow_reverse: bool = False,
+                        allow_mecanum: bool = False) -> None:
+    """Validate the raw command contract without constructing a simulator."""
+    if not isinstance(action, Mapping):
+        raise ValueError("action must be an object")
+    kind = action.get("kind")
+    if not isinstance(kind, str) or kind not in _ACTION_FIELDS:
+        raise ValueError("unknown action type")
+    unknown = set(action) - _ACTION_FIELDS[kind]
+    missing = _ACTION_FIELDS[kind] - set(action)
+    if unknown:
+        raise ValueError(f"unknown {kind} action fields: {sorted(unknown)}")
+    if missing:
+        raise ValueError(f"missing {kind} action fields: {sorted(missing)}")
+
+    if kind in {"drive", "mecanum"}:
+        if kind == "mecanum" and not allow_mecanum:
+            raise ValueError("mecanum action requires allow_mecanum=True")
+        _bounded_number("forward", action["forward"], -0.05 if allow_reverse else 0.0, 0.15)
+        _bounded_number("turn", action["turn"], -.15 if kind == "mecanum" else -.2,
+                        .15 if kind == "mecanum" else .2)
+        _bounded_number("duration_s", action["duration_s"], 0.0, 1.0)
+        if kind == "mecanum":
+            _bounded_number("left", action["left"], -.10, .10)
+    elif kind == "look":
+        _bounded_int("pan_pulse", action["pan_pulse"], 500, 2500)
+    elif kind == "arm":
+        servo = _bounded_int("servo_id", action["servo_id"], 1, 5)
+        if servo not in {1, 3, 4, 5}:
+            raise ValueError("servo_id must be one of 1, 3, 4, or 5")
+        _bounded_int("pulse", action["pulse"], 500, 2500)
+
+
 class CameraRobotPort:
     """Expose one robot's RGB camera and command actuators only.
 
@@ -86,34 +119,8 @@ class CameraRobotPort:
 
     def validate_action(self, action: Mapping[str, Any]) -> None:
         """Check a command without touching actuators (for batch preflight)."""
-        if not isinstance(action, Mapping):
-            raise ValueError("action must be an object")
-        kind = action.get("kind")
-        if not isinstance(kind, str) or kind not in _ACTION_FIELDS:
-            raise ValueError("unknown action type")
-        unknown = set(action) - _ACTION_FIELDS[kind]
-        missing = _ACTION_FIELDS[kind] - set(action)
-        if unknown:
-            raise ValueError(f"unknown {kind} action fields: {sorted(unknown)}")
-        if missing:
-            raise ValueError(f"missing {kind} action fields: {sorted(missing)}")
-
-        if kind in {"drive", "mecanum"}:
-            if kind == "mecanum" and not self._allow_mecanum:
-                raise ValueError("mecanum action requires allow_mecanum=True")
-            _bounded_number("forward", action["forward"], -0.05 if self._allow_reverse else 0.0, 0.15)
-            _bounded_number("turn", action["turn"], -.15 if kind == "mecanum" else -.2,
-                            .15 if kind == "mecanum" else .2)
-            _bounded_number("duration_s", action["duration_s"], 0.0, 1.0)
-            if kind == "mecanum":
-                _bounded_number("left", action["left"], -.10, .10)
-        elif kind == "look":
-            _bounded_int("pan_pulse", action["pan_pulse"], 500, 2500)
-        elif kind == "arm":
-            servo = _bounded_int("servo_id", action["servo_id"], 1, 5)
-            if servo not in {1, 3, 4, 5}:
-                raise ValueError("servo_id must be one of 1, 3, 4, or 5")
-            _bounded_int("pulse", action["pulse"], 500, 2500)
+        validate_raw_action(action, allow_reverse=self._allow_reverse,
+                            allow_mecanum=self._allow_mecanum)
 
     def validate_bounded(self, action: Mapping[str, Any], duration_s: float) -> None:
         self.validate_action(action)

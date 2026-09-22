@@ -10,7 +10,7 @@
 
 | 하려는 작업 | 먼저 읽기 | 실행/구현 진입점 |
 |---|---|---|
-| 시뮬레이션 켜고 실시간으로 보기 | [로컬 시뮬레이션](local_simulation.md) | `scripts/open_simulation.command` — 모델 없는 수동 물리·카메라 환경 |
+| 로컬 시뮬레이션 구성·실행 | [로컬 시뮬레이션](local_simulation.md) | `scripts/open_simulation.command` — 설정 파일·저수준 Python API·MuJoCo 기본 창 |
 | 설치·테스트·PR | [CONTRIBUTING](../CONTRIBUTING.md), [Ubuntu 안내](ubuntu_quickstart.md) | `scripts/run_ci_tests.py`, `.github/workflows/tests.yml` |
 | 새 세 LLM 계획과 공동 출하 | [연구 환경·실행 예시](research_dispatch_arena.md), [후속 복구 결과](../experiments/dispatch-adaptive-recovery-20260917/README.md) | `scripts/run_dispatch_e2e.py`, `scripts/run_dispatch_skills.py`, `scripts/dispatch_pair_skill.py` |
 | 공동 운반 ACT 비교 | [ACT 운반 보고서](../experiments/2026-09-18-act-pair-carry/README.md), [레퍼런스 차이표](reference_alignment.md) | `scripts/run_carry_act_experiment.py` |

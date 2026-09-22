@@ -118,7 +118,7 @@ jobs:
       - name: Install Ubuntu rendering and recording tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y libosmesa6 libgl1 libglfw3 ffmpeg fonts-noto-cjk
+          sudo apt-get install -y libosmesa6 libgl1 libglfw3 xvfb xauth ffmpeg fonts-noto-cjk
           ffmpeg -hide_banner -encoders | grep libx264
 
       - name: Install simulator dependencies
@@ -129,15 +129,21 @@ jobs:
       - name: Check demo input and output boundaries
         run: python -m pytest -q tests/test_sim_quickstart.py
 
-      - name: Verify local live cameras, controls, reset, and shutdown
-        run: python -m scripts.check_sim_live --output outputs/sim-live-ci
+      - name: Verify low-level reset, commands, RGB and scene configuration
+        run: python -m scripts.check_simulation --output outputs/simulation-ci/api
 
-      - name: Keep live viewer verification
+      - name: Run the native MuJoCo window on a virtual desktop
+        run: |
+          MUJOCO_GL=glfw xvfb-run -a python scripts/ugrp_session.py run native-ci -- python -m scripts.sim_cli run configs/simulation/drive.json --sim-seconds 3 --wall-seconds 60 --output outputs/simulation-ci/native
+          test ! -e "$UGRP_SESSION_DIR/native-ci.json"
+          python -c "import json; r=json.load(open('outputs/simulation-ci/native/result.json')); assert r['protocol_complete'] and r['commands'] == 3, r"
+
+      - name: Keep simulator verification
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: sim-live-verification
-          path: outputs/sim-live-ci/
+          name: simulation-runtime-verification
+          path: outputs/simulation-ci/
           if-no-files-found: warn
           retention-days: 14
 
