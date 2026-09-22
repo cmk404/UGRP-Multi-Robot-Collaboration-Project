@@ -126,7 +126,7 @@ def linked_fixture(spec, condition="structured"):
         {"command_id": "cmd-old", "action": {"drive": "forward"}})
     observations = []
     for number in range(spec["event"]["minimum_frames"]):
-        obs = {"observation_id": f"obs{number}", "images": image, "observed_at_s": float(number),
+        obs = {"observation_id": f"obs{number}", "images": copy.deepcopy(image), "observed_at_s": float(number),
                "own_issued_commands": [{"command_id": "cmd-old"}]}
         observations.append(obs)
         add(f"observation{number}", "observation_captured", {"observation_id": f"obs{number}"}, obs)
