@@ -110,6 +110,7 @@ def backend_descriptor(config):
             "clock_owner": "single_simulator", "clock_domain": "sim", "max_tick_s": MAX_TICK_S,
             "supervisor_clock_schema": "ugrp.execution_clock.v1",
             "skill_image_max_age_s": 1., "skill_worker_wall_limit_s": 2.,
+            "skill_worker_wall_scope": "submission_to_consumption",
             "capabilities": copy.deepcopy(SKILLS), "config_sha256": _digest(config),
             "map_sha256": _digest(scene_config["static_map"]),
             "map_id": static_map["map_id"], "map_version": str(static_map["version"]),
@@ -397,15 +398,28 @@ class PairActorSkill:
 
 @dataclass
 class _WorkerTiming:
-    started: float | None = None
-    completed: float | None = None
+    _started: float | None = None
+    _completed: float | None = None
     lock: object = field(default_factory=threading.Lock)
+
+    def start(self, now):
+        with self.lock:
+            if self._started is not None or not finite_number(now, minimum=0.):
+                raise ValueError("invalid worker start timestamp")
+            self._started = now
+
+    def complete(self, now):
+        with self.lock:
+            if (self._completed is not None or self._started is None
+                    or not finite_number(now, minimum=0.) or now < self._started):
+                raise ValueError("invalid worker completion timestamp")
+            self._completed = now
 
     def snapshot(self, submitted):
         with self.lock:
-            return {"worker_started_wall_s": self.started, "worker_completed_wall_s": self.completed,
-                "worker_wall_duration_s": (None if self.completed is None else self.completed-self.started),
-                "worker_queue_wall_s": None if self.started is None else self.started-submitted}
+            return {"worker_started_wall_s": self._started, "worker_completed_wall_s": self._completed,
+                "worker_wall_duration_s": (None if self._completed is None else self._completed-self._started),
+                "worker_queue_wall_s": None if self._started is None else self._started-submitted}
 
 
 def _write_supervisor(record, lock, row):
@@ -416,16 +430,14 @@ def _write_supervisor(record, lock, row):
 
 def _timed_rgb_decision(controller, own, top, timing, submitted, metadata, record, lock):
     """Only the controller's image inputs and a raw-log sink, no port handle."""
-    with timing.lock:
-        timing.started = time.monotonic()
+    timing.start(time.monotonic())
     outcome = "error"
     try:
         decision = controller.decide(own, top)
         outcome = "returned"
         return decision
     finally:
-        with timing.lock:
-            timing.completed = time.monotonic()
+        timing.complete(time.monotonic())
         _write_supervisor(record, lock, {"event": "RGB_WORKER_COMPLETED", **metadata,
             "worker_outcome": outcome, "submitted_wall_s": submitted, **timing.snapshot(submitted)})
 
@@ -441,6 +453,80 @@ class _Runner:
     sequence: int = 0
     was_paused: bool = False
     timing: _WorkerTiming | None = None
+
+
+@dataclass(frozen=True)
+class _CapturedRGB:
+    data: bytes
+    capture_id: str
+    sim_time_s: float
+    absolute_time_s: float
+    started_wall_s: float
+    completed_wall_s: float
+    sha256: str
+
+    def metadata(self):
+        return {key: value for key, value in self.__dict__.items() if key != "data"}
+
+
+class _RGBFrameCache:
+    """Owner-local immutable bytes, NOT cached observations/commands/status.
+
+    One cache per backend episode. A frame-producing state change at the same
+    clock requires invalidate(); the factory does so for every apply/hold and
+    physics advance. No reset/viewer/camera mutation API is exposed by B.
+    """
+    def __init__(self, own, top, *, record):
+        self.own, self.top, self.record = own, top, record
+        self._frames, self._key = {}, None
+        self._epoch = self._sequence = 0
+        self._last_absolute = None
+        self._identity = None
+
+    def invalidate(self):
+        self._epoch += 1
+        self._frames.clear()
+        self._key = None
+
+    def read(self, rid, *, sim_time_s, absolute_time_s, episode, camera_identity, observation_id):
+        if (not finite_number(absolute_time_s, minimum=0.)
+                or not finite_number(sim_time_s, minimum=0.)):
+            self.invalidate()
+            raise ValueError("invalid RGB capture clock")
+        identity = (episode, tuple(camera_identity))
+        if self._identity != identity:
+            if self._identity is None or self._identity[0] != episode:
+                self._last_absolute = None
+            self.invalidate()
+            self._identity = identity
+        if self._last_absolute is not None and absolute_time_s < self._last_absolute:
+            self.invalidate()
+            raise ValueError("RGB capture clock moved backwards")
+        self._last_absolute = absolute_time_s
+        key = (identity, self._epoch, sim_time_s, absolute_time_s)
+        if self._key != key:
+            self._frames.clear()
+            self._key = key
+        records, hits = {}, {}
+        for name, owner in (("top_rgb", None), ("own_rgb", rid)):
+            slot = (name, owner)
+            hits[name] = slot in self._frames
+            if slot not in self._frames:
+                start = time.monotonic()
+                data = self.top() if owner is None else self.own(owner)
+                ended = time.monotonic()
+                if not isinstance(data, bytes) or not data.startswith(b"\xff\xd8") or not data.endswith(b"\xff\xd9"):
+                    self.invalidate()
+                    raise ValueError("original JPEG bytes required")
+                self._sequence += 1
+                self._frames[slot] = _CapturedRGB(data, f"rgb-{self._sequence:08d}",
+                    sim_time_s, absolute_time_s, start, ended, hashlib.sha256(data).hexdigest())
+            records[name] = self._frames[slot]
+        self.record({"event": "RGB_FRAME_READ", "robot_id": rid, "observation_id": observation_id,
+            "timestamp_s": sim_time_s, "read_wall_s": time.monotonic(), "generation": self._epoch,
+            "camera_identity": list(camera_identity), "cache_hit": hits,
+            "captures": {name: item.metadata() for name, item in records.items()}})
+        return {name: item.data for name, item in records.items()}
 
 
 class _SimulationClockError(ValueError):
@@ -558,6 +644,7 @@ class RGBSkillExecutionPort(RGBExecutionPort):
 
     def _hold_participants(self, participants, reason):
         participants = tuple(participants)
+        revoked = []
         for rid in participants:
             runner = self._runners.get(rid) if hasattr(self, "_runners") else None
             if runner is not None:
@@ -567,6 +654,12 @@ class RGBSkillExecutionPort(RGBExecutionPort):
                     # A cancelled worker may still compute, but has no endpoint.
                     # Never reuse its mutated controller or accept its result.
                     runner.was_paused = True
+                    revoked.append({"event": "RGB_WORKER_REVOKED", "robot_id": rid,
+                        "observation_id": runner.observation["observation_id"], "timestamp_s": self._now_s,
+                        "revoked_wall_s": time.monotonic(), "reason": reason,
+                        "future_cancelled": runner.future.cancelled(), "future_done": runner.future.done(),
+                        "submitted_wall_s": runner.started_wall,
+                        **(runner.timing.snapshot(runner.started_wall) if runner.timing else {})})
                 if reason == "task_paused":
                     runner.was_paused = True
         errors = super()._hold_participants(participants, reason)
@@ -574,6 +667,8 @@ class RGBSkillExecutionPort(RGBExecutionPort):
             getter = getattr(self._endpoints[rid], "issued_servo_commands", None)
             if getter is not None:
                 self._command_states[rid].update(getter())
+        for row in revoked:
+            self._supervisor_event(row)
         return errors
 
     def _release_lease(self, lease, reason):
@@ -637,33 +732,45 @@ class RGBSkillExecutionPort(RGBExecutionPort):
         # controller input. Worker completion can be logged after revocation.
         _write_supervisor(self._record_supervisor, self._supervisor_lock, row)
 
-    def _record_worker_rejection(self, lease, runners, polled, guard):
+    def _worker_poll_rows(self, lease, runners, polled, guard, event):
+        rows = []
         for rid, runner in zip(lease.participants, runners):
             if runner.future is None:
                 continue
             age = self._now_s-runner.observation["observed_at_s"]
             wall = polled-runner.started_wall
-            self._supervisor_event({"event": "RGB_WORKER_REJECTED", "robot_id": rid,
+            timing = runner.timing.snapshot(runner.started_wall) if runner.timing else {}
+            completed = timing.get("worker_completed_wall_s")
+            rows.append({"event": event, "robot_id": rid,
                 "task_id": lease.task_id, "observation_id": runner.observation["observation_id"],
                 "timestamp_s": self._now_s, "observed_at_s": runner.observation["observed_at_s"],
                 "image_age_s": age, "submitted_wall_s": runner.started_wall, "polled_wall_s": polled,
                 "submission_to_poll_wall_s": wall, "future_done": runner.future.done(),
                 "guard": guard, "sim_age_exceeded": age > 1., "wall_cap_exceeded": wall > 2.,
                 "sim_age_cap_s": 1., "wall_cap_s": 2.,
-                **(runner.timing.snapshot(runner.started_wall) if runner.timing else {})})
+                "submission_to_completion_wall_s": None if completed is None else completed-runner.started_wall,
+                "completion_to_poll_wall_s": (None if completed is None or completed > polled else polled-completed),
+                "wall_scope": "submission_to_consumption", **timing})
+        return rows
+
+    def _record_worker_rejection(self, lease, runners, polled, guard):
+        for row in self._worker_poll_rows(lease, runners, polled, guard, "RGB_WORKER_REJECTED"):
+            self._supervisor_event(row)
 
     def _service(self):
-        for lease in list(self._active.values()):
+        # Poll existing work before blocking on new RGB capture/input I/O.
+        # This does NOT accept any result beyond the original total wall cap.
+        rank = {rid: index for index, rid in enumerate(self.robot_ids)}
+        leases = sorted(list(self._active.values()), key=lambda item: min(rank[r] for r in item.participants))
+        new_inputs = []
+        for lease in leases:
             if lease.paused:
+                continue
+            if any(rid not in self._runners for rid in lease.participants):
+                new_inputs.extend((lease, rid, self._runners.get(rid)) for rid in lease.participants)
                 continue
             try:
                 for rid in lease.participants:
-                    if rid not in self._runners:
-                        # Do not pile fresh work behind an uninterruptible old
-                        # image worker. It has no motion authority after revoke.
-                        if sum(not f.done() for f in self._all_futures) >= len(self.robot_ids):
-                            raise ValueError("image worker capacity unavailable")
-                        self._runners[rid] = self._new_runner(lease, rid)
                     runner = self._runners[rid]
                     if runner.was_paused:
                         if runner.future is not None:
@@ -686,6 +793,14 @@ class RGBSkillExecutionPort(RGBExecutionPort):
                            or polled-r.started_wall > 2. for r in runners):
                         self._record_worker_rejection(lease, runners, polled, "completed_staleness")
                         raise ValueError("stale RGB worker result")
+                    if any(r.observation["own_revision"] != self._own_revision[rid]
+                           for rid, r in zip(lease.participants, runners)):
+                        raise ValueError("revoked RGB consent")
+                    if any(r.timing is None or r.timing.snapshot(r.started_wall)["worker_completed_wall_s"] is None
+                           for r in runners):
+                        raise ValueError("worker completion timing unavailable")
+                    consumed = self._worker_poll_rows(lease, runners, polled,
+                        "completed_fresh", "RGB_WORKER_CONSUMED")
                     decisions = [r.future.result() for r in runners]
                     for runner in runners:
                         runner.future = None
@@ -704,6 +819,8 @@ class RGBSkillExecutionPort(RGBExecutionPort):
                                 decision_id=lease.consent_evidence[rid]["decision_id"], reason=reason)
                         self._hold_participants(lease.participants, "rgb_finish_claim")
                         self._release_lease(lease, "rgb_finish_claim")
+                        for row in consumed:
+                            self._supervisor_event(row)
                         continue
                     if len(runners) == 2 and all(d["ready"] for d in decisions):
                         for runner in runners:
@@ -719,25 +836,70 @@ class RGBSkillExecutionPort(RGBExecutionPort):
                             skill_decision_id=f"{lease.lease_id}:{rid}:{runner.sequence}", decision=decision)
                         runner.macro.submit(decision["action"], self._now_s)
                         runner.macro.tick(self._now_s)
+                    for row in consumed:
+                        self._supervisor_event(row)
                     continue
-                for rid, runner in zip(lease.participants, runners):
-                    observation = self.observe(rid)
-                    runner.observation = observation
-                    if self._record_observation:
-                        self._record_observation(observation)
-                    own = {"robot_id": rid, "frame_id": self._observation_sequence[rid],
-                        "sim_time": self._now_s, "camera": "robot_cam",
-                        "image": observation["images"]["own_rgb"]["jpeg_base64"],
-                        "sha256": observation["images"]["own_rgb"]["sha256"],
-                        "actuator_state": {"motor_commands": [], "servo_pulses": copy.deepcopy(self._command_states[rid])}}
-                    top = base64.b64decode(observation["images"]["top_rgb"]["jpeg_base64"], validate=True)
-                    runner.started_wall = time.monotonic()
-                    runner.timing = _WorkerTiming()
-                    runner.future = self._pool.submit(_timed_rgb_decision, runner.controller, own, top,
-                        runner.timing, runner.started_wall, {"robot_id": rid, "task_id": lease.task_id,
-                            "observation_id": observation["observation_id"], "observed_at_s": self._now_s},
-                        self._record_supervisor, self._supervisor_lock)
-                    self._all_futures = [f for f in self._all_futures if not f.done()] + [runner.future]
+                new_inputs.extend((lease, rid, runner) for rid, runner in zip(lease.participants, runners))
+            except Exception as error:
+                if lease.task_id in self._active:
+                    self._fail(lease, error)
+
+        # Fixed owner robot order in every communication condition. Capture and
+        # persist every new input BEFORE starting any new submission deadline;
+        # no worker/completion/global-planner barrier is introduced.
+        prepared = []
+        for lease, rid, runner in sorted(new_inputs, key=lambda item: rank[item[1]]):
+            if self._active.get(lease.task_id) is not lease or lease.paused:
+                continue
+            try:
+                preparation_started = time.monotonic()
+                if runner is None:
+                    # Do not pile work behind an uninterruptible revoked worker.
+                    if sum(not f.done() for f in self._all_futures) >= len(self.robot_ids):
+                        raise ValueError("image worker capacity unavailable")
+                    runner = self._runners[rid] = self._new_runner(lease, rid)
+                controller_ready = time.monotonic()
+                observation = self.observe(rid)
+                captured = time.monotonic()
+                runner.observation = observation
+                if self._record_observation:
+                    self._record_observation(observation)
+                saved = time.monotonic()
+                own = {"robot_id": rid, "frame_id": self._observation_sequence[rid],
+                    "sim_time": self._now_s, "camera": "robot_cam",
+                    "image": observation["images"]["own_rgb"]["jpeg_base64"],
+                    "sha256": observation["images"]["own_rgb"]["sha256"],
+                    "actuator_state": {"motor_commands": [], "servo_pulses": copy.deepcopy(self._command_states[rid])}}
+                top = base64.b64decode(observation["images"]["top_rgb"]["jpeg_base64"], validate=True)
+                self._supervisor_event({"event": "RGB_INPUT_PREPARED", "robot_id": rid,
+                    "observation_id": observation["observation_id"], "timestamp_s": self._now_s,
+                    "controller_setup_wall_s": controller_ready-preparation_started,
+                    "capture_and_pack_wall_s": captured-controller_ready,
+                    "input_persistence_wall_s": saved-captured,
+                    "request_pack_wall_s": time.monotonic()-saved})
+                prepared.append((lease, rid, runner, own, top))
+            except Exception as error:
+                if lease.task_id in self._active:
+                    self._fail(lease, error)
+
+        for lease, rid, runner, own, top in prepared:
+            if (self._active.get(lease.task_id) is not lease or lease.paused
+                    or self._runners.get(rid) is not runner):
+                continue
+            try:
+                self._all_futures = [f for f in self._all_futures if not f.done()]
+                if len(self._all_futures) >= len(self.robot_ids):
+                    raise ValueError("image worker capacity unavailable")
+                if (self._now_s >= lease.expires_at_s or
+                        runner.observation["own_revision"] != self._own_revision[rid]):
+                    raise ValueError("revoked RGB consent")
+                runner.started_wall = time.monotonic()
+                runner.timing = _WorkerTiming()
+                runner.future = self._pool.submit(_timed_rgb_decision, runner.controller, own, top,
+                    runner.timing, runner.started_wall, {"robot_id": rid, "task_id": lease.task_id,
+                        "observation_id": runner.observation["observation_id"], "observed_at_s": self._now_s},
+                    self._record_supervisor, self._supervisor_lock)
+                self._all_futures.append(runner.future)
             except Exception as error:
                 if lease.task_id in self._active:
                     self._fail(lease, error)
@@ -809,10 +971,11 @@ class RGBSkillExecutionPort(RGBExecutionPort):
 
 
 class _RelativeEndpoint:
-    def __init__(self, endpoint, origin, *, clock=None):
+    def __init__(self, endpoint, origin, *, clock=None, invalidate_frames=None):
         self.endpoint, self.origin = endpoint, origin
         self.robot_id = endpoint.robot_id
         self.clock = clock
+        self.invalidate_frames = invalidate_frames
         self._last_requested = 0.
 
     def _requested(self, now_s):
@@ -831,9 +994,13 @@ class _RelativeEndpoint:
         self.endpoint.validate_bounded(action, duration_s)
 
     def apply_bounded(self, action, now_s, duration_s):
+        if self.invalidate_frames is not None:
+            self.invalidate_frames()
         self.endpoint.apply_bounded(action, self._absolute(now_s), duration_s)
 
     def hold(self, now_s):
+        if self.invalidate_frames is not None:
+            self.invalidate_frames()
         self._requested(now_s)
         if self.clock is None:
             absolute = self.origin+now_s
@@ -914,12 +1081,26 @@ def build_rgb_skill_backend(config):
         video.capture(force=True)
         static_map = scene.config["static_map"]
         static_context = _public_static_context(static_map, descriptor)
-        top_cache = {}
+        frame_episode = object()  # never shared across reset/new backend instances
+        frame_cache = _RGBFrameCache(
+            lambda rid: scene.world.render_jpeg(robot_id=rid, camera="robot_cam", quality=95),
+            lambda: scene.world.render_team_jpeg(camera="cctv_top", quality=95),
+            record=lambda row: port._supervisor_event(row))
+        renderer_state = {"identity": None, "generation": 0}
         def frames(rid, now):
-            if top_cache.get("time") != now:
-                top_cache.update(time=now, data=scene.world.render_team_jpeg(camera="cctv_top", quality=95))
-            return {"own_rgb": scene.world.render_jpeg(robot_id=rid, camera="robot_cam", quality=95),
-                    "top_rgb": top_cache["data"]}
+            world = scene.world
+            state = tuple(id(item) for item in (world, world.model, world.data,
+                getattr(world, "renderer", None), getattr(world, "observer_renderer", None),
+                getattr(world, "_render_executor", None)))
+            if renderer_state["identity"] != state:
+                frame_cache.invalidate()
+                renderer_state.update(identity=state, generation=renderer_state["generation"]+1)
+            identity = ("robot_cam", "cctv_top", 95, scene.manifest["scene_xml_sha256"],
+                descriptor["camera_sha256"], scene.world.width, scene.world.height,
+                scene.world.observer_width, scene.world.observer_height, renderer_state["generation"])
+            return frame_cache.read(rid, sim_time_s=now, absolute_time_s=clock.absolute(),
+                episode=(frame_episode, *state[:3]), camera_identity=identity,
+                observation_id=f"{rid}-{port._observation_sequence[rid]+1:06d}")
 
         def save_observation(observation):
             rid, oid = observation["robot_id"], observation["observation_id"]
@@ -945,14 +1126,23 @@ def build_rgb_skill_backend(config):
         def advance(delta):
             # DispatchScene.step ticks every real CameraRobotPort before each
             # physics substep; this is the sole post-setup world step caller.
+            frame_cache.invalidate()
+            started_step = time.monotonic()
             scene.step(delta)
+            stepped = time.monotonic()
             now = clock.target(port._now_s+delta)
             if now+1e-8 >= next_sample[0]:
                 referee.sample()
                 next_sample[0] = now+.1
+            sampled = time.monotonic()
             video.capture()
+            port._supervisor_event({"event": "RGB_OWNER_ADVANCED", "timestamp_s": now-origin,
+                "physics_step_wall_s": stepped-started_step,
+                "referee_sample_wall_s": sampled-stepped,
+                "video_capture_wall_s": time.monotonic()-sampled})
 
-        port = RGBSkillExecutionPort({rid: _RelativeEndpoint(p, origin, clock=clock) for rid, p in scene.ports.items()},
+        port = RGBSkillExecutionPort({rid: _RelativeEndpoint(p, origin, clock=clock,
+                invalidate_frames=frame_cache.invalidate) for rid, p in scene.ports.items()},
             frame_source=frames, static_context=static_context, skill_factory=factory,
             advance_physics=advance, command_states={rid: dict(INITIAL_COMMANDS) for rid in scene.ports},
             max_sim_s=config["max_sim_s"], max_commands=config["max_commands"], record_observation=save_observation,
