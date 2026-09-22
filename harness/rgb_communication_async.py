@@ -20,6 +20,7 @@ import uuid
 
 from harness import rgb_communication_runtime as base
 from harness.rgb_communication_planner import PlannerCallError
+from harness.rgb_communication_clock import ExecutionClock, sanitized_error
 
 
 @dataclass(frozen=True)
@@ -168,6 +169,7 @@ def run_rgb_communication_async(
     limits: AsyncRuntimeLimits | None = None, trace_path: str | Path | None = None,
     artifact_dir: str | Path | None = None, control: RuntimeControl | None = None,
     provenance: Mapping[str, Any] | None = None, wall_clock=time.monotonic,
+    clock_snapshot=None,
 ) -> dict[str, Any]:
     """Bounded async scheduler, common to none/structured/natural conditions.
 
@@ -175,6 +177,8 @@ provenance is trace-only (e.g. split/seed/source/prompt/controller hashes), neve
 an actor input. tick_period is SIM advancement; poll_period is minimum wall
 pacing. One tick occurs per loop, so slow capture/prepare never causes a burst
 of catch-up steps. Port tick/observe/submit must themselves be bounded.
+clock_snapshot is a supervisor-only value callback for terminal/close evidence;
+it must not step/render/read an evaluator, and is never given to a planner.
 """
     limits = limits or AsyncRuntimeLimits()
     limits.validate()
@@ -201,6 +205,8 @@ of catch-up steps. Port tick/observe/submit must themselves be bounded.
     flights, responses = {}, queue.Queue()
     ledger = TokenLedger(limits)
     now_s, ticks, peak = 0., 0, 0
+    clock = ExecutionClock(port.clock_domain, clock_snapshot)
+    primary_error = close_error = None
     outcome, reason = "aborted", "MAX_TICKS"
     external_calls = {rid: 0 for rid in robot_ids}
     measured_external_calls = {rid: 0 for rid in robot_ids}
@@ -214,9 +220,10 @@ of catch-up steps. Port tick/observe/submit must themselves be bounded.
         "measured_metrics": ["high_level_actions", "messages", "message_bytes",
                              "planner_decisions", "external_model_calls", "model_response_time_s"]})
 
-    def emit(kind, rid=None, payload=None, related=None):
-        return trace.emit(kind, robot_id=rid, sim_time_s=base._trace_sim_time(
-            getattr(port, "clock_domain", "sim"), now_s), payload=payload, related_ids=related)
+    def emit(kind, rid=None, payload=None, related=None, *, supervisor_clock=False):
+        sim_time = clock.sim_time if supervisor_clock else now_s
+        return trace.emit(kind, robot_id=rid, sim_time_s=sim_time,
+                          payload=payload, related_ids=related)
 
     def capture(rid):
         nonlocal static_hash
@@ -252,9 +259,10 @@ of catch-up steps. Port tick/observe/submit must themselves be bounded.
             if loop_started - started >= limits.wall_timeout_s:
                 outcome, reason = "timeout", "WALL_TIMEOUT"
                 break
-            now_s = (ticks - 1) * limits.tick_period_s
+            requested_tick_s = (ticks - 1) * limits.tick_period_s
             # Supervisor return is intentionally discarded, not used to wake.
-            port.tick(now_s)
+            clock.tick(port, requested_tick_s)
+            now_s = requested_tick_s
             while not control.cancellations.empty():
                 rid = control.cancellations.get_nowait()
                 if rid in epochs:
@@ -460,21 +468,33 @@ of catch-up steps. Port tick/observe/submit must themselves be bounded.
             if remaining > 0:
                 control.stop.wait(remaining)
     except Exception as exc:
-        reason = getattr(exc, "reason", "RUNTIME_ERROR")
+        # The sole PlannerCallError raised to this scope has this fixed code.
+        reason = ("PROVIDER_TOKEN_BOUND_VIOLATION" if isinstance(exc, PlannerCallError)
+                  and exc.reason == "PROVIDER_TOKEN_BOUND_VIOLATION" else "RUNTIME_ERROR")
         outcome = "api_error" if isinstance(exc, PlannerCallError) else "aborted"
-        emit("run_error", payload={"reason": reason, "error_type": type(exc).__name__})
+        primary_error = sanitized_error(exc)
+        clock.refresh()
+        emit("run_error", payload={"reason": reason, "phase": "runtime",
+             **primary_error, "clock": clock.payload()}, supervisor_clock=True)
     finally:
         for flight in flights.values():
             flight.cancel.set()
+        clock.refresh()
         try:
-            port.close(now_s)
+            port.close(clock.close_argument(failed=primary_error is not None))
         except Exception as exc:
-            outcome, reason = "aborted", "CLOSE_ERROR"
-            emit("run_error", payload={"reason": reason, "error_type": type(exc).__name__})
+            close_error = sanitized_error(exc)
+            if primary_error is None:
+                outcome, reason = "aborted", "CLOSE_ERROR"
+            clock.refresh()
+            emit("run_error", payload={"reason": "CLOSE_ERROR", "phase": "close",
+                 **close_error, "clock": clock.payload()}, supervisor_clock=True)
+        clock.refresh()
     if reason == "MAX_TICKS":
         outcome = "timeout"
     result = {"run_id": run_id, "condition": condition, "outcome": outcome,
               "termination_reason": reason, "ticks": ticks,
+              "clock": clock.payload(), "primary_error": primary_error, "close_error": close_error,
               "actor_finish_claims": {rid: a.finish_claim == "mission_complete" for rid, a in actors.items()},
               "actor_finish_details": {rid: a.finish_claim for rid, a in actors.items()},
               "calls": {rid: a.calls for rid, a in actors.items()},
@@ -490,5 +510,5 @@ of catch-up steps. Port tick/observe/submit must themselves be bounded.
                   rid: f.request["request_id"] for rid, f in flights.items()},
               "tokens": ledger.summary(), "trace_events": len(trace.events)+1}
     result["retirement_reasons"] = retirement_reasons
-    emit("run_finished", payload=result)
+    emit("run_finished", payload=result, supervisor_clock=True)
     return {**result, "events": copy.deepcopy(trace.events)}

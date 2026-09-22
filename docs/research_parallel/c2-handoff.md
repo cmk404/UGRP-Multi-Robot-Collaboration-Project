@@ -53,6 +53,7 @@ result = run_rgb_communication_async(
     ),
     trace_path=output / "runtime.jsonl", artifact_dir=output / "runtime-inputs",
     provenance=trace_only_provenance,
+    clock_snapshot=bundle.clock_snapshot,  # supervisor-only; actor_port에는 없음
 )
 ```
 
@@ -152,3 +153,52 @@ system prompt SHA, adapter SHA, 합성 policy SHA를 준다. D는 여기에 cont
 - 실제 모델/물리 결과 없음. D 단일 제출자의 Colab replay/회수, A 독립 최종 감사,
   provider hard-bound 검증과 실제 endpoint readiness, 고정 SHA CI/승인 단계가 남는다.
   기존 ACT/뷰어 프로세스·데이터·다른 작업 worktree는 수정하지 않았다.
+
+## 2026-09-22 · 제한된 tick 실패 후속 수정
+
+앞 절의 검증 기록은 각 당시 소스 기준이다. 이번 범위는 새 물리/모델 실행이 아니라
+동기·비동기 runtime의 실패 시각과 오류 보존이다. `bfe478f`의 기존 두 물리 replay 원본,
+설정 및 `invalid_artifact` 판정은 바꾸지 않는다. 상한 완화·evaluator guard 제거도 없다.
+
+- 실패 요청 `.8`을 성공 시각으로 승격하지 않는다. 마지막 성공 **요청** `.75`,
+  backend의 마지막 성공 **실제 acknowledgement**, 현재 **실제** 시각은 별개다.
+  실패 도중 `.77`까지 진행했다면 `.77`로 닫고 기록하며, 확인할 수 없으면
+  `close(None)`으로 backend 자체 시각에서 닫고 terminal SIM time을 `null`로 남긴다.
+- `clock_snapshot=bundle.clock_snapshot`은 두 runtime에 선택적으로 전달하는 감독자
+  전용 callback이다. evaluator·렌더·step을 수행하지 않는 B 계약이며 actor facade나
+  request/memory/wakeup에 연결하지 않는다. tick 반환의 정답 정보는 계속 버린다.
+- callback은 아래 **정확히 4필드**만 허용한다. 초 단위 finite nonnegative 수 또는
+  `null`이며 `last_acknowledged_time_s <= actual_time_s`와 이전 확인 시각의 역행을
+  검사한다. 부동소수점 누적을 숨기지 않기 위해 actual을 requested에 맞추거나
+  `actual <= requested`를 강제하지 않는다. 수치 허용 경계는 B의 별도 책임이다.
+
+```json
+{"schema":"ugrp.execution_clock.v1","clock_domain":"sim",
+ "last_acknowledged_time_s":0.75,"actual_time_s":0.77}
+```
+
+- result 및 `run_finished.payload.clock`은 아래 **정확히 8필드**다. `run_error`에도
+  해당 시점 clock을 남긴다. verified terminal은 event의 `sim_time_s`와 일치한다.
+  unknown은 측정값이 아니라 미확인 상태이며 D는 평가를 fail closed한다.
+
+```json
+{"schema":"rgb-runtime-clock.v1","clock_domain":"sim",
+ "requested_tick_s":0.8,"last_successful_requested_tick_s":0.75,
+ "last_acknowledged_time_s":0.75,"terminal_time_s":0.77,
+ "terminal_time_status":"verified","reason":"VERIFIED_CLOCK_SNAPSHOT"}
+```
+
+- unknown reason은 `CLOCK_SNAPSHOT_UNAVAILABLE`, `CLOCK_SNAPSHOT_FAILED`,
+  `CLOCK_SNAPSHOT_INVALID`, `ACTUAL_CLOCK_UNKNOWN` 중 하나다. callback이 없는 legacy
+  성공 경로는 마지막 acknowledged 요청을 close 힌트로만 유지하며 실제 terminal은
+  여전히 unknown이다. backend snapshot의 acknowledgement도 raw 실제 시각이다.
+- `primary_error`/`close_error`를 별도로 보존한다. close도 실패해도 원래
+  `RUNTIME_ERROR`를 `CLOSE_ERROR`로 덮어쓰지 않는다. cause/context는 최대 8개,
+  허용 builtin 종류와 B의 고정 4개 error code 및 `CLOCK_MOVED_BACKWARDS`만 기록한다.
+  원문·인자·traceback·임의 예외 클래스명·키/토큰/provider body는 기록하지 않는다.
+- 먼저 오류 주입 회귀 **14 FAILED**로 `.8` 오기록/새 계약 부재를 재현한 뒤 수정했다.
+  C 관련 4개 모듈 **83 passed**: no-advance/partial-advance/unknown, 실제 clock ±부동소수
+  차이, 잘못된 clock, primary+close 오류, 비밀정보·cause cycle, actor 입력 비간섭.
+  기존 관측 유출 차단 테스트의 오류 close 기대값도 새 unknown 계약으로 갱신했다.
+- 최종 SHA의 CI 및 A 독립 감사, B callback/close와 D 실행기·평가기의 고정 SHA 통합은
+  별도로 확인해야 한다. 새 Colab 제출, 실제 LLM/physics 실행, main 병합은 하지 않는다.
