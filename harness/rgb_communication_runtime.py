@@ -24,6 +24,8 @@ import time
 from typing import TYPE_CHECKING, Any, Callable, Mapping, Protocol, Sequence
 import uuid
 
+from harness.rgb_communication_clock import ExecutionClock, sanitized_error
+
 if TYPE_CHECKING:
     # B owns this public type.  The runtime remains structurally usable before
     # the dependent execution-port PR is merged.
@@ -727,12 +729,13 @@ def run_rgb_communication(
     trace_path: str | Path | None = None,
     artifact_dir: str | Path | None = None,
     wall_clock: Callable[[], float] = time.monotonic,
+    clock_snapshot: Callable[[], dict] | None = None,
 ) -> dict[str, Any]:
     """Run one bounded, matched-condition fixture/replay/live-LLM episode.
 
-    ``planners`` must contain three distinct planner objects.  No evaluator or
-    supervisor snapshot is accepted, which prevents truth state from entering
-    actor inputs or wake-up decisions through this API.
+    ``planners`` must contain three distinct planner objects. No evaluator
+    snapshot is accepted. The optional clock-only supervisor callback
+    supplies terminal/close evidence, never actor inputs or wake-up decisions.
     """
 
     limits = limits or RuntimeLimits()
@@ -763,8 +766,9 @@ def run_rgb_communication(
     termination_reason = "MAX_TICKS"
     outcome = "aborted"
     runtime_error_type: str | None = None
+    primary_error = close_error = None
+    clock = ExecutionClock(getattr(port, "clock_domain", "monotonic"), clock_snapshot)
     tick_index = 0
-    now_s = 0.0
     trace.emit(
         "run_started",
         robot_id=None,
@@ -785,13 +789,13 @@ def run_rgb_communication(
 
     try:
         for tick_index in range(1, limits.max_ticks + 1):
-            now_s = (tick_index - 1) * limits.tick_period_s
             if wall_clock() - wall_started_s >= limits.wall_timeout_s:
                 termination_reason = "WALL_TIMEOUT"
                 break
             # Tick output is supervisor/audit material.  It is deliberately not
             # inspected for actor wake-up, planning input, or completion.
-            port.tick(now_s)
+            requested_tick_s = (tick_index - 1) * limits.tick_period_s
+            clock.tick(port, requested_tick_s)
 
             for robot_id in robot_ids:
                 actor = actors[robot_id]
@@ -1066,26 +1070,35 @@ def run_rgb_communication(
     except Exception as exc:
         termination_reason = "RUNTIME_ERROR"
         outcome = "aborted"
-        runtime_error_type = type(exc).__name__
+        primary_error = sanitized_error(exc)
+        runtime_error_type = primary_error["error_type"]
+        clock.refresh()
         trace.emit(
             "run_error",
             robot_id=None,
-            sim_time_s=_trace_sim_time(getattr(port, "clock_domain", "monotonic"), now_s),
-            payload={"reason": termination_reason, "error_type": runtime_error_type},
+            sim_time_s=clock.sim_time,
+            payload={"reason": termination_reason, "phase": "runtime",
+                     **primary_error, "clock": clock.payload()},
         )
     finally:
+        clock.refresh()
         try:
-            port.close(now_s)
+            port.close(clock.close_argument(failed=primary_error is not None))
         except Exception as exc:
-            termination_reason = "CLOSE_ERROR"
-            outcome = "aborted"
-            runtime_error_type = type(exc).__name__
+            close_error = sanitized_error(exc)
+            if primary_error is None:
+                termination_reason = "CLOSE_ERROR"
+                outcome = "aborted"
+                runtime_error_type = close_error["error_type"]
+            clock.refresh()
             trace.emit(
                 "run_error",
                 robot_id=None,
-                sim_time_s=_trace_sim_time(getattr(port, "clock_domain", "monotonic"), now_s),
-                payload={"reason": termination_reason, "error_type": runtime_error_type},
+                sim_time_s=clock.sim_time,
+                payload={"reason": "CLOSE_ERROR", "phase": "close",
+                         **close_error, "clock": clock.payload()},
             )
+        clock.refresh()
 
     if termination_reason == "WALL_TIMEOUT":
         outcome = "timeout"
@@ -1095,6 +1108,9 @@ def run_rgb_communication(
         "condition": condition,
         "outcome": outcome,
         "termination_reason": termination_reason,
+        "clock": clock.payload(),
+        "primary_error": primary_error,
+        "close_error": close_error,
         "actor_finish_claims": {rid: actors[rid].finish_claim == "mission_complete" for rid in robot_ids},
         "actor_finish_details": {rid: actors[rid].finish_claim for rid in robot_ids},
         "ticks": tick_index,
@@ -1109,7 +1125,7 @@ def run_rgb_communication(
     trace.emit(
         "run_finished",
         robot_id=None,
-        sim_time_s=_trace_sim_time(getattr(port, "clock_domain", "monotonic"), now_s),
+        sim_time_s=clock.sim_time,
         payload=result,
     )
     return {**result, "events": copy.deepcopy(trace.events)}
