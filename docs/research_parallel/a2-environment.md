@@ -59,6 +59,11 @@ final_test_ids는 원본 A/B 전체를 포함해야 한다. 실패 맵 사후제
 scenario_assignments는 `{scenario_id,parent_map_id,map_sha256,layout_sha256,split}`이며
 물체·사건·프레임 변형도 effective 부모 split을 상속한다. seed/시작점 변화는 맵 수가 아니다.
 
+기존 grasp/alignment 자료의 출처를 정직하게 나타내야 할 때만
+`audit_exposure(..., allow_legacy_dispatch_open=True)`를 사용한다. 동일한 소스 정의의
+dispatch_open을 별도 regression 부모로 추가한다. suite22의 맵 수/학습/시험에는
+합산하지 않으며 이 옵션은 development connection 진단용이다.
+
 ## T1/T2/T3
 
 training_plan schema=`rgb-training-comparison.v1`, arms/fixed_test_ids/training_seeds/

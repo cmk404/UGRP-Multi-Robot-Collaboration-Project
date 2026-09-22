@@ -488,6 +488,22 @@ class EnvironmentExposureTests(unittest.TestCase):
         self.assertFalse(report["valid"])
         self.assertIn("inherit", report["blockers"][0])
 
+    def test_legacy_exposure_requires_explicit_registry_and_never_becomes_train_or_test(self):
+        from sim.act_map_suite import layout_digest
+        from sim.research_dispatch_arena import authored_map, digest
+        provenance = self.provenance()
+        legacy = authored_map("open")
+        provenance["records"][0]["map_refs"] = [{"map_id": "dispatch_open",
+            "map_sha256": digest(legacy), "layout_sha256": layout_digest(legacy)}]
+        for record in provenance["records"]:
+            if record["id"] != "model":
+                record["declared_splits"] = ["regression"]
+        self.assertFalse(audit_exposure(self.cases, provenance, [])["valid"])
+        report = audit_exposure(self.cases, provenance, [], allow_legacy_dispatch_open=True)
+        self.assertTrue(report["valid"])
+        self.assertEqual(report["effective_splits"]["dispatch_open"], "regression")
+        self.assertEqual(report["lineage_maps"]["prompt"], ["dispatch_open"])
+
     def test_geometry_qa_is_distinct_from_policy_diagnosis_or_prompt_exposure(self):
         for use, valid in (("geometry_qa", True), ("policy_diagnosis", False), ("prompt_tuning", False)):
             provenance = self.provenance("test-a-open")

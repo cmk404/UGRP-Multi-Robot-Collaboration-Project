@@ -483,7 +483,8 @@ def summarize_episodes(schedule: Sequence[Mapping[str, Any]], rows: Sequence[Map
 
 
 def audit_exposure(cases: Sequence[Mapping[str, Any]], provenance: Mapping[str, Any],
-                   scenario_assignments: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+                   scenario_assignments: Sequence[Mapping[str, Any]], *,
+                   allow_legacy_dispatch_open: bool = False) -> dict[str, Any]:
     """E0: reuse the suite split validator, then audit all transitive exposure.
 
     Authored geometry QA alone is not policy exposure. Diagnostics, training,
@@ -491,7 +492,7 @@ def audit_exposure(cases: Sequence[Mapping[str, Any]], provenance: Mapping[str, 
     foundation pretraining is disclosed, never certified uncontaminated.
     """
     from sim.act_map_suite import layout_digest, validate_splits
-    from sim.research_dispatch_arena import digest
+    from sim.research_dispatch_arena import authored_map, digest
 
     blockers: list[str] = []
     effective: dict[str, str] = {}
@@ -500,6 +501,9 @@ def audit_exposure(cases: Sequence[Mapping[str, Any]], provenance: Mapping[str, 
     try:
         validate_splits(cases)
         by_map = {case["id"]: case for case in cases}
+        if allow_legacy_dispatch_open:
+            by_map["dispatch_open"] = {"id": "dispatch_open", "split": "regression",
+                                       "topology_id": "legacy-dispatch-room", "map": authored_map("open")}
         effective = {mid: case["split"] for mid, case in by_map.items()}
         _exact(provenance, {"schema_version", "records", "exposures", "freeze_order", "final_test_ids"}, "provenance")
         _require(provenance["schema_version"] == "rgb-map-exposure.v1", "exposure schema mismatch")
@@ -604,6 +608,7 @@ def audit_exposure(cases: Sequence[Mapping[str, Any]], provenance: Mapping[str, 
     return {"schema_version": "rgb-map-exposure-result.v1", "valid": not blockers,
             "blockers": blockers, "effective_splits": effective,
             "map_topologies": {case["id"]: case["topology_id"] for case in cases},
+            "legacy_development_registry": ["dispatch_open"] if allow_legacy_dispatch_open else [],
             "lineage_maps": {rid: sorted(maps) for rid, maps in lineage.items()},
             "unknown_origins": sorted(set(unknown)),
             "uncontaminated_pretraining_claim": False,
