@@ -102,11 +102,16 @@ class Scene:
             from sim.act_map_suite import load_suite, scene_config, SPEC
             self._read(SPEC)
             self._read(ROOT/'maps/act_generalization/protocol_v1.json')
-            _, cases = load_suite()
-            case = next(c for c in cases if c['id'] == name)
-            if case['split'] == 'regression':
+            suite, cases = load_suite()
+            # Resolution generates and validates the whole suite, not only the
+            # selected case. Preserve every map read by that path, including
+            # the authored corner template used by non-regression cases.
+            if suite['include_legacy_regression']:
                 self._read(ROOT/'maps/pair_navigation/catalog.json')
-                self._read(ROOT/case['parameters']['source'])
+            for source in sorted({c['parameters']['source'] for c in cases
+                                  if 'source' in c['parameters']}):
+                self._read(ROOT/source)
+            case = next(c for c in cases if c['id'] == name)
             self.map = copy.deepcopy(case['map'])
             self.config = scene_config(case, physics_seed=seed)
         elif self.family == 'multi_object':
