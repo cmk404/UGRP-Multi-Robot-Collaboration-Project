@@ -8,7 +8,7 @@
 
 ## PR #92의 연구 제어기 검증 — 2026-09-22
 
-[연구 제어기 검증 절차](research_controller_validation.md)는 공통 RGB 실패와 ACT 종료 실패를 분리하고, 모든 예정 사례·물리 판정·원본 해시로 채택 여부를 확인한다. [현재 후보 기록](../experiments/2026-09-22-research-controller-qualification/README.md)의 실행 SHA와 완료 범위를 따른다. 새 LLM 통신 비교가 아닌 계획 재생을 통한 구성요소 검증이며, PR 승인·병합 전 변경이다.
+[연구 제어기 검증 절차](research_controller_validation.md)에 따라 고정 소스 `f70bd9b`로 9/9회를 마쳤다. RGB 3/3, ACT+RGB 2/3, RGB 도착 확인을 붙인 ACT 0/3 성공이며, 지정된 세 회귀 조건에서는 RGB만 기본 제어기로 채택 가능하다. 공통 접근·파지 실패는 9회 모두 통과했고 남은 실패는 ACT 조기 종료 2회와 종료 신호 누락에 따른 행동 한도 소진 2회다. [최종 원본 감사·대시보드·영상 기록](../experiments/2026-09-22-research-controller-qualification/README.md)을 따른다. 모든 ACT 요청 4,552건의 입력 재구성, 9개 스냅샷·영상과 실제 TensorBoard 화면을 확인했다. 알려진 open-map 세 조건의 계획 재생 구성요소 검증이며, 새 지도 일반화·LLM 통신 효과는 입증하지 않는다. PR #92 승인·병합 전 변경이다.
 
 ## 목적별로 읽기
 

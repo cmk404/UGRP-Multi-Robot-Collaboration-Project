@@ -1,5 +1,29 @@
 # Research controller qualification
 
+## Completed fixed-suite acceptance — 2026-09-22
+
+All **9/9 preregistered trials** finished on unchanged execution source `f70bd9b20e0972ce71f24d724211f4cd27f7786e`. The common RGB entry, image translation and attachment checks now passed in all nine trials. The RGB controller qualifies for these three exposed open-map cases; neither ACT condition qualifies as the default controller.
+
+| Controller | Whole-task success | Failure count / attempts | Remaining failure | Successful wall-time median |
+| --- | --- | --- | --- | --- |
+| RGB | 3/3 | 0/3 | None in this fixed suite | 801.98 s |
+| ACT-guarded | 0/3 | 3/3 | 2 premature stop proposals; 1 decision-budget exhaustion | N/A |
+| ACT-RGB-refined | 2/3 | 1/3 | No ACT stop proposal, so no RGB handoff; decision budget exhausted | 889.83 s |
+
+Both case-3 ACT runs exhausted the declared 900-decision budget and recorded 324,709 physics steps with robot/obstacle contact. This is a step count, not a count of separate collision events. All nine had weld OFF and zero recorded inter-robot contact samples; all five successful runs also had zero obstacle-contact steps. Failed time is not a speed improvement. The Mac had variable shared load, so wall-time differences are descriptive and are not a controlled parallel-speedup result.
+
+The strict ACT failures are valid research results, not launch failures or missing evidence. All nine cases entered carry, including all six ACT cases; no common approach failure, runtime launch failure, omitted trial or physical interruption appears in this final denominator. Saved ACT input reconstruction passed for **4,552 requests**, including original JPEG hashes, causal history, static task context and actual previously issued commands. No fresh external Jev/Gemini request was made. This is a replay-plan component comparison, not an LLM communication comparison.
+
+Source/result/scene/input/command/evaluation/video readback is in [the final assessment](acceptance-v3-assessment.json). [The combined report](acceptance-v3-combined-report.json) retains the three raw dispatcher reports and their hashes. The B dispatcher stopped only after its fourth physical outcome was saved; its one unstarted job ran exactly once in C. B's original report correctly remains 4/5, while A4+B4+C1 covers all nine unique trials. [The handoff record](dispatch-handoff-v3.json) preserves that operational distinction. All owned simulation and handoff processes exited; the shared TensorBoard viewer remains available.
+
+All nine completed snapshots passed source-hash and scalar readback, all nine original MP4 endpoints passed HTTP Range 206, and Chrome 강 displayed their HParams rows, four configured columns, nine filtered runs and seven pinned metrics. [Dashboard verification](acceptance-v3-dashboard-verification.json) and [the saved dashboard link](dashboard-link.txt) record this. Native HParams labels truncate visually; their full identities were checked in accessibility text. The final handoff's post-run export is documented separately because the raw B report was preserved. Original success and failure videos remain local; [successful](video-preview.json) and [failed](failure-video-preview.json) 4× previews change playback only.
+
+The termination-aware 8,000-update candidate remains rejected: all three development episodes missed their terminal decision. The unchanged expanded checkpoint was used for all physical ACT trials. The three physical cases were exposed during diagnosis and establish fixed regression acceptance only, not unseen-map generalization. Original failed, interrupted and unstarted earlier candidates remain in [the supersession record](superseded-partial-cohorts.json), outside this final denominator. Raw local storage is not a remote backup.
+
+Use [the reusable execution and admission procedure](../../docs/research_controller_validation.md). PR #92 is reviewable but unmerged, stacked on #91; existing main has not been replaced by this experiment branch.
+
+## Preserved design and diagnostic history
+
 Repair the common coarse-entry failure, prevent unsupported learned completion from releasing a load, and explicitly distinguish the optional ACT + RGB final-alignment controller. Preserve the previous nine failures as diagnosed regression cases, not new held-out results.
 
 The initial candidate rounds the existing bounded pixel tolerance to complete pixel cells; colour/identity, four-corner support, size, ratio and angle gates remain. Default ACT completion requires an independent RGB destination estimate. A rejected proposal is a named model failure, with no silent steering replacement. `rgb_refined` is a separately labelled hybrid condition using the existing RGB final waypoint within the destination neighbourhood. Unassisted historical `learned` mode remains explicit.
@@ -36,3 +60,6 @@ Pixel candidate `2480274` completed the previously failing qualification-1 RGB m
 On case 3, the original hybrid waited for three simultaneous ACT stop votes, although one robot had already voted to stop. At saved step 100 the RGB error was only [-8.28, -12.39]px, inside the declared 80px final-refinement neighbourhood, but the other score was 0.623 rather than the 0.65 threshold. Subsequent scores fell and transit resumed, wasting the trial budget. The revised explicit hybrid hands off on the first local stop proposal; the strict ACT condition immediately rejects a proposal outside the destination, matching its episode-level audit. Legacy learned mode is unchanged. The original 738c4de cohort (6 completed, 1 interrupted, 2 not started) and bd634c0 shard (1 completed, 1 interrupted, 4 not started) were stopped and their owned children reaped. `superseded-partial-cohorts.json` preserves exact report hashes; neither partial cohort is a complete failure-rate comparison. The bd634c0 hybrid shard was never started.
 
 The next candidate receives one complete fixed nine-pair acceptance suite on unchanged source and models, split into balanced, disjoint trial-ID shards with at most two simulations owned by this task. Ordinary physical/model failures continue to the next planned trial. No replay plan involves a new Jev/Gemini call. A rejected strict ACT controller is an expected research outcome, not an environment success.
+
+
+During v3, shard A completed all four jobs while B still had the last hybrid case and an unstarted guarded case. `dispatch-amendment-v3.json` was recorded before launching that already-planned guarded case in shard C on the free second slot. The finite boundary watcher stops only B's dispatcher after its current physical child exits and the fourth result is saved. B's original report remains partial; combining A/B/C explicitly permits partial dispatchers but requires all nine originally planned physical trials exactly once and retains every raw row. Model/source/limits/cases are unchanged; no extra physical trial is authorized by this handoff. This avoids serially waiting for two long tail jobs. Final handoff completion is recorded separately after it occurs.

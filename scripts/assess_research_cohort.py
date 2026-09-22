@@ -59,6 +59,8 @@ def assess(report_path):
             'raw':str(root),'artifact_sha256':artifacts,'required_evidence_complete':required<=artifacts.keys(),
             'artifact_json_valid':valid_json,
             'report_matches_readback':consistent,'source_physics_checks_pass':boundary,
+            'obstacle_contact_steps':result.get('obstacle_contact_steps'),
+            'robot_robot_contact_samples':contacts,'weld_steps':evaluation.get('weld_steps'),
             'outcome':verdict,'wall_s':result.get('wall_s'),
             'commands':command_count,'commands_scope':'Issued actions, excluding initial SETUP target snapshots; same as TensorBoard',
             'act_model_calls':sum(len(d.get('inputs',{})) for d in act),

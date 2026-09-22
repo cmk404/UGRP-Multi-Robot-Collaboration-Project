@@ -1,0 +1,1126 @@
+{
+  "source_sha": "f70bd9b20e0972ce71f24d724211f4cd27f7786e",
+  "protocol_sha256": "894b2331e11ed8c14859dbaf850a96876c0386b5871f14a0b2067a7846dd8cda",
+  "protocol": {
+    "controls": {
+      "efficient_capture": true,
+      "route_overlap": true,
+      "max_wall_s": 2400,
+      "max_carry_steps": 900,
+      "video_fps": 4,
+      "min_free_gib": 8,
+      "overlap_start": "grasp"
+    },
+    "grasp": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+    "stages": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+    "asset_sha256": {
+      "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied/model-r3-yaw.json": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied/model-r3-forward.json": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied/model-r1-lateral.json": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied/model-r3-lateral.json": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied/model-r1-yaw.json": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied/model-r1-forward.json": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied/varied-start-skill.json": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp/student-skill.json": "b244293aa1a5dd2efda1a0d6e8b15582d8a12a3e4d151d46cf679321535e0970",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp/r3-model.json": "8349e10ed659abf4bc62f6fcc62bf22d22ca95fe05d954b42b3883b0d070861d",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp/evaluation-fixture.json": "c2183ad250ea16606d652f91d117e4abb085f9c88b2ab0115de0ba93e1bc5f3f",
+      "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp/r1-model.json": "c6995cac23ccf2fd168fb222c2332b518507d7ea66921aaf0c231bc460598e45",
+      "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/model-20260918/act/model.safetensors": "ddf79d3577b9d66aa53e16fbe387bbe1039a5ddb0b4cc3caeb7292dc81dcd90e",
+      "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/model-20260918/act/config.json": "2a923ed3a16197841fd599301ed157bc2e3518e35a8fc99563f45d73f8089665",
+      "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/model-20260918/act/adapter.json": "6da54d883574929010bf4a79d2419cd6cdf1d719e5e8cf060be6e4212b3f6b2b",
+      "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/assets/verified-data/data/dataset.json": "b1df68d3ccc085898c07d8f8120971c1d3e55f85d23d6c58dbf7f541e8edbe0c",
+      "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/assets/training/model-r128-h4-s20260921/act/model.safetensors": "14e924d03a62d3ac54062440c77931f0f6d5616bddfef8c893e6dfb644c4c863",
+      "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/assets/training/model-r128-h4-s20260921/act/config.json": "a4391e9cd4c9d5b8dc266f9706bad0e276cd7540df00aeb9b1e3195c389e7110",
+      "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/assets/training/model-r128-h4-s20260921/act/adapter.json": "cfc00170f7056da656087a5ae38718ded59d648c0817aadbaf29201eb986e50f",
+      "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/model-expanded/act/model.safetensors": "c98a640167110f7ee0b5fc2b1d5edde4a4065464c6c47519b366cc3ff8ee4e96",
+      "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/model-expanded/act/config.json": "a4391e9cd4c9d5b8dc266f9706bad0e276cd7540df00aeb9b1e3195c389e7110",
+      "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/model-expanded/act/adapter.json": "cfc00170f7056da656087a5ae38718ded59d648c0817aadbaf29201eb986e50f"
+    },
+    "scope": "Fixed exposed benchmark acceptance after unilateral stop handoff repair; not unseen generalization",
+    "conditions": {
+      "RGB": {},
+      "ACT-guarded": {
+        "model": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/model-expanded/act",
+        "stop_mode": "rgb_guarded"
+      },
+      "ACT-RGB-refined": {
+        "model": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/model-expanded/act",
+        "stop_mode": "rgb_refined"
+      }
+    },
+    "test": [
+      {
+        "id": "qualification-1",
+        "variant": "open",
+        "seed": 11,
+        "dock": "dock_a",
+        "offset": [
+          -0.01,
+          0.004,
+          -0.5
+        ],
+        "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+      },
+      {
+        "id": "qualification-2",
+        "variant": "open",
+        "seed": 11,
+        "dock": "dock_a",
+        "offset": [
+          0.008,
+          -0.004,
+          0.5
+        ],
+        "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+      },
+      {
+        "id": "qualification-3",
+        "variant": "open",
+        "seed": 11,
+        "dock": "dock_a",
+        "offset": [
+          0.02,
+          0.003,
+          -1.0
+        ],
+        "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+      }
+    ],
+    "expected_source_sha": "f70bd9b20e0972ce71f24d724211f4cd27f7786e",
+    "model_selection": {
+      "candidate_admission": "failed development terminal audit; 3/3 missed",
+      "model": "unchanged previous expanded model",
+      "audit": "terminal-candidate-development-audit.json",
+      "fresh_cases_inspected": true
+    },
+    "execution_layout": {
+      "maximum_simultaneous_owned_jobs": 2,
+      "partition": "disjoint trial_ids with unchanged full conditions and original ordering",
+      "timing_scope": "Variable shared Mac load; descriptive only"
+    }
+  },
+  "jobs": [
+    {
+      "case": {
+        "id": "qualification-1",
+        "variant": "open",
+        "seed": 11,
+        "dock": "dock_a",
+        "offset": [
+          -0.01,
+          0.004,
+          -0.5
+        ],
+        "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+      },
+      "condition": "RGB",
+      "repeat": 0,
+      "trial_id": "RGB--qualification-1--r0"
+    },
+    {
+      "case": {
+        "id": "qualification-1",
+        "variant": "open",
+        "seed": 11,
+        "dock": "dock_a",
+        "offset": [
+          -0.01,
+          0.004,
+          -0.5
+        ],
+        "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+      },
+      "condition": "ACT-guarded",
+      "repeat": 0,
+      "trial_id": "ACT-guarded--qualification-1--r0"
+    },
+    {
+      "case": {
+        "id": "qualification-1",
+        "variant": "open",
+        "seed": 11,
+        "dock": "dock_a",
+        "offset": [
+          -0.01,
+          0.004,
+          -0.5
+        ],
+        "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+      },
+      "condition": "ACT-RGB-refined",
+      "repeat": 0,
+      "trial_id": "ACT-RGB-refined--qualification-1--r0"
+    },
+    {
+      "case": {
+        "id": "qualification-2",
+        "variant": "open",
+        "seed": 11,
+        "dock": "dock_a",
+        "offset": [
+          0.008,
+          -0.004,
+          0.5
+        ],
+        "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+      },
+      "condition": "ACT-guarded",
+      "repeat": 0,
+      "trial_id": "ACT-guarded--qualification-2--r0"
+    },
+    {
+      "case": {
+        "id": "qualification-2",
+        "variant": "open",
+        "seed": 11,
+        "dock": "dock_a",
+        "offset": [
+          0.008,
+          -0.004,
+          0.5
+        ],
+        "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+      },
+      "condition": "ACT-RGB-refined",
+      "repeat": 0,
+      "trial_id": "ACT-RGB-refined--qualification-2--r0"
+    },
+    {
+      "case": {
+        "id": "qualification-2",
+        "variant": "open",
+        "seed": 11,
+        "dock": "dock_a",
+        "offset": [
+          0.008,
+          -0.004,
+          0.5
+        ],
+        "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+      },
+      "condition": "RGB",
+      "repeat": 0,
+      "trial_id": "RGB--qualification-2--r0"
+    },
+    {
+      "case": {
+        "id": "qualification-3",
+        "variant": "open",
+        "seed": 11,
+        "dock": "dock_a",
+        "offset": [
+          0.02,
+          0.003,
+          -1.0
+        ],
+        "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+      },
+      "condition": "ACT-RGB-refined",
+      "repeat": 0,
+      "trial_id": "ACT-RGB-refined--qualification-3--r0"
+    },
+    {
+      "case": {
+        "id": "qualification-3",
+        "variant": "open",
+        "seed": 11,
+        "dock": "dock_a",
+        "offset": [
+          0.02,
+          0.003,
+          -1.0
+        ],
+        "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+      },
+      "condition": "RGB",
+      "repeat": 0,
+      "trial_id": "RGB--qualification-3--r0"
+    },
+    {
+      "case": {
+        "id": "qualification-3",
+        "variant": "open",
+        "seed": 11,
+        "dock": "dock_a",
+        "offset": [
+          0.02,
+          0.003,
+          -1.0
+        ],
+        "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+      },
+      "condition": "ACT-guarded",
+      "repeat": 0,
+      "trial_id": "ACT-guarded--qualification-3--r0"
+    }
+  ],
+  "runs": [
+    {
+      "case": {
+        "id": "qualification-1",
+        "variant": "open",
+        "seed": 11,
+        "dock": "dock_a",
+        "offset": [
+          -0.01,
+          0.004,
+          -0.5
+        ],
+        "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+      },
+      "condition": "RGB",
+      "repeat": 0,
+      "trial_id": "RGB--qualification-1--r0",
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_s": 812.6401000000005,
+      "output": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-a/trials/RGB--qualification-1--r0",
+      "command": [
+        "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/scripts/run_dispatch_e2e.py",
+        "--executor",
+        "skills",
+        "--variant",
+        "open",
+        "--seed",
+        "11",
+        "--required-dock",
+        "dock_a",
+        "--plan-replay",
+        "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+        "--stage-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+        "--output",
+        "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-a/trials/RGB--qualification-1--r0",
+        "--max-wall-s",
+        "2400",
+        "--carry-max-steps",
+        "900",
+        "--video-fps",
+        "4",
+        "--spawn-offset",
+        "-0.01",
+        "0.004",
+        "-0.5",
+        "--efficient-capture",
+        "--route-overlap",
+        "--overlap-start",
+        "grasp"
+      ],
+      "outcome": {
+        "whole_success": true,
+        "robot_result_available": true,
+        "failure_kind": null,
+        "failure_phase": "FINISHED",
+        "error": null,
+        "stop_reason": "",
+        "carry_entered": true,
+        "act_carry_entered": false,
+        "failed_component": null,
+        "carry_censored_by_other_component": false,
+        "beam_success": true,
+        "robot_robot_contact_samples": 0,
+        "wall_s": 810.4671510830012
+      }
+    },
+    {
+      "case": {
+        "id": "qualification-1",
+        "variant": "open",
+        "seed": 11,
+        "dock": "dock_a",
+        "offset": [
+          -0.01,
+          0.004,
+          -0.5
+        ],
+        "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+      },
+      "condition": "ACT-guarded",
+      "repeat": 0,
+      "trial_id": "ACT-guarded--qualification-1--r0",
+      "exit_code": 1,
+      "timed_out": false,
+      "wall_s": 602.7753166660004,
+      "output": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-b/trials/ACT-guarded--qualification-1--r0",
+      "command": [
+        "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/scripts/run_dispatch_e2e.py",
+        "--executor",
+        "skills",
+        "--variant",
+        "open",
+        "--seed",
+        "11",
+        "--required-dock",
+        "dock_a",
+        "--plan-replay",
+        "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+        "--stage-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+        "--output",
+        "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-b/trials/ACT-guarded--qualification-1--r0",
+        "--max-wall-s",
+        "2400",
+        "--carry-max-steps",
+        "900",
+        "--video-fps",
+        "4",
+        "--spawn-offset",
+        "-0.01",
+        "0.004",
+        "-0.5",
+        "--efficient-capture",
+        "--route-overlap",
+        "--overlap-start",
+        "grasp",
+        "--carry-act-model",
+        "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/model-expanded/act",
+        "--carry-act-python",
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python",
+        "--carry-act-stop-mode",
+        "rgb_guarded"
+      ],
+      "outcome": {
+        "whole_success": false,
+        "robot_result_available": true,
+        "failure_kind": "premature_model_stop",
+        "failure_phase": "TRANSIT",
+        "error": "PrematureCarryStop: ACT premature stop rejected by RGB arrival guard",
+        "stop_reason": "",
+        "carry_entered": true,
+        "act_carry_entered": true,
+        "failed_component": "pair",
+        "carry_censored_by_other_component": false,
+        "beam_success": false,
+        "robot_robot_contact_samples": 0,
+        "wall_s": 600.5672238749994
+      }
+    },
+    {
+      "case": {
+        "id": "qualification-1",
+        "variant": "open",
+        "seed": 11,
+        "dock": "dock_a",
+        "offset": [
+          -0.01,
+          0.004,
+          -0.5
+        ],
+        "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+      },
+      "condition": "ACT-RGB-refined",
+      "repeat": 0,
+      "trial_id": "ACT-RGB-refined--qualification-1--r0",
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_s": 982.4562352909998,
+      "output": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-b/trials/ACT-RGB-refined--qualification-1--r0",
+      "command": [
+        "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/scripts/run_dispatch_e2e.py",
+        "--executor",
+        "skills",
+        "--variant",
+        "open",
+        "--seed",
+        "11",
+        "--required-dock",
+        "dock_a",
+        "--plan-replay",
+        "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+        "--stage-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+        "--output",
+        "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-b/trials/ACT-RGB-refined--qualification-1--r0",
+        "--max-wall-s",
+        "2400",
+        "--carry-max-steps",
+        "900",
+        "--video-fps",
+        "4",
+        "--spawn-offset",
+        "-0.01",
+        "0.004",
+        "-0.5",
+        "--efficient-capture",
+        "--route-overlap",
+        "--overlap-start",
+        "grasp",
+        "--carry-act-model",
+        "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/model-expanded/act",
+        "--carry-act-python",
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python",
+        "--carry-act-stop-mode",
+        "rgb_refined"
+      ],
+      "outcome": {
+        "whole_success": true,
+        "robot_result_available": true,
+        "failure_kind": null,
+        "failure_phase": "FINISHED",
+        "error": null,
+        "stop_reason": "",
+        "carry_entered": true,
+        "act_carry_entered": true,
+        "failed_component": null,
+        "carry_censored_by_other_component": false,
+        "beam_success": true,
+        "robot_robot_contact_samples": 0,
+        "wall_s": 979.3865566669992
+      }
+    },
+    {
+      "case": {
+        "id": "qualification-2",
+        "variant": "open",
+        "seed": 11,
+        "dock": "dock_a",
+        "offset": [
+          0.008,
+          -0.004,
+          0.5
+        ],
+        "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+      },
+      "condition": "ACT-guarded",
+      "repeat": 0,
+      "trial_id": "ACT-guarded--qualification-2--r0",
+      "exit_code": 1,
+      "timed_out": false,
+      "wall_s": 593.836145833,
+      "output": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-a/trials/ACT-guarded--qualification-2--r0",
+      "command": [
+        "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/scripts/run_dispatch_e2e.py",
+        "--executor",
+        "skills",
+        "--variant",
+        "open",
+        "--seed",
+        "11",
+        "--required-dock",
+        "dock_a",
+        "--plan-replay",
+        "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+        "--stage-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+        "--output",
+        "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-a/trials/ACT-guarded--qualification-2--r0",
+        "--max-wall-s",
+        "2400",
+        "--carry-max-steps",
+        "900",
+        "--video-fps",
+        "4",
+        "--spawn-offset",
+        "0.008",
+        "-0.004",
+        "0.5",
+        "--efficient-capture",
+        "--route-overlap",
+        "--overlap-start",
+        "grasp",
+        "--carry-act-model",
+        "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/model-expanded/act",
+        "--carry-act-python",
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python",
+        "--carry-act-stop-mode",
+        "rgb_guarded"
+      ],
+      "outcome": {
+        "whole_success": false,
+        "robot_result_available": true,
+        "failure_kind": "premature_model_stop",
+        "failure_phase": "TRANSIT",
+        "error": "PrematureCarryStop: ACT premature stop rejected by RGB arrival guard",
+        "stop_reason": "",
+        "carry_entered": true,
+        "act_carry_entered": true,
+        "failed_component": "pair",
+        "carry_censored_by_other_component": false,
+        "beam_success": false,
+        "robot_robot_contact_samples": 0,
+        "wall_s": 590.5913929580001
+      }
+    },
+    {
+      "case": {
+        "id": "qualification-2",
+        "variant": "open",
+        "seed": 11,
+        "dock": "dock_a",
+        "offset": [
+          0.008,
+          -0.004,
+          0.5
+        ],
+        "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+      },
+      "condition": "ACT-RGB-refined",
+      "repeat": 0,
+      "trial_id": "ACT-RGB-refined--qualification-2--r0",
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_s": 803.2734931249997,
+      "output": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-a/trials/ACT-RGB-refined--qualification-2--r0",
+      "command": [
+        "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/scripts/run_dispatch_e2e.py",
+        "--executor",
+        "skills",
+        "--variant",
+        "open",
+        "--seed",
+        "11",
+        "--required-dock",
+        "dock_a",
+        "--plan-replay",
+        "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+        "--stage-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+        "--output",
+        "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-a/trials/ACT-RGB-refined--qualification-2--r0",
+        "--max-wall-s",
+        "2400",
+        "--carry-max-steps",
+        "900",
+        "--video-fps",
+        "4",
+        "--spawn-offset",
+        "0.008",
+        "-0.004",
+        "0.5",
+        "--efficient-capture",
+        "--route-overlap",
+        "--overlap-start",
+        "grasp",
+        "--carry-act-model",
+        "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/model-expanded/act",
+        "--carry-act-python",
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python",
+        "--carry-act-stop-mode",
+        "rgb_refined"
+      ],
+      "outcome": {
+        "whole_success": true,
+        "robot_result_available": true,
+        "failure_kind": null,
+        "failure_phase": "FINISHED",
+        "error": null,
+        "stop_reason": "",
+        "carry_entered": true,
+        "act_carry_entered": true,
+        "failed_component": null,
+        "carry_censored_by_other_component": false,
+        "beam_success": true,
+        "robot_robot_contact_samples": 0,
+        "wall_s": 800.2786850829998
+      }
+    },
+    {
+      "case": {
+        "id": "qualification-2",
+        "variant": "open",
+        "seed": 11,
+        "dock": "dock_a",
+        "offset": [
+          0.008,
+          -0.004,
+          0.5
+        ],
+        "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+      },
+      "condition": "RGB",
+      "repeat": 0,
+      "trial_id": "RGB--qualification-2--r0",
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_s": 805.371571959,
+      "output": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-b/trials/RGB--qualification-2--r0",
+      "command": [
+        "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/scripts/run_dispatch_e2e.py",
+        "--executor",
+        "skills",
+        "--variant",
+        "open",
+        "--seed",
+        "11",
+        "--required-dock",
+        "dock_a",
+        "--plan-replay",
+        "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+        "--stage-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+        "--output",
+        "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-b/trials/RGB--qualification-2--r0",
+        "--max-wall-s",
+        "2400",
+        "--carry-max-steps",
+        "900",
+        "--video-fps",
+        "4",
+        "--spawn-offset",
+        "0.008",
+        "-0.004",
+        "0.5",
+        "--efficient-capture",
+        "--route-overlap",
+        "--overlap-start",
+        "grasp"
+      ],
+      "outcome": {
+        "whole_success": true,
+        "robot_result_available": true,
+        "failure_kind": null,
+        "failure_phase": "FINISHED",
+        "error": null,
+        "stop_reason": "",
+        "carry_entered": true,
+        "act_carry_entered": false,
+        "failed_component": null,
+        "carry_censored_by_other_component": false,
+        "beam_success": true,
+        "robot_robot_contact_samples": 0,
+        "wall_s": 801.9765357079996
+      }
+    },
+    {
+      "case": {
+        "id": "qualification-3",
+        "variant": "open",
+        "seed": 11,
+        "dock": "dock_a",
+        "offset": [
+          0.02,
+          0.003,
+          -1.0
+        ],
+        "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+      },
+      "condition": "ACT-RGB-refined",
+      "repeat": 0,
+      "trial_id": "ACT-RGB-refined--qualification-3--r0",
+      "exit_code": 1,
+      "timed_out": false,
+      "wall_s": 2167.049570250001,
+      "output": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-b/trials/ACT-RGB-refined--qualification-3--r0",
+      "command": [
+        "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/scripts/run_dispatch_e2e.py",
+        "--executor",
+        "skills",
+        "--variant",
+        "open",
+        "--seed",
+        "11",
+        "--required-dock",
+        "dock_a",
+        "--plan-replay",
+        "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+        "--stage-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+        "--output",
+        "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-b/trials/ACT-RGB-refined--qualification-3--r0",
+        "--max-wall-s",
+        "2400",
+        "--carry-max-steps",
+        "900",
+        "--video-fps",
+        "4",
+        "--spawn-offset",
+        "0.02",
+        "0.003",
+        "-1.0",
+        "--efficient-capture",
+        "--route-overlap",
+        "--overlap-start",
+        "grasp",
+        "--carry-act-model",
+        "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/model-expanded/act",
+        "--carry-act-python",
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python",
+        "--carry-act-stop-mode",
+        "rgb_refined"
+      ],
+      "outcome": {
+        "whole_success": false,
+        "robot_result_available": true,
+        "failure_kind": "decision_budget",
+        "failure_phase": "TRANSIT",
+        "error": "RuntimeError: ACT carry decision budget exhausted",
+        "stop_reason": "",
+        "carry_entered": true,
+        "act_carry_entered": true,
+        "failed_component": "pair",
+        "carry_censored_by_other_component": false,
+        "beam_success": false,
+        "robot_robot_contact_samples": 0,
+        "wall_s": 2163.945546875
+      }
+    },
+    {
+      "case": {
+        "id": "qualification-3",
+        "variant": "open",
+        "seed": 11,
+        "dock": "dock_a",
+        "offset": [
+          0.02,
+          0.003,
+          -1.0
+        ],
+        "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+      },
+      "condition": "RGB",
+      "repeat": 0,
+      "trial_id": "RGB--qualification-3--r0",
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_s": 761.3802879579998,
+      "output": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-a/trials/RGB--qualification-3--r0",
+      "command": [
+        "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/scripts/run_dispatch_e2e.py",
+        "--executor",
+        "skills",
+        "--variant",
+        "open",
+        "--seed",
+        "11",
+        "--required-dock",
+        "dock_a",
+        "--plan-replay",
+        "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+        "--stage-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+        "--output",
+        "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-a/trials/RGB--qualification-3--r0",
+        "--max-wall-s",
+        "2400",
+        "--carry-max-steps",
+        "900",
+        "--video-fps",
+        "4",
+        "--spawn-offset",
+        "0.02",
+        "0.003",
+        "-1.0",
+        "--efficient-capture",
+        "--route-overlap",
+        "--overlap-start",
+        "grasp"
+      ],
+      "outcome": {
+        "whole_success": true,
+        "robot_result_available": true,
+        "failure_kind": null,
+        "failure_phase": "FINISHED",
+        "error": null,
+        "stop_reason": "",
+        "carry_entered": true,
+        "act_carry_entered": false,
+        "failed_component": null,
+        "carry_censored_by_other_component": false,
+        "beam_success": true,
+        "robot_robot_contact_samples": 0,
+        "wall_s": 758.9261247089999
+      }
+    },
+    {
+      "case": {
+        "id": "qualification-3",
+        "variant": "open",
+        "seed": 11,
+        "dock": "dock_a",
+        "offset": [
+          0.02,
+          0.003,
+          -1.0
+        ],
+        "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+      },
+      "condition": "ACT-guarded",
+      "repeat": 0,
+      "trial_id": "ACT-guarded--qualification-3--r0",
+      "exit_code": 1,
+      "timed_out": false,
+      "wall_s": 1938.0299650839988,
+      "output": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-c/trials/ACT-guarded--qualification-3--r0",
+      "command": [
+        "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/mjpython",
+        "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/scripts/run_dispatch_e2e.py",
+        "--executor",
+        "skills",
+        "--variant",
+        "open",
+        "--seed",
+        "11",
+        "--required-dock",
+        "dock_a",
+        "--plan-replay",
+        "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+        "--grasp-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+        "--stage-model-dir",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+        "--output",
+        "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-c/trials/ACT-guarded--qualification-3--r0",
+        "--max-wall-s",
+        "2400",
+        "--carry-max-steps",
+        "900",
+        "--video-fps",
+        "4",
+        "--spawn-offset",
+        "0.02",
+        "0.003",
+        "-1.0",
+        "--efficient-capture",
+        "--route-overlap",
+        "--overlap-start",
+        "grasp",
+        "--carry-act-model",
+        "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/model-expanded/act",
+        "--carry-act-python",
+        "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python",
+        "--carry-act-stop-mode",
+        "rgb_guarded"
+      ],
+      "outcome": {
+        "whole_success": false,
+        "robot_result_available": true,
+        "failure_kind": "decision_budget",
+        "failure_phase": "TRANSIT",
+        "error": "RuntimeError: ACT carry decision budget exhausted",
+        "stop_reason": "",
+        "carry_entered": true,
+        "act_carry_entered": true,
+        "failed_component": "pair",
+        "carry_censored_by_other_component": false,
+        "beam_success": false,
+        "robot_robot_contact_samples": 0,
+        "wall_s": 1935.070194957998
+      }
+    }
+  ],
+  "not_attempted": [],
+  "complete": true,
+  "failure_estimates": {
+    "complete": true,
+    "planned": 9,
+    "attempted": 9,
+    "conditions": {
+      "ACT-RGB-refined": {
+        "planned": 3,
+        "attempted": 3,
+        "pending": 0,
+        "failures": 1,
+        "failure_fraction_attempted": 0.3333333333333333,
+        "failure_kinds": {
+          "decision_budget": 1
+        },
+        "failure_phases": {
+          "TRANSIT": 1
+        },
+        "robot_results_missing": 0,
+        "carry_entries": 3,
+        "carry_entry_unknown": 0,
+        "entry_failures_before_carry": 0,
+        "act_carry_entries": 3,
+        "carry_assessable_entries": 3,
+        "carry_censored_by_other_component": 0,
+        "carry_failures": 1,
+        "carry_failure_fraction": 0.3333333333333333,
+        "by_case": {
+          "qualification-1": {
+            "attempted": 1,
+            "failures": 0
+          },
+          "qualification-2": {
+            "attempted": 1,
+            "failures": 0
+          },
+          "qualification-3": {
+            "attempted": 1,
+            "failures": 1
+          }
+        }
+      },
+      "ACT-guarded": {
+        "planned": 3,
+        "attempted": 3,
+        "pending": 0,
+        "failures": 3,
+        "failure_fraction_attempted": 1.0,
+        "failure_kinds": {
+          "premature_model_stop": 2,
+          "decision_budget": 1
+        },
+        "failure_phases": {
+          "TRANSIT": 3
+        },
+        "robot_results_missing": 0,
+        "carry_entries": 3,
+        "carry_entry_unknown": 0,
+        "entry_failures_before_carry": 0,
+        "act_carry_entries": 3,
+        "carry_assessable_entries": 3,
+        "carry_censored_by_other_component": 0,
+        "carry_failures": 3,
+        "carry_failure_fraction": 1.0,
+        "by_case": {
+          "qualification-1": {
+            "attempted": 1,
+            "failures": 1
+          },
+          "qualification-2": {
+            "attempted": 1,
+            "failures": 1
+          },
+          "qualification-3": {
+            "attempted": 1,
+            "failures": 1
+          }
+        }
+      },
+      "RGB": {
+        "planned": 3,
+        "attempted": 3,
+        "pending": 0,
+        "failures": 0,
+        "failure_fraction_attempted": 0.0,
+        "failure_kinds": {},
+        "failure_phases": {},
+        "robot_results_missing": 0,
+        "carry_entries": 3,
+        "carry_entry_unknown": 0,
+        "entry_failures_before_carry": 0,
+        "act_carry_entries": 0,
+        "carry_assessable_entries": 3,
+        "carry_censored_by_other_component": 0,
+        "carry_failures": 0,
+        "carry_failure_fraction": 0.0,
+        "by_case": {
+          "qualification-1": {
+            "attempted": 1,
+            "failures": 0
+          },
+          "qualification-2": {
+            "attempted": 1,
+            "failures": 0
+          },
+          "qualification-3": {
+            "attempted": 1,
+            "failures": 0
+          }
+        }
+      }
+    },
+    "scope": "Descriptive failure fractions on the fixed case suite. Repeats of a deterministic scene are not independent new environments; no population confidence claim. Pending trials are not failures or successes. Zero carry entries means conditional carry performance is unavailable."
+  },
+  "tensorboard_exports": [
+    {
+      "trial_id": "RGB--qualification-1--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-\uc5f0\uad6c\ud658\uacbd-\uac80\uc99dv3/RGB--qualification-1--r0",
+      "manifest_sha256": "52aebb1913c12f799fb2e767eceea9fb8378a69d6a440854c0fd5bac605a22c8",
+      "event_readback": true,
+      "native_ui_verified": false
+    },
+    {
+      "trial_id": "ACT-guarded--qualification-2--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-\uc5f0\uad6c\ud658\uacbd-\uac80\uc99dv3/ACT-guarded--qualification-2--r0",
+      "manifest_sha256": "94ff2e6ac7d6e0c65484ff8d50c40a6e0505d1c8a7f9302f948c0aa9224997a4",
+      "event_readback": true,
+      "native_ui_verified": false
+    },
+    {
+      "trial_id": "ACT-RGB-refined--qualification-2--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-\uc5f0\uad6c\ud658\uacbd-\uac80\uc99dv3/ACT-RGB-refined--qualification-2--r0",
+      "manifest_sha256": "687df1f476fe61c1e3029a39a0c2480bcc9b71a28ffe982d3bbba17f6ce0cc75",
+      "event_readback": true,
+      "native_ui_verified": false
+    },
+    {
+      "trial_id": "RGB--qualification-3--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-\uc5f0\uad6c\ud658\uacbd-\uac80\uc99dv3/RGB--qualification-3--r0",
+      "manifest_sha256": "5734ec142c0564d71611db81dc2168fd3234264dfa1451d6ef3933960ef4c1cf",
+      "event_readback": true,
+      "native_ui_verified": false
+    },
+    {
+      "trial_id": "ACT-guarded--qualification-1--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-\uc5f0\uad6c\ud658\uacbd-\uac80\uc99dv3/ACT-guarded--qualification-1--r0",
+      "manifest_sha256": "28b00ab5f98f813ae36807f4701d271c0c4c69cd091cecbd2c0622e0e286faf7",
+      "event_readback": true,
+      "native_ui_verified": false
+    },
+    {
+      "trial_id": "ACT-RGB-refined--qualification-1--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-\uc5f0\uad6c\ud658\uacbd-\uac80\uc99dv3/ACT-RGB-refined--qualification-1--r0",
+      "manifest_sha256": "369b74b553c1bedbe03b2af6cd20b506627a6f42bed75406b4c407fe7270af15",
+      "event_readback": true,
+      "native_ui_verified": false
+    },
+    {
+      "trial_id": "RGB--qualification-2--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-\uc5f0\uad6c\ud658\uacbd-\uac80\uc99dv3/RGB--qualification-2--r0",
+      "manifest_sha256": "9b88593407f68b36f369c39dd400b4ffeb8cf9b6797550547be22d3f53685591",
+      "event_readback": true,
+      "native_ui_verified": false
+    },
+    {
+      "trial_id": "ACT-guarded--qualification-3--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-\uc5f0\uad6c\ud658\uacbd-\uac80\uc99dv3/ACT-guarded--qualification-3--r0",
+      "manifest_sha256": "df5b9fca077c8e51ec1fcd22c9743f78dd986cf9adda47ff738ceee7a12a200a",
+      "event_readback": true,
+      "native_ui_verified": false
+    }
+  ],
+  "shards": [
+    {
+      "report": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-a/report.json",
+      "sha256": "600b53c34912bb724764faff0336748250b36dec76c6a2516f1c0daec8df7218",
+      "protocol_sha256": "475ff0b6326a29f968b6d7293736f6aaa15f228548575d9c44860acc283f8cb3",
+      "complete": true,
+      "pending_trial_ids": []
+    },
+    {
+      "report": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-b/report.json",
+      "sha256": "b2b60ee23e1c2acaea4e39ed96eb2899c63be33634f1046b4228cbc9d71c3edd",
+      "protocol_sha256": "67f0bd59cb660efeab73788ddef2a8793fa6e592405ecc7e3acb78f9179efdd0",
+      "complete": false,
+      "pending_trial_ids": [
+        "ACT-guarded--qualification-3--r0"
+      ]
+    },
+    {
+      "report": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-c/report.json",
+      "sha256": "d1dd30c90ed27a8e205c82b27f082e803aa50a45e66083204eba90300b41d6c0",
+      "protocol_sha256": "700a3172cef2d9ae9be4cb7b1bbd7257868dd8cbdb79d436072ca6e699988b26",
+      "complete": true,
+      "pending_trial_ids": []
+    }
+  ],
+  "partial_shards_explicitly_allowed": true,
+  "scope": "Post-run aggregation only; every recorded row is retained and full planned coverage is required. Explicitly allowed partial shards can transfer pending trials to another shard, never drop failures or duplicate attempts. Raw reports retain launch order, commands and timing. Use assess_research_cohort for raw evidence readback."
+}
