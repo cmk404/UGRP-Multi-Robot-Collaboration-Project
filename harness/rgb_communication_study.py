@@ -106,6 +106,26 @@ def source_file_hashes(root: Path) -> dict[str, str]:
             if (root / name).is_file() and (root / name).suffix in {".py", ".json", ".xml", ".txt"}}
 
 
+def verify_local_assets(catalog: dict, descriptor: dict) -> None:
+    """Explicit local-only hash binding; never relax generic evidence paths."""
+    if set(catalog) != {"schema", "mode", "files"} \
+            or catalog["schema"] != "rgb-local-assets.v1" \
+            or catalog["mode"] != "read_only_reference" \
+            or not isinstance(catalog["files"], dict) or not catalog["files"]:
+        raise ContractError("invalid read-only local asset catalog")
+    for name, expected in catalog["files"].items():
+        if not isinstance(name, str) or not isinstance(expected, str):
+            raise ContractError("invalid local asset path/hash")
+        path = Path(name)
+        if not path.is_absolute() or path.is_symlink() or not path.is_file() \
+                or str(path.resolve()) != name or digest_file(path) != expected:
+            raise ContractError("local asset changed or unavailable")
+    hashes = descriptor.get("input_hashes")
+    if not isinstance(hashes, dict) or not hashes \
+            or any(catalog["files"].get(name) != expected for name, expected in hashes.items()):
+        raise ContractError("local catalog does not bind every backend input")
+
+
 def prepare_manifest(config: dict, root: Path) -> dict:
     stage = config.get("stage")
     if stage not in {"physical_replay", "llm_smoke", "pilot"}:
@@ -352,6 +372,19 @@ def preflight(manifest: dict, *, root: Path, evidence_root: Path) -> dict:
         checked.append({"backend": descriptor})
     except (ImportError, AttributeError, ValueError, RuntimeError, OSError) as exc:
         blockers.append(f"backend_unavailable:{type(exc).__name__}")
+    if "backend_descriptor_evidence" in config or config.get("submitter") == "D3":
+        try:
+            frozen = read_json(checked_reference(evidence_root, config.get("backend_descriptor_evidence")))
+            if frozen != descriptor:
+                blockers.append("backend_descriptor_changed")
+        except (ContractError, TypeError) as exc:
+            blockers.append(f"backend_descriptor_evidence_invalid:{type(exc).__name__}")
+    if "local_assets" in config:
+        try:
+            catalog = read_json(checked_reference(evidence_root, config["local_assets"]))
+            verify_local_assets(catalog, descriptor)
+        except (ContractError, OSError, TypeError) as exc:
+            blockers.append(f"local_assets_invalid:{type(exc).__name__}")
     try:
         runtime = importlib.import_module("harness.rgb_communication_async")
         limits = runtime.AsyncRuntimeLimits(**config.get("runtime_limits", {}))
@@ -389,6 +422,11 @@ def preflight(manifest: dict, *, root: Path, evidence_root: Path) -> dict:
     try:
         scenarios = importlib.import_module("harness.rgb_communication_scenarios")
         boundary = read_json(checked_reference(evidence_root, config.get("offline_boundary_evidence")))
+        if config.get("submitter") == "D3" and (
+            boundary.get("schema_version") != "rgb-offline-boundary-review.v2"
+            or boundary.get("independent_reviewer") != "A3"
+        ):
+            blockers.append("d3_requires_independent_a3_boundary_v2")
         verifier = getattr(scenarios, "assess_offline_boundary", None)
         if verifier is None:
             blockers.append("offline_boundary_checker_unavailable")
@@ -397,7 +435,9 @@ def preflight(manifest: dict, *, root: Path, evidence_root: Path) -> dict:
                              expected_config_sha256=digest_json({k: v for k, v in config.items()
                                                                  if k != "offline_boundary_evidence"}),
                              expected_components=config.get("components", {}),
-                             artifact_root=evidence_root, source_root=root)
+                             artifact_root=evidence_root, source_root=root,
+                             **({"required_schema": "rgb-offline-boundary-review.v2"}
+                                if config.get("submitter") == "D3" else {}))
             if not audit.get("ready"):
                 blockers.extend("offline_boundary:" + b for b in audit.get("blockers", ["not_ready"]))
             checked.append({"offline_boundary": audit})

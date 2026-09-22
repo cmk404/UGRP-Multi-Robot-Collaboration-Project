@@ -100,6 +100,68 @@ def test_provider_json_cannot_register_or_assert_verified_bounds():
             study.provider_settings(value)
 
 
+def test_local_asset_binding_rechecks_files_and_complete_backend_inputs(tmp_path):
+    asset = tmp_path / "saved-model.json"
+    asset.write_text('{"test_only": true}')
+    hashes = {str(asset): study.digest_file(asset)}
+    catalog = {"schema": "rgb-local-assets.v1", "mode": "read_only_reference", "files": hashes}
+    descriptor = {"input_hashes": dict(hashes)}
+    study.verify_local_assets(catalog, descriptor)
+    for bad in ({**catalog, "mode": "copy"}, {**catalog, "files": {}},
+                {**catalog, "files": {"relative.json": "0" * 64}}):
+        with pytest.raises(study.ContractError):
+            study.verify_local_assets(bad, descriptor)
+    with pytest.raises(study.ContractError, match="every backend input"):
+        study.verify_local_assets(catalog, {"input_hashes": {**hashes, "/missing": "0" * 64}})
+    asset.write_text('{"test_only": "changed"}')
+    with pytest.raises(study.ContractError, match="changed"):
+        study.verify_local_assets(catalog, descriptor)
+
+
+def test_local_asset_binding_rejects_symlink(tmp_path):
+    target = tmp_path / "target.json"
+    target.write_text("{}")
+    alias = tmp_path / "alias.json"
+    alias.symlink_to(target)
+    hashes = {str(alias): study.digest_file(target)}
+    with pytest.raises(study.ContractError):
+        study.verify_local_assets({"schema": "rgb-local-assets.v1", "mode": "read_only_reference",
+                                   "files": hashes}, {"input_hashes": hashes})
+
+
+def test_preflight_compares_frozen_descriptor_not_just_manifest_internal_hashes(source, tmp_path, monkeypatch):
+    conf = config()
+    frozen = {"backend_id": "test-only", "input_hashes": {"/model": "old-model-hash"}}
+    conf["backend_descriptor_evidence"] = put(tmp_path / "descriptor.json", frozen)
+    changed = {**frozen, "input_hashes": {"/model": "new-model-hash"}}
+    backend = SimpleNamespace(backend_descriptor=lambda _: changed,
+                              public_static_context=lambda _: {"task": {}})
+    def imported(name):
+        if name == study.BACKEND_MODULE:
+            return backend
+        raise ImportError(name)
+    monkeypatch.setattr(study.importlib, "import_module", imported)
+    result = study.preflight(study.prepare_manifest(conf, source), root=source, evidence_root=tmp_path)
+    assert "backend_descriptor_changed" in result["blockers"]
+
+
+def test_d3_demands_a3_v2_even_when_old_verifier_would_accept(source, tmp_path, monkeypatch):
+    conf = config()
+    conf["submitter"] = "D3"
+    conf["offline_boundary_evidence"] = put(tmp_path / "boundary.json", {
+        "schema_version": "rgb-offline-boundary-review.v1", "independent_reviewer": "A2"})
+    def assess(*args, **kwargs):
+        assert kwargs["required_schema"] == "rgb-offline-boundary-review.v2"
+        return {"ready": True}
+    def imported(name):
+        if name == "harness.rgb_communication_scenarios":
+            return SimpleNamespace(assess_offline_boundary=assess)
+        raise ImportError(name)
+    monkeypatch.setattr(study.importlib, "import_module", imported)
+    result = study.preflight(study.prepare_manifest(conf, source), root=source, evidence_root=tmp_path)
+    assert "d3_requires_independent_a3_boundary_v2" in result["blockers"]
+
+
 def test_replay_script_is_explicit_and_does_not_read_referee():
     planner = study.ReplayDecision([{"kind": "task_request", "task_id": "fixed-diagnostic"}])
     assert planner({})["action"]["task_id"] == "fixed-diagnostic"
