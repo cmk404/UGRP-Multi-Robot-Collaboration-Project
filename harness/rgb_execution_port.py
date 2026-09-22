@@ -24,9 +24,13 @@ from uuid import uuid4
 
 from harness.rgb_execution_contract import (
     COMMAND_KIND,
+    CANCEL_PENDING_KIND,
     INTERRUPT_KIND,
+    PAUSE_KIND,
     RELEASE_KIND,
+    RESUME_KIND,
     REQUEST_KIND,
+    SUBMISSION_KINDS,
     EvaluationSource,
     FrameSource,
     MotionEndpoint,
@@ -97,6 +101,9 @@ class _Lease:
     roles: dict[str, str]
     expires_at_s: float
     queued: dict[str, dict] = field(default_factory=dict)
+    paused: bool = False
+    resume_consents: set[str] = field(default_factory=set)
+    consent_evidence: dict[str, dict] = field(default_factory=dict)
 
 
 class RGBExecutionPort:
@@ -116,7 +123,8 @@ class RGBExecutionPort:
                  now_s: float = 0.,
                  evaluation_source: EvaluationSource | None = None,
                  command_history_limit: int = 16,
-                 max_request_age_s: float = 5.):
+                 max_request_age_s: float = 5.,
+                 strict_revisions: bool = False):
         if not endpoints or any(not nonempty_text(robot_id) for robot_id in endpoints):
             raise ValueError("at least one named endpoint is required")
         if any(getattr(endpoint, "robot_id", None) != robot_id
@@ -165,6 +173,10 @@ class RGBExecutionPort:
         self._command_ids = {robot_id: set() for robot_id in endpoints}
         self._audit: list[dict] = []
         self._closed = False
+        self._strict_revisions = strict_revisions
+        self._own_revision = {rid: 0 for rid in endpoints}
+        self._observations = {rid: {} for rid in endpoints}
+        self._unavailable: set[str] = set()
 
     @property
     def robot_ids(self) -> tuple[str, ...]:
@@ -201,6 +213,7 @@ class RGBExecutionPort:
             try:
                 self._endpoints[robot_id].hold(self._now_s)
             except Exception as exc:  # still attempt every named participant
+                self._unavailable.add(robot_id)
                 errors.append({"robot_id": robot_id,
                                "error_type": type(exc).__name__})
             self._record(robot_id, "LOCAL_HOLD", reason=reason)
@@ -208,7 +221,8 @@ class RGBExecutionPort:
 
     def _release_lease(self, lease: _Lease, reason: str) -> None:
         for resource in lease.resources:
-            if self._resource_owners.get(resource) == lease.task_id:
+            if (self._resource_owners.get(resource) == lease.task_id
+                    and not set(lease.participants) & self._unavailable):
                 self._resource_owners.pop(resource)
         self._active.pop(lease.task_id, None)
         self._terminal_tasks.add(lease.task_id)
@@ -222,6 +236,7 @@ class RGBExecutionPort:
             "execution_port_closed": "execution_port_closed",
         }.get(reason, "task_terminated")
         for robot_id in lease.participants:
+            self._own_revision[robot_id] += 1
             self._own_results[robot_id].append({
                 "request_id": "lifecycle:" + lease.lease_id,
                 "status": "TERMINATED",
@@ -250,17 +265,17 @@ class RGBExecutionPort:
         try:
             packet = self._frame_source(robot_id, self._now_s)
         except Exception as exc:
-            self._hold_participants((robot_id,), "rgb_source_failed")
+            self._sensor_failed(robot_id)
             raise RuntimeError("rgb source unavailable") from exc
         if not isinstance(packet, Mapping) or set(packet) != {"own_rgb", "top_rgb"}:
-            self._hold_participants((robot_id,), "invalid_rgb_packet")
+            self._sensor_failed(robot_id)
             raise ValueError("frame source must return only own_rgb and top_rgb")
         images = {}
         for name in ("own_rgb", "top_rgb"):
             data = packet[name]
             if (not isinstance(data, bytes) or not data.startswith(b"\xff\xd8")
                     or not data.endswith(b"\xff\xd9")):
-                self._hold_participants((robot_id,), "invalid_rgb_packet")
+                self._sensor_failed(robot_id)
                 raise ValueError("original JPEG bytes required")
             digest = hashlib.sha256(data).hexdigest()
             images[name] = {"ref": f"memory://{robot_id}/{self._observation_sequence[robot_id] + 1}/{name}.jpg",
@@ -268,6 +283,8 @@ class RGBExecutionPort:
                             "jpeg_base64": base64.b64encode(data).decode("ascii")}
         self._observation_sequence[robot_id] += 1
         observation_id = f"{robot_id}-{self._observation_sequence[robot_id]:06d}"
+        self._observations[robot_id][observation_id] = (self._own_revision[robot_id], self._now_s)
+        self._observations[robot_id] = dict(list(self._observations[robot_id].items())[-64:])
         return _json_copy({
             "schema": "ugrp.rgb_actor_observation.v1",
             "robot_id": robot_id,
@@ -278,7 +295,16 @@ class RGBExecutionPort:
             "static_context": self._static_context,
             "static_context_sha256": self._static_context_sha256,
             "own_issued_commands": self._own_commands[robot_id][-self._history_limit:],
+            **({"own_revision": self._own_revision[robot_id]} if self._strict_revisions else {}),
         })
+
+    def _sensor_failed(self, robot_id: str) -> None:
+        leases = list(self._active_for_robot(robot_id))
+        if not leases:
+            self._hold_participants((robot_id,), "rgb_source_failed")
+        for lease in leases:
+            self._hold_participants(lease.participants, "rgb_source_failed")
+            self._release_lease(lease, "rgb_source_failed")
 
     @_serialized
     def local_status(self, robot_id: str) -> dict:
@@ -293,6 +319,9 @@ class RGBExecutionPort:
                            "lease_id": lease.lease_id,
                            "expires_at_s": lease.expires_at_s,
                            "own_command_pending": robot_id in lease.queued})
+            if self._strict_revisions:
+                active[-1]["paused"] = lease.paused
+                active[-1]["own_resume_pending"] = robot_id in lease.resume_consents
         pending = []
         for request in self._pending_for_robot(robot_id):
             pending.append({"request_id": request.request_id,
@@ -312,6 +341,7 @@ class RGBExecutionPort:
             "active": active,
             "pending": pending,
             "own_submission_history": self._own_results[robot_id][-self._history_limit:],
+            **({"own_revision": self._own_revision[robot_id]} if self._strict_revisions else {}),
         })
 
     @_serialized
@@ -320,9 +350,21 @@ class RGBExecutionPort:
         self._require_open_robot(robot_id)
         try:
             payload = _json_copy(submission)
-            if not isinstance(payload, dict) or payload.get("kind") not in {
-                    REQUEST_KIND, COMMAND_KIND, INTERRUPT_KIND, RELEASE_KIND}:
+            if not isinstance(payload, dict) or payload.get("kind") not in SUBMISSION_KINDS:
                 raise ValueError("unknown submission kind")
+            expected = payload.pop("expected_revision", None)
+            if self._strict_revisions or expected is not None:
+                if (not isinstance(expected, int) or isinstance(expected, bool)
+                        or expected != self._own_revision[robot_id]):
+                    raise ValueError("stale or missing own revision")
+                observed = self._observations[robot_id].get(payload.get("observation_id"))
+                if (observed is None or observed[0] != expected
+                        or self._now_s - observed[1] > self._max_request_age_s):
+                    raise ValueError("unknown or stale own observation")
+            if payload["kind"] == CANCEL_PENDING_KIND:
+                return self._submit_cancel_pending(robot_id, payload)
+            if payload["kind"] in {PAUSE_KIND, RESUME_KIND}:
+                return self._submit_pause_resume(robot_id, payload)
             if payload["kind"] == REQUEST_KIND:
                 return self._submit_task(robot_id, payload)
             if payload["kind"] == COMMAND_KIND:
@@ -358,6 +400,13 @@ class RGBExecutionPort:
         self._validate_correlation(payload)
         if robot_id not in participants or set(participants) - set(self._endpoints):
             raise ValueError("participants must name the submitting endpoint and known peers")
+        if set(participants) & self._unavailable:
+            raise ValueError("execution unavailable")
+        if self._strict_revisions:
+            if payload["object_id"] not in self._static_context["task"]["object_ids"]:
+                raise ValueError("unknown static object")
+            if payload["object_id"] not in resources:
+                raise ValueError("object resource must be explicitly reserved")
         if not finite_number(payload["expires_at_s"], minimum=0.) or payload["expires_at_s"] <= self._now_s:
             raise ValueError("task request is expired")
         if payload["request_id"] in self._request_ids[robot_id]:
@@ -384,12 +433,17 @@ class RGBExecutionPort:
         if group and next(iter(group.values())).core != request.core:
             raise ValueError("joint request core mismatch")
         group[robot_id] = request
+        self._own_revision[robot_id] += 1
         self._record(robot_id, "TASK_REQUESTED", request_id=request.request_id,
                      task_id=request.task_id, participants=list(request.participants),
                      own_role=request.own_role)
         if set(group) != set(request.participants):
             return self._result(robot_id, request.request_id, "PENDING", "awaiting_independent_consent",
                                 task_id=request.task_id)
+
+        if any(self._now_s-item.requested_at_s > self._max_request_age_s
+               or item.expires_at_s <= self._now_s for item in group.values()):
+            return self._reject_group(request.task_id, "task request expired")[robot_id]
 
         if any(self._active_for_robot(participant) for participant in request.participants):
             return self._reject_group(request.task_id, "participant already active")[robot_id]
@@ -401,12 +455,16 @@ class RGBExecutionPort:
         lease = _Lease(uuid4().hex, request.task_id, request.object_id, request.skill,
                        request.participants, request.resources, request.stage, roles,
                        min(item.expires_at_s for item in group.values()))
+        lease.consent_evidence = {rid: {"observation_id": own.observation_id,
+            "decision_id": own.decision_id, "request_id": own.request_id,
+            "requested_at_s": own.requested_at_s} for rid, own in group.items()}
         self._active[lease.task_id] = lease
         self._pending.pop(lease.task_id)
         for resource in lease.resources:
             self._resource_owners[resource] = lease.task_id
         results = {}
         for participant in lease.participants:
+            self._own_revision[participant] += 1
             own = group[participant]
             results[participant] = self._result(
                 participant, own.request_id, "ACCEPTED", "independent_consent_complete",
@@ -416,6 +474,10 @@ class RGBExecutionPort:
 
     def _reject_group(self, task_id: str, reason: str) -> dict[str, dict]:
         group = self._pending.pop(task_id, {})
+        if group:
+            self._terminal_tasks.add(task_id)
+        for robot_id in group:
+            self._own_revision[robot_id] += 1
         return {robot_id: self._result(robot_id, request.request_id, "REJECTED", reason,
                                        task_id=task_id)
                 for robot_id, request in group.items()}
@@ -439,6 +501,8 @@ class RGBExecutionPort:
             raise ValueError("unknown task lease")
         if payload["stage"] != lease.stage:
             raise ValueError("command stage does not match task stage")
+        if lease.paused:
+            raise ValueError("task is paused")
         if robot_id in lease.queued:
             raise ValueError("robot already has a queued command")
         if not isinstance(payload["action"], dict) or not nonempty_text(payload["action"].get("kind")):
@@ -458,11 +522,71 @@ class RGBExecutionPort:
             raise ValueError(f"command validation failed: {type(exc).__name__}") from exc
         self._command_ids[robot_id].add(payload["command_id"])
         lease.queued[robot_id] = copy.deepcopy(payload)
+        self._own_revision[robot_id] += 1
         reason = ("ready_for_tick" if len(lease.participants) == 1
                   or set(lease.queued) == set(lease.participants)
                   else "awaiting_participant_command")
         return self._result(robot_id, payload["request_id"], "QUEUED", reason,
                             task_id=lease.task_id, command_id=payload["command_id"])
+
+    def _submit_cancel_pending(self, robot_id: str, payload: dict) -> dict:
+        _exact_keys(payload, {"kind", "request_id", "task_id", "reason", "observation_id",
+                              "decision_id", "requested_at_s"})
+        self._validate_correlation(payload)
+        if not all(nonempty_text(payload[k]) for k in ("request_id", "task_id", "reason")):
+            raise ValueError("invalid pending cancellation")
+        if payload["request_id"] in self._request_ids[robot_id]:
+            raise ValueError("duplicate request_id")
+        group = self._pending.get(payload["task_id"], {})
+        if robot_id not in group:
+            raise ValueError("unknown own pending request")
+        self._request_ids[robot_id].add(payload["request_id"])
+        self._reject_group(payload["task_id"], "task_request_withdrawn")
+        self._terminal_tasks.add(payload["task_id"])
+        return self._result(robot_id, payload["request_id"], "ACCEPTED", "own_request_cancelled",
+                            task_id=payload["task_id"])
+
+    def _submit_pause_resume(self, robot_id: str, payload: dict) -> dict:
+        _exact_keys(payload, {"kind", "request_id", "task_id", "lease_id", "reason",
+                              "observation_id", "decision_id", "requested_at_s"})
+        self._validate_correlation(payload)
+        if not all(nonempty_text(payload[k]) for k in ("request_id", "task_id", "lease_id", "reason")):
+            raise ValueError("invalid lifecycle request")
+        if payload["request_id"] in self._request_ids[robot_id]:
+            raise ValueError("duplicate request_id")
+        lease = self._active.get(payload["task_id"])
+        if lease is None or robot_id not in lease.participants or lease.lease_id != payload["lease_id"]:
+            raise ValueError("unknown task lease")
+        if payload["kind"] == RESUME_KIND and not lease.paused:
+            raise ValueError("task is not paused")
+        self._request_ids[robot_id].add(payload["request_id"])
+        if payload["kind"] == PAUSE_KIND:
+            errors = self._hold_participants(lease.participants, "task_paused")
+            lease.queued.clear()
+            lease.resume_consents.clear()
+            lease.paused = True
+            for rid in lease.participants:
+                self._own_revision[rid] += 1
+            if errors:
+                self._release_lease(lease, "endpoint_tick_failed")
+                raise ValueError("execution unavailable")
+            reason = "task_paused"
+        else:
+            if robot_id in lease.resume_consents:
+                raise ValueError("duplicate resume consent")
+            lease.resume_consents.add(robot_id)
+            self._own_revision[robot_id] += 1
+            reason = "awaiting_independent_resume"
+            if lease.resume_consents == set(lease.participants):
+                lease.paused = False
+                lease.resume_consents.clear()
+                for rid in lease.participants:
+                    self._own_revision[rid] += 1
+                reason = "task_resumed"
+        self._record(robot_id, "TASK_" + payload["kind"].upper(), task_id=lease.task_id,
+                     observation_id=payload["observation_id"], decision_id=payload["decision_id"])
+        return self._result(robot_id, payload["request_id"], "ACCEPTED", reason,
+                            task_id=lease.task_id, lease_id=lease.lease_id)
 
     def _submit_termination(self, robot_id: str, payload: dict) -> dict:
         _exact_keys(payload, {"kind", "request_id", "task_id", "lease_id", "reason",
@@ -518,9 +642,15 @@ class RGBExecutionPort:
                              "hold_errors": errors})
 
         for lease in list(self._active.values()):
-            if set(lease.queued) != set(lease.participants):
+            if lease.paused or set(lease.queued) != set(lease.participants):
                 continue
             batch = lease.queued
+            if any(self._now_s - command["requested_at_s"] > self._max_request_age_s
+                   or self._now_s + command["duration_s"] > lease.expires_at_s
+                   for command in batch.values()):
+                self._hold_participants(lease.participants, "stale_queued_command")
+                self._release_lease(lease, "stale_queued_command")
+                continue
             try:
                 for robot_id in lease.participants:
                     command = batch[robot_id]
@@ -531,8 +661,11 @@ class RGBExecutionPort:
                               "action": copy.deepcopy(command["action"]),
                               "duration_s": command["duration_s"],
                               "issued_at_s": self._now_s,
+                              "observation_id": command["observation_id"],
+                              "decision_id": command["decision_id"],
                               "meaning": "issued command, not measured state or success"}
                     self._own_commands[robot_id].append(issued)
+                    self._own_revision[robot_id] += 1
                     self._record(robot_id, "LOCAL_COMMAND", **issued)
                 rows.append({"task_id": lease.task_id, "status": "DISPATCHED",
                              "participants": list(lease.participants)})
