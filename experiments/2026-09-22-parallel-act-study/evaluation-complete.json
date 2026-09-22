@@ -1,0 +1,643 @@
+{
+  "source_sha": "db0a6a70e29bd1bea021b86036a029d1a5aac813",
+  "protocol_sha256": "305cbb1535926e51a14ded4726df1edaee7440e09ae291170f83a8b8fe2152e0",
+  "report_sha256": "1a5bc42921f5a864be6bf01bff2d069f33c5c78ae68f5ecbfc00fcbae80e2141",
+  "complete": true,
+  "attempted": 9,
+  "unattempted": 0,
+  "checked_unix": 1790053775.302707,
+  "conditions": {
+    "RGB": {
+      "attempted": 3,
+      "successes": 1,
+      "failures": 2,
+      "failure_phases": {
+        "APPROACH": 2
+      },
+      "carry_entries": 1,
+      "model_calls": 0.0,
+      "total_wall_s": 509.486526209
+    },
+    "ACT-before": {
+      "attempted": 3,
+      "successes": 0,
+      "failures": 3,
+      "failure_phases": {
+        "APPROACH": 2,
+        "RELEASE": 1
+      },
+      "carry_entries": 1,
+      "model_calls": 354.0,
+      "total_wall_s": 354.9024242090002
+    },
+    "ACT-expanded": {
+      "attempted": 3,
+      "successes": 0,
+      "failures": 3,
+      "failure_phases": {
+        "APPROACH": 2,
+        "RELEASE": 1
+      },
+      "carry_entries": 1,
+      "model_calls": 206.0,
+      "total_wall_s": 295.37286825
+    }
+  },
+  "trials": [
+    {
+      "trial_id": "RGB--test-minus--r0",
+      "condition": "RGB",
+      "case": "test-minus",
+      "outcome": {
+        "whole_success": false,
+        "robot_result_available": true,
+        "failure_kind": "execution_error",
+        "failure_phase": "APPROACH",
+        "error": "RuntimeError: coarse RGB model convention unresolved",
+        "stop_reason": "",
+        "carry_entered": false,
+        "act_carry_entered": false,
+        "beam_success": false,
+        "robot_robot_contact_samples": 0,
+        "wall_s": 11.02297324999995
+      },
+      "wall_s": 11.02297324999995,
+      "commands": 13.0,
+      "model_calls": 0.0,
+      "external_llm_calls": 0,
+      "act_decision_rounds": 0,
+      "mean_model_latency_s": null,
+      "simultaneous_loaded_motion_s": 0.0,
+      "robot_robot_contact_samples": 0,
+      "obstacle_contact_steps": 0,
+      "weld_steps": 0,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "input_boundary": "own fixed RGB + common fixed TOP RGB + static authored map + own issued commands + peer claims; referee output only",
+      "raw": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/evaluation/trials/RGB--test-minus--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-ACT재학습평가/RGB--test-minus--r0",
+      "snapshot_manifest_sha256": "8074437de9140d91baa43fd1744da8e4bfa09408210a2945660c69c6fc130f48",
+      "artifact_sha256": {
+        "result.json": "5aa879825ed9ce285ea26a6329dafc7b01d5303774fa0b21d0cbb14e7116fab8",
+        "pair-decisions.json": "a0aa8b2051ab6d52f0419cd1b345c1327c75c482fc90184b4568402e2acf9eb2",
+        "issued-commands.json": "93444d88919824261011471c777f065ebc624ffede5da61fcf227c31680b4a99",
+        "evaluation-only.json": "c71cf2ed901136b2b4f4e4d68ca8310026f42562a63d24dc380509dc92e81cf2",
+        "scene-manifest.json": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a",
+        "scene.xml": "90c279d1c8fbd4b30c41fcbfd28254610f0aa8ac9357fe65898cba127a05a674",
+        "execution.mp4": "d04785a0f055e440d9b94858070d89a401b0c4b401a98daf8f5bc955062ba6ef"
+      },
+      "first_act_input_hashes": null
+    },
+    {
+      "trial_id": "ACT-before--test-minus--r0",
+      "condition": "ACT-before",
+      "case": "test-minus",
+      "outcome": {
+        "whole_success": false,
+        "robot_result_available": true,
+        "failure_kind": "execution_error",
+        "failure_phase": "APPROACH",
+        "error": "RuntimeError: coarse RGB model convention unresolved",
+        "stop_reason": "",
+        "carry_entered": false,
+        "act_carry_entered": false,
+        "beam_success": false,
+        "robot_robot_contact_samples": 0,
+        "wall_s": 10.063988667000103
+      },
+      "wall_s": 10.063988667000103,
+      "commands": 13.0,
+      "model_calls": 0.0,
+      "external_llm_calls": 0,
+      "act_decision_rounds": 0,
+      "mean_model_latency_s": null,
+      "simultaneous_loaded_motion_s": 0.0,
+      "robot_robot_contact_samples": 0,
+      "obstacle_contact_steps": 0,
+      "weld_steps": 0,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "input_boundary": "own fixed RGB + common fixed TOP RGB + static authored map + own issued commands + peer claims; referee output only",
+      "raw": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/evaluation/trials/ACT-before--test-minus--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-ACT재학습평가/ACT-before--test-minus--r0",
+      "snapshot_manifest_sha256": "e9a3fa50de5b94a1c56927bd629276cbb0096021b296bba0d6f0f268a290068b",
+      "artifact_sha256": {
+        "result.json": "45f948d6094735861b1b5a62350b39b603d318926f8482644999041a25287475",
+        "pair-decisions.json": "a0aa8b2051ab6d52f0419cd1b345c1327c75c482fc90184b4568402e2acf9eb2",
+        "issued-commands.json": "93444d88919824261011471c777f065ebc624ffede5da61fcf227c31680b4a99",
+        "evaluation-only.json": "c71cf2ed901136b2b4f4e4d68ca8310026f42562a63d24dc380509dc92e81cf2",
+        "scene-manifest.json": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a",
+        "scene.xml": "90c279d1c8fbd4b30c41fcbfd28254610f0aa8ac9357fe65898cba127a05a674",
+        "execution.mp4": "d04785a0f055e440d9b94858070d89a401b0c4b401a98daf8f5bc955062ba6ef"
+      },
+      "first_act_input_hashes": null
+    },
+    {
+      "trial_id": "ACT-expanded--test-minus--r0",
+      "condition": "ACT-expanded",
+      "case": "test-minus",
+      "outcome": {
+        "whole_success": false,
+        "robot_result_available": true,
+        "failure_kind": "execution_error",
+        "failure_phase": "APPROACH",
+        "error": "RuntimeError: coarse RGB model convention unresolved",
+        "stop_reason": "",
+        "carry_entered": false,
+        "act_carry_entered": false,
+        "beam_success": false,
+        "robot_robot_contact_samples": 0,
+        "wall_s": 10.904720041000019
+      },
+      "wall_s": 10.904720041000019,
+      "commands": 13.0,
+      "model_calls": 0.0,
+      "external_llm_calls": 0,
+      "act_decision_rounds": 0,
+      "mean_model_latency_s": null,
+      "simultaneous_loaded_motion_s": 0.0,
+      "robot_robot_contact_samples": 0,
+      "obstacle_contact_steps": 0,
+      "weld_steps": 0,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "input_boundary": "own fixed RGB + common fixed TOP RGB + static authored map + own issued commands + peer claims; referee output only",
+      "raw": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/evaluation/trials/ACT-expanded--test-minus--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-ACT재학습평가/ACT-expanded--test-minus--r0",
+      "snapshot_manifest_sha256": "83133aa9e79282b651468acc7365da74751defbeccd2d602a689c2bf34cc59bd",
+      "artifact_sha256": {
+        "result.json": "d3c5b3914eda527dd996be1fdbda431db7043194f423d9033e58295435b3bcb1",
+        "pair-decisions.json": "a0aa8b2051ab6d52f0419cd1b345c1327c75c482fc90184b4568402e2acf9eb2",
+        "issued-commands.json": "93444d88919824261011471c777f065ebc624ffede5da61fcf227c31680b4a99",
+        "evaluation-only.json": "c71cf2ed901136b2b4f4e4d68ca8310026f42562a63d24dc380509dc92e81cf2",
+        "scene-manifest.json": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a",
+        "scene.xml": "90c279d1c8fbd4b30c41fcbfd28254610f0aa8ac9357fe65898cba127a05a674",
+        "execution.mp4": "d04785a0f055e440d9b94858070d89a401b0c4b401a98daf8f5bc955062ba6ef"
+      },
+      "first_act_input_hashes": null
+    },
+    {
+      "trial_id": "ACT-before--test-plus--r0",
+      "condition": "ACT-before",
+      "case": "test-plus",
+      "outcome": {
+        "whole_success": false,
+        "robot_result_available": true,
+        "failure_kind": "execution_error",
+        "failure_phase": "RELEASE",
+        "error": "RuntimeError: visual placement confirmation failed",
+        "stop_reason": "",
+        "carry_entered": true,
+        "act_carry_entered": true,
+        "beam_success": false,
+        "robot_robot_contact_samples": 0,
+        "wall_s": 327.870827209
+      },
+      "wall_s": 327.870827209,
+      "commands": 967.0,
+      "model_calls": 354.0,
+      "external_llm_calls": 0,
+      "act_decision_rounds": 177,
+      "mean_model_latency_s": 0.08752548139263946,
+      "simultaneous_loaded_motion_s": 5.999999999858119,
+      "robot_robot_contact_samples": 0,
+      "obstacle_contact_steps": 0,
+      "weld_steps": 0,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.077634396936579,
+          "displacement_m": 1.437909290801194,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.06867790671847246,
+          "displacement_m": 1.0591329660387556,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "input_boundary": "own fixed RGB + common fixed TOP RGB + static authored map + own issued commands + peer claims; referee output only",
+      "raw": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/evaluation/trials/ACT-before--test-plus--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-ACT재학습평가/ACT-before--test-plus--r0",
+      "snapshot_manifest_sha256": "7c3fc96dc576f08ad618c0d6ed2050794ba9ba26ee28c1a8397a90474dc44b5d",
+      "artifact_sha256": {
+        "result.json": "1c4862851e3070596a3c9bcd0845d6b49a2493270e3688e459ceb955aa2ccc89",
+        "pair-decisions.json": "1a478adebfa1f4aaf447d255c5a04ea810fa2e18b3f5e419ec5258750f5e870e",
+        "issued-commands.json": "da34aa6c62e8a9adc5a2ed7261a28dcb0f119911264cd97bf1be19974b80d691",
+        "evaluation-only.json": "3070684033b505c489e0d8c0af4b7148f63c7289e27c7146e68af7fe7ee0b28e",
+        "scene-manifest.json": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a",
+        "scene.xml": "90c279d1c8fbd4b30c41fcbfd28254610f0aa8ac9357fe65898cba127a05a674",
+        "execution.mp4": "857d1a11d12da01078614827ee0dd0184f28d6444809a594cdfa1daa9d75f3d1"
+      },
+      "first_act_input_hashes": {
+        "r1": {
+          "own": "20e442d5bd017b3180a118911208ebf1bca571ee3517e71ac83865d13aedfa18",
+          "top": "1bb9bb9c8072926a4024703972e38a0053a55d8a36e825e1e8f3af025f34a23f"
+        },
+        "r3": {
+          "own": "d2b61514d4e76a1defad03618a319da701a0218374b134d3a6f955ca17f80a3c",
+          "top": "1bb9bb9c8072926a4024703972e38a0053a55d8a36e825e1e8f3af025f34a23f"
+        }
+      }
+    },
+    {
+      "trial_id": "ACT-expanded--test-plus--r0",
+      "condition": "ACT-expanded",
+      "case": "test-plus",
+      "outcome": {
+        "whole_success": false,
+        "robot_result_available": true,
+        "failure_kind": "execution_error",
+        "failure_phase": "RELEASE",
+        "error": "RuntimeError: visual placement confirmation failed",
+        "stop_reason": "",
+        "carry_entered": true,
+        "act_carry_entered": true,
+        "beam_success": false,
+        "robot_robot_contact_samples": 0,
+        "wall_s": 264.37622925000005
+      },
+      "wall_s": 264.37622925000005,
+      "commands": 745.0,
+      "model_calls": 206.0,
+      "external_llm_calls": 0,
+      "act_decision_rounds": 103,
+      "mean_model_latency_s": 0.10969558512137005,
+      "simultaneous_loaded_motion_s": 5.799999999862848,
+      "robot_robot_contact_samples": 0,
+      "obstacle_contact_steps": 0,
+      "weld_steps": 0,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07767046396015204,
+          "displacement_m": 1.6782119762621397,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.06867790671847246,
+          "displacement_m": 1.05912669611661,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "input_boundary": "own fixed RGB + common fixed TOP RGB + static authored map + own issued commands + peer claims; referee output only",
+      "raw": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/evaluation/trials/ACT-expanded--test-plus--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-ACT재학습평가/ACT-expanded--test-plus--r0",
+      "snapshot_manifest_sha256": "131415d7fad8abc57c654ec1253466adaec66e5e2bc58fed96d3db5a4fe24d8e",
+      "artifact_sha256": {
+        "result.json": "8188ce0c4711f3219d1f4ef79c7e547de39225fd76ac280c8bc995474b76f7ba",
+        "pair-decisions.json": "80d8e6a6e9a72602487050667e38fc8d3b9947d81611a19b5fcb693532c34e3f",
+        "issued-commands.json": "a3bad363ea2cbf8fbb5d3b5127e46a8fec6f352a07413a8098ea4ae1afaaa26e",
+        "evaluation-only.json": "57791a9336eee3b10c10c0aeb99a1568a24a5973ae74c035d936a891ce4d5bb7",
+        "scene-manifest.json": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a",
+        "scene.xml": "90c279d1c8fbd4b30c41fcbfd28254610f0aa8ac9357fe65898cba127a05a674",
+        "execution.mp4": "073561dbdb0c0d1c86cdcbd0ed9c5c89a4096c13e0368fa4902da753acf88b8f"
+      },
+      "first_act_input_hashes": {
+        "r1": {
+          "own": "20e442d5bd017b3180a118911208ebf1bca571ee3517e71ac83865d13aedfa18",
+          "top": "1bb9bb9c8072926a4024703972e38a0053a55d8a36e825e1e8f3af025f34a23f"
+        },
+        "r3": {
+          "own": "d2b61514d4e76a1defad03618a319da701a0218374b134d3a6f955ca17f80a3c",
+          "top": "1bb9bb9c8072926a4024703972e38a0053a55d8a36e825e1e8f3af025f34a23f"
+        }
+      }
+    },
+    {
+      "trial_id": "RGB--test-plus--r0",
+      "condition": "RGB",
+      "case": "test-plus",
+      "outcome": {
+        "whole_success": true,
+        "robot_result_available": true,
+        "failure_kind": null,
+        "failure_phase": "FINISHED",
+        "error": null,
+        "stop_reason": "",
+        "carry_entered": true,
+        "act_carry_entered": false,
+        "beam_success": true,
+        "robot_robot_contact_samples": 0,
+        "wall_s": 479.55036570899983
+      },
+      "wall_s": 479.55036570899983,
+      "commands": 960.0,
+      "model_calls": 0.0,
+      "external_llm_calls": 0,
+      "act_decision_rounds": 0,
+      "mean_model_latency_s": null,
+      "simultaneous_loaded_motion_s": 5.999999999858119,
+      "robot_robot_contact_samples": 0,
+      "obstacle_contact_steps": 0,
+      "weld_steps": 0,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07767125976995862,
+          "displacement_m": 1.680349248759785,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": true
+        },
+        "box": {
+          "max_lift_m": 0.06867790671847246,
+          "displacement_m": 2.307645357319702,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "physical_success": true
+        }
+      },
+      "input_boundary": "own fixed RGB + common fixed TOP RGB + static authored map + own issued commands + peer claims; referee output only",
+      "raw": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/evaluation/trials/RGB--test-plus--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-ACT재학습평가/RGB--test-plus--r0",
+      "snapshot_manifest_sha256": "4b868b35ac21d0ee3977ef316969f550f5193c529115a1d1c0847de45d19a49e",
+      "artifact_sha256": {
+        "result.json": "b8209fa57ef6684ccc9b61ee7df3b9fec707467d66a2eaa459a59970a74b3a9a",
+        "pair-decisions.json": "61a0e54b84b1695c00a1f3b0c1e326f8cc58326e6ed79fe1b2f90c747fbde31f",
+        "issued-commands.json": "69908b16b249a8a869ea1177e1531bd18279ac183a2cb09b5e7307f5448bc333",
+        "evaluation-only.json": "2ab735900026bd00ef75688feedbab22b75bea0b24aedd9e69dfc3e94c011534",
+        "scene-manifest.json": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a",
+        "scene.xml": "90c279d1c8fbd4b30c41fcbfd28254610f0aa8ac9357fe65898cba127a05a674",
+        "execution.mp4": "7a975bd9191a0121c1e35babb7c17b732492027629467e36d23593ea94101065"
+      },
+      "first_act_input_hashes": null
+    },
+    {
+      "trial_id": "ACT-expanded--test-yaw--r0",
+      "condition": "ACT-expanded",
+      "case": "test-yaw",
+      "outcome": {
+        "whole_success": false,
+        "robot_result_available": true,
+        "failure_kind": "execution_error",
+        "failure_phase": "APPROACH",
+        "error": "RuntimeError: coarse RGB model convention unresolved",
+        "stop_reason": "",
+        "carry_entered": false,
+        "act_carry_entered": false,
+        "beam_success": false,
+        "robot_robot_contact_samples": 0,
+        "wall_s": 20.09191895899994
+      },
+      "wall_s": 20.09191895899994,
+      "commands": 15.0,
+      "model_calls": 0.0,
+      "external_llm_calls": 0,
+      "act_decision_rounds": 0,
+      "mean_model_latency_s": null,
+      "simultaneous_loaded_motion_s": 0.0,
+      "robot_robot_contact_samples": 0,
+      "obstacle_contact_steps": 0,
+      "weld_steps": 0,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "input_boundary": "own fixed RGB + common fixed TOP RGB + static authored map + own issued commands + peer claims; referee output only",
+      "raw": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/evaluation/trials/ACT-expanded--test-yaw--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-ACT재학습평가/ACT-expanded--test-yaw--r0",
+      "snapshot_manifest_sha256": "99d443856f732190bcded1862a2f79f94d9643700dc1530caea1ad560e9de218",
+      "artifact_sha256": {
+        "result.json": "75b632e31e7b69a21d1ba881d62a7f17f65c36ae1f2a5ecd391489e3bf68ecdd",
+        "pair-decisions.json": "002db19012f5db170d10c3b9691801da6dafaf47779deeb5ec291374c9124a99",
+        "issued-commands.json": "286ea43f02fcf45cbc88641875dff83ad46f028ff60159218019fbb182fad72f",
+        "evaluation-only.json": "ed6abf2d032624477f760b96db40e119e9afc3385fa6120c154faf3fd74e400d",
+        "scene-manifest.json": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a",
+        "scene.xml": "90c279d1c8fbd4b30c41fcbfd28254610f0aa8ac9357fe65898cba127a05a674",
+        "execution.mp4": "4c23142eeb7716d47bb9c2a6775ef26e7785f1bfb436523bc2a9a2144c79db85"
+      },
+      "first_act_input_hashes": null
+    },
+    {
+      "trial_id": "RGB--test-yaw--r0",
+      "condition": "RGB",
+      "case": "test-yaw",
+      "outcome": {
+        "whole_success": false,
+        "robot_result_available": true,
+        "failure_kind": "execution_error",
+        "failure_phase": "APPROACH",
+        "error": "RuntimeError: coarse RGB model convention unresolved",
+        "stop_reason": "",
+        "carry_entered": false,
+        "act_carry_entered": false,
+        "beam_success": false,
+        "robot_robot_contact_samples": 0,
+        "wall_s": 18.913187250000192
+      },
+      "wall_s": 18.913187250000192,
+      "commands": 15.0,
+      "model_calls": 0.0,
+      "external_llm_calls": 0,
+      "act_decision_rounds": 0,
+      "mean_model_latency_s": null,
+      "simultaneous_loaded_motion_s": 0.0,
+      "robot_robot_contact_samples": 0,
+      "obstacle_contact_steps": 0,
+      "weld_steps": 0,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "input_boundary": "own fixed RGB + common fixed TOP RGB + static authored map + own issued commands + peer claims; referee output only",
+      "raw": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/evaluation/trials/RGB--test-yaw--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-ACT재학습평가/RGB--test-yaw--r0",
+      "snapshot_manifest_sha256": "e42a07cb510e5207fd9cb18c7e23f625ce6b648f96ea52b7ef5d89446a6004a4",
+      "artifact_sha256": {
+        "result.json": "f250810e199139d2d8c0f5a887544b0cdf34bb76a1ab3c53cabee06defb0879d",
+        "pair-decisions.json": "002db19012f5db170d10c3b9691801da6dafaf47779deeb5ec291374c9124a99",
+        "issued-commands.json": "286ea43f02fcf45cbc88641875dff83ad46f028ff60159218019fbb182fad72f",
+        "evaluation-only.json": "ed6abf2d032624477f760b96db40e119e9afc3385fa6120c154faf3fd74e400d",
+        "scene-manifest.json": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a",
+        "scene.xml": "90c279d1c8fbd4b30c41fcbfd28254610f0aa8ac9357fe65898cba127a05a674",
+        "execution.mp4": "4c23142eeb7716d47bb9c2a6775ef26e7785f1bfb436523bc2a9a2144c79db85"
+      },
+      "first_act_input_hashes": null
+    },
+    {
+      "trial_id": "ACT-before--test-yaw--r0",
+      "condition": "ACT-before",
+      "case": "test-yaw",
+      "outcome": {
+        "whole_success": false,
+        "robot_result_available": true,
+        "failure_kind": "execution_error",
+        "failure_phase": "APPROACH",
+        "error": "RuntimeError: coarse RGB model convention unresolved",
+        "stop_reason": "",
+        "carry_entered": false,
+        "act_carry_entered": false,
+        "beam_success": false,
+        "robot_robot_contact_samples": 0,
+        "wall_s": 16.967608333000044
+      },
+      "wall_s": 16.967608333000044,
+      "commands": 15.0,
+      "model_calls": 0.0,
+      "external_llm_calls": 0,
+      "act_decision_rounds": 0,
+      "mean_model_latency_s": null,
+      "simultaneous_loaded_motion_s": 0.0,
+      "robot_robot_contact_samples": 0,
+      "obstacle_contact_steps": 0,
+      "weld_steps": 0,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.0,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "physical_success": false
+        }
+      },
+      "input_boundary": "own fixed RGB + common fixed TOP RGB + static authored map + own issued commands + peer claims; referee output only",
+      "raw": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/evaluation/trials/ACT-before--test-yaw--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-ACT재학습평가/ACT-before--test-yaw--r0",
+      "snapshot_manifest_sha256": "44e933cf147cb73036227edd5bdcdd520e018bfaa9c856580072c5be6cbb798f",
+      "artifact_sha256": {
+        "result.json": "101f41ac9fab2c83eb774e1a788af22382614c83b06fbee29b717406cf5c8fa5",
+        "pair-decisions.json": "002db19012f5db170d10c3b9691801da6dafaf47779deeb5ec291374c9124a99",
+        "issued-commands.json": "286ea43f02fcf45cbc88641875dff83ad46f028ff60159218019fbb182fad72f",
+        "evaluation-only.json": "ed6abf2d032624477f760b96db40e119e9afc3385fa6120c154faf3fd74e400d",
+        "scene-manifest.json": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a",
+        "scene.xml": "90c279d1c8fbd4b30c41fcbfd28254610f0aa8ac9357fe65898cba127a05a674",
+        "execution.mp4": "4c23142eeb7716d47bb9c2a6775ef26e7785f1bfb436523bc2a9a2144c79db85"
+      },
+      "first_act_input_hashes": null
+    }
+  ],
+  "matched_inputs": [
+    {
+      "case": "test-minus",
+      "identical_scene_xml": true,
+      "act_first_input_images_identical": null
+    },
+    {
+      "case": "test-plus",
+      "identical_scene_xml": true,
+      "act_first_input_images_identical": true
+    },
+    {
+      "case": "test-yaw",
+      "identical_scene_xml": true,
+      "act_first_input_images_identical": null
+    }
+  ],
+  "scope": "Three fixed unseen spawn perturbations, one training seed, open-map family. Descriptive failure counts only. Existing checkpoint trained on T4, expanded checkpoint on CPU; not a causal data-only ablation. Planning is replayed: no new Jev/Gemini communication evaluation.",
+  "source_frozen": true,
+  "teacher_or_referee_corrections": false,
+  "model_retrained_during_evaluation": false,
+  "tensorboard_event_readback": true,
+  "native_ui_verified": true,
+  "native_ui_review": {
+    "checked_unix": 1790053960.407866,
+    "browser": "Chrome 강",
+    "session_groups": 13,
+    "evaluation_rows": 9,
+    "visible_columns": [
+      "outcome",
+      "result/wall_s",
+      "result/commands",
+      "result/model_calls"
+    ],
+    "pinned_cards": 7,
+    "screen_values_match_raw": true
+  }
+}
