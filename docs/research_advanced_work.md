@@ -10,6 +10,14 @@ main `120cc821` 위에 #93 `e4c5d96`, A #94 `5f4a7ef`, B #95 `79f0262`, C #97 `3
 
 1차의 범위는 계약/fixture였다. 2차에서 같은 완료 표현을 쓰지 않는다: **실제 스킬 호출 → 물리/영상 증거 → 새 모델 판단 → 메시지·결정·물리 결과 연결**을 단계별로 확인해야 한다.
 
+### 배포한 기준선과 검증 기록
+
+- A/B/C/D 기존 세션에 배포한 공통 구현 SHA: `936bf821b873c9a364a768c4beea7c3debf27dd7`. 네 세션의 후속 작업 시작을 확인했다.
+- 네 신규 계약 모듈의 통합 검사: **46 passed, 3 subtests passed**. `git diff --check` 통과.
+- 같은 SHA의 `scripts/run_ci_tests.py`: **1219 passed, 3 skipped, 187 subtests passed**, 119개 오프라인 테스트 모듈, 135.91초. API 키를 제외하는 기존 CI 실행 경로를 사용했다.
+- 공용 CI에 `tests/test_rgb_execution*.py`와 `tests/test_rgb_communication*.py`를 등록했다. B의 후속 스킬 검사는 `test_rgb_execution` 접두사를 사용한다.
+- 위 결과는 단위/계약 회귀 검사다. 새로운 실제 모델 호출·물리 운반·통신 효과 결과는 없으며 공용 TensorBoard에 fixture를 등록하지 않았다.
+
 ## 담당과 완료 기준
 
 ### A2 · 협상·복구 시나리오와 독립 검증
