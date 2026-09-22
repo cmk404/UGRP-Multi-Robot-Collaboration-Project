@@ -161,7 +161,8 @@ def assess_environment(config: dict, evidence: dict, *, root: Path, evidence_roo
     assignments = evidence["scenario_assignments"]
     exposure = scenarios.audit_exposure(cases, provenance, assignments,
         allow_legacy_dispatch_open=config["stage"] == "physical_replay"
-            and evidence.get("map", {}).get("map_id") == "dispatch_open")
+            and evidence.get("map", {}).get("map_id") == "dispatch_open",
+        allow_unknown_diagnostic_origins=config["stage"] == "physical_replay")
     if not exposure.get("valid"):
         blockers.extend("exposure:" + value for value in exposure.get("blockers", ["invalid"]))
     # The map ID/version and authored geometry must match the actual builder,
