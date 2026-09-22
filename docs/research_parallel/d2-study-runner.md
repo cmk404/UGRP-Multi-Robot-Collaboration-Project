@@ -132,6 +132,10 @@ unknown·잘못된 schema/domain/유한값/순서/종료 event 불일치는 inva
 확정 partial actual .77과 last-ack .75는 분리 보존하고, 요청 .8을 실제 시각으로
 대입하지 않는다. requested/actual의 미세 roundoff 판정은 B가 소유한다.
 새 callback 연결·오프라인 회귀는 물리 재실행 권한이나 성공 근거가 아니다.
+실제 evaluator clock이 unknown이면 원본 `timestamp_s=null`을 파싱·보존하되
+최종 평가는 반드시 invalid로 거절한다. TensorBoard는 이 경우도 진단만 내보내고
+미측정 evaluator/final SIM 값을 생성하지 않는다. 숫자로 기록된 구 원본의
+시간 선후 guard는 변하지 않는다.
 
 - 새 계약/제출/회수/TensorBoard 테스트는 모두 network-free이며 임시 원본만 사용한다.
 - `scripts/run_ci_tests.py`의 기존 `tests/test_rgb_communication*.py` glob으로 자동 포함된다.
