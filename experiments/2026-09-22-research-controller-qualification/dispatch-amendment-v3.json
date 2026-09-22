@@ -1,0 +1,15 @@
+{
+  "recorded_at": "2026-09-22T08:27:44.285129+00:00",
+  "reason": "Shard A completed; transfer the unstarted B tail to the free second execution slot. No cases, controller source, model, limits or outcomes change.",
+  "full_protocol_sha256": "894b2331e11ed8c14859dbaf850a96876c0386b5871f14a0b2067a7846dd8cda",
+  "transferred_trial_id": "ACT-guarded--qualification-3--r0",
+  "destination_protocol_sha256": "700a3172cef2d9ae9be4cb7b1bbd7257868dd8cbdb79d436072ca6e699988b26",
+  "source_sha": "f70bd9b20e0972ce71f24d724211f4cd27f7786e",
+  "planned_total": 9,
+  "maximum_simultaneous_owned_simulations": 2,
+  "source_dispatcher_pid": 67845,
+  "source_completed_at_transfer": 3,
+  "source_report": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-b/report.json",
+  "stop_dispatcher_after_completed_trial": "ACT-RGB-refined--qualification-3--r0",
+  "accounting": "Original shard B stays incomplete with its pending tail; combine all original rows plus complete A/C with explicit --allow-partial-shards. Require all nine planned trials exactly once; no failure or recorded row may be removed."
+}

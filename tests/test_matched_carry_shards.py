@@ -55,3 +55,18 @@ def test_trial_partition_preserves_complete_plan_and_order(tmp_path):
 def test_invalid_trial_partition_is_rejected(tmp_path,ids):
     protocol,_=fixture(tmp_path);p=json.loads(protocol.read_text());p['trial_ids']=ids
     with pytest.raises(ValueError,match='trial_ids'):schedule(p,list(p['conditions']))
+
+
+def test_explicit_pending_handoff_preserves_all_attempts_and_requires_full_coverage(tmp_path):
+    protocol,reports=fixture(tmp_path);path=reports[0];r=json.loads(path.read_text())
+    transferred=r['runs'].pop();r['complete']=False;path.write_text(json.dumps(r))
+    full=json.loads(protocol.read_text());sub={**full,'trial_ids':[transferred['trial_id']]}
+    extra=tmp_path/'transferred.json';extra.write_text(json.dumps({'source_sha':'frozen',
+        'protocol_sha256':'extra','protocol':sub,'complete':True,
+        'jobs':schedule(sub,list(sub['conditions'])),'runs':[transferred]}))
+    with pytest.raises(ValueError,match='incomplete'):combine(protocol,reports+[extra])
+    with pytest.raises(ValueError,match='missing planned'):combine(protocol,reports,allow_partial_shards=True)
+    result=combine(protocol,reports+[extra],allow_partial_shards=True)
+    assert result['complete'] and len(result['runs'])==6
+    assert result['shards'][0]['pending_trial_ids']==[transferred['trial_id']]
+    with pytest.raises(ValueError,match='duplicate'):combine(protocol,reports+[extra,extra],allow_partial_shards=True)
