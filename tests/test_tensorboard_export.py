@@ -88,6 +88,28 @@ def test_failed_evaluation_remains_failed_despite_done_claim(tmp_path,export_api
     assert manifest['metadata']['success_source_field']=='success'
 
 
+@pytest.mark.parametrize('terminal_score',[.05,.9])
+def test_offline_termination_audit_is_recomputed_and_never_physical_success(tmp_path,export_api,terminal_score):
+    from scripts.audit_carry_termination import audit
+    convert,EA=export_api;src=tmp_path/'audit';src.mkdir()
+    predictions=[{'id':f'development:{slot}:{i}',
+                  'prediction':[0,0,0,terminal_score if i else 0.],
+                  'target':[0,0,0,float(i)]} for slot in ('r1','r3') for i in range(2)]
+    p=put(src,'predictions.json',predictions)
+    report=audit(predictions);report['predictions_sha256']=hashlib.sha256(p.read_bytes()).hexdigest()
+    put(src,'termination-audit.json',report)
+    manifest=convert(src,tmp_path/'export');ea=EA(str(tmp_path/'export')).Reload()
+    assert ea.Scalars('offline/missed_terminal_episodes')[0].value==int(terminal_score<.65)
+    assert ea.Scalars('offline/termination_pass')[0].value==int(terminal_score>=.65)
+    assert manifest['metadata']['outcome']==('offline_pass' if terminal_score>=.65 else 'offline_fail')
+    assert 'evaluation/reported_success' not in ea.Tags()['scalars']
+    assert manifest['metadata']['success_source_field'] is None
+    report['missed_terminal_episodes']=999;put(src,'termination-audit.json',report)
+    with pytest.raises(ValueError,match='saved predictions'):convert(src,tmp_path/'bad-count')
+    p.write_text('[]')
+    with pytest.raises(ValueError,match='hash mismatch'):convert(src,tmp_path/'bad-hash')
+
+
 def test_missing_success_is_not_zero(tmp_path,export_api):
     convert,EA=export_api;src=tmp_path/'source';src.mkdir()
     put(src,'result.json',{'protocol_complete':True})
