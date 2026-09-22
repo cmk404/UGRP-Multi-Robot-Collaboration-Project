@@ -30,3 +30,23 @@
 기존 아홉 번의 시험은 이미 진단에 사용했으므로 이후 성공률 추정용 새 시험으로 재사용하지 않는다. 종료 라벨이나 가중치를 바꾸면 새 후보 모델로 식별하고 개발 데이터에서 선정한 뒤 새 조건 전체를 비교한다.
 
 `train_carry_input_act.py --termination-objective episode`는 도착 전 마지막 8개 명령의 음성 표적을 별도 표본군으로 뽑고, 개발 에피소드의 조기 공동 정지율·종료 누락률·동작 오차로 체크포인트를 선정한다. 기존 방식 재현은 `--termination-objective legacy`로 명시한다. 목적 함수가 다르면 기존 체크포인트의 학습을 그대로 이어서 처리하지 않는다. 개발 통과 여부와 새 조건의 독립 실행 결과를 모두 보고한다.
+
+## 한 코호트 실행과 판정
+
+깨끗한 실행 체크아웃에서 모델·프로토콜을 고정하고 아래 순서로 실행한다. 프로토콜에는 `conditions`, `test`, `controls`, `grasp`, `stages`, `asset_sha256`, `expected_source_sha`를 모두 기록한다. 이번 Mac 검증의 실제 경로와 명령은 [실험 기록](../experiments/2026-09-22-research-controller-qualification/README.md)에 남긴다. 다른 컴퓨터에서는 해당 호스트의 런타임과 검증된 자료 경로를 사용한다.
+
+```sh
+python3 scripts/ugrp_session.py run research-cohort -- \
+  /absolute/path/to/sim-python scripts/run_matched_carry_cohort.py \
+  --protocol /absolute/path/to/frozen-protocol.json \
+  --out /absolute/path/to/new-raw-directory \
+  --mjpython /absolute/path/to/mjpython \
+  --act-python /absolute/path/to/reference-act-python \
+  --tensorboard-dir /absolute/path/to/primary/outputs/tensorboard/new-snapshot
+
+python3 scripts/assess_research_cohort.py \
+  --report /absolute/path/to/new-raw-directory/report.json \
+  --out /absolute/path/to/new-assessment.json
+```
+
+실행기의 종료 코드 0은 예정한 실행을 모두 시도했다는 뜻이다. 제어기 성공은 `conditions.<조건>.qualified_for_declared_cases`와 각 원본 물리 판정을 확인한다. 디스크 부족·런타임 실행 실패와 물리 실패를 구분하고, 미완료 원본 위에 재실행하거나 기존 실패 기록을 덮어쓰지 않는다. 조건을 바꾸면 새 프로토콜·새 디렉터리로 시작한다. 중단은 `python3 scripts/ugrp_session.py stop research-cohort`로 자신이 시작한 세션에만 적용한다.
