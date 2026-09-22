@@ -1,9 +1,12 @@
 """Offline tests only; no physical backend or network provider is constructed."""
 import copy
 import json
+import os
 from pathlib import Path
+import signal
 import subprocess
 import sys
+import time
 from types import SimpleNamespace
 
 import pytest
@@ -190,6 +193,118 @@ def test_subprocess_success_timeout_and_exclusive_evidence(tmp_path):
                                  cwd=tmp_path, log_path=tmp_path / "timeout.log", timeout_s=.05)
     assert timed["exit_code"] == 124 and timed["timed_out"]
     assert timed["wall_time_s"] < 6
+
+
+@pytest.mark.parametrize("ignore_term", [False, True])
+@pytest.mark.parametrize("parent_signal", [signal.SIGTERM, signal.SIGINT])
+def test_parent_sigterm_reaps_owned_child_before_returning(tmp_path, ignore_term, parent_signal):
+    marker = tmp_path / "owned-child.pid"
+    parent = subprocess.Popen([sys.executable, "-c", "\n".join([
+        "import sys", "from pathlib import Path",
+        "from harness.rgb_communication_study import bounded_process",
+        "child = 'import os,time,signal; from pathlib import Path; '",
+        f"child += 'signal.signal(signal.SIGTERM, signal.SIG_IGN); ' if {ignore_term!r} else ''",
+        "child += 'Path(sys.argv[1]).write_text(str(os.getpid())); time.sleep(30)'",
+        "child = 'import sys;' + child",
+        "result = bounded_process([sys.executable, '-c', child, sys.argv[1]], cwd=Path.cwd(), log_path=Path(sys.argv[2]), timeout_s=20)",
+        "print(result, flush=True)",
+        "raise SystemExit(0 if result['exit_code'] == 130 else 1)"]),
+        str(marker), str(tmp_path / "child.log")], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        text=True, start_new_session=True)
+    owned_pid = None
+    try:
+        deadline = time.monotonic() + 5
+        while not marker.exists() and time.monotonic() < deadline:
+            time.sleep(.01)
+        assert marker.exists(), parent.poll()
+        owned_pid = int(marker.read_text())
+        parent.send_signal(parent_signal)
+        stdout, stderr = parent.communicate(timeout=12)
+        assert parent.returncode == 0, (parent.returncode, stdout, stderr)
+        assert "'child_reaped': True" in stdout
+        assert "'process_group_gone': True" in stdout
+        with pytest.raises(ProcessLookupError):
+            os.kill(owned_pid, 0)
+    finally:
+        if parent.poll() is None:
+            parent.kill()
+            parent.wait()
+        if owned_pid is not None:
+            try:
+                os.killpg(owned_pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+
+
+@pytest.mark.parametrize("exit_code,timed_out,reason", [
+    (130, False, "study_interrupted"), (-15, False, "study_interrupted"),
+    (124, True, "previous_trial_wall_timeout"), (1, False, "previous_trial_process_failed")])
+def test_interrupted_study_does_not_start_next_trial_and_hashes_after_reap(
+        source, tmp_path, monkeypatch, exit_code, timed_out, reason):
+    value = study.prepare_manifest(config(), source)
+    output = tmp_path / "interrupted-study"
+    calls = []
+    monkeypatch.setattr(study, "preflight", lambda *a, **k: {"ready": True})
+    def child(*args, **kwargs):
+        calls.append(kwargs)
+        # Simulate the last child write immediately before confirmed reap.
+        (kwargs["log_path"].parent / "last-child-write.txt").write_text("closed-and-reaped")
+        return {"exit_code": exit_code, "timed_out": timed_out, "wall_time_s": .01,
+                "process_group": 999999999, "child_reaped": True, "process_group_gone": True}
+    monkeypatch.setattr(study, "bounded_process", child)
+    result = study.run_study(value, root=source, evidence_root=source, output=output)
+    assert len(calls) == 1
+    assert result["planned_denominator"] == 2
+    assert result["run_rows"][1] == {"run_id": "joint", "outcome": "unrun", "reason": reason}
+    assert not (output / "runs/joint").exists()
+    hashes = study.read_json(output / "artifact-hashes.json")
+    assert hashes["runs/solo/last-child-write.txt"] == study.digest_file(output / "runs/solo/last-child-write.txt")
+
+
+def test_unconfirmed_cleanup_never_hashes_live_artifacts(source, tmp_path, monkeypatch):
+    value = study.prepare_manifest(config(), source)
+    output = tmp_path / "cleanup-unknown"
+    monkeypatch.setattr(study, "preflight", lambda *a, **k: {"ready": True})
+    monkeypatch.setattr(study, "bounded_process", lambda *a, **k: {
+        "exit_code": 124, "timed_out": True, "child_reaped": True, "process_group_gone": False})
+    result = study.run_study(value, root=source, evidence_root=source, output=output)
+    assert result["artifact_hashes_finalized"] is False
+    assert result["run_rows"][1]["reason"] == "child_cleanup_unconfirmed"
+    assert not (output / "artifact-hashes.json").exists()
+
+
+def test_normal_trial_return_continues_even_when_physical_goal_failed(source, tmp_path, monkeypatch):
+    value = study.prepare_manifest(config(), source)
+    output = tmp_path / "physical-failures"
+    calls = []
+    monkeypatch.setattr(study, "preflight", lambda *a, **k: {"ready": True})
+    def child(*args, **kwargs):
+        calls.append(kwargs)
+        directory = kwargs["log_path"].parent
+        study.write_new_json(directory / "result.json", {"run_id": directory.name,
+            "schema_version": study.TRIAL_SCHEMA, "outcome": "failure", "source_artifact_hashes": {}})
+        return {"exit_code": 0, "timed_out": False, "child_reaped": True, "process_group_gone": True}
+    monkeypatch.setattr(study, "bounded_process", child)
+    result = study.run_study(value, root=source, evidence_root=source, output=output)
+    assert len(calls) == 2
+    assert [row["outcome"] for row in result["run_rows"]] == ["failure", "failure"]
+    assert result["artifact_hashes_finalized"] is True
+
+
+def test_exited_leader_does_not_leave_its_same_group_descendant_writing(tmp_path):
+    marker = tmp_path / "descendant.pid"
+    program = "\n".join([
+        "import subprocess,sys,time", "from pathlib import Path",
+        "worker='import os,sys,time; from pathlib import Path; Path(sys.argv[1]).write_text(str(os.getpid())); time.sleep(30)'",
+        "subprocess.Popen([sys.executable,'-c',worker,sys.argv[1]])",
+        "deadline=time.monotonic()+3",
+        "while not Path(sys.argv[1]).exists() and time.monotonic()<deadline: time.sleep(.01)"])
+    result = study.bounded_process([sys.executable, "-c", program, str(marker)],
+        cwd=tmp_path, log_path=tmp_path / "descendant.log", timeout_s=4, cleanup_grace_s=1)
+    assert result["exit_code"] == 125  # normal leader exit was not clean completion
+    assert result["child_reaped"] and result["process_group_gone"]
+    with pytest.raises(ProcessLookupError):
+        os.kill(int(marker.read_text()), 0)
 
 
 def test_strata_include_unrun_and_dont_use_failed_speed_or_guess_cause():
