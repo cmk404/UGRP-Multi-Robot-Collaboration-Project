@@ -80,7 +80,7 @@ capsule root: `/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/study-inputs`.
 입력 archive SHA256: `87c8ab7245a20cc1559331f52cc1a83e1fd2799b2e3ad51cc231b73e7051f8a1`.
 [원본 파일 inventory](raw-artifact-hashes.json), [제출/회수/종료](submission.json), [변경하지 않은 전체 report](original-report.json)를 저장했다. raw 영상·로그·모델은 로컬 보관이며 이 해시/요약을 원격 raw 백업으로 표현하지 않는다. Google Drive는 사용하지 않았다.
 
-물리 pass, clock 수정 후보의 새 실행, A의 수정 영향 감사, provider의 input/output hard token cap 검증 및 최종 live admission은 미완료다. 추가 실행·LLM은 NO-GO이며 승인된 두 시행을 자동 확장하지 않는다. 새 PR #100–103은 별도 사용자 승인 전 병합하지 않는다.
+물리 pass, clock 수정 후보의 새 실행, 새 전체 boundary certificate/execution admission, provider의 input/output hard token cap 검증 및 최종 live admission은 미완료다. stale-worker 문제도 별도 미해결이다. 제한된 A 영향 감사의 완료 범위는 아래 후속 기록을 따른다. 추가 실행·LLM은 NO-GO이며 승인된 두 시행을 자동 확장하지 않는다. 새 PR #100–103은 별도 사용자 승인 전 병합하지 않는다.
 
 후속 D `30f2409`는 clock-only supervisor 연결과 신규 terminal schema 검사만 추가했다. unknown/malformed clock 9개 RED 후 통과, 부분 진행 .77/last-ack .75 분리, requested/actual roundoff 보존, 구 원본 .8/.75 invalid 유지, actor/evaluator 비노출 seam을 포함해 관련 70 tests를 오프라인으로 검사했다. 이 수정은 원본 실행 소스가 아니며 새 Colab 실행을 포함하지 않는다.
 
