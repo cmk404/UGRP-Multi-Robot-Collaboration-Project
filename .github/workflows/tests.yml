@@ -151,7 +151,7 @@ jobs:
           python scripts/ugrp_session.py run scenes-ci -- python -m scripts.check_simulation_scenes --output outputs/simulation-ci/research-scenes
           MUJOCO_GL=glfw xvfb-run -a python scripts/ugrp_session.py run research-native -- python -m scripts.sim_cli run configs/simulation/local.json --sim-seconds 1 --wall-seconds 90 --video --capture --output outputs/simulation-ci/research-native
           python -c "import json; r=json.load(open('outputs/simulation-ci/research-native/result.json')); assert r['protocol_complete'] and r['video']['frames'] >= 10, r"
-          ffprobe -v error -show_entries stream=width,height,nb_frames -of json outputs/simulation-ci/research-native/video.mp4
+          ffprobe -v error -show_entries stream=width,height,nb_frames -of json outputs/simulation-ci/research-native/motion.mp4
 
       - name: Keep simulator verification
         if: always()

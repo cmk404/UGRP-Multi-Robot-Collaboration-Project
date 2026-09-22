@@ -117,6 +117,7 @@ def run(config, args):
             map_manifest.append({"path": path, "saved": str(saved.relative_to(output)), "sha256": entry["sha256"]})
         (output / "scene.xml").write_text(sim._world.scene_xml, encoding="utf-8")
         write_json(output / "scene.json", {**sim.scene.record(), "source_files": map_manifest,
+                   "geometry_modified": bool(sim.extensions.objects),
                    "scene_xml_sha256": hashlib.sha256(sim._world.scene_xml.encode()).hexdigest()})
         mujoco.mj_saveModel(sim._world.model, str(output / "model.mjb"))
         write_json(output / "physics.json", {"timestep_s": sim.timestep,

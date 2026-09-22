@@ -24,7 +24,7 @@ class Video:
                 '-f', 'image2pipe', '-vcodec', 'mjpeg', '-r', str(fps), '-i', '-',
                 '-an', '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '20',
                 '-vf', 'pad=ceil(iw/2)*2:ceil(ih/2)*2', '-pix_fmt', 'yuv420p',
-                '-movflags', '+faststart', str(output/'video.mp4')],
+                '-movflags', '+faststart', str(output/'motion.mp4')],
                 stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=self.log)
         except BaseException:
             self.log.close(); self.timeline.close()
@@ -59,5 +59,5 @@ class Video:
                     raise RuntimeError(f'video encoder failed ({code}); see video-encoder.log')
             finally:
                 self.log.close(); self.timeline.close()
-        return {'file': 'video.mp4', 'frames': self.frames, 'fps': self.fps, 'camera': self.camera,
+        return {'file': 'motion.mp4', 'frames': self.frames, 'fps': self.fps, 'camera': self.camera,
                 'time_basis': 'simulation time; pauses omitted; resets listed in video-frames.jsonl'}

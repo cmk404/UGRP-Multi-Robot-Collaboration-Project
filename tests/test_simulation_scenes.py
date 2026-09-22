@@ -48,6 +48,7 @@ def test_default_cli_preserves_dispatch_and_demo_requires_explicit_selection(tmp
     config = json.loads((directory/'config.json').read_text())
     assert config['scene']['layout'] == DEFAULT_SCENE
     assert config['controllers']['r1']['factory'].endswith(':create_idle_controller')
+    assert Scene(config['scene'], directory).record()['geometry_modified'] is None
     namespace = {}
     exec((directory/'scene.py').read_text(), namespace)
     assert namespace['build_scene'](seed=11, params={}) == []

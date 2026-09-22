@@ -109,7 +109,7 @@ with Simulation(config, render=True) as sim:
 
 ## 기록과 코드 위치
 
-CLI는 매번 `outputs/sim-<날짜>-<ID>/`를 만든다. `config.json`은 적용된 전체 설정, `session.json`은 소스 SHA/dirty 상태와 실행 환경, `model.mjb`는 컴파일된 모델, `physics.json`은 물리 설정·실제 선택 장면의 화물 목록, `commands.jsonl`은 초기화와 실제 발행 명령, `*-evaluation.json`은 별도 정답 진단, `result.json`은 종료 이유·시간·파일 해시다. `--capture`는 시작/종료의 실제 입력 RGB와 관측 JSON을 추가한다. `extensions.json`과 `extensions/`에는 실행한 확장 진입 파일·해시·최종 추가 형상을 보관한다. 제어기를 쓰면 `controller-decisions.jsonl`에 매 호출의 실제 RGB 입력·응답·발행 명령을 저장한다. `--video`는 ffmpeg로 관찰용 `video.mp4`를 녹화한다. `--video-camera cctv_top --video-fps 10`처럼 시점을 지정할 수 있다. `video-frames.jsonl`에 프레임별 에피소드/SIM 시각을 남기며 pause 시간은 생략한다. 전체 상태·제어기 기억의 checkpoint replay는 제공하지 않는다.
+CLI는 매번 `outputs/sim-<날짜>-<ID>/`를 만든다. `config.json`은 적용된 전체 설정, `session.json`은 소스 SHA/dirty 상태와 실행 환경, `model.mjb`는 컴파일된 모델, `physics.json`은 물리 설정·실제 선택 장면의 화물 목록, `commands.jsonl`은 초기화와 실제 발행 명령, `*-evaluation.json`은 별도 정답 진단, `result.json`은 종료 이유·시간·파일 해시다. `--capture`는 시작/종료의 실제 입력 RGB와 관측 JSON을 추가한다. `extensions.json`과 `extensions/`에는 실행한 확장 진입 파일·해시·최종 추가 형상을 보관한다. 제어기를 쓰면 `controller-decisions.jsonl`에 매 호출의 실제 RGB 입력·응답·발행 명령을 저장한다. `--video`는 ffmpeg로 관찰용 `motion.mp4`를 녹화한다. `--video-camera cctv_top --video-fps 10`처럼 시점을 지정할 수 있다. `video-frames.jsonl`에 프레임별 에피소드/SIM 시각을 남기며 pause 시간은 생략한다. 전체 상태·제어기 기억의 checkpoint replay는 제공하지 않는다.
 
 | 파일 | 책임 |
 |---|---|

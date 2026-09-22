@@ -200,5 +200,6 @@ class Scene:
                 'bounds_m': self.bounds, 'contact_profile': self.scene['contact_profile'],
                 'setup_only': self.config, 'authored_map': self.map,
                 'resolved_sha256': digest({'config': self.config, 'map': self.map}),
-                'geometry_modified': bool(self.scene['objects'] or self.scene['builder']),
+                'geometry_extension_configured': bool(self.scene['objects'] or self.scene['builder']),
+                'geometry_modified': None if self.scene['builder'] else bool(self.scene['objects']),
                 'overridden_robot_poses': self.scene['robots'], **self.manifest}
