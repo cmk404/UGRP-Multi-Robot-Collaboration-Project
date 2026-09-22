@@ -107,6 +107,7 @@ def backend_descriptor(config):
     return {"schema": "ugrp.rgb_skill_backend_descriptor.v1", "backend_id": BACKEND_ID,
             "synthetic": False, "weld": False, "camera_fov_changed": False,
             "clock_owner": "single_simulator", "clock_domain": "sim", "max_tick_s": MAX_TICK_S,
+            "skill_image_max_age_s": 1., "skill_worker_wall_limit_s": 2.,
             "capabilities": copy.deepcopy(SKILLS), "config_sha256": _digest(config),
             "map_sha256": _digest(scene_config["static_map"]),
             "map_id": static_map["map_id"], "map_version": str(static_map["version"]),
@@ -548,6 +549,9 @@ class RGBSkillExecutionPort(RGBExecutionPort):
                         raise TimeoutError("RGB decision exceeded 2-second wall cap")
                     continue
                 if all(r.future is not None for r in runners):
+                    if any(self._now_s-r.observation["observed_at_s"] > 1.
+                           or time.monotonic()-r.started_wall > 2. for r in runners):
+                        raise ValueError("stale RGB worker result")
                     decisions = [r.future.result() for r in runners]
                     for runner in runners:
                         runner.future = None
