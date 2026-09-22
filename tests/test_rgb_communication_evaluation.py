@@ -12,6 +12,7 @@ from harness.rgb_communication_evaluation import (
     EVENT_SCHEMA,
     build_manifest,
     evaluate_manifest,
+    evaluate_run,
     execution_blockers,
     finite_schedule,
     interaction_metrics,
@@ -121,6 +122,70 @@ def materialize_fixture(root, value):
     outcomes = json.loads((FIXTURE / "outcomes.json").read_text())
     for plan in value["schedule"]:
         write_artifacts(root, plan, outcomes[plan["scenario_id"]][plan["condition"]])
+
+
+def clock_artifacts(root, *, actual=.77, snapshot=.77, status="verified"):
+    plan = manifest()["schedule"][0]
+    write_artifacts(root, plan, "aborted", measured=False)
+    run = root / plan["artifact_relpath"]
+    rows = [json.loads(line) for line in (run / "runtime.jsonl").read_text().splitlines()]
+    rows[-1]["sim_time_s"] = actual
+    rows[-1]["payload"]["clock"] = {
+        "schema": "rgb-runtime-clock.v1", "clock_domain": "sim",
+        "requested_tick_s": .8, "last_acknowledged_time_s": .75,
+        "last_successful_requested_tick_s": .75,
+        "terminal_time_s": actual, "terminal_time_status": status, "reason": "tick_failed"}
+    evaluation = json.loads((run / "evaluator.json").read_text())
+    evaluation["source_snapshot"]["timestamp_s"] = snapshot
+    (run / "evaluator.json").write_text(json.dumps(evaluation))
+    return plan, run, rows
+
+
+def test_verified_partial_advance_preserves_actual_and_aborted_outcome(tmp_path):
+    plan, run, rows = clock_artifacts(tmp_path)
+    (run / "runtime.jsonl").write_text("".join(json.dumps(row) + "\n" for row in rows))
+    result = evaluate_run(plan, tmp_path)
+    assert result["outcome"] == "aborted"
+    assert result["metrics"]["sim_time_s"] == .77
+    assert result["runtime_termination"]["clock"]["last_acknowledged_time_s"] == .75
+
+
+@pytest.mark.parametrize("change", [
+    {"terminal_time_status": "unknown", "terminal_time_s": None},
+    {"schema": "wrong"}, {"clock_domain": "wall"},
+    {"last_acknowledged_time_s": .78}, {"terminal_time_s": .76},
+    {"requested_tick_s": float("nan")}, {"last_acknowledged_time_s": True},
+    {"last_successful_requested_tick_s": .85}, {"unreviewed": 1},
+])
+def test_new_clock_unknown_malformed_or_inconsistent_is_invalid(tmp_path, change):
+    plan, run, rows = clock_artifacts(tmp_path)
+    rows[-1]["payload"]["clock"].update(change)
+    if change.get("terminal_time_status") == "unknown":
+        rows[-1]["sim_time_s"] = None
+    (run / "runtime.jsonl").write_text("".join(json.dumps(row) + "\n" for row in rows))
+    result = evaluate_run(plan, tmp_path)
+    assert result["outcome"] == "invalid_artifact"
+    assert not result["mission_complete"]
+
+
+def test_new_clock_roundoff_is_not_replaced_by_requested_time(tmp_path):
+    actual = .8000000000000005
+    plan, run, rows = clock_artifacts(tmp_path, actual=actual, snapshot=actual)
+    (run / "runtime.jsonl").write_text("".join(json.dumps(row) + "\n" for row in rows))
+    result = evaluate_run(plan, tmp_path)
+    assert result["outcome"] == "aborted"
+    assert result["metrics"]["sim_time_s"] == actual
+
+
+def test_original_legacy_point_eight_vs_point_seven_five_stays_invalid(tmp_path):
+    plan, run, rows = clock_artifacts(tmp_path, actual=.8, snapshot=.75)
+    del rows[-1]["payload"]["clock"]
+    original = "".join(json.dumps(row) + "\n" for row in rows)
+    (run / "runtime.jsonl").write_text(original)
+    result = evaluate_run(plan, tmp_path)
+    assert result["outcome"] == "invalid_artifact"
+    assert result["reason"] == "evaluator snapshot predates the runtime terminal event"
+    assert (run / "runtime.jsonl").read_text() == original
 
 
 def test_manifest_is_a_complete_randomized_six_run_block_with_provenance():

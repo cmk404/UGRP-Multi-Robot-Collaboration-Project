@@ -1,0 +1,80 @@
+{
+  "scope": "Two frozen bfe478f deterministic development replays; diagnostic invalid_artifact, not communication efficacy or held-out performance. replay_goal_complete remains null.",
+  "run_filter": "^0922-RGB재생-",
+  "url": "http://127.0.0.1:6006/?pinnedCards=%5B%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Freported_success%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Fevidence_valid%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fcommands%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fexternal_model_calls%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fprocess_wall_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fplanner_decisions%22%7D%5D&smoothing=0&runFilter=%5E0922-RGB%EC%9E%AC%EC%83%9D-#timeseries",
+  "pinned_tags": [
+    "evaluation/reported_success",
+    "evaluation/evidence_valid",
+    "result/commands",
+    "result/external_model_calls",
+    "result/process_wall_s",
+    "result/planner_decisions"
+  ],
+  "hparams_visible_columns": [
+    "outcome",
+    "evaluation/reported_success",
+    "result/wall_s",
+    "result/commands"
+  ],
+  "hparams_unavailable_columns": [
+    "evaluation/evidence_valid",
+    "result/process_wall_s",
+    "result/external_model_calls",
+    "result/planner_decisions"
+  ],
+  "hparams_limit": "The running shared TensorBoard HParams experiment omits these newly registered metrics. Time Series shows all six pinned metrics; HParams wall_s is runtime wall, not process wall. Other sessions and old snapshots are preserved.",
+  "runs": [
+    "0922-RGB재생-단독",
+    "0922-RGB재생-공동"
+  ],
+  "expected_solo_joint": {
+    "outcome": [
+      "invalid_artifact",
+      "invalid_artifact"
+    ],
+    "evaluation/reported_success": [
+      0,
+      0
+    ],
+    "evaluation/evidence_valid": [
+      0,
+      0
+    ],
+    "result/commands": [
+      5,
+      0
+    ],
+    "result/external_model_calls": [
+      0,
+      0
+    ],
+    "result/process_wall_s": [
+      46.90187667600003,
+      35.87764009299997
+    ],
+    "result/planner_decisions": [
+      3,
+      3
+    ]
+  },
+  "null_semantics": "reported_success=0 means no confirmed success, not a valid physical-failure score; original replay_goal_complete=null. No model response latency applies to deterministic replay.",
+  "media_urls": [
+    "http://127.0.0.1:6007/video/9ebe5cb43f1f73c5d532",
+    "http://127.0.0.1:6007/video/e9bdaba10e6c19f4e0e5"
+  ],
+  "verification": {
+    "event_accumulator": true,
+    "live_tensorboard_loading": true,
+    "media_registered_and_range_206": true,
+    "native_ui": true,
+    "hparams_columns": true,
+    "pinned_cards": true,
+    "video_playback": true,
+    "text_body": false,
+    "delegate_task_id": "01a0c7a0-7425-7353-b6cf-0ee551a13a13",
+    "browser": "Chrome 강, existing tab 963999421",
+    "display_left_at_saved_timeseries_url": true
+  },
+  "verification_limit": "Native UI confirmed two runs, six pinned values, four supported HParams columns and playback of both original videos. Text validation category body remained blank and its media links were not verified in the Text tab.",
+  "media_lifecycle": "Owned d2-replay-media-review (PGID 65529, port 6007) stopped after verification; the two media URLs require restarting the documented read-only companion. Existing TensorBoard PID 9293 and media PID 9291 port 6009 were preserved."
+}

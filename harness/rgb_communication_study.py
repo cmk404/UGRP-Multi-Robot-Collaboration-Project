@@ -11,6 +11,7 @@ import hashlib
 from collections import Counter, defaultdict
 from copy import deepcopy
 import importlib
+import inspect
 import json
 import math
 import os
@@ -337,6 +338,8 @@ def preflight(manifest: dict, *, root: Path, evidence_root: Path) -> dict:
             blockers.append("backend_camera_geometry_not_preserved")
         if descriptor.get("clock_owner") != "single_simulator":
             blockers.append("backend_clock_owner_not_unique")
+        if descriptor.get("supervisor_clock_schema") != "ugrp.execution_clock.v1":
+            blockers.append("backend_supervisor_clock_unavailable")
         if descriptor.get("backend_id") != config.get("backend_id"):
             blockers.append("backend_identity_mismatch")
         public_task = backend.public_static_context(config.get("backend", {}))["task"]
@@ -353,6 +356,8 @@ def preflight(manifest: dict, *, root: Path, evidence_root: Path) -> dict:
         runtime = importlib.import_module("harness.rgb_communication_async")
         limits = runtime.AsyncRuntimeLimits(**config.get("runtime_limits", {}))
         limits.validate()
+        if "clock_snapshot" not in inspect.signature(runtime.run_rgb_communication_async).parameters:
+            blockers.append("async_supervisor_clock_not_connected")
         if limits.wall_timeout_s > budgets["wall_time_s"] - 5:
             blockers.append("runtime_wall_deadline_must_allow_cleanup")
         if limits.max_ticks * limits.tick_period_s > budgets["sim_time_s"] + 1e-6:
@@ -454,6 +459,14 @@ class ReplayDecision:
         return {"action": action, "message": None}
 
 
+def supervisor_clock_callback(bundle):
+    """Only pass B's clock-only callback; never derive it from evaluator state."""
+    callback = getattr(bundle, "clock_snapshot", None)
+    if not callable(callback):
+        raise ContractError("backend supervisor clock callback is unavailable")
+    return callback
+
+
 def run_trial(manifest: dict, *, run_id: str, root: Path, evidence_root: Path, output: Path) -> dict:
     """Only invoked in the parent's wall-bounded disposable subprocess."""
     readiness = preflight(manifest, root=root, evidence_root=evidence_root)
@@ -482,6 +495,7 @@ def run_trial(manifest: dict, *, run_id: str, root: Path, evidence_root: Path, o
     bundle = backend_module.build_rgb_skill_backend(backend_config)
     evidence_kind = "deterministic_physical_replay" if manifest["stage"] == "physical_replay" else "live_llm"
     try:
+        clock_snapshot = supervisor_clock_callback(bundle)
         write_new_json(output / "backend-provenance.json", bundle.provenance)
         if manifest["stage"] == "physical_replay":
             scripts = trial["replay_actions"]
@@ -498,6 +512,7 @@ def run_trial(manifest: dict, *, run_id: str, root: Path, evidence_root: Path, o
         # Only the explicitly authored public task enters actors. The manifest,
         # split, map seed, evaluator, exposure ledger and referee NEVER do.
         runtime.run_rgb_communication_async(bundle.actor_port, planners,
+            clock_snapshot=clock_snapshot,
             condition=trial["condition"], common_task=trial["common_task"], run_id=run_id,
             limits=limits, trace_path=output / "runtime.jsonl", artifact_dir=output / "runtime-inputs",
             provenance={"source_sha": manifest["source"]["git_sha"],

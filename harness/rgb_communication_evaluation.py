@@ -681,6 +681,40 @@ def interaction_metrics(events: list[dict[str, Any]], snapshot: dict[str, Any]) 
     }
 
 
+def validate_terminal_clock(terminal: dict[str, Any], snapshot: dict[str, Any]) -> None:
+    """Validate new supervisor clocks without rewriting legacy evidence.
+
+    Requested time is never a substitute for actual time, including partial
+    progress. Backend numerical clock checks own tiny requested/actual roundoff.
+    """
+    clock = terminal["payload"].get("clock")
+    if "clock" not in terminal["payload"]:
+        return
+    fields = {"schema", "clock_domain", "requested_tick_s", "last_acknowledged_time_s",
+              "last_successful_requested_tick_s", "terminal_time_s", "terminal_time_status", "reason"}
+    if not isinstance(clock, dict) or set(clock) != fields:
+        raise ContractError("runtime terminal clock schema is invalid")
+    if (clock["schema"] != "rgb-runtime-clock.v1" or clock["clock_domain"] != "sim"
+            or snapshot["clock_domain"] != clock["clock_domain"]):
+        raise ContractError("runtime terminal clock domain or schema is invalid")
+    if clock["terminal_time_status"] != "verified":
+        raise ContractError("runtime terminal actual clock is unknown")
+    actual = clock["terminal_time_s"]
+    if (not _is_number(actual) or actual < 0 or actual != terminal["sim_time_s"]
+            or not isinstance(clock["reason"], str) or not clock["reason"]):
+        raise ContractError("runtime terminal actual clock is inconsistent")
+    for field in ("requested_tick_s", "last_acknowledged_time_s", "last_successful_requested_tick_s"):
+        if clock[field] is not None and (not _is_number(clock[field]) or clock[field] < 0):
+            raise ContractError("runtime terminal clock has invalid numeric metadata")
+    acknowledged = clock["last_acknowledged_time_s"]
+    requested = clock["requested_tick_s"]
+    successful_request = clock["last_successful_requested_tick_s"]
+    if acknowledged is not None and acknowledged > actual:
+        raise ContractError("runtime terminal actual clock precedes acknowledged clock")
+    if successful_request is not None and (requested is None or successful_request > requested):
+        raise ContractError("runtime terminal requested clock order is inconsistent")
+
+
 def evaluate_run(plan: dict[str, Any], artifact_root: Path) -> dict[str, Any]:
     run_dir = artifact_root / plan["artifact_relpath"]
     base = {
@@ -722,9 +756,13 @@ def evaluate_run(plan: dict[str, Any], artifact_root: Path) -> dict[str, Any]:
         external = evaluator["source_snapshot"]["external_evaluation"]
         score = score_termination(terminal["payload"], external)
         snapshot = evaluator["source_snapshot"]
+        validate_terminal_clock(terminal, snapshot)
         if (snapshot["clock_domain"] == "sim" and terminal["sim_time_s"] is not None
                 and snapshot["timestamp_s"] < terminal["sim_time_s"]):
             raise ContractError("evaluator snapshot predates the runtime terminal event")
+        if "clock" in terminal["payload"]:
+            metrics["sim_time_s"] = terminal["payload"]["clock"]["terminal_time_s"]
+            measurement_status["sim_time_s"] = "verified_supervisor_terminal_clock"
         if original_hashes != {"runtime": _sha256(runtime_path), "evaluator": _sha256(evaluator_path)}:
             raise ContractError("source artifact changed during evaluation")
     except ContractError as exc:

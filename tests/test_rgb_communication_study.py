@@ -149,3 +149,71 @@ def test_source_and_config_drift_block_even_separate_trial_entry(source, tmp_pat
     manifest["config"]["trials"].reverse()
     with pytest.raises(study.ContractError, match="configuration drift"):
         study.run_trial(manifest, run_id="solo", root=source, evidence_root=source, output=tmp_path)
+
+
+def test_supervisor_callback_is_required_and_never_derived_from_evaluator():
+    calls = []
+    callback = lambda: calls.append("supervisor")
+    bundle = SimpleNamespace(clock_snapshot=callback,
+        evaluation_snapshot=lambda: pytest.fail("referee must not supply the clock"))
+    assert study.supervisor_clock_callback(bundle) is callback
+    assert calls == []
+    for invalid in (None, 0, {"actual_time_s": .75}):
+        bundle.clock_snapshot = invalid
+        with pytest.raises(study.ContractError, match="clock callback"):
+            study.supervisor_clock_callback(bundle)
+
+
+def test_preflight_requires_both_clock_capabilities_without_building_backend(source, monkeypatch):
+    conf = config()
+    backend = SimpleNamespace(backend_descriptor=lambda _: {
+        "synthetic": False, "weld": False, "camera_fov_changed": False,
+        "clock_owner": "single_simulator", "backend_id": "test-only"},
+        public_static_context=lambda _: {"task": {}},
+        build_rgb_skill_backend=lambda _: pytest.fail("preflight must not construct physics"))
+    runtime = SimpleNamespace(AsyncRuntimeLimits=lambda **kw: SimpleNamespace(**kw, validate=lambda: None),
+                              run_rgb_communication_async=lambda *args: None)
+    def imported(name):
+        if name == study.BACKEND_MODULE:
+            return backend
+        if name == "harness.rgb_communication_async":
+            return runtime
+        raise ImportError(name)
+    monkeypatch.setattr(study.importlib, "import_module", imported)
+    result = study.preflight(study.prepare_manifest(conf, source), root=source, evidence_root=source)
+    assert "backend_supervisor_clock_unavailable" in result["blockers"]
+    assert "async_supervisor_clock_not_connected" in result["blockers"]
+
+
+def test_trial_passes_clock_callback_only_to_supervisor(source, tmp_path, monkeypatch):
+    conf = config()
+    conf["trials"][0]["replay_actions"] = {rid: [] for rid in ("r1", "r2", "r3")}
+    value = study.prepare_manifest(conf, source)
+    sequence = []
+    clock = lambda: {"schema": "ugrp.execution_clock.v1", "clock_domain": "sim",
+                     "last_acknowledged_time_s": 0, "actual_time_s": 0}
+    bundle = SimpleNamespace(actor_port=object(), clock_snapshot=clock, provenance={},
+        evaluation_snapshot=lambda: sequence.append("evaluation") or {},
+        close=lambda: sequence.append("close"))
+    def run(port, planners, **kwargs):
+        assert port is bundle.actor_port and set(planners) == {"r1", "r2", "r3"}
+        assert kwargs["clock_snapshot"] is clock
+        assert kwargs["common_task"] == {}
+        assert "clock_snapshot" not in kwargs["provenance"]
+        assert sequence == []
+        sequence.append("runtime")
+    def imported(name):
+        if name == study.BACKEND_MODULE:
+            return SimpleNamespace(build_rgb_skill_backend=lambda _: bundle)
+        if name == "harness.rgb_communication_async":
+            return SimpleNamespace(AsyncRuntimeLimits=lambda **_: SimpleNamespace(validate=lambda: None),
+                                   OfflineDecisionPlanner=lambda *a, **k: object())
+        if name == study.RUNTIME_MODULE:
+            return SimpleNamespace(run_rgb_communication_async=run)
+        raise ImportError(name)
+    monkeypatch.setattr(study, "preflight", lambda *a, **k: {"ready": True})
+    monkeypatch.setattr(study.importlib, "import_module", imported)
+    result = study.run_trial(value, run_id="solo", root=source, evidence_root=source,
+                             output=tmp_path / "trial")
+    assert sequence == ["runtime", "evaluation", "close"]
+    assert result["outcome"] == "missing_artifact"  # fake deliberately produced no runtime

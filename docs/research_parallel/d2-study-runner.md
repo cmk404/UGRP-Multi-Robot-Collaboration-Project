@@ -115,6 +115,24 @@ fixture 검증만 한 경우 dashboard 재개방·공용 viewer 변경은 하지
 
 ## 현재 검증 범위
 
+2026-09-22 동결 통합 SHA `bfe478f1209375d774b6dc2881300198f967f5ca`로
+승인된 Colab 단독/공동 재생 2회를 모두 실행·회수하고 해당 세션을 종료했다.
+두 결과는 runtime terminal .8 / evaluator .75 모순으로 `invalid_artifact`이며,
+`replay_goal_complete=null`을 유지한다. LLM 0회, 추가 실행 NO-GO.
+전체 offline 1336 passed/7 skipped/198 subtests 및 관련 exporter 34 passed.
+원본·모든 실패·진단·TensorBoard 검증 단계는
+[별도 실험 기록](../../experiments/2026-09-22-rgb-communication-replay/README.md)에 보존한다.
+후속 clock 최소 수정 후보는 이 원본과 분리하며 시간 guard를 완화하지 않는다.
+
+후속 D seam은 B descriptor의 `supervisor_clock_schema`와 C의 `clock_snapshot`
+인자를 사전 검사하고, 실제 bundle의 clock-only callback만 runtime supervisor에
+연결한다. evaluator로 clock을 구성하거나 actor/common_task에 전달하지 않는다.
+새 `rgb-runtime-clock.v1`은 요청/성공 요청/확인 실제/종료 실제 시각을 분리한다.
+unknown·잘못된 schema/domain/유한값/순서/종료 event 불일치는 invalid로 거절한다.
+확정 partial actual .77과 last-ack .75는 분리 보존하고, 요청 .8을 실제 시각으로
+대입하지 않는다. requested/actual의 미세 roundoff 판정은 B가 소유한다.
+새 callback 연결·오프라인 회귀는 물리 재실행 권한이나 성공 근거가 아니다.
+
 - 새 계약/제출/회수/TensorBoard 테스트는 모두 network-free이며 임시 원본만 사용한다.
 - `scripts/run_ci_tests.py`의 기존 `tests/test_rgb_communication*.py` glob으로 자동 포함된다.
 - A/B/C의 최종 committed source를 별도 integration branch에 합친 뒤 실제 adapter

@@ -1,0 +1,118 @@
+{
+  "schema_version": "rgb-communication-study-result.v2",
+  "source_sha": "bfe478f1209375d774b6dc2881300198f967f5ca",
+  "manifest_sha256": "3eebd939fe81c80133b9b5c332c1af445d824d3e9f713d127dfbe456635b017b",
+  "stage": "physical_replay",
+  "planned_denominator": 2,
+  "run_rows": [
+    {
+      "run_id": "solo-physical-replay",
+      "condition": "none",
+      "process": {
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_time_s": 46.90187667600003,
+        "process_group": 3088
+      },
+      "result": {
+        "run_id": "solo-physical-replay",
+        "order": 1,
+        "scenario_id": "solo-physical-replay",
+        "condition": "none",
+        "seed": 11,
+        "repeat": 0,
+        "artifact_relpath": ".",
+        "outcome": "invalid_artifact",
+        "reason": "evaluator snapshot predates the runtime terminal event",
+        "mission_complete": false,
+        "artifacts": {
+          "runtime": "9a045b2cce1d324e33e2d16e1e8b91274a07754112cd21cca7d44ef5625de376",
+          "evaluator": "70abbaf37b46020c0b44245e96729a610a8e8d459afff8b77d391c2214d37df5"
+        },
+        "metrics": {},
+        "measurement_status": {},
+        "schema_version": "rgb-communication-trial-result.v2",
+        "source_sha": "bfe478f1209375d774b6dc2881300198f967f5ca",
+        "config_sha256": "777c9c9bbef09c970f9c21b289b34db34c9dee1968c13d36e8ad4245a0daff0b",
+        "evidence_kind": "deterministic_physical_replay",
+        "claim_scope": "development_connection_smoke",
+        "source_artifact_hashes": {
+          "plan.json": "20b9cb4eb63dc7949f76ed3415a6f3b4db1e0897c072afc0336058de841fc05c",
+          "runtime.jsonl": "9a045b2cce1d324e33e2d16e1e8b91274a07754112cd21cca7d44ef5625de376",
+          "evaluator.json": "70abbaf37b46020c0b44245e96729a610a8e8d459afff8b77d391c2214d37df5"
+        },
+        "replay_target_objects": [
+          "box"
+        ],
+        "replay_goal_complete": null,
+        "replay_goal_scope": "selected diagnostic objects only; does not override full mission_complete"
+      },
+      "outcome": "invalid_artifact"
+    },
+    {
+      "run_id": "joint-physical-replay",
+      "condition": "none",
+      "process": {
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_time_s": 35.87764009299997,
+        "process_group": 3329
+      },
+      "result": {
+        "run_id": "joint-physical-replay",
+        "order": 2,
+        "scenario_id": "joint-physical-replay",
+        "condition": "none",
+        "seed": 11,
+        "repeat": 0,
+        "artifact_relpath": ".",
+        "outcome": "invalid_artifact",
+        "reason": "evaluator snapshot predates the runtime terminal event",
+        "mission_complete": false,
+        "artifacts": {
+          "runtime": "39c5e568db6b57016e4363a9a3a1e533eb442a30a52c4971a9e92e52e64ccb73",
+          "evaluator": "b1bc12b920baca3d23efb5cb84fed046186cf22bb156f24fb32eb94685f83a40"
+        },
+        "metrics": {},
+        "measurement_status": {},
+        "schema_version": "rgb-communication-trial-result.v2",
+        "source_sha": "bfe478f1209375d774b6dc2881300198f967f5ca",
+        "config_sha256": "777c9c9bbef09c970f9c21b289b34db34c9dee1968c13d36e8ad4245a0daff0b",
+        "evidence_kind": "deterministic_physical_replay",
+        "claim_scope": "development_connection_smoke",
+        "source_artifact_hashes": {
+          "plan.json": "28d0086e50c75abb0c61920c5694d31628d27e08e5babf93441342ff1c23029b",
+          "runtime.jsonl": "39c5e568db6b57016e4363a9a3a1e533eb442a30a52c4971a9e92e52e64ccb73",
+          "evaluator.json": "b1bc12b920baca3d23efb5cb84fed046186cf22bb156f24fb32eb94685f83a40"
+        },
+        "replay_target_objects": [
+          "beam"
+        ],
+        "replay_goal_complete": null,
+        "replay_goal_scope": "selected diagnostic objects only; does not override full mission_complete"
+      },
+      "outcome": "invalid_artifact"
+    }
+  ],
+  "successes": 0,
+  "map_strata": [
+    {
+      "map_group_sha256": "fa0944a500de62caa2947ab321513c1063ab565c482016ed4e16645e21ab5987",
+      "stratum": "regression",
+      "condition": "none",
+      "planned_n": 2,
+      "outcomes": {
+        "invalid_artifact": 2
+      },
+      "failure_categories": {
+        "unclassified": 2
+      },
+      "event_reached_n": 0,
+      "event_measured_n": 0,
+      "successful_wall_time_s": []
+    }
+  ],
+  "wall_s": 82.78882158600004,
+  "allocated_job_wall_s": 1609.3287959999998,
+  "scope": "physical replay is capability evidence; communication pilot is not a superiority test"
+}

@@ -1,0 +1,68 @@
+{
+  "session": "ugrp-d2-06e86e6cb059",
+  "source_sha": "bfe478f1209375d774b6dc2881300198f967f5ca",
+  "status": "recovered",
+  "automatic_retry": false,
+  "deadline_s": 1800,
+  "input_archive_sha256": "87c8ab7245a20cc1559331f52cc1a83e1fd2799b2e3ad51cc231b73e7051f8a1",
+  "remote_exit_code": 0,
+  "recovered_archive_sha256": "c708440c3ec2aa95076449c97b142c8b5e6c02d0ad71692917970a5749459ab7",
+  "session_stop": {
+    "exit_code": 0,
+    "timed_out": false,
+    "wall_time_s": 3.1032666669998434,
+    "process_group": 61737
+  },
+  "steps": [
+    {
+      "step": "new",
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_time_s": 17.165687583999897,
+      "process_group": 60920
+    },
+    {
+      "step": "source-upload",
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_time_s": 11.207902750000358,
+      "process_group": 61032
+    },
+    {
+      "step": "input-upload",
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_time_s": 3.84584708300099,
+      "process_group": 61127
+    },
+    {
+      "step": "setup",
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_time_s": 38.44809829100086,
+      "process_group": 61154
+    },
+    {
+      "step": "run",
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_time_s": 92.04326574999868,
+      "process_group": 61466
+    },
+    {
+      "step": "download",
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_time_s": 2.928063999999722,
+      "process_group": 61729
+    },
+    {
+      "step": "download-sha",
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_time_s": 1.9344127910007956,
+      "process_group": 61730
+    }
+  ],
+  "wall_time_s": 170.71534608299953
+}
