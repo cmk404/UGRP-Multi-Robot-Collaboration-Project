@@ -55,6 +55,26 @@ def test_tampered_runtime_never_publishes_event_file(tmp_path):
     assert not list((tmp_path / "events").glob("*tfevents*"))
 
 
+def test_clock_invalid_failure_is_visible_without_fabricating_final_sim_time(tmp_path):
+    pytest.importorskip("tensorboard")
+    from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
+    src = fixture_source(tmp_path)
+    evaluator = json.loads((src / "evaluator.json").read_text())
+    evaluator["source_snapshot"]["timestamp_s"] = 3.95
+    (src / "evaluator.json").write_text(json.dumps(evaluator))
+    result = json.loads((src / "result.json").read_text())
+    result["source_artifact_hashes"]["evaluator.json"] = digest_file(src / "evaluator.json")
+    (src / "result.json").write_text(json.dumps(result))
+    manifest = convert(src, tmp_path / "events", allow_synthetic=True)
+    events = EventAccumulator(str(tmp_path / "events")).Reload()
+    assert manifest["metadata"]["outcome"] == "invalid_artifact"
+    assert events.Scalars("evaluation/evidence_valid")[0].value == 0
+    assert events.Scalars("evaluation/reported_success")[0].value == 0
+    assert events.Scalars("clock/runtime_requested_sim_s")[0].value == 4
+    assert "result/sim_s" not in events.Tags()["scalars"]
+    assert events.Scalars("result/commands")[0].value == 1
+
+
 def test_explicit_opt_in_cannot_publish_synthetic_to_non_temporary_directory(tmp_path, monkeypatch):
     from scripts.tensorboard_tools import export
     src = fixture_source(tmp_path)
