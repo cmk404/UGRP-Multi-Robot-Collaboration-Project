@@ -83,7 +83,8 @@ def test_explicit_opt_in_cannot_publish_synthetic_to_non_temporary_directory(tmp
         convert(src, tmp_path / "events", allow_synthetic=True)
 
 
-def test_unknown_new_terminal_clock_exports_only_diagnostics(tmp_path):
+@pytest.mark.parametrize("evaluator_clock", [4., None])
+def test_unknown_new_terminal_clock_exports_only_diagnostics(tmp_path, evaluator_clock):
     pytest.importorskip("tensorboard")
     from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
     src = fixture_source(tmp_path, outcome="success")
@@ -95,7 +96,11 @@ def test_unknown_new_terminal_clock_exports_only_diagnostics(tmp_path):
         "terminal_time_s": None, "terminal_time_status": "unknown", "reason": "ACTUAL_CLOCK_UNKNOWN"}
     (src / "runtime.jsonl").write_text("".join(json.dumps(row) + "\n" for row in rows))
     result = json.loads((src / "result.json").read_text())
+    evaluator = json.loads((src / "evaluator.json").read_text())
+    evaluator["source_snapshot"]["timestamp_s"] = evaluator_clock
+    (src / "evaluator.json").write_text(json.dumps(evaluator))
     result["source_artifact_hashes"]["runtime.jsonl"] = digest_file(src / "runtime.jsonl")
+    result["source_artifact_hashes"]["evaluator.json"] = digest_file(src / "evaluator.json")
     (src / "result.json").write_text(json.dumps(result))
     snapshot = convert(src, tmp_path / "events", allow_synthetic=True)
     events = EventAccumulator(str(tmp_path / "events")).Reload()
@@ -105,3 +110,5 @@ def test_unknown_new_terminal_clock_exports_only_diagnostics(tmp_path):
     assert events.Scalars("clock/runtime_requested_sim_s")[0].value == pytest.approx(4.1)
     assert "result/sim_s" not in events.Tags()["scalars"]
     assert "evaluation/false_finish_claim" not in events.Tags()["scalars"]
+    if evaluator_clock is None:
+        assert "clock/evaluator_snapshot_sim_s" not in events.Tags()["scalars"]

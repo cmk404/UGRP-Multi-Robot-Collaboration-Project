@@ -430,7 +430,10 @@ def load_evaluator(path: Path, plan: dict[str, Any]) -> dict[str, Any]:
         raise ContractError("evaluator snapshot boundary declaration is missing")
     if snapshot.get("clock_domain") not in {"sim", "monotonic"}:
         raise ContractError("evaluator snapshot clock_domain is invalid")
-    if not _is_number(snapshot.get("timestamp_s")) or snapshot["timestamp_s"] < 0:
+    # Unknown actual clock is preserved as missing raw evidence, not invented
+    # from a request or last acknowledgement. Combined scoring rejects it below.
+    if snapshot["timestamp_s"] is not None and (
+            not _is_number(snapshot["timestamp_s"]) or snapshot["timestamp_s"] < 0):
         raise ContractError("evaluator snapshot timestamp_s is invalid")
     if not isinstance(snapshot.get("active_task_ids"), list) or not isinstance(
         snapshot.get("pending_task_ids"), list
@@ -757,6 +760,8 @@ def evaluate_run(plan: dict[str, Any], artifact_root: Path) -> dict[str, Any]:
         score = score_termination(terminal["payload"], external)
         snapshot = evaluator["source_snapshot"]
         validate_terminal_clock(terminal, snapshot)
+        if snapshot["timestamp_s"] is None:
+            raise ContractError("evaluator snapshot actual clock is unknown")
         if (snapshot["clock_domain"] == "sim" and terminal["sim_time_s"] is not None
                 and snapshot["timestamp_s"] < terminal["sim_time_s"]):
             raise ContractError("evaluator snapshot predates the runtime terminal event")

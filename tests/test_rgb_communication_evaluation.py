@@ -188,6 +188,14 @@ def test_original_legacy_point_eight_vs_point_seven_five_stays_invalid(tmp_path)
     assert (run / "runtime.jsonl").read_text() == original
 
 
+def test_unknown_evaluator_clock_cannot_confirm_even_verified_terminal(tmp_path):
+    plan, run, rows = clock_artifacts(tmp_path, snapshot=None)
+    (run / "runtime.jsonl").write_text("".join(json.dumps(row) + "\n" for row in rows))
+    result = evaluate_run(plan, tmp_path)
+    assert result["outcome"] == "invalid_artifact"
+    assert not result["mission_complete"]
+
+
 def test_manifest_is_a_complete_randomized_six_run_block_with_provenance():
     value = manifest()
     validate_manifest(value)
