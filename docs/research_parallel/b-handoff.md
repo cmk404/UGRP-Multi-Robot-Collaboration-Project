@@ -62,7 +62,10 @@ A/B/C 파일럿을 Colab CLI로 제안한다. 현재 exact 실행 script가 없�
 ## source SHA
 
 - 구현 commit: `84aadca` (`Add common RGB execution port contract`)
-- handoff/PR metadata commit: 이 문서의 후속 commit
-- PR: 생성 뒤 설명과 task attachment에서 확인
+- handoff metadata commit: `da3f192`
+- PR: [#95](https://github.com/cmk404/UGRP-Multi-Robot-Collaboration-Project/pull/95)
+- `da3f192` 기준 GitHub CI 두 run의 proxy/TensorBoard/offline regression/reference ACT/
+  multi-object/Ubuntu simulation이 모두 통과했다. 이 URL 기록만 추가한 후속 문서 commit은 PR에서
+  같은 CI 보호 규칙을 다시 적용받는다.
 
 main 병합은 사용자 명시 승인 전 금지한다.
