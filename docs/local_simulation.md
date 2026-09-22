@@ -125,3 +125,12 @@ python -m scripts.check_simulation --output outputs/simulation-check-NEW
 ```
 
 MuJoCo passive viewer의 스레드·macOS 실행 규칙은 [공식 Python 문서](https://mujoco.readthedocs.io/en/stable/python.html#passive-viewer)를 따른다.
+
+## 플랫폼 검증
+
+| 환경 | 검사 |
+|---|---|
+| macOS arm64 · Python 3.12 · MuJoCo 3.12 | native 창 실행/유한 종료, headless, 보정 RGB, 설정/API |
+| Ubuntu 24.04 x64 · Python 3.12 · MuJoCo 3.12 | Xvfb에서 native 창 3회 연속 실행/종료, OSMesa RGB, 설정/API |
+
+두 OS에서 같은 JSON과 명령을 사용한다. Linux CI의 가상 디스플레이 검증은 각 PC의 그래픽 드라이버 확인을 대체하지 않는다. Mac 실제 창의 마우스/키보드 자동화는 도구 접근 시간 초과로 미확인이다. [검증 원본과 실패 기록](../experiments/2026-09-22-native-simulation/README.md)을 참조한다.
