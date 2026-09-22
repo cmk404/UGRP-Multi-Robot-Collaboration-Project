@@ -47,6 +47,14 @@ def capture(sim, output, label):
         write_json(output / f"{label}-{rid}-observation.json", observation)
 
 
+def model_totals(responses, *, complete):
+    totals = {"model_latency_s": sum(r["wall_s"] for r in responses) if complete else None}
+    for key, provider_key in (("input_tokens", "prompt_tokens"), ("output_tokens", "completion_tokens")):
+        if complete and responses and all(provider_key in (r.get("usage") or {}) for r in responses):
+            totals[key] = sum(r["usage"][provider_key] for r in responses)
+    return totals
+
+
 def run(config, args):
     if not args.headless and sys.platform.startswith("linux") and not (os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")):
         raise ValueError("native viewer requires a desktop display; use --headless on a server")
@@ -247,14 +255,16 @@ def run(config, args):
                             responses.append(response)
                     except (OSError, ValueError):
                         pass  # Cancellation may interrupt a result write; preserve its bytes.
-                result.update(model_calls=len(list((output / "model-calls").glob("*.wire.json"))),
+                attempted = len(list((output / "model-calls").glob("*.wire.json")))
+                # A killed/failed request may have no usage receipt. Do not report
+                # partial known usage/latency as a complete session total.
+                receipts_complete = len(responses) == console.calls
+                result.update(model_calls=attempted,
                               model_requests_started=console.calls, console_errors=console.failures, final_mode=console.mode,
                               operator_session_complete=result["stop_reason"] == "console_quit",
                               model_claims=sum(e["kind"] == "model_reply" and e["reply"]["done"] for e in console.events),
-                              model_latency_s=sum(r["wall_s"] for r in responses))
-                for key, provider_key in (("input_tokens", "prompt_tokens"), ("output_tokens", "completion_tokens")):
-                    if responses and all(provider_key in (r.get("usage") or {}) for r in responses):
-                        result[key] = sum(r["usage"][provider_key] for r in responses)
+                              model_receipts_complete=receipts_complete,
+                              **model_totals(responses, complete=receipts_complete))
             if sim is not None:
                 try:
                     result["sim_s"] = sim.time

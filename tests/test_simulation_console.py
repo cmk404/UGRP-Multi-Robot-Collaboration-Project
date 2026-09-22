@@ -208,3 +208,11 @@ def test_script_cli_accepts_controller_override_before_empty_check(tmp_path, mon
     monkeypatch.setattr("scripts.sim_cli.run", lambda config, args: seen.append(config) or 0)
     assert main(["console", str(target), "--mode", "script", "--controller", "r1=policy.py:create"]) == 0
     assert seen[0]["controllers"]["r1"]["factory"] == "policy.py:create"
+
+
+def test_partial_model_receipts_do_not_claim_complete_usage_or_latency():
+    from scripts.sim_cli import model_totals
+    responses = [{"wall_s": 1, "usage": {"prompt_tokens": 10, "completion_tokens": 5}}]
+    assert model_totals(responses, complete=False) == {"model_latency_s": None}
+    assert model_totals(responses, complete=True) == {"model_latency_s": 1, "input_tokens": 10, "output_tokens": 5}
+    assert model_totals([], complete=True) == {"model_latency_s": 0}
