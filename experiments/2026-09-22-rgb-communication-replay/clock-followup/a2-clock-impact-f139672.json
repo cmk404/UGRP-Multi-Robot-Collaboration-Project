@@ -1,0 +1,128 @@
+{
+  "source_sha": "f139672e130fc921087281c69977f039e09de353",
+  "scope": "A2 offline clock impact only",
+  "physical_runs": 0,
+  "model_calls": 0,
+  "cases": [
+    {
+      "case": "no_advance",
+      "pass": true,
+      "clock": {
+        "schema": "rgb-runtime-clock.v1",
+        "clock_domain": "sim",
+        "requested_tick_s": 0.8,
+        "last_successful_requested_tick_s": 0.75,
+        "last_acknowledged_time_s": 0.7499999999999949,
+        "terminal_time_s": 0.7499999999999949,
+        "terminal_time_status": "verified",
+        "reason": "VERIFIED_CLOCK_SNAPSHOT"
+      }
+    },
+    {
+      "case": "partial_advance",
+      "pass": true,
+      "clock": {
+        "schema": "rgb-runtime-clock.v1",
+        "clock_domain": "sim",
+        "requested_tick_s": 0.8,
+        "last_successful_requested_tick_s": 0.75,
+        "last_acknowledged_time_s": 0.7499999999999949,
+        "terminal_time_s": 0.7699999999999927,
+        "terminal_time_status": "verified",
+        "reason": "VERIFIED_CLOCK_SNAPSHOT"
+      }
+    },
+    {
+      "case": "unknown_actual",
+      "pass": true,
+      "clock": {
+        "schema": "rgb-runtime-clock.v1",
+        "clock_domain": "sim",
+        "requested_tick_s": 0.8,
+        "last_successful_requested_tick_s": 0.75,
+        "last_acknowledged_time_s": 0.7499999999999949,
+        "terminal_time_s": null,
+        "terminal_time_status": "unknown",
+        "reason": "ACTUAL_CLOCK_UNKNOWN"
+      }
+    },
+    {
+      "case": "close_raw_actual_at_budget",
+      "pass": true,
+      "requested_s": 180,
+      "actual_s": 180.00000000013756,
+      "roundoff_bound_s": 2.5580106921552215e-9,
+      "error": null
+    },
+    {
+      "case": "one_ulp_real_reverse_and_clock_only_fields",
+      "pass": true
+    },
+    {
+      "case": "D_writer_exit_barrier_normal_exit",
+      "pass": true,
+      "process": {
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_time_s": 0.9872091249999357,
+        "process_group": 75140
+      },
+      "changed_after_bundle_close": true,
+      "hash_stable_after_process_exit": true,
+      "completion_known": true,
+      "final_log_sha256": "4b24b652b275a8f0fdeaa3a9e79ea523981f9bf48bc0c7376552b31cbb684864"
+    },
+    {
+      "case": "D_writer_exit_barrier_timeout_exit",
+      "pass": true,
+      "process": {
+        "exit_code": 124,
+        "timed_out": true,
+        "wall_time_s": 1.5167326249993494,
+        "process_group": 75145
+      },
+      "changed_after_bundle_close": false,
+      "hash_stable_after_process_exit": true,
+      "completion_known": false,
+      "final_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "case": "D_writer_exit_barrier_forced_kill_exit",
+      "pass": true,
+      "process": {
+        "exit_code": 124,
+        "timed_out": true,
+        "wall_time_s": 6.512870833999841,
+        "process_group": 75160
+      },
+      "changed_after_bundle_close": false,
+      "hash_stable_after_process_exit": true,
+      "completion_known": false,
+      "final_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "case": "old_solo_still_rejected_unchanged",
+      "pass": true,
+      "hashes": {
+        "runtime.jsonl": "9a045b2cce1d324e33e2d16e1e8b91274a07754112cd21cca7d44ef5625de376",
+        "evaluator.json": "70abbaf37b46020c0b44245e96729a610a8e8d459afff8b77d391c2214d37df5",
+        "result.json": "2e97076c15b51ef72f7a376a5af7cdbf55cc74add81c23ad80766e6f01913f6a"
+      }
+    },
+    {
+      "case": "old_joint_still_rejected_unchanged",
+      "pass": true,
+      "hashes": {
+        "runtime.jsonl": "39c5e568db6b57016e4363a9a3a1e533eb442a30a52c4971a9e92e52e64ccb73",
+        "evaluator.json": "b1bc12b920baca3d23efb5cb84fed046186cf22bb156f24fb32eb94685f83a40",
+        "result.json": "20a2ccf5e1ef015e6b62ce0644c87d759ce22e779f1a3c0f5e154cb5a014bd55"
+      }
+    }
+  ],
+  "findings": [],
+  "live_readiness": false,
+  "passed": 10,
+  "failed": 0,
+  "verdict": "offline_impact_pass",
+  "worker_finalization_scope": "bundle.close is not a byte freeze; D subprocess exit/reap precedes full hashes. Killed worker duration/completion remain unknown."
+}

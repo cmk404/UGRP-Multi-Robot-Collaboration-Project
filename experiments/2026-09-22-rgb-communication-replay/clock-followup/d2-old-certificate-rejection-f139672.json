@@ -1,0 +1,24 @@
+{
+  "schema": "d2-old-certificate-rejection.v1",
+  "candidate_source": {
+    "git_sha": "f139672e130fc921087281c69977f039e09de353",
+    "clean": true
+  },
+  "original_execution_sha": "bfe478f1209375d774b6dc2881300198f967f5ca",
+  "old_manifest_file_sha256": "db877a237a173df18500b3bce60f2546e15a5cf59536462ecc511b7c8d7a7eb3",
+  "ready": false,
+  "blockers": [
+    "source_sha_or_clean_state_mismatch",
+    "source_file_changed:harness/rgb_communication_async.py",
+    "source_file_changed:harness/rgb_communication_evaluation.py",
+    "source_file_changed:harness/rgb_communication_runtime.py",
+    "source_file_changed:harness/rgb_communication_study.py",
+    "source_file_changed:harness/rgb_skill_execution.py",
+    "source_file_changed:scripts/tensorboard_tools/rgb_communication.py",
+    "source_dependency_set_mismatch",
+    "environment_source_mismatch",
+    "environment:environment source mismatch",
+    "offline_boundary:offline source mismatch"
+  ],
+  "meaning": "Read-only static preflight. The original execution certificate is not admission for the new source. No physical or model execution."
+}

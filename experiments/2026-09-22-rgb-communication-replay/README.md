@@ -83,3 +83,7 @@ capsule root: `/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/study-inputs`.
 물리 pass, clock 수정 후보의 새 실행, A의 수정 영향 감사, provider의 input/output hard token cap 검증 및 최종 live admission은 미완료다. 추가 실행·LLM은 NO-GO이며 승인된 두 시행을 자동 확장하지 않는다. 새 PR #100–103은 별도 사용자 승인 전 병합하지 않는다.
 
 후속 D `30f2409`는 clock-only supervisor 연결과 신규 terminal schema 검사만 추가했다. unknown/malformed clock 9개 RED 후 통과, 부분 진행 .77/last-ack .75 분리, requested/actual roundoff 보존, 구 원본 .8/.75 invalid 유지, actor/evaluator 비노출 seam을 포함해 관련 70 tests를 오프라인으로 검사했다. 이 수정은 원본 실행 소스가 아니며 새 Colab 실행을 포함하지 않는다.
+
+이후 nullable raw clock 표시 보완과 B의 180초 종료 반례 수정을 포함한
+`f139672`의 [후속 오프라인 영향 검증](clock-followup/README.md)은 별도 기록이다.
+전체 1423 tests와 A의 영향 감사는 통과했지만 execution admission/물리 pass는 false다.
