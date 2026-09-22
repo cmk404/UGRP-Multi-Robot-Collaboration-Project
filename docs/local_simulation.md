@@ -54,9 +54,11 @@ MuJoCo 창에서 **Space**는 일시정지/재개, **N**은 정지 중 물리 �
 
 | 항목 | 의미 |
 |---|---|
-| `scene.layout` | 기존 `standard`, `mixed`, `arena`, `camera_team` 장면 생성기 |
-| `scene.seed` | 정적 장면과 초기 배치 seed |
-| `scene.cargo_ids` | `null`이면 전체 화물, 배열이면 선택한 화물만 구성. 실제 ID는 실행의 `physics.json` 참고 |
+| `scene.layout` | `scenes`의 연구 장면 ID 또는 기존 4개 엔진 예제 |
+| `scene.seed` | 엔진 초기화·배치 seed. ACT 지도의 `map_seed`는 선택 case 명세를 따름 |
+| `scene.cargo_ids` | 기존 4개 엔진 예제의 화물 필터. 연구 장면은 작성된 inventory 사용 |
+| `scene.map_file` | `navigation/file`·`pair_navigation/file`의 지도 JSON; 설정 폴더 기준 |
+| `scene.contact_profile` | 출하장의 명시적 접촉 solver 프로필; 기본은 원래 생성기 설정 |
 | `scene.robots` | 초기화 시에만 적용할 로봇별 `xyz_m: [x,y,z]`, `yaw_deg` |
 | `camera.width/height` | 자기 RGB 출력 해상도. 공용 top은 기존 관찰자 최소 해상도를 유지 |
 | `control.allow_reverse/allow_mecanum` | 허용할 저수준 명령 범위 |
