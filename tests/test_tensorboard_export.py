@@ -95,6 +95,24 @@ def test_missing_success_is_not_zero(tmp_path,export_api):
     assert 'evaluation/reported_success' not in EA(str(tmp_path/'export')).Reload().Tags()['scalars']
 
 
+def test_dispatch_plan_receipts_keep_agreement_separate_from_transport(tmp_path,export_api):
+    convert,EA=export_api;src=tmp_path/'source';src.mkdir()
+    put(src,'result.json',{'plan_committed':True,'protocol_complete':False,'physical_success':False,'llm_calls':3})
+    put(src,'skill-bindings.json',{'solo_robot':'r2'})
+    put(src,'team/team.json',{'calls':[{'latency_ms':1000},{'latency_ms':2000},{'latency_ms':500}]})
+    put(src,'issued-commands.json',{'r1':[{'stage':'SETUP'},{'action':{'kind':'drive'}}],
+        'r2':[{'action':{'kind':'wait'}}],'r3':[]})
+    manifest=convert(src,tmp_path/'export')
+    ea=EA(str(tmp_path/'export')).Reload()
+    assert ea.Scalars('claims/plan_committed')[0].value==1
+    assert ea.Scalars('claims/protocol_complete')[0].value==0
+    assert ea.Scalars('evaluation/reported_success')[0].value==0
+    assert ea.Scalars('result/model_latency_s')[0].value==3.5
+    assert ea.Scalars('result/recorded_raw_commands')[0].value==2
+    assert 'excludes' in manifest['metadata']['command_count_scope']
+    assert 'team/team.json' in manifest['source_files']
+
+
 def test_images_and_sim_time_are_recoverable(tmp_path,export_api):
     convert,EA=export_api
     from PIL import Image

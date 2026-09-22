@@ -42,8 +42,11 @@
 `bash scripts/open_simulation.command workflows`에서 소스·문서·필요 자료를 확인한다.
 3대 계획·출하 스킬, RGB 공동 운반, 지도 주행, ACT 교사/학습/평가, Jev 비교, 다중 물건 실행,
 통신 조건 구성/감사, 단계 동기화, 물리 장치 기록과 기존 워커를 보존한다.
-새 로컬 실행기는 이들을 임의로 시작하지 않는다. 일부 경로에는 Git에 없는 모델·원시 기록과
-개인 모델 프록시가 필요하다. 새 clone의 기본 native 장면은 그 자료 없이 열린다.
+`dispatch` 선택은 기존 `run_dispatch_e2e --executor skills`를 실행하고 같은 물리를 네이티브
+관찰 창에서 보여준다. 자연어는 기존 peer 계획 입력으로 전달하며 계획·스킬을 다른 제어기로
+대체하지 않는다. 기본 메뉴는 공동 계획, 명시적 저장 plan 재생, 수동, 설정 실행을 구분한다.
+출하 스킬 모델은 기존 tracked ZIP에서 복원한다. 다른 일부 경로에는 Git에 없는 모델·원시
+기록과 개인 모델 프록시가 필요하다. 수동 native 장면은 그 자료 없이 열린다.
 
 기존 연구 XML 변환은 공유 모듈 `sim/research_scene_xml.py`에서 재사용한다.
 engine → 장면 XML/초기화 adapter → Simulation → CLI 순으로 구성하고,

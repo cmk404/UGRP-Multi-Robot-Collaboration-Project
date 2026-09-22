@@ -237,11 +237,22 @@ def export_execution(src, w, result, max_images):
         'result/input_tokens': result.get('input_tokens', usage.get('prompt_tokens')),
         'result/output_tokens': result.get('output_tokens', usage.get('completion_tokens')),
         'result/cost_usd': result.get('cost_usd'), 'result/model_latency_s': result.get('model_latency_s')}
+    if (src.root / 'skill-bindings.json').is_file():
+        # Existing skill runners keep receipts separately from result.json.
+        calls = rows(obj(src.read('team/team.json')).get('calls'))
+        if calls and all(finite(c.get('latency_ms')) for c in calls):
+            metrics['result/model_latency_s'] = sum(c['latency_ms'] for c in calls) / 1000
+        commands = src.read('issued-commands.json')
+        if isinstance(commands, dict):
+            metrics['result/recorded_raw_commands'] = sum(
+                'action' in row for values in commands.values() for row in rows(values))
+            meta['command_count_scope'] = 'recorded raw action rows only; excludes setup descriptions and internal macro servo commands'
     success_field = next((k for k in ('success', 'transport_success', 'physical_success') if type(result.get(k)) is bool), None)
     if success_field: metrics['evaluation/reported_success'] = int(result[success_field])
     meta['success_source_field'] = success_field
     meta['outcome'] = str(result[success_field]) if success_field else 'unrecorded'
     if type(result.get('protocol_complete')) is bool: metrics['claims/protocol_complete'] = int(result['protocol_complete'])
+    if type(result.get('plan_committed')) is bool: metrics['claims/plan_committed'] = int(result['plan_committed'])
     if type(result.get('operator_session_complete')) is bool:
         metrics['claims/operator_session_complete'] = int(result['operator_session_complete'])
     for name, val in obj(result.get('protocol')).items():
