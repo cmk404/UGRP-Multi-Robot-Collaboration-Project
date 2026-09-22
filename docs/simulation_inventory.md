@@ -60,4 +60,5 @@ engine → 장면 XML/초기화 adapter → Simulation → CLI 순으로 구성�
 - 사용자 Python은 trusted code이며 보안 격리가 아니다. 동기 호출이 멈추면 그 호출을 wall limit으로 강제 중단하지 못한다.
 - viewer GUI의 실제 마우스/키 조작은 물리/API·렌더링·정상 종료 검증과 별도로 보고한다.
 
-실제 검증 결과와 소스 SHA는 `experiments/2026-09-22-simulation-scenes/`에 기록한다.
+Mac·Ubuntu에서 58/58 장면 생성·reset을 통과했다. 실행·검증 범위와 소스 SHA는
+[검증 기록](../experiments/2026-09-22-simulation-scenes/README.md)에 남겼다.

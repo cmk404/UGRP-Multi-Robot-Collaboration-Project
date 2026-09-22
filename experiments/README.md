@@ -53,3 +53,5 @@
 이 표는 기존 보고서의 탐색 경로를 보완한 것으로, 모든 과거 실험의 소스·환경·원본을 현재 형식으로 이관했다는 뜻은 아니다. 이전 후보의 커밋 연결 및 raw 원격 보관은 미완료다. 원본 복구 경로는 [이슈 #3](https://github.com/kcm0127-dotcom/ugrp/issues/3)에서 추적한다.
 
 - [2026-09-21 TensorBoard 기록 열람 검증](2026-09-21-tensorboard-review/README.md): 기존 24개 기록 변환, 이벤트·원본 해시·로컬 화면 확인. 새 로봇 실험 아님.
+
+- [2026-09-22 로컬 연구 장면 구성 검토](2026-09-22-simulation-scenes/README.md): 기존 58개 항목 연결·Mac/Linux reset/RGB/native/기록 검사; 운반 성능 비교 아님.
