@@ -24,7 +24,8 @@ common_task = static_context['task']
 bundle = build_rgb_skill_backend(config)       # 실제 실행: D만 호출
 port = bundle.actor_port
 # C scheduler가 port.tick(0), .05, .10 ... 및 observe/status/submit을 소유
-port.close(last_sim_s)
+clock = bundle.clock_snapshot()                # C/D supervisor only; actor에 전달하지 않음
+port.close(clock['actual_time_s'])             # unknown(None)도 안전 hold, clock 전진 없음
 snapshot = bundle.evaluation_snapshot()        # actor close 이전에는 오류
 bundle.close()                                # 영상/평가/scene 정리, 반복 호출 안전
 # 정리 뒤 snapshot()은 보존된 동일 평가 cache 반환
@@ -62,6 +63,22 @@ config exact fields:
 
 ## clock, 수명, 오래된 답
 
+### bfe478f 회수 실패 후 제한 수정 (2026-09-22)
+
+회수된 solo/joint 원본은 그대로 `invalid_artifact`다. 원본에는 RuntimeError의 전체 원인 chain이 없지만,
+동일 소스의 `DispatchScene.step`과 `CameraRobotPort`를 사용하는 **산술 clock fixture**에서 같은 .8초 중단을 재현했다.
+origin `1.300000000000001`, dt `.002`일 때 .75초의 world absolute `2.049999999999996`과
+합성 endpoint clock `2.0500000000000007`의 차이는 `-4.884981308350689e-15`다.
+기존 fixture는 .005초를 먼저 더한 뒤 endpoint.tick을 호출해 실제 step-before-increment 경계를 놓쳤다.
+
+- 실제 endpoint에는 `_SimulationClock`의 world 누적 absolute time만 전달한다. `CameraRobotPort`와 `DispatchScene` 자체는 수정하지 않았다.
+- 요청 relative time과 실제 elapsed의 비교에만 `(ceil(max(requested,actual_elapsed)/dt)+2) * ulp(origin+max(requested,actual_elapsed))` 상계를 사용한다. 이는 누적 덧셈 및 경계의 덧셈/뺄셈 반올림을 위한 범위다. 실제 clock 단조성에는 이 범위를 적용하지 않으며 1 ULP 역행도 거절한다. 음수/nonfinite, 의미 있는 timestep 불일치 역시 실패한다.
+- descriptor의 `supervisor_clock_schema='ugrp.execution_clock.v1'`. `bundle.clock_snapshot()`은 정확히 `schema,clock_domain,last_acknowledged_time_s,actual_time_s`만 반환한다. 두 시간은 setup 이후 raw actual elapsed이며 last_ack는 성공한 tick에서만 갱신한다. 확인 불가 값은 null이고 실제값을 requested나 last_ack로 대체하지 않는다. 실제값은 반올림 때문에 requested보다 미세하게 작거나 클 수 있다.
+- 이 callback은 actor facade/관측/상태에 노출하지 않는다. 읽기만 하며 render, physics step, evaluator, 좌표·관절·접촉·성공 판정에 접근하지 않는다. close 뒤에도 사용할 수 있다. 최종 scene shutdown 뒤에는 종료 시 확인한 clock을 보존한다.
+- `close(None)`은 실제 clock에서 hold하되 clock이나 last_ack를 전진하지 않는다. 실제 clock이 확인 불가하면 마지막 **발행 명령 clock**에서 보간 없이 목표를 취소하고 바퀴를 정지한다. 이 취소 시각을 실제 물리 시각으로 보고하지 않는다. 부분 진행 실패도 원래 예외 chain을 유지하고 모든 소유 endpoint를 hold한다.
+- 별도 `worker-timing.jsonl`(`ugrp.rgb_worker_timing.v1`)에 RGB_WORKER_COMPLETED/REJECTED를 기록한다. worker 시작/완료/계산 wall duration, queue 지연, 제출→poll wall 시간, image age, 두 거절 조건을 분리한다. 진행 중 거절의 계산 duration은 null이며 늦게 완료되면 별도 완료 행으로 남는다. 감독 로그는 actor 입력/상태에 들어가지 않는다.
+- **wall 2초와 SIM image age 1초는 그대로**이며 제출→poll wall gate의 의미도 바꾸지 않았다. clock 수정은 stale-worker 해결 또는 물리 운반 성공의 증거가 아니다. 추가 물리/Colab/LLM 실행 없이 오프라인 clock·안전 경계만 검증한다. C의 terminal 시간 계약 및 D의 평가·수집 연결은 각 후속 변경과 합쳐 별도 검증한다.
+
 - scheduler가 소유한 SIM elapsed clock은 setup 종료 시 0으로 시작한다. 실제 world origin은 provenance에 보존한다. tick은 0~0.05초만 전진할 수 있고 180초를 넘을 수 없다. `DispatchScene.step` 한 곳만 post-setup 물리를 step하며 그 내부 각 물리 substep에서 모든 endpoint watchdog을 확인한다. 요청 시간과 실제 timestep grid가 다르면 중단한다.
 - 영상 판단은 robot별 worker에서 실행한다. worker에는 own RGB, common TOP, 자기 명령 cache와 자신의 스킬만 들어간다. world·port·평가 참조가 없고 완료 전에는 명령 권한도 없다. 다른 로봇/clock은 이 worker를 기다리지 않는다. 한 번의 판단은 wall 2초 한도이며 결과를 받았을 때도 원본 RGB가 SIM 1초 이내인지 검사한다. 취소된 계산의 늦은 결과는 폐기한다.
 - pose 보간/drive는 scheduler의 `MacroQueue`가 발행하고 raw duration은 최대 .1초다. 모든 명령은 전체 command cap 및 lease 만료로 제한한다. tick/모델을 정지해도 이미 발행한 endpoint 명령의 watchdog은 물리 owner가 확인한다.
@@ -93,7 +110,7 @@ endpoint hold 실패 시 그 로봇과 기존 resources를 격리한다. 다른 
 
 `evaluation_snapshot`은 facade 밖이며 actor close 후만 평가한다. 기존 Referee가 물체 들림·샘플별 운반 clearance·목표 포함·바닥 지지/로봇 접촉 해제·안정 구간·weld OFF를 평가한다. 물리 성공은 sampled evidence 범위다. 객체별 `attempted/selected_dock/physical_success/raw`와 `raw_by_dock`을 보존한다. `mission_complete`는 두 물건이 같은 dock에서 성공해야 참이다. 단독/공동 diagnostic 목표만의 완료는 D가 별도 `replay_goal_complete`로 파생하며 mission 원본을 덮어쓰지 않는다. 이 버전은 recovery 사건을 측정하지 않아 recovery 필드는 false로 남긴다.
 
-출력: `scene.xml`, `episode-setup-only.json`, `backend-provenance.json`, `skill-inputs.jsonl`, 실제 RGB JPEG, `referee-only.jsonl`, `execution.mp4`, `backend-evaluation.json`.
+출력: `scene.xml`, `episode-setup-only.json`, `backend-provenance.json`, `skill-inputs.jsonl`, `worker-timing.jsonl`, 실제 RGB JPEG, `referee-only.jsonl`, `execution.mp4`, `backend-evaluation.json`.
 
 ## E0 지원 매트릭스와 blocker
 

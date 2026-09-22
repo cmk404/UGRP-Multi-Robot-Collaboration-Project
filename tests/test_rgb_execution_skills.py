@@ -3,15 +3,17 @@ import base64
 import copy
 import hashlib
 import json
+import math
 from pathlib import Path
 import threading
+from types import SimpleNamespace
 
 import pytest
 
 from harness.rgb_execution_contract import SkillCapability
 from harness.rgb_execution_port import RGBExecutionPort
 from harness.rgb_skill_execution import (INITIAL_COMMANDS, SKILLS, MacroQueue, PairActorSkill,
-    RGBSkillExecutionPort, _ActorFacade, _RelativeEndpoint, backend_descriptor, map_support_matrix,
+    RGBSkillExecutionPort, _ActorFacade, _RelativeEndpoint, _SimulationClock, backend_descriptor, map_support_matrix,
     public_static_context, SoloActorSkill)
 from sim.camera_robot_port import CameraRobotPort
 
@@ -93,6 +95,248 @@ def build(controllers=None, *, max_commands=10000):
         advance_physics=advance, command_states={rid: dict(INITIAL_COMMANDS) for rid in endpoints},
         max_commands=max_commands)
     return port, world, endpoints, controllers
+
+
+def build_dispatch_float_clock():
+    """The recovered bfe478f clock, using DispatchScene.step but NO physics."""
+    from scripts.research_dispatch_scene import DispatchScene
+    world = World()
+    world.data.time = 1.300000000000001
+    world.data.eq_active = SimpleNamespace(any=lambda: False)
+    world.data.ncon = 0
+    world.data.contact = []
+    world.model = SimpleNamespace(opt=SimpleNamespace(timestep=.002))
+    world.controllers = world.robots
+    def add_timestep(_):
+        world.data.time += world.model.opt.timestep
+    world._physics_step_for = add_timestep
+    scene = DispatchScene({}, "not-created-float-clock-fixture")
+    scene.world = world
+    scene.ports = {rid: CameraRobotPort(world, rid) for rid in world.robots}
+    scene.robot_ids = scene.obstacle_ids = set()
+    clock = _SimulationClock(lambda: world.data.time, origin=world.data.time, timestep=.002, max_sim_s=180.)
+    port = RGBSkillExecutionPort({rid: _RelativeEndpoint(p, world.data.time, clock=clock)
+        for rid, p in scene.ports.items()}, frame_source=lambda rid, now: {"own_rgb": JPEG, "top_rgb": JPEG},
+        static_context=static_context(), skill_factory=lambda rid, role, skill: Controller(),
+        advance_physics=scene.step, command_states={rid: dict(INITIAL_COMMANDS) for rid in world.robots},
+        simulation_clock=clock)
+    return port, scene
+
+
+def test_recovered_dispatch_clock_survives_exact_point_eight_boundary():
+    port, scene = build_dispatch_float_clock()
+    try:
+        for i in range(16):
+            port.tick(i*.05)
+        assert scene.world.data.time == 2.049999999999996
+        port.tick(.8)
+        assert port._now_s == .8
+        assert all(p._servo_tick_time == scene.world.data.time for p in scene.ports.values())
+    finally:
+        port.close(port._now_s)
+
+
+def test_accumulated_clock_through_full_180_second_budget_without_physics():
+    port, scene = build_dispatch_float_clock()
+    try:
+        for i in range(3601):
+            port.tick(i*.05)
+        actual = scene.world.data.time-port._simulation_clock.origin
+        assert port.clock_snapshot() == {"schema": "ugrp.execution_clock.v1", "clock_domain": "sim",
+            "last_acknowledged_time_s": actual, "actual_time_s": actual}
+        assert abs(actual-180.) <= port._simulation_clock.roundoff_bound(180.)
+        assert all(p._servo_tick_time == scene.world.data.time for p in scene.ports.values())
+        with pytest.raises(ValueError):
+            port.tick(180.05)
+    finally:
+        port.close(None)
+
+
+@pytest.mark.parametrize("requested", [-.01, math.nan, math.inf, -math.inf, True, .1])
+def test_invalid_requested_clock_never_steps(requested):
+    port, scene = build_dispatch_float_clock()
+    try:
+        with pytest.raises(ValueError):
+            port.tick(requested)
+        assert scene.physics_steps == 0
+    finally:
+        port.close(None)
+
+
+@pytest.mark.parametrize("partial", [0., .02])
+def test_failed_tick_preserves_partial_actual_and_prior_ack_and_holds_all(partial):
+    port, scene = build_dispatch_float_clock()
+    for i in range(16):
+        port.tick(i*.05)
+    submit(port, "r2")
+    port.tick(.75)
+    settle_workers(port)
+    acknowledged = port.clock_snapshot()["actual_time_s"]
+    def fail_after_partial(_):
+        scene.step(partial)
+        raise OSError("fixture physics owner lost")
+    port._advance_physics = fail_after_partial
+    with pytest.raises(RuntimeError, match="physics owner unavailable") as raised:
+        port.tick(.8)
+    assert isinstance(raised.value.__cause__, OSError)
+    assert raised.value.error_code == "PHYSICS_OWNER_UNAVAILABLE"
+    snapshot = port.clock_snapshot()
+    assert snapshot["last_acknowledged_time_s"] == acknowledged
+    assert snapshot["actual_time_s"] == scene.world.data.time-port._simulation_clock.origin
+    assert snapshot["actual_time_s"] == pytest.approx(.75+partial)
+    assert port._now_s == .75 and port._closed
+    assert all(r.motor_calls[-1] == [0.]*4 for r in scene.world.robots.values())
+    assert all(not p._servo_targets for p in scene.ports.values())
+    assert not port._active and not port._resource_owners
+    steps = scene.physics_steps
+    port.close(None)
+    assert port.clock_snapshot() == snapshot and scene.physics_steps == steps
+
+
+@pytest.mark.parametrize("bad_clock", [math.nan, math.inf, -1., "one_ulp_back", "meaningful_back"])
+def test_invalid_actual_clock_stops_commands_and_never_claims_last_ack_as_actual(bad_clock):
+    port, scene = build_dispatch_float_clock()
+    port.tick(0.)
+    submit(port, "r2")
+    port.tick(0.)
+    settle_workers(port)
+    port.tick(.05)
+    acknowledged = port.clock_snapshot()["last_acknowledged_time_s"]
+    current = scene.world.data.time
+    scene.world.data.time = (math.nextafter(current, -math.inf) if bad_clock == "one_ulp_back"
+        else current-.01 if bad_clock == "meaningful_back" else bad_clock)
+    # Isolate the boundary from the arithmetic world fixture, not a real step.
+    port._advance_physics = lambda delta: None
+    with pytest.raises(RuntimeError):
+        port.tick(.1)
+    assert port.clock_snapshot()["actual_time_s"] is None
+    assert port.clock_snapshot()["last_acknowledged_time_s"] == acknowledged
+    assert all(r.motor_calls[-1] == [0.]*4 for r in scene.world.robots.values())
+    assert all(not p._servo_targets for p in scene.ports.values())
+    assert port._closed
+
+
+def test_meaningful_grid_mismatch_is_not_hidden_by_roundoff_bound():
+    port, scene = build_dispatch_float_clock()
+    port.tick(0.)
+    port._advance_physics = lambda delta: scene.step(.048)
+    with pytest.raises(RuntimeError) as raised:
+        port.tick(.05)
+    assert raised.value.__cause__.error_code == "SIM_CLOCK_MISMATCH"
+    assert port.clock_snapshot()["last_acknowledged_time_s"] == 0.
+    assert port.clock_snapshot()["actual_time_s"] == pytest.approx(.048)
+
+
+@pytest.mark.parametrize("kind", ["pause", "interrupt", "release", "expiry", "close"])
+def test_actual_clock_cancels_arm_interpolation_without_replay(kind):
+    port, scene = build_dispatch_float_clock()
+    port._skill_factory = lambda *args: Controller(action={"kind": "pose", "pulses": {5: 2000}})
+    try:
+        submit(port, "r2", expires_at_s=.15 if kind == "expiry" else 10.)
+        port.tick(0.)
+        settle_workers(port)
+        port.tick(.05)
+        if kind in {"pause", "interrupt", "release"}:
+            assert lifecycle(port, "r2", kind)["status"] == "ACCEPTED"
+        elif kind == "close":
+            port.close(None)
+        else:
+            port.tick(.1)
+            port.tick(.15)
+        calls = len(scene.world.robots["r2"].servo_calls)
+        # Continue just the clock owner after shutdown to test no queued replay.
+        scene.step(.2)
+        assert len(scene.world.robots["r2"].servo_calls) == calls
+        assert not scene.ports["r2"]._servo_targets
+    finally:
+        port.close(None)
+
+
+def test_supervisor_clock_is_readonly_separate_and_available_after_shutdown(monkeypatch):
+    port, scene = build_dispatch_float_clock()
+    port.tick(0.)
+    def prohibited(*args):
+        raise AssertionError("clock getter must not observe, render, evaluate or step")
+    monkeypatch.setattr(port, "_frame_source", prohibited)
+    monkeypatch.setattr(port, "_advance_physics", prohibited)
+    monkeypatch.setattr(port, "_evaluation_source", prohibited)
+    assert not hasattr(_ActorFacade(port), "clock_snapshot")
+    snapshot = port.clock_snapshot()
+    assert set(snapshot) == {"schema", "clock_domain", "last_acknowledged_time_s", "actual_time_s"}
+    port.close(None)
+    port._simulation_clock.freeze()
+    monkeypatch.setattr(port._simulation_clock, "_read_absolute", prohibited)
+    assert port.clock_snapshot() == snapshot
+    assert scene.physics_steps == 0
+
+
+@pytest.mark.parametrize("wall_age,sim_age,rejected", [(2., 1., False), (2.01, .05, True), (.01, 1.01, True)])
+def test_worker_guard_logs_actual_duration_separately_from_late_poll(monkeypatch, wall_age, sim_age, rejected):
+    import harness.rgb_skill_execution as skills
+    port, world, _, _ = build()
+    rows = []
+    port._record_supervisor = rows.append
+    try:
+        submit(port, "r2")
+        port.tick(0.)
+        runner = port._runners["r2"]
+        runner.future.result(timeout=1.)
+        # A completed image-only fixture, then only the supervisor polling
+        # clock/image-age changes. Neither cap uses worker completion time.
+        runner.observation["observed_at_s"] = -sim_age
+        monkeypatch.setattr(skills, "time", SimpleNamespace(monotonic=lambda: runner.started_wall+wall_age))
+        port.tick(0.)
+        denials = [r for r in rows if r["event"] == "RGB_WORKER_REJECTED"]
+        assert bool(denials) is rejected
+        if rejected:
+            row = denials[0]
+            assert row["wall_cap_exceeded"] is (wall_age > 2.)
+            assert row["sim_age_exceeded"] is (sim_age > 1.)
+            assert row["image_age_s"] == sim_age
+            assert row["submission_to_poll_wall_s"] == pytest.approx(wall_age)
+            assert row["worker_wall_duration_s"] >= 0 and row["future_done"]
+            assert row["wall_cap_s"] == 2. and row["sim_age_cap_s"] == 1.
+            assert not any(any(c) for c in world.robots["r2"].motor_calls)
+        assert any(r["event"] == "RGB_WORKER_COMPLETED" for r in rows)
+        assert "worker_wall_duration_s" not in json.dumps(port.local_status("r2"))
+    finally:
+        port.close(None)
+
+
+def test_in_flight_wall_timeout_logs_unknown_duration_then_late_completion(monkeypatch):
+    import harness.rgb_skill_execution as skills
+    entered, release = threading.Event(), threading.Event()
+    wall = [100.]
+    class WaitingController(Controller):
+        def decide(self, own, top):
+            entered.set()
+            assert release.wait(1.)
+            return super().decide(own, top)
+    monkeypatch.setattr(skills, "time", SimpleNamespace(monotonic=lambda: wall[0]))
+    port, world, _, _ = build({"r2": WaitingController()})
+    rows = []
+    port._record_supervisor = rows.append
+    try:
+        submit(port, "r2")
+        port.tick(0.)
+        assert entered.wait(1.)
+        future = port._runners["r2"].future
+        wall[0] = 102.01
+        port.tick(.05)
+        denial = next(r for r in rows if r["event"] == "RGB_WORKER_REJECTED")
+        assert denial["guard"] == "in_flight_wall"
+        assert denial["wall_cap_exceeded"] and not denial["sim_age_exceeded"]
+        assert denial["worker_wall_duration_s"] is None and not denial["future_done"]
+        wall[0] = 103.01
+        release.set()
+        future.result(timeout=1.)
+        completion = next(r for r in rows if r["event"] == "RGB_WORKER_COMPLETED")
+        assert completion["worker_wall_duration_s"] == pytest.approx(3.01)
+        port.tick(.1)
+        assert not any(any(c) for c in world.robots["r2"].motor_calls)
+    finally:
+        release.set()
+        port.close(None)
 
 
 def submit(port, rid, *, skill="solo_transport_A", task="box-task", participants=None, role="solo", **changes):
@@ -434,6 +678,7 @@ def test_readonly_descriptor_binds_models_map_camera_goal_and_reset(tmp_path):
     assert a["map_group_sha256"] == b["map_group_sha256"]
     assert a["reset_sha256"] != b["reset_sha256"]
     assert a["camera_sha256"] == b["camera_sha256"]
+    assert a["supervisor_clock_schema"] == "ugrp.execution_clock.v1"
     assert a["goal_frame"] == "warehouse_xy_m"
     assert not Path(config["output_dir"]).exists()
     public = public_static_context(config)
@@ -444,6 +689,60 @@ def test_readonly_descriptor_binds_models_map_camera_goal_and_reset(tmp_path):
     path.write_text("{}")
     with pytest.raises(ValueError, match="hash mismatch"):
         backend_descriptor(config)
+
+
+def test_real_factory_wires_clock_only_callback_and_raw_snapshot_with_fixture_scene(tmp_path, monkeypatch):
+    import harness.rgb_skill_execution as skills
+    import scripts.research_dispatch_scene as dispatch
+    import scripts.run_dispatch_e2e as evaluation
+    import scripts.probe_dual_grasp_sync as media
+    fixture_port, fixture_scene = build_dispatch_float_clock()
+    fixture_port.close(None)
+    events = []
+    class FixtureScene(dispatch.DispatchScene):
+        def open(self):
+            self.world, self.ports = fixture_scene.world, fixture_scene.ports
+            self.robot_ids = self.obstacle_ids = set()
+            self.manifest = {"scene_xml_sha256": "a"*64}
+            self.initial_invariants = {"weld_active": False}
+            self.out.mkdir()
+            (self.out / "rgb").mkdir()
+        def invariants(self):
+            return {"weld_active": False}
+        def close(self):
+            self.world = None
+    class Referee:
+        def __init__(self, scene):
+            self.file = SimpleNamespace(close=lambda: events.append("referee_close"))
+        def sample(self):
+            events.append("sample")
+        def finish(self, plan):
+            return {"cargo": {}}
+    class Video:
+        def __init__(self, *args):
+            pass
+        def capture(self, **kwargs):
+            events.append("capture")
+        def close(self):
+            events.append("video_close")
+    monkeypatch.setattr(dispatch, "DispatchScene", FixtureScene)
+    monkeypatch.setattr(evaluation, "Referee", Referee)
+    monkeypatch.setattr(media, "Video", Video)
+    bundle = skills.build_rgb_skill_backend(write_assets(tmp_path))
+    try:
+        for i in range(17):
+            bundle.actor_port.tick(i*.05)
+        before = list(events)
+        clock = bundle.clock_snapshot()
+        assert clock["actual_time_s"] == fixture_scene.world.data.time-1.300000000000001
+        assert events == before  # clock-only callback never samples or captures
+        bundle.actor_port.close(clock["actual_time_s"])
+        assert bundle.evaluation_snapshot()["timestamp_s"] == clock["actual_time_s"]
+        bundle.close()
+        assert bundle.clock_snapshot() == clock
+        assert not hasattr(bundle.actor_port, "clock_snapshot")
+    finally:
+        bundle.close()
 
 
 def test_existing_solo_rgb_policy_is_called_without_full_plan_or_world():

@@ -14,6 +14,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
+import threading
 import time
 from types import SimpleNamespace
 from typing import Callable
@@ -107,6 +108,7 @@ def backend_descriptor(config):
     return {"schema": "ugrp.rgb_skill_backend_descriptor.v1", "backend_id": BACKEND_ID,
             "synthetic": False, "weld": False, "camera_fov_changed": False,
             "clock_owner": "single_simulator", "clock_domain": "sim", "max_tick_s": MAX_TICK_S,
+            "supervisor_clock_schema": "ugrp.execution_clock.v1",
             "skill_image_max_age_s": 1., "skill_worker_wall_limit_s": 2.,
             "capabilities": copy.deepcopy(SKILLS), "config_sha256": _digest(config),
             "map_sha256": _digest(scene_config["static_map"]),
@@ -394,6 +396,41 @@ class PairActorSkill:
 
 
 @dataclass
+class _WorkerTiming:
+    started: float | None = None
+    completed: float | None = None
+    lock: object = field(default_factory=threading.Lock)
+
+    def snapshot(self, submitted):
+        with self.lock:
+            return {"worker_started_wall_s": self.started, "worker_completed_wall_s": self.completed,
+                "worker_wall_duration_s": (None if self.completed is None else self.completed-self.started),
+                "worker_queue_wall_s": None if self.started is None else self.started-submitted}
+
+
+def _write_supervisor(record, lock, row):
+    if record is not None:
+        with lock:
+            record({"schema": "ugrp.rgb_worker_timing.v1", **row})
+
+
+def _timed_rgb_decision(controller, own, top, timing, submitted, metadata, record, lock):
+    """Only the controller's image inputs and a raw-log sink, no port handle."""
+    with timing.lock:
+        timing.started = time.monotonic()
+    outcome = "error"
+    try:
+        decision = controller.decide(own, top)
+        outcome = "returned"
+        return decision
+    finally:
+        with timing.lock:
+            timing.completed = time.monotonic()
+        _write_supervisor(record, lock, {"event": "RGB_WORKER_COMPLETED", **metadata,
+            "worker_outcome": outcome, "submitted_wall_s": submitted, **timing.snapshot(submitted)})
+
+
+@dataclass
 class _Runner:
     controller: object
     macro: MacroQueue
@@ -403,13 +440,82 @@ class _Runner:
     phase: str = "START"
     sequence: int = 0
     was_paused: bool = False
+    timing: _WorkerTiming | None = None
+
+
+class _SimulationClockError(ValueError):
+    def __init__(self, code):
+        super().__init__(code)
+        self.error_code = code
+
+
+class _SimulationClock:
+    """Supervisor-only clock bridge; never reads evaluation or robot state.
+
+    Endpoints use the accumulated absolute clock exclusively. The requested
+    relative clock is checked, not forwarded. For n physical additions, at
+    most (n+2) ULPs at the largest operand bound accumulation/subtraction/
+    addition rounding. This bound ONLY compares the two representations:
+    actual clock reversals, even one ULP, are always errors.
+    """
+    def __init__(self, read_absolute, *, origin, timestep, max_sim_s):
+        if (not finite_number(origin, minimum=0.)
+                or not finite_number(timestep, minimum=0.) or timestep == 0
+                or not finite_number(max_sim_s, minimum=0.) or max_sim_s <= 0):
+            raise _SimulationClockError("SIM_CLOCK_INVALID")
+        self._read_absolute = read_absolute
+        self.origin, self.timestep, self.max_sim_s = origin, timestep, max_sim_s
+        self._last_absolute = origin
+        self._invalid = self._frozen = False
+
+    def roundoff_bound(self, relative):
+        return (math.ceil(relative/self.timestep)+2)*math.ulp(self.origin+relative)
+
+    def absolute(self):
+        if self._invalid:
+            raise _SimulationClockError("SIM_CLOCK_INVALID")
+        if self._frozen:
+            return self._last_absolute
+        try:
+            value = self._read_absolute()
+            if not finite_number(value, minimum=0.):
+                raise _SimulationClockError("SIM_CLOCK_INVALID")
+            if value < self._last_absolute:
+                raise _SimulationClockError("SIM_CLOCK_REVERSED")
+            if value-self.origin > self.max_sim_s+self.roundoff_bound(self.max_sim_s):
+                raise _SimulationClockError("SIM_CLOCK_MISMATCH")
+        except Exception:
+            self._invalid = True
+            raise
+        self._last_absolute = value
+        return value
+
+    def target(self, relative):
+        if not finite_number(relative, minimum=0.) or relative > self.max_sim_s:
+            raise _SimulationClockError("SIM_CLOCK_INVALID")
+        actual = self.absolute()
+        elapsed = actual-self.origin
+        if abs(elapsed-relative) > self.roundoff_bound(max(relative, elapsed)):
+            raise _SimulationClockError("SIM_CLOCK_MISMATCH")
+        return actual
+
+    def relative_or_none(self):
+        try:
+            return self.absolute()-self.origin
+        except Exception:
+            return None
+
+    def freeze(self):
+        self.relative_or_none()
+        self._frozen = True
 
 
 class RGBSkillExecutionPort(RGBExecutionPort):
     """Single scheduler thread; independent image workers have no motion handles."""
     def __init__(self, endpoints, *, frame_source, static_context, skill_factory,
                  advance_physics, command_states, max_sim_s=180., max_commands=10000,
-                 record_observation=None, evaluation_source=None):
+                 record_observation=None, evaluation_source=None, simulation_clock=None,
+                 record_supervisor=None):
         capabilities = [SkillCapability(name, frozenset({"RUN"}), frozenset({spec["team_size"]}),
             frozenset({"drive", "mecanum", "arm", "look", "wait"}), .1,
             distinct_roles=spec["team_size"] == 2) for name, spec in SKILLS.items()]
@@ -420,6 +526,10 @@ class RGBSkillExecutionPort(RGBExecutionPort):
         self._command_states = copy.deepcopy(command_states)
         self._max_sim_s, self._max_commands = max_sim_s, max_commands
         self._record_observation = record_observation
+        self._simulation_clock = simulation_clock
+        self._last_acknowledged_time_s = None
+        self._record_supervisor = record_supervisor
+        self._supervisor_lock = threading.Lock()
         self._pool = ThreadPoolExecutor(max_workers=len(endpoints), thread_name_prefix="rgb-skill")
         self._runners = {}
         self._all_futures = []
@@ -522,6 +632,26 @@ class RGBSkillExecutionPort(RGBExecutionPort):
         self._hold_participants(lease.participants, "rgb_skill_unavailable")
         self._release_lease(lease, "rgb_skill_unavailable")
 
+    def _supervisor_event(self, row):
+        # Separate raw stream: no timing telemetry enters own_events/status or
+        # controller input. Worker completion can be logged after revocation.
+        _write_supervisor(self._record_supervisor, self._supervisor_lock, row)
+
+    def _record_worker_rejection(self, lease, runners, polled, guard):
+        for rid, runner in zip(lease.participants, runners):
+            if runner.future is None:
+                continue
+            age = self._now_s-runner.observation["observed_at_s"]
+            wall = polled-runner.started_wall
+            self._supervisor_event({"event": "RGB_WORKER_REJECTED", "robot_id": rid,
+                "task_id": lease.task_id, "observation_id": runner.observation["observation_id"],
+                "timestamp_s": self._now_s, "observed_at_s": runner.observation["observed_at_s"],
+                "image_age_s": age, "submitted_wall_s": runner.started_wall, "polled_wall_s": polled,
+                "submission_to_poll_wall_s": wall, "future_done": runner.future.done(),
+                "guard": guard, "sim_age_exceeded": age > 1., "wall_cap_exceeded": wall > 2.,
+                "sim_age_cap_s": 1., "wall_cap_s": 2.,
+                **(runner.timing.snapshot(runner.started_wall) if runner.timing else {})})
+
     def _service(self):
         for lease in list(self._active.values()):
             if lease.paused:
@@ -545,12 +675,16 @@ class RGBSkillExecutionPort(RGBExecutionPort):
                 if not all(r.macro.idle(self._now_s) for r in runners):
                     continue
                 if any(r.future is not None and not r.future.done() for r in runners):
-                    if any(time.monotonic()-r.started_wall > 2. for r in runners if r.future is not None):
+                    polled = time.monotonic()
+                    if any(polled-r.started_wall > 2. for r in runners if r.future is not None):
+                        self._record_worker_rejection(lease, runners, polled, "in_flight_wall")
                         raise TimeoutError("RGB decision exceeded 2-second wall cap")
                     continue
                 if all(r.future is not None for r in runners):
+                    polled = time.monotonic()
                     if any(self._now_s-r.observation["observed_at_s"] > 1.
-                           or time.monotonic()-r.started_wall > 2. for r in runners):
+                           or polled-r.started_wall > 2. for r in runners):
+                        self._record_worker_rejection(lease, runners, polled, "completed_staleness")
                         raise ValueError("stale RGB worker result")
                     decisions = [r.future.result() for r in runners]
                     for runner in runners:
@@ -598,7 +732,11 @@ class RGBSkillExecutionPort(RGBExecutionPort):
                         "actuator_state": {"motor_commands": [], "servo_pulses": copy.deepcopy(self._command_states[rid])}}
                     top = base64.b64decode(observation["images"]["top_rgb"]["jpeg_base64"], validate=True)
                     runner.started_wall = time.monotonic()
-                    runner.future = self._pool.submit(runner.controller.decide, own, top)
+                    runner.timing = _WorkerTiming()
+                    runner.future = self._pool.submit(_timed_rgb_decision, runner.controller, own, top,
+                        runner.timing, runner.started_wall, {"robot_id": rid, "task_id": lease.task_id,
+                            "observation_id": observation["observation_id"], "observed_at_s": self._now_s},
+                        self._record_supervisor, self._supervisor_lock)
                     self._all_futures = [f for f in self._all_futures if not f.done()] + [runner.future]
             except Exception as error:
                 if lease.task_id in self._active:
@@ -613,39 +751,97 @@ class RGBSkillExecutionPort(RGBExecutionPort):
             raise ValueError("single-owner tick must advance 0..0.05s within the SIM cap")
         delta = now_s-self._now_s
         # Expiries/watchdogs execute at every physical substep in the owner.
-        if delta:
-            try:
+        try:
+            if delta:
                 self._advance_physics(delta)
-            except Exception as error:
-                self.close(self._now_s)
-                raise RuntimeError("physics owner unavailable") from error
+            if self._simulation_clock is not None:
+                self._simulation_clock.target(now_s)
+        except Exception as error:
+            failure = RuntimeError("physics owner unavailable")
+            failure.error_code = "PHYSICS_OWNER_UNAVAILABLE"
+            try:
+                self.close(None)
+            except Exception as close_error:
+                # Preserve the original failure chain even if safety cleanup
+                # itself fails; never turn that into a successful tick.
+                failure.close_error_type = type(close_error).__name__
+            raise failure from error
         result = super().tick(now_s)
         self._service()
+        if self._simulation_clock is not None:
+            self._last_acknowledged_time_s = self._simulation_clock.relative_or_none()
         return result
+
+    @_serialized
+    def clock_snapshot(self):
+        """Clock-only supervisor capability, deliberately absent from actor facade."""
+        return {"schema": "ugrp.execution_clock.v1", "clock_domain": "sim",
+            "last_acknowledged_time_s": self._last_acknowledged_time_s,
+            "actual_time_s": (self._simulation_clock.relative_or_none()
+                              if self._simulation_clock is not None else None)}
 
     @_serialized
     def close(self, now_s):
         if not self._closed:
-            super().close(now_s)
-            self._pool.shutdown(wait=False, cancel_futures=True)
+            if self._simulation_clock is not None:
+                if now_s is not None:
+                    self._simulation_clock.target(now_s)
+                # Closing never acknowledges or advances an attempted tick.
+                now_s = self._now_s
+            elif now_s is None:
+                now_s = self._now_s
+            held = {rid for lease in self._active.values() for rid in lease.participants}
+            held.update(rid for group in self._pending.values() for rid in group)
+            try:
+                super().close(now_s)
+            finally:
+                try:
+                    self._hold_participants(set(self.robot_ids)-held, "execution_port_closed")
+                finally:
+                    self._pool.shutdown(wait=False, cancel_futures=True)
 
 
 class _RelativeEndpoint:
-    def __init__(self, endpoint, origin):
+    def __init__(self, endpoint, origin, *, clock=None):
         self.endpoint, self.origin = endpoint, origin
         self.robot_id = endpoint.robot_id
+        self.clock = clock
+        self._last_requested = 0.
+
+    def _requested(self, now_s):
+        if not finite_number(now_s, minimum=0.):
+            raise _SimulationClockError("SIM_CLOCK_INVALID")
+        if now_s < self._last_requested:
+            raise _SimulationClockError("SIM_CLOCK_REVERSED")
+
+    def _absolute(self, now_s):
+        self._requested(now_s)
+        absolute = self.clock.target(now_s) if self.clock is not None else self.origin+now_s
+        self._last_requested = now_s
+        return absolute
 
     def validate_bounded(self, action, duration_s):
         self.endpoint.validate_bounded(action, duration_s)
 
     def apply_bounded(self, action, now_s, duration_s):
-        self.endpoint.apply_bounded(action, self.origin+now_s, duration_s)
+        self.endpoint.apply_bounded(action, self._absolute(now_s), duration_s)
 
     def hold(self, now_s):
-        self.endpoint.hold(self.origin+now_s)
+        self._requested(now_s)
+        if self.clock is None:
+            absolute = self.origin+now_s
+        else:
+            try:
+                absolute = self.clock.absolute()
+            except Exception:
+                # Unknown physical time: cancel at the last issued-command
+                # clock WITHOUT interpolation or claiming this is actual time.
+                absolute = self.endpoint._servo_tick_time
+        self._last_requested = now_s
+        self.endpoint.hold(absolute)
 
     def tick(self, now_s):
-        self.endpoint.tick(self.origin+now_s)
+        self.endpoint.tick(self._absolute(now_s))
 
     def issued_servo_commands(self):
         return self.endpoint._actuator_state()["servo_pulses"]
@@ -683,6 +879,7 @@ class RGBBackendBundle:
     capabilities: dict
     provenance: dict
     close: Callable
+    clock_snapshot: Callable | None = None
 
 
 def build_rgb_skill_backend(config):
@@ -702,6 +899,8 @@ def build_rgb_skill_backend(config):
         if scene.invariants()["weld_active"]:
             raise ValueError("weld must remain OFF")
         origin = float(scene.world.data.time)
+        clock = _SimulationClock(lambda: scene.world.data.time, origin=origin,
+            timestep=float(scene.world.model.opt.timestep), max_sim_s=config["max_sim_s"])
         video = Video(scene.world, scene.out / "execution.mp4", 4)
         referee = Referee(scene)
         referee.sample()
@@ -724,6 +923,11 @@ def build_rgb_skill_backend(config):
                 stream.write(json.dumps({**observation, "images": {k: {
                     "path": f"rgb/{oid}-{k}.jpg", "sha256": v["sha256"]} for k, v in observation["images"].items()}})+"\n")
 
+        worker_log_path = scene.out / "worker-timing.jsonl"
+        def save_supervisor(row):
+            with worker_log_path.open("a") as stream:
+                stream.write(json.dumps(row, allow_nan=False)+"\n")
+
         def factory(rid, role, name):
             spec = SKILLS[name]
             if spec["team_size"] == 1:
@@ -734,27 +938,18 @@ def build_rgb_skill_backend(config):
         def advance(delta):
             # DispatchScene.step ticks every real CameraRobotPort before each
             # physics substep; this is the sole post-setup world step caller.
-            try:
-                scene.step(delta)
-                now = float(scene.world.data.time)
-                if abs(now-origin-port._now_s-delta) > 1e-7:
-                    raise ValueError("requested SIM tick does not match physical timestep grid")
-                if now+1e-8 >= next_sample[0]:
-                    referee.sample()
-                    next_sample[0] = now+.1
-                video.capture()
-            except Exception:
-                # A partial physics advance must hold at its actual clock, not
-                # at the scheduler's preceding time. This is safety plumbing,
-                # never a controller/evaluator completion observation.
-                for endpoint in scene.ports.values():
-                    endpoint.hold(float(scene.world.data.time))
-                raise
+            scene.step(delta)
+            now = clock.target(port._now_s+delta)
+            if now+1e-8 >= next_sample[0]:
+                referee.sample()
+                next_sample[0] = now+.1
+            video.capture()
 
-        port = RGBSkillExecutionPort({rid: _RelativeEndpoint(p, origin) for rid, p in scene.ports.items()},
+        port = RGBSkillExecutionPort({rid: _RelativeEndpoint(p, origin, clock=clock) for rid, p in scene.ports.items()},
             frame_source=frames, static_context=static_context, skill_factory=factory,
             advance_physics=advance, command_states={rid: dict(INITIAL_COMMANDS) for rid in scene.ports},
-            max_sim_s=config["max_sim_s"], max_commands=config["max_commands"], record_observation=save_observation)
+            max_sim_s=config["max_sim_s"], max_commands=config["max_commands"], record_observation=save_observation,
+            simulation_clock=clock, record_supervisor=save_supervisor)
         provenance = {**descriptor, "scene_xml_sha256": scene.manifest["scene_xml_sha256"],
             "map_to_scene": {**descriptor["map_to_scene"], "scene_xml_sha256": scene.manifest["scene_xml_sha256"]},
             "sim_origin_s": origin, "initial_invariants": scene.initial_invariants,
@@ -794,7 +989,7 @@ def build_rgb_skill_backend(config):
                 "recovery": {"required": False, "reached": False, "succeeded": False},
                 "meaning": "post-run sampled physical evaluator; solo/pair diagnostic targets are derived separately"}
             value = {"schema": "ugrp.rgb_evaluation_snapshot.v1", "clock_domain": "sim",
-                "timestamp_s": port._now_s, "external_evaluation": external,
+                "timestamp_s": clock.relative_or_none(), "external_evaluation": external,
                 "coordination_audit": copy.deepcopy(port._audit), "active_task_ids": [], "pending_task_ids": [],
                 "resource_owners": {}, "meaning": "evaluation-only; forbidden as actor input or completion feedback"}
             cached.append(value)
@@ -806,18 +1001,19 @@ def build_rgb_skill_backend(config):
                 return
             closed[0] = True
             try:
-                port.close(port._now_s)
+                port.close(None)
                 snapshot()
             finally:
                 try:
                     video.close()
                 finally:
                     referee.file.close()
+                    clock.freeze()
                     scene.close()
-        return RGBBackendBundle(_ActorFacade(port), snapshot, descriptor, provenance, close)
+        return RGBBackendBundle(_ActorFacade(port), snapshot, descriptor, provenance, close, port.clock_snapshot)
     except Exception:
         if port is not None:
-            port.close(port._now_s)
+            port.close(None)
         try:
             if video is not None:
                 video.close()
