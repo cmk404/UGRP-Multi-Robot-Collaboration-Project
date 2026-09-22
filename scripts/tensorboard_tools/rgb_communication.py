@@ -50,7 +50,9 @@ def export_communication(src, writer, result):
             interactions=interaction_metrics(events, evaluation["source_snapshot"]))
         writer.text("validation/failure", {"reason": scored["reason"],
             "scope": "Invalid combined evidence. Separate raw-source measurements below do not establish a final scored success."})
-        writer.scalar("clock/runtime_requested_sim_s", events[-1]["sim_time_s"])
+        clock = terminal.get("clock")
+        requested = clock.get("requested_tick_s") if isinstance(clock, dict) else events[-1]["sim_time_s"]
+        writer.scalar("clock/runtime_requested_sim_s", requested)
         writer.scalar("clock/evaluator_snapshot_sim_s", evaluation["source_snapshot"]["timestamp_s"])
         # Do not disguise an attempted tick as measured final SIM progress.
         values["sim_time_s"] = None

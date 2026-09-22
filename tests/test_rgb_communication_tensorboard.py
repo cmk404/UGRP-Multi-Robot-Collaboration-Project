@@ -81,3 +81,27 @@ def test_explicit_opt_in_cannot_publish_synthetic_to_non_temporary_directory(tmp
     monkeypatch.setattr(export.tempfile, "gettempdir", lambda: str(tmp_path / "different-temp"))
     with pytest.raises(ValueError, match="temporary-logdir"):
         convert(src, tmp_path / "events", allow_synthetic=True)
+
+
+def test_unknown_new_terminal_clock_exports_only_diagnostics(tmp_path):
+    pytest.importorskip("tensorboard")
+    from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
+    src = fixture_source(tmp_path, outcome="success")
+    rows = [json.loads(line) for line in (src / "runtime.jsonl").read_text().splitlines()]
+    rows[-1]["sim_time_s"] = None
+    rows[-1]["payload"]["clock"] = {
+        "schema": "rgb-runtime-clock.v1", "clock_domain": "sim", "requested_tick_s": 4.1,
+        "last_acknowledged_time_s": 4, "last_successful_requested_tick_s": 4,
+        "terminal_time_s": None, "terminal_time_status": "unknown", "reason": "ACTUAL_CLOCK_UNKNOWN"}
+    (src / "runtime.jsonl").write_text("".join(json.dumps(row) + "\n" for row in rows))
+    result = json.loads((src / "result.json").read_text())
+    result["source_artifact_hashes"]["runtime.jsonl"] = digest_file(src / "runtime.jsonl")
+    (src / "result.json").write_text(json.dumps(result))
+    snapshot = convert(src, tmp_path / "events", allow_synthetic=True)
+    events = EventAccumulator(str(tmp_path / "events")).Reload()
+    assert snapshot["metadata"]["outcome"] == "invalid_artifact"
+    assert events.Scalars("evaluation/reported_success")[0].value == 0
+    assert events.Scalars("evaluation/physical_mission_complete")[0].value == 1  # raw referee, not valid success
+    assert events.Scalars("clock/runtime_requested_sim_s")[0].value == pytest.approx(4.1)
+    assert "result/sim_s" not in events.Tags()["scalars"]
+    assert "evaluation/false_finish_claim" not in events.Tags()["scalars"]
