@@ -1,0 +1,35 @@
+{
+  "schema": "d3-prior-candidate-history.v1",
+  "scope": "Preserved pre-execution offline findings; neither candidate performed a D3 physical trial.",
+  "candidates": [
+    {
+      "source_prefix": "755dca3",
+      "admission": "no_go",
+      "reason": "A reproduced owned fake-child leaks for launch-boundary SIGTERM and cleanup-time SIGINT.",
+      "evidence_root": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-prior-audit-755dca3",
+      "files": {
+        "a3-755dca3-cleanup-sigint-probe.py": "de3efb02fee3fb4eb49d297c134ce2cf96b892e433cff5937f906a98909f6c2c",
+        "a3-755dca3-cleanup-sigint-result.json": "d947a318904f7817bcc435e813e00d7caccd0fcc0bf3919e4cd283a90bd4a9c1",
+        "a3-755dca3-launch-boundary-probe.py": "9be43f1ebe4822f65af62a11f6ad7afd564a09ea9d537fb39e4ea38416b74de0",
+        "a3-755dca3-launch-boundary-result.json": "0536195ed485a8010e18f36368e37978702b3dfe47de0414563f63b793f3a12c"
+      },
+      "preserved_inputs": "outputs/d3-local-study-inputs",
+      "actual_physical_trials": 0
+    },
+    {
+      "source_sha": "de69eb313c17380f5bbfcb71fd40264cc3f0541e",
+      "admission": "no_go",
+      "reason": "Eight real-signal cases passed; unreapable mocked child restarted cleanup grace (0.7s rather than 0.1+0.3s, TERM/KILL each twice).",
+      "evidence": {
+        "path": "/Users/changmin/.codex/worktrees/9208/ugrp/outputs/a3-de69eb3-single-grace-result.json",
+        "sha256": "9cebf19a711ec309e430a006397006f11fb3eced13518e346ba86c663f07face"
+      },
+      "preserved_inputs": "outputs/d3-local-study-inputs-v2",
+      "actual_physical_trials": 0
+    }
+  ],
+  "final_source_sha": "8c1b64a95ca9dc3196e80ea6d47ea7c98d2776f5",
+  "final_independent_admission": "A3 offline v2 pass 18/18",
+  "raw_reclassification": false,
+  "deletion": false
+}

@@ -1,0 +1,754 @@
+{
+  "schema": "b3.d3.log-review.v1",
+  "source_sha": "8c1b64a95ca9dc3196e80ea6d47ea7c98d2776f5",
+  "raw_root": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a",
+  "verification": {
+    "receipt_hashes": {
+      "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/artifact-hashes.json": {
+        "actual_sha256": "a7e591c1d0e29f7a0ed347932729e736c5d5fe05f1d884952c9ce2bddc3d0a5e",
+        "expected_sha256": "a7e591c1d0e29f7a0ed347932729e736c5d5fe05f1d884952c9ce2bddc3d0a5e"
+      },
+      "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/artifact-finalization.json": {
+        "actual_sha256": "9823b07eb37340e662294634943af886ef5b309c11c52236e08834880c94f890",
+        "expected_sha256": "9823b07eb37340e662294634943af886ef5b309c11c52236e08834880c94f890"
+      },
+      "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a-launcher.json": {
+        "actual_sha256": "976e874b27aa704af7a74331f7dd918e7ee158cc18f9cbe5821d2e80c679f155",
+        "expected_sha256": "976e874b27aa704af7a74331f7dd918e7ee158cc18f9cbe5821d2e80c679f155"
+      }
+    },
+    "inventory_count": 1488,
+    "inventory_mismatches": [],
+    "launcher_receipt": {
+      "source_sha": "8c1b64a95ca9dc3196e80ea6d47ea7c98d2776f5",
+      "outer_process": {
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_time_s": 309.2978891249986,
+        "process_group": 27214,
+        "cleanup_grace_s": 10,
+        "child_reaped": true,
+        "process_group_gone": true
+      },
+      "full_wall_s": 309.2980136669976,
+      "maximum_total_wall_s": 1800,
+      "external_model_calls_authorized": 0
+    }
+  },
+  "scope": "Only worker-timing/runtime/skill-inputs interpreted. All inventory files byte-hashed. No simulation/inference/rendering or evaluator/visual reinterpretation.",
+  "runs": {
+    "solo": {
+      "runtime_events": {
+        "run_started": 1,
+        "observation_captured": 182,
+        "local_status_read": 182,
+        "planner_requested": 182,
+        "planner_responded": 182,
+        "actor_finished": 2,
+        "action_submitted": 1,
+        "action_result": 1,
+        "run_finished": 1
+      },
+      "worker_events": {
+        "RGB_FRAME_READ": 714,
+        "RGB_OWNER_ADVANCED": 3599,
+        "RGB_INPUT_PREPARED": 350,
+        "RGB_WORKER_COMPLETED": 350,
+        "RGB_WORKER_CONSUMED": 349,
+        "RGB_WORKER_REVOKED": 1
+      },
+      "completion_outcomes": {
+        "returned": 350
+      },
+      "timing": {
+        "worker_queue_wall_s": {
+          "count": 350,
+          "min": 7.125000047381036e-05,
+          "median": 0.00022093749976193067,
+          "p95": 0.0008013959490199347,
+          "max": 0.01964679099910427,
+          "sum": 0.14330574905034155
+        },
+        "worker_wall_duration_s": {
+          "count": 350,
+          "min": 1.0249998013023287e-05,
+          "median": 0.14330518749920884,
+          "p95": 0.34128834129933244,
+          "max": 0.8395682090012997,
+          "sum": 58.31616111294716
+        },
+        "submission_to_poll_wall_s": {
+          "count": 349,
+          "min": 0.005273791997751687,
+          "median": 0.1852309999994759,
+          "p95": 0.4390331086025977,
+          "max": 1.4204629580017354,
+          "sum": 77.60073896202448
+        },
+        "submission_to_completion_wall_s": {
+          "count": 349,
+          "min": 0.00010670799747458659,
+          "median": 0.14357562500299537,
+          "p95": 0.3417276498003046,
+          "max": 0.859215000000404,
+          "sum": 58.356978111998615
+        },
+        "completion_to_poll_wall_s": {
+          "count": 349,
+          "min": 0.0007888339969213121,
+          "median": 0.04440562500167289,
+          "p95": 0.11791514119977353,
+          "max": 0.7406797500007087,
+          "sum": 19.243760850025865
+        },
+        "image_age_s": {
+          "count": 349,
+          "min": 0.05000000000000002,
+          "median": 0.14999999999999147,
+          "p95": 0.25,
+          "max": 0.45000000000000007,
+          "sum": 55.9499999999979
+        },
+        "submission_to_revoke_wall_s_not_poll": {
+          "count": 1,
+          "min": 0.11021270799756167,
+          "median": 0.11021270799756167,
+          "p95": 0.11021270799756167,
+          "max": 0.11021270799756167,
+          "sum": 0.11021270799756167
+        },
+        "completion_to_revoke_wall_s_not_poll": {
+          "count": 1,
+          "min": 0.007723957998678088,
+          "median": 0.007723957998678088,
+          "p95": 0.007723957998678088,
+          "max": 0.007723957998678088,
+          "sum": 0.007723957998678088
+        },
+        "controller_setup_wall_s": {
+          "count": 350,
+          "min": 0.0,
+          "median": 8.400093065574765e-08,
+          "p95": 2.9200236895121634e-07,
+          "max": 0.009934582998539554,
+          "sum": 0.010326960997190326
+        },
+        "capture_and_pack_wall_s": {
+          "count": 350,
+          "min": 0.07785420899745077,
+          "median": 0.12697745799960103,
+          "p95": 0.2559720353490775,
+          "max": 0.7824745840007381,
+          "sum": 50.608512465991225
+        },
+        "input_persistence_wall_s": {
+          "count": 350,
+          "min": 0.0005993330014462117,
+          "median": 0.0009750415010785218,
+          "p95": 0.002366006399279286,
+          "max": 0.011385791000066092,
+          "sum": 0.41705900003944407
+        },
+        "request_pack_wall_s": {
+          "count": 350,
+          "min": 0.00018408300093142316,
+          "median": 0.00026602049911161885,
+          "p95": 0.00041210829931515036,
+          "max": 0.0023567919997731224,
+          "sum": 0.09939508496609051
+        },
+        "physics_step_wall_s": {
+          "count": 3599,
+          "min": 0.003280957997048972,
+          "median": 0.0058047500024258625,
+          "p95": 0.01388514139871404,
+          "max": 0.5731652499998745,
+          "sum": 27.436005510015093
+        },
+        "referee_sample_wall_s": {
+          "count": 3599,
+          "min": 2.4170003598555923e-06,
+          "median": 0.0001827079977374524,
+          "p95": 0.0005742537996411556,
+          "max": 0.04174695899928338,
+          "sum": 0.7402964311550022
+        },
+        "video_capture_wall_s": {
+          "count": 3599,
+          "min": 7.919989002402872e-07,
+          "median": 2.1669984562322497e-06,
+          "p95": 0.0793946167017566,
+          "max": 0.5612233329993614,
+          "sum": 54.022301646826236
+        },
+        "own_rgb_unique_capture_wall_s": {
+          "count": 702,
+          "min": 0.03800404199864715,
+          "median": 0.062339103998965584,
+          "p95": 0.11810569339831993,
+          "max": 0.6694201250029437,
+          "sum": 51.22857717805891
+        },
+        "top_rgb_unique_capture_wall_s": {
+          "count": 698,
+          "min": 0.03833154099993408,
+          "median": 0.06163081250269897,
+          "p95": 0.12247216880095944,
+          "max": 0.5245884590003698,
+          "sum": 49.51163128793269
+        }
+      },
+      "runtime_terminal": {
+        "condition": "none",
+        "event_id": "event-0734",
+        "event_type": "run_finished",
+        "payload": {
+          "actions": {
+            "r1": 0,
+            "r2": 1,
+            "r3": 0
+          },
+          "actor_finish_claims": {
+            "r1": false,
+            "r2": false,
+            "r3": false
+          },
+          "actor_finish_details": {
+            "r1": "cannot_continue",
+            "r2": null,
+            "r3": "cannot_continue"
+          },
+          "calls": {
+            "r1": 1,
+            "r2": 180,
+            "r3": 1
+          },
+          "clock": {
+            "clock_domain": "sim",
+            "last_acknowledged_time_s": 179.95000000013732,
+            "last_successful_requested_tick_s": 179.95000000000002,
+            "reason": "VERIFIED_CLOCK_SNAPSHOT",
+            "requested_tick_s": 179.95000000000002,
+            "schema": "rgb-runtime-clock.v1",
+            "terminal_time_s": 179.95000000013732,
+            "terminal_time_status": "verified"
+          },
+          "close_error": null,
+          "condition": "none",
+          "external_model_call_upper_bound": 0,
+          "external_model_calls": 0,
+          "external_model_calls_by_robot": {
+            "r1": 0,
+            "r2": 0,
+            "r3": 0
+          },
+          "message_bytes": {
+            "r1": 0,
+            "r2": 0,
+            "r3": 0
+          },
+          "messages": {
+            "r1": 0,
+            "r2": 0,
+            "r3": 0
+          },
+          "outcome": "timeout",
+          "peak_in_flight": 3,
+          "pending_planner_requests": {},
+          "planner_decisions": 182,
+          "primary_error": null,
+          "retirement_reasons": {},
+          "run_id": "d3-local-solo",
+          "termination_reason": "MAX_TICKS",
+          "ticks": 3600,
+          "tokens": {
+            "charged_input_tokens": 0,
+            "charged_output_tokens": 0,
+            "measured_input_tokens": 0,
+            "measured_output_tokens": 0,
+            "unknown_input_tokens_calls": 0,
+            "unknown_output_tokens_calls": 0
+          },
+          "trace_events": 734,
+          "unknown_external_call_requests": []
+        },
+        "related_ids": {},
+        "robot_id": null,
+        "run_id": "d3-local-solo",
+        "schema_version": "rgb-communication-event.v1",
+        "sim_time_s": 179.95000000013732,
+        "wall_time_s": 298.765120125001
+      },
+      "status_changes": [
+        {
+          "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/runtime.jsonl",
+          "line": 3,
+          "row": {
+            "event_id": "event-0003",
+            "robot_id": "r1",
+            "sim_time_s": 0.0,
+            "own_skill_status": {}
+          }
+        },
+        {
+          "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/runtime.jsonl",
+          "line": 6,
+          "row": {
+            "event_id": "event-0006",
+            "robot_id": "r2",
+            "sim_time_s": 0.0,
+            "own_skill_status": {}
+          }
+        },
+        {
+          "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/runtime.jsonl",
+          "line": 9,
+          "row": {
+            "event_id": "event-0009",
+            "robot_id": "r3",
+            "sim_time_s": 0.0,
+            "own_skill_status": {}
+          }
+        },
+        {
+          "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/runtime.jsonl",
+          "line": 19,
+          "row": {
+            "event_id": "event-0019",
+            "robot_id": "r2",
+            "sim_time_s": 1.0,
+            "own_skill_status": {
+              "meaning": "own RGB controller phase, not measured success",
+              "phase": "approach",
+              "state": "RUNNING",
+              "task_id": "solo-diagnostic"
+            }
+          }
+        }
+      ],
+      "capture_validation": {
+        "frame_reads": 714,
+        "unique_captures": 1400,
+        "hits": {
+          "own_rgb": 12,
+          "top_rgb": 16
+        },
+        "skill_image_hashes_checked": 700,
+        "violations": []
+      },
+      "unique_commands": 463,
+      "command_phases": {
+        "approach": 463
+      },
+      "command_kinds": {
+        "arm": 314,
+        "look": 9,
+        "drive": 137,
+        "wait": 3
+      },
+      "terminal_alternating_command_tail": {
+        "count": 270,
+        "first": {
+          "action": {
+            "kind": "arm",
+            "pulse": 508,
+            "servo_id": 3
+          },
+          "command_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a:r2:194",
+          "consent_observation_id": "r2-000001",
+          "decision_id": "decision-0002",
+          "duration_s": 0.1,
+          "issued_at_s": 44.650000000000006,
+          "lease_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a",
+          "meaning": "issued command, not measured state or success",
+          "observation_id": "r2-000170",
+          "skill_decision_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a:r2:80",
+          "stage": "approach",
+          "task_id": "solo-diagnostic"
+        },
+        "last": {
+          "task_id": "solo-diagnostic",
+          "lease_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a",
+          "command_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a:r2:463",
+          "stage": "approach",
+          "action": {
+            "kind": "arm",
+            "servo_id": 3,
+            "pulse": 500
+          },
+          "duration_s": 0.1,
+          "issued_at_s": 179.55,
+          "observation_id": "r2-000709",
+          "decision_id": "decision-0002",
+          "skill_decision_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a:r2:349",
+          "consent_observation_id": "r2-000001",
+          "meaning": "issued command, not measured state or success"
+        },
+        "duration_sim_s": 134.9
+      },
+      "revocations": [
+        {
+          "schema": "ugrp.rgb_worker_timing.v1",
+          "event": "RGB_WORKER_REVOKED",
+          "robot_id": "r2",
+          "observation_id": "r2-000710",
+          "timestamp_s": 179.95000000000002,
+          "revoked_wall_s": 20316.735675916,
+          "reason": "execution_port_closed",
+          "future_cancelled": false,
+          "future_done": true,
+          "submitted_wall_s": 20316.625463208,
+          "worker_started_wall_s": 20316.625660333,
+          "worker_completed_wall_s": 20316.727951958,
+          "worker_wall_duration_s": 0.10229162500036182,
+          "worker_queue_wall_s": 0.00019712499852175824
+        }
+      ]
+    },
+    "joint": {
+      "runtime_events": {
+        "run_started": 1,
+        "observation_captured": 5,
+        "local_status_read": 5,
+        "planner_requested": 5,
+        "planner_responded": 5,
+        "action_submitted": 2,
+        "action_result": 2,
+        "actor_finished": 3,
+        "run_finished": 1
+      },
+      "worker_events": {
+        "RGB_FRAME_READ": 12,
+        "RGB_OWNER_ADVANCED": 21,
+        "RGB_INPUT_PREPARED": 2,
+        "RGB_WORKER_COMPLETED": 2,
+        "RGB_WORKER_REVOKED": 2
+      },
+      "completion_outcomes": {
+        "error": 2
+      },
+      "timing": {
+        "worker_queue_wall_s": {
+          "count": 2,
+          "min": 5.2583000069716945e-05,
+          "median": 7.575000017823186e-05,
+          "p95": 9.660030027589528e-05,
+          "max": 9.891700028674677e-05,
+          "sum": 0.00015150000035646372
+        },
+        "worker_wall_duration_s": {
+          "count": 2,
+          "min": 0.03762262500094948,
+          "median": 0.038926145500226994,
+          "p95": 0.040099313949576755,
+          "max": 0.040229665999504505,
+          "sum": 0.07785229100045399
+        },
+        "submission_to_poll_wall_s": {
+          "count": 0
+        },
+        "submission_to_completion_wall_s": {
+          "count": 0
+        },
+        "completion_to_poll_wall_s": {
+          "count": 0
+        },
+        "image_age_s": {
+          "count": 0
+        },
+        "submission_to_revoke_wall_s_not_poll": {
+          "count": 2,
+          "min": 0.059689207999326754,
+          "median": 0.059769499999674736,
+          "p95": 0.059841762799987916,
+          "max": 0.05984979200002272,
+          "sum": 0.11953899999934947
+        },
+        "completion_to_revoke_wall_s_not_poll": {
+          "count": 2,
+          "min": 0.019521209000231465,
+          "median": 0.02076760449926951,
+          "p95": 0.021889360448403748,
+          "max": 0.022013999998307554,
+          "sum": 0.04153520899853902
+        },
+        "controller_setup_wall_s": {
+          "count": 2,
+          "min": 0.17258837500048685,
+          "median": 0.18802516650066536,
+          "p95": 0.20191827885082603,
+          "max": 0.20346195800084388,
+          "sum": 0.3760503330013307
+        },
+        "capture_and_pack_wall_s": {
+          "count": 2,
+          "min": 0.0630322500001057,
+          "median": 0.0994399164992501,
+          "p95": 0.13220681634848006,
+          "max": 0.1358475829983945,
+          "sum": 0.1988798329985002
+        },
+        "input_persistence_wall_s": {
+          "count": 2,
+          "min": 0.001123082998674363,
+          "median": 0.0012969585004611872,
+          "p95": 0.0014534464520693292,
+          "max": 0.0014708340022480115,
+          "sum": 0.0025939170009223744
+        },
+        "request_pack_wall_s": {
+          "count": 2,
+          "min": 0.00026908300060313195,
+          "median": 0.0003035415011254372,
+          "p95": 0.00033455415159551195,
+          "max": 0.00033800000164774247,
+          "sum": 0.0006070830022508744
+        },
+        "physics_step_wall_s": {
+          "count": 21,
+          "min": 0.003393832997971913,
+          "median": 0.004536666998319561,
+          "p95": 0.00901812499796506,
+          "max": 0.021083874999021646,
+          "sum": 0.12414637500114623
+        },
+        "referee_sample_wall_s": {
+          "count": 21,
+          "min": 3.6670026020146906e-06,
+          "median": 1.1792002624133602e-05,
+          "p95": 0.0003748340022866614,
+          "max": 0.0005029580024711322,
+          "sum": 0.003234126008464955
+        },
+        "video_capture_wall_s": {
+          "count": 21,
+          "min": 9.159994078800082e-07,
+          "median": 1.8750033632386476e-06,
+          "p95": 0.08628479099934339,
+          "max": 0.08802412500153878,
+          "sum": 0.29607695899903774
+        },
+        "own_rgb_unique_capture_wall_s": {
+          "count": 12,
+          "min": 0.04209616699881735,
+          "median": 0.05996527049865108,
+          "p95": 0.09449943124891433,
+          "max": 0.10038587499730056,
+          "sum": 0.7644196239962184
+        },
+        "top_rgb_unique_capture_wall_s": {
+          "count": 5,
+          "min": 0.043404833999375114,
+          "median": 0.058255625001038425,
+          "p95": 0.0792764250007167,
+          "max": 0.08207962500091526,
+          "sum": 0.2952187920018332
+        }
+      },
+      "runtime_terminal": {
+        "condition": "none",
+        "event_id": "event-0029",
+        "event_type": "run_finished",
+        "payload": {
+          "actions": {
+            "r1": 1,
+            "r2": 0,
+            "r3": 1
+          },
+          "actor_finish_claims": {
+            "r1": false,
+            "r2": false,
+            "r3": false
+          },
+          "actor_finish_details": {
+            "r1": "cannot_continue",
+            "r2": "cannot_continue",
+            "r3": "cannot_continue"
+          },
+          "calls": {
+            "r1": 2,
+            "r2": 1,
+            "r3": 2
+          },
+          "clock": {
+            "clock_domain": "sim",
+            "last_acknowledged_time_s": 1.0499999999999619,
+            "last_successful_requested_tick_s": 1.05,
+            "reason": "VERIFIED_CLOCK_SNAPSHOT",
+            "requested_tick_s": 1.05,
+            "schema": "rgb-runtime-clock.v1",
+            "terminal_time_s": 1.0499999999999619,
+            "terminal_time_status": "verified"
+          },
+          "close_error": null,
+          "condition": "none",
+          "external_model_call_upper_bound": 0,
+          "external_model_calls": 0,
+          "external_model_calls_by_robot": {
+            "r1": 0,
+            "r2": 0,
+            "r3": 0
+          },
+          "message_bytes": {
+            "r1": 0,
+            "r2": 0,
+            "r3": 0
+          },
+          "messages": {
+            "r1": 0,
+            "r2": 0,
+            "r3": 0
+          },
+          "outcome": "completed",
+          "peak_in_flight": 3,
+          "pending_planner_requests": {},
+          "planner_decisions": 5,
+          "primary_error": null,
+          "retirement_reasons": {},
+          "run_id": "d3-local-joint",
+          "termination_reason": "ALL_ACTORS_FINISHED",
+          "ticks": 22,
+          "tokens": {
+            "charged_input_tokens": 0,
+            "charged_output_tokens": 0,
+            "measured_input_tokens": 0,
+            "measured_output_tokens": 0,
+            "unknown_input_tokens_calls": 0,
+            "unknown_output_tokens_calls": 0
+          },
+          "trace_events": 29,
+          "unknown_external_call_requests": []
+        },
+        "related_ids": {},
+        "robot_id": null,
+        "run_id": "d3-local-joint",
+        "schema_version": "rgb-communication-event.v1",
+        "sim_time_s": 1.0499999999999619,
+        "wall_time_s": 2.586016707999079
+      },
+      "status_changes": [
+        {
+          "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/runtime.jsonl",
+          "line": 3,
+          "row": {
+            "event_id": "event-0003",
+            "robot_id": "r1",
+            "sim_time_s": 0.0,
+            "own_skill_status": {}
+          }
+        },
+        {
+          "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/runtime.jsonl",
+          "line": 6,
+          "row": {
+            "event_id": "event-0006",
+            "robot_id": "r2",
+            "sim_time_s": 0.0,
+            "own_skill_status": {}
+          }
+        },
+        {
+          "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/runtime.jsonl",
+          "line": 9,
+          "row": {
+            "event_id": "event-0009",
+            "robot_id": "r3",
+            "sim_time_s": 0.0,
+            "own_skill_status": {}
+          }
+        },
+        {
+          "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/runtime.jsonl",
+          "line": 20,
+          "row": {
+            "event_id": "event-0020",
+            "robot_id": "r3",
+            "sim_time_s": 1.0,
+            "own_skill_status": {
+              "meaning": "no physical success claim",
+              "reason": "rgb_skill_unavailable",
+              "state": "STOPPED",
+              "task_id": "joint-diagnostic"
+            }
+          }
+        },
+        {
+          "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/runtime.jsonl",
+          "line": 23,
+          "row": {
+            "event_id": "event-0023",
+            "robot_id": "r1",
+            "sim_time_s": 1.0,
+            "own_skill_status": {
+              "meaning": "no physical success claim",
+              "reason": "rgb_skill_unavailable",
+              "state": "STOPPED",
+              "task_id": "joint-diagnostic"
+            }
+          }
+        }
+      ],
+      "capture_validation": {
+        "frame_reads": 12,
+        "unique_captures": 17,
+        "hits": {
+          "own_rgb": 0,
+          "top_rgb": 7
+        },
+        "skill_image_hashes_checked": 4,
+        "violations": []
+      },
+      "unique_commands": 0,
+      "command_phases": {},
+      "command_kinds": {},
+      "terminal_alternating_command_tail": {
+        "count": 0,
+        "first": null,
+        "last": null,
+        "duration_sim_s": null
+      },
+      "revocations": [
+        {
+          "schema": "ugrp.rgb_worker_timing.v1",
+          "event": "RGB_WORKER_REVOKED",
+          "robot_id": "r1",
+          "observation_id": "r1-000003",
+          "timestamp_s": 0.2,
+          "revoked_wall_s": 20320.9742905,
+          "reason": "rgb_skill_unavailable",
+          "future_cancelled": false,
+          "future_done": true,
+          "submitted_wall_s": 20320.914440708,
+          "worker_started_wall_s": 20320.914539625,
+          "worker_completed_wall_s": 20320.954769291,
+          "worker_wall_duration_s": 0.040229665999504505,
+          "worker_queue_wall_s": 9.891700028674677e-05
+        },
+        {
+          "schema": "ugrp.rgb_worker_timing.v1",
+          "event": "RGB_WORKER_REVOKED",
+          "robot_id": "r3",
+          "observation_id": "r3-000003",
+          "timestamp_s": 0.2,
+          "revoked_wall_s": 20320.974296291,
+          "reason": "rgb_skill_unavailable",
+          "future_cancelled": false,
+          "future_done": true,
+          "submitted_wall_s": 20320.914607083,
+          "worker_started_wall_s": 20320.914659666,
+          "worker_completed_wall_s": 20320.952282291,
+          "worker_wall_duration_s": 0.03762262500094948,
+          "worker_queue_wall_s": 5.2583000069716945e-05
+        }
+      ]
+    }
+  },
+  "input_log_hashes": {
+    "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/backend/worker-timing.jsonl": "160a22ba158ac81d7392f0e6a74c8f987ca8fcace567acc0eec4f0a2649eb65a",
+    "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/runtime.jsonl": "8bb79452e98514ac2a3d26587adebea1c1b582c6892b4a3a8eb3338bd66dfc1b",
+    "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/backend/skill-inputs.jsonl": "c1e5190c3a2453b6d5677d2040e55419b05e5ef0940cf97a60b9636a779fc734",
+    "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/backend/worker-timing.jsonl": "2220f809178573737d986363b018ab676ce0e9072a4860e80af0091d371eb46f",
+    "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/runtime.jsonl": "67bc98968f9060b5b9d14984654f526949627a93e3ddb702f47ff051f42f71fb",
+    "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/backend/skill-inputs.jsonl": "f6c5fdb746aa8bc33178dc075187e3b0a69278dfe9bed93290e5a61991c0eba3"
+  }
+}

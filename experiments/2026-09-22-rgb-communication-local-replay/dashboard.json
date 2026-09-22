@@ -1,0 +1,174 @@
+{
+  "schema": "d3-tensorboard-review.v1",
+  "source_sha": "8c1b64a95ca9dc3196e80ea6d47ea7c98d2776f5",
+  "active_logdir": "/Users/changmin/projects/ugrp/outputs/tensorboard",
+  "run_filter": "^0922-RGB로컬-",
+  "url": "http://127.0.0.1:6006/?pinnedCards=%5B%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Freported_success%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Fevidence_valid%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fcommands%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fexternal_model_calls%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fprocess_wall_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fplanner_decisions%22%7D%5D&smoothing=0&runFilter=%5E0922-RGB%EB%A1%9C%EC%BB%AC-#timeseries",
+  "pinned_tags": [
+    "evaluation/reported_success",
+    "evaluation/evidence_valid",
+    "result/commands",
+    "result/external_model_calls",
+    "result/process_wall_s",
+    "result/planner_decisions"
+  ],
+  "hparams_visible_columns": [
+    "outcome",
+    "evaluation/reported_success",
+    "result/wall_s",
+    "result/commands"
+  ],
+  "hparams_limit": "Existing shared experiment may omit newer columns. wall_s is runtime, not process wall.",
+  "runs": [
+    {
+      "run_id": "d3-local-solo",
+      "display_run": "0922-RGB로컬-단독",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-RGB로컬-단독",
+      "manifest_sha256": "c2d119f7dd2b52c0bdd631a87f76b103ace2334b7e529f41cf5d992d0aa1c242",
+      "outcome": "timeout",
+      "counts": {
+        "scalars": 19,
+        "texts": 7,
+        "images": 0
+      },
+      "warnings": [],
+      "scalars": {
+        "evaluation/reported_success": 0,
+        "evaluation/evidence_valid": 1,
+        "result/commands": 463,
+        "result/external_model_calls": 0,
+        "result/process_wall_s": 302.3581237792969,
+        "result/planner_decisions": 182
+      },
+      "media": [
+        {
+          "url": "http://127.0.0.1:6009/video/468098dee9259d129ad8",
+          "range_status": 206,
+          "content_range": "bytes 0-63/543341",
+          "id": "468098dee9259d129ad8"
+        }
+      ],
+      "live_scalars": {
+        "evaluation/reported_success": 0,
+        "evaluation/evidence_valid": 1,
+        "result/commands": 463,
+        "result/external_model_calls": 0,
+        "result/process_wall_s": 302.3581237792969,
+        "result/planner_decisions": 182
+      }
+    },
+    {
+      "run_id": "d3-local-joint",
+      "display_run": "0922-RGB로컬-공동",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-RGB로컬-공동",
+      "manifest_sha256": "c37cd9229d0dfc2f637123c978c155a8c160d3f4b97bef947e83c18d40280dd7",
+      "outcome": "failure",
+      "counts": {
+        "scalars": 19,
+        "texts": 7,
+        "images": 0
+      },
+      "warnings": [],
+      "scalars": {
+        "evaluation/reported_success": 0,
+        "evaluation/evidence_valid": 1,
+        "result/commands": 0,
+        "result/external_model_calls": 0,
+        "result/process_wall_s": 5.096611976623535,
+        "result/planner_decisions": 5
+      },
+      "media": [
+        {
+          "url": "http://127.0.0.1:6009/video/2cfae755f72a40532d5f",
+          "range_status": 206,
+          "content_range": "bytes 0-63/71223",
+          "id": "2cfae755f72a40532d5f"
+        }
+      ],
+      "live_scalars": {
+        "evaluation/reported_success": 0,
+        "evaluation/evidence_valid": 1,
+        "result/commands": 0,
+        "result/external_model_calls": 0,
+        "result/process_wall_s": 5.096611976623535,
+        "result/planner_decisions": 5
+      }
+    }
+  ],
+  "verification": {
+    "event_accumulator": true,
+    "live_tensorboard_loading": true,
+    "media_registered_and_range_206": true,
+    "raw_rehash_after_export": true,
+    "native_ui": true,
+    "hparams_columns": true,
+    "pinned_cards": true,
+    "video_playback": true,
+    "text_body": true,
+    "text_media_links": true,
+    "saved_url_restored": true
+  },
+  "scope": "Two exposed development physical replays, both valid failures; not communication efficacy or held-out performance.",
+  "null_semantics": "No external model response latency applies; planner latency is separate. Unknown measurements are not zero-filled.",
+  "ui_review": {
+    "reviewer": "D3",
+    "task_id": "01a0c783-4cde-74b2-8c66-4f98bad3fd40",
+    "browser": "Chrome 강",
+    "tab_id": "963999421",
+    "observed_pinned_values_solo_joint": {
+      "evaluation/reported_success": [
+        0,
+        0
+      ],
+      "evaluation/evidence_valid": [
+        1,
+        1
+      ],
+      "result/commands": [
+        463,
+        0
+      ],
+      "result/external_model_calls": [
+        0,
+        0
+      ],
+      "result/process_wall_s": [
+        302.3581,
+        5.0966
+      ],
+      "result/planner_decisions": [
+        182,
+        5
+      ]
+    },
+    "hparams_rows": [
+      "0922-RGB로컬-공동 failure 2.5860 0.0000 0.0000",
+      "0922-RGB로컬-단독 timeout 298.77 463.00 0.0000"
+    ],
+    "hparams_order": [
+      "outcome",
+      "result/wall_s",
+      "result/commands",
+      "evaluation/reported_success"
+    ],
+    "text_verified": [
+      "media/backend/execution.mp4",
+      "result/measurements",
+      "result/termination"
+    ],
+    "joint_video": {
+      "duration_s": 1.5,
+      "ended": true,
+      "error": null
+    },
+    "solo_video": {
+      "duration_s": 180.25,
+      "playing_at_s": 173.385024,
+      "error": null,
+      "scope": "Playback and late-frame sample, not an exhaustive full-video visual audit"
+    },
+    "display": "Saved 6-pin Time Series URL restored and marked as deliverable; HParams columns reapplied after video navigation.",
+    "viewer_processes": "Existing shared 9285/9291/9293 retained; no restart or new server",
+    "ui_limit": "Chrome content export unsupported; live AX observations and screenshots verified in D task tool history. Previous viewport constraint reset to browser default and page zoom reset to 100%."
+  }
+}

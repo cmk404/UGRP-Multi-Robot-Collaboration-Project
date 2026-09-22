@@ -1,0 +1,837 @@
+{
+  "schema": "rgb-a3-postrun-visual-scene-review.v1",
+  "source_sha": "8c1b64a95ca9dc3196e80ea6d47ea7c98d2776f5",
+  "static_xml_path": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-study-inputs-v3/static/scene.xml",
+  "static_xml_sha256": "5852f4ed9b3bf1f12a29347cbe14a014105ec5668da06f22b72ebad5cb083687",
+  "runs": [
+    {
+      "run_id": "d3-local-solo",
+      "video_path": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/backend/execution.mp4",
+      "video_sha256": "cdbed43f7d52f1ede7f3a39c6781180d04b38010ed19903e6f7cff6e94271773",
+      "prior_ffmpeg_full_decode_exit_code": 0,
+      "human_visual_review_scope": "nine sampled frames, not all 721 frames",
+      "frames": [
+        {
+          "decoded_png": "/Users/changmin/.codex/worktrees/9208/ugrp/outputs/a3-postrun-8c1b64a-frames/solo-01.png",
+          "sha256": "739b816778962051963fe69f4eb47b498b9d7286d0297669495f67eebfff64ba",
+          "video_frame_index": 0,
+          "visually_reviewed": true
+        },
+        {
+          "decoded_png": "/Users/changmin/.codex/worktrees/9208/ugrp/outputs/a3-postrun-8c1b64a-frames/solo-02.png",
+          "sha256": "f9c515fa8f858baa3381415ef399563c6e7eb0f677d874eed021366cdb019082",
+          "video_frame_index": 4,
+          "visually_reviewed": true
+        },
+        {
+          "decoded_png": "/Users/changmin/.codex/worktrees/9208/ugrp/outputs/a3-postrun-8c1b64a-frames/solo-03.png",
+          "sha256": "d07fa5abf1ffdedab1a027175b6648b5a5faaabc0f5a5ed138bfede6661e8c92",
+          "video_frame_index": 40,
+          "visually_reviewed": true
+        },
+        {
+          "decoded_png": "/Users/changmin/.codex/worktrees/9208/ugrp/outputs/a3-postrun-8c1b64a-frames/solo-04.png",
+          "sha256": "8b31bca5ac404fa6314de96abd90c0b59337ff0765ddb3521679a368a8b6ab33",
+          "video_frame_index": 120,
+          "visually_reviewed": true
+        },
+        {
+          "decoded_png": "/Users/changmin/.codex/worktrees/9208/ugrp/outputs/a3-postrun-8c1b64a-frames/solo-05.png",
+          "sha256": "e476c657b298529e62b26892c6bed2f2d4b053d2308113997bf14df0475a50c9",
+          "video_frame_index": 240,
+          "visually_reviewed": true
+        },
+        {
+          "decoded_png": "/Users/changmin/.codex/worktrees/9208/ugrp/outputs/a3-postrun-8c1b64a-frames/solo-06.png",
+          "sha256": "187ddeb608549771c815663662cc6e211e1801e35b62454783319e95c2819277",
+          "video_frame_index": 360,
+          "visually_reviewed": true
+        },
+        {
+          "decoded_png": "/Users/changmin/.codex/worktrees/9208/ugrp/outputs/a3-postrun-8c1b64a-frames/solo-07.png",
+          "sha256": "1c9166511894734a46d2df3c1b8b9c0fd22137e8008da69a7fe7b7e97de56414",
+          "video_frame_index": 480,
+          "visually_reviewed": true
+        },
+        {
+          "decoded_png": "/Users/changmin/.codex/worktrees/9208/ugrp/outputs/a3-postrun-8c1b64a-frames/solo-08.png",
+          "sha256": "8e5bbf790a2105a0a569fc986a9a9bc1292bb74a8267b9625fc697141aa6b403",
+          "video_frame_index": 600,
+          "visually_reviewed": true
+        },
+        {
+          "decoded_png": "/Users/changmin/.codex/worktrees/9208/ugrp/outputs/a3-postrun-8c1b64a-frames/solo-09.png",
+          "sha256": "952e44e4cca9f95a7f4821da45482f2e29d3b76ddf29d66213249bd7842db724",
+          "video_frame_index": 720,
+          "visually_reviewed": true
+        }
+      ],
+      "observations": "Reviewed frames show r2 approaching the cyan box, then remaining near it; no lift or delivery observed in samples.",
+      "overlay_absolute_time_bounds_s": [
+        1.3,
+        181.25
+      ],
+      "relative_terminal_sim_s": 179.95,
+      "xml_path": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/backend/scene.xml",
+      "xml_sha256": "c1b9574303ac4f832e2b52bec166dcdf4c2c96fb41b0321579f692c17bcdc965",
+      "static_to_runtime_xml_changes": [
+        {
+          "path": "/mujoco[@name=None]/worldbody[@name=None]/body[@name='warehouse_oak_plank']",
+          "tag": "body",
+          "name": "warehouse_oak_plank",
+          "before": {
+            "name": "warehouse_oak_plank",
+            "pos": "0.750000 -1.000000 0.018000",
+            "gravcomp": "1"
+          },
+          "after": {
+            "name": "warehouse_oak_plank",
+            "pos": "1.043823 -0.993445 0.016932",
+            "gravcomp": "1"
+          },
+          "changed_attributes": [
+            "pos"
+          ]
+        },
+        {
+          "path": "/mujoco[@name=None]/worldbody[@name=None]/body[@name='warehouse_oak_plank']/geom[@name='warehouse_oak_plank_geom']",
+          "tag": "geom",
+          "name": "warehouse_oak_plank_geom",
+          "before": {
+            "name": "warehouse_oak_plank_geom",
+            "type": "box",
+            "size": "0.030000 0.215000 0.018000",
+            "mass": "0.1800",
+            "rgba": "0 0 0 0",
+            "friction": "1.2 .20 .010",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "after": {
+            "name": "warehouse_oak_plank_geom",
+            "type": "box",
+            "size": "0.031676 0.189691 0.016932",
+            "mass": "0.2010",
+            "rgba": "0 0 0 0",
+            "friction": "1.2 .20 .010",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "changed_attributes": [
+            "mass",
+            "size"
+          ]
+        },
+        {
+          "path": "/mujoco[@name=None]/worldbody[@name=None]/body[@name='warehouse_oak_plank']/geom[@name='warehouse_oak_plank_grain_l']",
+          "tag": "geom",
+          "name": "warehouse_oak_plank_grain_l",
+          "before": {
+            "name": "warehouse_oak_plank_grain_l",
+            "type": "box",
+            "pos": "-0.020000 0.000000 0.019000",
+            "size": ".003 0.215 .0015",
+            "mass": "0",
+            "rgba": "0 0 0 0",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "after": {
+            "name": "warehouse_oak_plank_grain_l",
+            "type": "box",
+            "pos": "-0.020000 0.000000 0.019000",
+            "size": ".003 0.190 .0015",
+            "mass": "0",
+            "rgba": "0 0 0 0",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "changed_attributes": [
+            "size"
+          ]
+        },
+        {
+          "path": "/mujoco[@name=None]/worldbody[@name=None]/body[@name='warehouse_oak_plank']/geom[@name='warehouse_oak_plank_grain_r']",
+          "tag": "geom",
+          "name": "warehouse_oak_plank_grain_r",
+          "before": {
+            "name": "warehouse_oak_plank_grain_r",
+            "type": "box",
+            "pos": "0.020000 0.000000 0.019000",
+            "size": ".003 0.215 .0015",
+            "mass": "0",
+            "rgba": "0 0 0 0",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "after": {
+            "name": "warehouse_oak_plank_grain_r",
+            "type": "box",
+            "pos": "0.020000 0.000000 0.019000",
+            "size": ".003 0.190 .0015",
+            "mass": "0",
+            "rgba": "0 0 0 0",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "changed_attributes": [
+            "size"
+          ]
+        },
+        {
+          "path": "/mujoco[@name=None]/worldbody[@name=None]/body[@name='warehouse_steel_pipe']",
+          "tag": "body",
+          "name": "warehouse_steel_pipe",
+          "before": {
+            "name": "warehouse_steel_pipe",
+            "pos": "0.750000 0.000000 0.018000",
+            "gravcomp": "1"
+          },
+          "after": {
+            "name": "warehouse_steel_pipe",
+            "pos": "1.018571 -0.018563 0.023208",
+            "gravcomp": "1"
+          },
+          "changed_attributes": [
+            "pos"
+          ]
+        },
+        {
+          "path": "/mujoco[@name=None]/worldbody[@name=None]/body[@name='warehouse_steel_pipe']/geom[@name='warehouse_steel_pipe_geom']",
+          "tag": "geom",
+          "name": "warehouse_steel_pipe_geom",
+          "before": {
+            "name": "warehouse_steel_pipe_geom",
+            "type": "box",
+            "size": "0.026000 0.210000 0.022000",
+            "mass": "0.2000",
+            "rgba": "0 0 0 0",
+            "friction": "1.3 .20 .010",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "after": {
+            "name": "warehouse_steel_pipe_geom",
+            "type": "box",
+            "size": "0.026922 0.197222 0.023208",
+            "mass": "0.1603",
+            "rgba": "0 0 0 0",
+            "friction": "1.3 .20 .010",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "changed_attributes": [
+            "mass",
+            "size"
+          ]
+        },
+        {
+          "path": "/mujoco[@name=None]/worldbody[@name=None]/body[@name='warehouse_steel_pipe']/geom[@name='warehouse_steel_pipe_visual']",
+          "tag": "geom",
+          "name": "warehouse_steel_pipe_visual",
+          "before": {
+            "name": "warehouse_steel_pipe_visual",
+            "type": "cylinder",
+            "euler": "1.570796 0 0",
+            "size": "0.0220 0.210",
+            "mass": "0",
+            "rgba": "0 0 0 0",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "after": {
+            "name": "warehouse_steel_pipe_visual",
+            "type": "cylinder",
+            "euler": "1.570796 0 0",
+            "size": "0.0232 0.197",
+            "mass": "0",
+            "rgba": "0 0 0 0",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "changed_attributes": [
+            "size"
+          ]
+        },
+        {
+          "path": "/mujoco[@name=None]/worldbody[@name=None]/body[@name='warehouse_wood_crate']",
+          "tag": "body",
+          "name": "warehouse_wood_crate",
+          "before": {
+            "name": "warehouse_wood_crate",
+            "pos": "0.750000 1.000000 0.020000",
+            "gravcomp": "1"
+          },
+          "after": {
+            "name": "warehouse_wood_crate",
+            "pos": "1.069570 1.017139 0.020997",
+            "gravcomp": "1"
+          },
+          "changed_attributes": [
+            "pos"
+          ]
+        },
+        {
+          "path": "/mujoco[@name=None]/worldbody[@name=None]/body[@name='warehouse_wood_crate']/geom[@name='warehouse_wood_crate_geom']",
+          "tag": "geom",
+          "name": "warehouse_wood_crate_geom",
+          "before": {
+            "name": "warehouse_wood_crate_geom",
+            "type": "box",
+            "size": "0.027500 0.170000 0.020000",
+            "mass": "0.2600",
+            "rgba": "0 0 0 0",
+            "friction": "1.2 .20 .010",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "after": {
+            "name": "warehouse_wood_crate_geom",
+            "type": "box",
+            "size": "0.026591 0.188040 0.020997",
+            "mass": "0.3106",
+            "rgba": "0 0 0 0",
+            "friction": "1.2 .20 .010",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "changed_attributes": [
+            "mass",
+            "size"
+          ]
+        }
+      ],
+      "cameras_robot_beam_box_and_other_elements_unchanged": true,
+      "weld_off": true,
+      "initial_invariants": {
+        "scene_xml_sha256": "c1b9574303ac4f832e2b52bec166dcdf4c2c96fb41b0321579f692c17bcdc965",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "setup_path": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/backend/episode-setup-only.json",
+      "setup_sha256": "3247ff96a39459aaca7c3d3c512cc4f326582c763901f82975af2956be126ee7",
+      "initial_planar_robot_error_m": {
+        "r1": 3.4224377124153084e-06,
+        "r3": 3.422437712304286e-06,
+        "r2": 3.4224377115303427e-06
+      },
+      "initial_planar_cargo_error_m": {
+        "beam": 0.0,
+        "box": 0.0
+      }
+    },
+    {
+      "run_id": "d3-local-joint",
+      "video_path": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/backend/execution.mp4",
+      "video_sha256": "4ac66b0bfa31061fb0d8eccf0eec4756e0fcdd80e70e80bdeb90f769358c3e9e",
+      "prior_ffmpeg_full_decode_exit_code": 0,
+      "human_visual_review_scope": "all six frames",
+      "frames": [
+        {
+          "decoded_png": "/Users/changmin/.codex/worktrees/9208/ugrp/outputs/a3-postrun-8c1b64a-frames/joint-01.png",
+          "sha256": "423cef963a0149678387359d9ee4f32f6b10644cea0c286e39df7566d2cfbbf3",
+          "video_frame_index": 0,
+          "visually_reviewed": true
+        },
+        {
+          "decoded_png": "/Users/changmin/.codex/worktrees/9208/ugrp/outputs/a3-postrun-8c1b64a-frames/joint-02.png",
+          "sha256": "7fe03bb18dd66033411fdf2e641c1a29ff47b0d0c50275623c0c70574db4ab7d",
+          "video_frame_index": 1,
+          "visually_reviewed": true
+        },
+        {
+          "decoded_png": "/Users/changmin/.codex/worktrees/9208/ugrp/outputs/a3-postrun-8c1b64a-frames/joint-03.png",
+          "sha256": "1048b437264951fa572daa286211731cb7192afd2bf72bc70405544477ed7588",
+          "video_frame_index": 2,
+          "visually_reviewed": true
+        },
+        {
+          "decoded_png": "/Users/changmin/.codex/worktrees/9208/ugrp/outputs/a3-postrun-8c1b64a-frames/joint-04.png",
+          "sha256": "b4e49887118550b5630b58c0ada87250083301e2cc5b6f5aaee51dd93f3fd234",
+          "video_frame_index": 3,
+          "visually_reviewed": true
+        },
+        {
+          "decoded_png": "/Users/changmin/.codex/worktrees/9208/ugrp/outputs/a3-postrun-8c1b64a-frames/joint-05.png",
+          "sha256": "952731975d4e642136314a93f705927689d74959b8b92f2bb3ce4150a7b5b6e7",
+          "video_frame_index": 4,
+          "visually_reviewed": true
+        },
+        {
+          "decoded_png": "/Users/changmin/.codex/worktrees/9208/ugrp/outputs/a3-postrun-8c1b64a-frames/joint-06.png",
+          "sha256": "caebb568ff6658926e410d04856e2602cd93814948a77e6315d9ffd756eaea0b",
+          "video_frame_index": 5,
+          "visually_reviewed": true
+        }
+      ],
+      "observations": "All six frames show no obvious robot/cargo movement; consistent with zero commands and stationary referee cargo.",
+      "overlay_absolute_time_bounds_s": [
+        1.3,
+        2.35
+      ],
+      "relative_terminal_sim_s": 1.05,
+      "xml_path": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/backend/scene.xml",
+      "xml_sha256": "c1b9574303ac4f832e2b52bec166dcdf4c2c96fb41b0321579f692c17bcdc965",
+      "static_to_runtime_xml_changes": [
+        {
+          "path": "/mujoco[@name=None]/worldbody[@name=None]/body[@name='warehouse_oak_plank']",
+          "tag": "body",
+          "name": "warehouse_oak_plank",
+          "before": {
+            "name": "warehouse_oak_plank",
+            "pos": "0.750000 -1.000000 0.018000",
+            "gravcomp": "1"
+          },
+          "after": {
+            "name": "warehouse_oak_plank",
+            "pos": "1.043823 -0.993445 0.016932",
+            "gravcomp": "1"
+          },
+          "changed_attributes": [
+            "pos"
+          ]
+        },
+        {
+          "path": "/mujoco[@name=None]/worldbody[@name=None]/body[@name='warehouse_oak_plank']/geom[@name='warehouse_oak_plank_geom']",
+          "tag": "geom",
+          "name": "warehouse_oak_plank_geom",
+          "before": {
+            "name": "warehouse_oak_plank_geom",
+            "type": "box",
+            "size": "0.030000 0.215000 0.018000",
+            "mass": "0.1800",
+            "rgba": "0 0 0 0",
+            "friction": "1.2 .20 .010",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "after": {
+            "name": "warehouse_oak_plank_geom",
+            "type": "box",
+            "size": "0.031676 0.189691 0.016932",
+            "mass": "0.2010",
+            "rgba": "0 0 0 0",
+            "friction": "1.2 .20 .010",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "changed_attributes": [
+            "mass",
+            "size"
+          ]
+        },
+        {
+          "path": "/mujoco[@name=None]/worldbody[@name=None]/body[@name='warehouse_oak_plank']/geom[@name='warehouse_oak_plank_grain_l']",
+          "tag": "geom",
+          "name": "warehouse_oak_plank_grain_l",
+          "before": {
+            "name": "warehouse_oak_plank_grain_l",
+            "type": "box",
+            "pos": "-0.020000 0.000000 0.019000",
+            "size": ".003 0.215 .0015",
+            "mass": "0",
+            "rgba": "0 0 0 0",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "after": {
+            "name": "warehouse_oak_plank_grain_l",
+            "type": "box",
+            "pos": "-0.020000 0.000000 0.019000",
+            "size": ".003 0.190 .0015",
+            "mass": "0",
+            "rgba": "0 0 0 0",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "changed_attributes": [
+            "size"
+          ]
+        },
+        {
+          "path": "/mujoco[@name=None]/worldbody[@name=None]/body[@name='warehouse_oak_plank']/geom[@name='warehouse_oak_plank_grain_r']",
+          "tag": "geom",
+          "name": "warehouse_oak_plank_grain_r",
+          "before": {
+            "name": "warehouse_oak_plank_grain_r",
+            "type": "box",
+            "pos": "0.020000 0.000000 0.019000",
+            "size": ".003 0.215 .0015",
+            "mass": "0",
+            "rgba": "0 0 0 0",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "after": {
+            "name": "warehouse_oak_plank_grain_r",
+            "type": "box",
+            "pos": "0.020000 0.000000 0.019000",
+            "size": ".003 0.190 .0015",
+            "mass": "0",
+            "rgba": "0 0 0 0",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "changed_attributes": [
+            "size"
+          ]
+        },
+        {
+          "path": "/mujoco[@name=None]/worldbody[@name=None]/body[@name='warehouse_steel_pipe']",
+          "tag": "body",
+          "name": "warehouse_steel_pipe",
+          "before": {
+            "name": "warehouse_steel_pipe",
+            "pos": "0.750000 0.000000 0.018000",
+            "gravcomp": "1"
+          },
+          "after": {
+            "name": "warehouse_steel_pipe",
+            "pos": "1.018571 -0.018563 0.023208",
+            "gravcomp": "1"
+          },
+          "changed_attributes": [
+            "pos"
+          ]
+        },
+        {
+          "path": "/mujoco[@name=None]/worldbody[@name=None]/body[@name='warehouse_steel_pipe']/geom[@name='warehouse_steel_pipe_geom']",
+          "tag": "geom",
+          "name": "warehouse_steel_pipe_geom",
+          "before": {
+            "name": "warehouse_steel_pipe_geom",
+            "type": "box",
+            "size": "0.026000 0.210000 0.022000",
+            "mass": "0.2000",
+            "rgba": "0 0 0 0",
+            "friction": "1.3 .20 .010",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "after": {
+            "name": "warehouse_steel_pipe_geom",
+            "type": "box",
+            "size": "0.026922 0.197222 0.023208",
+            "mass": "0.1603",
+            "rgba": "0 0 0 0",
+            "friction": "1.3 .20 .010",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "changed_attributes": [
+            "mass",
+            "size"
+          ]
+        },
+        {
+          "path": "/mujoco[@name=None]/worldbody[@name=None]/body[@name='warehouse_steel_pipe']/geom[@name='warehouse_steel_pipe_visual']",
+          "tag": "geom",
+          "name": "warehouse_steel_pipe_visual",
+          "before": {
+            "name": "warehouse_steel_pipe_visual",
+            "type": "cylinder",
+            "euler": "1.570796 0 0",
+            "size": "0.0220 0.210",
+            "mass": "0",
+            "rgba": "0 0 0 0",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "after": {
+            "name": "warehouse_steel_pipe_visual",
+            "type": "cylinder",
+            "euler": "1.570796 0 0",
+            "size": "0.0232 0.197",
+            "mass": "0",
+            "rgba": "0 0 0 0",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "changed_attributes": [
+            "size"
+          ]
+        },
+        {
+          "path": "/mujoco[@name=None]/worldbody[@name=None]/body[@name='warehouse_wood_crate']",
+          "tag": "body",
+          "name": "warehouse_wood_crate",
+          "before": {
+            "name": "warehouse_wood_crate",
+            "pos": "0.750000 1.000000 0.020000",
+            "gravcomp": "1"
+          },
+          "after": {
+            "name": "warehouse_wood_crate",
+            "pos": "1.069570 1.017139 0.020997",
+            "gravcomp": "1"
+          },
+          "changed_attributes": [
+            "pos"
+          ]
+        },
+        {
+          "path": "/mujoco[@name=None]/worldbody[@name=None]/body[@name='warehouse_wood_crate']/geom[@name='warehouse_wood_crate_geom']",
+          "tag": "geom",
+          "name": "warehouse_wood_crate_geom",
+          "before": {
+            "name": "warehouse_wood_crate_geom",
+            "type": "box",
+            "size": "0.027500 0.170000 0.020000",
+            "mass": "0.2600",
+            "rgba": "0 0 0 0",
+            "friction": "1.2 .20 .010",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "after": {
+            "name": "warehouse_wood_crate_geom",
+            "type": "box",
+            "size": "0.026591 0.188040 0.020997",
+            "mass": "0.3106",
+            "rgba": "0 0 0 0",
+            "friction": "1.2 .20 .010",
+            "contype": "0",
+            "conaffinity": "0",
+            "group": "5"
+          },
+          "changed_attributes": [
+            "mass",
+            "size"
+          ]
+        }
+      ],
+      "cameras_robot_beam_box_and_other_elements_unchanged": true,
+      "weld_off": true,
+      "initial_invariants": {
+        "scene_xml_sha256": "c1b9574303ac4f832e2b52bec166dcdf4c2c96fb41b0321579f692c17bcdc965",
+        "robot_xml_sha256": {
+          "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+          "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+          "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+        },
+        "beam_xml_sha256": "2d083b0b2eb1bbd61e3c6f952a8f6b376e61373886185a597f11e2745523f689",
+        "static_map_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+        "policy_cameras": {
+          "cctv_top": {
+            "position": [
+              0.55,
+              -2.0,
+              2.5
+            ],
+            "quaternion": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "fovy": 55.0
+          },
+          "r1__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r2__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          },
+          "r3__robot_cam": {
+            "position": [
+              0.067,
+              0.0,
+              0.0136
+            ],
+            "quaternion": [
+              0.466417262018992,
+              0.531464897891391,
+              -0.531464897891391,
+              -0.466417262018992
+            ],
+            "fovy": 42.18818995586325
+          }
+        },
+        "weld_active": false,
+        "solver": {
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        }
+      },
+      "setup_path": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/backend/episode-setup-only.json",
+      "setup_sha256": "3247ff96a39459aaca7c3d3c512cc4f326582c763901f82975af2956be126ee7",
+      "initial_planar_robot_error_m": {
+        "r1": 3.4224377124153084e-06,
+        "r3": 3.422437712304286e-06,
+        "r2": 3.4224377115303427e-06
+      },
+      "initial_planar_cargo_error_m": {
+        "beam": 0.0,
+        "box": 0.0
+      }
+    }
+  ],
+  "original_rgb_samples": [
+    {
+      "path": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/backend/rgb/r2-000003-own_rgb.jpg",
+      "sha256": "9cfc80c7e1c16b2bde280491632ad658b673a3334c10a3694707335a6283c5fb",
+      "visually_reviewed": true,
+      "observation": "Initial own view has small cyan box near left centre; no state overlay."
+    },
+    {
+      "path": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/backend/rgb/r2-000710-own_rgb.jpg",
+      "sha256": "4104770c4ed22b58eb3d5bd6b14b4dc45f9857b01ea5365a9608fcd754e04437",
+      "visually_reviewed": true,
+      "observation": "Late own view has larger cyan box in centre and lower robot edge; no state overlay."
+    },
+    {
+      "path": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/backend/rgb/r1-000003-own_rgb.jpg",
+      "sha256": "17328abae424ca3fc6e1da7bd4d5ca9ca439ab036b8a3f7c85bb0f3c221538a6",
+      "visually_reviewed": true,
+      "observation": "Beam partly visible at right edge; no state overlay."
+    },
+    {
+      "path": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/backend/rgb/r3-000003-own_rgb.jpg",
+      "sha256": "2b0c9232d006c5d5c63ca97208a7adf67577185b3d49c9a0942ae2d500ab9098",
+      "visually_reviewed": true,
+      "observation": "Beam partly visible at left edge; no state overlay."
+    },
+    {
+      "path": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/backend/rgb/r1-000003-top_rgb.jpg",
+      "sha256": "956ada3e6a585f3621c418780633553cf0d3b8697c14612da94a4a23b6c2fb14",
+      "visually_reviewed": true,
+      "observation": "Whole authored arena with robots, beam and cyan box; no state overlay."
+    }
+  ],
+  "xml_difference_explanation": "Runtime seeds legacy cargo specifications; static preparation uses defaults. Arena deactivates those inert placeholders. Only nine hidden noncolliding legacy body/geom attributes differ; cameras, robots, real beam and dispatch box are unchanged. Whole XMLs are not byte-identical.",
+  "xml_source_evidence": [
+    "sim/multi_masterpi_production.py:677-680,713",
+    "sim/research_dispatch_arena.py:98-151"
+  ],
+  "presentation_notes": [
+    "The 4 fps video uses cctv_warehouse and evaluator-only beam z overlay; it is not actor input.",
+    "The reused Video.stage stays fixture_setup; that static label does not mean the runtime did not execute.",
+    "Overlay uses absolute simulator time with 1.3 s settling origin. Relative runtime clock subtracts it.",
+    "Forced initial/final captures make video durations 180.25/1.50 s versus relative terminal SIM 179.95/1.05 s."
+  ],
+  "video_source_evidence": [
+    "scripts/probe_dual_grasp_sync.py:189-230",
+    "harness/rgb_skill_execution.py:1078"
+  ],
+  "limits": [
+    "Visual sample observations do not establish an exact failed-feature or servo-oscillation cause.",
+    "Joint first r1 error is duplicated to both SKILL_FAILED records. The r3 exact exception detail was not independently retained.",
+    "No simulator, simulator rendering, policy inference, provider call or raw edit was performed for this review."
+  ],
+  "new_simulations": 0,
+  "new_policy_inferences": 0,
+  "raw_written": false
+}

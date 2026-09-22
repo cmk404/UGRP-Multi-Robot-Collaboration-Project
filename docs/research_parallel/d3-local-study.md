@@ -21,7 +21,8 @@ ACT 소유자의 종료/자식 정리 확인과 최종 고정 source/config에 �
 로컬 부모 SIGTERM도 KeyboardInterrupt와 같은 소유 child TERM→5초→KILL→reap
 경로로 처리한다. exit130 뒤 다음 시행을 시작하지 않고 `unrun/study_interrupted`로
 분모에 남긴다. 바깥 launcher는 같은 `bounded_process`로 기존 study CLI를 직접
-감싼다(1790초+최대10초정리). 중첩 세션 wrapper의 동일 grace 경쟁은 추가하지 않는다.
+감싼다(1780초+최대10초정리+기록 여유10초, study allocation1750초).
+중첩 세션 wrapper의 동일 grace 경쟁은 추가하지 않는다.
 이 runner는 자신이 시작한 trial의 별도 process group을 회수한다. 기존 공유 viewer나
 ACT 프로세스를 종료 대상으로 검색하지 않는다.
 
@@ -101,3 +102,7 @@ consent/revision/cancel을 소비 시점에 다시 확인한다. completion→po
 기록한다. TensorBoard는 기존 공통 logdir에 원본 해시 중복 확인 후 새 snapshot으로
 추가하고, 로딩과 기존 native UI·고정 링크까지 확인한다. 합성 테스트는 공용
 대시보드에 올리지 않는다. Google Drive/새 상시 서버/자동 감시는 사용하지 않는다.
+
+완료된 실제 2회의 고정 SHA·실패·회수·독립 감사·TensorBoard 화면 확인은
+[D3 로컬 재생 기록](../../experiments/2026-09-22-rgb-communication-local-replay/README.md)에 있다.
+이 기록은 추가 실행이나 live LLM pilot 승인이 아니다.

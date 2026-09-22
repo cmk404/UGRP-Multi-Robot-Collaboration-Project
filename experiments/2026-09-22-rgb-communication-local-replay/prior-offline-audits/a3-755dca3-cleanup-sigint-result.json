@@ -1,0 +1,12 @@
+{
+  "source_sha": "755dca3f1b5bdb0d12be43cea86ae2c438d45c80",
+  "source_file_sha256": "1d1df96a7b22940f9bf18005c21df57e88c31d838c897523bc34ea8e781afe58",
+  "scope": "fake child only; timeout followed by SIGINT during cleanup",
+  "boundary_line": 608,
+  "sigint_delivered": true,
+  "returned_process_record": null,
+  "raised": "KeyboardInterrupt",
+  "owned_child_alive_after_bounded_process_exit": true,
+  "audit_cleanup_reaped_all_owned_fake_children": true,
+  "verdict": "no_go"
+}

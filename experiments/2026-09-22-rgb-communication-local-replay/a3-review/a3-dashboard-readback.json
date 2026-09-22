@@ -1,0 +1,36 @@
+{
+  "schema": "a3-dashboard-independent-readback.v1",
+  "runs": [
+    {
+      "run": "0922-RGB로컬-단독",
+      "manifest_path": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-RGB로컬-단독/manifest.json",
+      "manifest_sha256": "c2d119f7dd2b52c0bdd631a87f76b103ace2334b7e529f41cf5d992d0aa1c242",
+      "source_files_verified": 5,
+      "live_scalars": {
+        "evaluation/reported_success": 0.0,
+        "evaluation/evidence_valid": 1.0,
+        "result/commands": 463.0,
+        "result/external_model_calls": 0.0,
+        "result/process_wall_s": 302.3581237792969,
+        "result/planner_decisions": 182.0
+      }
+    },
+    {
+      "run": "0922-RGB로컬-공동",
+      "manifest_path": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-RGB로컬-공동/manifest.json",
+      "manifest_sha256": "c37cd9229d0dfc2f637123c978c155a8c160d3f4b97bef947e83c18d40280dd7",
+      "source_files_verified": 5,
+      "live_scalars": {
+        "evaluation/reported_success": 0.0,
+        "evaluation/evidence_valid": 1.0,
+        "result/commands": 0.0,
+        "result/external_model_calls": 0.0,
+        "result/process_wall_s": 5.096611976623535,
+        "result/planner_decisions": 5.0
+      }
+    }
+  ],
+  "native_ui_review_owner": "D3, not A",
+  "url": "http://127.0.0.1:6006/?pinnedCards=%5B%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Freported_success%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Fevidence_valid%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fcommands%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fexternal_model_calls%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fprocess_wall_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fplanner_decisions%22%7D%5D&smoothing=0&runFilter=%5E0922-RGB%EB%A1%9C%EC%BB%AC-#timeseries",
+  "no_conversion_or_viewer_restart": true
+}

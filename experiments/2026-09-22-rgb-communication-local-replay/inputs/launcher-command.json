@@ -1,0 +1,40 @@
+{
+  "schema": "rgb-local-launcher.v1",
+  "source_sha": "8c1b64a95ca9dc3196e80ea6d47ea7c98d2776f5",
+  "cwd": "/Users/changmin/.codex/worktrees/cf5f/ugrp",
+  "argv": [
+    "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/python",
+    "-c",
+    "from pathlib import Path\nimport json,time\nfrom harness.rgb_communication_study import bounded_process,write_new_json\nstarted=time.monotonic()\nresult=bounded_process([\"/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/python\",\"-m\",\"scripts.run_rgb_communication_study\",\"run\",\"--manifest\",\"/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-study-inputs-v3/manifest.json\",\"--evidence-root\",\"/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-study-inputs-v3\",\"--output\",\"/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a\",\"--allocation-wall-s\",\"1750\"],cwd=Path(\"/Users/changmin/.codex/worktrees/cf5f/ugrp\"),log_path=Path(\"/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a-launcher.log\"),timeout_s=1780,cleanup_grace_s=10)\nrecord={'source_sha':'8c1b64a95ca9dc3196e80ea6d47ea7c98d2776f5','outer_process':result,'full_wall_s':time.monotonic()-started,'maximum_total_wall_s':1800,'external_model_calls_authorized':0}\nwrite_new_json(Path(\"/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a-launcher.json\"),record)\nprint(json.dumps(record))\nraise SystemExit(0 if result['exit_code']==0 and result['child_reaped'] and result['process_group_gone'] and record['full_wall_s']<=1800 else 2)"
+  ],
+  "study_argv": [
+    "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/python",
+    "-m",
+    "scripts.run_rgb_communication_study",
+    "run",
+    "--manifest",
+    "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-study-inputs-v3/manifest.json",
+    "--evidence-root",
+    "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-study-inputs-v3",
+    "--output",
+    "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a",
+    "--allocation-wall-s",
+    "1750"
+  ],
+  "outer_timeout_s": 1780,
+  "outer_cleanup_grace_s": 10,
+  "post_cleanup_reserve_s": 10,
+  "maximum_total_wall_s": 1800,
+  "study_allocation_wall_s": 1750,
+  "trial_deadline_s": 595,
+  "trial_cleanup_grace_s": 5,
+  "planned_trials": [
+    "d3-local-solo",
+    "d3-local-joint"
+  ],
+  "automatic_retry": false,
+  "external_model_calls": 0,
+  "source_boundary": "Launch command only; all execution, deadline and cleanup logic imports the committed existing study implementation.",
+  "resource_gate": "The user native session simulation-native-5916/PGID5930 and any separately owned console validation must be confirmed non-contending immediately before launch; never stop another owner's process.",
+  "admission_gate": "Fresh A3 v2 review bound to this exact source/config plus preflight ready=true are required. Prior candidates and their NO-GO/successful offline checks are historical only."
+}

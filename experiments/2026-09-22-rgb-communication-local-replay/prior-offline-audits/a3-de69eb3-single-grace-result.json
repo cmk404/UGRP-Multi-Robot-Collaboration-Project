@@ -1,0 +1,200 @@
+{
+  "source_sha": "de69eb313c17380f5bbfcb71fd40264cc3f0541e",
+  "source_clean": true,
+  "source_file_sha256": "172bc14f97b6e4880a3de72a73125e128efaec48d5479c29adbc8f1d3194c02b",
+  "scope": "real signal / fake child only; no physics, rendering, model or external calls",
+  "heavy_runtimes_imported": [],
+  "cases": [
+    {
+      "boundary": "before_handle",
+      "signals": [
+        "SIGTERM"
+      ],
+      "injected": true,
+      "returned": {
+        "exit_code": 130,
+        "timed_out": false,
+        "wall_time_s": 0.01575895799760474,
+        "process_group": 20926,
+        "cleanup_grace_s": 0.3,
+        "child_reaped": true,
+        "process_group_gone": true
+      },
+      "raised": null,
+      "owned_child_alive_on_return": false,
+      "owned_group_alive_on_return": [],
+      "signal_handlers_restored": true,
+      "audit_cleanup_reaped_all_owned_fake_children": true,
+      "pass": true
+    },
+    {
+      "boundary": "before_handle",
+      "signals": [
+        "SIGINT"
+      ],
+      "injected": true,
+      "returned": {
+        "exit_code": 130,
+        "timed_out": false,
+        "wall_time_s": 0.01749112499965122,
+        "process_group": 20927,
+        "cleanup_grace_s": 0.3,
+        "child_reaped": true,
+        "process_group_gone": true
+      },
+      "raised": null,
+      "owned_child_alive_on_return": false,
+      "owned_group_alive_on_return": [],
+      "signal_handlers_restored": true,
+      "audit_cleanup_reaped_all_owned_fake_children": true,
+      "pass": true
+    },
+    {
+      "boundary": "post_handle",
+      "signals": [
+        "SIGTERM"
+      ],
+      "injected": true,
+      "returned": {
+        "exit_code": 130,
+        "timed_out": false,
+        "wall_time_s": 0.017727666003338527,
+        "process_group": 20928,
+        "cleanup_grace_s": 0.3,
+        "child_reaped": true,
+        "process_group_gone": true
+      },
+      "raised": null,
+      "owned_child_alive_on_return": false,
+      "owned_group_alive_on_return": [],
+      "signal_handlers_restored": true,
+      "audit_cleanup_reaped_all_owned_fake_children": true,
+      "pass": true
+    },
+    {
+      "boundary": "post_handle",
+      "signals": [
+        "SIGINT"
+      ],
+      "injected": true,
+      "returned": {
+        "exit_code": 130,
+        "timed_out": false,
+        "wall_time_s": 0.015039417001389666,
+        "process_group": 20929,
+        "cleanup_grace_s": 0.3,
+        "child_reaped": true,
+        "process_group_gone": true
+      },
+      "raised": null,
+      "owned_child_alive_on_return": false,
+      "owned_group_alive_on_return": [],
+      "signal_handlers_restored": true,
+      "audit_cleanup_reaped_all_owned_fake_children": true,
+      "pass": true
+    },
+    {
+      "boundary": "cleanup_entry",
+      "signals": [
+        "SIGTERM",
+        "SIGINT",
+        "SIGTERM"
+      ],
+      "injected": true,
+      "returned": {
+        "exit_code": 124,
+        "timed_out": true,
+        "wall_time_s": 0.31547233399760444,
+        "process_group": 20930,
+        "cleanup_grace_s": 0.3,
+        "child_reaped": true,
+        "process_group_gone": true
+      },
+      "raised": null,
+      "owned_child_alive_on_return": false,
+      "owned_group_alive_on_return": [],
+      "signal_handlers_restored": true,
+      "audit_cleanup_reaped_all_owned_fake_children": true,
+      "pass": true
+    },
+    {
+      "boundary": "cleanup_entry",
+      "signals": [
+        "SIGINT",
+        "SIGINT"
+      ],
+      "injected": true,
+      "returned": {
+        "exit_code": 124,
+        "timed_out": true,
+        "wall_time_s": 0.3145254170012777,
+        "process_group": 20931,
+        "cleanup_grace_s": 0.3,
+        "child_reaped": true,
+        "process_group_gone": true
+      },
+      "raised": null,
+      "owned_child_alive_on_return": false,
+      "owned_group_alive_on_return": [],
+      "signal_handlers_restored": true,
+      "audit_cleanup_reaped_all_owned_fake_children": true,
+      "pass": true
+    },
+    {
+      "boundary": "cleanup_kill",
+      "signals": [
+        "SIGINT",
+        "SIGTERM"
+      ],
+      "injected": true,
+      "returned": {
+        "exit_code": 124,
+        "timed_out": true,
+        "wall_time_s": 0.3205814590000955,
+        "process_group": 20933,
+        "cleanup_grace_s": 0.3,
+        "child_reaped": true,
+        "process_group_gone": true
+      },
+      "raised": null,
+      "owned_child_alive_on_return": false,
+      "owned_group_alive_on_return": [],
+      "signal_handlers_restored": true,
+      "audit_cleanup_reaped_all_owned_fake_children": true,
+      "pass": true
+    },
+    {
+      "boundary": "post_handle_exception",
+      "signals": [],
+      "injected": true,
+      "returned": null,
+      "raised": "RuntimeError",
+      "owned_child_alive_on_return": false,
+      "owned_group_alive_on_return": [],
+      "signal_handlers_restored": true,
+      "audit_cleanup_reaped_all_owned_fake_children": true,
+      "pass": true
+    },
+    {
+      "boundary": "unreapable_single_grace",
+      "scope": "fully mocked; no OS process",
+      "returned": {
+        "exit_code": 124,
+        "timed_out": true,
+        "wall_time_s": 0.7000000000000005,
+        "process_group": 424242,
+        "cleanup_grace_s": 0.3,
+        "child_reaped": false,
+        "process_group_gone": false
+      },
+      "termination_signals": [
+        15,
+        9,
+        15,
+        9
+      ],
+      "pass": false
+    }
+  ],
+  "verdict": "no_go"
+}

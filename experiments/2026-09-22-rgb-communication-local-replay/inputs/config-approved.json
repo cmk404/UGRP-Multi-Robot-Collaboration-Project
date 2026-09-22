@@ -1,0 +1,232 @@
+{
+  "stage": "physical_replay",
+  "claim_scope": "development_connection_smoke",
+  "submitter": "D3",
+  "backend_id": "rgb_incremental_dispatch_v1",
+  "backend": {
+    "schema": "ugrp.rgb_skill_backend.v1",
+    "map_id": "dispatch_open",
+    "seed": 11,
+    "output_dir": "outputs/not-yet-submitted-rgb-replay",
+    "max_sim_s": 180,
+    "max_commands": 6000,
+    "grasp_model_dir": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/study-inputs/assets/grasp",
+    "stage_model_dir": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/study-inputs/assets/varied",
+    "reference_top": "/Users/changmin/.codex/worktrees/cf5f/ugrp/tests/fixtures/camera_goal_transport/reference-top.jpg"
+  },
+  "backend_descriptor_evidence": {
+    "path": "static/backend-descriptor.json",
+    "sha256": "2746a0d8f56dd1d0e4099494e641dd3457cd6e24d208ce3e35e7b702424e47f5"
+  },
+  "local_assets": {
+    "path": "local-assets.json",
+    "sha256": "be0bf4cbbbac9d1f95dfec6be22b0000e05cb1d1929d7c9e11ece68e247e6b4d"
+  },
+  "components": {
+    "serializer_id": "rgb-agent-request.v1",
+    "backend_id": "rgb_incremental_dispatch_v1",
+    "scheduler_id": "rgb-independent-async.v1"
+  },
+  "budgets": {
+    "sim_time_s": 180,
+    "wall_time_s": 600,
+    "job_wall_time_s": 1800,
+    "model_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "commands": 6000
+  },
+  "runtime_limits": {
+    "max_ticks": 3600,
+    "max_calls_per_robot": 181,
+    "max_actions_per_robot": 181,
+    "max_messages_per_robot": 1,
+    "max_message_bytes_per_robot": 1,
+    "max_message_ttl_s": 12,
+    "decision_timeout_s": 30,
+    "wall_timeout_s": 595,
+    "tick_period_s": 0.05,
+    "poll_period_s": 0.05,
+    "decision_period_s": 1,
+    "max_concurrent_requests": 3,
+    "max_observation_age_s": 5,
+    "max_input_tokens": 1,
+    "max_output_tokens": 1,
+    "max_input_tokens_per_call": 1,
+    "max_output_tokens_per_call": 1
+  },
+  "inputs": {
+    "map": {
+      "path": "maps/research/dispatch_v1.json",
+      "sha256": "fc8b600fa3e57eb97c7eb19d8aafdbb52df9eda6021b47bfd146a2765069aca1"
+    },
+    "physics": {
+      "path": "sim/research_dispatch_arena.py",
+      "sha256": "eb4593ce5d6ce5c9406e903ad885262cc092113b013f50714fde26f01918af52"
+    },
+    "camera": {
+      "path": "sim/multi_masterpi_production.py",
+      "sha256": "190551966689059f4e962ce5a9051bf41c08448b8bdde0911b510235f294685c"
+    },
+    "calibration": {
+      "path": "tests/fixtures/camera_goal_transport/reference-top.jpg",
+      "sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+    }
+  },
+  "environment_evidence": {
+    "path": "environment.json",
+    "sha256": "14252a35683e49cdd716f5b02d816fa8ac6e02f92d3e6bba1ecf223c2e96c991"
+  },
+  "offline_boundary_evidence": {
+    "path": "a3-independent-audit-8c1b64a/offline-boundary-review.json",
+    "sha256": "6d348b8b06630ac09fbe47446616eff0fbf50a47302fe56895b64088d2ba6c1c"
+  },
+  "trials": [
+    {
+      "run_id": "d3-local-solo",
+      "scenario_id": "d3-local-solo",
+      "replay_kind": "solo",
+      "condition": "none",
+      "seed": 11,
+      "object_ids": [
+        "box",
+        "beam"
+      ],
+      "replay_target_objects": [
+        "box"
+      ],
+      "replay_actions": {
+        "r1": [
+          {
+            "kind": "finish",
+            "claim": "cannot_continue"
+          }
+        ],
+        "r2": [
+          {
+            "kind": "task_request",
+            "task_id": "solo-diagnostic",
+            "object_id": "box",
+            "skill": "solo_transport_A",
+            "participants": [
+              "r2"
+            ],
+            "resources": [
+              "box",
+              "south_gate"
+            ],
+            "stage": "RUN",
+            "own_role": "solo",
+            "expires_at_s": 180
+          }
+        ],
+        "r3": [
+          {
+            "kind": "finish",
+            "claim": "cannot_continue"
+          }
+        ]
+      },
+      "common_task": {
+        "description": "{\"authored_map\": {\"bounds_m\": [-1.02, 2.12, -3.18, -0.82], \"completion\": \"Both cargo footprints fully inside the same selected dock slots, released and stable; referee output only.\", \"docks\": {\"dock_a\": {\"slots\": {\"beam\": {\"center_m\": [1.54, -1.34], \"half_extents_m\": [0.14, 0.27]}, \"box\": {\"center_m\": [1.82, -1.34], \"half_extents_m\": [0.1, 0.12]}}}, \"dock_b\": {\"slots\": {\"beam\": {\"center_m\": [1.54, -2.66], \"half_extents_m\": [0.14, 0.27]}, \"box\": {\"center_m\": [1.82, -2.66], \"half_extents_m\": [0.1, 0.12]}}}}, \"frame\": \"warehouse_xy_m\", \"map_id\": \"dispatch_open\", \"obstacles\": [{\"center_m\": [0.55, -0.82], \"half_extents_m\": [1.57, 0.025], \"height_m\": 0.1, \"id\": \"wall_north\", \"kind\": \"wall\"}, {\"center_m\": [0.55, -3.18], \"half_extents_m\": [1.57, 0.025], \"height_m\": 0.1, \"id\": \"wall_south\", \"kind\": \"wall\"}, {\"center_m\": [-1.02, -2.0], \"half_extents_m\": [0.025, 1.18], \"height_m\": 0.1, \"id\": \"wall_west\", \"kind\": \"wall\"}, {\"center_m\": [2.12, -2.0], \"half_extents_m\": [0.025, 1.18], \"height_m\": 0.1, \"id\": \"wall_east\", \"kind\": \"wall\"}], \"regions\": {\"dispatch_apron\": {\"center_m\": [1.48, -2.0], \"half_extents_m\": [0.38, 0.2], \"rgba\": \".95 .70 .16 .18\"}, \"dock_a\": {\"center_m\": [1.59, -1.34], \"half_extents_m\": [0.37, 0.38], \"rgba\": \".14 .55 .40 .14\"}, \"dock_b\": {\"center_m\": [1.59, -2.66], \"half_extents_m\": [0.37, 0.38], \"rgba\": \".14 .55 .40 .14\"}, \"north_gate\": {\"center_m\": [0.6, -1.18], \"half_extents_m\": [0.32, 0.29], \"rgba\": \".22 .65 .75 .15\"}, \"pickup\": {\"center_m\": [-0.35, -2.0], \"half_extents_m\": [0.45, 0.96], \"rgba\": \".12 .36 .70 .14\"}, \"south_gate\": {\"center_m\": [0.6, -2.82], \"half_extents_m\": [0.32, 0.29], \"rgba\": \".22 .65 .75 .15\"}, \"wait_east\": {\"center_m\": [1.02, -2.0], \"half_extents_m\": [0.16, 0.29], \"rgba\": \".95 .70 .16 .22\"}, \"wait_west\": {\"center_m\": [0.18, -2.0], \"half_extents_m\": [0.16, 0.29], \"rgba\": \".95 .70 .16 .22\"}}, \"resource_rules\": {\"dispatch_apron\": \"one transport team at a time\", \"north_gate\": \"one transport team at a time\", \"south_gate\": \"one transport team at a time\"}, \"routes\": {\"north\": {\"declared_min_width_m\": 0.685, \"loaded_passage\": \"unvalidated\", \"regions\": [\"pickup\", \"north_gate\", \"dispatch_apron\"], \"resource\": \"north_gate\"}, \"south\": {\"declared_min_width_m\": 0.685, \"loaded_passage\": \"unvalidated\", \"regions\": [\"pickup\", \"south_gate\", \"dispatch_apron\"], \"resource\": \"south_gate\"}}, \"schema\": \"ugrp.dispatch_map.v1\", \"terrain\": [], \"top_camera\": {\"fov_y_deg\": 55, \"name\": \"cctv_top\", \"position_m\": [0.55, -2.0, 2.5], \"quaternion_wxyz\": [1, 0, 0, 0]}, \"version\": 1}, \"instruction\": \"Choose an object, independent participants and roles, and a declared skill. Skills encode immutable goal/route; unknown maps/headings fail closed. Own claims are unverified.\", \"skills\": {\"pair_transport_A\": {\"dock\": \"dock_a\", \"object_id\": \"beam\", \"resources\": [\"beam\", \"north_gate\"], \"roles\": [\"lower\", \"upper\"], \"route\": \"north\", \"team_size\": 2}, \"pair_transport_B\": {\"dock\": \"dock_b\", \"object_id\": \"beam\", \"resources\": [\"beam\", \"north_gate\"], \"roles\": [\"lower\", \"upper\"], \"route\": \"north\", \"team_size\": 2}, \"solo_transport_A\": {\"dock\": \"dock_a\", \"object_id\": \"box\", \"resources\": [\"box\", \"south_gate\"], \"roles\": [\"solo\"], \"route\": \"south\", \"team_size\": 1}, \"solo_transport_B\": {\"dock\": \"dock_b\", \"object_id\": \"box\", \"resources\": [\"box\", \"south_gate\"], \"roles\": [\"solo\"], \"route\": \"south\", \"team_size\": 1}}}",
+        "object_ids": [
+          "box",
+          "beam"
+        ],
+        "allowed_skills": [
+          "solo_transport_A",
+          "solo_transport_B",
+          "pair_transport_A",
+          "pair_transport_B"
+        ]
+      },
+      "map_id": "dispatch_open",
+      "map_version": "1",
+      "map_instance_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+      "map_group_sha256": "fa0944a500de62caa2947ab321513c1063ab565c482016ed4e16645e21ab5987",
+      "stratum": "regression"
+    },
+    {
+      "run_id": "d3-local-joint",
+      "scenario_id": "d3-local-joint",
+      "replay_kind": "joint",
+      "condition": "none",
+      "seed": 11,
+      "object_ids": [
+        "box",
+        "beam"
+      ],
+      "replay_target_objects": [
+        "beam"
+      ],
+      "replay_actions": {
+        "r1": [
+          {
+            "kind": "task_request",
+            "task_id": "joint-diagnostic",
+            "object_id": "beam",
+            "skill": "pair_transport_A",
+            "participants": [
+              "r1",
+              "r3"
+            ],
+            "resources": [
+              "beam",
+              "north_gate"
+            ],
+            "stage": "RUN",
+            "own_role": "lower",
+            "expires_at_s": 180
+          }
+        ],
+        "r2": [
+          {
+            "kind": "finish",
+            "claim": "cannot_continue"
+          }
+        ],
+        "r3": [
+          {
+            "kind": "task_request",
+            "task_id": "joint-diagnostic",
+            "object_id": "beam",
+            "skill": "pair_transport_A",
+            "participants": [
+              "r1",
+              "r3"
+            ],
+            "resources": [
+              "beam",
+              "north_gate"
+            ],
+            "stage": "RUN",
+            "own_role": "upper",
+            "expires_at_s": 180
+          }
+        ]
+      },
+      "common_task": {
+        "description": "{\"authored_map\": {\"bounds_m\": [-1.02, 2.12, -3.18, -0.82], \"completion\": \"Both cargo footprints fully inside the same selected dock slots, released and stable; referee output only.\", \"docks\": {\"dock_a\": {\"slots\": {\"beam\": {\"center_m\": [1.54, -1.34], \"half_extents_m\": [0.14, 0.27]}, \"box\": {\"center_m\": [1.82, -1.34], \"half_extents_m\": [0.1, 0.12]}}}, \"dock_b\": {\"slots\": {\"beam\": {\"center_m\": [1.54, -2.66], \"half_extents_m\": [0.14, 0.27]}, \"box\": {\"center_m\": [1.82, -2.66], \"half_extents_m\": [0.1, 0.12]}}}}, \"frame\": \"warehouse_xy_m\", \"map_id\": \"dispatch_open\", \"obstacles\": [{\"center_m\": [0.55, -0.82], \"half_extents_m\": [1.57, 0.025], \"height_m\": 0.1, \"id\": \"wall_north\", \"kind\": \"wall\"}, {\"center_m\": [0.55, -3.18], \"half_extents_m\": [1.57, 0.025], \"height_m\": 0.1, \"id\": \"wall_south\", \"kind\": \"wall\"}, {\"center_m\": [-1.02, -2.0], \"half_extents_m\": [0.025, 1.18], \"height_m\": 0.1, \"id\": \"wall_west\", \"kind\": \"wall\"}, {\"center_m\": [2.12, -2.0], \"half_extents_m\": [0.025, 1.18], \"height_m\": 0.1, \"id\": \"wall_east\", \"kind\": \"wall\"}], \"regions\": {\"dispatch_apron\": {\"center_m\": [1.48, -2.0], \"half_extents_m\": [0.38, 0.2], \"rgba\": \".95 .70 .16 .18\"}, \"dock_a\": {\"center_m\": [1.59, -1.34], \"half_extents_m\": [0.37, 0.38], \"rgba\": \".14 .55 .40 .14\"}, \"dock_b\": {\"center_m\": [1.59, -2.66], \"half_extents_m\": [0.37, 0.38], \"rgba\": \".14 .55 .40 .14\"}, \"north_gate\": {\"center_m\": [0.6, -1.18], \"half_extents_m\": [0.32, 0.29], \"rgba\": \".22 .65 .75 .15\"}, \"pickup\": {\"center_m\": [-0.35, -2.0], \"half_extents_m\": [0.45, 0.96], \"rgba\": \".12 .36 .70 .14\"}, \"south_gate\": {\"center_m\": [0.6, -2.82], \"half_extents_m\": [0.32, 0.29], \"rgba\": \".22 .65 .75 .15\"}, \"wait_east\": {\"center_m\": [1.02, -2.0], \"half_extents_m\": [0.16, 0.29], \"rgba\": \".95 .70 .16 .22\"}, \"wait_west\": {\"center_m\": [0.18, -2.0], \"half_extents_m\": [0.16, 0.29], \"rgba\": \".95 .70 .16 .22\"}}, \"resource_rules\": {\"dispatch_apron\": \"one transport team at a time\", \"north_gate\": \"one transport team at a time\", \"south_gate\": \"one transport team at a time\"}, \"routes\": {\"north\": {\"declared_min_width_m\": 0.685, \"loaded_passage\": \"unvalidated\", \"regions\": [\"pickup\", \"north_gate\", \"dispatch_apron\"], \"resource\": \"north_gate\"}, \"south\": {\"declared_min_width_m\": 0.685, \"loaded_passage\": \"unvalidated\", \"regions\": [\"pickup\", \"south_gate\", \"dispatch_apron\"], \"resource\": \"south_gate\"}}, \"schema\": \"ugrp.dispatch_map.v1\", \"terrain\": [], \"top_camera\": {\"fov_y_deg\": 55, \"name\": \"cctv_top\", \"position_m\": [0.55, -2.0, 2.5], \"quaternion_wxyz\": [1, 0, 0, 0]}, \"version\": 1}, \"instruction\": \"Choose an object, independent participants and roles, and a declared skill. Skills encode immutable goal/route; unknown maps/headings fail closed. Own claims are unverified.\", \"skills\": {\"pair_transport_A\": {\"dock\": \"dock_a\", \"object_id\": \"beam\", \"resources\": [\"beam\", \"north_gate\"], \"roles\": [\"lower\", \"upper\"], \"route\": \"north\", \"team_size\": 2}, \"pair_transport_B\": {\"dock\": \"dock_b\", \"object_id\": \"beam\", \"resources\": [\"beam\", \"north_gate\"], \"roles\": [\"lower\", \"upper\"], \"route\": \"north\", \"team_size\": 2}, \"solo_transport_A\": {\"dock\": \"dock_a\", \"object_id\": \"box\", \"resources\": [\"box\", \"south_gate\"], \"roles\": [\"solo\"], \"route\": \"south\", \"team_size\": 1}, \"solo_transport_B\": {\"dock\": \"dock_b\", \"object_id\": \"box\", \"resources\": [\"box\", \"south_gate\"], \"roles\": [\"solo\"], \"route\": \"south\", \"team_size\": 1}}}",
+        "object_ids": [
+          "box",
+          "beam"
+        ],
+        "allowed_skills": [
+          "solo_transport_A",
+          "solo_transport_B",
+          "pair_transport_A",
+          "pair_transport_B"
+        ]
+      },
+      "map_id": "dispatch_open",
+      "map_version": "1",
+      "map_instance_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+      "map_group_sha256": "fa0944a500de62caa2947ab321513c1063ab565c482016ed4e16645e21ab5987",
+      "stratum": "regression"
+    }
+  ],
+  "launcher_evidence": {
+    "path": "launcher-command.json",
+    "sha256": "b89cc5733b7aa803da0a531d24429ed79ee38c229de4bcf6b4dbef525970ffce"
+  }
+}
