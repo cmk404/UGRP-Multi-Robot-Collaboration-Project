@@ -152,5 +152,20 @@
     ],
     "native_ui_verified": false
   },
-  "scope": "Completed offline component candidate; not physically qualified, not communication experiment"
+  "scope": "Completed offline component candidate; not physically qualified, not communication experiment",
+  "threshold_diagnostic": {
+    "train": {
+      "terminal_min": 0.01923292875289917,
+      "terminal_max": 0.11542971432209015,
+      "nonterminal_max": 0.08651050925254822,
+      "separable_threshold_gap": -0.06727758049964905
+    },
+    "development": {
+      "terminal_min": 0.015260092914104462,
+      "terminal_max": 0.0543082058429718,
+      "nonterminal_max": 0.04891175031661987,
+      "separable_threshold_gap": -0.03365165740251541
+    }
+  },
+  "threshold_diagnostic_scope": "No threshold change made. Overlap of terminal and nonterminal scores rules out a single perfect threshold on development trajectories."
 }

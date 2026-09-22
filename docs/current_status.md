@@ -6,6 +6,10 @@
 
 시뮬레이션·렌더링·학습·평가의 기본 실행 대상은 Colab CLI다. [CLI 실행·결과 회수 안내](colab_simulation.md)를 따른다. [실제 CLI CPU 데모와 결과 회수](../experiments/2026-09-21-colab-cli-smoke/README.md)를 확인했다. 기존 실험 전체를 Colab에서 재검증했다는 뜻은 아니다. 실물 연결은 로컬에서 수행한다. [Kaggle CLI](kaggle_simulation.md)도 비공개 CPU·인터넷 OFF 배치 실행과 결과 회수를 [실제 검증](../experiments/2026-09-21-kaggle-cli-smoke/README.md)했다. 기본 물리·카메라 데모 범위이며 GPU/전체 운반 검증은 아니다.
 
+## PR #92의 연구 제어기 검증 — 2026-09-22
+
+[연구 제어기 검증 절차](research_controller_validation.md)는 공통 RGB 실패와 ACT 종료 실패를 분리하고, 모든 예정 사례·물리 판정·원본 해시로 채택 여부를 확인한다. [현재 후보 기록](../experiments/2026-09-22-research-controller-qualification/README.md)의 실행 SHA와 완료 범위를 따른다. 새 LLM 통신 비교가 아닌 계획 재생을 통한 구성요소 검증이며, PR 승인·병합 전 변경이다.
+
 ## 목적별로 읽기
 
 | 하려는 작업 | 먼저 읽기 | 실행/구현 진입점 |
