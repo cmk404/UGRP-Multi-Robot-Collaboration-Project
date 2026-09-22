@@ -61,5 +61,8 @@ A/B/C 파일럿을 Colab CLI로 제안한다. 현재 exact 실행 script가 없�
 
 ## source SHA
 
-구현 commit과 PR URL은 커밋·push·PR 생성 뒤 이 문서에 후속 기록한다. main 병합은 사용자 명시
-승인 전 금지한다.
+- 구현 commit: `84aadca` (`Add common RGB execution port contract`)
+- handoff/PR metadata commit: 이 문서의 후속 commit
+- PR: 생성 뒤 설명과 task attachment에서 확인
+
+main 병합은 사용자 명시 승인 전 금지한다.
