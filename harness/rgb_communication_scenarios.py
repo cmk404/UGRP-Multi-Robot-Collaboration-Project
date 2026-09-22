@@ -523,7 +523,8 @@ def summarize_episodes(schedule: Sequence[Mapping[str, Any]], rows: Sequence[Map
 
 def audit_exposure(cases: Sequence[Mapping[str, Any]], provenance: Mapping[str, Any],
                    scenario_assignments: Sequence[Mapping[str, Any]], *,
-                   allow_legacy_dispatch_open: bool = False) -> dict[str, Any]:
+                   allow_legacy_dispatch_open: bool = False,
+                   allow_unknown_diagnostic_origins: bool = False) -> dict[str, Any]:
     """E0: reuse the suite split validator, then audit all transitive exposure.
 
     Authored geometry QA alone is not policy exposure. Diagnostics, training,
@@ -548,7 +549,7 @@ def audit_exposure(cases: Sequence[Mapping[str, Any]], provenance: Mapping[str, 
         _require(provenance["schema_version"] == "rgb-map-exposure.v1", "exposure schema mismatch")
         _require(type(provenance["freeze_order"]) is int and provenance["freeze_order"] >= 0, "freeze order required")
         records = provenance["records"]
-        _require(isinstance(records, list), "provenance records required")
+        _require(isinstance(records, list) and records, "nonempty provenance records required")
         by_id = {}
         for record in records:
             _exact(record, {"id", "kind", "parents", "map_refs", "declared_splits", "origin"}, "provenance record")
@@ -581,7 +582,9 @@ def audit_exposure(cases: Sequence[Mapping[str, Any]], provenance: Mapping[str, 
                 maps.update(ancestors(parent))
             _require(sorted(record["declared_splits"]) == sorted({by_map[mid]["split"] for mid in maps}),
                      "child must inherit every parent map split")
-            _require(maps or record["kind"] == "foundation_model" or record["parents"], "known artifact lacks provenance")
+            diagnostic_unknown = allow_unknown_diagnostic_origins and record["origin"] == "unknown"
+            _require(maps or record["kind"] == "foundation_model" or record["parents"] or diagnostic_unknown,
+                     "artifact lacks provenance; unknown local origin requires diagnostic-only admission")
             if record["origin"] == "unknown":
                 unknown.append(rid)
             visiting.remove(rid)
@@ -650,6 +653,8 @@ def audit_exposure(cases: Sequence[Mapping[str, Any]], provenance: Mapping[str, 
             "legacy_development_registry": ["dispatch_open"] if allow_legacy_dispatch_open else [],
             "lineage_maps": {rid: sorted(maps) for rid, maps in lineage.items()},
             "unknown_origins": sorted(set(unknown)),
+            "diagnostic_only": allow_unknown_diagnostic_origins,
+            "heldout_claim_ready": not blockers and not allow_unknown_diagnostic_origins,
             "uncontaminated_pretraining_claim": False,
             "provenance_sha256": canonical_sha256(provenance),
             "scope": "declared lineage/exposure integrity, not policy performance or exhaustive pretraining knowledge"}
@@ -660,6 +665,7 @@ def validate_training_comparison(plan: Mapping[str, Any], exposure_report: Mappi
     _exact(plan, {"schema_version", "arms", "fixed_test_ids", "training_seeds", "selection_rule_sha256"}, "training design")
     _require(plan["schema_version"] == "rgb-training-comparison.v1", "training design schema mismatch")
     _require(exposure_report.get("valid") is True, "invalid split/exposure audit")
+    _require(exposure_report.get("heldout_claim_ready") is True, "diagnostic unknown provenance cannot approve training comparison")
     _require(isinstance(plan["arms"], list), "training arms required")
     arms = {arm["id"]: arm for arm in plan["arms"]}
     _require(len(arms) == len(plan["arms"]) and set(arms) in ({"T1", "T2"}, {"T1", "T2", "T3"}), "T1/T2 and optional T3 required")

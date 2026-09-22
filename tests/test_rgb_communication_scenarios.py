@@ -515,6 +515,19 @@ class EnvironmentExposureTests(unittest.TestCase):
         self.assertEqual(report["effective_splits"]["dispatch_open"], "regression")
         self.assertEqual(report["lineage_maps"]["prompt"], ["dispatch_open"])
 
+    def test_unknown_local_training_origin_is_explicit_diagnostic_only(self):
+        provenance = self.provenance()
+        provenance["records"].append({"id": "old-local-checkpoint", "kind": "checkpoint",
+            "parents": [], "map_refs": [], "declared_splits": [], "origin": "unknown"})
+        self.assertFalse(audit_exposure(self.cases, provenance, [])["valid"])
+        report = audit_exposure(self.cases, provenance, [], allow_unknown_diagnostic_origins=True)
+        self.assertTrue(report["valid"])
+        self.assertIn("old-local-checkpoint", report["unknown_origins"])
+        self.assertTrue(report["diagnostic_only"])
+        self.assertFalse(report["heldout_claim_ready"])
+        with self.assertRaises(ScenarioError):
+            validate_training_comparison(self.training_plan(), report)
+
     def test_geometry_qa_is_distinct_from_policy_diagnosis_or_prompt_exposure(self):
         for use, valid in (("geometry_qa", True), ("policy_diagnosis", False), ("prompt_tuning", False)):
             provenance = self.provenance("test-a-open")

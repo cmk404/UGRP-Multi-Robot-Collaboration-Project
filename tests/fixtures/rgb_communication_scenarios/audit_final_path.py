@@ -181,6 +181,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source-root", type=Path, required=True)
     parser.add_argument("--expected-sha", required=True)
+    parser.add_argument("--report", type=Path)
     args = parser.parse_args()
     root = args.source_root.resolve()
     sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
@@ -192,13 +193,24 @@ def main():
     suite = unittest.defaultTestLoader.loadTestsFromTestCase(FinalPathAudit)
     result = unittest.TextTestRunner(verbosity=2).run(suite)
     files = subprocess.check_output(["git", "ls-files", "-z", "harness", "sim", "scripts"], cwd=root).decode().split("\0")
-    print(json.dumps({"source_sha": sha, "source_files": {
+    post_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
+    post_dirty = subprocess.check_output(["git", "status", "--porcelain"], cwd=root, text=True).strip()
+    stable = post_sha == sha and not post_dirty
+    report = {"source_sha": sha, "source_unchanged": stable, "source_files": {
         name: hashlib.sha256((root / name).read_bytes()).hexdigest() for name in files if name.endswith(".py")},
+        "probe_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "scope": "offline independent seam probes; physical/image/provider/D capsule audit still separate",
         "tests": result.testsRun, "failures": len(result.failures), "errors": len(result.errors),
-        "verdict": "offline_subset_pass" if result.wasSuccessful() else "no_go",
-        "live_readiness": False}, sort_keys=True))
-    return 0 if result.wasSuccessful() else 1
+        "details": [{"test": str(test), "traceback": detail} for test, detail in result.failures + result.errors],
+        "verdict": "offline_subset_pass" if result.wasSuccessful() and stable else "no_go",
+        "live_readiness": False}
+    if args.report:
+        with args.report.open("x") as stream:
+            json.dump(report, stream, sort_keys=True, indent=2)
+        print(json.dumps({"report": str(args.report), "verdict": report["verdict"], "tests": result.testsRun}))
+    else:
+        print(json.dumps(report, sort_keys=True))
+    return 0 if result.wasSuccessful() and stable else 1
 
 
 if __name__ == "__main__":
