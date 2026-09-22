@@ -23,7 +23,8 @@ from scripts.tensorboard_tools.rgb_communication import EXTRA_METRICS, RUN_SCHEM
 
 MAX_BYTES = 64 * 1024 * 1024
 HP_METRICS = ('result/wall_s', 'result/sim_s', 'result/commands', 'result/model_calls',
-              'result/input_tokens', 'result/output_tokens', 'result/cost_usd',
+              'result/input_tokens', 'result/output_tokens', 'result/cost_usd', 'result/model_latency_s',
+              'claims/operator_session_complete',
               'evaluation/reported_success', 'claims/protocol_complete',
               'claims/completed_task_claims', 'claims/tasks', 'claims/final_object_claims',
               'training/final_loss', 'development/final_selection_score') + EXTRA_METRICS
@@ -235,12 +236,14 @@ def export_execution(src, w, result, max_images):
         'result/model_calls': result.get('model_calls', result.get('llm_calls')),
         'result/input_tokens': result.get('input_tokens', usage.get('prompt_tokens')),
         'result/output_tokens': result.get('output_tokens', usage.get('completion_tokens')),
-        'result/cost_usd': result.get('cost_usd')}
+        'result/cost_usd': result.get('cost_usd'), 'result/model_latency_s': result.get('model_latency_s')}
     success_field = next((k for k in ('success', 'transport_success', 'physical_success') if type(result.get(k)) is bool), None)
     if success_field: metrics['evaluation/reported_success'] = int(result[success_field])
     meta['success_source_field'] = success_field
     meta['outcome'] = str(result[success_field]) if success_field else 'unrecorded'
     if type(result.get('protocol_complete')) is bool: metrics['claims/protocol_complete'] = int(result['protocol_complete'])
+    if type(result.get('operator_session_complete')) is bool:
+        metrics['claims/operator_session_complete'] = int(result['operator_session_complete'])
     for name, val in obj(result.get('protocol')).items():
         if name in ('completed_task_claims', 'tasks', 'final_object_claims') and finite(val): metrics['claims/' + name] = val
     for k, v in metrics.items(): w.scalar(k, v)

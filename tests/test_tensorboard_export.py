@@ -188,3 +188,16 @@ def test_media_registry_ranges_and_changed_video(tmp_path):
 def test_unfinished_manifest_and_external_media_ignored(tmp_path):
     put(tmp_path,'manifest.json',{'schema':'ugrp.tensorboard-export.v1','complete':False,'source':str(tmp_path)})
     assert media_registry(tmp_path)=={}
+
+
+def test_console_latency_and_session_completion_are_not_physical_success(tmp_path, export_api):
+    convert, EA = export_api
+    src = tmp_path / 'source'; src.mkdir()
+    put(src, 'result.json', {'operator_session_complete': True, 'protocol_complete': False,
+                           'model_latency_s': 2.5, 'scope': 'interactive_simulation'})
+    convert(src, tmp_path / 'export')
+    ea = EA(str(tmp_path / 'export')).Reload()
+    assert ea.Scalars('claims/operator_session_complete')[0].value == 1
+    assert ea.Scalars('claims/protocol_complete')[0].value == 0
+    assert ea.Scalars('result/model_latency_s')[0].value == 2.5
+    assert 'evaluation/reported_success' not in ea.Tags()['scalars']
