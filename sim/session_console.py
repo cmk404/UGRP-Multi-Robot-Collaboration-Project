@@ -22,12 +22,14 @@ from sim.session_config import ROBOTS
 MODES = {
     "manual": "수동 명령 — r1 앞으로 0.5초 / raw action, 모델 불필요",
     "script": "설정 실행 — config의 actions/Python controllers",
-    "llm-single": "LLM 한 대 — 선택한 로봇에 자연어 지시",
-    "llm-independent": "LLM 세 대 — 각자 자기 영상으로 판단, 통신 없음",
-    "llm-peer": "LLM 세 대 — 각자 판단하고 서로 메시지 전달",
+    "llm-single": "raw LLM 진단 한 대 — 기존 plan/skill 실행 아님",
+    "llm-independent": "raw LLM 진단 세 대 — 기존 plan/skill 실행 아님, 통신 없음",
+    "llm-peer": "raw LLM 진단 세 대 — 기존 plan/skill 실행 아님, 메시지 전달",
 }
 ALIASES = {str(index): mode for index, mode in enumerate(MODES, 1)}
 HELP = """
+기존 공동 계획 → 로봇별 스킬 실행: bash scripts/open_simulation.command dispatch
+이 console은 저수준 수동/설정 제어이며 llm-*는 별도 raw action 진단입니다.
 모드: /mode manual|script|llm-single|llm-independent|llm-peer (또는 1..5)
 로봇: /robot r1|r2|r3     모델: /model 모델이름
 지시: 수동 모드에서 r1 앞으로 0.5초 / r2 왼쪽 0.3초

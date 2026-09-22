@@ -50,6 +50,7 @@ class SkillScene(DispatchScene):
         self.yield_rows=[];self.yield_policy=None;self.yield_folded=False
         self.identity=None
         self.original_step=None;self.deadline=None;self.last_frames=None
+        self.native_view=None
 
     def time(self):return float(self.world.data.time)
     def open(self):
@@ -58,6 +59,7 @@ class SkillScene(DispatchScene):
         self.world._physics_step_for=self._physics
         return self
     def _physics(self,active,commands=None):
+        if self.native_view:self.native_view.tick()
         self._solo_tick()
         now=self.time()
         for p in self.ports.values():p.tick(now)
@@ -191,6 +193,7 @@ class SkillScene(DispatchScene):
             if self.solo.reason!='VISUAL_RELEASE_CONFIRMED':raise RuntimeError('solo stopped: '+str(self.solo.reason))
             if self.bindings.tasks['beam']['id'] in self.bindings.finished:self.bindings.finish('box')
     def close(self):
+        if self.native_view:self.native_view.close();self.native_view=None
         if self.world:
             if self.solo_executor:self.solo_executor.cancel(self.time(),'trial_end')
             if self.original_step:self.world._physics_step_for=self.original_step
@@ -230,6 +233,9 @@ def run(args):
         'input_boundary':'own fixed RGB + common fixed TOP RGB + static authored map + own issued commands + peer claims; referee output only'}
     try:
         scene.open();scene.deadline=started+args.max_wall_s
+        if getattr(args,'viewer',False):
+            from scripts.dispatch_native_view import DispatchNativeView
+            scene.native_view=DispatchNativeView(scene,realtime_factor=args.realtime_factor)
         write(args.output/'episode-setup-only.json',scene.config)
         write(args.output/'scene-manifest.json',scene.manifest)
         scene.video=Video(scene.world,args.output/'execution.mp4',getattr(args,'video_fps',10))
@@ -250,6 +256,7 @@ def run(args):
         write(args.output/'identity-evidence.json',identity)
         scene.identity=identity
         task=actor_task(scene.config['static_map'],required_dock=getattr(args,'required_dock',None))
+        if getattr(args,'task',None):task['operator_instruction']=args.task
         task['capability_scope']='RGB pair approach/grasp plus loaded rotation and complete-footprint path checking; existing VisualBoxSkill. Parallel envelope 0.99m; rotated envelope 0.45m. Loaded terrain is unvalidated and avoided. In clutter, pickup preparation is exclusive. Waiting cargo and robots remain occupied space. If you select beam.after=[box_job] and box.after=[], the box executor releases its cargo and visually clears the unloading bay before finishing box_job. Role binding, routes and task dependencies follow your plan. All skills remain experimental; no raw-action fallback.'
         write(args.output/'actor-mission.json',task)
         run_id=opaque_run_id()
@@ -269,17 +276,24 @@ def run(args):
             agreement=TeamAgreement(run_id,plan_validator=partial(validate_dispatch_plan,
                 required_dock=getattr(args,'required_dock',None))),request_builder=planner,
             reply_validator=validate_dispatch_reply,request_timeout=args.timeout,max_tokens=1600,
-            roles_fixed_by_skill=False,planning_only=False,max_wall_s=args.max_wall_s)
+            roles_fixed_by_skill=False,planning_only=False,max_wall_s=args.max_wall_s,
+            model=getattr(args,'model','gemini-3.8-flash'),
+            idle_callback=scene.native_view.poll if scene.native_view else None)
         scene.team=team;frames=scene.capture('planning')
         result['phase']='NEGOTIATE'
         result['plan_feasibility']=negotiate_executable(team,frames,scene.command_history,task,
             scene.config['static_map'],scene.time(),max_tokens=args.max_input_tokens,
+            max_rounds=getattr(args,'planning_rounds',8),max_replans=getattr(args,'max_replans',2),
             live_replan=getattr(args,'live_replan',False),identity=identity,reference_top=reference)
         scene.bindings=SkillBindings(team.agreement.committed,scene.config['static_map'])
         result.update(plan_committed=True,plan=scene.bindings.plan,bindings=scene.bindings.capabilities())
         write(args.output/'committed-plan.json',team.agreement.committed)
         write(args.output/'robot-programs.json',scene.bindings.programs)
         write(args.output/'skill-bindings.json',scene.bindings.capabilities())
+        print('PLAN COMMITTED '+team.agreement.committed['plan_hash'],flush=True)
+        for rid,program in scene.bindings.programs.items():
+            row=program[0]
+            print(f"{rid}: {row['object']} | {row['role']} | partners={row['participants']} | route={row['route']} | after={row['after']}",flush=True)
         # Preserve the accepted plan. Do not silently replace its route or move
         # a loaded formation through a known insufficient static clearance.
         scene.bindings.check_route()
@@ -308,6 +322,8 @@ def run(args):
     finally:
         try:
             if scene.world:
+                if scene.native_view:
+                    scene.native_view.close();scene.native_view=None
                 # Freeze decisions before final referee-only settling.
                 if scene.solo_executor:scene.solo_executor.cancel(scene.time(),'trial_end')
                 if scene.solo:result['solo_status']={'phase':scene.solo.phase,'reason':scene.solo.reason,'done':scene.solo.done}

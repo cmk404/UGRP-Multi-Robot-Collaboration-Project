@@ -13,6 +13,7 @@
       "id": "dispatch",
       "purpose": "3대 LLM 계획·공동 출하·복구",
       "entry": "scripts/run_dispatch_e2e.py",
+      "local_cli": "bash scripts/open_simulation.command dispatch --task 'beam과 box를 같은 dock으로 옮겨'",
       "docs": "docs/research_dispatch_arena.md",
       "requires": "model endpoint, full grasp model and stage policies; costs depend on planner"
     },

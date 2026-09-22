@@ -1,6 +1,6 @@
 # 로컬 시뮬레이션: 설정 파일 · CLI · Python API
 
-같은 설정을 터미널에서 실행하고 MuJoCo 기본 3D 창으로 확인한다. Python에서는 `Simulation`을 불러와 관측·명령·물리 스텝을 직접 제어한다. 수동·설정 실행에는 별도 웹 서버나 모델 계정이 필요 없다. 자연어 LLM 모드는 접근 가능한 모델 프록시를 사용한다.
+같은 설정을 터미널에서 실행하고 MuJoCo 기본 3D 창으로 확인한다. Python에서는 `Simulation`을 불러와 관측·명령·물리 스텝을 직접 제어한다. 기본 연구 실행은 기존 `run_dispatch_e2e --executor skills`를 사용한다. 자연어 지시를 받은 세 로봇이 plan에 합의하고, 각자의 프로그램으로 기존 RGB 스킬을 실행한다. 수동·설정 실행에는 모델 계정이 필요 없다.
 
 ## 설치와 첫 실행
 
@@ -19,7 +19,7 @@ Ubuntu 24.04는 먼저 [설치 안내](ubuntu_quickstart.md)를 따른다. 창�
 
 ## 터미널에서 구성하기
 
-저장소 루트에서 실행한다. 인자 없는 실행은 `configs/simulation/local.json`의 **기존 공동 출하장(dispatch/shared_crossing, seed11)**을 열고 터미널에서 작동 방식을 선택한다. `init`과 `new`도 같은 연구 장면을 기본으로 사용한다. [전체 구성·누락 검토](simulation_inventory.md)에 기존 자산과 연결 범위를 정리했다.
+저장소 루트에서 실행한다. 인자 없는 실행은 공동 계획·저장된 plan 재생·수동·설정 실행을 선택하는 메뉴를 연다. 공동 계획의 기본 장면은 **기존 공동 출하장(dispatch/shared_crossing, seed11)**이다. 수동 기본 설정은 `configs/simulation/local.json`이다. `init`과 `new`도 같은 연구 장면을 기본으로 사용한다. [전체 구성·누락 검토](simulation_inventory.md)에 기존 자산과 연결 범위를 정리했다.
 
 ```bash
 # 설정 생성 → 편집 → 오류/기본값 확인
@@ -56,56 +56,47 @@ MuJoCo 패널은 표시 옵션 외에 물리·actuator 상태도 바꿀 수 있�
 
 관찰 카메라는 `--camera cctv_top`, `--camera cctv_warehouse`, `--camera r1__robot_cam` 등으로 선택한다. 창의 Rendering 카메라 선택도 사용할 수 있다. 자유 시점과 물체 드래그는 사람이 장면을 살펴보는 도구다. GUI에서 물리를 조작한 실행은 무인 평가와 구분한다.
 
-## 명령 입력과 작동 방식 선택
+## 기존 공동 계획과 로봇별 실행
 
 ```bash
 bash scripts/open_simulation.command
-# 1 수동 / 2 설정 실행 / 3 LLM 한 대 / 4 LLM 세 대 개별 / 5 LLM 세 대 통신
+# 1 공동 계획 → 기존 스킬 / 2 저장된 plan 재생 / 3 수동 / 4 설정 실행
 
-# 선택 화면을 건너뛰고 기존 연구 맵·모드 지정
-bash scripts/open_simulation.command console configs/simulation/local.json \
-  --scene dispatch/shared_crossing --mode llm-single --robot r1
+# 같은 기존 실행기를 직접 선택: 자연어는 세 로봇의 계획 협상에 전달
+bash scripts/open_simulation.command dispatch \
+  --task '서로 역할과 순서를 합의해서 beam과 box를 dock_b로 옮겨' \
+  --required-dock dock_b --variant shared_crossing --seed 11
+
+# 자신이 저장한 plan을 명시적으로 재생: 새로운 LLM 협상 아님
+bash scripts/open_simulation.command dispatch --plan-replay outputs/my-run/committed-plan.json
 ```
 
-**명령은 실행한 터미널에 입력하고, 결과는 MuJoCo 창에서 본다.** 기본 `local.json`에는 자동 동작이 없으므로 2번을 쓰려면 `drive.json`이나 자신의 controllers/actions 설정을 지정한다.
+`dispatch`는 **기존** `run_dispatch_e2e.py --executor skills`의 진입점이다. 세 로봇의 자기 RGB·공용 TOP·자기 명령 이력·허용 정적 지도·동료 메시지로 계획을 협상하고, 동일 plan ID/hash에 전원 합의해야 `SkillBindings`가 로봇별 프로그램을 만든다. 담당 물체, 운반 파트너, 경로, 목적지, 선행 작업은 plan에서 가져온다. pair RGB 접근·파지·운반과 solo box 스킬을 공통 물리 시계에서 진행하며, 공동 동작·점유 자원·선행 작업의 기존 허가를 유지한다. 별도 프로세스 세 개의 실시간 분산 제어를 뜻하지 않는다.
 
-| 모드 | 동작 |
-|---|---|
-| `manual` | 모델 없이 제한된 한국어 동작 또는 raw action을 즉시 발행 |
-| `script` | 설정 파일의 actions·Python controllers 실행 |
-| `llm-single` | 선택한 한 로봇이 영상과 자연어 지시로 다음 raw action 결정 |
-| `llm-independent` | 세 로봇이 자기 영상·자기 이력으로 각각 결정, 메시지 없음 |
-| `llm-peer` | 같은 개별 제어에 모델이 작성한 동료 메시지 전달 추가 |
+자연어는 **실행 전 계획 지시**다. 현재 계약은 기존 beam 1개·box 1개, 로봇 3대, dock_a/b, north/south 경로다. 자유로운 새 작업이나 임의 맵에 필요한 스킬을 자동으로 만드는 기능은 없다. 목적지처럼 반드시 지켜야 하는 조건은 `--required-dock`으로도 지정한다. 실행 중 새 자연어 지시로 이미 승인된 plan을 바꾸는 기능은 아직 없다. 새 작업은 종료 후 다시 실행한다. 저장된 plan 재생에는 새 `--task`를 함께 넣을 수 없다.
 
-```text
-r1 앞으로 0.5초
-r2 왼쪽 0.3초
-r1 arm 1 1800
-/raw r1 {"kind":"wait"}
-/mode llm-single
-/robot r1
-앞에 장애물이 있는지 보고 조금씩 전진해
-정지
-초기화
-/mode llm-peer
-서로 상의해서 다른 로봇과 부딪히지 않게 조금씩 움직여
-/status
-종료
+출하 스킬에 필요한 기존 모델은 저장소의 `experiments/dispatch-skill-integration-20260917/models.zip`에서 `outputs/dispatch-models/<bundle-hash>/`로 복원한다. 기존 파일을 덮어쓰거나 새로 학습하지 않는다. 자기 모델은 `--grasp-model-dir DIR --stage-model-dir DIR`를 함께 지정한다. 이 모델의 과거 성공 범위가 임의 조건의 성공을 보장하지는 않는다.
+
+새 계획에는 접근 가능한 기존 모델 프록시가 필요하다. `GEMINI_PROXY_URL`은 자신의 `/v1/chat/completions` 주소이며 기존 기본은 로컬 8391이다. 모델은 `--model` 또는 `UGRP_SIM_MODEL`, 기본은 `gemini-3.8-flash`다. 실행기는 계정이나 프록시 서버를 자동으로 만들지 않는다. 저장된 계획 재생은 새 모델 협상을 하지 않는다.
+
+주요 옵션은 `--variant open|shared_crossing|north_blocked|narrow_south|rough_south`, `--seed`, `--max-wall-s`(기본 1200초), `--timeout`(요청당 기본 60초), `--planning-rounds`(합의 시도당 기본 8라운드), `--max-replans`(실행 전 적합성 재협상 기본 2회), `--max-input-tokens`다. 기존 실행기의 나머지 옵션도 전달할 수 있다. headless는 `--headless`, 관찰 재생 속도는 `--realtime-factor`로 바꾼다. 속도는 물리 timestep이나 제어기를 바꾸지 않는다.
+
+MuJoCo **dispatch 관찰 창**은 마우스 회전/확대, **Space** 일시정지/재개, **Q 또는 창 닫기** 종료를 지원한다. 모델 대기 중 물리는 멈춘다. 관찰 창은 model/data의 별도 복사본을 사용하므로 패널 초기화·actuator 조작·물체 드래그가 실제 제어 세계에 전달되지 않는다. 실제 물체 조작은 아래 수동 경로를 사용한다. 종료 중 이미 진행된 모델 요청은 제한 시간 안에 끝날 때까지 기록을 회수하며, 서버 측 취소를 보장하지 않는다.
+
+결과 폴더에는 원래 실행기가 만드는 `actor-mission.json`, `team/`의 로봇별 실제 요청/응답, `committed-plan.json`, `robot-programs.json`, `skill-bindings.json`, 발행 명령·RGB·영상·별도 평가·`result.json`이 남는다. plan 합의, 스킬 프로토콜 완료, 실제 운반 성공은 각각 다른 판정이다. 출력 폴더는 덮어쓰지 않는다. 기존 연구 실행기와 동일하게 실제 실행 전 변경 소스를 커밋해야 한다.
+
+## 저수준 수동·설정 콘솔
+
+```bash
+bash scripts/open_simulation.command console configs/simulation/local.json --mode manual
+bash scripts/open_simulation.command console configs/simulation/drive.json --mode script
 ```
 
-수동 모드의 `앞으로/뒤로/왼쪽/오른쪽`은 고정 문법이며, 왼쪽·오른쪽은 **제자리 회전**이다. 평행 이동은 `r1 mecanum 0 0.05 0 0.5`처럼 forward/left/turn/duration 순서다. `/raw`에는 등록한 사용자 action도 쓸 수 있다. 자유로운 자연어 해석은 LLM 모드에서 한다. `/help`에 전체 명령이 나온다.
+명령은 터미널에 입력하고 MuJoCo 창에서 확인한다. 수동 모드의 `r1 앞으로 0.5초`, `r2 왼쪽 0.3초`는 고정 문법이며 왼쪽/오른쪽은 제자리 회전이다. 평행 이동은 `r1 mecanum 0 0.05 0 0.5`, 팔은 `r1 arm 1 1800`, 사용자 action은 `/raw r1 {"kind":"wait"}`처럼 입력한다. 자유로운 자연어 계획은 위의 `dispatch`를 사용한다.
 
-`/pause`는 물리만 일시정지하고 `/run`으로 이어간다. `/stop` 또는 `정지`는 현재 작업·남은 actuator 보간·모델 요청을 취소한다. `/reset` 또는 `초기화`는 같은 장면을 초기화한다. `/mode` 변경도 초기화하여 이전 모드의 행동과 기억이 섞이지 않게 한다. 모드 변경 직후에는 정지 상태다. script는 `/run`, LLM은 새 자연어 작업을 입력한다. 모델·제어 로봇은 `/model 이름`, `/robot r2`로 바꾼다. 실행 중 지도 변경은 종료 후 `--scene`으로 다시 연다.
+`/pause`는 물리를 정지하고 `/run`으로 잇는다. `/stop` 또는 `정지`는 작업·남은 actuator 보간을 취소한다. `/reset` 또는 `초기화`는 같은 장면을 초기화한다. `/mode manual|script` 변경도 초기화한다. `/status`, `/help`, `/quit` 또는 `종료`를 쓸 수 있다. script에는 actions/controllers가 있는 설정이 필요하다. 사용자 제어기를 바꾸려면 [확장 안내](simulation_extensions.md)를 따른다.
 
-LLM은 기존 `GeminiProxyCompleter`를 사용한다. `GEMINI_PROXY_URL`에 본인의 OpenAI 호환 프록시 `/v1/chat/completions` 주소를 설정한다. 기본은 기존 로컬 주소 `http://127.0.0.1:8391/v1/chat/completions`, 모델은 `UGRP_SIM_MODEL` 또는 `--model`이며 기본 `gemini-3.8-flash`다. 계정·프록시 자동 설치나 서비스 시작은 하지 않는다. Linux에서도 접근 가능한 주소·모델을 직접 지정해야 한다. 연결/응답 실패는 터미널에 표시하고 작업을 정지한다.
-
-기본 한도는 세션 전체 60요청, 지시당 12라운드, 요청당 30초다. `--max-calls`, `--max-rounds`, `--model-timeout`으로 바꾼다. 한 라운드는 한 대 모드에서 1요청, 세 대 모드에서 최대 3요청이다. 남은 예산으로 전체 라운드를 시작할 수 없으면 호출하지 않는다. 모델 응답을 기다리는 동안 물리를 멈추고 창과 입력을 계속 처리한다. 취소는 이 실행이 시작한 요청 프로세스만 중지하며 이미 서버에 전달된 요청의 과금/서버 작업 취소를 보장하지 않는다.
-
-모델은 자기 RGB·공용 TOP RGB·자기 발행 명령/판단 이력만 받으며 peer 모드에서만 다음 라운드에 동료 메시지를 받는다. 실시간 좌표·측정 관절·접촉·평가 성공은 전달하지 않는다. 직접 쓰는 action은 drive/mecanum/arm/look/wait이며, **기존 ACT 정책·운반 skill을 자동 선택하는 기능은 아직 아니다.** 기존 연구 실행기는 `workflows`에 별도로 보존돼 있다. 이 console은 대화식 탐색 경로이며 통신 성능 비교 프로토콜이나 운반 성공 검증으로 간주하지 않는다.
-
-`console-events.jsonl`에는 사용자 입력·모드·모델 판단·오류를, `model-calls/`에는 각 모델의 실제 텍스트/이미지 요청·전송 본문·응답·가능한 사용량을 기록한다. 평가 자료는 기존 별도 파일에 남긴다. result의 `model_calls`는 전송을 시도한 요청 수이며 서버 완료 수가 아니다. 취소/오류 시 사용량은 미확인일 수 있다. `protocol_complete`는 console에서 항상 false이고 `model_claims`도 물리 성공 판정이 아니다. 오류가 한 번이라도 있으면 종료 코드 2다.
-
-유한한 재현 명령은 `--task 'r1 앞으로 0.5초' --exit-after-task --mode manual`처럼 사용한다. 자연어 LLM 작업에도 같은 옵션을 쓸 수 있으며 작업 종료 또는 호출 한도에서 끝난다. 원격 서버에서 이 옵션과 `--headless`를 함께 쓰면 stdin 없이 실행한다.
+앞서 추가했던 `--mode llm-single|llm-independent|llm-peer`는 **별도 raw action 진단**으로만 보존한다. 기본 메뉴에는 표시하지 않는다. 이 경로는 LLM이 매번 저수준 명령을 고르므로 기존 plan→skill 실행 또는 같은 실행기를 고정한 통신 비교로 취급하지 않는다. 모델 요청 한도는 `--max-calls`, `--max-rounds`, `--model-timeout`; 기록은 `console-events.jsonl`, `model-calls/`에 남는다. 이 진단의 `protocol_complete`는 항상 false이며 모델의 완료 주장은 물리 성공이 아니다.
 
 ## 설정 계약 (version 1)
 

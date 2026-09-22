@@ -292,8 +292,22 @@ def run(config, args):
 
 
 def main(argv=None):
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] in ('start', 'dispatch'):
+        from scripts.sim_dispatch import choose, main as dispatch
+        try:
+            if argv[0] == 'dispatch':
+                return dispatch(argv[1:])
+            if len(argv) != 1 or not sys.stdin.isatty():
+                raise ValueError('start requires an interactive terminal; use dispatch or console with explicit options')
+            return choose()
+        except (ValueError, OSError, RuntimeError) as error:
+            print(f'sim: {error}', file=sys.stderr)
+            return 2
     parser = argparse.ArgumentParser(description="UGRP native MuJoCo + configurable local simulation")
     sub = parser.add_subparsers(dest="command", required=True)
+    sub.add_parser('start', help='choose existing plan/skills, saved-plan replay, manual or configured execution')
+    sub.add_parser('dispatch', help='existing peer planning and RGB skills in the native window; dispatch --help')
     init = sub.add_parser("init", help="write a new editable JSON configuration")
     init.add_argument("path", type=Path)
     init.add_argument("--scene", "--layout", dest="layout", default=DEFAULT_SCENE,
@@ -329,7 +343,7 @@ def main(argv=None):
     execute.add_argument("--realtime-factor", type=float)
     execute.add_argument("--output", type=Path)
     console = sub.add_parser("console", parents=[execute], add_help=False,
-                             help="terminal commands, mode selection and natural-language RGB control")
+                             help="low-level manual/configured control; use dispatch for plan-driven research")
     console.add_argument("--mode", help="manual, script, llm-single, llm-independent, llm-peer; interactive menu if omitted")
     console.add_argument("--robot", choices=ROBOTS, default="r1")
     console.add_argument("--model", default=os.environ.get("UGRP_SIM_MODEL", "gemini-3.8-flash"))
@@ -396,7 +410,9 @@ def main(argv=None):
                 if sys.stdin.isatty():
                     print("\n작동 방식을 선택하세요:")
                     for index, (name, description) in enumerate(MODES.items(), 1):
-                        print(f" {index}. {description} [{name}]")
+                        if name in ('manual', 'script'):
+                            print(f" {index}. {description} [{name}]")
+                    print('기존 공동 계획·스킬 실행은 dispatch 또는 인자 없는 실행기를 사용하세요.')
                     args.mode = input("선택 [1]: ").strip() or "manual"
                 else:
                     args.mode = "manual"

@@ -18,9 +18,9 @@ if [[ ! -x "$sim_python" ]]; then
 fi
 cd "$project_dir"
 # No arguments opens terminal mode selection plus the native research scene.
-if [[ $# -eq 0 ]]; then set -- console configs/simulation/local.json; fi
+if [[ $# -eq 0 ]]; then set -- start; fi
 runner="$sim_python"
-if [[ "$(uname -s)" == Darwin && ( "$1" == run || "$1" == console ) ]]; then
+if [[ "$(uname -s)" == Darwin && ( "$1" == run || "$1" == console || "$1" == start || "$1" == dispatch ) ]]; then
   headless=false
   for arg in "$@"; do [[ "$arg" == --headless ]] && headless=true; done
   if [[ "$headless" == false ]]; then
