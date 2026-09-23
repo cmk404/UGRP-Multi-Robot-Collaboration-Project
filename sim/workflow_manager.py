@@ -35,7 +35,7 @@ MANAGED_CHILD = "UGRP_SIM_MANAGED_CHILD"
 INPUT_PATH_FLAGS = ("--plan-replay", "--grasp-model-dir", "--stage-model-dir", "--protocol", "--manifest",
                     "--artifacts", "--map-file", "--map", "--act-python", "--mjpython", "--grasp",
                     "--stages", "--cases-json", "--dataset", "--evidence-root", "--inventory", "--config",
-                    "--carry-act-model", "--carry-act-python", "--reference-top")
+                    "--carry-act-model", "--carry-act-python", "--reference-top", "--spec")
 
 
 def _sha(path: Path) -> str:
@@ -223,8 +223,51 @@ def _input_paths(root: Path, argv: list[str], extra: list[Path]) -> list[Path]:
     return list(dict.fromkeys(_at_root(root, p) for p in paths))
 
 
+def _local_config_inputs(root: Path, argv: list[str]) -> list[Path]:
+    """Resolve local config dependencies without importing user extensions."""
+    from sim.session_config import load_config, validate_config
+    from sim.session_extensions import validate_reference
+
+    config_path = _at_root(root, argv[1])
+    if not config_path.is_file():
+        raise ValueError(f"local config does not exist: {argv[1]}")
+    config = load_config(config_path)
+    scene = _option(argv, "--scene")
+    if scene is not None:
+        config["scene"]["layout"] = scene
+    builder = _option(argv, "--scene-builder")
+    if builder is not None:
+        config["scene"]["builder"] = builder
+    for index, arg in enumerate(argv):
+        if arg != "--controller" and not arg.startswith("--controller="):
+            continue
+        value = argv[index + 1] if arg == "--controller" and index + 1 < len(argv) else arg.partition("=")[2]
+        if "=" not in value:
+            raise ValueError("--controller requires ROBOT=FILE.py:FACTORY")
+        robot, ref = value.split("=", 1)
+        config["controllers"][robot] = {**config["controllers"].get(robot, {}), "factory": ref}
+    config = validate_config(config)
+    base = config_path.parent
+    paths = [config_path]
+    if config["scene"]["map_file"] is not None:
+        paths.append(base / config["scene"]["map_file"])
+    refs = [config["scene"]["builder"], *config["action_plugins"].values(),
+            *(entry["factory"] for entry in config["controllers"].values())]
+    for ref in refs:
+        if ref is not None:
+            filename, _ = validate_reference(ref)
+            paths.append(base / filename)
+    resolved = list(dict.fromkeys(path.resolve() for path in paths))
+    for path in resolved:
+        if not path.is_file():
+            raise ValueError(f"local config input does not exist: {path}")
+    return resolved
+
+
 def _workflow_inputs(root: Path, workflow_id: str, argv: list[str], extra: list[Path]) -> list[Path]:
     paths = list(extra)
+    if workflow_id == "local":
+        paths.extend(_local_config_inputs(root, argv))
     if workflow_id == "dispatch" and _option(argv, "--grasp-model-dir") is None:
         paths.append(root / "experiments/dispatch-skill-integration-20260917/models.zip")
     if workflow_id == "dispatch-skills" and _option(argv, "--reference-top") is None:
@@ -233,8 +276,12 @@ def _workflow_inputs(root: Path, workflow_id: str, argv: list[str], extra: list[
 
 
 def _validate_input_paths(root: Path, workflow_id: str, argv: list[str]) -> None:
-    if workflow_id == "local" and not _at_root(root, argv[1]).is_file():
-        raise ValueError(f"local config does not exist: {argv[1]}")
+    if workflow_id == "local":
+        _local_config_inputs(root, argv)
+    if workflow_id == "act-map-suite":
+        spec = _option(argv, "--spec")
+        if spec is not None and not _at_root(root, spec).is_file():
+            raise ValueError(f"--spec input is not a file: {spec}")
     for flag in INPUT_PATH_FLAGS:
         value = _option(argv, flag)
         if value is not None and not _at_root(root, value).exists():
@@ -271,6 +318,8 @@ def _validate_args(row: dict, argv: list[str]) -> str | None:
             raise ValueError("dispatch-skills is saved-plan replay; live replan requires dispatch")
         if not _option(argv, "--grasp-model-dir") or not _option(argv, "--stage-model-dir"):
             raise ValueError("dispatch-skills requires explicit grasp and stage model directories")
+    elif workflow_id == "act-input-training" and any(arg == "--resume" or arg.startswith("--resume=") for arg in argv):
+        raise ValueError("act-input-training requires a fresh output; --resume is not managed")
     if workflow_id == "jev" and "--worker" in argv:
         raise ValueError("jev --worker is an internal worker entry point")
     output_flag = row["output_flag"]
@@ -445,6 +494,9 @@ def _finish(manifest: dict, record: Path, *, exit_code: int | None, output: Path
     manifest["inputs_after"] = [entry for entry in (
         safe("input_after", lambda path=Path(row["path"]): path_receipt(path)) for row in manifest["inputs_before"])
         if entry is not None]
+    before_inputs = {row["path"]: row["sha256"] for row in manifest["inputs_before"]}
+    after_inputs = {row["path"]: row["sha256"] for row in manifest["inputs_after"]}
+    manifest["inputs_changed_during_run"] = before_inputs != after_inputs
     root = Path(manifest["project_root"])
     after = safe("source_after", lambda: source_fingerprint(root))
     manifest["source_after"] = after
@@ -456,7 +508,8 @@ def _finish(manifest: dict, record: Path, *, exit_code: int | None, output: Path
 
 def _select_python(row: dict, argv: list[str]) -> str:
     native = (row["id"] in ("local", "dispatch") and "--headless" not in argv or
-              row["id"] == "dispatch-skills" and "--viewer" in argv)
+              row["id"] == "dispatch-skills" and "--viewer" in argv or
+              row["id"] == "act-map-suite" and "--render" in argv)
     if native and sys.platform == "darwin":
         candidate = Path(sys.executable).with_name("mjpython")
         if not candidate.is_file() or not os.access(candidate, os.X_OK):
@@ -579,6 +632,8 @@ def run_inprocess(root: Path, workflow_id: str, argv: list[str], invoke, *, outp
     if os.environ.get(MANAGED_CHILD) == "1":
         return invoke(output)
     root = root.resolve()
+    if workflow_id == "local":
+        _validate_input_paths(root, workflow_id, argv)
     if output is not None and output.exists():
         raise FileExistsError(f"workflow output already exists: {output}")
     record = _new_record(root, workflow_id, None)

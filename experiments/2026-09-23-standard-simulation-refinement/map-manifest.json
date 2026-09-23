@@ -1,0 +1,399 @@
+{
+  "schema": "ugrp.act_map_manifest.v1",
+  "suite_id": "local-pair-map-v1",
+  "spec_sha256": "540b28ea892e00f533c04aa6b8aecec2b57989373df873e796b1e96bc06a9c68",
+  "status": "map design frozen; final evaluation NOT authorized by this manifest",
+  "physics_initialization_seeds": [
+    11,
+    29
+  ],
+  "model_training_seeds": null,
+  "event_axis": [
+    "none"
+  ],
+  "cases": [
+    {
+      "id": "train-open-1",
+      "split": "train",
+      "family": "open",
+      "topology_id": "room",
+      "map_seed": 1101,
+      "map_sha256": "ec7f328d0ff0977ef1487eead27c3b78bf08f2d038089e10166761041ee41cb2",
+      "layout_sha256": "d66addeee4a83a4b7790ec3b3d549583d9b6c40f841421924f2b702f5f0115ef",
+      "task_sha256": "46636a64ad8f5e1f845db4c9ef8700d5960bb16e089ae0a3e34cc097f150f62f",
+      "parameters": {
+        "east_bound_m": 2.048658,
+        "doors": []
+      }
+    },
+    {
+      "id": "train-open-2",
+      "split": "train",
+      "family": "open",
+      "topology_id": "room",
+      "map_seed": 1102,
+      "map_sha256": "9cd3949153ac259da5d43ed545e32c72beb16f30406b87a035400c6b33ba877a",
+      "layout_sha256": "da38e886a7f63e918a9a60ceec7939f7a002d33ce756d1328c477ee06fe7a91e",
+      "task_sha256": "efb9a0b961aea0a32312349ce6cb27db380d951bd6ae0a56c85651a852132dab",
+      "parameters": {
+        "east_bound_m": 2.078438,
+        "doors": []
+      }
+    },
+    {
+      "id": "train-door-1",
+      "split": "train",
+      "family": "door",
+      "topology_id": "room-door-room",
+      "map_seed": 1201,
+      "map_sha256": "dafb2c28852a065e97fa84426fb84353591d5a72ba206a1473f55b58f762702d",
+      "layout_sha256": "d2d17527e5dfee9cc069073a6731556766268641c03b57c523a40480499b9b6b",
+      "task_sha256": "10e5ad7d6ff8c2575862c8bf64baa39162cd3116556ef446cf246b154810ff0d",
+      "parameters": {
+        "east_bound_m": 2.035506,
+        "doors": [
+          {
+            "x_m": 0.540008,
+            "center_y_m": -1.943403,
+            "width_m": 0.642892
+          }
+        ]
+      }
+    },
+    {
+      "id": "train-door-2",
+      "split": "train",
+      "family": "door",
+      "topology_id": "room-door-room",
+      "map_seed": 1202,
+      "map_sha256": "ea664c50bf40819b0b77f96edb8fb67916c08d4e38586d19d4477334cb8bb2a5",
+      "layout_sha256": "fccf87d122b9c805a2f67ed413481ce259a48f816d2d587bfd2bc6702d47c742",
+      "task_sha256": "37f1cb79a8e23f5336cd45752b11a8aa02468a0f28177c67021c7038c674a953",
+      "parameters": {
+        "east_bound_m": 2.044861,
+        "doors": [
+          {
+            "x_m": 0.537345,
+            "center_y_m": -2.023067,
+            "width_m": 0.632312
+          }
+        ]
+      }
+    },
+    {
+      "id": "train-corner-1",
+      "split": "train",
+      "family": "corner",
+      "topology_id": "entry-left-corner-exit",
+      "map_seed": 1301,
+      "map_sha256": "a05c0717fafdc4b61ccf1793af877a046210bf4aa2962ff30bfb85c2a763bd74",
+      "layout_sha256": "500bacbf39f6f3908448063cac060698fc77898c11926d59b9f7c131c779e400",
+      "task_sha256": "140707cb94756634162bd90fba782a617d3367ba7a2fe440ef9ce16667c92fca",
+      "parameters": {
+        "inside_corner_top_shift_m": 0.01212,
+        "rigid_translation_m": [
+          0.14,
+          0.0
+        ],
+        "source": "maps/pair_navigation/l-corner.json",
+        "source_sha256": "2c4ebc3a72cefd570e7e18b1194b086ed52fd19d0aea2f19c9c7c69a818bc270"
+      }
+    },
+    {
+      "id": "train-corner-2",
+      "split": "train",
+      "family": "corner",
+      "topology_id": "entry-left-corner-exit",
+      "map_seed": 1302,
+      "map_sha256": "d5f35e9eb4741fa8aa8a5248809c56977c76753b3b6c8cfdf490e4bd9886df86",
+      "layout_sha256": "988802b9afde26b5e73614039d2db19bc2b6f78a915863f7b684695ed095342e",
+      "task_sha256": "bf86562c12be1d7116cdd6723f0b137c52a92c78a2c212107091c6700d02c86a",
+      "parameters": {
+        "inside_corner_top_shift_m": 0.012183,
+        "rigid_translation_m": [
+          0.14,
+          0.0
+        ],
+        "source": "maps/pair_navigation/l-corner.json",
+        "source_sha256": "2c4ebc3a72cefd570e7e18b1194b086ed52fd19d0aea2f19c9c7c69a818bc270"
+      }
+    },
+    {
+      "id": "dev-open",
+      "split": "dev",
+      "family": "open",
+      "topology_id": "room",
+      "map_seed": 2101,
+      "map_sha256": "557bfc977561eba596fe857c67586e464ef90367a2e1efc923593528088f4fc1",
+      "layout_sha256": "c593f89a8675373dc28f890937344e0f02dba26069ed0a4762733cf7971ae5bf",
+      "task_sha256": "10a02c4e31c42dff60ba593e672ce2242e034950caee4c8bbbacefbe21f0873e",
+      "parameters": {
+        "east_bound_m": 2.077701,
+        "doors": []
+      }
+    },
+    {
+      "id": "dev-door",
+      "split": "dev",
+      "family": "door",
+      "topology_id": "room-door-room",
+      "map_seed": 2201,
+      "map_sha256": "478afc82f67684437cc952c6675e33022fc0756ce25fbf326a17465720611c13",
+      "layout_sha256": "4d45784f70c5723ce08fc64af379da3cefe44172a4606fcc454da908bb8bd73e",
+      "task_sha256": "c0349a499f48eb64b1a6c921516875304088c0d72868bc40c5fc3fb0fe34fb1a",
+      "parameters": {
+        "east_bound_m": 2.08094,
+        "doors": [
+          {
+            "x_m": 0.465076,
+            "center_y_m": -2.001405,
+            "width_m": 0.644772
+          }
+        ]
+      }
+    },
+    {
+      "id": "dev-corner",
+      "split": "dev",
+      "family": "corner",
+      "topology_id": "entry-left-corner-exit",
+      "map_seed": 2301,
+      "map_sha256": "f7c511b0ac360e34de403ed3c3fdeaa676239523870c566f8bc2c3d7c006d969",
+      "layout_sha256": "ed72ae58032b79084ccf5e0da5448969f68354c68e69d64429abf4f0aea3b144",
+      "task_sha256": "7491d1928fe0d96e8933677c8fa5371784c73cff824d5ffa96a40b3db372179e",
+      "parameters": {
+        "inside_corner_top_shift_m": 0.015613,
+        "rigid_translation_m": [
+          0.14,
+          0.0
+        ],
+        "source": "maps/pair_navigation/l-corner.json",
+        "source_sha256": "2c4ebc3a72cefd570e7e18b1194b086ed52fd19d0aea2f19c9c7c69a818bc270"
+      }
+    },
+    {
+      "id": "test-a-open",
+      "split": "test_a",
+      "family": "open",
+      "topology_id": "room",
+      "map_seed": 3101,
+      "map_sha256": "d14ad3ee4a7a59c51cc89e2e083fed9630fcb45af48d45873e42ec481c1a3350",
+      "layout_sha256": "360616dc5a07c738d5dad1f7646f730ec850cce1d6aa9bbac5112ca31b69489e",
+      "task_sha256": "e1bb8d069995d5526bf4fad7f5e7b4db95263269cd4f2bef434fa826497b694b",
+      "parameters": {
+        "east_bound_m": 2.082712,
+        "doors": []
+      }
+    },
+    {
+      "id": "test-a-door",
+      "split": "test_a",
+      "family": "door",
+      "topology_id": "room-door-room",
+      "map_seed": 3201,
+      "map_sha256": "1802900158ec39204d173f808925b633c63830fbd27a61d16f0f007a7392b568",
+      "layout_sha256": "c5f83ed6c4a0fb270fb292f9179ea191a151971eda54f4bc0b485a2832a144ac",
+      "task_sha256": "2a2c6ebdc25fba5e23e21d39940c4cd4d9f19a14a3f486bd10a06c6d3825b1d5",
+      "parameters": {
+        "east_bound_m": 2.069424,
+        "doors": [
+          {
+            "x_m": 0.526721,
+            "center_y_m": -1.972635,
+            "width_m": 0.784546
+          }
+        ]
+      }
+    },
+    {
+      "id": "test-a-corner",
+      "split": "test_a",
+      "family": "corner",
+      "topology_id": "entry-left-corner-exit",
+      "map_seed": 3301,
+      "map_sha256": "2b92ec74760539155c9bb7d5f19a0b88a7544647ccbc5bda5d30b04d44a49c84",
+      "layout_sha256": "c3fc11b911b2c2cba5e25c2d7ed1031513ad634879a11be8e2b418af4fe332d2",
+      "task_sha256": "c4daaa65063d60706e46f22c9a6094296d909fa82aaa33861c58c4af17207770",
+      "parameters": {
+        "inside_corner_top_shift_m": -0.010212,
+        "rigid_translation_m": [
+          0.14,
+          0.0
+        ],
+        "source": "maps/pair_navigation/l-corner.json",
+        "source_sha256": "2c4ebc3a72cefd570e7e18b1194b086ed52fd19d0aea2f19c9c7c69a818bc270"
+      }
+    },
+    {
+      "id": "test-b-double-1",
+      "split": "test_b",
+      "family": "double_door",
+      "topology_id": "room-door-offset-room-door-room",
+      "map_seed": 4101,
+      "map_sha256": "f6ab38b60dacc7b76b86993c692c86219351ebcc8f8a50649770aef742544503",
+      "layout_sha256": "1ad95351a9e65bc829f98b1511c39350936c1689bd443f48e78a6cbb4db52ace",
+      "task_sha256": "be1d0999477269fb2fd1b42e9f93e2b4d2936d0eeecac1903492da6a2cc36793",
+      "parameters": {
+        "east_bound_m": 2.084816,
+        "doors": [
+          {
+            "x_m": 0.0,
+            "center_y_m": -2.12,
+            "width_m": 1.193668
+          },
+          {
+            "x_m": 0.95,
+            "center_y_m": -1.88,
+            "width_m": 1.198986
+          }
+        ]
+      }
+    },
+    {
+      "id": "test-b-double-2",
+      "split": "test_b",
+      "family": "double_door",
+      "topology_id": "room-door-offset-room-door-room",
+      "map_seed": 4102,
+      "map_sha256": "9b81f6ebebea0ed76feb726b45233864e0180f1e15320ee1a7b3368fe95df21d",
+      "layout_sha256": "ea6db41c36e15a8c1ba87c432219b02cefedc6f564016adb9ba6e2c2e403b048",
+      "task_sha256": "bb1ddf55c9ecf885df9edbd1b142e0558839f0ca4c938a0029835f512e1fc2d6",
+      "parameters": {
+        "east_bound_m": 2.07268,
+        "doors": [
+          {
+            "x_m": 0.0,
+            "center_y_m": -2.12,
+            "width_m": 1.200255
+          },
+          {
+            "x_m": 0.95,
+            "center_y_m": -1.88,
+            "width_m": 1.203451
+          }
+        ]
+      }
+    },
+    {
+      "id": "control-narrow",
+      "split": "control",
+      "family": "too_narrow",
+      "topology_id": "room-impassable-door-room",
+      "map_seed": 5101,
+      "map_sha256": "af58b32a3e53d80239e7abd5bf33b5cecd6575c74e4887a4c4382c30d8c9e7ac",
+      "layout_sha256": "5d9a005df7839c58e5948337168c1e61d32a77a7d4baab66c526c256048be685",
+      "task_sha256": "5423aade0d593fd238626e2948984b19b7f2931573aa973f48cb93f9de20179f",
+      "parameters": {
+        "east_bound_m": 2.062648,
+        "doors": [
+          {
+            "x_m": 0.466877,
+            "center_y_m": -1.958844,
+            "width_m": 0.4
+          }
+        ]
+      }
+    },
+    {
+      "id": "control-blocked",
+      "split": "control",
+      "family": "blocked",
+      "topology_id": "disconnected-rooms",
+      "map_seed": 5102,
+      "map_sha256": "ccedd11ec9302b7453fa1770916e6e3d40e41b43a9d6dc9ee12ac9da96469c96",
+      "layout_sha256": "16310cc631b7c33d0ec5b6062c614d8edc38ef8dbe6bba3a5077eeecdd5445e7",
+      "task_sha256": "df4fbed5cb3af97f39ca935635cc156f9e7b9c9795e307e31177401ab689eca1",
+      "parameters": {
+        "east_bound_m": 2.027285,
+        "doors": [
+          {
+            "x_m": 0.414255,
+            "center_y_m": -2.002608,
+            "width_m": 0.0
+          }
+        ]
+      }
+    },
+    {
+      "id": "regression_narrow-door",
+      "split": "regression",
+      "family": "narrow-door",
+      "topology_id": "legacy_narrow-door",
+      "map_seed": null,
+      "map_sha256": "eda65e0ca2fca28602955da1e76737d82fbab696a06a726ba8a84ff89570bcb4",
+      "layout_sha256": "e34901f2326c478697d8dacda3afae8eda46a4b5d84f2367c55067e1e53c81fb",
+      "task_sha256": "1c5494cf49295d2efe27622e3c73f53a3c4a4378b6b7ebaa2c1bab5677395f81",
+      "parameters": {
+        "source": "maps/pair_navigation/narrow-door.json"
+      }
+    },
+    {
+      "id": "regression_l-corner",
+      "split": "regression",
+      "family": "l-corner",
+      "topology_id": "legacy_l-corner",
+      "map_seed": null,
+      "map_sha256": "2c4ebc3a72cefd570e7e18b1194b086ed52fd19d0aea2f19c9c7c69a818bc270",
+      "layout_sha256": "0f1578f611a4330b8454ac00c8692a53d1cd53254b383a6c9eaa6070b0feb4f2",
+      "task_sha256": "3f61c042d89374704492de4c2c1af7724dea4e3be40038b7940ed3e7065d51fc",
+      "parameters": {
+        "source": "maps/pair_navigation/l-corner.json"
+      }
+    },
+    {
+      "id": "regression_s-bends",
+      "split": "regression",
+      "family": "s-bends",
+      "topology_id": "legacy_s-bends",
+      "map_seed": null,
+      "map_sha256": "368a11bac3e33ee42b3fe2f6e76fb6fcd9348bc0ed6b410ae3f3d5dd822fdac1",
+      "layout_sha256": "932df09212642e802dd022aa521167d92a3f1b1cfcda62c428ff398975dc32b0",
+      "task_sha256": "71a583e43d631456f86f5f986f58a188033e1807bba3bc3a0096f441ecc5540c",
+      "parameters": {
+        "source": "maps/pair_navigation/s-bends.json"
+      }
+    },
+    {
+      "id": "regression_staggered-obstacles",
+      "split": "regression",
+      "family": "staggered-obstacles",
+      "topology_id": "legacy_staggered-obstacles",
+      "map_seed": null,
+      "map_sha256": "f5c7c96acb3a7729d83a8174fb53342ebf85dbbcaeddde1317c1f52f8c175aee",
+      "layout_sha256": "a412ab9775154467688359c2192d873d757b3fee268918ae09781ab5491d79f9",
+      "task_sha256": "68aaf5ce3c6332837af0a0334874254de74edef2b1354c1e74836b860d06bafd",
+      "parameters": {
+        "source": "maps/pair_navigation/staggered-obstacles.json"
+      }
+    },
+    {
+      "id": "regression_blocked-branch",
+      "split": "regression",
+      "family": "blocked-branch",
+      "topology_id": "legacy_blocked-branch",
+      "map_seed": null,
+      "map_sha256": "dab4c4cb8e0b981b1571e4174f3949dc7d5b2621a2bae3506c01bfb21de5d97d",
+      "layout_sha256": "ef6d85fa183fc713ebd20c92442de92de0ffb962e344ed051544ae8910371334",
+      "task_sha256": "1ad2a82cb5205bb5dc8d776381f3bcb2a53020b1f93ae68d703e5d7c7afca9be",
+      "parameters": {
+        "source": "maps/pair_navigation/blocked-branch.json"
+      }
+    },
+    {
+      "id": "regression_fully-blocked",
+      "split": "regression",
+      "family": "fully-blocked",
+      "topology_id": "legacy_fully-blocked",
+      "map_seed": null,
+      "map_sha256": "da1f449e1b4ee26faef45cd9060060cb9a93b3e07c771916f247c8e567306427",
+      "layout_sha256": "fe13919c4e17ee49a0b9f3887470bc1f4a05f5d1975a37691ad2046b21ca9fb8",
+      "task_sha256": "7763b9c62ccb69bf41a491bb3b73a64e5713ddd4ecdf30d2b37ff91c87c6fecb",
+      "parameters": {
+        "source": "maps/pair_navigation/fully-blocked.json"
+      }
+    }
+  ],
+  "source_sha": "029709de2ba768a8e26b8e68da21bb97d25859a4",
+  "render": true,
+  "scope": "map preparation and static visual QA; physical transport untested"
+}

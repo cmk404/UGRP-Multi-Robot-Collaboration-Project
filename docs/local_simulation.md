@@ -4,6 +4,20 @@
 
 **실행·버전·결과 관리는 [표준 시뮬레이션 관리](simulation_management.md)로 통일한다.** `workflow list/plan/run/runs/show`에서 연구별 실행을 선택하고 이력을 확인한다. 아래 기본 `run/console/dispatch`도 공통 실행 기록에 연결된다.
 
+## 터미널 간편 메뉴
+
+설치된 환경에서 저장소 루트의 다음 명령을 실행하면 메뉴가 열린다. **실행 방식·맵·관찰 속도**를 고르고, LLM 협업 출하에서는 **모델 ID·자연어 지시**도 입력한다. 실제 세계는 MuJoCo 기본 창에서 열린다. 자세한 물리·접촉·카메라 설정은 아래 CLI와 설정 파일에서 관리한다.
+
+```bash
+bash scripts/open_simulation.command
+```
+
+선택 메뉴는 번호를 표시한다. 실행 방식은 `1` LLM 공동 계획, `2` 장면 미리보기, `3` 기타 실행이다. 출하 지도 5종은 번호로 고른다. 장면 미리보기는 먼저 번호로 그룹을 고른 다음 그룹 안의 장면 번호를 고른다. 관찰 속도는 `1`=0.5×, `2`=1×(기본), `3`=2×, `4`=4×다. 모델은 `1`=현재 기본 모델, `2`=모델 ID 직접 입력이다. Enter는 각 단계의 기본값을 고른다. 자연어 지시는 텍스트로 입력하며, 장면 ID 직접 입력과 `/검색어`도 계속 사용할 수 있다.
+
+**LLM 협업 출하**는 기존 빔·상자 출하 임무와 지원 지도 5종에 한정된다. 자연어 지시를 비우면 기본 출하 임무가 전달된다. 지시는 실행 전 계획에 전달되며, 실행 도중 임의의 새 물체 작업을 추가하지 않는다. 모델 프록시가 준비되지 않았다면 모델 요청은 실패하며 메뉴가 로그인하거나 프록시를 시작하지 않는다. **지도 장면 보기**는 등록된 장면을 MuJoCo 창에서 정지 상태로 확인한다. ACT 지도도 볼 수 있지만 LLM 제어나 운반 평가가 아니다. 새 지도 구조를 생성하려면 지도 suite/설정 파일과 표준 workflow를 사용한다. 저장 plan 재생·수동 명령·설정 파일 실행은 메뉴의 **기타 실행**에서 계속 사용할 수 있다.
+
+MuJoCo 창에서 Space는 재개/일시정지, R은 초기화다. 창을 닫거나 시작한 터미널에서 Ctrl-C를 누르면 실행을 종료한다. 메뉴 선택은 기존 `run`/`dispatch`와 같은 실행 기록을 사용한다.
+
 ## 설치와 첫 실행
 
 Python 3.12를 사용한다. 기존 Mac 환경 `.venv-sim-worker-mac`을 재사용하며, 새 clone에서는 다음과 같이 설치한다.
@@ -12,8 +26,10 @@ Python 3.12를 사용한다. 기존 Mac 환경 `.venv-sim-worker-mac`을 재사�
 python3.12 -m venv .venv-dev
 .venv-dev/bin/python -m pip install -r requirements-sim.txt
 .venv-dev/bin/python -m pip check
-bash scripts/open_simulation.command
+bash scripts/open_simulation.command run configs/simulation/drive.json --paused --capture
 ```
+
+첫 명령은 모델 계정 없이 예제 명령 스케줄을 MuJoCo 기본 창에 연다. **Space**로 재개하면 3초의 SIM 시간 동안 로봇 명령을 실행하고 종료한다. `--capture`는 시작·종료의 로봇 RGB를 결과 폴더에 저장한다. 터미널에 표시된 `result.json` 경로와 `bash scripts/open_simulation.command workflow runs`의 실행 기록을 확인한다. 창을 열었다는 사실과 예제 명령 완료는 연구용 운반 성공이 아니다. 인자 없이 실행하면 선택 메뉴가 열리며 기본 선택 1은 모델 프록시가 필요한 공동 계획이다.
 
 Ubuntu 24.04는 먼저 [설치 안내](ubuntu_quickstart.md)를 따른다. 창을 띄우려면 데스크톱의 X11/Wayland 그래픽 세션이 필요하다. WSL은 WSLg가 필요하며 각 PC의 그래픽 지원은 따로 확인한다. 서버에서는 `--headless`를 사용한다. Linux에서 RGB를 저장하는 headless 실행에는 `libosmesa6`와 `MUJOCO_GL=osmesa`를 사용할 수 있다. 네이티브 창에는 기본 GLFW를 사용한다.
 
@@ -21,7 +37,7 @@ Ubuntu 24.04는 먼저 [설치 안내](ubuntu_quickstart.md)를 따른다. 창�
 
 ## 터미널에서 구성하기
 
-저장소 루트에서 실행한다. 인자 없는 실행은 공동 계획·저장된 plan 재생·수동·설정 실행을 선택하는 메뉴를 연다. 공동 계획의 기본 장면은 **기존 공동 출하장(dispatch/shared_crossing, seed11)**이다. 수동 기본 설정은 `configs/simulation/local.json`이다. `init`과 `new`도 같은 연구 장면을 기본으로 사용한다. [전체 구성·누락 검토](simulation_inventory.md)에 기존 자산과 연결 범위를 정리했다.
+저장소 루트에서 실행한다. 인자 없는 실행은 LLM 공동 계획·지도 장면 보기·기타 기존 실행을 선택하는 메뉴를 연다. 공동 계획의 기본 장면은 **기존 공동 출하장(dispatch/shared_crossing, seed11)**이다. 수동 기본 설정은 `configs/simulation/local.json`이다. `init`과 `new`도 같은 연구 장면을 기본으로 사용한다. [전체 구성·누락 검토](simulation_inventory.md)에 기존 자산과 연결 범위를 정리했다. 지도 준비·ACT 학습·실행 이력·TensorBoard를 연결하는 명령은 [표준 관리 절차](simulation_management.md#지도학습실행-결과를-잇는-절차)를 따른다.
 
 ```bash
 # 설정 생성 → 편집 → 오류/기본값 확인
@@ -30,6 +46,10 @@ bash scripts/open_simulation.command inspect my-scene.json
 bash scripts/open_simulation.command scenes
 bash scripts/open_simulation.command workflows
 bash scripts/open_simulation.command doctor
+
+# 등록된 지도를 설정 파일 수정 없이 바로 관찰
+bash scripts/open_simulation.command run configs/simulation/local.json \
+  --scene act/train-open-1 --paused --capture
 
 # MuJoCo 기본 창. 마우스로 회전/이동/확대하며 물리를 관찰한다.
 bash scripts/open_simulation.command run my-scene.json --paused
@@ -62,7 +82,10 @@ MuJoCo 패널은 표시 옵션 외에 물리·actuator 상태도 바꿀 수 있�
 
 ```bash
 bash scripts/open_simulation.command
-# 1 공동 계획 → 기존 스킬 / 2 저장된 plan 재생 / 3 수동 / 4 설정 실행
+# 1 LLM 공동 계획 → 기존 RGB 스킬 / 2 장면 미리보기 / 3 기타 실행
+# 1에서는 지원 출하 맵·관찰 속도·계획 모델·자연어 지시를 고른다.
+# 2에서는 등록된 장면을 그룹 또는 /검색어로 찾아 MuJoCo 기본 창에서 본다.
+# 저장된 plan 재생·수동·설정 실행은 3에서 고른다.
 
 # 같은 기존 실행기를 직접 선택: 자연어는 세 로봇의 계획 협상에 전달
 bash scripts/open_simulation.command dispatch \

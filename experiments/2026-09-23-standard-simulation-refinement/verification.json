@@ -1,0 +1,110 @@
+{
+  "schema": "ugrp.standard_simulation_refinement_verification.v1",
+  "execution_source_sha": "029709de2ba768a8e26b8e68da21bb97d25859a4",
+  "execution_environment": {
+    "python": "3.12.13",
+    "mujoco": "3.12.0",
+    "platform": "macOS-27.2-arm64-arm-64bit"
+  },
+  "map_suite": {
+    "run_id": "20260923-141800-act-map-suite-2a1400e3",
+    "command": "bash scripts/open_simulation.command workflow run act-map-suite --timeout 240 -- --spec maps/act_generalization/suite_v1.json --render",
+    "manager": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-runs/20260923-141800-act-map-suite-2a1400e3/manifest.json",
+      "sha256": "7de0f2bd9b27954a607b46e2846624cee5c09beec757abbfb9cf5ec2fe36398c",
+      "bytes": 248838
+    },
+    "artifact_manifest": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-runs/20260923-141800-act-map-suite-2a1400e3/artifacts/manifest.json",
+      "sha256": "a3ec4f98f0157944bcf9dd0bd6470689111c2387cf0605dd182d0560be20527b",
+      "bytes": 14022
+    },
+    "summary": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-runs/20260923-141800-act-map-suite-2a1400e3/artifacts/summary.json",
+      "sha256": "baf281779d33d47df6f09610306c894c0fd6bbd7281df020b22eb6ac5173abbf",
+      "bytes": 487
+    },
+    "top_gallery": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-runs/20260923-141800-act-map-suite-2a1400e3/artifacts/top-overview.jpg",
+      "sha256": "2507e1ef083bcce633be3538def9a5461af6d9ceebfcccf2683c300c377343fb",
+      "bytes": 481954
+    },
+    "status": "process_completed",
+    "exit_code": 0,
+    "source_changed_during_run": false,
+    "inputs_changed_during_run": false,
+    "physical_success": null
+  },
+  "native_scene": {
+    "run_id": "20260923-141843-local-f64cce22",
+    "command": "bash scripts/open_simulation.command run configs/simulation/local.json --scene act/train-open-1 --sim-seconds 3 --wall-seconds 45 --camera cctv_warehouse --capture --video",
+    "manager": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-runs/20260923-141843-local-f64cce22/manifest.json",
+      "sha256": "db6b1210e6617b6193b83b2819cfe384506196dda58f26f8ee228489d173b15d",
+      "bytes": 201749
+    },
+    "result": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-runs/20260923-141843-local-f64cce22/artifacts/result.json",
+      "sha256": "88682e409d3ec46ef60c6db587d44e78c72db33ba34b77a698f91d1094d2c911",
+      "bytes": 4724
+    },
+    "video": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-runs/20260923-141843-local-f64cce22/artifacts/motion.mp4",
+      "sha256": "a918c55bf70f29d925264a0f5039a93a34fe76d2fd6ee1fa426662a0cdfcac0d",
+      "bytes": 34211
+    },
+    "status": "process_completed",
+    "exit_code": 0,
+    "source_changed_during_run": false,
+    "inputs_changed_during_run": false,
+    "physical_success": null
+  },
+  "tensorboard": {
+    "snapshot_manifest": {
+      "path": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-standard-preview/20260923-141843-local-f64cce22__artifacts__2e38ec1e/manifest.json",
+      "sha256": "81df09fb635ca539737383efe060d8cfdb75982bac826efbca8e257f9e9aed7a",
+      "bytes": 1461
+    },
+    "event_file": {
+      "path": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-standard-preview/20260923-141843-local-f64cce22__artifacts__2e38ec1e/events.out.tfevents.1790140798.gangchangmin-ui-MacBookAir.local.86341.0",
+      "sha256": "222fcd98d05b7404ff500a0cce7cd97339e7963748d5ac255116cbc5ac1a2949",
+      "bytes": 5029
+    },
+    "event_run": "20260923-141843-local-f64cce22__artifacts__2e38ec1e",
+    "video_id": "b1cb4374fc259f9355cd"
+  },
+  "copied_raw_file_counts": {
+    "map_suite": 295,
+    "native_scene": 42
+  },
+  "raw_storage": "local project outputs only; no remote backup",
+  "review_images": [
+    {
+      "file": "top-overview.jpg",
+      "source": "/Users/changmin/projects/ugrp/outputs/simulation-runs/20260923-141800-act-map-suite-2a1400e3/artifacts/top-overview.jpg",
+      "sha256": "2507e1ef083bcce633be3538def9a5461af6d9ceebfcccf2683c300c377343fb"
+    },
+    {
+      "file": "diagram-overview.jpg",
+      "source": "/Users/changmin/projects/ugrp/outputs/simulation-runs/20260923-141800-act-map-suite-2a1400e3/artifacts/diagram-overview.jpg",
+      "sha256": "13b64fe61000d5742cc920e177b4a2bfb9cc32716f87a63775b257118239a1a7"
+    },
+    {
+      "file": "own-overview.jpg",
+      "source": "/Users/changmin/projects/ugrp/outputs/simulation-runs/20260923-141800-act-map-suite-2a1400e3/artifacts/own-overview.jpg",
+      "sha256": "dafdee97a5bfab99a032e9b280996a2a9299ad3676fcbf462637fc6614f0040d"
+    },
+    {
+      "file": "native-overview.jpg",
+      "source": "/Users/changmin/projects/ugrp/outputs/simulation-runs/20260923-141843-local-f64cce22/artifacts/final-overview.jpg",
+      "sha256": "6b616fa9f6f26eb2dfbbfcbf3bb89641f3f3b44a8a11b5245b2740dda28d197a"
+    }
+  ],
+  "training_plan": {
+    "file": "training-plan.json",
+    "sha256": "9c34844eed2ade8d2650974fe62745292e1541bcad3e390008aefbe83443d8ac",
+    "dataset_file_sha256": "3db730eaf9d827a40b355d7b53188993e14b75d10fd10b9b213a67f830fba167",
+    "execution_started": false,
+    "readiness": "required_inputs_present; legacy_parser_and_runtime_not_executed"
+  }
+}
