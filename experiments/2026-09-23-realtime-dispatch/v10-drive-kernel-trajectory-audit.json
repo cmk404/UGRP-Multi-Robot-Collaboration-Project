@@ -1,0 +1,110 @@
+{
+  "scope": "isolated no-render no-load MuJoCo diagnostic; fixed issued lateral command, no actor RGB/controller input or mission run",
+  "source_sha_at_test": "25a88b8",
+  "source_hashes": {
+    "kernel": "865f96dd10001741d982b72f3b322f20c2562d4c56efbb1b6e2f433acbd40724",
+    "legacy_step": "db1d90d40f9997f1a88fffeb335e34b92eaa954986d0840132eb68e082982b2b",
+    "port": "be94c99a2a597a81e55ab0cbaba44f9340d3c2bbb7a3d14a2078f1d903bc8910"
+  },
+  "scene": {
+    "variant": "open",
+    "seed": 11,
+    "render": false,
+    "target_robot": "r1",
+    "weld_active": false,
+    "timestep_s": 0.002,
+    "initial_xyz_m": [
+      -0.76999658,
+      -1.24999999,
+      0.03235512
+    ],
+    "initial_qpos_qvel_exact_between_worlds": true
+  },
+  "command": {
+    "kind": "mecanum",
+    "forward": 0.0,
+    "left": -0.02,
+    "turn": 0.0,
+    "duration_s": 0.2,
+    "renewal": "apply_bounded at each on-phase start; tick before every physics step; complete 0.2s on and optional off gap"
+  },
+  "kernel_legacy_parity": {
+    "trace_gap_sequence_s": [
+      0.0,
+      0.04,
+      0.26,
+      0.0
+    ],
+    "trace_on_s_each": 0.2,
+    "trace_total_sim_s": 1.1,
+    "compared_each_physics_step": true,
+    "max_abs_diff": {
+      "qpos": 0.0,
+      "qvel": 0.0,
+      "ctrl": 0.0,
+      "xfrc_applied": 0.0,
+      "r1_motor_state": 0.0,
+      "r1_xy": 0.0
+    },
+    "final_legacy_xy_m": [
+      -0.7699964334317384,
+      -1.252508264740968
+    ],
+    "final_kernel_xy_m": [
+      -0.7699964334317384,
+      -1.252508264740968
+    ]
+  },
+  "original_dynamics": {
+    "linear_damping_n_per_mps": 1.4,
+    "stop_linear_damping_n_per_mps": 18.0
+  },
+  "ten_pulse_comparison": {
+    "continuous_2_0sim_s": {
+      "active_sim_s": 2.0,
+      "elapsed_sim_s": 2.0,
+      "displacement_abs_m": 0.019475446402049398
+    },
+    "pulse_0_04_gap": {
+      "active_sim_s": 2.0,
+      "elapsed_sim_s": 2.4,
+      "displacement_abs_m": 0.009151908021077544,
+      "mean_gap_velocity_retention": 0.6135192205340906,
+      "fraction_of_continuous_equal_active": 0.4699203208053034,
+      "fraction_of_continuous_equal_elapsed": 0.3594439310486421
+    },
+    "continuous_2_4sim_s": {
+      "active_sim_s": 2.4,
+      "elapsed_sim_s": 2.4,
+      "displacement_abs_m": 0.02546129515771141
+    },
+    "pulse_0_26_gap": {
+      "active_sim_s": 2.0,
+      "elapsed_sim_s": 4.6,
+      "displacement_abs_m": 0.003572775143699186,
+      "mean_gap_velocity_retention": 8.68955719727973e-05,
+      "fraction_of_continuous_equal_active": 0.18345023112400768,
+      "fraction_of_continuous_equal_elapsed": 0.059480804287888454
+    },
+    "continuous_4_6sim_s": {
+      "active_sim_s": 4.6,
+      "elapsed_sim_s": 4.6,
+      "displacement_abs_m": 0.06006601939016952
+    }
+  },
+  "counterfactual_stop_damping_isolation": {
+    "description": "Diagnostic-only re-run with zero-command stop linear damping set to moving damping 1.4; same port commands, gaps, world and motor filter. Not a proposed production physics change.",
+    "gap_0_04_displacement_abs_m": 0.019822220766997335,
+    "gap_0_26_displacement_abs_m": 0.013031071512232397,
+    "original_over_low_damping_ratio": {
+      "gap_0_04": 0.46169942957727805,
+      "gap_0_26": 0.27417355052847237
+    },
+    "mean_gap_velocity_retention_with_1_4": {
+      "gap_0_04": 1.0263679502981875,
+      "gap_0_26": 0.6131345243668525
+    }
+  },
+  "interpretation": "Kernel extraction is trajectory-identical on this short unloaded scene. With exact same command amplitude, physical stop damping plus reduced duty sharply reduce lateral progress. The counterfactual isolates the added stop damping from mere off-duty time, but neither comparison establishes the actual v10 command-gap distribution or full mission outcome.",
+  "limitations": "Unloaded open scene, one robot, short finite horizon. No actor camera change, no renderer, no cargo contacts, no mission result. Do not transfer displacement percentages to loaded pair grasp without replay."
+}

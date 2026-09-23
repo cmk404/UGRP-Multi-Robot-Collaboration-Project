@@ -49,10 +49,12 @@
 
 - `rgb-standard-dispatch-v11`: v10의 실제 접근 판단 간격 중앙값 0.22초와 0.20초 이동 명령 사이에 반복 정지가 남았다. open RGB 초기 접근의 이동 lease만 최대 0.25초로 바꾸며, 원본 촬영 시각 + 0.6초 제한과 지연 시 양쪽 HOLD는 유지한다. 명령 지속시간이 바뀐 별도 후보이며 새 실제 접근·완주 검증 전에는 성공을 승계하지 않는다.
 
+- `rgb-standard-dispatch-v12`: v11은 초기 접근 71회와 정밀 yaw/lateral/yaw 확인을 통과했으나 정밀 forward의 160회 이동 한도를 소진했다. 0.25초 bounded 갱신을 open realtime의 정밀 접근 이동에도 적용한다. 정지 확인·모델 지원 임계값·물리 감쇠·0.6초 영상 TTL·운반 명령 시간은 유지한다. 새 후보의 물리 완주는 별도 판정한다.
+
 새 backend 설정 schema는 `ugrp.rgb_skill_backend.v2`다. `execution_bundle_id`가 없거나 지원하지 않는 조합이면 거절한다. 과거 v1 설정은 당시 실행 기록으로 보존한다. 실행 전 정적 검사는 다음과 같다. 시뮬레이션·렌더링·외부 모델 호출은 하지 않는다.
 
 ```sh
-python3 -m harness.rgb_execution_bundle verify-current --id rgb-standard-dispatch-v11
+python3 -m harness.rgb_execution_bundle verify-current --id rgb-standard-dispatch-v12
 python3 -m harness.rgb_execution_bundle verify-registry --base origin/main
 ```
 

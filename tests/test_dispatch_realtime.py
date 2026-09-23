@@ -148,7 +148,7 @@ def test_moving_open_approach_overlaps_rgb_with_bounded_lease_and_caps_ttl():
     assert all(port.hold.called for port in ports.values())
 
 
-def test_open_coarse_renews_for_quarter_second_without_changing_fine_lease():
+def test_open_approach_renews_for_quarter_second_in_coarse_and_fine():
     clock=[.05];issued=[]
     io=SimpleNamespace(realtime_control=True,time=lambda:clock[0],
         step=lambda seconds:clock.__setitem__(0,clock[0]+seconds),
@@ -162,7 +162,7 @@ def test_open_coarse_renews_for_quarter_second_without_changing_fine_lease():
     moving={'r1':{'forward':0.,'left':-.03,'turn':0.},
             'r3':{'forward':0.,'left':0.,'turn':0.}}
 
-    pair.drive_mecanum(moving,coarse_realtime=True)
+    pair.drive_mecanum(moving)
     assert issued[0][1]==pytest.approx(.25)
     assert all(action['duration_s']==pytest.approx(.25)
                for action in issued[0][0].values())
@@ -170,7 +170,7 @@ def test_open_coarse_renews_for_quarter_second_without_changing_fine_lease():
 
     pair.last_capture={'r1':{'observed_at_s':clock[0]}}
     pair.drive_mecanum(moving,.2)
-    assert issued[1][1]==pytest.approx(.2)
+    assert issued[1][1]==pytest.approx(.25)
 
 
 def test_cluttered_approach_keeps_full_synchronous_drive():

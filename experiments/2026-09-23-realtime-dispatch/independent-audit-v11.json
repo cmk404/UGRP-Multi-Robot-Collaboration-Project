@@ -1,0 +1,469 @@
+{
+  "schema": "ugrp.independent_realtime_dispatch_v11_audit.v1",
+  "checked_at_utc": "2026-09-23T13:29:25.719099+00:00",
+  "source_sha": "ea9759eb83d003020c72ec55e084dd85118b1309",
+  "bundle_id": "rgb-standard-dispatch-v11",
+  "bundle_sha256": "2ccc0a79d25d7a7cb32a9f909127a26655ebe32309616cb8a5cc6c1c7a19c4aa",
+  "manager": {
+    "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260923-222604-dispatch-e32f4590/manifest.json",
+    "sha256": "117459a27880be55c03930d0710cbacea90fe9ebf65bd0b9dca386cd0dbf05cd",
+    "status": "process_failed",
+    "exit_code": 1,
+    "runtime_s": 107.47209412499797,
+    "source_dirty": false,
+    "source_before_sha256": "3c6d1abc2aed9abee33aa60f1f47aa2fe2a309d28428e458bb51a7665fd4b681",
+    "source_after_sha256": "3c6d1abc2aed9abee33aa60f1f47aa2fe2a309d28428e458bb51a7665fd4b681",
+    "source_changed_during_run": false,
+    "inputs_changed_during_run": false,
+    "inputs_before_after_equal": true,
+    "finalization_errors": []
+  },
+  "result": {
+    "phase": "APPROACH",
+    "error": "RuntimeError: fine RGB alignment outside saved skill support",
+    "wall_s": 107.13655549999385,
+    "timing": {
+      "scene_and_observer_setup_wall_s": 1.553240207998897,
+      "scope": "output-only SIM/wall measurements; wall_s includes finalization",
+      "control_end_sim_s": 103.50999999928028,
+      "control_wall_s": 105.63643029199739,
+      "motion_wall_s": 98.82071737499791,
+      "motion_sim_s": 98.30999999927967,
+      "motion_sim_to_wall": 0.9948318794956709,
+      "cleanup_wall_s": 1.5001264580059797
+    },
+    "plan_committed": true,
+    "protocol_complete": false,
+    "physical_success": false,
+    "failed_component": "pair",
+    "llm_calls": 0,
+    "realtime_control_stats": {
+      "solo_backpressure": 0,
+      "solo_stale_rgb": 2,
+      "solo_decisions": 123,
+      "pair_backpressure": 0,
+      "pair_decisions": 0,
+      "max_decision_age_s": 0.5834999999862021,
+      "pair_stage_stale_rgb": 0,
+      "pair_stage_samples": 352
+    },
+    "pair_stage_sample_count": 352,
+    "pair_stage_age_s": {
+      "min": 0.1799999999995805,
+      "median": 0.24000000000071964,
+      "p95": 0.32000000000152795,
+      "max": 0.5599999999867578
+    },
+    "pair_stage_age_over_ttl_0_6_s": 0,
+    "pair_stage_wall_timing_s": {
+      "snapshot_submit_wall_s": {
+        "min": 0.00023183401208370924,
+        "median": 0.0003566664963727817,
+        "p95": 0.0006483329925686121,
+        "max": 0.006044958994607441
+      },
+      "render_wait_wall_s": {
+        "min": 0.12922254200384486,
+        "median": 0.1691420624993043,
+        "p95": 0.25397716600855347,
+        "max": 0.4777319590066327
+      },
+      "jpeg_encode_wall_s": {
+        "min": 0.004458124996745028,
+        "median": 0.004929813003400341,
+        "p95": 0.006985666987020522,
+        "max": 0.06214249999902677
+      },
+      "image_record_wall_s": {
+        "min": 0.0008042499975999817,
+        "median": 0.0014191875015967526,
+        "p95": 0.003682249996927567,
+        "max": 0.05845216600573622
+      },
+      "pair_bind_wall_s": {
+        "min": 0.009213249999447726,
+        "median": 0.010768437998194713,
+        "p95": 0.014343874994665384,
+        "max": 0.1551177910005208
+      },
+      "perception_wall_s": {
+        "min": 0.012771207999321632,
+        "median": 0.025384187501913402,
+        "p95": 0.03136220799933653,
+        "max": 0.10537108300195541
+      }
+    },
+    "coarse_count": 71,
+    "fine_stage_results": [
+      {
+        "phase_index": 0,
+        "stage": "yaw",
+        "ok": true,
+        "confirmations": [
+          {
+            "frame_ids": {
+              "r1": 265,
+              "r3": 265
+            },
+            "ready": {
+              "r1": true,
+              "r3": true
+            },
+            "stationary": true
+          },
+          {
+            "frame_ids": {
+              "r1": 271,
+              "r3": 271
+            },
+            "ready": {
+              "r1": true,
+              "r3": true
+            },
+            "stationary": true
+          }
+        ],
+        "recovery_confirmations": [],
+        "reason": "two consecutive fresh stationary RGB confirmations",
+        "movement_slices": 20
+      },
+      {
+        "phase_index": 1,
+        "stage": "lateral",
+        "ok": true,
+        "confirmations": [
+          {
+            "frame_ids": {
+              "r1": 524,
+              "r3": 524
+            },
+            "ready": {
+              "r1": true,
+              "r3": true
+            },
+            "stationary": true
+          },
+          {
+            "frame_ids": {
+              "r1": 529,
+              "r3": 529
+            },
+            "ready": {
+              "r1": true,
+              "r3": true
+            },
+            "stationary": true
+          }
+        ],
+        "recovery_confirmations": [],
+        "reason": "two consecutive fresh stationary RGB confirmations",
+        "movement_slices": 92
+      },
+      {
+        "phase_index": 2,
+        "stage": "yaw",
+        "ok": true,
+        "confirmations": [
+          {
+            "frame_ids": {
+              "r1": 539,
+              "r3": 539
+            },
+            "ready": {
+              "r1": true,
+              "r3": true
+            },
+            "stationary": true
+          },
+          {
+            "frame_ids": {
+              "r1": 544,
+              "r3": 544
+            },
+            "ready": {
+              "r1": true,
+              "r3": true
+            },
+            "stationary": true
+          }
+        ],
+        "recovery_confirmations": [],
+        "reason": "two consecutive fresh stationary RGB confirmations",
+        "movement_slices": 0
+      },
+      {
+        "phase_index": 3,
+        "stage": "forward",
+        "ok": false,
+        "confirmations": [],
+        "recovery_confirmations": [],
+        "reason": "bounded phase movement budget exhausted",
+        "movement_slices": 160
+      }
+    ],
+    "approach_ok": false,
+    "approach_elapsed_sim_s": 80.43999999926115,
+    "issued_commands_by_physical_robot": {
+      "r1": {
+        "approach_count": 354,
+        "bounded_count": 342,
+        "unbounded_count": 12,
+        "kinds": {
+          "lateral": 48,
+          "turn": 22,
+          "forward": 178,
+          "hold": 106
+        },
+        "issued_interval_s": {
+          "min": 0.019999999999527063,
+          "median": 0.26000000000124146,
+          "p95": 0.38000000000181444,
+          "max": 0.5799999999862848
+        },
+        "bounded_lease_s": {
+          "min": 0.04000000001323656,
+          "median": 0.20000000000000284,
+          "p95": 0.25,
+          "max": 0.2500000000000009
+        },
+        "bounded_matched_to_sample": 342,
+        "matched_observation_ttl_violations": 0,
+        "nonpositive_bounded_lease_count": 0,
+        "bounded_interlease_gap_s": {
+          "min": -0.050000000000466116,
+          "median": 0.059999999993848974,
+          "p95": 0.1600000000017161,
+          "max": 3.1600000000160406
+        },
+        "note": "Bounded-only interlease gaps across unbounded holds are not motion-duty-cycle gaps.",
+        "policy_requested_lease_s": {
+          "coarse": 0.25,
+          "fine": 0.2,
+          "source_sha": "ea9759eb83d003020c72ec55e084dd85118b1309",
+          "source_file": "scripts/dispatch_pair_skill.py"
+        },
+        "ttl_clipped_count": 7,
+        "ttl_clipped_coarse_count": 1,
+        "ttl_clipped_fine_count": 6,
+        "ttl_clipped_commands": [
+          {
+            "command_index": 7,
+            "requested_s": 0.25,
+            "actual_s": 0.23999999999955968
+          },
+          {
+            "command_index": 240,
+            "requested_s": 0.2,
+            "actual_s": 0.04000000001323656
+          },
+          {
+            "command_index": 272,
+            "requested_s": 0.2,
+            "actual_s": 0.180000000009926
+          },
+          {
+            "command_index": 273,
+            "requested_s": 0.2,
+            "actual_s": 0.14000000001087187
+          },
+          {
+            "command_index": 274,
+            "requested_s": 0.2,
+            "actual_s": 0.180000000009926
+          },
+          {
+            "command_index": 336,
+            "requested_s": 0.2,
+            "actual_s": 0.16000000001039894
+          },
+          {
+            "command_index": 339,
+            "requested_s": 0.2,
+            "actual_s": 0.180000000009926
+          }
+        ]
+      },
+      "r3": {
+        "approach_count": 354,
+        "bounded_count": 342,
+        "unbounded_count": 12,
+        "kinds": {
+          "hold": 82,
+          "forward": 179,
+          "lateral": 93
+        },
+        "issued_interval_s": {
+          "min": 0.019999999999527063,
+          "median": 0.26000000000124146,
+          "p95": 0.38000000000181444,
+          "max": 0.5799999999862848
+        },
+        "bounded_lease_s": {
+          "min": 0.04000000001323656,
+          "median": 0.20000000000000284,
+          "p95": 0.25,
+          "max": 0.2500000000000009
+        },
+        "bounded_matched_to_sample": 342,
+        "matched_observation_ttl_violations": 0,
+        "nonpositive_bounded_lease_count": 0,
+        "bounded_interlease_gap_s": {
+          "min": -0.050000000000466116,
+          "median": 0.059999999993848974,
+          "p95": 0.1600000000017161,
+          "max": 3.1600000000160406
+        },
+        "note": "Bounded-only interlease gaps across unbounded holds are not motion-duty-cycle gaps.",
+        "policy_requested_lease_s": {
+          "coarse": 0.25,
+          "fine": 0.2,
+          "source_sha": "ea9759eb83d003020c72ec55e084dd85118b1309",
+          "source_file": "scripts/dispatch_pair_skill.py"
+        },
+        "ttl_clipped_count": 7,
+        "ttl_clipped_coarse_count": 1,
+        "ttl_clipped_fine_count": 6,
+        "ttl_clipped_commands": [
+          {
+            "command_index": 7,
+            "requested_s": 0.25,
+            "actual_s": 0.23999999999955968
+          },
+          {
+            "command_index": 240,
+            "requested_s": 0.2,
+            "actual_s": 0.04000000001323656
+          },
+          {
+            "command_index": 272,
+            "requested_s": 0.2,
+            "actual_s": 0.180000000009926
+          },
+          {
+            "command_index": 273,
+            "requested_s": 0.2,
+            "actual_s": 0.14000000001087187
+          },
+          {
+            "command_index": 274,
+            "requested_s": 0.2,
+            "actual_s": 0.180000000009926
+          },
+          {
+            "command_index": 336,
+            "requested_s": 0.2,
+            "actual_s": 0.16000000001039894
+          },
+          {
+            "command_index": 339,
+            "requested_s": 0.2,
+            "actual_s": 0.180000000009926
+          }
+        ]
+      }
+    },
+    "robot_path_length_m": {
+      "r1": 0.6240587627493209,
+      "r2": 0.44173382398296385,
+      "r3": 0.5752966472019113
+    },
+    "cargo_displacement_m": {
+      "beam": 0.0,
+      "box": 0.0
+    },
+    "weld_steps": 0
+  },
+  "raw_files": {
+    "result.json": {
+      "bytes": 10633,
+      "sha256": "fd0099a41bfd81be6b7bbe41fd78fdacf837a528956ec45c028ec9b63a59759c",
+      "matches_manager_receipt": true
+    },
+    "issued-commands.json": {
+      "bytes": 256770,
+      "sha256": "892ebb1da673280fde2f674dade3aea282fcaa76cba78a26a3843cf92bcd032e",
+      "matches_manager_receipt": true
+    },
+    "referee-only.jsonl": {
+      "bytes": 1357213,
+      "sha256": "8bd3d68f195520ad50d29eb46d4ce2b3dff8ee772bbfd39bcc5fd665c5011060",
+      "matches_manager_receipt": true
+    },
+    "pair-decisions.json": {
+      "bytes": 16680207,
+      "sha256": "66baf5e9c8a6eb96c368d5ad622e55654cbb5730e2165812ed38a7504f6238eb",
+      "matches_manager_receipt": true
+    },
+    "execution.mp4": {
+      "bytes": 1177297,
+      "sha256": "625eee2e8435f2dc478064352d3be0c0a054e071ef67c6f6d233621ab1b1af3c",
+      "matches_manager_receipt": true
+    },
+    "execution.frames.json": {
+      "bytes": 140354,
+      "sha256": "f60eb6db671a3b131f24b56f76a0e963e085de2421f263c133ea6017339433ca",
+      "matches_manager_receipt": true
+    },
+    "native-observer.json": {
+      "bytes": 78,
+      "sha256": "899a04c6f3ee0e4888eb6dadde74603330c96650c527aa7864d0aed0f37ab848",
+      "matches_manager_receipt": true
+    },
+    "evaluation-only.json": {
+      "bytes": 1611,
+      "sha256": "33584b4129e71220c9462292e782a7d01dd2b9a60334070d1b3ef3a618cb840e",
+      "matches_manager_receipt": true
+    }
+  },
+  "recording": {
+    "requested_fps": 10,
+    "written_frames": 1036,
+    "captured_frames": 512,
+    "repeated_frames": 524,
+    "error": null,
+    "decoded_frames": 1036,
+    "counts_consistent": true,
+    "observer": {
+      "mode": "isolated_latest_state",
+      "published": 2612,
+      "busy_skips": 1
+    }
+  },
+  "tensorboard": {
+    "path": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단/v11",
+    "collection": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단",
+    "manifest_sha256": "335537e9b91ef0be74a04efff715c0549a725b0912357dc4e6b72f9d0d9dc790",
+    "event_sha256": "f8e94c0edea0fc0f6801720e0161625558adc7b840791d81d378310c1e03d694",
+    "manifest_complete": true,
+    "source_matches": true,
+    "counts": {
+      "scalars": 12,
+      "texts": 4,
+      "images": 0
+    },
+    "scalars": {
+      "evaluation/reported_success": 0.0,
+      "claims/protocol_complete": 0.0,
+      "result/wall_s": 107.13655853271484,
+      "result/commands": 711.0,
+      "result/model_calls": 0.0
+    },
+    "video_id": "e6dca6ce37f8053dc9e9",
+    "video_source_sha256": "625eee2e8435f2dc478064352d3be0c0a054e071ef67c6f6d233621ab1b1af3c",
+    "range_status": 206,
+    "content_range": "bytes 0-63/1177297",
+    "range_bytes_match_source": true
+  },
+  "limits": [
+    "Approach stages advanced but forward movement budget exhausted before grasp/carry; no successful transport.",
+    "Motion SIM/wall rate is physics playback during possible hold, not mission throughput.",
+    "Observer recording is output only; repeated frames are not actor RGB.",
+    "This artifact audit did not inspect native GUI appearance."
+  ],
+  "correction": {
+    "checked_at_utc": "2026-09-23T13:31:06.750724+00:00",
+    "reason": "Earlier count compared every bounded lease with coarse 0.25 s, incorrectly treating normal fine 0.20 s leases as TTL clipping. Recomputed from frozen source ea9759e: coarse policy 0.25 s for first 71 coarse decisions; fine policy 0.20 s thereafter.",
+    "earlier_incorrect_count_below_0_25_s": 273,
+    "correct_ttl_clipped_count_per_physical_robot": 7
+  }
+}
