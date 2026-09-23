@@ -44,6 +44,25 @@ def _visual_timing(frame, *, perception_wall_s=None, policy_wall_s=None):
     return result
 
 
+def _partial_pipeline_timing(frame,result):
+    needed=('top_render_completed_wall_s','render_completed_wall_s',
+            'top_materialized_wall_s','materialized_wall_s')
+    if not all(key in frame and frame[key] is not None for key in needed):
+        return None
+    start=float(result['top_analysis_started_wall_s'])
+    end=float(result['top_analysis_completed_wall_s'])
+    top=float(frame['top_render_completed_wall_s'])
+    full=float(frame['render_completed_wall_s'])
+    return {'top_render_completed_wall_s':top,
+            'top_materialized_wall_s':float(frame['top_materialized_wall_s']),
+            'top_analysis_started_wall_s':start,
+            'top_analysis_completed_wall_s':end,
+            'full_render_completed_wall_s':full,
+            'own_materialized_wall_s':float(frame['materialized_wall_s']),
+            'top_cpu_wall_s':max(0.,end-start),
+            'top_cpu_overlap_own_render_wall_s':max(0.,min(end,full)-max(start,top))}
+
+
 def coordinated_coarse_commands(decisions):
     """Let RGB alignment finish before either beam partner advances past the other."""
     if set(decisions) != set(ROBOTS) or not all(decisions[r].get('ok') is True for r in ROBOTS):
@@ -217,16 +236,23 @@ class BoundPairSkill:
                       'bind_started_wall_s':result['bind_started_wall_s'],
                       'bind_completed_wall_s':result['bind_completed_wall_s']}
                 for slot,rid in self.bindings.pair.items()}
+        pipeline_timing=_partial_pipeline_timing(mapped['r1'],result)
         self.carried_beam.previous=copy.deepcopy(result['carried_previous'])
         self.beam_continuity.previous=copy.deepcopy(result['continuity_previous'])
         self.latest_translation=transform['translation_px']
-        self.calls.append({'kind':'image_binding','frame_id':frame_id,
+        binding_record={'kind':'image_binding','frame_id':frame_id,
             'pair_binding':self.bindings.pair,'transform':transform,'derived_top':top_ref,
             'raw_top':frame['shared_top_rgb'],
             'own':{slot:raw_frames[rid]['own_rgb'] for slot,rid in self.bindings.pair.items()},
             'analysis_backend':'spawn_cpu',
             'pair_bind_timing_scope':'child RGB tracking and canonicalization; excludes IPC and owner image record',
-            'wall_timing':_visual_timing(mapped['r1'])})
+            'top_cpu_timing_scope':'spawn child tracker, canonicalization, route and skew; excludes IPC, own payload and file record',
+            'wall_timing':_visual_timing(mapped['r1'])}
+        if pipeline_timing is not None:
+            binding_record['partial_pipeline_wall_timing']=pipeline_timing
+            for mapped_frame in mapped.values():
+                mapped_frame['partial_pipeline_wall_timing']=pipeline_timing
+        self.calls.append(binding_record)
         self.last_capture=mapped
         return (mapped,result['motion'],result['route'],result['decisions'],
                 result['skew'],result['skew_evidence'],result['perception_wall_s'])
@@ -481,8 +507,12 @@ class BoundPairSkill:
                 while True:
                     count=self.count+1
                     try:
-                        future=self.io.capture_async('pair-'+str(count)+'-carry',
-                            own_robots=tuple(self.bindings.pair.values()),overview=False)
+                        if process_mode:
+                            future=self.io.capture_pair_partial_async('pair-'+str(count)+'-carry',
+                                own_robots=tuple(self.bindings.pair.values()))
+                        else:
+                            future=self.io.capture_async('pair-'+str(count)+'-carry',
+                                own_robots=tuple(self.bindings.pair.values()),overview=False)
                     except SnapshotBackpressure:
                         self.io.realtime_stats['pair_backpressure']+=1
                         if not retry:return None
@@ -496,56 +526,70 @@ class BoundPairSkill:
                     current=next_capture or submit_capture(retry=True)
                     next_capture=None
                     count,frame_future=current
-                    while not frame_future.done():
-                        advance_pending()
-                    raw_frames=frame_future.result()
-
-                    def analyze(raw_frames=raw_frames,count=count):
-                        frames=self._bind_capture(raw_frames,count)
-                        perception_started_wall_s=time.monotonic()
-                        raw=frames['r1']['raw_top_bytes']
-                        motion,evidence=navigator.observe(raw)
-                        decisions={}
-                        for r in ROBOTS:
-                            current=own_payload(frames[r]['own_bytes'],hue_upper=35)
-                            initial=own_payload(anchor[r]['own_bytes'],hue_upper=35)
-                            held=bool(current and initial and .25<=current[0]/initial[0]<=4
-                                      and math.dist(current[1:],initial[1:])<=.15)
-                            decisions[r]={'ok':held,'held_estimate':held,'ready':evidence['done'],
-                                'forward':abs(motion['forward']),
-                                'current_own_rgb_features':current,
-                                'anchor_own_rgb_features':initial,
-                                'appearance':'orange-to-yellow beam hue 3..35; same shape/consistency gates'}
-                        from harness.dispatch_translation_skew import translation_skew
-                        try:skew,skew_evidence=translation_skew(raw,self.carried_beam.previous)
-                        except ValueError as error:
-                            skew=None;skew_evidence={'unresolved':str(error)}
-                        perception_wall_s=time.monotonic()-perception_started_wall_s
-                        return frames,motion,evidence,decisions,skew,skew_evidence,perception_wall_s
-
                     if process_mode:
-                        observed=float(raw_frames['r1']['observed_at_s'])
-                        pending=worker.submit(raw_frames['r1']['frame_id'],observed,
-                            raw_frames['r1']['top_bytes'],
+                        while not frame_future.top.done():
+                            advance_pending()
+                        top_frame=frame_future.top.result()
+                        top_pending=worker.submit_top(top_frame['frame_id'],
+                            float(top_frame['observed_at_s']),top_frame['top_bytes'])
+                        if index+1<(900 if max_steps is None else max_steps):
+                            next_capture=submit_capture(retry=False)
+                        while not frame_future.full.done():
+                            advance_pending()
+                        raw_frames=frame_future.full.result()
+                        observed=float(top_frame['observed_at_s'])
+                        if (any(raw_frames[rid]['frame_id']!=top_frame['frame_id'] or
+                                abs(float(raw_frames[rid]['observed_at_s'])-observed)>1e-9 or
+                                raw_frames[rid]['top_bytes']!=top_frame['top_bytes']
+                                for rid in self.bindings.pair.values()) or
+                                raw_frames['r1']['shared_top_rgb']['sha256']!=
+                                top_frame['shared_top_rgb']['sha256']):
+                            raise RuntimeError('partial pair TOP/own provenance mismatch')
+                        while not top_pending.done():
+                            advance_pending()
+                        top_result=top_pending.result()
+                        if (top_result['frame_id']!=top_frame['frame_id'] or
+                                top_result['observed_at_s']!=observed):
+                            raise RuntimeError('partial pair TOP analysis provenance mismatch')
+                        own_pending=worker.submit_own(top_frame['frame_id'],observed,
                             {slot:raw_frames[rid]['own_bytes']
                              for slot,rid in self.bindings.pair.items()})
-                    else:
-                        pending=worker.submit(analyze)
-                    if index+1<(900 if max_steps is None else max_steps):
-                        # The current immutable RGB batch is materialized.
-                        # Rendering one next batch may now overlap its ordered
-                        # tracker/perception worker. Its original SIM timestamp
-                        # remains authoritative even if it predates this action.
-                        next_capture=submit_capture(retry=False)
-                    while not pending.done():
-                        # Only the owner advances physics. Port leases expire
-                        # independently if RGB/render/decision work stalls.
-                        advance_pending()
-                    if process_mode:
-                        result=pending.result()
+                        while not own_pending.done():
+                            advance_pending()
+                        result=own_pending.result()
                         (frames,motion,evidence,decisions,skew,skew_evidence,
                          perception_wall_s)=self._adopt_carry_analysis(raw_frames,count,result)
                     else:
+                        while not frame_future.done():
+                            advance_pending()
+                        raw_frames=frame_future.result()
+                        def analyze(raw_frames=raw_frames,count=count):
+                            frames=self._bind_capture(raw_frames,count)
+                            perception_started_wall_s=time.monotonic()
+                            raw=frames['r1']['raw_top_bytes']
+                            motion,evidence=navigator.observe(raw)
+                            decisions={}
+                            for r in ROBOTS:
+                                current=own_payload(frames[r]['own_bytes'],hue_upper=35)
+                                initial=own_payload(anchor[r]['own_bytes'],hue_upper=35)
+                                held=bool(current and initial and .25<=current[0]/initial[0]<=4
+                                          and math.dist(current[1:],initial[1:])<=.15)
+                                decisions[r]={'ok':held,'held_estimate':held,'ready':evidence['done'],
+                                    'forward':abs(motion['forward']),
+                                    'current_own_rgb_features':current,
+                                    'anchor_own_rgb_features':initial,
+                                    'appearance':'orange-to-yellow beam hue 3..35; same shape/consistency gates'}
+                            from harness.dispatch_translation_skew import translation_skew
+                            try:skew,skew_evidence=translation_skew(raw,self.carried_beam.previous)
+                            except ValueError as error:
+                                skew=None;skew_evidence={'unresolved':str(error)}
+                            perception_wall_s=time.monotonic()-perception_started_wall_s
+                            return frames,motion,evidence,decisions,skew,skew_evidence,perception_wall_s
+                        pending=worker.submit(analyze)
+                        if index+1<(900 if max_steps is None else max_steps):
+                            next_capture=submit_capture(retry=False)
+                        while not pending.done():
+                            advance_pending()
                         frames,motion,evidence,decisions,skew,skew_evidence,perception_wall_s=pending.result()
                     pending_lease=None  # A new decision replaces the older RGB authority.
                     now=self.time();observed=float(frames['r1']['observed_at_s'])
@@ -569,6 +613,11 @@ class BoundPairSkill:
                         carry_record['analysis_backend']='spawn_cpu'
                         carry_record['pair_bind_timing_scope']=(
                             'child RGB tracking and canonicalization; excludes IPC and owner image record')
+                        carry_record['top_cpu_timing_scope']=(
+                            'spawn child tracker, canonicalization, route and skew; excludes IPC, own payload and file record')
+                        if 'partial_pipeline_wall_timing' in frames['r1']:
+                            carry_record['partial_pipeline_wall_timing']=(
+                                frames['r1']['partial_pipeline_wall_timing'])
                     self.calls.append(carry_record)
                     if control['abort']:
                         raise RuntimeError('existing pair carry guard stopped: '+control['mode'])
@@ -608,10 +657,12 @@ class BoundPairSkill:
                 now=self.time()
                 for rid in self.bindings.pair.values():self.io.ports[rid].hold(now)
                 if next_capture is not None:
-                    future=next_capture[1]
-                    if not future.cancel():
-                        try:future.result(timeout=30.)
-                        except Exception:pass
+                    capture=next_capture[1]
+                    futures=(capture.top,capture.full) if process_mode else (capture,)
+                    for future in futures:
+                        if not future.cancel():
+                            try:future.result(timeout=30.)
+                            except Exception:pass
         raise RuntimeError('pair route decision budget exhausted')
 
     def carry_with_rotation(self,max_steps=None):
