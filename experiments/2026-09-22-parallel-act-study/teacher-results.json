@@ -1,0 +1,186 @@
+[
+  {
+    "trial": "RGB--parallel-train-plus--r0",
+    "config": {
+      "output": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/teachers/trials/RGB--parallel-train-plus--r0",
+      "variant": "open",
+      "seed": 11,
+      "required_dock": "dock_a",
+      "rounds": 24,
+      "timeout": 60.0,
+      "max_wall_s": 2400.0,
+      "max_input_tokens": 500000,
+      "max_quiet_rounds": 4,
+      "plan_replay": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+      "live_replan": false,
+      "executor": "skills",
+      "contact_profile": "local_contact_fine",
+      "grasp_model_dir": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+      "stage_model_dir": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+      "carry_act_model": null,
+      "carry_act_python": null,
+      "carry_act_max_steps": 900,
+      "carry_max_steps": 900,
+      "spawn_offset": [
+        0.006,
+        0.004,
+        0.0
+      ],
+      "video_fps": 4,
+      "efficient_capture": true,
+      "route_overlap": true,
+      "overlap_start": "grasp",
+      "reference_top": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/tests/fixtures/camera_goal_transport/reference-top.jpg"
+    },
+    "source_sha": "db0a6a70e29bd1bea021b86036a029d1a5aac813",
+    "environment": {
+      "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+      "platform": "macOS-27.2-arm64-arm-64bit",
+      "mujoco": "3.12.0"
+    },
+    "outcome": {
+      "whole_success": true,
+      "robot_result_available": true,
+      "failure_kind": null,
+      "failure_phase": "FINISHED",
+      "error": null,
+      "stop_reason": "",
+      "carry_entered": true,
+      "act_carry_entered": false,
+      "beam_success": true,
+      "robot_robot_contact_samples": 0,
+      "wall_s": 629.5366968339949
+    },
+    "concurrent_loaded_motion_s": 5.999999999858119,
+    "obstacle_contact_steps": 0,
+    "snapshot": {
+      "trial_id": "RGB--parallel-train-plus--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-ACT\uc7ac\ud559\uc2b5/teachers/RGB--parallel-train-plus--r0",
+      "manifest_sha256": "6a05910aa1019859f5b1f1479710b5bb62ad9b284918356ddd2765a9814e71c1",
+      "event_readback": true,
+      "native_ui_verified": false
+    },
+    "event_success": 1.0,
+    "video_checks": [
+      {
+        "id": "fd51695023aa3862da80",
+        "range_206": true
+      }
+    ],
+    "raw": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/teachers/trials/RGB--parallel-train-plus--r0",
+    "files": {
+      "result.json": "dd63d8f61566e3bddd4b146bbed538705b138ec821d5f2782ce43245a5a6be3d",
+      "pair-decisions.json": "a0e8623102dce1aedb1003c09936e1e5a4ac0031b7d7b73223fda7e43c78da42",
+      "issued-commands.json": "dde4b0abbfb65d3a086d367fd32bff5c77fb30e1079e1622a4c9369df8dccb88",
+      "referee-only.jsonl": "79cf0c721fb02cbeb7eb4ff02b016bdccdfe44236b3a1bba58b50bfa80b7f158",
+      "execution.mp4": "67ba7cf0d691f381a000fe7218720609e9a0be851dc9e88777eaef0ef072ca90"
+    },
+    "video_visual_review": {
+      "completed": true,
+      "scope": "Sampled concurrent-carry and final-placement frames; not exhaustive frame-by-frame review",
+      "frames": {
+        "train-plus": [
+          72.8,
+          136.05
+        ],
+        "dev-zero": [
+          74.05,
+          132.8
+        ]
+      }
+    },
+    "native_ui_blocker": "Mac locked"
+  },
+  {
+    "trial": "RGB--parallel-dev-zero--r0",
+    "config": {
+      "output": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/teachers/trials/RGB--parallel-dev-zero--r0",
+      "variant": "open",
+      "seed": 11,
+      "required_dock": "dock_a",
+      "rounds": 24,
+      "timeout": 60.0,
+      "max_wall_s": 2400.0,
+      "max_input_tokens": 500000,
+      "max_quiet_rounds": 4,
+      "plan_replay": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+      "live_replan": false,
+      "executor": "skills",
+      "contact_profile": "local_contact_fine",
+      "grasp_model_dir": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+      "stage_model_dir": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+      "carry_act_model": null,
+      "carry_act_python": null,
+      "carry_act_max_steps": 900,
+      "carry_max_steps": 900,
+      "spawn_offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "video_fps": 4,
+      "efficient_capture": true,
+      "route_overlap": true,
+      "overlap_start": "grasp",
+      "reference_top": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/tests/fixtures/camera_goal_transport/reference-top.jpg"
+    },
+    "source_sha": "db0a6a70e29bd1bea021b86036a029d1a5aac813",
+    "environment": {
+      "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+      "platform": "macOS-27.2-arm64-arm-64bit",
+      "mujoco": "3.12.0"
+    },
+    "outcome": {
+      "whole_success": true,
+      "robot_result_available": true,
+      "failure_kind": null,
+      "failure_phase": "FINISHED",
+      "error": null,
+      "stop_reason": "",
+      "carry_entered": true,
+      "act_carry_entered": false,
+      "beam_success": true,
+      "robot_robot_contact_samples": 0,
+      "wall_s": 778.2474853330059
+    },
+    "concurrent_loaded_motion_s": 5.799999999862848,
+    "obstacle_contact_steps": 0,
+    "snapshot": {
+      "trial_id": "RGB--parallel-dev-zero--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-ACT\uc7ac\ud559\uc2b5/teachers/RGB--parallel-dev-zero--r0",
+      "manifest_sha256": "46e970aec91bd5028f6ad5b6b590fef3ce078ca300e733fd569a46bee4d2c1e6",
+      "event_readback": true,
+      "native_ui_verified": false
+    },
+    "event_success": 1.0,
+    "video_checks": [
+      {
+        "id": "3a3f88f4ecd5a9c80361",
+        "range_206": true
+      }
+    ],
+    "raw": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/teachers/trials/RGB--parallel-dev-zero--r0",
+    "files": {
+      "result.json": "f33a69ed666a08c268062679c3cc57eb97341324ccb731669f7059de76f24de2",
+      "pair-decisions.json": "f0e8c74a0d158fb4adb680de5da12795d2c67b96368f5852e0d59c4cd7171c41",
+      "issued-commands.json": "29090be2968be8e907dea721a973911b50199623392385750a7e0d6cc0f04325",
+      "referee-only.jsonl": "6eac8c32438eb26625d2f7b8069b61b0353499900a42c73ebdbfea953909faa1",
+      "execution.mp4": "a4909d7f347b3729643bbb534b61c20bc9f10202ae5124aee20003908eeaeb97"
+    },
+    "video_visual_review": {
+      "completed": true,
+      "scope": "Sampled concurrent-carry and final-placement frames; not exhaustive frame-by-frame review",
+      "frames": {
+        "train-plus": [
+          72.8,
+          136.05
+        ],
+        "dev-zero": [
+          74.05,
+          132.8
+        ]
+      }
+    },
+    "native_ui_blocker": "Mac locked"
+  }
+]

@@ -1,0 +1,27 @@
+{
+  "completed_trials": [
+    {
+      "trial": "/Users/changmin/.codex/worktrees/research-controller-validation/ugrp/outputs/research-repair/hybrid-regression-v2/trials/ACT-RGB-refined--test-plus--r0",
+      "wall_s": 450.969370584,
+      "act_calls": 206,
+      "total_act_inference_s": 29.433495249997577,
+      "act_inference_fraction": 0.06526717149743795
+    },
+    {
+      "trial": "/Users/changmin/.codex/worktrees/research-controller-validation/ugrp/outputs/research-repair/qualification-v2/trials/ACT-guarded--qualification-2--r0",
+      "wall_s": 419.2380874169994,
+      "act_calls": 202,
+      "total_act_inference_s": 44.353889164000975,
+      "act_inference_fraction": 0.10579642092461873
+    }
+  ],
+  "sample": {
+    "path": "/Users/changmin/.codex/worktrees/act-parallel-review/ugrp/outputs/research-repair/runtime-sample.txt",
+    "sha256": "0fde3f957836b85a33675cc94fa3492375e3f44cc8a62c04303a8a06fcc58ed0",
+    "pid": 60115,
+    "seconds": 1,
+    "observed": "MuJoCo physics, Python callbacks, OpenGL rendering all appear in the sampled stacks",
+    "limitation": "One short phase snapshot, not a whole-mission time breakdown or speed benchmark"
+  },
+  "scope": "Inference call times are measured. Remaining wall time includes all other work and host contention; no attribution of its exact shares."
+}

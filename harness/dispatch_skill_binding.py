@@ -85,6 +85,47 @@ class BeamContinuity:
         return feature
 
 
+def released_beam_envelope(jpeg,prior,static_map):
+    """Reacquire the full released silhouette, not a trimmed tracking core.
+
+    The unchanged authored beam is .45m long, .05m wide and .04m high. Its
+    nominal top-face plane supplies scale, never a measured object height.
+    Missing visible length is uncertainty at either end, not invented pixels.
+    """
+    cam=static_map['top_camera'];w,h=prior['image_size']
+    scale=h/(2*(cam['position_m'][2]-.04)*math.tan(math.radians(cam['fov_y_deg'])/2))
+    length,width=.45*scale,.05*scale
+    axis=np.diff(np.array(prior['endpoints']),axis=0)[0]*[w,h];axis/=np.linalg.norm(axis)
+    origin=np.array(prior['center'])*[w,h];candidates=[]
+    for saturation in range(105,191,5):
+        for b in extract_beams(jpeg,hue_upper=35,min_saturation=saturation,include_contour=True):
+            v=np.diff(np.array(b['endpoints']),axis=0)[0]*[w,h];v/=np.linalg.norm(v)
+            if (not b['touches_border'] and .9*length<=b['length_px']<=1.1*length
+                    and b['width_px']<=2*width and b['length_px']/b['width_px']>=3.5
+                    and np.linalg.norm(np.array(b['center'])*[w,h]-origin)<=24
+                    and abs(float(v@axis))>=math.cos(math.radians(15))):
+                candidates.append((saturation,b,v))
+    levels={s for s,_,_ in candidates}
+    if len(levels)<3 or max(levels)-min(levels)<20:
+        raise ValueError('released full beam silhouette lacks RGB support')
+    # Minimum-area rectangles include empty corners when a same-colored
+    # gripper joins the beam. Bound actual supported contour pixels instead.
+    # Higher saturation masks are eroded subsets; their missing pixels must
+    # not independently enlarge the union beyond the already visible extent.
+    pixels=np.concatenate([np.array(b['contour_px']) for _,b,_ in candidates])
+    normal=np.array([-axis[1],axis[0]])
+    missing_length=max(0.,length-float(np.ptp(pixels@axis)))
+    missing_width=max(0.,width-float(np.ptp(pixels@normal)))
+    padding=np.abs(axis)*missing_length+np.abs(normal)*missing_width+1.
+    lower,upper=pixels.min(axis=0)-padding,pixels.max(axis=0)+padding
+    corners=[[x,y] for x in (lower[0],upper[0]) for y in (lower[1],upper[1])]
+    return {'corners_px':corners,'nominal_feature_height_m':.04,
+            'expected_length_px':length,'threshold_support':len(levels),
+            'missing_length_px':missing_length,'missing_width_px':missing_width,
+            'visible_lengths_px':[b['length_px'] for _,b,_ in candidates],
+            'source':'union of fresh untrimmed RGB contour pixels, prior RGB identity and axis, authored fixed dimensions; missing-span uncertainty and one-pixel quantization margin'}
+
+
 def canonical_pair_top(jpeg, reference, *, translation_px=None, hue_upper=24, observed_beam=None):
     """Translate observed pixels to the saved beam-centred image convention.
 
@@ -99,19 +140,27 @@ def canonical_pair_top(jpeg, reference, *, translation_px=None, hue_upper=24, ob
     h, w = frame.shape[:2]
     shift = (np.array(anchor['center']) - current['center']) * [w, h] if translation_px is None else np.asarray(translation_px,dtype=float)
     if shift.shape!=(2,) or not np.isfinite(shift).all():raise ValueError('invalid image translation')
+    measured_shift=shift.copy()
+    # Half-pixel contour changes must not blend wheel colours and manufacture
+    # an out-of-support pose. Translate whole source pixels; retain the raw
+    # estimate and <=0.50005px quantization error for inspection. Rounding the
+    # minAreaRect float noise makes exact half-pixel ties deterministic.
+    shift=np.rint(np.round(shift,4))
     transformed = cv2.warpAffine(frame, np.float32([[1,0,shift[0]],[0,1,shift[1]]]),
-                                 (w,h), flags=cv2.INTER_LINEAR)
+                                 (w,h), flags=cv2.INTER_NEAREST)
     data = cv2.imencode('.jpg', transformed, [cv2.IMWRITE_JPEG_QUALITY,95])[1].tobytes()
     return data, {'source_sha256':hashlib.sha256(jpeg).hexdigest(),
         'reference_sha256':hashlib.sha256(reference).hexdigest(),
         'translation_px':shift.tolist(),'observed_beam':current,
+        'unquantized_translation_px':measured_shift.tolist(),
+        'translation_quantization_error_px':(shift-measured_shift).tolist(),
         'fixed_from_prior_rgb':translation_px is not None,'hue_upper':hue_upper,
         'tracked_carried_shaft':observed_beam is not None,
-        'method':'RGB translation only; black padding; unchanged own RGB'}
+        'method':'integer-pixel RGB translation only; black padding; unchanged own RGB'}
 
 
 class SkillBindings:
-    def __init__(self, committed, static_map):
+    def __init__(self, committed, static_map, *, route_overlap=False, overlap_start='transit'):
         if not committed or committed.get('plan_hash') != digest(committed.get('plan')):
             raise ValueError('exact committed plan required')
         self.committed = copy.deepcopy(committed)
@@ -131,6 +180,36 @@ class SkillBindings:
         self.locks = {}
         self.revoked = False
         self.cluttered=any(o['id']=='service_island' for o in static_map['obstacles'])
+        self.route_overlap=route_overlap
+        if overlap_start not in ('grasp','transit'):raise ValueError('unknown overlap start')
+        self.overlap_start=overlap_start
+        self.grasp_started=set()
+        self.transit_started=set()
+        self.resource_events=[]
+        if route_overlap:
+            if self.cluttered:
+                raise ValueError('route overlap requires open-map translation; moving-obstacle rotation is not validated')
+            if any(t['after'] for t in self.tasks.values()):
+                raise ValueError('route overlap requires an explicitly agreed independent plan; dependencies are never removed')
+            if self.tasks['beam']['route']==self.tasks['box']['route']:
+                raise ValueError('route overlap requires distinct routes')
+
+    def note_transit_command(self,obj):
+        """Peer stage claim from issued commands, never measured completion."""
+        self.transit_started.add(obj)
+
+    def note_grasp_command(self,obj):
+        self.grasp_started.add(obj)
+
+    def reserve_beam_apron(self,feature):
+        """Reserve before the RGB-observed formation reaches the common bay."""
+        if not self.route_overlap:return
+        region=self.static_map['regions']['dispatch_apron']
+        west=region['center_m'][0]-region['half_extents_m'][0]
+        w,h=feature['image_size']
+        edge=pixel_from_map([west-.30,region['center_m'][1]],self.static_map,(h,w),height=.09)[0]
+        if feature['center'][0]*w>=edge and not self.permission('beam','UNLOAD'):
+            raise RuntimeError('shared unload resource unavailable before RGB boundary')
 
     def authorize(self, committed):
         if self.revoked or committed != self.committed:
@@ -139,6 +218,22 @@ class SkillBindings:
     def permission(self, obj, stage):
         if self.revoked:return False
         task = self.tasks[obj]
+        if self.route_overlap:
+            # The pair leaves pickup first. The box may lift and use its own
+            # route while the beam is moving, but queues before the shared bay.
+            released=self.grasp_started if self.overlap_start=='grasp' else self.transit_started
+            if obj=='box' and stage=='GRASP' and 'beam' not in released:return False
+            if stage=='UNLOAD':
+                if obj=='box' and self.tasks['beam']['id'] not in self.finished:return False
+                resources=['dispatch_apron']
+            elif stage in ('GRASP','TRANSIT'):
+                resources=[self.static_map['routes'][task['route']]['resource']]
+            else:resources=[]
+            if any(self.locks.get(r,task['id'])!=task['id'] for r in resources):return False
+            for r in resources:
+                if r not in self.locks:self.resource_events.append({'event':'acquire','object':obj,'resource':r,'stage':stage})
+                self.locks[r]=task['id']
+            return True
         if (stage != 'APPROACH' or self.cluttered) and any(dep not in self.finished for dep in task['after']):
             return False
         if stage in ('GRASP','TRANSIT') or (stage=='APPROACH' and self.cluttered):
@@ -151,6 +246,7 @@ class SkillBindings:
     def finish(self,obj):
         task_id = self.tasks[obj]['id']
         self.finished.add(task_id)
+        if self.route_overlap:self.resource_events.append({'event':'finish','object':obj,'released':[r for r,t in self.locks.items() if t==task_id]})
         self.locks = {r:t for r,t in self.locks.items() if t!=task_id}
 
     def capabilities(self):
@@ -163,6 +259,7 @@ class SkillBindings:
             for name, route in self.static_map['routes'].items():
                 if route['declared_min_width_m'] < .45:narrow.append(name)
         return {'pair_model_slots':self.pair, 'solo_robot':self.solo,
+            'route_overlap':self.route_overlap,'overlap_start':self.overlap_start,
             'parallel_pair_envelope_m':width,'unsupported_pair_routes':narrow,
             'pair_rotation_skill_available':True,'rotated_pair_envelope_m':.45,
             'route_execution':'RGB wheel/shaft tracking and swept full-load SE2 search when cluttered; experimental',
@@ -187,6 +284,7 @@ def pixel_from_map(xy, static_map, shape, *, height=0.):
 class ImageRoute:
     """Plan-selected authored waypoints with current cargo position from RGB."""
     def __init__(self, bindings, obj):
+        self.bindings=bindings
         self.map=bindings.static_map;self.obj=obj
         self.task=bindings.tasks[obj];self.dock=bindings.plan['dock']
         self.points=None;self.index=0;self.confirmations=0
@@ -326,6 +424,11 @@ class ImageRoute:
                     pixel_from_map([1.12,apron_y],self.map,frame.shape),
                     pixel_from_map([east_clear,apron_y],self.map,frame.shape),
                     pixel_from_map([east_clear,destination[1]],self.map,frame.shape),goal_px]
+                if self.bindings.route_overlap:
+                    # A separate south/north staging point stays west of the
+                    # shared apron, including the authored chassis margin.
+                    west=self.map['regions']['dispatch_apron']['center_m'][0]-self.map['regions']['dispatch_apron']['half_extents_m'][0]
+                    self.points.insert(1,pixel_from_map([west-.20,gate[1]],self.map,frame.shape))
         error=self.points[self.index]-center
         tolerance=4 if self.index==len(self.points)-1 else 6
         ready=float(np.max(np.abs(error))) <= tolerance
@@ -356,6 +459,11 @@ class ImageRoute:
                   'cargo_bounds_px':bounds.tolist(),'waypoint_index':self.index,
                   'waypoints_px':[p.tolist() for p in self.points],
                   'error_px':error.tolist(),'ready':ready,'done':done}
+        if (self.obj=='box' and self.bindings.route_overlap and self.index==1 and ready
+                and not self.bindings.permission('box','UNLOAD')):
+            self.confirmations=0
+            evidence.update(waiting_for_resource=True,resource='dispatch_apron',done=False)
+            return {'kind':'mecanum','forward':0.,'left':0.,'turn':0.,'duration_s':.2},evidence
         if self.obj=='box':evidence['tracking']=tracking
         if slot_evidence is not None:evidence['destination_region']=slot_evidence
         if ready and self.confirmations>=2 and not done:

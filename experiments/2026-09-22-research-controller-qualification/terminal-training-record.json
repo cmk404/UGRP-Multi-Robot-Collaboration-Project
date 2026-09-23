@@ -1,0 +1,171 @@
+{
+  "complete": true,
+  "training_source_sha": "da7444166f4ced0122adfa1259f20219281964ab",
+  "raw": "/Users/changmin/.codex/worktrees/research-act-training/ugrp/outputs/research-repair/model-terminal",
+  "dataset_sha256": "83dbd7707aa0fc464a1db70fd1ea87f5603ab37c4346476a299b7386158bfd95",
+  "steps": 8000,
+  "selected_step": 7000,
+  "wall_s": 1503.1662842919995,
+  "cache_wall_s": 440.000096709,
+  "train_metrics": {
+    "missed_done_rate": 1.0,
+    "false_done_rate": 0.0,
+    "group_normalized_mae": {
+      "0": 0.023197684626074848,
+      "1": 0.04052664828747531,
+      "2": 0.04123325207052665,
+      "3": 0.01029648210775728
+    },
+    "selection_score": 1.0288135167729586,
+    "termination_objective": "episode",
+    "premature_hold_episode_fraction": 0.0,
+    "missed_terminal_episode_fraction": 1.0,
+    "offline_termination_pass": false,
+    "samples": 4056,
+    "done_samples": 16
+  },
+  "development_metrics": {
+    "missed_done_rate": 1.0,
+    "false_done_rate": 0.0,
+    "group_normalized_mae": {
+      "0": 0.023011187338542776,
+      "1": 0.057524073953980785,
+      "2": 0.08015812698419152,
+      "3": 0.0217209003555278
+    },
+    "selection_score": 1.0456035721580608,
+    "termination_objective": "episode",
+    "premature_hold_episode_fraction": 0.0,
+    "missed_terminal_episode_fraction": 1.0,
+    "offline_termination_pass": false,
+    "samples": 1322,
+    "done_samples": 6
+  },
+  "readback_count": 4,
+  "deployment_max_abs": {
+    "train": [
+      0.0,
+      0.0
+    ],
+    "development": [
+      0.0,
+      0.0
+    ]
+  },
+  "selected_cache_verification": {
+    "train": {
+      "feature_atol": 0.0005,
+      "feature_rtol": 1e-05,
+      "action_atol": 1e-05,
+      "action_rtol": 1e-05,
+      "probes": [
+        {
+          "id": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r1:0",
+          "feature_max_abs": {
+            "observation.images.own": 6.16312026977539e-05,
+            "observation.images.top": 6.008148193359375e-05
+          },
+          "action_chunk_max_abs": 4.708766937255859e-06
+        },
+        {
+          "id": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r1:4",
+          "feature_max_abs": {
+            "observation.images.own": 7.903575897216797e-05,
+            "observation.images.top": 6.914138793945312e-05
+          },
+          "action_chunk_max_abs": 5.662441253662109e-07
+        },
+        {
+          "id": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/teachers/trials/RGB--parallel-train-plus--r0:r3:113",
+          "feature_max_abs": {
+            "observation.images.own": 0.00010097026824951172,
+            "observation.images.top": 6.389617919921875e-05
+          },
+          "action_chunk_max_abs": 7.003545761108398e-07
+        }
+      ]
+    },
+    "development": {
+      "feature_atol": 0.0005,
+      "feature_rtol": 1e-05,
+      "action_atol": 1e-05,
+      "action_rtol": 1e-05,
+      "probes": [
+        {
+          "id": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open:r1:0",
+          "feature_max_abs": {
+            "observation.images.own": 6.562471389770508e-05,
+            "observation.images.top": 5.91278076171875e-05
+          },
+          "action_chunk_max_abs": 2.637505531311035e-06
+        },
+        {
+          "id": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open:r1:4",
+          "feature_max_abs": {
+            "observation.images.own": 8.296966552734375e-05,
+            "observation.images.top": 7.390975952148438e-05
+          },
+          "action_chunk_max_abs": 1.385807991027832e-06
+        },
+        {
+          "id": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/teachers/trials/RGB--parallel-dev-zero--r0:r3:118",
+          "feature_max_abs": {
+            "observation.images.own": 0.0,
+            "observation.images.top": 0.0
+          },
+          "action_chunk_max_abs": 0.0
+        }
+      ]
+    }
+  },
+  "artifact_sha256": {
+    "report.json": "2d6613035e710cd0ea08b3a6af90ccfdfa89c68c8f28477ddf1636dd8d61131e",
+    "train-predictions.json": "1d0f3aa01d9c3400d8fe53114abdda46469b27f4bd071c8ab6f476c01bd788b8",
+    "development-predictions.json": "f6c72e140ba54aa2fc894b0eaaf92939a2ebaf57cb7648f7da3367f3e2647188",
+    "act/model.safetensors": "d70f0e756347913c135d2d57ee4658b840475cf5b71cc8270b1b99031e2791b3",
+    "act/config.json": "a4391e9cd4c9d5b8dc266f9706bad0e276cd7540df00aeb9b1e3195c389e7110",
+    "act/adapter.json": "cfc00170f7056da656087a5ae38718ded59d648c0817aadbaf29201eb986e50f"
+  },
+  "admitted_for_qualification": false,
+  "admission_reason": "0/3 premature holds, but 3/3 missed terminal decisions on development trajectories; fails preregistered criterion",
+  "qualification_model": "previous expanded checkpoint, unchanged",
+  "tensorboard": {
+    "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-\uc5f0\uad6c\ud658\uacbd-\uc885\ub8cc\ud559\uc2b5/research-repair__model-terminal__cecd75d1",
+    "manifest_sha256": "51f3a744a68dccd40b8c7c1b90cf9d477a3a3149810cc7f5e1b5d050aa96204d",
+    "event_readback": true,
+    "scalar_tags": [
+      "training/loss",
+      "training/elapsed_s",
+      "development/missed_done_rate",
+      "development/false_done_rate",
+      "development/group_normalized_mae/0",
+      "development/group_normalized_mae/1",
+      "development/group_normalized_mae/2",
+      "development/group_normalized_mae/3",
+      "development/selection_score",
+      "development/premature_hold_episode_fraction",
+      "development/missed_terminal_episode_fraction",
+      "development/samples",
+      "development/done_samples",
+      "training/final_loss",
+      "development/final_selection_score"
+    ],
+    "native_ui_verified": false
+  },
+  "scope": "Completed offline component candidate; not physically qualified, not communication experiment",
+  "threshold_diagnostic": {
+    "train": {
+      "terminal_min": 0.01923292875289917,
+      "terminal_max": 0.11542971432209015,
+      "nonterminal_max": 0.08651050925254822,
+      "separable_threshold_gap": -0.06727758049964905
+    },
+    "development": {
+      "terminal_min": 0.015260092914104462,
+      "terminal_max": 0.0543082058429718,
+      "nonterminal_max": 0.04891175031661987,
+      "separable_threshold_gap": -0.03365165740251541
+    }
+  },
+  "threshold_diagnostic_scope": "No threshold change made. Overlap of terminal and nonterminal scores rules out a single perfect threshold on development trajectories."
+}

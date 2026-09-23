@@ -1,0 +1,34 @@
+[
+  {
+    "source_audit": "/Users/changmin/.codex/worktrees/act-parallel-review/ugrp/experiments/2026-09-22-research-controller-qualification/development-termination-audit.json",
+    "source_audit_sha256": "f8e0d09d2156c6e8a246a4fbaa1e35d5bdf3afdaec157802c969860cd44a6298",
+    "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-연구환경-종료판정/기존ACT",
+    "manifest_sha256": "8278195f799f3f3a1678fd33d91ac24cb40a708a6df730a3ba6357c0a28e4398",
+    "source_predictions_sha256": "5c196c857f6548c0a42782eb1dcbd50e1f5664489abe57757b55d94bfccfcc80",
+    "metrics": {
+      "offline/episodes": 3.0,
+      "offline/premature_pair_hold_episodes": 3.0,
+      "offline/missed_terminal_episodes": 0.0,
+      "offline/termination_pass": 0.0
+    },
+    "native_ui_verified": true,
+    "checked_unix": 1790063329.3446422,
+    "physical_result_available": false
+  },
+  {
+    "source_audit": "/Users/changmin/.codex/worktrees/act-parallel-review/ugrp/experiments/2026-09-22-research-controller-qualification/terminal-candidate-development-audit.json",
+    "source_audit_sha256": "2e9b70358a34fb614a5b7e72a8cfbcbf19d1b6275ed1a7d5055a0f7e15a868e3",
+    "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-연구환경-종료판정/학습후보",
+    "manifest_sha256": "53052f41185d72a0aa177675efd852c2c0cac107700937ae5f86aff489de0e52",
+    "source_predictions_sha256": "f6c72e140ba54aa2fc894b0eaaf92939a2ebaf57cb7648f7da3367f3e2647188",
+    "metrics": {
+      "offline/episodes": 3.0,
+      "offline/premature_pair_hold_episodes": 0.0,
+      "offline/missed_terminal_episodes": 3.0,
+      "offline/termination_pass": 0.0
+    },
+    "native_ui_verified": true,
+    "checked_unix": 1790063329.344644,
+    "physical_result_available": false
+  }
+]

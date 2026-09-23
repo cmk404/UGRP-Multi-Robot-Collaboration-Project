@@ -25,7 +25,7 @@ def _ordered_corners(points: np.ndarray, center: tuple[float, float]) -> list[li
 
 
 def extract_beams(jpeg: bytes, robust_shaft: bool = False, *, hue_upper: int = 24,
-                  min_saturation: int = 105) -> list[dict[str, Any]]:
+                  min_saturation: int = 105, include_contour: bool = False) -> list[dict[str, Any]]:
     """Return orange connected components described only by their image pixels.
 
     Coordinates are normalized by image width and height. By default,
@@ -100,6 +100,7 @@ def extract_beams(jpeg: bytes, robust_shaft: bool = False, *, hue_upper: int = 2
                 "area_px": area,
                 "image_size": [int(width), int(height)],
                 "touches_border": touches_border,
+                **({"contour_px": contour[:, 0, :].tolist()} if include_contour else {}),
             }
         )
     return sorted(candidates, key=lambda item: (-item["area_px"], item["center"][0], item["center"][1]))

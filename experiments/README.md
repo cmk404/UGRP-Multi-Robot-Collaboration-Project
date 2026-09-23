@@ -5,6 +5,8 @@
 - [2026-09-22 native 시뮬레이션 CLI/API](2026-09-22-native-simulation/README.md) — Mac·Ubuntu 공통 설정/API, native 창·headless·RGB·reset, Linux 종료 오류 수정과 검증 한계.
 - [2026-09-22 브라우저 뷰어 검증 이력 (구현 폐기)](2026-09-22-local-simulation-live/README.md) — 네 카메라·수동 이동·일시정지·초기화·종료 통합 검사; 초기 검사 실패 포함, 자율 운반 평가는 아님.
 - [2026-09-22 RGB 통신 기반 최소 물리 재생](2026-09-22-rgb-communication-replay/README.md) — Colab 단독/공동 2회 회수, LLM 0회; 모두 종료·평가 clock 모순으로 invalid_artifact. 물리 성공·통신 효과 미입증.
+- [2026-09-22 2+1 병렬 운반 복구](2026-09-22-parallel-transport/README.md) — 순차 잠금·도착 오판 수정, 원 ACT 전체 성공·동시 운반 영상 확인. 개발 실패 포함 5회와 영상 판정 재생 11건 보존.
+- [2026-09-22 병렬 시연 추가와 ACT 재학습](2026-09-22-parallel-act-study/README.md) — 기존 시연 8개의 운반 중첩 0 확인, 추가 시연→128px/4프레임 학습→세 조건별 9회 평가. 완료 여부는 원본 study.json으로 구분.
 - [2026-09-22 ACT 영상 처리 속도](2026-09-22-act-render-speed/README.md) — 관측 처리 1.586배; 전체 운반 437초 성공, 전체 명령·공통 2177장 동일. 동시 실행 수가 달라 전체 wall 비율은 분리해 해석.
 - [2026-09-22 ACT 방출 연결·기준선 재검증](2026-09-22-act-release-revalidation/README.md) — 원 교사 2조건·원 ACT 성공 재현, 새 ACT의 추적 오류 해소·배치 실패 확인; 서로 다른 조건의 실패율로 합산하지 않음.
 

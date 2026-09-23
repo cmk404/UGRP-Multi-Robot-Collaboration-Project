@@ -88,6 +88,28 @@ def test_failed_evaluation_remains_failed_despite_done_claim(tmp_path,export_api
     assert manifest['metadata']['success_source_field']=='success'
 
 
+@pytest.mark.parametrize('terminal_score',[.05,.9])
+def test_offline_termination_audit_is_recomputed_and_never_physical_success(tmp_path,export_api,terminal_score):
+    from scripts.audit_carry_termination import audit
+    convert,EA=export_api;src=tmp_path/'audit';src.mkdir()
+    predictions=[{'id':f'development:{slot}:{i}',
+                  'prediction':[0,0,0,terminal_score if i else 0.],
+                  'target':[0,0,0,float(i)]} for slot in ('r1','r3') for i in range(2)]
+    p=put(src,'predictions.json',predictions)
+    report=audit(predictions);report['predictions_sha256']=hashlib.sha256(p.read_bytes()).hexdigest()
+    put(src,'termination-audit.json',report)
+    manifest=convert(src,tmp_path/'export');ea=EA(str(tmp_path/'export')).Reload()
+    assert ea.Scalars('offline/missed_terminal_episodes')[0].value==int(terminal_score<.65)
+    assert ea.Scalars('offline/termination_pass')[0].value==int(terminal_score>=.65)
+    assert manifest['metadata']['outcome']==('offline_pass' if terminal_score>=.65 else 'offline_fail')
+    assert 'evaluation/reported_success' not in ea.Tags()['scalars']
+    assert manifest['metadata']['success_source_field'] is None
+    report['missed_terminal_episodes']=999;put(src,'termination-audit.json',report)
+    with pytest.raises(ValueError,match='saved predictions'):convert(src,tmp_path/'bad-count')
+    p.write_text('[]')
+    with pytest.raises(ValueError,match='hash mismatch'):convert(src,tmp_path/'bad-hash')
+
+
 def test_missing_success_is_not_zero(tmp_path,export_api):
     convert,EA=export_api;src=tmp_path/'source';src.mkdir()
     put(src,'result.json',{'protocol_complete':True})
@@ -111,6 +133,20 @@ def test_dispatch_plan_receipts_keep_agreement_separate_from_transport(tmp_path,
     assert ea.Scalars('result/recorded_raw_commands')[0].value==2
     assert 'excludes' in manifest['metadata']['command_count_scope']
     assert 'team/team.json' in manifest['source_files']
+
+
+def test_postrun_concurrency_audit_keeps_original_and_checks_every_hash(tmp_path,export_api):
+    convert,EA=export_api;src=tmp_path/'source';src.mkdir()
+    original=put(src,'result.json',{'physical_success':True,'evaluation':{'concurrent_transport':{'simultaneous_loaded_motion_s':0}}}).read_bytes()
+    put(src,'issued-commands.json',{});(src/'referee-only.jsonl').write_text('{}\n')
+    put(src,'concurrency-audit.json',{'source_files_sha256':{n:hashlib.sha256((src/n).read_bytes()).hexdigest()
+        for n in ('result.json','issued-commands.json','referee-only.jsonl')},'concurrent_transport':{'simultaneous_loaded_motion_s':2.5}})
+    m=convert(src,tmp_path/'export')
+    assert EA(str(tmp_path/'export')).Reload().Scalars('evaluation/simultaneous_loaded_motion_s')[0].value==2.5
+    assert (src/'result.json').read_bytes()==original
+    assert 'concurrency-audit.json' in m['source_files']
+    (src/'referee-only.jsonl').write_text('{"changed":true}\n')
+    with pytest.raises(ValueError,match='source hash mismatch'):convert(src,tmp_path/'bad-export')
 
 
 def test_images_and_sim_time_are_recoverable(tmp_path,export_api):

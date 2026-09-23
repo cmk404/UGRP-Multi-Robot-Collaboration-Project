@@ -59,6 +59,38 @@ def test_timeout_is_bounded_and_recorded(tmp_path):
     assert r['timed_out'] and r['exit_code']!=0
 
 
+def test_signal_cleanup_reaps_separate_child_group_before_owner_deadline(tmp_path):
+    import os
+    import signal
+    import time
+    from pathlib import Path
+    pidfile=tmp_path/'child.pid'
+    child_code=f'import os,signal,time;from pathlib import Path;signal.signal(signal.SIGTERM,signal.SIG_IGN);Path({str(pidfile)!r}).write_text(str(os.getpid()));time.sleep(30)'
+    owner_code=f'''import signal,sys
+from pathlib import Path
+from scripts.cloud_progress import run_logged
+from scripts.run_matched_carry_cohort import CohortInterrupted
+def stop(sig,frame):raise CohortInterrupted(sig)
+signal.signal(signal.SIGTERM,stop)
+try:run_logged([sys.executable,'-c',{child_code!r}],Path({str(tmp_path/'child.log')!r}),name='cleanup-fixture',termination_grace_s=.2)
+except CohortInterrupted:raise SystemExit(143)
+'''
+    owner=subprocess.Popen([sys.executable,'-c',owner_code],cwd=Path(__file__).resolve().parents[1],stdout=subprocess.DEVNULL,start_new_session=True)
+    child=None
+    try:
+        deadline=time.monotonic()+5
+        while not pidfile.exists() and time.monotonic()<deadline:time.sleep(.01)
+        assert pidfile.exists();child=int(pidfile.read_text())
+        owner.send_signal(signal.SIGTERM)
+        assert owner.wait(timeout=3)==143
+        with pytest.raises(ProcessLookupError):os.kill(child,0)
+    finally:
+        if owner.poll() is None:os.killpg(owner.pid,signal.SIGKILL);owner.wait()
+        if child is not None:
+            try:os.killpg(child,signal.SIGKILL)
+            except ProcessLookupError:pass
+
+
 def test_missing_startup_dependency_blocks_even_with_zero_exit(monkeypatch):
     monkeypatch.setattr(subprocess,'run',lambda *a,**k:SimpleNamespace(returncode=0,stdout='{}',stderr="Error in sitecustomize; ModuleNotFoundError: wrapt"))
     report=probe_python('fixture',['numpy'])

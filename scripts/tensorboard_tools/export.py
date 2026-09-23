@@ -18,6 +18,7 @@ import time
 import tempfile
 import shutil
 import subprocess
+from scripts.carry_failure_metrics import issued_command_count
 
 from scripts.tensorboard_tools.rgb_communication import EXTRA_METRICS, RUN_SCHEMA, export_communication
 
@@ -26,8 +27,11 @@ HP_METRICS = ('process/exit_code', 'result/wall_s', 'result/sim_s', 'result/comm
               'result/input_tokens', 'result/output_tokens', 'result/cost_usd', 'result/model_latency_s',
               'claims/operator_session_complete',
               'evaluation/reported_success', 'claims/protocol_complete',
+              'evaluation/simultaneous_loaded_motion_s', 'evaluation/robot_robot_contact_samples',
               'claims/completed_task_claims', 'claims/tasks', 'claims/final_object_claims',
-              'training/final_loss', 'development/final_selection_score') + EXTRA_METRICS
+               'training/final_loss', 'development/final_selection_score',
+               'offline/episodes', 'offline/premature_pair_hold_episodes',
+               'offline/missed_terminal_episodes', 'offline/termination_pass') + EXTRA_METRICS
 SECRET = re.compile(r'authorization|cookie|password|secret|api.?key|access.?token|refresh.?token', re.I)
 
 
@@ -264,12 +268,26 @@ def export_execution(src, w, result, max_images):
         if not finite(metrics['result/commands']):
             issued = src.read('issued-commands.json')
             if isinstance(issued, dict):
-                metrics['result/commands'] = sum(
-                    bool(obj(command.get('action'))) or
-                    (command.get('stage') != 'SETUP' and bool(obj(command.get('issued_servo_targets'))))
-                    for history in issued.values() for command in rows(history))
+                metrics['result/commands'] = issued_command_count(issued)
                 meta['commands_source'] = 'issued-commands.json; excludes initial SETUP target snapshot'
     success_field = next((k for k in ('success', 'transport_success', 'physical_success') if type(result.get(k)) is bool), None)
+    evaluation=obj(result.get('evaluation'))
+    concurrency=obj(evaluation.get('concurrent_transport'))
+    audit=src.read('concurrency-audit.json')
+    if audit is not None:
+        expected=obj(audit.get('source_files_sha256'))
+        if set(expected)!={'result.json','issued-commands.json','referee-only.jsonl'}:
+            raise ValueError('concurrency audit requires all original source hashes')
+        for name,digest in expected.items():
+            path=inside(src.root,name)
+            if path is None or sha(path.read_bytes())!=digest:
+                raise ValueError('concurrency audit source hash mismatch')
+            src.files[name]={'sha256':digest,'size':path.stat().st_size,'mtime_s':path.stat().st_mtime}
+        concurrency=obj(audit.get('concurrent_transport'))
+        meta['concurrency_evaluation_source']='concurrency-audit.json; original result preserved'
+        w.text('evaluation/concurrency_audit',audit)
+    metrics['evaluation/simultaneous_loaded_motion_s']=concurrency.get('simultaneous_loaded_motion_s')
+    metrics['evaluation/robot_robot_contact_samples']=evaluation.get('robot_robot_contact_samples')
     if success_field: metrics['evaluation/reported_success'] = int(result[success_field])
     meta['success_source_field'] = success_field
     meta['outcome'] = str(result[success_field]) if success_field else 'unrecorded'
@@ -370,6 +388,26 @@ def export_hardware_probe(src, w, data):
             'success_source_field':None}, metrics
 
 
+def export_termination_audit(src, w, data):
+    """Recompute the saved-prediction audit; never call it physical success."""
+    from scripts.audit_carry_termination import audit
+    predictions=src.read('predictions.json',required=True)
+    if src.files['predictions.json']['sha256']!=data.get('predictions_sha256'):
+        raise ValueError('termination audit prediction hash mismatch')
+    checked=audit(predictions,threshold=data['threshold'])
+    if any(data.get(k)!=v for k,v in checked.items()):
+        raise ValueError('termination audit does not match saved predictions')
+    metrics={'offline/'+k:checked[k] for k in (
+        'episodes','premature_pair_hold_episodes','missed_terminal_episodes')}
+    metrics['offline/termination_pass']=int(checked['offline_termination_pass'])
+    for name,value in metrics.items():w.scalar(name,value)
+    w.text('offline/termination_audit',data)
+    return {'family':'act-termination-audit','policy':'ACT','case':src.root.name,
+            'outcome':'offline_pass' if checked['offline_termination_pass'] else 'offline_fail',
+            'scope':checked['scope'],'success_source_field':None,
+            'predictions_sha256':data['predictions_sha256']},metrics
+
+
 def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=False):
     """Export one source once. Existing destinations are rejected (no duplicate steps)."""
     source, output = Path(source).resolve(), Path(output).resolve()
@@ -385,6 +423,8 @@ def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=Fa
     if isinstance(training, dict) and rows(training.get('progress')):
         kind, data = 'training', training
     elif isinstance(result, dict): kind, data = 'execution', result
+    elif (source / 'termination-audit.json').exists():
+        kind, data = 'termination-audit', src.read('termination-audit.json', required=True)
     elif (source / 'gpu-inventory.json').exists():
         kind, data = 'hardware-probe', src.read('gpu-inventory.json', required=True)
     elif (source / 'run.json').exists():
@@ -401,6 +441,7 @@ def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=Fa
         if kind == 'training': meta, metrics = export_training(src, w, data)
         elif kind == 'cloud-job': meta, metrics = export_cloud_job(src, w, data)
         elif kind == 'hardware-probe': meta, metrics = export_hardware_probe(src, w, data)
+        elif kind == 'termination-audit': meta, metrics = export_termination_audit(src, w, data)
         else: meta, metrics = export_execution(src, w, data, max_images)
         videos = []
         video_names = ('motion.mp4', 'execution.mp4')

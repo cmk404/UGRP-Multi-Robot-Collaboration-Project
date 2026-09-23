@@ -38,7 +38,11 @@ def bind_attachment_pan(frames):
         lengths = np.linalg.norm([first, sweep, back], axis=1)
         # A stationary painted patch fails minimum motion. A monotonically
         # moving object fails reversal. Return near the initial home image.
-        if (np.all(lengths >= 2.) and np.all(lengths <= 20.)
+        # The initial grasp need not sit at the midpoint of the observed arm
+        # sweep. Require a resolved full sweep and reversals, not two symmetric
+        # half-sweeps. A one-pixel minimum on each return leg still rejects
+        # stationary patches; sub-pixel jitter cannot provide the 4px sweep.
+        if (np.all(lengths >= 1.) and lengths[1] >= 4. and np.all(lengths <= 20.)
                 and first@sweep/(lengths[0]*lengths[1]) < -.8
                 and sweep@back/(lengths[1]*lengths[2]) < -.8
                 and .25 <= lengths[0]/lengths[1] <= .8
@@ -52,5 +56,5 @@ def bind_attachment_pan(frames):
         'own_attachment_independently_required': True,
         'centers_px': tracks[0].tolist(),
         'frames_sha256': {phase: hashlib.sha256(frames[phase]).hexdigest() for phase in PAN_PHASES},
-        'minimum_motion_px': 2., 'maximum_home_error_px': 2.,
+        'minimum_motion_px': 1., 'minimum_full_sweep_px': 4., 'maximum_home_error_px': 2.,
     }

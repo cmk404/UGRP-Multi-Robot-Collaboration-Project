@@ -1,0 +1,81 @@
+{
+  "source_sha": "2480274d5463362aedeadfb600798669ca668dcd",
+  "protocol_sha256": "c9eca0e527278e67a35bbc3f7c009fc0231eeede9d5100b6383cb0615e2f7c89",
+  "report": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/pixel-regression/report.json",
+  "report_sha256": "5618498bd6b55cf7d19fc9660cd8a2da67735c8ccab2e41d131f771927c3871d",
+  "complete": true,
+  "conditions": {
+    "RGB": {
+      "planned": 1,
+      "attempted": 1,
+      "pending": 0,
+      "failures": 0,
+      "failure_fraction_attempted": 0.0,
+      "failure_kinds": {},
+      "failure_phases": {},
+      "robot_results_missing": 0,
+      "carry_entries": 1,
+      "carry_entry_unknown": 0,
+      "entry_failures_before_carry": 0,
+      "act_carry_entries": 0,
+      "carry_assessable_entries": 1,
+      "carry_censored_by_other_component": 0,
+      "carry_failures": 0,
+      "carry_failure_fraction": 0.0,
+      "by_case": {
+        "qualification-1": {
+          "attempted": 1,
+          "failures": 0
+        }
+      },
+      "qualified_for_declared_cases": true,
+      "successful_wall_s_median": 680.5264607500012
+    }
+  },
+  "same_scene_per_case": true,
+  "trials": [
+    {
+      "trial_id": "RGB--qualification-1--r0",
+      "condition": "RGB",
+      "raw": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/pixel-regression/trials/RGB--qualification-1--r0",
+      "artifact_sha256": {
+        "result.json": "03ab3577bcf93b435212e16d176770cc0cca30164dd762922b0a25cab99ebea3",
+        "scene.xml": "90c279d1c8fbd4b30c41fcbfd28254610f0aa8ac9357fe65898cba127a05a674",
+        "pair-decisions.json": "afed5f29864942f4f9dab4ed973b6510a0c6d3dd3d325388cd5c3b9704ef2adb",
+        "issued-commands.json": "21fa50b148c5c92fbc2a467c0e9029b3768040aa45c2f66f36cd4673febd5d33",
+        "evaluation-only.json": "a39b1a90db6002a8802d14d3ff6e9a047e85b422e97a01101bc317018bdf18df",
+        "execution.mp4": "a2d5a2188aef9fbe6e56214967f0b1e64e0ab71af0e6e24bba6db1da5ebfc73d"
+      },
+      "required_evidence_complete": true,
+      "artifact_json_valid": true,
+      "report_matches_readback": true,
+      "source_physics_checks_pass": true,
+      "outcome": {
+        "whole_success": true,
+        "robot_result_available": true,
+        "failure_kind": null,
+        "failure_phase": "FINISHED",
+        "error": null,
+        "stop_reason": "",
+        "carry_entered": true,
+        "act_carry_entered": false,
+        "failed_component": null,
+        "carry_censored_by_other_component": false,
+        "beam_success": true,
+        "robot_robot_contact_samples": 0,
+        "wall_s": 680.5264607500012
+      },
+      "wall_s": 680.5264607500012,
+      "commands": 960,
+      "act_model_calls": 0,
+      "mean_act_inference_s": null,
+      "external_llm_calls": 0,
+      "cost_usd": null,
+      "simultaneous_loaded_motion_s": 5.999999999858119,
+      "controller": "RGB",
+      "stop_mode": null,
+      "pure_act": false
+    }
+  ],
+  "scope": "Admission applies only to the declared fixed case suite. RGB-guarded and RGB-refined ACT are separately named. Physical completion, component carry entry, runtime errors and unattempted trials remain distinct. No communication, model-generalization or physical-robot claim."
+}
