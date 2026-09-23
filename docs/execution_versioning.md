@@ -32,8 +32,9 @@
 `config/rgb_execution_bundles/`에 버전별 JSON을 보존한다.
 
 - `dispatch-f1-local-contact-fine-v1`: 기존 `e099a4a` F1 성공의 참조 기록이다. 원래 실행기·접촉 설정과 원본 결과 해시에만 성공 근거가 적용되며 공통 adapter에서 선택하면 거절한다.
-- `rgb-adapter-legacy-v1`: 이전 공통 adapter 조건을 명시한 실험 버전이다. `legacy` 접촉 설정, 기존 명령 일정과 실패 이력을 유지한다. 성공 기준과의 차이를 확인하기 위한 버전 관리이며 이 변경으로 운반 성공을 복구했다고 주장하지 않는다.
-- `rgb-adapter-contact-fine-solo-parity-v1`: `local_contact_fine` 물리 설정과 단독 스킬의 팔 보간·안정화 시간을 기존 성공 실행에 맞춘 새 공통 adapter 후보이다. 공동 스킬의 명령 일정은 종전대로 두고, 경계 픽셀이 섞인 바퀴 영상의 국소 재검사를 포함한다. 등록 상태는 `experimental_unqualified`이며 실제 단독·공동 완주를 별도로 검증한다. 이전 두 번들은 읽기 전용 과거 기록으로 남는다.
+- `rgb-adapter-legacy-v1`: PR #113 당시 공통 adapter 조건을 보존한 실험 버전이다. 기존 JSON과 소스 해시는 변경하지 않는다. 현재 코드로 실행할 수 없으며 당시 checkout에서 재현한다.
+- `rgb-standard-dispatch-v2`: 표준 장면 생성·초기화와 연결한 이전 후보다. `legacy` 접촉 설정과 adapter의 기존 명령 일정을 사용한다. 운반 성공은 재검증되지 않았다.
+- `rgb-adapter-contact-fine-solo-parity-v1`: 표준 장면 위에서 `local_contact_fine` 물리 설정과 단독 스킬의 팔 보간·안정화 시간을 기존 성공 실행에 맞춘 새 공통 adapter 후보이다. 공동 스킬의 명령 일정은 종전대로 두고, 경계 픽셀이 섞인 바퀴 영상의 국소 재검사를 포함한다. 등록 상태는 `experimental_unqualified`이며 실제 단독·공동 완주를 별도로 검증한다. 이전 두 adapter 번들은 읽기 전용 과거 기록으로 남는다.
 
 새 backend 설정 schema는 `ugrp.rgb_skill_backend.v2`다. `execution_bundle_id`가 없거나 지원하지 않는 조합이면 거절한다. 과거 v1 설정은 당시 실행 기록으로 보존한다. 실행 전 정적 검사는 다음과 같다. 시뮬레이션·렌더링·외부 모델 호출은 하지 않는다.
 

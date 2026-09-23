@@ -1,14 +1,14 @@
 {
   "schema": "ugrp.rgb_execution_bundle.v1",
-  "id": "rgb-adapter-contact-fine-solo-parity-v1",
+  "id": "rgb-standard-dispatch-v2",
   "status": "experimental_unqualified",
   "adapter": "rgb_incremental_dispatch_v1",
-  "claim_scope": "new common RGB adapter candidate; physical transport unqualified until local replay",
+  "claim_scope": "standard dispatch scene integration; no inherited physical success",
   "effective": {
     "physics": {
-      "contact_solver_profile": "local_contact_fine",
-      "timestep_s": 0.00025,
-      "explicit_contact_pairs": 12,
+      "contact_solver_profile": "legacy",
+      "timestep_s": 0.002,
+      "explicit_contact_pairs": 0,
       "weld_active": false
     },
     "camera": {
@@ -34,26 +34,16 @@
       "owner_max_tick_s": 0.05,
       "pose_schedule_probe": {
         "pan_samples": [
-          1506,
-          1521,
-          1539,
-          1554,
-          1560
-        ],
-        "completion_s": 0.75
-      },
-      "pair_pose_schedule_probe": {
-        "pan_samples": [
           1530,
           1560
         ],
         "completion_s": 0.4
       },
-      "study_tick_period_s": 0.05,
-      "study_poll_period_s": 0.05,
       "worker_image_max_age_s": 1.0,
       "worker_wall_limit_s": 2.0,
-      "worker_wall_scope": "submission_to_consumption"
+      "worker_wall_scope": "submission_to_consumption",
+      "study_tick_period_s": 0.05,
+      "study_poll_period_s": 0.05
     }
   },
   "identity_binding": [
@@ -95,7 +85,7 @@
     "harness/dispatch_own_hold.py": "60f9ed5ea6cfb9efaaacc8ae530d58276019b6b9631e8ff44ade0e3de37db481",
     "harness/dispatch_pair_navigation.py": "b748270b83bc21616aa317fa44d331c6d9fa2023806805d1ca6656dbb2e38f7e",
     "harness/dispatch_plan.py": "b0f40cefcb45ffdc56d30e945fb402c5783d636fb7c9c1b6a510cf28af41e191",
-    "harness/dispatch_skill_binding.py": "e82f58223cdfcb0c6b31fc40d5d133aba79bc4cc58002ca044a98cb3a952dabf",
+    "harness/dispatch_skill_binding.py": "b6fd8df3dceae580934461292a6f2206ff9d0ce0bd9958603b9f254cd145373d",
     "harness/dispatch_translation_skew.py": "73a47886f6445b21f99b671826b8866d0aeef01977cf25124a408063f747b16d",
     "harness/dispatch_yield.py": "fc8005dd76d5ed0a8f9c7792592d2c79ad5124473f824b5525c132a4646a4d99",
     "harness/execution_trace.py": "9002a6b25599f7d8c084bc6686750eb2ccb557777047601b767fd0385b0eb0c5",
@@ -134,10 +124,10 @@
     "harness/rgb_communication_runtime.py": "bc55925100f897192ea0f7ddd9036ac4b974502290f8c7a2d0b48fa7e1481183",
     "harness/rgb_communication_scenarios.py": "a64dc3cb7c7b87f5ec812f56850b0d36b4db1ea93c0f53eb4dcbea2f1a1ea991",
     "harness/rgb_communication_study.py": "017cc11f13503c26c34649d26325e0659ee973f8ac313463fc5d78dfc7eef886",
-    "harness/rgb_execution_bundle.py": "a89ef7bb4e3e78185cd0b9f4406ded56132678aea69bdb1e102ee55885e7b290",
+    "harness/rgb_execution_bundle.py": "ee0634c37ccb32e84b6a6c228408a83524236cd65c14faf4995ad6557bd54375",
     "harness/rgb_execution_contract.py": "a9988e2a697dbb9df9f4171979e9578e0cb559e418487541374b460fe6b9cdee",
     "harness/rgb_execution_port.py": "bb2457c6fd5b7b582679d7bdbcd7aa870b5a5a8d104bdb9672da6c938c333db0",
-    "harness/rgb_skill_execution.py": "62925a1fcc93c0dbff9840b8a2eeb1cddb3bd5198d38261e84e7d3afcde280f0",
+    "harness/rgb_skill_execution.py": "93d5c657d1e19e75f904030e0b7ea1fe6629f43073764a9438c3930a696ead58",
     "harness/skill_errors.py": "12913287902d323decb007c8baf5606493ead763f3766fcdc9ad31d65cc5a6d1",
     "harness/solo_box_transport.py": "12620febd4445bfe25649e87797ab31b72d7ea1f1eb605051b45ee8a550f905f",
     "harness/state.py": "7f23b4f276326fb6d646c989614c204739f4e89e8f35f78bfe85b29836cc3ffd",
@@ -216,5 +206,7 @@
     "sim/warehouse_observation.py": "5dadf9df4be97d708dd8f70801c2e5807b2e471f448dec58da9959551f2ad43b",
     "sim/warehouse_research.py": "034a1d2898b9f7b2e1ac123a2be192b7e1c9f042b4d771930440db2132ad9058",
     "sim/wrist_load_sensor.py": "93f7fd64fc6a4c59b63b1c2ee860b938ce2ad52d9e7dfe84ba5edfcff390b3f6"
-  }
+  },
+  "parent_bundle_id": "rgb-adapter-legacy-v1",
+  "scene_definition": "sim.session_scenes.Scene"
 }

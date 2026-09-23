@@ -1,11 +1,10 @@
 """Physics owner for the research dispatch arena; never given to an actor."""
 from __future__ import annotations
 
-import hashlib
 from pathlib import Path
-from unittest.mock import patch
 
-from sim.research_dispatch_arena import ROBOTS, FIXED_TOP, build_scene_xml
+from sim.research_dispatch_arena import ROBOTS
+from sim.session_scenes import Scene
 
 
 class DispatchScene:
@@ -16,50 +15,43 @@ class DispatchScene:
         self.command_history={r:[] for r in ROBOTS}
         self.sequence=0
         self.physics_steps=self.weld_steps=self.obstacle_contact_steps=0
+        self.definition=None
 
     def open(self):
         import mujoco
-        import sim.multi_masterpi_production as production
+        from sim.multi_masterpi_production import MultiMasterPiProductionV2
         from sim.camera_robot_port import CameraRobotPort
-        from scripts.probe_dual_grasp_sync import _plain_beam_xml
-        original=_plain_beam_xml(production.build_multi_robot_xml)
-        def builder(*args,**kwargs):
-            kwargs['navigation_camera']=False
-            xml,self.manifest=build_scene_xml(original(*args,**kwargs),self.config)
-            profile=self.config.get('contact_solver_profile')
-            if profile is not None:
-                from sim.dispatch_contact_profile import contact_profile
-                xml=contact_profile(xml,profile)
-                self.manifest['scene_xml_sha256']=hashlib.sha256(xml.encode()).hexdigest()
-                self.manifest['contact_solver_profile']=profile
-            self.xml=xml
-            return xml
+        self.definition=Scene.from_dispatch_config(self.config)
         self.out.mkdir(parents=True,exist_ok=False)
         (self.out/'rgb').mkdir()
-        with patch.object(production,'build_multi_robot_xml',builder):
-            self.world=production.MultiMasterPiProductionV2(seed=self.config['seed'],
-                                    width=960,height=720,render=self.render)
-        w=self.world
-        # One-time authored reset only, before observations/actor calls.
-        for r,pose in self.config['setup_only']['spawns'].items():
-            w.controllers[r].set_base_pose_for_test(tuple(pose[:3]),pose[3])
-        for obj,joint in [('beam','team_beam_free'),('box','dispatch_box_free')]:
-            jid=mujoco.mj_name2id(w.model,mujoco.mjtObj.mjOBJ_JOINT,joint)
-            q=int(w.model.jnt_qposadr[jid]);v=int(w.model.jnt_dofadr[jid])
-            w.data.qpos[q:q+7]=[*self.config['setup_only']['cargo'][obj],1,0,0,0]
-            w.data.qvel[v:v+6]=0
-        w.data.eq_active[:]=0
-        mujoco.mj_forward(w.model,w.data)
-        w._team_joint_move_servos({r:{1:2000,3:740,4:2320,5:1320,6:1500} for r in ROBOTS},.6,settle_s=.4)
-        self.look_observer((2.6,-4.8,3.4))
-        self.ports={r:CameraRobotPort(w,r,allow_reverse=True,allow_mecanum=True) for r in ROBOTS}
-        self.obstacle_ids={i for i in range(w.model.ngeom)
-            if (mujoco.mj_id2name(w.model,mujoco.mjtObj.mjOBJ_GEOM,i) or '').startswith('dispatch_')
-            and w.model.geom_contype[i] and i != mujoco.mj_name2id(w.model,mujoco.mjtObj.mjOBJ_GEOM,'dispatch_box_geom')}
-        self.robot_ids={i for i in range(w.model.ngeom)
-            if (mujoco.mj_id2name(w.model,mujoco.mjtObj.mjOBJ_GEOM,i) or '').startswith(tuple(r+'__' for r in ROBOTS))}
-        self.initial_invariants=self.invariants()
-        (self.out/'scene.xml').write_text(self.xml)
+        try:
+            self.world=MultiMasterPiProductionV2(seed=self.config['seed'],
+                        width=960,height=720,render=self.render,
+                        warehouse_layout=self.definition.engine_layout,
+                        warehouse_cargo_ids=self.definition.scene['cargo_ids'],
+                        xml_transform=self.definition.transform)
+            w=self.world
+            self.manifest=self.definition.manifest
+            self.xml=w.scene_xml
+            self.definition.setup(w)
+            self.ports={r:CameraRobotPort(w,r,allow_reverse=True,allow_mecanum=True) for r in ROBOTS}
+            self.obstacle_ids={i for i in range(w.model.ngeom)
+                if (mujoco.mj_id2name(w.model,mujoco.mjtObj.mjOBJ_GEOM,i) or '').startswith('dispatch_')
+                and w.model.geom_contype[i] and i != mujoco.mj_name2id(w.model,mujoco.mjtObj.mjOBJ_GEOM,'dispatch_box_geom')}
+            self.robot_ids={i for i in range(w.model.ngeom)
+                if (mujoco.mj_id2name(w.model,mujoco.mjtObj.mjOBJ_GEOM,i) or '').startswith(tuple(r+'__' for r in ROBOTS))}
+            self.initial_invariants=self.invariants()
+            (self.out/'scene.xml').write_text(self.xml)
+        except BaseException:
+            for port in self.ports.values():
+                try:
+                    port.stop()
+                except Exception:
+                    pass
+            if self.world is not None:
+                self.world.close()
+                self.world=None
+            raise
         return self
 
     def look_observer(self,position):

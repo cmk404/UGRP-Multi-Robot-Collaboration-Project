@@ -15,6 +15,7 @@ from scripts.three_robot_runtime import ThreeRobotRuntime
 
 def test_cli_dispatch_reuses_skills_entry_with_operator_goal(monkeypatch, tmp_path):
     from scripts.sim_cli import main
+    monkeypatch.setattr('sim.workflow_manager.RECORDS', tmp_path / 'fixture-records')
     invoked = []
     monkeypatch.setattr('scripts.run_dispatch_e2e.main', lambda argv: invoked.append(argv) or 0)
     monkeypatch.setattr(sim_dispatch, 'bundled_models', lambda: (tmp_path/'grasp', tmp_path/'stages'))

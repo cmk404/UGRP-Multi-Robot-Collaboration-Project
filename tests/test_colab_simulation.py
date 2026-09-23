@@ -14,6 +14,8 @@ from scripts.run_colab_simulation import run
 def repo(tmp_path, monkeypatch):
     root = tmp_path / 'repo'
     (root / 'scripts').mkdir(parents=True)
+    (root / 'examples/task_stage_sync').mkdir(parents=True)
+    (root / 'examples/task_stage_sync/plan.json').write_text('{"fixture":"required runtime input"}')
     shutil.copy(Path(__file__).resolve().parents[1] / 'scripts/ugrp_session.py', root / 'scripts')
     (root / '.gitignore').write_text('outputs/\n')
     subprocess.run(['git', 'init', '-q', str(root)], check=True)
@@ -62,6 +64,7 @@ def test_cli_snapshot_preserves_real_source_and_excludes_untracked(repo):
     assert record['source_sha'] == subprocess.check_output(['git', '-C', str(snapshot), 'rev-parse', 'HEAD'], text=True).strip()
     assert not (snapshot/'private.env').exists()
     assert (snapshot/'scripts/ugrp_session.py').exists()
+    assert (snapshot/'examples/task_stage_sync/plan.json').read_bytes() == (repo/'examples/task_stage_sync/plan.json').read_bytes()
     assert subprocess.check_output(['git', '-C', str(snapshot), 'status', '--porcelain']) == b''
     assert subprocess.check_output(['git', '-C', str(snapshot), 'remote']) == b''
     compile(setup_code('/content/ugrp-test', record['sha256']), 'setup.py', 'exec')

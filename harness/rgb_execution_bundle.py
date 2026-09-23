@@ -21,6 +21,7 @@ REGISTRY = Path("config/rgb_execution_bundles")
 SCHEMA = "ugrp.rgb_execution_bundle.v1"
 RUNNABLE_ID = "rgb-adapter-contact-fine-solo-parity-v1"
 LEGACY_ID = "rgb-adapter-legacy-v1"
+RETIRED_IDS = frozenset({LEGACY_ID, "rgb-standard-dispatch-v2"})
 BASELINE_ID = "dispatch-f1-local-contact-fine-v1"
 REQUIRED_SOURCE_PATHS = frozenset({
     "harness/rgb_execution_bundle.py", "harness/rgb_skill_execution.py",
@@ -123,7 +124,7 @@ def source_closure(*, root: Path = ROOT) -> frozenset[str]:
 
 
 def load_bundle(bundle_id: str, *, root: Path = ROOT, require_runnable: bool = True) -> tuple[dict, str]:
-    if bundle_id not in {RUNNABLE_ID, LEGACY_ID, BASELINE_ID}:
+    if bundle_id not in {RUNNABLE_ID, BASELINE_ID, *RETIRED_IDS}:
         raise ValueError("unknown RGB execution bundle ID")
     path = root / REGISTRY / (bundle_id + ".json")
     raw = path.read_bytes()
@@ -133,7 +134,9 @@ def load_bundle(bundle_id: str, *, root: Path = ROOT, require_runnable: bool = T
     if value.get("status") not in {"experimental_unqualified", "historical_success_original_executor"}:
         raise ValueError("RGB execution bundle status missing")
     if require_runnable and (bundle_id != RUNNABLE_ID or value["status"] != "experimental_unqualified"):
-        raise ValueError("historical RGB execution bundle cannot run in this adapter")
+        if bundle_id in RETIRED_IDS:
+            raise ValueError("retired execution bundle requires its original source checkout")
+        raise ValueError("historical success bundle cannot run in this adapter")
     if set(value.get("effective", {})) != {"physics", "camera", "execution"}:
         raise ValueError("RGB execution effective contract incomplete")
     if bundle_id == RUNNABLE_ID and set(value.get("identity_binding", [])) != REQUIRED_IDENTITY_BINDING:

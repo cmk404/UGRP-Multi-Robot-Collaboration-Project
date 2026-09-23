@@ -293,11 +293,20 @@ def run(config, args):
 
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] == 'workflow':
+        from sim.workflow_manager import workflow_cli
+        return workflow_cli(argv[1:], root=ROOT)
     if argv and argv[0] in ('start', 'dispatch'):
         from scripts.sim_dispatch import choose, main as dispatch
         try:
             if argv[0] == 'dispatch':
-                return dispatch(argv[1:])
+                from sim.workflow_manager import _option, run_inprocess
+                output_value = _option(argv[1:], '--output')
+                supplied = Path(output_value) if output_value else None
+                def invoke(output):
+                    forwarded = argv[1:] if supplied else [*argv[1:], '--output', str(output)]
+                    return dispatch(forwarded)
+                return run_inprocess(ROOT, 'dispatch', argv, invoke, output=supplied)
             if len(argv) != 1 or not sys.stdin.isatty():
                 raise ValueError('start requires an interactive terminal; use dispatch or console with explicit options')
             return choose()
@@ -306,6 +315,7 @@ def main(argv=None):
             return 2
     parser = argparse.ArgumentParser(description="UGRP native MuJoCo + configurable local simulation")
     sub = parser.add_subparsers(dest="command", required=True)
+    sub.add_parser('workflow', help='plan/run registered workflows and inspect shared execution records; workflow --help')
     sub.add_parser('start', help='choose existing plan/skills, saved-plan replay, manual or configured execution')
     sub.add_parser('dispatch', help='existing peer planning and RGB skills in the native window; dispatch --help')
     init = sub.add_parser("init", help="write a new editable JSON configuration")
@@ -441,7 +451,12 @@ def main(argv=None):
                 config["run"][flag] = getattr(args, flag)
         if args.command == "console" and args.mode == "script" and not (config["actions"] or config["controllers"]):
             raise ValueError("script mode requires actions/controllers in the config")
-        return run(validate_config(config), args)
+        from sim.workflow_manager import run_inprocess
+        resolved = validate_config(config)
+        def invoke(output):
+            args.output = output
+            return run(resolved, args)
+        return run_inprocess(ROOT, 'local', argv, invoke, output=args.output, inputs=[args.config])
     except (ValueError, OSError, RuntimeError) as error:
         parser.exit(2, f"sim: {error}\n")
 

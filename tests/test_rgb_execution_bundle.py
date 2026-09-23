@@ -26,10 +26,19 @@ def test_historical_success_is_separate_from_experimental_adapter():
     assert baseline["effective"]["execution"]["pose_schedule_probe"]["pan_samples"] == [1506, 1521, 1539, 1554, 1560]
     assert current["effective"]["execution"]["pair_pose_schedule_probe"] == {"pan_samples": [1530, 1560], "completion_s": .4}
     assert "execution.owner" in contract.baseline_diff(current["effective"])
-    with pytest.raises(ValueError, match="historical RGB execution bundle cannot run"):
+    with pytest.raises(ValueError, match="historical success bundle cannot run"):
         contract.load_bundle(contract.BASELINE_ID)
-    with pytest.raises(ValueError, match="historical RGB execution bundle cannot run"):
+    with pytest.raises(ValueError, match="original source checkout"):
         contract.load_bundle(contract.LEGACY_ID)
+
+
+@pytest.mark.parametrize("bundle_id", sorted(contract.RETIRED_IDS))
+def test_retired_adapter_is_readable_but_cannot_run_as_current_source(bundle_id):
+    old, _ = contract.load_bundle(bundle_id, require_runnable=False)
+    assert old["id"] == bundle_id
+    assert old["status"] == "experimental_unqualified"
+    with pytest.raises(ValueError, match="original source checkout"):
+        contract.load_bundle(bundle_id)
 
 
 def isolated_registry(tmp_path):
@@ -40,7 +49,7 @@ def isolated_registry(tmp_path):
         path = root / name
         path.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(contract.ROOT / name, path)
-    for bundle_id in (contract.RUNNABLE_ID, contract.LEGACY_ID, contract.BASELINE_ID):
+    for bundle_id in (contract.RUNNABLE_ID, contract.BASELINE_ID, *contract.RETIRED_IDS):
         shutil.copyfile(contract.ROOT / contract.REGISTRY / (bundle_id + ".json"),
                         registry / (bundle_id + ".json"))
     return root

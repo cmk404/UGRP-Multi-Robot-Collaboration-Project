@@ -72,7 +72,7 @@ jobs:
         run: python -m pip install --requirement requirements-test.txt
 
       - name: Verify current RGB execution bundle and source pins
-        run: python -m harness.rgb_execution_bundle verify-current --id rgb-adapter-legacy-v1
+        run: python -m harness.rgb_execution_bundle verify-current --id rgb-standard-dispatch-v2
 
       - name: Reject changes or removal of existing RGB execution bundles
         if: github.event_name == 'pull_request'
@@ -83,6 +83,9 @@ jobs:
 
       - name: Exercise the task-stage JSON contract with fixture robot ports
         run: python scripts/demo_task_stage_sync.py --output outputs/task-stage-sync-ci
+
+      - name: Exercise the standard workflow manager with an offline fixture
+        run: python -m scripts.sim_cli workflow run stage-sync --record outputs/managed-stage-sync-ci --timeout 60
 
       - name: Exercise variable-cargo mission protocol fixtures
         run: python scripts/prepare_multi_object_pilot.py --output outputs/multi-object-pilot-ci
@@ -137,6 +140,9 @@ jobs:
 
       - name: Check demo input and output boundaries
         run: python -m pytest -q tests/test_sim_quickstart.py tests/test_simulation_recovery_optional.py
+
+      - name: Preserve dispatch and ACT scene physics across standard and research adapters
+        run: python -m pytest -q tests/test_dispatch_scene_parity.py
 
       - name: Keep the native window open after reset and invalid physics
         run: MUJOCO_GL=glfw xvfb-run -a python scripts/ugrp_session.py run native-recovery-ci -- python -m scripts.check_simulation_recovery --output outputs/simulation-ci/recovery
