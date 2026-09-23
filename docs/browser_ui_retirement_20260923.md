@@ -10,6 +10,9 @@
 기존 실험 코드와 회귀검사가 사용하는 `harness/web.py`의 내부 HTTP API·상태 처리 코드는
 보존했다. 이는 지원되는 브라우저 화면이나 현재 시뮬레이션 진입점을 뜻하지 않는다.
 실물 로봇의 전원·프로세스나 기존 raw 기록은 이 변경에서 건드리지 않았다.
+기존 RGB 실행 번들의 소스 해시를 유지하기 위해 `harness/chat.py`와
+`scripts/robot_actions.py`의 과거 `--chat` 예시 문구는 그대로 남겼다. 현재 CLI에서는
+`--chat`을 사용할 수 없으며 아래 표준 경로를 따른다.
 
 현재 사용 경로는 [표준 시뮬레이션 관리](simulation_management.md)의 CLI와
 [MuJoCo 기본 창](local_simulation.md), 완료된 실행 기록의 [TensorBoard](tensorboard.md)다.
