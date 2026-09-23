@@ -1,0 +1,56 @@
+{
+  "scope": "Same frozen source: Colab and Mac each 2 valid failures. Earlier Mac D3 shown separately as historical baseline; its raw paths are unavailable. No transport success or communication comparison.",
+  "url": "http://127.0.0.1:6006/?pinnedCards=%5B%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Freported_success%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Fevidence_valid%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fcommands%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fexternal_model_calls%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fprocess_wall_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fplanner_decisions%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fplanner_response_time_s%22%7D%5D&smoothing=0&runFilter=%5E%280923-RGB%EC%88%98%EC%A0%95-%28Colab%7CMac%29%2F%7C0922-RGB%EB%A1%9C%EC%BB%AC-%29#timeseries",
+  "run_filter": "^(0923-RGB수정-(Colab|Mac)/|0922-RGB로컬-)",
+  "pinned_tags": [
+    "evaluation/reported_success",
+    "evaluation/evidence_valid",
+    "result/commands",
+    "result/external_model_calls",
+    "result/process_wall_s",
+    "result/planner_decisions",
+    "result/planner_response_time_s"
+  ],
+  "hparams_visible_columns": [
+    "outcome",
+    "result/wall_s",
+    "result/commands",
+    "evaluation/reported_success"
+  ],
+  "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-RGB수정-Mac",
+  "event_readback_verified": true,
+  "media_range_verified": true,
+  "ui_verified": true,
+  "ui_verification": {
+    "runs": "Six runs selected: 2 historical D3, 2 Colab, 2 Mac.",
+    "pinned_cards": 7,
+    "mac_values": {
+      "공동": {
+        "success": 0,
+        "valid": 1,
+        "commands": 410,
+        "external_calls": 0,
+        "process_wall_s": 51.144,
+        "planner_decisions": 57,
+        "planner_response_time_s": 0.0394
+      },
+      "단독": {
+        "success": 0,
+        "valid": 1,
+        "commands": 701,
+        "external_calls": 0,
+        "process_wall_s": 102.3515,
+        "planner_decisions": 76,
+        "planner_response_time_s": 0.0538
+      }
+    },
+    "hparams_columns_applied": [
+      "outcome",
+      "result/wall_s",
+      "result/commands",
+      "evaluation/reported_success"
+    ],
+    "hparams_rows": "Both failure; runtime wall 48.786/100.01, commands 410/701, success 0 displayed.",
+    "response_time_scope": "Offline planner total response time; external model response is not applicable."
+  }
+}

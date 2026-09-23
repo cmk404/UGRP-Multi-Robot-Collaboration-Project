@@ -2,6 +2,7 @@
 
 현재 코드의 진입점은 [현재 상태](../docs/current_status.md)를 참고한다. 아래는 실행 SHA별 보존 기록이며 과거 실패와 후속 결과를 함께 남긴다. 필요한 ID만 골라 읽는다.
 
+- [2026-09-23 RGB 실행 계약 수정·4회 재생](2026-09-23-rgb-execution-contract/README.md) — 초기 해상도·공동 식별 결함 수정 후 Colab·Mac 단독/공동 모두 물리 완주 실패; 네 실패 경계·원본 해시·독립 감사 보존.
 - [2026-09-22 native 시뮬레이션 CLI/API](2026-09-22-native-simulation/README.md) — Mac·Ubuntu 공통 설정/API, native 창·headless·RGB·reset, Linux 종료 오류 수정과 검증 한계.
 - [2026-09-22 브라우저 뷰어 검증 이력 (구현 폐기)](2026-09-22-local-simulation-live/README.md) — 네 카메라·수동 이동·일시정지·초기화·종료 통합 검사; 초기 검사 실패 포함, 자율 운반 평가는 아님.
 - [2026-09-22 RGB 통신 기반 최소 물리 재생](2026-09-22-rgb-communication-replay/README.md) — Colab 단독/공동 2회 회수, LLM 0회; 모두 종료·평가 clock 모순으로 invalid_artifact. 물리 성공·통신 효과 미입증.

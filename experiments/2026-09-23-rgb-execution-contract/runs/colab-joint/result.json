@@ -1,0 +1,335 @@
+{
+  "run_id": "rgb-contract-20260923-joint",
+  "order": 2,
+  "scenario_id": "rgb-contract-20260923-joint",
+  "condition": "none",
+  "seed": 11,
+  "repeat": 0,
+  "artifact_relpath": ".",
+  "outcome": "failure",
+  "mission_complete": false,
+  "physical_mission_complete": false,
+  "runtime_outcome": "completed",
+  "runtime_termination": {
+    "actions": {
+      "r1": 1,
+      "r2": 0,
+      "r3": 1
+    },
+    "actor_finish_claims": {
+      "r1": false,
+      "r2": false,
+      "r3": false
+    },
+    "actor_finish_details": {
+      "r1": "cannot_continue",
+      "r2": "cannot_continue",
+      "r3": "cannot_continue"
+    },
+    "calls": {
+      "r1": 3,
+      "r2": 1,
+      "r3": 3
+    },
+    "clock": {
+      "clock_domain": "sim",
+      "last_acknowledged_time_s": 2.0499999999998515,
+      "last_successful_requested_tick_s": 2.0500000000000003,
+      "reason": "VERIFIED_CLOCK_SNAPSHOT",
+      "requested_tick_s": 2.0500000000000003,
+      "schema": "rgb-runtime-clock.v1",
+      "terminal_time_s": 2.0499999999998515,
+      "terminal_time_status": "verified"
+    },
+    "close_error": null,
+    "condition": "none",
+    "external_model_call_upper_bound": 0,
+    "external_model_calls": 0,
+    "external_model_calls_by_robot": {
+      "r1": 0,
+      "r2": 0,
+      "r3": 0
+    },
+    "message_bytes": {
+      "r1": 0,
+      "r2": 0,
+      "r3": 0
+    },
+    "messages": {
+      "r1": 0,
+      "r2": 0,
+      "r3": 0
+    },
+    "outcome": "completed",
+    "peak_in_flight": 3,
+    "pending_planner_requests": {},
+    "planner_decisions": 7,
+    "primary_error": null,
+    "retirement_reasons": {},
+    "run_id": "rgb-contract-20260923-joint",
+    "termination_reason": "ALL_ACTORS_FINISHED",
+    "ticks": 42,
+    "tokens": {
+      "charged_input_tokens": 0,
+      "charged_output_tokens": 0,
+      "measured_input_tokens": 0,
+      "measured_output_tokens": 0,
+      "unknown_input_tokens_calls": 0,
+      "unknown_output_tokens_calls": 0
+    },
+    "trace_events": 37,
+    "unknown_external_call_requests": []
+  },
+  "evaluator_verdict": {
+    "mission_complete": false,
+    "objects": {
+      "box": {
+        "attempted": false,
+        "selected_dock": null,
+        "physical_success": false,
+        "raw": null
+      },
+      "beam": {
+        "attempted": true,
+        "selected_dock": "dock_a",
+        "physical_success": false,
+        "raw": {
+          "max_lift_m": 1.2707543350920503e-13,
+          "displacement_m": 0.0,
+          "lift_observed_by_referee": false,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "carry_clearance": {
+            "sampled_continuous_clearance": false,
+            "samples": 0,
+            "floor_contact_samples": 0,
+            "window_s": null,
+            "scope": "Post-run referee samples only; never actor input. No claim about contact between samples."
+          },
+          "physical_success": false
+        }
+      }
+    },
+    "raw_by_dock": {
+      "dock_a": {
+        "physical_success": false,
+        "cargo": {
+          "beam": {
+            "max_lift_m": 1.2707543350920503e-13,
+            "displacement_m": 0.0,
+            "lift_observed_by_referee": false,
+            "inside_slot_at_end": false,
+            "released_supported_stable": false,
+            "carry_clearance": {
+              "sampled_continuous_clearance": false,
+              "samples": 0,
+              "floor_contact_samples": 0,
+              "window_s": null,
+              "scope": "Post-run referee samples only; never actor input. No claim about contact between samples."
+            },
+            "physical_success": false
+          },
+          "box": {
+            "max_lift_m": 3.0815627827252e-14,
+            "displacement_m": 0.0,
+            "lift_observed_by_referee": false,
+            "inside_slot_at_end": false,
+            "released_supported_stable": false,
+            "carry_clearance": {
+              "sampled_continuous_clearance": false
+            },
+            "physical_success": false
+          }
+        },
+        "concurrent_transport": {
+          "simultaneous_loaded_motion_s": 0.0,
+          "intervals_s": [],
+          "minimum_displacement_per_sample_m": 0.001,
+          "max_sample_gap_s": 0.11,
+          "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+        },
+        "robot_robot_contact_samples": 0,
+        "robot_path_length_m": {
+          "r1": 0.026740856664440302,
+          "r2": 1.2570495546636788e-09,
+          "r3": 1.2571215998902503e-09
+        },
+        "all_three_body_motion_sim_s": 0,
+        "weld_steps": 0,
+        "samples": 22,
+        "stable_window_s": 1.0499999999998844
+      },
+      "dock_b": {
+        "physical_success": false,
+        "cargo": {
+          "beam": {
+            "max_lift_m": 1.2707543350920503e-13,
+            "displacement_m": 0.0,
+            "lift_observed_by_referee": false,
+            "inside_slot_at_end": false,
+            "released_supported_stable": false,
+            "carry_clearance": {
+              "sampled_continuous_clearance": false
+            },
+            "physical_success": false
+          },
+          "box": {
+            "max_lift_m": 3.0815627827252e-14,
+            "displacement_m": 0.0,
+            "lift_observed_by_referee": false,
+            "inside_slot_at_end": false,
+            "released_supported_stable": false,
+            "carry_clearance": {
+              "sampled_continuous_clearance": false
+            },
+            "physical_success": false
+          }
+        },
+        "concurrent_transport": {
+          "simultaneous_loaded_motion_s": 0.0,
+          "intervals_s": [],
+          "minimum_displacement_per_sample_m": 0.001,
+          "max_sample_gap_s": 0.11,
+          "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+        },
+        "robot_robot_contact_samples": 0,
+        "robot_path_length_m": {
+          "r1": 0.026740856664440302,
+          "r2": 1.2570495546636788e-09,
+          "r3": 1.2571215998902503e-09
+        },
+        "all_three_body_motion_sim_s": 0,
+        "weld_steps": 0,
+        "samples": 22,
+        "stable_window_s": 1.0499999999998844
+      }
+    },
+    "recovery": {
+      "required": false,
+      "reached": false,
+      "succeeded": false
+    },
+    "meaning": "post-run sampled physical evaluator; solo/pair diagnostic targets are derived separately"
+  },
+  "actor_finish_claims": {
+    "r1": false,
+    "r2": false,
+    "r3": false
+  },
+  "false_finish_claim": false,
+  "false_finish_claim_by_robot": {
+    "r1": false,
+    "r2": false,
+    "r3": false
+  },
+  "termination_verdict_disagreement": false,
+  "reason": "ALL_ACTORS_FINISHED",
+  "objects": {
+    "box": {
+      "attempted": false,
+      "selected_dock": null,
+      "physical_success": false,
+      "raw": null
+    },
+    "beam": {
+      "attempted": true,
+      "selected_dock": "dock_a",
+      "physical_success": false,
+      "raw": {
+        "max_lift_m": 1.2707543350920503e-13,
+        "displacement_m": 0.0,
+        "lift_observed_by_referee": false,
+        "inside_slot_at_end": false,
+        "released_supported_stable": false,
+        "carry_clearance": {
+          "sampled_continuous_clearance": false,
+          "samples": 0,
+          "floor_contact_samples": 0,
+          "window_s": null,
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples."
+        },
+        "physical_success": false
+      }
+    }
+  },
+  "recovery": {
+    "required": false,
+    "reached": false,
+    "succeeded": false
+  },
+  "metrics": {
+    "wall_time_s": 67.86013633800007,
+    "sim_time_s": 2.0499999999998515,
+    "high_level_actions": 2,
+    "messages": 0,
+    "model_calls": null,
+    "planner_decisions": 7,
+    "external_model_calls": 0,
+    "message_bytes": 0,
+    "message_tokens": null,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "model_response_time_s": null,
+    "model_response_time_s_mean": null,
+    "external_model_call_upper_bound": 0,
+    "planner_response_time_s": 0.004847784000048705,
+    "pending_planner_requests": 0,
+    "commands": 13
+  },
+  "measurement_status": {
+    "wall_time_s": "measured",
+    "sim_time_s": "verified_supervisor_terminal_clock",
+    "high_level_actions": "measured",
+    "messages": "measured",
+    "model_calls": "not_measured",
+    "planner_decisions": "measured",
+    "external_model_calls": "measured",
+    "message_bytes": "measured",
+    "message_tokens": "not_measured",
+    "input_tokens": "measured",
+    "output_tokens": "measured",
+    "model_response_time_s": "not_applicable_offline_replay",
+    "model_response_time_s_mean": "not_applicable_offline_replay",
+    "external_model_call_upper_bound": "bounded",
+    "planner_response_time_s": "measured",
+    "commands": "measured"
+  },
+  "artifacts": {
+    "runtime": "791a0785f60138a02cece8ffc94bf46e6cf2228ffaee474cc0e5ac05928172a7",
+    "evaluator": "69c67fb88cc15081cee8779ef8c48b363bce29a170fa34cf92e0425c06a8bd4f"
+  },
+  "evaluator_scope": "deterministic_physical_replay; evaluation-only after runtime shutdown",
+  "interactions": {
+    "issued_command_overlap_sim_s": 0.39999999999999997,
+    "independent_task_command_overlap_sim_s": 0.0,
+    "issued_command_busy_sim_s_by_robot": {
+      "r1": 0.8999999999999999,
+      "r2": 0.0,
+      "r3": 0.39999999999999997
+    },
+    "wait_decisions_by_robot": {
+      "r1": 1,
+      "r2": 0,
+      "r3": 1
+    },
+    "message_preceded_action_changes": [],
+    "deadlock_observed": null,
+    "interpretation": "Issued command intervals are not measured motion; temporal message/action links are not causal effects."
+  },
+  "evaluator_snapshot_sha256": "c5dbf8666468e70bc1292654d9ee4506b131cb0095c70c7fd5d8380324e4fb2a",
+  "schema_version": "rgb-communication-trial-result.v2",
+  "source_sha": "6089f80519cab7b9c3c886f92ca71668249a41ea",
+  "config_sha256": "b02338ddf2403e0966f1b3970bb2bbf1eb88429b42b5ea2edd2f1858e34fed29",
+  "evidence_kind": "deterministic_physical_replay",
+  "claim_scope": "development_connection_smoke",
+  "source_artifact_hashes": {
+    "plan.json": "8a59a64c7066ad26fd34d5689aac9e7e1eb6fcfecb9173a2b7f79192f729de24",
+    "runtime.jsonl": "791a0785f60138a02cece8ffc94bf46e6cf2228ffaee474cc0e5ac05928172a7",
+    "evaluator.json": "69c67fb88cc15081cee8779ef8c48b363bce29a170fa34cf92e0425c06a8bd4f"
+  },
+  "replay_target_objects": [
+    "beam"
+  ],
+  "replay_goal_complete": false,
+  "replay_goal_scope": "selected diagnostic objects only; does not override full mission_complete"
+}

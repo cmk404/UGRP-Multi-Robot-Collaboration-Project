@@ -1,0 +1,221 @@
+{
+  "schema": "rgb-a3-postrun-replay-review.v1",
+  "source_sha": "6089f80519cab7b9c3c886f92ca71668249a41ea",
+  "scope": "recovered originals and frozen-code offline image decisions; no physics or model calls",
+  "verdict": "valid_failures",
+  "archive_verified": true,
+  "result_file_hashes_rechecked": 100,
+  "planned_trials": 2,
+  "physical_successes": 0,
+  "runs": [
+    {
+      "run_id": "rgb-contract-20260923-joint",
+      "target": "beam",
+      "outcome": "failure",
+      "replay_goal_complete": false,
+      "runtime_outcome": "completed",
+      "termination_reason": "ALL_ACTORS_FINISHED",
+      "runtime_terminal_sim_s": 2.0499999999998515,
+      "evaluator_snapshot_sim_s": 2.0499999999998515,
+      "commands": 13,
+      "external_model_calls": 0,
+      "messages": 0,
+      "referee_displacement_m": 0.0,
+      "worker_rejections": [
+        {
+          "robot_id": "r1",
+          "guard": "completed_staleness",
+          "image_age_s": 0.09999999999999987,
+          "submission_to_poll_wall_s": 3.259910428000012,
+          "submission_to_completion_wall_s": 0.12741743300000508,
+          "completion_to_poll_wall_s": 3.132492995000007
+        },
+        {
+          "robot_id": "r3",
+          "guard": "completed_staleness",
+          "image_age_s": 0.09999999999999987,
+          "submission_to_poll_wall_s": 3.2598564610000267,
+          "submission_to_completion_wall_s": 0.0036256979999507166,
+          "completion_to_poll_wall_s": 3.256230763000076
+        }
+      ],
+      "runtime_images_rehashed": 14,
+      "skill_images_rehashed": 16,
+      "runtime_observations": 7,
+      "skill_observations": 8
+    },
+    {
+      "run_id": "rgb-contract-20260923-solo",
+      "target": "box",
+      "outcome": "failure",
+      "replay_goal_complete": false,
+      "runtime_outcome": "completed",
+      "termination_reason": "ALL_ACTORS_FINISHED",
+      "runtime_terminal_sim_s": 1.0499999999999619,
+      "evaluator_snapshot_sim_s": 1.0499999999999619,
+      "commands": 5,
+      "external_model_calls": 0,
+      "messages": 0,
+      "referee_displacement_m": 0.0,
+      "worker_rejections": [
+        {
+          "robot_id": "r2",
+          "guard": "completed_staleness",
+          "image_age_s": 0.25,
+          "submission_to_poll_wall_s": 2.3597758350000504,
+          "submission_to_completion_wall_s": 0.6785133000000769,
+          "completion_to_poll_wall_s": 1.6812625349999735
+        }
+      ],
+      "runtime_images_rehashed": 8,
+      "skill_images_rehashed": 4,
+      "runtime_observations": 4,
+      "skill_observations": 2
+    }
+  ],
+  "solo_960_to_640": {
+    "consumed_first_transform_colab": {
+      "method": "cv2.resize 640x480 then JPEG quality 95",
+      "raw_size": [
+        960,
+        720
+      ],
+      "skill_size": [
+        640,
+        480
+      ],
+      "raw_sha256": "7d5fc8ca02f501b70db7e8d2bad6c5ea329fc1b4494069238cc43b74caca4aa2",
+      "skill_sha256": "87cfcd0fc9214c4820472af267eaf0e4b0ba2cac1ba3938592fea0d45928d5a6"
+    },
+    "offline_decisions": [
+      {
+        "observation_id": "r2-000003",
+        "raw_own_sha256": "7d5fc8ca02f501b70db7e8d2bad6c5ea329fc1b4494069238cc43b74caca4aa2",
+        "raw_size": [
+          960,
+          720
+        ],
+        "normalized_size": [
+          640,
+          480
+        ],
+        "mac_offline_normalized_sha256": "0bdd323c0845d8f043edd74818869afd88f330d9f5cc58145bc18a65d3a1524c",
+        "new_action_mac_offline": {
+          "kind": "pose",
+          "pulses": {
+            "1": 2000,
+            "3": 740,
+            "4": 2320,
+            "5": 1320,
+            "6": 1500
+          }
+        },
+        "old_action_mac_offline": {
+          "kind": "pose",
+          "pulses": {
+            "1": 2000,
+            "3": 740,
+            "4": 2320,
+            "5": 1320,
+            "6": 1500
+          }
+        }
+      },
+      {
+        "observation_id": "r2-000004",
+        "raw_own_sha256": "f612ed4dbc0ec9ceb97fc56c6234e0be234cf4ef6f4812af96a39da18bfc1480",
+        "raw_size": [
+          960,
+          720
+        ],
+        "normalized_size": [
+          640,
+          480
+        ],
+        "mac_offline_normalized_sha256": "9a7715db5d9306e8623de0e30b3441d8907a3ceef3bb29b5127e80a0d5360513",
+        "new_action_mac_offline": {
+          "kind": "drive",
+          "fwd": 0.0,
+          "turn": 0.12,
+          "duration": 0.4
+        },
+        "old_action_mac_offline": {
+          "kind": "pose",
+          "pulses": {
+            "6": 1600
+          }
+        }
+      }
+    ],
+    "second_decision_consumed": false,
+    "interpretation": "960-to-640 contract was used for the first consumed decision. The second saved raw frame produces a drive after normalization and a pan pose on the old path in Mac offline replay, but the Colab second worker result was rejected before consumption. Mac and Colab JPEG encoders differ; the normalized byte hash is not used as a cross-platform equality claim."
+  },
+  "joint_lower_identity": {
+    "lower_offline_decisions": [
+      {
+        "observation_id": "r1-000004",
+        "top_sha256": "7cf269e2b32bbc5467d8bdc5fe409b02f2aba6b36fa887d50d19495756f2937d",
+        "phase": "identify_lower",
+        "action": {
+          "kind": "drive",
+          "fwd": 0.1,
+          "turn": 0.0,
+          "duration": 0.6
+        },
+        "ready": false,
+        "evidence": {
+          "identity_probe": "own_drive_issued",
+          "own_motion": true
+        }
+      },
+      {
+        "observation_id": "r1-000005",
+        "top_sha256": "a1f2bc7182674c57adc6801cebe0b176d46e3fc8090d821ada68606366441c09",
+        "phase": "identify_lower",
+        "action": {
+          "kind": "wait",
+          "duration": 0.3
+        },
+        "ready": false,
+        "evidence": {
+          "identity_probe": "own_drive_settling",
+          "own_motion": true
+        }
+      },
+      {
+        "observation_id": "r1-000008",
+        "top_sha256": "718f81695ec4164e29498a271fa081c9ff1d12968c93d234ad4b5a6993a45839",
+        "phase": "identify_lower",
+        "action": {
+          "kind": "wait",
+          "duration": 0.2
+        },
+        "ready": true,
+        "evidence": {
+          "identity_probe": "own_motion_claim",
+          "claim": {
+            "center": [
+              0.11261730969760167,
+              0.20027816411682892
+            ],
+            "fresh": true,
+            "age": 0,
+            "changed_pixels": 2530,
+            "valid": true,
+            "reason": "compact motion follows prior own action"
+          },
+          "own_motion": true
+        }
+      }
+    ],
+    "third_identity_claim_consumed": false,
+    "upper_identity_probe_reached": false,
+    "interpretation": "The saved lower TOP frames yield a fresh compact-motion identity claim under the frozen controller. The 1.15-second worker returned but exceeded the fixed submission-to-consumption wall cap, so the claim was not accepted by the runtime. No upper identity or coarse phase was reached."
+  },
+  "remaining": [
+    "No valid physical delivery in either replay.",
+    "Second solo and third lower-pair worker outputs were rejected by the unchanged 2-second total wall guard before actor consumption.",
+    "The Colab normalized JPEG bytes and rejected worker decision payloads were not retained; Mac offline action replay is a bounded inference from saved raw frames, not a recovered runtime decision.",
+    "Upper identity and joint coarse approach were not reached; LLM communication and new-map performance remain untested."
+  ]
+}
