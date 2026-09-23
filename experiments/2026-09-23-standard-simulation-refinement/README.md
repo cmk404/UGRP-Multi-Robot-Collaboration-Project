@@ -19,6 +19,10 @@
 
 ## 결과 열람과 보관
 
+- PR에서도 바로 볼 수 있는 축소 미리보기: 아래 [상단 카메라 22개 장면](top-overview.jpg), [지도 도식](diagram-overview.jpg), [로봇 자기 RGB](own-overview.jpg), [네이티브 실행 화면](native-overview.jpg). 이미지는 시각 검토용이며 전체 raw 증거의 대체물이 아니다.
+
+![ACT 지도 22개 상단 카메라 미리보기](top-overview.jpg)
+
 - 22개 장면을 한눈에 보는 원본: `/Users/changmin/projects/ugrp/outputs/simulation-runs/20260923-141800-act-map-suite-2a1400e3/artifacts/top-overview.jpg`; 개별 지도·자기 RGB와 평가 JSON은 같은 실행 폴더에 있다.
 - 네이티브 영상: `/Users/changmin/projects/ugrp/outputs/simulation-runs/20260923-141843-local-f64cce22/artifacts/motion.mp4`.
 - 새 TensorBoard 스냅샷: `/Users/changmin/projects/ugrp/outputs/tensorboard/0923-standard-preview`. 공유 기본 logdir에서 새 실행과 `0922-native-simulation/07-window-final`을 함께 열어 Time Series 4개, HParams 열, 영상 링크와 실제 scalar 값(`wall_s=9.2827`, `commands=0`, `model_calls=0`, `protocol_complete=1`)을 확인했다. 지도 묶음은 정책·작업 실행이 아닌 정적 검사라 운반 성공 지표를 만들지 않았다.
