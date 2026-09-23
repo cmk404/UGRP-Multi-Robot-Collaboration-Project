@@ -1,0 +1,62 @@
+{
+  "scope": "read-only finite replay of saved v11 fine phase3 RGB; no source edit, render, model training, or physics execution",
+  "source_sha": "ea9759eb83d003020c72ec55e084dd85118b1309",
+  "inputs": {
+    "pair_decisions": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260923/native-v11-diagnostic/pair-decisions.json",
+    "pair_decisions_sha256": "66baf5e9c8a6eb96c368d5ad622e55654cbb5730e2165812ed38a7504f6238eb",
+    "forward_model_sha256": {
+      "r1": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45",
+      "r3": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+    }
+  },
+  "phase3_recorded": {
+    "frames": 160,
+    "perception_wall_median_s": 0.026008104505308438,
+    "perception_wall_p90_s": 0.029875467004603706,
+    "render_wait_wall_median_s": 0.17203410450019874,
+    "render_wait_wall_p90_s": 0.2476459172918112,
+    "pair_bind_wall_median_s": 0.010775271002785303,
+    "decision_age_median_sim_s": 0.23999999999432475,
+    "decision_age_p90_sim_s": 0.319999999992433,
+    "decision_age_max_sim_s": 0.5599999999867578
+  },
+  "replay": {
+    "saved_frame_ids": [
+      550,
+      552,
+      603,
+      656,
+      763,
+      871,
+      980
+    ],
+    "pair_predict_wall_s": [
+      0.0542,
+      0.0195,
+      0.0193,
+      0.0191,
+      0.0451,
+      0.0192,
+      0.0195
+    ],
+    "profiled_frame_ids": [
+      550,
+      763
+    ],
+    "unprofiled_typical_pair_median_s": 0.0193,
+    "all_seven_pair_median_s": 0.01950683399627451,
+    "model_schema": "ugrp.rgb_varied_start_pose.v1",
+    "all_sample_predictions_ok": true
+  },
+  "profile": {
+    "method": "cProfile on both model slots for first and middle saved frames; includes profiler and first-import overhead",
+    "four_predict_calls_cumulative_s": 0.099,
+    "predict_geometry_cumulative_s": 0.096,
+    "validate_tree_384_calls_cumulative_s": 0.07,
+    "imdecode_8_calls_cumulative_s": 0.007,
+    "features_4_calls_cumulative_s": 0.017,
+    "note": "The eight imdecode calls are four TOP JPEG decodes plus four per-model background PNG decodes; cProfile time cannot be treated as uninstrumented wall saving."
+  },
+  "finding": "Both slots receive byte-identical canonical TOP JPEG, but the pose models use different fixed ROIs and different saved background/forest. Own JPEG is unused by this model schema. Only the full-frame TOP decode is pure duplicate across slots; its measured scale is milliseconds, not 0.03s or greater. Revalidating all 96 trees per model call dominates the profiled Python path, but caching validation against mutable model dicts risks losing current tamper checks. No source patch is justified by this short audit.",
+  "limits": "Seven-frame replay is a CPU sample, not a v12 outcome. Do not relax camera, model support or TTL; native render queue remains the main measured timing component."
+}

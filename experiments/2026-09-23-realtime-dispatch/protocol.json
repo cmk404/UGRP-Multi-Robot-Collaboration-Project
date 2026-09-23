@@ -39,5 +39,14 @@
     "model_calls": 0
   },
   "source_freeze": "Commit each candidate before physical runs, preserve earlier bundles and every failed result; final candidate gets full replay after diagnostics.",
-  "scope": "Local open-map saved-plan RGB control. Does not qualify new LLM agreement, ACT, clutter/terrain, or physical hardware."
+  "scope": "Local open-map saved-plan RGB control. Does not qualify new LLM agreement, ACT, clutter/terrain, or physical hardware.",
+  "budget_review_after_v12": {
+    "evidence": "v10/v11 diagnosed lease gaps; v12 passed approach/grasp but first-frame carried-beam segmentation dominates 0.44-0.64 SIM-s decision age and 10-decision cap ended run.",
+    "additional_diagnostic_trials": 2,
+    "diagnostic_max_wall_s": 180,
+    "remaining_final_full_trials": 1,
+    "final_full_max_wall_s": 600,
+    "model_calls": 0,
+    "purpose": "Qualify exact first-frame segmentation optimization and moving carry renewal before the remaining full replay."
+  }
 }

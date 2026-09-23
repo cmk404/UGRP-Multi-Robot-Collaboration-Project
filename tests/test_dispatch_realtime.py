@@ -116,6 +116,61 @@ def test_delayed_pair_rgb_advances_independent_physics_then_holds_both(monkeypat
     assert all(port.hold.call_count>=1 for port in ports.values())
 
 
+@pytest.mark.parametrize('mode,forwards,observed_at_s,requested_s,effective_s,after_issue_step_s',[
+    ('CRUISE',{'r1':.08,'r3':.06},1.,.25,.25,.02),
+    ('CRUISE',{'r1':.08,'r3':.06},.55,.25,.15,.02),
+    ('ALIGN',{'r1':.04,'r3':0.},1.,.25,.25,.02),
+    ('SETTLE',{'r1':0.,'r3':0.},1.,.2,.2,.05),
+])
+def test_open_carry_renews_only_moving_pair_lease(
+        monkeypatch,mode,forwards,observed_at_s,requested_s,effective_s,after_issue_step_s):
+    frames={r:{'frame_id':20,'observed_at_s':observed_at_s,'raw_top_bytes':b'top',
+               'own_bytes':b'own'} for r in ('r1','r3')}
+    completed=Future();completed.set_result(frames)
+    ports={r:SimpleNamespace(hold=Mock()) for r in ('r1','r3')}
+    io=SimpleNamespace(realtime_control=True,time=lambda:1.,ports=ports,
+        capture_async=Mock(return_value=completed),pair_issue_bounded=Mock(),
+        realtime_stats={'pair_backpressure':0,'pair_decisions':0,
+                        'max_decision_age_s':0.})
+    binding=SimpleNamespace(cluttered=False,committed={'plan_hash':'0123456789abcdef'},
+        pair={'r1':'r3','r3':'r1'},reserve_beam_apron=Mock())
+    pair=BoundPairSkill.__new__(BoundPairSkill)
+    pair.io=io;pair.bindings=binding;pair.phase='SETUP';pair.transport_started=False
+    pair.count=0;pair.calls=[];pair.carried_beam=SimpleNamespace(previous=None)
+    pair.capture=lambda _tag:frames
+    pair._bind_capture=lambda captured,_count:captured
+    pair.tick=Mock()
+    control={'mode':mode,'valid':True,'forwards':forwards,
+             'duration_s':.2,'abort':False,'done':False}
+    monkeypatch.setattr('scripts.dispatch_pair_skill.PairCarryPolicy',
+        lambda _task:SimpleNamespace(step=lambda *_args,**_kwargs:control))
+    monkeypatch.setattr('scripts.dispatch_pair_skill.own_payload',
+        lambda *_args,**_kwargs:(1.,0.,0.))
+    monkeypatch.setattr('harness.dispatch_translation_skew.translation_skew',
+        lambda *_args:(0.,{}))
+    navigator=SimpleNamespace(observe=lambda _raw:({'forward':.08,'left':.01},
+                                                    {'done':False}))
+
+    with pytest.raises(RuntimeError,match='decision budget exhausted'):
+        pair.carry_realtime(navigator,max_steps=1)
+
+    io.pair_issue_bounded.assert_called_once()
+    actions,duration,stage=io.pair_issue_bounded.call_args.args
+    assert set(actions)=={'r1','r3'} and stage=='TRANSIT'
+    assert actions['r3']['forward']==pytest.approx(forwards['r1'])
+    assert actions['r1']['forward']==pytest.approx(forwards['r3'])
+    assert all(action['duration_s']==pytest.approx(effective_s)
+               for action in actions.values())
+    assert duration==pytest.approx(effective_s)
+    assert 1.+duration<=observed_at_s+.6+1e-9
+    assert pair.tick.call_args.args==(after_issue_step_s,)
+    carry_row=next(row for row in pair.calls if row['kind']=='carry')
+    assert carry_row['control']['duration_s']==.2
+    assert carry_row['requested_lease_s']==pytest.approx(requested_s)
+    assert carry_row['effective_lease_s']==pytest.approx(effective_s)
+    assert all(port.hold.call_count==1 for port in ports.values())
+
+
 def test_moving_open_approach_overlaps_rgb_with_bounded_lease_and_caps_ttl():
     clock=[.5];issued=[]
     ports={r:SimpleNamespace(hold=Mock()) for r in ('r1','r3')}

@@ -89,10 +89,13 @@ def _extract_beams_from_hsv(hsv: np.ndarray, *, robust_shaft: bool,
             or np.any(contour[:, 0, 1] >= height - 2)
         )
         if robust_shaft:
-            component = np.zeros_like(mask)
-            cv2.drawContours(component, [contour], -1, 255, thickness=cv2.FILLED)
-            component = cv2.bitwise_and(component, mask)
-            shaft = robust_shaft_geometry(component)
+            x, y, component_width, component_height = cv2.boundingRect(contour)
+            component = np.zeros((component_height, component_width), dtype=np.uint8)
+            cv2.drawContours(component, [contour], -1, 255,
+                             thickness=cv2.FILLED, offset=(-x, -y))
+            component = cv2.bitwise_and(component,
+                                        mask[y:y + component_height, x:x + component_width])
+            shaft = robust_shaft_geometry(component, offset_xy=(x, y))
             if shaft is None:
                 continue
             cx, cy = shaft["center_px"]

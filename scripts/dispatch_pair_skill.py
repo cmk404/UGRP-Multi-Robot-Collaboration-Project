@@ -23,6 +23,7 @@ COARSE_LEAD_LIMIT_PX = 16.
 # Open approach renews one moving command across its usual RGB refresh gap.
 # Zero/dwell stays settled; the port's .25s max and capture-time .6s TTL cap it.
 OPEN_APPROACH_RENEWAL_LEASE_S = .25
+OPEN_CARRY_RENEWAL_LEASE_S = .25
 
 
 def _visual_timing(frame, *, perception_wall_s=None, policy_wall_s=None):
@@ -388,18 +389,19 @@ class BoundPairSkill:
                         {r:f['frame_id'] for r,f in frames.items()},now,
                         observed_at_s=observed)
                     policy_wall_s=time.monotonic()-policy_started_wall_s
-                    self.calls.append({'kind':'carry','decisions':decisions,'control':control,
+                    carry_record={'kind':'carry','decisions':decisions,'control':control,
                         'route':evidence,'skew_evidence':skew_evidence,
                         'sim_time_s':now,'observed_at_s':observed,
                         'decision_age_s':now-observed,
                         'wall_timing':_visual_timing(frames['r1'],
                             perception_wall_s=perception_wall_s,
                             policy_wall_s=policy_wall_s),
-                        'frame_ids':{r:f['frame_id'] for r,f in frames.items()}})
+                        'frame_ids':{r:f['frame_id'] for r,f in frames.items()}}
+                    self.calls.append(carry_record)
                     if control['abort']:
                         raise RuntimeError('existing pair carry guard stopped: '+control['mode'])
                     if control['done']:
-                        self.issue_mecanum_bounded(
+                        carry_record['effective_lease_s']=self.issue_mecanum_bounded(
                             {r:dict(forward=0.,left=0.,turn=0.) for r in ROBOTS},.2,
                             observed_at_s=observed)
                         return
@@ -408,11 +410,17 @@ class BoundPairSkill:
                         forward=(math.copysign(v,motion['forward']) if moving and motion['forward'] else v),
                         left=motion['left'] if moving else 0.,turn=0.)
                         for r,v in control['forwards'].items()}
-                    self.issue_mecanum_bounded(commands,control['duration_s'],
-                                               observed_at_s=observed)
+                    renewing=any(abs(command[axis])>1e-9 for command in commands.values()
+                                 for axis in ('forward','left','turn'))
+                    requested_lease_s=(OPEN_CARRY_RENEWAL_LEASE_S if renewing
+                                       else control['duration_s'])
+                    carry_record['requested_lease_s']=requested_lease_s
+                    effective_lease_s=self.issue_mecanum_bounded(
+                        commands,requested_lease_s,observed_at_s=observed)
+                    carry_record['effective_lease_s']=effective_lease_s
                     # At least one physical control interval precedes the next
                     # image. The remaining lease may overlap RGB processing.
-                    self.tick(.05)
+                    self.tick(.02 if renewing and effective_lease_s>0 else .05)
             finally:
                 now=self.time()
                 for rid in self.bindings.pair.values():self.io.ports[rid].hold(now)
