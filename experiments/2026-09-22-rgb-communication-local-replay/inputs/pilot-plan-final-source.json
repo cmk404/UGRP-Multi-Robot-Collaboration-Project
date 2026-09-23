@@ -1,0 +1,230 @@
+{
+  "schema": "rgb-pilot-integrated-plan.v1",
+  "artifact_kind": "planning_only_not_execution_manifest",
+  "source": {
+    "git_sha": "8c1b64a95ca9dc3196e80ea6d47ea7c98d2776f5",
+    "clean": true
+  },
+  "historical_packet": {
+    "path": "docs/research_parallel/c3-provider-packet.json",
+    "sha256": "2b103933113666d25006fa1f557b50efc1fdbcdd773ee2748f8a7e9110f4d0f0"
+  },
+  "historical_packet_content": {
+    "schema": "rgb-c3-blocked-planning-packet.v1",
+    "artifact_kind": "planning_only_not_execution_manifest",
+    "base_source_sha": "357e1f2e66dcae20c54f669711308ed18cf03966",
+    "ready": false,
+    "execution_admission": false,
+    "live_readiness": false,
+    "approved_model_calls": 0,
+    "model_selection_approved": false,
+    "selected_model": null,
+    "budget_proposal_approved": false,
+    "probe": {
+      "recorded_at_utc": "2026-09-22T08:52:27Z",
+      "transport": "existing_local_loopback_proxy",
+      "get_paths": [
+        "/health",
+        "/v1/models"
+      ],
+      "http_200": true,
+      "model_generation_requests": 0,
+      "registered_aliases": [
+        "gemini-3.1-pro-preview",
+        "gemini-3.7-flash",
+        "gemini-3.8-flash"
+      ],
+      "meaning": "local handler responds and aliases are registered; not authentication, quota, upstream availability or generation proof",
+      "source_filename": "gemini_subscription_proxy.py",
+      "on_disk_source_sha256": "7d4c4e8c2addf9e0dc159de6ba0f4ec4374f876d915a6bc0752d3fd18db3e556",
+      "running_process_source_attested": false,
+      "full_proxy_imported": false,
+      "credential_files_opened": false,
+      "credentials_or_service_modified": false
+    },
+    "redacted_static_findings": {
+      "input_count_or_proven_bound_contract_found": false,
+      "requested_max_tokens": 512,
+      "normalized_output_caps": {
+        "gemini-3.1-pro-preview": 12288,
+        "gemini-3.7-flash": 8192,
+        "gemini-3.8-flash": 8192
+      },
+      "flash_requested_none_maps_to": "LOW",
+      "max_upstream_attempts_per_client_call": 2,
+      "retry_trigger": "first HTTP 429 with reset delay at most 60 seconds",
+      "upstream_timeout_s_per_attempt": 300,
+      "absent_usage_is_converted_to_zero": true,
+      "completion_usage_field": "candidatesTokenCount",
+      "thought_tokens_separately_accounted": false,
+      "synthetic_usage_case": {
+        "prompt": 100,
+        "candidate": 10,
+        "thought": 500,
+        "total": 610,
+        "reported_completion": 10
+      },
+      "client_deadline_proves_upstream_cancellation": false
+    },
+    "blockers": [
+      "NO_PROVEN_IMAGE_AND_TEXT_INPUT_TOKEN_BOUND",
+      "PROXY_INCREASES_REQUESTED_OUTPUT_CAP",
+      "UPSTREAM_RETRY_NOT_REPRESENTED_BY_ONE_CLIENT_CALL",
+      "MISSING_USAGE_IS_NOT_DISTINGUISHABLE_FROM_ZERO",
+      "HIDDEN_REASONING_COST_NOT_SEPARATELY_BOUNDED_OR_MEASURED",
+      "CLIENT_TIMEOUT_DOES_NOT_ESTABLISH_UPSTREAM_STOP",
+      "EXACT_MODEL_AND_MONETARY_BUDGET_NOT_APPROVED",
+      "PHYSICAL_AND_OBSERVATION_GATES_NOT_YET_PASSED"
+    ],
+    "unapproved_candidate_provider_config": {
+      "model": "gemini-3.7-flash",
+      "max_output_tokens": 512,
+      "timeout_s": 30,
+      "temperature": 0.2,
+      "reasoning_effort": "none"
+    },
+    "candidate_rationale": "existing C default only; no automatic selection or model switching",
+    "candidate_policy_manifest": {
+      "model": "gemini-3.7-flash",
+      "max_output_tokens": 512,
+      "temperature": 0.2,
+      "reasoning_effort": "none",
+      "timeout_s": 30,
+      "history_image_pairs": 1,
+      "system_prompt_sha256": "7e1daac8cbb182622d81ba7487cbc29371c812aaff39c638c12e30e66f6701a3",
+      "adapter_sha256": "2d5ba715678f6fee9094a7c3c298914f01c3d0ef9bcf9766993b57347e25e589",
+      "image_policy": "current_pair_plus_bounded_previous_original_pairs",
+      "policy_sha256": "77c90df27f87348eb65183cc2a1f148fc48c4beea3e1df118cf24f3aadce7390"
+    },
+    "image_lock": {
+      "current_original_pair": [
+        "own_rgb",
+        "top_rgb"
+      ],
+      "history_original_pairs": 1,
+      "max_images_per_request": 4,
+      "runtime_capture_sha256_required": true,
+      "future_image_hashes": null,
+      "camera_fov_or_geometry_changed": false
+    },
+    "base_component_sha256": {
+      "harness/rgb_communication_planner.py": "2d5ba715678f6fee9094a7c3c298914f01c3d0ef9bcf9766993b57347e25e589",
+      "harness/rgb_communication_async.py": "e553b65a1196f78e3dccf44f8d8c9af85b187f36343a6b4ab6f5055ff7aec6a6",
+      "harness/rgb_communication_runtime.py": "bc55925100f897192ea0f7ddd9036ac4b974502290f8c7a2d0b48fa7e1481183",
+      "harness/rgb_communication_clock.py": "71be7d8cfbf6f8dc53ab9cc9af3896111741c2e2dbf4c5dc9dd7b529526e172b",
+      "harness/gemini_proxy.py": "4929db654deae9c505548f7f9665879681753549312a356581c2a90498dbeeee",
+      "harness/rgb_execution_contract.py": "a9988e2a697dbb9df9f4171979e9578e0cb559e418487541374b460fe6b9cdee",
+      "harness/rgb_execution_port.py": "bb2457c6fd5b7b582679d7bdbcd7aa870b5a5a8d104bdb9672da6c938c333db0",
+      "harness/rgb_skill_execution.py": "ad42f2b12984251c50c0c93e907fb982c0feff32e68d7fa4f1c345f02f8529f6",
+      "harness/rgb_communication_study.py": "57c399f73f65869538445bd4d69ed9d91a787ee3c668c660911a09644e7605df",
+      "harness/rgb_communication_evaluation.py": "5871b4889957fe33f6b18e4ed2e57137b48a430c19f549de138ae197b9482fd1"
+    },
+    "proposed_trials": [
+      {
+        "scenario_role": "normal",
+        "scenario_id": "normal-supported-mission",
+        "condition": "none"
+      },
+      {
+        "scenario_role": "normal",
+        "scenario_id": "normal-supported-mission",
+        "condition": "structured"
+      },
+      {
+        "scenario_role": "normal",
+        "scenario_id": "normal-supported-mission",
+        "condition": "natural"
+      },
+      {
+        "scenario_role": "competition",
+        "scenario_id": "public-workspace-contention",
+        "condition": "none"
+      },
+      {
+        "scenario_role": "competition",
+        "scenario_id": "public-workspace-contention",
+        "condition": "structured"
+      },
+      {
+        "scenario_role": "competition",
+        "scenario_id": "public-workspace-contention",
+        "condition": "natural"
+      }
+    ],
+    "scheduler_proposal": {
+      "scheduler_id": "rgb-independent-async.v1",
+      "max_ticks": 3600,
+      "tick_period_s": 0.05,
+      "poll_period_s": 0.05,
+      "decision_period_s": 1,
+      "max_concurrent_requests": 3,
+      "max_calls_per_robot": 12,
+      "max_actions_per_robot": 12,
+      "max_messages_per_robot": 12,
+      "max_message_bytes_per_robot": 12000,
+      "max_message_ttl_s": 12,
+      "max_observation_age_s": 5,
+      "decision_timeout_s": 30,
+      "wall_timeout_s": 590,
+      "max_input_tokens_per_call": 10000,
+      "max_output_tokens_per_call": 512,
+      "max_input_tokens": 120000,
+      "max_output_tokens": 12000
+    },
+    "per_trial_budget_proposal": {
+      "call_unit": "admitted_client_requests_not_proven_upstream_attempts",
+      "sim_time_s": 180,
+      "wall_time_s": 600,
+      "commands": 6000,
+      "model_calls": 36,
+      "input_tokens": 120000,
+      "output_tokens": 12000,
+      "messages": 36,
+      "message_bytes": 36000
+    },
+    "six_trial_budget_proposal": {
+      "trials": 6,
+      "max_parallel_trials": 1,
+      "model_calls": 216,
+      "input_tokens": 720000,
+      "output_tokens": 72000,
+      "job_wall_time_s": 4200,
+      "automatic_retries": 0,
+      "monetary_cost_cap": null
+    },
+    "required_before_execution": [
+      "explicit exact model and call/input/output/wall/cost approval",
+      "approved provider capability proving image/text/hidden-token and attempt bounds",
+      "physical and observation readiness from D with A review",
+      "D exact scenario IDs, seed, common scene/backend and data-exposure qualification",
+      "regenerate all provider/prompt/controller/tool/evaluator/source/config locks on the final integrated SHA",
+      "save each actual serialized request and captured original image SHA at execution",
+      "new A source/config-specific preflight and single-submitter authorization"
+    ]
+  },
+  "integrated_component_sha256": {
+    "harness/rgb_communication_planner.py": "2d5ba715678f6fee9094a7c3c298914f01c3d0ef9bcf9766993b57347e25e589",
+    "harness/rgb_communication_async.py": "e553b65a1196f78e3dccf44f8d8c9af85b187f36343a6b4ab6f5055ff7aec6a6",
+    "harness/rgb_communication_runtime.py": "bc55925100f897192ea0f7ddd9036ac4b974502290f8c7a2d0b48fa7e1481183",
+    "harness/rgb_communication_clock.py": "71be7d8cfbf6f8dc53ab9cc9af3896111741c2e2dbf4c5dc9dd7b529526e172b",
+    "harness/gemini_proxy.py": "4929db654deae9c505548f7f9665879681753549312a356581c2a90498dbeeee",
+    "harness/rgb_execution_contract.py": "a9988e2a697dbb9df9f4171979e9578e0cb559e418487541374b460fe6b9cdee",
+    "harness/rgb_execution_port.py": "bb2457c6fd5b7b582679d7bdbcd7aa870b5a5a8d104bdb9672da6c938c333db0",
+    "harness/rgb_skill_execution.py": "15632076a99d21891d65243d6fcae2f1e132e16b3bb910efaedb924700b64cba",
+    "harness/rgb_communication_study.py": "2cc6a3cf6af388ed583398e57c5fb4c811bf2e1b4eb9de892f738001a809c756",
+    "harness/rgb_communication_evaluation.py": "5871b4889957fe33f6b18e4ed2e57137b48a430c19f549de138ae197b9482fd1"
+  },
+  "ready": false,
+  "execution_admission": false,
+  "selected_model": null,
+  "model_selection_approved": false,
+  "approved_model_calls": 0,
+  "monetary_cost_cap": null,
+  "future_actual_images": null,
+  "remaining_gates": [
+    "physical and observation witnesses",
+    "verified provider input/output/attempt/usage/time/cost bounds",
+    "explicit exact model and full budget approval",
+    "fresh live scenario/environment admission"
+  ]
+}

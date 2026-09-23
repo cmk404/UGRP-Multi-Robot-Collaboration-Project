@@ -1,0 +1,672 @@
+{
+  "solo": [
+    {
+      "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/backend/worker-timing.jsonl",
+      "line": 5363,
+      "row": {
+        "schema": "ugrp.rgb_worker_timing.v1",
+        "event": "RGB_WORKER_REVOKED",
+        "robot_id": "r2",
+        "observation_id": "r2-000710",
+        "timestamp_s": 179.95000000000002,
+        "revoked_wall_s": 20316.735675916,
+        "reason": "execution_port_closed",
+        "future_cancelled": false,
+        "future_done": true,
+        "submitted_wall_s": 20316.625463208,
+        "worker_started_wall_s": 20316.625660333,
+        "worker_completed_wall_s": 20316.727951958,
+        "worker_wall_duration_s": 0.10229162500036182,
+        "worker_queue_wall_s": 0.00019712499852175824
+      }
+    },
+    {
+      "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/runtime.jsonl",
+      "line": 12,
+      "row": {
+        "condition": "none",
+        "event_id": "event-0012",
+        "event_type": "actor_finished",
+        "payload": {
+          "claim": "cannot_continue",
+          "meaning": "unverified_actor_claim"
+        },
+        "related_ids": {
+          "action_id": "action-0001",
+          "decision_id": "decision-0001",
+          "observation_id": "r1-000001"
+        },
+        "robot_id": "r1",
+        "run_id": "d3-local-solo",
+        "schema_version": "rgb-communication-event.v1",
+        "sim_time_s": 0.05,
+        "wall_time_s": 0.6709655000013299
+      }
+    },
+    {
+      "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/runtime.jsonl",
+      "line": 15,
+      "row": {
+        "condition": "none",
+        "event_id": "event-0015",
+        "event_type": "action_result",
+        "payload": {
+          "clock_domain": "sim",
+          "expires_at_s": 180.0,
+          "lease_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a",
+          "reason": "independent_consent_complete",
+          "request_id": "action-0002",
+          "status": "ACCEPTED",
+          "task_id": "solo-diagnostic",
+          "timestamp_s": 0.05
+        },
+        "related_ids": {
+          "action_id": "action-0002",
+          "decision_id": "decision-0002",
+          "observation_id": "r2-000001"
+        },
+        "robot_id": "r2",
+        "run_id": "d3-local-solo",
+        "schema_version": "rgb-communication-event.v1",
+        "sim_time_s": 0.05,
+        "wall_time_s": 0.7382996670021384
+      }
+    },
+    {
+      "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/runtime.jsonl",
+      "line": 17,
+      "row": {
+        "condition": "none",
+        "event_id": "event-0017",
+        "event_type": "actor_finished",
+        "payload": {
+          "claim": "cannot_continue",
+          "meaning": "unverified_actor_claim"
+        },
+        "related_ids": {
+          "action_id": "action-0003",
+          "decision_id": "decision-0003",
+          "observation_id": "r3-000001"
+        },
+        "robot_id": "r3",
+        "run_id": "d3-local-solo",
+        "schema_version": "rgb-communication-event.v1",
+        "sim_time_s": 0.05,
+        "wall_time_s": 0.7991852920022211
+      }
+    },
+    {
+      "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/runtime.jsonl",
+      "line": 734,
+      "row": {
+        "condition": "none",
+        "event_id": "event-0734",
+        "event_type": "run_finished",
+        "payload": {
+          "actions": {
+            "r1": 0,
+            "r2": 1,
+            "r3": 0
+          },
+          "actor_finish_claims": {
+            "r1": false,
+            "r2": false,
+            "r3": false
+          },
+          "actor_finish_details": {
+            "r1": "cannot_continue",
+            "r2": null,
+            "r3": "cannot_continue"
+          },
+          "calls": {
+            "r1": 1,
+            "r2": 180,
+            "r3": 1
+          },
+          "clock": {
+            "clock_domain": "sim",
+            "last_acknowledged_time_s": 179.95000000013732,
+            "last_successful_requested_tick_s": 179.95000000000002,
+            "reason": "VERIFIED_CLOCK_SNAPSHOT",
+            "requested_tick_s": 179.95000000000002,
+            "schema": "rgb-runtime-clock.v1",
+            "terminal_time_s": 179.95000000013732,
+            "terminal_time_status": "verified"
+          },
+          "close_error": null,
+          "condition": "none",
+          "external_model_call_upper_bound": 0,
+          "external_model_calls": 0,
+          "external_model_calls_by_robot": {
+            "r1": 0,
+            "r2": 0,
+            "r3": 0
+          },
+          "message_bytes": {
+            "r1": 0,
+            "r2": 0,
+            "r3": 0
+          },
+          "messages": {
+            "r1": 0,
+            "r2": 0,
+            "r3": 0
+          },
+          "outcome": "timeout",
+          "peak_in_flight": 3,
+          "pending_planner_requests": {},
+          "planner_decisions": 182,
+          "primary_error": null,
+          "retirement_reasons": {},
+          "run_id": "d3-local-solo",
+          "termination_reason": "MAX_TICKS",
+          "ticks": 3600,
+          "tokens": {
+            "charged_input_tokens": 0,
+            "charged_output_tokens": 0,
+            "measured_input_tokens": 0,
+            "measured_output_tokens": 0,
+            "unknown_input_tokens_calls": 0,
+            "unknown_output_tokens_calls": 0
+          },
+          "trace_events": 734,
+          "unknown_external_call_requests": []
+        },
+        "related_ids": {},
+        "robot_id": null,
+        "run_id": "d3-local-solo",
+        "schema_version": "rgb-communication-event.v1",
+        "sim_time_s": 179.95000000013732,
+        "wall_time_s": 298.765120125001
+      }
+    },
+    {
+      "command_with_provenance": {
+        "command": {
+          "action": {
+            "kind": "arm",
+            "pulse": 508,
+            "servo_id": 3
+          },
+          "command_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a:r2:194",
+          "consent_observation_id": "r2-000001",
+          "decision_id": "decision-0002",
+          "duration_s": 0.1,
+          "issued_at_s": 44.650000000000006,
+          "lease_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a",
+          "meaning": "issued command, not measured state or success",
+          "observation_id": "r2-000170",
+          "skill_decision_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a:r2:80",
+          "stage": "approach",
+          "task_id": "solo-diagnostic"
+        },
+        "first_seen_file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/runtime.jsonl",
+        "first_seen_line": 194,
+        "first_seen_observation": "r2-000172"
+      }
+    },
+    {
+      "command_with_provenance": {
+        "command": {
+          "action": {
+            "kind": "arm",
+            "pulse": 500,
+            "servo_id": 3
+          },
+          "command_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a:r2:195",
+          "consent_observation_id": "r2-000001",
+          "decision_id": "decision-0002",
+          "duration_s": 0.1,
+          "issued_at_s": 45.1,
+          "lease_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a",
+          "meaning": "issued command, not measured state or success",
+          "observation_id": "r2-000171",
+          "skill_decision_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a:r2:81",
+          "stage": "approach",
+          "task_id": "solo-diagnostic"
+        },
+        "first_seen_file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/runtime.jsonl",
+        "first_seen_line": 198,
+        "first_seen_observation": "r2-000176"
+      }
+    },
+    {
+      "command_with_provenance": {
+        "command": {
+          "action": {
+            "kind": "arm",
+            "pulse": 508,
+            "servo_id": 3
+          },
+          "command_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a:r2:196",
+          "consent_observation_id": "r2-000001",
+          "decision_id": "decision-0002",
+          "duration_s": 0.1,
+          "issued_at_s": 45.650000000000006,
+          "lease_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a",
+          "meaning": "issued command, not measured state or success",
+          "observation_id": "r2-000174",
+          "skill_decision_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a:r2:82",
+          "stage": "approach",
+          "task_id": "solo-diagnostic"
+        },
+        "first_seen_file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/runtime.jsonl",
+        "first_seen_line": 198,
+        "first_seen_observation": "r2-000176"
+      }
+    },
+    {
+      "command_with_provenance": {
+        "command": {
+          "action": {
+            "kind": "arm",
+            "pulse": 500,
+            "servo_id": 3
+          },
+          "command_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a:r2:197",
+          "consent_observation_id": "r2-000001",
+          "decision_id": "decision-0002",
+          "duration_s": 0.1,
+          "issued_at_s": 46.1,
+          "lease_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a",
+          "meaning": "issued command, not measured state or success",
+          "observation_id": "r2-000175",
+          "skill_decision_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a:r2:83",
+          "stage": "approach",
+          "task_id": "solo-diagnostic"
+        },
+        "first_seen_file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/runtime.jsonl",
+        "first_seen_line": 202,
+        "first_seen_observation": "r2-000180"
+      }
+    },
+    {
+      "command_with_provenance": {
+        "command": {
+          "action": {
+            "kind": "arm",
+            "pulse": 508,
+            "servo_id": 3
+          },
+          "command_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a:r2:460",
+          "consent_observation_id": "r2-000001",
+          "decision_id": "decision-0002",
+          "duration_s": 0.1,
+          "issued_at_s": 178.05,
+          "lease_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a",
+          "meaning": "issued command, not measured state or success",
+          "observation_id": "r2-000702",
+          "skill_decision_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a:r2:346",
+          "stage": "approach",
+          "task_id": "solo-diagnostic"
+        },
+        "first_seen_file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/runtime.jsonl",
+        "first_seen_line": 730,
+        "first_seen_observation": "r2-000707"
+      }
+    },
+    {
+      "command_with_provenance": {
+        "command": {
+          "action": {
+            "kind": "arm",
+            "pulse": 500,
+            "servo_id": 3
+          },
+          "command_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a:r2:461",
+          "consent_observation_id": "r2-000001",
+          "decision_id": "decision-0002",
+          "duration_s": 0.1,
+          "issued_at_s": 178.55,
+          "lease_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a",
+          "meaning": "issued command, not measured state or success",
+          "observation_id": "r2-000705",
+          "skill_decision_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a:r2:347",
+          "stage": "approach",
+          "task_id": "solo-diagnostic"
+        },
+        "first_seen_file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/runtime.jsonl",
+        "first_seen_line": 730,
+        "first_seen_observation": "r2-000707"
+      }
+    },
+    {
+      "command_with_provenance": {
+        "command": {
+          "task_id": "solo-diagnostic",
+          "lease_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a",
+          "command_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a:r2:462",
+          "stage": "approach",
+          "action": {
+            "kind": "arm",
+            "servo_id": 3,
+            "pulse": 508
+          },
+          "duration_s": 0.1,
+          "issued_at_s": 179.05,
+          "observation_id": "r2-000706",
+          "decision_id": "decision-0002",
+          "skill_decision_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a:r2:348",
+          "consent_observation_id": "r2-000001",
+          "meaning": "issued command, not measured state or success"
+        },
+        "first_seen_file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/backend/skill-inputs.jsonl",
+        "first_seen_line": 349,
+        "first_seen_observation": "r2-000709"
+      }
+    },
+    {
+      "command_with_provenance": {
+        "command": {
+          "task_id": "solo-diagnostic",
+          "lease_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a",
+          "command_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a:r2:463",
+          "stage": "approach",
+          "action": {
+            "kind": "arm",
+            "servo_id": 3,
+            "pulse": 500
+          },
+          "duration_s": 0.1,
+          "issued_at_s": 179.55,
+          "observation_id": "r2-000709",
+          "decision_id": "decision-0002",
+          "skill_decision_id": "1dd6c0ecb5744e1da7fe9bd12f61c34a:r2:349",
+          "consent_observation_id": "r2-000001",
+          "meaning": "issued command, not measured state or success"
+        },
+        "first_seen_file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-solo/backend/skill-inputs.jsonl",
+        "first_seen_line": 350,
+        "first_seen_observation": "r2-000710"
+      }
+    }
+  ],
+  "joint": [
+    {
+      "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/backend/worker-timing.jsonl",
+      "line": 14,
+      "row": {
+        "schema": "ugrp.rgb_worker_timing.v1",
+        "event": "RGB_WORKER_COMPLETED",
+        "robot_id": "r3",
+        "task_id": "joint-diagnostic",
+        "observation_id": "r3-000003",
+        "observed_at_s": 0.1,
+        "worker_outcome": "error",
+        "submitted_wall_s": 20320.914607083,
+        "worker_started_wall_s": 20320.914659666,
+        "worker_completed_wall_s": 20320.952282291,
+        "worker_wall_duration_s": 0.03762262500094948,
+        "worker_queue_wall_s": 5.2583000069716945e-05
+      }
+    },
+    {
+      "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/backend/worker-timing.jsonl",
+      "line": 15,
+      "row": {
+        "schema": "ugrp.rgb_worker_timing.v1",
+        "event": "RGB_WORKER_COMPLETED",
+        "robot_id": "r1",
+        "task_id": "joint-diagnostic",
+        "observation_id": "r1-000003",
+        "observed_at_s": 0.1,
+        "worker_outcome": "error",
+        "submitted_wall_s": 20320.914440708,
+        "worker_started_wall_s": 20320.914539625,
+        "worker_completed_wall_s": 20320.954769291,
+        "worker_wall_duration_s": 0.040229665999504505,
+        "worker_queue_wall_s": 9.891700028674677e-05
+      }
+    },
+    {
+      "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/backend/worker-timing.jsonl",
+      "line": 17,
+      "row": {
+        "schema": "ugrp.rgb_worker_timing.v1",
+        "event": "RGB_WORKER_REVOKED",
+        "robot_id": "r1",
+        "observation_id": "r1-000003",
+        "timestamp_s": 0.2,
+        "revoked_wall_s": 20320.9742905,
+        "reason": "rgb_skill_unavailable",
+        "future_cancelled": false,
+        "future_done": true,
+        "submitted_wall_s": 20320.914440708,
+        "worker_started_wall_s": 20320.914539625,
+        "worker_completed_wall_s": 20320.954769291,
+        "worker_wall_duration_s": 0.040229665999504505,
+        "worker_queue_wall_s": 9.891700028674677e-05
+      }
+    },
+    {
+      "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/backend/worker-timing.jsonl",
+      "line": 18,
+      "row": {
+        "schema": "ugrp.rgb_worker_timing.v1",
+        "event": "RGB_WORKER_REVOKED",
+        "robot_id": "r3",
+        "observation_id": "r3-000003",
+        "timestamp_s": 0.2,
+        "revoked_wall_s": 20320.974296291,
+        "reason": "rgb_skill_unavailable",
+        "future_cancelled": false,
+        "future_done": true,
+        "submitted_wall_s": 20320.914607083,
+        "worker_started_wall_s": 20320.914659666,
+        "worker_completed_wall_s": 20320.952282291,
+        "worker_wall_duration_s": 0.03762262500094948,
+        "worker_queue_wall_s": 5.2583000069716945e-05
+      }
+    },
+    {
+      "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/runtime.jsonl",
+      "line": 13,
+      "row": {
+        "condition": "none",
+        "event_id": "event-0013",
+        "event_type": "action_result",
+        "payload": {
+          "clock_domain": "sim",
+          "reason": "awaiting_independent_consent",
+          "request_id": "action-0001",
+          "status": "PENDING",
+          "task_id": "joint-diagnostic",
+          "timestamp_s": 0.05
+        },
+        "related_ids": {
+          "action_id": "action-0001",
+          "decision_id": "decision-0001",
+          "observation_id": "r1-000001"
+        },
+        "robot_id": "r1",
+        "run_id": "d3-local-joint",
+        "schema_version": "rgb-communication-event.v1",
+        "sim_time_s": 0.05,
+        "wall_time_s": 0.4883284579991596
+      }
+    },
+    {
+      "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/runtime.jsonl",
+      "line": 15,
+      "row": {
+        "condition": "none",
+        "event_id": "event-0015",
+        "event_type": "actor_finished",
+        "payload": {
+          "claim": "cannot_continue",
+          "meaning": "unverified_actor_claim"
+        },
+        "related_ids": {
+          "action_id": "action-0002",
+          "decision_id": "decision-0002",
+          "observation_id": "r2-000001"
+        },
+        "robot_id": "r2",
+        "run_id": "d3-local-joint",
+        "schema_version": "rgb-communication-event.v1",
+        "sim_time_s": 0.05,
+        "wall_time_s": 0.5514065409988689
+      }
+    },
+    {
+      "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/runtime.jsonl",
+      "line": 18,
+      "row": {
+        "condition": "none",
+        "event_id": "event-0018",
+        "event_type": "action_result",
+        "payload": {
+          "clock_domain": "sim",
+          "expires_at_s": 180.0,
+          "lease_id": "d7da3e34f9d14d7099352924060db1d4",
+          "reason": "independent_consent_complete",
+          "request_id": "action-0003",
+          "status": "ACCEPTED",
+          "task_id": "joint-diagnostic",
+          "timestamp_s": 0.05
+        },
+        "related_ids": {
+          "action_id": "action-0003",
+          "decision_id": "decision-0003",
+          "observation_id": "r3-000001"
+        },
+        "robot_id": "r3",
+        "run_id": "d3-local-joint",
+        "schema_version": "rgb-communication-event.v1",
+        "sim_time_s": 0.05,
+        "wall_time_s": 0.6145004579993838
+      }
+    },
+    {
+      "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/runtime.jsonl",
+      "line": 26,
+      "row": {
+        "condition": "none",
+        "event_id": "event-0026",
+        "event_type": "actor_finished",
+        "payload": {
+          "claim": "cannot_continue",
+          "meaning": "unverified_actor_claim"
+        },
+        "related_ids": {
+          "action_id": "action-0004",
+          "decision_id": "decision-0004",
+          "observation_id": "r3-000004"
+        },
+        "robot_id": "r3",
+        "run_id": "d3-local-joint",
+        "schema_version": "rgb-communication-event.v1",
+        "sim_time_s": 1.05,
+        "wall_time_s": 2.5313573329985957
+      }
+    },
+    {
+      "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/runtime.jsonl",
+      "line": 28,
+      "row": {
+        "condition": "none",
+        "event_id": "event-0028",
+        "event_type": "actor_finished",
+        "payload": {
+          "claim": "cannot_continue",
+          "meaning": "unverified_actor_claim"
+        },
+        "related_ids": {
+          "action_id": "action-0005",
+          "decision_id": "decision-0005",
+          "observation_id": "r1-000004"
+        },
+        "robot_id": "r1",
+        "run_id": "d3-local-joint",
+        "schema_version": "rgb-communication-event.v1",
+        "sim_time_s": 1.05,
+        "wall_time_s": 2.5858135409980605
+      }
+    },
+    {
+      "file": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a/runs/d3-local-joint/runtime.jsonl",
+      "line": 29,
+      "row": {
+        "condition": "none",
+        "event_id": "event-0029",
+        "event_type": "run_finished",
+        "payload": {
+          "actions": {
+            "r1": 1,
+            "r2": 0,
+            "r3": 1
+          },
+          "actor_finish_claims": {
+            "r1": false,
+            "r2": false,
+            "r3": false
+          },
+          "actor_finish_details": {
+            "r1": "cannot_continue",
+            "r2": "cannot_continue",
+            "r3": "cannot_continue"
+          },
+          "calls": {
+            "r1": 2,
+            "r2": 1,
+            "r3": 2
+          },
+          "clock": {
+            "clock_domain": "sim",
+            "last_acknowledged_time_s": 1.0499999999999619,
+            "last_successful_requested_tick_s": 1.05,
+            "reason": "VERIFIED_CLOCK_SNAPSHOT",
+            "requested_tick_s": 1.05,
+            "schema": "rgb-runtime-clock.v1",
+            "terminal_time_s": 1.0499999999999619,
+            "terminal_time_status": "verified"
+          },
+          "close_error": null,
+          "condition": "none",
+          "external_model_call_upper_bound": 0,
+          "external_model_calls": 0,
+          "external_model_calls_by_robot": {
+            "r1": 0,
+            "r2": 0,
+            "r3": 0
+          },
+          "message_bytes": {
+            "r1": 0,
+            "r2": 0,
+            "r3": 0
+          },
+          "messages": {
+            "r1": 0,
+            "r2": 0,
+            "r3": 0
+          },
+          "outcome": "completed",
+          "peak_in_flight": 3,
+          "pending_planner_requests": {},
+          "planner_decisions": 5,
+          "primary_error": null,
+          "retirement_reasons": {},
+          "run_id": "d3-local-joint",
+          "termination_reason": "ALL_ACTORS_FINISHED",
+          "ticks": 22,
+          "tokens": {
+            "charged_input_tokens": 0,
+            "charged_output_tokens": 0,
+            "measured_input_tokens": 0,
+            "measured_output_tokens": 0,
+            "unknown_input_tokens_calls": 0,
+            "unknown_output_tokens_calls": 0
+          },
+          "trace_events": 29,
+          "unknown_external_call_requests": []
+        },
+        "related_ids": {},
+        "robot_id": null,
+        "run_id": "d3-local-joint",
+        "schema_version": "rgb-communication-event.v1",
+        "sim_time_s": 1.0499999999999619,
+        "wall_time_s": 2.586016707999079
+      }
+    }
+  ]
+}

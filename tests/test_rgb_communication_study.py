@@ -1,9 +1,12 @@
 """Offline tests only; no physical backend or network provider is constructed."""
 import copy
 import json
+import os
 from pathlib import Path
+import signal
 import subprocess
 import sys
+import time
 from types import SimpleNamespace
 
 import pytest
@@ -100,6 +103,77 @@ def test_provider_json_cannot_register_or_assert_verified_bounds():
             study.provider_settings(value)
 
 
+def test_local_asset_binding_rechecks_files_and_complete_backend_inputs(tmp_path):
+    asset = tmp_path / "saved-model.json"
+    asset.write_text('{"test_only": true}')
+    hashes = {str(asset): study.digest_file(asset)}
+    catalog = {"schema": "rgb-local-assets.v1", "mode": "read_only_reference", "files": hashes}
+    descriptor = {"input_hashes": dict(hashes)}
+    study.verify_local_assets(catalog, descriptor)
+    for bad in ({**catalog, "mode": "copy"}, {**catalog, "files": {}},
+                {**catalog, "files": {"relative.json": "0" * 64}}):
+        with pytest.raises(study.ContractError):
+            study.verify_local_assets(bad, descriptor)
+    with pytest.raises(study.ContractError, match="every backend input"):
+        study.verify_local_assets(catalog, {"input_hashes": {**hashes, "/missing": "0" * 64}})
+    asset.write_text('{"test_only": "changed"}')
+    with pytest.raises(study.ContractError, match="changed"):
+        study.verify_local_assets(catalog, descriptor)
+
+
+def test_local_asset_binding_rejects_symlink(tmp_path):
+    target = tmp_path / "target.json"
+    target.write_text("{}")
+    alias = tmp_path / "alias.json"
+    alias.symlink_to(target)
+    hashes = {str(alias): study.digest_file(target)}
+    with pytest.raises(study.ContractError):
+        study.verify_local_assets({"schema": "rgb-local-assets.v1", "mode": "read_only_reference",
+                                   "files": hashes}, {"input_hashes": hashes})
+
+
+def test_preflight_compares_frozen_descriptor_not_just_manifest_internal_hashes(source, tmp_path, monkeypatch):
+    conf = config()
+    frozen = {"backend_id": "test-only", "input_hashes": {"/model": "old-model-hash"}}
+    conf["backend_descriptor_evidence"] = put(tmp_path / "descriptor.json", frozen)
+    changed = {**frozen, "input_hashes": {"/model": "new-model-hash"}}
+    backend = SimpleNamespace(backend_descriptor=lambda _: changed,
+                              public_static_context=lambda _: {"task": {}})
+    def imported(name):
+        if name == study.BACKEND_MODULE:
+            return backend
+        raise ImportError(name)
+    monkeypatch.setattr(study.importlib, "import_module", imported)
+    result = study.preflight(study.prepare_manifest(conf, source), root=source, evidence_root=tmp_path)
+    assert "backend_descriptor_changed" in result["blockers"]
+    # Legacy portable capsules do not carry a host-bound descriptor requirement.
+    conf.pop("backend_descriptor_evidence")
+    result = study.preflight(study.prepare_manifest(conf, source), root=source, evidence_root=tmp_path)
+    assert not any(b.startswith("backend_descriptor_") for b in result["blockers"])
+    # D3 cannot remove that binding to bypass the local asset requirement.
+    conf["submitter"] = "D3"
+    result = study.preflight(study.prepare_manifest(conf, source), root=source, evidence_root=tmp_path)
+    assert "backend_descriptor_evidence_invalid:ContractError" in result["blockers"]
+    assert "local_assets_invalid:ContractError" in result["blockers"]
+
+
+def test_d3_demands_a3_v2_even_when_old_verifier_would_accept(source, tmp_path, monkeypatch):
+    conf = config()
+    conf["submitter"] = "D3"
+    conf["offline_boundary_evidence"] = put(tmp_path / "boundary.json", {
+        "schema_version": "rgb-offline-boundary-review.v1", "independent_reviewer": "A2"})
+    def assess(*args, **kwargs):
+        assert kwargs["required_schema"] == "rgb-offline-boundary-review.v2"
+        return {"ready": True}
+    def imported(name):
+        if name == "harness.rgb_communication_scenarios":
+            return SimpleNamespace(assess_offline_boundary=assess)
+        raise ImportError(name)
+    monkeypatch.setattr(study.importlib, "import_module", imported)
+    result = study.preflight(study.prepare_manifest(conf, source), root=source, evidence_root=tmp_path)
+    assert "d3_requires_independent_a3_boundary_v2" in result["blockers"]
+
+
 def test_replay_script_is_explicit_and_does_not_read_referee():
     planner = study.ReplayDecision([{"kind": "task_request", "task_id": "fixed-diagnostic"}])
     assert planner({})["action"]["task_id"] == "fixed-diagnostic"
@@ -119,6 +193,198 @@ def test_subprocess_success_timeout_and_exclusive_evidence(tmp_path):
                                  cwd=tmp_path, log_path=tmp_path / "timeout.log", timeout_s=.05)
     assert timed["exit_code"] == 124 and timed["timed_out"]
     assert timed["wall_time_s"] < 6
+
+
+@pytest.mark.parametrize("ignore_term", [False, True])
+@pytest.mark.parametrize("parent_signal", [signal.SIGTERM, signal.SIGINT])
+def test_parent_sigterm_reaps_owned_child_before_returning(tmp_path, ignore_term, parent_signal):
+    marker = tmp_path / "owned-child.pid"
+    parent = subprocess.Popen([sys.executable, "-c", "\n".join([
+        "import sys", "from pathlib import Path",
+        "from harness.rgb_communication_study import bounded_process",
+        "child = 'import os,time,signal; from pathlib import Path; '",
+        f"child += 'signal.signal(signal.SIGTERM, signal.SIG_IGN); ' if {ignore_term!r} else ''",
+        "child += 'Path(sys.argv[1]).write_text(str(os.getpid())); time.sleep(30)'",
+        "child = 'import sys;' + child",
+        "result = bounded_process([sys.executable, '-c', child, sys.argv[1]], cwd=Path.cwd(), log_path=Path(sys.argv[2]), timeout_s=20)",
+        "print(result, flush=True)",
+        "raise SystemExit(0 if result['exit_code'] == 130 else 1)"]),
+        str(marker), str(tmp_path / "child.log")], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        text=True, start_new_session=True)
+    owned_pid = None
+    try:
+        deadline = time.monotonic() + 5
+        while not marker.exists() and time.monotonic() < deadline:
+            time.sleep(.01)
+        assert marker.exists(), parent.poll()
+        owned_pid = int(marker.read_text())
+        parent.send_signal(parent_signal)
+        stdout, stderr = parent.communicate(timeout=12)
+        assert parent.returncode == 0, (parent.returncode, stdout, stderr)
+        assert "'child_reaped': True" in stdout
+        assert "'process_group_gone': True" in stdout
+        with pytest.raises(ProcessLookupError):
+            os.kill(owned_pid, 0)
+    finally:
+        if parent.poll() is None:
+            parent.kill()
+            parent.wait()
+        if owned_pid is not None:
+            try:
+                os.killpg(owned_pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+
+
+@pytest.mark.parametrize("exit_code,timed_out,reason", [
+    (130, False, "study_interrupted"), (-15, False, "study_interrupted"),
+    (124, True, "previous_trial_wall_timeout"), (1, False, "previous_trial_process_failed")])
+def test_interrupted_study_does_not_start_next_trial_and_hashes_after_reap(
+        source, tmp_path, monkeypatch, exit_code, timed_out, reason):
+    value = study.prepare_manifest(config(), source)
+    output = tmp_path / "interrupted-study"
+    calls = []
+    monkeypatch.setattr(study, "preflight", lambda *a, **k: {"ready": True})
+    def child(*args, **kwargs):
+        calls.append(kwargs)
+        # Simulate the last child write immediately before confirmed reap.
+        (kwargs["log_path"].parent / "last-child-write.txt").write_text("closed-and-reaped")
+        return {"exit_code": exit_code, "timed_out": timed_out, "wall_time_s": .01,
+                "process_group": 999999999, "child_reaped": True, "process_group_gone": True}
+    monkeypatch.setattr(study, "bounded_process", child)
+    result = study.run_study(value, root=source, evidence_root=source, output=output)
+    assert len(calls) == 1
+    assert result["planned_denominator"] == 2
+    assert result["run_rows"][1] == {"run_id": "joint", "outcome": "unrun", "reason": reason}
+    assert not (output / "runs/joint").exists()
+    hashes = study.read_json(output / "artifact-hashes.json")
+    assert hashes["runs/solo/last-child-write.txt"] == study.digest_file(output / "runs/solo/last-child-write.txt")
+
+
+def test_unconfirmed_cleanup_never_hashes_live_artifacts(source, tmp_path, monkeypatch):
+    value = study.prepare_manifest(config(), source)
+    output = tmp_path / "cleanup-unknown"
+    monkeypatch.setattr(study, "preflight", lambda *a, **k: {"ready": True})
+    monkeypatch.setattr(study, "bounded_process", lambda *a, **k: {
+        "exit_code": 124, "timed_out": True, "child_reaped": True, "process_group_gone": False})
+    result = study.run_study(value, root=source, evidence_root=source, output=output)
+    assert result["artifact_hashes_finalized"] is False
+    assert result["run_rows"][1]["reason"] == "child_cleanup_unconfirmed"
+    assert not (output / "artifact-hashes.json").exists()
+
+
+def test_normal_trial_return_continues_even_when_physical_goal_failed(source, tmp_path, monkeypatch):
+    value = study.prepare_manifest(config(), source)
+    output = tmp_path / "physical-failures"
+    calls = []
+    monkeypatch.setattr(study, "preflight", lambda *a, **k: {"ready": True})
+    def child(*args, **kwargs):
+        calls.append(kwargs)
+        directory = kwargs["log_path"].parent
+        study.write_new_json(directory / "result.json", {"run_id": directory.name,
+            "schema_version": study.TRIAL_SCHEMA, "outcome": "failure", "source_artifact_hashes": {}})
+        return {"exit_code": 0, "timed_out": False, "child_reaped": True, "process_group_gone": True}
+    monkeypatch.setattr(study, "bounded_process", child)
+    result = study.run_study(value, root=source, evidence_root=source, output=output)
+    assert len(calls) == 2
+    assert [row["outcome"] for row in result["run_rows"]] == ["failure", "failure"]
+    assert result["artifact_hashes_finalized"] is True
+
+
+def test_exited_leader_does_not_leave_its_same_group_descendant_writing(tmp_path):
+    marker = tmp_path / "descendant.pid"
+    program = "\n".join([
+        "import subprocess,sys,time", "from pathlib import Path",
+        "worker='import os,sys,time; from pathlib import Path; Path(sys.argv[1]).write_text(str(os.getpid())); time.sleep(30)'",
+        "subprocess.Popen([sys.executable,'-c',worker,sys.argv[1]])",
+        "deadline=time.monotonic()+3",
+        "while not Path(sys.argv[1]).exists() and time.monotonic()<deadline: time.sleep(.01)"])
+    result = study.bounded_process([sys.executable, "-c", program, str(marker)],
+        cwd=tmp_path, log_path=tmp_path / "descendant.log", timeout_s=4, cleanup_grace_s=1)
+    assert result["exit_code"] == 125  # normal leader exit was not clean completion
+    assert result["child_reaped"] and result["process_group_gone"]
+    with pytest.raises(ProcessLookupError):
+        os.kill(int(marker.read_text()), 0)
+
+
+@pytest.mark.parametrize("signum", [signal.SIGTERM, signal.SIGINT])
+def test_signal_after_spawn_before_wait_cannot_escape_owned_cleanup(tmp_path, monkeypatch, signum):
+    original = subprocess.Popen
+    children = []
+    def spawn(*args, **kwargs):
+        child = original(*args, **kwargs)
+        children.append(child)
+        os.kill(os.getpid(), signum)  # real signal before Popen returns the handle
+        return child
+    monkeypatch.setattr(study.subprocess, "Popen", spawn)
+    try:
+        result = study.bounded_process([sys.executable, "-c", "import time; time.sleep(30)"],
+            cwd=tmp_path, log_path=tmp_path / "spawn-window.log", timeout_s=2)
+        assert result["exit_code"] == 130
+        assert result["child_reaped"] and result["process_group_gone"]
+        assert children[0].poll() is not None
+    finally:
+        for child in children:
+            if child.poll() is None:
+                os.killpg(child.pid, signal.SIGKILL)
+                child.wait()
+
+
+def test_repeat_interrupt_during_cleanup_does_not_escape_reap(tmp_path, monkeypatch):
+    original_killpg = os.killpg
+    injected = []
+    def killpg(pid, signum):
+        result = original_killpg(pid, signum)
+        if signum == signal.SIGTERM and not injected:
+            injected.append(True)
+            os.kill(os.getpid(), signal.SIGINT)
+            os.kill(os.getpid(), signal.SIGTERM)
+        return result
+    monkeypatch.setattr(study.os, "killpg", killpg)
+    result = study.bounded_process([sys.executable, "-c",
+        "import signal,time; signal.signal(signal.SIGTERM,signal.SIG_IGN); time.sleep(30)"],
+        cwd=tmp_path, log_path=tmp_path / "repeated-interrupt.log", timeout_s=.2, cleanup_grace_s=1)
+    assert injected and result["timed_out"]
+    assert result["child_reaped"] and result["process_group_gone"]
+
+
+def test_inventory_write_failure_cannot_publish_finalization_receipt(source, tmp_path, monkeypatch):
+    value = study.prepare_manifest(config(), source)
+    output = tmp_path / "interrupted-inventory"
+    monkeypatch.setattr(study, "preflight", lambda *a, **k: {"ready": True})
+    monkeypatch.setattr(study, "bounded_process", lambda *a, **k: {
+        "exit_code": 0, "timed_out": False, "child_reaped": True, "process_group_gone": True})
+    original_write = study.write_new_json
+    def write(path, value):
+        if path.name == "artifact-hashes.json":
+            path.write_text('{"incomplete":')
+            raise OSError("test-only interrupted inventory")
+        original_write(path, value)
+    monkeypatch.setattr(study, "write_new_json", write)
+    with pytest.raises(OSError, match="interrupted inventory"):
+        study.run_study(value, root=source, evidence_root=source, output=output)
+    report = study.read_json(output / "report.json")
+    assert report["child_cleanup_confirmed"] is True
+    assert "artifact_hashes_finalized" not in report
+    assert not (output / "artifact-finalization.json").exists()
+
+
+def test_unconfirmed_reap_never_restarts_cleanup_grace(tmp_path, monkeypatch):
+    class UnreapableTestChild:
+        pid = 999999999
+        returncode = None
+        def wait(self, timeout=None):
+            raise subprocess.TimeoutExpired("test-only", timeout)
+        def poll(self):
+            return None
+    signals = []
+    monkeypatch.setattr(study.subprocess, "Popen", lambda *a, **k: UnreapableTestChild())
+    monkeypatch.setattr(study.os, "killpg", lambda pid, sig: signals.append(sig))
+    result = study.bounded_process(["test-only-not-executed"], cwd=tmp_path,
+        log_path=tmp_path / "unreapable.log", timeout_s=.001, cleanup_grace_s=.02)
+    assert not result["child_reaped"] and not result["process_group_gone"]
+    assert signals.count(signal.SIGTERM) == 1
+    assert signals.count(signal.SIGKILL) == 1
 
 
 def test_strata_include_unrun_and_dont_use_failed_speed_or_guess_cause():

@@ -1,0 +1,36 @@
+{
+  "source_sha": "8c1b64a95ca9dc3196e80ea6d47ea7c98d2776f5",
+  "suite": "Full local offline-regressions module set; existing Python 3.12 runtime",
+  "junit_count_note": "1774 cases = 1569 passed + 7 skipped + 198 subtests",
+  "module_count": 134,
+  "passed": 1569,
+  "skipped": 7,
+  "subtests": 198,
+  "junit": {
+    "path": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-integrated-8c1b64a-tests.xml",
+    "sha256": "2744abe32968060017e0a4695dc185a846a23e65d99215db589729d9fec21b0f",
+    "suites": [
+      {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "7",
+        "tests": "1774",
+        "time": "137.800",
+        "timestamp": "2026-09-22T18:36:53.541416+09:00",
+        "hostname": "gangchangmin-ui-MacBookAir.local"
+      }
+    ]
+  },
+  "execution_source_ci": {
+    "run_id": 35711353991,
+    "conclusion": "success",
+    "jobs": 6
+  },
+  "d_source_pr_ci_before_records": {
+    "pr": 104,
+    "source_sha": "8545801f50d3af613ea02fe50e3cf0af11ff64f1",
+    "success_checks": 12
+  },
+  "scope": "Pre-execution offline tests and CI; not robot success. Documentation-only followup CI checked separately."
+}

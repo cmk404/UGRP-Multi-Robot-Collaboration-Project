@@ -1,0 +1,92 @@
+{
+  "schema": "d3-recovery-review.v1",
+  "verified": true,
+  "source_sha": "8c1b64a95ca9dc3196e80ea6d47ea7c98d2776f5",
+  "source_clean": true,
+  "raw_root": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a",
+  "raw_file_count": 1488,
+  "raw_inventory_sha256": "a7e591c1d0e29f7a0ed347932729e736c5d5fe05f1d884952c9ce2bddc3d0a5e",
+  "finalization_receipt_sha256": "9823b07eb37340e662294634943af886ef5b309c11c52236e08834880c94f890",
+  "launcher_receipt_sha256": "976e874b27aa704af7a74331f7dd918e7ee158cc18f9cbe5821d2e80c679f155",
+  "manifest_sha256": "87d5e51d072cee9bb3df840db716b15cedd37076e3f6d086c3dbb41a050f916a",
+  "config_sha256": "ae941c5ecdcc78d537f6d52499ab1f553ee91e26835f02c8f4bce8fc386952e7",
+  "full_wall_s": 309.2980136669976,
+  "all_process_groups_absent": true,
+  "automatic_retry": false,
+  "planned_denominator": 2,
+  "run_rows": [
+    {
+      "run_id": "d3-local-solo",
+      "outcome": "timeout",
+      "reason": "MAX_TICKS",
+      "replay_goal_complete": false,
+      "mission_complete": false,
+      "metrics": {
+        "wall_time_s": 298.765120125001,
+        "sim_time_s": 179.95000000013732,
+        "high_level_actions": 1,
+        "messages": 0,
+        "model_calls": null,
+        "planner_decisions": 182,
+        "external_model_calls": 0,
+        "message_bytes": 0,
+        "message_tokens": null,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "model_response_time_s": null,
+        "model_response_time_s_mean": null,
+        "external_model_call_upper_bound": 0,
+        "planner_response_time_s": 0.2697952149937919,
+        "pending_planner_requests": 0,
+        "commands": 463
+      },
+      "process": {
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_time_s": 302.35812308299865,
+        "process_group": 27225,
+        "cleanup_grace_s": 5,
+        "child_reaped": true,
+        "process_group_gone": true
+      },
+      "raw_result_sha256": "f8384189f2ff2c23716548824c3520cc29668c99ffa77249a61ddd8918741fba"
+    },
+    {
+      "run_id": "d3-local-joint",
+      "outcome": "failure",
+      "reason": "ALL_ACTORS_FINISHED",
+      "replay_goal_complete": false,
+      "mission_complete": false,
+      "metrics": {
+        "wall_time_s": 2.586016707999079,
+        "sim_time_s": 1.0499999999999619,
+        "high_level_actions": 2,
+        "messages": 0,
+        "model_calls": null,
+        "planner_decisions": 5,
+        "external_model_calls": 0,
+        "message_bytes": 0,
+        "message_tokens": null,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "model_response_time_s": null,
+        "model_response_time_s_mean": null,
+        "external_model_call_upper_bound": 0,
+        "planner_response_time_s": 0.0008752889989409596,
+        "pending_planner_requests": 0,
+        "commands": 0
+      },
+      "process": {
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_time_s": 5.096612042001652,
+        "process_group": 29640,
+        "cleanup_grace_s": 5,
+        "child_reaped": true,
+        "process_group_gone": true
+      },
+      "raw_result_sha256": "012d7cd256ebb105bb01b52546edffccff6c03a294fe0363c8cfb1a899fa38db"
+    }
+  ],
+  "scope": "Raw rehash, fixed identity, evaluator rescore, budget and process cleanup; visual/independent review separate."
+}

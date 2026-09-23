@@ -1,0 +1,90 @@
+{
+  "schema": "a3-independent-postrun-review.v1",
+  "source_sha": "8c1b64a95ca9dc3196e80ea6d47ea7c98d2776f5",
+  "raw_root": "/Users/changmin/.codex/worktrees/cf5f/ugrp/outputs/d3-local-replay-8c1b64a",
+  "raw_inventory_sha256": "a7e591c1d0e29f7a0ed347932729e736c5d5fe05f1d884952c9ce2bddc3d0a5e",
+  "raw_file_count": 1488,
+  "source_files_verified": 508,
+  "recomputed_evaluation_fields_all_match": true,
+  "planned_runs": 2,
+  "completed_valid_records": 2,
+  "physical_target_successes": 0,
+  "outcomes": [
+    {
+      "run_id": "d3-local-solo",
+      "outcome": "timeout",
+      "reason": "MAX_TICKS",
+      "relative_sim_s": 179.95000000013732,
+      "runtime_wall_s": 298.765120125001,
+      "process_wall_s": 302.35812308299865,
+      "commands": 463,
+      "external_model_calls": 0,
+      "generic_model_calls": null
+    },
+    {
+      "run_id": "d3-local-joint",
+      "outcome": "failure",
+      "reason": "ALL_ACTORS_FINISHED",
+      "relative_sim_s": 1.0499999999999619,
+      "runtime_wall_s": 2.586016707999079,
+      "process_wall_s": 5.096612042001652,
+      "commands": 0,
+      "external_model_calls": 0,
+      "generic_model_calls": null
+    }
+  ],
+  "all_owned_process_groups_absent": true,
+  "input_boundary_issues_in_reviewed_scope": [],
+  "input_limits": [
+    "Original JPEG bytes were all decoded and hashed. Original in-memory jpeg_base64/wire bodies were not persisted; base64 checks reconstruct bytes, with source serializer/validator closure only.",
+    "Skill-input JSON records full pre-worker observation, not exact submitted own/top wrapper. Wrapper allowlist and issued servo state origin are source-reviewed, not independently logged wire evidence.",
+    "Cache metadata proves same SIM state/generation for TOP/own, not simultaneous wall exposure. Sequential render capture intervals are preserved.",
+    "The 2-second guard starts at worker submission, not first camera capture. Capture/preparation time is reported separately and not relabeled inference.",
+    "External model calls are zero; generic model_calls is null, not zero. Local saved-model skill computations did occur in original D runs, but none were rerun by this audit.",
+    "Joint r1/r3 worker_outcome=error are independent completion records. SKILL_FAILED detail is copied to both participants by _fail(lease,error); only the first retrieved r1 exception proves RGB outside saved approach support. The specific r3 exception and underlying visual cause are not separately recorded.",
+    "Solo command issuance is not measured movement, grasp or task success.",
+    "No whole-inventory certification, evaluator rescoring, video review or production speed/success conclusion is performed here."
+  ],
+  "decoded_input_jpegs": 1452,
+  "visual_scope": {
+    "solo_sampled_frames": 9,
+    "solo_total_frames": 721,
+    "joint_all_frames": 6,
+    "original_jpeg_samples": 5
+  },
+  "joint_exception_precision": "First retrieved r1 ValueError detail copied to both SKILL_FAILED rows; r3 error completion is independent but exact detail unrecorded.",
+  "runtime_static_xml": "nine inert legacy placeholder attribute changes only; policy camera, robot, real beam/box and other elements unchanged",
+  "live_llm_pilot_admission": false,
+  "no_go_reasons": [
+    "basic physical transport capability not established",
+    "provider and new execution authorization not replaced by this audit"
+  ],
+  "not_claimed": [
+    "communication efficacy",
+    "held-out generalization",
+    "speed improvement",
+    "exact unlogged visual failure cause"
+  ],
+  "dashboard_url": "http://127.0.0.1:6006/?pinnedCards=%5B%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Freported_success%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Fevidence_valid%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fcommands%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fexternal_model_calls%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fprocess_wall_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fplanner_decisions%22%7D%5D&smoothing=0&runFilter=%5E0922-RGB%EB%A1%9C%EC%BB%AC-#timeseries",
+  "dashboard_A_live_scalars_verified": 12,
+  "dashboard_UI_owner": "D3",
+  "dashboard_UI_complete_per_owner_record": true,
+  "audit_mutations": {
+    "new_physics": 0,
+    "new_simulator_render": 0,
+    "new_policy_inference": 0,
+    "external_calls": 0,
+    "retries": 0,
+    "product_code_changes": 0,
+    "raw_changes": 0,
+    "drive_operations": 0,
+    "pr_merges": 0
+  },
+  "record_storage": "local only, not remote backup",
+  "evidence_files": {
+    "a3-postrun-core-8c1b64a.json": "3fe070366860562bae37015bd10d9ca74d4d9dba70cac7c4270a838b0cd8d5d0",
+    "a3-postrun-visual-scene-8c1b64a.json": "088d827454282a83bcfefd285f512c459b5adcff50ef842a22d792b2306bd49d",
+    "a3-postrun-input-boundary-8c1b64a.json": "1ae9d7f875b4e19a432978d957b66506d9c4ad284dd1a9dff8a95c5eb8f70e60",
+    "dashboard-verified.json": "98b6dd7b9f9a38a965e01f48542ccebde4b0a83355c9cd2a69f32956d2ced755"
+  }
+}
