@@ -1,0 +1,23 @@
+{
+  "source_run": "physical-replay-c52d364/runs/rgb-recovery-c52d364-joint",
+  "source_commit": "c52d364",
+  "source_audit_path": "backend/backend-evaluation.json",
+  "source_audit_sha256": "0f64d5729f0cde6f21ce5d4dfe2da32748c388dfdefb89da12ccabed0594ad96",
+  "selection": "Only SKILL_DECISION coarse actor prediction image_error and ready; no referee fields",
+  "top_image": {
+    "filename": "r1-000270-top_rgb.jpg",
+    "source_observation_id": "r1-000270",
+    "sha256": "f85a7e517f1cb9a3dbdde34c0a12fed4fea0df6eee866f77c61d59a7cfaa66c4"
+  },
+  "own_motion_claim_center": {
+    "r3": [
+      0.11366006256517205,
+      0.49791376912378305
+    ],
+    "r1": [
+      0.11261730969760167,
+      0.20027816411682892
+    ]
+  },
+  "trace_sha256": "741efdc8de83a9331d605c53d1d461733141c17f3120a39933c3f3634c78518a"
+}

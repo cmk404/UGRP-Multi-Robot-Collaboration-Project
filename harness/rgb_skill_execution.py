@@ -14,6 +14,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
+from statistics import median
 import threading
 import time
 from types import SimpleNamespace
@@ -32,6 +33,10 @@ MAX_TICK_S = .05
 FRAME_JPEG_QUALITY = 95
 ADAPTER_CONTACT_PROFILE = "local_contact_fine"
 SOLO_MAX_DECISIONS = 1200
+PAIR_COARSE_BASE_DECISIONS = 170
+PAIR_COARSE_MAX_DECISIONS = 300
+PAIR_COARSE_PROGRESS_WINDOW = 24
+PAIR_COARSE_MIN_WINDOW_PROGRESS_PX = .5
 INITIAL_COMMANDS = {"1": 2000, "3": 740, "4": 2320, "5": 1320, "6": 1500}
 SKILLS = {f"{kind}_transport_{goal}": {
     "object_id": "box" if kind == "solo" else "beam",
@@ -80,6 +85,12 @@ def _execution_contract():
                 "reject_clipped_support": True,
                 "requires_four_corners": True},
             "pair_role_binding": "own_motion_claim_and_four_corner_top_bbox_same_beam_side_as_saved_slot",
+            "pair_coarse_progress_budget": {
+                "base_decisions": PAIR_COARSE_BASE_DECISIONS,
+                "max_decisions": PAIR_COARSE_MAX_DECISIONS,
+                "window_decisions": PAIR_COARSE_PROGRESS_WINDOW,
+                "min_window_progress_px": PAIR_COARSE_MIN_WINDOW_PROGRESS_PX,
+                "ready_wait_within_max": True},
             "study_tick_period_s": .05, "study_poll_period_s": .05,
             "worker_image_max_age_s": 1., "worker_wall_limit_s": 2.,
             "worker_wall_scope": "submission_to_consumption"}
@@ -343,6 +354,47 @@ def _route(static_map, spec):
         plan={"dock": spec["dock"]}), spec["object_id"])
 
 
+class PairCoarseProgressBudget:
+    """Bound a coarse phase using this actor's accepted TOP pixel predictions.
+
+    The original 170 decisions remain unconditional. Beyond that point, each
+    24-decision extension needs a median decrease in residual image error.
+    A visually ready actor may wait at the phase barrier, but only up to the
+    same absolute limit. Pixel/role rejection happens before this check.
+    """
+    def __init__(self):
+        self.errors_px = []
+
+    def observe(self, prediction):
+        if len(self.errors_px) >= PAIR_COARSE_MAX_DECISIONS:
+            raise RGBSkillUnsupported("coarse_budget_exhausted", "coarse", {
+                "observations": len(self.errors_px),
+                "max_decisions": PAIR_COARSE_MAX_DECISIONS})
+        gap_x, gap_y = prediction["image_error"]
+        if not all(math.isfinite(float(value)) for value in (gap_x, gap_y)):
+            raise RGBSkillUnsupported("coarse_progress_unresolved", "coarse", {
+                "image_error": prediction["image_error"]})
+        # The fixed TOP contract is 960x720. Count only error outside the
+        # existing forward/lateral acceptance gates, in image pixels.
+        error_px = max(0., (float(gap_x) - .065) * 960) + max(
+            0., (abs(float(gap_y)) - .003) * 720)
+        self.errors_px.append(error_px)
+        count = len(self.errors_px)
+        support = {"observations": count, "residual_error_px": error_px,
+                   "max_decisions": PAIR_COARSE_MAX_DECISIONS}
+        if count <= PAIR_COARSE_BASE_DECISIONS or prediction["ready"]:
+            return support
+        if (count - PAIR_COARSE_BASE_DECISIONS - 1) % PAIR_COARSE_PROGRESS_WINDOW:
+            return support
+        previous = median(self.errors_px[-2*PAIR_COARSE_PROGRESS_WINDOW:-PAIR_COARSE_PROGRESS_WINDOW])
+        current = median(self.errors_px[-PAIR_COARSE_PROGRESS_WINDOW:])
+        progress = previous - current
+        support["window_progress_px"] = progress
+        if progress < PAIR_COARSE_MIN_WINDOW_PROGRESS_PX:
+            raise RGBSkillUnsupported("coarse_rgb_stalled", "coarse", support)
+        return support
+
+
 class PairActorSkill:
     """One actor's saved RGB alignment/grasp and visual transit policy.
 
@@ -373,6 +425,7 @@ class PairActorSkill:
         self.identity_claim = None
         self.probe_step = "baseline"
         self.coarse = None
+        self.coarse_budget = PairCoarseProgressBudget()
 
     @property
     def phase(self):
@@ -381,6 +434,7 @@ class PairActorSkill:
     def advance(self):
         self.index += 1
         self.count, self.confirmations, self.issued = 0, 0, False
+        self.coarse_budget = PairCoarseProgressBudget()
 
     def resume(self):
         if self.phase not in {"coarse", "yaw", "lateral", "forward", "dock", "carry", "verify"}:
@@ -397,7 +451,10 @@ class PairActorSkill:
         commands = own["actuator_state"]["servo_pulses"]
         phase = self.phase
         self.count += 1
-        if self.count > (900 if phase == "carry" else 170):
+        if phase == "coarse" and self.count > PAIR_COARSE_MAX_DECISIONS:
+            raise RGBSkillUnsupported("coarse_budget_exhausted", phase, {
+                "observations": self.count, "max_decisions": PAIR_COARSE_MAX_DECISIONS})
+        if phase != "coarse" and self.count > (900 if phase == "carry" else 170):
             raise ValueError("bounded RGB phase exhausted")
         action, ready, evidence = {"kind": "wait", "duration": .2}, False, {}
         if phase in {"identify_lower", "identify_upper"}:
@@ -493,6 +550,8 @@ class PairActorSkill:
             if not prediction["ok"]:
                 raise RGBSkillUnsupported(prediction.get("reason", "RGB outside saved approach support"),
                                           phase, {"prediction": prediction, "image_transform": transform})
+            if phase == "coarse":
+                prediction["coarse_budget"] = self.coarse_budget.observe(prediction)
             observed_ready = prediction.get("stationary_ready", prediction["ready"])
             self.confirmations = self.confirmations+1 if observed_ready else 0
             ready = self.confirmations >= 2

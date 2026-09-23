@@ -39,12 +39,13 @@
 - `rgb-adapter-contact-fine-visual-recovery-v3`: 슬롯 경계보다 1px 안쪽의 단독 목표와 직전 TOP RGB의 공동 바퀴 영역 재검사를 적용했다. `050f341` 물리 재생에서는 단독 상자 대상이 운반·방출·안정화까지 성공했으나 공동은 sim 29.70의 자기 바퀴 방향 판독 실패로 파지 전에 중단됐다. 전체 임무 완료는 두 대상 모두 거짓이며 원본 번들은 보존한다.
 - `rgb-adapter-contact-fine-component-identity-v4`: 물리·카메라·팔 일정과 300초 예산을 유지한다. 공동 바퀴 영상이 겹쳐 이전 영역 확장 검사에 실패하면, 직전 자기 바퀴 영역 안에 중심이 있는 노란 영상 성분만 재선택한다. `2c23383` 물리 재생에서 단독 상자는 운반·방출·안정화에 성공했지만, 공동은 SIM 29.95의 r1-000177 바퀴 판독에서 파지 전에 중단됐다. 직전 마스크가 지지 영역 경계에 닿으며 이웃 바퀴를 받아들인 것이 저장 영상에서 확인됐다. 원본과 번들은 보존한다.
 - `rgb-adapter-contact-fine-boundary-identity-v5`: 영역 확장 마스크가 직전 자기 바퀴 영역의 지지 경계에 닿으면 그대로 수용하지 않고 v4의 성분 재선택으로 보낸다. 물리·카메라·팔 일정, 네 모서리·연속성 검사와 예산은 유지한다. `c1e63e7` 물리 재생에서 단독 상자는 다시 성공했으나 공동은 SIM 30.45의 양쪽 안쪽 바퀴가 하나의 TOP 영상 성분으로 합쳐져 파지 전에 중단됐다. 안전하게 구분할 근거 없이 성분을 잘라 통과시키지 않는다. 전체 임무 완료는 두 실행 모두 거짓이며 등록 상태는 `experimental_unqualified`다.
-- `rgb-adapter-contact-fine-role-binding-v6`: 고정 공동 역할 배정을 준비 입력에 명시하고, 각 actor가 자기 움직임으로 확인한 TOP 위치·네 모서리 바퀴 영역이 저장 슬롯과 빔의 같은 쪽에 있는지 동작 전에 검사한다. v5 첫 공동 영상에서 기존 r1 아래/r3 위 배정은 둘 다 거절되고 r1 위/r3 아래 배정은 수용됐다. 이 정적 영상 검사는 물리 운반 성공 근거가 아니며, 새 번들의 단독·공동 재생이 필요하다.
+- `rgb-adapter-contact-fine-role-binding-v6`: 고정 공동 역할 배정을 준비 입력에 명시하고, 각 actor가 자기 움직임으로 확인한 TOP 위치·네 모서리 바퀴 영역이 저장 슬롯과 빔의 같은 쪽에 있는지 동작 전에 검사한다. v5 첫 공동 영상에서 기존 r1 아래/r3 위 배정은 둘 다 거절되고 r1 위/r3 아래 배정은 수용됐다. `c52d364` 물리 재생에서 단독 상자는 대상 성공, 공동은 역할 판독을 유지하며 더 진행했으나 coarse 170회 상한으로 파지 전 중단됐다. 등록 상태는 여전히 `experimental_unqualified`다.
+- `rgb-adapter-contact-fine-progress-budget-v7`: v6의 자기 영상 역할 검사와 정렬 기준은 유지한다. 공동 coarse에서 170회 이후 TOP 오차의 24회 중앙값이 직전 창보다 0.5px 이상 줄어들 때만 유한한 연장을 허용하고, 준비된 동료는 barrier에서 기다린다. 둘 다 최대 300회이며 정체·영상 오류는 중단한다. v6 원본 판단 기록과 다음 TOP 영상의 오프라인 검사만 통과했고 물리 성공은 새 재생으로 검증해야 한다.
 
 새 backend 설정 schema는 `ugrp.rgb_skill_backend.v2`다. `execution_bundle_id`가 없거나 지원하지 않는 조합이면 거절한다. 과거 v1 설정은 당시 실행 기록으로 보존한다. 실행 전 정적 검사는 다음과 같다. 시뮬레이션·렌더링·외부 모델 호출은 하지 않는다.
 
 ```sh
-python3 -m harness.rgb_execution_bundle verify-current --id rgb-adapter-contact-fine-role-binding-v6
+python3 -m harness.rgb_execution_bundle verify-current --id rgb-adapter-contact-fine-progress-budget-v7
 python3 -m harness.rgb_execution_bundle verify-registry --base origin/main
 ```
 
