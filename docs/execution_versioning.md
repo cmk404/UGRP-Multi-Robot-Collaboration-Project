@@ -41,10 +41,12 @@
 
 - `rgb-standard-dispatch-v6`: v5의 로컬 촬영·경로 선택을 유지하고, MuJoCo 관찰 창의 wall-clock 입력 확인과 재생 속도 대기를 묶는다. 물리 timestep·actor 관측·명령 일정은 바꾸지 않는다. v5 원본 번들은 보존하며 실제 창 실행 결과는 별도 기록한다.
 
+- `rgb-standard-dispatch-v7`: v6의 pacing을 유지하며 관찰 창 전용 그림자·반사를 끄고 MuJoCo 3.12의 state-only sync를 사용한다. actor 카메라와 원본 영상 렌더러, 모델·물리·제어 주기는 유지한다. v6의 창 실행 완주와 이 후보의 처리 속도는 별도로 평가한다.
+
 새 backend 설정 schema는 `ugrp.rgb_skill_backend.v2`다. `execution_bundle_id`가 없거나 지원하지 않는 조합이면 거절한다. 과거 v1 설정은 당시 실행 기록으로 보존한다. 실행 전 정적 검사는 다음과 같다. 시뮬레이션·렌더링·외부 모델 호출은 하지 않는다.
 
 ```sh
-python3 -m harness.rgb_execution_bundle verify-current --id rgb-standard-dispatch-v6
+python3 -m harness.rgb_execution_bundle verify-current --id rgb-standard-dispatch-v7
 python3 -m harness.rgb_execution_bundle verify-registry --base origin/main
 ```
 

@@ -142,11 +142,16 @@ def test_native_observer_cannot_mutate_research_physics(monkeypatch):
     data = mujoco.MjData(model)
     original_qpos = data.qpos.copy()
     original_gravity = model.opt.gravity.copy()
+    original_model = mujoco.mj_saveModel(model)
+    actor_scene = mujoco.MjvScene(model, maxgeom=10)
+    original_actor_flags = actor_scene.flags.copy()
+    sync_modes = []
     class Viewer:
         cam = SimpleNamespace(lookat=[0.,0.,0.])
         def lock(self): return contextlib.nullcontext()
         def is_running(self): return True
-        def sync(self):
+        def sync(self, *, state_only=False):
+            sync_modes.append(state_only)
             # Simulate native reset/physics/actuator panel writes.
             self.data.qpos[:] = 2
             self.model.opt.gravity[:] = 0
@@ -154,11 +159,28 @@ def test_native_observer_cannot_mutate_research_physics(monkeypatch):
         def _sim(self): return None
     def launch(model, data, **kwargs):
         viewer = Viewer(); viewer.model = model; viewer.data = data
+        viewer.user_scn = mujoco.MjvScene(model, maxgeom=10)
+        viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_SHADOW] = 1
+        viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_REFLECTION] = 1
         return viewer
     monkeypatch.setattr(mujoco.viewer, 'launch_passive', launch)
     scene = SimpleNamespace(world=SimpleNamespace(model=model, data=data), time=lambda:float(data.time), deadline=None)
     view = DispatchNativeView(scene)
     try:
+        assert sync_modes == [True]
+        assert view.model is not model and view.data is not data
+        assert view.viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_SHADOW] == 0
+        assert view.viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_REFLECTION] == 0
+        # A GUI-side toggle cannot turn these observer-only effects back on.
+        view.viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_SHADOW] = 1
+        view.viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_REFLECTION] = 1
+        view.next_sync = 0.
+        view.poll()
+        assert sync_modes == [True, True]
+        assert view.viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_SHADOW] == 0
+        assert view.viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_REFLECTION] == 0
+        assert (actor_scene.flags == original_actor_flags).all()
+        assert mujoco.mj_saveModel(model) == original_model
         assert (data.qpos == original_qpos).all()
         assert (model.opt.gravity == original_gravity).all()
         view.keys.put(81)

@@ -55,5 +55,20 @@
     "runs": 1,
     "success_scope": "native user-flow check; compare completion and strict concurrent transport, do not compute speedup from an incomplete baseline",
     "source_freeze": "Commit v6 source before the finite native run; preserve v5 failure and its source identity."
+  },
+  "native_render_followup": {
+    "trigger": "v6 native full replay succeeds in429.020s for140.300SIM seconds; 3s stack sample shows native rendering and lock waits.",
+    "baseline_source_sha": "dd02695f1b97de9707d42c54eed0ec9bd98729a4",
+    "candidate_bundle": "rgb-standard-dispatch-v7",
+    "change_scope": "isolated native observer rendering and state synchronization only",
+    "fixed": "same saved plan/open/seed11/local_contact_fine, actor camera/video/controller/physics unchanged",
+    "viewer": true,
+    "realtime_factor": 2,
+    "max_wall_s": 600,
+    "manager_timeout_s": 660,
+    "external_model_calls": 0,
+    "runs": 1,
+    "acceptance": "full physical completion and unchanged command/referee trajectory; measure wall time against completed native v6, retain all intermediate outcomes",
+    "source_freeze": "commit v7 before native run"
   }
 }

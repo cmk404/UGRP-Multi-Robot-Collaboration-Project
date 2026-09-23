@@ -63,7 +63,10 @@ class DispatchNativeView:
             if now >= self.next_sync:
                 with self.viewer.lock():
                     mujoco.mj_copyData(self.data, self.model, self.scene.world.data)
-                self.viewer.sync()
+                    # These flags belong to the copied observer scene only.
+                    self.viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_SHADOW] = 0
+                    self.viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_REFLECTION] = 0
+                self.viewer.sync(state_only=True)
                 self.next_sync = now + 1 / 30
             if not self.paused:
                 self.next_poll = time.monotonic() + _POLL_INTERVAL_S
