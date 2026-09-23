@@ -284,7 +284,8 @@ def pixel_from_map(xy, static_map, shape, *, height=0.):
 class ImageRoute:
     """Plan-selected authored waypoints with current cargo position from RGB."""
     def __init__(self, bindings, obj):
-        self.bindings=bindings
+        self.route_overlap=bool(getattr(bindings,'route_overlap',False))
+        self._permission=getattr(bindings,'permission',None)
         self.map=bindings.static_map;self.obj=obj
         self.task=bindings.tasks[obj];self.dock=bindings.plan['dock']
         self.points=None;self.index=0;self.confirmations=0
@@ -424,7 +425,7 @@ class ImageRoute:
                     pixel_from_map([1.12,apron_y],self.map,frame.shape),
                     pixel_from_map([east_clear,apron_y],self.map,frame.shape),
                     pixel_from_map([east_clear,destination[1]],self.map,frame.shape),goal_px]
-                if self.bindings.route_overlap:
+                if self.route_overlap:
                     # A separate south/north staging point stays west of the
                     # shared apron, including the authored chassis margin.
                     west=self.map['regions']['dispatch_apron']['center_m'][0]-self.map['regions']['dispatch_apron']['half_extents_m'][0]
@@ -459,8 +460,8 @@ class ImageRoute:
                   'cargo_bounds_px':bounds.tolist(),'waypoint_index':self.index,
                   'waypoints_px':[p.tolist() for p in self.points],
                   'error_px':error.tolist(),'ready':ready,'done':done}
-        if (self.obj=='box' and self.bindings.route_overlap and self.index==1 and ready
-                and not self.bindings.permission('box','UNLOAD')):
+        if (self.obj=='box' and self.route_overlap and self.index==1 and ready
+                and self._permission is not None and not self._permission('box','UNLOAD')):
             self.confirmations=0
             evidence.update(waiting_for_resource=True,resource='dispatch_apron',done=False)
             return {'kind':'mecanum','forward':0.,'left':0.,'turn':0.,'duration_s':.2},evidence
