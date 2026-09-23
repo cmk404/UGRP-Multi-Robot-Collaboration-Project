@@ -119,7 +119,7 @@
   "budget_review_after_v19_transit": {
     "record": "budget-review-v19-grasp-admission.json",
     "evidence": "v19 same-source transit-admission native full and repeat both completed physical cargo and protocol, but strict loaded simultaneous motion was 0 in both; beam loaded interval ended before box loaded interval began by 2.54/1.76 SIM s.",
-    "candidate_difference": "Existing CLI --overlap-start grasp only; source 51fb09cf519f2ef61ff3f306beb07ffc64236816 and v19 bundle remain pinned. Default transit mode unchanged.",
+    "candidate_difference": "Existing CLI --overlap-start grasp only; execution code from 51fb09cf519f2ef61ff3f306beb07ffc64236816 and the v19 bundle remain unchanged. Grasp runs use documentation-only descendant 1fed936645d8c61bdbea99ec54d7cb09fd719d78. Default transit mode unchanged.",
     "additional_full_trials_max": 2,
     "full_max_wall_s_each": 600,
     "repeat_rule": "Only if first grasp trial completes both physical cargo and protocol; preserve each raw outcome.",
@@ -130,8 +130,8 @@
       "check grasp/held failure, contacts, strict simultaneous loaded motion, resource wait and exclusive apron",
       "separate configuration difference from code change, no new LLM calls"
     ],
-    "precondition_status": "fulfilled: native-v19-repeat manager exit 0, physical_success=true, protocol_complete=true, independent-audit-v19-repeat.json recorded; grasp trial not yet run",
-    "code_pin_check": "Current source HEAD remains 51fb09cf519f2ef61ff3f306beb07ffc64236816 before documentation-only record commit; grasp trial must pin same execution source and bundle with only CLI overlap_start difference.",
+    "precondition_status": "Before the grasp cohort, native-v19-repeat manager exit 0, physical_success=true, protocol_complete=true and its independent audit fulfilled the prerequisite. Both later grasp runs are recorded in completion.",
+    "code_pin_check": "The pre-run review verified execution source 51fb09cf519f2ef61ff3f306beb07ffc64236816. Completed grasp runs pinned documentation-only descendant 1fed936645d8c61bdbea99ec54d7cb09fd719d78; independent audits verify the same execution-code tree and v19 bundle, with only CLI overlap_start and output paths differing.",
     "completion": {
       "source_sha": "1fed936645d8c61bdbea99ec54d7cb09fd719d78",
       "execution_tree_equal_to_transit_source_51fb09c": true,
