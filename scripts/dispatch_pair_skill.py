@@ -24,6 +24,7 @@ COARSE_LEAD_LIMIT_PX = 16.
 # Zero/dwell stays settled; the port's .25s max and capture-time .6s TTL cap it.
 OPEN_APPROACH_RENEWAL_LEASE_S = .25
 OPEN_CARRY_RENEWAL_LEASE_S = .25
+_CURRENT_BEAM_FEATURE = object()
 
 
 def _visual_timing(frame, *, perception_wall_s=None, policy_wall_s=None):
@@ -192,7 +193,8 @@ class BoundPairSkill:
         self.last_capture=mapped
         return mapped
 
-    def issue_mecanum_bounded(self,commands,duration_s=.2,*,observed_at_s=None):
+    def issue_mecanum_bounded(self,commands,duration_s=.2,*,observed_at_s=None,
+                              reservation_feature=_CURRENT_BEAM_FEATURE):
         if getattr(self.io,'realtime_control',False):
             now=self.time()
             if observed_at_s is None or not math.isfinite(float(observed_at_s)) or float(observed_at_s)>now+1e-9:
@@ -204,8 +206,10 @@ class BoundPairSkill:
                 self.calls.append({'kind':'bounded_pair_stale_rgb','stage':self.phase,
                                    'observed_at_s':float(observed_at_s),'received_at_s':now})
                 return 0.
-        if self.transport_started and self.carried_beam.previous is not None:
-            self.bindings.reserve_beam_apron(self.carried_beam.previous)
+        feature=(self.carried_beam.previous if reservation_feature is _CURRENT_BEAM_FEATURE
+                 else reservation_feature)
+        if self.transport_started and feature is not None:
+            self.bindings.reserve_beam_apron(feature)
         self.io.pair_issue_bounded(
             {self.bindings.pair[r]:dict(kind='mecanum',**c,duration_s=duration_s)
              for r,c in commands.items()},duration_s,self.phase)
@@ -338,6 +342,82 @@ class BoundPairSkill:
         policy=PairCarryPolicy('dispatch-'+self.bindings.committed['plan_hash'][:12])
         with ThreadPoolExecutor(max_workers=1,thread_name_prefix='dispatch-pair-decision') as worker:
             next_capture=None
+            pending_lease=None
+
+            def advance_pending():
+                nonlocal pending_lease
+                lease=pending_lease
+                if lease is not None:
+                    now=self.time()
+                    # The last accepted RGB decision, plan and route permission
+                    # remain the only authority while its next image is pending.
+                    # A missing authority interface is fail-closed for renewal
+                    # (and keeps older non-runtime callers unchanged).
+                    authorize=getattr(self.io,'authorize',None)
+                    permission=getattr(self.bindings,'permission',None)
+                    sync=getattr(policy,'sync',None)
+                    if (not callable(authorize) or not callable(permission)
+                            or not callable(getattr(sync,'authorize',None))):
+                        pending_lease=None
+                    else:
+                        try:
+                            authorize()
+                            if self.bindings.committed['plan_hash']!=lease['plan_hash']:
+                                raise RuntimeError('pending pair plan changed')
+                            authority=sync.authorize(now)
+                            if (authority['phase']!='GO'
+                                    or authority['epoch']!=lease['sync_epoch']):
+                                pending_lease=None
+                                self._hold_pair()
+                            elif not permission('beam','TRANSIT'):
+                                raise RuntimeError('pending pair transit permission revoked')
+                            elif lease['accepted_beam'] is not None:
+                                self.bindings.reserve_beam_apron(lease['accepted_beam'])
+                        except BaseException:
+                            pending_lease=None
+                            self._hold_pair()
+                            raise
+                        deadline=lease['observed_at_s']+.6
+                        if pending_lease is None:
+                            pass
+                        elif now>=lease['valid_until_s']-1e-9:
+                            # A stopped/expired command may never be revived
+                            # from old RGB, even when part of its TTL remains.
+                            pending_lease=None
+                            self._hold_pair()
+                        elif now>=deadline-1e-9:
+                            pending_lease=None
+                            self._hold_pair()
+                        elif (now+.02>=lease['valid_until_s']-1e-9
+                              and lease['valid_until_s']<deadline-1e-9):
+                            prior_until=lease['valid_until_s']
+                            effective=self.issue_mecanum_bounded(
+                                lease['commands'],min(.25,deadline-now),
+                                observed_at_s=lease['observed_at_s'],
+                                reservation_feature=lease['accepted_beam'])
+                            if effective<=0:
+                                pending_lease=None
+                            else:
+                                lease['valid_until_s']=now+effective
+                                receipt={'kind':'carry_pending_renewal',
+                                    'source_frame_ids':dict(lease['frame_ids']),
+                                    'source_observed_at_s':lease['observed_at_s'],
+                                    'source_decision_sim_time_s':lease['decision_sim_time_s'],
+                                    'original_rgb_deadline_s':deadline,
+                                    'previous_valid_until_s':prior_until,
+                                    'issued_at_s':now,'valid_until_s':now+effective,
+                                    'duration_s':effective,'plan_hash':lease['plan_hash'],
+                                    'reason':'same_accepted_cruise_while_next_rgb_pending'}
+                                self.calls.append(receipt)
+                                history=getattr(self.io,'command_history',None)
+                                if history is not None:
+                                    for rid in self.bindings.pair.values():
+                                        history[rid][-1].update(
+                                            pending_renewal=True,
+                                            source_frame_ids=dict(lease['frame_ids']),
+                                            observed_at_s=lease['observed_at_s'],
+                                            original_rgb_deadline_s=deadline)
+                self.tick(.02)
 
             def submit_capture(*,retry):
                 # Only the physics owner requests actor snapshots. A speculative
@@ -363,7 +443,7 @@ class BoundPairSkill:
                     next_capture=None
                     count,frame_future=current
                     while not frame_future.done():
-                        self.tick(.02)
+                        advance_pending()
                     raw_frames=frame_future.result()
 
                     def analyze(raw_frames=raw_frames,count=count):
@@ -399,8 +479,9 @@ class BoundPairSkill:
                     while not pending.done():
                         # Only the owner advances physics. Port leases expire
                         # independently if RGB/render/decision work stalls.
-                        self.tick(.02)
+                        advance_pending()
                     frames,motion,evidence,decisions,skew,skew_evidence,perception_wall_s=pending.result()
+                    pending_lease=None  # A new decision replaces the older RGB authority.
                     now=self.time();observed=float(frames['r1']['observed_at_s'])
                     self.io.realtime_stats['pair_decisions']+=1
                     self.io.realtime_stats['max_decision_age_s']=max(
@@ -439,10 +520,21 @@ class BoundPairSkill:
                     effective_lease_s=self.issue_mecanum_bounded(
                         commands,requested_lease_s,observed_at_s=observed)
                     carry_record['effective_lease_s']=effective_lease_s
+                    permission=control.get('permission',{})
+                    if (moving and renewing and effective_lease_s>0
+                            and permission.get('phase')=='GO'
+                            and callable(getattr(getattr(policy,'sync',None),'authorize',None))):
+                        pending_lease={'commands':copy.deepcopy(commands),
+                            'observed_at_s':observed,'frame_ids':dict(carry_record['frame_ids']),
+                            'decision_sim_time_s':now,'valid_until_s':now+effective_lease_s,
+                            'plan_hash':self.bindings.committed['plan_hash'],
+                            'sync_epoch':permission['epoch'],
+                            'accepted_beam':copy.deepcopy(self.carried_beam.previous)}
                     # At least one physical control interval precedes the next
                     # image. The remaining lease may overlap RGB processing.
                     self.tick(.02 if renewing and effective_lease_s>0 else .05)
             finally:
+                pending_lease=None
                 now=self.time()
                 for rid in self.bindings.pair.values():self.io.ports[rid].hold(now)
                 if next_capture is not None:

@@ -1,0 +1,66 @@
+{
+  "scope": "Read-only post-run estimate from saved v15 decision rows; no physics replay or new model calls.",
+  "v15_source_sha": "efe19d03d1b0d6e803f74c02cfdf11d3baa74def",
+  "v15_raw_solo_decisions": {
+    "path": "native-v15-full/solo-decisions.json",
+    "sha256": "09d859fe7ded492d256acc035202ec39add272447cc78905a9c8e75176f328a7",
+    "row_count": 847
+  },
+  "method": "Each maximal consecutive resource_permission run starts at its first denied decision time and ends at the next non-denied decision time. Sum those elapsed SIM intervals; no hidden permission event time is inferred.",
+  "resource_wait_intervals": [
+    {
+      "first_denied_index": 84,
+      "last_denied_index": 128,
+      "next_non_denied_index": 129,
+      "first_denied_sim_s": 76.68374999991464,
+      "next_non_denied_sim_s": 100.6674999993475,
+      "elapsed_sim_s": 23.98374999943286,
+      "denied_row_count": 45
+    },
+    {
+      "first_denied_index": 338,
+      "last_denied_index": 338,
+      "next_non_denied_index": 339,
+      "first_denied_sim_s": 178.91774999749714,
+      "next_non_denied_sim_s": 179.27574999748867,
+      "elapsed_sim_s": 0.3579999999915344,
+      "denied_row_count": 1
+    },
+    {
+      "first_denied_index": 343,
+      "last_denied_index": 557,
+      "next_non_denied_index": 558,
+      "first_denied_sim_s": 180.55499999745842,
+      "next_non_denied_sim_s": 249.02924999583922,
+      "elapsed_sim_s": 68.4742499983808,
+      "denied_row_count": 215
+    },
+    {
+      "first_denied_index": 562,
+      "last_denied_index": 572,
+      "next_non_denied_index": 573,
+      "first_denied_sim_s": 252.07374999576723,
+      "next_non_denied_sim_s": 256.7892499956557,
+      "elapsed_sim_s": 4.715499999888493,
+      "denied_row_count": 11
+    }
+  ],
+  "resource_wait_total_sim_s": 97.53149999769369,
+  "saved_row_window_proxy": {
+    "first_decision_sim_s": 5.563000000001053,
+    "last_decision_sim_s": 304.44699999452877,
+    "elapsed_sim_s": 298.8839999945277,
+    "active_proxy_sim_s": 201.352499996834,
+    "caveat": "Approximately 201 SIM seconds only within the saved first-to-last decision window. The true solo start, last timeout tick, and denied-to-grant timing are not in this proxy. These are not v16 owner-clock budget statistics."
+  },
+  "v15_timeout": {
+    "error": "ComponentExecutionError: solo_box: RuntimeError: solo SIM budget exhausted",
+    "control_end_sim_s": 305.36049999450717,
+    "old_hard_cap_sim_s": 300.0,
+    "interpretation": "The v15 cap used elapsed solo SIM time, including resource denial waits."
+  },
+  "related_document": "docs/realtime_dispatch.md",
+  "new_model_calls": false,
+  "physical_reexecution": false,
+  "v16_reviewed_worktree_head": "bb9d4ba10b0e19fc97c7415b68838bfc140d9cfe"
+}

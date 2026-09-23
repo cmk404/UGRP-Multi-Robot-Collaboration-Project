@@ -96,6 +96,8 @@ TEST_PATTERNS = (
     "tests/test_dispatch_translation_skew_fallback.py",
     "tests/test_dispatch_pair_prefetch.py",
     "tests/test_communication_observer.py",
+    "tests/test_dispatch_solo_cadence.py",
+    "tests/test_dispatch_pair_pending_renewal.py",
     "tests/test_dispatch_solo_budget.py",
     "tests/test_camera_gripper_motion.py",
     "tests/test_camera_pixel_grasp.py",

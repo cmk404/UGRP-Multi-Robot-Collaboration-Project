@@ -64,5 +64,12 @@
     "full_max_wall_s": 600,
     "model_calls": 0,
     "purpose": "Qualify capture at actual render readiness and explicit resource-wait budget accounting, including observer-only conversation display. Repeat identical committed source only if first full run succeeds."
+  },
+  "budget_review_after_v16": {
+    "evidence": "v16 failed at600 solo decisions with227.5 active SIMseconds.213/447 adjacent moving decisions arrived faster than the original .2-second action cadence. Pair median expiry gap .07 seconds remains; native dialogue display is now verified in state-only sync.",
+    "remaining_full_trials": 1,
+    "full_max_wall_s": 600,
+    "model_calls": 0,
+    "purpose": "Use the remaining post-v15 budget to qualify original solo moving cadence and exact prior pair motion renewal under unchanged originalRGB TTL; no new threshold, duration budget, camera, physics or model changes."
   }
 }

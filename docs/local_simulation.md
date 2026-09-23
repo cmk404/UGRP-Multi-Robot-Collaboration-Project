@@ -100,6 +100,8 @@ bash scripts/open_simulation.command dispatch --plan-replay outputs/my-run/commi
 
 `dispatch`는 **기존** `run_dispatch_e2e.py --executor skills`의 진입점이다. 세 로봇의 자기 RGB·공용 TOP·자기 명령 이력·허용 정적 지도·동료 메시지로 계획을 협상하고, 동일 plan ID/hash에 전원 합의해야 `SkillBindings`가 로봇별 프로그램을 만든다. 담당 물체, 운반 파트너, 경로, 목적지, 선행 작업은 plan에서 가져온다. pair RGB 접근·파지·운반과 solo box 스킬을 공통 물리 시계에서 진행하며, 공동 동작·점유 자원·선행 작업의 기존 허가를 유지한다. 별도 프로세스 세 개의 실시간 분산 제어를 뜻하지 않는다.
 
+MuJoCo 출하 창 왼쪽 아래에서 최근 동료 메시지와 발신·수신 로봇을 볼 수 있다. 전체 대화는 출력 폴더의 `team/conversation.jsonl`과 터미널 `peer_delivery` 행에 남는다. 현재 새 자연어 대화는 주로 계획 협상에서 발생하며, 저장 계획 재생과 RGB 운반 중에는 새 대화가 없을 수 있다. [대화 관찰·원문 기록](communication_observer.md)을 참고한다.
+
 자연어는 **실행 전 계획 지시**다. 현재 계약은 기존 beam 1개·box 1개, 로봇 3대, dock_a/b, north/south 경로다. 자유로운 새 작업이나 임의 맵에 필요한 스킬을 자동으로 만드는 기능은 없다. 목적지처럼 반드시 지켜야 하는 조건은 `--required-dock`으로도 지정한다. 실행 중 새 자연어 지시로 이미 승인된 plan을 바꾸는 기능은 아직 없다. 새 작업은 종료 후 다시 실행한다. 저장된 plan 재생에는 새 `--task`를 함께 넣을 수 없다.
 
 출하 스킬에 필요한 기존 모델은 저장소의 `experiments/dispatch-skill-integration-20260917/models.zip`에서 `outputs/dispatch-models/<bundle-hash>/`로 복원한다. 기존 파일을 덮어쓰거나 새로 학습하지 않는다. 자기 모델은 `--grasp-model-dir DIR --stage-model-dir DIR`를 함께 지정한다. 이 모델의 과거 성공 범위가 임의 조건의 성공을 보장하지는 않는다.

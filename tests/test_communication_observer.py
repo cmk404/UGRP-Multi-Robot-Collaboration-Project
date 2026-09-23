@@ -185,6 +185,9 @@ def test_bounded_panel_reads_only_new_sidecar_sequences(tmp_path):
 
 def test_nonrealtime_view_polls_observer_panel_without_touching_physics(monkeypatch):
     calls = []
+    fake = ModuleType('mujoco')
+    fake.mj_copyData = lambda *args: pytest.fail('observer poll copied physics data')
+    monkeypatch.setitem(sys.modules, 'mujoco', fake)
     view = dispatch_native_view.DispatchNativeView.__new__(dispatch_native_view.DispatchNativeView)
     view.viewer = SimpleNamespace(is_running=lambda: True)
     view.scene = SimpleNamespace(deadline=None)

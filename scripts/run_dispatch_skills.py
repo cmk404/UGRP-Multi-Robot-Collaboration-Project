@@ -63,6 +63,7 @@ class SkillScene(DispatchScene):
         self._decision_workers=None
         self._solo_pending=None
         self._yield_pending=None
+        self._solo_motion_accept_after_s=0.
         self._solo_phase_label='SETUP'
         self._contact_audit=None
         self.realtime_stats={'solo_backpressure':0,'solo_stale_rgb':0,
@@ -307,6 +308,7 @@ class SkillScene(DispatchScene):
         self._solo_resource_wait_reason=None
         self._solo_budget_ended=False
         self._solo_phase_label=self.solo.phase
+        self._solo_motion_accept_after_s=0.
         if self.realtime_control:
             self._decision_workers=ThreadPoolExecutor(max_workers=2,thread_name_prefix='dispatch-decision')
     def other_robot_observation(self,top):
@@ -407,10 +409,13 @@ class SkillScene(DispatchScene):
         if self._solo_pending is not None:
             pending=self._solo_pending
             if not pending['future'].done():return
-            self._solo_pending=None
-            result=pending['future'].result()
+            if 'result' not in pending:pending['result']=pending['future'].result()
+            pending.setdefault('result_ready_at_s',now)
+            result=pending['result']
             observed=result['observed_at_s']
             if now-observed>RGB_ACTION_TTL_S:
+                self._solo_pending=None
+                self._solo_motion_accept_after_s=0.
                 self._solo_set_resource_wait(now,False)
                 self.ports[self.bindings.solo].hold(now)
                 self.realtime_stats['solo_stale_rgb']+=1
@@ -429,6 +434,8 @@ class SkillScene(DispatchScene):
                           and action['kind']=='mecanum'
                           and any(abs(action[k])>1e-9 for k in ('forward','left','turn')))
             if moving_carry and observed+RGB_ACTION_TTL_S-now<=0:
+                self._solo_pending=None
+                self._solo_motion_accept_after_s=0.
                 self._solo_set_resource_wait(now,False)
                 self.ports[self.bindings.solo].hold(now)
                 self.realtime_stats['solo_stale_rgb']+=1
@@ -437,12 +444,26 @@ class SkillScene(DispatchScene):
                     'frame_id':result['frame_id']})
                 return
             worker_wait=bool(evidence.get('waiting_for_resource'))
-            if worker_wait:
+            # The legacy RGB skill counts one moving decision per requested
+            # 0.2 SIM seconds. Finish the next RGB worker early, but admit its
+            # next moving action only after that nominal interval while the
+            # prior bounded lease remains valid. A TTL-shortened lease caps it.
+            cadence_due=getattr(self,'_solo_motion_accept_after_s',0.)
+            waiting_for_cadence=(moving_carry and before=='carry'
+                                 and candidate.phase=='carry'
+                                 and now+1e-9<cadence_due)
+            if worker_wait or waiting_for_cadence:
                 probe=self._permission_snapshot()
                 owner_denied=not all(probe.permission(obj,stage)
                                      for obj,stage in dict.fromkeys(requests))
             else:owner_denied=not self._commit_permissions(requests)
+            if waiting_for_cadence and not worker_wait and not owner_denied:
+                # No live lock or route state is committed while waiting. The
+                # original RGB timestamp is checked again on every owner tick.
+                return
+            self._solo_pending=None
             if worker_wait or owner_denied:
+                self._solo_motion_accept_after_s=0.
                 self._solo_set_resource_wait(now,owner_denied,
                                              'candidate' if owner_denied else None)
                 previous_guard_at=getattr(self.solo.box,'_last_sim_time',None)
@@ -489,14 +510,26 @@ class SkillScene(DispatchScene):
                 if moving_carry:
                     effective=self._issue_realtime_motor(
                         self.bindings.solo,action,'TRANSIT',observed,now=now)
+                    nominal_cadence=min(float(action['duration_s']),
+                                        REALTIME_MOTOR_RENEWAL_S)
+                    # A TTL-clipped lease must never force a later motor gap.
+                    admission_cadence=min(nominal_cadence,effective)
+                    self._solo_motion_accept_after_s=(
+                        now+admission_cadence if self.solo.phase=='carry' else 0.)
                     row.update(requested_duration_s=action['duration_s'],
                                renewal_request_s=REALTIME_MOTOR_RENEWAL_S,
-                               effective_lease_s=effective)
+                               effective_lease_s=effective,
+                               nominal_motion_cadence_s=nominal_cadence,
+                               motion_admission_cadence_s=admission_cadence,
+                               cadence_wait_s=max(0.,now-pending['result_ready_at_s']))
                     self.solo_lease=now+REALTIME_CAPTURE_OVERLAP_S
                 else:
+                    self._solo_motion_accept_after_s=0.
                     self.raw(self.bindings.solo,action,'TRANSIT')
                     self.solo_lease=now+action['duration_s']
-            else:self.solo_executor.submit(action,obs,self.solo.phase,now)
+            else:
+                self._solo_motion_accept_after_s=0.
+                self.solo_executor.submit(action,obs,self.solo.phase,now)
             self.solo_rows.append(row)
             if pending['index']%25==0 or before!=self.solo.phase:
                 print(json.dumps({'solo_step':pending['index'],'robot':self.bindings.solo,
