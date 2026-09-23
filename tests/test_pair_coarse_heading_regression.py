@@ -1,4 +1,4 @@
-"""Recorded RGB regression for pair wheel selection near another robot."""
+"""Recorded TOP RGB checks for pair wheel identity near another robot."""
 
 import hashlib
 from pathlib import Path
@@ -12,56 +12,105 @@ from harness.dispatch_skill_binding import PairCoarsePixels
 
 
 ROOT = Path(__file__).parent / "fixtures"
-TOP = ROOT / "pair_heading_overlap/r3-000156-top_rgb.jpg"
-NEW_TOP = ROOT / "pair_heading_overlap/r3-000158-top_rgb.jpg"
+FRAMES = ROOT / "pair_heading_overlap"
 REFERENCE = ROOT / "camera_goal_transport/reference-top.jpg"
-RECORDED_CROP_CENTER = [114.13569321533923 / 960, 279.5427728613569 / 720]
-NEW_CROP_CENTER = [112.665 / 960, 280.791 / 720]
+CASES = [
+    ("6089f80", [152, 155], 156,
+     [114.2406876790831 / 960, 282.27793696275074 / 720], 381),
+    ("bf476e2", [151], 158,
+     [112.90634441087613 / 960, 282.9274924471299 / 720], 343),
+    ("7c3e4aa", [151, 158], 159,
+     [112.90634441087613 / 960, 282.9274924471299 / 720], 337),
+]
+HASHES = {
+    156: "0bba4db4b15d7180bbe3201c4d8b42608401e47a83b050b86e2ee7e17ffdbe07",
+    158: "2f6ab101d0974445772a74c8547150736bc5f1aa3b8820f128e95f3f64a156e0",
+    159: "fbb56c4449f6201019b4b6e3999ce14254c01b890efb1c3590a895001d55d47f",
+}
+NO_PRIOR_CENTERS = {
+    156: [114.13569321533923 / 960, 279.5427728613569 / 720],
+    158: [112.66470588235295 / 960, 280.79117647058825 / 720],
+    159: [112.83381924198251 / 960, 279.9008746355685 / 720],
+}
 
 
-def _coarse(center=RECORDED_CROP_CENTER):
+def _frame(number):
+    return (FRAMES / f"r3-{number:06d}-top_rgb.jpg").read_bytes()
+
+
+def _coarse(center):
     return PairCoarsePixels(
         {"r3": {"claim": {"valid": True, "center": center}}},
         SimpleNamespace(pair={"r3": "r3"}), REFERENCE.read_bytes())
 
 
-def test_recorded_peer_wheel_at_crop_edge_preserves_four_corner_heading():
-    raw = TOP.read_bytes()
-    assert hashlib.sha256(raw).hexdigest() == "0bba4db4b15d7180bbe3201c4d8b42608401e47a83b050b86e2ee7e17ffdbe07"
-    prediction = _coarse().decide(raw, "r3")
+def _with_prior(case):
+    _, previous, _, center, _ = case
+    coarse = _coarse(center)
+    for number in previous:
+        assert coarse.decide(_frame(number), "r3")["ok"] is True
+    assert coarse.wheel_bounds["r3"]
+    return coarse
+
+
+@pytest.mark.parametrize("case", CASES, ids=[case[0] for case in CASES])
+def test_recorded_peer_wheel_recovered_from_prior_own_rgb_bounds(case):
+    _, _, number, _, expected_pixels = case
+    raw = _frame(number)
+    assert hashlib.sha256(raw).hexdigest() == HASHES[number]
+    prediction = _with_prior(case).decide(raw, "r3")
     assert prediction["ok"] is True
     assert prediction["ready"] is False
-    assert prediction["mask"]["initial_local_wheel_pixels"] == 422
-    assert prediction["mask"]["local_wheel_pixels"] == 381
-    assert prediction["mask"]["crop_half_size_px"] == [55, 44]
+    assert prediction["mask"]["selection"] == "prior_own_rgb_bounds"
+    assert prediction["mask"]["bounds_margin_px"] == 8
+    assert prediction["mask"]["local_wheel_pixels"] == expected_pixels
     assert min(prediction["heading"]["corner_pixels"]) >= 5
+    assert prediction["mask"]["center_step_px"] <= 8
+    assert prediction["mask"]["bounds_step_px"] <= 8
 
 
-def test_second_crop_recovers_recorded_peer_wheel_on_44px_boundary():
-    raw = NEW_TOP.read_bytes()
-    assert hashlib.sha256(raw).hexdigest() == "2f6ab101d0974445772a74c8547150736bc5f1aa3b8820f128e95f3f64a156e0"
-    prediction = _coarse(NEW_CROP_CENTER).decide(raw, "r3")
-    assert prediction["ok"] is True
-    assert prediction["ready"] is False
-    assert prediction["mask"]["initial_local_wheel_pixels"] == 444
-    assert prediction["mask"]["intermediate_local_wheel_pixels"] == 349
-    assert prediction["mask"]["local_wheel_pixels"] == 343
-    assert prediction["mask"]["crop_half_size_px"] == [55, 42]
-    assert prediction["mask"]["second_crop_retry"] is True
-    assert min(prediction["heading"]["corner_pixels"]) >= 5
+@pytest.mark.parametrize("case", CASES, ids=[case[0] for case in CASES])
+def test_ambiguous_frame_without_prior_wheel_bounds_stops(case):
+    _, _, number, _, _ = case
+    prediction = _coarse(NO_PRIOR_CENTERS[number]).decide(_frame(number), "r3")
+    assert prediction["ok"] is False
+    assert prediction["reason"] == "own_wheel_heading_unresolved"
+    assert prediction["mask"]["prior_wheel_bounds_px"] is None
+    assert prediction["forward"] == prediction["left"] == prediction["turn"] == 0.
 
 
-@pytest.mark.parametrize("top,center", [(TOP, RECORDED_CROP_CENTER), (NEW_TOP, NEW_CROP_CENTER)])
-@pytest.mark.parametrize("erased", [(112, 285, 151, 318), (75, 295, 151, 319)])
-def test_inner_crops_cannot_approve_missing_corner_or_occluded_wheel_band(top, center, erased):
-    frame = cv2.imdecode(np.frombuffer(top.read_bytes(), np.uint8), cv2.IMREAD_COLOR)
-    # Leave the peer visible while hiding either one corner or the lower row.
+@pytest.mark.parametrize("case", CASES, ids=[case[0] for case in CASES])
+@pytest.mark.parametrize("erased", [(112, 285, 151, 318), (75, 295, 151, 319)],
+                         ids=["missing_corner", "occluded_lower_wheels"])
+def test_prior_bounds_cannot_approve_missing_corner_or_wheel_band(case, erased):
+    _, _, number, _, _ = case
+    coarse = _with_prior(case)
+    prior_center = coarse.centers["r3"].copy()
+    prior_bounds = list(coarse.wheel_bounds["r3"])
+    frame = cv2.imdecode(np.frombuffer(_frame(number), np.uint8), cv2.IMREAD_COLOR)
     x1, y1, x2, y2 = erased
     frame[y1:y2, x1:x2] = 0
     damaged = cv2.imencode(".jpg", frame)[1].tobytes()
-    prediction = _coarse(center).decide(damaged, "r3")
+    prediction = coarse.decide(damaged, "r3")
     assert prediction["ok"] is False
-    assert prediction["reason"] == "own_wheel_heading_unresolved"
-    assert prediction["mask"]["inner_crop_retry"] is True
-    assert prediction["mask"]["second_crop_retry"] is True
+    assert prediction["reason"] in {"own_wheel_heading_unresolved", "own_wheel_identity_discontinuous"}
     assert prediction["forward"] == prediction["left"] == prediction["turn"] == 0.
+    np.testing.assert_array_equal(coarse.centers["r3"], prior_center)
+    assert coarse.wheel_bounds["r3"] == prior_bounds
+
+
+def test_large_image_displacement_does_not_rebind_wheel_identity():
+    coarse = _with_prior(CASES[1])
+    prior_center = coarse.centers["r3"].copy()
+    prior_bounds = list(coarse.wheel_bounds["r3"])
+    frame = cv2.imdecode(np.frombuffer(_frame(151), np.uint8), cv2.IMREAD_COLOR)
+    moved = cv2.warpAffine(frame, np.float32([[1, 0, 9], [0, 1, 0]]),
+                           (960, 720), flags=cv2.INTER_NEAREST)
+    raw = cv2.imencode(".jpg", moved, [cv2.IMWRITE_JPEG_QUALITY, 95])[1].tobytes()
+    prediction = coarse.decide(raw, "r3")
+    assert prediction["ok"] is False
+    assert prediction["reason"] == "own_wheel_identity_discontinuous"
+    assert prediction["mask"]["center_step_px"] > 8
+    assert prediction["forward"] == prediction["left"] == prediction["turn"] == 0.
+    np.testing.assert_array_equal(coarse.centers["r3"], prior_center)
+    assert coarse.wheel_bounds["r3"] == prior_bounds

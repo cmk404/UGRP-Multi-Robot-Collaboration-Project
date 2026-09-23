@@ -70,6 +70,8 @@ TEST_PATTERNS = (
     "tests/test_dispatch_research.py",
     "tests/test_dispatch_execution.py",
     "tests/test_dispatch_skill_binding.py",
+    "tests/test_solo_box_transport_budget.py",
+    "tests/test_solo_route_goal_margin_regression.py",
     "tests/test_dispatch_box_identity.py",
     "tests/test_pair_navigation*.py",
     "tests/test_pair_transport*.py",

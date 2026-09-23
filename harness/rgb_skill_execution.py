@@ -64,10 +64,16 @@ def _pair_pose_schedule_probe():
 
 
 def _execution_contract():
+    from harness.dispatch_skill_binding import (SOLO_GOAL_CONTROL_INSET_PX,
+        PAIR_OWN_BOUNDS_PAD_PX, PAIR_MAX_CENTER_STEP_PX, PAIR_MAX_BOUNDS_STEP_PX)
     return {"owner": "RGBSkillExecutionPort", "macro": "MacroQueue",
             "owner_max_tick_s": MAX_TICK_S, "pose_schedule_probe": _pose_schedule_probe(),
             "pair_pose_schedule_probe": _pair_pose_schedule_probe(),
             "solo_max_decisions": SOLO_MAX_DECISIONS,
+            "solo_goal_control_inset_px": SOLO_GOAL_CONTROL_INSET_PX,
+            "pair_heading_prior_bounds": {"pad_px": PAIR_OWN_BOUNDS_PAD_PX,
+                "max_center_step_px": PAIR_MAX_CENTER_STEP_PX,
+                "max_bounds_step_px": PAIR_MAX_BOUNDS_STEP_PX},
             "study_tick_period_s": .05, "study_poll_period_s": .05,
             "worker_image_max_age_s": 1., "worker_wall_limit_s": 2.,
             "worker_wall_scope": "submission_to_consumption"}

@@ -25,6 +25,9 @@ def test_historical_success_is_separate_from_experimental_adapter():
     assert current["effective"]["execution"]["pose_schedule_probe"]["pan_samples"] == [1506, 1521, 1539, 1554, 1560]
     assert baseline["effective"]["execution"]["pose_schedule_probe"]["pan_samples"] == [1506, 1521, 1539, 1554, 1560]
     assert current["effective"]["execution"]["pair_pose_schedule_probe"] == {"pan_samples": [1530, 1560], "completion_s": .4}
+    assert current["effective"]["execution"]["solo_goal_control_inset_px"] == 1.
+    assert current["effective"]["execution"]["pair_heading_prior_bounds"] == {
+        "pad_px": 8, "max_center_step_px": 8, "max_bounds_step_px": 10}
     assert "execution.owner" in contract.baseline_diff(current["effective"])
     with pytest.raises(ValueError, match="historical success bundle cannot run"):
         contract.load_bundle(contract.BASELINE_ID)

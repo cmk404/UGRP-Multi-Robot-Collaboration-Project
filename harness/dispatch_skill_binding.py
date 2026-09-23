@@ -15,6 +15,11 @@ from harness.three_robot_plan import digest
 from harness.camera_beam_features import extract_beams
 from harness.camera_goal_transport import decode
 
+SOLO_GOAL_CONTROL_INSET_PX = 1.
+PAIR_OWN_BOUNDS_PAD_PX = 8
+PAIR_MAX_CENTER_STEP_PX = 8
+PAIR_MAX_BOUNDS_STEP_PX = 10
+
 
 def beam_feature(jpeg, *, hue_upper=24):
     # The original mask remains first, preserving the learned image convention.
@@ -450,12 +455,20 @@ class ImageRoute:
             minimum_center=lo-(lower-center);maximum_center=hi-(upper-center)
             if np.any(minimum_center>maximum_center):
                 raise RuntimeError('observed box envelope does not fit destination region')
-            guided=np.clip(self.points[self.index],minimum_center,maximum_center)
+            # The exact containment boundary can lie inside the 0.5px motion
+            # deadband. Aim one image pixel inside it so a visible miss still
+            # produces a corrective command instead of waiting indefinitely.
+            control_inset=SOLO_GOAL_CONTROL_INSET_PX
+            if np.any(maximum_center-minimum_center < 2*control_inset):
+                raise RuntimeError('observed box envelope leaves no visual control margin')
+            guided=np.clip(self.points[self.index],minimum_center+control_inset,
+                           maximum_center-control_inset)
             error=guided-center;tolerance=.5
             slot_evidence={'source':'current RGB silhouette plus authored slot; not measured cargo pose',
                 'slot_interior_px':[lo.tolist(),hi.tolist()],
                 'padded_cargo_bounds_px':[lower.tolist(),upper.tolist()],
-                'occlusion_padding_px':4.,'floor_margin_px':2.,'inside':ready,'guided_center_px':guided.tolist()}
+                'occlusion_padding_px':4.,'floor_margin_px':2.,'guided_inset_px':control_inset,
+                'inside':ready,'guided_center_px':guided.tolist()}
         self.confirmations=self.confirmations+1 if ready else 0
         done=self.index==len(self.points)-1 and self.confirmations>=2
         evidence={'source':'TOP RGB + authored map', 'cargo_center_px':center.tolist(),
@@ -492,6 +505,7 @@ class PairCoarsePixels:
     """
     def __init__(self, identity, bindings, reference):
         self.centers={}
+        self.wheel_bounds={}
         self.reference=reference
         height,width=decode(reference).shape[:2]
         if (width,height)!=(960,720):
@@ -519,43 +533,48 @@ class PairCoarsePixels:
         component_pixels=int(np.count_nonzero(clean))
         cx,cy=self.centers[slot]
         yy,xx=np.indices(clean.shape)
-        clean[(abs(xx-cx)>55)|(abs(yy-cy)>48)]=0
-        ys,xs=np.nonzero(clean)
+        selected=clean.copy()
+        selected[(abs(xx-cx)>55)|(abs(yy-cy)>48)]=0
+        ys,xs=np.nonzero(selected)
+        prior_bounds=self.wheel_bounds.get(slot)
         mask={'raw_yellow_pixels':int(np.count_nonzero(yellow)),
               'small_component_pixels':component_pixels,
               'small_component_count':selected_components,
               'local_wheel_pixels':int(len(xs)),
               'crop_center_px':[float(cx),float(cy)],
-              'crop_half_size_px':[55,48], 'heading_tolerance_px':2.}
-        heading=wheel_heading(clean,pixel_tolerance=2.)
-        if heading is None:
-            # A nearby robot's outer wheel can enter the four-pixel rim of
-            # this motion-anchored crop. Retry on the inner pixels, still
-            # requiring the same full four-corner wheel shape. In particular,
-            # do not infer heading from a partial silhouette or command history.
-            outer_pixels=len(xs)
-            clean[abs(yy-cy)>44]=0
-            ys,xs=np.nonzero(clean)
-            heading=wheel_heading(clean,pixel_tolerance=2.)
-            mask.update(initial_local_wheel_pixels=int(outer_pixels),
-                        local_wheel_pixels=int(len(xs)),
-                        crop_half_size_px=[55,44],
-                        inner_crop_retry=True)
-        if heading is None:
-            # A peer wheel can still touch the 44px boundary by one row.
-            # Narrow once more; keep the same complete four-corner gate.
-            intermediate_pixels=len(xs)
-            clean[abs(yy-cy)>42]=0
-            ys,xs=np.nonzero(clean)
-            heading=wheel_heading(clean,pixel_tolerance=2.)
-            mask.update(intermediate_local_wheel_pixels=int(intermediate_pixels),
-                        local_wheel_pixels=int(len(xs)),
-                        crop_half_size_px=[55,42],
-                        second_crop_retry=True)
+              'crop_half_size_px':[55,48], 'heading_tolerance_px':2.,
+              'prior_wheel_bounds_px':None if prior_bounds is None else list(prior_bounds)}
+        heading=wheel_heading(selected,pixel_tolerance=2.)
+        if heading is None and prior_bounds is not None:
+            # The first accepted four-corner mask is bound to this actor's
+            # isolated own-motion probe. Subsequent RGB silhouettes move only
+            # within the observed prior support plus a bounded image margin.
+            # A peer wheel outside that support cannot define this heading.
+            xlo,xhi,ylo,yhi=prior_bounds
+            selected=clean.copy()
+            selected[(xx<xlo-PAIR_OWN_BOUNDS_PAD_PX)|(xx>xhi+PAIR_OWN_BOUNDS_PAD_PX)|
+                     (yy<ylo-PAIR_OWN_BOUNDS_PAD_PX)|(yy>yhi+PAIR_OWN_BOUNDS_PAD_PX)]=0
+            ys,xs=np.nonzero(selected)
+            heading=wheel_heading(selected,pixel_tolerance=2.)
+            mask.update(local_wheel_pixels=int(len(xs)),
+                        selection='prior_own_rgb_bounds',bounds_margin_px=PAIR_OWN_BOUNDS_PAD_PX)
         if heading is None:
             return dict(ok=False,ready=False,forward=0.,left=0.,turn=0.,
                         reason='own_wheel_heading_unresolved',mask=mask)
-        center=np.array([xs.mean(),ys.mean()]);self.centers[slot]=center
+        center=np.array([xs.mean(),ys.mean()])
+        bounds=[int(xs.min()),int(xs.max()),int(ys.min()),int(ys.max())]
+        if prior_bounds is not None:
+            center_step=float(np.linalg.norm(center-[cx,cy]))
+            bounds_step=max(abs(a-b) for a,b in zip(bounds,prior_bounds))
+            mask.update(center_step_px=center_step,bounds_step_px=int(bounds_step))
+            # JPEG colour segmentation can move an extremal pixel farther
+            # than the mask centroid after a small real image translation.
+            if center_step>PAIR_MAX_CENTER_STEP_PX or bounds_step>PAIR_MAX_BOUNDS_STEP_PX:
+                return dict(ok=False,ready=False,forward=0.,left=0.,turn=0.,
+                            reason='own_wheel_identity_discontinuous',mask=mask)
+        self.centers[slot]=center
+        self.wheel_bounds[slot]=bounds
+        mask['wheel_bounds_px']=bounds
         try:
             beam=beam_feature(raw_top);ref=lane_features(self.reference,slot)
         except ValueError as error:

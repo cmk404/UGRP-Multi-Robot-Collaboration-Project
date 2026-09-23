@@ -35,12 +35,13 @@
 - `rgb-adapter-legacy-v1`: PR #113 당시 공통 adapter 조건을 보존한 실험 버전이다. 기존 JSON과 소스 해시는 변경하지 않는다. 현재 코드로 실행할 수 없으며 당시 checkout에서 재현한다.
 - `rgb-standard-dispatch-v2`: 표준 장면 생성·초기화와 연결한 이전 후보다. `legacy` 접촉 설정과 adapter의 기존 명령 일정을 사용한다. 운반 성공은 재검증되지 않았다.
 - `rgb-adapter-contact-fine-solo-parity-v1`: 접촉·단독 팔 일정을 맞춘 첫 후보이다. `bf476e2`의 180초 물리 재생에서 단독은 화물을 든 채 시간 초과, 공동은 이웃 바퀴 픽셀이 섞여 방향 판독 실패했다. 원본과 번들은 읽기 전용으로 보존한다.
-- `rgb-adapter-contact-fine-replay-v2`: 첫 후보의 물리·카메라·명령 일정을 유지한다. 300초 실행 예산과 1,200회 단독 결정 상한을 명시하고, 공동 바퀴 영상이 겹친 때 동일한 네 모서리 판정으로 좁은 영역을 한 번 더 검사한다. 저장된 실패 영상 회귀 검사는 물리 완주 근거가 아니며, 이 버전도 `experimental_unqualified`로 시작한다.
+- `rgb-adapter-contact-fine-replay-v2`: 300초 실행 예산과 1,200회 단독 결정 상한, 공동 바퀴 영상의 좁은 영역 재검사를 적용한 후보이다. `7c3e4aa` 물리 재생에서는 단독이 슬롯 근처에서 영상 제어의 0.5px 정지 구간에 걸려 방출하지 못했고, 공동은 바로 다음 바퀴 영상에서 다시 중단됐다. 원본과 번들은 읽기 전용으로 보존한다.
+- `rgb-adapter-contact-fine-visual-recovery-v3`: 물리·카메라·팔 일정과 300초 예산을 유지한다. 단독은 슬롯 경계보다 1px 안쪽을 목표로 하고, 공동은 직전 TOP RGB에서 네 모서리가 확인된 자기 바퀴 영역을 최대 8px 확장해 재검사한다. 영상 연속성이나 네 모서리가 깨지면 명령 없이 거절한다. 저장 영상·반례 검사는 새 물리 완주 판정이 아니며 등록 상태는 `experimental_unqualified`다.
 
 새 backend 설정 schema는 `ugrp.rgb_skill_backend.v2`다. `execution_bundle_id`가 없거나 지원하지 않는 조합이면 거절한다. 과거 v1 설정은 당시 실행 기록으로 보존한다. 실행 전 정적 검사는 다음과 같다. 시뮬레이션·렌더링·외부 모델 호출은 하지 않는다.
 
 ```sh
-python3 -m harness.rgb_execution_bundle verify-current --id rgb-adapter-contact-fine-replay-v2
+python3 -m harness.rgb_execution_bundle verify-current --id rgb-adapter-contact-fine-visual-recovery-v3
 python3 -m harness.rgb_execution_bundle verify-registry --base origin/main
 ```
 

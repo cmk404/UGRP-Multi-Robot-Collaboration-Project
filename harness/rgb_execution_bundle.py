@@ -19,10 +19,11 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = Path("config/rgb_execution_bundles")
 SCHEMA = "ugrp.rgb_execution_bundle.v1"
-RUNNABLE_ID = "rgb-adapter-contact-fine-replay-v2"
+RUNNABLE_ID = "rgb-adapter-contact-fine-visual-recovery-v3"
 LEGACY_ID = "rgb-adapter-legacy-v1"
 RETIRED_IDS = frozenset({LEGACY_ID, "rgb-standard-dispatch-v2",
-                         "rgb-adapter-contact-fine-solo-parity-v1"})
+                         "rgb-adapter-contact-fine-solo-parity-v1",
+                         "rgb-adapter-contact-fine-replay-v2"})
 BASELINE_ID = "dispatch-f1-local-contact-fine-v1"
 REQUIRED_SOURCE_PATHS = frozenset({
     "harness/rgb_execution_bundle.py", "harness/rgb_skill_execution.py",
