@@ -39,7 +39,7 @@ def fit_pose_stage_model(reference_own, reference_top, samples, rid, stage,
             "diagnostics": geometry["diagnostics"]}
 
 
-def predict_pose_stage(model, own_jpeg, top_jpeg):
+def predict_pose_stage(model, own_jpeg, top_jpeg, *, wheel_center_px=None):
     from harness.camera_varied_start_geometry import predict_geometry
     stage = model.get("stage")
     if (model.get("schema") != SCHEMA or stage not in STAGES
@@ -57,8 +57,11 @@ def predict_pose_stage(model, own_jpeg, top_jpeg):
         raise ValueError("pose geometry identity mismatch")
     if stage == "yaw":
         from harness.camera_varied_start_heading import predict_heading
-        result = predict_heading(geometry, top_jpeg)
+        result = (predict_heading(geometry, top_jpeg) if wheel_center_px is None else
+                  predict_heading(geometry, top_jpeg, wheel_center_px=wheel_center_px))
     else:
+        if wheel_center_px is not None:
+            raise ValueError("own-wheel center applies only to yaw")
         result = predict_geometry(geometry, top_jpeg)
     if not result["ok"]:
         return {"ok": False, "command": 0., "ready_score": 0., "ready": False,

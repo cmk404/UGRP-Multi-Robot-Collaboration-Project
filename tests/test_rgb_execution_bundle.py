@@ -33,6 +33,11 @@ def test_historical_success_is_separate_from_experimental_adapter():
         "membership": "centroid_in_prior_own_bounds",
         "reject_clipped_support": True,
         "requires_four_corners": True}
+    assert current["effective"]["execution"]["pair_fine_heading_anchor"] == {
+        "source": "fresh_role_bound_four_corner_own_wheels_on_raw_top",
+        "canonicalization": "integer_pixel_beam_translation",
+        "scope": "yaw_and_dock_saved_heading_ecc",
+        "reject_missing_or_discontinuous_wheels": True}
     assert "execution.owner" in contract.baseline_diff(current["effective"])
     with pytest.raises(ValueError, match="historical success bundle cannot run"):
         contract.load_bundle(contract.BASELINE_ID)

@@ -132,10 +132,14 @@ def fit_stage_model(reference_own: bytes, reference_top: bytes,
                 "residual_limit_source": "all_validated_stage_training_rgb"}}
 
 
-def predict_stage(model: dict[str, Any], own_jpeg: bytes, top_jpeg: bytes) -> dict[str, Any]:
+def predict_stage(model: dict[str, Any], own_jpeg: bytes, top_jpeg: bytes, *,
+                  wheel_center_px=None) -> dict[str, Any]:
     if isinstance(model, dict) and model.get("schema") == "ugrp.rgb_varied_start_pose.v1":
         from harness.camera_varied_start_pose_student import predict_pose_stage
-        return predict_pose_stage(model, own_jpeg, top_jpeg)
+        return predict_pose_stage(model, own_jpeg, top_jpeg,
+                                  wheel_center_px=wheel_center_px)
+    if wheel_center_px is not None:
+        raise ValueError("own-wheel center requires calibrated pose yaw model")
     if not isinstance(model, dict) or model.get("schema") != SCHEMA:
         raise ValueError("unsupported varied-start stage model")
     rid, stage = model.get("robot_id"), model.get("stage")

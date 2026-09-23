@@ -85,6 +85,11 @@ def _execution_contract():
                 "reject_clipped_support": True,
                 "requires_four_corners": True},
             "pair_role_binding": "own_motion_claim_and_four_corner_top_bbox_same_beam_side_as_saved_slot",
+            "pair_fine_heading_anchor": {
+                "source": "fresh_role_bound_four_corner_own_wheels_on_raw_top",
+                "canonicalization": "integer_pixel_beam_translation",
+                "scope": "yaw_and_dock_saved_heading_ecc",
+                "reject_missing_or_discontinuous_wheels": True},
             "pair_coarse_progress_budget": {
                 "base_decisions": PAIR_COARSE_BASE_DECISIONS,
                 "max_decisions": PAIR_COARSE_MAX_DECISIONS,
@@ -441,8 +446,60 @@ class PairActorSkill:
             raise ValueError("interrupted manipulation requires explicit recovery task")
         self.confirmations = 0
 
+    def _bind_role_to_wheels(self, prediction, transform, phase):
+        from harness.camera_goal_transport import lane_features
+        # Retain the same four-corner, own-motion, and beam-side gate after
+        # coarse. The heading anchor must never come from a peer or the shaft.
+        ref = lane_features(self.reference, self.slot)
+        if ref is None:
+            self.coarse = None
+            raise RGBSkillUnsupported("pair_role_reference_unresolved", phase, {
+                "declared_slot": self.slot, "prediction": prediction,
+                "image_transform": transform})
+        beam_y = float(transform["observed_beam"]["center"][1]) * 720
+        claim_y = float(self.identity_claim["center"][1]) * 720
+        wheel_ylo, wheel_yhi = prediction["mask"]["wheel_bounds_px"][2:]
+        expected_side = ("upper" if ref["robot_y"] < ref["beam_y"] else
+                         "lower" if ref["robot_y"] > ref["beam_y"] else "ambiguous")
+        claim_side = "upper" if claim_y < beam_y else "lower" if claim_y > beam_y else "ambiguous"
+        wheel_side = "upper" if wheel_yhi < beam_y else "lower" if wheel_ylo > beam_y else "ambiguous"
+        role_support = {"declared_slot": self.slot, "expected_side": expected_side,
+                        "own_claim_side": claim_side, "own_wheel_side": wheel_side,
+                        "own_claim_y_px": claim_y,
+                        "own_wheel_y_bounds_px": [wheel_ylo, wheel_yhi],
+                        "observed_beam_y_px": beam_y,
+                        "reference_beam_minus_robot_y_px":
+                            float(ref["beam_y"] - ref["robot_y"]) * 720}
+        if expected_side == "ambiguous" or claim_side != expected_side or wheel_side != expected_side:
+            self.coarse = None
+            raise RGBSkillUnsupported("pair_role_image_side_mismatch", phase, {
+                "role_support": role_support, "prediction": prediction,
+                "image_transform": transform})
+        prediction["role_image_support"] = role_support
+
+    def _fine_wheel_anchor(self, top, transform, phase):
+        if self.coarse is None or self.identity_claim is None:
+            raise RGBSkillUnsupported("own_motion_identity_missing", phase, {
+                "image_transform": transform})
+        try:
+            wheel = self.coarse.decide(top, self.slot)
+        except ValueError as error:
+            raise RGBSkillUnsupported("fine_wheel_rgb_unresolved", phase, {
+                "detail": str(error), "raw_top_sha256": hashlib.sha256(top).hexdigest(),
+                "image_transform": transform}) from error
+        if not wheel["ok"]:
+            raise RGBSkillUnsupported(wheel["reason"], phase, {
+                "wheel_prediction": wheel, "image_transform": transform})
+        self._bind_role_to_wheels(wheel, transform, phase)
+        center = [float(a + b) for a, b in zip(wheel["wheel_center_px"],
+                                                transform["translation_px"])]
+        return center, {"raw_center_px": wheel["wheel_center_px"],
+                        "canonical_center_px": center, "mask": wheel["mask"],
+                        "heading": wheel["heading"],
+                        "role_image_support": wheel["role_image_support"]}
+
     def decide(self, own, top):
-        from harness.camera_goal_transport import dock_command, lane_features, own_payload
+        from harness.camera_goal_transport import dock_command, own_payload
         from harness.camera_varied_start_student import predict_stage
         from harness.grasp_student_inference import predict_student
         from harness.dispatch_skill_binding import PairCoarsePixels, canonical_pair_top, beam_feature, pixel_from_map
@@ -502,51 +559,26 @@ class PairActorSkill:
                         "detail": str(error), "raw_top_sha256": hashlib.sha256(top).hexdigest(),
                         "image_transform": transform}) from error
                 if prediction["ok"]:
-                    # The saved lower/upper slots are on opposite sides of
-                    # the visible shaft. Bind the declared slot to this
-                    # actor's own-motion anchor and complete wheel silhouette
-                    # before issuing any coarse command. This comparison is
-                    # translation-invariant across the fixed TOP views.
-                    ref = lane_features(self.reference, self.slot)
-                    if ref is None:
-                        self.coarse = None
-                        raise RGBSkillUnsupported("pair_role_reference_unresolved", phase, {
-                            "declared_slot": self.slot, "prediction": prediction,
-                            "image_transform": transform})
-                    beam_y = float(transform["observed_beam"]["center"][1]) * 720
-                    claim_y = float(self.identity_claim["center"][1]) * 720
-                    wheel_ylo, wheel_yhi = prediction["mask"]["wheel_bounds_px"][2:]
-                    expected_side = ("upper" if ref["robot_y"] < ref["beam_y"] else
-                                     "lower" if ref["robot_y"] > ref["beam_y"] else "ambiguous")
-                    claim_side = "upper" if claim_y < beam_y else "lower" if claim_y > beam_y else "ambiguous"
-                    wheel_side = "upper" if wheel_yhi < beam_y else "lower" if wheel_ylo > beam_y else "ambiguous"
-                    role_support = {"declared_slot": self.slot, "expected_side": expected_side,
-                                    "own_claim_side": claim_side, "own_wheel_side": wheel_side,
-                                    "own_claim_y_px": claim_y,
-                                    "own_wheel_y_bounds_px": [wheel_ylo, wheel_yhi],
-                                    "observed_beam_y_px": beam_y,
-                                    "reference_beam_minus_robot_y_px":
-                                        float(ref["beam_y"] - ref["robot_y"]) * 720}
-                    if expected_side == "ambiguous" or claim_side != expected_side or wheel_side != expected_side:
-                        self.coarse = None
-                        raise RGBSkillUnsupported("pair_role_image_side_mismatch", phase, {
-                            "role_support": role_support, "prediction": prediction,
-                            "image_transform": transform})
-                    prediction["role_image_support"] = role_support
+                    self._bind_role_to_wheels(prediction, transform, phase)
                 motion = {k: prediction[k] for k in ("forward", "left", "turn")}
-            elif phase == "dock":
-                checks = {s: predict_stage(m, jpeg, canonical) for s, m in self.stages.items()}
-                if not all(d["ok"] and d.get("precision") == "fine" for d in checks.values()):
-                    raise ValueError("alignment outside saved fine support")
-                prediction = dock_command(checks["forward"])
-                prediction["ready"] &= all(checks[s].get("stationary_ready", checks[s]["ready"])
-                                            for s in ("yaw", "lateral"))
-                motion = {"forward": prediction["forward"], "left": 0., "turn": 0.}
             else:
-                prediction = predict_stage(self.stages[phase], jpeg, canonical)
-                motion = {"forward": 0., "left": 0., "turn": 0.}
-                if not prediction["ready"]:
-                    motion[{"yaw": "turn", "lateral": "left", "forward": "forward"}[phase]] = prediction["command"]
+                wheel_center, wheel_anchor = self._fine_wheel_anchor(top, transform, phase)
+                if phase == "dock":
+                    checks = {s: predict_stage(m, jpeg, canonical,
+                                               **({"wheel_center_px": wheel_center} if s == "yaw" else {}))
+                              for s, m in self.stages.items()}
+                    if not all(d["ok"] and d.get("precision") == "fine" for d in checks.values()):
+                        raise ValueError("alignment outside saved fine support")
+                    prediction = dock_command(checks["forward"])
+                    prediction["ready"] &= all(checks[s].get("stationary_ready", checks[s]["ready"])
+                                                for s in ("yaw", "lateral"))
+                    motion = {"forward": prediction["forward"], "left": 0., "turn": 0.}
+                else:
+                    prediction = predict_stage(self.stages[phase], jpeg, canonical,
+                        **({"wheel_center_px": wheel_center} if phase == "yaw" else {}))
+                    motion = {"forward": 0., "left": 0., "turn": 0.}
+                    if not prediction["ready"]:
+                        motion[{"yaw": "turn", "lateral": "left", "forward": "forward"}[phase]] = prediction["command"]
             if not prediction["ok"]:
                 raise RGBSkillUnsupported(prediction.get("reason", "RGB outside saved approach support"),
                                           phase, {"prediction": prediction, "image_transform": transform})
@@ -558,6 +590,8 @@ class PairActorSkill:
             if not observed_ready:
                 action = {"kind": "mecanum", **motion, "duration_s": .2}
             evidence = {"prediction": prediction, "image_transform": transform}
+            if phase != "coarse":
+                evidence["wheel_anchor"] = wheel_anchor
         elif phase.startswith("initialize_"):
             if self.grasp_translation is None:
                 _, transform = canonical_pair_top(top, self.reference)

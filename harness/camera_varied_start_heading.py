@@ -100,9 +100,11 @@ def _measure(
     goal_center: tuple[float, float],
     mode: str,
     threshold: float,
+    *,
+    wheel_center: tuple[float, float] | None = None,
 ) -> tuple[np.ndarray, float] | None:
     try:
-        center = _yellow_center(image, background)
+        center = _yellow_center(image, background) if wheel_center is None else wheel_center
         patch = cv2.getRectSubPix(_field(image, background, mode), _PATCH_SIZE, center)
     except (ValueError, cv2.error):
         return None
@@ -219,7 +221,8 @@ def fit_heading_model(
     }
 
 
-def predict_heading(model: dict[str, Any], top_jpeg: bytes) -> dict[str, Any]:
+def predict_heading(model: dict[str, Any], top_jpeg: bytes, *,
+                    wheel_center_px: tuple[float, float] | None = None) -> dict[str, Any]:
     """Estimate heading error, preferring the calibrated fine measurement."""
     if (not isinstance(model, dict) or model.get("schema") != SCHEMA
             or model.get("robot_id") not in TOP_ROIS or model.get("stage") != "yaw"
@@ -231,6 +234,16 @@ def predict_heading(model: dict[str, Any], top_jpeg: bytes) -> dict[str, Any]:
     goal_center = tuple(float(value) for value in model["goal_center"])
     if background.shape != image.shape or len(goal_center) != 2 or not all(map(math.isfinite, goal_center)):
         raise ValueError("invalid heading background/center")
+    wheel_center = None
+    if wheel_center_px is not None:
+        center = np.array(wheel_center_px, dtype=float, copy=True)
+        if center.shape != (2,) or not np.all(np.isfinite(center)):
+            raise ValueError("invalid own-wheel RGB center")
+        center -= np.asarray(model["roi"][:2], dtype=float)
+        half = np.asarray(_PATCH_SIZE, dtype=float) / 2
+        if np.any(center < half) or np.any(center > np.array([image.shape[1], image.shape[0]]) - half):
+            raise ValueError("own-wheel RGB patch outside heading ROI")
+        wheel_center = tuple(float(value) for value in center)
     attempts = []
     for mode, precision in (("soft_yellow", "fine"), ("full_delta", "coarse")):
         template = _decode_png(model["templates_png"][mode]).astype(np.float32) / 255.0
@@ -241,14 +254,8 @@ def predict_heading(model: dict[str, Any], top_jpeg: bytes) -> dict[str, Any]:
                 or low.shape != (3,) or high.shape != (3,) or np.any(low >= high)
                 or not all(np.all(np.isfinite(x)) for x in (template, coefficient, low, high))):
             raise ValueError("invalid heading model arrays")
-        measured = _measure(
-            image,
-            background,
-            template,
-            goal_center,
-            mode,
-            float(model["thresholds"][mode]),
-        )
+        measured = _measure(image, background, template, goal_center, mode,
+                            float(model["thresholds"][mode]), wheel_center=wheel_center)
         if measured is None:
             attempts.append({"method": mode, "ok": False})
             continue
