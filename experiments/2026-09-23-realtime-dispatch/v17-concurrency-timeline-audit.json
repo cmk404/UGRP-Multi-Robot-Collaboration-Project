@@ -1,0 +1,476 @@
+{
+  "schema": "ugrp.v17_concurrency_timeline_audit.v1",
+  "checked_at_utc": "2026-09-23T15:46:46.858237+00:00",
+  "method": "Read only saved result, issued commands, pair/solo decisions and referee-only samples; 0.1s intervals, strict criterion from harness/dispatch_evaluation.py; no new physics or actor inputs. Resource-event order has no timestamps; drop and phase times are observational bounds.",
+  "runs": {
+    "first": {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260923/native-v17-full",
+      "source_sha": "817872651083143fe4ff46b11dba30915e34f5ff",
+      "plan_replay_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+      "result_sha256": "51dbfc0642261d2a3f048622fec83aa402248f85ba6fa5e449763ae71df8ea9c",
+      "issued_commands_sha256": "00f42e1b15b919df9cade033c2f689afdc87a5a553c5b5f6b374c9d757965117",
+      "solo_decisions_sha256": "9071f76232d1610729fd60067a8fa61661a8b6503323afffe61d4543576a2da8",
+      "pair_decisions_sha256": "a46bbbf2696b5598f2b151c36d1c92b182cbe26218bbafa43eb7fc50310eb1dd",
+      "evaluation_sha256": "5ab14b3ec488c66fca85e7e8abe4b88cd87b6b469ffba173fe7604a9b4d06814",
+      "first_solo_decision_s": 5.65175,
+      "pair_stage_issued_time_s": {
+        "APPROACH": {
+          "first_s": 5.52,
+          "last_s": 99.88,
+          "count": 324
+        },
+        "grasp_initialization": {
+          "first_s": 100.08,
+          "last_s": 103.61,
+          "count": 8
+        },
+        "grasp_close": {
+          "first_s": 115.5,
+          "last_s": 115.5,
+          "count": 1
+        },
+        "grasp_lift": {
+          "first_s": 116.33,
+          "last_s": 116.33,
+          "count": 1
+        },
+        "TRANSIT": {
+          "first_s": 120.14,
+          "last_s": 241.17,
+          "count": 458
+        },
+        "place_lower": {
+          "first_s": 241.17,
+          "last_s": 241.17,
+          "count": 1
+        },
+        "place_open": {
+          "first_s": 242.46,
+          "last_s": 242.46,
+          "count": 1
+        },
+        "place_retract": {
+          "first_s": 244.03,
+          "last_s": 244.03,
+          "count": 1
+        }
+      },
+      "first_pair_carry_decision_s": 120.14,
+      "last_pair_carry_decision_s": 241.17,
+      "pair_release_hold_last_observed_at_s": 248.411,
+      "solo_phase_first_accepted_time_s": {
+        "approach": 5.65175,
+        "lower": 122.0635,
+        "close": 131.83125,
+        "lift": 132.38925,
+        "verify_lift": 141.59275,
+        "attachment_left": 142.6615,
+        "attachment_right": 143.7735,
+        "attachment_home": 144.8605,
+        "carry": 145.1975,
+        "release": 294.866,
+        "open": 302.20175,
+        "retract": 303.267,
+        "verify_release": 305.6,
+        "release_ground_home": 307.29125
+      },
+      "solo_transit_issued_time_s": {
+        "first_s": 144.8605,
+        "last_s": 294.29375,
+        "count": 452
+      },
+      "pair_loaded_window_s": [
+        120.14,
+        241.37
+      ],
+      "solo_loaded_window_s": [
+        144.8605,
+        294.49375
+      ],
+      "both_loaded_window_s": [
+        144.8605,
+        241.37
+      ],
+      "both_loaded_window_duration_s": 96.5095,
+      "concurrent_sample_breakdown": {
+        "sampled_both_loaded_window_s": 96.4,
+        "all_three_transit_commands_valid_s": 31.0,
+        "both_cargo_loaded_contacts_s": 96.4,
+        "both_cargo_move_over_1mm_s": 33.0,
+        "all_three_robot_bodies_move_over_1mm_s": 33.5,
+        "commands_and_both_cargo_move_s": 11.1,
+        "strict_loaded_motion_recomputed_s": 11.1
+      },
+      "strict_loaded_motion_reported_s": 11.09999999973752,
+      "all_three_body_motion_reported_s": 34.899999999214515,
+      "resource_permission_drop_clusters": [
+        {
+          "first_drop_sim_s": 80.27025,
+          "last_drop_sim_s": 119.60775,
+          "next_accepted_sim_s": 120.2555,
+          "count": 69,
+          "phase": "approach",
+          "requests": [
+            [
+              "box",
+              "APPROACH"
+            ],
+            [
+              "box",
+              "GRASP"
+            ]
+          ],
+          "last_requests": [
+            [
+              "box",
+              "APPROACH"
+            ],
+            [
+              "box",
+              "GRASP"
+            ]
+          ],
+          "owner_denied_count": 69,
+          "state_only_count": 0
+        },
+        {
+          "first_drop_sim_s": 235.81475,
+          "last_drop_sim_s": 249.1845,
+          "next_accepted_sim_s": 249.41275,
+          "count": 46,
+          "phase": "carry",
+          "requests": [
+            [
+              "box",
+              "TRANSIT"
+            ],
+            [
+              "box",
+              "UNLOAD"
+            ],
+            [
+              "box",
+              "TRANSIT"
+            ]
+          ],
+          "last_requests": [
+            [
+              "box",
+              "TRANSIT"
+            ],
+            [
+              "box",
+              "UNLOAD"
+            ],
+            [
+              "box",
+              "TRANSIT"
+            ]
+          ],
+          "owner_denied_count": 45,
+          "state_only_count": 46
+        }
+      ],
+      "authoritative_resource_wait_sim_s": 53.35499999873832,
+      "authoritative_resource_wait_intervals": 2,
+      "resource_event_order": [
+        {
+          "event": "acquire",
+          "object": "beam",
+          "resource": "north_gate",
+          "stage": "GRASP"
+        },
+        {
+          "event": "acquire",
+          "object": "box",
+          "resource": "south_gate",
+          "stage": "GRASP"
+        },
+        {
+          "event": "acquire",
+          "object": "beam",
+          "resource": "dispatch_apron",
+          "stage": "UNLOAD"
+        },
+        {
+          "event": "finish",
+          "object": "beam",
+          "released": [
+            "north_gate",
+            "dispatch_apron"
+          ]
+        },
+        {
+          "event": "acquire",
+          "object": "box",
+          "resource": "dispatch_apron",
+          "stage": "UNLOAD"
+        },
+        {
+          "event": "finish",
+          "object": "box",
+          "released": [
+            "south_gate",
+            "dispatch_apron"
+          ]
+        }
+      ],
+      "overlap_selection": {
+        "mode": "auto",
+        "enabled": true,
+        "reason": "independent_open_routes",
+        "plan_hash": "c2f420b7d1eb537334502b0eebe14161ffc0468f058bb5230e3d31c39281e45c",
+        "beam_route": "north",
+        "box_route": "south",
+        "beam_resource": "north_gate",
+        "box_resource": "south_gate",
+        "overlap_start": "transit"
+      },
+      "result": {
+        "physical_success": true,
+        "protocol_complete": true,
+        "wall_s": 312.37089370899776,
+        "control_end_sim_s": 307.3599999944599
+      }
+    },
+    "repeat": {
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260923/native-v17-repeat",
+      "source_sha": "817872651083143fe4ff46b11dba30915e34f5ff",
+      "plan_replay_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+      "result_sha256": "8982d9e05232780a1fefce2e0111622d5277e5f4e7e2d63c19b2e6114cac8452",
+      "issued_commands_sha256": "e6c7e82ceea7e2fb08facfec0f89aea325685979fe2f62b841b6e613a9c03e3a",
+      "solo_decisions_sha256": "19d04c194bc45c15fed808dd7cf8160aa312b37025df8f75471b5f7619201b37",
+      "pair_decisions_sha256": "43fda3a9ded900c08637f861afa164297300e8d3cc0a9b1da9cfdac1ae410686",
+      "evaluation_sha256": "bb40aa3fca6561967a56e4eac80a2a5549b2867a4f1495bea713bebc559fd247",
+      "first_solo_decision_s": 5.5785,
+      "pair_stage_issued_time_s": {
+        "APPROACH": {
+          "first_s": 5.52,
+          "last_s": 86.36,
+          "count": 303
+        },
+        "grasp_initialization": {
+          "first_s": 86.56,
+          "last_s": 90.09,
+          "count": 8
+        },
+        "grasp_close": {
+          "first_s": 102.16,
+          "last_s": 102.16,
+          "count": 1
+        },
+        "grasp_lift": {
+          "first_s": 102.99,
+          "last_s": 102.99,
+          "count": 1
+        },
+        "TRANSIT": {
+          "first_s": 106.7,
+          "last_s": 138.28,
+          "count": 173
+        },
+        "place_lower": {
+          "first_s": 138.28,
+          "last_s": 138.28,
+          "count": 1
+        },
+        "place_open": {
+          "first_s": 139.57,
+          "last_s": 139.57,
+          "count": 1
+        },
+        "place_retract": {
+          "first_s": 140.98,
+          "last_s": 140.98,
+          "count": 1
+        }
+      },
+      "first_pair_carry_decision_s": 106.7,
+      "last_pair_carry_decision_s": 138.28,
+      "pair_release_hold_last_observed_at_s": 145.54725,
+      "solo_phase_first_accepted_time_s": {
+        "approach": 5.5785,
+        "lower": 108.56825,
+        "close": 117.889,
+        "lift": 118.3935,
+        "verify_lift": 126.73625,
+        "attachment_left": 127.70825,
+        "attachment_right": 128.63525,
+        "attachment_home": 129.659,
+        "carry": 130.01025,
+        "release": 198.0445,
+        "open": 205.24525,
+        "retract": 206.26,
+        "verify_release": 208.503,
+        "release_ground_home": 210.15725
+      },
+      "solo_transit_issued_time_s": {
+        "first_s": 129.659,
+        "last_s": 197.478,
+        "count": 314
+      },
+      "pair_loaded_window_s": [
+        106.7,
+        138.48
+      ],
+      "solo_loaded_window_s": [
+        129.659,
+        197.678
+      ],
+      "both_loaded_window_s": [
+        129.659,
+        138.48
+      ],
+      "both_loaded_window_duration_s": 8.821,
+      "concurrent_sample_breakdown": {
+        "sampled_both_loaded_window_s": 8.7,
+        "all_three_transit_commands_valid_s": 4.0,
+        "both_cargo_loaded_contacts_s": 8.7,
+        "both_cargo_move_over_1mm_s": 5.0,
+        "all_three_robot_bodies_move_over_1mm_s": 5.2,
+        "commands_and_both_cargo_move_s": 2.2,
+        "strict_loaded_motion_recomputed_s": 2.2
+      },
+      "strict_loaded_motion_reported_s": 2.199999999947977,
+      "all_three_body_motion_reported_s": 6.599999999878037,
+      "resource_permission_drop_clusters": [
+        {
+          "first_drop_sim_s": 79.8785,
+          "last_drop_sim_s": 106.1675,
+          "next_accepted_sim_s": 106.7925,
+          "count": 50,
+          "phase": "approach",
+          "requests": [
+            [
+              "box",
+              "APPROACH"
+            ],
+            [
+              "box",
+              "GRASP"
+            ]
+          ],
+          "last_requests": [
+            [
+              "box",
+              "APPROACH"
+            ],
+            [
+              "box",
+              "GRASP"
+            ]
+          ],
+          "owner_denied_count": 50,
+          "state_only_count": 0
+        }
+      ],
+      "authoritative_resource_wait_sim_s": 26.91399999936357,
+      "authoritative_resource_wait_intervals": 1,
+      "resource_event_order": [
+        {
+          "event": "acquire",
+          "object": "beam",
+          "resource": "north_gate",
+          "stage": "GRASP"
+        },
+        {
+          "event": "acquire",
+          "object": "box",
+          "resource": "south_gate",
+          "stage": "GRASP"
+        },
+        {
+          "event": "acquire",
+          "object": "beam",
+          "resource": "dispatch_apron",
+          "stage": "UNLOAD"
+        },
+        {
+          "event": "finish",
+          "object": "beam",
+          "released": [
+            "north_gate",
+            "dispatch_apron"
+          ]
+        },
+        {
+          "event": "acquire",
+          "object": "box",
+          "resource": "dispatch_apron",
+          "stage": "UNLOAD"
+        },
+        {
+          "event": "finish",
+          "object": "box",
+          "released": [
+            "south_gate",
+            "dispatch_apron"
+          ]
+        }
+      ],
+      "overlap_selection": {
+        "mode": "auto",
+        "enabled": true,
+        "reason": "independent_open_routes",
+        "plan_hash": "c2f420b7d1eb537334502b0eebe14161ffc0468f058bb5230e3d31c39281e45c",
+        "beam_route": "north",
+        "box_route": "south",
+        "beam_resource": "north_gate",
+        "box_resource": "south_gate",
+        "overlap_start": "transit"
+      },
+      "result": {
+        "physical_success": true,
+        "protocol_complete": true,
+        "wall_s": 213.65587179199792,
+        "control_end_sim_s": 210.16999999675812
+      }
+    }
+  },
+  "interpretation": {
+    "parallelism_supported": "Pair r1/r3 and solo r2 begin approach in same SIM clock and have independent TRANSIT routes. Referee confirms >0 simultaneous loaded motion in both runs.",
+    "barrier": "overlap_start=transit policy blocks box GRASP before beam TRANSIT; initial box pregrasp resource wait 39.337/26.289s between first and last denied rows.",
+    "shared_bay": "dispatch_apron UNLOAD is exclusive. First run has second box resource wait cluster at 235.815-249.184 SIM overlapping final beam carry for about 5.55s; repeat has no second denied cluster because beam clears before box reaches unload.",
+    "strict_overlap": "Loaded windows overlap for 96.509/8.821 SIMs, but all three TRANSIT commands are simultaneously valid for only 31.0/4.0 sampled SIMs; both cargo actually move >1mm in 33.0/5.0s; all conditions coincide for 11.1/2.2s. These are sampled evidence, not continuous motion proof.",
+    "causal_limit": "Asynchronous RGB timing, short command leases and different physical trajectories plausibly affect overlap. Records do not isolate their causal shares. Small strict overlap does not mean the entire execution was sequential or that three robots moved together throughout."
+  },
+  "historical_grasp_overlap": {
+    "source": "experiments/2026-09-22-parallel-transport/README.md and reference-results.json",
+    "development_references": [
+      {
+        "source_sha": "6baecbaca65109e5de38de74b33deb07491b3b77",
+        "admission": "transit",
+        "controller": "RGB",
+        "physical_and_protocol_success": true,
+        "wall_s": 276.773,
+        "strict_loaded_s": 2.8
+      },
+      {
+        "source_sha": "6ff7f6f470f4c5a5920b2aad985c967949ba7ca6",
+        "admission": "grasp",
+        "controller": "RGB",
+        "physical_and_protocol_success": true,
+        "wall_s": 347.316,
+        "strict_loaded_s": 4.8
+      },
+      {
+        "source_sha": "6ff7f6f470f4c5a5920b2aad985c967949ba7ca6",
+        "admission": "grasp",
+        "controller": "ACT-original",
+        "physical_and_protocol_success": false,
+        "failure": "conservative visual check rejected physically placed beam",
+        "wall_s": 251.54,
+        "strict_loaded_s": 4.0
+      },
+      {
+        "source_sha": "db0a6a70e29bd1bea021b86036a029d1a5aac813",
+        "admission": "grasp",
+        "controller": "ACT-original",
+        "physical_and_protocol_success": true,
+        "wall_s": 245.267,
+        "strict_loaded_s": 4.0
+      }
+    ],
+    "interpretation": "The option has succeeded for RGB in one saved-plan development run, but revisions and visual-release logic differ; these are not controlled timing or reliability evidence. The current transit default keeps box GRASP gated until beam TRANSIT, with exclusive shared-apron UNLOAD."
+  }
+}

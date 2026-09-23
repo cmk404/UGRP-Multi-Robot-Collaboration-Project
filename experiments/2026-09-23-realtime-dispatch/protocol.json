@@ -81,5 +81,21 @@
     "source_sha": "817872651083143fe4ff46b11dba30915e34f5ff",
     "bundle_sha256": "8a686939f6505bfaae2f4ebadb3e637b0e229b63e25dfb96877c411235bf6125",
     "purpose": "Check same frozen open/seed11 saved-plan candidate under asynchronous timing; does not authorize another run or promote default controller."
+  },
+  "budget_review_after_v17_repeat": {
+    "evidence": "Same frozen v17 source completed 2/2, wall312.371/213.656 with carry age medians .3547/.30275 and substantial stop/start variation. Pure CPU process prototype has low measured IPC overhead and exact recorded RGB outputs; physical benefit not yet established.",
+    "additional_full_trials": 2,
+    "full_max_wall_s": 600,
+    "model_calls": 0,
+    "training_runs": 0,
+    "scope": "Only open/seed11 same saved plan, camera/contact/physics/TTL/decision budgets unchanged; persistent spawn process for pure pair RGB perception.",
+    "gates": [
+      "Independent code review and relevant regressions pass",
+      "Recorded sequential carry RGB output parity including route transitions",
+      "New immutable execution bundle and clean committed source before any physical run",
+      "Repeat same source only if first full run succeeds; preserve both results and all earlier failures"
+    ],
+    "acceptance": "Both cargos physically placed/released and protocol complete; compare whole mission time, original RGB age, command gaps, active/resource-wait time, clock and concurrent motion. No best-run-only speed or generalization claim.",
+    "stop_rule": "No third full trial within this review; first physical failure triggers evidence review, not automatic budget or safety threshold extension."
   }
 }
