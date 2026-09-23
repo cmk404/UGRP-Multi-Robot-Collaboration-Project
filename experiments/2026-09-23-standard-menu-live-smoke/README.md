@@ -23,7 +23,7 @@ Mac의 기존 `.venv-sim-worker-mac`에서 `bash scripts/open_simulation.command
 | 재실행 | `artifacts/config.json` | `0b4187bded5ca93bf70b1a4369e91a2752c877850745e1b30104036dc06bdb42` |
 | 재실행 | `artifacts/scene.json` | `ab459e714cb2148846869aca9637a069e181c2602b7959ad788951a053c0b508` |
 
-수정 후 로컬 전체 검사: 1,857 passed, 8 skipped, 205 subtests passed. 재실행의 실패·중단 결과는 기본 체크아웃의 TensorBoard 새 스냅샷 `outputs/tensorboard/0923-terminal-menu-live-smoke`로 변환했다. 첫 실행에는 `result.json`이 없어 변환 대상에 포함하지 않았다.
+수정 후 로컬 전체 검사: 1,857 passed, 8 skipped, 205 subtests passed. 재실행의 실패·중단 결과는 기본 체크아웃의 TensorBoard 새 스냅샷 `outputs/tensorboard/0923-terminal-menu-live-smoke`로 변환했다. 첫 실행에는 `result.json`이 없어 변환 대상에 포함하지 않았다. EventAccumulator와 공유 TensorBoard 서버(기본 체크아웃의 `outputs/tensorboard`, 포트 6006)가 같은 다섯 scalar를 반환했다: `result/wall_s=57.38168`, `result/sim_s=7.78`, `result/commands=0`, `result/model_calls=0`, `claims/protocol_complete=0`. [해당 run의 Time Series](http://127.0.0.1:6006/?runFilter=%5E0923-terminal-menu-live-smoke%2F#timeseries)에서도 선택·표시를 확인했다. 이는 중단 결과이며 성공 지표가 아니다.
 
 ## 판정 경계
 
