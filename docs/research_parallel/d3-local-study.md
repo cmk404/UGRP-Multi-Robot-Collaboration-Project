@@ -58,12 +58,14 @@ report만 존재하거나 inventory 쓰기 도중 종료된 실행은 해시 완
 기존 원격용 `copy` 모드는 별도 선택으로 보존한다.
 절대경로 descriptor 고정은 `reference`에만 적용해 원격 capsule의 경로 이동을 막지 않는다.
 D3는 `copy` 선택 자체를 거부한다. 기존 복사 모드는 D2의 상대경로 계약을 유지한다.
+공동 스킬의 위·아래 역할은 준비할 때 명시하며, 실행 중 자기 움직임으로 확인한 TOP 영상의 빔 상대 위치와 대조한다. 아래 배정은 `dispatch/open` seed 11 진단용이다.
 
 ```sh
 python -m scripts.prepare_rgb_communication_replay \
   --assets-root /EXISTING/READ_ONLY/assets \
   --output outputs/d3-local-study-inputs \
-  --asset-mode reference --run-prefix d3-local --submitter D3
+  --asset-mode reference --run-prefix d3-local --submitter D3 \
+  --pair-role-assignment r1-upper-r3-lower
 ```
 
 결과는 `ready=false`이며 `config-for-audit.json`에 독립 감사가 없다.

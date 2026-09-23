@@ -9,6 +9,15 @@ from scripts import prepare_rgb_communication_replay as preparation
 from scripts.prepare_rgb_communication_replay import prepare_assets
 
 
+def test_pair_role_assignment_is_explicit_and_rejects_unknown_layout():
+    assert preparation.pair_roles_for_assignment("r1-lower-r3-upper") == {
+        "r1": "lower", "r3": "upper"}
+    assert preparation.pair_roles_for_assignment("r1-upper-r3-lower") == {
+        "r1": "upper", "r3": "lower"}
+    with pytest.raises(ContractError, match="unknown pair role assignment"):
+        preparation.pair_roles_for_assignment("r1-upper-r3-upper")
+
+
 def inputs(tmp_path):
     root = tmp_path / "repo"
     fixture = root / "tests/fixtures/camera_goal_transport/reference-top.jpg"
@@ -77,5 +86,6 @@ def test_d3_rejects_copy_before_any_output_or_asset_write(tmp_path, monkeypatch)
     output = root / "outputs/not-created"
     monkeypatch.setattr(preparation, "source_state", lambda _: {"clean": True})
     with pytest.raises(ContractError, match="read-only local assets"):
-        preparation.prepare(root, assets, output=output, asset_mode="copy", submitter="D3")
+        preparation.prepare(root, assets, output=output, asset_mode="copy", submitter="D3",
+                            pair_role_assignment="r1-upper-r3-lower")
     assert not output.exists()

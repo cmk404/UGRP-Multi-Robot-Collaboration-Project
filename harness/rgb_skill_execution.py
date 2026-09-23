@@ -79,6 +79,7 @@ def _execution_contract():
                 "membership": "centroid_in_prior_own_bounds",
                 "reject_clipped_support": True,
                 "requires_four_corners": True},
+            "pair_role_binding": "own_motion_claim_and_four_corner_top_bbox_same_beam_side_as_saved_slot",
             "study_tick_period_s": .05, "study_poll_period_s": .05,
             "worker_image_max_age_s": 1., "worker_wall_limit_s": 2.,
             "worker_wall_scope": "submission_to_consumption"}
@@ -387,7 +388,7 @@ class PairActorSkill:
         self.confirmations = 0
 
     def decide(self, own, top):
-        from harness.camera_goal_transport import dock_command, own_payload
+        from harness.camera_goal_transport import dock_command, lane_features, own_payload
         from harness.camera_varied_start_student import predict_stage
         from harness.grasp_student_inference import predict_student
         from harness.dispatch_skill_binding import PairCoarsePixels, canonical_pair_top, beam_feature, pixel_from_map
@@ -443,6 +444,38 @@ class PairActorSkill:
                     raise RGBSkillUnsupported("coarse_rgb_unresolved", phase, {
                         "detail": str(error), "raw_top_sha256": hashlib.sha256(top).hexdigest(),
                         "image_transform": transform}) from error
+                if prediction["ok"]:
+                    # The saved lower/upper slots are on opposite sides of
+                    # the visible shaft. Bind the declared slot to this
+                    # actor's own-motion anchor and complete wheel silhouette
+                    # before issuing any coarse command. This comparison is
+                    # translation-invariant across the fixed TOP views.
+                    ref = lane_features(self.reference, self.slot)
+                    if ref is None:
+                        self.coarse = None
+                        raise RGBSkillUnsupported("pair_role_reference_unresolved", phase, {
+                            "declared_slot": self.slot, "prediction": prediction,
+                            "image_transform": transform})
+                    beam_y = float(transform["observed_beam"]["center"][1]) * 720
+                    claim_y = float(self.identity_claim["center"][1]) * 720
+                    wheel_ylo, wheel_yhi = prediction["mask"]["wheel_bounds_px"][2:]
+                    expected_side = ("upper" if ref["robot_y"] < ref["beam_y"] else
+                                     "lower" if ref["robot_y"] > ref["beam_y"] else "ambiguous")
+                    claim_side = "upper" if claim_y < beam_y else "lower" if claim_y > beam_y else "ambiguous"
+                    wheel_side = "upper" if wheel_yhi < beam_y else "lower" if wheel_ylo > beam_y else "ambiguous"
+                    role_support = {"declared_slot": self.slot, "expected_side": expected_side,
+                                    "own_claim_side": claim_side, "own_wheel_side": wheel_side,
+                                    "own_claim_y_px": claim_y,
+                                    "own_wheel_y_bounds_px": [wheel_ylo, wheel_yhi],
+                                    "observed_beam_y_px": beam_y,
+                                    "reference_beam_minus_robot_y_px":
+                                        float(ref["beam_y"] - ref["robot_y"]) * 720}
+                    if expected_side == "ambiguous" or claim_side != expected_side or wheel_side != expected_side:
+                        self.coarse = None
+                        raise RGBSkillUnsupported("pair_role_image_side_mismatch", phase, {
+                            "role_support": role_support, "prediction": prediction,
+                            "image_transform": transform})
+                    prediction["role_image_support"] = role_support
                 motion = {k: prediction[k] for k in ("forward", "left", "turn")}
             elif phase == "dock":
                 checks = {s: predict_stage(m, jpeg, canonical) for s, m in self.stages.items()}

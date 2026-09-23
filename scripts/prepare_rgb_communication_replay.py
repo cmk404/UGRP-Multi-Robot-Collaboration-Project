@@ -19,6 +19,18 @@ from harness.rgb_communication_study import (
 )
 
 ROOT = Path(__file__).resolve().parents[1]
+PAIR_ROLE_ASSIGNMENTS = {
+    "r1-lower-r3-upper": {"r1": "lower", "r3": "upper"},
+    "r1-upper-r3-lower": {"r1": "upper", "r3": "lower"},
+}
+
+
+def pair_roles_for_assignment(assignment: str) -> dict[str, str]:
+    """Resolve a declared diagnostic role layout, never an evaluator-derived role."""
+    try:
+        return dict(PAIR_ROLE_ASSIGNMENTS[assignment])
+    except KeyError as exc:
+        raise ContractError("unknown pair role assignment") from exc
 
 
 def prepare_assets(root: Path, assets: Path, output: Path, *, mode: str) -> dict:
@@ -77,7 +89,9 @@ def prepare_assets(root: Path, assets: Path, output: Path, *, mode: str) -> dict
 
 
 def prepare(root: Path, assets: Path, *, output: Path | None = None,
-            asset_mode: str = "copy", run_prefix: str = "", submitter: str = "D2") -> dict:
+            asset_mode: str = "copy", run_prefix: str = "", submitter: str = "D2",
+            pair_role_assignment: str) -> dict:
+    pair_roles = pair_roles_for_assignment(pair_role_assignment)
     state = source_state(root)
     if not state["clean"]:
         raise ContractError("commit preparation source before preparing evidence")
@@ -181,11 +195,12 @@ def prepare(root: Path, assets: Path, *, output: Path | None = None,
         actions[kind] = {rid: [{"kind": "task_request", "task_id": kind + "-diagnostic",
             "object_id": capability["object_id"], "skill": skill, "participants": participants,
             "resources": capability["resources"], "stage": "RUN",
-            "own_role": "solo" if kind == "solo" else "lower" if rid == "r1" else "upper",
+            "own_role": "solo" if kind == "solo" else pair_roles[rid],
             "expires_at_s": PHYSICAL_BUDGETS["sim_time_s"]}] if rid in participants else [{"kind": "finish", "claim": "cannot_continue"}]
             for rid in ("r1", "r2", "r3")}
     prompt_ref = record("replay-actions.json", {"evidence_kind": "deterministic_physical_replay",
-        "fixed_roles_not_negotiation": True, "actions": actions})
+        "fixed_roles_not_negotiation": True, "pair_role_assignment": pair_role_assignment,
+        "pair_roles": pair_roles, "actions": actions})
     # Missing historical map lineage is a real unknown, not a fabricated link
     # from the old grasp/alignment model to the current dispatch scene.
     provenance = {"schema_version": "rgb-map-exposure.v1", "records": [
@@ -255,10 +270,13 @@ def main():
     parser.add_argument("--asset-mode", choices=("copy", "reference"), default="copy")
     parser.add_argument("--run-prefix", default="")
     parser.add_argument("--submitter", default="D2")
+    parser.add_argument("--pair-role-assignment", choices=tuple(PAIR_ROLE_ASSIGNMENTS),
+                        required=True)
     args = parser.parse_args()
     print(json.dumps(prepare(ROOT, args.assets_root, output=args.output,
                             asset_mode=args.asset_mode, run_prefix=args.run_prefix,
-                            submitter=args.submitter), ensure_ascii=False))
+                            submitter=args.submitter,
+                            pair_role_assignment=args.pair_role_assignment), ensure_ascii=False))
 
 
 if __name__ == "__main__":
