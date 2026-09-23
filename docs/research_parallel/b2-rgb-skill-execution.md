@@ -4,6 +4,15 @@
 관련 범위 R2/R3, E0. 목적은 독립 actor 선택을 같은 RGB 운동 경로에 연결하는 것이다.
 이 문서는 코드/오프라인 연결 검증이며 실제 운반·통신 효과·새 맵 일반화 결과가 아니다.
 
+## 실행 번들 선택 — 2026-09-23
+
+새 실행은 `execution_bundle_id`를 명시해야 한다. 현재 adapter의
+`rgb-adapter-legacy-v1`은 기존 물리·명령 타이밍을 기록한 실험 버전이며,
+과거 dispatch 성공 버전과 다르다. 이미지 정규화·공동 식별 수정이 있어도
+성공 경로의 접촉 설정·명령 일정까지 같아진 것은 아니다.
+[실행 버전 관리](../execution_versioning.md)에 따라 번들·실제 적용값을
+검사하고 성공 기준과의 차이를 기록한다. 이전 실행 설정·결과는 수정하지 않는다.
+
 ## RGB 입력·식별 계약 수정 — 2026-09-23
 
 과거 성공한 dispatch와 독립 실행기의 연결 차이를 다음 경계에서 제거한다.
@@ -64,7 +73,8 @@ config exact fields:
 
 ```json
 {
-  "schema": "ugrp.rgb_skill_backend.v1",
+  "schema": "ugrp.rgb_skill_backend.v2",
+  "execution_bundle_id": "rgb-adapter-legacy-v1",
   "map_id": "dispatch_open",
   "seed": 11,
   "output_dir": "outputs/NEW-NONEXISTENT-DIRECTORY",

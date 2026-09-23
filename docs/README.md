@@ -11,6 +11,7 @@
 | 출하·협업·동기화 | [출하 환경](research_dispatch_arena.md), [3대 실행](three_robot_e2e.md), [단계 계약](task_stage_sync_contract.md), [단계 연결](task_stage_execution.md) | 관련 구현 작업; 각 문서의 검증 날짜 확인 |
 | 연구 설계·학습 | [관측·비교 계약](warehouse_research_contract.md), [레퍼런스 비교](reference_alignment.md), [하네스 설계](research/show_harness_camera_pair_design.md) | 연구 질문·비교 조건 검토 |
 | 제어기 검증·결과 판정 | [연구 제어기 검증](research_controller_validation.md) | 회귀 실패 재현, 새 조건 비교, 원본 재검증과 제어기 채택 |
+| 실행 버전·이식 검증 | [실행 버전 관리](execution_versioning.md) | 성공 설정 재사용, 실행기 변경, 실제 적용값과 기준의 차이 확인 |
 | 실험 증거 | [실험 인덱스](../experiments/README.md) | 관련 ID의 설정·성공/실패·원본 확인 |
 | 실물 운영 | [네트워크](masterpi_network_runbook.md), [trace](real_trace_system.md), [물리 보정](masterpi_physics_calibration.md) | 실물 연결 시 현재 장치 상태와 함께 확인 |
 | 과거 기록 | [결정 이력](decision_log.md), [옛 아키텍처](current_architecture_todo.md), [이전 검증 요약](archive/validation_summary_20260917.md), [초기 연구 브리프](research_brief_20260813.md) | 변경 이유·과거 실험을 조사할 때 |

@@ -1,0 +1,62 @@
+{
+  "schema": "ugrp.rgb_execution_bundle.v1",
+  "id": "dispatch-f1-local-contact-fine-v1",
+  "status": "historical_success_original_executor",
+  "adapter": "scripts.run_dispatch_skills.SkillScene",
+  "claim_scope": "F1 only; source e099a4a, not transferable to RGBSkillExecutionPort",
+  "source_sha": "e099a4a38c8da094c8c1946ffca2e7ab02f16a83",
+  "raw_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1",
+  "evidence": {
+    "result.json": "86c85d4667126b18e765aa27dcab82a3ca4542a4d8098cb4b168b9c65f5284fd",
+    "episode-setup-only.json": "93e9db02cf32810422df3d0073e6575cd75f54e4e2d368d6584cf278011f3021",
+    "scene.xml": "90c279d1c8fbd4b30c41fcbfd28254610f0aa8ac9357fe65898cba127a05a674",
+    "tracked_summary": "experiments/dispatch-adaptive-recovery-20260917/README.md"
+  },
+  "observed_result": {
+    "physical_success": true,
+    "protocol_complete": true
+  },
+  "effective": {
+    "physics": {
+      "contact_solver_profile": "local_contact_fine",
+      "timestep_s": 0.00025,
+      "explicit_contact_pairs": 12,
+      "weld_active": false
+    },
+    "camera": {
+      "own_raw_size": [
+        960,
+        720
+      ],
+      "top_raw_size": [
+        960,
+        720
+      ],
+      "raw_jpeg_quality": 95,
+      "solo_skill_size": [
+        640,
+        480
+      ],
+      "solo_skill_jpeg_quality": 95,
+      "solo_resize": "cv2.resize"
+    },
+    "execution": {
+      "owner": "SkillScene._solo_tick",
+      "macro": "VisualMacroExecutor",
+      "owner_max_tick_s": 0.00025,
+      "pose_schedule_probe": {
+        "pan_samples": [
+          1506,
+          1521,
+          1539,
+          1554,
+          1560
+        ],
+        "completion_s": 0.75
+      },
+      "worker_image_max_age_s": null,
+      "worker_wall_limit_s": null,
+      "worker_wall_scope": "none"
+    }
+  }
+}

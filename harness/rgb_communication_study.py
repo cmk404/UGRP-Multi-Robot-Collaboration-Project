@@ -16,7 +16,6 @@ import json
 import math
 import os
 from pathlib import Path
-import platform
 import signal
 import subprocess
 import sys
@@ -24,6 +23,7 @@ import threading
 import time
 from typing import Any
 
+from harness.rgb_execution_bundle import environment_fingerprint
 from harness.rgb_communication_evaluation import (
     ContractError, EVALUATOR_SCHEMA, CONDITIONS, evaluate_run,
 )
@@ -131,6 +131,10 @@ def prepare_manifest(config: dict, root: Path) -> dict:
     stage = config.get("stage")
     if stage not in {"physical_replay", "llm_smoke", "pilot"}:
         raise ContractError("stage must be physical_replay, llm_smoke, or pilot")
+    backend_config = config.get("backend")
+    selected_bundle = backend_config.get("execution_bundle_id") if isinstance(backend_config, dict) else None
+    if not isinstance(selected_bundle, str) or not selected_bundle:
+        raise ContractError("explicit backend execution_bundle_id required")
     state = source_state(root)
     if not state["clean"]:
         raise ContractError("commit all source/configuration before preparing the study")
@@ -145,6 +149,7 @@ def prepare_manifest(config: dict, root: Path) -> dict:
         raise ContractError("trial IDs must be unique path-safe strings")
     manifest = {"schema_version": STUDY_SCHEMA, "stage": stage, "source": state,
                 "source_files": source_file_hashes(root), "scheduler_id": SCHEDULER_ID,
+                "execution_bundle_id": selected_bundle,
                 "config": config, "config_sha256": digest_json(config),
                 "planned_denominator": len(trials), "automatic_retry": False}
     # Structural validity is not a declaration of live readiness.
@@ -272,6 +277,9 @@ def preflight(manifest: dict, *, root: Path, evidence_root: Path) -> dict:
         return {"ready": False, "blockers": ["configuration_invalid"], "checked": []}
     if digest_json(config) != manifest.get("config_sha256"):
         blockers.append("configuration_hash_mismatch")
+    if not isinstance(config.get("backend"), dict) or not config["backend"].get("execution_bundle_id") \
+            or manifest.get("execution_bundle_id") != config["backend"].get("execution_bundle_id"):
+        blockers.append("execution_bundle_selection_missing_or_mismatched")
     files = manifest.get("source_files")
     if not isinstance(files, dict) or not files:
         blockers.append("source_file_hashes_missing")
@@ -353,6 +361,9 @@ def preflight(manifest: dict, *, root: Path, evidence_root: Path) -> dict:
     try:
         backend = importlib.import_module(BACKEND_MODULE)
         descriptor = backend.backend_descriptor(config.get("backend", {}))
+        if descriptor.get("execution_bundle_id") != manifest.get("execution_bundle_id") \
+                or not descriptor.get("execution_bundle_sha256"):
+            blockers.append("execution_bundle_descriptor_mismatch")
         if descriptor.get("synthetic") is not False or descriptor.get("weld") is not False:
             blockers.append("backend_is_synthetic_or_weld_not_off")
         if descriptor.get("camera_fov_changed") is not False:
@@ -390,6 +401,11 @@ def preflight(manifest: dict, *, root: Path, evidence_root: Path) -> dict:
         runtime = importlib.import_module("harness.rgb_communication_async")
         limits = runtime.AsyncRuntimeLimits(**config.get("runtime_limits", {}))
         limits.validate()
+        expected_timing = descriptor.get("execution_contract", {})
+        for attr, expected_key in (("tick_period_s", "study_tick_period_s"),
+                                   ("poll_period_s", "study_poll_period_s")):
+            if getattr(limits, attr, None) != expected_timing.get(expected_key):
+                blockers.append("execution_bundle_runtime_timing_mismatch:" + attr)
         if "clock_snapshot" not in inspect.signature(runtime.run_rgb_communication_async).parameters:
             blockers.append("async_supervisor_clock_not_connected")
         if limits.wall_timeout_s > budgets["wall_time_s"] - 5:
@@ -534,10 +550,18 @@ def run_trial(manifest: dict, *, run_id: str, root: Path, evidence_root: Path, o
     backend_config = {**config["backend"], "output_dir": str(output / "backend"),
                       "seed": trial["seed"]}
     bundle = backend_module.build_rgb_skill_backend(backend_config)
+    bundle_provenance = bundle.provenance
+    if bundle_provenance.get("execution_bundle_id") != manifest["execution_bundle_id"] \
+            or not bundle_provenance.get("execution_bundle_sha256") \
+            or not isinstance(bundle_provenance.get("effective_execution"), dict) \
+            or not isinstance(bundle_provenance.get("diff_from_historical_f1"), dict) \
+            or bundle_provenance.get("execution_source") != {"git_sha": manifest["source"]["git_sha"], "dirty": False}:
+        bundle.close()
+        raise ContractError("backend execution bundle evidence missing or mismatched")
     evidence_kind = "deterministic_physical_replay" if manifest["stage"] == "physical_replay" else "live_llm"
     try:
         clock_snapshot = supervisor_clock_callback(bundle)
-        write_new_json(output / "backend-provenance.json", bundle.provenance)
+        write_new_json(output / "backend-provenance.json", bundle_provenance)
         if manifest["stage"] == "physical_replay":
             scripts = trial["replay_actions"]
             if set(scripts) != {"r1", "r2", "r3"}:
@@ -557,7 +581,9 @@ def run_trial(manifest: dict, *, run_id: str, root: Path, evidence_root: Path, o
             condition=trial["condition"], common_task=trial["common_task"], run_id=run_id,
             limits=limits, trace_path=output / "runtime.jsonl", artifact_dir=output / "runtime-inputs",
             provenance={"source_sha": manifest["source"]["git_sha"],
-                        "manifest_sha256": digest_json(manifest), "evidence_kind": evidence_kind})
+                        "manifest_sha256": digest_json(manifest), "evidence_kind": evidence_kind,
+                        "execution_bundle_id": bundle_provenance["execution_bundle_id"],
+                        "execution_bundle_sha256": bundle_provenance["execution_bundle_sha256"]})
         snapshot = bundle.evaluation_snapshot()
         write_new_json(output / "evaluator.json", {
             "schema_version": EVALUATOR_SCHEMA, "run_id": run_id, "condition": trial["condition"],
@@ -572,6 +598,11 @@ def run_trial(manifest: dict, *, run_id: str, root: Path, evidence_root: Path, o
     scored = evaluate_run(plan, output)
     result = {**scored, "schema_version": TRIAL_SCHEMA,
               "source_sha": manifest["source"]["git_sha"], "config_sha256": manifest["config_sha256"],
+              "execution_bundle_id": bundle_provenance["execution_bundle_id"],
+              "execution_bundle_sha256": bundle_provenance["execution_bundle_sha256"],
+              "effective_execution": bundle_provenance["effective_execution"],
+              "diff_from_historical_f1": bundle_provenance["diff_from_historical_f1"],
+              "execution_environment_sha256": bundle_provenance["execution_environment"]["sha256"],
               "evidence_kind": evidence_kind, "claim_scope": config["claim_scope"],
               "source_artifact_hashes": {name: digest_file(output / name)
                   for name in ("plan.json", "runtime.jsonl", "evaluator.json") if (output / name).is_file()}}
@@ -694,12 +725,17 @@ def run_study(manifest: dict, *, root: Path, evidence_root: Path, output: Path,
     readiness = preflight(manifest, root=root, evidence_root=evidence_root)
     if not readiness["ready"]:
         raise ContractError("study blocked: " + ", ".join(readiness["blockers"]))
+    backend_check = next((row["backend"] for row in readiness["checked"] if "backend" in row), {})
+    if not backend_check.get("execution_bundle_sha256"):
+        raise ContractError("preflight omitted execution bundle identity")
     output.mkdir(parents=True, exist_ok=False)
     # Exclusive directory creation is also the no-duplicate-submission lock.
     write_new_json(output / "manifest.json", manifest)
     write_new_json(output / "preflight.json", readiness)
-    write_new_json(output / "environment.json", {"python": sys.version, "platform": platform.platform(),
-                                                "source_sha": manifest["source"]["git_sha"]})
+    write_new_json(output / "environment.json", {**environment_fingerprint(),
+        "source_sha": manifest["source"]["git_sha"],
+        "execution_bundle_id": manifest["execution_bundle_id"],
+        "execution_bundle_sha256": backend_check.get("execution_bundle_sha256")})
     started = time.monotonic()
     config = manifest["config"]
     allowed_wall = config["budgets"]["job_wall_time_s"]
@@ -764,6 +800,7 @@ def run_study(manifest: dict, *, root: Path, evidence_root: Path, output: Path,
                                                                 "planned_denominator": len(config["trials"])})
     report = {"schema_version": RESULT_SCHEMA, "source_sha": manifest["source"]["git_sha"],
               "manifest_sha256": digest_json(manifest), "stage": manifest["stage"],
+              "execution_bundle_id": manifest["execution_bundle_id"],
               "planned_denominator": len(config["trials"]), "run_rows": rows,
               "successes": sum(row.get("outcome") == "success" for row in rows),
               "map_strata": stratified_report(rows, config["trials"]),

@@ -14,6 +14,10 @@ import pytest
 from harness import rgb_communication_study as study
 
 
+def ready_preflight(*_args, **_kwargs):
+    return {"ready": True, "checked": [{"backend": {"execution_bundle_sha256": "test-hash"}}]}
+
+
 def put(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value))
@@ -34,7 +38,7 @@ def source(tmp_path):
 
 def config():
     return {"stage": "physical_replay", "claim_scope": "development_connection_smoke",
-            "submitter": "D2", "backend_id": "test-only", "backend": {},
+            "submitter": "D2", "backend_id": "test-only", "backend": {"execution_bundle_id": "test-only"},
             "budgets": dict(study.PHYSICAL_BUDGETS),
             "runtime_limits": {"max_ticks": 3600, "tick_period_s": .05, "wall_timeout_s": 595,
                                "max_concurrent_requests": 3},
@@ -51,6 +55,13 @@ def test_manifest_pins_source_configuration_and_all_dependencies(source):
     put(source / "uncommitted.json", {})
     with pytest.raises(study.ContractError, match="commit"):
         study.prepare_manifest(config(), source)
+
+
+def test_manifest_requires_explicit_execution_bundle_selection(source):
+    conf = config()
+    conf["backend"].pop("execution_bundle_id")
+    with pytest.raises(study.ContractError, match="execution_bundle_id required"):
+        study.prepare_manifest(conf, source)
 
 
 @pytest.mark.parametrize("run_id", ["../escape", "/tmp/run", "", ["not-a-string"]])
@@ -244,7 +255,7 @@ def test_interrupted_study_does_not_start_next_trial_and_hashes_after_reap(
     value = study.prepare_manifest(config(), source)
     output = tmp_path / "interrupted-study"
     calls = []
-    monkeypatch.setattr(study, "preflight", lambda *a, **k: {"ready": True})
+    monkeypatch.setattr(study, "preflight", ready_preflight)
     def child(*args, **kwargs):
         calls.append(kwargs)
         # Simulate the last child write immediately before confirmed reap.
@@ -264,7 +275,7 @@ def test_interrupted_study_does_not_start_next_trial_and_hashes_after_reap(
 def test_unconfirmed_cleanup_never_hashes_live_artifacts(source, tmp_path, monkeypatch):
     value = study.prepare_manifest(config(), source)
     output = tmp_path / "cleanup-unknown"
-    monkeypatch.setattr(study, "preflight", lambda *a, **k: {"ready": True})
+    monkeypatch.setattr(study, "preflight", ready_preflight)
     monkeypatch.setattr(study, "bounded_process", lambda *a, **k: {
         "exit_code": 124, "timed_out": True, "child_reaped": True, "process_group_gone": False})
     result = study.run_study(value, root=source, evidence_root=source, output=output)
@@ -277,7 +288,7 @@ def test_normal_trial_return_continues_even_when_physical_goal_failed(source, tm
     value = study.prepare_manifest(config(), source)
     output = tmp_path / "physical-failures"
     calls = []
-    monkeypatch.setattr(study, "preflight", lambda *a, **k: {"ready": True})
+    monkeypatch.setattr(study, "preflight", ready_preflight)
     def child(*args, **kwargs):
         calls.append(kwargs)
         directory = kwargs["log_path"].parent
@@ -351,7 +362,7 @@ def test_repeat_interrupt_during_cleanup_does_not_escape_reap(tmp_path, monkeypa
 def test_inventory_write_failure_cannot_publish_finalization_receipt(source, tmp_path, monkeypatch):
     value = study.prepare_manifest(config(), source)
     output = tmp_path / "interrupted-inventory"
-    monkeypatch.setattr(study, "preflight", lambda *a, **k: {"ready": True})
+    monkeypatch.setattr(study, "preflight", ready_preflight)
     monkeypatch.setattr(study, "bounded_process", lambda *a, **k: {
         "exit_code": 0, "timed_out": False, "child_reaped": True, "process_group_gone": True})
     original_write = study.write_new_json
@@ -411,7 +422,7 @@ def test_no_output_or_process_when_preflight_blocks(source, tmp_path, monkeypatc
 
 def test_source_and_config_drift_block_even_separate_trial_entry(source, tmp_path, monkeypatch):
     manifest = study.prepare_manifest(config(), source)
-    monkeypatch.setattr(study, "preflight", lambda *a, **k: {"ready": True})
+    monkeypatch.setattr(study, "preflight", ready_preflight)
     manifest["config"]["trials"].reverse()
     with pytest.raises(study.ContractError, match="configuration drift"):
         study.run_trial(manifest, run_id="solo", root=source, evidence_root=source, output=tmp_path)
@@ -458,7 +469,11 @@ def test_trial_passes_clock_callback_only_to_supervisor(source, tmp_path, monkey
     sequence = []
     clock = lambda: {"schema": "ugrp.execution_clock.v1", "clock_domain": "sim",
                      "last_acknowledged_time_s": 0, "actual_time_s": 0}
-    bundle = SimpleNamespace(actor_port=object(), clock_snapshot=clock, provenance={},
+    bundle = SimpleNamespace(actor_port=object(), clock_snapshot=clock, provenance={
+        "execution_bundle_id": "test-only", "execution_bundle_sha256": "test-hash",
+        "effective_execution": {}, "diff_from_historical_f1": {},
+        "execution_source": {"git_sha": value["source"]["git_sha"], "dirty": False},
+        "execution_environment": {"sha256": "test-env"}},
         evaluation_snapshot=lambda: sequence.append("evaluation") or {},
         close=lambda: sequence.append("close"))
     def run(port, planners, **kwargs):
@@ -477,7 +492,7 @@ def test_trial_passes_clock_callback_only_to_supervisor(source, tmp_path, monkey
         if name == study.RUNTIME_MODULE:
             return SimpleNamespace(run_rgb_communication_async=run)
         raise ImportError(name)
-    monkeypatch.setattr(study, "preflight", lambda *a, **k: {"ready": True})
+    monkeypatch.setattr(study, "preflight", ready_preflight)
     monkeypatch.setattr(study.importlib, "import_module", imported)
     result = study.run_trial(value, run_id="solo", root=source, evidence_root=source,
                              output=tmp_path / "trial")

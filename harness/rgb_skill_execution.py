@@ -18,14 +18,19 @@ import threading
 import time
 from types import SimpleNamespace
 from typing import Callable
+import xml.etree.ElementTree as ET
 
+from harness.rgb_execution_bundle import (load_bundle, require_effective, baseline_diff,
+                                          source_identity, environment_fingerprint)
 from harness.rgb_execution_contract import SkillCapability, finite_number
 from harness.rgb_execution_port import RGBExecutionPort, _serialized
 
 ROOT = Path(__file__).resolve().parents[1]
 BACKEND_ID = "rgb_incremental_dispatch_v1"
-SCHEMA = "ugrp.rgb_skill_backend.v1"
+SCHEMA = "ugrp.rgb_skill_backend.v2"
 MAX_TICK_S = .05
+FRAME_JPEG_QUALITY = 95
+ADAPTER_CONTACT_PROFILE = "legacy"
 INITIAL_COMMANDS = {"1": 2000, "3": 740, "4": 2320, "5": 1320, "6": 1500}
 SKILLS = {f"{kind}_transport_{goal}": {
     "object_id": "box" if kind == "solo" else "beam",
@@ -39,6 +44,44 @@ SKILLS = {f"{kind}_transport_{goal}": {
 def _digest(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":"),
                                      allow_nan=False).encode()).hexdigest()
+
+
+def _pose_schedule_probe():
+    """Measure the adapter's actual pan samples and completion deadline."""
+    macro = MacroQueue(lambda _action, _duration: None, dict(INITIAL_COMMANDS))
+    macro.submit({"kind": "pose", "pulses": {"6": 1560}}, 0.)
+    return {"pan_samples": [action["pan_pulse"] for _, action in macro.events],
+            "completion_s": round(macro.until, 6)}
+
+
+def _execution_contract():
+    return {"owner": "RGBSkillExecutionPort", "macro": "MacroQueue",
+            "owner_max_tick_s": MAX_TICK_S, "pose_schedule_probe": _pose_schedule_probe(),
+            "study_tick_period_s": .05, "study_poll_period_s": .05,
+            "worker_image_max_age_s": 1., "worker_wall_limit_s": 2.,
+            "worker_wall_scope": "submission_to_consumption"}
+
+
+def _applied_contract(scene):
+    """Read live model/XML and camera dimensions after construction, before actor work."""
+    xml = ET.fromstring(scene.xml)
+    pairs = xml.findall("contact/pair")
+    model_pairs = int(scene.world.model.npair)
+    if len(pairs) != model_pairs:
+        raise ValueError("XML/model explicit contact pair count differs")
+    xml_step = float(xml.find("option").get("timestep"))
+    if xml_step != float(scene.world.model.opt.timestep):
+        raise ValueError("XML/model timestep differs")
+    return {"physics": {"contact_solver_profile": scene.manifest.get("contact_solver_profile"),
+                        "timestep_s": float(scene.world.model.opt.timestep),
+                        "explicit_contact_pairs": model_pairs,
+                        "weld_active": bool(scene.world.data.eq_active.any())},
+            "camera": {"own_raw_size": [int(scene.world.width), int(scene.world.height)],
+                       "top_raw_size": [int(scene.world.observer_width), int(scene.world.observer_height)],
+                       "raw_jpeg_quality": FRAME_JPEG_QUALITY,
+                       "solo_skill_size": [640, 480], "solo_skill_jpeg_quality": 95,
+                       "solo_resize": "cv2.resize"},
+            "execution": _execution_contract()}
 
 
 def _read_models(root, manifest, *, staged=False):
@@ -86,9 +129,14 @@ def map_support_matrix():
 def backend_descriptor(config):
     """Read-only preflight: no renderer, world, model inference, or process."""
     required = {"schema", "map_id", "seed", "output_dir", "max_sim_s", "max_commands",
-                "grasp_model_dir", "stage_model_dir", "reference_top"}
+                "grasp_model_dir", "stage_model_dir", "reference_top", "execution_bundle_id"}
     if not isinstance(config, dict) or set(config) != required or config["schema"] != SCHEMA:
         raise ValueError("exact RGB backend config required")
+    execution_bundle, bundle_sha = load_bundle(config["execution_bundle_id"])
+    if execution_bundle["effective"]["execution"] != _execution_contract():
+        raise ValueError("RGB execution macro schedule or worker contract changed")
+    if execution_bundle["effective"]["physics"]["contact_solver_profile"] != ADAPTER_CONTACT_PROFILE:
+        raise ValueError("RGB execution contact profile changed")
     if config["map_id"] != "dispatch_open":
         raise ValueError("unsupported map: no open/north/south substitution; consult map_support_matrix")
     if type(config["seed"]) is not int or config["seed"] < 0:
@@ -106,6 +154,10 @@ def backend_descriptor(config):
     scene_config = episode("open", config["seed"])
     static_map = scene_config["static_map"]
     return {"schema": "ugrp.rgb_skill_backend_descriptor.v1", "backend_id": BACKEND_ID,
+            "execution_bundle_id": execution_bundle["id"],
+            "execution_bundle_sha256": bundle_sha,
+            "execution_bundle_status": execution_bundle["status"],
+            "execution_contract": execution_bundle["effective"]["execution"],
             "synthetic": False, "weld": False, "camera_fov_changed": False,
             "clock_owner": "single_simulator", "clock_domain": "sim", "max_tick_s": MAX_TICK_S,
             "supervisor_clock_schema": "ugrp.execution_clock.v1",
@@ -1192,10 +1244,15 @@ def build_rgb_skill_backend(config):
     from scripts.research_dispatch_scene import DispatchScene
     from scripts.run_dispatch_e2e import Referee
     from scripts.probe_dual_grasp_sync import Video
-    scene = DispatchScene(episode("open", config["seed"]), config["output_dir"])
+    execution_bundle, bundle_sha = load_bundle(config["execution_bundle_id"])
+    scene_config = episode("open", config["seed"])
+    scene_config["contact_solver_profile"] = ADAPTER_CONTACT_PROFILE
+    scene = DispatchScene(scene_config, config["output_dir"])
     video = referee = port = None
     try:
         scene.open()
+        applied_contract = _applied_contract(scene)
+        require_effective(execution_bundle, applied_contract)
         if scene.invariants()["weld_active"]:
             raise ValueError("weld must remain OFF")
         origin = float(scene.world.data.time)
@@ -1209,8 +1266,8 @@ def build_rgb_skill_backend(config):
         static_context = _public_static_context(static_map, descriptor)
         frame_episode = object()  # never shared across reset/new backend instances
         frame_cache = _RGBFrameCache(
-            lambda rid: scene.world.render_jpeg(robot_id=rid, camera="robot_cam", quality=95),
-            lambda: scene.world.render_team_jpeg(camera="cctv_top", quality=95),
+            lambda rid: scene.world.render_jpeg(robot_id=rid, camera="robot_cam", quality=FRAME_JPEG_QUALITY),
+            lambda: scene.world.render_team_jpeg(camera="cctv_top", quality=FRAME_JPEG_QUALITY),
             record=lambda row: port._supervisor_event(row))
         renderer_state = {"identity": None, "generation": 0}
         def frames(rid, now):
@@ -1221,7 +1278,7 @@ def build_rgb_skill_backend(config):
             if renderer_state["identity"] != state:
                 frame_cache.invalidate()
                 renderer_state.update(identity=state, generation=renderer_state["generation"]+1)
-            identity = ("robot_cam", "cctv_top", 95, scene.manifest["scene_xml_sha256"],
+            identity = ("robot_cam", "cctv_top", FRAME_JPEG_QUALITY, scene.manifest["scene_xml_sha256"],
                 descriptor["camera_sha256"], scene.world.width, scene.world.height,
                 scene.world.observer_width, scene.world.observer_height, renderer_state["generation"])
             return frame_cache.read(rid, sim_time_s=now, absolute_time_s=clock.absolute(),
@@ -1274,6 +1331,13 @@ def build_rgb_skill_backend(config):
             max_sim_s=config["max_sim_s"], max_commands=config["max_commands"], record_observation=save_observation,
             simulation_clock=clock, record_supervisor=save_supervisor)
         provenance = {**descriptor, "scene_xml_sha256": scene.manifest["scene_xml_sha256"],
+            "execution_bundle_id": execution_bundle["id"],
+            "execution_bundle_sha256": bundle_sha,
+            "execution_bundle_status": execution_bundle["status"],
+            "effective_execution": applied_contract,
+            "diff_from_historical_f1": baseline_diff(applied_contract),
+            "execution_source": source_identity(),
+            "execution_environment": environment_fingerprint(),
             "map_to_scene": {**descriptor["map_to_scene"], "scene_xml_sha256": scene.manifest["scene_xml_sha256"]},
             "sim_origin_s": origin, "initial_invariants": scene.initial_invariants,
             "video": str(scene.out / "execution.mp4"), "referee": str(scene.out / "referee-only.jsonl")}
