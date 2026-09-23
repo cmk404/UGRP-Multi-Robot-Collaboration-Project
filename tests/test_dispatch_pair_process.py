@@ -96,6 +96,25 @@ def test_spawned_worker_error_is_explicit_and_cleanup_bounded():
     assert not process.process.is_alive()
 
 
+def test_top_analysis_precedes_own_and_rejects_mismatched_stage():
+    initialization, top, own = _portable_input()
+    expected = PairPerceptionState(**initialization).analyze(7, 1.25, top, own)
+    process = PairPerceptionProcess(initialization)
+    try:
+        process.wait_ready(lambda: time.sleep(.002))
+        top_result = _await(process, process.submit_top(7, 1.25, top))
+        assert top_result['canonical_top'] == expected['canonical_top']
+        assert top_result['route'] == expected['route']
+        assert 'decisions' not in top_result
+        with pytest.raises(RuntimeError, match='one ordered RGB'):
+            process.submit_top(8, 1.5, top)
+        with pytest.raises(RuntimeError, match='pair perception ValueError'):
+            _await(process, process.submit_own(8, 1.5, own))
+    finally:
+        process.close()
+    assert not process.process.is_alive()
+
+
 def test_owner_adopts_only_matching_rgb_and_retains_physical_slot_mapping(tmp_path):
     initialization, top, own = _portable_input()
     result = PairPerceptionState(**initialization).analyze(21, 1.25, top, own)
@@ -106,9 +125,16 @@ def test_owner_adopts_only_matching_rgb_and_retains_physical_slot_mapping(tmp_pa
     pair.beam_continuity = BeamContinuity()
     pair.calls = []
     pair.last_capture = None
+    started = result['top_analysis_started_wall_s']
+    completed = result['top_analysis_completed_wall_s']
+    halfway = (started + completed) / 2
     raw = {rid: {'frame_id': 21, 'observed_at_s': 1.25,
                  'top_bytes': top, 'shared_top_rgb': {'path': 'top.jpg'},
-                 'own_bytes': own[slot], 'own_rgb': {'path': f'{rid}.jpg'}}
+                 'own_bytes': own[slot], 'own_rgb': {'path': f'{rid}.jpg'},
+                 'top_render_completed_wall_s': started - .01,
+                 'top_materialized_wall_s': started - .001,
+                 'render_completed_wall_s': halfway,
+                 'materialized_wall_s': completed + .01}
            for slot, rid in pair.bindings.pair.items()}
     wrong = dict(result, frame_id=20)
     with pytest.raises(RuntimeError, match='provenance mismatch'):
@@ -124,6 +150,10 @@ def test_owner_adopts_only_matching_rgb_and_retains_physical_slot_mapping(tmp_pa
     assert pair.carried_beam.previous == result['carried_previous']
     assert pair.beam_continuity.previous == result['continuity_previous']
     assert pair.calls[0]['derived_top']['sha256'] == hashlib.sha256(result['canonical_top']).hexdigest()
+    timing = pair.calls[0]['partial_pipeline_wall_timing']
+    assert timing['top_analysis_started_wall_s'] == started
+    assert timing['top_analysis_completed_wall_s'] == completed
+    assert timing['top_cpu_overlap_own_render_wall_s'] == pytest.approx(halfway - started)
     assert (motion, route, decisions, skew, skew_evidence) == (
         result['motion'], result['route'], result['decisions'],
         result['skew'], result['skew_evidence'])
@@ -158,7 +188,9 @@ def test_saved_v17_entire_carry_matches_original_record_and_spawned_process():
             frame_id = row['frame_id']
             observed = float(index)  # saved sequence; only ordering is consumed
             expected = inline.analyze(frame_id, observed, top, own)
-            actual = _await(process, process.submit(frame_id, observed, top, own))
+            partial = _await(process, process.submit_top(frame_id, observed, top))
+            assert 'decisions' not in partial
+            actual = _await(process, process.submit_own(frame_id, observed, own))
             _same_analysis(expected, actual)
             assert hashlib.sha256(actual['canonical_top']).hexdigest() == row['derived_top']['sha256']
             assert actual['transform'] == row['transform']

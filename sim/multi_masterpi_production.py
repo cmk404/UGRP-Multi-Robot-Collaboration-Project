@@ -27,7 +27,7 @@ import numpy as np
 from PIL import Image
 
 from sim.masterpi_camera_profile import raw_fisheye_remap
-from sim.snapshot_render import CameraKey, RenderBatch, SnapshotRenderBroker
+from sim.snapshot_render import CameraKey, RenderBatch, SnapshotRenderBroker, TopRenderLatch
 from sim.cooperative_payload import (
     BEAM_BODY_NAME,
     BEAM_CARRIER_IDS,
@@ -4550,6 +4550,55 @@ class MultiMasterPiProductionV2:
                 return future
         except Exception:
             # A failed capture/submit has no queued owner to return this slot.
+            broker.slots.put_nowait(slot)
+            raise
+
+    def render_pair_snapshot_with_top_async(self, cameras: Sequence[CameraKey]) -> tuple[TopRenderLatch, Future[RenderBatch]]:
+        """Expose TOP first from one frozen pair batch; full completion owns slot release.
+
+        The latch has no callbacks. Publishing it on the GL owner only signals
+        copied RGB; JPEG encoding and actor analysis run on other workers.
+        """
+        selected = tuple(cameras)
+        if (len(selected) != 3 or selected[0] != (None, 'cctv_top')
+                or len(set(selected)) != 3
+                or any(rid not in self.controllers or camera != 'robot_cam'
+                       for rid, camera in selected[1:])):
+            raise ValueError('partial TOP requires TOP then two unique robot cameras')
+        if threading.get_ident() == self._render_thread_id:
+            raise RuntimeError('snapshot capture cannot queue from render owner thread')
+        with self._snapshot_submit_lock:
+            if self._render_closed or self._render_executor is None:
+                raise RuntimeError('multi MasterPi world is closing')
+            if self._snapshot_broker is None:
+                self._snapshot_broker = self._render_executor.submit(
+                    SnapshotRenderBroker, self).result(timeout=30.0)
+            broker = self._snapshot_broker
+        slot = broker.acquire()
+        latch = TopRenderLatch()
+        try:
+            with self._snapshot_submit_lock:
+                if self._render_closed or self._render_executor is None:
+                    raise RuntimeError('multi MasterPi world is closing')
+                def capture_and_render():
+                    snapshot = broker.capture(self, selected, slot)
+                    return broker.render(snapshot, top_latch=latch)
+                future = self._render_executor.submit(capture_and_render)
+                def finish(done):
+                    try:
+                        if done.cancelled():
+                            from concurrent.futures import CancelledError
+                            latch.fail(CancelledError())
+                        else:
+                            error = done.exception()
+                            if error is not None:
+                                latch.fail(error)
+                    finally:
+                        broker.slots.put_nowait(slot)
+                future.add_done_callback(finish)
+                return latch, future
+        except BaseException as error:
+            latch.fail(error)
             broker.slots.put_nowait(slot)
             raise
 

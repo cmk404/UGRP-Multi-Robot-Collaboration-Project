@@ -9,6 +9,7 @@ import copy
 from dataclasses import dataclass
 import queue
 import threading
+import time
 from typing import Sequence
 
 import mujoco
@@ -25,6 +26,49 @@ class RenderBatch:
     frame_id: int
     sim_time: float
     rgb: dict[CameraKey, np.ndarray]
+    render_completed_wall_s: float | None = None
+
+
+@dataclass(frozen=True)
+class RenderedTop:
+    frame_id: int
+    sim_time: float
+    rgb: np.ndarray
+    render_completed_wall_s: float
+
+
+class TopRenderLatch:
+    """A callback-free signal; GL never runs image encoding or consumer code."""
+    def __init__(self):
+        self._event = threading.Event()
+        self._value: RenderedTop | None = None
+        self._error: BaseException | None = None
+        self._lock = threading.Lock()
+
+    def publish(self, value: RenderedTop) -> None:
+        with self._lock:
+            if self._event.is_set():
+                return
+            self._value = value
+            self._event.set()
+
+    def fail(self, error: BaseException) -> None:
+        with self._lock:
+            if self._event.is_set():
+                return
+            self._error = error
+            self._event.set()
+
+    def done(self) -> bool:
+        return self._event.is_set()
+
+    def result(self, timeout: float | None = None) -> RenderedTop:
+        if not self._event.wait(timeout):
+            raise TimeoutError('TOP render did not complete')
+        if self._error is not None:
+            raise self._error
+        assert self._value is not None
+        return self._value
 
 
 @dataclass(frozen=True)
@@ -147,7 +191,8 @@ class SnapshotRenderBroker:
             return FrozenRenderSnapshot(world._snapshot_frame_id, float(world.data.time),
                                         slot, arrays, tuple(requests), needs_forward)
 
-    def render(self, snapshot: FrozenRenderSnapshot) -> RenderBatch:
+    def render(self, snapshot: FrozenRenderSnapshot, *,
+               top_latch: TopRenderLatch | None = None) -> RenderBatch:
         if threading.get_ident() != self.owner_thread_id:
             raise RuntimeError("MuJoCo snapshot renderer accessed outside its owner thread")
         for name, source in snapshot.model_arrays.items():
@@ -165,7 +210,11 @@ class SnapshotRenderBroker:
                 rgb = cv2.remap(rgb, *req.fisheye_map, cv2.INTER_LINEAR,
                                 borderMode=cv2.BORDER_CONSTANT)
             images[req.key] = rgb
-        return RenderBatch(snapshot.frame_id, snapshot.sim_time, images)
+            if top_latch is not None and req.key == (None, 'cctv_top'):
+                top_latch.publish(RenderedTop(snapshot.frame_id, snapshot.sim_time,
+                                              rgb, time.monotonic()))
+        return RenderBatch(snapshot.frame_id, snapshot.sim_time, images,
+                           time.monotonic())
 
     def close(self) -> None:
         if threading.get_ident() != self.owner_thread_id:

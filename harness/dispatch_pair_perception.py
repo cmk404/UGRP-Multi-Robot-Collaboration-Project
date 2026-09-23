@@ -53,13 +53,14 @@ class PairPerceptionState:
         self.route = route
         self.last_frame_id = None
         self.last_observed_at_s = None
+        self.pending_top = None
 
-    def analyze(self, frame_id, observed_at_s, raw_top, own_by_slot):
+    def analyze_top(self, frame_id, observed_at_s, raw_top):
+        if self.pending_top is not None:
+            raise RuntimeError('previous TOP analysis still awaits both own views')
         if (self.last_frame_id is not None and frame_id <= self.last_frame_id) or (
                 self.last_observed_at_s is not None and observed_at_s < self.last_observed_at_s):
             raise ValueError('pair perception RGB frames must be accepted in order')
-        if set(own_by_slot) != {'r1', 'r3'}:
-            raise ValueError('both own RGB images are required')
         started = time.monotonic()
         observed_beam = self.carried_beam.observe(raw_top)
         canonical, transform = canonical_pair_top(
@@ -68,6 +69,34 @@ class PairPerceptionState:
         bind_completed = time.monotonic()
         perception_started = time.monotonic()
         motion, evidence = self.route.observe(raw_top)
+        try:
+            skew, skew_evidence = translation_skew(raw_top, self.carried_beam.previous)
+        except ValueError as error:
+            skew, skew_evidence = None, {'unresolved': str(error)}
+        top_analysis_completed = time.monotonic()
+        top_perception_wall_s = top_analysis_completed - perception_started
+        self.pending_top = {'frame_id': frame_id, 'observed_at_s': observed_at_s,
+                'canonical_top': canonical, 'transform': transform,
+                'carried_previous': copy.deepcopy(self.carried_beam.previous),
+                'continuity_previous': copy.deepcopy(self.continuity.previous),
+                'motion': motion, 'route': evidence,
+                'skew': skew, 'skew_evidence': skew_evidence,
+                'bind_started_wall_s': started,
+                'bind_completed_wall_s': bind_completed,
+                'top_analysis_started_wall_s': started,
+                'top_analysis_completed_wall_s': top_analysis_completed,
+                'top_perception_wall_s': top_perception_wall_s}
+        return self.pending_top
+
+    def analyze_own(self, frame_id, observed_at_s, own_by_slot):
+        top = self.pending_top
+        if (top is None or top['frame_id'] != frame_id or
+                top['observed_at_s'] != observed_at_s):
+            raise ValueError('own RGB does not match the pending TOP snapshot')
+        if set(own_by_slot) != {'r1', 'r3'}:
+            raise ValueError('both own RGB images are required')
+        perception_started = time.monotonic()
+        motion, evidence = top['motion'], top['route']
         decisions = {}
         for slot in ('r1', 'r3'):
             current = own_payload(own_by_slot[slot], hue_upper=35)
@@ -79,22 +108,16 @@ class PairPerceptionState:
                 'current_own_rgb_features': current,
                 'anchor_own_rgb_features': initial,
                 'appearance': 'orange-to-yellow beam hue 3..35; same shape/consistency gates'}
-        try:
-            skew, skew_evidence = translation_skew(raw_top, self.carried_beam.previous)
-        except ValueError as error:
-            skew, skew_evidence = None, {'unresolved': str(error)}
-        perception_wall_s = time.monotonic() - perception_started
+        perception_wall_s = top['top_perception_wall_s'] + time.monotonic() - perception_started
         self.last_frame_id = frame_id
         self.last_observed_at_s = observed_at_s
-        return {'frame_id': frame_id, 'observed_at_s': observed_at_s,
-                'canonical_top': canonical, 'transform': transform,
-                'carried_previous': copy.deepcopy(self.carried_beam.previous),
-                'continuity_previous': copy.deepcopy(self.continuity.previous),
-                'motion': motion, 'route': evidence, 'decisions': decisions,
-                'skew': skew, 'skew_evidence': skew_evidence,
-                'bind_started_wall_s': started,
-                'bind_completed_wall_s': bind_completed,
+        self.pending_top = None
+        return {**top, 'decisions': decisions,
                 'perception_wall_s': perception_wall_s}
+
+    def analyze(self, frame_id, observed_at_s, raw_top, own_by_slot):
+        self.analyze_top(frame_id, observed_at_s, raw_top)
+        return self.analyze_own(frame_id, observed_at_s, own_by_slot)
 
 
 def _worker(connection, initialization):
@@ -106,7 +129,8 @@ def _worker(connection, initialization):
             if message is None:
                 return
             try:
-                result = state.analyze(**message)
+                method = message.pop('method', 'analyze')
+                result = getattr(state, method)(**message)
                 connection.send(('ok', result))
             except BaseException as error:
                 connection.send(('error', (type(error).__name__, str(error))))
@@ -157,6 +181,7 @@ class PairPerceptionProcess:
         self.timeout_s = timeout_s
         self.pending = None
         self.closed = False
+        self.stage = 'top'
 
     def wait_ready(self, pump):
         deadline = time.monotonic() + self.timeout_s
@@ -171,14 +196,37 @@ class PairPerceptionProcess:
             raise RuntimeError(f'pair perception process startup: {detail}')
 
     def submit(self, frame_id, observed_at_s, raw_top, own_by_slot):
-        if self.closed or (self.pending is not None and not self.pending.consumed):
-            raise RuntimeError('pair perception accepts one ordered RGB batch at a time')
+        self._require_stage('top')
         message = {'frame_id': frame_id, 'observed_at_s': observed_at_s,
                    'raw_top': bytes(raw_top),
                    'own_by_slot': {slot: bytes(value) for slot, value in own_by_slot.items()}}
         future = self.executor.submit(self._roundtrip, message)
         self.pending = _PendingResult(future, self.process, self.timeout_s)
         return self.pending
+
+    def submit_top(self, frame_id, observed_at_s, raw_top):
+        self._require_stage('top')
+        message = {'method': 'analyze_top', 'frame_id': frame_id,
+                   'observed_at_s': observed_at_s, 'raw_top': bytes(raw_top)}
+        future = self.executor.submit(self._roundtrip, message)
+        self.pending = _PendingResult(future, self.process, self.timeout_s)
+        self.stage = 'own'
+        return self.pending
+
+    def submit_own(self, frame_id, observed_at_s, own_by_slot):
+        self._require_stage('own')
+        message = {'method': 'analyze_own', 'frame_id': frame_id,
+                   'observed_at_s': observed_at_s,
+                   'own_by_slot': {slot: bytes(value) for slot, value in own_by_slot.items()}}
+        future = self.executor.submit(self._roundtrip, message)
+        self.pending = _PendingResult(future, self.process, self.timeout_s)
+        self.stage = 'top'
+        return self.pending
+
+    def _require_stage(self, stage):
+        if self.closed or self.stage != stage or (
+                self.pending is not None and not self.pending.consumed):
+            raise RuntimeError('pair perception accepts one ordered RGB batch/stage at a time')
 
     def _roundtrip(self, message):
         self.connection.send(message)

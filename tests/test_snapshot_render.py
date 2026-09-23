@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import threading
 import time
+from dataclasses import replace
+from concurrent.futures import CancelledError
 
 import mujoco
 import numpy as np
@@ -10,6 +12,9 @@ import pytest
 
 from sim.multi_masterpi_production import MultiMasterPiProductionV2
 from sim.snapshot_render import SnapshotBackpressure
+
+
+PAIR_CAMERAS = [(None, 'cctv_top'), ('r1', 'robot_cam'), ('r3', 'robot_cam')]
 
 
 @pytest.fixture
@@ -203,3 +208,91 @@ def test_navigation_camera_uses_same_actor_pixels_on_camera_team_map():
         assert np.array_equal(world.model.cam_fovy, fovy)
     finally:
         world.close()
+
+
+def test_partial_top_precedes_own_from_same_frozen_slot_and_pixels(world, monkeypatch):
+    baseline = world.render_snapshot_async(PAIR_CAMERAS,
+        capture_on_render_ready=True).result(timeout=5)
+    broker = world._snapshot_broker
+    from sim.snapshot_render import TopRenderLatch
+    original_publish = TopRenderLatch.publish
+    top_signaled, resume = threading.Event(), threading.Event()
+
+    def pause_after_top(self, value):
+        original_publish(self, value)
+        top_signaled.set()
+        assert resume.wait(5), 'test TOP gate was not released'
+
+    monkeypatch.setattr(TopRenderLatch, 'publish', pause_after_top)
+    latch, full = world.render_pair_snapshot_with_top_async(PAIR_CAMERAS)
+    try:
+        assert top_signaled.wait(2)
+        top = latch.result(timeout=1)
+        assert not full.done()
+        assert broker.slots.qsize() == 2  # partial release is forbidden
+        assert world.physics_lock.acquire(timeout=.5)
+        try:
+            mujoco.mj_step(world.model, world.data)
+        finally:
+            world.physics_lock.release()
+    finally:
+        resume.set()
+    batch = full.result(timeout=5)
+    assert batch.frame_id == top.frame_id == baseline.frame_id + 1
+    assert batch.sim_time == top.sim_time == baseline.sim_time
+    assert top.rgb is batch.rgb[(None, 'cctv_top')]
+    assert top.render_completed_wall_s < batch.render_completed_wall_s
+    assert all(np.array_equal(batch.rgb[key], baseline.rgb[key]) for key in PAIR_CAMERAS)
+    assert broker.slots.qsize() == 3
+
+
+def test_queued_partial_cancel_wakes_top_and_returns_only_its_slot(world):
+    world.render_snapshot_async([(None, 'cctv_top')]).result(timeout=5)
+    broker = world._snapshot_broker
+    entered, resume = threading.Event(), threading.Event()
+    def queue_gate():
+        entered.set()
+        assert resume.wait(5)
+    gate = world._render_executor.submit(queue_gate)
+    assert entered.wait(2)
+    try:
+        latch, full = world.render_pair_snapshot_with_top_async(PAIR_CAMERAS)
+        assert broker.slots.qsize() == 2
+        assert full.cancel()
+        with pytest.raises(CancelledError):
+            latch.result(timeout=1)
+        assert broker.slots.qsize() == 3
+    finally:
+        resume.set()
+    gate.result(timeout=5)
+
+
+def test_partial_top_success_then_own_failure_aborts_and_releases_slot(world, monkeypatch):
+    world.render_snapshot_async([(None, 'cctv_top')]).result(timeout=5)
+    broker = world._snapshot_broker
+    original_render = broker.render
+    def fail_after_top(snapshot, *, top_latch=None):
+        original_render(replace(snapshot, requests=snapshot.requests[:1]),
+                        top_latch=top_latch)
+        raise RuntimeError('own render failed')
+    monkeypatch.setattr(broker, 'render', fail_after_top)
+    latch, full = world.render_pair_snapshot_with_top_async(PAIR_CAMERAS)
+    assert latch.result(timeout=5).frame_id > 0
+    with pytest.raises(RuntimeError, match='own render failed'):
+        full.result(timeout=5)
+    assert broker.slots.qsize() == 3
+    monkeypatch.setattr(broker, 'render', original_render)
+    assert world.render_snapshot_async(PAIR_CAMERAS).result(timeout=5).rgb
+
+
+def test_partial_capture_failure_before_top_wakes_latch_and_releases_slot(world, monkeypatch):
+    world.render_snapshot_async([(None, 'cctv_top')]).result(timeout=5)
+    broker = world._snapshot_broker
+    monkeypatch.setattr(broker, 'capture', lambda *_args: (_ for _ in ()).throw(
+        RuntimeError('copy failed')))
+    latch, full = world.render_pair_snapshot_with_top_async(PAIR_CAMERAS)
+    with pytest.raises(RuntimeError, match='copy failed'):
+        latch.result(timeout=5)
+    with pytest.raises(RuntimeError, match='copy failed'):
+        full.result(timeout=5)
+    assert broker.slots.qsize() == 3
