@@ -1,0 +1,207 @@
+{
+  "scope": "Development evidence only. Not final failure-rate cohort. Commands are issued actions; physical success is separate referee output.",
+  "rows": [
+    {
+      "run": "dev-open-act-v1",
+      "source_sha": "0e2c64448a3281ac1eedf77d97c726f8e29c265c",
+      "result_sha256": "d491e888bf32f3af2e15d4b9221955d3460741cfc66dc981ab8188e09c4da0ba",
+      "phase": "APPROACH",
+      "error": "RuntimeError: fine RGB alignment outside saved skill support",
+      "whole_physical_success": false,
+      "protocol_complete": false,
+      "wall_s": 55.257445249997545,
+      "camera_geometry_unchanged": true,
+      "weld_steps": 0,
+      "box_success": false,
+      "beam_success": false,
+      "beam_displacement_m": 0.0,
+      "act_rounds": 0,
+      "completed_act_responses": 0,
+      "act_commands_matched_to_issued_history": 0,
+      "wire_reconstruction_checks": [],
+      "median_inference_s": null,
+      "max_inference_s": null,
+      "raw": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/dev-open-act-v1"
+    },
+    {
+      "run": "dev-crossing-act-v1",
+      "source_sha": "0e2c64448a3281ac1eedf77d97c726f8e29c265c",
+      "result_sha256": "5defea3d83f44033665fbd88d176f57a8509f68578e213d815dbb6a3bb5f9aee",
+      "phase": "APPROACH",
+      "error": "RuntimeError: fine RGB alignment outside saved skill support",
+      "whole_physical_success": false,
+      "protocol_complete": false,
+      "wall_s": 354.3371161670002,
+      "camera_geometry_unchanged": true,
+      "weld_steps": 0,
+      "box_success": true,
+      "beam_success": false,
+      "beam_displacement_m": 0.0,
+      "act_rounds": 0,
+      "completed_act_responses": 0,
+      "act_commands_matched_to_issued_history": 0,
+      "wire_reconstruction_checks": [],
+      "median_inference_s": null,
+      "max_inference_s": null,
+      "raw": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/dev-crossing-act-v1"
+    },
+    {
+      "run": "dev-open-act-v2",
+      "source_sha": "0e2c64448a3281ac1eedf77d97c726f8e29c265c",
+      "result_sha256": "b03c3dde3981fbde4baf5ec682c3a27142ee5300f1e7cfc2d4d5da6a45106aa1",
+      "phase": "TRANSIT",
+      "error": "RuntimeError: skill wall budget exhausted",
+      "whole_physical_success": false,
+      "protocol_complete": false,
+      "wall_s": 903.9775989159971,
+      "camera_geometry_unchanged": true,
+      "weld_steps": 0,
+      "box_success": false,
+      "beam_success": false,
+      "beam_displacement_m": 1.0742549985569487,
+      "act_rounds": 614,
+      "completed_act_responses": 1228,
+      "act_commands_matched_to_issued_history": 1228,
+      "wire_reconstruction_checks": [
+        [
+          0,
+          "r1"
+        ],
+        [
+          0,
+          "r3"
+        ],
+        [
+          307,
+          "r1"
+        ],
+        [
+          307,
+          "r3"
+        ],
+        [
+          613,
+          "r1"
+        ],
+        [
+          613,
+          "r3"
+        ]
+      ],
+      "median_inference_s": 0.042905145997792715,
+      "max_inference_s": 0.346271833004721,
+      "raw": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/dev-open-act-v2"
+    },
+    {
+      "run": "dev-crossing-act-v2",
+      "source_sha": "0e2c64448a3281ac1eedf77d97c726f8e29c265c",
+      "result_sha256": "f7e685308359f9ac0ca2d04cf009453f557abd3659d060adfc5c282b2379c0fb",
+      "phase": "TRANSIT",
+      "error": "RuntimeError: skill wall budget exhausted",
+      "whole_physical_success": false,
+      "protocol_complete": false,
+      "wall_s": 903.9640059159938,
+      "camera_geometry_unchanged": true,
+      "weld_steps": 0,
+      "box_success": true,
+      "beam_success": false,
+      "beam_displacement_m": 2.0267706251284667,
+      "act_rounds": 425,
+      "completed_act_responses": 850,
+      "act_commands_matched_to_issued_history": 850,
+      "wire_reconstruction_checks": [
+        [
+          0,
+          "r1"
+        ],
+        [
+          0,
+          "r3"
+        ],
+        [
+          212,
+          "r1"
+        ],
+        [
+          212,
+          "r3"
+        ],
+        [
+          424,
+          "r1"
+        ],
+        [
+          424,
+          "r3"
+        ]
+      ],
+      "median_inference_s": 0.04335183300281642,
+      "max_inference_s": 0.1387066249953932,
+      "raw": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/dev-crossing-act-v2"
+    },
+    {
+      "run": "dev-open-baseline-v2",
+      "source_sha": "0e2c64448a3281ac1eedf77d97c726f8e29c265c",
+      "result_sha256": "1026312c7829e8ea7437c7f6783dbadc9c3ffde59c476a6e8233b44e7483b339",
+      "phase": "FINISHED",
+      "error": null,
+      "whole_physical_success": true,
+      "protocol_complete": true,
+      "wall_s": 421.16048616700573,
+      "camera_geometry_unchanged": true,
+      "weld_steps": 0,
+      "box_success": true,
+      "beam_success": true,
+      "beam_displacement_m": 1.6800293467528065,
+      "act_rounds": 0,
+      "completed_act_responses": 0,
+      "act_commands_matched_to_issued_history": 0,
+      "wire_reconstruction_checks": [],
+      "median_inference_s": null,
+      "max_inference_s": null,
+      "raw": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/dev-open-baseline-v2"
+    }
+  ],
+  "checked_unix": 1789996828.330684,
+  "environment": {
+    "platform": "macOS-27.2-arm64-arm-64bit",
+    "python": "3.12.13",
+    "mujoco": "3.12.0",
+    "renderer": "native macOS",
+    "act_python": "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python"
+  },
+  "calibration": {
+    "root": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/mac-calibration-v1",
+    "report": {
+      "base_skill_sha256": "e2d38d0bcc5fa2bb2d4bc5818d7315f016e95baa1a581d49363189bcaa90a3a7",
+      "camera_geometry_unchanged": true,
+      "complete": true,
+      "error": null,
+      "model_provenance": "offline new-arena teacher; existing backend retraining; no online teacher correction",
+      "source_sha": "0e2c64448a3281ac1eedf77d97c726f8e29c265c",
+      "student_inputs": [
+        "own_rgb",
+        "fixed_top_rgb"
+      ],
+      "teacher_nominal_grasp_success": true,
+      "teacher_only": true,
+      "wall_s": 369.59310395800276
+    },
+    "files": {
+      "models/grasp/evaluation-fixture.json": "c2183ad250ea16606d652f91d117e4abb085f9c88b2ab0115de0ba93e1bc5f3f",
+      "models/grasp/r1-model.json": "e22a24d630834a193cf7cfc624afb947b1b7b07748b6e1c040866dbe8c22729e",
+      "models/grasp/r3-model.json": "a7f96a6a2f508609f604c6a447d3ad19856c2580e9f3bf5e8bab17875ebb3483",
+      "models/grasp/student-skill.json": "44d7b605a8e9fc6dfd8fedbb10797b5873a6287a61c58552af579d765abbbdb4",
+      "models/varied/model-r1-forward.json": "1ad471ad3196e23d0932cef70cbe5bc8899eb3072b3dc86c34ff6191e65f2900",
+      "models/varied/model-r1-lateral.json": "22e614a92e4cf36b7eb5db7c7efbeaeff52897885894067b0c9d8fd4cd4ee1d4",
+      "models/varied/model-r1-yaw.json": "405d1072f6cea1984294b92c509326d0a939a3bfdff9fd9096e5f7aa0a2a51db",
+      "models/varied/model-r3-forward.json": "70efe98cae1304ac5c6e9d616cf0c13c1cbbe669d0b7a4414db4f3c3124895bc",
+      "models/varied/model-r3-lateral.json": "67d1c91f9b44b4d1fac3d911cf39f868c0a916166ff5de85407b6a050bf5cb37",
+      "models/varied/model-r3-yaw.json": "25884ddafcb89411254412f432df48fb6dd68001ef4cb9b049e8fbba8509ed47",
+      "models/varied/varied-start-skill.json": "fc89072f15efbbfba9cdddd9f9710c2835398b24d2bf18aabd22af841181a258"
+    }
+  },
+  "input_asset_archive_sha256": "62c07863302b37ee96de61ff54a11f4da034e0dffe864db3b70a9acd0ead63d9",
+  "act_model_sha256": "8cebac23f2058c2916fb9b08eecbd16b37fbacfd6f171377288223d94baf6875",
+  "raw_backup": "Local only; not a remote backup"
+}

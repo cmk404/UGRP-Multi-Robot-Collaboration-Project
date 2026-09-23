@@ -150,6 +150,47 @@ def test_act_slot_maps_to_physical_robot(tmp_path,export_api):
     assert manifest['metadata']['act_carry_decision_rows']==1
 
 
+def test_dispatch_counts_local_responses_commands_and_latency(tmp_path,export_api):
+    convert,EA=export_api;src=tmp_path/'source';src.mkdir()
+    put(src,'result.json',{'physical_success':False,'llm_calls':2})
+    put(src,'pair-decisions.json',[{'kind':'act_carry',
+        'inputs':{'r1':{'inference_wall_s':.04},'r3':{'inference_wall_s':.06}},
+        'decisions':{'r1':{'done':False},'r3':{'done':True}}}])
+    put(src,'issued-commands.json',{'r1':[
+        {'stage':'SETUP','issued_servo_targets':{'1':2000}},
+        {'stage':'TRANSIT','action':{'kind':'mecanum','forward':.1}}],
+        'r3':[{'stage':'GRASP','issued_servo_targets':{'1':1500}}]})
+    manifest=convert(src,tmp_path/'export',max_images=0)
+    ea=EA(str(tmp_path/'export')).Reload()
+    assert [x.value for x in ea.Scalars('result/model_calls')]==[4]
+    assert [x.value for x in ea.Scalars('result/commands')]==[2]
+    assert [x.value for x in ea.Scalars('execution/model_latency_s')]==pytest.approx([.04,.06])
+    assert [x.step for x in ea.Scalars('execution/model_latency_s')]==[0,1]
+    assert manifest['metadata']['completed_act_responses']==2
+    assert 'issued-commands.json' in manifest['source_files']
+
+
+def test_configured_act_does_not_invent_responses_or_latency(tmp_path,export_api):
+    convert,EA=export_api;src=tmp_path/'source';src.mkdir()
+    put(src,'result.json',{'physical_success':False,'llm_calls':0,
+                         'config':{'carry_act_model':'model/act'}})
+    put(src,'pair-decisions.json',[])
+    convert(src,tmp_path/'export',max_images=0)
+    ea=EA(str(tmp_path/'export')).Reload()
+    assert ea.Scalars('result/model_calls')[0].value==0
+    assert 'execution/model_latency_s' not in ea.Tags()['scalars']
+
+
+def test_explicit_dispatch_total_is_not_counted_twice(tmp_path,export_api):
+    convert,EA=export_api;src=tmp_path/'source';src.mkdir()
+    put(src,'result.json',{'model_calls':3,'commands':7,'llm_calls':1})
+    put(src,'pair-decisions.json',[{'kind':'act_carry','decisions':{'r1':{'done':False}}}])
+    convert(src,tmp_path/'export',max_images=0)
+    ea=EA(str(tmp_path/'export')).Reload()
+    assert ea.Scalars('result/model_calls')[0].value==3
+    assert ea.Scalars('result/commands')[0].value==7
+
+
 def test_invalid_source_leaves_no_events(tmp_path,export_api):
     convert,_=export_api;src=tmp_path/'source';src.mkdir()
     put(src,'report.json',{'progress':[{'step':5,'loss':1},{'step':4,'loss':.5}]})

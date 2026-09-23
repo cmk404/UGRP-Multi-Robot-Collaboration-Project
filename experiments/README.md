@@ -5,6 +5,9 @@
 - [2026-09-22 native 시뮬레이션 CLI/API](2026-09-22-native-simulation/README.md) — Mac·Ubuntu 공통 설정/API, native 창·headless·RGB·reset, Linux 종료 오류 수정과 검증 한계.
 - [2026-09-22 브라우저 뷰어 검증 이력 (구현 폐기)](2026-09-22-local-simulation-live/README.md) — 네 카메라·수동 이동·일시정지·초기화·종료 통합 검사; 초기 검사 실패 포함, 자율 운반 평가는 아님.
 - [2026-09-22 RGB 통신 기반 최소 물리 재생](2026-09-22-rgb-communication-replay/README.md) — Colab 단독/공동 2회 회수, LLM 0회; 모두 종료·평가 clock 모순으로 invalid_artifact. 물리 성공·통신 효과 미입증.
+- [2026-09-22 ACT 영상 처리 속도](2026-09-22-act-render-speed/README.md) — 관측 처리 1.586배; 전체 운반 437초 성공, 전체 명령·공통 2177장 동일. 동시 실행 수가 달라 전체 wall 비율은 분리해 해석.
+- [2026-09-22 ACT 방출 연결·기준선 재검증](2026-09-22-act-release-revalidation/README.md) — 원 교사 2조건·원 ACT 성공 재현, 새 ACT의 추적 오류 해소·배치 실패 확인; 서로 다른 조건의 실패율로 합산하지 않음.
+
 - [2026-09-21 시뮬레이션 전 환경·통신 검사](2026-09-21-cloud-preflight/README.md) — 과부하 복구 기록, 의존성·진행률·사전 차단, 새 시뮬레이션 없음.
 
 - [2026-09-21 Colab 중계 최적화](2026-09-21-relay-performance/README.md) — 연결 재사용·4슬롯 독립 전달, 중단 기록 보존과 남은 시행 재개.

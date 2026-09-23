@@ -64,6 +64,8 @@ class SoloBoxTransport:
             self.initialized = True
             return {'kind': 'pose', 'pulses': dict(SEARCH)}, features
         previous_phase = self.box.phase
+        recorder=getattr(self.navigator,'record_attachment_top',None)
+        if recorder is not None:recorder(previous_phase,top_jpeg)
         action = self.box.decide(own)
         if previous_phase == 'lift' and self.box.phase == 'verify_lift':
             # Establish the visual attachment anchor after lift settling, not

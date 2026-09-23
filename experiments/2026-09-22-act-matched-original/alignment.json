@@ -1,0 +1,17 @@
+{
+  "baseline": "/Users/changmin/.codex/worktrees/act-render-speed/ugrp/outputs/render-speed/reference-efficient-v1",
+  "candidate": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/matched-act-v1/r128-h1-original-open-minus",
+  "checks": {
+    "same_scene_xml": true,
+    "same_precarry_commands": true,
+    "same_first_carry_image_hashes": true,
+    "same_calibration": true
+  },
+  "baseline_success": true,
+  "candidate_success": false,
+  "candidate_failure": "RuntimeError: visual placement confirmation failed",
+  "candidate_wall_s": 471.9395602079967,
+  "candidate_rounds": 543,
+  "candidate_one_sided_done_rounds": 263,
+  "scope": "Same successful original calibration, map, spawn and serial plan. ACT architecture/input configuration and trained checkpoint differ. Does not isolate history/resolution from training seed."
+}

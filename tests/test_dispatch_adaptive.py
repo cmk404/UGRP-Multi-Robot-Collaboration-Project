@@ -82,6 +82,21 @@ def test_temporal_shaft_tracks_actual_failed_frames_and_rejects_missing_cargo(ru
     with pytest.raises(ValueError,match='consistent RGB support'):tracker.observe(blank)
 
 
+def test_act_release_keeps_the_shaft_identity_from_loaded_motion():
+    import json
+    from harness.dispatch_beam_tracker import CarriedBeamTracker
+    root=Path('tests/fixtures/act_release_continuity')
+    raw=(root/'place-lowered.jpg').read_bytes()
+    with pytest.raises(ValueError,match='unresolved or ambiguous'):
+        CarriedBeamTracker().observe(raw)
+    tracker=CarriedBeamTracker()
+    tracker.previous=json.loads((root/'prior.json').read_text())['previous']
+    feature=tracker.observe(raw)
+    assert feature['tracking']['uses_issued_motion'] is False
+    expected=json.loads((root/'provenance.json').read_text())['release_center']
+    assert np.allclose(feature['center'],expected,atol=1e-8)
+
+
 def test_input_audit_rejects_a_changed_frozen_grasp_translation():
     import copy
     from scripts.audit_dispatch_skill_inputs import audit_translation_history

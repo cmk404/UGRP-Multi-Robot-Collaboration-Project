@@ -25,7 +25,7 @@ from sim.research_dispatch_arena import episode
 from scripts.run_camera_approach_student import models,sha,write
 from harness.dispatch_skill_binding import canonical_pair_top
 from harness.camera_varied_start_pose_student import fit_pose_stage_model
-from harness.camera_recovery_student import fit_recovery_model
+from harness.camera_recovery_student import fit_recovery_model, GRASP_TOP_ROI
 from scripts.camera_approach_scene import normalize_replay,image_record
 
 
@@ -155,8 +155,9 @@ def main():
         grasp_out=out/'models'/'grasp';grasp_out.mkdir(parents=True)
         grasp_manifest=copy.deepcopy(skill);grasp_manifest['models']={}
         grasp_manifest['task_domain']='dispatch_open_v1'
-        grasp_manifest['rgb_support_scope']='full_calibrated_views'
+        grasp_manifest['rgb_support_scope']='local_grasp_top_v1'
         grasp_manifest.pop('constant_background_top_band',None)
+        grasp_manifest.pop('constant_background_top_roi',None)
         rng=np.random.default_rng(705)
         for s in pair:
             rows=[]
@@ -178,10 +179,9 @@ def main():
                 teacher_rows.append({'sample_id':f'grasp-{s}-{i:04d}','correction_pulses':[-d for d in delta],'physical_teacher_recovery':ok,'setup_jitter_teacher_only':setup_jitter})
                 if ok:rows.append({'own_jpeg':own,'top_jpeg':top,'case_id':f'grasp-{i:04d}','correction_pulses':[-d for d in delta]})
                 if i%15==0:print(json.dumps({'teacher':'grasp','slot':s,'sample':i,'accepted':len(rows)}),flush=True)
-            model=fit_recovery_model(*grasp_refs[s],rows)
-            # Fresh scene calibration learns from every RGB feature, including
-            # the base-pose jitter. A legacy transfer mask can remove those
-            # learned directions; retain the fitted model's full RGB support.
+            model=fit_recovery_model(*grasp_refs[s],rows,top_roi=GRASP_TOP_ROI)
+            # Fit support in the arm/shaft window from the outset. Full own RGB
+            # remains observed; distant solo motion belongs to navigation.
             from harness.camera_recovery_student import predict_recovery
             predict_recovery(model,*grasp_refs[s])
             path=grasp_out/f'{s}-model.json';write(path,model)

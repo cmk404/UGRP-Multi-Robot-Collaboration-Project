@@ -51,6 +51,7 @@ class SkillScene(DispatchScene):
         self.identity=None
         self.original_step=None;self.deadline=None;self.last_frames=None
         self.native_view=None
+        self.efficient_capture=False
 
     def time(self):return float(self.world.data.time)
     def open(self):
@@ -80,8 +81,9 @@ class SkillScene(DispatchScene):
             self.world._physics_step_for(self.world.controllers['r1'])
     def hold(self):
         for p in self.ports.values():p.hold(self.time())
-    def capture(self,label):
-        self.last_frames=super().capture(label)
+    def capture(self,label,*,own_robots=None,overview=True):
+        if not self.efficient_capture:own_robots,overview=None,True
+        self.last_frames=super().capture(label,own_robots=own_robots,overview=overview)
         return self.last_frames
     def authorize(self):
         if self.bindings:self.bindings.authorize(self.team.agreement.committed)
@@ -201,7 +203,7 @@ class SkillScene(DispatchScene):
 
 
 def grasp_transfer_options(skill):
-    if skill.get('rgb_support_scope') == 'full_calibrated_views':
+    if skill.get('rgb_support_scope') in {'full_calibrated_views', 'local_grasp_top_v1'}:
         return {'background_band': False, 'top_roi': None}
     return {'background_band': skill.get('task_domain') != 'dispatch_open_v1',
             'top_roi': [12,6,20,19] if skill.get('task_domain') == 'dispatch_open_v1' else None}
@@ -226,6 +228,7 @@ def run(args):
     for pose in config['setup_only']['spawns'].values():
         pose[0]+=dx;pose[1]+=dy;pose[3]+=math.radians(yaw)
     scene=SkillScene(config,args.output)
+    scene.efficient_capture=getattr(args,'efficient_capture',False)
     started=time.monotonic();pair=team=None
     result={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         'scope':'three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute',
@@ -313,12 +316,14 @@ def run(args):
         pair.grasp_report['evaluation_source']='separate referee-only.jsonl after control ends'
         while not scene.bindings.permission('beam','TRANSIT'):scene.step(.2)
         result['phase']='TRANSIT'
+        carry_steps=getattr(args,'carry_max_steps',None)
         if getattr(args,'carry_act_model',None):
             from scripts.dispatch_act_carry import carry
             result['carry_policy']='ACT own RGB + raw top RGB + static task + own last issued motion'
             result['carry_model_sha256']=sha(args.carry_act_model/'model.safetensors')
-            carry(pair,args.carry_act_python,args.carry_act_model,args.carry_act_max_steps)
-        else:pair.carry(ImageRoute(scene.bindings,'beam'))
+            carry(pair,args.carry_act_python,args.carry_act_model,
+                  args.carry_act_max_steps if carry_steps is None else carry_steps)
+        else:pair.carry(ImageRoute(scene.bindings,'beam'),max_steps=carry_steps)
         result['phase']='RELEASE';pair.place();pair.verify_placement();scene.bindings.finish('beam')
         while scene.bindings.tasks['box']['id'] not in scene.bindings.finished:scene.step(.2)
         result['protocol_complete']=True;result['phase']='FINISHED'

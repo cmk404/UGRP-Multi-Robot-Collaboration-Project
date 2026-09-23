@@ -247,6 +247,28 @@ def export_execution(src, w, result, max_images):
             metrics['result/recorded_raw_commands'] = sum(
                 'action' in row for values in commands.values() for row in rows(values))
             meta['command_count_scope'] = 'recorded raw action rows only; excludes setup descriptions and internal macro servo commands'
+    carries = []
+    if family == 'dispatch-act':
+        entries = rows(src.read('pair-decisions.json', required=True))
+        carries = [(i, row) for i, row in enumerate(entries) if row.get('kind') == 'act_carry']
+        completed = sum(bool(obj(decision)) for _, row in carries
+                        for decision in obj(row.get('decisions')).values())
+        meta['act_carry_decision_rows'] = len(carries)
+        meta['completed_act_responses'] = completed
+        # llm_calls excludes local ACT. Preserve an explicit total if supplied.
+        if not finite(result.get('model_calls')):
+            external = result.get('llm_calls')
+            metrics['result/model_calls'] = completed + (external if finite(external) else 0)
+            meta['model_calls_scope'] = ('completed ACT responses plus recorded llm_calls'
+                                        if finite(external) else 'completed ACT responses only; external calls unknown')
+        if not finite(metrics['result/commands']):
+            issued = src.read('issued-commands.json')
+            if isinstance(issued, dict):
+                metrics['result/commands'] = sum(
+                    bool(obj(command.get('action'))) or
+                    (command.get('stage') != 'SETUP' and bool(obj(command.get('issued_servo_targets'))))
+                    for history in issued.values() for command in rows(history))
+                meta['commands_source'] = 'issued-commands.json; excludes initial SETUP target snapshot'
     success_field = next((k for k in ('success', 'transport_success', 'physical_success') if type(result.get(k)) is bool), None)
     if success_field: metrics['evaluation/reported_success'] = int(result[success_field])
     meta['success_source_field'] = success_field
@@ -284,15 +306,16 @@ def export_execution(src, w, result, max_images):
                 if finite(reply.get('confidence')): w.scalar('model_confidence_not_success/' + slug(rid), reply['confidence'], i)
                 if i in selected: emit_images(w, src, {slug(rid) + '/own': req.get('own_rgb'), 'shared/top/' + slug(rid): req.get('top_rgb')}, i, 'scene')
     elif family == 'dispatch-act':
-        entries = rows(src.read('pair-decisions.json', required=True))
-        carries = [(i, row) for i, row in enumerate(entries) if row.get('kind') == 'act_carry']
         selected = sample_indices(len(carries), max_images)
         # Carry prerequisites are not inferred from ACT being configured.
-        meta['act_carry_decision_rows'] = len(carries)
+        call_index = 0
         for j, (i, row) in enumerate(carries):
             w.scalar('execution/sim_time_s', row.get('sim_time_s'), j)
             for slot, inp in obj(row.get('inputs')).items():
                 inp = obj(inp); rid = slug(inp.get('physical_robot_id', slot)); decision = obj(obj(row.get('decisions')).get(slot))
+                if decision:
+                    w.scalar('execution/model_latency_s', inp.get('inference_wall_s'), call_index)
+                    call_index += 1
                 w.text('decisions/' + rid, {'input': inp, 'decision': decision, 'permission': row.get('permission'), 'source_index': i}, j)
                 for k in ('forward', 'left', 'turn'): w.scalar('issued_prediction/' + rid + '/' + k, obj(decision.get('action')).get(k), j)
                 if type(decision.get('done')) is bool: w.scalar('claims/' + rid + '/done', int(decision['done']), j)

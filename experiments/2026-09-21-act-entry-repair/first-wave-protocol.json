@@ -1,0 +1,108 @@
+{
+  "scope": "Mac first wave after RGB entry repair: four ACT input arms and RGB skill baseline, two held-out plus-offset cases, three repeats. Development and old Kaggle trials excluded.",
+  "dataset": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/assets/verified-data/data/dataset.json",
+  "dataset_sha256": "3db730eaf9d827a40b355d7b53188993e14b75d10fd10b9b213a67f830fba167",
+  "training": {
+    "steps": 8000,
+    "seeds": [
+      20260921
+    ],
+    "batch": 32,
+    "frozen_backbone": "ImageNet ResNet18",
+    "dim_model": 64,
+    "chunk": 8,
+    "selection": "original development loss; no final trial selection"
+  },
+  "arms": [
+    {
+      "id": "r128-h1",
+      "size": 128,
+      "history": 1
+    },
+    {
+      "id": "r128-h4",
+      "size": 128,
+      "history": 4
+    },
+    {
+      "id": "r256-h1",
+      "size": 256,
+      "history": 1
+    },
+    {
+      "id": "r256-h4",
+      "size": 256,
+      "history": 4
+    }
+  ],
+  "controls": {
+    "parameter_count": "all arms use 32 context dimensions; h1 repeats current 8-vector four times",
+    "history": "oldest-to-current, pad first, never crosses robot/episode; independent CNN maps concatenated spatially before positional encoding",
+    "context": "only static goal/route/role and each past own issued command; no measured state",
+    "camera": "Original own/TOP RGB and unchanged pose/FOV for ACT. Prerequisite grasp uses the recorded native local feature ROI.",
+    "action_interval_sim_s": 0.2,
+    "max_carry_steps": 900,
+    "contact_profile": "local_contact_fine",
+    "weld": false,
+    "max_wall_s": 900,
+    "plan_replay": true,
+    "workers": 2,
+    "min_free_gib": 8
+  },
+  "test": [
+    {
+      "id": "open-plus",
+      "variant": "open",
+      "teacher_case": "F1",
+      "offset": [
+        0.008,
+        -0.003,
+        0.0
+      ]
+    },
+    {
+      "id": "shared_crossing-plus",
+      "variant": "shared_crossing",
+      "teacher_case": "F3",
+      "offset": [
+        0.008,
+        -0.003,
+        0.0
+      ]
+    }
+  ],
+  "interpretation": "First wave only: same scene families as training, two new small offsets. One fixed model seed, no unseen-task or general-scene claim. Condition named teacher in runner is the existing RGB skill baseline during evaluation, with no live teacher/oracle correction. Development minus-offset trials excluded. Remaining model seed and minus-offset final cases deferred, not marked complete. All original model checkpoints preserved.",
+  "metrics": [
+    "strict beam/whole success",
+    "carry entry and prerequisite failure",
+    "false done",
+    "one-sided done rounds",
+    "contact and drop",
+    "goal margin",
+    "carry SIM duration",
+    "wall duration",
+    "commands",
+    "inference latency",
+    "local training time; external calls zero"
+  ],
+  "evaluation": {
+    "repeats": 3,
+    "planned_trials": 30,
+    "scope": "5 conditions x 2 cases x 3 reruns. Same seeded physics repeats measure run reproducibility, not 30 independent environments. Keep prerequisites in whole-task denominator; carry-conditional separate. Individual failures continue. Disk reserve skips remain pending."
+  },
+  "calibration": {
+    "root": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/mac-calibration-v1",
+    "runtime_backend": "macOS native MuJoCo 3.12.0",
+    "source_sha": "0e2c64448a3281ac1eedf77d97c726f8e29c265c",
+    "teacher_only": true,
+    "report_sha256": "0db47bd299e7b613f62b8575cf4705387c856ebbc70b4d4aa5388457974c6d51"
+  },
+  "time_and_storage": {
+    "expected_upper_active_hours": 4.0,
+    "trial_wall_limit_s": 900,
+    "process_timeout_s": 960,
+    "parallel_trials": 2,
+    "stop_starting_below_free_gib": 8,
+    "note": "No recurring monitor or reconnect. Finite session. Estimates exclude OS sleep and unrelated load."
+  }
+}
