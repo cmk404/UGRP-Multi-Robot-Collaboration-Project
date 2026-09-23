@@ -73,6 +73,7 @@ TEST_PATTERNS = (
     "tests/test_dispatch_box_identity.py",
     "tests/test_pair_navigation*.py",
     "tests/test_pair_transport*.py",
+    "tests/test_pair_coarse_heading_regression.py",
     "tests/test_dispatch_adaptive.py",
     "tests/test_dispatch_pair_navigation.py",
     "tests/test_dispatch_evaluation.py",
