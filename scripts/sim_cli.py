@@ -335,20 +335,26 @@ def _menu_input(prompt):
     return value
 
 
-def _menu_choice(prompt, choices, default, *, numbered=True):
+def _print_menu_items(choices):
+    for index, item in enumerate(choices, 1):
+        print(f"  {index:>2}. {item}")
+
+
+def _menu_choice(prompt, choices, default, *, labels=None):
+    displayed = labels if labels is not None else choices
+    _print_menu_items(displayed)
     while True:
         value = _menu_input(prompt)
         if not value:
             return default
         if value == "?":
-            for index, item in enumerate(choices, 1):
-                print(f"  {index:>2}. {item}")
+            _print_menu_items(displayed)
             continue
+        if value.isdecimal() and 1 <= int(value) <= len(choices):
+            return choices[int(value) - 1]
         if value in choices:
             return value
-        if numbered and value.isdecimal() and 1 <= int(value) <= len(choices):
-            return choices[int(value) - 1]
-        print("목록의 이름을 입력하세요. ?는 목록, q는 종료입니다.")
+        print("목록의 번호 또는 이름을 입력하세요. ?는 목록, q는 종료입니다.")
 
 
 def _preview_map_choice(maps):
@@ -357,13 +363,19 @@ def _preview_map_choice(maps):
     for scene in maps:
         family = scene.split("/", 1)[0] if "/" in scene else "legacy"
         families.setdefault(family, []).append(scene)
+    group_names = list(families)
+    group_labels = [f"{name} ({len(families[name])}장면)" for name in group_names]
+    _print_menu_items(group_labels)
     shown = []
     while True:
-        value = _menu_input("장면 [Enter 기본값; ? 그룹; /단어 검색]: ")
+        prompt = ("장면 번호/ID [Enter 기본값; ? 그룹; /단어 검색]: " if shown else
+                  "그룹 번호/장면 ID [Enter 기본값; ? 그룹; /단어 검색]: ")
+        value = _menu_input(prompt)
         if not value:
             return DEFAULT_SCENE
         if value == "?":
-            print("그룹: " + ", ".join(f"{name} ({len(rows)})" for name, rows in families.items()))
+            shown = []
+            _print_menu_items(group_labels)
             continue
         if value in maps:
             return value
@@ -371,10 +383,17 @@ def _preview_map_choice(maps):
             shown = families[value]
         elif value.startswith("/") and value[1:]:
             shown = [scene for scene in maps if value[1:].casefold() in scene.casefold()]
-        elif value.isdecimal() and 1 <= int(value) <= len(shown):
-            return shown[int(value) - 1]
+        elif value.isdecimal():
+            index = int(value)
+            if shown and 1 <= index <= len(shown):
+                return shown[index - 1]
+            if not shown and 1 <= index <= len(group_names):
+                shown = families[group_names[index - 1]]
+            else:
+                print("표시된 목록의 번호를 입력하세요. ?는 그룹 목록입니다.")
+                continue
         else:
-            print("등록 장면 ID, 그룹명 또는 /검색어를 입력하세요. q는 종료입니다.")
+            print("그룹 번호, 등록 장면 ID, 그룹명 또는 /검색어를 입력하세요. q는 종료입니다.")
             continue
         if not shown:
             print("일치하는 장면이 없습니다.")
@@ -383,13 +402,36 @@ def _preview_map_choice(maps):
                 print(f"  {index:>2}. {scene}")
 
 
+def _model_choice(default_model):
+    choices = [f"기본 모델 ({default_model})", "모델 ID 직접 입력"]
+    _print_menu_items(choices)
+    while True:
+        value = _menu_input("계획 모델 [1; 2 직접 입력]: ")
+        if not value or value == "1":
+            return default_model
+        if value == "?":
+            _print_menu_items(choices)
+            continue
+        if value == "2":
+            model = _menu_input("모델 ID: ")
+            if model:
+                return model
+            print("모델 ID를 입력하세요.")
+            continue
+        if value.isdecimal():
+            print("계획 모델은 1 또는 2를 선택하세요.")
+            continue
+        return value
+
+
 def _choose_launch():
     """Select an existing native CLI run without adding another process layer."""
     print("\nUGRP 로컬 시뮬레이션")
-    print("  1. LLM 공동 계획 → 기존 RGB 스킬 (모델 호출)")
-    print("  2. 장면 미리보기 (모델 호출 없음, 시작 시 일시정지)")
-    print("  3. 기타 실행 (plan 재생·수동·설정 파일)")
-    mode = _menu_choice("실행 방식 [1; q 종료]: ", ["1", "2", "3"], "1")
+    mode = _menu_choice("실행 방식 [1; q 종료]: ", ["1", "2", "3"], "1", labels=[
+        "LLM 공동 계획 → 기존 RGB 스킬 (모델 호출)",
+        "장면 미리보기 (모델 호출 없음, 시작 시 일시정지)",
+        "기타 실행 (plan 재생·수동·설정 파일)",
+    ])
     if mode == "3":
         from scripts.sim_dispatch import choose
         return choose()
@@ -404,19 +446,19 @@ def _choose_launch():
     if default_map not in maps:
         raise ValueError("기본 맵이 현재 목록에 없습니다")
     if selected_mode == "llm_dispatch":
-        print("지원 맵 (공동 출하): " + ", ".join(maps))
         selected_map = _menu_choice(f"맵 [{default_map}; ? 목록]: ", maps, default_map)
     else:
         print(f"기본 장면: {default_map}. ACT 등은 관찰용 장면이며 정책 실행·성공 검증이 아닙니다.")
         selected_map = _preview_map_choice(maps)
-    speed = _menu_choice("관찰 속도 [1; 0.5/1/2/4]: ", ["0.5", "1", "2", "4"], "1", numbered=False)
+    speed = _menu_choice("관찰 속도 [2 = 1× 기본; ? 목록]: ", ["0.5", "1", "2", "4"], "1",
+                         labels=["0.5×", "1×", "2×", "4×"])
     selection = {"mode": selected_mode, "map": selected_map, "speed": speed}
     if selected_mode == "llm_dispatch":
         default_model = os.environ.get("UGRP_SIM_MODEL", "gemini-3.8-flash")
         default_task = "기존 beam과 box를 같은 dock으로 옮겨"
         print("기존 출하 임무의 역할과 경로를 계획합니다. 모델 프록시가 필요합니다.")
         while True:
-            model = _menu_input(f"계획 모델 [{default_model}]: ") or default_model
+            model = _model_choice(default_model)
             task = _menu_input("자연어 지시 [기본 출하 임무]: ") or default_task
             selection.update(model=model, task=task)
             try:

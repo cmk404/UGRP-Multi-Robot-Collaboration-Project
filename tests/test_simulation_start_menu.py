@@ -5,7 +5,7 @@ from types import SimpleNamespace
 import pytest
 
 from scripts import sim_cli, sim_dispatch
-from sim.simulation_launch_options import preview_maps
+from sim.simulation_launch_options import dispatch_maps, preview_maps
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -68,6 +68,62 @@ def test_start_preview_search_narrows_scene_list(monkeypatch, capsys):
     command = sim_cli.main(["start"])
     assert command[command.index("--scene") + 1] == "dispatch/shared_crossing"
     assert "dispatch/shared_crossing" in capsys.readouterr().out
+
+
+def test_start_dispatch_accepts_numbered_map_speed_and_default_model(monkeypatch, capsys):
+    _interactive(monkeypatch, ["1", "1", "1", "1", "짐을 옮겨"])
+    monkeypatch.setenv("UGRP_SIM_MODEL", "configured-model")
+    monkeypatch.setattr("sim.workflow_manager.run_inprocess",
+                        lambda _root, _kind, argv, _invoke, **_kwargs: argv)
+    command = sim_cli.main(["start"])
+    assert command[command.index("--variant") + 1] == dispatch_maps()[0]
+    assert command[command.index("--realtime-factor") + 1] == "0.5"
+    assert command[command.index("--model") + 1] == "configured-model"
+    output = capsys.readouterr().out
+    assert "1. open" in output
+    assert "1. 0.5" in output
+    assert "1. 기본 모델 (configured-model)" in output
+
+
+def test_start_preview_accepts_numbered_group_and_scene(monkeypatch, capsys):
+    maps = preview_maps()
+    first_act = next(scene for scene in maps if scene.startswith("act/"))
+    # Catalog families are shown in first-occurrence order; act is the second group.
+    groups = list(dict.fromkeys(scene.split("/", 1)[0] if "/" in scene else "legacy"
+                                for scene in maps))
+    _interactive(monkeypatch, ["2", str(groups.index("act") + 1), "1", "2"])
+    monkeypatch.setattr("sim.workflow_manager.run_inprocess",
+                        lambda _root, _kind, argv, _invoke, **_kwargs: argv)
+    command = sim_cli.main(["start"])
+    assert command[command.index("--scene") + 1] == first_act
+    assert command[command.index("--realtime-factor") + 1] == "1"
+    output = capsys.readouterr().out
+    assert f"{groups.index('act') + 1}. act (" in output
+    assert f"1. {first_act}" in output
+
+
+def test_start_reprompts_out_of_range_numbers_and_empty_custom_model(monkeypatch, capsys):
+    _interactive(monkeypatch, ["1", "99", "1", "9", "4", "3", "2", "", "test-model", "go"])
+    monkeypatch.setattr("sim.workflow_manager.run_inprocess",
+                        lambda _root, _kind, argv, _invoke, **_kwargs: argv)
+    command = sim_cli.main(["start"])
+    assert command[command.index("--variant") + 1] == "open"
+    assert command[command.index("--realtime-factor") + 1] == "4"
+    assert command[command.index("--model") + 1] == "test-model"
+    output = capsys.readouterr().out
+    assert "목록의 번호 또는 이름" in output
+    assert "계획 모델은 1 또는 2" in output
+    assert "모델 ID를 입력하세요" in output
+
+
+def test_start_preview_reprompts_invalid_group_and_scene_numbers(monkeypatch, capsys):
+    _interactive(monkeypatch, ["2", "99", "1", "99", "1", "3"])
+    monkeypatch.setattr("sim.workflow_manager.run_inprocess",
+                        lambda _root, _kind, argv, _invoke, **_kwargs: argv)
+    command = sim_cli.main(["start"])
+    assert command[command.index("--scene") + 1] == preview_maps()[0]
+    assert command[command.index("--realtime-factor") + 1] == "2"
+    assert capsys.readouterr().out.count("표시된 목록의 번호") == 2
 
 
 def test_start_dispatch_enter_uses_default_mission(monkeypatch):
