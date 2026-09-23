@@ -38,16 +38,22 @@ class PairCarryPolicy:
         self.recoveries = 0
         self.events = []
 
-    def step(self, decisions, skew_px, frame_ids, now_s, delivered=ROBOTS):
+    def step(self, decisions, skew_px, frame_ids, now_s, delivered=ROBOTS, *, observed_at_s=None):
         if not math.isfinite(now_s):
             raise ValueError('finite monotonic clock required')
+        # Legacy synchronous callers observe and decide at one frozen SIM
+        # instant. Async callers must pass the RGB snapshot time explicitly.
+        observed_at_s = now_s if observed_at_s is None else float(observed_at_s)
+        if not math.isfinite(observed_at_s) or observed_at_s > now_s:
+            raise ValueError('RGB observation must have a finite past SIM timestamp')
         duration = .20
         forwards = {r: 0. for r in ROBOTS}
         # Local predictors may run during a relay outage, but an undelivered
         # report must not influence the execution coordinator.
         decisions = {r: decisions[r] for r in delivered if r in decisions}
         missing = set(decisions) != set(ROBOTS)
-        valid = (set(decisions) == set(ROBOTS)
+        valid = (now_s-observed_at_s <= self.sync.report_ttl_s
+                 and set(decisions) == set(ROBOTS)
                  and all(d.get('ok') is True and d.get('held_estimate') is True
                          for d in decisions.values())
                  and skew_px is not None and math.isfinite(skew_px))
@@ -94,7 +100,7 @@ class PairCarryPolicy:
                     accepted = []
                     for rid in delivered:
                         accepted.append(self.sync.report(rid, plan_version=1, epoch=self.sync.epoch,
-                            sequence=self.index, ready=not waiting, observed_at_s=now_s,
+                            sequence=self.index, ready=not waiting, observed_at_s=observed_at_s,
                             received_at_s=now_s, frame_id=str(frame_ids[rid]),
                             reason='rgb_valid_and_held_estimate'))
                     if len(accepted) != len(ROBOTS) or not all(accepted):

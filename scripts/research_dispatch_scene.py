@@ -1,7 +1,11 @@
 """Physics owner for the research dispatch arena; never given to an actor."""
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
+from io import BytesIO
 from pathlib import Path
+
+from PIL import Image
 
 from sim.research_dispatch_arena import ROBOTS
 from sim.session_scenes import Scene
@@ -16,6 +20,7 @@ class DispatchScene:
         self.sequence=0
         self.physics_steps=self.weld_steps=self.obstacle_contact_steps=0
         self.definition=None
+        self._capture_workers=None
 
     def open(self):
         import mujoco
@@ -98,6 +103,46 @@ class DispatchScene:
             (self.out/f'{label}-overview.jpg').write_bytes(self.world.render_team_jpeg(camera='cctv_warehouse',quality=95))
         return frames
 
+    def capture_async(self,label,*,own_robots=None,overview=False):
+        """Capture one immutable physics instant, then encode/store RGB off owner.
+
+        The render broker owns its GL thread and supplies a single frame id and
+        SIM timestamp for all cameras. At most the caller's bounded in-flight
+        requests should be outstanding; this method never advances physics.
+        """
+        from scripts.camera_approach_scene import image_record
+        selected=set(ROBOTS if own_robots is None else own_robots)
+        if not selected or not selected.issubset(ROBOTS):
+            raise ValueError('capture requires known robot cameras')
+        cameras=[(None,'cctv_top'),*((rid,'robot_cam') for rid in ROBOTS if rid in selected)]
+        if overview:cameras.append((None,'cctv_warehouse'))
+        batch_future=self.world.render_snapshot_async(cameras)
+        self.sequence+=1
+        if self._capture_workers is None:
+            self._capture_workers=ThreadPoolExecutor(max_workers=2,thread_name_prefix='dispatch-rgb')
+
+        def materialize():
+            batch=batch_future.result(timeout=30.)
+            def jpeg(key):
+                stream=BytesIO()
+                Image.fromarray(batch.rgb[key]).save(stream,format='JPEG',quality=95)
+                return stream.getvalue()
+            top=jpeg((None,'cctv_top'))
+            top_ref=image_record(self.out/'rgb'/f'{label}-top.jpg',self.out,top)
+            frames={}
+            for rid in ROBOTS:
+                frame={'top_bytes':top,'frame_id':batch.frame_id,
+                       'observed_at_s':float(batch.sim_time),'shared_top_rgb':top_ref}
+                if rid in selected:
+                    own=jpeg((rid,'robot_cam'))
+                    frame.update(own_bytes=own,
+                                 own_rgb=image_record(self.out/'rgb'/f'{label}-{rid}.jpg',self.out,own))
+                frames[rid]=frame
+            if overview:
+                (self.out/f'{label}-overview.jpg').write_bytes(jpeg((None,'cctv_warehouse')))
+            return frames
+        return self._capture_workers.submit(materialize)
+
     def step(self,seconds):
         w=self.world
         for _ in range(round(seconds/w.model.opt.timestep)):
@@ -116,6 +161,9 @@ class DispatchScene:
 
     def close(self):
         try:
+            if self._capture_workers:
+                self._capture_workers.shutdown(wait=True,cancel_futures=True)
+                self._capture_workers=None
             for p in self.ports.values():p.stop()
         finally:
             if self.world:self.world.close();self.world=None

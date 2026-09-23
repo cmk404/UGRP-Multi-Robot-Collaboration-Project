@@ -1,0 +1,133 @@
+"""Bounded dispatch RGB snapshots and paired command admission."""
+from concurrent.futures import Future
+from types import SimpleNamespace
+from unittest.mock import Mock
+
+import numpy as np
+import pytest
+
+from scripts.research_dispatch_scene import DispatchScene
+from scripts.run_dispatch_skills import SkillScene
+from scripts.dispatch_pair_skill import BoundPairSkill
+from scripts.dispatch_native_view import HeadlessPacer
+
+
+def test_async_capture_binds_all_actor_cameras_to_one_snapshot(tmp_path):
+    batch=SimpleNamespace(frame_id=19,sim_time=3.125,
+        rgb={(None,'cctv_top'):np.zeros((8,8,3),dtype=np.uint8),
+             ('r1','robot_cam'):np.ones((8,8,3),dtype=np.uint8)*50,
+             ('r3','robot_cam'):np.ones((8,8,3),dtype=np.uint8)*100})
+    rendered=Future();rendered.set_result(batch)
+    world=SimpleNamespace(render_snapshot_async=Mock(return_value=rendered))
+    scene=DispatchScene.__new__(DispatchScene)
+    scene.world=world;scene.out=tmp_path;scene.sequence=0;scene._capture_workers=None
+    (tmp_path/'rgb').mkdir()
+    try:
+        frames=scene.capture_async('sample',own_robots=('r1','r3')).result(timeout=2)
+        assert world.render_snapshot_async.call_args.args[0] == [
+            (None,'cctv_top'),('r1','robot_cam'),('r3','robot_cam')]
+        assert {frames[r]['frame_id'] for r in ('r1','r2','r3')} == {19}
+        assert {frames[r]['observed_at_s'] for r in ('r1','r2','r3')} == {3.125}
+        assert frames['r1']['top_bytes']==frames['r3']['top_bytes']
+        assert 'own_bytes' not in frames['r2']
+    finally:
+        scene._capture_workers.shutdown(wait=True)
+
+
+def test_pair_batch_preflight_prevents_half_issued_command():
+    scene=SkillScene.__new__(SkillScene)
+    scene.authorize=Mock();scene.time=lambda:2.
+    scene.pair_phase='SETUP';scene.command_history={'r1':[],'r2':[],'r3':[]}
+    scene.bindings=SimpleNamespace(pair={'r1':'r1','r3':'r3'},
+        committed={'plan_hash':'abc'},note_transit_command=Mock())
+    first=SimpleNamespace(validate_bounded=Mock(),apply_bounded=Mock())
+    second=SimpleNamespace(validate_bounded=Mock(side_effect=ValueError('bad')),
+        apply_bounded=Mock())
+    scene.ports={'r1':first,'r3':second}
+    commands={r:dict(kind='mecanum',forward=.05,left=0.,turn=0.,duration_s=.2)
+              for r in ('r1','r3')}
+    with pytest.raises(ValueError,match='bad'):
+        scene.pair_issue_bounded(commands,.2,'TRANSIT')
+    first.apply_bounded.assert_not_called()
+    second.apply_bounded.assert_not_called()
+
+    second.validate_bounded.side_effect=None
+    scene.pair_issue_bounded(commands,.2,'TRANSIT')
+    first.apply_bounded.assert_called_once_with(commands['r1'],2.,.2)
+    second.apply_bounded.assert_called_once_with(commands['r3'],2.,.2)
+    assert {scene.command_history[r][0]['valid_until_s'] for r in ('r1','r3')}=={2.2}
+
+
+def test_pending_solo_rgb_does_not_block_physics_owner():
+    pending=Future()
+    scene=SkillScene.__new__(SkillScene)
+    scene.solo=object();scene.authorize=Mock();scene.time=lambda:1.
+    scene.solo_executor=SimpleNamespace(tick=Mock())
+    scene._solo_pending={'future':pending,'index':0}
+    scene.realtime_control=True;scene.native_view=None
+    scene.ports={};scene.original_step=Mock()
+    scene.physics_steps=scene.weld_steps=scene.obstacle_contact_steps=0
+    scene._contact_audit=SimpleNamespace(has_penetrating_contact=lambda _:False)
+    scene.world=SimpleNamespace(data=SimpleNamespace(eq_active=np.array([False])))
+    scene.video=scene.referee=None
+    scene._physics(None)
+    scene.original_step.assert_called_once()
+    assert scene.physics_steps==1
+    assert not pending.done()
+
+
+def test_delayed_pair_rgb_advances_independent_physics_then_holds_both(monkeypatch):
+    """An injected slow RGB result cannot be relabelled with decision time."""
+    clock=[0.];solo_ticks=[0];pending=Future();issued=[]
+    frames={r:{'frame_id':2,'observed_at_s':0.,'raw_top_bytes':b'top',
+               'own_bytes':b'own'} for r in ('r1','r3')}
+    def step(seconds):
+        clock[0]+=seconds;solo_ticks[0]+=1
+        if clock[0]>=.7 and not pending.done():pending.set_result(frames)
+    ports={r:SimpleNamespace(hold=Mock()) for r in ('r1','r3')}
+    io=SimpleNamespace(time=lambda:clock[0],step=step,ports=ports,
+        capture_async=Mock(return_value=pending),
+        pair_issue_bounded=lambda commands,duration,stage:issued.append(commands),
+        realtime_stats={'pair_backpressure':0,'pair_decisions':0,'max_decision_age_s':0.})
+    binding=SimpleNamespace(cluttered=False,committed={'plan_hash':'0123456789abcdef'},
+        pair={'r1':'r1','r3':'r3'},reserve_beam_apron=Mock())
+    pair=BoundPairSkill.__new__(BoundPairSkill)
+    pair.io=io;pair.bindings=binding;pair.phase='SETUP';pair.transport_started=False
+    pair.count=0;pair.calls=[];pair.carried_beam=SimpleNamespace(previous=None)
+    pair.capture=lambda _:frames
+    pair._bind_capture=lambda captured,count:captured
+    monkeypatch.setattr('scripts.dispatch_pair_skill.own_payload',lambda *_args,**_kw:(1.,0.,0.))
+    monkeypatch.setattr('harness.dispatch_translation_skew.translation_skew',
+                        lambda *_args:(0.,{}))
+    navigator=SimpleNamespace(observe=lambda _raw:({'forward':.08,'left':0.},
+                                                    {'done':False}))
+    with pytest.raises(RuntimeError,match='decision budget exhausted'):
+        pair.carry_realtime(navigator,max_steps=1)
+    assert solo_ticks[0]>0  # shared physics continued during pair RGB delay
+    assert io.realtime_stats['pair_decisions']==1
+    assert pair.calls[-1]['decision_age_s']>.6
+    assert issued and all(command['forward']==command['left']==command['turn']==0.
+                          for command in issued[-1].values())
+    assert all(port.hold.call_count==1 for port in ports.values())
+
+
+def test_delayed_yield_rgb_cannot_issue_fold_or_drive():
+    completed=Future();completed.set_result({'observed_at_s':0.,'frame_id':7})
+    scene=SkillScene.__new__(SkillScene)
+    scene.bindings=SimpleNamespace(solo='r2',tasks={'beam':{'id':'beam-job'}},finished=set())
+    scene.ports={'r2':SimpleNamespace(hold=Mock())}
+    scene._yield_pending={'future':completed,'index':0}
+    scene.yield_rows=[];scene.realtime_stats={'solo_stale_rgb':0}
+    scene.solo_executor=SimpleNamespace(submit=Mock())
+    scene._yield_tick_realtime(1.)
+    scene.ports['r2'].hold.assert_called_once_with(1.)
+    scene.solo_executor.submit.assert_not_called()
+    assert scene.yield_rows[0]['dropped']=='stale_rgb'
+
+
+def test_headless_pacer_has_no_viewer_dependency():
+    scene=SimpleNamespace(time=lambda:0.,deadline=None)
+    pacer=HeadlessPacer(scene,realtime_factor=1.)
+    pacer.tick();pacer.close()
+    with pytest.raises(ValueError,match='positive finite'):
+        HeadlessPacer(scene,realtime_factor=0.)

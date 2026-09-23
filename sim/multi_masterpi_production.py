@@ -14,7 +14,7 @@ import io
 import math
 import os
 import threading
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from dataclasses import replace
 import time as wall_time
 import xml.etree.ElementTree as ET
@@ -27,6 +27,7 @@ import numpy as np
 from PIL import Image
 
 from sim.masterpi_camera_profile import raw_fisheye_remap
+from sim.snapshot_render import CameraKey, RenderBatch, SnapshotRenderBroker
 from sim.cooperative_payload import (
     BEAM_BODY_NAME,
     BEAM_CARRIER_IDS,
@@ -744,6 +745,10 @@ class MultiMasterPiProductionV2:
         self.observer_renderer = None
         self._render_executor: ThreadPoolExecutor | None = None
         self._render_thread_id: int | None = None
+        self._snapshot_broker: SnapshotRenderBroker | None = None
+        self._snapshot_frame_id = 0
+        self._render_closed = False
+        self._snapshot_submit_lock = threading.Lock()
         if render:
             self._render_executor = ThreadPoolExecutor(
                 max_workers=1,
@@ -827,6 +832,8 @@ class MultiMasterPiProductionV2:
             )
         except Exception:
             renderer.close()
+            if 'observer' in locals():
+                observer.close()
             raise
         return renderer, observer, threading.get_ident()
 
@@ -892,10 +899,17 @@ class MultiMasterPiProductionV2:
     def _close_renderers(self) -> None:
         if threading.get_ident() != self._render_thread_id:
             raise RuntimeError("MuJoCo renderer closed outside its owner thread")
-        if self.renderer is not None:
-            self.renderer.close()
-        if self.observer_renderer is not None:
-            self.observer_renderer.close()
+        first_error = None
+        for renderer in (self.renderer, self.observer_renderer, self._snapshot_broker):
+            if renderer is None:
+                continue
+            try:
+                renderer.close()
+            except Exception as exc:
+                if first_error is None:
+                    first_error = exc
+        if first_error is not None:
+            raise first_error
 
     def _bind_controller(self, rid: str, index: int) -> NamespacedMasterPi:
         c = object.__new__(NamespacedMasterPi)
@@ -1450,27 +1464,31 @@ class MultiMasterPiProductionV2:
             mixed = getattr(self, "_mixed_engine", None)
             if mixed is not None:
                 mixed.before_step()
-            self.data.xfrc_applied[:, :] = 0.0
-            for c in self.controllers.values():
-                alpha = 1.0 - math.exp(-dt / c.dynamics["motor_time_constant_s"])
-                c.motor_state += alpha * (c.motor_command - c.motor_state)
-                self.data.ctrl[c.wheel_act] = c.motor_state * MAX_WHEEL_RAD_S
-                fwd = float(np.dot(c.motor_state, FORWARD_PATTERN) / 4.0)
-                left = float(np.dot(c.motor_state, LEFT_PATTERN) / 4.0)
-                yaw_cmd = float(np.dot(c.motor_state, YAW_LEFT_PATTERN) / 4.0)
-                qvel = self.data.qvel[c.base_dadr:c.base_dadr + 6]
-                vx_w, vy_w, wz = float(qvel[0]), float(qvel[1]), float(qvel[5])
-                _, _, yaw = c.base_rpy(); cy, sy = math.cos(yaw), math.sin(yaw)
-                vx_local = cy * vx_w + sy * vy_w; vy_local = -sy * vx_w + cy * vy_w
-                stopped = float(np.max(np.abs(c.motor_command))) < 1e-6
-                ld = c.dynamics["stop_linear_damping_n_per_mps" if stopped else "linear_damping_n_per_mps"]
-                yd = c.dynamics["stop_yaw_damping_nm_per_radps" if stopped else "yaw_damping_nm_per_radps"]
-                fx_l = c.dynamics["max_forward_force_n"] * fwd - ld * vx_local
-                fy_l = c.dynamics["max_lateral_force_n"] * left - ld * vy_local
-                tz = c.dynamics["max_yaw_torque_nm"] * yaw_cmd - yd * wz
-                self.data.xfrc_applied[c.robot_bid, 0] = cy * fx_l - sy * fy_l
-                self.data.xfrc_applied[c.robot_bid, 1] = sy * fx_l + cy * fy_l
-                self.data.xfrc_applied[c.robot_bid, 5] = tz
+            fast_drive = getattr(self, "_fast_drive_kernel", None)
+            if fast_drive is not None:
+                fast_drive.apply(dt)
+            else:
+                self.data.xfrc_applied[:, :] = 0.0
+                for c in self.controllers.values():
+                    alpha = 1.0 - math.exp(-dt / c.dynamics["motor_time_constant_s"])
+                    c.motor_state += alpha * (c.motor_command - c.motor_state)
+                    self.data.ctrl[c.wheel_act] = c.motor_state * MAX_WHEEL_RAD_S
+                    fwd = float(np.dot(c.motor_state, FORWARD_PATTERN) / 4.0)
+                    left = float(np.dot(c.motor_state, LEFT_PATTERN) / 4.0)
+                    yaw_cmd = float(np.dot(c.motor_state, YAW_LEFT_PATTERN) / 4.0)
+                    qvel = self.data.qvel[c.base_dadr:c.base_dadr + 6]
+                    vx_w, vy_w, wz = float(qvel[0]), float(qvel[1]), float(qvel[5])
+                    _, _, yaw = c.base_rpy(); cy, sy = math.cos(yaw), math.sin(yaw)
+                    vx_local = cy * vx_w + sy * vy_w; vy_local = -sy * vx_w + cy * vy_w
+                    stopped = float(np.max(np.abs(c.motor_command))) < 1e-6
+                    ld = c.dynamics["stop_linear_damping_n_per_mps" if stopped else "linear_damping_n_per_mps"]
+                    yd = c.dynamics["stop_yaw_damping_nm_per_radps" if stopped else "yaw_damping_nm_per_radps"]
+                    fx_l = c.dynamics["max_forward_force_n"] * fwd - ld * vx_local
+                    fy_l = c.dynamics["max_lateral_force_n"] * left - ld * vy_local
+                    tz = c.dynamics["max_yaw_torque_nm"] * yaw_cmd - yd * wz
+                    self.data.xfrc_applied[c.robot_bid, 0] = cy * fx_l - sy * fy_l
+                    self.data.xfrc_applied[c.robot_bid, 1] = sy * fx_l + cy * fy_l
+                    self.data.xfrc_applied[c.robot_bid, 5] = tz
             mujoco.mj_step(self.model, self.data)
             for c in self.controllers.values():
                 c._presentation_dirty = True
@@ -4487,6 +4505,40 @@ class MultiMasterPiProductionV2:
     def render_rgb(self, *, robot_id: object = "r1", camera: str = "robot_cam") -> np.ndarray:
         return self.robot(robot_id).render_rgb(camera)
 
+    def render_snapshot_async(self, cameras: Sequence[CameraKey]) -> Future[RenderBatch]:
+        """Freeze one SIM instant, then render requested RGB views off physics lock.
+
+        At most three batches may be outstanding. Full capacity raises
+        ``SnapshotBackpressure`` before taking physics_lock. The returned
+        Future yields ``RenderBatch(frame_id, sim_time, rgb)``; only pixels and
+        capture provenance are returned to the caller.
+        """
+        if threading.get_ident() == self._render_thread_id:
+            raise RuntimeError("snapshot capture cannot queue from render owner thread")
+        if self._render_executor is None:
+            raise RuntimeError("multi MasterPi world was created with render=False")
+        with self._snapshot_submit_lock:
+            if self._render_closed or self._render_executor is None:
+                raise RuntimeError("multi MasterPi world is closing")
+            if self._snapshot_broker is None:
+                # Allocate the extra copied context only when this API is used.
+                self._snapshot_broker = self._render_executor.submit(
+                    SnapshotRenderBroker, self).result(timeout=30.0)
+            broker = self._snapshot_broker
+        slot = broker.acquire()
+        try:
+            with self._snapshot_submit_lock:
+                if self._render_closed or self._render_executor is None:
+                    raise RuntimeError("multi MasterPi world is closing")
+                snapshot = broker.capture(self, cameras, slot)
+                future = self._render_executor.submit(broker.render, snapshot)
+                future.add_done_callback(lambda _done: broker.release(snapshot))
+                return future
+        except Exception:
+            # A failed capture/submit has no queued owner to return this slot.
+            broker.slots.put_nowait(slot)
+            raise
+
     def render_jpeg(self, *, robot_id: object = "r1", camera: str = "robot_cam", quality: int = 82) -> bytes:
         rgb = self.render_rgb(robot_id=robot_id, camera=camera)
         buf = io.BytesIO(); Image.fromarray(rgb).save(buf, format="JPEG", quality=int(quality)); return buf.getvalue()
@@ -4505,7 +4557,9 @@ class MultiMasterPiProductionV2:
         engine = getattr(self, "_mixed_engine", None)
         if engine is not None:
             engine.close()
-        executor = self._render_executor
+        with self._snapshot_submit_lock:
+            self._render_closed = True
+            executor = self._render_executor
         if executor is not None:
             try:
                 executor.submit(self._close_renderers).result(timeout=15.0)
@@ -4514,5 +4568,6 @@ class MultiMasterPiProductionV2:
                 self._render_executor = None
         self.renderer = None
         self.observer_renderer = None
+        self._snapshot_broker = None
         for c in self.controllers.values():
             c.renderer = None; c.observer_renderer = None

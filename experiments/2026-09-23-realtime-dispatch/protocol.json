@@ -1,0 +1,43 @@
+{
+  "schema": "ugrp.realtime_dispatch.v1",
+  "question": "Remove rendering/decision stalls from shared physics without leaking state to actors; qualify completed native execution at real time.",
+  "base_sha": "4a79e79f5b97dd8daabc66491e47b0e490b6452b",
+  "baseline_evidence": "../2026-09-23-local-dispatch-performance/results.json",
+  "fixed": {
+    "variant": "open",
+    "seed": 11,
+    "plan_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+    "contact_profile": "local_contact_fine",
+    "timestep_s": 0.00025,
+    "weld": false,
+    "actor_camera_and_transform": "unchanged own RGB and common top RGB; actual observation timestamps preserved",
+    "external_model_calls": 0,
+    "training_runs": 0
+  },
+  "candidate": {
+    "realtime_control": true,
+    "realtime_factor": 1,
+    "native_viewer": "isolated latest-state process",
+    "video": "bounded async snapshot recording at requested10fps; repeated frames explicitly marked and counted, preserve SIM duration; not identical video sampling to synchronous baseline",
+    "control": "single shared physics owner; independent bounded RGB work; pair shared expiring leases"
+  },
+  "acceptance": [
+    "Full physical beam and box delivery and release; no artificial weld",
+    "Native end-to-end SIM/wall>=1 target; report active-loop and startup/cleanup separately, no silent exclusion",
+    "Report total mission SIM and wall durations and command/decision ages; time spent holding is not faster motion",
+    "Injected decision delays must not stall independent physics; expired joint actions hold both robots",
+    "No stale observation promoted to current time; all actor images and commands retain provenance"
+  ],
+  "budget": {
+    "baseline_profile_wall_s": 180,
+    "initial_native_trial_wall_s": 600,
+    "initial_native_trials": 1,
+    "diagnostic_trial_max_wall_s": 180,
+    "diagnostic_trials_before_review": 3,
+    "final_full_max_wall_s": 600,
+    "final_full_trials": 2,
+    "model_calls": 0
+  },
+  "source_freeze": "Commit each candidate before physical runs, preserve earlier bundles and every failed result; final candidate gets full replay after diagnostics.",
+  "scope": "Local open-map saved-plan RGB control. Does not qualify new LLM agreement, ACT, clutter/terrain, or physical hardware."
+}

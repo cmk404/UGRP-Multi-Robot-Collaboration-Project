@@ -297,6 +297,8 @@ def main(argv=None):
     p.add_argument('--model',default='gemini-3.8-flash',help='existing peer planner model')
     p.add_argument('--viewer',action='store_true',help='skills: live native observer window, Space pause/resume, Q quit')
     p.add_argument('--realtime-factor',type=float,default=1.,help='native observer pacing; does not change physics timestep')
+    p.add_argument('--realtime-control',action='store_true',
+                   help='bounded asynchronous RGB control and isolated observer; separately versioned candidate')
     p.add_argument('--planning-rounds',type=int,default=8)
     p.add_argument('--max-replans',type=int,default=2)
     p.add_argument('--rounds',type=int,default=24)

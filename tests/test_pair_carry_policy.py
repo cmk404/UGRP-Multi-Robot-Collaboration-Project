@@ -56,6 +56,21 @@ class PairCarryPolicyTests(unittest.TestCase):
         self.assertEqual(row['permission']['phase'], 'HOLD')
         self.assertFalse(any(row['forwards'].values()))
 
+    def test_delayed_rgb_keeps_capture_time_and_holds_both(self):
+        p=PairCarryPolicy()
+        initial=p.step(decisions(),0.,{'r1':'frame-1','r3':'frame-1'},0.,
+                       observed_at_s=0.)
+        self.assertEqual(initial['permission']['phase'],'GO')
+        delayed=p.step(decisions(),0.,{'r1':'frame-2','r3':'frame-2'},.7,
+                       observed_at_s=.05)
+        self.assertEqual(delayed['permission']['phase'],'HOLD')
+        self.assertFalse(any(delayed['forwards'].values()))
+        self.assertFalse(delayed['valid'])
+        fresh=p.step(decisions(),0.,{'r1':'frame-3','r3':'frame-3'},.8,
+                     observed_at_s=.75)
+        self.assertEqual(fresh['permission']['phase'],'GO')
+        self.assertEqual(fresh['forwards'],{'r1':.1,'r3':.1})
+
     def test_undelivered_ready_cannot_complete_or_change_policy(self):
         p, q = PairCarryPolicy(), PairCarryPolicy()
         self.step(p, 0, ready=True)

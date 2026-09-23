@@ -4,6 +4,7 @@ Only RGB/callbacks/own issued commands are visible here. Legacy r1/r3 keys are
 model slots, remapped at the driver boundary using the committed plan.
 """
 from __future__ import annotations
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from harness.dispatch_skill_binding import canonical_pair_top, beam_feature, PairCoarsePixels, pixel_from_map, BeamContinuity, released_beam_envelope
 from harness.camera_goal_transport import coarse_approach, dock_command, preclose_supported, own_payload
@@ -83,13 +84,16 @@ class BoundPairSkill:
         self.count+=1
         frames=self.io.capture('pair-'+str(self.count)+'-'+tag,
             own_robots=tuple(self.bindings.pair.values()),overview=False)
+        return self._bind_capture(frames,self.count)
+
+    def _bind_capture(self,frames,count):
         top, transform=canonical_pair_top(frames['r1']['top_bytes'],self.reference,
             translation_px=self.grasp_translation if self.phase.startswith('grasp') else None,
             hue_upper=35 if self.transport_started else 24,
             observed_beam=self.carried_beam.observe(frames['r1']['top_bytes']) if self.transport_started else None)
         if self.transport_started:self.beam_continuity.observe(transform['observed_beam'])
         self.latest_translation=transform['translation_px']
-        top_ref=image_record(self.out/'rgb'/f'pair-{self.count}-canonical-top.jpg',self.out,top)
+        top_ref=image_record(self.out/'rgb'/f'pair-{count}-canonical-top.jpg',self.out,top)
         mapped={slot:{**frames[rid], 'top_bytes':top,'shared_top_rgb':top_ref,
                       'raw_top_rgb':frames[rid]['shared_top_rgb'],'raw_top_bytes':frames[rid]['top_bytes'],'physical_robot_id':rid}
                 for slot,rid in self.bindings.pair.items()}
@@ -99,6 +103,13 @@ class BoundPairSkill:
             'own':{slot:frames[rid]['own_rgb'] for slot,rid in self.bindings.pair.items()}})
         self.last_capture=mapped
         return mapped
+
+    def issue_mecanum_bounded(self,commands,duration_s=.2):
+        if self.transport_started and self.carried_beam.previous is not None:
+            self.bindings.reserve_beam_apron(self.carried_beam.previous)
+        self.io.pair_issue_bounded(
+            {self.bindings.pair[r]:dict(kind='mecanum',**c,duration_s=duration_s)
+             for r,c in commands.items()},duration_s,self.phase)
 
     def drive_mecanum(self,commands,duration_s=.2):
         if self.transport_started and self.carried_beam.previous is not None:
@@ -191,6 +202,88 @@ class BoundPairSkill:
             commands={r:dict(forward=(math.copysign(v,motion['forward']) if moving and motion['forward'] else v),
                       left=motion['left'] if moving else 0.,turn=0.) for r,v in control['forwards'].items()}
             self.drive_mecanum(commands,control['duration_s'])
+        raise RuntimeError('pair route decision budget exhausted')
+
+    def carry_realtime(self,navigator,max_steps=None):
+        """Keep physics advancing while one bounded RGB batch is processed."""
+        if self.bindings.cluttered:
+            # Rotation/grasp stages have distinct motion safety contracts.
+            return self.carry_with_rotation(max_steps)
+        self.phase='TRANSIT';self.transport_started=True
+        anchor=self.capture('carry-anchor')
+        policy=PairCarryPolicy('dispatch-'+self.bindings.committed['plan_hash'][:12])
+        with ThreadPoolExecutor(max_workers=1,thread_name_prefix='dispatch-pair-decision') as worker:
+            try:
+                for index in range(900 if max_steps is None else max_steps):
+                    self.count+=1
+                    count=self.count
+                    from sim.snapshot_render import SnapshotBackpressure
+                    while True:
+                        try:
+                            frame_future=self.io.capture_async('pair-'+str(count)+'-carry',
+                                own_robots=tuple(self.bindings.pair.values()),overview=False)
+                            break
+                        except SnapshotBackpressure:
+                            self.io.realtime_stats['pair_backpressure']+=1
+                            self.tick(.02)
+
+                    def analyze(frame_future=frame_future,count=count):
+                        frames=self._bind_capture(frame_future.result(),count)
+                        raw=frames['r1']['raw_top_bytes']
+                        motion,evidence=navigator.observe(raw)
+                        decisions={}
+                        for r in ROBOTS:
+                            current=own_payload(frames[r]['own_bytes'],hue_upper=35)
+                            initial=own_payload(anchor[r]['own_bytes'],hue_upper=35)
+                            held=bool(current and initial and .25<=current[0]/initial[0]<=4
+                                      and math.dist(current[1:],initial[1:])<=.15)
+                            decisions[r]={'ok':held,'held_estimate':held,'ready':evidence['done'],
+                                'forward':abs(motion['forward']),
+                                'current_own_rgb_features':current,
+                                'anchor_own_rgb_features':initial,
+                                'appearance':'orange-to-yellow beam hue 3..35; same shape/consistency gates'}
+                        from harness.dispatch_translation_skew import translation_skew
+                        try:skew,skew_evidence=translation_skew(raw,self.carried_beam.previous)
+                        except ValueError as error:
+                            skew=None;skew_evidence={'unresolved':str(error)}
+                        return frames,motion,evidence,decisions,skew,skew_evidence
+
+                    pending=worker.submit(analyze)
+                    while not pending.done():
+                        # Only the owner advances physics. Port leases expire
+                        # independently if RGB/render/decision work stalls.
+                        self.tick(.02)
+                    frames,motion,evidence,decisions,skew,skew_evidence=pending.result()
+                    now=self.time();observed=float(frames['r1']['observed_at_s'])
+                    self.io.realtime_stats['pair_decisions']+=1
+                    self.io.realtime_stats['max_decision_age_s']=max(
+                        self.io.realtime_stats['max_decision_age_s'],now-observed)
+                    control=policy.step(decisions,skew,
+                        {r:f['frame_id'] for r,f in frames.items()},now,
+                        observed_at_s=observed)
+                    self.calls.append({'kind':'carry','decisions':decisions,'control':control,
+                        'route':evidence,'skew_evidence':skew_evidence,
+                        'sim_time_s':now,'observed_at_s':observed,
+                        'decision_age_s':now-observed,
+                        'frame_ids':{r:f['frame_id'] for r,f in frames.items()}})
+                    if control['abort']:
+                        raise RuntimeError('existing pair carry guard stopped: '+control['mode'])
+                    if control['done']:
+                        self.issue_mecanum_bounded(
+                            {r:dict(forward=0.,left=0.,turn=0.) for r in ROBOTS},.2)
+                        return
+                    moving=control['mode']=='CRUISE' and control['valid']
+                    commands={r:dict(
+                        forward=(math.copysign(v,motion['forward']) if moving and motion['forward'] else v),
+                        left=motion['left'] if moving else 0.,turn=0.)
+                        for r,v in control['forwards'].items()}
+                    self.issue_mecanum_bounded(commands,control['duration_s'])
+                    # At least one physical control interval precedes the next
+                    # image. The remaining lease may overlap RGB processing.
+                    self.tick(.05)
+            finally:
+                now=self.time()
+                for rid in self.bindings.pair.values():self.io.ports[rid].hold(now)
         raise RuntimeError('pair route decision budget exhausted')
 
     def carry_with_rotation(self,max_steps=None):

@@ -8,6 +8,7 @@ from __future__ import annotations
 import copy
 import queue
 import time
+import math
 
 _POLL_INTERVAL_S = .01
 _SLEEP_BATCH_S = .005
@@ -104,3 +105,23 @@ class DispatchNativeView:
             if time.monotonic() >= deadline:
                 raise RuntimeError('native dispatch viewer did not close within 10 seconds')
             time.sleep(.01)
+
+
+class HeadlessPacer(DispatchNativeView):
+    """Use the native SIM/wall clock contract without opening an observer UI."""
+    def __init__(self,scene,*,realtime_factor=1.):
+        if not math.isfinite(realtime_factor) or realtime_factor<=0:
+            raise ValueError('positive finite realtime_factor required')
+        self.scene=scene;self.factor=float(realtime_factor)
+        self.paused=False
+        self.pace_sim=scene.time();self.pace_wall=time.monotonic()
+        self.last_tick_wall=self.pace_wall;self.rebase_pace=False
+        self.next_poll=0.
+
+    def poll(self):
+        if self.scene.deadline and time.monotonic()>=self.scene.deadline:
+            raise RuntimeError('skill wall budget exhausted')
+        self.next_poll=time.monotonic()+_POLL_INTERVAL_S
+
+    def close(self):
+        pass
