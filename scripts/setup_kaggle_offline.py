@@ -29,7 +29,7 @@ def setup(base, inputs, manifest):
     env.update(PYTHONPATH=str(inputs/pip_wheels[0]), PIP_DISABLE_PIP_VERSION_CHECK='1', PIP_CONFIG_FILE=os.devnull)
     # pip can target a venv which does not yet contain pip; no ensurepip or network needed.
     subprocess.run([sys.executable, '-m', 'pip', '--python', py, 'install', '--no-index',
-                    '--find-links', str(inputs), '-r', str(base/'source/requirements-sim.txt'), 'pip==26.2.1'], env=env, check=True)
+                    '--find-links', str(inputs), '-r', str(base/'source/requirements-kaggle.txt'), 'pip==26.2.1'], env=env, check=True)
     subprocess.run([py, '-m', 'pip', 'check'], check=True)
     env.pop('PYTHONPATH', None)
     env['LD_LIBRARY_PATH'] = str(system/'usr/lib/x86_64-linux-gnu')

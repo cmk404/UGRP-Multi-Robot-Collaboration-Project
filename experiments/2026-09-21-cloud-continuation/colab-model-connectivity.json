@@ -1,0 +1,59 @@
+{
+  "source_sha": "b5ca7ca6d494dab76cf926c7af3f22dd2146ad08",
+  "session": "ugrp-model-compare-20260921",
+  "scope": "Colab private mailbox transport probe; synthetic state, not robot trial",
+  "probe_time_unix": 1789960240.401405,
+  "models": [
+    {
+      "provider": "jev",
+      "model": "jev-1.13.0",
+      "status": "ok",
+      "http_status": 200,
+      "end_to_end_s": 2.8974308360000123,
+      "provider_s": 0.8746718750007858
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "status": "ok",
+      "http_status": 200,
+      "end_to_end_s": 4.624361704999956,
+      "provider_s": 2.6165506249999453
+    }
+  ],
+  "comparison": {
+    "development": 3,
+    "holdout": 108,
+    "overall_wall_limit_s": 12600,
+    "relay_max_calls": 8000,
+    "status": "development running; no completed trials at record time",
+    "scope": "RGB approach and route selection, not grasp/carry"
+  },
+  "offline_tests": {
+    "passed": 1199,
+    "skipped": 3,
+    "subtests_passed": 191
+  },
+  "artifacts": {
+    "remote-model-probe.json": {
+      "local": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-model-compare/remote-model-probe.json",
+      "sha256": "aca74bed887c24b40ef5ee0843ab1fe7a01fd092ea9cb24e6fc0b5fd5f49ea3b"
+    },
+    "supervisor.py": {
+      "local": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-model-compare/supervisor.py",
+      "sha256": "39f9f44ed2a0791e779dc686e4343c9aa333f9089328ba726a8bc9c7742e130c"
+    },
+    "collector.py": {
+      "local": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-model-compare/collector.py",
+      "sha256": "9be87cfeea8d52a6b524c63143541135b7f8ee6d319c18e902e44fd1802fe94e"
+    },
+    "source-manifest.json": {
+      "local": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-model-compare/source-manifest.json",
+      "sha256": "1991b86a411cbfc7f7b4f98f49af45fdf28f6b61eecffd71dd2c1b904e883deb"
+    },
+    "transport-probe.py": {
+      "local": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-model-compare/transport-probe.py",
+      "sha256": "48ddd66f77511d1c98d99bf18f14152a6d3c47b15ea0e3e56cb9656428f91d95"
+    }
+  }
+}

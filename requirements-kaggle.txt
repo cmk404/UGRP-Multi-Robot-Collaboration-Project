@@ -1,0 +1,3 @@
+# Kaggle's stdlib sitecustomize imports wrapt even inside an isolated venv.
+-r requirements-sim.txt
+wrapt==2.2.2

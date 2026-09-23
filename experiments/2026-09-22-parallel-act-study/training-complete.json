@@ -1,0 +1,215 @@
+{
+  "source_sha": "db0a6a70e29bd1bea021b86036a029d1a5aac813",
+  "dataset_sha256": "83dbd7707aa0fc464a1db70fd1ea87f5603ab37c4346476a299b7386158bfd95",
+  "seed": 20260921,
+  "steps": 8000,
+  "completed_steps": 8000,
+  "batch_size": 32,
+  "adapter": {
+    "version": 1,
+    "kind": "carry_input_ablation",
+    "size": 128,
+    "history": 4,
+    "order": "oldest_to_current",
+    "padding": "repeat_first_robot_local_frame",
+    "temporal_encoding": "independent_frozen_CNN_then_width_concat_before_ACT_2d_positions",
+    "context": "four chronological 8-vectors; history=1 repeats current context four times for matched parameter count",
+    "outputs": [
+      "forward",
+      "left",
+      "turn",
+      "done"
+    ]
+  },
+  "environment": {
+    "python": "3.12.12 (main, Feb  4 2026, 01:57:59) [Clang 21.1.4 ]",
+    "platform": "macOS-27.2-arm64-arm-64bit",
+    "device": "cpu",
+    "cuda": null,
+    "upstream_modeling_sha256": "2ea0acbdf210acee9d08f1f306afbda1e935bce0604b3b67b8d87c57c3f79a19",
+    "gpu": null,
+    "torch": "2.11.0",
+    "torchvision": "0.26.0",
+    "lerobot": "0.6.2",
+    "numpy": "2.2.6"
+  },
+  "upstream_sha": "89236ea0f4f81a81ca566081e20dd1ff5f823cbe",
+  "selected": {
+    "step": 7500,
+    "loss": 0.03828200697898865,
+    "development": {
+      "missed_done_rate": 0.0,
+      "false_done_rate": 0.006838905775075988,
+      "group_normalized_mae": {
+        "0": 0.024836664591857533,
+        "1": 0.05898005335529688,
+        "2": 0.08684234204467776,
+        "3": 0.015970971538788743
+      },
+      "selection_score": 0.053496413657731216,
+      "samples": 1322,
+      "done_samples": 6
+    },
+    "elapsed_s": 844.2257887090018
+  },
+  "development_metrics": {
+    "missed_done_rate": 0.0,
+    "false_done_rate": 0.006838905775075988,
+    "group_normalized_mae": {
+      "0": 0.024836664591857533,
+      "1": 0.05898005335529688,
+      "2": 0.08684234204467776,
+      "3": 0.015970971538788743
+    },
+    "selection_score": 0.053496413657731216,
+    "samples": 1322,
+    "done_samples": 6
+  },
+  "train_metrics": {
+    "missed_done_rate": 0.0,
+    "false_done_rate": 0.005445544554455445,
+    "group_normalized_mae": {
+      "0": 0.026695151615229642,
+      "1": 0.040579282241300516,
+      "2": 0.041177543035998854,
+      "3": 0.00281235808506608
+    },
+    "selection_score": 0.03326162829885422,
+    "samples": 4056,
+    "done_samples": 16
+  },
+  "initial_cache_verification": {
+    "feature_atol": 0.0005,
+    "feature_rtol": 1e-05,
+    "action_atol": 1e-05,
+    "action_rtol": 1e-05,
+    "probes": [
+      {
+        "id": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r1:0",
+        "feature_max_abs": {
+          "observation.images.own": 6.16312026977539e-05,
+          "observation.images.top": 6.008148193359375e-05
+        },
+        "action_chunk_max_abs": 3.635883331298828e-06
+      },
+      {
+        "id": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r1:4",
+        "feature_max_abs": {
+          "observation.images.own": 7.903575897216797e-05,
+          "observation.images.top": 6.914138793945312e-05
+        },
+        "action_chunk_max_abs": 2.0265579223632812e-06
+      },
+      {
+        "id": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/teachers/trials/RGB--parallel-train-plus--r0:r3:113",
+        "feature_max_abs": {
+          "observation.images.own": 0.00010097026824951172,
+          "observation.images.top": 6.389617919921875e-05
+        },
+        "action_chunk_max_abs": 2.2649765014648438e-06
+      }
+    ]
+  },
+  "selected_cache_verification": {
+    "train": {
+      "feature_atol": 0.0005,
+      "feature_rtol": 1e-05,
+      "action_atol": 1e-05,
+      "action_rtol": 1e-05,
+      "probes": [
+        {
+          "id": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r1:0",
+          "feature_max_abs": {
+            "observation.images.own": 6.16312026977539e-05,
+            "observation.images.top": 6.008148193359375e-05
+          },
+          "action_chunk_max_abs": 3.591179847717285e-06
+        },
+        {
+          "id": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r1:4",
+          "feature_max_abs": {
+            "observation.images.own": 7.903575897216797e-05,
+            "observation.images.top": 6.914138793945312e-05
+          },
+          "action_chunk_max_abs": 8.046627044677734e-07
+        },
+        {
+          "id": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/teachers/trials/RGB--parallel-train-plus--r0:r3:113",
+          "feature_max_abs": {
+            "observation.images.own": 0.00010097026824951172,
+            "observation.images.top": 6.389617919921875e-05
+          },
+          "action_chunk_max_abs": 3.159046173095703e-06
+        }
+      ]
+    },
+    "development": {
+      "feature_atol": 0.0005,
+      "feature_rtol": 1e-05,
+      "action_atol": 1e-05,
+      "action_rtol": 1e-05,
+      "probes": [
+        {
+          "id": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open:r1:0",
+          "feature_max_abs": {
+            "observation.images.own": 6.562471389770508e-05,
+            "observation.images.top": 5.91278076171875e-05
+          },
+          "action_chunk_max_abs": 1.3709068298339844e-06
+        },
+        {
+          "id": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open:r1:4",
+          "feature_max_abs": {
+            "observation.images.own": 8.296966552734375e-05,
+            "observation.images.top": 7.390975952148438e-05
+          },
+          "action_chunk_max_abs": 9.611248970031738e-07
+        },
+        {
+          "id": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/teachers/trials/RGB--parallel-dev-zero--r0:r3:118",
+          "feature_max_abs": {
+            "observation.images.own": 0.0,
+            "observation.images.top": 0.0
+          },
+          "action_chunk_max_abs": 0.0
+        }
+      ]
+    }
+  },
+  "deployment_max_abs": {
+    "train": [
+      0.0,
+      0.0
+    ],
+    "development": [
+      0.0,
+      0.0
+    ]
+  },
+  "complete": true,
+  "wall_s": 886.5776440839982,
+  "feature_cache_wall_s": 393.25844762499764,
+  "model_sha256": "c98a640167110f7ee0b5fc2b1d5edde4a4065464c6c47519b366cc3ff8ee4e96",
+  "external_model_calls": 0,
+  "raw": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/model-expanded",
+  "report_sha256": "48af19ebc2b683e0dc36f80662abf164947880da662357c6de2ac6e1eecc5c28",
+  "tensorboard": {
+    "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-ACT\uc7ac\ud559\uc2b5/training",
+    "manifest_sha256": "e1fe7b4bbcd4debe3248fe6a531720593e6ec2b698e0f5b122587cef5845ff89",
+    "event_readback": true,
+    "server_run_listed": true,
+    "native_ui_verified": false,
+    "blocker": "Mac screen locked"
+  },
+  "evaluation": {
+    "planned": 9,
+    "attempted": 0,
+    "state": "not_started_disk_reserve",
+    "blocker": "RuntimeError: disk reserve; next stage not attempted",
+    "free_gib_at_record": 3.6692886352539062,
+    "required_free_gib": 8,
+    "protocol": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/evaluation-protocol.json",
+    "protocol_sha256": "305cbb1535926e51a14ded4726df1edaee7440e09ae291170f83a8b8fe2152e0"
+  },
+  "checked_unix": 1790018912.2935
+}

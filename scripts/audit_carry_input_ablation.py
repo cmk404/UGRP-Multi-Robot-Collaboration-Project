@@ -43,8 +43,9 @@ def main():
         return path.read_bytes()
     for run in report['runs']:
         root=Path(run['output']).resolve()
+        case_key=f"{run['case']['id']}--r{run.get('repeat', 0)}"
         if not (root/'result.json').exists():
-            rows.append({'case':run['case']['id'],'condition':run['condition'],'completed_report':False,'error':'missing result','exit_code':run['exit_code']});continue
+            rows.append({'case':run['case']['id'],'condition':run['condition'],'repeat':run.get('repeat',0),'completed_report':False,'error':'missing result','exit_code':run['exit_code']});continue
         r=read(root/'result.json');setup=read(root/'episode-setup-only.json');commands=read(root/'issued-commands.json')
         assert r['source_sha']==report['source_sha'] and r['camera_geometry_unchanged']
         assert r['llm_calls']==0 and r['evaluation']['weld_steps']==0
@@ -56,7 +57,7 @@ def main():
         plan=read(root/'committed-plan.json')['plan'];bindings=read(root/'skill-bindings.json')['pair_model_slots']
         decisions=read(root/'pair-decisions.json');act=[v for v in decisions if v['kind']=='act_carry']
         carry_window=evaluation['cargo']['beam']['carry_clearance']['window_s']
-        row={'case':run['case']['id'],'condition':run['condition'],'completed_report':True,
+        row={'case':run['case']['id'],'condition':run['condition'],'repeat':run.get('repeat',0),'completed_report':True,
              'whole_success':bool(r['physical_success'] and r['protocol_complete'] and not r['error'] and not r['obstacle_contact_steps']),
              'beam_success':bool(evaluation['cargo']['beam']['physical_success'] and not r['error'] and not r['obstacle_contact_steps']),
              'carry_entered':bool(act or carry_window),'phase_at_end':r['phase'],'error':r['error'],
@@ -71,11 +72,11 @@ def main():
         row['both_done_rounds']=sum(all(d['done'] for d in v['decisions'].values()) for v in act)
         row['declared_done']=bool(act and act[-1]['ready_count']>=3)
         row['false_done']=bool(row['declared_done'] and not evaluation['cargo']['beam']['physical_success'])
-        initials.setdefault(run['case']['id'],{})[run['condition']]={'sample':samples[0],'setup':setup,'plan':plan}
-        entries.setdefault(run['case']['id'],{})[run['condition']]={}
+        initials.setdefault(case_key,{})[run['condition']]={'sample':samples[0],'setup':setup,'plan':plan}
+        entries.setdefault(case_key,{})[run['condition']]={}
         if carry_window:
             entry=min(samples,key=lambda s:abs(s['sim_time_s']-carry_window[0]))
-            entries[run['case']['id']][run['condition']]['referee_at_carry']=entry
+            entries[case_key][run['condition']]['referee_at_carry']=entry
             source=next(Path(e['root']) for e in data['train'] if Path(e['root']).name==run['case']['teacher_case'])
             tr=read(source/'result.json');t0=tr['evaluation']['cargo']['beam']['carry_clearance']['window_s'][0]
             original=min((json.loads(line) for line in (source/'referee-only.jsonl').open()),key=lambda s:abs(s['sim_time_s']-t0))
@@ -109,7 +110,7 @@ def main():
                             assert command and all(command['action'][k]==action[k] for k in AXES)
                         else:assert command is None
                         previous[s]=[action[k] for k in AXES];latencies.append(inp['inference_wall_s'])
-                    if i==0:entries[run['case']['id']][run['condition']]['rgb_sha256']={s:{k:ref['sha256'] for k,ref in inp['images'].items()} for s,inp in v['inputs'].items()}
+                    if i==0:entries[case_key][run['condition']]['rgb_sha256']={s:{k:ref['sha256'] for k,ref in inp['images'].items()} for s,inp in v['inputs'].items()}
             finally:client.close()
             row['inference_wall_s']={'median':float(np.median(latencies)),'p95':float(np.percentile(latencies,95)),'max':max(latencies)}
         elif run['condition']=='teacher':
@@ -117,7 +118,7 @@ def main():
             first=next((d for d in decisions if d['kind'] in ('carry','rotating_carry')),None)
             if first:
                 image_record=captures[first['frame_ids']['r1']]
-                entries[run['case']['id']]['teacher']['rgb_sha256']={s:{'own':image_record['own'][s]['sha256'],'top':image_record['raw_top']['sha256']} for s in bindings}
+                entries[case_key]['teacher']['rgb_sha256']={s:{'own':image_record['own'][s]['sha256'],'top':image_record['raw_top']['sha256']} for s in bindings}
         row['raw_hashes']={name:sha(root/name) for name in ('result.json','pair-decisions.json','issued-commands.json','referee-only.jsonl','execution.mp4')}
         rows.append(row)
     expected_conditions={'teacher',*freeze['models']}

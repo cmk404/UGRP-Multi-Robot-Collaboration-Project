@@ -57,6 +57,8 @@ HParams의 **session status=success는 이벤트 가져오기 완료**를 뜻한
 - Jev 직접 운동: `result.json` + `turns.json` + 참조 RGB.
 - 다중 물건: `result.json` + `actor-static-task.json` + `turn-*.json` + `runtime/<request_id>.json`.
 - ACT 공동 운반: `result.json` + `pair-decisions.json`의 `act_carry` 행. 물리 로봇 ID와 모델 슬롯 구분.
+- ACT 종료 오프라인 감사: `termination-audit.json`과 해시가 일치하는 `predictions.json`. 예측을 다시 감사해 `offline/episodes`, 조기 정지·종료 누락 횟수, `offline/termination_pass`를 표시한다. `offline_pass`도 물리 성공이나 기본 제어기 채택을 뜻하지 않는다.
+- 클라우드 실행: 종료된 `run.json`의 프로세스 종료 코드와 실제 시작/종료 시간. GPU 설치 실패는 로봇 실패로 바꾸지 않는다.
 - 기타 `result.json`: 명시된 결과 지표와 출처만 변환. 형식을 모르는 내부 로그를 임의로 해석하지 않음.
 
 `--source`는 한 실행/학습 폴더를 지정한다. 코호트 상위 폴더의 `results.json`이나 `report.json.runs`를 자동으로 따라가지 않는다. 원하는 하위 실행을 명시적으로 반복 지정한다. 현재 실행 중인 폴더보다 결과가 완성된 폴더를 선택한다.

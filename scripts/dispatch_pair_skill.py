@@ -5,7 +5,7 @@ model slots, remapped at the driver boundary using the committed plan.
 """
 from __future__ import annotations
 from pathlib import Path
-from harness.dispatch_skill_binding import canonical_pair_top, beam_feature, PairCoarsePixels, pixel_from_map, BeamContinuity
+from harness.dispatch_skill_binding import canonical_pair_top, beam_feature, PairCoarsePixels, pixel_from_map, BeamContinuity, released_beam_envelope
 from harness.camera_goal_transport import coarse_approach, dock_command, preclose_supported, own_payload
 from harness.camera_varied_start_student import predict_stage
 from harness.grasp_student_inference import predict_student
@@ -46,7 +46,8 @@ class BoundPairSkill:
 
     def capture(self,tag):
         self.count+=1
-        frames=self.io.capture('pair-'+str(self.count)+'-'+tag)
+        frames=self.io.capture('pair-'+str(self.count)+'-'+tag,
+            own_robots=tuple(self.bindings.pair.values()),overview=False)
         top, transform=canonical_pair_top(frames['r1']['top_bytes'],self.reference,
             translation_px=self.grasp_translation if self.phase.startswith('grasp') else None,
             hue_upper=35 if self.transport_started else 24,
@@ -65,6 +66,8 @@ class BoundPairSkill:
         return mapped
 
     def drive_mecanum(self,commands,duration_s=.2):
+        if self.transport_started and self.carried_beam.previous is not None:
+            self.bindings.reserve_beam_apron(self.carried_beam.previous)
         self.io.pair_drive({self.bindings.pair[r]:dict(kind='mecanum',**c,duration_s=duration_s)
                             for r,c in commands.items()},duration_s,self.phase)
     def drive(self,forwards,duration_s=.2):
@@ -113,12 +116,12 @@ class BoundPairSkill:
             if ready_count>=2:return report
         raise RuntimeError('fine docking confirmation budget exhausted')
 
-    def carry(self,navigator):
-        if self.bindings.cluttered:return self.carry_with_rotation()
+    def carry(self,navigator,max_steps=None):
+        if self.bindings.cluttered:return self.carry_with_rotation(max_steps)
         self.phase='TRANSIT';self.transport_started=True
         anchor=self.capture('carry-anchor')
         policy=PairCarryPolicy('dispatch-'+self.bindings.committed['plan_hash'][:12])
-        for index in range(900):
+        for index in range(900 if max_steps is None else max_steps):
             frames=self.capture('carry')
             raw=self.io.last_frames['r1']['top_bytes']
             motion,evidence=navigator.observe(raw)
@@ -151,7 +154,7 @@ class BoundPairSkill:
             self.drive_mecanum(commands,control['duration_s'])
         raise RuntimeError('pair route decision budget exhausted')
 
-    def carry_with_rotation(self):
+    def carry_with_rotation(self,max_steps=None):
         from harness.dispatch_navigation_map import navigation_map
         from harness.dispatch_pair_navigation import PairNavigator,authorize_pair
         from harness.pair_carry_sync import PairCarrySync
@@ -164,7 +167,7 @@ class BoundPairSkill:
         own_guards={r:OwnHoldContinuity(anchor[r]['own_bytes']) for r in ROBOTS}
         sync=PairCarrySync('dispatch-'+self.bindings.committed['plan_hash'])
         self.calls.append({'kind':'navigation_map','map':data,'other_robot_observation':other,'other_robot_source':other_source})
-        for index in range(1200):
+        for index in range(1200 if max_steps is None else max_steps):
             frames=self.capture('rotate-carry')
             decisions={}
             for r in ROBOTS:
@@ -190,11 +193,12 @@ class BoundPairSkill:
         for index in range(2):
             frames=self.capture('placement-confirmation')
             b=self.carried_beam.previous
-            w,h=b['image_size'];corners=np.array(b['corners4'])*[w,h]
-            a=pixel_from_map(np.array(slot['center_m'])-slot['half_extents_m'],self.bindings.static_map,(h,w))
-            z=pixel_from_map(np.array(slot['center_m'])+slot['half_extents_m'],self.bindings.static_map,(h,w))
+            envelope=released_beam_envelope(frames['r1']['raw_top_bytes'],b,self.bindings.static_map)
+            w,h=b['image_size'];corners=np.array(envelope['corners_px'])
+            a=pixel_from_map(np.array(slot['center_m'])-slot['half_extents_m'],self.bindings.static_map,(h,w),height=.04)
+            z=pixel_from_map(np.array(slot['center_m'])+slot['half_extents_m'],self.bindings.static_map,(h,w),height=.04)
             inside=bool(np.all(corners>=np.minimum(a,z)) and np.all(corners<=np.maximum(a,z)))
-            samples.append({'frame_id':frames['r1']['frame_id'],'beam':b,'inside_visible_slot':inside})
+            samples.append({'frame_id':frames['r1']['frame_id'],'beam':b,'released_envelope':envelope,'inside_visible_slot':inside})
             self.tick(.5)
         stable=math.dist(samples[0]['beam']['center'],samples[1]['beam']['center'])<.003
         self.calls.append({'kind':'visual_placement','samples':samples,'stable':stable,

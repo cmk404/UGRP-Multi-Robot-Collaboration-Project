@@ -66,8 +66,16 @@ def wheel_heading(yellow, *, pixel_tolerance=0.):
     if a < b:
         angle += 90
     angle = (angle + 90) % 180 - 90
-    if not (.05*w-pixel_tolerance <= long <= .075*w+pixel_tolerance
-            and .045*h-pixel_tolerance <= short <= .07*h+pixel_tolerance
+    lower = (.05*w-pixel_tolerance, .045*h-pixel_tolerance)
+    upper = (.075*w+pixel_tolerance, .07*h+pixel_tolerance)
+    if pixel_tolerance:
+        # A thresholded image has integer pixel support, while a rotated
+        # min-area rectangle has fractional extents. Round the already bounded
+        # tolerance outwards to a pixel cell; do not reject 52.47 against 52.4.
+        lower = tuple(math.floor(v) for v in lower)
+        upper = tuple(math.ceil(v) for v in upper)
+    if not (lower[0] <= long <= upper[0]
+            and lower[1] <= short <= upper[1]
             and 1.12 <= long/short <= 1.65 and abs(angle) <= 18):
         return None
     # All four wheel corners must contribute; a partial silhouette is not

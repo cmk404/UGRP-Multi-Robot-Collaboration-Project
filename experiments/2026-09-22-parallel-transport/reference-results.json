@@ -1,0 +1,1755 @@
+[
+  {
+    "cohort": "parallel-reference-v1",
+    "condition": "RGB",
+    "source_sha": "6baecbaca65109e5de38de74b33deb07491b3b77",
+    "outcome": {
+      "whole_success": true,
+      "robot_result_available": true,
+      "failure_kind": null,
+      "failure_phase": "FINISHED",
+      "error": null,
+      "stop_reason": "",
+      "carry_entered": true,
+      "act_carry_entered": false,
+      "beam_success": true,
+      "wall_s": 276.7734231249997
+    },
+    "evaluation": {
+      "physical_success": true,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07771018721422365,
+          "displacement_m": 1.6800151785171171,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "carry_clearance": {
+            "sampled_continuous_clearance": true,
+            "samples": 237,
+            "floor_contact_samples": 0,
+            "window_s": [
+              59.4600000001929,
+              83.15999999976741
+            ],
+            "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+            "max_sample_gap_s": 0.10000000000047748,
+            "first_floor_contact_s": null
+          },
+          "physical_success": true
+        },
+        "box": {
+          "max_lift_m": 0.06880446729061826,
+          "displacement_m": 2.305097464145342,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "carry_clearance": {
+            "sampled_continuous_clearance": true,
+            "samples": 507,
+            "floor_contact_samples": 0,
+            "window_s": [
+              75.34649999994626,
+              126.00949999875297
+            ],
+            "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+            "max_sample_gap_s": 0.09999999999763531,
+            "first_floor_contact_s": null
+          },
+          "physical_success": true
+        }
+      },
+      "concurrent_transport": {
+        "simultaneous_loaded_motion_s": 0.0,
+        "intervals_s": [],
+        "minimum_displacement_per_sample_m": 0.001,
+        "max_sample_gap_s": 0.11,
+        "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+      },
+      "robot_robot_contact_samples": 0,
+      "robot_path_length_m": {
+        "r1": 2.6498803021864483,
+        "r2": 4.1563086314284545,
+        "r3": 2.609970603379399
+      },
+      "all_three_body_motion_sim_s": 7.099999999854845,
+      "weld_steps": 0,
+      "samples": 1356,
+      "stable_window_s": 0.9999999999763531
+    },
+    "concurrency_audit": {
+      "evaluator_source_sha": "f1a31447a079fc2f2eacffac337ddaa39d4a31ee",
+      "source_files_sha256": {
+        "result.json": "6feca950b6e2db5fdb07fe8ac6aef5b27fbfa4a9c5ebc11e285352b7d7ebb5a5",
+        "issued-commands.json": "16524dd077df64e838404e35954b7a52c217c5bbad87eaf3c7c48729062df34a",
+        "referee-only.jsonl": "7dbf156115171254f1c42aa99f2a621288774550ac648089759974fd2cb3a6f2"
+      },
+      "execution_source_sha": "6baecbaca65109e5de38de74b33deb07491b3b77",
+      "original_reported": {
+        "simultaneous_loaded_motion_s": 0.0,
+        "intervals_s": [],
+        "minimum_displacement_per_sample_m": 0.001,
+        "max_sample_gap_s": 0.11,
+        "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+      },
+      "concurrent_transport": {
+        "simultaneous_loaded_motion_s": 2.799999999933789,
+        "intervals_s": [
+          [
+            75.60024999994026,
+            75.7002499999379
+          ],
+          [
+            75.80024999993553,
+            75.90024999993317
+          ],
+          [
+            76.0002499999308,
+            76.10024999992844
+          ],
+          [
+            76.20024999992607,
+            76.30024999992371
+          ],
+          [
+            76.40024999992134,
+            76.50024999991898
+          ],
+          [
+            76.60024999991661,
+            76.70024999991425
+          ],
+          [
+            76.80024999991188,
+            76.90024999990952
+          ],
+          [
+            77.00024999990715,
+            77.10024999990479
+          ],
+          [
+            77.20024999990243,
+            77.30024999990006
+          ],
+          [
+            78.20024999987878,
+            78.30024999987641
+          ],
+          [
+            79.00024999985986,
+            79.1002499998575
+          ],
+          [
+            79.20024999985513,
+            79.30024999985277
+          ],
+          [
+            79.4002499998504,
+            79.50024999984804
+          ],
+          [
+            79.60024999984567,
+            79.70024999984331
+          ],
+          [
+            79.80024999984094,
+            79.90024999983858
+          ],
+          [
+            80.00024999983621,
+            80.10024999983385
+          ],
+          [
+            80.20024999983148,
+            80.30024999982912
+          ],
+          [
+            80.40024999982676,
+            80.50024999982439
+          ],
+          [
+            80.60024999982203,
+            80.70024999981966
+          ],
+          [
+            80.8002499998173,
+            80.90024999981493
+          ],
+          [
+            81.00024999981257,
+            81.1002499998102
+          ],
+          [
+            81.20024999980784,
+            81.30024999980547
+          ],
+          [
+            81.40024999980311,
+            81.50024999980074
+          ],
+          [
+            81.60024999979838,
+            81.70024999979601
+          ],
+          [
+            81.80024999979365,
+            81.90024999979128
+          ],
+          [
+            82.00024999978892,
+            82.10024999978656
+          ],
+          [
+            82.20024999978419,
+            82.30024999978183
+          ],
+          [
+            82.40024999977946,
+            82.5002499997771
+          ]
+        ],
+        "minimum_displacement_per_sample_m": 0.001,
+        "max_sample_gap_s": 0.11,
+        "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+      },
+      "reason": "Merge adjoining per-robot TRANSIT leases before comparing the common referee sample clock. Raw physics and original result remain unchanged."
+    },
+    "raw": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-reference-v1/trials/RGB--open-original--r0",
+    "files": {
+      "solo-raw-actions.json": {
+        "sha256": "7d9ad23763a0f91426fa3f7df56c2194acb39dd6e3cdc6e30e0173307f58f553",
+        "bytes": 961945
+      },
+      "pair-replay.json": {
+        "sha256": "a652b9c196fe8763656b8bd6e849e2a1c12ccb2dde69164479c0f53a6333883d",
+        "bytes": 14888
+      },
+      "result.json": {
+        "sha256": "6feca950b6e2db5fdb07fe8ac6aef5b27fbfa4a9c5ebc11e285352b7d7ebb5a5",
+        "bytes": 3411813
+      },
+      "evaluation-only.json": {
+        "sha256": "6141c87f49b0a20bfffd3f732ff7cfde3d0540836697718895d8182dec0d1a67",
+        "bytes": 1966
+      },
+      "plan-feasibility-0.json": {
+        "sha256": "43ab0b8bb0261f9c2a85ebb6151658565c9fcb6084ee89d7ba4455c47ae54ed9",
+        "bytes": 2057
+      },
+      "solo-yield.json": {
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "bytes": 3
+      },
+      "scene-manifest.json": {
+        "sha256": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a",
+        "bytes": 606
+      },
+      "concurrency-audit.json": {
+        "sha256": "b2b00061d64e00600b111d375ecec489b8f2bf3a604e4cfe05282e73233fdc6d",
+        "bytes": 3117
+      },
+      "actor-mission.json": {
+        "sha256": "f4775b1862bcbc899b940f700aa8459338d223807f3578940fa533cd82fcd709",
+        "bytes": 6130
+      },
+      "execution.mp4": {
+        "sha256": "2be063db5e83cc20b8fd7eb6b0c6d69dbe7bf11b9d50ae8af31a82301a99eea0",
+        "bytes": 1045851
+      },
+      "pair-decisions.json": {
+        "sha256": "7ba646fe3e52d77bbbc1fb0791c052deec7391d0c54145b697e342008aed57f7",
+        "bytes": 4905314
+      },
+      "committed-plan.json": {
+        "sha256": "36d8fdcaef9e15659e3e95d3214505ab4cf088629558f8f1eb1435ed27a79fce",
+        "bytes": 579
+      },
+      "referee-only.jsonl": {
+        "sha256": "7dbf156115171254f1c42aa99f2a621288774550ac648089759974fd2cb3a6f2",
+        "bytes": 2017738
+      },
+      "robot-programs.json": {
+        "sha256": "72fd7cdcfc6890dff0379957e5411578488f6f4b840304506e3cf6c3d984abe0",
+        "bytes": 8489
+      },
+      "skill-bindings.json": {
+        "sha256": "cb01d6f04ec81ba2244f9ba879b63da3a67eeab4697984c26ab3919502d0b424",
+        "bytes": 422
+      },
+      "solo-decisions.json": {
+        "sha256": "5f7ff9d551dbdff9c0403d726530494d2996b4aa6c359126e07bb4eae20f258f",
+        "bytes": 1592126
+      },
+      "issued-commands.json": {
+        "sha256": "16524dd077df64e838404e35954b7a52c217c5bbad87eaf3c7c48729062df34a",
+        "bytes": 293090
+      },
+      "episode-setup-only.json": {
+        "sha256": "e7d2c493aea24e897d5e2a7e627f74674cbd61ae87c7d6f44456598eb6b13ba9",
+        "bytes": 5491
+      },
+      "pair-grasp.json": {
+        "sha256": "8632c0b90b96ec1f1f447eb5747f1245cc330c45557bb83bdd605373be9e4d85",
+        "bytes": 47928
+      },
+      "scene.xml": {
+        "sha256": "90c279d1c8fbd4b30c41fcbfd28254610f0aa8ac9357fe65898cba127a05a674",
+        "bytes": 112929
+      },
+      "identity-evidence.json": {
+        "sha256": "b3922167819ccd4201f0913c351996e8023ac1aa81c36e8c6b83e76055d41e00",
+        "bytes": 1225592
+      }
+    },
+    "storage": "local only; hashes and Git evidence are not a raw backup",
+    "config": {
+      "output": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-reference-v1/trials/RGB--open-original--r0",
+      "variant": "open",
+      "seed": 11,
+      "required_dock": "dock_a",
+      "rounds": 24,
+      "timeout": 60.0,
+      "max_wall_s": 2400.0,
+      "max_input_tokens": 500000,
+      "max_quiet_rounds": 4,
+      "plan_replay": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+      "live_replan": false,
+      "executor": "skills",
+      "contact_profile": "local_contact_fine",
+      "grasp_model_dir": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+      "stage_model_dir": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+      "carry_act_model": null,
+      "carry_act_python": null,
+      "carry_act_max_steps": 900,
+      "carry_max_steps": 900,
+      "spawn_offset": [
+        -0.01,
+        0.004,
+        0.0
+      ],
+      "video_fps": 4,
+      "efficient_capture": true,
+      "route_overlap": true,
+      "reference_top": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/tests/fixtures/camera_goal_transport/reference-top.jpg"
+    },
+    "environment": {
+      "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+      "platform": "macOS-27.2-arm64-arm-64bit",
+      "mujoco": "3.12.0"
+    },
+    "obstacle_contact_steps": 0
+  },
+  {
+    "cohort": "parallel-reference-v1",
+    "condition": "ACT-original",
+    "source_sha": "6baecbaca65109e5de38de74b33deb07491b3b77",
+    "outcome": {
+      "whole_success": false,
+      "robot_result_available": true,
+      "failure_kind": "task_incomplete",
+      "failure_phase": "FINISHED",
+      "error": null,
+      "stop_reason": "",
+      "carry_entered": true,
+      "act_carry_entered": true,
+      "beam_success": false,
+      "wall_s": 286.13130920800177
+    },
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07771736717174588,
+          "displacement_m": 1.673534237561906,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "carry_clearance": {
+            "sampled_continuous_clearance": true,
+            "samples": 204,
+            "floor_contact_samples": 0,
+            "window_s": [
+              59.4600000001929,
+              79.85999999984426
+            ],
+            "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+            "max_sample_gap_s": 0.10000000000047748,
+            "first_floor_contact_s": null
+          },
+          "physical_success": false
+        },
+        "box": {
+          "max_lift_m": 0.06880446729061826,
+          "displacement_m": 2.3046069929893864,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "carry_clearance": {
+            "sampled_continuous_clearance": true,
+            "samples": 493,
+            "floor_contact_samples": 0,
+            "window_s": [
+              75.34649999994626,
+              124.60774999878612
+            ],
+            "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+            "max_sample_gap_s": 0.09999999999763531,
+            "first_floor_contact_s": null
+          },
+          "physical_success": true
+        }
+      },
+      "concurrent_transport": {
+        "simultaneous_loaded_motion_s": 0.0,
+        "intervals_s": [],
+        "minimum_displacement_per_sample_m": 0.001,
+        "max_sample_gap_s": 0.11,
+        "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+      },
+      "robot_robot_contact_samples": 0,
+      "robot_path_length_m": {
+        "r1": 2.5105907025503345,
+        "r2": 4.171020913371014,
+        "r3": 2.4883150160774514
+      },
+      "all_three_body_motion_sim_s": 4.699999999911597,
+      "weld_steps": 0,
+      "samples": 1343,
+      "stable_window_s": 0.9999999999763531
+    },
+    "concurrency_audit": {
+      "evaluator_source_sha": "6ff7f6f470f4c5a5920b2aad985c967949ba7ca6",
+      "source_files_sha256": {
+        "result.json": "55a4093b559297160943dea8fafb14ded83fa56605e6b56a9e26112c93aaadae",
+        "issued-commands.json": "f335522f177b2ebc8b97eab208a422b84dc5f3cc8f43d7796c0fd77d90130cbd",
+        "referee-only.jsonl": "0278d1538ea0a2f7b79c2c5f6753adc76a62176d8ff3681947479b1acbc026cd"
+      },
+      "execution_source_sha": "6baecbaca65109e5de38de74b33deb07491b3b77",
+      "original_reported": {
+        "simultaneous_loaded_motion_s": 0.0,
+        "intervals_s": [],
+        "minimum_displacement_per_sample_m": 0.001,
+        "max_sample_gap_s": 0.11,
+        "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+      },
+      "concurrent_transport": {
+        "simultaneous_loaded_motion_s": 1.599999999962165,
+        "intervals_s": [
+          [
+            75.60024999994026,
+            75.7002499999379
+          ],
+          [
+            75.80024999993553,
+            75.90024999993317
+          ],
+          [
+            76.0002499999308,
+            76.10024999992844
+          ],
+          [
+            76.20024999992607,
+            76.30024999992371
+          ],
+          [
+            76.40024999992134,
+            76.50024999991898
+          ],
+          [
+            76.60024999991661,
+            76.70024999991425
+          ],
+          [
+            76.80024999991188,
+            76.90024999990952
+          ],
+          [
+            77.00024999990715,
+            77.10024999990479
+          ],
+          [
+            77.20024999990243,
+            77.30024999990006
+          ],
+          [
+            77.4002499998977,
+            77.50024999989533
+          ],
+          [
+            77.60024999989297,
+            77.7002499998906
+          ],
+          [
+            77.80024999988824,
+            77.90024999988587
+          ],
+          [
+            78.00024999988351,
+            78.10024999988114
+          ],
+          [
+            78.20024999987878,
+            78.30024999987641
+          ],
+          [
+            79.00024999985986,
+            79.1002499998575
+          ],
+          [
+            79.20024999985513,
+            79.30024999985277
+          ]
+        ],
+        "minimum_displacement_per_sample_m": 0.001,
+        "max_sample_gap_s": 0.11,
+        "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+      },
+      "reason": "Merge adjoining per-robot TRANSIT leases before comparing the common referee sample clock. Raw physics and original result remain unchanged."
+    },
+    "raw": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-reference-v1/trials/ACT-original--open-original--r0",
+    "files": {
+      "solo-raw-actions.json": {
+        "sha256": "52a67dea73a7792dc9e0a416d31d388910539d52554c5cc9ab658a8308750b4f",
+        "bytes": 962002
+      },
+      "pair-replay.json": {
+        "sha256": "a652b9c196fe8763656b8bd6e849e2a1c12ccb2dde69164479c0f53a6333883d",
+        "bytes": 14888
+      },
+      "result.json": {
+        "sha256": "55a4093b559297160943dea8fafb14ded83fa56605e6b56a9e26112c93aaadae",
+        "bytes": 3412165
+      },
+      "evaluation-only.json": {
+        "sha256": "91401b17fa2b3af848c89c8c3797e704a37b0b90c7588430449dd4b3f8e7edff",
+        "bytes": 1970
+      },
+      "plan-feasibility-0.json": {
+        "sha256": "43ab0b8bb0261f9c2a85ebb6151658565c9fcb6084ee89d7ba4455c47ae54ed9",
+        "bytes": 2057
+      },
+      "solo-yield.json": {
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "bytes": 3
+      },
+      "scene-manifest.json": {
+        "sha256": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a",
+        "bytes": 606
+      },
+      "concurrency-audit.json": {
+        "sha256": "5d9c6b2057170f0da2b24046ebf6bd727baf0ac6c0056033b1af41ebf60dbe32",
+        "bytes": 2279
+      },
+      "actor-mission.json": {
+        "sha256": "f4775b1862bcbc899b940f700aa8459338d223807f3578940fa533cd82fcd709",
+        "bytes": 6130
+      },
+      "execution.mp4": {
+        "sha256": "67174f6531ff892a46f93135c8f5326efb9470c07b3773dd9cba16375fc5ac2d",
+        "bytes": 1031468
+      },
+      "pair-decisions.json": {
+        "sha256": "813ab56ba639daf0f3c03a274899f015339f4593f38eeb0e52e87bb6ff6c4194",
+        "bytes": 4630772
+      },
+      "committed-plan.json": {
+        "sha256": "9b58bccf9de2b62edfc86c6cabd161cb8c8fe3d32448a5ed2792cc7cfdef0b56",
+        "bytes": 579
+      },
+      "referee-only.jsonl": {
+        "sha256": "0278d1538ea0a2f7b79c2c5f6753adc76a62176d8ff3681947479b1acbc026cd",
+        "bytes": 1999193
+      },
+      "robot-programs.json": {
+        "sha256": "72fd7cdcfc6890dff0379957e5411578488f6f4b840304506e3cf6c3d984abe0",
+        "bytes": 8489
+      },
+      "skill-bindings.json": {
+        "sha256": "cb01d6f04ec81ba2244f9ba879b63da3a67eeab4697984c26ab3919502d0b424",
+        "bytes": 422
+      },
+      "solo-decisions.json": {
+        "sha256": "12890793d8be82a099a6022bfac7905d25bdf1465db21feaaf6a44181aafd1a5",
+        "bytes": 1557681
+      },
+      "issued-commands.json": {
+        "sha256": "f335522f177b2ebc8b97eab208a422b84dc5f3cc8f43d7796c0fd77d90130cbd",
+        "bytes": 290484
+      },
+      "episode-setup-only.json": {
+        "sha256": "e7d2c493aea24e897d5e2a7e627f74674cbd61ae87c7d6f44456598eb6b13ba9",
+        "bytes": 5491
+      },
+      "pair-grasp.json": {
+        "sha256": "8632c0b90b96ec1f1f447eb5747f1245cc330c45557bb83bdd605373be9e4d85",
+        "bytes": 47928
+      },
+      "scene.xml": {
+        "sha256": "90c279d1c8fbd4b30c41fcbfd28254610f0aa8ac9357fe65898cba127a05a674",
+        "bytes": 112929
+      },
+      "identity-evidence.json": {
+        "sha256": "b3922167819ccd4201f0913c351996e8023ac1aa81c36e8c6b83e76055d41e00",
+        "bytes": 1225592
+      }
+    },
+    "storage": "local only; hashes and Git evidence are not a raw backup",
+    "config": {
+      "output": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-reference-v1/trials/ACT-original--open-original--r0",
+      "variant": "open",
+      "seed": 11,
+      "required_dock": "dock_a",
+      "rounds": 24,
+      "timeout": 60.0,
+      "max_wall_s": 2400.0,
+      "max_input_tokens": 500000,
+      "max_quiet_rounds": 4,
+      "plan_replay": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+      "live_replan": false,
+      "executor": "skills",
+      "contact_profile": "local_contact_fine",
+      "grasp_model_dir": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+      "stage_model_dir": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+      "carry_act_model": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/model-20260918/act",
+      "carry_act_python": "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python",
+      "carry_act_max_steps": 900,
+      "carry_max_steps": 900,
+      "spawn_offset": [
+        -0.01,
+        0.004,
+        0.0
+      ],
+      "video_fps": 4,
+      "efficient_capture": true,
+      "route_overlap": true,
+      "reference_top": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/tests/fixtures/camera_goal_transport/reference-top.jpg"
+    },
+    "environment": {
+      "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+      "platform": "macOS-27.2-arm64-arm-64bit",
+      "mujoco": "3.12.0"
+    },
+    "obstacle_contact_steps": 0
+  },
+  {
+    "cohort": "parallel-reference-v2",
+    "condition": "RGB",
+    "source_sha": "6ff7f6f470f4c5a5920b2aad985c967949ba7ca6",
+    "outcome": {
+      "whole_success": true,
+      "robot_result_available": true,
+      "failure_kind": null,
+      "failure_phase": "FINISHED",
+      "error": null,
+      "stop_reason": "",
+      "carry_entered": true,
+      "act_carry_entered": false,
+      "beam_success": true,
+      "robot_robot_contact_samples": 0,
+      "wall_s": 347.3164258329998
+    },
+    "evaluation": {
+      "physical_success": true,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07771018721422365,
+          "displacement_m": 1.6800151785157196,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "carry_clearance": {
+            "sampled_continuous_clearance": true,
+            "samples": 237,
+            "floor_contact_samples": 0,
+            "window_s": [
+              59.4600000001929,
+              83.15999999976741
+            ],
+            "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+            "max_sample_gap_s": 0.10000000000047748,
+            "first_floor_contact_s": null
+          },
+          "physical_success": true
+        },
+        "box": {
+          "max_lift_m": 0.06880443639670472,
+          "displacement_m": 2.307940654734569,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "carry_clearance": {
+            "sampled_continuous_clearance": true,
+            "samples": 535,
+            "floor_contact_samples": 0,
+            "window_s": [
+              71.44425000003854,
+              124.91074999877895
+            ],
+            "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+            "max_sample_gap_s": 0.09999999999763531,
+            "first_floor_contact_s": null
+          },
+          "physical_success": true
+        }
+      },
+      "concurrent_transport": {
+        "simultaneous_loaded_motion_s": 4.799999999886495,
+        "intervals_s": [
+          [
+            71.70025000003248,
+            71.80025000003012
+          ],
+          [
+            71.90025000002775,
+            72.00025000002539
+          ],
+          [
+            72.10025000002302,
+            72.20025000002066
+          ],
+          [
+            72.3002500000183,
+            72.40025000001593
+          ],
+          [
+            72.50025000001357,
+            72.6002500000112
+          ],
+          [
+            72.70025000000884,
+            72.80025000000647
+          ],
+          [
+            72.9002500000041,
+            73.00025000000174
+          ],
+          [
+            73.10024999999938,
+            73.20024999999701
+          ],
+          [
+            73.30024999999465,
+            73.40024999999228
+          ],
+          [
+            73.50024999998992,
+            73.60024999998755
+          ],
+          [
+            73.70024999998519,
+            73.80024999998282
+          ],
+          [
+            73.90024999998046,
+            74.0002499999781
+          ],
+          [
+            74.10024999997573,
+            74.20024999997337
+          ],
+          [
+            74.300249999971,
+            74.40024999996864
+          ],
+          [
+            75.10024999995208,
+            75.20024999994972
+          ],
+          [
+            75.30024999994735,
+            75.40024999994499
+          ],
+          [
+            75.50024999994262,
+            75.60024999994026
+          ],
+          [
+            75.7002499999379,
+            75.80024999993553
+          ],
+          [
+            75.90024999993317,
+            76.0002499999308
+          ],
+          [
+            76.10024999992844,
+            76.20024999992607
+          ],
+          [
+            76.30024999992371,
+            76.40024999992134
+          ],
+          [
+            76.50024999991898,
+            76.60024999991661
+          ],
+          [
+            76.70024999991425,
+            76.80024999991188
+          ],
+          [
+            76.90024999990952,
+            77.00024999990715
+          ],
+          [
+            77.10024999990479,
+            77.20024999990243
+          ],
+          [
+            77.30024999990006,
+            77.4002499998977
+          ],
+          [
+            78.30024999987641,
+            78.40024999987405
+          ],
+          [
+            78.50024999987168,
+            78.60024999986932
+          ],
+          [
+            78.70024999986695,
+            78.80024999986459
+          ],
+          [
+            78.90024999986223,
+            79.00024999985986
+          ],
+          [
+            79.1002499998575,
+            79.20024999985513
+          ],
+          [
+            79.30024999985277,
+            79.4002499998504
+          ],
+          [
+            79.50024999984804,
+            79.60024999984567
+          ],
+          [
+            79.70024999984331,
+            79.80024999984094
+          ],
+          [
+            79.90024999983858,
+            80.00024999983621
+          ],
+          [
+            80.10024999983385,
+            80.20024999983148
+          ],
+          [
+            80.30024999982912,
+            80.40024999982676
+          ],
+          [
+            80.50024999982439,
+            80.60024999982203
+          ],
+          [
+            80.70024999981966,
+            80.8002499998173
+          ],
+          [
+            80.90024999981493,
+            81.00024999981257
+          ],
+          [
+            81.1002499998102,
+            81.20024999980784
+          ],
+          [
+            81.30024999980547,
+            81.40024999980311
+          ],
+          [
+            81.50024999980074,
+            81.60024999979838
+          ],
+          [
+            81.70024999979601,
+            81.80024999979365
+          ],
+          [
+            81.90024999979128,
+            82.00024999978892
+          ],
+          [
+            82.10024999978656,
+            82.20024999978419
+          ],
+          [
+            82.30024999978183,
+            82.40024999977946
+          ],
+          [
+            82.5002499997771,
+            82.60024999977473
+          ]
+        ],
+        "minimum_displacement_per_sample_m": 0.001,
+        "max_sample_gap_s": 0.11,
+        "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+      },
+      "robot_robot_contact_samples": 0,
+      "robot_path_length_m": {
+        "r1": 2.6498802945028124,
+        "r2": 4.158522452062435,
+        "r3": 2.609970601373892
+      },
+      "all_three_body_motion_sim_s": 10.999999999762622,
+      "weld_steps": 0,
+      "samples": 1346,
+      "stable_window_s": 0.9999999999763531
+    },
+    "concurrency_audit": null,
+    "raw": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-reference-v2/trials/RGB--open-original--r0",
+    "files": {
+      "solo-raw-actions.json": {
+        "sha256": "790302a61900a55d2fe59aa2f17f91011e1c5c349384189971b6cfb5730b95d9",
+        "bytes": 946482
+      },
+      "pair-replay.json": {
+        "sha256": "a652b9c196fe8763656b8bd6e849e2a1c12ccb2dde69164479c0f53a6333883d",
+        "bytes": 14888
+      },
+      "result.json": {
+        "sha256": "102ad705326faed540aeef1948de30c5c96806925ecaf2aebcd98ec3a9470c52",
+        "bytes": 3415650
+      },
+      "evaluation-only.json": {
+        "sha256": "1b68cd0135337b8b012acdb38227d5013e574fde15ea79256f42a2ae24f88117",
+        "bytes": 5330
+      },
+      "plan-feasibility-0.json": {
+        "sha256": "43ab0b8bb0261f9c2a85ebb6151658565c9fcb6084ee89d7ba4455c47ae54ed9",
+        "bytes": 2057
+      },
+      "solo-yield.json": {
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "bytes": 3
+      },
+      "scene-manifest.json": {
+        "sha256": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a",
+        "bytes": 606
+      },
+      "actor-mission.json": {
+        "sha256": "f4775b1862bcbc899b940f700aa8459338d223807f3578940fa533cd82fcd709",
+        "bytes": 6130
+      },
+      "execution.mp4": {
+        "sha256": "3bf27a7515786171d3e53d7ad064a5320140743248551b4f42c9569063c0a682",
+        "bytes": 1038558
+      },
+      "pair-decisions.json": {
+        "sha256": "99fabc22696a30c3493cdd90923048b57dcad8873029ec34474fc7f260e892ba",
+        "bytes": 4920866
+      },
+      "committed-plan.json": {
+        "sha256": "a8453d19eb2c2738e3379d0e4341028d0ddc4cf3b75aa8d4807e18b18308ce5d",
+        "bytes": 579
+      },
+      "referee-only.jsonl": {
+        "sha256": "9041f24a50e308c62cc7f4696ed1e575a19739e5e471a6aaf66274b504930720",
+        "bytes": 2007392
+      },
+      "robot-programs.json": {
+        "sha256": "72fd7cdcfc6890dff0379957e5411578488f6f4b840304506e3cf6c3d984abe0",
+        "bytes": 8489
+      },
+      "skill-bindings.json": {
+        "sha256": "0929f5eb79ea166b2fe36d829908e043af6d7ceef39e9727ace14522c48b9a60",
+        "bytes": 475
+      },
+      "solo-decisions.json": {
+        "sha256": "7b62b69f6f22b71d6b72dbb542f1ccf2b01544728b537a589f7987b8bd0427b6",
+        "bytes": 1640848
+      },
+      "issued-commands.json": {
+        "sha256": "96f3ca24cf3fcb222c57cdd748ff645b2e0cff134536731f9f39c128032855f8",
+        "bytes": 297450
+      },
+      "episode-setup-only.json": {
+        "sha256": "e7d2c493aea24e897d5e2a7e627f74674cbd61ae87c7d6f44456598eb6b13ba9",
+        "bytes": 5491
+      },
+      "pair-grasp.json": {
+        "sha256": "8632c0b90b96ec1f1f447eb5747f1245cc330c45557bb83bdd605373be9e4d85",
+        "bytes": 47928
+      },
+      "scene.xml": {
+        "sha256": "90c279d1c8fbd4b30c41fcbfd28254610f0aa8ac9357fe65898cba127a05a674",
+        "bytes": 112929
+      },
+      "identity-evidence.json": {
+        "sha256": "b3922167819ccd4201f0913c351996e8023ac1aa81c36e8c6b83e76055d41e00",
+        "bytes": 1225592
+      }
+    },
+    "storage": "local only; hashes and Git evidence are not a raw backup",
+    "config": {
+      "output": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-reference-v2/trials/RGB--open-original--r0",
+      "variant": "open",
+      "seed": 11,
+      "required_dock": "dock_a",
+      "rounds": 24,
+      "timeout": 60.0,
+      "max_wall_s": 2400.0,
+      "max_input_tokens": 500000,
+      "max_quiet_rounds": 4,
+      "plan_replay": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+      "live_replan": false,
+      "executor": "skills",
+      "contact_profile": "local_contact_fine",
+      "grasp_model_dir": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+      "stage_model_dir": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+      "carry_act_model": null,
+      "carry_act_python": null,
+      "carry_act_max_steps": 900,
+      "carry_max_steps": 900,
+      "spawn_offset": [
+        -0.01,
+        0.004,
+        0.0
+      ],
+      "video_fps": 4,
+      "efficient_capture": true,
+      "route_overlap": true,
+      "overlap_start": "grasp",
+      "reference_top": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/tests/fixtures/camera_goal_transport/reference-top.jpg"
+    },
+    "environment": {
+      "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+      "platform": "macOS-27.2-arm64-arm-64bit",
+      "mujoco": "3.12.0"
+    },
+    "obstacle_contact_steps": 0
+  },
+  {
+    "cohort": "parallel-reference-v2",
+    "condition": "ACT-original",
+    "source_sha": "6ff7f6f470f4c5a5920b2aad985c967949ba7ca6",
+    "outcome": {
+      "whole_success": false,
+      "robot_result_available": true,
+      "failure_kind": "execution_error",
+      "failure_phase": "RELEASE",
+      "error": "RuntimeError: visual placement confirmation failed",
+      "stop_reason": "",
+      "carry_entered": true,
+      "act_carry_entered": true,
+      "beam_success": true,
+      "robot_robot_contact_samples": 0,
+      "wall_s": 251.53994604200125
+    },
+    "evaluation": {
+      "physical_success": false,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07771871722022536,
+          "displacement_m": 1.665209115117198,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "carry_clearance": {
+            "sampled_continuous_clearance": true,
+            "samples": 212,
+            "floor_contact_samples": 0,
+            "window_s": [
+              59.4600000001929,
+              80.65999999982535
+            ],
+            "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+            "max_sample_gap_s": 0.10000000000047748,
+            "first_floor_contact_s": null
+          },
+          "physical_success": true
+        },
+        "box": {
+          "max_lift_m": 0.06880443639670472,
+          "displacement_m": 1.0563971470641917,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "carry_clearance": {
+            "sampled_continuous_clearance": true,
+            "samples": 156,
+            "floor_contact_samples": 0,
+            "window_s": [
+              71.44425000003854,
+              87.06349999967392
+            ],
+            "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+            "max_sample_gap_s": 0.09999999999763531,
+            "first_floor_contact_s": null
+          },
+          "physical_success": false
+        }
+      },
+      "concurrent_transport": {
+        "simultaneous_loaded_motion_s": 3.9999999999054126,
+        "intervals_s": [
+          [
+            71.70025000003248,
+            71.80025000003012
+          ],
+          [
+            71.90025000002775,
+            72.00025000002539
+          ],
+          [
+            72.10025000002302,
+            72.20025000002066
+          ],
+          [
+            72.3002500000183,
+            72.40025000001593
+          ],
+          [
+            72.50025000001357,
+            72.6002500000112
+          ],
+          [
+            72.70025000000884,
+            72.80025000000647
+          ],
+          [
+            72.9002500000041,
+            73.00025000000174
+          ],
+          [
+            73.10024999999938,
+            73.20024999999701
+          ],
+          [
+            73.30024999999465,
+            73.40024999999228
+          ],
+          [
+            73.50024999998992,
+            73.60024999998755
+          ],
+          [
+            73.70024999998519,
+            73.80024999998282
+          ],
+          [
+            73.90024999998046,
+            74.0002499999781
+          ],
+          [
+            74.10024999997573,
+            74.20024999997337
+          ],
+          [
+            74.300249999971,
+            74.40024999996864
+          ],
+          [
+            75.10024999995208,
+            75.20024999994972
+          ],
+          [
+            75.30024999994735,
+            75.40024999994499
+          ],
+          [
+            75.50024999994262,
+            75.60024999994026
+          ],
+          [
+            75.7002499999379,
+            75.80024999993553
+          ],
+          [
+            75.90024999993317,
+            76.0002499999308
+          ],
+          [
+            76.10024999992844,
+            76.20024999992607
+          ],
+          [
+            76.30024999992371,
+            76.40024999992134
+          ],
+          [
+            76.50024999991898,
+            76.60024999991661
+          ],
+          [
+            76.70024999991425,
+            76.80024999991188
+          ],
+          [
+            76.90024999990952,
+            77.00024999990715
+          ],
+          [
+            77.10024999990479,
+            77.20024999990243
+          ],
+          [
+            77.30024999990006,
+            77.4002499998977
+          ],
+          [
+            77.50024999989533,
+            77.60024999989297
+          ],
+          [
+            77.7002499998906,
+            77.80024999988824
+          ],
+          [
+            77.90024999988587,
+            78.00024999988351
+          ],
+          [
+            78.10024999988114,
+            78.20024999987878
+          ],
+          [
+            78.30024999987641,
+            78.40024999987405
+          ],
+          [
+            78.50024999987168,
+            78.60024999986932
+          ],
+          [
+            78.70024999986695,
+            78.80024999986459
+          ],
+          [
+            78.90024999986223,
+            79.00024999985986
+          ],
+          [
+            79.1002499998575,
+            79.20024999985513
+          ],
+          [
+            79.30024999985277,
+            79.4002499998504
+          ],
+          [
+            79.50024999984804,
+            79.60024999984567
+          ],
+          [
+            79.70024999984331,
+            79.80024999984094
+          ],
+          [
+            79.90024999983858,
+            80.00024999983621
+          ],
+          [
+            80.10024999983385,
+            80.20024999983148
+          ]
+        ],
+        "minimum_displacement_per_sample_m": 0.001,
+        "max_sample_gap_s": 0.11,
+        "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+      },
+      "robot_robot_contact_samples": 0,
+      "robot_path_length_m": {
+        "r1": 2.5632676600178255,
+        "r2": 1.6084514994135293,
+        "r3": 2.5228823709615797
+      },
+      "all_three_body_motion_sim_s": 9.399999999800457,
+      "weld_steps": 0,
+      "samples": 871,
+      "stable_window_s": 0.9999999999763531
+    },
+    "concurrency_audit": null,
+    "raw": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-reference-v2/trials/ACT-original--open-original--r0",
+    "files": {
+      "solo-raw-actions.json": {
+        "sha256": "f517d49c931daff02028e8c3710245bc26ccfca66b9c8cfc071793e312e438a7",
+        "bytes": 671199
+      },
+      "pair-replay.json": {
+        "sha256": "a652b9c196fe8763656b8bd6e849e2a1c12ccb2dde69164479c0f53a6333883d",
+        "bytes": 14888
+      },
+      "result.json": {
+        "sha256": "94fd94f6ae8ebae81ba59675e64c03a8b7bd142a2c9b7114d042b7024b543a3c",
+        "bytes": 3415009
+      },
+      "evaluation-only.json": {
+        "sha256": "fd0c24e8d1d15294ad79f8d1e67ddc13ad53670de8f26c8d91f74bcde9fdbffb",
+        "bytes": 4776
+      },
+      "plan-feasibility-0.json": {
+        "sha256": "43ab0b8bb0261f9c2a85ebb6151658565c9fcb6084ee89d7ba4455c47ae54ed9",
+        "bytes": 2057
+      },
+      "solo-yield.json": {
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "bytes": 3
+      },
+      "scene-manifest.json": {
+        "sha256": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a",
+        "bytes": 606
+      },
+      "actor-mission.json": {
+        "sha256": "f4775b1862bcbc899b940f700aa8459338d223807f3578940fa533cd82fcd709",
+        "bytes": 6130
+      },
+      "execution.mp4": {
+        "sha256": "135449bbb451ee39d65f55e65500a9e5b46e57eba875391dffdad5dfe2d1d616",
+        "bytes": 741726
+      },
+      "pair-decisions.json": {
+        "sha256": "eaaf1a2dfafd1294a75f749ccb04f6ee7a727835894f75f4877f8056a83642a5",
+        "bytes": 4665468
+      },
+      "committed-plan.json": {
+        "sha256": "a68902fbee8a19ea35112155f41a7636c6088273aab98590af0097a88c34ceb4",
+        "bytes": 579
+      },
+      "referee-only.jsonl": {
+        "sha256": "d939cb91063ff9e2fa7888a56cb70359033358116c45ecdcedf27f84631330c0",
+        "bytes": 1235247
+      },
+      "robot-programs.json": {
+        "sha256": "72fd7cdcfc6890dff0379957e5411578488f6f4b840304506e3cf6c3d984abe0",
+        "bytes": 8489
+      },
+      "skill-bindings.json": {
+        "sha256": "0929f5eb79ea166b2fe36d829908e043af6d7ceef39e9727ace14522c48b9a60",
+        "bytes": 475
+      },
+      "solo-decisions.json": {
+        "sha256": "41328c140230df40a1b1ac209b41a7cf28cd95fb0cb6b15fd4d48087f447123f",
+        "bytes": 544294
+      },
+      "issued-commands.json": {
+        "sha256": "e55cc248e0205962a306186aa9fc6e85f4771d240aa844dc5f047ab1ce71b708",
+        "bytes": 240278
+      },
+      "episode-setup-only.json": {
+        "sha256": "e7d2c493aea24e897d5e2a7e627f74674cbd61ae87c7d6f44456598eb6b13ba9",
+        "bytes": 5491
+      },
+      "pair-grasp.json": {
+        "sha256": "8632c0b90b96ec1f1f447eb5747f1245cc330c45557bb83bdd605373be9e4d85",
+        "bytes": 47928
+      },
+      "scene.xml": {
+        "sha256": "90c279d1c8fbd4b30c41fcbfd28254610f0aa8ac9357fe65898cba127a05a674",
+        "bytes": 112929
+      },
+      "identity-evidence.json": {
+        "sha256": "b3922167819ccd4201f0913c351996e8023ac1aa81c36e8c6b83e76055d41e00",
+        "bytes": 1225592
+      }
+    },
+    "storage": "local only; hashes and Git evidence are not a raw backup",
+    "config": {
+      "output": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-reference-v2/trials/ACT-original--open-original--r0",
+      "variant": "open",
+      "seed": 11,
+      "required_dock": "dock_a",
+      "rounds": 24,
+      "timeout": 60.0,
+      "max_wall_s": 2400.0,
+      "max_input_tokens": 500000,
+      "max_quiet_rounds": 4,
+      "plan_replay": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+      "live_replan": false,
+      "executor": "skills",
+      "contact_profile": "local_contact_fine",
+      "grasp_model_dir": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+      "stage_model_dir": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+      "carry_act_model": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/model-20260918/act",
+      "carry_act_python": "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python",
+      "carry_act_max_steps": 900,
+      "carry_max_steps": 900,
+      "spawn_offset": [
+        -0.01,
+        0.004,
+        0.0
+      ],
+      "video_fps": 4,
+      "efficient_capture": true,
+      "route_overlap": true,
+      "overlap_start": "grasp",
+      "reference_top": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/tests/fixtures/camera_goal_transport/reference-top.jpg"
+    },
+    "environment": {
+      "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+      "platform": "macOS-27.2-arm64-arm-64bit",
+      "mujoco": "3.12.0"
+    },
+    "obstacle_contact_steps": 0
+  },
+  {
+    "cohort": "parallel-reference-v3",
+    "condition": "ACT-original",
+    "source_sha": "db0a6a70e29bd1bea021b86036a029d1a5aac813",
+    "outcome": {
+      "whole_success": true,
+      "robot_result_available": true,
+      "failure_kind": null,
+      "failure_phase": "FINISHED",
+      "error": null,
+      "stop_reason": "",
+      "carry_entered": true,
+      "act_carry_entered": true,
+      "beam_success": true,
+      "robot_robot_contact_samples": 0,
+      "wall_s": 245.26746308399743
+    },
+    "evaluation": {
+      "physical_success": true,
+      "cargo": {
+        "beam": {
+          "max_lift_m": 0.07771871722022536,
+          "displacement_m": 1.6652091150581378,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "carry_clearance": {
+            "sampled_continuous_clearance": true,
+            "samples": 212,
+            "floor_contact_samples": 0,
+            "window_s": [
+              59.4600000001929,
+              80.65999999982535
+            ],
+            "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+            "max_sample_gap_s": 0.10000000000047748,
+            "first_floor_contact_s": null
+          },
+          "physical_success": true
+        },
+        "box": {
+          "max_lift_m": 0.06880443639670472,
+          "displacement_m": 2.307630412866419,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": true,
+          "released_supported_stable": true,
+          "carry_clearance": {
+            "sampled_continuous_clearance": true,
+            "samples": 511,
+            "floor_contact_samples": 0,
+            "window_s": [
+              71.44425000003854,
+              122.50774999883578
+            ],
+            "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+            "max_sample_gap_s": 0.09999999999763531,
+            "first_floor_contact_s": null
+          },
+          "physical_success": true
+        }
+      },
+      "concurrent_transport": {
+        "simultaneous_loaded_motion_s": 3.9999999999054126,
+        "intervals_s": [
+          [
+            71.70025000003248,
+            71.80025000003012
+          ],
+          [
+            71.90025000002775,
+            72.00025000002539
+          ],
+          [
+            72.10025000002302,
+            72.20025000002066
+          ],
+          [
+            72.3002500000183,
+            72.40025000001593
+          ],
+          [
+            72.50025000001357,
+            72.6002500000112
+          ],
+          [
+            72.70025000000884,
+            72.80025000000647
+          ],
+          [
+            72.9002500000041,
+            73.00025000000174
+          ],
+          [
+            73.10024999999938,
+            73.20024999999701
+          ],
+          [
+            73.30024999999465,
+            73.40024999999228
+          ],
+          [
+            73.50024999998992,
+            73.60024999998755
+          ],
+          [
+            73.70024999998519,
+            73.80024999998282
+          ],
+          [
+            73.90024999998046,
+            74.0002499999781
+          ],
+          [
+            74.10024999997573,
+            74.20024999997337
+          ],
+          [
+            74.300249999971,
+            74.40024999996864
+          ],
+          [
+            75.10024999995208,
+            75.20024999994972
+          ],
+          [
+            75.30024999994735,
+            75.40024999994499
+          ],
+          [
+            75.50024999994262,
+            75.60024999994026
+          ],
+          [
+            75.7002499999379,
+            75.80024999993553
+          ],
+          [
+            75.90024999993317,
+            76.0002499999308
+          ],
+          [
+            76.10024999992844,
+            76.20024999992607
+          ],
+          [
+            76.30024999992371,
+            76.40024999992134
+          ],
+          [
+            76.50024999991898,
+            76.60024999991661
+          ],
+          [
+            76.70024999991425,
+            76.80024999991188
+          ],
+          [
+            76.90024999990952,
+            77.00024999990715
+          ],
+          [
+            77.10024999990479,
+            77.20024999990243
+          ],
+          [
+            77.30024999990006,
+            77.4002499998977
+          ],
+          [
+            77.50024999989533,
+            77.60024999989297
+          ],
+          [
+            77.7002499998906,
+            77.80024999988824
+          ],
+          [
+            77.90024999988587,
+            78.00024999988351
+          ],
+          [
+            78.10024999988114,
+            78.20024999987878
+          ],
+          [
+            78.30024999987641,
+            78.40024999987405
+          ],
+          [
+            78.50024999987168,
+            78.60024999986932
+          ],
+          [
+            78.70024999986695,
+            78.80024999986459
+          ],
+          [
+            78.90024999986223,
+            79.00024999985986
+          ],
+          [
+            79.1002499998575,
+            79.20024999985513
+          ],
+          [
+            79.30024999985277,
+            79.4002499998504
+          ],
+          [
+            79.50024999984804,
+            79.60024999984567
+          ],
+          [
+            79.70024999984331,
+            79.80024999984094
+          ],
+          [
+            79.90024999983858,
+            80.00024999983621
+          ],
+          [
+            80.10024999983385,
+            80.20024999983148
+          ]
+        ],
+        "minimum_displacement_per_sample_m": 0.001,
+        "max_sample_gap_s": 0.11,
+        "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+      },
+      "robot_robot_contact_samples": 0,
+      "robot_path_length_m": {
+        "r1": 2.563267664854524,
+        "r2": 4.159041672422976,
+        "r3": 2.5228824318005136
+      },
+      "all_three_body_motion_sim_s": 9.399999999800457,
+      "weld_steps": 0,
+      "samples": 1321,
+      "stable_window_s": 0.9999999999763531
+    },
+    "concurrency_audit": null,
+    "raw": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-reference-v3/trials/ACT-original--open-original--r0",
+    "files": {
+      "solo-raw-actions.json": {
+        "sha256": "d465639419a067d1ab50a000c73f3b07085014f4a42d65dba7248c003ec54e0e",
+        "bytes": 946475
+      },
+      "pair-replay.json": {
+        "sha256": "a652b9c196fe8763656b8bd6e849e2a1c12ccb2dde69164479c0f53a6333883d",
+        "bytes": 14888
+      },
+      "result.json": {
+        "sha256": "dddeef02e6a8e5b3fe7f83307b16238429e791a04a5c76299213cb4b7ab26d53",
+        "bytes": 3415375
+      },
+      "evaluation-only.json": {
+        "sha256": "644bebaacfa40107061ffc4cce4b292da8e8eeba2315c70ebb662ecffecc2db8",
+        "bytes": 4772
+      },
+      "plan-feasibility-0.json": {
+        "sha256": "43ab0b8bb0261f9c2a85ebb6151658565c9fcb6084ee89d7ba4455c47ae54ed9",
+        "bytes": 2057
+      },
+      "solo-yield.json": {
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "bytes": 3
+      },
+      "scene-manifest.json": {
+        "sha256": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a",
+        "bytes": 606
+      },
+      "actor-mission.json": {
+        "sha256": "f4775b1862bcbc899b940f700aa8459338d223807f3578940fa533cd82fcd709",
+        "bytes": 6130
+      },
+      "execution.mp4": {
+        "sha256": "383798756a2d41328124489e5fd0f77702038509dad238e15faed7c4b2874584",
+        "bytes": 1026805
+      },
+      "pair-decisions.json": {
+        "sha256": "58b9ce4e107fa50f43523ce463675999d58d5d6477b3746e7760dd99e6359091",
+        "bytes": 4663493
+      },
+      "committed-plan.json": {
+        "sha256": "377d7f921ee8d672ee2538cd3081ffbd1ebd3e28fd32009e3cc31a67a26a7e67",
+        "bytes": 579
+      },
+      "referee-only.jsonl": {
+        "sha256": "818f6e0e258bccd6e6c179c9334563879e72094c57ef0c1e389ac9f22e279225",
+        "bytes": 1968970
+      },
+      "robot-programs.json": {
+        "sha256": "72fd7cdcfc6890dff0379957e5411578488f6f4b840304506e3cf6c3d984abe0",
+        "bytes": 8489
+      },
+      "skill-bindings.json": {
+        "sha256": "0929f5eb79ea166b2fe36d829908e043af6d7ceef39e9727ace14522c48b9a60",
+        "bytes": 475
+      },
+      "solo-decisions.json": {
+        "sha256": "9bea7dce9a1b1ee780138652da43381e7ba318e0f0b36fae33b7d0336351279a",
+        "bytes": 1584778
+      },
+      "issued-commands.json": {
+        "sha256": "74b06e4c7045084ee71608eae00898f8aa4a90ebdcb4797b471b57594c61b7e3",
+        "bytes": 296200
+      },
+      "episode-setup-only.json": {
+        "sha256": "e7d2c493aea24e897d5e2a7e627f74674cbd61ae87c7d6f44456598eb6b13ba9",
+        "bytes": 5491
+      },
+      "pair-grasp.json": {
+        "sha256": "8632c0b90b96ec1f1f447eb5747f1245cc330c45557bb83bdd605373be9e4d85",
+        "bytes": 47928
+      },
+      "scene.xml": {
+        "sha256": "90c279d1c8fbd4b30c41fcbfd28254610f0aa8ac9357fe65898cba127a05a674",
+        "bytes": 112929
+      },
+      "identity-evidence.json": {
+        "sha256": "b3922167819ccd4201f0913c351996e8023ac1aa81c36e8c6b83e76055d41e00",
+        "bytes": 1225592
+      }
+    },
+    "storage": "local only; hashes and Git evidence are not a raw backup",
+    "config": {
+      "output": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-reference-v3/trials/ACT-original--open-original--r0",
+      "variant": "open",
+      "seed": 11,
+      "required_dock": "dock_a",
+      "rounds": 24,
+      "timeout": 60.0,
+      "max_wall_s": 2400.0,
+      "max_input_tokens": 500000,
+      "max_quiet_rounds": 4,
+      "plan_replay": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+      "live_replan": false,
+      "executor": "skills",
+      "contact_profile": "local_contact_fine",
+      "grasp_model_dir": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+      "stage_model_dir": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+      "carry_act_model": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/model-20260918/act",
+      "carry_act_python": "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python",
+      "carry_act_max_steps": 900,
+      "carry_max_steps": 900,
+      "spawn_offset": [
+        -0.01,
+        0.004,
+        0.0
+      ],
+      "video_fps": 4,
+      "efficient_capture": true,
+      "route_overlap": true,
+      "overlap_start": "grasp",
+      "reference_top": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/tests/fixtures/camera_goal_transport/reference-top.jpg"
+    },
+    "environment": {
+      "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+      "platform": "macOS-27.2-arm64-arm-64bit",
+      "mujoco": "3.12.0"
+    },
+    "obstacle_contact_steps": 0
+  }
+]

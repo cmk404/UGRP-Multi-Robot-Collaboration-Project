@@ -1,0 +1,70 @@
+{
+  "episodes": 3,
+  "premature_pair_hold_episodes": 0,
+  "missed_terminal_episodes": 3,
+  "offline_termination_pass": false,
+  "eligible_for_default": false,
+  "scope": "Teacher-trajectory replay audit only. Any unilateral false done freezes the coupled pair. An offline pass still requires independent physical qualification; false-done frame percentage alone is not admission.",
+  "threshold": 0.65,
+  "results": [
+    {
+      "episode": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open",
+      "robots": {
+        "r1": {
+          "samples": 119,
+          "terminal_score": 0.041813142597675323,
+          "premature_stop_indices": [],
+          "first_stop_remaining_commands": 0
+        },
+        "r3": {
+          "samples": 119,
+          "terminal_score": 0.04237072542309761,
+          "premature_stop_indices": [],
+          "first_stop_remaining_commands": 0
+        }
+      },
+      "premature_pair_hold": false,
+      "terminal_missed": true
+    },
+    {
+      "episode": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-turn",
+      "robots": {
+        "r1": {
+          "samples": 423,
+          "terminal_score": 0.027449630200862885,
+          "premature_stop_indices": [],
+          "first_stop_remaining_commands": 0
+        },
+        "r3": {
+          "samples": 423,
+          "terminal_score": 0.015260092914104462,
+          "premature_stop_indices": [],
+          "first_stop_remaining_commands": 0
+        }
+      },
+      "premature_pair_hold": false,
+      "terminal_missed": true
+    },
+    {
+      "episode": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/teachers/trials/RGB--parallel-dev-zero--r0",
+      "robots": {
+        "r1": {
+          "samples": 119,
+          "terminal_score": 0.049921151250600815,
+          "premature_stop_indices": [],
+          "first_stop_remaining_commands": 0
+        },
+        "r3": {
+          "samples": 119,
+          "terminal_score": 0.0543082058429718,
+          "premature_stop_indices": [],
+          "first_stop_remaining_commands": 0
+        }
+      },
+      "premature_pair_hold": false,
+      "terminal_missed": true
+    }
+  ],
+  "predictions": "/Users/changmin/.codex/worktrees/research-act-training/ugrp/outputs/research-repair/model-terminal/development-predictions.json",
+  "predictions_sha256": "f6c72e140ba54aa2fc894b0eaaf92939a2ebaf57cb7648f7da3367f3e2647188"
+}

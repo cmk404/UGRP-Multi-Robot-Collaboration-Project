@@ -1,0 +1,85 @@
+{
+  "episodes": 3,
+  "premature_pair_hold_episodes": 3,
+  "missed_terminal_episodes": 0,
+  "offline_termination_pass": false,
+  "eligible_for_default": false,
+  "scope": "Teacher-trajectory replay audit only. Any unilateral false done freezes the coupled pair. An offline pass still requires independent physical qualification; false-done frame percentage alone is not admission.",
+  "threshold": 0.65,
+  "results": [
+    {
+      "episode": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-open",
+      "robots": {
+        "r1": {
+          "samples": 119,
+          "terminal_score": 1.0069847106933594,
+          "premature_stop_indices": [
+            117
+          ],
+          "first_stop_remaining_commands": 1
+        },
+        "r3": {
+          "samples": 119,
+          "terminal_score": 0.9532155394554138,
+          "premature_stop_indices": [
+            117
+          ],
+          "first_stop_remaining_commands": 1
+        }
+      },
+      "premature_pair_hold": true,
+      "terminal_missed": false
+    },
+    {
+      "episode": "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v1/development/teacher/dev-turn",
+      "robots": {
+        "r1": {
+          "samples": 423,
+          "terminal_score": 0.8821062445640564,
+          "premature_stop_indices": [
+            420,
+            421
+          ],
+          "first_stop_remaining_commands": 2
+        },
+        "r3": {
+          "samples": 423,
+          "terminal_score": 0.9991602897644043,
+          "premature_stop_indices": [
+            419,
+            420,
+            421
+          ],
+          "first_stop_remaining_commands": 3
+        }
+      },
+      "premature_pair_hold": true,
+      "terminal_missed": false
+    },
+    {
+      "episode": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/teachers/trials/RGB--parallel-dev-zero--r0",
+      "robots": {
+        "r1": {
+          "samples": 119,
+          "terminal_score": 0.9801034927368164,
+          "premature_stop_indices": [
+            117
+          ],
+          "first_stop_remaining_commands": 1
+        },
+        "r3": {
+          "samples": 119,
+          "terminal_score": 0.9686660766601562,
+          "premature_stop_indices": [
+            117
+          ],
+          "first_stop_remaining_commands": 1
+        }
+      },
+      "premature_pair_hold": true,
+      "terminal_missed": false
+    }
+  ],
+  "predictions": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/model-expanded/development-predictions.json",
+  "predictions_sha256": "5c196c857f6548c0a42782eb1dcbd50e1f5664489abe57757b55d94bfccfcc80"
+}

@@ -19,6 +19,23 @@ SCHEMA = "ugrp.rgb_recovery_kernel.v1"
 CHANNELS = (3, 4, 5)
 POOL = 4
 MAX_COMPONENTS = 24
+GRASP_TOP_ROI = [12, 6, 20, 19]
+
+
+def _local_mask(top_roi):
+    if top_roi != GRASP_TOP_ROI:
+        raise ValueError('unsupported trained TOP feature window')
+    own_count = 2 * (OWN_SIZE[0]//POOL) * (OWN_SIZE[1]//POOL)
+    yy, xx = np.indices((TOP_SIZE[1]//POOL, TOP_SIZE[0]//POOL))
+    keep = (xx >= top_roi[0]) & (xx < top_roi[2]) & (yy >= top_roi[1]) & (yy < top_roi[3])
+    return np.r_[np.ones(own_count, dtype=bool), np.tile(keep.ravel(), 2)]
+
+
+def _features(own, top, top_roi=None):
+    value = _compact(encode_views(own, top))
+    if top_roi is not None:
+        value[~_local_mask(top_roi)] = 0.
+    return value
 
 
 def _compact(encoded: np.ndarray) -> np.ndarray:
@@ -118,11 +135,13 @@ def _select_kernel(x: np.ndarray, y: np.ndarray, groups: list[str] | None = None
 
 
 def fit_recovery_model(reference_own: bytes, reference_top: bytes,
-                       samples: list[dict[str, Any]]) -> dict[str, Any]:
+                       samples: list[dict[str, Any]], *, top_roi=None) -> dict[str, Any]:
     """Fit a compact Gaussian-kernel inverse controller from RGB-labelled examples."""
     if not isinstance(samples, list) or not samples:
         raise ValueError("samples must be a non-empty list")
-    reference = _compact(encode_views(reference_own, reference_top))
+    # Select the representation BEFORE fitting PCA, support and novelty limits.
+    # This is a new model, not a mask applied to already learned directions.
+    reference = _features(reference_own, reference_top, top_roi)
     features, labels = [reference], [np.zeros(3)]  # explicit goal anchor
     case_ids: list[str] = []
     any_case_id = any(isinstance(sample, dict) and "case_id" in sample for sample in samples)
@@ -130,7 +149,7 @@ def fit_recovery_model(reference_own: bytes, reference_top: bytes,
         if not isinstance(sample, dict) or not all(
                 key in sample for key in ("own_jpeg", "top_jpeg", "correction_pulses")):
             raise ValueError("each sample requires two RGB views and correction_pulses")
-        features.append(_compact(encode_views(sample["own_jpeg"], sample["top_jpeg"])))
+        features.append(_features(sample["own_jpeg"], sample["top_jpeg"], top_roi))
         labels.append(_label(sample["correction_pulses"]))
         if any_case_id:
             case_id = sample.get("case_id")
@@ -167,7 +186,8 @@ def fit_recovery_model(reference_own: bytes, reference_top: bytes,
     return {
         "schema": SCHEMA, "channels": list(CHANNELS),
         "feature_spec": {"source": "encode_views", "pool": POOL,
-                         "components": int(len(components))},
+                         "components": int(len(components)),
+                         **({"trained_top_roi": list(top_roi)} if top_roi is not None else {})},
         "reference_compact": reference.tolist(),
         "pca_components": components.tolist(),
         "support_coordinates": coordinates.tolist(),
@@ -207,6 +227,13 @@ def _validated(model: Any) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarr
             or not math.isfinite(residual_limit) or residual_limit <= 0
             or not all(np.all(np.isfinite(v)) for v in (reference, components, support, alpha))):
         raise ValueError("recovery model has invalid shapes or values")
+    roi = model.get('feature_spec', {}).get('trained_top_roi')
+    if roi is not None:
+        mask = _local_mask(roi)
+        if (np.any(reference[~mask] != 0.) or np.max(np.abs(components[:, ~mask])) > 1e-8
+                or model.get('constant_background_top_band') is not None
+                or model.get('constant_background_top_roi') is not None):
+            raise ValueError('trained TOP window requires a model fitted in that representation')
     return (reference, components, support, alpha, float(bandwidth),
             float(residual_limit), diagnostics)
 
@@ -217,7 +244,7 @@ def predict_recovery(model: dict[str, Any], own_jpeg: bytes, top_jpeg: bytes,
     if isinstance(max_step, bool) or not isinstance(max_step, int) or not 1 <= max_step <= 100:
         raise ValueError("max_step must be an integer in 1..100")
     reference, components, support, alpha, bandwidth, residual_limit, diagnostics = _validated(model)
-    difference = _compact(encode_views(own_jpeg, top_jpeg)) - reference
+    difference = _features(own_jpeg, top_jpeg, model.get('feature_spec', {}).get('trained_top_roi')) - reference
     band = model.get('constant_background_top_band')
     if band is not None:
         # Optional task-local transfer of an existing model: discard only TOP

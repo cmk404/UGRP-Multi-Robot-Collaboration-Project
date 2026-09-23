@@ -1,0 +1,150 @@
+{
+  "base_cases": [
+    {
+      "split": "train",
+      "root": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/assets/verified-data/data/episodes/train-0",
+      "case": [
+        "open",
+        11,
+        "dock_a",
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "split": "train",
+      "root": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/assets/verified-data/data/episodes/train-1",
+      "case": [
+        "open",
+        11,
+        "dock_b",
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "split": "train",
+      "root": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/assets/verified-data/data/episodes/train-2",
+      "case": [
+        "shared_crossing",
+        11,
+        "dock_a",
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "split": "train",
+      "root": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/assets/verified-data/data/episodes/train-3",
+      "case": [
+        "north_blocked",
+        11,
+        "dock_a",
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "split": "train",
+      "root": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/assets/verified-data/data/episodes/train-4",
+      "case": [
+        "narrow_south",
+        11,
+        "dock_a",
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "split": "train",
+      "root": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/assets/verified-data/data/episodes/train-5",
+      "case": [
+        "rough_south",
+        11,
+        "dock_a",
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "split": "development",
+      "root": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/assets/verified-data/data/episodes/development-0",
+      "case": [
+        "open",
+        11,
+        "dock_a",
+        [
+          0.005,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "split": "development",
+      "root": "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/assets/verified-data/data/episodes/development-1",
+      "case": [
+        "shared_crossing",
+        11,
+        "dock_a",
+        [
+          -0.005,
+          0.0,
+          0.0
+        ]
+      ]
+    }
+  ],
+  "test_cases": [
+    [
+      "open",
+      11,
+      "dock_a",
+      [
+        -0.015,
+        0.008,
+        0.0
+      ]
+    ],
+    [
+      "open",
+      11,
+      "dock_a",
+      [
+        0.015,
+        -0.008,
+        0.0
+      ]
+    ],
+    [
+      "open",
+      11,
+      "dock_a",
+      [
+        0.0,
+        0.0,
+        1.0
+      ]
+    ]
+  ],
+  "test_overlap_with_base": false,
+  "scope": "Test perturbations excluded from original and added demonstrations. Whole-episode development split; new parallel development starts at the same pose as an original serial training episode, so development is not an unseen-initial-scene claim."
+}

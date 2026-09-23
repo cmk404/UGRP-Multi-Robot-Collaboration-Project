@@ -73,7 +73,9 @@ def test_submit_never_public_and_does_not_duplicate_dataset(prepared, monkeypatc
     monkeypatch.setattr(k,'cli',fake)
     assert k.submit(output) == 2
     indexing[0]=False
-    assert k.submit(output) == 0
+    assert k.submit(output, timeout_seconds=14400) == 0
+    assert json.loads((output/'job.json').read_text())['timeout_seconds'] == 14400
+    assert [c for c in calls if c[:2] == ('kernels','push')][0][-2:] == ('--timeout', '14400')
     assert len([c for c in calls if c[:2] == ('datasets','create')]) == 1
     assert all('--public' not in c for c in calls)
     with pytest.raises(ValueError,match='already attempted'):
@@ -193,3 +195,70 @@ def test_deb_transport_names_survive_kaggle_normalization(tmp_path, monkeypatch)
     manifest=deps.prepare_dependencies(root,output,wheelhouse)
     assert 'libosmesa6.deb' in manifest['files']
     assert all('~' not in name for name in manifest['files'])
+
+
+@pytest.mark.parametrize('raw', ['KernelWorkerStatus.CANCEL_ACKNOWLEDGED', 'cancelacknowledged', 'cancel_acknowledged'])
+def test_cancelled_enum_reaches_failure_evidence_collection(prepared, monkeypatch, raw):
+    output,state=prepared
+    calls=[]
+    def fake(*args):
+        calls.append(args)
+        if args[:2]==('kernels','status'):return f'kernel has status "{raw}"'
+        if args[:2]==('kernels','pull'):
+            target=Path(args[args.index('-p')+1])
+            k.write(target/'kernel-metadata.json', {'is_private':True})
+        return ''
+    monkeypatch.setattr(k,'cli',fake)
+    with pytest.raises(RuntimeError,match='no result ZIP'):k.collect(output)
+    assert any(c[:2]==('kernels','output') for c in calls)
+    assert json.loads((output/'job.json').read_text())['stage']=='remote_failed'
+
+
+def test_reuse_private_inputs_gets_new_run_identity_without_dataset_upload(prepared, monkeypatch):
+    old,original=prepared
+    original['dataset_private_verified']=True
+    k.write(old/'job.json',original)
+    new=old.parent/'reuse'
+    state=k.reuse_inputs(old,new,module='scripts.sim_quickstart',arguments=['--output','{output}'])
+    assert state['job_id']!=original['job_id'] and state['kernel']!=original['kernel']
+    assert state['dataset']==original['dataset']
+    assert state['source_filename']=='ugrp-source-'+original['job_id']+'.bin'
+    assert state['source_sha']==original['source_sha']
+    calls=[]
+    def fake(*args):
+        calls.append(args)
+        if args[:2]==('datasets','status'):return '{"status":"ready"}'
+        if args[:2]==('datasets','metadata'):
+            k.write(Path(args[-1])/'dataset-metadata.json',{'isPrivate':True})
+        if args[:2]==('kernels','push'):return 'Kernel version 1 successfully pushed'
+        return ''
+    monkeypatch.setattr(k,'cli',fake)
+    assert k.submit(new)==0
+    assert not any(c[:2]==('datasets','create') for c in calls)
+
+
+def test_git_delta_reproduces_exact_committed_source_and_rejects_tampering(tmp_path):
+    import base64
+    from scripts.colab_simulation_cli import pack
+    from scripts.kaggle_source_delta import apply_source_delta, object_delta
+    root=snapshot_repo(tmp_path)
+    (root/'docs').mkdir();(root/'docs/omitted.md').write_text('omitted old object')
+    subprocess.run(['git','add','.'],cwd=root,check=True)
+    subprocess.run(['git','-c','user.name=Test','-c','user.email=test@example.invalid','commit','-qm','omitted file'],cwd=root,check=True)
+    base=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()
+    old=tmp_path/'old';pack(root,old)
+    (root/'README.md').write_text('updated source')
+    (root/'docs/omitted.md').write_text('omitted new object')
+    (root/'harness').mkdir();(root/'harness/new.py').write_text('fixed = True\n')
+    subprocess.run(['git','add','.'],cwd=root,check=True)
+    subprocess.run(['git','-c','user.name=Test','-c','user.email=test@example.invalid','commit','-qm','update'],cwd=root,check=True)
+    new=tmp_path/'new';record=pack(root,new)
+    bundle=tmp_path/'delta.bundle'
+    bundle.write_bytes(object_delta(old/'source',new/'source'))
+    delta={'base_sha':base,'target_sha':record['source_sha'],'included':record['included'],
+           'sha256':k.digest(bundle),'content':base64.b64encode(bundle.read_bytes()).decode()}
+    with pytest.raises(ValueError,match='hash'):apply_source_delta(old/'source',{**delta,'sha256':'0'*64})
+    apply_source_delta(old/'source',delta)
+    assert (old/'source/harness/new.py').read_text()=='fixed = True\n'
+    assert (old/'source/README.md').read_text()=='updated source'
+    assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=old/'source',text=True).strip()==record['source_sha']

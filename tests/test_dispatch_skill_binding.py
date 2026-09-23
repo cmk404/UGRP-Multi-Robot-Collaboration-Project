@@ -14,6 +14,38 @@ from sim.research_dispatch_arena import authored_map
 from scripts.dispatch_pair_skill import BoundPairSkill
 
 
+def test_efficient_pair_capture_preserves_consumed_images_and_default(tmp_path):
+    from scripts.run_dispatch_skills import SkillScene
+    scene=SkillScene({},tmp_path)
+    (tmp_path/'rgb').mkdir()
+    scene.world=SimpleNamespace(
+        render_team_jpeg=Mock(side_effect=lambda **kw:kw['camera'].encode()),
+        render_jpeg=Mock(side_effect=lambda **kw:kw['robot_id'].encode()))
+    selection={'own_robots':('r2','r3'),'overview':False}
+    baseline=scene.capture('baseline',**selection)
+    assert scene.world.render_team_jpeg.call_count==2
+    assert scene.world.render_jpeg.call_count==3
+    assert (tmp_path/'baseline-overview.jpg').exists()
+    scene.world.render_team_jpeg.reset_mock();scene.world.render_jpeg.reset_mock()
+    scene.efficient_capture=True
+    optimized=scene.capture('optimized',**selection)
+    assert scene.world.render_team_jpeg.call_count==1
+    assert scene.world.render_jpeg.call_count==2
+    assert not (tmp_path/'optimized-overview.jpg').exists()
+    for rid in ('r2','r3'):
+        for key in ('own_bytes','top_bytes'):
+            assert optimized[rid][key]==baseline[rid][key]
+        for key in ('own_rgb','shared_top_rgb'):
+            assert optimized[rid][key]['sha256']==baseline[rid][key]['sha256']
+    # Existing TOP-only consumers use r1 even when r1 is not in the pair.
+    assert optimized['r1']['top_bytes']==baseline['r1']['top_bytes']
+    assert 'own_bytes' not in optimized['r1']
+    assert all(frame['frame_id']==2 for frame in optimized.values())
+    scene.world.render_jpeg.reset_mock()
+    assert all('own_bytes' in frame for frame in scene.capture('planning').values())
+    assert scene.world.render_jpeg.call_count==3
+
+
 def committed(order=('r1','r3','r2'),after=False):
     plan=validate_dispatch_plan({'dock':'dock_b','tasks':[
         {'id':'beam_job','object':'beam','participants':list(order[:2]),'route':'north','after':['box_job'] if after else []},
@@ -60,6 +92,79 @@ def test_task_dependencies_and_resource_occupancy_persist_on_revoke():
     assert b.permission('beam','GRASP') and b.permission('beam','TRANSIT')
     locks=copy.deepcopy(b.locks);b.revoked=True
     assert not b.permission('box','TRANSIT') and b.locks==locks
+
+
+def test_route_overlap_has_independent_travel_and_exclusive_unload():
+    b=SkillBindings(committed(),authored_map('open'),route_overlap=True)
+    assert b.permission('beam','GRASP')
+    assert not b.permission('box','GRASP')
+    b.note_transit_command('beam')
+    assert b.permission('box','GRASP') and b.permission('box','TRANSIT')
+    assert b.permission('beam','TRANSIT')
+    assert set(b.locks)=={'north_gate','south_gate'}
+    assert not b.permission('box','UNLOAD')
+    assert b.permission('beam','UNLOAD')
+    locks=copy.deepcopy(b.locks);b.revoked=True
+    assert not b.permission('box','UNLOAD') and b.locks==locks
+    b.revoked=False;b.finish('beam')
+    assert b.permission('box','UNLOAD')
+    assert b.locks=={'south_gate':'box_job','dispatch_apron':'box_job'}
+
+
+def test_route_overlap_does_not_remove_agreed_dependencies_or_assume_moving_obstacles():
+    with pytest.raises(ValueError,match='dependencies are never removed'):
+        SkillBindings(committed(after=True),authored_map('open'),route_overlap=True)
+    with pytest.raises(ValueError,match='moving-obstacle'):
+        SkillBindings(committed(),authored_map('shared_crossing'),route_overlap=True)
+
+
+def test_open_pickup_overlap_waits_for_issued_pair_grasp_then_admits_box():
+    b=SkillBindings(committed(),authored_map('open'),route_overlap=True,overlap_start='grasp')
+    assert not b.permission('box','GRASP')
+    assert b.permission('beam','GRASP')
+    assert not b.permission('box','GRASP')  # Grant alone is not an issued command.
+    b.note_grasp_command('beam')
+    assert b.permission('box','GRASP') and b.permission('box','TRANSIT')
+    assert not b.permission('box','UNLOAD')
+    assert b.transit_started==set()
+
+
+def test_route_overlap_queue_is_at_rgb_staging_point_before_unload():
+    from harness.dispatch_skill_binding import ImageRoute,pixel_from_map
+    b=SkillBindings(committed(),authored_map('open'),route_overlap=True)
+    raw=Path('tests/fixtures/dispatch_skill_transfer/box-top-held.jpg').read_bytes()
+    route=ImageRoute(b,'box');_,e=route.observe(raw)
+    assert len(route.points)==7
+    west=b.static_map['regions']['dispatch_apron']['center_m'][0]-b.static_map['regions']['dispatch_apron']['half_extents_m'][0]
+    assert route.points[1][0]==pytest.approx(pixel_from_map([west-.20,0],b.static_map,(720,960))[0])
+    route.index=1;route.points[1]=np.array(e['cargo_center_px'])
+    for _ in range(4):
+        action,e=route.observe(raw)
+        assert e['waiting_for_resource'] and route.index==1
+        assert action['forward']==action['left']==0.
+    b.finish('beam')
+    route.observe(raw);route.observe(raw)
+    assert route.index==2 and b.locks['dispatch_apron']=='box_job'
+
+
+@pytest.mark.parametrize('name,expected',[('inside',True),('outside',False),('inside-act-serial',True),('inside-act-parallel',True)])
+def test_full_release_outline_rejects_trimmed_core_false_completion(name,expected):
+    import json,hashlib
+    from harness.dispatch_skill_binding import released_beam_envelope,pixel_from_map
+    root=Path('tests/fixtures/dispatch_release_boundary');record=json.loads((root/(name+'.json')).read_text())
+    raw=(root/(name+'.jpg')).read_bytes();assert hashlib.sha256(raw).hexdigest()==record['source_sha256']
+    m=authored_map('open');slot=m['docks']['dock_a']['slots']['beam'];b=record['prior']
+    lo=pixel_from_map(np.array(slot['center_m'])-slot['half_extents_m'],m,(720,960),height=.04)
+    hi=pixel_from_map(np.array(slot['center_m'])+slot['half_extents_m'],m,(720,960),height=.04)
+    lower,upper=np.minimum(lo,hi),np.maximum(lo,hi)
+    # Both old trimmed cores fit, including the physically outside beam.
+    old=np.array(b['corners4'])*[960,720]
+    assert np.all(old>=lower) and np.all(old<=upper)
+    envelope=released_beam_envelope(raw,b,m)
+    corners=np.array(envelope['corners_px'])
+    assert bool(np.all(corners>=lower) and np.all(corners<=upper))==expected
+    blank=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))[1].tobytes()
+    with pytest.raises(ValueError,match='silhouette lacks RGB support'):released_beam_envelope(blank,b,m)
 
 
 def test_resource_queue_does_not_exhaust_remaining_skill_decision(tmp_path):
@@ -116,6 +221,27 @@ def test_rgb_transform_preserves_pixels_without_reference_substitution():
     decoded=cv2.imdecode(np.frombuffer(aligned,np.uint8),cv2.IMREAD_COLOR)
     assert decoded[495,265,0]>220 and decoded[495,265,2]>220
     assert np.allclose(beam_feature(aligned)['center'],beam_feature(reference)['center'],atol=.003)
+
+
+def test_recorded_half_pixel_translation_does_not_create_unsupported_pose():
+    import gzip
+    import json
+    from harness.camera_varied_start_student import predict_stage
+    root=Path('tests/fixtures/dispatch_pixel_translation')
+    model=json.loads(gzip.decompress((root/'r1-forward.json.gz').read_bytes()))
+    reference=Path('tests/fixtures/camera_goal_transport/reference-top.jpg').read_bytes()
+    for name in ('pair-188-dock-top.jpg','pair-189-dock-top.jpg'):
+        raw=(root/name).read_bytes()
+        corrected,evidence=canonical_pair_top(raw,reference)
+        assert evidence['translation_px']==[212.,96.]
+        assert max(map(abs,evidence['translation_quantization_error_px']))<=.50005
+        assert predict_stage(model,b'',corrected)['ready']
+    # Reproduce the rejected frame with the former subpixel interpolation.
+    frame=cv2.imdecode(np.frombuffer(raw,np.uint8),cv2.IMREAD_COLOR)
+    shift=evidence['unquantized_translation_px']
+    blurred=cv2.warpAffine(frame,np.float32([[1,0,shift[0]],[0,1,shift[1]]]),(960,720),flags=cv2.INTER_LINEAR)
+    legacy=cv2.imencode('.jpg',blurred,[cv2.IMWRITE_JPEG_QUALITY,95])[1].tobytes()
+    assert not predict_stage(model,b'',legacy)['ok']
 
 
 def test_solo_navigation_cannot_skip_existing_attachment_failure():
@@ -181,6 +307,14 @@ def test_dispatch_box_route_rejects_cyan_floor_distractors():
     action,evidence=route.observe(raw)
     assert np.allclose(evidence['cargo_center_px'],[274,545],atol=2)
     assert not evidence['done'] and action['kind']=='mecanum'
+
+
+def test_overlap_route_requires_live_permission_check():
+    from harness.dispatch_skill_binding import ImageRoute
+    narrow=SimpleNamespace(static_map=authored_map('open'), tasks={'box':{'route':'south'}},
+                           plan={'dock':'dock_b'}, route_overlap=True)
+    with pytest.raises(ValueError,match='requires live permission check'):
+        ImageRoute(narrow,'box')
 
 
 def test_route_cannot_stop_in_diagonal_dead_zone():

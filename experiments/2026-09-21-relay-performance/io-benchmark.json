@@ -1,0 +1,65 @@
+{
+  "scope": "CPU runtime Contents transfer only; no robot, model calls, or GPU evaluation",
+  "started_unix": 1789980685.729311,
+  "benchmark": {
+    "scope": "Contents API only; no model or robot execution",
+    "model_calls": 0,
+    "request_bytes": 8207,
+    "response_bytes": 1048,
+    "request_sha256": "756d8b5ea7a18c3dbf337e8ab253c061f16956a797f7d8f32514d56edbc81bfe",
+    "response_sha256": "8478a08027728b86349dbf337d21afaf8c10d6fe18cbaecaea5f77f23cd25a30",
+    "rows": [
+      {
+        "pair": 0,
+        "mode": "sequential",
+        "wall_s": 2.543075173976831
+      },
+      {
+        "pair": 0,
+        "mode": "pooled_parallel",
+        "wall_s": 0.5504559479886666
+      },
+      {
+        "pair": 1,
+        "mode": "pooled_parallel",
+        "wall_s": 0.5417641799431294
+      },
+      {
+        "pair": 1,
+        "mode": "sequential",
+        "wall_s": 2.0085657950257882
+      },
+      {
+        "pair": 2,
+        "mode": "sequential",
+        "wall_s": 2.0890207630582154
+      },
+      {
+        "pair": 2,
+        "mode": "pooled_parallel",
+        "wall_s": 0.5603036830434576
+      },
+      {
+        "pair": 3,
+        "mode": "pooled_parallel",
+        "wall_s": 0.5664516770048067
+      },
+      {
+        "pair": 3,
+        "mode": "sequential",
+        "wall_s": 2.0943621129263192
+      }
+    ],
+    "median_batch_s": {
+      "sequential": 2.0916914379922673,
+      "pooled_parallel": 0.5553798155160621
+    },
+    "ratio": 3.766235969610555,
+    "verified": true,
+    "finished_unix": 1789980716.4275217,
+    "source_sha": "b0288f09890eb881028139a4aabe67484c9e9b93"
+  },
+  "verified": true,
+  "stop_exit_code": 0,
+  "finished_unix": 1789980718.2063036
+}

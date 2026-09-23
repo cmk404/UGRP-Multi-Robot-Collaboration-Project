@@ -13,10 +13,13 @@ import platform
 import re
 import subprocess
 import sys
+import threading
 import time
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT))
+from scripts.cloud_progress import copy_output,emit
 
 
 def sha256(path):
@@ -63,15 +66,23 @@ def run(output: Path, command: list[str], *, root: Path = ROOT) -> int:
         with (output / "run.log").open("w") as log:
             child = subprocess.Popen(
                 [sys.executable, str(root / "scripts/ugrp_session.py"), "run", session, "--", *command],
-                cwd=root, stdout=log, stderr=subprocess.STDOUT,
+                cwd=root, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,text=True,
+                env={**os.environ,'PYTHONUNBUFFERED':'1'},
             )
+            reader=threading.Thread(target=copy_output,args=(child.stdout,log),daemon=True);reader.start()
             try:
-                code = child.wait()
+                while child.poll() is None:
+                    try:child.wait(timeout=30)
+                    except subprocess.TimeoutExpired:emit('job_running',name=output.name,elapsed_s=time.time()-record['started_at_unix'])
+                code = child.returncode
             except KeyboardInterrupt:
                 # Stop only the process group registered by this session.
                 subprocess.run([sys.executable, str(root / "scripts/ugrp_session.py"), "stop", session], cwd=root)
                 child.wait()
                 code = 130
+            finally:
+                reader.join(timeout=5)
+                child.stdout.close()
     finally:
         record.update(exit_code=code, status="complete" if code == 0 else "failed", finished_at_unix=time.time())
         files = [p for p in sorted(output.rglob("*")) if p.is_file() and not p.is_symlink() and p != manifest]

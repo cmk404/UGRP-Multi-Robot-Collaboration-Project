@@ -1,0 +1,105 @@
+{
+  "controls": {
+    "efficient_capture": true,
+    "route_overlap": true,
+    "max_wall_s": 2400,
+    "max_carry_steps": 900,
+    "video_fps": 4,
+    "min_free_gib": 8,
+    "overlap_start": "grasp"
+  },
+  "grasp": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+  "stages": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+  "asset_sha256": {
+    "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied/model-r3-yaw.json": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied/model-r3-forward.json": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied/model-r1-lateral.json": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied/model-r3-lateral.json": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied/model-r1-yaw.json": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied/model-r1-forward.json": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied/varied-start-skill.json": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp/student-skill.json": "b244293aa1a5dd2efda1a0d6e8b15582d8a12a3e4d151d46cf679321535e0970",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp/r3-model.json": "8349e10ed659abf4bc62f6fcc62bf22d22ca95fe05d954b42b3883b0d070861d",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp/evaluation-fixture.json": "c2183ad250ea16606d652f91d117e4abb085f9c88b2ab0115de0ba93e1bc5f3f",
+    "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp/r1-model.json": "c6995cac23ccf2fd168fb222c2332b518507d7ea66921aaf0c231bc460598e45",
+    "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/model-20260918/act/model.safetensors": "ddf79d3577b9d66aa53e16fbe387bbe1039a5ddb0b4cc3caeb7292dc81dcd90e",
+    "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/model-20260918/act/config.json": "2a923ed3a16197841fd599301ed157bc2e3518e35a8fc99563f45d73f8089665",
+    "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/model-20260918/act/adapter.json": "6da54d883574929010bf4a79d2419cd6cdf1d719e5e8cf060be6e4212b3f6b2b",
+    "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/assets/verified-data/data/dataset.json": "b1df68d3ccc085898c07d8f8120971c1d3e55f85d23d6c58dbf7f541e8edbe0c",
+    "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/assets/training/model-r128-h4-s20260921/act/model.safetensors": "14e924d03a62d3ac54062440c77931f0f6d5616bddfef8c893e6dfb644c4c863",
+    "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/assets/training/model-r128-h4-s20260921/act/config.json": "a4391e9cd4c9d5b8dc266f9706bad0e276cd7540df00aeb9b1e3195c389e7110",
+    "/Users/changmin/.codex/worktrees/act-entry-repair/ugrp/outputs/entry-diagnosis/assets/training/model-r128-h4-s20260921/act/adapter.json": "cfc00170f7056da656087a5ae38718ded59d648c0817aadbaf29201eb986e50f",
+    "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/model-expanded/act/model.safetensors": "c98a640167110f7ee0b5fc2b1d5edde4a4065464c6c47519b366cc3ff8ee4e96",
+    "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/model-expanded/act/config.json": "a4391e9cd4c9d5b8dc266f9706bad0e276cd7540df00aeb9b1e3195c389e7110",
+    "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/model-expanded/act/adapter.json": "cfc00170f7056da656087a5ae38718ded59d648c0817aadbaf29201eb986e50f"
+  },
+  "scope": "Fixed exposed benchmark acceptance after unilateral stop handoff repair; not unseen generalization",
+  "conditions": {
+    "RGB": {},
+    "ACT-guarded": {
+      "model": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/model-expanded/act",
+      "stop_mode": "rgb_guarded"
+    },
+    "ACT-RGB-refined": {
+      "model": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/outputs/parallel-study-v1/model-expanded/act",
+      "stop_mode": "rgb_refined"
+    }
+  },
+  "test": [
+    {
+      "id": "qualification-1",
+      "variant": "open",
+      "seed": 11,
+      "dock": "dock_a",
+      "offset": [
+        -0.01,
+        0.004,
+        -0.5
+      ],
+      "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+    },
+    {
+      "id": "qualification-2",
+      "variant": "open",
+      "seed": 11,
+      "dock": "dock_a",
+      "offset": [
+        0.008,
+        -0.004,
+        0.5
+      ],
+      "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+    },
+    {
+      "id": "qualification-3",
+      "variant": "open",
+      "seed": 11,
+      "dock": "dock_a",
+      "offset": [
+        0.02,
+        0.003,
+        -1.0
+      ],
+      "plan": "/Users/changmin/.codex/worktrees/act-parallel-transport/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json"
+    }
+  ],
+  "expected_source_sha": "f70bd9b20e0972ce71f24d724211f4cd27f7786e",
+  "model_selection": {
+    "candidate_admission": "failed development terminal audit; 3/3 missed",
+    "model": "unchanged previous expanded model",
+    "audit": "terminal-candidate-development-audit.json",
+    "fresh_cases_inspected": true
+  },
+  "execution_layout": {
+    "maximum_simultaneous_owned_jobs": 2,
+    "partition": "disjoint trial_ids with unchanged full conditions and original ordering",
+    "timing_scope": "Variable shared Mac load; descriptive only"
+  },
+  "trial_ids": [
+    "RGB--qualification-1--r0",
+    "ACT-guarded--qualification-2--r0",
+    "ACT-RGB-refined--qualification-2--r0",
+    "RGB--qualification-3--r0"
+  ]
+}

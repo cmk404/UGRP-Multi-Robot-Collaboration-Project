@@ -48,9 +48,18 @@ def wrap(x):
 def detect_box(top):
     hsv = cv2.cvtColor(top, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv, np.array((80, 125, 35), np.uint8), np.array((100, 255, 255), np.uint8))
-    n, _, stats, centers = cv2.connectedComponentsWithStats(mask)
+    n, labels, stats, centers = cv2.connectedComponentsWithStats(mask)
+    # Software-rendered floor/JPEG speckles can pass area/aspect gates.
+    # Require a solid 3x3 interior, while preserving the original RGB centroid.
+    interior = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
+    # NVIDIA rendering can make dim floor texture form solid cyan JPEG blocks.
+    # The target's bright cyan interior must be present as well. Keep the
+    # original mask for its centroid; insufficient color evidence still holds.
+    bright = cv2.inRange(hsv, np.array((80, 125, 125), np.uint8), np.array((100, 255, 255), np.uint8))
     found = [i for i in range(1, n) if 25 <= stats[i, 4] <= 600
-             and .35 <= stats[i, 2] / max(1, stats[i, 3]) <= 2.8]
+             and .35 <= stats[i, 2] / max(1, stats[i, 3]) <= 2.8
+             and np.count_nonzero(interior[labels == i]) >= 25
+             and np.count_nonzero(bright[labels == i]) >= 25]
     if len(found) != 1:
         raise ValueError('cyan_target_missing_or_ambiguous')
     return centers[found[0]], int(stats[found[0], 4])
@@ -191,28 +200,7 @@ def validate_jev(body):
     return a['choice']
 
 
-class NoRedirect(urllib.request.HTTPRedirectHandler):
-    def redirect_request(self, *args, **kwargs): return None
-
-
-def post(body, url, key=None, timeout=30):
-    headers = {'Content-Type':'application/json'}
-    if key: headers['Authorization'] = 'Bearer ' + key
-    req = urllib.request.Request(url, json.dumps(body, allow_nan=False).encode(), headers)
-    start = time.perf_counter()
-    try:
-        with urllib.request.build_opener(NoRedirect).open(req, timeout=timeout) as response:
-            status, raw = response.status, response.read(2_000_000).decode()
-    except urllib.error.HTTPError as exc:
-        status, raw = exc.code, exc.read(2_000_000).decode(errors='replace')
-    except (OSError, urllib.error.URLError) as exc:
-        return {'status':'transport_error','error_type':type(exc).__name__, 'latency_s':time.perf_counter()-start}
-    if key: raw = raw.replace(key,'[REDACTED]')
-    result = {'http_status':status,'raw_response':raw,'latency_s':time.perf_counter()-start,'status':'http_error'}
-    if status == 200:
-        try: result['body'] = json.loads(raw); result['status'] = 'ok'
-        except ValueError: result['status'] = 'invalid_json'
-    return result
+from harness.model_http import NoRedirect, post
 
 
 def gemini_request(state, model):

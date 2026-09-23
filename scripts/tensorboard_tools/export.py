@@ -18,16 +18,20 @@ import time
 import tempfile
 import shutil
 import subprocess
+from scripts.carry_failure_metrics import issued_command_count
 
 from scripts.tensorboard_tools.rgb_communication import EXTRA_METRICS, RUN_SCHEMA, export_communication
 
 MAX_BYTES = 64 * 1024 * 1024
-HP_METRICS = ('result/wall_s', 'result/sim_s', 'result/commands', 'result/model_calls',
+HP_METRICS = ('process/exit_code', 'result/wall_s', 'result/sim_s', 'result/commands', 'result/model_calls',
               'result/input_tokens', 'result/output_tokens', 'result/cost_usd', 'result/model_latency_s',
               'claims/operator_session_complete',
               'evaluation/reported_success', 'claims/protocol_complete',
+              'evaluation/simultaneous_loaded_motion_s', 'evaluation/robot_robot_contact_samples',
               'claims/completed_task_claims', 'claims/tasks', 'claims/final_object_claims',
-              'training/final_loss', 'development/final_selection_score') + EXTRA_METRICS
+               'training/final_loss', 'development/final_selection_score',
+               'offline/episodes', 'offline/premature_pair_hold_episodes',
+               'offline/missed_terminal_episodes', 'offline/termination_pass') + EXTRA_METRICS
 SECRET = re.compile(r'authorization|cookie|password|secret|api.?key|access.?token|refresh.?token', re.I)
 
 
@@ -247,7 +251,43 @@ def export_execution(src, w, result, max_images):
             metrics['result/recorded_raw_commands'] = sum(
                 'action' in row for values in commands.values() for row in rows(values))
             meta['command_count_scope'] = 'recorded raw action rows only; excludes setup descriptions and internal macro servo commands'
+    carries = []
+    if family == 'dispatch-act':
+        entries = rows(src.read('pair-decisions.json', required=True))
+        carries = [(i, row) for i, row in enumerate(entries) if row.get('kind') == 'act_carry']
+        completed = sum(bool(obj(decision)) for _, row in carries
+                        for decision in obj(row.get('decisions')).values())
+        meta['act_carry_decision_rows'] = len(carries)
+        meta['completed_act_responses'] = completed
+        # llm_calls excludes local ACT. Preserve an explicit total if supplied.
+        if not finite(result.get('model_calls')):
+            external = result.get('llm_calls')
+            metrics['result/model_calls'] = completed + (external if finite(external) else 0)
+            meta['model_calls_scope'] = ('completed ACT responses plus recorded llm_calls'
+                                        if finite(external) else 'completed ACT responses only; external calls unknown')
+        if not finite(metrics['result/commands']):
+            issued = src.read('issued-commands.json')
+            if isinstance(issued, dict):
+                metrics['result/commands'] = issued_command_count(issued)
+                meta['commands_source'] = 'issued-commands.json; excludes initial SETUP target snapshot'
     success_field = next((k for k in ('success', 'transport_success', 'physical_success') if type(result.get(k)) is bool), None)
+    evaluation=obj(result.get('evaluation'))
+    concurrency=obj(evaluation.get('concurrent_transport'))
+    audit=src.read('concurrency-audit.json')
+    if audit is not None:
+        expected=obj(audit.get('source_files_sha256'))
+        if set(expected)!={'result.json','issued-commands.json','referee-only.jsonl'}:
+            raise ValueError('concurrency audit requires all original source hashes')
+        for name,digest in expected.items():
+            path=inside(src.root,name)
+            if path is None or sha(path.read_bytes())!=digest:
+                raise ValueError('concurrency audit source hash mismatch')
+            src.files[name]={'sha256':digest,'size':path.stat().st_size,'mtime_s':path.stat().st_mtime}
+        concurrency=obj(audit.get('concurrent_transport'))
+        meta['concurrency_evaluation_source']='concurrency-audit.json; original result preserved'
+        w.text('evaluation/concurrency_audit',audit)
+    metrics['evaluation/simultaneous_loaded_motion_s']=concurrency.get('simultaneous_loaded_motion_s')
+    metrics['evaluation/robot_robot_contact_samples']=evaluation.get('robot_robot_contact_samples')
     if success_field: metrics['evaluation/reported_success'] = int(result[success_field])
     meta['success_source_field'] = success_field
     meta['outcome'] = str(result[success_field]) if success_field else 'unrecorded'
@@ -284,15 +324,16 @@ def export_execution(src, w, result, max_images):
                 if finite(reply.get('confidence')): w.scalar('model_confidence_not_success/' + slug(rid), reply['confidence'], i)
                 if i in selected: emit_images(w, src, {slug(rid) + '/own': req.get('own_rgb'), 'shared/top/' + slug(rid): req.get('top_rgb')}, i, 'scene')
     elif family == 'dispatch-act':
-        entries = rows(src.read('pair-decisions.json', required=True))
-        carries = [(i, row) for i, row in enumerate(entries) if row.get('kind') == 'act_carry']
         selected = sample_indices(len(carries), max_images)
         # Carry prerequisites are not inferred from ACT being configured.
-        meta['act_carry_decision_rows'] = len(carries)
+        call_index = 0
         for j, (i, row) in enumerate(carries):
             w.scalar('execution/sim_time_s', row.get('sim_time_s'), j)
             for slot, inp in obj(row.get('inputs')).items():
                 inp = obj(inp); rid = slug(inp.get('physical_robot_id', slot)); decision = obj(obj(row.get('decisions')).get(slot))
+                if decision:
+                    w.scalar('execution/model_latency_s', inp.get('inference_wall_s'), call_index)
+                    call_index += 1
                 w.text('decisions/' + rid, {'input': inp, 'decision': decision, 'permission': row.get('permission'), 'source_index': i}, j)
                 for k in ('forward', 'left', 'turn'): w.scalar('issued_prediction/' + rid + '/' + k, obj(decision.get('action')).get(k), j)
                 if type(decision.get('done')) is bool: w.scalar('claims/' + rid + '/done', int(decision['done']), j)
@@ -310,6 +351,63 @@ def exporter_version():
     except (OSError, subprocess.SubprocessError): return {'sha': None, 'working_tree_dirty': None}
 
 
+def export_cloud_job(src, w, data):
+    """Process completion is distinct from robot success, including setup failures."""
+    if (data.get('status') not in {'complete', 'completed', 'failed'}
+            or type(data.get('exit_code')) is not int
+            or not finite(data.get('finished_at_unix'))):
+        raise ValueError('Cloud job has no terminal process evidence')
+    metrics = {'process/exit_code': data['exit_code']}
+    start, end = data.get('started_at_unix'), data['finished_at_unix']
+    if finite(start) and end >= start:
+        metrics['result/wall_s'] = end - start
+    for name, value in metrics.items(): w.scalar(name, value)
+    w.text('process/result', data)
+    recovery = src.read('result/recovery-status.json')
+    if recovery is not None: w.text('process/recovery', recovery)
+    return {'family': 'cloud-job', 'policy': 'environment',
+            'source_sha': data.get('source_sha'), 'scope': data.get('scope'),
+            'outcome': 'process_exit_' + str(data['exit_code']),
+            'success_source_field': None}, metrics
+
+
+def export_hardware_probe(src, w, data):
+    torch = obj(data.get('torch'))
+    if type(torch.get('available')) is not bool or type(torch.get('count')) is not int:
+        raise ValueError('No completed GPU inventory evidence')
+    metrics = {'hardware/gpu_count': torch['count'],
+               'hardware/cuda_available': int(torch['available']),
+               'hardware/internet_http_status': data.get('internet_http_status')}
+    for name, value in metrics.items(): w.scalar(name, value)
+    w.text('hardware/inventory', data)
+    provenance = src.read('probe-provenance.json')
+    if provenance: w.text('hardware/provenance', provenance)
+    return {'family':'hardware-probe', 'policy':'environment',
+            'outcome':'gpu_available' if torch['available'] else 'gpu_unavailable',
+            'scope':'Observed cloud devices and connectivity; no robot evaluation',
+            'success_source_field':None}, metrics
+
+
+def export_termination_audit(src, w, data):
+    """Recompute the saved-prediction audit; never call it physical success."""
+    from scripts.audit_carry_termination import audit
+    predictions=src.read('predictions.json',required=True)
+    if src.files['predictions.json']['sha256']!=data.get('predictions_sha256'):
+        raise ValueError('termination audit prediction hash mismatch')
+    checked=audit(predictions,threshold=data['threshold'])
+    if any(data.get(k)!=v for k,v in checked.items()):
+        raise ValueError('termination audit does not match saved predictions')
+    metrics={'offline/'+k:checked[k] for k in (
+        'episodes','premature_pair_hold_episodes','missed_terminal_episodes')}
+    metrics['offline/termination_pass']=int(checked['offline_termination_pass'])
+    for name,value in metrics.items():w.scalar(name,value)
+    w.text('offline/termination_audit',data)
+    return {'family':'act-termination-audit','policy':'ACT','case':src.root.name,
+            'outcome':'offline_pass' if checked['offline_termination_pass'] else 'offline_fail',
+            'scope':checked['scope'],'success_source_field':None,
+            'predictions_sha256':data['predictions_sha256']},metrics
+
+
 def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=False):
     """Export one source once. Existing destinations are rejected (no duplicate steps)."""
     source, output = Path(source).resolve(), Path(output).resolve()
@@ -325,6 +423,12 @@ def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=Fa
     if isinstance(training, dict) and rows(training.get('progress')):
         kind, data = 'training', training
     elif isinstance(result, dict): kind, data = 'execution', result
+    elif (source / 'termination-audit.json').exists():
+        kind, data = 'termination-audit', src.read('termination-audit.json', required=True)
+    elif (source / 'gpu-inventory.json').exists():
+        kind, data = 'hardware-probe', src.read('gpu-inventory.json', required=True)
+    elif (source / 'run.json').exists():
+        kind, data = 'cloud-job', src.read('run.json', required=True)
     elif (source / 'progress.json').exists():
         kind, data = 'training', {'progress': src.read('progress.json', required=True)}
     else: raise ValueError('No complete result.json or supported training progress; source left untouched')
@@ -334,7 +438,11 @@ def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=Fa
     manifest = {'schema': 'ugrp.tensorboard-export.v1', 'source': str(source), 'exported_at_s': at,
                 'event_wall_time': 'export time, not historical execution time', 'exporter': exporter_version(), 'complete': False}
     try:
-        meta, metrics = export_training(src, w, data) if kind == 'training' else export_execution(src, w, data, max_images)
+        if kind == 'training': meta, metrics = export_training(src, w, data)
+        elif kind == 'cloud-job': meta, metrics = export_cloud_job(src, w, data)
+        elif kind == 'hardware-probe': meta, metrics = export_hardware_probe(src, w, data)
+        elif kind == 'termination-audit': meta, metrics = export_termination_audit(src, w, data)
+        else: meta, metrics = export_execution(src, w, data, max_images)
         videos = []
         video_names = ('motion.mp4', 'execution.mp4')
         if isinstance(result, dict) and result.get('schema_version') == RUN_SCHEMA:

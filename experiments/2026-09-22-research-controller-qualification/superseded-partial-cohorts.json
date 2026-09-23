@@ -1,0 +1,56 @@
+{
+  "recorded_at": "2026-09-22T07:25:13.174944+00:00",
+  "reason": "Superseded after confirming unilateral ACT stop did not trigger bounded RGB handoff, allowing motion to resume and diverge. These are partial diagnostics, not final failure-rate cohorts. All raw originals remain unchanged.",
+  "runs": [
+    {
+      "name": "qualification-v2",
+      "source_sha": "738c4de1ba8d7cb5c0b91f47768a0c3b7ca31525",
+      "report": "/Users/changmin/.codex/worktrees/research-controller-validation/ugrp/outputs/research-repair/qualification-v2/report.json",
+      "report_sha256": "980118d2286bd7c5a397229e5a8c6fedf03d3ef591418941634c94c3fb4e317c",
+      "planned": 9,
+      "completed": 6,
+      "interrupted_trial": "ACT-RGB-refined--qualification-3--r0",
+      "interruption_exit_code": 130,
+      "not_started": [
+        "RGB--qualification-3--r0",
+        "ACT-guarded--qualification-3--r0"
+      ],
+      "raw_report_contains_interruption": false
+    },
+    {
+      "name": "final-rgb-act",
+      "source_sha": "bd634c0aaae54776580ddb7f7cc4d0d76cf195dd",
+      "report": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/final-rgb-act/report.json",
+      "report_sha256": "d767acf28f55cd8afae67807a4c4d85dc61c4be7c917d02fad8de87ea27ca294",
+      "planned": 6,
+      "completed": 1,
+      "interrupted_trial": "ACT-guarded--qualification-1--r0",
+      "interruption_exit_code": 143,
+      "not_started": [
+        "ACT-guarded--qualification-2--r0",
+        "RGB--qualification-2--r0",
+        "RGB--qualification-3--r0",
+        "ACT-guarded--qualification-3--r0"
+      ],
+      "raw_report_contains_interruption": true
+    }
+  ],
+  "diagnostic": {
+    "trial": "/Users/changmin/.codex/worktrees/research-controller-validation/ugrp/outputs/research-repair/qualification-v2/trials/ACT-RGB-refined--qualification-3--r0",
+    "step": 100,
+    "stop_scores": {
+      "r1": 0.622535,
+      "r3": 0.668849
+    },
+    "arrival_replay": {
+      "RGB_error_px": [
+        -8.279002733328184,
+        -12.393186912872494
+      ],
+      "tolerance_px": 4,
+      "hybrid_neighbourhood_px": 80
+    },
+    "replay_method": "CarriedBeamTracker anchor and saved raw TOP frames 0..100, authored_map(open), arrival_evidence; no new simulation or state correction."
+  },
+  "cleanup": "Verified runner and physical/model children exited. Other tasks and viewer remain running."
+}

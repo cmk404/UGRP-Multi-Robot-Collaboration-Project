@@ -1,0 +1,91 @@
+{
+  "checked_unix": 1790053820.129833,
+  "runs": [
+    "0922-ACT병렬검증-v3/ACT-original--open-original--r0",
+    "0922-ACT재학습/teachers/RGB--parallel-train-plus--r0",
+    "0922-ACT재학습/teachers/RGB--parallel-dev-zero--r0",
+    "0922-ACT재학습/training",
+    "0922-ACT재학습평가/RGB--test-minus--r0",
+    "0922-ACT재학습평가/ACT-before--test-minus--r0",
+    "0922-ACT재학습평가/ACT-expanded--test-minus--r0",
+    "0922-ACT재학습평가/ACT-before--test-plus--r0",
+    "0922-ACT재학습평가/ACT-expanded--test-plus--r0",
+    "0922-ACT재학습평가/RGB--test-plus--r0",
+    "0922-ACT재학습평가/ACT-expanded--test-yaw--r0",
+    "0922-ACT재학습평가/RGB--test-yaw--r0",
+    "0922-ACT재학습평가/ACT-before--test-yaw--r0"
+  ],
+  "video_range_checks": [
+    {
+      "trial_id": "RGB--test-minus--r0",
+      "id": "eb6b1daba1f78bb96421",
+      "http_status": 206,
+      "content_range": "bytes 0-63/107094"
+    },
+    {
+      "trial_id": "ACT-before--test-minus--r0",
+      "id": "174491c8310bc6f5d670",
+      "http_status": 206,
+      "content_range": "bytes 0-63/107094"
+    },
+    {
+      "trial_id": "ACT-expanded--test-minus--r0",
+      "id": "2eeceb02308553ad2a97",
+      "http_status": 206,
+      "content_range": "bytes 0-63/107094"
+    },
+    {
+      "trial_id": "ACT-before--test-plus--r0",
+      "id": "02182463b40440e16208",
+      "http_status": 206,
+      "content_range": "bytes 0-63/763978"
+    },
+    {
+      "trial_id": "ACT-expanded--test-plus--r0",
+      "id": "b29af9cc99b16a4a7ff7",
+      "http_status": 206,
+      "content_range": "bytes 0-63/730326"
+    },
+    {
+      "trial_id": "RGB--test-plus--r0",
+      "id": "74a3c87aee4bce45c6ac",
+      "http_status": 206,
+      "content_range": "bytes 0-63/1030380"
+    },
+    {
+      "trial_id": "ACT-expanded--test-yaw--r0",
+      "id": "8d0e67def939745bb9df",
+      "http_status": 206,
+      "content_range": "bytes 0-63/107781"
+    },
+    {
+      "trial_id": "RGB--test-yaw--r0",
+      "id": "13ccbc60082ec942a1ee",
+      "http_status": 206,
+      "content_range": "bytes 0-63/107781"
+    },
+    {
+      "trial_id": "ACT-before--test-yaw--r0",
+      "id": "6b80bfd99db5a6076af5",
+      "http_status": 206,
+      "content_range": "bytes 0-63/107781"
+    }
+  ],
+  "native_ui_verified": true,
+  "native_ui_review": {
+    "checked_unix": 1790053960.407866,
+    "browser": "Chrome 강",
+    "session_groups": 13,
+    "evaluation_rows": 9,
+    "visible_columns": [
+      "outcome",
+      "result/wall_s",
+      "result/commands",
+      "result/model_calls"
+    ],
+    "pinned_cards": 7,
+    "screen_values_match_raw": true
+  },
+  "snapshot_focus_manifest": "/Users/changmin/projects/ugrp/outputs/cleanup-20260922/tensorboard-focus.json",
+  "snapshot_focus_manifest_sha256": "4a650d389f948ba069cd4aadaef5168985c2158fd40519ed6727d25d1db1c460"
+}

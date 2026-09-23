@@ -19,6 +19,7 @@ from harness.act_training import frozen_features, checkpoint_encoder
 from harness.pair_carry_act import CONTEXT_KEY
 from harness.reference_act import IMAGE_KEYS, UPSTREAM_SHA
 from scripts.train_carry_act import load
+from scripts.carry_training_objective import sampling_groups, selection
 from scripts.colab_carry_bundle import source_identity, verify_dataset
 from harness.carry_training_checkpoint import save_checkpoint, restore_checkpoint
 from scripts.patch_reference_act import BEFORE, AFTER, ORIGINAL_SHA256
@@ -75,7 +76,7 @@ def batch_at(cache, windows, device="cpu"):
 
 
 @torch.no_grad()
-def evaluate(policy, cache, windows, rows, batch_size=32):
+def evaluate(policy, cache, windows, rows, batch_size=32, objective='legacy'):
     policy.eval()
     pred = []
     with frozen_features(policy):
@@ -87,8 +88,9 @@ def evaluate(policy, cache, windows, rows, batch_size=32):
     mae = {str(g): float(np.abs(values[groups == g, :3] - target[groups == g, :3]).mean()) for g in set(groups)}
     missed = float((done & ~ready).sum()/max(1, done.sum()))
     false = float((~done & ready).sum()/max(1, (~done).sum()))
+    mean_mae=float(np.mean(list(mae.values())))
     return {'missed_done_rate': missed, 'false_done_rate': false, 'group_normalized_mae': mae,
-            'selection_score': missed + false + float(np.mean(list(mae.values()))),
+            **selection(rows,pred,mean_mae,missed+false+mean_mae,objective),
             'samples': len(rows), 'done_samples': int(done.sum())}, pred
 
 
@@ -155,6 +157,8 @@ def main():
     p.add_argument('--history', type=int, choices=(1, 4), required=True)
     p.add_argument('--steps', type=int, default=8000)
     p.add_argument('--seed', type=int, default=20260921)
+    p.add_argument('--termination-objective',choices=('legacy','episode'),default='episode',
+                   help='episode: sample near-terminal negatives and penalize any premature pair hold')
     p.add_argument('--device', choices=('cpu', 'cuda'), default='cpu')
     p.add_argument('--resume', action='store_true')
     p.add_argument('--checkpoint-encoder', action='store_true', help='Recompute encoder activations; keep the full training batch and RNG')
@@ -199,7 +203,9 @@ def main():
               'activation_checkpointing': a.checkpoint_encoder,
               'cpu_evaluation_batch_size': a.cpu_evaluation_batch_size,
               'train_episodes': [e['root'] for e in data['train']], 'development_episodes': [e['root'] for e in data['development']],
-              'selection': 'original missed_done + false_done + mean direction-group MAE, development only',
+              'selection': 'episode premature-hold + missed-terminal fractions + mean direction-group MAE' if a.termination_objective=='episode' else 'legacy frame rates + mean direction-group MAE',
+              'termination_objective':a.termination_objective,
+              'hard_negative_window_steps':8 if a.termination_objective=='episode' else 0,
               'trainable_parameters': sum(v.numel() for v in policy.parameters() if v.requires_grad),
               'parameters': sum(v.numel() for v in policy.parameters()), 'upstream_sha': UPSTREAM_SHA,
               'environment': {'python': sys.version, 'platform': platform.platform(),
@@ -215,14 +221,14 @@ def main():
     report['initial_cache_verification'] = verify_cache(policy, rows, windows, cache, a.size, a.history)
     if not a.resume:
         write(a.out/'report.json', report)
-    groups = [3 if r['done'] else int(np.argmax(np.abs(r['action'][:3]))) for r in rows]
+    groups = sampling_groups(rows,a.termination_objective)
     counts = {g: groups.count(g) for g in set(groups)}
     report['groups'] = counts
     weights = torch.tensor([1/counts[g] for g in groups], dtype=torch.double)
     generator = torch.Generator().manual_seed(a.seed)
     optimizer = torch.optim.AdamW([v for v in policy.parameters() if v.requires_grad], lr=1e-4, weight_decay=1e-4)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, a.steps, eta_min=1e-5)
-    signature = {k: report[k] for k in ('source_sha', 'dataset_sha256', 'adapter', 'seed', 'steps', 'batch_size', 'upstream_sha', 'environment', 'activation_checkpointing')}
+    signature = {k: report[k] for k in ('source_sha', 'dataset_sha256', 'adapter', 'seed', 'steps', 'batch_size', 'upstream_sha', 'environment', 'activation_checkpointing','termination_objective')}
     best, state, start_step, elapsed_before = float('inf'), None, 0, 0.0
     if a.resume:
         saved = restore_checkpoint(a.out/'resume.pt', signature=signature, policy=policy, optimizer=optimizer, scheduler=scheduler, generator=generator)
@@ -245,7 +251,7 @@ def main():
             loss.backward()
         torch.nn.utils.clip_grad_norm_(policy.parameters(), 1); optimizer.step(); scheduler.step()
         if step == 1 or step % 500 == 0 or step == a.steps:
-            metrics, _ = evaluate(policy, dcache, dwindows, dev)
+            metrics, _ = evaluate(policy, dcache, dwindows, dev,objective=a.termination_objective)
             event = {'step': step, 'loss': float(loss.detach()), 'development': metrics, 'elapsed_s': elapsed_before+time.monotonic()-started}
             report['progress'].append(event)
             if metrics['selection_score'] < best:
@@ -290,7 +296,7 @@ def main():
             report['readback'].append({'id': rs[i]['id'], 'history_ids': [rs[j]['id'] for j in ws[i]], 'decision': decision})
     del restored
     for name, rs, cs, ws in (('train', rows, cache, windows), ('development', dev, dcache, dwindows)):
-        metrics, pred = evaluate(policy, cs, ws, rs, batch_size=a.cpu_evaluation_batch_size); report[name+'_metrics'] = metrics
+        metrics, pred = evaluate(policy, cs, ws, rs, batch_size=a.cpu_evaluation_batch_size,objective=a.termination_objective); report[name+'_metrics'] = metrics
         write(a.out/(name+'-predictions.json'), [{'id': r['id'], 'target': r['action'], 'prediction': v} for r, v in zip(rs, pred)])
     # A crash can leave a partial/previous export. Preserve it before publishing
     # the verified candidate; repeated finalization does not destroy evidence.

@@ -133,3 +133,46 @@ def test_local_top_window_excludes_distant_scenery_but_preserves_novelty_guards(
     model['pca_components'][0][-1]=.001
     with pytest.raises(ValueError,match='removes a learned'):
         predict_recovery(model,own,top)
+
+
+def test_fresh_dispatch_model_keeps_full_rgb_support_through_export(tmp_path):
+    import hashlib
+    from scripts.run_dispatch_skills import grasp_transfer_options
+    from scripts.run_three_robot_mission import prepare_grasp_models
+    reference = _views()
+    model = fit_recovery_model(*reference, _training())
+    # A new scene may learn features outside the legacy TOP window.
+    model['pca_components'][0][-1] = .001
+    source = tmp_path/'source'; source.mkdir()
+    raw = json.dumps(model).encode()
+    (source/'model.json').write_bytes(raw)
+    skill = {'task_domain': 'dispatch_open_v1',
+             'rgb_support_scope': 'full_calibrated_views',
+             'models': {slot: {'path': 'model.json', 'sha256': hashlib.sha256(raw).hexdigest()}
+                        for slot in ('r1', 'r3')}}
+    (source/'student-skill.json').write_text(json.dumps(skill))
+    (source/'evaluation-fixture.json').write_text('{}')
+    target = prepare_grasp_models(source, tmp_path/'export', **grasp_transfer_options(skill))
+    exported = json.loads((target/'model.json').read_text())
+    assert exported == model
+    assert predict_recovery(exported, *reference)['observable']
+    changed = cv2.imencode('.png', np.full((192,256,3),255,np.uint8))[1].tobytes()
+    assert not predict_recovery(exported, reference[0], changed)['observable']
+
+
+def test_trained_local_features_ignore_distant_motion_and_reject_local_novelty():
+    from harness.camera_recovery_student import GRASP_TOP_ROI
+    own, top = _views()
+    model = fit_recovery_model(own, top, _training(), top_roi=GRASP_TOP_ROI)
+    def altered(rect):
+        scene = cv2.imdecode(np.frombuffer(top, np.uint8), cv2.IMREAD_COLOR)
+        x0,y0,x1,y1 = rect; scene[y0:y1,x0:x1] = 255
+        return cv2.imencode('.png',scene)[1].tobytes()
+    assert predict_recovery(model, own, altered((10,160,70,190)))['observable']
+    assert not predict_recovery(model, own, altered((100,60,150,140)))['observable']
+    changed_own = cv2.imencode('.png', np.full((144,192,3),255,np.uint8))[1].tobytes()
+    assert not predict_recovery(model, changed_own, top)['observable']
+    # This representation cannot be retrofitted by changing model metadata.
+    model['pca_components'][0][-1] = .001
+    with pytest.raises(ValueError, match='fitted in that representation'):
+        predict_recovery(model, own, top)

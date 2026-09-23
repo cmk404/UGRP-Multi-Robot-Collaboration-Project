@@ -75,3 +75,38 @@ Linux wheel을 재사용하려면 `prepare --wheelhouse <폴더>`를 지정한�
 로컬 관련 테스트 **25개**를 통과했다. 계정 `changmin2026`에서 private Dataset·CPU kernel을 만들고 **인터넷 OFF** 상태로 Python 3.12/OSMesa 설치·실행·결과 회수까지 확인했다. 최종 후보는 **0.138548m 이동·1.5 SIM초·12프레임**, 종료 코드 0이다. ZIP 및 내부 모든 해시와 대표 3프레임을 확인했다. [실행 SHA·앞선 실패·원본 위치·검토 범위](../experiments/2026-09-21-kaggle-cli-smoke/README.md)를 기록했다. 기본 이미지의 비치명적인 sitecustomize/wrapt 경고는 raw 로그에 보존한다. GPU 학습·외부 LLM·전체 운반 실험은 별도 검증 대상이다.
 
 참고: [공식 kernels 명령](https://github.com/Kaggle/kaggle-cli/blob/main/docs/kernels.md), [Dataset 메타데이터와 라이선스](https://github.com/Kaggle/kaggle-cli/blob/main/docs/datasets_metadata.md), [kernel 메타데이터](https://github.com/Kaggle/kaggle-cli/blob/main/docs/kernels_metadata.md). 실제 플래그는 설치된 `kaggle <명령> --help`를 우선한다.
+
+## 검증된 private Dataset 재사용
+
+새 자료 업로드 없이 동일한 고정 소스를 다른 유한 실행에 쓰려면 `reuse --from-output <이전 출력> --output <새 출력> --module <모듈> -- <인자>`로 새 kernel을 준비한 뒤 `submit --output <새 출력>`을 사용한다. 입력의 전체 해시와 private 설정을 다시 검사하며 기존 kernel/결과를 덮어쓰지 않는다. 실행 SHA는 이전 자료의 SHA이고 새 원격 driver 해시는 별도로 기록한다. `CANCEL_ACKNOWLEDGED`를 포함한 취소 종료도 collect 대상으로 처리한다.
+
+전체 코호트가 기본 30분을 넘는다면 제출 전에 유한한 시간을 지정한다.
+`submit --output <prepared-output> --timeout-seconds 14400`은 최대 4시간으로
+제출하며 해당 값을 `job.json`에 기록한다. 이는 완료 예상 시간이 아니며,
+Kaggle의 실제 할당·실행 상태와 결과 회수는 별도로 검증한다.
+
+## 평가 전에 환경과 진행률 확인
+
+`requirements-kaggle.txt`는 기본 이미지의 `sitecustomize`가 요구하는 `wrapt`도
+격리 환경에 설치한다. 기존 wheelhouse를 재사용할 때 이 wheel이 포함되어야 한다.
+`cloud_environment_preflight.py`는 시작 오류·필수 import·pip 의존성·GPU 장치만
+검사한다. ACT 평가 실행기는 기본 환경 검사와 ACT 환경 검사를 통과하기 전에
+교사 보정이나 평가를 시작하지 않는다.
+
+```sh
+python scripts/kaggle_simulation_cli.py prepare --output outputs/preflight-NEW \
+  --gpu-preflight --module scripts.cloud_environment_preflight \
+  -- --output '{output}' --require-gpu --with-act
+python scripts/kaggle_simulation_cli.py submit --output outputs/preflight-NEW --timeout-seconds 900
+```
+
+이 명시적 검사는 private GPU/인터넷 ON이며 고정 ACT 의존성 설치에만 인터넷을
+쓴다. 일반 CPU/offline 기본값은 그대로다. 시뮬레이션·렌더링·학습은 실행하지
+않으며 900초를 초과하는 제출을 거부한다. 설치된 가상환경은 결과 ZIP 밖에 둔다.
+
+`UGRP_PROGRESS` 메시지는 단계·실행 중 프로세스·완료/실패/미완료 시행 수를
+중첩 로그에서 Kaggle 로그까지 전달한다. 원시 모델 요청이나 일반 로그 전체를
+공개하지 않는다. 수집기의 `progress.visibility`는 `live`, `stale`, `unavailable`
+중 하나다. 이전 실행처럼 진행 메시지가 없으면 시행 수는 알 수 없다고 기록한다.
+일시적인 조회 오류로 실행이나 수집을 종료하지 않으며 원래 정한 수집 한도와
+무결성 오류 차단은 유지한다.

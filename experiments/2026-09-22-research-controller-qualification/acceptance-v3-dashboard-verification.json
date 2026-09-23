@@ -1,0 +1,242 @@
+{
+  "scope": "Nine final physical trials only; exposed fixed regression cases, source f70bd9b. Does not aggregate historical partial cohorts.",
+  "checked_unix": 1790067899.627774,
+  "native_ui_verified": true,
+  "snapshots": [
+    {
+      "trial_id": "RGB--qualification-1--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-\uc5f0\uad6c\ud658\uacbd-\uac80\uc99dv3/RGB--qualification-1--r0",
+      "manifest_sha256": "52aebb1913c12f799fb2e767eceea9fb8378a69d6a440854c0fd5bac605a22c8",
+      "source": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-a/trials/RGB--qualification-1--r0",
+      "complete": true,
+      "all_source_hashes_match": true,
+      "scalar_readback_matches": {
+        "evaluation/reported_success": 1,
+        "result/wall_s": 810.4671510830012,
+        "result/commands": 957,
+        "result/model_calls": 0,
+        "evaluation/simultaneous_loaded_motion_s": 5.999999999858119,
+        "evaluation/robot_robot_contact_samples": 0
+      },
+      "mean_model_latency_readback_matches": null,
+      "video_checks": [
+        {
+          "url": "http://127.0.0.1:6009/raw/8e648858246dc752723d",
+          "player_url": "http://127.0.0.1:6009/video/8e648858246dc752723d",
+          "status": 206,
+          "bytes": 64
+        }
+      ],
+      "native_ui_verified": true
+    },
+    {
+      "trial_id": "ACT-guarded--qualification-1--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-\uc5f0\uad6c\ud658\uacbd-\uac80\uc99dv3/ACT-guarded--qualification-1--r0",
+      "manifest_sha256": "28b00ab5f98f813ae36807f4701d271c0c4c69cd091cecbd2c0622e0e286faf7",
+      "source": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-b/trials/ACT-guarded--qualification-1--r0",
+      "complete": true,
+      "all_source_hashes_match": true,
+      "scalar_readback_matches": {
+        "evaluation/reported_success": 0,
+        "result/wall_s": 600.5672238749994,
+        "result/commands": 800,
+        "result/model_calls": 278,
+        "evaluation/simultaneous_loaded_motion_s": 6.899999999836837,
+        "evaluation/robot_robot_contact_samples": 0
+      },
+      "mean_model_latency_readback_matches": true,
+      "video_checks": [
+        {
+          "url": "http://127.0.0.1:6009/raw/a76cc23d891d070afde4",
+          "player_url": "http://127.0.0.1:6009/video/a76cc23d891d070afde4",
+          "status": 206,
+          "bytes": 64
+        }
+      ],
+      "native_ui_verified": true
+    },
+    {
+      "trial_id": "ACT-RGB-refined--qualification-1--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-\uc5f0\uad6c\ud658\uacbd-\uac80\uc99dv3/ACT-RGB-refined--qualification-1--r0",
+      "manifest_sha256": "369b74b553c1bedbe03b2af6cd20b506627a6f42bed75406b4c407fe7270af15",
+      "source": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-b/trials/ACT-RGB-refined--qualification-1--r0",
+      "complete": true,
+      "all_source_hashes_match": true,
+      "scalar_readback_matches": {
+        "evaluation/reported_success": 1,
+        "result/wall_s": 979.3865566669992,
+        "result/commands": 1076,
+        "result/model_calls": 278,
+        "evaluation/simultaneous_loaded_motion_s": 6.899999999836837,
+        "evaluation/robot_robot_contact_samples": 0
+      },
+      "mean_model_latency_readback_matches": true,
+      "video_checks": [
+        {
+          "url": "http://127.0.0.1:6009/raw/efad8295101354df72cf",
+          "player_url": "http://127.0.0.1:6009/video/efad8295101354df72cf",
+          "status": 206,
+          "bytes": 64
+        }
+      ],
+      "native_ui_verified": true
+    },
+    {
+      "trial_id": "ACT-guarded--qualification-2--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-\uc5f0\uad6c\ud658\uacbd-\uac80\uc99dv3/ACT-guarded--qualification-2--r0",
+      "manifest_sha256": "94ff2e6ac7d6e0c65484ff8d50c40a6e0505d1c8a7f9302f948c0aa9224997a4",
+      "source": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-a/trials/ACT-guarded--qualification-2--r0",
+      "complete": true,
+      "all_source_hashes_match": true,
+      "scalar_readback_matches": {
+        "evaluation/reported_success": 0,
+        "result/wall_s": 590.5913929580001,
+        "result/commands": 705,
+        "result/model_calls": 198,
+        "evaluation/simultaneous_loaded_motion_s": 6.499999999846295,
+        "evaluation/robot_robot_contact_samples": 0
+      },
+      "mean_model_latency_readback_matches": true,
+      "video_checks": [
+        {
+          "url": "http://127.0.0.1:6009/raw/dcc2e5a769ea156b3365",
+          "player_url": "http://127.0.0.1:6009/video/dcc2e5a769ea156b3365",
+          "status": 206,
+          "bytes": 64
+        }
+      ],
+      "native_ui_verified": true
+    },
+    {
+      "trial_id": "ACT-RGB-refined--qualification-2--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-\uc5f0\uad6c\ud658\uacbd-\uac80\uc99dv3/ACT-RGB-refined--qualification-2--r0",
+      "manifest_sha256": "687df1f476fe61c1e3029a39a0c2480bcc9b71a28ffe982d3bbba17f6ce0cc75",
+      "source": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-a/trials/ACT-RGB-refined--qualification-2--r0",
+      "complete": true,
+      "all_source_hashes_match": true,
+      "scalar_readback_matches": {
+        "evaluation/reported_success": 1,
+        "result/wall_s": 800.2786850829998,
+        "result/commands": 960,
+        "result/model_calls": 198,
+        "evaluation/simultaneous_loaded_motion_s": 6.499999999846295,
+        "evaluation/robot_robot_contact_samples": 0
+      },
+      "mean_model_latency_readback_matches": true,
+      "video_checks": [
+        {
+          "url": "http://127.0.0.1:6009/raw/8fecd574b0ed0c9ad815",
+          "player_url": "http://127.0.0.1:6009/video/8fecd574b0ed0c9ad815",
+          "status": 206,
+          "bytes": 64
+        }
+      ],
+      "native_ui_verified": true
+    },
+    {
+      "trial_id": "RGB--qualification-2--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-\uc5f0\uad6c\ud658\uacbd-\uac80\uc99dv3/RGB--qualification-2--r0",
+      "manifest_sha256": "9b88593407f68b36f369c39dd400b4ffeb8cf9b6797550547be22d3f53685591",
+      "source": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-b/trials/RGB--qualification-2--r0",
+      "complete": true,
+      "all_source_hashes_match": true,
+      "scalar_readback_matches": {
+        "evaluation/reported_success": 1,
+        "result/wall_s": 801.9765357079996,
+        "result/commands": 998,
+        "result/model_calls": 0,
+        "evaluation/simultaneous_loaded_motion_s": 5.999999999858119,
+        "evaluation/robot_robot_contact_samples": 0
+      },
+      "mean_model_latency_readback_matches": null,
+      "video_checks": [
+        {
+          "url": "http://127.0.0.1:6009/raw/af6e8c721dfa860af287",
+          "player_url": "http://127.0.0.1:6009/video/af6e8c721dfa860af287",
+          "status": 206,
+          "bytes": 64
+        }
+      ],
+      "native_ui_verified": true
+    },
+    {
+      "trial_id": "ACT-RGB-refined--qualification-3--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-\uc5f0\uad6c\ud658\uacbd-\uac80\uc99dv3/ACT-RGB-refined--qualification-3--r0",
+      "manifest_sha256": "49bceabbbf27006d9e00150d09838c744d64405e04fdac8770556c3a873cb977",
+      "source": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-b/trials/ACT-RGB-refined--qualification-3--r0",
+      "complete": true,
+      "all_source_hashes_match": true,
+      "scalar_readback_matches": {
+        "evaluation/reported_success": 0,
+        "result/wall_s": 2163.945546875,
+        "result/commands": 3101,
+        "result/model_calls": 1800,
+        "evaluation/simultaneous_loaded_motion_s": 7.699999999817919,
+        "evaluation/robot_robot_contact_samples": 0
+      },
+      "mean_model_latency_readback_matches": true,
+      "video_checks": [
+        {
+          "url": "http://127.0.0.1:6009/raw/2307f031309864bfd49b",
+          "player_url": "http://127.0.0.1:6009/video/2307f031309864bfd49b",
+          "status": 206,
+          "bytes": 64
+        }
+      ],
+      "native_ui_verified": true
+    },
+    {
+      "trial_id": "RGB--qualification-3--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-\uc5f0\uad6c\ud658\uacbd-\uac80\uc99dv3/RGB--qualification-3--r0",
+      "manifest_sha256": "5734ec142c0564d71611db81dc2168fd3234264dfa1451d6ef3933960ef4c1cf",
+      "source": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-a/trials/RGB--qualification-3--r0",
+      "complete": true,
+      "all_source_hashes_match": true,
+      "scalar_readback_matches": {
+        "evaluation/reported_success": 1,
+        "result/wall_s": 758.9261247089999,
+        "result/commands": 1002,
+        "result/model_calls": 0,
+        "evaluation/simultaneous_loaded_motion_s": 7.099999999832107,
+        "evaluation/robot_robot_contact_samples": 0
+      },
+      "mean_model_latency_readback_matches": null,
+      "video_checks": [
+        {
+          "url": "http://127.0.0.1:6009/raw/6eafda3a7f4e6a4e1f9e",
+          "player_url": "http://127.0.0.1:6009/video/6eafda3a7f4e6a4e1f9e",
+          "status": 206,
+          "bytes": 64
+        }
+      ],
+      "native_ui_verified": true
+    },
+    {
+      "trial_id": "ACT-guarded--qualification-3--r0",
+      "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-\uc5f0\uad6c\ud658\uacbd-\uac80\uc99dv3/ACT-guarded--qualification-3--r0",
+      "manifest_sha256": "df5b9fca077c8e51ec1fcd22c9743f78dd986cf9adda47ff738ceee7a12a200a",
+      "source": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp/outputs/research-repair/acceptance-v3-c/trials/ACT-guarded--qualification-3--r0",
+      "complete": true,
+      "all_source_hashes_match": true,
+      "scalar_readback_matches": {
+        "evaluation/reported_success": 0,
+        "result/wall_s": 1935.070194957998,
+        "result/commands": 3101,
+        "result/model_calls": 1800,
+        "evaluation/simultaneous_loaded_motion_s": 7.699999999817919,
+        "evaluation/robot_robot_contact_samples": 0
+      },
+      "mean_model_latency_readback_matches": true,
+      "video_checks": [
+        {
+          "url": "http://127.0.0.1:6009/raw/71e03f21160e7841d442",
+          "player_url": "http://127.0.0.1:6009/video/71e03f21160e7841d442",
+          "status": 206,
+          "bytes": 64
+        }
+      ],
+      "native_ui_verified": true
+    }
+  ],
+  "native_ui": "Chrome \uac15 existing TensorBoard tab: all nine HParams rows match outcome/wall_s/commands/model_calls, four selected columns, nine Time Series runs and seven pinned cards. HParams trial labels are visually truncated by its native fixed column width; full labels were verified in accessibility text."
+}

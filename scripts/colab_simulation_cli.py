@@ -110,6 +110,7 @@ base = Path({remote!r})
 source = base/'source'
 py = str(base/'sim-env/bin/python')
 env = os.environ.copy()
+env.pop('__EGL_VENDOR_LIBRARY_FILENAMES', None)
 env.update(MUJOCO_GL='osmesa', PYOPENGL_PLATFORM='osmesa', PYTHONPATH=str(source))
 result = subprocess.run([py, str(source/'scripts/run_colab_simulation.py'), '--output', str(source/'outputs/cli-job'), '--', py, '-m', {module!r}, *{arguments!r}], cwd=source, env=env)
 print('UGRP_COLAB_EXIT_CODE', result.returncode)

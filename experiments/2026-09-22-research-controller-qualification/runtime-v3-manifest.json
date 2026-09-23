@@ -1,0 +1,71 @@
+{
+  "recorded_utc": "2026-09-22T07:28:51.374427+00:00",
+  "python_executable": "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/python",
+  "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+  "platform": "macOS-27.2-arm64-arm-64bit",
+  "packages": {
+    "mujoco": "3.12.0",
+    "numpy": "2.5.2",
+    "tensorboard": "2.21.0",
+    "cv2": "5.0.0"
+  },
+  "execution_checkout": "/Users/changmin/.codex/worktrees/research-pixel-validation/ugrp",
+  "expected_source_sha": "f70bd9b20e0972ce71f24d724211f4cd27f7786e",
+  "protocol_sha256": "894b2331e11ed8c14859dbaf850a96876c0386b5871f14a0b2067a7846dd8cda",
+  "asset_hashes_checked": 22,
+  "all_asset_hashes_match": true,
+  "act_runtime": "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python",
+  "host_authorization": "User explicitly chose this Mac in this task; not a change to project-wide Colab default",
+  "controls": {
+    "efficient_capture": true,
+    "route_overlap": true,
+    "max_wall_s": 2400,
+    "max_carry_steps": 900,
+    "video_fps": 4,
+    "min_free_gib": 8,
+    "overlap_start": "grasp"
+  },
+  "idle_sleep_policy": "caffeinate -i exists only for the finite owned job, no permanent power setting change",
+  "remote_execution": false,
+  "external_llm_calls": 0,
+  "raw_remote_backup": false,
+  "disk_free_gib_at_acceptance_start": 89.65230178833008,
+  "local_preflight": {
+    "scope": "Preflight imports/packages/device inventory only; no simulation or training",
+    "ready": true,
+    "checks": {
+      "sim_imports": {
+        "ready": true,
+        "exit_code": 0,
+        "startup_error": false,
+        "modules": [
+          "numpy",
+          "cv2",
+          "mujoco",
+          "PIL",
+          "OpenGL"
+        ],
+        "stdout": "{\"numpy\": true, \"cv2\": true, \"mujoco\": true, \"PIL\": true, \"OpenGL\": true}\n",
+        "stderr": ""
+      },
+      "sim_packages": {
+        "ready": true,
+        "exit_code": 0,
+        "detail": "No broken requirements found.\n"
+      },
+      "act_imports": {
+        "ready": true,
+        "exit_code": 0,
+        "startup_error": false,
+        "modules": [
+          "torch",
+          "torchvision",
+          "lerobot.policies.act.modeling_act"
+        ],
+        "stdout": "{\"torch\": true, \"torchvision\": true, \"lerobot.policies.act.modeling_act\": true}\n",
+        "stderr": ""
+      }
+    },
+    "checked_unix": 1790062081.7164118
+  }
+}

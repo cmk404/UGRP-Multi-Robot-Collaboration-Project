@@ -88,6 +88,28 @@ def test_failed_evaluation_remains_failed_despite_done_claim(tmp_path,export_api
     assert manifest['metadata']['success_source_field']=='success'
 
 
+@pytest.mark.parametrize('terminal_score',[.05,.9])
+def test_offline_termination_audit_is_recomputed_and_never_physical_success(tmp_path,export_api,terminal_score):
+    from scripts.audit_carry_termination import audit
+    convert,EA=export_api;src=tmp_path/'audit';src.mkdir()
+    predictions=[{'id':f'development:{slot}:{i}',
+                  'prediction':[0,0,0,terminal_score if i else 0.],
+                  'target':[0,0,0,float(i)]} for slot in ('r1','r3') for i in range(2)]
+    p=put(src,'predictions.json',predictions)
+    report=audit(predictions);report['predictions_sha256']=hashlib.sha256(p.read_bytes()).hexdigest()
+    put(src,'termination-audit.json',report)
+    manifest=convert(src,tmp_path/'export');ea=EA(str(tmp_path/'export')).Reload()
+    assert ea.Scalars('offline/missed_terminal_episodes')[0].value==int(terminal_score<.65)
+    assert ea.Scalars('offline/termination_pass')[0].value==int(terminal_score>=.65)
+    assert manifest['metadata']['outcome']==('offline_pass' if terminal_score>=.65 else 'offline_fail')
+    assert 'evaluation/reported_success' not in ea.Tags()['scalars']
+    assert manifest['metadata']['success_source_field'] is None
+    report['missed_terminal_episodes']=999;put(src,'termination-audit.json',report)
+    with pytest.raises(ValueError,match='saved predictions'):convert(src,tmp_path/'bad-count')
+    p.write_text('[]')
+    with pytest.raises(ValueError,match='hash mismatch'):convert(src,tmp_path/'bad-hash')
+
+
 def test_missing_success_is_not_zero(tmp_path,export_api):
     convert,EA=export_api;src=tmp_path/'source';src.mkdir()
     put(src,'result.json',{'protocol_complete':True})
@@ -111,6 +133,20 @@ def test_dispatch_plan_receipts_keep_agreement_separate_from_transport(tmp_path,
     assert ea.Scalars('result/recorded_raw_commands')[0].value==2
     assert 'excludes' in manifest['metadata']['command_count_scope']
     assert 'team/team.json' in manifest['source_files']
+
+
+def test_postrun_concurrency_audit_keeps_original_and_checks_every_hash(tmp_path,export_api):
+    convert,EA=export_api;src=tmp_path/'source';src.mkdir()
+    original=put(src,'result.json',{'physical_success':True,'evaluation':{'concurrent_transport':{'simultaneous_loaded_motion_s':0}}}).read_bytes()
+    put(src,'issued-commands.json',{});(src/'referee-only.jsonl').write_text('{}\n')
+    put(src,'concurrency-audit.json',{'source_files_sha256':{n:hashlib.sha256((src/n).read_bytes()).hexdigest()
+        for n in ('result.json','issued-commands.json','referee-only.jsonl')},'concurrent_transport':{'simultaneous_loaded_motion_s':2.5}})
+    m=convert(src,tmp_path/'export')
+    assert EA(str(tmp_path/'export')).Reload().Scalars('evaluation/simultaneous_loaded_motion_s')[0].value==2.5
+    assert (src/'result.json').read_bytes()==original
+    assert 'concurrency-audit.json' in m['source_files']
+    (src/'referee-only.jsonl').write_text('{"changed":true}\n')
+    with pytest.raises(ValueError,match='source hash mismatch'):convert(src,tmp_path/'bad-export')
 
 
 def test_images_and_sim_time_are_recoverable(tmp_path,export_api):
@@ -148,6 +184,47 @@ def test_act_slot_maps_to_physical_robot(tmp_path,export_api):
     ea=EA(str(tmp_path/'export')).Reload()
     assert ea.Scalars('claims/r3/done')[0].value==1
     assert manifest['metadata']['act_carry_decision_rows']==1
+
+
+def test_dispatch_counts_local_responses_commands_and_latency(tmp_path,export_api):
+    convert,EA=export_api;src=tmp_path/'source';src.mkdir()
+    put(src,'result.json',{'physical_success':False,'llm_calls':2})
+    put(src,'pair-decisions.json',[{'kind':'act_carry',
+        'inputs':{'r1':{'inference_wall_s':.04},'r3':{'inference_wall_s':.06}},
+        'decisions':{'r1':{'done':False},'r3':{'done':True}}}])
+    put(src,'issued-commands.json',{'r1':[
+        {'stage':'SETUP','issued_servo_targets':{'1':2000}},
+        {'stage':'TRANSIT','action':{'kind':'mecanum','forward':.1}}],
+        'r3':[{'stage':'GRASP','issued_servo_targets':{'1':1500}}]})
+    manifest=convert(src,tmp_path/'export',max_images=0)
+    ea=EA(str(tmp_path/'export')).Reload()
+    assert [x.value for x in ea.Scalars('result/model_calls')]==[4]
+    assert [x.value for x in ea.Scalars('result/commands')]==[2]
+    assert [x.value for x in ea.Scalars('execution/model_latency_s')]==pytest.approx([.04,.06])
+    assert [x.step for x in ea.Scalars('execution/model_latency_s')]==[0,1]
+    assert manifest['metadata']['completed_act_responses']==2
+    assert 'issued-commands.json' in manifest['source_files']
+
+
+def test_configured_act_does_not_invent_responses_or_latency(tmp_path,export_api):
+    convert,EA=export_api;src=tmp_path/'source';src.mkdir()
+    put(src,'result.json',{'physical_success':False,'llm_calls':0,
+                         'config':{'carry_act_model':'model/act'}})
+    put(src,'pair-decisions.json',[])
+    convert(src,tmp_path/'export',max_images=0)
+    ea=EA(str(tmp_path/'export')).Reload()
+    assert ea.Scalars('result/model_calls')[0].value==0
+    assert 'execution/model_latency_s' not in ea.Tags()['scalars']
+
+
+def test_explicit_dispatch_total_is_not_counted_twice(tmp_path,export_api):
+    convert,EA=export_api;src=tmp_path/'source';src.mkdir()
+    put(src,'result.json',{'model_calls':3,'commands':7,'llm_calls':1})
+    put(src,'pair-decisions.json',[{'kind':'act_carry','decisions':{'r1':{'done':False}}}])
+    convert(src,tmp_path/'export',max_images=0)
+    ea=EA(str(tmp_path/'export')).Reload()
+    assert ea.Scalars('result/model_calls')[0].value==3
+    assert ea.Scalars('result/commands')[0].value==7
 
 
 def test_invalid_source_leaves_no_events(tmp_path,export_api):
@@ -219,3 +296,58 @@ def test_console_latency_and_session_completion_are_not_physical_success(tmp_pat
     assert ea.Scalars('claims/protocol_complete')[0].value == 0
     assert ea.Scalars('result/model_latency_s')[0].value == 2.5
     assert 'evaluation/reported_success' not in ea.Tags()['scalars']
+
+
+def test_media_discovers_later_completed_export_without_restart(tmp_path):
+    exports=tmp_path/'export';exports.mkdir()
+    server=make_server(exports,0)
+    thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
+    ident='b'*20;url=f'http://127.0.0.1:{server.server_port}/raw/{ident}'
+    try:
+        with pytest.raises(HTTPError) as error:urlopen(url)
+        assert error.value.code==404
+        source=tmp_path/'source';source.mkdir();video=source/'execution.mp4';video.write_bytes(b'new-video')
+        st=video.stat()
+        record={'schema':'ugrp.tensorboard-export.v1','complete':False,'source':str(source),
+            'videos':[{'id':ident,'path':str(video),'size':st.st_size,'mtime_ns':st.st_mtime_ns}]}
+        put(exports/'later','manifest.json',record)
+        with pytest.raises(HTTPError) as error:urlopen(url)
+        assert error.value.code==404
+        record['complete']=True;put(exports/'later','manifest.json',record)
+        with urlopen(url) as response:assert response.read()==b'new-video'
+    finally:server.shutdown();server.server_close();thread.join()
+
+
+def test_cloud_setup_failure_is_not_robot_failure(tmp_path, export_api):
+    convert, EA = export_api
+    src = tmp_path/'source'; src.mkdir()
+    put(src, 'run.json', {'status':'failed', 'exit_code':1, 'started_at_unix':10., 'finished_at_unix':12., 'source_sha':'abc'})
+    put(src, 'result/recovery-status.json', {'phase':'setup', 'error':'GPU absent'})
+    manifest = convert(src, tmp_path/'export')
+    events = EA(str(tmp_path/'export')).Reload()
+    assert events.Scalars('process/exit_code')[0].value == 1
+    assert events.Scalars('result/wall_s')[0].value == 2
+    assert 'evaluation/reported_success' not in events.Tags()['scalars']
+    assert manifest['metadata']['outcome'] == 'process_exit_1'
+    assert 'result/recovery-status.json' in manifest['source_files']
+
+
+def test_running_cloud_job_is_not_exported_as_complete(tmp_path, export_api):
+    convert, _ = export_api
+    src = tmp_path/'source'; src.mkdir()
+    put(src, 'run.json', {'status':'running', 'started_at_unix':10.})
+    with pytest.raises(ValueError, match='terminal process evidence'):
+        convert(src, tmp_path/'export')
+    assert not list((tmp_path/'export').glob('events.*'))
+
+
+def test_gpu_probe_reports_devices_without_robot_success(tmp_path, export_api):
+    convert, EA = export_api
+    src = tmp_path/'source'; src.mkdir()
+    put(src, 'gpu-inventory.json', {'torch':{'available':True, 'count':2}, 'internet_http_status':200})
+    manifest = convert(src, tmp_path/'export')
+    events = EA(str(tmp_path/'export')).Reload()
+    assert events.Scalars('hardware/gpu_count')[0].value == 2
+    assert events.Scalars('hardware/internet_http_status')[0].value == 200
+    assert 'evaluation/reported_success' not in events.Tags()['scalars']
+    assert manifest['metadata']['outcome'] == 'gpu_available'
