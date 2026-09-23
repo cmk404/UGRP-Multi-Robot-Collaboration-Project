@@ -63,6 +63,8 @@ class SkillScene(DispatchScene):
                              'solo_decisions':0,'pair_backpressure':0,
                              'pair_decisions':0,'max_decision_age_s':0.}
         self._solo_retry_at=0.
+        self._in_physics=False
+        self.realtime_stats.update(pair_stage_stale_rgb=0,pair_stage_samples=0)
 
     def time(self):return float(self.world.data.time)
     def open(self):
@@ -80,6 +82,12 @@ class SkillScene(DispatchScene):
         self.world._physics_step_for=self._physics
         return self
     def _physics(self,active,commands=None):
+        if getattr(self,'_in_physics',False):raise RuntimeError('recursive physics owner step')
+        self._in_physics=True
+        try:return self._physics_owned(active,commands)
+        finally:self._in_physics=False
+
+    def _physics_owned(self,active,commands=None):
         if self.native_view:self.native_view.tick()
         try:
             if self.realtime_control:self._solo_tick_realtime()
@@ -114,6 +122,19 @@ class SkillScene(DispatchScene):
         if not self.efficient_capture:own_robots,overview=None,True
         self.last_frames=super().capture(label,own_robots=own_robots,overview=overview)
         return self.last_frames
+
+    def await_visual(self,future):
+        """Pump the single physics owner while one bounded visual job runs."""
+        if getattr(self,'_in_physics',False):raise RuntimeError('visual wait inside physics callback')
+        while not future.done():self.step(.02)
+        return future.result()
+
+    def compute_visual(self,fn):
+        """Run only RGB/model arithmetic off owner; never issue actuators here."""
+        if not self.realtime_control:return fn()
+        if self._decision_workers is None:
+            raise RuntimeError('realtime visual workers not started')
+        return self.await_visual(self._decision_workers.submit(fn))
     def authorize(self):
         if self.bindings:self.bindings.authorize(self.team.agreement.committed)
     def raw(self,rid,action,stage):

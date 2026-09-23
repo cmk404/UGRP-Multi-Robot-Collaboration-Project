@@ -15,9 +15,27 @@ from scripts.camera_approach_scene import ApproachScene, image_record, normalize
 from scripts.camera_short_transport_scene import ShortTransportScene
 from scripts.run_camera_varied_start_student import run_approach
 import math
+import copy
+import time
 import numpy as np
 
 COARSE_LEAD_LIMIT_PX = 16.
+
+
+def _visual_timing(frame, *, perception_wall_s=None, policy_wall_s=None):
+    """Output-only wall breakdown; missing legacy timing fields stay absent."""
+    spans={
+        'snapshot_submit':('capture_requested_wall_s','snapshot_submitted_wall_s'),
+        'render_wait':('snapshot_submitted_wall_s','render_completed_wall_s'),
+        'jpeg_encode':('render_completed_wall_s','encode_completed_wall_s'),
+        'image_record':('encode_completed_wall_s','materialized_wall_s'),
+        'pair_bind':('bind_started_wall_s','bind_completed_wall_s'),
+    }
+    result={name+'_wall_s':max(0.,float(frame[end])-float(frame[start]))
+            for name,(start,end) in spans.items() if start in frame and end in frame}
+    if perception_wall_s is not None:result['perception_wall_s']=perception_wall_s
+    if policy_wall_s is not None:result['policy_wall_s']=policy_wall_s
+    return result
 
 
 def coordinated_coarse_commands(decisions):
@@ -81,12 +99,69 @@ class BoundPairSkill:
         return {'source':'separate referee-only.jsonl'}
 
     def capture(self,tag):
-        self.count+=1
-        frames=self.io.capture('pair-'+str(self.count)+'-'+tag,
-            own_robots=tuple(self.bindings.pair.values()),overview=False)
-        return self._bind_capture(frames,self.count)
+        if not getattr(self.io,'realtime_control',False) or self.transport_started:
+            self.count+=1
+            frames=self.io.capture('pair-'+str(self.count)+'-'+tag,
+                own_robots=tuple(self.bindings.pair.values()),overview=False)
+            return self._bind_capture(frames,self.count)
+        from sim.snapshot_render import SnapshotBackpressure
+        for _ in range(3):
+            self.count+=1;count=self.count
+            while True:
+                try:
+                    future=self.io.capture_async('pair-'+str(count)+'-'+tag,
+                        own_robots=tuple(self.bindings.pair.values()),overview=False)
+                    break
+                except SnapshotBackpressure:
+                    self.io.realtime_stats['pair_backpressure']+=1
+                    self.tick(.02)
+            frames=self.io.await_visual(future)
+            self.io.last_frames=frames
+            observed=float(frames['r1']['observed_at_s'])
+            if self.time()-observed<=.6:
+                mapped=self.io.compute_visual(lambda:self._bind_capture(frames,count))
+                if self.time()-observed<=.6:return mapped
+            self.io.realtime_stats['pair_stage_stale_rgb']+=1
+            self.calls.append({'kind':'pair_stage_stale_rgb','stage':self.phase,
+                'frame_id':frames['r1']['frame_id'],'observed_at_s':observed,
+                'received_at_s':self.time(),'wall_timing':_visual_timing(frames['r1'])})
+            self._hold_pair()
+        raise RuntimeError('pair stage RGB remained stale after bounded reobservation')
+
+    def _hold_pair(self):
+        now=self.time()
+        for rid in self.bindings.pair.values():self.io.ports[rid].hold(now)
+
+    def observe_and_compute(self,tag,predict):
+        """Commit no paired action from a stale capture or delayed predictor."""
+        if not getattr(self.io,'realtime_control',False):
+            frames=self.capture(tag)
+            return frames,predict(frames)
+        for _ in range(3):
+            frames=self.capture(tag)
+            def measured_predict():
+                started=time.monotonic()
+                return predict(frames),time.monotonic()-started
+            decisions,predict_wall_s=self.io.compute_visual(measured_predict)
+            observed=float(frames['r1']['observed_at_s'])
+            if self.time()-observed<=.6:
+                self.io.realtime_stats['pair_stage_samples']+=1
+                self.calls.append({'kind':'pair_stage_sample','stage':self.phase,
+                    'frame_id':frames['r1']['frame_id'],'observed_at_s':observed,
+                    'received_at_s':self.time(),'decision_age_s':self.time()-observed,
+                    'wall_timing':_visual_timing(frames['r1'],
+                        perception_wall_s=predict_wall_s)})
+                return frames,decisions
+            self.io.realtime_stats['pair_stage_stale_rgb']+=1
+            self.calls.append({'kind':'pair_stage_stale_prediction','stage':self.phase,
+                'frame_id':frames['r1']['frame_id'],'observed_at_s':observed,
+                'received_at_s':self.time(),'wall_timing':_visual_timing(frames['r1'],
+                    perception_wall_s=predict_wall_s)})
+            self._hold_pair()
+        raise RuntimeError('pair stage prediction remained stale after bounded reobservation')
 
     def _bind_capture(self,frames,count):
+        bind_started_wall_s=time.monotonic()
         top, transform=canonical_pair_top(frames['r1']['top_bytes'],self.reference,
             translation_px=self.grasp_translation if self.phase.startswith('grasp') else None,
             hue_upper=35 if self.transport_started else 24,
@@ -94,13 +169,18 @@ class BoundPairSkill:
         if self.transport_started:self.beam_continuity.observe(transform['observed_beam'])
         self.latest_translation=transform['translation_px']
         top_ref=image_record(self.out/'rgb'/f'pair-{count}-canonical-top.jpg',self.out,top)
+        bind_completed_wall_s=time.monotonic()
         mapped={slot:{**frames[rid], 'top_bytes':top,'shared_top_rgb':top_ref,
                       'raw_top_rgb':frames[rid]['shared_top_rgb'],'raw_top_bytes':frames[rid]['top_bytes'],'physical_robot_id':rid}
                 for slot,rid in self.bindings.pair.items()}
+        for frame in mapped.values():
+            frame['bind_started_wall_s']=bind_started_wall_s
+            frame['bind_completed_wall_s']=bind_completed_wall_s
         self.calls.append({'kind':'image_binding','frame_id':frames['r1']['frame_id'],
             'pair_binding':self.bindings.pair,'transform':transform,'derived_top':top_ref,
             'raw_top':frames['r1']['shared_top_rgb'],
-            'own':{slot:frames[rid]['own_rgb'] for slot,rid in self.bindings.pair.items()}})
+            'own':{slot:frames[rid]['own_rgb'] for slot,rid in self.bindings.pair.items()},
+            'wall_timing':_visual_timing(mapped['r1'])})
         self.last_capture=mapped
         return mapped
 
@@ -124,9 +204,10 @@ class BoundPairSkill:
         if stage=='grasp_initialization':self.grasp_translation=self.latest_translation
         self.phase=stage
         if stage=='grasp_close':
-            frames=self.capture('preclose-support')
-            d={r:predict_student(self.grasp_models[r],frames[r]['own_bytes'],frames[r]['top_bytes'],max_step=25)
-               for r in ROBOTS}
+            frames,d=self.observe_and_compute('preclose-support',lambda frames:{
+                r:predict_student(self.grasp_models[r],frames[r]['own_bytes'],
+                                  frames[r]['top_bytes'],max_step=25)
+                for r in ROBOTS})
             self.calls.append({'kind':'preclose','predictions':d})
             if not preclose_supported(d):raise RuntimeError('preclose RGB outside learned grasp support')
         for command in commands:
@@ -139,9 +220,18 @@ class BoundPairSkill:
     def approach(self):
         report={'coarse_calls':[]}
         for index in range(120):
-            frames=self.capture('coarse')
-            decisions={r:(self.coarse.decide(self.io.last_frames['r1']['top_bytes'],r) if self.coarse is not None
-                          else coarse_approach(frames[r]['top_bytes'],self.reference,r)) for r in ROBOTS}
+            def predict_coarse(frames):
+                candidate=(copy.deepcopy(self.coarse) if getattr(self.io,'realtime_control',False)
+                           else self.coarse)
+                raw=(frames['r1']['raw_top_bytes'] if frames else
+                     self.io.last_frames['r1']['top_bytes'])
+                decisions={r:(candidate.decide(raw,r)
+                              if candidate is not None else
+                              coarse_approach(frames[r]['top_bytes'],self.reference,r))
+                           for r in ROBOTS}
+                return decisions,candidate
+            frames,(decisions,candidate)=self.observe_and_compute('coarse',predict_coarse)
+            if self.coarse is not None:self.coarse=candidate
             if not all(d['ok'] for d in decisions.values()):raise RuntimeError('coarse RGB model convention unresolved')
             commands,coordination=coordinated_coarse_commands(decisions)
             report['coarse_calls'].append(decisions)
@@ -156,8 +246,9 @@ class BoundPairSkill:
         if not report['approach_ok']:raise RuntimeError('fine RGB alignment outside saved skill support')
         ready_count=0
         for index in range(30):
-            frames=self.capture('dock')
-            predictions={r:predict_stage(self.stage_models[r]['forward'],frames[r]['own_bytes'],frames[r]['top_bytes']) for r in ROBOTS}
+            frames,predictions=self.observe_and_compute('dock',lambda frames:{
+                r:predict_stage(self.stage_models[r]['forward'],frames[r]['own_bytes'],frames[r]['top_bytes'])
+                for r in ROBOTS})
             commands={r:dock_command(p) for r,p in predictions.items()}
             self.calls.append({'kind':'dock','predictions':predictions,'commands':commands})
             if not all(c['ok'] for c in commands.values()):raise RuntimeError('fine docking outside saved support')
@@ -229,6 +320,7 @@ class BoundPairSkill:
 
                     def analyze(frame_future=frame_future,count=count):
                         frames=self._bind_capture(frame_future.result(),count)
+                        perception_started_wall_s=time.monotonic()
                         raw=frames['r1']['raw_top_bytes']
                         motion,evidence=navigator.observe(raw)
                         decisions={}
@@ -246,25 +338,31 @@ class BoundPairSkill:
                         try:skew,skew_evidence=translation_skew(raw,self.carried_beam.previous)
                         except ValueError as error:
                             skew=None;skew_evidence={'unresolved':str(error)}
-                        return frames,motion,evidence,decisions,skew,skew_evidence
+                        perception_wall_s=time.monotonic()-perception_started_wall_s
+                        return frames,motion,evidence,decisions,skew,skew_evidence,perception_wall_s
 
                     pending=worker.submit(analyze)
                     while not pending.done():
                         # Only the owner advances physics. Port leases expire
                         # independently if RGB/render/decision work stalls.
                         self.tick(.02)
-                    frames,motion,evidence,decisions,skew,skew_evidence=pending.result()
+                    frames,motion,evidence,decisions,skew,skew_evidence,perception_wall_s=pending.result()
                     now=self.time();observed=float(frames['r1']['observed_at_s'])
                     self.io.realtime_stats['pair_decisions']+=1
                     self.io.realtime_stats['max_decision_age_s']=max(
                         self.io.realtime_stats['max_decision_age_s'],now-observed)
+                    policy_started_wall_s=time.monotonic()
                     control=policy.step(decisions,skew,
                         {r:f['frame_id'] for r,f in frames.items()},now,
                         observed_at_s=observed)
+                    policy_wall_s=time.monotonic()-policy_started_wall_s
                     self.calls.append({'kind':'carry','decisions':decisions,'control':control,
                         'route':evidence,'skew_evidence':skew_evidence,
                         'sim_time_s':now,'observed_at_s':observed,
                         'decision_age_s':now-observed,
+                        'wall_timing':_visual_timing(frames['r1'],
+                            perception_wall_s=perception_wall_s,
+                            policy_wall_s=policy_wall_s),
                         'frame_ids':{r:f['frame_id'] for r,f in frames.items()}})
                     if control['abort']:
                         raise RuntimeError('existing pair carry guard stopped: '+control['mode'])

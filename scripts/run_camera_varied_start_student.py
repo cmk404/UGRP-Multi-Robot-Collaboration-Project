@@ -88,6 +88,12 @@ def run_approach(scene, stage_models, *, condition='visual', straight_models=Non
     from harness.camera_varied_start_student import predict_stage
     from harness.camera_approach_student import predict_approach
 
+    def observe_and_predict(tag,predict):
+        hook=getattr(scene,'observe_and_compute',None)
+        if hook is not None:return hook(tag,predict)
+        frames=scene.capture(tag)
+        return frames,predict(frames)
+
     if condition not in ('visual', 'straight'):
         raise ValueError(f'unsupported approach condition: {condition}')
     if condition == 'straight' and straight_models is None:
@@ -112,14 +118,18 @@ def run_approach(scene, stage_models, *, condition='visual', straight_models=Non
             record['recovery_confirmations'] = []
         result['stage_results'].append(record)
         for index in range(LIMITS[stage] + 5):
-            frames = scene.capture(f'phase-{phase_index}-{index:03d}')
             if condition == 'visual':
-                decisions = {r: predict_stage(stage_models[r][stage], frames[r]['own_bytes'], frames[r]['top_bytes']) for r in ROBOTS}
+                frames,decisions=observe_and_predict(f'phase-{phase_index}-{index:03d}',
+                    lambda frames:{r:predict_stage(stage_models[r][stage],frames[r]['own_bytes'],
+                                                   frames[r]['top_bytes']) for r in ROBOTS})
             else:
-                decisions = {}
-                for r in ROBOTS:
-                    d = predict_approach(straight_models[r], frames[r]['own_bytes'], frames[r]['top_bytes'])
-                    decisions[r] = {**d, 'command': d['forward']}
+                def predict_straight(frames):
+                    decisions={}
+                    for r in ROBOTS:
+                        d=predict_approach(straight_models[r],frames[r]['own_bytes'],frames[r]['top_bytes'])
+                        decisions[r]={**d,'command':d['forward']}
+                    return decisions
+                frames,decisions=observe_and_predict(f'phase-{phase_index}-{index:03d}',predict_straight)
             control = choose_stage_actions(decisions, stage, confirming)
             start_recovery = (not control['valid'] and invalid_reobserve_budget
                               and not recovery_used and not recovering)
@@ -198,8 +208,9 @@ def run_approach(scene, stage_models, *, condition='visual', straight_models=Non
     if result['approach_ok'] and condition == 'visual':
         result['final_alignment_checks'] = []
         for index in range(2):
-            frames = scene.capture(f'final-alignment-{index}')
-            checks = {r: {s: predict_stage(stage_models[r][s], frames[r]['own_bytes'], frames[r]['top_bytes']) for s in AXES} for r in ROBOTS}
+            frames,checks=observe_and_predict(f'final-alignment-{index}',
+                lambda frames:{r:{s:predict_stage(stage_models[r][s],frames[r]['own_bytes'],
+                                                  frames[r]['top_bytes']) for s in AXES} for r in ROBOTS})
             result['final_alignment_checks'].append({'frame_ids': {r: frames[r]['frame_id'] for r in ROBOTS},
                 'images': {r: {'own': frames[r]['own_rgb'], 'top': frames[r]['shared_top_rgb']} for r in ROBOTS}, 'decisions': checks})
             result['approach_ok'] &= all(d['ok'] and d.get('stationary_ready', d['ready']) and d.get('precision', 'fine') == 'fine'
@@ -213,8 +224,9 @@ def run_approach(scene, stage_models, *, condition='visual', straight_models=Non
             result['alignment_refinement_reason'] = 'bounded refinement budget exhausted'
             confirming, consecutive = False, 0
             for index in range(final_refinement_steps):
-                frames = scene.capture(f'alignment-refine-{index:03d}')
-                checks = {r: {s: predict_stage(stage_models[r][s], frames[r]['own_bytes'], frames[r]['top_bytes']) for s in AXES} for r in ROBOTS}
+                frames,checks=observe_and_predict(f'alignment-refine-{index:03d}',
+                    lambda frames:{r:{s:predict_stage(stage_models[r][s],frames[r]['own_bytes'],
+                                                      frames[r]['top_bytes']) for s in AXES} for r in ROBOTS})
                 control = choose_alignment_refinement(checks, confirming)
                 result['alignment_refinement_calls'].append(dict(index=index, stationary=confirming,
                     frame_ids={r: frames[r]['frame_id'] for r in ROBOTS},

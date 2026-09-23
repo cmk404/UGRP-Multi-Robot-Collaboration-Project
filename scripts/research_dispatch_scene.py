@@ -4,6 +4,7 @@ from __future__ import annotations
 from concurrent.futures import ThreadPoolExecutor
 from io import BytesIO
 from pathlib import Path
+import time
 
 from PIL import Image
 
@@ -116,30 +117,43 @@ class DispatchScene:
             raise ValueError('capture requires known robot cameras')
         cameras=[(None,'cctv_top'),*((rid,'robot_cam') for rid in ROBOTS if rid in selected)]
         if overview:cameras.append((None,'cctv_warehouse'))
+        requested_wall_s=time.monotonic()
         batch_future=self.world.render_snapshot_async(cameras)
+        submitted_wall_s=time.monotonic()
         self.sequence+=1
         if self._capture_workers is None:
             self._capture_workers=ThreadPoolExecutor(max_workers=2,thread_name_prefix='dispatch-rgb')
 
         def materialize():
             batch=batch_future.result(timeout=30.)
+            rendered_wall_s=time.monotonic()
             def jpeg(key):
                 stream=BytesIO()
                 Image.fromarray(batch.rgb[key]).save(stream,format='JPEG',quality=95)
                 return stream.getvalue()
-            top=jpeg((None,'cctv_top'))
+            encoded={(None,'cctv_top'):jpeg((None,'cctv_top'))}
+            for rid in ROBOTS:
+                if rid in selected:encoded[(rid,'robot_cam')]=jpeg((rid,'robot_cam'))
+            if overview:encoded[(None,'cctv_warehouse')]=jpeg((None,'cctv_warehouse'))
+            encoded_wall_s=time.monotonic()
+            top=encoded[(None,'cctv_top')]
             top_ref=image_record(self.out/'rgb'/f'{label}-top.jpg',self.out,top)
             frames={}
             for rid in ROBOTS:
                 frame={'top_bytes':top,'frame_id':batch.frame_id,
-                       'observed_at_s':float(batch.sim_time),'shared_top_rgb':top_ref}
+                       'observed_at_s':float(batch.sim_time),'shared_top_rgb':top_ref,
+                       'capture_requested_wall_s':requested_wall_s,
+                       'snapshot_submitted_wall_s':submitted_wall_s,
+                       'render_completed_wall_s':rendered_wall_s,
+                       'encode_completed_wall_s':encoded_wall_s}
                 if rid in selected:
-                    own=jpeg((rid,'robot_cam'))
+                    own=encoded[(rid,'robot_cam')]
                     frame.update(own_bytes=own,
                                  own_rgb=image_record(self.out/'rgb'/f'{label}-{rid}.jpg',self.out,own))
                 frames[rid]=frame
             if overview:
-                (self.out/f'{label}-overview.jpg').write_bytes(jpeg((None,'cctv_warehouse')))
+                (self.out/f'{label}-overview.jpg').write_bytes(encoded[(None,'cctv_warehouse')])
+            for frame in frames.values():frame['materialized_wall_s']=time.monotonic()
             return frames
         return self._capture_workers.submit(materialize)
 
