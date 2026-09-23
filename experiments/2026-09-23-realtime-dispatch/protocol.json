@@ -48,5 +48,14 @@
     "final_full_max_wall_s": 600,
     "model_calls": 0,
     "purpose": "Qualify exact first-frame segmentation optimization and moving carry renewal before the remaining full replay."
+  },
+  "budget_review_after_v13": {
+    "evidence": "v13 full ended on current-RGB high-saturation centerline ambiguity after 167 carry decisions; no stale pair inputs. Offline original-frame replay supports a corroborated low/high saturation fallback. Independent review found worker-side permission mutation and solo moving-command gaps.",
+    "additional_full_trials": 2,
+    "full_max_wall_s": 600,
+    "additional_diagnostic_trials": 1,
+    "diagnostic_max_wall_s": 180,
+    "model_calls": 0,
+    "purpose": "Qualify combined RGB corroboration, owner-only resource commit, and original-TTL solo carry/yield renewal on a new frozen source, then repeat the same full run if the first succeeds."
   }
 }

@@ -31,6 +31,7 @@ class _PermissionProbeSolo:
         self.steps+=1
         allowed=self.navigator._permission('box','UNLOAD')
         if allowed:self.navigator.index+=1
+        if getattr(self,'enter_carry',False):self.box.phase='carry'
         return ({'kind':'mecanum','forward':.05 if allowed else 0.,
                  'left':0.,'turn':0.,'duration_s':.2},
                 {'waiting_for_resource':not allowed})
@@ -120,6 +121,29 @@ def test_solo_carry_lease_ends_at_original_rgb_ttl(tmp_path,monkeypatch):
         assert port.apply_bounded.call_args.args[2]==pytest.approx(.1)
         assert scene.command_history['r2'][-1]['valid_until_s']==pytest.approx(.6)
         assert scene.solo_lease==pytest.approx(.52)
+    finally:scene._decision_workers.shutdown(wait=True)
+
+
+def test_first_attachment_home_to_carry_motion_uses_original_rgb_ttl(
+        tmp_path,monkeypatch):
+    scene,binding,port,clock=_realtime_solo_scene(tmp_path,monkeypatch)
+    scene.solo.box.phase='attachment_home'
+    scene.solo.enter_carry=True
+    try:
+        scene._solo_tick_realtime()
+        scene._solo_pending['future'].result(timeout=2)
+        clock[0]=.45  # First post-attachment RGB decision is already >0.4 SIM old.
+        scene._solo_tick_realtime()
+        assert scene.solo.phase=='carry'
+        assert scene.solo_rows[-1]['phase_before']=='attachment_home'
+        assert scene.solo_rows[-1]['phase_after']=='carry'
+        assert scene.solo_rows[-1]['decision_age_s']==pytest.approx(.45)
+        assert scene.solo_rows[-1]['requested_duration_s']==pytest.approx(.2)
+        assert scene.solo_rows[-1]['effective_lease_s']==pytest.approx(.15)
+        port.apply.assert_not_called()  # The unbounded raw path would expire at .65.
+        assert port.apply_bounded.call_args.args[2]==pytest.approx(.15)
+        assert scene.command_history['r2'][-1]['valid_until_s']==pytest.approx(.6)
+        assert scene.solo_lease==pytest.approx(.47)
     finally:scene._decision_workers.shutdown(wait=True)
 
 

@@ -335,7 +335,8 @@ class SkillScene(DispatchScene):
             if before=='approach' and candidate.phase=='lower':
                 requests.append(('box','GRASP'))
             if action['kind']=='mecanum':requests.append(('box','TRANSIT'))
-            moving_carry=(before=='carry' and action['kind']=='mecanum'
+            moving_carry=((before=='carry' or candidate.phase=='carry')
+                          and action['kind']=='mecanum'
                           and any(abs(action[k])>1e-9 for k in ('forward','left','turn')))
             if moving_carry and observed+RGB_ACTION_TTL_S-now<=0:
                 self.ports[self.bindings.solo].hold(now)
