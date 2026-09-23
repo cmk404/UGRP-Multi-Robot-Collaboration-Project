@@ -2,6 +2,7 @@
 
 현재 코드의 진입점은 [현재 상태](../docs/current_status.md)를 참고한다. 아래는 실행 SHA별 보존 기록이며 과거 실패와 후속 결과를 함께 남긴다. 필요한 ID만 골라 읽는다.
 
+- [2026-09-23 표준 시뮬레이션 지도·로컬 실행 검증](2026-09-23-standard-simulation-refinement/README.md) — 관리 CLI에서 지도 22종 정적 검사·MuJoCo 창/영상 실행, 원본 해시와 TensorBoard 스냅샷; 학습·운반 성공 판정은 미실행.
 - [2026-09-23 표준 시뮬레이션 관리·Colab 포장 검증](2026-09-23-unified-simulation-management/README.md) — 19개 실행 공통 관리·공유 장면, 회귀 1,812개·fixture 9/9·로컬 포장/회수 검증; L4·운반 재검증은 미실행.
 - [2026-09-23 RGB 실행 계약 수정·4회 재생](2026-09-23-rgb-execution-contract/README.md) — 초기 해상도·공동 식별 결함 수정 후 Colab·Mac 단독/공동 모두 물리 완주 실패; 네 실패 경계·원본 해시·독립 감사 보존.
 - [2026-09-23 공통 RGB 물리 완주 복구](2026-09-23-rgb-common-physical-recovery/README.md) — v1~v8 개발 후보를 같은 seed11에서 분리 재생; 단독 상자 대상은 v3~v8 성공, 공동 빔은 v8에서 회전을 통과하고 횡방향 영상 지원 범위 밖에서 파지 전 중단. 전체 임무·통신 효과는 미입증.

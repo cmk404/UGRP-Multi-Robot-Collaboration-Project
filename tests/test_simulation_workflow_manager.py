@@ -69,6 +69,7 @@ raise SystemExit(3 if a.fail else 0)
         self.assertIs(data["physical_success"], False)
         self.assertIs(data["reported_outcomes"]["protocol_complete"]["value"], True)
         self.assertEqual(data["inputs_before"], data["inputs_after"])
+        self.assertIs(data["inputs_changed_during_run"], False)
         self.assertFalse(data["source_changed_during_run"])
         self.assertIn("result.json", [r["path"] for r in data["output_receipt"]["files"]])
         self.assertIn("fixture executed", (record / "console.log").read_text())
@@ -182,12 +183,13 @@ raise SystemExit(3 if a.fail else 0)
         self.assertEqual(row["status"], "launcher_failed")
         self.assertEqual(row["exit_code"], 2)
 
-    def test_catalog_has_nineteen_selectable_workflows_and_distinct_adapters(self):
+    def test_catalog_has_twenty_one_selectable_workflows_and_distinct_adapters(self):
         data, digest = wm.catalog(PROJECT)
-        self.assertEqual(len(data["workflows"]), 19)
+        self.assertEqual(len(data["workflows"]), 21)
         self.assertEqual(len(digest), 64)
         self.assertEqual(next(r for r in data["workflows"] if r["id"] == "dispatch-skills")["runner"], "scripts.run_dispatch_e2e")
         self.assertEqual(next(r for r in data["workflows"] if r["id"] == "communication")["output_kind"]["prepare"], "file")
+        self.assertEqual(next(r for r in data["workflows"] if r["id"] == "act-training")["runner"], "scripts.train_carry_act")
 
     def test_every_catalog_workflow_has_a_read_only_explicit_plan(self):
         data, _ = wm.catalog(PROJECT)
@@ -197,7 +199,7 @@ raise SystemExit(3 if a.fail else 0)
         model.mkdir()
         (model / "weights.bin").write_bytes(b"fixture")
         samples = {
-            "local": ["run", str(source), "--headless"], "dispatch": ["--headless"],
+            "local": ["run", str(PROJECT / "configs/simulation/drive.json"), "--headless"], "dispatch": ["--headless"],
             "dispatch-skills": ["--plan-replay", str(source), "--grasp-model-dir", str(model), "--stage-model-dir", str(model)],
             "communication": ["prepare", "--protocol", str(source)],
             "multi-object": ["--model", "fixture"],
@@ -206,7 +208,10 @@ raise SystemExit(3 if a.fail else 0)
             "camera-pair": [], "rgb-traffic": ["--scenario", "crossing"],
             "act": ["--act-python", str(source), "--mjpython", str(source), "--grasp", str(model), "--stages", str(model)],
             "teacher": ["--grasp-model-dir", str(model), "--cases-json", str(source)],
+            "act-map-suite": ["--spec", str(PROJECT / "maps/act_generalization/suite_v1.json")],
             "act-training": ["--dataset", str(model)],
+            "act-input-training": ["--dataset", str(source), "--size", "128", "--history", "1",
+                                   "--steps", "100", "--device", "cpu", "--seed", "18"],
             "jev": ["--execute", "--mjpython", str(source)], "stage-sync": [],
             "physical": [str(model)], "worker": ["--url", "ws://localhost/fixture"],
             "tensorboard": ["--source", str(model)],
@@ -220,6 +225,28 @@ raise SystemExit(3 if a.fail else 0)
         self.assertEqual(plans["physical"]["command"][-1], "<record>/artifacts")
         self.assertEqual(plans["communication"]["output"], "<record>/artifacts.json")
         self.assertEqual(plans["dispatch-skills"]["command"][3:5], ["--executor", "skills"])
+        self.assertEqual(plans["act-map-suite"]["command"][-2:], ["--output", "<record>/artifacts"])
+        self.assertEqual(plans["act-input-training"]["command"][-2:], ["--out", "<record>/artifacts"])
+        self.assertEqual(plans["act-map-suite"]["inputs"][0]["path"], str(PROJECT / "maps/act_generalization/suite_v1.json"))
+        self.assertEqual(plans["act-input-training"]["inputs"][0]["path"], str(source.resolve()))
+        self.assertTrue(all(not plan["execution_started"] for plan in plans.values()))
+
+    def test_act_workflows_require_explicit_suite_and_training_shape(self):
+        with self.assertRaisesRegex(ValueError, "act-map-suite requires --spec"):
+            wm.plan(PROJECT, "act-map-suite", [])
+        with self.assertRaisesRegex(ValueError, "act-input-training requires --dataset"):
+            wm.plan(PROJECT, "act-input-training", ["--size", "128", "--history", "1"])
+        with self.assertRaisesRegex(ValueError, "act-input-training requires --size"):
+            wm.plan(PROJECT, "act-input-training", ["--dataset", str(PROJECT / "maps/act_generalization/suite_v1.json"), "--history", "1"])
+        with self.assertRaisesRegex(ValueError, "act-input-training requires --history"):
+            wm.plan(PROJECT, "act-input-training", ["--dataset", str(PROJECT / "maps/act_generalization/suite_v1.json"), "--size", "128"])
+        args = ["--dataset", str(PROJECT / "maps/act_generalization/suite_v1.json"),
+                "--size", "128", "--history", "1", "--steps", "100", "--device", "cpu", "--seed", "18"]
+        for flag in ("--steps", "--device", "--seed"):
+            missing = args[:]
+            del missing[missing.index(flag):missing.index(flag) + 2]
+            with self.assertRaisesRegex(ValueError, f"act-input-training requires {flag}"):
+                wm.plan(PROJECT, "act-input-training", missing)
 
     def test_physical_rejects_copy_into_own_trace_and_worker_token_argv(self):
         row = next(r for r in wm.catalog(PROJECT)[0]["workflows"] if r["id"] == "worker")
@@ -246,6 +273,7 @@ raise SystemExit(3 if a.fail else 0)
         archive.parent.mkdir(parents=True)
         archive.write_bytes(b"fixture model bundle")
         def fake_run(_config, args):
+            self.assertEqual(_config["scene"]["layout"], "navigation/s-bends")
             args.output.mkdir()
             (args.output / "result.json").write_text('{"protocol_complete":false}')
             return 0
@@ -256,7 +284,7 @@ raise SystemExit(3 if a.fail else 0)
             return 0
         with mock.patch.object(sim_cli, "ROOT", self.root), mock.patch.object(sim_cli, "run", fake_run), \
              mock.patch.object(sim_dispatch, "main", fake_dispatch):
-            self.assertEqual(sim_cli.main(["run", str(config), "--headless"]), 0)
+            self.assertEqual(sim_cli.main(["run", str(config), "--headless", "--scene", "navigation/s-bends"]), 0)
             self.assertEqual(sim_cli.main(["dispatch", "--headless"]), 0)
         rows = [json.loads(p.read_text()) for p in wm._records(self.root)]
         self.assertEqual({r["workflow_id"] for r in rows}, {"local", "dispatch"})

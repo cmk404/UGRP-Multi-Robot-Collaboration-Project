@@ -20,6 +20,7 @@ from uuid import uuid4
 
 from sim.session_config import ROBOTS, load_config, validate_config
 from sim.session_scenes import DEFAULT_SCENE, Scene, catalog
+from sim.simulation_launch_options import build_command, dispatch_maps, preview_maps
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -92,6 +93,7 @@ def run(config, args):
     def interrupted(*_):
         raise KeyboardInterrupt
     previous_term = signal.signal(signal.SIGTERM, interrupted)
+    exit_code = None
     try:
         # Record entry bytes before trusted Python can fail in a builder/factory.
         # Successful construction also records the exact executed bytes below.
@@ -235,15 +237,29 @@ def run(config, args):
         result["protocol_complete"] = not interactive and result["stop_reason"] == "sim_limit" and not result["runtime_events"]
         if args.capture and state_error is None:
             capture(sim, output, "final")
-        return 2 if result["runtime_events"] or (console and console.failures) or (args.headless and not interactive and not result["protocol_complete"]) else 0
+        exit_code = 2 if result["runtime_events"] or (console and console.failures) or (args.headless and not interactive and not result["protocol_complete"]) else 0
     except KeyboardInterrupt:
         result["stop_reason"] = "interrupted"
-        return 130
+        exit_code = 130
     except Exception as error:
         result["error"] = f"{type(error).__name__}: {error}"
         raise
     finally:
-        signal.signal(signal.SIGTERM, previous_term)
+        cleanup_interrupted = False
+        def note_cleanup_interrupt(*_):
+            nonlocal cleanup_interrupted
+            cleanup_interrupted = True
+            result.update(stop_reason="interrupted", protocol_complete=False)
+
+        # Ctrl-C in the terminal can be followed by the session owner's
+        # SIGTERM. Keep both signals from aborting artifact finalization.
+        cleanup_signals = {signal.SIGINT, signal.SIGTERM}
+        previous_mask = signal.pthread_sigmask(signal.SIG_BLOCK, cleanup_signals)
+        try:
+            previous_int = signal.signal(signal.SIGINT, note_cleanup_interrupt)
+            signal.signal(signal.SIGTERM, note_cleanup_interrupt)
+        finally:
+            signal.pthread_sigmask(signal.SIG_SETMASK, previous_mask)
         try:
             if console is not None:
                 console.close()
@@ -283,12 +299,178 @@ def run(config, args):
             result.update(protocol_complete=False, stop_reason="error", error=f"{type(error).__name__}: {error}")
             raise
         finally:
-            decisions.close()
-            result["wall_s"] = time.monotonic() - started
-            result["artifacts_sha256"] = {str(p.relative_to(output)): hashlib.sha256(p.read_bytes()).hexdigest()
-                                           for p in sorted(output.rglob("*")) if p.is_file() and p.name != "result.json"}
-            write_json(output / "result.json", result)
-            print(f"Stopped: {result['stop_reason']} | {output.resolve() / 'result.json'}", flush=True)
+            try:
+                decisions.close()
+                result["wall_s"] = time.monotonic() - started
+                result["artifacts_sha256"] = {str(p.relative_to(output)): hashlib.sha256(p.read_bytes()).hexdigest()
+                                               for p in sorted(output.rglob("*")) if p.is_file() and p.name != "result.json"}
+                write_json(output / "result.json", result)
+                print(f"Stopped: {result['stop_reason']} | {output.resolve() / 'result.json'}", flush=True)
+            finally:
+                previous_mask = signal.pthread_sigmask(signal.SIG_BLOCK, cleanup_signals)
+                try:
+                    signal.signal(signal.SIGTERM, previous_term)
+                    signal.signal(signal.SIGINT, previous_int)
+                finally:
+                    signal.pthread_sigmask(signal.SIG_SETMASK, previous_mask)
+    return 130 if cleanup_interrupted else exit_code
+
+
+class _MenuCancelled(Exception):
+    """The operator left the interactive launcher before starting a run."""
+
+    def __init__(self, exit_code=0):
+        self.exit_code = exit_code
+
+
+def _menu_input(prompt):
+    try:
+        value = input(prompt).strip()
+    except EOFError as error:
+        raise _MenuCancelled from error
+    except KeyboardInterrupt as error:
+        raise _MenuCancelled(130) from error
+    if value.lower() in ("q", "quit"):
+        raise _MenuCancelled
+    return value
+
+
+def _print_menu_items(choices):
+    for index, item in enumerate(choices, 1):
+        print(f"  {index:>2}. {item}")
+
+
+def _menu_choice(prompt, choices, default, *, labels=None):
+    displayed = labels if labels is not None else choices
+    _print_menu_items(displayed)
+    while True:
+        value = _menu_input(prompt)
+        if not value:
+            return default
+        if value == "?":
+            _print_menu_items(displayed)
+            continue
+        if value.isdecimal() and 1 <= int(value) <= len(choices):
+            return choices[int(value) - 1]
+        if value in choices:
+            return value
+        print("목록의 번호 또는 이름을 입력하세요. ?는 목록, q는 종료입니다.")
+
+
+def _preview_map_choice(maps):
+    """Browse one catalog family or a text match rather than all scenes."""
+    families = {}
+    for scene in maps:
+        family = scene.split("/", 1)[0] if "/" in scene else "legacy"
+        families.setdefault(family, []).append(scene)
+    group_names = list(families)
+    group_labels = [f"{name} ({len(families[name])}장면)" for name in group_names]
+    _print_menu_items(group_labels)
+    shown = []
+    while True:
+        prompt = ("장면 번호/ID [Enter 기본값; ? 그룹; /단어 검색]: " if shown else
+                  "그룹 번호/장면 ID [Enter 기본값; ? 그룹; /단어 검색]: ")
+        value = _menu_input(prompt)
+        if not value:
+            return DEFAULT_SCENE
+        if value == "?":
+            shown = []
+            _print_menu_items(group_labels)
+            continue
+        if value in maps:
+            return value
+        if value in families:
+            shown = families[value]
+        elif value.startswith("/") and value[1:]:
+            shown = [scene for scene in maps if value[1:].casefold() in scene.casefold()]
+        elif value.isdecimal():
+            index = int(value)
+            if shown and 1 <= index <= len(shown):
+                return shown[index - 1]
+            if not shown and 1 <= index <= len(group_names):
+                shown = families[group_names[index - 1]]
+            else:
+                print("표시된 목록의 번호를 입력하세요. ?는 그룹 목록입니다.")
+                continue
+        else:
+            print("그룹 번호, 등록 장면 ID, 그룹명 또는 /검색어를 입력하세요. q는 종료입니다.")
+            continue
+        if not shown:
+            print("일치하는 장면이 없습니다.")
+        else:
+            for index, scene in enumerate(shown, 1):
+                print(f"  {index:>2}. {scene}")
+
+
+def _model_choice(default_model):
+    choices = [f"기본 모델 ({default_model})", "모델 ID 직접 입력"]
+    _print_menu_items(choices)
+    while True:
+        value = _menu_input("계획 모델 [1; 2 직접 입력]: ")
+        if not value or value == "1":
+            return default_model
+        if value == "?":
+            _print_menu_items(choices)
+            continue
+        if value == "2":
+            model = _menu_input("모델 ID: ")
+            if model:
+                return model
+            print("모델 ID를 입력하세요.")
+            continue
+        if value.isdecimal():
+            print("계획 모델은 1 또는 2를 선택하세요.")
+            continue
+        return value
+
+
+def _choose_launch():
+    """Select an existing native CLI run without adding another process layer."""
+    print("\nUGRP 로컬 시뮬레이션")
+    mode = _menu_choice("실행 방식 [1; q 종료]: ", ["1", "2", "3"], "1", labels=[
+        "LLM 공동 계획 → 기존 RGB 스킬 (모델 호출)",
+        "장면 미리보기 (모델 호출 없음, 시작 시 일시정지)",
+        "기타 실행 (plan 재생·수동·설정 파일)",
+    ])
+    if mode == "3":
+        from scripts.sim_dispatch import choose
+        return choose()
+    if mode == "1":
+        selected_mode = "llm_dispatch"
+        maps = dispatch_maps()
+        default_map = "shared_crossing"
+    else:
+        selected_mode = "preview"
+        maps = preview_maps()
+        default_map = DEFAULT_SCENE
+    if default_map not in maps:
+        raise ValueError("기본 맵이 현재 목록에 없습니다")
+    if selected_mode == "llm_dispatch":
+        selected_map = _menu_choice(f"맵 [{default_map}; ? 목록]: ", maps, default_map)
+    else:
+        print(f"기본 장면: {default_map}. ACT 등은 관찰용 장면이며 정책 실행·성공 검증이 아닙니다.")
+        selected_map = _preview_map_choice(maps)
+    speed = _menu_choice("관찰 속도 [2 = 1× 기본; ? 목록]: ", ["0.5", "1", "2", "4"], "1",
+                         labels=["0.5×", "1×", "2×", "4×"])
+    selection = {"mode": selected_mode, "map": selected_map, "speed": speed}
+    if selected_mode == "llm_dispatch":
+        default_model = os.environ.get("UGRP_SIM_MODEL", "gemini-3.8-flash")
+        default_task = "기존 beam과 box를 같은 dock으로 옮겨"
+        print("기존 출하 임무의 역할과 경로를 계획합니다. 모델 프록시가 필요합니다.")
+        while True:
+            model = _model_choice(default_model)
+            task = _menu_input("자연어 지시 [기본 출하 임무]: ") or default_task
+            selection.update(model=model, task=task)
+            try:
+                command = build_command(ROOT, selection)
+                break
+            except ValueError as error:
+                print(f"입력 오류: {error}")
+    else:
+        command = build_command(ROOT, selection)
+    if command[:2] != ["bash", "scripts/open_simulation.command"]:
+        raise ValueError("시뮬레이션 실행 명령 형식이 올바르지 않습니다")
+    return main(command[2:])
 
 
 def main(argv=None):
@@ -297,7 +479,7 @@ def main(argv=None):
         from sim.workflow_manager import workflow_cli
         return workflow_cli(argv[1:], root=ROOT)
     if argv and argv[0] in ('start', 'dispatch'):
-        from scripts.sim_dispatch import choose, main as dispatch
+        from scripts.sim_dispatch import main as dispatch
         try:
             if argv[0] == 'dispatch':
                 from sim.workflow_manager import _option, run_inprocess
@@ -309,7 +491,10 @@ def main(argv=None):
                 return run_inprocess(ROOT, 'dispatch', argv, invoke, output=supplied)
             if len(argv) != 1 or not sys.stdin.isatty():
                 raise ValueError('start requires an interactive terminal; use dispatch or console with explicit options')
-            return choose()
+            return _choose_launch()
+        except _MenuCancelled as error:
+            print("시뮬레이션 시작을 취소했습니다.")
+            return error.exit_code
         except (ValueError, OSError, RuntimeError) as error:
             print(f'sim: {error}', file=sys.stderr)
             return 2
@@ -344,6 +529,7 @@ def main(argv=None):
     execute.add_argument("--video-camera", default="cctv_warehouse")
     execute.add_argument("--video-fps", type=int, choices=range(1, 31), default=10)
     execute.add_argument("--camera", default="free", help="native view: free, cctv_top, cctv_warehouse, r1__robot_cam, ...")
+    execute.add_argument("--scene", help="select a registered scene for this run without editing the config")
     execute.add_argument("--controller", action="append", default=[], metavar="ROBOT=FILE.py:FACTORY",
                          help="replace/add a robot controller; paths relative to the config directory")
     execute.add_argument("--scene-builder", help="replace scene builder, relative to the config directory")
@@ -362,7 +548,6 @@ def main(argv=None):
     console.add_argument("--max-rounds", type=int, default=12)
     console.add_argument("--task", help="initial manual command or natural-language goal")
     console.add_argument("--exit-after-task", action="store_true", help="finite single-task invocation, no stdin reader")
-    console.add_argument("--scene", help="select any scene from scenes without editing JSON")
     args = parser.parse_args(argv)
     try:
         if args.command in ("layouts", "scenes"):
@@ -433,10 +618,10 @@ def main(argv=None):
                 raise ValueError("model-timeout: 1..120 seconds")
             if args.exit_after_task and not args.task:
                 raise ValueError("--exit-after-task requires --task")
-            if args.scene:
-                config["scene"]["layout"] = args.scene
             if args.sim_seconds is None:
                 config["run"]["sim_seconds"] = 1800
+        if args.scene:
+            config["scene"]["layout"] = args.scene
         for override in args.controller:
             if "=" not in override:
                 raise ValueError("--controller requires ROBOT=FILE.py:FACTORY")
