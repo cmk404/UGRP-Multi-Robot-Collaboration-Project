@@ -523,7 +523,7 @@ class PairCoarsePixels:
             raise ValueError('pair coarse TOP requires calibrated 960x720 pixels')
         hsv=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
         yellow=cv2.inRange(hsv,np.array((20,70,50),np.uint8),np.array((40,255,255),np.uint8))
-        n,labels,stats,_=cv2.connectedComponentsWithStats(yellow)
+        n,labels,stats,component_centers=cv2.connectedComponentsWithStats(yellow)
         clean=np.zeros_like(yellow)
         selected_components=0
         for i in range(1,n):
@@ -558,6 +558,30 @@ class PairCoarsePixels:
             heading=wheel_heading(selected,pixel_tolerance=2.)
             mask.update(local_wheel_pixels=int(len(xs)),
                         selection='prior_own_rgb_bounds',bounds_margin_px=PAIR_OWN_BOUNDS_PAD_PX)
+            if heading is None:
+                # When the peer reaches the expanded prior support, retain
+                # only complete colour components centred in the actor's
+                # previously observed wheel bounds. Never validate a shape
+                # assembled from a component clipped by the support edge.
+                selected=np.zeros_like(clean)
+                for i in range(1,n):
+                    component_x,component_y=component_centers[i]
+                    if (stats[i,4]<=300 and xlo<=component_x<=xhi
+                            and ylo<=component_y<=yhi):
+                        selected[labels==i]=255
+                selected[(xx<xlo-PAIR_OWN_BOUNDS_PAD_PX)|(xx>xhi+PAIR_OWN_BOUNDS_PAD_PX)|
+                         (yy<ylo-PAIR_OWN_BOUNDS_PAD_PX)|(yy>yhi+PAIR_OWN_BOUNDS_PAD_PX)]=0
+                ys,xs=np.nonzero(selected)
+                touches_bounds=(len(xs)>0 and
+                    (xs.min()<=xlo-PAIR_OWN_BOUNDS_PAD_PX or
+                     xs.max()>=xhi+PAIR_OWN_BOUNDS_PAD_PX or
+                     ys.min()<=ylo-PAIR_OWN_BOUNDS_PAD_PX or
+                     ys.max()>=yhi+PAIR_OWN_BOUNDS_PAD_PX))
+                if not touches_bounds:
+                    heading=wheel_heading(selected,pixel_tolerance=2.)
+                mask.update(local_wheel_pixels=int(len(xs)),
+                            selection='prior_own_rgb_components',
+                            selection_touches_bounds=bool(touches_bounds))
         if heading is None:
             return dict(ok=False,ready=False,forward=0.,left=0.,turn=0.,
                         reason='own_wheel_heading_unresolved',mask=mask)

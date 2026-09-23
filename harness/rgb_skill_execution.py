@@ -74,6 +74,10 @@ def _execution_contract():
             "pair_heading_prior_bounds": {"pad_px": PAIR_OWN_BOUNDS_PAD_PX,
                 "max_center_step_px": PAIR_MAX_CENTER_STEP_PX,
                 "max_bounds_step_px": PAIR_MAX_BOUNDS_STEP_PX},
+            "pair_heading_component_fallback": {
+                "membership": "centroid_in_prior_own_bounds",
+                "reject_clipped_support": True,
+                "requires_four_corners": True},
             "study_tick_period_s": .05, "study_poll_period_s": .05,
             "worker_image_max_age_s": 1., "worker_wall_limit_s": 2.,
             "worker_wall_scope": "submission_to_consumption"}
