@@ -38,6 +38,46 @@ def test_catalog_covers_every_existing_map_and_case_without_a_hidden_fallback():
             resolve(selection)
 
 
+@pytest.mark.parametrize('selection', [row['id'] for row in catalog() if row['family'] == 'act'])
+def test_act_scene_records_every_map_read_by_generation_and_split_validation(monkeypatch, selection):
+    from sim import act_map_suite
+    read_paths = set()
+    original_read = act_map_suite.read_json
+
+    def tracked_read(path):
+        read_paths.add(str(Path(path).resolve()))
+        return original_read(path)
+
+    monkeypatch.setattr(act_map_suite, 'read_json', tracked_read)
+    scene = resolve(selection)
+    assert read_paths <= scene.sources.keys()
+    for path in read_paths:
+        content = Path(path).read_bytes()
+        assert scene.sources[path] == {'bytes': content, 'sha256': hashlib.sha256(content).hexdigest()}
+
+
+def test_generated_corner_records_its_template_without_legacy_regression(monkeypatch):
+    from sim import act_map_suite
+    row = next(row for row in json.loads(act_map_suite.SPEC.read_text())['cases'] if row['family'] == 'corner')
+    monkeypatch.setattr(act_map_suite, 'load_suite', lambda: (
+        {'include_legacy_regression': False}, [act_map_suite.generate_case(row)]))
+    scene = resolve('act/'+row['id'])
+    assert str(ROOT/'maps/pair_navigation/l-corner.json') in scene.sources
+    assert str(ROOT/'maps/pair_navigation/catalog.json') not in scene.sources
+
+
+def test_act_cli_inspect_exposes_transitive_source_hashes(tmp_path, capsys):
+    from sim.act_map_suite import SPEC
+    row = next(row for row in json.loads(SPEC.read_text())['cases'] if row['family'] == 'corner')
+    config = tmp_path/'corner.json'
+    assert main(['init', str(config), '--scene', 'act/'+row['id']]) == 0
+    capsys.readouterr()
+    assert main(['inspect', str(config)]) == 0
+    report = json.loads(capsys.readouterr().out)
+    source = ROOT/'maps/pair_navigation/l-corner.json'
+    assert report['source_files'][str(source)] == hashlib.sha256(source.read_bytes()).hexdigest()
+
+
 def test_default_cli_preserves_dispatch_and_demo_requires_explicit_selection(tmp_path):
     path = tmp_path/'default.json'
     assert main(['init', str(path)]) == 0
