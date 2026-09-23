@@ -1,5 +1,6 @@
 """Bounded dispatch RGB snapshots and paired command admission."""
 from concurrent.futures import Future, ThreadPoolExecutor
+import copy
 import threading
 from types import SimpleNamespace
 from unittest.mock import Mock
@@ -9,10 +10,170 @@ import pytest
 
 from scripts.research_dispatch_scene import DispatchScene
 from scripts.run_dispatch_skills import SkillScene
+from harness.dispatch_skill_binding import SkillBindings
 from scripts.dispatch_pair_skill import BoundPairSkill
 from scripts.dispatch_native_view import HeadlessPacer
 from scripts.camera_approach_scene import ApproachScene
 from scripts.run_camera_varied_start_student import run_approach
+
+
+class _PermissionProbeSolo:
+    """Worker candidate that advances its route only after an RGB gate check."""
+    def __init__(self, binding):
+        self.navigator=SimpleNamespace(_permission=binding.permission,index=0)
+        self.box=SimpleNamespace(phase='carry',last_attachment=None)
+        self.steps=0;self.done=False
+
+    @property
+    def phase(self):return self.box.phase
+
+    def decide(self,_own,_top):
+        self.steps+=1
+        allowed=self.navigator._permission('box','UNLOAD')
+        if allowed:self.navigator.index+=1
+        return ({'kind':'mecanum','forward':.05 if allowed else 0.,
+                 'left':0.,'turn':0.,'duration_s':.2},
+                {'waiting_for_resource':not allowed})
+
+
+def _realtime_solo_scene(tmp_path,monkeypatch):
+    binding=SkillBindings.__new__(SkillBindings)
+    binding.solo='r2';binding.revoked=False;binding.route_overlap=True
+    binding.overlap_start='grasp';binding.grasp_started={'beam'}
+    binding.transit_started=set();binding.finished={'beam-job'}
+    binding.tasks={'box':{'id':'box-job','route':'south'},
+                   'beam':{'id':'beam-job','route':'north'}}
+    binding.static_map={'routes':{'south':{'resource':'south-lane'},
+                                  'north':{'resource':'north-lane'}}}
+    binding.locks={};binding.resource_events=[]
+    binding.committed={'plan_hash':'test-plan'}
+    clock=[0.]
+    port=SimpleNamespace(_actuator_state=Mock(return_value={}),hold=Mock(),
+        validate_bounded=Mock(),apply_bounded=Mock(),validate_action=Mock(),
+        apply=Mock())
+    scene=SkillScene.__new__(SkillScene)
+    scene.bindings=binding;scene.solo=_PermissionProbeSolo(binding)
+    scene.authorize=Mock();scene.time=lambda:clock[0]
+    scene.ports={'r2':port};scene.command_history={'r2':[]}
+    scene.solo_executor=SimpleNamespace(tick=Mock(),idle=True,submit=Mock())
+    scene._solo_pending=None;scene._solo_retry_at=0.;scene.solo_lease=0.
+    scene.solo_started=0.;scene.solo_rows=[];scene._solo_phase_label='carry'
+    scene.realtime_stats={'solo_backpressure':0,'solo_stale_rgb':0,
+                          'solo_decisions':0,'max_decision_age_s':0.}
+    scene._decision_workers=ThreadPoolExecutor(max_workers=1)
+    scene.out=tmp_path;scene.video=None
+    frames=Future();frames.set_result({'r2':{'frame_id':11,
+        'observed_at_s':0.,'own_bytes':b'own','top_bytes':b'top',
+        'own_rgb':'raw-own','shared_top_rgb':'raw-top'}})
+    scene.capture_async=Mock(return_value=frames)
+    monkeypatch.setattr('scripts.run_dispatch_skills.normalize_own_rgb',
+                        lambda obs:(obs,{'method':'test'}))
+    monkeypatch.setattr('scripts.run_dispatch_skills.image_record',
+                        lambda *_args:'normalized-own')
+    return scene,binding,port,clock
+
+
+@pytest.mark.parametrize('commit_time,deny_unload,expected',[
+    (.1,False,'committed'),(.1,True,'denied'),(.7,False,'stale')])
+def test_solo_worker_permission_is_private_until_fresh_owner_commit(
+        tmp_path,monkeypatch,commit_time,deny_unload,expected):
+    scene,binding,port,clock=_realtime_solo_scene(tmp_path,monkeypatch)
+    try:
+        scene._solo_tick_realtime()
+        scene._solo_pending['future'].result(timeout=2)
+        assert binding.locks=={} and binding.resource_events==[]
+        assert scene.solo.navigator.index==0
+        if deny_unload:binding.finished.clear()
+        clock[0]=commit_time
+        scene._solo_tick_realtime()
+        if expected=='committed':
+            assert scene.solo.navigator.index==1
+            assert scene.solo.navigator._permission.__self__ is binding
+            assert binding.locks=={'south-lane':'box-job','dispatch_apron':'box-job'}
+            assert {event['resource'] for event in binding.resource_events}=={
+                'south-lane','dispatch_apron'}
+            port.apply_bounded.assert_called_once()
+            assert scene.command_history['r2'][-1]['valid_until_s']==pytest.approx(.35)
+            assert scene.solo_lease==pytest.approx(.12)
+            assert scene.solo_rows[-1]['requested_duration_s']==pytest.approx(.2)
+            assert scene.solo_rows[-1]['effective_lease_s']==pytest.approx(.25)
+            # The next cloned worker must not inherit a live mutating callback.
+            clone=copy.deepcopy(scene.solo)
+            assert clone.navigator._permission.__self__ is not binding
+        else:
+            assert scene.solo.navigator.index==0
+            assert binding.locks=={} and binding.resource_events==[]
+            assert scene.solo_rows[-1]['dropped']==(
+                'resource_permission' if expected=='denied' else 'stale_rgb')
+            port.apply_bounded.assert_not_called()
+            port.hold.assert_called_once_with(commit_time)
+    finally:scene._decision_workers.shutdown(wait=True)
+
+
+def test_solo_carry_lease_ends_at_original_rgb_ttl(tmp_path,monkeypatch):
+    scene,binding,port,clock=_realtime_solo_scene(tmp_path,monkeypatch)
+    try:
+        scene._solo_tick_realtime()
+        scene._solo_pending['future'].result(timeout=2)
+        clock[0]=.5
+        scene._solo_tick_realtime()
+        assert port.apply_bounded.call_args.args[2]==pytest.approx(.1)
+        assert scene.command_history['r2'][-1]['valid_until_s']==pytest.approx(.6)
+        assert scene.solo_lease==pytest.approx(.52)
+    finally:scene._decision_workers.shutdown(wait=True)
+
+
+def test_denied_worker_route_gate_never_acquires_live_resources(tmp_path,monkeypatch):
+    scene,binding,port,clock=_realtime_solo_scene(tmp_path,monkeypatch)
+    binding.finished.clear()  # Beam has not released the shared unload apron.
+    try:
+        scene._solo_tick_realtime()
+        result=scene._solo_pending['future'].result(timeout=2)
+        assert result['evidence']['waiting_for_resource'] is True
+        assert result['candidate'].navigator.index==0
+        assert binding.locks=={} and binding.resource_events==[]
+        clock[0]=.1
+        scene._solo_tick_realtime()
+        assert scene.solo.navigator.index==0
+        assert binding.locks=={} and binding.resource_events==[]
+        assert scene.solo_rows[-1]['dropped']=='resource_permission'
+        port.apply_bounded.assert_not_called()
+    finally:scene._decision_workers.shutdown(wait=True)
+
+
+@pytest.mark.parametrize('forward,expected_lease,expected_capture_wait',[
+    (.05,.15,.02),(0.,.2,.2)])
+def test_yield_moving_renews_with_rgb_ttl_but_zero_keeps_dwell(
+        forward,expected_lease,expected_capture_wait):
+    action={'kind':'mecanum','forward':forward,'left':0.,'turn':0.,
+            'duration_s':.2}
+    result={'observed_at_s':.5,'frame_id':15,'action':action,'evidence':{},
+            'policy':SimpleNamespace(done=False),'observation':{'image':'encoded'},
+            'images':{}}
+    completed=Future();completed.set_result(result)
+    scene=SkillScene.__new__(SkillScene)
+    scene.bindings=SimpleNamespace(solo='r2',tasks={'beam':{'id':'beam-job'},
+        'box':{'id':'box-job'}},finished=set(),committed={'plan_hash':'test-plan'})
+    port=SimpleNamespace(hold=Mock(),validate_bounded=Mock(),apply_bounded=Mock())
+    scene.ports={'r2':port};scene.authorize=Mock();scene.raw=Mock()
+    scene.command_history={'r2':[]};scene._yield_pending={'future':completed,'index':0}
+    scene.yield_folded=True;scene.yield_policy=None;scene.yield_rows=[]
+    scene.realtime_stats={'solo_stale_rgb':0,'solo_decisions':0,
+                          'max_decision_age_s':0.}
+    scene.solo_executor=SimpleNamespace(submit=Mock())
+    scene.step=Mock(side_effect=AssertionError('recursive physics'))
+    scene._yield_tick_realtime(.95)
+    assert scene.solo_lease==pytest.approx(.95+expected_capture_wait)
+    if forward:
+        assert port.apply_bounded.call_args.args[2]==pytest.approx(expected_lease)
+        assert scene.command_history['r2'][-1]['valid_until_s']==pytest.approx(1.1)
+        scene.raw.assert_not_called()
+    else:
+        port.apply_bounded.assert_not_called()
+        scene.raw.assert_called_once_with('r2',action,'YIELD')
+    assert scene.yield_rows[-1]['requested_duration_s']==pytest.approx(.2)
+    assert scene.yield_rows[-1]['effective_lease_s']==pytest.approx(expected_lease)
+    scene.step.assert_not_called()
 
 
 def test_async_capture_binds_all_actor_cameras_to_one_snapshot(tmp_path):

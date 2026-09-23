@@ -41,6 +41,10 @@ from scripts.run_three_robot_mission import prepare_grasp_models
 from scripts.dispatch_pair_skill import BoundPairSkill
 from scripts.camera_approach_scene import image_record
 
+RGB_ACTION_TTL_S=.6
+REALTIME_MOTOR_RENEWAL_S=.25
+REALTIME_CAPTURE_OVERLAP_S=.02
+
 
 class SkillScene(DispatchScene):
     def __init__(self,*args,**kwargs):
@@ -142,6 +146,41 @@ class SkillScene(DispatchScene):
         self.ports[rid].apply(action,self.time())
         self.command_history[rid].append({'stage':stage,'action':copy.deepcopy(action),
             'issued_at_s':self.time(),'plan_hash':self.bindings.committed['plan_hash'] if self.bindings else None})
+    def _permission_snapshot(self):
+        """A private permission state for RGB workers and owner preflight."""
+        snapshot=copy.copy(self.bindings)
+        snapshot.locks=dict(self.bindings.locks)
+        snapshot.finished=set(self.bindings.finished)
+        snapshot.grasp_started=set(self.bindings.grasp_started)
+        snapshot.transit_started=set(self.bindings.transit_started)
+        snapshot.resource_events=[]
+        return snapshot
+    def _commit_permissions(self,requests):
+        """Check every requested gate without side effects, then acquire on owner."""
+        requests=list(dict.fromkeys(requests))
+        probe=self._permission_snapshot()
+        if not all(probe.permission(obj,stage) for obj,stage in requests):return False
+        for obj,stage in requests:
+            if not self.bindings.permission(obj,stage):
+                raise RuntimeError('resource permission changed during owner commit')
+        return True
+    def _issue_realtime_motor(self,rid,action,stage,observed_at_s,*,now):
+        """Owner-only bounded motor renewal from one fresh RGB instant."""
+        requested=float(action['duration_s'])
+        renewal=REALTIME_MOTOR_RENEWAL_S
+        effective=min(renewal,float(observed_at_s)+RGB_ACTION_TTL_S-now)
+        if effective<=0:
+            self.ports[rid].hold(now)
+            return None
+        issued={**action,'duration_s':effective}
+        self.authorize();self.ports[rid].validate_bounded(issued,effective)
+        self.ports[rid].apply_bounded(issued,now,effective)
+        self.command_history[rid].append({'stage':stage,'action':copy.deepcopy(issued),
+            'issued_at_s':now,'valid_until_s':now+effective,
+            'observed_at_s':float(observed_at_s),'requested_duration_s':requested,
+            'renewal_request_s':renewal,
+            'plan_hash':self.bindings.committed['plan_hash']})
+        return effective
     def pair_drive(self,commands,duration,stage):
         self.authorize();self.pair_phase=stage
         if set(commands)!=set(self.bindings.pair.values()):raise ValueError('pair endpoint mismatch')
@@ -282,41 +321,67 @@ class SkillScene(DispatchScene):
             self._solo_pending=None
             result=pending['future'].result()
             observed=result['observed_at_s']
-            if now-observed>.6:
+            if now-observed>RGB_ACTION_TTL_S:
                 self.ports[self.bindings.solo].hold(now)
                 self.realtime_stats['solo_stale_rgb']+=1
                 self.solo_rows.append({'index':pending['index'],'sim_time_s':now,
                     'observed_at_s':observed,'dropped':'stale_rgb',
                     'frame_id':result['frame_id']})
                 return
-            self.solo=result['candidate']
+            candidate=result['candidate']
+            action,evidence=result['action'],result['evidence']
+            before=result['before']
+            requests=[('box',pending['stage']),*result['permission_requests']]
+            if before=='approach' and candidate.phase=='lower':
+                requests.append(('box','GRASP'))
+            if action['kind']=='mecanum':requests.append(('box','TRANSIT'))
+            moving_carry=(before=='carry' and action['kind']=='mecanum'
+                          and any(abs(action[k])>1e-9 for k in ('forward','left','turn')))
+            if moving_carry and observed+RGB_ACTION_TTL_S-now<=0:
+                self.ports[self.bindings.solo].hold(now)
+                self.realtime_stats['solo_stale_rgb']+=1
+                self.solo_rows.append({'index':pending['index'],'sim_time_s':now,
+                    'observed_at_s':observed,'dropped':'expired_motion_lease',
+                    'frame_id':result['frame_id']})
+                return
+            if evidence.get('waiting_for_resource') or not self._commit_permissions(requests):
+                self.ports[self.bindings.solo].hold(now)
+                self._solo_retry_at=now+(.3 if ('box','GRASP') in requests else .1)
+                self.solo_rows.append({'index':pending['index'],'sim_time_s':now,
+                    'observed_at_s':observed,'dropped':'resource_permission',
+                    'frame_id':result['frame_id'],'requests':requests})
+                return
+            # The committed navigator must no longer retain the worker's
+            # private permission snapshot when it is cloned next time.
+            if candidate.navigator is not None:
+                candidate.navigator._permission=self.bindings.permission
+            self.solo=candidate
             self.realtime_stats['solo_decisions']+=1
             self.realtime_stats['max_decision_age_s']=max(
                 self.realtime_stats['max_decision_age_s'],now-observed)
             self._solo_phase_label=self.solo.phase
-            action,evidence=result['action'],result['evidence']
-            before=result['before']
             obs=result['observation']
-            if evidence.get('waiting_for_resource'):self.solo.steps-=1
-            if before=='approach' and self.solo.phase=='lower' and not self.bindings.permission('box','GRASP'):
-                self.solo.box=result['approach_state'];self.solo.steps-=1
-                action={'kind':'wait','duration':.3}
-                evidence={**evidence,'waiting_before_grasp':True}
-            if action['kind']=='mecanum' and not self.bindings.permission('box','TRANSIT'):
-                action={'kind':'wait','duration':.1};self.solo.steps-=1
-                evidence={**evidence,'waiting_for_resource':True}
-            self.solo_rows.append({'index':pending['index'],'sim_time_s':now,
+            row={'index':pending['index'],'sim_time_s':now,
                 'observed_at_s':observed,'frame_id':result['frame_id'],
                 'decision_age_s':now-observed,'robot_id':self.bindings.solo,
                 'input_transform':result['input_transform'],'phase_before':before,
                 'phase_after':self.solo.phase,
                 'observation':{k:v for k,v in obs.items() if k!='image'},
                 'images':result['images'],'action':action,'top_evidence':evidence,
-                'own_attachment_evidence':copy.deepcopy(self.solo.box.last_attachment)})
+                'own_attachment_evidence':copy.deepcopy(self.solo.box.last_attachment)}
             if action['kind']=='mecanum':
-                self.raw(self.bindings.solo,action,'TRANSIT')
-                self.solo_lease=now+action['duration_s']
+                if moving_carry:
+                    effective=self._issue_realtime_motor(
+                        self.bindings.solo,action,'TRANSIT',observed,now=now)
+                    row.update(requested_duration_s=action['duration_s'],
+                               renewal_request_s=REALTIME_MOTOR_RENEWAL_S,
+                               effective_lease_s=effective)
+                    self.solo_lease=now+REALTIME_CAPTURE_OVERLAP_S
+                else:
+                    self.raw(self.bindings.solo,action,'TRANSIT')
+                    self.solo_lease=now+action['duration_s']
             else:self.solo_executor.submit(action,obs,self.solo.phase,now)
+            self.solo_rows.append(row)
             if pending['index']%25==0 or before!=self.solo.phase:
                 print(json.dumps({'solo_step':pending['index'],'robot':self.bindings.solo,
                     'phase':self.solo.phase,'action':action}),flush=True)
@@ -330,12 +395,21 @@ class SkillScene(DispatchScene):
         if self.solo.done:
             self._yield_tick_realtime(now);return
         stage='APPROACH' if self.solo.phase=='approach' else 'TRANSIT' if self.solo.phase=='carry' else 'GRASP'
-        if not self.bindings.permission('box',stage):return
         if self.solo_started is None:self.solo_started=now
         if now-self.solo_started>300:raise RuntimeError('solo SIM budget exhausted')
         rid=self.bindings.solo;index=len(self.solo_rows)
         observation_state=copy.deepcopy(self.ports[rid]._actuator_state())
+        permission_snapshot=self._permission_snapshot()
+        if not permission_snapshot.permission('box',stage):
+            self.ports[rid].hold(now)
+            return
         candidate=copy.deepcopy(self.solo,{id(self.bindings):self.bindings})
+        permission_requests=[]
+        if candidate.navigator is not None:
+            def worker_permission(obj,requested_stage):
+                permission_requests.append((obj,requested_stage))
+                return permission_snapshot.permission(obj,requested_stage)
+            candidate.navigator._permission=worker_permission
         from sim.snapshot_render import SnapshotBackpressure
         try:frames=self.capture_async(f'solo-{index}',own_robots=(rid,),overview=False)
         except SnapshotBackpressure:
@@ -363,8 +437,10 @@ class SkillScene(DispatchScene):
                     'before':before,'approach_state':approach_state,
                     'observation':normalized,'input_transform':input_transform,
                     'images':refs,'observed_at_s':frame['observed_at_s'],
-                    'frame_id':frame['frame_id']}
-        self._solo_pending={'future':self._decision_workers.submit(decide),'index':index}
+                    'frame_id':frame['frame_id'],
+                    'permission_requests':tuple(permission_requests)}
+        self._solo_pending={'future':self._decision_workers.submit(decide),
+                            'index':index,'stage':stage}
 
     def _yield_tick_realtime(self,now):
         if self.bindings.tasks['beam']['id'] in self.bindings.finished:
@@ -375,7 +451,7 @@ class SkillScene(DispatchScene):
             self._yield_pending=None
             result=pending['future'].result()
             observed=result['observed_at_s']
-            if now-observed>.6:
+            if now-observed>RGB_ACTION_TTL_S:
                 self.ports[self.bindings.solo].hold(now)
                 self.realtime_stats['solo_stale_rgb']+=1
                 self.yield_rows.append({'index':pending['index'],'sim_time_s':now,
@@ -383,21 +459,41 @@ class SkillScene(DispatchScene):
                     'frame_id':result['frame_id']})
                 return
             action,evidence=result['action'],result['evidence']
+            moving=(self.yield_folded and action['kind']=='mecanum'
+                    and any(abs(action[k])>1e-9 for k in ('forward','left','turn')))
+            if moving and observed+RGB_ACTION_TTL_S-now<=0:
+                self.ports[self.bindings.solo].hold(now)
+                self.realtime_stats['solo_stale_rgb']+=1
+                self.yield_rows.append({'index':pending['index'],'sim_time_s':now,
+                    'observed_at_s':observed,'dropped':'expired_motion_lease',
+                    'frame_id':result['frame_id']})
+                return
             if result['policy'] is not None:self.yield_policy=result['policy']
-            if not self.yield_folded:
-                self.solo_executor.submit(action,result['observation'],'yield_fold',now)
-                self.yield_folded=True
-            else:
-                self.raw(self.bindings.solo,action,'YIELD')
-                self.solo_lease=now+action['duration_s']
-                if self.yield_policy.done:self.bindings.finish('box')
-            self.yield_rows.append({'index':pending['index'],'sim_time_s':now,
+            row={'index':pending['index'],'sim_time_s':now,
                 'observed_at_s':observed,'decision_age_s':now-observed,
                 'frame_id':result['frame_id'],'robot_id':self.bindings.solo,
                 'images':result['images'],
                 'observation':{k:v for k,v in result['observation'].items() if k!='image'},
                 'action':action,'evidence':evidence,
-                'box_job_finished':self.bindings.tasks['box']['id'] in self.bindings.finished})
+                'box_job_finished':self.bindings.tasks['box']['id'] in self.bindings.finished}
+            if not self.yield_folded:
+                self.solo_executor.submit(action,result['observation'],'yield_fold',now)
+                self.yield_folded=True
+            else:
+                if moving:
+                    effective=self._issue_realtime_motor(
+                        self.bindings.solo,action,'YIELD',observed,now=now)
+                    row.update(requested_duration_s=action['duration_s'],
+                               renewal_request_s=REALTIME_MOTOR_RENEWAL_S,
+                               effective_lease_s=effective)
+                    self.solo_lease=now+REALTIME_CAPTURE_OVERLAP_S
+                else:
+                    self.raw(self.bindings.solo,action,'YIELD')
+                    row.update(requested_duration_s=action['duration_s'],
+                               effective_lease_s=action['duration_s'])
+                    self.solo_lease=now+action['duration_s']
+                if self.yield_policy.done:self.bindings.finish('box')
+            self.yield_rows.append(row)
             self.realtime_stats['solo_decisions']+=1
             self.realtime_stats['max_decision_age_s']=max(
                 self.realtime_stats['max_decision_age_s'],now-observed)
@@ -407,8 +503,10 @@ class SkillScene(DispatchScene):
         if now<self._solo_retry_at:return
         rid=self.bindings.solo;index=len(self.yield_rows)
         observation_state=copy.deepcopy(self.ports[rid]._actuator_state())
+        cargo_center=copy.deepcopy(self.solo.navigator.box_center)
+        folded=self.yield_folded
         policy=(copy.deepcopy(self.yield_policy) if self.yield_policy is not None
-                else SoloYield(self.bindings.static_map,self.solo.navigator.box_center))
+                else SoloYield(self.bindings.static_map,cargo_center))
         from sim.snapshot_render import SnapshotBackpressure
         try:frames=self.capture_async(f'yield-{index}',own_robots=(rid,),overview=False)
         except SnapshotBackpressure:
@@ -424,13 +522,13 @@ class SkillScene(DispatchScene):
                  'image':base64.b64encode(own).decode('ascii'),
                  'sha256':hashlib.sha256(own).hexdigest(),
                  'camera':'robot_cam','actuator_state':observation_state}
-            if not self.yield_folded:
+            if not folded:
                 action={'kind':'pose','pulses':{1:2000,3:740,4:2320,5:1320,6:1500}}
                 evidence={'phase':'fold_open_arm_after_visual_release'}
                 used_policy=None
             else:
                 action,evidence=policy.decide(frame['top_bytes'])
-                evidence['initial_cargo_center_px']=self.solo.navigator.box_center.tolist()
+                evidence['initial_cargo_center_px']=cargo_center.tolist()
                 used_policy=policy
             return {'action':action,'evidence':evidence,'policy':used_policy,
                     'observation':obs,'observed_at_s':frame['observed_at_s'],
