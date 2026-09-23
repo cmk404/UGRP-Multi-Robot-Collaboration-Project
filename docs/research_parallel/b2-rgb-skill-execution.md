@@ -4,6 +4,44 @@
 관련 범위 R2/R3, E0. 목적은 독립 actor 선택을 같은 RGB 운동 경로에 연결하는 것이다.
 이 문서는 코드/오프라인 연결 검증이며 실제 운반·통신 효과·새 맵 일반화 결과가 아니다.
 
+## 실행 번들 선택 — 2026-09-23
+
+새 실행은 `execution_bundle_id`를 명시해야 한다. 현재 adapter의
+`rgb-adapter-legacy-v1`은 기존 물리·명령 타이밍을 기록한 실험 버전이며,
+과거 dispatch 성공 버전과 다르다. 이미지 정규화·공동 식별 수정이 있어도
+성공 경로의 접촉 설정·명령 일정까지 같아진 것은 아니다.
+[실행 버전 관리](../execution_versioning.md)에 따라 번들·실제 적용값을
+검사하고 성공 기준과의 차이를 기록한다. 이전 실행 설정·결과는 수정하지 않는다.
+
+## RGB 입력·식별 계약 수정 — 2026-09-23
+
+과거 성공한 dispatch와 독립 실행기의 연결 차이를 다음 경계에서 제거한다.
+
+- 단독 own RGB는 `normalize_own_rgb`를 통해 640×480, JPEG quality 95로 맞춘다.
+  성공 dispatch와 `SoloActorSkill`이 같은 함수를 호출한다. 지원 입력은 기존
+  640×480·960×720이며 다른 크기는 거절한다. crop·FOV·카메라 위치를 바꾸지 않는다.
+  관측 원본은 보존하고 원본/변환 이미지의 크기·SHA·변환 방법을 판단 근거에 기록한다.
+  픽셀 기준을 가진 `VisualBoxSkill`에 native 960×720을 직접 전달하지 않는다.
+- 공동 coarse에 들어가기 전에 `identify_lower`와 `identify_upper`를 순서대로
+  실행한다. 해당 역할만 짧게 이동하고 다른 참여자는 정지한다. 각 actor는 자기
+  발행 명령과 공용 TOP 연속 영상으로 만든 자기 motion claim만 보관한다.
+  역할 이름은 모델 슬롯이며 실제 로봇 ID나 화면상 위치를 정답으로 사용하지 않는다.
+  감독 실행기는 다른 작업의 진행 중 명령을 마친 뒤 짧은 정지 구간을 확인하고
+  식별을 시작한다. 식별 중 다른 작업의 새 움직임만 유예하며 물리 시계·취소·
+  만료·watchdog은 계속 처리한다. 이 규칙은 모든 통신 조건에 동일하게 적용된다.
+- 각 actor의 자기 claim을 기존 `PairCoarsePixels`에 연결한다. 작은 바퀴 성분,
+  국소 마스크와 기존 2px 허용 조건을 성공 경로와 공유한다. 식별 불명확·지원
+  범위 밖 영상은 정지하며, 단순 lane 전체 HSV 경로로 우회하지 않는다.
+- 거절 판단은 감독 로그 `RGB_DECISION_REJECTED`에 단계·구체적인 이유·마스크
+  통계/영상 변환 근거를 남긴다. 이 진단은 다른 actor의 입력에 전달하지 않는다.
+
+재발 검사는 실제 backend 크기의 JPEG를 사용해 단독 행동·입력 SHA 계약을
+검사하고, 공동의 순차 식별·실제 저장 영상 인식·불명확한 식별의 정지·취소 경계를
+검사한다. `scripts/run_ci_tests.py`가 `tests/test_rgb_execution*.py`를 자동 포함한다.
+오프라인 통과는 운반 성공이 아니며 새 실행 SHA·설정·전체 실패를 포함한 물리
+재생 결과를 별도로 기록한다. 아래 2026-09-22 설명의 `coarse_approach` 직접 연결과
+초기 identity 부재는 이 수정 전의 상태다.
+
 ## 재사용과 달라진 부분
 
 - 실제 `CameraRobotPort`의 bounded apply/tick/hold를 사용한다. own 명령 보간 cache만 읽으며 관절·접촉을 읽지 않는다.
@@ -35,7 +73,8 @@ config exact fields:
 
 ```json
 {
-  "schema": "ugrp.rgb_skill_backend.v1",
+  "schema": "ugrp.rgb_skill_backend.v2",
+  "execution_bundle_id": "rgb-adapter-legacy-v1",
   "map_id": "dispatch_open",
   "seed": 11,
   "output_dir": "outputs/NEW-NONEXISTENT-DIRECTORY",

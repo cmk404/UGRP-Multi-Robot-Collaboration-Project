@@ -102,7 +102,9 @@ def prepare(root: Path, assets: Path, *, output: Path | None = None,
 
     asset_info = prepare_assets(root, assets, output, mode=asset_mode)
     from harness.rgb_skill_execution import backend_descriptor, public_static_context
-    backend = {"schema": "ugrp.rgb_skill_backend.v1", "map_id": "dispatch_open", "seed": 11,
+    from harness.rgb_execution_bundle import RUNNABLE_ID
+    backend = {"schema": "ugrp.rgb_skill_backend.v2", "map_id": "dispatch_open", "seed": 11,
+               "execution_bundle_id": RUNNABLE_ID,
                "output_dir": "outputs/not-yet-submitted-rgb-replay", "max_sim_s": 180,
                "max_commands": 6000,
                **{key: asset_info[key] for key in ("grasp_model_dir", "stage_model_dir", "reference_top")}}

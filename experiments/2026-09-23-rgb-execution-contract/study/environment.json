@@ -1,0 +1,71 @@
+{
+  "schema_version": "rgb-study-environment.v1",
+  "source_sha": "6089f80519cab7b9c3c886f92ca71668249a41ea",
+  "suite": {
+    "path": "maps/act_generalization/suite_v1.json",
+    "sha256": "38b0012cdfb849dc73d2034427a3d2f47e602be08e7b2dc912f92f80cbdef70a"
+  },
+  "provenance": {
+    "path": "exposure.json",
+    "sha256": "e223eae8df15163051f0ff2393f1701bbbd8264d9b9e0341840db1e5e6f86c72"
+  },
+  "scenario_assignments": [
+    {
+      "scenario_id": "rgb-contract-20260923-solo",
+      "parent_map_id": "dispatch_open",
+      "map_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+      "layout_sha256": "fa0944a500de62caa2947ab321513c1063ab565c482016ed4e16645e21ab5987",
+      "split": "regression"
+    },
+    {
+      "scenario_id": "rgb-contract-20260923-joint",
+      "parent_map_id": "dispatch_open",
+      "map_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+      "layout_sha256": "fa0944a500de62caa2947ab321513c1063ab565c482016ed4e16645e21ab5987",
+      "split": "regression"
+    }
+  ],
+  "map": {
+    "map_id": "dispatch_open",
+    "map_version": "1",
+    "map_instance_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+    "map_group_sha256": "fa0944a500de62caa2947ab321513c1063ab565c482016ed4e16645e21ab5987",
+    "stratum": "regression"
+  },
+  "review": {
+    "path": "environment-review.json",
+    "sha256": "0171cccf4e8adb8abb3e072c1da2cd29556a7bfa4456b07417a61b122de87559"
+  },
+  "scene_selection": {
+    "path": "static/scene-selection.json",
+    "sha256": "105ddcf9d07b0b730dfd3fcc91ac4b4642648cc10d592c4b620df20e035334d1"
+  },
+  "provenance_artifacts": {
+    "data": [
+      {
+        "path": "assets/grasp/training-report.json",
+        "sha256": "17fba08c94dbe770fdd138d32d1f4094ec9177051041a3d47338345dd0e2be6b"
+      },
+      {
+        "path": "assets/varied/training-report.json",
+        "sha256": "e978484d2f80eb467fcd3a6afb192a891ed80f52e51df232567235f19607d9d7"
+      }
+    ],
+    "checkpoint": [
+      {
+        "path": "assets/grasp/student-skill.json",
+        "sha256": "9ab4e7547be7386de1705df0c6ab47a8953237a2317ccc0c188fcc6fd7e58049"
+      },
+      {
+        "path": "assets/varied/varied-start-skill.json",
+        "sha256": "b89e6fce188efe7ab025d08826bdf269b515c353b81f9b3184f9351ac8bf5f84"
+      }
+    ],
+    "prompt": [
+      {
+        "path": "replay-actions.json",
+        "sha256": "45382e9fe61d4d6434eb9cbe858069d06fb2bb18e18ea1f77d23c985db7ca6f8"
+      }
+    ]
+  }
+}

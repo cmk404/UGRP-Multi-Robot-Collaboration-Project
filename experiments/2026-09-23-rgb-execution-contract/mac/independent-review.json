@@ -1,0 +1,176 @@
+{
+  "inventory": {
+    "files_checked": 1284,
+    "mismatches": [],
+    "receipt_complete": true,
+    "sha256": "b815e1049726655c92c1aae446c43bc792c4b5bd0ba8f538e1030adc41461814"
+  },
+  "schema": "rgb-local-replay-independent-review.v1",
+  "scope": "completed local physical diagnostics; read-only audit",
+  "source_sha": "6089f80519cab7b9c3c886f92ca71668249a41ea",
+  "trials": {
+    "joint": {
+      "cascade_failed_actors": [
+        "r1",
+        "r3"
+      ],
+      "child_reaped": true,
+      "coarse_predictions_recomputed": 94,
+      "commands": 410,
+      "external_model_calls": 0,
+      "identity_claims_recomputed": {
+        "r1": {
+          "baseline_observation": "r1-000004",
+          "baseline_sha256": "956ada3e6a585f3621c418780633553cf0d3b8697c14612da94a4a23b6c2fb14",
+          "center": [
+            0.11366006256517205,
+            0.20027816411682892
+          ],
+          "changed_pixels": 2586,
+          "claim_observation": "r1-000008",
+          "claim_sha256": "65ba0d14387679da526c76fbca3a43fb5c3efd0cb8db85d1f9a06fa462c2edc5",
+          "fresh": true,
+          "valid": true
+        },
+        "r3": {
+          "baseline_observation": "r3-000009",
+          "baseline_sha256": "bfd2cb3d8e98ed5fbc9312a04bc191552a637d6eb82ea8591df3e3b871881a92",
+          "center": [
+            0.11366006256517205,
+            0.4993045897079277
+          ],
+          "changed_pixels": 2023,
+          "claim_observation": "r3-000013",
+          "claim_sha256": "f7f8e51f0498eb645e9c1ef248ab784fe8f1769d5c03a345c04d253ab9726598",
+          "fresh": true,
+          "valid": true
+        }
+      },
+      "messages": 0,
+      "outcome": "failure",
+      "phase_counts": {
+        "r1": {
+          "coarse": 94,
+          "identify_lower": 3,
+          "identify_upper": 3
+        },
+        "r3": {
+          "coarse": 94,
+          "identify_lower": 3,
+          "identify_upper": 3
+        }
+      },
+      "planner_decisions": 57,
+      "process_group_gone": true,
+      "rejection": {
+        "geometry": {
+          "angle_deg": -90.0,
+          "angle_limit_deg": 18,
+          "aspect_ratio": 1.1746030746463685,
+          "long_px": 73.99998474121094,
+          "long_range_px": [
+            46,
+            74
+          ],
+          "short_px": 62.99999237060547,
+          "short_range_px": [
+            30,
+            53
+          ]
+        },
+        "observation_id": "r3-000156",
+        "observed_at_s": 26.450000000000003,
+        "phase": "coarse",
+        "prediction": {
+          "forward": 0.0,
+          "left": 0.0,
+          "mask": {
+            "crop_center_px": [
+              114.13569321533923,
+              279.5427728613569
+            ],
+            "crop_half_size_px": [
+              55,
+              48
+            ],
+            "heading_tolerance_px": 2.0,
+            "local_wheel_pixels": 422,
+            "raw_yellow_pixels": 47463,
+            "small_component_count": 71,
+            "small_component_pixels": 913
+          },
+          "ok": false,
+          "ready": false,
+          "reason": "own_wheel_heading_unresolved",
+          "turn": 0.0
+        },
+        "raw_top_sha256": "0bba4db4b15d7180bbe3201c4d8b42608401e47a83b050b86e2ee7e17ffdbe07",
+        "reason": "own_wheel_heading_unresolved",
+        "robot_id": "r3",
+        "top_size": [
+          960,
+          720
+        ]
+      },
+      "replay_goal_complete": false,
+      "runtime_reason": "ALL_ACTORS_FINISHED",
+      "sim_time_s": 27.049999999995165,
+      "skill_decisions": 200,
+      "wall_time_s": 48.785631749997265,
+      "worker_guard_counts": {
+        "completed_fresh": 200
+      }
+    },
+    "solo": {
+      "child_reaped": true,
+      "commands": 701,
+      "external_model_calls": 0,
+      "finish_claim": {
+        "reason": "VISUAL_ATTACHMENT_UNCONFIRMED",
+        "time_s": 72.7
+      },
+      "messages": 0,
+      "normalization": {
+        "jpeg_quality": 95,
+        "raw_and_transformed_hashes_recomputed": true,
+        "raw_size": [
+          960,
+          720
+        ],
+        "skill_size": [
+          640,
+          480
+        ],
+        "verified_decisions": 153
+      },
+      "outcome": "failure",
+      "phase_counts": {
+        "approach": 82,
+        "attachment_home": 3,
+        "attachment_left": 3,
+        "attachment_right": 3,
+        "carry": 27,
+        "close": 1,
+        "lift": 15,
+        "lower": 16,
+        "verify_lift": 3
+      },
+      "physical_box": {
+        "displacement_m": 0.10652209962231685,
+        "inside_slot_at_end": false,
+        "max_lift_m": 0.06186075323442652,
+        "physical_success": false
+      },
+      "planner_decisions": 76,
+      "process_group_gone": true,
+      "replay_goal_complete": false,
+      "runtime_reason": "ALL_ACTORS_FINISHED",
+      "sim_time_s": 73.05000000000813,
+      "skill_decisions": 153,
+      "wall_time_s": 100.0054883749981,
+      "worker_guard_counts": {
+        "completed_fresh": 154
+      }
+    }
+  }
+}

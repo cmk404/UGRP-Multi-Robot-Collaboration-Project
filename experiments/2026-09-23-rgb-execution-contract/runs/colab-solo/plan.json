@@ -1,0 +1,71 @@
+{
+  "run_id": "rgb-contract-20260923-solo",
+  "scenario_id": "rgb-contract-20260923-solo",
+  "replay_kind": "solo",
+  "condition": "none",
+  "seed": 11,
+  "object_ids": [
+    "box",
+    "beam"
+  ],
+  "replay_target_objects": [
+    "box"
+  ],
+  "replay_actions": {
+    "r1": [
+      {
+        "kind": "finish",
+        "claim": "cannot_continue"
+      }
+    ],
+    "r2": [
+      {
+        "kind": "task_request",
+        "task_id": "solo-diagnostic",
+        "object_id": "box",
+        "skill": "solo_transport_A",
+        "participants": [
+          "r2"
+        ],
+        "resources": [
+          "box",
+          "south_gate"
+        ],
+        "stage": "RUN",
+        "own_role": "solo",
+        "expires_at_s": 180
+      }
+    ],
+    "r3": [
+      {
+        "kind": "finish",
+        "claim": "cannot_continue"
+      }
+    ]
+  },
+  "common_task": {
+    "description": "{\"authored_map\": {\"bounds_m\": [-1.02, 2.12, -3.18, -0.82], \"completion\": \"Both cargo footprints fully inside the same selected dock slots, released and stable; referee output only.\", \"docks\": {\"dock_a\": {\"slots\": {\"beam\": {\"center_m\": [1.54, -1.34], \"half_extents_m\": [0.14, 0.27]}, \"box\": {\"center_m\": [1.82, -1.34], \"half_extents_m\": [0.1, 0.12]}}}, \"dock_b\": {\"slots\": {\"beam\": {\"center_m\": [1.54, -2.66], \"half_extents_m\": [0.14, 0.27]}, \"box\": {\"center_m\": [1.82, -2.66], \"half_extents_m\": [0.1, 0.12]}}}}, \"frame\": \"warehouse_xy_m\", \"map_id\": \"dispatch_open\", \"obstacles\": [{\"center_m\": [0.55, -0.82], \"half_extents_m\": [1.57, 0.025], \"height_m\": 0.1, \"id\": \"wall_north\", \"kind\": \"wall\"}, {\"center_m\": [0.55, -3.18], \"half_extents_m\": [1.57, 0.025], \"height_m\": 0.1, \"id\": \"wall_south\", \"kind\": \"wall\"}, {\"center_m\": [-1.02, -2.0], \"half_extents_m\": [0.025, 1.18], \"height_m\": 0.1, \"id\": \"wall_west\", \"kind\": \"wall\"}, {\"center_m\": [2.12, -2.0], \"half_extents_m\": [0.025, 1.18], \"height_m\": 0.1, \"id\": \"wall_east\", \"kind\": \"wall\"}], \"regions\": {\"dispatch_apron\": {\"center_m\": [1.48, -2.0], \"half_extents_m\": [0.38, 0.2], \"rgba\": \".95 .70 .16 .18\"}, \"dock_a\": {\"center_m\": [1.59, -1.34], \"half_extents_m\": [0.37, 0.38], \"rgba\": \".14 .55 .40 .14\"}, \"dock_b\": {\"center_m\": [1.59, -2.66], \"half_extents_m\": [0.37, 0.38], \"rgba\": \".14 .55 .40 .14\"}, \"north_gate\": {\"center_m\": [0.6, -1.18], \"half_extents_m\": [0.32, 0.29], \"rgba\": \".22 .65 .75 .15\"}, \"pickup\": {\"center_m\": [-0.35, -2.0], \"half_extents_m\": [0.45, 0.96], \"rgba\": \".12 .36 .70 .14\"}, \"south_gate\": {\"center_m\": [0.6, -2.82], \"half_extents_m\": [0.32, 0.29], \"rgba\": \".22 .65 .75 .15\"}, \"wait_east\": {\"center_m\": [1.02, -2.0], \"half_extents_m\": [0.16, 0.29], \"rgba\": \".95 .70 .16 .22\"}, \"wait_west\": {\"center_m\": [0.18, -2.0], \"half_extents_m\": [0.16, 0.29], \"rgba\": \".95 .70 .16 .22\"}}, \"resource_rules\": {\"dispatch_apron\": \"one transport team at a time\", \"north_gate\": \"one transport team at a time\", \"south_gate\": \"one transport team at a time\"}, \"routes\": {\"north\": {\"declared_min_width_m\": 0.685, \"loaded_passage\": \"unvalidated\", \"regions\": [\"pickup\", \"north_gate\", \"dispatch_apron\"], \"resource\": \"north_gate\"}, \"south\": {\"declared_min_width_m\": 0.685, \"loaded_passage\": \"unvalidated\", \"regions\": [\"pickup\", \"south_gate\", \"dispatch_apron\"], \"resource\": \"south_gate\"}}, \"schema\": \"ugrp.dispatch_map.v1\", \"terrain\": [], \"top_camera\": {\"fov_y_deg\": 55, \"name\": \"cctv_top\", \"position_m\": [0.55, -2.0, 2.5], \"quaternion_wxyz\": [1, 0, 0, 0]}, \"version\": 1}, \"instruction\": \"Choose an object, independent participants and roles, and a declared skill. Skills encode immutable goal/route; unknown maps/headings fail closed. Own claims are unverified.\", \"skills\": {\"pair_transport_A\": {\"dock\": \"dock_a\", \"object_id\": \"beam\", \"resources\": [\"beam\", \"north_gate\"], \"roles\": [\"lower\", \"upper\"], \"route\": \"north\", \"team_size\": 2}, \"pair_transport_B\": {\"dock\": \"dock_b\", \"object_id\": \"beam\", \"resources\": [\"beam\", \"north_gate\"], \"roles\": [\"lower\", \"upper\"], \"route\": \"north\", \"team_size\": 2}, \"solo_transport_A\": {\"dock\": \"dock_a\", \"object_id\": \"box\", \"resources\": [\"box\", \"south_gate\"], \"roles\": [\"solo\"], \"route\": \"south\", \"team_size\": 1}, \"solo_transport_B\": {\"dock\": \"dock_b\", \"object_id\": \"box\", \"resources\": [\"box\", \"south_gate\"], \"roles\": [\"solo\"], \"route\": \"south\", \"team_size\": 1}}}",
+    "object_ids": [
+      "box",
+      "beam"
+    ],
+    "allowed_skills": [
+      "solo_transport_A",
+      "solo_transport_B",
+      "pair_transport_A",
+      "pair_transport_B"
+    ]
+  },
+  "map_id": "dispatch_open",
+  "map_version": "1",
+  "map_instance_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+  "map_group_sha256": "fa0944a500de62caa2947ab321513c1063ab565c482016ed4e16645e21ab5987",
+  "stratum": "regression",
+  "order": 1,
+  "repeat": 0,
+  "artifact_relpath": ".",
+  "required_artifacts": {
+    "runtime": "runtime.jsonl",
+    "evaluator": "evaluator.json"
+  }
+}

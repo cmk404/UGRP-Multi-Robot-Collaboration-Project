@@ -1,0 +1,350 @@
+{
+  "run_id": "rgb-contract-20260923-local-solo",
+  "order": 1,
+  "scenario_id": "rgb-contract-20260923-local-solo",
+  "condition": "none",
+  "seed": 11,
+  "repeat": 0,
+  "artifact_relpath": ".",
+  "outcome": "failure",
+  "mission_complete": false,
+  "physical_mission_complete": false,
+  "runtime_outcome": "completed",
+  "runtime_termination": {
+    "actions": {
+      "r1": 0,
+      "r2": 1,
+      "r3": 0
+    },
+    "actor_finish_claims": {
+      "r1": false,
+      "r2": false,
+      "r3": false
+    },
+    "actor_finish_details": {
+      "r1": "cannot_continue",
+      "r2": "cannot_continue",
+      "r3": "cannot_continue"
+    },
+    "calls": {
+      "r1": 1,
+      "r2": 74,
+      "r3": 1
+    },
+    "clock": {
+      "clock_domain": "sim",
+      "last_acknowledged_time_s": 73.05000000000813,
+      "last_successful_requested_tick_s": 73.05,
+      "reason": "VERIFIED_CLOCK_SNAPSHOT",
+      "requested_tick_s": 73.05,
+      "schema": "rgb-runtime-clock.v1",
+      "terminal_time_s": 73.05000000000813,
+      "terminal_time_status": "verified"
+    },
+    "close_error": null,
+    "condition": "none",
+    "external_model_call_upper_bound": 0,
+    "external_model_calls": 0,
+    "external_model_calls_by_robot": {
+      "r1": 0,
+      "r2": 0,
+      "r3": 0
+    },
+    "message_bytes": {
+      "r1": 0,
+      "r2": 0,
+      "r3": 0
+    },
+    "messages": {
+      "r1": 0,
+      "r2": 0,
+      "r3": 0
+    },
+    "outcome": "completed",
+    "peak_in_flight": 3,
+    "pending_planner_requests": {},
+    "planner_decisions": 76,
+    "primary_error": null,
+    "retirement_reasons": {},
+    "run_id": "rgb-contract-20260923-local-solo",
+    "termination_reason": "ALL_ACTORS_FINISHED",
+    "ticks": 1462,
+    "tokens": {
+      "charged_input_tokens": 0,
+      "charged_output_tokens": 0,
+      "measured_input_tokens": 0,
+      "measured_output_tokens": 0,
+      "unknown_input_tokens_calls": 0,
+      "unknown_output_tokens_calls": 0
+    },
+    "trace_events": 311,
+    "unknown_external_call_requests": []
+  },
+  "evaluator_verdict": {
+    "mission_complete": false,
+    "objects": {
+      "box": {
+        "attempted": true,
+        "selected_dock": "dock_a",
+        "physical_success": false,
+        "raw": {
+          "max_lift_m": 0.06186075323442652,
+          "displacement_m": 0.10652209962231685,
+          "lift_observed_by_referee": true,
+          "inside_slot_at_end": false,
+          "released_supported_stable": false,
+          "carry_clearance": {
+            "sampled_continuous_clearance": true,
+            "samples": 88,
+            "floor_contact_samples": 0,
+            "window_s": [
+              63.150000000000006,
+              72.0
+            ],
+            "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+            "max_sample_gap_s": 0.10000000000012221,
+            "first_floor_contact_s": null
+          },
+          "physical_success": false
+        }
+      },
+      "beam": {
+        "attempted": false,
+        "selected_dock": null,
+        "physical_success": false,
+        "raw": null
+      }
+    },
+    "raw_by_dock": {
+      "dock_a": {
+        "physical_success": false,
+        "cargo": {
+          "beam": {
+            "max_lift_m": 1.6207521436051309e-13,
+            "displacement_m": 0.0,
+            "lift_observed_by_referee": false,
+            "inside_slot_at_end": false,
+            "released_supported_stable": false,
+            "carry_clearance": {
+              "sampled_continuous_clearance": false
+            },
+            "physical_success": false
+          },
+          "box": {
+            "max_lift_m": 0.06186075323442652,
+            "displacement_m": 0.10652209962231685,
+            "lift_observed_by_referee": true,
+            "inside_slot_at_end": false,
+            "released_supported_stable": false,
+            "carry_clearance": {
+              "sampled_continuous_clearance": true,
+              "samples": 88,
+              "floor_contact_samples": 0,
+              "window_s": [
+                63.150000000000006,
+                72.0
+              ],
+              "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+              "max_sample_gap_s": 0.10000000000012221,
+              "first_floor_contact_s": null
+            },
+            "physical_success": false
+          }
+        },
+        "concurrent_transport": {
+          "simultaneous_loaded_motion_s": 0.0,
+          "intervals_s": [],
+          "minimum_displacement_per_sample_m": 0.001,
+          "max_sample_gap_s": 0.11,
+          "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+        },
+        "robot_robot_contact_samples": 0,
+        "robot_path_length_m": {
+          "r1": 5.98899545965167e-08,
+          "r2": 0.5429358323661619,
+          "r3": 5.987549156919187e-08
+        },
+        "all_three_body_motion_sim_s": 0,
+        "weld_steps": 0,
+        "samples": 732,
+        "stable_window_s": 1.049999999997553
+      },
+      "dock_b": {
+        "physical_success": false,
+        "cargo": {
+          "beam": {
+            "max_lift_m": 1.6207521436051309e-13,
+            "displacement_m": 0.0,
+            "lift_observed_by_referee": false,
+            "inside_slot_at_end": false,
+            "released_supported_stable": false,
+            "carry_clearance": {
+              "sampled_continuous_clearance": false
+            },
+            "physical_success": false
+          },
+          "box": {
+            "max_lift_m": 0.06186075323442652,
+            "displacement_m": 0.10652209962231685,
+            "lift_observed_by_referee": true,
+            "inside_slot_at_end": false,
+            "released_supported_stable": false,
+            "carry_clearance": {
+              "sampled_continuous_clearance": false
+            },
+            "physical_success": false
+          }
+        },
+        "concurrent_transport": {
+          "simultaneous_loaded_motion_s": 0.0,
+          "intervals_s": [],
+          "minimum_displacement_per_sample_m": 0.001,
+          "max_sample_gap_s": 0.11,
+          "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+        },
+        "robot_robot_contact_samples": 0,
+        "robot_path_length_m": {
+          "r1": 5.98899545965167e-08,
+          "r2": 0.5429358323661619,
+          "r3": 5.987549156919187e-08
+        },
+        "all_three_body_motion_sim_s": 0,
+        "weld_steps": 0,
+        "samples": 732,
+        "stable_window_s": 1.049999999997553
+      }
+    },
+    "recovery": {
+      "required": false,
+      "reached": false,
+      "succeeded": false
+    },
+    "meaning": "post-run sampled physical evaluator; solo/pair diagnostic targets are derived separately"
+  },
+  "actor_finish_claims": {
+    "r1": false,
+    "r2": false,
+    "r3": false
+  },
+  "false_finish_claim": false,
+  "false_finish_claim_by_robot": {
+    "r1": false,
+    "r2": false,
+    "r3": false
+  },
+  "termination_verdict_disagreement": false,
+  "reason": "ALL_ACTORS_FINISHED",
+  "objects": {
+    "box": {
+      "attempted": true,
+      "selected_dock": "dock_a",
+      "physical_success": false,
+      "raw": {
+        "max_lift_m": 0.06186075323442652,
+        "displacement_m": 0.10652209962231685,
+        "lift_observed_by_referee": true,
+        "inside_slot_at_end": false,
+        "released_supported_stable": false,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 88,
+          "floor_contact_samples": 0,
+          "window_s": [
+            63.150000000000006,
+            72.0
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.10000000000012221,
+          "first_floor_contact_s": null
+        },
+        "physical_success": false
+      }
+    },
+    "beam": {
+      "attempted": false,
+      "selected_dock": null,
+      "physical_success": false,
+      "raw": null
+    }
+  },
+  "recovery": {
+    "required": false,
+    "reached": false,
+    "succeeded": false
+  },
+  "metrics": {
+    "wall_time_s": 100.0054883749981,
+    "sim_time_s": 73.05000000000813,
+    "high_level_actions": 1,
+    "messages": 0,
+    "model_calls": null,
+    "planner_decisions": 76,
+    "external_model_calls": 0,
+    "message_bytes": 0,
+    "message_tokens": null,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "model_response_time_s": null,
+    "model_response_time_s_mean": null,
+    "external_model_call_upper_bound": 0,
+    "planner_response_time_s": 0.053807291013072245,
+    "pending_planner_requests": 0,
+    "commands": 701
+  },
+  "measurement_status": {
+    "wall_time_s": "measured",
+    "sim_time_s": "verified_supervisor_terminal_clock",
+    "high_level_actions": "measured",
+    "messages": "measured",
+    "model_calls": "not_measured",
+    "planner_decisions": "measured",
+    "external_model_calls": "measured",
+    "message_bytes": "measured",
+    "message_tokens": "not_measured",
+    "input_tokens": "measured",
+    "output_tokens": "measured",
+    "model_response_time_s": "not_applicable_offline_replay",
+    "model_response_time_s_mean": "not_applicable_offline_replay",
+    "external_model_call_upper_bound": "bounded",
+    "planner_response_time_s": "measured",
+    "commands": "measured"
+  },
+  "artifacts": {
+    "runtime": "202d6e2d2ef5ae2fd39c6a671499b6bb069900557f76b4ede044ed15603b5f42",
+    "evaluator": "44c120d8181cffdd7bdaa1b231e7a8fb993d61ecc45567a6f3dd31dda51a90e2"
+  },
+  "evaluator_scope": "deterministic_physical_replay; evaluation-only after runtime shutdown",
+  "interactions": {
+    "issued_command_overlap_sim_s": 0.0,
+    "independent_task_command_overlap_sim_s": 0.0,
+    "issued_command_busy_sim_s_by_robot": {
+      "r1": 0.0,
+      "r2": 34.34999999999983,
+      "r3": 0.0
+    },
+    "wait_decisions_by_robot": {
+      "r1": 0,
+      "r2": 72,
+      "r3": 0
+    },
+    "message_preceded_action_changes": [],
+    "deadlock_observed": null,
+    "interpretation": "Issued command intervals are not measured motion; temporal message/action links are not causal effects."
+  },
+  "evaluator_snapshot_sha256": "b1c9999bd553b4804bf81f0df4269d3e26e0a34d5ad008537828f4ec2ef2fd39",
+  "schema_version": "rgb-communication-trial-result.v2",
+  "source_sha": "6089f80519cab7b9c3c886f92ca71668249a41ea",
+  "config_sha256": "4b86b7ad10be5acdcb0aba45a6257cc575f2701a72ff551963af073eff43efbd",
+  "evidence_kind": "deterministic_physical_replay",
+  "claim_scope": "development_connection_smoke",
+  "source_artifact_hashes": {
+    "plan.json": "2eb2a23904baba4bb3e371b19cedc68c66456ba53ea3cd77caa05b247b9cfd57",
+    "runtime.jsonl": "202d6e2d2ef5ae2fd39c6a671499b6bb069900557f76b4ede044ed15603b5f42",
+    "evaluator.json": "44c120d8181cffdd7bdaa1b231e7a8fb993d61ecc45567a6f3dd31dda51a90e2"
+  },
+  "replay_target_objects": [
+    "box"
+  ],
+  "replay_goal_complete": false,
+  "replay_goal_scope": "selected diagnostic objects only; does not override full mission_complete"
+}
