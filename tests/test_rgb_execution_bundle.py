@@ -33,6 +33,17 @@ def test_retired_adapter_is_readable_but_cannot_run_as_current_source():
     assert old["status"] == "experimental_unqualified"
     with pytest.raises(ValueError, match="original source checkout"):
         contract.load_bundle("rgb-adapter-legacy-v1")
+    previous, _ = contract.load_bundle("rgb-standard-dispatch-v2", require_runnable=False)
+    assert previous["id"] == "rgb-standard-dispatch-v2"
+    with pytest.raises(ValueError, match="original source checkout"):
+        contract.load_bundle("rgb-standard-dispatch-v2")
+
+
+def test_current_bundle_records_new_coarse_approach_policy_without_success_claim():
+    current, _ = contract.load_bundle(contract.RUNNABLE_ID)
+    assert current["parent_bundle_id"] == "rgb-standard-dispatch-v2"
+    assert "16px" in current["controller_policy"]["paired_coarse_approach"]
+    assert current["status"] == "experimental_unqualified"
 
 
 def isolated_registry(tmp_path):
