@@ -1,6 +1,6 @@
 # MuJoCo 실시간 출하 실행
 
-`dispatch --realtime-control`은 물리 계산이 화면 출력이나 RGB 판단을 기다리며 멈추지 않도록 하는 선택 옵션이다. 현재 검증 범위는 open 지도, 기존 RGB 스킬과 저장된 계획이다. 실제 완료 여부와 후보별 실패는 [실행 기록](../experiments/2026-09-23-realtime-dispatch/README.md)에 분리해 기록한다.
+`dispatch --realtime-control`은 물리 계산이 화면 출력이나 RGB 판단을 기다리며 멈추지 않도록 하는 선택 옵션이다. 현재 검증 범위는 open 지도, 기존 RGB 스킬과 저장된 계획이다. 실제 완료 여부와 후보별 실패는 [실행 기록](../experiments/2026-09-23-realtime-dispatch/README.md)에 분리해 기록한다. v17 고정 소스 `8178726`의 같은 조건 native 실행 두 번은 물리 운반·방출과 프로토콜 종료까지 완료했다. 소요 시간은 312.37초와 213.66초로 편차가 크고 첫 실행의 상자 판단은 598/600회였다. 물리 시계 약0.996배속 복구와 운반 중 끊김 해소는 별개이며 후자는 계속 개선 중이다.
 
 ```sh
 bash scripts/open_simulation.command dispatch --realtime-control \
