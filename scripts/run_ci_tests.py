@@ -27,6 +27,7 @@ TEST_PATTERNS = (
     "tests/test_jev_execution_shadow.py",
     "tests/test_jev_motion.py",
     "tests/test_tensorboard_export.py",
+    "tests/test_tensorboard_launcher.py",
     "tests/test_colab_carry_bundle.py",
     "tests/test_carry_training_checkpoint_optional.py",
     "tests/test_act_speed_generalization.py",

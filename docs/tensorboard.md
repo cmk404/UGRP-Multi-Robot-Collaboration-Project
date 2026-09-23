@@ -21,7 +21,11 @@ python3 scripts/ugrp_session.py run tensorboard-review -- \
 
 [TensorBoard](http://127.0.0.1:6006)을 연다. 원본 영상은 Text의 `media/` 링크에서 열린다. 기본 미디어 포트는 6007이다. 두 서버 모두 127.0.0.1에만 바인딩한다. 사용 후 실행 터미널에서 Ctrl-C 또는 `python3 scripts/ugrp_session.py stop tensorboard-review`로 종료한다. 로그인 시 자동 시작하거나 백그라운드 서비스를 설치하지 않는다.
 
-Mac에서는 `scripts/open_tensorboard.command`를 Finder에서 실행해도 된다. 기본 체크아웃의 Python과 `outputs/tensorboard`를 사용하며 모든 변환 묶음을 읽는다. 특정 묶음만 보려면 위 `--logdir` 명령을 사용한다. 다른 환경은 `UGRP_REVIEW_PYTHON`으로 Python 경로를 지정할 수 있다. 실행 파일은 브라우저 프로필을 임의로 선택하지 않으며 주소를 터미널에 표시한다.
+Mac에서는 `scripts/open_tensorboard.command`를 Finder에서 실행해도 된다. 기본 체크아웃의 Python을 사용하며, `outputs/tensorboard` 아래에 여러 export collection이 있으면 `collection.json` 수정 시각이 가장 최근인 **export snapshot 하나**를 기본으로 연다. 이것은 편의를 위한 뷰어 선택이며 실제 실험 수행 날짜를 뜻하지 않는다. 특정 위치를 열려면 `UGRP_TENSORBOARD_LOGDIR=/path/to/review scripts/open_tensorboard.command`처럼 지정할 수 있다. 모든 collection을 한꺼번에 보려면 `scripts/run_tensorboard.py`를 `--prefer-latest-collection` 없이 직접 실행한다.
+
+TensorBoard의 기존 run selector는 run이 40개를 넘으면 기본 선택을 모두 해제한다. 이 상태에서는 Text 탭에 `decisions`, `evaluation`, `provenance` 같은 그룹 제목만 보이고 실제 카드 내용은 비어 보일 수 있다. Finder launcher가 최신 export collection 하나를 기본으로 고르는 이유가 이것이다. 전체 logdir를 일부러 열었다면 왼쪽에서 run을 명시적으로 선택하거나 특정 collection으로 다시 실행한다.
+
+미디어 포트가 이미 사용 중이면 launcher는 traceback 대신 포트 충돌을 명시적으로 보고한다. 기존 review 서버가 남아 있으면 그 서버를 종료한 뒤 다시 실행한다. 다른 미디어 포트를 사용하려면 이벤트 안의 `media/` 링크도 같은 포트를 가리키도록 해당 snapshot을 그 포트로 다시 export해야 한다.
 
 ## 무엇을 어디서 보는가
 
@@ -70,9 +74,9 @@ HParams의 **session status=success는 이벤트 가져오기 완료**를 뜻한
 ## 검증
 
 ```sh
-.venv-sim-worker-mac/bin/python -m pytest -q tests/test_tensorboard_export.py
+.venv-sim-worker-mac/bin/python -m pytest -q tests/test_tensorboard_export.py tests/test_tensorboard_launcher.py
 ```
 
-이벤트를 TensorBoard EventAccumulator로 다시 읽어 실제 scalar·text·image, HParams 메타데이터, 원본 불변성, 시간·누락값·완료 주장 분리, 영상 Range/경로 제한을 확인한다. CI의 `tensorboard-export`가 선택 의존성을 설치해 실행하며 일반 회귀 환경에서는 선택 의존성이 필요한 테스트만 건너뛴다.
+이벤트를 TensorBoard EventAccumulator로 다시 읽어 실제 scalar·text·image, HParams 메타데이터, 원본 불변성, 시간·누락값·완료 주장 분리, 영상 Range/경로 제한을 확인한다. launcher 회귀는 여러 export collection이 있을 때 최신 **export snapshot**만 고르는지와 손상·빈 collection을 무시하는지 확인한다. CI의 `tensorboard-export`가 선택 의존성을 설치해 실행하며 일반 회귀 환경에서는 선택 의존성이 필요한 테스트만 건너뛴다.
 
 설계 참고: [TensorBoard 시작](https://www.tensorflow.org/tensorboard/get_started), [HParams 비교](https://www.tensorflow.org/tensorboard/hyperparameter_tuning_with_hparams), [PyTorch SummaryWriter](https://docs.pytorch.org/docs/stable/tensorboard.html). 실제 변환은 TensorBoard 2.21.0의 event protobuf를 사용한다.
