@@ -556,6 +556,16 @@ class PairCoarsePixels:
                      (yy<ylo-PAIR_OWN_BOUNDS_PAD_PX)|(yy>yhi+PAIR_OWN_BOUNDS_PAD_PX)]=0
             ys,xs=np.nonzero(selected)
             heading=wheel_heading(selected,pixel_tolerance=2.)
+            # A silhouette ending on the expanded support boundary may have
+            # been clipped there. It can pass four corners by combining a
+            # peer wheel with the actor's own wheels, so reselect components.
+            touches_bounds=(len(xs)>0 and
+                (xs.min()<=xlo-PAIR_OWN_BOUNDS_PAD_PX or
+                 xs.max()>=xhi+PAIR_OWN_BOUNDS_PAD_PX or
+                 ys.min()<=ylo-PAIR_OWN_BOUNDS_PAD_PX or
+                 ys.max()>=yhi+PAIR_OWN_BOUNDS_PAD_PX))
+            if touches_bounds:
+                heading=None
             mask.update(local_wheel_pixels=int(len(xs)),
                         selection='prior_own_rgb_bounds',bounds_margin_px=PAIR_OWN_BOUNDS_PAD_PX)
             if heading is None:

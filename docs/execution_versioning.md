@@ -37,12 +37,13 @@
 - `rgb-adapter-contact-fine-solo-parity-v1`: 접촉·단독 팔 일정을 맞춘 첫 후보이다. `bf476e2`의 180초 물리 재생에서 단독은 화물을 든 채 시간 초과, 공동은 이웃 바퀴 픽셀이 섞여 방향 판독 실패했다. 원본과 번들은 읽기 전용으로 보존한다.
 - `rgb-adapter-contact-fine-replay-v2`: 300초 실행 예산과 1,200회 단독 결정 상한, 공동 바퀴 영상의 좁은 영역 재검사를 적용한 후보이다. `7c3e4aa` 물리 재생에서는 단독이 슬롯 근처에서 영상 제어의 0.5px 정지 구간에 걸려 방출하지 못했고, 공동은 바로 다음 바퀴 영상에서 다시 중단됐다. 원본과 번들은 읽기 전용으로 보존한다.
 - `rgb-adapter-contact-fine-visual-recovery-v3`: 슬롯 경계보다 1px 안쪽의 단독 목표와 직전 TOP RGB의 공동 바퀴 영역 재검사를 적용했다. `050f341` 물리 재생에서는 단독 상자 대상이 운반·방출·안정화까지 성공했으나 공동은 sim 29.70의 자기 바퀴 방향 판독 실패로 파지 전에 중단됐다. 전체 임무 완료는 두 대상 모두 거짓이며 원본 번들은 보존한다.
-- `rgb-adapter-contact-fine-component-identity-v4`: 물리·카메라·팔 일정과 300초 예산을 유지한다. 공동 바퀴 영상이 겹쳐 이전 영역 확장 검사에 실패하면, 직전 자기 바퀴 영역 안에 중심이 있는 노란 영상 성분만 재선택한다. 지지 영역 경계에 닿거나 네 모서리·연속성 검사를 통과하지 못하면 명령 없이 거절한다. 저장 영상 검사는 물리 완주 근거가 아니며 등록 상태는 `experimental_unqualified`다.
+- `rgb-adapter-contact-fine-component-identity-v4`: 물리·카메라·팔 일정과 300초 예산을 유지한다. 공동 바퀴 영상이 겹쳐 이전 영역 확장 검사에 실패하면, 직전 자기 바퀴 영역 안에 중심이 있는 노란 영상 성분만 재선택한다. `2c23383` 물리 재생에서 단독 상자는 운반·방출·안정화에 성공했지만, 공동은 SIM 29.95의 r1-000177 바퀴 판독에서 파지 전에 중단됐다. 직전 마스크가 지지 영역 경계에 닿으며 이웃 바퀴를 받아들인 것이 저장 영상에서 확인됐다. 원본과 번들은 보존한다.
+- `rgb-adapter-contact-fine-boundary-identity-v5`: 영역 확장 마스크가 직전 자기 바퀴 영역의 지지 경계에 닿으면 그대로 수용하지 않고 v4의 성분 재선택으로 보낸다. 물리·카메라·팔 일정, 네 모서리·연속성 검사와 예산은 유지한다. 저장된 v3·v4 영상 검사 통과는 물리 완주 근거가 아니며 등록 상태는 `experimental_unqualified`다.
 
 새 backend 설정 schema는 `ugrp.rgb_skill_backend.v2`다. `execution_bundle_id`가 없거나 지원하지 않는 조합이면 거절한다. 과거 v1 설정은 당시 실행 기록으로 보존한다. 실행 전 정적 검사는 다음과 같다. 시뮬레이션·렌더링·외부 모델 호출은 하지 않는다.
 
 ```sh
-python3 -m harness.rgb_execution_bundle verify-current --id rgb-adapter-contact-fine-component-identity-v4
+python3 -m harness.rgb_execution_bundle verify-current --id rgb-adapter-contact-fine-boundary-identity-v5
 python3 -m harness.rgb_execution_bundle verify-registry --base origin/main
 ```
 

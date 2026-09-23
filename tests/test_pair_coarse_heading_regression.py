@@ -28,6 +28,7 @@ HASHES = {
     159: "fbb56c4449f6201019b4b6e3999ce14254c01b890efb1c3590a895001d55d47f",
     175: "8cbd5d32aade7bbde81bd1911d807f8bb4689be63e43ccaeb3c233e774e5e7e4",
     176: "b6c59831a7ec23f2a9cb9d33905e9a96316646ad336215ff9af1fc23e52abf23",
+    177: "6a2b6dba4a53b5f73e9b56ff08b352624b1071e2cc8ecc1bf148e72fac78524e",
 }
 NO_PRIOR_CENTERS = {
     156: [114.13569321533923 / 960, 279.5427728613569 / 720],
@@ -40,10 +41,15 @@ def _frame(number):
     return (FRAMES / f"r3-{number:06d}-top_rgb.jpg").read_bytes()
 
 
-def _coarse(center):
+def _r1_frame(number):
+    # The fixed shared TOP frame is byte-identical for r1 and r3 at 175/176.
+    return _frame(number) if number in (175, 176) else (FRAMES / f"r1-{number:06d}-top_rgb.jpg").read_bytes()
+
+
+def _coarse(center, robot="r3"):
     return PairCoarsePixels(
-        {"r3": {"claim": {"valid": True, "center": center}}},
-        SimpleNamespace(pair={"r3": "r3"}), REFERENCE.read_bytes())
+        {robot: {"claim": {"valid": True, "center": center}}},
+        SimpleNamespace(pair={robot: robot}), REFERENCE.read_bytes())
 
 
 def _with_prior(case):
@@ -61,7 +67,18 @@ def _v3_with_prior():
     coarse.wheel_bounds["r3"] = [81, 144, 254, 298]
     assert hashlib.sha256(_frame(175)).hexdigest() == HASHES[175]
     assert coarse.decide(_frame(175), "r3")["ok"] is True
-    assert coarse.wheel_bounds["r3"] == [80, 143, 246, 297]
+    assert coarse.wheel_bounds["r3"] == [82, 143, 254, 297]
+    return coarse
+
+
+def _v4_r1_with_prior(number):
+    # Actor's accepted r1-000174 TOP decision, then recorded RGB frames.
+    coarse = _coarse([115.47572815533981 / 960, 221.38834951456312 / 720], "r1")
+    coarse.wheel_bounds["r1"] = [80, 144, 201, 245]
+    for previous in range(175, number):
+        raw = _r1_frame(previous)
+        assert hashlib.sha256(raw).hexdigest() == HASHES[previous]
+        assert coarse.decide(raw, "r1")["ok"] is True
     return coarse
 
 
@@ -136,8 +153,8 @@ def test_v3_peer_component_is_excluded_without_relaxing_four_corners():
     assert prediction["mask"]["selection"] == "prior_own_rgb_components"
     assert prediction["mask"]["bounds_margin_px"] == 8
     assert prediction["mask"]["selection_touches_bounds"] is False
-    assert prediction["mask"]["local_wheel_pixels"] == 351
-    assert prediction["heading"]["corner_pixels"] == [79, 33, 95, 77]
+    assert prediction["mask"]["local_wheel_pixels"] == 342
+    assert prediction["heading"]["corner_pixels"] == [87, 37, 92, 58]
     assert prediction["mask"]["center_step_px"] < 1
     assert prediction["mask"]["bounds_step_px"] == 1
 
@@ -170,3 +187,43 @@ def test_v3_component_fallback_rejects_damaged_or_clipped_wheels(damage):
     assert prediction["forward"] == prediction["left"] == prediction["turn"] == 0.
     np.testing.assert_array_equal(coarse.centers["r3"], prior_center)
     assert coarse.wheel_bounds["r3"] == prior_bounds
+
+
+@pytest.mark.parametrize("number,pixels,corners", [
+    (176, 411, [95, 51, 104, 79]),
+    (177, 426, [80, 62, 115, 81]),
+])
+def test_v4_upper_actor_rejects_boundary_clipped_peer_and_keeps_four_corners(number, pixels, corners):
+    raw = _r1_frame(number)
+    assert hashlib.sha256(raw).hexdigest() == HASHES[number]
+    prediction = _v4_r1_with_prior(number).decide(raw, "r1")
+    assert prediction["ok"] is True
+    assert prediction["mask"]["selection"] == "prior_own_rgb_components"
+    assert prediction["mask"]["selection_touches_bounds"] is False
+    assert prediction["mask"]["local_wheel_pixels"] == pixels
+    assert prediction["heading"]["corner_pixels"] == corners
+    assert prediction["mask"]["center_step_px"] < 2
+    assert prediction["mask"]["bounds_step_px"] <= 2
+
+
+@pytest.mark.parametrize("number", [176, 177])
+@pytest.mark.parametrize("damage", ["missing_corner", "occluded_lower_wheels", "shifted_nine_px"])
+def test_v4_upper_actor_rejects_missing_or_boundary_clipped_wheels(number, damage):
+    coarse = _v4_r1_with_prior(number)
+    prior_center = coarse.centers["r1"].copy()
+    prior_bounds = list(coarse.wheel_bounds["r1"])
+    frame = cv2.imdecode(np.frombuffer(_r1_frame(number), np.uint8), cv2.IMREAD_COLOR)
+    if damage == "missing_corner":
+        frame[238:252, 120:151] = 0
+    elif damage == "occluded_lower_wheels":
+        frame[238:252, 75:151] = 0
+    else:
+        frame = cv2.warpAffine(frame, np.float32([[1, 0, 9], [0, 1, 0]]),
+                               (960, 720), flags=cv2.INTER_NEAREST)
+    raw = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, 95])[1].tobytes()
+    prediction = coarse.decide(raw, "r1")
+    assert prediction["ok"] is False
+    assert prediction["reason"] in {"own_wheel_heading_unresolved", "own_wheel_identity_discontinuous"}
+    assert prediction["forward"] == prediction["left"] == prediction["turn"] == 0.
+    np.testing.assert_array_equal(coarse.centers["r1"], prior_center)
+    assert coarse.wheel_bounds["r1"] == prior_bounds

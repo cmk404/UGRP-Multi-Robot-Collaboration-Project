@@ -73,7 +73,8 @@ def _execution_contract():
             "solo_goal_control_inset_px": SOLO_GOAL_CONTROL_INSET_PX,
             "pair_heading_prior_bounds": {"pad_px": PAIR_OWN_BOUNDS_PAD_PX,
                 "max_center_step_px": PAIR_MAX_CENTER_STEP_PX,
-                "max_bounds_step_px": PAIR_MAX_BOUNDS_STEP_PX},
+                "max_bounds_step_px": PAIR_MAX_BOUNDS_STEP_PX,
+                "reject_clipped_prior_mask": True},
             "pair_heading_component_fallback": {
                 "membership": "centroid_in_prior_own_bounds",
                 "reject_clipped_support": True,
