@@ -13,7 +13,8 @@ import pytest
 
 from harness.communication_observer import CommunicationObserver, read_latest, LATEST_LIMIT
 from harness.three_robot_plan import ROBOTS, fixture_plan
-from harness.communication_overlay import ObserverDialoguePanel, render_dialogue_overlay
+from harness.communication_overlay import (
+    ObserverDialoguePanel, _wrapped_lines, render_dialogue_overlay)
 from scripts import dispatch_native_process, dispatch_native_view
 from scripts import smoke_communication_overlay
 from scripts.smoke_communication_overlay import saved_dialogue
@@ -127,6 +128,17 @@ def test_latest_changes_only_when_message_or_mode_changes(tmp_path):
     assert read_latest(tmp_path/'team/latest-dialogue.json') is None
 
 
+def test_long_sidecar_preview_marks_truncation_but_jsonl_keeps_original(tmp_path):
+    observer = CommunicationObserver(tmp_path/'team', run_id='long', mode='llm')
+    message = '가' * 500
+    observer.record_reply('r1', {'request_id': 'long-1', 'message': message},
+                          [{'model': 'offline-recorded-llm'}], phase='planning',
+                          turn=0, sim_time_s=0., delivered_to=('r2', 'r3'))
+    assert events(tmp_path/'team/conversation.jsonl')[-1]['text'] == message
+    preview = read_latest(tmp_path/'team/latest-dialogue.json')['recent_messages'][0]['text']
+    assert preview == '가'*320 + '…'
+
+
 def test_overlay_renders_recent_dialogue_and_ascii_fallback(tmp_path):
     observer = CommunicationObserver(tmp_path/'team', run_id='overlay', mode='llm')
     observer.record_reply('r3', {'request_id': 'o1', 'message': '함께 운반해요'},
@@ -134,28 +146,40 @@ def test_overlay_renders_recent_dialogue_and_ascii_fallback(tmp_path):
                           turn=1, sim_time_s=2., delivered_to=('r1', 'r2'))
     state = read_latest(tmp_path/'team/latest-dialogue.json')
     pixels, korean = render_dialogue_overlay(state)
-    assert pixels.shape == (196, 680, 3) and pixels.dtype == np.uint8
+    assert pixels.shape == (330, 1000, 3) and pixels.dtype == np.uint8
     assert pixels.std() > 0
     ascii_pixels, ascii_korean = render_dialogue_overlay(state, font_paths=())
     assert not ascii_korean and ascii_pixels.shape == pixels.shape
     assert not np.array_equal(pixels, ascii_pixels) or not korean
 
 
+def test_long_message_wraps_two_lines_with_visible_ellipsis():
+    from PIL import Image, ImageDraw, ImageFont
+    font = ImageFont.load_default()
+    draw = ImageDraw.Draw(Image.new('RGB', (200, 100)))
+    lines = _wrapped_lines('via north route then south lane ' * 20,
+                           draw, font, 145)
+    assert len(lines) == 2 and lines[-1].endswith('…')
+    assert all(draw.textlength(line, font=font) <= 145 for line in lines)
+
+
 def test_bounded_panel_reads_only_new_sidecar_sequences(tmp_path):
     observer = CommunicationObserver(tmp_path/'team', run_id='panel', mode='llm')
     panel = ObserverDialoguePanel(observer.latest_path)
-    images = []
-    viewer = SimpleNamespace(set_images=images.append)
+    operations = []
+    viewer = SimpleNamespace(set_images=lambda value: operations.append(('images', value)),
+                             set_texts=lambda value: operations.append(('texts', value)))
     mujoco = SimpleNamespace(MjrRect=lambda *args: args)
     assert panel.poll(viewer, mujoco, now=1.)
-    assert len(images) == 1 and images[0][0] == (12, 12, 680, 196)
+    assert [name for name, _ in operations] == ['texts', 'images']
+    assert operations[1][1][0] == (12, 12, 1000, 330)
     assert not panel.poll(viewer, mujoco, now=1.1)
     assert not panel.poll(viewer, mujoco, now=1.3)
     observer.record_reply('r1', {'request_id': 'next', 'message': '새 메시지'},
                           [{'model': 'offline-recorded-llm'}], phase='planning',
                           turn=1, sim_time_s=1., delivered_to=('r2', 'r3'))
     assert panel.poll(viewer, mujoco, now=1.5)
-    assert len(images) == 2
+    assert [name for name, _ in operations] == ['texts', 'images', 'texts', 'images']
     assert not panel.poll(viewer, mujoco, now=1.8)
 
 
@@ -235,7 +259,9 @@ def test_saved_llm_smoke_labels_replay_and_rejects_fixture(tmp_path):
         saved_dialogue(source)
 
 
-def test_saved_dialogue_diagnostic_requests_center_image_and_ascii_text(monkeypatch, tmp_path):
+@pytest.mark.parametrize('diagnostic', (False, True))
+def test_saved_dialogue_smoke_uses_common_primer_and_optional_marker(
+        monkeypatch, tmp_path, diagnostic):
     source = tmp_path/'team.json'
     reply = {'request_id': 'real-r1-plan-0', 'message': '저장된 대화'}
     source.write_text(json.dumps({'mode': 'llm',
@@ -272,11 +298,18 @@ def test_saved_dialogue_diagnostic_requests_center_image_and_ascii_text(monkeypa
     monkeypatch.setitem(sys.modules, 'mujoco', fake)
     monkeypatch.setitem(sys.modules, 'mujoco.viewer', fake_viewer)
     audit = tmp_path/'audit.json'
-    assert smoke_communication_overlay.main(['--source', str(source), '--audit', str(audit),
-                                             '--diagnostic', '--duration-s', '1']) == 0
-    assert viewer.sync_modes == [False]
-    assert len(viewer.images) == 2
-    assert viewer.images[1][0] == (490, 355, 300, 90)
-    assert viewer.images[1][1][0, 0].tolist() == [255, 0, 220]
-    assert 'UGRP OVERLAY DIAGNOSTIC' in viewer.texts
-    assert json.loads(audit.read_text())['viewer_viewport']['width'] == 1280
+    argv = ['--source', str(source), '--audit', str(audit), '--duration-s', '1']
+    if diagnostic:
+        argv.append('--diagnostic')
+    assert smoke_communication_overlay.main(argv) == 0
+    assert viewer.sync_modes == ([False] if diagnostic else [])
+    if diagnostic:
+        assert len(viewer.images) == 2
+        assert viewer.images[1][0] == (490, 355, 300, 90)
+        assert viewer.images[1][1][0, 0].tolist() == [255, 0, 220]
+        assert 'UGRP OVERLAY DIAGNOSTIC' in viewer.texts
+        assert json.loads(audit.read_text())['viewer_viewport']['width'] == 1280
+    else:
+        assert viewer.images[0] == (12, 12, 1000, 330)
+        assert 'Peer dialogue' in viewer.texts
+        assert json.loads(audit.read_text())['viewer_viewport'] is None

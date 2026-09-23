@@ -122,9 +122,12 @@ class CommunicationObserver:
                 if source == 'llm':
                     self.fresh_count += 1
                     displayed_message = True
+                    preview = event['text'][:320]
+                    if len(event['text']) > 320:
+                        preview += '…'
                     self.recent.append({key: event[key] for key in
                                         ('seq', 'phase', 'sender', 'recipients', 'turn', 'source')}
-                                       | {'text': event['text'][:320]})
+                                       | {'text': preview})
                 # JSON quoting escapes terminal control bytes while preserving
                 # the unmodified UTF-8 text in the append-only event.
                 print('peer_delivery ' + _terminal_json(event), flush=True)

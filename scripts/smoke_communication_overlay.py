@@ -51,7 +51,7 @@ def main(argv=None):
     if args.audit.exists():
         parser.error('audit output already exists')
     state, digest, count = saved_dialogue(args.source)
-    from harness.communication_overlay import render_dialogue_overlay
+    from harness.communication_overlay import present_dialogue_overlay, render_dialogue_overlay
     import mujoco
     import mujoco.viewer
     pixels, korean_font = render_dialogue_overlay(state)
@@ -80,7 +80,7 @@ def main(argv=None):
                               'saved dialogue replay; no robot or model call'))
             print('diagnostic viewer viewport:', viewport, flush=True)
         else:
-            viewer.set_images((mujoco.MjrRect(12, 12, pixels.shape[1], pixels.shape[0]), pixels))
+            present_dialogue_overlay(viewer, mujoco, pixels)
         until = started + args.duration_s
         while viewer.is_running() and time.monotonic() < until:
             viewer.sync(state_only=not args.diagnostic)
