@@ -1,0 +1,11 @@
+{
+  "created_at_utc": "2026-09-23T15:19:27.901960+00:00",
+  "source_git_sha": "817872651083143fe4ff46b11dba30915e34f5ff",
+  "reason": "First v17 full run completed both physical cargos and protocol, but accepted solo decisions598/600 leaves little margin under asynchronous timing. Verify the identical frozen candidate once more; do not cherry-pick the successful run.",
+  "additional_full_trials": 1,
+  "full_max_wall_s": 600,
+  "external_model_calls": 0,
+  "training_runs": 0,
+  "conditions": "identical open seed11 saved plan, contact .00025, weldOFF, native factor1, same immutablev17 bundle",
+  "acceptance": "Report both outcomes, distributions, motion clock and actual speed; any repeat failure keeps runtime experimental and blocks default promotion."
+}

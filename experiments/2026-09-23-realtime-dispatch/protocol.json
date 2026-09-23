@@ -71,5 +71,15 @@
     "full_max_wall_s": 600,
     "model_calls": 0,
     "purpose": "Use the remaining post-v15 budget to qualify original solo moving cadence and exact prior pair motion renewal under unchanged originalRGB TTL; no new threshold, duration budget, camera, physics or model changes."
+  },
+  "budget_review_after_v17_success": {
+    "evidence": "First frozen v17 run completed both physical cargos and protocol; accepted solo decisions 598/600 leaves a narrow margin. Root approved one finite same-SHA repeat recorded in budget-review-after-v17-success.json.",
+    "additional_full_trials": 1,
+    "full_max_wall_s": 600,
+    "model_calls": 0,
+    "status": "completed; native-v17-repeat physical_success and protocol_complete true, wall 213.656 s; retain both original outcomes and timing variation",
+    "source_sha": "817872651083143fe4ff46b11dba30915e34f5ff",
+    "bundle_sha256": "8a686939f6505bfaae2f4ebadb3e637b0e229b63e25dfb96877c411235bf6125",
+    "purpose": "Check same frozen open/seed11 saved-plan candidate under asynchronous timing; does not authorize another run or promote default controller."
   }
 }

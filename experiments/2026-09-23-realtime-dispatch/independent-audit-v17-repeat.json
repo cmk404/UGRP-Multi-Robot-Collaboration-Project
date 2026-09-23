@@ -1,0 +1,364 @@
+{
+  "schema": "ugrp.independent_realtime_dispatch_v17_repeat_audit.v1",
+  "checked_at_utc": "2026-09-23T15:27:32.105924+00:00",
+  "source_sha": "817872651083143fe4ff46b11dba30915e34f5ff",
+  "bundle_sha256": "8a686939f6505bfaae2f4ebadb3e637b0e229b63e25dfb96877c411235bf6125",
+  "manager": {
+    "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260924-002112-dispatch-6e3bb60f/manifest.json",
+    "sha256": "0499463721283215f262defcb4c8ebee678a28854792e85c2307ebf66a0b9977",
+    "status": "process_completed",
+    "exit_code": 0,
+    "source_dirty": false,
+    "source_changed_during_run": false,
+    "inputs_changed_during_run": false,
+    "input_before_after_equal": true,
+    "source_tree_before_sha256": "a433c64525bfba6860ad4aedb939795fbd12a00e8838627332b6f000d60fd1c6",
+    "source_tree_after_sha256": "a433c64525bfba6860ad4aedb939795fbd12a00e8838627332b6f000d60fd1c6",
+    "finalization_errors": []
+  },
+  "result": {
+    "phase": "FINISHED",
+    "error": null,
+    "physical_success": true,
+    "protocol_complete": true,
+    "wall_s": 213.65587179199792,
+    "timing": {
+      "scene_and_observer_setup_wall_s": 1.5358655419986462,
+      "scope": "output-only SIM/wall measurements; wall_s includes finalization",
+      "control_end_sim_s": 210.16999999675812,
+      "control_wall_s": 212.24139087500225,
+      "motion_wall_s": 205.2354979160009,
+      "motion_sim_s": 204.9699999967575,
+      "motion_sim_to_wall": 0.9987063742776503,
+      "cleanup_wall_s": 1.4144825419934932
+    },
+    "llm_calls": 0,
+    "realtime_control_stats": {
+      "solo_backpressure": 0,
+      "solo_stale_rgb": 0,
+      "solo_decisions": 461,
+      "pair_backpressure": 0,
+      "pair_decisions": 121,
+      "max_decision_age_s": 0.42599999998992644,
+      "solo_total_sim_s": 204.9574999967578,
+      "solo_active_sim_s": 178.04349999739424,
+      "solo_resource_wait_sim_s": 26.91399999936357,
+      "solo_resource_waiting": false,
+      "solo_resource_wait_intervals": 1,
+      "solo_active_budget_s": 300.0,
+      "pair_stage_stale_rgb": 0,
+      "pair_stage_samples": 322
+    },
+    "plan_replay_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7"
+  },
+  "referee": {
+    "physical_success": true,
+    "cargo": {
+      "beam": {
+        "max_lift_m": 0.07753065333366677,
+        "displacement_m": 1.6839092832424538,
+        "lift_observed_by_referee": true,
+        "inside_slot_at_end": true,
+        "released_supported_stable": true,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 318,
+          "floor_contact_samples": 0,
+          "window_s": [
+            106.69999999920485,
+            138.47999999845808
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999764952,
+          "first_floor_contact_s": null
+        },
+        "physical_success": true
+      },
+      "box": {
+        "max_lift_m": 0.06891913717288364,
+        "displacement_m": 2.299646942964046,
+        "lift_observed_by_referee": true,
+        "inside_slot_at_end": true,
+        "released_supported_stable": true,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 680,
+          "floor_contact_samples": 0,
+          "window_s": [
+            129.65899999866195,
+            197.67799999705824
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999763531,
+          "first_floor_contact_s": null
+        },
+        "physical_success": true
+      }
+    },
+    "simultaneous_loaded_motion_s": 2.199999999947977,
+    "weld_steps": 0,
+    "all_three_body_motion_sim_s": 6.599999999878037
+  },
+  "core_files": {
+    "result.json": {
+      "sha256": "8982d9e05232780a1fefce2e0111622d5277e5f4e7e2d63c19b2e6114cac8452",
+      "bytes": 6006808,
+      "matches_receipt": true
+    },
+    "issued-commands.json": {
+      "sha256": "e6c7e82ceea7e2fb08facfec0f89aea325685979fe2f62b841b6e613a9c03e3a",
+      "bytes": 529787,
+      "matches_receipt": true
+    },
+    "referee-only.jsonl": {
+      "sha256": "d5de5cf662b04bd33c5916787c951af043307a1e665fea806351b57792d2d29b",
+      "bytes": 3084415,
+      "matches_receipt": true
+    },
+    "pair-decisions.json": {
+      "sha256": "43fda3a9ded900c08637f861afa164297300e8d3cc0a9b1da9cfdac1ae410686",
+      "bytes": 8693229,
+      "matches_receipt": true
+    },
+    "solo-decisions.json": {
+      "sha256": "19d04c194bc45c15fed808dd7cf8160aa312b37025df8f75471b5f7619201b37",
+      "bytes": 2342664,
+      "matches_receipt": true
+    },
+    "execution.mp4": {
+      "sha256": "2023a560f8b50befe80949cf05349fb625e877cd8dbfa7062851d73dabe16a6f",
+      "bytes": 2242219,
+      "matches_receipt": true
+    },
+    "execution.frames.json": {
+      "sha256": "a68edbdad8d33045e84ef2a1de7bdb92f9feb1cd995b35bb390974c86a07bbbe",
+      "bytes": 306323,
+      "matches_receipt": true
+    },
+    "native-observer.json": {
+      "sha256": "048f5fffbb258e5edebfb0d05b4efe3868a4c59e843ff64750e155782f73cb10",
+      "bytes": 78,
+      "matches_receipt": true
+    },
+    "evaluation-only.json": {
+      "sha256": "bb40aa3fca6561967a56e4eac80a2a5549b2867a4f1495bea713bebc559fd247",
+      "bytes": 3210,
+      "matches_receipt": true
+    }
+  },
+  "pair_carry": {
+    "count": 121,
+    "permission_go": 121,
+    "frame_ids_strict_increasing": true,
+    "observed_at_monotone": true,
+    "age_s": {
+      "count": 121,
+      "min": 0.268999999993639,
+      "median": 0.3027499999928409,
+      "p95": 0.37899999999103784,
+      "max": 0.42599999998992644,
+      "sum": 37.286499999118305
+    },
+    "period_s": {
+      "count": 120,
+      "min": 0.17999999999574356,
+      "median": 0.2799999999933789,
+      "p95": 0.319999999992433,
+      "max": 0.39999999999054126,
+      "sum": 31.579999999253246
+    },
+    "effective_lease_s": {
+      "count": 121,
+      "min": 0.17400000001006788,
+      "median": 0.25,
+      "p95": 0.25,
+      "max": 0.25,
+      "sum": 29.37250000010936
+    },
+    "waypoints": {
+      "0": {
+        "count": 34,
+        "span_sim_s": 8.54999999979782,
+        "start_error_px": [
+          0.0,
+          -89.63488661541862
+        ],
+        "end_error_px": [
+          -0.47909828025666457,
+          -5.13500191755341
+        ]
+      },
+      "1": {
+        "count": 54,
+        "span_sim_s": 12.869999999695679,
+        "start_error_px": [
+          367.70147076722634,
+          -4.134240438026211
+        ],
+        "end_error_px": [
+          0.37556242436073717,
+          -4.136737266245916
+        ]
+      },
+      "2": {
+        "count": 2,
+        "span_sim_s": 0.2899999999931424,
+        "start_error_px": [
+          -2.54094193966057,
+          0.6146480342424923
+        ],
+        "end_error_px": [
+          -2.35204176124671,
+          1.108814097341991
+        ]
+      },
+      "3": {
+        "count": 31,
+        "span_sim_s": 9.159999999783395,
+        "start_error_px": [
+          106.83881418224894,
+          1.108814097341991
+        ],
+        "end_error_px": [
+          -0.15405711624612195,
+          0.6137362979764873
+        ]
+      }
+    },
+    "pending_renewal": {
+      "count": 52,
+      "duration_s": {
+        "count": 52,
+        "min": 0.030250000013467115,
+        "median": 0.05775000001281683,
+        "p95": 0.07825000001233207,
+        "max": 0.08275000001222566,
+        "sum": 3.008750000666339
+      },
+      "invariant_errors": []
+    },
+    "command_coverage": {
+      "r1": {
+        "with_renewal": {
+          "moving_records": 162,
+          "covered_sim_s": 27.34724999995491,
+          "positive_gap": {
+            "count": 42,
+            "min": 0.001749999985776185,
+            "median": 0.016749999985421482,
+            "p95": 0.19199999998127737,
+            "max": 0.8699999999735155,
+            "sum": 3.2897499993348163
+          }
+        },
+        "original_only": {
+          "moving_records": 110,
+          "covered_sim_s": 25.096249999875894,
+          "positive_gap": {
+            "count": 63,
+            "min": 0.008999999985604745,
+            "median": 0.04999999999290594,
+            "p95": 0.1722499999817444,
+            "max": 0.8699999999735155,
+            "sum": 5.503749999406438
+          }
+        }
+      },
+      "r3": {
+        "with_renewal": {
+          "moving_records": 162,
+          "covered_sim_s": 27.34724999995491,
+          "positive_gap": {
+            "count": 42,
+            "min": 0.001749999985776185,
+            "median": 0.016749999985421482,
+            "p95": 0.19199999998127737,
+            "max": 0.8699999999735155,
+            "sum": 3.2897499993348163
+          }
+        },
+        "original_only": {
+          "moving_records": 110,
+          "covered_sim_s": 25.096249999875894,
+          "positive_gap": {
+            "count": 63,
+            "min": 0.008999999985604745,
+            "median": 0.04999999999290594,
+            "p95": 0.1722499999817444,
+            "max": 0.8699999999735155,
+            "sum": 5.503749999406438
+          }
+        }
+      }
+    }
+  },
+  "solo": {
+    "rows": 511,
+    "actual_decisions": 461,
+    "resource_drops": 50,
+    "phase_before_counts": {
+      "approach": 139,
+      "lower": 16,
+      "close": 1,
+      "lift": 15,
+      "verify_lift": 1,
+      "attachment_left": 1,
+      "attachment_right": 1,
+      "attachment_home": 1,
+      "carry": 314,
+      "release": 16,
+      "open": 1,
+      "retract": 1,
+      "verify_release": 1,
+      "release_ground_left": 1,
+      "release_ground_right": 1,
+      "release_ground_home": 1
+    },
+    "nominal_admission_rows": 301,
+    "shortened_admissions": 0,
+    "budget_margin_decisions": 139
+  },
+  "video": {
+    "requested_fps": 10,
+    "written_frames": 2102,
+    "captured_frames": 1328,
+    "repeated_frames": 774,
+    "error": null,
+    "ffprobe_decoded_frames": 2102,
+    "media_range_206_matches_source": true,
+    "media_id": "97b4ee8552298ac9ed7d"
+  },
+  "tensorboard": {
+    "path": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단/v17-repeat",
+    "manifest_complete": true,
+    "scalars": {
+      "result/wall_s": 213.65586853027344,
+      "result/commands": 1329.0,
+      "result/model_calls": 0.0,
+      "result/input_tokens": 0.0,
+      "result/output_tokens": 0.0,
+      "result/model_latency_s": 0.0,
+      "result/recorded_raw_commands": 1269.0,
+      "evaluation/simultaneous_loaded_motion_s": 2.200000047683716,
+      "evaluation/robot_robot_contact_samples": 0.0,
+      "evaluation/reported_success": 1.0,
+      "claims/protocol_complete": 1.0,
+      "claims/plan_committed": 1.0
+    }
+  },
+  "comparison_to_first_full": {
+    "first_wall_s": 312.37089370899776,
+    "first_pair_carry_decisions": 357,
+    "first_solo_decisions": 598,
+    "first_strict_loaded_s": 11.09999999973752,
+    "same_source_sha": true,
+    "same_plan_replay_sha256": true,
+    "scope": "Two complete native runs; asynchronous RGB timing and physical trajectories differ. No deterministic speed guarantee.",
+    "same_input_receipts": true,
+    "same_source_execution_tree": true,
+    "same_argv_except_output": true,
+    "first_all_three_body_motion_sim_s": 34.899999999214515,
+    "repeat_all_three_body_motion_sim_s": 6.599999999878037
+  },
+  "errors": []
+}
