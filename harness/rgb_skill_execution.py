@@ -30,7 +30,7 @@ BACKEND_ID = "rgb_incremental_dispatch_v1"
 SCHEMA = "ugrp.rgb_skill_backend.v2"
 MAX_TICK_S = .05
 FRAME_JPEG_QUALITY = 95
-ADAPTER_CONTACT_PROFILE = "legacy"
+ADAPTER_CONTACT_PROFILE = "local_contact_fine"
 INITIAL_COMMANDS = {"1": 2000, "3": 740, "4": 2320, "5": 1320, "6": 1500}
 SKILLS = {f"{kind}_transport_{goal}": {
     "object_id": "box" if kind == "solo" else "beam",
@@ -47,7 +47,15 @@ def _digest(value):
 
 
 def _pose_schedule_probe():
-    """Measure the adapter's actual pan samples and completion deadline."""
+    """Measure the solo adapter's actual pan samples and completion deadline."""
+    macro = MacroQueue(lambda _action, _duration: None, dict(INITIAL_COMMANDS),
+                       solo_pose_parity=True)
+    macro.submit({"kind": "pose", "pulses": {"6": 1560}}, 0., phase="attachment_left")
+    return {"pan_samples": [action["pan_pulse"] for _, action in macro.events],
+            "completion_s": round(macro.until, 6)}
+
+
+def _pair_pose_schedule_probe():
     macro = MacroQueue(lambda _action, _duration: None, dict(INITIAL_COMMANDS))
     macro.submit({"kind": "pose", "pulses": {"6": 1560}}, 0.)
     return {"pan_samples": [action["pan_pulse"] for _, action in macro.events],
@@ -57,6 +65,7 @@ def _pose_schedule_probe():
 def _execution_contract():
     return {"owner": "RGBSkillExecutionPort", "macro": "MacroQueue",
             "owner_max_tick_s": MAX_TICK_S, "pose_schedule_probe": _pose_schedule_probe(),
+            "pair_pose_schedule_probe": _pair_pose_schedule_probe(),
             "study_tick_period_s": .05, "study_poll_period_s": .05,
             "worker_image_max_age_s": 1., "worker_wall_limit_s": 2.,
             "worker_wall_scope": "submission_to_consumption"}
@@ -201,8 +210,9 @@ def _public_static_context(static_map, descriptor):
 
 class MacroQueue:
     """A cancellable sequence of <=.1s raw commands; never steps physics."""
-    def __init__(self, issue: Callable, commands: dict):
+    def __init__(self, issue: Callable, commands: dict, *, solo_pose_parity: bool = False):
         self.issue, self.commands = issue, commands
+        self.solo_pose_parity = solo_pose_parity
         self.events = []
         self.until = 0.
 
@@ -213,13 +223,15 @@ class MacroQueue:
         self.events.clear()
         self.until = now
 
-    def submit(self, action, now):
+    def submit(self, action, now, *, phase=None):
         if not self.idle(now):
             raise ValueError("macro already active")
         action = copy.deepcopy(action)
         kind = action.pop("kind")
         if kind == "pose":
             target = action.pop("pulses")
+            if self.solo_pose_parity and ("duration" in action or "settle" in action):
+                raise ValueError("solo visual pose schedule does not accept overrides")
             settle = action.pop("settle", .3)
             requested = action.pop("duration", 0.)
             if action or not isinstance(target, dict) or not target:
@@ -228,17 +240,28 @@ class MacroQueue:
             if any(k not in self.commands or type(v) is not int or not 500 <= v <= 2500
                    for k, v in target.items()):
                 raise ValueError("invalid issued pose targets")
-            duration = max(float(requested), max(abs(v-self.commands[k]) for k, v in target.items())/600, .05)
+            delta = max(abs(v-self.commands[k]) for k, v in target.items())
+            duration = (max(.25, delta/600) if self.solo_pose_parity else
+                        max(float(requested), delta/600, .05))
+            if self.solo_pose_parity:
+                settle = (.5 if phase in {"verify_lift", "attachment_left", "attachment_right", "attachment_home"}
+                          else .3 if phase == "approach" else .08)
             if not finite_number(settle, minimum=0.) or not math.isfinite(duration) or duration+settle > 10:
                 raise ValueError("pose duration outside finite macro budget")
-            steps = math.ceil(duration/.05)
+            steps = max(5, math.ceil(duration/.05)) if self.solo_pose_parity else math.ceil(duration/.05)
+            interval = duration/steps
             before = dict(self.commands)
             for index in range(1, steps+1):
                 for channel, value in target.items():
-                    pulse = round(before[channel]+(value-before[channel])*index/steps)
+                    u = index/steps
+                    if self.solo_pose_parity:
+                        u = u*u*(3-2*u)
+                    pulse = round(before[channel]+(value-before[channel])*u)
                     raw = ({"kind": "look", "pan_pulse": pulse} if channel == "6" else
                            {"kind": "arm", "servo_id": int(channel), "pulse": pulse})
-                    self.events.append((now+duration*index/steps, raw))
+                    scheduled = (now+index*interval if self.solo_pose_parity else
+                                 now+duration*index/steps)
+                    self.events.append((scheduled, raw))
             self.until = now+duration+settle
         elif kind in {"drive", "mecanum", "wait"}:
             duration = action.pop("duration_s", action.pop("duration", .2))
@@ -830,7 +853,8 @@ class RGBSkillExecutionPort(RGBExecutionPort):
         # Only own role and actor-selected immutable capability enter the worker.
         controller = self._skill_factory(rid, lease.roles[rid], lease.skill)
         return _Runner(controller, MacroQueue(lambda a, d: self._issue(lease, rid, a, d),
-                                               self._command_states[rid]))
+                                               self._command_states[rid],
+                                               solo_pose_parity=lease.skill.startswith("solo_")))
 
     def _fail(self, lease, error):
         for rid in lease.participants:
@@ -992,7 +1016,7 @@ class RGBSkillExecutionPort(RGBExecutionPort):
                             observation_id=runner.observation["observation_id"],
                             decision_id=lease.consent_evidence[rid]["decision_id"],
                             skill_decision_id=f"{lease.lease_id}:{rid}:{runner.sequence}", decision=decision)
-                        runner.macro.submit(decision["action"], self._now_s)
+                        runner.macro.submit(decision["action"], self._now_s, phase=runner.phase)
                         runner.macro.tick(self._now_s)
                     for row in consumed:
                         self._supervisor_event(row)

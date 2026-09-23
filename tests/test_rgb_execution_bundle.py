@@ -15,16 +15,21 @@ from harness.rgb_skill_execution import _applied_contract
 def test_historical_success_is_separate_from_experimental_adapter():
     current, digest = contract.load_bundle(contract.RUNNABLE_ID)
     baseline, _ = contract.load_bundle(contract.BASELINE_ID, require_runnable=False)
+    legacy, _ = contract.load_bundle(contract.LEGACY_ID, require_runnable=False)
     assert len(digest) == 64
     assert current["status"] == "experimental_unqualified"
     assert baseline["observed_result"]["physical_success"] is True
-    assert current["effective"]["physics"]["timestep_s"] == .002
+    assert current["effective"]["physics"]["timestep_s"] == .00025
     assert baseline["effective"]["physics"]["timestep_s"] == .00025
-    assert current["effective"]["execution"]["pose_schedule_probe"]["pan_samples"] == [1530, 1560]
+    assert legacy["effective"]["physics"]["timestep_s"] == .002
+    assert current["effective"]["execution"]["pose_schedule_probe"]["pan_samples"] == [1506, 1521, 1539, 1554, 1560]
     assert baseline["effective"]["execution"]["pose_schedule_probe"]["pan_samples"] == [1506, 1521, 1539, 1554, 1560]
-    assert "physics.contact_solver_profile" in contract.baseline_diff(current["effective"])
-    with pytest.raises(ValueError, match="historical success bundle cannot run"):
+    assert current["effective"]["execution"]["pair_pose_schedule_probe"] == {"pan_samples": [1530, 1560], "completion_s": .4}
+    assert "execution.owner" in contract.baseline_diff(current["effective"])
+    with pytest.raises(ValueError, match="historical RGB execution bundle cannot run"):
         contract.load_bundle(contract.BASELINE_ID)
+    with pytest.raises(ValueError, match="historical RGB execution bundle cannot run"):
+        contract.load_bundle(contract.LEGACY_ID)
 
 
 def isolated_registry(tmp_path):
@@ -35,7 +40,7 @@ def isolated_registry(tmp_path):
         path = root / name
         path.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(contract.ROOT / name, path)
-    for bundle_id in (contract.RUNNABLE_ID, contract.BASELINE_ID):
+    for bundle_id in (contract.RUNNABLE_ID, contract.LEGACY_ID, contract.BASELINE_ID):
         shutil.copyfile(contract.ROOT / contract.REGISTRY / (bundle_id + ".json"),
                         registry / (bundle_id + ".json"))
     return root
@@ -76,18 +81,19 @@ def test_local_import_closure_catches_from_package_relative_and_initializer(tmp_
 
 def test_live_scene_values_and_measured_macro_schedule_are_checked():
     bundle, _ = contract.load_bundle(contract.RUNNABLE_ID)
-    model = SimpleNamespace(npair=0, opt=SimpleNamespace(timestep=.002))
+    model = SimpleNamespace(npair=12, opt=SimpleNamespace(timestep=.00025))
     world = SimpleNamespace(model=model, data=SimpleNamespace(eq_active=SimpleNamespace(any=lambda: False)),
                             width=960, height=720, observer_width=960, observer_height=720)
-    scene = SimpleNamespace(world=world, manifest={"contact_solver_profile": "legacy"},
-                            xml='<mujoco><option timestep="0.002"/><contact/></mujoco>')
+    pairs = '<pair/>'*12
+    scene = SimpleNamespace(world=world, manifest={"contact_solver_profile": "local_contact_fine"},
+                            xml=f'<mujoco><option timestep="0.00025"/><contact>{pairs}</contact></mujoco>')
     actual = _applied_contract(scene)
-    assert actual["execution"]["pose_schedule_probe"] == {"pan_samples": [1530, 1560], "completion_s": .4}
+    assert actual["execution"]["pose_schedule_probe"] == {"pan_samples": [1506, 1521, 1539, 1554, 1560], "completion_s": .75}
     contract.require_effective(bundle, actual)
-    model.opt.timestep = .00025
+    model.opt.timestep = .002
     with pytest.raises(ValueError, match="XML/model timestep differs"):
         _applied_contract(scene)
-    model.opt.timestep = .002
+    model.opt.timestep = .00025
     world.observer_width = 1280
     with pytest.raises(ValueError, match="camera.top_raw_size"):
         contract.require_effective(bundle, _applied_contract(scene))

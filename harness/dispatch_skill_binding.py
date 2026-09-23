@@ -529,6 +529,19 @@ class PairCoarsePixels:
               'crop_half_size_px':[55,48], 'heading_tolerance_px':2.}
         heading=wheel_heading(clean,pixel_tolerance=2.)
         if heading is None:
+            # A nearby robot's outer wheel can enter the four-pixel rim of
+            # this motion-anchored crop. Retry on the inner pixels, still
+            # requiring the same full four-corner wheel shape. In particular,
+            # do not infer heading from a partial silhouette or command history.
+            outer_pixels=len(xs)
+            clean[abs(yy-cy)>44]=0
+            ys,xs=np.nonzero(clean)
+            heading=wheel_heading(clean,pixel_tolerance=2.)
+            mask.update(initial_local_wheel_pixels=int(outer_pixels),
+                        local_wheel_pixels=int(len(xs)),
+                        crop_half_size_px=[55,44],
+                        inner_crop_retry=True)
+        if heading is None:
             return dict(ok=False,ready=False,forward=0.,left=0.,turn=0.,
                         reason='own_wheel_heading_unresolved',mask=mask)
         center=np.array([xs.mean(),ys.mean()]);self.centers[slot]=center

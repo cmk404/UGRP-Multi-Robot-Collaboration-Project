@@ -583,6 +583,31 @@ def test_macro_does_not_infer_actual_pose_and_bounds_every_drive():
     assert len(issued) == count
 
 
+def test_solo_pose_pan_matches_successful_executor_schedule_without_changing_pair():
+    from harness.visual_macro_runtime import VisualMacroExecutor
+    class Port:
+        robot_id = "r2"
+        def tick(self, now):
+            pass
+        def apply(self, action, now):
+            pass
+        def stop(self):
+            pass
+    observation = {"sha256": "fresh-own-rgb", "actuator_state": {
+        "servo_pulses": dict(INITIAL_COMMANDS)}}
+    reference = VisualMacroExecutor(Port())
+    reference.submit({"kind": "pose", "pulses": {6: 1560}},
+                     observation, "attachment_left", 0.)
+    solo = MacroQueue(lambda _action, _duration: None, dict(INITIAL_COMMANDS),
+                      solo_pose_parity=True)
+    solo.submit({"kind": "pose", "pulses": {6: 1560}}, 0., phase="attachment_left")
+    assert solo.events == reference._events
+    assert solo.until == reference._completion_time == .75
+    pair = MacroQueue(lambda _action, _duration: None, dict(INITIAL_COMMANDS))
+    pair.submit({"kind": "pose", "pulses": {6: 1560}}, 0., phase="attachment_left")
+    assert [action["pan_pulse"] for _, action in pair.events] == [1530, 1560]
+
+
 def test_all_suite_maps_are_explicitly_unsupported_and_never_remapped():
     matrix = map_support_matrix()
     assert len(matrix) == 23
@@ -591,7 +616,7 @@ def test_all_suite_maps_are_explicitly_unsupported_and_never_remapped():
     for row in matrix[1:]:
         with pytest.raises(ValueError, match="unsupported map"):
             backend_descriptor({"schema": "ugrp.rgb_skill_backend.v2", "map_id": row["map_id"],
-                "execution_bundle_id": "rgb-adapter-legacy-v1",
+                "execution_bundle_id": "rgb-adapter-contact-fine-solo-parity-v1",
                 "seed": 11, "output_dir": "never-created", "max_sim_s": 180, "max_commands": 10000,
                 "grasp_model_dir": "not-read", "stage_model_dir": "not-read", "reference_top": "not-read"})
 
@@ -692,7 +717,7 @@ def write_assets(tmp_path):
     reference = tmp_path / "reference.jpg"
     reference.write_bytes(JPEG)
     return {"schema": "ugrp.rgb_skill_backend.v2", "map_id": "dispatch_open", "seed": 11,
-            "execution_bundle_id": "rgb-adapter-legacy-v1",
+            "execution_bundle_id": "rgb-adapter-contact-fine-solo-parity-v1",
             "output_dir": str(tmp_path / "not-created"), "max_sim_s": 180, "max_commands": 10000,
             "grasp_model_dir": str(grasp), "stage_model_dir": str(staged), "reference_top": str(reference)}
 
@@ -742,9 +767,10 @@ def test_real_factory_wires_clock_only_callback_and_raw_snapshot_with_fixture_sc
             self.world, self.ports = fixture_scene.world, fixture_scene.ports
             self.robot_ids = self.obstacle_ids = set()
             self.manifest = {"scene_xml_sha256": "a"*64}
-            self.manifest["contact_solver_profile"] = "legacy"
-            self.xml = '<mujoco><option timestep="0.002"/><contact/></mujoco>'
-            self.world.model.npair = 0
+            self.manifest["contact_solver_profile"] = "local_contact_fine"
+            self.xml = '<mujoco><option timestep="0.00025"/><contact>' + '<pair/>'*12 + '</contact></mujoco>'
+            self.world.model.npair = 12
+            self.world.model.opt.timestep = .00025
             self.initial_invariants = {"weld_active": False}
             self.out.mkdir()
             (self.out / "rgb").mkdir()
