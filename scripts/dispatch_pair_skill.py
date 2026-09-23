@@ -6,6 +6,7 @@ model slots, remapped at the driver boundary using the committed plan.
 from __future__ import annotations
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+import hashlib
 from harness.dispatch_skill_binding import canonical_pair_top, beam_feature, PairCoarsePixels, pixel_from_map, BeamContinuity, released_beam_envelope
 from harness.camera_goal_transport import coarse_approach, dock_command, preclose_supported, own_payload
 from harness.camera_varied_start_student import predict_stage
@@ -92,6 +93,7 @@ class BoundPairSkill:
         # Only the open RGB carry path has the owner-step pump contract through
         # release. Rotation and other transports retain their capture timing.
         self.realtime_open_capture=False
+        self.process_pair_perception=bool(getattr(io,'realtime_control',False))
         self.beam_continuity=BeamContinuity()
         from harness.dispatch_beam_tracker import CarriedBeamTracker
         self.carried_beam=CarriedBeamTracker()
@@ -192,6 +194,42 @@ class BoundPairSkill:
             'wall_timing':_visual_timing(mapped['r1'])})
         self.last_capture=mapped
         return mapped
+
+    def _adopt_carry_analysis(self,raw_frames,count,result):
+        """Commit ordered RGB evidence on the owner; permissions stay live here."""
+        frame=raw_frames['r1']
+        frame_id=frame['frame_id']
+        observed=float(frame['observed_at_s'])
+        if (result['frame_id']!=frame_id or
+                abs(float(result['observed_at_s'])-observed)>1e-9 or
+                any(raw_frames[rid]['frame_id']!=frame_id or
+                    abs(float(raw_frames[rid]['observed_at_s'])-observed)>1e-9
+                    for rid in self.bindings.pair.values())):
+            raise RuntimeError('pair perception result/capture provenance mismatch')
+        top=result['canonical_top']
+        transform=result['transform']
+        if transform['source_sha256']!=hashlib.sha256(frame['top_bytes']).hexdigest():
+            raise RuntimeError('pair perception returned a different TOP RGB source')
+        top_ref=image_record(self.out/'rgb'/f'pair-{count}-canonical-top.jpg',self.out,top)
+        mapped={slot:{**raw_frames[rid], 'top_bytes':top,'shared_top_rgb':top_ref,
+                      'raw_top_rgb':raw_frames[rid]['shared_top_rgb'],
+                      'raw_top_bytes':raw_frames[rid]['top_bytes'],'physical_robot_id':rid,
+                      'bind_started_wall_s':result['bind_started_wall_s'],
+                      'bind_completed_wall_s':result['bind_completed_wall_s']}
+                for slot,rid in self.bindings.pair.items()}
+        self.carried_beam.previous=copy.deepcopy(result['carried_previous'])
+        self.beam_continuity.previous=copy.deepcopy(result['continuity_previous'])
+        self.latest_translation=transform['translation_px']
+        self.calls.append({'kind':'image_binding','frame_id':frame_id,
+            'pair_binding':self.bindings.pair,'transform':transform,'derived_top':top_ref,
+            'raw_top':frame['shared_top_rgb'],
+            'own':{slot:raw_frames[rid]['own_rgb'] for slot,rid in self.bindings.pair.items()},
+            'analysis_backend':'spawn_cpu',
+            'pair_bind_timing_scope':'child RGB tracking and canonicalization; excludes IPC and owner image record',
+            'wall_timing':_visual_timing(mapped['r1'])})
+        self.last_capture=mapped
+        return (mapped,result['motion'],result['route'],result['decisions'],
+                result['skew'],result['skew_evidence'],result['perception_wall_s'])
 
     def issue_mecanum_bounded(self,commands,duration_s=.2,*,observed_at_s=None,
                               reservation_feature=_CURRENT_BEAM_FEATURE):
@@ -340,7 +378,23 @@ class BoundPairSkill:
         self.realtime_open_capture=True
         anchor=self.capture('carry-anchor')
         policy=PairCarryPolicy('dispatch-'+self.bindings.committed['plan_hash'][:12])
-        with ThreadPoolExecutor(max_workers=1,thread_name_prefix='dispatch-pair-decision') as worker:
+        process_mode=getattr(self,'process_pair_perception',False)
+        if process_mode:
+            from harness.dispatch_pair_perception import PairPerceptionProcess, detached_beam_route
+            self._hold_pair()
+            initialization={'reference':self.reference,
+                'anchor_own':{r:anchor[r]['own_bytes'] for r in ROBOTS},
+                'carried_previous':copy.deepcopy(self.carried_beam.previous),
+                'continuity_previous':copy.deepcopy(self.beam_continuity.previous),
+                'route_state':detached_beam_route(navigator)}
+            worker_context=PairPerceptionProcess(initialization)
+        else:
+            worker_context=ThreadPoolExecutor(max_workers=1,thread_name_prefix='dispatch-pair-decision')
+        with worker_context as worker:
+            if process_mode:
+                # Startup occurs before requesting the first carry RGB. The
+                # anchor is a fixed appearance reference, not a command lease.
+                worker.wait_ready(lambda:self.tick(.02))
             next_capture=None
             pending_lease=None
 
@@ -469,7 +523,14 @@ class BoundPairSkill:
                         perception_wall_s=time.monotonic()-perception_started_wall_s
                         return frames,motion,evidence,decisions,skew,skew_evidence,perception_wall_s
 
-                    pending=worker.submit(analyze)
+                    if process_mode:
+                        observed=float(raw_frames['r1']['observed_at_s'])
+                        pending=worker.submit(raw_frames['r1']['frame_id'],observed,
+                            raw_frames['r1']['top_bytes'],
+                            {slot:raw_frames[rid]['own_bytes']
+                             for slot,rid in self.bindings.pair.items()})
+                    else:
+                        pending=worker.submit(analyze)
                     if index+1<(900 if max_steps is None else max_steps):
                         # The current immutable RGB batch is materialized.
                         # Rendering one next batch may now overlap its ordered
@@ -480,7 +541,12 @@ class BoundPairSkill:
                         # Only the owner advances physics. Port leases expire
                         # independently if RGB/render/decision work stalls.
                         advance_pending()
-                    frames,motion,evidence,decisions,skew,skew_evidence,perception_wall_s=pending.result()
+                    if process_mode:
+                        result=pending.result()
+                        (frames,motion,evidence,decisions,skew,skew_evidence,
+                         perception_wall_s)=self._adopt_carry_analysis(raw_frames,count,result)
+                    else:
+                        frames,motion,evidence,decisions,skew,skew_evidence,perception_wall_s=pending.result()
                     pending_lease=None  # A new decision replaces the older RGB authority.
                     now=self.time();observed=float(frames['r1']['observed_at_s'])
                     self.io.realtime_stats['pair_decisions']+=1
@@ -499,6 +565,10 @@ class BoundPairSkill:
                             perception_wall_s=perception_wall_s,
                             policy_wall_s=policy_wall_s),
                         'frame_ids':{r:f['frame_id'] for r,f in frames.items()}}
+                    if process_mode:
+                        carry_record['analysis_backend']='spawn_cpu'
+                        carry_record['pair_bind_timing_scope']=(
+                            'child RGB tracking and canonicalization; excludes IPC and owner image record')
                     self.calls.append(carry_record)
                     if control['abort']:
                         raise RuntimeError('existing pair carry guard stopped: '+control['mode'])
