@@ -223,10 +223,8 @@ def run(args):
             batch = {r:f.result() for r,f in futures.items()}
             replies = {r:v[0] for r,v in batch.items()}
             for reply,stop,records in batch.values():team.calls.extend(records)
-            for rid,reply in replies.items():
-                if reply and reply['message']:
-                    for peer in ROBOTS:
-                        if peer!=rid:team.inbox[peer].append({'from_robot':rid,'message':reply['message'],'turn':turn})
+            team.deliver_replies(batch,phase='execution',turn=turn,
+                                 sim_time=float(scene.world.data.time))
             frame_id = frames['r1']['frame_id'];now = float(scene.world.data.time)
             commands = gate.batch(replies,frame_id=frame_id,now_s=now)
             row = {'turn':turn,'at_s':now,'stages':{r:p['stage'] if p else 'FINISHED' for r,p in rows.items()},
