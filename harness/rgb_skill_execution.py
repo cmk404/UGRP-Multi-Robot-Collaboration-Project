@@ -31,6 +31,7 @@ SCHEMA = "ugrp.rgb_skill_backend.v2"
 MAX_TICK_S = .05
 FRAME_JPEG_QUALITY = 95
 ADAPTER_CONTACT_PROFILE = "local_contact_fine"
+SOLO_MAX_DECISIONS = 1200
 INITIAL_COMMANDS = {"1": 2000, "3": 740, "4": 2320, "5": 1320, "6": 1500}
 SKILLS = {f"{kind}_transport_{goal}": {
     "object_id": "box" if kind == "solo" else "beam",
@@ -66,6 +67,7 @@ def _execution_contract():
     return {"owner": "RGBSkillExecutionPort", "macro": "MacroQueue",
             "owner_max_tick_s": MAX_TICK_S, "pose_schedule_probe": _pose_schedule_probe(),
             "pair_pose_schedule_probe": _pair_pose_schedule_probe(),
+            "solo_max_decisions": SOLO_MAX_DECISIONS,
             "study_tick_period_s": .05, "study_poll_period_s": .05,
             "worker_image_max_age_s": 1., "worker_wall_limit_s": 2.,
             "worker_wall_scope": "submission_to_consumption"}
@@ -150,8 +152,8 @@ def backend_descriptor(config):
         raise ValueError("unsupported map: no open/north/south substitution; consult map_support_matrix")
     if type(config["seed"]) is not int or config["seed"] < 0:
         raise ValueError("nonnegative reset seed required")
-    if not finite_number(config["max_sim_s"], minimum=.05) or config["max_sim_s"] > 180:
-        raise ValueError("SIM cap must be .05..180 seconds")
+    if not finite_number(config["max_sim_s"], minimum=.05) or config["max_sim_s"] > 300:
+        raise ValueError("SIM cap must be .05..300 seconds")
     if type(config["max_commands"]) is not int or not 1 <= config["max_commands"] <= 10000:
         raise ValueError("command cap must be 1..10000")
     _, _, grasp_hashes = _read_models(config["grasp_model_dir"], "student-skill.json")
@@ -301,7 +303,8 @@ class SoloActorSkill:
     def __init__(self, robot_id, static_map, spec):
         from harness.solo_box_transport import SoloBoxTransport
         self.skill = SoloBoxTransport(robot_id=robot_id, navigator=_route(static_map, spec),
-                                      attachment_min_saturation=150, release_refine_ground_fit=True)
+                                      attachment_min_saturation=150, release_refine_ground_fit=True,
+                                      max_decisions=SOLO_MAX_DECISIONS)
 
     def decide(self, own, top):
         from harness.solo_box_transport import normalize_own_rgb

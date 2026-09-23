@@ -542,6 +542,17 @@ class PairCoarsePixels:
                         crop_half_size_px=[55,44],
                         inner_crop_retry=True)
         if heading is None:
+            # A peer wheel can still touch the 44px boundary by one row.
+            # Narrow once more; keep the same complete four-corner gate.
+            intermediate_pixels=len(xs)
+            clean[abs(yy-cy)>42]=0
+            ys,xs=np.nonzero(clean)
+            heading=wheel_heading(clean,pixel_tolerance=2.)
+            mask.update(intermediate_local_wheel_pixels=int(intermediate_pixels),
+                        local_wheel_pixels=int(len(xs)),
+                        crop_half_size_px=[55,42],
+                        second_crop_retry=True)
+        if heading is None:
             return dict(ok=False,ready=False,forward=0.,left=0.,turn=0.,
                         reason='own_wheel_heading_unresolved',mask=mask)
         center=np.array([xs.mean(),ys.mean()]);self.centers[slot]=center

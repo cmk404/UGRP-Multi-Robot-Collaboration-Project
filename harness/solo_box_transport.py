@@ -59,11 +59,13 @@ def solo_top_features(jpeg):
 
 class SoloBoxTransport:
     """Skill-bound curriculum, not a general route planner or raw-action LLM."""
-    def __init__(self, goal=None, *, robot_id='r2', navigator=None, attachment_min_saturation=65, release_refine_ground_fit=False):
+    def __init__(self, goal=None, *, robot_id='r2', navigator=None, attachment_min_saturation=65, release_refine_ground_fit=False, max_decisions=600):
         if robot_id not in ('r1','r2','r3'):
             raise ValueError('unknown solo robot')
         if navigator is None and goal not in GOALS:
             raise ValueError('unsupported goal')
+        if type(max_decisions) is not int or not 1 <= max_decisions <= 10000:
+            raise ValueError('solo decision budget must be an integer from 1 to 10000')
         self.goal = goal
         self.navigator = navigator
         self.box = VisualBoxSkill(task='external_navigation', robot_id=robot_id,
@@ -74,6 +76,7 @@ class SoloBoxTransport:
         self.done = False
         self.reason = None
         self.steps = 0
+        self.max_decisions = max_decisions
         self.goal_confirmations = 0
         self.grip_reobservations = 0
 
@@ -85,7 +88,7 @@ class SoloBoxTransport:
         if self.done:
             raise ValueError('completed task cannot issue more actions')
         self.steps += 1
-        if self.steps > 600:
+        if self.steps > self.max_decisions:
             raise RuntimeError('solo RGB decision budget exhausted')
         features = solo_top_features(top_jpeg) if self.navigator is None else {}
         if self.target is None and self.navigator is None:

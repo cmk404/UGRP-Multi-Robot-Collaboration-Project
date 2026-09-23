@@ -105,7 +105,7 @@ def prepare(root: Path, assets: Path, *, output: Path | None = None,
     from harness.rgb_execution_bundle import RUNNABLE_ID
     backend = {"schema": "ugrp.rgb_skill_backend.v2", "map_id": "dispatch_open", "seed": 11,
                "execution_bundle_id": RUNNABLE_ID,
-               "output_dir": "outputs/not-yet-submitted-rgb-replay", "max_sim_s": 180,
+               "output_dir": "outputs/not-yet-submitted-rgb-replay", "max_sim_s": PHYSICAL_BUDGETS["sim_time_s"],
                "max_commands": 6000,
                **{key: asset_info[key] for key in ("grasp_model_dir", "stage_model_dir", "reference_top")}}
     descriptor = backend_descriptor(backend)
@@ -182,7 +182,7 @@ def prepare(root: Path, assets: Path, *, output: Path | None = None,
             "object_id": capability["object_id"], "skill": skill, "participants": participants,
             "resources": capability["resources"], "stage": "RUN",
             "own_role": "solo" if kind == "solo" else "lower" if rid == "r1" else "upper",
-            "expires_at_s": 180}] if rid in participants else [{"kind": "finish", "claim": "cannot_continue"}]
+            "expires_at_s": PHYSICAL_BUDGETS["sim_time_s"]}] if rid in participants else [{"kind": "finish", "claim": "cannot_continue"}]
             for rid in ("r1", "r2", "r3")}
     prompt_ref = record("replay-actions.json", {"evidence_kind": "deterministic_physical_replay",
         "fixed_roles_not_negotiation": True, "actions": actions})
@@ -219,7 +219,7 @@ def prepare(root: Path, assets: Path, *, output: Path | None = None,
             **asset_info["provenance"],
             "prompt": [prompt_ref]}})
     from harness.rgb_communication_async import AsyncRuntimeLimits
-    limits = AsyncRuntimeLimits(max_ticks=3600, max_calls_per_robot=181, max_actions_per_robot=181,
+    limits = AsyncRuntimeLimits(max_ticks=6000, max_calls_per_robot=301, max_actions_per_robot=301,
         max_messages_per_robot=1, max_message_bytes_per_robot=1, wall_timeout_s=595,
         decision_period_s=1., max_input_tokens=1, max_output_tokens=1,
         max_input_tokens_per_call=1, max_output_tokens_per_call=1)

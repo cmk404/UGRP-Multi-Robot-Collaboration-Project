@@ -12,6 +12,7 @@ from types import SimpleNamespace
 import pytest
 
 from harness.rgb_execution_contract import SkillCapability
+from harness.rgb_execution_bundle import RUNNABLE_ID
 from harness.rgb_execution_port import RGBExecutionPort
 from harness.rgb_skill_execution import (INITIAL_COMMANDS, SKILLS, MacroQueue, PairActorSkill, RGBSkillUnsupported,
     RGBSkillExecutionPort, _ActorFacade, _RelativeEndpoint, _SimulationClock, backend_descriptor, map_support_matrix,
@@ -616,7 +617,7 @@ def test_all_suite_maps_are_explicitly_unsupported_and_never_remapped():
     for row in matrix[1:]:
         with pytest.raises(ValueError, match="unsupported map"):
             backend_descriptor({"schema": "ugrp.rgb_skill_backend.v2", "map_id": row["map_id"],
-                "execution_bundle_id": "rgb-adapter-contact-fine-solo-parity-v1",
+                "execution_bundle_id": RUNNABLE_ID,
                 "seed": 11, "output_dir": "never-created", "max_sim_s": 180, "max_commands": 10000,
                 "grasp_model_dir": "not-read", "stage_model_dir": "not-read", "reference_top": "not-read"})
 
@@ -717,7 +718,7 @@ def write_assets(tmp_path):
     reference = tmp_path / "reference.jpg"
     reference.write_bytes(JPEG)
     return {"schema": "ugrp.rgb_skill_backend.v2", "map_id": "dispatch_open", "seed": 11,
-            "execution_bundle_id": "rgb-adapter-contact-fine-solo-parity-v1",
+            "execution_bundle_id": RUNNABLE_ID,
             "output_dir": str(tmp_path / "not-created"), "max_sim_s": 180, "max_commands": 10000,
             "grasp_model_dir": str(grasp), "stage_model_dir": str(staged), "reference_top": str(reference)}
 
@@ -733,6 +734,10 @@ def test_readonly_descriptor_binds_models_map_camera_goal_and_reset(tmp_path):
     assert a["supervisor_clock_schema"] == "ugrp.execution_clock.v1"
     assert a["skill_worker_wall_scope"] == "submission_to_consumption"
     assert a["goal_frame"] == "warehouse_xy_m"
+    assert a["execution_contract"]["solo_max_decisions"] == 1200
+    assert backend_descriptor({**config, "max_sim_s": 300})["config_sha256"] != a["config_sha256"]
+    with pytest.raises(ValueError, match="SIM cap"):
+        backend_descriptor({**config, "max_sim_s": 300.05})
     assert not Path(config["output_dir"]).exists()
     public = public_static_context(config)
     assert public == public_static_context({**config, "seed": 29})

@@ -36,7 +36,7 @@ RUNTIME_MODULE = "harness.rgb_communication_runtime"
 PLANNER_MODULE = "harness.rgb_communication_planner"
 SCHEDULER_ID = "rgb-independent-async.v1"
 PHYSICAL_BUDGETS = {
-    "sim_time_s": 180, "wall_time_s": 600, "job_wall_time_s": 1800,
+    "sim_time_s": 300, "wall_time_s": 600, "job_wall_time_s": 1800,
     "model_calls": 0, "input_tokens": 0, "output_tokens": 0,
     "commands": 6000,
 }

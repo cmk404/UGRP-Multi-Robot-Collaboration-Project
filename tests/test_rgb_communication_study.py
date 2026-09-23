@@ -94,7 +94,8 @@ def test_gate_never_uses_fixture_or_boolean_as_live_readiness(source):
 
 
 @pytest.mark.parametrize("key,value", [("model_calls", 1), ("wall_time_s", 601),
-                                      ("sim_time_s", float("inf")), ("input_tokens", True)])
+                                      ("sim_time_s", 301), ("sim_time_s", float("inf")),
+                                      ("input_tokens", True)])
 def test_replay_rejects_live_calls_and_budget_expansion(source, key, value):
     conf = config()
     conf["budgets"][key] = value
