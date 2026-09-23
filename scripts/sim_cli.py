@@ -52,7 +52,7 @@ def run(config, args):
         raise ValueError("native viewer requires a desktop display; use --headless on a server")
     if args.headless and args.paused:
         raise ValueError("--paused requires the native viewer")
-    from sim.session import Simulation
+    from sim.session import Simulation, SimulationStateError
     import mujoco
 
     output = Path(args.output) if args.output else ROOT / "outputs" / f"sim-{datetime.now():%Y%m%d-%H%M%S}-{uuid4().hex[:6]}"
@@ -72,9 +72,11 @@ def run(config, args):
         decisions.flush()
     started = time.monotonic()
     paused = args.paused
+    state_error = None
     result = {**metadata, "seed": config["scene"]["seed"], "policy": "local_controller" if config["controllers"] else "raw_commands",
               "case": config["scene"]["layout"], "scope": "simulation_runtime_check",
               "protocol_complete": False, "stop_reason": "error"}
+    result["runtime_events"] = []
     if not config["controllers"]:
         result["model_calls"] = 0
     def interrupted(*_):
@@ -140,13 +142,15 @@ def run(config, args):
             while not keys.empty():
                 key = keys.get()
                 if key == 32:
-                    paused = not paused
+                    if state_error is None:
+                        paused = not paused
                     print("Paused" if paused else "Running", flush=True)
                 elif key in (ord("R"), ord("r")):
                     sim.reset()
+                    state_error = None
                     paused = True
                     print(f"Reset episode {sim.episode}; paused", flush=True)
-                elif key in (ord("N"), ord("n")) and paused:
+                elif key in (ord("N"), ord("n")) and paused and state_error is None:
                     single_step = True
             if viewer is not None and not viewer.is_running():
                 result["stop_reason"] = "window_closed"
@@ -159,22 +163,37 @@ def run(config, args):
                 result["stop_reason"] = "sim_limit"
                 break
             advanced = 0.0
-            if not paused or single_step:
-                steps = 1 if single_step else min(batch, max(1, math.ceil(remaining / sim.timestep - 1e-9)))
-                sim.step(steps)
-                advanced = steps * sim.timestep
-            if video is not None and advanced:
-                video.frame(sim)
+            try:
+                if not paused or single_step:
+                    steps = 1 if single_step else min(batch, max(1, math.ceil(remaining / sim.timestep - 1e-9)))
+                    sim.step(steps)
+                    advanced = steps * sim.timestep
+                if video is not None and advanced:
+                    video.frame(sim)
+                if viewer is not None:
+                    sim.sync_viewer()
+            except SimulationStateError as error:
+                if state_error is None:
+                    state_error = error
+                    result["runtime_events"].append(error.record)
+                    write_json(output / "runtime-events.json", result["runtime_events"])
+                    print(f"Physics paused: {error}. Press R to reset; Space cannot resume an invalid episode.", flush=True)
+                if viewer is None:
+                    raise
+                paused = True
+                advanced = 0.0
             if viewer is not None:
-                sim.sync_viewer()
+                status = "Physics state changed / unstable. Press R to reset." if state_error else (
+                    "Paused: Space to run | N step | R reset" if paused else "Running: Space to pause | R reset")
+                viewer.set_texts((mujoco.mjtFont.mjFONT_NORMAL, mujoco.mjtGridPos.mjGRID_TOPLEFT, status, ""))
             if viewer is not None or paused:
                 delay = (advanced / config["run"]["realtime_factor"] if advanced else .02) - (time.monotonic() - tick_started)
                 if delay > 0:
                     time.sleep(delay)
-        result["protocol_complete"] = result["stop_reason"] == "sim_limit"
-        if args.capture:
+        result["protocol_complete"] = result["stop_reason"] == "sim_limit" and not result["runtime_events"]
+        if args.capture and state_error is None:
             capture(sim, output, "final")
-        return 2 if args.headless and not result["protocol_complete"] else 0
+        return 2 if result["runtime_events"] or (args.headless and not result["protocol_complete"]) else 0
     except KeyboardInterrupt:
         result["stop_reason"] = "interrupted"
         return 130

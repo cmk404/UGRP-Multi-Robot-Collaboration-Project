@@ -5,7 +5,7 @@ from types import SimpleNamespace
 import pytest
 
 from scripts.sim_cli import main
-from sim.session import Simulation
+from sim.session import Simulation, SimulationStateError
 from sim.session_config import DEFAULT_CONFIG, validate_config
 
 
@@ -142,3 +142,39 @@ def test_close_waits_for_native_render_owner_before_world_cleanup(monkeypatch):
     sim._world.close = lambda: order.append("world_closed")
     sim.close()
     assert order == ["exit_requested", "render_destroyed", "world_closed"]
+
+
+def test_external_reset_revokes_commands_and_requires_explicit_episode_reset():
+    with Simulation({"version": 1}, render=True, world_factory=World) as sim:
+        sim.apply("r1", {"kind": "drive", "forward": .1, "turn": 0, "duration_s": 1})
+        sim.step(5)
+        sim._world.data.time = 0.
+        with pytest.raises(SimulationStateError) as fault:
+            sim.step()
+        assert fault.value.record["kind"] == "external_reset"
+        assert fault.value.record["at_s"] == pytest.approx(.05)
+        assert sim.time == pytest.approx(.05)
+        assert sim._world.robot("r1").motors == [0.] * 4
+        with pytest.raises(SimulationStateError):
+            sim.apply("r1", {"kind": "wait"})
+        with pytest.raises(SimulationStateError):
+            sim.observe("r1")
+        sim.reset()
+        assert sim.episode == 1
+        assert sim.step() == pytest.approx(.01)
+
+
+def test_physics_auto_reset_reports_warning_and_close_does_not_mask_it(monkeypatch):
+    sim = Simulation({"version": 1}, world_factory=World)
+    sim.step(5)
+    def unstable(_):
+        sim._world.data.time = .01
+        monkeypatch.setattr(sim, "_warnings", lambda: {"BADQACC": 1})
+    sim._world._physics_step_for = unstable
+    with pytest.raises(SimulationStateError) as fault:
+        sim.step()
+    assert fault.value.record["kind"] == "physics_instability"
+    assert fault.value.record["warnings"] == {"BADQACC": 1}
+    assert sim.time == pytest.approx(.05)
+    sim.close()
+    assert sim._world.closed

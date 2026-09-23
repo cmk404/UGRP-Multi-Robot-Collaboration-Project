@@ -46,6 +46,14 @@ bash scripts/open_simulation.command run my-scene.json --seed 43 --sim-seconds 6
 
 MuJoCo 창에서 **Space**는 일시정지/재개, **N**은 정지 중 물리 한 스텝, **R**은 동일 설정으로 초기화 후 정지다. 정지는 물리 시간을 멈추므로 남은 명령도 재개 시 이어진다. 창 닫기 또는 터미널 Ctrl-C로 종료한다. 기본 SIM 30초 또는 실제 30분에 도달해도 종료한다. `--sim-seconds`, `--wall-seconds`로 변경할 수 있고 실제 시간 제한은 일시정지/초기화해도 초기화되지 않는다.
 
+MuJoCo 패널은 표시 옵션 외에 물리·actuator 상태도 바꿀 수 있다. 패널의 초기화나
+수치 불안정으로 시간이 되돌아가면 창을 닫지 않고 물리를 정지하며 안내를 표시한다.
+**R로 새 에피소드를 초기화한 뒤 Space로 재개**한다. 잘못된 상태에서는 Space/N이
+동작을 재개하지 않는다. R은 장면·동작 상태를 초기화하지만 사용자가 패널에서 바꾼
+물리 모델 설정까지 복원하지 않으므로, 그 설정 때문에 반복되면 실행을 다시 시작한다.
+`runtime-events.json`과 결과에 해당 사건을 남기며, 복구 후에도 그 실행을 정상 완료로
+집계하지 않는다(종료 코드 2). headless/API는 명확한 `SimulationStateError`로 중단한다.
+
 관찰 카메라는 `--camera cctv_top`, `--camera cctv_warehouse`, `--camera r1__robot_cam` 등으로 선택한다. 창의 Rendering 카메라 선택도 사용할 수 있다. 자유 시점과 물체 드래그는 사람이 장면을 살펴보는 도구다. GUI에서 물리를 조작한 실행은 무인 평가와 구분한다.
 
 ## 설정 계약 (version 1)
