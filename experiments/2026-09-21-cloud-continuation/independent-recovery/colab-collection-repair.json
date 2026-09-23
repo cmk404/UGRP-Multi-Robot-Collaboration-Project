@@ -1,0 +1,79 @@
+{
+  "observed_at": "2026-09-21T07:12:24.813744+00:00",
+  "actor_source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+  "control_source_sha": "8ff2cd907868caab7cef567b541c12ac397533ec",
+  "preserved_trials": 37,
+  "remaining_at_start": 194,
+  "scope": "Colab recovery verified; full model comparison pending; resumed trials keep original actor source and enumerated conditions",
+  "runtime": "ugrp-resume-20260921-d",
+  "renderer": {
+    "vendor": "NVIDIA Corporation",
+    "renderer": "Tesla T4/PCIe/SSE2"
+  },
+  "credential_probe": {
+    "same_endpoint": true,
+    "invalid_proxy_errors": [
+      "FileNotFoundError"
+    ],
+    "refresh_count": 2,
+    "recovered_directory_type": "directory",
+    "new_runtime_allocations": 0
+  },
+  "resume_manifest_sha256": "d70693a6a45531b1e74fa16944f3d615bdaed0b2d512cbfbe7dcd9d933d7d61a",
+  "new_verified_trials": [
+    {
+      "trial": "holdout/open04-r2-jev-full",
+      "success": true,
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/colab-recovery-20260921/review/holdout/open04-r2-jev-full",
+      "result_sha256": "a760d26965d8d28afe623e72ae9a4839b4407edc02608344cf932c91d0018707",
+      "videos": [
+        {
+          "id": "c85968b82388583d76a9",
+          "status": 206,
+          "bytes": 32
+        }
+      ],
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-Colab-복구검증/재개-open04-r2-jev-full"
+    },
+    {
+      "trial": "holdout/unknown03-r0-rule-full",
+      "success": true,
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/colab-recovery-20260921/review/holdout/unknown03-r0-rule-full",
+      "result_sha256": "f77c3a182e148075b300ac43ccf2ee508ec1bcc7c34f78d05e4b7e6478f51c86",
+      "videos": [
+        {
+          "id": "f5630ecc963fffd60bdc",
+          "status": 206,
+          "bytes": 32
+        }
+      ],
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-Colab-복구검증/재개-unknown03-r0-rule-full"
+    }
+  ],
+  "tests": {
+    "passed": 1226,
+    "skipped": 3,
+    "subtests": 191
+  },
+  "earlier_error": {
+    "type": "FileNotFoundError",
+    "consecutive": 3,
+    "collector_exit_code": 1,
+    "original_trigger": "Not proven; invalid proxy credentials reproduce this error but original token expiry was not captured"
+  },
+  "cleanup_policy": "Only verified remote completion AND collection, or original finite deadline; never collector error alone",
+  "dashboard": "http://127.0.0.1:6006/#hparams",
+  "dashboard_verification": {
+    "native_rows": 76,
+    "new_rows_visible": true,
+    "selected_columns": [
+      "outcome",
+      "result/wall_s",
+      "result/commands",
+      "result/model_calls"
+    ],
+    "video_range_verified": true
+  }
+}

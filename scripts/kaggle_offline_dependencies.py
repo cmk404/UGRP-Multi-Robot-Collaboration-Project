@@ -16,7 +16,7 @@ def prepare_dependencies(root, output, wheelhouse=None):
         subprocess.run([sys.executable, '-m', 'pip', 'download', '--only-binary=:all:',
                         '--platform', 'manylinux_2_28_x86_64', '--platform', 'manylinux_2_27_x86_64',
                         '--platform', 'manylinux2014_x86_64', '--python-version', '312',
-                        '--implementation', 'cp', '--abi', 'cp312', '-r', str(root/'requirements-sim.txt'),
+                        '--implementation', 'cp', '--abi', 'cp312', '-r', str(root/'requirements-kaggle.txt'),
                         'pip==26.2.1', '-d', str(cache)], check=True)
     else:
         for path in sorted(wheelhouse.glob('*.whl')):

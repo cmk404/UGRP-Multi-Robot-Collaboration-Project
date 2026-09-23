@@ -22,7 +22,7 @@ import subprocess
 from scripts.tensorboard_tools.rgb_communication import EXTRA_METRICS, RUN_SCHEMA, export_communication
 
 MAX_BYTES = 64 * 1024 * 1024
-HP_METRICS = ('result/wall_s', 'result/sim_s', 'result/commands', 'result/model_calls',
+HP_METRICS = ('process/exit_code', 'result/wall_s', 'result/sim_s', 'result/commands', 'result/model_calls',
               'result/input_tokens', 'result/output_tokens', 'result/cost_usd', 'result/model_latency_s',
               'claims/operator_session_complete',
               'evaluation/reported_success', 'claims/protocol_complete',
@@ -310,6 +310,43 @@ def exporter_version():
     except (OSError, subprocess.SubprocessError): return {'sha': None, 'working_tree_dirty': None}
 
 
+def export_cloud_job(src, w, data):
+    """Process completion is distinct from robot success, including setup failures."""
+    if (data.get('status') not in {'complete', 'completed', 'failed'}
+            or type(data.get('exit_code')) is not int
+            or not finite(data.get('finished_at_unix'))):
+        raise ValueError('Cloud job has no terminal process evidence')
+    metrics = {'process/exit_code': data['exit_code']}
+    start, end = data.get('started_at_unix'), data['finished_at_unix']
+    if finite(start) and end >= start:
+        metrics['result/wall_s'] = end - start
+    for name, value in metrics.items(): w.scalar(name, value)
+    w.text('process/result', data)
+    recovery = src.read('result/recovery-status.json')
+    if recovery is not None: w.text('process/recovery', recovery)
+    return {'family': 'cloud-job', 'policy': 'environment',
+            'source_sha': data.get('source_sha'), 'scope': data.get('scope'),
+            'outcome': 'process_exit_' + str(data['exit_code']),
+            'success_source_field': None}, metrics
+
+
+def export_hardware_probe(src, w, data):
+    torch = obj(data.get('torch'))
+    if type(torch.get('available')) is not bool or type(torch.get('count')) is not int:
+        raise ValueError('No completed GPU inventory evidence')
+    metrics = {'hardware/gpu_count': torch['count'],
+               'hardware/cuda_available': int(torch['available']),
+               'hardware/internet_http_status': data.get('internet_http_status')}
+    for name, value in metrics.items(): w.scalar(name, value)
+    w.text('hardware/inventory', data)
+    provenance = src.read('probe-provenance.json')
+    if provenance: w.text('hardware/provenance', provenance)
+    return {'family':'hardware-probe', 'policy':'environment',
+            'outcome':'gpu_available' if torch['available'] else 'gpu_unavailable',
+            'scope':'Observed cloud devices and connectivity; no robot evaluation',
+            'success_source_field':None}, metrics
+
+
 def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=False):
     """Export one source once. Existing destinations are rejected (no duplicate steps)."""
     source, output = Path(source).resolve(), Path(output).resolve()
@@ -325,6 +362,10 @@ def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=Fa
     if isinstance(training, dict) and rows(training.get('progress')):
         kind, data = 'training', training
     elif isinstance(result, dict): kind, data = 'execution', result
+    elif (source / 'gpu-inventory.json').exists():
+        kind, data = 'hardware-probe', src.read('gpu-inventory.json', required=True)
+    elif (source / 'run.json').exists():
+        kind, data = 'cloud-job', src.read('run.json', required=True)
     elif (source / 'progress.json').exists():
         kind, data = 'training', {'progress': src.read('progress.json', required=True)}
     else: raise ValueError('No complete result.json or supported training progress; source left untouched')
@@ -334,7 +375,10 @@ def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=Fa
     manifest = {'schema': 'ugrp.tensorboard-export.v1', 'source': str(source), 'exported_at_s': at,
                 'event_wall_time': 'export time, not historical execution time', 'exporter': exporter_version(), 'complete': False}
     try:
-        meta, metrics = export_training(src, w, data) if kind == 'training' else export_execution(src, w, data, max_images)
+        if kind == 'training': meta, metrics = export_training(src, w, data)
+        elif kind == 'cloud-job': meta, metrics = export_cloud_job(src, w, data)
+        elif kind == 'hardware-probe': meta, metrics = export_hardware_probe(src, w, data)
+        else: meta, metrics = export_execution(src, w, data, max_images)
         videos = []
         video_names = ('motion.mp4', 'execution.mp4')
         if isinstance(result, dict) and result.get('schema_version') == RUN_SCHEMA:

@@ -5,10 +5,16 @@ import hashlib
 import json
 from pathlib import Path
 import shutil
+import os
+import signal
 import subprocess
 import sys
 import time
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from scripts.carry_failure_metrics import schedule, outcome, aggregate
+from scripts.cloud_progress import emit,run_logged
 
 
 def sha(p):
@@ -49,6 +55,7 @@ def main():
     p.add_argument('--stages', type=Path, required=True)
     p.add_argument('--training-only', action='store_true')
     p.add_argument('--reuse-training', type=Path)
+    p.add_argument('--dataset', type=Path, help='Hash-verified portable dataset; canonical protocol remains unchanged')
     p.add_argument('--protocol', type=Path, default=ROOT/'experiments/2026-09-21-carry-input-ablation/protocol.json')
     a = p.parse_args(); a.out = a.out.resolve(); a.out.mkdir(parents=True, exist_ok=False)
     protocol_path = a.protocol
@@ -62,18 +69,25 @@ def main():
         if subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()!=source or subprocess.check_output(['git','status','--porcelain'],cwd=ROOT):
             raise RuntimeError('cohort source changed')
 
-    def run(cmd, name):
+    def run(cmd, name, timeout=None):
         frozen(); started=time.monotonic()
         log=a.out/(name+'.log')
-        with log.open('w') as stream:
-            proc=subprocess.run(list(map(str,cmd)),cwd=ROOT,stdout=stream,stderr=subprocess.STDOUT)
+        try:
+            result=run_logged(cmd,log,name=name,cwd=ROOT,timeout=timeout)
+            exit_code,timed_out=result['exit_code'],result['timed_out']
+        except OSError as exc:
+            log.write_text(f'Process launch failed: {type(exc).__name__}\n')
+            exit_code,timed_out=127,False
         frozen()
-        return {'name':name,'command':list(map(str,cmd)),'exit_code':proc.returncode,
-                'wall_s':time.monotonic()-started,'log':str(log)}
+        return {'name':name,'command':list(map(str,cmd)),'exit_code':exit_code,
+                'wall_s':time.monotonic()-started,'log':str(log),'timed_out':timed_out}
 
-    data=Path(protocol['dataset'])
-    if sha(data)!=protocol['dataset_sha256']:
+    from scripts.colab_carry_bundle import verify_dataset
+    data=a.dataset or Path(protocol['dataset'])
+    provenance=verify_dataset(data)
+    if provenance['dataset_sha256']!=protocol['dataset_sha256']:
         raise ValueError('original dataset changed')
+    report['dataset_provenance']=provenance
     shutil.copyfile(data,a.out/'dataset.json')
     models={}
     for seed in protocol['training']['seeds']:
@@ -102,9 +116,13 @@ def main():
         report['training_complete']=True;write(a.out/'report.json',report);return 0
     dataset=json.loads(data.read_text())
 
-    def trial(case, condition):
-        base=next(Path(e['root']) for e in dataset['train'] if Path(e['root']).name==case['teacher_case'])
-        output=a.out/'final'/condition/case['id']
+    def trial(job):
+        case,condition,repeat=job['case'],job['condition'],job['repeat']
+        root_map=provenance.get('relocation_provenance',{}).get('root_map',{})
+        original_roots={v:k for k,v in root_map.items()}
+        base=next(Path(e['root']) for e in dataset['train']
+                  if Path(original_roots.get(e['root'],e['root'])).name==case['teacher_case'])
+        output=a.out/'final'/condition/f"{case['id']}-r{repeat}"
         cmd=[a.mjpython,ROOT/'scripts/run_dispatch_e2e.py','--executor','skills','--variant',case['variant'],
              '--seed','11','--required-dock','dock_a','--plan-replay',base/'committed-plan.json',
              '--grasp-model-dir',a.grasp,'--stage-model-dir',a.stages,'--output',output,
@@ -112,24 +130,34 @@ def main():
         if condition!='teacher':
             cmd+=['--carry-act-model',models[condition]['path'],'--carry-act-python',a.act_python,
                   '--carry-act-max-steps',protocol['controls']['max_carry_steps']]
-        row=run(cmd,'final-'+condition+'-'+case['id'])
-        row.update(phase='final',condition=condition,case=case,output=str(output))
+        row=run(cmd,'final-'+job['trial_id'],timeout=protocol['controls']['max_wall_s']+60)
+        row.update(job,phase='final',output=str(output))
         if (output/'result.json').exists():
-            result=json.loads((output/'result.json').read_text())
-            row['summary']={k:result.get(k) for k in ('physical_success','protocol_complete','phase','error','wall_s')}
+            try:
+                result=json.loads((output/'result.json').read_text())
+                row['summary']={k:result.get(k) for k in ('physical_success','protocol_complete','phase','error','wall_s')}
+            except (OSError,ValueError,AttributeError):pass
+        row['outcome']=outcome(output,row['exit_code'],row['timed_out'])
         return row
 
-    tasks=[]
     names=['teacher',*models]
-    for i,case in enumerate(protocol['test']):
-        order=names[i:]+names[:i]
-        tasks.extend((case,name) for name in order)
+    tasks=schedule(protocol,names)
+    report['evaluation_jobs']=tasks
+    report['failure_estimates']=aggregate(tasks,[])
+    write(a.out/'report.json',report)
+    def progress():
+        failures=sum(not r['outcome']['whole_success'] for r in report['runs'])
+        emit('evaluation_progress',phase='physics128256',planned=len(tasks),attempted=len(report['runs']),
+             successes=len(report['runs'])-failures,failures=failures,pending=len(tasks)-len(report['runs']))
+    progress()
     with concurrent.futures.ThreadPoolExecutor(max_workers=protocol['controls']['workers']) as pool:
-        futures=[pool.submit(trial,*task) for task in tasks]
+        futures=[pool.submit(trial,task) for task in tasks]
         for future in concurrent.futures.as_completed(futures):
-            row=future.result();report['runs'].append(row);write(a.out/'report.json',report)
+            row=future.result();report['runs'].append(row)
+            report['failure_estimates']=aggregate(tasks,report['runs']);write(a.out/'report.json',report)
+            progress()
             print(json.dumps({'event':'trial','case':row['case']['id'],'condition':row['condition'],'summary':row.get('summary'),'exit_code':row['exit_code']}),flush=True)
-    report['complete']=True;write(a.out/'report.json',report)
+    report['complete']=report['failure_estimates']['complete'];write(a.out/'report.json',report)
     return 0
 
 

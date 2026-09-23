@@ -51,9 +51,53 @@ Colab VM이 삭제되면 미회수 파일은 사라질 수 있다. 일반 시뮬
 
 ## 학습과 모델 연결
 
+### 결과 회수 오류와 실행 수명 분리
+
+`scripts/resume_colab_comparison.py`는 명시한 런타임 한 개에서 유한한 비교를
+실행한다. 회수기의 파일/통신 오류나 종료 코드는 런타임 종료 조건이 아니다.
+원격 실행 완료와 회수 완료가 모두 확인됐거나, 처음 정한 최대 시간이 끝났을
+때에만 소유 세션을 종료한다. 회수 불가를 실행 중이나 완료로 표시하지 않는다.
+
+`scripts/colab_live_contents.py`는 Colab CLI의 현재 할당 목록에서 **같은 endpoint**의
+전송 인증을 만료 전에 갱신한다. 다른 런타임으로 전환하거나 새 VM을 할당하지
+않는다. 로그에는 토큰/전체 인증 URL 대신 작업 종류·상대 파일 경로·오류 종류를
+남긴다. 누락 파일은 제한 시간 내 재조회하고, 체크포인트 무결성 오류는 별도로
+차단한다.
+
+재개 목록은 기존 ZIP·내부 파일 해시·실험 SHA·전체 조건 목록을 검증해 만든다.
+`scripts/run_frozen_skill_resume.py`는 고정된 기존 actor checkout을 그대로 사용하고
+완료된 성공/실패 모두를 건너뛴다. 제어 스크립트 SHA/해시, 원래 프로토콜,
+이전 결과와 새 실행 범위를 별도로 기록한다. 중단된 물리 상태를 이어 붙이지는
+않으며 완료 결과가 없는 조건만 처음부터 수행한다. 기존·재개 결과 전체를
+회수하기 전에는 전체 비교 완료로 보고하지 않는다.
+
 ACT의 `requirements-reference-act.txt`는 시뮬레이션과 NumPy/OpenCV 버전이 달라 별도 환경에 설치한다. `scripts/patch_reference_act.py` 적용 후 CUDA·실제 forward/backward·checkpoint를 확인하고 학습 실행기의 Python 경로 인자를 명시한다. 기존 ACT 입력 비교/재개 코드는 [PR #84](https://github.com/kcm0127-dotcom/ugrp/pull/84)의 별도 작업이다.
 
 실제 LLM 운반에는 Colab에서 접근 가능한 인증된 모델 endpoint와 입력 가중치/데이터가 필요하다. Mac `127.0.0.1`은 원격에서 접근할 수 없다. endpoint·인증을 임의로 공개하거나 키를 로그에 기록하지 않는다. 기본 CLI 전송·무료 데모는 GitHub 키와 모델 키가 필요 없다. 모델 호출·학습·EGL·전체 코호트는 별도 실행 검증 대상이다.
+
+## 별도 CPU 모델 진단
+
+GPU 배정이 막힌 경우 `scripts.run_cpu_model_diagnostic`으로 **새 CPU 진단**을
+실행할 수 있다. 기존 GPU 코호트를 CPU 결과로 채우지 않는다. 같은 `dev_open`
+장면의 rule/Jev/Gemini를 각각 시뮬레이션 4초·모델 최대 2회·시행 프로세스
+최대 180초로 실행한다. 실패/시간 초과도 보존하며 다음 방식을 계속 확인한다.
+짧은 예산 안의 목표 미달은 실행 준비 판정과 구분하고 성공률 추정에 넣지 않는다.
+
+먼저 호스트의 기존 비공개 Gemini 프록시와 Jev 자격 증명으로 모델 사전 검사를
+완료하고, 같은 CPU 세션의 `/content/<진단ID>/mailbox`를 대상으로 유한한 relay를
+실행한다(`--max-calls 4 --http-attempts 1`). 모델 키는 Colab에 전달하지 않는다.
+
+```sh
+python scripts/colab_simulation_cli.py --session <소유CPU세션> \
+  --output outputs/cpu-model-<진단ID> --timeout 650 \
+  --module scripts.run_cpu_model_diagnostic -- \
+  --output '{output}' --model-mailbox /content/<진단ID>/mailbox
+```
+
+`cpu-diagnostic.json`은 RGB 파일·해시, 응답 파싱, 명령 발행, 카메라 불변,
+weld OFF, 영상 저장을 검증한다. `cpu-renderer.json`에 실제 OpenGL 정보를 남긴다.
+회수 ZIP·내부 해시와 영상 내용도 확인한 뒤 소유 세션/relay/프록시를 정리한다.
+CPU 시간과 기존 GPU 시간은 별도 보고한다.
 
 ## Kaggle CLI 병행
 
@@ -62,3 +106,46 @@ ACT의 `requirements-reference-act.txt`는 시뮬레이션과 NumPy/OpenCV 버�
 ## 검증 범위
 
 로컬 관련 테스트 12개와 최초 CI 4개 job이 통과했다. CLI 경로 수정 후 검증은 PR의 최신 head와 연결된 CI 및 로컬 `outputs/` 기록을 따른다. 세션 조회·생성·원격 Python 출력은 실제 Colab CLI에서 확인했다. [실제 Colab CPU 진단](../experiments/2026-09-21-colab-cli-smoke/README.md)에서 물리 이동 0.138548m·카메라 12프레임·결과 다운로드·전체 파일 해시가 확인되었고 소유 세션도 종료했다. 교사/학생·정적 지도 경계, 카메라 FOV와 weld OFF는 기존 지침을 유지한다.
+
+## Mac 모델 연결을 사용하는 비공개 Colab 비교
+
+`run_jev_skill_cohort.py --model-mailbox /content/<작업>/mailbox`는 인증된 Colab Contents 파일 전송으로 모델 요청/응답만 전달한다. Mac의 `relay_colab_models.py`가 고정된 Jev API와 기존 loopback Gemini 서비스에 호출한다. 외부 공개 포트·터널은 만들지 않는다. Jev 키는 Mac 키체인(`ugrp.typesafe.ai` / `jev`)에서 프로세스 메모리로만 읽으며 원격 소스·큐·로그에 넣지 않는다. `scripts/macos_model_keychain.swift`로 빌드한 helper의 읽기 출력은 relay가 직접 캡처한다. 터미널에서 helper의 읽기 출력을 표시하지 않는다.
+
+relay는 Colab CLI가 설치된 Python에서 `--session`, `--remote`, `--keychain-helper`, `--output`, `--seconds`를 지정해 `ugrp_session.py run`으로 실행한다. 최대 4시간/지정 호출 수까지만 동작하며 종료 시 해당 소유 세션을 정리한다. 요청마다 30초 한도와 고유 ID를 사용하고, 응답 전송 재시도 시 모델 호출을 반복하지 않는다. 임의 URL·모델·만료된 요청을 거부한다.
+
+`latency_s`는 파일 전송을 포함한 실제 대기 시간이며 `provider_latency_s`가 API 응답 시간이다. 이 경로의 continuous 결과를 직접 HTTP 경로의 지연 성능과 합쳐 비교하지 않는다. 동일 소스·동일 Colab 환경에서 rule/Jev/Gemini를 함께 실행하며, 다른 Kaggle/과거 Mac 결과는 별도 실험으로 둔다.
+
+### T4가 배정됐지만 실제 렌더러가 llvmpipe인 경우
+
+`nvidia-smi`의 GPU 배정은 MuJoCo 렌더링 사용 증거가 아니다. Colab의 기존
+`/usr/lib64-nvidia` 라이브러리와 GLVND 등록이 누락된 경우에만 다음 명령으로
+등록하고 새 프로세스의 실제 OpenGL vendor/renderer를 확인한다. 기존의 다른
+등록 내용은 덮어쓰지 않는다. 드라이버 설치나 실행 중 실험 변경은 하지 않는다.
+
+```sh
+python scripts/setup_colab_egl.py --python /content/ugrp-repair/sim-env/bin/python \
+  --output /content/egl-verification-NEW.json
+```
+
+검증된 새 실행에만 출력의 `environment` 세 값(`MUJOCO_GL`,
+`PYOPENGL_PLATFORM`, `__EGL_VENDOR_LIBRARY_FILENAMES`)을 적용한다. renderer가
+NVIDIA인 것을 확인한 후 같은 소스·조건으로 새 코호트를 시작한다. CPU/OSMesa
+결과와 NVIDIA 결과는 렌더러가 다른 진단으로 구분한다. GPU 영상에도 다른 JPEG
+색 무늬가 있으므로 이전 CPU 프레임 재생만으로 GPU 제어 검증을 대신하지 않는다.
+
+## 모델 연결 사전 검사와 실패 보존
+
+비교 런타임 생성 전 `scripts/model_connectivity_preflight.py`로 Jev/Gemini 각각
+3번의 고정 연결/응답 형식 검사를 수행한다. 실제 모델 호출이 발생하지만 로봇
+관측·행동은 없다. `resume_colab_comparison.py --model-preflight <report.json>`은
+성공한 보고서가 최근 5분 이내인 경우에만 시작한다. 실행기/모델 주소가 바뀌면
+다시 검증하며 짧은 검사 통과를 장시간 무오류 보장으로 사용하지 않는다.
+
+새 중계 정책은 명시적 429/503/529 거절만 총 30초·최대 3번 안에서 복구한다.
+`Retry-After` 대기를 존중하고 추가 호출도 전체 API 호출 한도에 포함한다.
+시간 초과·502/504처럼 원 처리 여부가 불확실한 응답, 인증 오류·잘못된 JSON은
+재전송하지 않는다. `http_attempts`, `first_attempt_failed`, `retry_count`, `recovered`
+필드를 원본 응답에 남겨 최초 오류율과 복구 후 오류율을 구분한다. 응답 파일
+업로드 재시도는 모델을 호출하지 않으며 과거 실패 시행을 다시 실행하지 않는다.
+
+재시도 조건도 코호트의 일부다. 기존 231회 비교의 이어달리기는 `--http-attempts 1`로 원래 정책을 유지한다. 새 복구 정책을 평가하는 별도 코호트만 relay의 `--http-attempts 3`을 명시하고 그 조건을 고정한다. 연결 사전 검사는 최대 3회 정책으로 수행하며, 그 결과를 로봇 성공률에 합산하지 않는다.

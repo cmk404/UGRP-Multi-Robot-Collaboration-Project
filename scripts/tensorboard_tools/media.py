@@ -46,9 +46,10 @@ def handler_for(registry):
             if self.headers.get('Host') not in allowed:
                 self.message(403, 'Local host only');return
             match = re.fullmatch(r'/(video|raw)/([0-9a-f]{20})', urlsplit(self.path).path)
-            if not match or match[2] not in registry:
+            current = registry() if callable(registry) else registry
+            if not match or match[2] not in current:
                 self.message(404, 'No registered video');return
-            entry = registry[match[2]];path = Path(entry['path'])
+            entry = current[match[2]];path = Path(entry['path'])
             try:
                 if path.is_symlink() or path.resolve() != path: self.message(404, 'Video moved');return
                 st = path.stat()
@@ -88,4 +89,4 @@ def handler_for(registry):
 
 
 def make_server(logdir, port):
-    return ThreadingHTTPServer(('127.0.0.1', port),handler_for(media_registry(logdir)))
+    return ThreadingHTTPServer(('127.0.0.1', port),handler_for(lambda: media_registry(logdir)))

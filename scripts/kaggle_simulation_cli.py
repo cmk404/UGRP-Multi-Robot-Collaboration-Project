@@ -1,6 +1,8 @@
 """Prepare, submit and recover private Kaggle CPU simulation jobs through its CLI."""
 from __future__ import annotations
 import argparse
+import base64
+import inspect
 import hashlib
 import json
 from pathlib import Path
@@ -8,6 +10,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tarfile
 import uuid
 import zipfile
 
@@ -23,25 +26,31 @@ def write(path, value):
 
 
 def cli(*args):
+    from scripts.kaggle_cli_auth import refresh_existing_oauth
+    refresh_existing_oauth()
     result = subprocess.run(['kaggle', *map(str, args)], text=True, capture_output=True)
     if result.returncode:
         raise RuntimeError(result.stderr.strip() or result.stdout.strip() or 'Kaggle CLI failed')
     return result.stdout
 
 
-def driver(record, job_id, module, arguments, dependencies_sha256):
+def driver(record, job_id, module, arguments, dependencies_sha256, source_filename=None, source_delta=None):
     remote = '/kaggle/temp/ugrp-' + job_id
+    from scripts.kaggle_source_delta import apply_source_delta
+    delta_code = inspect.getsource(apply_source_delta) if source_delta else ''
     return f'''from pathlib import Path
-import hashlib, json, os, shutil, subprocess, sys, tarfile, traceback
+import base64, hashlib, json, os, shutil, subprocess, sys, tarfile, traceback
+{delta_code}
 working = Path('/kaggle/working')
 working.mkdir(exist_ok=True)
 base = Path({remote!r})
 job = {{'job_id': {job_id!r}, 'source_sha': {record['source_sha']!r}, 'provider': 'kaggle', 'status': 'setup', 'exit_code': None}}
 def save():
     (working/'remote-job.json').write_text(json.dumps(job, indent=2)+'\\n')
+    print('UGRP_JOB_STATUS', json.dumps(job), flush=True)
 save()
 try:
-    candidates = list(Path('/kaggle/input').rglob({('ugrp-source-' + job_id + '.bin')!r}))
+    candidates = list(Path('/kaggle/input').rglob({(source_filename or 'ugrp-source-' + job_id + '.bin')!r}))
     if len(candidates) != 1:
         raise RuntimeError('expected exactly one source bundle input')
     base.parent.mkdir(parents=True, exist_ok=True)
@@ -58,6 +67,9 @@ try:
             if member.issym() or member.islnk():
                 raise ValueError('source archive links are forbidden')
         bundle.extractall(base, filter='data')
+    source_delta = {source_delta!r}
+    if source_delta:
+        apply_source_delta(base/'source', source_delta)
     with (working/'setup.log').open('w') as log:
         subprocess.run([sys.executable, str(base/'source/scripts/setup_kaggle_offline.py'), str(base), str(inputs), str(manifest_file)], stdout=log, stderr=subprocess.STDOUT, check=True)
     source = base/'source'
@@ -67,7 +79,8 @@ try:
     output = source/'outputs'/('kaggle-'+{job_id!r})
     job['status'] = 'running'
     save()
-    run = subprocess.run([py, str(source/'scripts/run_colab_simulation.py'), '--output', str(output), '--', py, '-m', {module!r}, *{arguments!r}], cwd=source, env=env)
+    arguments = [arg.replace('{{python}}', py) for arg in {arguments!r}]
+    run = subprocess.run([py, str(source/'scripts/run_colab_simulation.py'), '--output', str(output), '--', py, '-m', {module!r}, *arguments], cwd=source, env=env)
     job['exit_code'] = run.returncode
     job['status'] = 'complete' if run.returncode == 0 else 'failed'
     for suffix in ('.zip', '.zip.sha256'):
@@ -85,7 +98,10 @@ if job['exit_code']:
 '''
 
 
-def prepare(output, owner=None, *, root=ROOT, module='scripts.sim_quickstart', arguments=None, include=(), wheelhouse=None):
+def prepare(output, owner=None, *, root=ROOT, module='scripts.sim_quickstart', arguments=None, include=(), wheelhouse=None, gpu_preflight=False):
+    if gpu_preflight:
+        if module!='scripts.cloud_environment_preflight' or arguments!=['--output','{output}','--require-gpu','--with-act']:
+            raise ValueError('GPU preflight permits only environment checks, never a simulation module')
     if owner is not None and not re.fullmatch(r'[A-Za-z0-9_-]+', owner):
         raise ValueError('invalid Kaggle username')
     record = pack(root, output, include)
@@ -112,16 +128,67 @@ def prepare(output, owner=None, *, root=ROOT, module='scripts.sim_quickstart', a
           'licenses': [{'name': 'other'}],
           'description': 'Private execution copy only. Original copyright notices and licenses remain applicable; no additional redistribution license is granted.'})
     metadata = {'id': owner+'/'+kernel_slug, 'title': kernel_slug, 'code_file': 'run.py', 'language': 'python',
-                'kernel_type': 'script', 'is_private': True, 'enable_gpu': False, 'enable_tpu': False,
-                'enable_internet': False, 'dataset_sources': [owner+'/'+dataset_slug],
+                'kernel_type': 'script', 'is_private': True, 'enable_gpu': gpu_preflight, 'enable_tpu': False,
+                'enable_internet': gpu_preflight, 'dataset_sources': [owner+'/'+dataset_slug],
                 'competition_sources': [], 'kernel_sources': [], 'model_sources': []}
+    if gpu_preflight:metadata['machine_shape']='NvidiaTeslaT4'
     write(kernel/'kernel-metadata.json', metadata)
     (kernel/'run.py').write_text(driver(record, job_id, module, arguments or ['--output', '{output}'], dependencies_sha256))
     state = {'job_id': job_id, 'source_sha': record['source_sha'], 'source_sha256': record['sha256'],
              'dataset': owner+'/'+dataset_slug, 'kernel': owner+'/'+kernel_slug, 'stage': 'prepared',
-             'driver_sha256': digest(kernel/'run.py'), 'cpu_only': True,
+             'driver_sha256': digest(kernel/'run.py'), 'cpu_only': not gpu_preflight,
+             'execution_kind':'gpu_preflight' if gpu_preflight else 'cpu_job',
              'dependencies_sha256': dependencies_sha256}
     write(output/'job.json', state)
+    return state
+
+
+def reuse_inputs(previous, output, *, module, arguments, refresh_source=False):
+    """New kernel using a verified private input dataset; no upload or mutation."""
+    original = json.loads((previous/'job.json').read_text())
+    if original.get('execution_kind')=='gpu_preflight' and (module!='scripts.cloud_environment_preflight' or arguments!=['--output','{output}','--require-gpu','--with-act']):
+        raise ValueError('GPU preflight reuse permits environment checks only')
+    validate(previous, original)
+    if original.get('dataset_private_verified') is not True:
+        raise ValueError('previous dataset privacy was not verified')
+    output.mkdir(parents=True, exist_ok=False)
+    shutil.copytree(previous/'dataset', output/'dataset')
+    shutil.copyfile(previous/'source-manifest.json', output/'source-manifest.json')
+    record = json.loads((output/'source-manifest.json').read_text())
+    job_id = uuid.uuid4().hex[:12]
+    owner = original['kernel'].split('/')[0]
+    kernel = owner+'/ugrp-simulation-'+job_id
+    folder = output/'kernel';folder.mkdir()
+    metadata = json.loads((previous/'kernel/kernel-metadata.json').read_text())
+    metadata.update(id=kernel, title='ugrp-simulation-'+job_id)
+    write(folder/'kernel-metadata.json', metadata)
+    filename = original.get('source_filename', 'ugrp-source-'+original['job_id']+'.bin')
+    delta = None
+    if refresh_source:
+        snapshot = pack(ROOT, output/'updated-source')
+        from scripts.kaggle_source_delta import object_delta, apply_source_delta
+        base_copy = output/'base-source';base_copy.mkdir()
+        with tarfile.open(output/'dataset'/filename) as archive:
+            if any(m.issym() or m.islnk() for m in archive.getmembers()):raise ValueError('source links forbidden')
+            archive.extractall(base_copy,filter='data')
+        bundle = output/'source-update.pack'
+        bundle.write_bytes(object_delta(base_copy/'source', output/'updated-source/source'))
+        delta = {'base_sha':original['source_sha'],'target_sha':snapshot['source_sha'],
+                 'included':snapshot['included'],'sha256':digest(bundle),
+                 'content':base64.b64encode(bundle.read_bytes()).decode()}
+        apply_source_delta(base_copy/'source', delta)
+        record = {**record, 'source_sha':snapshot['source_sha']}
+    (folder/'run.py').write_text(driver(record, job_id, module, arguments,
+                                       original['dependencies_sha256'], filename, delta))
+    state = {**original, 'job_id':job_id, 'kernel':kernel, 'stage':'dataset_submitted',
+             'source_filename':filename, 'reused_dataset_from_kernel':original['kernel'],
+             'driver_sha256':digest(folder/'run.py')}
+    if delta:
+        state.update(source_sha=delta['target_sha'],source_base_sha=delta['base_sha'],source_delta_sha256=delta['sha256'])
+    for key in ('kernel_version','downloaded','exit_code','kernel_private_verified'):
+        state.pop(key, None)
+    write(output/'job.json', state)
+    validate(output, state)
     return state
 
 
@@ -133,12 +200,13 @@ def validate(output, state):
     for name, expected in dependencies['files'].items():
         if Path(name).name != name or digest(output/'dataset'/name) != expected:
             raise ValueError('dependency changed since preparation')
-    expected_files = set(dependencies['files']) | {'dependencies-manifest.json', 'dataset-metadata.json', 'source-manifest.json', 'ugrp-source-'+state['job_id']+'.bin'}
+    expected_files = set(dependencies['files']) | {'dependencies-manifest.json', 'dataset-metadata.json', 'source-manifest.json', state.get('source_filename', 'ugrp-source-'+state['job_id']+'.bin')}
     files = list((output/'dataset').iterdir())
     if {p.name for p in files} != expected_files or any(not p.is_file() or p.is_symlink() for p in files):
         raise ValueError('unexpected file in dataset upload directory')
     metadata = json.loads((output/'kernel/kernel-metadata.json').read_text())
-    if metadata['is_private'] is not True or metadata['enable_gpu'] is not False or metadata.get('enable_tpu') is not False or metadata.get('enable_internet') is not False:
+    gpu_preflight=state.get('execution_kind')=='gpu_preflight'
+    if metadata['is_private'] is not True or metadata['enable_gpu'] is not gpu_preflight or metadata.get('enable_tpu') is not False or metadata.get('enable_internet') is not gpu_preflight:
         raise ValueError('this runner requires a private CPU kernel')
     if metadata['id'] != state['kernel'] or metadata['dataset_sources'] != [state['dataset']]:
         raise ValueError('kernel identity/input changed since preparation')
@@ -147,13 +215,17 @@ def validate(output, state):
         raise ValueError('dataset identity or source rights metadata changed')
     if digest(output/'kernel/run.py') != state['driver_sha256']:
         raise ValueError('remote driver changed since preparation')
-    if digest(output/'dataset'/('ugrp-source-'+state['job_id']+'.bin')) != state['source_sha256']:
+    if digest(output/'dataset'/(state.get('source_filename', 'ugrp-source-'+state['job_id']+'.bin'))) != state['source_sha256']:
         raise ValueError('source bundle changed since preparation')
 
 
-def submit(output):
+def submit(output, timeout_seconds=1800):
+    if not 60 <= timeout_seconds <= 43200:
+        raise ValueError('kernel timeout must be between 60 and 43200 seconds')
     state = json.loads((output/'job.json').read_text())
     validate(output, state)
+    if state.get('execution_kind')=='gpu_preflight' and timeout_seconds>900:
+        raise ValueError('GPU preflight is limited to 900 seconds')
     if state['stage'] == 'prepared':
         state['stage'] = 'dataset_create_requested'
         write(output/'job.json', state)
@@ -192,8 +264,9 @@ def submit(output):
         raise ValueError('remote dataset privacy was not confirmed; kernel will not be submitted')
     state['dataset_private_verified'] = True
     state['stage'] = 'kernel_submit_requested'
+    state['timeout_seconds'] = timeout_seconds
     write(output/'job.json', state)
-    response = cli('kernels', 'push', '-p', output/'kernel', '--timeout', '1800')
+    response = cli('kernels', 'push', '-p', output/'kernel', '--timeout', str(timeout_seconds))
     (output/'kernel-push.log').write_text(response)
     match = re.search(r'Kernel version (\d+) successfully pushed', response)
     if not match or 'not valid' in response or 'error:' in response.lower():
@@ -210,7 +283,7 @@ def status(output):
     (output/'kernel-status.log').write_text(response)
     print(response.strip())
     match = re.search(r'has status "([^"]+)"', response)
-    return match.group(1).lower().split('.')[-1] if match else 'unknown'
+    return re.sub(r'[^a-z]', '', match.group(1).lower().split('.')[-1]) if match else 'unknown'
 
 
 def verify(output, downloaded):
@@ -267,20 +340,33 @@ def main():
     p.add_argument('--include', action='append', default=[])
     p.add_argument('--module', default='scripts.sim_quickstart')
     p.add_argument('--wheelhouse', type=Path, help='reuse Linux CPython 3.12 wheels, including pip 26.2.1')
+    p.add_argument('--gpu-preflight',action='store_true',help='Explicit finite dependency/GPU checks only')
+    p.add_argument('args', nargs=argparse.REMAINDER)
+    p = sub.add_parser('reuse')
+    p.add_argument('--from-output', required=True, type=Path)
+    p.add_argument('--refresh-source', action='store_true', help='Embed a verified Git delta; reuse large private input bytes')
+    p.add_argument('--output', required=True, type=Path)
+    p.add_argument('--module', required=True)
     p.add_argument('args', nargs=argparse.REMAINDER)
     for name in ('submit', 'status', 'collect'):
         q = sub.add_parser(name)
         q.add_argument('--output', required=True, type=Path)
+        if name == 'submit':
+            q.add_argument('--timeout-seconds', type=int, default=1800)
     args = parser.parse_args()
     output = args.output.resolve()
+    if args.action == 'reuse':
+        arguments = args.args[1:] if args.args[:1] == ['--'] else args.args
+        print(json.dumps(reuse_inputs(args.from_output.resolve(), output, module=args.module, arguments=arguments, refresh_source=args.refresh_source)))
+        return 0
     if args.action == 'prepare':
         arguments = args.args[1:] if args.args[:1] == ['--'] else args.args
-        print(json.dumps(prepare(output, args.owner, module=args.module, arguments=arguments, include=args.include, wheelhouse=args.wheelhouse)))
+        print(json.dumps(prepare(output, args.owner, module=args.module, arguments=arguments, include=args.include, wheelhouse=args.wheelhouse,gpu_preflight=args.gpu_preflight)))
         return 0
     if args.action == 'status':
         status(output)
         return 0
-    return submit(output) if args.action == 'submit' else collect(output)
+    return submit(output, args.timeout_seconds) if args.action == 'submit' else collect(output)
 
 
 if __name__ == '__main__':

@@ -200,6 +200,13 @@ class SkillScene(DispatchScene):
         super().close()
 
 
+def grasp_transfer_options(skill):
+    if skill.get('rgb_support_scope') == 'full_calibrated_views':
+        return {'background_band': False, 'top_roi': None}
+    return {'background_band': skill.get('task_domain') != 'dispatch_open_v1',
+            'top_roi': [12,6,20,19] if skill.get('task_domain') == 'dispatch_open_v1' else None}
+
+
 def run(args):
     if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip():
         raise RuntimeError('commit and freeze source before a trial')
@@ -207,8 +214,7 @@ def run(args):
     from scripts.probe_dual_grasp_sync import Video
     source_skill=json.loads((args.grasp_model_dir/'student-skill.json').read_text())
     grasp_root=prepare_grasp_models(args.grasp_model_dir,args.output.with_name(args.output.name+'-grasp-models'),
-        background_band=source_skill.get('task_domain')!='dispatch_open_v1',
-        top_roi=[12,6,20,19] if source_skill.get('task_domain')=='dispatch_open_v1' else None).resolve()
+        **grasp_transfer_options(source_skill)).resolve()
     skill,grasp=models(grasp_root,'student-skill.json')
     stage_skill,stages=load_stage_models(args.stage_model_dir)
     reference=args.reference_top.read_bytes()

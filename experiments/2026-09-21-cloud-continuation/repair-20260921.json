@@ -1,0 +1,809 @@
+{
+  "checked_at": "2026-09-21T04:14:54.498819+00:00",
+  "completed_diagnostics": [
+    {
+      "cohort": "old-colab",
+      "source_sha": "b5ca7ca6d494dab76cf926c7af3f22dd2146ad08",
+      "policy": "gemini",
+      "case": "dev_open",
+      "success": false,
+      "stop_reason": "vision_recovery_exhausted",
+      "wall_s": 1137.46801603,
+      "sim_s": 9.799999999999942,
+      "commands": 31,
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": null,
+      "clock": "paused",
+      "scope": "RGB approach, route selection and recovery; no grasp/carry",
+      "mean_model_roundtrip_s": null,
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/old-colab/result/dev_open-r0-gemini-full",
+      "result_sha256": "825f7163395add30dcfe5ee7cf8be0a2c499b2aa5529ffc59cbbc0ff09e87854"
+    },
+    {
+      "cohort": "old-colab",
+      "source_sha": "b5ca7ca6d494dab76cf926c7af3f22dd2146ad08",
+      "policy": "jev",
+      "case": "dev_open",
+      "success": false,
+      "stop_reason": "vision_recovery_exhausted",
+      "wall_s": 1135.214852026,
+      "sim_s": 9.799999999999942,
+      "commands": 31,
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": null,
+      "clock": "paused",
+      "scope": "RGB approach, route selection and recovery; no grasp/carry",
+      "mean_model_roundtrip_s": null,
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/old-colab/result/dev_open-r0-jev-full",
+      "result_sha256": "cf086647389b6910246b7e87883c7ba3d25a0c911e2869689dc3b493c6b58e40"
+    },
+    {
+      "cohort": "old-colab",
+      "source_sha": "b5ca7ca6d494dab76cf926c7af3f22dd2146ad08",
+      "policy": "rule",
+      "case": "dev_open",
+      "success": false,
+      "stop_reason": "vision_recovery_exhausted",
+      "wall_s": 1135.2297086610001,
+      "sim_s": 9.799999999999942,
+      "commands": 31,
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": null,
+      "clock": "paused",
+      "scope": "RGB approach, route selection and recovery; no grasp/carry",
+      "mean_model_roundtrip_s": null,
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/old-colab/result/dev_open-r0-rule-full",
+      "result_sha256": "2b918d1ac5039c90cc759dfc53c2e61005f9cb1b18e308700a7a01c35f03bc25"
+    },
+    {
+      "cohort": "old-kaggle",
+      "source_sha": "06c4150364ea14f70cc10c9802446ed278723dde",
+      "policy": "rule",
+      "case": "dev_open",
+      "success": false,
+      "stop_reason": "vision_recovery_exhausted",
+      "wall_s": 202.45599886599996,
+      "sim_s": 9.799999999999942,
+      "commands": 31,
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": null,
+      "clock": "paused",
+      "scope": "RGB approach, route selection and recovery; no grasp/carry",
+      "mean_model_roundtrip_s": null,
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/old-kaggle/result/dev_open-r0-rule-full",
+      "result_sha256": "bfb14e63c92e318f6fea21b6d923c6852565d477bb8f3d1170aa34d71d504cd5"
+    },
+    {
+      "cohort": "gpu",
+      "source_sha": "04f129c983a8dc3281392ffc993235f17e2b6942",
+      "policy": "gemini",
+      "case": "dev_open",
+      "success": false,
+      "stop_reason": "vision_recovery_exhausted",
+      "wall_s": 11.439426734000108,
+      "sim_s": 9.799999999999942,
+      "commands": 31,
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": null,
+      "clock": "paused",
+      "scope": "RGB approach, route selection and recovery; no grasp/carry",
+      "mean_model_roundtrip_s": null,
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/gpu/result/dev_open-r0-gemini-full",
+      "result_sha256": "164c5722c2cb47c7b360473f6952733566edf81ad9bba739b56dcee4cabe12bd"
+    },
+    {
+      "cohort": "gpu",
+      "source_sha": "04f129c983a8dc3281392ffc993235f17e2b6942",
+      "policy": "jev",
+      "case": "dev_open",
+      "success": false,
+      "stop_reason": "vision_recovery_exhausted",
+      "wall_s": 18.970988050000187,
+      "sim_s": 9.799999999999942,
+      "commands": 31,
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": null,
+      "clock": "paused",
+      "scope": "RGB approach, route selection and recovery; no grasp/carry",
+      "mean_model_roundtrip_s": null,
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/gpu/result/dev_open-r0-jev-full",
+      "result_sha256": "e2b7302c72005dd82ab6c5d4bcfee4af9654befb6088a4513679fe1a7fda12bf"
+    },
+    {
+      "cohort": "gpu",
+      "source_sha": "04f129c983a8dc3281392ffc993235f17e2b6942",
+      "policy": "rule",
+      "case": "dev_open",
+      "success": false,
+      "stop_reason": "vision_recovery_exhausted",
+      "wall_s": 19.01534681499993,
+      "sim_s": 9.799999999999942,
+      "commands": 31,
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": null,
+      "clock": "paused",
+      "scope": "RGB approach, route selection and recovery; no grasp/carry",
+      "mean_model_roundtrip_s": null,
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/gpu/result/dev_open-r0-rule-full",
+      "result_sha256": "1aa144b726c9530ea992e29cd73bd7c402fcb7d49f3a021694df5c8d08247035"
+    },
+    {
+      "cohort": "kaggle",
+      "source_sha": "27616931217e93d52a7c4285a53e50bfca6f1fb2",
+      "policy": "rule",
+      "case": "dev_open",
+      "success": true,
+      "stop_reason": "RGB_goal_confirmed",
+      "wall_s": 430.9913609140001,
+      "sim_s": 21.049999999999212,
+      "commands": 76,
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": null,
+      "clock": "paused",
+      "scope": "RGB approach, route selection and recovery; no grasp/carry",
+      "mean_model_roundtrip_s": null,
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/kaggle/result/dev_open-r0-rule-full",
+      "result_sha256": "79b97dbcbf7bcc46cf23610f7c3fbe8a0b3ec6d922a0f06bc136df1de9bd5b8d"
+    },
+    {
+      "cohort": "v3",
+      "source_sha": "9c6c36d615ad935141bff320e5b762d2190dd0c4",
+      "policy": "gemini",
+      "case": "dev_open",
+      "success": true,
+      "stop_reason": "RGB_goal_confirmed",
+      "wall_s": 177.036877925,
+      "sim_s": 21.299999999999073,
+      "commands": 77,
+      "model_calls": 12,
+      "input_tokens": 10081,
+      "output_tokens": 376,
+      "cost_usd": null,
+      "clock": "paused",
+      "scope": "RGB approach, route selection and recovery; no grasp/carry",
+      "mean_model_roundtrip_s": 8.132093478250018,
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/v3/result/dev_open-r0-gemini-full",
+      "result_sha256": "d6e403095cec82019d2902b472ed32481563e7d22541a53b42353939e479916a"
+    },
+    {
+      "cohort": "v3",
+      "source_sha": "9c6c36d615ad935141bff320e5b762d2190dd0c4",
+      "policy": "jev",
+      "case": "dev_open",
+      "success": true,
+      "stop_reason": "RGB_goal_confirmed",
+      "wall_s": 123.33486501799985,
+      "sim_s": 21.299999999999073,
+      "commands": 77,
+      "model_calls": 12,
+      "input_tokens": 14386,
+      "output_tokens": 1326,
+      "cost_usd": null,
+      "clock": "paused",
+      "scope": "RGB approach, route selection and recovery; no grasp/carry",
+      "mean_model_roundtrip_s": 2.7996416475833334,
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/v3/result/dev_open-r0-jev-full",
+      "result_sha256": "c003281cde718838f865fd291d95b5596090a19694a1a221831ca900b6c0ca36"
+    },
+    {
+      "cohort": "v3",
+      "source_sha": "9c6c36d615ad935141bff320e5b762d2190dd0c4",
+      "policy": "rule",
+      "case": "dev_open",
+      "success": true,
+      "stop_reason": "RGB_goal_confirmed",
+      "wall_s": 89.27932150399988,
+      "sim_s": 21.299999999999073,
+      "commands": 77,
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": null,
+      "clock": "paused",
+      "scope": "RGB approach, route selection and recovery; no grasp/carry",
+      "mean_model_roundtrip_s": null,
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/v3/result/dev_open-r0-rule-full",
+      "result_sha256": "3897317bd0f09ec31ec53f4dd7de95dae473399fc08c628e3974672a35e46f2a"
+    }
+  ],
+  "colab_current": {
+    "session": "ugrp-repair-20260921",
+    "source_sha": "9c6c36d615ad935141bff320e5b762d2190dd0c4",
+    "collected": {
+      "development": {
+        "archive": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/v3/collected/development/result.zip",
+        "sha256": "15bda218629efec87adc5c0daa35ba34ded0dbd3a445374735b176bc52443bf3",
+        "exit_code": 0,
+        "verified_files": 1168
+      }
+    },
+    "trials": {
+      "development/dev_open-r0-rule-full": {
+        "policy": "rule",
+        "success": true,
+        "stop_reason": "RGB_goal_confirmed",
+        "model_calls": 0
+      },
+      "development/dev_open-r0-jev-full": {
+        "policy": "jev",
+        "success": true,
+        "stop_reason": "RGB_goal_confirmed",
+        "model_calls": 12
+      },
+      "holdout/occluded03-r0-gemini-full": {
+        "policy": "gemini",
+        "success": true,
+        "stop_reason": "RGB_goal_confirmed",
+        "model_calls": 15
+      },
+      "holdout/temporary04-r1-jev-full": {
+        "policy": "jev",
+        "success": true,
+        "stop_reason": "RGB_goal_confirmed",
+        "model_calls": 28
+      },
+      "holdout/open04-r0-rule-full": {
+        "policy": "rule",
+        "success": true,
+        "stop_reason": "RGB_goal_confirmed",
+        "model_calls": 0
+      }
+    },
+    "started_unix": 1789963401.3700638,
+    "complete": false,
+    "remote": {
+      "source_sha": "9c6c36d615ad935141bff320e5b762d2190dd0c4",
+      "started_unix": 1789963378.6588995,
+      "phase": "holdout",
+      "complete": false,
+      "exports": {
+        "development": "/content/ugrp-repair/model-v3-exports/development/manifest.json"
+      },
+      "phase_exit_code": 0
+    },
+    "act": {
+      "source_sha": "04f129c983a8dc3281392ffc993235f17e2b6942",
+      "phase": "physics128256",
+      "complete": false,
+      "exports": {},
+      "started_unix": 1789962948.6438959
+    },
+    "last_check_unix": 1789964080.641217
+  },
+  "act_partial": {
+    "complete": false,
+    "completed_runs": 10,
+    "summaries": [
+      {
+        "condition": "r128-h1-s20260921",
+        "case": {
+          "id": "open-minus",
+          "variant": "open",
+          "teacher_case": "F1",
+          "offset": [
+            -0.008,
+            0.003,
+            0.0
+          ]
+        },
+        "summary": {
+          "physical_success": false,
+          "protocol_complete": false,
+          "phase": "APPROACH",
+          "error": "RuntimeError: fine RGB alignment outside saved skill support",
+          "wall_s": 145.16870742100014
+        }
+      },
+      {
+        "condition": "teacher",
+        "case": {
+          "id": "open-minus",
+          "variant": "open",
+          "teacher_case": "F1",
+          "offset": [
+            -0.008,
+            0.003,
+            0.0
+          ]
+        },
+        "summary": {
+          "physical_success": false,
+          "protocol_complete": false,
+          "phase": "APPROACH",
+          "error": "RuntimeError: fine RGB alignment outside saved skill support",
+          "wall_s": 146.52245269700006
+        }
+      },
+      {
+        "condition": "r128-h4-s20260921",
+        "case": {
+          "id": "open-minus",
+          "variant": "open",
+          "teacher_case": "F1",
+          "offset": [
+            -0.008,
+            0.003,
+            0.0
+          ]
+        },
+        "summary": {
+          "physical_success": false,
+          "protocol_complete": false,
+          "phase": "APPROACH",
+          "error": "RuntimeError: fine RGB alignment outside saved skill support",
+          "wall_s": 144.02038121400005
+        }
+      },
+      {
+        "condition": "r256-h1-s20260921",
+        "case": {
+          "id": "open-minus",
+          "variant": "open",
+          "teacher_case": "F1",
+          "offset": [
+            -0.008,
+            0.003,
+            0.0
+          ]
+        },
+        "summary": {
+          "physical_success": false,
+          "protocol_complete": false,
+          "phase": "APPROACH",
+          "error": "RuntimeError: fine RGB alignment outside saved skill support",
+          "wall_s": 144.42131477999988
+        }
+      },
+      {
+        "condition": "r256-h4-s20260921",
+        "case": {
+          "id": "open-minus",
+          "variant": "open",
+          "teacher_case": "F1",
+          "offset": [
+            -0.008,
+            0.003,
+            0.0
+          ]
+        },
+        "summary": {
+          "physical_success": false,
+          "protocol_complete": false,
+          "phase": "APPROACH",
+          "error": "RuntimeError: fine RGB alignment outside saved skill support",
+          "wall_s": 201.31195054
+        }
+      },
+      {
+        "condition": "r128-h1-s20260922",
+        "case": {
+          "id": "open-minus",
+          "variant": "open",
+          "teacher_case": "F1",
+          "offset": [
+            -0.008,
+            0.003,
+            0.0
+          ]
+        },
+        "summary": {
+          "physical_success": false,
+          "protocol_complete": false,
+          "phase": "APPROACH",
+          "error": "RuntimeError: fine RGB alignment outside saved skill support",
+          "wall_s": 209.531635155
+        }
+      },
+      {
+        "condition": "r128-h4-s20260922",
+        "case": {
+          "id": "open-minus",
+          "variant": "open",
+          "teacher_case": "F1",
+          "offset": [
+            -0.008,
+            0.003,
+            0.0
+          ]
+        },
+        "summary": {
+          "physical_success": false,
+          "protocol_complete": false,
+          "phase": "APPROACH",
+          "error": "RuntimeError: fine RGB alignment outside saved skill support",
+          "wall_s": 169.73237628700008
+        }
+      },
+      {
+        "condition": "r256-h1-s20260922",
+        "case": {
+          "id": "open-minus",
+          "variant": "open",
+          "teacher_case": "F1",
+          "offset": [
+            -0.008,
+            0.003,
+            0.0
+          ]
+        },
+        "summary": {
+          "physical_success": false,
+          "protocol_complete": false,
+          "phase": "APPROACH",
+          "error": "RuntimeError: fine RGB alignment outside saved skill support",
+          "wall_s": 170.19834389099992
+        }
+      },
+      {
+        "condition": "r128-h1-s20260921",
+        "case": {
+          "id": "open-plus",
+          "variant": "open",
+          "teacher_case": "F1",
+          "offset": [
+            0.008,
+            -0.003,
+            0.0
+          ]
+        },
+        "summary": {
+          "physical_success": false,
+          "protocol_complete": false,
+          "phase": "APPROACH",
+          "error": "RuntimeError: fine RGB alignment outside saved skill support",
+          "wall_s": 205.61607007899988
+        }
+      },
+      {
+        "condition": "r256-h4-s20260922",
+        "case": {
+          "id": "open-minus",
+          "variant": "open",
+          "teacher_case": "F1",
+          "offset": [
+            -0.008,
+            0.003,
+            0.0
+          ]
+        },
+        "summary": {
+          "physical_success": false,
+          "protocol_complete": false,
+          "phase": "APPROACH",
+          "error": "RuntimeError: fine RGB alignment outside saved skill support",
+          "wall_s": 225.6467335110001
+        }
+      }
+    ],
+    "scope": "completed run metadata only; full ACT media archive not recovered yet; no ACT carry success inference"
+  },
+  "kaggle_holdout": {
+    "kernel": "changmin2026/ugrp-simulation-521e784bded7",
+    "source_sha": "b07093904abf4da48a3b9549628d5dde5edaea0c",
+    "stage": "submitted",
+    "timeout_seconds": 14400,
+    "dataset_private_verified": true
+  },
+  "tests": {
+    "offline_passed": 1206,
+    "offline_skipped": 3,
+    "offline_subtests": 191,
+    "targeted_passed": 57,
+    "note": "new EGL test file separately included in targeted tests; CI uses an explicit module list"
+  },
+  "renderer_verification": {
+    "exit_code": 0,
+    "stdout": "{\"vendor\": \"NVIDIA Corporation\", \"renderer\": \"Tesla T4/PCIe/SSE2\"}\n",
+    "stderr": "",
+    "verified": {
+      "vendor": "NVIDIA Corporation",
+      "renderer": "Tesla T4/PCIe/SSE2"
+    }
+  },
+  "tensorboard": {
+    "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-복구",
+    "exported": [
+      {
+        "run": "0921-복구/Colab-수정후-Gemini",
+        "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/v3/result/dev_open-r0-gemini-full",
+        "manifest_sha256": "fa7c078f7d23de9be9db7a77cabe13161da5029a827e44fe42e7186f5498fa43",
+        "result_sha256": "d6e403095cec82019d2902b472ed32481563e7d22541a53b42353939e479916a",
+        "counts": {
+          "scalars": 229,
+          "texts": 74,
+          "images": 16
+        },
+        "videos": [
+          {
+            "id": "4b81b0967c0e57ed3012",
+            "path": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/v3/result/dev_open-r0-gemini-full/motion.mp4",
+            "size": 158241,
+            "mtime_ns": 1789963790340388217
+          }
+        ],
+        "scalars": {
+          "evaluation/reported_success": 1.0,
+          "result/wall_s": 177.03688049316406,
+          "result/commands": 77.0,
+          "result/model_calls": 12.0
+        }
+      },
+      {
+        "run": "0921-복구/Colab-수정후-Jev",
+        "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/v3/result/dev_open-r0-jev-full",
+        "manifest_sha256": "f4a83503e83e6d4faebccfee72209321ed6065d6f60dc7f03b8d88a289a97159",
+        "result_sha256": "c003281cde718838f865fd291d95b5596090a19694a1a221831ca900b6c0ca36",
+        "counts": {
+          "scalars": 229,
+          "texts": 74,
+          "images": 16
+        },
+        "videos": [
+          {
+            "id": "4013381c5d2262986bf5",
+            "path": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/v3/result/dev_open-r0-jev-full/motion.mp4",
+            "size": 157266,
+            "mtime_ns": 1789963790445247448
+          }
+        ],
+        "scalars": {
+          "evaluation/reported_success": 1.0,
+          "result/wall_s": 123.3348617553711,
+          "result/commands": 77.0,
+          "result/model_calls": 12.0
+        }
+      },
+      {
+        "run": "0921-복구/Colab-수정후-규칙",
+        "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/v3/result/dev_open-r0-rule-full",
+        "manifest_sha256": "574a66b0c698f817605f97abc8b338d08f30257d4afb7740a10dc8856d11336c",
+        "result_sha256": "3897317bd0f09ec31ec53f4dd7de95dae473399fc08c628e3974672a35e46f2a",
+        "counts": {
+          "scalars": 217,
+          "texts": 74,
+          "images": 16
+        },
+        "videos": [
+          {
+            "id": "1ef07b76f472939c2641",
+            "path": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/v3/result/dev_open-r0-rule-full/motion.mp4",
+            "size": 158905,
+            "mtime_ns": 1789963790546509721
+          }
+        ],
+        "scalars": {
+          "evaluation/reported_success": 1.0,
+          "result/wall_s": 89.2793197631836,
+          "result/commands": 77.0,
+          "result/model_calls": 0.0
+        }
+      },
+      {
+        "run": "0921-복구/Colab-GPU실패-Gemini",
+        "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/gpu/result/dev_open-r0-gemini-full",
+        "manifest_sha256": "b2b462fa82ea50f8f6858bbf113501e866315fa5059eb6fa55d6cd0cb38801c4",
+        "result_sha256": "164c5722c2cb47c7b360473f6952733566edf81ad9bba739b56dcee4cabe12bd",
+        "counts": {
+          "scalars": 31,
+          "texts": 28,
+          "images": 16
+        },
+        "videos": [
+          {
+            "id": "c28d7a9968202b09fa76",
+            "path": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/gpu/result/dev_open-r0-gemini-full/motion.mp4",
+            "size": 89904,
+            "mtime_ns": 1789963213273020154
+          }
+        ],
+        "scalars": {
+          "evaluation/reported_success": 0.0,
+          "result/wall_s": 11.43942642211914,
+          "result/commands": 31.0,
+          "result/model_calls": 0.0
+        }
+      },
+      {
+        "run": "0921-복구/Colab-GPU실패-Jev",
+        "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/gpu/result/dev_open-r0-jev-full",
+        "manifest_sha256": "9e1c82bb0e9005e55d4fbc394f68287562a43b3123743f69b59b3fa00816c53c",
+        "result_sha256": "e2b7302c72005dd82ab6c5d4bcfee4af9654befb6088a4513679fe1a7fda12bf",
+        "counts": {
+          "scalars": 31,
+          "texts": 28,
+          "images": 16
+        },
+        "videos": [
+          {
+            "id": "8498919d39f099f68889",
+            "path": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/gpu/result/dev_open-r0-jev-full/motion.mp4",
+            "size": 88576,
+            "mtime_ns": 1789963213308761954
+          }
+        ],
+        "scalars": {
+          "evaluation/reported_success": 0.0,
+          "result/wall_s": 18.97098731994629,
+          "result/commands": 31.0,
+          "result/model_calls": 0.0
+        }
+      },
+      {
+        "run": "0921-복구/Colab-GPU실패-규칙",
+        "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/gpu/result/dev_open-r0-rule-full",
+        "manifest_sha256": "c85275cc3203e3d1500e819a0c3f7f08e0627951ca98d7f885960fc2fb7f208e",
+        "result_sha256": "1aa144b726c9530ea992e29cd73bd7c402fcb7d49f3a021694df5c8d08247035",
+        "counts": {
+          "scalars": 31,
+          "texts": 28,
+          "images": 16
+        },
+        "videos": [
+          {
+            "id": "1a9d839d0e36158b0ca7",
+            "path": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/gpu/result/dev_open-r0-rule-full/motion.mp4",
+            "size": 89143,
+            "mtime_ns": 1789963213343485586
+          }
+        ],
+        "scalars": {
+          "evaluation/reported_success": 0.0,
+          "result/wall_s": 19.01534652709961,
+          "result/commands": 31.0,
+          "result/model_calls": 0.0
+        }
+      },
+      {
+        "run": "0921-복구/Kaggle-수정후-규칙",
+        "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/kaggle/result/dev_open-r0-rule-full",
+        "manifest_sha256": "2ae600aee624d95bcd712cae4a08d1f74b558be484e48f351be2ae8bb107fff3",
+        "result_sha256": "79b97dbcbf7bcc46cf23610f7c3fbe8a0b3ec6d922a0f06bc136df1de9bd5b8d",
+        "counts": {
+          "scalars": 214,
+          "texts": 73,
+          "images": 16
+        },
+        "videos": [
+          {
+            "id": "072f8e9993489cd7da74",
+            "path": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/kaggle/result/dev_open-r0-rule-full/motion.mp4",
+            "size": 168145,
+            "mtime_ns": 1789963213390287138
+          }
+        ],
+        "scalars": {
+          "evaluation/reported_success": 1.0,
+          "result/wall_s": 430.9913635253906,
+          "result/commands": 76.0,
+          "result/model_calls": 0.0
+        }
+      },
+      {
+        "run": "0921-복구/Colab-수정전-Gemini",
+        "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/old-colab/result/dev_open-r0-gemini-full",
+        "manifest_sha256": "64a775b18f3cfddf8b30602b04fa7ad2a040a9c0bd393a71bb5e11c15964e799",
+        "result_sha256": "825f7163395add30dcfe5ee7cf8be0a2c499b2aa5529ffc59cbbc0ff09e87854",
+        "counts": {
+          "scalars": 31,
+          "texts": 28,
+          "images": 16
+        },
+        "videos": [
+          {
+            "id": "e6538858ce067f8d3b7c",
+            "path": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/old-colab/result/dev_open-r0-gemini-full/motion.mp4",
+            "size": 91330,
+            "mtime_ns": 1789963776383714757
+          }
+        ],
+        "scalars": {
+          "evaluation/reported_success": 0.0,
+          "result/wall_s": 1137.468017578125,
+          "result/commands": 31.0,
+          "result/model_calls": 0.0
+        }
+      },
+      {
+        "run": "0921-복구/Colab-수정전-Jev",
+        "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/old-colab/result/dev_open-r0-jev-full",
+        "manifest_sha256": "d6dc5fd19767b243ee3548b886826f19c34b521ffe6b41e95f09d5db5a9a1e72",
+        "result_sha256": "cf086647389b6910246b7e87883c7ba3d25a0c911e2869689dc3b493c6b58e40",
+        "counts": {
+          "scalars": 31,
+          "texts": 28,
+          "images": 16
+        },
+        "videos": [
+          {
+            "id": "5443f76ebe95f5785d3c",
+            "path": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/old-colab/result/dev_open-r0-jev-full/motion.mp4",
+            "size": 89659,
+            "mtime_ns": 1789963776419052056
+          }
+        ],
+        "scalars": {
+          "evaluation/reported_success": 0.0,
+          "result/wall_s": 1135.21484375,
+          "result/commands": 31.0,
+          "result/model_calls": 0.0
+        }
+      },
+      {
+        "run": "0921-복구/Colab-수정전-규칙",
+        "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/old-colab/result/dev_open-r0-rule-full",
+        "manifest_sha256": "1d61862cc20e20bc17da2c3aa4562eeb98c7f8e9e203da12a3b4b0861e2a570b",
+        "result_sha256": "2b918d1ac5039c90cc759dfc53c2e61005f9cb1b18e308700a7a01c35f03bc25",
+        "counts": {
+          "scalars": 31,
+          "texts": 28,
+          "images": 16
+        },
+        "videos": [
+          {
+            "id": "1a51904fe8e09327800a",
+            "path": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/old-colab/result/dev_open-r0-rule-full/motion.mp4",
+            "size": 90087,
+            "mtime_ns": 1789963776464707941
+          }
+        ],
+        "scalars": {
+          "evaluation/reported_success": 0.0,
+          "result/wall_s": 1135.229736328125,
+          "result/commands": 31.0,
+          "result/model_calls": 0.0
+        }
+      },
+      {
+        "run": "0921-복구/Kaggle-수정전-규칙",
+        "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/old-kaggle/result/dev_open-r0-rule-full",
+        "manifest_sha256": "b140208aa6cf98c233d6b956e52306464106699934fbf3ac755f69f8e1a77484",
+        "result_sha256": "bfb14e63c92e318f6fea21b6d923c6852565d477bb8f3d1170aa34d71d504cd5",
+        "counts": {
+          "scalars": 31,
+          "texts": 28,
+          "images": 16
+        },
+        "videos": [
+          {
+            "id": "d9b007eb460042f16195",
+            "path": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-repair/review/old-kaggle/result/dev_open-r0-rule-full/motion.mp4",
+            "size": 90112,
+            "mtime_ns": 1789963776503559992
+          }
+        ],
+        "scalars": {
+          "evaluation/reported_success": 0.0,
+          "result/wall_s": 202.45599365234375,
+          "result/commands": 31.0,
+          "result/model_calls": 0.0
+        }
+      }
+    ],
+    "skipped_existing": [],
+    "actual_event_loading_verified": true
+  },
+  "remaining": [
+    "Full held-out model cohorts are running, not completed.",
+    "ACT inherited RGB approach model rejects the novel foreground before carry; original thresholds preserved.",
+    "Kaggle holdout is server RUNNING; no result archive yet.",
+    "Existing other-task media server has not registered new video manifests (404); scalar/image/HParams verified."
+  ],
+  "source_storage": "local raw archives, not remote backup",
+  "512": "deferred by user"
+}

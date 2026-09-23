@@ -1,0 +1,89 @@
+{
+  "checked_unix": 1789983961.984258,
+  "code_sha": "2f86690225edba8f8884fb2eaf65c4e592ced67c",
+  "new_evaluation_or_training_cohorts_started": 0,
+  "local_tests": {
+    "passed": 1253,
+    "skipped": 3,
+    "subtests_passed": 191,
+    "log_sha256": "17f3a9a4278bc4935932eba4a17b6cd4cb16ec1a11eaa394cec962c09b11cfc5"
+  },
+  "models": {
+    "jev": {
+      "valid": 3,
+      "planned": 3,
+      "latencies_s": [
+        0.4360053009586409,
+        0.4225559459300712,
+        0.38878583791665733
+      ]
+    },
+    "gemini": {
+      "valid": 3,
+      "planned": 3,
+      "latencies_s": [
+        2.7127580229425803,
+        2.010743845021352,
+        2.158644625917077
+      ]
+    }
+  },
+  "model_http_attempts": 6,
+  "model_first_attempt_failures": 0,
+  "kaggle": {
+    "kernel": "changmin2026/ugrp-simulation-7e5288b5047f",
+    "source_sha": "2f86690225edba8f8884fb2eaf65c4e592ced67c",
+    "ready": true,
+    "checks": {
+      "sim_imports": true,
+      "sim_packages": true,
+      "act_imports": true,
+      "act_cuda": true,
+      "gpu_assignment": true
+    },
+    "gpus": "Tesla T4, 580.159.04\nTesla T4, 580.159.04\n",
+    "act_cuda": {
+      "available": true,
+      "devices": 2,
+      "tiny_sum": 2.0
+    },
+    "wall_s": 161.09581065177917,
+    "archive_sha256": "09f7f5019a93fb671da251461122c8adccc58f6b29d0ec33dbe26a20c2c9039e",
+    "raw_archive": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/preflight-repair-20260921/kaggle-environment-fixed/download-0a222920/result.zip"
+  },
+  "colab": {
+    "source_sha": "a487bf04121cc3e5959245525d9d5f20bee3159b",
+    "started_unix": 1789983183.6717594,
+    "ready": false,
+    "scope": "One T4 allocation and device query only; no simulation",
+    "session": "ugrp-preflight-20260921-g",
+    "allocation_exit": 1,
+    "reason": "provider_service_unavailable",
+    "ended_unix": 1789983185.548412,
+    "local_session_remaining": false,
+    "authoritative_active_assignments_after": 0,
+    "temporary_gemini_proxy_stopped": true
+  },
+  "legacy_running_kernel": "changmin2026/ugrp-simulation-04832043e57f",
+  "legacy_collector_original_deadline": 1789991790.8911371,
+  "scope": "Finite preflight only; not robot success or sustained service reliability. Existing failed trials remain unchanged.",
+  "remaining": [
+    "Colab T4 provider Service Unavailable; no active runtime.",
+    "Existing frozen Kaggle cohort has no per-trial live progress instrumentation; await terminal archive.",
+    "Reused sparse source patch emitted one non-fatal invalid-object cache warning on Kaggle. Target SHA and clean checkout passed; full fresh bundles avoid this legacy patch path."
+  ],
+  "raw_hashes": {
+    "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/preflight-repair-20260921/model-preflight.json": "d1d715a2326537e00cb8fcb1c4182584a32c958c451cf25222404c9d99d5bd3c",
+    "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/preflight-repair-20260921/colab-preflight.json": "3e3afd456b081f8a169935f365acacdc672f5de4a9d258694e55560d8886c3e2",
+    "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/preflight-repair-20260921/kaggle-environment-fixed/environment-report.json": "fed1d829b4d113b78b3379cb3fe39fa6ee9c11ee10ea16ca488a8eb8d2b467f7",
+    "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/preflight-repair-20260921/kaggle-environment/environment-report.json": "fab94f151d51c3540d37e504f9f03056f20b247cf21a1c9171d5323bad05357c"
+  },
+  "additional_collector_regressions_passed": 16,
+  "dashboard": {
+    "path": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-실행전점검",
+    "new_rows": 9,
+    "server_loaded": true,
+    "native_ui_verified": true,
+    "total_groups": 206
+  }
+}

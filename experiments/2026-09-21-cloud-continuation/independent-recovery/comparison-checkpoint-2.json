@@ -1,0 +1,567 @@
+{
+  "observed_at": "2026-09-21T06:41:16.921367+00:00",
+  "scope": "Partial frozen-source development and holdout only; approach/alignment, not ACT carry or final ranking",
+  "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+  "rows": [
+    {
+      "trial": "development/dev_open-r0-rule-full",
+      "success": true,
+      "policy": "rule",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/development/dev_open-r0-rule-full/result.json",
+      "sha256": "10e7383985c25775321da56853e1a0a23f45522de99a04438d7ceff594af3ea1"
+    },
+    {
+      "trial": "development/dev_open-r0-jev-full",
+      "success": true,
+      "policy": "jev",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/development/dev_open-r0-jev-full/result.json",
+      "sha256": "37cfa164306237c2383c93a11ae95feea84412401f6051d59c46af99bc8792fb"
+    },
+    {
+      "trial": "development/dev_open-r0-gemini-full",
+      "success": true,
+      "policy": "gemini",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/development/dev_open-r0-gemini-full/result.json",
+      "sha256": "ca5967e3de72728c2c61d0eb53629ba63f3e68a40fcb57a87a8a296528c2ad23"
+    },
+    {
+      "trial": "holdout/open04-r0-rule-full",
+      "success": true,
+      "policy": "rule",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/open04-r0-rule-full/result.json",
+      "sha256": "6151c5868609d41aca3d60e1404b6bbbe90462b54ea6dfb2c120ee4359e25639"
+    },
+    {
+      "trial": "holdout/open04-r1-jev-full",
+      "success": true,
+      "policy": "jev",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/open04-r1-jev-full/result.json",
+      "sha256": "5705bb77f3fc82f7c3871efddfc25843e09b8f3ac37bb5f77cc7f964eda4d1c2"
+    },
+    {
+      "trial": "holdout/temporary04-r1-jev-full",
+      "success": true,
+      "policy": "jev",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/temporary04-r1-jev-full/result.json",
+      "sha256": "15980646deaffb0fc57bb826b191151538cbea2e099a799eac2893ab7fdfd02e"
+    },
+    {
+      "trial": "holdout/occluded03-r0-gemini-full",
+      "success": true,
+      "policy": "gemini",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/occluded03-r0-gemini-full/result.json",
+      "sha256": "cee28c4ff74236e2821f2d5324639680a9b15f430206496f265d765f1b4ad172"
+    },
+    {
+      "trial": "holdout/temporary03-r1-jev-full",
+      "success": true,
+      "policy": "jev",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/temporary03-r1-jev-full/result.json",
+      "sha256": "7a34c2511af09454898b01e0a4519b8513894ddd3249209964929d49eec8940e"
+    },
+    {
+      "trial": "holdout/yaw03-r1-jev-full",
+      "success": true,
+      "policy": "jev",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/yaw03-r1-jev-full/result.json",
+      "sha256": "2632222bd6e2adfe8ef426bafe1cda3988f313a19635a5bf5e34a856887e47d5"
+    },
+    {
+      "trial": "holdout/temporary03-r2-rule-full",
+      "success": true,
+      "policy": "rule",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/temporary03-r2-rule-full/result.json",
+      "sha256": "383a735f0b1aa0ee64cf30dbe2ecf05f73ac7d136878b557b6858222db80334e"
+    },
+    {
+      "trial": "holdout/open03-r2-jev-full",
+      "success": true,
+      "policy": "jev",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/open03-r2-jev-full/result.json",
+      "sha256": "3a853ad3ccb157e4895bfaf558cac535d7f5c79c668acf9e5abdb89d9fb57adf"
+    },
+    {
+      "trial": "holdout/open03-r2-rule-full",
+      "success": true,
+      "policy": "rule",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/open03-r2-rule-full/result.json",
+      "sha256": "8f1c376d064116d99e9e8410b9544083499c376ee855396d86a6ed70b59ad7bb"
+    },
+    {
+      "trial": "holdout/yaw03-r1-rule-full",
+      "success": true,
+      "policy": "rule",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/yaw03-r1-rule-full/result.json",
+      "sha256": "fd352b2ca4d01b3d0d198270a6d44df036354df4274321819d132755977084ad"
+    },
+    {
+      "trial": "holdout/yaw04-r1-rule-full",
+      "success": true,
+      "policy": "rule",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/yaw04-r1-rule-full/result.json",
+      "sha256": "ae3ce2b9d5db52fd7b5574d370997025292f74cccc306316aaf1fd58f8478b8c"
+    },
+    {
+      "trial": "holdout/yaw04-r1-jev-full",
+      "success": true,
+      "policy": "jev",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/yaw04-r1-jev-full/result.json",
+      "sha256": "7983367df29df94140f433d8db776c0cdb76e9b01ac34e55f93572540424fe62"
+    },
+    {
+      "trial": "holdout/occluded03-r2-gemini-full",
+      "success": true,
+      "policy": "gemini",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/occluded03-r2-gemini-full/result.json",
+      "sha256": "57caebe466c9c43f424517c5987d313d0ed61c2629e3d137a5f5614ddccbfab6"
+    },
+    {
+      "trial": "holdout/known03-r0-gemini-full",
+      "success": true,
+      "policy": "gemini",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/known03-r0-gemini-full/result.json",
+      "sha256": "cab230794d00f4c6901892dd338dabce806416290c7cb8afddfa1a1fe860e611"
+    },
+    {
+      "trial": "holdout/yaw03-r1-gemini-full",
+      "success": true,
+      "policy": "gemini",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/yaw03-r1-gemini-full/result.json",
+      "sha256": "8d0243c8d47e3cd5c739701a7d007ef0effb97d71a574900f6dd7b25db86f0d8"
+    },
+    {
+      "trial": "holdout/occluded04-r1-jev-full",
+      "success": true,
+      "policy": "jev",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/occluded04-r1-jev-full/result.json",
+      "sha256": "459ed9139fda37977f784356b813f6188b554e732919a7d8f15776e8418a2a5c"
+    },
+    {
+      "trial": "holdout/yaw03-r0-jev-full",
+      "success": true,
+      "policy": "jev",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/yaw03-r0-jev-full/result.json",
+      "sha256": "e0324763b2690423a0eeb12603d75a657f8538f48d45a30ac2bbabf707b74ca8"
+    },
+    {
+      "trial": "holdout/temporary03-r0-gemini-full",
+      "success": true,
+      "policy": "gemini",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/temporary03-r0-gemini-full/result.json",
+      "sha256": "7e5ac8309f3634c2c872de07ec3aa2384d1a68328abe06c0a012bd637b08a597"
+    },
+    {
+      "trial": "holdout/occluded04-r0-rule-full",
+      "success": true,
+      "policy": "rule",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/occluded04-r0-rule-full/result.json",
+      "sha256": "7578473b289e50d9b1c12c6da9bfc643a233a3bcc092b9c7066f2b3ad149ccef"
+    },
+    {
+      "trial": "holdout/occluded03-r2-rule-full",
+      "success": true,
+      "policy": "rule",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/occluded03-r2-rule-full/result.json",
+      "sha256": "256cc8ea83c7ab0f8867c9ef26899a1b2f774244ad7e6fb544ec2f759211a841"
+    },
+    {
+      "trial": "holdout/yaw03-r0-rule-full",
+      "success": true,
+      "policy": "rule",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/yaw03-r0-rule-full/result.json",
+      "sha256": "99f77fa41a904a652e7f85ac47244a3714a374ab7479957139e4037f3ea7deab"
+    },
+    {
+      "trial": "holdout/occluded04-r0-gemini-full",
+      "success": true,
+      "policy": "gemini",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/occluded04-r0-gemini-full/result.json",
+      "sha256": "14477f9c52d95328c180b9226534e34a9227b683c32ca11e0faa1e19ca530a33"
+    },
+    {
+      "trial": "holdout/known03-r2-jev-full",
+      "success": true,
+      "policy": "jev",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/known03-r2-jev-full/result.json",
+      "sha256": "422e5858a9059c69274aa9d83fe8bad554115e982ca5f5c8b5e72093097f5ff3"
+    },
+    {
+      "trial": "holdout/temporary04-r1-gemini-full",
+      "success": true,
+      "policy": "gemini",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/temporary04-r1-gemini-full/result.json",
+      "sha256": "a9c36adb11449b8c96831ba70b854ccc89c1bfad8212fb0c72b2ee14389c24e5"
+    },
+    {
+      "trial": "holdout/open03-r2-gemini-full",
+      "success": true,
+      "policy": "gemini",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/open03-r2-gemini-full/result.json",
+      "sha256": "588d3e93d6dcbeee000bc3d2fca11637a2c368a58ea990099b71ca8710cecdfa"
+    },
+    {
+      "trial": "holdout/known04-r2-gemini-full",
+      "success": true,
+      "policy": "gemini",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/known04-r2-gemini-full/result.json",
+      "sha256": "395c2f07f46e3ca35f8cfe00bf089f165d0d1e32e2ca8d46755dd95382faac04"
+    },
+    {
+      "trial": "holdout/unknown04-r2-gemini-full",
+      "success": true,
+      "policy": "gemini",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/unknown04-r2-gemini-full/result.json",
+      "sha256": "40427a7a35e484ec65c2d4bb63ea0946e590489304c116bdd9fdffd32c5ee319"
+    },
+    {
+      "trial": "holdout/occluded04-r2-jev-full",
+      "success": true,
+      "policy": "jev",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/occluded04-r2-jev-full/result.json",
+      "sha256": "04903917daf03ea0fbcf29208907d8b146a71b7370a1df906765e0d05608e473"
+    },
+    {
+      "trial": "holdout/yaw04-r1-gemini-full",
+      "success": true,
+      "policy": "gemini",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/yaw04-r1-gemini-full/result.json",
+      "sha256": "45f41028d95880f165eee26bbafa7b306168a0350a4e80dff7f9f4c88f500cc8"
+    },
+    {
+      "trial": "holdout/unknown03-r1-gemini-full",
+      "success": true,
+      "policy": "gemini",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/unknown03-r1-gemini-full/result.json",
+      "sha256": "f82fb19c46e6be318dd5699d43662bec77315124fcc57b20b0cd44a7b9d5b0a7"
+    },
+    {
+      "trial": "holdout/open04-r2-rule-full",
+      "success": true,
+      "policy": "rule",
+      "source_sha": "5a51a355fa6f8f535fbbe12a0a21d5fdb460e047",
+      "raw": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/open04-r2-rule-full/result.json",
+      "sha256": "0dc2bb2489bb3a2fd1006515478c650f611af8e83dfbb961e69b9c1395d97f82"
+    }
+  ],
+  "new_exports": [
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/temporary03-r2-rule-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-temporary03-r2-rule-full",
+      "videos": [
+        {
+          "id": "20a388665245a2adaf41",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/open03-r2-jev-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-open03-r2-jev-full",
+      "videos": [
+        {
+          "id": "2b08bab06b7f32e529b6",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/open03-r2-rule-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-open03-r2-rule-full",
+      "videos": [
+        {
+          "id": "54d80fa273f1a2e7aeda",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/yaw03-r1-rule-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-yaw03-r1-rule-full",
+      "videos": [
+        {
+          "id": "f6ea8b143f49f7cbd837",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/yaw04-r1-rule-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-yaw04-r1-rule-full",
+      "videos": [
+        {
+          "id": "bd239e03aa0c6eca5139",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/yaw04-r1-jev-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-yaw04-r1-jev-full",
+      "videos": [
+        {
+          "id": "66afab88b8463f7092f1",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/occluded03-r2-gemini-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-occluded03-r2-gemini-full",
+      "videos": [
+        {
+          "id": "f89aadc0e6d4d735add4",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/known03-r0-gemini-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-known03-r0-gemini-full",
+      "videos": [
+        {
+          "id": "53e057b24aa3f1d2da6b",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/yaw03-r1-gemini-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-yaw03-r1-gemini-full",
+      "videos": [
+        {
+          "id": "3ef44288fb70bb087cb0",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/occluded04-r1-jev-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-occluded04-r1-jev-full",
+      "videos": [
+        {
+          "id": "4608429e20a59f16aac6",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/yaw03-r0-jev-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-yaw03-r0-jev-full",
+      "videos": [
+        {
+          "id": "60b01ff15784fe8e820d",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/temporary03-r0-gemini-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-temporary03-r0-gemini-full",
+      "videos": [
+        {
+          "id": "e0ed0443c18924e9793e",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/occluded04-r0-rule-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-occluded04-r0-rule-full",
+      "videos": [
+        {
+          "id": "8c6050d8779758dde3f0",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/occluded03-r2-rule-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-occluded03-r2-rule-full",
+      "videos": [
+        {
+          "id": "0c175e9f216fda862a62",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/yaw03-r0-rule-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-yaw03-r0-rule-full",
+      "videos": [
+        {
+          "id": "89af86b9bcb001070bf7",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/occluded04-r0-gemini-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-occluded04-r0-gemini-full",
+      "videos": [
+        {
+          "id": "f5897a998b1afd51a7e0",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/known03-r2-jev-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-known03-r2-jev-full",
+      "videos": [
+        {
+          "id": "54b1e4fccc15448f29a7",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/temporary04-r1-gemini-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-temporary04-r1-gemini-full",
+      "videos": [
+        {
+          "id": "e3b3b2a8753ecff992e5",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/open03-r2-gemini-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-open03-r2-gemini-full",
+      "videos": [
+        {
+          "id": "a160a37744d9830533bd",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/known04-r2-gemini-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-known04-r2-gemini-full",
+      "videos": [
+        {
+          "id": "123b91551a266ccec4bb",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/unknown04-r2-gemini-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-unknown04-r2-gemini-full",
+      "videos": [
+        {
+          "id": "971cdfb62a778fe3103c",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/occluded04-r2-jev-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-occluded04-r2-jev-full",
+      "videos": [
+        {
+          "id": "824ebb90c4f4cd9022b1",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/yaw04-r1-gemini-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-yaw04-r1-gemini-full",
+      "videos": [
+        {
+          "id": "ea65e9f74025fc446719",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/unknown03-r1-gemini-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-unknown03-r1-gemini-full",
+      "videos": [
+        {
+          "id": "fb401084ef874d355b48",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "source": "/Users/changmin/.codex/worktrees/act-cloud-resume/ugrp/outputs/cloud-independent/review/0921-전송수정/holdout/open04-r2-rule-full",
+      "event_directory": "/Users/changmin/projects/ugrp/outputs/tensorboard/0921-전송수정-추가1/평가-open04-r2-rule-full",
+      "videos": [
+        {
+          "id": "3c91bcc0235c683e1a01",
+          "status": 206,
+          "bytes": 32
+        }
+      ]
+    }
+  ],
+  "counts": {
+    "development/rule": 1,
+    "development/jev": 1,
+    "development/gemini": 1,
+    "holdout/rule": 9,
+    "holdout/jev": 10,
+    "holdout/gemini": 12
+  },
+  "complete": false,
+  "tensorboard_native_rows": 70,
+  "tensorboard_columns_verified": true
+}
