@@ -4505,13 +4505,19 @@ class MultiMasterPiProductionV2:
     def render_rgb(self, *, robot_id: object = "r1", camera: str = "robot_cam") -> np.ndarray:
         return self.robot(robot_id).render_rgb(camera)
 
-    def render_snapshot_async(self, cameras: Sequence[CameraKey]) -> Future[RenderBatch]:
+    def render_snapshot_async(self, cameras: Sequence[CameraKey], *,
+                              capture_on_render_ready: bool = False) -> Future[RenderBatch]:
         """Freeze one SIM instant, then render requested RGB views off physics lock.
 
         At most three batches may be outstanding. Full capacity raises
         ``SnapshotBackpressure`` before taking physics_lock. The returned
         Future yields ``RenderBatch(frame_id, sim_time, rgb)``; only pixels and
-        capture provenance are returned to the caller.
+        capture provenance are returned to the caller. With
+        ``capture_on_render_ready``, the renderer takes the frozen copy when
+        its queued job actually starts. This excludes queue delay from camera
+        age; the timestamp still belongs to the actual copy, never the request
+        or delivery time. Only copying holds physics_lock; stepping remains
+        with the physics owner and rendering uses the isolated copy.
         """
         if threading.get_ident() == self._render_thread_id:
             raise RuntimeError("snapshot capture cannot queue from render owner thread")
@@ -4530,9 +4536,17 @@ class MultiMasterPiProductionV2:
             with self._snapshot_submit_lock:
                 if self._render_closed or self._render_executor is None:
                     raise RuntimeError("multi MasterPi world is closing")
-                snapshot = broker.capture(self, cameras, slot)
-                future = self._render_executor.submit(broker.render, snapshot)
-                future.add_done_callback(lambda _done: broker.release(snapshot))
+                selected = tuple(cameras)
+                if capture_on_render_ready:
+                    def capture_and_render():
+                        return broker.render(broker.capture(self, selected, slot))
+                    future = self._render_executor.submit(capture_and_render)
+                else:
+                    snapshot = broker.capture(self, selected, slot)
+                    future = self._render_executor.submit(broker.render, snapshot)
+                # Release even when a deferred capture fails or a queued job
+                # is cancelled before it has constructed a snapshot.
+                future.add_done_callback(lambda _done: broker.slots.put_nowait(slot))
                 return future
         except Exception:
             # A failed capture/submit has no queued owner to return this slot.

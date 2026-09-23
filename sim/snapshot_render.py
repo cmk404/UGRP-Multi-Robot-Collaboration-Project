@@ -15,12 +15,9 @@ import mujoco
 import numpy as np
 
 from sim.masterpi_camera_profile import CAMERA_LOCAL_POS_M, CAMERA_LOCAL_QUAT_WXYZ
+from sim.snapshot_contract import SnapshotBackpressure
 
 CameraKey = tuple[str | None, str]
-
-
-class SnapshotBackpressure(RuntimeError):
-    """All bounded render snapshots are in flight; retry on a later cadence."""
 
 
 @dataclass(frozen=True)

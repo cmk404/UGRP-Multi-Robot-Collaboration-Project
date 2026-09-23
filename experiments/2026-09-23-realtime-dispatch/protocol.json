@@ -57,5 +57,12 @@
     "diagnostic_max_wall_s": 180,
     "model_calls": 0,
     "purpose": "Qualify combined RGB corroboration, owner-only resource commit, and original-TTL solo carry/yield renewal on a new frozen source, then repeat the same full run if the first succeeds."
+  },
+  "budget_review_after_v15": {
+    "evidence": "v15 placed both cargo but exhausted the solo 300 SIM total budget after about 97.5 SIM resource waiting. Prefetch improved the first carry leg but old queued snapshots raised median RGB age .32 to .44 SIM-s and reduced lease .25 to .16.",
+    "additional_full_trials": 2,
+    "full_max_wall_s": 600,
+    "model_calls": 0,
+    "purpose": "Qualify capture at actual render readiness and explicit resource-wait budget accounting, including observer-only conversation display. Repeat identical committed source only if first full run succeeds."
   }
 }

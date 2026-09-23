@@ -22,7 +22,8 @@ def world():
         scene.close()
 
 
-def test_actor_and_top_pixels_share_frozen_instant_while_physics_advances(world, monkeypatch):
+@pytest.mark.parametrize('render_ready', [False, True])
+def test_actor_and_top_pixels_share_frozen_instant_while_physics_advances(world, monkeypatch, render_ready):
     own = world.render_rgb(robot_id="r1", camera="robot_cam")
     top = world._render_executor.submit(world._render_team_rgb_direct, "cctv_top").result()
     before_time = float(world.data.time)
@@ -47,7 +48,8 @@ def test_actor_and_top_pixels_share_frozen_instant_while_physics_advances(world,
         return original_render(snapshot)
 
     monkeypatch.setattr(broker, "render", blocked_render)
-    future = world.render_snapshot_async([("r1", "robot_cam"), (None, "cctv_top")])
+    future = world.render_snapshot_async([("r1", "robot_cam"), (None, "cctv_top")],
+                                         capture_on_render_ready=render_ready)
     try:
         assert entered.wait(2)
         assert world.physics_lock.acquire(timeout=.5), "render retained physics_lock"
@@ -69,7 +71,8 @@ def test_actor_and_top_pixels_share_frozen_instant_while_physics_advances(world,
     assert np.array_equal(batch.rgb[(None, "cctv_top")], top)
 
 
-def test_snapshot_pressure_is_bounded_nonblocking_and_recovers(world, monkeypatch):
+@pytest.mark.parametrize('render_ready', [False, True])
+def test_snapshot_pressure_is_bounded_nonblocking_and_recovers(world, monkeypatch, render_ready):
     world.render_snapshot_async([(None, "cctv_top")]).result()
     broker = world._snapshot_broker
     original_render = broker.render
@@ -81,19 +84,22 @@ def test_snapshot_pressure_is_bounded_nonblocking_and_recovers(world, monkeypatc
         return original_render(snapshot)
 
     monkeypatch.setattr(broker, "render", blocked_render)
-    futures = [world.render_snapshot_async([("r1", "robot_cam")])]
+    def capture():
+        return world.render_snapshot_async([("r1", "robot_cam")],
+                                            capture_on_render_ready=render_ready)
+    futures = [capture()]
     try:
         assert entered.wait(2)
-        futures.extend(world.render_snapshot_async([("r1", "robot_cam")]) for _ in range(2))
+        futures.extend(capture() for _ in range(2))
         started = time.monotonic()
         with pytest.raises(SnapshotBackpressure):
-            world.render_snapshot_async([("r1", "robot_cam")])
+            capture()
         assert time.monotonic() - started < .5
         assert broker.slots.qsize() == 0
         # A queued request can be cancelled without leaking its slot.
         assert futures[1].cancel()
         assert broker.slots.qsize() == 1
-        replacement = world.render_snapshot_async([("r1", "robot_cam")])
+        replacement = capture()
     finally:
         resume.set()
     assert all(f.result(timeout=5).rgb[("r1", "robot_cam")].shape == (60, 80, 3)
@@ -101,7 +107,8 @@ def test_snapshot_pressure_is_bounded_nonblocking_and_recovers(world, monkeypatc
     assert broker.slots.qsize() == 3
 
 
-def test_snapshot_failure_returns_slot_without_corrupting_next_capture(world, monkeypatch):
+@pytest.mark.parametrize('render_ready', [False, True])
+def test_snapshot_failure_returns_slot_without_corrupting_next_capture(world, monkeypatch, render_ready):
     world.render_snapshot_async([(None, "cctv_top")]).result()
     broker = world._snapshot_broker
     original_render = broker.render
@@ -111,10 +118,77 @@ def test_snapshot_failure_returns_slot_without_corrupting_next_capture(world, mo
 
     monkeypatch.setattr(broker, "render", fail)
     with pytest.raises(RuntimeError, match="render failed"):
-        world.render_snapshot_async([(None, "cctv_top")]).result(timeout=5)
+        world.render_snapshot_async([(None, "cctv_top")],
+                                    capture_on_render_ready=render_ready).result(timeout=5)
     assert broker.slots.qsize() == 3
     monkeypatch.setattr(broker, "render", original_render)
     assert world.render_snapshot_async([(None, "cctv_top")]).result(timeout=5).rgb
+
+
+def test_render_ready_captures_after_queue_wait_with_true_timestamp(world):
+    world.render_snapshot_async([(None, 'cctv_top')]).result(timeout=5)
+    entered, resume = threading.Event(), threading.Event()
+    def queue_gate():
+        entered.set()
+        assert resume.wait(5)
+    gate = world._render_executor.submit(queue_gate)
+    assert entered.wait(2)
+    before = float(world.data.time)
+    try:
+        # A recording still freezes the requested instant. The actor request
+        # reserves capacity, but does not freeze pixels behind the queue gate.
+        immediate = world.render_snapshot_async([(None, 'cctv_top')])
+        cameras = [(None, 'cctv_top')]
+        fresh = world.render_snapshot_async(cameras, capture_on_render_ready=True)
+        cameras.clear()  # callers cannot mutate a queued camera selection
+        with world.physics_lock:
+            for _ in range(4):
+                mujoco.mj_step(world.model, world.data)
+        captured_at = float(world.data.time)
+        assert captured_at > before
+    finally:
+        resume.set()
+    gate.result(timeout=5)
+    old_batch, new_batch = immediate.result(timeout=5), fresh.result(timeout=5)
+    assert old_batch.sim_time == before
+    assert new_batch.sim_time == captured_at
+    assert new_batch.frame_id > old_batch.frame_id
+    expected = world.render_snapshot_async([(None, 'cctv_top')]).result(timeout=5)
+    assert np.array_equal(new_batch.rgb[(None, 'cctv_top')], expected.rgb[(None, 'cctv_top')])
+    assert world._snapshot_broker.slots.qsize() == 3
+
+
+def test_failed_deferred_capture_returns_reserved_slot(world):
+    world.render_snapshot_async([(None, 'cctv_top')]).result(timeout=5)
+    with pytest.raises(ValueError, match='unknown camera'):
+        world.render_snapshot_async([(None, 'missing_camera')],
+                                    capture_on_render_ready=True).result(timeout=5)
+    assert world._snapshot_broker.slots.qsize() == 3
+    assert world.render_snapshot_async([(None, 'cctv_top')],
+                                       capture_on_render_ready=True).result(timeout=5).rgb
+
+
+def test_deferred_copy_waits_for_physics_lock_and_close_drains_it(world, monkeypatch):
+    world.render_snapshot_async([(None, 'cctv_top')]).result(timeout=5)
+    broker = world._snapshot_broker
+    entered = threading.Event()
+    original_capture = broker.capture
+    def capture(*args):
+        entered.set()
+        return original_capture(*args)
+    monkeypatch.setattr(broker, 'capture', capture)
+    with world.physics_lock:
+        future = world.render_snapshot_async([(None, 'cctv_top')],
+                                             capture_on_render_ready=True)
+        assert entered.wait(2)
+        assert not future.done()
+        mujoco.mj_step(world.model, world.data)
+        expected_time = float(world.data.time)
+    world.close()
+    assert future.result(timeout=5).sim_time == expected_time
+    assert broker.slots.qsize() == 3
+    with pytest.raises(RuntimeError):
+        world.render_snapshot_async([(None, 'cctv_top')], capture_on_render_ready=True)
 
 
 def test_navigation_camera_uses_same_actor_pixels_on_camera_team_map():

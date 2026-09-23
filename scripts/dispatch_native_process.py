@@ -17,6 +17,7 @@ import time
 
 import numpy as np
 
+from harness.communication_overlay import ObserverDialoguePanel
 from scripts.dispatch_native_view import DispatchNativeView
 
 HEADER = 6
@@ -73,7 +74,8 @@ class IsolatedDispatchNativeView(DispatchNativeView):
             self.log = (scene.out / 'native-observer.log').open('wb')
             python = Path(sys.prefix) / 'bin' / ('mjpython' if sys.platform == 'darwin' else 'python')
             self.process = subprocess.Popen(
-                [str(python), '-m', 'scripts.dispatch_native_process', str(directory), str(os.getpid())],
+                [str(python), '-m', 'scripts.dispatch_native_process', str(directory),
+                 str(os.getpid()), str((scene.out / 'team' / 'latest-dialogue.json').resolve())],
                 cwd=Path(__file__).resolve().parents[1], stdout=self.log, stderr=subprocess.STDOUT)
             until = time.monotonic() + 20.
             while True:
@@ -154,7 +156,7 @@ class IsolatedDispatchNativeView(DispatchNativeView):
         (self.scene.out / 'native-observer.json').write_text(json.dumps(self.stats, indent=2) + '\n')
 
 
-def observe(directory, parent):
+def observe(directory, parent, latest_dialogue=None):
     import mujoco
     import mujoco.viewer
     import queue
@@ -177,6 +179,7 @@ def observe(directory, parent):
             viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_REFLECTION] = 0
         pending_pauses = pending_quit = 0
         last_sequence = 0
+        dialogue_panel = ObserverDialoguePanel(latest_dialogue) if latest_dialogue else None
         while viewer.is_running():
             start = time.monotonic()
             try:
@@ -206,6 +209,8 @@ def observe(directory, parent):
                         mujoco.mj_setState(model, data, state, kind)
                     viewer.sync(state_only=True)
                     last_sequence = sequence
+            if dialogue_panel:
+                dialogue_panel.poll(viewer, mujoco, start)
             time.sleep(max(0., 1 / 30 - (time.monotonic() - start)))
     finally:
         box.transact(lambda a: a.__setitem__(QUIT, 1))
@@ -218,4 +223,4 @@ def observe(directory, parent):
 
 
 if __name__ == '__main__':
-    observe(Path(sys.argv[1]), int(sys.argv[2]))
+    observe(Path(sys.argv[1]), int(sys.argv[2]), Path(sys.argv[3]) if len(sys.argv) > 3 else None)

@@ -118,7 +118,9 @@ class DispatchScene:
         cameras=[(None,'cctv_top'),*((rid,'robot_cam') for rid in ROBOTS if rid in selected)]
         if overview:cameras.append((None,'cctv_warehouse'))
         requested_wall_s=time.monotonic()
-        batch_future=self.world.render_snapshot_async(cameras)
+        capture_on_render_ready=bool(getattr(self,'realtime_control',False))
+        batch_future=self.world.render_snapshot_async(
+            cameras,capture_on_render_ready=capture_on_render_ready)
         submitted_wall_s=time.monotonic()
         self.sequence+=1
         if self._capture_workers is None:
@@ -142,6 +144,7 @@ class DispatchScene:
             for rid in ROBOTS:
                 frame={'top_bytes':top,'frame_id':batch.frame_id,
                        'observed_at_s':float(batch.sim_time),'shared_top_rgb':top_ref,
+                       'capture_mode':('render_ready' if capture_on_render_ready else 'request_time'),
                        'capture_requested_wall_s':requested_wall_s,
                        'snapshot_submitted_wall_s':submitted_wall_s,
                        'render_completed_wall_s':rendered_wall_s,

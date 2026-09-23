@@ -8,7 +8,7 @@ import time
 import pytest
 
 from scripts.dispatch_pair_skill import BoundPairSkill
-from sim.snapshot_render import SnapshotBackpressure
+from sim.snapshot_contract import SnapshotBackpressure
 
 
 def _frames(frame_id, observed_at_s):

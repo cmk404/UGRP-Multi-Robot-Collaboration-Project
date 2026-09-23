@@ -11,6 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 import hashlib
 import json
+import math
 from pathlib import Path
 import platform
 import subprocess
@@ -44,6 +45,7 @@ from scripts.camera_approach_scene import image_record
 RGB_ACTION_TTL_S=.6
 REALTIME_MOTOR_RENEWAL_S=.25
 REALTIME_CAPTURE_OVERLAP_S=.02
+SOLO_ACTIVE_SIM_BUDGET_S=300.
 
 
 class SkillScene(DispatchScene):
@@ -65,8 +67,19 @@ class SkillScene(DispatchScene):
         self._contact_audit=None
         self.realtime_stats={'solo_backpressure':0,'solo_stale_rgb':0,
                              'solo_decisions':0,'pair_backpressure':0,
-                             'pair_decisions':0,'max_decision_age_s':0.}
+                             'pair_decisions':0,'max_decision_age_s':0.,
+                             'solo_total_sim_s':0.,'solo_active_sim_s':0.,
+                             'solo_resource_wait_sim_s':0.,
+                             'solo_resource_waiting':False,
+                             'solo_resource_wait_intervals':0,
+                             'solo_active_budget_s':SOLO_ACTIVE_SIM_BUDGET_S}
         self._solo_retry_at=0.
+        self._solo_budget_last_s=None
+        self._solo_budget_active_s=0.
+        self._solo_budget_wait_s=0.
+        self._solo_resource_waiting=False
+        self._solo_resource_wait_reason=None
+        self._solo_budget_ended=False
         self._in_physics=False
         self.realtime_stats.update(pair_stage_stale_rgb=0,pair_stage_samples=0)
 
@@ -181,6 +194,46 @@ class SkillScene(DispatchScene):
             'renewal_request_s':renewal,
             'plan_hash':self.bindings.committed['plan_hash']})
         return effective
+    def _solo_budget_tick(self,now,*,enforce=True):
+        """Charge every owner SIM interval to active work or a denied gate."""
+        started=getattr(self,'solo_started',None)
+        if started is None or getattr(self,'_solo_budget_ended',False):return
+        if not math.isfinite(now) or now<started-1e-9:
+            raise RuntimeError('solo SIM clock invalid or moved backwards')
+        previous=getattr(self,'_solo_budget_last_s',None)
+        if previous is None:previous=started
+        if now<previous-1e-9:
+            raise RuntimeError('solo SIM clock moved backwards')
+        elapsed=max(0.,now-previous)
+        if getattr(self,'_solo_resource_waiting',False):
+            self._solo_budget_wait_s=getattr(self,'_solo_budget_wait_s',0.)+elapsed
+            self._solo_budget_active_s=getattr(self,'_solo_budget_active_s',0.)
+        else:
+            self._solo_budget_active_s=getattr(self,'_solo_budget_active_s',0.)+elapsed
+            self._solo_budget_wait_s=getattr(self,'_solo_budget_wait_s',0.)
+        self._solo_budget_last_s=now
+        self.realtime_stats.update(solo_total_sim_s=now-started,
+            solo_active_sim_s=self._solo_budget_active_s,
+            solo_resource_wait_sim_s=self._solo_budget_wait_s,
+            solo_resource_waiting=getattr(self,'_solo_resource_waiting',False),
+            solo_active_budget_s=SOLO_ACTIVE_SIM_BUDGET_S)
+        if enforce and self._solo_budget_active_s>SOLO_ACTIVE_SIM_BUDGET_S:
+            raise RuntimeError('solo active SIM budget exhausted')
+    def _solo_set_resource_wait(self,now,waiting,reason=None):
+        self._solo_budget_tick(now)
+        previous=getattr(self,'_solo_resource_waiting',False)
+        self._solo_resource_waiting=bool(waiting)
+        self._solo_resource_wait_reason=reason if waiting else None
+        if waiting and not previous:
+            self.realtime_stats['solo_resource_wait_intervals']=(
+                self.realtime_stats.get('solo_resource_wait_intervals',0)+1)
+        self.realtime_stats['solo_resource_waiting']=bool(waiting)
+    def _solo_finish_budget(self,now):
+        self._solo_budget_tick(now,enforce=False)
+        self._solo_budget_ended=True
+        self._solo_resource_waiting=False
+        self._solo_resource_wait_reason=None
+        self.realtime_stats['solo_resource_waiting']=False
     def _adopt_waiting_carry_visual(self,candidate,action,evidence,observation):
         """Advance only a proven RGB guard frame while an unload gate is closed."""
         if (self.solo.phase!='carry' or candidate.phase!='carry'
@@ -248,6 +301,11 @@ class SkillScene(DispatchScene):
         self.solo_executor=VisualMacroExecutor(self.ports[self.bindings.solo],
             log_callback=self.solo_raw.append,drive_settle_by_phase={'carry':0.})
         self.solo_started=None
+        self._solo_budget_last_s=None
+        self._solo_budget_active_s=self._solo_budget_wait_s=0.
+        self._solo_resource_waiting=False
+        self._solo_resource_wait_reason=None
+        self._solo_budget_ended=False
         self._solo_phase_label=self.solo.phase
         if self.realtime_control:
             self._decision_workers=ThreadPoolExecutor(max_workers=2,thread_name_prefix='dispatch-decision')
@@ -340,6 +398,12 @@ class SkillScene(DispatchScene):
         if self.solo is None:return
         self.authorize();now=self.time()
         self.solo_executor.tick(now)
+        tasks=getattr(getattr(self,'bindings',None),'tasks',None)
+        finished=bool(tasks and tasks['box']['id'] in self.bindings.finished)
+        self._solo_budget_tick(now,enforce=not finished)
+        if finished:
+            self._solo_finish_budget(now)
+            return
         if self._solo_pending is not None:
             pending=self._solo_pending
             if not pending['future'].done():return
@@ -347,6 +411,7 @@ class SkillScene(DispatchScene):
             result=pending['future'].result()
             observed=result['observed_at_s']
             if now-observed>RGB_ACTION_TTL_S:
+                self._solo_set_resource_wait(now,False)
                 self.ports[self.bindings.solo].hold(now)
                 self.realtime_stats['solo_stale_rgb']+=1
                 self.solo_rows.append({'index':pending['index'],'sim_time_s':now,
@@ -364,13 +429,22 @@ class SkillScene(DispatchScene):
                           and action['kind']=='mecanum'
                           and any(abs(action[k])>1e-9 for k in ('forward','left','turn')))
             if moving_carry and observed+RGB_ACTION_TTL_S-now<=0:
+                self._solo_set_resource_wait(now,False)
                 self.ports[self.bindings.solo].hold(now)
                 self.realtime_stats['solo_stale_rgb']+=1
                 self.solo_rows.append({'index':pending['index'],'sim_time_s':now,
                     'observed_at_s':observed,'dropped':'expired_motion_lease',
                     'frame_id':result['frame_id']})
                 return
-            if evidence.get('waiting_for_resource') or not self._commit_permissions(requests):
+            worker_wait=bool(evidence.get('waiting_for_resource'))
+            if worker_wait:
+                probe=self._permission_snapshot()
+                owner_denied=not all(probe.permission(obj,stage)
+                                     for obj,stage in dict.fromkeys(requests))
+            else:owner_denied=not self._commit_permissions(requests)
+            if worker_wait or owner_denied:
+                self._solo_set_resource_wait(now,owner_denied,
+                                             'candidate' if owner_denied else None)
                 previous_guard_at=getattr(self.solo.box,'_last_sim_time',None)
                 vision_refreshed=self._adopt_waiting_carry_visual(
                     candidate,action,evidence,result['observation'])
@@ -379,6 +453,7 @@ class SkillScene(DispatchScene):
                 self.solo_rows.append({'index':pending['index'],'sim_time_s':now,
                     'observed_at_s':observed,'dropped':'resource_permission',
                     'frame_id':result['frame_id'],'requests':requests,
+                    'owner_permission_denied':owner_denied,
                     'state_only':vision_refreshed,
                     'phase_before':before,'phase_after':self.solo.phase,
                     'observation':{k:v for k,v in result['observation'].items()
@@ -391,6 +466,7 @@ class SkillScene(DispatchScene):
                     'guard_observation_gap_s':(
                         observed-previous_guard_at if vision_refreshed else None)})
                 return
+            self._solo_set_resource_wait(now,False)
             # The committed navigator must no longer retain the worker's
             # private permission snapshot when it is cloned next time.
             if candidate.navigator is not None:
@@ -436,13 +512,16 @@ class SkillScene(DispatchScene):
             self._yield_tick_realtime(now);return
         stage='APPROACH' if self.solo.phase=='approach' else 'TRANSIT' if self.solo.phase=='carry' else 'GRASP'
         if self.solo_started is None:self.solo_started=now
-        if now-self.solo_started>300:raise RuntimeError('solo SIM budget exhausted')
+        self._solo_budget_tick(now)
         rid=self.bindings.solo;index=len(self.solo_rows)
         observation_state=copy.deepcopy(self.ports[rid]._actuator_state())
         permission_snapshot=self._permission_snapshot()
         if not permission_snapshot.permission('box',stage):
+            self._solo_set_resource_wait(now,True,'stage')
             self.ports[rid].hold(now)
             return
+        if getattr(self,'_solo_resource_wait_reason',None)=='stage':
+            self._solo_set_resource_wait(now,False)
         candidate=copy.deepcopy(self.solo,{id(self.bindings):self.bindings})
         permission_requests=[]
         if candidate.navigator is not None:
@@ -453,6 +532,7 @@ class SkillScene(DispatchScene):
         from sim.snapshot_render import SnapshotBackpressure
         try:frames=self.capture_async(f'solo-{index}',own_robots=(rid,),overview=False)
         except SnapshotBackpressure:
+            self._solo_set_resource_wait(now,False)
             self.realtime_stats['solo_backpressure']+=1
             self._solo_retry_at=now+.02
             return

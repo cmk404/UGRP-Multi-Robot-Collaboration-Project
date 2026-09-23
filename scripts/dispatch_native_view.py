@@ -10,6 +10,8 @@ import queue
 import time
 import math
 
+from harness.communication_overlay import ObserverDialoguePanel
+
 _POLL_INTERVAL_S = .01
 _SLEEP_BATCH_S = .005
 _PACE_REBASE_GAP_S = .25
@@ -29,6 +31,8 @@ class DispatchNativeView:
         self.viewer = mujoco.viewer.launch_passive(
             self.model, self.data, key_callback=self.keys.put,
             show_left_ui=False, show_right_ui=False)
+        self.dialogue_panel = (ObserverDialoguePanel(scene.out / 'team' / 'latest-dialogue.json')
+                               if getattr(scene, 'out', None) is not None else None)
         with self.viewer.lock():
             self.viewer.cam.type = mujoco.mjtCamera.mjCAMERA_FREE
             self.viewer.cam.lookat[:] = [.55, -2., .1]
@@ -69,6 +73,9 @@ class DispatchNativeView:
                     self.viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_REFLECTION] = 0
                 self.viewer.sync(state_only=True)
                 self.next_sync = now + 1 / 30
+            panel = getattr(self, 'dialogue_panel', None)
+            if panel is not None:
+                panel.poll(self.viewer, mujoco, now)
             if not self.paused:
                 self.next_poll = time.monotonic() + _POLL_INTERVAL_S
                 return

@@ -53,10 +53,14 @@
 
 - `rgb-standard-dispatch-v13`: v12는 접근·파지 후 계획된 10회 운반 진단 한도까지 도달했다. 그러나 첫 프레임 빔 특징 계산으로 운반 RGB age가 0.44–0.64초였고 TTL에 남은 명령 시간이 짧았다. 같은 특징 결과를 유지하는 계산 최적화와 moving carry 최대0.25초 갱신/빠른 다음 관측을 검증한다. TTL·물리·모델·파지/경로/성공 임계값은 유지한다.
 
+- `rgb-standard-dispatch-v14`: 최신 권한을 물리 owner에서 확정하고 solo 이동 갱신을 겹친 후보. 상자 대기 중 영상 상태 갱신 공백으로 중단한 원본을 보존한다.
+- `rgb-standard-dispatch-v15`: carry 분석과 다음 촬영 요청을 겹치고 자원 대기 중 검증된 own-RGB 연속 관측을 유지한다. 두 화물 물리 성공과 solo 시간 한도에 따른 절차 실패를 분리한다.
+- `rgb-standard-dispatch-v16`: realtime actor 영상은 렌더 작업 시작 시 동일 순간을 복사해 대기열에서 생기는 관측 지연을 줄인다. 실제 촬영 시각과0.6초 TTL을 유지하며 solo 활동300초와 명시적 자원 대기를 분리한다. MuJoCo 관찰 창의 실제 자연어 전달 패널은 제어 입력과 분리한다. 새 완주는 고정 소스에서 별도 검증한다.
+
 새 backend 설정 schema는 `ugrp.rgb_skill_backend.v2`다. `execution_bundle_id`가 없거나 지원하지 않는 조합이면 거절한다. 과거 v1 설정은 당시 실행 기록으로 보존한다. 실행 전 정적 검사는 다음과 같다. 시뮬레이션·렌더링·외부 모델 호출은 하지 않는다.
 
 ```sh
-python3 -m harness.rgb_execution_bundle verify-current --id rgb-standard-dispatch-v13
+python3 -m harness.rgb_execution_bundle verify-current --id rgb-standard-dispatch-v16
 python3 -m harness.rgb_execution_bundle verify-registry --base origin/main
 ```
 

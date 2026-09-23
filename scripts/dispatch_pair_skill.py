@@ -112,7 +112,7 @@ class BoundPairSkill:
             frames=self.io.capture('pair-'+str(self.count)+'-'+tag,
                 own_robots=tuple(self.bindings.pair.values()),overview=False)
             return self._bind_capture(frames,self.count)
-        from sim.snapshot_render import SnapshotBackpressure
+        from sim.snapshot_contract import SnapshotBackpressure
         for _ in range(3):
             self.count+=1;count=self.count
             while True:
@@ -340,10 +340,10 @@ class BoundPairSkill:
             next_capture=None
 
             def submit_capture(*,retry):
-                # Only the physics owner freezes a snapshot. A speculative
-                # capture is bounded to one; backpressure is retried when it
+                # Only the physics owner requests actor snapshots. A speculative
+                # request is bounded to one; backpressure is retried when it
                 # becomes the current iteration, without skipping frame IDs.
-                from sim.snapshot_render import SnapshotBackpressure
+                from sim.snapshot_contract import SnapshotBackpressure
                 while True:
                     count=self.count+1
                     try:
