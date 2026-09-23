@@ -2,13 +2,24 @@
 
 `dispatch --realtime-control`은 물리 계산이 화면 출력이나 RGB 판단을 기다리며 멈추지 않도록 하는 선택 옵션이다. 현재 검증 범위는 open 지도, 기존 RGB 스킬과 저장된 계획이다. 실제 완료 여부와 후보별 실패는 [실행 기록](../experiments/2026-09-23-realtime-dispatch/README.md)에 분리해 기록한다. v19 고정 소스 `51fb09c`의 같은 조건 native 실행 두 번은 두 화물 운반·방출과 프로토콜 종료까지 완료했다. 소요 시간은 207.95초와 223.06초, 이동 구간 SIM/wall 비율은 1.0000과 0.9874였다. 운반 관측부터 판단까지의 중앙 지연은 0.192/0.225초다. 기본 transit 진입 조건에서는 두 화물의 적재 운반 시간이 겹치지 않았다. 물리 시계 복구·판단 지연·실제 동시 운반을 각각 구분한다.
 
+독립 north/south 경로의 알려진 open/seed11 조건에서 파지 시작도 겹치려면 다음과 같이 실행한다. `--overlap-start grasp`는 빔의 첫 파지 명령 이후 상자의 파지를 허용한다. 공용 하역장 사용 순서와 계획의 선후 의존성은 유지한다. 기본값 `transit`은 빔 운반 시작 후 허용하는 비교 조건으로 남아 있다.
+
 ```sh
-bash scripts/open_simulation.command dispatch --realtime-control \
+bash scripts/open_simulation.command dispatch --realtime-control --overlap-start grasp \
   --plan-replay experiments/2026-09-22-parallel-transport/independent-plan.json \
   --variant open --seed 11 --contact-profile local_contact_fine \
   --realtime-factor 1 --max-wall-s 600 \
   --output outputs/realtime-open-NEW
 ```
+
+검증된 v19 실행 코드와 입력을 고정하고 진입 옵션만 바꾼 결과는 다음과 같다. 시간은 한 번의 임무 전체 실제 시간이며, 동시 이동은 별도 사후 물리 평가다.
+
+| 파지 진입 조건 | 완주 실제 시간(2회) | 이동 구간 SIM/wall | 두 화물 적재 구간 중첩 | 엄격한 실제 동시 적재 이동 |
+|---|---|---|---|---|
+| `transit` | 207.95 / 223.06초 | 1.0000 / 0.9874 | 0 / 0초 | 0 / 0초 |
+| `grasp` | 200.93 / 196.10초 | 0.9946 / 0.9987 | 27.58 / 21.34초 | 7.0 / 3.5초 |
+
+각 조건 2/2에서 두 화물의 배치·방출과 프로토콜 종료가 성공했다. `grasp` 두 실행의 평가 표본에서 로봇 간 접촉과 운반 중 화물 바닥 접촉은 0건이다. 샘플 사이 접촉까지 없었다고 단정하지 않는다. 진입 조건 비교의 실행 코드·모델·카메라 및 입력 변환·지도·시드·계획·명령 한도는 같으며, 커밋 `51fb09c`와 `1fed936` 사이에는 문서와 감사 기록만 추가됐다. 이 네 실행은 다른 지도·시드의 신뢰성이나 새로운 LLM 통신 효과를 측정하지 않는다. 원본 및 독립 감사는 [실행 기록](../experiments/2026-09-23-realtime-dispatch/README.md)에 있다.
 
 기존 Mac 환경을 재사용한다. 물리 owner는 일반 Python으로 실행되고, 별도 `mjpython` 프로세스가 MuJoCo 기본 창을 표시한다. 새 LLM 요청 없이 저장된 계획을 재생하는 진단이며, 새 계획 합의나 ACT·회전 운반·다른 지도의 성공을 뜻하지 않는다. 실행 전 커밋하고 실행 중 소스를 고정한다. `Q` 또는 창 닫기는 이 실행을 종료한다.
 

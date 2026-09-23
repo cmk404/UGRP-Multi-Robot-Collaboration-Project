@@ -124,13 +124,42 @@
     "full_max_wall_s_each": 600,
     "repeat_rule": "Only if first grasp trial completes both physical cargo and protocol; preserve each raw outcome.",
     "stop_rule": "First failure or second completed trial ends this review; no silent budget extension.",
-    "status": "authorized finite follow-up, not executed in this record",
+    "status": "completed; finite 2/2 grasp-admission native trials used, no further trial under this review",
     "gates": [
       "same plan/map/seed/models/scene/camera/physics and original RGB TTL/lease",
       "check grasp/held failure, contacts, strict simultaneous loaded motion, resource wait and exclusive apron",
       "separate configuration difference from code change, no new LLM calls"
     ],
     "precondition_status": "fulfilled: native-v19-repeat manager exit 0, physical_success=true, protocol_complete=true, independent-audit-v19-repeat.json recorded; grasp trial not yet run",
-    "code_pin_check": "Current source HEAD remains 51fb09cf519f2ef61ff3f306beb07ffc64236816 before documentation-only record commit; grasp trial must pin same execution source and bundle with only CLI overlap_start difference."
+    "code_pin_check": "Current source HEAD remains 51fb09cf519f2ef61ff3f306beb07ffc64236816 before documentation-only record commit; grasp trial must pin same execution source and bundle with only CLI overlap_start difference.",
+    "completion": {
+      "source_sha": "1fed936645d8c61bdbea99ec54d7cb09fd719d78",
+      "execution_tree_equal_to_transit_source_51fb09c": true,
+      "bundle_sha256": "5516e639e7a31029a7cfb2a5d92844eeee784e32a8aca629735bac8e0dc16e32",
+      "changed_cli_option_only": "--overlap-start grasp",
+      "physical_and_protocol_successes": 2,
+      "completed_trials": 2,
+      "whole_wall_s": [
+        200.92883170799178,
+        196.1035526249907
+      ],
+      "strict_loaded_simultaneous_motion_s": [
+        6.999999999834472,
+        3.499999999917236
+      ],
+      "sampled_robot_contacts": [
+        0,
+        0
+      ],
+      "weld_steps": [
+        0,
+        0
+      ],
+      "raw_audits": [
+        "independent-audit-v19-grasp-full.json",
+        "independent-audit-v19-grasp-repeat.json"
+      ],
+      "scope": "known open/seed11 saved plan; no fresh LLM communication or generalized reliability claim"
+    }
   }
 }
