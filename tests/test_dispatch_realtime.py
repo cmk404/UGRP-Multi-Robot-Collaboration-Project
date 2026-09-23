@@ -1,6 +1,10 @@
 """Bounded dispatch RGB snapshots and paired command admission."""
 from concurrent.futures import Future, ThreadPoolExecutor
+import base64
 import copy
+import json
+import os
+from pathlib import Path
 import threading
 from types import SimpleNamespace
 from unittest.mock import Mock
@@ -11,6 +15,7 @@ import pytest
 from scripts.research_dispatch_scene import DispatchScene
 from scripts.run_dispatch_skills import SkillScene
 from harness.dispatch_skill_binding import SkillBindings
+from harness.visual_box_skill import VisualBoxSkill
 from scripts.dispatch_pair_skill import BoundPairSkill
 from scripts.dispatch_native_view import HeadlessPacer
 from scripts.camera_approach_scene import ApproachScene
@@ -163,6 +168,112 @@ def test_denied_worker_route_gate_never_acquires_live_resources(tmp_path,monkeyp
         assert scene.solo_rows[-1]['dropped']=='resource_permission'
         port.apply_bounded.assert_not_called()
     finally:scene._decision_workers.shutdown(wait=True)
+
+
+def test_denied_unload_commits_only_proven_visual_guard_state(tmp_path,monkeypatch):
+    scene,binding,port,clock=_realtime_solo_scene(tmp_path,monkeypatch)
+    original=scene.solo.box
+    original._carry_previous_image='prior-rgb';original._last_frame_id=10
+    original._last_sim_time=.1;original._surface_drop_probe_validated=True
+    original._hashes=['prior'];original._history=[{'frame_id':10}]
+    original.last_box={};original.last_target=None
+    original.last_target_provenance=None;original.last_surface=None
+    candidate=copy.deepcopy(scene.solo)
+    candidate.navigator.index=7  # Must remain uncommitted despite visual renewal.
+    checked=candidate.box
+    checked._carry_previous_image='fresh-rgb'
+    checked.last_attachment={'attached':True,'carry_anchor_metrics':{'mask_iou':.9}}
+    checked._last_frame_id=11;checked._last_sim_time=.2
+    checked._hashes.append('fresh');checked._history.append({'frame_id':11})
+    action={'kind':'mecanum','forward':0.,'left':0.,'turn':0.,'duration_s':.2}
+    result={'candidate':candidate,'action':action,
+        'evidence':{'waiting_for_resource':True},'before':'carry',
+        'observation':{'frame_id':11,'sim_time':.2,'image':'fresh-rgb'},
+        'input_transform':{},'images':{'own':{'path':'rgb/own.jpg'},
+                                       'top':{'path':'rgb/top.jpg'}},
+        'observed_at_s':.2,'frame_id':11,
+        'permission_requests':(('box','UNLOAD'),)}
+    completed=Future();completed.set_result(result)
+    scene._solo_pending={'future':completed,'index':9,'stage':'TRANSIT'}
+    clock[0]=.3
+    try:
+        scene._solo_tick_realtime()
+        assert original._carry_previous_image=='fresh-rgb'
+        assert original._last_frame_id==11 and original._last_sim_time==.2
+        assert original.last_attachment==checked.last_attachment
+        assert original._surface_drop_probe_validated is True
+        assert scene.solo.navigator.index==0 and scene.solo.steps==0
+        assert binding.locks=={} and binding.resource_events==[]
+        port.apply_bounded.assert_not_called()
+        row=scene.solo_rows[-1]
+        assert row['state_only'] is True
+        assert row['guard_previous_observed_at_s']==pytest.approx(.1)
+        assert row['guard_observation_gap_s']==pytest.approx(.1)
+        assert row['images']==result['images']
+        assert row['own_attachment_evidence']==checked.last_attachment
+        assert row['phase_before']==row['phase_after']=='carry'
+
+        # A failed visual guard cannot silently reset the adjacent-frame anchor.
+        bad=copy.deepcopy(scene.solo)
+        bad.box._carry_previous_image='unverified-rgb'
+        bad.box.last_attachment={'attached':False}
+        assert scene._adopt_waiting_carry_visual(bad,action,
+            {'waiting_for_resource':True},
+            {'frame_id':12,'sim_time':.4,'image':'unverified-rgb'}) is False
+        assert original._carry_previous_image=='fresh-rgb'
+
+        expired=copy.deepcopy(scene.solo)
+        expired.box._carry_previous_image='late-rgb'
+        expired.box.last_attachment={'attached':True}
+        expired.box._last_frame_id=12;expired.box._last_sim_time=.4
+        late={**result,'candidate':expired,'observed_at_s':.4,'frame_id':12,
+              'observation':{'frame_id':12,'sim_time':.4,'image':'late-rgb'}}
+        late_future=Future();late_future.set_result(late)
+        scene._solo_pending={'future':late_future,'index':10,'stage':'TRANSIT'}
+        clock[0]=1.01  # TTL rejection precedes any state-only visual renewal.
+        scene._solo_tick_realtime()
+        assert scene.solo_rows[-1]['dropped']=='stale_rgb'
+        assert original._carry_previous_image=='fresh-rgb'
+        assert scene.solo.navigator.index==0 and binding.locks=={}
+    finally:scene._decision_workers.shutdown(wait=True)
+
+
+def test_saved_v14_denied_carry_frames_pass_existing_visual_guard_in_sequence():
+    """Opt-in local replay of preserved RGB; CI has no ignored raw artifacts."""
+    root=os.environ.get('UGRP_V14_REPLAY_DIR')
+    if not root:pytest.skip('set UGRP_V14_REPLAY_DIR to preserved native-v14-full')
+    replay=Path(root);rows=json.loads((replay/'solo-decisions.json').read_text())
+    image=lambda index:base64.b64encode(
+        (replay/'rgb'/f'solo-{index}-own.jpg').read_bytes()).decode('ascii')
+    box=VisualBoxSkill(task='external_navigation',robot_id='r2',
+                       attachment_min_saturation=150)
+    box.phase='carry';box.held=True
+    box._attachment_image=image(174)
+    box._carry_previous_image=image(343)
+    box._last_frame_id=rows[343]['frame_id']
+    box._last_sim_time=rows[343]['observed_at_s']
+    scene=SkillScene.__new__(SkillScene)
+    scene.solo=SimpleNamespace(phase='carry',box=box,
+                               navigator=SimpleNamespace(index=1),steps=343)
+    original_anchor=box._attachment_image
+    action={'kind':'mecanum','forward':0.,'left':0.,'turn':0.,'duration_s':.2}
+    for index in range(344,460):
+        candidate=copy.deepcopy(scene.solo)
+        candidate.navigator.index+=1
+        current=image(index)
+        assert candidate.box._carry({'image':current},{'6':1562})['kind']=='wait'
+        candidate.box._last_frame_id=rows[index]['frame_id']
+        candidate.box._last_sim_time=rows[index]['observed_at_s']
+        observation={'image':current,'frame_id':rows[index]['frame_id'],
+                     'sim_time':rows[index]['observed_at_s']}
+        assert scene._adopt_waiting_carry_visual(candidate,action,
+            {'waiting_for_resource':True},observation)
+        assert scene.solo.navigator.index==1 and scene.solo.steps==343
+        assert box._attachment_image==original_anchor
+    assert box.last_attachment['attached'] is True
+    assert box.last_attachment['centroid_delta_px']<8.
+    assert box.last_attachment['carry_anchor_metrics']['centroid_delta_px']<25.6
+    assert box._compare_attachment(image(343),image(459))['attached'] is False
 
 
 @pytest.mark.parametrize('forward,expected_lease,expected_capture_wait',[

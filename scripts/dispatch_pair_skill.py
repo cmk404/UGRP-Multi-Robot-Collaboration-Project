@@ -337,22 +337,37 @@ class BoundPairSkill:
         anchor=self.capture('carry-anchor')
         policy=PairCarryPolicy('dispatch-'+self.bindings.committed['plan_hash'][:12])
         with ThreadPoolExecutor(max_workers=1,thread_name_prefix='dispatch-pair-decision') as worker:
+            next_capture=None
+
+            def submit_capture(*,retry):
+                # Only the physics owner freezes a snapshot. A speculative
+                # capture is bounded to one; backpressure is retried when it
+                # becomes the current iteration, without skipping frame IDs.
+                from sim.snapshot_render import SnapshotBackpressure
+                while True:
+                    count=self.count+1
+                    try:
+                        future=self.io.capture_async('pair-'+str(count)+'-carry',
+                            own_robots=tuple(self.bindings.pair.values()),overview=False)
+                    except SnapshotBackpressure:
+                        self.io.realtime_stats['pair_backpressure']+=1
+                        if not retry:return None
+                        self.tick(.02)
+                    else:
+                        self.count=count
+                        return count,future
+
             try:
                 for index in range(900 if max_steps is None else max_steps):
-                    self.count+=1
-                    count=self.count
-                    from sim.snapshot_render import SnapshotBackpressure
-                    while True:
-                        try:
-                            frame_future=self.io.capture_async('pair-'+str(count)+'-carry',
-                                own_robots=tuple(self.bindings.pair.values()),overview=False)
-                            break
-                        except SnapshotBackpressure:
-                            self.io.realtime_stats['pair_backpressure']+=1
-                            self.tick(.02)
+                    current=next_capture or submit_capture(retry=True)
+                    next_capture=None
+                    count,frame_future=current
+                    while not frame_future.done():
+                        self.tick(.02)
+                    raw_frames=frame_future.result()
 
-                    def analyze(frame_future=frame_future,count=count):
-                        frames=self._bind_capture(frame_future.result(),count)
+                    def analyze(raw_frames=raw_frames,count=count):
+                        frames=self._bind_capture(raw_frames,count)
                         perception_started_wall_s=time.monotonic()
                         raw=frames['r1']['raw_top_bytes']
                         motion,evidence=navigator.observe(raw)
@@ -375,6 +390,12 @@ class BoundPairSkill:
                         return frames,motion,evidence,decisions,skew,skew_evidence,perception_wall_s
 
                     pending=worker.submit(analyze)
+                    if index+1<(900 if max_steps is None else max_steps):
+                        # The current immutable RGB batch is materialized.
+                        # Rendering one next batch may now overlap its ordered
+                        # tracker/perception worker. Its original SIM timestamp
+                        # remains authoritative even if it predates this action.
+                        next_capture=submit_capture(retry=False)
                     while not pending.done():
                         # Only the owner advances physics. Port leases expire
                         # independently if RGB/render/decision work stalls.
@@ -424,6 +445,11 @@ class BoundPairSkill:
             finally:
                 now=self.time()
                 for rid in self.bindings.pair.values():self.io.ports[rid].hold(now)
+                if next_capture is not None:
+                    future=next_capture[1]
+                    if not future.cancel():
+                        try:future.result(timeout=30.)
+                        except Exception:pass
         raise RuntimeError('pair route decision budget exhausted')
 
     def carry_with_rotation(self,max_steps=None):

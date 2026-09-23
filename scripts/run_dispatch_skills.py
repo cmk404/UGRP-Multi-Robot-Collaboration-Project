@@ -181,6 +181,31 @@ class SkillScene(DispatchScene):
             'renewal_request_s':renewal,
             'plan_hash':self.bindings.committed['plan_hash']})
         return effective
+    def _adopt_waiting_carry_visual(self,candidate,action,evidence,observation):
+        """Advance only a proven RGB guard frame while an unload gate is closed."""
+        if (self.solo.phase!='carry' or candidate.phase!='carry'
+                or not evidence.get('waiting_for_resource')
+                or action['kind']!='mecanum'
+                or any(abs(action[k])>1e-9 for k in ('forward','left','turn'))):
+            return False
+        current=self.solo.box;checked=candidate.box
+        if (not hasattr(current,'_carry_previous_image')
+                or checked._carry_previous_image!=observation['image']
+                or not (checked.last_attachment or {}).get('attached')
+                or checked._last_frame_id!=observation['frame_id']
+                or checked._last_frame_id<=current._last_frame_id
+                or checked._last_sim_time!=observation['sim_time']
+                or checked._last_sim_time<current._last_sim_time):
+            return False
+        # VisualBoxSkill updates _carry_previous_image only after its strict
+        # pairwise, absolute anchor, and ground checks pass. Its navigation
+        # candidate, policy step and any requested locks are never adopted.
+        for field in ('_carry_previous_image','last_attachment',
+                      '_surface_drop_probe_validated','_last_frame_id',
+                      '_last_sim_time','_hashes','_history','last_box',
+                      'last_target','last_target_provenance','last_surface'):
+            setattr(current,field,copy.deepcopy(getattr(checked,field)))
+        return True
     def pair_drive(self,commands,duration,stage):
         self.authorize();self.pair_phase=stage
         if set(commands)!=set(self.bindings.pair.values()):raise ValueError('pair endpoint mismatch')
@@ -346,11 +371,25 @@ class SkillScene(DispatchScene):
                     'frame_id':result['frame_id']})
                 return
             if evidence.get('waiting_for_resource') or not self._commit_permissions(requests):
+                previous_guard_at=getattr(self.solo.box,'_last_sim_time',None)
+                vision_refreshed=self._adopt_waiting_carry_visual(
+                    candidate,action,evidence,result['observation'])
                 self.ports[self.bindings.solo].hold(now)
                 self._solo_retry_at=now+(.3 if ('box','GRASP') in requests else .1)
                 self.solo_rows.append({'index':pending['index'],'sim_time_s':now,
                     'observed_at_s':observed,'dropped':'resource_permission',
-                    'frame_id':result['frame_id'],'requests':requests})
+                    'frame_id':result['frame_id'],'requests':requests,
+                    'state_only':vision_refreshed,
+                    'phase_before':before,'phase_after':self.solo.phase,
+                    'observation':{k:v for k,v in result['observation'].items()
+                                   if k!='image'},
+                    'images':result['images'],
+                    'action':action,'top_evidence':evidence,
+                    'own_attachment_evidence':copy.deepcopy(candidate.box.last_attachment),
+                    'carry_visual_refreshed':vision_refreshed,
+                    'guard_previous_observed_at_s':previous_guard_at,
+                    'guard_observation_gap_s':(
+                        observed-previous_guard_at if vision_refreshed else None)})
                 return
             # The committed navigator must no longer retain the worker's
             # private permission snapshot when it is cloned next time.

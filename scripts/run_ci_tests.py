@@ -94,6 +94,7 @@ TEST_PATTERNS = (
     "tests/test_camera_beam_shaft.py",
     "tests/test_camera_beam_fast_exact.py",
     "tests/test_dispatch_translation_skew_fallback.py",
+    "tests/test_dispatch_pair_prefetch.py",
     "tests/test_camera_gripper_motion.py",
     "tests/test_camera_pixel_grasp.py",
     "tests/test_camera_sweep_trial.py",

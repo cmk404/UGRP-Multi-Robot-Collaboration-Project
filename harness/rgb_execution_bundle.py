@@ -19,9 +19,9 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = Path("config/rgb_execution_bundles")
 SCHEMA = "ugrp.rgb_execution_bundle.v1"
-RUNNABLE_ID = "rgb-standard-dispatch-v14"
+RUNNABLE_ID = "rgb-standard-dispatch-v15"
 RETIRED_IDS = frozenset({"rgb-adapter-legacy-v1", "rgb-standard-dispatch-v2",
-                         "rgb-standard-dispatch-v3", "rgb-standard-dispatch-v4", "rgb-standard-dispatch-v5", "rgb-standard-dispatch-v6", "rgb-standard-dispatch-v7", "rgb-standard-dispatch-v8", "rgb-standard-dispatch-v9", "rgb-standard-dispatch-v10", "rgb-standard-dispatch-v11", "rgb-standard-dispatch-v12", "rgb-standard-dispatch-v13"})
+                         "rgb-standard-dispatch-v3", "rgb-standard-dispatch-v4", "rgb-standard-dispatch-v5", "rgb-standard-dispatch-v6", "rgb-standard-dispatch-v7", "rgb-standard-dispatch-v8", "rgb-standard-dispatch-v9", "rgb-standard-dispatch-v10", "rgb-standard-dispatch-v11", "rgb-standard-dispatch-v12", "rgb-standard-dispatch-v13", "rgb-standard-dispatch-v14"})
 BASELINE_ID = "dispatch-f1-local-contact-fine-v1"
 REQUIRED_SOURCE_PATHS = frozenset({
     "harness/rgb_execution_bundle.py", "harness/rgb_skill_execution.py",
