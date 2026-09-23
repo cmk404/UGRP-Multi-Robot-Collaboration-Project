@@ -142,13 +142,33 @@ raise SystemExit(3 if a.fail else 0)
 
     def test_redacts_secret_argv_and_tracks_input_hash(self):
         safe = wm.redact_argv(["--token", "SENSITIVE", "--api-key=TOPSECRET", "--max-input-tokens", "1000",
-                               "--url=wss://user:pass@example.test/ws?access_token=SECRET&mode=run", "--task", "go"])
+                               "--url=wss://user:pass@example.test/ws?access_token=SECRET&key=APIKEY&sig=SIGNATURE&mode=run#session=FRAGMENTSECRET",
+                               "--task", "go"])
         self.assertNotIn("SENSITIVE", str(safe))
         self.assertNotIn("TOPSECRET", str(safe))
         self.assertNotIn("user:pass", str(safe))
         self.assertNotIn("access_token=SECRET", str(safe))
+        self.assertNotIn("APIKEY", str(safe))
+        self.assertNotIn("SIGNATURE", str(safe))
+        self.assertNotIn("mode=run", str(safe))
+        self.assertNotIn("FRAGMENTSECRET", str(safe))
+        self.assertIn("--url=wss://[REDACTED]@example.test/ws?", safe[5])
+        self.assertIn("key=", safe[5])
+        self.assertIn("sig=", safe[5])
+        self.assertTrue(safe[5].endswith("#[REDACTED]"))
         self.assertIn("1000", safe)
         self.assertEqual(safe[-1], "go")
+
+    def test_worker_plan_redacts_entire_url_query(self):
+        url = "wss://example.test/ws?key=APIKEY&sig=SIGNATURE&mode=run"
+        with mock.patch.dict(os.environ, {"UGRP_SIM_TOKEN": "TOKEN"}):
+            planned = wm.plan(PROJECT, "worker", ["--url", url])
+        for field in ("argv", "command"):
+            rendered = str(planned[field])
+            self.assertNotIn("APIKEY", rendered)
+            self.assertNotIn("SIGNATURE", rendered)
+            self.assertNotIn("mode=run", rendered)
+            self.assertIn("wss://example.test/ws?", rendered)
 
     def test_inprocess_finalizes_on_exception(self):
         def fail(output):

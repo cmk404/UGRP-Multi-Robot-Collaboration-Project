@@ -137,9 +137,12 @@ def redact_argv(argv: list[str]) -> list[str]:
             netloc = parts.netloc
             if "@" in netloc:
                 netloc = "[REDACTED]@" + netloc.rsplit("@", 1)[1]
-            query = urlencode([(key, "[REDACTED]" if SECRET.search(key) else item)
+            # Query names vary across providers (key, sig, auth, etc.).  Keep
+            # the URL shape for diagnosis without persisting any query value.
+            query = urlencode([(key, "[REDACTED]" if item else "")
                                for key, item in parse_qsl(parts.query, keep_blank_values=True)])
-            return urlunsplit((parts.scheme, netloc, parts.path, query, parts.fragment))
+            fragment = "[REDACTED]" if parts.fragment else ""
+            return urlunsplit((parts.scheme, netloc, parts.path, query, fragment))
         except ValueError:
             return "[REDACTED_URL]"
     result = []
