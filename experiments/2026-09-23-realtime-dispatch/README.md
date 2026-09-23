@@ -1,0 +1,9 @@
+# 로컬 MuJoCo 실시간 실행 검증
+
+물리 owner가 RGB 렌더·판단·관찰 창 때문에 멈추는 문제를 분리한다. `protocol.json`의 동일 open/seed11 계획·모델·카메라·접촉 설정을 고정한다. 실제 timestep은 0.00025초, weld는 OFF, 새 LLM 호출과 학습은 0회다. 각 물리 실행 전 코드를 커밋하며 원본을 덮어쓰지 않는다.
+
+첫 계측과 실패 실행의 해시·소스·입력·영상·TensorBoard 검증은 `initial-diagnostics.json`에 있다. 180초 cProfile 진단은 기한 중단이며 완주 시간 비교에 포함하지 않는다. v8(`f2d6ced`)은 95.803초 뒤 공동 운반에서 중단됐다. 5개 판단 모두 실제 RGB 촬영 시각보다 0.70–0.74 SIM초 늦어 0.6초 제한을 넘었고, 운반 명령은 양쪽 HOLD였다. 낮은 종료 시간을 속도 개선으로 해석하지 않는다.
+
+원본은 기본 checkout의 `outputs/simulation-realtime-20260923/{profile-baseline,native-v8}`에 보존한다. 기존 TensorBoard 서버의 `0923-실시간-진단/{계측,v8}`에 두 실패를 별도 등록했으며 이벤트 값 로딩과 MP4 Range 206 응답을 검증했다. 새 후보는 접근·파지의 비동기 관측, 동일 JPEG 분할 재사용, 지연 원인 분리 및 독립 관찰 창의 Mac launcher를 통합한다. 완주 결과는 별도 결과 기록으로 추가한다.
+
+단위 검사·동일 픽셀/분할 후보 검사는 실제 운반 성공을 의미하지 않는다. headless·native·녹화와 공동 운반·ACT·새 지도 성공을 각각 구분한다.

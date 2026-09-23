@@ -75,6 +75,7 @@ TEST_PATTERNS = (
     "tests/test_dispatch_execution.py",
     "tests/test_dispatch_skill_binding.py",
     "tests/test_dispatch_box_identity.py",
+    "tests/test_dispatch_beam_scan_cache.py",
     "tests/test_pair_navigation*.py",
     "tests/test_pair_transport*.py",
     "tests/test_dispatch_adaptive.py",

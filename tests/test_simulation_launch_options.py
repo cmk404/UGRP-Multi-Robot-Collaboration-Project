@@ -1,5 +1,9 @@
 """The start menu only builds supported native CLI argument vectors."""
 from pathlib import Path
+import json
+import os
+import subprocess
+import sys
 
 import pytest
 
@@ -25,6 +29,24 @@ def test_dispatch_argv_preserves_natural_language_as_one_argument():
         "bash", "scripts/open_simulation.command", "dispatch", "--task", task,
         "--variant", "open", "--model", "gemini-3.8-flash", "--realtime-factor", "2",
     ]
+
+
+@pytest.mark.parametrize("realtime", [False, True])
+def test_mac_launcher_uses_only_one_native_viewer_process(tmp_path, realtime):
+    python = tmp_path / "python"
+    python.write_text(f"#!{sys.executable}\nimport json,sys\nprint(json.dumps(sys.argv[1:]))\n")
+    python.chmod(0o755)
+    (tmp_path / "mjpython").symlink_to(python)
+    uname = tmp_path / "uname"
+    uname.write_text("#!/bin/sh\necho Darwin\n")
+    uname.chmod(0o755)
+    options = ["--realtime-control"] if realtime else []
+    result = subprocess.run(["bash", "scripts/open_simulation.command", "dispatch", *options],
+                            cwd=ROOT, env={**os.environ, "UGRP_SIM_PYTHON": str(python),
+                                           "PATH": str(tmp_path) + os.pathsep + os.environ["PATH"]},
+                            check=True, capture_output=True, text=True)
+    argv = json.loads(result.stdout)
+    assert argv[argv.index("--") + 1] == str(python if realtime else tmp_path / "mjpython")
 
 
 def test_preview_argv_has_no_model_or_task_and_uses_registered_scene():

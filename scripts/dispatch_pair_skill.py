@@ -84,6 +84,9 @@ class BoundPairSkill:
         self.trace=[];self.evaluation_samples=[];self.grasp_report={};self.phase='APPROACH'
         self.last_capture=None;self.count=0;self.calls=[]
         self.grasp_translation=None;self.latest_translation=None;self.transport_started=False
+        # Only the open RGB carry path has the owner-step pump contract through
+        # release. Rotation and other transports retain their capture timing.
+        self.realtime_open_capture=False
         self.beam_continuity=BeamContinuity()
         from harness.dispatch_beam_tracker import CarriedBeamTracker
         self.carried_beam=CarriedBeamTracker()
@@ -99,7 +102,8 @@ class BoundPairSkill:
         return {'source':'separate referee-only.jsonl'}
 
     def capture(self,tag):
-        if not getattr(self.io,'realtime_control',False) or self.transport_started:
+        if (not getattr(self.io,'realtime_control',False) or
+                (self.transport_started and not getattr(self,'realtime_open_capture',False))):
             self.count+=1
             frames=self.io.capture('pair-'+str(self.count)+'-'+tag,
                 own_robots=tuple(self.bindings.pair.values()),overview=False)
@@ -301,6 +305,7 @@ class BoundPairSkill:
             # Rotation/grasp stages have distinct motion safety contracts.
             return self.carry_with_rotation(max_steps)
         self.phase='TRANSIT';self.transport_started=True
+        self.realtime_open_capture=True
         anchor=self.capture('carry-anchor')
         policy=PairCarryPolicy('dispatch-'+self.bindings.committed['plan_hash'][:12])
         with ThreadPoolExecutor(max_workers=1,thread_name_prefix='dispatch-pair-decision') as worker:
@@ -420,15 +425,24 @@ class BoundPairSkill:
         """Fresh visual slot/stability claim; physical release stays referee-only."""
         slot=self.bindings.static_map['docks'][self.bindings.plan['dock']]['slots']['beam']
         samples=[]
-        for index in range(2):
-            frames=self.capture('placement-confirmation')
-            b=self.carried_beam.previous
+        def assess(frames):
+            # Capture/binding has completed before this runs. The pair tracker
+            # is not mutated by owner physics while this RGB work is pending.
+            b=(copy.deepcopy(self.carried_beam.previous)
+               if getattr(self,'realtime_open_capture',False) else self.carried_beam.previous)
             envelope=released_beam_envelope(frames['r1']['raw_top_bytes'],b,self.bindings.static_map)
             w,h=b['image_size'];corners=np.array(envelope['corners_px'])
             a=pixel_from_map(np.array(slot['center_m'])-slot['half_extents_m'],self.bindings.static_map,(h,w),height=.04)
             z=pixel_from_map(np.array(slot['center_m'])+slot['half_extents_m'],self.bindings.static_map,(h,w),height=.04)
             inside=bool(np.all(corners>=np.minimum(a,z)) and np.all(corners<=np.maximum(a,z)))
-            samples.append({'frame_id':frames['r1']['frame_id'],'beam':b,'released_envelope':envelope,'inside_visible_slot':inside})
+            return {'beam':b,'released_envelope':envelope,'inside_visible_slot':inside}
+        for index in range(2):
+            if getattr(self,'realtime_open_capture',False):
+                frames,assessment=self.observe_and_compute('placement-confirmation',assess)
+            else:
+                frames=self.capture('placement-confirmation')
+                assessment=assess(frames)
+            samples.append({'frame_id':frames['r1']['frame_id'],**assessment})
             self.tick(.5)
         stable=math.dist(samples[0]['beam']['center'],samples[1]['beam']['center'])<.003
         self.calls.append({'kind':'visual_placement','samples':samples,'stable':stable,

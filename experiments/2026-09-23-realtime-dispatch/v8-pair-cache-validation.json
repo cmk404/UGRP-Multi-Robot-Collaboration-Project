@@ -1,0 +1,68 @@
+{
+  "scope": "source-only cache patch validation on saved RGB; no new physical run",
+  "base_source_sha": "f2d6ced",
+  "source_inputs": {
+    "v8_pair_decisions_sha256": "40b41c1e5969c2ca1dcaa430aed68c91aa9065a4921eb66be7609c7a4731d72f",
+    "prior_profile_sha256": "105bb606421bbb0821dbdd85dd0df9ee2eb96c67a161e671afb1f18e80738645"
+  },
+  "changed_files": [
+    "harness/camera_beam_features.py",
+    "harness/dispatch_beam_tracker.py",
+    "tests/test_dispatch_beam_scan_cache.py"
+  ],
+  "method": "Compare old HEAD Python source loaded read-only by git show against working-tree extractor/tracker on original saved JPEGs; time first and second tracker on 5 carry TOP frames after anchor initialization.",
+  "candidate_comparison": {
+    "actual_rgb_images": 9,
+    "saturations_per_image": 18,
+    "exact_candidate_lists": 162,
+    "failed": 0
+  },
+  "tracker_comparison": {
+    "v8_carry_frames": 5,
+    "exact_complete_feature_dicts": 5,
+    "failed": 0
+  },
+  "post_patch_tracker_wall_s": [
+    {
+      "frame_id": 539,
+      "first": 0.1392,
+      "second": 0.0047
+    },
+    {
+      "frame_id": 548,
+      "first": 0.1378,
+      "second": 0.0024
+    },
+    {
+      "frame_id": 557,
+      "first": 0.1381,
+      "second": 0.0026
+    },
+    {
+      "frame_id": 566,
+      "first": 0.1398,
+      "second": 0.0025
+    },
+    {
+      "frame_id": 575,
+      "first": 0.1383,
+      "second": 0.0024
+    }
+  ],
+  "post_patch_tracker_median_s": {
+    "first": 0.13830745799350552,
+    "second": 0.002465791010763496
+  },
+  "pre_patch_worker_median_s": {
+    "bind": 0.1663,
+    "navigator": 0.1623,
+    "own_payload_4": 0.0127,
+    "translation_skew": 0.0066,
+    "total": 0.3482
+  },
+  "tests": {
+    "command": "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python -m pytest -q tests/test_dispatch_beam_scan_cache.py tests/test_dispatch_adaptive.py tests/test_dispatch_pair_navigation.py tests/test_camera_beam_features.py tests/test_camera_beam_shaft.py",
+    "passed": 66
+  },
+  "limits": "Isolated wall timings do not predict SIM decision age exactly. No v9 physics replay yet; root will perform full run. Cache LRU is thread-safe and values copied per tracker; simultaneous cold misses may recompute safely."
+}

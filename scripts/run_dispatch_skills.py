@@ -478,6 +478,7 @@ def run(args):
     scene.efficient_capture=getattr(args,'efficient_capture',False)
     scene.realtime_control=bool(getattr(args,'realtime_control',False))
     started=time.monotonic();pair=team=None
+    motion_started_wall=motion_started_sim=None
     result={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         'scope':'three LLM peers choose allocation; actual saved approach/grasp models and existing box skill execute',
         'config':{k:str(v) if isinstance(v,Path) else v for k,v in vars(args).items()},
@@ -500,6 +501,8 @@ def run(args):
         elif scene.realtime_control:
             from scripts.dispatch_native_view import HeadlessPacer
             scene.native_view=HeadlessPacer(scene,realtime_factor=args.realtime_factor)
+        result['timing']={'scene_and_observer_setup_wall_s':time.monotonic()-started,
+                          'scope':'output-only SIM/wall measurements; wall_s includes finalization'}
         write(args.output/'episode-setup-only.json',scene.config)
         write(args.output/'scene-manifest.json',scene.manifest)
         if scene.realtime_control:
@@ -569,6 +572,7 @@ def run(args):
         # Preserve the accepted plan. Do not silently replace its route or move
         # a loaded formation through a known insufficient static clearance.
         scene.bindings.check_route()
+        motion_started_wall=time.monotonic();motion_started_sim=scene.time()
         scene.start_solo()
         pair=BoundPairSkill(scene,scene.bindings,skill,grasp,stages,grasp_root,reference,identity)
         while not scene.bindings.permission('beam','APPROACH'):scene.step(.2)
@@ -608,6 +612,15 @@ def run(args):
             'pair' if result['phase'] in ('APPROACH','GRASP','TRANSIT','RELEASE') else 'runtime')
         if args.output.exists():(args.output/'exception.txt').write_text(traceback.format_exc())
     finally:
+        cleanup_started=time.monotonic()
+        if scene.world:
+            timing=result.setdefault('timing',{})
+            timing.update(control_end_sim_s=scene.time(),control_wall_s=cleanup_started-started)
+            if motion_started_wall is not None:
+                motion_wall_s=cleanup_started-motion_started_wall
+                motion_sim_s=scene.time()-motion_started_sim
+                timing.update(motion_wall_s=motion_wall_s,motion_sim_s=motion_sim_s,
+                              motion_sim_to_wall=motion_sim_s/motion_wall_s)
         try:
             if scene.world:
                 if scene.native_view:
@@ -641,6 +654,7 @@ def run(args):
                 try:cleanup()
                 except Exception as exc:result.setdefault('cleanup_errors',[]).append(str(exc))
         result['wall_s']=time.monotonic()-started
+        result.setdefault('timing',{})['cleanup_wall_s']=time.monotonic()-cleanup_started
         if team:
             result['protocol_calls']=len(team.calls)
             result['llm_calls']=sum(c.get('model')!='scripted-fixture-not-llm' for c in team.calls)

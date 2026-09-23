@@ -123,3 +123,15 @@ def test_act_map_render_selects_mjpython_on_mac(project: Path) -> None:
     with mock.patch.object(wm.sys, "platform", "darwin"), mock.patch.object(wm.sys, "executable", str(python)):
         assert wm._select_python(row, []) == str(python)
         assert wm._select_python(row, ["--render"]) == str(mjpython)
+
+
+@pytest.mark.parametrize("workflow,argv", [("dispatch", []), ("dispatch-skills", ["--viewer"])])
+def test_realtime_dispatch_keeps_physics_owner_in_python(project: Path, workflow, argv) -> None:
+    python = project / "python"
+    mjpython = project / "mjpython"
+    python.touch()
+    mjpython.touch()
+    mjpython.chmod(0o755)
+    with mock.patch.object(wm.sys, "platform", "darwin"), mock.patch.object(wm.sys, "executable", str(python)):
+        assert wm._select_python({"id": workflow}, argv) == str(mjpython)
+        assert wm._select_python({"id": workflow}, [*argv, "--realtime-control"]) == str(python)

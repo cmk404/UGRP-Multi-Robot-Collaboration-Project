@@ -106,12 +106,81 @@ def test_delayed_pair_rgb_advances_independent_physics_then_holds_both(monkeypat
                                                     {'done':False}))
     with pytest.raises(RuntimeError,match='decision budget exhausted'):
         pair.carry_realtime(navigator,max_steps=1)
+    assert pair.realtime_open_capture is True
     assert solo_ticks[0]>0  # shared physics continued during pair RGB delay
     assert io.realtime_stats['pair_decisions']==1
     assert pair.calls[-1]['decision_age_s']>.6
     assert issued and all(command['forward']==command['left']==command['turn']==0.
                           for command in issued[-1].values())
     assert all(port.hold.call_count==1 for port in ports.values())
+
+
+def test_open_carry_release_and_confirmation_keep_async_capture(monkeypatch):
+    frames={r:{'frame_id':7,'observed_at_s':0.,'raw_top_bytes':b'top'}
+            for r in ('r1','r3')}
+    async_tags=[]
+    def capture_async(tag,**_kwargs):
+        async_tags.append(tag)
+        completed=Future();completed.set_result(frames);return completed
+    io=SimpleNamespace(realtime_control=True,time=lambda:0.,
+        capture=Mock(side_effect=AssertionError('synchronous capture')),
+        capture_async=capture_async,await_visual=lambda future:future.result(),
+        compute_visual=lambda fn:fn(),
+        realtime_stats={'pair_backpressure':0,'pair_stage_stale_rgb':0,
+                        'pair_stage_samples':0})
+    pair=BoundPairSkill.__new__(BoundPairSkill)
+    pair.io=io;pair.bindings=SimpleNamespace(
+        pair={'r1':'r1','r3':'r3'},plan={'dock':'north'},
+        static_map={'docks':{'north':{'slots':{'beam':{
+            'center_m':[1.,1.],'half_extents_m':[1.,1.]}}}}})
+    pair.transport_started=True;pair.realtime_open_capture=True
+    pair.phase='TRANSIT';pair.count=0;pair.calls=[]
+    pair._bind_capture=lambda captured,_count:captured
+    pair.commands={r:{3:1500,4:1500,5:1500} for r in ('r1','r3')}
+    pair.grasp_report={'preclose_issued_commands':pair.commands}
+    pair.replay=Mock();pair.tick=Mock()
+    pair.carried_beam=SimpleNamespace(previous={'center':[0.,0.],'image_size':[8,8]})
+    monkeypatch.setattr('scripts.dispatch_pair_skill.released_beam_envelope',
+        lambda *_args:{'corners_px':[[1.,1.]]*4})
+    monkeypatch.setattr('scripts.dispatch_pair_skill.pixel_from_map',
+        lambda xy,*_args,**_kwargs:np.array(xy))
+
+    pair.capture('carry-anchor')
+    pair.place()
+    pair.verify_placement()
+
+    assert len(async_tags)==6
+    assert async_tags[0].endswith('carry-anchor')
+    assert [tag.rsplit('-',1)[-1] for tag in async_tags[1:4]]==[
+        'lowered','opened','final']
+    assert all(tag.endswith('placement-confirmation') for tag in async_tags[4:])
+    assert io.realtime_stats['pair_stage_samples']==2
+    assert pair.calls[-1]['kind']=='visual_placement'
+    assert pair.calls[-1]['stable'] is True
+    io.capture.assert_not_called()
+
+
+def test_transport_capture_remains_sync_without_open_realtime_capability():
+    frames={r:{'frame_id':3} for r in ('r1','r3')}
+    io=SimpleNamespace(realtime_control=True,capture=Mock(return_value=frames),
+                       capture_async=Mock(side_effect=AssertionError('async capture')))
+    pair=BoundPairSkill.__new__(BoundPairSkill)
+    pair.io=io;pair.bindings=SimpleNamespace(pair={'r1':'r1','r3':'r3'})
+    pair.transport_started=True;pair.realtime_open_capture=False;pair.count=0
+    pair._bind_capture=lambda captured,_count:captured
+    assert pair.capture('rotate-carry') is frames
+    io.capture.assert_called_once()
+    io.capture_async.assert_not_called()
+
+
+def test_cluttered_realtime_carry_keeps_rotation_capture_contract():
+    pair=BoundPairSkill.__new__(BoundPairSkill)
+    pair.bindings=SimpleNamespace(cluttered=True)
+    pair.realtime_open_capture=False
+    pair.carry_with_rotation=Mock(return_value='legacy-rotation')
+    assert pair.carry_realtime(None,max_steps=2)=='legacy-rotation'
+    assert pair.realtime_open_capture is False
+    pair.carry_with_rotation.assert_called_once_with(2)
 
 
 def test_delayed_yield_rgb_cannot_issue_fold_or_drive():

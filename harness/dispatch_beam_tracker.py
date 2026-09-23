@@ -1,7 +1,7 @@
 """Temporal carried-shaft identity from raw TOP RGB, never issued motion/truth."""
 import copy,math
 import numpy as np
-from harness.camera_beam_features import extract_beams
+from harness.camera_beam_features import carried_beam_scans
 
 class CarriedBeamTracker:
     def __init__(self):self.previous=None
@@ -23,8 +23,8 @@ class CarriedBeamTracker:
         from harness.dispatch_skill_binding import beam_feature
         anchor=self.previous or beam_feature(jpeg,hue_upper=35)
         rows=[]
-        for saturation in range(105,191,5):
-            for b in extract_beams(jpeg,robust_shaft=True,hue_upper=35,min_saturation=saturation):
+        for saturation, candidates in zip(range(105,191,5), carried_beam_scans(jpeg)):
+            for b in candidates:
                 movement=np.linalg.norm((np.array(b['center'])-anchor['center'])*b['image_size'])
                 aligned=abs(float(self._axis(b)@self._axis(anchor)))>=math.cos(math.radians(15))
                 if (not b['touches_border'] and 65<=b['length_px']<=130 and b['width_px']<=25
