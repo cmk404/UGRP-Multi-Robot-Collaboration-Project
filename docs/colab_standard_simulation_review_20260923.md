@@ -45,4 +45,6 @@ python3 scripts/colab_simulation_cli.py \
   -- run configs/simulation/drive.json --headless --capture
 ```
 
+로컬에서는 커밋 `267ada9`의 sparse 전송 묶음에서 표준 manager의 stage-sync fixture 9개를 실행하고, manifest를 포함한 결과 ZIP 15개 파일의 해시를 전부 검증했다. 초기 예제 누락 실패와 수정 후 결과는 [검증 기록](../experiments/2026-09-23-unified-simulation-management/README.md)에 함께 보존한다. 이는 포장/실행/회수 연결 검사이며 Colab 서버 실행 검증은 아니다.
+
 이번 검토는 공식 안내·현재 소스·설치 CLI와 세션 조회에 근거한다. 개인 계정의 유료 혜택 활성화, 실제 L4 할당·렌더링·학습·운반·결과 회수는 미실행이다. 계정 구매/변경, Drive 사용, 자동 재접속·상시 서버는 포함하지 않는다.
