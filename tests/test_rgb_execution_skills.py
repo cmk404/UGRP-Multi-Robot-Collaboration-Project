@@ -13,9 +13,9 @@ import pytest
 
 from harness.rgb_execution_contract import SkillCapability
 from harness.rgb_execution_port import RGBExecutionPort
-from harness.rgb_skill_execution import (INITIAL_COMMANDS, SKILLS, MacroQueue, PairActorSkill,
+from harness.rgb_skill_execution import (INITIAL_COMMANDS, SKILLS, MacroQueue, PairActorSkill, RGBSkillUnsupported,
     RGBSkillExecutionPort, _ActorFacade, _RelativeEndpoint, _SimulationClock, backend_descriptor, map_support_matrix,
-    public_static_context, SoloActorSkill)
+    public_static_context, SoloActorSkill, _WorkerTiming, _timed_rgb_decision)
 from sim.camera_robot_port import CameraRobotPort
 
 JPEG = b"\xff\xd8test-only\xff\xd9"
@@ -603,6 +603,9 @@ def test_pair_controller_resumes_only_rgb_reobservable_phases():
     actor.phases = ["close"]
     with pytest.raises(ValueError, match="explicit recovery"):
         actor.resume()
+    actor.phases = ["identify_lower"]
+    with pytest.raises(ValueError, match="explicit recovery"):
+        actor.resume()
 
 
 def manual_port():
@@ -824,19 +827,229 @@ def test_existing_solo_rgb_policy_is_called_without_full_plan_or_world():
     assert not hasattr(actor.skill.navigator, "bindings")
 
 
-def test_existing_pair_rgb_coarse_policy_and_phase_barrier_are_incremental():
+def test_solo_actor_uses_demonstrated_pixel_contract_for_backend_sized_rgb(monkeypatch):
+    import cv2
+    import numpy as np
+    from harness.solo_box_transport import normalize_own_rgb
+    from harness.visual_box_skill import VisualBoxSkill
+    from sim.research_dispatch_arena import authored_map
+
+    def observed_box(encoded, pose, target_id, **options):
+        frame = cv2.imdecode(np.frombuffer(base64.b64decode(encoded), np.uint8), cv2.IMREAD_COLOR)
+        return {"visible": True, "pixel_centroid": [frame.shape[1] / 2, frame.shape[0] * .455625],
+                "estimated_box_center_base_m": [.5, 0., .02], "provenance": "fixture"}
+
+    monkeypatch.setattr("harness.visual_box_skill.observe_ground_box", observed_box)
+    actions = []
+    for width, height in ((640, 480), (960, 720)):
+        frame = np.zeros((height, width, 3), np.uint8)
+        cv2.rectangle(frame, (width//3, height//3), (2*width//3, 2*height//3), (200, 200, 0), -1)
+        raw = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, 95])[1].tobytes()
+        own = {"robot_id": "r2", "frame_id": 1, "sim_time": 0., "camera": "robot_cam",
+            "image": base64.b64encode(raw).decode(), "sha256": hashlib.sha256(raw).hexdigest(),
+            "actuator_state": {"motor_commands": [0.]*4, "servo_pulses": dict(INITIAL_COMMANDS)}}
+        actor = SoloActorSkill("r2", authored_map("open"), SKILLS["solo_transport_A"])
+        actor.decide(own, raw)  # demonstrated initialization pose
+        result = actor.decide({**own, "frame_id": 2, "sim_time": 1.}, raw)
+        actions.append(result["action"])
+        transform = result["evidence"]["own_rgb_transform"]
+        assert transform["raw_size"] == [width, height]
+        assert transform["skill_size"] == [640, 480]
+        assert transform["raw_sha256"] == own["sha256"]
+        normalized, same_transform = normalize_own_rgb(own)
+        assert same_transform == transform
+        assert normalized["sha256"] == transform["skill_sha256"]
+        assert actor.skill.box.history[-1]["sha256"] == transform["skill_sha256"]
+        assert own["sha256"] == hashlib.sha256(raw).hexdigest()  # untouched raw observation
+    assert actions == [{"kind": "drive", "fwd": .10, "turn": 0., "duration": .6}] * 2
+    # The formerly unscaled centroid crosses the same fixed servo threshold.
+    old = VisualBoxSkill(perception_mode="markerless")
+    assert old._approach({"pixel_centroid": [480, 720*.455625]},
+                         np.asarray([.5, 0., .02]), dict(INITIAL_COMMANDS))["kind"] == "pose"
+    distorted = cv2.imencode(".jpg", np.zeros((720, 900, 3), np.uint8))[1].tobytes()
+    with pytest.raises(ValueError, match="unsupported own RGB pixel contract"):
+        normalize_own_rgb({**own, "image": base64.b64encode(distorted).decode(),
+                           "sha256": hashlib.sha256(distorted).hexdigest()})
+    with pytest.raises(ValueError, match="SHA does not match"):
+        normalize_own_rgb({**own, "sha256": "0"*64})
+
+
+def _pair_actor(robot_id, role):
     from sim.research_dispatch_arena import authored_map
     reference = (Path(__file__).parent / "fixtures/camera_goal_transport/reference-top.jpg").read_bytes()
     own = {"image": base64.b64encode(reference).decode(),
            "actuator_state": {"servo_pulses": dict(INITIAL_COMMANDS)}}
     saved = {"initialization_replay": [{"targets": {}}]}
-    actor = PairActorSkill("r2", "lower", authored_map("open"), SKILLS["pair_transport_A"],
-                          (saved, {"r1": {}}, {"r1": {}}, reference))
-    first, second = actor.decide(own, reference), actor.decide(own, reference)
-    assert first["phase"] == second["phase"] == "coarse"
-    assert not first["ready"] and second["ready"]
-    assert second["action"]["kind"] == "wait"
-    assert actor.phase == "coarse"  # No inferred peer readiness.
-    actor.advance()
-    assert actor.phase == "yaw"
-    assert actor.slot == "r1" and actor.robot_id == "r2"
+    return PairActorSkill(robot_id, role, authored_map("open"), SKILLS["pair_transport_A"],
+                          (saved, {"r1": {}, "r3": {}}, {"r1": {}, "r3": {}}, reference)), own
+
+
+def test_pair_identity_probes_are_sequential_and_private_then_real_coarse_frames_pass():
+    import cv2
+    import numpy as np
+    from harness.camera_goal_transport import coarse_approach
+    root = Path(__file__).parent / "fixtures"
+    before = (root / "jev_motion/probe-before-top.jpg").read_bytes()
+    after = (root / "jev_motion/probe-after-top.jpg").read_bytes()
+    frame = cv2.imdecode(np.frombuffer(after, np.uint8), cv2.IMREAD_COLOR)
+    shifted = frame.copy()
+    # A second isolated motion view from the real TOP JPEG. Only the upper
+    # wheel area moves, while the lower actor is held at its phase barrier.
+    patch = frame[90:210, 60:180]
+    shifted[90:210, 60:180] = cv2.warpAffine(patch, np.float32([[1, 0, 8], [0, 1, 0]]), (120, 120))
+    upper_after = cv2.imencode(".jpg", shifted, [cv2.IMWRITE_JPEG_QUALITY, 95])[1].tobytes()
+    lower, own_lower = _pair_actor("r2", "lower")
+    upper, own_upper = _pair_actor("r1", "upper")
+
+    assert lower.decide(own_lower, before)["action"] == {"kind": "drive", "fwd": .10, "turn": 0., "duration": .6}
+    assert upper.decide(own_upper, before)["ready"]
+    assert upper.decide(own_upper, after)["action"]["kind"] == "wait"
+    assert lower.decide(own_lower, after)["action"] == {"kind": "wait", "duration": .3}
+    assert lower.decide(own_lower, after)["ready"]
+    assert lower.identity_claim["fresh"] and upper.identity_claim is None
+    lower.advance(); upper.advance()
+    assert lower.decide(own_lower, after)["ready"]
+    assert upper.decide(own_upper, after)["action"]["kind"] == "drive"
+    assert upper.decide(own_upper, upper_after)["action"] == {"kind": "wait", "duration": .3}
+    assert upper.decide(own_upper, upper_after)["ready"]
+    assert upper.identity_claim["fresh"]
+    lower.advance(); upper.advance()
+    assert lower.phase == upper.phase == "coarse"
+    assert not hasattr(lower, "peer_identity") and not hasattr(upper, "peer_identity")
+    for name in ("coarse-test-minus.jpg", "coarse-test-yaw.jpg"):
+        raw = (root / "research_entry_stop" / name).read_bytes()
+        # The previous lane-wide/default-tolerance path rejects this recorded
+        # image; the actor's own-motion-bound production pixel path accepts it.
+        assert not coarse_approach(raw, lower.reference, "r3")["ok"]
+        for actor, own in ((lower, own_lower), (upper, own_upper)):
+            result = actor.decide(own, raw)
+            prediction = result["evidence"]["prediction"]
+            assert result["phase"] == "coarse" and prediction["ok"]
+            assert prediction["mask"]["heading_tolerance_px"] == 2.
+            assert min(prediction["heading"]["corner_pixels"]) >= 5
+            assert actor.phase == "coarse"  # A peer-ready barrier has not advanced.
+    shifted = cv2.warpAffine(
+        cv2.imdecode(np.frombuffer(raw, np.uint8), cv2.IMREAD_COLOR),
+        np.float32([[1, 0, 5], [0, 1, 3]]), (960, 720), flags=cv2.INTER_NEAREST)
+    transformed = cv2.imencode(".jpg", shifted, [cv2.IMWRITE_JPEG_QUALITY, 95])[1].tobytes()
+    for actor, own in ((lower, own_lower), (upper, own_upper)):
+        result = actor.decide(own, transformed)
+        assert result["evidence"]["prediction"]["ok"]
+        assert result["evidence"]["image_transform"]["source_sha256"] == hashlib.sha256(transformed).hexdigest()
+
+
+def test_pair_identity_without_observed_own_motion_stops_before_coarse():
+    raw = (Path(__file__).parent / "fixtures/jev_motion/probe-before-top.jpg").read_bytes()
+    actor, own = _pair_actor("r2", "lower")
+    assert actor.decide(own, raw)["action"]["kind"] == "drive"
+    assert actor.decide(own, raw)["action"] == {"kind": "wait", "duration": .3}
+    with pytest.raises(RGBSkillUnsupported, match="own_motion_identity_unresolved") as raised:
+        actor.decide(own, raw)
+    assert raised.value.diagnostics["claim"]["fresh"] is False
+    assert actor.identity_claim is None and actor.coarse is None
+
+
+@pytest.mark.parametrize("before_pair_ticks", [0, 4])
+def test_pair_probe_isolation_waits_for_solo_motion_and_releases_on_cancel(before_pair_ticks):
+    class Probe(PairActorSkill):
+        def __init__(self):
+            self.phases, self.index, self.inputs = ["identify_lower"], 0, []
+
+        def decide(self, own, top):
+            self.inputs.append(own["robot_id"])
+            return {"phase": self.phase, "ready": False,
+                    "action": {"kind": "drive", "fwd": .10, "turn": 0., "duration": .25},
+                    "evidence": {"fixture": "isolated probe"}}
+
+    controllers = {"r1": Probe(), "r2": Controller(), "r3": Probe()}
+    port, world, _, _ = build(controllers)
+    rows = []
+    port._record_supervisor = rows.append
+    try:
+        submit(port, "r2")
+        port.tick(0.)
+        settle_workers(port)  # solo has already issued a .25s drive
+        for i in range(1, before_pair_ticks + 1):
+            port.tick(round(i*.05, 10))
+        for rid, role in (("r1", "lower"), ("r3", "upper")):
+            submit(port, rid, task="pair", skill="pair_transport_A",
+                   participants=["r1", "r3"], role=role)
+        for i in range(before_pair_ticks + 1, 11):
+            port.tick(round(i*.05, 10))
+        assert controllers["r1"].inputs == controllers["r3"].inputs == []
+        assert len(controllers["r2"].inputs) == 1
+        port.tick(.55)
+        if before_pair_ticks:
+            # Pair construction occurs as the solo macro becomes idle. Its
+            # first submission must still wait for the complete quiet window.
+            assert controllers["r1"].inputs == controllers["r3"].inputs == []
+            port.tick(.6)
+        settle_workers(port)
+        assert len(controllers["r1"].inputs) == len(controllers["r3"].inputs) == 1
+        assert len(controllers["r2"].inputs) == 1
+        assert any(row["event"] == "RGB_PROBE_ISOLATION_STARTED" for row in rows)
+        lifecycle(port, "r1", "interrupt", task="pair")
+        port.tick(round(port._now_s + .05, 10))
+        settle_workers(port)
+        assert any(row["event"] == "RGB_PROBE_ISOLATION_ENDED" for row in rows)
+        assert len(controllers["r2"].inputs) == 2
+    finally:
+        port.close(port._now_s)
+
+
+def test_paused_foreign_worker_cannot_deadlock_pair_identity_probe():
+    class Probe(PairActorSkill):
+        def __init__(self):
+            self.phases, self.index, self.inputs = ["identify_lower"], 0, []
+
+        def decide(self, own, top):
+            self.inputs.append(own["robot_id"])
+            return {"phase": self.phase, "ready": False,
+                    "action": {"kind": "wait", "duration": .2}, "evidence": {}}
+
+    gate = threading.Event()
+    controllers = {"r1": Probe(), "r2": Controller(gate=gate), "r3": Probe()}
+    port, _, _, _ = build(controllers)
+    try:
+        submit(port, "r2")
+        port.tick(0.)
+        for rid, role in (("r1", "lower"), ("r3", "upper")):
+            submit(port, rid, task="pair", skill="pair_transport_A",
+                   participants=["r1", "r3"], role=role)
+        lifecycle(port, "r2", "pause")
+        gate.set()
+        for i in range(1, 8):
+            port.tick(round(i*.05, 10))
+        assert controllers["r1"].inputs == controllers["r3"].inputs == []
+        port.tick(.4)
+        settle_workers(port)
+        assert len(controllers["r1"].inputs) == len(controllers["r3"].inputs) == 1
+        assert port.local_status("r2")["active"][0]["paused"]
+    finally:
+        gate.set()
+        port.close(port._now_s)
+
+
+def test_pair_coarse_rejects_unsupported_top_and_logs_wheel_mask_before_stopping():
+    import cv2
+    import numpy as np
+    root = Path(__file__).parent / "fixtures"
+    raw = (root / "research_entry_stop/coarse-test-minus.jpg").read_bytes()
+    actor, own = _pair_actor("r1", "upper")
+    actor.index = 2
+    actor.identity_claim = {"valid": True, "fresh": True, "center": [.106, .203]}
+    frame = cv2.imdecode(np.frombuffer(raw, np.uint8), cv2.IMREAD_COLOR)
+    frame[90:210, 60:180] = 0
+    hidden = cv2.imencode(".jpg", frame)[1].tobytes()
+    rows = []
+    with pytest.raises(RGBSkillUnsupported, match="own_wheel_heading_unresolved"):
+        _timed_rgb_decision(actor, own, hidden, _WorkerTiming(), 0.,
+            {"robot_id": "r1", "task_id": "pair"}, rows.append, threading.Lock())
+    rejected = next(row for row in rows if row["event"] == "RGB_DECISION_REJECTED")
+    assert rejected["reason"] == "own_wheel_heading_unresolved"
+    assert rejected["diagnostics"]["prediction"]["mask"]["local_wheel_pixels"] < 80
+    assert rejected["diagnostics"]["image_transform"]["source_sha256"] == hashlib.sha256(hidden).hexdigest()
+    assert all(row.get("worker_outcome") != "returned" for row in rows)
+    wrong_shape = cv2.imencode(".jpg", np.zeros((700, 960, 3), np.uint8))[1].tobytes()
+    with pytest.raises(RGBSkillUnsupported, match="canonical_top_unresolved"):
+        actor.decide(own, wrong_shape)

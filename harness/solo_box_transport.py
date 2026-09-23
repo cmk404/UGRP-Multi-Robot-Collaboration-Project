@@ -1,12 +1,44 @@
 """Own-RGB manipulation plus shared-TOP goal servo; no simulator access."""
 from __future__ import annotations
 
+import base64
+import hashlib
 import cv2
 import numpy as np
 
 from harness.camera_goal_transport import decode
 from harness.visual_box_skill import VisualBoxSkill, SEARCH
 from harness.three_robot_mission import GOALS
+
+
+def normalize_own_rgb(observation):
+    """Use the demonstrated 640x480 own-camera pixel contract without changing FOV.
+
+    The caller retains the original JPEG separately. This produces the exact
+    cv2.resize/JPEG-95 input used by the successful dispatch solo adapter.
+    """
+    raw = base64.b64decode(observation['image'], validate=True)
+    decoded = cv2.imdecode(np.frombuffer(raw, np.uint8), cv2.IMREAD_COLOR)
+    if decoded is None:
+        raise ValueError('invalid own RGB JPEG')
+    height, width = decoded.shape[:2]
+    if (width, height) not in {(640, 480), (960, 720)}:
+        raise ValueError('unsupported own RGB pixel contract; expected 640x480 or 960x720')
+    raw_sha = hashlib.sha256(raw).hexdigest()
+    if observation.get('sha256') is not None and observation['sha256'] != raw_sha:
+        raise ValueError('own RGB SHA does not match original JPEG')
+    resized = cv2.resize(decoded, (640, 480))
+    encoded = cv2.imencode('.jpg', resized, [cv2.IMWRITE_JPEG_QUALITY, 95])
+    if not encoded[0]:
+        raise ValueError('own RGB normalization failed')
+    normalized = encoded[1].tobytes()
+    result = dict(observation, image=base64.b64encode(normalized).decode(),
+                  sha256=hashlib.sha256(normalized).hexdigest())
+    evidence = {'method': 'cv2.resize 640x480 then JPEG quality 95',
+                'raw_size': [width, height], 'skill_size': [640, 480],
+                'raw_sha256': raw_sha,
+                'skill_sha256': result['sha256']}
+    return result, evidence
 
 
 def solo_top_features(jpeg):

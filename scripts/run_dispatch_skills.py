@@ -8,7 +8,6 @@ from __future__ import annotations
 import base64
 import copy
 from functools import partial
-import hashlib
 import json
 from pathlib import Path
 import platform
@@ -26,7 +25,7 @@ from harness.dispatch_skill_binding import SkillBindings, ImageRoute
 from harness.dispatch_feasibility import negotiate_executable
 from harness.dispatch_yield import SoloYield,WheelObserver
 from harness.three_robot_plan import ROBOTS, TeamAgreement, images
-from harness.solo_box_transport import SoloBoxTransport
+from harness.solo_box_transport import SoloBoxTransport, normalize_own_rgb
 from harness.grasp_student_inference import predict_student
 from harness.visual_macro_runtime import VisualMacroExecutor
 from sim.research_dispatch_arena import episode, actor_task
@@ -166,12 +165,12 @@ class SkillScene(DispatchScene):
         if now-self.solo_started>300:raise RuntimeError('solo SIM budget exhausted')
         obs=self.ports[self.bindings.solo].capture()
         native=base64.b64decode(obs['image'])
-        decoded=cv2.imdecode(np.frombuffer(native,np.uint8),cv2.IMREAD_COLOR)
-        own=cv2.imencode('.jpg',cv2.resize(decoded,(640,480)),[cv2.IMWRITE_JPEG_QUALITY,95])[1].tobytes()
-        obs['image']=base64.b64encode(own).decode();obs['sha256']=hashlib.sha256(own).hexdigest()
+        obs, input_transform=normalize_own_rgb(obs)
+        own=base64.b64decode(obs['image'],validate=True)
         top=self.world.render_team_jpeg(camera='cctv_top',quality=95)
         index=len(self.solo_rows)
-        refs={'own':image_record(self.out/'rgb'/f'solo-{index}-own.jpg',self.out,own),
+        refs={'raw_own':image_record(self.out/'rgb'/f'solo-{index}-raw-own.jpg',self.out,native),
+              'own':image_record(self.out/'rgb'/f'solo-{index}-own.jpg',self.out,own),
               'top':image_record(self.out/'rgb'/f'solo-{index}-top.jpg',self.out,top)}
         before=self.solo.phase
         approach_state=copy.deepcopy(self.solo.box) if before=='approach' else None
@@ -189,6 +188,7 @@ class SkillScene(DispatchScene):
             self.solo.steps-=1
             evidence={**evidence,'waiting_for_resource':True}
         self.solo_rows.append({'index':index,'sim_time_s':now,'robot_id':self.bindings.solo,
+            'input_transform':input_transform,
             'phase_before':before,'phase_after':self.solo.phase,'observation':{k:v for k,v in obs.items() if k!='image'},
             'images':refs,'action':action,'top_evidence':evidence,
             'own_attachment_evidence':copy.deepcopy(self.solo.box.last_attachment)})

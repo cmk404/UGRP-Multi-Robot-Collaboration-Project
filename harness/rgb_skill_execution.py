@@ -229,9 +229,11 @@ class SoloActorSkill:
                                       attachment_min_saturation=150, release_refine_ground_fit=True)
 
     def decide(self, own, top):
-        action, evidence = self.skill.decide(own, top)
+        from harness.solo_box_transport import normalize_own_rgb
+        skill_own, transform = normalize_own_rgb(own)
+        action, evidence = self.skill.decide(skill_own, top)
         return {"action": action, "phase": self.skill.phase, "ready": False,
-                "evidence": evidence}
+                "evidence": {**evidence, "own_rgb_transform": transform}}
 
     def advance(self):
         raise ValueError("solo phases belong to the existing own-RGB skill")
@@ -267,7 +269,9 @@ class PairActorSkill:
         self.reference = reference
         self.route = _route(static_map, spec)
         self.static_map, self.spec = copy.deepcopy(static_map), dict(spec)
-        self.phases = ["coarse", "yaw", "lateral", "forward", "dock"] + [
+        # Each probe is a separate pair barrier. Only its named actor moves;
+        # the other waits, so TOP motion can be attributed to this actor alone.
+        self.phases = ["identify_lower", "identify_upper", "coarse", "yaw", "lateral", "forward", "dock"] + [
             f"initialize_{i}" for i in range(1, len(skill["initialization_replay"]))] + [
             f"correct_{i}" for i in range(16)] + ["preclose", "close", "lift", "settle",
                 "carry", "lower", "open", "retract", "verify"]
@@ -275,6 +279,10 @@ class PairActorSkill:
         self.issued = False
         self.preclose = self.lifted = self.anchor = self.previous_center = None
         self.grasp_translation = None
+        self.identity_tracker = None
+        self.identity_claim = None
+        self.probe_step = "baseline"
+        self.coarse = None
 
     @property
     def phase(self):
@@ -290,10 +298,10 @@ class PairActorSkill:
         self.confirmations = 0
 
     def decide(self, own, top):
-        from harness.camera_goal_transport import coarse_approach, dock_command, own_payload
+        from harness.camera_goal_transport import dock_command, own_payload
         from harness.camera_varied_start_student import predict_stage
         from harness.grasp_student_inference import predict_student
-        from harness.dispatch_skill_binding import canonical_pair_top, beam_feature, pixel_from_map
+        from harness.dispatch_skill_binding import PairCoarsePixels, canonical_pair_top, beam_feature, pixel_from_map
         import numpy as np
         jpeg = base64.b64decode(own["image"], validate=True)
         commands = own["actuator_state"]["servo_pulses"]
@@ -302,11 +310,51 @@ class PairActorSkill:
         if self.count > (900 if phase == "carry" else 170):
             raise ValueError("bounded RGB phase exhausted")
         action, ready, evidence = {"kind": "wait", "duration": .2}, False, {}
-        if phase in {"coarse", "yaw", "lateral", "forward", "dock"}:
-            canonical, transform = canonical_pair_top(top, self.reference)
+        if phase in {"identify_lower", "identify_upper"}:
+            active_slot = {"identify_lower": "r1", "identify_upper": "r3"}[phase]
+            if self.slot != active_slot:
+                ready = True
+                evidence = {"identity_probe": "peer_probe_barrier", "own_motion": False}
+            elif self.probe_step == "baseline":
+                from harness.camera_motion_identity import ImageMotionIdentity
+                self.identity_tracker = ImageMotionIdentity()
+                self.identity_tracker.update(top, None)
+                self.probe_step = "driven"
+                action = {"kind": "drive", "fwd": .10, "turn": 0., "duration": .6}
+                evidence = {"identity_probe": "own_drive_issued", "own_motion": True}
+            elif self.probe_step == "driven":
+                self.probe_step = "settled"
+                action = {"kind": "wait", "duration": .3}
+                evidence = {"identity_probe": "own_drive_settling", "own_motion": True}
+            else:
+                claim = self.identity_tracker.update(top,
+                    {"kind": "drive", "forward": .10, "turn": 0., "duration_s": .6})
+                evidence = {"identity_probe": "own_motion_claim", "claim": claim,
+                            "own_motion": True}
+                if not claim["valid"] or not claim["fresh"]:
+                    raise RGBSkillUnsupported("own_motion_identity_unresolved", phase, evidence)
+                self.identity_claim = claim
+                ready = True
+        elif phase in {"coarse", "yaw", "lateral", "forward", "dock"}:
+            try:
+                canonical, transform = canonical_pair_top(top, self.reference)
+            except ValueError as error:
+                raise RGBSkillUnsupported("canonical_top_unresolved", phase, {
+                    "detail": str(error), "raw_top_sha256": hashlib.sha256(top).hexdigest(),
+                    "reference_sha256": hashlib.sha256(self.reference).hexdigest()}) from error
             if phase == "coarse":
-                prediction = coarse_approach(canonical, self.reference, self.slot)
-                motion = {"forward": prediction["forward"], "left": 0., "turn": prediction["turn"]}
+                if self.identity_claim is None:
+                    raise RGBSkillUnsupported("own_motion_identity_missing", phase, {"image_transform": transform})
+                if self.coarse is None:
+                    self.coarse = PairCoarsePixels({self.robot_id: {"claim": self.identity_claim}},
+                        SimpleNamespace(pair={self.slot: self.robot_id}), self.reference)
+                try:
+                    prediction = self.coarse.decide(top, self.slot)
+                except ValueError as error:
+                    raise RGBSkillUnsupported("coarse_rgb_unresolved", phase, {
+                        "detail": str(error), "raw_top_sha256": hashlib.sha256(top).hexdigest(),
+                        "image_transform": transform}) from error
+                motion = {k: prediction[k] for k in ("forward", "left", "turn")}
             elif phase == "dock":
                 checks = {s: predict_stage(m, jpeg, canonical) for s, m in self.stages.items()}
                 if not all(d["ok"] and d.get("precision") == "fine" for d in checks.values()):
@@ -321,7 +369,8 @@ class PairActorSkill:
                 if not prediction["ready"]:
                     motion[{"yaw": "turn", "lateral": "left", "forward": "forward"}[phase]] = prediction["command"]
             if not prediction["ok"]:
-                raise ValueError("RGB outside saved approach support")
+                raise RGBSkillUnsupported(prediction.get("reason", "RGB outside saved approach support"),
+                                          phase, {"prediction": prediction, "image_transform": transform})
             observed_ready = prediction.get("stationary_ready", prediction["ready"])
             self.confirmations = self.confirmations+1 if observed_ready else 0
             ready = self.confirmations >= 2
@@ -428,6 +477,13 @@ def _write_supervisor(record, lock, row):
             record({"schema": "ugrp.rgb_worker_timing.v1", **row})
 
 
+class RGBSkillUnsupported(ValueError):
+    """A stopped RGB decision with evidence for the separate raw audit log."""
+    def __init__(self, reason, phase, diagnostics):
+        super().__init__(f"{phase}: {reason}")
+        self.reason, self.phase, self.diagnostics = reason, phase, diagnostics
+
+
 def _timed_rgb_decision(controller, own, top, timing, submitted, metadata, record, lock):
     """Only the controller's image inputs and a raw-log sink, no port handle."""
     timing.start(time.monotonic())
@@ -436,6 +492,10 @@ def _timed_rgb_decision(controller, own, top, timing, submitted, metadata, recor
         decision = controller.decide(own, top)
         outcome = "returned"
         return decision
+    except RGBSkillUnsupported as error:
+        _write_supervisor(record, lock, {"event": "RGB_DECISION_REJECTED", **metadata,
+            "phase": error.phase, "reason": error.reason, "diagnostics": error.diagnostics})
+        raise
     finally:
         timing.complete(time.monotonic())
         _write_supervisor(record, lock, {"event": "RGB_WORKER_COMPLETED", **metadata,
@@ -622,6 +682,8 @@ class RGBSkillExecutionPort(RGBExecutionPort):
         self._raw_count = 0
         self._task_records = {}
         self._last_skill_status = {rid: {} for rid in endpoints}
+        self._probe_isolation_task_id = None
+        self._probe_quiet_since = None
 
     def _submit_task(self, rid, payload):
         spec = SKILLS.get(payload.get("skill"))
@@ -757,15 +819,59 @@ class RGBSkillExecutionPort(RGBExecutionPort):
         for row in self._worker_poll_rows(lease, runners, polled, guard, "RGB_WORKER_REJECTED"):
             self._supervisor_event(row)
 
+    def _identity_probe_lease(self, leases):
+        """Reserve TOP motion for one pair's own-command identity probes."""
+        for lease in leases:
+            if lease.paused or len(lease.participants) != 2 or lease.skill not in SKILLS:
+                continue
+            if any(rid in self._runners and isinstance(self._runners[rid].controller, PairActorSkill)
+                   and self._runners[rid].controller.phase.startswith("identify_")
+                   for rid in lease.participants):
+                return lease
+        return None
+
     def _service(self):
         # Poll existing work before blocking on new RGB capture/input I/O.
         # This does NOT accept any result beyond the original total wall cap.
         rank = {rid: index for index, rid in enumerate(self.robot_ids)}
         leases = sorted(list(self._active.values()), key=lambda item: min(rank[r] for r in item.participants))
+        probe_lease = self._identity_probe_lease(leases)
+        probe_id = None if probe_lease is None else probe_lease.task_id
+        if probe_id != self._probe_isolation_task_id:
+            if self._probe_isolation_task_id is not None:
+                self._supervisor_event({"event": "RGB_PROBE_ISOLATION_ENDED",
+                    "task_id": self._probe_isolation_task_id, "timestamp_s": self._now_s})
+            self._probe_isolation_task_id, self._probe_quiet_since = probe_id, None
+            if probe_id is not None:
+                self._supervisor_event({"event": "RGB_PROBE_ISOLATION_STARTED",
+                    "task_id": probe_id, "timestamp_s": self._now_s,
+                    "scope": "other leases finish issued motion, then hold new decisions"})
         new_inputs = []
         for lease in leases:
             if lease.paused:
                 continue
+            if probe_lease is not None and lease is not probe_lease:
+                # Let already issued actions and in-flight decisions finish,
+                # then hold this lease at an idle command boundary. It cannot
+                # produce unrelated TOP motion during either isolated probe.
+                if all(rid in self._runners for rid in lease.participants):
+                    runners = [self._runners[rid] for rid in lease.participants]
+                    if all(r.future is None and r.macro.idle(self._now_s) for r in runners):
+                        continue
+                else:
+                    continue
+            if lease is probe_lease:
+                foreign_leases = [other for other in leases if other is not lease]
+                foreign = [self._runners[rid] for other in foreign_leases if not other.paused
+                           for rid in other.participants if rid in self._runners]
+                if any(r.future is not None or not r.macro.idle(self._now_s) for r in foreign):
+                    self._probe_quiet_since = None
+                    continue
+                if foreign_leases:
+                    if self._probe_quiet_since is None:
+                        self._probe_quiet_since = self._now_s
+                    if self._now_s-self._probe_quiet_since < .3-1e-9:
+                        continue
             if any(rid not in self._runners for rid in lease.participants):
                 new_inputs.extend((lease, rid, self._runners.get(rid)) for rid in lease.participants)
                 continue
@@ -839,6 +945,8 @@ class RGBSkillExecutionPort(RGBExecutionPort):
                     for row in consumed:
                         self._supervisor_event(row)
                     continue
+                if probe_lease is not None and lease is not probe_lease:
+                    continue
                 new_inputs.extend((lease, rid, runner) for rid, runner in zip(lease.participants, runners))
             except Exception as error:
                 if lease.task_id in self._active:
@@ -882,10 +990,28 @@ class RGBSkillExecutionPort(RGBExecutionPort):
                 if lease.task_id in self._active:
                     self._fail(lease, error)
 
+        # A pair actor may have been constructed while preparing this tick.
+        # Apply isolation before any worker is submitted, including a solo
+        # observation that was staged earlier in the fixed robot order.
+        probe_lease = self._identity_probe_lease(leases)
+        newly_discovered_probe = (probe_lease is not None
+                                  and self._probe_isolation_task_id != probe_lease.task_id)
         for lease, rid, runner, own, top in prepared:
             if (self._active.get(lease.task_id) is not lease or lease.paused
                     or self._runners.get(rid) is not runner):
                 continue
+            if probe_lease is not None:
+                if lease is not probe_lease:
+                    continue
+                # Start the quiet interval in the next service pass. A solo
+                # macro may have become idle just before this construction.
+                if newly_discovered_probe:
+                    continue
+                foreign = [self._runners[other_rid] for other in leases
+                           if other is not lease and not other.paused
+                           for other_rid in other.participants if other_rid in self._runners]
+                if any(r.future is not None or not r.macro.idle(self._now_s) for r in foreign):
+                    continue
             try:
                 self._all_futures = [f for f in self._all_futures if not f.done()]
                 if len(self._all_futures) >= len(self.robot_ids):

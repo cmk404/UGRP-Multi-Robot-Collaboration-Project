@@ -493,30 +493,55 @@ class PairCoarsePixels:
     def __init__(self, identity, bindings, reference):
         self.centers={}
         self.reference=reference
+        height,width=decode(reference).shape[:2]
+        if (width,height)!=(960,720):
+            raise ValueError('pair coarse reference requires calibrated 960x720 TOP')
         for slot,rid in bindings.pair.items():
             claim=identity[rid]['claim']
             if not claim.get('valid') or not claim.get('center'):
                 raise ValueError('valid own motion identity required for '+rid)
-            self.centers[slot]=np.array(claim['center'])*[960,720]
+            self.centers[slot]=np.array(claim['center'])*[width,height]
 
     def decide(self, raw_top, slot):
         from harness.camera_goal_transport import lane_features, wheel_heading
         frame=decode(raw_top);h,w=frame.shape[:2]
+        if (w,h)!=(960,720):
+            raise ValueError('pair coarse TOP requires calibrated 960x720 pixels')
         hsv=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
         yellow=cv2.inRange(hsv,np.array((20,70,50),np.uint8),np.array((40,255,255),np.uint8))
         n,labels,stats,_=cv2.connectedComponentsWithStats(yellow)
         clean=np.zeros_like(yellow)
+        selected_components=0
         for i in range(1,n):
-            if stats[i,4]<=300:clean[labels==i]=255
+            if stats[i,4]<=300:
+                clean[labels==i]=255
+                selected_components+=1
+        component_pixels=int(np.count_nonzero(clean))
         cx,cy=self.centers[slot]
         yy,xx=np.indices(clean.shape)
         clean[(abs(xx-cx)>55)|(abs(yy-cy)>48)]=0
         ys,xs=np.nonzero(clean)
+        mask={'raw_yellow_pixels':int(np.count_nonzero(yellow)),
+              'small_component_pixels':component_pixels,
+              'small_component_count':selected_components,
+              'local_wheel_pixels':int(len(xs)),
+              'crop_center_px':[float(cx),float(cy)],
+              'crop_half_size_px':[55,48], 'heading_tolerance_px':2.}
         heading=wheel_heading(clean,pixel_tolerance=2.)
         if heading is None:
-            return dict(ok=False,ready=False,forward=0.,left=0.,turn=0.,reason='own_wheel_heading_unresolved',pixel_count=len(xs))
+            return dict(ok=False,ready=False,forward=0.,left=0.,turn=0.,
+                        reason='own_wheel_heading_unresolved',mask=mask)
         center=np.array([xs.mean(),ys.mean()]);self.centers[slot]=center
-        beam=beam_feature(raw_top);ref=lane_features(self.reference,slot)
+        try:
+            beam=beam_feature(raw_top);ref=lane_features(self.reference,slot)
+        except ValueError as error:
+            return dict(ok=False,ready=False,forward=0.,left=0.,turn=0.,
+                        reason='payload_or_reference_unresolved',detail=str(error),
+                        wheel_center_px=center.tolist(),heading=heading,mask=mask)
+        if ref is None:
+            return dict(ok=False,ready=False,forward=0.,left=0.,turn=0.,
+                        reason='reference_lane_unresolved',wheel_center_px=center.tolist(),
+                        heading=heading,mask=mask)
         gap=(np.array(beam['center'])-center/[w,h])-np.array([ref['beam_x']-ref['robot_x'],ref['beam_y']-ref['robot_y']])
         angle=heading['angle_deg'];angle_ready=abs(angle)<=1.5
         lateral_ready=abs(gap[1])<=.003
@@ -525,4 +550,5 @@ class PairCoarsePixels:
             forward=min(.12,max(.03,float(gap[0]))) if angle_ready and lateral_ready and not ready else 0.,
             left=(-math.copysign(min(.05,max(.01,abs(float(gap[1])))),float(gap[1])) if angle_ready and not lateral_ready else 0.),
             turn=0. if angle_ready else math.copysign(min(.10,max(.01,.5*abs(math.radians(angle)))),angle),
-            reason='RGB role-relative coarse approach',wheel_center_px=center.tolist(),image_error=gap.tolist(),heading=heading)
+            reason='RGB role-relative coarse approach',wheel_center_px=center.tolist(),
+            image_error=gap.tolist(),heading=heading,mask=mask)
