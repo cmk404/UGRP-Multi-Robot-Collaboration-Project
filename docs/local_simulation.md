@@ -80,7 +80,10 @@ MuJoCo 패널은 표시 옵션 외에 물리·actuator 상태도 바꿀 수 있�
 
 ```bash
 bash scripts/open_simulation.command
-# 1 공동 계획 → 기존 스킬 / 2 저장된 plan 재생 / 3 수동 / 4 설정 실행
+# 1 LLM 공동 계획 → 기존 RGB 스킬 / 2 장면 미리보기 / 3 기타 실행
+# 1에서는 지원 출하 맵·관찰 속도·계획 모델·자연어 지시를 고른다.
+# 2에서는 등록된 장면을 그룹 또는 /검색어로 찾아 MuJoCo 기본 창에서 본다.
+# 저장된 plan 재생·수동·설정 실행은 3에서 고른다.
 
 # 같은 기존 실행기를 직접 선택: 자연어는 세 로봇의 계획 협상에 전달
 bash scripts/open_simulation.command dispatch \

@@ -27,4 +27,16 @@ Mac의 기존 `.venv-sim-worker-mac`에서 `bash scripts/open_simulation.command
 
 ## 판정 경계
 
-직접 확인한 것은 터미널 메뉴의 장면·속도 선택, MuJoCo 기본 창 표시·재생, 중단 시 기록 최종화·소유 프로세스 정리다. 자연어 지시의 외부 LLM 응답, 로봇 행동·운반 성공, 다른 지도에서의 실행, 학습, 성능 비교는 이번 실행으로 확인하지 않았다. 미리보기 중단을 시뮬레이션 완주나 연구 성공으로 간주하지 않는다.
+직접 확인한 것은 터미널 메뉴의 장면·속도 선택, MuJoCo 기본 창 표시·재생, 중단 시 기록 최종화·소유 프로세스 정리다. 미리보기 중단을 시뮬레이션 완주나 연구 성공으로 간주하지 않는다.
+
+## 자연어 지시·모델 호출 직접 확인
+
+같은 터미널 메뉴에서 `1. LLM 공동 계획` → `open` 지도 → 관찰 속도 `1×` → 기본 `gemini-3.8-flash` → `beam과 box를 dock_b로 옮겨`를 입력해 실제 실행했다. 소스 SHA는 `7c1bb783dc3a168414d144a107723eb9867779d3`, 실행 중 소스는 깨끗하고 불변이었다. MuJoCo 관찰 창이 열렸고, 원본 12개 모델 요청/응답 쌍과 3대 로봇의 합의 로그가 남았다. 모든 요청의 user 텍스트에는 해당 `operator_instruction`이 Unicode 이스케이프 형태로 포함됐다. 합의된 계획은 `dock_b`, beam 담당 `r1+r3`/north, box 담당 `r2`/south다. 로봇별 프로그램 생성 후 접근 단계에서 발행 명령이 기록됐다.
+
+약 75초 후 테스트 수행자가 Ctrl-C로 중단했다. `result.json`은 `plan_committed=true`, `phase=APPROACH`, `protocol_complete=false`, `physical_success=false`, `wall_s=75.1704`, `llm_calls=12`, 입력 115,637 tokens/출력 2,997 tokens/합계 123,136 tokens를 기록했다. `issued-commands.json`은 r1 20행, r2 2행, r3 20행으로 총 42행이다. 이 중 로봇별 첫 `SETUP` 목표 스냅샷 3행을 제외한 실제 **발행 명령은 39개**이며, TensorBoard의 `result/commands`도 39다. 발행 명령은 실제 이동 성공이 아니다. 비용 필드는 `null`로 금액을 산정할 수 없다. 종료 중 ffmpeg가 exit 255/Broken pipe를 기록했지만 남은 7.5초 MP4는 ffprobe와 전체 디코딩이 통과했다. 이는 부분 영상이며 전체 실행 영상은 아니다. 관리 manifest는 exit 1/`process_failed`다. 소유 세션과 자식 프로세스는 종료됐다.
+
+원본은 worktree의 `outputs/simulation-runs/20260923-161558-dispatch-cca0ae6c`에 있고 기본 체크아웃의 같은 `outputs/simulation-runs/`에 242파일/31,107,436바이트를 복사해 전수 SHA-256을 대조했다. 파일 목록·크기·해시 집계는 `5fb4a9baa371c6404364d1d02c5bdfa2730c509925674192222c0bb82581aab0`이다. 이는 로컬 보관이지 원격 백업이 아니다. 핵심 SHA-256: `manifest.json` `4491f03f9276b5c669a8d7b3f040fa6d2828e5c3dab36992d704c2c1e5254e57`; `artifacts/result.json` `08dc747a780eadacceffd76846e7c9ef8802ef7bc6447bb579a088130d0f99ef`; `artifacts/actor-mission.json` `6dae1f9c65919ed3e047b56f0ad6b164a71c23ac6882fc78f4d07390ec0eff6a`; `artifacts/committed-plan.json` `fa2da6d7f27d0d85dd65b4e4874912424c81c64a7480b4a1a12f0354cb1b7e07`; `artifacts/issued-commands.json` `b201f315c89ddddcb26ce6bd91cb1228686d6aae28d6b74b06b842dc12587b47`.
+
+기본 체크아웃의 새 TensorBoard 스냅샷 `outputs/tensorboard/0923-terminal-menu-llm-smoke`는 변환 실패 0이다. EventAccumulator와 기존 포트 6006 서버에서 `evaluation/reported_success=0`, `result/wall_s=75.1704`, `result/commands=39`, `result/model_calls=12`, `result/model_latency_s=110.4104`, `claims/plan_committed=1`을 대조했다. 원본 부분 MP4의 6009 서버 Range 요청은 206이었다. 스냅샷 manifest SHA-256은 `4c2cbb30bd7d6e3a10bd2d1ae076887c23c9d593447c7575f262544f5059504f`이다.
+
+이 실행은 자연어 입력 → 실제 모델 응답 → 계획 합의 → RGB 스킬의 초기 명령까지 확인했다. 운반 완주, 다른 지도에서의 일반화, 학습, 성공률·시간·비용 비교는 확인하지 않았다. 중단한 실행을 물리 성공으로 집계하지 않는다.
