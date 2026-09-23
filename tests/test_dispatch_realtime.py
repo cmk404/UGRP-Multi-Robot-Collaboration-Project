@@ -148,6 +148,31 @@ def test_moving_open_approach_overlaps_rgb_with_bounded_lease_and_caps_ttl():
     assert all(port.hold.called for port in ports.values())
 
 
+def test_open_coarse_renews_for_quarter_second_without_changing_fine_lease():
+    clock=[.05];issued=[]
+    io=SimpleNamespace(realtime_control=True,time=lambda:clock[0],
+        step=lambda seconds:clock.__setitem__(0,clock[0]+seconds),
+        pair_issue_bounded=lambda commands,duration,stage:issued.append(
+            (commands,duration,stage,clock[0])))
+    pair=BoundPairSkill.__new__(BoundPairSkill)
+    pair.io=io;pair.bindings=SimpleNamespace(cluttered=False,pair={'r1':'r1','r3':'r3'})
+    pair.phase='APPROACH';pair.transport_started=False
+    pair.carried_beam=SimpleNamespace(previous=None)
+    pair.last_capture={'r1':{'observed_at_s':0.}}
+    moving={'r1':{'forward':0.,'left':-.03,'turn':0.},
+            'r3':{'forward':0.,'left':0.,'turn':0.}}
+
+    pair.drive_mecanum(moving,coarse_realtime=True)
+    assert issued[0][1]==pytest.approx(.25)
+    assert all(action['duration_s']==pytest.approx(.25)
+               for action in issued[0][0].values())
+    assert clock[0]==pytest.approx(.07)
+
+    pair.last_capture={'r1':{'observed_at_s':clock[0]}}
+    pair.drive_mecanum(moving,.2)
+    assert issued[1][1]==pytest.approx(.2)
+
+
 def test_cluttered_approach_keeps_full_synchronous_drive():
     io=SimpleNamespace(realtime_control=True,pair_drive=Mock())
     pair=BoundPairSkill.__new__(BoundPairSkill)

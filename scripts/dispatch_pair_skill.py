@@ -20,6 +20,9 @@ import time
 import numpy as np
 
 COARSE_LEAD_LIMIT_PX = 16.
+# Open coarse alignment renews one command across its usual RGB refresh gap.
+# The port's .25s maximum and the capture-time .6s TTL still cap this lease.
+OPEN_COARSE_RENEWAL_LEASE_S = .25
 
 
 def _visual_timing(frame, *, perception_wall_s=None, policy_wall_s=None):
@@ -207,7 +210,7 @@ class BoundPairSkill:
              for r,c in commands.items()},duration_s,self.phase)
         return duration_s
 
-    def drive_mecanum(self,commands,duration_s=.2):
+    def drive_mecanum(self,commands,duration_s=.2,*,coarse_realtime=False):
         moving=any(abs(c[k])>1e-9 for c in commands.values()
                    for k in ('forward','left','turn'))
         if (getattr(self.io,'realtime_control',False) and not self.bindings.cluttered
@@ -216,7 +219,8 @@ class BoundPairSkill:
             # interpreted. The owner advances only enough to start that batch.
             frame=self.last_capture['r1'] if self.last_capture else None
             observed=frame.get('observed_at_s') if frame else None
-            self.issue_mecanum_bounded(commands,duration_s,observed_at_s=observed)
+            lease_s=(OPEN_COARSE_RENEWAL_LEASE_S if coarse_realtime else duration_s)
+            self.issue_mecanum_bounded(commands,lease_s,observed_at_s=observed)
             self.tick(.02)
             return
         if self.transport_started and self.carried_beam.previous is not None:
@@ -264,7 +268,7 @@ class BoundPairSkill:
             report['coarse_calls'].append(decisions)
             self.calls.append({'kind':'coarse','decisions':decisions,'commands':commands,
                                'coordination':coordination})
-            self.drive_mecanum(commands)
+            self.drive_mecanum(commands,coarse_realtime=True)
             if all(d['ready'] for d in decisions.values()):self.stop_dwell();break
         else:raise RuntimeError('coarse RGB approach budget exhausted')
         report.update(run_approach(self,self.stage_models,reacquire_on_settle=True,

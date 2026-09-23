@@ -47,10 +47,12 @@
 - `rgb-standard-dispatch-v9`: open RGB의 접근·파지·운반·하역 관측까지 비동기 경로를 연결한다. 같은 JPEG의 18개 빔 분할 후보만 제한된 캐시에 재사용하며 각 tracker의 이전 상태와 선택 판단은 독립 유지한다. stale 관측은 매번 양쪽 HOLD로 처리하고 연속 지연 예산을 시각 인식 실패와 구분한다. Mac 물리 owner는 일반 Python, 독립 관찰 창만 `mjpython`을 사용한다. 물리 timestep·카메라·임계값·모델은 그대로이며 전체 완주와 처리 속도는 이 버전에서 재검증한다.
 - `rgb-standard-dispatch-v10`: v9의 명령 종료 후 관측 공백을 줄이기 위해 open RGB 초기 접근의 이동 명령과 다음 관측을 겹친다. 정지 확인의 기존 대기 시간은 유지하고 공동 명령은 촬영 시각 + 0.6초 이내에서 끝나도록 제한한다. v9은 정지를 포함한 물리 재생률 1.000×에 도달했지만 120회 접근 한도를 소진했으므로 성공으로 승계하지 않는다.
 
+- `rgb-standard-dispatch-v11`: v10의 실제 접근 판단 간격 중앙값 0.22초와 0.20초 이동 명령 사이에 반복 정지가 남았다. open RGB 초기 접근의 이동 lease만 최대 0.25초로 바꾸며, 원본 촬영 시각 + 0.6초 제한과 지연 시 양쪽 HOLD는 유지한다. 명령 지속시간이 바뀐 별도 후보이며 새 실제 접근·완주 검증 전에는 성공을 승계하지 않는다.
+
 새 backend 설정 schema는 `ugrp.rgb_skill_backend.v2`다. `execution_bundle_id`가 없거나 지원하지 않는 조합이면 거절한다. 과거 v1 설정은 당시 실행 기록으로 보존한다. 실행 전 정적 검사는 다음과 같다. 시뮬레이션·렌더링·외부 모델 호출은 하지 않는다.
 
 ```sh
-python3 -m harness.rgb_execution_bundle verify-current --id rgb-standard-dispatch-v10
+python3 -m harness.rgb_execution_bundle verify-current --id rgb-standard-dispatch-v11
 python3 -m harness.rgb_execution_bundle verify-registry --base origin/main
 ```
 

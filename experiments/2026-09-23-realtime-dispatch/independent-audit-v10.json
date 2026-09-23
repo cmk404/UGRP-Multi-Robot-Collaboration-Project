@@ -1,0 +1,263 @@
+{
+  "schema": "ugrp.independent_realtime_dispatch_v10_audit.v1",
+  "checked_at_utc": "2026-09-23T13:25:06.637903+00:00",
+  "source_sha": "25a88b82e2990e653d1d42506f5b12f9b048dad5",
+  "bundle_id": "rgb-standard-dispatch-v10",
+  "bundle_sha256": "aa3a4373fcbe2970b1ce95062d684704ea8c342cab77a0fce913720bb71eb606",
+  "manager": {
+    "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260923-222042-dispatch-e8f1a71f/manifest.json",
+    "sha256": "57806dff74e176cfb7bd432dcc85587a10c655908d0cc8f03956ef17d687518d",
+    "status": "process_failed",
+    "exit_code": 1,
+    "runtime_s": 37.28654775000177,
+    "source_dirty": false,
+    "source_before_sha256": "c4f4da9c79271190b7fdb1d51f1b7f6c42c88c39bf4117a2390cf1338220a39b",
+    "source_after_sha256": "c4f4da9c79271190b7fdb1d51f1b7f6c42c88c39bf4117a2390cf1338220a39b",
+    "source_changed_during_run": false,
+    "inputs_changed_during_run": false,
+    "inputs_before_after_equal": true,
+    "finalization_errors": []
+  },
+  "result": {
+    "phase": "APPROACH",
+    "error": "RuntimeError: coarse RGB approach budget exhausted",
+    "wall_s": 36.96208462500363,
+    "timing": {
+      "scene_and_observer_setup_wall_s": 1.4871099589945516,
+      "scope": "output-only SIM/wall measurements; wall_s includes finalization",
+      "control_end_sim_s": 34.18000000007219,
+      "control_wall_s": 35.92803174999426,
+      "motion_wall_s": 28.98366091599746,
+      "motion_sim_s": 28.98000000007158,
+      "motion_sim_to_wall": 0.9998736903548351,
+      "cleanup_wall_s": 1.0340540000033798
+    },
+    "plan_committed": true,
+    "protocol_complete": false,
+    "physical_success": false,
+    "failed_component": "pair",
+    "llm_calls": 0,
+    "realtime_control_stats": {
+      "solo_backpressure": 0,
+      "solo_stale_rgb": 0,
+      "solo_decisions": 31,
+      "pair_backpressure": 0,
+      "pair_decisions": 0,
+      "max_decision_age_s": 0.49125000000234564,
+      "pair_stage_stale_rgb": 0,
+      "pair_stage_samples": 120
+    },
+    "pair_stage_sample_count": 120,
+    "pair_stage_age_s": {
+      "min": 0.1799999999995805,
+      "median": 0.20000000000095497,
+      "p95": 0.30000000000036664,
+      "max": 0.40000000000190994
+    },
+    "pair_stage_age_over_ttl_0_6_s": 0,
+    "pair_stage_wall_timing_s": {
+      "snapshot_submit_wall_s": {
+        "min": 0.00019362499006092548,
+        "median": 0.00028760400164173916,
+        "p95": 0.0004990840097889304,
+        "max": 0.0007123329996829852
+      },
+      "render_wait_wall_s": {
+        "min": 0.1255913750064792,
+        "median": 0.1373043335042894,
+        "p95": 0.22745645898976363,
+        "max": 0.4374485000007553
+      },
+      "jpeg_encode_wall_s": {
+        "min": 0.0044472080044215545,
+        "median": 0.004805000498890877,
+        "p95": 0.006131374990218319,
+        "max": 0.008737083000596613
+      },
+      "image_record_wall_s": {
+        "min": 0.000785291995271109,
+        "median": 0.0014115625017439015,
+        "p95": 0.003565499995602295,
+        "max": 0.007464333000825718
+      },
+      "pair_bind_wall_s": {
+        "min": 0.008726624990231358,
+        "median": 0.010209791500528809,
+        "p95": 0.012964416004251689,
+        "max": 0.025456832998315804
+      },
+      "perception_wall_s": {
+        "min": 0.012207332998514175,
+        "median": 0.016966458002571017,
+        "p95": 0.01992858298763167,
+        "max": 0.14191387499158736
+      }
+    },
+    "pair_binding": {
+      "r1": "r3",
+      "r3": "r1"
+    },
+    "coarse_ready_count": {
+      "r1": 0,
+      "r3": 0
+    },
+    "coarse_held_forward_count_by_role": {
+      "r1": 115,
+      "r3": 0
+    },
+    "issued_commands_by_physical_robot": {
+      "r1": {
+        "count": 120,
+        "kinds": {
+          "hold": 0,
+          "forward": 3,
+          "lateral": 107,
+          "turn": 10
+        },
+        "issued_interval_s": {
+          "min": 0.19999999999953388,
+          "median": 0.22000000000105047,
+          "p95": 0.3199999999992542,
+          "max": 0.42000000000200544
+        },
+        "lease_s": {
+          "min": 0.19999999999809148,
+          "median": 0.1999999999999993,
+          "p95": 0.20000000000000284,
+          "max": 0.20000000000000284
+        },
+        "positive_interlease_gap_total_s": 4.860000000076336,
+        "max_interlease_gap_s": 0.2200000000020026,
+        "observation_lease_violations": 0,
+        "nonpositive_lease_count": 0,
+        "clipped_below_0_2s_count": 0
+      },
+      "r3": {
+        "count": 120,
+        "kinds": {
+          "hold": 115,
+          "forward": 3,
+          "lateral": 2,
+          "turn": 0
+        },
+        "issued_interval_s": {
+          "min": 0.19999999999953388,
+          "median": 0.22000000000105047,
+          "p95": 0.3199999999992542,
+          "max": 0.42000000000200544
+        },
+        "lease_s": {
+          "min": 0.19999999999809148,
+          "median": 0.1999999999999993,
+          "p95": 0.20000000000000284,
+          "max": 0.20000000000000284
+        },
+        "positive_interlease_gap_total_s": 4.860000000076336,
+        "max_interlease_gap_s": 0.2200000000020026,
+        "observation_lease_violations": 0,
+        "nonpositive_lease_count": 0,
+        "clipped_below_0_2s_count": 0
+      }
+    },
+    "last_referee_record": {
+      "sim_time_s": 35.40025000007802
+    },
+    "robot_path_length_m": {
+      "r1": 0.12549153938422822,
+      "r2": 0.3105750885013849,
+      "r3": 0.057184669868360204
+    },
+    "cargo_displacement_m": {
+      "beam": 0.0,
+      "box": 0.0
+    },
+    "weld_steps": 0
+  },
+  "raw_files": {
+    "result.json": {
+      "bytes": 10605,
+      "sha256": "67af22f5e9e6ba77d7323e35241d45d147c0986d71a1c677d84d5459b8270acb",
+      "matches_manager_receipt": true
+    },
+    "issued-commands.json": {
+      "bytes": 87947,
+      "sha256": "f5c2962f14e4cf0f7054d8b467de0cc06106b1848dadf166d846404430068251",
+      "matches_manager_receipt": true
+    },
+    "referee-only.jsonl": {
+      "bytes": 448544,
+      "sha256": "ddaa72b9f0e2f84130f556c2048bf6ea9b54f9c428fb2ee5b5af973c1e809e10",
+      "matches_manager_receipt": true
+    },
+    "pair-decisions.json": {
+      "bytes": 678715,
+      "sha256": "53eae50fe90cd6107a5aebd5c313b8cb394842491a303e22efce7e284903ee04",
+      "matches_manager_receipt": true
+    },
+    "execution.mp4": {
+      "bytes": 361201,
+      "sha256": "dbe47605db6de992fcfba58048159d46ac1a79b36b73eb2c2f084e517821760b",
+      "matches_manager_receipt": true
+    },
+    "execution.frames.json": {
+      "bytes": 47114,
+      "sha256": "58f2b2c9e4d5e3c595da13cb9bd916546245b1594d345ddd401d2bb97ab1495f",
+      "matches_manager_receipt": true
+    },
+    "native-observer.json": {
+      "bytes": 77,
+      "sha256": "ebab3ead9458835a8decd1b4dd121e603d630ba5e3a44d52084278c4f2c3ece7",
+      "matches_manager_receipt": true
+    },
+    "evaluation-only.json": {
+      "bytes": 1595,
+      "sha256": "cb6d7b961cf8156acaff76dbe0aebbcc8afeb442251b80e7430f2a9c85be5710",
+      "matches_manager_receipt": true
+    }
+  },
+  "recording": {
+    "requested_fps": 10,
+    "written_frames": 342,
+    "captured_frames": 179,
+    "repeated_frames": 163,
+    "error": null,
+    "decoded_frames": 342,
+    "counts_consistent": true,
+    "observer": {
+      "mode": "isolated_latest_state",
+      "published": 892,
+      "busy_skips": 1
+    }
+  },
+  "tensorboard": {
+    "path": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단/v10",
+    "collection": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단",
+    "manifest_sha256": "20e0d725feba1ff266b06a15ca775debb1d8c8e74050b3b31760df605b675343",
+    "event_sha256": "19ecb673c45d8ff8eb39ea4459e2dc1cf81ad685dc7c4ceeae0b411a45bcbd2b",
+    "manifest_complete": true,
+    "source_matches": true,
+    "counts": {
+      "scalars": 12,
+      "texts": 4,
+      "images": 0
+    },
+    "scalars": {
+      "evaluation/reported_success": 0.0,
+      "claims/protocol_complete": 0.0,
+      "result/wall_s": 36.96208572387695,
+      "result/commands": 243.0,
+      "result/model_calls": 0.0
+    },
+    "video_id": "89afa5f06630739ceb77",
+    "video_source_sha256": "dbe47605db6de992fcfba58048159d46ac1a79b36b73eb2c2f084e517821760b",
+    "range_status": 206,
+    "content_range": "bytes 0-63/361201",
+    "range_bytes_match_source": true
+  },
+  "limits": [
+    "Motion SIM/wall rate measures physics playback during possible hold, not mission throughput.",
+    "The APPROACH budget failed before grasp/carry; no successful transport or fresh LLM E2E claim.",
+    "Observer recording is output only and repeated frames are not actor RGB.",
+    "This artifact audit did not inspect native GUI appearance."
+  ]
+}
