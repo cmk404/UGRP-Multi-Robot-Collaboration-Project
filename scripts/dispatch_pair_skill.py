@@ -139,7 +139,8 @@ class BoundPairSkill:
             self.drive_mecanum(commands)
             if all(d['ready'] for d in decisions.values()):self.stop_dwell();break
         else:raise RuntimeError('coarse RGB approach budget exhausted')
-        report.update(run_approach(self,self.stage_models,reacquire_on_settle=True,final_refinement_steps=40))
+        report.update(run_approach(self,self.stage_models,reacquire_on_settle=True,
+                                   final_refinement_steps=40,invalid_reobserve_budget=1))
         self.calls.append({'kind':'learned_approach','report':report})
         if not report['approach_ok']:raise RuntimeError('fine RGB alignment outside saved skill support')
         ready_count=0

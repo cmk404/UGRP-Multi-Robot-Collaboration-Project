@@ -82,7 +82,8 @@ def choose_alignment_refinement(decisions, confirming=False):
 
 
 def run_approach(scene, stage_models, *, condition='visual', straight_models=None,
-                 reacquire_on_settle=False, final_refinement_steps=0):
+                 reacquire_on_settle=False, final_refinement_steps=0,
+                 invalid_reobserve_budget=0):
     """Run the RGB-only wheel approach and return output-only audit data."""
     from harness.camera_varied_start_student import predict_stage
     from harness.camera_approach_student import predict_approach
@@ -95,6 +96,9 @@ def run_approach(scene, stage_models, *, condition='visual', straight_models=Non
     if (isinstance(final_refinement_steps, bool) or not isinstance(final_refinement_steps, int)
             or not 0 <= final_refinement_steps <= 40):
         raise ValueError('final refinement budget must be 0..40 slices')
+    if (isinstance(invalid_reobserve_budget, bool) or not isinstance(invalid_reobserve_budget, int)
+            or not 0 <= invalid_reobserve_budget <= 1):
+        raise ValueError('invalid RGB re-observation budget must be 0..1')
 
     result = {'approach_calls': [], 'stage_results': [], 'approach_ok': False}
     approach_start = scene.time()
@@ -102,7 +106,10 @@ def run_approach(scene, stage_models, *, condition='visual', straight_models=Non
     history = {r: [] for r in ROBOTS}
     for phase_index, stage in enumerate(phases):
         confirming, confirmations, consecutive, movements = False, 0, 0, 0
+        recovery_used, recovering, recovery_valid_streak = False, False, 0
         record = {'phase_index': phase_index, 'stage': stage, 'ok': False, 'confirmations': []}
+        if invalid_reobserve_budget:
+            record['recovery_confirmations'] = []
         result['stage_results'].append(record)
         for index in range(LIMITS[stage] + 5):
             frames = scene.capture(f'phase-{phase_index}-{index:03d}')
@@ -114,16 +121,48 @@ def run_approach(scene, stage_models, *, condition='visual', straight_models=Non
                     d = predict_approach(straight_models[r], frames[r]['own_bytes'], frames[r]['top_bytes'])
                     decisions[r] = {**d, 'command': d['forward']}
             control = choose_stage_actions(decisions, stage, confirming)
+            start_recovery = (not control['valid'] and invalid_reobserve_budget
+                              and not recovery_used and not recovering)
+            if recovering:
+                # Two new supported frames must agree while both robots hold.
+                # Their predictions are audited, but no motion is admitted.
+                control['commands'] = {r: dict(forward=0.,left=0.,turn=0.) for r in ROBOTS}
+                control['duration_s'] = .25
             for rid in ROBOTS:
                 action = {'kind': 'mecanum', **control['commands'][rid], 'duration_s': control['duration_s']}
                 result['approach_calls'].append({'phase_index': phase_index, 'stage': stage,
                     'index': index, 'robot_id': rid, 'frame_id': frames[rid]['frame_id'],
-                    'stationary': confirming, 'images': {'own': frames[rid]['own_rgb'], 'top': frames[rid]['shared_top_rgb']},
+                    'stationary': confirming, 'reobservation': bool(start_recovery or recovering),
+                    'images': {'own': frames[rid]['own_rgb'], 'top': frames[rid]['shared_top_rgb']},
                     'decision': decisions[rid], 'action': action, 'own_command_history': list(history[rid])})
                 history[rid].append(action)
             scene.drive_mecanum(control['commands'], control['duration_s'])
+            if start_recovery:
+                # After the .25s zero command, the ports remain commanded to
+                # stop. The recorded dropout recovered after a further 1.3s
+                # hold; advance only physics, without simulator-state input.
+                recovery_used, recovering = True, True
+                confirming, consecutive = False, 0
+                record['recovery_trigger'] = {'frame_ids': {r: frames[r]['frame_id'] for r in ROBOTS},
+                                              'stationary_command_s': control['duration_s'],
+                                              'additional_hold_s': 1.3}
+                scene.tick(1.3)
+                continue
+            if recovering:
+                record['recovery_confirmations'].append({
+                    'frame_ids': {r: frames[r]['frame_id'] for r in ROBOTS},
+                    'supported': {r: decisions[r]['ok'] is True for r in ROBOTS},
+                    'stationary': True})
+                if not control['valid']:
+                    record['reason'] = 'RGB outside learned stage support after bounded re-observation'
+                    break
+                recovery_valid_streak += 1
+                if recovery_valid_streak >= 2:
+                    recovering = False
+                continue
             if not control['valid']:
-                record['reason'] = 'RGB outside learned stage support'
+                record['reason'] = ('RGB outside learned stage support after bounded re-observation'
+                                    if invalid_reobserve_budget else 'RGB outside learned stage support')
                 break
             if confirming:
                 confirmations += 1

@@ -34,12 +34,13 @@
 - `dispatch-f1-local-contact-fine-v1`: 기존 `e099a4a` F1 성공의 참조 기록이다. 원래 실행기·접촉 설정과 원본 결과 해시에만 성공 근거가 적용되며 공통 adapter에서 선택하면 거절한다.
 - `rgb-adapter-legacy-v1`: PR #113 당시 공통 adapter 조건을 보존한 실험 버전이다. 기존 JSON과 소스 해시는 변경하지 않는다. 현재 코드로 실행할 수 없으며 당시 checkout에서 재현한다.
 - `rgb-standard-dispatch-v2`: 표준 장면 생성·초기화와 연결한 2026-09-23 이전 후보다. 당시 소스와 실행 조건을 보존한다.
-- `rgb-standard-dispatch-v3`: beam 접근 중 양쪽의 새 TOP RGB로 전진 간격을 제한하는 현재 후보이다. `legacy` 접촉 설정과 adapter의 명령 일정은 유지한다. 16px 제한은 새 제어 정책 설정이며 실제 접근·운반 완주 결과로 아직 검증되지 않았다. 과거 성공 프로필 `local_contact_fine`과도 별도 조건이다.
+- `rgb-standard-dispatch-v3`: beam 접근 중 양쪽의 새 TOP RGB로 전진 간격을 제한한 후보이다. 16px 제한으로 초기 전진 시작은 동기화됐지만, 2026-09-23 동일 계획의 headless 재실행 두 번 모두 미세 접근 중 일시적인 RGB 모델 지원 범위 이탈로 중단됐다. 실행 기록과 번들 JSON은 보존한다.
+- `rgb-standard-dispatch-v4`: 현재 실험 후보이다. v3의 접근 제어를 유지하며 dispatch 공동 접근에서만 미세 단계의 유효하지 않은 RGB 판정 1회에 양쪽 정지 명령 0.25초, 추가 정지 대기 1.3초, 양쪽 모두 유효한 새 영상 2회 확인을 허용한다. 지속 이탈은 중단한다. 다른 RGB 접근 경로의 기본 동작은 그대로 즉시 중단한다. 임계값·저장 모델·`legacy` 접촉 설정은 변경하지 않았으며 실제 접근·운반 완주 결과로 아직 검증되지 않았다. 과거 성공 프로필 `local_contact_fine`과도 별도 조건이다.
 
 새 backend 설정 schema는 `ugrp.rgb_skill_backend.v2`다. `execution_bundle_id`가 없거나 지원하지 않는 조합이면 거절한다. 과거 v1 설정은 당시 실행 기록으로 보존한다. 실행 전 정적 검사는 다음과 같다. 시뮬레이션·렌더링·외부 모델 호출은 하지 않는다.
 
 ```sh
-python3 -m harness.rgb_execution_bundle verify-current --id rgb-standard-dispatch-v3
+python3 -m harness.rgb_execution_bundle verify-current --id rgb-standard-dispatch-v4
 python3 -m harness.rgb_execution_bundle verify-registry --base origin/main
 ```
 

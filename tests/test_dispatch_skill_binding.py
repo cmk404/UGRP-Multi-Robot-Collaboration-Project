@@ -2,7 +2,7 @@ import copy
 import itertools
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 import cv2
 import numpy as np
 import pytest
@@ -115,6 +115,22 @@ def test_coarse_approach_rejects_missing_or_nonfinite_rgb_gap():
         coordinated_coarse_commands({'r1':valid})
     with pytest.raises(ValueError,match='finite RGB'):
         coordinated_coarse_commands({'r1':valid,'r3':{**valid,'image_error':[float('nan'),0.]}})
+
+
+def test_dispatch_pair_alone_opts_into_bounded_fine_rgb_reobservation():
+    bindings = SkillBindings(committed(), authored_map('open'))
+    io = SimpleNamespace(out=Path('/tmp/unused'), pair_drive=Mock(),
+                         last_frames={'r1': {'top_bytes': b'top'}})
+    skill = {'initialization_replay': [{'targets': {'r1': {1: 2000}, 'r3': {1: 2000}}}]}
+    pair = BoundPairSkill(io, bindings, skill, {}, {}, Path('/tmp/models'), b'')
+    ready = dict(ok=True, ready=True, forward=0., left=0., turn=0., image_error=[.06, 0.])
+    pair.coarse = SimpleNamespace(decide=Mock(return_value=ready))
+    pair.capture = Mock(return_value={})
+    with patch('scripts.dispatch_pair_skill.run_approach', return_value={'approach_ok': False}) as run:
+        with pytest.raises(RuntimeError, match='fine RGB alignment'):
+            pair.approach()
+    assert run.call_args.kwargs['invalid_reobserve_budget'] == 1
+    assert io.pair_drive.call_count == 2
 
 
 def test_no_silent_route_change_or_revoked_plan_execution():

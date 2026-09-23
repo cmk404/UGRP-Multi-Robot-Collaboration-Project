@@ -24,6 +24,9 @@ class FakeScene:
     def stop_dwell(self):
         self.sim_time += .25
 
+    def tick(self, seconds):
+        self.sim_time += seconds
+
     def evaluation_snapshot(self):
         return {'sim_time': self.sim_time}
 
@@ -112,6 +115,63 @@ class TaggedScene(FakeScene):
         for row in frames.values():
             row['own_bytes'] = label.encode()
         return frames
+
+
+class InvalidRGBRecoveryTests(unittest.TestCase):
+    good = dict(ok=True, ready=True, stationary_ready=True, precision='fine', command=0.)
+    invalid = dict(ok=False, ready=False, command=0., reason='rgb_pose_outside_support')
+
+    def models(self):
+        return {r: {axis: {'robot': r} for axis in ('yaw', 'lateral', 'forward')}
+                for r in ('r1', 'r3')}
+
+    @patch('scripts.run_camera_varied_start_student.PHASES', ('forward',))
+    @patch('harness.camera_varied_start_student.predict_stage')
+    def test_opt_in_reobserves_after_stationary_hold_and_two_supported_frames(self, predict):
+        predict.side_effect = lambda model, own, top: (
+            self.invalid if own == b'phase-0-000' and model['robot'] == 'r3' else self.good)
+        scene = TaggedScene()
+        result = run_approach(scene, self.models(), invalid_reobserve_budget=1)
+        self.assertTrue(result['approach_ok'])
+        stage = result['stage_results'][0]
+        self.assertEqual(stage['recovery_trigger']['stationary_command_s'], .25)
+        self.assertEqual(stage['recovery_trigger']['additional_hold_s'], 1.3)
+        self.assertEqual(len(stage['recovery_confirmations']), 2)
+        self.assertTrue(all(all(c['supported'].values()) and c['stationary']
+                            for c in stage['recovery_confirmations']))
+        self.assertNotEqual(stage['recovery_confirmations'][0]['frame_ids'],
+                            stage['recovery_confirmations'][1]['frame_ids'])
+        self.assertTrue(all(v == 0 for commands, _ in scene.drives[:3]
+                            for command in commands.values() for v in command.values()))
+        self.assertEqual([row['action']['duration_s'] for row in result['approach_calls'][:2]], [.25, .25])
+        self.assertAlmostEqual(result['approach_elapsed_sim_s'], 1.3 + 8*.25)
+
+    @patch('scripts.run_camera_varied_start_student.PHASES', ('forward',))
+    @patch('harness.camera_varied_start_student.predict_stage')
+    def test_persistent_invalid_rgb_stops_after_one_bounded_attempt(self, predict):
+        predict.side_effect = lambda model, own, top: (
+            self.invalid if model['robot'] == 'r3' else self.good)
+        scene = TaggedScene()
+        result = run_approach(scene, self.models(), invalid_reobserve_budget=1)
+        self.assertFalse(result['approach_ok'])
+        self.assertEqual(len(scene.drives), 2)
+        self.assertEqual(result['stage_results'][0]['reason'],
+                         'RGB outside learned stage support after bounded re-observation')
+        self.assertEqual(len(result['stage_results'][0]['recovery_confirmations']), 1)
+        self.assertTrue(all(v == 0 for commands, _ in scene.drives
+                            for command in commands.values() for v in command.values()))
+
+    @patch('scripts.run_camera_varied_start_student.PHASES', ('forward',))
+    @patch('harness.camera_varied_start_student.predict_stage')
+    def test_default_invalid_rgb_still_fails_immediately(self, predict):
+        predict.side_effect = lambda model, own, top: (
+            self.invalid if model['robot'] == 'r3' else self.good)
+        scene = TaggedScene()
+        result = run_approach(scene, self.models())
+        self.assertFalse(result['approach_ok'])
+        self.assertEqual(len(scene.drives), 1)
+        self.assertEqual(scene.drives[0][1], .25)
+        self.assertNotIn('recovery_trigger', result['stage_results'][0])
 
 
 class FinalAlignmentRefinementTests(unittest.TestCase):
