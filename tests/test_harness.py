@@ -1492,44 +1492,12 @@ class WebTests(unittest.TestCase):
             self._open("/")
         self.assertEqual(ctx.exception.code, 401)
 
-    def test_serves_chat_html(self):
-        with self._open("/", headers=self.auth) as res:
-            body = res.read().decode("utf-8")
-        self.assertIn("/api/turn", body)
-        self.assertIn("/api/team/chat", body)
-        self.assertIn('id="team-chat-form"', body)
-        self.assertIn("@R1", body)
-        self.assertIn("TEAM chat", body)
-        self.assertIn('id="team-cam-overview"', body)
-        self.assertIn("/api/camera", body)
-        self.assertIn("/api/camera", body)
-        self.assertIn("/api/observer/cctv_front_left/snapshot", body)
-        self.assertIn("/sim-scene.xml", (pathlib.Path(__file__).resolve().parents[1] / "harness" / "static" / "sim3d.js").read_text())
-        self.assertIn("MuJoCo 실제 RGB", body)
-        self.assertIn("/api/tools", body)
-        self.assertNotIn("/api/robot", body)
-        self.assertIn("MasterPi", body)
-        self.assertIn("<h1>UGRP</h1>", body)
-        self.assertIn("background: var(--send)", body)
-        self.assertIn("isComposing", body)
-        self.assertIn("stream: true", body)
-        self.assertIn("계획", body)
-        self.assertIn("중지", body)
-        self.assertIn("/api/status", body)
-        self.assertIn("/api/real-traces", body)
-        self.assertIn("최근 REAL 실행 분석", body)
-        self.assertIn("/api/cancel", body)
-        self.assertIn("/api/sim/reset", body)
-        self.assertIn("/api/sim/wake", body)
-        self.assertIn("id=\"sim-wake\"", body)
-        self.assertIn("SIM 켜기", body)
-        self.assertIn("id=\"sim-seed\"", body)
-        self.assertIn("랜덤", body)
-        self.assertIn("async function loadTools", body)
-        self.assertIn("지금은 대화만", body)
-        self.assertNotIn("getUserMedia", body)
-        self.assertNotIn("맥 웹캠은 쓰지 않습니다", body)
-        self.assertNotIn("장면을 보고, 맞는지 말한 다음", body)
+    def test_legacy_frontend_routes_are_unavailable(self):
+        for path in ("/", "/index.html", "/sim3d.js", "/three.min.js", "/sim-scene.xml", "/offline/robot.jpg"):
+            with self.subTest(path=path):
+                with self.assertRaises(self.urllib_error.HTTPError) as ctx:
+                    self._open(path, headers=self.auth)
+                self.assertEqual(ctx.exception.code, 404)
 
     def test_real_trace_api_lists_details_and_serves_only_run_images(self):
         import os
@@ -2142,7 +2110,7 @@ class RobotPanelTests(unittest.TestCase):
         self.assertEqual(body["arm"][0]["pulse"], 2000)
 
     def test_drive_keeps_last_command(self):
-        from dashboard.server import CommandResult
+        from harness.robot_commands import CommandResult
         from harness.robot import RobotPanel
 
         calls = []
@@ -2159,6 +2127,48 @@ class RobotPanelTests(unittest.TestCase):
         self.assertEqual(calls[0][0][0], "ssh")
         self.assertIn("drive", calls[0][0])
         self.assertIn("forward", calls[0][0])
+
+    def test_invalid_commands_never_reach_robot(self):
+        from harness.robot import RobotPanel
+
+        class Runner:
+            def run(self, argv, timeout):
+                raise AssertionError(f"unexpected ssh {argv}")
+
+        panel = RobotPanel(runner=Runner(), ssh_args=("ugrp1", []))
+        for payload in (
+            {"direction": "forward", "speed": 30, "duration": 0.3},
+            {"direction": "forward", "speed": True, "duration": 0.3},
+            {"direction": "forward", "speed": 35, "duration": float("nan")},
+            {"direction": "forward", "speed": 35, "duration": 2.01},
+        ):
+            with self.subTest(payload=payload), self.assertRaises(ValueError):
+                panel.drive(payload)
+        for payload in (
+            {"servo": 2, "pulse": 1500, "duration": 0.5},
+            {"servo": 1, "pulse": 2501, "duration": 0.5},
+            {"servo": 1, "pulse": 1500, "duration": float("inf")},
+            {"servo": 1, "pulse": 1500, "duration": True},
+        ):
+            with self.subTest(payload=payload), self.assertRaises(ValueError):
+                panel.arm(payload)
+
+    def test_robot_command_bounds_and_subprocess_seam(self):
+        from unittest.mock import patch
+
+        from harness.robot_commands import CommandRunner, validate_drive_payload, validate_servo_payload
+
+        self.assertEqual(validate_drive_payload({"direction": "forward", "speed": 31, "duration": 0.05}), ("forward", 31, 0.05))
+        self.assertEqual(validate_drive_payload({"direction": "rotate-right", "speed": 40, "duration": 2}), ("rotate-right", 40, 2.0))
+        self.assertEqual(validate_servo_payload({"servo": 1, "pulse": 500, "duration": 0.1}), (1, 500, 0.1))
+        self.assertEqual(validate_servo_payload({"servo": 6, "pulse": 2500, "duration": 3}), (6, 2500, 3.0))
+        with patch("harness.robot_commands.subprocess.run") as run:
+            run.return_value.returncode = 0
+            run.return_value.stdout = "{}"
+            run.return_value.stderr = ""
+            CommandRunner().run(["ssh", "ugrp1", "probe"], timeout=1.0)
+        self.assertEqual(run.call_args.args, (["ssh", "ugrp1", "probe"],))
+        self.assertFalse(run.call_args.kwargs["shell"])
 
 
 class TalkTests(unittest.TestCase):

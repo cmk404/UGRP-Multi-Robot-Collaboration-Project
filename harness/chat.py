@@ -1,8 +1,7 @@
-"""Research chat window over the allowlisted skill loop.
+"""Research turn handling over the allowlisted skill loop.
 
 The model never writes Python. Each user goal runs run_loop until
-final, with optional plan / tool / wait / look steps. Launch with
---chat; --execute is a process flag.
+final, with optional plan / tool / wait / look steps.
 """
 
 from __future__ import annotations

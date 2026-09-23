@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """실행 가능한 로봇 행동.
 
-채팅 창이 호출할 수 있는 Python 도구는 이 파일의 ACTIONS 가 전부입니다.
+허용 목록 기반 로봇 실행기가 호출할 수 있는 Python 도구는 이 파일의 ACTIONS 가 전부입니다.
 파일을 통째로 바꾸거나 `--actions 다른파일.py` 로 바꿔 끼우면 됩니다.
 
 기본 구현은 scripts/red_block/<이름>.py 를 그대로 호출합니다.
 다른 로봇/다른 일을 쓰려면 ACTIONS 와 run() 만 맞추면 됩니다.
 
     python3 scripts/robot_actions.py approach
-    python3 -m harness --chat --actions scripts/robot_actions.py
+    python3 -m harness '빨간 블록을 찾아' --actions scripts/robot_actions.py
 """
 
 from __future__ import annotations
@@ -34,7 +34,7 @@ def cancel_current() -> bool:
 
     The fresh skill Python process, its SSH client, and helper children inherit
     one local process group. The remote watchdog handles SSH hangup/termination
-    by stopping its own skill process group, so cancelling a web turn cannot
+    by stopping its own skill process group, so cancelling a turn cannot
     leave the MasterPi action running independently.
     """
     with _CURRENT_PROCESS_LOCK:

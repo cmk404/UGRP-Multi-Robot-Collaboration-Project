@@ -119,7 +119,7 @@ LLM 응답 대기를 포함한 실제 경과 시간을 따로 보고한다. 녹�
   source hash, 실패 포함 분모, 원문·송수신·실행·토큰 로그를 보존한다.
   공통 초기 센서 준비 시간과 실험 실행 시간을 따로 기록한다.
 - TEAM의 `/api/warehouse/decision`과 실험 실행 경로에도 연결했다.
-  `scripts/serve_sim_coworker.sh`의 기본 architecture는 coela이다.
+  당시 `scripts/serve_sim_coworker.sh`의 기본 architecture는 coela였다. 구형 웹 UI 런처는 2026-09-23 퇴역했다.
   `UGRP_WAREHOUSE_MODE`의 llm_no_comm/llm_structured_comm/llm_peer_comm이 A/B/C에 대응한다.
   `UGRP_WAREHOUSE_ARCHITECTURE=legacy`로 이전 경로를 명시적으로 사용할 수 있다.
   새 remote worker contract는 `masterpi-v2-coela-local-view-v8`이다.
