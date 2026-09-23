@@ -18,3 +18,5 @@ TensorBoard의 현재 generic export는 이 JSONL을 Text 카드로 변환하지
   --audit outputs/communication-observer/saved-dialogue-native-smoke.json \
   --duration-s 10
 ```
+
+만약 MuJoCo 창에서 패널이 보이지 않으면 새 `--audit` 경로로 `--diagnostic --duration-s 30`을 실행한다. 이 모드는 관찰창 viewport를 기록하고 ASCII 텍스트 및 밝은 중앙 RGB 표식을 함께 요청하며, 정지 복제 모델에만 full viewer sync를 수행한다. 표식이 실제 화면에 나타나는지는 창 캡처로 별도 확인해야 한다.

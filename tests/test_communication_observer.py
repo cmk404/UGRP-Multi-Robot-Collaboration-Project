@@ -15,6 +15,7 @@ from harness.communication_observer import CommunicationObserver, read_latest, L
 from harness.three_robot_plan import ROBOTS, fixture_plan
 from harness.communication_overlay import ObserverDialoguePanel, render_dialogue_overlay
 from scripts import dispatch_native_process, dispatch_native_view
+from scripts import smoke_communication_overlay
 from scripts.smoke_communication_overlay import saved_dialogue
 from scripts.three_robot_runtime import ThreeRobotRuntime
 
@@ -232,3 +233,50 @@ def test_saved_llm_smoke_labels_replay_and_rejects_fixture(tmp_path):
     source.write_text(json.dumps(saved), encoding='utf-8')
     with pytest.raises(ValueError, match='non-fixture'):
         saved_dialogue(source)
+
+
+def test_saved_dialogue_diagnostic_requests_center_image_and_ascii_text(monkeypatch, tmp_path):
+    source = tmp_path/'team.json'
+    reply = {'request_id': 'real-r1-plan-0', 'message': '저장된 대화'}
+    source.write_text(json.dumps({'mode': 'llm',
+        'calls': [{'request_id': reply['request_id'], 'model': 'saved-model', 'reply': reply}],
+        'rounds': [{'turn': 0, 'replies': {'r1': reply}}]}), encoding='utf-8')
+    class Viewer:
+        viewport = SimpleNamespace(left=0, bottom=0, width=1280, height=800)
+        def __init__(self):
+            self.images = self.texts = None
+            self.sync_modes = []
+        def __enter__(self):
+            return self
+        def __exit__(self, *args):
+            pass
+        def is_running(self):
+            return False
+        def sync(self, *, state_only):
+            self.sync_modes.append(state_only)
+        def set_images(self, images):
+            self.images = images
+        def set_texts(self, texts):
+            self.texts = texts
+        def _sim(self):
+            return None
+    viewer = Viewer()
+    fake = ModuleType('mujoco')
+    fake.__path__ = []
+    fake.MjModel = SimpleNamespace(from_xml_string=lambda xml: object())
+    fake.MjData = lambda model: object()
+    fake.MjrRect = lambda *args: args
+    fake_viewer = ModuleType('mujoco.viewer')
+    fake_viewer.launch_passive = lambda *args, **kwargs: viewer
+    fake.viewer = fake_viewer
+    monkeypatch.setitem(sys.modules, 'mujoco', fake)
+    monkeypatch.setitem(sys.modules, 'mujoco.viewer', fake_viewer)
+    audit = tmp_path/'audit.json'
+    assert smoke_communication_overlay.main(['--source', str(source), '--audit', str(audit),
+                                             '--diagnostic', '--duration-s', '1']) == 0
+    assert viewer.sync_modes == [False]
+    assert len(viewer.images) == 2
+    assert viewer.images[1][0] == (490, 355, 300, 90)
+    assert viewer.images[1][1][0, 0].tolist() == [255, 0, 220]
+    assert 'UGRP OVERLAY DIAGNOSTIC' in viewer.texts
+    assert json.loads(audit.read_text())['viewer_viewport']['width'] == 1280
