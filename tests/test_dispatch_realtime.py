@@ -1,5 +1,6 @@
 """Bounded dispatch RGB snapshots and paired command admission."""
-from concurrent.futures import Future
+from concurrent.futures import Future, ThreadPoolExecutor
+import threading
 from types import SimpleNamespace
 from unittest.mock import Mock
 
@@ -10,6 +11,8 @@ from scripts.research_dispatch_scene import DispatchScene
 from scripts.run_dispatch_skills import SkillScene
 from scripts.dispatch_pair_skill import BoundPairSkill
 from scripts.dispatch_native_view import HeadlessPacer
+from scripts.camera_approach_scene import ApproachScene
+from scripts.run_camera_varied_start_student import run_approach
 
 
 def test_async_capture_binds_all_actor_cameras_to_one_snapshot(tmp_path):
@@ -131,3 +134,93 @@ def test_headless_pacer_has_no_viewer_dependency():
     pacer.tick();pacer.close()
     with pytest.raises(ValueError,match='positive finite'):
         HeadlessPacer(scene,realtime_factor=0.)
+
+
+def test_pair_stage_reobserves_after_delayed_rgb_without_issuing_motion():
+    clock=[0.];owner_ticks=[0];calls=[0]
+    first=Future()
+    def frames(frame_id,observed):
+        return {r:{'frame_id':frame_id,'observed_at_s':observed}
+                for r in ('r1','r3')}
+    def capture_async(*_args,**_kwargs):
+        calls[0]+=1
+        if calls[0]==1:return first
+        fresh=Future();fresh.set_result(frames(2,clock[0]));return fresh
+    def await_visual(future):
+        while not future.done():
+            clock[0]+=.02;owner_ticks[0]+=1
+            if clock[0]>=.7:first.set_result(frames(1,0.))
+        return future.result()
+    ports={r:SimpleNamespace(hold=Mock()) for r in ('r1','r3')}
+    io=SimpleNamespace(realtime_control=True,capture_async=capture_async,
+        await_visual=await_visual,compute_visual=lambda fn:fn(),
+        realtime_stats={'pair_backpressure':0,'pair_stage_stale_rgb':0,'pair_stage_samples':0},
+        ports=ports,time=lambda:clock[0])
+    pair=BoundPairSkill.__new__(BoundPairSkill)
+    pair.io=io;pair.bindings=SimpleNamespace(pair={'r1':'r1','r3':'r3'})
+    pair.transport_started=False;pair.phase='APPROACH';pair.count=0;pair.calls=[]
+    pair._bind_capture=lambda captured,_count:captured
+    observed,decision=pair.observe_and_compute('coarse',lambda frame:frame['r1']['frame_id'])
+    assert owner_ticks[0]>0 and calls[0]==2
+    assert decision==observed['r1']['frame_id']==2
+    assert io.realtime_stats['pair_stage_stale_rgb']==1
+    assert all(port.hold.call_count==1 for port in ports.values())
+
+
+def test_visual_compute_pumps_owner_and_rejects_recursive_wait():
+    gate=threading.Event();progress=[0]
+    scene=SkillScene.__new__(SkillScene)
+    scene.realtime_control=True;scene._in_physics=False
+    scene.step=lambda _seconds:(progress.__setitem__(0,progress[0]+1),gate.set())
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        scene._decision_workers=pool
+        assert scene.compute_visual(lambda:(gate.wait(2),'ready')[1])=='ready'
+    assert progress[0]>0
+    scene._in_physics=True
+    done=Future();done.set_result('ready')
+    with pytest.raises(RuntimeError,match='inside physics callback'):
+        scene.await_visual(done)
+
+
+def test_stage_runner_uses_optional_observation_compute_hook(monkeypatch):
+    monkeypatch.setattr('harness.camera_varied_start_student.predict_stage',
+        lambda *_args:dict(ok=True,ready=True,stationary_ready=True,
+                           precision='fine',command=0.))
+    frames={r:{'own_bytes':b'own','top_bytes':b'top','frame_id':1,
+               'own_rgb':'own.jpg','shared_top_rgb':'top.jpg'} for r in ('r1','r3')}
+    labels=[]
+    scene=SimpleNamespace(time=lambda:0.,capture=Mock(side_effect=AssertionError('sync capture')),
+        drive_mecanum=Mock(),stop_dwell=Mock(),tick=Mock(),
+        evaluation_snapshot=lambda:{'source':'referee_only'})
+    scene.observe_and_compute=lambda tag,predict:(labels.append(tag) or frames,predict(frames))
+    models={r:{stage:{} for stage in ('yaw','lateral','forward')} for r in ('r1','r3')}
+    report=run_approach(scene,models)
+    assert report['approach_ok']
+    assert any(tag.startswith('phase-') for tag in labels)
+    assert labels[-1]=='final-alignment-1'
+    scene.capture.assert_not_called()
+
+
+def test_inherited_grasp_uses_optional_observation_compute_hook(tmp_path,monkeypatch):
+    (tmp_path/'student-skill.json').write_text('{}')
+    monkeypatch.setattr('scripts.run_camera_pair_transport.evaluate_grasp_samples',
+                        lambda _samples:{'grasp_success':False})
+    frames={r:{'own_bytes':b'own','top_bytes':b'top',
+               'own_rgb':'own.jpg','shared_top_rgb':'top.jpg'} for r in ('r1','r3')}
+    labels=[]
+    fake=SimpleNamespace(
+        skill={'initialization_replay':[{}],'models':{r:{'sha256':'sha'} for r in ('r1','r3')},
+               'close_pulses':{'r1':1500,'r3':1500},'close_duration_s':.5,
+               'close_settle_s':.1,'lift_delta_pulses':{r:{} for r in ('r1','r3')},
+               'lift_duration_s':.4,'lift_settle_s':.1,'hold_s':.1},
+        models_root=tmp_path,commands={r:{1:1500,3:1500,4:1500,5:1500}
+                                       for r in ('r1','r3')},
+        evaluation_samples=[],capture=Mock(side_effect=AssertionError('sync capture')),
+        replay=Mock(),tick=Mock(),phase='GRASP')
+    fake.observe_and_compute=lambda tag,predict:(labels.append(tag) or frames,predict(frames))
+    models={r:{'channels':[1]} for r in ('r1','r3')}
+    decisions=ApproachScene.finish_grasp(fake,
+        lambda *_args,**_kwargs:{'delta_pulses':[0]},models,rounds=1)
+    assert len(decisions)==2
+    assert labels==['grasp-000','grasp-post-recovery']
+    fake.capture.assert_not_called()
