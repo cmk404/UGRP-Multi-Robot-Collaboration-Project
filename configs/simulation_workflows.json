@@ -210,6 +210,22 @@
       "output_kind": "directory"
     },
     {
+      "id": "act-map-suite",
+      "purpose": "ACT 지도 suite 생성·분할·정적 검토",
+      "entry": "scripts/prepare_act_map_suite.py",
+      "docs": "docs/act_map_suite.md",
+      "requires": "explicit committed suite spec; static map/geometry preview only, no teacher, training or transport result",
+      "version": "1.0.0",
+      "runner": "scripts.prepare_act_map_suite",
+      "output_flag": "--output",
+      "side_effect": "static_simulation_preview",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--spec"
+      ],
+      "output_kind": "directory"
+    },
+    {
       "id": "act-training",
       "purpose": "운반 학습",
       "entry": "scripts/train_carry_act.py",
@@ -222,6 +238,27 @@
       "adapter": "managed_legacy_cli",
       "required_inputs": [
         "--dataset"
+      ],
+      "output_kind": "directory"
+    },
+    {
+      "id": "act-input-training",
+      "purpose": "운반 입력·이력·종료 목적 함수 ACT 학습",
+      "entry": "scripts/train_carry_input_act.py",
+      "docs": "docs/research_controller_validation.md",
+      "requires": "verified teacher dataset and pinned ACT dependencies; explicit size/history/steps/device/seed and a fresh output; managed resume is not supported",
+      "version": "1.0.0",
+      "runner": "scripts.train_carry_input_act",
+      "output_flag": "--out",
+      "side_effect": "training",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--dataset",
+        "--size",
+        "--history",
+        "--steps",
+        "--device",
+        "--seed"
       ],
       "output_kind": "directory"
     },

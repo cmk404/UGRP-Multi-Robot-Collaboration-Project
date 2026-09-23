@@ -344,6 +344,7 @@ def main(argv=None):
     execute.add_argument("--video-camera", default="cctv_warehouse")
     execute.add_argument("--video-fps", type=int, choices=range(1, 31), default=10)
     execute.add_argument("--camera", default="free", help="native view: free, cctv_top, cctv_warehouse, r1__robot_cam, ...")
+    execute.add_argument("--scene", help="select a registered scene for this run without editing the config")
     execute.add_argument("--controller", action="append", default=[], metavar="ROBOT=FILE.py:FACTORY",
                          help="replace/add a robot controller; paths relative to the config directory")
     execute.add_argument("--scene-builder", help="replace scene builder, relative to the config directory")
@@ -362,7 +363,6 @@ def main(argv=None):
     console.add_argument("--max-rounds", type=int, default=12)
     console.add_argument("--task", help="initial manual command or natural-language goal")
     console.add_argument("--exit-after-task", action="store_true", help="finite single-task invocation, no stdin reader")
-    console.add_argument("--scene", help="select any scene from scenes without editing JSON")
     args = parser.parse_args(argv)
     try:
         if args.command in ("layouts", "scenes"):
@@ -433,10 +433,10 @@ def main(argv=None):
                 raise ValueError("model-timeout: 1..120 seconds")
             if args.exit_after_task and not args.task:
                 raise ValueError("--exit-after-task requires --task")
-            if args.scene:
-                config["scene"]["layout"] = args.scene
             if args.sim_seconds is None:
                 config["run"]["sim_seconds"] = 1800
+        if args.scene:
+            config["scene"]["layout"] = args.scene
         for override in args.controller:
             if "=" not in override:
                 raise ValueError("--controller requires ROBOT=FILE.py:FACTORY")
