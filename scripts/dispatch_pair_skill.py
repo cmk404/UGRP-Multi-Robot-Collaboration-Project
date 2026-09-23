@@ -188,14 +188,37 @@ class BoundPairSkill:
         self.last_capture=mapped
         return mapped
 
-    def issue_mecanum_bounded(self,commands,duration_s=.2):
+    def issue_mecanum_bounded(self,commands,duration_s=.2,*,observed_at_s=None):
+        if getattr(self.io,'realtime_control',False):
+            now=self.time()
+            if observed_at_s is None or not math.isfinite(float(observed_at_s)) or float(observed_at_s)>now+1e-9:
+                self._hold_pair()
+                raise ValueError('bounded pair action requires a valid RGB capture time')
+            duration_s=min(duration_s,.25,float(observed_at_s)+.6-now)
+            if duration_s<=0:
+                self._hold_pair()
+                self.calls.append({'kind':'bounded_pair_stale_rgb','stage':self.phase,
+                                   'observed_at_s':float(observed_at_s),'received_at_s':now})
+                return 0.
         if self.transport_started and self.carried_beam.previous is not None:
             self.bindings.reserve_beam_apron(self.carried_beam.previous)
         self.io.pair_issue_bounded(
             {self.bindings.pair[r]:dict(kind='mecanum',**c,duration_s=duration_s)
              for r,c in commands.items()},duration_s,self.phase)
+        return duration_s
 
     def drive_mecanum(self,commands,duration_s=.2):
+        moving=any(abs(c[k])>1e-9 for c in commands.values()
+                   for k in ('forward','left','turn'))
+        if (getattr(self.io,'realtime_control',False) and not self.bindings.cluttered
+                and not self.transport_started and self.phase=='APPROACH' and moving):
+            # A short lease continues while the next RGB batch is rendered and
+            # interpreted. The owner advances only enough to start that batch.
+            frame=self.last_capture['r1'] if self.last_capture else None
+            observed=frame.get('observed_at_s') if frame else None
+            self.issue_mecanum_bounded(commands,duration_s,observed_at_s=observed)
+            self.tick(.02)
+            return
         if self.transport_started and self.carried_beam.previous is not None:
             self.bindings.reserve_beam_apron(self.carried_beam.previous)
         self.io.pair_drive({self.bindings.pair[r]:dict(kind='mecanum',**c,duration_s=duration_s)
@@ -373,14 +396,16 @@ class BoundPairSkill:
                         raise RuntimeError('existing pair carry guard stopped: '+control['mode'])
                     if control['done']:
                         self.issue_mecanum_bounded(
-                            {r:dict(forward=0.,left=0.,turn=0.) for r in ROBOTS},.2)
+                            {r:dict(forward=0.,left=0.,turn=0.) for r in ROBOTS},.2,
+                            observed_at_s=observed)
                         return
                     moving=control['mode']=='CRUISE' and control['valid']
                     commands={r:dict(
                         forward=(math.copysign(v,motion['forward']) if moving and motion['forward'] else v),
                         left=motion['left'] if moving else 0.,turn=0.)
                         for r,v in control['forwards'].items()}
-                    self.issue_mecanum_bounded(commands,control['duration_s'])
+                    self.issue_mecanum_bounded(commands,control['duration_s'],
+                                               observed_at_s=observed)
                     # At least one physical control interval precedes the next
                     # image. The remaining lease may overlap RGB processing.
                     self.tick(.05)

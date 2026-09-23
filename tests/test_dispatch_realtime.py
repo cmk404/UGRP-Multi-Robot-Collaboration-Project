@@ -89,6 +89,7 @@ def test_delayed_pair_rgb_advances_independent_physics_then_holds_both(monkeypat
         if clock[0]>=.7 and not pending.done():pending.set_result(frames)
     ports={r:SimpleNamespace(hold=Mock()) for r in ('r1','r3')}
     io=SimpleNamespace(time=lambda:clock[0],step=step,ports=ports,
+        realtime_control=True,
         capture_async=Mock(return_value=pending),
         pair_issue_bounded=lambda commands,duration,stage:issued.append(commands),
         realtime_stats={'pair_backpressure':0,'pair_decisions':0,'max_decision_age_s':0.})
@@ -109,10 +110,53 @@ def test_delayed_pair_rgb_advances_independent_physics_then_holds_both(monkeypat
     assert pair.realtime_open_capture is True
     assert solo_ticks[0]>0  # shared physics continued during pair RGB delay
     assert io.realtime_stats['pair_decisions']==1
-    assert pair.calls[-1]['decision_age_s']>.6
-    assert issued and all(command['forward']==command['left']==command['turn']==0.
-                          for command in issued[-1].values())
-    assert all(port.hold.call_count==1 for port in ports.values())
+    assert next(row for row in pair.calls if row['kind']=='carry')['decision_age_s']>.6
+    assert pair.calls[-1]['kind']=='bounded_pair_stale_rgb'
+    assert not issued  # Even a zero lease is replaced by an immediate pair hold.
+    assert all(port.hold.call_count>=1 for port in ports.values())
+
+
+def test_moving_open_approach_overlaps_rgb_with_bounded_lease_and_caps_ttl():
+    clock=[.5];issued=[]
+    ports={r:SimpleNamespace(hold=Mock()) for r in ('r1','r3')}
+    def step(seconds):clock[0]+=seconds
+    io=SimpleNamespace(realtime_control=True,time=lambda:clock[0],step=step,
+        ports=ports,pair_drive=Mock(),
+        pair_issue_bounded=lambda commands,duration,stage:issued.append(
+            (commands,duration,stage,clock[0])))
+    pair=BoundPairSkill.__new__(BoundPairSkill)
+    pair.io=io;pair.bindings=SimpleNamespace(cluttered=False,
+        pair={'r1':'r1','r3':'r3'},reserve_beam_apron=Mock())
+    pair.phase='APPROACH';pair.transport_started=False;pair.calls=[]
+    pair.carried_beam=SimpleNamespace(previous=None)
+    pair.last_capture={'r1':{'observed_at_s':0.}}
+    moving={'r1':{'forward':0.,'left':-.03,'turn':0.},
+            'r3':{'forward':0.,'left':0.,'turn':0.}}
+    pair.drive_mecanum(moving,.2)
+    commands,duration,stage,issued_at=issued[0]
+    assert stage=='APPROACH' and duration==pytest.approx(.1)
+    assert issued_at+duration==pytest.approx(.6)
+    assert all(action['duration_s']==duration for action in commands.values())
+    assert clock[0]==pytest.approx(.52)  # The rest of the lease can overlap RGB.
+    io.pair_drive.assert_not_called()
+
+    pair.drive_mecanum({r:{'forward':0.,'left':0.,'turn':0.} for r in ('r1','r3')},.25)
+    io.pair_drive.assert_called_once()  # Stationary confirmation keeps full dwell.
+    clock[0]=.61
+    pair.drive_mecanum(moving,.2)
+    assert len(issued)==1
+    assert all(port.hold.called for port in ports.values())
+
+
+def test_cluttered_approach_keeps_full_synchronous_drive():
+    io=SimpleNamespace(realtime_control=True,pair_drive=Mock())
+    pair=BoundPairSkill.__new__(BoundPairSkill)
+    pair.io=io;pair.bindings=SimpleNamespace(cluttered=True,pair={'r1':'r1','r3':'r3'})
+    pair.transport_started=False;pair.phase='APPROACH'
+    pair.carried_beam=SimpleNamespace(previous=None)
+    moving={r:{'forward':.1,'left':0.,'turn':0.} for r in ('r1','r3')}
+    pair.drive_mecanum(moving,.2)
+    io.pair_drive.assert_called_once()
 
 
 def test_open_carry_release_and_confirmation_keep_async_capture(monkeypatch):

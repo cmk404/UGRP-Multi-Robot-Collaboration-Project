@@ -6,4 +6,6 @@
 
 원본은 기본 checkout의 `outputs/simulation-realtime-20260923/{profile-baseline,native-v8}`에 보존한다. 기존 TensorBoard 서버의 `0923-실시간-진단/{계측,v8}`에 두 실패를 별도 등록했으며 이벤트 값 로딩과 MP4 Range 206 응답을 검증했다. 새 후보는 접근·파지의 비동기 관측, 동일 JPEG 분할 재사용, 지연 원인 분리 및 독립 관찰 창의 Mac launcher를 통합한다. 완주 결과는 별도 결과 기록으로 추가한다.
 
+v9(`5f14753`)의 native 실행에서는 motion 구간 56.480 SIM초/56.482 wall초(1.000×)를 기록했다. 모든 pair 영상은 0.6초 제한 이내였지만 초기 접근 120회 한도를 소진했고 화물은 이동하지 않았다. `independent-audit-v9.json`과 `v9-pair-stage-latency-audit.json`에 원본 해시 및 수치를 기록한다. 0.2초 명령마다 관측 중 중앙값 0.26초의 명령 공백이 있었다. v10은 다음 RGB 처리를 이동 명령과 겹치고 정지 확인의 전체 dwell을 유지하는 후보다. 기존 성공 v7과의 완주 시간 비교는 성공 재실행이 생긴 뒤에만 계산한다.
+
 단위 검사·동일 픽셀/분할 후보 검사는 실제 운반 성공을 의미하지 않는다. headless·native·녹화와 공동 운반·ACT·새 지도 성공을 각각 구분한다.
