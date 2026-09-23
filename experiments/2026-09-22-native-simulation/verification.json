@@ -1,0 +1,104 @@
+{
+  "schema": 1,
+  "execution_source_sha": "535ba3c26dcdf986cd71d760fcde86ddbae7be69",
+  "scope": "Simulation infrastructure, not autonomous task evaluation",
+  "unit_tests": {
+    "passed": 30,
+    "subtests_passed": 27
+  },
+  "checks": {
+    "four_layouts_mac_linux": true,
+    "robot_spawn_and_cargo_subset": true,
+    "same_model_reset_reproduction": true,
+    "own_and_top_rgb_boundary": true,
+    "camera_fov_preserved": true,
+    "weld_off": true,
+    "native_mac_finite_exit": true,
+    "native_linux_xvfb_three_exits": true,
+    "mac_headless_capture": true,
+    "manual_native_ui_controls": false
+  },
+  "manual_ui_limitation": "CUA native app lookup org.mujoco.mjpython timed out. No manual keyboard/mouse/screenshot success claim.",
+  "ci_evidence": "https://github.com/cmk404/UGRP-Multi-Robot-Collaboration-Project/actions/runs/35695487261",
+  "sources": [
+    {
+      "label": "01-api-initial",
+      "raw_result": "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/native-api-v1/result.json",
+      "sha256": "cfb926f1154ffde52011fc5cc616ac9ce14492981be291a121591b160bb35186",
+      "source_sha": "5938f1454cfae558c0c985778bef10b5abb9f953"
+    },
+    {
+      "label": "02-window-paused",
+      "raw_result": "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/native-window-v1/result.json",
+      "sha256": "988149d5f11b8ad330c978a9a5682f763a49278dc92888ea7d94482a0dde5ad0",
+      "source_sha": "5938f1454cfae558c0c985778bef10b5abb9f953"
+    },
+    {
+      "label": "03-window-initial",
+      "raw_result": "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/native-window-v2/result.json",
+      "sha256": "be745a11b0dfdca7f8e809b7a7140e650326dd9aa325f149c6d26ceee2a303ec",
+      "source_sha": "5938f1454cfae558c0c985778bef10b5abb9f953"
+    },
+    {
+      "label": "04-headless-initial",
+      "raw_result": "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/native-headless-v1/result.json",
+      "sha256": "e7341679d9694ff65a5973d2ef41ee73c08efe0d083e2ad37dcc2fa89e22d10c",
+      "source_sha": "5938f1454cfae558c0c985778bef10b5abb9f953"
+    },
+    {
+      "label": "05-window-inspection",
+      "raw_result": "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/native-window-v3/result.json",
+      "sha256": "c29840c3307293455dd6405033edecd0a9f35c5f776e6de1e8d238d96f6d1c11",
+      "source_sha": "5938f1454cfae558c0c985778bef10b5abb9f953"
+    },
+    {
+      "label": "06-api-final",
+      "raw_result": "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/native-api-v2/result.json",
+      "sha256": "241f1fb41ab9fe81369bfd539df852b99728e6f373f13387f6883be9a8cb9bfb",
+      "source_sha": "535ba3c26dcdf986cd71d760fcde86ddbae7be69"
+    },
+    {
+      "label": "07-window-final",
+      "raw_result": "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/native-window-v4/result.json",
+      "sha256": "2ec35cdad766fce4badb945c95e2b22de0fa16d77c180f98103a6b6b0bdffcc1",
+      "source_sha": "535ba3c26dcdf986cd71d760fcde86ddbae7be69"
+    },
+    {
+      "label": "08-headless-final",
+      "raw_result": "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/native-headless-v2/result.json",
+      "sha256": "7f0cb82756670a84ac2d4b31132b0e9a5e7520702d54f1a2703e2306e71dc7e7",
+      "source_sha": "535ba3c26dcdf986cd71d760fcde86ddbae7be69"
+    },
+    {
+      "label": "09-linux-close-failed",
+      "raw_result": "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/native-ci-failed/native/result.json",
+      "sha256": "3864fd1ebe6a74c33fa9f823f4877c98a9b13a56f4a41c8e41c5b28e0c049cea",
+      "source_sha": "aa0c63c0b59f823bbb931f6346f13f0d6ce8f695"
+    },
+    {
+      "label": "linux-api",
+      "raw_result": "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/native-ci-linux-v2/api/result.json",
+      "sha256": "0cc2fe5b52911700860ba239fbda262b003eb36dc4c5e32a953c6945cc8fd00f",
+      "source_sha": "535ba3c26dcdf986cd71d760fcde86ddbae7be69"
+    },
+    {
+      "label": "linux-native-1",
+      "raw_result": "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/native-ci-linux-v2/native-1/result.json",
+      "sha256": "5a1ecb7a65625ca7709de53426de35631d3d17227800b053a8c08c5a5e7c2edc",
+      "source_sha": "535ba3c26dcdf986cd71d760fcde86ddbae7be69"
+    },
+    {
+      "label": "linux-native-2",
+      "raw_result": "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/native-ci-linux-v2/native-2/result.json",
+      "sha256": "39c2c0f2fd99eba0a2313f4a75d86ecd48ae1f9442434bb67f8978cad2ade9ed",
+      "source_sha": "535ba3c26dcdf986cd71d760fcde86ddbae7be69"
+    },
+    {
+      "label": "linux-native-3",
+      "raw_result": "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/native-ci-linux-v2/native-3/result.json",
+      "sha256": "79fbc335c0e26a6222ed03137f8be8b446cd2b5289c515e50c9abac4678de531",
+      "source_sha": "535ba3c26dcdf986cd71d760fcde86ddbae7be69"
+    }
+  ],
+  "storage": "Raw files remain locally under this worktree; Linux CI artifact additionally retained by GitHub for 14 days. Git summary is not a raw backup."
+}

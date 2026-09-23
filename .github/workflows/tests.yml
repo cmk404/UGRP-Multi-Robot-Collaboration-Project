@@ -98,7 +98,7 @@ jobs:
 
   ubuntu-simulation:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     env:
       MUJOCO_GL: osmesa
       UGRP_SESSION_DIR: ${{ github.workspace }}/outputs/.quickstart-sessions
@@ -118,7 +118,7 @@ jobs:
       - name: Install Ubuntu rendering and recording tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y libosmesa6 libgl1 libglfw3 ffmpeg fonts-noto-cjk
+          sudo apt-get install -y libosmesa6 libgl1 libglfw3 xvfb xauth ffmpeg fonts-noto-cjk
           ffmpeg -hide_banner -encoders | grep libx264
 
       - name: Install simulator dependencies
@@ -128,6 +128,39 @@ jobs:
 
       - name: Check demo input and output boundaries
         run: python -m pytest -q tests/test_sim_quickstart.py
+
+      - name: Verify low-level reset, commands, RGB and scene configuration
+        run: python -m scripts.check_simulation --output outputs/simulation-ci/api
+
+      - name: Run the native MuJoCo window on a virtual desktop
+        run: |
+          for attempt in 1 2 3; do
+            MUJOCO_GL=glfw xvfb-run -a python scripts/ugrp_session.py run native-ci -- python -m scripts.sim_cli run configs/simulation/drive.json --sim-seconds 3 --wall-seconds 60 --output "outputs/simulation-ci/native-$attempt"
+            test ! -e "$UGRP_SESSION_DIR/native-ci.json"
+          done
+          python -c "import json,pathlib; rows=[json.loads(p.read_text()) for p in pathlib.Path('outputs/simulation-ci').glob('native-*/result.json')]; assert len(rows)==3 and all(r['protocol_complete'] and r['commands']==3 for r in rows), rows"
+
+      - name: Extend a copied scene, action and controller without core edits
+        run: |
+          python scripts/ugrp_session.py run extensions-ci -- python -m scripts.check_simulation_extensions --output outputs/simulation-ci/extensions
+          UGRP_SIM_PYTHON="$(command -v python)" MUJOCO_GL=glfw xvfb-run -a bash scripts/open_simulation.command run examples/simulation_extensions/config.json --wall-seconds 60 --output outputs/simulation-ci/extensions-native
+          python -c "import json; r=json.load(open('outputs/simulation-ci/extensions-native/result.json')); assert r['protocol_complete'] and r['controller_calls']==10, r"
+
+      - name: Preserve every research scene and record the native default
+        run: |
+          python scripts/ugrp_session.py run scenes-ci -- python -m scripts.check_simulation_scenes --output outputs/simulation-ci/research-scenes
+          MUJOCO_GL=glfw xvfb-run -a python scripts/ugrp_session.py run research-native -- python -m scripts.sim_cli run configs/simulation/local.json --sim-seconds 1 --wall-seconds 90 --video --capture --output outputs/simulation-ci/research-native
+          python -c "import json; r=json.load(open('outputs/simulation-ci/research-native/result.json')); assert r['protocol_complete'] and r['video']['frames'] >= 10, r"
+          ffprobe -v error -show_entries stream=width,height,nb_frames -of json outputs/simulation-ci/research-native/motion.mp4
+
+      - name: Keep simulator verification
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulation-runtime-verification
+          path: outputs/simulation-ci/
+          if-no-files-found: warn
+          retention-days: 14
 
       - name: Render and move without a model or GPU
         run: |

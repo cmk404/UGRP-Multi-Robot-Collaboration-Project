@@ -32,6 +32,8 @@ python3.12 -m venv .venv-dev
 
 ## 2. 모델 비용 없이 시뮬레이션 확인
 
+MuJoCo 기본 창을 열려면 데스크톱 그래픽 세션에서 `bash scripts/open_simulation.command`를 실행한다. [로컬 CLI/Python API 안내](local_simulation.md)에 설정·저수준 제어·무화면 실행 방법이 있다. 아래 GIF 경로는 설치 확인용 유한 실행이다.
+
 ```bash
 export MUJOCO_GL=osmesa
 .venv-dev/bin/python scripts/ugrp_session.py run quickstart -- \

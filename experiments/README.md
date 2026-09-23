@@ -2,6 +2,8 @@
 
 현재 코드의 진입점은 [현재 상태](../docs/current_status.md)를 참고한다. 아래는 실행 SHA별 보존 기록이며 과거 실패와 후속 결과를 함께 남긴다. 필요한 ID만 골라 읽는다.
 
+- [2026-09-22 native 시뮬레이션 CLI/API](2026-09-22-native-simulation/README.md) — Mac·Ubuntu 공통 설정/API, native 창·headless·RGB·reset, Linux 종료 오류 수정과 검증 한계.
+- [2026-09-22 브라우저 뷰어 검증 이력 (구현 폐기)](2026-09-22-local-simulation-live/README.md) — 네 카메라·수동 이동·일시정지·초기화·종료 통합 검사; 초기 검사 실패 포함, 자율 운반 평가는 아님.
 - [2026-09-22 RGB 통신 기반 최소 물리 재생](2026-09-22-rgb-communication-replay/README.md) — Colab 단독/공동 2회 회수, LLM 0회; 모두 종료·평가 clock 모순으로 invalid_artifact. 물리 성공·통신 효과 미입증.
 
 - [2026-09-21 Kaggle CLI CPU 실행·결과 회수](2026-09-21-kaggle-cli-smoke/README.md) — private·인터넷 OFF, 최종 물리·카메라 데모 1/1, 앞선 setup 실패 3회 별도 보존.
@@ -53,3 +55,5 @@
 이 표는 기존 보고서의 탐색 경로를 보완한 것으로, 모든 과거 실험의 소스·환경·원본을 현재 형식으로 이관했다는 뜻은 아니다. 이전 후보의 커밋 연결 및 raw 원격 보관은 미완료다. 원본 복구 경로는 [이슈 #3](https://github.com/kcm0127-dotcom/ugrp/issues/3)에서 추적한다.
 
 - [2026-09-21 TensorBoard 기록 열람 검증](2026-09-21-tensorboard-review/README.md): 기존 24개 기록 변환, 이벤트·원본 해시·로컬 화면 확인. 새 로봇 실험 아님.
+
+- [2026-09-22 로컬 연구 장면 구성 검토](2026-09-22-simulation-scenes/README.md): 기존 58개 항목 연결·Mac/Linux reset/RGB/native/기록 검사; 운반 성능 비교 아님.

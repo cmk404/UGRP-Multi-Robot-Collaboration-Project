@@ -30,31 +30,7 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def course_xml(xml: str, authored_map: dict):
-    """Keep the exact robot bodies; replace legacy task props with this course."""
-    root = ET.fromstring(xml)
-    world = root.find('worldbody')
-    robots = {node.get('name'): ET.tostring(node) for node in world.findall('body')
-              if node.get('name', '').endswith('__robot')}
-    if len(robots) != 3:
-        raise ValueError('expected the three unchanged robot bodies')
-    for node in list(world):
-        if node.tag == 'geom' and node.get('name') != 'floor':
-            world.remove(node)
-        elif node.tag == 'body' and node.get('name') not in robots:
-            # Schema placeholders remain for existing reset/controller APIs.
-            # These legacy task props are not part of the unloaded map course.
-            for body in node.iter('body'):
-                body.set('gravcomp', '1')
-            for geom in node.iter('geom'):
-                geom.attrib.update(contype='0', conaffinity='0', rgba='0 0 0 0', group='5')
-    xml = augment_map_xml(ET.tostring(root, encoding='unicode'), authored_map)
-    final = ET.fromstring(xml).find('worldbody')
-    after = {node.get('name'): ET.tostring(node) for node in final.findall('body')
-             if node.get('name') in robots}
-    if robots != after:
-        raise ValueError('map construction changed robot body or camera geometry')
-    return xml, {name: sha(data) for name, data in robots.items()}
+from sim.research_scene_xml import course_xml
 
 
 class KnownMapScene:

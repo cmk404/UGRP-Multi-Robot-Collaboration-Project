@@ -1,0 +1,122 @@
+{
+  "platform": "macOS-27.2-arm64-arm-64bit-Mach-O",
+  "python": "3.12.13",
+  "mujoco": "3.12.0",
+  "runs": [
+    {
+      "name": "v1-browser",
+      "source_sha": "69a27044e99bfeb482a104e283e6ac3781993e6e",
+      "result": {
+        "mode": "local_interactive_physics_viewer",
+        "seed": 41,
+        "episodes": 1,
+        "exit_reason": "shutdown",
+        "error": null,
+        "wall_s": 181.8,
+        "sim_time_s": 60.138,
+        "commands": 1,
+        "frame_batches": 274,
+        "model_calls": 0,
+        "scope": "Manual camera/physics playground; not autonomous transport or communication evaluation."
+      },
+      "verification": null,
+      "local_originals_sha256": {
+        "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/live-smoke-v1/result.json": "37b9bb9bbfe09e0728a137674e64e48269ba14a28bce6ff64c71e1093b137528",
+        "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/live-smoke-v1/session.json": "df74f8293f7d7c89b2fbf725426851add9bd56f6ff3add0f2d18199ccfddd16f",
+        "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/live-smoke-v1/commands.jsonl": "757fb32477b54707bf8bd1b675331d9bf6f2717cc611711200c0d77fddbb1bd8"
+      }
+    },
+    {
+      "name": "v2-check-failed",
+      "source_sha": "599922f392e903d7386d767e2cdfb83ba6d099e2",
+      "result": {
+        "mode": "local_interactive_physics_viewer",
+        "seed": 41,
+        "episodes": 1,
+        "exit_reason": "shutdown",
+        "error": null,
+        "wall_s": 7.302,
+        "sim_time_s": 0.0,
+        "commands": 0,
+        "frame_batches": 1,
+        "model_calls": 0,
+        "scope": "Manual camera/physics playground; not autonomous transport or communication evaluation."
+      },
+      "verification": {
+        "scope": "Live camera/control integration only; no autonomous task evaluation.",
+        "error": "AssertionError: (640, 480)"
+      },
+      "local_originals_sha256": {
+        "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/live-verification-v2/runtime/result.json": "d8842dfabf48d411589c51de94b12c10dc018756a56c821d1e7a6c5fa7ba6032",
+        "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/live-verification-v2/runtime/session.json": "a6b6e70e0f1abea7fc84e0487a06244f1d366ccbc3c14dcd27b058a32efa5c3d",
+        "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/live-verification-v2/runtime/commands.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/live-verification-v2/verification.json": "f3c29d31f391d386755eb1564a5f67758a2848215ebdd51b2917818cd7d07de7"
+      }
+    },
+    {
+      "name": "v3-check-passed",
+      "source_sha": "a9194b1d27f3182f306e54457d25dccdb236cad3",
+      "result": {
+        "mode": "local_interactive_physics_viewer",
+        "seed": 42,
+        "episodes": 2,
+        "exit_reason": "shutdown",
+        "error": null,
+        "wall_s": 9.041,
+        "sim_s": 1.978,
+        "commands": 5,
+        "frame_batches": 10,
+        "model_calls": 0,
+        "policy": "manual browser controls",
+        "case": "local viewer",
+        "source_sha": "a9194b1d27f3182f306e54457d25dccdb236cad3",
+        "scope": "Manual camera/physics playground; not autonomous transport or communication evaluation."
+      },
+      "verification": {
+        "scope": "Live camera/control integration only; no autonomous task evaluation.",
+        "initial_frames": {
+          "overview": "bf8969cac0564ac6167b8dff37a557711a2248b4d2e0a939646570e1fad2fee4",
+          "r1": "9815ab18480622124137e34bbd1d68fdf8d14e79dedbb42f01c50044d1ec4269",
+          "r2": "e3d1629195a6623304fcc6aab48247311e1a3d3907ec8f9cd851c27255c3c831",
+          "r3": "770d45837829ae001cfa8ab9f0c124faad9efcd7962d2da79a86a4635d9498de"
+        },
+        "moved_frames": {
+          "overview": "0f48d7e0990afaa045d8c50ba75d0bafbd3055765dbdf5d78d11f7f1e9121d5a",
+          "r1": "4b55c0dc9a7bf285b7ce95f8c6ed23715aa9da5861c36aa5233cf89b08addc86",
+          "r2": "e7a5f1778552ba2fabde17539fc69123cd24f5e8a17511e014e046418d826512",
+          "r3": "2abc822c7fb719f18ddc8a1abd760bc0a2b01e27381d5377a34d8804d90e014d"
+        },
+        "source_sha": "a9194b1d27f3182f306e54457d25dccdb236cad3",
+        "moved_sim_s": 1.216,
+        "pause_verified": true,
+        "reset_verified": true,
+        "four_cameras_verified": true,
+        "shutdown_verified": true,
+        "result": {
+          "mode": "local_interactive_physics_viewer",
+          "seed": 42,
+          "episodes": 2,
+          "exit_reason": "shutdown",
+          "error": null,
+          "wall_s": 9.041,
+          "sim_s": 1.978,
+          "commands": 5,
+          "frame_batches": 10,
+          "model_calls": 0,
+          "policy": "manual browser controls",
+          "case": "local viewer",
+          "source_sha": "a9194b1d27f3182f306e54457d25dccdb236cad3",
+          "scope": "Manual camera/physics playground; not autonomous transport or communication evaluation."
+        }
+      },
+      "local_originals_sha256": {
+        "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/live-verification-v3/runtime/result.json": "49238313afd69fb933b6e214dfe1417b8068db6e06a2fe270b7c8d6b7ddde4d3",
+        "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/live-verification-v3/runtime/session.json": "171e2507d0bf85db73186675b959ed30fa57f114baaa17673848aa25148d3328",
+        "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/live-verification-v3/runtime/commands.jsonl": "e3647e4450d22c1328f7e1b649e9b73bc0df64b369c7cd3bd398659322509aed",
+        "/Users/changmin/.codex/worktrees/simulation-live-view/ugrp/outputs/live-verification-v3/verification.json": "d648cb9226d219d51dafd6bf4251a99dc94c5bed387c70c259ced778731805f6"
+      }
+    }
+  ],
+  "unit_tests": "26 passed, 27 subtests passed",
+  "scope": "Manual physics/camera viewer; no model calls, autonomous task evaluation, or real hardware."
+}

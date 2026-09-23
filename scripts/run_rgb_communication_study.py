@@ -1,4 +1,4 @@
-"""Prepare/check offline, or execute a finite communication study on Colab.
+"""Prepare/check offline, or execute a finite communication study locally.
 
 No provisioning, retry, model choice, or gate override is implicit. Existing
 scripts.colab_simulation_cli transports committed source and verifies recovery.
@@ -43,8 +43,8 @@ def main(argv=None):
             if args.command == "check":
                 result = preflight(manifest, root=ROOT, evidence_root=args.evidence_root)
             else:
-                if platform.system() != "Linux" or not Path("/content").is_dir():
-                    raise ContractError("actual trials require the authorized Colab execution host")
+                if platform.system() not in ("Linux", "Darwin"):
+                    raise ContractError("actual trials require the supported Linux or macOS runtime")
                 common = {"root": ROOT, "evidence_root": args.evidence_root,
                           "output": args.output}
                 result = run_study(manifest, allocation_wall_s=args.allocation_wall_s, **common) if args.command == "run" else run_trial(
