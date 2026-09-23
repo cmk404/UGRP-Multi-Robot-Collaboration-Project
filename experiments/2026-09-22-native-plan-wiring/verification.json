@@ -1,0 +1,91 @@
+{
+  "runtime_sha": "c089c2024d8efbe555e4bd0b524a6968c387746b",
+  "raw_local": "/Users/changmin/.codex/worktrees/native-simulation-console/ugrp/outputs/dispatch-console-correction-v1/live",
+  "raw_files": 766,
+  "remote_raw_backup": false,
+  "command": {
+    "output": "outputs/dispatch-console-correction-v1/live",
+    "variant": "open",
+    "seed": 11,
+    "required_dock": "dock_a",
+    "task": "서로 역할과 실행 순서를 합의해서 beam과 box를 dock_a로 옮겨.",
+    "model": "gemini-3.8-flash",
+    "viewer": true,
+    "realtime_factor": 1.0,
+    "planning_rounds": 4,
+    "max_replans": 1,
+    "rounds": 24,
+    "timeout": 20.0,
+    "max_wall_s": 120.0,
+    "max_input_tokens": 120000,
+    "max_quiet_rounds": 4,
+    "plan_replay": null,
+    "live_replan": false,
+    "executor": "skills",
+    "contact_profile": "local_contact_fine",
+    "grasp_model_dir": "/Users/changmin/.codex/worktrees/native-simulation-console/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/grasp",
+    "stage_model_dir": "/Users/changmin/.codex/worktrees/native-simulation-console/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied",
+    "carry_act_model": null,
+    "carry_act_python": null,
+    "carry_act_max_steps": 900,
+    "spawn_offset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "video_fps": 5,
+    "reference_top": "/Users/changmin/.codex/worktrees/native-simulation-console/ugrp/tests/fixtures/camera_goal_transport/reference-top.jpg"
+  },
+  "plan_hash": "c2f420b7d1eb537334502b0eebe14161ffc0468f058bb5230e3d31c39281e45c",
+  "plan": {
+    "dock": "dock_a",
+    "tasks": [
+      {
+        "id": "beam_job",
+        "object": "beam",
+        "participants": [
+          "r1",
+          "r3"
+        ],
+        "route": "north",
+        "after": []
+      },
+      {
+        "id": "box_job",
+        "object": "box",
+        "participants": [
+          "r2"
+        ],
+        "route": "south",
+        "after": []
+      }
+    ]
+  },
+  "plan_programs_match_existing_SkillBindings": true,
+  "operator_instruction_in_all_9_model_requests": true,
+  "plan_committed": true,
+  "protocol_complete": false,
+  "physical_success": false,
+  "phase": "APPROACH",
+  "error": "RuntimeError: skill wall budget exhausted",
+  "wall_s": 122.11636545799774,
+  "llm_calls": 9,
+  "model_latency_s": 53.52685608400134,
+  "pair_decision_rows": 151,
+  "solo_decision_rows": 34,
+  "weld_steps": 0,
+  "camera_geometry_unchanged": true,
+  "cleanup_errors": [],
+  "tests": {
+    "new_contracts": "8 passed, 1 optional native probe skipped",
+    "mac_native_probe": "1 passed",
+    "export_plus_contracts": "25 passed, 1 optional native probe skipped"
+  },
+  "limits": [
+    "One open/seed11 bounded native run only; not a completed transport or communication comparison.",
+    "Replay and changed role binding exercised with protocol fixtures in unit tests; live trial used fresh LLM negotiation.",
+    "Native observer uses a model/data copy; GUI feedback isolation unit tested; manual mouse/key gestures not independently inspected.",
+    "Recorded raw-command metric excludes setup descriptions and internal macro servo commands.",
+    "Linux exact runtime commit CI still pending at record creation; final status belongs in PR checks."
+  ]
+}

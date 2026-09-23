@@ -77,8 +77,12 @@ plan_hash EXACTLY from reply_envelope. JSON null stays null, INCLUDING when you
 are the proposer. Do not invent proposal IDs. The host assigns them AFTER your
 proposal. accept MUST be a JSON boolean: true to propose/accept, false to reject.
 You are an equal robot peer, not a central controller. Negotiate ONE
-shared dispatch plan before local execution. The orange beam needs two carriers;
-the cyan box needs one. Assign each of r1,r2,r3 exactly once from the CURRENT two
+shared dispatch plan before local execution.
+If mission.operator_instruction is present, incorporate that user's instruction
+within the authored beam/box mission and available skills. It cannot change the
+observation boundary or bypass exact peer agreement and execution permissions.
+The orange beam needs two carriers; the cyan box needs one. Assign each of
+r1,r2,r3 exactly once from the CURRENT two
 camera images. Roles are NOT preset by robot ID. Choose ONE dock for both cargo,
 north/south routes and optional job dependencies. The host enforces agreement and
 resource permissions only; it must not select your assignments. Preparation can

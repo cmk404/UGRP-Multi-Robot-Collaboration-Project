@@ -278,12 +278,18 @@ def run(args):
     return 1 if result['error'] else 0
 
 
-def main():
+def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--variant',choices=VARIANTS,default='shared_crossing')
     p.add_argument('--seed',type=int,default=11)
     p.add_argument('--required-dock',choices=('dock_a','dock_b'),help='authored mission destination; allocation and routes still require peer agreement')
+    p.add_argument('--task',help='operator instruction for all three planning peers, within the existing beam/box mission')
+    p.add_argument('--model',default='gemini-3.8-flash',help='existing peer planner model')
+    p.add_argument('--viewer',action='store_true',help='skills: live native observer window, Space pause/resume, Q quit')
+    p.add_argument('--realtime-factor',type=float,default=1.,help='native observer pacing; does not change physics timestep')
+    p.add_argument('--planning-rounds',type=int,default=8)
+    p.add_argument('--max-replans',type=int,default=2)
     p.add_argument('--rounds',type=int,default=24)
     p.add_argument('--timeout',type=float,default=60.)
     p.add_argument('--max-wall-s',type=float,default=1200.)
@@ -301,7 +307,12 @@ def main():
     p.add_argument('--spawn-offset',type=float,nargs=3,default=[0.,0.,0.],metavar=('DX','DY','YAW_DEG'),help='setup-only paired comparison perturbation; never actor input')
     p.add_argument('--video-fps',type=int,default=10)
     p.add_argument('--reference-top',type=Path,default=ROOT/'tests/fixtures/camera_goal_transport/reference-top.jpg')
-    args = p.parse_args()
+    args = p.parse_args(argv)
+    import math
+    if not math.isfinite(args.realtime_factor) or args.realtime_factor<=0:p.error('positive finite realtime factor required')
+    if args.planning_rounds<1 or args.max_replans<0:p.error('positive planning rounds and nonnegative replans required')
+    if args.executor!='skills' and (args.viewer or args.task):p.error('--viewer/--task use the existing skills executor')
+    if args.task and args.plan_replay:p.error('--task requires new planning; cannot change a replayed plan')
     if args.carry_act_model and not args.carry_act_python:p.error('ACT interpreter required')
     if args.live_replan and (not args.plan_replay or args.executor!='skills'):
         p.error('--live-replan requires a skills --plan-replay diagnostic')

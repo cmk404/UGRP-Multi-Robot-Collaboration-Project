@@ -29,11 +29,14 @@ class ThreeRobotRuntime:
                  agreement=None, request_builder=build_plan_request,
                  reply_validator=validate_plan_reply, plan_fixture=None,
                  request_timeout=30., max_tokens=950,
-                 roles_fixed_by_skill=True, planning_only=False, max_wall_s=600.):
+                 roles_fixed_by_skill=True, planning_only=False, max_wall_s=600.,
+                 model='gemini-3.8-flash', idle_callback=None):
         self.output, self.mode, self.fixture_timing = output, mode, fixture_timing
         self.roles_fixed_by_skill = roles_fixed_by_skill
         self.planning_only = planning_only
         self.max_wall_s = max_wall_s
+        self.idle_callback = idle_callback
+        self.pending_plan = {}
         self.agreement = agreement or TeamAgreement(run_id)
         self.request_builder, self.reply_validator = request_builder, reply_validator
         self.plan_fixture = plan_fixture
@@ -57,7 +60,7 @@ class ThreeRobotRuntime:
                     data = response.read()
                 path.with_name(path.stem+'-response.json').write_bytes(data)
                 return io.BytesIO(data)
-            self.clients[rid] = GeminiProxyCompleter(model='gemini-3.8-flash', max_tokens=max_tokens,
+            self.clients[rid] = GeminiProxyCompleter(model=model, max_tokens=max_tokens,
                 timeout=request_timeout, reasoning_effort='none', http_open=audited_open)
 
     def _invoke(self, rid, request, validate, *, fixture_reply=None):
@@ -83,6 +86,7 @@ class ThreeRobotRuntime:
         return reply, stop, records
 
     def negotiate(self, frames, own_history, turn, sim_time):
+        if self.idle_callback:self.idle_callback()
         context = self.agreement.context()
         requests, futures = {}, {}
         for rid in ROBOTS:
@@ -98,7 +102,14 @@ class ThreeRobotRuntime:
                        'reason': 'scripted protocol fixture, not visual reasoning', 'message': ''}
             futures[rid] = self.pool.submit(self._invoke, rid, requests[rid],
                 lambda raw, req, c=context: self.reply_validator(raw, req, c), fixture_reply=fixture)
+        self.pending_plan = futures
+        if self.idle_callback:
+            while not all(f.done() for f in futures.values()):
+                self.idle_callback()
+                time.sleep(.02)
+            self.idle_callback()
         batch = {r: f.result() for r, f in futures.items()}
+        self.pending_plan = {}
         replies = {r: v[0] for r, v in batch.items()}
         for reply, stop, records in batch.values():
             self.calls.extend(records)
@@ -174,5 +185,11 @@ class ThreeRobotRuntime:
             self.collect_inspection(sim_time, wait=True)
         finally:
             self.pool.shutdown(wait=True, cancel_futures=True)
+            # A native stop may interrupt the waiting owner thread. Preserve the
+            # bounded in-flight request receipts without applying their replies.
+            for future in self.pending_plan.values():
+                if not future.cancelled() and future.exception() is None:
+                    self.calls.extend(future.result()[2])
+            self.pending_plan = {}
             self.closed = True
             self.save()

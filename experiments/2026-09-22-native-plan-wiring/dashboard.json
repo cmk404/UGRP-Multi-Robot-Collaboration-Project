@@ -1,0 +1,43 @@
+{
+  "scope": "Native launcher wiring check: one 120-second bounded open/seed11 trial. Plan agreed and existing pair/solo approach ran; transport incomplete. Raw command count excludes macro internals. Latency is sum of request latencies.",
+  "url": "http://127.0.0.1:6006/?pinnedCards=%5B%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22claims%2Fplan_committed%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22claims%2Fprotocol_complete%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Freported_success%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fwall_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Frecorded_raw_commands%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fmodel_calls%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fmodel_latency_s%22%7D%5D&smoothing=0&runFilter=%5E0922-plan-skills#timeseries",
+  "run_filter": "^0922-plan-skills",
+  "pinned_tags": [
+    "claims/plan_committed",
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "result/wall_s",
+    "result/recorded_raw_commands",
+    "result/model_calls",
+    "result/model_latency_s"
+  ],
+  "hparams_visible_columns": [
+    "policy",
+    "case",
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "result/wall_s",
+    "result/model_calls"
+  ],
+  "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0922-plan-skills/live",
+  "event_readback_verified": true,
+  "ui_verified": true,
+  "hparams_columns_verified": true,
+  "loaded_scalars": {
+    "result/wall_s": 122.11636352539062,
+    "result/model_calls": 9.0,
+    "result/input_tokens": 86434.0,
+    "result/output_tokens": 2141.0,
+    "result/model_latency_s": 53.52685546875,
+    "result/recorded_raw_commands": 205.0,
+    "evaluation/reported_success": 0.0,
+    "claims/protocol_complete": 0.0,
+    "claims/plan_committed": 1.0
+  },
+  "media": {
+    "status": 206,
+    "content_range": "bytes 0-63/218922",
+    "content_type": "video/mp4"
+  },
+  "hparams_limit": "Plan, raw commands and latency use pinned Time Series; shared HParams experiment does not expose these newer columns."
+}

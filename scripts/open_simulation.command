@@ -17,10 +17,10 @@ if [[ ! -x "$sim_python" ]]; then
   exit 1
 fi
 cd "$project_dir"
-# No arguments opens the editable default scene. Other invocations use CLI subcommands.
-if [[ $# -eq 0 ]]; then set -- run configs/simulation/local.json; fi
+# No arguments opens terminal mode selection plus the native research scene.
+if [[ $# -eq 0 ]]; then set -- start; fi
 runner="$sim_python"
-if [[ "$(uname -s)" == Darwin && "$1" == run ]]; then
+if [[ "$(uname -s)" == Darwin && ( "$1" == run || "$1" == console || "$1" == start || "$1" == dispatch ) ]]; then
   headless=false
   for arg in "$@"; do [[ "$arg" == --headless ]] && headless=true; done
   if [[ "$headless" == false ]]; then
