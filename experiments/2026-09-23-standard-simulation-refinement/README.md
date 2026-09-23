@@ -15,6 +15,8 @@
 | `workflow run act-map-suite --timeout 240 -- --spec maps/act_generalization/suite_v1.json --render` | [22개 지도 결과](case-results.json): 기하 경로 후보 19, 의도한 불가능 대조군 2, `regression_fully-blocked`의 격자 경로 미확정 1. 22개 모두 렌더 오류·초기 충돌 0. [요약](map-summary.json)·[지도 매니페스트](map-manifest.json). | 정적 기하·초기 카메라 검사만 수행. 기존 장면 6개의 상단 카메라 FOV 제한이 남음. 명령·정책 호출·운반 시도 0, 모델 비용 $0, 성공률 미정. 소요 11.83초. |
 | `run configs/simulation/local.json --scene act/train-open-1 --sim-seconds 3 --wall-seconds 45 --camera cctv_warehouse --capture --video` | MuJoCo 창에서 `act/train-open-1` 로드, 3초 시뮬레이션과 31프레임 영상 생성, 정상 종료. [결과](native-result.json): 실행 9.28초, 명령 0, 모델 호출 0. | 로봇이 작업을 수행하지 않은 장면·기록 확인이며 물리 운반 성공 아님. `physical_success=null`. |
 
+기존 ACT 시연 데이터셋 파일의 SHA-256이 사전 기록 `3db730eaf9d827a40b355d7b53188993e14b75d10fd10b9b213a67f830fba167`과 일치함을 확인했다. 이를 입력으로 `workflow plan act-input-training`을 실제 호출해 [학습 계획](training-plan.json)의 필수 인자·입력 해시·출력 경로를 확인했다. 계획의 `execution_started=false`이고 학습기 parser·runtime은 실행되지 않았다.
+
 전체 오프라인 CI는 **1,821 통과, 8 건너뜀, 205 subtests 통과**였다. 관리·지도·장면 집중 검사 101개 통과. `rgb-standard-dispatch-v2` 정적 번들 검증은 통과했으나 상태는 `experimental_unqualified`이다. 새 입력 이력 학습 workflow는 매개변수·입력 검사와 기록 경로까지만 검증했다. 학습 실행·학생의 새 지도 통과·단독/공동 RGB 운반 재현은 수행하지 않았다. 연결된 병목 분석의 RGB 파지·방향 실패가 이 검증으로 해소됐다는 판정은 없다.
 
 ## 결과 열람과 보관

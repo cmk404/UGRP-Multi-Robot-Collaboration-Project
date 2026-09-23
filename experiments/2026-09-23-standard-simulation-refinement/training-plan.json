@@ -1,0 +1,59 @@
+{
+  "workflow_id": "act-input-training",
+  "workflow_version": "1.0.0",
+  "catalog_sha256": "017f851ede95dd74f594923262a767c9ab78a2166821b4f9bbd6bed5b1c0af8b",
+  "runner": "scripts.train_carry_input_act",
+  "adapter": "managed_legacy_cli",
+  "side_effect": "training",
+  "argv": [
+    "--dataset",
+    "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/dataset.json",
+    "--size",
+    "128",
+    "--history",
+    "1",
+    "--steps",
+    "8000",
+    "--seed",
+    "20260921",
+    "--device",
+    "cpu"
+  ],
+  "command": [
+    "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/python",
+    "-m",
+    "scripts.train_carry_input_act",
+    "--dataset",
+    "/Users/changmin/projects/ugrp-worktrees/act-pair-carry/outputs/experiment-v2/dataset.json",
+    "--size",
+    "128",
+    "--history",
+    "1",
+    "--steps",
+    "8000",
+    "--seed",
+    "20260921",
+    "--device",
+    "cpu",
+    "--out",
+    "<record>/artifacts"
+  ],
+  "output": "<record>/artifacts",
+  "output_flag": "--out",
+  "inputs": [
+    {
+      "path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/act-pair-carry/outputs/experiment-v2/dataset.json",
+      "kind": "file",
+      "sha256": "7154075458b80cd96e8b3059407f71e1acd717f042a926430e3c10386f2b37b0",
+      "files": [
+        {
+          "path": "dataset.json",
+          "sha256": "3db730eaf9d827a40b355d7b53188993e14b75d10fd10b9b213a67f830fba167",
+          "bytes": 5690306
+        }
+      ]
+    }
+  ],
+  "readiness": "required_inputs_present; legacy_parser_and_runtime_not_executed",
+  "execution_started": false
+}
