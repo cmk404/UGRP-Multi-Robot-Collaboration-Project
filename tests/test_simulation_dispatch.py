@@ -168,6 +168,86 @@ def test_native_observer_cannot_mutate_research_physics(monkeypatch):
         view.close()
 
 
+def _clocked_native_view(monkeypatch, *, factor=1., oversleep=0.):
+    pytest.importorskip('mujoco')
+    import queue
+    from scripts import dispatch_native_view
+
+    class Clock:
+        now = 0.
+        sleeps = []
+        def monotonic(self): return self.now
+        def sleep(self, seconds):
+            self.sleeps.append(seconds)
+            self.now += seconds + oversleep
+
+    class Viewer:
+        running = True
+        polls = 0
+        def is_running(self):
+            self.polls += 1
+            return self.running
+
+    clock = Clock()
+    monkeypatch.setattr(dispatch_native_view, 'time', clock)
+    sim = [0.]
+    scene = SimpleNamespace(time=lambda: sim[0], deadline=None)
+    view = dispatch_native_view.DispatchNativeView.__new__(dispatch_native_view.DispatchNativeView)
+    view.scene, view.viewer, view.keys = scene, Viewer(), queue.SimpleQueue()
+    view.factor, view.paused = factor, False
+    view.pace_sim = view.pace_wall = view.last_tick_wall = 0.
+    view.rebase_pace, view.next_poll, view.next_sync = False, 0., float('inf')
+    return view, clock, sim
+
+
+@pytest.mark.parametrize('factor,expected_wall', [(1.,1.), (2.,.5)])
+def test_native_pacing_batches_poll_and_sleep_without_oversleep_drift(monkeypatch, factor, expected_wall):
+    view, clock, sim = _clocked_native_view(monkeypatch, factor=factor, oversleep=.002)
+    for _ in range(4000):
+        view.tick()
+        sim[0] += .00025
+        clock.now += .00001  # Other work in the unchanged fine physics step.
+    assert abs(clock.now - expected_wall) < .012
+    assert len(clock.sleeps) < 220
+    assert all(.005 <= delay <= .01 for delay in clock.sleeps)
+    assert view.viewer.polls < 130  # A wall-time cadence, not 4000 GUI calls.
+
+
+def test_native_pacing_rebases_after_long_inference_and_operator_pause(monkeypatch):
+    view, clock, sim = _clocked_native_view(monkeypatch)
+    for _ in range(400):
+        view.tick(); sim[0] += .00025; clock.now += .00001
+    clock.now += 10.  # Physics was stopped during an external model call.
+    view.tick()
+    resumed = clock.now
+    for _ in range(400):
+        sim[0] += .00025; view.tick(); clock.now += .00001
+    assert .09 <= clock.now - resumed <= .11
+    view.paused = True
+    view.keys.put(32)  # Space resumes even when the pause is brief.
+    clock.now += .05
+    view.tick()
+    assert not view.paused and not view.rebase_pace
+    assert view.pace_wall >= resumed
+
+
+def test_native_pacing_checks_budget_every_step_and_polls_quit_promptly(monkeypatch):
+    view, clock, sim = _clocked_native_view(monkeypatch)
+    view.next_poll = 1.
+    view.scene.deadline = .001
+    clock.now = .001
+    with pytest.raises(RuntimeError, match='wall budget'):
+        view.tick()
+    view.scene.deadline = None
+    clock.now = 0.
+    view.next_poll = .01
+    view.keys.put(81)
+    with pytest.raises(KeyboardInterrupt, match='quit'):
+        for _ in range(100):
+            view.tick(); sim[0] += .00025; clock.now += .0001
+    assert clock.now < .02
+
+
 def test_real_native_observer_lifecycle():
     import os
     if os.environ.get('UGRP_TEST_NATIVE_VIEWER') != '1':

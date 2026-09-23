@@ -42,5 +42,18 @@
     "paid_model_calls": 0,
     "native_window_check_wall_seconds": 45
   },
-  "source_freeze": "Candidate source is committed before running; baseline runs from clean PR118 dbf7073. Results are appended after processes end."
+  "source_freeze": "Candidate source is committed before running; baseline runs from clean PR118 dbf7073. Results are appended after processes end.",
+  "native_pacing_followup": {
+    "trigger": "v5 c44b571 native viewer with the same recorded plan reached wall budget601.99s before completion; headless candidate finished285.49s. Both strict simultaneous loaded motion2.9s.",
+    "question": "Batch native GUI polling and pacing without changing simulation steps, actor observations or commands.",
+    "candidate_bundle": "rgb-standard-dispatch-v6",
+    "viewer": true,
+    "realtime_factor": 2,
+    "max_wall_s": 600,
+    "manager_timeout_s": 660,
+    "external_model_calls": 0,
+    "runs": 1,
+    "success_scope": "native user-flow check; compare completion and strict concurrent transport, do not compute speedup from an incomplete baseline",
+    "source_freeze": "Commit v6 source before the finite native run; preserve v5 failure and its source identity."
+  }
 }

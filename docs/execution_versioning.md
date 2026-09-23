@@ -39,10 +39,12 @@
 
 - `rgb-standard-dispatch-v5`: 표준 로컬 dispatch가 불필요한 pair 카메라 촬영을 생략하고, 합의된 독립 open-map 경로의 동시 운반을 자동 선택하는 후보이다. 선행 조건·같은 경로/자원·지원하지 않는 지도에서는 기존 직렬 gate를 유지하고 선택 이유를 기록한다. 공용 하역 구역의 독점과 실제 물리·입력·동작 주기는 유지한다. v4의 접근·재관측 동작도 보존하며 새 물리 재생 결과는 별도로 판정한다. 이 JSON의 `effective`는 공통 adapter 조건이고, 로컬 dispatch에서 선택한 접촉 프로필·VisualMacroExecutor·자동 선택의 실제 값은 실행 manifest/result와 함께 확인한다.
 
+- `rgb-standard-dispatch-v6`: v5의 로컬 촬영·경로 선택을 유지하고, MuJoCo 관찰 창의 wall-clock 입력 확인과 재생 속도 대기를 묶는다. 물리 timestep·actor 관측·명령 일정은 바꾸지 않는다. v5 원본 번들은 보존하며 실제 창 실행 결과는 별도 기록한다.
+
 새 backend 설정 schema는 `ugrp.rgb_skill_backend.v2`다. `execution_bundle_id`가 없거나 지원하지 않는 조합이면 거절한다. 과거 v1 설정은 당시 실행 기록으로 보존한다. 실행 전 정적 검사는 다음과 같다. 시뮬레이션·렌더링·외부 모델 호출은 하지 않는다.
 
 ```sh
-python3 -m harness.rgb_execution_bundle verify-current --id rgb-standard-dispatch-v5
+python3 -m harness.rgb_execution_bundle verify-current --id rgb-standard-dispatch-v6
 python3 -m harness.rgb_execution_bundle verify-registry --base origin/main
 ```
 
