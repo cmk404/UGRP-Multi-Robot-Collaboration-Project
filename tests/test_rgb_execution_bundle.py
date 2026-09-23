@@ -27,6 +27,14 @@ def test_historical_success_is_separate_from_experimental_adapter():
         contract.load_bundle(contract.BASELINE_ID)
 
 
+def test_retired_adapter_is_readable_but_cannot_run_as_current_source():
+    old, _ = contract.load_bundle("rgb-adapter-legacy-v1", require_runnable=False)
+    assert old["id"] == "rgb-adapter-legacy-v1"
+    assert old["status"] == "experimental_unqualified"
+    with pytest.raises(ValueError, match="original source checkout"):
+        contract.load_bundle("rgb-adapter-legacy-v1")
+
+
 def isolated_registry(tmp_path):
     root = tmp_path / "repo"
     registry = root / contract.REGISTRY

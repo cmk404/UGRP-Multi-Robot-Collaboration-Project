@@ -52,8 +52,8 @@ def validate_selection(scene):
     profile = scene['contact_profile']
     if profile is not None:
         from sim.dispatch_contact_profile import PROFILES
-        if not selection.startswith('dispatch/') or profile not in PROFILES:
-            raise ValueError(f'scene.contact_profile: dispatch scenes only, choose {PROFILES}')
+        if not selection.startswith(('dispatch/', 'act/')) or profile not in PROFILES:
+            raise ValueError(f'scene.contact_profile: dispatch/ACT research scenes only, choose {PROFILES}')
 
 
 class Scene:
@@ -71,6 +71,47 @@ class Scene:
         self.engine_layout = self.selection if self.family == 'legacy' else 'standard'
         self.base_dir = Path(base_dir).resolve()
         self._resolve()
+
+    @classmethod
+    def from_dispatch_config(cls, config, base_dir=ROOT):
+        """Wrap an already selected dispatch episode in the standard scene path.
+
+        Research runners may adjust setup-only spawn poses before construction.
+        Keep those poses while sharing the XML transform and reset implementation
+        used by the public Simulation scene.
+        """
+        from sim.research_dispatch_arena import VARIANTS, episode
+        variant, seed = config['variant'], config['seed']
+        if variant in VARIANTS:
+            selection = 'dispatch/' + variant
+            reference = episode(variant, seed)
+        elif variant == 'local_map_preview':
+            # The ACT map preparation tool has historically used DispatchScene
+            # to render each authored local map. Resolve its exact standard
+            # catalog entry; never substitute the open dispatch map.
+            from sim.act_map_suite import load_suite, scene_config
+            _, cases = load_suite()
+            matching = [case for case in cases
+                        if scene_config(case, physics_seed=seed)['static_map'] == config['static_map']]
+            if len(matching) != 1:
+                raise ValueError('ACT preview map has no unique standard scene')
+            selection = 'act/' + matching[0]['id']
+            reference = config
+        else:
+            raise ValueError('research runner scene variant is not in the standard catalog')
+        selected = {'layout': selection, 'seed': seed,
+                    'map_file': None, 'cargo_ids': None, 'robots': {}, 'objects': [],
+                    'builder': None, 'params': {},
+                    'contact_profile': config.get('contact_solver_profile')}
+        validate_selection(selected)
+        scene = cls(selected, base_dir)
+        if config['static_map'] != reference['static_map']:
+            raise ValueError('dispatch runner static map differs from selected scene')
+        scene.config = copy.deepcopy(config)
+        scene.bounds = scene.config['static_map']['bounds_m']
+        scene.inventory = list(scene.config['setup_only']['cargo'])
+        scene._verify_camera()
+        return scene
 
     def _read(self, path):
         path = Path(path).resolve()
@@ -150,6 +191,8 @@ class Scene:
             if self.scene['contact_profile']:
                 from sim.dispatch_contact_profile import contact_profile
                 xml = contact_profile(xml, self.scene['contact_profile'])
+                self.manifest['scene_xml_sha256'] = hashlib.sha256(xml.encode()).hexdigest()
+                self.manifest['contact_solver_profile'] = self.scene['contact_profile']
         return xml
 
     def setup(self, world):

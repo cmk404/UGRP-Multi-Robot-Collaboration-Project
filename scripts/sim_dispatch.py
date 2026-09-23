@@ -83,14 +83,14 @@ def choose():
           '3. 수동 저수준 명령 (모델 불필요)\n'
           '4. 설정 파일의 actions / Python controllers 실행')
     choice = input('작동 방식 [1]: ').strip() or '1'
+    from scripts.sim_cli import main as sim_cli
     if choice == '1':
-        return main([])
+        return sim_cli(['dispatch'])
     if choice == '2':
         path = input('committed-plan.json 경로: ').strip()
         if not path:
             raise ValueError('saved plan path required; a plan is never chosen implicitly')
-        return main(['--plan-replay', path])
-    from scripts.sim_cli import main as sim_cli
+        return sim_cli(['dispatch', '--plan-replay', path])
     if choice == '3':
         return sim_cli(['console', str(ROOT/'configs/simulation/local.json'), '--mode', 'manual'])
     if choice == '4':
