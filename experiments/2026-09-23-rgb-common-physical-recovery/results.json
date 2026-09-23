@@ -776,6 +776,116 @@
           "raw_run_path": "/Users/changmin/.codex/worktrees/rgb-common-physical-recovery/ugrp/outputs/rgb-common-physical-recovery-20260923/physical-replay-13c7996/runs/rgb-recovery-13c7996-joint"
         }
       ]
+    },
+    {
+      "source_sha": "ead4a3a471c2d70ac2ebd73bff200627f99d55c7",
+      "execution_bundle_id": "rgb-adapter-contact-fine-yaw-wheel-anchor-v8",
+      "manifest_sha256": "e2d090acd526b8ceb439d6b2ab79f329998796c62b3680f4fd8c594c7e6dd2cc",
+      "manifest_digest_kind": "canonical_json",
+      "raw_manifest_file_sha256": "21550946f8e9225741ad51c45675241aa01049ae789a9e4081181b9e53f96888",
+      "planned_denominator": 2,
+      "full_mission_successes": 0,
+      "workflow_wall_s": 544.6777285829885,
+      "child_cleanup_confirmed": true,
+      "raw_report_path": "/Users/changmin/.codex/worktrees/rgb-common-physical-recovery/ugrp/outputs/rgb-common-physical-recovery-20260923/physical-replay-ead4a3a/report.json",
+      "raw_manifest_path": "/Users/changmin/.codex/worktrees/rgb-common-physical-recovery/ugrp/outputs/rgb-common-physical-recovery-20260923/physical-replay-ead4a3a/manifest.json",
+      "raw_inventory_path": "/Users/changmin/.codex/worktrees/rgb-common-physical-recovery/ugrp/outputs/rgb-common-physical-recovery-20260923/physical-replay-ead4a3a/artifact-hashes.json",
+      "raw_inventory_sha256": "1fc910ee699c9f5ca9a78eca82d54fafcc101e754554c82669bdbff857dbfd65",
+      "raw_inventory_file_count": 4542,
+      "artifact_finalization_complete": true,
+      "runs": [
+        {
+          "run_id": "rgb-recovery-ead4a3a-solo",
+          "target_object": "box",
+          "seed": 11,
+          "outcome": "failure",
+          "runtime_outcome": "completed",
+          "termination_reason": "ALL_ACTORS_FINISHED",
+          "sim_s": 280.0499999950749,
+          "run_wall_s": 413.74053170799743,
+          "process_wall_s": 419.58643941600167,
+          "commands": 3421,
+          "planner_decisions": 283,
+          "external_model_calls": 0,
+          "messages": 0,
+          "message_bytes": 0,
+          "selected_target_physical_success": true,
+          "replay_goal_complete": true,
+          "full_mission_complete": false,
+          "physical_evaluation": {
+            "max_lift_m": 0.0687383951413395,
+            "displacement_m": 2.3316655604001078,
+            "lift_observed_by_referee": true,
+            "inside_slot_at_end": true,
+            "released_supported_stable": true,
+            "carry_clearance": {
+              "sampled_continuous_clearance": true,
+              "samples": 1965,
+              "floor_contact_samples": 0,
+              "window_s": [
+                72.90000000000002,
+                269.35
+              ],
+              "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+              "max_sample_gap_s": 0.09999999999764952,
+              "first_floor_contact_s": null
+            },
+            "physical_success": true
+          },
+          "process_exit_code": 0,
+          "process_timed_out": false,
+          "child_reaped": true,
+          "process_group_gone": true,
+          "config_sha256": "56f6ae53fbe7ed648cb2795997ee66aad2fc267d3c185f3253d4e56c3fa71322",
+          "execution_bundle_sha256": "6abb07042f3723fb987c10f5d934a18981535d4501f055eb46899a04ba4a64c8",
+          "execution_environment_sha256": "f2bdd99f614a6cd510c9c2b4d82f025adaa9bbd4929420eee85966a9ccf718a9",
+          "evaluator_snapshot_sha256": "b441226d4545a8eceaaf32a63ec2a85f1fb2367375f305138ec95b15ccef1583",
+          "raw_run_path": "/Users/changmin/.codex/worktrees/rgb-common-physical-recovery/ugrp/outputs/rgb-common-physical-recovery-20260923/physical-replay-ead4a3a/runs/rgb-recovery-ead4a3a-solo"
+        },
+        {
+          "run_id": "rgb-recovery-ead4a3a-joint",
+          "target_object": "beam",
+          "seed": 11,
+          "outcome": "failure",
+          "runtime_outcome": "completed",
+          "termination_reason": "ALL_ACTORS_FINISHED",
+          "sim_s": 64.05000000018264,
+          "run_wall_s": 119.75476587499725,
+          "process_wall_s": 125.0606968330103,
+          "commands": 1006,
+          "planner_decisions": 131,
+          "external_model_calls": 0,
+          "messages": 0,
+          "message_bytes": 0,
+          "selected_target_physical_success": false,
+          "replay_goal_complete": false,
+          "full_mission_complete": false,
+          "physical_evaluation": {
+            "max_lift_m": 0.0,
+            "displacement_m": 0.0,
+            "lift_observed_by_referee": false,
+            "inside_slot_at_end": false,
+            "released_supported_stable": false,
+            "carry_clearance": {
+              "sampled_continuous_clearance": false,
+              "samples": 0,
+              "floor_contact_samples": 0,
+              "window_s": null,
+              "scope": "Post-run referee samples only; never actor input. No claim about contact between samples."
+            },
+            "physical_success": false
+          },
+          "process_exit_code": 0,
+          "process_timed_out": false,
+          "child_reaped": true,
+          "process_group_gone": true,
+          "config_sha256": "56f6ae53fbe7ed648cb2795997ee66aad2fc267d3c185f3253d4e56c3fa71322",
+          "execution_bundle_sha256": "6abb07042f3723fb987c10f5d934a18981535d4501f055eb46899a04ba4a64c8",
+          "execution_environment_sha256": "f2bdd99f614a6cd510c9c2b4d82f025adaa9bbd4929420eee85966a9ccf718a9",
+          "evaluator_snapshot_sha256": "3329a611bed8ed3215aacc9d80597831e9866060db5fc34f12a948ad1a18d8c2",
+          "raw_run_path": "/Users/changmin/.codex/worktrees/rgb-common-physical-recovery/ugrp/outputs/rgb-common-physical-recovery-20260923/physical-replay-ead4a3a/runs/rgb-recovery-ead4a3a-joint"
+        }
+      ]
     }
   ]
 }
