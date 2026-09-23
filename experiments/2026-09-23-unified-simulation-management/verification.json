@@ -1,0 +1,319 @@
+{
+  "schema": "ugrp.integration_verification.v1",
+  "date": "2026-09-23",
+  "scope": "Simulation management and packaging integration; not robot transport or communication efficacy evaluation",
+  "source_commits": {
+    "manager_and_initial_package": "64d09959b7066d5e2b2848d3a540a41b4bbee458",
+    "final_package_fix": "267ada94c60c9c74541e7d5d06be1e2771d7ce3f"
+  },
+  "environment": {
+    "python": "3.12.13",
+    "executable": "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/python",
+    "platform": "macOS-27.2-arm64-arm-64bit",
+    "packages": {
+      "mujoco": "3.12.0",
+      "numpy": "2.5.2",
+      "opencv-python": null,
+      "opencv-python-headless": "5.0.0.93",
+      "Pillow": "12.3.0",
+      "torch": null,
+      "gymnasium": "1.3.0"
+    }
+  },
+  "checks": [
+    {
+      "name": "offline regression suite before final examples packaging fix",
+      "passed": 1812,
+      "skipped": 8,
+      "subtests_passed": 205,
+      "runtime_s": 200.15,
+      "log": "offline-regressions.txt"
+    },
+    {
+      "name": "manager console dispatch focused",
+      "passed": 43,
+      "skipped": 1
+    },
+    {
+      "name": "mock history isolation focused",
+      "passed": 28,
+      "skipped": 1
+    },
+    {
+      "name": "Colab packaging and RGB bundle final fix",
+      "passed": 10
+    },
+    {
+      "name": "RGB bundle skills and scene parity",
+      "passed": 74
+    }
+  ],
+  "managed_fixture": {
+    "source_sha": "64d09959b7066d5e2b2848d3a540a41b4bbee458",
+    "conditions_matching_expected": 9,
+    "conditions_total": 9,
+    "runtime_s": 0.24455658400256652,
+    "exit_code": 0,
+    "physical_success": null,
+    "source_changed": false,
+    "finalization_errors": []
+  },
+  "package_attempts": [
+    {
+      "name": "colab-pack",
+      "source_sha": "64d09959b7066d5e2b2848d3a540a41b4bbee458",
+      "exit_code": 1,
+      "failure": "examples/task_stage_sync/plan.json omitted from sparse source package",
+      "remote_execution": false
+    },
+    {
+      "name": "colab-pack-fixed",
+      "source_sha": "267ada94c60c9c74541e7d5d06be1e2771d7ce3f",
+      "result_zip_sha256": "843ff31ecf08ea529daae54e6fb98ba402c386661822c23e8e06b16d9a30cbfd",
+      "archive_file_count": 15,
+      "all_archived_hashes_verified": true,
+      "manager_manifest_in_archive": true,
+      "fixture_conditions": 9,
+      "exit_code": 0,
+      "physical_success": null,
+      "remote_execution": false,
+      "gpu_allocated": false,
+      "source_tree_sha256": "cb6b883f7f9a6d41ce0983c8d6d9409c4c3c73dbd442254be3688e651fb980fb",
+      "missing_source_scope_count": 3
+    }
+  ],
+  "known_sparse_scope_omissions": [
+    "dashboard/__init__.py",
+    "dashboard/server.py",
+    "dashboard/transport.py"
+  ],
+  "llm_calls": 0,
+  "gpu_allocated": false,
+  "remote_execution": false,
+  "physical_transport_revalidated": false,
+  "raw_primary_path": "/Users/changmin/projects/ugrp/outputs/unified-simulation-management-20260923",
+  "original_worktree_path": "/Users/changmin/.codex/worktrees/unified-simulation-management/ugrp/outputs/unified-simulation-management-20260923",
+  "raw_storage": "local only; not remote backup",
+  "raw_files": [
+    {
+      "path": "offline-regressions.txt",
+      "sha256": "433e154c9ddf8d50fe1300281a190ab494e84aaea5184e430ed435bd6237fceb",
+      "bytes": 2181
+    },
+    {
+      "path": "colab-package-validation.json",
+      "sha256": "d3ccb3156e61b5114a44187bd919b4e36d4541ca5d4e41fa7a1a390ad7ed38a9",
+      "bytes": 516
+    },
+    {
+      "path": "show-managed-stage-sync.json",
+      "sha256": "30adf49b1b1b8769f93876fe00b5b90ab9aae0a5842ebb85d8f091d127316dbf",
+      "bytes": 196039
+    },
+    {
+      "path": "managed-stage-sync/console.log",
+      "sha256": "4e301816df59bd16d52e49400bbe04e1fd358f37c5558933365ed23e42ede49b",
+      "bytes": 377
+    },
+    {
+      "path": "managed-stage-sync/manifest.json",
+      "sha256": "f6a25f9b87401fea37de0ea1d0d460cefbe5bffe48bf50a25a1a9306d75ea7bf",
+      "bytes": 196038
+    },
+    {
+      "path": "managed-stage-sync/artifacts/report_gap.json",
+      "sha256": "0b970ebdb0d602ead79dc3f35d17b7354ec4c78d1b65fff1955d6cdfa93f6f08",
+      "bytes": 42608
+    },
+    {
+      "path": "managed-stage-sync/artifacts/old_stage_permission.json",
+      "sha256": "a99ef6db3002019516c1119dbc270e76070a0f7b07ee6e6525b4e98cc1135c60",
+      "bytes": 39883
+    },
+    {
+      "path": "managed-stage-sync/artifacts/summary.json",
+      "sha256": "7dea383a2e840a6aca98fc1034970ae77b0151d25b3cfeeba8fd962ecc816ba8",
+      "bytes": 9092
+    },
+    {
+      "path": "managed-stage-sync/artifacts/missing_support.json",
+      "sha256": "b36f749163297d185a656fe777f3eed1d40773139cfc2058cf0c9c348fdaa4d8",
+      "bytes": 33709
+    },
+    {
+      "path": "managed-stage-sync/artifacts/normal.json",
+      "sha256": "117da1a29c137f4eba6c53495b462dc98672c0fcba3ebd1b149bd8d9a7271190",
+      "bytes": 37316
+    },
+    {
+      "path": "managed-stage-sync/artifacts/command_only.json",
+      "sha256": "cfe4f8101b3a1748949f9397caaead95f975d25d707c83a079416e97d29898fa",
+      "bytes": 5820
+    },
+    {
+      "path": "managed-stage-sync/artifacts/delayed_ready.json",
+      "sha256": "ab5062ddf132f738a094632a272180991833c6fc969af890cf61b9a2410b4cbb",
+      "bytes": 102405
+    },
+    {
+      "path": "managed-stage-sync/artifacts/delayed_done.json",
+      "sha256": "d523998d535ed55e910820f6155f8efeef267c895975c8840b8539b8a126197b",
+      "bytes": 39399
+    },
+    {
+      "path": "managed-stage-sync/artifacts/plan_change.json",
+      "sha256": "a24103de19e01de05117731c19096399187e468340cad7f39efa4249f8f36ef9",
+      "bytes": 41971
+    },
+    {
+      "path": "managed-stage-sync/artifacts/hold_reobserve.json",
+      "sha256": "99647b4b213874b03082c22701333acfe224bdc8334980dba8dfb7f4a8a98e45",
+      "bytes": 41252
+    },
+    {
+      "path": "colab-pack/source.tar.gz",
+      "sha256": "a12522da1045ed69b093c3c40b0feac801ee4611e973ea5ce158b3b33b4040d2",
+      "bytes": 38160724
+    },
+    {
+      "path": "colab-pack/source-manifest.json",
+      "sha256": "706a31ecc2fb06f16a1860247f005597c47566a539e88448234f8e0a36833be6",
+      "bytes": 373185
+    },
+    {
+      "path": "colab-pack/results/colab-standard-smoke.zip",
+      "sha256": "ce98eb6ffcd4cbec9d6158875d8f255242c811a53caf9ced4abc7882961a2f93",
+      "bytes": 63973
+    },
+    {
+      "path": "colab-pack/results/colab-standard-smoke.zip.sha256",
+      "sha256": "39d1d62efd38299148b399ebbd9d4e5b36586508905d1a99f6a5c72b9cc961b7",
+      "bytes": 91
+    },
+    {
+      "path": "colab-pack/results/colab-standard-smoke/run.log",
+      "sha256": "0d7c3aac03e2ddac92edbae8e8c7400ef0f76d9fbd6e4c0d694652d7d77d68fb",
+      "bytes": 2097
+    },
+    {
+      "path": "colab-pack/results/colab-standard-smoke/packages.txt",
+      "sha256": "77e331832330d64268d7d7053fcd20bdc365f314b11e91e3b215c783192a0dbb",
+      "bytes": 540
+    },
+    {
+      "path": "colab-pack/results/colab-standard-smoke/run.json",
+      "sha256": "74fbb6ff2cb6c1a88a21d2766a219ce4f06675b59feff8543d01742682ba372e",
+      "bytes": 1238
+    },
+    {
+      "path": "colab-pack/results/colab-standard-smoke/result/console.log",
+      "sha256": "f79cc1d525f8ba152cee3f1a5da9e7c420b8c36b46fc5fd35a2a080c6febaebe",
+      "bytes": 1580
+    },
+    {
+      "path": "colab-pack/results/colab-standard-smoke/result/manifest.json",
+      "sha256": "ce3d4ca913ae6bd42bf32f3971626279ad454c4a2d352fe385f253edd928a6df",
+      "bytes": 194611
+    },
+    {
+      "path": "colab-pack-fixed/source.tar.gz",
+      "sha256": "30778e693cf132577b93133acaba7f6b8b27a50d8ddf7abc8d1e31bcf19a77e7",
+      "bytes": 38167505
+    },
+    {
+      "path": "colab-pack-fixed/source-manifest.json",
+      "sha256": "9f637ed49507db90b43d54e37a0442d9d64e0b529f0276d96785530db91d518a",
+      "bytes": 373185
+    },
+    {
+      "path": "colab-pack-fixed/results/colab-standard-smoke.zip",
+      "sha256": "843ff31ecf08ea529daae54e6fb98ba402c386661822c23e8e06b16d9a30cbfd",
+      "bytes": 95527
+    },
+    {
+      "path": "colab-pack-fixed/results/colab-standard-smoke.zip.sha256",
+      "sha256": "59b565c1fc5c4fdb8769b4899aaacefbf7852700c73c5744e9b08d349ad17484",
+      "bytes": 91
+    },
+    {
+      "path": "colab-pack-fixed/results/colab-standard-smoke/run.log",
+      "sha256": "dacdae370b4711ea2ce10472d23ce356cc28da413165aa8a45357f830e2324fc",
+      "bytes": 906
+    },
+    {
+      "path": "colab-pack-fixed/results/colab-standard-smoke/packages.txt",
+      "sha256": "77e331832330d64268d7d7053fcd20bdc365f314b11e91e3b215c783192a0dbb",
+      "bytes": 540
+    },
+    {
+      "path": "colab-pack-fixed/results/colab-standard-smoke/run.json",
+      "sha256": "8c6658f1706c7b0cebae5f6947d8ffed029fca5d6b730b85bd0e288b61c8be02",
+      "bytes": 2347
+    },
+    {
+      "path": "colab-pack-fixed/results/colab-standard-smoke/result/console.log",
+      "sha256": "4e301816df59bd16d52e49400bbe04e1fd358f37c5558933365ed23e42ede49b",
+      "bytes": 377
+    },
+    {
+      "path": "colab-pack-fixed/results/colab-standard-smoke/result/manifest.json",
+      "sha256": "216301ebdba89e1c94752ce2dbb161ea774b0e121fc71b3f813b64a2060a431b",
+      "bytes": 196291
+    },
+    {
+      "path": "colab-pack-fixed/results/colab-standard-smoke/result/artifacts/report_gap.json",
+      "sha256": "f83c62e6ea6d2c1b08bdc5204a3cd75f2dbc1d4960bf96a52c0d3fac5174107f",
+      "bytes": 42605
+    },
+    {
+      "path": "colab-pack-fixed/results/colab-standard-smoke/result/artifacts/old_stage_permission.json",
+      "sha256": "49f642fb09d0eabd39ea44f064e78942bf01eee31b480bb0b9e80d39af54bc70",
+      "bytes": 39881
+    },
+    {
+      "path": "colab-pack-fixed/results/colab-standard-smoke/result/artifacts/summary.json",
+      "sha256": "9cbdd2ff861a2df3f2d13f50bb561f0e1194119a470cc68de27eb66db56c8923",
+      "bytes": 9090
+    },
+    {
+      "path": "colab-pack-fixed/results/colab-standard-smoke/result/artifacts/missing_support.json",
+      "sha256": "d416b2bdd9748f3e3a395356fa731e5a4c7f4ed5ea31fbc6a10d5b44571c4d75",
+      "bytes": 33705
+    },
+    {
+      "path": "colab-pack-fixed/results/colab-standard-smoke/result/artifacts/normal.json",
+      "sha256": "a4e88940e690efcb801be3767130e3d246653f1240bbeca2e72b2ec393a0754b",
+      "bytes": 37314
+    },
+    {
+      "path": "colab-pack-fixed/results/colab-standard-smoke/result/artifacts/command_only.json",
+      "sha256": "fa7967b399ba03a30e4ff3ea27fa818a25e88650545f994acc0d09f52a71d556",
+      "bytes": 5817
+    },
+    {
+      "path": "colab-pack-fixed/results/colab-standard-smoke/result/artifacts/delayed_ready.json",
+      "sha256": "b7aa45dc4cab98183c8389fd48b6ac0d1ef472d52c216d79181ca55fdf56257d",
+      "bytes": 102397
+    },
+    {
+      "path": "colab-pack-fixed/results/colab-standard-smoke/result/artifacts/delayed_done.json",
+      "sha256": "73f65631d44b85094c98f7ab64fc4fb0edab6bee8b57884a96a5a21e145e7543",
+      "bytes": 39401
+    },
+    {
+      "path": "colab-pack-fixed/results/colab-standard-smoke/result/artifacts/plan_change.json",
+      "sha256": "e6f2d81d3207c05124eedd19208df691bc01ec0addba3f2f0ea7e47a8fe56865",
+      "bytes": 41971
+    },
+    {
+      "path": "colab-pack-fixed/results/colab-standard-smoke/result/artifacts/hold_reobserve.json",
+      "sha256": "06ffdeeeca1d9daad36d75bdd768f74e6eb284140fbe5a52abf6a7dad3fd5ff4",
+      "bytes": 41252
+    },
+    {
+      "path": "parser-audit.md",
+      "sha256": "fbb6c01bc3e4bb50545762a96363a00731dec58025407bd097e92d7f9470adfa",
+      "bytes": 6520
+    }
+  ]
+}

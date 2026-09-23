@@ -1,5 +1,7 @@
 # Colab CLI 시뮬레이션·평가
 
+[2026-09-23 표준 시뮬레이션·Google AI Pro/L4 검토](colab_standard_simulation_review_20260923.md): 같은 표준 CLI를 전송·회수하는 연결, 200 CCU의 의미, 현재 OSMesa 강제 및 EGL/학습 연결의 남은 작업을 확인한다.
+
 2026-09-21 사용자 요청: 시뮬레이션·렌더링·교사 데이터 생성·학습·평가는 **Colab CLI**로 실행한다. 브라우저 노트북·Colab Secrets·GitHub 토큰 등록을 기본 절차로 요구하지 않는다. Kaggle CLI는 추가 배치 실행 대상으로 사용할 수 있다. 코드 편집·단위 테스트·Git·결과 검토와 실물 MasterPi 연결은 로컬에 남긴다.
 
 ## Colab CLI에서 실행

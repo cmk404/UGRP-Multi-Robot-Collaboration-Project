@@ -7,7 +7,21 @@
       "purpose": "기본 창·설정·raw action·사용자 제어기",
       "entry": "scripts/sim_cli.py",
       "docs": "docs/local_simulation.md",
-      "requires": "simulator only; no model account or weights"
+      "requires": "simulator only; no model account or weights",
+      "version": "1.0.0",
+      "runner": "scripts.sim_cli",
+      "output_flag": "--output",
+      "side_effect": "local_simulation",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": {
+        "run": [
+          "CONFIG"
+        ],
+        "console": [
+          "CONFIG"
+        ]
+      },
+      "output_kind": "directory"
     },
     {
       "id": "dispatch",
@@ -15,126 +29,337 @@
       "entry": "scripts/run_dispatch_e2e.py",
       "local_cli": "bash scripts/open_simulation.command dispatch --task 'beam과 box를 같은 dock으로 옮겨'",
       "docs": "docs/research_dispatch_arena.md",
-      "requires": "model endpoint, full grasp model and stage policies; costs depend on planner"
+      "requires": "model endpoint, full grasp model and stage policies; costs depend on planner",
+      "version": "1.0.0",
+      "runner": "scripts.sim_cli",
+      "output_flag": "--output",
+      "side_effect": "model_calls",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [],
+      "output_kind": "directory"
     },
     {
       "id": "dispatch-skills",
       "purpose": "확정 계획의 RGB 스킬 실행",
       "entry": "scripts/run_dispatch_skills.py",
       "docs": "docs/research_dispatch_arena.md",
-      "requires": "saved agreement and complete grasp/stage policy artifacts"
+      "requires": "saved agreement and complete grasp/stage policy artifacts",
+      "version": "1.0.0",
+      "runner": "scripts.run_dispatch_e2e",
+      "output_flag": "--output",
+      "side_effect": "local_simulation",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--plan-replay",
+        "--grasp-model-dir",
+        "--stage-model-dir"
+      ],
+      "output_kind": "directory"
     },
     {
       "id": "communication",
       "purpose": "동일 실행기 A/B/C 통신 연결·감사",
       "entry": "scripts/evaluate_rgb_communication.py",
       "docs": "docs/research_todo.md",
-      "requires": "offline prepare/admit/audit; not a live model launcher"
+      "requires": "offline prepare/admit/audit; not a live model launcher",
+      "version": "1.0.0",
+      "runner": "scripts.evaluate_rgb_communication",
+      "output_flag": {
+        "prepare": "--output",
+        "evaluate": "--output"
+      },
+      "side_effect": "offline_analysis",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": {
+        "prepare": [
+          "--protocol"
+        ],
+        "validate": [
+          "--manifest"
+        ],
+        "schedule": [
+          "--manifest"
+        ],
+        "admit": [
+          "--manifest"
+        ],
+        "evaluate": [
+          "--manifest",
+          "--artifacts"
+        ]
+      },
+      "output_kind": {
+        "prepare": "file",
+        "evaluate": "file"
+      }
     },
     {
       "id": "multi-object",
       "purpose": "다중 물건 계획·RGB 식별·실행",
       "entry": "scripts/run_multi_object_execution.py",
       "docs": "docs/multi_object_pilot.md",
-      "requires": "model endpoint and declared physical adapters; not all cases are proven complete"
+      "requires": "model endpoint and declared physical adapters; not all cases are proven complete",
+      "version": "1.0.0",
+      "runner": "scripts.run_multi_object_execution",
+      "output_flag": "--output",
+      "side_effect": "model_calls",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--model"
+      ],
+      "output_kind": "directory"
     },
     {
       "id": "navigation",
       "purpose": "정적 지도·RGB 단독 주행",
       "entry": "scripts/run_known_map_navigation.py",
       "docs": "docs/known_map_navigation.md",
-      "requires": "authored map and setup case"
+      "requires": "authored map and setup case",
+      "version": "1.0.0",
+      "runner": "scripts.run_known_map_navigation",
+      "output_flag": "--out-dir",
+      "side_effect": "local_simulation",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--map-file",
+        "--case-json"
+      ],
+      "output_kind": "directory"
     },
     {
       "id": "pair-navigation",
       "purpose": "RGB 공동 운반·지형 통과",
       "entry": "scripts/run_pair_navigation.py",
       "docs": "maps/README.md",
-      "requires": "full grasp model directory; profile and vision mode must match experiment"
+      "requires": "full grasp model directory; profile and vision mode must match experiment",
+      "version": "1.0.0",
+      "runner": "scripts.run_pair_navigation",
+      "output_flag": "--out-dir",
+      "side_effect": "local_simulation",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--map",
+        "--grasp-model-dir"
+      ],
+      "output_kind": "directory"
     },
     {
       "id": "camera-pair",
       "purpose": "자기 RGB·TOP 기반 공동 운반",
       "entry": "scripts/run_camera_pair_transport.py",
       "docs": "docs/README.md",
-      "requires": "existing grasp policy artifacts and explicit cohort configuration"
+      "requires": "existing grasp policy artifacts and explicit cohort configuration",
+      "version": "1.0.0",
+      "runner": "scripts.run_camera_pair_transport",
+      "output_flag": "--out-dir",
+      "side_effect": "model_calls",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [],
+      "output_kind": "directory"
     },
     {
       "id": "rgb-traffic",
       "purpose": "RGB 주행 양보·점유",
       "entry": "scripts/run_rgb_traffic.py",
       "docs": "docs/current_status.md",
-      "requires": "finite local scenario; no external model"
+      "requires": "finite local scenario; no external model",
+      "version": "1.0.0",
+      "runner": "scripts.run_rgb_traffic",
+      "output_flag": "--out-dir",
+      "side_effect": "local_simulation",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--scenario"
+      ],
+      "output_kind": "directory"
     },
     {
       "id": "act",
       "purpose": "교사·ACT 운반 비교",
       "entry": "scripts/run_carry_act_experiment.py",
       "docs": "docs/reference_alignment.md",
-      "requires": "optional ACT Python environment, weights, grasp/stage models; historical protocol"
+      "requires": "optional ACT Python environment, weights, grasp/stage models; historical protocol",
+      "version": "1.0.0",
+      "runner": "scripts.run_carry_act_experiment",
+      "output_flag": "--out",
+      "side_effect": "local_simulation",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--act-python",
+        "--mjpython",
+        "--grasp",
+        "--stages"
+      ],
+      "output_kind": "directory"
     },
     {
       "id": "teacher",
       "purpose": "접근 교사 데이터 생성",
       "entry": "scripts/collect_camera_approach_teacher.py",
       "docs": "docs/README.md",
-      "requires": "privileged teacher only; never a student success"
+      "requires": "privileged teacher only; never a student success",
+      "version": "1.0.0",
+      "runner": "scripts.collect_camera_approach_teacher",
+      "output_flag": "--out-dir",
+      "side_effect": "local_simulation",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--grasp-model-dir",
+        "--cases-json"
+      ],
+      "output_kind": "directory"
     },
     {
       "id": "act-training",
       "purpose": "운반 학습",
       "entry": "scripts/train_carry_act.py",
       "docs": "docs/reference_alignment.md",
-      "requires": "teacher dataset and optional training dependencies"
+      "requires": "teacher dataset and optional training dependencies",
+      "version": "1.0.0",
+      "runner": "scripts.train_carry_act",
+      "output_flag": "--out",
+      "side_effect": "training",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--dataset"
+      ],
+      "output_kind": "directory"
     },
     {
       "id": "jev",
       "purpose": "Jev 표현·행동 보조 비교",
       "entry": "scripts/run_jev_semantic_cohort.py",
       "docs": "docs/research_todo.md",
-      "requires": "component evaluation, not the communication experiment"
+      "requires": "component evaluation, not the communication experiment",
+      "version": "1.0.0",
+      "runner": "scripts.run_jev_semantic_cohort",
+      "output_flag": "--output",
+      "side_effect": "model_calls",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--execute",
+        "--mjpython"
+      ],
+      "output_kind": "directory"
     },
     {
       "id": "stage-sync",
       "purpose": "로봇별 단계·허가 동기화",
       "entry": "scripts/demo_task_stage_sync.py",
       "docs": "docs/task_stage_sync_contract.md",
-      "requires": "offline fixtures; live port integration audited separately"
+      "requires": "offline fixtures; live port integration audited separately",
+      "version": "1.0.0",
+      "runner": "scripts.demo_task_stage_sync",
+      "output_flag": "--output",
+      "side_effect": "offline_analysis",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [],
+      "output_kind": "directory"
     },
     {
       "id": "physical",
       "purpose": "실물 입력·기록 연결",
       "entry": "scripts/analyze_real_trace.py",
       "docs": "docs/masterpi_network_runbook.md",
-      "requires": "actual devices, networking, calibration and explicit hardware session"
+      "requires": "actual devices, networking, calibration and explicit hardware session",
+      "version": "1.0.0",
+      "runner": "scripts.analyze_real_trace",
+      "output_flag": null,
+      "side_effect": "hardware_record_analysis",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "TRACE_DIRECTORY"
+      ],
+      "output_kind": "directory"
     },
     {
       "id": "worker",
       "purpose": "기존 MuJoCo 워커 연결",
       "entry": "scripts/run_mujoco_ws_worker.py",
       "docs": "docs/README.md",
-      "requires": "existing bridge protocol; native CLI does not start a server"
+      "requires": "existing bridge protocol; native CLI does not start a server",
+      "version": "1.0.0",
+      "runner": "scripts.run_mujoco_ws_worker",
+      "output_flag": null,
+      "side_effect": "persistent_worker",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--url",
+        "--token"
+      ],
+      "output_kind": "directory"
     },
     {
       "id": "tensorboard",
       "purpose": "기록·영상 검토",
       "entry": "scripts/export_tensorboard.py",
       "docs": "docs/tensorboard.md",
-      "requires": "optional observability dependencies; existing viewer"
+      "requires": "optional observability dependencies; existing viewer",
+      "version": "1.0.0",
+      "runner": "scripts.export_tensorboard",
+      "output_flag": "--output",
+      "side_effect": "offline_analysis",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--source"
+      ],
+      "output_kind": "directory"
     },
     {
       "id": "communication-study",
       "purpose": "같은 물리 실행기의 유한 통신 연구 prepare/check/run/trial",
       "entry": "scripts/run_rgb_communication_study.py",
       "docs": "docs/research_parallel/d2-study-runner.md",
-      "requires": "local Mac/Linux; fresh source-bound manifest, map/model evidence, all readiness and cost gates; stale evidence is rejected"
+      "requires": "local Mac/Linux; fresh source-bound manifest, map/model evidence, all readiness and cost gates; stale evidence is rejected",
+      "version": "1.0.0",
+      "runner": "scripts.run_rgb_communication_study",
+      "output_flag": {
+        "prepare": "--output",
+        "run": "--output",
+        "trial": "--output"
+      },
+      "side_effect": "local_simulation",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": {
+        "prepare": [
+          "--config"
+        ],
+        "check": [
+          "--manifest",
+          "--evidence-root"
+        ],
+        "run": [
+          "--manifest",
+          "--evidence-root"
+        ],
+        "trial": [
+          "--manifest",
+          "--evidence-root",
+          "--run-id"
+        ]
+      },
+      "output_kind": {
+        "prepare": "file",
+        "run": "directory",
+        "trial": "directory"
+      }
     },
     {
       "id": "communication-cloud-submit",
       "purpose": "명시적으로 선택하는 원격 통신 연구 제출",
       "entry": "scripts/submit_rgb_communication_study.py",
       "docs": "docs/research_parallel/d2-study-runner.md",
-      "requires": "explicit Colab allocation and evidence capsule; optional remote path, not invoked by local CLI"
+      "requires": "explicit Colab allocation and evidence capsule; optional remote path, not invoked by local CLI",
+      "version": "1.0.0",
+      "runner": "scripts.submit_rgb_communication_study",
+      "output_flag": "--output",
+      "side_effect": "remote_submit",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--evidence-root",
+        "--inventory"
+      ],
+      "output_kind": "directory"
     }
   ]
 }

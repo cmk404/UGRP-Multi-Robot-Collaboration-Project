@@ -4,6 +4,7 @@
 
 ## 시작하기
 
+- **[표준 시뮬레이션 관리](docs/simulation_management.md)** — 연구별 실행 선택·버전·입력·결과 기록을 하나의 CLI에서 관리
 - **[로컬 시뮬레이션 · CLI/Python API](docs/local_simulation.md) · [환경·제어기·action 확장](docs/simulation_extensions.md)** — 자연어 지시 → 기존 공동 plan → 로봇별 RGB 스킬 실행과 MuJoCo 기본 창, 수동/설정 실행 선택 · [구성 검토](docs/simulation_inventory.md)
 - **[연구 TODO와 우선순위](docs/research_todo.md)** — 독립 에이전트의 무통신·정형·자연어 비교를 중심으로 실행 기반·본실험·ACT/Jev 보조 과제 정리
 - **[Kaggle CLI 배치 실행](docs/kaggle_simulation.md)** — 비공개 CPU·오프라인 실행·결과 회수 검증 완료; 신규 계정은 최초 인증 필요

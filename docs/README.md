@@ -4,6 +4,7 @@
 
 | 종류 | 문서 | 읽는 시점 |
 |---|---|---|
+| 표준 시뮬레이션 관리 | [실행·버전·결과 관리](simulation_management.md) | 연구별 workflow 실행과 공통 이력·입력·결과 해시를 확인할 때 |
 | 로컬 구성·실행 API | [로컬 시뮬레이션](local_simulation.md) | 설정 파일과 CLI/Python으로 세계를 구성하고 MuJoCo 창에서 확인할 때 |
 | 현재 규칙·개발 절차 | [AGENTS](../AGENTS.md), [CONTRIBUTING](../CONTRIBUTING.md) | 작업 시작, 설치·검증·Git 작업 |
 | 연구 우선순위·완료 기준 | [연구 TODO](research_todo.md) | 통신 본실험과 실행 기반·보조 과제의 순서 결정 |

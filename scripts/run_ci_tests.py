@@ -16,6 +16,8 @@ TEST_PATTERNS = (
     "tests/test_simulation_dispatch.py",
     "tests/test_simulation_extensions.py",
     "tests/test_simulation_scenes.py",
+    "tests/test_simulation_workflow_manager.py",
+    "tests/test_dispatch_scene_parity.py",
     "tests/test_cloud_preflight.py",
     "tests/test_carry_failure_measurement.py",
     "tests/test_repeated_skill_summary.py",

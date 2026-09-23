@@ -2,6 +2,8 @@
 
 같은 설정을 터미널에서 실행하고 MuJoCo 기본 3D 창으로 확인한다. Python에서는 `Simulation`을 불러와 관측·명령·물리 스텝을 직접 제어한다. 기본 연구 실행은 기존 `run_dispatch_e2e --executor skills`를 사용한다. 자연어 지시를 받은 세 로봇이 plan에 합의하고, 각자의 프로그램으로 기존 RGB 스킬을 실행한다. 수동·설정 실행에는 모델 계정이 필요 없다.
 
+**실행·버전·결과 관리는 [표준 시뮬레이션 관리](simulation_management.md)로 통일한다.** `workflow list/plan/run/runs/show`에서 연구별 실행을 선택하고 이력을 확인한다. 아래 기본 `run/console/dispatch`도 공통 실행 기록에 연결된다.
+
 ## 설치와 첫 실행
 
 Python 3.12를 사용한다. 기존 Mac 환경 `.venv-sim-worker-mac`을 재사용하며, 새 clone에서는 다음과 같이 설치한다.
@@ -172,7 +174,7 @@ CLI는 매번 `outputs/sim-<날짜>-<ID>/`를 만든다. `config.json`은 적용
 | `scripts/open_simulation.command` | 기존 Python 환경 선택과 프로세스 세션 관리 |
 | `scripts/check_simulation.py` | 실제 물리·초기화·카메라·설정 통합 검사 |
 
-명령 스케줄은 고정 입력이며 자율 운반·LLM 협력 성공을 뜻하지 않는다. 기존 하네스는 별도 경로로 유지되며 이 API로 전부 이관된 것은 아니다. 완료된 연구 결과 비교는 [TensorBoard](tensorboard.md) 절차를 따른다. 실행기는 개별 PID 기반 세션을 만들며 Ctrl-C/창 종료/시간 제한 시 자신이 시작한 세계와 창을 닫는다.
+명령 스케줄은 고정 입력이며 자율 운반·LLM 협력 성공을 뜻하지 않는다. 기존 하네스는 표준 관리 계층의 workflow 어댑터로 연결된다. 제어 루프 전체를 이 Python API로 이관한 것은 아니다. 완료된 연구 결과 비교는 [TensorBoard](tensorboard.md) 절차를 따른다. 실행기는 개별 PID 기반 세션을 만들며 Ctrl-C/창 종료/시간 제한 시 자신이 시작한 세계와 창을 닫는다.
 
 검증 명령:
 
