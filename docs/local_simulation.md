@@ -12,8 +12,10 @@ Python 3.12를 사용한다. 기존 Mac 환경 `.venv-sim-worker-mac`을 재사�
 python3.12 -m venv .venv-dev
 .venv-dev/bin/python -m pip install -r requirements-sim.txt
 .venv-dev/bin/python -m pip check
-bash scripts/open_simulation.command
+bash scripts/open_simulation.command run configs/simulation/drive.json --paused --capture
 ```
+
+첫 명령은 모델 계정 없이 예제 명령 스케줄을 MuJoCo 기본 창에 연다. **Space**로 재개하면 3초의 SIM 시간 동안 로봇 명령을 실행하고 종료한다. `--capture`는 시작·종료의 로봇 RGB를 결과 폴더에 저장한다. 터미널에 표시된 `result.json` 경로와 `bash scripts/open_simulation.command workflow runs`의 실행 기록을 확인한다. 창을 열었다는 사실과 예제 명령 완료는 연구용 운반 성공이 아니다. 인자 없이 실행하면 선택 메뉴가 열리며 기본 선택 1은 모델 프록시가 필요한 공동 계획이다.
 
 Ubuntu 24.04는 먼저 [설치 안내](ubuntu_quickstart.md)를 따른다. 창을 띄우려면 데스크톱의 X11/Wayland 그래픽 세션이 필요하다. WSL은 WSLg가 필요하며 각 PC의 그래픽 지원은 따로 확인한다. 서버에서는 `--headless`를 사용한다. Linux에서 RGB를 저장하는 headless 실행에는 `libosmesa6`와 `MUJOCO_GL=osmesa`를 사용할 수 있다. 네이티브 창에는 기본 GLFW를 사용한다.
 
@@ -21,7 +23,7 @@ Ubuntu 24.04는 먼저 [설치 안내](ubuntu_quickstart.md)를 따른다. 창�
 
 ## 터미널에서 구성하기
 
-저장소 루트에서 실행한다. 인자 없는 실행은 공동 계획·저장된 plan 재생·수동·설정 실행을 선택하는 메뉴를 연다. 공동 계획의 기본 장면은 **기존 공동 출하장(dispatch/shared_crossing, seed11)**이다. 수동 기본 설정은 `configs/simulation/local.json`이다. `init`과 `new`도 같은 연구 장면을 기본으로 사용한다. [전체 구성·누락 검토](simulation_inventory.md)에 기존 자산과 연결 범위를 정리했다.
+저장소 루트에서 실행한다. 인자 없는 실행은 공동 계획·저장된 plan 재생·수동·설정 실행을 선택하는 메뉴를 연다. 공동 계획의 기본 장면은 **기존 공동 출하장(dispatch/shared_crossing, seed11)**이다. 수동 기본 설정은 `configs/simulation/local.json`이다. `init`과 `new`도 같은 연구 장면을 기본으로 사용한다. [전체 구성·누락 검토](simulation_inventory.md)에 기존 자산과 연결 범위를 정리했다. 지도 준비·ACT 학습·실행 이력·TensorBoard를 연결하는 명령은 [표준 관리 절차](simulation_management.md#지도학습실행-결과를-잇는-절차)를 따른다.
 
 ```bash
 # 설정 생성 → 편집 → 오류/기본값 확인
@@ -30,6 +32,10 @@ bash scripts/open_simulation.command inspect my-scene.json
 bash scripts/open_simulation.command scenes
 bash scripts/open_simulation.command workflows
 bash scripts/open_simulation.command doctor
+
+# 등록된 지도를 설정 파일 수정 없이 바로 관찰
+bash scripts/open_simulation.command run configs/simulation/local.json \
+  --scene act/train-open-1 --paused --capture
 
 # MuJoCo 기본 창. 마우스로 회전/이동/확대하며 물리를 관찰한다.
 bash scripts/open_simulation.command run my-scene.json --paused
