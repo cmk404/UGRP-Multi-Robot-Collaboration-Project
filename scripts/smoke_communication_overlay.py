@@ -43,6 +43,8 @@ def main(argv=None):
     parser.add_argument('--audit', type=Path, required=True,
                         help='new output JSON; source is never changed')
     parser.add_argument('--duration-s', type=float, default=10.)
+    parser.add_argument('--diagnostic', action='store_true',
+                        help='add ASCII text and a bright center image; use full viewer sync')
     args = parser.parse_args(argv)
     if not 0 < args.duration_s <= 30:
         parser.error('duration must be within (0, 30] seconds')
@@ -57,12 +59,31 @@ def main(argv=None):
         '<mujoco><worldbody><geom type="plane" size="1 1 .1"/></worldbody></mujoco>')
     data = mujoco.MjData(model)
     started = time.monotonic()
+    viewport = None
     with mujoco.viewer.launch_passive(model, data,
                                       show_left_ui=False, show_right_ui=False) as viewer:
-        viewer.set_images((mujoco.MjrRect(12, 12, pixels.shape[1], pixels.shape[0]), pixels))
+        if args.diagnostic:
+            import numpy as np
+            viewer.sync(state_only=False)
+            area = viewer.viewport
+            viewport = {name: int(getattr(area, name)) for name in
+                        ('left', 'bottom', 'width', 'height')}
+            marker = np.empty((90, 300, 3), dtype=np.uint8)
+            marker[:] = (255, 0, 220)
+            center = mujoco.MjrRect(area.left + max(0, (area.width-300)//2),
+                                    area.bottom + max(0, (area.height-90)//2), 300, 90)
+            viewer.set_images([
+                (mujoco.MjrRect(12, 12, pixels.shape[1], pixels.shape[0]), pixels),
+                (center, marker),
+            ])
+            viewer.set_texts((None, None, 'UGRP OVERLAY DIAGNOSTIC',
+                              'saved dialogue replay; no robot or model call'))
+            print('diagnostic viewer viewport:', viewport, flush=True)
+        else:
+            viewer.set_images((mujoco.MjrRect(12, 12, pixels.shape[1], pixels.shape[0]), pixels))
         until = started + args.duration_s
         while viewer.is_running() and time.monotonic() < until:
-            viewer.sync(state_only=True)
+            viewer.sync(state_only=not args.diagnostic)
             time.sleep(.05)
     # MuJoCo 3.12 close signals the render thread; wait for its teardown before
     # releasing the model, as in DispatchNativeView.close.
@@ -77,7 +98,8 @@ def main(argv=None):
              'saved_peer_messages': count, 'displayed_recent_messages': min(3, count),
              'fresh_messages': 0, 'korean_font_available': korean_font,
              'requested_duration_s': args.duration_s,
-             'viewer_elapsed_s': time.monotonic()-started}
+             'viewer_elapsed_s': time.monotonic()-started,
+             'diagnostic': args.diagnostic, 'viewer_viewport': viewport}
     args.audit.parent.mkdir(parents=True, exist_ok=True)
     with args.audit.open('x', encoding='utf-8') as file:
         json.dump(audit, file, ensure_ascii=False, indent=2)
