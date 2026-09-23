@@ -20,6 +20,36 @@ def _overlay_text(value):
     return ''.join(char if char.isprintable() else f'\\u{ord(char):04x}' for char in str(value))
 
 
+def _wrapped_lines(text, draw, font, width, *, limit=2):
+    """Fit an excerpt; only clipped text gets an explicit ellipsis."""
+    remaining = _overlay_text(text).strip()
+    lines = []
+    while remaining and len(lines) < limit:
+        if draw.textlength(remaining, font=font) <= width:
+            lines.append(remaining)
+            remaining = ''
+            break
+        low, high = 1, len(remaining)
+        while low < high:
+            middle = (low + high + 1) // 2
+            if draw.textlength(remaining[:middle], font=font) <= width:
+                low = middle
+            else:
+                high = middle - 1
+        cut = low
+        space = remaining.rfind(' ', 0, cut+1)
+        if space >= cut//2:
+            cut = space
+        line = remaining[:cut].rstrip()
+        remaining = remaining[cut:].lstrip()
+        if len(lines) == limit-1 and remaining:
+            while line and draw.textlength(line + '…', font=font) > width:
+                line = line[:-1]
+            line = line.rstrip() + '…'
+        lines.append(line)
+    return lines
+
+
 def render_dialogue_overlay(state, *, font_paths=KOREAN_FONTS):
     """Render recent text for a copied observer, never an actor camera."""
     from PIL import Image, ImageDraw, ImageFont
@@ -27,23 +57,24 @@ def render_dialogue_overlay(state, *, font_paths=KOREAN_FONTS):
     font = None
     for path in font_paths:
         try:
-            font = ImageFont.truetype(path, 17)
+            font = ImageFont.truetype(path, 22)
             break
         except OSError:
             continue
     korean_font = font is not None
     if font is None:
         font = ImageFont.load_default()
-    width, height = 680, 196
+    width, height = 1000, 330
     panel = Image.new('RGB', (width, height), '#14212a')
     draw = ImageDraw.Draw(panel)
     draw.rectangle((0, 0, width-1, height-1), outline='#65a9bc', width=2)
+    full_log = '/'.join(Path(state.get('full_log', 'team/conversation.jsonl')).parts[-2:])
     if korean_font:
         title = f"동료 메시지 관찰 | {state['status']}"
-        footer = f"전체 원문: {state.get('full_log', 'team/conversation.jsonl')}"
+        footer = f'전체 원문: {full_log}'
     else:
         title = f"Peer messages: {state['fresh_peer_messages']} (Korean font unavailable)"
-        footer = f"Full UTF-8 text: {state.get('full_log', 'team/conversation.jsonl')}"
+        footer = f'Full UTF-8 text: {full_log} and terminal'
 
     def line(text, y, color):
         text = _overlay_text(text)
@@ -55,14 +86,27 @@ def render_dialogue_overlay(state, *, font_paths=KOREAN_FONTS):
     recent = state.get('recent_messages', [])[-3:]
     if not recent:
         line('새 자연어 메시지 없음' if korean_font else 'No fresh natural-language message',
-             52, '#c2d6da')
+             57, '#c2d6da')
     for index, message in enumerate(recent):
         arrow = '→' if korean_font else '->'
-        prefix = f"#{message['seq']} {message['sender']} {arrow} {','.join(message['recipients'])} "
-        line(prefix + (message['text'] if korean_font else '[see full UTF-8 log]'),
-             52 + 35*index, '#d7f5e7')
-    line(footer, 165, '#91c3cf')
+        y = 57 + 82*index
+        line(f"#{message['seq']} {message['sender']} {arrow} {','.join(message['recipients'])}",
+             y, '#8dd9f4')
+        excerpt = message['text'] if korean_font else '[see full UTF-8 log]'
+        for line_index, wrapped in enumerate(_wrapped_lines(excerpt, draw, font, width-28)):
+            line(wrapped, y + 24 + line_index*24, '#d7f5e7')
+    line(footer, 305, '#91c3cf')
     return np.asarray(panel), korean_font
+
+
+def present_dialogue_overlay(viewer, mujoco, pixels):
+    """Prime MuJoCo's 2D GL state with ASCII text before drawing RGB pixels.
+
+    In MuJoCo 3.12 the image path calls glDrawPixels without init2D; with
+    both native sidebars disabled, a bare image request can be invisible.
+    """
+    viewer.set_texts((None, None, 'Peer dialogue', 'Full UTF-8 text in team log'))
+    viewer.set_images((mujoco.MjrRect(12, 12, pixels.shape[1], pixels.shape[0]), pixels))
 
 
 class ObserverDialoguePanel:
@@ -85,7 +129,7 @@ class ObserverDialoguePanel:
             if state is None or state['seq'] == self.sequence:
                 return False
             pixels, korean_font = render_dialogue_overlay(state)
-            viewer.set_images((mujoco.MjrRect(12, 12, pixels.shape[1], pixels.shape[0]), pixels))
+            present_dialogue_overlay(viewer, mujoco, pixels)
             self.sequence = state['seq']
             if not korean_font and not self.font_warning:
                 print('Korean font unavailable; full UTF-8 dialogue is in '

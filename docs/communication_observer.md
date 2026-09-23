@@ -6,6 +6,8 @@
 
 `--viewer`의 MuJoCo 관찰 창은 이 최신 파일만 5 Hz 이하로 읽어 최근 대화와 전체 로그 위치를 작은 이미지로 표시한다. `--realtime-control`에서는 독립 프로세스의 복제 모델, 기본 비실시간 실행에서는 기존 복제 모델의 창에 표시한다. 두 창 모두 팀 생성·계획 협상 전에 열린다. Headless 실행은 터미널·JSONL 기록을 제공한다. macOS Apple SD Gothic Neo 또는 Linux Noto/Nanum 한글 폰트를 사용한다. 폰트가 없으면 창은 영문 안내로 돌아가며 원문은 UTF-8 터미널과 JSONL에서 볼 수 있다. 관찰용 이미지/파일은 로봇 RGB, 물리 상태, 판단 요청으로 되돌아가지 않는다. 별도 웹 UI나 추가 모델 요청은 없다.
 
+MuJoCo 3.12의 이미지 overlay는 3D 렌더 뒤 `glDrawPixels`를 쓰므로, 관찰창에 짧은 ASCII 헤더를 먼저 설정해 2D 그리기 상태를 초기화한다. 이후 1000×330 RGB 패널에 최근 세 메시지를 각각 수신자 한 줄과 원문 최대 두 줄로 표시한다. 잘린 문장에는 줄임표를 붙이고 전체 원문 위치를 아래에 표시한다. 이 과정은 관찰창 내부에서만 실행한다.
+
 `--plan-replay`의 합의 투표는 scripted fixture다. 이때 새 자연어 메시지 수는 0으로 표시한다. fixture가 시험용 문장을 inbox에 전달하더라도 `fixture_peer_message`로 기록하고 실제 모델 대화 건수에는 넣지 않는다. 저장 계획의 RGB 물리 실행도 새로운 자연어 대화를 만들어내지 않는다.
 
 TensorBoard의 현재 generic export는 이 JSONL을 Text 카드로 변환하지 않는다. 완료된 실행을 별도 불변 snapshot으로 내보낼 때 `peer_message`와 `fixture_peer_message`를 분리해 Text event를 추가할 수 있다. 실시간 관찰의 기준 원본은 계속 JSONL이다.
