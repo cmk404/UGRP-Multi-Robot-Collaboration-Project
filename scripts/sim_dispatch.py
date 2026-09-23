@@ -45,10 +45,18 @@ def main(argv=None):
     parser.add_argument('--grasp-model-dir', type=Path)
     parser.add_argument('--stage-model-dir', type=Path)
     parser.add_argument('--model', default=os.environ.get('UGRP_SIM_MODEL', 'gemini-3.8-flash'))
+    parser.add_argument('--full-capture', action='store_true',
+                        help='keep the original extra pair camera and overview captures')
+    parser.add_argument('--serial-route', action='store_true',
+                        help='keep the original serial resource gate even for independent open routes')
     # Remaining options use the original runner's parser and validation.
     args, rest = parser.parse_known_args(argv)
     if '--executor' in rest or any(a.startswith('--executor=') for a in rest):
         parser.error('dispatch uses the existing skills executor; raw diagnostics have a separate entry point')
+    if args.serial_route and any(flag in rest for flag in ('--route-overlap', '--auto-route-overlap')):
+        parser.error('--serial-route conflicts with explicit route overlap')
+    if args.full_capture and '--efficient-capture' in rest:
+        parser.error('--full-capture conflicts with --efficient-capture')
     if bool(args.grasp_model_dir) != bool(args.stage_model_dir):
         parser.error('supply both --grasp-model-dir and --stage-model-dir')
     if not args.headless and sys.platform.startswith('linux') and not (os.environ.get('DISPLAY') or os.environ.get('WAYLAND_DISPLAY')):
@@ -64,6 +72,10 @@ def main(argv=None):
     forwarded = ['--executor', 'skills', '--output', str(output),
                  '--grasp-model-dir', str(args.grasp_model_dir),
                  '--stage-model-dir', str(args.stage_model_dir), '--model', args.model]
+    if not args.full_capture and '--efficient-capture' not in rest:
+        forwarded.append('--efficient-capture')
+    if not args.serial_route and not any(flag in rest for flag in ('--route-overlap', '--auto-route-overlap')):
+        forwarded.append('--auto-route-overlap')
     if not args.headless:
         forwarded.append('--viewer')
     if args.task:

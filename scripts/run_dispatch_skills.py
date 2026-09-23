@@ -303,8 +303,10 @@ def run(args):
             live_replan=getattr(args,'live_replan',False),identity=identity,reference_top=reference)
         scene.bindings=SkillBindings(team.agreement.committed,scene.config['static_map'],
                                     route_overlap=getattr(args,'route_overlap',False),
+                                    auto_route_overlap=getattr(args,'auto_route_overlap',False),
                                     overlap_start=getattr(args,'overlap_start','transit'))
-        result.update(plan_committed=True,plan=scene.bindings.plan,bindings=scene.bindings.capabilities())
+        result.update(plan_committed=True,plan=scene.bindings.plan,bindings=scene.bindings.capabilities(),
+                      overlap_selection=scene.bindings.overlap_selection)
         write(args.output/'committed-plan.json',team.agreement.committed)
         write(args.output/'robot-programs.json',scene.bindings.programs)
         write(args.output/'skill-bindings.json',scene.bindings.capabilities())

@@ -160,7 +160,7 @@ def canonical_pair_top(jpeg, reference, *, translation_px=None, hue_upper=24, ob
 
 
 class SkillBindings:
-    def __init__(self, committed, static_map, *, route_overlap=False, overlap_start='transit'):
+    def __init__(self, committed, static_map, *, route_overlap=False, auto_route_overlap=False, overlap_start='transit'):
         if not committed or committed.get('plan_hash') != digest(committed.get('plan')):
             raise ValueError('exact committed plan required')
         self.committed = copy.deepcopy(committed)
@@ -180,19 +180,48 @@ class SkillBindings:
         self.locks = {}
         self.revoked = False
         self.cluttered=any(o['id']=='service_island' for o in static_map['obstacles'])
-        self.route_overlap=route_overlap
         if overlap_start not in ('grasp','transit'):raise ValueError('unknown overlap start')
         self.overlap_start=overlap_start
         self.grasp_started=set()
         self.transit_started=set()
         self.resource_events=[]
-        if route_overlap:
-            if self.cluttered:
-                raise ValueError('route overlap requires open-map translation; moving-obstacle rotation is not validated')
-            if any(t['after'] for t in self.tasks.values()):
-                raise ValueError('route overlap requires an explicitly agreed independent plan; dependencies are never removed')
-            if self.tasks['beam']['route']==self.tasks['box']['route']:
-                raise ValueError('route overlap requires distinct routes')
+        beam_route=self.tasks['beam']['route'];box_route=self.tasks['box']['route']
+        routes=static_map.get('routes',{})
+        beam_resource=routes.get(beam_route,{}).get('resource')
+        box_resource=routes.get(box_route,{}).get('resource')
+        reason=None;error=None
+        if self.cluttered:
+            reason='service_island_requires_serial'
+            error='route overlap requires open-map translation; moving-obstacle rotation is not validated'
+        elif any(t['after'] for t in self.tasks.values()):
+            reason='agreed_dependencies_require_serial'
+            error='route overlap requires an explicitly agreed independent plan; dependencies are never removed'
+        elif beam_route==box_route:
+            reason='same_route_requires_serial'
+            error='route overlap requires distinct routes'
+        elif not beam_resource or not box_resource:
+            reason='unknown_route_resource_requires_serial'
+            error='route overlap requires known route resources'
+        elif beam_resource==box_resource:
+            reason='shared_route_resource_requires_serial'
+            error='route overlap requires distinct route resources'
+        if route_overlap and error:
+            raise ValueError(error)
+        if auto_route_overlap and not route_overlap and reason is None:
+            boundary={'wall_north','wall_south','wall_west','wall_east'}
+            if static_map.get('map_id')!='dispatch_open' or any(
+                    obstacle.get('id') not in boundary for obstacle in static_map.get('obstacles',[])) \
+                    or static_map.get('terrain'):
+                reason='open_map_capability_not_established'
+        self.route_overlap=bool(route_overlap or (auto_route_overlap and reason is None))
+        mode='explicit' if route_overlap else 'auto' if auto_route_overlap else 'serial'
+        self.overlap_selection={'mode':mode,'enabled':self.route_overlap,
+            'reason':('explicit_overlap_requested' if route_overlap else
+                      'independent_open_routes' if self.route_overlap else
+                      reason if auto_route_overlap else 'serial_runner_default'),
+            'plan_hash':committed['plan_hash'],'beam_route':beam_route,'box_route':box_route,
+            'beam_resource':beam_resource,'box_resource':box_resource,
+            'overlap_start':overlap_start}
 
     def note_transit_command(self,obj):
         """Peer stage claim from issued commands, never measured completion."""
@@ -260,6 +289,7 @@ class SkillBindings:
                 if route['declared_min_width_m'] < .45:narrow.append(name)
         return {'pair_model_slots':self.pair, 'solo_robot':self.solo,
             'route_overlap':self.route_overlap,'overlap_start':self.overlap_start,
+            'overlap_selection':self.overlap_selection,
             'parallel_pair_envelope_m':width,'unsupported_pair_routes':narrow,
             'pair_rotation_skill_available':True,'rotated_pair_envelope_m':.45,
             'route_execution':'RGB wheel/shaft tracking and swept full-load SE2 search when cluttered; experimental',

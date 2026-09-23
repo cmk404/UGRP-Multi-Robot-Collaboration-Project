@@ -106,6 +106,10 @@ bash scripts/open_simulation.command dispatch --plan-replay outputs/my-run/commi
 
 주요 옵션은 `--variant open|shared_crossing|north_blocked|narrow_south|rough_south`, `--seed`, `--max-wall-s`(기본 1200초), `--timeout`(요청당 기본 60초), `--planning-rounds`(합의 시도당 기본 8라운드), `--max-replans`(실행 전 적합성 재협상 기본 2회), `--max-input-tokens`다. 기존 실행기의 나머지 옵션도 전달할 수 있다. headless는 `--headless`, 관찰 재생 속도는 `--realtime-factor`로 바꾼다. 속도는 물리 timestep이나 제어기를 바꾸지 않는다.
 
+표준 `dispatch`는 pair 판단에 쓰지 않는 카메라 촬영을 생략한다. 로봇이 실제로 받은 자기·TOP 영상과 연속 기록 영상의 조건은 유지한다. 합의한 계획이 열린 맵의 독립된 경로·자원을 사용하면 기존 병렬 운반 경로도 자동 선택한다. 선행 작업이나 공유 경로가 있으면 직렬 실행을 유지하고, 병렬 실행에서도 공용 하역 구역은 한 팀씩 사용한다. 실제 선택과 이유는 `skill-bindings.json`과 `result.json`의 `overlap_selection`에 남는다. 계획의 역할·경로·선행 조건은 자동 수정하지 않는다.
+
+이전 촬영·자원 일정과 비교하려면 `dispatch --full-capture --serial-route`를 사용한다. 연구 실행기 `run_dispatch_e2e.py`와 `dispatch-skills` workflow의 기본값은 그대로이며 새 자동 선택은 `--auto-route-overlap`, 촬영 최적화는 `--efficient-capture`로 명시한다. 기본 병렬 진입은 봉의 운반 명령 이후이고, `--overlap-start grasp`는 파지부터 겹치는 별도 조건이다. 창의 배속, 렌더 처리량, 계획 협상 시간, 실제 동시 운반 시간은 각각 구분해 측정한다.
+
 MuJoCo **dispatch 관찰 창**은 마우스 회전/확대, **Space** 일시정지/재개, **Q 또는 창 닫기** 종료를 지원한다. 모델 대기 중 물리는 멈춘다. 관찰 창은 model/data의 별도 복사본을 사용하므로 패널 초기화·actuator 조작·물체 드래그가 실제 제어 세계에 전달되지 않는다. 실제 물체 조작은 아래 수동 경로를 사용한다. 종료 중 이미 진행된 모델 요청은 제한 시간 안에 끝날 때까지 기록을 회수하며, 서버 측 취소를 보장하지 않는다.
 
 결과 폴더에는 원래 실행기가 만드는 `actor-mission.json`, `team/`의 로봇별 실제 요청/응답, `committed-plan.json`, `robot-programs.json`, `skill-bindings.json`, 발행 명령·RGB·영상·별도 평가·`result.json`이 남는다. plan 합의, 스킬 프로토콜 완료, 실제 운반 성공은 각각 다른 판정이다. 출력 폴더는 덮어쓰지 않는다. 기존 연구 실행기와 동일하게 실제 실행 전 변경 소스를 커밋해야 한다.

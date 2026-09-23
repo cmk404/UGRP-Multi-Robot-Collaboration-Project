@@ -26,7 +26,48 @@ def test_cli_dispatch_reuses_skills_entry_with_operator_goal(monkeypatch, tmp_pa
     assert args[args.index('--task')+1] == 'dock_b로 함께 옮겨'
     assert args[args.index('--model')+1] == 'test-model'
     assert '--viewer' not in args
+    assert '--efficient-capture' in args
+    assert '--auto-route-overlap' in args
     assert args[-4:] == ['--required-dock', 'dock_b', '--variant', 'open']
+
+
+def test_standard_dispatch_can_restore_serial_route_and_full_capture(monkeypatch, tmp_path):
+    invoked=[]
+    monkeypatch.setattr('scripts.run_dispatch_e2e.main', lambda argv: invoked.append(argv) or 0)
+    assert sim_dispatch.main(['--headless','--plan-replay','saved.json',
+                              '--grasp-model-dir',str(tmp_path/'grasp'),
+                              '--stage-model-dir',str(tmp_path/'stage'),
+                              '--full-capture','--serial-route'])==0
+    assert '--efficient-capture' not in invoked[0]
+    assert '--auto-route-overlap' not in invoked[0]
+    assert '--route-overlap' not in invoked[0]
+
+
+@pytest.mark.parametrize('args', [
+    ['--serial-route','--route-overlap'],
+    ['--serial-route','--auto-route-overlap'],
+    ['--full-capture','--efficient-capture'],
+])
+def test_standard_dispatch_rejects_conflicting_performance_options(monkeypatch, args):
+    monkeypatch.setattr(sim_dispatch.sys.stdin, 'isatty', lambda: False)
+    with pytest.raises(SystemExit) as error:
+        sim_dispatch.main(['--headless']+args)
+    assert error.value.code==2
+
+
+def test_research_runner_defaults_and_explicit_overlap_flags(monkeypatch, tmp_path):
+    from scripts import run_dispatch_e2e
+    seen=[]
+    monkeypatch.setattr('scripts.run_dispatch_skills.run', lambda args: seen.append(args) or 0)
+    base=['--executor','skills','--output',str(tmp_path/'one'),
+          '--grasp-model-dir',str(tmp_path/'grasp'),
+          '--stage-model-dir',str(tmp_path/'stage')]
+    assert run_dispatch_e2e.main(base)==0
+    assert not seen[-1].efficient_capture and not seen[-1].route_overlap and not seen[-1].auto_route_overlap
+    assert run_dispatch_e2e.main([*base[:3],str(tmp_path/'two'),*base[4:],
+                                  '--route-overlap','--overlap-start','grasp'])==0
+    assert seen[-1].route_overlap and not seen[-1].auto_route_overlap
+    assert seen[-1].overlap_start=='grasp'
 
 
 @pytest.mark.parametrize('args', [

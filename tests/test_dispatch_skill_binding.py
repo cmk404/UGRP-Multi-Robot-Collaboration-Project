@@ -179,6 +179,58 @@ def test_route_overlap_does_not_remove_agreed_dependencies_or_assume_moving_obst
         SkillBindings(committed(),authored_map('shared_crossing'),route_overlap=True)
 
 
+def test_auto_overlap_uses_existing_transit_gate_and_preserves_plan():
+    c=committed();original=copy.deepcopy(c)
+    b=SkillBindings(c,authored_map('open'),auto_route_overlap=True)
+    assert b.route_overlap and b.overlap_start=='transit'
+    assert b.overlap_selection['mode']=='auto'
+    assert b.overlap_selection['reason']=='independent_open_routes'
+    assert b.capabilities()['overlap_selection']==b.overlap_selection
+    assert c==original and b.committed==original
+    assert b.permission('beam','GRASP')
+    assert not b.permission('box','GRASP')
+    b.note_transit_command('beam')
+    assert b.permission('box','GRASP')
+    assert not b.permission('box','UNLOAD')
+    b.finish('beam')
+    assert b.permission('box','UNLOAD')
+
+
+@pytest.mark.parametrize('map_variant,after,reason',[
+    ('open',True,'agreed_dependencies_require_serial'),
+    ('shared_crossing',False,'service_island_requires_serial'),
+])
+def test_auto_overlap_keeps_serial_gate_when_plan_or_map_requires_it(map_variant,after,reason):
+    c=committed(after=after)
+    b=SkillBindings(c,authored_map(map_variant),auto_route_overlap=True)
+    assert not b.route_overlap and b.overlap_selection['reason']==reason
+    if after:
+        assert not b.permission('beam','GRASP')
+    else:
+        assert b.permission('beam','GRASP')
+        assert not b.permission('box','GRASP')
+
+
+def test_auto_overlap_rejects_same_route_resource_and_unproven_map():
+    c=committed();shared=authored_map('open')
+    shared['routes']['south']['resource']=shared['routes']['north']['resource']
+    b=SkillBindings(c,shared,auto_route_overlap=True)
+    assert not b.route_overlap
+    assert b.overlap_selection['reason']=='shared_route_resource_requires_serial'
+    with pytest.raises(ValueError,match='distinct route resources'):
+        SkillBindings(c,shared,route_overlap=True)
+    same=copy.deepcopy(c);same['plan']['tasks'][1]['route']='north';same['plan_hash']=digest(same['plan'])
+    b=SkillBindings(same,authored_map('open'),auto_route_overlap=True)
+    assert not b.route_overlap and b.overlap_selection['reason']=='same_route_requires_serial'
+    unknown=authored_map('open');unknown['map_id']='custom'
+    b=SkillBindings(c,unknown,auto_route_overlap=True)
+    assert not b.route_overlap and b.overlap_selection['reason']=='open_map_capability_not_established'
+    obstacle=authored_map('open');obstacle['obstacles'].append({'id':'new_interior_obstacle'})
+    assert not SkillBindings(c,obstacle,auto_route_overlap=True).route_overlap
+    terrain=authored_map('open');terrain['terrain'].append({'id':'new_terrain'})
+    assert not SkillBindings(c,terrain,auto_route_overlap=True).route_overlap
+
+
 def test_open_pickup_overlap_waits_for_issued_pair_grasp_then_admits_box():
     b=SkillBindings(committed(),authored_map('open'),route_overlap=True,overlap_start='grasp')
     assert not b.permission('box','GRASP')

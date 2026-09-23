@@ -42,13 +42,18 @@ def test_retired_adapter_is_readable_but_cannot_run_as_current_source():
     with pytest.raises(ValueError, match="original source checkout"):
         contract.load_bundle("rgb-standard-dispatch-v3")
 
+    with pytest.raises(ValueError, match="original source checkout"):
+        contract.load_bundle("rgb-standard-dispatch-v4")
+    assert contract.load_bundle("rgb-standard-dispatch-v4", require_runnable=False)[0]["id"] == "rgb-standard-dispatch-v4"
 
-def test_current_bundle_records_new_coarse_approach_policy_without_success_claim():
+def test_current_bundle_records_dispatch_defaults_without_success_claim():
     current, _ = contract.load_bundle(contract.RUNNABLE_ID)
-    assert current["parent_bundle_id"] == "rgb-standard-dispatch-v3"
+    assert current["parent_bundle_id"] == "rgb-standard-dispatch-v4"
     assert "16px" in current["controller_policy"]["paired_coarse_approach"]
     assert "1.3s" in current["controller_policy"]["paired_fine_rgb_reobservation"]
     assert "two" in current["controller_policy"]["paired_fine_rgb_reobservation"]
+    assert current["controller_policy"]["local_dispatch_defaults"]["route_overlap"] == "auto"
+    assert current["controller_policy"]["local_dispatch_defaults"]["efficient_capture"] is True
     assert current["status"] == "experimental_unqualified"
 
 
