@@ -4,6 +4,18 @@
 
 **실행·버전·결과 관리는 [표준 시뮬레이션 관리](simulation_management.md)로 통일한다.** `workflow list/plan/run/runs/show`에서 연구별 실행을 선택하고 이력을 확인한다. 아래 기본 `run/console/dispatch`도 공통 실행 기록에 연결된다.
 
+## 터미널 간편 메뉴
+
+설치된 환경에서 저장소 루트의 다음 명령을 실행하면 메뉴가 열린다. **실행 방식·맵·관찰 속도**를 고르고, LLM 협업 출하에서는 **모델 ID·자연어 지시**도 입력한다. 실제 세계는 MuJoCo 기본 창에서 열린다. 자세한 물리·접촉·카메라 설정은 아래 CLI와 설정 파일에서 관리한다.
+
+```bash
+bash scripts/open_simulation.command
+```
+
+**LLM 협업 출하**는 기존 빔·상자 출하 임무와 지원 지도 5종에 한정된다. 자연어 지시를 비우면 기본 출하 임무가 전달된다. 지시는 실행 전 계획에 전달되며, 실행 도중 임의의 새 물체 작업을 추가하지 않는다. 모델 프록시가 준비되지 않았다면 모델 요청은 실패하며 메뉴가 로그인하거나 프록시를 시작하지 않는다. **지도 장면 보기**는 등록된 장면을 MuJoCo 창에서 정지 상태로 확인한다. ACT 지도도 볼 수 있지만 LLM 제어나 운반 평가가 아니다. 새 지도 구조를 생성하려면 지도 suite/설정 파일과 표준 workflow를 사용한다. 저장 plan 재생·수동 명령·설정 파일 실행은 메뉴의 **기타 실행**에서 계속 사용할 수 있다.
+
+MuJoCo 창에서 Space는 재개/일시정지, R은 초기화다. 창을 닫거나 시작한 터미널에서 Ctrl-C를 누르면 실행을 종료한다. 메뉴 선택은 기존 `run`/`dispatch`와 같은 실행 기록을 사용한다.
+
 ## 설치와 첫 실행
 
 Python 3.12를 사용한다. 기존 Mac 환경 `.venv-sim-worker-mac`을 재사용하며, 새 clone에서는 다음과 같이 설치한다.
@@ -23,7 +35,7 @@ Ubuntu 24.04는 먼저 [설치 안내](ubuntu_quickstart.md)를 따른다. 창�
 
 ## 터미널에서 구성하기
 
-저장소 루트에서 실행한다. 인자 없는 실행은 공동 계획·저장된 plan 재생·수동·설정 실행을 선택하는 메뉴를 연다. 공동 계획의 기본 장면은 **기존 공동 출하장(dispatch/shared_crossing, seed11)**이다. 수동 기본 설정은 `configs/simulation/local.json`이다. `init`과 `new`도 같은 연구 장면을 기본으로 사용한다. [전체 구성·누락 검토](simulation_inventory.md)에 기존 자산과 연결 범위를 정리했다. 지도 준비·ACT 학습·실행 이력·TensorBoard를 연결하는 명령은 [표준 관리 절차](simulation_management.md#지도학습실행-결과를-잇는-절차)를 따른다.
+저장소 루트에서 실행한다. 인자 없는 실행은 LLM 공동 계획·지도 장면 보기·기타 기존 실행을 선택하는 메뉴를 연다. 공동 계획의 기본 장면은 **기존 공동 출하장(dispatch/shared_crossing, seed11)**이다. 수동 기본 설정은 `configs/simulation/local.json`이다. `init`과 `new`도 같은 연구 장면을 기본으로 사용한다. [전체 구성·누락 검토](simulation_inventory.md)에 기존 자산과 연결 범위를 정리했다. 지도 준비·ACT 학습·실행 이력·TensorBoard를 연결하는 명령은 [표준 관리 절차](simulation_management.md#지도학습실행-결과를-잇는-절차)를 따른다.
 
 ```bash
 # 설정 생성 → 편집 → 오류/기본값 확인
