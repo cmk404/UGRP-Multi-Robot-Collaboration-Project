@@ -1,0 +1,91 @@
+{
+  "schema": "ugrp.robotics_literature_review.v1",
+  "reviewed_on": "2026-09-23",
+  "scope": "Primary-source reading only; no new robot experiment or implementation",
+  "sources": [
+    {
+      "title": "Visual Servo Control, Part I: Basic Approaches",
+      "year": 2006,
+      "primary_url": "https://web.mit.edu/amcp/OldFiles/drg/Chaumette_Part_I.pdf",
+      "verified_sections_pages": ["The Basic Components of Visual Servoing, PDF pp. 1-2 (printed pp. 82-83)"],
+      "verified_facts": ["Image features s from image measurements are compared with desired features s* to form error e.", "A velocity control law uses an estimated image interaction matrix to turn feature error into camera velocity.", "The paper distinguishes image-based features from 3D position-based features; no universal control frequency is stated here."],
+      "output_type": "camera velocity from image-feature error",
+      "replan_or_observe": "Repeated image-feedback control; fixed Hz not specified in the cited section",
+      "mid_chunk_observation_and_cancellation": "Not an action-chunk algorithm; separate emergency cancellation interface is not specified",
+      "ugrp_allowed_input_fit": "Conceptually compatible when features are computed from own/top RGB and known camera calibration; current UGRP must not inject ground-truth pose",
+      "applicability": "Direct control-law analogy for PairNavigator.decide and rigid_pair_commands, not a ready-made carried-payload controller"
+    },
+    {
+      "title": "ViNT: A Foundation Model for Visual Navigation",
+      "year": 2023,
+      "primary_url": "https://proceedings.mlr.press/v229/shah23a/shah23a.pdf",
+      "verified_sections_pages": ["§3, PDF p. 3", "§4, PDF p. 4", "Appendix B Table 6, PDF p. 15", "Appendix E.3.2, PDF p. 20"],
+      "verified_facts": ["Input is current and five past RGB observations plus a subgoal image; model predicts temporal distance and a future action sequence.", "Action space is relative waypoints normalized by robot top speed; a robot-specific controller tracks un-normalized waypoints.", "Appendix Table 6 gives prediction horizon H=5.", "The CARLA fine-tuning evaluation uses a 4 Hz image context, a goal image 1.5 seconds ahead on a demonstration graph, and a simple PID tracker."],
+      "output_type": "5 future relative waypoints, not direct motor voltage",
+      "replan_or_observe": "4 Hz RGB context is reported for a CARLA experiment, not a universal deployment frequency",
+      "mid_chunk_observation_and_cancellation": "PID can adjust low-level tracking; paper does not specify a universal mid-sequence cancellation contract",
+      "ugrp_allowed_input_fit": "RGB and static goal/map design are conceptually compatible; CARLA goal-node selection/localization and pretrained model are not automatically available in UGRP",
+      "applicability": "Short relative waypoint and robot-specific tracking architecture"
+    },
+    {
+      "title": "NoMaD: Goal Masked Diffusion Policies for Navigation and Exploration",
+      "year": 2024,
+      "primary_url": "https://arxiv.org/pdf/2310.07896",
+      "verified_sections_pages": ["§III, PDF pp. 2-3", "Fig. 2 and §IV, PDF pp. 3-4", "§V, PDF p. 4"],
+      "verified_facts": ["Policy input is recent RGB observations and optionally an RGB goal image; it outputs a distribution over future actions.", "Fig. 2 depicts five past observation steps and eight future actions.", "Long-horizon navigation is combined with a topological graph and frontier-based subgoals.", "The checked paper does not give a fixed control Hz, exact executed prefix length, or a mid-chunk cancellation API."],
+      "output_type": "8 future navigation actions sampled by action diffusion; paper does not give physical units in cited section",
+      "replan_or_observe": "Exact deployment refresh cadence not specified in checked paper",
+      "mid_chunk_observation_and_cancellation": "Not specified in checked paper",
+      "ugrp_allowed_input_fit": "RGB input is conceptually compatible, but training/validation on UGRP carried-load dynamics would be new work",
+      "applicability": "Reference for RGB-conditioned short action sequences; exploration mechanism is lower priority for an authored static map"
+    },
+    {
+      "title": "NaVILA: Legged Robot Vision-Language-Action Model for Navigation",
+      "year": 2025,
+      "primary_url": "https://navila-bot.github.io/static/navila_paper.pdf",
+      "verified_sections_pages": ["Abstract and §I, PDF pp. 1-2", "§III, PDF p. 5"],
+      "verified_facts": ["The VLM emits intermediate spatial language commands, such as moving forward 75 cm, and a separate locomotion policy executes them.", "The paper explicitly describes slow VLA and real-time low-level policy as two timescales but does not give their control Hz.", "For Go2, LiDAR point clouds are broadcast at 15 Hz; this is a sensor frequency.", "Examples map discrete VLM words to 0.5 m/s forward or ±π/6 rad/s turn commands, with durations aligned to the VLM output.", "Low-level actor observes LiDAR-derived height map and proprioceptive history including orientation and joint state; these exceed current UGRP student input permissions."],
+      "output_type": "VLM spatial language instruction -> command velocity -> desired leg joint positions",
+      "replan_or_observe": "Two timescales; exact VLM/low-level loop Hz not reported in checked passage",
+      "mid_chunk_observation_and_cancellation": "Low-level policy reacts to its own sensors; high-level mid-command cancellation guarantee not specified",
+      "ugrp_allowed_input_fit": "Architecture only; LiDAR height map and measured joint/proprioceptive input cannot be passed to UGRP student controller",
+      "applicability": "Separate high-level instruction from ongoing low-level visual control"
+    },
+    {
+      "title": "Learning Fine-Grained Bimanual Manipulation with Low-Cost Hardware",
+      "year": 2023,
+      "primary_url": "https://arxiv.org/pdf/2304.13705",
+      "verified_sections_pages": ["§IV and Algorithm 2, PDF pp. 4-5", "§VI.C, PDF p. 10"],
+      "verified_facts": ["ACT observes four cameras and measured follower joint positions, then predicts target joint positions for both arms.", "Basic action chunking observes once and executes k steps; temporal ensembling instead queries the policy every timestep and combines overlapping predictions.", "The 5 Hz versus 50 Hz result belongs to a human teleoperation study, not a required ACT inference or navigation observation rate."],
+      "output_type": "target joint-position action sequence",
+      "replan_or_observe": "Every k steps for basic chunking, every timestep for the temporal-ensemble variant",
+      "mid_chunk_observation_and_cancellation": "Basic chunk has no interim policy update; temporal-ensemble variant incorporates fresh observations; emergency stop API not specified",
+      "ugrp_allowed_input_fit": "Original ACT observations use measured joint positions and therefore are not directly admissible for UGRP student execution",
+      "applicability": "Action overlap and incremental corrections are transferable ideas, but method and task are manipulation-specific"
+    },
+    {
+      "title": "Diffusion Policy: Visuomotor Policy Learning via Action Diffusion",
+      "year": 2023,
+      "primary_url": "https://arxiv.org/pdf/2303.04137",
+      "verified_sections_pages": ["§2.3, PDF p. 3", "§4.3, PDF p. 8", "Appendix B Table 7, PDF p. 17"],
+      "verified_facts": ["At timestep t, the policy takes To recent observations and predicts Tp future actions, commits to only Ta actions, then replans.", "The action execution horizon is a trade-off between smoothness and reaction speed.", "Real-world Table 7 entries include Ta=6 and Ta=8 steps, with prediction horizon Tp=16; these are step counts, not seconds or Hz.", "The paper evaluates manipulation, usually position control, not loaded two-robot navigation."],
+      "output_type": "future robot action sequence, predominantly position targets in cited physical experiments",
+      "replan_or_observe": "After the executed Ta-step prefix; no universal seconds/Hz in cited result",
+      "mid_chunk_observation_and_cancellation": "Policy does not replan during Ta-step committed prefix; hardware emergency cancellation is not established or denied by the paper",
+      "ugrp_allowed_input_fit": "Control structure can inspire an RGB/own-command-history variant, but original policy data/action space are not a drop-in fit",
+      "applicability": "Short receding horizon with explicit step-count versus wall-time distinction"
+    },
+    {
+      "title": "Real-Time Execution of Action Chunking Flow Policies",
+      "year": 2025,
+      "primary_url": "https://arxiv.org/pdf/2506.07339",
+      "verified_sections_pages": ["§2, PDF p. 3", "§3, PDF pp. 4-5", "Algorithm 1, PDF pp. 5-6"],
+      "verified_facts": ["Asynchronous inference starts while the current chunk is still executing, instead of waiting at the boundary.", "The new chunk freezes the already committed prefix and inpaints later actions for cross-chunk continuity.", "Algorithm 1's controller gets a new observation each Δt and returns the next current-chunk action; a background inference loop replaces the chunk when ready.", "The paper cites π0's 50 Hz target and 20 ms Δt as a particular VLA example, not a generic RTC rate.", "The method assumes a flow/diffusion action-chunk policy; it is not a direct inpainting method for UGRP's rule-based PairNavigator."],
+      "output_type": "continuous action chunk from flow/diffusion policy",
+      "replan_or_observe": "Observe each controller Δt; overlap computation and execution; update after next chunk is ready",
+      "mid_chunk_observation_and_cancellation": "Observations arrive during current execution; next chunk can replace it when ready; protective stop contract is not provided for UGRP",
+      "ugrp_allowed_input_fit": "Scheduling pattern could fit allowed RGB/history, but published policy/robot observations and inpainting are not directly transferable",
+      "applicability": "Only pursue asynchronous pipeline if measured inference delay, rather than physics/render work, causes motion stalls"
+    }
+  ]
+}

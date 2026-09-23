@@ -264,3 +264,9 @@ headless에서 SIM 시간에 도달하지 못한 wall timeout은 종료 코드 2
 로컬 Mac/Linux에서 호출할 수 있다. 인자는 해당 subcommand의 `--help`와
 [연구 실행기 계약](research_parallel/d2-study-runner.md)을 따른다. 출처가 동결된 manifest와
 증거·예산·모델 admission이 필요하며, native 장면을 연 것만으로 이 조건이 충족되지는 않는다.
+
+### 관찰 창 속도와 시뮬레이션 시간
+
+`--realtime-factor`는 SIM 시간의 목표 진행 속도이며, 컴퓨터가 물리·영상 처리·화면 표시를 따라가지 못하면 그 속도를 보장하지 않는다. 예를 들어 SIM140초에 현실331초가 걸리면 실제 진행률은 약0.42배속이다. 이는 저장 영상을 느리게 재생하는 것이 아니라 시뮬레이션 진행 자체가 늦은 상태다. 결과의 SIM 시간과 `wall_s`를 나눠 확인한다.
+
+표준 관찰 창은 별도 복제 모델의 그림자·반사를 생략하고 state-only sync 및 묶음 pacing을 사용한다. 로봇이 입력으로 받는 RGB와 저장 원본 영상, 물리 timestep은 이 관찰 창 설정에 영향받지 않는다. 검증 범위는 [속도·병렬 실행 기록](../experiments/2026-09-23-local-dispatch-performance/README.md)을 따른다.
