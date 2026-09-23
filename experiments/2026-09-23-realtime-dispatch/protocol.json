@@ -97,5 +97,23 @@
     ],
     "acceptance": "Both cargos physically placed/released and protocol complete; compare whole mission time, original RGB age, command gaps, active/resource-wait time, clock and concurrent motion. No best-run-only speed or generalization claim.",
     "stop_rule": "No third full trial within this review; first physical failure triggers evidence review, not automatic budget or safety threshold extension."
+  },
+  "budget_review_after_v18_repeat": {
+    "evidence": "v18 same-source known saved-plan native replays completed twice, wall256.399/204.848. In first carry, 154 positive CRUISE gaps sum10.92575 SIM seconds and exactly equal next decision minus originalRGB+.6 deadline; 139 renewals were all issued .01 before lease expiry. Earlier renewal cannot cover expired image authority.",
+    "additional_full_trials": 2,
+    "full_max_wall_s": 600,
+    "external_model_calls": 0,
+    "training_runs": 0,
+    "candidate": "Same coherent snapshot, TOP-first RGB CPU analysis overlaps own-camera rendering; policy waits for all required views and owner alone applies commands.",
+    "fixed": "Same open/seed11 plan, transit admission, original cameras/JPEGs, scene/contact/physics, .6 RGB TTL, .25 command cap and decision budgets.",
+    "gates": [
+      "Existing batch API regressions pass",
+      "Same frozen snapshot frame/time/source hashes and bounded slot lifetime verified under partial success/error/cancellation",
+      "Recorded entire carry RGB output parity; small actual-render/gated test proves pixel identity and early TOP availability. Actual native TOP-analysis/render overlap is measured during the bounded full trial.",
+      "Independent review, new execution bundle and clean source commit before full physical runs"
+    ],
+    "repeat_rule": "Repeat identical source only after first physical and protocol success; retain both full outcomes and original raw results.",
+    "stop_rule": "At most two full native trials under this review. First failure or failed overlap/parity evidence triggers review, not automatic threshold/budget extension.",
+    "reporting": "Separate physical clock, whole task time, original RGB age, deadline gaps, resource waiting and measured concurrent cargo motion. Previous successes do not transfer to this candidate."
   }
 }
