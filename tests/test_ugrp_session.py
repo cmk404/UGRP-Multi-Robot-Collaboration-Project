@@ -63,6 +63,32 @@ class UgrpSessionTests(unittest.TestCase):
         with self.assertRaises(ProcessLookupError):
             os.kill(grandchild_pid, 0)
 
+    def test_wrapper_allows_child_to_write_result_after_sigint(self):
+        ready = Path(self.temp.name) / "ready"
+        result = Path(self.temp.name) / "result.json"
+        term = Path(self.temp.name) / "unexpected-term"
+        code = (
+            "import pathlib,signal,sys,time; "
+            f"ready=pathlib.Path({str(ready)!r}); "
+            f"result=pathlib.Path({str(result)!r}); "
+            f"term=pathlib.Path({str(term)!r}); "
+            "signal.signal(signal.SIGINT, lambda *_: (time.sleep(.3), result.write_text('done'), sys.exit(130))); "
+            "signal.signal(signal.SIGTERM, lambda *_: (term.write_text('term'), sys.exit(143))); "
+            "ready.touch(); time.sleep(60)"
+        )
+        wrapper = subprocess.Popen(
+            [sys.executable, str(SESSION), "run", "graceful", "--", sys.executable, "-c", code],
+            env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+        )
+        record_file = Path(self.temp.name) / "graceful.json"
+        self.wait_for(lambda: ready.exists() and record_file.exists())
+        wrapper.send_signal(signal.SIGINT)
+        out, err = wrapper.communicate(timeout=4)
+        self.assertEqual(wrapper.returncode, 130, (out, err))
+        self.assertEqual(result.read_text(), "done")
+        self.assertFalse(term.exists(), err)
+        self.assertFalse(record_file.exists())
+
     def test_stop_command_terminates_session(self):
         wrapper = subprocess.Popen(
             [sys.executable, str(SESSION), "run", "manual", "--", sys.executable, "-c", "import time; time.sleep(60)"],

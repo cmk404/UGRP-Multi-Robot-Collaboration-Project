@@ -176,12 +176,14 @@ def run_session(name: str, command: list[str], grace: float) -> int:
         print(f"UGRP session '{name}' started (pgid {pgid})", file=sys.stderr)
 
         requested_signal: int | None = None
+        signal_deadline: float | None = None
 
         def forward(signum: int, _frame: object) -> None:
-            nonlocal requested_signal
+            nonlocal requested_signal, signal_deadline
             if requested_signal is not None:
                 return
             requested_signal = signum
+            signal_deadline = time.monotonic() + grace
             try:
                 os.killpg(pgid, signum)
             except ProcessLookupError:
@@ -194,7 +196,9 @@ def run_session(name: str, command: list[str], grace: float) -> int:
                     status = child.wait(timeout=0.1)
                     break
                 except subprocess.TimeoutExpired:
-                    if requested_signal is not None:
+                    # Let a child finish its own result/receipt cleanup after
+                    # SIGINT or SIGTERM before escalating to group termination.
+                    if signal_deadline is not None and time.monotonic() >= signal_deadline:
                         stop_group(pgid, grace)
                         status = child.wait()
                         break

@@ -20,6 +20,7 @@ TEST_PATTERNS = (
     "tests/test_simulation_input_provenance.py",
     "tests/test_simulation_launch_options.py",
     "tests/test_simulation_start_menu.py",
+    "tests/test_simulation_interrupt_cleanup.py",
     "tests/test_dispatch_scene_parity.py",
     "tests/test_cloud_preflight.py",
     "tests/test_carry_failure_measurement.py",

@@ -93,6 +93,7 @@ def run(config, args):
     def interrupted(*_):
         raise KeyboardInterrupt
     previous_term = signal.signal(signal.SIGTERM, interrupted)
+    exit_code = None
     try:
         # Record entry bytes before trusted Python can fail in a builder/factory.
         # Successful construction also records the exact executed bytes below.
@@ -236,15 +237,29 @@ def run(config, args):
         result["protocol_complete"] = not interactive and result["stop_reason"] == "sim_limit" and not result["runtime_events"]
         if args.capture and state_error is None:
             capture(sim, output, "final")
-        return 2 if result["runtime_events"] or (console and console.failures) or (args.headless and not interactive and not result["protocol_complete"]) else 0
+        exit_code = 2 if result["runtime_events"] or (console and console.failures) or (args.headless and not interactive and not result["protocol_complete"]) else 0
     except KeyboardInterrupt:
         result["stop_reason"] = "interrupted"
-        return 130
+        exit_code = 130
     except Exception as error:
         result["error"] = f"{type(error).__name__}: {error}"
         raise
     finally:
-        signal.signal(signal.SIGTERM, previous_term)
+        cleanup_interrupted = False
+        def note_cleanup_interrupt(*_):
+            nonlocal cleanup_interrupted
+            cleanup_interrupted = True
+            result.update(stop_reason="interrupted", protocol_complete=False)
+
+        # Ctrl-C in the terminal can be followed by the session owner's
+        # SIGTERM. Keep both signals from aborting artifact finalization.
+        cleanup_signals = {signal.SIGINT, signal.SIGTERM}
+        previous_mask = signal.pthread_sigmask(signal.SIG_BLOCK, cleanup_signals)
+        try:
+            previous_int = signal.signal(signal.SIGINT, note_cleanup_interrupt)
+            signal.signal(signal.SIGTERM, note_cleanup_interrupt)
+        finally:
+            signal.pthread_sigmask(signal.SIG_SETMASK, previous_mask)
         try:
             if console is not None:
                 console.close()
@@ -284,12 +299,21 @@ def run(config, args):
             result.update(protocol_complete=False, stop_reason="error", error=f"{type(error).__name__}: {error}")
             raise
         finally:
-            decisions.close()
-            result["wall_s"] = time.monotonic() - started
-            result["artifacts_sha256"] = {str(p.relative_to(output)): hashlib.sha256(p.read_bytes()).hexdigest()
-                                           for p in sorted(output.rglob("*")) if p.is_file() and p.name != "result.json"}
-            write_json(output / "result.json", result)
-            print(f"Stopped: {result['stop_reason']} | {output.resolve() / 'result.json'}", flush=True)
+            try:
+                decisions.close()
+                result["wall_s"] = time.monotonic() - started
+                result["artifacts_sha256"] = {str(p.relative_to(output)): hashlib.sha256(p.read_bytes()).hexdigest()
+                                               for p in sorted(output.rglob("*")) if p.is_file() and p.name != "result.json"}
+                write_json(output / "result.json", result)
+                print(f"Stopped: {result['stop_reason']} | {output.resolve() / 'result.json'}", flush=True)
+            finally:
+                previous_mask = signal.pthread_sigmask(signal.SIG_BLOCK, cleanup_signals)
+                try:
+                    signal.signal(signal.SIGTERM, previous_term)
+                    signal.signal(signal.SIGINT, previous_int)
+                finally:
+                    signal.pthread_sigmask(signal.SIG_SETMASK, previous_mask)
+    return 130 if cleanup_interrupted else exit_code
 
 
 class _MenuCancelled(Exception):
