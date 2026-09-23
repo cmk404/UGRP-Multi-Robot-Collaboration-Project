@@ -12,7 +12,7 @@ import tarfile
 import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE_DIRS = {'harness', 'sim', 'scripts', 'maps', 'calibration', 'config', 'configs', 'boot', 'tests'}
+SOURCE_DIRS = {'harness', 'sim', 'scripts', 'maps', 'calibration', 'config', 'configs', 'boot', 'tests', 'examples'}
 
 
 def call(args, **kwargs):

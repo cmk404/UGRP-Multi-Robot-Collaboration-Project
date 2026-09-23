@@ -15,7 +15,7 @@
 | 항목 | 확인 결과 |
 |---|---|
 | CLI 접근 | 이 Mac의 `colab` 0.6.0에서 세션 조회 성공, 활성 세션 0개. `colab new --help`에 L4 지원 표시. 생성·업로드·GPU 실행은 하지 않음 |
-| 소스·버전 | `colab_simulation_cli.pack`이 커밋 SHA를 유지한 sparse checkout과 포함/제외 파일·압축 해시를 보존. 표준 CLI 코드/config도 포함 |
+| 소스·버전 | `colab_simulation_cli.pack`이 커밋 SHA를 유지한 sparse checkout과 포함/제외 파일·압축 해시를 보존. 표준 CLI 코드/config도 포함. 로컬 포장 검사에서 `examples/task_stage_sync/plan.json` 누락을 발견해 추적된 examples를 기본 묶음에 포함하도록 수정 |
 | 기본 시뮬레이션 | Linux headless 경로 사용 가능. native Mac 창을 원격에서 그대로 여는 방식은 아니며 RGB/MP4/평가 자료를 회수 |
 | GPU 렌더링 | `colab_simulation_cli.job_code`가 `MUJOCO_GL=osmesa`, `PYOPENGL_PLATFORM=osmesa`를 강제. L4 할당만으로 GPU 렌더링이 되지 않음 |
 | EGL 준비 | `setup_colab_egl.py`가 기존 NVIDIA 라이브러리 등록과 새 GL context의 vendor 확인을 구현. 전송 실행기의 EGL 선택·검증·실패 차단에 연결해야 함 |

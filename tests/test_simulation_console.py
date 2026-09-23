@@ -201,6 +201,7 @@ def test_model_worker_saves_exact_wire_request_and_response(tmp_path, monkeypatc
 
 
 def test_script_cli_accepts_controller_override_before_empty_check(tmp_path, monkeypatch):
+    monkeypatch.setattr('sim.workflow_manager.RECORDS', tmp_path / 'fixture-records')
     from scripts.sim_cli import main
     target = tmp_path / "scene.json"
     target.write_text('{"version":1}')
