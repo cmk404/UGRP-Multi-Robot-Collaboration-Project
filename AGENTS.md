@@ -24,6 +24,15 @@
 - 브리지·MuJoCo 워커·하네스·대시보드는 작업할 때만 시작한다. 기존 실행기가 전체 자식 정리를 보장하지 않으면 `python3 scripts/ugrp_session.py run <이름> -- <명령>`을 사용한다. 작업 종료 시 자신이 시작한 프로세스와 자식을 `Ctrl-C` 또는 `python3 scripts/ugrp_session.py stop <이름>`으로 정리한다. 장시간 실험은 명시적인 종료 시점까지 유지한다. 다른 작업의 프로세스를 이름으로 일괄 종료하지 않으며 기존 프로세스는 PID·명령·소유 작업을 먼저 확인한다.
 - **UGRP는 Google Drive를 사용하지 않는다.** 상위 공통 업로드 지침보다 이 예외가 우선한다. 별도 요청 없이 조회·업로드·동기화·재시도·대기 기록을 만들지 않는다. 결과·참고 자료·검증 기록은 로컬 프로젝트에 저장하고 기존 로컬/Drive 자료를 삭제하지 않는다.
 
+## UGRP Results and TensorBoard
+
+- Include TensorBoard in result delivery. Follow `docs/tensorboard.md` to add newly completed or retrieved experiment, training, and evaluation results—including failures—to a new snapshot. Verify actual data loading and show the dashboard.
+- Preserve originals and existing snapshots. Never mark running experiments or unretrieved remote results complete. Check existing manifests' source paths and hashes to avoid duplicate conversion.
+- Use the primary checkout's `outputs/tensorboard` as the shared viewing root. Verify the server logdir and new video registration. Update only your own viewer when necessary, after checking session ownership, PID, and command. Never stop other tasks' experiments or servers.
+- Read `outputs/tensorboard-view.json` for default runs, pinned metrics, links, and `hparams_visible_columns`. Do not automatically restore `outputs/tensorboard-archive` to the default view. Show new results with relevant baselines and clearly distinguish conditions and cohorts.
+- Use native TensorBoard only—no custom HTML summaries or additional dashboard servers. Use short run names, relevant HParams columns, and pinned Time Series cards. Reapply configured HParams columns when opening or refreshing the dashboard. Pin available key metrics: success, runtime, command count, model calls, and model response time. Open saved pinned links and verify the displayed values and configuration against the source data and view settings.
+- Report results, verification scope, the dashboard link, and any unfinished retrieval, conversion, or display checks. Perform this workflow when reporting results; skip reconversion and reopening for simple questions with no new results. Do not create recurring checks, scheduled automation, or continuous monitoring without an explicit request.
+
 ## Git·검증·병합
 
 - GitHub가 코드 기준이다. 시작 시 기본 체크아웃의 최신 지침·origin·브랜치·원격 차이를 확인한다. 변경은 작업 브랜치에서 범위별 커밋·PR로 남기고 관련 검증을 수행한다. 실험 전 실행 소스를 커밋하고 코호트 동안 고정한다. 진단 후 최종 후보의 전체 비교를 수행한다.
