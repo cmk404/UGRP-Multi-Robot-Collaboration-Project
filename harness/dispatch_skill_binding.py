@@ -286,6 +286,8 @@ class ImageRoute:
     def __init__(self, bindings, obj):
         self.route_overlap=bool(getattr(bindings,'route_overlap',False))
         self._permission=getattr(bindings,'permission',None)
+        if self.route_overlap and not callable(self._permission):
+            raise ValueError('overlap route requires live permission check')
         self.map=bindings.static_map;self.obj=obj
         self.task=bindings.tasks[obj];self.dock=bindings.plan['dock']
         self.points=None;self.index=0;self.confirmations=0
@@ -461,7 +463,7 @@ class ImageRoute:
                   'waypoints_px':[p.tolist() for p in self.points],
                   'error_px':error.tolist(),'ready':ready,'done':done}
         if (self.obj=='box' and self.route_overlap and self.index==1 and ready
-                and self._permission is not None and not self._permission('box','UNLOAD')):
+                and not self._permission('box','UNLOAD')):
             self.confirmations=0
             evidence.update(waiting_for_resource=True,resource='dispatch_apron',done=False)
             return {'kind':'mecanum','forward':0.,'left':0.,'turn':0.,'duration_s':.2},evidence

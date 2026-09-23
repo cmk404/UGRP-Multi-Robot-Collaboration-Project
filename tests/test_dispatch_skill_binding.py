@@ -309,6 +309,14 @@ def test_dispatch_box_route_rejects_cyan_floor_distractors():
     assert not evidence['done'] and action['kind']=='mecanum'
 
 
+def test_overlap_route_requires_live_permission_check():
+    from harness.dispatch_skill_binding import ImageRoute
+    narrow=SimpleNamespace(static_map=authored_map('open'), tasks={'box':{'route':'south'}},
+                           plan={'dock':'dock_b'}, route_overlap=True)
+    with pytest.raises(ValueError,match='requires live permission check'):
+        ImageRoute(narrow,'box')
+
+
 def test_route_cannot_stop_in_diagonal_dead_zone():
     from harness.dispatch_skill_binding import ImageRoute
     raw=Path('tests/fixtures/dispatch_skill_transfer/box-top-held.jpg').read_bytes()
