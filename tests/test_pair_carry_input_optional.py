@@ -45,7 +45,14 @@ def test_real_training_cache_and_checkpoint(tmp_path, size, history):
     if size in (128, 512) and history == 4:
         client = InputCarryClient(sys.executable, tmp_path/'act')
         try:
-            assert client.predict(fs) == before
+            deployed = client.predict(fs)
+            # The worker memoizes identical frames and can use a different
+            # CNN batch size. Require the same stop decision and a strict
+            # numerical bound rather than bit identity across those paths.
+            assert deployed.keys() == before.keys()
+            assert deployed['done'] == before['done']
+            assert deployed['action'] == pytest.approx(before['action'], rel=1e-6, abs=1e-6)
+            assert deployed['stop_score'] == pytest.approx(before['stop_score'], rel=1e-6, abs=1e-6)
         finally:
             client.close()
         assert client.process.poll() is not None
