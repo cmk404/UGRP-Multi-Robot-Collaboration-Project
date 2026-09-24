@@ -36,7 +36,9 @@ HP_METRICS = ('process/exit_code', 'result/wall_s', 'result/sim_s', 'result/comm
                'finalization/complete', 'finalization/selected_checkpoint_eligible',
                'finalization/development/first_action_strict_mismatch_count',
                'benchmark/reference_request_latency_median_s',
-               'benchmark/refined_request_latency_median_s') + EXTRA_METRICS
+               'benchmark/refined_request_latency_median_s',
+               'infrastructure/aborted_attempts',
+               'infrastructure/unstarted_cases') + EXTRA_METRICS
 SECRET = re.compile(r'authorization|cookie|password|secret|api.?key|access.?token|refresh.?token', re.I)
 
 
@@ -792,13 +794,96 @@ def export_termination_audit(src, w, data):
             'predictions_sha256':data['predictions_sha256']},metrics
 
 
+def export_teacher_infrastructure_abort(src, w, incident):
+    """Import one saved collection interruption, never a robot outcome."""
+    collection = src.root / 'route-teachers-managed'
+    raw = collection / 'raw/south-train-a'
+    launcher = src.read('route-teachers-managed/launcher.json', required=True)
+    manager = src.read('route-teachers-managed/managed/south-train-a/manifest.json', required=True)
+    src.read('route-teachers-managed/raw/south-train-a/episode-setup-only.json', required=True)
+    src.read('route-teachers-managed/raw/south-train-a/scene-manifest.json', required=True)
+    owned = obj(obj(incident.get('own_stop')).get('owned_pid_readback'))
+    unstarted = incident.get('unstarted_cases')
+    elapsed = incident.get('elapsed_collection_wall_s')
+    source_tree = obj(obj(manager.get('source')).get('execution_tree')).get('sha256')
+    if (incident.get('schema') != 'ugrp.teacher_collection_interference_abort.v1'
+            or incident.get('collection') != str(collection)
+            or incident.get('teacher_source_sha') != '931d910998a94361342c372ec2675c475daa625f'
+            or incident.get('launcher_source_sha') != 'e0d330da0045b285bcf7707d5707c63f608a5fd6'
+            or incident.get('first_case') != 'south-train-a'
+            or incident.get('first_case_status') != 'aborted_by_owner_due_concurrent_foreign_simulation'
+            or incident.get('physical_success', False) is not None
+            or incident.get('admitted_for_training') is not False
+            or unstarted != ['south-train-b', 'south-development']
+            or not finite(elapsed) or elapsed <= 0
+            or incident.get('launcher_sha256') != src.files['route-teachers-managed/launcher.json']['sha256']
+            or launcher.get('schema') != 'ugrp.act.route_teacher_launcher.v1'
+            or launcher.get('status') != 'collection_incomplete'
+            or launcher.get('teacher_source_sha') != incident.get('teacher_source_sha')
+            or launcher.get('launcher_source_sha') != incident.get('launcher_source_sha')
+            or not finite(launcher.get('elapsed_wall_s'))
+            or not math.isclose(launcher['elapsed_wall_s'], elapsed, rel_tol=1e-9)
+            or launcher.get('input_sha256_before') != launcher.get('input_sha256_after')
+            or len(rows(launcher.get('cases'))) != 1
+            or rows(launcher['cases'])[0].get('id') != 'south-train-a'
+            or manager.get('schema') != 'ugrp.simulation_run.v1'
+            or manager.get('workflow_id') != 'dispatch-skills'
+            or manager.get('status') != 'interrupted'
+            or manager.get('exit_code') != 130
+            or manager.get('physical_success', False) is not None
+            or manager.get('output') != str(raw)
+            or obj(manager.get('source')).get('source_sha') != incident.get('teacher_source_sha')
+            or obj(manager.get('source')).get('source_dirty') is not False
+            or manager.get('source_changed_during_run') is not False
+            or manager.get('inputs_changed_during_run') is not False
+            or not source_tree or obj(manager.get('source_after')).get('sha256') != source_tree
+            or manager.get('inputs_before') != manager.get('inputs_after')
+            or obj(incident.get('own_stop')).get('signal') != 'SIGINT'
+            or obj(incident.get('own_stop')).get('exit_code') != 130
+            or obj(incident.get('own_stop')).get('all_known_own_pids_gone') is not True
+            or not owned or any(value != '' for value in owned.values())
+            or str(obj(incident.get('own_stop')).get('target_pid')) not in owned
+            or incident.get('foreign_processes_touched') is not False
+            or not raw.is_dir() or (raw / 'result.json').exists()
+            or any((collection / 'raw' / case).exists() or
+                   (collection / 'managed' / case).exists() for case in unstarted)):
+        raise ValueError('Teacher infrastructure incident/source mismatch')
+    metrics = {'infrastructure/aborted_attempts': 1,
+               'infrastructure/unstarted_cases': len(unstarted),
+               'infrastructure/elapsed_collection_wall_s': elapsed,
+               'infrastructure/interrupted_manager_exit_code': 130}
+    for tag, value in metrics.items(): w.scalar(tag, value)
+    provenance = {'incident': {'path': str(src.root / 'teacher-interference-abort.json'),
+                               'sha256': src.files['teacher-interference-abort.json']['sha256']},
+                  'launcher_sha256': src.files['route-teachers-managed/launcher.json']['sha256'],
+                  'manager_sha256': src.files['route-teachers-managed/managed/south-train-a/manifest.json']['sha256'],
+                  'raw_setup_sha256': src.files['route-teachers-managed/raw/south-train-a/episode-setup-only.json']['sha256'],
+                  'raw_scene_sha256': src.files['route-teachers-managed/raw/south-train-a/scene-manifest.json']['sha256']}
+    w.text('infrastructure/status_and_scope', {'status': incident['first_case_status'],
+        'started_attempts': 1, 'unstarted_cases': unstarted,
+        'physical_success': None, 'physical_failure': None,
+        'root_cause': incident.get('root_cause'),
+        'owner_cleanup_saved_readback': incident['own_stop'],
+        'provenance': provenance,
+        'limit': 'Saved interruption and cleanup receipts; not a robot evaluation or live PID check.'})
+    w.text('dataset/unavailable', {'reason': 'No successful teacher episode; result.json absent; '
+        'first attempt excluded and two fixed cases not started.',
+        'admitted_for_training': False, 'originals_preserved': True})
+    return {'family': 'teacher-infrastructure-abort', 'policy': 'RGB teacher',
+            'case': 'south-train-a-interrupted', 'source_sha': incident['teacher_source_sha'],
+            'outcome': 'infrastructure_abort_no_physical_verdict',
+            'scope': 'Collection interruption; no robot outcome, training curve, or dataset row',
+            'success_source_field': None, 'report_provenance': provenance}, metrics
+
+
 def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=False,
             coverage_audit=None):
     """Export one source once. Existing destinations are rejected (no duplicate steps)."""
     source, output = Path(source).resolve(), Path(output).resolve()
     direct_benchmark = source.is_file() and source.name == 'runtime-benchmark-comparison.json'
-    source_root = source.parent if direct_benchmark else source
-    if not source_root.is_dir() or (source.is_file() and not direct_benchmark):
+    direct_incident = source.is_file() and source.name == 'teacher-interference-abort.json'
+    source_root = source.parent if direct_benchmark or direct_incident else source
+    if not source_root.is_dir() or (source.is_file() and not (direct_benchmark or direct_incident)):
         raise ValueError(f'Not a supported source directory or benchmark file: {source}')
     if output == source_root or output.is_relative_to(source_root):
         raise ValueError('Export must be outside the source directory')
@@ -806,6 +891,9 @@ def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=Fa
     if direct_benchmark:
         result = None
         kind, data = 'act-runtime-benchmark', src.read('runtime-benchmark-comparison.json', required=True)
+    elif direct_incident:
+        result = None
+        kind, data = 'teacher-infrastructure-abort', src.read('teacher-interference-abort.json', required=True)
     else:
         result = src.read('result.json')
         if isinstance(result, dict) and result.get('schema_version') == RUN_SCHEMA:
@@ -847,12 +935,13 @@ def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=Fa
         if kind == 'training': meta, metrics = export_training(src, w, data)
         elif kind == 'act-finalization': meta, metrics = export_finalization(src, w, data)
         elif kind == 'act-runtime-benchmark': meta, metrics = export_runtime_benchmark(src, w, data)
+        elif kind == 'teacher-infrastructure-abort': meta, metrics = export_teacher_infrastructure_abort(src, w, data)
         elif kind == 'cloud-job': meta, metrics = export_cloud_job(src, w, data)
         elif kind == 'hardware-probe': meta, metrics = export_hardware_probe(src, w, data)
         elif kind == 'termination-audit': meta, metrics = export_termination_audit(src, w, data)
         else: meta, metrics = export_execution(src, w, data, max_images, coverage)
         videos = []
-        video_names = ('motion.mp4', 'execution.mp4')
+        video_names = () if kind == 'teacher-infrastructure-abort' else ('motion.mp4', 'execution.mp4')
         if isinstance(result, dict) and result.get('schema_version') == RUN_SCHEMA:
             video_names += ('backend/execution.mp4',)
         for name in video_names:
@@ -876,6 +965,9 @@ def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=Fa
             current = inside(src.root, relative)
             if current is None or sha(current.read_bytes()) != record['sha256']:
                 raise ValueError(f'Source changed during export: {relative}; no event file published')
+        if (kind == 'teacher-infrastructure-abort' and
+                (src.root / 'route-teachers-managed/raw/south-train-a/result.json').exists()):
+            raise ValueError('Teacher result appeared during infrastructure import; no event file published')
         if coverage_provenance is not None:
             current = Path(coverage_provenance['path'])
             if not current.is_file() or sha(current.read_bytes()) != coverage_provenance['sha256']:
