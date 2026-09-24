@@ -1,0 +1,82 @@
+{
+  "schema": "ugrp.fine_gain_schedule_protocol.v3",
+  "supersedes": "protocol-v2.json (B1 overshoot failure, see results-v2.json)",
+  "request": "v3 스케줄 동기 모드 검증 (2026-09-24, 사용자 ㄱㄱ)",
+  "question": "Does the overshoot-safe schedule (schema v2, bundle v32) complete the synchronous mission and shorten fine alignment and whole-mission SIM time versus the deterministic OFF baseline?",
+  "why_synchronous": "v1 realtime runs were dominated by host CPU load (SIM/wall 0.575-0.95). Without --realtime-control, physics waits for each capture and decision, so host load changes wall time but not actor inputs, decisions or SIM time.",
+  "runtime": {
+    "branch": "claude/fine-gain-schedule",
+    "runtime_source_sha": "0b7c2a5",
+    "bundle": "rgb-standard-dispatch-v32 (parent v31)"
+  },
+  "design": {
+    "comparison": "same source; only --fine-gain-schedule differs",
+    "order": [
+      "B1_on",
+      "B2_on",
+      "A1_off"
+    ],
+    "max_runs": 3,
+    "parallel_physics": false,
+    "new_llm_calls": 0,
+    "training_runs": 0,
+    "host_load": "recorded before each run; not a precondition because it does not affect SIM-time metrics",
+    "baseline_reference": "protocol-v2 A1/A2 OFF: control_end SIM 126.26 s, fine 28.40 s (identical); v3 A1 must reproduce these on the new source"
+  },
+  "fixed": {
+    "variant": "open",
+    "seed": 11,
+    "plan_replay": "experiments/2026-09-22-parallel-transport/independent-plan.json",
+    "plan_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+    "contact_profile": "local_contact_fine",
+    "timestep_s": 0.00025,
+    "weld": false,
+    "efficient_capture": true,
+    "auto_route_overlap": true,
+    "overlap_start": "grasp",
+    "video_fps": 10,
+    "rgb_ttl_s": 0.6,
+    "max_command_lease_s": 0.25,
+    "stage_and_grasp_models": "outputs/dispatch-models/e78a5a5777f5bc48/models/{varied,grasp} (faster-dispatch worktree copy; file hashes identical to the v19 simulation-realtime copy used by the replay audit)",
+    "headless": true,
+    "realtime_control": false,
+    "max_wall_s": 1200
+  },
+  "command_template": "bash scripts/open_simulation.command dispatch --headless --plan-replay experiments/2026-09-22-parallel-transport/independent-plan.json --variant open --seed 11 --contact-profile local_contact_fine --max-wall-s 1200 --overlap-start grasp --video-fps 10 --grasp-model-dir <models>/grasp --stage-model-dir <models>/varied [--fine-gain-schedule] --output /Users/changmin/projects/ugrp/outputs/fine-gain-schedule-20260924-sync-v3/<run>",
+  "driver": "run_ab.py --protocol v3",
+  "primary_metrics": [
+    "physical_success and protocol_complete",
+    "fine alignment SIM s (learned_approach approach_elapsed_sim_s) and per-stage movement slices",
+    "control_end_sim_s (whole mission SIM time)"
+  ],
+  "secondary_metrics": [
+    "coarse sample count, box pregrasp resource wait",
+    "issued commands",
+    "contact, weld",
+    "wall_s (informational only)"
+  ],
+  "acceptance": [
+    "Both B runs physically and protocol complete",
+    "A1 reproduces control_end 126.26 and fine 28.40 SIM s",
+    "No contact/weld/permission audit failure",
+    "Report per-run B fine SIM s and control_end_sim_s against the deterministic baseline; never average incomplete runs",
+    "No realtime-window speed claim; default adoption out of scope"
+  ],
+  "stop_conditions": [
+    "A B1 failure skips B2; A1 still runs",
+    "No budget extension or threshold change",
+    "Preserve every run with hashes"
+  ],
+  "limits": [
+    "One saved plan, open map, seed 11; not a generalization or real-robot claim",
+    "Response constants are a controller calibration from recorded RGB-derived error changes, not a physical measurement",
+    "Box approach may become the critical path once the beam fine stage shortens; its tilt-step limit is handled separately in draft PRs #129/#131",
+    "Synchronous mode measures SIM-time behavior; realtime native wall time needs a separate idle-host check"
+  ],
+  "offline_evidence": {
+    "fit": "synchronous A1/B1 RGB-derived error change per slice: forward .021*current + .156*previous (residual sd .0034); lateral .006/.068; yaw .002/.118",
+    "monte_carlo": "forward stage model simulation, response scale .6-1.5x, measurement noise sd .0017, 200 each: baseline median 62 slices (A1 observed 57), schedule median 28 slices, 0/200 beyond -tolerance, minimum error -.0013",
+    "b1_trace": "at the recorded overshoot point (error .0596 after .15) v1 issued .139, v2 issues the model command .012",
+    "scope": "model-based estimate, not physical evidence"
+  }
+}

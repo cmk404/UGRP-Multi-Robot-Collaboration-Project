@@ -1090,6 +1090,7 @@ def run(args):
         raise ValueError('rolling visual servo requires realtime control')
     if scene.bounded_carrier_relink and not (scene.rolling_visual_servo and scene.realtime_control):
         raise ValueError('bounded carrier relink requires rolling realtime control')
+    scene.fine_gain_schedule=bool(getattr(args,'fine_gain_schedule',False))
     started=time.monotonic();pair=team=None
     motion_started_wall=motion_started_sim=None
     result={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),

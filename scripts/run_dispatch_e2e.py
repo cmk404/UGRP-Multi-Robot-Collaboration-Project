@@ -301,6 +301,8 @@ def main(argv=None):
                    help='experimental solo approach: bounded drive while paired RGB is captured; requires realtime control and open map')
     p.add_argument('--bounded-carrier-relink',action='store_true',
                    help='experimental solo carry: finite current-RGB carrier revalidation across TOP cargo occlusion; requires rolling realtime open-map skill')
+    p.add_argument('--fine-gain-schedule',action='store_true',
+                   help='skills only, synchronous only: experimental far-field command schedule for paired fine RGB alignment; default off')
     p.add_argument('--planning-rounds',type=int,default=8)
     p.add_argument('--max-replans',type=int,default=2)
     p.add_argument('--rounds',type=int,default=24)
@@ -340,6 +342,8 @@ def main(argv=None):
     if args.task and args.plan_replay:p.error('--task requires new planning; cannot change a replayed plan')
     if args.carry_act_model and not args.carry_act_python:p.error('ACT interpreter required')
     if args.carry_max_steps is not None and args.carry_max_steps<=0:p.error('positive carry-max-steps required')
+    if args.fine_gain_schedule and args.executor!='skills':p.error('--fine-gain-schedule uses the skills executor')
+    if args.fine_gain_schedule and args.realtime_control:p.error('--fine-gain-schedule is calibrated for synchronous execution only; omit --realtime-control')
     if args.live_replan and (not args.plan_replay or args.executor!='skills'):
         p.error('--live-replan requires a skills --plan-replay diagnostic')
     if args.output.exists():p.error('output exists; choose a new directory')

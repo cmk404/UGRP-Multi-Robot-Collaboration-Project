@@ -1,4 +1,4 @@
-"""Browser coworker: talk, look at the scene, then run allowlisted skills."""
+"""Legacy robot HTTP API retained for existing research traces and tests."""
 
 from __future__ import annotations
 
@@ -28,12 +28,8 @@ from .loop import Completer
 from .multi_agent import MultiRobotCompleter
 from .pi_camera import (
     CameraError,
-    ensure_camera_service,
-    grab_snapshot,
     open_mjpeg_stream,
     pop_jpegs,
-    start_camera_tunnel,
-    stream_url_from_snapshot,
 )
 from .robot import RobotError, RobotPanel
 from .vlm import VlmError
@@ -54,13 +50,7 @@ from sim.team_batch import use_team_batch
 from sim.team_layout import TEAM_STACK_SITE, TEAM_STACK_SITE_TOLERANCE_M
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-STATIC = Path(__file__).resolve().parent / "static" / "index.html"
-THREE_JS = Path(__file__).resolve().parent / "static" / "three.min.js"
-SIM3D_JS = Path(__file__).resolve().parent / "static" / "sim3d.js"
-SIM_SCENE_XML = Path(__file__).resolve().parents[1] / "sim" / "masterpi_scene_v2.xml"
 SIM_CALIBRATION_JSON = Path(__file__).resolve().parents[1] / "sim" / "masterpi_dynamics_calibration.json"
-TEST_VIDEO_DIR = Path(__file__).resolve().parents[1] / "outputs" / "test_videos"
-OFFLINE_PREVIEW_DIR = Path(__file__).resolve().parent / "static" / "offline"
 GPU_RECOVERY_STATUS = Path(os.environ.get("UGRP_GPU_RECOVERY_STATUS", "/tmp/ugrp_gpu_recovery_status.json"))
 
 
@@ -87,9 +77,8 @@ def request_gpu_recovery() -> tuple[bool, str]:
 REAL_RESUME_GRASP_PATH = Path(
     os.environ.get("UGRP_REAL_RESUME_GRASP_PATH", "/tmp/ugrp-real-resume-grasp.json")
 )
-# Main SIM R1 remains the public/static server. Other robot sessions are local
-# children reached only through these explicit prefixes, preventing chat/cancel/
-# camera state from crossing robot boundaries.
+# Historical SIM/REAL robot ports remain for internal API trace compatibility.
+# Their browser frontends and process launchers have been retired.
 BACKEND_PORTS = {
     ("sim", "r1"): int(os.environ.get("UGRP_SIM_R1_PORT", "8082")),
     ("sim", "r2"): int(os.environ.get("UGRP_SIM_R2_PORT", "8084")),
@@ -1020,34 +1009,6 @@ class ChatHandler(BaseHTTPRequestHandler):
             if len(parts) == 5 and parts[:3] == ["api", "team", "camera"]:
                 self._team_camera(parts[3], parts[4]); return
             self._send_json(404, {"error": "team camera route not found"}); return
-        if path in {"/", "/index.html"}:
-            self._send(200, STATIC.read_bytes(), "text/html; charset=utf-8")
-            return
-        if path == "/three.min.js":
-            self._send(200, THREE_JS.read_bytes(), "application/javascript; charset=utf-8")
-            return
-        if path == "/sim3d.js":
-            self._send(200, SIM3D_JS.read_bytes(), "application/javascript; charset=utf-8")
-            return
-        if path == "/sim-scene.xml":
-            self._send(200, SIM_SCENE_XML.read_bytes(), "application/xml; charset=utf-8")
-            return
-        if path.startswith("/offline/"):
-            name = Path(path[len("/offline/"):]).name
-            target = OFFLINE_PREVIEW_DIR / name
-            if target.exists() and target.is_file() and target.suffix.lower() in {".jpg", ".jpeg"}:
-                self._send(200, target.read_bytes(), "image/jpeg")
-            else:
-                self._send(404, b"not found", "text/plain; charset=utf-8")
-            return
-        if path.startswith("/artifacts/test-videos/"):
-            name = Path(path[len("/artifacts/test-videos/"):]).name
-            target = TEST_VIDEO_DIR / name
-            if target.exists() and target.is_file() and target.suffix.lower() == ".mp4":
-                self._send(200, target.read_bytes(), "video/mp4")
-            else:
-                self._send(404, b"not found", "text/plain; charset=utf-8")
-            return
         if path == "/api/sim/state":
             if self.state.ui_mode != "sim":
                 self._send_json(404, {"error": "simulation state unavailable"})
@@ -2874,229 +2835,3 @@ def _team_message_sent_since(mode: str, sender: str, recipient: str, seq_floor: 
         and m.get("recipient") in {recipient, "all"}
         for m in messages
     )
-
-
-def start_team_wake_dispatcher(state: ChatState) -> threading.Thread | None:
-    """Start the neutral message router on each robot service process.
-
-    Every robot backend participates. Atomic wake claiming makes duplicate
-    dispatch harmless while allowing R1/R2/R3 to execute their own wakeups
-    independently and concurrently.
-    """
-    if os.environ.get("UGRP_TEAM_AUTOWAKE", "1") == "0":
-        return None
-    stop = threading.Event()
-    state._team_dispatch_stop = stop
-
-    def loop() -> None:
-        stop.wait(0.35)
-        mode = state.ui_mode
-        while not stop.is_set():
-            dispatched = False
-            # Keep SIM and REAL routing ownership isolated. A long-lived REAL R1
-            # process must never claim SIM wakeups (and vice versa), otherwise
-            # stale code/config in the other service can decide retry/error state.
-            for _ in range(3):
-                wake = team_bus.claim_wakeup(namespace=mode)
-                if wake is None:
-                    break
-                dispatched = True
-                threading.Thread(
-                    target=_deliver_team_wakeup, args=(state, mode, wake),
-                    name=f"ugrp-team-{mode}-{wake.get('robot_id')}", daemon=True,
-                ).start()
-            stop.wait(0.08 if dispatched else 0.25)
-
-    thread = threading.Thread(target=loop, name="ugrp-team-dispatcher", daemon=True)
-    thread.start()
-    return thread
-
-
-def serve_chat(
-    *,
-    completer: Completer | None = None,
-    replies: list[Any] | None = None,
-    model: str | None = None,
-    host: str = "127.0.0.1",
-    port: int = 8080,
-    password: str | None = None,
-    execute: bool = False,
-    robot: str = "ugrp1",
-    robot_id: str = "r1",
-    camera_url: str | None = None,
-    camera: bool = True,
-    actions_path: str | Path | None = None,
-    max_steps: int = 12,
-    backend: str = "auto",
-) -> None:
-    from .groq import live_completer
-    from .loop import ReplayCompleter
-    from .multi_agent import MultiRobotCompleter
-
-    if host not in {"127.0.0.1", "localhost", "::1"} and not password:
-        raise SystemExit("error: 외부에 열려면 --password 가 필요합니다.")
-    name = "replay"
-    if completer is None:
-        if replies is not None:
-            completer = ReplayCompleter(replies)
-        else:
-            # Three robots run as three independent planner instances by default.
-            # Each instance keeps its own provider/conversation state and only
-            # coordinates through team_bus.
-            if (
-                os.environ.get("UGRP_MULTI_LLM_AGENTS", "1") == "1"
-                and os.environ.get("UGRP_MULTI_ROBOT_CHILD", "0") != "1"
-            ):
-                agents = {}
-                for rid in ("r1", "r2", "r3"):
-                    agents[rid], _ = live_completer(backend, model)
-                completer = MultiRobotCompleter(agents, default=robot_id)
-                name = "multi-llm"
-            else:
-                # Production SIM/REAL launches one child process per robot, so
-                # one provider instance here means exactly three LLM agents in
-                # the three child processes rather than nine mostly-unused ones.
-                completer, name = live_completer(backend, model)
-    tunnel = None
-    tunnel_lock = threading.Lock()
-    opener = None
-
-    def ensure_camera_tunnel():
-        nonlocal tunnel
-        with tunnel_lock:
-            if tunnel is not None and tunnel.proc.poll() is None:
-                return tunnel
-            if tunnel is not None:
-                try:
-                    tunnel.close()
-                except Exception:
-                    pass
-                tunnel = None
-            tunnel = start_camera_tunnel(host=robot, wait=2.0)
-            return tunnel
-
-    def invalidate_camera_tunnel(expected) -> None:
-        nonlocal tunnel
-        with tunnel_lock:
-            if tunnel is not expected:
-                return
-            try:
-                tunnel.close()
-            except Exception:
-                pass
-            tunnel = None
-
-    if camera:
-        if camera_url:
-            stream_url = stream_url_from_snapshot(camera_url)
-            opener = lambda: open_mjpeg_stream(url=stream_url)
-        else:
-            ensure_camera_service(host=robot)
-            tunnel = start_camera_tunnel(host=robot)
-
-            def open_physical_stream():
-                # A legacy workflow may have cleanly SIGTERM'd ustreamer.
-                # Recover only if nothing already serves :8080; never stop or
-                # replace an existing camera owner.
-                ensure_camera_service(host=robot)
-                current = ensure_camera_tunnel()
-                if current is not None:
-                    try:
-                        return open_mjpeg_stream(url=current.stream_url)
-                    except CameraError:
-                        invalidate_camera_tunnel(current)
-                # Direct SSH is slower to establish, but it is a robust fallback
-                # and the pump keeps that one connection open once established.
-                return open_mjpeg_stream(host=robot)
-
-            opener = open_physical_stream
-    final_verifier = None
-    if name == "groq":
-        from .verify import verify_final as _verify_final
-
-        final_verifier = lambda goal, final_text, image: _verify_final(
-            completer, goal, final_text, image
-        )
-    state = ChatState(
-        completer=completer,
-        password=password,
-        execute=execute,
-        open_stream=opener,
-        robot=RobotPanel(host=robot),
-        robot_id=robot_id,
-        actions_path=actions_path,
-        max_steps=max_steps,
-        verify_final=final_verifier,
-    )
-    if camera:
-        state.prefer_fresh_camera_snapshot = bool(camera_url)
-        # Physical ustreamer prefers one MJPEG client, so its path reuses the
-        # cached stream frame. Explicit HTTP camera URLs (simulation/cloud)
-        # can safely fall back to /snapshot, which also makes headless API
-        # turns work before any browser has opened /api/camera/stream.
-        def grabber() -> bytes:
-            # Snapshot-backed simulation/cloud cameras are cheap and must be
-            # re-read after each action. Physical REAL may reuse only a FRESH
-            # cached frame; stale camera evidence is never returned.
-            if camera_url:
-                jpeg = grab_snapshot(url=camera_url)
-                # UI/API snapshot reads update only the presented frame cache.
-                # Ordered planner perception is applied by run_loop to the exact
-                # image used for its initial/post-action decision.
-                state.remember_frame(jpeg, perceive=False)
-                return jpeg
-            cached = state.cached_frame()
-            if cached is not None:
-                return cached
-            ensure_camera_service(host=robot)
-            current = ensure_camera_tunnel()
-            if current is not None:
-                try:
-                    jpeg = grab_snapshot(url=current.snapshot_url)
-                except CameraError:
-                    invalidate_camera_tunnel(current)
-                    ensure_camera_service(host=robot)
-                    jpeg = grab_snapshot(host=robot)
-            else:
-                jpeg = grab_snapshot(host=robot)
-            state.remember_frame(jpeg, perceive=False)
-            return jpeg
-
-        state.grab_camera = grabber
-        try:
-            grabber()
-        except CameraError:
-            pass
-        if not camera_url and opener is not None:
-            state.start_low_latency_camera(pose_stream=True)
-    httpd = make_server(state, host=host, port=port)
-    team_dispatcher = start_team_wake_dispatcher(state)
-    bound = httpd.server_address
-    print(f"UGRP http://{bound[0]}:{bound[1]}/", flush=True)
-    print("장면을 보고 말로 맞춘 다음, 허용된 스킬만 실행합니다.", flush=True)
-    print("카메라가 없으면 대화만 합니다.", flush=True)
-    print(f"실행 도구: {state.actions_path.name}", flush=True)
-    if name == "groq":
-        nkeys = len(getattr(completer, "keys", []))
-        print(f"모델: groq {getattr(completer, 'model_name', '')} ({nkeys} keys)", flush=True)
-    elif name == "replay":
-        print("모델: replay", flush=True)
-    else:
-        print(f"모델: {name} {getattr(completer, 'model_name', '')}", flush=True)
-    if execute:
-        print("execute: on", flush=True)
-    else:
-        print("execute: dry-run", flush=True)
-    if password:
-        print("브라우저가 사용자/비밀번호를 물으면 비밀번호만 맞으면 됩니다.", flush=True)
-    try:
-        httpd.serve_forever()
-    except KeyboardInterrupt:
-        print("\nstopped")
-    finally:
-        if state._team_dispatch_stop is not None:
-            state._team_dispatch_stop.set()
-        state.stop_low_latency_camera()
-        if tunnel is not None:
-            tunnel.close()
-        httpd.server_close()
