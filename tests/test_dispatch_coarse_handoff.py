@@ -76,7 +76,8 @@ def test_near_supported_handoff_requires_second_stationary_batch(monkeypatch):
     assert pair.stop_dwell.call_count==1
     pair.drive_mecanum.assert_not_called()
     assert fine.call_args.kwargs==dict(reacquire_on_settle=True,
-                                      final_refinement_steps=40,invalid_reobserve_budget=1)
+                                      final_refinement_steps=40,invalid_reobserve_budget=1,
+                                      fine_gain_schedule=False)
     assert fine.call_args.args[1] is pair.stage_models
     evidence=pair.calls[-2]  # handoff precedes learned approach audit
     assert evidence['kind']=='coarse_fine_handoff'

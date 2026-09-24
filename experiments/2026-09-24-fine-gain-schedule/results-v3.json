@@ -1,0 +1,152 @@
+{
+  "schema": "ugrp.fine_gain_schedule_results.v3",
+  "protocol": "protocol-v3.json",
+  "runs": {
+    "B1": {
+      "fine_gain_schedule": true,
+      "source_sha": "2854fa4d405d10869c90f36890011be99b11d22c",
+      "loadavg_before": [
+        13.1318359375,
+        7.2587890625,
+        7.017578125
+      ],
+      "exit_code": 1,
+      "physical_success": false,
+      "protocol_complete": false,
+      "error": "RuntimeError: fine RGB alignment outside saved skill support",
+      "wall_s_informational": 76.92883962500491,
+      "control_end_sim_s": 40.650000000103084,
+      "fine_alignment_sim_s": 22.200000000106,
+      "fine_stages": [
+        [
+          "yaw",
+          true,
+          7,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "lateral",
+          true,
+          27,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "yaw",
+          true,
+          0,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "forward",
+          true,
+          53,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "yaw",
+          false,
+          0,
+          "RGB outside learned stage support after bounded re-observation"
+        ]
+      ],
+      "schedule_applied_decisions": 14,
+      "weld_steps": 0,
+      "obstacle_contact_steps": 0,
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/fine-gain-schedule-20260924-sync-v3/B1",
+      "raw_files": 924,
+      "raw_inventory_sha256": "e349ad6d6558741d53b7b1ca9263554f6c6ec1722e73347e08c0d21b580c0583",
+      "result_sha256": "4ac608b6675752f1bb486f66af000f529d098edfb8d130c04f675e478a47634f"
+    },
+    "A1": {
+      "fine_gain_schedule": false,
+      "source_sha": "2854fa4d405d10869c90f36890011be99b11d22c",
+      "loadavg_before": [
+        6.6513671875,
+        6.54248046875,
+        6.76123046875
+      ],
+      "exit_code": 0,
+      "physical_success": true,
+      "protocol_complete": true,
+      "error": null,
+      "wall_s_informational": 250.11091345801833,
+      "control_end_sim_s": 126.25999999874232,
+      "fine_alignment_sim_s": 28.400000000135606,
+      "fine_stages": [
+        [
+          "yaw",
+          true,
+          7,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "lateral",
+          true,
+          27,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "yaw",
+          true,
+          0,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "forward",
+          true,
+          57,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "yaw",
+          true,
+          0,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "lateral",
+          true,
+          12,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "forward",
+          true,
+          0,
+          "two consecutive fresh stationary RGB confirmations"
+        ]
+      ],
+      "schedule_applied_decisions": 0,
+      "weld_steps": 0,
+      "obstacle_contact_steps": 0,
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/fine-gain-schedule-20260924-sync-v3/A1",
+      "raw_files": 2493,
+      "raw_inventory_sha256": "1c0063d65d7e703f18d4a0f3760e7c00a1325b16d24aa28184f962b575222a2b",
+      "result_sha256": "a75d6b194be62ebc44e9dc9a103984f235db0072fa9bac4590cb8a4c9036be45"
+    }
+  },
+  "skipped": {
+    "B2": {
+      "run": "B2",
+      "reason": "protocol stop: earlier B failure"
+    }
+  },
+  "findings": {
+    "baseline": "A1 OFF on source 2854fa4 reproduced control_end 126.26 and fine 28.40 SIM s exactly (third identical OFF run).",
+    "b1": [
+      "Forward stage passed (53 movement slices vs 57 OFF) but schedule handed over at .0608 after a .11 command and the error still fell .0608 -> .0331 -> .007 -> -.0066 under .012/.01 model commands: carry-over lasts several slices, beyond the one-slice fit.",
+      "Likely mechanism (hypothesis): a small nonzero command uses the moving damping rather than the stop damping, so the chassis coasts; the one-lag fit was dominated by small-command data.",
+      "Recovering from the overshoot at the .01 floor removed most of the saving; stage-4 yaw RGB for slot r3 was then outside learned support at SIM 40.65.",
+      "No weld or obstacle contact."
+    ],
+    "claims": "Schedule v2 (bundle v32) is not qualified; no speed or success claim."
+  },
+  "assessment": {
+    "ceiling": "Even a perfect fine-stage schedule can save at most part of 28.4 SIM s of a 126.3 SIM s synchronous mission (~5-15%), and each faster approach risks leaving pose-model support.",
+    "larger_opportunity": "Fine alignment takes 28.4 SIM s synchronously but 51-78 SIM s in realtime runs; the realtime gap (decision latency and idle leases) is larger than any gain-schedule saving and overlaps Codex rolling work (#131)."
+  },
+  "tensorboard": {
+    "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0924-fine-gain-sync-v3",
+    "view_key": "fine_gain_schedule_sync_v3_20260924"
+  }
+}
