@@ -181,3 +181,135 @@ def test_teacher_arm_sequence_interpolates_issued_targets_in_order():
     for _, a in issued:
         last[a.get('servo_id', 6)] = a.get('pulse', a.get('pan_pulse'))
     assert last == {1: 1500, 3: 1340, 6: 1600} and arm.commanded[3] == 1340
+
+
+def test_fixture_claims_do_not_collide_and_leave_extra_robots_idle():
+    # dev-fixture-1 (2026-09-25): identical fixture claims collided three
+    # times and the run ended with no job. The fixture now ranks askers.
+    from scripts.run_zone_dispatch import _fixture_claim
+    labels = {'red-1': {'kind': 'red'}, 'red-2': {'kind': 'red'}, 'red-3': {'kind': 'red'},
+              'cyan-1': {'kind': 'cyan'}, 'green-1': {'kind': 'green'}}
+    for label in labels:
+        labels[label]['floor_xy_m'] = [0., 0.]
+    view = {'pickup_boxes_still_visible': sorted(labels), 'zone_counts_seen': {'A': {}, 'B': {}, 'C': {}}}
+    claims = {r: _fixture_claim(r, 'q', GOAL, labels, view, {}, ('r1', 'r2', 'r3'))['claim']
+              for r in ('r1', 'r2', 'r3')}
+    checked = zc.check_claims(claims, goal=GOAL, labels=labels, view=view, active={})
+    assert len(checked['accepted']) == 3 and not checked['collisions'] and not checked['invalid']
+    one_left = {'A': {'red': 1}}
+    claims = {r: _fixture_claim(r, 'q', one_left, labels, view, {}, ('r2', 'r3'))['claim'] for r in ('r2', 'r3')}
+    assert claims['r2']['box'] == 'red-1' and claims['r3'] == {'box': None, 'zone': None}
+
+
+def test_replicas_get_the_dispatch_box_finger_pairs_and_the_planner_leaves_an_overlapped_box():
+    # dev-fixture-2 (2026-09-25): every teacher carry slid out of the grip
+    # because the contact profile declares finger pairs for dispatch_box_geom
+    # only; robots that dropped a box next to themselves could not plan out.
+    from sim.zone_scene import mirror_box_contact_pairs
+    from scripts.zone_teacher import plan_path
+    xml = ('<mujoco><contact><pair geom1="r1__left_finger" geom2="dispatch_box_geom" friction="3.4 3.4 .2 .01 .01"/>'
+           '<pair geom1="r1__left_finger" geom2="team_beam_geom"/></contact></mujoco>')
+    out, count = mirror_box_contact_pairs(xml, ['cargo_box_00', 'cargo_box_01'])
+    assert count == 2 and out.count('geom2="cargo_box_00_geom"') == 1 and out.count('3.4 3.4 .2 .01 .01') == 3
+    bounds = [-1.05, 5.40, -3.15, -.85]
+    assert plan_path((3.10, -2.15), (0., -1.30), bounds, [(3.24, -2.16, .06)]) is not None
+    # dev-fixture-3: with a path available the margin is kept, so a robot
+    # that grazes a box's margin does not plan straight through the box.
+    path = plan_path((-.60, -1.45), (1.0, -1.70), bounds, [(-.25, -1.70, .06)], radius=.21)
+    assert path and all(math.hypot(x+.25, y+1.70) >= .06+.21-1e-6 for x, y in path[1:-1])
+
+
+def test_teacher_goes_around_its_target_box_to_the_pregrasp_pose():
+    # dev-fixture-4: with its target excluded from the keep-outs, a robot
+    # coming from the east planned through the box and pushed it west.
+    from scripts.zone_teacher import plan_path, GRASP_RADIUS_M, ROBOT_RADIUS_M, BOX_CLEARANCE_M
+    box = (-.30, -1.70)
+    goal = (box[0]-GRASP_RADIUS_M-.10, box[1])
+    assert math.dist(goal, box) > ROBOT_RADIUS_M+BOX_CLEARANCE_M
+    column = [(box[0], box[1], BOX_CLEARANCE_M), (-.30, -1.30, BOX_CLEARANCE_M), (-.30, -2.10, BOX_CLEARANCE_M)]
+    path = plan_path((4.26, -1.60), goal, [-1.05, 5.40, -3.15, -.85], column)
+    assert path[-1] == goal and min(math.dist(q, box) for q in path[:-1]) >= ROBOT_RADIUS_M+BOX_CLEARANCE_M-1e-6
+
+
+def test_plan_prompt_requires_copying_the_accepted_plan_and_failed_jobs_free_their_slot():
+    # Z1-G5-plan: robots replied accept=true, plan=null and never committed.
+    # Z1-G8-dyn: slots of stopped jobs were never returned ("zone C has no free slot").
+    from scripts.run_zone_dispatch import Slots
+    assert 'accept=true with\nplan=null is invalid' in zc._PLAN
+    slots = Slots(za.authored_map())
+    taken = [slots.take('C') for _ in range(3)]
+    with pytest.raises(RuntimeError):
+        slots.take('C')
+    slots.give_back(taken[1])
+    assert slots.take('C') == taken[1]
+    slots.give_back(taken[0])
+    with pytest.raises(ValueError):
+        slots.give_back(taken[0])
+
+
+class _FakeWorld:
+    """Poses only, for the teacher's yield rule (the teacher reads truth)."""
+    def __init__(self, robots, boxes):
+        self.robots, self.boxes = dict(robots), dict(boxes)
+        self.data = SimpleNamespace(body=lambda name: SimpleNamespace(xpos=(*self.boxes[name], .02)))
+
+    def robot(self, rid):
+        x, y = self.robots[rid]
+        return SimpleNamespace(base_xyz=lambda: (x, y, .03), base_rpy=lambda: (0., 0., 0.))
+
+
+def _teacher_team(robots, boxes, jobs):
+    from scripts.zone_teacher import ZoneTeacherExecutor
+    world = _FakeWorld(robots, {b: xy for b, xy in boxes.items()})
+    port = SimpleNamespace(hold=lambda now: None, apply=lambda cmd, now: None)
+    log = []
+    team = ZoneTeacherExecutor(world, {r: port for r in robots}, za.authored_map(),
+                               {b: {'body_name': b} for b in boxes}, lambda *a, **k: log.append((a, k)))
+    for rid, box in jobs.items():
+        team.robots[rid].assign({'job_id': f'{rid}-1', 'box_body': box, 'slot_xy': (3., -2.)}, 0.)
+    return world, team, log
+
+
+BOXES_Z2G8 = {'cyan-1': (-.197, -1.45), 'green-1': (-.198, -2.649), 'red-1': (.401, -1.453),
+              'cyan-2': (.998, -1.449), 'cyan-3': (1.601, -2.05), 'red-2': (1.6, -2.649), 'red-3': (1.599, -1.45)}
+
+
+def test_blocked_teacher_robots_break_a_mutual_block_by_priority():
+    # Z2-G8-plan: r1 and r3 each parked beside the other's pregrasp goal and
+    # both waited out the 120 s drive limit.
+    from scripts.zone_teacher import YIELD_AFTER_S, plan_path, retreat_point, PEER_CLEARANCE_M, ROBOT_RADIUS_M
+    robots = {'r1': (-.68, -2.51), 'r2': (4.2, -2.7), 'r3': (-.68, -1.49)}
+    world, team, log = _teacher_team(robots, BOXES_Z2G8, {'r1': 'cyan-1', 'r3': 'green-1'})
+    for now in (0., .1):
+        for rid in ('r1', 'r3'):
+            team.robots[rid].tick(now, team.discs_for)
+    assert team.robots['r1'].blocked_since == team.robots['r3'].blocked_since == 0.
+    team.resolve_blocks(YIELD_AFTER_S + .1)
+    req = team.robots['r3'].yield_req
+    assert req and req['by'] is team.robots['r1'] and team.robots['r1'].yield_req is None
+    assert team.robots['r2'].yield_req is None
+    spot = retreat_point(robots['r3'], req['avoid'], za.authored_map()['bounds_m'],
+                         team.discs_for(team.robots['r3']), clear=PEER_CLEARANCE_M+ROBOT_RADIUS_M+.05)
+    assert spot is not None
+    world.robots['r3'] = spot
+    assert plan_path(robots['r1'], team.robots['r1'].path_goal, za.authored_map()['bounds_m'],
+                     team.discs_for(team.robots['r1'])) is not None
+
+
+def test_robots_that_met_head_on_never_plan_closer_to_each_other():
+    # Z2-G8-dyn: in the lane left by yellow-1 r1 and r2 came within 0.19 m.
+    # Releasing the overlapped peer margin let both drive into each other.
+    from scripts.zone_teacher import plan_path, GRASP_RADIUS_M
+    robots = {'r1': (-.03, -2.17), 'r2': (-.21, -2.12), 'r3': (4.24, -2.65)}
+    world, team, _ = _teacher_team(robots, BOXES_Z2G8, {'r1': 'green-1', 'r2': 'red-1'})
+    for rid, box, peer in (('r1', 'green-1', 'r2'), ('r2', 'red-1', 'r1')):
+        goal = (BOXES_Z2G8[box][0]-GRASP_RADIUS_M-.10, BOXES_Z2G8[box][1])
+        path = plan_path(robots[rid], goal, za.authored_map()['bounds_m'], team.discs_for(team.robots[rid]))
+        now = math.dist(robots[rid], robots[peer])
+        assert path and min(math.dist(q, robots[peer]) for q in path[1:]) >= now - 1e-6
+
+
+def test_claim_prompt_breaks_an_all_yield_conflict_by_robot_id():
+    # Z2-G8-dyn: r1 and r3 both yielded green-1 to each other three times.
+    assert 'if you all yield nobody takes it' in ' '.join(zc._CLAIM.split())
+    assert 'lowest robot_id' in zc._CLAIM

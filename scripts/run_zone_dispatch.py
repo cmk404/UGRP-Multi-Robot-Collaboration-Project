@@ -27,6 +27,9 @@ from harness.zone_perception import detect_all, label_pickup, observe  # noqa: E
 from sim.zone_arena import actor_task, episode, goal_counts  # noqa: E402
 
 SCHEMA = 'ugrp.zone_dispatch_result.v1'
+# Dynamic mode: re-ask a stalled team (no job running, claims unresolved) at
+# most this many times before ending the run as STALLED.
+STALL_TURNS = 2
 
 
 def write(path, value):
@@ -128,6 +131,13 @@ class Slots:
             raise RuntimeError(f'zone {zone} has no free slot')
         return self.free[zone].pop(0)
 
+    def give_back(self, slot):
+        """A job the executor stopped before its release never filled its slot."""
+        zone = slot[0]
+        if slot in self.free[zone]:
+            raise ValueError(f'slot {slot} is already free')
+        self.free[zone].insert(0, slot)
+
 
 def run(args):
     if subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip():
@@ -155,7 +165,9 @@ def run(args):
     slots = Slots(config['static_map'])
     active, own_jobs, finished, failed = {}, {r: [] for r in ROBOTS}, [], []
     queues = {r: [] for r in ROBOTS}
-    stats = {'claim_rounds': 0, 'collisions': 0, 'invalid_claims': 0, 'plan_turns': 0, 'done_robots': []}
+    stats = {'claim_rounds': 0, 'collisions': 0, 'invalid_claims': 0, 'plan_turns': 0, 'done_robots': [],
+             'stalled_turns': 0}
+    stalled = False
     try:
         zone.step(.5)
         frames, tops = zone.capture('start')
@@ -191,6 +203,8 @@ def run(args):
                               'sim_time_s': round(zone.time(), 2)}
                     own_jobs[rid][-1]['status'] = report['executor_receipt']
                     (finished if robot.outcome == 'placed_by_teacher' else failed).append(report)
+                    if robot.outcome in ('grasp_failed_by_teacher', 'teacher_path_blocked', 'dropped_in_transit'):
+                        slots.give_back(job['slot'])
                     zone._log('job_end', rid, zone.time(), outcome=robot.outcome, box=job['box'], zone=job['zone'])
 
         if args.coordination == 'plan_first':
@@ -205,7 +219,7 @@ def run(args):
                     return zc.build_plan_request(rid, request_id=request_id, task=task, frame=frames[rid],
                                                  agreement=context, ctx=ctx[rid])
                 def fixture(rid, request_id, context=context):
-                    return _fixture_plan_reply(rid, request_id, context, goal, labels)
+                    return _fixture_plan_reply(rid, request_id, context, goal, labels, args.fixture_plan)
                 from harness.three_robot_plan import validate_plan_reply
                 replies = team.ask(ROBOTS, build,
                     lambda raw, rq, c=context: validate_plan_reply(raw, rq, c, plan_validator=agreement.plan_validator),
@@ -245,11 +259,22 @@ def run(args):
                         if rid not in decided['accepted']:
                             stats['done_robots'].append(rid)
                     if not active and set(stats['done_robots']) >= set(idle):
-                        break
+                        # Nobody holds a job: either the team believes the goal
+                        # is met, or unresolved claims left everyone waiting.
+                        # Ask again (with the stall visible) a bounded number
+                        # of times before ending as STALLED.
+                        if not decided['idle_all'] and stats['stalled_turns'] < STALL_TURNS:
+                            stats['stalled_turns'] += 1
+                            stats['done_robots'] = []
+                        else:
+                            if not decided['idle_all']:
+                                stalled = True
+                            break
                 elif not active:
                     break
             zone.step(.5)
-        result['phase'] = 'FINISHED' if zone.time() - motion_started < args.max_sim_s else 'SIM_BUDGET'
+        result['phase'] = ('STALLED' if stalled else 'FINISHED' if zone.time() - motion_started < args.max_sim_s
+                           else 'SIM_BUDGET')
         zone.step(1.)
         _, tops = zone.capture('final')
         result['final_rgb_view'] = observe(tops, config['static_map'], labels)
@@ -296,8 +321,8 @@ def dynamic_round(zone, team, task, labels, goal, waiting, active, own_jobs, boa
                    own_jobs=own_jobs[r], inbox=team.inbox[r], extra=extra.get(r)) for r in askers}
         def build(rid, request_id, ctx=ctx, frames=frames):
             return zc.build_claim_request(rid, request_id=request_id, task=task, frame=frames[rid], ctx=ctx[rid])
-        def fixture(rid, request_id, view=view, pending=pending):
-            return _fixture_claim(rid, request_id, goal, labels, view, pending)
+        def fixture(rid, request_id, view=view, pending=pending, askers=tuple(askers)):
+            return _fixture_claim(rid, request_id, goal, labels, view, pending, askers)
         replies = team.ask(askers, build, zc.validate_claim_reply, fixture,
                            phase=f'claim-{turn}-{attempt}', turn=turn, sim_time=zone.time())
         stats['claim_rounds'] += 1
@@ -309,20 +334,29 @@ def dynamic_round(zone, team, task, labels, goal, waiting, active, own_jobs, boa
         stats['invalid_claims'] += len(checked['invalid'])
         team.event('CLAIMS_CHECKED', zone.time(), turn=turn, attempt=attempt, **checked)
         retry = sorted({r for c in checked['collisions'] for r in c['robots']} | set(checked['invalid']))
+        retry = [r for r in retry if r not in accepted]
         if not retry:
             break
         askers = retry
         extra = {r: {'conflict': [c for c in checked['collisions'] if r in c['robots']],
                      'invalid_reason': checked['invalid'].get(r)} for r in retry}
-    return {'accepted': accepted, 'idle': idle}
+    # idle_all: no claim was left unresolved; every robot without a job said
+    # that nothing useful remains for it.
+    return {'accepted': accepted, 'idle': idle, 'unresolved': retry,
+            'idle_all': not retry and set(waiting) - set(accepted) <= set(idle)}
 
 
-def _fixture_plan_reply(rid, request_id, context, goal, labels):
+def _fixture_plan_reply(rid, request_id, context, goal, labels, plan_file=None):
     proposal = context['proposal']
     if proposal:
         return {'request_id': request_id, 'proposal_id': proposal['proposal_id'],
                 'plan_hash': proposal['plan_hash'], 'accept': True, 'plan': proposal['plan'],
                 'reason': 'scripted protocol fixture, not visual reasoning', 'message': ''}
+    if plan_file:
+        # Diagnostic: propose a recorded committed plan to replay its execution.
+        plan = json.loads(Path(plan_file).read_text())['plan']
+        return {'request_id': request_id, 'proposal_id': None, 'plan_hash': None, 'accept': True,
+                'plan': plan, 'reason': f'scripted fixture proposing recorded plan {plan_file}', 'message': ''}
     jobs, unused = [], sorted(labels)
     for zone, kinds in sorted(goal.items()):
         for kind, count in sorted(kinds.items()):
@@ -335,16 +369,22 @@ def _fixture_plan_reply(rid, request_id, context, goal, labels):
             'plan': plan, 'reason': 'scripted protocol fixture, not visual reasoning', 'message': ''}
 
 
-def _fixture_claim(rid, request_id, goal, labels, view, pending):
+def _fixture_claim(rid, request_id, goal, labels, view, pending, askers=ROBOTS):
+    """Scripted protocol fixture (not visual reasoning): the i-th asking robot
+    takes the i-th open need unit, so idle robots claim different boxes."""
     need = zc.remaining_need(goal, view, pending)
     taken = {j['box'] for j in pending.values()}
-    for zone, kinds in sorted(need.items()):
-        for kind in sorted(kinds):
-            for box in view['pickup_boxes_still_visible']:
-                if box not in taken and labels[box]['kind'] == kind:
-                    return {'request_id': request_id, 'claim': {'box': box, 'zone': zone},
-                            'reason': 'scripted protocol fixture, not visual reasoning', 'message': ''}
-    return {'request_id': request_id, 'claim': {'box': None, 'zone': None},
+    units = [(zone, kind) for zone, kinds in sorted(need.items())
+             for kind in sorted(kinds) for _ in range(kinds[kind])]
+    free = {kind: [b for b in view['pickup_boxes_still_visible'] if b not in taken and labels[b]['kind'] == kind]
+            for kind in {k for _, k in units}}
+    order = []
+    for zone, kind in units:
+        if free[kind]:
+            order.append({'box': free[kind].pop(0), 'zone': zone})
+    rank = list(askers).index(rid)
+    claim = order[rank] if rank < len(order) else {'box': None, 'zone': None}
+    return {'request_id': request_id, 'claim': claim,
             'reason': 'scripted protocol fixture, not visual reasoning', 'message': ''}
 
 
@@ -363,11 +403,15 @@ def parser():
     p.add_argument('--max-wall-s', type=float, default=3600.)
     p.add_argument('--contact-profile', default='local_contact_fine')
     p.add_argument('--record-replay', action='store_true')
+    p.add_argument('--fixture-plan', help='diagnostic, fixture plan_first only: propose this recorded '
+                   'committed-plan.json instead of the scripted split')
     return p
 
 
 def main(argv=None):
     args = parser().parse_args(argv)
+    if args.fixture_plan and (args.mode != 'fixture' or args.coordination != 'plan_first'):
+        raise SystemExit('--fixture-plan needs --mode fixture --coordination plan_first')
     result = run(args)
     return 0 if result.get('error') is None else 1
 
