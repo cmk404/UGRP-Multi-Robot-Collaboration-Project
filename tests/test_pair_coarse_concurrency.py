@@ -9,9 +9,9 @@ from types import SimpleNamespace
 import pytest
 
 from scripts.dispatch_pair_skill import (BoundPairSkill, coordinated_coarse_commands,
-    _coarse_concurrent_issue_age)
+    _coarse_concurrent_issue_age, coarse_command_audit, complete_coarse_command_audit)
 from scripts.run_dispatch_e2e import main
-from scripts.run_dispatch_skills import coarse_concurrency_status
+from scripts.run_dispatch_skills import coarse_concurrency_status, port_issue_receipt, SkillScene
 from sim.research_dispatch_arena import authored_map, digest
 
 
@@ -173,3 +173,62 @@ def test_cli_requires_realtime_skills_and_carries_opt_in_to_runner(tmp_path,monk
                         lambda args: received.append(args.coarse_concurrent_alignment) or 0)
     assert main([*command,'--realtime-control'])==0
     assert received==[True]
+
+
+def test_coarse_receipts_link_actual_port_issue_to_saved_rgb_and_parallel_window():
+    capture,now=frames()
+    for slot in ROBOTS:
+        capture[slot].update(own_bytes=slot.encode(),top_bytes=b'bound model TOP')
+    bindings=SimpleNamespace(pair={'r1':'physical-a','r3':'physical-c'})
+    decisions=deepcopy(recorded_rows()[0]['decisions'])
+    audit=coarse_command_audit(1,capture,decisions,bindings,source_sha='source',map_sha='map')
+    commands,coordination=coordinated_coarse_commands(
+        decisions,concurrent_alignment=True,frames=capture,now_s=now)
+    audit.update(coordinated_commands=deepcopy(commands),coordination=coordination)
+    receipts={}
+    for slot,rid in bindings.pair.items():
+        receipts[rid]=port_issue_receipt(
+            {'sim_time':now,'actuator_state':{'motor_commands':[20.,20.,20.,20.]}},
+            SimpleNamespace(_drive_expires_at=1.3),commands[slot],bounded=False)
+    complete_coarse_command_audit(audit,receipts,bindings)
+    assert audit['issued_parallel_window_s']==pytest.approx([1.1,1.3])
+    assert audit['physical_motion_inferred'] is False
+    assert all(row['whole_issued_window_within_ttl'] for row in audit['rgb_ttl_audit'].values())
+    assert audit['lead_gap_audit']['r1']['below_16px_when_moving'] is True
+    assert audit['source_rgb']['r1']['own_rgb_sha256']!=audit['source_rgb']['r3']['own_rgb_sha256']
+    # Output receipts must not retain mutable policy or port-ack objects.
+    receipts['physical-a']['port_ack_motor_pwm'][0]=999
+    decisions['r1']['forward']=999
+    assert audit['port_receipts']['r1']['port_ack_motor_pwm'][0]==20
+    assert audit['model_proposals']['r1']['forward']==.12
+
+
+@pytest.mark.parametrize('issued,expiry,pwm',[
+    (True,1.3,[0.]*4), (float('nan'),1.3,[0.]*4),
+    (1.1,None,[0.]*4), (1.1,1.0,[0.]*4),
+    (1.1,1.3,[]), (1.1,1.3,[float('nan')]*4),
+])
+def test_incomplete_or_invalid_port_ack_cannot_prove_issued_motion(issued,expiry,pwm):
+    receipt=port_issue_receipt({'sim_time':issued,'actuator_state':{'motor_commands':pwm}},
+        SimpleNamespace(_drive_expires_at=expiry),{'forward':.12},bounded=False)
+    assert receipt['acknowledged'] is False
+    assert receipt['port_ack_motor_pwm'] is None
+
+
+def test_pair_drive_freezes_port_ack_before_step_expires_the_command():
+    scene=SkillScene.__new__(SkillScene)
+    scene.authorize=lambda:None
+    scene.bindings=SimpleNamespace(pair={'r1':'a','r3':'c'})
+    scene.ports={rid:SimpleNamespace(validate_action=lambda action:None,
+        _drive_expires_at=1.3) for rid in ('a','c')}
+    def raw(rid,action,stage):
+        return {'sim_time':1.1,'actuator_state':{'motor_commands':[10.,10.,10.,10.]}}
+    scene.raw=raw
+    def step(duration):
+        for port in scene.ports.values():port._drive_expires_at=None
+    scene.step=step
+    commands={rid:dict(kind='mecanum',forward=.12,left=0.,turn=0.,duration_s=.2)
+              for rid in ('a','c')}
+    receipts=scene.pair_drive(commands,.2,'APPROACH')
+    assert all(row['acknowledged'] and row['effective_expiry_s']==1.3
+               for row in receipts.values())

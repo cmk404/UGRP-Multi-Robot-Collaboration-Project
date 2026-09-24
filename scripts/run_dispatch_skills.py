@@ -72,6 +72,23 @@ def coarse_concurrency_status(pair, *, requested):
     return {'applied':True,'reason':'eligible_for_rgb_decision_admission'}
 
 
+def port_issue_receipt(applied,port,action,*,bounded):
+    """Freeze only the returned port acknowledgement before physics advances."""
+    state=applied.get('actuator_state') if isinstance(applied,dict) else None
+    pwm=state.get('motor_commands') if isinstance(state,dict) else None
+    issued=applied.get('sim_time') if isinstance(applied,dict) else None
+    expiry=getattr(port,'_command_expires_at' if bounded else '_drive_expires_at',None)
+    acknowledged=(type(issued) in (int,float) and math.isfinite(issued)
+                  and type(expiry) in (int,float) and math.isfinite(expiry) and expiry>=issued
+                  and isinstance(pwm,(list,tuple)) and len(pwm)==4
+                  and all(type(v) in (int,float) and math.isfinite(v) for v in pwm))
+    return {'acknowledged':acknowledged,
+            'actual_issued_at_s':issued if acknowledged else None,
+            'effective_expiry_s':expiry if acknowledged else None,
+            'port_ack_motor_pwm':list(pwm) if acknowledged else None,
+            'applied_action':copy.deepcopy(action) if acknowledged else None}
+
+
 class SkillScene(DispatchScene):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
@@ -196,9 +213,12 @@ class SkillScene(DispatchScene):
         if self.bindings:self.bindings.authorize(self.team.agreement.committed)
     def raw(self,rid,action,stage):
         self.authorize();self.ports[rid].validate_action(action)
-        self.ports[rid].apply(action,self.time())
+        applied=self.ports[rid].apply(action,self.time())
         self.command_history[rid].append({'stage':stage,'action':copy.deepcopy(action),
-            'issued_at_s':self.time(),'plan_hash':self.bindings.committed['plan_hash'] if self.bindings else None})
+            'issued_at_s':(applied['sim_time'] if isinstance(applied,dict)
+                           and 'sim_time' in applied else self.time()),
+            'plan_hash':self.bindings.committed['plan_hash'] if self.bindings else None})
+        return applied
     def _permission_snapshot(self):
         """A private permission state for RGB workers and owner preflight."""
         snapshot=copy.copy(self.bindings)
@@ -309,8 +329,12 @@ class SkillScene(DispatchScene):
         for r,a in commands.items():self.ports[r].validate_action(a)
         if stage=='TRANSIT' and any(any(abs(a.get(k,0.))>0 for k in ('forward','left','turn')) for a in commands.values()):
             self.bindings.note_transit_command('beam')
-        for r,a in commands.items():self.raw(r,a,stage)
+        receipts={}
+        for r,a in commands.items():
+            applied=self.raw(r,a,stage)
+            receipts[r]=port_issue_receipt(applied,self.ports[r],a,bounded=False)
         self.step(duration)
+        return receipts
     def pair_issue_bounded(self,commands,duration,stage):
         """Issue one atomic pair lease; physics remains on the calling owner."""
         self.authorize();self.pair_phase=stage
@@ -320,15 +344,18 @@ class SkillScene(DispatchScene):
         if stage=='TRANSIT' and any(any(abs(a.get(k,0.))>0 for k in ('forward','left','turn')) for a in commands.values()):
             self.bindings.note_transit_command('beam')
         now=self.time()
+        receipts={}
         try:
             for r,a in commands.items():
-                self.ports[r].apply_bounded(a,now,duration)
+                applied=self.ports[r].apply_bounded(a,now,duration)
                 self.command_history[r].append({'stage':stage,'action':copy.deepcopy(a),
                     'issued_at_s':now,'valid_until_s':now+duration,
                     'plan_hash':self.bindings.committed['plan_hash']})
+                receipts[r]=port_issue_receipt(applied,self.ports[r],a,bounded=True)
         except BaseException:
             for r in commands:self.ports[r].hold(now)
             raise
+        return receipts
     def pair_arm(self,targets,duration,settle,stage):
         self.authorize();self.pair_phase=stage
         if not set(targets)<=set(self.bindings.pair.values()):raise ValueError('pair arm endpoint mismatch')
@@ -1146,6 +1173,7 @@ def run(args):
             'max_cumulative_visual_motion_px':_CARRIER_RELINK_MAX_MOTION_PX,
             'final_slot_requires_direct_top_cargo':True},
         'input_boundary':'own fixed RGB + common fixed TOP RGB + static authored map + own issued commands + peer claims; referee output only'}
+    scene.source_sha=result['source_sha']
     try:
         scene.open();scene.deadline=started+args.max_wall_s
         if getattr(args,'viewer',False):
