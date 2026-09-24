@@ -1,0 +1,2190 @@
+{
+ "schema": "ugrp.zone_dispatch_experiment.v1",
+ "raw_root": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925",
+ "raw_storage": "local primary checkout only; not a remote backup",
+ "source_txt": [
+  "sha 5ebecda 2026-09-24T17:52:22Z",
+  "dev-fixture-2 sha 1586b58 2026-09-24T18:20:04Z",
+  "dev-fixture-3 sha 913e4da 2026-09-24T18:26:48Z (parallel with V-runs under the same claude lock)",
+  "dev-fixture-4 sha ada1c9b 2026-09-24T18:29:55Z (parallel with V-runs under the same claude lock)",
+  "dev-fixture-5 sha 0244ab8 2026-09-24T18:32:52Z (parallel with V-runs under the same claude lock)",
+  "dev-fixture-6-planfirst sha 0244ab8 2026-09-24T18:35:13Z (parallel with V-runs under the same claude lock)",
+  "Z1 sha c3d06ec 2026-09-24T18:51:10Z",
+  "dev-fixture-7 sha f8b2f54 2026-09-24T19:05:20Z",
+  "dev-fixture-8 sha f8b2f54 2026-09-24T19:06:59Z",
+  "Z2 sha f8b2f54 2026-09-24T19:10:25Z",
+  "diag-plan-replay sha e520a3a 2026-09-24T19:41:40Z",
+  "dev-fixture-9 sha e520a3a 2026-09-24T19:43:24Z",
+  "Z3-G5-plan sha e520a3a 2026-09-24T19:45:13Z",
+  "Z3-G5-dyn sha e520a3a 2026-09-24T19:47:28Z",
+  "Z3-G8-plan sha e520a3a 2026-09-24T19:49:21Z",
+  "Z3-G8-dyn sha e520a3a 2026-09-24T19:51:44Z"
+ ],
+ "runs": [
+  {
+   "run": "Z1-G5-dyn",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z1-G5-dyn",
+   "loads": [
+    {
+     "run": "Z1-G5-dyn",
+     "start_utc": "2026-09-24T18:52:26Z",
+     "load": "{ 2.67 4.33 5.06 }"
+    },
+    {
+     "run": "Z1-G5-dyn",
+     "end_utc": "2026-09-24T18:54:14Z",
+     "exit": 0,
+     "load": "{ 3.36 4.00 4.83 }"
+    }
+   ],
+   "console_sha256": "a6701f8c890408077f9ffb0d5cbd4a9d55b4c60454ac16bf1657b791b5afaaab",
+   "console_tail": [
+    "peer_delivery {\"schema\":\"ugrp.peer-communication.v1\",\"seq\":26,\"run_id\":\"zone-c3d06ecc-275947\",\"recorded_at_utc\":\"2026-09-24T18:54:13.848926+00:00\",\"kind\":\"peer_message\",\"source\":\"llm\",\"phase\":\"claim-6-0\",\"sender\":\"r3\",\"recipients\":[\"r1\",\"r2\"],\"turn\":6,\"sim_time_s\":150.29999999817386,\"request_id\":\"zone-c3d06ecc-275947-r3-claim-6-0-6\",\"text\":\"All goals have been achieved and no pickup boxes remain. Standing by.\"}",
+    "{\"team_phase\": \"claim-6-0\", \"turn\": 6, \"replied\": {\"r1\": true, \"r2\": true, \"r3\": true}}",
+    "{\"phase\": \"FINISHED\", \"error\": null, \"goal_met_rgb\": true, \"physical_success_teacher_condition\": true, \"makespan_sim_s\": 149.5, \"llm_calls\": 13, \"wall_s\": 107.83}"
+   ],
+   "result_sha256": "5eead8784581eb66bdee5cddf43a420f7e4c4625d327eba996418c3bfe6d0a90",
+   "source_sha": "c3d06eccb75ec4377cb01b9c502291179574c784",
+   "coordination": "dynamic",
+   "mode": "llm",
+   "model": "gemini-3.8-flash",
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "green": 1,
+     "red": 1
+    }
+   },
+   "extra_boxes": "{}",
+   "seed": 11,
+   "phase": "FINISHED",
+   "error": null,
+   "success_referee": true,
+   "goal_met_rgb": true,
+   "makespan_sim_s": 149.5,
+   "sim_end_s": 151.3,
+   "wall_s": 107.83,
+   "llm_calls": 13,
+   "usage": {
+    "prompt_tokens": 55541,
+    "completion_tokens": 1201,
+    "total_tokens": 60369
+   },
+   "coordination_stats": {
+    "claim_rounds": 7,
+    "collisions": 1,
+    "invalid_claims": 0,
+    "plan_turns": 0,
+    "done_robots": [
+     "r1",
+     "r2",
+     "r3"
+    ],
+    "stalled_turns": 0
+   },
+   "referee_counts": {
+    "A": {
+     "red": 2
+    },
+    "C": {
+     "red": 1,
+     "green": 1
+    },
+    "B": {
+     "cyan": 1
+    }
+   },
+   "rgb_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "red": 1,
+     "green": 1
+    }
+   },
+   "finished": 5,
+   "stopped": [],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z1-G5-dyn/replay",
+    "frames": 4478,
+    "sim_end_s": 151.2797499981507,
+    "manifest_sha256": "7232d4fe953b4c3074e7dbf87181f464eea18d6de49fdc6578f9768ed191bc21"
+   }
+  },
+  {
+   "run": "Z1-G5-plan",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z1-G5-plan",
+   "loads": [
+    {
+     "run": "Z1-G5-plan",
+     "start_utc": "2026-09-24T18:51:10Z",
+     "load": "{ 3.64 4.88 5.30 }"
+    },
+    {
+     "run": "Z1-G5-plan",
+     "end_utc": "2026-09-24T18:52:26Z",
+     "exit": 1,
+     "load": "{ 2.67 4.33 5.06 }"
+    }
+   ],
+   "console_sha256": "82d54f67232aa7c85a22303759aeb8f09ec4aa47cc2d1760ff1af61eebddc2ae",
+   "console_tail": [
+    "{\"team_phase\": \"plan\", \"turn\": 6, \"replied\": {\"r1\": true, \"r2\": true, \"r3\": false}}",
+    "{\"team_phase\": \"plan\", \"turn\": 7, \"replied\": {\"r1\": false, \"r2\": false, \"r3\": false}}",
+    "{\"phase\": \"NEGOTIATE\", \"error\": \"RuntimeError: no plan agreed within the planning rounds\", \"goal_met_rgb\": false, \"physical_success_teacher_condition\": false, \"makespan_sim_s\": null, \"llm_calls\": 35, \"wall_s\": 75.73}"
+   ],
+   "result_sha256": "e03ce917f3fbf11289fd5646706ac7e15d326a559063f8d485b4a9dca4fd909b",
+   "source_sha": "c3d06eccb75ec4377cb01b9c502291179574c784",
+   "coordination": "plan_first",
+   "mode": "llm",
+   "model": "gemini-3.8-flash",
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "green": 1,
+     "red": 1
+    }
+   },
+   "extra_boxes": "{}",
+   "seed": 11,
+   "phase": "NEGOTIATE",
+   "error": "RuntimeError: no plan agreed within the planning rounds",
+   "success_referee": false,
+   "goal_met_rgb": false,
+   "makespan_sim_s": null,
+   "sim_end_s": 1.8,
+   "wall_s": 75.73,
+   "llm_calls": 35,
+   "usage": {
+    "prompt_tokens": 152045,
+    "completion_tokens": 6682,
+    "total_tokens": 168820
+   },
+   "coordination_stats": {
+    "claim_rounds": 0,
+    "collisions": 0,
+    "invalid_claims": 0,
+    "plan_turns": 8,
+    "done_robots": [],
+    "stalled_turns": 0
+   },
+   "referee_counts": {},
+   "rgb_counts": null,
+   "finished": 0,
+   "stopped": [],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z1-G5-plan/replay",
+    "frames": 15,
+    "sim_end_s": 1.7692500000001745,
+    "manifest_sha256": "d58b6ce998214b6dd3ee42678b8a21a324a08bb56fedf831d43108454923ebec"
+   }
+  },
+  {
+   "run": "Z1-G8-dyn",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z1-G8-dyn",
+   "loads": [
+    {
+     "run": "Z1-G8-dyn",
+     "start_utc": "2026-09-24T18:57:10Z",
+     "load": "{ 3.21 3.77 4.58 }"
+    },
+    {
+     "run": "Z1-G8-dyn",
+     "end_utc": "2026-09-24T19:01:38Z",
+     "exit": 1,
+     "load": "{ 3.40 3.35 4.15 }"
+    }
+   ],
+   "console_sha256": "5cedd2972e73a1b4dcc69c77ebfe77f413eb0b2d37df6ebe0b4d06ff58f3b803",
+   "console_tail": [
+    "peer_delivery {\"schema\":\"ugrp.peer-communication.v1\",\"seq\":18,\"run_id\":\"zone-c3d06ecc-276231\",\"recorded_at_utc\":\"2026-09-24T19:01:37.831083+00:00\",\"kind\":\"peer_message\",\"source\":\"llm\",\"phase\":\"claim-4-0\",\"sender\":\"r3\",\"recipients\":[\"r1\",\"r2\"],\"turn\":4,\"sim_time_s\":242.79999999598652,\"request_id\":\"zone-c3d06ecc-276231-r3-claim-4-0-4\",\"text\":\"Retrying green-1 for Zone C to complete green requirement.\"}",
+    "{\"team_phase\": \"claim-4-0\", \"turn\": 4, \"replied\": {\"r2\": true, \"r3\": true}}",
+    "{\"phase\": \"EXECUTE\", \"error\": \"RuntimeError: zone C has no free slot\", \"goal_met_rgb\": false, \"physical_success_teacher_condition\": false, \"makespan_sim_s\": null, \"llm_calls\": 9, \"wall_s\": 267.41}"
+   ],
+   "result_sha256": "fca41e2d0cc7b27989a320a539d1513807b54524d22411c7fcb799a6f1fbc6cc",
+   "source_sha": "c3d06eccb75ec4377cb01b9c502291179574c784",
+   "coordination": "dynamic",
+   "mode": "llm",
+   "model": "gemini-3.8-flash",
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 2
+    },
+    "C": {
+     "green": 1,
+     "yellow": 1
+    }
+   },
+   "extra_boxes": "{\"red\":1,\"cyan\":1}",
+   "seed": 12,
+   "phase": "EXECUTE",
+   "error": "RuntimeError: zone C has no free slot",
+   "success_referee": false,
+   "goal_met_rgb": false,
+   "makespan_sim_s": null,
+   "sim_end_s": 242.8,
+   "wall_s": 267.41,
+   "llm_calls": 9,
+   "usage": {
+    "prompt_tokens": 39159,
+    "completion_tokens": 895,
+    "total_tokens": 45450
+   },
+   "coordination_stats": {
+    "claim_rounds": 5,
+    "collisions": 0,
+    "invalid_claims": 1,
+    "plan_turns": 0,
+    "done_robots": [],
+    "stalled_turns": 0
+   },
+   "referee_counts": {},
+   "rgb_counts": null,
+   "finished": 0,
+   "stopped": [
+    {
+     "robot": "r2",
+     "box": "cyan-1",
+     "zone": "B",
+     "executor_receipt": "executor stopped before finishing",
+     "sim_time_s": 122.3
+    },
+    {
+     "robot": "r3",
+     "box": "green-1",
+     "zone": "C",
+     "executor_receipt": "executor stopped before finishing",
+     "sim_time_s": 122.3
+    },
+    {
+     "robot": "r1",
+     "box": "cyan-2",
+     "zone": "B",
+     "executor_receipt": "executor stopped before finishing",
+     "sim_time_s": 130.8
+    },
+    {
+     "robot": "r2",
+     "box": "cyan-1",
+     "zone": "B",
+     "executor_receipt": "executor stopped before finishing",
+     "sim_time_s": 242.8
+    },
+    {
+     "robot": "r3",
+     "box": "green-1",
+     "zone": "C",
+     "executor_receipt": "executor stopped before finishing",
+     "sim_time_s": 242.8
+    }
+   ],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z1-G8-dyn/replay",
+    "frames": 7209,
+    "sim_end_s": 242.76824999598728,
+    "manifest_sha256": "409715db427987673bfdd9bf1baade5bb77ad2b4ab95ae6ce138915cdc444a4c"
+   }
+  },
+  {
+   "run": "Z1-G8-plan",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z1-G8-plan",
+   "loads": [
+    {
+     "run": "Z1-G8-plan",
+     "start_utc": "2026-09-24T18:54:14Z",
+     "load": "{ 3.36 4.00 4.83 }"
+    },
+    {
+     "run": "Z1-G8-plan",
+     "end_utc": "2026-09-24T18:57:10Z",
+     "exit": 0,
+     "load": "{ 3.21 3.77 4.58 }"
+    }
+   ],
+   "console_sha256": "ad0bf7a98441dc5aa5a5c62f6924624ce1e7f16082c299c4b351c9b598813d8b",
+   "console_tail": [
+    "JOB r2 cyan-1 -> B (B2)",
+    "JOB r3 green-1 -> C (C2)",
+    "{\"phase\": \"FINISHED\", \"error\": null, \"goal_met_rgb\": true, \"physical_success_teacher_condition\": true, \"makespan_sim_s\": 239.5, \"llm_calls\": 13, \"wall_s\": 175.07}"
+   ],
+   "result_sha256": "b96b840f8eac84ad49f684d45778e9e95fe645637f3704181b82b98427352483",
+   "source_sha": "c3d06eccb75ec4377cb01b9c502291179574c784",
+   "coordination": "plan_first",
+   "mode": "llm",
+   "model": "gemini-3.8-flash",
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 2
+    },
+    "C": {
+     "green": 1,
+     "yellow": 1
+    }
+   },
+   "extra_boxes": "{\"red\":1,\"cyan\":1}",
+   "seed": 12,
+   "phase": "FINISHED",
+   "error": null,
+   "success_referee": true,
+   "goal_met_rgb": true,
+   "makespan_sim_s": 239.5,
+   "sim_end_s": 241.3,
+   "wall_s": 175.07,
+   "llm_calls": 13,
+   "usage": {
+    "prompt_tokens": 56860,
+    "completion_tokens": 2800,
+    "total_tokens": 64878
+   },
+   "coordination_stats": {
+    "claim_rounds": 0,
+    "collisions": 0,
+    "invalid_claims": 0,
+    "plan_turns": 3,
+    "done_robots": [],
+    "stalled_turns": 0
+   },
+   "referee_counts": {
+    "C": {
+     "green": 1,
+     "yellow": 1
+    },
+    "B": {
+     "cyan": 2
+    },
+    "A": {
+     "red": 2
+    }
+   },
+   "rgb_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 2
+    },
+    "C": {
+     "green": 1,
+     "yellow": 1
+    }
+   },
+   "finished": 5,
+   "stopped": [
+    {
+     "robot": "r3",
+     "box": "red-1",
+     "zone": "A",
+     "executor_receipt": "executor stopped before finishing",
+     "sim_time_s": 155.3
+    }
+   ],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z1-G8-plan/replay",
+    "frames": 7165,
+    "sim_end_s": 241.29424999602213,
+    "manifest_sha256": "ed81e9691edb4ea887a83dcbfc62a92b9d3e62ab6396512942e04484cf4ddb4b"
+   }
+  },
+  {
+   "run": "Z2-G5-dyn",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z2-G5-dyn",
+   "loads": [
+    {
+     "run": "Z2-G5-dyn",
+     "start_utc": "2026-09-24T19:12:31Z",
+     "load": "{ 2.01 2.49 3.24 }"
+    },
+    {
+     "run": "Z2-G5-dyn",
+     "end_utc": "2026-09-24T19:14:15Z",
+     "exit": 0,
+     "load": "{ 2.79 2.64 3.20 }"
+    }
+   ],
+   "console_sha256": "db85aea4702f6bb4fc9031105c17df96c6e8c52cdce2dc1061cd28b42a65e4f2",
+   "console_tail": [
+    "peer_delivery {\"schema\":\"ugrp.peer-communication.v1\",\"seq\":22,\"run_id\":\"zone-f8b2f54f-277152\",\"recorded_at_utc\":\"2026-09-24T19:14:14.682337+00:00\",\"kind\":\"peer_message\",\"source\":\"llm\",\"phase\":\"claim-6-0\",\"sender\":\"r3\",\"recipients\":[\"r1\",\"r2\"],\"turn\":6,\"sim_time_s\":160.2999999979374,\"request_id\":\"zone-f8b2f54f-277152-r3-claim-6-0-6\",\"text\":\"All goals are met and no boxes remain in pickup. Standing by.\"}",
+    "{\"team_phase\": \"claim-6-0\", \"turn\": 6, \"replied\": {\"r1\": true, \"r2\": true, \"r3\": true}}",
+    "{\"phase\": \"FINISHED\", \"error\": null, \"goal_met_rgb\": true, \"physical_success_teacher_condition\": true, \"makespan_sim_s\": 159.5, \"llm_calls\": 11, \"wall_s\": 103.17}"
+   ],
+   "result_sha256": "82989caaf71c22081649f2e35e86059f25eeaa9cd9512ac563063c6bd633132c",
+   "source_sha": "f8b2f54f35fe8f834ea8f794fc4970d16ce32c91",
+   "coordination": "dynamic",
+   "mode": "llm",
+   "model": "gemini-3.8-flash",
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "green": 1,
+     "red": 1
+    }
+   },
+   "extra_boxes": "{}",
+   "seed": 11,
+   "phase": "FINISHED",
+   "error": null,
+   "success_referee": true,
+   "goal_met_rgb": true,
+   "makespan_sim_s": 159.5,
+   "sim_end_s": 161.3,
+   "wall_s": 103.17,
+   "llm_calls": 11,
+   "usage": {
+    "prompt_tokens": 46948,
+    "completion_tokens": 1071,
+    "total_tokens": 49016
+   },
+   "coordination_stats": {
+    "claim_rounds": 6,
+    "collisions": 0,
+    "invalid_claims": 0,
+    "plan_turns": 0,
+    "done_robots": [
+     "r1",
+     "r2",
+     "r3"
+    ],
+    "stalled_turns": 0
+   },
+   "referee_counts": {
+    "A": {
+     "red": 2
+    },
+    "C": {
+     "red": 1,
+     "green": 1
+    },
+    "B": {
+     "cyan": 1
+    }
+   },
+   "rgb_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "green": 1,
+     "red": 1
+    }
+   },
+   "finished": 5,
+   "stopped": [],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z2-G5-dyn/replay",
+    "frames": 4777,
+    "sim_end_s": 161.29624999791383,
+    "manifest_sha256": "7affe27de0b6f3a69e3020e147c18bd80753bd7b46f76c448b1431e337c7182b"
+   }
+  },
+  {
+   "run": "Z2-G5-plan",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z2-G5-plan",
+   "loads": [
+    {
+     "run": "Z2-G5-plan",
+     "start_utc": "2026-09-24T19:10:25Z",
+     "load": "{ 2.82 2.80 3.45 }"
+    },
+    {
+     "run": "Z2-G5-plan",
+     "end_utc": "2026-09-24T19:12:31Z",
+     "exit": 0,
+     "load": "{ 2.01 2.49 3.24 }"
+    }
+   ],
+   "console_sha256": "21a067bf0718dedb26c5b4943fee53a2d41e3149afada5eb048f3ffc8308876a",
+   "console_tail": [
+    "JOB r1 green-1 -> C (C1)",
+    "JOB r3 red-2 -> C (C2)",
+    "{\"phase\": \"FINISHED\", \"error\": null, \"goal_met_rgb\": true, \"physical_success_teacher_condition\": true, \"makespan_sim_s\": 172.0, \"llm_calls\": 19, \"wall_s\": 126.36}"
+   ],
+   "result_sha256": "a16887c7167d2748cd1e68a1930124c205b1be2421b50fbc4f5caebc3a01d593",
+   "source_sha": "f8b2f54f35fe8f834ea8f794fc4970d16ce32c91",
+   "coordination": "plan_first",
+   "mode": "llm",
+   "model": "gemini-3.8-flash",
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "green": 1,
+     "red": 1
+    }
+   },
+   "extra_boxes": "{}",
+   "seed": 11,
+   "phase": "FINISHED",
+   "error": null,
+   "success_referee": true,
+   "goal_met_rgb": true,
+   "makespan_sim_s": 172.0,
+   "sim_end_s": 173.8,
+   "wall_s": 126.36,
+   "llm_calls": 19,
+   "usage": {
+    "prompt_tokens": 84687,
+    "completion_tokens": 3724,
+    "total_tokens": 96399
+   },
+   "coordination_stats": {
+    "claim_rounds": 0,
+    "collisions": 0,
+    "invalid_claims": 0,
+    "plan_turns": 6,
+    "done_robots": [],
+    "stalled_turns": 0
+   },
+   "referee_counts": {
+    "A": {
+     "red": 2
+    },
+    "C": {
+     "red": 1,
+     "green": 1
+    },
+    "B": {
+     "cyan": 1
+    }
+   },
+   "rgb_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "red": 1,
+     "green": 1
+    }
+   },
+   "finished": 5,
+   "stopped": [],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z2-G5-plan/replay",
+    "frames": 5150,
+    "sim_end_s": 173.79174999761835,
+    "manifest_sha256": "3b41d155a2d592fac815f5d5aa56db805e3ce70fd5dcf7d9bf042d49acc9925d"
+   }
+  },
+  {
+   "run": "Z2-G8-dyn",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z2-G8-dyn",
+   "loads": [
+    {
+     "run": "Z2-G8-dyn",
+     "start_utc": "2026-09-24T19:18:35Z",
+     "load": "{ 3.54 2.91 3.15 }"
+    },
+    {
+     "run": "Z2-G8-dyn",
+     "end_utc": "2026-09-24T19:22:08Z",
+     "exit": 0,
+     "load": "{ 2.74 2.79 3.04 }"
+    }
+   ],
+   "console_sha256": "45042e31132b02bb9c388ed79e5878a08fb9c53a7683c9c06533fdae2da6260c",
+   "console_tail": [
+    "peer_delivery {\"schema\":\"ugrp.peer-communication.v1\",\"seq\":46,\"run_id\":\"zone-f8b2f54f-277516\",\"recorded_at_utc\":\"2026-09-24T19:22:07.940939+00:00\",\"kind\":\"peer_message\",\"source\":\"llm\",\"phase\":\"claim-8-1\",\"sender\":\"r3\",\"recipients\":[\"r1\",\"r2\"],\"turn\":8,\"sim_time_s\":271.79999999530077,\"request_id\":\"zone-f8b2f54f-277516-r3-claim-8-1-8\",\"text\":\"Yielding green-1 to r1 who is already at pickup. Standing by.\"}",
+    "{\"team_phase\": \"claim-8-1\", \"turn\": 8, \"replied\": {\"r1\": true, \"r3\": true}}",
+    "{\"phase\": \"FINISHED\", \"error\": null, \"goal_met_rgb\": false, \"physical_success_teacher_condition\": false, \"makespan_sim_s\": 271.0, \"llm_calls\": 23, \"wall_s\": 212.47}"
+   ],
+   "result_sha256": "a25c7184033b8b2fb6ba9b0de30eaff82202338257bcc73303b0257c1b467176",
+   "source_sha": "f8b2f54f35fe8f834ea8f794fc4970d16ce32c91",
+   "coordination": "dynamic",
+   "mode": "llm",
+   "model": "gemini-3.8-flash",
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 2
+    },
+    "C": {
+     "green": 1,
+     "yellow": 1
+    }
+   },
+   "extra_boxes": "{\"red\":1,\"cyan\":1}",
+   "seed": 12,
+   "phase": "FINISHED",
+   "error": null,
+   "success_referee": false,
+   "goal_met_rgb": false,
+   "makespan_sim_s": 271.0,
+   "sim_end_s": 272.8,
+   "wall_s": 212.47,
+   "llm_calls": 23,
+   "usage": {
+    "prompt_tokens": 105490,
+    "completion_tokens": 2460,
+    "total_tokens": 114646
+   },
+   "coordination_stats": {
+    "claim_rounds": 12,
+    "collisions": 4,
+    "invalid_claims": 0,
+    "plan_turns": 0,
+    "done_robots": [
+     "r1",
+     "r2",
+     "r3"
+    ],
+    "stalled_turns": 0
+   },
+   "referee_counts": {
+    "C": {
+     "yellow": 1
+    },
+    "B": {
+     "cyan": 2
+    },
+    "A": {
+     "red": 2
+    }
+   },
+   "rgb_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 2
+    },
+    "C": {
+     "yellow": 1
+    }
+   },
+   "finished": 5,
+   "stopped": [
+    {
+     "robot": "r1",
+     "box": "green-1",
+     "zone": "C",
+     "executor_receipt": "executor stopped before finishing",
+     "sim_time_s": 175.3
+    },
+    {
+     "robot": "r2",
+     "box": "red-1",
+     "zone": "A",
+     "executor_receipt": "executor stopped before finishing",
+     "sim_time_s": 177.3
+    }
+   ],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z2-G8-dyn/replay",
+    "frames": 8105,
+    "sim_end_s": 272.7842499952775,
+    "manifest_sha256": "668eaae4b80ce32181e766c1bf20eb6994efc44d3551a62f93e7889e08ada66e"
+   }
+  },
+  {
+   "run": "Z2-G8-plan",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z2-G8-plan",
+   "loads": [
+    {
+     "run": "Z2-G8-plan",
+     "start_utc": "2026-09-24T19:14:15Z",
+     "load": "{ 2.79 2.64 3.20 }"
+    },
+    {
+     "run": "Z2-G8-plan",
+     "end_utc": "2026-09-24T19:18:35Z",
+     "exit": 0,
+     "load": "{ 3.54 2.91 3.15 }"
+    }
+   ],
+   "console_sha256": "e16a3c1353da91b45ce38b1e57b049427280ac92e9cbf3a444a1db9026016e0c",
+   "console_tail": [
+    "JOB r1 red-1 -> A (A1)",
+    "JOB r3 red-2 -> A (A2)",
+    "{\"phase\": \"FINISHED\", \"error\": null, \"goal_met_rgb\": false, \"physical_success_teacher_condition\": false, \"makespan_sim_s\": 195.0, \"llm_calls\": 17, \"wall_s\": 259.97}"
+   ],
+   "result_sha256": "a9e730940be187b946574316d4bb9798c92bb1c67e4846bd85372e3da3cbe594",
+   "source_sha": "f8b2f54f35fe8f834ea8f794fc4970d16ce32c91",
+   "coordination": "plan_first",
+   "mode": "llm",
+   "model": "gemini-3.8-flash",
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 2
+    },
+    "C": {
+     "green": 1,
+     "yellow": 1
+    }
+   },
+   "extra_boxes": "{\"red\":1,\"cyan\":1}",
+   "seed": 12,
+   "phase": "FINISHED",
+   "error": null,
+   "success_referee": false,
+   "goal_met_rgb": false,
+   "makespan_sim_s": 195.0,
+   "sim_end_s": 196.8,
+   "wall_s": 259.97,
+   "llm_calls": 17,
+   "usage": {
+    "prompt_tokens": 76460,
+    "completion_tokens": 3672,
+    "total_tokens": 90235
+   },
+   "coordination_stats": {
+    "claim_rounds": 0,
+    "collisions": 0,
+    "invalid_claims": 0,
+    "plan_turns": 5,
+    "done_robots": [],
+    "stalled_turns": 0
+   },
+   "referee_counts": {
+    "C": {
+     "yellow": 1
+    },
+    "B": {
+     "cyan": 1
+    },
+    "A": {
+     "red": 2
+    }
+   },
+   "rgb_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "yellow": 1
+    }
+   },
+   "finished": 4,
+   "stopped": [
+    {
+     "robot": "r1",
+     "box": "cyan-1",
+     "zone": "B",
+     "executor_receipt": "executor stopped before finishing",
+     "sim_time_s": 122.3
+    },
+    {
+     "robot": "r3",
+     "box": "green-1",
+     "zone": "C",
+     "executor_receipt": "executor stopped before finishing",
+     "sim_time_s": 122.3
+    }
+   ],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z2-G8-plan/replay",
+    "frames": 5836,
+    "sim_end_s": 196.77274999707492,
+    "manifest_sha256": "e451f2fd8cfb9ee43ef0d4b97cfde747a7af70de3a7365deba5aaeee813b905e"
+   }
+  },
+  {
+   "run": "Z3-G5-dyn",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z3-G5-dyn",
+   "loads": [
+    {
+     "run": "Z3-G5-dyn",
+     "start_utc": "2026-09-24T19:47:28Z",
+     "load": "{ 3.70 3.74 3.80 }"
+    },
+    {
+     "run": "Z3-G5-dyn",
+     "end_utc": "2026-09-24T19:49:21Z",
+     "exit": 0,
+     "load": "{ 2.72 3.46 3.68 }"
+    }
+   ],
+   "console_sha256": "c847e2473b96cd1c8c94de9094a627290e61d33529f363413d30087bf6094f32",
+   "console_tail": [
+    "peer_delivery {\"schema\":\"ugrp.peer-communication.v1\",\"seq\":22,\"run_id\":\"zone-e520a3ad-279249\",\"recorded_at_utc\":\"2026-09-24T19:49:20.429598+00:00\",\"kind\":\"peer_message\",\"source\":\"llm\",\"phase\":\"claim-6-0\",\"sender\":\"r3\",\"recipients\":[\"r1\",\"r2\"],\"turn\":6,\"sim_time_s\":160.79999999792557,\"request_id\":\"zone-e520a3ad-279249-r3-claim-6-0-6\",\"text\":\"All goals are completed. No remaining boxes in pickup. Standing by.\"}",
+    "{\"team_phase\": \"claim-6-0\", \"turn\": 6, \"replied\": {\"r1\": true, \"r2\": true, \"r3\": true}}",
+    "{\"phase\": \"FINISHED\", \"error\": null, \"goal_met_rgb\": true, \"physical_success_teacher_condition\": true, \"makespan_sim_s\": 160.0, \"llm_calls\": 11, \"wall_s\": 112.12}"
+   ],
+   "result_sha256": "f3d90c6a4f852cda76d2f6461d90fffe05bf9650ea54f330d0e953785f9c173b",
+   "source_sha": "e520a3adcb8ae8b44cd070af377934041c977a65",
+   "coordination": "dynamic",
+   "mode": "llm",
+   "model": "gemini-3.8-flash",
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "green": 1,
+     "red": 1
+    }
+   },
+   "extra_boxes": "{}",
+   "seed": 11,
+   "phase": "FINISHED",
+   "error": null,
+   "success_referee": true,
+   "goal_met_rgb": true,
+   "makespan_sim_s": 160.0,
+   "sim_end_s": 161.8,
+   "wall_s": 112.12,
+   "llm_calls": 11,
+   "usage": {
+    "prompt_tokens": 47427,
+    "completion_tokens": 1050,
+    "total_tokens": 50253
+   },
+   "coordination_stats": {
+    "claim_rounds": 6,
+    "collisions": 0,
+    "invalid_claims": 0,
+    "plan_turns": 0,
+    "done_robots": [
+     "r1",
+     "r2",
+     "r3"
+    ],
+    "stalled_turns": 0
+   },
+   "referee_counts": {
+    "A": {
+     "red": 2
+    },
+    "C": {
+     "red": 1,
+     "green": 1
+    },
+    "B": {
+     "cyan": 1
+    }
+   },
+   "rgb_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "red": 1,
+     "green": 1
+    }
+   },
+   "finished": 5,
+   "stopped": [],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z3-G5-dyn/replay",
+    "frames": 4792,
+    "sim_end_s": 161.79874999790195,
+    "manifest_sha256": "2f66cb4d512279cc9998e3853b0224e5b081342f917081b4a511e1b1a310125b"
+   }
+  },
+  {
+   "run": "Z3-G5-plan",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z3-G5-plan",
+   "loads": [
+    {
+     "run": "Z3-G5-plan",
+     "start_utc": "2026-09-24T19:45:13Z",
+     "load": "{ 3.90 3.93 3.88 }"
+    },
+    {
+     "run": "Z3-G5-plan",
+     "end_utc": "2026-09-24T19:47:28Z",
+     "exit": 0,
+     "load": "{ 3.70 3.74 3.80 }"
+    }
+   ],
+   "console_sha256": "51268a3b2f1e264f7028e816da6eaac1c6975dd7ed24157057f63ddfbee1cfaf",
+   "console_tail": [
+    "JOB r1 red-1 -> A (A1)",
+    "JOB r2 red-2 -> A (A2)",
+    "{\"phase\": \"FINISHED\", \"error\": null, \"goal_met_rgb\": true, \"physical_success_teacher_condition\": true, \"makespan_sim_s\": 185.0, \"llm_calls\": 18, \"wall_s\": 134.66}"
+   ],
+   "result_sha256": "aca1e01b03a474910f2f9d862ecc8c344482b2f9dbfd9c56808cb40d96f41fb6",
+   "source_sha": "e520a3adcb8ae8b44cd070af377934041c977a65",
+   "coordination": "plan_first",
+   "mode": "llm",
+   "model": "gemini-3.8-flash",
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "green": 1,
+     "red": 1
+    }
+   },
+   "extra_boxes": "{}",
+   "seed": 11,
+   "phase": "FINISHED",
+   "error": null,
+   "success_referee": true,
+   "goal_met_rgb": true,
+   "makespan_sim_s": 185.0,
+   "sim_end_s": 186.8,
+   "wall_s": 134.66,
+   "llm_calls": 18,
+   "usage": {
+    "prompt_tokens": 80733,
+    "completion_tokens": 3414,
+    "total_tokens": 91752
+   },
+   "coordination_stats": {
+    "claim_rounds": 0,
+    "collisions": 0,
+    "invalid_claims": 0,
+    "plan_turns": 6,
+    "done_robots": [],
+    "stalled_turns": 0
+   },
+   "referee_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "green": 1,
+     "red": 1
+    }
+   },
+   "rgb_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "green": 1,
+     "red": 1
+    }
+   },
+   "finished": 5,
+   "stopped": [],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z3-G5-plan/replay",
+    "frames": 5538,
+    "sim_end_s": 186.789749997311,
+    "manifest_sha256": "5a467a6fdf5d62f909808d4778beaabbac0ea5619e773e773498c1ac62005fa8"
+   }
+  },
+  {
+   "run": "Z3-G8-dyn",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z3-G8-dyn",
+   "loads": [
+    {
+     "run": "Z3-G8-dyn",
+     "start_utc": "2026-09-24T19:51:44Z",
+     "load": "{ 3.07 3.28 3.56 }"
+    },
+    {
+     "run": "Z3-G8-dyn",
+     "end_utc": "2026-09-24T19:54:06Z",
+     "exit": 0,
+     "load": "{ 2.27 2.90 3.37 }"
+    }
+   ],
+   "console_sha256": "9f9faf6dd102d7d5f2323ecf35ab53ce01185a593385af15da6642561c971d4e",
+   "console_tail": [
+    "peer_delivery {\"schema\":\"ugrp.peer-communication.v1\",\"seq\":28,\"run_id\":\"zone-e520a3ad-279505\",\"recorded_at_utc\":\"2026-09-24T19:54:05.993066+00:00\",\"kind\":\"peer_message\",\"source\":\"llm\",\"phase\":\"claim-7-0\",\"sender\":\"r3\",\"recipients\":[\"r1\",\"r2\"],\"turn\":7,\"sim_time_s\":177.2999999975354,\"request_id\":\"zone-e520a3ad-279505-r3-claim-7-0-7\",\"text\":\"All goals in zones A, B, and C are completely satisfied. Mission accomplished, standing by.\"}",
+    "{\"team_phase\": \"claim-7-0\", \"turn\": 7, \"replied\": {\"r1\": true, \"r2\": true, \"r3\": true}}",
+    "{\"phase\": \"FINISHED\", \"error\": null, \"goal_met_rgb\": true, \"physical_success_teacher_condition\": true, \"makespan_sim_s\": 176.5, \"llm_calls\": 14, \"wall_s\": 142.21}"
+   ],
+   "result_sha256": "9d139a780f475617c8d5bcca0ad74d2b798086ca2a9bb89e8f48e552647c314c",
+   "source_sha": "e520a3adcb8ae8b44cd070af377934041c977a65",
+   "coordination": "dynamic",
+   "mode": "llm",
+   "model": "gemini-3.8-flash",
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 2
+    },
+    "C": {
+     "green": 1,
+     "yellow": 1
+    }
+   },
+   "extra_boxes": "{\"red\":1,\"cyan\":1}",
+   "seed": 12,
+   "phase": "FINISHED",
+   "error": null,
+   "success_referee": true,
+   "goal_met_rgb": true,
+   "makespan_sim_s": 176.5,
+   "sim_end_s": 178.3,
+   "wall_s": 142.21,
+   "llm_calls": 14,
+   "usage": {
+    "prompt_tokens": 62915,
+    "completion_tokens": 1422,
+    "total_tokens": 67761
+   },
+   "coordination_stats": {
+    "claim_rounds": 8,
+    "collisions": 1,
+    "invalid_claims": 0,
+    "plan_turns": 0,
+    "done_robots": [
+     "r1",
+     "r2",
+     "r3"
+    ],
+    "stalled_turns": 0
+   },
+   "referee_counts": {
+    "C": {
+     "yellow": 1,
+     "green": 1
+    },
+    "B": {
+     "cyan": 2
+    },
+    "A": {
+     "red": 2
+    }
+   },
+   "rgb_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 2
+    },
+    "C": {
+     "yellow": 1,
+     "green": 1
+    }
+   },
+   "finished": 6,
+   "stopped": [],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z3-G8-dyn/replay",
+    "frames": 5284,
+    "sim_end_s": 178.2807499975122,
+    "manifest_sha256": "ff37c5eea5d3191818c958a9b9eeebbf2bfaf97170cf847319612e32ebf4e19c"
+   }
+  },
+  {
+   "run": "Z3-G8-plan",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z3-G8-plan",
+   "loads": [
+    {
+     "run": "Z3-G8-plan",
+     "start_utc": "2026-09-24T19:49:21Z",
+     "load": "{ 2.72 3.46 3.68 }"
+    },
+    {
+     "run": "Z3-G8-plan",
+     "end_utc": "2026-09-24T19:51:44Z",
+     "exit": 0,
+     "load": "{ 3.07 3.28 3.56 }"
+    }
+   ],
+   "console_sha256": "18d0571cf8ee047f0062e62df03b629b82c7325d437762824fb1ab1e8ee1d5c2",
+   "console_tail": [
+    "JOB r2 cyan-3 -> B (B2)",
+    "JOB r3 red-1 -> A (A2)",
+    "{\"phase\": \"FINISHED\", \"error\": null, \"goal_met_rgb\": true, \"physical_success_teacher_condition\": true, \"makespan_sim_s\": 167.5, \"llm_calls\": 18, \"wall_s\": 142.59}"
+   ],
+   "result_sha256": "71dc08c1fbf8a1b69434352410a061b84a92344002bbafe3345bf23c778b16e8",
+   "source_sha": "e520a3adcb8ae8b44cd070af377934041c977a65",
+   "coordination": "plan_first",
+   "mode": "llm",
+   "model": "gemini-3.8-flash",
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 2
+    },
+    "C": {
+     "green": 1,
+     "yellow": 1
+    }
+   },
+   "extra_boxes": "{\"red\":1,\"cyan\":1}",
+   "seed": 12,
+   "phase": "FINISHED",
+   "error": null,
+   "success_referee": true,
+   "goal_met_rgb": true,
+   "makespan_sim_s": 167.5,
+   "sim_end_s": 169.3,
+   "wall_s": 142.59,
+   "llm_calls": 18,
+   "usage": {
+    "prompt_tokens": 83173,
+    "completion_tokens": 3631,
+    "total_tokens": 99585
+   },
+   "coordination_stats": {
+    "claim_rounds": 0,
+    "collisions": 0,
+    "invalid_claims": 0,
+    "plan_turns": 6,
+    "done_robots": [],
+    "stalled_turns": 0
+   },
+   "referee_counts": {
+    "B": {
+     "cyan": 2
+    },
+    "C": {
+     "yellow": 1,
+     "green": 1
+    },
+    "A": {
+     "red": 2
+    }
+   },
+   "rgb_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 2
+    },
+    "C": {
+     "green": 1,
+     "yellow": 1
+    }
+   },
+   "finished": 6,
+   "stopped": [],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/Z3-G8-plan/replay",
+    "frames": 5015,
+    "sim_end_s": 169.2692499977253,
+    "manifest_sha256": "117700929c51f4ff5cff1c01c58291d3c1caf8c422cce56c3ba22954d5e34e3a"
+   }
+  },
+  {
+   "run": "dev-fixture-1",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/dev-fixture-1",
+   "loads": [
+    {
+     "run": "dev-fixture-1",
+     "start_utc": "2026-09-24T17:52:22Z",
+     "load": "{ 3.59 3.61 4.42 }"
+    },
+    {
+     "run": "dev-fixture-1",
+     "end_utc": "2026-09-24T17:52:25Z",
+     "exit": 0,
+     "load": "{ 3.59 3.61 4.42 }"
+    }
+   ],
+   "console_sha256": "40e673b319256f712bcc09e5a823acc649415ca8045e1d97f359f2990f209b4b",
+   "console_tail": [
+    "{\"team_phase\": \"claim-1-1\", \"turn\": 1, \"replied\": {\"r1\": true, \"r2\": true, \"r3\": true}}",
+    "{\"team_phase\": \"claim-1-2\", \"turn\": 1, \"replied\": {\"r1\": true, \"r2\": true, \"r3\": true}}",
+    "{\"phase\": \"FINISHED\", \"error\": null, \"goal_met_rgb\": false, \"physical_success_teacher_condition\": false, \"makespan_sim_s\": 1.0, \"llm_calls\": 0, \"wall_s\": 2.62}"
+   ],
+   "result_sha256": "7776ca9892b134f51256afcd571d8987c9bd7a446a168f1518807aecabbec243",
+   "source_sha": "5ebecda696b7bc231bc3094483827b3ff1ba17b1",
+   "coordination": "dynamic",
+   "mode": "fixture",
+   "model": null,
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "green": 1,
+     "red": 1
+    }
+   },
+   "extra_boxes": "{}",
+   "seed": 11,
+   "phase": "FINISHED",
+   "error": null,
+   "success_referee": false,
+   "goal_met_rgb": false,
+   "makespan_sim_s": 1.0,
+   "sim_end_s": 2.8,
+   "wall_s": 2.62,
+   "llm_calls": 0,
+   "usage": {
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "total_tokens": 0
+   },
+   "coordination_stats": {
+    "claim_rounds": 3,
+    "collisions": 3,
+    "invalid_claims": 0,
+    "plan_turns": 0,
+    "done_robots": [
+     "r1",
+     "r2",
+     "r3"
+    ]
+   },
+   "referee_counts": {},
+   "rgb_counts": {
+    "A": {},
+    "B": {},
+    "C": {}
+   },
+   "finished": 0,
+   "stopped": [],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/dev-fixture-1/replay",
+    "frames": 45,
+    "sim_end_s": 2.7742499999998222,
+    "manifest_sha256": "1bfba2ebeaf76914ca13ecb226bf950fb433c31223e8abe857f0edfb5211bfad"
+   }
+  },
+  {
+   "run": "dev-fixture-2",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/dev-fixture-2",
+   "loads": [
+    {
+     "run": "dev-fixture-2",
+     "start_utc": "2026-09-24T18:20:04Z",
+     "load": "{ 2.84 3.68 4.05 }"
+    },
+    {
+     "run": "dev-fixture-2",
+     "end_utc": "2026-09-24T18:24:06Z",
+     "exit": 0,
+     "load": "{ 2.96 3.34 3.81 }"
+    }
+   ],
+   "console_sha256": "a89a642b244fcf5a24a758b9c306b27adb1f9347c2e275fd2b6405fb041b02fd",
+   "console_tail": [
+    "{\"team_phase\": \"claim-5-0\", \"turn\": 5, \"replied\": {\"r2\": true, \"r3\": true}}",
+    "JOB r2 green-1 -> C (C2)",
+    "{\"phase\": \"SIM_BUDGET\", \"error\": null, \"goal_met_rgb\": false, \"physical_success_teacher_condition\": false, \"makespan_sim_s\": 601.0, \"llm_calls\": 0, \"wall_s\": 240.82}"
+   ],
+   "result_sha256": "7c4f18057211ff246de83a4432e146a8222d42652c0340cae4033ef9019737e5",
+   "source_sha": "1586b580b624a89b61b9dc92a3dae8bd9c1f2606",
+   "coordination": "dynamic",
+   "mode": "fixture",
+   "model": null,
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "green": 1,
+     "red": 1
+    }
+   },
+   "extra_boxes": "{}",
+   "seed": 11,
+   "phase": "SIM_BUDGET",
+   "error": null,
+   "success_referee": false,
+   "goal_met_rgb": false,
+   "makespan_sim_s": 601.0,
+   "sim_end_s": 602.8,
+   "wall_s": 240.82,
+   "llm_calls": 0,
+   "usage": {
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "total_tokens": 0
+   },
+   "coordination_stats": {
+    "claim_rounds": 5,
+    "collisions": 0,
+    "invalid_claims": 0,
+    "plan_turns": 0,
+    "done_robots": [
+     "r3"
+    ],
+    "stalled_turns": 0
+   },
+   "referee_counts": {
+    "C": {
+     "red": 1
+    }
+   },
+   "rgb_counts": {
+    "A": {},
+    "B": {},
+    "C": {}
+   },
+   "finished": 0,
+   "stopped": [
+    {
+     "robot": "r3",
+     "box": "cyan-1",
+     "zone": "B",
+     "executor_receipt": "executor stopped before finishing",
+     "sim_time_s": 28.3
+    },
+    {
+     "robot": "r1",
+     "box": "red-1",
+     "zone": "A",
+     "executor_receipt": "executor stopped before finishing",
+     "sim_time_s": 29.8
+    },
+    {
+     "robot": "r2",
+     "box": "red-2",
+     "zone": "A",
+     "executor_receipt": "executor stopped before finishing",
+     "sim_time_s": 37.3
+    },
+    {
+     "robot": "r3",
+     "box": "green-1",
+     "zone": "C",
+     "executor_receipt": "executor stopped before finishing",
+     "sim_time_s": 60.3
+    }
+   ],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/dev-fixture-2/replay",
+    "frames": 17956,
+    "sim_end_s": 602.7927500081177,
+    "manifest_sha256": "3acd4114e4c844666531e5c3bc58a7b0d28315df16c9d79aa3cec0d15f91f526"
+   }
+  },
+  {
+   "run": "dev-fixture-3",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/dev-fixture-3",
+   "loads": [
+    {
+     "run": "dev-fixture-3",
+     "start_utc": "2026-09-24T18:26:48Z",
+     "load": "{ 4.13 3.77 3.91 }"
+    },
+    {
+     "run": "dev-fixture-3",
+     "end_utc": "2026-09-24T18:28:45Z",
+     "exit": 0,
+     "load": "{ 4.72 4.09 4.02 }"
+    }
+   ],
+   "console_sha256": "981b93e893728e2e6f26f57533b3fed7642e9dfdb1c1f89e913ec19fba090229",
+   "console_tail": [
+    "{\"team_phase\": \"claim-4-0\", \"turn\": 4, \"replied\": {\"r2\": true, \"r3\": true}}",
+    "{\"team_phase\": \"claim-5-0\", \"turn\": 5, \"replied\": {\"r1\": true, \"r2\": true, \"r3\": true}}",
+    "{\"phase\": \"FINISHED\", \"error\": null, \"goal_met_rgb\": false, \"physical_success_teacher_condition\": false, \"makespan_sim_s\": 135.0, \"llm_calls\": 0, \"wall_s\": 116.49}"
+   ],
+   "result_sha256": "b1ecc103402d5994ffeff95efd619659a4d528fb24745a3eefbad78817925829",
+   "source_sha": "913e4da56c6cfa2619d6e7b88c7b99cf780fc874",
+   "coordination": "dynamic",
+   "mode": "fixture",
+   "model": null,
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "green": 1,
+     "red": 1
+    }
+   },
+   "extra_boxes": "{}",
+   "seed": 11,
+   "phase": "FINISHED",
+   "error": null,
+   "success_referee": false,
+   "goal_met_rgb": false,
+   "makespan_sim_s": 135.0,
+   "sim_end_s": 136.8,
+   "wall_s": 116.49,
+   "llm_calls": 0,
+   "usage": {
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "total_tokens": 0
+   },
+   "coordination_stats": {
+    "claim_rounds": 5,
+    "collisions": 0,
+    "invalid_claims": 0,
+    "plan_turns": 0,
+    "done_robots": [
+     "r1",
+     "r2",
+     "r3"
+    ],
+    "stalled_turns": 0
+   },
+   "referee_counts": {
+    "A": {
+     "red": 2
+    },
+    "C": {
+     "red": 1
+    }
+   },
+   "rgb_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {},
+    "C": {
+     "red": 1
+    }
+   },
+   "finished": 3,
+   "stopped": [
+    {
+     "robot": "r3",
+     "box": "cyan-1",
+     "zone": "B",
+     "executor_receipt": "executor stopped before finishing",
+     "sim_time_s": 130.8
+    }
+   ],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/dev-fixture-3/replay",
+    "frames": 4045,
+    "sim_end_s": 136.7742499984937,
+    "manifest_sha256": "ee1fd30e230cf3c5fc1025e22e31e29a66f1284406c443d8b2a1227c3136a840"
+   }
+  },
+  {
+   "run": "dev-fixture-4",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/dev-fixture-4",
+   "loads": [
+    {
+     "run": "dev-fixture-4",
+     "start_utc": "2026-09-24T18:29:55Z",
+     "load": "{ 5.94 4.47 4.15 }"
+    },
+    {
+     "run": "dev-fixture-4",
+     "end_utc": "2026-09-24T18:32:01Z",
+     "exit": 0,
+     "load": "{ 3.82 4.16 4.07 }"
+    }
+   ],
+   "console_sha256": "0f6965eff902a92aa343f61e516df7e7d9848f8a3a1aa4afcb4a0ab9400733c3",
+   "console_tail": [
+    "{\"team_phase\": \"claim-5-0\", \"turn\": 5, \"replied\": {\"r2\": true, \"r3\": true}}",
+    "{\"team_phase\": \"claim-6-0\", \"turn\": 6, \"replied\": {\"r1\": true, \"r2\": true, \"r3\": true}}",
+    "{\"phase\": \"FINISHED\", \"error\": null, \"goal_met_rgb\": false, \"physical_success_teacher_condition\": false, \"makespan_sim_s\": 174.0, \"llm_calls\": 0, \"wall_s\": 125.62}"
+   ],
+   "result_sha256": "22dfdd55adde771f1df831a4ad3f486dbac4ffcbd15fdb7a5d554708115f97a3",
+   "source_sha": "ada1c9b177cf367568d786e4933915fe0c7a7f9d",
+   "coordination": "dynamic",
+   "mode": "fixture",
+   "model": null,
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "green": 1,
+     "red": 1
+    }
+   },
+   "extra_boxes": "{}",
+   "seed": 11,
+   "phase": "FINISHED",
+   "error": null,
+   "success_referee": false,
+   "goal_met_rgb": false,
+   "makespan_sim_s": 174.0,
+   "sim_end_s": 175.8,
+   "wall_s": 125.62,
+   "llm_calls": 0,
+   "usage": {
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "total_tokens": 0
+   },
+   "coordination_stats": {
+    "claim_rounds": 6,
+    "collisions": 0,
+    "invalid_claims": 0,
+    "plan_turns": 0,
+    "done_robots": [
+     "r1",
+     "r2",
+     "r3"
+    ],
+    "stalled_turns": 0
+   },
+   "referee_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "red": 1
+    }
+   },
+   "rgb_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "red": 1
+    }
+   },
+   "finished": 4,
+   "stopped": [
+    {
+     "robot": "r1",
+     "box": "green-1",
+     "zone": "C",
+     "executor_receipt": "executor stopped before finishing",
+     "sim_time_s": 174.8
+    }
+   ],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/dev-fixture-4/replay",
+    "frames": 5209,
+    "sim_end_s": 175.76824999757162,
+    "manifest_sha256": "2b486967a0440d118bd9f83856574b0fb2457780b77affae6fbf9b2535216e1a"
+   }
+  },
+  {
+   "run": "dev-fixture-5",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/dev-fixture-5",
+   "loads": [
+    {
+     "run": "dev-fixture-5",
+     "start_utc": "2026-09-24T18:32:52Z",
+     "load": "{ 3.66 4.03 4.03 }"
+    },
+    {
+     "run": "dev-fixture-5",
+     "end_utc": "2026-09-24T18:35:00Z",
+     "exit": 0,
+     "load": "{ 4.21 4.30 4.14 }"
+    }
+   ],
+   "console_sha256": "b2e766bd6059c2016fd7f801ecbfde3e36de0d490c68a5ce15c050b211228432",
+   "console_tail": [
+    "{\"team_phase\": \"claim-5-0\", \"turn\": 5, \"replied\": {\"r1\": true, \"r3\": true}}",
+    "{\"team_phase\": \"claim-6-0\", \"turn\": 6, \"replied\": {\"r1\": true, \"r2\": true, \"r3\": true}}",
+    "{\"phase\": \"FINISHED\", \"error\": null, \"goal_met_rgb\": true, \"physical_success_teacher_condition\": true, \"makespan_sim_s\": 168.5, \"llm_calls\": 0, \"wall_s\": 126.61}"
+   ],
+   "result_sha256": "76ecd20f9d1f6761150e3eefa4ae59a7fbfc8f46cc45f0059db89f1ed94c62c7",
+   "source_sha": "0244ab8c022b3f25107cb2fb56f3487db7b1ca1d",
+   "coordination": "dynamic",
+   "mode": "fixture",
+   "model": null,
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "green": 1,
+     "red": 1
+    }
+   },
+   "extra_boxes": "{}",
+   "seed": 11,
+   "phase": "FINISHED",
+   "error": null,
+   "success_referee": true,
+   "goal_met_rgb": true,
+   "makespan_sim_s": 168.5,
+   "sim_end_s": 170.3,
+   "wall_s": 126.61,
+   "llm_calls": 0,
+   "usage": {
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "total_tokens": 0
+   },
+   "coordination_stats": {
+    "claim_rounds": 6,
+    "collisions": 0,
+    "invalid_claims": 0,
+    "plan_turns": 0,
+    "done_robots": [
+     "r1",
+     "r2",
+     "r3"
+    ],
+    "stalled_turns": 0
+   },
+   "referee_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "green": 1,
+     "red": 1
+    }
+   },
+   "rgb_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "green": 1,
+     "red": 1
+    }
+   },
+   "finished": 5,
+   "stopped": [],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/dev-fixture-5/replay",
+    "frames": 5045,
+    "sim_end_s": 170.27424999770153,
+    "manifest_sha256": "ada81331c610950aed3e9d16b75156a279bf3163df7640677f9c9f63f78f6f90"
+   }
+  },
+  {
+   "run": "dev-fixture-6-planfirst",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/dev-fixture-6-planfirst",
+   "loads": [
+    {
+     "run": "dev-fixture-6-planfirst",
+     "start_utc": "2026-09-24T18:35:13Z",
+     "load": "{ 3.74 4.19 4.10 }"
+    },
+    {
+     "run": "dev-fixture-6-planfirst",
+     "end_utc": "2026-09-24T18:37:19Z",
+     "exit": 0,
+     "load": "{ 3.98 4.12 4.09 }"
+    }
+   ],
+   "console_sha256": "d40b8689bf85c8323200bd6dec2ba512f64d84847ffb3349d57917dd582aefa7",
+   "console_tail": [
+    "JOB r1 green-1 -> C (C1)",
+    "JOB r2 red-3 -> C (C2)",
+    "{\"phase\": \"FINISHED\", \"error\": null, \"goal_met_rgb\": true, \"physical_success_teacher_condition\": true, \"makespan_sim_s\": 168.5, \"llm_calls\": 0, \"wall_s\": 125.28}"
+   ],
+   "result_sha256": "524eb4cae43784769596abd2afc39ea72d6cd6cf84e83d3834ce842a49a24160",
+   "source_sha": "0244ab8c022b3f25107cb2fb56f3487db7b1ca1d",
+   "coordination": "plan_first",
+   "mode": "fixture",
+   "model": null,
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "green": 1,
+     "red": 1
+    }
+   },
+   "extra_boxes": "{}",
+   "seed": 11,
+   "phase": "FINISHED",
+   "error": null,
+   "success_referee": true,
+   "goal_met_rgb": true,
+   "makespan_sim_s": 168.5,
+   "sim_end_s": 170.3,
+   "wall_s": 125.28,
+   "llm_calls": 0,
+   "usage": {
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "total_tokens": 0
+   },
+   "coordination_stats": {
+    "claim_rounds": 0,
+    "collisions": 0,
+    "invalid_claims": 0,
+    "plan_turns": 2,
+    "done_robots": [],
+    "stalled_turns": 0
+   },
+   "referee_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "green": 1,
+     "red": 1
+    }
+   },
+   "rgb_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 1
+    },
+    "C": {
+     "green": 1,
+     "red": 1
+    }
+   },
+   "finished": 5,
+   "stopped": [],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/dev-fixture-6-planfirst/replay",
+    "frames": 5045,
+    "sim_end_s": 170.27424999770153,
+    "manifest_sha256": "ada81331c610950aed3e9d16b75156a279bf3163df7640677f9c9f63f78f6f90"
+   }
+  },
+  {
+   "run": "dev-fixture-7",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/dev-fixture-7",
+   "loads": [
+    {
+     "run": "dev-fixture-7",
+     "start_utc": "2026-09-24T19:05:20Z",
+     "load": "{ 2.25 2.82 3.74 }"
+    },
+    {
+     "run": "dev-fixture-7",
+     "end_utc": "2026-09-24T19:06:59Z",
+     "exit": 0,
+     "load": "{ 3.19 2.95 3.68 }"
+    }
+   ],
+   "console_sha256": "f08dcfce52ab29b43d4d4f4d1bf39021127a10511208f76985645a3bf92d5488",
+   "console_tail": [
+    "{\"team_phase\": \"claim-6-0\", \"turn\": 6, \"replied\": {\"r2\": true, \"r3\": true}}",
+    "{\"team_phase\": \"claim-7-0\", \"turn\": 7, \"replied\": {\"r1\": true, \"r2\": true, \"r3\": true}}",
+    "{\"phase\": \"FINISHED\", \"error\": null, \"goal_met_rgb\": true, \"physical_success_teacher_condition\": true, \"makespan_sim_s\": 184.5, \"llm_calls\": 0, \"wall_s\": 98.59}"
+   ],
+   "result_sha256": "c24f8846e38ba8415b434c06d27b326bee82d923f06b941c21c86e647290a9cc",
+   "source_sha": "f8b2f54f35fe8f834ea8f794fc4970d16ce32c91",
+   "coordination": "dynamic",
+   "mode": "fixture",
+   "model": null,
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 2
+    },
+    "C": {
+     "green": 1,
+     "yellow": 1
+    }
+   },
+   "extra_boxes": "{\"red\":1,\"cyan\":1}",
+   "seed": 12,
+   "phase": "FINISHED",
+   "error": null,
+   "success_referee": true,
+   "goal_met_rgb": true,
+   "makespan_sim_s": 184.5,
+   "sim_end_s": 186.3,
+   "wall_s": 98.59,
+   "llm_calls": 0,
+   "usage": {
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "total_tokens": 0
+   },
+   "coordination_stats": {
+    "claim_rounds": 7,
+    "collisions": 0,
+    "invalid_claims": 0,
+    "plan_turns": 0,
+    "done_robots": [
+     "r1",
+     "r2",
+     "r3"
+    ],
+    "stalled_turns": 0
+   },
+   "referee_counts": {
+    "C": {
+     "yellow": 1,
+     "green": 1
+    },
+    "B": {
+     "cyan": 2
+    },
+    "A": {
+     "red": 2
+    }
+   },
+   "rgb_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 2
+    },
+    "C": {
+     "green": 1,
+     "yellow": 1
+    }
+   },
+   "finished": 6,
+   "stopped": [],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/dev-fixture-7/replay",
+    "frames": 5523,
+    "sim_end_s": 186.28724999732287,
+    "manifest_sha256": "d0240212457b1411a97146d5b4122138dd9cce1d1cdb4e6f84a3fe83cad0a51a"
+   }
+  },
+  {
+   "run": "dev-fixture-8",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/dev-fixture-8",
+   "loads": [
+    {
+     "run": "dev-fixture-8",
+     "start_utc": "2026-09-24T19:06:59Z",
+     "load": "{ 3.19 2.95 3.68 }"
+    },
+    {
+     "run": "dev-fixture-8",
+     "end_utc": "2026-09-24T19:08:42Z",
+     "exit": 0,
+     "load": "{ 2.81 2.88 3.56 }"
+    }
+   ],
+   "console_sha256": "14188e21093a075132e4b526f09e29d19e730c1edd25b9a404521a70c3c36c76",
+   "console_tail": [
+    "JOB r3 yellow-1 -> C (C2)",
+    "JOB r1 cyan-2 -> B (B2)",
+    "{\"phase\": \"FINISHED\", \"error\": null, \"goal_met_rgb\": true, \"physical_success_teacher_condition\": true, \"makespan_sim_s\": 185.0, \"llm_calls\": 0, \"wall_s\": 102.57}"
+   ],
+   "result_sha256": "6854e9ef7fd7509b0583abe9f6cffe66b7b5e2647f191f3d8bca1aa24f1ae71a",
+   "source_sha": "f8b2f54f35fe8f834ea8f794fc4970d16ce32c91",
+   "coordination": "plan_first",
+   "mode": "fixture",
+   "model": null,
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 2
+    },
+    "C": {
+     "green": 1,
+     "yellow": 1
+    }
+   },
+   "extra_boxes": "{\"red\":1,\"cyan\":1}",
+   "seed": 12,
+   "phase": "FINISHED",
+   "error": null,
+   "success_referee": true,
+   "goal_met_rgb": true,
+   "makespan_sim_s": 185.0,
+   "sim_end_s": 186.8,
+   "wall_s": 102.57,
+   "llm_calls": 0,
+   "usage": {
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "total_tokens": 0
+   },
+   "coordination_stats": {
+    "claim_rounds": 0,
+    "collisions": 0,
+    "invalid_claims": 0,
+    "plan_turns": 2,
+    "done_robots": [],
+    "stalled_turns": 0
+   },
+   "referee_counts": {
+    "C": {
+     "yellow": 1,
+     "green": 1
+    },
+    "B": {
+     "cyan": 2
+    },
+    "A": {
+     "red": 2
+    }
+   },
+   "rgb_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 2
+    },
+    "C": {
+     "green": 1,
+     "yellow": 1
+    }
+   },
+   "finished": 6,
+   "stopped": [],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/dev-fixture-8/replay",
+    "frames": 5538,
+    "sim_end_s": 186.789749997311,
+    "manifest_sha256": "2b4cb3987ee220378be67f3fe465dca124cf0a8c39ac9f95ad6a7cd4e92e7537"
+   }
+  },
+  {
+   "run": "dev-fixture-9",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/dev-fixture-9",
+   "loads": [
+    {
+     "run": "dev-fixture-9",
+     "start_utc": "2026-09-24T19:43:24Z",
+     "load": "{ 3.03 3.86 3.85 }"
+    },
+    {
+     "run": "dev-fixture-9",
+     "end_utc": "2026-09-24T19:45:13Z",
+     "exit": 0,
+     "load": "{ 3.90 3.93 3.88 }"
+    }
+   ],
+   "console_sha256": "d77184e4a3c96fb990d0504c6bae38a8310adaf99d72b002a76bfee519969b5f",
+   "console_tail": [
+    "{\"team_phase\": \"claim-6-0\", \"turn\": 6, \"replied\": {\"r2\": true, \"r3\": true}}",
+    "{\"team_phase\": \"claim-7-0\", \"turn\": 7, \"replied\": {\"r1\": true, \"r2\": true, \"r3\": true}}",
+    "{\"phase\": \"FINISHED\", \"error\": null, \"goal_met_rgb\": true, \"physical_success_teacher_condition\": true, \"makespan_sim_s\": 182.0, \"llm_calls\": 0, \"wall_s\": 108.38}"
+   ],
+   "result_sha256": "c29c5a4f331f0259215b896fd5a936d1cf76f15b3520e27201464b2d0187fa58",
+   "source_sha": "e520a3adcb8ae8b44cd070af377934041c977a65",
+   "coordination": "dynamic",
+   "mode": "fixture",
+   "model": null,
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 2
+    },
+    "C": {
+     "green": 1,
+     "yellow": 1
+    }
+   },
+   "extra_boxes": "{\"red\":1,\"cyan\":1}",
+   "seed": 12,
+   "phase": "FINISHED",
+   "error": null,
+   "success_referee": true,
+   "goal_met_rgb": true,
+   "makespan_sim_s": 182.0,
+   "sim_end_s": 183.8,
+   "wall_s": 108.38,
+   "llm_calls": 0,
+   "usage": {
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "total_tokens": 0
+   },
+   "coordination_stats": {
+    "claim_rounds": 7,
+    "collisions": 0,
+    "invalid_claims": 0,
+    "plan_turns": 0,
+    "done_robots": [
+     "r1",
+     "r2",
+     "r3"
+    ],
+    "stalled_turns": 0
+   },
+   "referee_counts": {
+    "C": {
+     "yellow": 1,
+     "green": 1
+    },
+    "B": {
+     "cyan": 2
+    },
+    "A": {
+     "red": 2
+    }
+   },
+   "rgb_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 2
+    },
+    "C": {
+     "yellow": 1,
+     "green": 1
+    }
+   },
+   "finished": 6,
+   "stopped": [],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/dev-fixture-9/replay",
+    "frames": 5448,
+    "sim_end_s": 183.7747499973823,
+    "manifest_sha256": "872c4bc42996847dc244cb0a43147cf78f65f5593eb1621c890109ad212c2285"
+   }
+  },
+  {
+   "run": "diag-plan-replay",
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/diag-plan-replay",
+   "loads": [
+    {
+     "run": "diag-plan-replay",
+     "start_utc": "2026-09-24T19:41:40Z",
+     "load": "{ 4.92 4.35 4.00 }"
+    },
+    {
+     "run": "diag-plan-replay",
+     "end_utc": "2026-09-24T19:43:24Z",
+     "exit": 0,
+     "load": "{ 3.03 3.86 3.85 }"
+    }
+   ],
+   "console_sha256": "86b772c597b789fb5f688b740bdbf90f370cace0b180ab17d71bf6792fbbfc44",
+   "console_tail": [
+    "JOB r1 red-1 -> A (A1)",
+    "JOB r3 red-2 -> A (A2)",
+    "{\"phase\": \"FINISHED\", \"error\": null, \"goal_met_rgb\": true, \"physical_success_teacher_condition\": true, \"makespan_sim_s\": 175.5, \"llm_calls\": 0, \"wall_s\": 103.82}"
+   ],
+   "result_sha256": "e6cf63792d923d5dee0ae5d3144979475089fd64b3a6d9d25701484d5dfaa7cb",
+   "source_sha": "e520a3adcb8ae8b44cd070af377934041c977a65",
+   "coordination": "plan_first",
+   "mode": "fixture",
+   "model": null,
+   "goal": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 2
+    },
+    "C": {
+     "green": 1,
+     "yellow": 1
+    }
+   },
+   "extra_boxes": "{\"red\":1,\"cyan\":1}",
+   "seed": 12,
+   "phase": "FINISHED",
+   "error": null,
+   "success_referee": true,
+   "goal_met_rgb": true,
+   "makespan_sim_s": 175.5,
+   "sim_end_s": 177.3,
+   "wall_s": 103.82,
+   "llm_calls": 0,
+   "usage": {
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "total_tokens": 0
+   },
+   "coordination_stats": {
+    "claim_rounds": 0,
+    "collisions": 0,
+    "invalid_claims": 0,
+    "plan_turns": 2,
+    "done_robots": [],
+    "stalled_turns": 0
+   },
+   "referee_counts": {
+    "C": {
+     "yellow": 1,
+     "green": 1
+    },
+    "B": {
+     "cyan": 2
+    },
+    "A": {
+     "red": 2
+    }
+   },
+   "rgb_counts": {
+    "A": {
+     "red": 2
+    },
+    "B": {
+     "cyan": 2
+    },
+    "C": {
+     "yellow": 1,
+     "green": 1
+    }
+   },
+   "finished": 6,
+   "stopped": [],
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/zone-dispatch-20260925/diag-plan-replay/replay",
+    "frames": 5254,
+    "sim_end_s": 177.27574999753597,
+    "manifest_sha256": "f093d7d81cba42d731c8c3746ff259eaaa610cdd86471af7d4d583c57087a79b"
+   }
+  }
+ ]
+}
