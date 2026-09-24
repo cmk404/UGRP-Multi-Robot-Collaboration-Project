@@ -1,0 +1,27 @@
+{
+  "schema": "ugrp.approach_rgb_gate_saved_replay.v1",
+  "source_run": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v26-full",
+  "source_sha": "83f92c3c691311fae95dacc089fd76da3910b943",
+  "solo_decisions_sha256": "d76a880bca844feea35fd1464d40c3f97276ecc59d5321a0fd8e928c9a78f932",
+  "method": "For 14 selected saved decisions, verify raw JPEG SHA256, repeat the existing normalize_own_rgb transform, verify normalized JPEG SHA256 against the saved decision, and run the unchanged observe_ground_box detector with saved own issued PWM. Evaluate two-frame confidence, freshness, pan/command continuity, target continuity and vertical-error trend; do not issue the counterfactual action.",
+  "selected_indices": [28, 29, 30, 31, 32, 33, 34, 35, 60, 62, 74, 76, 87, 88],
+  "initial_contiguous_segment": {
+    "indices": [28, 29, 30, 31, 32, 33, 34, 35],
+    "validated_single_own_rgb_cuboid": "8/8",
+    "confidence_range": [0.8381920649785559, 0.8801892317474755],
+    "estimated_x_m_range": [0.29608504599699903, 0.29752665635552755],
+    "vertical_error_px_first_last": [125.21776947166381, 58.64599648339754],
+    "eligible_consecutive_pairs_for_24_pwm": "7/7",
+    "note": "The first frame of an opt-in controller still uses the 8-PWM step to establish feedback. The subsequent seven saved baseline pairs pass the proposed two-view gate; changed future images under 24 PWM are unknown."
+  },
+  "later_samples": {
+    "indices": [60, 62, 74, 76, 87, 88],
+    "validated_single_own_rgb_cuboid": "6/6",
+    "confidence_range": [0.8748101246768257, 0.9206723498080959],
+    "vertical_error_px_range": [15.85054054054055, 27.1243863722828],
+    "eligible_for_45_px_fast_gate": "0/6",
+    "note": "These are nonconsecutive samples. Their 16-27 px errors are below the 45 px acceleration threshold despite strong geometry confidence."
+  },
+  "interpretation": "Real saved RGB supports activation for an early large-error stretch, but these samples do not support a 20 SIM s approach reduction. The original 39 small-pose-cycle arithmetic was an upper bound that included many near-tolerance steps which the conservative gate leaves unchanged.",
+  "scope": "Offline saved-image development evidence only. No new robot action, physics rerun, grasp result, or full-task success was produced by this replay."
+}

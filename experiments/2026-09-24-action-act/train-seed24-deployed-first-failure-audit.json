@@ -1,0 +1,269 @@
+{
+  "scope": "second ACT managed training and bounded selected-checkpoint cache failure diagnosis",
+  "source_sha": "931d910998a94361342c372ec2675c475daa625f",
+  "source_clean_at_run": true,
+  "dataset_path": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/data/combined-dataset.json",
+  "dataset_sha256": "9cd42d3b6859fcb1526dab7ee675ba4349cf6fd32537d1c955a696e1e3197a57",
+  "training": {
+    "updates_completed": 8000,
+    "updates_requested": 8000,
+    "wall_s": 977.8912978750013,
+    "seed": 20260924,
+    "termination_objective": "deployed_first_action",
+    "first_batch_deployed_done": {
+      "positive": 7,
+      "negative": 25,
+      "class_balanced": true,
+      "action_head_done_gradient_norm": 18.435840606689453
+    }
+  },
+  "finalization": {
+    "managed_status": "process_failed",
+    "managed_exit_code": 1,
+    "report_complete": false,
+    "failure": "selected cache verification raises at full action chunk rtol=atol=1e-5 before deployment export/readback",
+    "exported_model_present": false,
+    "readback_present": false
+  },
+  "selected_diagnostic": {
+    "step": 3000,
+    "selection_eligible": false,
+    "candidate_rank": [
+      1,
+      1.0,
+      1.1262230011828107
+    ],
+    "development": {
+      "missed_done_rate": 0.5,
+      "false_done_rate": 0.011320754716981131,
+      "group_normalized_mae": {
+        "0": 0.07166946584935029,
+        "1": 0.1851351669487049,
+        "2": 0.18677476417202524,
+        "3": 0.06131260776116202
+      },
+      "selection_score": 1.1262230011828107,
+      "termination_objective": "episode",
+      "premature_hold_episode_fraction": 0.5,
+      "missed_terminal_episode_fraction": 0.5,
+      "offline_termination_pass": false,
+      "samples": 2128,
+      "done_samples": 8
+    }
+  },
+  "failing_probe": {
+    "id": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v25-full:r3:113",
+    "row_index": 2933,
+    "mismatched_indices": [
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        6,
+        3
+      ]
+    ],
+    "max_action_chunk_abs": 3.8743019104003906e-05,
+    "first_action": {
+      "native_raw": [
+        -0.003382667899131775,
+        -0.008964212611317635,
+        0.0061925724148750305,
+        1.0019334554672241
+      ],
+      "cache_raw": [
+        -0.003382161259651184,
+        -0.008964600041508675,
+        0.006191737949848175,
+        1.0019335746765137
+      ],
+      "native_decoded": {
+        "action": {
+          "forward": 0.0,
+          "left": 0.0,
+          "turn": 0.0
+        },
+        "done": true,
+        "stop_score": 1.0
+      },
+      "cache_decoded": {
+        "action": {
+          "forward": 0.0,
+          "left": 0.0,
+          "turn": 0.0
+        },
+        "done": true,
+        "stop_score": 1.0
+      },
+      "raw_axis_max_abs": 8.344650268554688e-07,
+      "scaled_physical_axis_max_abs": 1.2516976255483314e-07,
+      "decoded_axis_max_abs": 0.0,
+      "native_done_margin_to_0_65": 0.3519334554672241,
+      "cache_done_margin_to_0_65": 0.35193357467651365,
+      "threshold_flip": false
+    },
+    "history_inputs": [
+      {
+        "id": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v25-full:r3:110",
+        "root": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v25-full",
+        "images": {
+          "own": {
+            "path": "rgb/pair-335-carry-r1.jpg",
+            "sha256": "2b094f1c3ad2f0cf4f43fda2337ebbf5334779006c2fdd09b0d6b7c48302099c"
+          },
+          "top": {
+            "path": "rgb/pair-335-carry-top.jpg",
+            "sha256": "466c150d054186c16d8251de57ee6547bb7fbec7f92d9832a839abad28e01b23"
+          }
+        },
+        "context": [
+          0.5133333333333333,
+          -0.4466666666666667,
+          1.0,
+          0.0,
+          1.0,
+          0.16666666666666669,
+          -0.0,
+          0.0
+        ],
+        "target_action": [
+          0.0,
+          -0.0,
+          0.0,
+          0.0
+        ],
+        "target_done": false
+      },
+      {
+        "id": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v25-full:r3:111",
+        "root": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v25-full",
+        "images": {
+          "own": {
+            "path": "rgb/pair-336-carry-r1.jpg",
+            "sha256": "d6bb2090eb36e2ba3d7e3c349e85dcecf7eedc14d2d8a575f2a651a8166ba030"
+          },
+          "top": {
+            "path": "rgb/pair-336-carry-top.jpg",
+            "sha256": "763a38610f7adf0febb4b5f223df99b366bd413172e5469a11898441aaf730bc"
+          }
+        },
+        "context": [
+          0.5133333333333333,
+          -0.4466666666666667,
+          1.0,
+          0.0,
+          1.0,
+          0.0,
+          -0.0,
+          0.0
+        ],
+        "target_action": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "target_done": false
+      },
+      {
+        "id": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v25-full:r3:112",
+        "root": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v25-full",
+        "images": {
+          "own": {
+            "path": "rgb/pair-337-carry-r1.jpg",
+            "sha256": "46cf5acc6c6db720a716a1a1dd702dc5a6bcd58b0949d2c88232daaf25d17159"
+          },
+          "top": {
+            "path": "rgb/pair-337-carry-top.jpg",
+            "sha256": "f45c4324358327490346313115ebca16cb6cc260e494a645e829698926aa832f"
+          }
+        },
+        "context": [
+          0.5133333333333333,
+          -0.4466666666666667,
+          1.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "target_action": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "target_done": false
+      },
+      {
+        "id": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v25-full:r3:113",
+        "root": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v25-full",
+        "images": {
+          "own": {
+            "path": "rgb/pair-338-carry-r1.jpg",
+            "sha256": "e8dd1638db6b100b816e460ed77e5288c81a07f74939ff3348b84066455d0edb"
+          },
+          "top": {
+            "path": "rgb/pair-338-carry-top.jpg",
+            "sha256": "9d8cddb47d0a26c6c208627e74dd466adc06f83f6948f185771c71c6f8408d68"
+          }
+        },
+        "context": [
+          0.5133333333333333,
+          -0.4466666666666667,
+          1.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "target_action": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "target_done": true
+      }
+    ],
+    "batch4_whole_chunk_max_abs": 0.0,
+    "batch4_feature_drift": {
+      "observation.images.own": 0.0,
+      "observation.images.top": 0.0
+    }
+  },
+  "bounded_six_probe_result": {
+    "batch32_first_action_done_threshold_flips": 0,
+    "batch32_any_chunk_threshold_flips": 0,
+    "batch4_all_features_and_chunks_exact": true
+  },
+  "originals": {
+    "resume_pt_sha256": "546a7cf3c3f761eb269b793e85037c83e00c0dba2cc6248a13cc0fa7e908e6f0",
+    "report_json_sha256": "eb9c083a14aa9bab9d809fbb0935ffb339ac6324efdf7fd8f9d767a6a043a055",
+    "manifest_json_sha256": "aa90d237e0c772eff7a87797e76542cf92764b929375fa8d0c74f0c6cae0fedb"
+  },
+  "diagnosis": {
+    "path": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/cache-failure-diagnosis.json",
+    "sha256": "2677146f6e56fabf6d09d131bb57b065a90dd973f72595b336c67353cb42e7ff"
+  },
+  "interpretation": "The selected checkpoint has no exported/readback model and has not passed development termination eligibility. The observed verification failure is in unused later chunk done dimensions due to B32-vs-B4 frozen-CNN float32 drift on bounded probes; the deployed first action did not cross done threshold on these probes. Physical success is untested."
+}

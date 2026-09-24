@@ -48,7 +48,7 @@ def test_retired_adapter_is_readable_but_cannot_run_as_current_source():
 
 def test_current_bundle_records_dispatch_defaults_without_success_claim():
     current, _ = contract.load_bundle(contract.RUNNABLE_ID)
-    assert current["parent_bundle_id"] == "rgb-standard-dispatch-v27"
+    assert current["parent_bundle_id"] == "rgb-standard-dispatch-v28"
     assert current["parent_bundle"] == current["parent_bundle_id"]
     assert current["realtime_dispatch"]["option"] == "--realtime-control"
     assert "16px" in current["controller_policy"]["paired_coarse_approach"]
@@ -79,6 +79,8 @@ def test_required_source_set_and_bytes_fail_closed(tmp_path):
     path = root / contract.REGISTRY / (contract.RUNNABLE_ID + ".json")
     removed = "harness/camera_varied_start_student.py"
     assert removed in contract.source_closure()
+    assert {'scripts/carry_input_worker.py', 'scripts/pair_carry_act_worker.py',
+            'harness/carry_input_act.py', 'harness/pair_carry_act.py'} <= contract.source_closure()
     assert len(contract.source_closure()) >= 129
     value["source_files_sha256"].pop(removed)
     path.write_text(json.dumps(value))

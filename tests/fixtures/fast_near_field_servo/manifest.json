@@ -1,0 +1,31 @@
+{
+  "source_run": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v26-full",
+  "source_sha": "83f92c3c691311fae95dacc089fd76da3910b943",
+  "source_decisions_sha256": "d76a880bca844feea35fd1464d40c3f97276ecc59d5321a0fd8e928c9a78f932",
+  "images": [
+    {
+      "decision_index": 28,
+      "frame_id": 287,
+      "observed_at_sim_s": 33.55825000006922,
+      "raw_source": "rgb/solo-28-r2.jpg",
+      "raw_sha256": "77399917a8aebd7021ea1d306e84aa0451b463d582596c3ff0a559f56c35a6a2",
+      "fixture": "v26-solo-28-own.jpg",
+      "normalized_own_sha256": "ebff1a1e044a79817f42f4c2bbd6fa05bbc192598f6fdbcab11fb84a35d49b14",
+      "servo_3_command_pwm": 652,
+      "saved_action_servo_3_pwm": 644
+    },
+    {
+      "decision_index": 29,
+      "frame_id": 297,
+      "observed_at_sim_s": 34.57150000007406,
+      "raw_source": "rgb/solo-29-r2.jpg",
+      "raw_sha256": "1d6fc8046a94a2b5354a0e7b4ebc65cfe158d84c83f2c6d8aa92bb796b4a6d85",
+      "fixture": "v26-solo-29-own.jpg",
+      "normalized_own_sha256": "c1e66df272f359ee9673e075e7b3974d2fa1c8f9ea69d65e77f80c7c8780b618",
+      "servo_3_command_pwm": 644,
+      "saved_action_servo_3_pwm": 636
+    }
+  ],
+  "normalization": "cv2.resize 640x480 then JPEG quality 95; fixture bytes exactly match logged own image hashes",
+  "scope": "Saved RGB controller-input fixtures for a counterfactual gate regression; the 24-PWM action was not executed in this source run and the fixture is not physical success evidence."
+}

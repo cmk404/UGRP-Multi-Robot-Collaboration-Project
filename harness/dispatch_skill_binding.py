@@ -5,6 +5,7 @@ Static capabilities and image transforms are explicit and auditable. No fixture
 poses are read here, and no failed model prediction is replaced by a raw LLM action.
 """
 from __future__ import annotations
+import base64
 import copy
 from functools import lru_cache
 import hashlib
@@ -314,7 +315,10 @@ def pixel_from_map(xy, static_map, shape, *, height=0.):
 
 class ImageRoute:
     """Plan-selected authored waypoints with current cargo position from RGB."""
-    def __init__(self, bindings, obj):
+    def __init__(self, bindings, obj, *, time_aware_box_reacquisition=False):
+        if not isinstance(time_aware_box_reacquisition, bool):
+            raise ValueError('time_aware_box_reacquisition must be a bool')
+        self.time_aware_box_reacquisition=time_aware_box_reacquisition
         self.route_overlap=bool(getattr(bindings,'route_overlap',False))
         self._permission=getattr(bindings,'permission',None)
         if self.route_overlap and not callable(self._permission):
@@ -329,6 +333,7 @@ class ImageRoute:
         # independently shown the same motion while the cargo is visible.
         self.box_carrier_points=None
         self.box_carrier_occluded_frames=0
+        self.box_direct_history=[]
         from harness.dispatch_beam_tracker import CarriedBeamTracker
         self.beam_tracker=CarriedBeamTracker()
 
@@ -444,7 +449,130 @@ class ImageRoute:
             'uncertainty':'cargo silhouette hidden; proxy center cannot confirm delivery',
         }
 
-    def observe(self,jpeg, *, own_attachment=None):
+    def _remember_direct_box(self,center,bounds,area,hue,top_sha,
+                             observed_at_s,frame_id,saturation):
+        """Only the strong, directly segmented TOP cargo may seed a visual speed."""
+        if (not self.time_aware_box_reacquisition or saturation<125
+                or isinstance(observed_at_s,bool)
+                or not isinstance(observed_at_s,(int,float))
+                or not math.isfinite(float(observed_at_s))
+                or isinstance(frame_id,bool) or not isinstance(frame_id,int)):
+            return
+        if self.box_direct_history and (observed_at_s<=self.box_direct_history[-1]['observed_at_s']
+                or frame_id<=self.box_direct_history[-1]['frame_id']):
+            return
+        self.box_direct_history.append({
+            'center_px':tuple(float(v) for v in center),
+            'bounds_px':tuple(int(v) for v in bounds),
+            'area_px':int(area),'hue_median':float(hue),
+            'top_sha256':top_sha,'observed_at_s':float(observed_at_s),
+            'frame_id':frame_id})
+        self.box_direct_history=self.box_direct_history[-2:]
+
+    def _reacquire_direct_box(self,frame,hsv,foreground,jpeg,own_attachment,
+                              observed_at_s,frame_id,own_sha256):
+        """Recover one visible cargo after a missed narrow gate, not a proxy."""
+        if not self.time_aware_box_reacquisition or len(self.box_direct_history)<2:
+            return None
+        if (not isinstance(own_attachment,tuple) or len(own_attachment)!=3
+                or not isinstance(own_sha256,str)):
+            return None
+        evidence,current_own,validated_own=own_attachment
+        if (not isinstance(evidence,dict) or evidence.get('evidence')!='visual_attachment'
+                or evidence.get('attached') is not True
+                or evidence.get('camera_pan_delta_pwm')!=0
+                or not isinstance(current_own,str) or current_own!=validated_own):
+            return None
+        try:
+            if hashlib.sha256(base64.b64decode(current_own,validate=True)).hexdigest()!=own_sha256:
+                return None
+        except (ValueError,TypeError):
+            return None
+        if (isinstance(observed_at_s,bool) or not isinstance(observed_at_s,(int,float))
+                or not math.isfinite(float(observed_at_s))
+                or isinstance(frame_id,bool) or not isinstance(frame_id,int)):
+            return None
+        earlier,last=self.box_direct_history
+        dt=float(observed_at_s)-last['observed_at_s']
+        history_dt=last['observed_at_s']-earlier['observed_at_s']
+        top_sha=hashlib.sha256(jpeg).hexdigest()
+        if (not 0<dt<=.6 or not 0<history_dt<=.8
+                or frame_id<=last['frame_id'] or top_sha==last['top_sha256']
+                or np.array_equal(frame,self.box_previous)):
+            return None
+        velocity=(np.asarray(last['center_px'])-np.asarray(earlier['center_px']))/history_dt
+        speed=float(np.linalg.norm(velocity))
+        if not 3<=speed<=100:
+            return None
+        direction=velocity/speed
+        predicted=np.asarray(last['center_px'])+velocity*dt
+        longitudinal_limit=min(18.,4.+.5*speed*dt)
+        lateral_limit=8.
+        displacement_limit=min(36.,2.+1.75*speed*dt)
+        # The stronger original cyan cut is required for reacquisition. A
+        # lower-saturation fragment remains eligible only for legacy tracking.
+        mask=cv2.inRange(hsv,np.array((80,125,35),np.uint8),
+                         np.array((102,255,255),np.uint8))
+        mask[~foreground]=0
+        count,labels,stats,centers=cv2.connectedComponentsWithStats(mask)
+        plausible=[]
+        corridor_count=0
+        for i in range(1,count):
+            x,y,width,height,area=(int(v) for v in stats[i,:5])
+            if not (8<=area<=600 and max(width,height)<40
+                    and x>0 and y>0 and x+width<frame.shape[1]
+                    and y+height<frame.shape[0]):
+                continue
+            shift=centers[i]-np.asarray(last['center_px'])
+            residual=centers[i]-predicted
+            along=float(residual@direction)
+            across=float(abs(np.linalg.det(np.stack((direction,residual)))))
+            if (abs(along)>longitudinal_limit or across>lateral_limit
+                    or np.linalg.norm(shift)>displacement_limit
+                    or float(shift@direction)<2.):
+                continue
+            corridor_count+=1
+            old_x,old_y,old_width,old_height=last['bounds_px']
+            if not (.5<=area/last['area_px']<=2.
+                    and .55<=width/old_width<=1.9
+                    and .55<=height/old_height<=1.9):
+                continue
+            hue=float(np.median(hsv[:,:,0][labels==i]))
+            if abs(hue-last['hue_median'])>8:
+                continue
+            plausible.append((i,centers[i],(x,y,width,height),area,hue,along,across))
+        # A second cyan fragment in the motion corridor is an identity
+        # ambiguity even if its size or hue fit is weaker than the first.
+        if corridor_count!=1 or len(plausible)!=1:
+            return None
+        _,center,bbox,area,hue,along,across=plausible[0]
+        x,y,width,height=bbox
+        bounds=np.array([[x,y],[x+width,y+height]])
+        tracking={
+            'method':'time-aware direct cyan reacquisition from TOP RGB',
+            'source':'unique current foreground cyan silhouette, two prior direct TOP RGB silhouettes, current own RGB attachment',
+            'previous_direct_frame_ids':[earlier['frame_id'],last['frame_id']],
+            'current_frame_id':frame_id,
+            'previous_direct_top_sha256':last['top_sha256'],
+            'current_top_sha256':top_sha,
+            'direct_observation_gap_s':dt,
+            'visual_velocity_px_s':velocity.tolist(),
+            'predicted_center_px':predicted.tolist(),
+            'longitudinal_residual_px':along,
+            'lateral_residual_px':across,
+            'longitudinal_limit_px':longitudinal_limit,
+            'lateral_limit_px':lateral_limit,
+            'displacement_limit_px':displacement_limit,
+            'candidate_count_in_corridor':corridor_count,
+            'visible_component_area_px':area,
+            'visible_component_hue_median':hue,
+            'own_attachment':'fresh validated same-capture own RGB required',
+            'uncertainty':'identity inferred from bounded image continuity; no measured contact or cargo pose',
+        }
+        return center,bounds,tracking,area,hue
+
+    def observe(self,jpeg, *, own_attachment=None, observed_at_s=None,
+                frame_id=None, own_sha256=None):
         frame=decode(jpeg);h,w=frame.shape[:2]
         if self.obj=='beam':
             feature=self.beam_tracker.observe(jpeg)
@@ -475,7 +603,7 @@ class ImageRoute:
                 if suppress_background:mask[~foreground]=0
                 if self.box_center is None:
                     mask=cv2.morphologyEx(mask,cv2.MORPH_OPEN,np.ones((3,3),np.uint8))
-                n,_,stats,centers=cv2.connectedComponentsWithStats(mask)
+                n,labels,stats,centers=cv2.connectedComponentsWithStats(mask)
                 choices=[i for i in range(1,n) if (25 if self.box_center is None else 8) <= stats[i,4] <= 600
                          and max(stats[i,2:4]) < 40]
                 if binding is not None:
@@ -493,6 +621,14 @@ class ImageRoute:
                 if len(choices)==1:break
             tracking={'method':'cyan component','min_saturation':saturation}
             if binding is not None:tracking['initial_identity']=binding
+            recovered=None
+            def reacquire_direct():
+                # The original eight-pixel colour/KLT/carrier routes have
+                # priority. Only a missing narrow-gate candidate can enter.
+                if choices:return None
+                return self._reacquire_direct_box(
+                    frame,hsv,foreground,jpeg,own_attachment,
+                    observed_at_s,frame_id,own_sha256)
             if len(choices)==1:
                 i=choices[0];center=centers[i];x,y,bw,bh=stats[i,:4]
                 bounds=np.array([[x,y],[x+bw,y+bh]])
@@ -500,8 +636,17 @@ class ImageRoute:
                 # Once the silhouette was lost, unrelated corners near the
                 # proxy must not silently re-establish cargo identity. Only a
                 # fresh cyan component can end the bounded occlusion window.
-                center,tracking=self._track_carrier_under_occlusion(frame,own_attachment)
-                bounds=np.array([center-12,center+12])
+                try:center,tracking=self._track_carrier_under_occlusion(frame,own_attachment)
+                except RuntimeError as exc:
+                    if str(exc) not in {
+                            'dispatch box unresolved or ambiguous in TOP RGB',
+                            'dispatch linked carrier motion ambiguous in TOP RGB',
+                            'dispatch linked carrier appearance unresolved in TOP RGB',
+                            'dispatch linked carrier has no fresh TOP RGB motion'}:
+                        raise
+                    recovered=reacquire_direct()
+                    if recovered is None:raise
+                if recovered is None:bounds=np.array([center-12,center+12])
             elif self.box_previous is not None:
                 # Follow actual prior RGB appearance when same-colour floor
                 # merges the component. Own-camera attachment must independently
@@ -515,31 +660,64 @@ class ImageRoute:
                 points=cv2.goodFeaturesToTrack(old,30,.01,3,mask=feature_mask)
                 if points is None or len(points)<3:
                     if self.box_carrier_points is None:
-                        raise RuntimeError('dispatch box appearance unresolved in TOP RGB')
+                        recovered=reacquire_direct()
+                        if recovered is None:
+                            raise RuntimeError('dispatch box appearance unresolved in TOP RGB')
                     delta,cycle=np.empty((0,2)),np.empty(0)
                 else:
                     delta,cycle,_,_=self._tracked_points(old,gray,points)
-                if len(delta)<3 and self.box_carrier_points is None:
-                    raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
-                # A painted edge may supply stationary corners; require a
-                # majority of independently tracked corners to share motion.
-                inliers=self._consistent_group(delta,minimum=3)
-                if inliers is not None:
-                    motion=np.median(delta[inliers],axis=0)
-                    center=self.box_center+motion
-                    bounds=np.array([center-12,center+12])
-                    tracking={'method':'bidirectional RGB feature motion; own attachment independently required',
-                              'feature_count':int(len(delta)),'consistent_features':int(inliers.sum()),
-                              'max_cycle_error_px':float(cycle[inliers].max()),'motion_px':motion.tolist()}
-                else:
-                    center,tracking=self._track_carrier_under_occlusion(frame,own_attachment)
-                    bounds=np.array([center-12,center+12])
+                if recovered is None:
+                    if len(delta)<3 and self.box_carrier_points is None:
+                        recovered=reacquire_direct()
+                        if recovered is None:
+                            raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
+                    else:
+                        # A painted edge may supply stationary corners; require
+                        # a majority of independent features to share motion.
+                        inliers=self._consistent_group(delta,minimum=3)
+                        if inliers is not None:
+                            motion=np.median(delta[inliers],axis=0)
+                            center=self.box_center+motion
+                            bounds=np.array([center-12,center+12])
+                            tracking={'method':'bidirectional RGB feature motion; own attachment independently required',
+                                      'feature_count':int(len(delta)),'consistent_features':int(inliers.sum()),
+                                      'max_cycle_error_px':float(cycle[inliers].max()),'motion_px':motion.tolist()}
+                        else:
+                            try:center,tracking=self._track_carrier_under_occlusion(frame,own_attachment)
+                            except RuntimeError as exc:
+                                if str(exc) not in {
+                                        'dispatch box unresolved or ambiguous in TOP RGB',
+                                        'dispatch linked carrier motion ambiguous in TOP RGB',
+                                        'dispatch linked carrier appearance unresolved in TOP RGB',
+                                        'dispatch linked carrier has no fresh TOP RGB motion'}:
+                                    raise
+                                recovered=reacquire_direct()
+                                if recovered is None:raise
+                            if recovered is None:bounds=np.array([center-12,center+12])
             else:raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
+            if recovered is not None:
+                center,bounds,tracking,recovered_area,recovered_hue=recovered
+                # A newly reacquired image is directly visible, but a failed
+                # carrier cloud is not reusable as evidence on the next frame.
+                self.box_carrier_points=None
+                self.box_carrier_occluded_frames=0
+                self.confirmations=0
             if self.box_origin is None:self.box_origin=center.copy()
             tracking['static_background']={'reference_sha256':self.box_background_sha,
                 'active':bool(suppress_background),'rgb_difference_threshold':20,
                 'initial_occupied_radius_px':30,'origin_px':self.box_origin.tolist()}
-            if tracking['method']!='linked TOP RGB carrier motion during cargo occlusion':
+            if tracking['method']=='cyan component':
+                self._remember_direct_box(center,(int(x),int(y),int(bw),int(bh)),
+                    stats[i,4],np.median(hsv[:,:,0][labels==i]),
+                    hashlib.sha256(jpeg).hexdigest(),observed_at_s,frame_id,saturation)
+            elif recovered is not None:
+                x,y,bw,bh=(int(v) for v in (bounds[0,0],bounds[0,1],
+                                             bounds[1,0]-bounds[0,0],bounds[1,1]-bounds[0,1]))
+                self._remember_direct_box(center,(x,y,bw,bh),recovered_area,
+                    recovered_hue,hashlib.sha256(jpeg).hexdigest(),
+                    observed_at_s,frame_id,125)
+            if (tracking['method']!='linked TOP RGB carrier motion during cargo occlusion'
+                    and recovered is None):
                 self._link_carrier_features(frame,center)
                 self.box_carrier_occluded_frames=0
             self.box_delta=np.zeros(2) if self.box_center is None else center-self.box_center

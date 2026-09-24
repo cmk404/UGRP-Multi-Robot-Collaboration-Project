@@ -1,0 +1,135 @@
+{
+  "schema": "ugrp.action_act_cohort_summary.v2",
+  "planned_trial_order": [
+    "holdout-a/reference-rgb-v26",
+    "holdout-a/candidate-rgb",
+    "holdout-a/candidate-act",
+    "holdout-b/reference-rgb-v26",
+    "holdout-b/candidate-rgb",
+    "holdout-b/candidate-act"
+  ],
+  "audited_trial_ids": [
+    "holdout-a/candidate-act",
+    "holdout-a/candidate-rgb",
+    "holdout-a/reference-rgb-v26",
+    "holdout-b/candidate-act",
+    "holdout-b/candidate-rgb",
+    "holdout-b/reference-rgb-v26"
+  ],
+  "arms": {
+    "candidate-act": {
+      "planned": 2,
+      "started_and_audited": 2,
+      "unstarted_or_unreviewed": [],
+      "physical_and_protocol_success": 0,
+      "failures_by_component_or_phase": {
+        "solo_box": 1,
+        "pair": 1
+      },
+      "successful_wall_s": [],
+      "successful_wall_median_s": null,
+      "recorded_act_request_rows": 126,
+      "recorded_act_response_rows": 126,
+      "worker_received_total_independently_verified": false
+    },
+    "candidate-rgb": {
+      "planned": 2,
+      "started_and_audited": 2,
+      "unstarted_or_unreviewed": [],
+      "physical_and_protocol_success": 1,
+      "failures_by_component_or_phase": {
+        "solo_box": 1
+      },
+      "successful_wall_s": [
+        173.12803662501392
+      ],
+      "successful_wall_median_s": 173.12803662501392,
+      "recorded_act_request_rows": 0,
+      "recorded_act_response_rows": 0,
+      "worker_received_total_independently_verified": null
+    },
+    "reference-rgb-v26": {
+      "planned": 2,
+      "started_and_audited": 2,
+      "unstarted_or_unreviewed": [],
+      "physical_and_protocol_success": 1,
+      "failures_by_component_or_phase": {
+        "solo_box": 1
+      },
+      "successful_wall_s": [
+        166.39214958398952
+      ],
+      "successful_wall_median_s": 166.39214958398952,
+      "recorded_act_request_rows": 0,
+      "recorded_act_response_rows": 0,
+      "worker_received_total_independently_verified": null
+    }
+  },
+  "cases": {
+    "holdout-a": {
+      "planned": 3,
+      "started_and_audited": 3,
+      "unstarted_or_unreviewed": [],
+      "physical_and_protocol_success": 1,
+      "outcomes_by_arm": {
+        "reference-rgb-v26": {
+          "physical_success": false,
+          "protocol_complete": false,
+          "phase": "RELEASE",
+          "error": "ComponentExecutionError: solo_box: RuntimeError: dispatch box unresolved or ambiguous in TOP RGB"
+        },
+        "candidate-rgb": {
+          "physical_success": true,
+          "protocol_complete": true,
+          "phase": "FINISHED",
+          "error": null
+        },
+        "candidate-act": {
+          "physical_success": false,
+          "protocol_complete": false,
+          "phase": "TRANSIT",
+          "error": "ComponentExecutionError: solo_box: RuntimeError: dispatch linked carrier motion ambiguous in TOP RGB"
+        }
+      }
+    },
+    "holdout-b": {
+      "planned": 3,
+      "started_and_audited": 3,
+      "unstarted_or_unreviewed": [],
+      "physical_and_protocol_success": 1,
+      "outcomes_by_arm": {
+        "reference-rgb-v26": {
+          "physical_success": true,
+          "protocol_complete": true,
+          "phase": "FINISHED",
+          "error": null
+        },
+        "candidate-rgb": {
+          "physical_success": false,
+          "protocol_complete": false,
+          "phase": "RELEASE",
+          "error": "ComponentExecutionError: solo_box: RuntimeError: dispatch box unresolved or ambiguous in TOP RGB"
+        },
+        "candidate-act": {
+          "physical_success": false,
+          "protocol_complete": false,
+          "phase": "TRANSIT",
+          "error": "RuntimeError: ACT RGB/prediction remained stale after bounded reobservation"
+        }
+      }
+    }
+  },
+  "paired_rgb_speed": {
+    "holdout-a": {
+      "status": "failed_pair",
+      "baseline_success": false,
+      "candidate_success": true
+    },
+    "holdout-b": {
+      "status": "failed_pair",
+      "baseline_success": true,
+      "candidate_success": false
+    }
+  },
+  "scope": "Only physically and procedurally complete matched cases enter successful wall-time comparison. Unstarted, failed, censored and error trials retain their own denominator. ACT request counts refer only to saved input rows; owner-aborted in-flight worker requests may be unknown."
+}

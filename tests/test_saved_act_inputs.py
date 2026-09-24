@@ -157,3 +157,71 @@ def test_partial_inference_error_attempt_is_audited_without_adoption(tmp_path):
     error['inputs']['r3'].pop('wire_sha256')
     with pytest.raises(ValueError, match='wire hash'):
         audit(tmp_path, [calls[0], error])
+
+
+def owner_abort(calls, known):
+    row = copy.deepcopy(calls[1])
+    row.update(kind='act_inference_error', frame_id=1, observed_at_s=.1,
+               received_at_s=.2, discard_reason='owner_aborted',
+               owner_error='RuntimeError: box lost', worker_completion='timeout',
+               slot_failures={}, unconfirmed_slots=[slot for slot in ('r1', 'r3')
+                                                    if slot not in known])
+    row.pop('sim_time_s')
+    row.pop('actions')
+    row['inputs'] = {slot: row['inputs'][slot] for slot in known}
+    row['decisions'] = {slot: {'done': False} for slot in known}
+    for inp in row['inputs'].values():
+        inp.update(frame_id=1, observed_at_s=.1, response_received=True)
+        inp['history'][-1]['sim_time_s'] = .1
+    return row
+
+
+@pytest.mark.parametrize('known', [('r1',), ()])
+def test_owner_abort_keeps_known_wire_and_marks_unknown_incomplete(tmp_path, known):
+    calls = fixture(tmp_path)
+    row = owner_abort(calls, known)
+    result = audit(tmp_path, [calls[0], row])
+    assert result['known_inputs_passed'] is True
+    assert result['passed'] is False and result['complete'] is False
+    assert result['requests'] == 2 + len(known)
+    assert result['unconfirmed_slots'] == 2 - len(known)
+    assert result['accepted_decisions'] == 1
+    assert result['history'] == 4
+
+
+def test_owner_abort_unknown_slots_and_known_wire_must_be_honest(tmp_path):
+    calls = fixture(tmp_path)
+    row = owner_abort(calls, ('r1',))
+    row['inputs']['r1'].pop('wire_sha256')
+    with pytest.raises(ValueError, match='wire hash'):
+        audit(tmp_path, [calls[0], row])
+    row = owner_abort(calls, ('r1',))
+    row['unconfirmed_slots'] = ['r1']
+    with pytest.raises(ValueError, match='unconfirmed slot'):
+        audit(tmp_path, [calls[0], row])
+    row = owner_abort(calls, ('r1',))
+    row['unconfirmed_slots'] = []
+    with pytest.raises(ValueError, match='aborted prediction accounting'):
+        audit(tmp_path, [calls[0], row])
+
+
+def test_aborted_prediction_does_not_advance_later_history(tmp_path):
+    calls = fixture(tmp_path)
+    row = owner_abort(calls, ('r1',))
+    row['discard_reason'] = 'prediction_raised'
+    result = audit(tmp_path, [calls[0], row, *calls[1:]])
+    assert result['requests'] == 7
+    assert result['accepted_decisions'] == 3
+    assert result['unconfirmed_slots'] == 1
+    assert result['passed'] is False
+
+
+def test_only_unconfirmed_abort_is_incomplete_not_zero_request_proof(tmp_path):
+    calls = fixture(tmp_path)
+    row = owner_abort(calls, ())
+    row['index'] = 0
+    result = audit(tmp_path, [row])
+    assert result['requests'] == 0
+    assert result['unconfirmed_slots'] == 2
+    assert result['schema'] == 'unknown'
+    assert result['passed'] is False

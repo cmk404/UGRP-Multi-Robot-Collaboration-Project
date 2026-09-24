@@ -1,0 +1,69 @@
+{
+  "schema": "ugrp.action_act_refinement.v1",
+  "status": "implementation_plan_before_physical_outcomes",
+  "trigger": "First 8000-update ACT training missed every train/development terminal. Frozen-v27 first study also exposed direct cyan target remaining visible outside fixed eight-pixel prediction window; use these first-study failures as development evidence, retaining all six outcomes. Refined physical case triples remain preregistered and unexecuted.",
+  "reference_source_sha": "12f8e6dda76e39b3ec612f247deb4835a2ff50bc",
+  "training": {
+    "model_ordinal": 2,
+    "dataset_sha256": "9cd42d3b6859fcb1526dab7ee675ba4349cf6fd32537d1c955a696e1e3197a57",
+    "seed": 20260924,
+    "seed_rationale": "Keep first model seed to compare objective rather than introduce a random-seed change; this supersedes the optional seed25 proposal before second training begins.",
+    "updates": 8000,
+    "max_wall_s": 1800,
+    "device": "cpu",
+    "threads": 2,
+    "new_objective": "upstream ACT chunk L1+KL plus weight1.0 class-balanced first-action raw done MSE, using the deployment eval/zero-latent forward without action targets",
+    "architecture": "Same upstream ACT, frozen pretrained visual backbone, 128px/history4, chunk8, raw own/TOP and authored/self-issued context",
+    "selection": "Development-only lexicographic gate: offline termination pass, premature+missed episode fraction, then original episode selection score; retain best failing checkpoint explicitly as diagnostic only. Preserve all outcomes and fixed 0.65 threshold.",
+    "gate": "Readback and input audit, zero premature and zero missed development episodes required before describing the candidate as offline-qualified; offline qualification does not establish physical success.",
+    "deployed_done_weight": 1.0
+  },
+  "rgb_candidate": {
+    "change": "Larger near-field camera-servo correction only with repeated supported own-RGB evidence and sufficiently large vertical error; original trajectory/settling/new-image/final approach/grasp gates retained.",
+    "diagnostic_gate": "Two original-spawn runs after immutable v28 source freeze, each max350wall seconds; both preserved, no failed time counted as speed gain.",
+    "qualification": "After diagnostics, freeze at least three further unseen nearby spawn triples and compare each against v27 RGB under same local native conditions; all proposed cases must be recorded before outcomes.",
+    "large_error_gate_px": 45,
+    "maximum_step_pwm": 24,
+    "speed_expectation": "Saved actual RGB gates activate for initial large-error frames only; 20s gain is not established and is not assumed.",
+    "tracking_change": "After existing cyan/KLT paths fail, permit direct cyan reacquisition only from current paired own/TOP RGB, recent direct-silhouette motion and observation time interval, unique matching foreground silhouette and fresh attachment. No blind proxy location or relaxed issue TTL. Thresholds and regression fixtures freeze before refinement outcomes.",
+    "causal_scope": "Compare the combined refined RGB controller package (near-field servo and time-aware direct cargo reacquisition). Do not attribute full-run differences to either change separately."
+  },
+  "resource": {
+    "no_cloud": true,
+    "one_physics_owner": true,
+    "no_training_or_heavy_tests_during_timed_physics": true,
+    "maximum_refinement_diagnostic_wall_s": 740,
+    "maximum_refinement_qualification_wall_s": 4500,
+    "new_pose_cases": 3,
+    "maximum_qualification_trials": 9,
+    "qualification_requires_case_and_arm_schedule_before_first_trial": true
+  },
+  "scope": "Local saved-plan component study, no live LLM communication claim. Source/model/bundle and all outcomes retained. No main merge without PR-specific owner approval.",
+  "runtime_candidate": {
+    "latency_evidence": "First ACT b: two sequential requests each about0.13-0.15s plus capture/guards consumed0.6s TTL; one formally positive issue lease was only1.4e-11s.",
+    "changes": [
+      "Separate per-slot ACT worker clients with1 Torch thread each and concurrent prediction; same total2 inference threads.",
+      "Inference-only bounded exact-input frozen-CNN/image transform memoization; histories/contexts remain explicit and model output equivalence verified.",
+      "Require at least one20ms control tick of validity before accepting motion; preserve discarded model requests."
+    ],
+    "limits_unchanged": {
+      "observation_ttl_s": 0.6,
+      "maximum_command_lease_s": 0.25
+    },
+    "interpretation": "Refined ACT is a combined objective/runtime candidate; offline loss comparison uses same dataset/seed, physical result is not an isolated loss effect."
+  },
+  "runtime_benchmark": {
+    "question": "Same first checkpoint and recorded causal histories: paired request latency before versus concurrent cached workers.",
+    "model_sha256": "3957eb3df4304561e2af6ed28e3be05a8a85c985ff80c31c2ad733e2d2e355d2",
+    "source_reference": "12f8e6dda76e39b3ec612f247deb4835a2ff50bc",
+    "rows": "First14 accepted ACT rows of holdout-a-candidate-act, first2 per process warmup, remaining12 reported.",
+    "order": [
+      "v27-sequential-1",
+      "v28-parallel-cached-1",
+      "v28-parallel-cached-2",
+      "v27-sequential-2"
+    ],
+    "resource": "No concurrent training, physical run, heavy tests or UI work. Existing ACT CPU environment, total2 inference Torch threads per condition. All outcomes preserved.",
+    "readout": "Median/max pair request latency and decoded per-slot outputs, model/source/raw hashes; no physics/camera included and no full-mission speed claim."
+  }
+}

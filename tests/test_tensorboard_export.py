@@ -75,6 +75,25 @@ def test_training_roundtrip_preserves_steps_and_labels_export_time(tmp_path,expo
     with pytest.raises(FileExistsError): convert(src,tmp_path/'export')
 
 
+def test_deployment_objective_keeps_loss_parts_and_failed_selection(tmp_path,export_api):
+    convert,EA=export_api
+    src=tmp_path/'source';src.mkdir()
+    put(src,'report.json',{'progress':[{'step':500,'loss':.6,
+        'loss_components':{'act_total':.1,'weighted_deployed_done':.5},
+        'selection_eligible':False}], 'complete':True,
+        'deployed_done_objective':{'weight':1.,'runtime_score_threshold':.65},
+        'first_batch_deployed_done':{'action_head_done_gradient_norm':.2},
+        'selected_checkpoint_eligible':False})
+    convert(src,tmp_path/'export')
+    ea=EA(str(tmp_path/'export')).Reload()
+    assert ea.Scalars('training/loss_components/act_total')[0].value==pytest.approx(.1)
+    assert ea.Scalars('training/loss_components/weighted_deployed_done')[0].value==pytest.approx(.5)
+    assert [(x.step,x.value) for x in ea.Scalars('development/checkpoint_eligible')]==[(500,0.)]
+    assert 'evaluation/reported_success' not in ea.Tags()['scalars']
+    text=ea.Tensors('training/deployed_objective')[0].tensor_proto.string_val[0].decode()
+    assert 'selected_checkpoint_eligible' in text and 'false' in text.lower()
+
+
 def test_failed_evaluation_remains_failed_despite_done_claim(tmp_path,export_api):
     convert,EA=export_api;src=tmp_path/'source';src.mkdir()
     put(src,'result.json',{'success':False,'stop_reason':'RGB_goal_confirmed','protocol_complete':True,
@@ -190,7 +209,8 @@ def test_dispatch_counts_local_responses_commands_and_latency(tmp_path,export_ap
     convert,EA=export_api;src=tmp_path/'source';src.mkdir()
     put(src,'result.json',{'physical_success':False,'llm_calls':2})
     put(src,'pair-decisions.json',[{'kind':'act_carry',
-        'inputs':{'r1':{'inference_wall_s':.04},'r3':{'inference_wall_s':.06}},
+        'inputs':{'r1':{'inference_wall_s':.04,'wire_sha256':'a'*64},
+                  'r3':{'inference_wall_s':.06,'wire_sha256':'b'*64}},
         'decisions':{'r1':{'done':False},'r3':{'done':True}}}])
     put(src,'issued-commands.json',{'r1':[
         {'stage':'SETUP','issued_servo_targets':{'1':2000}},
@@ -212,13 +232,13 @@ def test_dispatch_counts_stale_act_predictions_without_issuing_them(tmp_path,exp
     put(src,'pair-decisions.json',[
         {'kind':'act_stale_capture','frame_id':1,'observed_at_s':1.},
         {'kind':'act_stale_prediction','index':0,'received_at_s':2.,
-         'inputs':{'r1':{'physical_robot_id':'r1','inference_wall_s':.08},
-                   'r3':{'physical_robot_id':'r3','inference_wall_s':.09}},
+         'inputs':{'r1':{'physical_robot_id':'r1','inference_wall_s':.08,'wire_sha256':'a'*64},
+                   'r3':{'physical_robot_id':'r3','inference_wall_s':.09,'wire_sha256':'b'*64}},
          'decisions':{'r1':{'done':True,'action':{'forward':.1}},
                       'r3':{'done':False,'action':{'forward':.1}}}},
         {'kind':'act_carry','index':0,'sim_time_s':2.2,
-         'inputs':{'r1':{'physical_robot_id':'r1','inference_wall_s':.04},
-                   'r3':{'physical_robot_id':'r3','inference_wall_s':.05}},
+         'inputs':{'r1':{'physical_robot_id':'r1','inference_wall_s':.04,'wire_sha256':'c'*64},
+                   'r3':{'physical_robot_id':'r3','inference_wall_s':.05,'wire_sha256':'d'*64}},
          'decisions':{'r1':{'done':False,'action':{'forward':.02}},
                       'r3':{'done':False,'action':{'forward':.02}}}}])
     manifest=convert(src,tmp_path/'export',max_images=0)
@@ -259,6 +279,125 @@ def test_dispatch_counts_partial_inference_error_as_attempt(tmp_path,export_api)
     assert EA(str(tmp_path/'export-incomplete')).Reload().Scalars('result/model_calls')[0].value==1
 
 
+def test_dispatch_owner_abort_keeps_unconfirmed_slots_out_of_model_calls(tmp_path,export_api):
+    convert,EA=export_api;src=tmp_path/'source';src.mkdir()
+    put(src,'result.json',{'physical_success':False,'llm_calls':0,'model_calls':2})
+    put(src,'pair-decisions.json',[{'kind':'act_inference_error','index':0,
+        'discard_reason':'owner_aborted','worker_completion':'timeout',
+        'owner_error':'RuntimeError: box lost','unconfirmed_slots':['r3'],
+        'inputs':{'r1':{'physical_robot_id':'r1','wire_sha256':'a'*64,
+                        'response_received':True,'inference_wall_s':.04}},
+        'decisions':{'r1':{'done':False}}}])
+    manifest=convert(src,tmp_path/'export',max_images=0)
+    ea=EA(str(tmp_path/'export')).Reload()
+    assert ea.Scalars('result/model_calls')[0].value==1
+    assert ea.Scalars('execution/act_unconfirmed_slots')[0].value==1
+    assert manifest['metadata']['reported_model_calls']==2
+    assert manifest['metadata']['unconfirmed_act_slots']==1
+    assert manifest['metadata']['act_request_verification_complete'] is False
+    assert ea.Tags()['tensors'].count('inference_errors/unconfirmed_slots')==1
+
+
+def coverage_fixture(tmp_path):
+    src=tmp_path/'source';src.mkdir()
+    put(src,'result.json',{'physical_success':False,'llm_calls':0})
+    decisions=put(src,'pair-decisions.json',[{'kind':'act_carry',
+        'inputs':{'r1':{'wire_sha256':'a'*64},'r3':{'wire_sha256':'b'*64}},
+        'decisions':{'r1':{'done':False},'r3':{'done':False}}}])
+    tag='act-carry-1-attempt-0'
+    files={}
+    for slot in ('r1','r3','top'):
+        path=f'rgb/{tag}-{slot}.jpg';data=f'{slot}-orphan'.encode()
+        target=src/path;target.parent.mkdir(exist_ok=True);target.write_bytes(data)
+        files[slot]={'path':path,'sha256':hashlib.sha256(data).hexdigest()}
+    audit={'schema':'ugrp.act_request_coverage_audit.v1','source_raw':str(src.resolve()),
+           'pair_decisions_sha256':hashlib.sha256(decisions.read_bytes()).hexdigest(),
+           'recorded_wire_request_rows':2,'possible_unlogged_slots':{'min':0,'max':2},
+           'worker_receipt_independently_verified':False,
+           'orphan_capture_groups':[{'tag':tag,'files':files}]}
+    sidecar=put(tmp_path,'coverage.json',audit)
+    return src,sidecar
+
+
+def test_external_coverage_marks_unknown_without_inventing_model_calls(tmp_path,export_api):
+    convert,EA=export_api
+    src,sidecar=coverage_fixture(tmp_path)
+    original=(src/'pair-decisions.json').read_bytes()
+    manifest=convert(src,tmp_path/'export',max_images=0,coverage_audit=sidecar)
+    ea=EA(str(tmp_path/'export')).Reload()
+    meta=manifest['metadata']
+    assert meta['attempted_act_requests']==2
+    assert meta['act_request_verification_complete'] is False
+    assert (meta['act_possible_unlogged_slots_min'],meta['act_possible_unlogged_slots_max'])==(0,2)
+    assert (meta['act_possible_request_slot_total_min'],meta['act_possible_request_slot_total_max'])==(2,4)
+    assert ea.Scalars('result/model_calls')[0].value==2
+    assert ea.Scalars('execution/act_possible_unlogged_slots_max')[0].value==2
+    assert 'inference_errors/coverage_audit' in ea.Tags()['tensors']
+    assert manifest['external_coverage_audit']['sha256']==hashlib.sha256(sidecar.read_bytes()).hexdigest()
+    assert (src/'pair-decisions.json').read_bytes()==original
+    uncorrected=convert(src,tmp_path/'uncorrected',max_images=0)
+    assert uncorrected['metadata']['act_request_verification_complete'] is True
+
+
+@pytest.mark.parametrize('damage', ['missing','source','decisions','count','bounds','image','referenced','receipt'])
+def test_external_coverage_mismatch_fails_before_export(tmp_path,export_api,damage):
+    convert,_=export_api
+    src,sidecar=coverage_fixture(tmp_path)
+    audit=json.loads(sidecar.read_text())
+    if damage=='missing':sidecar.unlink()
+    elif damage=='source':audit['source_raw']=str(tmp_path/'other')
+    elif damage=='decisions':audit['pair_decisions_sha256']='0'*64
+    elif damage=='count':audit['recorded_wire_request_rows']=3
+    elif damage=='bounds':audit['possible_unlogged_slots']['max']=1
+    elif damage=='image':audit['orphan_capture_groups'][0]['files']['top']['sha256']='0'*64
+    elif damage=='receipt':audit['worker_receipt_independently_verified']=True
+    elif damage=='referenced':
+        rows=json.loads((src/'pair-decisions.json').read_text())
+        rows[0]['inputs']['r1']['images']={'own':audit['orphan_capture_groups'][0]['files']['r1']}
+        put(src,'pair-decisions.json',rows)
+        audit['pair_decisions_sha256']=hashlib.sha256((src/'pair-decisions.json').read_bytes()).hexdigest()
+    if damage!='missing':sidecar.write_text(json.dumps(audit))
+    with pytest.raises(ValueError,match='Coverage audit'):
+        convert(src,tmp_path/'export',max_images=0,coverage_audit=sidecar)
+    assert not (tmp_path/'export').exists()
+
+
+def test_coverage_cli_maps_one_audit_among_multiple_sources(tmp_path,export_api,monkeypatch):
+    _,EA=export_api
+    from scripts.tensorboard_tools.export import main
+    src,sidecar=coverage_fixture(tmp_path)
+    other=tmp_path/'other';other.mkdir()
+    put(other,'result.json',{'physical_success':False})
+    out=tmp_path/'collection'
+    monkeypatch.setattr('sys.argv',['export','--source',str(src),'--source',str(other),
+                                   '--coverage-audit',str(sidecar),'--output',str(out),
+                                   '--max-images','0'])
+    assert main()==0
+    collection=json.loads((out/'collection.json').read_text())
+    assert len(collection['exported'])==2 and collection['failed']==[]
+    manifests={json.loads((out/item['name']/'manifest.json').read_text())['source']:
+               json.loads((out/item['name']/'manifest.json').read_text())
+               for item in collection['exported']}
+    assert manifests[str(src)]['metadata']['act_request_verification_complete'] is False
+    assert 'external_coverage_audit' not in manifests[str(other)]
+    assert EA(str(out/collection['exported'][0]['name'])).Reload().Scalars('result/model_calls')[0].value==2
+    monkeypatch.setattr('sys.argv',['export','--source',str(other),
+                                   '--coverage-audit',str(sidecar),'--output',str(tmp_path/'rejected')])
+    with pytest.raises(SystemExit):main()
+
+
+def test_coverage_is_not_silently_ignored_by_communication_early_return(tmp_path,export_api):
+    convert,_=export_api
+    from scripts.tensorboard_tools.rgb_communication import RUN_SCHEMA
+    src,sidecar=coverage_fixture(tmp_path)
+    result=json.loads((src/'result.json').read_text())
+    result.update(schema_version=RUN_SCHEMA,evidence_kind='live_llm')
+    put(src,'result.json',result)
+    with pytest.raises(ValueError,match='Coverage audit applies only to ACT dispatch'):
+        convert(src,tmp_path/'export',max_images=0,coverage_audit=sidecar)
+    assert json.loads((tmp_path/'export'/'manifest.json').read_text())['complete'] is False
+
+
 def test_configured_act_does_not_invent_responses_or_latency(tmp_path,export_api):
     convert,EA=export_api;src=tmp_path/'source';src.mkdir()
     put(src,'result.json',{'physical_success':False,'llm_calls':0,
@@ -273,10 +412,14 @@ def test_configured_act_does_not_invent_responses_or_latency(tmp_path,export_api
 def test_explicit_dispatch_total_is_not_counted_twice(tmp_path,export_api):
     convert,EA=export_api;src=tmp_path/'source';src.mkdir()
     put(src,'result.json',{'model_calls':3,'commands':7,'llm_calls':1})
-    put(src,'pair-decisions.json',[{'kind':'act_carry','decisions':{'r1':{'done':False}}}])
-    convert(src,tmp_path/'export',max_images=0)
+    put(src,'pair-decisions.json',[{'kind':'act_carry',
+        'inputs':{'r1':{'wire_sha256':'a'*64},'r3':{'wire_sha256':'b'*64}},
+        'decisions':{'r1':{'done':False},'r3':{'done':False}}}])
+    manifest=convert(src,tmp_path/'export',max_images=0)
     ea=EA(str(tmp_path/'export')).Reload()
     assert ea.Scalars('result/model_calls')[0].value==3
+    assert manifest['metadata']['reported_model_calls']==3
+    assert manifest['metadata']['act_request_verification_complete'] is True
     assert ea.Scalars('result/commands')[0].value==7
 
 

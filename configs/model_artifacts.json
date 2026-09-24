@@ -1,0 +1,267 @@
+{
+  "schema": "ugrp.model-artifacts.v1",
+  "repository": "cmkang131/UGRP-Multi-Robot-Collaboration-Project",
+  "artifacts": [
+    {
+      "id": "act-pair-carry-seed18-20260918",
+      "status": "available",
+      "description": "Historical pair-carry ACT training seed 20260918; experimental, not a default controller",
+      "source_sha": "92b984e9d518fbdd878d0e1260b527cb5aad6a1a",
+      "training_source_sha": "e987d4a7f5bea5d08fd4100f23be6fce9b1251f0",
+      "release": {
+        "tag": "models-20260923-v1",
+        "asset": "act-pair-carry-seed18-20260918.zip",
+        "url": "https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/releases/download/models-20260923-v1/act-pair-carry-seed18-20260918.zip"
+      },
+      "archive": {
+        "sha256": "f930e43b9e9617580902e455589dff43d698092d9e0137bd98d94c7e0a9d4a50",
+        "bytes": 44604665
+      },
+      "files": [
+        {
+          "path": "act/adapter.json",
+          "bytes": 334,
+          "sha256": "6da54d883574929010bf4a79d2419cd6cdf1d719e5e8cf060be6e4212b3f6b2b"
+        },
+        {
+          "path": "act/config.json",
+          "bytes": 1395,
+          "sha256": "2a923ed3a16197841fd599301ed157bc2e3518e35a8fc99563f45d73f8089665"
+        },
+        {
+          "path": "act/model.safetensors",
+          "bytes": 45777416,
+          "sha256": "ddf79d3577b9d66aa53e16fbe387bbe1039a5ddb0b4cc3caeb7292dc81dcd90e"
+        },
+        {
+          "path": "plan.json",
+          "bytes": 609,
+          "sha256": "2153ca63e64457d8495a8c215dad40e154cde9ffc45a710ac4f396aa90357548"
+        },
+        {
+          "path": "provenance.json",
+          "bytes": 781,
+          "sha256": "473eb02cb84be86bbcc49d9c17c45d44edadf23e19dcbfcc7b2b799f4cb27e85"
+        },
+        {
+          "path": "reference-top.jpg",
+          "bytes": 71401,
+          "sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+        },
+        {
+          "path": "requirements-reference-act.txt",
+          "bytes": 330,
+          "sha256": "fa1d4f36fe5cc2eb43c784a41e5b9e754b6a9ca2f53145242e4803a7f904793d"
+        },
+        {
+          "path": "rgb/grasp/evaluation-fixture.json",
+          "bytes": 467,
+          "sha256": "c2183ad250ea16606d652f91d117e4abb085f9c88b2ab0115de0ba93e1bc5f3f"
+        },
+        {
+          "path": "rgb/grasp/r1-model.json",
+          "bytes": 1122932,
+          "sha256": "c6995cac23ccf2fd168fb222c2332b518507d7ea66921aaf0c231bc460598e45"
+        },
+        {
+          "path": "rgb/grasp/r3-model.json",
+          "bytes": 1121267,
+          "sha256": "8349e10ed659abf4bc62f6fcc62bf22d22ca95fe05d954b42b3883b0d070861d"
+        },
+        {
+          "path": "rgb/grasp/student-skill.json",
+          "bytes": 9497,
+          "sha256": "b244293aa1a5dd2efda1a0d6e8b15582d8a12a3e4d151d46cf679321535e0970"
+        },
+        {
+          "path": "rgb/varied/model-r1-forward.json",
+          "bytes": 1515692,
+          "sha256": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45"
+        },
+        {
+          "path": "rgb/varied/model-r1-lateral.json",
+          "bytes": 1518422,
+          "sha256": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869"
+        },
+        {
+          "path": "rgb/varied/model-r1-yaw.json",
+          "bytes": 79887,
+          "sha256": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374"
+        },
+        {
+          "path": "rgb/varied/model-r3-forward.json",
+          "bytes": 1543369,
+          "sha256": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+        },
+        {
+          "path": "rgb/varied/model-r3-lateral.json",
+          "bytes": 1540729,
+          "sha256": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f"
+        },
+        {
+          "path": "rgb/varied/model-r3-yaw.json",
+          "bytes": 74733,
+          "sha256": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8"
+        },
+        {
+          "path": "rgb/varied/varied-start-skill.json",
+          "bytes": 1051,
+          "sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a"
+        }
+      ],
+      "entrypoints": {
+        "act": "act",
+        "grasp": "rgb/grasp",
+        "stages": "rgb/varied",
+        "plan": "plan.json",
+        "reference_top": "reference-top.jpg"
+      },
+      "limitations": [
+        "Historical experimental checkpoint; not the 2026-09-22 expanded ACT model.",
+        "Model loading and inference are distinct from successful physical transport.",
+        "Training images and full raw experiment evidence are not included."
+      ]
+    },
+    {
+      "id": "act-pair-carry-seed19-20260919",
+      "status": "available",
+      "description": "Historical pair-carry ACT training seed 20260919; experimental, not a default controller",
+      "source_sha": "92b984e9d518fbdd878d0e1260b527cb5aad6a1a",
+      "training_source_sha": "e987d4a7f5bea5d08fd4100f23be6fce9b1251f0",
+      "release": {
+        "tag": "models-20260923-v1",
+        "asset": "act-pair-carry-seed19-20260919.zip",
+        "url": "https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/releases/download/models-20260923-v1/act-pair-carry-seed19-20260919.zip"
+      },
+      "archive": {
+        "sha256": "1744191db018b882f7a9f88b035b713596dffca969efdd4a38cb63227ca747a7",
+        "bytes": 44604587
+      },
+      "files": [
+        {
+          "path": "act/adapter.json",
+          "bytes": 334,
+          "sha256": "6da54d883574929010bf4a79d2419cd6cdf1d719e5e8cf060be6e4212b3f6b2b"
+        },
+        {
+          "path": "act/config.json",
+          "bytes": 1395,
+          "sha256": "2a923ed3a16197841fd599301ed157bc2e3518e35a8fc99563f45d73f8089665"
+        },
+        {
+          "path": "act/model.safetensors",
+          "bytes": 45777416,
+          "sha256": "0023b1cb3c016c6ea20c7c42f402adf5b39b5df4a99089439833c00323364199"
+        },
+        {
+          "path": "plan.json",
+          "bytes": 609,
+          "sha256": "2153ca63e64457d8495a8c215dad40e154cde9ffc45a710ac4f396aa90357548"
+        },
+        {
+          "path": "provenance.json",
+          "bytes": 781,
+          "sha256": "256392146ff16f388cab93cfa746a4f8d07a014d45a8c9199af55632c1b0cf54"
+        },
+        {
+          "path": "reference-top.jpg",
+          "bytes": 71401,
+          "sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+        },
+        {
+          "path": "requirements-reference-act.txt",
+          "bytes": 330,
+          "sha256": "fa1d4f36fe5cc2eb43c784a41e5b9e754b6a9ca2f53145242e4803a7f904793d"
+        },
+        {
+          "path": "rgb/grasp/evaluation-fixture.json",
+          "bytes": 467,
+          "sha256": "c2183ad250ea16606d652f91d117e4abb085f9c88b2ab0115de0ba93e1bc5f3f"
+        },
+        {
+          "path": "rgb/grasp/r1-model.json",
+          "bytes": 1122932,
+          "sha256": "c6995cac23ccf2fd168fb222c2332b518507d7ea66921aaf0c231bc460598e45"
+        },
+        {
+          "path": "rgb/grasp/r3-model.json",
+          "bytes": 1121267,
+          "sha256": "8349e10ed659abf4bc62f6fcc62bf22d22ca95fe05d954b42b3883b0d070861d"
+        },
+        {
+          "path": "rgb/grasp/student-skill.json",
+          "bytes": 9497,
+          "sha256": "b244293aa1a5dd2efda1a0d6e8b15582d8a12a3e4d151d46cf679321535e0970"
+        },
+        {
+          "path": "rgb/varied/model-r1-forward.json",
+          "bytes": 1515692,
+          "sha256": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45"
+        },
+        {
+          "path": "rgb/varied/model-r1-lateral.json",
+          "bytes": 1518422,
+          "sha256": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869"
+        },
+        {
+          "path": "rgb/varied/model-r1-yaw.json",
+          "bytes": 79887,
+          "sha256": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374"
+        },
+        {
+          "path": "rgb/varied/model-r3-forward.json",
+          "bytes": 1543369,
+          "sha256": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+        },
+        {
+          "path": "rgb/varied/model-r3-lateral.json",
+          "bytes": 1540729,
+          "sha256": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f"
+        },
+        {
+          "path": "rgb/varied/model-r3-yaw.json",
+          "bytes": 74733,
+          "sha256": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8"
+        },
+        {
+          "path": "rgb/varied/varied-start-skill.json",
+          "bytes": 1051,
+          "sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a"
+        }
+      ],
+      "entrypoints": {
+        "act": "act",
+        "grasp": "rgb/grasp",
+        "stages": "rgb/varied",
+        "plan": "plan.json",
+        "reference_top": "reference-top.jpg"
+      },
+      "limitations": [
+        "Historical experimental checkpoint; not the 2026-09-22 expanded ACT model.",
+        "Model loading and inference are distinct from successful physical transport.",
+        "Training images and full raw experiment evidence are not included."
+      ]
+    },
+    {
+      "id": "act-expanded-20260922",
+      "status": "unavailable",
+      "description": "Expanded 128px/history4 ACT used in the 2026-09-22 qualification; original files not located",
+      "source_sha": "f70bd9b20e0972ce71f24d724211f4cd27f7786e",
+      "reason": "Original checkpoint/config/adapter not located in the checked local and archive paths; do not substitute an older model.",
+      "expected_files": [
+        {
+          "path": "act/model.safetensors",
+          "sha256": "c98a640167110f7ee0b5fc2b1d5edde4a4065464c6c47519b366cc3ff8ee4e96"
+        },
+        {
+          "path": "act/config.json",
+          "sha256": "a4391e9cd4c9d5b8dc266f9706bad0e276cd7540df00aeb9b1e3195c389e7110"
+        },
+        {
+          "path": "act/adapter.json",
+          "sha256": "cfc00170f7056da656087a5ae38718ded59d648c0817aadbaf29201eb986e50f"
+        }
+      ]
+    }
+  ]
+}

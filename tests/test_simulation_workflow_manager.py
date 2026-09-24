@@ -183,9 +183,9 @@ raise SystemExit(3 if a.fail else 0)
         self.assertEqual(row["status"], "launcher_failed")
         self.assertEqual(row["exit_code"], 2)
 
-    def test_catalog_has_twenty_one_selectable_workflows_and_distinct_adapters(self):
+    def test_catalog_has_twenty_two_selectable_workflows_and_distinct_adapters(self):
         data, digest = wm.catalog(PROJECT)
-        self.assertEqual(len(data["workflows"]), 21)
+        self.assertEqual(len(data["workflows"]), 22)
         self.assertEqual(len(digest), 64)
         self.assertEqual(next(r for r in data["workflows"] if r["id"] == "dispatch-skills")["runner"], "scripts.run_dispatch_e2e")
         self.assertEqual(next(r for r in data["workflows"] if r["id"] == "communication")["output_kind"]["prepare"], "file")
@@ -212,6 +212,12 @@ raise SystemExit(3 if a.fail else 0)
             "act-training": ["--dataset", str(model)],
             "act-input-training": ["--dataset", str(source), "--size", "128", "--history", "1",
                                    "--steps", "100", "--device", "cpu", "--seed", "18"],
+            "act-input-finalization": ["--failed-run", str(model), "--dataset", str(source),
+                                       "--source-freeze", str(source),
+                                       "--expected-manifest-sha256", "0"*64,
+                                       "--expected-report-sha256", "1"*64,
+                                       "--expected-checkpoint-sha256", "2"*64,
+                                       "--expected-source-freeze-sha256", "3"*64],
             "jev": ["--execute", "--mjpython", str(source)], "stage-sync": [],
             "physical": [str(model)], "worker": ["--url", "ws://localhost/fixture"],
             "tensorboard": ["--source", str(model)],
@@ -227,8 +233,11 @@ raise SystemExit(3 if a.fail else 0)
         self.assertEqual(plans["dispatch-skills"]["command"][3:5], ["--executor", "skills"])
         self.assertEqual(plans["act-map-suite"]["command"][-2:], ["--output", "<record>/artifacts"])
         self.assertEqual(plans["act-input-training"]["command"][-2:], ["--out", "<record>/artifacts"])
+        self.assertEqual(plans["act-input-finalization"]["command"][-2:], ["--out", "<record>/artifacts"])
         self.assertEqual(plans["act-map-suite"]["inputs"][0]["path"], str(PROJECT / "maps/act_generalization/suite_v1.json"))
         self.assertEqual(plans["act-input-training"]["inputs"][0]["path"], str(source.resolve()))
+        self.assertEqual({item['path'] for item in plans["act-input-finalization"]["inputs"]},
+                         {str(source.resolve()), str(model.resolve())})
         self.assertTrue(all(not plan["execution_started"] for plan in plans.values()))
 
     def test_act_workflows_require_explicit_suite_and_training_shape(self):
@@ -247,6 +256,29 @@ raise SystemExit(3 if a.fail else 0)
             del missing[missing.index(flag):missing.index(flag) + 2]
             with self.assertRaisesRegex(ValueError, f"act-input-training requires {flag}"):
                 wm.plan(PROJECT, "act-input-training", missing)
+
+    def test_act_finalization_requires_original_assets_and_pinned_hashes(self):
+        with tempfile.TemporaryDirectory() as root:
+            failed = Path(root) / "failed"
+            failed.mkdir()
+            dataset = Path(root) / "data.json"
+            dataset.write_text('{}')
+            freeze = Path(root) / "freeze.json"
+            freeze.write_text('{}')
+            args = ["--failed-run", str(failed), "--dataset", str(dataset),
+                    "--source-freeze", str(freeze),
+                    "--expected-manifest-sha256", "0"*64,
+                    "--expected-report-sha256", "1"*64,
+                    "--expected-checkpoint-sha256", "2"*64,
+                    "--expected-source-freeze-sha256", "3"*64]
+            for flag in args[::2]:
+                missing = args[:]
+                del missing[missing.index(flag):missing.index(flag) + 2]
+                with self.assertRaisesRegex(ValueError, f"act-input-finalization requires {flag}"):
+                    wm.plan(PROJECT, "act-input-finalization", missing)
+            planned = wm.plan(PROJECT, "act-input-finalization", args)
+            self.assertEqual({entry['path'] for entry in planned['inputs']},
+                             {str(failed.resolve()), str(dataset.resolve()), str(freeze.resolve())})
 
     def test_physical_rejects_copy_into_own_trace_and_worker_token_argv(self):
         row = next(r for r in wm.catalog(PROJECT)[0]["workflows"] if r["id"] == "worker")
