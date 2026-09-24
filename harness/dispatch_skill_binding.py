@@ -506,10 +506,10 @@ class ImageRoute:
         if slot_evidence is not None:evidence['destination_region']=slot_evidence
         if ready and self.confirmations>=2 and not done:
             self.index+=1;self.confirmations=0
-        # More authority only on the known independent open-map box route.
+        # More authority only on known independent open-map cargo routes.
         # The same proportional gain decelerates near every waypoint; final
-        # silhouette containment keeps its original cap and stop criteria.
-        cruise=(self.obj=='box' and self.route_overlap
+        # beam alignment and box containment keep their original caps.
+        cruise=(self.obj in ('beam','box') and self.route_overlap
                 and self.map.get('map_id')=='dispatch_open'
                 and not self.map.get('terrain')
                 and all(o.get('id') in {'wall_north','wall_south','wall_west','wall_east'}

@@ -115,5 +115,17 @@
     "max_wall_s_each": 500,
     "aggregate_native_wall_s": 1800,
     "repeat_condition": "physical+protocol success, wall below196.1036, no contact/weld/authority errors, same frozen source/assets."
+  },
+  "review_after_v25": {
+    "outcome": "Two physical/protocol successes194.183056/206.512401s; mean200.347729 slower than baseline198.516192. Invariant audits pass. No overall speed improvement established.",
+    "evidence": "v25 repeat box has51 carry waiting_for_resource rows127.67575..149.00625SIM; beam retains .08/.08 cap and controls exclusive unload apron. Fine bridge reduces first-run fine to50.79SIM but faster box queues behind beam.",
+    "decision": "Extend existing open independent pre-final cruise caps to beam .12/.10. Preserve final .08, proportional near-waypoint braking, pair synchronization, permissions and apron exclusion. Do not include viewer resolution changes in this cohort.",
+    "budget_review": "Eight completed runs consumed1052.2311277 wall seconds. At most2 v26 trials each350=>1752.2311277 below original1800 aggregate. Review follows queue evidence, not retry of v25.",
+    "max_total_trials": 10,
+    "v26_max_trials": 2,
+    "max_wall_s_each": 350,
+    "aggregate_native_wall_s": 1800,
+    "repeat_condition": "First physical+protocol success, wall below196.1036, all contact/weld/authority audits pass; identical clean committed source/assets.",
+    "limit": "One open seed11 saved plan; no LLM calls or training; no further automatic candidate expansion."
   }
 }

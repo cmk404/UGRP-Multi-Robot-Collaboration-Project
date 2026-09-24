@@ -329,7 +329,7 @@ def audit_pair_fine_bridges(pair_decisions, commands, result):
         until = receipt.get("valid_until_s")
         duration = receipt.get("duration_s")
         extension = receipt.get("total_extension_s")
-        axis = receipt.get("fine_axis")
+        axis = receipt.get("axis")
         phase_index = receipt.get("phase_index")
         phase_tag = receipt.get("phase_tag")
         plan_hash = receipt.get("plan_hash")
