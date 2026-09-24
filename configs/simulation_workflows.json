@@ -30,7 +30,7 @@
       "local_cli": "bash scripts/open_simulation.command dispatch --task 'beam과 box를 같은 dock으로 옮겨'",
       "docs": "docs/research_dispatch_arena.md",
       "requires": "model endpoint, full grasp model and stage policies; costs depend on planner",
-      "version": "1.55.0",
+      "version": "1.57.0",
       "runner": "scripts.sim_cli",
       "output_flag": "--output",
       "side_effect": "model_calls",
@@ -44,7 +44,7 @@
       "entry": "scripts/run_dispatch_skills.py",
       "docs": "docs/research_dispatch_arena.md",
       "requires": "saved agreement and complete grasp/stage policy artifacts",
-      "version": "1.55.0",
+      "version": "1.57.0",
       "runner": "scripts.run_dispatch_e2e",
       "output_flag": "--output",
       "side_effect": "local_simulation",
@@ -107,6 +107,20 @@
       "required_inputs": [
         "--model"
       ],
+      "output_kind": "directory"
+    },
+    {
+      "id": "zone-dispatch",
+      "purpose": "구역별 수량 목표 협업 벤치마크(교사 실행기)",
+      "entry": "scripts/run_zone_dispatch.py",
+      "docs": "docs/zone_dispatch.md",
+      "requires": "model endpoint in llm mode; privileged TEACHER motion executor, never an RGB-skill success",
+      "version": "1.0.0",
+      "runner": "scripts.run_zone_dispatch",
+      "output_flag": "--output",
+      "side_effect": "model_calls",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [],
       "output_kind": "directory"
     },
     {

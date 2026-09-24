@@ -260,7 +260,7 @@ def test_park_verdict_must_match_committed_plan(monkeypatch):
 
 
 @pytest.mark.parametrize('extra', [['--realtime-control'], ['--route-overlap'], ['--executor', 'raw'],
-                                   ['--coordination', 'dynamic']])
+                                   ['--coordination', 'dynamic'], ['--plan-guidance', 'objective']])
 def test_cli_limits_planned_navigation_to_the_serial_synchronous_skills_executor(tmp_path, extra):
     from scripts.run_dispatch_e2e import main
     with pytest.raises(SystemExit):

@@ -107,7 +107,7 @@ The box_job object is then exactly:
 
 def build_dispatch_request(rid, *, task, request_id, own_rgb, top_rgb, agreement,
                            inbox=(), own_history=(), execution_pilot=False, identity_evidence=None,
-                           navigation='authored'):
+                           guidance=None, navigation='authored'):
     if rid not in ROBOTS:
         raise ValueError('unknown robot')
     p = agreement['proposal']
@@ -184,6 +184,9 @@ North is the upper passage around the central island; south is the lower one.'''
                    'Do not replace your own probe evidence with a contradictory peer identity claim. '
                    'Share your observed image location with peers. Use their claims to assign roles.')
         extra = copy.deepcopy(identity_evidence['images'])
+    if guidance is not None:
+        prompt = guidance.system_prompt(prompt)
+        guidance.context(rid, agreement, context)
     return {'request_id':request_id,'messages':[{'role':'system','content':prompt},
         {'role':'user','content':json.dumps(context,sort_keys=True)}], 'images':images(own_rgb,top_rgb)+extra}
 

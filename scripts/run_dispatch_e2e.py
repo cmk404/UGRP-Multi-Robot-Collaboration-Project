@@ -309,6 +309,9 @@ def main(argv=None):
                    help='experimental solo carry: finite current-RGB carrier revalidation across TOP cargo occlusion; requires rolling realtime open-map skill')
     p.add_argument('--fine-gain-schedule',action='store_true',
                    help='skills only, synchronous only: experimental far-field command schedule for paired fine RGB alignment; default off')
+    p.add_argument('--plan-guidance',choices=('legacy','objective','objective_preview'),default='legacy',
+                   help='skills planning prompt condition: legacy text, stated safe-then-fast objective, '
+                        'or objective plus a rough schedule preview of each frozen proposal')
     p.add_argument('--coordination',choices=('plan_first','dynamic'),default='plan_first',
                    help='plan_first: negotiate one full plan before motion; dynamic: independent self-claims, '
                         'talk only on conflict, and discuss supported approach failures (experimental)')
@@ -378,8 +381,11 @@ def main(argv=None):
     if args.carry_max_steps is not None and args.carry_max_steps<=0:p.error('positive carry-max-steps required')
     if args.fine_gain_schedule and args.executor!='skills':p.error('--fine-gain-schedule uses the skills executor')
     if args.fine_gain_schedule and args.realtime_control:p.error('--fine-gain-schedule is calibrated for synchronous execution only; omit --realtime-control')
+    if args.plan_guidance!='legacy' and args.executor!='skills':p.error('--plan-guidance uses the skills executor')
+    if args.plan_guidance!='legacy' and args.coordination!='plan_first':
+        p.error('--plan-guidance is validated for plan_first negotiation only; dynamic self-claims use their own prompt')
     if args.navigation=='planned' and (args.executor!='skills' or args.realtime_control or args.route_overlap
-                                       or args.coordination!='plan_first'):
+                                       or args.coordination!='plan_first' or args.plan_guidance!='legacy'):
         p.error('--navigation planned uses the synchronous plan-first skills executor without --route-overlap')
     if args.live_replan and (not args.plan_replay or args.executor!='skills'):
         p.error('--live-replan requires a skills --plan-replay diagnostic')

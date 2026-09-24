@@ -1,0 +1,304 @@
+{
+  "scope": "Independent read-only result/plan/hash aggregation; not a new physical run, full pixel/command/referee audit, or communication efficacy finding",
+  "recorded_utc": "2026-09-24T17:18:00.064283+00:00",
+  "source_report": "/Users/changmin/projects/ugrp-worktrees/plan-objective-preview/experiments/2026-09-25-plan-guidance/results.json",
+  "source_report_sha256": "8bf7d73f1288e4c107bb75f0aa84dd44c5669183b53cf706988f9dbe3058c8fa",
+  "rows": [
+    {
+      "run": "legacy-1",
+      "source_sha": "f76913d6c9fff77a9b61ff1d6148ff71af8befc6",
+      "result_sha256": "5ad1908de39e6d74c7650e6bb5f276b1546602ef7afeb3ef1b24ecd75cd5b1fe",
+      "physical_success_reported": true,
+      "protocol_complete": true,
+      "condition": "legacy",
+      "dependency": "beam_first",
+      "control_end_sim_s": 181.45999999743702,
+      "motion_sim_to_wall": 0.4509966168634621,
+      "llm_calls": 15,
+      "prompt_tokens": 126975
+    },
+    {
+      "run": "objective-1",
+      "source_sha": "6e9b4055908db071540f66d0d4a297d1bb7875f2",
+      "result_sha256": "8b7626142371892ba9452ccf746142ab86f99dc8a1645227f451ee8e9a67dae2",
+      "physical_success_reported": true,
+      "protocol_complete": true,
+      "condition": "objective",
+      "dependency": "none",
+      "control_end_sim_s": 141.25999999838763,
+      "motion_sim_to_wall": 0.5167567934277361,
+      "llm_calls": 18,
+      "prompt_tokens": 150331
+    },
+    {
+      "run": "objective_preview-1",
+      "source_sha": "6e9b4055908db071540f66d0d4a297d1bb7875f2",
+      "result_sha256": "6079b6b00139c930719cc984292f8d316ade5bb70365d9627a99d75067ba5d3b",
+      "physical_success_reported": true,
+      "protocol_complete": true,
+      "condition": "objective_preview",
+      "dependency": "none",
+      "control_end_sim_s": 141.25999999838763,
+      "motion_sim_to_wall": 0.3742028136342421,
+      "llm_calls": 15,
+      "prompt_tokens": 147061
+    },
+    {
+      "run": "objective-2",
+      "source_sha": "6e9b4055908db071540f66d0d4a297d1bb7875f2",
+      "result_sha256": "4e6a2a2b3be8caccb7abc063273342d9f9d4a83a1d73eabec8a6b22293ef29a5",
+      "physical_success_reported": true,
+      "protocol_complete": true,
+      "condition": "objective",
+      "dependency": "none",
+      "control_end_sim_s": 141.25999999838763,
+      "motion_sim_to_wall": 0.3465134510484418,
+      "llm_calls": 15,
+      "prompt_tokens": 109506
+    },
+    {
+      "run": "objective_preview-2",
+      "source_sha": "6e9b4055908db071540f66d0d4a297d1bb7875f2",
+      "result_sha256": "80e070b308aee1e12b7bbe6570230cd4674b45c46699dda3aa6f06ba231dc92c",
+      "physical_success_reported": true,
+      "protocol_complete": true,
+      "condition": "objective_preview",
+      "dependency": "none",
+      "control_end_sim_s": 141.25999999838763,
+      "motion_sim_to_wall": 0.4345536543915956,
+      "llm_calls": 15,
+      "prompt_tokens": 146772
+    },
+    {
+      "run": "legacy-2",
+      "source_sha": "6e9b4055908db071540f66d0d4a297d1bb7875f2",
+      "result_sha256": "0d405447f8486783e3459b0d1b12f9eeb52d9a3395da7594b99457fd9f67963d",
+      "physical_success_reported": true,
+      "protocol_complete": true,
+      "condition": "legacy",
+      "dependency": "none",
+      "control_end_sim_s": 141.25999999838763,
+      "motion_sim_to_wall": 0.4571300322310863,
+      "llm_calls": 12,
+      "prompt_tokens": 116531
+    },
+    {
+      "run": "objective_preview-3",
+      "source_sha": "6e9b4055908db071540f66d0d4a297d1bb7875f2",
+      "result_sha256": "c9882fcd9b8d8416bdb628f581a150aab12519e732b78b03bd93ea2badad603d",
+      "physical_success_reported": true,
+      "protocol_complete": true,
+      "condition": "objective_preview",
+      "dependency": "none",
+      "control_end_sim_s": 141.25999999838763,
+      "motion_sim_to_wall": 0.5226891316800326,
+      "llm_calls": 12,
+      "prompt_tokens": 124669
+    },
+    {
+      "run": "legacy-3",
+      "source_sha": "6e9b4055908db071540f66d0d4a297d1bb7875f2",
+      "result_sha256": "c37c578968725f224c75d1e18d39bb0f988c65eb3dbc4c07c8ecb01a6563bc76",
+      "physical_success_reported": true,
+      "protocol_complete": true,
+      "condition": "legacy",
+      "dependency": "beam_first",
+      "control_end_sim_s": 181.45999999743702,
+      "motion_sim_to_wall": 0.5403890585755288,
+      "llm_calls": 12,
+      "prompt_tokens": 116473
+    },
+    {
+      "run": "objective-3",
+      "source_sha": "6e9b4055908db071540f66d0d4a297d1bb7875f2",
+      "result_sha256": "b92652ca206574fb7c3450f5a9298344726b7c7f121b683815cf34bba019791c",
+      "physical_success_reported": true,
+      "protocol_complete": true,
+      "condition": "objective",
+      "dependency": "none",
+      "control_end_sim_s": 141.25999999838763,
+      "motion_sim_to_wall": 0.5362518270756287,
+      "llm_calls": 12,
+      "prompt_tokens": 118841
+    },
+    {
+      "run": "legacy-4",
+      "source_sha": "6e9b4055908db071540f66d0d4a297d1bb7875f2",
+      "result_sha256": "a72f4ecf0f44ae7b604b0a2e17f27916b4faf8f354be4051a374163fdd55252b",
+      "physical_success_reported": true,
+      "protocol_complete": true,
+      "condition": "legacy",
+      "dependency": "none",
+      "control_end_sim_s": 141.25999999838763,
+      "motion_sim_to_wall": 0.5364376760890873,
+      "llm_calls": 9,
+      "prompt_tokens": 86206
+    },
+    {
+      "run": "objective-4",
+      "source_sha": "6e9b4055908db071540f66d0d4a297d1bb7875f2",
+      "result_sha256": "132d45cd395b25eb5b3b5b92431fead529cc30e3cabba5bb5f93a26e5298c591",
+      "physical_success_reported": true,
+      "protocol_complete": true,
+      "condition": "objective",
+      "dependency": "none",
+      "control_end_sim_s": 141.25999999838763,
+      "motion_sim_to_wall": 0.539279783816125,
+      "llm_calls": 12,
+      "prompt_tokens": 119159
+    },
+    {
+      "run": "objective_preview-4",
+      "source_sha": "6e9b4055908db071540f66d0d4a297d1bb7875f2",
+      "result_sha256": "ec8e42ba16cca7fee74f72df3948cbeb3cbc72c0bb9f9dc26b8b71f0bed73558",
+      "physical_success_reported": true,
+      "protocol_complete": true,
+      "condition": "objective_preview",
+      "dependency": "none",
+      "control_end_sim_s": 141.25999999838763,
+      "motion_sim_to_wall": 0.4775070618960048,
+      "llm_calls": 12,
+      "prompt_tokens": 124783
+    },
+    {
+      "run": "objective-5",
+      "source_sha": "6e9b4055908db071540f66d0d4a297d1bb7875f2",
+      "result_sha256": "8b1191f91246ef4537ac29448043dd7cc696b9bf7b11e8adaa09ddc5670347d9",
+      "physical_success_reported": true,
+      "protocol_complete": true,
+      "condition": "objective",
+      "dependency": "none",
+      "control_end_sim_s": 141.25999999838763,
+      "motion_sim_to_wall": 0.5165243605629464,
+      "llm_calls": 12,
+      "prompt_tokens": 119145
+    },
+    {
+      "run": "objective_preview-5",
+      "source_sha": "6e9b4055908db071540f66d0d4a297d1bb7875f2",
+      "result_sha256": "1ca610775ac448472782846d133e05c6dd41748adb9ac7c403f7e1c17b70528f",
+      "physical_success_reported": true,
+      "protocol_complete": true,
+      "condition": "objective_preview",
+      "dependency": "none",
+      "control_end_sim_s": 141.25999999838763,
+      "motion_sim_to_wall": 0.469207700431307,
+      "llm_calls": 12,
+      "prompt_tokens": 130383
+    },
+    {
+      "run": "legacy-5",
+      "source_sha": "6e9b4055908db071540f66d0d4a297d1bb7875f2",
+      "result_sha256": "a96485645dd733ab6529970b1d3d863b0c55b72f7091031f3dc50179208732da",
+      "physical_success_reported": true,
+      "protocol_complete": true,
+      "condition": "legacy",
+      "dependency": "none",
+      "control_end_sim_s": 141.25999999838763,
+      "motion_sim_to_wall": 0.4504311497516061,
+      "llm_calls": 12,
+      "prompt_tokens": 116197
+    }
+  ],
+  "summary": {
+    "legacy": {
+      "n": 5,
+      "success_flags": 5,
+      "concurrent": 3,
+      "mean_control_end_sim_s": 157.33999999800739,
+      "median_control_end_sim_s": 141.25999999838763
+    },
+    "objective": {
+      "n": 5,
+      "success_flags": 5,
+      "concurrent": 5,
+      "mean_control_end_sim_s": 141.25999999838763,
+      "median_control_end_sim_s": 141.25999999838763
+    },
+    "objective_preview": {
+      "n": 5,
+      "success_flags": 5,
+      "concurrent": 5,
+      "mean_control_end_sim_s": 141.25999999838763,
+      "median_control_end_sim_s": 141.25999999838763
+    }
+  },
+  "source_commit_changes": [
+    "experiments/2026-09-25-plan-guidance/analyze.py"
+  ],
+  "bundle_hashes_equal": [
+    "8eccb79037d4d4a2b1600c463ce5e70db03f7dc977b5d7ad83be8f004d10c28c",
+    "8eccb79037d4d4a2b1600c463ce5e70db03f7dc977b5d7ad83be8f004d10c28c"
+  ],
+  "mean_condition_improvement_fraction": 0.102199059360769,
+  "median_condition_improvement_fraction": 0.0,
+  "problems": [],
+  "note": "22% is serial-plan versus concurrent-plan comparison. Condition means improve about 10.2%, medians unchanged. Same scene/seed, five each, no extra preview effect established. No realtime speed inference.",
+  "existing_tensorboard_verification": {
+    "server": "http://127.0.0.1:6006",
+    "cohort_runs": [
+      {
+        "run": "0925-plan-guidance/C2-preview-1",
+        "success_value": 1.0
+      },
+      {
+        "run": "0925-plan-guidance/C1-objective-1",
+        "success_value": 1.0
+      },
+      {
+        "run": "0925-plan-guidance/C0-legacy-5",
+        "success_value": 1.0
+      },
+      {
+        "run": "0925-plan-guidance/C0-legacy-2",
+        "success_value": 1.0
+      },
+      {
+        "run": "0925-plan-guidance/C0-legacy-3",
+        "success_value": 1.0
+      },
+      {
+        "run": "0925-plan-guidance/C0-legacy-4",
+        "success_value": 1.0
+      },
+      {
+        "run": "0925-plan-guidance/C2-preview-4",
+        "success_value": 1.0
+      },
+      {
+        "run": "0925-plan-guidance/C1-objective-4",
+        "success_value": 1.0
+      },
+      {
+        "run": "0925-plan-guidance/C2-preview-3",
+        "success_value": 1.0
+      },
+      {
+        "run": "0925-plan-guidance/C1-objective-3",
+        "success_value": 1.0
+      },
+      {
+        "run": "0925-plan-guidance/C2-preview-2",
+        "success_value": 1.0
+      },
+      {
+        "run": "0925-plan-guidance/C1-objective-2",
+        "success_value": 1.0
+      },
+      {
+        "run": "0925-plan-guidance/C2-preview-5",
+        "success_value": 1.0
+      },
+      {
+        "run": "0925-plan-guidance/C1-objective-5",
+        "success_value": 1.0
+      },
+      {
+        "run": "0925-plan-guidance/C0-legacy-1",
+        "success_value": 1.0
+      }
+    ],
+    "ui_checked": false,
+    "no_reconversion": true
+  }
+}
