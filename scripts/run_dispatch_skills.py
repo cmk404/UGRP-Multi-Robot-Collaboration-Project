@@ -139,7 +139,8 @@ class SkillScene(DispatchScene):
                 (self._solo_phase_label if self.realtime_control else self.solo.phase) if self.solo else 'SETUP/END')
             self.video.capture()
         # Observer-only post-run replay; never read by actors or the referee.
-        if self.replay:self.replay.sample(self.video.stage if self.video else None)
+        replay=getattr(self,'replay',None)
+        if replay:replay.sample(self.video.stage if self.video else None)
         if self.referee and self.time()+1e-9>=self.next_sample:
             self.referee.sample();self.next_sample=self.time()+.1
     def step(self,seconds):
