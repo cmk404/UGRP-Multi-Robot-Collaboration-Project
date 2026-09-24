@@ -15,6 +15,7 @@
 - [개발·테스트·실험·PR 절차](CONTRIBUTING.md) · [로봇 입력과 작업 규칙](AGENTS.md)
 - [TensorBoard로 학습·실험 기록 보기](docs/tensorboard.md)
 - [2026-09-24 ACT 학습·행동 개선 후보](experiments/2026-09-24-action-act/refinement.md) — 첫 6회 실패 포함 비교와 후속 학습·실시간 추론·영상 접근 보정; 기본 채택 전 후보
+- [학습 모델 다운로드·검증·배포](docs/model_artifacts.md) — GitHub Release 가중치와 저장소의 버전·해시 목록
 - [구형 브라우저 UI 퇴역 기록](docs/browser_ui_retirement_20260923.md) — 로컬 실행은 CLI·MuJoCo 창, 결과 비교는 TensorBoard
 - [연구 제어기 검증·사용 기준](docs/research_controller_validation.md) — RGB 기준선, ACT 완료 거부와 명시적 혼합 제어기를 구분하고 유한한 전체 시험으로 채택 여부 판정
 - [문서 찾아보기](docs/README.md) · [실험 인덱스](experiments/README.md) · [지도 목록](maps/README.md)
@@ -46,4 +47,4 @@
 
 ## 저장과 변경
 
-변경은 작업 브랜치와 PR로 남기고 사용자 승인 뒤 main에 반영한다. 실행 코드는 실험 전에 커밋하며 실패도 보존한다. Git에는 소스·설정 예시·fixture·요약 결과와 일부 압축 모델/감사 자료가 있다. 대부분의 raw 영상·대량 로그·가중치는 로컬 보관이므로 실험 manifest의 실제 포함 범위를 확인한다. 로컬 보관과 해시는 원격 백업이 아니다. 인증정보·가상환경은 커밋하지 않으며 UGRP는 Google Drive를 사용하지 않는다.
+변경은 작업 브랜치와 PR로 남기고 사용자 승인 뒤 main에 반영한다. 실행 코드는 실험 전에 커밋하며 실패도 보존한다. Git에는 소스·설정·fixture·요약·모델 목록과 해시를, 배포한 학습 가중치와 추론 자산은 GitHub Releases에 보관한다. 현재 제공하는 모델과 미발견 모델은 [모델 목록](configs/model_artifacts.json)을 확인한다. raw 영상·대량 로그·학습 데이터는 별도 보관이며 모델 배포가 이 자료 전체의 백업을 뜻하지 않는다. 인증정보·가상환경은 커밋하지 않으며 UGRP는 Google Drive를 사용하지 않는다.

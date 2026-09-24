@@ -8,7 +8,7 @@
 | 로컬 구성·실행 API | [로컬 시뮬레이션](local_simulation.md) | 설정 파일과 CLI/Python으로 세계를 구성하고 MuJoCo 창에서 확인할 때 |
 | 현재 규칙·개발 절차 | [AGENTS](../AGENTS.md), [CONTRIBUTING](../CONTRIBUTING.md) | 작업 시작, 설치·검증·Git 작업 |
 | 연구 우선순위·완료 기준 | [연구 TODO](research_todo.md) | 통신 본실험과 실행 기반·보조 과제의 순서 결정 |
-| 설치·모델 연결 | [Colab](colab_simulation.md), [Kaggle](kaggle_simulation.md), [Ubuntu](ubuntu_quickstart.md), [Gemini 프록시](gemini_subscription_proxy.md) | 환경 준비 |
+| 설치·모델 연결 | [Colab](colab_simulation.md), [Kaggle](kaggle_simulation.md), [Ubuntu](ubuntu_quickstart.md), [Gemini 프록시](gemini_subscription_proxy.md), [학습 모델 다운로드·배포](model_artifacts.md) | 환경 준비·가중치 확보 |
 | 출하·협업·동기화 | [출하 환경](research_dispatch_arena.md), [3대 실행](three_robot_e2e.md), [단계 계약](task_stage_sync_contract.md), [단계 연결](task_stage_execution.md) | 관련 구현 작업; 각 문서의 검증 날짜 확인 |
 | 연구 설계·학습 | [관측·비교 계약](warehouse_research_contract.md), [레퍼런스 비교](reference_alignment.md), [하네스 설계](research/show_harness_camera_pair_design.md) | 연구 질문·비교 조건 검토 |
 | 제어기 검증·결과 판정 | [연구 제어기 검증](research_controller_validation.md) | 회귀 실패 재현, 새 조건 비교, 원본 재검증과 제어기 채택 |
