@@ -9,12 +9,149 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
+import shlex
 import signal
 import subprocess
 import time
+from datetime import datetime, timezone
 
 ROOT = Path(__file__).resolve().parents[1]
 PROTOCOL = ROOT/'experiments/2026-09-24-action-act/route-coverage-protocol.json'
+SECRET_FLAG = re.compile(r'(token|secret|password|credential|api[-_]?key)', re.I)
+
+
+def safe_command(command):
+    try:
+        words = shlex.split(command)
+    except ValueError:
+        words = command.split()
+    redacted, hide_next = [], False
+    for word in words:
+        if hide_next:
+            redacted.append('[REDACTED]')
+            hide_next = False
+        elif word.startswith('--') and '=' in word and SECRET_FLAG.search(word.split('=', 1)[0]):
+            redacted.append(word.split('=', 1)[0]+'=[REDACTED]')
+        elif word.startswith('--') and SECRET_FLAG.search(word):
+            redacted.append(word)
+            hide_next = True
+        elif '://' in word:
+            redacted.append('[URL_REDACTED]')
+        else:
+            redacted.append(word)
+    return shlex.join(redacted)
+
+
+def _entrypoint(command):
+    """Return a process's actual entrypoint and its arguments, not arg text."""
+    try:
+        words = shlex.split(command)
+    except ValueError:
+        words = command.split()
+    if not words:
+        return '', []
+    executable = Path(words[0]).name.lower()
+    if executable == 'mjpython':
+        return 'mjpython', words[1:]
+    if executable.startswith('python') or executable in ('python.app',):
+        if '-m' in words:
+            index = words.index('-m')
+            return (words[index+1], words[index+2:]) if index+1 < len(words) else ('', [])
+        for index, word in enumerate(words[1:6], start=1):
+            if word.endswith('.py'):
+                return word, words[index+1:]
+        return executable, words[1:]
+    if executable in ('bash', 'sh', 'zsh') and len(words) > 1:
+        return words[1], words[2:]
+    return words[0], words[1:]
+
+
+def _foreign_reason(command):
+    entry, args = _entrypoint(command)
+    name = Path(entry).name.lower()
+    module = entry.lower()
+    if name == 'mjpython':
+        return 'native_mjpython'
+    if name in ('run_ab.py', 'run_ab') or module.endswith('.run_ab'):
+        return 'foreign_cohort_owner'
+    if name in ('run_dispatch_e2e.py', 'run_dispatch_skills.py', 'sim_dispatch.py',
+                'run_research_dispatch.py', 'dispatch_native_process.py',
+                'dispatch_native_view.py') or module in (
+                    'scripts.run_dispatch_e2e', 'scripts.run_dispatch_skills',
+                    'scripts.sim_dispatch', 'scripts.run_research_dispatch',
+                    'scripts.dispatch_native_process', 'scripts.dispatch_native_view'):
+        return 'foreign_dispatch_or_observer'
+    if name == 'open_simulation.command':
+        return 'foreign_simulation_launcher'
+    if name == 'ugrp_session.py' and args[:1] == ['run']:
+        return 'foreign_ugrp_session'
+    if name == 'sim_cli.py' or module == 'scripts.sim_cli':
+        if args[:1] in (['dispatch'], ['run'], ['start'], ['console']) or args[:2] == ['workflow', 'run']:
+            return 'foreign_sim_cli_execution'
+    if (name in ('train_carry_act.py', 'train_carry_input_act.py',
+                 'train_dispatch_transfer.py') or
+            module in ('scripts.train_carry_act', 'scripts.train_carry_input_act',
+                       'scripts.train_dispatch_transfer') or
+            name.startswith('train_act_') and name.endswith('.py')):
+        return 'foreign_training'
+    if name in ('pytest', 'py.test', 'torchrun') or module in ('pytest', 'torch.distributed.run'):
+        return 'foreign_test_or_torch_job'
+    return None
+
+
+def parse_process_table(table, own_pid, owned_pgids=()):
+    """Identify foreign owners by ancestry and entrypoint, including idle owners."""
+    processes = {}
+    for line in table.splitlines():
+        parts = line.strip().split(None, 3)
+        if (len(parts) != 4 or not parts[0].isdigit() or
+                not parts[1].isdigit() or not parts[2].isdigit()):
+            continue
+        pid, ppid, pgid = int(parts[0]), int(parts[1]), int(parts[2])
+        processes[pid] = {'pid': pid, 'ppid': ppid, 'pgid': pgid,
+                          'command': safe_command(parts[3]),
+                          '_raw_command': parts[3]}
+
+    def owned(pid):
+        seen = set()
+        while pid and pid in processes and pid not in seen:
+            if pid == own_pid:
+                return True
+            seen.add(pid)
+            pid = processes[pid]['ppid']
+        return False
+
+    owned_groups = set(owned_pgids)
+    own_main_group = processes.get(own_pid, {}).get('pgid')
+    owned_groups.update(row['pgid'] for pid, row in processes.items()
+                        if pid != own_pid and owned(pid) and row['pgid'] != own_main_group)
+    return [{key: value for key, value in row.items() if key != '_raw_command'} | {'reason': reason}
+            for pid, row in sorted(processes.items())
+            if not owned(pid) and row['pgid'] not in owned_groups and
+            (reason := _foreign_reason(row['_raw_command']))]
+
+
+def foreign_processes(owned_pgids=()):
+    table = subprocess.check_output(
+        ['ps', '-ww', '-axo', 'pid=,ppid=,pgid=,command='], text=True)
+    return parse_process_table(table, os.getpid(), owned_pgids)
+
+
+def foreign_snapshot(owned_pgids=()):
+    blockers = foreign_processes(owned_pgids)
+    if not blockers:
+        return None
+    for blocker in blockers:
+        try:
+            text = subprocess.check_output(
+                ['lsof', '-a', '-p', str(blocker['pid']), '-d', 'cwd', '-Fn'],
+                text=True, stderr=subprocess.DEVNULL, timeout=.25)
+            blocker['cwd'] = next((line[1:] for line in text.splitlines() if line.startswith('n')), None)
+        except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
+            blocker['cwd'] = None
+    return {'observed_utc': datetime.now(timezone.utc).isoformat(),
+            'processes': blockers}
 
 
 def sha(path):
@@ -95,7 +232,9 @@ def stop_own_group(process):
     return True
 
 
-def run_owned(command, *, cwd, environment, log, timeout):
+def run_owned(command, *, cwd, environment, log, timeout, poll_interval=1.0):
+    if timeout <= 0 or poll_interval <= 0:
+        raise ValueError('positive owned workflow timeout and poll interval required')
     started = time.monotonic()
     with log.open('x') as stream:
         process = subprocess.Popen(command, cwd=cwd, env=environment,
@@ -103,12 +242,27 @@ def run_owned(command, *, cwd, environment, log, timeout):
                                    start_new_session=True)
         pid = process.pid
         timed_out = False
+        interference = None
         try:
-            code = process.wait(timeout=timeout)
-        except subprocess.TimeoutExpired:
-            timed_out = True
-            stop_own_group(process)
-            code = process.poll()
+            while True:
+                # Poll only for the lifetime of this bounded collection. An
+                # idle foreign cohort owner remains visible between children.
+                interference = foreign_snapshot((process.pid,))
+                if interference is not None:
+                    stop_own_group(process)
+                    code = process.poll()
+                    break
+                left = timeout-(time.monotonic()-started)
+                if left <= 0:
+                    timed_out = True
+                    stop_own_group(process)
+                    code = process.poll()
+                    break
+                try:
+                    code = process.wait(timeout=min(poll_interval, left))
+                    break
+                except subprocess.TimeoutExpired:
+                    pass
         finally:
             if group_exists(process.pid):
                 stop_own_group(process)
@@ -116,7 +270,7 @@ def run_owned(command, *, cwd, environment, log, timeout):
             raise RuntimeError(f'owned workflow process {process.pid} survived cleanup')
     return {'pid': pid, 'exit_code': code, 'timed_out': timed_out,
             'wall_s': time.monotonic()-started, 'console_log': str(log),
-            'console_sha256': sha(log)}
+            'console_sha256': sha(log), 'foreign_interference': interference}
 
 
 def input_identity(protocol):
@@ -153,6 +307,11 @@ def main():
     assert_source(ROOT, launcher_source_sha)
     assert_source(checkout, source['teacher_and_physical_inference_source_sha'])
     before_inputs = input_identity(protocol)
+    preflight = foreign_snapshot()
+    if preflight is not None:
+        # No new record root exists yet. Keep the independent owner's process
+        # evidence in this launcher's console; never signal foreign PIDs.
+        raise RuntimeError('foreign owner blocks teacher preflight: '+json.dumps(preflight))
     root = args.record_root.resolve()
     root.mkdir(parents=True, exist_ok=False)
     (root/'raw').mkdir()
@@ -178,7 +337,15 @@ def main():
     fixed = protocol['teacher_managed_cli']['fixed_trial_args']
     exception = None
     try:
-        for case in teacher['cases']:
+        for case_index, case in enumerate(teacher['cases']):
+            external = foreign_snapshot()
+            if external is not None:
+                record['foreign_interference'] = {'phase': 'before_case', 'case': case['id'],
+                                                  **external}
+                record['cases'].extend({'id': next_case['id'], 'status': 'unstarted_foreign_interference'}
+                                       for next_case in teacher['cases'][case_index:])
+                save(root/'launcher.json', record)
+                break
             remaining = teacher['aggregate_manager_hard_wall_s']-(time.monotonic()-started)
             # Reserve ten seconds for our cleanup and another ten for the
             # workflow manager's child/tee/manifest finalization.
@@ -209,6 +376,14 @@ def main():
                                 log=root/'logs'/(case['id']+'-plan.log'),
                                 timeout=effective_wall_cap(remaining, 30))
             case_record['plan'] = planned
+            if planned['foreign_interference'] is not None:
+                case_record['status'] = 'aborted_foreign_interference_during_plan'
+                record['foreign_interference'] = {'phase': 'during_plan', 'case': case['id'],
+                                                  **planned['foreign_interference']}
+                record['cases'].extend({'id': next_case['id'], 'status': 'unstarted_foreign_interference'}
+                                       for next_case in teacher['cases'][case_index+1:])
+                save(root/'launcher.json', record)
+                break
             if planned['exit_code'] != 0 or planned['timed_out']:
                 raise ValueError(f"workflow plan failed for {case['id']}")
             plan_log = Path(planned['console_log'])
@@ -216,6 +391,15 @@ def main():
                 'command': plan_command, 'console_path': str(plan_log),
                 'console_sha256': sha(plan_log)})
             save(root/'launcher.json', record)
+            external = foreign_snapshot()
+            if external is not None:
+                case_record['status'] = 'unstarted_after_plan_foreign_interference'
+                record['foreign_interference'] = {'phase': 'before_run', 'case': case['id'],
+                                                  **external}
+                record['cases'].extend({'id': next_case['id'], 'status': 'unstarted_foreign_interference'}
+                                       for next_case in teacher['cases'][case_index+1:])
+                save(root/'launcher.json', record)
+                break
             remaining = teacher['aggregate_manager_hard_wall_s']-(time.monotonic()-started)
             outer_cap, inner_cap = managed_caps(remaining, teacher['manager_timeout_per_case_s'])
             if inner_cap <= 0:
@@ -241,6 +425,14 @@ def main():
                 outcome = json.loads(result_path.read_text())
                 case_record['physical_success'] = bool(outcome.get('physical_success'))
                 case_record['protocol_complete'] = bool(outcome.get('protocol_complete'))
+            if result['foreign_interference'] is not None:
+                case_record['status'] = 'aborted_foreign_interference_during_run'
+                record['foreign_interference'] = {'phase': 'during_run', 'case': case['id'],
+                                                  **result['foreign_interference']}
+                record['cases'].extend({'id': next_case['id'], 'status': 'unstarted_foreign_interference'}
+                                       for next_case in teacher['cases'][case_index+1:])
+                save(root/'launcher.json', record)
+                break
             case_record['status'] = ('teacher_success' if result['exit_code'] == 0 and
                                      case_record.get('physical_success') and
                                      case_record.get('protocol_complete') else 'teacher_failed')
@@ -264,7 +456,8 @@ def main():
         except Exception as error:
             record['source_identity_after_error'] = {'type': type(error).__name__, 'message': str(error)}
         record['error'] = exception
-        record['status'] = ('collection_complete' if exception is None and
+        record['status'] = ('foreign_interference_abort' if 'foreign_interference' in record else
+                            'collection_complete' if exception is None and
                             'input_identity_after_error' not in record and
                             'source_identity_after_error' not in record and
                             record['input_sha256_after'] == before_inputs and
