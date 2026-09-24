@@ -39,7 +39,7 @@ class VisualBoxSkill:
     def __init__(self, task="short_transfer", destination_zone="B", robot_id="r1", cargo_id="small_box_01",
                  near_field_reacquisition=False, perception_mode="markerless",
                  attachment_home_reference="anchor", attachment_min_saturation=65, release_refine_ground_fit=False,
-                 fast_near_field_servo=False):
+                 fast_near_field_servo=False, search_turn=0.12):
         if task not in {"short_transfer", "destination_zone", "external_navigation"}:
             raise ValueError("unsupported visual box task")
         if destination_zone not in {"A", "B", "C"}:
@@ -55,6 +55,11 @@ class VisualBoxSkill:
         if not isinstance(fast_near_field_servo, bool):
             raise ValueError("fast_near_field_servo must be a bool")
         self.fast_near_field_servo = fast_near_field_servo
+        if search_turn not in (0.12, -0.12):
+            raise ValueError("search_turn must be 0.12 (left) or -0.12 (right)")
+        # In-place search when nothing was seen yet; left unless a caller knows
+        # from its own earlier RGB on which side the box was last seen.
+        self.search_turn = search_turn
         self._near_field_servo_sample = None
         self.last_approach_adjustment = None
         self._rolling_view_lock = None
@@ -379,7 +384,7 @@ class VisualBoxSkill:
                 if new != wrist:
                     return _pose({3: new})
                 return _pose({4: _clip_int(int(pose["4"]) - delta, 500, 2500)})
-            return _drive(0.0, 0.12, 0.4)
+            return _drive(0.0, self.search_turn, 0.4)
 
         self._missing = 0
         self._last_seen_pose = dict(pose)

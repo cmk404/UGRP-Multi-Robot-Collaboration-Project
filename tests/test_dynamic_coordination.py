@@ -269,11 +269,31 @@ def test_backoff_keeps_rgb_tracked_crops_and_recentres_them():
     assert all(stale.coarse.decide(raw, s)['mask']['local_wheel_pixels'] == 0 for s in ('r1', 'r3'))
     pair, tracker = _backoff_pair('after-long-backoff-top.jpg', TRACKED_CENTERS)
     pair.back_off()
-    assert pair.coarse is tracker and len(pair.driven) == 21  # 20 reverse slices + stop dwell
+    # stop dwell, then four chunks of 5 reverse slices, each followed by a stop dwell
+    assert pair.coarse is tracker and len(pair.driven) == 1 + 4*(5+1)
     assert all(pair.coarse.decide(raw, s)['ok'] is True for s in ('r1', 'r3'))
-    row = pair.calls[-1]
-    assert row['kind'] == 'recovery_recenter' and row['slices'] == 20
-    assert row['crop_centers_before_px'] == TRACKED_CENTERS
+    rows = [c for c in pair.calls if c['kind'] == 'recovery_recenter']
+    assert [r['slices'] for r in rows] == [0, 5, 10, 15, 20] and rows[-1]['lost_slots'] == []
+    assert rows[0]['crop_centers_before_px'] == TRACKED_CENTERS
+
+
+def test_backoff_chunks_stay_inside_the_crop_that_a_full_backoff_leaves():
+    # E2 (v51): one 20-slice reverse moved both carriers ~64 px west of their
+    # tracked crops; r1 fell below the 80 wheel-pixel floor. Crops that lag by
+    # one or two 5-slice chunks (~16 px each) still re-centre on both carriers.
+    true = {'r1': [151, 371], 'r3': [154, 181]}
+    for lag in (16, 32):
+        _, tracker = _backoff_pair('e2-after-fine-failure-backoff-top.jpg',
+                                   {s: [x+lag, y] for s, (x, y) in true.items()})
+        pair, _ = _backoff_pair('e2-after-fine-failure-backoff-top.jpg', {})
+        pair.coarse = tracker
+        pair._recenter_coarse(5, .05)
+        row = pair.calls[-1]
+        assert row['lost_slots'] == []
+        assert all(abs(row['crop_centers_after_px'][s][0]-true[s][0]) <= 3 for s in true)
+    pair, _ = _backoff_pair('e2-after-fine-failure-backoff-top.jpg', {'r1': [218.3, 370.2], 'r3': [215.7, 180.7]})
+    pair._recenter_coarse(20, .05)
+    assert pair.calls[-1]['lost_slots'] == ['r1']
 
 
 def test_backoff_stays_synchronous_and_bounded():
@@ -347,6 +367,15 @@ def test_dropped_job_releases_resources_and_unblocks_peers_without_counting_as_d
     b.finish('box')
     with pytest.raises(ValueError):
         b.drop('box')
+
+
+def test_dropping_the_beam_before_it_starts_releases_the_box_grasp():
+    # E4 (v51): the beam was dropped before any grasp/transit command and the
+    # box waited at the pregrasp boundary until its SIM budget ran out.
+    b = _bindings()
+    assert not b.permission('box', 'GRASP')  # box grasps after the beam starts
+    b.drop('beam')
+    assert b.permission('box', 'GRASP') and b.permission('box', 'TRANSIT') and b.permission('box', 'UNLOAD')
 
 
 class _Team:
@@ -496,9 +525,28 @@ def test_scene_pauses_box_and_applies_the_team_decision():
     assert scene._solo_event is None and scene._solo_recovery[0]['kind'] == 'pose'
     assert [a['forward'] for a in scene._solo_recovery[1:]] == [-.05] * 10
     assert scene.last_frames == {'kept': True} and scene.solo_events[0]['decision'] == 'retry'
+    assert scene._solo_search_turn == .12  # nothing seen: the skill's default left search
     scene._solo_event = {'reason': 'VISUAL_LOAD_DROPPED', 'phase': 'carry', 'sim_time_s': 4.}
     scene._handle_solo_event()
     assert scene.solo_dropped
+
+
+def test_box_retry_searches_toward_the_side_last_seen_in_own_rgb():
+    # E3 (v51): the box was last seen to the right (own RGB, robot frame y<0),
+    # but the fresh skill searched left and stopped as TARGET_NOT_VISIBLE.
+    from harness.visual_box_skill import VisualBoxSkill
+    from scripts.run_dispatch_skills import SkillScene
+    scene = SkillScene.__new__(SkillScene)
+    scene.solo_events, scene.solo_dropped, scene._solo_recovery = [], False, None
+    scene.team_event_handler = lambda event: 'retry'
+    for y, turn in ((-.08, -.12), (.05, .12)):
+        scene.solo = SimpleNamespace(box=SimpleNamespace(last_target=(.2, y, .02)))
+        scene._solo_event = {'reason': 'BOX_FACE_ALIGNMENT_UNOBSERVABLE', 'phase': 'approach', 'sim_time_s': 3.}
+        scene._handle_solo_event()
+        assert scene._solo_search_turn == turn
+    assert VisualBoxSkill().search_turn == .12 and VisualBoxSkill(search_turn=-.12).search_turn == -.12
+    with pytest.raises(ValueError):
+        VisualBoxSkill(search_turn=.3)
 
 
 def test_replay_overlay_shows_recent_peer_messages(tmp_path):
