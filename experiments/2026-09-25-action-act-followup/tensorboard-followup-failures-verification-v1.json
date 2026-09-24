@@ -1,0 +1,123 @@
+{
+  "schema": "ugrp.tensorboard.followup_failures_verification.v1",
+  "recorded_utc": "2026-09-24T14:58:09.493506+00:00",
+  "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0924-action-act-followup-failures",
+  "native_ui_inspected": false,
+  "ui_applied": false,
+  "runs": [
+    {
+      "run": "0924-action-act-followup-failures/dispatch-cargo-recovery-20260924__original-candidate-diagnostic-1__a892940f",
+      "source": "/Users/changmin/projects/ugrp/outputs/dispatch-cargo-recovery-20260924/original-candidate-diagnostic-1",
+      "source_result_sha256": "dd6d9114504bf59c011b0ea103e782f0ec417d8b5999eaa1b2d1a5c2355f122a",
+      "manifest_sha256": "2ab06c0a768908f0acf7298da30c1b4d636a77426eb84f6538d5c31268b61eef",
+      "complete": true,
+      "scalars": {
+        "evaluation/reported_success": 0.0,
+        "claims/protocol_complete": 0.0,
+        "result/wall_s": 261.8897399902344,
+        "result/commands": 3706.0,
+        "result/model_calls": 0.0,
+        "result/model_latency_s": 0.0
+      },
+      "videos": [
+        {
+          "id": "be0ffe624ac9b1173485",
+          "range_status": 206,
+          "bytes": 64
+        }
+      ]
+    },
+    {
+      "run": "0924-action-act-followup-failures/raw__south-train-a__5373a03f",
+      "source": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/route-teachers-managed-v3/raw/south-train-a",
+      "source_result_sha256": "ae4db1591ebf5f756656a0b63f30b2885ef87ccd2e9af1bb85a3fa89ce5bdd4c",
+      "manifest_sha256": "805a389884f6bc1d9c0682ed86851985f40be0623614cc83b7a19f3469c294d3",
+      "complete": true,
+      "scalars": {
+        "evaluation/reported_success": 0.0,
+        "claims/protocol_complete": 0.0,
+        "result/wall_s": 277.9706115722656,
+        "result/commands": 652.0,
+        "result/model_calls": 0.0,
+        "result/model_latency_s": 0.0
+      },
+      "videos": [
+        {
+          "id": "e83deaf67289a4f2db15",
+          "range_status": 206,
+          "bytes": 64
+        }
+      ]
+    }
+  ],
+  "scope": "Two completed physical failures only; interrupted teacher case and unstarted case are not physical outcomes. Historical v28 references do not form a new speed cohort.",
+  "hparams_columns_registered": [
+    "family",
+    "policy",
+    "case",
+    "source_sha",
+    "outcome",
+    "evaluation/reported_success",
+    "claims/protocol_complete",
+    "result/wall_s",
+    "result/commands",
+    "result/model_calls"
+  ],
+  "views": {
+    "v40_closed_diagnostic": {
+      "run_filter": "^0924-action-act-followup-failures/dispatch-cargo-recovery|^0924-action-act-v28-complete/.*__original-diagnostic-",
+      "scope": "v40 failed development diagnostic and historical v28 reference diagnostics; not a matched speed cohort",
+      "pinned_tags": [
+        "evaluation/reported_success",
+        "claims/protocol_complete",
+        "result/wall_s",
+        "result/commands",
+        "result/model_calls",
+        "result/model_latency_s"
+      ],
+      "hparams_visible_columns": [
+        "family",
+        "policy",
+        "case",
+        "source_sha",
+        "outcome",
+        "evaluation/reported_success",
+        "claims/protocol_complete",
+        "result/wall_s",
+        "result/commands",
+        "result/model_calls"
+      ],
+      "ui_applied": false,
+      "native_ui_inspected": false,
+      "url": "http://127.0.0.1:6006/?pinnedCards=%5B%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Freported_success%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22claims%2Fprotocol_complete%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fwall_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fcommands%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fmodel_calls%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fmodel_latency_s%22%7D%5D&smoothing=0&runFilter=%5E0924-action-act-followup-failures%2Fdispatch-cargo-recovery%7C%5E0924-action-act-v28-complete%2F.%2A__original-diagnostic-#timeseries"
+    },
+    "teacher_v3_failed_case": {
+      "run_filter": "^0924-action-act-followup-failures/raw__south-train-a",
+      "scope": "One physically failed teacher case; second interrupted and third unstarted excluded from physical denominator; ACT training not started",
+      "pinned_tags": [
+        "evaluation/reported_success",
+        "claims/protocol_complete",
+        "result/wall_s",
+        "result/commands",
+        "result/model_calls",
+        "result/model_latency_s"
+      ],
+      "hparams_visible_columns": [
+        "family",
+        "policy",
+        "case",
+        "source_sha",
+        "outcome",
+        "evaluation/reported_success",
+        "claims/protocol_complete",
+        "result/wall_s",
+        "result/commands",
+        "result/model_calls"
+      ],
+      "ui_applied": false,
+      "native_ui_inspected": false,
+      "url": "http://127.0.0.1:6006/?pinnedCards=%5B%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Freported_success%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22claims%2Fprotocol_complete%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fwall_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fcommands%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fmodel_calls%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fmodel_latency_s%22%7D%5D&smoothing=0&runFilter=%5E0924-action-act-followup-failures%2Fraw__south-train-a#timeseries"
+    }
+  },
+  "unrelated_view_keys_unchanged": true
+}

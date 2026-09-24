@@ -107,7 +107,7 @@ def main():
     guard = module('settled_diagnostic_host_guard', Path(protocol['host_guard']))
     lock = module('settled_diagnostic_host_lock', ROOT/'scripts/agent_lock.py')
     lock.acquire(lock.DEFAULT_ROOT, owner='codex', branch=git('branch', '--show-current'),
-                 purpose=f'v46 original diagnostic {args.trial}, finite 370s',
+                 purpose=f"{protocol['expected_bundle']} original diagnostic {args.trial}, finite 370s",
                  pid=os.getpid(), expected_minutes=7)
     launch = None
     run_started = False

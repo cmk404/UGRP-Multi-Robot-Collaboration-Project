@@ -1,0 +1,279 @@
+{
+  "schema": "ugrp.view_recovery_postrun_audit.v1",
+  "trial": "original/candidate-diagnostic-1",
+  "raw": "/Users/changmin/projects/ugrp/outputs/dispatch-view-recovery-20260924/original-candidate-diagnostic-1",
+  "manager": "/Users/changmin/.codex/worktrees/rolling-view-recovery/ugrp/outputs/simulation-runs/20260925-002144-dispatch-5538e992/manifest.json",
+  "launch": "/Users/changmin/projects/ugrp/outputs/dispatch-view-recovery-20260924/original-candidate-diagnostic-1.launch.json",
+  "freeze": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/view-recovery-source-freeze-v1.json",
+  "source_sha": "b47bbec7328890596d098ca007273771406eb749",
+  "raw_result_sha256": "1b364e1392e73bcb2c3b47b14145c48af83f6735e2bc2d94d27934f85dbf5e3a",
+  "manager_manifest_sha256": "650abdecae59a0a0ff45f35af4d8d673a08a7c64d1b7313999f6044b7513d2f9",
+  "launch_record_sha256": "eb2ce825c10c6601ed02613b600a9fb0f95411fc718924c4c14ab0f01820bbc8",
+  "scene_manifest_sha256": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a",
+  "freeze_sha256": "2f76bfe57b7e2d75b6dd29c16e4c3673ee2e85d5340d56b001b4bf2ea5576784",
+  "audit_helper_sha256": "0525434da54be00969927e8ba8d70f458d5a8b82591b2fd6d90a2d5444eaef45",
+  "audit_dependencies": {
+    "frozen_base_audit_sha256": "d0aeac060f17d054953f6b99a7435f64ecf7c936473a4b4718edc747e617ddbd",
+    "rolling_audit_sha256": "a6f940c21d296f2917486640c3b50103362252018b617b53f3d5e2e844fa1a8a",
+    "run_helper_sha256": "f579744cb13091e1046cd647d560b0eda2e76fc53d5e548660504b99bb953b6d",
+    "preflight_report_sha256": "b87ea384762d1e35808c82dc8c7a5c01cc20768eb23393f7adb4f1796ae50dd1"
+  },
+  "audit_passed": false,
+  "boundary_pass": {
+    "source_integrity": true,
+    "input_integrity": true,
+    "rgb_evidence": true,
+    "typed_lease_freshness": true,
+    "active_view_recovery": false,
+    "weld_off": true,
+    "camera_geometry": true,
+    "static_map_scene": true
+  },
+  "boundary_errors": {
+    "source_integrity": [],
+    "input_integrity": [],
+    "rgb_evidence": [],
+    "typed_lease_freshness": [],
+    "active_view_recovery": [
+      "known weak-RGB diagnostic did not exercise an issued active-view pose"
+    ],
+    "weld_off": [],
+    "camera_geometry": [],
+    "static_map_scene": []
+  },
+  "outcome_errors": [],
+  "outcome": {
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 15.71497458399972,
+    "timing_eligible": false,
+    "timing_exclusion_path": null,
+    "timing_exclusion_sha256": null,
+    "phase": "APPROACH",
+    "failed_component": "solo_box",
+    "error": "ComponentExecutionError: solo_box: RuntimeError: solo RGB active-view recovery failed: anchor_stale_or_wheel_issued"
+  },
+  "condition": {
+    "variant": "open",
+    "seed": 11,
+    "spawn_offset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "dock": "dock_a",
+    "contact_profile": "local_contact_fine",
+    "candidate": true
+  },
+  "image_audit": {
+    "status": "pass",
+    "errors": [],
+    "unique_images_hashed": 30,
+    "roles": {
+      "raw_own": 10,
+      "own": 10,
+      "top": 10
+    },
+    "scope": "Saved JPEG bytes and decision references only; no video decode or live pose."
+  },
+  "rolling_evidence": {
+    "status": "pass",
+    "errors": [],
+    "rolling_command_rows": 410,
+    "initial_issues": 5,
+    "renewal_rows": 405,
+    "stop_rows": 5,
+    "capture_rows": 10,
+    "support_rows": 6,
+    "saved_rgb_files_checked": 30,
+    "support_allowed_rows": 5,
+    "support_denied_reasons": {
+      "weak_direct_cyan_rgb": 1
+    },
+    "capture_inside_command_window_claimed": 5,
+    "capture_inside_effective_issued_window_verified": 5,
+    "scope": "Command windows and paired image hashes are saved-input evidence, not measured motor motion or travel."
+  },
+  "active_view_evidence": {
+    "status": "pass",
+    "errors": [],
+    "pose_issued": 0,
+    "recovered": 0,
+    "failed": 1,
+    "episodes": 0,
+    "safe_owner_aborts": 0,
+    "weak_direct_rgb_rows": 1,
+    "longest_recorded_weak_rgb_streak": 1,
+    "active_view_zero_wheel_hold_rows": 0,
+    "mechanism_exercised": false,
+    "scope": "Owner-issued PWM, zero-wheel command, and later settled RGB provenance; not measured joint or wheel travel."
+  },
+  "typed_solo_renewals": {
+    "status": "pass",
+    "errors": [],
+    "kind_counts": {
+      "solo_approach_rolling_issue": 5,
+      "solo_approach_rolling_renewal": 405,
+      "solo_approach_rolling_stop": 5
+    },
+    "unknown_kinds": [],
+    "carry": {
+      "receipts": 0,
+      "issued_renewals": 0,
+      "errors": [],
+      "status": "pass"
+    },
+    "rolling": {
+      "status": "pass",
+      "initial_issues": 5,
+      "renewal_rows": 405,
+      "stop_rows": 5
+    },
+    "scope": "Carry receipts use frozen carry audit; rolling issue/renewal receipts match issued command identities and rolling stop/capture windows use the rolling evidence audit; unknown kinds fail."
+  },
+  "relink_and_release_evidence": {
+    "status": "pass",
+    "errors": [],
+    "accepted_relink_rows": 0,
+    "provisional_direct_rows": 0,
+    "confirmed_two_view_rows": 0,
+    "aborted_then_direct_rows": 0,
+    "direct_release_gate_rows": 0,
+    "scope": "Saved RGB hashes, visual identity/budget receipts, and direct-release gates; no pixel resegmentation or contact inference."
+  },
+  "lease_status": {
+    "solo_carry": {
+      "status": "pass",
+      "errors": [],
+      "error_count": 0
+    },
+    "pair_approach": {
+      "status": "pass",
+      "errors": [],
+      "error_count": 0
+    },
+    "pair_fine": {
+      "status": "pass",
+      "errors": [],
+      "error_count": 0
+    }
+  },
+  "camera_geometry": {
+    "status": "pass",
+    "errors": [],
+    "scene_xml_sha256": "90c279d1c8fbd4b30c41fcbfd28254610f0aa8ac9357fe65898cba127a05a674",
+    "robot_xml_sha256": {
+      "r1__robot": "6de5aa2a097a8c817bca56665bf1a454dc7f8428b303db359c785f8d640c3f09",
+      "r2__robot": "c6ef0471e775780c05c6a1f29dcbe26bea7b877b46a0109249e1fdfaed4547e3",
+      "r3__robot": "e5526115205061e5b9a068c8019938102276f24060e0bf69b23123765fac7e7c"
+    }
+  },
+  "static_map_scene": {
+    "status": "pass",
+    "errors": [],
+    "static_map_sha256": "733b5ee3320f0230c199afaefe2c2a6b8baa6a57a152417a6e8022e3bc0f9bab",
+    "spawn_offset": [
+      0,
+      0,
+      0
+    ],
+    "contact_solver_profile": "local_contact_fine"
+  },
+  "stage_timing": {
+    "approach_span_sim_s": 6.181249999994077,
+    "approach_issued_drive_window_union_sim_s": 1.5467500000018397,
+    "beam_fine_alignment_sim_s": null,
+    "beam_fine_alignment_scope": "Not identifiable as an exclusive interval from saved pair decision/command windows; do not substitute command duration.",
+    "box_permission_wait_sim_s": 0.0,
+    "box_permission_wait_scope": "Recorded solo resource wait, may overlap pair operation.",
+    "solo_phase_occupancy_sim_s": {
+      "approach": 6.181249999994077
+    },
+    "motion_sim_s": 6.593249999994581,
+    "motion_sim_to_wall": 0.9975195716845315,
+    "full_mission_wall_s": 15.71497458399972,
+    "scope": "Solo phase spans overlap beam work. Issued-command windows are not measured motion."
+  },
+  "base_audit": {
+    "manager": {
+      "path": "/Users/changmin/.codex/worktrees/rolling-view-recovery/ugrp/outputs/simulation-runs/20260925-002144-dispatch-5538e992/manifest.json",
+      "sha256": "650abdecae59a0a0ff45f35af4d8d673a08a7c64d1b7313999f6044b7513d2f9",
+      "run_id": "20260925-002144-dispatch-5538e992",
+      "status": "process_failed",
+      "exit_code": 1,
+      "output_matches_run": true,
+      "source_sha": "b47bbec7328890596d098ca007273771406eb749",
+      "source_dirty": false,
+      "source_tree_before_sha256": "0389a3e9600c1e0a8c40f9048747110db2d2d528f09e1473d971f02276db597a",
+      "source_tree_after_sha256": "0389a3e9600c1e0a8c40f9048747110db2d2d528f09e1473d971f02276db597a",
+      "source_unchanged": true,
+      "inputs_unchanged": true,
+      "finalization_errors": [],
+      "runtime_s": 16.438047875009943
+    },
+    "core_files": {
+      "result.json": {
+        "present": true,
+        "bytes": 12088,
+        "sha256": "1b364e1392e73bcb2c3b47b14145c48af83f6735e2bc2d94d27934f85dbf5e3a",
+        "matches_manager_receipt": true
+      },
+      "evaluation-only.json": {
+        "present": true,
+        "bytes": 1597,
+        "sha256": "26dc1e05c2b2c7319824a3710eb985db7dba01bfc09c1de2a2f807e49a5e37b7",
+        "matches_manager_receipt": true
+      },
+      "issued-commands.json": {
+        "present": true,
+        "bytes": 585382,
+        "sha256": "513246396cf153a747943ac6e8ba426d61a809ef6ba994829933531164e6e953",
+        "matches_manager_receipt": true
+      },
+      "solo-decisions.json": {
+        "present": true,
+        "bytes": 26900,
+        "sha256": "6f240a1457f9f22db196df91efb694ea25917f7af0156a86abe0837724733d8a",
+        "matches_manager_receipt": true
+      },
+      "solo-raw-actions.json": {
+        "present": true,
+        "bytes": 278015,
+        "sha256": "bf5ad7b5c5746f0c94ccc9e493d2f937d3e47227232e4bedb015d80f5900839b",
+        "matches_manager_receipt": true
+      },
+      "pair-decisions.json": {
+        "present": true,
+        "bytes": 146322,
+        "sha256": "f5fa616df4df5669ea4bc00540740256b40bccd6bae49f74debb76de4bdacd80",
+        "matches_manager_receipt": true
+      },
+      "scene-manifest.json": {
+        "present": true,
+        "bytes": 606,
+        "sha256": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a",
+        "matches_manager_receipt": true
+      },
+      "execution.frames.json": {
+        "present": true,
+        "bytes": 16837,
+        "sha256": "9b5a0686e8b31751beac6082212c3f1a424496188b1bf9f32f40e672a1d06b3b",
+        "matches_manager_receipt": true
+      },
+      "execution.mp4": {
+        "present": true,
+        "bytes": 145944,
+        "sha256": "740da04b583e0229e242cd2a20c4c45acdc9f205430ffa7c18e71426cd09855c",
+        "matches_manager_receipt": true
+      }
+    },
+    "errors_count": 2,
+    "errors_preview": [
+      "manager process did not complete successfully",
+      "solo renewal invariants failed"
+    ],
+    "note": "Frozen base audit mixes rolling approach receipts into its carry count; typed_solo_renewals replaces only that lease check. Manager nonzero exit and unreleased resources can be ordinary physical failure."
+  },
+  "control_boundary": "Referee and setup are read only by this post-run audit, not by the controller.",
+  "audit_revision": "v1_nested_images_typed_renewals_active_view"
+}
