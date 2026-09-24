@@ -3,14 +3,15 @@ from types import SimpleNamespace
 
 import pytest
 
-from scripts import dispatch_replay, sim_dispatch
+from scripts import dispatch_replay, run_dispatch_e2e, sim_dispatch
 
 
 def _wrapper(monkeypatch, tmp_path, argv):
     invoked, played = [], []
     monkeypatch.setattr(sim_dispatch.sys, 'platform', 'darwin')
     monkeypatch.setattr(sim_dispatch.sys.stdin, 'isatty', lambda: False)
-    monkeypatch.setattr('scripts.run_dispatch_e2e.main', lambda args: invoked.append(args) or 1)
+    # Imported above: urllib imports macOS-only _scproxy when first loaded under a patched platform.
+    monkeypatch.setattr(run_dispatch_e2e, 'main', lambda args: invoked.append(args) or 1)
     monkeypatch.setattr(dispatch_replay, 'play', lambda output, speed: played.append((output, speed)) or 0)
     code = sim_dispatch.main(['--plan-replay', 'saved.json', '--output', str(tmp_path / 'run'),
                               '--grasp-model-dir', str(tmp_path / 'g'), '--stage-model-dir', str(tmp_path / 's'),
