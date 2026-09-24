@@ -299,6 +299,8 @@ def main(argv=None):
                    help='skills: save observer-only states for post-run native replay (scripts.dispatch_replay)')
     p.add_argument('--realtime-control',action='store_true',
                    help='bounded asynchronous RGB control and isolated observer; separately versioned candidate')
+    p.add_argument('--coarse-concurrent-alignment',action='store_true',
+                   help='experimental paired coarse RGB: keep valid own forward while a peer aligns; requires skills realtime control')
     p.add_argument('--rolling-visual-servo',action='store_true',
                    help='experimental solo approach: bounded drive while paired RGB is captured; requires realtime control and open map')
     p.add_argument('--rolling-view-recovery',action='store_true',
@@ -348,6 +350,8 @@ def main(argv=None):
     if args.executor!='skills' and args.record_replay:p.error('--record-replay uses the existing skills executor')
     if args.rolling_visual_servo and (args.executor!='skills' or not args.realtime_control):
         p.error('--rolling-visual-servo requires skills --realtime-control')
+    if args.coarse_concurrent_alignment and (args.executor!='skills' or not args.realtime_control):
+        p.error('--coarse-concurrent-alignment requires skills --realtime-control')
     if args.bounded_carrier_relink and not args.rolling_visual_servo:
         p.error('--bounded-carrier-relink requires --rolling-visual-servo')
     if args.rolling_view_recovery and not args.rolling_visual_servo:

@@ -47,7 +47,8 @@ from scripts.three_robot_runtime import ThreeRobotRuntime, write
 from scripts.run_camera_approach_student import models, sha
 from scripts.run_camera_varied_start_student import load_stage_models
 from scripts.run_three_robot_mission import prepare_grasp_models
-from scripts.dispatch_pair_skill import BoundPairSkill
+from scripts.dispatch_pair_skill import (BoundPairSkill, COARSE_LEAD_LIMIT_PX,
+    COARSE_CONCURRENT_MAX_CAPTURE_AGE_S, COARSE_CONCURRENT_COMMAND_S)
 from scripts.camera_approach_scene import image_record
 
 RGB_ACTION_TTL_S=.6
@@ -63,6 +64,33 @@ def fast_servo_map_supported(static_map, *, realtime_control):
                 and all(item.get('id') in boundaries for item in static_map.get('obstacles',[])))
 
 
+def coarse_concurrency_status(pair, *, requested):
+    if not requested:
+        return {'applied':False,'reason':'disabled'}
+    if pair.coarse is None:
+        return {'applied':False,'reason':'own_motion_identity_unresolved'}
+    if not pair._concurrent_coarse_scope():
+        return {'applied':False,'reason':'unsupported_map_or_runtime_scope'}
+    return {'applied':True,'reason':'eligible_for_rgb_decision_admission'}
+
+
+def port_issue_receipt(applied,port,action,*,bounded):
+    """Freeze only the returned port acknowledgement before physics advances."""
+    state=applied.get('actuator_state') if isinstance(applied,dict) else None
+    pwm=state.get('motor_commands') if isinstance(state,dict) else None
+    issued=applied.get('sim_time') if isinstance(applied,dict) else None
+    expiry=getattr(port,'_command_expires_at' if bounded else '_drive_expires_at',None)
+    acknowledged=(type(issued) in (int,float) and math.isfinite(issued)
+                  and type(expiry) in (int,float) and math.isfinite(expiry) and expiry>=issued
+                  and isinstance(pwm,(list,tuple)) and len(pwm)==4
+                  and all(type(v) in (int,float) and math.isfinite(v) for v in pwm))
+    return {'acknowledged':acknowledged,
+            'actual_issued_at_s':issued if acknowledged else None,
+            'effective_expiry_s':expiry if acknowledged else None,
+            'port_ack_motor_pwm':list(pwm) if acknowledged else None,
+            'applied_action':copy.deepcopy(action) if acknowledged else None}
+
+
 class SkillScene(DispatchScene):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
@@ -76,6 +104,7 @@ class SkillScene(DispatchScene):
         self.replay=None
         self.efficient_capture=False
         self.realtime_control=False
+        self.coarse_concurrent_alignment=False
         self.rolling_visual_servo=False
         self.bounded_carrier_relink=False
         self.rolling_view_recovery=False
@@ -188,9 +217,12 @@ class SkillScene(DispatchScene):
         if self.bindings:self.bindings.authorize(self.team.agreement.committed)
     def raw(self,rid,action,stage):
         self.authorize();self.ports[rid].validate_action(action)
-        self.ports[rid].apply(action,self.time())
+        applied=self.ports[rid].apply(action,self.time())
         self.command_history[rid].append({'stage':stage,'action':copy.deepcopy(action),
-            'issued_at_s':self.time(),'plan_hash':self.bindings.committed['plan_hash'] if self.bindings else None})
+            'issued_at_s':(applied['sim_time'] if isinstance(applied,dict)
+                           and 'sim_time' in applied else self.time()),
+            'plan_hash':self.bindings.committed['plan_hash'] if self.bindings else None})
+        return applied
     def _permission_snapshot(self):
         """A private permission state for RGB workers and owner preflight."""
         snapshot=copy.copy(self.bindings)
@@ -301,8 +333,12 @@ class SkillScene(DispatchScene):
         for r,a in commands.items():self.ports[r].validate_action(a)
         if stage=='TRANSIT' and any(any(abs(a.get(k,0.))>0 for k in ('forward','left','turn')) for a in commands.values()):
             self.bindings.note_transit_command('beam')
-        for r,a in commands.items():self.raw(r,a,stage)
+        receipts={}
+        for r,a in commands.items():
+            applied=self.raw(r,a,stage)
+            receipts[r]=port_issue_receipt(applied,self.ports[r],a,bounded=False)
         self.step(duration)
+        return receipts
     def pair_issue_bounded(self,commands,duration,stage):
         """Issue one atomic pair lease; physics remains on the calling owner."""
         self.authorize();self.pair_phase=stage
@@ -312,15 +348,18 @@ class SkillScene(DispatchScene):
         if stage=='TRANSIT' and any(any(abs(a.get(k,0.))>0 for k in ('forward','left','turn')) for a in commands.values()):
             self.bindings.note_transit_command('beam')
         now=self.time()
+        receipts={}
         try:
             for r,a in commands.items():
-                self.ports[r].apply_bounded(a,now,duration)
+                applied=self.ports[r].apply_bounded(a,now,duration)
                 self.command_history[r].append({'stage':stage,'action':copy.deepcopy(a),
                     'issued_at_s':now,'valid_until_s':now+duration,
                     'plan_hash':self.bindings.committed['plan_hash']})
+                receipts[r]=port_issue_receipt(applied,self.ports[r],a,bounded=True)
         except BaseException:
             for r in commands:self.ports[r].hold(now)
             raise
+        return receipts
     def pair_arm(self,targets,duration,settle,stage):
         self.authorize();self.pair_phase=stage
         if not set(targets)<=set(self.bindings.pair.values()):raise ValueError('pair arm endpoint mismatch')
@@ -1295,11 +1334,14 @@ def run(args):
     scene=SkillScene(config,args.output)
     scene.efficient_capture=getattr(args,'efficient_capture',False)
     scene.realtime_control=bool(getattr(args,'realtime_control',False))
+    scene.coarse_concurrent_alignment=bool(getattr(args,'coarse_concurrent_alignment',False))
     scene.rolling_visual_servo=bool(getattr(args,'rolling_visual_servo',False))
     scene.bounded_carrier_relink=bool(getattr(args,'bounded_carrier_relink',False))
     scene.rolling_view_recovery=bool(getattr(args,'rolling_view_recovery',False))
     if scene.rolling_visual_servo and not scene.realtime_control:
         raise ValueError('rolling visual servo requires realtime control')
+    if scene.coarse_concurrent_alignment and not scene.realtime_control:
+        raise ValueError('coarse concurrent alignment requires realtime control')
     if scene.bounded_carrier_relink and not (scene.rolling_visual_servo and scene.realtime_control):
         raise ValueError('bounded carrier relink requires rolling realtime control')
     if scene.rolling_view_recovery and not (scene.rolling_visual_servo and scene.realtime_control):
@@ -1316,6 +1358,16 @@ def run(args):
         'environment':{'python':sys.version,'platform':platform.platform(),'mujoco':mujoco.__version__},
         'plan_committed':False,'protocol_complete':False,'physical_success':False,'error':None,
         'phase':'SETUP','cost_usd':None,
+        'coarse_concurrent_alignment':{
+            'requested':scene.coarse_concurrent_alignment,'applied':False,
+            'reason':'not_evaluated',
+            'scope':'realtime paired APPROACH on fixed dispatch_open or dispatch_shared_crossing RGB maps',
+            'static_map_sha256':config['static_map_sha256'],
+            'arena_variant':config['variant'],
+            'same_fresh_top_required':True,'max_capture_age_s':COARSE_CONCURRENT_MAX_CAPTURE_AGE_S,
+            'rgb_ttl_s':RGB_ACTION_TTL_S,'existing_coarse_command_s':COARSE_CONCURRENT_COMMAND_S,
+            'lead_limit_px':COARSE_LEAD_LIMIT_PX,'coarse_decision_cap':120,
+            'lease_policy':'unchanged existing 0.25s wire cap and 0.6s RGB TTL'},
         'rolling_approach':{'requested':scene.rolling_visual_servo,'applied':False,
             'scope':'solo approach only, realtime dispatch_open without internal obstacles',
             'max_wire_lease_s':REALTIME_MOTOR_RENEWAL_S,
@@ -1342,6 +1394,7 @@ def run(args):
             'max_cumulative_visual_motion_px':_CARRIER_RELINK_MAX_MOTION_PX,
             'final_slot_requires_direct_top_cargo':True},
         'input_boundary':'own fixed RGB + common fixed TOP RGB + static authored map + own issued commands + peer claims; referee output only'}
+    scene.source_sha=result['source_sha']
     try:
         scene.open();scene.deadline=started+args.max_wall_s
         if getattr(args,'viewer',False):
@@ -1447,6 +1500,8 @@ def run(args):
         result['bounded_carrier_relink']['applied']=scene.bounded_carrier_relink
         result['view_recovery']['applied']=scene.rolling_view_recovery
         pair=BoundPairSkill(scene,scene.bindings,skill,grasp,stages,grasp_root,reference,identity)
+        result['coarse_concurrent_alignment'].update(coarse_concurrency_status(
+            pair,requested=scene.coarse_concurrent_alignment))
         while not scene.bindings.permission('beam','APPROACH'):scene.step(.2)
         result['phase']='APPROACH';result['pair_approach']=_approach(pair,scene,team,task,args,result)
         while not scene.bindings.permission('beam','GRASP'):scene.step(.2)
