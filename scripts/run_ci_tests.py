@@ -11,9 +11,12 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 TEST_PATTERNS = (
+    "tests/test_model_artifacts.py",
     "tests/test_simulation_session.py",
+    "tests/test_agent_lock.py",
     "tests/test_simulation_console.py",
     "tests/test_simulation_dispatch.py",
+    "tests/test_dispatch_replay.py",
     "tests/test_simulation_extensions.py",
     "tests/test_simulation_scenes.py",
     "tests/test_simulation_workflow_manager.py",
@@ -49,6 +52,7 @@ TEST_PATTERNS = (
     "tests/test_tensorboard_launcher.py",
     "tests/test_colab_carry_bundle.py",
     "tests/test_carry_training_checkpoint_optional.py",
+    "tests/test_act_route_teacher*.py",
     "tests/test_jev_skill_motion.py",
     "tests/test_act_speed_generalization.py",
     "tests/test_act_recovery.py", "tests/test_recovery_commands.py",
@@ -97,6 +101,9 @@ TEST_PATTERNS = (
     "tests/test_dispatch_pair_prefetch.py",
     "tests/test_communication_observer.py",
     "tests/test_dispatch_solo_cadence.py",
+    "tests/test_fine_gain_schedule.py",
+    "tests/test_dispatch_coarse_handoff.py",
+    "tests/test_camera_varied_start_runner.py",
     "tests/test_dispatch_pair_pending_renewal.py",
     "tests/test_dispatch_solo_budget.py",
     "tests/test_camera_gripper_motion.py",

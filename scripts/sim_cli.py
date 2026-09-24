@@ -450,7 +450,8 @@ def _choose_launch():
     else:
         print(f"기본 장면: {default_map}. ACT 등은 관찰용 장면이며 정책 실행·성공 검증이 아닙니다.")
         selected_map = _preview_map_choice(maps)
-    speed = _menu_choice("관찰 속도 [2 = 1× 기본; ? 목록]: ", ["0.5", "1", "2", "4"], "1",
+    speed_prompt = "재생 속도" if selected_mode == "llm_dispatch" else "관찰 속도"
+    speed = _menu_choice(f"{speed_prompt} [2 = 1× 기본; ? 목록]: ", ["0.5", "1", "2", "4"], "1",
                          labels=["0.5×", "1×", "2×", "4×"])
     selection = {"mode": selected_mode, "map": selected_map, "speed": speed}
     if selected_mode == "llm_dispatch":
@@ -475,6 +476,12 @@ def _choose_launch():
 
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] == 'models':
+        from scripts.model_artifacts import main as models_cli
+        return models_cli(argv[1:], root=ROOT)
+    if argv and argv[0] == 'replay':
+        from scripts.dispatch_replay import main as replay
+        return replay(argv[1:])
     if argv and argv[0] == 'workflow':
         from sim.workflow_manager import workflow_cli
         return workflow_cli(argv[1:], root=ROOT)
@@ -500,9 +507,11 @@ def main(argv=None):
             return 2
     parser = argparse.ArgumentParser(description="UGRP native MuJoCo + configurable local simulation")
     sub = parser.add_subparsers(dest="command", required=True)
+    sub.add_parser('models', help='list, fetch, verify, and package model artifacts; models --help')
     sub.add_parser('workflow', help='plan/run registered workflows and inspect shared execution records; workflow --help')
     sub.add_parser('start', help='choose existing plan/skills, saved-plan replay, manual or configured execution')
-    sub.add_parser('dispatch', help='existing peer planning and RGB skills in the native window; dispatch --help')
+    sub.add_parser('dispatch', help='existing peer planning and RGB skills, computed then replayed in the native window; dispatch --help')
+    sub.add_parser('replay', help='replay a finished dispatch output in the native window; replay --help')
     init = sub.add_parser("init", help="write a new editable JSON configuration")
     init.add_argument("path", type=Path)
     init.add_argument("--scene", "--layout", dest="layout", default=DEFAULT_SCENE,

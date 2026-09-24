@@ -151,6 +151,8 @@ class BoundPairSkill:
         self.commands={r:{int(c):int(v) for c,v in p.items()} for r,p in self.commands.items()}
         self.trace=[];self.evaluation_samples=[];self.grasp_report={};self.phase='APPROACH'
         self.last_capture=None;self.count=0;self.calls=[]
+        # Explicit experimental far-field fine alignment command schedule.
+        self.fine_gain_schedule=bool(getattr(io,'fine_gain_schedule',False))
         self.grasp_translation=None;self.latest_translation=None;self.transport_started=False
         # Only the open RGB carry path has the owner-step pump contract through
         # release. Rotation and other transports retain their capture timing.
@@ -834,7 +836,8 @@ class BoundPairSkill:
             self._clear_approach_pending(hold=True)
             raise RuntimeError('coarse RGB approach budget exhausted')
         report.update(run_approach(self,self.stage_models,reacquire_on_settle=True,
-                                   final_refinement_steps=40,invalid_reobserve_budget=1))
+                                   final_refinement_steps=40,invalid_reobserve_budget=1,
+                                   fine_gain_schedule=getattr(self,'fine_gain_schedule',False)))
         self.calls.append({'kind':'learned_approach','report':report})
         if not report['approach_ok']:raise RuntimeError('fine RGB alignment outside saved skill support')
         ready_count=0

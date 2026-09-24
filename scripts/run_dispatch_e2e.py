@@ -295,6 +295,8 @@ def main(argv=None):
     p.add_argument('--model',default='gemini-3.8-flash',help='existing peer planner model')
     p.add_argument('--viewer',action='store_true',help='skills: live native observer window, Space pause/resume, Q quit')
     p.add_argument('--realtime-factor',type=float,default=1.,help='native observer pacing; does not change physics timestep')
+    p.add_argument('--record-replay',action='store_true',
+                   help='skills: save observer-only states for post-run native replay (scripts.dispatch_replay)')
     p.add_argument('--realtime-control',action='store_true',
                    help='bounded asynchronous RGB control and isolated observer; separately versioned candidate')
     p.add_argument('--rolling-visual-servo',action='store_true',
@@ -303,6 +305,8 @@ def main(argv=None):
                    help='experimental solo approach: bounded own-RGB active view after weak visible cyan; requires rolling realtime open-map skill')
     p.add_argument('--bounded-carrier-relink',action='store_true',
                    help='experimental solo carry: finite current-RGB carrier revalidation across TOP cargo occlusion; requires rolling realtime open-map skill')
+    p.add_argument('--fine-gain-schedule',action='store_true',
+                   help='skills only, synchronous only: experimental far-field command schedule for paired fine RGB alignment; default off')
     p.add_argument('--planning-rounds',type=int,default=8)
     p.add_argument('--max-replans',type=int,default=2)
     p.add_argument('--rounds',type=int,default=24)
@@ -335,6 +339,7 @@ def main(argv=None):
     if not math.isfinite(args.realtime_factor) or args.realtime_factor<=0:p.error('positive finite realtime factor required')
     if args.planning_rounds<1 or args.max_replans<0:p.error('positive planning rounds and nonnegative replans required')
     if args.executor!='skills' and (args.viewer or args.task):p.error('--viewer/--task use the existing skills executor')
+    if args.executor!='skills' and args.record_replay:p.error('--record-replay uses the existing skills executor')
     if args.rolling_visual_servo and (args.executor!='skills' or not args.realtime_control):
         p.error('--rolling-visual-servo requires skills --realtime-control')
     if args.bounded_carrier_relink and not args.rolling_visual_servo:
@@ -344,6 +349,8 @@ def main(argv=None):
     if args.task and args.plan_replay:p.error('--task requires new planning; cannot change a replayed plan')
     if args.carry_act_model and not args.carry_act_python:p.error('ACT interpreter required')
     if args.carry_max_steps is not None and args.carry_max_steps<=0:p.error('positive carry-max-steps required')
+    if args.fine_gain_schedule and args.executor!='skills':p.error('--fine-gain-schedule uses the skills executor')
+    if args.fine_gain_schedule and args.realtime_control:p.error('--fine-gain-schedule is calibrated for synchronous execution only; omit --realtime-control')
     if args.live_replan and (not args.plan_replay or args.executor!='skills'):
         p.error('--live-replan requires a skills --plan-replay diagnostic')
     if args.output.exists():p.error('output exists; choose a new directory')

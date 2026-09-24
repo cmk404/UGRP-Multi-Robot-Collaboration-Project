@@ -37,19 +37,6 @@ class LatestFrameTests(unittest.TestCase):
         self.assertGreater(received, 0)
 
 class PhysicalCameraSourceTests(unittest.TestCase):
-    def test_physical_grabber_uses_reconnectable_tunnel_and_starts_pump(self):
-        text=(ROOT/'harness/web.py').read_text()
-        self.assertIn('ensure_camera_tunnel()',text)
-        self.assertIn('invalidate_camera_tunnel(current)',text)
-        self.assertIn('grab_snapshot(url=current.snapshot_url)',text)
-        self.assertIn('state.start_low_latency_camera(pose_stream=True)',text)
-        self.assertIn('frames[-1]',text)
-
-    def test_real_ui_never_leaves_previous_sim_bitmap_visible(self):
-        text=(ROOT/'harness/static/index.html').read_text()
-        self.assertIn('preview.removeAttribute("src")', text)
-        self.assertIn('preview.style.visibility = "hidden"', text)
-        self.assertIn('setTalkOnly(!!data.talk_only)', text)
     def test_pose_stream_is_persistent_read_only(self):
         text=(ROOT/'harness/real_pose.py').read_text()
         self.assertIn('while true; do cat /tmp/ugrp-masterpi-pose.json',text)

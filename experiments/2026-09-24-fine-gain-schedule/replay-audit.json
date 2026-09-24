@@ -1,0 +1,108 @@
+{
+  "schema": "ugrp.fine_gain_schedule_replay.v1",
+  "source": {
+    "git_sha": "46595c796900681d4d72d09fc3cee27614dddbe6",
+    "dirty": false
+  },
+  "scope": "offline RGB decision replay only; no physics, referee, model call, speed or success claim",
+  "settings": {
+    "schema": "ugrp.fine_gain_schedule.v1",
+    "step_fraction": 0.35,
+    "far_tolerance_multiple": 3.0,
+    "nominal_response": {
+      "yaw": 0.12,
+      "lateral": 0.15,
+      "forward": 0.15
+    },
+    "high_response": {
+      "yaw": 0.17,
+      "lateral": 0.24,
+      "forward": 0.24
+    },
+    "tolerances": {
+      "yaw": 0.006,
+      "lateral": 0.0025,
+      "forward": 0.004
+    },
+    "command_bounds": {
+      "yaw": [
+        -0.06,
+        0.06
+      ],
+      "lateral": [
+        -0.06,
+        0.06
+      ],
+      "forward": [
+        -0.05,
+        0.15
+      ]
+    }
+  },
+  "stage_models": {
+    "dir": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied",
+    "files_sha256": {
+      "model-r1-forward.json": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45",
+      "model-r1-lateral.json": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869",
+      "model-r1-yaw.json": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374",
+      "model-r3-forward.json": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d",
+      "model-r3-lateral.json": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f",
+      "model-r3-yaw.json": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8",
+      "varied-start-skill.json": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a"
+    }
+  },
+  "runs": {
+    "native-v19-grasp-full": {
+      "pair_decisions_sha256": "92fb30975f1c227cf1e1fb753db589ebbd451ea6870a322bae731417b4e06aae",
+      "replayed_moving_decisions": 340,
+      "recorded_decision_mismatches": 0,
+      "image_hash_failures": 0,
+      "stages": {
+        "yaw": {
+          "moving_decisions": 38,
+          "scheduled": 1,
+          "max_model_command": 0.01,
+          "max_scheduled_command": 0.053100629065064055
+        },
+        "lateral": {
+          "moving_decisions": 108,
+          "scheduled": 29,
+          "max_model_command": 0.01,
+          "max_scheduled_command": 0.048040930165651134
+        },
+        "forward": {
+          "moving_decisions": 194,
+          "scheduled": 169,
+          "max_model_command": 0.03953385934349283,
+          "max_scheduled_command": 0.15
+        }
+      }
+    },
+    "native-v19-grasp-repeat": {
+      "pair_decisions_sha256": "891f1578aed39666f12b7ab739ed80578b488539cbcab90c7486828f96401fcc",
+      "replayed_moving_decisions": 328,
+      "recorded_decision_mismatches": 0,
+      "image_hash_failures": 0,
+      "stages": {
+        "yaw": {
+          "moving_decisions": 36,
+          "scheduled": 3,
+          "max_model_command": 0.01,
+          "max_scheduled_command": 0.05339047969123332
+        },
+        "lateral": {
+          "moving_decisions": 116,
+          "scheduled": 34,
+          "max_model_command": 0.01,
+          "max_scheduled_command": 0.051764189594950674
+        },
+        "forward": {
+          "moving_decisions": 176,
+          "scheduled": 155,
+          "max_model_command": 0.04016504780859223,
+          "max_scheduled_command": 0.15
+        }
+      }
+    }
+  }
+}

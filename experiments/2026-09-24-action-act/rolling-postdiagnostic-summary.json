@@ -1,0 +1,88 @@
+{
+  "schema": "ugrp.rolling_visual_servo_summary.v1",
+  "protocol": "/Users/changmin/.codex/worktrees/rolling-visual-servo/ugrp/experiments/2026-09-24-action-act/rolling-protocol.json",
+  "raw_root": "/Users/changmin/projects/ugrp/outputs/dispatch-rolling-servo-20260924",
+  "planned_order": [
+    "original/rolling-diagnostic-1",
+    "original/rolling-diagnostic-2",
+    "roll-a/reference",
+    "roll-a/rolling",
+    "roll-b/rolling",
+    "roll-b/reference",
+    "roll-c/reference",
+    "roll-c/rolling"
+  ],
+  "trial_states": {
+    "original/rolling-diagnostic-1": "audited",
+    "original/rolling-diagnostic-2": "audited",
+    "roll-a/reference": "unstarted",
+    "roll-a/rolling": "unstarted",
+    "roll-b/rolling": "unstarted",
+    "roll-b/reference": "unstarted",
+    "roll-c/reference": "unstarted",
+    "roll-c/rolling": "unstarted"
+  },
+  "diagnostic_denominator": {
+    "planned": 2,
+    "started": 2,
+    "audited": 2,
+    "physical_and_protocol_success": 0,
+    "audited_ordinary_or_invariant_failures": 2,
+    "unstarted": 0,
+    "started_unreviewed_or_incomplete": 0
+  },
+  "qualification_denominator": {
+    "planned": 6,
+    "started": 0,
+    "audited": 0,
+    "physical_and_protocol_success": 0,
+    "audited_ordinary_or_invariant_failures": 0,
+    "unstarted": 6,
+    "started_unreviewed_or_incomplete": 0
+  },
+  "matched_pairs": {
+    "roll-a": {
+      "status": "missing_audit",
+      "reference_audited": false,
+      "rolling_audited": false
+    },
+    "roll-b": {
+      "status": "missing_audit",
+      "reference_audited": false,
+      "rolling_audited": false
+    },
+    "roll-c": {
+      "status": "missing_audit",
+      "reference_audited": false,
+      "rolling_audited": false
+    }
+  },
+  "speed_gate_pass": false,
+  "moving_capture_gate_pass": false,
+  "budgets": {
+    "diagnostic": {
+      "hard_limit_s": 740,
+      "recorded_process_wall_s": 397.39684820800903,
+      "remaining_s": 342.60315179199097,
+      "within_limit": true,
+      "finalized_launches": {
+        "original/rolling-diagnostic-1": 167.0920109580038,
+        "original/rolling-diagnostic-2": 230.30483725000522
+      },
+      "unresolved_launches": []
+    },
+    "qualification": {
+      "hard_limit_s": 2200,
+      "recorded_process_wall_s": 0,
+      "remaining_s": 2200,
+      "within_limit": true,
+      "finalized_launches": {},
+      "unresolved_launches": []
+    }
+  },
+  "failed_wall_s_separate": {
+    "original/rolling-diagnostic-1": 165.184449124994,
+    "original/rolling-diagnostic-2": 228.45988316598232
+  },
+  "claim_scope": "Speed gate requires all six matched physical/protocol successes, every pair faster, median relative full-wall reduction >=5%. Rolling capture evidence separately requires each candidate captured RGB within an effective issued command window; it proves no measured motion. Diagnostics and failed walls never enter speed statistics."
+}

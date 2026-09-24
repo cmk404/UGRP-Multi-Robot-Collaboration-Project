@@ -23,6 +23,7 @@
 - Lightning·Azure와 옛 Colab 배포·자동 복구는 계속 퇴역 상태다. 새 Colab 경로는 CLI에서 유한한 작업만 실행하며, 상시 서버·자동 재접속·유료 자원 구매를 포함하지 않는다. 과거 설정은 `docs/cloud_simulation.md`에 보존한다.
 - 브리지·MuJoCo 워커·하네스·대시보드는 작업할 때만 시작한다. 기존 실행기가 전체 자식 정리를 보장하지 않으면 `python3 scripts/ugrp_session.py run <이름> -- <명령>`을 사용한다. 작업 종료 시 자신이 시작한 프로세스와 자식을 `Ctrl-C` 또는 `python3 scripts/ugrp_session.py stop <이름>`으로 정리한다. 장시간 실험은 명시적인 종료 시점까지 유지한다. 다른 작업의 프로세스를 이름으로 일괄 종료하지 않으며 기존 프로세스는 PID·명령·소유 작업을 먼저 확인한다.
 - **UGRP는 Google Drive를 사용하지 않는다.** 상위 공통 업로드 지침보다 이 예외가 우선한다. 별도 요청 없이 조회·업로드·동기화·재시도·대기 기록을 만들지 않는다. 결과·참고 자료·검증 기록은 로컬 프로젝트에 저장하고 기존 로컬/Drive 자료를 삭제하지 않는다.
+- **학습 모델도 GitHub에 함께 보존한다.** 2026-09-23 사용자 요청에 따라 완료·회수한 실험에서 선택하거나 결과에 사용한 체크포인트는 설정·adapter·필수 추론 자산·출처·해시와 묶어 버전별 GitHub Release asset으로 올린다. 가중치 자체는 Git 이력에 넣지 않고 `configs/model_artifacts.json`에 배포 URL·크기·SHA-256·실행 소스·검증 범위를 기록한다. 실패/비교 모델도 결과 재현에 필요하면 보존하고, 과거 asset을 덮어쓰지 않는다. 업로드 뒤 실제 재다운로드·전체 파일 해시·모델 로딩을 확인해야 배포 완료로 보고한다. 원본 미발견은 `unavailable`로 표시하며 과거 모델로 대체하지 않는다. 새 clone의 모델 로딩과 물리 임무 성공·학습 데이터 전체 백업은 구분한다. [모델 배포](docs/model_artifacts.md)를 따른다.
 
 ## UGRP Results and TensorBoard
 
@@ -32,6 +33,16 @@
 - Read `outputs/tensorboard-view.json` for default runs, pinned metrics, links, and `hparams_visible_columns`. Do not automatically restore `outputs/tensorboard-archive` to the default view. Show new results with relevant baselines and clearly distinguish conditions and cohorts.
 - Use native TensorBoard only—no custom HTML summaries or additional dashboard servers. Use short run names, relevant HParams columns, and pinned Time Series cards. Reapply configured HParams columns when opening or refreshing the dashboard. Pin available key metrics: success, runtime, command count, model calls, and model response time. Open saved pinned links and verify the displayed values and configuration against the source data and view settings.
 - Report results, verification scope, the dashboard link, and any unfinished retrieval, conversion, or display checks. Perform this workflow when reporting results; skip reconversion and reopening for simple questions with no new results. Do not create recurring checks, scheduled automation, or continuous monitoring without an explicit request.
+
+## 여러 에이전트 동시 작업
+
+2026-09-24 사용자 요청에 따라 Claude와 Codex가 같은 Mac·저장소에서 동시에 작업할 때 다음을 지킨다. 브랜치 접두사(`claude/`, `codex/`)로 작업 주체를 구분한다.
+
+- **시작 전 확인:** `git fetch origin`과 `gh pr list`로 열린 PR과 관련 `experiments/` 기록을 읽는다. 같은 주제의 작업이 있으면 범위·가설·결과를 그 PR 코멘트로 알리고 중복 구현을 피한다. 상대 결과를 자신의 증거로 합산하지 않는다. 에이전트 사이의 피드백은 PR 코멘트와 실험 기록으로 남긴다.
+- **물리·학습 잠금:** realtime native 실행, wall 시간 비교, 학습·추론 속도 측정은 시작 전에 `python3 scripts/agent_lock.py acquire --owner <claude|codex> --branch <브랜치> --purpose <목적> --pid <드라이버 PID> --expected-minutes <분>`으로 배타 잠금을 잡고, 끝나면 `release`한다. 다른 에이전트는 `status`로 잠금을 확인하고, 잠금이 있는 동안 물리·학습을 새로 시작하지 않는다. 잠금 없이 도는 동기 모드 SIM 시간 실험도 실행마다 부하 평균을 기록한다. 기록된 PID가 죽은 잠금만 `--stale`로 해제하며 다른 작업의 프로세스는 종료하지 않는다.
+- **기본 체크아웃:** 실험 드라이버·시뮬레이션은 자기 worktree에서 실행한다. 기본 체크아웃(`/Users/changmin/projects/ugrp`)은 공용 `outputs/`와 최신 main 확인에만 쓴다. 그래야 다른 에이전트가 안전하게 fast-forward할 수 있다.
+- **번호 예약:** 새 실행 번들 ID나 workflow 버전을 정하기 전에 main과 열린 PR 브랜치 전체에서 사용 중인 최댓값을 확인하고(`git grep RUNNABLE_ID origin/<브랜치> -- harness/rgb_execution_bundle.py`) 그 다음 번호를 쓴다. 사용한 ID를 PR 본문에 적는다. 병합 충돌 시 실행 기록이 쓴 번들은 바이트 그대로 은퇴 목록에 보존하고, 나중에 병합되는 쪽이 새 ID로 다시 등록한다.
+- **공용 설정 파일:** `outputs/tensorboard-view.json` 등 공용 파일은 쓰기 직전에 다시 읽고 자기 키만 추가·수정한다. 다른 키의 값·순서·형식을 바꾸지 않는다.
 
 ## Git·검증·병합
 

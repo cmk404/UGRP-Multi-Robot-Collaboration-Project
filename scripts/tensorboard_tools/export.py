@@ -14,6 +14,7 @@ import json
 import math
 from pathlib import Path
 import re
+import statistics
 import time
 import tempfile
 import shutil
@@ -31,7 +32,13 @@ HP_METRICS = ('process/exit_code', 'result/wall_s', 'result/sim_s', 'result/comm
               'claims/completed_task_claims', 'claims/tasks', 'claims/final_object_claims',
                'training/final_loss', 'development/final_selection_score',
                'offline/episodes', 'offline/premature_pair_hold_episodes',
-               'offline/missed_terminal_episodes', 'offline/termination_pass') + EXTRA_METRICS
+               'offline/missed_terminal_episodes', 'offline/termination_pass',
+               'finalization/complete', 'finalization/selected_checkpoint_eligible',
+               'finalization/development/first_action_strict_mismatch_count',
+               'benchmark/reference_request_latency_median_s',
+               'benchmark/refined_request_latency_median_s',
+               'infrastructure/aborted_attempts',
+               'infrastructure/unstarted_cases') + EXTRA_METRICS
 SECRET = re.compile(r'authorization|cookie|password|secret|api.?key|access.?token|refresh.?token', re.I)
 
 
@@ -55,6 +62,79 @@ def finite(value): return type(value) in (int, float) and math.isfinite(value)
 def sha(data): return hashlib.sha256(data).hexdigest()
 def slug(value): return re.sub(r'[^a-zA-Z0-9._-]+', '-', str(value)).strip('-')[:100] or 'run'
 def stable_digest(value): return sha(json.dumps(value, sort_keys=True, allow_nan=False).encode())
+
+
+def coverage_document(path):
+    """Read an external coverage correction; absence or malformed content is fatal."""
+    path = Path(path)
+    if path.is_symlink() or not path.is_file() or path.stat().st_size > MAX_BYTES:
+        raise ValueError(f'Coverage audit missing, linked, or oversized: {path}')
+    data = path.read_bytes()
+    try: audit = json.loads(data)
+    except (ValueError, UnicodeError) as exc:
+        raise ValueError(f'Invalid coverage audit JSON: {path}') from exc
+    if not isinstance(audit, dict) or audit.get('schema') != 'ugrp.act_request_coverage_audit.v1':
+        raise ValueError('Coverage audit schema mismatch')
+    raw = audit.get('source_raw')
+    if not isinstance(raw, str) or not Path(raw).is_absolute():
+        raise ValueError('Coverage audit source_raw must be absolute')
+    return audit, {'path': str(path.resolve()), 'sha256': sha(data), 'size': len(data)}
+
+
+def load_coverage_audit(src, path):
+    """Verify an orphan capture without asserting that either worker got a request."""
+    audit, provenance = coverage_document(path)
+    if Path(provenance['path']).is_relative_to(src.root):
+        raise ValueError('Coverage audit must be outside the raw source')
+    if audit['source_raw'] != str(src.root):
+        raise ValueError('Coverage audit source_raw mismatch')
+    decisions = src.read('pair-decisions.json', required=True)
+    if not isinstance(decisions, list) or src.files['pair-decisions.json']['sha256'] != audit.get('pair_decisions_sha256'):
+        raise ValueError('Coverage audit pair-decisions SHA mismatch')
+    act_rows = [row for row in rows(decisions) if row.get('kind') in
+                ('act_carry', 'act_stale_prediction', 'act_inference_error')]
+    if not act_rows:
+        raise ValueError('Coverage audit requires recorded ACT requests')
+    known = sum(isinstance(inp.get('wire_sha256'), str) and bool(re.fullmatch(
+        r'[0-9a-fA-F]{64}', inp['wire_sha256']))
+        for row in act_rows for inp in obj(row.get('inputs')).values())
+    if type(audit.get('recorded_wire_request_rows')) is not int or audit['recorded_wire_request_rows'] != known:
+        raise ValueError('Coverage audit recorded request count mismatch')
+    groups = audit.get('orphan_capture_groups')
+    bounds = audit.get('possible_unlogged_slots')
+    if (not isinstance(groups, list) or not groups or not isinstance(bounds, dict)
+            or type(bounds.get('min')) is not int or bounds['min'] != 0
+            or type(bounds.get('max')) is not int or bounds['max'] != 2 * len(groups)
+            or audit.get('worker_receipt_independently_verified') is not False):
+        raise ValueError('Coverage audit orphan bounds or worker-receipt scope invalid')
+    referenced = set()
+    def collect(value):
+        if isinstance(value, dict):
+            if isinstance(value.get('path'), str): referenced.add(value['path'])
+            for child in value.values(): collect(child)
+        elif isinstance(value, list):
+            for child in value: collect(child)
+    collect(act_rows)
+    seen = set()
+    for group in groups:
+        if not isinstance(group, dict) or not isinstance(group.get('tag'), str):
+            raise ValueError('Coverage audit orphan capture group invalid')
+        tag = group['tag']
+        if not re.fullmatch(r'act-carry-[0-9]+-attempt-[0-9]+', tag) or tag in seen:
+            raise ValueError('Coverage audit orphan capture tag invalid or duplicated')
+        seen.add(tag)
+        files = group.get('files')
+        if not isinstance(files, dict) or set(files) != {'r1', 'r3', 'top'}:
+            raise ValueError('Coverage audit requires r1, r3, and TOP capture hashes')
+        for slot in ('r1', 'r3', 'top'):
+            ref = files[slot]
+            expected = f'rgb/{tag}-{slot}.jpg'
+            if (not isinstance(ref, dict) or ref.get('path') != expected
+                    or not isinstance(ref.get('sha256'), str)
+                    or not re.fullmatch(r'[0-9a-fA-F]{64}', ref['sha256'])
+                    or expected in referenced or src.image(ref) is None):
+                raise ValueError(f'Coverage audit orphan image missing, referenced, or hash mismatched: {expected}')
+    return audit, provenance
 
 
 def inside(root, relative):
@@ -224,8 +304,216 @@ def export_training(src, w, data):
             'dataset_sha256': data.get('dataset_sha256'), 'complete': data.get('complete')}, {}
 
 
-def export_execution(src, w, result, max_images):
+def finalization_report(data):
+    return (isinstance(data, dict) and data.get('complete_scope') == 'artifact_finalization_only'
+            and data.get('termination_objective') == 'deployed_first_action'
+            and 'optimizer_updates_this_run' in data)
+
+
+def export_finalization(src, w, data):
+    """An artifact-only check is never an optimizer curve or robot evaluation."""
+    report_path = 'artifacts/report.json'
+    manager = src.read('manifest.json', required=True)
+    if (not finalization_report(data) or rows(data.get('progress'))
+            or data.get('optimizer_updates_this_run') != 0
+            or data.get('new_checkpoint_selection') is not False
+            or type(data.get('complete')) is not bool
+            or type(data.get('selected_checkpoint_eligible')) is not bool
+            or type(data.get('physical_success_claim')) is not bool
+            or data['physical_success_claim'] is not False):
+        raise ValueError('Invalid artifact-only ACT finalization report')
+    if (manager.get('schema') != 'ugrp.simulation_run.v1'
+            or manager.get('workflow_id') != 'act-input-finalization'
+            or manager.get('source', {}).get('source_sha') != data.get('source_sha')
+            or manager.get('source', {}).get('source_dirty') is not False
+            or manager.get('source_changed_during_run') is not False
+            or manager.get('inputs_changed_during_run') is not False
+            or manager.get('output') != str(src.root / 'artifacts')
+            or type(manager.get('exit_code')) is not int
+            or not finite(manager.get('runtime_s'))
+            or manager['runtime_s'] < 0
+            or (data['complete'] and (manager['exit_code'] != 0 or manager.get('status') != 'process_completed'))
+            or (not data['complete'] and (manager['exit_code'] == 0 or manager.get('status') != 'process_failed'))):
+        raise ValueError('ACT finalization manager/report provenance mismatch')
+    source_tree = obj(obj(manager.get('source')).get('execution_tree')).get('sha256')
+    if not source_tree or obj(manager.get('source_after')).get('sha256') != source_tree:
+        raise ValueError('ACT finalization source tree changed or missing')
+    dev_guard = obj(data.get('development_all_rows_cache_guard'))
+    finalization_error = (None if data['complete'] else
+                          'development all-row first-action original strict guard failed'
+                          if dev_guard.get('first_action_original_strict_guard_passed') is False else
+                          'unidentified finalization failure; inspect manager console')
+    metrics = {'process/exit_code': manager['exit_code'],
+               'finalization/process_wall_s': manager['runtime_s'],
+               'finalization/complete': int(data['complete']),
+               'finalization/selected_checkpoint_eligible': int(data['selected_checkpoint_eligible']),
+               'finalization/optimizer_updates_this_run': 0,
+               'finalization/selected_step_diagnostic_only': data.get('selected_step')}
+    for split in ('train', 'development'):
+        offline = obj(data.get(split + '_native_metrics'))
+        cache = obj(data.get(split + '_all_rows_cache_guard'))
+        first = obj(data.get(split + '_cache_vs_native_first_action'))
+        prefix = 'finalization/' + split + '/'
+        for key in ('samples', 'done_samples', 'selection_score', 'missed_done_rate',
+                    'false_done_rate', 'premature_hold_episode_fraction',
+                    'missed_terminal_episode_fraction'):
+            metrics[prefix + key] = offline.get(key)
+        if type(offline.get('offline_termination_pass')) is bool:
+            metrics[prefix + 'offline_termination_pass'] = int(offline['offline_termination_pass'])
+        for key in ('first_action_strict_mismatch_count',
+                    'full_chunk_original_strict_mismatch_count',
+                    'full_chunk_bounded_mismatch_count', 'done_decision_flip_count',
+                    'first_action_max_abs', 'full_chunk_max_abs'):
+            metrics[prefix + key] = cache.get(key)
+        for key in ('first_action_original_strict_guard_passed',
+                    'full_chunk_original_strict_guard_passed',
+                    'full_chunk_bounded_guard_passed', 'all_chunk_done_decisions_same'):
+            if type(cache.get(key)) is bool:
+                metrics[prefix + key] = int(cache[key])
+        metrics[prefix + 'cache_native_done_threshold_flip_count'] = first.get('done_threshold_flip_count')
+    for tag, value in metrics.items(): w.scalar(tag, value)
+    report_provenance = {'path': str(src.root / report_path),
+                         'sha256': src.files[report_path]['sha256'],
+                         'manager_path': str(src.root / 'manifest.json'),
+                         'manager_sha256': src.files['manifest.json']['sha256']}
+    console = inside(src.root, 'console.log')
+    if console and console.stat().st_size <= MAX_BYTES:
+        raw_console = console.read_bytes()
+        src.files['console.log'] = {'sha256': sha(raw_console), 'size': len(raw_console),
+                                    'mtime_s': console.stat().st_mtime}
+        report_provenance['console_path'] = str(console)
+        report_provenance['console_sha256'] = src.files['console.log']['sha256']
+    w.text('finalization/status', {'status': manager.get('status'),
+        'exit_code': manager['exit_code'], 'complete': data['complete'],
+        'phase': 'artifact_finalization', 'finalization_error': finalization_error,
+        'finalization_error_source': 'derived from current development all-row guard' if
+            dev_guard.get('first_action_original_strict_guard_passed') is False and not data['complete'] else
+            'manager console required' if not data['complete'] else None,
+        'original_failure_stage': data.get('original_failure_stage'),
+        'original_failure': data.get('original_failure'),
+        'selected_checkpoint_eligible': data['selected_checkpoint_eligible'],
+        'diagnostic_model_only': data.get('diagnostic_model_only'),
+        'original_training_completed_steps_provenance_only': data.get('original_training_completed_steps'),
+        'original_training_wall_s_provenance_only': data.get('original_training_wall_s'),
+        'report_provenance': report_provenance})
+    w.text('finalization/guard_details', {key: data.get(key) for key in
+        ('selected_cache_verification', 'train_native_metrics',
+         'development_native_metrics', 'train_all_rows_cache_guard',
+         'development_all_rows_cache_guard', 'train_cache_vs_native_first_action',
+         'development_cache_vs_native_first_action')})
+    return {'family': 'act-artifact-finalization', 'policy': 'ACT',
+            'case': src.root.name, 'source_sha': data.get('source_sha'),
+            'outcome': 'finalization_complete' if data['complete'] else 'finalization_failed',
+            'phase': 'artifact_finalization', 'status': manager.get('status'),
+            'scope': 'No optimizer updates or physical trial in this run',
+            'error': finalization_error,
+            'success_source_field': None,
+            'report_provenance': report_provenance}, {k:v for k,v in metrics.items() if finite(v)}
+
+
+def export_runtime_benchmark(src, w, data):
+    if (data.get('schema') != 'ugrp.act_runtime_benchmark_comparison.v1'
+            or type(data.get('per_condition_measured_pairs')) is not int
+            or data['per_condition_measured_pairs'] <= 0
+            or type(data.get('total_worker_requests_including_warmups')) is not int
+            or not isinstance(data.get('records'), dict)
+            or set(data['records']) != {'v27-sequential-1', 'v28-parallel-cached-1',
+                                       'v28-parallel-cached-2', 'v27-sequential-2'}
+            or any(not isinstance(v, str) or not re.fullmatch(r'[0-9a-f]{64}', v)
+                   for v in data['records'].values())):
+        raise ValueError('Invalid paired ACT request-latency benchmark')
+    ref, candidate = data.get('reference_median_s'), data.get('refined_median_s')
+    ratio, reduction = data.get('ratio'), data.get('reduction_fraction')
+    if (not all(finite(v) for v in (ref, candidate, ratio, reduction)) or
+            ref <= 0 or candidate <= 0 or ratio <= 0 or
+            not math.isclose(ratio, ref/candidate, rel_tol=1e-6) or
+            not math.isclose(reduction, 1-candidate/ref, rel_tol=1e-6) or
+            not finite(data.get('max_decoded_difference')) or
+            data['max_decoded_difference'] < 0 or
+            data['total_worker_requests_including_warmups'] < 2*data['per_condition_measured_pairs'] or
+            type(data.get('all_done_identical')) is not bool):
+        raise ValueError('ACT benchmark latency fields inconsistent')
+    ordered_records = ('v27-sequential-1', 'v28-parallel-cached-1',
+                       'v28-parallel-cached-2', 'v27-sequential-2')
+    records = {}
+    for name in ordered_records:
+        relative = name + '.json'
+        record = src.read(relative, required=True)
+        if src.files[relative]['sha256'] != data['records'][name]:
+            raise ValueError('ACT benchmark source record hash mismatch: ' + name)
+        expected_mode = 'sequential' if name.startswith('v27-') else 'parallel-cached'
+        expected_sha = ('12f8e6dda76e39b3ec612f247deb4835a2ff50bc'
+                        if name.startswith('v27-') else '931d910998a94361342c372ec2675c475daa625f')
+        if (record.get('schema') != 'ugrp.act_runtime_benchmark.v1'
+                or record.get('mode') != expected_mode
+                or record.get('source_sha') != expected_sha
+                or record.get('warmup_rows') != 2
+                or record.get('measured_rows') != data['per_condition_measured_pairs']//2
+                or len(rows(record.get('rows'))) != record['warmup_rows'] + record['measured_rows']):
+            raise ValueError('ACT benchmark source record condition mismatch: ' + name)
+        records[name] = record
+    first = records[ordered_records[0]]
+    if (data['per_condition_measured_pairs'] % 2
+            or data['total_worker_requests_including_warmups'] !=
+               2 * sum(len(rows(record['rows'])) for record in records.values())
+            or len({record.get('model_sha256') for record in records.values()}) != 1
+            or len({record.get('raw_source') for record in records.values()}) != 1
+            or len({record.get('raw_decisions_sha256') for record in records.values()}) != 1
+            or not isinstance(first.get('model_sha256'), str)
+            or not re.fullmatch(r'[0-9a-f]{64}', first['model_sha256'])
+            or not isinstance(first.get('raw_source'), str)
+            or not Path(first['raw_source']).is_absolute()
+            or not isinstance(first.get('raw_decisions_sha256'), str)
+            or not re.fullmatch(r'[0-9a-f]{64}', first['raw_decisions_sha256'])):
+        raise ValueError('ACT benchmark model/input or request denominator mismatch')
+    reference_times = []
+    refined_times = []
+    first_decisions = [row.get('decisions') for row in rows(first['rows'])]
+    for name, record in records.items():
+        measured = rows(record['rows'])[record['warmup_rows']:]
+        if [row.get('index') for row in rows(record['rows'])] != list(range(len(rows(record['rows'])))):
+            raise ValueError('ACT benchmark record index order mismatch')
+        if [row.get('decisions') for row in rows(record['rows'])] != first_decisions:
+            raise ValueError('ACT benchmark decoded decisions differ across paired runs')
+        times = [row.get('wall_s') for row in measured]
+        if not all(finite(value) and value > 0 for value in times):
+            raise ValueError('ACT benchmark measured request times invalid')
+        (reference_times if name.startswith('v27-') else refined_times).extend(times)
+    if (not math.isclose(statistics.median(reference_times), ref, rel_tol=1e-6)
+            or not math.isclose(statistics.median(refined_times), candidate, rel_tol=1e-6)
+            or data['max_decoded_difference'] != 0
+            or data['all_done_identical'] is not True):
+        raise ValueError('ACT benchmark medians or decoded-output consistency mismatch')
+    metrics = {'benchmark/reference_request_latency_median_s': ref,
+               'benchmark/refined_request_latency_median_s': candidate,
+               'benchmark/request_latency_ratio': ratio,
+               'benchmark/request_latency_reduction_fraction': reduction,
+               'benchmark/measured_pairs_per_condition': data['per_condition_measured_pairs'],
+               'benchmark/worker_requests_including_warmups': data['total_worker_requests_including_warmups'],
+               'benchmark/max_decoded_difference': data.get('max_decoded_difference'),
+               'benchmark/done_outputs_identical': int(data['all_done_identical'])}
+    for tag,value in metrics.items(): w.scalar(tag,value)
+    provenance = {'path': str(src.root / 'runtime-benchmark-comparison.json'),
+                  'sha256': src.files['runtime-benchmark-comparison.json']['sha256']}
+    w.text('benchmark/scope_and_records', {'scope': data.get('scope'),
+        'same_model_saved_input_pairs': data['per_condition_measured_pairs'],
+        'record_hashes': data['records'], 'model_sha256': first.get('model_sha256'),
+        'raw_source': first.get('raw_source'),
+        'raw_decisions_sha256': first.get('raw_decisions_sha256'),
+        'provenance': provenance,
+        'limit': 'Per-request latency only; no full-mission wall-time or robot-success metric.'})
+    return {'family': 'act-request-latency-benchmark', 'policy': 'ACT same checkpoint',
+            'case': 'v27-sequential-vs-v28-parallel-cached',
+            'outcome': 'request_latency_measured',
+            'scope': 'Same-model saved-input request latency; no physical mission claim',
+            'success_source_field': None,
+            'report_provenance': provenance}, {k:v for k,v in metrics.items() if finite(v)}
+
+
+def export_execution(src, w, result, max_images, coverage_audit=None):
     if result.get('schema_version') == RUN_SCHEMA:
+        if coverage_audit is not None:
+            raise ValueError('Coverage audit applies only to ACT dispatch evidence, not communication runs')
         return export_communication(src, w, result)
     cfg = obj(result.get('config')); usage = obj(result.get('usage'))
     if (src.root / 'turns.json').is_file(): family = 'jev-motion'
@@ -260,6 +548,8 @@ def export_execution(src, w, result, max_images):
             meta['command_count_scope'] = 'recorded raw action rows only; excludes setup descriptions and internal macro servo commands'
     carries = []
     act_predictions = []
+    if coverage_audit is not None and family != 'dispatch-act':
+        raise ValueError('Coverage audit applies only to ACT dispatch evidence')
     if family == 'dispatch-act':
         entries = rows(src.read('pair-decisions.json', required=True))
         carries = [(i, row) for i, row in enumerate(entries) if row.get('kind') == 'act_carry']
@@ -300,13 +590,28 @@ def export_execution(src, w, result, max_images):
         meta['act_request_count_scope'] = 'saved input rows with a 64-character wire hash; worker receipt not independently verified'
         meta['unconfirmed_act_slots'] = unconfirmed_slots
         meta['unverified_saved_act_inputs'] = unverified_saved_inputs
-        meta['act_request_verification_complete'] = not (unverified_saved_inputs or unconfirmed_slots)
+        meta['act_request_verification_complete'] = not (unverified_saved_inputs or unconfirmed_slots or coverage_audit)
+        if coverage_audit is not None:
+            bounds = coverage_audit['possible_unlogged_slots']
+            meta['act_recorded_wire_request_rows'] = attempted
+            meta['act_possible_unlogged_slots_min'] = bounds['min']
+            meta['act_possible_unlogged_slots_max'] = bounds['max']
+            meta['act_possible_request_slot_total_min'] = attempted + bounds['min']
+            meta['act_possible_request_slot_total_max'] = attempted + bounds['max']
+            meta['act_worker_received_total_independently_verified'] = False
+            meta['act_coverage_orphan_capture_groups'] = [g['tag'] for g in coverage_audit['orphan_capture_groups']]
+            meta['act_request_count_scope'] += '; external hashed orphan capture leaves possible unlogged slots, not confirmed worker calls'
+            w.text('inference_errors/coverage_audit', coverage_audit)
         metrics['execution/act_accepted_responses'] = accepted_responses
         metrics['execution/act_stale_responses'] = stale_responses
         metrics['execution/act_error_responses'] = error_responses
         metrics['execution/act_verified_error_attempts'] = verified_error_attempts
         metrics['execution/act_unverified_error_attempts'] = unverified_error_attempts
         metrics['execution/act_unconfirmed_slots'] = unconfirmed_slots
+        if coverage_audit is not None:
+            metrics['execution/act_recorded_wire_request_rows'] = attempted
+            metrics['execution/act_possible_unlogged_slots_min'] = coverage_audit['possible_unlogged_slots']['min']
+            metrics['execution/act_possible_unlogged_slots_max'] = coverage_audit['possible_unlogged_slots']['max']
         # llm_calls excludes local ACT. Preserve an explicit total if supplied.
         if finite(result.get('model_calls')):
             meta['reported_model_calls'] = result['model_calls']
@@ -317,6 +622,8 @@ def export_execution(src, w, result, max_images):
                                      if finite(external) else
                                      'saved ACT input rows with wire hash only; external calls unknown; '
                                      'unconfirmed ACT slots excluded')
+        if coverage_audit is not None:
+            meta['model_calls_scope'] += '; orphan-capture possible requests excluded, so the displayed value is a recorded lower bound'
         if not finite(metrics['result/commands']):
             issued = src.read('issued-commands.json')
             if isinstance(issued, dict):
@@ -487,43 +794,186 @@ def export_termination_audit(src, w, data):
             'predictions_sha256':data['predictions_sha256']},metrics
 
 
-def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=False):
+def export_teacher_infrastructure_abort(src, w, incident, incident_name='teacher-interference-abort.json'):
+    """Import one saved collection interruption, never a robot outcome."""
+    collection = Path(str(incident.get('collection', '')))
+    if (collection.parent != src.root or collection.is_symlink()
+            or not re.fullmatch(r'route-teachers-managed(?:-v[1-9][0-9]*)?', collection.name)):
+        raise ValueError('Teacher infrastructure collection must be a local sibling')
+    prefix = collection.name
+    raw = collection / 'raw/south-train-a'
+    launcher_name = prefix + '/launcher.json'
+    manager_name = prefix + '/managed/south-train-a/manifest.json'
+    setup_name = prefix + '/raw/south-train-a/episode-setup-only.json'
+    scene_name = prefix + '/raw/south-train-a/scene-manifest.json'
+    launcher = src.read(launcher_name, required=True)
+    manager = src.read(manager_name, required=True)
+    src.read(setup_name, required=True)
+    src.read(scene_name, required=True)
+    owned = obj(obj(incident.get('own_stop')).get('owned_pid_readback'))
+    stop = obj(incident.get('own_stop'))
+    cleanup = (bool(owned) and not any(value != '' for value in owned.values())
+               and str(stop.get('target_pid')) in owned)
+    case_rows = rows(launcher.get('cases'))
+    monitored = launcher.get('status') == 'foreign_interference_abort'
+    if monitored:
+        first = case_rows[0] if case_rows else {}
+        run = obj(first.get('run'))
+        interference = obj(run.get('foreign_interference'))
+        cleanup = (stop.get('owned_process_group_gone') is True
+                   and type(stop.get('target_pid')) is int and stop['target_pid'] > 0
+                   and run.get('pid') == stop['target_pid'] and run.get('exit_code') == 130
+                   and run.get('timed_out') is False)
+        cases_valid = (len(case_rows) == 3
+                       and first.get('id') == 'south-train-a'
+                       and first.get('status') == incident.get('first_case_status')
+                       == 'aborted_foreign_interference_during_run'
+                       and first.get('raw') == str(raw)
+                       and [c.get('id') for c in case_rows[1:]] == incident.get('unstarted_cases')
+                       and all(c.get('status') == 'unstarted_foreign_interference' for c in case_rows[1:])
+                       and incident.get('foreign_owner') in rows(interference.get('processes'))
+                       and obj(launcher.get('foreign_interference')).get('processes') == interference.get('processes')
+                       and incident.get('manager_manifest_sha256') == src.files[manager_name]['sha256'])
+    else:
+        cases_valid = (launcher.get('status') == 'collection_incomplete'
+                       and incident.get('first_case_status') == 'aborted_by_owner_due_concurrent_foreign_simulation'
+                       and len(case_rows) == 1 and case_rows[0].get('id') == 'south-train-a')
+    unstarted = incident.get('unstarted_cases')
+    elapsed = incident.get('elapsed_collection_wall_s')
+    source_tree = obj(obj(manager.get('source')).get('execution_tree')).get('sha256')
+    if (incident.get('schema') != 'ugrp.teacher_collection_interference_abort.v1'
+            or incident.get('collection') != str(collection)
+            or not re.fullmatch(r'[0-9a-f]{40}', str(incident.get('teacher_source_sha', '')))
+            or not re.fullmatch(r'[0-9a-f]{40}', str(incident.get('launcher_source_sha', '')))
+            or incident.get('first_case') != 'south-train-a'
+            or not cases_valid
+            or incident.get('physical_success', False) is not None
+            or incident.get('admitted_for_training') is not False
+            or unstarted != ['south-train-b', 'south-development']
+            or not finite(elapsed) or elapsed <= 0
+            or incident.get('launcher_sha256') != src.files[launcher_name]['sha256']
+            or launcher.get('schema') != 'ugrp.act.route_teacher_launcher.v1'
+            or launcher.get('teacher_source_sha') != incident.get('teacher_source_sha')
+            or launcher.get('launcher_source_sha') != incident.get('launcher_source_sha')
+            or not finite(launcher.get('elapsed_wall_s'))
+            or not math.isclose(launcher['elapsed_wall_s'], elapsed, rel_tol=1e-9)
+            or launcher.get('input_sha256_before') != launcher.get('input_sha256_after')
+            or manager.get('schema') != 'ugrp.simulation_run.v1'
+            or manager.get('workflow_id') != 'dispatch-skills'
+            or manager.get('status') != 'interrupted'
+            or manager.get('exit_code') != 130
+            or manager.get('physical_success', False) is not None
+            or manager.get('output') != str(raw)
+            or obj(manager.get('source')).get('source_sha') != incident.get('teacher_source_sha')
+            or obj(manager.get('source')).get('source_dirty') is not False
+            or manager.get('source_changed_during_run') is not False
+            or manager.get('inputs_changed_during_run') is not False
+            or not source_tree or obj(manager.get('source_after')).get('sha256') != source_tree
+            or manager.get('inputs_before') != manager.get('inputs_after')
+            or obj(incident.get('own_stop')).get('signal') != 'SIGINT'
+            or obj(incident.get('own_stop')).get('exit_code') != 130
+            or obj(incident.get('own_stop')).get('all_known_own_pids_gone') is not True
+            or not cleanup
+            or incident.get('foreign_processes_touched') is not False
+            or not raw.is_dir() or (raw / 'result.json').exists()
+            or any((collection / 'raw' / case).exists() or
+                   (collection / 'managed' / case).exists() for case in unstarted)):
+        raise ValueError('Teacher infrastructure incident/source mismatch')
+    metrics = {'infrastructure/aborted_attempts': 1,
+               'infrastructure/unstarted_cases': len(unstarted),
+               'infrastructure/elapsed_collection_wall_s': elapsed,
+               'infrastructure/interrupted_manager_exit_code': 130}
+    for tag, value in metrics.items(): w.scalar(tag, value)
+    provenance = {'incident': {'path': str(src.root / incident_name),
+                               'sha256': src.files[incident_name]['sha256']},
+                  'launcher_sha256': src.files[launcher_name]['sha256'],
+                  'manager_sha256': src.files[manager_name]['sha256'],
+                  'raw_setup_sha256': src.files[setup_name]['sha256'],
+                  'raw_scene_sha256': src.files[scene_name]['sha256']}
+    w.text('infrastructure/status_and_scope', {'status': incident['first_case_status'],
+        'started_attempts': 1, 'unstarted_cases': unstarted,
+        'physical_success': None, 'physical_failure': None,
+        'root_cause': incident.get('root_cause'),
+        'owner_cleanup_saved_readback': incident['own_stop'],
+        'provenance': provenance,
+        'limit': 'Saved interruption and cleanup receipts; not a robot evaluation or live PID check.'})
+    w.text('dataset/unavailable', {'reason': 'No successful teacher episode; result.json absent; '
+        'first attempt excluded and two fixed cases not started.',
+        'admitted_for_training': False, 'originals_preserved': True})
+    return {'family': 'teacher-infrastructure-abort', 'policy': 'RGB teacher',
+            'case': 'south-train-a-interrupted', 'source_sha': incident['teacher_source_sha'],
+            'outcome': 'infrastructure_abort_no_physical_verdict',
+            'scope': 'Collection interruption; no robot outcome, training curve, or dataset row',
+            'success_source_field': None, 'report_provenance': provenance}, metrics
+
+
+def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=False,
+            coverage_audit=None):
     """Export one source once. Existing destinations are rejected (no duplicate steps)."""
     source, output = Path(source).resolve(), Path(output).resolve()
-    if not source.is_dir(): raise ValueError(f'Not a source directory: {source}')
-    if output == source or output.is_relative_to(source): raise ValueError('Export must be outside the source directory')
-    src = Source(source)
-    result = src.read('result.json')
-    if isinstance(result, dict) and result.get('schema_version') == RUN_SCHEMA:
-        if result.get('evidence_kind') not in {'deterministic_physical_replay', 'live_llm'}:
-            if not allow_synthetic or not output.is_relative_to(Path(tempfile.gettempdir()).resolve()):
-                raise ValueError('Synthetic communication evidence requires explicit temporary-logdir opt-in')
-    training = src.read('report.json')
-    if isinstance(training, dict) and rows(training.get('progress')):
-        kind, data = 'training', training
-    elif isinstance(result, dict): kind, data = 'execution', result
-    elif (source / 'termination-audit.json').exists():
-        kind, data = 'termination-audit', src.read('termination-audit.json', required=True)
-    elif (source / 'gpu-inventory.json').exists():
-        kind, data = 'hardware-probe', src.read('gpu-inventory.json', required=True)
-    elif (source / 'run.json').exists():
-        kind, data = 'cloud-job', src.read('run.json', required=True)
-    elif (source / 'progress.json').exists():
-        kind, data = 'training', {'progress': src.read('progress.json', required=True)}
-    else: raise ValueError('No complete result.json or supported training progress; source left untouched')
+    direct_benchmark = source.is_file() and source.name == 'runtime-benchmark-comparison.json'
+    direct_incident = source.is_file() and bool(re.fullmatch(
+        r'teacher-interference-abort(?:-v[1-9][0-9]*)?\.json', source.name))
+    source_root = source.parent if direct_benchmark or direct_incident else source
+    if not source_root.is_dir() or (source.is_file() and not (direct_benchmark or direct_incident)):
+        raise ValueError(f'Not a supported source directory or benchmark file: {source}')
+    if output == source_root or output.is_relative_to(source_root):
+        raise ValueError('Export must be outside the source directory')
+    src = Source(source_root)
+    if direct_benchmark:
+        result = None
+        kind, data = 'act-runtime-benchmark', src.read('runtime-benchmark-comparison.json', required=True)
+    elif direct_incident:
+        result = None
+        kind, data = 'teacher-infrastructure-abort', src.read(source.name, required=True)
+    else:
+        result = src.read('result.json')
+        if isinstance(result, dict) and result.get('schema_version') == RUN_SCHEMA:
+            if result.get('evidence_kind') not in {'deterministic_physical_replay', 'live_llm'}:
+                if not allow_synthetic or not output.is_relative_to(Path(tempfile.gettempdir()).resolve()):
+                    raise ValueError('Synthetic communication evidence requires explicit temporary-logdir opt-in')
+        training = src.read('report.json')
+        finalization = src.read('artifacts/report.json')
+        benchmark = src.read('runtime-benchmark-comparison.json')
+        if finalization_report(finalization):
+            kind, data = 'act-finalization', finalization
+        elif isinstance(benchmark, dict) and benchmark.get('schema') == 'ugrp.act_runtime_benchmark_comparison.v1' and result is None and training is None:
+            kind, data = 'act-runtime-benchmark', benchmark
+        elif isinstance(training, dict) and rows(training.get('progress')):
+            kind, data = 'training', training
+        elif isinstance(result, dict): kind, data = 'execution', result
+        elif (source / 'termination-audit.json').exists():
+            kind, data = 'termination-audit', src.read('termination-audit.json', required=True)
+        elif (source / 'gpu-inventory.json').exists():
+            kind, data = 'hardware-probe', src.read('gpu-inventory.json', required=True)
+        elif (source / 'run.json').exists():
+            kind, data = 'cloud-job', src.read('run.json', required=True)
+        elif (source / 'progress.json').exists():
+            kind, data = 'training', {'progress': src.read('progress.json', required=True)}
+        else: raise ValueError('No complete result.json or supported training progress; source left untouched')
+    coverage = coverage_provenance = None
+    if coverage_audit is not None:
+        if kind != 'execution':
+            raise ValueError('Coverage audit applies only to execution evidence')
+        coverage, coverage_provenance = load_coverage_audit(src, coverage_audit)
     at = time.time(); output.mkdir(parents=True, exist_ok=False)
     temporary = tempfile.TemporaryDirectory(prefix='ugrp-tensorboard-export-')
     w = Writer(Path(temporary.name), at)
     manifest = {'schema': 'ugrp.tensorboard-export.v1', 'source': str(source), 'exported_at_s': at,
                 'event_wall_time': 'export time, not historical execution time', 'exporter': exporter_version(), 'complete': False}
+    if coverage_provenance is not None:
+        manifest['external_coverage_audit'] = coverage_provenance
     try:
         if kind == 'training': meta, metrics = export_training(src, w, data)
+        elif kind == 'act-finalization': meta, metrics = export_finalization(src, w, data)
+        elif kind == 'act-runtime-benchmark': meta, metrics = export_runtime_benchmark(src, w, data)
+        elif kind == 'teacher-infrastructure-abort': meta, metrics = export_teacher_infrastructure_abort(src, w, data, source.name)
         elif kind == 'cloud-job': meta, metrics = export_cloud_job(src, w, data)
         elif kind == 'hardware-probe': meta, metrics = export_hardware_probe(src, w, data)
         elif kind == 'termination-audit': meta, metrics = export_termination_audit(src, w, data)
-        else: meta, metrics = export_execution(src, w, data, max_images)
+        else: meta, metrics = export_execution(src, w, data, max_images, coverage)
         videos = []
-        video_names = ('motion.mp4', 'execution.mp4')
+        video_names = () if kind == 'teacher-infrastructure-abort' else ('motion.mp4', 'execution.mp4')
         if isinstance(result, dict) and result.get('schema_version') == RUN_SCHEMA:
             video_names += ('backend/execution.mp4',)
         for name in video_names:
@@ -547,6 +997,13 @@ def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=Fa
             current = inside(src.root, relative)
             if current is None or sha(current.read_bytes()) != record['sha256']:
                 raise ValueError(f'Source changed during export: {relative}; no event file published')
+        if (kind == 'teacher-infrastructure-abort' and
+                (src.root / 'route-teachers-managed/raw/south-train-a/result.json').exists()):
+            raise ValueError('Teacher result appeared during infrastructure import; no event file published')
+        if coverage_provenance is not None:
+            current = Path(coverage_provenance['path'])
+            if not current.is_file() or sha(current.read_bytes()) != coverage_provenance['sha256']:
+                raise ValueError('Coverage audit changed during export; no event file published')
         for event_file in Path(temporary.name).iterdir():
             shutil.copy2(event_file, output / event_file.name)
         manifest['complete'] = True
@@ -567,19 +1024,35 @@ def main():
     p.add_argument('--output', type=Path, required=True, help='New export collection directory')
     p.add_argument('--max-images', type=int, default=8, help='Evenly sampled decisions per run, including first/last; 0 disables images')
     p.add_argument('--media-port', type=int, default=6007)
+    p.add_argument('--coverage-audit', type=Path, action='append', default=[],
+                   help='External ACT request coverage JSON; repeat per audited --source, mapped by source_raw')
     args = p.parse_args()
     if not 0 <= args.max_images <= 100: p.error('--max-images must be in 0..100')
     if not 1 <= args.media_port <= 65535: p.error('invalid media port')
     sources = list(dict.fromkeys(x.resolve() for x in args.source))
+    coverage_by_source = {}
+    for path in args.coverage_audit:
+        try: audit, _ = coverage_document(path)
+        except ValueError as exc: p.error(str(exc))
+        source_raw = Path(audit['source_raw'])
+        if source_raw not in sources:
+            p.error(f'coverage audit source_raw is not a selected --source: {source_raw}')
+        if source_raw in coverage_by_source:
+            p.error(f'duplicate coverage audits for source: {source_raw}')
+        coverage_by_source[source_raw] = path
     output = args.output.resolve()
-    if any(output == s or output.is_relative_to(s) for s in sources): p.error('output must be outside every source directory')
+    if any(output == (s.parent if s.is_file() else s) or
+           output.is_relative_to(s.parent if s.is_file() else s) for s in sources):
+        p.error('output must be outside every source directory')
     if output.exists(): p.error('output must be new; existing events are never overwritten or appended')
     output.mkdir(parents=True)
     exported, failed = [], []
     for source in sources:
         name = slug(source.parent.name) + '__' + slug(source.name) + '__' + sha(str(source).encode())[:8]
         try:
-            m = convert(source, output/name, max_images=args.max_images, media_port=args.media_port)
+            m = convert(source, output/name, max_images=args.max_images,
+                        media_port=args.media_port,
+                        coverage_audit=coverage_by_source.get(source))
             exported.append({'name': name, 'source': str(source), 'counts': m['counts']})
             print(json.dumps(exported[-1], ensure_ascii=False), flush=True)
         except (ValueError, OSError) as e:

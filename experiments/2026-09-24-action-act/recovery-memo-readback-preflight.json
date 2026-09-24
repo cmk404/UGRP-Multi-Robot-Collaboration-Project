@@ -1,0 +1,126 @@
+{
+  "scope": "bounded four raw selected-checkpoint runtime memoization readback preflight; not artifact export",
+  "checkpoint_sha256": "546a7cf3c3f761eb269b793e85037c83e00c0dba2cc6248a13cc0fa7e908e6f0",
+  "selected_state_sha256": "caf093acb3d26c548fb4fe991e2c1882b5b351f83f380c3e094b73fd1ba93a40",
+  "normal_state_sha256": "caf093acb3d26c548fb4fe991e2c1882b5b351f83f380c3e094b73fd1ba93a40",
+  "memo_state_sha256": "caf093acb3d26c548fb4fe991e2c1882b5b351f83f380c3e094b73fd1ba93a40",
+  "probes": [
+    {
+      "split": "train",
+      "id": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F1:r1:0",
+      "native_raw_first_action": [
+        0.005722716450691223,
+        0.49194085597991943,
+        -0.01981235295534134,
+        -0.018322303891181946
+      ],
+      "memoized_raw_first_action": [
+        0.005722716450691223,
+        0.49194085597991943,
+        -0.01981235295534134,
+        -0.018322303891181946
+      ],
+      "first_action_max_abs": 0.0,
+      "native_done": false,
+      "memoized_done": false,
+      "memoized_decision": {
+        "action": {
+          "forward": 0.0008584074676036835,
+          "left": 0.07379112839698791,
+          "turn": -0.0029718529433012007
+        },
+        "done": false,
+        "stop_score": 0.0
+      },
+      "feature_cache_hits": 16
+    },
+    {
+      "split": "train",
+      "id": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v25-full:r3:113",
+      "native_raw_first_action": [
+        -0.003382667899131775,
+        -0.008964212611317635,
+        0.0061925724148750305,
+        1.0019334554672241
+      ],
+      "memoized_raw_first_action": [
+        -0.003382667899131775,
+        -0.008964212611317635,
+        0.0061925724148750305,
+        1.0019334554672241
+      ],
+      "first_action_max_abs": 0.0,
+      "native_done": true,
+      "memoized_done": true,
+      "memoized_decision": {
+        "action": {
+          "forward": 0.0,
+          "left": 0.0,
+          "turn": 0.0
+        },
+        "done": true,
+        "stop_score": 1.0
+      },
+      "feature_cache_hits": 32
+    },
+    {
+      "split": "development",
+      "id": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3:r1:0",
+      "native_raw_first_action": [
+        0.09715647250413895,
+        0.144773930311203,
+        0.23178580403327942,
+        -0.0315878763794899
+      ],
+      "memoized_raw_first_action": [
+        0.09715647250413895,
+        0.144773930311203,
+        0.23178580403327942,
+        -0.0315878763794899
+      ],
+      "first_action_max_abs": 0.0,
+      "native_done": false,
+      "memoized_done": false,
+      "memoized_decision": {
+        "action": {
+          "forward": 0.014573470875620841,
+          "left": 0.02171608954668045,
+          "turn": 0.03476787060499191
+        },
+        "done": false,
+        "stop_score": 0.0
+      },
+      "feature_cache_hits": 48
+    },
+    {
+      "split": "development",
+      "id": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v26-full:r3:93",
+      "native_raw_first_action": [
+        -0.0302475243806839,
+        0.034712761640548706,
+        -0.030080072581768036,
+        -0.008138440549373627
+      ],
+      "memoized_raw_first_action": [
+        -0.0302475243806839,
+        0.034712761640548706,
+        -0.030080072581768036,
+        -0.008138440549373627
+      ],
+      "first_action_max_abs": 0.0,
+      "native_done": false,
+      "memoized_done": false,
+      "memoized_decision": {
+        "action": {
+          "forward": -0.004537128657102585,
+          "left": 0.0052069142460823056,
+          "turn": -0.004512010887265205
+        },
+        "done": false,
+        "stop_score": 0.0
+      },
+      "feature_cache_hits": 64
+    }
+  ],
+  "feature_cache_hits": 64
+}

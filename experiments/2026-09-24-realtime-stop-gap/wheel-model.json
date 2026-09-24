@@ -1,0 +1,33 @@
+{
+ "schema": "ugrp.wheel_lease_model.v1",
+ "unit": "metres per unit forward command per slice",
+ "constants": {
+  "motor_time_constant_s": 0.085,
+  "max_forward_force_n": 2.2,
+  "moving_damping": 1.4,
+  "stop_damping": 18.0,
+  "mass_kg": 1.1
+ },
+ "per_unit_command_by_slice_count": {
+  "synchronous_0.20_back_to_back": {
+   "1": 0.0409,
+   "5": 0.1334,
+   "20": 0.2516
+  },
+  "realtime_0.25_no_gap": {
+   "1": 0.0591,
+   "5": 0.1925,
+   "20": 0.3299
+  },
+  "realtime_0.25_gap_0.05": {
+   "1": 0.0591,
+   "5": 0.1106,
+   "20": 0.1275
+  },
+  "realtime_0.25_gap_0.175": {
+   "1": 0.0591,
+   "5": 0.069,
+   "20": 0.0709
+  }
+ }
+}

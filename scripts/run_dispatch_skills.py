@@ -73,6 +73,7 @@ class SkillScene(DispatchScene):
         self.identity=None
         self.original_step=None;self.deadline=None;self.last_frames=None
         self.native_view=None
+        self.replay=None
         self.efficient_capture=False
         self.realtime_control=False
         self.rolling_visual_servo=False
@@ -152,6 +153,9 @@ class SkillScene(DispatchScene):
             self.video.stage='PAIR '+self.pair_phase+' | '+(self.bindings.solo+' '+
                 (self._solo_phase_label if self.realtime_control else self.solo.phase) if self.solo else 'SETUP/END')
             self.video.capture()
+        # Observer-only post-run replay; never read by actors or the referee.
+        replay=getattr(self,'replay',None)
+        if replay:replay.sample(self.video.stage if self.video else None)
         if self.referee and self.time()+1e-9>=self.next_sample:
             self.referee.sample();self.next_sample=self.time()+.1
     def step(self,seconds):
@@ -1238,6 +1242,7 @@ def run(args):
         raise ValueError('bounded carrier relink requires rolling realtime control')
     if scene.rolling_view_recovery and not (scene.rolling_visual_servo and scene.realtime_control):
         raise ValueError('rolling view recovery requires rolling realtime control')
+    scene.fine_gain_schedule=bool(getattr(args,'fine_gain_schedule',False))
     started=time.monotonic();pair=team=None
     motion_started_wall=motion_started_sim=None
     result={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
@@ -1285,6 +1290,9 @@ def run(args):
         elif scene.realtime_control:
             from scripts.dispatch_native_view import HeadlessPacer
             scene.native_view=HeadlessPacer(scene,realtime_factor=args.realtime_factor)
+        if getattr(args,'record_replay',False):
+            from scripts.dispatch_replay import ReplayRecorder
+            scene.replay=ReplayRecorder(scene.world,args.output)
         result['timing']={'scene_and_observer_setup_wall_s':time.monotonic()-started,
                           'scope':'output-only SIM/wall measurements; wall_s includes finalization'}
         write(args.output/'episode-setup-only.json',scene.config)
@@ -1440,7 +1448,9 @@ def run(args):
                     write(args.output/'pair-replay.json',pair.trace)
         finally:
             for cleanup in (lambda:team.close(scene.time() if scene.world else 0.) if team else None,
-                            lambda:scene.video.close() if scene.video else None,scene.close):
+                            lambda:scene.video.close() if scene.video else None,
+                            lambda:result.__setitem__('replay',scene.replay.close()) if scene.replay else None,
+                            scene.close):
                 try:cleanup()
                 except Exception as exc:result.setdefault('cleanup_errors',[]).append(str(exc))
         result['wall_s']=time.monotonic()-started

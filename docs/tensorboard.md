@@ -45,6 +45,19 @@ TensorBoard의 기존 run selector는 run이 40개를 넘으면 기본 선택을
 
 HParams의 **session status=success는 이벤트 가져오기 완료**를 뜻한다. 로봇 성공은 `evaluation/reported_success`와 그 출처 필드로 확인한다. 서로 다른 조건의 성공률을 자동 합산하지 않는다. 빠르게 실패한 실행의 시간을 성능 개선으로 해석하지 않는다. ACT 설정이 있어도 운반 결정에 진입하지 않았다면 `act_carry_decision_rows=0`이며, ACT 운반 성공률의 분모로 자동 포함하지 않는다.
 
+### ACT 요청 누락 캡처의 외부 감사
+
+과거 실행에서 카메라 캡처 뒤 소유자 오류로 ACT 결정 행이 저장되지 않았다면 `--coverage-audit`로 **원본 밖**의 감사 JSON을 연결할 수 있다. 이 옵션은 반복할 수 있으며 각 JSON의 절대 `source_raw`가 해당 `--source` 하나를 지정한다. 선택한 source와 연결되지 않거나 중복된 감사, 원본 경로·`pair-decisions.json` SHA256·기록된 wire 요청 수·고아 r1/r3/TOP 캡처 해시가 맞지 않는 감사는 오류로 거부한다.
+
+```sh
+.venv-sim-worker-mac/bin/python scripts/export_tensorboard.py \
+  --source /Users/changmin/projects/ugrp/outputs/dispatch-action-act-20260924/holdout-a-candidate-act \
+  --coverage-audit /Users/changmin/projects/ugrp/outputs/act-action-training-20260924/audits/v27-a-act-request-coverage.json \
+  --output outputs/tensorboard/action-act-coverage-NEW-ID --max-images 0
+```
+
+이 실행에는 **저장된 wire 요청 92행**이 있고, 마지막 고아 캡처의 두 모델 슬롯에서 추가 요청이 실제 전송됐는지는 **0~2건 범위로 미확인**이다. `result/model_calls`는 기록된 92건을 유지하고, `execution/act_possible_unlogged_slots_min/max`와 Text의 `inference_errors/coverage_audit`에 범위를 표시한다. `act_request_verification_complete=false`는 이 누락을 뜻하며 고아 캡처 자체를 모델 호출이나 응답으로 세지 않는다. 외부 감사 파일의 SHA와 연결된 원본 이미지도 새 export manifest에 기록한다. 기존 이벤트 폴더에 추가하지 않고 새 스냅샷을 만든다.
+
 ### 시간축
 
 기본으로 **STEP 축**을 사용한다. 학습은 원래 optimizer step, 실행은 기록된 결정 순번이다. SIM 시각은 별도의 `execution/sim_time_s` 곡선으로 제공한다. 화면의 기본 smoothing은 원자료를 시각적으로 평활하므로 정확한 값 비교에는 0으로 설정한다. 뷰어는 태그당 최대 10,000 scalar 표본을 읽고, 이벤트 파일에는 변환한 전체 값을 보존한다.
@@ -59,6 +72,8 @@ HParams의 **session status=success는 이벤트 가져오기 완료**를 뜻한
 - ACT 공동 운반: `result.json` + `pair-decisions.json`의 `act_carry` 행. 물리 로봇 ID와 모델 슬롯 구분.
 - ACT 종료 오프라인 감사: `termination-audit.json`과 해시가 일치하는 `predictions.json`. 예측을 다시 감사해 `offline/episodes`, 조기 정지·종료 누락 횟수, `offline/termination_pass`를 표시한다. `offline_pass`도 물리 성공이나 기본 제어기 채택을 뜻하지 않는다.
 - 클라우드 실행: 종료된 `run.json`의 프로세스 종료 코드와 실제 시작/종료 시간. GPU 설치 실패는 로봇 실패로 바꾸지 않는다.
+- ACT 최종화 관리 실행 루트: `artifacts/report.json`과 `manifest.json`의 출처·종료 상태를 검증하고 `finalization/*`에 기록한다. 추가 optimizer update가 0인 검증 실행이며 학습 곡선·로봇 실패로 표시하지 않는다.
+- `runtime-benchmark-comparison.json`: 직접 파일 또는 부모 폴더를 지정한다. 고정된 4개 ABBA 요청 기록의 해시·모델·입력·측정값을 대조하고 `benchmark/*`에 표시한다. 요청 지연을 전체 임무 시간이나 로봇 성공으로 바꾸지 않는다.
 - 기타 `result.json`: 명시된 결과 지표와 출처만 변환. 형식을 모르는 내부 로그를 임의로 해석하지 않음.
 
 `--source`는 한 실행/학습 폴더를 지정한다. 코호트 상위 폴더의 `results.json`이나 `report.json.runs`를 자동으로 따라가지 않는다. 원하는 하위 실행을 명시적으로 반복 지정한다. 현재 실행 중인 폴더보다 결과가 완성된 폴더를 선택한다.

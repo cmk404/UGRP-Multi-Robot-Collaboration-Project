@@ -1,0 +1,235 @@
+{
+  "schema": "ugrp.fine_gain_schedule_results.v1",
+  "protocol": "protocol.json",
+  "runs": {
+    "A1": {
+      "fine_gain_schedule": false,
+      "source_sha": "db3cd877ab243057f82c251cdfcd7368aa98a8ed",
+      "loadavg_before": [
+        4.28515625,
+        6.77099609375,
+        7.552734375
+      ],
+      "exit_code": 1,
+      "physical_success": false,
+      "protocol_complete": false,
+      "phase": "RELEASE",
+      "error": "RuntimeError: skill wall budget exhausted",
+      "wall_s": 352.0373916249955,
+      "timing": {
+        "scene_and_observer_setup_wall_s": 2.221797542006243,
+        "scope": "output-only SIM/wall measurements; wall_s includes finalization",
+        "control_end_sim_s": 201.71799999695799,
+        "control_wall_s": 350.00371891699615,
+        "motion_wall_s": 342.0074054590077,
+        "motion_sim_s": 196.51799999695737,
+        "motion_sim_to_wall": 0.5746015930070602,
+        "cleanup_wall_s": 2.0336737080069724
+      },
+      "cargo_physical_success": {
+        "beam": true,
+        "box": false
+      },
+      "weld_steps": 0,
+      "obstacle_contact_steps": 0,
+      "coarse_samples": 61,
+      "fine": {
+        "elapsed_sim_s": 78.28999999930858,
+        "stages": [
+          [
+            0,
+            "yaw",
+            true,
+            "two consecutive fresh stationary RGB confirmations",
+            18
+          ],
+          [
+            1,
+            "lateral",
+            true,
+            "two consecutive fresh stationary RGB confirmations",
+            29
+          ],
+          [
+            2,
+            "yaw",
+            true,
+            "two consecutive fresh stationary RGB confirmations",
+            0
+          ],
+          [
+            3,
+            "forward",
+            true,
+            "two consecutive fresh stationary RGB confirmations",
+            79
+          ],
+          [
+            4,
+            "yaw",
+            true,
+            "two consecutive fresh stationary RGB confirmations",
+            0
+          ],
+          [
+            5,
+            "lateral",
+            true,
+            "two consecutive fresh stationary RGB confirmations",
+            59
+          ],
+          [
+            6,
+            "forward",
+            true,
+            "two consecutive fresh stationary RGB confirmations",
+            0
+          ]
+        ]
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/fine-gain-schedule-20260924/A1",
+      "raw_files": 2730,
+      "raw_inventory_sha256": "e0d2014514a19c8593dd607ecc5ce32ca8418404e09fff29c843d94f898e9270",
+      "result_sha256": "494668af6ba2d245f9590d0747fa01aff00c0f342e7f2821de220d9a472d49f4",
+      "launch_sha256": "cbe3ca34142a0ef15695eff3322b07a9acc6ec0b66700ee2a7a7db39afd098fa",
+      "console_log_sha256": "ca3f3bd5426ce9a26e48bf2826bcbc74e5732c1e822f13e90067b9eac832e35c"
+    },
+    "B1": {
+      "fine_gain_schedule": true,
+      "source_sha": "db3cd877ab243057f82c251cdfcd7368aa98a8ed",
+      "loadavg_before": [
+        30.67236328125,
+        35.71142578125,
+        21.2744140625
+      ],
+      "exit_code": 1,
+      "physical_success": false,
+      "protocol_complete": false,
+      "phase": "APPROACH",
+      "error": "RuntimeError: coarse RGB approach budget exhausted",
+      "wall_s": 60.26844779099338,
+      "timing": {
+        "scene_and_observer_setup_wall_s": 2.097260374983307,
+        "scope": "output-only SIM/wall measurements; wall_s includes finalization",
+        "control_end_sim_s": 51.12000000015308,
+        "control_wall_s": 58.70735466599581,
+        "motion_wall_s": 48.32305950002046,
+        "motion_sim_s": 45.92000000015247,
+        "motion_sim_to_wall": 0.9502709570807085,
+        "cleanup_wall_s": 1.5610949169786181
+      },
+      "cargo_physical_success": {
+        "beam": false,
+        "box": false
+      },
+      "weld_steps": 0,
+      "obstacle_contact_steps": 0,
+      "coarse_samples": 120,
+      "fine": null,
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/fine-gain-schedule-20260924/B1",
+      "raw_files": 671,
+      "raw_inventory_sha256": "0a615354ef75ab0f999504c16cd7ddf6e2bf1b06a6df66b17e22e9dcf9273a21",
+      "result_sha256": "59d5d6129e973181216262dae54f09be55deef5b86d5114fdc42f254339edda0",
+      "launch_sha256": "0b2b0b2828e15cc03cb1c42a9cda487c53889aa562e9e1ebe8269eb8619211f9",
+      "console_log_sha256": "856bd30d31160be98f8a2a59d154ac71377c12a905081ef6478b06997156532b"
+    },
+    "A2": {
+      "fine_gain_schedule": false,
+      "source_sha": "db3cd877ab243057f82c251cdfcd7368aa98a8ed",
+      "loadavg_before": [
+        14.32666015625,
+        29.87109375,
+        20.13671875
+      ],
+      "exit_code": 1,
+      "physical_success": false,
+      "protocol_complete": false,
+      "phase": "APPROACH",
+      "error": "RuntimeError: fine RGB alignment outside saved skill support",
+      "wall_s": 176.02275562501745,
+      "timing": {
+        "scene_and_observer_setup_wall_s": 1.521332167001674,
+        "scope": "output-only SIM/wall measurements; wall_s includes finalization",
+        "control_end_sim_s": 146.34999999826726,
+        "control_wall_s": 174.05994037500932,
+        "motion_wall_s": 165.68467449999298,
+        "motion_sim_s": 141.14999999826665,
+        "motion_sim_to_wall": 0.8519194694634996,
+        "cleanup_wall_s": 1.962817333987914
+      },
+      "cargo_physical_success": {
+        "beam": false,
+        "box": false
+      },
+      "weld_steps": 0,
+      "obstacle_contact_steps": 0,
+      "coarse_samples": 108,
+      "fine": {
+        "elapsed_sim_s": 100.89999999814125,
+        "stages": [
+          [
+            0,
+            "yaw",
+            true,
+            "two consecutive fresh stationary RGB confirmations",
+            19
+          ],
+          [
+            1,
+            "lateral",
+            true,
+            "two consecutive fresh stationary RGB confirmations",
+            63
+          ],
+          [
+            2,
+            "yaw",
+            true,
+            "two consecutive fresh stationary RGB confirmations",
+            0
+          ],
+          [
+            3,
+            "forward",
+            false,
+            "bounded phase movement budget exhausted",
+            160
+          ]
+        ]
+      },
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/fine-gain-schedule-20260924/A2",
+      "raw_files": 1930,
+      "raw_inventory_sha256": "a1aa8e97ef5eb6a26c05124b5a2b9704d5c854b18396c2725c4fb56feeba17c9",
+      "result_sha256": "5c03f1766100f748dfabcd9914705fb963d2c50f27d6f4ab6ce727eb1a0a7f04",
+      "launch_sha256": "ddf10d7396dd1362927e4ab30351e32407117858b4db3ed116a37940418ae246",
+      "console_log_sha256": "dccfde3ff189ede76e6387c4d2bd1c21c1845da1fdd84f0ec060f6197452c9f3"
+    }
+  },
+  "skipped": {
+    "B2": {
+      "run": "B2",
+      "reason": "protocol stop: earlier B failure"
+    }
+  },
+  "interpretation": {
+    "valid_comparison": false,
+    "why": [
+      "No B run reached the fine stage: B1 exhausted the unchanged 120-step coarse approach budget, which the schedule does not affect.",
+      "Protocol stop skipped B2 after the B1 failure.",
+      "macOS user applications (file dialog service, fileproviderd, Drive/Adobe sync, WindowServer) raised load average to 14-31 during B1/A2 and lowered motion SIM/wall to 0.575 (A1), 0.95 (B1), 0.852 (A2); the protocol precondition of an idle machine was not met.",
+      "Both OFF baselines also failed: A1 placed the beam but ran out of the 350 s wall budget in box release at 0.575x realtime; A2 exhausted the fine forward 160-move budget."
+    ],
+    "observation": "A2 (schedule OFF) failed in exactly the slow fine forward stage the schedule targets; A1 fine alignment took 78.3 SIM s (v19 baseline 51-54 s).",
+    "claims": "No speed or success claim for the schedule. Current main baseline was not reproduced under these conditions."
+  },
+  "tensorboard": {
+    "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0924-fine-gain-ab",
+    "runs": [
+      "A1-off",
+      "B1-on",
+      "A2-off"
+    ],
+    "view_key": "fine_gain_schedule_20260924",
+    "media_port": 6009
+  }
+}

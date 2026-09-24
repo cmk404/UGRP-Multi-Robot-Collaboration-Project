@@ -1,5 +1,8 @@
 # 실험 인덱스
 
+- [2026-09-24 실시간 명령 끊김과 빔 미세 정렬 시간](2026-09-24-realtime-stop-gap/README.md): 기존 기록 오프라인 분석. 실시간 39개에서 임대 만료 뒤 정지 감쇠 끊김 비율이 명령당 이동 감소(순위 상관 -0.88)·미세 정렬 시간(+0.79)과 연관; 새 물리 실행 없음.
+
+- [2026-09-24 빔 미세 정렬 이득 스케줄](2026-09-24-fine-gain-schedule/README.md): 임계 경로 분석(빔 미세 정렬 51–54 SIM초), 기본 OFF 옵션·번들 v30, 저장 RGB 668건 재생 불일치 0. 물리 A/B는 사전 고정만 했고 결과 없음.
 - [2026-09-24 ACT 학습·행동 개선](2026-09-24-action-act/refinement.md): 첫 8,000 update 학습과 6회 비교의 실패를 보존하고, 영상 접근·추적·ACT 학습 및 추론을 수정한 후보를 고정 비교.
 
 - [2026-09-23 로컬 dispatch 속도·병렬 실행](2026-09-23-local-dispatch-performance/README.md): 동일 계획 headless 367→285초, 최종 MuJoCo 창331초 완주; 동시 적재 이동·중간 실패·SIM/wall 시간과 원본 해시를 구분.
@@ -9,6 +12,7 @@
 - [2026-09-23 표준 시뮬레이션 지도·로컬 실행 검증](2026-09-23-standard-simulation-refinement/README.md) — 관리 CLI에서 지도 22종 정적 검사·MuJoCo 창/영상 실행, 원본 해시와 TensorBoard 스냅샷; 학습·운반 성공 판정은 미실행.
 - [2026-09-23 표준 시뮬레이션 관리·Colab 포장 검증](2026-09-23-unified-simulation-management/README.md) — 19개 실행 공통 관리·공유 장면, 회귀 1,812개·fixture 9/9·로컬 포장/회수 검증; L4·운반 재검증은 미실행.
 - [2026-09-23 RGB 실행 계약 수정·4회 재생](2026-09-23-rgb-execution-contract/README.md) — 초기 해상도·공동 식별 결함 수정 후 Colab·Mac 단독/공동 모두 물리 완주 실패; 네 실패 경계·원본 해시·독립 감사 보존.
+- [2026-09-23 공통 RGB 물리 완주 복구](2026-09-23-rgb-common-physical-recovery/README.md) — v1~v8 개발 후보를 같은 seed11에서 분리 재생; 단독 상자 대상은 v3~v8 성공, 공동 빔은 v8에서 회전을 통과하고 횡방향 영상 지원 범위 밖에서 파지 전 중단. 전체 임무·통신 효과는 미입증.
 - [2026-09-22 native 시뮬레이션 CLI/API](2026-09-22-native-simulation/README.md) — Mac·Ubuntu 공통 설정/API, native 창·headless·RGB·reset, Linux 종료 오류 수정과 검증 한계.
 - [2026-09-22 브라우저 뷰어 검증 이력 (구현 폐기)](2026-09-22-local-simulation-live/README.md) — 네 카메라·수동 이동·일시정지·초기화·종료 통합 검사; 초기 검사 실패 포함, 자율 운반 평가는 아님.
 - [2026-09-22 RGB 통신 기반 최소 물리 재생](2026-09-22-rgb-communication-replay/README.md) — Colab 단독/공동 2회 회수, LLM 0회; 모두 종료·평가 clock 모순으로 invalid_artifact. 물리 성공·통신 효과 미입증.
