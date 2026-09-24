@@ -269,11 +269,31 @@ def test_backoff_keeps_rgb_tracked_crops_and_recentres_them():
     assert all(stale.coarse.decide(raw, s)['mask']['local_wheel_pixels'] == 0 for s in ('r1', 'r3'))
     pair, tracker = _backoff_pair('after-long-backoff-top.jpg', TRACKED_CENTERS)
     pair.back_off()
-    assert pair.coarse is tracker and len(pair.driven) == 21  # 20 reverse slices + stop dwell
+    # stop dwell, then four chunks of 5 reverse slices, each followed by a stop dwell
+    assert pair.coarse is tracker and len(pair.driven) == 1 + 4*(5+1)
     assert all(pair.coarse.decide(raw, s)['ok'] is True for s in ('r1', 'r3'))
-    row = pair.calls[-1]
-    assert row['kind'] == 'recovery_recenter' and row['slices'] == 20
-    assert row['crop_centers_before_px'] == TRACKED_CENTERS
+    rows = [c for c in pair.calls if c['kind'] == 'recovery_recenter']
+    assert [r['slices'] for r in rows] == [0, 5, 10, 15, 20] and rows[-1]['lost_slots'] == []
+    assert rows[0]['crop_centers_before_px'] == TRACKED_CENTERS
+
+
+def test_backoff_chunks_stay_inside_the_crop_that_a_full_backoff_leaves():
+    # E2 (v51): one 20-slice reverse moved both carriers ~64 px west of their
+    # tracked crops; r1 fell below the 80 wheel-pixel floor. Crops that lag by
+    # one or two 5-slice chunks (~16 px each) still re-centre on both carriers.
+    true = {'r1': [151, 371], 'r3': [154, 181]}
+    for lag in (16, 32):
+        _, tracker = _backoff_pair('e2-after-fine-failure-backoff-top.jpg',
+                                   {s: [x+lag, y] for s, (x, y) in true.items()})
+        pair, _ = _backoff_pair('e2-after-fine-failure-backoff-top.jpg', {})
+        pair.coarse = tracker
+        pair._recenter_coarse(5, .05)
+        row = pair.calls[-1]
+        assert row['lost_slots'] == []
+        assert all(abs(row['crop_centers_after_px'][s][0]-true[s][0]) <= 3 for s in true)
+    pair, _ = _backoff_pair('e2-after-fine-failure-backoff-top.jpg', {'r1': [218.3, 370.2], 'r3': [215.7, 180.7]})
+    pair._recenter_coarse(20, .05)
+    assert pair.calls[-1]['lost_slots'] == ['r1']
 
 
 def test_backoff_stays_synchronous_and_bounded():
