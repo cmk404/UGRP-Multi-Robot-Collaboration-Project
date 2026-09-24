@@ -26,7 +26,48 @@ def test_cli_dispatch_reuses_skills_entry_with_operator_goal(monkeypatch, tmp_pa
     assert args[args.index('--task')+1] == 'dock_b로 함께 옮겨'
     assert args[args.index('--model')+1] == 'test-model'
     assert '--viewer' not in args
+    assert '--efficient-capture' in args
+    assert '--auto-route-overlap' in args
     assert args[-4:] == ['--required-dock', 'dock_b', '--variant', 'open']
+
+
+def test_standard_dispatch_can_restore_serial_route_and_full_capture(monkeypatch, tmp_path):
+    invoked=[]
+    monkeypatch.setattr('scripts.run_dispatch_e2e.main', lambda argv: invoked.append(argv) or 0)
+    assert sim_dispatch.main(['--headless','--plan-replay','saved.json',
+                              '--grasp-model-dir',str(tmp_path/'grasp'),
+                              '--stage-model-dir',str(tmp_path/'stage'),
+                              '--full-capture','--serial-route'])==0
+    assert '--efficient-capture' not in invoked[0]
+    assert '--auto-route-overlap' not in invoked[0]
+    assert '--route-overlap' not in invoked[0]
+
+
+@pytest.mark.parametrize('args', [
+    ['--serial-route','--route-overlap'],
+    ['--serial-route','--auto-route-overlap'],
+    ['--full-capture','--efficient-capture'],
+])
+def test_standard_dispatch_rejects_conflicting_performance_options(monkeypatch, args):
+    monkeypatch.setattr(sim_dispatch.sys.stdin, 'isatty', lambda: False)
+    with pytest.raises(SystemExit) as error:
+        sim_dispatch.main(['--headless']+args)
+    assert error.value.code==2
+
+
+def test_research_runner_defaults_and_explicit_overlap_flags(monkeypatch, tmp_path):
+    from scripts import run_dispatch_e2e
+    seen=[]
+    monkeypatch.setattr('scripts.run_dispatch_skills.run', lambda args: seen.append(args) or 0)
+    base=['--executor','skills','--output',str(tmp_path/'one'),
+          '--grasp-model-dir',str(tmp_path/'grasp'),
+          '--stage-model-dir',str(tmp_path/'stage')]
+    assert run_dispatch_e2e.main(base)==0
+    assert not seen[-1].efficient_capture and not seen[-1].route_overlap and not seen[-1].auto_route_overlap
+    assert run_dispatch_e2e.main([*base[:3],str(tmp_path/'two'),*base[4:],
+                                  '--route-overlap','--overlap-start','grasp'])==0
+    assert seen[-1].route_overlap and not seen[-1].auto_route_overlap
+    assert seen[-1].overlap_start=='grasp'
 
 
 @pytest.mark.parametrize('args', [
@@ -101,11 +142,16 @@ def test_native_observer_cannot_mutate_research_physics(monkeypatch):
     data = mujoco.MjData(model)
     original_qpos = data.qpos.copy()
     original_gravity = model.opt.gravity.copy()
+    original_model = mujoco.mj_saveModel(model)
+    actor_scene = mujoco.MjvScene(model, maxgeom=10)
+    original_actor_flags = actor_scene.flags.copy()
+    sync_modes = []
     class Viewer:
         cam = SimpleNamespace(lookat=[0.,0.,0.])
         def lock(self): return contextlib.nullcontext()
         def is_running(self): return True
-        def sync(self):
+        def sync(self, *, state_only=False):
+            sync_modes.append(state_only)
             # Simulate native reset/physics/actuator panel writes.
             self.data.qpos[:] = 2
             self.model.opt.gravity[:] = 0
@@ -113,11 +159,28 @@ def test_native_observer_cannot_mutate_research_physics(monkeypatch):
         def _sim(self): return None
     def launch(model, data, **kwargs):
         viewer = Viewer(); viewer.model = model; viewer.data = data
+        viewer.user_scn = mujoco.MjvScene(model, maxgeom=10)
+        viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_SHADOW] = 1
+        viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_REFLECTION] = 1
         return viewer
     monkeypatch.setattr(mujoco.viewer, 'launch_passive', launch)
     scene = SimpleNamespace(world=SimpleNamespace(model=model, data=data), time=lambda:float(data.time), deadline=None)
     view = DispatchNativeView(scene)
     try:
+        assert sync_modes == [True]
+        assert view.model is not model and view.data is not data
+        assert view.viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_SHADOW] == 0
+        assert view.viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_REFLECTION] == 0
+        # A GUI-side toggle cannot turn these observer-only effects back on.
+        view.viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_SHADOW] = 1
+        view.viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_REFLECTION] = 1
+        view.next_sync = 0.
+        view.poll()
+        assert sync_modes == [True, True]
+        assert view.viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_SHADOW] == 0
+        assert view.viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_REFLECTION] == 0
+        assert (actor_scene.flags == original_actor_flags).all()
+        assert mujoco.mj_saveModel(model) == original_model
         assert (data.qpos == original_qpos).all()
         assert (model.opt.gravity == original_gravity).all()
         view.keys.put(81)
@@ -125,6 +188,86 @@ def test_native_observer_cannot_mutate_research_physics(monkeypatch):
             view.poll()
     finally:
         view.close()
+
+
+def _clocked_native_view(monkeypatch, *, factor=1., oversleep=0.):
+    pytest.importorskip('mujoco')
+    import queue
+    from scripts import dispatch_native_view
+
+    class Clock:
+        now = 0.
+        sleeps = []
+        def monotonic(self): return self.now
+        def sleep(self, seconds):
+            self.sleeps.append(seconds)
+            self.now += seconds + oversleep
+
+    class Viewer:
+        running = True
+        polls = 0
+        def is_running(self):
+            self.polls += 1
+            return self.running
+
+    clock = Clock()
+    monkeypatch.setattr(dispatch_native_view, 'time', clock)
+    sim = [0.]
+    scene = SimpleNamespace(time=lambda: sim[0], deadline=None)
+    view = dispatch_native_view.DispatchNativeView.__new__(dispatch_native_view.DispatchNativeView)
+    view.scene, view.viewer, view.keys = scene, Viewer(), queue.SimpleQueue()
+    view.factor, view.paused = factor, False
+    view.pace_sim = view.pace_wall = view.last_tick_wall = 0.
+    view.rebase_pace, view.next_poll, view.next_sync = False, 0., float('inf')
+    return view, clock, sim
+
+
+@pytest.mark.parametrize('factor,expected_wall', [(1.,1.), (2.,.5)])
+def test_native_pacing_batches_poll_and_sleep_without_oversleep_drift(monkeypatch, factor, expected_wall):
+    view, clock, sim = _clocked_native_view(monkeypatch, factor=factor, oversleep=.002)
+    for _ in range(4000):
+        view.tick()
+        sim[0] += .00025
+        clock.now += .00001  # Other work in the unchanged fine physics step.
+    assert abs(clock.now - expected_wall) < .012
+    assert len(clock.sleeps) < 220
+    assert all(.005 <= delay <= .01 for delay in clock.sleeps)
+    assert view.viewer.polls < 130  # A wall-time cadence, not 4000 GUI calls.
+
+
+def test_native_pacing_rebases_after_long_inference_and_operator_pause(monkeypatch):
+    view, clock, sim = _clocked_native_view(monkeypatch)
+    for _ in range(400):
+        view.tick(); sim[0] += .00025; clock.now += .00001
+    clock.now += 10.  # Physics was stopped during an external model call.
+    view.tick()
+    resumed = clock.now
+    for _ in range(400):
+        sim[0] += .00025; view.tick(); clock.now += .00001
+    assert .09 <= clock.now - resumed <= .11
+    view.paused = True
+    view.keys.put(32)  # Space resumes even when the pause is brief.
+    clock.now += .05
+    view.tick()
+    assert not view.paused and not view.rebase_pace
+    assert view.pace_wall >= resumed
+
+
+def test_native_pacing_checks_budget_every_step_and_polls_quit_promptly(monkeypatch):
+    view, clock, sim = _clocked_native_view(monkeypatch)
+    view.next_poll = 1.
+    view.scene.deadline = .001
+    clock.now = .001
+    with pytest.raises(RuntimeError, match='wall budget'):
+        view.tick()
+    view.scene.deadline = None
+    clock.now = 0.
+    view.next_poll = .01
+    view.keys.put(81)
+    with pytest.raises(KeyboardInterrupt, match='quit'):
+        for _ in range(100):
+            view.tick(); sim[0] += .00025; clock.now += .0001
+    assert clock.now < .02
 
 
 def test_real_native_observer_lifecycle():

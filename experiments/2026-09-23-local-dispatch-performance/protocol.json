@@ -1,0 +1,74 @@
+{
+  "schema": "ugrp.local_dispatch_performance.v1",
+  "question": "Reduce local camera overhead and remove unnecessary serialization for an already independent plan without changing physical/input/controller settings.",
+  "base_sha": "dbf7073deaf18c5720bcf4f209f25424b992afcd",
+  "planned_variants": {
+    "baseline": {
+      "efficient_capture": false,
+      "route_overlap": false
+    },
+    "candidate": {
+      "efficient_capture": true,
+      "auto_route_overlap": true,
+      "overlap_start": "transit"
+    }
+  },
+  "fixed": {
+    "variant": "open",
+    "seed": 11,
+    "contact_profile": "local_contact_fine",
+    "weld": false,
+    "video_fps": 10,
+    "viewer": false,
+    "max_wall_s": 600,
+    "plan_relative_path": "experiments/2026-09-22-parallel-transport/independent-plan.json",
+    "plan_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+    "model_source": "versioned experiments/dispatch-skill-integration-20260917/models.zip",
+    "model_archive_sha256": "e78a5a5777f5bc48daf1bd5e03d2058705083a38505ed959159d5903526b83f1",
+    "external_model_calls": 0
+  },
+  "measurement": {
+    "capture_benchmark": "paired frozen-state capture only; compare exact actor image hashes and unchanged physics state",
+    "physical_replay": "same plan, map, models and physics; compare full-task outcomes, wall and SIM time, command totals and strict sampled simultaneous loaded motion",
+    "clock_caution": "new scheduling changes action timing, so full-run wall difference combines scheduling and capture; do not attribute all improvement to rendering",
+    "success_scope": "one open-map recorded-plan condition only; no fresh LLM agreement or map generalization",
+    "native_window": "After matched headless runs, check the standard launcher in MuJoCo at realtime factor 2 with the same saved plan; finite 45s smoke may intentionally stop before completion and is not part of the full-task success denominator."
+  },
+  "budget": {
+    "runs": 2,
+    "wall_seconds_per_run": 600,
+    "manager_timeout_seconds": 660,
+    "training_runs": 0,
+    "paid_model_calls": 0,
+    "native_window_check_wall_seconds": 45
+  },
+  "source_freeze": "Candidate source is committed before running; baseline runs from clean PR118 dbf7073. Results are appended after processes end.",
+  "native_pacing_followup": {
+    "trigger": "v5 c44b571 native viewer with the same recorded plan reached wall budget601.99s before completion; headless candidate finished285.49s. Both strict simultaneous loaded motion2.9s.",
+    "question": "Batch native GUI polling and pacing without changing simulation steps, actor observations or commands.",
+    "candidate_bundle": "rgb-standard-dispatch-v6",
+    "viewer": true,
+    "realtime_factor": 2,
+    "max_wall_s": 600,
+    "manager_timeout_s": 660,
+    "external_model_calls": 0,
+    "runs": 1,
+    "success_scope": "native user-flow check; compare completion and strict concurrent transport, do not compute speedup from an incomplete baseline",
+    "source_freeze": "Commit v6 source before the finite native run; preserve v5 failure and its source identity."
+  },
+  "native_render_followup": {
+    "trigger": "v6 native full replay succeeds in429.020s for140.300SIM seconds; 3s stack sample shows native rendering and lock waits.",
+    "baseline_source_sha": "dd02695f1b97de9707d42c54eed0ec9bd98729a4",
+    "candidate_bundle": "rgb-standard-dispatch-v7",
+    "change_scope": "isolated native observer rendering and state synchronization only",
+    "fixed": "same saved plan/open/seed11/local_contact_fine, actor camera/video/controller/physics unchanged",
+    "viewer": true,
+    "realtime_factor": 2,
+    "max_wall_s": 600,
+    "manager_timeout_s": 660,
+    "external_model_calls": 0,
+    "runs": 1,
+    "acceptance": "full physical completion and unchanged command/referee trajectory; measure wall time against completed native v6, retain all intermediate outcomes",
+    "source_freeze": "commit v7 before native run"
+  }
+}
