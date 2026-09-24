@@ -1,0 +1,81 @@
+{
+  "schema": "ugrp.rolling_visual_servo_protocol.v1",
+  "status": "preregistered_before_physical_outcomes",
+  "baseline_source_sha": "931d910998a94361342c372ec2675c475daa625f",
+  "candidate_source": "commit and bundle hash frozen separately before launch",
+  "hypothesis": "Overlap fresh paired RGB capture with bounded solo approach drive to reduce unnecessary stop-observe wait, preserving original motion horizon and settled final entry.",
+  "evidence": "Previously completed approach had 17-22 percent issued-drive duty; near drive-only overlap theoretical saving about9s, not established mission gain.",
+  "control": "Reference v28 RGB versus v29 --rolling-visual-servo; same saved plan, physical scene, camera, common models, open/seed11/dock_a/local_contact_fine/grasp overlap/native1x/video10/weldOFF.",
+  "diagnostic": {
+    "case": "original",
+    "offset": [
+      0,
+      0,
+      0
+    ],
+    "candidate_runs": 2,
+    "max_wall_s_each": 350,
+    "purpose": "Detect mechanical integration failures, keep all outcomes outside final comparison. Source changes require new candidate ID/frozen source; no relabeling failures."
+  },
+  "cases": [
+    {
+      "id": "roll-a",
+      "offset": [
+        0.004,
+        -0.005,
+        0.15
+      ]
+    },
+    {
+      "id": "roll-b",
+      "offset": [
+        -0.004,
+        0.005,
+        -0.15
+      ]
+    },
+    {
+      "id": "roll-c",
+      "offset": [
+        0.005,
+        0.004,
+        0.35
+      ]
+    }
+  ],
+  "order": [
+    "roll-a/reference",
+    "roll-a/rolling",
+    "roll-b/rolling",
+    "roll-b/reference",
+    "roll-c/reference",
+    "roll-c/rolling"
+  ],
+  "qualification": {
+    "planned_runs": 6,
+    "max_wall_s_each": 350,
+    "aggregate_max_wall_s": 2200,
+    "retry": false,
+    "all_runs_retained": true
+  },
+  "claim_gate": {
+    "success": "Both cargo delivered, placement/release/clearance and source/input/lease/RGB audits valid for all six trials. Failures do not count as faster completion.",
+    "speed": "Each of three matched pairs faster and median relative full mission wall reduction >=5 percent; also report approach-only duration/duty and wall/SIM ratio. Narrow nearby-pose component claim only.",
+    "moving_capture": "Hash-linked paired own/TOP observations actually captured inside a previously issued rolling command window; never infer physical motion from command alone."
+  },
+  "boundaries": [
+    "No GT, measured joints or contact feedback to student.",
+    "Only ownRGB/TOP and self-issued command history control actions.",
+    "Native viewer at1x, no concurrent CPU-heavy job, no rendering or video inspection during timed trial.",
+    "No new LLM messages in saved-plan replay, no communication efficacy claim.",
+    "No default rollout or main merge without separate approval."
+  ],
+  "artifacts": [
+    "source/bundle/config/models hashes",
+    "manager manifest and all launch statuses",
+    "raw RGB decisions and source image hashes",
+    "bounded issued command windows and stop reasons",
+    "evaluation-only physics result and video",
+    "TensorBoard immutable snapshots including failure"
+  ]
+}
