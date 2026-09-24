@@ -35,8 +35,10 @@ from harness.grasp_student_inference import predict_student
 from harness.visual_macro_runtime import VisualMacroExecutor
 from harness.rolling_visual_servo import (FINAL_ENTRY_HANDOFF_M,
     FINAL_ENTRY_SETTLE_S, NEAR_MOTION_REOBSERVE_BUFFER_M,
-    RollingApproachLease, approach_drive_support,
-    guard_near_entry_from_issued_commands)
+    ActiveViewRecovery, RollingApproachLease, approach_drive_support,
+    guard_near_entry_from_issued_commands, VIEW_RECOVERY_MAX_POSES,
+    VIEW_RECOVERY_MAX_ELAPSED_S, VIEW_RECOVERY_MAX_EPISODES,
+    VIEW_RECOVERY_WRIST_STEP_PWM, VIEW_RECOVERY_MAX_PAN_DELTA_PWM)
 from sim.research_dispatch_arena import episode, actor_task
 from scripts.research_dispatch_scene import DispatchScene
 from scripts.run_dispatch_e2e import Referee
@@ -105,6 +107,8 @@ class SkillScene(DispatchScene):
         self.coarse_concurrent_alignment=False
         self.rolling_visual_servo=False
         self.bounded_carrier_relink=False
+        self.rolling_view_recovery=False
+        self._view_recovery=None
         self._decision_workers=None
         self._solo_pending=None
         self._solo_pending_lease=None
@@ -374,9 +378,11 @@ class SkillScene(DispatchScene):
             raise ValueError('rolling visual servo requires realtime dispatch_open without internal obstacles')
         if getattr(self,'bounded_carrier_relink',False) and not fast_servo:
             raise ValueError('bounded carrier relink requires realtime dispatch_open without internal obstacles')
+        if getattr(self,'rolling_view_recovery',False) and not fast_servo:
+            raise ValueError('rolling view recovery requires realtime dispatch_open without internal obstacles')
         self.solo=SoloBoxTransport(robot_id=self.bindings.solo,
             navigator=ImageRoute(self.bindings,'box',time_aware_box_reacquisition=fast_servo,
-                                 bounded_carrier_relink=self.bounded_carrier_relink),
+                                 bounded_carrier_relink=getattr(self,'bounded_carrier_relink',False)),
             attachment_min_saturation=150,release_refine_ground_fit=True,
             fast_near_field_servo=fast_servo)
         self.solo_executor=VisualMacroExecutor(self.ports[self.bindings.solo],
@@ -393,6 +399,9 @@ class SkillScene(DispatchScene):
         self._solo_approach_lease=None
         self._solo_approach_last_lease=None
         self._solo_approach_last_source=None
+        self._view_recovery=ActiveViewRecovery() if getattr(self,'rolling_view_recovery',False) else None
+        self._solo_pose_log_cursor=0
+        self._solo_completed_pose_receipts={}
         self.solo_renewals=[]
         if self.realtime_control:
             self._decision_workers=ThreadPoolExecutor(max_workers=2,thread_name_prefix='dispatch-decision')
@@ -584,6 +593,85 @@ class SkillScene(DispatchScene):
             'source_top_sha256':lease.evidence['source_top_sha256'],
             'source_frame_id':lease.evidence['source_frame_id']})
 
+    def _rolling_view_sample(self,result,pending,obs,now):
+        """Only paired current RGB and the camera port's issued-command cache."""
+        return {'frame_id':result['frame_id'],
+                'capture_started_at_s':pending['capture_started_at_s'],
+                'observed_at_s':result['observed_at_s'],'decision_at_s':now,
+                'own_sha256':obs['sha256'],'top_sha256':result['top_sha256'],
+                'paired_top_sha256':result['images']['top']['sha256'],
+                'pose':obs['actuator_state']['servo_pulses'],
+                'box':self.solo.box.last_box,'target':self.solo.box.last_target,
+                'cargo_id':self.solo.box.cargo_id,
+                'completed_pose':self.solo_executor.last_execution,
+                'completed_pose_receipts':copy.deepcopy(self._solo_completed_pose_receipts),
+                'phase':self.solo.phase,
+                'plan_hash':self.bindings.committed['plan_hash']}
+
+    def _refresh_completed_issued_pose_receipts(self):
+        """Index completed own poses and every actually issued solo wheel command."""
+        if getattr(self,'_view_recovery',None) is None:return
+        for item in self.solo_raw[self._solo_pose_log_cursor:]:
+            if item.get('robot_id')==self.bindings.solo and (
+                    item.get('event')=='rolling_raw_action'
+                    or (item.get('event')=='raw_action'
+                        and (item.get('raw_action') or {}).get('kind') in ('drive','mecanum'))):
+                self._view_recovery.note_wheel_issue()
+            if item.get('event')!='macro_finished':continue
+            macro=item.get('macro') or {}
+            receipt=item.get('execution') or {}
+            if macro.get('kind')!='pose' or receipt.get('status')!='completed':continue
+            pulses=macro.get('pulses') or {}
+            for servo in (3,6):
+                if servo in pulses or str(servo) in pulses:
+                    self._solo_completed_pose_receipts[str(servo)]=copy.deepcopy(receipt)
+        self._solo_pose_log_cursor=len(self.solo_raw)
+
+    def _issue_rolling_view_pose(self,event,sample,obs,row,now):
+        """Hold wheels before the existing interpolated pose/settle scheduler."""
+        port=self.ports[self.bindings.solo]
+        port.hold(now)
+        if any(abs(value)>1e-12 for value in port._motor_commands):
+            raise RuntimeError('rolling view recovery could not hold wheels')
+        pose={'kind':'pose','pulses':event['issued_pose']}
+        self.solo.box.lock_rolling_approach_view(
+            int(event['issued_pose'].get('6',sample['pose']['6'])),
+            math.hypot(*sample['target'][:2]))
+        self.solo_raw.append({'event':'rolling_view_recovery_hold','time':now,
+            'robot_id':self.bindings.solo,'source_frame_id':sample['frame_id'],
+            'source_frame_sha256':sample['own_sha256'],
+            'source_top_sha256':sample['top_sha256'],
+            'motor_commands':list(port._motor_commands),
+            'reason':event['reason']})
+        self.solo_executor.submit(pose,obs,self.solo.phase,now)
+        event['issued_at_s']=now
+        event['macro_source_own_sha256']=obs['sha256']
+        row['view_recovery']=event
+        row['issued_action']=pose
+        row['rolling_dropped']='active_view_pose_instead_of_weak_drive'
+        self.solo_rows.append(row)
+
+    def _fail_rolling_view(self,event,row,now):
+        self.ports[self.bindings.solo].hold(now)
+        row['view_recovery']=event
+        row['rolling_dropped']=event['reason']
+        self.solo_rows.append(row)
+        self.solo_raw.append({'event':'rolling_view_recovery_stop','time':now,
+            'robot_id':self.bindings.solo,'reason':event['reason'],
+            'source_frame_id':event.get('frame_id'),
+            'source_frame_sha256':event.get('own_sha256'),
+            'motor_commands':list(self.ports[self.bindings.solo]._motor_commands)})
+        raise RuntimeError('solo RGB active-view recovery failed: '+event['reason'])
+
+    def _clear_rolling_view_recovery(self,now,reason):
+        recovery=getattr(self,'_view_recovery',None)
+        if recovery is None or recovery.episode is None:return
+        recovery.episode=None
+        self.ports[self.bindings.solo].hold(now)
+        self.solo_raw.append({'event':'rolling_view_recovery_stop','time':now,
+            'robot_id':self.bindings.solo,'reason':reason,
+            'motor_commands':list(self.ports[self.bindings.solo]._motor_commands)})
+
     def _start_solo_approach_lease(self,action,support,now,requests):
         """Issue the first <=.25 s slice of exactly one RGB-selected drive."""
         raw={'kind':'drive','forward':float(action['fwd']),
@@ -702,15 +790,41 @@ class SkillScene(DispatchScene):
     def _solo_tick_realtime(self):
         try:self._solo_tick_realtime_owned()
         except BaseException:
-            self._clear_solo_pending_lease(self.time(),hold=True)
-            self._clear_solo_approach_lease(self.time(),'owner_exception')
+            now=self.time()
+            recovery=getattr(self,'_view_recovery',None)
+            if recovery is not None and recovery.episode is not None:
+                if self.solo_executor:self.solo_executor.cancel(now,'active_view_owner_exception')
+                self.ports[self.bindings.solo].hold(now)
+                recovery.episode=None
+                self.solo_raw.append({'event':'rolling_view_recovery_stop','time':now,
+                    'robot_id':self.bindings.solo,'reason':'owner_exception',
+                    'motor_commands':list(self.ports[self.bindings.solo]._motor_commands)})
+            self._clear_solo_pending_lease(now,hold=True)
+            self._clear_solo_approach_lease(now,'owner_exception')
             raise
 
     def _solo_tick_realtime_owned(self):
         """Poll one RGB decision without making the physics owner wait for it."""
         if self.solo is None:return
         self.authorize();now=self.time()
+        recovery=getattr(self,'_view_recovery',None)
+        if recovery is not None and recovery.episode is not None:
+            if now>=recovery.episode['started_at_s']+VIEW_RECOVERY_MAX_ELAPSED_S:
+                self.solo_executor.cancel(now,'active_view_elapsed_budget')
+                self._clear_rolling_view_recovery(now,'active_view_elapsed_budget')
+                raise RuntimeError('solo RGB active-view elapsed budget exhausted')
+            if (self.bindings.committed['plan_hash']!=recovery.episode['plan_hash']
+                    or not self.bindings.permission('box','APPROACH')):
+                self.solo_executor.cancel(now,'active_view_plan_or_permission_changed')
+                self.ports[self.bindings.solo].hold(now)
+                recovery.episode=None
+                self.solo_raw.append({'event':'rolling_view_recovery_stop','time':now,
+                    'robot_id':self.bindings.solo,
+                    'reason':'plan_or_permission_changed',
+                    'motor_commands':list(self.ports[self.bindings.solo]._motor_commands)})
+                raise RuntimeError('solo RGB active-view recovery lost plan or permission')
         self.solo_executor.tick(now)
+        self._refresh_completed_issued_pose_receipts()
         if getattr(self,'rolling_visual_servo',False):self._tick_solo_approach_lease(now)
         tasks=getattr(getattr(self,'bindings',None),'tasks',None)
         finished=bool(tasks and tasks['box']['id'] in self.bindings.finished)
@@ -740,6 +854,13 @@ class SkillScene(DispatchScene):
                 self.solo_rows.append({'index':pending['index'],'sim_time_s':now,
                     'observed_at_s':observed,'dropped':'stale_rgb',
                     'frame_id':result['frame_id']})
+                if recovery is not None and recovery.episode is not None:
+                    recovery.episode=None
+                    self.solo_raw.append({'event':'rolling_view_recovery_stop','time':now,
+                        'robot_id':self.bindings.solo,'reason':'stale_reobservation',
+                        'source_frame_id':result['frame_id'],
+                        'motor_commands':list(self.ports[self.bindings.solo]._motor_commands)})
+                    raise RuntimeError('solo RGB active-view recovery stale reobservation')
                 return
             candidate=result['candidate']
             action,evidence=result['action'],result['evidence']
@@ -847,6 +968,23 @@ class SkillScene(DispatchScene):
                     'frame_within_issued_command_window':bool(previous_approach_lease and
                         previous_approach_lease.frame_within_issued_command_window(observed)),
                     'command_window_is_not_measured_motion':True}
+            view_sample=None
+            if recovery is not None and before=='approach':
+                view_sample=self._rolling_view_sample(result,pending,obs,now)
+                view_event=recovery.advance(view_sample)
+                if view_event is not None:
+                    if view_event['kind']=='pose_issued':
+                        self._issue_rolling_view_pose(view_event,view_sample,obs,row,now)
+                        return
+                    if view_event['kind']=='failed':
+                        self._fail_rolling_view(view_event,row,now)
+                    row['view_recovery']=view_event
+                if (not row['rolling_capture_evidence']['frame_within_issued_command_window']
+                        and recovery.episode is None):
+                    previous_end=(previous_approach_lease.last_command_end_s()
+                                  if previous_approach_lease is not None else None)
+                    recovery.remember(view_sample,view_sample['completed_pose_receipts'],
+                                      previous_end)
             if action['kind']=='mecanum':
                 if moving_carry:
                     effective=self._issue_realtime_motor(
@@ -917,6 +1055,13 @@ class SkillScene(DispatchScene):
                     # Preserve the existing settled final-entry/grasp routine.
                     self.solo_executor.submit(action,obs,self.solo.phase,now)
                 else:
+                    if (recovery is not None and support['reason']=='weak_direct_cyan_rgb'):
+                        view_event=recovery.start(view_sample)
+                        if view_event['kind']=='pose_issued':
+                            row['rolling_support']=support
+                            self._issue_rolling_view_pose(view_event,view_sample,obs,row,now)
+                            return
+                        self._fail_rolling_view(view_event,row,now)
                     row['rolling_dropped']=support['reason']
                     self.ports[self.bindings.solo].hold(now)
                     self._solo_retry_at=max(now+.1,settle_until or now)
@@ -1089,6 +1234,7 @@ class SkillScene(DispatchScene):
     def close(self):
         if self.native_view:self.native_view.close();self.native_view=None
         if self.world:
+            self._clear_rolling_view_recovery(self.time(),'trial_end')
             self._clear_solo_approach_lease(self.time(),'trial_end')
             self._clear_solo_pending_lease(self.time(),hold=True)
             if self.solo_executor:self.solo_executor.cancel(self.time(),'trial_end')
@@ -1130,12 +1276,15 @@ def run(args):
     scene.coarse_concurrent_alignment=bool(getattr(args,'coarse_concurrent_alignment',False))
     scene.rolling_visual_servo=bool(getattr(args,'rolling_visual_servo',False))
     scene.bounded_carrier_relink=bool(getattr(args,'bounded_carrier_relink',False))
+    scene.rolling_view_recovery=bool(getattr(args,'rolling_view_recovery',False))
     if scene.rolling_visual_servo and not scene.realtime_control:
         raise ValueError('rolling visual servo requires realtime control')
     if scene.coarse_concurrent_alignment and not scene.realtime_control:
         raise ValueError('coarse concurrent alignment requires realtime control')
     if scene.bounded_carrier_relink and not (scene.rolling_visual_servo and scene.realtime_control):
         raise ValueError('bounded carrier relink requires rolling realtime control')
+    if scene.rolling_view_recovery and not (scene.rolling_visual_servo and scene.realtime_control):
+        raise ValueError('rolling view recovery requires rolling realtime control')
     scene.fine_gain_schedule=bool(getattr(args,'fine_gain_schedule',False))
     started=time.monotonic();pair=team=None
     motion_started_wall=motion_started_sim=None
@@ -1166,6 +1315,17 @@ def run(args):
             'near_motion_reobserve_buffer_m':NEAR_MOTION_REOBSERVE_BUFFER_M,
             'final_entry_settle_s':FINAL_ENTRY_SETTLE_S,
             'issued_command_integral_is_not_measured_travel':True},
+        'view_recovery':{'requested':scene.rolling_view_recovery,'applied':False,
+            'scope':'solo rolling approach on realtime dispatch_open; current paired own/TOP RGB and completed issued pose only',
+            'minimum_drive_rgb_confidence':0.75,
+            'max_poses_per_episode':VIEW_RECOVERY_MAX_POSES,
+            'max_elapsed_s':VIEW_RECOVERY_MAX_ELAPSED_S,
+            'max_episodes':VIEW_RECOVERY_MAX_EPISODES,
+            'wrist_step_pwm':VIEW_RECOVERY_WRIST_STEP_PWM,
+            'max_pan_delta_pwm':VIEW_RECOVERY_MAX_PAN_DELTA_PWM,
+            'episodes_started':0,
+            'poses_issued':0,
+            'issued_pwm_not_measured_joint':True},
         'bounded_carrier_relink':{'requested':scene.bounded_carrier_relink,'applied':False,
             'scope':'solo carry only, realtime dispatch_open with rolling approach',
             'max_total_occluded_frames':_CARRIER_RELINK_MAX_OCCLUDED_FRAMES,
@@ -1264,6 +1424,7 @@ def run(args):
         scene.start_solo()
         result['rolling_approach']['applied']=scene.rolling_visual_servo
         result['bounded_carrier_relink']['applied']=scene.bounded_carrier_relink
+        result['view_recovery']['applied']=scene.rolling_view_recovery
         pair=BoundPairSkill(scene,scene.bindings,skill,grasp,stages,grasp_root,reference,identity)
         result['coarse_concurrent_alignment'].update(coarse_concurrency_status(
             pair,requested=scene.coarse_concurrent_alignment))
@@ -1318,9 +1479,13 @@ def run(args):
                 if scene.native_view:
                     scene.native_view.close();scene.native_view=None
                 # Freeze decisions before final referee-only settling.
+                scene._clear_rolling_view_recovery(scene.time(),'trial_end')
                 scene._clear_solo_approach_lease(scene.time(),'trial_end')
                 if scene.solo_executor:scene.solo_executor.cancel(scene.time(),'trial_end')
                 if scene.solo:result['solo_status']={'phase':scene.solo.phase,'reason':scene.solo.reason,'done':scene.solo.done}
+                if scene._view_recovery is not None:
+                    result['view_recovery']['episodes_started']=scene._view_recovery.episodes_started
+                    result['view_recovery']['poses_issued']=scene._view_recovery.poses_issued
                 if scene.bindings:result['resource_events']=scene.bindings.resource_events
                 if scene.realtime_control:result['realtime_control_stats']=dict(scene.realtime_stats)
                 scene.solo=None;scene.deadline=None;scene.hold()
