@@ -1,4 +1,5 @@
-# UGRP Git policy: source/config/docs are versioned; runtime/build/heavy artifacts stay local.
+# Source/config/docs/manifests are versioned; model binaries use GitHub Releases.
+# Downloaded models and runtime/build artifacts remain outside Git history.
 
 # Python / test caches
 **/__pycache__/
