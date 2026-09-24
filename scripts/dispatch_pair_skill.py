@@ -1202,6 +1202,34 @@ class BoundPairSkill:
             'crop_centers_before_px':before,
             'crop_centers_after_px':{slot:[float(v) for v in c] for slot,c in self.coarse.centers.items()}})
 
+    def holds_cargo(self):
+        """From own issued commands only: grippers were closed and not reopened."""
+        issued=self.trace[getattr(self,'_grasp_trace_start',0):]
+        return (any(t.get('stage')=='grasp_close' for t in issued)
+                and not any(t.get('stage')=='place_open' for t in issued))
+
+    def set_down(self):
+        """Dynamic job drop only: lower and open where the pair stands, if closed."""
+        self._hold_pair()
+        if self.holds_cargo():self.place()
+
+    def reset_for_regrasp(self):
+        """Dynamic regrasp only: open if closed, fold, and restart at APPROACH.
+
+        The fold is the skill's own folded setup command, so the next RGB
+        approach starts from the same arm pose as the first one.
+        """
+        if getattr(self.io,'realtime_control',False):
+            raise RuntimeError('regrasp supports synchronous execution only')
+        self.set_down()
+        self.replay([self.skill['initialization_replay'][0]],'regrasp_fold')
+        self.previous_grasp_reports=getattr(self,'previous_grasp_reports',[])+[self.grasp_report]
+        self.grasp_report={};self.phase='APPROACH';self.transport_started=False
+        self._grasp_trace_start=len(self.trace)
+        self.grasp_translation=self.latest_translation=None
+        from harness.dispatch_beam_tracker import CarriedBeamTracker
+        self.carried_beam=CarriedBeamTracker();self.beam_continuity=BeamContinuity()
+
     def carry(self,navigator,max_steps=None):
         if self.bindings.cluttered:return self.carry_with_rotation(max_steps)
         self.phase='TRANSIT';self.transport_started=True

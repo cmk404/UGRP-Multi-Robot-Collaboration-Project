@@ -121,6 +121,33 @@ def label_at(labels, index: int) -> str:
     return labels[position][1] if position >= 0 else ''
 
 
+def dialogue(run_dir: Path) -> list:
+    """Peer messages from the run's own communication record, by SIM time.
+
+    Observer-only overlay; the file is the run's saved output, not replay input.
+    """
+    path = Path(run_dir) / 'team' / 'conversation.jsonl'
+    if not path.is_file():
+        return []
+    rows = []
+    for line in path.read_text().splitlines():
+        row = json.loads(line)
+        if row.get('kind') == 'peer_message' and row.get('text') and row.get('sim_time_s') is not None:
+            rows.append((float(row['sim_time_s']), row['sender'], row.get('phase', ''), row['text']))
+    return sorted(rows, key=lambda row: row[0])
+
+
+def dialogue_at(rows, t: float, *, keep: int = 3, window_s: float = 30., width: int = 110) -> str:
+    """The last ``keep`` messages sent at or before ``t`` and within ``window_s``."""
+    recent = [row for row in rows if row[0] <= t + 1e-9 and t - row[0] <= window_s][-keep:]
+    lines = []
+    for sim_s, sender, phase, text in recent:
+        text = text.encode('ascii', 'replace').decode()
+        line = f'{sim_s:5.1f}s {sender} [{phase}] {text}'
+        lines.append(line if len(line) <= width else line[:width - 3] + '...')
+    return '\n'.join(lines)
+
+
 def _close(viewer) -> None:
     viewer.close()
     # MuJoCo 3.12 close signals its render thread; wait before glfw teardown.
@@ -139,6 +166,7 @@ def play(run_dir: Path, *, speed: float = 1., max_wall_s: float | None = None) -
     if not math.isfinite(speed) or not .1 <= speed <= 16:
         raise ValueError('replay speed must be within 0.1..16')
     model, states, labels, manifest = load(run_dir)
+    messages = dialogue(run_dir)
     data = mujoco.MjData(model)
     times = states['time'].tolist()
     start, end = times[0], times[-1]
@@ -188,8 +216,13 @@ def play(run_dir: Path, *, speed: float = 1., max_wall_s: float | None = None) -
                 mujoco.mj_forward(model, data)
             shown = index
         status = 'PAUSED' if paused else ('END' if playhead >= end else f'{speed:g}x')
-        viewer.set_texts((mujoco.mjtFont.mjFONT_NORMAL, mujoco.mjtGridPos.mjGRID_TOPLEFT,
-                          f'SIM {times[index]:.1f}/{end:.1f}s  {status}', label_at(labels, index)))
+        texts = [(mujoco.mjtFont.mjFONT_NORMAL, mujoco.mjtGridPos.mjGRID_TOPLEFT,
+                  f'SIM {times[index]:.1f}/{end:.1f}s  {status}', label_at(labels, index))]
+        said = dialogue_at(messages, times[index])
+        if said:
+            texts.append((mujoco.mjtFont.mjFONT_NORMAL, mujoco.mjtGridPos.mjGRID_BOTTOMLEFT,
+                          'TEAM TALK', said))
+        viewer.set_texts(texts)
         viewer.sync()
         time.sleep(1 / 60)
     _close(viewer)

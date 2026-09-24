@@ -284,3 +284,246 @@ def test_backoff_stays_synchronous_and_bounded():
     pair.io.realtime_control = True
     with pytest.raises(RuntimeError, match='synchronous'):
         pair.back_off()
+
+
+# --- general team decisions: events, delivery, job drops, grasp and box recovery ---
+
+def test_events_carry_their_own_options_and_fail_closed_choice():
+    event = dyn.make_event('job_failed', 'job_failed-3', participants=['r1', 'r2', 'r3'],
+                           failure='box stopped: TARGET_NOT_VISIBLE', failed_job='box')
+    assert event['options'] == ['continue_others', 'stop_all'] and event['fail_closed'] == 'stop_all'
+    assert set(event['option_meanings']) == set(event['options']) and event['failed_job'] == 'box'
+    ok = {'request_id': 'q', 'event_id': 'e', 'decision': 'continue_others', 'reason': 'r', 'message': 'm'}
+    assert dyn.validate_recovery_reply(json.dumps(ok), 'q', 'e', event['options'])['decision'] == 'continue_others'
+    with pytest.raises(ValueError):
+        dyn.validate_recovery_reply(json.dumps({**ok, 'decision': 'retry'}), 'q', 'e', event['options'])
+    with pytest.raises(ValueError):
+        dyn.make_event('box_failure', 'x', participants=['r9'], failure='f')
+    assert dyn.recoverable(RuntimeError('existing pair carry guard stopped: ABORT'), dyn.RECOVERABLE_GRASP_FAILURES)
+    assert not dyn.recoverable(RuntimeError('visual placement confirmation failed'), dyn.RECOVERABLE_GRASP_FAILURES)
+
+
+def test_consult_messages_reach_participants_only_and_disagreement_fails_closed():
+    calls = []
+    def ask(robots, build, validate, fixture, **kw):
+        calls.append(kw)
+        return {'r1': {'decision': 'continue_others'}, 'r2': {'decision': 'stop_all'}, 'r3': None}
+    team = SimpleNamespace(ask=ask, inbox={r: [] for r in ('r1', 'r2', 'r3')})
+    event = dyn.make_event('job_failed', 'j', participants=['r1', 'r2', 'r3'], failure='f')
+    decision, rounds = dyn.consult(team, event['participants'], event, FRAMES, HISTORY, {}, 1., turn=0)
+    assert decision == 'stop_all' and len(rounds) == 2
+    assert all(kw['recipients'] == ['r1', 'r2', 'r3'] for kw in calls)
+
+
+def test_runtime_delivers_consultation_messages_only_to_recipients(tmp_path):
+    from scripts.three_robot_runtime import ThreeRobotRuntime
+    team = ThreeRobotRuntime(tmp_path, run_id='t', mode='fixture')
+    try:
+        reply = lambda rid, rq: {'request_id': rq, 'event_id': 'e', 'decision': 'retry',
+                                 'reason': 'r', 'message': f'from {rid}'}
+        team.ask(['r1', 'r3'], lambda rid, rq: {'request_id': rq, 'messages': [], 'images': []},
+                 lambda raw, rq: json.loads(raw), reply, phase='recovery-e-r0', turn=0, sim_time=1.,
+                 recipients=['r1', 'r3'])
+        assert [m['from_robot'] for m in team.inbox['r1']] == ['r3']
+        assert [m['from_robot'] for m in team.inbox['r3']] == ['r1'] and team.inbox['r2'] == []
+    finally:
+        team.close(1.)
+
+
+def _bindings():
+    from harness.dispatch_skill_binding import SkillBindings
+    from sim.research_dispatch_arena import authored_map
+    from tests.test_dispatch_skill_binding import committed
+    return SkillBindings(committed(), authored_map('open'), route_overlap=True)
+
+
+def test_dropped_job_releases_resources_and_unblocks_peers_without_counting_as_delivered():
+    b = _bindings()
+    assert b.permission('beam', 'TRANSIT') and b.locks
+    assert not b.permission('box', 'UNLOAD')  # box unloads after the beam
+    b.drop('beam')
+    assert b.settled('beam') and b.tasks['beam']['id'] not in b.finished and not b.locks
+    assert b.permission('box', 'UNLOAD') and b.resource_events[-2]['event'] == 'drop'
+    b.finish('box')
+    with pytest.raises(ValueError):
+        b.drop('box')
+
+
+class _Team:
+    def __init__(self):
+        self.events = []
+    def event(self, *a, **k):
+        self.events.append((a, k))
+
+
+def _decisions(monkeypatch, decisions):
+    consulted = []
+    def consult(team, participants, event, *a, **k):
+        consulted.append(event)
+        return decisions.pop(0), [{'round': 0}]
+    monkeypatch.setattr(dyn, 'consult', consult)
+    return consulted
+
+
+def _job_scene(settled=()):
+    dropped = []
+    bindings = SimpleNamespace(pair={'r1': 'r3', 'r3': 'r1'}, solo='r2',
+                               settled=lambda job: job in settled or job in dropped,
+                               drop=dropped.append)
+    return SimpleNamespace(step=lambda s: None, capture=lambda label: FRAMES, time=lambda: 9.,
+                           bindings=bindings, command_history=HISTORY, dropped=dropped)
+
+
+def test_job_failure_asks_all_three_and_drops_only_on_continue(monkeypatch):
+    from scripts import run_dispatch_skills as runner
+    consulted = _decisions(monkeypatch, ['continue_others', 'stop_all'])
+    scene, result, downs = _job_scene(), {'coordination': {'recoveries': []}}, []
+    runner._job_failed(scene, _Team(), {}, result, 'beam', RuntimeError('budget'), set_down=lambda: downs.append(1))
+    assert consulted[0]['participants'] == ['r1', 'r2', 'r3'] and consulted[0]['failed_job'] == 'beam'
+    assert consulted[0]['other_job_state'] == 'in_progress'
+    assert scene.dropped == ['beam'] and downs == [1] and result['coordination']['dropped_jobs'][0]['job'] == 'beam'
+    with pytest.raises(runner.TeamStop, match='no agreed job left'):
+        runner._job_failed(scene, _Team(), {}, result, 'box', RuntimeError('x'), set_down=lambda: None)
+    scene2, result2 = _job_scene(), {'coordination': {'recoveries': []}}
+    with pytest.raises(runner.TeamStop, match='stop all'):
+        runner._job_failed(scene2, _Team(), {}, result2, 'box', RuntimeError('x'), set_down=lambda: None)
+    assert scene2.dropped == []
+
+
+def test_box_failure_retries_with_the_box_robot_then_escalates_to_the_team(monkeypatch):
+    from scripts import run_dispatch_skills as runner
+    consulted = _decisions(monkeypatch, ['retry', 'abort', 'continue_others'])
+    scene, result = _job_scene(), {'coordination': {'recoveries': []}}
+    scene.solo_events = []
+    args = SimpleNamespace(box_retries=2)
+    event = {'reason': 'APPROACH_OVERSHOT', 'phase': 'approach', 'diagnostic_injection': True}
+    assert runner._box_event(scene, _Team(), {}, args, result, event) == 'retry'
+    assert consulted[0]['participants'] == ['r2'] and consulted[0]['kind'] == 'box_failure'
+    assert 'diagnostic_injection' not in consulted[0]
+    assert result['coordination']['recoveries'][0]['diagnostic_injection'] is True
+    assert runner._box_event(scene, _Team(), {}, args, result, event) == 'dropped'
+    assert consulted[2]['kind'] == 'job_failed' and scene.dropped == ['box']
+    # A stop after the load is carried is not retried; the team decides at once.
+    consulted = _decisions(monkeypatch, ['stop_all'])
+    carrying = _job_scene();carrying.solo_events = []
+    with pytest.raises(runner.TeamStop):
+        runner._box_event(carrying, _Team(), {}, args, {'coordination': {'recoveries': []}},
+                          {'reason': 'VISUAL_LOAD_DROPPED', 'phase': 'carry'})
+    assert consulted[0]['kind'] == 'job_failed'
+
+
+class _GraspPair(_Pair):
+    def __init__(self, grasp_failures):
+        super().__init__([])
+        self.grasp_failures, self.regrasps, self.log = list(grasp_failures), 0, []
+        self.grasp_report = {}
+    def finish_grasp(self, predict, models):
+        self.log.append('grasp')
+        if self.grasp_failures:
+            raise RuntimeError(self.grasp_failures.pop(0))
+        return ['calls']
+    def reset_for_regrasp(self):
+        self.regrasps += 1;self.log.append('reset')
+    def place(self):
+        self.log.append('place')
+    def verify_placement(self):
+        self.log.append('verify')
+
+
+def _beam_scene():
+    finished = []
+    bindings = SimpleNamespace(pair={'r1': 'r3', 'r3': 'r1'}, solo='r2', route_overlap=False,
+                               transit_started=set(), permission=lambda obj, stage: True,
+                               finish=finished.append)
+    return SimpleNamespace(step=lambda s: None, capture=lambda label: FRAMES, time=lambda: 5.,
+                           bindings=bindings, command_history=HISTORY, finished=finished)
+
+
+def test_grasp_failure_regrasps_after_team_agreement(monkeypatch):
+    from scripts import run_dispatch_skills as runner
+    consulted = _decisions(monkeypatch, ['regrasp'])
+    monkeypatch.setattr(runner, '_carry', lambda *a: None)
+    pair, scene = _GraspPair(['preclose RGB outside learned grasp support']), _beam_scene()
+    result = {'coordination': {'recoveries': []}}
+    args = SimpleNamespace(coordination='dynamic', approach_retries=2)
+    runner._beam_job(pair, scene, _Team(), {}, args, result, {})
+    assert consulted[0]['kind'] == 'pair_grasp_failure' and consulted[0]['options'] == ['regrasp', 'abort']
+    assert pair.log == ['grasp', 'reset', 'grasp', 'place', 'verify'] and pair.backoffs == 1
+    assert scene.finished == ['beam']
+
+
+def test_grasp_injection_and_no_regrasp_after_loaded_transit(monkeypatch):
+    from scripts import run_dispatch_skills as runner
+    consulted = _decisions(monkeypatch, ['regrasp'])
+    monkeypatch.setattr(runner, '_carry', lambda *a: None)
+    pair, scene = _GraspPair([]), _beam_scene()
+    result = {'coordination': {'recoveries': []}}
+    args = SimpleNamespace(coordination='dynamic', approach_retries=2, diagnostic_fail_grasp_once=True)
+    runner._beam_job(pair, scene, _Team(), {}, args, result, {})
+    assert consulted[0]['failure']['reason'] == 'existing pair carry guard stopped: ABORT'
+    assert result['coordination']['recoveries'][0]['diagnostic_injection'] is True and pair.regrasps == 1
+    def carry_fails(*a):
+        scene.bindings.transit_started.add('beam')
+        raise RuntimeError('existing pair carry guard stopped: ABORT')
+    monkeypatch.setattr(runner, '_carry', carry_fails)
+    with pytest.raises(RuntimeError, match='carry guard'):
+        runner._beam_job(_GraspPair([]), scene, _Team(), {}, SimpleNamespace(coordination='dynamic',
+                         approach_retries=2), {'coordination': {'recoveries': []}}, {})
+
+
+def test_pair_knows_it_holds_cargo_only_from_issued_close_and_open():
+    from scripts.dispatch_pair_skill import BoundPairSkill
+    pair = BoundPairSkill.__new__(BoundPairSkill)
+    pair.trace = [{'stage': 'grasp_rgb_recovery'}]
+    assert not pair.holds_cargo()
+    pair.trace.append({'stage': 'grasp_close'})
+    assert pair.holds_cargo()
+    pair.trace.append({'stage': 'place_open'})
+    assert not pair.holds_cargo()
+    pair._grasp_trace_start = len(pair.trace)
+    assert not pair.holds_cargo()
+
+
+def test_scene_pauses_box_and_applies_the_team_decision():
+    from scripts.run_dispatch_skills import SkillScene
+    scene = SkillScene.__new__(SkillScene)
+    scene.solo_events, scene.solo_dropped, scene._solo_recovery = [], False, None
+    scene.last_frames = {'kept': True}
+    decisions = ['retry', 'dropped']
+    scene.team_event_handler = lambda event: decisions.pop(0)
+    scene._solo_event = {'reason': 'TARGET_NOT_VISIBLE', 'phase': 'approach', 'sim_time_s': 3.}
+    scene._handle_solo_event()
+    assert scene._solo_event is None and scene._solo_recovery[0]['kind'] == 'pose'
+    assert [a['forward'] for a in scene._solo_recovery[1:]] == [-.05] * 10
+    assert scene.last_frames == {'kept': True} and scene.solo_events[0]['decision'] == 'retry'
+    scene._solo_event = {'reason': 'VISUAL_LOAD_DROPPED', 'phase': 'carry', 'sim_time_s': 4.}
+    scene._handle_solo_event()
+    assert scene.solo_dropped
+
+
+def test_replay_overlay_shows_recent_peer_messages(tmp_path):
+    from scripts.dispatch_replay import dialogue, dialogue_at
+    (tmp_path / 'team').mkdir()
+    rows = [{'kind': 'peer_message', 'sender': 'r1', 'phase': 'claim', 'sim_time_s': 5., 'text': 'beam upper'},
+            {'kind': 'decision_explanation', 'sender': 'r1', 'phase': 'claim', 'sim_time_s': 5., 'text': 'hidden'},
+            {'kind': 'peer_message', 'sender': 'r3', 'phase': 'recovery', 'sim_time_s': 48., 'text': 'retry ok'}]
+    (tmp_path / 'team' / 'conversation.jsonl').write_text(''.join(json.dumps(r) + '\n' for r in rows))
+    said = dialogue(tmp_path)
+    assert len(said) == 2 and dialogue_at(said, 1.) == ''
+    assert 'beam upper' in dialogue_at(said, 6.) and 'hidden' not in dialogue_at(said, 6.)
+    assert dialogue_at(said, 50.).endswith('retry ok') and 'beam upper' not in dialogue_at(said, 50.)
+    assert dialogue(tmp_path / 'missing') == []
+
+
+def test_cli_validates_new_dynamic_options(tmp_path, monkeypatch):
+    from scripts import run_dispatch_e2e
+    seen = []
+    monkeypatch.setattr('scripts.run_dispatch_skills.run', lambda args: seen.append(args) or 0)
+    base = ['--grasp-model-dir', str(tmp_path), '--stage-model-dir', str(tmp_path)]
+    assert run_dispatch_e2e.main(['--output', str(tmp_path / 'a'), '--coordination', 'dynamic', '--box-retries', '0',
+                                  '--diagnostic-fail-grasp-once', '--diagnostic-fail-box-once', *base]) == 0
+    assert seen[-1].box_retries == 0 and seen[-1].diagnostic_fail_grasp_once and seen[-1].diagnostic_fail_box_once
+    for bad in (['--coordination', 'dynamic', '--box-retries', '4'], ['--diagnostic-fail-box-once'],
+                ['--diagnostic-fail-grasp-once']):
+        with pytest.raises(SystemExit):
+            run_dispatch_e2e.main(['--output', str(tmp_path / 'b'), *bad, *base])
