@@ -124,6 +124,37 @@ class ThreeRobotRuntime:
         print(json.dumps({'team_turn': turn, 'committed': committed, 'stops': self.rounds[-1]['stops']}), flush=True)
         return committed
 
+    def ask(self, robots, build, validate, fixture, *, phase, turn, sim_time):
+        """One independent request per listed robot, in parallel; deliver messages.
+
+        ``build(rid, request_id)`` returns the request; ``validate(raw, request_id)``
+        checks a reply; ``fixture(rid, request_id)`` is the scripted reply used
+        only in fixture mode. Returns ``{rid: reply or None}``.
+        """
+        if self.idle_callback:self.idle_callback()
+        futures = {}
+        for rid in robots:
+            request_id = f'{self.agreement.run_id}-{rid}-{phase}-{turn}'
+            futures[rid] = self.pool.submit(self._invoke, rid, build(rid, request_id),
+                lambda raw, req: validate(raw, req), fixture_reply=fixture(rid, request_id))
+        self.pending_plan = futures
+        if self.idle_callback:
+            while not all(f.done() for f in futures.values()):
+                self.idle_callback()
+                time.sleep(.02)
+        batch = {r: f.result() for r, f in futures.items()}
+        self.pending_plan = {}
+        for reply, stop, records in batch.values():
+            self.calls.extend(records)
+        self.deliver_replies(batch, phase=phase, turn=turn, sim_time=sim_time)
+        self.rounds.append({'phase': phase, 'turn': turn, 'sim_time_s': sim_time,
+                            'replies': {r: v[0] for r, v in batch.items()},
+                            'stops': {r: v[1] for r, v in batch.items()}})
+        self.save()
+        print(json.dumps({'team_phase': phase, 'turn': turn,
+                          'replied': {r: v[0] is not None for r, v in batch.items()}}), flush=True)
+        return {r: v[0] for r, v in batch.items()}
+
     def deliver_replies(self, batch, *, phase, turn, sim_time):
         """Forward validated peer text and record only the completed deliveries."""
         for sender, (reply, _stop, records) in batch.items():

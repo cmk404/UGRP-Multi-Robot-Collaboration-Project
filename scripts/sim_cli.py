@@ -458,6 +458,11 @@ def _choose_launch():
         default_model = os.environ.get("UGRP_SIM_MODEL", "gemini-3.8-flash")
         default_task = "기존 beam과 box를 같은 dock으로 옮겨"
         print("기존 출하 임무의 역할과 경로를 계획합니다. 모델 프록시가 필요합니다.")
+        coordination = _menu_choice("협업 방식 [1 = 계획 먼저 기본; ? 목록]: ", ["1", "2"], "1", labels=[
+            "계획 먼저: 전체 계획에 합의한 뒤 출발",
+            "동적 (실험): 각자 할 일을 말하고 바로 출발, 충돌·실패 때만 대화",
+        ])
+        selection["coordination"] = "dynamic" if coordination == "2" else "plan_first"
         while True:
             model = _model_choice(default_model)
             task = _menu_input("자연어 지시 [기본 출하 임무]: ") or default_task
