@@ -1,0 +1,51 @@
+{
+  "schema": "ugrp.dispatch_stage_priors.v1",
+  "purpose": "Rough nominal SIM stage durations for the planning schedule preview only. Never actor control, stage-transition or success input.",
+  "unit": "SIM seconds from the stage's first issued command to the next stage's first issued command",
+  "stages_sim_s": {
+    "beam": {
+      "approach": 42.3,
+      "grasp": 15.6,
+      "carry": {"dock_a": 18.3, "dock_b": 38.7},
+      "release": 4.0
+    },
+    "box": {
+      "approach": 47.0,
+      "grasp": 14.3,
+      "carry": {"dock_a": 43.6, "dock_b": 48.4},
+      "release": 9.2,
+      "yield": 29.6
+    }
+  },
+  "box_carry_before_bay_fraction": 0.7,
+  "limits": [
+    "Two synchronous open-map seed-11 runs only (one concurrent dock_a, one serial dock_b); both beam carries used north and both box carries used south, so durations are route-agnostic per dock.",
+    "An unobserved dock falls back to the mean of observed docks and is marked unobserved_dock_mean.",
+    "Realtime runs of the same scene show beam approach 48-121 s and beam carry 7-148 s; the spread is large.",
+    "box_carry_before_bay_fraction is an authored guess of where the box queues before the shared bay, not a measurement."
+  ],
+  "sources": [
+    {
+      "run": "outputs/post-run-replay-20260924/smoke-1",
+      "checkout": "primary",
+      "plan": "dock_a; beam r1+r3 north after=[]; box r2 south after=[]; concurrent (independent_open_routes)",
+      "control_end_sim_s": 132.3,
+      "sha256": {
+        "issued-commands.json": "2de79d10691ffd4776bce4ae0800f8513bb77a2af35ec4221c0865b4c7f37811",
+        "solo-decisions.json": "7a30a8e996b98a3e2739e6737f1fa4552aa649dd733b23b957845d3677606dd6",
+        "result.json": "1d78e573cd321d063462529aab084c3b1410d76a0c16799cfedf8c09fd588106"
+      }
+    },
+    {
+      "run": "outputs/simulation-runs/20260925-000852-dispatch-ee5eac42/artifacts",
+      "checkout": "/Users/changmin/projects/ugrp-worktrees/post-run-replay",
+      "plan": "dock_b; box r2 south after=[]; beam r1+r3 north after=[box_job]; one job at a time (agreed_dependencies_require_serial)",
+      "control_end_sim_s": 216.1,
+      "sha256": {
+        "issued-commands.json": "155dbe872815e473e905c42b928626f1371aa833f29d3a4f95dc30a293f361e7",
+        "solo-decisions.json": "636204688954012093077d0a3cf5742531e5a9cd823b9fe2b64637766250df5a",
+        "result.json": "8ddc9f2c89943c19e1bae62e76ea1812746fae5b3d02c62dcbdd5c33290220f1"
+      }
+    }
+  ]
+}
