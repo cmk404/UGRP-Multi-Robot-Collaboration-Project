@@ -21,7 +21,7 @@ def resolve(selection, **kwargs):
 def test_catalog_covers_every_existing_map_and_case_without_a_hidden_fallback():
     rows = catalog()
     assert len({r['id'] for r in rows}) == len(rows)
-    assert Counter(r['family'] for r in rows) == dict(legacy=4, dispatch=5, navigation=9, pair_navigation=6, act=22, multi_object=12)
+    assert Counter(r['family'] for r in rows) == dict(legacy=4, dispatch=5, navigation=9, pair_navigation=6, act=22, multi_object=12, zones=1)
     for family in ('navigation', 'pair_navigation'):
         assert {p.stem for p in (ROOT/'maps'/family).glob('*.json') if p.name != 'catalog.json'} == {
             r['id'].split('/')[1] for r in rows if r['family'] == family}

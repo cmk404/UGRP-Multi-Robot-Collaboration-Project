@@ -34,6 +34,9 @@ def catalog():
     pilot = json.loads((ROOT/'maps/act_generalization/multi_object_pilot_v1.json').read_text())
     rows += [{'id': 'multi_object/'+c['id'], 'family': 'multi_object',
               'scope': 'physical replicas; research task execution uses its own runner'} for c in pilot['cases']]
+    from sim.zone_arena import VARIANTS as ZONE_VARIANTS
+    rows += [{'id': 'zones/'+name, 'family': 'zones',
+              'scope': 'zone-goal coordination benchmark; goal via scene params'} for name in ZONE_VARIANTS]
     return rows
 
 
@@ -52,8 +55,8 @@ def validate_selection(scene):
     profile = scene['contact_profile']
     if profile is not None:
         from sim.dispatch_contact_profile import PROFILES
-        if not selection.startswith(('dispatch/', 'act/')) or profile not in PROFILES:
-            raise ValueError(f'scene.contact_profile: dispatch/ACT research scenes only, choose {PROFILES}')
+        if not selection.startswith(('dispatch/', 'act/', 'zones/')) or profile not in PROFILES:
+            raise ValueError(f'scene.contact_profile: dispatch/ACT/zone research scenes only, choose {PROFILES}')
 
 
 class Scene:
@@ -71,6 +74,20 @@ class Scene:
         self.engine_layout = self.selection if self.family == 'legacy' else 'standard'
         self.base_dir = Path(base_dir).resolve()
         self._resolve()
+
+    @classmethod
+    def from_zone_config(cls, config, base_dir=ROOT):
+        """Standard scene path for a zone episode (goal and spares from the config)."""
+        from sim.zone_arena import episode
+        selected = {'layout': 'zones/' + config['variant'], 'seed': config['seed'],
+                    'map_file': None, 'cargo_ids': None, 'robots': {}, 'objects': [],
+                    'builder': None, 'contact_profile': config.get('contact_solver_profile'),
+                    'params': {'goal': config['goal'], 'extra_boxes': config.get('extra_boxes') or {}}}
+        validate_selection(selected)
+        scene = cls(selected, base_dir)
+        if scene.config['setup_only'] != config['setup_only'] or scene.config['static_map'] != config['static_map']:
+            raise ValueError('zone runner episode differs from the selected scene')
+        return scene
 
     @classmethod
     def from_dispatch_config(cls, config, base_dir=ROOT):
@@ -155,6 +172,13 @@ class Scene:
             case = next(c for c in cases if c['id'] == name)
             self.map = copy.deepcopy(case['map'])
             self.config = scene_config(case, physics_seed=seed)
+        elif self.family == 'zones':
+            from sim.zone_arena import episode, DEFAULT_GOAL, MAP_DIR
+            self._read(MAP_DIR/(name+'.json'))
+            params = self.scene.get('params') or {}
+            self.config = episode(name, seed, goal=params.get('goal') or DEFAULT_GOAL,
+                                  extra_boxes=params.get('extra_boxes'))
+            self.config['extra_boxes'] = params.get('extra_boxes') or {}
         elif self.family == 'multi_object':
             from sim.multi_object_suite import load_pilot, SPEC as PILOT
             from sim.multi_object_scene import configuration, SPEC
@@ -172,6 +196,11 @@ class Scene:
     def _verify_camera(self):
         from sim.research_dispatch_arena import FIXED_TOP
         data = self.config['static_map'] if self.config else self.map
+        if self.family == 'zones':
+            from sim.zone_arena import EAST_TOP
+            if data['top_cameras'] != [FIXED_TOP, EAST_TOP]:
+                raise ValueError('zone scene must keep the approved TOP plus one identical east CCTV')
+            return
         if data and data['top_camera'] != FIXED_TOP:
             raise ValueError('research scene must preserve the approved fixed TOP camera')
 
@@ -186,6 +215,9 @@ class Scene:
             if self.family == 'multi_object':
                 from sim.multi_object_scene import build_multi_object_xml
                 xml, self.manifest = build_multi_object_xml(xml, self.config)
+            elif self.family == 'zones':
+                from sim.zone_arena import build_zone_xml
+                xml, self.manifest = build_zone_xml(xml, self.config)
             else:
                 xml, self.manifest = build_scene_xml(xml, self.config)
             if self.scene['contact_profile']:
@@ -227,13 +259,16 @@ class Scene:
         world._team_joint_move_servos({r: {1:2000,3:740,4:2320,5:1320,6:1500} for r in folded},
                                      .6, settle_s=.5 if self.family == 'navigation' else .4)
         data = self.config['static_map'] if self.config else self.map
-        top = world.model.camera('cctv_top')
-        top.pos[:] = data['top_camera']['position_m']
-        top.quat[:] = data['top_camera']['quaternion_wxyz']
-        top.fovy[:] = data['top_camera']['fov_y_deg']
+        for spec in data.get('top_cameras') or [{**data['top_camera'], 'name': 'cctv_top'}]:
+            top = world.model.camera(spec['name'])
+            top.pos[:] = spec['position_m']
+            top.quat[:] = spec['quaternion_wxyz']
+            top.fovy[:] = spec['fov_y_deg']
         observer = world.model.camera('cctv_warehouse')
-        position = np.array([.55, -4.3, 3.]) if self.family == 'navigation' else np.array([2.6, -4.8, 3.4])
-        target = np.array([.55, -2., 0. if self.family == 'navigation' else .03])
+        position = (np.array([.55, -4.3, 3.]) if self.family == 'navigation' else
+                    np.array([2.2, -6.6, 4.6]) if self.family == 'zones' else np.array([2.6, -4.8, 3.4]))
+        target = np.array([2.2 if self.family == 'zones' else .55, -2.,
+                           0. if self.family == 'navigation' else .03])
         forward = target-position; forward /= np.linalg.norm(forward)
         right = np.cross(forward, [0.,0.,1.]); right /= np.linalg.norm(right)
         up = np.cross(right, forward)
