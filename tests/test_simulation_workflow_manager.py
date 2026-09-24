@@ -183,9 +183,9 @@ raise SystemExit(3 if a.fail else 0)
         self.assertEqual(row["status"], "launcher_failed")
         self.assertEqual(row["exit_code"], 2)
 
-    def test_catalog_has_twenty_two_selectable_workflows_and_distinct_adapters(self):
+    def test_catalog_has_twenty_three_selectable_workflows_and_distinct_adapters(self):
         data, digest = wm.catalog(PROJECT)
-        self.assertEqual(len(data["workflows"]), 22)
+        self.assertEqual(len(data["workflows"]), 23)
         self.assertEqual(len(digest), 64)
         self.assertEqual(next(r for r in data["workflows"] if r["id"] == "dispatch-skills")["runner"], "scripts.run_dispatch_e2e")
         self.assertEqual(next(r for r in data["workflows"] if r["id"] == "communication")["output_kind"]["prepare"], "file")
@@ -223,6 +223,7 @@ raise SystemExit(3 if a.fail else 0)
             "tensorboard": ["--source", str(model)],
             "communication-study": ["prepare", "--config", str(source)],
             "communication-cloud-submit": ["--evidence-root", str(model), "--inventory", str(source)],
+            "zone-dispatch": ["--mode", "fixture", "--coordination", "dynamic"],
         }
         with mock.patch.dict(os.environ, {"UGRP_SIM_TOKEN": "secret"}), \
              mock.patch.object(subprocess, "Popen", side_effect=AssertionError("planning launched a child")):
@@ -238,6 +239,7 @@ raise SystemExit(3 if a.fail else 0)
         self.assertEqual(plans["act-input-training"]["inputs"][0]["path"], str(source.resolve()))
         self.assertEqual({item['path'] for item in plans["act-input-finalization"]["inputs"]},
                          {str(source.resolve()), str(model.resolve())})
+        self.assertEqual(plans["zone-dispatch"]["command"][-2:], ["--output", "<record>/artifacts"])
         self.assertTrue(all(not plan["execution_started"] for plan in plans.values()))
 
     def test_act_workflows_require_explicit_suite_and_training_shape(self):
