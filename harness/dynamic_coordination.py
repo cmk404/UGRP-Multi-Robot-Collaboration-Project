@@ -7,7 +7,9 @@ The neutral host checks only that these self-claims are mutually consistent;
 it never assigns or edits anyone's work. When they conflict, or the capability
 check rejects them, the robots talk (the existing peer negotiation). During
 execution, a supported skill failure wakes the affected robots, who decide
-together whether to retry or stop. Nothing here reads simulator truth.
+together whether to retry or stop; when a job is given up, all three decide
+whether the others finish their own jobs (the failed job is dropped from the
+agreed plan) or the whole team stops. Nothing here reads simulator truth.
 """
 from __future__ import annotations
 
@@ -21,7 +23,6 @@ OBJECTS = ('beam', 'box')
 BEAM_ENDS = ('upper', 'lower')
 ROUTES = ('north', 'south')
 DOCKS = ('dock_a', 'dock_b')
-DECISIONS = ('retry', 'abort')
 # Pair approach failures that leave both robots stopped at an RGB-observable
 # pose with no cargo attached. Other failures remain terminal.
 RECOVERABLE_APPROACH_FAILURES = (
@@ -31,6 +32,44 @@ RECOVERABLE_APPROACH_FAILURES = (
     'fine docking outside saved support',
     'fine docking confirmation budget exhausted',
 )
+# Pair grasp failures at the pickup pose: the preclose support check before the
+# grippers close, or the carry guard before any loaded transit command.
+RECOVERABLE_GRASP_FAILURES = (
+    'preclose RGB outside learned grasp support',
+    'existing pair carry guard stopped',
+)
+# Box skill stop reasons before a load is carried (approach or lift check).
+RECOVERABLE_BOX_FAILURES = (
+    'TARGET_NOT_VISIBLE', 'INVALID_BOX_CENTROID', 'BOX_FACE_ALIGNMENT_UNOBSERVABLE',
+    'INVALID_MARKER_ROTATION', 'INVALID_MARKER_NORMAL', 'APPROACH_OVERSHOT',
+    'VISUAL_LIFT_UNCONFIRMED',
+)
+# Each event kind: the options the affected robots choose from, what they mean,
+# and the fail-closed choice when they do not agree.
+EVENT_KINDS = {
+    'pair_approach_failure': {
+        'options': ('retry', 'abort'), 'fail_closed': 'abort',
+        'meaning': {'retry': 'both beam carriers back away from the beam briefly and repeat '
+                             'the RGB approach from the new pose',
+                    'abort': 'give up the beam job'}},
+    'pair_grasp_failure': {
+        'options': ('regrasp', 'abort'), 'fail_closed': 'abort',
+        'meaning': {'regrasp': 'both beam carriers lower and open their grippers where they are, '
+                               'fold their arms, back away and repeat the RGB approach and grasp',
+                    'abort': 'give up the beam job'}},
+    'box_failure': {
+        'options': ('retry', 'abort'), 'fail_closed': 'abort',
+        'meaning': {'retry': 'the box robot opens its gripper, folds its arm, backs away and '
+                             'repeats its RGB approach and grasp',
+                    'abort': 'give up the box job'}},
+    'job_failed': {
+        'options': ('continue_others', 'stop_all'), 'fail_closed': 'stop_all',
+        'meaning': {'continue_others': 'drop the failed job from the agreed plan; its robots stop '
+                                       'and hold still (beam carriers first lower and open their '
+                                       'grippers); the other robots finish their own job',
+                    'stop_all': 'the whole team stops now'}},
+}
+DECISIONS = tuple(sorted({o for k in EVENT_KINDS.values() for o in k['options']}))
 
 _COMMON = '''You are an equal robot peer in a three-robot team, not a central controller.
 The orange beam needs two carriers (one at each end); the cyan box needs one.
@@ -58,16 +97,16 @@ Reply JSON only: {"request_id": copied exactly, "claim": {"object": "beam OR box
 "message": "brief message to peers"}. reason/message under 240 characters.'''
 
 _RECOVERY = _COMMON + '''
-DYNAMIC RECOVERY: your team is executing its agreed work and a skill just
-failed. All robots are holding still. You are one of the affected robots.
-failure.reason is the controller's own RGB-derived stop reason, not ground
-truth. Decide together: "retry" means both beam carriers back away from the
-beam briefly and repeat the RGB approach from the new pose; "abort" stops this
-mission as failed. A retry is only sensible if your current images still show
-the cargo and your partner. Decisions must be unanimous; otherwise the team
-stops. retries_left is the remaining retry budget.
+DYNAMIC RECOVERY: your team is executing its agreed work and something just
+failed. The simulation is paused while you decide; the affected robots are
+holding still. You are one of event.participants. failure.reason is the
+controller's own RGB-derived stop reason, not ground truth. Choose exactly one
+of event.options; event.option_meanings explains each. Repeating a skill is only
+sensible if your current images still show the cargo (and your partner, for the
+beam). Decisions must be unanimous among event.participants; otherwise the
+team takes event.fail_closed. retries_left is the remaining retry budget.
 Reply JSON only: {"request_id": copied exactly, "event_id": copied exactly,
-"decision": "retry OR abort", "reason": "brief visual reason",
+"decision": "one of event.options", "reason": "brief visual reason",
 "message": "brief message to peers"}. reason/message under 240 characters.'''
 
 
@@ -158,8 +197,19 @@ def merge_claims(claims, *, required_dock=None):
     return {'consistent': True, 'plan': plan, 'conflicts': []}
 
 
-def recoverable(error):
-    return any(str(error).startswith(reason) for reason in RECOVERABLE_APPROACH_FAILURES)
+def recoverable(error, reasons=RECOVERABLE_APPROACH_FAILURES):
+    return any(str(error).startswith(reason) for reason in reasons)
+
+
+def make_event(kind, event_id, *, participants, failure, **details):
+    """Robot-facing event: the options come from the kind, never from the host's choice."""
+    spec = EVENT_KINDS[kind]
+    if not participants or any(r not in ROBOTS for r in participants):
+        raise ValueError('event participants must be robots')
+    return {'event_id': event_id, 'kind': kind, 'participants': list(participants),
+            'failure': {'reason': str(failure)}, 'options': list(spec['options']),
+            'option_meanings': dict(spec['meaning']), 'fail_closed': spec['fail_closed'],
+            **details}
 
 
 def build_recovery_request(rid, *, task, request_id, event, own_rgb, top_rgb,
@@ -175,15 +225,15 @@ def build_recovery_request(rid, *, task, request_id, event, own_rgb, top_rgb,
             'images': images(own_rgb, top_rgb)}
 
 
-def validate_recovery_reply(raw, request_id, event_id):
+def validate_recovery_reply(raw, request_id, event_id, options=('retry', 'abort')):
     value = parse(raw) if isinstance(raw, str) else copy.deepcopy(raw)
     if (not isinstance(value, dict)
             or set(value) != {'request_id', 'event_id', 'decision', 'reason', 'message'}):
         raise ValueError('recovery reply requires request_id, event_id, decision, reason and message')
     if value['request_id'] != request_id or value['event_id'] != event_id:
         raise ValueError('stale recovery reply')
-    if value['decision'] not in DECISIONS:
-        raise ValueError('decision must be retry or abort')
+    if value['decision'] not in options:
+        raise ValueError('decision must be one of ' + ', '.join(options))
     text_fields(value)
     return value
 
@@ -251,7 +301,14 @@ def start(team, frames, history, task, static_map, sim_time, *, identity=None, r
 
 def consult(team, participants, event, frames, history, task, sim_time, *, turn,
             fixture_decisions=None, rounds=2):
-    """Affected robots decide retry/abort; unanimity required, else abort."""
+    """Affected robots choose one event option unanimously, else the fail-closed one.
+
+    Peer messages of this consultation reach only the participants.
+    """
+    options = tuple(event.get('options', ('retry', 'abort')))
+    fail_closed = event.get('fail_closed', 'abort')
+    if fail_closed not in options:
+        raise ValueError('fail-closed decision must be an option')
     history_rounds = []
     for index in range(rounds):
         def build(rid, request_id):
@@ -262,15 +319,15 @@ def consult(team, participants, event, frames, history, task, sim_time, *, turn,
 
         def fixture(rid, request_id):
             return {'request_id': request_id, 'event_id': event['event_id'],
-                    'decision': (fixture_decisions or {}).get(rid, 'abort'),
+                    'decision': (fixture_decisions or {}).get(rid, fail_closed),
                     'reason': 'scripted protocol fixture, not visual reasoning', 'message': ''}
 
         replies = team.ask(participants, build,
-                           lambda raw, req: validate_recovery_reply(raw, req, event['event_id']),
+                           lambda raw, req: validate_recovery_reply(raw, req, event['event_id'], options),
                            fixture, phase=f"recovery-{event['event_id']}-r{index}", turn=turn,
-                           sim_time=sim_time)
+                           sim_time=sim_time, recipients=participants)
         decision = unanimous(replies)
         history_rounds.append({'round': index, 'replies': copy.deepcopy(replies), 'decision': decision})
         if decision is not None:
             return decision, history_rounds
-    return 'abort', history_rounds
+    return fail_closed, history_rounds
