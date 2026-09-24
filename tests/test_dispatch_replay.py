@@ -115,3 +115,13 @@ def test_play_rejects_out_of_range_speed(tmp_path):
     pytest.importorskip('mujoco')
     with pytest.raises(ValueError, match='speed'):
         dispatch_replay.play(tmp_path, speed=0.)
+
+
+def test_real_native_replay_window_reaches_the_last_frame(tmp_path):
+    import os
+    if os.environ.get('UGRP_TEST_NATIVE_VIEWER') != '1':
+        pytest.skip('explicit native display probe only')
+    recorder, _, _ = _recorded(tmp_path)
+    recorder.close()
+    last = dispatch_replay.play(tmp_path, speed=16., max_wall_s=1.)
+    assert last == recorder.closed['frames'] - 1

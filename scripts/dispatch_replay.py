@@ -121,8 +121,19 @@ def label_at(labels, index: int) -> str:
     return labels[position][1] if position >= 0 else ''
 
 
-def play(run_dir: Path, *, speed: float = 1.) -> int:
-    """Open MuJoCo's native window and play the recorded run until it is closed."""
+def _close(viewer) -> None:
+    viewer.close()
+    # MuJoCo 3.12 close signals its render thread; wait before glfw teardown.
+    deadline = time.monotonic() + 10
+    while viewer._sim() is not None and time.monotonic() < deadline:
+        time.sleep(.01)
+
+
+def play(run_dir: Path, *, speed: float = 1., max_wall_s: float | None = None) -> int:
+    """Play the recorded run in MuJoCo's native window until it is closed.
+
+    Returns the last displayed frame index. ``max_wall_s`` bounds smoke checks.
+    """
     import mujoco
     import mujoco.viewer
     if not math.isfinite(speed) or not .1 <= speed <= 16:
@@ -145,8 +156,10 @@ def play(run_dir: Path, *, speed: float = 1.) -> int:
     print(f'재생: SIM {end - start:.1f}초, {speed:g}× · Space 일시정지/재개 · ←/→ {SEEK_S:g}초 이동 · '
           'R 처음부터 · Q 또는 창 닫기로 종료', flush=True)
     playhead, paused, shown = start, False, -1
-    last = time.monotonic()
+    last = opened = time.monotonic()
     while viewer.is_running():
+        if max_wall_s is not None and time.monotonic() - opened >= max_wall_s:
+            break
         while not keys.empty():
             key = keys.get()
             if key == KEY_SPACE:
@@ -158,8 +171,8 @@ def play(run_dir: Path, *, speed: float = 1.) -> int:
             elif key == KEY_LEFT:
                 playhead = max(start, playhead - SEEK_S)
             elif key in (KEY_Q, KEY_ESCAPE):
-                viewer.close()
-                return 0
+                _close(viewer)
+                return shown
         now = time.monotonic()
         if not paused:
             playhead = min(end, playhead + (now - last) * speed)
@@ -179,7 +192,8 @@ def play(run_dir: Path, *, speed: float = 1.) -> int:
                           f'SIM {times[index]:.1f}/{end:.1f}s  {status}', label_at(labels, index)))
         viewer.sync()
         time.sleep(1 / 60)
-    return 0
+    _close(viewer)
+    return shown
 
 
 def main(argv=None) -> int:
@@ -188,7 +202,8 @@ def main(argv=None) -> int:
     parser.add_argument('--speed', type=float, default=1., help='playback speed, 0.1..16')
     args = parser.parse_args(argv)
     try:
-        return play(args.run_dir, speed=args.speed)
+        play(args.run_dir, speed=args.speed)
+        return 0
     except ValueError as error:
         print(f'replay: {error}', file=sys.stderr)
         return 2
