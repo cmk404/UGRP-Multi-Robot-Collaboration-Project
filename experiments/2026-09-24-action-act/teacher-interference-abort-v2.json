@@ -1,0 +1,39 @@
+{
+  "schema": "ugrp.teacher_collection_interference_abort.v1",
+  "recorded_utc": "2026-09-24T14:11:54.351386+00:00",
+  "collection": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/route-teachers-managed-v2",
+  "launcher_sha256": "1760e9ebff621ba4f4e0c1dbab62352013c597a49ea4d9e5eb7b035091cf0192",
+  "launcher_source_sha": "08c39e1e76a60f1c4db6a1f92dd2833cf766362f",
+  "teacher_source_sha": "931d910998a94361342c372ec2675c475daa625f",
+  "first_case": "south-train-a",
+  "first_case_status": "aborted_foreign_interference_during_run",
+  "physical_success": null,
+  "admitted_for_training": false,
+  "unstarted_cases": [
+    "south-train-b",
+    "south-development"
+  ],
+  "foreign_owner": {
+    "pid": 8433,
+    "ppid": 8430,
+    "pgid": 8430,
+    "command": "python3 -m pytest tests/test_bot.py -q",
+    "reason": "foreign_test_or_torch_job",
+    "cwd": "/Users/changmin/projects/stock"
+  },
+  "root_cause": "The strict monitor classified any host pytest as a disqualifying heavy job. A different project test triggered immediate owned-group cleanup during teacher-data collection. Actual foreign duration and CPU load were not measured; no claim it was harmless. This policy is stricter than necessary for a non-timing teacher dataset, and no completed physical verdict exists.",
+  "own_stop": {
+    "signal": "SIGINT",
+    "target_pid": 5337,
+    "exit_code": 130,
+    "all_known_own_pids_gone": true,
+    "owned_process_group_gone": true
+  },
+  "foreign_processes_touched": false,
+  "elapsed_collection_wall_s": 260.1407853339915,
+  "manager_manifest": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/route-teachers-managed-v2/managed/south-train-a/manifest.json",
+  "manager_manifest_sha256": "e00703b32a4c1c8ff57d732bbfa66d1edc488ae13adb71d824d9438fa4d9374d",
+  "raw_result_exists": false,
+  "quality_gate_passed": false,
+  "action": "Preserve full partial raw/manager/logs and video; zero training admission, exclude from physical/timing outcomes. New teacher-only policy may record known non-UGRP pytest events without abort; strict foreign UGRP physics/training checks remain. Any new collection gets a fresh preregistered amendment, fixed cases and unchanged physical/data quality gate."
+}
