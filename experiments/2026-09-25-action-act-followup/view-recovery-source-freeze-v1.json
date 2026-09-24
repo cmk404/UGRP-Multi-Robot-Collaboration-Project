@@ -1,0 +1,31 @@
+{
+  "schema": "ugrp.view_recovery_source_freeze.v1",
+  "frozen_utc": "2026-09-24T15:21:02.647905+00:00",
+  "reference_source_sha": "931d910998a94361342c372ec2675c475daa625f",
+  "candidate_source_sha": "b47bbec7328890596d098ca007273771406eb749",
+  "host_guard_source_sha": "dddd67b5b76f91bd2273ae00b8f5275846015dcf",
+  "candidate_bundle_manifest_path": "/Users/changmin/.codex/worktrees/rolling-view-recovery/ugrp/config/rgb_execution_bundles/rgb-standard-dispatch-v43.json",
+  "candidate_active_view_flag": "--rolling-view-recovery",
+  "candidate_active_view_receipt_schema": "solo-decisions.view_recovery.v1",
+  "audit_preflight_report_path": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/view-recovery-audit-preflight.json",
+  "common_models_sha256": "081841147e698c560dc122c633bf71169ecca0ddfee9936f06801efb59d2361c",
+  "physical_protocol_sha256": "5a79c5faa0781ebf71ca5ee9dbfb0603acc2ea055026e1ce0b03df4bc3006de2",
+  "candidate_bundle_manifest_sha256": "7509360909e7015e592f741151413bf443484203e22755f1690ecaa683b7e260",
+  "plan_replay_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+  "reference_top_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c",
+  "run_helper_sha256": "f579744cb13091e1046cd647d560b0eda2e76fc53d5e548660504b99bb953b6d",
+  "audit_helper_sha256": "0525434da54be00969927e8ba8d70f458d5a8b82591b2fd6d90a2d5444eaef45",
+  "host_guard_file_sha256": "cfa54a3b474b5e85f03aad60f958e19f4ef1721aee7a44ea7bb7ba16422e806d",
+  "audit_preflight_report_sha256": "b87ea384762d1e35808c82dc8c7a5c01cc20768eb23393f7adb4f1796ae50dd1",
+  "rolling_audit_sha256": "a6f940c21d296f2917486640c3b50103362252018b617b53f3d5e2e844fa1a8a",
+  "base_audit_sha256": "d0aeac060f17d054953f6b99a7435f64ecf7c936473a4b4718edc747e617ddbd",
+  "cohort_driver_sha256": "4799ec7a7bdf54b3d29fe31f697041a30cb9e87bca4eaf9cc3005e661921514e",
+  "validation": {
+    "focused_tests_passed": 100,
+    "focused_tests_skipped": 2,
+    "audit_unit_tests_passed": 5,
+    "audit_preflight_checks_passed": 10,
+    "cohort_driver_tests_passed": 3,
+    "physical_runs_before_freeze": 0
+  }
+}
