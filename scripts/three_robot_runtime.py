@@ -65,7 +65,7 @@ class ThreeRobotRuntime:
             self.clients[rid] = GeminiProxyCompleter(model=model, max_tokens=max_tokens,
                 timeout=request_timeout, reasoning_effort='none', http_open=audited_open)
 
-    def _invoke(self, rid, request, validate, *, fixture_reply=None):
+    def _invoke(self, rid, request, validate, *, fixture_reply=None, attempts=1):
         path = f'{rid}/{request["request_id"]}-request.json'
         write(self.output/path, request)
         if self.mode == 'fixture':
@@ -81,9 +81,10 @@ class ThreeRobotRuntime:
             row.update(request=path, robot_id=rid, wire_index=self.wires[rid],
                        returned_wall_s=time.monotonic()-self.started)
             records.append(row)
-            write(self.output/rid/f'{request["request_id"]}-decision.json', row)
+            suffix = f'-attempt{row["attempt"]}' if row['attempt'] else ''
+            write(self.output/rid/f'{request["request_id"]}-decision{suffix}.json', row)
         reply, stop = request_with_recovery(self.clients[rid], lambda attempt, retry: request,
-            validate, record, max_attempts=1,
+            validate, record, max_attempts=attempts,
             can_request=lambda: time.monotonic() - self.started < self.max_wall_s)
         return reply, stop, records
 
@@ -124,19 +125,23 @@ class ThreeRobotRuntime:
         print(json.dumps({'team_turn': turn, 'committed': committed, 'stops': self.rounds[-1]['stops']}), flush=True)
         return committed
 
-    def ask(self, robots, build, validate, fixture, *, phase, turn, sim_time):
+    def ask(self, robots, build, validate, fixture, *, phase, turn, sim_time,
+            recipients=None, attempts=2):
         """One independent request per listed robot, in parallel; deliver messages.
 
         ``build(rid, request_id)`` returns the request; ``validate(raw, request_id)``
         checks a reply; ``fixture(rid, request_id)`` is the scripted reply used
-        only in fixture mode. Returns ``{rid: reply or None}``.
+        only in fixture mode. Messages reach ``recipients`` (default: every
+        robot). One identical re-request is allowed after a retryable failure
+        (transient proxy error or malformed reply). Returns ``{rid: reply or None}``.
         """
         if self.idle_callback:self.idle_callback()
         futures = {}
         for rid in robots:
             request_id = f'{self.agreement.run_id}-{rid}-{phase}-{turn}'
             futures[rid] = self.pool.submit(self._invoke, rid, build(rid, request_id),
-                lambda raw, req: validate(raw, req), fixture_reply=fixture(rid, request_id))
+                lambda raw, req: validate(raw, req), fixture_reply=fixture(rid, request_id),
+                attempts=attempts)
         self.pending_plan = futures
         if self.idle_callback:
             while not all(f.done() for f in futures.values()):
@@ -146,7 +151,8 @@ class ThreeRobotRuntime:
         self.pending_plan = {}
         for reply, stop, records in batch.values():
             self.calls.extend(records)
-        self.deliver_replies(batch, phase=phase, turn=turn, sim_time=sim_time)
+        self.deliver_replies(batch, phase=phase, turn=turn, sim_time=sim_time,
+                             recipients=recipients)
         self.rounds.append({'phase': phase, 'turn': turn, 'sim_time_s': sim_time,
                             'replies': {r: v[0] for r, v in batch.items()},
                             'stops': {r: v[1] for r, v in batch.items()}})
@@ -155,12 +161,12 @@ class ThreeRobotRuntime:
                           'replied': {r: v[0] is not None for r, v in batch.items()}}), flush=True)
         return {r: v[0] for r, v in batch.items()}
 
-    def deliver_replies(self, batch, *, phase, turn, sim_time):
+    def deliver_replies(self, batch, *, phase, turn, sim_time, recipients=None):
         """Forward validated peer text and record only the completed deliveries."""
         for sender, (reply, _stop, records) in batch.items():
             delivered = []
             if reply and reply.get('message'):
-                for receiver in ROBOTS:
+                for receiver in (ROBOTS if recipients is None else recipients):
                     if sender != receiver:
                         self.inbox[receiver].append({'from_robot': sender, 'turn': turn,
                                                      'message': reply['message']})

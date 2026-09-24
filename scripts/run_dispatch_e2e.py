@@ -299,6 +299,8 @@ def main(argv=None):
                    help='skills: save observer-only states for post-run native replay (scripts.dispatch_replay)')
     p.add_argument('--realtime-control',action='store_true',
                    help='bounded asynchronous RGB control and isolated observer; separately versioned candidate')
+    p.add_argument('--coarse-concurrent-alignment',action='store_true',
+                   help='experimental paired coarse RGB: keep valid own forward while a peer aligns; requires skills realtime control')
     p.add_argument('--rolling-visual-servo',action='store_true',
                    help='experimental solo approach: bounded drive while paired RGB is captured; requires realtime control and open map')
     p.add_argument('--rolling-view-recovery',action='store_true',
@@ -310,9 +312,15 @@ def main(argv=None):
     p.add_argument('--coordination',choices=('plan_first','dynamic'),default='plan_first',
                    help='plan_first: negotiate one full plan before motion; dynamic: independent self-claims, '
                         'talk only on conflict, and discuss supported approach failures (experimental)')
-    p.add_argument('--approach-retries',type=int,default=2,help='dynamic only: team-approved pair approach retries')
+    p.add_argument('--approach-retries',type=int,default=2,
+                   help='dynamic only: team-approved pair approach retries and, separately, regrasps')
+    p.add_argument('--box-retries',type=int,default=2,help='dynamic only: box-robot-approved box retries')
     p.add_argument('--diagnostic-fail-approach-once',action='store_true',
                    help='dynamic diagnostic: inject one approach failure after the first completed approach')
+    p.add_argument('--diagnostic-fail-grasp-once',action='store_true',
+                   help='dynamic diagnostic: inject one carry-guard stop after the first completed pair grasp')
+    p.add_argument('--diagnostic-fail-box-once',action='store_true',
+                   help='dynamic diagnostic: inject one box stop when its first approach completes')
     p.add_argument('--planning-rounds',type=int,default=8)
     p.add_argument('--max-replans',type=int,default=2)
     p.add_argument('--rounds',type=int,default=24)
@@ -351,6 +359,8 @@ def main(argv=None):
     if args.executor!='skills' and args.record_replay:p.error('--record-replay uses the existing skills executor')
     if args.rolling_visual_servo and (args.executor!='skills' or not args.realtime_control):
         p.error('--rolling-visual-servo requires skills --realtime-control')
+    if args.coarse_concurrent_alignment and (args.executor!='skills' or not args.realtime_control):
+        p.error('--coarse-concurrent-alignment requires skills --realtime-control')
     if args.bounded_carrier_relink and not args.rolling_visual_servo:
         p.error('--bounded-carrier-relink requires --rolling-visual-servo')
     if args.rolling_view_recovery and not args.rolling_visual_servo:
@@ -359,8 +369,10 @@ def main(argv=None):
         if args.executor!='skills' or args.plan_replay or args.realtime_control:
             p.error('--coordination dynamic uses live skills planning, synchronous only, without --plan-replay')
     if not 0<=args.approach_retries<=3:p.error('--approach-retries must be 0..3')
-    if args.diagnostic_fail_approach_once and args.coordination!='dynamic':
-        p.error('--diagnostic-fail-approach-once requires --coordination dynamic')
+    if not 0<=args.box_retries<=3:p.error('--box-retries must be 0..3')
+    for flag in ('approach','grasp','box'):
+        if getattr(args,f'diagnostic_fail_{flag}_once') and args.coordination!='dynamic':
+            p.error(f'--diagnostic-fail-{flag}-once requires --coordination dynamic')
     if args.task and args.plan_replay:p.error('--task requires new planning; cannot change a replayed plan')
     if args.carry_act_model and not args.carry_act_python:p.error('ACT interpreter required')
     if args.carry_max_steps is not None and args.carry_max_steps<=0:p.error('positive carry-max-steps required')

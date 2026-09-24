@@ -202,6 +202,9 @@ class SkillBindings:
                                             else 'existing_visual_box_v1')
                 row['model_slot'] = next((slot for slot,r in self.pair.items() if r==rid),None)
         self.finished = set()
+        # Jobs the team agreed to give up mid-run (dynamic coordination only).
+        # They gate peers like finished jobs but are never reported delivered.
+        self.dropped = set()
         self.locks = {}
         self.revoked = False
         self.cluttered=any(o['id']=='service_island' for o in static_map['obstacles'])
@@ -281,7 +284,7 @@ class SkillBindings:
             released=self.grasp_started if self.overlap_start=='grasp' else self.transit_started
             if obj=='box' and stage=='GRASP' and 'beam' not in released:return False
             if stage=='UNLOAD':
-                if obj=='box' and self.tasks['beam']['id'] not in self.finished:return False
+                if obj=='box' and not self.settled('beam'):return False
                 resources=['dispatch_apron']
             elif stage in ('GRASP','TRANSIT'):
                 resources=self.route_resources(obj)
@@ -291,7 +294,8 @@ class SkillBindings:
                 if r not in self.locks:self.resource_events.append({'event':'acquire','object':obj,'resource':r,'stage':stage})
                 self.locks[r]=task['id']
             return True
-        if (stage != 'APPROACH' or self.cluttered) and any(dep not in self.finished for dep in task['after']):
+        if (stage != 'APPROACH' or self.cluttered) and any(
+                dep not in self.finished and dep not in getattr(self,'dropped',()) for dep in task['after']):
             return False
         if stage in ('GRASP','TRANSIT') or (stage=='APPROACH' and self.cluttered):
             resources = self.route_resources(obj)+['dispatch_apron']
@@ -318,6 +322,19 @@ class SkillBindings:
         self.finished.add(task_id)
         if self.route_overlap:self.resource_events.append({'event':'finish','object':obj,'released':[r for r,t in self.locks.items() if t==task_id]})
         self.locks = {r:t for r,t in self.locks.items() if t!=task_id}
+
+    def settled(self,obj):
+        task_id=self.tasks[obj]['id']
+        return task_id in self.finished or task_id in getattr(self,'dropped',())
+
+    def drop(self,obj):
+        """Team decision only: give up this job and release its resources."""
+        task_id=self.tasks[obj]['id']
+        if task_id in self.finished:raise ValueError('finished job cannot be dropped')
+        self.dropped=getattr(self,'dropped',set());self.dropped.add(task_id)
+        self.resource_events.append({'event':'drop','object':obj,
+            'released':[r for r,t in self.locks.items() if t==task_id]})
+        self.locks={r:t for r,t in self.locks.items() if t!=task_id}
 
     def capabilities(self):
         # Conservative authored envelope of the demonstrated parallel formation:

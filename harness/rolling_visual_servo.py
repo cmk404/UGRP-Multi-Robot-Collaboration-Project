@@ -432,7 +432,8 @@ class ActiveViewRecovery:
         if (sample["frame_id"] <= prior_frame or sample["observed_at_s"] <= prior_time
                 or sample["own_sha256"] == prior_sha):
             return self._fail("no_distinct_post_pose_rgb", sample)
-        if self.wheel_generation != anchor["wheel_generation"] or not _same_cargo_view(anchor, sample):
+        expected_generation = episode.get("held_wheel_generation", anchor["wheel_generation"])
+        if self.wheel_generation != expected_generation or not _same_cargo_view(anchor, sample):
             return self._fail("reobservation_identity_or_wheel_mismatch", sample)
         if _direct_view(sample, 0.75):
             event = {"kind": "recovered", "reason": "strong_distinct_own_rgb",
@@ -446,4 +447,109 @@ class ActiveViewRecovery:
                      "wheels_held_until_fresh_rgb": True}
             self.episode = None
             return event
+        return self._issue_view_pose(sample)
+
+
+@dataclass
+class SettledViewRecovery(ActiveViewRecovery):
+    """Reobserve a weak moving capture after an exact wheel HOLD first.
+
+    The earlier strong view can suggest a camera search pose. It never becomes
+    current drive evidence by adjusting its timestamp or wheel generation.
+    """
+
+    holds_started: int = 0
+    settled_observations: int = 0
+
+    def start(self, sample: Mapping[str, Any]) -> dict[str, Any]:
+        if not _fresh_view(sample):
+            return self._fail("stale_or_unpaired_rgb", sample)
+        if sample.get("phase") != "approach" or not _direct_view(sample, 0.50):
+            return self._fail("weak_view_identity_unresolved", sample)
+        if self.episodes_started >= VIEW_RECOVERY_MAX_EPISODES:
+            return self._fail("active_view_episode_budget_exhausted", sample)
+        self.episodes_started += 1
+        self.holds_started += 1
+        held_at = sample["decision_at_s"]
+        self.episode = {
+            "started_at_s": held_at, "plan_hash": sample.get("plan_hash"),
+            "attempted_poses": [], "expected_pose": None, "last_view": None,
+            "stage": "hold_reobserve", "held_wheel_generation": self.wheel_generation,
+            "capture_not_before_s": held_at + FINAL_ENTRY_SETTLE_S,
+            "weak_view": {**sample, "box": dict(sample["box"]),
+                          "target": tuple(sample["target"]), "pose": dict(sample["pose"])},
+        }
+        return {"kind": "hold_reobserve", "reason": "weak_capture_requires_settled_rgb",
+                "episode": self.episodes_started, "issued_at_s": held_at,
+                "capture_not_before_s": self.episode["capture_not_before_s"],
+                "frame_id": sample["frame_id"], "own_sha256": sample["own_sha256"],
+                "top_sha256": sample["top_sha256"],
+                "wheel_generation": self.wheel_generation,
+                "wheels_held": True, "issued_hold_not_measured_stop": True}
+
+    def _issue_view_pose(self, sample: Mapping[str, Any]) -> dict[str, Any]:
+        # Keep explicit proof that intervening wheel issues were not erased.
+        episode = self.episode
+        event = super()._issue_view_pose(sample)
+        if episode is not None and event["kind"] == "pose_issued":
+            event["settled_search"] = {
+                "hold_at_s": episode["started_at_s"],
+                "capture_not_before_s": episode["capture_not_before_s"],
+                "held_wheel_generation": episode["held_wheel_generation"],
+                "anchor_wheel_generation": self.anchor["wheel_generation"],
+                "weak_frame_id": episode["weak_view"]["frame_id"],
+                "weak_own_sha256": episode["weak_view"]["own_sha256"],
+                "settled_frame_id": episode["settled_frame_id"],
+                "settled_own_sha256": episode["settled_own_sha256"],
+                "anchor_is_search_pose_only": True,
+            }
+        return event
+
+    def advance(self, sample: Mapping[str, Any]) -> dict[str, Any] | None:
+        episode = self.episode
+        if episode is None or episode.get("stage") != "hold_reobserve":
+            return super().advance(sample)
+        if sample.get("phase") != "approach":
+            return self._fail("phase_exit_during_active_view", sample)
+        if not _fresh_view(sample):
+            return self._fail("stale_or_unpaired_reobservation", sample)
+        if sample["decision_at_s"] >= episode["started_at_s"] + VIEW_RECOVERY_MAX_ELAPSED_S:
+            return self._fail("active_view_budget_exhausted", sample)
+        if sample.get("plan_hash") != episode["plan_hash"]:
+            return self._fail("plan_changed_during_active_view", sample)
+        weak = episode["weak_view"]
+        if (sample["capture_started_at_s"] < episode["capture_not_before_s"]
+                or sample["frame_id"] <= weak["frame_id"]
+                or sample["observed_at_s"] <= weak["observed_at_s"]):
+            return self._fail("missing_post_hold_settled_capture", sample)
+        if (self.wheel_generation != episode["held_wheel_generation"]
+                or sample["pose"] != weak["pose"]):
+            return self._fail("own_command_changed_during_settle", sample)
+        if not _same_cargo_view(weak, sample):
+            return self._fail("settled_view_identity_unresolved", sample)
+        self.settled_observations += 1
+        episode["settled_frame_id"] = sample["frame_id"]
+        episode["settled_own_sha256"] = sample["own_sha256"]
+        if _direct_view(sample, 0.75):
+            self.episode = None
+            return {"kind": "recovered", "reason": "strong_settled_own_rgb",
+                    "episode": self.episodes_started, "poses_issued": 0,
+                    "frame_id": sample["frame_id"], "own_sha256": sample["own_sha256"],
+                    "top_sha256": sample["top_sha256"],
+                    "hold_at_s": episode["started_at_s"],
+                    "capture_not_before_s": episode["capture_not_before_s"],
+                    "weak_frame_id": weak["frame_id"], "weak_own_sha256": weak["own_sha256"],
+                    "box_confidence": sample["box"]["confidence"],
+                    "wheels_held_until_fresh_rgb": True}
+        anchor = self.anchor
+        if anchor is None:
+            return self._fail("no_bounded_strong_anchor", sample)
+        if sample.get("plan_hash") != anchor["plan_hash"]:
+            return self._fail("anchor_plan_changed", sample)
+        if (sample["observed_at_s"] - anchor["observed_at_s"] > VIEW_RECOVERY_MAX_ANCHOR_AGE_S
+                or anchor["frame_id"] >= weak["frame_id"]):
+            return self._fail("search_anchor_stale", sample)
+        if not _same_cargo_view(anchor, weak) or not _same_cargo_view(anchor, sample):
+            return self._fail("weak_view_identity_unresolved", sample)
+        episode["stage"] = "pose_search"
         return self._issue_view_pose(sample)

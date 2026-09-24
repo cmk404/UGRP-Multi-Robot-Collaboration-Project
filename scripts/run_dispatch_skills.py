@@ -36,7 +36,7 @@ from harness.grasp_student_inference import predict_student
 from harness.visual_macro_runtime import VisualMacroExecutor
 from harness.rolling_visual_servo import (FINAL_ENTRY_HANDOFF_M,
     FINAL_ENTRY_SETTLE_S, NEAR_MOTION_REOBSERVE_BUFFER_M,
-    ActiveViewRecovery, RollingApproachLease, approach_drive_support,
+    SettledViewRecovery, RollingApproachLease, approach_drive_support,
     guard_near_entry_from_issued_commands, VIEW_RECOVERY_MAX_POSES,
     VIEW_RECOVERY_MAX_ELAPSED_S, VIEW_RECOVERY_MAX_EPISODES,
     VIEW_RECOVERY_WRIST_STEP_PWM, VIEW_RECOVERY_MAX_PAN_DELTA_PWM)
@@ -48,7 +48,8 @@ from scripts.three_robot_runtime import ThreeRobotRuntime, write
 from scripts.run_camera_approach_student import models, sha
 from scripts.run_camera_varied_start_student import load_stage_models
 from scripts.run_three_robot_mission import prepare_grasp_models
-from scripts.dispatch_pair_skill import BoundPairSkill
+from scripts.dispatch_pair_skill import (BoundPairSkill, COARSE_LEAD_LIMIT_PX,
+    COARSE_CONCURRENT_MAX_CAPTURE_AGE_S, COARSE_CONCURRENT_COMMAND_S)
 from scripts.camera_approach_scene import image_record
 
 RGB_ACTION_TTL_S=.6
@@ -64,6 +65,41 @@ def fast_servo_map_supported(static_map, *, realtime_control):
                 and all(item.get('id') in boundaries for item in static_map.get('obstacles',[])))
 
 
+def coarse_concurrency_status(pair, *, requested):
+    if not requested:
+        return {'applied':False,'reason':'disabled'}
+    if pair.coarse is None:
+        return {'applied':False,'reason':'own_motion_identity_unresolved'}
+    if not pair._concurrent_coarse_scope():
+        return {'applied':False,'reason':'unsupported_map_or_runtime_scope'}
+    return {'applied':True,'reason':'eligible_for_rgb_decision_admission'}
+
+
+def port_issue_receipt(applied,port,action,*,bounded):
+    """Freeze only the returned port acknowledgement before physics advances."""
+    state=applied.get('actuator_state') if isinstance(applied,dict) else None
+    pwm=state.get('motor_commands') if isinstance(state,dict) else None
+    issued=applied.get('sim_time') if isinstance(applied,dict) else None
+    expiry=getattr(port,'_command_expires_at' if bounded else '_drive_expires_at',None)
+    acknowledged=(type(issued) in (int,float) and math.isfinite(issued)
+                  and type(expiry) in (int,float) and math.isfinite(expiry) and expiry>=issued
+                  and isinstance(pwm,(list,tuple)) and len(pwm)==4
+                  and all(type(v) in (int,float) and math.isfinite(v) for v in pwm))
+    return {'acknowledged':acknowledged,
+            'actual_issued_at_s':issued if acknowledged else None,
+            'effective_expiry_s':expiry if acknowledged else None,
+            'port_ack_motor_pwm':list(pwm) if acknowledged else None,
+            'applied_action':copy.deepcopy(action) if acknowledged else None}
+
+
+def _solo_skill(scene,fast_servo):
+    return SoloBoxTransport(robot_id=scene.bindings.solo,
+        navigator=ImageRoute(scene.bindings,'box',time_aware_box_reacquisition=fast_servo,
+                             bounded_carrier_relink=getattr(scene,'bounded_carrier_relink',False)),
+        attachment_min_saturation=150,release_refine_ground_fit=True,
+        fast_near_field_servo=fast_servo)
+
+
 class SkillScene(DispatchScene):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
@@ -77,6 +113,7 @@ class SkillScene(DispatchScene):
         self.replay=None
         self.efficient_capture=False
         self.realtime_control=False
+        self.coarse_concurrent_alignment=False
         self.rolling_visual_servo=False
         self.bounded_carrier_relink=False
         self.rolling_view_recovery=False
@@ -109,6 +146,14 @@ class SkillScene(DispatchScene):
         self._solo_budget_ended=False
         self._in_physics=False
         self.realtime_stats.update(pair_stage_stale_rgb=0,pair_stage_samples=0)
+        # Dynamic coordination only (synchronous): a box failure pauses the box
+        # robot; the team decides outside the physics callback (see step()).
+        self.team_event_handler=None
+        self.diagnostic_fail_box_once=False
+        self._solo_event=None
+        self._solo_recovery=None
+        self.solo_dropped=False
+        self.solo_events=[]
 
     def time(self):return float(self.world.data.time)
     def open(self):
@@ -163,6 +208,39 @@ class SkillScene(DispatchScene):
         for _ in range(round(seconds/self.world.model.opt.timestep)):
             if self.deadline and time.monotonic()>self.deadline:raise RuntimeError('skill wall budget exhausted')
             self.world._physics_step_for(self.world.controllers['r1'])
+            event=getattr(self,'_solo_event',None)
+            if event is not None and not event.get('handling'):
+                self._handle_solo_event()
+    def _handle_solo_event(self):
+        """Team decision on a paused box failure, outside the physics callback."""
+        event=self._solo_event;event['handling']=True
+        saved=getattr(self,'last_frames',None)
+        try:decision=self.team_event_handler(event)
+        finally:self.last_frames=saved
+        self.solo_events.append({**{k:v for k,v in event.items() if k!='handling'},'decision':decision})
+        if decision=='retry':
+            self._solo_recovery=[{'kind':'pose','pulses':{1:2000,3:740,4:2320,5:1320,6:1500}}]+[
+                {'kind':'mecanum','forward':-.05,'left':0.,'turn':0.,'duration_s':.2}]*10
+        elif decision=='dropped':self.solo_dropped=True
+        else:raise RuntimeError(f"box stopped: {event['reason']}; team decided to stop all")
+        self._solo_event=None
+    def _solo_failed(self,reason,phase,now,*,injected=False):
+        self.solo_executor.cancel(now,'team_recovery');self.ports[self.bindings.solo].hold(now)
+        self._solo_event={'reason':str(reason),'phase':phase,'sim_time_s':now,
+                          'diagnostic_injection':injected}
+    def _solo_recovery_tick(self,now):
+        """Issued fold pose then a short reverse; then a fresh box skill."""
+        if not self.solo_executor.idle or now<self.solo_lease:return
+        if not self._solo_recovery:
+            self.solo=_solo_skill(self,fast_servo_map_supported(
+                self.bindings.static_map,realtime_control=self.realtime_control))
+            self._solo_recovery=None
+            self._solo_phase_label=self.solo.phase;return
+        action=self._solo_recovery.pop(0)
+        if action['kind']=='pose':
+            self.solo_executor.submit(action,self.ports[self.bindings.solo].capture(),'recovery_fold',now)
+        else:
+            self.raw(self.bindings.solo,action,'RECOVERY');self.solo_lease=now+action['duration_s']
     def hold(self):
         self._solo_pending_lease=None
         if getattr(self,'_solo_approach_lease',None) is not None:
@@ -189,14 +267,18 @@ class SkillScene(DispatchScene):
         if self.bindings:self.bindings.authorize(self.team.agreement.committed)
     def raw(self,rid,action,stage):
         self.authorize();self.ports[rid].validate_action(action)
-        self.ports[rid].apply(action,self.time())
+        applied=self.ports[rid].apply(action,self.time())
         self.command_history[rid].append({'stage':stage,'action':copy.deepcopy(action),
-            'issued_at_s':self.time(),'plan_hash':self.bindings.committed['plan_hash'] if self.bindings else None})
+            'issued_at_s':(applied['sim_time'] if isinstance(applied,dict)
+                           and 'sim_time' in applied else self.time()),
+            'plan_hash':self.bindings.committed['plan_hash'] if self.bindings else None})
+        return applied
     def _permission_snapshot(self):
         """A private permission state for RGB workers and owner preflight."""
         snapshot=copy.copy(self.bindings)
         snapshot.locks=dict(self.bindings.locks)
         snapshot.finished=set(self.bindings.finished)
+        snapshot.dropped=set(getattr(self.bindings,'dropped',()))
         snapshot.grasp_started=set(self.bindings.grasp_started)
         snapshot.transit_started=set(self.bindings.transit_started)
         snapshot.resource_events=[]
@@ -302,8 +384,12 @@ class SkillScene(DispatchScene):
         for r,a in commands.items():self.ports[r].validate_action(a)
         if stage=='TRANSIT' and any(any(abs(a.get(k,0.))>0 for k in ('forward','left','turn')) for a in commands.values()):
             self.bindings.note_transit_command('beam')
-        for r,a in commands.items():self.raw(r,a,stage)
+        receipts={}
+        for r,a in commands.items():
+            applied=self.raw(r,a,stage)
+            receipts[r]=port_issue_receipt(applied,self.ports[r],a,bounded=False)
         self.step(duration)
+        return receipts
     def pair_issue_bounded(self,commands,duration,stage):
         """Issue one atomic pair lease; physics remains on the calling owner."""
         self.authorize();self.pair_phase=stage
@@ -313,15 +399,18 @@ class SkillScene(DispatchScene):
         if stage=='TRANSIT' and any(any(abs(a.get(k,0.))>0 for k in ('forward','left','turn')) for a in commands.values()):
             self.bindings.note_transit_command('beam')
         now=self.time()
+        receipts={}
         try:
             for r,a in commands.items():
-                self.ports[r].apply_bounded(a,now,duration)
+                applied=self.ports[r].apply_bounded(a,now,duration)
                 self.command_history[r].append({'stage':stage,'action':copy.deepcopy(a),
                     'issued_at_s':now,'valid_until_s':now+duration,
                     'plan_hash':self.bindings.committed['plan_hash']})
+                receipts[r]=port_issue_receipt(applied,self.ports[r],a,bounded=True)
         except BaseException:
             for r in commands:self.ports[r].hold(now)
             raise
+        return receipts
     def pair_arm(self,targets,duration,settle,stage):
         self.authorize();self.pair_phase=stage
         if not set(targets)<=set(self.bindings.pair.values()):raise ValueError('pair arm endpoint mismatch')
@@ -342,11 +431,7 @@ class SkillScene(DispatchScene):
             raise ValueError('bounded carrier relink requires realtime dispatch_open without internal obstacles')
         if getattr(self,'rolling_view_recovery',False) and not fast_servo:
             raise ValueError('rolling view recovery requires realtime dispatch_open without internal obstacles')
-        self.solo=SoloBoxTransport(robot_id=self.bindings.solo,
-            navigator=ImageRoute(self.bindings,'box',time_aware_box_reacquisition=fast_servo,
-                                 bounded_carrier_relink=getattr(self,'bounded_carrier_relink',False)),
-            attachment_min_saturation=150,release_refine_ground_fit=True,
-            fast_near_field_servo=fast_servo)
+        self.solo=_solo_skill(self,fast_servo)
         self.solo_executor=VisualMacroExecutor(self.ports[self.bindings.solo],
             log_callback=self.solo_raw.append,drive_settle_by_phase={'carry':0.})
         self.solo_started=None
@@ -361,7 +446,7 @@ class SkillScene(DispatchScene):
         self._solo_approach_lease=None
         self._solo_approach_last_lease=None
         self._solo_approach_last_source=None
-        self._view_recovery=ActiveViewRecovery() if getattr(self,'rolling_view_recovery',False) else None
+        self._view_recovery=SettledViewRecovery() if getattr(self,'rolling_view_recovery',False) else None
         self._solo_pose_log_cursor=0
         self._solo_completed_pose_receipts={}
         self.solo_renewals=[]
@@ -383,7 +468,7 @@ class SkillScene(DispatchScene):
         return MapGoToYield(self.bindings.static_map,self.bindings.plan,self.solo.navigator.box_center,
             top_jpeg=top,beam_center=self.bindings.planning_beam_center,destination=planned.get('park'))
     def _yield_tick(self,now):
-        if self.bindings.tasks['beam']['id'] in self.bindings.finished:
+        if self.bindings.settled('beam'):
             self.bindings.finish('box');return
         obs=self.ports[self.bindings.solo].capture()
         own=base64.b64decode(obs['image'])
@@ -411,7 +496,9 @@ class SkillScene(DispatchScene):
         if self.solo is None:return
         self.authorize();now=self.time()
         self.solo_executor.tick(now)
-        if self.bindings.tasks['box']['id'] in self.bindings.finished:return
+        if self.bindings.settled('box') or getattr(self,'_solo_event',None) is not None:return
+        if getattr(self,'_solo_recovery',None) is not None:
+            self._solo_recovery_tick(now);return
         if not self.solo_executor.idle or now<self.solo_lease:return
         if self.solo.done:
             self._yield_tick(now);return
@@ -431,8 +518,16 @@ class SkillScene(DispatchScene):
         before=self.solo.phase
         approach_state=copy.deepcopy(self.solo.box) if before=='approach' else None
         action,evidence=self.solo.decide(obs,top)
+        injected=False
+        if (getattr(self,'diagnostic_fail_box_once',False) and before=='approach'
+                and self.solo.phase not in ('approach','finished')):
+            # Output-only diagnostic: the robots see the real stop reason.
+            self.diagnostic_fail_box_once=False;injected=True
+            action={'kind':'finish','reason':'APPROACH_OVERSHOT'}
+            evidence={**evidence,'diagnostic_injection':True}
         if evidence.get('waiting_for_resource'):self.solo.steps-=1
-        if before=='approach' and self.solo.phase=='lower' and not self.bindings.permission('box','GRASP'):
+        if (not injected and before=='approach' and self.solo.phase=='lower'
+                and not self.bindings.permission('box','GRASP')):
             # Stay at the pregrasp visual boundary and reobserve after waiting.
             # Never hold a lifted cargo merely to queue for the apron.
             self.solo.box=approach_state
@@ -450,6 +545,11 @@ class SkillScene(DispatchScene):
             'own_attachment_evidence':copy.deepcopy(self.solo.box.last_attachment),
                 'approach_adjustment':copy.deepcopy(getattr(self.solo.box,'last_approach_adjustment',None))})
         if self.video:self.video.stage='PAIR '+self.pair_phase+' | '+self.bindings.solo+' '+self.solo.phase
+        if injected:
+            self._solo_failed('APPROACH_OVERSHOT',before,now,injected=True);return
+        if (self.solo.done and self.solo.reason!='VISUAL_RELEASE_CONFIRMED'
+                and getattr(self,'team_event_handler',None) is not None):
+            self._solo_failed(self.solo.reason,before,now);return
         if action['kind']=='mecanum':
             self.raw(self.bindings.solo,action,'TRANSIT');self.solo_lease=now+action['duration_s']
         else:self.solo_executor.submit(action,obs,self.solo.phase,now)
@@ -457,7 +557,7 @@ class SkillScene(DispatchScene):
             print(json.dumps({'solo_step':index,'robot':self.bindings.solo,'phase':self.solo.phase,'action':action}),flush=True)
         if self.solo.done:
             if self.solo.reason!='VISUAL_RELEASE_CONFIRMED':raise RuntimeError('solo stopped: '+str(self.solo.reason))
-            if self.bindings.tasks['beam']['id'] in self.bindings.finished:self.bindings.finish('box')
+            if self.bindings.settled('beam'):self.bindings.finish('box')
 
     def _clear_solo_pending_lease(self,now,*,hold=False):
         lease=getattr(self,'_solo_pending_lease',None)
@@ -595,6 +695,24 @@ class SkillScene(DispatchScene):
                 if servo in pulses or str(servo) in pulses:
                     self._solo_completed_pose_receipts[str(servo)]=copy.deepcopy(receipt)
         self._solo_pose_log_cursor=len(self.solo_raw)
+
+    def _issue_rolling_view_reobserve(self,event,row,now):
+        """Hold first, then let the regular RGB worker capture after settling."""
+        port=self.ports[self.bindings.solo]
+        port.hold(now)
+        if any(abs(value)>1e-12 for value in port._motor_commands):
+            raise RuntimeError('rolling settled observation could not hold wheels')
+        self._solo_retry_at=event['capture_not_before_s']
+        self.solo_raw.append({'event':'rolling_view_recovery_settle_hold','time':now,
+            'robot_id':self.bindings.solo,'source_frame_id':event['frame_id'],
+            'source_frame_sha256':event['own_sha256'],
+            'source_top_sha256':event['top_sha256'],
+            'capture_not_before_s':event['capture_not_before_s'],
+            'episode':event['episode'],'motor_commands':list(port._motor_commands)})
+        row['view_recovery']=event
+        row['issued_action']={'kind':'hold','motor_commands':list(port._motor_commands)}
+        row['rolling_dropped']='hold_for_settled_rgb_instead_of_weak_drive'
+        self.solo_rows.append(row)
 
     def _issue_rolling_view_pose(self,event,sample,obs,row,now):
         """Hold wheels before the existing interpolated pose/settle scheduler."""
@@ -1026,6 +1144,10 @@ class SkillScene(DispatchScene):
                 else:
                     if (recovery is not None and support['reason']=='weak_direct_cyan_rgb'):
                         view_event=recovery.start(view_sample)
+                        if view_event['kind']=='hold_reobserve':
+                            row['rolling_support']=support
+                            self._issue_rolling_view_reobserve(view_event,row,now)
+                            return
                         if view_event['kind']=='pose_issued':
                             row['rolling_support']=support
                             self._issue_rolling_view_pose(view_event,view_sample,obs,row,now)
@@ -1221,43 +1343,159 @@ def grasp_transfer_options(skill):
             'top_roi': [12,6,20,19] if skill.get('task_domain') == 'dispatch_open_v1' else None}
 
 
+class TeamStop(RuntimeError):
+    """The robots chose to stop the whole team (dynamic coordination)."""
+
+
+def _pair_participants(scene):
+    return [scene.bindings.pair[slot] for slot in sorted(scene.bindings.pair)]
+
+
+def _inject(args,result,where):
+    """Output-only diagnostic failure, at most once per kind and run."""
+    if (getattr(args,'coordination','plan_first')!='dynamic'
+            or not getattr(args,f'diagnostic_fail_{where}_once',False)):return False
+    done=result['coordination'].setdefault('injections',[])
+    if where in done:return False
+    done.append(where);result['_injected']=True
+    return True
+
+
+def _team_decide(scene,team,task,result,kind,participants,failure,*,injected=False,hold=None,
+                 settle_s=.5,**details):
+    """Ask the affected robots; record the event, replies and decision."""
+    from harness.dynamic_coordination import consult,make_event
+    coordination=result['coordination']
+    if hold is not None:
+        hold();scene.step(settle_s)
+    # Numbered after the settle: a paused box event may be decided meanwhile.
+    index=len(coordination['recoveries'])
+    frames=scene.capture(f'recovery-{index}')
+    event=make_event(kind,f'{kind}-{index}',participants=participants,failure=failure,**details)
+    decision,rounds=consult(team,participants,event,frames,scene.command_history,task,
+                            scene.time(),turn=index)
+    coordination['recoveries'].append({**event,'sim_time_s':scene.time(),
+        'diagnostic_injection':injected,'decision':decision,'rounds':rounds})
+    team.event('RECOVERY_DECISION',scene.time(),event_id=event['event_id'],decision=decision)
+    print(f'RECOVERY {event["event_id"]}: {decision}',flush=True)
+    return decision
+
+
+def _job_failed(scene,team,task,result,job,exc,*,set_down,hold=None):
+    """A job is given up: all three decide to continue the others or stop."""
+    other='box' if job=='beam' else 'beam'
+    if other in [row['job'] for row in result['coordination'].get('dropped_jobs',[])]:
+        raise TeamStop(f'{exc}; no agreed job left') from exc
+    decision=_team_decide(scene,team,task,result,'job_failed',list(ROBOTS),exc,hold=hold,
+        failed_job=job,other_job=other,
+        other_job_state='finished' if scene.bindings.settled(other) else 'in_progress')
+    if decision!='continue_others':
+        raise TeamStop(f'{exc}; team decided to stop all') from exc
+    set_down();scene.bindings.drop(job)
+    result['coordination'].setdefault('dropped_jobs',[]).append(
+        {'job':job,'reason':str(exc),'sim_time_s':scene.time()})
+    print(f'JOB DROPPED {job}: {exc}',flush=True)
+
+
+def _box_event(scene,team,task,args,result,event):
+    """Paused box failure: the box robot may retry; otherwise the team decides."""
+    from harness.dynamic_coordination import RECOVERABLE_BOX_FAILURES
+    retries=getattr(args,'box_retries',2)
+    used=sum(row.get('decision')=='retry' for row in scene.solo_events)
+    solo=scene.bindings.solo
+    if event['reason'] in RECOVERABLE_BOX_FAILURES and used<retries:
+        decision=_team_decide(scene,team,task,result,'box_failure',[solo],event['reason'],
+            injected=event.get('diagnostic_injection',False),stage=event['phase'],
+            retries_left=retries-used)
+        if decision=='retry':return 'retry'
+    # The box robot is already holding; it keeps its gripper as issued.
+    _job_failed(scene,team,task,result,'box',RuntimeError('box stopped: '+event['reason']),
+                set_down=lambda:None)
+    return 'dropped'
+
+
 def _approach(pair,scene,team,task,args,result):
     """Pair approach; in dynamic coordination a supported failure is discussed.
 
     The affected carriers decide unanimously to retry (bounded back-off and a
     fresh RGB approach) or abort. Plan-first coordination keeps fail-closed.
     """
+    from harness.dynamic_coordination import recoverable
     dynamic=getattr(args,'coordination','plan_first')=='dynamic'
     retries=getattr(args,'approach_retries',2) if dynamic else 0
-    inject=dynamic and getattr(args,'diagnostic_fail_approach_once',False)
     attempt=0
     while True:
-        injected=False
         try:
             report=pair.approach()
-            if inject and attempt==0:
+            if dynamic and _inject(args,result,'approach'):
                 # The robots see a real controller stop reason, so the team's
                 # decision rests on its images; the injection is output-only.
-                injected=True
                 raise RuntimeError('coarse RGB approach budget exhausted')
             return report
         except RuntimeError as exc:
-            from harness.dynamic_coordination import consult,recoverable
             if not dynamic or not recoverable(exc) or attempt>=retries:raise
-            pair._hold_pair();scene.step(.5)
-            frames=scene.capture(f'recovery-{attempt}')
-            participants=[scene.bindings.pair[slot] for slot in sorted(scene.bindings.pair)]
-            event={'event_id':f'approach-{attempt}','kind':'pair_approach_failure','stage':'APPROACH',
-                   'failure':{'reason':str(exc)},'participants':participants,
-                   'retries_left':retries-attempt}
-            decision,rounds=consult(team,participants,event,frames,scene.command_history,task,
-                                    scene.time(),turn=attempt)
-            result['coordination']['recoveries'].append({**event,'sim_time_s':scene.time(),
-                'diagnostic_injection':injected,'decision':decision,'rounds':rounds})
-            team.event('RECOVERY_DECISION',scene.time(),event_id=event['event_id'],decision=decision)
-            print(f'RECOVERY {event["event_id"]}: {decision}',flush=True)
+            decision=_team_decide(scene,team,task,result,'pair_approach_failure',
+                _pair_participants(scene),exc,injected=result.pop('_injected',False),
+                hold=pair._hold_pair,stage='APPROACH',retries_left=retries-attempt)
             if decision!='retry':raise RuntimeError(f'{exc}; team decided to abort') from exc
             pair.back_off();attempt+=1
+
+
+def _beam_job(pair,scene,team,task,args,result,grasp):
+    while not scene.bindings.permission('beam','APPROACH'):scene.step(.2)
+    result['phase']='APPROACH';result['pair_approach']=_approach(pair,scene,team,task,args,result)
+    regrasps=0
+    while True:
+        while not scene.bindings.permission('beam','GRASP'):scene.step(.2)
+        result['phase']='GRASP'
+        try:
+            result['pair_grasp']=pair.finish_grasp(predict_student,grasp)
+            if _inject(args,result,'grasp'):
+                raise RuntimeError('existing pair carry guard stopped: ABORT')
+            pair.grasp_report.pop('evaluation',None)
+            pair.grasp_report['evaluation_source']='separate referee-only.jsonl after control ends'
+            while not scene.bindings.permission('beam','TRANSIT'):scene.step(.2)
+            result['phase']='TRANSIT'
+            _carry(pair,scene,args,result)
+            break
+        except RuntimeError as exc:
+            from harness.dynamic_coordination import recoverable,RECOVERABLE_GRASP_FAILURES
+            retries=getattr(args,'approach_retries',2)
+            # Regrasp only at the pickup: before any loaded transit command.
+            if (getattr(args,'coordination','plan_first')!='dynamic'
+                    or not recoverable(exc,RECOVERABLE_GRASP_FAILURES)
+                    or 'beam' in scene.bindings.transit_started or regrasps>=retries):raise
+            decision=_team_decide(scene,team,task,result,'pair_grasp_failure',
+                _pair_participants(scene),exc,stage=result['phase'],retries_left=retries-regrasps,
+                injected=result.pop('_injected',False),hold=pair._hold_pair)
+            if decision!='regrasp':raise RuntimeError(f'{exc}; team decided to abort') from exc
+            pair.reset_for_regrasp();pair.back_off();regrasps+=1
+            result['phase']='APPROACH'
+            result['pair_approach']=_approach(pair,scene,team,task,args,result)
+    if scene.bindings.route_overlap and not scene.bindings.permission('beam','UNLOAD'):
+        raise RuntimeError('shared unload resource unavailable')
+    result['phase']='RELEASE';pair.place();pair.verify_placement();scene.bindings.finish('beam')
+
+
+def _carry(pair,scene,args,result):
+    carry_steps=getattr(args,'carry_max_steps',None)
+    if getattr(args,'carry_act_model',None):
+        from scripts.dispatch_act_carry import carry
+        result['carry_policy']='ACT own RGB + raw top RGB + static task + own last issued motion'
+        result['carry_stop_mode']=getattr(args,'carry_act_stop_mode','rgb_guarded')
+        result['pure_act']=result['carry_stop_mode']=='learned'
+        result['act_motion_only']=result['carry_stop_mode']!='rgb_refined'
+        if result['carry_stop_mode']=='rgb_guarded':
+            result['carry_policy']='ACT motion with independent RGB stop admission'
+        elif result['carry_stop_mode']=='rgb_refined':
+            result['carry_policy']='ACT transit plus explicit RGB final alignment (hybrid)'
+        result['carry_model_sha256']=sha(args.carry_act_model/'model.safetensors')
+        carry(pair,args.carry_act_python,args.carry_act_model,
+              args.carry_act_max_steps if carry_steps is None else carry_steps,
+              stop_mode=result['carry_stop_mode'])
+    elif scene.realtime_control:
+        pair.carry_realtime(ImageRoute(scene.bindings,'beam'),max_steps=carry_steps)
+    else:pair.carry(ImageRoute(scene.bindings,'beam'),max_steps=carry_steps)
 
 
 def run(args):
@@ -1281,11 +1519,14 @@ def run(args):
     scene=SkillScene(config,args.output)
     scene.efficient_capture=getattr(args,'efficient_capture',False)
     scene.realtime_control=bool(getattr(args,'realtime_control',False))
+    scene.coarse_concurrent_alignment=bool(getattr(args,'coarse_concurrent_alignment',False))
     scene.rolling_visual_servo=bool(getattr(args,'rolling_visual_servo',False))
     scene.bounded_carrier_relink=bool(getattr(args,'bounded_carrier_relink',False))
     scene.rolling_view_recovery=bool(getattr(args,'rolling_view_recovery',False))
     if scene.rolling_visual_servo and not scene.realtime_control:
         raise ValueError('rolling visual servo requires realtime control')
+    if scene.coarse_concurrent_alignment and not scene.realtime_control:
+        raise ValueError('coarse concurrent alignment requires realtime control')
     if scene.bounded_carrier_relink and not (scene.rolling_visual_servo and scene.realtime_control):
         raise ValueError('bounded carrier relink requires rolling realtime control')
     if scene.rolling_view_recovery and not (scene.rolling_visual_servo and scene.realtime_control):
@@ -1302,6 +1543,16 @@ def run(args):
         'environment':{'python':sys.version,'platform':platform.platform(),'mujoco':mujoco.__version__},
         'plan_committed':False,'protocol_complete':False,'physical_success':False,'error':None,
         'phase':'SETUP','cost_usd':None,
+        'coarse_concurrent_alignment':{
+            'requested':scene.coarse_concurrent_alignment,'applied':False,
+            'reason':'not_evaluated',
+            'scope':'realtime paired APPROACH on fixed dispatch_open or dispatch_shared_crossing RGB maps',
+            'static_map_sha256':config['static_map_sha256'],
+            'arena_variant':config['variant'],
+            'same_fresh_top_required':True,'max_capture_age_s':COARSE_CONCURRENT_MAX_CAPTURE_AGE_S,
+            'rgb_ttl_s':RGB_ACTION_TTL_S,'existing_coarse_command_s':COARSE_CONCURRENT_COMMAND_S,
+            'lead_limit_px':COARSE_LEAD_LIMIT_PX,'coarse_decision_cap':120,
+            'lease_policy':'unchanged existing 0.25s wire cap and 0.6s RGB TTL'},
         'rolling_approach':{'requested':scene.rolling_visual_servo,'applied':False,
             'scope':'solo approach only, realtime dispatch_open without internal obstacles',
             'max_wire_lease_s':REALTIME_MOTOR_RENEWAL_S,
@@ -1328,6 +1579,7 @@ def run(args):
             'max_cumulative_visual_motion_px':_CARRIER_RELINK_MAX_MOTION_PX,
             'final_slot_requires_direct_top_cargo':True},
         'input_boundary':'own fixed RGB + common fixed TOP RGB + static authored map + own issued commands + peer claims; referee output only'}
+    scene.source_sha=result['source_sha']
     try:
         scene.open();scene.deadline=started+args.max_wall_s
         if getattr(args,'viewer',False):
@@ -1442,43 +1694,33 @@ def run(args):
         result['bounded_carrier_relink']['applied']=scene.bounded_carrier_relink
         result['view_recovery']['applied']=scene.rolling_view_recovery
         pair=BoundPairSkill(scene,scene.bindings,skill,grasp,stages,grasp_root,reference,identity)
-        while not scene.bindings.permission('beam','APPROACH'):scene.step(.2)
-        result['phase']='APPROACH';result['pair_approach']=_approach(pair,scene,team,task,args,result)
-        while not scene.bindings.permission('beam','GRASP'):scene.step(.2)
-        result['phase']='GRASP';result['pair_grasp']=pair.finish_grasp(predict_student,grasp)
-        pair.grasp_report.pop('evaluation',None)
-        pair.grasp_report['evaluation_source']='separate referee-only.jsonl after control ends'
-        while not scene.bindings.permission('beam','TRANSIT'):scene.step(.2)
-        result['phase']='TRANSIT'
-        carry_steps=getattr(args,'carry_max_steps',None)
-        if getattr(args,'carry_act_model',None):
-            from scripts.dispatch_act_carry import carry
-            result['carry_policy']='ACT own RGB + raw top RGB + static task + own last issued motion'
-            result['carry_stop_mode']=getattr(args,'carry_act_stop_mode','rgb_guarded')
-            result['pure_act']=result['carry_stop_mode']=='learned'
-            result['act_motion_only']=result['carry_stop_mode']!='rgb_refined'
-            if result['carry_stop_mode']=='rgb_guarded':
-                result['carry_policy']='ACT motion with independent RGB stop admission'
-            elif result['carry_stop_mode']=='rgb_refined':
-                result['carry_policy']='ACT transit plus explicit RGB final alignment (hybrid)'
-            result['carry_model_sha256']=sha(args.carry_act_model/'model.safetensors')
-            carry(pair,args.carry_act_python,args.carry_act_model,
-                  args.carry_act_max_steps if carry_steps is None else carry_steps,
-                  stop_mode=result['carry_stop_mode'])
-        elif scene.realtime_control:
-            pair.carry_realtime(ImageRoute(scene.bindings,'beam'),max_steps=carry_steps)
-        else:pair.carry(ImageRoute(scene.bindings,'beam'),max_steps=carry_steps)
-        if scene.bindings.route_overlap and not scene.bindings.permission('beam','UNLOAD'):
-            raise RuntimeError('shared unload resource unavailable')
-        result['phase']='RELEASE';pair.place();pair.verify_placement();scene.bindings.finish('beam')
-        while scene.bindings.tasks['box']['id'] not in scene.bindings.finished:scene.step(.2)
-        result['protocol_complete']=True;result['phase']='FINISHED'
+        result['coarse_concurrent_alignment'].update(coarse_concurrency_status(
+            pair,requested=scene.coarse_concurrent_alignment))
+        dynamic=getattr(args,'coordination','plan_first')=='dynamic'
+        if dynamic:
+            scene.team_event_handler=lambda event:_box_event(scene,team,task,args,result,event)
+            scene.diagnostic_fail_box_once=getattr(args,'diagnostic_fail_box_once',False)
+        try:
+            _beam_job(pair,scene,team,task,args,result,grasp)
+        except Exception as exc:
+            if not dynamic or isinstance(exc,TeamStop) or getattr(exc,'component',None):raise
+            _job_failed(scene,team,task,result,'beam',exc,
+                        set_down=pair.set_down,hold=pair._hold_pair)
+        while not scene.bindings.settled('box'):scene.step(.2)
+        dropped=result.get('coordination',{}).get('dropped_jobs')
+        if dropped:
+            result['phase']='FINISHED_PARTIAL'
+        else:
+            result['protocol_complete']=True;result['phase']='FINISHED'
     except (Exception,KeyboardInterrupt) as exc:
         result['error']=f'{type(exc).__name__}: {exc}'
         result['failed_component']=getattr(exc,'component',
             'pair' if result['phase'] in ('APPROACH','GRASP','TRANSIT','RELEASE') else 'runtime')
         if args.output.exists():(args.output/'exception.txt').write_text(traceback.format_exc())
     finally:
+        result.pop('_injected',None)
+        if getattr(scene,'solo_events',None):
+            result.setdefault('coordination',{})['box_events']=copy.deepcopy(scene.solo_events)
         cleanup_started=time.monotonic()
         if scene.world:
             timing=result.setdefault('timing',{})
@@ -1500,6 +1742,8 @@ def run(args):
                 if scene._view_recovery is not None:
                     result['view_recovery']['episodes_started']=scene._view_recovery.episodes_started
                     result['view_recovery']['poses_issued']=scene._view_recovery.poses_issued
+                    result['view_recovery']['holds_started']=scene._view_recovery.holds_started
+                    result['view_recovery']['settled_observations']=scene._view_recovery.settled_observations
                 if scene.bindings:result['resource_events']=scene.bindings.resource_events
                 if scene.realtime_control:result['realtime_control_stats']=dict(scene.realtime_stats)
                 scene.solo=None;scene.deadline=None;scene.hold()

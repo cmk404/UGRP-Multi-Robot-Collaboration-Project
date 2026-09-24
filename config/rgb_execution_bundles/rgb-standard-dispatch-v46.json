@@ -1,9 +1,9 @@
 {
   "schema": "ugrp.rgb_execution_bundle.v1",
-  "id": "rgb-standard-dispatch-v48",
+  "id": "rgb-standard-dispatch-v46",
   "status": "experimental_unqualified",
   "adapter": "rgb_incremental_dispatch_v1",
-  "claim_scope": "Parent v42 plus default-OFF --rolling-view-recovery for open realtime solo approach with --rolling-visual-servo: a finite own-RGB active-view pose/reobserve attempt after weak visible direct cyan. Completed self-issued pan/wrist receipts, paired own/TOP RGB, same cargo visual identity and current confidence >=.75 are required; no measured joints, contact, GT or success feedback. Unqualified physical candidate; no v29/v40/v42 success inherited. Fine gain remains synchronous-only and post-run replay remains observer-only.",
+  "claim_scope": "Parent v43 plus a bounded exact-HOLD and settled fresh RGB step before active-view search. Intervening own wheel issues invalidate current drive evidence but do not relabel a recent strong camera pose as measured state. Current paired post-HOLD RGB must validate continuity before pose-only search, and fresh strong RGB is required to drive. Default OFF, unqualified; no past physical success inherited.",
   "effective": {
     "physics": {
       "contact_solver_profile": "legacy",
@@ -131,11 +131,11 @@
     "harness/rgb_communication_runtime.py": "bc55925100f897192ea0f7ddd9036ac4b974502290f8c7a2d0b48fa7e1481183",
     "harness/rgb_communication_scenarios.py": "a64dc3cb7c7b87f5ec812f56850b0d36b4db1ea93c0f53eb4dcbea2f1a1ea991",
     "harness/rgb_communication_study.py": "017cc11f13503c26c34649d26325e0659ee973f8ac313463fc5d78dfc7eef886",
-    "harness/rgb_execution_bundle.py": "fcd2113715e24e6e7fe6527c0bf566c269b6b21cb3d32ed78661e5f1a113f75d",
+    "harness/rgb_execution_bundle.py": "ac9fc2b654d4e46069d86678e0773dba57682818fbf04020f478eb2f56869149",
     "harness/rgb_execution_contract.py": "a9988e2a697dbb9df9f4171979e9578e0cb559e418487541374b460fe6b9cdee",
     "harness/rgb_execution_port.py": "bb2457c6fd5b7b582679d7bdbcd7aa870b5a5a8d104bdb9672da6c938c333db0",
     "harness/rgb_skill_execution.py": "93d5c657d1e19e75f904030e0b7ea1fe6629f43073764a9438c3930a696ead58",
-    "harness/rolling_visual_servo.py": "8918426a52833e5fcfeadb2e7f97114ae3c22c9e80086463e0fc16d965d04a50",
+    "harness/rolling_visual_servo.py": "8d0ad51f678facc26483571830aa1f31c7054ae8dd8096b332d0569b013199d4",
     "harness/skill_errors.py": "12913287902d323decb007c8baf5606493ead763f3766fcdc9ad31d65cc5a6d1",
     "harness/solo_box_transport.py": "3c9f1cd5888578bd5fd371bb249bb618712d3faddf6e9a9206914ba2df447e0a",
     "harness/state.py": "7f23b4f276326fb6d646c989614c204739f4e89e8f35f78bfe85b29836cc3ffd",
@@ -164,7 +164,7 @@
     "scripts/dispatch_async_video.py": "f4097cc619496bb340a824b0e695ac3c386ac301d70f21c15b1c1705130b3364",
     "scripts/dispatch_native_process.py": "797257fd2621c6e84541921d2943595ed6e807d5e59b301bc183f9cb4d25d972",
     "scripts/dispatch_native_view.py": "f7f1592b8083fcedea022209db8cc452235013e18849ba04be39d7b1ee6f6806",
-    "scripts/dispatch_pair_skill.py": "5539abe991bf4c312aa2868ec934de4c0eeddfaac6dcf343809b090831a6eddb",
+    "scripts/dispatch_pair_skill.py": "7d81368e81b776530fb7b9317ce331ca2d3b82a13c816de1649ea729d65ff891",
     "scripts/dispatch_replay.py": "d0a9f13df12823bf6624397c7b5e9142be3922df92b713b19dac9042beeefb52",
     "scripts/evaluate_camera_short_transport.py": "0a36eb1ac1a39cdead272ec14da287bf752177a0d6345d835cbbb5f5e12a3ffc",
     "scripts/pair_carry_act_worker.py": "b13219e94b7631690955e5cd7169e618657478e29c2fbb28b75ee6dbcdb8413b",
@@ -178,8 +178,8 @@
     "scripts/run_camera_goal_transport.py": "5f8da5389aaa9b765b3f5cbcbf05710b982ba0aed4f0697abeb3d057b36cadd5",
     "scripts/run_camera_pair_transport.py": "b8a0fd17563672b8ade073ec1ee5784874defcc39fc81436ede8a88a1f02d353",
     "scripts/run_camera_varied_start_student.py": "f8756260db8e74aaf2a6918a28771488921e9be6bf0928c3560fb351b5256ef0",
-    "scripts/run_dispatch_e2e.py": "d9601127f2577f742622b85ea0d429bf0f7a94c564b1fa977c5a09d3c942bbef",
-    "scripts/run_dispatch_skills.py": "a22277239ed00fc476fb7c2edca7a1010d30603bd1ae63bdca96491d3604c284",
+    "scripts/run_dispatch_e2e.py": "764dacc10d2900a8e2b6f37b4e7cf747091dbf4c7cc227dd054738762ca3c68a",
+    "scripts/run_dispatch_skills.py": "a33d67af03c58b49ff43547b5a31d6f391238fcdbaa008bba4ddca0b3fb1fbda",
     "scripts/run_research_dispatch.py": "2e1e2d74a4c996560ac72ee248a03adeb0a2f5567c660e633395eda6f01fa4d8",
     "scripts/run_rgb_communication_study.py": "6353c3e6b25f8c9587162c4f4f915528c2c3c62d685561a448742304f481d8f4",
     "scripts/run_three_robot_mission.py": "97dc58ee40c4a9de0ba769ab5bf686079dd0820882d5f9168552347cdc3ce46f",
@@ -238,8 +238,7 @@
       "shared_unload": "exclusive dispatch apron; no plan rewriting",
       "research_runner_defaults": "unchanged; auto and capture optimization require explicit flags outside local dispatch"
     },
-    "fine_gain_schedule": "dispatch skills opt-in --fine-gain-schedule only, synchronous execution only (rejected with --realtime-control), default off. Schema ugrp.fine_gain_schedule.v2: visual pose fine stages; subtract upper-bound carry-over of the robot's own previous same-axis command (yaw .18/lateral .10/forward .24 per unit), size the command so upper-bound travel (yaw .18/lateral .11/forward .27 per unit) stops 8 outer tolerances before the target, never lower or reverse the model command, use the model command inside that hand-over distance, latch off for the rest of a stage after an error sign flip. Readiness, tolerances, stationary confirmations, final refinement, dock, leases and budgets unchanged; decisions record model_command and schedule state.",
-    "paired_coarse_concurrent_alignment": "Opt-in --coarse-concurrent-alignment (default OFF), realtime APPROACH only, exact authored open/shared_crossing map hash. Fresh same-frame common TOP and valid own RGB policy for both; own ready yaw/lateral, forward gap > .065 and strict lead <16px. Peer turn/lateral alignment alone no longer suppresses a ready forward proposal. Keep existing command duration, original 0.6s RGB TTL and 120 coarse decisions. Issue-time TTL rejection holds both. No GT inputs, weld, camera changes, or physical success claim."
+    "fine_gain_schedule": "dispatch skills opt-in --fine-gain-schedule only, synchronous execution only (rejected with --realtime-control), default off. Schema ugrp.fine_gain_schedule.v2: visual pose fine stages; subtract upper-bound carry-over of the robot's own previous same-axis command (yaw .18/lateral .10/forward .24 per unit), size the command so upper-bound travel (yaw .18/lateral .11/forward .27 per unit) stops 8 outer tolerances before the target, never lower or reverse the model command, use the model command inside that hand-over distance, latch off for the rest of a stage after an error sign flip. Readiness, tolerances, stationary confirmations, final refinement, dock, leases and budgets unchanged; decisions record model_command and schedule state."
   },
   "native_observer": {
     "gui_poll_wall_s": 0.01,
@@ -304,8 +303,7 @@
     "solo_near_field_servo": "Unmodified static open map realtime only: opt-in two distinct geometry-validated own RGB observations, confidence >=.75, nearfield x>=.18, absolute vertical error>=45px, at least1px improvement, target continuity<=.04m and prior issued-PWM state match permit24 PWM cap. Otherwise legacy8. No measured joint input, trajectory/settling/final approach/grasp changes. Proposed delta/target and gate evidence recorded.",
     "box_direct_reacquisition": "Open realtime opt-in only after existing tracking fails: current unique strong foreground cyan with size/hue continuity, fresh same-capture own attachment/hash, two recent direct cyan observations and dt-bounded visual velocity corridor; proxy does not seed velocity, no invisible-center fallback, owner TTL unchanged. Clears stale carrier/confirmations.",
     "rolling_solo_approach": "Default OFF --rolling-visual-servo, realtime open only. Distinct current own direct cyan and paired TOP hashes; frame/time/plan/permission audit. Capture next RGB during <=.25s issued motor window, original action horizon and observed+.6s unchanged. Expiry/revocation/stale/exception holds. At own-RGB range <=.22m plus .03m command-based reobserve buffer, hold and fresh image after .2s settled interval precede old final-entry macro; command integral is not measured displacement. Actual hold clips effective issued windows; original scheduled windows also logged. No arm/grasp/carry/release/physics changes.",
-    "rolling_active_view_recovery": "Opt-in --rolling-view-recovery requires realtime open --rolling-visual-servo. After weak visible direct cyan, exact wheel HOLD then at most 3 issued pan/wrist view poses within 4 SIM-s per episode and at most 3 episodes per trial. Anchor uses completed self-issued pose receipts for both servos, matching plan and no intervening wheel issue; restore pan within 45 PWM and wrist offsets within 24 PWM. Existing pose interpolation + .3s settle; each recovery requires new paired own/TOP RGB, same cargo optical identity and direct confidence >=.75. Original .6s RGB TTL, .25s wire lease, near/final/grasp/carry/release/physics/camera boundaries unchanged. Failure or budget exhaustion holds; issued PWM never treated as measured joint state.",
-    "paired_coarse_receipts": "Output-only coarse_command_receipt joins capture frame/time/own+TOP hashes, model proposals, coordinated command, physical robot port ack motor PWM, actual issue and expiry; issued overlap is not measured travel."
+    "rolling_active_view_recovery": "Opt-in --rolling-view-recovery realtime open rolling approach: exact zero HOLD on weak direct own RGB; next capture starts at least .2 SIM seconds after that hold, with no new wheel/pose command. Fresh strong >=.75 view may resume through the unchanged drive gate. Otherwise a recent completed own-issued strong-view camera pose may seed a bounded pose-only search after current weak/settled RGB geometry continuity checks; the old anchor retains its original frame, time, and wheel generation. At most3 episodes,3 poses each,4s per episode starting at the initial HOLD. Fresh distinct own/TOP RGB after pose completion is required for drive. Original.6s TTL/.25s lease/600 decisions, physics and cameras unchanged."
   },
   "parent_bundle": "rgb-standard-dispatch-v43",
   "communication_observer": {
