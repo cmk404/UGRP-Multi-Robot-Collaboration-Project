@@ -262,6 +262,128 @@
           "sha256": "cfc00170f7056da656087a5ae38718ded59d648c0817aadbaf29201eb986e50f"
         }
       ]
+    },
+    {
+      "archive": {
+        "bytes": 44611174,
+        "sha256": "c22d88a7c37b8a543f1f0fb452c3f54a4f6ef3ed379e2465bd8b5c85762f82e8"
+      },
+      "description": "First 2026-09-24 action-ACT 128px/history4 comparison checkpoint; offline termination gate failed; not a default controller",
+      "entrypoints": {
+        "act": "act",
+        "grasp": "rgb/grasp",
+        "plan": "plan.json",
+        "reference_top": "reference-top.jpg",
+        "stages": "rgb/varied"
+      },
+      "files": [
+        {
+          "bytes": 442,
+          "path": "act/adapter.json",
+          "sha256": "cfc00170f7056da656087a5ae38718ded59d648c0817aadbaf29201eb986e50f"
+        },
+        {
+          "bytes": 1396,
+          "path": "act/config.json",
+          "sha256": "a4391e9cd4c9d5b8dc266f9706bad0e276cd7540df00aeb9b1e3195c389e7110"
+        },
+        {
+          "bytes": 45784256,
+          "path": "act/model.safetensors",
+          "sha256": "3957eb3df4304561e2af6ed28e3be05a8a85c985ff80c31c2ad733e2d2e355d2"
+        },
+        {
+          "bytes": 587,
+          "path": "plan.json",
+          "sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7"
+        },
+        {
+          "bytes": 3973,
+          "path": "provenance.json",
+          "sha256": "772e118a555a4b3167d1e47704e9358c4f67a3860421425d61ccbf39f6d24634"
+        },
+        {
+          "bytes": 71401,
+          "path": "reference-top.jpg",
+          "sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+        },
+        {
+          "bytes": 330,
+          "path": "requirements-reference-act.txt",
+          "sha256": "fa1d4f36fe5cc2eb43c784a41e5b9e754b6a9ca2f53145242e4803a7f904793d"
+        },
+        {
+          "bytes": 467,
+          "path": "rgb/grasp/evaluation-fixture.json",
+          "sha256": "c2183ad250ea16606d652f91d117e4abb085f9c88b2ab0115de0ba93e1bc5f3f"
+        },
+        {
+          "bytes": 1122932,
+          "path": "rgb/grasp/r1-model.json",
+          "sha256": "c6995cac23ccf2fd168fb222c2332b518507d7ea66921aaf0c231bc460598e45"
+        },
+        {
+          "bytes": 1121267,
+          "path": "rgb/grasp/r3-model.json",
+          "sha256": "8349e10ed659abf4bc62f6fcc62bf22d22ca95fe05d954b42b3883b0d070861d"
+        },
+        {
+          "bytes": 9497,
+          "path": "rgb/grasp/student-skill.json",
+          "sha256": "b244293aa1a5dd2efda1a0d6e8b15582d8a12a3e4d151d46cf679321535e0970"
+        },
+        {
+          "bytes": 1515692,
+          "path": "rgb/varied/model-r1-forward.json",
+          "sha256": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45"
+        },
+        {
+          "bytes": 1518422,
+          "path": "rgb/varied/model-r1-lateral.json",
+          "sha256": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869"
+        },
+        {
+          "bytes": 79887,
+          "path": "rgb/varied/model-r1-yaw.json",
+          "sha256": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374"
+        },
+        {
+          "bytes": 1543369,
+          "path": "rgb/varied/model-r3-forward.json",
+          "sha256": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+        },
+        {
+          "bytes": 1540729,
+          "path": "rgb/varied/model-r3-lateral.json",
+          "sha256": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f"
+        },
+        {
+          "bytes": 74733,
+          "path": "rgb/varied/model-r3-yaw.json",
+          "sha256": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8"
+        },
+        {
+          "bytes": 1051,
+          "path": "rgb/varied/varied-start-skill.json",
+          "sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a"
+        }
+      ],
+      "id": "act-action-first-study-seed24-20260924",
+      "limitations": [
+        "Selected development termination gate failed.",
+        "Physical comparison completed 0 of 2 trials; both attempts failed.",
+        "Experimental comparison only; not a default controller.",
+        "Model loading is not physical transport success.",
+        "Original training data and raw experiment video are excluded."
+      ],
+      "release": {
+        "asset": "act-action-first-study-seed24-20260924.zip",
+        "tag": "models-20260924-action-act-v1",
+        "url": "https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/releases/download/models-20260924-action-act-v1/act-action-first-study-seed24-20260924.zip"
+      },
+      "source_sha": "12f8e6dda76e39b3ec612f247deb4835a2ff50bc",
+      "status": "available",
+      "training_source_sha": "12f8e6dda76e39b3ec612f247deb4835a2ff50bc"
     }
   ]
 }

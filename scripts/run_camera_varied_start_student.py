@@ -83,10 +83,11 @@ def choose_alignment_refinement(decisions, confirming=False):
 
 def run_approach(scene, stage_models, *, condition='visual', straight_models=None,
                  reacquire_on_settle=False, final_refinement_steps=0,
-                 invalid_reobserve_budget=0):
+                 invalid_reobserve_budget=0, fine_gain_schedule=False):
     """Run the RGB-only wheel approach and return output-only audit data."""
     from harness.camera_varied_start_student import predict_stage
     from harness.camera_approach_student import predict_approach
+    from harness import fine_gain_schedule as gain_schedule
 
     def observe_and_predict(tag,predict):
         hook=getattr(scene,'observe_and_compute',None)
@@ -106,7 +107,15 @@ def run_approach(scene, stage_models, *, condition='visual', straight_models=Non
             or not 0 <= invalid_reobserve_budget <= 1):
         raise ValueError('invalid RGB re-observation budget must be 0..1')
 
+    if fine_gain_schedule:
+        # Explicit opt-in: the far-field schedule is defined for visual pose
+        # stage models only. Never apply it to straight or legacy models.
+        if condition != 'visual' or any(m.get('schema') != gain_schedule.POSE_SCHEMA
+                                        for stages in stage_models.values() for m in stages.values()):
+            raise ValueError('fine gain schedule requires visual pose stage models')
     result = {'approach_calls': [], 'stage_results': [], 'approach_ok': False}
+    if fine_gain_schedule:
+        result['fine_gain_schedule'] = gain_schedule.settings()
     approach_start = scene.time()
     phases = PHASES if condition == 'visual' else ('forward',)
     history = {r: [] for r in ROBOTS}
@@ -117,11 +126,18 @@ def run_approach(scene, stage_models, *, condition='visual', straight_models=Non
         if invalid_reobserve_budget:
             record['recovery_confirmations'] = []
         result['stage_results'].append(record)
+        # Own issued commands and the sign-flip latch reset with every stage.
+        scheduler = gain_schedule.StageScheduler(ROBOTS) if fine_gain_schedule else None
         for index in range(LIMITS[stage] + 5):
             if condition == 'visual':
-                frames,decisions=observe_and_predict(f'phase-{phase_index}-{index:03d}',
-                    lambda frames:{r:predict_stage(stage_models[r][stage],frames[r]['own_bytes'],
-                                                   frames[r]['top_bytes']) for r in ROBOTS})
+                def predict_visual(frames, stage=stage, scheduler=scheduler):
+                    decisions = {r: predict_stage(stage_models[r][stage], frames[r]['own_bytes'],
+                                                  frames[r]['top_bytes']) for r in ROBOTS}
+                    if scheduler is not None:
+                        decisions = {r: scheduler.decide(r, stage_models[r][stage], d)
+                                     for r, d in decisions.items()}
+                    return decisions
+                frames,decisions=observe_and_predict(f'phase-{phase_index}-{index:03d}',predict_visual)
             else:
                 def predict_straight(frames):
                     decisions={}
@@ -146,6 +162,8 @@ def run_approach(scene, stage_models, *, condition='visual', straight_models=Non
                     'images': {'own': frames[rid]['own_rgb'], 'top': frames[rid]['shared_top_rgb']},
                     'decision': decisions[rid], 'action': action, 'own_command_history': list(history[rid])})
                 history[rid].append(action)
+                if scheduler is not None:
+                    scheduler.issued(rid, control['commands'][rid][AXES[stage]])
             scene.drive_mecanum(control['commands'], control['duration_s'])
             if start_recovery:
                 # After the .25s zero command, the ports remain commanded to

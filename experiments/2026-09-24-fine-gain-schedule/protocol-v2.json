@@ -1,0 +1,75 @@
+{
+  "schema": "ugrp.fine_gain_schedule_protocol.v2",
+  "supersedes": "protocol.json (v1 realtime native cohort: comparison invalid, see results.json)",
+  "request": "Mac에서 동기 모드 A/B (2026-09-24)",
+  "question": "Under synchronous execution, does --fine-gain-schedule shorten fine alignment SIM time and whole-mission SIM time without losing physical/protocol success?",
+  "why_synchronous": "v1 realtime runs were dominated by host CPU load (SIM/wall 0.575-0.95). Without --realtime-control, physics waits for each capture and decision, so host load changes wall time but not actor inputs, decisions or SIM time.",
+  "runtime": {
+    "branch": "claude/fine-gain-schedule",
+    "source": "HEAD at launch, committed and clean (recorded per run)",
+    "bundle": "rgb-standard-dispatch-v31 (parent v28)"
+  },
+  "design": {
+    "comparison": "same source; only --fine-gain-schedule differs",
+    "order": [
+      "A1_off",
+      "B1_on",
+      "B2_on",
+      "A2_off"
+    ],
+    "max_runs": 4,
+    "parallel_physics": false,
+    "new_llm_calls": 0,
+    "training_runs": 0,
+    "host_load": "recorded before each run; not a precondition because it does not affect SIM-time metrics"
+  },
+  "fixed": {
+    "variant": "open",
+    "seed": 11,
+    "plan_replay": "experiments/2026-09-22-parallel-transport/independent-plan.json",
+    "plan_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+    "contact_profile": "local_contact_fine",
+    "timestep_s": 0.00025,
+    "weld": false,
+    "efficient_capture": true,
+    "auto_route_overlap": true,
+    "overlap_start": "grasp",
+    "video_fps": 10,
+    "rgb_ttl_s": 0.6,
+    "max_command_lease_s": 0.25,
+    "stage_and_grasp_models": "outputs/dispatch-models/e78a5a5777f5bc48/models/{varied,grasp} (faster-dispatch worktree copy; file hashes identical to the v19 simulation-realtime copy used by the replay audit)",
+    "headless": true,
+    "realtime_control": false,
+    "max_wall_s": 1200
+  },
+  "command_template": "bash scripts/open_simulation.command dispatch --headless --plan-replay experiments/2026-09-22-parallel-transport/independent-plan.json --variant open --seed 11 --contact-profile local_contact_fine --max-wall-s 1200 --overlap-start grasp --video-fps 10 --grasp-model-dir <models>/grasp --stage-model-dir <models>/varied [--fine-gain-schedule] --output /Users/changmin/projects/ugrp/outputs/fine-gain-schedule-20260924-sync/<run>",
+  "driver": "run_ab.py --protocol v2",
+  "primary_metrics": [
+    "physical_success and protocol_complete",
+    "fine alignment SIM s (learned_approach approach_elapsed_sim_s) and per-stage movement slices",
+    "control_end_sim_s (whole mission SIM time)"
+  ],
+  "secondary_metrics": [
+    "coarse sample count, box pregrasp resource wait",
+    "issued commands",
+    "contact, weld",
+    "wall_s (informational only)"
+  ],
+  "acceptance": [
+    "Both B runs physically and protocol complete",
+    "No contact/weld/permission audit failure",
+    "Report per-run B vs A fine SIM s and control_end_sim_s; never average incomplete runs",
+    "No realtime-window speed claim; default adoption out of scope"
+  ],
+  "stop_conditions": [
+    "A B failure skips remaining B runs; A2 still runs",
+    "No budget extension or threshold change",
+    "Preserve every run with hashes"
+  ],
+  "limits": [
+    "One saved plan, open map, seed 11; not a generalization or real-robot claim",
+    "Response constants are a controller calibration from recorded RGB-derived error changes, not a physical measurement",
+    "Box approach may become the critical path once the beam fine stage shortens; its tilt-step limit is handled separately in draft PRs #129/#131",
+    "Synchronous mode measures SIM-time behavior; realtime native wall time needs a separate idle-host check"
+  ]
+}

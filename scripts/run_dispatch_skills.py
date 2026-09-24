@@ -857,6 +857,7 @@ def run(args):
     scene=SkillScene(config,args.output)
     scene.efficient_capture=getattr(args,'efficient_capture',False)
     scene.realtime_control=bool(getattr(args,'realtime_control',False))
+    scene.fine_gain_schedule=bool(getattr(args,'fine_gain_schedule',False))
     started=time.monotonic();pair=team=None
     motion_started_wall=motion_started_sim=None
     result={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
