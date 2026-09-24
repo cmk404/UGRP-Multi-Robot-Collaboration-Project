@@ -56,6 +56,10 @@ RGB_ACTION_TTL_S=.6
 REALTIME_MOTOR_RENEWAL_S=.25
 REALTIME_CAPTURE_OVERLAP_S=.02
 SOLO_ACTIVE_SIM_BUDGET_S=300.
+# Dynamic box retry: reverse slices after the fold. E3/V3 (v51/v56): 10
+# slices moved r2 ~8 cm and left the box ~0.25 m away, below the folded
+# camera's view, so the fresh search never saw it.
+BOX_RETRY_REVERSE_SLICES=20
 
 
 def fast_servo_map_supported(static_map, *, realtime_control):
@@ -220,7 +224,7 @@ class SkillScene(DispatchScene):
         self.solo_events.append({**{k:v for k,v in event.items() if k!='handling'},'decision':decision})
         if decision=='retry':
             self._solo_recovery=[{'kind':'pose','pulses':{1:2000,3:740,4:2320,5:1320,6:1500}}]+[
-                {'kind':'mecanum','forward':-.05,'left':0.,'turn':0.,'duration_s':.2}]*10
+                {'kind':'mecanum','forward':-.05,'left':0.,'turn':0.,'duration_s':.2}]*BOX_RETRY_REVERSE_SLICES
             # The fresh skill first searches toward the side where the failed
             # skill last saw the box in its own RGB (robot frame, +y = left).
             seen=getattr(getattr(getattr(self,'solo',None),'box',None),'last_target',None)
