@@ -4,7 +4,7 @@
   "purpose": "fixed south-train-a physical A/B; same new source with opt-in OFF versus ON",
   "reviewed_implementation_commit": "d2be823a23e90cc9f9c63bb8e6839f2565587c9a",
   "execution_source_sha": null,
-  "execution_bundle_id": "rgb-standard-dispatch-v49",
+  "execution_bundle_id": "rgb-standard-dispatch-v53",
   "freeze_owner": "root; assign only after focused tests, review and source freeze",
   "historical_context_only": {
     "case": "route-teachers-managed-v3/south-train-a",
@@ -105,7 +105,7 @@
       "source_sha",
       "static_map_sha256"
     ],
-    "current_gap": "Port acknowledgement interface implemented; current-source tests and physical receipts not yet verified."
+    "current_gap": "Port acknowledgement and immutable RGB-to-command receipts implemented; pre-integration v49 CI passed, v53 CI and physical receipts remain to be verified."
   },
   "acceptance": {
     "denominator": "2 planned arms; report failures, timeouts and unstarted arms separately",

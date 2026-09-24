@@ -39,3 +39,5 @@
 서브에이전트 중단 뒤 root가 출력 전용 port receipt와 무효 ack 회귀 검사를 완성했다. main 위에 병합하고 v48 / workflow 1.48.0으로 등록했다(v45·v46·v47은 별도 후보). source frame/own·TOP 해시, 실제 port ack PWM과 issue/expiry를 `coarse_command_receipt`로 연결한다. physics step으로 port cache가 지워지기 전에 기록을 복사하며 이후 제어에는 사용하지 않는다. 앞의 166 passed는 receipt 변경 전 검사다. 새 전체 검사와 물리 A/B는 아직 완료되지 않았고 Claude의 CPU 잠금 때문에 로컬 실행을 시작하지 않았다.
 
 #142가 먼저 main에 병합되어 최종 후보를 **v49 / workflow 1.49.0 (부모 v47)**로 다시 등록했다. v48은 바이트 그대로 은퇴 보존하며 물리 실행한 적은 없다. 기존 handoff 테스트의 가짜 IO에도 새 출력 기록이 요구하는 issued-port/time 문맥을 명시했다.
+
+#145 병합 뒤 부모 v50 위에 **v53 / workflow 1.53.0**으로 통합했다. v48·v49는 실행 전 후보로 원본 바이트를 보존하며 실제 물리 시도는 0회다. v51·v52는 Claude의 두 열린 PR에 요청한 예약 번호다. 직전 v49 소스 `1163fa03756072f5b2d363412d39bc02984dda60`는 [GitHub 검사 6개](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/actions/runs/36025049633) 모두 통과했으며 offline은 2,106 passed·76 skipped·205 subtests였다. 이는 v53의 새 검증이나 물리 결과가 아니다. 기존 v49 A/B 준비 기록은 시작 전 종료로 보존하고 새 v53 소스를 고정한다. 정지 후 재관측(v50)을 계승하지만 이 A/B에서는 해당 옵션을 켜지 않는다.
