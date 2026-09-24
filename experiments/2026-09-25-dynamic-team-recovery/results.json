@@ -7,7 +7,8 @@
  "weld": "off",
  "source_log": [
   "sha 846b4b0 bundle v51 2026-09-24T17:24:13Z",
-  "V-runs sha 997c851 bundle v56 2026-09-24T18:24:06Z"
+  "V-runs sha 997c851 bundle v56 2026-09-24T18:24:06Z",
+  "W-runs sha c2fdc63 bundle v58 2026-09-24T19:22:08Z"
  ],
  "runs": [
   {
@@ -798,6 +799,270 @@
     "result.json": "82c2d52f37ee2bcb565f74b847203490121d5350b718b901997e2688a99e18c3",
     "evaluation-only.json": "a6a03fdebaec9ce1ee4252a214f32fffb646f8a6fd8b95d18dfacf8704209daf",
     "team/team.json": "a196676ba3282336315b4a3d294025504d90415cb41a9beee869f69c071e0dd4"
+   }
+  },
+  {
+   "run": "W1-approach",
+   "path": "/Users/changmin/projects/ugrp/outputs/dynamic-team-recovery-20260925/W1-approach",
+   "bundle": "rgb-standard-dispatch-v58",
+   "source_sha": "c2fdc633c25d4ababb7246ec94ff310fa05dd5ae",
+   "flags": [
+    "--diagnostic-fail-approach-once"
+   ],
+   "phase": "FINISHED",
+   "protocol_complete": true,
+   "error": null,
+   "physical_success": true,
+   "cargo_success": {
+    "beam": true,
+    "box": true
+   },
+   "llm_calls": 5,
+   "usage": {
+    "prompt_tokens": 39737,
+    "completion_tokens": 642,
+    "total_tokens": 41313
+   },
+   "control_end_sim_s": 185.6099999973389,
+   "wall_s": 355.9949075419863,
+   "start_path": "claims",
+   "recoveries": [
+    {
+     "kind": "pair_approach_failure",
+     "failure": "coarse RGB approach budget exhausted",
+     "participants": [
+      "r3",
+      "r1"
+     ],
+     "decision": "retry",
+     "rounds": 1,
+     "sim_time_s": 48.15,
+     "diagnostic_injection": true,
+     "replies": [
+      {
+       "r3": "retry",
+       "r1": "retry"
+      }
+     ]
+    }
+   ],
+   "dropped_jobs": null,
+   "box_events": [],
+   "loads": [
+    {
+     "run": "W1-approach",
+     "start_utc": "2026-09-24T19:22:08Z",
+     "load": "{ 2.74 2.79 3.04 }"
+    },
+    {
+     "run": "W1-approach",
+     "end_utc": "2026-09-24T19:28:06Z",
+     "exit": 0,
+     "load": "{ 4.08 4.25 3.76 }"
+    }
+   ],
+   "sha256": {
+    "result.json": "c33ddbc7285d5944c43afc8991f5f40e68495a069c0cf637d27ee3c8bd16c425",
+    "evaluation-only.json": "b70ab7c32944e432f10f5c5eea98b1f850f1e795bf5f713461dc1cd9b786f178",
+    "team/team.json": "188ae285105b2739cb5e8283df73b681d90a50ed148aba70e28afd77fd5c3edc"
+   }
+  },
+  {
+   "run": "W2-grasp",
+   "path": "/Users/changmin/projects/ugrp/outputs/dynamic-team-recovery-20260925/W2-grasp",
+   "bundle": "rgb-standard-dispatch-v58",
+   "source_sha": "c2fdc633c25d4ababb7246ec94ff310fa05dd5ae",
+   "flags": [
+    "--diagnostic-fail-grasp-once"
+   ],
+   "phase": "FINISHED_PARTIAL",
+   "protocol_complete": false,
+   "error": null,
+   "physical_success": false,
+   "cargo_success": {
+    "beam": false,
+    "box": true
+   },
+   "llm_calls": 18,
+   "usage": {
+    "prompt_tokens": 147791,
+    "completion_tokens": 3165,
+    "total_tokens": 151551
+   },
+   "control_end_sim_s": 201.90999999695345,
+   "wall_s": 422.45270166700357,
+   "start_path": "conflict_then_talk",
+   "recoveries": [
+    {
+     "kind": "pair_grasp_failure",
+     "failure": "existing pair carry guard stopped: ABORT",
+     "participants": [
+      "r3",
+      "r1"
+     ],
+     "decision": "regrasp",
+     "rounds": 1,
+     "sim_time_s": 63.81,
+     "diagnostic_injection": true,
+     "replies": [
+      {
+       "r3": "regrasp",
+       "r1": "regrasp"
+      }
+     ]
+    },
+    {
+     "kind": "pair_approach_failure",
+     "failure": "fine RGB alignment outside saved skill support",
+     "participants": [
+      "r3",
+      "r1"
+     ],
+     "decision": "retry",
+     "rounds": 1,
+     "sim_time_s": 93.81,
+     "diagnostic_injection": false,
+     "replies": [
+      {
+       "r3": "retry",
+       "r1": "retry"
+      }
+     ]
+    },
+    {
+     "kind": "pair_approach_failure",
+     "failure": "fine RGB alignment outside saved skill support",
+     "participants": [
+      "r3",
+      "r1"
+     ],
+     "decision": "retry",
+     "rounds": 1,
+     "sim_time_s": 114.96,
+     "diagnostic_injection": false,
+     "replies": [
+      {
+       "r3": "retry",
+       "r1": "retry"
+      }
+     ]
+    },
+    {
+     "kind": "job_failed",
+     "failure": "fine RGB alignment outside saved skill support",
+     "participants": [
+      "r1",
+      "r2",
+      "r3"
+     ],
+     "decision": "continue_others",
+     "rounds": 1,
+     "sim_time_s": 132.91,
+     "diagnostic_injection": false,
+     "replies": [
+      {
+       "r1": "continue_others",
+       "r2": "continue_others",
+       "r3": "continue_others"
+      }
+     ]
+    }
+   ],
+   "dropped_jobs": [
+    {
+     "job": "beam",
+     "reason": "fine RGB alignment outside saved skill support",
+     "sim_time_s": 132.90999999858508
+    }
+   ],
+   "box_events": [],
+   "loads": [
+    {
+     "run": "W2-grasp",
+     "start_utc": "2026-09-24T19:28:06Z",
+     "load": "{ 4.08 4.25 3.76 }"
+    },
+    {
+     "run": "W2-grasp",
+     "end_utc": "2026-09-24T19:35:11Z",
+     "exit": 1,
+     "load": "{ 4.72 4.17 3.85 }"
+    }
+   ],
+   "sha256": {
+    "result.json": "aeb057a7fe5056afe2621e9a5e2de22b77ee8e5106a633d0c84db0f5993ad7be",
+    "evaluation-only.json": "770d0aba04bc92ceccc307d11496b5ea63de4b8251295850142590d0f34c0f88",
+    "team/team.json": "d1b3085a83cefe5f7a4315fcca695f546671084d33bef6446dbcfb4232cff987"
+   }
+  },
+  {
+   "run": "W3-box",
+   "path": "/Users/changmin/projects/ugrp/outputs/dynamic-team-recovery-20260925/W3-box",
+   "bundle": "rgb-standard-dispatch-v58",
+   "source_sha": "c2fdc633c25d4ababb7246ec94ff310fa05dd5ae",
+   "flags": [
+    "--diagnostic-fail-box-once"
+   ],
+   "phase": "FINISHED",
+   "protocol_complete": true,
+   "error": null,
+   "physical_success": true,
+   "cargo_success": {
+    "beam": true,
+    "box": true
+   },
+   "llm_calls": 10,
+   "usage": {
+    "prompt_tokens": 90355,
+    "completion_tokens": 2264,
+    "total_tokens": 93353
+   },
+   "control_end_sim_s": 183.659999997385,
+   "wall_s": 383.6619862090156,
+   "start_path": "conflict_then_talk",
+   "recoveries": [
+    {
+     "kind": "box_failure",
+     "failure": "APPROACH_OVERSHOT",
+     "participants": [
+      "r2"
+     ],
+     "decision": "retry",
+     "rounds": 1,
+     "sim_time_s": 61.11,
+     "diagnostic_injection": true,
+     "replies": [
+      {
+       "r2": "retry"
+      }
+     ]
+    }
+   ],
+   "dropped_jobs": null,
+   "box_events": [
+    {
+     "reason": "APPROACH_OVERSHOT",
+     "decision": "retry",
+     "diagnostic_injection": true
+    }
+   ],
+   "loads": [
+    {
+     "run": "W3-box",
+     "start_utc": "2026-09-24T19:35:11Z",
+     "load": "{ 4.72 4.17 3.85 }"
+    },
+    {
+     "run": "W3-box",
+     "end_utc": "2026-09-24T19:41:36Z",
+     "exit": 0,
+     "load": "{ 4.92 4.35 4.00 }"
+    }
+   ],
+   "sha256": {
+    "result.json": "b9834359d8a59c670a1d9dfbe5a8e9cfebfef8a407aa77f20fcd90c1bfeeef7d",
+    "evaluation-only.json": "dfbdffae1d55467cc9f6874eabb90a45ee7f848f1c1bfec5eb9835c32986e2aa",
+    "team/team.json": "fc31edc205939b849aa1436e0f3e7ffadc6a3e876d0be445ffb872c4291d5665"
    }
   }
  ]
