@@ -1,0 +1,864 @@
+{
+  "schema": "ugrp.action_act_refinement_summary.v3",
+  "design": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/refinement-evaluation-design.json",
+  "raw_root": "outputs/dispatch-action-act-refinement-20260924",
+  "qualification_order": [
+    "near-a/reference-rgb-v27",
+    "near-a/refined-rgb",
+    "near-a/refined-act",
+    "near-b/reference-rgb-v27",
+    "near-b/refined-rgb",
+    "near-b/refined-act",
+    "near-c/reference-rgb-v27",
+    "near-c/refined-rgb",
+    "near-c/refined-act"
+  ],
+  "diagnostic_order": [
+    "original-diagnostic-1/refined-rgb",
+    "original-diagnostic-2/refined-rgb"
+  ],
+  "audited_trial_ids": [
+    "near-a/reference-rgb-v27",
+    "near-a/refined-rgb",
+    "near-b/reference-rgb-v27",
+    "near-b/refined-rgb",
+    "near-c/reference-rgb-v27",
+    "near-c/refined-rgb",
+    "original-diagnostic-1/refined-rgb",
+    "original-diagnostic-2/refined-rgb"
+  ],
+  "all_trials": {
+    "denominator": {
+      "planned": 11,
+      "physical_eligible_planned": 8,
+      "not_run_prerequisite_failed_declared": 3,
+      "not_run_prerequisite_failed_receipted": 3,
+      "not_run_receipt_pending": 0,
+      "unstarted_eligible": 0,
+      "started": 8,
+      "reserved_incomplete": 0,
+      "audited": 8,
+      "process_completed": 6,
+      "physical_success": 6,
+      "protocol_complete": 6,
+      "physical_and_protocol_success": 6,
+      "physically_successful_with_complete_audit": 6,
+      "successful_with_eligible_timing": 5,
+      "timing_excluded_successful": 1,
+      "timing_excluded_started": 1,
+      "ordinary_or_unclassified_failures": 2,
+      "invariant_failure_runs": 0,
+      "input_audit_incomplete_runs": 0
+    },
+    "trial_states": {
+      "near-a/reference-rgb-v27": "audited",
+      "near-a/refined-rgb": "audited",
+      "near-a/refined-act": "not_run_prerequisite_failed",
+      "near-b/reference-rgb-v27": "audited",
+      "near-b/refined-rgb": "audited",
+      "near-b/refined-act": "not_run_prerequisite_failed",
+      "near-c/reference-rgb-v27": "audited",
+      "near-c/refined-rgb": "audited",
+      "near-c/refined-act": "not_run_prerequisite_failed",
+      "original-diagnostic-1/refined-rgb": "audited",
+      "original-diagnostic-2/refined-rgb": "audited"
+    },
+    "failure_by_component_or_phase": {
+      "solo_box": 2
+    },
+    "successful_wall_s": [
+      190.59507341700373,
+      294.5046312090126,
+      246.9175189170055,
+      175.7615480000095,
+      188.0442323750176
+    ],
+    "successful_wall_median_s": 190.59507341700373,
+    "failed_wall_s_separate": {
+      "near-a/reference-rgb-v27": 179.6939127910009,
+      "near-c/reference-rgb-v27": 184.736301041994
+    },
+    "successful_wall_excluded_for_incomplete_audit": {},
+    "successful_wall_excluded_for_timing_interference": {
+      "near-b/refined-rgb": 267.4727515830018
+    },
+    "act_attempted_wire_requests": 0,
+    "act_completed_responses": 0,
+    "act_stale_predictions": 0,
+    "act_inference_error_rows": 0,
+    "act_unconfirmed_slots": 0
+  },
+  "qualification": {
+    "overall": {
+      "denominator": {
+        "planned": 9,
+        "physical_eligible_planned": 6,
+        "not_run_prerequisite_failed_declared": 3,
+        "not_run_prerequisite_failed_receipted": 3,
+        "not_run_receipt_pending": 0,
+        "unstarted_eligible": 0,
+        "started": 6,
+        "reserved_incomplete": 0,
+        "audited": 6,
+        "process_completed": 4,
+        "physical_success": 4,
+        "protocol_complete": 4,
+        "physical_and_protocol_success": 4,
+        "physically_successful_with_complete_audit": 4,
+        "successful_with_eligible_timing": 3,
+        "timing_excluded_successful": 1,
+        "timing_excluded_started": 1,
+        "ordinary_or_unclassified_failures": 2,
+        "invariant_failure_runs": 0,
+        "input_audit_incomplete_runs": 0
+      },
+      "trial_states": {
+        "near-a/reference-rgb-v27": "audited",
+        "near-a/refined-rgb": "audited",
+        "near-a/refined-act": "not_run_prerequisite_failed",
+        "near-b/reference-rgb-v27": "audited",
+        "near-b/refined-rgb": "audited",
+        "near-b/refined-act": "not_run_prerequisite_failed",
+        "near-c/reference-rgb-v27": "audited",
+        "near-c/refined-rgb": "audited",
+        "near-c/refined-act": "not_run_prerequisite_failed"
+      },
+      "failure_by_component_or_phase": {
+        "solo_box": 2
+      },
+      "successful_wall_s": [
+        190.59507341700373,
+        294.5046312090126,
+        246.9175189170055
+      ],
+      "successful_wall_median_s": 246.9175189170055,
+      "failed_wall_s_separate": {
+        "near-a/reference-rgb-v27": 179.6939127910009,
+        "near-c/reference-rgb-v27": 184.736301041994
+      },
+      "successful_wall_excluded_for_incomplete_audit": {},
+      "successful_wall_excluded_for_timing_interference": {
+        "near-b/refined-rgb": 267.4727515830018
+      },
+      "act_attempted_wire_requests": 0,
+      "act_completed_responses": 0,
+      "act_stale_predictions": 0,
+      "act_inference_error_rows": 0,
+      "act_unconfirmed_slots": 0
+    },
+    "arms": {
+      "reference-rgb-v27": {
+        "denominator": {
+          "planned": 3,
+          "physical_eligible_planned": 3,
+          "not_run_prerequisite_failed_declared": 0,
+          "not_run_prerequisite_failed_receipted": 0,
+          "not_run_receipt_pending": 0,
+          "unstarted_eligible": 0,
+          "started": 3,
+          "reserved_incomplete": 0,
+          "audited": 3,
+          "process_completed": 1,
+          "physical_success": 1,
+          "protocol_complete": 1,
+          "physical_and_protocol_success": 1,
+          "physically_successful_with_complete_audit": 1,
+          "successful_with_eligible_timing": 1,
+          "timing_excluded_successful": 0,
+          "timing_excluded_started": 0,
+          "ordinary_or_unclassified_failures": 2,
+          "invariant_failure_runs": 0,
+          "input_audit_incomplete_runs": 0
+        },
+        "trial_states": {
+          "near-a/reference-rgb-v27": "audited",
+          "near-b/reference-rgb-v27": "audited",
+          "near-c/reference-rgb-v27": "audited"
+        },
+        "failure_by_component_or_phase": {
+          "solo_box": 2
+        },
+        "successful_wall_s": [
+          294.5046312090126
+        ],
+        "successful_wall_median_s": 294.5046312090126,
+        "failed_wall_s_separate": {
+          "near-a/reference-rgb-v27": 179.6939127910009,
+          "near-c/reference-rgb-v27": 184.736301041994
+        },
+        "successful_wall_excluded_for_incomplete_audit": {},
+        "successful_wall_excluded_for_timing_interference": {},
+        "act_attempted_wire_requests": 0,
+        "act_completed_responses": 0,
+        "act_stale_predictions": 0,
+        "act_inference_error_rows": 0,
+        "act_unconfirmed_slots": 0
+      },
+      "refined-rgb": {
+        "denominator": {
+          "planned": 3,
+          "physical_eligible_planned": 3,
+          "not_run_prerequisite_failed_declared": 0,
+          "not_run_prerequisite_failed_receipted": 0,
+          "not_run_receipt_pending": 0,
+          "unstarted_eligible": 0,
+          "started": 3,
+          "reserved_incomplete": 0,
+          "audited": 3,
+          "process_completed": 3,
+          "physical_success": 3,
+          "protocol_complete": 3,
+          "physical_and_protocol_success": 3,
+          "physically_successful_with_complete_audit": 3,
+          "successful_with_eligible_timing": 2,
+          "timing_excluded_successful": 1,
+          "timing_excluded_started": 1,
+          "ordinary_or_unclassified_failures": 0,
+          "invariant_failure_runs": 0,
+          "input_audit_incomplete_runs": 0
+        },
+        "trial_states": {
+          "near-a/refined-rgb": "audited",
+          "near-b/refined-rgb": "audited",
+          "near-c/refined-rgb": "audited"
+        },
+        "failure_by_component_or_phase": {},
+        "successful_wall_s": [
+          190.59507341700373,
+          246.9175189170055
+        ],
+        "successful_wall_median_s": 218.75629616700462,
+        "failed_wall_s_separate": {},
+        "successful_wall_excluded_for_incomplete_audit": {},
+        "successful_wall_excluded_for_timing_interference": {
+          "near-b/refined-rgb": 267.4727515830018
+        },
+        "act_attempted_wire_requests": 0,
+        "act_completed_responses": 0,
+        "act_stale_predictions": 0,
+        "act_inference_error_rows": 0,
+        "act_unconfirmed_slots": 0
+      },
+      "refined-act": {
+        "denominator": {
+          "planned": 3,
+          "physical_eligible_planned": 0,
+          "not_run_prerequisite_failed_declared": 3,
+          "not_run_prerequisite_failed_receipted": 3,
+          "not_run_receipt_pending": 0,
+          "unstarted_eligible": 0,
+          "started": 0,
+          "reserved_incomplete": 0,
+          "audited": 0,
+          "process_completed": 0,
+          "physical_success": 0,
+          "protocol_complete": 0,
+          "physical_and_protocol_success": 0,
+          "physically_successful_with_complete_audit": 0,
+          "successful_with_eligible_timing": 0,
+          "timing_excluded_successful": 0,
+          "timing_excluded_started": 0,
+          "ordinary_or_unclassified_failures": 0,
+          "invariant_failure_runs": 0,
+          "input_audit_incomplete_runs": 0
+        },
+        "trial_states": {
+          "near-a/refined-act": "not_run_prerequisite_failed",
+          "near-b/refined-act": "not_run_prerequisite_failed",
+          "near-c/refined-act": "not_run_prerequisite_failed"
+        },
+        "failure_by_component_or_phase": {},
+        "successful_wall_s": [],
+        "successful_wall_median_s": null,
+        "failed_wall_s_separate": {},
+        "successful_wall_excluded_for_incomplete_audit": {},
+        "successful_wall_excluded_for_timing_interference": {},
+        "act_attempted_wire_requests": 0,
+        "act_completed_responses": 0,
+        "act_stale_predictions": 0,
+        "act_inference_error_rows": 0,
+        "act_unconfirmed_slots": 0
+      }
+    },
+    "cases": {
+      "near-a": {
+        "denominator": {
+          "planned": 3,
+          "physical_eligible_planned": 2,
+          "not_run_prerequisite_failed_declared": 1,
+          "not_run_prerequisite_failed_receipted": 1,
+          "not_run_receipt_pending": 0,
+          "unstarted_eligible": 0,
+          "started": 2,
+          "reserved_incomplete": 0,
+          "audited": 2,
+          "process_completed": 1,
+          "physical_success": 1,
+          "protocol_complete": 1,
+          "physical_and_protocol_success": 1,
+          "physically_successful_with_complete_audit": 1,
+          "successful_with_eligible_timing": 1,
+          "timing_excluded_successful": 0,
+          "timing_excluded_started": 0,
+          "ordinary_or_unclassified_failures": 1,
+          "invariant_failure_runs": 0,
+          "input_audit_incomplete_runs": 0
+        },
+        "trial_states": {
+          "near-a/reference-rgb-v27": "audited",
+          "near-a/refined-rgb": "audited",
+          "near-a/refined-act": "not_run_prerequisite_failed"
+        },
+        "failure_by_component_or_phase": {
+          "solo_box": 1
+        },
+        "successful_wall_s": [
+          190.59507341700373
+        ],
+        "successful_wall_median_s": 190.59507341700373,
+        "failed_wall_s_separate": {
+          "near-a/reference-rgb-v27": 179.6939127910009
+        },
+        "successful_wall_excluded_for_incomplete_audit": {},
+        "successful_wall_excluded_for_timing_interference": {},
+        "act_attempted_wire_requests": 0,
+        "act_completed_responses": 0,
+        "act_stale_predictions": 0,
+        "act_inference_error_rows": 0,
+        "act_unconfirmed_slots": 0
+      },
+      "near-b": {
+        "denominator": {
+          "planned": 3,
+          "physical_eligible_planned": 2,
+          "not_run_prerequisite_failed_declared": 1,
+          "not_run_prerequisite_failed_receipted": 1,
+          "not_run_receipt_pending": 0,
+          "unstarted_eligible": 0,
+          "started": 2,
+          "reserved_incomplete": 0,
+          "audited": 2,
+          "process_completed": 2,
+          "physical_success": 2,
+          "protocol_complete": 2,
+          "physical_and_protocol_success": 2,
+          "physically_successful_with_complete_audit": 2,
+          "successful_with_eligible_timing": 1,
+          "timing_excluded_successful": 1,
+          "timing_excluded_started": 1,
+          "ordinary_or_unclassified_failures": 0,
+          "invariant_failure_runs": 0,
+          "input_audit_incomplete_runs": 0
+        },
+        "trial_states": {
+          "near-b/reference-rgb-v27": "audited",
+          "near-b/refined-rgb": "audited",
+          "near-b/refined-act": "not_run_prerequisite_failed"
+        },
+        "failure_by_component_or_phase": {},
+        "successful_wall_s": [
+          294.5046312090126
+        ],
+        "successful_wall_median_s": 294.5046312090126,
+        "failed_wall_s_separate": {},
+        "successful_wall_excluded_for_incomplete_audit": {},
+        "successful_wall_excluded_for_timing_interference": {
+          "near-b/refined-rgb": 267.4727515830018
+        },
+        "act_attempted_wire_requests": 0,
+        "act_completed_responses": 0,
+        "act_stale_predictions": 0,
+        "act_inference_error_rows": 0,
+        "act_unconfirmed_slots": 0
+      },
+      "near-c": {
+        "denominator": {
+          "planned": 3,
+          "physical_eligible_planned": 2,
+          "not_run_prerequisite_failed_declared": 1,
+          "not_run_prerequisite_failed_receipted": 1,
+          "not_run_receipt_pending": 0,
+          "unstarted_eligible": 0,
+          "started": 2,
+          "reserved_incomplete": 0,
+          "audited": 2,
+          "process_completed": 1,
+          "physical_success": 1,
+          "protocol_complete": 1,
+          "physical_and_protocol_success": 1,
+          "physically_successful_with_complete_audit": 1,
+          "successful_with_eligible_timing": 1,
+          "timing_excluded_successful": 0,
+          "timing_excluded_started": 0,
+          "ordinary_or_unclassified_failures": 1,
+          "invariant_failure_runs": 0,
+          "input_audit_incomplete_runs": 0
+        },
+        "trial_states": {
+          "near-c/reference-rgb-v27": "audited",
+          "near-c/refined-rgb": "audited",
+          "near-c/refined-act": "not_run_prerequisite_failed"
+        },
+        "failure_by_component_or_phase": {
+          "solo_box": 1
+        },
+        "successful_wall_s": [
+          246.9175189170055
+        ],
+        "successful_wall_median_s": 246.9175189170055,
+        "failed_wall_s_separate": {
+          "near-c/reference-rgb-v27": 184.736301041994
+        },
+        "successful_wall_excluded_for_incomplete_audit": {},
+        "successful_wall_excluded_for_timing_interference": {},
+        "act_attempted_wire_requests": 0,
+        "act_completed_responses": 0,
+        "act_stale_predictions": 0,
+        "act_inference_error_rows": 0,
+        "act_unconfirmed_slots": 0
+      }
+    },
+    "matched_rgb_speed": {
+      "near-a": {
+        "status": "failed_pair",
+        "base_success": false,
+        "comparison_success": true
+      },
+      "near-b": {
+        "status": "timing_excluded",
+        "physical_pair_success": true,
+        "timing_excluded_trial_ids": [
+          "near-b/refined-rgb"
+        ],
+        "scope": "Physical outcomes retained; no matched speed ratio from an interfered run."
+      },
+      "near-c": {
+        "status": "failed_pair",
+        "base_success": false,
+        "comparison_success": true
+      }
+    },
+    "matched_refined_act_vs_rgb_speed": {
+      "near-a": {
+        "status": "not_run_prerequisite_failed",
+        "receipt_state": "not_run_prerequisite_failed",
+        "base_audited": true,
+        "comparison_audited": false
+      },
+      "near-b": {
+        "status": "not_run_prerequisite_failed",
+        "receipt_state": "not_run_prerequisite_failed",
+        "base_audited": true,
+        "comparison_audited": false
+      },
+      "near-c": {
+        "status": "not_run_prerequisite_failed",
+        "receipt_state": "not_run_prerequisite_failed",
+        "base_audited": true,
+        "comparison_audited": false
+      }
+    },
+    "directional_rgb_speed_gate_pass": false
+  },
+  "diagnostics": {
+    "denominator": {
+      "planned": 2,
+      "physical_eligible_planned": 2,
+      "not_run_prerequisite_failed_declared": 0,
+      "not_run_prerequisite_failed_receipted": 0,
+      "not_run_receipt_pending": 0,
+      "unstarted_eligible": 0,
+      "started": 2,
+      "reserved_incomplete": 0,
+      "audited": 2,
+      "process_completed": 2,
+      "physical_success": 2,
+      "protocol_complete": 2,
+      "physical_and_protocol_success": 2,
+      "physically_successful_with_complete_audit": 2,
+      "successful_with_eligible_timing": 2,
+      "timing_excluded_successful": 0,
+      "timing_excluded_started": 0,
+      "ordinary_or_unclassified_failures": 0,
+      "invariant_failure_runs": 0,
+      "input_audit_incomplete_runs": 0
+    },
+    "trial_states": {
+      "original-diagnostic-1/refined-rgb": "audited",
+      "original-diagnostic-2/refined-rgb": "audited"
+    },
+    "failure_by_component_or_phase": {},
+    "successful_wall_s": [
+      175.7615480000095,
+      188.0442323750176
+    ],
+    "successful_wall_median_s": 181.90289018751355,
+    "failed_wall_s_separate": {},
+    "successful_wall_excluded_for_incomplete_audit": {},
+    "successful_wall_excluded_for_timing_interference": {},
+    "act_attempted_wire_requests": 0,
+    "act_completed_responses": 0,
+    "act_stale_predictions": 0,
+    "act_inference_error_rows": 0,
+    "act_unconfirmed_slots": 0
+  },
+  "timing_exclusions": {
+    "near-b/refined-rgb": {
+      "path": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/audits/refinement-near-b-refined-rgb-timing-exclusion.json",
+      "sha256": "e62906413933611cd1a390f1daaa385899dfb33e9f5ecfcf9cec74d181e5e238",
+      "recorded_utc": "2026-09-24T12:35:04.360984+00:00",
+      "reason": "Preserve planned and started physical outcome; exclude wall-time comparison due external CPU testing. No fabricated replacement.",
+      "observed_foreign_process": {
+        "pid": 70997,
+        "ppid": 70988,
+        "cwd": "/Users/changmin/projects/ugrp-worktrees/fine-gain-schedule",
+        "owner": "separate Claude task, not this Codex task",
+        "scope": "pytest camera/dispatch/RGB/workflow plus tests/ and test_fine_gain_schedule.py",
+        "observed_cpu_percent": [
+          88.0,
+          94.8
+        ],
+        "elapsed_at_second_observation": "01:17"
+      }
+    }
+  },
+  "act_model_prerequisite": {
+    "status": "failed_no_exported_readback_model",
+    "amendment": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/refinement-act-prerequisite-amendment-v2.json",
+    "amendment_sha256": "19a15eb96b3e08bc459b260446517bbc667bb6a1f07e99af066e5ed5aba15d08",
+    "training_complete": false,
+    "finalizer_complete": false,
+    "model_exported": false,
+    "act_not_run_trial_ids": [
+      "near-a/refined-act",
+      "near-b/refined-act",
+      "near-c/refined-act"
+    ],
+    "scope": "Original admission allowed a failed diagnostic checkpoint for narrow feasibility, but no guarded exported/readback second model exists."
+  },
+  "budget_and_launch_closure": {
+    "schema": "ugrp.action_act_refinement_budget_snapshot.v1",
+    "design": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/refinement-evaluation-design.json",
+    "raw_root": "outputs/dispatch-action-act-refinement-20260924",
+    "trial_order": [
+      "original-diagnostic-1/refined-rgb",
+      "original-diagnostic-2/refined-rgb",
+      "near-a/reference-rgb-v27",
+      "near-a/refined-rgb",
+      "near-a/refined-act",
+      "near-b/reference-rgb-v27",
+      "near-b/refined-rgb",
+      "near-b/refined-act",
+      "near-c/reference-rgb-v27",
+      "near-c/refined-rgb",
+      "near-c/refined-act"
+    ],
+    "trials": {
+      "original-diagnostic-1/refined-rgb": {
+        "group": "diagnostics",
+        "state": "started_result",
+        "launch": "outputs/dispatch-action-act-refinement-20260924/original-diagnostic-1-refined-rgb.launch.json",
+        "raw": "outputs/dispatch-action-act-refinement-20260924/original-diagnostic-1-refined-rgb",
+        "per_trial_cap_s": 350,
+        "recorded_cap_matches": true,
+        "process_wall_s": 177.4321605830046,
+        "exit_code": 0,
+        "result_present": true,
+        "physical_success": true,
+        "protocol_complete": true,
+        "failed_component": null,
+        "manager_manifest": "/Users/changmin/.codex/worktrees/action-act-refinement/ugrp/outputs/simulation-runs/20260924-203400-dispatch-b630b2dd/manifest.json",
+        "not_run_receipt": null,
+        "not_run_reason": null,
+        "invariants": {
+          "freeze_unchanged": true,
+          "source_unchanged": true,
+          "common_models_unchanged": true,
+          "manager_argv_matches": true,
+          "manager_adapter_matches": true,
+          "manager_source_matches": true,
+          "manager_output_matches": true,
+          "manager_inputs_unchanged": true
+        }
+      },
+      "original-diagnostic-2/refined-rgb": {
+        "group": "diagnostics",
+        "state": "started_result",
+        "launch": "outputs/dispatch-action-act-refinement-20260924/original-diagnostic-2-refined-rgb.launch.json",
+        "raw": "outputs/dispatch-action-act-refinement-20260924/original-diagnostic-2-refined-rgb",
+        "per_trial_cap_s": 350,
+        "recorded_cap_matches": true,
+        "process_wall_s": 189.5607640419912,
+        "exit_code": 0,
+        "result_present": true,
+        "physical_success": true,
+        "protocol_complete": true,
+        "failed_component": null,
+        "manager_manifest": "/Users/changmin/.codex/worktrees/action-act-refinement/ugrp/outputs/simulation-runs/20260924-203746-dispatch-2186b77d/manifest.json",
+        "not_run_receipt": null,
+        "not_run_reason": null,
+        "invariants": {
+          "freeze_unchanged": true,
+          "source_unchanged": true,
+          "common_models_unchanged": true,
+          "manager_argv_matches": true,
+          "manager_adapter_matches": true,
+          "manager_source_matches": true,
+          "manager_output_matches": true,
+          "manager_inputs_unchanged": true
+        }
+      },
+      "near-a/reference-rgb-v27": {
+        "group": "qualification",
+        "state": "started_result",
+        "launch": "outputs/dispatch-action-act-refinement-20260924/near-a-reference-rgb-v27.launch.json",
+        "raw": "outputs/dispatch-action-act-refinement-20260924/near-a-reference-rgb-v27",
+        "per_trial_cap_s": 350,
+        "recorded_cap_matches": true,
+        "process_wall_s": 181.43684087501606,
+        "exit_code": 1,
+        "result_present": true,
+        "physical_success": false,
+        "protocol_complete": false,
+        "failed_component": "solo_box",
+        "manager_manifest": "/Users/changmin/.codex/worktrees/dispatch-action-act/ugrp/outputs/simulation-runs/20260924-211027-dispatch-91923c6c/manifest.json",
+        "not_run_receipt": null,
+        "not_run_reason": null,
+        "invariants": {
+          "freeze_unchanged": true,
+          "source_unchanged": true,
+          "common_models_unchanged": true,
+          "manager_argv_matches": true,
+          "manager_adapter_matches": true,
+          "manager_source_matches": true,
+          "manager_output_matches": true,
+          "manager_inputs_unchanged": true
+        }
+      },
+      "near-a/refined-rgb": {
+        "group": "qualification",
+        "state": "started_result",
+        "launch": "outputs/dispatch-action-act-refinement-20260924/near-a-refined-rgb.launch.json",
+        "raw": "outputs/dispatch-action-act-refinement-20260924/near-a-refined-rgb",
+        "per_trial_cap_s": 350,
+        "recorded_cap_matches": true,
+        "process_wall_s": 192.29275816699374,
+        "exit_code": 0,
+        "result_present": true,
+        "physical_success": true,
+        "protocol_complete": true,
+        "failed_component": null,
+        "manager_manifest": "/Users/changmin/.codex/worktrees/action-act-refinement/ugrp/outputs/simulation-runs/20260924-211701-dispatch-3093fd07/manifest.json",
+        "not_run_receipt": null,
+        "not_run_reason": null,
+        "invariants": {
+          "freeze_unchanged": true,
+          "source_unchanged": true,
+          "common_models_unchanged": true,
+          "manager_argv_matches": true,
+          "manager_adapter_matches": true,
+          "manager_source_matches": true,
+          "manager_output_matches": true,
+          "manager_inputs_unchanged": true
+        }
+      },
+      "near-a/refined-act": {
+        "group": "qualification",
+        "state": "not_run_prerequisite_failed",
+        "launch": "outputs/dispatch-action-act-refinement-20260924/near-a-refined-act.launch.json",
+        "raw": "outputs/dispatch-action-act-refinement-20260924/near-a-refined-act",
+        "per_trial_cap_s": 750,
+        "recorded_cap_matches": null,
+        "process_wall_s": null,
+        "exit_code": null,
+        "result_present": false,
+        "physical_success": null,
+        "protocol_complete": null,
+        "failed_component": null,
+        "manager_manifest": null,
+        "not_run_receipt": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/audits/refinement-near-a-refined-act-not-run.json",
+        "not_run_reason": "exported/readback second ACT model unavailable after failed finalization",
+        "invariants": null
+      },
+      "near-b/reference-rgb-v27": {
+        "group": "qualification",
+        "state": "started_result",
+        "launch": "outputs/dispatch-action-act-refinement-20260924/near-b-reference-rgb-v27.launch.json",
+        "raw": "outputs/dispatch-action-act-refinement-20260924/near-b-reference-rgb-v27",
+        "per_trial_cap_s": 350,
+        "recorded_cap_matches": true,
+        "process_wall_s": 296.73071724997135,
+        "exit_code": 0,
+        "result_present": true,
+        "physical_success": true,
+        "protocol_complete": true,
+        "failed_component": null,
+        "manager_manifest": "/Users/changmin/.codex/worktrees/dispatch-action-act/ugrp/outputs/simulation-runs/20260924-212057-dispatch-e68f95d4/manifest.json",
+        "not_run_receipt": null,
+        "not_run_reason": null,
+        "invariants": {
+          "freeze_unchanged": true,
+          "source_unchanged": true,
+          "common_models_unchanged": true,
+          "manager_argv_matches": true,
+          "manager_adapter_matches": true,
+          "manager_source_matches": true,
+          "manager_output_matches": true,
+          "manager_inputs_unchanged": true
+        }
+      },
+      "near-b/refined-rgb": {
+        "group": "qualification",
+        "state": "started_result",
+        "launch": "outputs/dispatch-action-act-refinement-20260924/near-b-refined-rgb.launch.json",
+        "raw": "outputs/dispatch-action-act-refinement-20260924/near-b-refined-rgb",
+        "per_trial_cap_s": 350,
+        "recorded_cap_matches": true,
+        "process_wall_s": 269.4172209170065,
+        "exit_code": 0,
+        "result_present": true,
+        "physical_success": true,
+        "protocol_complete": true,
+        "failed_component": null,
+        "manager_manifest": "/Users/changmin/.codex/worktrees/action-act-refinement/ugrp/outputs/simulation-runs/20260924-213001-dispatch-df12905d/manifest.json",
+        "not_run_receipt": null,
+        "not_run_reason": null,
+        "invariants": {
+          "freeze_unchanged": true,
+          "source_unchanged": true,
+          "common_models_unchanged": true,
+          "manager_argv_matches": true,
+          "manager_adapter_matches": true,
+          "manager_source_matches": true,
+          "manager_output_matches": true,
+          "manager_inputs_unchanged": true
+        }
+      },
+      "near-b/refined-act": {
+        "group": "qualification",
+        "state": "not_run_prerequisite_failed",
+        "launch": "outputs/dispatch-action-act-refinement-20260924/near-b-refined-act.launch.json",
+        "raw": "outputs/dispatch-action-act-refinement-20260924/near-b-refined-act",
+        "per_trial_cap_s": 750,
+        "recorded_cap_matches": null,
+        "process_wall_s": null,
+        "exit_code": null,
+        "result_present": false,
+        "physical_success": null,
+        "protocol_complete": null,
+        "failed_component": null,
+        "manager_manifest": null,
+        "not_run_receipt": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/audits/refinement-near-b-refined-act-not-run.json",
+        "not_run_reason": "exported/readback second ACT model unavailable after failed finalization",
+        "invariants": null
+      },
+      "near-c/reference-rgb-v27": {
+        "group": "qualification",
+        "state": "started_result",
+        "launch": "outputs/dispatch-action-act-refinement-20260924/near-c-reference-rgb-v27.launch.json",
+        "raw": "outputs/dispatch-action-act-refinement-20260924/near-c-reference-rgb-v27",
+        "per_trial_cap_s": 350,
+        "recorded_cap_matches": true,
+        "process_wall_s": 186.26972970899078,
+        "exit_code": 1,
+        "result_present": true,
+        "physical_success": false,
+        "protocol_complete": false,
+        "failed_component": "solo_box",
+        "manager_manifest": "/Users/changmin/.codex/worktrees/dispatch-action-act/ugrp/outputs/simulation-runs/20260924-214558-dispatch-790cc398/manifest.json",
+        "not_run_receipt": null,
+        "not_run_reason": null,
+        "invariants": {
+          "freeze_unchanged": true,
+          "source_unchanged": true,
+          "common_models_unchanged": true,
+          "manager_argv_matches": true,
+          "manager_adapter_matches": true,
+          "manager_source_matches": true,
+          "manager_output_matches": true,
+          "manager_inputs_unchanged": true
+        }
+      },
+      "near-c/refined-rgb": {
+        "group": "qualification",
+        "state": "started_result",
+        "launch": "outputs/dispatch-action-act-refinement-20260924/near-c-refined-rgb.launch.json",
+        "raw": "outputs/dispatch-action-act-refinement-20260924/near-c-refined-rgb",
+        "per_trial_cap_s": 350,
+        "recorded_cap_matches": true,
+        "process_wall_s": 249.0211994999845,
+        "exit_code": 0,
+        "result_present": true,
+        "physical_success": true,
+        "protocol_complete": true,
+        "failed_component": null,
+        "manager_manifest": "/Users/changmin/.codex/worktrees/action-act-refinement/ugrp/outputs/simulation-runs/20260924-214925-dispatch-92da7ac9/manifest.json",
+        "not_run_receipt": null,
+        "not_run_reason": null,
+        "invariants": {
+          "freeze_unchanged": true,
+          "source_unchanged": true,
+          "common_models_unchanged": true,
+          "manager_argv_matches": true,
+          "manager_adapter_matches": true,
+          "manager_source_matches": true,
+          "manager_output_matches": true,
+          "manager_inputs_unchanged": true
+        }
+      },
+      "near-c/refined-act": {
+        "group": "qualification",
+        "state": "not_run_prerequisite_failed",
+        "launch": "outputs/dispatch-action-act-refinement-20260924/near-c-refined-act.launch.json",
+        "raw": "outputs/dispatch-action-act-refinement-20260924/near-c-refined-act",
+        "per_trial_cap_s": 750,
+        "recorded_cap_matches": null,
+        "process_wall_s": null,
+        "exit_code": null,
+        "result_present": false,
+        "physical_success": null,
+        "protocol_complete": null,
+        "failed_component": null,
+        "manager_manifest": null,
+        "not_run_receipt": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/audits/refinement-near-c-refined-act-not-run.json",
+        "not_run_reason": "exported/readback second ACT model unavailable after failed finalization",
+        "invariants": null
+      }
+    },
+    "budgets": {
+      "diagnostics": {
+        "hard_limit_s": 740.0,
+        "recorded_process_wall_s": 366.9929246249958,
+        "remaining_s": 373.0070753750042,
+        "finalized_trial_count": 2,
+        "not_run_prerequisite_failed_trial_ids": [],
+        "pending_not_run_receipt_trial_ids": [],
+        "unstarted_trial_ids": [],
+        "unresolved_trial_ids": [],
+        "over_cap_trial_ids": [],
+        "within_hard_limit": true
+      },
+      "qualification": {
+        "hard_limit_s": 4500.0,
+        "recorded_process_wall_s": 1375.168466417963,
+        "remaining_s": 3124.831533582037,
+        "finalized_trial_count": 6,
+        "not_run_prerequisite_failed_trial_ids": [
+          "near-a/refined-act",
+          "near-b/refined-act",
+          "near-c/refined-act"
+        ],
+        "pending_not_run_receipt_trial_ids": [],
+        "unstarted_trial_ids": [],
+        "unresolved_trial_ids": [],
+        "over_cap_trial_ids": [],
+        "within_hard_limit": true
+      }
+    },
+    "next_trial_gate": null,
+    "amendment": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/refinement-act-prerequisite-amendment-v2.json",
+    "amendment_sha256": "19a15eb96b3e08bc459b260446517bbc667bb6a1f07e99af066e5ed5aba15d08",
+    "scope": "All 11 planned slots retained. ACT prerequisite skips have no process wall or outcome and consume zero qualification physics budget. Sums use finalized launcher process_wall_s, not successful-only result wall time. A reserved or unfinished launch blocks further trials; ordinary task failure with finalized evidence does not."
+  },
+  "scope": "Diagnostics are excluded from nine qualification slots. Three ACT slots are NOT RUN prerequisite failures with unknown physical outcome and no timing or model-call value; they are never counted as started or ordinary physical failures. Failed, audit-incomplete, and explicitly timing-interfered wall times never enter successful speed statistics. Physical success remains counted for interfered runs. RGB directional gate requires all three successful, audit-complete, timing-eligible matched pairs. All 11 slot states and separate 740/4500 s launcher-process budgets are retained. Ordinary process exit 1 is not by itself an invariant failure."
+}

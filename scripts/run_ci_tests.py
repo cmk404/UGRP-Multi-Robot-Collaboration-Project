@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 TEST_PATTERNS = (
     "tests/test_model_artifacts.py",
     "tests/test_simulation_session.py",
+    "tests/test_agent_lock.py",
     "tests/test_simulation_console.py",
     "tests/test_simulation_dispatch.py",
     "tests/test_dispatch_replay.py",

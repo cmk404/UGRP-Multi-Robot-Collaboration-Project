@@ -1,0 +1,18 @@
+{
+  "schema": "ugrp.act_runtime_benchmark_comparison.v1",
+  "reference_median_s": 0.1094913334964076,
+  "refined_median_s": 0.03871479151712265,
+  "ratio": 2.828152476243664,
+  "reduction_fraction": 0.6464122750099406,
+  "max_decoded_difference": 0.0,
+  "all_done_identical": true,
+  "per_condition_measured_pairs": 24,
+  "total_worker_requests_including_warmups": 112,
+  "scope": "Same checkpoint and saved raw own/TOP histories, two ABBA repeats. No concurrent physics/training. Only request latency, not full mission speed.",
+  "records": {
+    "v27-sequential-1": "81e09692547493e25fef2af0507823f98713f58597faf324d72058f75ea682c2",
+    "v28-parallel-cached-1": "f16d0db711344e93da9713b0e483fc2f65217ce0b39842c8b12cf0b90fc152af",
+    "v28-parallel-cached-2": "cb09930f901d512a94e1f8e2850a2d71e1b708aed67a085653afc9185038f69c",
+    "v27-sequential-2": "d5f8d601658eed0adb0485d808c8edf8dd788ee535a5b08c12efba5e96fbb318"
+  }
+}
