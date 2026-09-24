@@ -126,13 +126,15 @@ def run_approach(scene, stage_models, *, condition='visual', straight_models=Non
         if invalid_reobserve_budget:
             record['recovery_confirmations'] = []
         result['stage_results'].append(record)
+        # Own issued commands and the sign-flip latch reset with every stage.
+        scheduler = gain_schedule.StageScheduler(ROBOTS) if fine_gain_schedule else None
         for index in range(LIMITS[stage] + 5):
             if condition == 'visual':
-                def predict_visual(frames, stage=stage):
+                def predict_visual(frames, stage=stage, scheduler=scheduler):
                     decisions = {r: predict_stage(stage_models[r][stage], frames[r]['own_bytes'],
                                                   frames[r]['top_bytes']) for r in ROBOTS}
-                    if fine_gain_schedule:
-                        decisions = {r: gain_schedule.schedule_decision(stage_models[r][stage], d)
+                    if scheduler is not None:
+                        decisions = {r: scheduler.decide(r, stage_models[r][stage], d)
                                      for r, d in decisions.items()}
                     return decisions
                 frames,decisions=observe_and_predict(f'phase-{phase_index}-{index:03d}',predict_visual)
@@ -160,6 +162,8 @@ def run_approach(scene, stage_models, *, condition='visual', straight_models=Non
                     'images': {'own': frames[rid]['own_rgb'], 'top': frames[rid]['shared_top_rgb']},
                     'decision': decisions[rid], 'action': action, 'own_command_history': list(history[rid])})
                 history[rid].append(action)
+                if scheduler is not None:
+                    scheduler.issued(rid, control['commands'][rid][AXES[stage]])
             scene.drive_mecanum(control['commands'], control['duration_s'])
             if start_recovery:
                 # After the .25s zero command, the ports remain commanded to
