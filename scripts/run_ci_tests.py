@@ -107,6 +107,7 @@ TEST_PATTERNS = (
     "tests/test_dispatch_pair_pending_renewal.py",
     "tests/test_dispatch_solo_budget.py",
     "tests/test_rolling_view_recovery.py",
+    "tests/test_settled_view_recovery.py",
     "tests/test_camera_gripper_motion.py",
     "tests/test_camera_pixel_grasp.py",
     "tests/test_camera_sweep_trial.py",

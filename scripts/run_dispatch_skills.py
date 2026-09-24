@@ -35,7 +35,7 @@ from harness.grasp_student_inference import predict_student
 from harness.visual_macro_runtime import VisualMacroExecutor
 from harness.rolling_visual_servo import (FINAL_ENTRY_HANDOFF_M,
     FINAL_ENTRY_SETTLE_S, NEAR_MOTION_REOBSERVE_BUFFER_M,
-    ActiveViewRecovery, RollingApproachLease, approach_drive_support,
+    SettledViewRecovery, RollingApproachLease, approach_drive_support,
     guard_near_entry_from_issued_commands, VIEW_RECOVERY_MAX_POSES,
     VIEW_RECOVERY_MAX_ELAPSED_S, VIEW_RECOVERY_MAX_EPISODES,
     VIEW_RECOVERY_WRIST_STEP_PWM, VIEW_RECOVERY_MAX_PAN_DELTA_PWM)
@@ -360,7 +360,7 @@ class SkillScene(DispatchScene):
         self._solo_approach_lease=None
         self._solo_approach_last_lease=None
         self._solo_approach_last_source=None
-        self._view_recovery=ActiveViewRecovery() if getattr(self,'rolling_view_recovery',False) else None
+        self._view_recovery=SettledViewRecovery() if getattr(self,'rolling_view_recovery',False) else None
         self._solo_pose_log_cursor=0
         self._solo_completed_pose_receipts={}
         self.solo_renewals=[]
@@ -587,6 +587,24 @@ class SkillScene(DispatchScene):
                 if servo in pulses or str(servo) in pulses:
                     self._solo_completed_pose_receipts[str(servo)]=copy.deepcopy(receipt)
         self._solo_pose_log_cursor=len(self.solo_raw)
+
+    def _issue_rolling_view_reobserve(self,event,row,now):
+        """Hold first, then let the regular RGB worker capture after settling."""
+        port=self.ports[self.bindings.solo]
+        port.hold(now)
+        if any(abs(value)>1e-12 for value in port._motor_commands):
+            raise RuntimeError('rolling settled observation could not hold wheels')
+        self._solo_retry_at=event['capture_not_before_s']
+        self.solo_raw.append({'event':'rolling_view_recovery_settle_hold','time':now,
+            'robot_id':self.bindings.solo,'source_frame_id':event['frame_id'],
+            'source_frame_sha256':event['own_sha256'],
+            'source_top_sha256':event['top_sha256'],
+            'capture_not_before_s':event['capture_not_before_s'],
+            'episode':event['episode'],'motor_commands':list(port._motor_commands)})
+        row['view_recovery']=event
+        row['issued_action']={'kind':'hold','motor_commands':list(port._motor_commands)}
+        row['rolling_dropped']='hold_for_settled_rgb_instead_of_weak_drive'
+        self.solo_rows.append(row)
 
     def _issue_rolling_view_pose(self,event,sample,obs,row,now):
         """Hold wheels before the existing interpolated pose/settle scheduler."""
@@ -1018,6 +1036,10 @@ class SkillScene(DispatchScene):
                 else:
                     if (recovery is not None and support['reason']=='weak_direct_cyan_rgb'):
                         view_event=recovery.start(view_sample)
+                        if view_event['kind']=='hold_reobserve':
+                            row['rolling_support']=support
+                            self._issue_rolling_view_reobserve(view_event,row,now)
+                            return
                         if view_event['kind']=='pose_issued':
                             row['rolling_support']=support
                             self._issue_rolling_view_pose(view_event,view_sample,obs,row,now)
@@ -1431,6 +1453,8 @@ def run(args):
                 if scene._view_recovery is not None:
                     result['view_recovery']['episodes_started']=scene._view_recovery.episodes_started
                     result['view_recovery']['poses_issued']=scene._view_recovery.poses_issued
+                    result['view_recovery']['holds_started']=scene._view_recovery.holds_started
+                    result['view_recovery']['settled_observations']=scene._view_recovery.settled_observations
                 if scene.bindings:result['resource_events']=scene.bindings.resource_events
                 if scene.realtime_control:result['realtime_control_stats']=dict(scene.realtime_stats)
                 scene.solo=None;scene.deadline=None;scene.hold()
