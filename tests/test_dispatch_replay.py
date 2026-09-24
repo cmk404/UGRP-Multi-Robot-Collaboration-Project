@@ -8,7 +8,7 @@ from scripts import dispatch_replay, run_dispatch_e2e, sim_dispatch
 
 def _wrapper(monkeypatch, tmp_path, argv):
     invoked, played = [], []
-    monkeypatch.setattr(sim_dispatch.sys, 'platform', 'darwin')
+    monkeypatch.setenv('DISPLAY', ':0')  # satisfy the Linux desktop check without faking the OS
     monkeypatch.setattr(sim_dispatch.sys.stdin, 'isatty', lambda: False)
     # Imported above: urllib imports macOS-only _scproxy when first loaded under a patched platform.
     monkeypatch.setattr(run_dispatch_e2e, 'main', lambda args: invoked.append(args) or 1)
