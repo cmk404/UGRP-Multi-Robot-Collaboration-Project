@@ -1,0 +1,183 @@
+{
+  "schema": "ugrp.cargo_recovery_physical_protocol.v1",
+  "status": "preregistered_design_before_v40_source_freeze_or_physical_outcomes",
+  "question": "Can the opt-in bounded carrier relink restore physically successful camera-only cargo recovery while the existing rolling approach improves matched full-mission completion time?",
+  "claim_scope": "Local open-map nearby-pose RGB controller package only; no isolated relink causal attribution, map generalization, statistical confirmation, or communication-efficacy claim.",
+  "comparison": {
+    "reference_checkout": "/Users/changmin/.codex/worktrees/action-act-refinement/ugrp",
+    "reference_source_sha": "931d910998a94361342c372ec2675c475daa625f",
+    "candidate_checkout": "/Users/changmin/.codex/worktrees/rolling-cargo-recovery/ugrp",
+    "candidate_source_sha": "freeze_after_clean_commit",
+    "candidate_flags": [
+      "--rolling-visual-servo",
+      "--bounded-carrier-relink"
+    ],
+    "reference_flags": [],
+    "same_runtime_for_both": "standard scripts/open_simulation.command dispatch managed adapter; native realtime 1x",
+    "same_models_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models",
+    "same_models_tree_sha256": "081841147e698c560dc122c633bf71169ecca0ddfee9936f06801efb59d2361c",
+    "plan_replay": "experiments/2026-09-22-parallel-transport/independent-plan.json",
+    "plan_replay_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+    "reference_top": "tests/fixtures/camera_goal_transport/reference-top.jpg",
+    "reference_top_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c",
+    "fixed": {
+      "variant": "open",
+      "seed": 11,
+      "required_dock": "dock_a",
+      "contact_profile": "local_contact_fine",
+      "overlap_start": "grasp",
+      "realtime_control": true,
+      "realtime_factor": 1,
+      "video_fps": 10,
+      "weld": false,
+      "camera": "unchanged own RGB and common TOP RGB",
+      "student_input": "own/TOP RGB, authored static map/goal, own issued commands only; no live GT joints, pose, contact or referee in control"
+    }
+  },
+  "diagnostic": {
+    "order": [
+      "original/candidate-diagnostic-1",
+      "original/candidate-diagnostic-2"
+    ],
+    "offset": [
+      0,
+      0,
+      0
+    ],
+    "source": "candidate v40 both times",
+    "purpose": "Recheck two full native attempts at the formerly failing original spawn; saved-frame replay is not sufficient.",
+    "must_pass_before_qualification": [
+      "both physical_success true",
+      "both protocol_complete true",
+      "both raw/manager/launch/freeze/source hash and invariant audit valid",
+      "both RGB/lease/weld boundary audit pass"
+    ],
+    "failed_or_missing_diagnostic_policy": "Stop before any nearby-pose qualification; preserve both diagnostics and report ordinary failure separately from infrastructure/invariant failure."
+  },
+  "qualification": {
+    "cases": [
+      {
+        "id": "roll-a",
+        "offset": [
+          0.004,
+          -0.005,
+          0.15
+        ]
+      },
+      {
+        "id": "roll-b",
+        "offset": [
+          -0.004,
+          0.005,
+          -0.15
+        ]
+      },
+      {
+        "id": "roll-c",
+        "offset": [
+          0.005,
+          0.004,
+          0.35
+        ]
+      }
+    ],
+    "order": [
+      "roll-a/reference",
+      "roll-a/candidate",
+      "roll-b/candidate",
+      "roll-b/reference",
+      "roll-c/reference",
+      "roll-c/candidate"
+    ],
+    "planned_runs": 6,
+    "retry": false,
+    "failure_policy": "Record every planned arm in order. Ordinary physical/protocol failure does not cancel later arms if source/input/RGB/lease/weld audit remains valid. Infrastructure collision, missing/corrupt evidence or source/input invariant failure stops subsequent launches; no replacement runs."
+  },
+  "budget": {
+    "diagnostic_aggregate_process_wall_max_s": 740,
+    "qualification_aggregate_process_wall_max_s": 2220,
+    "per_trial_outer_process_wall_max_s": 370,
+    "per_trial_owned_child_timeout_s": 360,
+    "per_trial_internal_max_wall_s": 350,
+    "cleanup_reserve_s": 10,
+    "budget_gate": "Do not launch unless a full 370-second process allocation remains for that group. No overlap, retry, or automatic replenishment."
+  },
+  "freeze_before_first_launch": {
+    "schema": "ugrp.cargo_recovery_source_freeze.v1",
+    "required": [
+      "reference_source_sha",
+      "candidate_source_sha",
+      "physical_protocol_sha256",
+      "candidate_bundle_manifest_path",
+      "candidate_bundle_manifest_sha256",
+      "common_models_sha256",
+      "plan_replay_sha256",
+      "reference_top_sha256",
+      "run_helper_sha256",
+      "host_guard_source_sha",
+      "host_guard_file_sha256"
+    ],
+    "host_guard_source_sha": "08c39e1e76a60f1c4db6a1f92dd2833cf766362f",
+    "host_guard_module": "/Users/changmin/.codex/worktrees/act-route-coverage/ugrp/scripts/run_act_route_teachers.py",
+    "rule": "Root creates immutable freeze only after candidate v40 source and bundle are committed and clean. Helper verifies all pins before each launch and again after. Any source or helper change requires a new frozen candidate/cohort."
+  },
+  "host_ownership": {
+    "prelaunch": "Call frozen foreign_snapshot before starting any child; on a blocker save infrastructure-abort receipt and launch nothing.",
+    "during": "Use frozen run_owned to start own process group, monitor foreign_snapshot while it runs, and clean only owned PGID on interference or timeout. Preserve blocker snapshot and own cleanup.",
+    "after": "An infrastructure abort blocks the next scheduled trial. Never signal, stop, inspect UI of, or modify a foreign owner."
+  },
+  "audit_contract": {
+    "path_template": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/audits/cargo-recovery-{trial_slug}.json",
+    "schema": "ugrp.cargo_recovery_postrun_audit.v1",
+    "required_hash_links": [
+      "raw_result_sha256",
+      "manager_manifest_sha256",
+      "launch_record_sha256",
+      "scene_manifest_sha256",
+      "freeze_sha256"
+    ],
+    "required_boundary_pass_flags": [
+      "source_integrity",
+      "input_integrity",
+      "rgb_evidence",
+      "lease_freshness",
+      "weld_off",
+      "camera_geometry",
+      "static_map_scene"
+    ],
+    "required_outcome_fields": [
+      "physical_success",
+      "protocol_complete",
+      "wall_s",
+      "timing_eligible"
+    ],
+    "rule": "Root creates audited receipts from separate raw/manager verification after each trial. Helper never manufactures an audit; next trial is blocked until previous receipt hashes and boundary flags validate. Ordinary physical failure may continue qualification only if boundary flags all pass."
+  },
+  "directional_speed_gate": {
+    "requires": "All three matched nearby-pose pairs have reference and candidate physical_success+protocol_complete with complete audit, unchanged scene/contact/weld, and valid uncontended wall times.",
+    "metric": "Median candidate full-mission wall_s across the three cases <= 0.90 * median reference full-mission wall_s. Report each paired wall difference and relative reduction; no requirement that every candidate pair be faster.",
+    "failure_handling": "Failed/aborted/timing-excluded wall times are excluded from speed median but retained with denominator; an absent valid pair makes the gate false.",
+    "claim": "Directional local completion-time evidence only; three pairs are not statistical confirmation."
+  },
+  "phase_and_timing_analysis": {
+    "primary": "Full physical mission completion wall_s, counted only for physical_success and protocol_complete with complete audits and uncontended timing; retain every planned arm in the denominator.",
+    "report_for_each_started_run": [
+      "approach phase SIM seconds",
+      "beam fine-alignment SIM seconds",
+      "box permission/wait SIM seconds",
+      "all other phase SIM seconds and total motion SIM seconds",
+      "full mission wall_s and motion_sim_to_wall ratio",
+      "host load or foreign-process evidence and timing exclusion reason",
+      "rolling command windows, issued-command count, observed motion, and carrier-relink evidence separately"
+    ],
+    "interpretation": "With overlap_start=grasp, a shorter box approach can be absorbed by beam-grasp waiting. Approach or command-window reductions alone do not pass the full-mission speed gate; a command window is not measured motion. Report the motion SIM/wall ratio and host load but do not impose an arbitrary 0.98 ratio cutoff because controller latency also affects that ratio.",
+    "cohort_boundary": "Do not pool synchronized Claude runs or other cohorts with these native v40 paired trials."
+  },
+  "output": {
+    "raw_root": "/Users/changmin/projects/ugrp/outputs/dispatch-cargo-recovery-20260924",
+    "every_trial": "raw result/video, pair/solo RGB decisions, issued commands, manager manifest, immutable launch record, per-run audit receipt and source/config/model hashes",
+    "diagnostic": "diagnostics excluded from qualification speed median",
+    "tensorboard": "new native snapshot after completed evidence, including failures; preserve existing originals/snapshots"
+  },
+  "prior_result_boundary": "v29 two original-spawn rolling failures and six NOT RUN qualification slots remain unchanged. v28 physical successes do not transfer to v40."
+}
