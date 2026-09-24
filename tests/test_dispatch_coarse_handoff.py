@@ -16,6 +16,10 @@ def decision(*, gap=.06, ok=True, ready=False):
                 image_error=[gap, .0031])
 
 
+def heading_unresolved(*, gap=.06, reason='own_wheel_heading_unresolved'):
+    return {**decision(gap=gap,ok=False), 'reason':reason}
+
+
 def frame(index):
     return {r:dict(frame_id=index, observed_at_s=float(index),
                    raw_top_bytes=str(index).encode(), own_bytes=f'{r}-{index}'.encode(),
@@ -42,6 +46,7 @@ def pair_for(rows, frames, *, realtime=True, obstacles=(), terrain=()):
     pair.calls = []
     pair.stop_dwell = Mock()
     pair.drive_mecanum = Mock()
+    pair._hold_pair = Mock()
     captured = iter(frames)
     pair.observe_and_compute = Mock(side_effect=lambda tag, predict:
                                     (batch := next(captured), predict(batch)))
@@ -81,6 +86,70 @@ def test_near_supported_handoff_requires_second_stationary_batch(monkeypatch):
     assert evidence['stationary']['fresh'] is True
     assert all(p['precision']=='fine' for axes in evidence['stationary']['fine_predictions'].values()
                for p in axes.values())
+
+
+@pytest.mark.parametrize('first_unresolved', [False, True])
+def test_exact_heading_dropout_uses_only_stopped_fine_handoff(monkeypatch,first_unresolved):
+    initial={r:decision() for r in ROBOTS}
+    if first_unresolved:initial['r3']=heading_unresolved()
+    stationary={'r1':decision(ready=True),'r3':heading_unresolved(gap=.052)}
+    pair=pair_for({1:initial,2:stationary},[frame(1),frame(2)])
+    monkeypatch.setattr('scripts.dispatch_pair_skill.predict_stage',supported_prediction)
+    with patch('scripts.dispatch_pair_skill.run_approach',return_value={'approach_ok':False}) as fine:
+        with pytest.raises(RuntimeError,match='fine RGB alignment'):
+            pair.approach()
+    fine.assert_called_once()
+    pair.drive_mecanum.assert_not_called()
+    pair._hold_pair.assert_not_called()
+    pair.stop_dwell.assert_called_once()
+    handoff=next(c for c in pair.calls if c['kind']=='coarse_fine_handoff')
+    assert handoff['reason']=='fine_supported_heading_unresolved_handoff'
+    assert handoff['stationary']['unresolved_heading_slots']==['r3']
+    assert handoff['stationary']['forward_gaps']['r3']==pytest.approx(.052)
+    assert handoff['stationary']['fine_predictions']['r3']['yaw']['ok'] is True
+    if first_unresolved:
+        coarse=next(c for c in pair.calls if c['kind']=='coarse')
+        assert coarse['coordination']['unresolved_heading']==['r3']
+        assert all(not any(action.values()) for action in coarse['commands'].values())
+
+
+def test_initial_heading_dropout_without_six_fine_support_holds_and_fails(monkeypatch):
+    rows={1:{'r1':decision(),'r3':heading_unresolved()}}
+    pair=pair_for(rows,[frame(1)])
+    monkeypatch.setattr('scripts.dispatch_pair_skill.predict_stage',
+                        lambda model,own,top:dict(ok=False,precision='fine',ready=False))
+    with patch('scripts.dispatch_pair_skill.run_approach') as fine:
+        with pytest.raises(RuntimeError,match='coarse RGB model convention unresolved'):
+            pair.approach()
+    fine.assert_not_called()
+    pair._hold_pair.assert_called_once()
+    pair.stop_dwell.assert_not_called()
+    pair.drive_mecanum.assert_not_called()
+
+
+@pytest.mark.parametrize('failure', ['support','far_gap','other_reason','stale'])
+def test_heading_dropout_stationary_failure_holds_and_fails(monkeypatch,failure):
+    initial={r:decision() for r in ROBOTS}
+    stationary={'r1':decision(),'r3':heading_unresolved()}
+    if failure=='far_gap':stationary['r3']=heading_unresolved(gap=.066)
+    if failure=='other_reason':stationary['r3']=heading_unresolved(reason='payload_or_reference_unresolved')
+    second=frame(2)
+    if failure=='stale':
+        for r in ROBOTS:second[r]['frame_id']=1
+    pair=pair_for({1:initial,2:stationary},[frame(1),second])
+    def predict(model,own,top):
+        result=supported_prediction(model,own,top)
+        if failure=='support' and top==b'top-2':result['ok']=False
+        return result
+    monkeypatch.setattr('scripts.dispatch_pair_skill.predict_stage',predict)
+    with patch('scripts.dispatch_pair_skill.run_approach') as fine:
+        with pytest.raises(RuntimeError,match='coarse RGB model convention unresolved'):
+            pair.approach()
+    fine.assert_not_called()
+    pair.stop_dwell.assert_called_once()
+    pair._hold_pair.assert_called_once()
+    pair.drive_mecanum.assert_not_called()
+    assert next(c for c in pair.calls if c['kind']=='coarse_fine_handoff')['reason'] != 'fine_supported_heading_unresolved_handoff'
 
 
 @pytest.mark.parametrize('reason,rows,prediction,settings',[

@@ -121,3 +121,27 @@ def test_parallel_callers_receive_independent_masks_and_decisions():
     with ThreadPoolExecutor(max_workers=8) as pool:
         assert all(row == expected for row in pool.map(classify, range(16)))
     assert _coarse_raw_mask(TOP)[0][0, 0] == 0
+
+
+def test_unresolved_heading_retains_rgb_gap_without_coarse_motion_permission(monkeypatch):
+    expected=controller().decide(TOP,'r1')
+    coarse=controller();initial=coarse.centers['r1'].copy()
+    monkeypatch.setattr('harness.camera_goal_transport.wheel_heading',lambda *a,**kw:None)
+    row=coarse.decide(TOP,'r1')
+    assert row['ok'] is False and row['ready'] is False
+    assert row['reason']=='own_wheel_heading_unresolved'
+    assert row['forward']==row['left']==row['turn']==0.
+    assert row['image_error']==expected['image_error']
+    assert row['wheel_center_px']==expected['wheel_center_px']
+    assert np.array_equal(coarse.centers['r1'],initial)
+
+
+def test_missing_pixels_or_payload_cannot_supply_handoff_gap(monkeypatch):
+    black=cv2.imencode('.jpg',np.zeros((720,960,3),np.uint8))[1].tobytes()
+    assert 'image_error' not in controller().decide(black,'r1')
+    monkeypatch.setattr('harness.camera_goal_transport.wheel_heading',lambda *a,**kw:None)
+    def missing_beam(_):raise ValueError('missing payload')
+    monkeypatch.setattr('harness.dispatch_skill_binding._coarse_beam',missing_beam)
+    row=controller().decide(TOP,'r1')
+    assert not row['ok'] and row['reason']=='payload_or_reference_unresolved'
+    assert 'image_error' not in row

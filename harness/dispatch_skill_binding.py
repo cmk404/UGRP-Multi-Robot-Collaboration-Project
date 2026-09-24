@@ -610,10 +610,11 @@ class PairCoarsePixels:
               'crop_center_px':[float(cx),float(cy)],
               'crop_half_size_px':[55,48], 'heading_tolerance_px':2.}
         heading=wheel_heading(clean,pixel_tolerance=2.)
-        if heading is None:
+        if not 80 <= len(xs) <= 700:
             return dict(ok=False,ready=False,forward=0.,left=0.,turn=0.,
                         reason='own_wheel_heading_unresolved',mask=mask)
-        center=np.array([xs.mean(),ys.mean()]);self.centers[slot]=center
+        center=np.array([xs.mean(),ys.mean()])
+        if heading is not None:self.centers[slot]=center
         try:
             beam=_coarse_beam(raw_top)
             ref=_coarse_reference_lane(self.reference,slot)
@@ -626,6 +627,13 @@ class PairCoarsePixels:
                         reason='reference_lane_unresolved',wheel_center_px=center.tolist(),
                         heading=heading,mask=mask)
         gap=(np.array(beam['center'])-center/[w,h])-np.array([ref['beam_x']-ref['robot_x'],ref['beam_y']-ref['robot_y']])
+        if heading is None:
+            # Translation remains observable even when the four-corner yaw
+            # estimator has no support. This is never a coarse motion permit;
+            # only the separate six-model, stopped-RGB handoff may use it.
+            return dict(ok=False,ready=False,forward=0.,left=0.,turn=0.,
+                        reason='own_wheel_heading_unresolved',mask=mask,
+                        wheel_center_px=center.tolist(),image_error=gap.tolist())
         angle=heading['angle_deg'];angle_ready=abs(angle)<=1.5
         lateral_ready=abs(gap[1])<=.003
         ready=gap[0]<=.065 and angle_ready and lateral_ready

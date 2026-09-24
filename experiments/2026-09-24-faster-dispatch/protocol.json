@@ -75,5 +75,14 @@
       "Retain v20 original-TTL solo renewal"
     ],
     "qualification_limit": "Cannot isolate performance contribution of each v21 change from this cohort; compare whole mission and phase time only."
+  },
+  "review_after_v21": {
+    "outcome": "Stopped-RGB coarse wheel heading unresolved; fine6/6 support still valid on stationary frame204 and next206; no carry/renewal reached.",
+    "diagnosis": "A four-corner heading gate suppressed a valid RGB centroid/forward gap, preventing transition to finer supported models. Separate position evidence from coarse heading permission; preserve zero/invalid coarse action and require finer yaw support.",
+    "budget_review": "Two early diagnostic failures consumed65.484 actual wall seconds. Replace unused final-candidate slots with max2 v22 full trials, second only if first meets all acceptance. Total trial count ceiling4, aggregate native wall limit1800s retained (original3x600), pertrial600. No modelcalls/training. This review follows new source evidence, not an automatic retry.",
+    "max_total_trials": 4,
+    "aggregate_native_wall_s": 1800,
+    "v22_max_trials": 2,
+    "repeat_condition": "physical+protocol success, no contacts/clearance/renewal invariant error"
   }
 }

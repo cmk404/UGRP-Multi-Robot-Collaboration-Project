@@ -1,0 +1,251 @@
+{
+  "scope": "offline replay of saved RGB only; no simulator state or physical success claim",
+  "source_run": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v21-full",
+  "run_source_sha": "d2c4e8b9efc2b0c6df377b25d1c3a85cfbd09808",
+  "stage_manifest_sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a",
+  "stage_model_sha256": {
+    "r1": {
+      "yaw": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374",
+      "lateral": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869",
+      "forward": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45"
+    },
+    "r3": {
+      "yaw": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8",
+      "lateral": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f",
+      "forward": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+    }
+  },
+  "reference_top_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c",
+  "frames": [
+    {
+      "frame_id": 204,
+      "pair_capture_index": 75,
+      "canonical_top": {
+        "path": "rgb/pair-75-canonical-top.jpg",
+        "sha256": "c04c47f940e2a0936fbd31daacc0384b32979d72c41cbc7e5ba8dae774955351"
+      },
+      "raw_top": {
+        "path": "rgb/pair-75-coarse-fine-handoff-stationary-top.jpg",
+        "sha256": "c8083afd2eb051eefcfb086fb9f64f71127c470180d52989520fa0fbfedcd34e"
+      },
+      "slots": {
+        "r1": {
+          "own_rgb": {
+            "path": "rgb/pair-75-coarse-fine-handoff-stationary-r3.jpg",
+            "sha256": "620f8fb3cb339616b5230bbc8db6ea3678ee1dbea6e39201b019aac035d1195d"
+          },
+          "fine": {
+            "yaw": {
+              "ok": true,
+              "precision": "fine",
+              "ready": true,
+              "image_derived_error": 0.0036584673642041606,
+              "reason": "visual_pose_ready"
+            },
+            "lateral": {
+              "ok": true,
+              "precision": "fine",
+              "ready": false,
+              "image_derived_error": 0.0180700216707409,
+              "reason": "visual_pose_command"
+            },
+            "forward": {
+              "ok": true,
+              "precision": "fine",
+              "ready": false,
+              "image_derived_error": 0.17270754926578757,
+              "reason": "visual_pose_command"
+            }
+          },
+          "recomputed_raw_top_rgb": {
+            "local_wheel_pixels": 363,
+            "heading": {
+              "angle_deg": 0.0,
+              "wheel_pixels": 363,
+              "corner_pixels": [
+                69,
+                47,
+                108,
+                87
+              ]
+            },
+            "wheel_center_px": [
+              226.43250688705234,
+              358.55922865013775
+            ],
+            "image_error": [
+              0.05512415284718819,
+              -0.000877238785643164
+            ],
+            "crop_center_px": [
+              225.73282442748092,
+              358.90330788804073
+            ]
+          }
+        },
+        "r3": {
+          "own_rgb": {
+            "path": "rgb/pair-75-coarse-fine-handoff-stationary-r1.jpg",
+            "sha256": "6f416e818e7913525a3bffe4bb56e86cf24851b4aaec21e46b667e7e37b3e04c"
+          },
+          "fine": {
+            "yaw": {
+              "ok": true,
+              "precision": "fine",
+              "ready": false,
+              "image_derived_error": -0.015317766069288958,
+              "reason": "visual_pose_command"
+            },
+            "lateral": {
+              "ok": true,
+              "precision": "fine",
+              "ready": true,
+              "image_derived_error": -0.000930977345556233,
+              "reason": "visual_pose_ready"
+            },
+            "forward": {
+              "ok": true,
+              "precision": "fine",
+              "ready": false,
+              "image_derived_error": 0.16698407322396444,
+              "reason": "visual_pose_command"
+            }
+          },
+          "recomputed_raw_top_rgb": {
+            "local_wheel_pixels": 498,
+            "heading": null,
+            "wheel_center_px": [
+              225.90963855421685,
+              166.97791164658634
+            ],
+            "image_error": [
+              0.052168043665829195,
+              0.0012194093428439523
+            ],
+            "crop_center_px": [
+              218.40733590733592,
+              166.84362934362935
+            ]
+          }
+        }
+      },
+      "six_fine_supported": true,
+      "all_fine_ready": false
+    },
+    {
+      "frame_id": 206,
+      "pair_capture_index": 76,
+      "canonical_top": {
+        "path": "rgb/pair-76-canonical-top.jpg",
+        "sha256": "15e81132489212dd6afb7c8f2feb5dbcd0762dd4f753de43dcf6f85edb4a4fa7"
+      },
+      "raw_top": {
+        "path": "rgb/pair-76-coarse-top.jpg",
+        "sha256": "13bf817134d16cb5a59abc475cb69fcae04cad93834f4df4c36eb1760824402a"
+      },
+      "slots": {
+        "r1": {
+          "own_rgb": {
+            "path": "rgb/pair-76-coarse-r3.jpg",
+            "sha256": "8acb6b290f15b82617a394c3008fb8736a3228ea21b3cd1710e7f824901b211b"
+          },
+          "fine": {
+            "yaw": {
+              "ok": true,
+              "precision": "fine",
+              "ready": true,
+              "image_derived_error": 0.002942845708323641,
+              "reason": "visual_pose_ready"
+            },
+            "lateral": {
+              "ok": true,
+              "precision": "fine",
+              "ready": false,
+              "image_derived_error": 0.018098050505062895,
+              "reason": "visual_pose_command"
+            },
+            "forward": {
+              "ok": true,
+              "precision": "fine",
+              "ready": false,
+              "image_derived_error": 0.17513810486808698,
+              "reason": "visual_pose_command"
+            }
+          },
+          "recomputed_raw_top_rgb": {
+            "local_wheel_pixels": 357,
+            "heading": {
+              "angle_deg": 0.0,
+              "wheel_pixels": 357,
+              "corner_pixels": [
+                68,
+                47,
+                111,
+                83
+              ]
+            },
+            "wheel_center_px": [
+              226.52100840336135,
+              358.078431372549
+            ],
+            "image_error": [
+              0.05503196376769964,
+              -0.00020946478899214194
+            ],
+            "crop_center_px": [
+              226.43250688705234,
+              358.55922865013775
+            ]
+          }
+        },
+        "r3": {
+          "own_rgb": {
+            "path": "rgb/pair-76-coarse-r1.jpg",
+            "sha256": "40fcca8d61b7c8b21b22cee872a86d6c9d6b239f49996412607261d4ce6b0356"
+          },
+          "fine": {
+            "yaw": {
+              "ok": true,
+              "precision": "fine",
+              "ready": false,
+              "image_derived_error": -0.015634530439248073,
+              "reason": "visual_pose_command"
+            },
+            "lateral": {
+              "ok": true,
+              "precision": "fine",
+              "ready": true,
+              "image_derived_error": -0.0005504744103166088,
+              "reason": "visual_pose_ready"
+            },
+            "forward": {
+              "ok": true,
+              "precision": "fine",
+              "ready": false,
+              "image_derived_error": 0.16664796850828312,
+              "reason": "visual_pose_command"
+            }
+          },
+          "recomputed_raw_top_rgb": {
+            "local_wheel_pixels": 502,
+            "heading": null,
+            "wheel_center_px": [
+              225.84462151394422,
+              166.79482071713147
+            ],
+            "image_error": [
+              0.05223576974944652,
+              0.0014737023004201544
+            ],
+            "crop_center_px": [
+              225.90963855421685,
+              166.97791164658634
+            ]
+          }
+        }
+      },
+      "six_fine_supported": true,
+      "all_fine_ready": false
+    }
+  ]
+}

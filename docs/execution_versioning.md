@@ -74,3 +74,5 @@ python3 -m harness.rgb_execution_bundle verify-registry --base origin/main
 - `rgb-standard-dispatch-v20`: solo carry에서 다음 RGB를 기다리는 동안 마지막 승인 이동 명령만 원본0.6초 TTL 및0.25초 lease 안에서 갱신한다. 만료 명령 재개·권한 상실·새 정지 판단 시 연장은 금지한다. .2초 판단 주기와 속도 정책은 유지하며 실제 완주는 새 고정 소스에서 별도 검증한다.
 
 - `rgb-standard-dispatch-v21`: v20의 solo TTL 갱신을 유지하고, 지원되는 RGB 정지 관측으로 coarse→fine 진입을 확인한다. 알려진 open 독립 상자 경로의 먼 구간 상한은 전진.12/측면.10이며 근거리 비례 감속·후진.05·최종 하역 판정·기존 모터 한도는 유지한다. 실제 완주와 시간은 별도 유한 검증한다.
+
+- `rgb-standard-dispatch-v22`: coarse 방향 추정 불가 시에도 충분한 바퀴 픽셀·화물·참조 RGB에서 독립적으로 관측된 전방 간격은 보존한다. coarse 명령은 계속 무효/정지이며, 더 정밀한 기존 yaw 포함6개 모델이 초기/새 정지 RGB 모두를 지원할 때만 별도 fine 진입을 허용한다. v21 실패와 새 물리 검증은 분리한다.

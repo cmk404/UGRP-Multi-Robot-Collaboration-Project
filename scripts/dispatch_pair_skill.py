@@ -98,14 +98,16 @@ def coordinated_coarse_commands(decisions):
 
 
 def _handoff_gaps(decisions):
-    """Require both finite, image-derived forward gaps inside the coarse band."""
+    """Only valid coarse or its exact heading dropout may supply RGB gaps."""
     gaps = {}
     if set(decisions) != set(ROBOTS):
         return None
     for r in ROBOTS:
         d = decisions[r]
         error = d.get('image_error')
-        if d.get('ok') is not True or not isinstance(error, (list, tuple)) or not error:
+        if (not (d.get('ok') is True or
+                 (d.get('ok') is False and d.get('reason')=='own_wheel_heading_unresolved'))
+                or not isinstance(error, (list, tuple)) or not error):
             return None
         try:
             gap = float(error[0])
@@ -395,8 +397,20 @@ class BoundPairSkill:
                 'coarse',lambda frames:predict_coarse(
                     frames,check_fine=handoff_available and not handoff_attempted))
             if self.coarse is not None:self.coarse=candidate
-            if not all(d['ok'] for d in decisions.values()):raise RuntimeError('coarse RGB model convention unresolved')
-            commands,coordination=coordinated_coarse_commands(decisions)
+            unresolved=[r for r in ROBOTS if decisions[r].get('ok') is not True]
+            gaps=_handoff_gaps(decisions)
+            if unresolved:
+                if not (handoff_available and not handoff_attempted
+                        and gaps is not None and supported(predictions)):
+                    self._hold_pair()
+                    raise RuntimeError('coarse RGB model convention unresolved')
+                # The coarse heading has no motion authority. Hold both while
+                # only the independent fine models can admit a stopped handoff.
+                commands={r:dict(forward=0.,left=0.,turn=0.) for r in ROBOTS}
+                coordination={'unresolved_heading':unresolved,'held_forward':list(ROBOTS),
+                              'forward_gap_px':{r:gaps[r]*960 for r in ROBOTS}}
+            else:
+                commands,coordination=coordinated_coarse_commands(decisions)
             report['coarse_calls'].append(decisions)
             self.calls.append({'kind':'coarse','decisions':decisions,'commands':commands,
                                'coordination':coordination})
@@ -406,7 +420,8 @@ class BoundPairSkill:
                          'observed_at_s':{r:frames[r]['observed_at_s'] for r in ROBOTS},
                          'images':{r:{'own':frames[r]['own_rgb'],'top':frames[r]['shared_top_rgb']}
                                    for r in ROBOTS},
-                         'coarse_decisions':decisions,'forward_gaps':_handoff_gaps(decisions),
+                         'coarse_decisions':decisions,'forward_gaps':gaps,
+                         'unresolved_heading_slots':unresolved,
                          'fine_predictions':predictions}
                 self.stop_dwell()
                 stationary,(checks,checked_coarse,checked_fine)=self.observe_and_compute(
@@ -416,8 +431,11 @@ class BoundPairSkill:
                 if fresh and self.coarse is not None:self.coarse=checked_coarse
                 gaps=_handoff_gaps(checks)
                 accepted=fresh and gaps is not None and supported(checked_fine)
+                stationary_unresolved=[r for r in ROBOTS if checks[r].get('ok') is not True]
                 evidence={'kind':'coarse_fine_handoff','coarse_index':index,
-                          'reason':('fine_supported_handoff' if accepted else
+                          'reason':(('fine_supported_heading_unresolved_handoff'
+                                     if unresolved or stationary_unresolved else 'fine_supported_handoff')
+                                    if accepted else
                                     'stationary_rgb_not_fresh' if not fresh else
                                     'stationary_coarse_gap_or_signature_outside_band' if gaps is None else
                                     'stationary_fine_support_missing'),
@@ -428,10 +446,15 @@ class BoundPairSkill:
                                                      'top':stationary[r].get('shared_top_rgb')}
                                                   for r in ROBOTS},
                                         'fresh':fresh,'coarse_decisions':checks,
-                                        'forward_gaps':gaps,'fine_predictions':checked_fine}}
+                                        'forward_gaps':gaps,
+                                        'unresolved_heading_slots':stationary_unresolved,
+                                        'fine_predictions':checked_fine}}
                 self.calls.append(evidence)
                 report['coarse_fine_handoff']=evidence
                 if accepted:break
+                if unresolved or stationary_unresolved:
+                    self._hold_pair()
+                    raise RuntimeError('coarse RGB model convention unresolved')
                 continue
             self.drive_mecanum(commands)
             if all(d['ready'] for d in decisions.values()):self.stop_dwell();break
