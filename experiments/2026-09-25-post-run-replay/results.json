@@ -1,0 +1,69 @@
+{
+ "schema": "ugrp.post_run_replay_check.v1",
+ "bundle": "rgb-standard-dispatch-v42",
+ "runs": {
+  "A-record": {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/post-run-replay-20260924/smoke-1",
+   "command": "bash scripts/open_simulation.command dispatch --headless --record-replay --plan-replay experiments/2026-09-22-parallel-transport/independent-plan.json --variant open --seed 11",
+   "source_sha": "40149354ab697ef02653c3807ffa7f4e5d2fbeb9",
+   "physical_success": true,
+   "protocol_complete": true,
+   "error": null,
+   "control_end_sim_s": 132.25999999860045,
+   "wall_s_informational": 235.59310708299745,
+   "obstacle_contact_steps": 0,
+   "replay": {
+    "dir": "/Users/changmin/projects/ugrp/outputs/post-run-replay-20260924/smoke-1/replay",
+    "frames": 3949,
+    "sim_end_s": 133.55824999856975,
+    "manifest_sha256": "43142a93088b0cf1d5ea20845597a4e8bb07882aabfed35eae3f3bb3e694fa5d"
+   },
+   "files_sha256": {
+    "result.json": "1d78e573cd321d063462529aab084c3b1410d76a0c16799cfedf8c09fd588106",
+    "issued-commands.json": "2de79d10691ffd4776bce4ae0800f8513bb77a2af35ec4221c0865b4c7f37811",
+    "pair-decisions.json": "bb252dd6b61b69ac6967c2554e45750046f60a7de2cd726ae70b3ff3e2529d1f",
+    "solo-decisions.json": "7a30a8e996b98a3e2739e6737f1fa4552aa649dd733b23b957845d3677606dd6",
+    "evaluation-only.json": "e852d37962c9174fa28756dbf64eda72771861621cee946875be28879c019cee"
+   }
+  },
+  "B-no-record": {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/post-run-replay-20260924/control-no-record",
+   "command": "bash scripts/open_simulation.command dispatch --headless --plan-replay experiments/2026-09-22-parallel-transport/independent-plan.json --variant open --seed 11",
+   "source_sha": "40149354ab697ef02653c3807ffa7f4e5d2fbeb9",
+   "physical_success": true,
+   "protocol_complete": true,
+   "error": null,
+   "control_end_sim_s": 132.25999999860045,
+   "wall_s_informational": 243.76994229201227,
+   "obstacle_contact_steps": 0,
+   "replay": null,
+   "files_sha256": {
+    "result.json": "cdb95d6bd20ff898916f97885415f2f1fff508e99f2cd69553621d4a8b4c4aea",
+    "issued-commands.json": "2de79d10691ffd4776bce4ae0800f8513bb77a2af35ec4221c0865b4c7f37811",
+    "pair-decisions.json": "5f6bc275d32136aa3a098fb33d7659d1848172a84174abb9e24fcdc0e28806f8",
+    "solo-decisions.json": "7a30a8e996b98a3e2739e6737f1fa4552aa649dd733b23b957845d3677606dd6",
+    "evaluation-only.json": "e852d37962c9174fa28756dbf64eda72771861621cee946875be28879c019cee"
+   }
+  }
+ },
+ "comparison": {
+  "issued_commands": "byte-identical",
+  "solo_decisions": "byte-identical",
+  "evaluation": "byte-identical",
+  "pair_decisions": "identical after removing wall-clock fields (only /wall_timing/pair_bind_wall_s differs)",
+  "control_end_sim_s": "132.26 both"
+ },
+ "native_replay": {
+  "host": "macOS mjpython",
+  "speed": 16,
+  "max_wall_s": 10,
+  "last_frame": 3948,
+  "frames": 3949,
+  "replay_size_mb": 6.3
+ },
+ "tensorboard": {
+  "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0925-post-run-replay",
+  "view_key": "post_run_replay_20260925"
+ },
+ "scope": "Viewer/recording check only: recording does not change control on this plan/seed; not a new task-success or speed claim. Control-end 132.26 SIM s differs from the 2026-09-24 126.26 baseline because main changed (source 2854fa4 -> 4014935); not attributed to replay."
+}
