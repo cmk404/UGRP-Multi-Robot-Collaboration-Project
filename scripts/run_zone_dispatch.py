@@ -265,6 +265,11 @@ def run(args):
         team.close(zone.time())
         result['referee'] = zc.referee(goal, config['static_map'], zone.box_positions())
         result['physical_success_teacher_condition'] = result['referee']['goal_met']
+        # Generic keys for the shared TensorBoard exporter; scope marks the condition.
+        result['success'] = result['physical_success_teacher_condition']
+        result['sim_s'] = result.get('makespan_sim_s')
+        result['scope'] = ('zone benchmark, TEACHER motion executor (ground truth drive/IK, real gripper, '
+                           'weld off): success is the referee goal count, not an RGB-skill result')
         result['sim_end_s'] = round(zone.time(), 2)
         result['wall_s'] = round(time.monotonic() - started, 2)
         result['jobs'] = own_jobs
