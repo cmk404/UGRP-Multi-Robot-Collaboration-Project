@@ -78,12 +78,17 @@ def box_delivery_route(static_map, dock, start_xy, *, beam_finished, top_jpeg=No
     if reserved_resources is not None:
         blocked = [r for r in map_goto.resource_regions(static_map)
                    if r not in reserved_resources and r != 'dispatch_apron']
-    route = plan_path(static_map, start_xy, predock_goal(static_map, dock), SOLO_CARRY_ENVELOPE,
+    # A delivered beam team leaves only the far-side entry: stage there and use
+    # the authored straight docking move. Otherwise A* plans to the slot itself.
+    goal = predock_goal(static_map, dock) if beam_finished else box_slot_goal(static_map, dock)
+    route = plan_path(static_map, start_xy, goal, SOLO_CARRY_ENVELOPE,
                       obstacles=obstacles, blocked_regions=blocked, escape_start_m=.05)
     if route is None:
         return None
     route['final_docking_m'] = box_slot_goal(static_map, dock)
-    route['final_docking_scope'] = 'existing authored straight docking move + RGB slot containment'
+    route['predock_used'] = bool(beam_finished)
+    route['final_docking_scope'] = ('existing authored straight docking move + RGB slot containment'
+                                    if beam_finished else 'A* segment to the slot + RGB slot containment')
     route['cargo_feature_plane_m'] = CARRY_PLANE_M
     return route
 
@@ -229,6 +234,9 @@ class MapGoToYield:
 
 def box_waypoints_px(route, static_map, shape):
     """A* waypoints on the lifted-cargo plane, then the authored floor docking target."""
-    points = [map_to_pixel(p, static_map, shape, height=CARRY_PLANE_M) for p in route['waypoints_m'][1:]]
+    carried = route['waypoints_m'][1:] if route['predock_used'] else route['waypoints_m'][1:-1]
+    points = [map_to_pixel(p, static_map, shape, height=CARRY_PLANE_M) for p in carried]
+    # The final target keeps the validated floor-plane projection; the RGB
+    # slot-containment check then decides the release as before.
     points.append(map_to_pixel(route['final_docking_m'], static_map, shape))
     return points

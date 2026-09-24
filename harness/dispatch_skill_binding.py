@@ -963,7 +963,7 @@ class ImageRoute:
     def _check_auto_deviation(self,jpeg,shape,center):
         from harness import dispatch_goto
         from harness.map_goto import pixel_to_map,CARRY_PLANE_M
-        if self.index>=len(self.points)-1:return  # final authored docking move
+        if self.index>=len(self.points)-1:return  # final docking target: containment check governs
         path=self.auto_route['waypoints_m']
         a=np.array(path[self.index]);b=np.array(path[self.index+1])
         xy=np.array(pixel_to_map(center,self.map,shape,height=CARRY_PLANE_M))

@@ -60,12 +60,18 @@ def test_astar_routes_the_loaded_box_around_the_island_inside_the_envelope():
     static = authored_map('shared_crossing')
     route = dispatch_goto.box_delivery_route(static, 'dock_a', BOX_START, beam_finished=True)
     assert route is not None and route['waypoints_m'][0] == BOX_START
-    assert route['waypoints_m'][-1] == dispatch_goto.predock_goal(static, 'dock_a')
+    assert route['waypoints_m'][-1] == dispatch_goto.predock_goal(static, 'dock_a') and route['predock_used']
     assert route['final_docking_m'] == [1.86, -1.34]
+    pixels = dispatch_goto.box_waypoints_px(route, static, (720, 960))
+    assert len(pixels) == len(route['waypoints_m'])  # carried waypoints + floor-plane slot target
+    early = dispatch_goto.box_delivery_route(static, 'dock_b', BOX_START, beam_finished=False,
+                                             fallback_beam_center=[-.18, -1.65])
+    assert early['waypoints_m'][-1] == [1.86, -2.66] and not early['predock_used']
+    assert len(dispatch_goto.box_waypoints_px(early, static, (720, 960))) == len(early['waypoints_m']) - 1
     dense_clear(static, route, SOLO_CARRY_ENVELOPE, [map_goto.beam_delivered_keepout(static, 'dock_a')])
     assert set(route['resources']) <= {'south_gate', 'north_gate', 'dispatch_apron'}
     assert route['plan_sha256'] == map_goto.digest({k: v for k, v in route.items()
-                                                    if k not in ('plan_sha256', 'final_docking_m',
+                                                    if k not in ('plan_sha256', 'final_docking_m', 'predock_used',
                                                                  'final_docking_scope', 'cargo_feature_plane_m')})
 
 
@@ -182,7 +188,8 @@ def test_feasibility_plans_the_box_from_rgb_and_checks_the_park_place():
     good = fixture_plan(dock='dock_a', route='south', navigation='planned', park={'xy_m': [-.75, -2.85]})
     report = inspect_routes(committed(good), static, RAW)
     auto = report['box_routes']['auto']
-    assert auto['feasible'] and auto['waypoints_m'][-1] == dispatch_goto.predock_goal(static, 'dock_a')
+    # The beam is not yet delivered, so A* plans to the slot target itself.
+    assert auto['feasible'] and auto['waypoints_m'][-1] == [1.86, -1.34]
     planned = report['planned_box_route']
     assert planned['resources_checked'] and planned['park']['feasible']
     assert planned['start_source'].startswith('current TOP RGB')
