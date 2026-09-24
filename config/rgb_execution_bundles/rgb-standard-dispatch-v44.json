@@ -1,9 +1,9 @@
 {
   "schema": "ugrp.rgb_execution_bundle.v1",
-  "id": "rgb-standard-dispatch-v43",
+  "id": "rgb-standard-dispatch-v44",
   "status": "experimental_unqualified",
   "adapter": "rgb_incremental_dispatch_v1",
-  "claim_scope": "Opt-in combination re-registered on v32: synchronous-only --fine-gain-schedule (v32) and realtime-open-only --rolling-visual-servo/--bounded-carrier-relink (v40, originally v29/v40 in PR #131/#137). All options default OFF; unqualified comparison candidate without inherited success from v29, v32 or v40. Adds v33 observer-only post-run native replay (PR #140); replay is never actor, controller or referee input. v43 adds opt-in --coordination dynamic (synchronous only): independent self-claims start without negotiation when consistent, conflicts fall back to peer negotiation, and supported pair-approach failures are resolved by a unanimous retry/abort decision of the affected carriers. Default plan_first unchanged.",
+  "claim_scope": "Opt-in combination re-registered on v32: synchronous-only --fine-gain-schedule (v32) and realtime-open-only --rolling-visual-servo/--bounded-carrier-relink (v40, originally v29/v40 in PR #131/#137). All options default OFF; unqualified comparison candidate without inherited success from v29, v32 or v40. Adds v33 observer-only post-run native replay (PR #140); replay is never actor, controller or referee input. v44 adds opt-in --coordination dynamic (synchronous only): independent self-claims start without negotiation when consistent, conflicts fall back to peer negotiation, and supported pair-approach failures are resolved by a unanimous retry/abort decision of the affected carriers. Default plan_first unchanged.",
   "effective": {
     "physics": {
       "contact_solver_profile": "legacy",
@@ -132,7 +132,7 @@
     "harness/rgb_communication_runtime.py": "bc55925100f897192ea0f7ddd9036ac4b974502290f8c7a2d0b48fa7e1481183",
     "harness/rgb_communication_scenarios.py": "a64dc3cb7c7b87f5ec812f56850b0d36b4db1ea93c0f53eb4dcbea2f1a1ea991",
     "harness/rgb_communication_study.py": "017cc11f13503c26c34649d26325e0659ee973f8ac313463fc5d78dfc7eef886",
-    "harness/rgb_execution_bundle.py": "16b9f9dd8f7957d53659941aa947767e2b60f4ad174e440dfc5aa9cbf814547e",
+    "harness/rgb_execution_bundle.py": "27bbb2cea8d742546a8765192dc4c26a182c259fdf30a608a8ad61220f57f8d2",
     "harness/rgb_execution_contract.py": "a9988e2a697dbb9df9f4171979e9578e0cb559e418487541374b460fe6b9cdee",
     "harness/rgb_execution_port.py": "bb2457c6fd5b7b582679d7bdbcd7aa870b5a5a8d104bdb9672da6c938c333db0",
     "harness/rgb_skill_execution.py": "93d5c657d1e19e75f904030e0b7ea1fe6629f43073764a9438c3930a696ead58",
