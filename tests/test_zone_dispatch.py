@@ -181,3 +181,21 @@ def test_teacher_arm_sequence_interpolates_issued_targets_in_order():
     for _, a in issued:
         last[a.get('servo_id', 6)] = a.get('pulse', a.get('pan_pulse'))
     assert last == {1: 1500, 3: 1340, 6: 1600} and arm.commanded[3] == 1340
+
+
+def test_fixture_claims_do_not_collide_and_leave_extra_robots_idle():
+    # dev-fixture-1 (2026-09-25): identical fixture claims collided three
+    # times and the run ended with no job. The fixture now ranks askers.
+    from scripts.run_zone_dispatch import _fixture_claim
+    labels = {'red-1': {'kind': 'red'}, 'red-2': {'kind': 'red'}, 'red-3': {'kind': 'red'},
+              'cyan-1': {'kind': 'cyan'}, 'green-1': {'kind': 'green'}}
+    for label in labels:
+        labels[label]['floor_xy_m'] = [0., 0.]
+    view = {'pickup_boxes_still_visible': sorted(labels), 'zone_counts_seen': {'A': {}, 'B': {}, 'C': {}}}
+    claims = {r: _fixture_claim(r, 'q', GOAL, labels, view, {}, ('r1', 'r2', 'r3'))['claim']
+              for r in ('r1', 'r2', 'r3')}
+    checked = zc.check_claims(claims, goal=GOAL, labels=labels, view=view, active={})
+    assert len(checked['accepted']) == 3 and not checked['collisions'] and not checked['invalid']
+    one_left = {'A': {'red': 1}}
+    claims = {r: _fixture_claim(r, 'q', one_left, labels, view, {}, ('r2', 'r3'))['claim'] for r in ('r2', 'r3')}
+    assert claims['r2']['box'] == 'red-1' and claims['r3'] == {'box': None, 'zone': None}
