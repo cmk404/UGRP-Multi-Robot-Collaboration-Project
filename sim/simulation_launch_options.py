@@ -12,7 +12,7 @@ from sim.session_scenes import catalog
 
 
 _SPEEDS = {0.5: "0.5", 1: "1", 2: "2", 4: "4"}
-_FIELDS = frozenset({"mode", "map", "speed", "model", "task"})
+_FIELDS = frozenset({"mode", "map", "speed", "model", "task", "coordination"})
 
 
 def dispatch_maps() -> list[str]:
@@ -67,13 +67,18 @@ def build_command(root: Path, selection: dict) -> list[str]:
         task = selection.get("task")
         if not isinstance(task, str) or not task.strip() or len(task) > 4000 or "\0" in task:
             raise ValueError("task: nonempty instruction up to 4000 characters required")
+        coordination = selection.get("coordination", "plan_first")
+        if coordination not in ("plan_first", "dynamic"):
+            raise ValueError("coordination: plan_first or dynamic")
+        extra = ["--coordination", "dynamic"] if coordination == "dynamic" else []
         return [*base, "dispatch", "--task", task, "--variant", map_id,
-                "--model", model, "--realtime-factor", speed]
+                "--model", model, "--realtime-factor", speed, *extra]
 
     if mode == "preview":
         if map_id not in preview_maps():
             raise ValueError("map: unregistered or file-backed scene")
-        if selection.get("model") not in (None, "") or selection.get("task") not in (None, ""):
+        if (selection.get("model") not in (None, "") or selection.get("task") not in (None, "")
+                or selection.get("coordination") not in (None, "plan_first")):
             raise ValueError("preview: model and task are unavailable")
         if not (Path(root) / "configs/simulation/local.json").is_file():
             raise ValueError("root: local simulation configuration is unavailable")

@@ -1252,6 +1252,45 @@ def grasp_transfer_options(skill):
             'top_roi': [12,6,20,19] if skill.get('task_domain') == 'dispatch_open_v1' else None}
 
 
+def _approach(pair,scene,team,task,args,result):
+    """Pair approach; in dynamic coordination a supported failure is discussed.
+
+    The affected carriers decide unanimously to retry (bounded back-off and a
+    fresh RGB approach) or abort. Plan-first coordination keeps fail-closed.
+    """
+    dynamic=getattr(args,'coordination','plan_first')=='dynamic'
+    retries=getattr(args,'approach_retries',2) if dynamic else 0
+    inject=dynamic and getattr(args,'diagnostic_fail_approach_once',False)
+    attempt=0
+    while True:
+        injected=False
+        try:
+            report=pair.approach()
+            if inject and attempt==0:
+                # The robots see a real controller stop reason, so the team's
+                # decision rests on its images; the injection is output-only.
+                injected=True
+                raise RuntimeError('coarse RGB approach budget exhausted')
+            return report
+        except RuntimeError as exc:
+            from harness.dynamic_coordination import consult,recoverable
+            if not dynamic or not recoverable(exc) or attempt>=retries:raise
+            pair._hold_pair();scene.step(.5)
+            frames=scene.capture(f'recovery-{attempt}')
+            participants=[scene.bindings.pair[slot] for slot in sorted(scene.bindings.pair)]
+            event={'event_id':f'approach-{attempt}','kind':'pair_approach_failure','stage':'APPROACH',
+                   'failure':{'reason':str(exc)},'participants':participants,
+                   'retries_left':retries-attempt}
+            decision,rounds=consult(team,participants,event,frames,scene.command_history,task,
+                                    scene.time(),turn=attempt)
+            result['coordination']['recoveries'].append({**event,'sim_time_s':scene.time(),
+                'diagnostic_injection':injected,'decision':decision,'rounds':rounds})
+            team.event('RECOVERY_DECISION',scene.time(),event_id=event['event_id'],decision=decision)
+            print(f'RECOVERY {event["event_id"]}: {decision}',flush=True)
+            if decision!='retry':raise RuntimeError(f'{exc}; team decided to abort') from exc
+            pair.back_off();attempt+=1
+
+
 def run(args):
     if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip():
         raise RuntimeError('commit and freeze source before a trial')
@@ -1399,11 +1438,24 @@ def run(args):
             model=getattr(args,'model','gemini-3.8-flash'),
             idle_callback=scene.native_view.poll if scene.native_view else None)
         scene.team=team;frames=scene.capture('planning')
-        result['phase']='NEGOTIATE'
-        result['plan_feasibility']=negotiate_executable(team,frames,scene.command_history,task,
-            scene.config['static_map'],scene.time(),max_tokens=args.max_input_tokens,
+        negotiation=dict(max_tokens=args.max_input_tokens,
             max_rounds=getattr(args,'planning_rounds',8),max_replans=getattr(args,'max_replans',2),
-            live_replan=getattr(args,'live_replan',False),identity=identity,reference_top=reference)
+            live_replan=getattr(args,'live_replan',False))
+        if getattr(args,'coordination','plan_first')=='dynamic':
+            # Start from independent self-claims; talk only on conflict/rejection.
+            from harness.dynamic_coordination import start as dynamic_start
+            result['phase']='CLAIM'
+            log=dynamic_start(team,frames,scene.command_history,task,scene.config['static_map'],
+                scene.time(),identity=identity,reference_top=reference,
+                required_dock=getattr(args,'required_dock',None),**negotiation)
+            result['plan_feasibility']=log.pop('feasibility')
+            result['coordination']={'mode':'dynamic','start':log,'recoveries':[]}
+            print('DYNAMIC START '+log['path'],flush=True)
+        else:
+            result['phase']='NEGOTIATE'
+            result['plan_feasibility']=negotiate_executable(team,frames,scene.command_history,task,
+                scene.config['static_map'],scene.time(),identity=identity,reference_top=reference,
+                **negotiation)
         scene.bindings=SkillBindings(team.agreement.committed,scene.config['static_map'],
                                     route_overlap=getattr(args,'route_overlap',False),
                                     auto_route_overlap=getattr(args,'auto_route_overlap',False),
@@ -1429,7 +1481,7 @@ def run(args):
         result['coarse_concurrent_alignment'].update(coarse_concurrency_status(
             pair,requested=scene.coarse_concurrent_alignment))
         while not scene.bindings.permission('beam','APPROACH'):scene.step(.2)
-        result['phase']='APPROACH';result['pair_approach']=pair.approach()
+        result['phase']='APPROACH';result['pair_approach']=_approach(pair,scene,team,task,args,result)
         while not scene.bindings.permission('beam','GRASP'):scene.step(.2)
         result['phase']='GRASP';result['pair_grasp']=pair.finish_grasp(predict_student,grasp)
         pair.grasp_report.pop('evaluation',None)

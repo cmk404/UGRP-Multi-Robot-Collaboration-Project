@@ -309,6 +309,12 @@ def main(argv=None):
                    help='experimental solo carry: finite current-RGB carrier revalidation across TOP cargo occlusion; requires rolling realtime open-map skill')
     p.add_argument('--fine-gain-schedule',action='store_true',
                    help='skills only, synchronous only: experimental far-field command schedule for paired fine RGB alignment; default off')
+    p.add_argument('--coordination',choices=('plan_first','dynamic'),default='plan_first',
+                   help='plan_first: negotiate one full plan before motion; dynamic: independent self-claims, '
+                        'talk only on conflict, and discuss supported approach failures (experimental)')
+    p.add_argument('--approach-retries',type=int,default=2,help='dynamic only: team-approved pair approach retries')
+    p.add_argument('--diagnostic-fail-approach-once',action='store_true',
+                   help='dynamic diagnostic: inject one approach failure after the first completed approach')
     p.add_argument('--planning-rounds',type=int,default=8)
     p.add_argument('--max-replans',type=int,default=2)
     p.add_argument('--rounds',type=int,default=24)
@@ -350,6 +356,12 @@ def main(argv=None):
         p.error('--bounded-carrier-relink requires --rolling-visual-servo')
     if args.rolling_view_recovery and not args.rolling_visual_servo:
         p.error('--rolling-view-recovery requires --rolling-visual-servo')
+    if args.coordination=='dynamic':
+        if args.executor!='skills' or args.plan_replay or args.realtime_control:
+            p.error('--coordination dynamic uses live skills planning, synchronous only, without --plan-replay')
+    if not 0<=args.approach_retries<=3:p.error('--approach-retries must be 0..3')
+    if args.diagnostic_fail_approach_once and args.coordination!='dynamic':
+        p.error('--diagnostic-fail-approach-once requires --coordination dynamic')
     if args.task and args.plan_replay:p.error('--task requires new planning; cannot change a replayed plan')
     if args.carry_act_model and not args.carry_act_python:p.error('ACT interpreter required')
     if args.carry_max_steps is not None and args.carry_max_steps<=0:p.error('positive carry-max-steps required')
