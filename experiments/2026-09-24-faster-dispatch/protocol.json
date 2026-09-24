@@ -127,5 +127,74 @@
     "aggregate_native_wall_s": 1800,
     "repeat_condition": "First physical+protocol success, wall below196.1036, all contact/weld/authority audits pass; identical clean committed source/assets.",
     "limit": "One open seed11 saved plan; no LLM calls or training; no further automatic candidate expansion."
+  },
+  "final_budget_record": {
+    "native_runs": [
+      {
+        "run": "native-v20-full",
+        "wall_s": 40.21062641699973,
+        "physical_success": false,
+        "protocol_complete": false
+      },
+      {
+        "run": "native-v21-full",
+        "wall_s": 25.27357337498688,
+        "physical_success": false,
+        "protocol_complete": false
+      },
+      {
+        "run": "native-v22-foreground",
+        "wall_s": 71.03117295799893,
+        "physical_success": false,
+        "protocol_complete": false
+      },
+      {
+        "run": "native-v22-full",
+        "wall_s": 158.78386712502106,
+        "physical_success": false,
+        "protocol_complete": false
+      },
+      {
+        "run": "native-v23-full",
+        "wall_s": 135.88860904198373,
+        "physical_success": false,
+        "protocol_complete": false
+      },
+      {
+        "run": "native-v24-full",
+        "wall_s": 220.34782145801,
+        "physical_success": true,
+        "protocol_complete": true
+      },
+      {
+        "run": "native-v25-full",
+        "wall_s": 194.18305620801402,
+        "physical_success": true,
+        "protocol_complete": true
+      },
+      {
+        "run": "native-v25-repeat",
+        "wall_s": 206.51240112501546,
+        "physical_success": true,
+        "protocol_complete": true
+      },
+      {
+        "run": "native-v26-full",
+        "wall_s": 187.9489868330129,
+        "physical_success": true,
+        "protocol_complete": true
+      },
+      {
+        "run": "native-v26-repeat",
+        "wall_s": 199.14402037500986,
+        "physical_success": false,
+        "protocol_complete": false
+      }
+    ],
+    "total_native_wall_s": 1439.3241349160526,
+    "aggregate_limit_s": 1800,
+    "new_llm_calls": 0,
+    "training_runs": 0,
+    "decision": "v26 repeat failure ends this qualification cohort. No automatic further trials. Preserve first success and repeat failure separately; no speed qualification."
   }
 }

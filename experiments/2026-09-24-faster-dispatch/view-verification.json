@@ -1,0 +1,38 @@
+{
+  "shared_view": "/Users/changmin/projects/ugrp/outputs/tensorboard-view.json",
+  "settings": {
+    "schema": "ugrp.tensorboard.performance.v1",
+    "active_logdir": "/Users/changmin/projects/ugrp/outputs/tensorboard",
+    "run_filter": "^(0923-실시간-진단/|0923-창속도-v7/완주$)",
+    "url": "http://127.0.0.1:6006/?pinnedCards=%5B%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Freported_success%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22claims%2Fprotocol_complete%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fwall_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fcommands%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fmodel_calls%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Fsimultaneous_loaded_motion_s%22%7D%5D&smoothing=0&runFilter=%5E%280923-%EC%8B%A4%EC%8B%9C%EA%B0%84-%EC%A7%84%EB%8B%A8%2F%7C0923-%EC%B0%BD%EC%86%8D%EB%8F%84-v7%2F%EC%99%84%EC%A3%BC%24%29#timeseries",
+    "pinned_tags": [
+      "evaluation/reported_success",
+      "claims/protocol_complete",
+      "result/wall_s",
+      "result/commands",
+      "result/model_calls",
+      "evaluation/simultaneous_loaded_motion_s"
+    ],
+    "hparams_visible_columns": [
+      "outcome",
+      "result/wall_s",
+      "result/commands",
+      "result/model_calls",
+      "claims/protocol_complete",
+      "evaluation/simultaneous_loaded_motion_s"
+    ],
+    "scope": "v19 saved-plan open seed11 grasp baseline2/2 wall200.929/196.104. v25 candidate2/2 mean200.348, not faster. v26 first complete187.949 but repeat TOP RGB tracking failure199.144,1/2 not speed-qualified. All failed earlier candidates preserved; never average aborted runs as completion time.",
+    "unavailable_metrics": {
+      "execution/model_latency_s": "Saved plan; no external model inference"
+    },
+    "ui_verified": true,
+    "ui_verified_through": "v26-repeat",
+    "ui_verification_scope": "Actual native TensorBoard six configured HParams columns retained. v25 full True194.18/commands1379/model0/protocol1/loaded9.5; repeat True206.51/1476/0/1/10.5. v26 full True187.95/1292/0/1/3.6; repeat False199.14/1358/0/0/0. All six Time Series cards show Unpin state; smoothing0 retained in saved link. v20 nested ghost label remains cached only; do not count as another run.",
+    "ui_verified_at": "2026-09-24T08:29:11.777547+00:00"
+  },
+  "video_decode": {
+    "v26-full": "ffmpeg -v error full decode exit0",
+    "v26-repeat": "ffmpeg -v error full decode exit0"
+  },
+  "media_scope": "raw local MP4 registered in native TensorBoard Text; no remote backup"
+}
