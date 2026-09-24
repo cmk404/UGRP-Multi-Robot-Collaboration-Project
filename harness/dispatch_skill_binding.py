@@ -502,8 +502,19 @@ class ImageRoute:
         if slot_evidence is not None:evidence['destination_region']=slot_evidence
         if ready and self.confirmations>=2 and not done:
             self.index+=1;self.confirmations=0
-        control=np.clip(error*.002,-.08,.08)
+        # More authority only on the known independent open-map box route.
+        # The same proportional gain decelerates near every waypoint; final
+        # silhouette containment keeps its original cap and stop criteria.
+        cruise=(self.obj=='box' and self.route_overlap
+                and self.map.get('map_id')=='dispatch_open'
+                and not self.map.get('terrain')
+                and all(o.get('id') in {'wall_north','wall_south','wall_west','wall_east'}
+                        for o in self.map.get('obstacles',[]))
+                and evidence['waypoint_index']<len(self.points)-1)
+        limits=np.array([.12,.10]) if cruise else np.array([.08,.08])
+        control=np.clip(error*.002,-limits,limits)
         control[0]=max(-.05,control[0])
+        if cruise:evidence['cruise_command_limits']={'forward':.12,'left':.10,'reverse':.05}
         if ready:control[:]=0
         else:
             for i in range(2):

@@ -62,5 +62,18 @@
   "limits": [
     "One known saved plan/open map/seed only",
     "No new LLM communication or physical robot generalization"
-  ]
+  ],
+  "review_after_v20": {
+    "source_sha": "9b846e7",
+    "outcome": "APPROACH coarse budget failure; no solo carry/renewal ran",
+    "wall_s": 40.21062641699973,
+    "evidence": "audit-v20-full.json and coarse-handoff-diagnosis.json",
+    "decision": "v20 renewal performance unmeasured. Use remaining two full trials for v21 combined candidate and same-source repeat if first passes. Total maximum remains3; no repeat of failed v20.",
+    "v21_changes": [
+      "Bounded stationary RGB-supported coarse-to-fine handoff, retain final fine/physical criteria",
+      "Box farcruise forward .12/lateral .10 within existing port limits",
+      "Retain v20 original-TTL solo renewal"
+    ],
+    "qualification_limit": "Cannot isolate performance contribution of each v21 change from this cohort; compare whole mission and phase time only."
+  }
 }

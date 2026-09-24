@@ -21,6 +21,7 @@ import time
 import numpy as np
 
 COARSE_LEAD_LIMIT_PX = 16.
+COARSE_FINE_HANDOFF_GAP = .065
 # Open approach renews one moving command across its usual RGB refresh gap.
 # Zero/dwell stays settled; the port's .25s max and capture-time .6s TTL cap it.
 OPEN_APPROACH_RENEWAL_LEASE_S = .25
@@ -94,6 +95,44 @@ def coordinated_coarse_commands(decisions):
     return commands, {'forward_gap_px': {r: gaps[r] * 960 for r in ROBOTS},
                       'lead_limit_px': COARSE_LEAD_LIMIT_PX,
                       'alignment_in_progress': aligning, 'held_forward': held_forward}
+
+
+def _handoff_gaps(decisions):
+    """Require both finite, image-derived forward gaps inside the coarse band."""
+    gaps = {}
+    if set(decisions) != set(ROBOTS):
+        return None
+    for r in ROBOTS:
+        d = decisions[r]
+        error = d.get('image_error')
+        if d.get('ok') is not True or not isinstance(error, (list, tuple)) or not error:
+            return None
+        try:
+            gap = float(error[0])
+        except (TypeError, ValueError):
+            return None
+        if not math.isfinite(gap) or gap > COARSE_FINE_HANDOFF_GAP:
+            return None
+        gaps[r] = gap
+    return gaps
+
+
+def _fresh_handoff_frames(before, after):
+    """The stopped pair must be seen together in a strictly newer RGB batch."""
+    try:
+        old = [before[r] for r in ROBOTS]
+        new = [after[r] for r in ROBOTS]
+        old_ids = [int(f['frame_id']) for f in old]
+        new_ids = [int(f['frame_id']) for f in new]
+        old_times = [float(f['observed_at_s']) for f in old]
+        new_times = [float(f['observed_at_s']) for f in new]
+    except (KeyError, TypeError, ValueError, OverflowError):
+        return False
+    return (old_ids[0] == old_ids[1] and new_ids[0] == new_ids[1]
+            and new_ids[0] > old_ids[0]
+            and all(math.isfinite(t) for t in old_times + new_times)
+            and old_times[0] == old_times[1] and new_times[0] == new_times[1]
+            and new_times[0] > old_times[0])
 
 
 class BoundPairSkill:
@@ -319,8 +358,27 @@ class BoundPairSkill:
 
     def approach(self):
         report={'coarse_calls':[]}
+        # The extra admission is confined to the live open map and may stop
+        # for one stationary probe only. It does not change the coarse budget
+        # or any of the seven learned alignment phases that follow.
+        handoff_available=(getattr(self.io,'realtime_control',False)
+                           and self.bindings.static_map.get('map_id')=='dispatch_open'
+                           and not self.bindings.cluttered
+                           and not self.bindings.static_map.get('terrain')
+                           and all(o.get('id') in {'wall_north','wall_south','wall_west','wall_east'}
+                                   for o in self.bindings.static_map.get('obstacles',[])))
+        handoff_attempted=False
+        def fine_support(frames):
+            return {r:{axis:predict_stage(self.stage_models[r][axis],
+                        frames[r]['own_bytes'],frames[r]['top_bytes'])
+                       for axis in ('yaw','lateral','forward')} for r in ROBOTS}
+        def supported(predictions):
+            return (predictions is not None and all(
+                predictions[r][axis].get('ok') is True
+                and predictions[r][axis].get('precision')=='fine'
+                for r in ROBOTS for axis in ('yaw','lateral','forward')))
         for index in range(120):
-            def predict_coarse(frames):
+            def predict_coarse(frames, *, check_fine=False, require_not_ready=True):
                 candidate=(copy.deepcopy(self.coarse) if getattr(self.io,'realtime_control',False)
                            else self.coarse)
                 raw=(frames['r1']['raw_top_bytes'] if frames else
@@ -329,14 +387,52 @@ class BoundPairSkill:
                               if candidate is not None else
                               coarse_approach(frames[r]['top_bytes'],self.reference,r))
                            for r in ROBOTS}
-                return decisions,candidate
-            frames,(decisions,candidate)=self.observe_and_compute('coarse',predict_coarse)
+                predictions=(fine_support(frames) if check_fine and _handoff_gaps(decisions) is not None
+                             and (not require_not_ready or not all(d['ready'] for d in decisions.values()))
+                             else None)
+                return decisions,candidate,predictions
+            frames,(decisions,candidate,predictions)=self.observe_and_compute(
+                'coarse',lambda frames:predict_coarse(
+                    frames,check_fine=handoff_available and not handoff_attempted))
             if self.coarse is not None:self.coarse=candidate
             if not all(d['ok'] for d in decisions.values()):raise RuntimeError('coarse RGB model convention unresolved')
             commands,coordination=coordinated_coarse_commands(decisions)
             report['coarse_calls'].append(decisions)
             self.calls.append({'kind':'coarse','decisions':decisions,'commands':commands,
                                'coordination':coordination})
+            if predictions is not None and supported(predictions):
+                handoff_attempted=True
+                initial={'frame_ids':{r:frames[r]['frame_id'] for r in ROBOTS},
+                         'observed_at_s':{r:frames[r]['observed_at_s'] for r in ROBOTS},
+                         'images':{r:{'own':frames[r]['own_rgb'],'top':frames[r]['shared_top_rgb']}
+                                   for r in ROBOTS},
+                         'coarse_decisions':decisions,'forward_gaps':_handoff_gaps(decisions),
+                         'fine_predictions':predictions}
+                self.stop_dwell()
+                stationary,(checks,checked_coarse,checked_fine)=self.observe_and_compute(
+                    'coarse-fine-handoff-stationary',
+                    lambda frames:predict_coarse(frames,check_fine=True,require_not_ready=False))
+                fresh=_fresh_handoff_frames(frames,stationary)
+                if fresh and self.coarse is not None:self.coarse=checked_coarse
+                gaps=_handoff_gaps(checks)
+                accepted=fresh and gaps is not None and supported(checked_fine)
+                evidence={'kind':'coarse_fine_handoff','coarse_index':index,
+                          'reason':('fine_supported_handoff' if accepted else
+                                    'stationary_rgb_not_fresh' if not fresh else
+                                    'stationary_coarse_gap_or_signature_outside_band' if gaps is None else
+                                    'stationary_fine_support_missing'),
+                          'initial':initial,
+                          'stationary':{'frame_ids':{r:stationary[r].get('frame_id') for r in ROBOTS},
+                                        'observed_at_s':{r:stationary[r].get('observed_at_s') for r in ROBOTS},
+                                        'images':{r:{'own':stationary[r].get('own_rgb'),
+                                                     'top':stationary[r].get('shared_top_rgb')}
+                                                  for r in ROBOTS},
+                                        'fresh':fresh,'coarse_decisions':checks,
+                                        'forward_gaps':gaps,'fine_predictions':checked_fine}}
+                self.calls.append(evidence)
+                report['coarse_fine_handoff']=evidence
+                if accepted:break
+                continue
             self.drive_mecanum(commands)
             if all(d['ready'] for d in decisions.values()):self.stop_dwell();break
         else:raise RuntimeError('coarse RGB approach budget exhausted')
