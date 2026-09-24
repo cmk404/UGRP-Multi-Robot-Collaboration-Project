@@ -1,0 +1,56 @@
+{
+  "status": "development_diagnosis_only_no_v41_physical_claim",
+  "frozen_v40_source": "0828988b65f34e4e77301cc86f6476e1eb8e359f",
+  "comparison": {
+    "v40": {
+      "raw_path": "/Users/changmin/projects/ugrp/outputs/dispatch-cargo-recovery-20260924/original-candidate-diagnostic-1",
+      "solo_decisions_sha256": "73ed41df42ba4e2830a96c1204c9a70fa1c9aedee64a202a7fb09f4e5fdc75f1",
+      "issued_commands_sha256": "a7db6b2f47776d579d1f9a3b8ea0dab4a1fc9bdeb834ced38790cad52fffabb9",
+      "approach_decisions": 474,
+      "weak_direct_rejections": 365,
+      "accepted_rolling_drive_decisions": 40,
+      "final_entry_handoffs": 13,
+      "weak_streak": {
+        "first_index": 13,
+        "last_index": 377,
+        "first_sim_time_s": 14.54799999998877,
+        "last_sim_time_s": 146.25799999826944,
+        "count": 365
+      },
+      "same_own_rgb_plateau": {
+        "first_index": 14,
+        "last_index": 316,
+        "count": 303,
+        "first_sim_time_s": 14.876499999988004,
+        "last_sim_time_s": 121.89899999884544,
+        "own_sha256": "39f3b422c54177ce1eca7e9947ae47728d230cb05e8069cdb75ddfd6ff1aff1c"
+      },
+      "rolling_wire_gap": {
+        "last_prior_valid_until_s": 13.095749999993552,
+        "next_issued_at_s": 146.55749999826236,
+        "gap_s": 133.4617499982688
+      },
+      "result_sha256": "dd6d9114504bf59c011b0ea103e782f0ec417d8b5999eaa1b2d1a5c2355f122a"
+    },
+    "v29": {
+      "raw_path": "/Users/changmin/projects/ugrp/outputs/dispatch-rolling-servo-20260924/original-rolling-diagnostic-1",
+      "solo_decisions_sha256": "32b570a688127f3090c45105c8b0d790c59381c549a4812202c1fa76dc4793d9",
+      "issued_commands_sha256": "545f00ca9be6b9bb00bb85703087b045254178f4c950dd9f93a4abe6ebdbae87",
+      "approach_decisions": 104,
+      "weak_direct_rejections": 1,
+      "accepted_rolling_drive_decisions": 42,
+      "final_entry_handoffs": 13
+    }
+  },
+  "saved_own_rgb_reobservation": {
+    "strong_solo_index": 12,
+    "weak_solo_index": 13,
+    "source": "tests/fixtures/rolling_view_recovery/manifest.json and unmodified markerless_box.observe_ground_box",
+    "note": "Confidences are detector replay from saved own JPEGs and issued PWM, not GT; numerical rounding shown.",
+    "strong_confidence_rounded_3dp": 0.82,
+    "weak_confidence_rounded_3dp": 0.689,
+    "weak_projection_iou_rounded_3dp": 0.748
+  },
+  "cause": "VisualBoxSkill retains a visible low-confidence RGB target and repeatedly proposes forward drive, while rolling owner requires confidence >=0.75 and holds wheels. Same stopped own RGB recurs until external visual change; bounded active observation is a new untested candidate.",
+  "boundary": "The v40 carrier relink acts in carry/release, not solo approach. v29/v40 differences are observational trajectory divergence; do not attribute physical speed or success to the new recovery until a frozen finite cohort."
+}
