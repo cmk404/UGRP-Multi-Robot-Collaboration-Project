@@ -9,6 +9,7 @@ import numpy as np
 from harness.camera_goal_transport import decode
 from harness.visual_box_skill import VisualBoxSkill, SEARCH
 from harness.three_robot_mission import GOALS
+from harness.dispatch_skill_binding import ImageRoute
 
 
 def normalize_own_rgb(observation):
@@ -121,7 +122,15 @@ class SoloBoxTransport:
             return action, features
         if self.box.phase == 'carry':
             if self.navigator is not None:
-                action, features = self.navigator.observe(top_jpeg)
+                # A cargo-occlusion fallback may use TOP robot motion only for
+                # this same observation, after the own-camera carry guard has
+                # accepted and stored its exact current image.
+                if isinstance(self.navigator, ImageRoute):
+                    attachment=(self.box.last_attachment,own['image'],
+                                self.box._carry_previous_image)
+                    action, features = self.navigator.observe(top_jpeg,own_attachment=attachment)
+                else:
+                    action, features = self.navigator.observe(top_jpeg)
                 if features['done']:
                     self.box.phase = 'release'
                     return {'kind':'wait','duration':.1}, features
