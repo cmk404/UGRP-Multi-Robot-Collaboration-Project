@@ -10,11 +10,12 @@ from harness.carry_input_history import decode_request
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--model-dir', type=Path, required=True)
+    p.add_argument('--torch-threads', type=int, choices=(1, 2), default=2)
     a = p.parse_args()
     import torch
     from harness.carry_input_act import InputCarryAct
-    torch.set_num_threads(2)
-    actor = InputCarryAct.load(a.model_dir)
+    torch.set_num_threads(a.torch_threads)
+    actor = InputCarryAct.load(a.model_dir, cache_features=True)
     print(json.dumps({'ready': True, 'history': actor.history}), flush=True)
     for line in sys.stdin:
         try:

@@ -48,6 +48,13 @@ REALTIME_CAPTURE_OVERLAP_S=.02
 SOLO_ACTIVE_SIM_BUDGET_S=300.
 
 
+def fast_servo_map_supported(static_map, *, realtime_control):
+    boundaries={'wall_north','wall_south','wall_west','wall_east'}
+    return bool(realtime_control and static_map.get('map_id')=='dispatch_open'
+                and not static_map.get('terrain')
+                and all(item.get('id') in boundaries for item in static_map.get('obstacles',[])))
+
+
 class SkillScene(DispatchScene):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
@@ -301,7 +308,12 @@ class SkillScene(DispatchScene):
         # This helper reads its issued-command cache, not measured joints.
         self.world._team_joint_move_servos(targets,duration,settle_s=settle)
     def start_solo(self):
-        self.solo=SoloBoxTransport(robot_id=self.bindings.solo,navigator=ImageRoute(self.bindings,'box'),attachment_min_saturation=150,release_refine_ground_fit=True)
+        authored=self.bindings.static_map
+        fast_servo=fast_servo_map_supported(authored,realtime_control=self.realtime_control)
+        self.solo=SoloBoxTransport(robot_id=self.bindings.solo,
+            navigator=ImageRoute(self.bindings,'box',time_aware_box_reacquisition=fast_servo),
+            attachment_min_saturation=150,release_refine_ground_fit=True,
+            fast_near_field_servo=fast_servo)
         self.solo_executor=VisualMacroExecutor(self.ports[self.bindings.solo],
             log_callback=self.solo_raw.append,drive_settle_by_phase={'carry':0.})
         self.solo_started=None
@@ -389,7 +401,8 @@ class SkillScene(DispatchScene):
             'input_transform':input_transform,
             'phase_before':before,'phase_after':self.solo.phase,'observation':{k:v for k,v in obs.items() if k!='image'},
             'images':refs,'action':action,'top_evidence':evidence,
-            'own_attachment_evidence':copy.deepcopy(self.solo.box.last_attachment)})
+            'own_attachment_evidence':copy.deepcopy(self.solo.box.last_attachment),
+                'approach_adjustment':copy.deepcopy(getattr(self.solo.box,'last_approach_adjustment',None))})
         if self.video:self.video.stage='PAIR '+self.pair_phase+' | '+self.bindings.solo+' '+self.solo.phase
         if action['kind']=='mecanum':
             self.raw(self.bindings.solo,action,'TRANSIT');self.solo_lease=now+action['duration_s']
@@ -576,6 +589,7 @@ class SkillScene(DispatchScene):
                     'images':result['images'],
                     'action':action,'top_evidence':evidence,
                     'own_attachment_evidence':copy.deepcopy(candidate.box.last_attachment),
+                    'approach_adjustment':copy.deepcopy(getattr(candidate.box,'last_approach_adjustment',None)),
                     'carry_visual_refreshed':vision_refreshed,
                     'guard_previous_observed_at_s':previous_guard_at,
                     'guard_observation_gap_s':(
@@ -600,7 +614,8 @@ class SkillScene(DispatchScene):
                 'phase_after':self.solo.phase,
                 'observation':{k:v for k,v in obs.items() if k!='image'},
                 'images':result['images'],'action':action,'top_evidence':evidence,
-                'own_attachment_evidence':copy.deepcopy(self.solo.box.last_attachment)}
+                'own_attachment_evidence':copy.deepcopy(self.solo.box.last_attachment),
+                'approach_adjustment':copy.deepcopy(getattr(self.solo.box,'last_approach_adjustment',None))}
             if action['kind']=='mecanum':
                 if moving_carry:
                     effective=self._issue_realtime_motor(

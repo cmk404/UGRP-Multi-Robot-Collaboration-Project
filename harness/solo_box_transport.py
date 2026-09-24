@@ -60,7 +60,8 @@ def solo_top_features(jpeg):
 
 class SoloBoxTransport:
     """Skill-bound curriculum, not a general route planner or raw-action LLM."""
-    def __init__(self, goal=None, *, robot_id='r2', navigator=None, attachment_min_saturation=65, release_refine_ground_fit=False):
+    def __init__(self, goal=None, *, robot_id='r2', navigator=None, attachment_min_saturation=65,
+                 release_refine_ground_fit=False, fast_near_field_servo=False):
         if robot_id not in ('r1','r2','r3'):
             raise ValueError('unknown solo robot')
         if navigator is None and goal not in GOALS:
@@ -69,7 +70,8 @@ class SoloBoxTransport:
         self.navigator = navigator
         self.box = VisualBoxSkill(task='external_navigation', robot_id=robot_id,
                                   attachment_home_reference='previous_endpoint',attachment_min_saturation=attachment_min_saturation,
-                                  release_refine_ground_fit=release_refine_ground_fit)
+                                  release_refine_ground_fit=release_refine_ground_fit,
+                                  fast_near_field_servo=fast_near_field_servo)
         self.initialized = False
         self.target = None
         self.done = False
@@ -128,7 +130,10 @@ class SoloBoxTransport:
                 if isinstance(self.navigator, ImageRoute):
                     attachment=(self.box.last_attachment,own['image'],
                                 self.box._carry_previous_image)
-                    action, features = self.navigator.observe(top_jpeg,own_attachment=attachment)
+                    action, features = self.navigator.observe(
+                        top_jpeg, own_attachment=attachment,
+                        observed_at_s=own.get('sim_time'), frame_id=own.get('frame_id'),
+                        own_sha256=own.get('sha256'))
                 else:
                     action, features = self.navigator.observe(top_jpeg)
                 if features['done']:

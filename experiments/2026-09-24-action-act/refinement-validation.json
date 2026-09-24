@@ -1,0 +1,38 @@
+{
+  "schema": "ugrp.refinement_preflight.v1",
+  "recorded_at_utc": "2026-09-24T11:09:06.189842+00:00",
+  "parent_source_sha": "12f8e6dda76e39b3ec612f247deb4835a2ff50bc",
+  "bundle_id": "rgb-standard-dispatch-v28",
+  "bundle_sha256": "3414ab8c93995bf8692f71ce4205fb17dd05698c10efc1edab97ae5c81775d25",
+  "checks": [
+    {
+      "scope": "Root integrated bundle/map wiring/ACT realtime+parallel/saved inputs/TensorBoard export",
+      "result": "83 passed in11.80s"
+    },
+    {
+      "scope": "Sol visual approach/reacquisition and existing RGB regressions",
+      "result": "161 passed,1 skipped in3.74s"
+    },
+    {
+      "scope": "Root actual ACT cache/model output/training gradient and checkpoint regressions",
+      "result": "7 passed in2.36s; cache post-load invalidation follow-up2 passed in1.75s"
+    },
+    {
+      "scope": "Sol parallel ownership/owner-abort/timeout/headroom and legacy temporal/realtime",
+      "result": "40 passed in0.44s"
+    },
+    {
+      "scope": "Sol saved ACT and exporter unknown-accounting",
+      "result": "49 passed in3.06s"
+    },
+    {
+      "scope": "Bundle source hashes and immutable registry against origin/codex/dispatch-action-act",
+      "result": "passed"
+    },
+    {
+      "scope": "Root standard simulation workflow manager registration and process/input records",
+      "result": "17 passed in1.08s"
+    }
+  ],
+  "scope": "Static/unit/saved-RGB tests only. Test groups overlap and are not summed. No v28 physical success or actual inference latency claim."
+}

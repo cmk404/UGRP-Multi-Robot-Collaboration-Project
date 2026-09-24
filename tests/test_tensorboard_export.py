@@ -75,6 +75,25 @@ def test_training_roundtrip_preserves_steps_and_labels_export_time(tmp_path,expo
     with pytest.raises(FileExistsError): convert(src,tmp_path/'export')
 
 
+def test_deployment_objective_keeps_loss_parts_and_failed_selection(tmp_path,export_api):
+    convert,EA=export_api
+    src=tmp_path/'source';src.mkdir()
+    put(src,'report.json',{'progress':[{'step':500,'loss':.6,
+        'loss_components':{'act_total':.1,'weighted_deployed_done':.5},
+        'selection_eligible':False}], 'complete':True,
+        'deployed_done_objective':{'weight':1.,'runtime_score_threshold':.65},
+        'first_batch_deployed_done':{'action_head_done_gradient_norm':.2},
+        'selected_checkpoint_eligible':False})
+    convert(src,tmp_path/'export')
+    ea=EA(str(tmp_path/'export')).Reload()
+    assert ea.Scalars('training/loss_components/act_total')[0].value==pytest.approx(.1)
+    assert ea.Scalars('training/loss_components/weighted_deployed_done')[0].value==pytest.approx(.5)
+    assert [(x.step,x.value) for x in ea.Scalars('development/checkpoint_eligible')]==[(500,0.)]
+    assert 'evaluation/reported_success' not in ea.Tags()['scalars']
+    text=ea.Tensors('training/deployed_objective')[0].tensor_proto.string_val[0].decode()
+    assert 'selected_checkpoint_eligible' in text and 'false' in text.lower()
+
+
 def test_failed_evaluation_remains_failed_despite_done_claim(tmp_path,export_api):
     convert,EA=export_api;src=tmp_path/'source';src.mkdir()
     put(src,'result.json',{'success':False,'stop_reason':'RGB_goal_confirmed','protocol_complete':True,
@@ -190,7 +209,8 @@ def test_dispatch_counts_local_responses_commands_and_latency(tmp_path,export_ap
     convert,EA=export_api;src=tmp_path/'source';src.mkdir()
     put(src,'result.json',{'physical_success':False,'llm_calls':2})
     put(src,'pair-decisions.json',[{'kind':'act_carry',
-        'inputs':{'r1':{'inference_wall_s':.04},'r3':{'inference_wall_s':.06}},
+        'inputs':{'r1':{'inference_wall_s':.04,'wire_sha256':'a'*64},
+                  'r3':{'inference_wall_s':.06,'wire_sha256':'b'*64}},
         'decisions':{'r1':{'done':False},'r3':{'done':True}}}])
     put(src,'issued-commands.json',{'r1':[
         {'stage':'SETUP','issued_servo_targets':{'1':2000}},
@@ -212,13 +232,13 @@ def test_dispatch_counts_stale_act_predictions_without_issuing_them(tmp_path,exp
     put(src,'pair-decisions.json',[
         {'kind':'act_stale_capture','frame_id':1,'observed_at_s':1.},
         {'kind':'act_stale_prediction','index':0,'received_at_s':2.,
-         'inputs':{'r1':{'physical_robot_id':'r1','inference_wall_s':.08},
-                   'r3':{'physical_robot_id':'r3','inference_wall_s':.09}},
+         'inputs':{'r1':{'physical_robot_id':'r1','inference_wall_s':.08,'wire_sha256':'a'*64},
+                   'r3':{'physical_robot_id':'r3','inference_wall_s':.09,'wire_sha256':'b'*64}},
          'decisions':{'r1':{'done':True,'action':{'forward':.1}},
                       'r3':{'done':False,'action':{'forward':.1}}}},
         {'kind':'act_carry','index':0,'sim_time_s':2.2,
-         'inputs':{'r1':{'physical_robot_id':'r1','inference_wall_s':.04},
-                   'r3':{'physical_robot_id':'r3','inference_wall_s':.05}},
+         'inputs':{'r1':{'physical_robot_id':'r1','inference_wall_s':.04,'wire_sha256':'c'*64},
+                   'r3':{'physical_robot_id':'r3','inference_wall_s':.05,'wire_sha256':'d'*64}},
          'decisions':{'r1':{'done':False,'action':{'forward':.02}},
                       'r3':{'done':False,'action':{'forward':.02}}}}])
     manifest=convert(src,tmp_path/'export',max_images=0)
@@ -259,6 +279,25 @@ def test_dispatch_counts_partial_inference_error_as_attempt(tmp_path,export_api)
     assert EA(str(tmp_path/'export-incomplete')).Reload().Scalars('result/model_calls')[0].value==1
 
 
+def test_dispatch_owner_abort_keeps_unconfirmed_slots_out_of_model_calls(tmp_path,export_api):
+    convert,EA=export_api;src=tmp_path/'source';src.mkdir()
+    put(src,'result.json',{'physical_success':False,'llm_calls':0,'model_calls':2})
+    put(src,'pair-decisions.json',[{'kind':'act_inference_error','index':0,
+        'discard_reason':'owner_aborted','worker_completion':'timeout',
+        'owner_error':'RuntimeError: box lost','unconfirmed_slots':['r3'],
+        'inputs':{'r1':{'physical_robot_id':'r1','wire_sha256':'a'*64,
+                        'response_received':True,'inference_wall_s':.04}},
+        'decisions':{'r1':{'done':False}}}])
+    manifest=convert(src,tmp_path/'export',max_images=0)
+    ea=EA(str(tmp_path/'export')).Reload()
+    assert ea.Scalars('result/model_calls')[0].value==1
+    assert ea.Scalars('execution/act_unconfirmed_slots')[0].value==1
+    assert manifest['metadata']['reported_model_calls']==2
+    assert manifest['metadata']['unconfirmed_act_slots']==1
+    assert manifest['metadata']['act_request_verification_complete'] is False
+    assert ea.Tags()['tensors'].count('inference_errors/unconfirmed_slots')==1
+
+
 def test_configured_act_does_not_invent_responses_or_latency(tmp_path,export_api):
     convert,EA=export_api;src=tmp_path/'source';src.mkdir()
     put(src,'result.json',{'physical_success':False,'llm_calls':0,
@@ -273,10 +312,14 @@ def test_configured_act_does_not_invent_responses_or_latency(tmp_path,export_api
 def test_explicit_dispatch_total_is_not_counted_twice(tmp_path,export_api):
     convert,EA=export_api;src=tmp_path/'source';src.mkdir()
     put(src,'result.json',{'model_calls':3,'commands':7,'llm_calls':1})
-    put(src,'pair-decisions.json',[{'kind':'act_carry','decisions':{'r1':{'done':False}}}])
-    convert(src,tmp_path/'export',max_images=0)
+    put(src,'pair-decisions.json',[{'kind':'act_carry',
+        'inputs':{'r1':{'wire_sha256':'a'*64},'r3':{'wire_sha256':'b'*64}},
+        'decisions':{'r1':{'done':False},'r3':{'done':False}}}])
+    manifest=convert(src,tmp_path/'export',max_images=0)
     ea=EA(str(tmp_path/'export')).Reload()
     assert ea.Scalars('result/model_calls')[0].value==3
+    assert manifest['metadata']['reported_model_calls']==3
+    assert manifest['metadata']['act_request_verification_complete'] is True
     assert ea.Scalars('result/commands')[0].value==7
 
 

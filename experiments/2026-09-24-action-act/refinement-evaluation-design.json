@@ -1,0 +1,208 @@
+{
+  "schema": "ugrp.action_act_refinement_evaluation_design.v1",
+  "status": "preregistered_design_only_no_refinement_source_or_physics",
+  "parent_protocol": "/Users/changmin/.codex/worktrees/action-act-refinement/ugrp/experiments/2026-09-24-action-act/refinement-protocol.json",
+  "timing_boundary": "Start only after the frozen-v27 first physical six-trial study has closed and all raw results are preserved. Freeze refined source, execution bundle, checkpoint, and common inputs before the first qualification case; no mid-cohort case or arm substitution.",
+  "question": "On three nearby but previously unused open-map spawn triples, does refined RGB improve the complete mission over frozen v27 RGB, and does refined ACT carry complete the same physical tasks under the refined source?",
+  "claim_limit": "Nearby initial-pose variation with same open map, seed11, dock_a, saved plan, grasp start, cameras and contact profile. This is not new-map, unseen-task, independent communication, or broad reliability generalization.",
+  "prior_exposure": {
+    "training_and_development": "The current ACT training/development realtime episodes use open/seed11/original spawn; older F-series scene families are exposed. Verify the final second-model dataset manifest before launch. The three candidate exact triples below are not training data.",
+    "known_exact_offsets": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        -0.015,
+        0.008,
+        0.0
+      ],
+      [
+        0.015,
+        -0.008,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        -0.01,
+        0.004,
+        -0.5
+      ],
+      [
+        0.008,
+        -0.004,
+        0.5
+      ],
+      [
+        0.02,
+        0.003,
+        -1.0
+      ],
+      [
+        0.012,
+        -0.006,
+        0.0
+      ],
+      [
+        -0.012,
+        0.006,
+        0.0
+      ],
+      [
+        0.014,
+        -0.005,
+        0.75
+      ],
+      [
+        -0.014,
+        0.005,
+        -0.75
+      ]
+    ],
+    "inspected_sources": [
+      "experiments/2026-09-22-parallel-transport/protocol.json",
+      "experiments/2026-09-22-parallel-act-study/split-audit.json",
+      "experiments/2026-09-22-research-controller-qualification/acceptance-v3-full-protocol.json",
+      "experiments/2026-09-22-research-controller-qualification/final-hybrid-protocol.json",
+      "experiments/2026-09-24-action-act/evaluation-design.json"
+    ],
+    "novelty_statement": "Only each exact DX/DY/YAW triple is new relative to inspected protocols and the original-spawn ACT train/development episodes; individual offsets, signs, yaw values, map and pose neighborhood are familiar. No claim of independent holdout from all possible historical raw imagery."
+  },
+  "fixed_condition": {
+    "variant": "open",
+    "seed": 11,
+    "required_dock": "dock_a",
+    "plan_replay": "experiments/2026-09-22-parallel-transport/independent-plan.json",
+    "plan_replay_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+    "contact_profile": "local_contact_fine",
+    "weld": false,
+    "overlap": "--auto-route-overlap --overlap-start grasp",
+    "camera_input": "own RGB + common TOP RGB + authored map and own issued commands",
+    "realtime_factor": 1.0,
+    "video_fps": 10,
+    "observation_ttl_s": 0.6,
+    "maximum_command_lease_s": 0.25
+  },
+  "cases": [
+    {
+      "id": "near-a",
+      "spawn_offset_dx_dy_m_yaw_deg": [
+        0.006,
+        -0.003,
+        0.25
+      ],
+      "rationale": "small positive x, negative y, positive yaw; closer than first-study holdout-a"
+    },
+    {
+      "id": "near-b",
+      "spawn_offset_dx_dy_m_yaw_deg": [
+        -0.006,
+        0.003,
+        -0.25
+      ],
+      "rationale": "matched opposite-sign small perturbation"
+    },
+    {
+      "id": "near-c",
+      "spawn_offset_dx_dy_m_yaw_deg": [
+        0.003,
+        0.006,
+        0.5
+      ],
+      "rationale": "different positive-y translation and moderate yaw combination"
+    }
+  ],
+  "arms": [
+    {
+      "id": "reference-rgb-v27",
+      "source_sha": "12f8e6dda76e39b3ec612f247deb4835a2ff50bc",
+      "model": null,
+      "max_wall_s": 350,
+      "behavior": "Frozen v27 RGB under same case/common flags"
+    },
+    {
+      "id": "refined-rgb",
+      "source_sha": "freeze_before_trial_1",
+      "model": null,
+      "max_wall_s": 350,
+      "behavior": "Refined camera action algorithm; no carry ACT flags"
+    },
+    {
+      "id": "refined-act",
+      "source_sha": "same_as_refined-rgb",
+      "model_sha256": "freeze_before_trial_1",
+      "max_wall_s": 750,
+      "behavior": "Second ACT checkpoint controls loaded beam motion with rgb_guarded stop; same refined RGB entry and solo transport"
+    }
+  ],
+  "trial_order": [
+    "near-a/reference-rgb-v27",
+    "near-a/refined-rgb",
+    "near-a/refined-act",
+    "near-b/reference-rgb-v27",
+    "near-b/refined-rgb",
+    "near-b/refined-act",
+    "near-c/reference-rgb-v27",
+    "near-c/refined-rgb",
+    "near-c/refined-act"
+  ],
+  "budget": {
+    "maximum_trials": 9,
+    "maximum_serial_trial_wall_s": 4350,
+    "aggregate_hard_wall_s": 4500,
+    "reserved_setup_cleanup_audit_s": 150,
+    "one_physics_owner": true,
+    "no_training_heavy_tests_ui_or_worktree_actions_during_timed_runs": true,
+    "stop_rule": "Cap each trial at its preregistered maximum and stop the cohort at aggregate hard limit; save timeouts and explicitly mark remaining trial IDs unstarted. Continue after ordinary task failures while budget allows; pause only for source/input/artifact invariant failure."
+  },
+  "cli": {
+    "entry": "bash scripts/open_simulation.command dispatch",
+    "common_flags": [
+      "--variant",
+      "open",
+      "--seed",
+      "11",
+      "--required-dock",
+      "dock_a",
+      "--plan-replay",
+      "experiments/2026-09-22-parallel-transport/independent-plan.json",
+      "--contact-profile",
+      "local_contact_fine",
+      "--realtime-control",
+      "--viewer",
+      "--realtime-factor",
+      "1",
+      "--auto-route-overlap",
+      "--overlap-start",
+      "grasp",
+      "--efficient-capture",
+      "--video-fps",
+      "10",
+      "--reference-top",
+      "tests/fixtures/camera_goal_transport/reference-top.jpg"
+    ],
+    "per_trial": "Pass --spawn-offset DX DY YAW_DEG, a fresh --output path, --max-wall-s as specified by arm, and the same frozen grasp/stage model directories as first study. ACT arm additionally passes --carry-act-model CHECKPOINT_DIR --carry-act-python /Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python --carry-act-stop-mode rgb_guarded. Record exact command and resolved inputs in manager manifest."
+  },
+  "readout": {
+    "denominators": "For each case and arm: planned, started, process completed, protocol complete, beam and box physical success, timeout, typed failure. Include all nine slots and do not replace failures.",
+    "physical": "Both cargos lifted, carried with sampled clearance, inside their slots and stably released, with zero weld steps; report sampled contact/clearance limits.",
+    "speed": "Report wall_s, motion SIM_s, SIM/wall, approach/fine/carry/resource-wait times and command/lease counts. Speed comparison uses matched successful case pairs only; non-success wall time is failure evidence, not speed gain.",
+    "act": "All attempted wire requests including accepted, stale and error, completed responses, inference latency distribution, actual issued commands, max age and lease, model stop proposals versus RGB admission, premature stop, physical result. External LLM calls separately.",
+    "directional_gate": "To describe a directional refined-RGB gain, all three refined-RGB and v27 paired cases must physically/procedurally succeed without contact/weld violation, refined RGB must be faster in each matched case and the three-case successful median wall time at least 10% lower. Otherwise give case outcomes without a speed claim. Three cases do not establish a population success rate.",
+    "act_gate": "Refined ACT must enter carry and complete all three cases with zero premature stop, no contact/weld violation, and all inference requests audited before a narrow nearby-pose feasibility claim. Compare refined ACT against same-source refined RGB, not against v27 as isolated ACT effect."
+  },
+  "record": "Keep raw and manager artifacts, exact source/model/bundle/input hashes, videos and failure results. Add completed cases to a new TensorBoard snapshot; inspect source values before reporting.",
+  "diagnostic_trial_order": [
+    "original-diagnostic-1/refined-rgb",
+    "original-diagnostic-2/refined-rgb"
+  ],
+  "output_naming": {
+    "rule": "For a planned case/arm key, raw directory is RAW_ROOT / (case + \"-\" + arm). Supply RAW_ROOT explicitly to the summary tool. Preserve an independently named manager manifest with each audit.",
+    "diagnostics": "The two original-spawn refined-RGB diagnostics are separate from the nine nearby-pose qualification trials and never enter qualification speed or success denominators."
+  }
+}
