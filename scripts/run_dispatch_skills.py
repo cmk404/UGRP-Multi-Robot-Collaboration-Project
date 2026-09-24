@@ -45,7 +45,8 @@ from scripts.three_robot_runtime import ThreeRobotRuntime, write
 from scripts.run_camera_approach_student import models, sha
 from scripts.run_camera_varied_start_student import load_stage_models
 from scripts.run_three_robot_mission import prepare_grasp_models
-from scripts.dispatch_pair_skill import BoundPairSkill
+from scripts.dispatch_pair_skill import (BoundPairSkill, COARSE_LEAD_LIMIT_PX,
+    COARSE_CONCURRENT_MAX_CAPTURE_AGE_S, COARSE_CONCURRENT_COMMAND_S)
 from scripts.camera_approach_scene import image_record
 
 RGB_ACTION_TTL_S=.6
@@ -61,6 +62,16 @@ def fast_servo_map_supported(static_map, *, realtime_control):
                 and all(item.get('id') in boundaries for item in static_map.get('obstacles',[])))
 
 
+def coarse_concurrency_status(pair, *, requested):
+    if not requested:
+        return {'applied':False,'reason':'disabled'}
+    if pair.coarse is None:
+        return {'applied':False,'reason':'own_motion_identity_unresolved'}
+    if not pair._concurrent_coarse_scope():
+        return {'applied':False,'reason':'unsupported_map_or_runtime_scope'}
+    return {'applied':True,'reason':'eligible_for_rgb_decision_admission'}
+
+
 class SkillScene(DispatchScene):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
@@ -74,6 +85,7 @@ class SkillScene(DispatchScene):
         self.replay=None
         self.efficient_capture=False
         self.realtime_control=False
+        self.coarse_concurrent_alignment=False
         self.rolling_visual_servo=False
         self.bounded_carrier_relink=False
         self._decision_workers=None
@@ -1088,10 +1100,13 @@ def run(args):
     scene=SkillScene(config,args.output)
     scene.efficient_capture=getattr(args,'efficient_capture',False)
     scene.realtime_control=bool(getattr(args,'realtime_control',False))
+    scene.coarse_concurrent_alignment=bool(getattr(args,'coarse_concurrent_alignment',False))
     scene.rolling_visual_servo=bool(getattr(args,'rolling_visual_servo',False))
     scene.bounded_carrier_relink=bool(getattr(args,'bounded_carrier_relink',False))
     if scene.rolling_visual_servo and not scene.realtime_control:
         raise ValueError('rolling visual servo requires realtime control')
+    if scene.coarse_concurrent_alignment and not scene.realtime_control:
+        raise ValueError('coarse concurrent alignment requires realtime control')
     if scene.bounded_carrier_relink and not (scene.rolling_visual_servo and scene.realtime_control):
         raise ValueError('bounded carrier relink requires rolling realtime control')
     scene.fine_gain_schedule=bool(getattr(args,'fine_gain_schedule',False))
@@ -1106,6 +1121,16 @@ def run(args):
         'environment':{'python':sys.version,'platform':platform.platform(),'mujoco':mujoco.__version__},
         'plan_committed':False,'protocol_complete':False,'physical_success':False,'error':None,
         'phase':'SETUP','cost_usd':None,
+        'coarse_concurrent_alignment':{
+            'requested':scene.coarse_concurrent_alignment,'applied':False,
+            'reason':'not_evaluated',
+            'scope':'realtime paired APPROACH on fixed dispatch_open or dispatch_shared_crossing RGB maps',
+            'static_map_sha256':config['static_map_sha256'],
+            'arena_variant':config['variant'],
+            'same_fresh_top_required':True,'max_capture_age_s':COARSE_CONCURRENT_MAX_CAPTURE_AGE_S,
+            'rgb_ttl_s':RGB_ACTION_TTL_S,'existing_coarse_command_s':COARSE_CONCURRENT_COMMAND_S,
+            'lead_limit_px':COARSE_LEAD_LIMIT_PX,'coarse_decision_cap':120,
+            'lease_policy':'unchanged existing 0.25s wire cap and 0.6s RGB TTL'},
         'rolling_approach':{'requested':scene.rolling_visual_servo,'applied':False,
             'scope':'solo approach only, realtime dispatch_open without internal obstacles',
             'max_wire_lease_s':REALTIME_MOTOR_RENEWAL_S,
@@ -1212,6 +1237,8 @@ def run(args):
         result['rolling_approach']['applied']=scene.rolling_visual_servo
         result['bounded_carrier_relink']['applied']=scene.bounded_carrier_relink
         pair=BoundPairSkill(scene,scene.bindings,skill,grasp,stages,grasp_root,reference,identity)
+        result['coarse_concurrent_alignment'].update(coarse_concurrency_status(
+            pair,requested=scene.coarse_concurrent_alignment))
         while not scene.bindings.permission('beam','APPROACH'):scene.step(.2)
         result['phase']='APPROACH';result['pair_approach']=pair.approach()
         while not scene.bindings.permission('beam','GRASP'):scene.step(.2)

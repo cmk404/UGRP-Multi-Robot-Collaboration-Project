@@ -20,9 +20,15 @@ import math
 import copy
 import time
 import numpy as np
+from sim.research_dispatch_arena import authored_map, digest as static_map_digest
 
 COARSE_LEAD_LIMIT_PX = 16.
 COARSE_FINE_HANDOFF_GAP = .065
+# Cluttered maps issue one existing .2s coarse command per RGB batch. Admit it
+# only while that whole command fits within the original capture + .6s TTL.
+COARSE_CONCURRENT_MAX_CAPTURE_AGE_S = .4
+COARSE_CONCURRENT_COMMAND_S = .2
+RGB_ACTION_TTL_S = .6
 # Open approach renews one moving command across its usual RGB refresh gap.
 # Zero/dwell stays settled; the port's .25s max and capture-time .6s TTL cap it.
 OPEN_APPROACH_RENEWAL_LEASE_S = .25
@@ -66,8 +72,111 @@ def _partial_pipeline_timing(frame,result):
             'top_cpu_overlap_own_render_wall_s':max(0.,min(end,full)-max(start,top))}
 
 
-def coordinated_coarse_commands(decisions):
-    """Let RGB alignment finish before either beam partner advances past the other."""
+def _fresh_common_coarse_top(frames, now_s):
+    """Admit concurrent motion only from one current TOP capture for both roles."""
+    try:
+        if set(frames) != set(ROBOTS) or type(now_s) not in (int, float):
+            return None
+        now = float(now_s)
+        first, second = (frames[r] for r in ROBOTS)
+        frame_id = first['frame_id']
+        observed = first['observed_at_s']
+        top = first['raw_top_bytes']
+        if (type(frame_id) is not int or type(second['frame_id']) is not int
+                or frame_id != second['frame_id']
+                or type(observed) not in (int, float)
+                or type(second['observed_at_s']) not in (int, float)
+                or not all(math.isfinite(v) for v in (now, float(observed),
+                                                     float(second['observed_at_s'])))
+                or abs(float(observed)-float(second['observed_at_s'])) > 1e-9
+                or not 0 <= now-float(observed) <= COARSE_CONCURRENT_MAX_CAPTURE_AGE_S
+                or not isinstance(top, bytes) or not top
+                or top != second['raw_top_bytes']):
+            return None
+        return {'frame_id': frame_id, 'observed_at_s': float(observed),
+                'top_sha256': hashlib.sha256(top).hexdigest(),
+                'decision_age_s': now-float(observed)}
+    except (KeyError, TypeError, ValueError, OverflowError):
+        return None
+
+
+def _coarse_concurrent_issue_age(observed_at_s, issued_at_s, duration_s):
+    """Check the whole issued command against its original RGB deadline."""
+    try:
+        observed, issued, duration = map(float, (observed_at_s, issued_at_s, duration_s))
+        if (not all(math.isfinite(v) for v in (observed, issued, duration))
+                or duration <= 0 or issued < observed
+                or issued + duration > observed + RGB_ACTION_TTL_S + 1e-9):
+            return None
+        return issued - observed
+    except (TypeError, ValueError, OverflowError):
+        return None
+
+
+def _bounded_coarse_values(decision):
+    """Check the own RGB policy output before allowing its forward proposal."""
+    if not isinstance(decision, dict) or decision.get('ok') is not True \
+            or type(decision.get('ready')) is not bool:
+        return None
+    error = decision.get('image_error')
+    heading = decision.get('heading')
+    if (not isinstance(error, (list, tuple)) or len(error) != 2
+            or not isinstance(heading, dict)):
+        return None
+    values = [*error, heading.get('angle_deg'), *(decision.get(k) for k in ('forward','left','turn'))]
+    if any(type(value) not in (int, float) for value in values):
+        return None
+    try:
+        gap_x, gap_y, angle, forward, left, turn = map(float, values)
+    except (TypeError, ValueError, OverflowError):
+        return None
+    if not all(math.isfinite(value) for value in (gap_x,gap_y,angle,forward,left,turn)):
+        return None
+    if not (gap_x >= 0 and 0 <= forward <= .12 and abs(left) <= .05 and abs(turn) <= .10):
+        return None
+    if decision['ready'] and any(abs(value) > 1e-9 for value in (forward,left,turn)):
+        return None
+    if (forward > 0 and (decision['ready'] or gap_x <= COARSE_FINE_HANDOFF_GAP
+                         or abs(gap_y) > .003 or abs(angle) > 1.5
+                         or abs(left) > 1e-9 or abs(turn) > 1e-9)):
+        return None
+    return gap_x, forward, left, turn
+
+
+def coordinated_coarse_commands(decisions, *, concurrent_alignment=False,
+                                frames=None, now_s=None):
+    """Keep the 16px lead bound; opt in to moving while a peer aligns."""
+    if concurrent_alignment:
+        capture = _fresh_common_coarse_top(frames, now_s)
+        values = ({r: _bounded_coarse_values(decisions[r]) for r in ROBOTS}
+                  if isinstance(decisions, dict) and set(decisions) == set(ROBOTS)
+                  else None)
+        if capture is None or values is None or any(v is None for v in values.values()):
+            return ({r: dict(forward=0., left=0., turn=0.) for r in ROBOTS},
+                    {'coarse_concurrent_alignment': True,
+                     'admitted': False, 'reason': 'coarse_capture_or_policy_unresolved',
+                     'held_forward': list(ROBOTS), 'lead_limit_px': COARSE_LEAD_LIMIT_PX})
+        gaps = {r: values[r][0] for r in ROBOTS}
+        aligning = any(abs(values[r][axis]) > 1e-9 for r in ROBOTS for axis in (2, 3))
+        farthest_gap = max(gaps.values())
+        commands = {}
+        held_forward = []
+        for r in ROBOTS:
+            gap, forward, left, turn = values[r]
+            if forward > 0 and (farthest_gap-gap)*960 >= COARSE_LEAD_LIMIT_PX:
+                forward = 0.
+                held_forward.append(r)
+            commands[r] = dict(forward=forward, left=left, turn=turn)
+        return commands, {'forward_gap_px': {r: gaps[r]*960 for r in ROBOTS},
+                          'lead_limit_px': COARSE_LEAD_LIMIT_PX,
+                          'alignment_in_progress': aligning,
+                          'held_forward': held_forward,
+                          'coarse_concurrent_alignment': True, 'admitted': True,
+                          'common_top_capture': capture,
+                          'concurrent_forward_with_peer_alignment': [
+                              r for r in ROBOTS if commands[r]['forward'] > 0 and
+                              any(abs(commands[other][axis]) > 1e-9
+                                  for other in ROBOTS if other != r for axis in ('left','turn'))]}
     if set(decisions) != set(ROBOTS) or not all(decisions[r].get('ok') is True for r in ROBOTS):
         raise ValueError('both coarse RGB decisions are required')
     gaps = {}
@@ -153,6 +262,7 @@ class BoundPairSkill:
         self.last_capture=None;self.count=0;self.calls=[]
         # Explicit experimental far-field fine alignment command schedule.
         self.fine_gain_schedule=bool(getattr(io,'fine_gain_schedule',False))
+        self.coarse_concurrent_alignment=bool(getattr(io,'coarse_concurrent_alignment',False))
         self.grasp_translation=None;self.latest_translation=None;self.transport_started=False
         # Only the open RGB carry path has the owner-step pump contract through
         # release. Rotation and other transports retain their capture timing.
@@ -236,6 +346,31 @@ class BoundPairSkill:
                 and not self.bindings.cluttered and not static.get('terrain')
                 and all(o.get('id') in {'wall_north','wall_south','wall_west','wall_east'}
                         for o in static.get('obstacles',[])))
+
+    def _concurrent_coarse_scope(self):
+        """The fixed teacher arena and open map use the same RGB admission."""
+        static=self.bindings.static_map
+        map_id=static.get('map_id')
+        config=getattr(self.io,'config',None)
+        variant=config.get('variant') if isinstance(config,dict) else None
+        if variant not in {'open','shared_crossing'}:
+            return False
+        try:
+            authored_hash=static_map_digest(static)
+            expected_hash=static_map_digest(authored_map(variant))
+        except (TypeError,ValueError,KeyError,OSError):
+            return False
+        allowed={'wall_north','wall_south','wall_west','wall_east'}
+        if map_id=='dispatch_shared_crossing':
+            allowed.add('service_island')
+        return (getattr(self.io,'realtime_control',False)
+                and getattr(self,'phase',None)=='APPROACH'
+                and not getattr(self,'transport_started',False)
+                and map_id in {'dispatch_open','dispatch_shared_crossing'}
+                and map_id=='dispatch_'+variant
+                and config.get('static_map_sha256')==authored_hash==expected_hash
+                and not static.get('terrain')
+                and all(o.get('id') in allowed for o in static.get('obstacles',[])))
 
     def _approach_port_matches(self,lease):
         for slot,rid in self.bindings.pair.items():
@@ -690,7 +825,7 @@ class BoundPairSkill:
              for r,c in commands.items()},duration_s,self.phase)
         return duration_s
 
-    def drive_mecanum(self,commands,duration_s=.2):
+    def drive_mecanum(self,commands,duration_s=COARSE_CONCURRENT_COMMAND_S,*,coarse_observed_at_s=None):
         self._clear_approach_pending(hold=True)
         self._clear_fine_pending(hold=True)
         moving=any(abs(c[k])>1e-9 for c in commands.values()
@@ -700,7 +835,8 @@ class BoundPairSkill:
             # A short lease continues while the next RGB batch is rendered and
             # interpreted. The owner advances only enough to start that batch.
             frame=self.last_capture['r1'] if self.last_capture else None
-            observed=frame.get('observed_at_s') if frame else None
+            observed=(coarse_observed_at_s if coarse_observed_at_s is not None else
+                      frame.get('observed_at_s') if frame else None)
             effective=self.issue_mecanum_bounded(commands,OPEN_APPROACH_RENEWAL_LEASE_S,
                                                  observed_at_s=observed)
             if effective>0:self._accept_fine_pending(commands)
@@ -710,6 +846,22 @@ class BoundPairSkill:
         self._fine_candidate=None
         if self.transport_started and self.carried_beam.previous is not None:
             self.bindings.reserve_beam_apron(self.carried_beam.previous)
+        if coarse_observed_at_s is not None and moving:
+            # The owner thread does not advance SIM time between this check
+            # and pair_drive/raw issuance. Include all compute-to-issue delay.
+            issue_age=_coarse_concurrent_issue_age(
+                coarse_observed_at_s,self.time(),duration_s)
+            if issue_age is None:
+                self._hold_pair()
+                self.calls.append({'kind':'coarse_concurrent_stale_issue',
+                                   'observed_at_s':coarse_observed_at_s,
+                                   'issued_check_at_s':self.time(),
+                                   'duration_s':duration_s})
+                return False
+            self.calls.append({'kind':'coarse_concurrent_issue_guard',
+                               'source_observed_at_s':coarse_observed_at_s,
+                               'issue_age_s':issue_age,'duration_s':duration_s,
+                               'rgb_deadline_s':coarse_observed_at_s+RGB_ACTION_TTL_S})
         self.io.pair_drive({self.bindings.pair[r]:dict(kind='mecanum',**c,duration_s=duration_s)
                             for r,c in commands.items()},duration_s,self.phase)
     def drive(self,forwards,duration_s=.2):
@@ -783,7 +935,17 @@ class BoundPairSkill:
                 coordination={'unresolved_heading':unresolved,'held_forward':list(ROBOTS),
                               'forward_gap_px':{r:gaps[r]*960 for r in ROBOTS}}
             else:
-                commands,coordination=coordinated_coarse_commands(decisions)
+                concurrent=getattr(self,'coarse_concurrent_alignment',False)
+                if concurrent and (not self._concurrent_coarse_scope() or self.coarse is None):
+                    commands={r:dict(forward=0.,left=0.,turn=0.) for r in ROBOTS}
+                    coordination={'coarse_concurrent_alignment':True,'admitted':False,
+                                  'reason':'coarse_scope_or_own_identity_unresolved',
+                                  'held_forward':list(ROBOTS),'lead_limit_px':COARSE_LEAD_LIMIT_PX}
+                else:
+                    commands,coordination=coordinated_coarse_commands(
+                        decisions,concurrent_alignment=concurrent,
+                        frames=frames if concurrent else None,
+                        now_s=self.time() if concurrent else None)
             report['coarse_calls'].append(decisions)
             self.calls.append({'kind':'coarse','decisions':decisions,'commands':commands,
                                'coordination':coordination})
@@ -829,8 +991,15 @@ class BoundPairSkill:
                     self._hold_pair()
                     raise RuntimeError('coarse RGB model convention unresolved')
                 continue
-            self.drive_mecanum(commands)
-            if not unresolved:self._accept_coarse_pending(frames,decisions,commands)
+            issued=self.drive_mecanum(
+                commands,coarse_observed_at_s=(frames['r1']['observed_at_s']
+                    if concurrent and coordination.get('admitted') else None))
+            if issued is False:
+                coordination.update(admitted=False,reason='coarse_issue_ttl_expired',
+                                    held_forward=list(ROBOTS))
+                for r in ROBOTS:commands[r]=dict(forward=0.,left=0.,turn=0.)
+            if not unresolved and issued is not False:
+                self._accept_coarse_pending(frames,decisions,commands)
             if all(d['ready'] for d in decisions.values()):self.stop_dwell();break
         else:
             self._clear_approach_pending(hold=True)
