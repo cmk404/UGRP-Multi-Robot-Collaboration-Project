@@ -48,7 +48,7 @@ def test_retired_adapter_is_readable_but_cannot_run_as_current_source():
 
 def test_current_bundle_records_dispatch_defaults_without_success_claim():
     current, _ = contract.load_bundle(contract.RUNNABLE_ID)
-    assert current["parent_bundle_id"] == "rgb-standard-dispatch-v42"
+    assert current["parent_bundle_id"] == "rgb-standard-dispatch-v43"
     assert current["parent_bundle"] == current["parent_bundle_id"]
     assert current["id"] == "rgb-standard-dispatch-v46"
     assert "--rolling-view-recovery" in current["realtime_dispatch"]["rolling_active_view_recovery"]
