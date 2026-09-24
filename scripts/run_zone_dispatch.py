@@ -58,7 +58,10 @@ class ZoneRun:
         self.replay = None
         if record_replay:
             from scripts.dispatch_replay import ReplayRecorder
-            self.replay = ReplayRecorder(self.world, self.out)
+            bounds = config['static_map']['bounds_m']
+            self.replay = ReplayRecorder(self.world, self.out, view={
+                'lookat': [(bounds[0]+bounds[1])/2, (bounds[2]+bounds[3])/2, .1],
+                'distance': 7.5, 'azimuth': 90, 'elevation': -60})
         self.robot_geoms = {i for i in range(self.world.model.ngeom)
                             if (mujoco.mj_id2name(self.world.model, mujoco.mjtObj.mjOBJ_GEOM, i) or '')
                             .startswith(tuple(r+'__' for r in ROBOTS))}
