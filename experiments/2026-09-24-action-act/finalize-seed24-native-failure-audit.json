@@ -1,0 +1,803 @@
+{
+  "scope": "first immutable recovery finalization attempt and all-row result; no model exported",
+  "recovery_source_sha": "7c0a5ebd6fcbaee6c35b9aa4232eb820c751a5bb",
+  "recovery_source_dirty": false,
+  "training_source_sha": "931d910998a94361342c372ec2675c475daa625f",
+  "original_training_source_sha": "931d910998a94361342c372ec2675c475daa625f",
+  "source_changed_during_run": false,
+  "inputs_changed_during_run": false,
+  "managed_status": "process_failed",
+  "exit_code": 1,
+  "runtime_s": 324.96980529100983,
+  "report_complete": false,
+  "optimizer_updates_this_run": 0,
+  "selected_step": 3000,
+  "selected_eligible": false,
+  "model_exported": false,
+  "failure": "development all-row ACT deployed first-action original 1e-5 guard failed; 23 done-coordinate rows",
+  "guards": {
+    "train": {
+      "first_action_original_strict_guard_passed": true,
+      "first_action_max_abs": 9.059906005859375e-06,
+      "full_chunk_original_strict_guard_passed": false,
+      "full_chunk_bounded_guard_passed": true,
+      "full_chunk_max_abs": 5.310773849487305e-05,
+      "all_chunk_done_decisions_same": true,
+      "first_action_strict_mismatch_count": 0,
+      "full_chunk_original_strict_mismatch_count": 60,
+      "full_chunk_bounded_mismatch_count": 0,
+      "done_decision_flip_count": 0,
+      "original_full_chunk_strict_mismatch_indices_first64": [
+        [
+          118,
+          1,
+          3
+        ],
+        [
+          118,
+          2,
+          3
+        ],
+        [
+          118,
+          3,
+          3
+        ],
+        [
+          118,
+          5,
+          3
+        ],
+        [
+          118,
+          6,
+          3
+        ],
+        [
+          237,
+          1,
+          3
+        ],
+        [
+          237,
+          2,
+          3
+        ],
+        [
+          237,
+          3,
+          3
+        ],
+        [
+          237,
+          5,
+          3
+        ],
+        [
+          237,
+          6,
+          3
+        ],
+        [
+          437,
+          1,
+          3
+        ],
+        [
+          437,
+          2,
+          3
+        ],
+        [
+          437,
+          3,
+          3
+        ],
+        [
+          437,
+          4,
+          3
+        ],
+        [
+          437,
+          5,
+          3
+        ],
+        [
+          437,
+          6,
+          3
+        ],
+        [
+          637,
+          1,
+          3
+        ],
+        [
+          637,
+          2,
+          3
+        ],
+        [
+          637,
+          3,
+          3
+        ],
+        [
+          637,
+          4,
+          3
+        ],
+        [
+          637,
+          5,
+          3
+        ],
+        [
+          637,
+          6,
+          3
+        ],
+        [
+          2167,
+          1,
+          3
+        ],
+        [
+          2167,
+          2,
+          3
+        ],
+        [
+          2167,
+          3,
+          3
+        ],
+        [
+          2167,
+          5,
+          3
+        ],
+        [
+          2167,
+          6,
+          3
+        ],
+        [
+          2259,
+          1,
+          3
+        ],
+        [
+          2259,
+          2,
+          3
+        ],
+        [
+          2259,
+          3,
+          3
+        ],
+        [
+          2259,
+          5,
+          3
+        ],
+        [
+          2259,
+          6,
+          3
+        ],
+        [
+          2371,
+          1,
+          3
+        ],
+        [
+          2371,
+          5,
+          3
+        ],
+        [
+          2483,
+          1,
+          3
+        ],
+        [
+          2483,
+          2,
+          3
+        ],
+        [
+          2483,
+          3,
+          3
+        ],
+        [
+          2483,
+          5,
+          3
+        ],
+        [
+          2594,
+          1,
+          3
+        ],
+        [
+          2594,
+          2,
+          3
+        ],
+        [
+          2594,
+          3,
+          3
+        ],
+        [
+          2594,
+          5,
+          3
+        ],
+        [
+          2594,
+          6,
+          3
+        ],
+        [
+          2705,
+          1,
+          3
+        ],
+        [
+          2705,
+          2,
+          3
+        ],
+        [
+          2705,
+          3,
+          3
+        ],
+        [
+          2705,
+          5,
+          3
+        ],
+        [
+          2705,
+          6,
+          3
+        ],
+        [
+          2819,
+          1,
+          3
+        ],
+        [
+          2819,
+          2,
+          3
+        ],
+        [
+          2819,
+          3,
+          3
+        ],
+        [
+          2819,
+          4,
+          3
+        ],
+        [
+          2819,
+          5,
+          3
+        ],
+        [
+          2819,
+          6,
+          3
+        ],
+        [
+          2933,
+          1,
+          3
+        ],
+        [
+          2933,
+          2,
+          3
+        ],
+        [
+          2933,
+          3,
+          3
+        ],
+        [
+          2933,
+          4,
+          3
+        ],
+        [
+          2933,
+          5,
+          3
+        ],
+        [
+          2933,
+          6,
+          3
+        ]
+      ],
+      "first_action_strict_mismatch_ids_first64": [],
+      "done_decision_flip_ids_first64": [],
+      "full_chunk_bounded_mismatch_ids_first64": []
+    },
+    "development": {
+      "first_action_original_strict_guard_passed": false,
+      "first_action_max_abs": 4.9233436584472656e-05,
+      "full_chunk_original_strict_guard_passed": false,
+      "full_chunk_bounded_guard_passed": true,
+      "full_chunk_max_abs": 4.9233436584472656e-05,
+      "all_chunk_done_decisions_same": true,
+      "first_action_strict_mismatch_count": 23,
+      "full_chunk_original_strict_mismatch_count": 72,
+      "full_chunk_bounded_mismatch_count": 0,
+      "done_decision_flip_count": 0,
+      "original_full_chunk_strict_mismatch_indices_first64": [
+        [
+          393,
+          0,
+          3
+        ],
+        [
+          393,
+          1,
+          3
+        ],
+        [
+          400,
+          0,
+          3
+        ],
+        [
+          400,
+          1,
+          3
+        ],
+        [
+          405,
+          6,
+          3
+        ],
+        [
+          407,
+          2,
+          3
+        ],
+        [
+          407,
+          3,
+          3
+        ],
+        [
+          407,
+          5,
+          3
+        ],
+        [
+          407,
+          6,
+          3
+        ],
+        [
+          409,
+          0,
+          3
+        ],
+        [
+          410,
+          0,
+          3
+        ],
+        [
+          411,
+          0,
+          3
+        ],
+        [
+          416,
+          0,
+          3
+        ],
+        [
+          416,
+          1,
+          3
+        ],
+        [
+          417,
+          0,
+          3
+        ],
+        [
+          417,
+          1,
+          3
+        ],
+        [
+          420,
+          0,
+          3
+        ],
+        [
+          420,
+          1,
+          3
+        ],
+        [
+          420,
+          2,
+          3
+        ],
+        [
+          420,
+          3,
+          3
+        ],
+        [
+          420,
+          5,
+          3
+        ],
+        [
+          420,
+          6,
+          3
+        ],
+        [
+          422,
+          1,
+          3
+        ],
+        [
+          422,
+          2,
+          3
+        ],
+        [
+          422,
+          3,
+          3
+        ],
+        [
+          422,
+          5,
+          3
+        ],
+        [
+          422,
+          6,
+          3
+        ],
+        [
+          816,
+          0,
+          3
+        ],
+        [
+          816,
+          1,
+          3
+        ],
+        [
+          823,
+          0,
+          3
+        ],
+        [
+          826,
+          5,
+          3
+        ],
+        [
+          826,
+          6,
+          3
+        ],
+        [
+          828,
+          3,
+          3
+        ],
+        [
+          828,
+          4,
+          3
+        ],
+        [
+          828,
+          5,
+          3
+        ],
+        [
+          828,
+          6,
+          3
+        ],
+        [
+          830,
+          2,
+          3
+        ],
+        [
+          830,
+          3,
+          3
+        ],
+        [
+          830,
+          4,
+          3
+        ],
+        [
+          830,
+          5,
+          3
+        ],
+        [
+          830,
+          6,
+          3
+        ],
+        [
+          832,
+          0,
+          3
+        ],
+        [
+          833,
+          0,
+          3
+        ],
+        [
+          834,
+          0,
+          3
+        ],
+        [
+          836,
+          0,
+          3
+        ],
+        [
+          837,
+          0,
+          3
+        ],
+        [
+          839,
+          0,
+          3
+        ],
+        [
+          839,
+          1,
+          3
+        ],
+        [
+          840,
+          0,
+          3
+        ],
+        [
+          843,
+          0,
+          3
+        ],
+        [
+          843,
+          1,
+          3
+        ],
+        [
+          843,
+          2,
+          3
+        ],
+        [
+          843,
+          3,
+          3
+        ],
+        [
+          843,
+          5,
+          3
+        ],
+        [
+          843,
+          6,
+          3
+        ],
+        [
+          845,
+          0,
+          3
+        ],
+        [
+          845,
+          1,
+          3
+        ],
+        [
+          845,
+          2,
+          3
+        ],
+        [
+          845,
+          5,
+          3
+        ],
+        [
+          1809,
+          0,
+          3
+        ],
+        [
+          1810,
+          5,
+          3
+        ],
+        [
+          1810,
+          6,
+          3
+        ],
+        [
+          1813,
+          0,
+          3
+        ],
+        [
+          1813,
+          1,
+          3
+        ]
+      ],
+      "first_action_strict_mismatch_ids_first64": [
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3:r1:393",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3:r1:400",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3:r1:409",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3:r1:410",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3:r1:411",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3:r1:416",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3:r1:417",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3:r1:420",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3:r3:393",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3:r3:400",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3:r3:409",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3:r3:410",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3:r3:411",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3:r3:413",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3:r3:414",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3:r3:416",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3:r3:417",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3:r3:420",
+        "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3:r3:422",
+        "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v25-repeat:r1:117",
+        "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v25-repeat:r1:121",
+        "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v25-repeat:r3:117",
+        "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v25-repeat:r3:121"
+      ],
+      "done_decision_flip_ids_first64": [],
+      "full_chunk_bounded_mismatch_ids_first64": []
+    }
+  },
+  "metrics": {
+    "train": {
+      "cache": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.0,
+        "group_normalized_mae": {
+          "0": 0.032089953032311415,
+          "1": 0.03617830462814028,
+          "2": 0.03847853694361021,
+          "3": 0.008873826893115486
+        },
+        "selection_score": 0.028905155374294347,
+        "termination_objective": "episode",
+        "premature_hold_episode_fraction": 0.0,
+        "missed_terminal_episode_fraction": 0.0,
+        "offline_termination_pass": true,
+        "samples": 2934,
+        "done_samples": 18
+      },
+      "native": {
+        "missed_done_rate": 0.0,
+        "false_done_rate": 0.0,
+        "group_normalized_mae": {
+          "0": 0.032089857728668326,
+          "1": 0.036178277120084756,
+          "2": 0.038478433290144325,
+          "3": 0.008873577195185202
+        },
+        "selection_score": 0.02890503633352065,
+        "termination_objective": "episode",
+        "premature_hold_episode_fraction": 0.0,
+        "missed_terminal_episode_fraction": 0.0,
+        "offline_termination_pass": true,
+        "samples": 2934,
+        "done_samples": 18
+      }
+    },
+    "development": {
+      "cache": {
+        "missed_done_rate": 0.5,
+        "false_done_rate": 0.011320754716981131,
+        "group_normalized_mae": {
+          "0": 0.07166946584935029,
+          "1": 0.1851351669487049,
+          "2": 0.18677476417202524,
+          "3": 0.06131260776116202
+        },
+        "selection_score": 1.1262230011828107,
+        "termination_objective": "episode",
+        "premature_hold_episode_fraction": 0.5,
+        "missed_terminal_episode_fraction": 0.5,
+        "offline_termination_pass": false,
+        "samples": 2128,
+        "done_samples": 8
+      },
+      "native": {
+        "missed_done_rate": 0.5,
+        "false_done_rate": 0.011320754716981131,
+        "group_normalized_mae": {
+          "0": 0.07166952848845452,
+          "1": 0.18513506095928323,
+          "2": 0.18677512476640276,
+          "3": 0.06131277078141769
+        },
+        "selection_score": 1.1262231212488896,
+        "termination_objective": "episode",
+        "premature_hold_episode_fraction": 0.5,
+        "missed_terminal_episode_fraction": 0.5,
+        "offline_termination_pass": false,
+        "samples": 2128,
+        "done_samples": 8
+      }
+    }
+  },
+  "originals": {
+    "managed_status": "process_failed",
+    "report_complete": false,
+    "report_sha256": "eb9c083a14aa9bab9d809fbb0935ffb339ac6324efdf7fd8f9d767a6a043a055",
+    "checkpoint_sha256": "546a7cf3c3f761eb269b793e85037c83e00c0dba2cc6248a13cc0fa7e908e6f0",
+    "manifest_sha256": "aa90d237e0c772eff7a87797e76542cf92764b929375fa8d0c74f0c6cae0fedb",
+    "console_sha256": "e905c75c86fadd82d6eeebc460f2abac3b2b699632ce47d89b012eb992efba23"
+  },
+  "recovery_files": {
+    "manifest": {
+      "path": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/finalize-seed24-native-managed/manifest.json",
+      "sha256": "5f189e637b212638dd73bf21db7e075fd117c549c72fa734644ec370f7689a21"
+    },
+    "report": {
+      "path": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/finalize-seed24-native-managed/artifacts/report.json",
+      "sha256": "8b7774dc3c7cef67798df9bbde65a303195d67ba17f1deb7888afc5280ff0d77"
+    },
+    "train_predictions": {
+      "path": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/finalize-seed24-native-managed/artifacts/train-predictions.json",
+      "sha256": "d0c3db2f24953488fdb4e5ec8f9396824991706879633ac55c1a8271e131e773"
+    },
+    "development_predictions": {
+      "path": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/finalize-seed24-native-managed/artifacts/development-predictions.json",
+      "sha256": "421bf98e69bc9560bafe20195fa8851d63a8588f584b9cc0a0eff5573dcfa545"
+    },
+    "console": {
+      "path": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/finalize-seed24-native-managed/console.log",
+      "sha256": "c0286c1f72af358fc28b8671dfe3458837a6a797b8bef92a776011c7c0705601"
+    }
+  },
+  "boundary": "Neither recovery report complete nor a deployable/readback model was produced. Native and cached dev termination rates agree but selected development termination fails 2/4 missed and 2/4 premature; physical success untested."
+}
