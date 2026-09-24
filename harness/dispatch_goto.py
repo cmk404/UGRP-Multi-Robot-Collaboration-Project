@@ -20,6 +20,10 @@ from harness.map_goto import (CARRY_PLANE_M, SOLO_CARRY_ENVELOPE, UNLOADED_ENVEL
                               direction_preserving, map_to_pixel, pixel_to_map, plan_path)
 
 PREDOCK_OFFSET_M = .14   # the fixed-route skill's east staging line (x=2.00)
+# The lifted cyan box disappears under its own gripper when carried near the
+# fixed TOP camera's nadir (lost at x=0.52, y=-2.05 in the 2026-09-25 R-beam-first
+# replay, never reacquired). Keep the tracked cargo point out of this square.
+NADIR_OCCLUSION_HALF_M = .25
 REPLAN_CROSS_TRACK_M = .08
 MAX_REPLANS = 4
 
@@ -57,6 +61,12 @@ def rgb_obstacles(static_map, jpeg):
             for o in visual_barriers(jpeg, static_map)]
 
 
+def nadir_occlusion(static_map):
+    cam = static_map['top_camera']['position_m']
+    return map_goto.rect('top_nadir_cargo_occlusion', cam[:2], [NADIR_OCCLUSION_HALF_M] * 2,
+                         'carried cyan hidden under own gripper near fixed TOP camera nadir')
+
+
 def predock_goal(static_map, dock):
     """A* goal: the staging point on the slot's far side from the beam slot.
 
@@ -78,17 +88,19 @@ def box_delivery_route(static_map, dock, start_xy, *, beam_finished, top_jpeg=No
     if reserved_resources is not None:
         blocked = [r for r in map_goto.resource_regions(static_map)
                    if r not in reserved_resources and r != 'dispatch_apron']
-    # A delivered beam team leaves only the far-side entry: stage there and use
-    # the authored straight docking move. Otherwise A* plans to the slot itself.
-    goal = predock_goal(static_map, dock) if beam_finished else box_slot_goal(static_map, dock)
-    route = plan_path(static_map, start_xy, goal, SOLO_CARRY_ENVELOPE,
-                      obstacles=obstacles, blocked_regions=blocked, escape_start_m=.05)
+    # Always enter the slot from its far side. The lifted cargo appears ~4 cm
+    # farther from the camera than it is; RGB slot containment stops at the
+    # first contained view, so an entry from the beam side releases outside
+    # (2026-09-25 R-box-first: 9 mm outside). The authored east entry keeps
+    # that bias inside the slot.
+    route = plan_path(static_map, start_xy, predock_goal(static_map, dock), SOLO_CARRY_ENVELOPE,
+                      obstacles=obstacles, blocked_regions=blocked, escape_start_m=.05,
+                      point_keepouts=[nadir_occlusion(static_map)])
     if route is None:
         return None
     route['final_docking_m'] = box_slot_goal(static_map, dock)
-    route['predock_used'] = bool(beam_finished)
-    route['final_docking_scope'] = ('existing authored straight docking move + RGB slot containment'
-                                    if beam_finished else 'A* segment to the slot + RGB slot containment')
+    route['predock_used'] = True
+    route['final_docking_scope'] = 'existing authored straight docking move + RGB slot containment'
     route['cargo_feature_plane_m'] = CARRY_PLANE_M
     return route
 
@@ -208,7 +220,9 @@ class MapGoToYield:
             cross_track = 0.
         final = self.index == len(self.points) - 1
         error = target - xy
-        tolerance = .012 if final else .025
+        # A waiting place needs no docking precision; 1.2 cm oscillated for
+        # 50 s at the command resolution in 2026-09-25 R-box-first.
+        tolerance = .02 if final else .03
         ready = float(np.linalg.norm(error)) < tolerance
         self.confirmations = self.confirmations + 1 if ready else 0
         if self.confirmations >= (3 if final else 1):
@@ -217,7 +231,7 @@ class MapGoToYield:
             else:
                 self.index += 1
                 self.confirmations = 0
-        velocity = np.zeros(2) if ready else error / max(np.linalg.norm(error) / .06, .2)
+        velocity = np.zeros(2) if ready else error / max(np.linalg.norm(error) / .06, .4)
         from harness.dispatch_pair_navigation import rotate
         local = rotate(velocity, -obs['heading_rad'])
         command = direction_preserving([local[0] / 1.57, local[1] / 1.18], [(-.05, .06), (-.06, .06)])

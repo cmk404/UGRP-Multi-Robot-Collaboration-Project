@@ -197,6 +197,7 @@ def resource_regions(static_map: Mapping[str, Any]) -> list[str]:
 def plan_path(static_map: Mapping[str, Any], start: Sequence[float], goal: Sequence[float], envelope, *,
               obstacles: Iterable[Mapping[str, Any]] = (), blocked_regions: Iterable[str] = (),
               penalized_regions: Mapping[str, float] | None = None, escape_start_m: float = 0.,
+              point_keepouts: Iterable[Mapping[str, Any]] = (),
               margin_m: float = MARGIN_M, resolution_m: float = GRID_M) -> dict | None:
     """A* for a fixed-heading translating body; None when no clear path exists.
 
@@ -205,6 +206,8 @@ def plan_path(static_map: Mapping[str, Any], start: Sequence[float], goal: Seque
     `penalized_regions` multiplies step cost inside named regions.
     `escape_start_m` lets the body leave a start that already touches an
     obstacle (e.g. just-released cargo) but never enter one elsewhere.
+    `point_keepouts` are rectangles the tracked reference point itself must
+    avoid (not the whole envelope), e.g. where the RGB feature is hidden.
     """
     if not (_finite_pair(start) and _finite_pair(goal)):
         raise ValueError('finite start and goal required')
@@ -217,6 +220,11 @@ def plan_path(static_map: Mapping[str, Any], start: Sequence[float], goal: Seque
                 & (grid.Y + ey0 >= bounds[2]) & (grid.Y + ey1 <= bounds[3]))
     for obstacle in obstacles:
         blocked |= grid.footprint_mask(obstacle, envelope, margin_m)
+    point_keepouts = [dict(o) for o in point_keepouts]
+    for keepout in point_keepouts:
+        cx, cy = keepout['center_m']
+        hx, hy = keepout['half_extents_m']
+        blocked |= (np.abs(grid.X - cx) < hx) & (np.abs(grid.Y - cy) < hy)
     regions = static_map.get('regions', {})
     blocked_regions = sorted(set(blocked_regions))
     for name in blocked_regions:
@@ -302,6 +310,8 @@ def plan_path(static_map: Mapping[str, Any], start: Sequence[float], goal: Seque
               'envelope': envelope, 'margin_m': margin_m, 'grid_m': resolution_m,
               'obstacles': [{k: o[k] for k in ('id', 'center_m', 'half_extents_m', 'source') if k in o}
                             for o in obstacles],
+              'point_keepouts': [{k: o[k] for k in ('id', 'center_m', 'half_extents_m', 'source') if k in o}
+                                 for o in point_keepouts],
               'blocked_regions': blocked_regions, 'penalized_regions': penalized,
               'escape_start_m': escape_start_m, 'map_sha256': digest(static_map),
               'scope': 'authored static map + supplied RGB obstacle estimates; not physical passage proof'}

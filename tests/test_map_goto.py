@@ -66,8 +66,12 @@ def test_astar_routes_the_loaded_box_around_the_island_inside_the_envelope():
     assert len(pixels) == len(route['waypoints_m'])  # carried waypoints + floor-plane slot target
     early = dispatch_goto.box_delivery_route(static, 'dock_b', BOX_START, beam_finished=False,
                                              fallback_beam_center=[-.18, -1.65])
-    assert early['waypoints_m'][-1] == [1.86, -2.66] and not early['predock_used']
-    assert len(dispatch_goto.box_waypoints_px(early, static, (720, 960))) == len(early['waypoints_m']) - 1
+    # Even without the beam in the dock, the slot is entered from the far (east) side.
+    assert early['waypoints_m'][-1] == dispatch_goto.predock_goal(static, 'dock_b') and early['predock_used']
+    nadir = dispatch_goto.nadir_occlusion(static)
+    for a, b in zip(early['waypoints_m'], early['waypoints_m'][1:]):
+        for p in map_goto._segment_samples(a, b, .01):
+            assert not (abs(p[0] - nadir['center_m'][0]) < .25 and abs(p[1] - nadir['center_m'][1]) < .25)
     dense_clear(static, route, SOLO_CARRY_ENVELOPE, [map_goto.beam_delivered_keepout(static, 'dock_a')])
     assert set(route['resources']) <= {'south_gate', 'north_gate', 'dispatch_apron'}
     assert route['plan_sha256'] == map_goto.digest({k: v for k, v in route.items()
@@ -188,8 +192,7 @@ def test_feasibility_plans_the_box_from_rgb_and_checks_the_park_place():
     good = fixture_plan(dock='dock_a', route='south', navigation='planned', park={'xy_m': [-.75, -2.85]})
     report = inspect_routes(committed(good), static, RAW)
     auto = report['box_routes']['auto']
-    # The beam is not yet delivered, so A* plans to the slot target itself.
-    assert auto['feasible'] and auto['waypoints_m'][-1] == [1.86, -1.34]
+    assert auto['feasible'] and auto['waypoints_m'][-1] == dispatch_goto.predock_goal(static, 'dock_a')
     planned = report['planned_box_route']
     assert planned['resources_checked'] and planned['park']['feasible']
     assert planned['start_source'].startswith('current TOP RGB')
@@ -234,7 +237,7 @@ def test_park_move_follows_astar_waypoints_from_rgb_positions(monkeypatch):
             break
         # Apply the commanded local velocity as ideal translation (heading 0).
         policy.vision.xy = policy.vision.xy + np.array([action['forward'] * 1.57, action['left'] * 1.18]) * .2
-    assert policy.done and np.linalg.norm(policy.vision.xy - [-.75, -2.85]) < .02
+    assert policy.done and np.linalg.norm(policy.vision.xy - [-.75, -2.85]) < .025
     assert evidence['destination_source'] == 'model_coordinate'
     assert policy.route['waypoints_m'][1][0] < 1.62  # backs away from the released box first
     released = map_goto.rect('released_box', [1.82, -2.66], [.04, .04], 'test')
