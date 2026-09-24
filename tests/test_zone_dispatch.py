@@ -217,3 +217,15 @@ def test_replicas_get_the_dispatch_box_finger_pairs_and_the_planner_leaves_an_ov
     # that grazes a box's margin does not plan straight through the box.
     path = plan_path((-.60, -1.45), (1.0, -1.70), bounds, [(-.25, -1.70, .06)], radius=.21)
     assert path and all(math.hypot(x+.25, y+1.70) >= .06+.21-1e-6 for x, y in path[1:-1])
+
+
+def test_teacher_goes_around_its_target_box_to_the_pregrasp_pose():
+    # dev-fixture-4: with its target excluded from the keep-outs, a robot
+    # coming from the east planned through the box and pushed it west.
+    from scripts.zone_teacher import plan_path, GRASP_RADIUS_M, ROBOT_RADIUS_M, BOX_CLEARANCE_M
+    box = (-.30, -1.70)
+    goal = (box[0]-GRASP_RADIUS_M-.10, box[1])
+    assert math.dist(goal, box) > ROBOT_RADIUS_M+BOX_CLEARANCE_M
+    column = [(box[0], box[1], BOX_CLEARANCE_M), (-.30, -1.30, BOX_CLEARANCE_M), (-.30, -2.10, BOX_CLEARANCE_M)]
+    path = plan_path((4.26, -1.60), goal, [-1.05, 5.40, -3.15, -.85], column)
+    assert path[-1] == goal and min(math.dist(q, box) for q in path[:-1]) >= ROBOT_RADIUS_M+BOX_CLEARANCE_M-1e-6

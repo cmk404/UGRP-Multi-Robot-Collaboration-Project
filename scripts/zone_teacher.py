@@ -238,7 +238,9 @@ class TeacherRobot:
         if self.phase == 'to_box':
             box = self.box_xyz(job['box_body'])
             goal = (box[0]-GRASP_RADIUS_M-.10, box[1])
-            if self._drive_to(goal, 0., now, discs_for(self, exclude=job['box_body'], carrying=False),
+            # The target box stays a keep-out: the pregrasp goal is outside its
+            # margin, and a robot coming from the east must go around it.
+            if self._drive_to(goal, 0., now, discs_for(self, carrying=False),
                               carrying=False, tol=.04):
                 self._set('align_box', now)
         elif self.phase == 'align_box':
