@@ -566,6 +566,7 @@ class SkillScene(DispatchScene):
                 'cargo_id':self.solo.box.cargo_id,
                 'completed_pose':self.solo_executor.last_execution,
                 'completed_pose_receipts':copy.deepcopy(self._solo_completed_pose_receipts),
+                'phase':self.solo.phase,
                 'plan_hash':self.bindings.committed['plan_hash']}
 
     def _refresh_completed_issued_pose_receipts(self):
@@ -1270,6 +1271,8 @@ def run(args):
             'max_episodes':VIEW_RECOVERY_MAX_EPISODES,
             'wrist_step_pwm':VIEW_RECOVERY_WRIST_STEP_PWM,
             'max_pan_delta_pwm':VIEW_RECOVERY_MAX_PAN_DELTA_PWM,
+            'episodes_started':0,
+            'poses_issued':0,
             'issued_pwm_not_measured_joint':True},
         'bounded_carrier_relink':{'requested':scene.bounded_carrier_relink,'applied':False,
             'scope':'solo carry only, realtime dispatch_open with rolling approach',
@@ -1425,6 +1428,9 @@ def run(args):
                 scene._clear_solo_approach_lease(scene.time(),'trial_end')
                 if scene.solo_executor:scene.solo_executor.cancel(scene.time(),'trial_end')
                 if scene.solo:result['solo_status']={'phase':scene.solo.phase,'reason':scene.solo.reason,'done':scene.solo.done}
+                if scene._view_recovery is not None:
+                    result['view_recovery']['episodes_started']=scene._view_recovery.episodes_started
+                    result['view_recovery']['poses_issued']=scene._view_recovery.poses_issued
                 if scene.bindings:result['resource_events']=scene.bindings.resource_events
                 if scene.realtime_control:result['realtime_control_stats']=dict(scene.realtime_stats)
                 scene.solo=None;scene.deadline=None;scene.hold()

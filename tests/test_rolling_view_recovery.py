@@ -41,7 +41,8 @@ def _saved_samples():
                         "paired_top_sha256": item["top_sha256"],
                         "pose": item["servo_pulses"], "box": box,
                         "target": box["estimated_box_center_base_m"],
-                        "cargo_id": "small_box_01", "plan_hash": "saved-plan"})
+                        "cargo_id": "small_box_01", "plan_hash": "saved-plan",
+                        "phase": "approach"})
     return samples
 
 
@@ -77,7 +78,7 @@ def _started():
 
 def _post_pose(strong, weak):
     # A hypothetical *new* post-pose capture with the saved strong pixels.
-    # This checks the evidence contract, not that a v41 robot actually moved.
+    # This checks the evidence contract, not that a v43 robot actually moved.
     sample = copy.deepcopy(strong)
     sample.update(frame_id=weak["frame_id"] + 8,
                   capture_started_at_s=15.25, observed_at_s=15.30,
@@ -110,6 +111,17 @@ def test_recovery_rejects_same_frame_missing_receipt_and_plan_change():
         sample = _post_pose(strong, weak)
         sample.update(change)
         assert trial.advance(sample)["reason"] == reason
+
+
+def test_active_view_aborts_when_candidate_exits_approach():
+    recovery, strong, weak = _started()
+    sample = _post_pose(strong, weak)
+    sample["phase"] = "lower"
+    event = recovery.advance(sample)
+    assert event["kind"] == "failed"
+    assert event["reason"] == "phase_exit_during_active_view"
+    assert event["wheels_held"] is True
+    assert recovery.episode is None
 
 
 def test_recovery_rejects_stale_detached_ambiguous_or_post_anchor_wheels():

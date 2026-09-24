@@ -409,6 +409,8 @@ class ActiveViewRecovery:
         episode, anchor = self.episode, self.anchor
         if episode is None:
             return None
+        if sample.get("phase") != "approach":
+            return self._fail("phase_exit_during_active_view", sample)
         if not _fresh_view(sample):
             return self._fail("stale_or_unpaired_reobservation", sample)
         if sample["decision_at_s"]-episode["started_at_s"] > VIEW_RECOVERY_MAX_ELAPSED_S:
