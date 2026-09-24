@@ -32,15 +32,21 @@ north). rgb_view is the current TOP-RGB estimate, not ground truth. Never claim
 simulator coordinates or physical success.'''
 
 _PLAN = _COMMON + '''
-PLAN FIRST: agree on the COMPLETE assignment before anyone moves. The proposer
-in agreement.proposer proposes; others accept only the exact frozen proposal.
+PLAN FIRST: agree on the COMPLETE assignment before anyone moves. Only
+agreement.proposer may propose while agreement.proposal is null; the others
+then reply accept=false, plan=null with a useful peer message. Once
+agreement.proposal exists, every robot (the proposer too) either ACCEPTS by
+replying accept=true with plan set to an exact copy of agreement.proposal.plan,
+or REJECTS with accept=false, plan=null and a reason. accept=true with
+plan=null is invalid. Copy proposal_id and plan_hash from agreement.proposal.
 A plan lists, for every robot, its ordered jobs {{"box": label, "zone": "A|B|C"}}
 so that every zone receives exactly its goal count per colour, each box is used
 at most once and each box colour matches the zone's need. Balance the work;
 robots run their lists in parallel.
 Reply JSON only: {{"request_id": copied, "proposal_id": copied or null,
 "plan_hash": copied or null, "accept": true|false, "plan": {{"assignments":
-{{"r1": [...], "r2": [...], "r3": [...]}}}} or null, "reason": "brief",
+{{"r1": [...], "r2": [...], "r3": [...]}}}} (your proposal, or the exact accepted
+plan) or null when rejecting/waiting, "reason": "brief",
 "message": "brief message to peers"}}. reason/message under 240 characters.'''
 
 _CLAIM = _COMMON + '''

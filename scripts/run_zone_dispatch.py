@@ -131,6 +131,13 @@ class Slots:
             raise RuntimeError(f'zone {zone} has no free slot')
         return self.free[zone].pop(0)
 
+    def give_back(self, slot):
+        """A job the executor stopped before its release never filled its slot."""
+        zone = slot[0]
+        if slot in self.free[zone]:
+            raise ValueError(f'slot {slot} is already free')
+        self.free[zone].insert(0, slot)
+
 
 def run(args):
     if subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip():
@@ -196,6 +203,8 @@ def run(args):
                               'sim_time_s': round(zone.time(), 2)}
                     own_jobs[rid][-1]['status'] = report['executor_receipt']
                     (finished if robot.outcome == 'placed_by_teacher' else failed).append(report)
+                    if robot.outcome in ('grasp_failed_by_teacher', 'teacher_path_blocked', 'dropped_in_transit'):
+                        slots.give_back(job['slot'])
                     zone._log('job_end', rid, zone.time(), outcome=robot.outcome, box=job['box'], zone=job['zone'])
 
         if args.coordination == 'plan_first':

@@ -229,3 +229,19 @@ def test_teacher_goes_around_its_target_box_to_the_pregrasp_pose():
     column = [(box[0], box[1], BOX_CLEARANCE_M), (-.30, -1.30, BOX_CLEARANCE_M), (-.30, -2.10, BOX_CLEARANCE_M)]
     path = plan_path((4.26, -1.60), goal, [-1.05, 5.40, -3.15, -.85], column)
     assert path[-1] == goal and min(math.dist(q, box) for q in path[:-1]) >= ROBOT_RADIUS_M+BOX_CLEARANCE_M-1e-6
+
+
+def test_plan_prompt_requires_copying_the_accepted_plan_and_failed_jobs_free_their_slot():
+    # Z1-G5-plan: robots replied accept=true, plan=null and never committed.
+    # Z1-G8-dyn: slots of stopped jobs were never returned ("zone C has no free slot").
+    from scripts.run_zone_dispatch import Slots
+    assert 'accept=true with\nplan=null is invalid' in zc._PLAN
+    slots = Slots(za.authored_map())
+    taken = [slots.take('C') for _ in range(3)]
+    with pytest.raises(RuntimeError):
+        slots.take('C')
+    slots.give_back(taken[1])
+    assert slots.take('C') == taken[1]
+    slots.give_back(taken[0])
+    with pytest.raises(ValueError):
+        slots.give_back(taken[0])

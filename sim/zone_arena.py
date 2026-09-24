@@ -33,10 +33,13 @@ SLOTS_PER_ZONE = 3
 DEFAULT_GOAL = {'A': {'red': 2}, 'B': {'cyan': 1}, 'C': {'green': 1, 'red': 1}}
 SLOT_SPACING_M = .24
 # Pickup grid: columns along +x, rows along y. Robots grasp facing +x, so each
-# column leaves the chassis room west of every box.
-PICKUP_COLUMNS_X = (-.30, .25)
-PICKUP_ROWS_Y = (-1.30, -1.70, -2.10, -2.50, -2.90)
-SPAWN_X = -.78
+# column leaves the chassis room west of every box. The 0.6 m spacing keeps
+# lanes that a robot carrying a box can drive through, plus a corridor between
+# the spawn line and the first column: with 8 boxes on a denser grid
+# (Z1-G8-dyn) no teacher path existed and the robots never left their spawns.
+PICKUP_COLUMNS_X = (-.20, .40, 1.00, 1.60)
+PICKUP_ROWS_Y = (-1.45, -2.05, -2.65)
+SPAWN_X = -.85
 SPAWN_ROWS_Y = (-1.35, -2.0, -2.65)
 
 
@@ -56,7 +59,7 @@ def build_authored_map(variant='zone_open'):
         wall.update(height_m=.10, kind='wall')
     zones = {'A': [4.70, -1.35], 'B': [4.70, -2.65], 'C': [3.30, -2.00]}
     zone_rgba = {'A': '.95 .45 .10 .30', 'B': '.20 .40 .95 .30', 'C': '.70 .20 .85 .30'}
-    regions = {'pickup': {'center_m': [-.02, -2.10], 'half_extents_m': [.55, 1.02],
+    regions = {'pickup': {'center_m': [.70, -2.05], 'half_extents_m': [1.15, .85],
                           'rgba': '.12 .36 .70 .14'}}
     slots = {}
     for zone, (x, y) in zones.items():
@@ -64,7 +67,7 @@ def build_authored_map(variant='zone_open'):
                                  'rgba': zone_rgba[zone]}
         slots[zone] = [{'slot_id': f'{zone}{i+1}', 'center_m': [x, y+(i-1)*SLOT_SPACING_M],
                         'half_extents_m': [.06, .06]} for i in range(SLOTS_PER_ZONE)]
-    return {'schema': SCHEMA, 'map_id': 'zone_'+variant.split('_', 1)[1], 'version': 1,
+    return {'schema': SCHEMA, 'map_id': 'zone_'+variant.split('_', 1)[1], 'version': 2,
             'frame': 'world metres; x east, y north',
             'bounds_m': bounds, 'top_cameras': [copy.deepcopy(FIXED_TOP), copy.deepcopy(EAST_TOP)],
             'obstacles': walls, 'terrain': [], 'regions': regions, 'zone_slots': slots,
