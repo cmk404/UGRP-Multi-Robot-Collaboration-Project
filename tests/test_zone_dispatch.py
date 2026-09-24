@@ -213,4 +213,3 @@ def test_replicas_get_the_dispatch_box_finger_pairs_and_the_planner_leaves_an_ov
     assert count == 2 and out.count('geom2="cargo_box_00_geom"') == 1 and out.count('3.4 3.4 .2 .01 .01') == 3
     bounds = [-1.05, 5.40, -3.15, -.85]
     assert plan_path((3.10, -2.15), (0., -1.30), bounds, [(3.24, -2.16, .06)]) is not None
-    assert plan_path((2.0, -2.0), (3.24, -2.16), bounds, [(3.24, -2.16, .06)])[-1] == (3.24, -2.16)

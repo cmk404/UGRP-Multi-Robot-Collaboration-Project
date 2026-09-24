@@ -37,9 +37,11 @@ def _wrap(angle):
 def plan_path(start, goal, bounds, discs, *, grid=GRID_M, radius=ROBOT_RADIUS_M, budget=40000):
     """8-connected grid A* for a disc robot; discs are (x, y, r) keep-outs."""
     x0, x1, y0, y1 = bounds
-    # A keep-out the robot already overlaps (e.g. a box it just dropped next
-    # to itself) would wall in the start cell; the robot may leave it.
-    discs = [(x, y, r) for x, y, r in discs if math.hypot(start[0]-x, start[1]-y) >= r+radius]
+    # A keep-out whose clearance margin (not the obstacle itself) already
+    # overlaps the robot, e.g. a box it just dropped next to itself, would
+    # wall in the start cell; the robot may drive out of that margin.
+    discs = [(x, y, r) for x, y, r in discs
+             if not r <= math.hypot(start[0]-x, start[1]-y) < r+radius]
     def free(p):
         if not (x0+radius <= p[0] <= x1-radius and y0+radius <= p[1] <= y1-radius):
             return False
