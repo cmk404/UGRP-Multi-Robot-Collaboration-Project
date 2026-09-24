@@ -1,5 +1,7 @@
 # 실험 인덱스
 
+- [2026-09-25 정지 후 RGB 재관측 후보](2026-09-25-settled-view-recovery/README.md): v43의 정상 주행 뒤 기준 영상 무효화 실패를 재현하고, 정확한 HOLD·안정화 뒤 새 영상으로 재관측하는 v46 후보. 실제 물리 검증 전.
+
 - [2026-09-25 후속 RGB 진단·ACT 교사 수집 검토](2026-09-25-action-act-followup/README.md): v40 물리 0/1·수정 사후 감사 통과, 남쪽 교사 물리 실패/인프라 중단/미실행 각 1건, 세 번째 학습 미시작과 새 TensorBoard 2개 실패 기록.
 - [2026-09-25 계산 후 재생 확인](2026-09-25-post-run-replay/README.md): 표준 dispatch 재생 기록 ON/OFF 동기 실행 2회 모두 성공, 명령·평가 동일(SIM 132.26초), Mac MuJoCo 창 재생 끝 프레임 확인.
 - [2026-09-24 rolling 접근 영상 시야 복구](2026-09-24-rolling-view-recovery/physical-protocol.md): v40의 365회 연속 약한 직접 RGB 관측·600결정 한도 실패를 근거로 만든 v43 기본 OFF 후보와 사전 물리 비교 계약. v43의 물리 결과는 아직 없다.

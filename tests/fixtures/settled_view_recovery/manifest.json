@@ -1,0 +1,234 @@
+{
+  "scope": "Saved v43 failed development observations; fabricated future timestamps in tests are not a physical recovery.",
+  "source_sha": "b47bbec7328890596d098ca007273771406eb749",
+  "source_decisions_sha256": "6f240a1457f9f22db196df91efb694ea25917f7af0156a86abe0837724733d8a",
+  "source_raw_actions_sha256": "bf5ad7b5c5746f0c94ccc9e493d2f937d3e47227232e4bedb015d80f5900839b",
+  "items": [
+    {
+      "fixture": "strong-own.jpg",
+      "source_path": "/Users/changmin/projects/ugrp/outputs/dispatch-view-recovery-20260924/original-candidate-diagnostic-1/rgb/solo-8-own.jpg",
+      "source_sha256": "54b52d739ce0d5b7fa996fab0a025ed1d6f1fc50fedb8c3ed04005c797372253",
+      "row": {
+        "index": 8,
+        "sim_time_s": 11.289249999996365,
+        "observed_at_s": 10.962749999997126,
+        "frame_id": 92,
+        "decision_age_s": 0.32649999999923907,
+        "robot_id": "r2",
+        "input_transform": {
+          "method": "cv2.resize 640x480 then JPEG quality 95",
+          "raw_size": [
+            960,
+            720
+          ],
+          "skill_size": [
+            640,
+            480
+          ],
+          "raw_sha256": "baf31451d7f350b42ba8a23a75846a60a5544911c260fa2d5457afc7196b6b81",
+          "skill_sha256": "54b52d739ce0d5b7fa996fab0a025ed1d6f1fc50fedb8c3ed04005c797372253"
+        },
+        "phase_before": "approach",
+        "phase_after": "approach",
+        "observation": {
+          "robot_id": "r2",
+          "frame_id": 92,
+          "sim_time": 10.962749999997126,
+          "sha256": "54b52d739ce0d5b7fa996fab0a025ed1d6f1fc50fedb8c3ed04005c797372253",
+          "camera": "robot_cam",
+          "actuator_state": {
+            "motor_commands": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "servo_pulses": {
+              "1": 2000,
+              "3": 740,
+              "4": 2320,
+              "5": 1320,
+              "6": 1553
+            }
+          }
+        },
+        "images": {
+          "raw_own": {
+            "path": "rgb/solo-8-r2.jpg",
+            "sha256": "baf31451d7f350b42ba8a23a75846a60a5544911c260fa2d5457afc7196b6b81"
+          },
+          "own": {
+            "path": "rgb/solo-8-own.jpg",
+            "sha256": "54b52d739ce0d5b7fa996fab0a025ed1d6f1fc50fedb8c3ed04005c797372253"
+          },
+          "top": {
+            "path": "rgb/solo-8-top.jpg",
+            "sha256": "d53fbbbaebe5f29095a57247b384c0de21b22c6cea68be6c8f99ff3f5ac19e7c"
+          }
+        },
+        "action": {
+          "kind": "drive",
+          "fwd": 0.0,
+          "turn": 0.04441859420277637,
+          "duration": 0.4
+        },
+        "top_evidence": {},
+        "own_attachment_evidence": null,
+        "approach_adjustment": null,
+        "rolling_capture_evidence": {
+          "capture_started_at_s": 10.843749999997403,
+          "observed_at_s": 10.962749999997126,
+          "frame_id": 92,
+          "own_sha256": "54b52d739ce0d5b7fa996fab0a025ed1d6f1fc50fedb8c3ed04005c797372253",
+          "top_sha256": "d53fbbbaebe5f29095a57247b384c0de21b22c6cea68be6c8f99ff3f5ac19e7c",
+          "frame_within_issued_command_window": false,
+          "command_window_is_not_measured_motion": true
+        },
+        "rolling_support": {
+          "allowed": true,
+          "reason": "fresh_direct_cyan_rgb",
+          "radial_m": 0.6011842081922608,
+          "confidence": 0.7992688931551757,
+          "source_frame_id": 92,
+          "source_observed_at_s": 10.962749999997126,
+          "source_own_sha256": "54b52d739ce0d5b7fa996fab0a025ed1d6f1fc50fedb8c3ed04005c797372253",
+          "source_top_sha256": "d53fbbbaebe5f29095a57247b384c0de21b22c6cea68be6c8f99ff3f5ac19e7c",
+          "original_duration_s": 0.4,
+          "post_capture_issued_forward_integral_m": 0.0,
+          "issued_integral_is_not_measured_travel": true,
+          "previous_command_settle_until_s": 10.268499999999209
+        },
+        "rolling_effective_lease_s": 0.25,
+        "rolling_original_horizon_s": 11.689249999996365
+      }
+    },
+    {
+      "fixture": "weak-own.jpg",
+      "source_path": "/Users/changmin/projects/ugrp/outputs/dispatch-view-recovery-20260924/original-candidate-diagnostic-1/rgb/solo-9-own.jpg",
+      "source_sha256": "2f8e8e9a006ccba9e71959d4fde700e6f3195d95eca702ba61e80c28c18ffd7b",
+      "row": {
+        "index": 9,
+        "sim_time_s": 11.79324999999519,
+        "observed_at_s": 11.498999999995876,
+        "frame_id": 97,
+        "decision_age_s": 0.2942499999993142,
+        "robot_id": "r2",
+        "input_transform": {
+          "method": "cv2.resize 640x480 then JPEG quality 95",
+          "raw_size": [
+            960,
+            720
+          ],
+          "skill_size": [
+            640,
+            480
+          ],
+          "raw_sha256": "4b4c63c6c9bda8b34738db153b1111e7e98bb08d384f73a903506b4867d6355a",
+          "skill_sha256": "2f8e8e9a006ccba9e71959d4fde700e6f3195d95eca702ba61e80c28c18ffd7b"
+        },
+        "phase_before": "approach",
+        "phase_after": "approach",
+        "observation": {
+          "robot_id": "r2",
+          "frame_id": 97,
+          "sim_time": 11.498999999995876,
+          "sha256": "2f8e8e9a006ccba9e71959d4fde700e6f3195d95eca702ba61e80c28c18ffd7b",
+          "camera": "robot_cam",
+          "actuator_state": {
+            "motor_commands": [
+              -0.04441859420277637,
+              0.04441859420277637,
+              -0.04441859420277637,
+              0.04441859420277637
+            ],
+            "servo_pulses": {
+              "1": 2000,
+              "3": 740,
+              "4": 2320,
+              "5": 1320,
+              "6": 1553
+            }
+          }
+        },
+        "images": {
+          "raw_own": {
+            "path": "rgb/solo-9-r2.jpg",
+            "sha256": "4b4c63c6c9bda8b34738db153b1111e7e98bb08d384f73a903506b4867d6355a"
+          },
+          "own": {
+            "path": "rgb/solo-9-own.jpg",
+            "sha256": "2f8e8e9a006ccba9e71959d4fde700e6f3195d95eca702ba61e80c28c18ffd7b"
+          },
+          "top": {
+            "path": "rgb/solo-9-top.jpg",
+            "sha256": "8c85ea6bc18d12aeba5acdce7c20588ce4e82cfd29175e6d50d82c4ac653e60b"
+          }
+        },
+        "action": {
+          "kind": "drive",
+          "fwd": 0.0,
+          "turn": 0.037851346799019144,
+          "duration": 0.4
+        },
+        "top_evidence": {},
+        "own_attachment_evidence": null,
+        "approach_adjustment": null,
+        "rolling_capture_evidence": {
+          "capture_started_at_s": 11.309499999996317,
+          "observed_at_s": 11.498999999995876,
+          "frame_id": 97,
+          "own_sha256": "2f8e8e9a006ccba9e71959d4fde700e6f3195d95eca702ba61e80c28c18ffd7b",
+          "top_sha256": "8c85ea6bc18d12aeba5acdce7c20588ce4e82cfd29175e6d50d82c4ac653e60b",
+          "frame_within_issued_command_window": true,
+          "command_window_is_not_measured_motion": true
+        },
+        "rolling_support": {
+          "allowed": false,
+          "reason": "weak_direct_cyan_rgb",
+          "post_capture_issued_forward_integral_m": 0.0,
+          "issued_integral_is_not_measured_travel": true,
+          "previous_command_settle_until_s": 11.762749999995727
+        },
+        "view_recovery": {
+          "kind": "failed",
+          "reason": "anchor_stale_or_wheel_issued",
+          "frame_id": 97,
+          "own_sha256": "2f8e8e9a006ccba9e71959d4fde700e6f3195d95eca702ba61e80c28c18ffd7b",
+          "episode": 0,
+          "poses_issued": 0,
+          "wheels_held": true
+        },
+        "rolling_dropped": "anchor_stale_or_wheel_issued"
+      }
+    }
+  ],
+  "completed_pose_receipts": {
+    "3": {
+      "status": "completed",
+      "macro": {
+        "kind": "pose",
+        "pulses": {
+          "1": 2000,
+          "3": 740,
+          "4": 2320,
+          "5": 1320,
+          "6": 1500
+        }
+      },
+      "ended_at": 6.162000000001785
+    },
+    "6": {
+      "status": "completed",
+      "macro": {
+        "kind": "pose",
+        "pulses": {
+          "6": 1553
+        }
+      },
+      "ended_at": 10.843749999997403
+    }
+  },
+  "intervening_wheel_issue_count": 82,
+  "wheel_issue_first_s": 11.289249999996365,
+  "wheel_issue_last_s": 11.562499999995728
+}
