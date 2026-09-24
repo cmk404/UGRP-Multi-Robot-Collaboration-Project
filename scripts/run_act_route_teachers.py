@@ -11,7 +11,6 @@ import os
 from pathlib import Path
 import signal
 import subprocess
-import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -57,6 +56,24 @@ def effective_wall_cap(remaining, maximum, *, cleanup_reserve=10):
     if maximum <= 0 or cleanup_reserve < 0:
         raise ValueError('invalid teacher wall budget')
     return max(0., min(float(maximum), float(remaining)-cleanup_reserve))
+
+
+def managed_caps(remaining, maximum, *, aggregate_cleanup_reserve=10,
+                 manager_finalization_reserve=10):
+    outer = effective_wall_cap(remaining, maximum,
+                               cleanup_reserve=aggregate_cleanup_reserve)
+    if manager_finalization_reserve <= 0:
+        raise ValueError('positive manager finalization reserve required')
+    inner = outer-manager_finalization_reserve
+    return outer, max(0., inner)
+
+
+def managed_run_command(record, trial, inner_timeout):
+    if inner_timeout <= 0:
+        raise ValueError('cannot start teacher with nonpositive manager timeout')
+    return ['bash', 'scripts/open_simulation.command', 'workflow', 'run',
+            'dispatch-skills', '--record', str(record), '--timeout',
+            str(inner_timeout), '--', *trial]
 
 
 def stop_own_group(process):
@@ -163,8 +180,10 @@ def main():
     try:
         for case in teacher['cases']:
             remaining = teacher['aggregate_manager_hard_wall_s']-(time.monotonic()-started)
-            # Leave ten seconds for owned-child cleanup at the aggregate edge.
-            if effective_wall_cap(remaining, teacher['manager_timeout_per_case_s']) <= 0:
+            # Reserve ten seconds for our cleanup and another ten for the
+            # workflow manager's child/tee/manifest finalization.
+            outer_cap, inner_cap = managed_caps(remaining, teacher['manager_timeout_per_case_s'])
+            if inner_cap <= 0:
                 record['cases'].append({'id': case['id'], 'status': 'unstarted_aggregate_cap'})
                 continue
             assert_source(checkout, source['teacher_and_physical_inference_source_sha'])
@@ -198,20 +217,23 @@ def main():
                 'console_sha256': sha(plan_log)})
             save(root/'launcher.json', record)
             remaining = teacher['aggregate_manager_hard_wall_s']-(time.monotonic()-started)
-            effective_cap = effective_wall_cap(remaining, teacher['manager_timeout_per_case_s'])
-            if effective_cap <= 0:
+            outer_cap, inner_cap = managed_caps(remaining, teacher['manager_timeout_per_case_s'])
+            if inner_cap <= 0:
                 case_record['status'] = 'unstarted_after_plan_aggregate_cap'
+                case_record['effective_outer_wall_cap_s'] = outer_cap
+                case_record['effective_manager_wall_cap_s'] = inner_cap
                 save(root/'launcher.json', record)
                 continue
-            run_command = ['bash', 'scripts/open_simulation.command', 'workflow', 'run',
-                           'dispatch-skills', '--record', str(managed), '--timeout',
-                           str(effective_cap), '--', *trial]
+            run_command = managed_run_command(managed, trial, inner_cap)
             case_record['run_command'] = run_command
-            case_record['effective_manager_wall_cap_s'] = effective_cap
+            case_record['effective_outer_wall_cap_s'] = outer_cap
+            case_record['effective_manager_wall_cap_s'] = inner_cap
+            case_record['aggregate_cleanup_reserve_s'] = 10
+            case_record['manager_finalization_reserve_s'] = 10
             save(root/'launcher.json', record)
             result = run_owned(run_command, cwd=checkout, environment=environment,
                                log=root/'logs'/(case['id']+'-run.log'),
-                               timeout=effective_cap)
+                               timeout=outer_cap)
             case_record['run'] = result
             result_path = raw/'result.json'
             if result_path.is_file():
