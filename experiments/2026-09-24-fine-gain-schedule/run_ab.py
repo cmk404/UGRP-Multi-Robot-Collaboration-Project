@@ -10,9 +10,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 OUTS = {'v1': Path('/Users/changmin/projects/ugrp/outputs/fine-gain-schedule-20260924'),
-        'v2': Path('/Users/changmin/projects/ugrp/outputs/fine-gain-schedule-20260924-sync')}
+        'v2': Path('/Users/changmin/projects/ugrp/outputs/fine-gain-schedule-20260924-sync'),
+        'v3': Path('/Users/changmin/projects/ugrp/outputs/fine-gain-schedule-20260924-sync-v3')}
 MODELS = Path('/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models')
-ORDER = [('A1', False), ('B1', True), ('B2', True), ('A2', False)]
+ORDERS = {'v1': [('A1', False), ('B1', True), ('B2', True), ('A2', False)],
+          'v2': [('A1', False), ('B1', True), ('B2', True), ('A2', False)],
+          # v3: the synchronous OFF baseline is deterministic (v2 A1 == A2);
+          # one OFF run on the new source confirms it after both B runs.
+          'v3': [('B1', True), ('B2', True), ('A1', False)]}
 BASE = ['--realtime-control', '--plan-replay', 'experiments/2026-09-22-parallel-transport/independent-plan.json',
         '--variant', 'open', '--seed', '11', '--contact-profile', 'local_contact_fine',
         '--realtime-factor', '1', '--max-wall-s', '350', '--overlap-start', 'grasp', '--video-fps', '10',
@@ -31,15 +36,16 @@ def git(*args):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--protocol', choices=('v1', 'v2'), default='v1')
+    parser.add_argument('--protocol', choices=('v1', 'v2', 'v3'), default='v1')
     version = parser.parse_args().protocol
     OUT, base = OUTS[version], (BASE if version == 'v1' else BASE_V2)
+    order = ORDERS[version]
     if git('status', '--porcelain'):
         raise SystemExit('runtime source must be committed and clean before the cohort')
     OUT.mkdir(parents=True, exist_ok=True)
     sha = git('rev-parse', 'HEAD')
     b_failed = False
-    for name, schedule in ORDER:
+    for name, schedule in order:
         output = OUT / name
         if output.exists():
             raise SystemExit(f'output exists: {output}')
