@@ -1,0 +1,32 @@
+{
+  "plan": {
+    "dock": "dock_b",
+    "tasks": [
+      {
+        "after": [
+          "box_job"
+        ],
+        "id": "beam_job",
+        "object": "beam",
+        "participants": [
+          "r1",
+          "r3"
+        ],
+        "route": "north"
+      },
+      {
+        "after": [],
+        "id": "box_job",
+        "object": "box",
+        "participants": [
+          "r2"
+        ],
+        "route": "south"
+      }
+    ]
+  },
+  "plan_hash": "dbb86285f4de975b65e92d392e1db09f4dc144a93efeed20114e4612472f69f1",
+  "proposal_id": "map-goto-authored-box-first",
+  "proposer": "fixture",
+  "version": 1
+}
