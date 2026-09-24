@@ -161,6 +161,7 @@ class BoundPairSkill:
         self.beam_continuity=BeamContinuity()
         from harness.dispatch_beam_tracker import CarriedBeamTracker
         self.carried_beam=CarriedBeamTracker()
+        self.identity=identity
         self.coarse=PairCoarsePixels(identity,bindings,reference) if identity is not None else None
         self._approach_pending_lease=None
         self._fine_pending_lease=None
@@ -852,6 +853,21 @@ class BoundPairSkill:
             ready_count=ready_count+1 if all(c['ready'] for c in commands.values()) else 0
             if ready_count>=2:return report
         raise RuntimeError('fine docking confirmation budget exhausted')
+
+    def back_off(self,slices=10,speed=.05):
+        """Dynamic recovery only: short straight reverse of both carriers.
+
+        Issued commands only; the next approach re-observes from RGB. The coarse
+        pixel tracker restarts from the original own-probe identity evidence.
+        """
+        if getattr(self.io,'realtime_control',False):
+            raise RuntimeError('recovery back-off supports synchronous execution only')
+        if not 0<slices<=20 or not 0<speed<=.05:
+            raise ValueError('bounded recovery back-off required')
+        for _ in range(slices):self.drive({r:-speed for r in ROBOTS})
+        self.stop_dwell()
+        if self.coarse is not None:
+            self.coarse=PairCoarsePixels(self.identity,self.bindings,self.reference)
 
     def carry(self,navigator,max_steps=None):
         if self.bindings.cluttered:return self.carry_with_rotation(max_steps)
