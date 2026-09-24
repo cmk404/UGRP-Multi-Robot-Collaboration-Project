@@ -15,7 +15,12 @@
   },
   "design": {
     "comparison": "same runtime source and bundle; only --fine-gain-schedule differs",
-    "order": ["A1_off", "B1_on", "B2_on", "A2_off"],
+    "order": [
+      "A1_off",
+      "B1_on",
+      "B2_on",
+      "A2_off"
+    ],
     "max_native_full_runs": 4,
     "parallel_physics": false,
     "precondition": "no other simulation or training process running; record load average before each run",
@@ -42,7 +47,7 @@
     "max_command_lease_s": 0.25,
     "stage_and_grasp_models": "outputs/dispatch-models/e78a5a5777f5bc48/models/{varied,grasp} (faster-dispatch worktree copy; file hashes identical to the v19 simulation-realtime copy used by the replay audit)"
   },
-  "command_template": "python3 scripts/ugrp_session.py run fine-gain-<run> -- .venv-sim-worker-mac/bin/python -m scripts.sim_cli workflow run dispatch-skills --record outputs/fine-gain-schedule-20260924/<run> --timeout 600 -- --variant open --seed 11 --plan-replay experiments/2026-09-22-parallel-transport/independent-plan.json --contact-profile local_contact_fine --grasp-model-dir <models>/grasp --stage-model-dir <models>/varied --viewer --realtime-control --efficient-capture --auto-route-overlap --overlap-start grasp --max-wall-s 350 [--fine-gain-schedule]",
+  "command_template": "bash scripts/open_simulation.command dispatch --realtime-control --plan-replay experiments/2026-09-22-parallel-transport/independent-plan.json --variant open --seed 11 --contact-profile local_contact_fine --realtime-factor 1 --max-wall-s 350 --overlap-start grasp --video-fps 10 --grasp-model-dir <models>/grasp --stage-model-dir <models>/varied [--fine-gain-schedule] --output /Users/changmin/projects/ugrp/outputs/fine-gain-schedule-20260924/<run>",
   "metrics": [
     "physical_success and protocol_complete",
     "fine_approach_sim_s (approach_elapsed_sim_s of learned_approach) and per-stage movement slices",
@@ -66,5 +71,10 @@
     "One saved plan, open map, seed 11; not a generalization or real-robot claim",
     "Response constants are a controller calibration from recorded RGB-derived error changes, not a physical measurement",
     "Box approach may become the critical path once the beam fine stage shortens; its tilt-step limit is handled separately in draft PRs #129/#131"
-  ]
+  ],
+  "launcher": {
+    "entry": "standard dispatch launcher (scripts/open_simulation.command -> scripts.sim_cli dispatch), which owns its ugrp_session and adds --efficient-capture, --auto-route-overlap and --viewer",
+    "driver": "run_ab.py",
+    "amended_before_first_run": "replaced the earlier workflow-run template with the standard launcher used by the concurrent v27 study; flags unchanged"
+  }
 }
