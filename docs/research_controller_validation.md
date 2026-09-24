@@ -31,6 +31,8 @@
 
 `train_carry_input_act.py --termination-objective episode`는 도착 전 마지막 8개 명령의 음성 표적을 별도 표본군으로 뽑고, 개발 에피소드의 조기 공동 정지율·종료 누락률·동작 오차로 체크포인트를 선정한다. 기존 방식 재현은 `--termination-objective legacy`로 명시한다. 목적 함수가 다르면 기존 체크포인트의 학습을 그대로 이어서 처리하지 않는다. 개발 통과 여부와 새 조건의 독립 실행 결과를 모두 보고한다.
 
+배포 입력 배치에 맞추는 선택적 `--feature-cache-mode deployed_window`는 각 시간창의 고정 CNN 특징을 history 4일 때 실제 배포와 같은 프레임 배치 4로 계산한다. 이 모드에서는 `--cpu-evaluation-batch-size 1`을 지정해 개발 선택과 최종 예측을 단일 요청으로 평가한다. 고정 학습·선택 후 모든 학습·개발 행에서 캐시와 원본 RGB 추론의 전체 ACT chunk가 기존 `atol=rtol=1e-5` 안이고 각 chunk 종료 결정이 같아야 내보낸다. 기본 `batched32` 모드는 이전 동작을 유지한다. 이 모드에서 데이터까지 추가한 후보는 두 변경이 결합된 결과로 보고한다. [고정된 세 번째 후보 규약](../experiments/2026-09-24-action-act/route-coverage-protocol.json)을 참조한다.
+
 ## 한 코호트 실행과 판정
 
 깨끗한 실행 체크아웃에서 모델·프로토콜을 고정하고 아래 순서로 실행한다. 프로토콜에는 `conditions`, `test`, `controls`, `grasp`, `stages`, `asset_sha256`, `expected_source_sha`를 모두 기록한다. 이번 Mac 검증의 실제 경로와 명령은 [실험 기록](../experiments/2026-09-22-research-controller-qualification/README.md)에 남긴다. 다른 컴퓨터에서는 해당 호스트의 런타임과 검증된 자료 경로를 사용한다.
