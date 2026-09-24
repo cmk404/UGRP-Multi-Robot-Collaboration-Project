@@ -1,0 +1,212 @@
+{
+  "schema": "ugrp.fine_gain_schedule_results.v2",
+  "protocol": "protocol-v2.json",
+  "runs": {
+    "A1": {
+      "fine_gain_schedule": false,
+      "source_sha": "23f8c6a4e71ea37be56206ef3e6d85c90acd9f8f",
+      "loadavg_before": [
+        5.62744140625,
+        6.0634765625,
+        9.5986328125
+      ],
+      "exit_code": 0,
+      "physical_success": true,
+      "protocol_complete": true,
+      "error": null,
+      "wall_s_informational": 239.05879937499412,
+      "control_end_sim_s": 126.25999999874232,
+      "fine_alignment_sim_s": 28.400000000135606,
+      "fine_stages": [
+        [
+          "yaw",
+          true,
+          7,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "lateral",
+          true,
+          27,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "yaw",
+          true,
+          0,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "forward",
+          true,
+          57,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "yaw",
+          true,
+          0,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "lateral",
+          true,
+          12,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "forward",
+          true,
+          0,
+          "two consecutive fresh stationary RGB confirmations"
+        ]
+      ],
+      "coarse_samples": 65,
+      "weld_steps": 0,
+      "obstacle_contact_steps": 0,
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/fine-gain-schedule-20260924-sync/A1",
+      "raw_files": 2493,
+      "raw_inventory_sha256": "169f3fdf766b256b76d82d2494470407135fbada43def16d82671830b0351dfb",
+      "result_sha256": "baecaa6cf3853038b3198555d65a07537d0b37a5dfe9e36fd7d46756e384a6a8"
+    },
+    "B1": {
+      "fine_gain_schedule": true,
+      "source_sha": "23f8c6a4e71ea37be56206ef3e6d85c90acd9f8f",
+      "loadavg_before": [
+        6.61767578125,
+        6.05078125,
+        8.68212890625
+      ],
+      "exit_code": 1,
+      "physical_success": false,
+      "protocol_complete": false,
+      "error": "RuntimeError: fine RGB alignment outside saved skill support",
+      "wall_s_informational": 64.90725925000152,
+      "control_end_sim_s": 34.00000000007133,
+      "fine_alignment_sim_s": 15.550000000074249,
+      "fine_stages": [
+        [
+          "yaw",
+          true,
+          7,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "lateral",
+          true,
+          6,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "yaw",
+          true,
+          0,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "forward",
+          false,
+          42,
+          "RGB outside learned stage support after bounded re-observation"
+        ]
+      ],
+      "coarse_samples": 65,
+      "weld_steps": 0,
+      "obstacle_contact_steps": 0,
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/fine-gain-schedule-20260924-sync/B1",
+      "raw_files": 753,
+      "raw_inventory_sha256": "f095cd0b5527c21fea6a531fe6e13c37cc46ef1fa95ebaf5093c42b543e3ba50",
+      "result_sha256": "d8a3eb5c71900af2d14cc6d55f155d0e3723e90d8627cf34a0b79cea7ed0bb29"
+    },
+    "A2": {
+      "fine_gain_schedule": false,
+      "source_sha": "23f8c6a4e71ea37be56206ef3e6d85c90acd9f8f",
+      "loadavg_before": [
+        4.86865234375,
+        5.6474609375,
+        8.3193359375
+      ],
+      "exit_code": 0,
+      "physical_success": true,
+      "protocol_complete": true,
+      "error": null,
+      "wall_s_informational": 283.311523500015,
+      "control_end_sim_s": 126.25999999874232,
+      "fine_alignment_sim_s": 28.400000000135606,
+      "fine_stages": [
+        [
+          "yaw",
+          true,
+          7,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "lateral",
+          true,
+          27,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "yaw",
+          true,
+          0,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "forward",
+          true,
+          57,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "yaw",
+          true,
+          0,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "lateral",
+          true,
+          12,
+          "two consecutive fresh stationary RGB confirmations"
+        ],
+        [
+          "forward",
+          true,
+          0,
+          "two consecutive fresh stationary RGB confirmations"
+        ]
+      ],
+      "coarse_samples": 65,
+      "weld_steps": 0,
+      "obstacle_contact_steps": 0,
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/fine-gain-schedule-20260924-sync/A2",
+      "raw_files": 2493,
+      "raw_inventory_sha256": "ef210c7011e0a9f700b40a6d3563067ea94876887fe7bf460f159a8ac9a7d2cd",
+      "result_sha256": "38b4aac4c6e42677a189e272c61d819a8cb9b9a47cc77fc55956a147a697798c"
+    }
+  },
+  "skipped": {
+    "B2": {
+      "run": "B2",
+      "reason": "protocol stop: earlier B failure"
+    }
+  },
+  "findings": {
+    "baseline_deterministic": "A1 and A2 (schedule OFF) have identical control_end SIM 126.26 s and fine alignment 28.40 s; synchronous mode is reproducible and load-insensitive.",
+    "sync_vs_realtime": "Synchronous fine alignment 28.4 SIM s vs 51-78 SIM s in realtime runs: realtime decision latency, not only controller gain, dominates fine-stage time.",
+    "b1_failure_mechanism": [
+      "Forward stage (slot r1 = physical r3 via pair binding): scheduled commands .15 reduced image error .186 -> .026 in 6 slices (A1 needed ~26 slices to reach .054).",
+      "Carry-over motion from the preceding .139/.15 commands overshot the target to -0.0062 (outer tolerance .004). The no-crossing cap used only the current command, not residual motion.",
+      "Beyond the target the pose estimate is not monotonic: post-run referee (evaluation only) shows physical r3 advancing ~6 cm while the image-derived error went from negative back to +.016, so the model kept commanding forward until RGB left learned support at SIM 34.0.",
+      "No beam contact, beam displacement, weld or obstacle contact in B1."
+    ],
+    "claims": "No speed or success claim for the v31 schedule; it is unsafe as designed because overshoot enters a region where the pose model is not trustworthy."
+  },
+  "next_design": "Overshoot-proof variant: limit predicted travel including residual motion from the previous slice, hand back to the unchanged controller well before the target, and disable the schedule for the rest of a stage after any sign flip. Validate offline on B1/A1 traces before a new protocol.",
+  "tensorboard": {
+    "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0924-fine-gain-sync",
+    "view_key": "fine_gain_schedule_sync_20260924",
+    "note": "SIM-time metrics are not exported as scalars by the current converter"
+  }
+}
