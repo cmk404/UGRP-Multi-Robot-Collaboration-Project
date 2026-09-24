@@ -5,15 +5,23 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+import signal
 import subprocess
 import sys
+import time
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if __name__ == "__main__":
+    sys.path.insert(0, str(ROOT))
+
+from scripts import agent_lock
+
 TEST_PATTERNS = (
     "tests/test_model_artifacts.py",
     "tests/test_simulation_session.py",
     "tests/test_agent_lock.py",
+    "tests/test_ci_host_lock.py",
     "tests/test_simulation_console.py",
     "tests/test_simulation_dispatch.py",
     "tests/test_dispatch_replay.py",
@@ -147,6 +155,90 @@ TEST_PATTERNS = (
 )
 
 
+def local_lock_root(primary: Path | None = None) -> Path | None:
+    """Share the experiment lock only with worktrees of the local primary repo.
+
+    A GitHub runner or unrelated clone must not create a developer's Mac path.
+    Do not use CI=true as an escape hatch: local offline tests also set it.
+    """
+    primary = primary or agent_lock.DEFAULT_ROOT.parent.parent
+    if not (primary / ".git").is_dir():
+        return None
+    common = subprocess.check_output(
+        ["git", "rev-parse", "--git-common-dir"], cwd=ROOT, text=True,
+    ).strip()
+    if (ROOT / common).resolve() != (primary / ".git").resolve():
+        return None
+    return primary / "outputs" / "agent-locks"
+
+
+def run_locked(command: list[str], env: dict, lock_root: Path) -> int:
+    """Fail before spawn when busy; retain the lock until our group is gone."""
+    from scripts import ugrp_session
+
+    branch = subprocess.check_output(
+        ["git", "branch", "--show-current"], cwd=ROOT, text=True,
+    ).strip() or "detached"
+    owner = branch.split("/", 1)[0] if branch.startswith(("codex/", "claude/")) else "local-tests"
+    try:
+        acquired = agent_lock.acquire(
+            lock_root, owner=owner, branch=branch, purpose="local offline regression tests",
+            pid=os.getpid(), expected_minutes=10,
+        )
+    except RuntimeError as error:
+        print(f"Tests not started: {error}", file=sys.stderr)
+        return 3
+
+    child = None
+    requested_signal = None
+    previous = {}
+    cleanup_verified = False
+
+    def request_stop(signum, _frame):
+        nonlocal requested_signal
+        if requested_signal is None:
+            requested_signal = signum
+
+    try:
+        for sig in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):
+            previous[sig] = signal.signal(sig, request_stop)
+        child = subprocess.Popen(command, cwd=ROOT, env=env, start_new_session=True)
+        deadline = None
+        while True:
+            if requested_signal is not None and deadline is None:
+                try:
+                    os.killpg(child.pid, requested_signal)
+                except ProcessLookupError:
+                    pass
+                deadline = time.monotonic() + 5
+            try:
+                code = child.wait(timeout=0.1)
+                return 128 + (-code) if code < 0 else code
+            except subprocess.TimeoutExpired:
+                if deadline is not None and time.monotonic() >= deadline:
+                    ugrp_session.stop_group(child.pid, grace=1)
+    finally:
+        try:
+            if child is not None:
+                try:
+                    ugrp_session.stop_group(child.pid, grace=1)
+                except ProcessLookupError:
+                    pass
+                child.wait(timeout=5)
+            cleanup_verified = child is None or not ugrp_session.process_group_alive(child.pid)
+        finally:
+            held = agent_lock.status(lock_root)
+            ours = held and all(held.get(key) == acquired[key] for key in ("owner", "pid", "acquired_unix"))
+            if cleanup_verified and ours:
+                agent_lock.release(lock_root, owner=owner)
+            elif ours:
+                print("Test process cleanup unconfirmed; host lock retained for inspection", file=sys.stderr)
+            for sig, handler in previous.items():
+                signal.signal(sig, handler)
+            if not cleanup_verified:
+                raise RuntimeError("Owned test group cleanup unconfirmed; inspect the retained lock")
+
+
 def main() -> int:
     tests = sorted(
         {
@@ -166,6 +258,9 @@ def main() -> int:
     env.update({"CI": "true", "PYTHONDONTWRITEBYTECODE": "1"})
     command = [sys.executable, "-m", "pytest", "-q", *tests]
     print(f"Running {len(tests)} offline test modules", flush=True)
+    lock_root = local_lock_root()
+    if lock_root is not None:
+        return run_locked(command, env, lock_root)
     return subprocess.call(command, cwd=ROOT, env=env)
 
 
