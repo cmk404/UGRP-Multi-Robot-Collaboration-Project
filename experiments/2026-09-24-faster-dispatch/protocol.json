@@ -1,0 +1,66 @@
+{
+  "schema": "ugrp.faster_dispatch_protocol.v1",
+  "request": "더 빠르게는 못 해줘?",
+  "objective": "Reduce physical mission completion wall time in native MuJoCo, preserve camera-only control and physical/protocol success.",
+  "baseline": {
+    "source_sha": "1fed936645d8c61bdbea99ec54d7cb09fd719d78",
+    "bundle": "rgb-standard-dispatch-v19",
+    "whole_wall_s": [
+      200.92883170799178,
+      196.1035526249907
+    ],
+    "conditions": "open seed11 stored independent plan --overlap-start grasp"
+  },
+  "candidates": [
+    {
+      "id": "v20",
+      "change": "Only solo pending moving carry renewal within original TTL; speed policy unchanged",
+      "max_full_trials": 1
+    },
+    {
+      "id": "next-far-cruise",
+      "change": "Only raise far box forward cap .08 to .12 and lateral cap .08 to .10, within existing CameraRobotPort limits; proportional .002 near control, reverse .05, staging stop/final waypoint, routes and permissions preserved.",
+      "max_full_trials": 2,
+      "repeat_condition": "First candidate physical and protocol success, no contact/clearance/renewal invariant failure"
+    }
+  ],
+  "budget": {
+    "max_native_full_runs": 3,
+    "max_wall_s_each": 600,
+    "new_llm_calls": 0,
+    "training_runs": 0,
+    "parallel_physics": false
+  },
+  "fixed": {
+    "variant": "open",
+    "seed": 11,
+    "contact_profile": "local_contact_fine",
+    "timestep_s": 0.00025,
+    "camera_raw": [
+      960,
+      720
+    ],
+    "jpeg_quality": 95,
+    "rgb_ttl_s": 0.6,
+    "max_command_lease_s": 0.25,
+    "overlap_start": "grasp",
+    "weld": false,
+    "plan_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7"
+  },
+  "acceptance": [
+    "Both cargo physical placement/release and protocol complete",
+    "Record wall/SIM speed, phase duration, decision and command counts, strict loaded concurrency",
+    "No robot-robot contact, carried cargo sampled floor contact or artificial weld",
+    "Original RGB timestamps, maximum .25 lease, no expired-command revival, current gate/plan authority",
+    "Each candidate committed before run; source and assets remain fixed during run; preserve failed runs"
+  ],
+  "stop_conditions": [
+    "Failure or safety invariant failure stops that candidate cohort for review",
+    "No automatic budget extension or lowered success threshold",
+    "A final successful candidate is repeated once within the stated remaining budget"
+  ],
+  "limits": [
+    "One known saved plan/open map/seed only",
+    "No new LLM communication or physical robot generalization"
+  ]
+}

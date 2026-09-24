@@ -11,6 +11,16 @@ from scripts.run_dispatch_skills import SkillScene
 def _scene():
     clock=[1.]
     port=SimpleNamespace(hold=Mock(),validate_bounded=Mock(),apply_bounded=Mock())
+    port._motor_commands=(0.,)*4
+    port._command_expires_at=port._drive_expires_at=None
+    def issue(action,now,duration):
+        port._motor_commands=(action['forward'],)*4
+        port._command_expires_at=port._drive_expires_at=now+duration
+    def hold(_now):
+        port._motor_commands=(0.,)*4
+        port._command_expires_at=port._drive_expires_at=None
+    port.apply_bounded.side_effect=issue
+    port.hold.side_effect=hold
     scene=SkillScene.__new__(SkillScene)
     scene.time=lambda:clock[0]
     scene.authorize=Mock()
@@ -22,6 +32,7 @@ def _scene():
     scene.solo=SimpleNamespace(phase='carry',box=SimpleNamespace(last_attachment={}),
                                navigator=None,steps=0,done=False,reason=None)
     scene.solo_rows=[];scene._solo_pending=None
+    scene.solo_renewals=[]
     scene._solo_retry_at=0.;scene.solo_lease=0.
     scene._solo_motion_accept_after_s=0.
     scene.realtime_stats={'solo_decisions':0,'solo_stale_rgb':0,
@@ -30,6 +41,7 @@ def _scene():
     scene._solo_budget_tick=Mock();scene._solo_set_resource_wait=Mock()
     scene._commit_permissions=Mock(return_value=True)
     permission=Mock(return_value=True)
+    scene.bindings.permission=permission
     scene._permission_snapshot=Mock(return_value=SimpleNamespace(permission=permission))
     scene._adopt_waiting_carry_visual=Mock(return_value=False)
     return scene,port,clock,permission
@@ -161,3 +173,159 @@ def test_moving_phase_transition_is_not_delayed_by_carry_cadence():
     assert scene.command_history['r2'][-1]['issued_at_s']==pytest.approx(1.15)
     assert scene._solo_motion_accept_after_s==0.
     assert port.apply_bounded.call_count==2
+
+
+def test_pending_carry_reissues_exact_accepted_motion_before_lease_expiry():
+    scene,port,clock,_=_scene()
+    _first_motion(scene,clock)
+    source=scene._solo_pending_lease
+    scene._solo_pending={'future':Future(),'index':1,'stage':'TRANSIT'}
+    clock[0]=1.24;scene._solo_tick_realtime()
+    assert port.apply_bounded.call_count==2
+    issued=port.apply_bounded.call_args.args[0]
+    assert {axis:issued[axis] for axis in ('forward','left','turn')}=={
+        axis:source['action'][axis] for axis in ('forward','left','turn')}
+    assert scene.command_history['r2'][-1]['observed_at_s']==pytest.approx(.9)
+    assert scene.command_history['r2'][-1]['valid_until_s']==pytest.approx(1.49)
+    assert scene.solo_renewals[-1]['previous_valid_until_s']==pytest.approx(1.25)
+    assert scene.solo_renewals[-1]['source_frame_id']==0
+    assert scene.solo_renewals[-1]['permission_requests']==[('box','TRANSIT')]
+    assert scene.realtime_stats['solo_decisions']==1
+    assert scene._solo_motion_accept_after_s==pytest.approx(1.2)
+
+
+def test_pending_carry_stops_at_original_rgb_ttl_without_new_decision():
+    scene,port,clock,_=_scene()
+    _first_motion(scene,clock)
+    scene._solo_pending={'future':Future(),'index':1,'stage':'TRANSIT'}
+    clock[0]=1.24;scene._solo_tick_realtime()
+    clock[0]=1.47;scene._solo_tick_realtime()
+    assert scene.solo_renewals[-1]['valid_until_s']==pytest.approx(1.5)
+    assert port.apply_bounded.call_count==3
+    clock[0]=1.5;scene._solo_tick_realtime()
+    assert scene._solo_pending_lease is None
+    port.hold.assert_called_once_with(1.5)
+    assert port.apply_bounded.call_count==3
+    assert scene.realtime_stats['solo_decisions']==1
+
+
+def test_expired_prior_lease_cannot_be_revived_with_still_fresh_rgb():
+    scene,port,clock,_=_scene()
+    _first_motion(scene,clock)
+    scene._solo_pending={'future':Future(),'index':1,'stage':'TRANSIT'}
+    clock[0]=1.26;scene._solo_tick_realtime()
+    assert scene._solo_pending_lease is None
+    port.hold.assert_called_once_with(1.26)
+    assert port.apply_bounded.call_count==1
+    assert scene.solo_renewals==[]
+
+
+def test_pending_renewal_rechecks_apron_permission_and_holds_when_denied():
+    scene,port,clock,permission=_scene()
+    scene.bindings.route_overlap=True
+    candidate=_pending(scene,0,.9)
+    candidate.navigator=SimpleNamespace(index=2)
+    scene._solo_tick_realtime()
+    assert ('box','UNLOAD') in scene._solo_pending_lease['permission_requests']
+    scene._solo_pending={'future':Future(),'index':1,'stage':'TRANSIT'}
+    permission.side_effect=lambda obj,stage:stage!='UNLOAD'
+    clock[0]=1.24;scene._solo_tick_realtime()
+    assert scene._solo_pending_lease is None
+    port.hold.assert_called_once_with(1.24)
+    assert port.apply_bounded.call_count==1
+    assert scene.solo_renewals==[]
+
+
+def test_renewal_requires_live_commit_even_when_permission_probe_allows():
+    scene,port,clock,_=_scene()
+    scene._commit_permissions.side_effect=[True,False]
+    _first_motion(scene,clock)
+    scene._solo_pending={'future':Future(),'index':1,'stage':'TRANSIT'}
+    clock[0]=1.24;scene._solo_tick_realtime()
+    assert scene._commit_permissions.call_count==2
+    assert scene._solo_pending_lease is None
+    port.hold.assert_called_once_with(1.24)
+    assert port.apply_bounded.call_count==1
+
+
+def test_pending_plan_replacement_stops_old_motion():
+    scene,port,clock,_=_scene()
+    _first_motion(scene,clock)
+    scene.bindings.committed['plan_hash']='new-plan'
+    scene._solo_pending={'future':Future(),'index':1,'stage':'TRANSIT'}
+    clock[0]=1.24
+    with pytest.raises(RuntimeError,match='pending solo plan changed'):
+        scene._solo_tick_realtime()
+    assert scene._solo_pending_lease is None
+    port.hold.assert_called_once_with(1.24)
+    assert port.apply_bounded.call_count==1
+
+
+def test_fresh_zero_clears_prior_renewal_authority_and_keeps_cadence():
+    scene,port,clock,_=_scene()
+    scene.raw=Mock()
+    _first_motion(scene,clock)
+    candidate=_pending(scene,1,1.02,moving=False)
+    clock[0]=1.15;scene._solo_tick_realtime()
+    assert scene.solo is candidate
+    assert scene._solo_pending_lease is None
+    assert scene._solo_motion_accept_after_s==0.
+    port.hold.assert_called_once_with(1.15)
+    scene.raw.assert_called_once()
+    clock[0]=1.24;scene._solo_pending={'future':Future(),'index':2}
+    scene._solo_tick_realtime()
+    assert port.apply_bounded.call_count==1
+    assert scene.realtime_stats['solo_decisions']==2
+
+
+def test_non_carry_phase_cannot_renew_and_cancellation_holds():
+    scene,port,clock,_=_scene()
+    _first_motion(scene,clock)
+    scene.solo.phase='release'
+    scene._solo_pending={'future':Future(),'index':1,'stage':'TRANSIT'}
+    clock[0]=1.24;scene._solo_tick_realtime()
+    port.hold.assert_called_once_with(1.24)
+    assert scene._solo_pending_lease is None
+    assert port.apply_bounded.call_count==1
+
+    scene,port,clock,_=_scene()
+    _first_motion(scene,clock)
+    cancelled=Future();cancelled.cancel()
+    scene._solo_pending={'future':cancelled,'index':1,'stage':'TRANSIT'}
+    clock[0]=1.24
+    from concurrent.futures import CancelledError
+    with pytest.raises(CancelledError):scene._solo_tick_realtime()
+    port.hold.assert_called_once_with(1.24)
+    assert scene._solo_pending_lease is None
+
+
+@pytest.mark.parametrize('port_change', ['hold', 'replacement'])
+def test_other_port_command_invalidates_cached_carry_authority(port_change):
+    scene,port,clock,_=_scene()
+    _first_motion(scene,clock)
+    lease=scene._solo_pending_lease
+    lease['motor_commands']=(.06,)*4
+    port._motor_commands=(.06,)*4
+    port._command_expires_at=port._drive_expires_at=1.25
+    scene._solo_pending={'future':Future(),'index':1,'stage':'TRANSIT'}
+    if port_change=='hold':
+        port._motor_commands=(0.,)*4
+        port._command_expires_at=port._drive_expires_at=None
+    else:
+        port._motor_commands=(.03,)*4
+        port._command_expires_at=port._drive_expires_at=1.3
+    clock[0]=1.24;scene._solo_tick_realtime()
+    assert scene._solo_pending_lease is None
+    port.hold.assert_called_once_with(1.24)
+    assert port.apply_bounded.call_count==1
+
+
+def test_scene_hold_clears_renewal_authority():
+    scene,port,clock,_=_scene()
+    _first_motion(scene,clock)
+    scene.hold()
+    assert scene._solo_pending_lease is None
+    port.hold.assert_called_once_with(1.)
+    scene._solo_pending={'future':Future(),'index':1,'stage':'TRANSIT'}
+    clock[0]=1.24;scene._solo_tick_realtime()
+    assert port.apply_bounded.call_count==1

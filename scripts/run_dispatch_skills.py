@@ -62,6 +62,8 @@ class SkillScene(DispatchScene):
         self.realtime_control=False
         self._decision_workers=None
         self._solo_pending=None
+        self._solo_pending_lease=None
+        self.solo_renewals=[]
         self._yield_pending=None
         self._solo_motion_accept_after_s=0.
         self._solo_phase_label='SETUP'
@@ -135,6 +137,7 @@ class SkillScene(DispatchScene):
             if self.deadline and time.monotonic()>self.deadline:raise RuntimeError('skill wall budget exhausted')
             self.world._physics_step_for(self.world.controllers['r1'])
     def hold(self):
+        self._solo_pending_lease=None
         for p in self.ports.values():p.hold(self.time())
     def capture(self,label,*,own_robots=None,overview=True):
         if not self.efficient_capture:own_robots,overview=None,True
@@ -309,6 +312,8 @@ class SkillScene(DispatchScene):
         self._solo_budget_ended=False
         self._solo_phase_label=self.solo.phase
         self._solo_motion_accept_after_s=0.
+        self._solo_pending_lease=None
+        self.solo_renewals=[]
         if self.realtime_control:
             self._decision_workers=ThreadPoolExecutor(max_workers=2,thread_name_prefix='dispatch-decision')
     def other_robot_observation(self,top):
@@ -395,7 +400,89 @@ class SkillScene(DispatchScene):
             if self.solo.reason!='VISUAL_RELEASE_CONFIRMED':raise RuntimeError('solo stopped: '+str(self.solo.reason))
             if self.bindings.tasks['beam']['id'] in self.bindings.finished:self.bindings.finish('box')
 
+    def _clear_solo_pending_lease(self,now,*,hold=False):
+        lease=getattr(self,'_solo_pending_lease',None)
+        self._solo_pending_lease=None
+        if hold and lease is not None:self.ports[self.bindings.solo].hold(now)
+
+    def _solo_port_lease_matches(self,lease):
+        """Inspect issued port state only; never infer motion from measured joints."""
+        port=self.ports[self.bindings.solo]
+        if not hasattr(port,'_command_expires_at'):return False
+        return (getattr(port,'_command_expires_at',None)==lease['valid_until_s']
+                and getattr(port,'_drive_expires_at',None)==lease['valid_until_s']
+                and tuple(getattr(port,'_motor_commands',()))==lease['motor_commands'])
+
+    def _renew_solo_pending_lease(self,now,*,reason):
+        """Owner-only replay of the last accepted carry action while RGB is pending."""
+        lease=getattr(self,'_solo_pending_lease',None)
+        if lease is None:return
+        deadline=lease['observed_at_s']+RGB_ACTION_TTL_S
+        if (self.solo.phase!='carry' or self.solo.done
+                or self.bindings.tasks['box']['id'] in self.bindings.finished
+                or now>=lease['valid_until_s']-1e-9 or now>=deadline-1e-9
+                or not self._solo_port_lease_matches(lease)):
+            self._clear_solo_pending_lease(now,hold=True)
+            return
+        nearing_expiry=now+REALTIME_CAPTURE_OVERLAP_S>=lease['valid_until_s']-1e-9
+        if not nearing_expiry and now<lease['next_permission_check_s']:
+            return
+        self.authorize()
+        if self.bindings.committed['plan_hash']!=lease['plan_hash']:
+            self._clear_solo_pending_lease(now,hold=True)
+            raise RuntimeError('pending solo plan changed')
+        probe=self._permission_snapshot()
+        requests=lease['permission_requests']
+        if not all(probe.permission(obj,stage) for obj,stage in requests):
+            self._clear_solo_pending_lease(now,hold=True)
+            return
+        lease['next_permission_check_s']=now+REALTIME_CAPTURE_OVERLAP_S
+        if not nearing_expiry:return
+        if lease['valid_until_s']>=deadline-1e-9:return
+        # A copy-only probe must not invent a live lane or apron reservation.
+        if not self._commit_permissions(requests):
+            self._clear_solo_pending_lease(now,hold=True)
+            return
+        prior_until=lease['valid_until_s']
+        effective=self._issue_realtime_motor(self.bindings.solo,lease['action'],
+                                             'TRANSIT',lease['observed_at_s'],now=now)
+        if effective is None:
+            self._clear_solo_pending_lease(now,hold=True)
+            return
+        lease['valid_until_s']=now+effective
+        port=self.ports[self.bindings.solo]
+        if hasattr(port,'_motor_commands'):
+            lease['motor_commands']=tuple(port._motor_commands)
+        receipt={'kind':'solo_carry_pending_renewal',
+                 'source_frame_id':lease['frame_id'],
+                 'source_observed_at_s':lease['observed_at_s'],
+                 'source_decision_sim_time_s':lease['decision_sim_time_s'],
+                 'original_rgb_deadline_s':deadline,
+                 'previous_valid_until_s':prior_until,
+                 'issued_at_s':now,'valid_until_s':now+effective,
+                 'duration_s':effective,'plan_hash':lease['plan_hash'],
+                 'permission_requests':list(requests),
+                 'permission_verified_at_s':now,
+                 'route_overlap':bool(getattr(self.bindings,'route_overlap',False)),
+                 'apron_permission_required':('box','UNLOAD') in requests,
+                 'phase':self.solo.phase,'reason':reason}
+        self.solo_renewals.append(receipt)
+        self.command_history[self.bindings.solo][-1].update(
+            pending_renewal=True,source_frame_id=lease['frame_id'],
+            source_decision_sim_time_s=lease['decision_sim_time_s'],
+            original_rgb_deadline_s=deadline,
+            permission_requests=list(requests),
+            permission_verified_at_s=now,
+            apron_permission_required=('box','UNLOAD') in requests,
+            renewal_reason=reason)
+
     def _solo_tick_realtime(self):
+        try:self._solo_tick_realtime_owned()
+        except BaseException:
+            self._clear_solo_pending_lease(self.time(),hold=True)
+            raise
+
+    def _solo_tick_realtime_owned(self):
         """Poll one RGB decision without making the physics owner wait for it."""
         if self.solo is None:return
         self.authorize();now=self.time()
@@ -404,16 +491,20 @@ class SkillScene(DispatchScene):
         finished=bool(tasks and tasks['box']['id'] in self.bindings.finished)
         self._solo_budget_tick(now,enforce=not finished)
         if finished:
+            self._clear_solo_pending_lease(now,hold=True)
             self._solo_finish_budget(now)
             return
         if self._solo_pending is not None:
             pending=self._solo_pending
-            if not pending['future'].done():return
+            if not pending['future'].done():
+                self._renew_solo_pending_lease(now,reason='next_rgb_pending')
+                return
             if 'result' not in pending:pending['result']=pending['future'].result()
             pending.setdefault('result_ready_at_s',now)
             result=pending['result']
             observed=result['observed_at_s']
             if now-observed>RGB_ACTION_TTL_S:
+                self._clear_solo_pending_lease(now)
                 self._solo_pending=None
                 self._solo_motion_accept_after_s=0.
                 self._solo_set_resource_wait(now,False)
@@ -434,6 +525,7 @@ class SkillScene(DispatchScene):
                           and action['kind']=='mecanum'
                           and any(abs(action[k])>1e-9 for k in ('forward','left','turn')))
             if moving_carry and observed+RGB_ACTION_TTL_S-now<=0:
+                self._clear_solo_pending_lease(now)
                 self._solo_pending=None
                 self._solo_motion_accept_after_s=0.
                 self._solo_set_resource_wait(now,False)
@@ -460,9 +552,11 @@ class SkillScene(DispatchScene):
             if waiting_for_cadence and not worker_wait and not owner_denied:
                 # No live lock or route state is committed while waiting. The
                 # original RGB timestamp is checked again on every owner tick.
+                self._renew_solo_pending_lease(now,reason='fresh_rgb_waiting_for_cadence')
                 return
             self._solo_pending=None
             if worker_wait or owner_denied:
+                self._clear_solo_pending_lease(now)
                 self._solo_motion_accept_after_s=0.
                 self._solo_set_resource_wait(now,owner_denied,
                                              'candidate' if owner_denied else None)
@@ -487,6 +581,7 @@ class SkillScene(DispatchScene):
                     'guard_observation_gap_s':(
                         observed-previous_guard_at if vision_refreshed else None)})
                 return
+            self._clear_solo_pending_lease(now,hold=True)
             self._solo_set_resource_wait(now,False)
             # The committed navigator must no longer retain the worker's
             # private permission snapshot when it is cloned next time.
@@ -516,6 +611,23 @@ class SkillScene(DispatchScene):
                     admission_cadence=min(nominal_cadence,effective)
                     self._solo_motion_accept_after_s=(
                         now+admission_cadence if self.solo.phase=='carry' else 0.)
+                    if effective is not None and self.solo.phase=='carry':
+                        renewal_requests=list(dict.fromkeys([*requests,('box','TRANSIT')]))
+                        navigator=getattr(candidate,'navigator',None)
+                        if (getattr(self.bindings,'route_overlap',False)
+                                and navigator is not None
+                                and getattr(navigator,'index',0)>=2):
+                            renewal_requests=list(dict.fromkeys([*renewal_requests,
+                                                                   ('box','UNLOAD')]))
+                        self._solo_pending_lease={
+                            'action':copy.deepcopy(action),'observed_at_s':observed,
+                            'frame_id':result['frame_id'],'decision_sim_time_s':now,
+                            'valid_until_s':now+effective,
+                            'motor_commands':tuple(getattr(
+                                self.ports[self.bindings.solo], '_motor_commands', ())),
+                            'next_permission_check_s':now+REALTIME_CAPTURE_OVERLAP_S,
+                            'plan_hash':self.bindings.committed['plan_hash'],
+                            'permission_requests':tuple(renewal_requests)}
                     row.update(requested_duration_s=action['duration_s'],
                                renewal_request_s=REALTIME_MOTOR_RENEWAL_S,
                                effective_lease_s=effective,
@@ -550,6 +662,7 @@ class SkillScene(DispatchScene):
         observation_state=copy.deepcopy(self.ports[rid]._actuator_state())
         permission_snapshot=self._permission_snapshot()
         if not permission_snapshot.permission('box',stage):
+            self._clear_solo_pending_lease(now)
             self._solo_set_resource_wait(now,True,'stage')
             self.ports[rid].hold(now)
             return
@@ -692,6 +805,7 @@ class SkillScene(DispatchScene):
     def close(self):
         if self.native_view:self.native_view.close();self.native_view=None
         if self.world:
+            self._clear_solo_pending_lease(self.time(),hold=True)
             if self.solo_executor:self.solo_executor.cancel(self.time(),'trial_end')
             if self.original_step:self.world._physics_step_for=self.original_step
         if self._decision_workers:
@@ -894,6 +1008,7 @@ def run(args):
                     write(args.output/'evaluation-only.json',result['evaluation'])
                 write(args.output/'issued-commands.json',scene.command_history)
                 write(args.output/'solo-decisions.json',scene.solo_rows);write(args.output/'solo-raw-actions.json',scene.solo_raw)
+                write(args.output/'solo-renewals.json',scene.solo_renewals)
                 write(args.output/'solo-yield.json',scene.yield_rows)
                 if pair:
                     write(args.output/'pair-decisions.json',pair.calls)
