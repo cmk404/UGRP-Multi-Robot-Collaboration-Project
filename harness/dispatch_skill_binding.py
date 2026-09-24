@@ -376,7 +376,11 @@ class ImageRoute:
                                    key=lambda i:np.linalg.norm(centers[i]-predicted))
                     if len(choices)>1 and np.linalg.norm(centers[choices[1]]-predicted)-np.linalg.norm(centers[choices[0]]-predicted)>5:
                         choices=choices[:1]
-                if choices:break
+                # A strong mask can split one partially occluded box into two
+                # nearby fragments. Keep the same geometry and motion gates,
+                # but allow an existing lower-saturation mask to join them.
+                # A unique strong candidate still wins immediately.
+                if len(choices)==1:break
             tracking={'method':'cyan component','min_saturation':saturation}
             if binding is not None:tracking['initial_identity']=binding
             if len(choices)==1:
@@ -502,8 +506,19 @@ class ImageRoute:
         if slot_evidence is not None:evidence['destination_region']=slot_evidence
         if ready and self.confirmations>=2 and not done:
             self.index+=1;self.confirmations=0
-        control=np.clip(error*.002,-.08,.08)
+        # More authority only on known independent open-map cargo routes.
+        # The same proportional gain decelerates near every waypoint; final
+        # beam alignment and box containment keep their original caps.
+        cruise=(self.obj in ('beam','box') and self.route_overlap
+                and self.map.get('map_id')=='dispatch_open'
+                and not self.map.get('terrain')
+                and all(o.get('id') in {'wall_north','wall_south','wall_west','wall_east'}
+                        for o in self.map.get('obstacles',[]))
+                and evidence['waypoint_index']<len(self.points)-1)
+        limits=np.array([.12,.10]) if cruise else np.array([.08,.08])
+        control=np.clip(error*.002,-limits,limits)
         control[0]=max(-.05,control[0])
+        if cruise:evidence['cruise_command_limits']={'forward':.12,'left':.10,'reverse':.05}
         if ready:control[:]=0
         else:
             for i in range(2):
@@ -599,10 +614,11 @@ class PairCoarsePixels:
               'crop_center_px':[float(cx),float(cy)],
               'crop_half_size_px':[55,48], 'heading_tolerance_px':2.}
         heading=wheel_heading(clean,pixel_tolerance=2.)
-        if heading is None:
+        if not 80 <= len(xs) <= 700:
             return dict(ok=False,ready=False,forward=0.,left=0.,turn=0.,
                         reason='own_wheel_heading_unresolved',mask=mask)
-        center=np.array([xs.mean(),ys.mean()]);self.centers[slot]=center
+        center=np.array([xs.mean(),ys.mean()])
+        if heading is not None:self.centers[slot]=center
         try:
             beam=_coarse_beam(raw_top)
             ref=_coarse_reference_lane(self.reference,slot)
@@ -615,6 +631,13 @@ class PairCoarsePixels:
                         reason='reference_lane_unresolved',wheel_center_px=center.tolist(),
                         heading=heading,mask=mask)
         gap=(np.array(beam['center'])-center/[w,h])-np.array([ref['beam_x']-ref['robot_x'],ref['beam_y']-ref['robot_y']])
+        if heading is None:
+            # Translation remains observable even when the four-corner yaw
+            # estimator has no support. This is never a coarse motion permit;
+            # only the separate six-model, stopped-RGB handoff may use it.
+            return dict(ok=False,ready=False,forward=0.,left=0.,turn=0.,
+                        reason='own_wheel_heading_unresolved',mask=mask,
+                        wheel_center_px=center.tolist(),image_error=gap.tolist())
         angle=heading['angle_deg'];angle_ready=abs(angle)<=1.5
         lateral_ready=abs(gap[1])<=.003
         ready=gap[0]<=.065 and angle_ready and lateral_ready

@@ -20,6 +20,7 @@ from scripts.dispatch_pair_skill import BoundPairSkill
 from scripts.dispatch_native_view import HeadlessPacer
 from scripts.camera_approach_scene import ApproachScene
 from scripts.run_camera_varied_start_student import run_approach
+from sim.research_dispatch_arena import authored_map
 
 
 class _PermissionProbeSolo:
@@ -646,7 +647,8 @@ def test_pair_stage_reobserves_after_delayed_rgb_without_issuing_motion():
         realtime_stats={'pair_backpressure':0,'pair_stage_stale_rgb':0,'pair_stage_samples':0},
         ports=ports,time=lambda:clock[0])
     pair=BoundPairSkill.__new__(BoundPairSkill)
-    pair.io=io;pair.bindings=SimpleNamespace(pair={'r1':'r1','r3':'r3'})
+    pair.io=io;pair.bindings=SimpleNamespace(pair={'r1':'r1','r3':'r3'},
+        static_map=authored_map('open'),cluttered=False)
     pair.transport_started=False;pair.phase='APPROACH';pair.count=0;pair.calls=[]
     pair._bind_capture=lambda captured,_count:captured
     observed,decision=pair.observe_and_compute('coarse',lambda frame:frame['r1']['frame_id'])
@@ -654,6 +656,7 @@ def test_pair_stage_reobserves_after_delayed_rgb_without_issuing_motion():
     assert decision==observed['r1']['frame_id']==2
     assert io.realtime_stats['pair_stage_stale_rgb']==1
     assert all(port.hold.call_count==1 for port in ports.values())
+    assert pair._fine_candidate is None
 
 
 def test_visual_compute_pumps_owner_and_rejects_recursive_wait():

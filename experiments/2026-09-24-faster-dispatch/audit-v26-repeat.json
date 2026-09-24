@@ -1,0 +1,306 @@
+{
+  "schema": "ugrp.faster_dispatch_run_audit.v1",
+  "run": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v26-repeat",
+  "manager": {
+    "path": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/simulation-runs/20260924-172146-dispatch-95ed553c/manifest.json",
+    "sha256": "057813fc8abbb70b51f2b08eb9f78da55d832ca84229104dba44a66457baf393",
+    "run_id": "20260924-172146-dispatch-95ed553c",
+    "status": "process_failed",
+    "exit_code": 1,
+    "output_matches_run": true,
+    "source_sha": "83f92c3c691311fae95dacc089fd76da3910b943",
+    "source_dirty": false,
+    "source_tree_before_sha256": "f012d9bcf92cd2470c8af30d86f00083ac951d6055d6a2a0abcae3705e57a885",
+    "source_tree_after_sha256": "f012d9bcf92cd2470c8af30d86f00083ac951d6055d6a2a0abcae3705e57a885",
+    "source_unchanged": true,
+    "inputs_unchanged": true,
+    "finalization_errors": [],
+    "runtime_s": 199.71788750000997
+  },
+  "source_bundle": {
+    "active_bundle": "not identified by run result or manager; inspect pinned source separately",
+    "recorded_bundle_hashes": {
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v10.json": "aa3a4373fcbe2970b1ce95062d684704ea8c342cab77a0fce913720bb71eb606",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v11.json": "2ccc0a79d25d7a7cb32a9f909127a26655ebe32309616cb8a5cc6c1c7a19c4aa",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v12.json": "4577c8d906715ab98341f97aa6afa656e704acafd03ef20a2a4ac67adb41a54a",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v13.json": "fce4968d73ec94f38fde438ab74989a0a4199ec6e93c295ca50b85501a8089a2",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v14.json": "9fa9bd26155e66a60bb636be2c1334420024e40ed89357ac7698b4a43046aa72",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v15.json": "1933cd0e277e6249f5b6125d006bdca2fe8d9a4edf02603efb01514bfe12edaa",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v16.json": "9d11f82ca02fb60d283fe6908fe1f696b2d31aabfc1acd9bf779c56a94b98958",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v17.json": "8a686939f6505bfaae2f4ebadb3e637b0e229b63e25dfb96877c411235bf6125",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v18.json": "a6891549ad88372a168fca34813ae96dd5c387447cc2ec4b352d3c96d5b891e4",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v19.json": "5516e639e7a31029a7cfb2a5d92844eeee784e32a8aca629735bac8e0dc16e32",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v2.json": "771a1cb51feeeecb55174d0e68e0dad30bfedfb748149dcd7c9e1cf3f1e2d120",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v20.json": "c55ce2163f89d6db069f47a18b7cf46f92e27887611370019e5b2fc25dab3ad5",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v21.json": "0c50a3f5d842d675dc1c78fc33e5a17eab014c87cbf6bed167d228bb371815b3",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v22.json": "89fadd2c963025a8514a24c6c435b8f06b5caf4e7561b944506e1645c55ea157",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v23.json": "abc0d78e520fa5994003c36f1e9193352c08fabcbf75fdf99fc5ba5c595d0745",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v24.json": "d1dc432c4bcb176fd5c73cfa65c555c8ba856070b067e4ad8b37ec637c2a6173",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v25.json": "e591f30cc8318d2decad6c961da5912d96a81503f8a2b42998398cd1f18ace1f",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v26.json": "4900ac0cb6f2933c4acbe6275a3567cfb1af3714cabb48c68c7a2a195c951514",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v3.json": "a1a975381e4097c6e0c324d2153ab1cf6e886873f9068afe7c8cba604d235732",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v4.json": "16cf1053ff07372cb86921d52dfebb7f2a938e6d275d9923f4f11320eb158379",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v5.json": "8ab2b8a67141d769c425065b01015c5f5a0cd1c6c6bebc8474a0d55e10d2fd3f",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v6.json": "f07581649e84418c0ad31fc4577aaaebc680b34928ce3485fa8cb813d04d8045",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v7.json": "86f22c3d05280a5d8ab35a57b646852768520e0fcd536f7a54cc8018144544be",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v8.json": "a312cac4acb581c5c97b41d042049fa83ac6636d35f15f1579525c44119fb93e",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v9.json": "d50e4a2e2ebcac796daec1b4eca1c203da8b15b12d5182465f72d93865f0428c"
+    },
+    "plan_replay_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+    "scene_manifest_sha256": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a"
+  },
+  "outcome": {
+    "phase": "RELEASE",
+    "error": "ComponentExecutionError: solo_box: RuntimeError: dispatch box motion ambiguous in TOP RGB",
+    "protocol_complete": false,
+    "physical_success_reported": false,
+    "physical_success_evaluation_only": false,
+    "llm_calls": 0,
+    "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+    "interpretation": "referee samples are evaluation-only; issued commands are not measured motion or physical success"
+  },
+  "timing": {
+    "wall_s": 199.14402037500986,
+    "scene_and_observer_setup_wall_s": 1.77195337502053,
+    "scope": "output-only SIM/wall measurements; wall_s includes finalization",
+    "control_end_sim_s": 179.5869999974813,
+    "control_wall_s": 196.79553758300608,
+    "motion_wall_s": 189.83299108297797,
+    "motion_sim_s": 174.3869999974807,
+    "motion_sim_to_wall": 0.9186337896412028,
+    "cleanup_wall_s": 2.348484832997201
+  },
+  "physical_evaluation_only": {
+    "cargo": {
+      "beam": {
+        "physical_success": true,
+        "max_lift_m": 0.07764747301032215,
+        "displacement_m": 1.6854372364924526,
+        "inside_slot_at_end": true,
+        "released_supported_stable": true,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 221,
+          "floor_contact_samples": 0,
+          "window_s": [
+            112.31999999907195,
+            134.40999999855433
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999764952,
+          "first_floor_contact_s": null
+        }
+      },
+      "box": {
+        "physical_success": false,
+        "max_lift_m": 0.06889835527045876,
+        "displacement_m": 2.1229803367280593,
+        "inside_slot_at_end": false,
+        "released_supported_stable": false,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 391,
+          "floor_contact_samples": 0,
+          "window_s": [
+            140.55249999840436,
+            179.68724999749313
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999763531,
+          "first_floor_contact_s": null
+        }
+      }
+    },
+    "weld_steps": 0,
+    "robot_robot_contact_samples": 0,
+    "obstacle_contact_steps": 0,
+    "simultaneous_loaded_motion_s": 0.0,
+    "both_loaded_intervals_count": 0,
+    "all_three_body_motion_sim_s": 2.2000000000105047
+  },
+  "resources": {
+    "events": [
+      {
+        "event": "acquire",
+        "object": "beam",
+        "resource": "north_gate",
+        "stage": "GRASP"
+      },
+      {
+        "event": "acquire",
+        "object": "box",
+        "resource": "south_gate",
+        "stage": "GRASP"
+      },
+      {
+        "event": "acquire",
+        "object": "beam",
+        "resource": "dispatch_apron",
+        "stage": "UNLOAD"
+      },
+      {
+        "event": "finish",
+        "object": "beam",
+        "released": [
+          "north_gate",
+          "dispatch_apron"
+        ]
+      },
+      {
+        "event": "acquire",
+        "object": "box",
+        "resource": "dispatch_apron",
+        "stage": "UNLOAD"
+      }
+    ],
+    "apron_acquire_order": [
+      "beam",
+      "box"
+    ],
+    "apron_exclusion_errors": [
+      "apron never released"
+    ],
+    "solo_resource_wait_sim_s": 0.0
+  },
+  "solo": {
+    "decision_count": 285,
+    "carry_decision_count": 142,
+    "carry_decision_span_s": 38.346999999093214,
+    "phase_counts": {
+      "approach": 107,
+      "lower": 16,
+      "close": 1,
+      "lift": 15,
+      "verify_lift": 1,
+      "attachment_left": 1,
+      "attachment_right": 1,
+      "attachment_home": 1,
+      "carry": 142
+    },
+    "moving_command_coverage": {
+      "moving_command_count": 266,
+      "moving_command_union_s": 35.29874999929294,
+      "consecutive_positive_gap_s": {
+        "count": 8,
+        "min": 0.04324999998479484,
+        "median": 0.5489999999728354,
+        "p95": 0.8919999999647246,
+        "max": 0.8919999999647246,
+        "sum": 3.835999999795831
+      }
+    },
+    "original_moving_command_coverage": {
+      "moving_command_count": 134,
+      "moving_command_union_s": 33.27224999984577,
+      "consecutive_positive_gap_s": {
+        "count": 106,
+        "min": 0.0002499999940823727,
+        "median": 0.0071249999939198005,
+        "p95": 0.2194999999888978,
+        "max": 1.0222499999699153,
+        "sum": 5.7467499992374655
+      }
+    },
+    "pending_renewal": {
+      "receipts": 132,
+      "issued_renewals": 132,
+      "errors": [],
+      "status": "pass"
+    },
+    "own_rgb_attachment_evidence_rows": 146,
+    "own_rgb_attachment_attached_counts": {
+      "True": 146
+    },
+    "own_rgb_attachment_scope": "recorded image-derived estimates, not a contact sensor"
+  },
+  "pair_approach_pending_renewal": {
+    "receipts": 35,
+    "issued_by_slot": {
+      "r1": 35,
+      "r3": 35
+    },
+    "errors": [],
+    "status": "pass"
+  },
+  "pair_fine_pending_bridge": {
+    "receipts": 101,
+    "issued_by_slot": {
+      "r1": 101,
+      "r3": 101
+    },
+    "errors": [],
+    "status": "pass"
+  },
+  "core_files": {
+    "result.json": {
+      "present": true,
+      "bytes": 6488487,
+      "sha256": "8a8f27bf9fc7b9c95db5c29f3e76bfb8633399a6a1aadbd59489cba758bb6210",
+      "matches_manager_receipt": true
+    },
+    "evaluation-only.json": {
+      "present": true,
+      "bytes": 1977,
+      "sha256": "dede624797414d0cf879914af06b09e4e9c1db80a26991dd366ac5390e313a7f",
+      "matches_manager_receipt": true
+    },
+    "issued-commands.json": {
+      "present": true,
+      "bytes": 816676,
+      "sha256": "0f72e9fb63fde569cc3fb958dab9b5fdacba8d6aa0dedfd3d5b69c8117be0f33",
+      "matches_manager_receipt": true
+    },
+    "solo-decisions.json": {
+      "present": true,
+      "bytes": 1136693,
+      "sha256": "670adf2b5aa6ceda26ea6353780498aae9849e4dec3c8c1dcecab360a79a72e7",
+      "matches_manager_receipt": true
+    },
+    "solo-raw-actions.json": {
+      "present": true,
+      "bytes": 710087,
+      "sha256": "2e3e5556102e79bb004f7fc2e4bbf0fe41caa363407cdc4597d63e57bf6aac76",
+      "matches_manager_receipt": true
+    },
+    "solo-renewals.json": {
+      "present": true,
+      "bytes": 101797,
+      "sha256": "9966f31de23b98956a79a43cfbf9850dbc91367f6eb2caf33717d705e990b0ff",
+      "matches_manager_receipt": true
+    },
+    "pair-decisions.json": {
+      "present": true,
+      "bytes": 8971626,
+      "sha256": "8ce35bc22717610a66bc4632f879f86bb888b2e26e20b3ee2ee65d33e5b7daa3",
+      "matches_manager_receipt": true
+    },
+    "referee-only.jsonl": {
+      "present": true,
+      "bytes": 2560709,
+      "sha256": "742d46afaedfc4e3297b56786354949bbb0b57859c901cfa9f79768045c50218",
+      "matches_manager_receipt": true
+    },
+    "execution.frames.json": {
+      "present": true,
+      "bytes": 239786,
+      "sha256": "5271bf7b4b36592f0a86ec28bf1d00c78e7e92017e50ad98f4da21c6f5e30e6b",
+      "matches_manager_receipt": true
+    },
+    "execution.mp4": {
+      "present": true,
+      "bytes": 1908250,
+      "sha256": "463963c31d6b87643523076d6b5508105c04d1d8b36f3a2738807400a97f9cb0",
+      "matches_manager_receipt": true
+    },
+    "scene-manifest.json": {
+      "present": true,
+      "bytes": 606,
+      "sha256": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a",
+      "matches_manager_receipt": true
+    }
+  },
+  "errors": [
+    "manager process did not complete successfully",
+    "resource: apron never released"
+  ]
+}

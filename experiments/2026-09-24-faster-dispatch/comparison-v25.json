@@ -1,0 +1,109 @@
+{
+  "schema": "ugrp.dispatch_speed_comparison.v1",
+  "conditions": "open seed11 saved independent plan, local_contact_fine, native realtime1, overlap_start grasp",
+  "baseline_runs": [
+    {
+      "run": "native-v19-grasp-full",
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260923/native-v19-grasp-full",
+      "source_sha": "1fed936645d8c61bdbea99ec54d7cb09fd719d78",
+      "result_sha256": "c58b87d1e140b02edd1bb6f03aa504dc04856fcb1f1f626f0fa33e49b1cb79ce",
+      "physical_success": true,
+      "protocol_complete": true,
+      "wall_s": 200.92883170799178,
+      "motion_sim_to_wall": 0.9946021623578826,
+      "fine_approach_sim_s": 53.64999999964112,
+      "solo_carry_span_sim_s": 75.85999999820616,
+      "solo_resource_wait_sim_s": 8.695749999794373,
+      "fine_bridge_count": 0,
+      "config": {
+        "variant": "open",
+        "seed": 11,
+        "contact_profile": "local_contact_fine",
+        "realtime_factor": 1.0,
+        "realtime_control": true,
+        "overlap_start": "grasp"
+      },
+      "plan_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+      "llm_calls": 0
+    },
+    {
+      "run": "native-v19-grasp-repeat",
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260923/native-v19-grasp-repeat",
+      "source_sha": "1fed936645d8c61bdbea99ec54d7cb09fd719d78",
+      "result_sha256": "4201e1d2c65010ccb3c4dc2f2fa2a7991b03b91f1107795c895776289d91d117",
+      "physical_success": true,
+      "protocol_complete": true,
+      "wall_s": 196.1035526249907,
+      "motion_sim_to_wall": 0.9986687295442443,
+      "fine_approach_sim_s": 51.02999999987929,
+      "solo_carry_span_sim_s": 75.37499999821763,
+      "solo_resource_wait_sim_s": 0.0,
+      "fine_bridge_count": 0,
+      "config": {
+        "variant": "open",
+        "seed": 11,
+        "contact_profile": "local_contact_fine",
+        "realtime_factor": 1.0,
+        "realtime_control": true,
+        "overlap_start": "grasp"
+      },
+      "plan_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+      "llm_calls": 0
+    }
+  ],
+  "candidate_runs": [
+    {
+      "run": "native-v25-full",
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v25-full",
+      "source_sha": "dc64f335f9852612dbfe44f93135c54feb09ad27",
+      "result_sha256": "0b0f9265ebde77ac59b2000ae7236d4f432867d1a9268abfac994eb9187eba25",
+      "physical_success": true,
+      "protocol_complete": true,
+      "wall_s": 194.18305620801402,
+      "motion_sim_to_wall": 0.9980310845102514,
+      "fine_approach_sim_s": 50.79000000008846,
+      "solo_carry_span_sim_s": 67.08049999841377,
+      "solo_resource_wait_sim_s": 9.858999999766866,
+      "fine_bridge_count": 89,
+      "config": {
+        "variant": "open",
+        "seed": 11,
+        "contact_profile": "local_contact_fine",
+        "realtime_factor": 1.0,
+        "realtime_control": true,
+        "overlap_start": "grasp"
+      },
+      "plan_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+      "llm_calls": 0
+    },
+    {
+      "run": "native-v25-repeat",
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v25-repeat",
+      "source_sha": "dc64f335f9852612dbfe44f93135c54feb09ad27",
+      "result_sha256": "41eeb479c050113da1b5c5f8724ecca04a43ed1a94bff87d99b2e4fb24001bd7",
+      "physical_success": true,
+      "protocol_complete": true,
+      "wall_s": 206.51240112501546,
+      "motion_sim_to_wall": 0.9928551144225491,
+      "fine_approach_sim_s": 57.54999999994282,
+      "solo_carry_span_sim_s": 73.76899999825561,
+      "solo_resource_wait_sim_s": 12.767749999698083,
+      "fine_bridge_count": 104,
+      "config": {
+        "variant": "open",
+        "seed": 11,
+        "contact_profile": "local_contact_fine",
+        "realtime_factor": 1.0,
+        "realtime_control": true,
+        "overlap_start": "grasp"
+      },
+      "plan_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+      "llm_calls": 0
+    }
+  ],
+  "baseline_mean_wall_s": 198.51619216649124,
+  "candidate_mean_wall_s": 200.34772866651474,
+  "candidate_wall_change_percent": 0.9226131531313131,
+  "conclusion": "No demonstrated end-to-end speed improvement: candidate mean is slower despite first run faster. Both fixed-source candidate runs physically and procedurally complete. Two runs do not establish statistical timing reliability.",
+  "scope": "local native saved-plan path only; no new LLM calls, no ACT generalization or other map claims."
+}

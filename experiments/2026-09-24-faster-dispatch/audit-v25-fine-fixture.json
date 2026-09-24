@@ -1,0 +1,251 @@
+{
+  "schema": "ugrp.audit_fine_bridge_fixture.v1",
+  "provenance": {
+    "raw_run": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v25-full",
+    "source_sha": "dc64f335f9852612dbfe44f93135c54feb09ad27",
+    "pair_decisions_sha256": "82277e8674b54bdf2a19780cc8ba7569946498550fbc9e9100cb5e5473d62e0e",
+    "note": "One real v25 receipt and its two robot command rows; paths/images/history omitted."
+  },
+  "pair_decisions": [
+    {
+      "kind": "learned_approach",
+      "report": {
+        "approach_calls": [
+          {
+            "robot_id": "r1",
+            "phase_index": 1,
+            "index": 2,
+            "stage": "lateral",
+            "frame_id": 194,
+            "stationary": false,
+            "reobservation": false,
+            "decision": {
+              "ok": true,
+              "command": 0.01,
+              "ready_score": 0.0,
+              "ready": false,
+              "stationary_ready": false,
+              "precision": "fine",
+              "reason": "visual_pose_command",
+              "diagnostics": {
+                "nearest_support_distance": 8.845066118472594,
+                "orthogonal_residual": 9.21289413425851,
+                "support_count": 159,
+                "image_derived_error": 0.01770484609953557
+              }
+            },
+            "action": {
+              "kind": "mecanum",
+              "forward": 0.0,
+              "left": 0.01,
+              "turn": 0.0,
+              "duration_s": 0.2
+            }
+          },
+          {
+            "robot_id": "r3",
+            "phase_index": 1,
+            "index": 2,
+            "stage": "lateral",
+            "frame_id": 194,
+            "stationary": false,
+            "reobservation": false,
+            "decision": {
+              "ok": true,
+              "command": 0.0,
+              "ready_score": 1.0,
+              "ready": true,
+              "stationary_ready": true,
+              "precision": "fine",
+              "reason": "visual_pose_ready",
+              "diagnostics": {
+                "nearest_support_distance": 4.3105332730102885,
+                "orthogonal_residual": 5.548657418319002,
+                "support_count": 164,
+                "image_derived_error": -0.0007010231218777969
+              }
+            },
+            "action": {
+              "kind": "mecanum",
+              "forward": 0.0,
+              "left": 0.0,
+              "turn": 0.0,
+              "duration_s": 0.2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "approach_fine_pending_bridge",
+      "source_frame_ids": {
+        "r1": 194,
+        "r3": 194
+      },
+      "source_observed_at_s": 23.46150000002101,
+      "source_decision_sim_time_s": 23.680000000022055,
+      "phase_tag": "phase-1-002",
+      "phase_index": 1,
+      "axis": "lateral",
+      "source_ready": {
+        "r1": false,
+        "r3": true
+      },
+      "source_stationary": false,
+      "far_error_m": {
+        "r1": 0.01770484609953557
+      },
+      "outer_tolerance_m": 0.0025,
+      "near_ready_multiplier": 2,
+      "original_rgb_deadline_s": 24.061500000021013,
+      "original_valid_until_s": 23.930000000022055,
+      "previous_valid_until_s": 23.930000000022055,
+      "issued_at_s": 23.9200000000232,
+      "valid_until_s": 23.980000000022056,
+      "duration_s": 0.05999999999885475,
+      "total_extension_s": 0.05000000000000071,
+      "plan_hash": "c2f420b7d1eb537334502b0eebe14161ffc0468f058bb5230e3d31c39281e45c",
+      "permission_request": [
+        "beam",
+        "APPROACH"
+      ],
+      "permission_verified_at_s": 23.9200000000232,
+      "phase": "APPROACH",
+      "commands": {
+        "r1": {
+          "forward": 0.0,
+          "left": 0.01,
+          "turn": 0.0
+        },
+        "r3": {
+          "forward": 0.0,
+          "left": 0.0,
+          "turn": 0.0
+        }
+      }
+    }
+  ],
+  "issued_commands": {
+    "r3": [
+      {
+        "stage": "APPROACH",
+        "action": {
+          "kind": "mecanum",
+          "forward": 0.0,
+          "left": 0.01,
+          "turn": 0.0,
+          "duration_s": 0.25
+        },
+        "issued_at_s": 23.680000000022055,
+        "valid_until_s": 23.930000000022055,
+        "plan_hash": "c2f420b7d1eb537334502b0eebe14161ffc0468f058bb5230e3d31c39281e45c",
+        "source_frame_ids": {
+          "r1": 194,
+          "r3": 194
+        },
+        "observed_at_s": 23.46150000002101,
+        "phase_tag": "phase-1-002",
+        "fine_axis": "lateral",
+        "fine_bridge_eligible": true
+      },
+      {
+        "stage": "APPROACH",
+        "action": {
+          "kind": "mecanum",
+          "forward": 0.0,
+          "left": 0.01,
+          "turn": 0.0,
+          "duration_s": 0.05999999999885475
+        },
+        "issued_at_s": 23.9200000000232,
+        "valid_until_s": 23.980000000022056,
+        "plan_hash": "c2f420b7d1eb537334502b0eebe14161ffc0468f058bb5230e3d31c39281e45c",
+        "pending_renewal": true,
+        "source_frame_ids": {
+          "r1": 194,
+          "r3": 194
+        },
+        "observed_at_s": 23.46150000002101,
+        "source_decision_sim_time_s": 23.680000000022055,
+        "phase_tag": "phase-1-002",
+        "fine_axis": "lateral",
+        "original_rgb_deadline_s": 24.061500000021013,
+        "original_valid_until_s": 23.930000000022055,
+        "previous_valid_until_s": 23.930000000022055,
+        "duration_s": 0.05999999999885475,
+        "total_extension_s": 0.05000000000000071,
+        "permission_request": [
+          "beam",
+          "APPROACH"
+        ],
+        "permission_verified_at_s": 23.9200000000232
+      }
+    ],
+    "r1": [
+      {
+        "stage": "APPROACH",
+        "action": {
+          "kind": "mecanum",
+          "forward": 0.0,
+          "left": 0.0,
+          "turn": 0.0,
+          "duration_s": 0.25
+        },
+        "issued_at_s": 23.680000000022055,
+        "valid_until_s": 23.930000000022055,
+        "plan_hash": "c2f420b7d1eb537334502b0eebe14161ffc0468f058bb5230e3d31c39281e45c",
+        "source_frame_ids": {
+          "r1": 194,
+          "r3": 194
+        },
+        "observed_at_s": 23.46150000002101,
+        "phase_tag": "phase-1-002",
+        "fine_axis": "lateral",
+        "fine_bridge_eligible": true
+      },
+      {
+        "stage": "APPROACH",
+        "action": {
+          "kind": "mecanum",
+          "forward": 0.0,
+          "left": 0.0,
+          "turn": 0.0,
+          "duration_s": 0.05999999999885475
+        },
+        "issued_at_s": 23.9200000000232,
+        "valid_until_s": 23.980000000022056,
+        "plan_hash": "c2f420b7d1eb537334502b0eebe14161ffc0468f058bb5230e3d31c39281e45c",
+        "pending_renewal": true,
+        "source_frame_ids": {
+          "r1": 194,
+          "r3": 194
+        },
+        "observed_at_s": 23.46150000002101,
+        "source_decision_sim_time_s": 23.680000000022055,
+        "phase_tag": "phase-1-002",
+        "fine_axis": "lateral",
+        "original_rgb_deadline_s": 24.061500000021013,
+        "original_valid_until_s": 23.930000000022055,
+        "previous_valid_until_s": 23.930000000022055,
+        "duration_s": 0.05999999999885475,
+        "total_extension_s": 0.05000000000000071,
+        "permission_request": [
+          "beam",
+          "APPROACH"
+        ],
+        "permission_verified_at_s": 23.9200000000232
+      }
+    ]
+  },
+  "result": {
+    "bindings": {
+      "pair_model_slots": {
+        "r1": "r3",
+        "r3": "r1"
+      }
+    },
+    "config": {
+      "realtime_control": true
+    }
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "schema": "ugrp.dispatch.box_tracking_diagnosis.v1",
+  "source_run": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v23-full",
+  "source_revision": "7b30aeee655d320b5971f69e94aac8653da3c3b5",
+  "source_images": {
+    "background": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v23-full/rgb/solo-144-top.jpg",
+      "sha256": "badb0d2ac0b8bbbe877050a99a843f90597e82349edd563b174523e9acf8b0bf"
+    },
+    "previous": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v23-full/rgb/solo-166-top.jpg",
+      "sha256": "208ac81a95e41571323964094212851806450ddeaaf6531a14e9f09c1d99cbed"
+    },
+    "failed": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v23-full/rgb/solo-167-top.jpg",
+      "sha256": "540dfdddd2f62781049116714a51b5d7d8576a382f707f803d29ab63a1842d7c"
+    }
+  },
+  "last_accepted_decision": {
+    "index": 166,
+    "frame_id": 1135,
+    "observed_at_s": 129.9824999986543,
+    "sim_time_s": 130.14999999865034,
+    "cargo_center_px": [
+      451.26666666666665,
+      571.5
+    ],
+    "previous_delta_px": [
+      18.474999999999966,
+      0.375
+    ],
+    "predicted_next_center_px": [
+      466.26666666666665,
+      571.875
+    ],
+    "own_attachment_passed": true,
+    "own_mask_iou": 0.9969176363766696
+  },
+  "before_patch_replay": {
+    "result": "RuntimeError: dispatch box unresolved or ambiguous in TOP RGB",
+    "candidate_loop": "first nonempty saturation had two candidates, then bidirectional KLT fallback",
+    "source": "direct ImageRoute.observe replay on original source revision before this patch"
+  },
+  "existing_rgb_gates_at_failed_frame": {
+    "saturation_levels": [
+      {
+        "min_saturation": 125,
+        "candidate_count": 2,
+        "candidates": [
+          {
+            "center_px": [
+              471.38461538461536,
+              568.3076923076923
+            ],
+            "area_px": 13,
+            "size_px": [
+              4,
+              6
+            ],
+            "prediction_error_px": 6.238516109713171
+          },
+          {
+            "center_px": [
+              473.1666666666667,
+              574.75
+            ],
+            "area_px": 12,
+            "size_px": [
+              3,
+              7
+            ],
+            "prediction_error_px": 7.475000000000032
+          }
+        ]
+      },
+      {
+        "min_saturation": 105,
+        "candidate_count": 1,
+        "candidates": [
+          {
+            "center_px": [
+              472.14285714285717,
+              571.3928571428571
+            ],
+            "area_px": 28,
+            "size_px": [
+              6,
+              13
+            ],
+            "prediction_error_px": 5.895937266216969
+          }
+        ]
+      },
+      {
+        "min_saturation": 90,
+        "candidate_count": 1,
+        "candidates": [
+          {
+            "center_px": [
+              471.84375,
+              571.25
+            ],
+            "area_px": 32,
+            "size_px": [
+              7,
+              13
+            ],
+            "prediction_error_px": 5.611994610380931
+          }
+        ]
+      },
+      {
+        "min_saturation": 70,
+        "candidate_count": 1,
+        "candidates": [
+          {
+            "center_px": [
+              471.675,
+              572.05
+            ],
+            "area_px": 40,
+            "size_px": [
+              9,
+              17
+            ],
+            "prediction_error_px": 5.411163871520129
+          }
+        ]
+      }
+    ],
+    "klt": {
+      "points": 16,
+      "cycle_and_error_accepted": 10,
+      "valid_with_motion_under_20_px": 0,
+      "consistent_motion_x_px": [
+        21.44921875,
+        21.4329833984375,
+        21.331085205078125,
+        21.197296142578125,
+        21.087615966796875,
+        21.46343994140625,
+        21.312591552734375,
+        21.07745361328125,
+        20.77850341796875,
+        21.19012451171875
+      ],
+      "motion_limit_px": 20
+    }
+  },
+  "after_patch_rgb_replay": {
+    "result": "accepted",
+    "action": {
+      "kind": "mecanum",
+      "forward": 0.12,
+      "left": -0.029873424819796355,
+      "turn": 0.0,
+      "duration_s": 0.2
+    },
+    "cargo_center_px": [
+      472.14285714285717,
+      571.3928571428571
+    ],
+    "tracking": {
+      "method": "cyan component",
+      "min_saturation": 105,
+      "static_background": {
+        "reference_sha256": "badb0d2ac0b8bbbe877050a99a843f90597e82349edd563b174523e9acf8b0bf",
+        "active": true,
+        "rgb_difference_threshold": 20,
+        "initial_occupied_radius_px": 30,
+        "origin_px": [
+          274.06666666666666,
+          545.0266666666666
+        ]
+      }
+    },
+    "note": "Pure RGB replay only; no physical continuation or delivered-box claim"
+  },
+  "minimal_change": "Continue to the next existing saturation level only if the current level has multiple acceptable candidates; retain all area, size, 8 px prediction, KLT and fail-closed gates. Unique strong candidate remains immediate."
+}

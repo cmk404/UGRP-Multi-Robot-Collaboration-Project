@@ -535,6 +535,47 @@ def test_tracked_thin_cargo_keeps_identity_after_leaving_cyan_floor():
     assert e['tracking']['min_saturation']<=125
 
 
+def _split_cyan_box_route(*, bridged, strong_unique=False):
+    from harness.dispatch_skill_binding import ImageRoute
+    route=ImageRoute(SkillBindings(committed(),authored_map('open')),'box')
+    hsv=np.zeros((720,960,3),np.uint8)
+    hsv[196:200,219:223]=[90,200,220]
+    if strong_unique:
+        hsv[202:206,219:223]=[90,110,220]
+    else:
+        hsv[202:206,219:223]=[90,200,220]
+    if bridged:hsv[200:202,219:223]=[90,110,220]
+    frame=cv2.cvtColor(hsv,cv2.COLOR_HSV2BGR)
+    route.box_center=np.array([200.,200.]);route.box_delta=np.array([15.,0.])
+    route.box_previous=np.zeros_like(frame)
+    route.box_background=np.zeros_like(frame);route.box_background_sha='blank RGB'
+    route.box_origin=np.zeros(2)
+    route.points=[np.array([300.,200.])]
+    return route,cv2.imencode('.png',frame)[1].tobytes()
+
+
+def test_box_tracker_keeps_unique_strong_cyan_candidate():
+    route,image=_split_cyan_box_route(bridged=False,strong_unique=True)
+    _,evidence=route.observe(image)
+    assert evidence['tracking']['method']=='cyan component'
+    assert evidence['tracking']['min_saturation']==125
+    assert np.allclose(evidence['cargo_center_px'],[220.5,197.5],atol=.1)
+
+
+def test_box_tracker_reunites_split_cyan_at_existing_lower_threshold():
+    route,image=_split_cyan_box_route(bridged=True)
+    _,evidence=route.observe(image)
+    assert evidence['tracking']['method']=='cyan component'
+    assert evidence['tracking']['min_saturation']==105
+    assert np.allclose(evidence['cargo_center_px'],[220.5,200.5],atol=.1)
+
+
+def test_box_tracker_keeps_ambiguous_cyan_fail_closed():
+    route,image=_split_cyan_box_route(bridged=False)
+    with pytest.raises(RuntimeError,match='appearance unresolved'):
+        route.observe(image)
+
+
 def test_shadowed_cargo_requires_bidirectional_rgb_match():
     from harness.dispatch_skill_binding import ImageRoute
     root=Path('tests/fixtures/dispatch_skill_transfer')

@@ -1,0 +1,408 @@
+{
+  "scope": "Read-only offline prediction of only the final coarse RGB frame in each archived run. These predictions were not applied to the v20 physics run.",
+  "prediction_method": "Existing predict_stage on each slot own JPEG and same-frame canonical TOP JPEG, using the configured saved stage models; source JPEG and model SHA-256 verified.",
+  "criterion_examined": "Alternative coarse-to-fine handoff only after both original forward gaps are <=0.065 and all six saved stage model predictions have ok=true and precision=fine; stop and reobserve fresh stationary RGB before applying in a future run. No coarse-ready or physical-success claim.",
+  "runs": [
+    {
+      "label": "v20-failed",
+      "run_path": "outputs/simulation-realtime-20260924-faster/native-v20-full",
+      "source_sha": "9b846e7c294ad1cf4c7bb7d013701a3795a2cc3e",
+      "coarse_index_zero_based": 119,
+      "frame_id": 331,
+      "coarse": {
+        "r1": {
+          "forward_gap_normalized": 0.057993053174222486,
+          "lateral_error_normalized": 0.0030549257625501203,
+          "heading_angle_deg": 0.0,
+          "ready": false
+        },
+        "r3": {
+          "forward_gap_normalized": 0.06423725683027401,
+          "lateral_error_normalized": 0.0021683466213199,
+          "heading_angle_deg": -1.5074357986450195,
+          "ready": false
+        }
+      },
+      "model_manifest": {
+        "path": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/varied-start-skill.json",
+        "sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a"
+      },
+      "rgb": {
+        "canonical_top": {
+          "path": "outputs/simulation-realtime-20260924-faster/native-v20-full/rgb/pair-120-canonical-top.jpg",
+          "sha256": "981b7503a77c36afbed64cbf13d077285789e97392d1c8c16441e2397b55f493"
+        },
+        "own": {
+          "r1": {
+            "path": "outputs/simulation-realtime-20260924-faster/native-v20-full/rgb/pair-120-coarse-r3.jpg",
+            "sha256": "5d715af3d9f2b2eafa25cc5583fc47eedce8a018f34ac1fce3ad519f835e87bb",
+            "physical_robot_id": "r3"
+          },
+          "r3": {
+            "path": "outputs/simulation-realtime-20260924-faster/native-v20-full/rgb/pair-120-coarse-r1.jpg",
+            "sha256": "eddbfd106b62838c39d0d49561fea0f9042b65701f820648989e9f78af006a8c",
+            "physical_robot_id": "r1"
+          }
+        }
+      },
+      "models": {
+        "r1": {
+          "yaw": {
+            "path": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r1-yaw.json",
+            "sha256": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374"
+          },
+          "lateral": {
+            "path": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r1-lateral.json",
+            "sha256": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869"
+          },
+          "forward": {
+            "path": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r1-forward.json",
+            "sha256": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45"
+          }
+        },
+        "r3": {
+          "yaw": {
+            "path": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r3-yaw.json",
+            "sha256": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8"
+          },
+          "lateral": {
+            "path": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r3-lateral.json",
+            "sha256": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f"
+          },
+          "forward": {
+            "path": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r3-forward.json",
+            "sha256": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+          }
+        }
+      },
+      "predictions": {
+        "r1": {
+          "yaw": {
+            "ok": true,
+            "precision": "fine",
+            "ready": true,
+            "stationary_ready": true,
+            "command": 0.0,
+            "reason": "visual_pose_ready",
+            "image_derived_error": -0.000855222964770779
+          },
+          "lateral": {
+            "ok": true,
+            "precision": "fine",
+            "ready": false,
+            "stationary_ready": false,
+            "command": 0.01,
+            "reason": "visual_pose_command",
+            "image_derived_error": 0.020855231433717574
+          },
+          "forward": {
+            "ok": true,
+            "precision": "fine",
+            "ready": false,
+            "stationary_ready": false,
+            "command": 0.03764567625780056,
+            "reason": "visual_pose_command",
+            "image_derived_error": 0.1882283812890028
+          }
+        },
+        "r3": {
+          "yaw": {
+            "ok": true,
+            "precision": "fine",
+            "ready": false,
+            "stationary_ready": false,
+            "command": -0.01,
+            "reason": "visual_pose_command",
+            "image_derived_error": -0.018319643859316524
+          },
+          "lateral": {
+            "ok": true,
+            "precision": "fine",
+            "ready": false,
+            "stationary_ready": false,
+            "command": -0.01,
+            "reason": "visual_pose_command",
+            "image_derived_error": -0.002680714198397893
+          },
+          "forward": {
+            "ok": true,
+            "precision": "fine",
+            "ready": false,
+            "stationary_ready": false,
+            "command": 0.04410920197235491,
+            "reason": "visual_pose_command",
+            "image_derived_error": 0.22054600986177456
+          }
+        }
+      }
+    },
+    {
+      "label": "v19-full-success",
+      "run_path": "outputs/simulation-realtime-20260923/native-v19-grasp-full",
+      "source_sha": "1fed936645d8c61bdbea99ec54d7cb09fd719d78",
+      "coarse_index_zero_based": 104,
+      "frame_id": 287,
+      "coarse": {
+        "r1": {
+          "forward_gap_normalized": 0.059051672612776135,
+          "lateral_error_normalized": 0.0008877155361293187,
+          "heading_angle_deg": 0.0,
+          "ready": true
+        },
+        "r3": {
+          "forward_gap_normalized": 0.0614737680544373,
+          "lateral_error_normalized": 0.0024036637006772943,
+          "heading_angle_deg": 0.0,
+          "ready": true
+        }
+      },
+      "model_manifest": {
+        "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/varied-start-skill.json",
+        "sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a"
+      },
+      "rgb": {
+        "canonical_top": {
+          "path": "outputs/simulation-realtime-20260923/native-v19-grasp-full/rgb/pair-105-canonical-top.jpg",
+          "sha256": "cefaa5657d90ed84baf6e3517343a8818e86a55ecacc7d4fe48ec3cbbe9dcf35"
+        },
+        "own": {
+          "r1": {
+            "path": "outputs/simulation-realtime-20260923/native-v19-grasp-full/rgb/pair-105-coarse-r3.jpg",
+            "sha256": "dff4a382f525d87a20285120a97a1687d2bbc132e884291a5b49ede943808308",
+            "physical_robot_id": "r3"
+          },
+          "r3": {
+            "path": "outputs/simulation-realtime-20260923/native-v19-grasp-full/rgb/pair-105-coarse-r1.jpg",
+            "sha256": "3d10a74fe83a0febbc5d2992079f4d128cf9a34d88a93a92f07617b3fd24b868",
+            "physical_robot_id": "r1"
+          }
+        }
+      },
+      "models": {
+        "r1": {
+          "yaw": {
+            "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r1-yaw.json",
+            "sha256": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374"
+          },
+          "lateral": {
+            "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r1-lateral.json",
+            "sha256": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869"
+          },
+          "forward": {
+            "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r1-forward.json",
+            "sha256": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45"
+          }
+        },
+        "r3": {
+          "yaw": {
+            "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r3-yaw.json",
+            "sha256": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8"
+          },
+          "lateral": {
+            "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r3-lateral.json",
+            "sha256": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f"
+          },
+          "forward": {
+            "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r3-forward.json",
+            "sha256": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+          }
+        }
+      },
+      "predictions": {
+        "r1": {
+          "yaw": {
+            "ok": true,
+            "precision": "fine",
+            "ready": true,
+            "stationary_ready": true,
+            "command": 0.0,
+            "reason": "visual_pose_ready",
+            "image_derived_error": 0.0010327801996055036
+          },
+          "lateral": {
+            "ok": true,
+            "precision": "fine",
+            "ready": false,
+            "stationary_ready": false,
+            "command": 0.01,
+            "reason": "visual_pose_command",
+            "image_derived_error": 0.02036388532865666
+          },
+          "forward": {
+            "ok": true,
+            "precision": "fine",
+            "ready": false,
+            "stationary_ready": false,
+            "command": 0.038395676236252084,
+            "reason": "visual_pose_command",
+            "image_derived_error": 0.1919783811812604
+          }
+        },
+        "r3": {
+          "yaw": {
+            "ok": true,
+            "precision": "fine",
+            "ready": false,
+            "stationary_ready": false,
+            "command": -0.01,
+            "reason": "visual_pose_command",
+            "image_derived_error": -0.015289715116335704
+          },
+          "lateral": {
+            "ok": true,
+            "precision": "fine",
+            "ready": false,
+            "stationary_ready": false,
+            "command": -0.01,
+            "reason": "visual_pose_command",
+            "image_derived_error": -0.003767347053642914
+          },
+          "forward": {
+            "ok": true,
+            "precision": "fine",
+            "ready": false,
+            "stationary_ready": false,
+            "command": 0.0421486059921887,
+            "reason": "visual_pose_command",
+            "image_derived_error": 0.2107430299609435
+          }
+        }
+      }
+    },
+    {
+      "label": "v19-repeat-success",
+      "run_path": "outputs/simulation-realtime-20260923/native-v19-grasp-repeat",
+      "source_sha": "1fed936645d8c61bdbea99ec54d7cb09fd719d78",
+      "coarse_index_zero_based": 82,
+      "frame_id": 233,
+      "coarse": {
+        "r1": {
+          "forward_gap_normalized": 0.06275858890051139,
+          "lateral_error_normalized": -0.0015409979917221373,
+          "heading_angle_deg": 0.0,
+          "ready": true
+        },
+        "r3": {
+          "forward_gap_normalized": 0.061601986498227485,
+          "lateral_error_normalized": 0.0008309066467329373,
+          "heading_angle_deg": 1.3019561767578125,
+          "ready": true
+        }
+      },
+      "model_manifest": {
+        "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/varied-start-skill.json",
+        "sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a"
+      },
+      "rgb": {
+        "canonical_top": {
+          "path": "outputs/simulation-realtime-20260923/native-v19-grasp-repeat/rgb/pair-83-canonical-top.jpg",
+          "sha256": "d98b37944aad257afe92f2e1673b9b4084d8e1dc5ea314c591835a3fefd117cb"
+        },
+        "own": {
+          "r1": {
+            "path": "outputs/simulation-realtime-20260923/native-v19-grasp-repeat/rgb/pair-83-coarse-r3.jpg",
+            "sha256": "f5e628b678d392a1467c7961a396de6d3e42617e02c6702b79bcb3f88e4d64eb",
+            "physical_robot_id": "r3"
+          },
+          "r3": {
+            "path": "outputs/simulation-realtime-20260923/native-v19-grasp-repeat/rgb/pair-83-coarse-r1.jpg",
+            "sha256": "0bb05f9990e5090ea8b1cc2165ca3837c67674b724fce5d7b87b4537ccdd5ac0",
+            "physical_robot_id": "r1"
+          }
+        }
+      },
+      "models": {
+        "r1": {
+          "yaw": {
+            "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r1-yaw.json",
+            "sha256": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374"
+          },
+          "lateral": {
+            "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r1-lateral.json",
+            "sha256": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869"
+          },
+          "forward": {
+            "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r1-forward.json",
+            "sha256": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45"
+          }
+        },
+        "r3": {
+          "yaw": {
+            "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r3-yaw.json",
+            "sha256": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8"
+          },
+          "lateral": {
+            "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r3-lateral.json",
+            "sha256": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f"
+          },
+          "forward": {
+            "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r3-forward.json",
+            "sha256": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+          }
+        }
+      },
+      "predictions": {
+        "r1": {
+          "yaw": {
+            "ok": true,
+            "precision": "fine",
+            "ready": true,
+            "stationary_ready": true,
+            "command": 0.0,
+            "reason": "visual_pose_ready",
+            "image_derived_error": -0.00030596593924473727
+          },
+          "lateral": {
+            "ok": true,
+            "precision": "fine",
+            "ready": false,
+            "stationary_ready": false,
+            "command": 0.01,
+            "reason": "visual_pose_command",
+            "image_derived_error": 0.02111360814994793
+          },
+          "forward": {
+            "ok": true,
+            "precision": "fine",
+            "ready": false,
+            "stationary_ready": false,
+            "command": 0.03976373181160903,
+            "reason": "visual_pose_command",
+            "image_derived_error": 0.1988186590580451
+          }
+        },
+        "r3": {
+          "yaw": {
+            "ok": true,
+            "precision": "fine",
+            "ready": false,
+            "stationary_ready": false,
+            "command": -0.01,
+            "reason": "visual_pose_command",
+            "image_derived_error": -0.015536411469437829
+          },
+          "lateral": {
+            "ok": true,
+            "precision": "fine",
+            "ready": true,
+            "stationary_ready": true,
+            "command": 0.0,
+            "reason": "visual_pose_ready",
+            "image_derived_error": -0.0012822575996682144
+          },
+          "forward": {
+            "ok": true,
+            "precision": "fine",
+            "ready": false,
+            "stationary_ready": false,
+            "command": 0.041753710301060856,
+            "reason": "visual_pose_command",
+            "image_derived_error": 0.20876855150530427
+          }
+        }
+      }
+    }
+  ],
+  "finding": "v20 final frame satisfies the existing coarse forward-gap gate and all six fine-model support checks. Coarse ready failed only at marginal lateral and heading gates. All six models also support the final coarse frame in both v19 successful runs; their fine alignment errors are similar to v20.",
+  "limits": "Archived-frame support is not a new physical run. Stationary reobservation and actual end-to-end grasp, carry, unload, contact and protocol success remain unverified for the proposed handoff."
+}
