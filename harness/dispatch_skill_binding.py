@@ -376,7 +376,11 @@ class ImageRoute:
                                    key=lambda i:np.linalg.norm(centers[i]-predicted))
                     if len(choices)>1 and np.linalg.norm(centers[choices[1]]-predicted)-np.linalg.norm(centers[choices[0]]-predicted)>5:
                         choices=choices[:1]
-                if choices:break
+                # A strong mask can split one partially occluded box into two
+                # nearby fragments. Keep the same geometry and motion gates,
+                # but allow an existing lower-saturation mask to join them.
+                # A unique strong candidate still wins immediately.
+                if len(choices)==1:break
             tracking={'method':'cyan component','min_saturation':saturation}
             if binding is not None:tracking['initial_identity']=binding
             if len(choices)==1:

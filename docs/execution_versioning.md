@@ -78,3 +78,5 @@ python3 -m harness.rgb_execution_bundle verify-registry --base origin/main
 - `rgb-standard-dispatch-v22`: coarse 방향 추정 불가 시에도 충분한 바퀴 픽셀·화물·참조 RGB에서 독립적으로 관측된 전방 간격은 보존한다. coarse 명령은 계속 무효/정지이며, 더 정밀한 기존 yaw 포함6개 모델이 초기/새 정지 RGB 모두를 지원할 때만 별도 fine 진입을 허용한다. v21 실패와 새 물리 검증은 분리한다.
 
 - `rgb-standard-dispatch-v23`: 기본 open coarse 접근에서도 다음 영상 처리 중 마지막 승인 이동을 원본 TTL 이내로 갱신한다. 현재 계획·접근 권한·실제 발행 포트 명령/만료를 다시 확인하며 만료 후 재개하지 않는다. coarse120회·정렬 기준·fine/정지 확인은 유지한다. v22 실패 및 짧은1배속 진단은 별도 원본이며 새 완주를 승계하지 않는다.
+
+- `rgb-standard-dispatch-v24`: 운반 상자의 강한 색상 마스크가 여러 조각으로 나뉘면 기존 다음 포화도 단계에서도 유일 후보를 확인한다. 강한 색상의 유일 후보 우선·면적/모양/8px 예측 오차·optical flow 조건은 유지한다. 이전 v23은 파지/운반 및 명령 갱신 감사를 통과했지만 TOP 추적 실패로 완주하지 못했으며 새 전체 결과는 별도 기록한다.
