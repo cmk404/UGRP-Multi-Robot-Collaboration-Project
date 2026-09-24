@@ -10,7 +10,10 @@ import argparse
 import hashlib
 import json
 import statistics
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 
 def span(commands, rid, stages):
@@ -68,6 +71,16 @@ def run_row(path: Path):
             row['pair_idle_after_approach_sim_s'] = round(grasp[0] - approach[1], 1)
         if beam_carry and box_carry:
             row['carry_overlap_sim_s'] = round(max(0., min(beam_carry[1], box_carry[1]) - max(beam_carry[0], box_carry[0])), 1)
+    solo_path = path / 'solo-decisions.json'
+    if solo_path.exists():
+        rows = json.loads(solo_path.read_text())
+        idle = 0.
+        for this, following in zip(rows, rows[1:]):
+            evidence = this.get('top_evidence') or {}
+            if evidence.get('waiting_before_grasp') or evidence.get('waiting_for_resource'):
+                idle += following['sim_time_s'] - this['sim_time_s']
+        # Resource waits of the box robot: SIM time from each waiting decision to the next decision.
+        row['box_idle_waiting_sim_s'] = round(idle, 1)
     previews_path = path / 'plan-previews.json'
     if previews_path.exists() and plan:
         from harness.three_robot_plan import digest
@@ -99,6 +112,10 @@ def summarise(rows):
             'success_sim_s_all': times,
             'pair_idle_median': statistics.median([r['pair_idle_after_approach_sim_s'] for r in group
                                                    if 'pair_idle_after_approach_sim_s' in r] or [None]),
+            'box_idle_median': statistics.median([r['box_idle_waiting_sim_s'] for r in group
+                                                  if 'box_idle_waiting_sim_s' in r] or [None]),
+            'negotiation_turns_median': statistics.median([r['negotiation_turns'] for r in group
+                                                           if r.get('negotiation_turns')] or [None]),
             'llm_calls_median': statistics.median([r['llm_calls'] for r in group if r.get('llm_calls')] or [None]),
             'prompt_tokens_median': statistics.median([(r.get('usage') or {}).get('prompt_tokens') for r in group
                                                        if (r.get('usage') or {}).get('prompt_tokens')] or [None]),
@@ -109,7 +126,7 @@ def summarise(rows):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('cohort', type=Path)
+    parser.add_argument("cohort", type=Path)
     parser.add_argument('--write', type=Path)
     args = parser.parse_args(argv)
     rows = [run_row(p) for p in sorted(args.cohort.iterdir())
