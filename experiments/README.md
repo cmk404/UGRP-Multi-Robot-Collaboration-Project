@@ -1,5 +1,7 @@
 # 실험 인덱스
 
+- [2026-09-24 ACT 학습·행동 개선](2026-09-24-action-act/refinement.md): 첫 8,000 update 학습과 6회 비교의 실패를 보존하고, 영상 접근·추적·ACT 학습 및 추론을 수정한 후보를 고정 비교.
+
 - [2026-09-23 로컬 dispatch 속도·병렬 실행](2026-09-23-local-dispatch-performance/README.md): 동일 계획 headless 367→285초, 최종 MuJoCo 창331초 완주; 동시 적재 이동·중간 실패·SIM/wall 시간과 원본 해시를 구분.
 
 현재 코드의 진입점은 [현재 상태](../docs/current_status.md)를 참고한다. 아래는 실행 SHA별 보존 기록이며 과거 실패와 후속 결과를 함께 남긴다. 필요한 ID만 골라 읽는다.

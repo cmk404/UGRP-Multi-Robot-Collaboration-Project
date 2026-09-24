@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import base64
+import copy
 import hashlib
 import math
 from collections.abc import Mapping
@@ -12,7 +13,7 @@ import cv2
 import numpy as np
 
 from harness.monocular_box import CameraBoxTracker
-from harness.markerless_box import observe_ground_box
+from harness.markerless_box import observe_ground_box, _PROVENANCE as GROUND_BOX_PROVENANCE
 from harness.markerless_face import MarkerlessFaceAligner
 from harness.approach_geometry import assess_face_standoff
 from harness.visual_arm import camera_extrinsics, camera_to_base, forward_grip, solve_grip_ik, tool_pose
@@ -22,6 +23,8 @@ from harness.visual_attachment import compare_box_comotion
 
 
 SEARCH = {1: 2000, 3: 740, 4: 2320, 5: 1320, 6: 1500}
+_FAST_NEAR_FIELD_CONFIDENCE = 0.75
+_FAST_NEAR_FIELD_ERROR_PX = 45.0
 
 
 class VisualBoxSkill:
@@ -35,7 +38,8 @@ class VisualBoxSkill:
 
     def __init__(self, task="short_transfer", destination_zone="B", robot_id="r1", cargo_id="small_box_01",
                  near_field_reacquisition=False, perception_mode="markerless",
-                 attachment_home_reference="anchor", attachment_min_saturation=65, release_refine_ground_fit=False):
+                 attachment_home_reference="anchor", attachment_min_saturation=65, release_refine_ground_fit=False,
+                 fast_near_field_servo=False):
         if task not in {"short_transfer", "destination_zone", "external_navigation"}:
             raise ValueError("unsupported visual box task")
         if destination_zone not in {"A", "B", "C"}:
@@ -48,6 +52,11 @@ class VisualBoxSkill:
         if not isinstance(near_field_reacquisition, bool):
             raise ValueError("near_field_reacquisition must be a bool")
         self.near_field_reacquisition = near_field_reacquisition
+        if not isinstance(fast_near_field_servo, bool):
+            raise ValueError("fast_near_field_servo must be a bool")
+        self.fast_near_field_servo = fast_near_field_servo
+        self._near_field_servo_sample = None
+        self.last_approach_adjustment = None
         if perception_mode not in {"markerless", "fiducial"}:
             raise ValueError("unsupported perception_mode")
         self.perception_mode = perception_mode
@@ -106,10 +115,11 @@ class VisualBoxSkill:
     @property
     def history(self) -> tuple[dict[str, Any], ...]:
         """Bounded metadata history; images and privileged state are not kept."""
-        return tuple(dict(item) for item in self._history)
+        return tuple(copy.deepcopy(item) for item in self._history)
 
     def decide(self, observation: Mapping[str, Any]) -> dict[str, Any]:
         obs, pose = self._validate_observation(observation)
+        self.last_approach_adjustment = None
         ground_phase = self.phase in {"approach", "verify_release", "release_ground_left", "release_ground_right", "release_ground_home"}
         if self.perception_mode == "markerless":
             # A floor hypothesis is only appropriate before pickup or after
@@ -315,6 +325,7 @@ class VisualBoxSkill:
 
     def _approach(self, box, target, pose):
         if target is None:
+            self._near_field_servo_sample = None
             self._missing += 1
             if self._missing > 20:
                 return self._finish("TARGET_NOT_VISIBLE")
@@ -333,6 +344,7 @@ class VisualBoxSkill:
         bearing = math.atan2(y, x)
         desired_pan = _clip_int(round(1500 + math.degrees(bearing) * 2000 / 180), 500, 2500)
         if abs(int(pose["6"]) - desired_pan) > 20:
+            self._near_field_servo_sample = None
             return _pose({6: desired_pan})
         centroid = box.get("pixel_centroid")
         if not isinstance(centroid, (list, tuple)) or len(centroid) != 2:
@@ -340,12 +352,28 @@ class VisualBoxSkill:
         vertical_error = float(centroid[1]) - 218.7
         if abs(vertical_error) > (15 if x < 0.35 else 35):
             limit = 8 if x < 0.35 else 65
+            previous = self._near_field_servo_sample
+            if x < 0.35 and self.fast_near_field_servo:
+                limit, cap_reason, supported = self._near_field_servo_cap(
+                    box, x, y, vertical_error, pose, previous)
+            else:
+                cap_reason, supported = ("legacy_8_pwm" if x < 0.35 else "far_field_65_pwm"), False
+                self._near_field_servo_sample = None
             delta = _clip_int(round(-vertical_error * 0.65), -limit, limit)
             wrist = int(pose["3"])
             adjusted = _clip_int(wrist + delta, 500, 2200)
             if adjusted != wrist:
+                self._record_near_field_adjustment(
+                    box, x, y, vertical_error, previous, pose, 3, adjusted-wrist,
+                    adjusted, limit, cap_reason, supported)
                 return _pose({3: adjusted})
-            return _pose({4: _clip_int(int(pose["4"]) - delta, 500, 2500)})
+            elbow = int(pose["4"])
+            adjusted = _clip_int(elbow - delta, 500, 2500)
+            self._record_near_field_adjustment(
+                box, x, y, vertical_error, previous, pose, 4, adjusted-elbow,
+                adjusted, limit, cap_reason, supported)
+            return _pose({4: adjusted})
+        self._near_field_servo_sample = None
         if self.perception_mode == "markerless" and not self._face_inspection_reached:
             if abs(bearing) > .05:
                 return _drive(0.0, float(np.clip(bearing * .6, -.18, .18)), .4)
@@ -423,6 +451,92 @@ class VisualBoxSkill:
             return self._finish(f"IK_UNAVAILABLE:{exc}")
         self.phase = "lower"
         return _pose({**self._hover, 1: 2000})
+
+    def _near_field_servo_cap(self, box, x, y, error, pose, previous):
+        """Accelerate only after two independent, consistent own-RGB views."""
+        confidence = box.get("confidence")
+        supported = (
+            self.perception_mode == "markerless"
+            and box.get("visible") is True
+            and box.get("target_id") == self.cargo_id
+            and box.get("reason") in {
+                "FLOOR_CUBOID_HYPOTHESIS_VALIDATED",
+                "MEASURED_TOP_FACE_FLOOR_HYPOTHESIS_VALIDATED"}
+            and box.get("ambiguity_reason") is None
+            and box.get("identity_source") == "task_catalog_reference_only_not_visually_decoded"
+            and box.get("provenance") in {
+                GROUND_BOX_PROVENANCE,
+                GROUND_BOX_PROVENANCE + "+measured_full_top_rectangle"}
+            and isinstance(confidence, (int, float)) and not isinstance(confidence, bool)
+            and math.isfinite(float(confidence))
+            and float(confidence) >= _FAST_NEAR_FIELD_CONFIDENCE
+            and math.isfinite(error)
+            and self._last_frame_id > 0 and bool(self._hashes))
+        if not supported:
+            return 8, "weak_or_ambiguous_own_rgb", False
+        if x < 0.18:
+            return 8, "final_standoff", True
+        if abs(error) < _FAST_NEAR_FIELD_ERROR_PX:
+            return 8, "near_vertical_tolerance", True
+        if previous is None:
+            return 8, "first_supported_frame", True
+        if not previous["eligible_next"]:
+            return 8, "reestablishing_visual_progress", True
+        if (previous["frame_id"] >= self._last_frame_id
+                or previous["sha256"] == self._hashes[-1]):
+            return 8, "not_a_fresh_rgb_view", True
+        if (previous["pan_pwm"] != int(pose["6"])
+                or int(pose[str(previous["servo"])]) != previous["command_target_pwm"]):
+            return 8, "previous_command_state_unconfirmed", True
+        if math.hypot(x-previous["target_xy_m"][0], y-previous["target_xy_m"][1]) > 0.04:
+            return 8, "own_rgb_target_discontinuous", True
+        if (error > 0) != (previous["error_px"] > 0):
+            return 8, "vertical_error_reversed", True
+        if abs(error) > abs(previous["error_px"]):
+            return 8, "vertical_error_grew", True
+        if abs(previous["error_px"]) - abs(error) < 1.0:
+            return 8, "vertical_error_not_improving", True
+        return 24, "two_fresh_consistent_own_rgb_views", True
+
+    def _record_near_field_adjustment(self, box, x, y, error, previous, pose,
+                                      servo, applied_delta, command_target,
+                                      limit, cap_reason, supported):
+        if x >= 0.35:
+            return
+        confidence = box.get("confidence")
+        self.last_approach_adjustment = {
+            "frame_id": self._last_frame_id,
+            "sha256": self._hashes[-1] if self._hashes else None,
+            "observed_vertical_error_px": error,
+            "previous_observed_vertical_error_px": previous["error_px"] if previous else None,
+            "previous_frame_id": previous["frame_id"] if previous else None,
+            "target_x_m_from_own_rgb": x,
+            "target_y_m_from_own_rgb": y,
+            "previous_target_xy_m_from_own_rgb": list(previous["target_xy_m"]) if previous else None,
+            "box_confidence": float(confidence) if isinstance(confidence, (int, float))
+                and not isinstance(confidence, bool) and math.isfinite(float(confidence)) else None,
+            "box_reason": box.get("reason"),
+            "box_provenance": box.get("provenance"),
+            "visual_support": "single_geometry_validated_own_rgb_cyan_cuboid" if supported else None,
+            "selected_cap_pwm": limit,
+            "cap_reason": cap_reason,
+            "servo": servo,
+            "proposed_delta_pwm": applied_delta,
+            "proposed_target_pwm": command_target,
+            "pan_command_pwm": int(pose["6"]),
+            "command_state_only_not_joint_measurement": True,
+        }
+        if self._history and self._history[-1]["frame_id"] == self._last_frame_id:
+            self._history[-1]["approach_adjustment"] = dict(self.last_approach_adjustment)
+        self._near_field_servo_sample = (
+            {"frame_id": self._last_frame_id, "sha256": self._hashes[-1],
+             "error_px": error, "target_xy_m": (x, y),
+             "pan_pwm": int(pose["6"]), "servo": servo,
+             "command_target_pwm": command_target,
+             "eligible_next": cap_reason in {
+                 "first_supported_frame", "reestablishing_visual_progress",
+                 "two_fresh_consistent_own_rgb_views"}}
+            if self.fast_near_field_servo and supported and applied_delta else None)
 
     def _carry(self, obs, pose):
         # During travel, track between fresh frames while retaining an anchor.

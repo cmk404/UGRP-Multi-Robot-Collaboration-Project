@@ -208,10 +208,17 @@ def export_training(src, w, data):
         previous = step
         w.scalar('training/loss', row.get('loss'), step)
         w.scalar('training/elapsed_s', row.get('elapsed_s'), step)
+        for key, value in numeric_leaves(obj(row.get('loss_components'))):
+            w.scalar('training/loss_components/' + key, value, step)
+        if type(row.get('selection_eligible')) is bool:
+            w.scalar('development/checkpoint_eligible', int(row['selection_eligible']), step)
         for key, value in numeric_leaves(obj(row.get('development'))): w.scalar('development/' + key, value, step)
     w.scalar('training/final_loss', progress[-1].get('loss'))
     w.scalar('development/final_selection_score', obj(progress[-1].get('development')).get('selection_score'))
     w.text('training/selection', {k: data.get(k) for k in ('selected', 'selection', 'seed', 'steps', 'complete')})
+    if data.get('deployed_done_objective'):
+        w.text('training/deployed_objective', {k: data.get(k) for k in
+            ('deployed_done_objective', 'first_batch_deployed_done', 'selected_checkpoint_eligible')})
     return {'family': 'training', 'policy': 'ACT', 'case': src.root.name,
             'source_sha': data.get('source_sha'), 'seed': data.get('seed'),
             'dataset_sha256': data.get('dataset_sha256'), 'complete': data.get('complete')}, {}
@@ -266,13 +273,18 @@ def export_execution(src, w, result, max_images):
                               for decision in obj(row.get('decisions')).values())
         error_responses = sum(bool(obj(decision)) for _, row in inference_errors
                               for decision in obj(row.get('decisions')).values())
-        verified_error_attempts = sum(bool(obj(inp).get('wire_sha256'))
-                                      for _, row in inference_errors
+        known_wire = lambda inp: isinstance(obj(inp).get('wire_sha256'), str) and bool(
+            re.fullmatch(r'[0-9a-fA-F]{64}', obj(inp)['wire_sha256']))
+        verified_error_attempts = sum(known_wire(inp) for _, row in inference_errors
                                       for inp in obj(row.get('inputs')).values())
-        unverified_error_attempts = sum(not bool(obj(inp).get('wire_sha256'))
-                                        for _, row in inference_errors
+        unverified_error_attempts = sum(not known_wire(inp) for _, row in inference_errors
                                         for inp in obj(row.get('inputs')).values())
-        attempted = sum(len(obj(row.get('inputs'))) for _, row in carries + stale) + verified_error_attempts
+        recorded_inputs = [inp for _, row in act_predictions
+                           for inp in obj(row.get('inputs')).values()]
+        attempted = sum(known_wire(inp) for inp in recorded_inputs)
+        unverified_saved_inputs = sum(not known_wire(inp) for inp in recorded_inputs)
+        unconfirmed_slots = sum(len(row.get('unconfirmed_slots', []))
+                                for _, row in inference_errors)
         completed = sum(bool(obj(decision)) for _, row in act_predictions
                         for decision in obj(row.get('decisions')).values())
         meta['act_carry_decision_rows'] = len(carries)
@@ -285,18 +297,26 @@ def export_execution(src, w, result, max_images):
         meta['unverified_error_act_attempts'] = unverified_error_attempts
         meta['completed_act_responses'] = completed
         meta['attempted_act_requests'] = attempted
-        meta['act_request_verification_complete'] = not unverified_error_attempts
+        meta['act_request_count_scope'] = 'saved input rows with a 64-character wire hash; worker receipt not independently verified'
+        meta['unconfirmed_act_slots'] = unconfirmed_slots
+        meta['unverified_saved_act_inputs'] = unverified_saved_inputs
+        meta['act_request_verification_complete'] = not (unverified_saved_inputs or unconfirmed_slots)
         metrics['execution/act_accepted_responses'] = accepted_responses
         metrics['execution/act_stale_responses'] = stale_responses
         metrics['execution/act_error_responses'] = error_responses
         metrics['execution/act_verified_error_attempts'] = verified_error_attempts
         metrics['execution/act_unverified_error_attempts'] = unverified_error_attempts
+        metrics['execution/act_unconfirmed_slots'] = unconfirmed_slots
         # llm_calls excludes local ACT. Preserve an explicit total if supplied.
-        if not finite(result.get('model_calls')):
-            external = result.get('llm_calls')
-            metrics['result/model_calls'] = attempted + (external if finite(external) else 0)
-            meta['model_calls_scope'] = ('recorded ACT wire attempts plus recorded llm_calls'
-                                        if finite(external) else 'recorded ACT wire attempts only; external calls unknown')
+        if finite(result.get('model_calls')):
+            meta['reported_model_calls'] = result['model_calls']
+        external = result.get('llm_calls')
+        metrics['result/model_calls'] = attempted + (external if finite(external) else 0)
+        meta['model_calls_scope'] = ('saved ACT input rows with wire hash plus recorded llm_calls; '
+                                     'unconfirmed ACT slots excluded'
+                                     if finite(external) else
+                                     'saved ACT input rows with wire hash only; external calls unknown; '
+                                     'unconfirmed ACT slots excluded')
         if not finite(metrics['result/commands']):
             issued = src.read('issued-commands.json')
             if isinstance(issued, dict):
@@ -390,6 +410,12 @@ def export_execution(src, w, result, max_images):
                     if type(decision.get('done')) is bool: w.scalar('claims/' + rid + '/done', int(decision['done']), j)
                     if j in selected:
                         images = obj(inp.get('images'));emit_images(w, src, {rid + '/own': images.get('own'), rid + '/top': images.get('top')}, j)
+            if is_error and row.get('unconfirmed_slots'):
+                w.text('inference_errors/unconfirmed_slots',
+                       {'source_index': i, 'slots': row['unconfirmed_slots'],
+                        'discard_reason': row.get('discard_reason'),
+                        'worker_completion': row.get('worker_completion'),
+                        'owner_error': row.get('owner_error')}, i)
             if not is_stale and not is_error:
                 accepted_index += 1
     return meta, {k: v for k, v in metrics.items() if finite(v)}

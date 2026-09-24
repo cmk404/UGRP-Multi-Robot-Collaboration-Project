@@ -1,0 +1,74 @@
+{
+  "description": "Small saved RGB samples for time-aware direct TOP cargo reacquisition; images are observations, not control ground truth.",
+  "source_root": "/Users/changmin/projects/ugrp/outputs/dispatch-action-act-20260924",
+  "a": {
+    "run": "holdout-a-candidate-act",
+    "top_indices": [
+      117,
+      141,
+      142,
+      143,
+      144,
+      145
+    ],
+    "own_indices": [
+      144,
+      145
+    ],
+    "solo_decisions_sha256": "93fb7e5534341ac201d12a61958815f5ccf5f3a02e6c8a56eb803b6200bb82a5",
+    "last_valid_direct": {
+      "decision_index": 144,
+      "observed_at_s": 103.03524999929151,
+      "frame_id": 1018
+    },
+    "failed_capture": {
+      "image_index": 145,
+      "observed_at_s": 103.40024999928288,
+      "frame_id": 1021
+    }
+  },
+  "b": {
+    "run": "holdout-b-candidate-rgb",
+    "top_indices": [
+      121,
+      154,
+      155,
+      156,
+      157
+    ],
+    "own_indices": [
+      156,
+      157
+    ],
+    "solo_decisions_sha256": "7752b2a03ad9d7f67f1bcad6cbab2146ff3fbd5ea127d5699ab06dc647d45ab3",
+    "last_valid_direct": {
+      "decision_index": 156,
+      "observed_at_s": 115.74024999899108,
+      "frame_id": 1074
+    },
+    "failed_capture": {
+      "image_index": 157,
+      "observed_at_s": 116.00024999898493,
+      "frame_id": 1077,
+      "timestamp_source": "execution.frames.json captured entry; RGB image has no independent embedded timestamp"
+    },
+    "identity_limit": "Dim current cyan fragment can be measured but cannot be labeled cargo versus distractor from allowed RGB alone."
+  },
+  "files_sha256": {
+    "a-117-top.jpg": "889028c8e671802513ddb89ea0dc08eec873f42a9052e99725327f14ca29cb8b",
+    "a-141-top.jpg": "12aaedf8fe64f841f2249c7c2dcc46a39526abac90b8cc1c0d051facc6723860",
+    "a-142-top.jpg": "c68a8ab8455d65c2273480df919f0f50cbd669e53563b86993a30730beca705a",
+    "a-143-top.jpg": "733b9154b4c39c2cfd88883b5ea182f2891d3c6ad46d43e74186400b71e42321",
+    "a-144-own.jpg": "833643fab08f2eb83a00461f961e5baac08f6c4d15cf151d570b2697434322a5",
+    "a-144-top.jpg": "ffa65c665f5c832ca1d67e82a1ff5b5f4f9617049c93acd4a71400f99cd1f249",
+    "a-145-own.jpg": "be40dfe3520d79a1d728a0eb09da3276034e157cff68edf837b56509622275e0",
+    "a-145-top.jpg": "c0be4d73208ef69ac0ba54a5f6f8b134cf65d315dfa062407a63a44785bf247d",
+    "b-121-top.jpg": "f0df78980533d0897fa7696f90d8c8e8e9c1050d96ee33b1645b37d99addc9ab",
+    "b-154-top.jpg": "9eb1757efe32db0066867200a837dcd093aa77a169ec1c446bde72a32ae77b17",
+    "b-155-top.jpg": "fcfa605fcece7742d7af5168f3b64211fd851d89c445c64d11c64ababfa67ad8",
+    "b-156-own.jpg": "b82c5b33a70435c1145b5850fd5f0959857dfd04282933f92165106fccf35cf1",
+    "b-156-top.jpg": "ad3f636464d28204f68f3ddc9fe7cb3e51631ff15102ae7a3ceb1634431f5db7",
+    "b-157-own.jpg": "6e20cf3b6e5001c1ba71c03483d4621233641d13728b4451a5472fc32f9bea9e",
+    "b-157-top.jpg": "3a08c760b005390d93f00dff635c8bb34c6b8f9afdaa4a33d4dec1496a10f028"
+  }
+}

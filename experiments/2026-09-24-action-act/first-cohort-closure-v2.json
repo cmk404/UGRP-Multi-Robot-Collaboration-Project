@@ -1,0 +1,114 @@
+{
+  "schema": "ugrp.action_act_first_cohort_closure.v2",
+  "summary": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/audits/first-cohort-summary-v2.json",
+  "status": "six_preregistered_trials_audited_complete_with_failures",
+  "trial_order": [
+    "holdout-a/reference-rgb-v26",
+    "holdout-a/candidate-rgb",
+    "holdout-a/candidate-act",
+    "holdout-b/reference-rgb-v26",
+    "holdout-b/candidate-rgb",
+    "holdout-b/candidate-act"
+  ],
+  "denominator": {
+    "planned": 6,
+    "started": 6,
+    "audited": 6,
+    "physical_and_protocol_success": 2,
+    "ordinary_failures": 4,
+    "unstarted": 0,
+    "by_arm": {
+      "candidate-act": {
+        "planned": 2,
+        "started_and_audited": 2,
+        "successful": 0
+      },
+      "candidate-rgb": {
+        "planned": 2,
+        "started_and_audited": 2,
+        "successful": 1
+      },
+      "reference-rgb-v26": {
+        "planned": 2,
+        "started_and_audited": 2,
+        "successful": 1
+      }
+    }
+  },
+  "typed_failure_by_trial": {
+    "holdout-a/reference-rgb-v26": "box_top_rgb_unresolved_during_carry",
+    "holdout-a/candidate-act": "box_linked_carrier_proxy_ambiguous_during_carry",
+    "holdout-b/candidate-rgb": "box_top_rgb_unresolved_during_carry",
+    "holdout-b/candidate-act": "act_rgb_prediction_stale_after_bounded_reobservation"
+  },
+  "matched_rgb_speed": {
+    "holdout-a": {
+      "status": "failed_pair",
+      "baseline_success": false,
+      "candidate_success": true
+    },
+    "holdout-b": {
+      "status": "failed_pair",
+      "baseline_success": true,
+      "candidate_success": false
+    }
+  },
+  "speed_conclusion": "No successful matched RGB pair in two cases; candidate-vs-reference speed ratio and 10% directional gate cannot be estimated. Failed wall times are excluded from successful speed statistics.",
+  "act": {
+    "accepted_decisions": 54,
+    "issued_decisions": 54,
+    "stale_predictions": 9,
+    "inference_error_rows": 0,
+    "lease_audit_all_pass": true,
+    "physical_success": 0,
+    "terminal_assessment": "Neither ACT run reached a delivery terminal. a failed common solo box tracking; b exhausted bounded stale reobservation. No missed-terminal or successful ACT claim.",
+    "recorded_request_rows": 126,
+    "recorded_response_rows": 126,
+    "recorded_wire_hash_present": 126,
+    "saved_known_inputs_reconstruction_pass": true,
+    "worker_received_total_independently_verified": false,
+    "unaccounted_capture_groups": {
+      "holdout-a/candidate-act": [
+        "act-carry-42-attempt-1"
+      ],
+      "holdout-b/candidate-act": []
+    },
+    "possible_unlogged_model_request_slots": {
+      "holdout-a/candidate-act": "0-2",
+      "holdout-b/candidate-act": "0"
+    },
+    "request_count_scope": "126 recorded input rows reconstruct and hash-verify; a final captured pair was not followed by an ACT decision row when owner-side box tracking raised. Whether either worker request was sent or received cannot be determined from v27 logs."
+  },
+  "provenance": {
+    "source_sha_by_arm": {
+      "candidate-act": [
+        "12f8e6dda76e39b3ec612f247deb4835a2ff50bc"
+      ],
+      "candidate-rgb": [
+        "12f8e6dda76e39b3ec612f247deb4835a2ff50bc"
+      ],
+      "reference-rgb-v26": [
+        "41a906cfa28ead87b150fd7b0c494ee0cfe58a83"
+      ]
+    },
+    "act_model_sha256": [
+      "3957eb3df4304561e2af6ed28e3be05a8a85c985ff80c31c2ad733e2d2e355d2"
+    ],
+    "all_source_clean_and_unchanged": true,
+    "all_inputs_unchanged": true,
+    "all_core_raw_hashes_match_manager": true,
+    "all_weld_steps_zero": true,
+    "sampled_robot_and_obstacle_contact_counters_zero": true,
+    "contact_scope": "Post-run sampled robot-robot contact and obstacle-contact steps; no claim about unsampled instants.",
+    "act_request_journal_scope": "No independent worker-side per-request journal in v27; saved request rows are a lower bound, not verified worker total."
+  },
+  "budget": {
+    "per_trial_all_within_cap": true,
+    "sum_result_wall_s": 792.4452165010152,
+    "sum_launcher_process_wall_s": 801.4300543749996,
+    "preregistered_aggregate_limit_s": 3600,
+    "within_aggregate_limit": true,
+    "scope": "Sum of serial trial process wall times; intervals between trials for audits and setup are excluded."
+  },
+  "interpretation": "Local saved-plan open-map nearby-spawn component study only. Candidate RGB and ACT are not qualified for reliability or speed; no independent LLM communication effect measured."
+}

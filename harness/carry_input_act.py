@@ -7,6 +7,8 @@ This is an experimental adapter, not a new default carry policy.
 """
 import io
 import json
+import hashlib
+from collections import OrderedDict
 from pathlib import Path
 
 import draccus
@@ -37,13 +39,46 @@ class FrameBackbone(torch.nn.Module):
     def __init__(self, native, size, history):
         super().__init__()
         self.native, self.size, self.history = native, size, history
+        self.cache_capacity = 0
+        self._feature_cache = OrderedDict()
+        self.cache_hits = self.cache_misses = 0
+        self.register_load_state_dict_post_hook(self._clear_loaded_cache)
+
+    @staticmethod
+    def _clear_loaded_cache(module, _incompatible_keys):
+        module._feature_cache.clear()
 
     def forward(self, images):
         if images.shape[-2:] != (self.size, self.size * self.history):
             raise ValueError('invalid temporal image dimensions')
         batch = images.shape[0]
         frames = torch.cat(images.split(self.size, dim=-1), dim=0)
-        features = self.native(frames)['feature_map']
+        if self.cache_capacity and not self.training and not torch.is_grad_enabled():
+            keys = [(str(frame.device), str(frame.dtype), tuple(frame.shape),
+                     hashlib.sha256(frame.contiguous().cpu().numpy().tobytes()).digest())
+                    for frame in frames]
+            missing = {}
+            resolved = {}
+            for key, frame in zip(keys, frames):
+                if key in self._feature_cache:
+                    resolved[key] = self._feature_cache[key]
+                    self._feature_cache.move_to_end(key)
+                    self.cache_hits += 1
+                elif key not in missing:
+                    missing[key] = frame
+                    self.cache_misses += 1
+            if missing:
+                computed = self.native(torch.stack(list(missing.values())))['feature_map']
+                for key, feature in zip(missing, computed):
+                    resolved[key] = feature.detach().clone()
+                    self._feature_cache[key] = resolved[key]
+                    while len(self._feature_cache) > self.cache_capacity:
+                        self._feature_cache.popitem(last=False)
+            features = torch.stack([resolved[key] for key in keys])
+        else:
+            # A training/gradient-bearing call cannot reuse detached features.
+            self._feature_cache.clear()
+            features = self.native(frames)['feature_map']
         return {'feature_map': torch.cat(features.split(batch, dim=0), dim=-1)}
 
 
@@ -68,9 +103,9 @@ def image_tensor(jpeg, size):
     return (t - torch.tensor([.485, .456, .406])[:, None, None]) / torch.tensor([.229, .224, .225])[:, None, None]
 
 
-def actor_batch(frames, size, history):
+def actor_batch(frames, size, history, *, tensorize=image_tensor):
     validate_frames(frames, history)
-    batch = {key: torch.cat([image_tensor(f[field], size) for f in frames], dim=-1).unsqueeze(0)
+    batch = {key: torch.cat([tensorize(f[field], size) for f in frames], dim=-1).unsqueeze(0)
              for key, field in zip(IMAGE_KEYS, ('own_rgb', 'top_rgb'))}
     contexts = frames if history == 4 else frames * 4
     batch[CONTEXT_KEY] = torch.tensor([[v for f in contexts for v in f['context']]], dtype=torch.float32)
@@ -78,12 +113,28 @@ def actor_batch(frames, size, history):
 
 
 class InputCarryAct:
-    def __init__(self, policy, size, history):
+    def __init__(self, policy, size, history, *, cache_features=False):
         self.policy, self.size, self.history = policy.eval(), size, history
+        self.cache_features = bool(cache_features)
+        self._image_cache = OrderedDict()
+        self.policy.model.backbone.cache_capacity = 16 if cache_features else 0
+        self.policy.model.backbone._feature_cache.clear()
+
+    def _tensorize(self, jpeg, size):
+        # Exact input bytes and resize configuration identify a pure image
+        # transform; histories and contexts are never cached or altered.
+        key = (size, jpeg)
+        if key not in self._image_cache:
+            self._image_cache[key] = image_tensor(jpeg, size)
+            while len(self._image_cache) > 16:
+                self._image_cache.popitem(last=False)
+        self._image_cache.move_to_end(key)
+        return self._image_cache[key]
 
     @torch.inference_mode()
     def predict(self, frames):
-        batch = actor_batch(frames, self.size, self.history)
+        batch = actor_batch(frames, self.size, self.history,
+                            tensorize=self._tensorize if self.cache_features else image_tensor)
         return decode(self.policy.predict_action_chunk(batch)[0, 0].tolist())
 
     def save(self, root):
@@ -94,7 +145,7 @@ class InputCarryAct:
         (root / 'adapter.json').write_text(json.dumps(metadata(self.size, self.history), indent=2))
 
     @classmethod
-    def load(cls, root):
+    def load(cls, root, *, cache_features=False):
         root = Path(root)
         meta = json.loads((root / 'adapter.json').read_text())
         if meta != metadata(meta['size'], meta['history']):
@@ -103,4 +154,4 @@ class InputCarryAct:
         if json.loads((root / 'config.json').read_text()) != json.loads(json.dumps(draccus.encode(policy.config))):
             raise ValueError('checkpoint architecture mismatch')
         policy.load_state_dict(load_file(str(root / 'model.safetensors')), strict=True)
-        return cls(policy, meta['size'], meta['history'])
+        return cls(policy, meta['size'], meta['history'], cache_features=cache_features)

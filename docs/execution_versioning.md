@@ -86,3 +86,5 @@ python3 -m harness.rgb_execution_bundle verify-registry --base origin/main
 - `rgb-standard-dispatch-v26`: 기존 open 독립 경로의 먼 구간 속도 상한을 빔에도 적용한다(전진.12/측면.10/후진.05). 근접 비례감속·최종.08·경유점 판정·pair GO/skew·하역 자원 독점은 유지한다. v25 두 완주 평균200.348초는 기준198.516초보다 느리며, v26 시간은 별도 검증한다.
 
 - `rgb-standard-dispatch-v27`: 상자 TOP 가림은 직전 상자와 함께 움직인 로봇 외형 특징 8점 이상·60% 일치, 현재 own RGB 파지 확인이 모두 있을 때 최대 3프레임만 연결한다. 이 추정으로 최종 도착을 확정하지 않는다. ACT는 원본 RGB 추론을 owner 밖에서 처리하고 물리를 계속 진행하며 원 관측+0.6초 TTL·0.25초 명령 상한을 유지한다. 폐기·오류 요청도 보존한다. 학습·실제 운반 결과는 2026-09-24-action-act 코호트에서 별도 검증한다.
+
+- `rgb-standard-dispatch-v28`: realtime·정적 open 지도에서 반복된 지원 own RGB로 큰 수직 오차의 감소와 명령 이력 일치를 확인할 때만 근거리 카메라 보정 상한을8→24 PWM으로 높인다. 궤적·안정화·새 영상·최종 접근 및 파지 기준은 유지하고 후보 명령과 선택 근거를 기록한다. 별도 ACT 종료 목적 함수는 배포와 동일한 zero-latent 첫 출력에 class-balanced MSE를 더한다. 동결한 새 물리 코호트와 모델 학습으로 검증하며 v27의 성공 판정을 승계하지 않는다.

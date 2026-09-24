@@ -27,7 +27,9 @@ def audit(root, decisions):
     past = {slot: [] for slot in bindings}
     previous = {slot: [0., 0., 0.] for slot in bindings}
     images = {}; references = requests = completed = accepted = stale = errors = 0; length = None
-    temporal = 'history' in next(iter(calls[0]['inputs'].values()))
+    unconfirmed = 0
+    first_known = next((inp for row in calls for inp in row.get('inputs', {}).values()), None)
+    temporal = 'history' in first_known if first_known is not None else None
 
     def require(ok, message):
         if not ok:
@@ -49,7 +51,20 @@ def audit(root, decisions):
         error_row = row['kind'] == 'act_inference_error'
         index = accepted
         slots = set(row['inputs'])
-        require(row['index'] == index and slots
+        unknown = row.get('unconfirmed_slots', [])
+        require(type(unknown) is list and len(unknown) == len(set(unknown))
+                and set(unknown) <= set(bindings) and not (slots & set(unknown)),
+                'ACT unconfirmed slot set is invalid')
+        if row.get('discard_reason') in ('owner_aborted', 'prediction_raised'):
+            require(error_row and 'unconfirmed_slots' in row
+                    and slots | set(unknown) == set(bindings)
+                    and row.get('worker_completion') in ('completed', 'raised', 'timeout')
+                    and isinstance(row.get('owner_error'), str)
+                    and isinstance(row.get('slot_failures'), dict),
+                    'ACT aborted prediction accounting is incomplete')
+        else:
+            require(not unknown, 'ACT unconfirmed slots require aborted prediction accounting')
+        require(row['index'] == index and (slots or unknown)
                 and (slots <= set(bindings) if error_row else slots == set(bindings)),
                 'ACT decision sequence mismatch')
         if error_row:
@@ -58,6 +73,12 @@ def audit(root, decisions):
             require(all(type(inp.get('response_received')) is bool for inp in row['inputs'].values())
                     and set(row.get('decisions', {})) == completed_slots,
                     'ACT inference error response receipt mismatch')
+            failures = row.get('slot_failures', {})
+            require(isinstance(failures, dict)
+                    and set(failures) <= (slots - completed_slots) | set(unknown)
+                    and all(isinstance(value, str) for value in failures.values()),
+                    'ACT inference error slot failures mismatch')
+        unconfirmed += len(unknown)
         captures = {(inp.get('frame_id'), inp.get('observed_at_s'))
                     for inp in row['inputs'].values() if 'observed_at_s' in inp}
         require(len(captures) <= 1, 'ACT pair capture is not coherent')
@@ -70,7 +91,8 @@ def audit(root, decisions):
         for slot, inp in row['inputs'].items():
             require(inp['physical_robot_id'] == bindings[slot], 'ACT robot binding mismatch')
             require(inp['context'] == context(goal, route, slot, previous[slot]), 'ACT issued-command context mismatch')
-            require(('history' in inp) == temporal, 'ACT request schema changed')
+            require(temporal is not None and ('history' in inp) == temporal,
+                    'ACT request schema changed')
             observed = inp.get('observed_at_s')
             if not accepted_row:
                 require('frame_id' in inp and type(observed) in (int, float),
@@ -138,9 +160,11 @@ def audit(root, decisions):
                 errors += 1
             else:
                 stale += 1
-    return {'passed': True, 'requests': requests, 'accepted_decisions': accepted,
+    return {'passed': unconfirmed == 0, 'known_inputs_passed': True,
+            'complete': unconfirmed == 0, 'unconfirmed_slots': unconfirmed,
+            'requests': requests, 'accepted_decisions': accepted,
             'completed_responses': completed, 'stale_predictions': stale,
             'inference_error_rows': errors, 'history': length,
-            'schema': 'temporal' if temporal else 'single-frame',
+            'schema': 'temporal' if temporal else 'single-frame' if temporal is False else 'unknown',
             'image_references': references, 'unique_images': len(images),
-            'scope': 'Accepted, stale and inference-error ACT attempts reconstructed from raw images, causal per-robot history and authored/actually-issued context. Discarded histories and actions never advance state. No model inference replay or physical rerun.'}
+            'scope': 'Known saved ACT input rows reconstructed from raw images, causal per-robot history and actually-issued context. Unconfirmed slots are excluded from known request counts and prevent complete audit. Wire hashes verify saved payloads, not independent worker receipt. Discarded histories and actions never advance state. No model inference replay or physical rerun.'}

@@ -1,0 +1,159 @@
+{
+  "schema": "ugrp.refinement_box_reacquisition_diagnosis.v1",
+  "status": "saved-RGB development regression before refinement physical cohort; no physical success claim",
+  "source_run_root": "/Users/changmin/projects/ugrp/outputs/dispatch-action-act-20260924",
+  "fixture_manifest": "tests/fixtures/dispatch_box_reacquisition/manifest.json",
+  "observation_contract": "Only own RGB, fixed TOP RGB, authored static map, and same-capture frame metadata are used. Timestamp bounds inter-image visual displacement; it is not a measured cargo pose. Evaluator state, contact, joints, and issued command magnitude are absent from the association.",
+  "algorithm": {
+    "enablement": "ImageRoute(time_aware_box_reacquisition=True), opt-in; old cyan, KLT and linked carrier paths run first",
+    "trigger": "No cyan component within the legacy 8-pixel prediction and legacy TOP feature/carrier route fails, including inconsistent KLT motion with no linked carrier.",
+    "required_evidence": [
+      "Two earlier directly segmented saturation>=125 TOP cyan cargo silhouettes with increasing frame/time IDs; proxy centers never seed visual velocity",
+      "A distinct current TOP frame with exactly one saturation>=125, foreground, compatible size and hue component inside bounded visual-velocity corridor",
+      "Fresh same-capture own RGB attachment passed and current own image bytes match the observation SHA"
+    ],
+    "bounds": {
+      "latest_direct_gap_s": "(0, 0.6]",
+      "two_direct_history_gap_s": "(0, 0.8]",
+      "visual_speed_px_per_s": "[3, 100]",
+      "longitudinal_residual_px": "<=min(18, 4+0.5*speed*dt)",
+      "lateral_residual_px": "<=8",
+      "last_direct_displacement_px": "<=min(36, 2+1.75*speed*dt)",
+      "current_component_area_px": "[8, 600]",
+      "area_ratio_vs_last_direct": "[0.5, 2.0]",
+      "width_and_height_ratio_vs_last_direct": "[0.55, 1.9]",
+      "hue_difference_cv2_units": "<=8"
+    },
+    "post_reacquisition": "Audit method is separately labeled as direct TOP recovery; stale carrier features and route confirmations are reset. No inferred invisible center can confirm delivery."
+  },
+  "holdout_a_candidate_act": {
+    "source_decisions_sha256": "93fb7e5534341ac201d12a61958815f5ccf5f3a02e6c8a56eb803b6200bb82a5",
+    "previous_direct": [
+      {
+        "decision_index": 142,
+        "frame_id": 1013,
+        "observed_at_s": 102.4352499993057,
+        "center_px": [
+          343.43,
+          575.23
+        ]
+      },
+      {
+        "decision_index": 144,
+        "frame_id": 1018,
+        "observed_at_s": 103.03524999929151,
+        "center_px": [
+          371.24,
+          572.67
+        ]
+      }
+    ],
+    "intervening_proxy": "#143 KLT feature motion; excluded from direct visual velocity",
+    "failed_current": {
+      "image_index": 145,
+      "frame_id": 1021,
+      "observed_at_s": 103.40024999928288,
+      "component_center_px": [
+        397.2926829268293,
+        571.8048780487804
+      ],
+      "component_bounds_xywh_px": [
+        394,
+        566,
+        7,
+        13
+      ],
+      "component_area_px": 41,
+      "legacy_prediction_px": [
+        380.503275844029,
+        571.4072509765624
+      ],
+      "distance_to_legacy_prediction_px": 16.79,
+      "reacquisition_longitudinal_residual_px": 9.04,
+      "reacquisition_lateral_residual_px": 1.54,
+      "result": "Saved current own/TOP replay accepts one strong direct silhouette; this repairs the image-association failure only, not a physical run."
+    }
+  },
+  "holdout_b_candidate_rgb": {
+    "previous_direct": [
+      {
+        "decision_index": 155,
+        "frame_id": 1072,
+        "observed_at_s": 115.49149999899696,
+        "center_px": [
+          520.0,
+          564.4
+        ],
+        "area_px": 10,
+        "bounds_xywh_px": [
+          519,
+          562,
+          3,
+          6
+        ],
+        "median_hue": 94.0
+      },
+      {
+        "decision_index": 156,
+        "frame_id": 1074,
+        "observed_at_s": 115.74024999899108,
+        "center_px": [
+          531.1111111111111,
+          566.1111111111111
+        ],
+        "area_px": 18,
+        "bounds_xywh_px": [
+          528,
+          563,
+          6,
+          6
+        ],
+        "median_hue": 92.5
+      }
+    ],
+    "failed_current": {
+      "image_index": 157,
+      "observed_at_s": 116.00024999898493,
+      "frame_id": 1077,
+      "capture_metadata_source": "execution.frames.json captured entry; JPEG has no embedded frame timestamp",
+      "visual_velocity_px_per_s": [
+        44.6678,
+        6.8788
+      ],
+      "predicted_center_px": [
+        542.7247,
+        567.8996
+      ],
+      "strong_saturation_125_nearby_component_areas_px": [
+        7,
+        5
+      ],
+      "minimum_eligible_component_area_px": 8,
+      "weak_saturation_105_fragment": {
+        "center_px": [
+          551.7143,
+          566.9286
+        ],
+        "bounds_xywh_px": [
+          549,
+          564,
+          6,
+          6
+        ],
+        "area_px": 14,
+        "median_hue": 92.5,
+        "median_saturation": 180.5,
+        "foreground_difference_threshold": 20,
+        "longitudinal_residual_px": 8.737,
+        "longitudinal_limit_px": 9.875,
+        "lateral_residual_px": 2.328,
+        "lateral_limit_px": 8
+      },
+      "own_rgb_attachment_mask_iou": 0.9967,
+      "result": "The opt-in reacquisition fails closed: no eligible strong foreground component exists although a lower-saturation fragment lies in the visual corridor.",
+      "identity_uncertainty": "Allowed RGB does not prove whether the weak fragment is cargo, robot, or another distractor. The legacy 105/90/70 masks are used only with its narrow 8-pixel continuation gate; broad reacquisition requires saturation 125 to avoid extending an uncertain identity."
+    }
+  },
+  "verification": "Focused related pytest: 161 passed, 1 skipped in 3.74 s. Saved a positive, b weak-colour negative, detached/mismatched/pan/hash/stale/background/jump/competing-colour/repeated-TOP new-branch negatives, plus forced inconsistent KLT with no linked carrier: fresh direct cyan recovers while competing-colour/detached/stale cases fail closed. No v28 physical complete-run evidence yet.",
+  "limits": "A unique matching RGB component is still an appearance and continuity inference, not a contact or identity oracle. A/RGB success cannot be claimed from one saved transition, and b/RGB remains a deliberate fail-closed stop."
+}
