@@ -83,7 +83,7 @@ REAL에서 횡이동 효과가 작고 불안정한 것이 현재 설계 기준�
 | ID | 산출물 | 완료 기준 | 담당 |
 | --- | --- | --- | --- |
 | C1 | MasterPi 연결·제어 | 제어 스크립트·상태 확인 절차가 `outputs/`에 재현 가능 — **완료 (ugrp1)** | masterpi |
-| C2 | 대시보드 | 관측/제어 UI가 로컬에서 기동·기본 조작 가능 — **완료** (`dashboard/`, `harness/web.py`) | masterpi |
+| C2 | 대시보드 | 당시 로컬 관측/제어 UI 검증 완료. 2026-09-23 구형 브라우저 UI는 퇴역하고 표준 CLI·MuJoCo 창·TensorBoard를 사용 | masterpi |
 | C3 | 환경 심판 경계 | 충돌·접촉·동기화·성공만 판정, 계획 미제공 — **부분** (SIM `TaskExecutive` 전제조건 게이트, 성공 판정 `team_stack_verified`) | (사양 후) |
 | C4 | SIM 디지털 트윈 캘리브레이션 | `training_ready=true` (동역학 캘리브레이션 입력 수집·적용). **미완료** — sim-to-real 병목 1순위, `docs/decision_log.md` 09-02 | sim |
 | C5 | RED-BLOCK REAL-like base staging | pure strafe 없이 dog-leg만으로 actor-visible 관측 기준 pregrasp 형성. seed 11 `approach` 성공, multi-seed 검증 필요 | sim+real |
