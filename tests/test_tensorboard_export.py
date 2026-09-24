@@ -75,6 +75,244 @@ def test_training_roundtrip_preserves_steps_and_labels_export_time(tmp_path,expo
     with pytest.raises(FileExistsError): convert(src,tmp_path/'export')
 
 
+def test_failed_artifact_finalization_is_not_a_training_curve_or_robot_failure(tmp_path,export_api):
+    convert,EA=export_api
+    src=tmp_path/'finalizer';(src/'artifacts').mkdir(parents=True)
+    report=put(src,'artifacts/report.json',{
+        'complete':False,'complete_scope':'artifact_finalization_only',
+        'termination_objective':'deployed_first_action','source_sha':'f'*40,
+        'optimizer_updates_this_run':0,'new_checkpoint_selection':False,
+        'selected_checkpoint_eligible':False,'selected_step':3000,
+        'physical_success_claim':False,'original_training_completed_steps':8000,
+        'original_training_wall_s':977.89,'original_failure_stage':'old training guard',
+        'development_all_rows_cache_guard':{
+            'first_action_original_strict_guard_passed':False,
+            'first_action_strict_mismatch_count':23,
+            'full_chunk_bounded_guard_passed':True,
+            'full_chunk_bounded_mismatch_count':0,'done_decision_flip_count':0},
+        'train_all_rows_cache_guard':{'first_action_strict_mismatch_count':0},
+        'train_native_metrics':{'samples':2934,'done_samples':18},
+        'development_native_metrics':{'samples':2128,'done_samples':8,
+                                      'offline_termination_pass':False}})
+    manager=put(src,'manifest.json',{'schema':'ugrp.simulation_run.v1',
+        'workflow_id':'act-input-finalization','status':'process_failed',
+        'exit_code':1,'runtime_s':324.96980529100983,
+        'source':{'source_sha':'f'*40,'source_dirty':False,
+                  'execution_tree':{'sha256':'a'*64}},
+        'source_after':{'sha256':'a'*64},
+        'source_changed_during_run':False,'inputs_changed_during_run':False,
+        'output':str((src/'artifacts').resolve())})
+    m=convert(src,tmp_path/'export');ea=EA(str(tmp_path/'export')).Reload()
+    tags=ea.Tags()['scalars']
+    assert m['metadata']['family']=='act-artifact-finalization'
+    assert m['metadata']['outcome']=='finalization_failed'
+    assert m['metadata']['error']=='development all-row first-action original strict guard failed'
+    assert m['metadata']['report_provenance']['sha256']==hashlib.sha256(report.read_bytes()).hexdigest()
+    assert m['metadata']['report_provenance']['manager_sha256']==hashlib.sha256(manager.read_bytes()).hexdigest()
+    assert ea.Scalars('process/exit_code')[0].value==1
+    assert ea.Scalars('finalization/process_wall_s')[0].value==pytest.approx(324.96980529100983,rel=1e-5)
+    assert ea.Scalars('finalization/development/first_action_strict_mismatch_count')[0].value==23
+    assert ea.Scalars('finalization/development/full_chunk_bounded_guard_passed')[0].value==1
+    assert ea.Scalars('finalization/development/done_decision_flip_count')[0].value==0
+    assert ea.Scalars('finalization/train/samples')[0].value==2934
+    assert ea.Scalars('finalization/development/samples')[0].value==2128
+    assert not any(tag.startswith(('training/','evaluation/','result/wall_s')) for tag in tags)
+
+
+def teacher_interference_fixture(tmp_path):
+    src=tmp_path/'source';collection=src/'route-teachers-managed'
+    raw=collection/'raw/south-train-a'
+    put(raw,'episode-setup-only.json',{'variant':'shared_crossing','seed':11})
+    put(raw,'scene-manifest.json',{'map':'shared_crossing'})
+    (raw/'execution.mp4').write_bytes(b'partial video: never register')
+    launcher=put(collection,'launcher.json',{
+        'schema':'ugrp.act.route_teacher_launcher.v1','status':'collection_incomplete',
+        'launcher_source_sha':'e0d330da0045b285bcf7707d5707c63f608a5fd6',
+        'teacher_source_sha':'931d910998a94361342c372ec2675c475daa625f',
+        'elapsed_wall_s':226.75,'input_sha256_before':{'plan':'a'*64},
+        'input_sha256_after':{'plan':'a'*64},
+        'cases':[{'id':'south-train-a','raw':str(raw)}]})
+    manager=put(collection,'managed/south-train-a/manifest.json',{
+        'schema':'ugrp.simulation_run.v1','workflow_id':'dispatch-skills',
+        'status':'interrupted','exit_code':130,
+        'physical_success':None,'output':str(raw),
+        'source':{'source_sha':'931d910998a94361342c372ec2675c475daa625f',
+                  'source_dirty':False,'execution_tree':{'sha256':'a'*64}},
+        'source_after':{'sha256':'a'*64},'inputs_before':[], 'inputs_after':[],
+        'source_changed_during_run':False,'inputs_changed_during_run':False})
+    incident=put(src,'teacher-interference-abort.json',{
+        'schema':'ugrp.teacher_collection_interference_abort.v1',
+        'collection':str(collection),'launcher_sha256':hashlib.sha256(launcher.read_bytes()).hexdigest(),
+        'launcher_source_sha':'e0d330da0045b285bcf7707d5707c63f608a5fd6',
+        'teacher_source_sha':'931d910998a94361342c372ec2675c475daa625f',
+        'first_case':'south-train-a',
+        'first_case_status':'aborted_by_owner_due_concurrent_foreign_simulation',
+        'physical_success':None,'admitted_for_training':False,
+        'unstarted_cases':['south-train-b','south-development'],
+        'elapsed_collection_wall_s':226.75,
+        'root_cause':'Competing local simulation detected after launch.',
+        'own_stop':{'signal':'SIGINT','target_pid':12,'exit_code':130,
+                    'owned_pid_readback':{'12':'','13':''},'all_known_own_pids_gone':True},
+        'foreign_processes_touched':False})
+    return incident, launcher, manager, raw
+
+
+def test_teacher_interference_is_typed_infrastructure_only(tmp_path,export_api):
+    convert,EA=export_api
+    incident,launcher,manager,raw=teacher_interference_fixture(tmp_path)
+    before={p:p.read_bytes() for p in (incident,launcher,manager,raw/'episode-setup-only.json')}
+    manifest=convert(incident,tmp_path/'export')
+    events=EA(str(tmp_path/'export')).Reload()
+    tags=events.Tags()['scalars']
+    assert manifest['complete'] is True
+    assert manifest['source']==str(incident)
+    assert manifest['metadata']['family']=='teacher-infrastructure-abort'
+    assert manifest['metadata']['success_source_field'] is None
+    assert manifest['metadata']['outcome']=='infrastructure_abort_no_physical_verdict'
+    assert manifest['metadata']['report_provenance']['incident']['sha256']==hashlib.sha256(before[incident]).hexdigest()
+    assert manifest['metadata']['report_provenance']['manager_sha256']==hashlib.sha256(before[manager]).hexdigest()
+    assert events.Scalars('infrastructure/aborted_attempts')[0].value==1
+    assert events.Scalars('infrastructure/unstarted_cases')[0].value==2
+    assert events.Scalars('infrastructure/elapsed_collection_wall_s')[0].value==pytest.approx(226.75)
+    assert not any(tag.startswith(('result/','evaluation/','training/','finalization/','offline/')) for tag in tags)
+    assert 'dataset/unavailable' in events.Tags()['tensors']
+    assert manifest['videos']==[]
+    assert all(path.read_bytes()==data for path,data in before.items())
+
+
+def monitored_teacher_interference_fixture(tmp_path):
+    incident, launcher, manager, raw = teacher_interference_fixture(tmp_path)
+    old = launcher.parent
+    collection = old.with_name('route-teachers-managed-v2')
+    old.rename(collection)
+    launcher = collection/'launcher.json'
+    manager = collection/'managed/south-train-a/manifest.json'
+    raw = collection/'raw/south-train-a'
+    foreign = {'pid': 90, 'cwd': '/unrelated/project', 'reason': 'foreign_test_or_torch_job'}
+    data = json.loads(manager.read_text()); data['output'] = str(raw)
+    put(manager.parent, manager.name, data)
+    data = json.loads(launcher.read_text())
+    data.update(status='foreign_interference_abort', launcher_source_sha='b'*40,
+                foreign_interference={'processes':[foreign]},
+                cases=[{'id':'south-train-a','raw':str(raw),
+                        'status':'aborted_foreign_interference_during_run',
+                        'run':{'pid':12,'exit_code':130,'timed_out':False,
+                               'foreign_interference':{'processes':[foreign]}}},
+                       {'id':'south-train-b','status':'unstarted_foreign_interference'},
+                       {'id':'south-development','status':'unstarted_foreign_interference'}])
+    put(launcher.parent, launcher.name, data)
+    data = json.loads(incident.read_text())
+    data.update(collection=str(collection), launcher_source_sha='b'*40,
+                launcher_sha256=hashlib.sha256(launcher.read_bytes()).hexdigest(),
+                first_case_status='aborted_foreign_interference_during_run',
+                foreign_owner=foreign,
+                manager_manifest_sha256=hashlib.sha256(manager.read_bytes()).hexdigest())
+    data['own_stop'].pop('owned_pid_readback')
+    data['own_stop']['owned_process_group_gone'] = True
+    current = put(incident.parent, 'teacher-interference-abort-v2.json', data)
+    return current, launcher, manager, raw
+
+
+def test_monitored_teacher_abort_keeps_new_source_and_no_robot_verdict(tmp_path,export_api):
+    convert, EA = export_api
+    incident, launcher, manager, raw = monitored_teacher_interference_fixture(tmp_path)
+    manifest = convert(incident, tmp_path/'export')
+    events = EA(str(tmp_path/'export')).Reload()
+    assert manifest['complete'] is True
+    assert manifest['source'] == str(incident)
+    assert manifest['metadata']['report_provenance']['incident']['path'] == str(incident)
+    assert manifest['metadata']['report_provenance']['manager_sha256'] == hashlib.sha256(manager.read_bytes()).hexdigest()
+    assert events.Scalars('infrastructure/unstarted_cases')[0].value == 2
+    assert all(tag.startswith('infrastructure/') for tag in events.Tags()['scalars'])
+    assert manifest['videos'] == []
+    assert not (raw/'result.json').exists()
+
+
+@pytest.mark.parametrize('damage', ('foreign_owner', 'group_cleanup', 'manager_hash', 'collection_escape', 'unstarted_status'))
+def test_monitored_teacher_abort_rejects_broken_provenance(tmp_path,export_api,damage):
+    convert, _ = export_api
+    incident, launcher, manager, raw = monitored_teacher_interference_fixture(tmp_path)
+    data = json.loads(incident.read_text())
+    if damage == 'foreign_owner': data['foreign_owner']['pid'] = 91
+    elif damage == 'group_cleanup': data['own_stop']['owned_process_group_gone'] = False
+    elif damage == 'manager_hash': data['manager_manifest_sha256'] = '0'*64
+    elif damage == 'collection_escape': data['collection'] = str(tmp_path/'elsewhere'/'route-teachers-managed-v2')
+    elif damage == 'unstarted_status':
+        state = json.loads(launcher.read_text()); state['cases'][1]['status'] = 'teacher_failed'
+        put(launcher.parent, launcher.name, state)
+        data['launcher_sha256'] = hashlib.sha256(launcher.read_bytes()).hexdigest()
+    put(incident.parent, incident.name, data)
+    with pytest.raises(ValueError, match='Teacher infrastructure'):
+        convert(incident, tmp_path/'export')
+
+
+@pytest.mark.parametrize('damage',('launcher_hash','manager_exit','physical_result','pid_readback','unstarted_raw'))
+def test_teacher_interference_rejects_mismatched_or_reclassified_source(tmp_path,export_api,damage):
+    convert,_=export_api
+    incident,launcher,manager,raw=teacher_interference_fixture(tmp_path)
+    source=incident.parent
+    if damage=='launcher_hash':
+        data=json.loads(incident.read_text());data['launcher_sha256']='0'*64;put(source,incident.name,data)
+    elif damage=='manager_exit':
+        data=json.loads(manager.read_text());data['exit_code']=0;put(manager.parent,manager.name,data)
+    elif damage=='physical_result':
+        put(raw,'result.json',{'physical_success':False})
+    elif damage=='pid_readback':
+        data=json.loads(incident.read_text());data['own_stop']['owned_pid_readback']['12']='still running'
+        put(source,incident.name,data)
+    else:
+        (source/'route-teachers-managed/raw/south-train-b').mkdir()
+    with pytest.raises(ValueError,match='incident/source mismatch'):
+        convert(incident,tmp_path/'rejected')
+    assert json.loads((tmp_path/'rejected/manifest.json').read_text())['complete'] is False
+
+
+def test_same_model_benchmark_is_request_latency_only(tmp_path,export_api):
+    convert,EA=export_api
+    src=tmp_path/'bench';src.mkdir()
+    data={'schema':'ugrp.act_runtime_benchmark_comparison.v1',
+          'reference_median_s':.1094913334964076,'refined_median_s':.03871479151712265,
+          'ratio':2.828152476243664,'reduction_fraction':.6464122750099406,
+          'max_decoded_difference':0.,'all_done_identical':True,
+          'per_condition_measured_pairs':24,'total_worker_requests_including_warmups':112,
+          'scope':'Same checkpoint and saved raw own/TOP histories; only request latency.',
+          'records':{}}
+    names=('v27-sequential-1','v28-parallel-cached-1',
+           'v28-parallel-cached-2','v27-sequential-2')
+    for name in names:
+        sequential=name.startswith('v27-')
+        request_s=data['reference_median_s'] if sequential else data['refined_median_s']
+        record=put(src,name+'.json',{
+            'schema':'ugrp.act_runtime_benchmark.v1',
+            'source_sha':('12f8e6dda76e39b3ec612f247deb4835a2ff50bc' if sequential
+                          else '931d910998a94361342c372ec2675c475daa625f'),
+            'mode':'sequential' if sequential else 'parallel-cached',
+            'model_sha256':'a'*64,'raw_source':'/tmp/fixed-raw',
+            'raw_decisions_sha256':'b'*64,'warmup_rows':2,'measured_rows':12,
+            'rows':[{'index':i,'wall_s':request_s,
+                     'decisions':{'r1':{'action':{'forward':.1},'done':False},
+                                  'r3':{'action':{'forward':.1},'done':False}}}
+                    for i in range(14)]})
+        data['records'][name]=hashlib.sha256(record.read_bytes()).hexdigest()
+    path=put(src,'runtime-benchmark-comparison.json',data)
+    m=convert(path,tmp_path/'export');ea=EA(str(tmp_path/'export')).Reload()
+    tags=ea.Tags()['scalars']
+    assert m['metadata']['family']=='act-request-latency-benchmark'
+    assert m['metadata']['report_provenance']['sha256']==hashlib.sha256(path.read_bytes()).hexdigest()
+    assert ea.Scalars('benchmark/reference_request_latency_median_s')[0].value==pytest.approx(.1094913334964076)
+    assert ea.Scalars('benchmark/refined_request_latency_median_s')[0].value==pytest.approx(.03871479151712265)
+    assert ea.Scalars('benchmark/measured_pairs_per_condition')[0].value==24
+    assert not any(tag.startswith(('result/','evaluation/','training/','finalization/')) for tag in tags)
+    data['ratio']=99;put(src,'runtime-benchmark-comparison.json',data)
+    with pytest.raises(ValueError,match='latency fields inconsistent'):
+        convert(path,tmp_path/'bad-export')
+    data['ratio']=2.828152476243664
+    put(src,'runtime-benchmark-comparison.json',data)
+    put(src,'v27-sequential-1.json',{'changed':True})
+    with pytest.raises(ValueError,match='source record hash mismatch'):
+        convert(path,tmp_path/'tampered-record-export')
+
+
 def test_deployment_objective_keeps_loss_parts_and_failed_selection(tmp_path,export_api):
     convert,EA=export_api
     src=tmp_path/'source';src.mkdir()
