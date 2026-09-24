@@ -158,6 +158,7 @@ class BoundPairSkill:
         from harness.dispatch_beam_tracker import CarriedBeamTracker
         self.carried_beam=CarriedBeamTracker()
         self.coarse=PairCoarsePixels(identity,bindings,reference) if identity is not None else None
+        self._approach_pending_lease=None
 
     def time(self):return self.io.time()
     def tick(self,seconds):
@@ -185,12 +186,14 @@ class BoundPairSkill:
                     break
                 except SnapshotBackpressure:
                     self.io.realtime_stats['pair_backpressure']+=1
-                    self.tick(.02)
-            frames=self.io.await_visual(future)
+                    if getattr(self,'_approach_pending_lease',None) is not None:
+                        self._advance_approach_pending()
+                    else:self.tick(.02)
+            frames=self._await_approach_visual(future)
             self.io.last_frames=frames
             observed=float(frames['r1']['observed_at_s'])
             if self.time()-observed<=.6:
-                mapped=self.io.compute_visual(lambda:self._bind_capture(frames,count))
+                mapped=self._compute_approach_visual(lambda:self._bind_capture(frames,count))
                 if self.time()-observed<=.6:return mapped
             self.io.realtime_stats['pair_stage_stale_rgb']+=1
             self.calls.append({'kind':'pair_stage_stale_rgb','stage':self.phase,
@@ -200,10 +203,164 @@ class BoundPairSkill:
         raise RuntimeError('pair stage RGB remained stale after bounded reobservation')
 
     def _hold_pair(self):
+        self._approach_pending_lease=None
         now=self.time()
         for rid in self.bindings.pair.values():self.io.ports[rid].hold(now)
 
+    def _clear_approach_pending(self,*,hold=False):
+        lease=getattr(self,'_approach_pending_lease',None)
+        self._approach_pending_lease=None
+        if hold and lease is not None:
+            self._hold_pair()
+
+    def _open_coarse_scope(self):
+        static=self.bindings.static_map
+        return (getattr(self.io,'realtime_control',False)
+                and static.get('map_id')=='dispatch_open'
+                and not self.bindings.cluttered and not static.get('terrain')
+                and all(o.get('id') in {'wall_north','wall_south','wall_west','wall_east'}
+                        for o in static.get('obstacles',[])))
+
+    def _approach_port_matches(self,lease):
+        for slot,rid in self.bindings.pair.items():
+            port=self.io.ports[rid]
+            if (getattr(port,'_command_expires_at',None)!=lease['valid_until_s']
+                    or getattr(port,'_drive_expires_at',None)!=lease['valid_until_s']
+                    or tuple(getattr(port,'_motor_commands',()) or ())!=lease['motor_commands'][slot]):
+                return False
+        return True
+
+    def _accept_coarse_pending(self,frames,decisions,commands):
+        """Record only an issued, valid open coarse command as renewal authority."""
+        self._approach_pending_lease=None
+        if (not self._open_coarse_scope() or getattr(self,'phase',None)!='APPROACH'
+                or getattr(self,'transport_started',False)
+                or any(decisions[r].get('ok') is not True or
+                       decisions[r].get('ready') is True for r in ROBOTS)
+                or _handoff_gaps(decisions) is not None
+                or not any(abs(commands[r][axis])>1e-9 for r in ROBOTS
+                           for axis in ('forward','left','turn'))):
+            return
+        history=getattr(self.io,'command_history',None)
+        if history is None:return
+        try:
+            observed=float(frames['r1']['observed_at_s'])
+            frame_ids={r:int(frames[r]['frame_id']) for r in ROBOTS}
+            if (not math.isfinite(observed) or
+                    any(float(frames[r]['observed_at_s'])!=observed for r in ROBOTS)
+                    or len(set(frame_ids.values()))!=1):return
+            rows={slot:history[rid][-1] for slot,rid in self.bindings.pair.items()}
+            issued=float(rows['r1']['issued_at_s'])
+            valid=float(rows['r1']['valid_until_s'])
+            if (any(row['stage']!='APPROACH' or row['issued_at_s']!=issued
+                    or row['valid_until_s']!=valid for row in rows.values())
+                    or not 0.<valid-issued<=.25+1e-9
+                    or valid>observed+.6+1e-9
+                    or self.time()>=valid-1e-9
+                    or any(any(rows[slot]['action'][axis]!=commands[slot][axis]
+                               for axis in ('forward','left','turn'))
+                           for slot in ROBOTS)):return
+            motors={slot:tuple(self.io.ports[rid]._motor_commands)
+                    for slot,rid in self.bindings.pair.items()}
+        except (KeyError,IndexError,TypeError,ValueError,AttributeError):
+            return
+        lease={'commands':copy.deepcopy(commands),'frame_ids':frame_ids,
+               'observed_at_s':observed,'decision_sim_time_s':issued,
+               'valid_until_s':valid,'plan_hash':self.bindings.committed['plan_hash'],
+               'motor_commands':motors}
+        if self._approach_port_matches(lease):
+            for row in rows.values():
+                row.update(source_frame_ids=dict(frame_ids),observed_at_s=observed)
+            self._approach_pending_lease=lease
+
+    def _advance_approach_pending(self):
+        lease=getattr(self,'_approach_pending_lease',None)
+        if lease is not None:
+            now=self.time();deadline=lease['observed_at_s']+.6
+            if (self.phase!='APPROACH' or self.transport_started
+                    or not self._open_coarse_scope()
+                    or now>=lease['valid_until_s']-1e-9
+                    or now>=deadline-1e-9
+                    or not self._approach_port_matches(lease)):
+                self._clear_approach_pending(hold=True)
+            else:
+                try:
+                    self.io.authorize()
+                    if self.bindings.committed['plan_hash']!=lease['plan_hash']:
+                        raise RuntimeError('pending approach plan changed')
+                    if not self.bindings.permission('beam','APPROACH'):
+                        raise RuntimeError('pending approach permission revoked')
+                    if (now+.02>=lease['valid_until_s']-1e-9
+                            and lease['valid_until_s']<deadline-1e-9):
+                        prior=lease['valid_until_s']
+                        effective=self.issue_mecanum_bounded(
+                            lease['commands'],min(.25,deadline-now),
+                            observed_at_s=lease['observed_at_s'])
+                        if effective<=0:
+                            self._clear_approach_pending(hold=True)
+                        else:
+                            lease['valid_until_s']=now+effective
+                            lease['motor_commands']={
+                                slot:tuple(self.io.ports[rid]._motor_commands)
+                                for slot,rid in self.bindings.pair.items()}
+                            if not self._approach_port_matches(lease):
+                                raise RuntimeError('renewed approach port state changed')
+                            receipt={'kind':'approach_coarse_pending_renewal',
+                                'source_frame_ids':dict(lease['frame_ids']),
+                                'source_observed_at_s':lease['observed_at_s'],
+                                'source_decision_sim_time_s':lease['decision_sim_time_s'],
+                                'original_rgb_deadline_s':deadline,
+                                'previous_valid_until_s':prior,'issued_at_s':now,
+                                'valid_until_s':now+effective,'duration_s':effective,
+                                'plan_hash':lease['plan_hash'],
+                                'permission_request':['beam','APPROACH'],
+                                'permission_verified_at_s':now,
+                                'phase':self.phase,'commands':copy.deepcopy(lease['commands'])}
+                            self.calls.append(receipt)
+                            history=getattr(self.io,'command_history',None)
+                            if history is not None:
+                                for rid in self.bindings.pair.values():
+                                    history[rid][-1].update(
+                                        pending_renewal=True,
+                                        source_frame_ids=dict(lease['frame_ids']),
+                                        observed_at_s=lease['observed_at_s'],
+                                        original_rgb_deadline_s=deadline,
+                                        source_decision_sim_time_s=lease['decision_sim_time_s'],
+                                        previous_valid_until_s=prior,
+                                        duration_s=effective,
+                                        permission_request=['beam','APPROACH'],
+                                        permission_verified_at_s=now)
+                except BaseException:
+                    self._clear_approach_pending(hold=True)
+                    raise
+        self.tick(.02)
+
+    def _await_approach_visual(self,future):
+        if getattr(self,'_approach_pending_lease',None) is None:
+            return self.io.await_visual(future)
+        try:
+            while not future.done():self._advance_approach_pending()
+            return future.result()
+        except BaseException:
+            self._clear_approach_pending(hold=True)
+            raise
+
+    def _compute_approach_visual(self,fn):
+        if getattr(self,'_approach_pending_lease',None) is None:
+            return self.io.compute_visual(fn)
+        worker=getattr(self.io,'_decision_workers',None)
+        if worker is None:
+            self._clear_approach_pending(hold=True)
+            raise RuntimeError('approach renewal requires owner visual worker')
+        return self._await_approach_visual(worker.submit(fn))
+
     def observe_and_compute(self,tag,predict):
+        try:return self._observe_and_compute_owned(tag,predict)
+        except BaseException:
+            self._clear_approach_pending(hold=True)
+            raise
+
+    def _observe_and_compute_owned(self,tag,predict):
         """Commit no paired action from a stale capture or delayed predictor."""
         if not getattr(self.io,'realtime_control',False):
             frames=self.capture(tag)
@@ -213,9 +370,10 @@ class BoundPairSkill:
             def measured_predict():
                 started=time.monotonic()
                 return predict(frames),time.monotonic()-started
-            decisions,predict_wall_s=self.io.compute_visual(measured_predict)
+            decisions,predict_wall_s=self._compute_approach_visual(measured_predict)
             observed=float(frames['r1']['observed_at_s'])
             if self.time()-observed<=.6:
+                self._clear_approach_pending(hold=True)
                 self.io.realtime_stats['pair_stage_samples']+=1
                 self.calls.append({'kind':'pair_stage_sample','stage':self.phase,
                     'frame_id':frames['r1']['frame_id'],'observed_at_s':observed,
@@ -321,6 +479,7 @@ class BoundPairSkill:
         return duration_s
 
     def drive_mecanum(self,commands,duration_s=.2):
+        self._clear_approach_pending(hold=True)
         moving=any(abs(c[k])>1e-9 for c in commands.values()
                    for k in ('forward','left','turn'))
         if (getattr(self.io,'realtime_control',False) and not self.bindings.cluttered
@@ -342,6 +501,7 @@ class BoundPairSkill:
     def stop_dwell(self):self.drive({r:0. for r in ROBOTS},.25)
 
     def replay(self,commands,stage):
+        self._clear_approach_pending(hold=True)
         if stage=='grasp_initialization':self.grasp_translation=self.latest_translation
         self.phase=stage
         if stage=='grasp_close':
@@ -363,12 +523,7 @@ class BoundPairSkill:
         # The extra admission is confined to the live open map and may stop
         # for one stationary probe only. It does not change the coarse budget
         # or any of the seven learned alignment phases that follow.
-        handoff_available=(getattr(self.io,'realtime_control',False)
-                           and self.bindings.static_map.get('map_id')=='dispatch_open'
-                           and not self.bindings.cluttered
-                           and not self.bindings.static_map.get('terrain')
-                           and all(o.get('id') in {'wall_north','wall_south','wall_west','wall_east'}
-                                   for o in self.bindings.static_map.get('obstacles',[])))
+        handoff_available=self._open_coarse_scope()
         handoff_attempted=False
         def fine_support(frames):
             return {r:{axis:predict_stage(self.stage_models[r][axis],
@@ -457,8 +612,11 @@ class BoundPairSkill:
                     raise RuntimeError('coarse RGB model convention unresolved')
                 continue
             self.drive_mecanum(commands)
+            if not unresolved:self._accept_coarse_pending(frames,decisions,commands)
             if all(d['ready'] for d in decisions.values()):self.stop_dwell();break
-        else:raise RuntimeError('coarse RGB approach budget exhausted')
+        else:
+            self._clear_approach_pending(hold=True)
+            raise RuntimeError('coarse RGB approach budget exhausted')
         report.update(run_approach(self,self.stage_models,reacquire_on_settle=True,
                                    final_refinement_steps=40,invalid_reobserve_budget=1))
         self.calls.append({'kind':'learned_approach','report':report})

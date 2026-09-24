@@ -159,6 +159,136 @@ def audit_renewals(receipts, commands, decisions):
             "status": "pass" if not errors else "fail"}
 
 
+def audit_pair_approach_renewals(pair_decisions, commands, result, mission):
+    """Link every coarse renewal to both original and renewed issued commands."""
+    receipts = [row for row in pair_decisions
+                if row.get("kind") == "approach_coarse_pending_renewal"]
+    mapping = (result.get("bindings") or {}).get("pair_model_slots") or {}
+    pair_ids = tuple(mapping.get(slot) for slot in ("r1", "r3"))
+    errors = []
+    issued = {slot: [row for row in commands.get(rid, []) if row.get("pending_renewal")
+                     and row.get("stage") == "APPROACH"]
+              for slot, rid in zip(("r1", "r3"), pair_ids)}
+    if len(set(pair_ids)) != 2 or any(rid not in commands for rid in pair_ids):
+        errors.append("pair physical robot mapping missing or duplicated")
+    for slot in ("r1", "r3"):
+        if len(issued[slot]) != len(receipts):
+            errors.append(f"{slot}: {len(issued[slot])} issued approach renewals for {len(receipts)} receipts")
+    for rid in pair_ids:
+        for row in commands.get(rid, []):
+            if row.get("pending_renewal") and row.get("stage") not in ("APPROACH", "TRANSIT"):
+                errors.append(f"fine-stage pending renewal on {rid}: {row.get('stage')}")
+    if not receipts:
+        return {"receipts": 0, "issued_by_slot": {slot: len(rows) for slot, rows in issued.items()},
+                "errors": errors, "status": "pass" if not errors else "fail"}
+
+    static = mission.get("static_map") or {}
+    config = result.get("config") or {}
+    if not (config.get("realtime_control") is True and static.get("map_id") == "dispatch_open"
+            and not static.get("terrain")
+            and all(obstacle.get("id") in {"wall_north", "wall_south", "wall_west", "wall_east"}
+                    for obstacle in static.get("obstacles", []))):
+        errors.append("coarse renewal outside open real-time map scope")
+    seen_rows = {slot: set() for slot in ("r1", "r3")}
+    last_until = {}
+    def same_time(left, right):
+        return isinstance(left, (int, float)) and isinstance(right, (int, float)) and abs(left - right) <= 1e-6
+
+    for index, receipt in enumerate(receipts):
+        tag = f"approach renewal[{index}]"
+        frames = receipt.get("source_frame_ids") or {}
+        observed = receipt.get("source_observed_at_s")
+        original_at = receipt.get("source_decision_sim_time_s")
+        previous = receipt.get("previous_valid_until_s")
+        issued_at = receipt.get("issued_at_s")
+        valid_until = receipt.get("valid_until_s")
+        duration = receipt.get("duration_s")
+        deadline = receipt.get("original_rgb_deadline_s")
+        plan_hash = receipt.get("plan_hash")
+        source_key = (original_at, frames.get("r1"), frames.get("r3"))
+        if not all(isinstance(value, (int, float)) and math.isfinite(value)
+                   for value in (observed, original_at, previous, issued_at, valid_until, duration, deadline)):
+            errors.append(f"{tag}: missing or invalid time")
+            continue
+        if (receipt.get("phase") != "APPROACH"
+                or receipt.get("permission_request") != ["beam", "APPROACH"]
+                or not same_time(receipt.get("permission_verified_at_s"), issued_at)):
+            errors.append(f"{tag}: phase or APPPROACH permission record invalid")
+        if not (isinstance(frames.get("r1"), int) and frames.get("r1") == frames.get("r3")):
+            errors.append(f"{tag}: pair source frame IDs differ")
+        if not same_time(deadline, observed + .6):
+            errors.append(f"{tag}: RGB deadline differs from source observation")
+        if not (0 < duration <= .25 + 1e-8 and same_time(valid_until, issued_at + duration)):
+            errors.append(f"{tag}: duration or lease interval invalid")
+        if not (original_at <= issued_at < previous - 1e-9 and valid_until <= deadline + 1e-8):
+            errors.append(f"{tag}: expired previous lease or exceeded RGB TTL")
+        if source_key in last_until and not same_time(previous, last_until[source_key]):
+            errors.append(f"{tag}: previous valid-until does not chain to last renewal")
+        last_until[source_key] = valid_until
+
+        sample_at = next((i for i, row in enumerate(pair_decisions)
+                          if row.get("kind") == "pair_stage_sample" and row.get("stage") == "APPROACH"
+                          and row.get("frame_id") == frames.get("r1")
+                          and same_time(row.get("observed_at_s"), observed)), None)
+        coarse = None
+        if sample_at is not None:
+            for row in pair_decisions[sample_at + 1:]:
+                if row.get("kind") == "pair_stage_sample":
+                    break
+                if row.get("kind") == "coarse":
+                    coarse = row
+                    break
+        if coarse is None or coarse.get("commands") != receipt.get("commands") or not all(
+                (coarse.get("decisions") or {}).get(slot, {}).get("ok") is True
+                for slot in ("r1", "r3")):
+            errors.append(f"{tag}: accepted coarse RGB decision cannot be linked")
+
+        for slot, rid in zip(("r1", "r3"), pair_ids):
+            original = next((row for row in commands.get(rid, [])
+                             if not row.get("pending_renewal") and row.get("stage") == "APPROACH"
+                             and same_time(row.get("issued_at_s"), original_at)
+                             and row.get("source_frame_ids") == frames), None)
+            if original is None:
+                errors.append(f"{tag} {slot}: original issued command missing")
+            elif (not same_time(original.get("observed_at_s"), observed)
+                  or original.get("plan_hash") != plan_hash):
+                errors.append(f"{tag} {slot}: original RGB time or plan differs")
+            candidates = [(i, row) for i, row in enumerate(issued[slot])
+                          if same_time(row.get("issued_at_s"), issued_at)
+                          and row.get("source_frame_ids") == frames]
+            if len(candidates) != 1:
+                errors.append(f"{tag} {slot}: expected exactly one matching renewed command")
+                continue
+            row_index, renewed = candidates[0]
+            if row_index in seen_rows[slot]:
+                errors.append(f"{tag} {slot}: renewed command reused by another receipt")
+            seen_rows[slot].add(row_index)
+            for key, value in (("valid_until_s", valid_until), ("observed_at_s", observed),
+                               ("original_rgb_deadline_s", deadline),
+                               ("source_decision_sim_time_s", original_at),
+                               ("previous_valid_until_s", previous), ("duration_s", duration),
+                               ("permission_verified_at_s", issued_at)):
+                if not same_time(renewed.get(key), value):
+                    errors.append(f"{tag} {slot}: renewed {key} differs from receipt")
+            if (renewed.get("plan_hash") != plan_hash
+                    or renewed.get("permission_request") != ["beam", "APPROACH"]):
+                errors.append(f"{tag} {slot}: renewed plan or permission differs")
+            action = renewed.get("action") or {}
+            source_action = (original or {}).get("action") or {}
+            expected = (receipt.get("commands") or {}).get(slot) or {}
+            if action.get("kind") != "mecanum" or not same_time(action.get("duration_s"), duration):
+                errors.append(f"{tag} {slot}: issued action or duration invalid")
+            for axis in MOTION_KEYS:
+                if not (same_time(action.get(axis), expected.get(axis))
+                        and same_time(action.get(axis), source_action.get(axis))):
+                    errors.append(f"{tag} {slot}: {axis} differs from accepted coarse command")
+    for slot in ("r1", "r3"):
+        if len(seen_rows[slot]) != len(issued[slot]):
+            errors.append(f"{slot}: unmatched approach renewed command")
+    return {"receipts": len(receipts), "issued_by_slot": {slot: len(rows) for slot, rows in issued.items()},
+            "errors": errors, "status": "pass" if not errors else "fail"}
+
+
 def audit(run: Path, manager_path: Path):
     if not (run / "result.json").is_file():
         raise ValueError(f"missing result.json: {run}")
@@ -167,6 +297,8 @@ def audit(run: Path, manager_path: Path):
     result = read_json(run / "result.json") or {}
     evaluation = read_json(run / "evaluation-only.json") or {}
     decisions = read_json(run / "solo-decisions.json", [])
+    pair_decisions = read_json(run / "pair-decisions.json", [])
+    mission = read_json(run / "actor-mission.json", {})
     commands = read_json(run / "issued-commands.json", {})
     receipts = read_json(run / "solo-renewals.json", [])
     manager = read_json(manager_path) or {}
@@ -252,6 +384,9 @@ def audit(run: Path, manager_path: Path):
     renewal_audit = audit_renewals(receipts, solo, decisions)
     if renewal_audit["errors"]:
         errors.append("solo renewal invariants failed")
+    pair_approach_audit = audit_pair_approach_renewals(pair_decisions, commands, result, mission)
+    if pair_approach_audit["errors"]:
+        errors.append("pair approach renewal invariants failed")
     return {
         "schema": "ugrp.faster_dispatch_run_audit.v1", "run": str(run), "manager": manager_summary,
         "source_bundle": {"active_bundle": "not identified by run result or manager; inspect pinned source separately",
@@ -283,6 +418,7 @@ def audit(run: Path, manager_path: Path):
                  "own_rgb_attachment_evidence_rows": len(attachments),
                  "own_rgb_attachment_attached_counts": dict(held),
                  "own_rgb_attachment_scope": "recorded image-derived estimates, not a contact sensor"},
+        "pair_approach_pending_renewal": pair_approach_audit,
         "core_files": core, "errors": errors,
     }
 
