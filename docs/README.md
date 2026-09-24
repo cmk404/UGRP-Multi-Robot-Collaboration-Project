@@ -16,7 +16,7 @@
 | 실험 증거 | [실험 인덱스](../experiments/README.md) | 관련 ID의 설정·성공/실패·원본 확인 |
 | 실물 운영 | [네트워크](masterpi_network_runbook.md), [trace](real_trace_system.md), [물리 보정](masterpi_physics_calibration.md) | 실물 연결 시 현재 장치 상태와 함께 확인 |
 | 과거 기록 | [결정 이력](decision_log.md), [옛 아키텍처](current_architecture_todo.md), [이전 검증 요약](archive/validation_summary_20260917.md), [초기 연구 브리프](research_brief_20260813.md) | 변경 이유·과거 실험을 조사할 때 |
-| 퇴역 기록 | [클라우드](cloud_simulation.md), [환경 정리](simulation_cleanup_20260909.md) | 이력 확인; 설치·자동 복구 지침으로 사용하지 않음 |
+| 퇴역 기록 | [구형 브라우저 UI](browser_ui_retirement_20260923.md), [클라우드](cloud_simulation.md), [환경 정리](simulation_cleanup_20260909.md) | 이력 확인; 현재 실행 지침으로 사용하지 않음 |
 
 코드 탐색은 해당 모듈·테스트부터 시작하고, 긴 결정 이력은 필요한 날짜·키워드로 좁혀 검색한다. `docs/archive/`와 `outputs/`는 이름만으로 읽기가 차단되지 않는다. `.gitignore`도 접근 제어가 아니므로 탐색 도구에 필요한 경로를 명시한다. 실험 증거를 옮기거나 삭제하기 전에는 코드·fixture·manifest 참조와 로컬 원본의 보존 상태를 확인한다.
 

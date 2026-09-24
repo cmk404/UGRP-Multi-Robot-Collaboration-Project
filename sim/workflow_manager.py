@@ -27,7 +27,7 @@ from uuid import uuid4
 SCHEMA = "ugrp.simulation_run.v1"
 CATALOG = Path("configs/simulation_workflows.json")
 RECORDS = Path("outputs/simulation-runs")
-SOURCE_DIRS = ("harness", "sim", "scripts", "config", "configs", "maps", "calibration", "examples", "dashboard")
+SOURCE_DIRS = ("harness", "sim", "scripts", "config", "configs", "maps", "calibration", "examples")
 SOURCE_SUFFIXES = {".py", ".json", ".jsonl", ".xml", ".yaml", ".yml", ".toml", ".command",
                    ".txt", ".csv", ".png", ".jpg", ".jpeg", ".npy", ".npz"}
 SECRET = re.compile(r"(?:^|[-_])(?:token|password|secret|api[-_]?key|authorization|cookie|credential)(?:$|[-_])", re.I)

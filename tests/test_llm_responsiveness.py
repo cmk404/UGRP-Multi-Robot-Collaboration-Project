@@ -264,12 +264,4 @@ class PlannerQueuePromptTests(unittest.TestCase):
         self.assertIn("instead of issuing the skills one-by-one", prompt)
         self.assertIn("queue drains, blocks, or fails", prompt)
 
-class UiResponsivenessSourceTests(unittest.TestCase):
-    def test_sse_sends_immediate_status_and_frontend_renders_it(self):
-        web=(ROOT/'harness/web.py').read_text()
-        html=(ROOT/'harness/static/index.html').read_text()
-        self.assertIn('{"type": "status", "text": "요청을 받았습니다"}', web)
-        self.assertIn('event.type === "status"', html)
-        self.assertIn('line = resp.readline()', web)
-
 if __name__=='__main__': unittest.main()
