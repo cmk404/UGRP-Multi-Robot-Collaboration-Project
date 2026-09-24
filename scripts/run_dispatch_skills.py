@@ -25,12 +25,18 @@ if str(ROOT) not in sys.path:sys.path.insert(0,str(ROOT))
 from harness.camera_motion_identity import ImageMotionIdentity
 from harness.dispatch_plan import build_dispatch_request, validate_dispatch_plan, validate_dispatch_reply
 from harness.dispatch_skill_binding import SkillBindings, ImageRoute
+from harness.dispatch_skill_binding import (_CARRIER_RELINK_MAX_OCCLUDED_FRAMES,
+    _CARRIER_RELINK_MAX_ELAPSED_S,_CARRIER_RELINK_MAX_MOTION_PX)
 from harness.dispatch_feasibility import negotiate_executable
 from harness.dispatch_yield import SoloYield,WheelObserver
 from harness.three_robot_plan import ROBOTS, TeamAgreement, images
 from harness.solo_box_transport import SoloBoxTransport, normalize_own_rgb
 from harness.grasp_student_inference import predict_student
 from harness.visual_macro_runtime import VisualMacroExecutor
+from harness.rolling_visual_servo import (FINAL_ENTRY_HANDOFF_M,
+    FINAL_ENTRY_SETTLE_S, NEAR_MOTION_REOBSERVE_BUFFER_M,
+    RollingApproachLease, approach_drive_support,
+    guard_near_entry_from_issued_commands)
 from sim.research_dispatch_arena import episode, actor_task
 from scripts.research_dispatch_scene import DispatchScene
 from scripts.run_dispatch_e2e import Referee
@@ -68,9 +74,14 @@ class SkillScene(DispatchScene):
         self.replay=None
         self.efficient_capture=False
         self.realtime_control=False
+        self.rolling_visual_servo=False
+        self.bounded_carrier_relink=False
         self._decision_workers=None
         self._solo_pending=None
         self._solo_pending_lease=None
+        self._solo_approach_lease=None
+        self._solo_approach_last_lease=None
+        self._solo_approach_last_source=None
         self.solo_renewals=[]
         self._yield_pending=None
         self._solo_motion_accept_after_s=0.
@@ -149,6 +160,8 @@ class SkillScene(DispatchScene):
             self.world._physics_step_for(self.world.controllers['r1'])
     def hold(self):
         self._solo_pending_lease=None
+        if getattr(self,'_solo_approach_lease',None) is not None:
+            self._clear_solo_approach_lease(self.time(),'scene_hold')
         for p in self.ports.values():p.hold(self.time())
     def capture(self,label,*,own_robots=None,overview=True):
         if not self.efficient_capture:own_robots,overview=None,True
@@ -192,11 +205,13 @@ class SkillScene(DispatchScene):
             if not self.bindings.permission(obj,stage):
                 raise RuntimeError('resource permission changed during owner commit')
         return True
-    def _issue_realtime_motor(self,rid,action,stage,observed_at_s,*,now):
+    def _issue_realtime_motor(self,rid,action,stage,observed_at_s,*,now,
+                              max_duration_s=None,source_evidence=None):
         """Owner-only bounded motor renewal from one fresh RGB instant."""
         requested=float(action['duration_s'])
         renewal=REALTIME_MOTOR_RENEWAL_S
         effective=min(renewal,float(observed_at_s)+RGB_ACTION_TTL_S-now)
+        if max_duration_s is not None:effective=min(effective,float(max_duration_s))
         if effective<=0:
             self.ports[rid].hold(now)
             return None
@@ -208,6 +223,8 @@ class SkillScene(DispatchScene):
             'observed_at_s':float(observed_at_s),'requested_duration_s':requested,
             'renewal_request_s':renewal,
             'plan_hash':self.bindings.committed['plan_hash']})
+        if source_evidence is not None:
+            self.command_history[rid][-1]['source_rgb_evidence']=copy.deepcopy(source_evidence)
         return effective
     def _solo_budget_tick(self,now,*,enforce=True):
         """Charge every owner SIM interval to active work or a denied gate."""
@@ -314,8 +331,13 @@ class SkillScene(DispatchScene):
     def start_solo(self):
         authored=self.bindings.static_map
         fast_servo=fast_servo_map_supported(authored,realtime_control=self.realtime_control)
+        if getattr(self,'rolling_visual_servo',False) and not fast_servo:
+            raise ValueError('rolling visual servo requires realtime dispatch_open without internal obstacles')
+        if getattr(self,'bounded_carrier_relink',False) and not fast_servo:
+            raise ValueError('bounded carrier relink requires realtime dispatch_open without internal obstacles')
         self.solo=SoloBoxTransport(robot_id=self.bindings.solo,
-            navigator=ImageRoute(self.bindings,'box',time_aware_box_reacquisition=fast_servo),
+            navigator=ImageRoute(self.bindings,'box',time_aware_box_reacquisition=fast_servo,
+                                 bounded_carrier_relink=self.bounded_carrier_relink),
             attachment_min_saturation=150,release_refine_ground_fit=True,
             fast_near_field_servo=fast_servo)
         self.solo_executor=VisualMacroExecutor(self.ports[self.bindings.solo],
@@ -329,6 +351,9 @@ class SkillScene(DispatchScene):
         self._solo_phase_label=self.solo.phase
         self._solo_motion_accept_after_s=0.
         self._solo_pending_lease=None
+        self._solo_approach_lease=None
+        self._solo_approach_last_lease=None
+        self._solo_approach_last_source=None
         self.solo_renewals=[]
         if self.realtime_control:
             self._decision_workers=ThreadPoolExecutor(max_workers=2,thread_name_prefix='dispatch-decision')
@@ -493,10 +518,153 @@ class SkillScene(DispatchScene):
             apron_permission_required=('box','UNLOAD') in requests,
             renewal_reason=reason)
 
+    def _clear_solo_approach_lease(self,now,reason):
+        """Stop an issued rolling motor lease and retain its abort context."""
+        lease=getattr(self,'_solo_approach_lease',None)
+        self._solo_approach_lease=None
+        if lease is None:return
+        scheduled_windows=list(lease.issued_windows)
+        lease.issued_windows=[(start,min(end,now)) for start,end in scheduled_windows
+                              if start < now and min(end,now) > start]
+        lease.hold_at_s=now
+        self._solo_approach_last_lease=lease
+        self.ports[self.bindings.solo].hold(now)
+        self.solo_renewals.append({'kind':'solo_approach_rolling_stop',
+            'time_s':now,'reason':reason,'source_frame_id':lease.evidence['source_frame_id'],
+            'source_own_sha256':lease.evidence['source_own_sha256'],
+            'source_top_sha256':lease.evidence['source_top_sha256'],
+            'source_observed_at_s':lease.evidence['source_observed_at_s'],
+            'original_horizon_s':lease.horizon_s,'rgb_deadline_s':lease.rgb_deadline_s,
+            'last_valid_until_s':lease.valid_until_s,'plan_hash':lease.plan_hash,
+            'scheduled_lease_windows':scheduled_windows,
+            'effective_command_windows':list(lease.issued_windows),
+            'hold_at_s':now,'issued_command_not_measured_motion':True})
+        self.solo_raw.append({'event':'rolling_motor_hold','time':now,
+            'reason':reason,'robot_id':self.bindings.solo,
+            'source_frame_sha256':lease.evidence['source_own_sha256'],
+            'source_top_sha256':lease.evidence['source_top_sha256'],
+            'source_frame_id':lease.evidence['source_frame_id']})
+
+    def _start_solo_approach_lease(self,action,support,now,requests):
+        """Issue the first <=.25 s slice of exactly one RGB-selected drive."""
+        raw={'kind':'drive','forward':float(action['fwd']),
+             'turn':float(action['turn']),'duration_s':float(action['duration'])}
+        horizon=now+support['original_duration_s']
+        duration=min(REALTIME_MOTOR_RENEWAL_S,horizon-now,
+                     support['source_observed_at_s']+RGB_ACTION_TTL_S-now)
+        if duration<=0:return None
+        effective=self._issue_realtime_motor(
+            self.bindings.solo,raw,'APPROACH',support['source_observed_at_s'],
+            now=now,max_duration_s=duration,source_evidence={
+                **support,'decision_at_s':now,'original_horizon_s':horizon,
+                'lease_kind':'rolling_approach'})
+        if effective is None:return None
+        port=self.ports[self.bindings.solo]
+        lease=RollingApproachLease(
+            action=raw,evidence=copy.deepcopy(support),decision_at_s=now,
+            first_issued_at_s=now,plan_hash=self.bindings.committed['plan_hash'],
+            valid_until_s=now+effective,
+            motor_commands=tuple(getattr(port,'_motor_commands',())),
+            permission_requests=tuple(dict.fromkeys(requests)),
+            issued_windows=[(now,now+effective)])
+        self._solo_approach_lease=lease
+        self._solo_approach_last_source=(support['source_frame_id'],
+            support['source_observed_at_s'],support['source_own_sha256'])
+        self.solo_renewals.append({'kind':'solo_approach_rolling_issue',
+            'issued_at_s':now,'valid_until_s':lease.valid_until_s,
+            'source_frame_id':support['source_frame_id'],
+            'source_own_sha256':support['source_own_sha256'],
+            'source_top_sha256':support['source_top_sha256'],
+            'source_observed_at_s':support['source_observed_at_s'],
+            'original_horizon_s':lease.horizon_s,'rgb_deadline_s':lease.rgb_deadline_s,
+            'plan_hash':lease.plan_hash,'permission_requests':list(lease.permission_requests)})
+        self.solo_raw.append({'event':'rolling_raw_action','time':now,
+            'robot_id':self.bindings.solo,
+            'source_frame_sha256':support['source_own_sha256'],
+            'source_top_sha256':support['source_top_sha256'],
+            'source_frame_id':support['source_frame_id'],
+            'raw_action':{**raw,'duration_s':effective},
+            'valid_until_s':lease.valid_until_s,
+            'original_horizon_s':lease.horizon_s,
+            'rgb_deadline_s':lease.rgb_deadline_s})
+        return effective
+
+    def _tick_solo_approach_lease(self,now):
+        """Owner-check and, only while a new RGB job runs, finish this action's horizon."""
+        lease=getattr(self,'_solo_approach_lease',None)
+        if lease is None:return
+        if (self.solo.phase!='approach' or self.solo.done
+                or self.bindings.tasks['box']['id'] in self.bindings.finished):
+            self._clear_solo_approach_lease(now,'phase_exit')
+            return
+        if self.bindings.committed['plan_hash']!=lease.plan_hash:
+            self._clear_solo_approach_lease(now,'plan_changed')
+            raise RuntimeError('rolling approach plan changed')
+        # The port can expire and clear its own command fields before this
+        # owner tick. Normal expiry is a hold/reobserve, not a foreign write.
+        if (now>=lease.valid_until_s-1e-9 or now>=lease.horizon_s-1e-9
+                or now>=lease.rgb_deadline_s-1e-9):
+            self._clear_solo_approach_lease(now,'original_horizon_or_rgb_ttl')
+            return
+        if not self._solo_port_lease_matches({
+                'valid_until_s':lease.valid_until_s,
+                'motor_commands':lease.motor_commands}):
+            self._clear_solo_approach_lease(now,'port_command_replaced')
+            raise RuntimeError('rolling approach motor command changed outside owner lease')
+        probe=self._permission_snapshot()
+        if not all(probe.permission(obj,stage) for obj,stage in lease.permission_requests):
+            self._clear_solo_approach_lease(now,'permission_revoked')
+            return
+        pending=self._solo_pending
+        if (pending is None or pending['future'].done()
+                or now+REALTIME_CAPTURE_OVERLAP_S<lease.valid_until_s-1e-9):
+            return
+        remaining=lease.next_duration_s(now)
+        if remaining<=1e-9:
+            self._clear_solo_approach_lease(now,'original_horizon_or_rgb_ttl')
+            return
+        if not self._commit_permissions(lease.permission_requests):
+            self._clear_solo_approach_lease(now,'permission_revoked_at_renewal')
+            return
+        previous_until=lease.valid_until_s
+        effective=self._issue_realtime_motor(
+            self.bindings.solo,lease.action,'APPROACH',
+            lease.evidence['source_observed_at_s'],now=now,max_duration_s=remaining,
+            source_evidence={**lease.evidence,'decision_at_s':lease.decision_at_s,
+                'original_horizon_s':lease.horizon_s,'lease_kind':'rolling_approach',
+                'renewed_with_same_rgb':True})
+        if effective is None:
+            self._clear_solo_approach_lease(now,'rgb_ttl_at_renewal')
+            return
+        lease.valid_until_s=now+effective
+        lease.motor_commands=tuple(self.ports[self.bindings.solo]._motor_commands)
+        lease.issued_windows.append((now,now+effective))
+        self.solo_renewals.append({'kind':'solo_approach_rolling_renewal',
+            'source_frame_id':lease.evidence['source_frame_id'],
+            'source_own_sha256':lease.evidence['source_own_sha256'],
+            'source_top_sha256':lease.evidence['source_top_sha256'],
+            'source_observed_at_s':lease.evidence['source_observed_at_s'],
+            'decision_at_s':lease.decision_at_s,'issued_at_s':now,
+            'previous_valid_until_s':previous_until,'valid_until_s':lease.valid_until_s,
+            'original_horizon_s':lease.horizon_s,'rgb_deadline_s':lease.rgb_deadline_s,
+            'permission_requests':list(lease.permission_requests),
+            'plan_hash':lease.plan_hash})
+        self.solo_raw.append({'event':'rolling_raw_action','time':now,
+            'robot_id':self.bindings.solo,
+            'source_frame_sha256':lease.evidence['source_own_sha256'],
+            'source_top_sha256':lease.evidence['source_top_sha256'],
+            'source_frame_id':lease.evidence['source_frame_id'],
+            'raw_action':{**lease.action,'duration_s':effective},
+            'valid_until_s':lease.valid_until_s,
+            'original_horizon_s':lease.horizon_s,
+            'rgb_deadline_s':lease.rgb_deadline_s,
+            'renewed_with_same_rgb':True})
+
     def _solo_tick_realtime(self):
         try:self._solo_tick_realtime_owned()
         except BaseException:
             self._clear_solo_pending_lease(self.time(),hold=True)
+            self._clear_solo_approach_lease(self.time(),'owner_exception')
             raise
 
     def _solo_tick_realtime_owned(self):
@@ -504,11 +672,13 @@ class SkillScene(DispatchScene):
         if self.solo is None:return
         self.authorize();now=self.time()
         self.solo_executor.tick(now)
+        if getattr(self,'rolling_visual_servo',False):self._tick_solo_approach_lease(now)
         tasks=getattr(getattr(self,'bindings',None),'tasks',None)
         finished=bool(tasks and tasks['box']['id'] in self.bindings.finished)
         self._solo_budget_tick(now,enforce=not finished)
         if finished:
             self._clear_solo_pending_lease(now,hold=True)
+            self._clear_solo_approach_lease(now,'box_job_finished')
             self._solo_finish_budget(now)
             return
         if self._solo_pending is not None:
@@ -522,6 +692,7 @@ class SkillScene(DispatchScene):
             observed=result['observed_at_s']
             if now-observed>RGB_ACTION_TTL_S:
                 self._clear_solo_pending_lease(now)
+                self._clear_solo_approach_lease(now,'stale_rgb')
                 self._solo_pending=None
                 self._solo_motion_accept_after_s=0.
                 self._solo_set_resource_wait(now,False)
@@ -534,6 +705,11 @@ class SkillScene(DispatchScene):
             candidate=result['candidate']
             action,evidence=result['action'],result['evidence']
             before=result['before']
+            if (getattr(self,'rolling_visual_servo',False) and before!=self.solo.phase):
+                self._clear_solo_approach_lease(now,'worker_phase_mismatch')
+                self._solo_pending=None
+                self.ports[self.bindings.solo].hold(now)
+                raise RuntimeError('rolling approach worker phase changed before owner commit')
             requests=[('box',pending['stage']),*result['permission_requests']]
             if before=='approach' and candidate.phase=='lower':
                 requests.append(('box','GRASP'))
@@ -574,6 +750,7 @@ class SkillScene(DispatchScene):
             self._solo_pending=None
             if worker_wait or owner_denied:
                 self._clear_solo_pending_lease(now)
+                self._clear_solo_approach_lease(now,'resource_permission')
                 self._solo_motion_accept_after_s=0.
                 self._solo_set_resource_wait(now,owner_denied,
                                              'candidate' if owner_denied else None)
@@ -600,6 +777,9 @@ class SkillScene(DispatchScene):
                         observed-previous_guard_at if vision_refreshed else None)})
                 return
             self._clear_solo_pending_lease(now,hold=True)
+            previous_approach_lease=(getattr(self,'_solo_approach_lease',None)
+                or getattr(self,'_solo_approach_last_lease',None))
+            self._clear_solo_approach_lease(now,'fresh_rgb_decision')
             self._solo_set_resource_wait(now,False)
             # The committed navigator must no longer retain the worker's
             # private permission snapshot when it is cloned next time.
@@ -620,6 +800,14 @@ class SkillScene(DispatchScene):
                 'images':result['images'],'action':action,'top_evidence':evidence,
                 'own_attachment_evidence':copy.deepcopy(self.solo.box.last_attachment),
                 'approach_adjustment':copy.deepcopy(getattr(self.solo.box,'last_approach_adjustment',None))}
+            if getattr(self,'rolling_visual_servo',False) and before=='approach':
+                row['rolling_capture_evidence']={
+                    'capture_started_at_s':pending['capture_started_at_s'],
+                    'observed_at_s':observed,'frame_id':result['frame_id'],
+                    'own_sha256':obs['sha256'],'top_sha256':result['top_sha256'],
+                    'frame_within_issued_command_window':bool(previous_approach_lease and
+                        previous_approach_lease.frame_within_issued_command_window(observed)),
+                    'command_window_is_not_measured_motion':True}
             if action['kind']=='mecanum':
                 if moving_carry:
                     effective=self._issue_realtime_motor(
@@ -658,6 +846,41 @@ class SkillScene(DispatchScene):
                     self._solo_motion_accept_after_s=0.
                     self.raw(self.bindings.solo,action,'TRANSIT')
                     self.solo_lease=now+action['duration_s']
+            elif (getattr(self,'rolling_visual_servo',False) and before=='approach'
+                    and self.solo.phase=='approach' and action['kind']=='drive'):
+                prior=self._solo_approach_last_source
+                support=approach_drive_support(
+                    action=action,box=self.solo.box.last_box,
+                    target=self.solo.box.last_target,
+                    cargo_id=self.solo.box.cargo_id,frame_id=result['frame_id'],
+                    observed_at_s=observed,decision_at_s=now,
+                    capture_started_at_s=pending['capture_started_at_s'],
+                    own_sha256=obs['sha256'],top_sha256=result['top_sha256'],
+                    paired_top_sha256=result['images']['top']['sha256'],
+                    prior_frame_id=prior[0] if prior else None,
+                    prior_observed_at_s=prior[1] if prior else None,
+                    prior_own_sha256=prior[2] if prior else None)
+                support=guard_near_entry_from_issued_commands(
+                    support,previous_approach_lease,observed,now)
+                settle_until=support['previous_command_settle_until_s']
+                row['rolling_support']=support
+                if support['allowed']:
+                    effective=self._start_solo_approach_lease(action,support,now,requests)
+                    if effective is None:
+                        row['rolling_dropped']='lease_expired_before_issue'
+                        self.ports[self.bindings.solo].hold(now)
+                        self._solo_retry_at=now+REALTIME_CAPTURE_OVERLAP_S
+                    else:
+                        row.update(rolling_effective_lease_s=effective,
+                                   rolling_original_horizon_s=now+support['original_duration_s'])
+                        self.solo_lease=now+REALTIME_CAPTURE_OVERLAP_S
+                elif support['reason']=='final_entry_handoff':
+                    # Preserve the existing settled final-entry/grasp routine.
+                    self.solo_executor.submit(action,obs,self.solo.phase,now)
+                else:
+                    row['rolling_dropped']=support['reason']
+                    self.ports[self.bindings.solo].hold(now)
+                    self._solo_retry_at=max(now+.1,settle_until or now)
             else:
                 self._solo_motion_accept_after_s=0.
                 self.solo_executor.submit(action,obs,self.solo.phase,now)
@@ -682,6 +905,7 @@ class SkillScene(DispatchScene):
         permission_snapshot=self._permission_snapshot()
         if not permission_snapshot.permission('box',stage):
             self._clear_solo_pending_lease(now)
+            self._clear_solo_approach_lease(now,'capture_stage_permission_denied')
             self._solo_set_resource_wait(now,True,'stage')
             self.ports[rid].hold(now)
             return
@@ -723,9 +947,11 @@ class SkillScene(DispatchScene):
                     'observation':normalized,'input_transform':input_transform,
                     'images':refs,'observed_at_s':frame['observed_at_s'],
                     'frame_id':frame['frame_id'],
+                    'top_sha256':hashlib.sha256(frame['top_bytes']).hexdigest(),
                     'permission_requests':tuple(permission_requests)}
         self._solo_pending={'future':self._decision_workers.submit(decide),
-                            'index':index,'stage':stage}
+                            'index':index,'stage':stage,
+                            'capture_started_at_s':now}
 
     def _yield_tick_realtime(self,now):
         if self.bindings.tasks['beam']['id'] in self.bindings.finished:
@@ -824,6 +1050,7 @@ class SkillScene(DispatchScene):
     def close(self):
         if self.native_view:self.native_view.close();self.native_view=None
         if self.world:
+            self._clear_solo_approach_lease(self.time(),'trial_end')
             self._clear_solo_pending_lease(self.time(),hold=True)
             if self.solo_executor:self.solo_executor.cancel(self.time(),'trial_end')
             if self.original_step:self.world._physics_step_for=self.original_step
@@ -861,6 +1088,12 @@ def run(args):
     scene=SkillScene(config,args.output)
     scene.efficient_capture=getattr(args,'efficient_capture',False)
     scene.realtime_control=bool(getattr(args,'realtime_control',False))
+    scene.rolling_visual_servo=bool(getattr(args,'rolling_visual_servo',False))
+    scene.bounded_carrier_relink=bool(getattr(args,'bounded_carrier_relink',False))
+    if scene.rolling_visual_servo and not scene.realtime_control:
+        raise ValueError('rolling visual servo requires realtime control')
+    if scene.bounded_carrier_relink and not (scene.rolling_visual_servo and scene.realtime_control):
+        raise ValueError('bounded carrier relink requires rolling realtime control')
     scene.fine_gain_schedule=bool(getattr(args,'fine_gain_schedule',False))
     started=time.monotonic();pair=team=None
     motion_started_wall=motion_started_sim=None
@@ -873,6 +1106,20 @@ def run(args):
         'environment':{'python':sys.version,'platform':platform.platform(),'mujoco':mujoco.__version__},
         'plan_committed':False,'protocol_complete':False,'physical_success':False,'error':None,
         'phase':'SETUP','cost_usd':None,
+        'rolling_approach':{'requested':scene.rolling_visual_servo,'applied':False,
+            'scope':'solo approach only, realtime dispatch_open without internal obstacles',
+            'max_wire_lease_s':REALTIME_MOTOR_RENEWAL_S,
+            'rgb_ttl_s':RGB_ACTION_TTL_S,
+            'final_entry_handoff_m':FINAL_ENTRY_HANDOFF_M,
+            'near_motion_reobserve_buffer_m':NEAR_MOTION_REOBSERVE_BUFFER_M,
+            'final_entry_settle_s':FINAL_ENTRY_SETTLE_S,
+            'issued_command_integral_is_not_measured_travel':True},
+        'bounded_carrier_relink':{'requested':scene.bounded_carrier_relink,'applied':False,
+            'scope':'solo carry only, realtime dispatch_open with rolling approach',
+            'max_total_occluded_frames':_CARRIER_RELINK_MAX_OCCLUDED_FRAMES,
+            'max_elapsed_s':_CARRIER_RELINK_MAX_ELAPSED_S,
+            'max_cumulative_visual_motion_px':_CARRIER_RELINK_MAX_MOTION_PX,
+            'final_slot_requires_direct_top_cargo':True},
         'input_boundary':'own fixed RGB + common fixed TOP RGB + static authored map + own issued commands + peer claims; referee output only'}
     try:
         scene.open();scene.deadline=started+args.max_wall_s
@@ -962,6 +1209,8 @@ def run(args):
         scene.bindings.check_route()
         motion_started_wall=time.monotonic();motion_started_sim=scene.time()
         scene.start_solo()
+        result['rolling_approach']['applied']=scene.rolling_visual_servo
+        result['bounded_carrier_relink']['applied']=scene.bounded_carrier_relink
         pair=BoundPairSkill(scene,scene.bindings,skill,grasp,stages,grasp_root,reference,identity)
         while not scene.bindings.permission('beam','APPROACH'):scene.step(.2)
         result['phase']='APPROACH';result['pair_approach']=pair.approach()
@@ -1014,6 +1263,7 @@ def run(args):
                 if scene.native_view:
                     scene.native_view.close();scene.native_view=None
                 # Freeze decisions before final referee-only settling.
+                scene._clear_solo_approach_lease(scene.time(),'trial_end')
                 if scene.solo_executor:scene.solo_executor.cancel(scene.time(),'trial_end')
                 if scene.solo:result['solo_status']={'phase':scene.solo.phase,'reason':scene.solo.reason,'done':scene.solo.done}
                 if scene.bindings:result['resource_events']=scene.bindings.resource_events

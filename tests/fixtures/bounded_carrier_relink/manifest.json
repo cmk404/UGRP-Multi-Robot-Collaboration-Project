@@ -1,0 +1,183 @@
+{
+  "files_sha256": {
+    "diag1-139-top.jpg": "8cda960869a34288daea310b3e7330a3860e5ef6343370c816e18a1301a731ce",
+    "diag1-341-top.jpg": "f6a2db3e45fdee1aa5e5400901d5d292c7d5087507028ca235c7e2b0cc126777",
+    "diag1-342-own.jpg": "ac7f8d2c8db684266fff156857d0fc657fd769623f966f0234a77eb8ec2bd375",
+    "diag1-342-top.jpg": "f5ddf1dbb938b98cb54972bc512f336d714a07799a1bc91144b67b9177fd49eb",
+    "diag1-343-own.jpg": "bd30f372e020b25fa537498da4f937883c52797f409f6a842c1f8e64ed6aacff",
+    "diag1-343-top.jpg": "5a76a40beb88540d14300add4a1ce1dc9b603a85a4c85d49d6f3dd9c2d7722ff",
+    "diag1-344-own.jpg": "8d34617dacd14c902e334d200d52000081cb09ed8dfdca677b959bd188f55f68",
+    "diag1-344-top.jpg": "7d38ea95b848c910d67e0907d0f65aa4121aba3eb164832e5af6533955bdfa83",
+    "diag1-345-own.jpg": "ff62e36a240f73bed91e578985bf1c914375733899d64d5409624a531840423d",
+    "diag1-345-top.jpg": "ec64d11eeb51257d1ceec80d4b598acf8ff4146ecbfea05de0ce64d52831d93b",
+    "diag1-346-own.jpg": "0f7bdf7f7e210cf3e8a96ac22a659fddeb7d512234e0398170ef1901caecc00f",
+    "diag1-346-top.jpg": "f0670ae802e9cfded12391341a1ad5a433dcbb54d9c1dffc31af05c47bc5e54d",
+    "diag2-185-top.jpg": "75a042f1bcbb2936c81cf620d160e202b535045e90f11a48ccb6d468b8a1ca6b",
+    "diag2-391-top.jpg": "0dec772148c28ac712ab2661cc081e671f33c0a12620f5db52ba785c17803aae",
+    "diag2-392-own.jpg": "d3e153dcc963417a0edd7ca7d8a16339df5835a44d802f6e45e4732cd7b304f9",
+    "diag2-392-top.jpg": "ad8c056b5cc2ed34355fba7e19ea057af19ab878a88665398457c9d53303d57e",
+    "diag2-393-own.jpg": "7a3a3b27d11b8e9d4261603e291f9612a5e39d18779cb55827e54363e4d91d7c",
+    "diag2-393-top.jpg": "e07604dae72de2670cae8d9bea6d802136ee5a3f82c8d2ffc2d87b7bf6c13c7b",
+    "diag2-394-own.jpg": "9673bc8b0a0cc82fba462174f1193e18089c59bd665d844abd582383ae109834",
+    "diag2-394-top.jpg": "ddf1ae9897e89d98ef5bc15db1768975530bb4c986e89eb00cc28f919cd59db1",
+    "diag2-395-own.jpg": "f6b9461320ac79a52a74946d4ff2e96ce2e636e1b523058d829085c601ff2cdd",
+    "diag2-395-top.jpg": "5fd1db973ae4772163c7337219b556b13e6a59e92744343d951f6018245f5048",
+    "diag2-396-own.jpg": "c5ba798ee132e3fe7f0d1cb578547d6ae742b4d79b56942a6e7ad98895815ac6",
+    "diag2-396-top.jpg": "add4c7c81841f94f71aa16c2d7c2b762700aa2f995d474e0d57d59c6dd6102f5"
+  },
+  "purpose": "Saved actor RGB and decision metadata only; no simulator GT or success claim",
+  "runs": {
+    "diag1": {
+      "background_index": 139,
+      "captures": {
+        "342": {
+          "frame_id": 1402,
+          "observed_at_s": 153.66949999809418
+        },
+        "343": {
+          "frame_id": 1404,
+          "observed_at_s": 153.96974999808708
+        },
+        "344": {
+          "frame_id": 1406,
+          "observed_at_s": 154.2524999980804
+        },
+        "345": {
+          "frame_id": 1409,
+          "observed_at_s": 154.58774999807247
+        }
+      },
+      "failed_capture": {
+        "frame_id": 1411,
+        "metadata_source": "offline fixture approximation; actual failed capture metadata not in completed decision row",
+        "observed_at_s": 154.86774999807247
+      },
+      "failed_original_index": 346,
+      "first_replay_index": 342,
+      "prior_index": 341,
+      "prior_state": {
+        "box_center_px": [
+          874.7610168457031,
+          287.0196990966797
+        ],
+        "box_delta_px": [
+          -0.6651611328125,
+          -7.7170867919921875
+        ],
+        "box_origin_px": [
+          274.51020408163265,
+          544.7755102040817
+        ],
+        "waypoint_index": 5,
+        "waypoints_px": [
+          [
+            274.51020408163265,
+            586.3295695527553
+          ],
+          [
+            576.3174991993468,
+            586.3295695527553
+          ],
+          [
+            637.1742129817933,
+            586.3295695527553
+          ],
+          [
+            637.1742129817933,
+            359.5
+          ],
+          [
+            880.6010681115795,
+            359.5
+          ],
+          [
+            880.6010681115795,
+            176.92985865266039
+          ],
+          [
+            841.8740684318409,
+            176.92985865266039
+          ]
+        ]
+      },
+      "source_raw_directory": "/Users/changmin/projects/ugrp/outputs/dispatch-rolling-servo-20260924/original-rolling-diagnostic-1"
+    },
+    "diag2": {
+      "background_index": 185,
+      "captures": {
+        "392": {
+          "frame_id": 1681,
+          "observed_at_s": 205.2869999968736
+        },
+        "393": {
+          "frame_id": 1683,
+          "observed_at_s": 205.57899999686668
+        },
+        "394": {
+          "frame_id": 1685,
+          "observed_at_s": 205.86124999686
+        },
+        "395": {
+          "frame_id": 1687,
+          "observed_at_s": 206.0809999968548
+        }
+      },
+      "failed_capture": {
+        "frame_id": 1689,
+        "metadata_source": "offline fixture approximation; actual failed capture metadata not in completed decision row",
+        "observed_at_s": 206.36099999685482
+      },
+      "failed_original_index": 396,
+      "first_replay_index": 392,
+      "prior_index": 391,
+      "prior_state": {
+        "box_center_px": [
+          873.1774156358507,
+          265.5846676296658
+        ],
+        "box_delta_px": [
+          -0.34527587890625,
+          -6.36639404296875
+        ],
+        "box_origin_px": [
+          274.18333333333334,
+          545.2333333333333
+        ],
+        "waypoint_index": 5,
+        "waypoints_px": [
+          [
+            274.18333333333334,
+            586.3295695527553
+          ],
+          [
+            576.3174991993468,
+            586.3295695527553
+          ],
+          [
+            637.1742129817933,
+            586.3295695527553
+          ],
+          [
+            637.1742129817933,
+            359.5
+          ],
+          [
+            880.6010681115795,
+            359.5
+          ],
+          [
+            880.6010681115795,
+            176.92985865266039
+          ],
+          [
+            841.8740684318409,
+            176.92985865266039
+          ]
+        ]
+      },
+      "source_raw_directory": "/Users/changmin/projects/ugrp/outputs/dispatch-rolling-servo-20260924/original-rolling-diagnostic-2"
+    }
+  },
+  "schema": "ugrp.saved_rgb_carrier_relink_fixture.v1",
+  "source_sha": "c78174e129296da3ac1efea71c0e61e36092af80"
+}

@@ -1,0 +1,116 @@
+{
+  "schema": "ugrp.rolling_postdiagnostic_closure_amendment.v1",
+  "recorded_utc": "2026-09-24T13:06:23.437648+00:00",
+  "decision_boundary": "After both original-spawn rolling diagnostics finalized and audited; before any of six nearby-pose qualification trials started. This is a post-outcome resource-allocation amendment, not a preregistered success gate.",
+  "original_protocol": {
+    "path": "/Users/changmin/.codex/worktrees/rolling-visual-servo/ugrp/experiments/2026-09-24-action-act/rolling-protocol.json",
+    "sha256": "e636f98e82dd6412425a17ee8baf03347fbd53ac5fa4451edd5925c51ed004ee",
+    "status": "preregistered_before_physical_outcomes"
+  },
+  "source_freeze": {
+    "path": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/rolling-source-freeze-v2.json",
+    "sha256": "a5f0ceaf46d95b0a547b262f9d7cffec9752418a8936682d22b943c347b62536",
+    "baseline_source_sha": "931d910998a94361342c372ec2675c475daa625f",
+    "candidate_source_sha": "c78174e129296da3ac1efea71c0e61e36092af80",
+    "bundle_manifest_sha256": "484b6b7692a07b3fc0b0dec4ffcd0123a163e566185879550fdd0cac2b00a472",
+    "common_models_sha256": "081841147e698c560dc122c633bf71169ecca0ddfee9936f06801efb59d2361c"
+  },
+  "diagnostics": [
+    {
+      "trial": "original/rolling-diagnostic-1",
+      "raw_result": {
+        "path": "/Users/changmin/projects/ugrp/outputs/dispatch-rolling-servo-20260924/original-rolling-diagnostic-1/result.json",
+        "sha256": "35a6bcb4609ba7171e809b4ea9d86e01ce67303229926dbd0c132b87538c02c8"
+      },
+      "launch": {
+        "path": "/Users/changmin/projects/ugrp/outputs/dispatch-rolling-servo-20260924/original-rolling-diagnostic-1.launch.json",
+        "sha256": "5345820a90f1e024ddbb9751f6bd9978a4c3c1adf57110543c90620a1cb0a803",
+        "exit_code": 1,
+        "process_wall_s": 167.0920109580038,
+        "manager_manifest": "/Users/changmin/.codex/worktrees/rolling-visual-servo/ugrp/outputs/simulation-runs/20260924-215623-dispatch-9af5c663/manifest.json"
+      },
+      "audit": {
+        "path": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/audits/rolling-original-diagnostic-1.json",
+        "sha256": "dc85cc8d8791e58058ca0f0687df5b7c92f8e68224490d100bf54f3b13a9742a",
+        "protocol_validation_passed": false,
+        "rolling_evidence_status": "pass",
+        "moving_capture_verified": 36
+      },
+      "outcome": {
+        "physical_success": false,
+        "protocol_complete": false,
+        "wall_s": 165.184449124994,
+        "motion_sim_to_wall": 0.970001028631411,
+        "phase": "RELEASE",
+        "failed_component": "solo_box",
+        "error": "ComponentExecutionError: solo_box: RuntimeError: dispatch box unresolved or ambiguous in TOP RGB"
+      },
+      "source_unchanged": true,
+      "manager_inputs_unchanged": true
+    },
+    {
+      "trial": "original/rolling-diagnostic-2",
+      "raw_result": {
+        "path": "/Users/changmin/projects/ugrp/outputs/dispatch-rolling-servo-20260924/original-rolling-diagnostic-2/result.json",
+        "sha256": "f89349123b4289ad2e28144937f61917d315c41c476ad77fe6aa6e7fd6dd7fc4"
+      },
+      "launch": {
+        "path": "/Users/changmin/projects/ugrp/outputs/dispatch-rolling-servo-20260924/original-rolling-diagnostic-2.launch.json",
+        "sha256": "67b519d93d8d0bffccdeda2456d6f6711745c51a5ce93146cd202c9235d4c37e",
+        "exit_code": 1,
+        "process_wall_s": 230.30483725000522,
+        "manager_manifest": "/Users/changmin/.codex/worktrees/rolling-visual-servo/ugrp/outputs/simulation-runs/20260924-215942-dispatch-00c4d661/manifest.json"
+      },
+      "audit": {
+        "path": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/audits/rolling-original-diagnostic-2.json",
+        "sha256": "7e4e7f0ba9e08c4e3899a9969bbd1fee4a376c747e96ad5adf7248b645813e5c",
+        "protocol_validation_passed": false,
+        "rolling_evidence_status": "pass",
+        "moving_capture_verified": 51
+      },
+      "outcome": {
+        "physical_success": false,
+        "protocol_complete": false,
+        "wall_s": 228.45988316598232,
+        "motion_sim_to_wall": 0.9199481382461678,
+        "phase": "RELEASE",
+        "failed_component": "solo_box",
+        "error": "ComponentExecutionError: solo_box: RuntimeError: dispatch box unresolved or ambiguous in TOP RGB"
+      },
+      "source_unchanged": true,
+      "manager_inputs_unchanged": true
+    }
+  ],
+  "qualification_not_run": [
+    "roll-a/reference",
+    "roll-a/rolling",
+    "roll-b/rolling",
+    "roll-b/reference",
+    "roll-c/reference",
+    "roll-c/rolling"
+  ],
+  "denominators": {
+    "planned_total": 8,
+    "diagnostic_planned": 2,
+    "diagnostic_started": 2,
+    "diagnostic_physical_success": 0,
+    "diagnostic_failed": 2,
+    "qualification_planned": 6,
+    "qualification_started": 0,
+    "qualification_not_run": 6,
+    "matched_speed_pairs": 0
+  },
+  "decision": {
+    "status": "stop_v29_expansion_before_qualification",
+    "reason": "Both separate original-spawn diagnostics reached RELEASE but failed in shared solo_box TOP-RGB resolution. Additional frozen-source qualification trials are not allocated before the RGB release-tracking readiness failure is addressed.",
+    "attribution_boundary": "Rolling command/capture evidence passed in both diagnostics (36 and 51 verified captures), but this does not establish measured motion or speed, and the shared solo_box failure cannot be attributed solely to rolling.",
+    "new_source_policy": "Any later RGB release-tracking change requires its own frozen source/candidate/protocol record; no retry or relabel of these two original diagnostics."
+  },
+  "claim_gate": {
+    "qualification_success": false,
+    "matched_speed": false,
+    "rolling_moving_capture_evidence_for_diagnostics_only": true,
+    "speed_claim": "none"
+  },
+  "preservation": "Original protocol, raw results, launches, managers, audits, and failed wall times remain unchanged."
+}
