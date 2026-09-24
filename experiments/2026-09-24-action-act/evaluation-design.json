@@ -1,0 +1,104 @@
+{
+  "schema": "ugrp.action_act_evaluation_design.v1",
+  "status": "design_only_no_physics_run",
+  "question": "Under matched camera, contact, mission and spawn conditions, does the revised RGB action algorithm complete both physical deliveries faster and more reliably than frozen v26 RGB, and can a newly trained ACT control loaded beam motion without false arrival or loss of contact?",
+  "research_scope": "Local saved-plan component study. It does not measure new LLM communication, map generalization, real robot performance, or ACT benefit from a matched old checkpoint unless that comparator is added in a separately frozen cohort.",
+  "source_evidence": [
+    "experiments/2026-09-23-realtime-dispatch/independent-audit-v19-grasp-full.json",
+    "experiments/2026-09-23-realtime-dispatch/independent-audit-v19-grasp-repeat.json",
+    "experiments/2026-09-24-faster-dispatch/comparison-v25.json",
+    "experiments/2026-09-24-faster-dispatch/comparison-v26.json",
+    "experiments/2026-09-22-parallel-act-study/split-audit.json",
+    "experiments/2026-09-22-parallel-transport/screening-protocol.json",
+    "experiments/2026-09-22-research-controller-qualification/acceptance-v3-full-protocol.json",
+    "scripts/run_dispatch_e2e.py",
+    "scripts/run_dispatch_skills.py",
+    "sim/research_dispatch_arena.py"
+  ],
+  "known_durations_wall_s": {
+    "v19_grasp_successes": [200.929, 196.104],
+    "v25_successes": [194.183, 206.512],
+    "v26_success_and_failed_repeat": [187.949, 199.144],
+    "v26_repeat_failure": "TOP box tracking ambiguity before release; the 199.144 s is not a successful completion time",
+    "older_synchronous_act_rgb_refined_success_median": 889.833,
+    "older_synchronous_rgb_success_median": 801.977,
+    "interpretation": "The recent approximately 200 s RGB times are open/seed11 saved-plan runs; older ACT timings used a different synchronous controller/runtime. They guide run budgets but are not a matched speed comparison."
+  },
+  "fixed_inputs": {
+    "variant": "open",
+    "seed": 11,
+    "required_dock": "dock_a",
+    "plan_replay": "experiments/2026-09-22-parallel-transport/independent-plan.json",
+    "plan_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+    "contact_profile": "local_contact_fine",
+    "weld": false,
+    "grasp_model_dir": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+    "stage_model_dir": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+    "reference_top": "tests/fixtures/camera_goal_transport/reference-top.jpg",
+    "route_overlap": "--auto-route-overlap --overlap-start grasp; verify selected independent open routes and shared apron exclusion in each result",
+    "camera_and_actor_boundary": "Original own fixed RGB and common fixed TOP RGB, authored static map and own issued commands. No referee coordinates/contact/joints used by control.",
+    "observation_ttl_s": 0.6,
+    "maximum_command_lease_s": 0.25,
+    "video_fps": 10,
+    "realtime_factor": 1.0,
+    "external_llm_calls_expected": 0,
+    "model_and_data_freeze": "Record source commit/tree, execution bundle ID/hash, Python/package versions, grasp/stage/ACT model hashes, exact scene XML/config/plan hashes and raw input/output hashes before comparing arms. No model retraining, source edits or case selection after first physical outcome."
+  },
+  "cli_contract": {
+    "entry": "bash scripts/open_simulation.command dispatch",
+    "fallback_direct_entry": "PYTHONPATH=. /Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python -m scripts.run_dispatch_e2e",
+    "common_flags": [
+      "--variant", "open", "--seed", "11",
+      "--required-dock", "dock_a", "--plan-replay", "experiments/2026-09-22-parallel-transport/independent-plan.json",
+      "--grasp-model-dir", "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+      "--stage-model-dir", "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+      "--contact-profile", "local_contact_fine", "--realtime-control", "--viewer",
+      "--realtime-factor", "1", "--auto-route-overlap", "--overlap-start", "grasp",
+      "--efficient-capture", "--video-fps", "10", "--reference-top", "tests/fixtures/camera_goal_transport/reference-top.jpg"
+    ],
+    "per_trial_flags": "Supply a fresh --output, the case's three --spawn-offset numbers, and the arm's --max-wall-s. ACT adds --carry-act-model MODEL_DIR --carry-act-python /Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python --carry-act-stop-mode rgb_guarded; RGB omits all ACT flags. The dispatch launcher inserts --executor skills itself and forwards unrecognized options to run_dispatch_e2e.",
+    "unsupported_flags": "At design checkout 41a906c, --episode-config and --carry-policy are not CLI inputs. carry_policy is an output result field. New CLI support is not assumed."
+  },
+  "case_selection": {
+    "candidate_training_split_as_reported_by_training_owner": "Nine full training episodes: older F1/F2/F5/F6 plus realtime v19 four runs and v25-full. Four development episodes: older F3/F4 (kept together because they share image SHA values), realtime v25-repeat and v26-full. The training owner reports zero train/development image-SHA overlap; audit final dataset manifest before executing. Older missing-image dev-open/dev-turn are excluded. These are checkpoint-selection data, not physical test cases.",
+    "existing_exposed_conditions": [
+      "The seven successful real-time ACT training/development source runs are open/seed11/original spawn and stored plan. Older F-series episodes add exposed scene families to train/development. Whole-episode and zero-image-SHA split does not make the development cases independent physical holdout.",
+      "2026-09-22 parallel ACT tests [-0.015,0.008,0], [0.015,-0.008,0], [0,0,1] and research-controller qualification [-0.010,0.004,-0.5], [0.008,-0.004,0.5], [0.020,0.003,-1.0] were inspected and are regression cases.",
+      "The previous screening also used [0.012,-0.006,0] on open and [-0.012,0.006,0] on shared_crossing."
+    ],
+    "new_cases": [
+      {"id": "holdout-a", "spawn_offset_dx_dy_m_yaw_deg": [0.014, -0.005, 0.75]},
+      {"id": "holdout-b", "spawn_offset_dx_dy_m_yaw_deg": [-0.014, 0.005, -0.75]}
+    ],
+    "selection_audit": "Both exact offset triples were absent from the inspected 2026-09-22 parallel-transport, parallel-act-study, research-controller-qualification, 2026-09-23 realtime-dispatch, and 2026-09-24 faster-dispatch JSON protocols/audits at design time. They stay inside the CLI's +/-0.03 m and +/-3 degree bounds and preserve the known open map, dock and r1/r3 pair plus r2 solo role assignment.",
+    "novelty_limit": "Only initial pose triples are new. Same map, seed11 spawn ordering, camera, plan and nearby pose family remain exposed. Do not call this unseen-map or broad generalization evidence. Seeds 12 and 13 shuffle to the same physical spawn ordering as seed11 and would be label-only pseudo-holdouts."
+  },
+  "arms": [
+    {"id": "reference-rgb-v26", "source_sha": "41a906cfa28ead87b150fd7b0c494ee0cfe58a83", "controller": "Frozen v26 RGB action algorithm; run in an isolated clean checkout with the exact same common flags", "max_wall_s": 350},
+    {"id": "candidate-rgb", "source_sha": "to_be_frozen_by_integration_owner", "controller": "Revised RGB action algorithm with ACT omitted; same candidate source as candidate-act", "max_wall_s": 350},
+    {"id": "candidate-act", "source_sha": "same_as_candidate-rgb", "controller": "New 128px/history4 ACT checkpoint for beam loaded motion, RGB independent stop admission; not pure ACT and not RGB final refinement", "max_wall_s": 1000, "additional_flags": ["--carry-act-model", "TO_BE_FROZEN_ACT_MODEL_DIR", "--carry-act-python", "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act/bin/python", "--carry-act-stop-mode", "rgb_guarded"]}
+  ],
+  "finite_first_study": {
+    "trial_order": ["holdout-a/reference-rgb-v26", "holdout-a/candidate-rgb", "holdout-a/candidate-act", "holdout-b/reference-rgb-v26", "holdout-b/candidate-rgb", "holdout-b/candidate-act"],
+    "planned_physical_trials": 6,
+    "maximum_serial_trial_wall_s_before_cleanup": 3400,
+    "aggregate_wall_budget_s_including_cleanup": 3600,
+    "execution": "Run one local MuJoCo physics job at a time; no cloud, no concurrent physics load, no automatic retry. Commit/freeze candidate and baseline sources first, then run all preregistered trial IDs despite ordinary task failures while budget remains. Reserve 200 s for setup/cleanup and record any unstarted IDs explicitly if the hard aggregate limit is reached.",
+    "budget_stop": "A run is capped at its arm's max_wall_s. If an ACT run exceeds 1000 s or the aggregate 3600 s deadline, stop its own session cleanly, preserve timeout/error and mark remaining preregistered trials unstarted. Do not silently replace a failed arm or extend budgets. A serious source/input invariant failure pauses the cohort for audit.",
+    "after_first_study": "Treat this as feasibility screening. For speed/reliability qualification, preregister at least three further new pose cases and same-source repeated trials after reviewing this cohort; do not use these inspected two cases as new holdout again."
+  },
+  "measurements": {
+    "per_trial_denominator": "Report planned/started/completed/physical-success/protocol-complete/timeout/launch-failure counts by arm and case. Include all ordinary failures; do not average failed run wall time into successful completion time.",
+    "primary_success": "Both beam and box lifted, carried with sampled clearance, fully inside target slots, released with stable floor support for the referee tail, protocol complete; zero artificial weld steps.",
+    "contact": "Record robot-robot sampled contact count, obstacle contact steps, loaded cargo floor contact samples and continuous-clearance sampling gap. Zero measured contacts is required for acceptance, with explicit sampled-only limitation.",
+    "speed": "Whole mission wall_s and SIM_s, motion SIM/wall, successful paired-case wall ratio candidate-rgb/reference-rgb, stage durations including approach/fine/carry/resource wait, issued commands, expired leases and observation age. Compare successful complete pairs only and report failures beside them.",
+    "act": "For every started ACT trial report ACT inference request count, response latency distribution, invalid/timeout/error count, carry entries, model stop proposals and RGB admission/rejection, premature stop, decision-budget exhaustion, attachment loss and final placement. External LLM planning call count remains a separate zero-expected field.",
+    "typed_failures": ["setup_or_launch", "plan_or_binding", "approach_or_fine", "grasp_or_attachment", "beam_transport_or_tracking", "box_transport_or_tracking", "premature_act_stop", "release_or_stable_support", "contact_or_weld", "model_inference", "wall_or_decision_budget", "artifact_or_audit"],
+    "artifacts": ["manager manifest", "result.json", "scene-manifest.json", "episode-setup-only.json", "committed-plan.json", "issued-commands.json", "pair-decisions.json", "solo-decisions.json", "evaluation-only.json", "referee-only.jsonl", "execution.mp4", "model request/response hashes and timings", "new TensorBoard snapshot with failure rows"]
+  },
+  "first_study_readout": {
+    "action_algorithm_directional_gate": "Candidate RGB must physically and procedurally succeed on both new cases with no contact/weld violation; compare its two matched successful wall times against reference v26 and require both faster plus at least 10 percent lower two-case median before describing a directional speed gain. Otherwise report exact failure and timing without a speed claim.",
+    "act_feasibility_gate": "Candidate ACT rgb_guarded must enter carry and finish both new cases with both cargos physically placed/released, no false model stop proposal outside RGB arrival, no contact/weld violation, and all inference requests accounted for. If it fails, keep failure as a model/controller result, including whether the shared RGB entry failed before ACT inference.",
+    "interpretation_limit": "Two pose cases cannot establish a reliability rate or isolate each code change. Candidate ACT versus candidate RGB measures the cost and task behavior of substituting learned loaded-beam motion under the same candidate runtime; it is not evidence that the new ACT improves over a missing old checkpoint. Successful baseline and candidate runs on different source bundles must retain exact bundle differences."
+  }
+}

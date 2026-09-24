@@ -252,19 +252,51 @@ def export_execution(src, w, result, max_images):
                 'action' in row for values in commands.values() for row in rows(values))
             meta['command_count_scope'] = 'recorded raw action rows only; excludes setup descriptions and internal macro servo commands'
     carries = []
+    act_predictions = []
     if family == 'dispatch-act':
         entries = rows(src.read('pair-decisions.json', required=True))
         carries = [(i, row) for i, row in enumerate(entries) if row.get('kind') == 'act_carry']
-        completed = sum(bool(obj(decision)) for _, row in carries
+        stale = [(i, row) for i, row in enumerate(entries) if row.get('kind') == 'act_stale_prediction']
+        inference_errors = [(i, row) for i, row in enumerate(entries)
+                            if row.get('kind') == 'act_inference_error']
+        act_predictions = sorted(carries + stale + inference_errors)
+        accepted_responses = sum(bool(obj(decision)) for _, row in carries
+                                 for decision in obj(row.get('decisions')).values())
+        stale_responses = sum(bool(obj(decision)) for _, row in stale
+                              for decision in obj(row.get('decisions')).values())
+        error_responses = sum(bool(obj(decision)) for _, row in inference_errors
+                              for decision in obj(row.get('decisions')).values())
+        verified_error_attempts = sum(bool(obj(inp).get('wire_sha256'))
+                                      for _, row in inference_errors
+                                      for inp in obj(row.get('inputs')).values())
+        unverified_error_attempts = sum(not bool(obj(inp).get('wire_sha256'))
+                                        for _, row in inference_errors
+                                        for inp in obj(row.get('inputs')).values())
+        attempted = sum(len(obj(row.get('inputs'))) for _, row in carries + stale) + verified_error_attempts
+        completed = sum(bool(obj(decision)) for _, row in act_predictions
                         for decision in obj(row.get('decisions')).values())
         meta['act_carry_decision_rows'] = len(carries)
+        meta['act_stale_prediction_rows'] = len(stale)
+        meta['act_inference_error_rows'] = len(inference_errors)
+        meta['accepted_act_responses'] = accepted_responses
+        meta['stale_act_responses'] = stale_responses
+        meta['error_act_responses'] = error_responses
+        meta['verified_error_act_attempts'] = verified_error_attempts
+        meta['unverified_error_act_attempts'] = unverified_error_attempts
         meta['completed_act_responses'] = completed
+        meta['attempted_act_requests'] = attempted
+        meta['act_request_verification_complete'] = not unverified_error_attempts
+        metrics['execution/act_accepted_responses'] = accepted_responses
+        metrics['execution/act_stale_responses'] = stale_responses
+        metrics['execution/act_error_responses'] = error_responses
+        metrics['execution/act_verified_error_attempts'] = verified_error_attempts
+        metrics['execution/act_unverified_error_attempts'] = unverified_error_attempts
         # llm_calls excludes local ACT. Preserve an explicit total if supplied.
         if not finite(result.get('model_calls')):
             external = result.get('llm_calls')
-            metrics['result/model_calls'] = completed + (external if finite(external) else 0)
-            meta['model_calls_scope'] = ('completed ACT responses plus recorded llm_calls'
-                                        if finite(external) else 'completed ACT responses only; external calls unknown')
+            metrics['result/model_calls'] = attempted + (external if finite(external) else 0)
+            meta['model_calls_scope'] = ('recorded ACT wire attempts plus recorded llm_calls'
+                                        if finite(external) else 'recorded ACT wire attempts only; external calls unknown')
         if not finite(metrics['result/commands']):
             issued = src.read('issued-commands.json')
             if isinstance(issued, dict):
@@ -327,18 +359,39 @@ def export_execution(src, w, result, max_images):
         selected = sample_indices(len(carries), max_images)
         # Carry prerequisites are not inferred from ACT being configured.
         call_index = 0
-        for j, (i, row) in enumerate(carries):
-            w.scalar('execution/sim_time_s', row.get('sim_time_s'), j)
+        accepted_index = 0
+        for i, row in act_predictions:
+            is_stale = row.get('kind') == 'act_stale_prediction'
+            is_error = row.get('kind') == 'act_inference_error'
+            j = accepted_index
+            if not is_stale and not is_error:
+                w.scalar('execution/sim_time_s', row.get('sim_time_s'), j)
             for slot, inp in obj(row.get('inputs')).items():
                 inp = obj(inp); rid = slug(inp.get('physical_robot_id', slot)); decision = obj(obj(row.get('decisions')).get(slot))
                 if decision:
                     w.scalar('execution/model_latency_s', inp.get('inference_wall_s'), call_index)
-                    call_index += 1
-                w.text('decisions/' + rid, {'input': inp, 'decision': decision, 'permission': row.get('permission'), 'source_index': i}, j)
-                for k in ('forward', 'left', 'turn'): w.scalar('issued_prediction/' + rid + '/' + k, obj(decision.get('action')).get(k), j)
-                if type(decision.get('done')) is bool: w.scalar('claims/' + rid + '/done', int(decision['done']), j)
-                if j in selected:
-                    images = obj(inp.get('images'));emit_images(w, src, {rid + '/own': images.get('own'), rid + '/top': images.get('top')}, j)
+                elif is_error:
+                    w.scalar('execution/act_inference_error_wall_s', inp.get('inference_wall_s'), call_index)
+                w.scalar('execution/act_request_outcome', 2 if is_error else 1 if is_stale else 0, call_index)
+                w.scalar('execution/act_stale_prediction', int(is_stale), call_index)
+                call_index += 1
+                if is_stale:
+                    w.text('stale_decisions/' + rid,
+                           {'input': inp, 'decision': decision, 'source_index': i,
+                            'received_at_s': row.get('received_at_s')}, call_index)
+                elif is_error:
+                    w.text('inference_errors/' + rid,
+                           {'input': inp, 'decision': decision, 'source_index': i,
+                            'received_at_s': row.get('received_at_s'),
+                            'error': row.get('error')}, call_index)
+                else:
+                    w.text('decisions/' + rid, {'input': inp, 'decision': decision, 'permission': row.get('permission'), 'source_index': i}, j)
+                    for k in ('forward', 'left', 'turn'): w.scalar('issued_prediction/' + rid + '/' + k, obj(decision.get('action')).get(k), j)
+                    if type(decision.get('done')) is bool: w.scalar('claims/' + rid + '/done', int(decision['done']), j)
+                    if j in selected:
+                        images = obj(inp.get('images'));emit_images(w, src, {rid + '/own': images.get('own'), rid + '/top': images.get('top')}, j)
+            if not is_stale and not is_error:
+                accepted_index += 1
     return meta, {k: v for k, v in metrics.items() if finite(v)}
 
 

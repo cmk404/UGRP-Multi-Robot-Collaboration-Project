@@ -325,6 +325,10 @@ class ImageRoute:
         self.box_center=None;self.box_delta=np.zeros(2);self.box_previous=None
         self.box_background=None;self.box_origin=None;self.box_background_sha=None
         self.box_pan_frames={}
+        # TOP RGB robot features are linked to cargo only after both have
+        # independently shown the same motion while the cargo is visible.
+        self.box_carrier_points=None
+        self.box_carrier_occluded_frames=0
         from harness.dispatch_beam_tracker import CarriedBeamTracker
         self.beam_tracker=CarriedBeamTracker()
 
@@ -334,7 +338,113 @@ class ImageRoute:
         if phase=='verify_lift':self.box_pan_frames={}
         self.box_pan_frames[phase]=jpeg
 
-    def observe(self,jpeg):
+    @staticmethod
+    def _tracked_points(old,new,points):
+        if points is None or len(points)==0:
+            return np.empty((0,2)),np.empty(0),np.empty((0,2)),np.empty((0,2))
+        forward,ok,errors=cv2.calcOpticalFlowPyrLK(old,new,points,None,winSize=(15,15),maxLevel=2)
+        if forward is None:
+            return np.empty((0,2)),np.empty(0),np.empty((0,2)),np.empty((0,2))
+        backward,back_ok,_=cv2.calcOpticalFlowPyrLK(new,old,forward,None,winSize=(15,15),maxLevel=2)
+        if backward is None:
+            return np.empty((0,2)),np.empty(0),np.empty((0,2)),np.empty((0,2))
+        cycle=np.linalg.norm(backward-points,axis=2).ravel()
+        delta=(forward-points).reshape(-1,2)
+        valid=(ok.ravel()>0)&(back_ok.ravel()>0)&(cycle<1)&(np.linalg.norm(delta,axis=1)<20)&(errors.ravel()<30)
+        return delta[valid],cycle[valid],points.reshape(-1,2)[valid],forward.reshape(-1,2)[valid]
+
+    @staticmethod
+    def _consistent_group(delta,*,minimum):
+        if len(delta)<minimum:return None
+        groups=np.linalg.norm(delta[:,None,:]-delta[None,:,:],axis=2)<1.5
+        inliers=groups[np.argmax(groups.sum(axis=1))]
+        return inliers if inliers.sum()>=max(minimum,.6*len(delta)) else None
+
+    @staticmethod
+    def _spread_supported(points):
+        # Distributed corners on the chassis, not a tiny painted patch.
+        return len(points)>=8 and np.all(np.ptp(points,axis=0)>=[20,15])
+
+    def _link_carrier_features(self,frame,center):
+        """Associate a visible cargo with the neighbouring robot by RGB comotion."""
+        self.box_carrier_points=None
+        if self.box_previous is None or self.box_center is None or self.box_background is None:
+            return
+        cargo_motion=center-self.box_center
+        if not 2<=np.linalg.norm(cargo_motion)<20:return
+        old=self.box_previous
+        h,w=old.shape[:2]
+        px,py=self.box_center
+        x0=max(0,math.floor(px-120));x1=min(w,math.ceil(px+120)+1)
+        y0=max(0,math.floor(py-120));y1=min(h,math.ceil(py+120)+1)
+        old_roi=old[y0:y1,x0:x1]
+        old_hsv=cv2.cvtColor(old_roi,cv2.COLOR_BGR2HSV)
+        # This robot's orange chassis trim has independent texture. Restrict
+        # candidates to the moving foreground around the previously observed
+        # cargo; cyan and the static yellow apron cannot establish identity.
+        orange=cv2.inRange(old_hsv,np.array((4,95,40),np.uint8),np.array((25,255,255),np.uint8))>0
+        foreground=cv2.absdiff(old_roi,self.box_background[y0:y1,x0:x1]).max(axis=2)>25
+        yy,xx=np.ogrid[y0:y1,x0:x1]
+        radius=np.hypot(xx-px,yy-py)
+        mask=np.uint8(orange&foreground&(radius>=25)&(radius<=120))*255
+        old_gray=cv2.cvtColor(old,cv2.COLOR_BGR2GRAY)
+        new_gray=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+        points=cv2.goodFeaturesToTrack(old_gray[y0:y1,x0:x1],100,.01,4,mask=mask)
+        if points is not None:points+=np.float32([x0,y0])
+        delta,_,_,current=self._tracked_points(old_gray,new_gray,points)
+        if len(delta)<8:return
+        # The visual cargo motion, not the issued command, selects the robot.
+        agreeing=np.linalg.norm(delta-cargo_motion,axis=1)<1.5
+        if agreeing.sum()<max(8,.6*len(delta)) or not self._spread_supported(current[agreeing]):return
+        self.box_carrier_points=current[agreeing].astype(np.float32).reshape(-1,1,2)
+
+    def _track_carrier_under_occlusion(self,frame,own_attachment):
+        """Use a previously linked TOP robot only while fresh own RGB holds cargo."""
+        if (self.box_carrier_points is None or self.box_previous is None
+                or self.box_carrier_occluded_frames>=3):
+            raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
+        if (not isinstance(own_attachment,tuple) or len(own_attachment)!=3):
+            raise RuntimeError('dispatch box occlusion requires current own RGB attachment evidence')
+        evidence,current_own,validated_own=own_attachment
+        if (not isinstance(evidence,dict) or evidence.get('evidence')!='visual_attachment'
+                or evidence.get('attached') is not True
+                or evidence.get('camera_pan_delta_pwm')!=0
+                or not isinstance(current_own,str) or current_own!=validated_own):
+            raise RuntimeError('dispatch box occlusion requires fresh validated own RGB attachment')
+        if np.array_equal(frame,self.box_previous):
+            raise RuntimeError('dispatch box occlusion has stale TOP RGB')
+        old_gray=cv2.cvtColor(self.box_previous,cv2.COLOR_BGR2GRAY)
+        new_gray=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+        delta,cycle,_,current=self._tracked_points(old_gray,new_gray,self.box_carrier_points)
+        inliers=self._consistent_group(delta,minimum=8)
+        if inliers is None or not self._spread_supported(current[inliers]):
+            raise RuntimeError('dispatch linked carrier motion ambiguous in TOP RGB')
+        # Preserve the linked robot's colour and foreground identity in the
+        # new image; tracking onto a stationary floor or a peer fails closed.
+        hsv=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
+        orange=cv2.inRange(hsv,np.array((4,95,40),np.uint8),np.array((25,255,255),np.uint8))>0
+        foreground=cv2.absdiff(frame,self.box_background).max(axis=2)>25
+        pixels=np.rint(current[inliers]).astype(int)
+        inside=(pixels[:,0]>=0)&(pixels[:,0]<frame.shape[1])&(pixels[:,1]>=0)&(pixels[:,1]<frame.shape[0])
+        if not np.all(inside) or np.mean(orange[pixels[:,1],pixels[:,0]]&foreground[pixels[:,1],pixels[:,0]])<.6:
+            raise RuntimeError('dispatch linked carrier appearance unresolved in TOP RGB')
+        motion=np.median(delta[inliers],axis=0)
+        if np.linalg.norm(motion)<1:
+            raise RuntimeError('dispatch linked carrier has no fresh TOP RGB motion')
+        self.box_carrier_points=current[inliers].astype(np.float32).reshape(-1,1,2)
+        self.box_carrier_occluded_frames+=1
+        return self.box_center+motion, {
+            'method':'linked TOP RGB carrier motion during cargo occlusion',
+            'linked_feature_count':int(len(delta)),
+            'consistent_features':int(inliers.sum()),
+            'max_cycle_error_px':float(cycle[inliers].max()),
+            'motion_px':motion.tolist(),
+            'occluded_frames':self.box_carrier_occluded_frames,
+            'own_attachment':'fresh validated own RGB required',
+            'uncertainty':'cargo silhouette hidden; proxy center cannot confirm delivery',
+        }
+
+    def observe(self,jpeg, *, own_attachment=None):
         frame=decode(jpeg);h,w=frame.shape[:2]
         if self.obj=='beam':
             feature=self.beam_tracker.observe(jpeg)
@@ -386,6 +496,12 @@ class ImageRoute:
             if len(choices)==1:
                 i=choices[0];center=centers[i];x,y,bw,bh=stats[i,:4]
                 bounds=np.array([[x,y],[x+bw,y+bh]])
+            elif self.box_previous is not None and self.box_carrier_occluded_frames:
+                # Once the silhouette was lost, unrelated corners near the
+                # proxy must not silently re-establish cargo identity. Only a
+                # fresh cyan component can end the bounded occlusion window.
+                center,tracking=self._track_carrier_under_occlusion(frame,own_attachment)
+                bounds=np.array([center-12,center+12])
             elif self.box_previous is not None:
                 # Follow actual prior RGB appearance when same-colour floor
                 # merges the component. Own-camera attachment must independently
@@ -398,31 +514,34 @@ class ImageRoute:
                 feature_mask[old>90]=0
                 points=cv2.goodFeaturesToTrack(old,30,.01,3,mask=feature_mask)
                 if points is None or len(points)<3:
-                    raise RuntimeError('dispatch box appearance unresolved in TOP RGB')
-                forward,ok,errors=cv2.calcOpticalFlowPyrLK(old,gray,points,None,winSize=(15,15),maxLevel=2)
-                backward,back_ok,_=cv2.calcOpticalFlowPyrLK(gray,old,forward,None,winSize=(15,15),maxLevel=2)
-                cycle=np.linalg.norm(backward-points,axis=2).ravel()
-                delta=(forward-points).reshape(-1,2)
-                valid=(ok.ravel()>0)&(back_ok.ravel()>0)&(cycle<1)&(np.linalg.norm(delta,axis=1)<20)&(errors.ravel()<30)
-                delta=delta[valid];cycle=cycle[valid]
-                if len(delta)<3:raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
+                    if self.box_carrier_points is None:
+                        raise RuntimeError('dispatch box appearance unresolved in TOP RGB')
+                    delta,cycle=np.empty((0,2)),np.empty(0)
+                else:
+                    delta,cycle,_,_=self._tracked_points(old,gray,points)
+                if len(delta)<3 and self.box_carrier_points is None:
+                    raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
                 # A painted edge may supply stationary corners; require a
                 # majority of independently tracked corners to share motion.
-                groups=np.linalg.norm(delta[:,None,:]-delta[None,:,:],axis=2)<1.5
-                inliers=groups[np.argmax(groups.sum(axis=1))]
-                if inliers.sum()<max(3,.6*len(delta)):
-                    raise RuntimeError('dispatch box motion ambiguous in TOP RGB')
-                motion=np.median(delta[inliers],axis=0)
-                center=self.box_center+motion
-                bounds=np.array([center-12,center+12])
-                tracking={'method':'bidirectional RGB feature motion; own attachment independently required',
-                          'feature_count':int(len(delta)),'consistent_features':int(inliers.sum()),
-                          'max_cycle_error_px':float(cycle[inliers].max()),'motion_px':motion.tolist()}
+                inliers=self._consistent_group(delta,minimum=3)
+                if inliers is not None:
+                    motion=np.median(delta[inliers],axis=0)
+                    center=self.box_center+motion
+                    bounds=np.array([center-12,center+12])
+                    tracking={'method':'bidirectional RGB feature motion; own attachment independently required',
+                              'feature_count':int(len(delta)),'consistent_features':int(inliers.sum()),
+                              'max_cycle_error_px':float(cycle[inliers].max()),'motion_px':motion.tolist()}
+                else:
+                    center,tracking=self._track_carrier_under_occlusion(frame,own_attachment)
+                    bounds=np.array([center-12,center+12])
             else:raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
             if self.box_origin is None:self.box_origin=center.copy()
             tracking['static_background']={'reference_sha256':self.box_background_sha,
                 'active':bool(suppress_background),'rgb_difference_threshold':20,
                 'initial_occupied_radius_px':30,'origin_px':self.box_origin.tolist()}
+            if tracking['method']!='linked TOP RGB carrier motion during cargo occlusion':
+                self._link_carrier_features(frame,center)
+                self.box_carrier_occluded_frames=0
             self.box_delta=np.zeros(2) if self.box_center is None else center-self.box_center
             self.box_center=center.copy();self.box_previous=frame.copy()
 
@@ -471,6 +590,11 @@ class ImageRoute:
         tolerance=4 if self.index==len(self.points)-1 else 6
         ready=float(np.max(np.abs(error))) <= tolerance
         slot_evidence=None
+        if (self.obj=='box' and self.index==len(self.points)-1
+                and tracking['method']=='linked TOP RGB carrier motion during cargo occlusion'):
+            # The proxy can guide travel, but hidden cargo cannot establish
+            # final slot containment or authorize release.
+            raise RuntimeError('dispatch box delivery requires fresh cargo silhouette in TOP RGB')
         if self.obj=='box' and self.index==len(self.points)-1:
             # Delivery is containment in an authored floor region. Continuing
             # toward its exact centre can push the carrier into released cargo.

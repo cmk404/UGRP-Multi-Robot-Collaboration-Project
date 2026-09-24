@@ -1,0 +1,50 @@
+{
+  "schema": "ugrp.dispatch.action_algorithm_diagnosis.v1",
+  "candidate": "camera-only linked carrier motion for temporarily occluded solo cargo",
+  "source_run": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v26-repeat",
+  "source_revision": "83f92c3c691311fae95dacc089fd76da3910b943",
+  "source_diagnosis": "experiments/2026-09-24-faster-dispatch/v26-box-tracking-diagnosis.json",
+  "failure": "At solo decision 285 the cyan cargo component is absent from TOP RGB and cargo-patch KLT has only two moving corners versus two stationary corners, below the existing three-point and 60-percent motion agreement gates.",
+  "design": {
+    "prior_visual_link": "While cargo motion is independently resolved from TOP RGB, link distributed orange carrier-chassis corners only when at least eight foreground corners within 25-120 px of prior cargo match the cargo motion within 1.5 px and constitute at least 60 percent of candidate corners.",
+    "occlusion": "If the cargo silhouette and its direct RGB feature motion are unresolved, propagate its last visually established center only from bidirectionally tracked linked robot corners, requiring at least eight corners, 60-percent motion agreement, 20x15 px spatial spread, current orange foreground appearance, and a fresh own-RGB attachment check for the same observation.",
+    "limits": "Retain existing cargo KLT three-point and 60-percent gates. At most three consecutive cargo-occluded frames are allowed; only a unique fresh cyan component restores direct cargo identity. A robot proxy cannot confirm final delivery or release. No command-history pose propagation, simulator state, changed camera/FOV, or weld is used."
+  },
+  "saved_replay": {
+    "previous_decision": 284,
+    "failed_decision": 285,
+    "prior_cargo_center_px": [828.7489429820668, 344.6551153009588],
+    "current_own_rgb_attachment": {
+      "method": "compare_box_comotion on saved own RGB 284 to 285 with dispatch saturation calibration",
+      "attached": true,
+      "mask_iou": 0.9969330500978195
+    },
+    "linked_carrier_features": 26,
+    "consistent_carrier_features": 26,
+    "max_bidirectional_cycle_error_px": 0.10227972269058228,
+    "observed_carrier_motion_px": [13.25128173828125, 0.0263671875],
+    "proxy_cargo_center_px": [842.000224720348, 344.6814824884588],
+    "expected_from_previous_cargo_motion_px": [841.780742298473, 344.6013738458807],
+    "scope": "Saved-image control decision only; this is not a completed physical replay or measured cargo pose."
+  },
+  "negative_checks": [
+    "Missing, detached, mismatched, or stale own-RGB attachment evidence rejects the occlusion fallback.",
+    "A TOP image mixing stationary and moving carrier patches rejects carrier motion.",
+    "Replacing the carrier with static background rejects carrier appearance.",
+    "Repeating an occluded TOP image cannot silently regain direct cargo identity.",
+    "A proxy cargo center cannot confirm final slot containment."
+  ],
+  "saved_success_regressions": "One accepted direct TOP RGB cargo-tracking transition each from native-v19-full (319 to 320), native-v25-full (283 to 284), and native-v26-full (284 to 285) retained the recorded cargo centers within 0.01 px.",
+  "verification": {
+    "command": "PYTHONPATH=.:tests /Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python -m pytest -q tests/test_dispatch_carrier_occlusion.py tests/test_dispatch_skill_binding.py tests/test_dispatch_box_identity.py tests/test_dispatch_solo_cadence.py tests/test_dispatch_execution.py tests/test_dispatch_solo_budget.py tests/test_visual_box_skill.py",
+    "result": "112 passed in 2.08s",
+    "microbenchmark": "The isolated carrier-link helper averaged 0.00196 s over 50 repeats of saved 283-to-284 RGB on this Mac; native end-to-end timing remains unverified.",
+    "compileall": "passed for harness/dispatch_skill_binding.py and harness/solo_box_transport.py",
+    "git_diff_check": "passed"
+  },
+  "fixtures": [
+    "tests/fixtures/dispatch_carrier_occlusion/provenance.json",
+    "tests/fixtures/dispatch_carrier_regression/provenance.json"
+  ],
+  "remaining": "The changed build needs fresh native repeated trials and held-out condition checks before claiming improved full-run reliability or timing. The three-frame proxy assumes the linked carrier and visually attached cargo continue translating together; rotation, long occlusion, or uncertain own attachment stops movement."
+}
