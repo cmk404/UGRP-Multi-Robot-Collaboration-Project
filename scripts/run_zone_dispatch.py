@@ -219,7 +219,7 @@ def run(args):
                     return zc.build_plan_request(rid, request_id=request_id, task=task, frame=frames[rid],
                                                  agreement=context, ctx=ctx[rid])
                 def fixture(rid, request_id, context=context):
-                    return _fixture_plan_reply(rid, request_id, context, goal, labels)
+                    return _fixture_plan_reply(rid, request_id, context, goal, labels, args.fixture_plan)
                 from harness.three_robot_plan import validate_plan_reply
                 replies = team.ask(ROBOTS, build,
                     lambda raw, rq, c=context: validate_plan_reply(raw, rq, c, plan_validator=agreement.plan_validator),
@@ -346,12 +346,17 @@ def dynamic_round(zone, team, task, labels, goal, waiting, active, own_jobs, boa
             'idle_all': not retry and set(waiting) - set(accepted) <= set(idle)}
 
 
-def _fixture_plan_reply(rid, request_id, context, goal, labels):
+def _fixture_plan_reply(rid, request_id, context, goal, labels, plan_file=None):
     proposal = context['proposal']
     if proposal:
         return {'request_id': request_id, 'proposal_id': proposal['proposal_id'],
                 'plan_hash': proposal['plan_hash'], 'accept': True, 'plan': proposal['plan'],
                 'reason': 'scripted protocol fixture, not visual reasoning', 'message': ''}
+    if plan_file:
+        # Diagnostic: propose a recorded committed plan to replay its execution.
+        plan = json.loads(Path(plan_file).read_text())['plan']
+        return {'request_id': request_id, 'proposal_id': None, 'plan_hash': None, 'accept': True,
+                'plan': plan, 'reason': f'scripted fixture proposing recorded plan {plan_file}', 'message': ''}
     jobs, unused = [], sorted(labels)
     for zone, kinds in sorted(goal.items()):
         for kind, count in sorted(kinds.items()):
@@ -398,11 +403,15 @@ def parser():
     p.add_argument('--max-wall-s', type=float, default=3600.)
     p.add_argument('--contact-profile', default='local_contact_fine')
     p.add_argument('--record-replay', action='store_true')
+    p.add_argument('--fixture-plan', help='diagnostic, fixture plan_first only: propose this recorded '
+                   'committed-plan.json instead of the scripted split')
     return p
 
 
 def main(argv=None):
     args = parser().parse_args(argv)
+    if args.fixture_plan and (args.mode != 'fixture' or args.coordination != 'plan_first'):
+        raise SystemExit('--fixture-plan needs --mode fixture --coordination plan_first')
     result = run(args)
     return 0 if result.get('error') is None else 1
 

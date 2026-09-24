@@ -28,26 +28,84 @@ PEER_CLEARANCE_M = .14
 # A drive phase (to the box, or carrying to the slot) that has not arrived
 # within this SIM time ends the job as teacher_path_blocked.
 DRIVE_PHASE_LIMIT_S = 120.
+# Two driving robots can block each other (one parked beside the other's goal,
+# or head-on in a lane between box columns) and both wait forever. A robot that
+# has had no path this long, while a path exists without peers, asks the peers
+# on that path to step aside: an idle peer, or a blocked driving peer of lower
+# priority (larger robot id). A yield lasts at most YIELD_LIMIT_S.
+YIELD_AFTER_S = 2.
+YIELD_LIMIT_S = 20.
+DRIVE_PHASES = ('to_box', 'carry')
 
 
 def _wrap(angle):
     return (angle + math.pi) % (2*math.pi) - math.pi
 
 
+class PeerDisc(tuple):
+    """(x, y, r) keep-out around another robot. It is never released: when the
+    robot already overlaps it, it only stops the robot getting any closer."""
+
+
+def _no_closer(start, disc, radius):
+    x, y, r = disc
+    d = math.hypot(start[0]-x, start[1]-y)
+    return (x, y, d-radius-1e-3) if d < r+radius else (x, y, r)
+
+
 def plan_path(start, goal, bounds, discs, *, grid=GRID_M, radius=ROBOT_RADIUS_M, budget=40000):
     """8-connected grid A* for a disc robot; discs are (x, y, r) keep-outs.
 
-    Only when no path exists: a keep-out whose clearance margin (not the
+    Only when no path exists: a box keep-out whose clearance margin (not the
     obstacle itself) already overlaps the robot, e.g. a box it just dropped
     next to itself, walls in the start cell, so that margin is released.
     Releasing it on every replan would let the robot plough through boxes.
+    Peer robots (PeerDisc) are never released; an overlapped one only forbids
+    getting closer, so two robots that met head-on do not push each other.
     """
-    path = _astar(start, goal, bounds, discs, grid, radius, budget)
+    peers = [_no_closer(start, d, radius) for d in discs if isinstance(d, PeerDisc)]
+    boxes = [d for d in discs if not isinstance(d, PeerDisc)]
+    path = _astar(start, goal, bounds, boxes + peers, grid, radius, budget)
     if path is None:
-        freed = [(x, y, r) for x, y, r in discs if not r <= math.hypot(start[0]-x, start[1]-y) < r+radius]
-        if len(freed) != len(discs):
-            path = _astar(start, goal, bounds, freed, grid, radius, budget)
+        freed = [(x, y, r) for x, y, r in boxes if not r <= math.hypot(start[0]-x, start[1]-y) < r+radius]
+        if len(freed) != len(boxes):
+            path = _astar(start, goal, bounds, freed + peers, grid, radius, budget)
     return path
+
+
+def retreat_point(start, avoid, bounds, discs, *, clear, grid=GRID_M, radius=ROBOT_RADIUS_M, budget=20000):
+    """Nearest reachable grid point at least `clear` from every point of `avoid`.
+
+    Keep-outs the robot already overlaps only forbid getting closer to them.
+    """
+    x0, x1, y0, y1 = bounds
+    discs = [_no_closer(start, d, radius) for d in discs]
+    def free(p):
+        if not (x0+radius <= p[0] <= x1-radius and y0+radius <= p[1] <= y1-radius):
+            return False
+        return all(math.hypot(p[0]-x, p[1]-y) >= r+radius for x, y, r in discs)
+    def point(c):
+        return (x0+c[0]*grid, y0+c[1]*grid)
+    start_c = (round((start[0]-x0)/grid), round((start[1]-y0)/grid))
+    frontier = [(0., start_c)]
+    cost = {start_c: 0.}
+    steps = 0
+    while frontier and steps < budget:
+        steps += 1
+        d, current = heapq.heappop(frontier)
+        p = point(current)
+        if current != start_c and min(math.hypot(p[0]-ax, p[1]-ay) for ax, ay in avoid) >= clear:
+            return p
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                nxt = (current[0]+dx, current[1]+dy)
+                if (not dx and not dy) or not free(point(nxt)):
+                    continue
+                new = d + math.hypot(dx, dy)*grid
+                if new < cost.get(nxt, math.inf):
+                    cost[nxt] = new
+                    heapq.heappush(frontier, (new, nxt))
+    return None
 
 
 def _astar(start, goal, bounds, discs, grid, radius, budget):
@@ -136,6 +194,8 @@ class TeacherRobot:
         self.stuck_since = None
         self.last_xy = None
         self.outcome = None
+        self.blocked_since = None
+        self.yield_req = None
 
     # --- ground truth (teacher only) ---
     def pose(self):
@@ -166,6 +226,7 @@ class TeacherRobot:
 
     def _set(self, phase, now, **detail):
         self.phase, self.phase_started, self.path = phase, now, None
+        self.blocked_since = None
         self.log('phase', self.rid, now, phase=phase, job=self.job and self.job['job_id'], **detail)
 
     def _finish(self, outcome, now, **detail):
@@ -184,8 +245,11 @@ class TeacherRobot:
                                   radius=CARRY_RADIUS_M if carrying else ROBOT_RADIUS_M)
             self.path_goal, self.replan_at = tuple(goal), now + 1.
             if self.path is None:
+                if self.blocked_since is None:
+                    self.blocked_since = now
                 self.port.hold(now)
                 return False
+            self.blocked_since = None
         while len(self.path) > 1 and math.hypot(self.path[0][0]-x, self.path[0][1]-y) < .12:
             self.path.pop(0)
         target = self.path[0] if len(self.path) > 1 else goal
@@ -224,8 +288,45 @@ class TeacherRobot:
         path = [solve_grip_ik(bx, by, float(z), pitch) for z in np.linspace(HOVER_Z_M, GRASP_Z_M, 8)[1:]]
         return hover, path
 
+    @property
+    def carrying(self):
+        return self.busy and self.phase in ('lift', 'carry', 'align_slot', 'release')
+
+    def request_yield(self, requester, avoid, now):
+        self.yield_req = {'by': requester, 'job': requester.job, 'phase': requester.phase,
+                          'avoid': avoid, 'until': now + YIELD_LIMIT_S, 'target': None, 'started': now}
+        self.path, self.blocked_since = None, None
+        self.log('yield', self.rid, now, to=requester.rid, own_phase=self.phase)
+
+    def _yield(self, now, discs_for):
+        """Step off a higher-priority peer's path; True while yielding."""
+        req = self.yield_req
+        other = req['by']
+        if now >= req['until'] or other.job is not req['job'] or other.phase != req['phase']:
+            self.yield_req, self.path, self.blocked_since = None, None, None
+            self.port.hold(now)
+            self.log('yield_end', self.rid, now, to=other.rid, held_s=round(now-req['started'], 2))
+            return False
+        carrying = self.carrying
+        discs = discs_for(self, exclude=self.job['box_body'] if carrying else None, carrying=carrying)
+        radius = CARRY_RADIUS_M if carrying else ROBOT_RADIUS_M
+        if req['target'] is None:
+            clear = PEER_CLEARANCE_M + (CARRY_RADIUS_M if other.phase == 'carry' else ROBOT_RADIUS_M) + GRID_M
+            req['target'] = retreat_point(self.pose()[:2], req['avoid'], self.map['bounds_m'], discs,
+                                          clear=clear, radius=radius)
+            self.log('yield_target', self.rid, now, to=other.rid,
+                     target=req['target'] and [round(v, 3) for v in req['target']])
+            if req['target'] is None:
+                self.yield_req = None
+                return False
+        if self._drive_to(req['target'], self.pose()[2], now, discs, carrying=carrying, tol=.05):
+            self.port.hold(now)
+        return True
+
     def tick(self, now, discs_for):
         done = self.arm.tick(now)
+        if self.yield_req and self._yield(now, discs_for):
+            return
         if not self.busy:
             return
         job = self.job
@@ -311,7 +412,7 @@ class ZoneTeacherExecutor:
         self.robots = {rid: TeacherRobot(rid, world, port, static_map, log) for rid, port in ports.items()}
         self.next_tick = 0.
 
-    def discs_for(self, robot, *, exclude=None, carrying=False):
+    def discs_for(self, robot, *, exclude=None, carrying=False, peers=True):
         discs = []
         held = {r.job['box_body'] for r in self.robots.values()
                 if r.job and r.phase in ('lift', 'carry', 'align_slot', 'release')}
@@ -322,11 +423,35 @@ class ZoneTeacherExecutor:
             p = self.world.data.body(body).xpos
             discs.append((float(p[0]), float(p[1]), BOX_CLEARANCE_M))
         for other in self.robots.values():
-            if other is robot:
+            if other is robot or not peers:
                 continue
             x, y, _ = other.pose()
-            discs.append((x, y, PEER_CLEARANCE_M))
+            discs.append(PeerDisc((x, y, PEER_CLEARANCE_M)))
         return discs
+
+    def resolve_blocks(self, now):
+        """Ask peers standing on a blocked robot's peer-free path to step aside."""
+        for robot in sorted(self.robots.values(), key=lambda r: r.rid):
+            if (robot.blocked_since is None or now - robot.blocked_since < YIELD_AFTER_S
+                    or robot.yield_req or robot.phase not in DRIVE_PHASES or robot.path_goal is None):
+                continue
+            carrying = robot.phase == 'carry'
+            radius = CARRY_RADIUS_M if carrying else ROBOT_RADIUS_M
+            discs = self.discs_for(robot, exclude=robot.job['box_body'] if carrying else None,
+                                   carrying=carrying, peers=False)
+            avoid = plan_path(robot.pose()[:2], robot.path_goal, robot.map['bounds_m'], discs, radius=radius)
+            if avoid is None:
+                continue
+            clear = PEER_CLEARANCE_M + radius
+            for other in sorted(self.robots.values(), key=lambda r: r.rid):
+                if other is robot or other.yield_req:
+                    continue
+                ox, oy, _ = other.pose()
+                if min(math.hypot(px-ox, py-oy) for px, py in avoid) >= clear:
+                    continue
+                if not other.busy or (other.phase in DRIVE_PHASES and other.blocked_since is not None
+                                      and robot.rid < other.rid):
+                    other.request_yield(robot, avoid, now)
 
     def tick(self, now):
         if now + 1e-9 < self.next_tick:
@@ -336,3 +461,4 @@ class ZoneTeacherExecutor:
         self.next_tick = now + CONTROL_S
         for robot in self.robots.values():
             robot.tick(now, self.discs_for)
+        self.resolve_blocks(now)

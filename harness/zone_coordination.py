@@ -57,7 +57,10 @@ team_board.active, and a zone that still needs that colour (goal minus
 rgb_view.zone_counts_seen minus active peer claims to that zone and colour).
 Prefer jobs that keep the team busy and avoid peers' current paths. If
 conflict is present, you and a peer claimed the same box or the same last need:
-agree who takes it (read peer_messages) and choose again.
+agree who takes it (read peer_messages) and choose again. Everyone answers at
+once, so if you all yield nobody takes it: unless a peer's message already
+gives it to a specific robot, the conflicting robot with the lowest robot_id
+keeps it and the others choose a different job or null.
 Reply JSON only: {{"request_id": copied, "claim": {{"box": label or null,
 "zone": "A|B|C" or null}}, "reason": "brief", "message": "brief message to
 peers"}}. reason/message under 240 characters.'''

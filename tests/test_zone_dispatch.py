@@ -245,3 +245,71 @@ def test_plan_prompt_requires_copying_the_accepted_plan_and_failed_jobs_free_the
     slots.give_back(taken[0])
     with pytest.raises(ValueError):
         slots.give_back(taken[0])
+
+
+class _FakeWorld:
+    """Poses only, for the teacher's yield rule (the teacher reads truth)."""
+    def __init__(self, robots, boxes):
+        self.robots, self.boxes = dict(robots), dict(boxes)
+        self.data = SimpleNamespace(body=lambda name: SimpleNamespace(xpos=(*self.boxes[name], .02)))
+
+    def robot(self, rid):
+        x, y = self.robots[rid]
+        return SimpleNamespace(base_xyz=lambda: (x, y, .03), base_rpy=lambda: (0., 0., 0.))
+
+
+def _teacher_team(robots, boxes, jobs):
+    from scripts.zone_teacher import ZoneTeacherExecutor
+    world = _FakeWorld(robots, {b: xy for b, xy in boxes.items()})
+    port = SimpleNamespace(hold=lambda now: None, apply=lambda cmd, now: None)
+    log = []
+    team = ZoneTeacherExecutor(world, {r: port for r in robots}, za.authored_map(),
+                               {b: {'body_name': b} for b in boxes}, lambda *a, **k: log.append((a, k)))
+    for rid, box in jobs.items():
+        team.robots[rid].assign({'job_id': f'{rid}-1', 'box_body': box, 'slot_xy': (3., -2.)}, 0.)
+    return world, team, log
+
+
+BOXES_Z2G8 = {'cyan-1': (-.197, -1.45), 'green-1': (-.198, -2.649), 'red-1': (.401, -1.453),
+              'cyan-2': (.998, -1.449), 'cyan-3': (1.601, -2.05), 'red-2': (1.6, -2.649), 'red-3': (1.599, -1.45)}
+
+
+def test_blocked_teacher_robots_break_a_mutual_block_by_priority():
+    # Z2-G8-plan: r1 and r3 each parked beside the other's pregrasp goal and
+    # both waited out the 120 s drive limit.
+    from scripts.zone_teacher import YIELD_AFTER_S, plan_path, retreat_point, PEER_CLEARANCE_M, ROBOT_RADIUS_M
+    robots = {'r1': (-.68, -2.51), 'r2': (4.2, -2.7), 'r3': (-.68, -1.49)}
+    world, team, log = _teacher_team(robots, BOXES_Z2G8, {'r1': 'cyan-1', 'r3': 'green-1'})
+    for now in (0., .1):
+        for rid in ('r1', 'r3'):
+            team.robots[rid].tick(now, team.discs_for)
+    assert team.robots['r1'].blocked_since == team.robots['r3'].blocked_since == 0.
+    team.resolve_blocks(YIELD_AFTER_S + .1)
+    req = team.robots['r3'].yield_req
+    assert req and req['by'] is team.robots['r1'] and team.robots['r1'].yield_req is None
+    assert team.robots['r2'].yield_req is None
+    spot = retreat_point(robots['r3'], req['avoid'], za.authored_map()['bounds_m'],
+                         team.discs_for(team.robots['r3']), clear=PEER_CLEARANCE_M+ROBOT_RADIUS_M+.05)
+    assert spot is not None
+    world.robots['r3'] = spot
+    assert plan_path(robots['r1'], team.robots['r1'].path_goal, za.authored_map()['bounds_m'],
+                     team.discs_for(team.robots['r1'])) is not None
+
+
+def test_robots_that_met_head_on_never_plan_closer_to_each_other():
+    # Z2-G8-dyn: in the lane left by yellow-1 r1 and r2 came within 0.19 m.
+    # Releasing the overlapped peer margin let both drive into each other.
+    from scripts.zone_teacher import plan_path, GRASP_RADIUS_M
+    robots = {'r1': (-.03, -2.17), 'r2': (-.21, -2.12), 'r3': (4.24, -2.65)}
+    world, team, _ = _teacher_team(robots, BOXES_Z2G8, {'r1': 'green-1', 'r2': 'red-1'})
+    for rid, box, peer in (('r1', 'green-1', 'r2'), ('r2', 'red-1', 'r1')):
+        goal = (BOXES_Z2G8[box][0]-GRASP_RADIUS_M-.10, BOXES_Z2G8[box][1])
+        path = plan_path(robots[rid], goal, za.authored_map()['bounds_m'], team.discs_for(team.robots[rid]))
+        now = math.dist(robots[rid], robots[peer])
+        assert path and min(math.dist(q, robots[peer]) for q in path[1:]) >= now - 1e-6
+
+
+def test_claim_prompt_breaks_an_all_yield_conflict_by_robot_id():
+    # Z2-G8-dyn: r1 and r3 both yielded green-1 to each other three times.
+    assert 'if you all yield nobody takes it' in ' '.join(zc._CLAIM.split())
+    assert 'lowest robot_id' in zc._CLAIM
