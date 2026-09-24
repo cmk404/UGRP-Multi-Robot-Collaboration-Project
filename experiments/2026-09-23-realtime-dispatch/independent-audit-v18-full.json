@@ -1,0 +1,365 @@
+{
+  "schema": "ugrp.independent_realtime_dispatch_v18_full_audit.v1",
+  "checked_at_utc": "2026-09-23T15:54:56.308178+00:00",
+  "source_sha": "81446dd0d3b97942b714442b086a4892a04b71b9",
+  "bundle_sha256": "a6891549ad88372a168fca34813ae96dd5c387447cc2ec4b352d3c96d5b891e4",
+  "manager": {
+    "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260924-004832-dispatch-dcbe74b6/manifest.json",
+    "sha256": "63c10167a2f630720713a0c22a3fd2f6b81610710752687fe636101ff12d1a12",
+    "status": "process_completed",
+    "exit_code": 0,
+    "source_dirty": false,
+    "source_changed_during_run": false,
+    "inputs_changed_during_run": false,
+    "input_before_after_equal": true,
+    "source_tree_before_sha256": "ba80ef46527eca1714ba20d6ec97ac153878ffda9a32fe6302b0f331ed31cb31",
+    "source_tree_after_sha256": "ba80ef46527eca1714ba20d6ec97ac153878ffda9a32fe6302b0f331ed31cb31",
+    "finalization_errors": []
+  },
+  "result": {
+    "phase": "FINISHED",
+    "error": null,
+    "physical_success": true,
+    "protocol_complete": true,
+    "wall_s": 256.39910383299866,
+    "timing": {
+      "scene_and_observer_setup_wall_s": 1.6925017499888781,
+      "scope": "output-only SIM/wall measurements; wall_s includes finalization",
+      "control_end_sim_s": 251.67999999577654,
+      "control_wall_s": 254.72794679099752,
+      "motion_wall_s": 247.52647995800362,
+      "motion_sim_s": 246.47999999577593,
+      "motion_sim_to_wall": 0.9957722504581924,
+      "cleanup_wall_s": 1.6711582919961074
+    },
+    "llm_calls": 0,
+    "realtime_control_stats": {
+      "solo_backpressure": 0,
+      "solo_stale_rgb": 0,
+      "solo_decisions": 510,
+      "pair_backpressure": 0,
+      "pair_decisions": 213,
+      "max_decision_age_s": 0.4997499999881825,
+      "solo_total_sim_s": 246.37724999577836,
+      "solo_active_sim_s": 206.44024999672274,
+      "solo_resource_wait_sim_s": 39.936999999055615,
+      "solo_resource_waiting": false,
+      "solo_resource_wait_intervals": 1,
+      "solo_active_budget_s": 300.0,
+      "pair_stage_stale_rgb": 0,
+      "pair_stage_samples": 337
+    },
+    "plan_replay_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+    "overlap_selection": {
+      "mode": "auto",
+      "enabled": true,
+      "reason": "independent_open_routes",
+      "plan_hash": "c2f420b7d1eb537334502b0eebe14161ffc0468f058bb5230e3d31c39281e45c",
+      "beam_route": "north",
+      "box_route": "south",
+      "beam_resource": "north_gate",
+      "box_resource": "south_gate",
+      "overlap_start": "transit"
+    }
+  },
+  "referee": {
+    "physical_success": true,
+    "cargo": {
+      "beam": {
+        "max_lift_m": 0.07775074674589322,
+        "displacement_m": 1.6716505941831352,
+        "lift_observed_by_referee": true,
+        "inside_slot_at_end": true,
+        "released_supported_stable": true,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 673,
+          "floor_contact_samples": 0,
+          "window_s": [
+            119.43999999890359,
+            186.7899999973157
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999764952,
+          "first_floor_contact_s": null
+        },
+        "physical_success": true
+      },
+      "box": {
+        "max_lift_m": 0.06847419441844449,
+        "displacement_m": 2.302791030511845,
+        "lift_observed_by_referee": true,
+        "inside_slot_at_end": true,
+        "released_supported_stable": true,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 939,
+          "floor_contact_samples": 0,
+          "window_s": [
+            144.38724999831368,
+            238.2807499960981
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999763531,
+          "first_floor_contact_s": null
+        },
+        "physical_success": true
+      }
+    },
+    "simultaneous_loaded_motion_s": 7.599999999820284,
+    "weld_steps": 0,
+    "robot_robot_contact_samples": 0,
+    "all_three_body_motion_sim_s": 19.899999999566376
+  },
+  "core_files": {
+    "result.json": {
+      "sha256": "7ccb272ae6435349cc998740d0861c167e575b8e4b4459e824658a2866e53c21",
+      "bytes": 7094975,
+      "matches_receipt": true
+    },
+    "issued-commands.json": {
+      "sha256": "233f3a2162a782a8b6d1c34785e2583c446d43c917d2590f3c1a17c63b0e12bf",
+      "bytes": 733990,
+      "matches_receipt": true
+    },
+    "referee-only.jsonl": {
+      "sha256": "eefbbbe2d03e275f4569891631899113eae537356d1cd8ed3fdc4ffcc706100e",
+      "bytes": 3720684,
+      "matches_receipt": true
+    },
+    "pair-decisions.json": {
+      "sha256": "97a7c5b2c17bcd17a823d215dc1d8ac6dfa69da220ffb1271740826b4313c3b1",
+      "bytes": 10729955,
+      "matches_receipt": true
+    },
+    "solo-decisions.json": {
+      "sha256": "2886ded9e5eebb31f3b50b2db23d998835cc9952568632a63f99626e2edb9cac",
+      "bytes": 2673272,
+      "matches_receipt": true
+    },
+    "execution.mp4": {
+      "sha256": "2902c162e43b4880c5c18a30538f47e1e871a3e594414b48d0b067c66922059d",
+      "bytes": 2813936,
+      "matches_receipt": true
+    },
+    "execution.frames.json": {
+      "sha256": "7e872e5c162d1347461e2edc1dfb32b47ea705e655f8216a261670318082df6c",
+      "bytes": 346330,
+      "matches_receipt": true
+    },
+    "native-observer.json": {
+      "sha256": "f6ceb8b31d5a93fb64c67cc7e666417fbc30d98ea01d62fd4e44b2613bffeda6",
+      "bytes": 78,
+      "matches_receipt": true
+    },
+    "evaluation-only.json": {
+      "sha256": "c74dfadbf96411a7099f37ac8d5f98f8d43af4ca1256b22f05e3a0f3fc5d34ed",
+      "bytes": 5836,
+      "matches_receipt": true
+    }
+  },
+  "pair_carry": {
+    "count": 213,
+    "analysis_backend_counts": {
+      "spawn_cpu": 213
+    },
+    "permission_go": 213,
+    "frame_ids_strict_increasing": true,
+    "observed_at_monotone": true,
+    "age_s": {
+      "count": 213,
+      "min": 0.2817499999933375,
+      "median": 0.3159999999925276,
+      "p95": 0.38324999999093734,
+      "max": 0.4997499999881825,
+      "sum": 68.83199999837237
+    },
+    "period_s": {
+      "count": 212,
+      "min": 0.19999999999527063,
+      "median": 0.33999999999196007,
+      "p95": 0.3799999999910142,
+      "max": 0.45999999998912244,
+      "sum": 67.14999999841213
+    },
+    "effective_lease_s": {
+      "count": 213,
+      "min": 0.10025000001181184,
+      "median": 0.25,
+      "p95": 0.25,
+      "max": 0.25,
+      "sum": 51.99050000015266
+    },
+    "waypoints": {
+      "0": {
+        "count": 42,
+        "span_sim_s": 11.42999999972973,
+        "start_error_px": [
+          0.0,
+          -89.63191472145786
+        ],
+        "end_error_px": [
+          0.09572528519544221,
+          -5.630248550079358
+        ]
+      },
+      "1": {
+        "count": 111,
+        "span_sim_s": 34.50999999918395,
+        "start_error_px": [
+          367.66354596694407,
+          -5.631345300014914
+        ],
+        "end_error_px": [
+          4.125798529905751,
+          -4.13544378906829
+        ]
+      },
+      "2": {
+        "count": 2,
+        "span_sim_s": 0.3499999999917236,
+        "start_error_px": [
+          4.086301081902548,
+          0.11092468308228831
+        ],
+        "end_error_px": [
+          4.078583419581264,
+          0.11087385741674893
+        ]
+      },
+      "3": {
+        "count": 58,
+        "span_sim_s": 19.9899999995273,
+        "start_error_px": [
+          113.2771570253982,
+          0.11092468308228831
+        ],
+        "end_error_px": [
+          3.817643651755475,
+          -0.38844144895276145
+        ]
+      }
+    },
+    "pending_renewal": {
+      "count": 139,
+      "duration_s": {
+        "count": 139,
+        "min": 0.013750000013857289,
+        "median": 0.04450000001314436,
+        "p95": 0.062250000012710416,
+        "max": 0.07825000001233207,
+        "sum": 6.023000001828947
+      },
+      "invariant_errors": []
+    },
+    "command_coverage": {
+      "r1": {
+        "with_renewal": {
+          "moving_command_union_s": 53.44425000092623,
+          "positive_gap_count": 154,
+          "positive_gap_sum_s": 12.6602499975248,
+          "positive_gap_median_s": 0.05987499998440171
+        },
+        "original_only": {
+          "moving_command_union_s": 48.82049999990011,
+          "positive_gap_count": 155,
+          "positive_gap_sum_s": 17.24949999854347,
+          "positive_gap_median_s": 0.08999999999196007
+        }
+      },
+      "r3": {
+        "with_renewal": {
+          "moving_command_union_s": 53.44425000092623,
+          "positive_gap_count": 154,
+          "positive_gap_sum_s": 12.6602499975248,
+          "positive_gap_median_s": 0.05987499998440171
+        },
+        "original_only": {
+          "moving_command_union_s": 48.82049999990011,
+          "positive_gap_count": 155,
+          "positive_gap_sum_s": 17.24949999854347,
+          "positive_gap_median_s": 0.08999999999196007
+        }
+      }
+    },
+    "command_coverage_scope": "Issued command interval union, not measured robot speed; renewal attributed retrospectively with same physical run."
+  },
+  "solo": {
+    "rows": 577,
+    "actual_decisions": 510,
+    "resource_drops": 67,
+    "phase_before_counts": {
+      "approach": 151,
+      "lower": 16,
+      "close": 1,
+      "lift": 15,
+      "verify_lift": 1,
+      "attachment_left": 1,
+      "attachment_right": 1,
+      "attachment_home": 1,
+      "carry": 368,
+      "release": 16,
+      "open": 1,
+      "retract": 1,
+      "verify_release": 1,
+      "release_ground_left": 1,
+      "release_ground_right": 1,
+      "release_ground_home": 1
+    },
+    "nominal_admission_rows": 355,
+    "shortened_admissions": 0,
+    "budget_margin_decisions": 90
+  },
+  "backend_and_cleanup": {
+    "spawn_cpu_carry_records": 213,
+    "native_observer": {
+      "mode": "isolated_latest_state",
+      "published": 6371,
+      "busy_skips": 5
+    },
+    "manager_process_completed": true,
+    "manager_finalization_errors": [],
+    "scope": "Backend label and manager cleanup receipt; does not independently prove no leaked OS process."
+  },
+  "video": {
+    "requested_fps": 10,
+    "written_frames": 2517,
+    "captured_frames": 1276,
+    "repeated_frames": 1241,
+    "error": null,
+    "ffprobe_decoded_frames": 2517,
+    "media_range_206_matches_source": true,
+    "media_id": "48ec28c8f9f3f94b9112"
+  },
+  "tensorboard": {
+    "path": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단/v18-full",
+    "manifest_complete": true,
+    "scalars": {
+      "result/wall_s": 256.39910888671875,
+      "result/commands": 1771.0,
+      "result/model_calls": 0.0,
+      "result/input_tokens": 0.0,
+      "result/output_tokens": 0.0,
+      "result/model_latency_s": 0.0,
+      "result/recorded_raw_commands": 1711.0,
+      "evaluation/simultaneous_loaded_motion_s": 7.599999904632568,
+      "evaluation/robot_robot_contact_samples": 0.0,
+      "evaluation/reported_success": 1.0,
+      "claims/protocol_complete": 1.0,
+      "claims/plan_committed": 1.0
+    }
+  },
+  "comparison_to_v17": {
+    "v17_first_wall_s": 312.37089370899776,
+    "v17_repeat_wall_s": 213.65587179199792,
+    "v18_wall_s": 256.39910383299866,
+    "v17_first_first_waypoint_sim_s": 14.509999999656898,
+    "v17_repeat_first_waypoint_sim_s": 8.54999999979782,
+    "v18_first_waypoint_sim_s": 11.42999999972973,
+    "v17_first_strict_loaded_s": 11.09999999973752,
+    "v17_repeat_strict_loaded_s": 2.199999999947977,
+    "v18_strict_loaded_s": 7.599999999820284,
+    "scope": "Different source and asynchronous timing; one v18 run. Do not treat backend pair_bind timing as comparable; whole mission and physical outcomes only."
+  },
+  "errors": []
+}

@@ -1,0 +1,103 @@
+{
+  "scope": "Read-only replay of saved own RGB and post-run referee samples; no physical re-execution.",
+  "v14_source_sha": "427d6ad5a1c5d426d6c19441ef0695a6f4a74c00",
+  "helper_source": {
+    "worktree_head_sha": "427d6ad5a1c5d426d6c19441ef0695a6f4a74c00",
+    "integrated_commit_sha": null,
+    "run_dispatch_skills_sha256": "74fd21c4c41f02cbae5f225e661b739d91d813d250bee34ce220c8be924dd598",
+    "test_dispatch_realtime_sha256": "fd3f18b78dadee45e34dc50d85ee92d8457147573b4871f6d111b696b9f94ad3",
+    "note": "The helper is present as uncommitted worktree content; fill integrated_commit_sha after the root commit."
+  },
+  "evidence": {
+    "last_accepted_before_wait": 343,
+    "first_accepted_after_wait": 459,
+    "denied_navigation_indices": [
+      344,
+      458
+    ],
+    "unadvanced_previous_observation_gap_s": 42.022749999006294,
+    "replayed_saved_own_rgb_indices": [
+      344,
+      459
+    ],
+    "replayed_frame_count": 116,
+    "ordered_frame_sha256_digest": "00f39b5f86b9d8e89cff405ec212a3feb178d6fccdd811792b5fce7c5db3717e",
+    "landmark_frames": {
+      "174": {
+        "capture_frame_id": 1274,
+        "observed_at_s": 131.83799999861043,
+        "own_rgb_path": "rgb/solo-174-own.jpg",
+        "own_rgb_sha256": "5c80c689b498c813feab4f28e6de77210fc9947361595dd9f773a89dd6f83601"
+      },
+      "343": {
+        "capture_frame_id": 1747,
+        "observed_at_s": 179.20849999749026,
+        "own_rgb_path": "rgb/solo-343-own.jpg",
+        "own_rgb_sha256": "022615c559bcf4c685e5192b8f1278309440ac69bc8cd9873de1a6c8d9d23aa2"
+      },
+      "344": {
+        "capture_frame_id": 1750,
+        "observed_at_s": 179.51649999748298,
+        "own_rgb_path": "rgb/solo-344-own.jpg",
+        "own_rgb_sha256": "75421e4b350d9dc20c49e360f85d7dcfed98559451d65b23b8dac30107c892d0"
+      },
+      "458": {
+        "capture_frame_id": 2161,
+        "observed_at_s": 220.89849999650443,
+        "own_rgb_path": "rgb/solo-458-own.jpg",
+        "own_rgb_sha256": "2a09a0d3d6126056426ba6b6a99dc1bf0551c56d664d73a767d9d0dbb54f48b9"
+      },
+      "459": {
+        "capture_frame_id": 2165,
+        "observed_at_s": 221.23124999649656,
+        "own_rgb_path": "rgb/solo-459-own.jpg",
+        "own_rgb_sha256": "ab62edf8afd7009abe91de20e75013149160d68355ed94085b3778b886cb3021"
+      }
+    },
+    "original_343_to_459": {
+      "attached": false,
+      "centroid_delta_px": 8.089579083996053,
+      "limit_px": 8.0,
+      "mask_iou": 0.9404984165620599,
+      "reason": "CYAN_OBJECT_DID_NOT_COMOVE_WITH_CAMERA"
+    },
+    "sequential_replay": {
+      "failed_frame_indices": [],
+      "max_adjacent_centroid_delta_px": 0.3339513455860457,
+      "final_adjacent_centroid_delta_px": 0.11503815748018352,
+      "min_absolute_anchor_iou": 0.8760351183373996,
+      "final_absolute_anchor_centroid_delta_px": 19.491237746528444,
+      "absolute_anchor_limit_px": 25.6,
+      "visual_guard": "VisualBoxSkill._compare_attachment; unchanged strict pairwise and existing carry absolute-anchor checks"
+    },
+    "post_run_referee_only": {
+      "samples_in_wait_window": 417,
+      "floor_contact_samples": 0,
+      "robot_contact_samples": 417,
+      "landmarks": {
+        "start": {
+          "sim_time_s": 179.80024999747627,
+          "box_z_m": 0.08301846583711002,
+          "box_r2_xy_distance_m": 0.16610291877274566,
+          "box_floor_contact": false,
+          "box_robot_contact": true
+        },
+        "end": {
+          "sim_time_s": 221.5002499964902,
+          "box_z_m": 0.08165732378065071,
+          "box_r2_xy_distance_m": 0.16611111429493142,
+          "box_floor_contact": false,
+          "box_robot_contact": true
+        }
+      },
+      "scope": "Diagnostic only; not passed to actor/controller and no claim between samples."
+    }
+  },
+  "reproduce_command": "UGRP_V14_REPLAY_DIR=/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260923/native-v14-full /Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python -m pytest -q tests/test_dispatch_realtime.py::test_saved_v14_denied_carry_frames_pass_existing_visual_guard_in_sequence",
+  "verification": {
+    "result": "passed",
+    "physical_reexecution": false,
+    "saved_rgb_replay": true
+  },
+  "integrated_commit_sha": "efe19d03d1b0d6e803f74c02cfdf11d3baa74def"
+}

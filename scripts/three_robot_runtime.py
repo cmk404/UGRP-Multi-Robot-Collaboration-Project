@@ -8,6 +8,7 @@ import json
 import time
 from urllib.request import urlopen
 
+from harness.communication_observer import CommunicationObserver
 from harness.gemini_proxy import GeminiProxyCompleter
 from harness.research_execution_recovery import request_with_recovery
 from harness.three_robot_plan import (ROBOTS, TeamAgreement, build_plan_request,
@@ -46,6 +47,7 @@ class ThreeRobotRuntime:
         self.started = time.monotonic()
         self.wires = {r: 0 for r in ROBOTS}
         self.clients = {}
+        self.communication = CommunicationObserver(output, run_id=run_id, mode=mode)
         self.pool = ThreadPoolExecutor(max_workers=3, thread_name_prefix='three-rgb')
         self.inspection_future = None
         self.inspection_result = None
@@ -117,14 +119,23 @@ class ThreeRobotRuntime:
         self.rounds.append({'turn': turn, 'sim_time_s': sim_time, 'agreement': context,
             'images': refs(frames), 'own_history': copy.deepcopy(own_history),
             'replies': replies, 'stops': {r: v[1] for r, v in batch.items()}, 'committed': committed})
-        for sender, reply in replies.items():
-            if reply and reply['message']:
-                for receiver in ROBOTS:
-                    if sender != receiver:
-                        self.inbox[receiver].append({'from_robot': sender, 'turn': turn, 'message': reply['message']})
+        self.deliver_replies(batch, phase='planning', turn=turn, sim_time=sim_time)
         self.save()
         print(json.dumps({'team_turn': turn, 'committed': committed, 'stops': self.rounds[-1]['stops']}), flush=True)
         return committed
+
+    def deliver_replies(self, batch, *, phase, turn, sim_time):
+        """Forward validated peer text and record only the completed deliveries."""
+        for sender, (reply, _stop, records) in batch.items():
+            delivered = []
+            if reply and reply.get('message'):
+                for receiver in ROBOTS:
+                    if sender != receiver:
+                        self.inbox[receiver].append({'from_robot': sender, 'turn': turn,
+                                                     'message': reply['message']})
+                        delivered.append(receiver)
+            self.communication.record_reply(sender, reply, records, phase=phase,
+                turn=turn, sim_time_s=sim_time, delivered_to=delivered)
 
     def start_inspection(self, frame, sim_time):
         if self.inspection_future is not None or self.agreement.committed is None:

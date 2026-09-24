@@ -1,0 +1,128 @@
+{
+  "scope": "read-only native-v9 pair_stage_sample latency audit; no source edit or physical run",
+  "source_sha": "5f14753a2d90902caa2ad0e4c2111129496ed8ae",
+  "input": {
+    "path": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260923/native-v9/pair-decisions.json",
+    "sha256": "e22aa363e8678b02b335cdd073a33da588e3c0a2a143aa03480280b184c1eb50",
+    "issued_commands_sha256": "561f85fe80dc3232e3faf1093247b61e94b65823452ff4069262dbc766f9ac59"
+  },
+  "observed": {
+    "coarse_samples": 120,
+    "pair_stale_rgb": 0,
+    "pair_backpressure": 0,
+    "age_sim_s": {
+      "sum": 32.48000000011679,
+      "mean": 0.2706666666676399,
+      "median": 0.26000000000124146,
+      "p90": 0.32000000000152795,
+      "p95": 0.34000000000162345,
+      "max": 0.43999999999897454
+    },
+    "age_max_margin_to_ttl_sim_s": 0.16000000000102543,
+    "frame_observed_gap_sim_s": {
+      "sum": 56.04000000020079,
+      "mean": 0.47092436974958646,
+      "median": 0.46000000000219643,
+      "p90": 0.5200000000024829,
+      "p95": 0.5400000000025784,
+      "max": 0.6399999999985084
+    },
+    "paired_issued_gap_sim_s": {
+      "sum": 55.9200000002015,
+      "mean": 0.4699159663882479,
+      "median": 0.46000000000219643,
+      "p90": 0.5200000000024829,
+      "p95": 0.5400000000025784,
+      "max": 0.6399999999985084
+    },
+    "issue_matches_received_sim_s": true,
+    "paired_commands": 120,
+    "coarse_both_ready": 0
+  },
+  "wall_components_s": {
+    "snapshot_submit_wall_s": {
+      "sum": 0.04036133397312369,
+      "mean": 0.00033634444977603074,
+      "median": 0.00030197900923667476,
+      "p90": 0.0004888627925538459,
+      "p95": 0.0005474579935253132,
+      "max": 0.0007400830072583631
+    },
+    "render_wait_wall_s": {
+      "sum": 18.78692549596599,
+      "mean": 0.15655771246638323,
+      "median": 0.1427268124971306,
+      "p90": 0.19775435000337896,
+      "p95": 0.23488913364708422,
+      "max": 0.29540566699870396
+    },
+    "jpeg_encode_wall_s": {
+      "sum": 0.6093339240323985,
+      "mean": 0.005077782700269987,
+      "median": 0.004766875004861504,
+      "p90": 0.005887503904523328,
+      "p95": 0.0061352107062702995,
+      "max": 0.012074832993675955
+    },
+    "image_record_wall_s": {
+      "sum": 0.18592337405425496,
+      "mean": 0.0015493614504521248,
+      "median": 0.0012701875020866282,
+      "p90": 0.0023554919927846643,
+      "p95": 0.0028392205553245723,
+      "max": 0.011795583995990455
+    },
+    "pair_bind_wall_s": {
+      "sum": 1.2793878350639716,
+      "mean": 0.010661565292199764,
+      "median": 0.010460625002451707,
+      "p90": 0.011858358002791647,
+      "p95": 0.012648511856241385,
+      "max": 0.021599458006676286
+    },
+    "perception_wall_s": {
+      "sum": 8.13010579800175,
+      "mean": 0.06775088165001458,
+      "median": 0.06509293749695644,
+      "p90": 0.07498704139870825,
+      "p95": 0.07808086039149202,
+      "max": 0.2142850840027677
+    }
+  },
+  "wall_component_total_s": {
+    "sum": 29.032037761091487,
+    "mean": 0.24193364800909573,
+    "median": 0.22898539600282675,
+    "p90": 0.2884696339999209,
+    "p95": 0.3181531511574576,
+    "max": 0.4059062920132419
+  },
+  "wall_component_shares": {
+    "snapshot_submit_wall_s": 0.0013902342751570694,
+    "render_wait_wall_s": 0.6471101219475569,
+    "jpeg_encode_wall_s": 0.02098832775868813,
+    "image_record_wall_s": 0.006404075924130549,
+    "pair_bind_wall_s": 0.04406813760688191,
+    "perception_wall_s": 0.28003910248758546
+  },
+  "render_wait_age_correlation": 0.936383730136755,
+  "motion_window": {
+    "motion_sim_s": 56.48000000020289,
+    "motion_wall_s": 56.48176162499294,
+    "wall_s_total": 64.74888429199927
+  },
+  "cadence_model": {
+    "lease_sim_s": 0.2,
+    "ttl_sim_s": 0.6,
+    "ideal_max_hz_one_new_decision_per_lease": 5.0,
+    "observed_hz_from_119_issue_gaps": 2.1280400572169387,
+    "observed_hz_from_120_commands_per_motion_window": 2.1246458923436427,
+    "observed_max_lease_duty_bound": 0.42492917846872846,
+    "serial_mean_gap_estimate_sim_s": 0.4706666666676399,
+    "serial_estimated_hz": 2.1246458923468814,
+    "perfect_overlap_single_inflight_mean_age_hz_ceiling": 3.694581280774893,
+    "perfect_overlap_single_inflight_mean_age_duty_ceiling": 0.7389162561549786
+  },
+  "interpretation": "render_wait includes single-GL-thread queue plus rendering; logs cannot split those. Component wall spans are a paired critical-path breakdown and may overlap owner physics/solo activity, so sums are not an additive decomposition of total mission wall time. TTL constrains observation age at commit, not the command rate by itself. Ideal 5Hz/100% duty requires each new frame decision ready within 0.2 SIM seconds while preserving fresh-RGB feedback; current serial loop awaits capture and perception before each 0.2 SIM drive.",
+  "remaining_bound": "At coarse, render_wait median 0.143 wall s and 64.7% of measured paired spans; perception median 0.065 wall s (28.0% of spans). Pair bind median 0.0105 wall s. Prior carry beam cache does not target this unladen coarse phase. Behavior reason for 120-budget failure is separate from latency."
+}

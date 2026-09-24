@@ -35,6 +35,8 @@ Ubuntu 24.04는 먼저 [설치 안내](ubuntu_quickstart.md)를 따른다. 창�
 
 실행기는 저장소 또는 기본 worktree의 `.venv-sim-worker-mac`, `.venv-dev`를 찾는다. 외부 환경은 `UGRP_SIM_PYTHON=/absolute/path/bin/python`으로 지정한다. macOS의 네이티브 창은 MuJoCo가 제공하는 **`mjpython`**으로 실행해야 하며 실행기가 자동 선택한다. 환경을 활성화했다면 `mjpython -m scripts.sim_cli ...`(Mac 창), `python -m scripts.sim_cli ...`(Linux 또는 headless)를 직접 써도 된다.
 
+출하 실행의 실험 옵션 `dispatch --realtime-control`은 일반 Python에서 물리 owner를 실행하고, 별도 `mjpython` 프로세스에 MuJoCo 창을 연다. 기존 실행기에 이 옵션을 추가하면 된다. RGB의 실제 촬영 SIM 시각과 판단 지연을 저장하고, 오래된 판단은 정지 처리한다. 녹화가 밀리면 이전 프레임을 표시하고 화면에 반복 표시 및 `execution.frames.json`에 횟수를 남기므로 영상 길이를 줄여 빠르게 보이게 하지 않는다. 이 옵션은 open RGB 경로의 별도 검증 후보이며 ACT·회전 운반의 검증을 대신하지 않는다. `result.json`의 `timing`은 물리 진행/실제 시간과 준비·정리 시간을 나눠 기록하며 최종 `wall_s`는 정리까지 포함한다. 실행 구조와 기록 해석은 [실시간 출하 실행](realtime_dispatch.md), 상세 근거는 [실시간 실행 검증](../experiments/2026-09-23-realtime-dispatch/README.md)을 따른다.
+
 ## 터미널에서 구성하기
 
 저장소 루트에서 실행한다. 인자 없는 실행은 LLM 공동 계획·지도 장면 보기·기타 기존 실행을 선택하는 메뉴를 연다. 공동 계획의 기본 장면은 **기존 공동 출하장(dispatch/shared_crossing, seed11)**이다. 수동 기본 설정은 `configs/simulation/local.json`이다. `init`과 `new`도 같은 연구 장면을 기본으로 사용한다. [전체 구성·누락 검토](simulation_inventory.md)에 기존 자산과 연결 범위를 정리했다. 지도 준비·ACT 학습·실행 이력·TensorBoard를 연결하는 명령은 [표준 관리 절차](simulation_management.md#지도학습실행-결과를-잇는-절차)를 따른다.
@@ -97,6 +99,8 @@ bash scripts/open_simulation.command dispatch --plan-replay outputs/my-run/commi
 ```
 
 `dispatch`는 **기존** `run_dispatch_e2e.py --executor skills`의 진입점이다. 세 로봇의 자기 RGB·공용 TOP·자기 명령 이력·허용 정적 지도·동료 메시지로 계획을 협상하고, 동일 plan ID/hash에 전원 합의해야 `SkillBindings`가 로봇별 프로그램을 만든다. 담당 물체, 운반 파트너, 경로, 목적지, 선행 작업은 plan에서 가져온다. pair RGB 접근·파지·운반과 solo box 스킬을 공통 물리 시계에서 진행하며, 공동 동작·점유 자원·선행 작업의 기존 허가를 유지한다. 별도 프로세스 세 개의 실시간 분산 제어를 뜻하지 않는다.
+
+MuJoCo 출하 창 왼쪽 아래에서 최근 동료 메시지와 발신·수신 로봇을 볼 수 있다. 전체 대화는 출력 폴더의 `team/conversation.jsonl`과 터미널 `peer_delivery` 행에 남는다. 현재 새 자연어 대화는 주로 계획 협상에서 발생하며, 저장 계획 재생과 RGB 운반 중에는 새 대화가 없을 수 있다. [대화 관찰·원문 기록](communication_observer.md)을 참고한다.
 
 자연어는 **실행 전 계획 지시**다. 현재 계약은 기존 beam 1개·box 1개, 로봇 3대, dock_a/b, north/south 경로다. 자유로운 새 작업이나 임의 맵에 필요한 스킬을 자동으로 만드는 기능은 없다. 목적지처럼 반드시 지켜야 하는 조건은 `--required-dock`으로도 지정한다. 실행 중 새 자연어 지시로 이미 승인된 plan을 바꾸는 기능은 아직 없다. 새 작업은 종료 후 다시 실행한다. 저장된 plan 재생에는 새 `--task`를 함께 넣을 수 없다.
 

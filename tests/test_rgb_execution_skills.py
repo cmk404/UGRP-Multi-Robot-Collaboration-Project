@@ -12,6 +12,7 @@ from types import SimpleNamespace
 import pytest
 
 from harness.rgb_execution_contract import SkillCapability
+from harness.rgb_execution_bundle import RUNNABLE_ID
 from harness.rgb_execution_port import RGBExecutionPort
 from harness.rgb_skill_execution import (INITIAL_COMMANDS, SKILLS, MacroQueue, PairActorSkill, RGBSkillUnsupported,
     RGBSkillExecutionPort, _ActorFacade, _RelativeEndpoint, _SimulationClock, backend_descriptor, map_support_matrix,
@@ -591,7 +592,7 @@ def test_all_suite_maps_are_explicitly_unsupported_and_never_remapped():
     for row in matrix[1:]:
         with pytest.raises(ValueError, match="unsupported map"):
             backend_descriptor({"schema": "ugrp.rgb_skill_backend.v2", "map_id": row["map_id"],
-                "execution_bundle_id": "rgb-standard-dispatch-v7",
+                "execution_bundle_id": RUNNABLE_ID,
                 "seed": 11, "output_dir": "never-created", "max_sim_s": 180, "max_commands": 10000,
                 "grasp_model_dir": "not-read", "stage_model_dir": "not-read", "reference_top": "not-read"})
 
@@ -692,7 +693,7 @@ def write_assets(tmp_path):
     reference = tmp_path / "reference.jpg"
     reference.write_bytes(JPEG)
     return {"schema": "ugrp.rgb_skill_backend.v2", "map_id": "dispatch_open", "seed": 11,
-            "execution_bundle_id": "rgb-standard-dispatch-v7",
+            "execution_bundle_id": RUNNABLE_ID,
             "output_dir": str(tmp_path / "not-created"), "max_sim_s": 180, "max_commands": 10000,
             "grasp_model_dir": str(grasp), "stage_model_dir": str(staged), "reference_top": str(reference)}
 

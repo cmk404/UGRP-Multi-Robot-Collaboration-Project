@@ -1,0 +1,56 @@
+{
+  "scope": "source-only PairCoarsePixels exactness and CPU replay; no physics/video run",
+  "base_source_sha": "5f14753",
+  "inputs": {
+    "pair-decisions.json": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260923/native-v9/pair-decisions.json",
+      "sha256": "e22aa363e8678b02b335cdd073a33da588e3c0a2a143aa03480280b184c1eb50"
+    },
+    "identity-evidence.json": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260923/native-v9/identity-evidence.json",
+      "sha256": "82d20ac7d3ae774bf5d2467da9762756fd328cfc432e601ead0917855f7da7df"
+    },
+    "skill-bindings.json": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260923/native-v9/skill-bindings.json",
+      "sha256": "40fe2492d20c76702c5148ac5d408ba793ca046775006ceed787296543e4f8a7"
+    }
+  },
+  "changed_files": [
+    "harness/dispatch_skill_binding.py",
+    "tests/test_pair_coarse_pixel_cache.py"
+  ],
+  "algorithm": "For each exact raw JPEG, cache state-free 960x720 yellow component mask using keep[labels] with background excluded and <=300-pixel threshold unchanged. Cache beam feature by exact JPEG and reference lane by exact reference bytes plus slot. Cache sizes 4/4/8; return independent mutable copies. Per-instance wheel centers and all action thresholds unchanged.",
+  "regression": {
+    "v9_original_top_frames": 120,
+    "slot_decisions": 240,
+    "exact_old_HEAD_new_saved_decisions": 240,
+    "exact_center_state_after_each_frame": 120,
+    "failures": 0,
+    "test_command": "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python -m pytest -q tests/test_pair_coarse_pixel_cache.py tests/test_dispatch_skill_binding.py tests/test_dispatch_adaptive.py tests/test_camera_beam_features.py",
+    "tests_passed": 77,
+    "covered": "exact 300/301-pixel component boundary, background, invalid JPEG and dimensions, changed raw bytes, cache eviction, returned-value mutation isolation, independent center state and parallel callers"
+  },
+  "cpu_replay": {
+    "method": "Read original 120 v9 TOP JPEGs in order, run old HEAD and current controllers with saved identity/reference; two slot decisions per frame, perf_counter wall timings; no physics",
+    "old_total_wall_s": 5.767530367927975,
+    "new_total_wall_s": 1.5575190841627773,
+    "old_median_pair_wall_s": 0.047758708002220374,
+    "new_median_pair_wall_s": 0.012046354495396372,
+    "total_speedup": 3.7030238836708897,
+    "cache_hits_misses": {
+      "raw": [
+        120,
+        120
+      ],
+      "beam": [
+        120,
+        120
+      ],
+      "reference_lane": [
+        238,
+        2
+      ]
+    }
+  },
+  "limitations": "These are isolated CPU timings and exact saved-RGB behavior checks, not a new native mission result. v9 render_wait median was 0.1427 wall s and remains the major runtime cost; actual combined wall latency and SIM TTL/duty require v10 native replay."
+}

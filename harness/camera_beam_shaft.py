@@ -23,16 +23,27 @@ def _slices(points: np.ndarray, origin: np.ndarray, axis: np.ndarray):
     axial = (points - origin) @ axis
     lateral = (points - origin) @ normal
     indices = np.floor(axial).astype(int)
+    # Sort once by slice and lateral position. Scanning the entire point array
+    # for every axial slice dominated first-frame beam extraction.
+    order = np.lexsort((lateral, indices))
+    sorted_indices = indices[order]
+    sorted_lateral = lateral[order]
+    boundaries = np.flatnonzero(np.diff(sorted_indices)) + 1
+    starts = np.concatenate(([0], boundaries))
+    ends = np.concatenate((boundaries, [len(indices)]))
     rows = []
-    for index in range(int(indices.min()), int(indices.max()) + 1):
-        values = lateral[indices == index]
-        if len(values) >= 2:
-            rows.append((index, float(values.min()), float(values.max()),
-                         float(np.median(values)), len(values)))
+    for start, end in zip(starts, ends):
+        count = int(end - start)
+        if count >= 2:
+            middle = int(start + count // 2)
+            median = (float(sorted_lateral[middle]) if count % 2 else
+                      float((sorted_lateral[middle - 1] + sorted_lateral[middle]) / 2.0))
+            rows.append((int(sorted_indices[start]), float(sorted_lateral[start]),
+                         float(sorted_lateral[end - 1]), median, count))
     return axial, lateral, rows
 
 
-def robust_shaft_geometry(component_mask: np.ndarray) -> dict | None:
+def robust_shaft_geometry(component_mask: np.ndarray, *, offset_xy: tuple[int, int] = (0, 0)) -> dict | None:
     """Fit the longest stable-width shaft in one connected component.
 
     The provisional PCA axis is refined from the central 60 percent of the
@@ -44,6 +55,8 @@ def robust_shaft_geometry(component_mask: np.ndarray) -> dict | None:
     ys, xs = np.nonzero(component_mask)
     if len(xs) < 100:
         return None
+    xs = xs + offset_xy[0]
+    ys = ys + offset_xy[1]
     points = np.column_stack((xs, ys)).astype(float)
     origin = np.median(points, axis=0)
     axis = _principal_axis(points)
@@ -101,8 +114,11 @@ def robust_shaft_geometry(component_mask: np.ndarray) -> dict | None:
     # a narrow connector or diagonal tail cannot satisfy this support gate.
     indices = np.floor(axial).astype(int)
     corridor = np.abs(lateral - shaft_center) <= .55 * shaft_width
-    supported = {index for index in range(int(indices.min()), int(indices.max()) + 1)
-                 if np.count_nonzero((indices == index) & corridor) >= .75 * shaft_width}
+    first_index = int(indices.min())
+    support_counts = np.bincount(indices[corridor] - first_index,
+                                 minlength=int(indices.max()) - first_index + 1)
+    supported = {index + first_index for index, count in enumerate(support_counts)
+                 if count >= .75 * shaft_width}
     start_index, end_index = run[0][0], run[-1][0]
     while start_index - 1 in supported:
         start_index -= 1

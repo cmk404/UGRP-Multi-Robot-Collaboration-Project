@@ -1,0 +1,236 @@
+{
+  "schema": "ugrp.independent_realtime_dispatch_v8_audit.v1",
+  "checked_at_utc": "2026-09-23T12:51:02.248134+00:00",
+  "manager_manifest": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260923-214300-dispatch-27e5baa9/manifest.json",
+  "manager_manifest_sha256": "cc985c4b819bdb9f01f2c439849c1e36cc6687952ec09f03cc475cf9bc8831b4",
+  "manager": {
+    "status": "process_failed",
+    "exit_code": 1,
+    "source_sha": "f2d6ced5c270e1a4b4e7a3a39a363aee79fe5ef8",
+    "source_dirty": false,
+    "source_tree_before_sha256": "9c4f0a5d4f25b303cf013e0e3514552ae37acb274fdb0f324d3c7a2f69bca7f5",
+    "source_tree_after_sha256": "9c4f0a5d4f25b303cf013e0e3514552ae37acb274fdb0f324d3c7a2f69bca7f5",
+    "source_changed_during_run": false,
+    "inputs_changed_during_run": false,
+    "inputs_before_after_equal": true,
+    "finalization_errors": []
+  },
+  "runs": {
+    "계측": {
+      "source_sha": "4a79e79f5b97dd8daabc66491e47b0e490b6452b",
+      "phase": "TRANSIT",
+      "error": "RuntimeError: skill wall budget exhausted",
+      "wall_s": 182.55718962500396,
+      "plan_committed": true,
+      "protocol_complete": false,
+      "physical_success": false,
+      "llm_calls": 0,
+      "cost_usd": null,
+      "failed_component": "pair",
+      "input_boundary_recorded": "own fixed RGB + common fixed TOP RGB + static authored map + own issued commands + peer claims; referee output only",
+      "last_referee_sim_s": 75.40024999994499,
+      "files": {
+        "result.json": {
+          "sha256": "005b276600cedcd0eb357a684854ff849be1a454a32c689a895841be46ae79b7",
+          "bytes": 3231401
+        },
+        "issued-commands.json": {
+          "sha256": "fe329157cff8806e605bb65e24007d47f4aec912ad467b8f4fed33472775a2c4",
+          "bytes": 179169
+        },
+        "referee-only.jsonl": {
+          "sha256": "c6ad4ee53e02a8a1bf00a90fe41f3a81577d65150953f92f4319a0834c31fd5b",
+          "bytes": 1008810
+        },
+        "pair-decisions.json": {
+          "sha256": "a3839c68630a9409d0f9519d971057c244d4024407686e370c44a9aaf366ccb5",
+          "bytes": 4469755
+        },
+        "exception.txt": {
+          "sha256": "4d04f0cf39b684abfca4560c0a39277b9354c15aebea9d3fba30897e2b47c2d2",
+          "bytes": 1229
+        },
+        "execution.mp4": {
+          "sha256": "4829f9e291df909e17a07a3769ac52023b69a55a83551c8661a7696d66dc685c",
+          "bytes": 807854
+        }
+      },
+      "video_probe": {
+        "avg_frame_rate": "10/1",
+        "duration": "74.200000",
+        "nb_read_frames": "742"
+      },
+      "cprofile_file": {
+        "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/baseline-runtime.prof",
+        "bytes": 584501,
+        "sha256": "aa24895620cdbc1037e1a847dd1f397292cc8a77585b18f132fa117b7f0fcaec",
+        "scope": "180s capped diagnostic; not a completed physical run"
+      }
+    },
+    "v8": {
+      "source_sha": "f2d6ced5c270e1a4b4e7a3a39a363aee79fe5ef8",
+      "phase": "TRANSIT",
+      "error": "RuntimeError: existing pair carry guard stopped: ABORT",
+      "wall_s": 95.80262962500274,
+      "plan_committed": true,
+      "protocol_complete": false,
+      "physical_success": false,
+      "llm_calls": 0,
+      "cost_usd": null,
+      "failed_component": "pair",
+      "input_boundary_recorded": "own fixed RGB + common fixed TOP RGB + static authored map + own issued commands + peer claims; referee output only",
+      "last_referee_sim_s": 68.40025000011052,
+      "files": {
+        "result.json": {
+          "sha256": "e65c7a3a89a2db284c692abd0264b2355c714d74f0416a7ecd427202275b4554",
+          "bytes": 3231538,
+          "matches_manager_receipt": true
+        },
+        "issued-commands.json": {
+          "sha256": "f063af3fcaefb4ee8b7edf41f2b128b313c22f0f3edb438c9d619a1077c34377",
+          "bytes": 147447,
+          "matches_manager_receipt": true
+        },
+        "referee-only.jsonl": {
+          "sha256": "23c78b76df7f956048e10fadb41d4cf723098abbfaebcabc54fc22914e341baf",
+          "bytes": 896671,
+          "matches_manager_receipt": true
+        },
+        "pair-decisions.json": {
+          "sha256": "40b41c1e5969c2ca1dcaa430aed68c91aa9065a4921eb66be7609c7a4731d72f",
+          "bytes": 4145721,
+          "matches_manager_receipt": true
+        },
+        "exception.txt": {
+          "sha256": "c15fd414f06c3f94558df276f34af9322cfe9160faf76da8db592cc363ae92ff",
+          "bytes": 492,
+          "matches_manager_receipt": true
+        },
+        "execution.mp4": {
+          "sha256": "15c2dc8501e03004e3f178e9d6e883c49901042b7bbad1b639562f7d746c18ff",
+          "bytes": 708785,
+          "matches_manager_receipt": true
+        },
+        "execution.frames.json": {
+          "sha256": "764e6cb314d7baab43870216ac21a6a4b02f04fc27f392786fa5bf6f1e099c70",
+          "bytes": 102276,
+          "matches_manager_receipt": true
+        },
+        "native-observer.json": {
+          "sha256": "0fe0286a3126da374f296541aa7ee0932d3b19ae5d9bf6cfe55a028dd963cb53",
+          "bytes": 78,
+          "matches_manager_receipt": true
+        }
+      },
+      "video_probe": {
+        "avg_frame_rate": "10/1",
+        "duration": "67.200000",
+        "nb_read_frames": "672"
+      },
+      "freshness": {
+        "report_ttl_s": 0.6,
+        "decision_ages_s": [
+          0.7400000000021052,
+          0.7399999999825013,
+          0.6999999999834472,
+          0.7199999999829743,
+          0.7399999999825013
+        ],
+        "all_exceed_ttl": true,
+        "held_estimate_all_true": true,
+        "modes": [
+          "CRUISE",
+          "CRUISE",
+          "CRUISE",
+          "CRUISE",
+          "ABORT"
+        ],
+        "permission_reasons": [
+          "visual_evidence_unavailable",
+          "visual_evidence_unavailable",
+          "visual_evidence_unavailable",
+          "visual_evidence_unavailable",
+          "visual_evidence_unavailable_after_reobserve"
+        ],
+        "max_decision_age_reported_s": 0.7400000000021052
+      },
+      "recording": {
+        "requested_fps": 10,
+        "written_frames": 672,
+        "captured_frames": 503,
+        "repeated_frames": 169,
+        "error": null,
+        "counts_consistent": true
+      },
+      "observer": {
+        "mode": "isolated_latest_state",
+        "published": 1331,
+        "busy_skips": 0
+      },
+      "observer_process_found_at_audit": false
+    }
+  },
+  "tensorboard": {
+    "collection": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단",
+    "collection_sha256": "ea4036004b3b1ab25fb9fe9733458287dbe31b896cb636640a3a7d2fe0ea28cc",
+    "runs": {
+      "계측": {
+        "path": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단/계측",
+        "manifest_sha256": "47a5124f5dcc2b76cc5094deb7fc2d284099e446945d1b78ee511c3746510749",
+        "event_sha256": "5d70f0730a181b190d8eff19724b8626afc007bec21b9e0d1a87d61facb141b6",
+        "manifest_complete": true,
+        "source_matches": true,
+        "counts": {
+          "scalars": 12,
+          "texts": 4,
+          "images": 0
+        },
+        "scalar_tags": 12,
+        "text_tags": 4,
+        "scalars": {
+          "evaluation/reported_success": 0.0,
+          "claims/protocol_complete": 0.0,
+          "result/wall_s": 182.55718994140625,
+          "result/commands": 565.0,
+          "result/model_calls": 0.0
+        },
+        "video_id": "6f3361951e53a9526e9b",
+        "video_source_sha256": "4829f9e291df909e17a07a3769ac52023b69a55a83551c8661a7696d66dc685c",
+        "range_status": 206,
+        "content_range": "bytes 0-63/807854",
+        "range_bytes_match_source": true
+      },
+      "v8": {
+        "path": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단/v8",
+        "manifest_sha256": "2fb71da31a767eeb948caa3fe0295c649a2bda633d58a3b44a1d0719d25631e7",
+        "event_sha256": "d70444944a5058bd5e26ec5ae9f7761f1ccd6fd7137c561961cdf79044572997",
+        "manifest_complete": true,
+        "source_matches": true,
+        "counts": {
+          "scalars": 12,
+          "texts": 4,
+          "images": 0
+        },
+        "scalar_tags": 12,
+        "text_tags": 4,
+        "scalars": {
+          "evaluation/reported_success": 0.0,
+          "claims/protocol_complete": 0.0,
+          "result/wall_s": 95.80262756347656,
+          "result/commands": 463.0,
+          "result/model_calls": 0.0
+        },
+        "video_id": "45f6a50f16ccdd7c14a4",
+        "video_source_sha256": "15c2dc8501e03004e3f178e9d6e883c49901042b7bbad1b639562f7d746c18ff",
+        "range_status": 206,
+        "content_range": "bytes 0-63/708785",
+        "range_bytes_match_source": true
+      }
+    }
+  },
+  "limits": [
+    "Both runs failed during TRANSIT; lower wall time is not a completed-throughput comparison.",
+    "Profile baseline has no manager manifest in this audit; source identity is from its result.json.",
+    "Referee metrics are post-run evaluation only and not actor observations."
+  ]
+}

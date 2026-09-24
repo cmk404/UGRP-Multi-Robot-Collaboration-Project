@@ -43,10 +43,25 @@
 
 - `rgb-standard-dispatch-v7`: v6의 pacing을 유지하며 관찰 창 전용 그림자·반사를 끄고 MuJoCo 3.12의 state-only sync를 사용한다. actor 카메라와 원본 영상 렌더러, 모델·물리·제어 주기는 유지한다. v6의 창 실행 완주와 이 후보의 처리 속도는 별도로 평가한다.
 
+- `rgb-standard-dispatch-v8`: 선택 옵션 `--realtime-control`에서 actor RGB를 같은 물리 순간의 복사본으로 비동기 렌더하고, 단독 판단·공동 운반 판단·관찰 창·녹화를 물리 owner에서 분리했다. 첫 open/seed11 실행은 운반 영상이 0.70–0.74 SIM초 늦어져 0.6초 신선도 제한에 걸려 중단됐다. 실패 원본과 별도 TensorBoard 스냅샷을 보존한다.
+- `rgb-standard-dispatch-v9`: open RGB의 접근·파지·운반·하역 관측까지 비동기 경로를 연결한다. 같은 JPEG의 18개 빔 분할 후보만 제한된 캐시에 재사용하며 각 tracker의 이전 상태와 선택 판단은 독립 유지한다. stale 관측은 매번 양쪽 HOLD로 처리하고 연속 지연 예산을 시각 인식 실패와 구분한다. Mac 물리 owner는 일반 Python, 독립 관찰 창만 `mjpython`을 사용한다. 물리 timestep·카메라·임계값·모델은 그대로이며 전체 완주와 처리 속도는 이 버전에서 재검증한다.
+- `rgb-standard-dispatch-v10`: v9의 명령 종료 후 관측 공백을 줄이기 위해 open RGB 초기 접근의 이동 명령과 다음 관측을 겹친다. 정지 확인의 기존 대기 시간은 유지하고 공동 명령은 촬영 시각 + 0.6초 이내에서 끝나도록 제한한다. v9은 정지를 포함한 물리 재생률 1.000×에 도달했지만 120회 접근 한도를 소진했으므로 성공으로 승계하지 않는다.
+
+- `rgb-standard-dispatch-v11`: v10의 실제 접근 판단 간격 중앙값 0.22초와 0.20초 이동 명령 사이에 반복 정지가 남았다. open RGB 초기 접근의 이동 lease만 최대 0.25초로 바꾸며, 원본 촬영 시각 + 0.6초 제한과 지연 시 양쪽 HOLD는 유지한다. 명령 지속시간이 바뀐 별도 후보이며 새 실제 접근·완주 검증 전에는 성공을 승계하지 않는다.
+
+- `rgb-standard-dispatch-v12`: v11은 초기 접근 71회와 정밀 yaw/lateral/yaw 확인을 통과했으나 정밀 forward의 160회 이동 한도를 소진했다. 0.25초 bounded 갱신을 open realtime의 정밀 접근 이동에도 적용한다. 정지 확인·모델 지원 임계값·물리 감쇠·0.6초 영상 TTL·운반 명령 시간은 유지한다. 새 후보의 물리 완주는 별도 판정한다.
+
+- `rgb-standard-dispatch-v13`: v12는 접근·파지 후 계획된 10회 운반 진단 한도까지 도달했다. 그러나 첫 프레임 빔 특징 계산으로 운반 RGB age가 0.44–0.64초였고 TTL에 남은 명령 시간이 짧았다. 같은 특징 결과를 유지하는 계산 최적화와 moving carry 최대0.25초 갱신/빠른 다음 관측을 검증한다. TTL·물리·모델·파지/경로/성공 임계값은 유지한다.
+
+- `rgb-standard-dispatch-v14`: 최신 권한을 물리 owner에서 확정하고 solo 이동 갱신을 겹친 후보. 상자 대기 중 영상 상태 갱신 공백으로 중단한 원본을 보존한다.
+- `rgb-standard-dispatch-v15`: carry 분석과 다음 촬영 요청을 겹치고 자원 대기 중 검증된 own-RGB 연속 관측을 유지한다. 두 화물 물리 성공과 solo 시간 한도에 따른 절차 실패를 분리한다.
+- `rgb-standard-dispatch-v16`: realtime actor 영상은 렌더 작업 시작 시 동일 순간을 복사해 대기열에서 생기는 관측 지연을 줄인다. 실제 촬영 시각과0.6초 TTL을 유지하며 solo 활동300초와 명시적 자원 대기를 분리한다. MuJoCo 관찰 창의 실제 자연어 전달 패널은 제어 입력과 분리한다. 새 완주는 고정 소스에서 별도 검증한다.
+- `rgb-standard-dispatch-v17`: 실제 창에서 검증한 한글 대화 패널을 사용하고, 상자 이동 판단은 기존 명령의0.2초 주기를 유지한다. 공동 운반은 새 영상 처리를 기다리는 동안 승인된 동일 명령만 원본 영상 TTL 이내에서 갱신한다. 실제 완주와 명령 공백은 새 고정 실행에서 별도 확인한다.
+
 새 backend 설정 schema는 `ugrp.rgb_skill_backend.v2`다. `execution_bundle_id`가 없거나 지원하지 않는 조합이면 거절한다. 과거 v1 설정은 당시 실행 기록으로 보존한다. 실행 전 정적 검사는 다음과 같다. 시뮬레이션·렌더링·외부 모델 호출은 하지 않는다.
 
 ```sh
-python3 -m harness.rgb_execution_bundle verify-current --id rgb-standard-dispatch-v7
+python3 -m harness.rgb_execution_bundle verify-current --id rgb-standard-dispatch-v17
 python3 -m harness.rgb_execution_bundle verify-registry --base origin/main
 ```
 

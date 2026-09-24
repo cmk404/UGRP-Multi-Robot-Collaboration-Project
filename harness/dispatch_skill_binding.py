@@ -6,6 +6,7 @@ poses are read here, and no failed model prediction is replaced by a raw LLM act
 """
 from __future__ import annotations
 import copy
+from functools import lru_cache
 import hashlib
 import math
 import cv2
@@ -513,6 +514,55 @@ class ImageRoute:
         return action,evidence
 
 
+def _coarse_small_components(yellow):
+    """Keep the original <=300-pixel components with one label lookup."""
+    n, labels, stats, _ = cv2.connectedComponentsWithStats(yellow)
+    keep = np.zeros(n, dtype=np.uint8)
+    keep[1:] = (stats[1:, 4] <= 300).astype(np.uint8) * 255
+    clean = keep[labels]
+    return clean, int(np.count_nonzero(keep[1:])), int(np.count_nonzero(clean))
+
+
+@lru_cache(maxsize=4)
+def _cached_coarse_raw_mask(raw_top):
+    """State-free TOP segmentation, shared only by calls with identical JPEGs."""
+    frame = decode(raw_top)
+    h, w = frame.shape[:2]
+    if (w, h) != (960, 720):
+        raise ValueError('pair coarse TOP requires calibrated 960x720 pixels')
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    yellow = cv2.inRange(hsv, np.array((20, 70, 50), np.uint8),
+                         np.array((40, 255, 255), np.uint8))
+    clean, count, pixels = _coarse_small_components(yellow)
+    clean.setflags(write=False)
+    return clean, int(np.count_nonzero(yellow)), count, pixels
+
+
+def _coarse_raw_mask(raw_top):
+    clean, yellow_pixels, count, pixels = _cached_coarse_raw_mask(raw_top)
+    return clean.copy(), yellow_pixels, count, pixels
+
+
+@lru_cache(maxsize=4)
+def _cached_coarse_beam(raw_top):
+    return beam_feature(raw_top)
+
+
+def _coarse_beam(raw_top):
+    """Pure beam candidates are reused; callers receive their own copy."""
+    return copy.deepcopy(_cached_coarse_beam(raw_top))
+
+
+@lru_cache(maxsize=8)
+def _cached_coarse_reference_lane(reference, slot):
+    from harness.camera_goal_transport import lane_features
+    return lane_features(reference, slot)
+
+
+def _coarse_reference_lane(reference, slot):
+    return copy.deepcopy(_cached_coarse_reference_lane(reference, slot))
+
+
 class PairCoarsePixels:
     """Role-bound RGB wheel selection; rejects painted floor/beam components.
 
@@ -533,25 +583,16 @@ class PairCoarsePixels:
             self.centers[slot]=np.array(claim['center'])*[width,height]
 
     def decide(self, raw_top, slot):
-        from harness.camera_goal_transport import lane_features, wheel_heading
-        frame=decode(raw_top);h,w=frame.shape[:2]
-        if (w,h)!=(960,720):
-            raise ValueError('pair coarse TOP requires calibrated 960x720 pixels')
-        hsv=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
-        yellow=cv2.inRange(hsv,np.array((20,70,50),np.uint8),np.array((40,255,255),np.uint8))
-        n,labels,stats,_=cv2.connectedComponentsWithStats(yellow)
-        clean=np.zeros_like(yellow)
-        selected_components=0
-        for i in range(1,n):
-            if stats[i,4]<=300:
-                clean[labels==i]=255
-                selected_components+=1
-        component_pixels=int(np.count_nonzero(clean))
+        from harness.camera_goal_transport import wheel_heading
+        if not isinstance(raw_top, bytes) or not raw_top:
+            raise ValueError('nonempty JPEG required')
+        clean, raw_yellow_pixels, selected_components, component_pixels = _coarse_raw_mask(raw_top)
+        h,w=clean.shape
         cx,cy=self.centers[slot]
         yy,xx=np.indices(clean.shape)
         clean[(abs(xx-cx)>55)|(abs(yy-cy)>48)]=0
         ys,xs=np.nonzero(clean)
-        mask={'raw_yellow_pixels':int(np.count_nonzero(yellow)),
+        mask={'raw_yellow_pixels':raw_yellow_pixels,
               'small_component_pixels':component_pixels,
               'small_component_count':selected_components,
               'local_wheel_pixels':int(len(xs)),
@@ -563,7 +604,8 @@ class PairCoarsePixels:
                         reason='own_wheel_heading_unresolved',mask=mask)
         center=np.array([xs.mean(),ys.mean()]);self.centers[slot]=center
         try:
-            beam=beam_feature(raw_top);ref=lane_features(self.reference,slot)
+            beam=_coarse_beam(raw_top)
+            ref=_coarse_reference_lane(self.reference,slot)
         except ValueError as error:
             return dict(ok=False,ready=False,forward=0.,left=0.,turn=0.,
                         reason='payload_or_reference_unresolved',detail=str(error),

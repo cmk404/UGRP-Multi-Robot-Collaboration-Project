@@ -72,7 +72,7 @@ jobs:
         run: python -m pip install --requirement requirements-test.txt
 
       - name: Verify current RGB execution bundle and source pins
-        run: python -m harness.rgb_execution_bundle verify-current --id rgb-standard-dispatch-v7
+        run: python -m harness.rgb_execution_bundle verify-current --id rgb-standard-dispatch-v19
 
       - name: Reject changes or removal of existing RGB execution bundles
         if: github.event_name == 'pull_request'
@@ -143,6 +143,9 @@ jobs:
 
       - name: Preserve dispatch and ACT scene physics across standard and research adapters
         run: python -m pytest -q tests/test_dispatch_scene_parity.py
+
+      - name: Verify asynchronous RGB, physics parity, observer isolation, and recording
+        run: python -m pytest -q tests/test_dispatch_realtime.py tests/test_dispatch_async_video.py tests/test_dispatch_native_process.py tests/test_snapshot_render.py tests/test_physics_drive_kernel.py tests/test_contact_audit_kernel.py
 
       - name: Keep the native window open after reset and invalid physics
         run: MUJOCO_GL=glfw xvfb-run -a python scripts/ugrp_session.py run native-recovery-ci -- python -m scripts.check_simulation_recovery --output outputs/simulation-ci/recovery

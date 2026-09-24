@@ -56,6 +56,46 @@ class PairCarryPolicyTests(unittest.TestCase):
         self.assertEqual(row['permission']['phase'], 'HOLD')
         self.assertFalse(any(row['forwards'].values()))
 
+    def test_delayed_rgb_keeps_capture_time_and_holds_both(self):
+        p=PairCarryPolicy()
+        initial=p.step(decisions(),0.,{'r1':'frame-1','r3':'frame-1'},0.,
+                       observed_at_s=0.)
+        self.assertEqual(initial['permission']['phase'],'GO')
+        delayed=p.step(decisions(),0.,{'r1':'frame-2','r3':'frame-2'},.7,
+                       observed_at_s=.05)
+        self.assertEqual(delayed['permission']['phase'],'HOLD')
+        self.assertFalse(any(delayed['forwards'].values()))
+        self.assertFalse(delayed['valid'])
+        fresh=p.step(decisions(),0.,{'r1':'frame-3','r3':'frame-3'},.8,
+                     observed_at_s=.75)
+        self.assertEqual(fresh['permission']['phase'],'GO')
+        self.assertEqual(fresh['forwards'],{'r1':.1,'r3':.1})
+
+    def test_continuously_late_rgb_uses_separate_bounded_timeout(self):
+        p=PairCarryPolicy(stale_budget_s=1.)
+        for index,now in enumerate((.7,.9,1.1,1.3,1.5),1):
+            row=p.step(decisions(),0.,{'r1':str(index),'r3':str(index)},now,
+                       observed_at_s=now-.7)
+            self.assertTrue(row['stale_rgb'])
+            self.assertFalse(any(row['forwards'].values()))
+            self.assertEqual(p.invalid_count,0)
+            self.assertFalse(row['abort'])
+        expired=p.step(decisions(),0.,{'r1':'6','r3':'6'},1.7,
+                       observed_at_s=1.)
+        self.assertTrue(expired['abort'])
+        self.assertEqual(expired['permission']['reason'],'stale_pair_rgb_budget_exhausted')
+        self.assertEqual(p.invalid_count,0)
+
+    def test_stale_timer_resets_only_after_fresh_complete_pair(self):
+        p=PairCarryPolicy(stale_budget_s=2.)
+        p.step(decisions(),0.,{'r1':'1','r3':'1'},.7,observed_at_s=0.)
+        self.assertEqual(p.stale_since_s,.7)
+        p.step(decisions(),0.,{'r1':'2','r3':'2'},.9,('r1',),observed_at_s=.8)
+        self.assertEqual(p.stale_since_s,.7)
+        fresh=p.step(decisions(),0.,{'r1':'3','r3':'3'},1.,observed_at_s=.95)
+        self.assertEqual(fresh['permission']['phase'],'GO')
+        self.assertIsNone(p.stale_since_s)
+
     def test_undelivered_ready_cannot_complete_or_change_policy(self):
         p, q = PairCarryPolicy(), PairCarryPolicy()
         self.step(p, 0, ready=True)

@@ -1,0 +1,548 @@
+{
+  "schema": "ugrp.independent_realtime_dispatch_v12_audit.v1",
+  "checked_at_utc": "2026-09-23T13:36:02.278656+00:00",
+  "source_sha": "6fd23aec807fbc88ba131d320b6b60c85868592d",
+  "bundle_id": "rgb-standard-dispatch-v12",
+  "bundle_sha256": "4577c8d906715ab98341f97aa6afa656e704acafd03ef20a2a4ac67adb41a54a",
+  "manager": {
+    "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260923-223141-dispatch-7c5462f6/manifest.json",
+    "sha256": "89d49ae177dee9ad648b1c8c897f7d7cf90fc5adf82231f25c8e55ecc913dd53",
+    "status": "process_failed",
+    "exit_code": 1,
+    "runtime_s": 109.58479750000697,
+    "source_dirty": false,
+    "source_before_sha256": "855d33652ee23ff851f4906a5bfd766d13ff72efcdb2dd9e0d6fc7f2f657f12f",
+    "source_after_sha256": "855d33652ee23ff851f4906a5bfd766d13ff72efcdb2dd9e0d6fc7f2f657f12f",
+    "source_changed_during_run": false,
+    "inputs_changed_during_run": false,
+    "inputs_before_after_equal": true,
+    "finalization_errors": []
+  },
+  "result": {
+    "phase": "TRANSIT",
+    "error": "RuntimeError: pair route decision budget exhausted",
+    "wall_s": 109.11516758300422,
+    "timing": {
+      "scene_and_observer_setup_wall_s": 1.5356142500095302,
+      "scope": "output-only SIM/wall measurements; wall_s includes finalization",
+      "control_end_sim_s": 105.41999999923512,
+      "control_wall_s": 107.57528812500823,
+      "motion_wall_s": 100.23154312500264,
+      "motion_sim_s": 100.2199999992345,
+      "motion_sim_to_wall": 0.9998848353980369,
+      "cleanup_wall_s": 1.5398808750032913
+    },
+    "plan_committed": true,
+    "protocol_complete": false,
+    "physical_success": false,
+    "failed_component": "pair",
+    "llm_calls": 0,
+    "realtime_control_stats": {
+      "solo_backpressure": 0,
+      "solo_stale_rgb": 0,
+      "solo_decisions": 135,
+      "pair_backpressure": 0,
+      "pair_decisions": 10,
+      "max_decision_age_s": 0.639999999984866,
+      "pair_stage_stale_rgb": 0,
+      "pair_stage_samples": 290
+    },
+    "coarse_count": 88,
+    "fine_stage_results": [
+      {
+        "phase_index": 0,
+        "stage": "yaw",
+        "ok": true,
+        "confirmations": [
+          {
+            "frame_ids": {
+              "r1": 294,
+              "r3": 294
+            },
+            "ready": {
+              "r1": true,
+              "r3": true
+            },
+            "stationary": true
+          },
+          {
+            "frame_ids": {
+              "r1": 298,
+              "r3": 298
+            },
+            "ready": {
+              "r1": true,
+              "r3": true
+            },
+            "stationary": true
+          }
+        ],
+        "recovery_confirmations": [],
+        "reason": "two consecutive fresh stationary RGB confirmations",
+        "movement_slices": 12
+      },
+      {
+        "phase_index": 1,
+        "stage": "lateral",
+        "ok": true,
+        "confirmations": [
+          {
+            "frame_ids": {
+              "r1": 398,
+              "r3": 398
+            },
+            "ready": {
+              "r1": true,
+              "r3": true
+            },
+            "stationary": true
+          },
+          {
+            "frame_ids": {
+              "r1": 402,
+              "r3": 402
+            },
+            "ready": {
+              "r1": true,
+              "r3": true
+            },
+            "stationary": true
+          }
+        ],
+        "recovery_confirmations": [],
+        "reason": "two consecutive fresh stationary RGB confirmations",
+        "movement_slices": 35
+      },
+      {
+        "phase_index": 2,
+        "stage": "yaw",
+        "ok": true,
+        "confirmations": [
+          {
+            "frame_ids": {
+              "r1": 411,
+              "r3": 411
+            },
+            "ready": {
+              "r1": true,
+              "r3": true
+            },
+            "stationary": true
+          },
+          {
+            "frame_ids": {
+              "r1": 416,
+              "r3": 416
+            },
+            "ready": {
+              "r1": true,
+              "r3": true
+            },
+            "stationary": true
+          }
+        ],
+        "recovery_confirmations": [],
+        "reason": "two consecutive fresh stationary RGB confirmations",
+        "movement_slices": 0
+      },
+      {
+        "phase_index": 3,
+        "stage": "forward",
+        "ok": true,
+        "confirmations": [
+          {
+            "frame_ids": {
+              "r1": 664,
+              "r3": 664
+            },
+            "ready": {
+              "r1": true,
+              "r3": true
+            },
+            "stationary": true
+          },
+          {
+            "frame_ids": {
+              "r1": 668,
+              "r3": 668
+            },
+            "ready": {
+              "r1": true,
+              "r3": true
+            },
+            "stationary": true
+          }
+        ],
+        "recovery_confirmations": [],
+        "reason": "two consecutive fresh stationary RGB confirmations",
+        "movement_slices": 91
+      },
+      {
+        "phase_index": 4,
+        "stage": "yaw",
+        "ok": true,
+        "confirmations": [
+          {
+            "frame_ids": {
+              "r1": 677,
+              "r3": 677
+            },
+            "ready": {
+              "r1": true,
+              "r3": true
+            },
+            "stationary": true
+          },
+          {
+            "frame_ids": {
+              "r1": 682,
+              "r3": 682
+            },
+            "ready": {
+              "r1": true,
+              "r3": true
+            },
+            "stationary": true
+          }
+        ],
+        "recovery_confirmations": [],
+        "reason": "two consecutive fresh stationary RGB confirmations",
+        "movement_slices": 0
+      },
+      {
+        "phase_index": 5,
+        "stage": "lateral",
+        "ok": true,
+        "confirmations": [
+          {
+            "frame_ids": {
+              "r1": 741,
+              "r3": 741
+            },
+            "ready": {
+              "r1": true,
+              "r3": true
+            },
+            "stationary": true
+          },
+          {
+            "frame_ids": {
+              "r1": 747,
+              "r3": 747
+            },
+            "ready": {
+              "r1": true,
+              "r3": true
+            },
+            "stationary": true
+          }
+        ],
+        "recovery_confirmations": [],
+        "reason": "two consecutive fresh stationary RGB confirmations",
+        "movement_slices": 19
+      },
+      {
+        "phase_index": 6,
+        "stage": "forward",
+        "ok": true,
+        "confirmations": [
+          {
+            "frame_ids": {
+              "r1": 758,
+              "r3": 758
+            },
+            "ready": {
+              "r1": true,
+              "r3": true
+            },
+            "stationary": true
+          },
+          {
+            "frame_ids": {
+              "r1": 763,
+              "r3": 763
+            },
+            "ready": {
+              "r1": true,
+              "r3": true
+            },
+            "stationary": true
+          }
+        ],
+        "recovery_confirmations": [],
+        "reason": "two consecutive fresh stationary RGB confirmations",
+        "movement_slices": 0
+      }
+    ],
+    "approach_ok": true,
+    "carry_decision_count": 10,
+    "carry_age_s": {
+      "min": 0.4399999999895954,
+      "median": 0.469999999988886,
+      "p95": 0.5599999999867578,
+      "max": 0.639999999984866
+    },
+    "carry_age_over_ttl_0_6_s": 1,
+    "carry_modes": {
+      "CRUISE": 10
+    },
+    "carry_stale_event_count": 1,
+    "carry_stale_events": [
+      {
+        "kind": "bounded_pair_stale_rgb",
+        "stage": "TRANSIT",
+        "observed_at_s": 102.7099999992992,
+        "received_at_s": 103.34999999928407
+      }
+    ],
+    "issued_commands_by_physical_robot": {
+      "r1": {
+        "APPROACH": {
+          "issued_count": 273,
+          "bounded_count": 246,
+          "unbounded_count": 27,
+          "kinds": {
+            "lateral": 65,
+            "turn": 19,
+            "forward": 111,
+            "hold": 78
+          },
+          "requested_bounded_lease_s": 0.25,
+          "actual_bounded_lease_s": {
+            "min": 0.1199999999977095,
+            "median": 0.25,
+            "p95": 0.25,
+            "max": 0.2500000000000071
+          },
+          "ttl_clipped_count": 6,
+          "bounded_matched_to_observation": 246,
+          "matched_observation_ttl_violations": 0,
+          "nonpositive_bounded_lease_count": 0,
+          "issued_interval_s": {
+            "min": 0.19999999999953388,
+            "median": 0.24000000000114596,
+            "p95": 0.4700000000022442,
+            "max": 0.5899999999860484
+          }
+        },
+        "TRANSIT": {
+          "issued_count": 9,
+          "bounded_count": 9,
+          "unbounded_count": 0,
+          "kinds": {
+            "lateral": 9
+          },
+          "requested_bounded_lease_s": 0.2,
+          "actual_bounded_lease_s": {
+            "min": 0.04000000001323656,
+            "median": 0.14000000001087187,
+            "p95": 0.16000000001039894,
+            "max": 0.16000000001039894
+          },
+          "ttl_clipped_count": 9,
+          "bounded_matched_to_observation": 9,
+          "matched_observation_ttl_violations": 0,
+          "nonpositive_bounded_lease_count": 0,
+          "issued_interval_s": {
+            "min": 0.48999999998841304,
+            "median": 0.5199999999877036,
+            "p95": 0.5499999999869942,
+            "max": 1.1799999999720967
+          }
+        }
+      },
+      "r3": {
+        "APPROACH": {
+          "issued_count": 273,
+          "bounded_count": 246,
+          "unbounded_count": 27,
+          "kinds": {
+            "hold": 109,
+            "forward": 107,
+            "lateral": 57
+          },
+          "requested_bounded_lease_s": 0.25,
+          "actual_bounded_lease_s": {
+            "min": 0.1199999999977095,
+            "median": 0.25,
+            "p95": 0.25,
+            "max": 0.2500000000000071
+          },
+          "ttl_clipped_count": 6,
+          "bounded_matched_to_observation": 246,
+          "matched_observation_ttl_violations": 0,
+          "nonpositive_bounded_lease_count": 0,
+          "issued_interval_s": {
+            "min": 0.19999999999953388,
+            "median": 0.24000000000114596,
+            "p95": 0.4700000000022442,
+            "max": 0.5899999999860484
+          }
+        },
+        "TRANSIT": {
+          "issued_count": 9,
+          "bounded_count": 9,
+          "unbounded_count": 0,
+          "kinds": {
+            "lateral": 9
+          },
+          "requested_bounded_lease_s": 0.2,
+          "actual_bounded_lease_s": {
+            "min": 0.04000000001323656,
+            "median": 0.14000000001087187,
+            "p95": 0.16000000001039894,
+            "max": 0.16000000001039894
+          },
+          "ttl_clipped_count": 9,
+          "bounded_matched_to_observation": 9,
+          "matched_observation_ttl_violations": 0,
+          "nonpositive_bounded_lease_count": 0,
+          "issued_interval_s": {
+            "min": 0.48999999998841304,
+            "median": 0.5199999999877036,
+            "p95": 0.5499999999869942,
+            "max": 1.1799999999720967
+          }
+        }
+      }
+    },
+    "robot_path_length_m": {
+      "r1": 0.6895813026182271,
+      "r2": 0.43706187695377213,
+      "r3": 0.6430742520236531
+    },
+    "cargo_evaluation": {
+      "beam": {
+        "max_lift_m": 0.07737422088300142,
+        "displacement_m": 0.008955977307471694,
+        "lift_observed_by_referee": true,
+        "inside_slot_at_end": false,
+        "released_supported_stable": false,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 49,
+          "floor_contact_samples": 0,
+          "window_s": [
+            100.5999999993491,
+            105.48999999924764
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999763531,
+          "first_floor_contact_s": null
+        },
+        "physical_success": false
+      },
+      "box": {
+        "max_lift_m": 0.0,
+        "displacement_m": 0.0,
+        "lift_observed_by_referee": false,
+        "inside_slot_at_end": false,
+        "released_supported_stable": false,
+        "carry_clearance": {
+          "sampled_continuous_clearance": false,
+          "samples": 0,
+          "floor_contact_samples": 0,
+          "window_s": null,
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples."
+        },
+        "physical_success": false
+      }
+    },
+    "concurrent_transport": {
+      "simultaneous_loaded_motion_s": 0.0,
+      "intervals_s": [],
+      "minimum_displacement_per_sample_m": 0.001,
+      "max_sample_gap_s": 0.11,
+      "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+    },
+    "weld_steps": 0
+  },
+  "raw_files": {
+    "result.json": {
+      "bytes": 6047440,
+      "sha256": "81b344245f21f89d4e98a0e55bdb3fc0700e94bbcaa483640fcae750af26f2f1",
+      "matches_manager_receipt": true
+    },
+    "issued-commands.json": {
+      "bytes": 219938,
+      "sha256": "dedbdfbe2f82029674b3146d0d99be0ecf5399845c0848ccca7cc6ff9f9c15eb",
+      "matches_manager_receipt": true
+    },
+    "referee-only.jsonl": {
+      "bytes": 1401287,
+      "sha256": "6569f33feff59542a86b2ada7195b0075483efb5a7bc1ad9194d310099d40c34",
+      "matches_manager_receipt": true
+    },
+    "pair-decisions.json": {
+      "bytes": 7702928,
+      "sha256": "19b9b8d3c27c0331cca823f6f6627de0964f8eda3ee3dd6aead163d720c6a61b",
+      "matches_manager_receipt": true
+    },
+    "execution.mp4": {
+      "bytes": 1157011,
+      "sha256": "ef56193b1ddeb390af9ffb36d925d53d2133517871590acc318d878830853672",
+      "matches_manager_receipt": true
+    },
+    "execution.frames.json": {
+      "bytes": 149466,
+      "sha256": "2355e6c27af3a5c581b37966f160468a9bdf3eec3eba71627a2804f58edf386b",
+      "matches_manager_receipt": true
+    },
+    "native-observer.json": {
+      "bytes": 78,
+      "sha256": "5bff384cb6d5fac900c07a9d58e929d3ae5e6b212d9192e71934f8b160e08a50",
+      "matches_manager_receipt": true
+    },
+    "evaluation-only.json": {
+      "bytes": 1796,
+      "sha256": "5c472cfedffd82a0696abbd781db4251bca94df1a5fe016b51f3aa807ccd8d4c",
+      "matches_manager_receipt": true
+    }
+  },
+  "recording": {
+    "requested_fps": 10,
+    "written_frames": 1055,
+    "captured_frames": 621,
+    "repeated_frames": 434,
+    "error": null,
+    "decoded_frames": 1055,
+    "counts_consistent": true,
+    "observer": {
+      "mode": "isolated_latest_state",
+      "published": 2712,
+      "busy_skips": 3
+    }
+  },
+  "tensorboard": {
+    "path": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단/v12",
+    "collection": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단",
+    "manifest_sha256": "6b2f52c1d1110ac3047a077722ee7b872ed8c584708d8f76e22f26f69a6e43b5",
+    "event_sha256": "eb50a6859a64aa9a190bc30b754bb45bff0402a43796d28b3ed03134dde6abc2",
+    "manifest_complete": true,
+    "source_matches": true,
+    "counts": {
+      "scalars": 12,
+      "texts": 4,
+      "images": 0
+    },
+    "scalars": {
+      "evaluation/reported_success": 0.0,
+      "claims/protocol_complete": 0.0,
+      "result/wall_s": 109.11516571044922,
+      "result/commands": 621.0,
+      "result/model_calls": 0.0
+    },
+    "video_id": "e79d7173936338153344",
+    "video_source_sha256": "ef56193b1ddeb390af9ffb36d925d53d2133517871590acc318d878830853672",
+    "range_status": 206,
+    "content_range": "bytes 0-63/1157011",
+    "range_bytes_match_source": true
+  },
+  "limits": [
+    "Ten carry decisions reached diagnostic cap; no mission completion or transport success claim.",
+    "Carry control forward=0 does not mean idle because route left=+0.08 was issued.",
+    "Referee measurements are output only and do not enter controller.",
+    "Motion SIM/wall rate measures physics playback, not mission throughput.",
+    "Observer recording includes repeated frames and is not actor RGB."
+  ]
+}

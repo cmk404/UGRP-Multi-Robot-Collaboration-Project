@@ -1,0 +1,728 @@
+{
+  "schema": "ugrp.independent_realtime_dispatch_v17_full_audit.v1",
+  "checked_at_utc": "2026-09-23T15:23:39.516879+00:00",
+  "source_sha": "817872651083143fe4ff46b11dba30915e34f5ff",
+  "bundle_sha256": "8a686939f6505bfaae2f4ebadb3e637b0e229b63e25dfb96877c411235bf6125",
+  "manager": {
+    "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260924-001203-dispatch-1f51ffef/manifest.json",
+    "sha256": "874d4fbcb95752fc5071b4df496f5bb61f4c2486fc3f15c321dbdecd95486226",
+    "status": "process_completed",
+    "exit_code": 0,
+    "source_dirty": false,
+    "source_changed_during_run": false,
+    "inputs_changed_during_run": false,
+    "input_before_after_equal": true,
+    "source_tree_before_sha256": "a433c64525bfba6860ad4aedb939795fbd12a00e8838627332b6f000d60fd1c6",
+    "source_tree_after_sha256": "a433c64525bfba6860ad4aedb939795fbd12a00e8838627332b6f000d60fd1c6",
+    "finalization_errors": []
+  },
+  "result": {
+    "phase": "FINISHED",
+    "error": null,
+    "physical_success": true,
+    "protocol_complete": true,
+    "wall_s": 312.37089370899776,
+    "timing": {
+      "scene_and_observer_setup_wall_s": 1.6952091669954825,
+      "scope": "output-only SIM/wall measurements; wall_s includes finalization",
+      "control_end_sim_s": 307.3599999944599,
+      "control_wall_s": 310.70887787500396,
+      "motion_wall_s": 303.46692004099896,
+      "motion_sim_s": 302.15999999445927,
+      "motion_sim_to_wall": 0.995693368995991,
+      "cleanup_wall_s": 1.6620171669928823
+    },
+    "llm_calls": 0,
+    "realtime_control_stats": {
+      "solo_backpressure": 0,
+      "solo_stale_rgb": 0,
+      "solo_decisions": 598,
+      "pair_backpressure": 0,
+      "pair_decisions": 357,
+      "max_decision_age_s": 0.4737499999887973,
+      "solo_total_sim_s": 302.0914999944609,
+      "solo_active_sim_s": 248.73649999572257,
+      "solo_resource_wait_sim_s": 53.35499999873832,
+      "solo_resource_waiting": false,
+      "solo_resource_wait_intervals": 2,
+      "solo_active_budget_s": 300.0,
+      "pair_stage_stale_rgb": 0,
+      "pair_stage_samples": 343
+    },
+    "plan_replay_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7"
+  },
+  "referee": {
+    "physical_success": true,
+    "cargo": {
+      "beam": {
+        "max_lift_m": 0.07767236882016074,
+        "displacement_m": 1.6724585308845314,
+        "lift_observed_by_referee": true,
+        "inside_slot_at_end": true,
+        "released_supported_stable": true,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 1212,
+          "floor_contact_samples": 0,
+          "window_s": [
+            120.13999999888703,
+            241.36999999602506
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999764952,
+          "first_floor_contact_s": null
+        },
+        "physical_success": true
+      },
+      "box": {
+        "max_lift_m": 0.06855364102378783,
+        "displacement_m": 2.3002069261783626,
+        "lift_observed_by_referee": true,
+        "inside_slot_at_end": true,
+        "released_supported_stable": true,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 1496,
+          "floor_contact_samples": 0,
+          "window_s": [
+            144.8604999983025,
+            294.49374999476885
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999763531,
+          "first_floor_contact_s": null
+        },
+        "physical_success": true
+      }
+    },
+    "concurrent_transport": {
+      "simultaneous_loaded_motion_s": 11.09999999973752,
+      "intervals_s": [
+        [
+          145.00024999829918,
+          145.10024999829682
+        ],
+        [
+          145.3002499982921,
+          145.40024999828972
+        ],
+        [
+          145.600249998285,
+          145.70024999828263
+        ],
+        [
+          146.00024999827554,
+          146.10024999827317
+        ],
+        [
+          146.30024999826844,
+          146.40024999826608
+        ],
+        [
+          146.70024999825898,
+          146.80024999825662
+        ],
+        [
+          147.0002499982519,
+          147.10024999824952
+        ],
+        [
+          147.3002499982448,
+          147.50024999824006
+        ],
+        [
+          147.70024999823534,
+          147.80024999823297
+        ],
+        [
+          148.40024999821878,
+          148.50024999821642
+        ],
+        [
+          148.80024999820932,
+          148.90024999820696
+        ],
+        [
+          168.60024999774112,
+          168.70024999773875
+        ],
+        [
+          168.90024999773402,
+          169.00024999773166
+        ],
+        [
+          169.20024999772693,
+          169.4002499977222
+        ],
+        [
+          169.60024999771747,
+          169.7002499977151
+        ],
+        [
+          169.90024999771038,
+          170.10024999770565
+        ],
+        [
+          170.30024999770092,
+          170.40024999769855
+        ],
+        [
+          170.60024999769382,
+          170.8002499976891
+        ],
+        [
+          171.00024999768436,
+          171.100249997682
+        ],
+        [
+          171.4002499976749,
+          171.50024999767254
+        ],
+        [
+          171.7002499976678,
+          171.80024999766545
+        ],
+        [
+          172.10024999765835,
+          172.200249997656
+        ],
+        [
+          172.40024999765126,
+          172.60024999764653
+        ],
+        [
+          172.8002499976418,
+          172.90024999763943
+        ],
+        [
+          173.1002499976347,
+          173.30024999762998
+        ],
+        [
+          173.50024999762525,
+          173.60024999762288
+        ],
+        [
+          173.80024999761815,
+          173.9002499976158
+        ],
+        [
+          174.2002499976087,
+          174.30024999760633
+        ],
+        [
+          174.5002499976016,
+          174.60024999759924
+        ],
+        [
+          175.30024999758268,
+          175.40024999758032
+        ],
+        [
+          175.70024999757322,
+          175.80024999757086
+        ],
+        [
+          178.500249997507,
+          178.60024999750465
+        ],
+        [
+          178.90024999749755,
+          179.0002499974952
+        ],
+        [
+          179.3002499974881,
+          179.40024999748573
+        ],
+        [
+          180.40024999746208,
+          180.50024999745972
+        ],
+        [
+          180.80024999745262,
+          180.90024999745026
+        ],
+        [
+          181.20024999744317,
+          181.3002499974408
+        ],
+        [
+          181.6002499974337,
+          181.70024999743134
+        ],
+        [
+          183.10024999739824,
+          183.20024999739587
+        ],
+        [
+          183.90024999737932,
+          184.00024999737695
+        ],
+        [
+          184.30024999736986,
+          184.4002499973675
+        ],
+        [
+          184.7002499973604,
+          184.80024999735804
+        ],
+        [
+          185.8002499973344,
+          185.90024999733203
+        ],
+        [
+          186.20024999732493,
+          186.30024999732257
+        ],
+        [
+          186.60024999731547,
+          186.7002499973131
+        ],
+        [
+          187.30024999729892,
+          187.40024999729656
+        ],
+        [
+          187.70024999728946,
+          187.8002499972871
+        ],
+        [
+          188.10024999728,
+          188.20024999727764
+        ],
+        [
+          189.60024999724453,
+          189.70024999724217
+        ],
+        [
+          190.00024999723507,
+          190.1002499972327
+        ],
+        [
+          190.70024999721852,
+          190.80024999721616
+        ],
+        [
+          192.10024999718541,
+          192.20024999718305
+        ],
+        [
+          206.8002499968378,
+          207.00024999683308
+        ],
+        [
+          207.20024999682835,
+          207.30024999682598
+        ],
+        [
+          207.6002499968189,
+          207.70024999681652
+        ],
+        [
+          207.9002499968118,
+          208.00024999680943
+        ],
+        [
+          208.30024999680234,
+          208.40024999679997
+        ],
+        [
+          208.60024999679524,
+          208.70024999679288
+        ],
+        [
+          209.00024999678578,
+          209.10024999678342
+        ],
+        [
+          209.40024999677632,
+          209.50024999677396
+        ],
+        [
+          209.70024999676923,
+          209.80024999676687
+        ],
+        [
+          210.10024999675977,
+          210.2002499967574
+        ],
+        [
+          210.40024999675268,
+          210.5002499967503
+        ],
+        [
+          210.80024999674322,
+          210.90024999674085
+        ],
+        [
+          211.10024999673612,
+          211.20024999673376
+        ],
+        [
+          211.50024999672667,
+          211.6002499967243
+        ],
+        [
+          211.80024999671957,
+          211.9002499967172
+        ],
+        [
+          212.2002499967101,
+          212.30024999670775
+        ],
+        [
+          212.50024999670302,
+          212.7002499966983
+        ],
+        [
+          212.90024999669356,
+          213.0002499966912
+        ],
+        [
+          213.20024999668647,
+          213.40024999668174
+        ],
+        [
+          213.600249996677,
+          213.70024999667464
+        ],
+        [
+          214.00024999666755,
+          214.10024999666518
+        ],
+        [
+          214.30024999666045,
+          214.4002499966581
+        ],
+        [
+          214.700249996651,
+          214.80024999664863
+        ],
+        [
+          215.40024999663444,
+          215.50024999663208
+        ],
+        [
+          215.70024999662735,
+          215.80024999662498
+        ],
+        [
+          216.00024999662025,
+          216.20024999661553
+        ],
+        [
+          216.4002499966108,
+          216.50024999660843
+        ],
+        [
+          216.7002499966037,
+          216.90024999659897
+        ],
+        [
+          217.10024999659424,
+          217.20024999659188
+        ],
+        [
+          217.40024999658715,
+          217.50024999658478
+        ],
+        [
+          217.8002499965777,
+          217.90024999657533
+        ],
+        [
+          218.1002499965706,
+          218.20024999656823
+        ],
+        [
+          218.50024999656114,
+          218.60024999655877
+        ],
+        [
+          218.90024999655168,
+          219.00024999654931
+        ],
+        [
+          219.20024999654458,
+          219.30024999654222
+        ],
+        [
+          219.60024999653513,
+          219.70024999653276
+        ],
+        [
+          220.00024999652567,
+          220.1002499965233
+        ],
+        [
+          220.30024999651857,
+          220.4002499965162
+        ],
+        [
+          220.70024999650911,
+          220.80024999650675
+        ],
+        [
+          221.00024999650202,
+          221.10024999649966
+        ],
+        [
+          221.40024999649256,
+          221.5002499964902
+        ],
+        [
+          221.8002499964831,
+          221.90024999648074
+        ],
+        [
+          222.100249996476,
+          222.20024999647364
+        ],
+        [
+          222.50024999646655,
+          222.60024999646419
+        ],
+        [
+          222.80024999645946,
+          222.9002499964571
+        ],
+        [
+          223.20024999645,
+          223.30024999644763
+        ],
+        [
+          223.90024999643344,
+          224.00024999643108
+        ],
+        [
+          225.30024999640034,
+          225.40024999639797
+        ]
+      ],
+      "minimum_displacement_per_sample_m": 0.001,
+      "max_sample_gap_s": 0.11,
+      "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+    },
+    "weld_steps": 0,
+    "all_three_body_motion_sim_s": 34.899999999214515
+  },
+  "core_files": {
+    "result.json": {
+      "sha256": "51dbfc0642261d2a3f048622fec83aa402248f85ba6fa5e449763ae71df8ea9c",
+      "bytes": 7709833,
+      "matches_receipt": true
+    },
+    "issued-commands.json": {
+      "sha256": "00f42e1b15b919df9cade033c2f689afdc87a5a553c5b5f6b374c9d757965117",
+      "bytes": 843655,
+      "matches_receipt": true
+    },
+    "referee-only.jsonl": {
+      "sha256": "c1dea2b9b0543e3ca653e34409027183c4dcd34e2e3026211f47f7e0b34cec8c",
+      "bytes": 4620083,
+      "matches_receipt": true
+    },
+    "pair-decisions.json": {
+      "sha256": "a46bbbf2696b5598f2b151c36d1c92b182cbe26218bbafa43eb7fc50310eb1dd",
+      "bytes": 12392004,
+      "matches_receipt": true
+    },
+    "solo-decisions.json": {
+      "sha256": "9071f76232d1610729fd60067a8fa61661a8b6503323afffe61d4543576a2da8",
+      "bytes": 3447209,
+      "matches_receipt": true
+    },
+    "execution.mp4": {
+      "sha256": "6489e4a7b243c2798789f21b6e984c16cdcd528826c499b50a7616e61bd13b93",
+      "bytes": 3400233,
+      "matches_receipt": true
+    },
+    "execution.frames.json": {
+      "sha256": "63738d43f89f99554e021796fa3450c141937b22218ca3f0ee652c61b89a2281",
+      "bytes": 415795,
+      "matches_receipt": true
+    },
+    "native-observer.json": {
+      "sha256": "58d61473878c1cd44fe9b18e36e23cde3fd798668f3b24ecc28173a54fd6a568",
+      "bytes": 78,
+      "matches_receipt": true
+    },
+    "evaluation-only.json": {
+      "sha256": "5ab14b3ec488c66fca85e7e8abe4b88cd87b6b469ffba173fe7604a9b4d06814",
+      "bytes": 9124,
+      "matches_receipt": true
+    }
+  },
+  "pair_carry": {
+    "count": 357,
+    "permission_go": 357,
+    "frame_ids_strict_increasing": true,
+    "observed_at_monotone": true,
+    "age_s": {
+      "count": 357,
+      "min": 0.30824999999271085,
+      "median": 0.3547499999916113,
+      "p95": 0.39974999999054717,
+      "max": 0.4309999999898082,
+      "sum": 127.92049999697511
+    },
+    "period_s": {
+      "count": 356,
+      "min": 0.19999999999527063,
+      "median": 0.35999999999148713,
+      "p95": 0.39999999999054126,
+      "max": 0.4399999999895954,
+      "sum": 121.02999999713803
+    },
+    "effective_lease_s": {
+      "count": 357,
+      "min": 0.1690000000101861,
+      "median": 0.2442500000084067,
+      "p95": 0.25,
+      "max": 0.25,
+      "sum": 84.22000000186287
+    },
+    "first_waypoint": {
+      "count": 53,
+      "span_sim_s": 14.509999999656898,
+      "start_error_px": [
+        0.0,
+        -89.63498337033917
+      ],
+      "end_error_px": [
+        0.015954784480470607,
+        -5.631128561742116
+      ]
+    },
+    "pending_renewal": {
+      "count": 101,
+      "duration_s": {
+        "count": 101,
+        "min": 0.010250000013940053,
+        "median": 0.020000000013709496,
+        "p95": 0.04000000001323656,
+        "max": 0.05175000001295871,
+        "sum": 2.2475000013792794
+      },
+      "invariant_errors": []
+    },
+    "command_coverage": {
+      "r1": {
+        "with_renewal": {
+          "moving_records": 448,
+          "covered_sim_s": 82.36775000232117,
+          "positive_gap": {
+            "count": 300,
+            "min": 0.00249999998575845,
+            "median": 0.11399999998312182,
+            "p95": 0.19174999998128328,
+            "max": 1.5497499999491708,
+            "sum": 37.49449999485866
+          }
+        },
+        "original_only": {
+          "moving_records": 347,
+          "covered_sim_s": 81.16525000155681,
+          "positive_gap": {
+            "count": 303,
+            "min": 0.009999999993851816,
+            "median": 0.11424999998311591,
+            "p95": 0.18999999998132466,
+            "max": 1.5497499999491708,
+            "sum": 38.69699999562302
+          }
+        }
+      },
+      "r3": {
+        "with_renewal": {
+          "moving_records": 448,
+          "covered_sim_s": 82.36775000232117,
+          "positive_gap": {
+            "count": 300,
+            "min": 0.00249999998575845,
+            "median": 0.11399999998312182,
+            "p95": 0.19174999998128328,
+            "max": 1.5497499999491708,
+            "sum": 37.49449999485866
+          }
+        },
+        "original_only": {
+          "moving_records": 347,
+          "covered_sim_s": 81.16525000155681,
+          "positive_gap": {
+            "count": 303,
+            "min": 0.009999999993851816,
+            "median": 0.11424999998311591,
+            "p95": 0.18999999998132466,
+            "max": 1.5497499999491708,
+            "sum": 38.69699999562302
+          }
+        }
+      }
+    }
+  },
+  "solo": {
+    "rows": 713,
+    "actual_decisions": 598,
+    "resource_drops": 115,
+    "phase_before_counts": {
+      "approach": 153,
+      "lower": 16,
+      "close": 1,
+      "lift": 15,
+      "verify_lift": 2,
+      "attachment_left": 2,
+      "attachment_right": 2,
+      "attachment_home": 2,
+      "carry": 498,
+      "release": 16,
+      "open": 1,
+      "retract": 1,
+      "verify_release": 1,
+      "release_ground_left": 1,
+      "release_ground_right": 1,
+      "release_ground_home": 1
+    },
+    "nominal_admission_rows": 439,
+    "shortened_admissions": 0,
+    "budget_margin_decisions": 2
+  },
+  "video": {
+    "requested_fps": 10,
+    "written_frames": 3074,
+    "captured_frames": 1447,
+    "repeated_frames": 1627,
+    "error": null,
+    "media_range_206_matches_source": true,
+    "media_id": "ef3700b637177a0f6bae"
+  },
+  "tensorboard": {
+    "path": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단/v17-full",
+    "manifest_complete": true,
+    "scalars": {
+      "result/wall_s": 312.3708801269531,
+      "result/commands": 2079.0,
+      "result/model_calls": 0.0,
+      "result/input_tokens": 0.0,
+      "result/output_tokens": 0.0,
+      "result/model_latency_s": 0.0,
+      "result/recorded_raw_commands": 2019.0,
+      "evaluation/simultaneous_loaded_motion_s": 11.100000381469727,
+      "evaluation/robot_robot_contact_samples": 0.0,
+      "evaluation/reported_success": 1.0,
+      "claims/protocol_complete": 1.0,
+      "claims/plan_committed": 1.0
+    }
+  },
+  "assessment": {
+    "first_full_success": true,
+    "reliability_repeat_needed": true,
+    "limitations": [
+      "one full run; same SHA repeat in progress",
+      "issued command union is not measured velocity",
+      "first waypoint 14.51s vs v16 13.97s, no segment speedup claim",
+      "solo margin 2 of 600"
+    ]
+  },
+  "errors": []
+}

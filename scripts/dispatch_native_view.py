@@ -8,6 +8,9 @@ from __future__ import annotations
 import copy
 import queue
 import time
+import math
+
+from harness.communication_overlay import ObserverDialoguePanel
 
 _POLL_INTERVAL_S = .01
 _SLEEP_BATCH_S = .005
@@ -28,6 +31,8 @@ class DispatchNativeView:
         self.viewer = mujoco.viewer.launch_passive(
             self.model, self.data, key_callback=self.keys.put,
             show_left_ui=False, show_right_ui=False)
+        self.dialogue_panel = (ObserverDialoguePanel(scene.out / 'team' / 'latest-dialogue.json')
+                               if getattr(scene, 'out', None) is not None else None)
         with self.viewer.lock():
             self.viewer.cam.type = mujoco.mjtCamera.mjCAMERA_FREE
             self.viewer.cam.lookat[:] = [.55, -2., .1]
@@ -68,6 +73,9 @@ class DispatchNativeView:
                     self.viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_REFLECTION] = 0
                 self.viewer.sync(state_only=True)
                 self.next_sync = now + 1 / 30
+            panel = getattr(self, 'dialogue_panel', None)
+            if panel is not None:
+                panel.poll(self.viewer, mujoco, now)
             if not self.paused:
                 self.next_poll = time.monotonic() + _POLL_INTERVAL_S
                 return
@@ -104,3 +112,23 @@ class DispatchNativeView:
             if time.monotonic() >= deadline:
                 raise RuntimeError('native dispatch viewer did not close within 10 seconds')
             time.sleep(.01)
+
+
+class HeadlessPacer(DispatchNativeView):
+    """Use the native SIM/wall clock contract without opening an observer UI."""
+    def __init__(self,scene,*,realtime_factor=1.):
+        if not math.isfinite(realtime_factor) or realtime_factor<=0:
+            raise ValueError('positive finite realtime_factor required')
+        self.scene=scene;self.factor=float(realtime_factor)
+        self.paused=False
+        self.pace_sim=scene.time();self.pace_wall=time.monotonic()
+        self.last_tick_wall=self.pace_wall;self.rebase_pace=False
+        self.next_poll=0.
+
+    def poll(self):
+        if self.scene.deadline and time.monotonic()>=self.scene.deadline:
+            raise RuntimeError('skill wall budget exhausted')
+        self.next_poll=time.monotonic()+_POLL_INTERVAL_S
+
+    def close(self):
+        pass

@@ -1,0 +1,409 @@
+{
+  "schema": "ugrp.independent_realtime_dispatch_v14_full_audit.v1",
+  "checked_at_utc": "2026-09-23T14:03:55.041441+00:00",
+  "source_sha": "427d6ad5a1c5d426d6c19441ef0695a6f4a74c00",
+  "bundle_id": "rgb-standard-dispatch-v14",
+  "bundle_sha256": "9fa9bd26155e66a60bb636be2c1334420024e40ed89357ac7698b4a43046aa72",
+  "manager": {
+    "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260923-225746-dispatch-19e3b2fa/manifest.json",
+    "sha256": "7aca855f045ede2fbc9fc15e0465a8fa83dd21387abe94e3a91925a04f584195",
+    "status": "process_failed",
+    "exit_code": 1,
+    "runtime_s": 226.6071763749933,
+    "source_dirty": false,
+    "source_before_sha256": "cf1ba1f9347467b57a035135df4d183fa8680a61148b96d27e9c13371c9dc3c6",
+    "source_after_sha256": "cf1ba1f9347467b57a035135df4d183fa8680a61148b96d27e9c13371c9dc3c6",
+    "source_changed_during_run": false,
+    "inputs_changed_during_run": false,
+    "inputs_before_after_equal": true,
+    "finalization_errors": []
+  },
+  "result": {
+    "phase": "TRANSIT",
+    "error": "ComponentExecutionError: solo_box: RuntimeError: solo stopped: VISUAL_LOAD_DROPPED_OR_OCCLUDED",
+    "wall_s": 226.10585620799975,
+    "timing": {
+      "scene_and_observer_setup_wall_s": 1.832799417010392,
+      "scope": "output-only SIM/wall measurements; wall_s includes finalization",
+      "control_end_sim_s": 221.51824999648977,
+      "control_wall_s": 224.42855995800346,
+      "motion_wall_s": 217.36203941599524,
+      "motion_sim_s": 216.31824999648916,
+      "motion_sim_to_wall": 0.9951979222208693,
+      "cleanup_wall_s": 1.6772970839956542
+    },
+    "plan_committed": true,
+    "protocol_complete": false,
+    "physical_success": false,
+    "failed_component": "solo_box",
+    "llm_calls": 0,
+    "realtime_control_stats": {
+      "solo_backpressure": 0,
+      "solo_stale_rgb": 2,
+      "solo_decisions": 294,
+      "pair_backpressure": 0,
+      "pair_decisions": 320,
+      "max_decision_age_s": 0.619999999985339,
+      "pair_stage_stale_rgb": 0,
+      "pair_stage_samples": 309
+    },
+    "pair_carry_decision_count": 320,
+    "pair_carry_age_s": {
+      "min": 0.2599999999938518,
+      "median": 0.319999999992433,
+      "p95": 0.39999999999054126,
+      "max": 0.619999999985339
+    },
+    "pair_permission_phases": {
+      "GO": 319,
+      "HOLD": 1
+    },
+    "pair_waypoints": {
+      "0": 81,
+      "1": 228,
+      "2": 2,
+      "3": 9
+    },
+    "pair_stale_events": [
+      {
+        "kind": "bounded_pair_stale_rgb",
+        "stage": "TRANSIT",
+        "observed_at_s": 167.23999999777328,
+        "received_at_s": 167.85999999775862
+      }
+    ],
+    "solo_rows_count": 460,
+    "solo_drops": {
+      "stale_rgb": 2,
+      "resource_permission": 164
+    },
+    "solo_resource_permission_requests": {
+      "(('box', 'APPROACH'), ('box', 'GRASP'))": 49,
+      "(('box', 'TRANSIT'), ('box', 'UNLOAD'), ('box', 'TRANSIT'))": 115
+    },
+    "last_solo_row": {
+      "index": 459,
+      "sim_time_s": 221.51824999648977,
+      "observed_at_s": 221.23124999649656,
+      "phase_before": "carry",
+      "phase_after": "finished",
+      "action": {
+        "kind": "finish",
+        "reason": "VISUAL_LOAD_DROPPED_OR_OCCLUDED"
+      }
+    },
+    "issued_commands": {
+      "r1": {
+        "APPROACH": {
+          "issued_count": 292,
+          "bounded_count": 265,
+          "unbounded_count": 27,
+          "kinds": {
+            "lateral": 75,
+            "turn": 21,
+            "forward": 122,
+            "hold": 74
+          },
+          "requested_lease_s": {
+            "min": 0.25,
+            "median": 0.25,
+            "p95": 0.25,
+            "max": 0.25
+          },
+          "effective_lease_s": {
+            "min": 0.03999999999732751,
+            "median": 0.25,
+            "p95": 0.25,
+            "max": 0.2500000000000071
+          },
+          "ttl_clipped_count": 9,
+          "observation_matches": 265,
+          "ttl_violations": 0,
+          "nonpositive_lease_count": 0
+        },
+        "TRANSIT": {
+          "issued_count": 319,
+          "bounded_count": 319,
+          "unbounded_count": 0,
+          "kinds": {
+            "lateral": 79,
+            "hold": 6,
+            "forward": 234
+          },
+          "requested_lease_s": {
+            "min": 0.2,
+            "median": 0.25,
+            "p95": 0.25,
+            "max": 0.25
+          },
+          "effective_lease_s": {
+            "min": 0.04000000001323656,
+            "median": 0.25,
+            "p95": 0.25,
+            "max": 0.25
+          },
+          "ttl_clipped_count": 100,
+          "observation_matches": 319,
+          "ttl_violations": 0,
+          "nonpositive_lease_count": 0
+        }
+      },
+      "r3": {
+        "APPROACH": {
+          "issued_count": 292,
+          "bounded_count": 265,
+          "unbounded_count": 27,
+          "kinds": {
+            "hold": 112,
+            "forward": 119,
+            "lateral": 61
+          },
+          "requested_lease_s": {
+            "min": 0.25,
+            "median": 0.25,
+            "p95": 0.25,
+            "max": 0.25
+          },
+          "effective_lease_s": {
+            "min": 0.03999999999732751,
+            "median": 0.25,
+            "p95": 0.25,
+            "max": 0.2500000000000071
+          },
+          "ttl_clipped_count": 9,
+          "observation_matches": 265,
+          "ttl_violations": 0,
+          "nonpositive_lease_count": 0
+        },
+        "TRANSIT": {
+          "issued_count": 319,
+          "bounded_count": 319,
+          "unbounded_count": 0,
+          "kinds": {
+            "lateral": 79,
+            "hold": 6,
+            "forward": 234
+          },
+          "requested_lease_s": {
+            "min": 0.2,
+            "median": 0.25,
+            "p95": 0.25,
+            "max": 0.25
+          },
+          "effective_lease_s": {
+            "min": 0.04000000001323656,
+            "median": 0.25,
+            "p95": 0.25,
+            "max": 0.25
+          },
+          "ttl_clipped_count": 100,
+          "observation_matches": 319,
+          "ttl_violations": 0,
+          "nonpositive_lease_count": 0
+        }
+      },
+      "r2": {
+        "TRANSIT": {
+          "issued_count": 170,
+          "bounded_count": 168,
+          "unbounded_zero_motion_count": 2,
+          "moving_count": 168,
+          "moving_all_bounded": true,
+          "requested_policy_renewal_s": {
+            "min": 0.25,
+            "median": 0.25,
+            "p95": 0.25,
+            "max": 0.25
+          },
+          "effective_lease_s": {
+            "min": 0.1412500000108423,
+            "median": 0.25,
+            "p95": 0.25,
+            "max": 0.25
+          },
+          "ttl_violations": 0,
+          "first_carry_transition_bounded": true
+        }
+      }
+    },
+    "robot_path_length_m": {
+      "r1": 2.275784938368067,
+      "r2": 1.6005748195644742,
+      "r3": 2.2275577482214977
+    },
+    "cargo_evaluation": {
+      "beam": {
+        "max_lift_m": 0.07760095371729459,
+        "displacement_m": 1.3422580086808313,
+        "lift_observed_by_referee": true,
+        "inside_slot_at_end": false,
+        "released_supported_stable": false,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 1127,
+          "floor_contact_samples": 0,
+          "window_s": [
+            109.05999999914904,
+            221.73999999649044
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999764952,
+          "first_floor_contact_s": null
+        },
+        "physical_success": false
+      },
+      "box": {
+        "max_lift_m": 0.0687434036174652,
+        "displacement_m": 1.05656629524768,
+        "lift_observed_by_referee": true,
+        "inside_slot_at_end": false,
+        "released_supported_stable": false,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 477,
+          "floor_contact_samples": 0,
+          "window_s": [
+            132.04349999860557,
+            179.74624999748346
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999763531,
+          "first_floor_contact_s": null
+        },
+        "physical_success": false
+      }
+    },
+    "concurrent_transport_summary": {
+      "simultaneous_loaded_motion_s": 11.799999999720967,
+      "minimum_displacement_per_sample_m": 0.001,
+      "max_sample_gap_s": 0.11,
+      "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+    },
+    "all_three_body_motion_sim_s": 28.799999999361603,
+    "weld_steps": 0
+  },
+  "comparison_to_v7": {
+    "baseline_path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v7/artifacts/result.json",
+    "same_plan_replay_sha256": true,
+    "same_model_provenance": true,
+    "same_environment": true,
+    "same_variant_seed_contact": true,
+    "changed_conditions": {
+      "v14_source_sha": "427d6ad5a1c5d426d6c19441ef0695a6f4a74c00",
+      "v7_source_sha": "6916e8cd4182a65766178ec08d654649c1af1498",
+      "v14_realtime_control": true,
+      "v7_realtime_control": false,
+      "v14_realtime_factor": 1.0,
+      "v7_realtime_factor": 2.0
+    },
+    "v14": {
+      "wall_s": 226.10585620799975,
+      "protocol_complete": false,
+      "physical_success": false,
+      "beam_displacement_m": 1.3422580086808313,
+      "box_displacement_m": 1.05656629524768,
+      "simultaneous_loaded_motion_s": 11.799999999720967
+    },
+    "v7": {
+      "wall_s": 330.72713116699015,
+      "protocol_complete": true,
+      "physical_success": true,
+      "beam_displacement_m": 1.6804292466115642,
+      "box_displacement_m": 2.3080579222012565,
+      "simultaneous_loaded_motion_s": 2.899999999931424
+    },
+    "interpretation": "v14 failed before completion, with a changed controller and realtime factor. Its wall time is not a matched successful-throughput speedup."
+  },
+  "raw_files": {
+    "result.json": {
+      "bytes": 7093040,
+      "sha256": "cdd9de26657b624410eafe1b5af1bab3a81cf2c85fc0b05925865a42d46dc596",
+      "matches_manager_receipt": true
+    },
+    "issued-commands.json": {
+      "bytes": 539704,
+      "sha256": "04c11a82b04c2606f973640d79d84c76544f33d12bb466ee2564bd347c930324",
+      "matches_manager_receipt": true
+    },
+    "referee-only.jsonl": {
+      "bytes": 3257413,
+      "sha256": "1dee05e467ca8c766cd0dcab4a3fca7df6f9b9f2042313bb59d91ea5dcd7f6cf",
+      "matches_manager_receipt": true
+    },
+    "pair-decisions.json": {
+      "bytes": 11188471,
+      "sha256": "0091143a945bd01363eb1b4f5dfd40f30f6c159378ca43b7f191047bea8d17a4",
+      "matches_manager_receipt": true
+    },
+    "solo-decisions.json": {
+      "bytes": 1274430,
+      "sha256": "68cac517bddfa039b9086fb76525c029f1e2762da7f83ca0083df44006703de3",
+      "matches_manager_receipt": true
+    },
+    "execution.mp4": {
+      "bytes": 2595243,
+      "sha256": "bdb0fd807f909bd10a04d4518aea527544f53fb6a0ff3571d44d43846ba837fe",
+      "matches_manager_receipt": true
+    },
+    "execution.frames.json": {
+      "bytes": 301916,
+      "sha256": "e134ffb2534bd63b25880346ead1724cced0e547e901be2baec441390b52940d",
+      "matches_manager_receipt": true
+    },
+    "native-observer.json": {
+      "bytes": 78,
+      "sha256": "5ca074db7f500784d83f686f8a70752d0a24fb394be6fe9eeddcbf005b1796de",
+      "matches_manager_receipt": true
+    },
+    "evaluation-only.json": {
+      "bytes": 7928,
+      "sha256": "9ad8ef8843e60dc389f3fd4ff60f45a0f28848b0b3cce35370fcacbb4ab850b0",
+      "matches_manager_receipt": true
+    }
+  },
+  "recording": {
+    "requested_fps": 10,
+    "written_frames": 2216,
+    "captured_frames": 1083,
+    "repeated_frames": 1133,
+    "error": null,
+    "decoded_frames": 2216,
+    "counts_consistent": true,
+    "observer": {
+      "mode": "isolated_latest_state",
+      "published": 5573,
+      "busy_skips": 2
+    }
+  },
+  "tensorboard": {
+    "path": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단/v14-full",
+    "collection": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단",
+    "manifest_sha256": "7556d482f2e53a140db6ee45024957f5590728653952c1510277aef34e6c8f17",
+    "event_sha256": "6c07f623d2c0c96214aaff41760d49efdb9d1fcffc0c63958f9c556c42a4635a",
+    "manifest_complete": true,
+    "source_matches": true,
+    "counts": {
+      "scalars": 12,
+      "texts": 4,
+      "images": 0
+    },
+    "scalars": {
+      "evaluation/reported_success": 0.0,
+      "claims/protocol_complete": 0.0,
+      "result/wall_s": 226.10585021972656,
+      "result/commands": 1449.0,
+      "result/model_calls": 0.0
+    },
+    "video_id": "3accf7065532fe69d408",
+    "video_source_sha256": "bdb0fd807f909bd10a04d4518aea527544f53fb6a0ff3571d44d43846ba837fe",
+    "range_status": 206,
+    "content_range": "bytes 0-63/2595243",
+    "range_bytes_match_source": true
+  },
+  "limits": [
+    "Failure is a solo visual load status; cargo/contact referee outputs do not prove real-world drop vs occlusion.",
+    "Loaded overlap is referee-only sampled physical motion, not task completion.",
+    "v7 had changed controller and realtime factor; wall time is not successful-throughput speedup.",
+    "Observer recording includes repeated frames and is not actor RGB."
+  ]
+}

@@ -1,0 +1,420 @@
+{
+  "schema": "ugrp.independent_realtime_dispatch_v16_full_audit.v1",
+  "checked_at_utc": "2026-09-23T14:51:43.371996+00:00",
+  "source_sha": "bb9d4ba10b0e19fc97c7415b68838bfc140d9cfe",
+  "bundle_id": "rgb-standard-dispatch-v16",
+  "bundle_sha256": "9d11f82ca02fb60d283fe6908fe1f696b2d31aabfc1acd9bf779c56a94b98958",
+  "manager": {
+    "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260923-234102-dispatch-b43ca3d1/manifest.json",
+    "sha256": "166647ea4a885c9b18965e638a57fe1bf827079f2c612856dd7c3c1fb9fb47d9",
+    "status": "process_failed",
+    "exit_code": 1,
+    "runtime_s": 255.83905699999013,
+    "source_dirty": false,
+    "source_tree_before_sha256": "1dec0375ababe709294cb1649633ea70a4e8c8121cbb909100952820c87b1bec",
+    "source_tree_after_sha256": "1dec0375ababe709294cb1649633ea70a4e8c8121cbb909100952820c87b1bec",
+    "source_changed_during_run": false,
+    "inputs_changed_during_run": false,
+    "inputs_before_after_equal": true,
+    "finalization_errors": []
+  },
+  "result": {
+    "phase": "RELEASE",
+    "error": "ComponentExecutionError: solo_box: RuntimeError: solo RGB decision budget exhausted",
+    "wall_s": 255.34353045800526,
+    "timing": {
+      "scene_and_observer_setup_wall_s": 1.6258516249945387,
+      "scope": "output-only SIM/wall measurements; wall_s includes finalization",
+      "control_end_sim_s": 250.44124999580583,
+      "control_wall_s": 253.3947029580013,
+      "motion_wall_s": 246.30648441700032,
+      "motion_sim_s": 245.24124999580522,
+      "motion_sim_to_wall": 0.9956751669623458,
+      "cleanup_wall_s": 1.9488286669948138
+    },
+    "physical_success": false,
+    "protocol_complete": false,
+    "llm_calls": 0,
+    "failed_component": "solo_box",
+    "realtime_control_stats": {
+      "solo_backpressure": 0,
+      "solo_stale_rgb": 0,
+      "solo_decisions": 600,
+      "pair_backpressure": 0,
+      "pair_decisions": 302,
+      "max_decision_age_s": 0.49824999998821795,
+      "solo_total_sim_s": 245.24124999580522,
+      "solo_active_sim_s": 227.51249999622445,
+      "solo_resource_wait_sim_s": 17.72874999958077,
+      "solo_resource_waiting": false,
+      "solo_resource_wait_intervals": 2,
+      "solo_active_budget_s": 300.0,
+      "pair_stage_stale_rgb": 0,
+      "pair_stage_samples": 307
+    }
+  },
+  "pair_carry": {
+    "count": 302,
+    "go": 302,
+    "hold": 0,
+    "same_frame_for_both_count": 302,
+    "frame_ids_strictly_increasing": true,
+    "observed_at_monotone": true,
+    "decision_sim_time_monotone": true,
+    "next_capture_minus_previous_decision_s": {
+      "count": 301,
+      "min": -0.13974999999669535,
+      "median": 0.010749999999745796,
+      "p95": 0.030249999999284682,
+      "max": 0.03899999999907777,
+      "sum": -2.545999999939795
+    },
+    "period_s": {
+      "count": 301,
+      "min": 0.17999999999574356,
+      "median": 0.319999999992433,
+      "p95": 0.3799999999910142,
+      "max": 0.5199999999877036,
+      "sum": 94.9899999977538
+    },
+    "age_s": {
+      "count": 302,
+      "min": 0.2749999999934971,
+      "median": 0.31699999999250394,
+      "p95": 0.38324999999093734,
+      "max": 0.49824999998821795,
+      "sum": 97.87574999768556
+    },
+    "render_wait_wall_s": {
+      "count": 302,
+      "min": 0.1456666669982951,
+      "median": 0.3162137709950912,
+      "p95": 0.34769941700506024,
+      "max": 0.6431626249977853,
+      "sum": 91.8973953378154
+    },
+    "pair_bind_wall_s": {
+      "count": 302,
+      "min": 0.07763087499188259,
+      "median": 0.09392483350529801,
+      "p95": 0.12488654200569727,
+      "max": 0.4456682079908205,
+      "sum": 30.24103028976242
+    },
+    "perception_wall_s": {
+      "count": 302,
+      "min": 0.02841662500577513,
+      "median": 0.04581343750032829,
+      "p95": 0.052940542009309866,
+      "max": 0.262548541999422,
+      "sum": 13.620421251936932
+    },
+    "requested_lease_counts": {
+      "0.25": 294,
+      "0.2": 7,
+      "None": 1
+    },
+    "actual_lease_s": {
+      "count": 302,
+      "min": 0.10175000001177636,
+      "median": 0.25,
+      "p95": 0.25,
+      "max": 0.25,
+      "sum": 73.73525000038791
+    },
+    "actual_at_025_cap_count": 251,
+    "available_ttl_after_decision_s": {
+      "count": 302,
+      "min": 0.10175000001178203,
+      "median": 0.28300000000749603,
+      "p95": 0.3097500000068635,
+      "max": 0.32500000000650286,
+      "sum": 83.32425000231443
+    },
+    "positive_interlease_gap_s": {
+      "count": 301,
+      "min": 0.0,
+      "median": 0.069999999992433,
+      "p95": 0.14824999998231192,
+      "max": 0.3787499999768613,
+      "sum": 22.89799999764268
+    },
+    "positive_gap_count": 254,
+    "first_waypoint": {
+      "decision_count": 52,
+      "sim_span_s": 13.969999999669653,
+      "error_first_px": [
+        0.0,
+        -89.63300124698071
+      ],
+      "error_last_px": [
+        0.025146503436928924,
+        -4.631255642082294
+      ]
+    },
+    "hypothetical_035_cap_with_same_rgb_and_decision_times": {
+      "feasible_full_035_count": 0,
+      "extended_lease_s": {
+        "count": 302,
+        "min": 0.0,
+        "median": 0.032750000007501945,
+        "p95": 0.05975000000686348,
+        "max": 0.07500000000650286,
+        "sum": 8.911000001866883
+      },
+      "gap_s": {
+        "count": 301,
+        "min": 0.0,
+        "median": 0.046499999984712326,
+        "p95": 0.1429999999824304,
+        "max": 0.37874999997685566,
+        "sum": 15.852749996158508
+      },
+      "scope": "Retrospective command-coverage bound only; not a physical replay or success projection. Extend only records with requested lease .25 and retain RGB TTL .6."
+    }
+  },
+  "solo": {
+    "decision_rows": 646,
+    "actual_decisions": 600,
+    "drops": {
+      "resource_permission": 46
+    },
+    "carry_rows": 487,
+    "carry_age_s": {
+      "count": 460,
+      "min": 0.11449999999729243,
+      "median": 0.13499999999680767,
+      "p95": 0.1577499999962697,
+      "max": 0.3097499999926754,
+      "sum": 63.426749998500156
+    },
+    "bounded_transit_issued": 449,
+    "renewal_request_counts": {
+      "0.25": 449
+    },
+    "transit_age_s": {
+      "count": 449,
+      "min": 0.1152499999972747,
+      "median": 0.13524999999680176,
+      "p95": 0.1577499999962697,
+      "max": 0.3097499999926754,
+      "sum": 62.018999998533445
+    },
+    "transit_lease_s": {
+      "count": 449,
+      "min": 0.25,
+      "median": 0.25,
+      "p95": 0.25,
+      "max": 0.25,
+      "sum": 112.25
+    },
+    "transit_gap_s": {
+      "count": 448,
+      "min": 0.0,
+      "median": 0.0,
+      "p95": 0.1062499999915758,
+      "max": 7.1367499998253265,
+      "sum": 29.146499998022023
+    },
+    "last_decision": {
+      "index": 645,
+      "sim_time_s": 250.31924999580872,
+      "phase_before": "carry",
+      "phase_after": "carry",
+      "waypoint_index": 6,
+      "error_px": [
+        -36.46764135245644,
+        -1.8443494161872707
+      ],
+      "action": {
+        "kind": "mecanum",
+        "forward": -0.05,
+        "left": 0.025,
+        "turn": 0.0,
+        "duration_s": 0.2
+      }
+    }
+  },
+  "evaluation": {
+    "physical_success": false,
+    "beam": {
+      "max_lift_m": 0.0774894090382624,
+      "displacement_m": 1.6727420843728693,
+      "lift_observed_by_referee": true,
+      "inside_slot_at_end": true,
+      "released_supported_stable": true,
+      "carry_clearance": {
+        "sampled_continuous_clearance": true,
+        "samples": 952,
+        "floor_contact_samples": 0,
+        "window_s": [
+          106.41999999921147,
+          201.60999999696526
+        ],
+        "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+        "max_sample_gap_s": 0.09999999999764952,
+        "first_floor_contact_s": null
+      },
+      "physical_success": true
+    },
+    "box": {
+      "max_lift_m": 0.06883988449657691,
+      "displacement_m": 2.4178083233839627,
+      "lift_observed_by_referee": true,
+      "inside_slot_at_end": false,
+      "released_supported_stable": false,
+      "carry_clearance": {
+        "sampled_continuous_clearance": true,
+        "samples": 1202,
+        "floor_contact_samples": 0,
+        "window_s": [
+          130.31524999864644,
+          250.56924999580872
+        ],
+        "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+        "max_sample_gap_s": 0.09999999999763531,
+        "first_floor_contact_s": null
+      },
+      "physical_success": false
+    },
+    "simultaneous_loaded_motion_s": 14.399999999659485,
+    "all_three_body_motion_sim_s": 39.09999999913509,
+    "weld_steps": 0
+  },
+  "prior_first_waypoint_comparison": {
+    "v13-full": {
+      "carry_decisions": 167,
+      "decision_period_median_s": 0.35999999999148713,
+      "age_median_s": 0.33999999999196007,
+      "first_waypoint_sim_span_s": 20.369999999518313,
+      "first_waypoint_start_error_px": [
+        0.0,
+        -89.63248800479488
+      ],
+      "first_waypoint_end_error_px": [
+        0.04794666503971712,
+        -5.6323911020146795
+      ]
+    },
+    "v14-full": {
+      "carry_decisions": 320,
+      "decision_period_median_s": 0.33999999999196007,
+      "age_median_s": 0.319999999992433,
+      "first_waypoint_sim_span_s": 26.989999999361785,
+      "first_waypoint_start_error_px": [
+        0.0,
+        -90.13345748726724
+      ],
+      "first_waypoint_end_error_px": [
+        0.01608817011225483,
+        -5.639297637612174
+      ]
+    },
+    "v15-full": {
+      "carry_decisions": 501,
+      "decision_period_median_s": 0.29999999999290594,
+      "age_median_s": 0.4399999999895954,
+      "first_waypoint_sim_span_s": 7.289999999827614,
+      "first_waypoint_start_error_px": [
+        0.0,
+        -90.63567777945468
+      ],
+      "first_waypoint_end_error_px": [
+        -0.0004047398697935023,
+        -4.631976373994007
+      ]
+    }
+  },
+  "raw_files": {
+    "result.json": {
+      "bytes": 6465275,
+      "sha256": "8cd14493992a25778e7e574d54ca0eaa19d4830e7b683032b65bd318f1780f8d",
+      "matches_manager_receipt": true
+    },
+    "issued-commands.json": {
+      "bytes": 662038,
+      "sha256": "5ec47912ecea6af463c2e78a53e1f4449796fd878ea9dd83e329a3652c23a7b6",
+      "matches_manager_receipt": true
+    },
+    "referee-only.jsonl": {
+      "bytes": 3735335,
+      "sha256": "4d04233e1239662beab7915e78a27f4ee122ae4a085ccb366bd99c5ee0afdfc2",
+      "matches_manager_receipt": true
+    },
+    "pair-decisions.json": {
+      "bytes": 10401984,
+      "sha256": "864ee674c6bf2f8df80d38f19fcd891d0ebe15c560350464982a44e5fbe95845",
+      "matches_manager_receipt": true
+    },
+    "solo-decisions.json": {
+      "bytes": 3183228,
+      "sha256": "a7e599a9d2181afa31b26a8cea4cb22058efcefffd8c9eaffb1ffda4bc76f6a0",
+      "matches_manager_receipt": true
+    },
+    "execution.mp4": {
+      "bytes": 2878968,
+      "sha256": "407730af1f60a338ac54149f38f5582b41b825ddf703b131d6af07172666b06f",
+      "matches_manager_receipt": true
+    },
+    "execution.frames.json": {
+      "bytes": 342472,
+      "sha256": "ed3ecd54769e620a173b3b60f62c5bc9cbb5e871b5444ef1174ee98198fb4c28",
+      "matches_manager_receipt": true
+    },
+    "native-observer.json": {
+      "bytes": 78,
+      "sha256": "0219d6aa88c674644ddd221648b4b886d03c8e00b9a6bdb8247d43396c8d3a1a",
+      "matches_manager_receipt": true
+    },
+    "evaluation-only.json": {
+      "bytes": 9633,
+      "sha256": "e6ac28a435c397cff89fae70bef35ccd1da0140c9d33a8e3635cd79c88749060",
+      "matches_manager_receipt": true
+    }
+  },
+  "recording": {
+    "requested_fps": 10,
+    "written_frames": 2505,
+    "captured_frames": 1238,
+    "repeated_frames": 1267,
+    "error": null,
+    "decoded_frames": 2505,
+    "observer": {
+      "mode": "isolated_latest_state",
+      "published": 6315,
+      "busy_skips": 7
+    }
+  },
+  "tensorboard": {
+    "path": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단/v16-full",
+    "collection": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단",
+    "manifest_sha256": "3c4bb783df11553f3d55637d5db0d898367acf86831a48826938a63a9d2c4568",
+    "event_sha256": "1fc92131a0ea890a014356e1f278b6626c99c51367107930281fe99430accca4",
+    "manifest_complete": true,
+    "source_matches": true,
+    "counts": {
+      "scalars": 12,
+      "texts": 4,
+      "images": 0
+    },
+    "scalars": {
+      "evaluation/reported_success": 0.0,
+      "claims/protocol_complete": 0.0,
+      "result/wall_s": 255.34353637695312,
+      "result/commands": 1704.0,
+      "result/model_calls": 0.0
+    },
+    "video_id": "84b049e211e9338cd5d4",
+    "video_source_sha256": "407730af1f60a338ac54149f38f5582b41b825ddf703b131d6af07172666b06f",
+    "range_status": 206,
+    "content_range": "bytes 0-63/2878968",
+    "range_bytes_match_source": true
+  },
+  "limits": [
+    "Failed release-phase run: solo RGB decision budget exhausted at 600 actual decisions; beam succeeded physically but box did not reach/release in slot.",
+    "First-waypoint timing across versions is descriptive: code/control scheduling changed; it is not an isolated causal speedup claim.",
+    "Lease gap is issued-command coverage only. Port sets STOP at expiry; measured robot stopping/reacceleration requires motion trace analysis.",
+    "A .35 renewal cap cannot deliver .35s in this run because all recorded pair carry RGB decisions have less than .35s left before the unchanged .6s TTL.",
+    "Observer repeated frames are not actor RGB; referee-only contact and motion samples are not controller inputs."
+  ]
+}
