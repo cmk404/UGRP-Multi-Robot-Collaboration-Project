@@ -42,6 +42,8 @@ python3 -m scripts.sim_cli models fetch act-action-first-study-seed24-20260924
 python3 -m scripts.sim_cli models verify act-action-first-study-seed24-20260924
 ```
 
+2026-09-24 실제 검증에서는 이 태그를 새 폴더에 복제하고 CLI로 GitHub 자산을 내려받아 ZIP 및 내부 18개 파일(54,390,431바이트)을 검증했다. `carry_input_worker`는 `ready: true`, history 4를 반환하고 정상 종료했다. 모델 배포 검사도 통과했다. [다운로드·로딩 기록](../experiments/2026-09-24-model-release/verification.json)을 보존하며, 새 물리 시험 결과를 뜻하지 않는다.
+
 두 번째 학습은 모델 내보내기에 실패했으므로 내려받을 모델이 없다. 첫 모델로 그 결과를 대체하지 않는다. 모델마다 포함 자산과 검증 범위는 목록·ZIP의 `provenance.json`·Release 검증 기록을 함께 확인한다.
 
 ## 실제 ACT 로딩
