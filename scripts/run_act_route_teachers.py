@@ -5,6 +5,7 @@ case, or writes to the frozen v28 checkout. Run after source/input freeze and
 only while no other physics or training owner is active.
 """
 import argparse
+from functools import lru_cache
 import hashlib
 import json
 import os
@@ -19,6 +20,10 @@ from datetime import datetime, timezone
 ROOT = Path(__file__).resolve().parents[1]
 PROTOCOL = ROOT/'experiments/2026-09-24-action-act/route-coverage-protocol.json'
 SECRET_FLAG = re.compile(r'(token|secret|password|credential|api[-_]?key)', re.I)
+HOST_LOAD_POLICIES = ('strict', 'teacher-data')
+_PYTHON = re.compile(r'python(?:\d+(?:\.\d+)*)?$', re.I)
+_PYTEST_FLAGS = {'-q', '-qq', '-v', '-vv', '-s', '-x', '--disable-warnings',
+                 '--no-header', '--no-summary'}
 
 
 def safe_command(command):
@@ -154,6 +159,88 @@ def foreign_snapshot(owned_pgids=()):
             'processes': blockers}
 
 
+@lru_cache(maxsize=64)
+def _repo_identity(cwd):
+    """Resolve an observed cwd to its local Git root and origin, without fetch."""
+    try:
+        path = Path(cwd).resolve(strict=True)
+        if not path.is_dir():
+            return None
+        top = Path(subprocess.check_output(
+            ['git', '-C', str(path), 'rev-parse', '--show-toplevel'],
+            text=True, stderr=subprocess.DEVNULL, timeout=.5).strip()).resolve(strict=True)
+        remote = subprocess.check_output(
+            ['git', '-C', str(top), 'remote', 'get-url', 'origin'],
+            text=True, stderr=subprocess.DEVNULL, timeout=.5).strip()
+        return top, remote
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired,
+            ValueError):
+        return None
+
+
+def _is_known_external_pytest(row, *, ugrp_roots=()):
+    """Allow only a recognized pytest module within a verified other repo."""
+    if row.get('reason') != 'foreign_test_or_torch_job':
+        return False
+    cwd = row.get('cwd')
+    if not isinstance(cwd, str) or not cwd or not Path(cwd).is_absolute():
+        return False
+    identity = _repo_identity(cwd)
+    if identity is None:
+        return False
+    repo, origin = identity
+    resolved_cwd = Path(cwd).resolve()
+    if not resolved_cwd.is_relative_to(repo):
+        return False
+    known_ugrp = [ROOT, Path('/Users/changmin/projects/ugrp'),
+                  *(Path(path) for path in ugrp_roots)]
+    if (any(repo.is_relative_to(path.resolve()) or path.resolve().is_relative_to(repo)
+            for path in known_ugrp)
+            or any('ugrp' in part.lower() for part in repo.parts)
+            or 'ugrp' in origin.lower()):
+        return False
+    try:
+        words = shlex.split(row['command'])
+    except (KeyError, TypeError, ValueError):
+        return False
+    if (len(words) < 3 or not _PYTHON.fullmatch(Path(words[0]).name)
+            or words[1:3] != ['-m', 'pytest']):
+        return False
+    for arg in words[3:]:
+        if 'ugrp' in arg.lower() or '[REDACTED]' in arg or '[URL_REDACTED]' in arg:
+            return False
+        if arg.startswith('-'):
+            if (arg not in _PYTEST_FLAGS
+                    and not re.fullmatch(r'--maxfail=\d+|--tb=(?:short|line|no)', arg)):
+                return False
+        else:
+            target = arg.split('::', 1)[0]
+            try:
+                if not (resolved_cwd/target).resolve(strict=True).is_relative_to(repo):
+                    return False
+            except (OSError, ValueError):
+                return False
+    return True
+
+
+def classify_host_load(snapshot, *, policy='strict', ugrp_roots=()):
+    """Keep strict blocking intact; teacher data may record only proven outside pytest."""
+    if policy not in HOST_LOAD_POLICIES:
+        raise ValueError('unknown host load policy')
+    if snapshot is None or policy == 'strict':
+        return snapshot, []
+    blockers, events = [], []
+    for row in snapshot['processes']:
+        if _is_known_external_pytest(row, ugrp_roots=ugrp_roots):
+            events.append({'observed_utc': snapshot['observed_utc'], **row,
+                           'classification': 'verified_non_ugrp_pytest',
+                           'timing_eligible': False})
+        else:
+            blockers.append(row)
+    blocked = {**snapshot, 'processes': blockers} if blockers else None
+    return blocked, events
+
+
 def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
@@ -232,7 +319,8 @@ def stop_own_group(process):
     return True
 
 
-def run_owned(command, *, cwd, environment, log, timeout, poll_interval=1.0):
+def run_owned(command, *, cwd, environment, log, timeout, poll_interval=1.0,
+              host_load_policy='strict', ugrp_roots=()):
     if timeout <= 0 or poll_interval <= 0:
         raise ValueError('positive owned workflow timeout and poll interval required')
     started = time.monotonic()
@@ -243,11 +331,15 @@ def run_owned(command, *, cwd, environment, log, timeout, poll_interval=1.0):
         pid = process.pid
         timed_out = False
         interference = None
+        external_test_events = []
         try:
             while True:
                 # Poll only for the lifetime of this bounded collection. An
                 # idle foreign cohort owner remains visible between children.
-                interference = foreign_snapshot((process.pid,))
+                interference, events = classify_host_load(
+                    foreign_snapshot((process.pid,)), policy=host_load_policy,
+                    ugrp_roots=ugrp_roots)
+                external_test_events.extend(events)
                 if interference is not None:
                     stop_own_group(process)
                     code = process.poll()
@@ -268,9 +360,20 @@ def run_owned(command, *, cwd, environment, log, timeout, poll_interval=1.0):
                 stop_own_group(process)
         if process.poll() is None:
             raise RuntimeError(f'owned workflow process {process.pid} survived cleanup')
-    return {'pid': pid, 'exit_code': code, 'timed_out': timed_out,
-            'wall_s': time.monotonic()-started, 'console_log': str(log),
-            'console_sha256': sha(log), 'foreign_interference': interference}
+    result = {'pid': pid, 'exit_code': code, 'timed_out': timed_out,
+              'wall_s': time.monotonic()-started, 'console_log': str(log),
+              'console_sha256': sha(log), 'foreign_interference': interference}
+    if host_load_policy == 'teacher-data':
+        result['observed_external_test_events'] = external_test_events
+    return result
+
+
+def record_external_tests(record, events, *, phase, case=None):
+    for event in events:
+        record['observed_external_test_events'].append(
+            {**event, 'phase': phase, 'case': case})
+    if events:
+        record['timing_eligible'] = False
 
 
 def input_identity(protocol):
@@ -296,6 +399,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--record-root', type=Path, required=True,
                         help='fresh root for launcher/manager/raw records')
+    parser.add_argument('--host-load-policy', choices=HOST_LOAD_POLICIES, default='strict',
+                        help='strict aborts on every foreign test; teacher-data records verified non-UGRP pytest')
     args = parser.parse_args()
     protocol = json.loads(PROTOCOL.read_text())
     if protocol['schema'] != 'ugrp.action_act_route_coverage_protocol.v1':
@@ -307,7 +412,9 @@ def main():
     assert_source(ROOT, launcher_source_sha)
     assert_source(checkout, source['teacher_and_physical_inference_source_sha'])
     before_inputs = input_identity(protocol)
-    preflight = foreign_snapshot()
+    ugrp_roots = (checkout,)
+    preflight, preflight_tests = classify_host_load(
+        foreign_snapshot(), policy=args.host_load_policy, ugrp_roots=ugrp_roots)
     if preflight is not None:
         # No new record root exists yet. Keep the independent owner's process
         # evidence in this launcher's console; never signal foreign PIDs.
@@ -327,8 +434,16 @@ def main():
         'teacher_source_sha': source['teacher_and_physical_inference_source_sha'],
         'input_sha256_before': before_inputs,
         'aggregate_manager_hard_wall_s': teacher['aggregate_manager_hard_wall_s'],
+        'runtime_policy': {'host_load_policy': args.host_load_policy,
+                           'verified_external_pytest': ('record_only' if args.host_load_policy == 'teacher-data'
+                                                        else 'abort'),
+                           'unknown_or_ugrp_test_and_foreign_physics_training': 'abort'},
+        'not_speedbenchmark': True,
+        'timing_eligible': args.host_load_policy == 'strict',
+        'observed_external_test_events': [],
         'cases': [],
     }
+    record_external_tests(record, preflight_tests, phase='preflight')
     save(root/'launcher.json', record)
     environment = dict(os.environ)
     environment['UGRP_SIM_PYTHON'] = '/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python'
@@ -338,7 +453,9 @@ def main():
     exception = None
     try:
         for case_index, case in enumerate(teacher['cases']):
-            external = foreign_snapshot()
+            external, tests = classify_host_load(
+                foreign_snapshot(), policy=args.host_load_policy, ugrp_roots=ugrp_roots)
+            record_external_tests(record, tests, phase='before_case', case=case['id'])
             if external is not None:
                 record['foreign_interference'] = {'phase': 'before_case', 'case': case['id'],
                                                   **external}
@@ -374,8 +491,11 @@ def main():
                               'raw': str(raw)}), flush=True)
             planned = run_owned(plan_command, cwd=checkout, environment=environment,
                                 log=root/'logs'/(case['id']+'-plan.log'),
-                                timeout=effective_wall_cap(remaining, 30))
+                                timeout=effective_wall_cap(remaining, 30),
+                                host_load_policy=args.host_load_policy, ugrp_roots=ugrp_roots)
             case_record['plan'] = planned
+            record_external_tests(record, planned.get('observed_external_test_events', []),
+                                  phase='during_plan', case=case['id'])
             if planned['foreign_interference'] is not None:
                 case_record['status'] = 'aborted_foreign_interference_during_plan'
                 record['foreign_interference'] = {'phase': 'during_plan', 'case': case['id'],
@@ -391,7 +511,9 @@ def main():
                 'command': plan_command, 'console_path': str(plan_log),
                 'console_sha256': sha(plan_log)})
             save(root/'launcher.json', record)
-            external = foreign_snapshot()
+            external, tests = classify_host_load(
+                foreign_snapshot(), policy=args.host_load_policy, ugrp_roots=ugrp_roots)
+            record_external_tests(record, tests, phase='before_run', case=case['id'])
             if external is not None:
                 case_record['status'] = 'unstarted_after_plan_foreign_interference'
                 record['foreign_interference'] = {'phase': 'before_run', 'case': case['id'],
@@ -417,8 +539,11 @@ def main():
             save(root/'launcher.json', record)
             result = run_owned(run_command, cwd=checkout, environment=environment,
                                log=root/'logs'/(case['id']+'-run.log'),
-                               timeout=outer_cap)
+                               timeout=outer_cap, host_load_policy=args.host_load_policy,
+                               ugrp_roots=ugrp_roots)
             case_record['run'] = result
+            record_external_tests(record, result.get('observed_external_test_events', []),
+                                  phase='during_run', case=case['id'])
             result_path = raw/'result.json'
             if result_path.is_file():
                 case_record['raw_result_sha256'] = sha(result_path)

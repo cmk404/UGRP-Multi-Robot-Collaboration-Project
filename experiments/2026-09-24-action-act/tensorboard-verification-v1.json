@@ -1,0 +1,54 @@
+{
+  "schema": "ugrp.action_act_tensorboard_verification.v1",
+  "as_of_utc": "2026-09-24T14:01:52.009668+00:00",
+  "scope": "Completed source conversion and read-only native TensorBoard HTTP verification; no native GUI inspection",
+  "primary_logdir": "outputs/tensorboard",
+  "source_evidence": {
+    "export": {
+      "path": "outputs/act-action-training-20260924/tensorboard-export-completed-v1/report.json",
+      "sha256": "bc1c9237900ae894ae142e15cbae3b3c478ccc79ddce2a77ab465b9614b85a38"
+    },
+    "http": {
+      "path": "outputs/act-action-training-20260924/tensorboard-http-verification-v1.json",
+      "sha256": "32b01786587371b4fbb4aa9c3050228b8f4e3fcf12fae89bab461ac85b9e5af1"
+    },
+    "view": {
+      "path": "outputs/act-action-training-20260924/tensorboard-action-act-view-verified-v1.json",
+      "sha256": "f4f2ebace3f5d5c40ce8f29f13ce8c301f42f9cfba16bc37e7f2293e16d1029b"
+    }
+  },
+  "new_completed_run_count": 22,
+  "new_run_groups": {
+    "training": 1,
+    "finalization": 1,
+    "latency": 1,
+    "v27": 8,
+    "v28": 8,
+    "rolling": 2,
+    "infrastructure": 1
+  },
+  "new_registered_video_range_206_count": 18,
+  "http_readback": {
+    "scalar_runs_loaded": 22,
+    "source_success_and_wall_values_compared": true,
+    "registered_video_range_status": 206
+  },
+  "main_view": {
+    "key": "action_act_20260924",
+    "primary_filter": "v28_matched_rgb",
+    "matched_run_count": 6,
+    "view_url": "http://127.0.0.1:6006/?pinnedCards=%5B%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Freported_success%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22claims%2Fprotocol_complete%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fwall_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fcommands%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fmodel_calls%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Fsimultaneous_loaded_motion_s%22%7D%5D&smoothing=0&runFilter=%5E0924%5C-action%5C-act%5C-v28%5C-complete%2F.%2A__near-#timeseries",
+    "separate_view_count": 9
+  },
+  "speed_inference_exclusions": [
+    "v27_original_repeat1",
+    "v28_near_b_refined_rgb"
+  ],
+  "physical_success_and_raw_wall_scalars_retained": true,
+  "hparams_status_meaning": "STATUS_SUCCESS reports event import, not physical robot success",
+  "native_ui_inspected": false,
+  "ui_applied": false,
+  "visually_verified": false,
+  "teacher_v2_collection_at_snapshot": "running; not among these completed runs",
+  "model_release_boundary": "First ACT physical comparison 0/2; Release download/readback is separate evidence and is not controller qualification"
+}
