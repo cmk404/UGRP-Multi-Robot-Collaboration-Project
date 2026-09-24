@@ -263,6 +263,28 @@
       "output_kind": "directory"
     },
     {
+      "id": "act-input-finalization",
+      "purpose": "완료된 학습의 실패 원본에서 선택 상태만 별도 진단 모델로 최종화",
+      "entry": "scripts/finalize_carry_input_act.py",
+      "docs": "experiments/2026-09-24-action-act/finalization-recovery.md",
+      "requires": "failed 8000-update managed ACT run, frozen source/dataset and explicit original SHA-256; no optimizer updates or checkpoint reselection; fixed 720-second wall cap",
+      "version": "1.0.0",
+      "runner": "scripts.finalize_carry_input_act",
+      "output_flag": "--out",
+      "side_effect": "offline_model_finalization",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--failed-run",
+        "--dataset",
+        "--source-freeze",
+        "--expected-manifest-sha256",
+        "--expected-report-sha256",
+        "--expected-checkpoint-sha256",
+        "--expected-source-freeze-sha256"
+      ],
+      "output_kind": "directory"
+    },
+    {
       "id": "jev",
       "purpose": "Jev 표현·행동 보조 비교",
       "entry": "scripts/run_jev_semantic_cohort.py",
