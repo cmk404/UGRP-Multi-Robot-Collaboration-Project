@@ -11,6 +11,7 @@
 | `act-pair-carry-seed18-20260918` | 20260918 seed의 128px·chunk8 ACT, config/adapter, RGB grasp/stage, 저장 계획·TOP 기준 영상 | [2026-09-18 비교](../experiments/2026-09-18-act-pair-carry/README.md)의 가중치; 최신 모델이나 일반화된 성공 모델이 아님 |
 | `act-pair-carry-seed19-20260919` | 같은 구성, 20260919 seed | 실패한 비교 모델도 원래 가중치로 보존 |
 | `act-expanded-20260922` | 최종 제어기 검증에서 사용한 128px/history4 모델 | `unavailable`: 기록된 원본을 아직 찾지 못함. 위 두 모델로 대체하지 않음 |
+| `act-action-first-study-seed24-20260924` | 128px/history4·chunk8 ACT, 8,000회 학습 중 step 1,500 선택 | 개발 4/4 에피소드 종료 누락, 새 물리 비교 0/2 완료. 실패 비교 모델을 보존하며 기본 제어기로 쓰지 않음 |
 
 각 ZIP에는 가중치·설정·보조 자산·출처를 합쳐 18개 파일이 있다. 학습 데이터 전체와 raw 실험 영상은 포함하지 않는다. 다운받았다는 사실은 운반 성공이나 과거 전체 실험 재현을 뜻하지 않는다. 과거 실행의 소스·조건·분모는 원 실험 보고서를 따른다.
 
@@ -31,6 +32,18 @@ python3 -m scripts.sim_cli models verify act-pair-carry-seed18-20260918
 
 GitHub의 [Release 페이지](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/releases/tag/models-20260923-v1)에는 동일 ZIP·모델 목록·`SHA256SUMS`를 함께 제공한다. CLI가 아직 포함되지 않은 checkout에서는 Release에서 ZIP을 직접 받을 수 있다. 새 다운로드 도구의 PR 병합과 Release asset 업로드는 별도 상태다.
 
+새 action-ACT 모델은 별도 [비교 모델 Release](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/releases/tag/models-20260924-action-act-v1)에 보존한다. 이 태그에는 해당 모델을 등록한 CLI 코드도 포함되므로 main 병합 전에도 다음처럼 받을 수 있다. 태그의 배포 코드와 실제 학습 소스 `12f8e6dda76e39b3ec612f247deb4835a2ff50bc`는 별도로 기록한다.
+
+```sh
+git clone --branch models-20260924-action-act-v1 --depth 1 \
+  https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project.git ugrp-action-model
+cd ugrp-action-model
+python3 -m scripts.sim_cli models fetch act-action-first-study-seed24-20260924
+python3 -m scripts.sim_cli models verify act-action-first-study-seed24-20260924
+```
+
+두 번째 학습은 모델 내보내기에 실패했으므로 내려받을 모델이 없다. 첫 모델로 그 결과를 대체하지 않는다. 모델마다 포함 자산과 검증 범위는 목록·ZIP의 `provenance.json`·Release 검증 기록을 함께 확인한다.
+
 ## 실제 ACT 로딩
 
 ACT의 선택 의존성은 [requirements-reference-act.txt](../requirements-reference-act.txt)에 고정돼 있다. 기존 ACT 환경이 있으면 재사용한다. 새 팀원의 설치는 [Ubuntu 안내](ubuntu_quickstart.md)의 환경 분리를 따른다. Mac의 기존 환경은 `/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act`다.
@@ -40,6 +53,13 @@ ACT 환경의 Python으로 다음 명령을 실행하면 가중치·설정·adap
 ```sh
 python -m scripts.pair_carry_act_worker \
   --model-dir outputs/models/act-pair-carry-seed18-20260918/act < /dev/null
+```
+
+새 action-ACT 모델은 입력 처리 worker가 다르다. 같은 ACT 환경에서 아래 명령을 사용한다.
+
+```sh
+python -m scripts.carry_input_worker \
+  --model-dir outputs/models/act-action-first-study-seed24-20260924/act < /dev/null
 ```
 
 이 검사는 두 RGB 입력과 고정/자기 발행 문맥을 받는 추론 worker의 로딩 검사다. 물리 운반은 기존 표준 `dispatch-skills` workflow에서 명시적으로 선택한다. 예를 들어 설치된 자산을 실행기에 전달하는 계획은 다음처럼 검사할 수 있다.
