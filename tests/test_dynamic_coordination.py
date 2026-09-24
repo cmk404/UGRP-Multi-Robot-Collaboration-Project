@@ -269,11 +269,11 @@ def test_backoff_keeps_rgb_tracked_crops_and_recentres_them():
     assert all(stale.coarse.decide(raw, s)['mask']['local_wheel_pixels'] == 0 for s in ('r1', 'r3'))
     pair, tracker = _backoff_pair('after-long-backoff-top.jpg', TRACKED_CENTERS)
     pair.back_off()
-    # stop dwell, then four chunks of 5 reverse slices, each followed by a stop dwell
-    assert pair.coarse is tracker and len(pair.driven) == 1 + 4*(5+1)
+    # stop dwell, then eight chunks of 5 reverse slices, each followed by a stop dwell
+    assert pair.coarse is tracker and len(pair.driven) == 1 + 8*(5+1)
     assert all(pair.coarse.decide(raw, s)['ok'] is True for s in ('r1', 'r3'))
     rows = [c for c in pair.calls if c['kind'] == 'recovery_recenter']
-    assert [r['slices'] for r in rows] == [0, 5, 10, 15, 20] and rows[-1]['lost_slots'] == []
+    assert [r['slices'] for r in rows] == list(range(0, 45, 5)) and rows[-1]['lost_slots'] == []
     assert rows[0]['crop_centers_before_px'] == TRACKED_CENTERS
 
 
@@ -298,7 +298,7 @@ def test_backoff_chunks_stay_inside_the_crop_that_a_full_backoff_leaves():
 
 def test_backoff_stays_synchronous_and_bounded():
     pair, _ = _backoff_pair('after-short-backoff-top.jpg', TRACKED_CENTERS)
-    for slices, speed in ((21, .05), (10, .06), (0, .05)):
+    for slices, speed in ((41, .05), (10, .06), (0, .05)):
         with pytest.raises(ValueError):
             pair.back_off(slices, speed)
     pair.io.realtime_control = True
@@ -523,7 +523,7 @@ def test_scene_pauses_box_and_applies_the_team_decision():
     scene._solo_event = {'reason': 'TARGET_NOT_VISIBLE', 'phase': 'approach', 'sim_time_s': 3.}
     scene._handle_solo_event()
     assert scene._solo_event is None and scene._solo_recovery[0]['kind'] == 'pose'
-    assert [a['forward'] for a in scene._solo_recovery[1:]] == [-.05] * 10
+    assert [a['forward'] for a in scene._solo_recovery[1:]] == [-.05] * 20
     assert scene.last_frames == {'kept': True} and scene.solo_events[0]['decision'] == 'retry'
     assert scene._solo_search_turn == .12  # nothing seen: the skill's default left search
     scene._solo_event = {'reason': 'VISUAL_LOAD_DROPPED', 'phase': 'carry', 'sim_time_s': 4.}
