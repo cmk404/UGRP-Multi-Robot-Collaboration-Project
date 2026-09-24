@@ -37,8 +37,9 @@ class Coarse:
 
 def pair_for(rows, frames, *, realtime=True, obstacles=(), terrain=()):
     pair = BoundPairSkill.__new__(BoundPairSkill)
-    pair.io = SimpleNamespace(realtime_control=realtime)
-    pair.bindings = SimpleNamespace(cluttered=False, static_map={
+    pair.io = SimpleNamespace(realtime_control=realtime, time=lambda:0.,
+                             ports={r:SimpleNamespace(_motor_commands=(0.,)*4) for r in ROBOTS})
+    pair.bindings = SimpleNamespace(pair={r:r for r in ROBOTS}, cluttered=False, static_map={
         'map_id':'dispatch_open', 'obstacles':list(obstacles), 'terrain':list(terrain)})
     pair.coarse = Coarse(rows)
     pair.stage_models = {r:{axis:dict(slot=r, axis=axis) for axis in AXES} for r in ROBOTS}

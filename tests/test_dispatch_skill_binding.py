@@ -119,7 +119,7 @@ def test_coarse_approach_rejects_missing_or_nonfinite_rgb_gap():
 
 def test_dispatch_pair_alone_opts_into_bounded_fine_rgb_reobservation():
     bindings = SkillBindings(committed(), authored_map('open'))
-    io = SimpleNamespace(out=Path('/tmp/unused'), pair_drive=Mock(),
+    io = SimpleNamespace(out=Path('/tmp/unused'), pair_drive=Mock(), time=lambda:0.,
                          last_frames={'r1': {'top_bytes': b'top'}})
     skill = {'initialization_replay': [{'targets': {'r1': {1: 2000}, 'r3': {1: 2000}}}]}
     pair = BoundPairSkill(io, bindings, skill, {}, {}, Path('/tmp/models'), b'')
