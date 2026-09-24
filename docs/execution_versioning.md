@@ -124,3 +124,5 @@ python3 -m harness.rgb_execution_bundle verify-registry --base origin/main
 - `rgb-standard-dispatch-v50`: #142가 먼저 병합되어 부모 v47 위에 v46 정지 후 RGB 재관측을 다시 등록했다. v46·v44·v47은 원본 바이트를 보존한다. 정지/시야 탐색은 같은 기본 OFF 옵션이며 이번 진단은 저장 계획 plan_first만 사용한다. v46은 로컬 물리 미실행이고 v50 역시 완주 검증 전이다.
 
 - `rgb-standard-dispatch-v53`: #145의 정지 후 새 RGB 재관측(v50)을 보존한 부모 v50 위에 v49 coarse 동시 접근을 통합했다. v48·v49·v46·v50은 바이트 그대로 은퇴 보존한다. v51·v52는 열린 Claude PR에 요청한 번호로 건너뛴다. 두 옵션은 각각 기본 OFF이며, 이번 동일 소스 OFF/ON 비교는 coarse 옵션만 바꾼다. v49 CI 통과는 이전 소스 검증이고 v53 물리 실행·속도 개선은 아직 없다.
+
+- `rgb-standard-dispatch-v51`: 부모는 main의 v53(PR #146)이다. 이 브랜치가 처음 등록한 v49 제안은 main의 v49(#146)와 번호가 겹쳐 실행 전에 철회했고, 루트가 예약한 v51로 다시 등록했다(v49 제안은 물리 실행 기록 없음). 명시적 `--coordination dynamic`에서만 실패 대화를 넓힌다. 빔 파지 실패(닫기 전 RGB 지원 밖, 또는 짐을 싣고 이동하기 전 운반 감시 정지)는 짝이 `regrasp`/`abort`를 정한다. 상자 로봇 실패(접근 중 대상·자세 판단 실패, 들기 미확인)는 상자 로봇이 `retry`/`abort`를 정한다. 한 작업을 포기하게 되면 세 로봇이 `continue_others`/`stop_all`을 정하고, `continue_others`면 그 작업만 계획에서 빼고 나머지를 끝내 `FINISHED_PARTIAL`(전체 성공 아님)로 끝난다. 결정 대화 메시지는 참가 로봇에게만 가고, 일시 오류는 같은 요청을 한 번 다시 보낸다. 계산 후 재생 창은 동료 메시지를 관찰 전용으로 겹쳐 보여 준다. 기본 `plan_first`와 기본 OFF coarse 동시 접근·정지 후 재관측은 바뀌지 않는다. 물리 미검증.
