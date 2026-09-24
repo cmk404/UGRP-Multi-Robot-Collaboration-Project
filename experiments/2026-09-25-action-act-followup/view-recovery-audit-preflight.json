@@ -1,0 +1,22 @@
+{
+  "schema": "ugrp.view_recovery_audit_preflight.v1",
+  "audit_helper": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/audit-tools/audit_view_recovery_trial.py",
+  "audit_helper_sha256": "0525434da54be00969927e8ba8d70f458d5a8b82591b2fd6d90a2d5444eaef45",
+  "rolling_audit_sha256": "a6f940c21d296f2917486640c3b50103362252018b617b53f3d5e2e844fa1a8a",
+  "base_audit_sha256": "d0aeac060f17d054953f6b99a7435f64ecf7c936473a4b4718edc747e617ddbd",
+  "receipt_schema": "solo-decisions.view_recovery.v1",
+  "checks": {
+    "nested_pair_rgb": true,
+    "typed_carry_and_rolling_renewals": true,
+    "unknown_renewal_kind_rejected": true,
+    "active_view_pose_to_issued_pwm": true,
+    "active_view_zero_wheel_hold": true,
+    "active_view_settled_fresh_rgb": true,
+    "active_view_anchor_fresh_and_wheel_free": true,
+    "active_view_safe_abort_and_missing_stop": true,
+    "active_view_first_pose_deadline": true,
+    "active_view_finite_refusals_and_unknown_rejected": true
+  },
+  "passed": true,
+  "scope": "Tiny saved-schema fixtures only; no model, physics, video decode or physical outcome."
+}
