@@ -1,9 +1,9 @@
 {
   "schema": "ugrp.rgb_execution_bundle.v1",
-  "id": "rgb-standard-dispatch-v48",
+  "id": "rgb-standard-dispatch-v44",
   "status": "experimental_unqualified",
   "adapter": "rgb_incremental_dispatch_v1",
-  "claim_scope": "Parent v47 plus default-OFF --navigation planned for the synchronous serial dispatch skills executor: the peer models choose the box destination dock and a park place (authored region name or map xy_m); map A* over the authored map plans the loaded box path from the current TOP RGB cargo position and the unloaded park move from RGB wheel geometry, with authored obstacles, terrain, RGB barriers and beam-team keep-outs. The beam keeps its agreed corridor. No GT pose, contact or success feedback. Unqualified physical candidate; no v47 or earlier success inherited. Default authored navigation is unchanged.",
+  "claim_scope": "Opt-in combination re-registered on v32: synchronous-only --fine-gain-schedule (v32) and realtime-open-only --rolling-visual-servo/--bounded-carrier-relink (v40, originally v29/v40 in PR #131/#137). All options default OFF; unqualified comparison candidate without inherited success from v29, v32 or v40. Adds v33 observer-only post-run native replay (PR #140); replay is never actor, controller or referee input. v44 adds opt-in --coordination dynamic (synchronous only): independent self-claims start without negotiation when consistent, conflicts fall back to peer negotiation, and supported pair-approach failures are resolved by a unanimous retry/abort decision of the affected carriers. Default plan_first unchanged.",
   "effective": {
     "physics": {
       "contact_solver_profile": "legacy",
@@ -83,17 +83,16 @@
     "harness/dispatch_box_identity.py": "b6a113813b885d753b646cff4822cedaa2dc4e82b85536ebcbf4648731733627",
     "harness/dispatch_evaluation.py": "28cfeb976217a538af5cdefb3e3999e6f7bb31899310780ed99aeef1ff80d571",
     "harness/dispatch_execution.py": "680c594b438613ad30e4f36023ebc4bc10b0927137c250723ceb275302db735b",
-    "harness/dispatch_feasibility.py": "2d96b25d88a4eebca52f596be25f532d951912dabc85cb619583db9c0a11cbbf",
-    "harness/dispatch_goto.py": "c3739d7bc7405c6afd1028acad02df403e5f59ae0e7c30897c44315718c53c49",
-    "harness/dispatch_navigation_map.py": "6d898733d5745435bb64a9739073fbb775bb97bb2c968a46fce2f0dbdcd79235",
+    "harness/dispatch_feasibility.py": "e03171224346b9e8dba744c5ec1031431d9769012a046d5c095c39f107650d2b",
+    "harness/dispatch_navigation_map.py": "97a5fe64007fc5b6d81400943b20eb462c3ad878162d431ee917170d3bb58609",
     "harness/dispatch_own_hold.py": "60f9ed5ea6cfb9efaaacc8ae530d58276019b6b9631e8ff44ade0e3de37db481",
     "harness/dispatch_pair_navigation.py": "b748270b83bc21616aa317fa44d331c6d9fa2023806805d1ca6656dbb2e38f7e",
     "harness/dispatch_pair_perception.py": "3a4cca83107fa74869d8444f5c90578fec591f3b35120e24216b0af55b48b050",
-    "harness/dispatch_plan.py": "9a9dff3dd91ffbef4482033650c30ee4abb183928ac84518b791c37f47ce4f4b",
-    "harness/dispatch_skill_binding.py": "a55b81fc5cb7d61d3211cc03ec50982f05356d06193232aca1dfc0aee953ead0",
+    "harness/dispatch_plan.py": "b0f40cefcb45ffdc56d30e945fb402c5783d636fb7c9c1b6a510cf28af41e191",
+    "harness/dispatch_skill_binding.py": "9ddf8b462f5463e3fbb318269df83797b3194d927715e239a730d712809a382f",
     "harness/dispatch_translation_skew.py": "5193f2cc77d9814a6f0d56354cb27ded952c011e45ae9df5d2fe9eabfd97535c",
     "harness/dispatch_yield.py": "fc8005dd76d5ed0a8f9c7792592d2c79ad5124473f824b5525c132a4646a4d99",
-    "harness/dynamic_coordination.py": "031c58cddcd973cebf947ae34b8ef45f78def1ceca9272d77ef43ed067e5d71e",
+    "harness/dynamic_coordination.py": "8cee617762ec6e6526c6db7550eebb5efc4b91a449f3a30fd1a8cfbec10624f8",
     "harness/execution_trace.py": "9002a6b25599f7d8c084bc6686750eb2ccb557777047601b767fd0385b0eb0c5",
     "harness/executive.py": "535a2e9a75886a19c26c174007dcad750e782e94d9950a0d6eb736ae0be302b8",
     "harness/fine_gain_schedule.py": "e27a71b8822f37bce17f4197d52f01f1bbf5adde4810de6de0d0a0ad899074d0",
@@ -103,7 +102,6 @@
     "harness/groq.py": "ed686d08ab36b38fcbea050152997f03427f35225d17c923ff6b66d3d2ab0229",
     "harness/known_map_navigation.py": "484a176a3dbd632fec094d612137e448100f07c1180c2f6abeb490bc5a18fc0b",
     "harness/loop.py": "6872dd3d2b7ae669290b6e46db0838241f35bf559d0625374ec9e47ddc5d8761",
-    "harness/map_goto.py": "330073da4ea1cf7dfac8bef0085d78789f868af5e85185af8f6149b726019896",
     "harness/markerless_box.py": "f1bc74126d91b17dbe7527c5444e5dff7c3a2ce469a1a90834f85dbae57bd46c",
     "harness/markerless_face.py": "1f829650c9f8da508ee521f6721f2c0fb6d80872053b8c622d79bf49037e9134",
     "harness/mixed_warehouse_protocol.py": "21dcce5eb992ddccdb6f68f92cda3df0330ec635c6a1719594ebba96232842f0",
@@ -134,11 +132,11 @@
     "harness/rgb_communication_runtime.py": "bc55925100f897192ea0f7ddd9036ac4b974502290f8c7a2d0b48fa7e1481183",
     "harness/rgb_communication_scenarios.py": "a64dc3cb7c7b87f5ec812f56850b0d36b4db1ea93c0f53eb4dcbea2f1a1ea991",
     "harness/rgb_communication_study.py": "017cc11f13503c26c34649d26325e0659ee973f8ac313463fc5d78dfc7eef886",
-    "harness/rgb_execution_bundle.py": "b791a8b46d0b460c827705f89ce2b06b3bd5c089d85aad641a69d24a5c16b170",
+    "harness/rgb_execution_bundle.py": "27bbb2cea8d742546a8765192dc4c26a182c259fdf30a608a8ad61220f57f8d2",
     "harness/rgb_execution_contract.py": "a9988e2a697dbb9df9f4171979e9578e0cb559e418487541374b460fe6b9cdee",
     "harness/rgb_execution_port.py": "bb2457c6fd5b7b582679d7bdbcd7aa870b5a5a8d104bdb9672da6c938c333db0",
     "harness/rgb_skill_execution.py": "93d5c657d1e19e75f904030e0b7ea1fe6629f43073764a9438c3930a696ead58",
-    "harness/rolling_visual_servo.py": "8918426a52833e5fcfeadb2e7f97114ae3c22c9e80086463e0fc16d965d04a50",
+    "harness/rolling_visual_servo.py": "5c1c3c6718cb38b47b53badc8a8cc542d9832eb292a9a8b7596387d3ff5e0617",
     "harness/skill_errors.py": "12913287902d323decb007c8baf5606493ead763f3766fcdc9ad31d65cc5a6d1",
     "harness/solo_box_transport.py": "3c9f1cd5888578bd5fd371bb249bb618712d3faddf6e9a9206914ba2df447e0a",
     "harness/state.py": "7f23b4f276326fb6d646c989614c204739f4e89e8f35f78bfe85b29836cc3ffd",
@@ -150,7 +148,7 @@
     "harness/trace_analysis.py": "ef4f75d0f4c4d7ade80c2ab9c7ffe593df7638bce37d8753a77549d1d3395161",
     "harness/visual_arm.py": "f60e4829fb734da2cdf52619a5e38c0de87da6137bac6fd42516560361de527a",
     "harness/visual_attachment.py": "3f7378be87807f2b044ad8ec62956518e2d6b39c7172b10e427d38894aab280e",
-    "harness/visual_box_skill.py": "1bff49f83dcbd33fe3dc08307ebc3b5c7a76670c1020dcf25659322d5144deb2",
+    "harness/visual_box_skill.py": "177511b16f1d50442d3d69d55b927b50e212873dc2543a82ec695c65a85f43f0",
     "harness/visual_box_surface.py": "bbc04aa79388acfb617145a3b642992bdce08fca0b55fc028cef52635944fbbc",
     "harness/visual_floor.py": "2415658edcd03df6347136c9b3f17a32d16b950d4365a237d547dcd3a9d42e26",
     "harness/visual_macro_runtime.py": "579e9c9ba655bf5e4ca3db5a717662f74dbe16d6758463f6733c81638dcc7191",
@@ -167,7 +165,7 @@
     "scripts/dispatch_async_video.py": "f4097cc619496bb340a824b0e695ac3c386ac301d70f21c15b1c1705130b3364",
     "scripts/dispatch_native_process.py": "797257fd2621c6e84541921d2943595ed6e807d5e59b301bc183f9cb4d25d972",
     "scripts/dispatch_native_view.py": "f7f1592b8083fcedea022209db8cc452235013e18849ba04be39d7b1ee6f6806",
-    "scripts/dispatch_pair_skill.py": "b7e01d90105609a1179b168d26319060a10723900fc1927599235f0fd1fc3ed1",
+    "scripts/dispatch_pair_skill.py": "c59958b73c53a7f8b706ae0c79fef0e0b20066816a8422dd03795f61842ce47a",
     "scripts/dispatch_replay.py": "d0a9f13df12823bf6624397c7b5e9142be3922df92b713b19dac9042beeefb52",
     "scripts/evaluate_camera_short_transport.py": "0a36eb1ac1a39cdead272ec14da287bf752177a0d6345d835cbbb5f5e12a3ffc",
     "scripts/pair_carry_act_worker.py": "b13219e94b7631690955e5cd7169e618657478e29c2fbb28b75ee6dbcdb8413b",
@@ -181,8 +179,8 @@
     "scripts/run_camera_goal_transport.py": "5f8da5389aaa9b765b3f5cbcbf05710b982ba0aed4f0697abeb3d057b36cadd5",
     "scripts/run_camera_pair_transport.py": "b8a0fd17563672b8ade073ec1ee5784874defcc39fc81436ede8a88a1f02d353",
     "scripts/run_camera_varied_start_student.py": "f8756260db8e74aaf2a6918a28771488921e9be6bf0928c3560fb351b5256ef0",
-    "scripts/run_dispatch_e2e.py": "5dd15d3e8f830e125267e2d2c7f23a49e56057909895cc984e4ada4d2b44148b",
-    "scripts/run_dispatch_skills.py": "e0d52ffc2c3442c7a025472c96348645abf10f46faa12c4bb92f19f589df9d71",
+    "scripts/run_dispatch_e2e.py": "e8b2545dde11aef542f042a7a71b2a894ac74367151523efcf848407cb720303",
+    "scripts/run_dispatch_skills.py": "37c75ed7ee6a6445018d150ce6bf20620564f2189a77a410fdf8b5b0818f0602",
     "scripts/run_research_dispatch.py": "2e1e2d74a4c996560ac72ee248a03adeb0a2f5567c660e633395eda6f01fa4d8",
     "scripts/run_rgb_communication_study.py": "6353c3e6b25f8c9587162c4f4f915528c2c3c62d685561a448742304f481d8f4",
     "scripts/run_three_robot_mission.py": "97dc58ee40c4a9de0ba769ab5bf686079dd0820882d5f9168552347cdc3ce46f",
@@ -227,7 +225,7 @@
     "sim/warehouse_research.py": "034a1d2898b9f7b2e1ac123a2be192b7e1c9f042b4d771930440db2132ad9058",
     "sim/wrist_load_sensor.py": "93f7fd64fc6a4c59b63b1c2ee860b938ce2ad52d9e7dfe84ba5edfcff390b3f6"
   },
-  "parent_bundle_id": "rgb-standard-dispatch-v47",
+  "parent_bundle_id": "rgb-standard-dispatch-v42",
   "scene_definition": "sim.session_scenes.Scene",
   "controller_policy": {
     "paired_coarse_approach": "fresh shared TOP RGB gap; 16px maximum forward lead at command selection; hold forward while either partner corrects heading or lateral alignment",
@@ -245,8 +243,8 @@
     "dynamic_coordination": {
       "option": "--coordination dynamic; default plan_first",
       "start": "one independent self-claim per robot (object, beam_end, route, dock) from own RGB, TOP RGB, own probe evidence and own commands; host checks consistency only and edits nothing; consistent and capability-feasible claims commit without negotiation, otherwise existing peer negotiation with the claims and conflicts as feedback",
-      "recovery": "supported pair approach failures (coarse budget/convention, fine support, docking) hold both carriers; affected carriers decide retry/abort unanimously within two rounds, else abort; retry = 20 x 0.2 s reverse at 0.05, keep the RGB-tracked coarse wheel crops and re-centre them on one stopped TOP frame, then full RGB approach; at most --approach-retries (0..3, default 2)",
-      "diagnostic": "--diagnostic-fail-approach-once raises the real controller stop reason \"coarse RGB approach budget exhausted\" after the first completed approach; the injection is recorded output-only (recoveries[].diagnostic_injection) and is not shown to the robots",
+      "recovery": "supported pair approach failures (coarse budget/convention, fine support, docking) hold both carriers; affected carriers decide retry/abort unanimously within two rounds, else abort; retry = 10 x 0.2 s reverse at 0.05 then fresh coarse tracker and full RGB approach; at most --approach-retries (0..3, default 2)",
+      "diagnostic": "--diagnostic-fail-approach-once injects one failure after the first completed approach",
       "inputs": "no simulator truth; failure reason is the controller RGB-derived stop reason"
     }
   },
@@ -312,10 +310,9 @@
     "act_realtime": "Raw coherent own/TOP and original .6s TTL/.25 lease/.2 cadence. Two independent temporal ACT workers, each1 CPU thread, predict concurrently. Exact-input frozen CNN/JPEG LRU16 cache in eval/no-grad only. Require20ms headroom; no stale adoption. Owner-abort joins already started requests, logs known inputs and unconfirmed slots; owned clients cleaned even after late startup/timeout. Legacy non-temporal scheduling retained.",
     "solo_near_field_servo": "Unmodified static open map realtime only: opt-in two distinct geometry-validated own RGB observations, confidence >=.75, nearfield x>=.18, absolute vertical error>=45px, at least1px improvement, target continuity<=.04m and prior issued-PWM state match permit24 PWM cap. Otherwise legacy8. No measured joint input, trajectory/settling/final approach/grasp changes. Proposed delta/target and gate evidence recorded.",
     "box_direct_reacquisition": "Open realtime opt-in only after existing tracking fails: current unique strong foreground cyan with size/hue continuity, fresh same-capture own attachment/hash, two recent direct cyan observations and dt-bounded visual velocity corridor; proxy does not seed velocity, no invisible-center fallback, owner TTL unchanged. Clears stale carrier/confirmations.",
-    "rolling_solo_approach": "Default OFF --rolling-visual-servo, realtime open only. Distinct current own direct cyan and paired TOP hashes; frame/time/plan/permission audit. Capture next RGB during <=.25s issued motor window, original action horizon and observed+.6s unchanged. Expiry/revocation/stale/exception holds. At own-RGB range <=.22m plus .03m command-based reobserve buffer, hold and fresh image after .2s settled interval precede old final-entry macro; command integral is not measured displacement. Actual hold clips effective issued windows; original scheduled windows also logged. No arm/grasp/carry/release/physics changes.",
-    "rolling_active_view_recovery": "Opt-in --rolling-view-recovery requires realtime open --rolling-visual-servo. After weak visible direct cyan, exact wheel HOLD then at most 3 issued pan/wrist view poses within 4 SIM-s per episode and at most 3 episodes per trial. Anchor uses completed self-issued pose receipts for both servos, matching plan and no intervening wheel issue; restore pan within 45 PWM and wrist offsets within 24 PWM. Existing pose interpolation + .3s settle; each recovery requires new paired own/TOP RGB, same cargo optical identity and direct confidence >=.75. Original .6s RGB TTL, .25s wire lease, near/final/grasp/carry/release/physics/camera boundaries unchanged. Failure or budget exhaustion holds; issued PWM never treated as measured joint state."
+    "rolling_solo_approach": "Default OFF --rolling-visual-servo, realtime open only. Distinct current own direct cyan and paired TOP hashes; frame/time/plan/permission audit. Capture next RGB during <=.25s issued motor window, original action horizon and observed+.6s unchanged. Expiry/revocation/stale/exception holds. At own-RGB range <=.22m plus .03m command-based reobserve buffer, hold and fresh image after .2s settled interval precede old final-entry macro; command integral is not measured displacement. Actual hold clips effective issued windows; original scheduled windows also logged. No arm/grasp/carry/release/physics changes."
   },
-  "parent_bundle": "rgb-standard-dispatch-v47",
+  "parent_bundle": "rgb-standard-dispatch-v42",
   "communication_observer": {
     "scope": "operator-only; never actor RGB, request or controller input",
     "source": "validated reply.message recorded after inbox delivery; reason and proposal votes separate; fixture not counted as live model text",
@@ -329,14 +326,5 @@
     "latest_max_bytes": 8192,
     "new_model_calls": 0,
     "native_rendering": "ASCII 2D primer plus Korean UTF-8 image overlay1000x330, three recent wrapped messages; verified on native default state-only sync from saved real LLM messages without new calls."
-  },
-  "map_goto": {
-    "flag": "--navigation planned",
-    "default": "authored",
-    "module": "harness/map_goto.py",
-    "dispatch_glue": "harness/dispatch_goto.py",
-    "bound_robots": "solo box carrier only (loaded path + park move)",
-    "modes": "synchronous plan-first skills executor; serial resources only (route overlap and dynamic coordination rejected)",
-    "planner": "grid A* 0.025 m, 8-connected, fixed-heading rectangular envelope, clearance weighted"
   }
 }

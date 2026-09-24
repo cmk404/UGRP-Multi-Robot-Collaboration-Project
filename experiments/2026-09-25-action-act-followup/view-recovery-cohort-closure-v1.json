@@ -1,0 +1,84 @@
+{
+  "schema": "ugrp.view_recovery_cohort_closure.v1",
+  "freeze": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/view-recovery-source-freeze-v1.json",
+  "freeze_sha256": "2f76bfe57b7e2d75b6dd29c16e4c3673ee2e85d5340d56b001b4bf2ea5576784",
+  "protocol": "/Users/changmin/.codex/worktrees/rolling-view-recovery/ugrp/experiments/2026-09-24-rolling-view-recovery/physical-protocol.json",
+  "protocol_sha256": "5a79c5faa0781ebf71ca5ee9dbfb0603acc2ea055026e1ce0b03df4bc3006de2",
+  "driver_sha256": "4799ec7a7bdf54b3d29fe31f697041a30cb9e87bca4eaf9cc3005e661921514e",
+  "source_sha": "b47bbec7328890596d098ca007273771406eb749",
+  "process_wall_s": 17.764797500014538,
+  "planned_total": 8,
+  "results": [
+    {
+      "trial": "original/candidate-diagnostic-1",
+      "started": true,
+      "status": "AUDIT_FAILED",
+      "reason": "evidence audit failed; no subsequent launches",
+      "launch": "/Users/changmin/projects/ugrp/outputs/dispatch-view-recovery-20260924/original-candidate-diagnostic-1.launch.json",
+      "runner_exit_code": 1,
+      "audit": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/audits/view-recovery-original-candidate-diagnostic-1.json",
+      "audit_exit_code": 2,
+      "audit_passed": false,
+      "outcome": {
+        "physical_success": false,
+        "protocol_complete": false,
+        "wall_s": 15.71497458399972,
+        "timing_eligible": false,
+        "timing_exclusion_path": null,
+        "timing_exclusion_sha256": null,
+        "phase": "APPROACH",
+        "failed_component": "solo_box",
+        "error": "ComponentExecutionError: solo_box: RuntimeError: solo RGB active-view recovery failed: anchor_stale_or_wheel_issued"
+      },
+      "diagnostic_gate": false
+    },
+    {
+      "trial": "original/candidate-diagnostic-2",
+      "started": false,
+      "status": "NOT_RUN",
+      "reason": "evidence audit failed; no subsequent launches"
+    },
+    {
+      "trial": "view-a/reference",
+      "started": false,
+      "status": "NOT_RUN",
+      "reason": "evidence audit failed; no subsequent launches"
+    },
+    {
+      "trial": "view-a/candidate",
+      "started": false,
+      "status": "NOT_RUN",
+      "reason": "evidence audit failed; no subsequent launches"
+    },
+    {
+      "trial": "view-b/candidate",
+      "started": false,
+      "status": "NOT_RUN",
+      "reason": "evidence audit failed; no subsequent launches"
+    },
+    {
+      "trial": "view-b/reference",
+      "started": false,
+      "status": "NOT_RUN",
+      "reason": "evidence audit failed; no subsequent launches"
+    },
+    {
+      "trial": "view-c/reference",
+      "started": false,
+      "status": "NOT_RUN",
+      "reason": "evidence audit failed; no subsequent launches"
+    },
+    {
+      "trial": "view-c/candidate",
+      "started": false,
+      "status": "NOT_RUN",
+      "reason": "evidence audit failed; no subsequent launches"
+    }
+  ],
+  "started_total": 1,
+  "not_run_total": 7,
+  "stop_reason": "evidence audit failed; no subsequent launches",
+  "owned_cleanup_pending": false,
+  "owned_groups_alive": [],
+  "helper_cleanup_error": null
+}

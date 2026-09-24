@@ -1,9 +1,9 @@
 {
   "schema": "ugrp.rgb_execution_bundle.v1",
-  "id": "rgb-standard-dispatch-v48",
+  "id": "rgb-standard-dispatch-v47",
   "status": "experimental_unqualified",
   "adapter": "rgb_incremental_dispatch_v1",
-  "claim_scope": "Parent v47 plus default-OFF --navigation planned for the synchronous serial dispatch skills executor: the peer models choose the box destination dock and a park place (authored region name or map xy_m); map A* over the authored map plans the loaded box path from the current TOP RGB cargo position and the unloaded park move from RGB wheel geometry, with authored obstacles, terrain, RGB barriers and beam-team keep-outs. The beam keeps its agreed corridor. No GT pose, contact or success feedback. Unqualified physical candidate; no v47 or earlier success inherited. Default authored navigation is unchanged.",
+  "claim_scope": "Parent v42 plus default-OFF --rolling-view-recovery for open realtime solo approach with --rolling-visual-servo: a finite own-RGB active-view pose/reobserve attempt after weak visible direct cyan. Completed self-issued pan/wrist receipts, paired own/TOP RGB, same cargo visual identity and current confidence >=.75 are required; no measured joints, contact, GT or success feedback. Unqualified physical candidate; no v29/v40/v42 success inherited. Fine gain remains synchronous-only and post-run replay remains observer-only. v47 (parent v43) re-registers the opt-in --coordination dynamic of v44 (parent v42; retired unchanged, used by live runs D2/D3), synchronous only: independent self-claims start without negotiation when consistent, conflicts fall back to peer negotiation, and supported pair-approach failures are resolved by a unanimous retry/abort decision of the affected carriers. v47 also fixes the v44 retry, which failed every time as coarse RGB model convention unresolved because the back-off reset the coarse wheel crops to the start-of-run probe centres: the back-off now keeps the RGB-tracked crops, re-centres them on one stopped TOP frame and reverses 20 slices; a diagnostic injection shows the robots a real controller stop reason and is recorded output-only. Default plan_first and default-OFF --rolling-view-recovery unchanged; no success inherited from v43 or v44.",
   "effective": {
     "physics": {
       "contact_solver_profile": "legacy",
@@ -83,14 +83,13 @@
     "harness/dispatch_box_identity.py": "b6a113813b885d753b646cff4822cedaa2dc4e82b85536ebcbf4648731733627",
     "harness/dispatch_evaluation.py": "28cfeb976217a538af5cdefb3e3999e6f7bb31899310780ed99aeef1ff80d571",
     "harness/dispatch_execution.py": "680c594b438613ad30e4f36023ebc4bc10b0927137c250723ceb275302db735b",
-    "harness/dispatch_feasibility.py": "2d96b25d88a4eebca52f596be25f532d951912dabc85cb619583db9c0a11cbbf",
-    "harness/dispatch_goto.py": "c3739d7bc7405c6afd1028acad02df403e5f59ae0e7c30897c44315718c53c49",
-    "harness/dispatch_navigation_map.py": "6d898733d5745435bb64a9739073fbb775bb97bb2c968a46fce2f0dbdcd79235",
+    "harness/dispatch_feasibility.py": "e03171224346b9e8dba744c5ec1031431d9769012a046d5c095c39f107650d2b",
+    "harness/dispatch_navigation_map.py": "97a5fe64007fc5b6d81400943b20eb462c3ad878162d431ee917170d3bb58609",
     "harness/dispatch_own_hold.py": "60f9ed5ea6cfb9efaaacc8ae530d58276019b6b9631e8ff44ade0e3de37db481",
     "harness/dispatch_pair_navigation.py": "b748270b83bc21616aa317fa44d331c6d9fa2023806805d1ca6656dbb2e38f7e",
     "harness/dispatch_pair_perception.py": "3a4cca83107fa74869d8444f5c90578fec591f3b35120e24216b0af55b48b050",
-    "harness/dispatch_plan.py": "9a9dff3dd91ffbef4482033650c30ee4abb183928ac84518b791c37f47ce4f4b",
-    "harness/dispatch_skill_binding.py": "a55b81fc5cb7d61d3211cc03ec50982f05356d06193232aca1dfc0aee953ead0",
+    "harness/dispatch_plan.py": "b0f40cefcb45ffdc56d30e945fb402c5783d636fb7c9c1b6a510cf28af41e191",
+    "harness/dispatch_skill_binding.py": "9ddf8b462f5463e3fbb318269df83797b3194d927715e239a730d712809a382f",
     "harness/dispatch_translation_skew.py": "5193f2cc77d9814a6f0d56354cb27ded952c011e45ae9df5d2fe9eabfd97535c",
     "harness/dispatch_yield.py": "fc8005dd76d5ed0a8f9c7792592d2c79ad5124473f824b5525c132a4646a4d99",
     "harness/dynamic_coordination.py": "031c58cddcd973cebf947ae34b8ef45f78def1ceca9272d77ef43ed067e5d71e",
@@ -103,7 +102,6 @@
     "harness/groq.py": "ed686d08ab36b38fcbea050152997f03427f35225d17c923ff6b66d3d2ab0229",
     "harness/known_map_navigation.py": "484a176a3dbd632fec094d612137e448100f07c1180c2f6abeb490bc5a18fc0b",
     "harness/loop.py": "6872dd3d2b7ae669290b6e46db0838241f35bf559d0625374ec9e47ddc5d8761",
-    "harness/map_goto.py": "330073da4ea1cf7dfac8bef0085d78789f868af5e85185af8f6149b726019896",
     "harness/markerless_box.py": "f1bc74126d91b17dbe7527c5444e5dff7c3a2ce469a1a90834f85dbae57bd46c",
     "harness/markerless_face.py": "1f829650c9f8da508ee521f6721f2c0fb6d80872053b8c622d79bf49037e9134",
     "harness/mixed_warehouse_protocol.py": "21dcce5eb992ddccdb6f68f92cda3df0330ec635c6a1719594ebba96232842f0",
@@ -134,7 +132,7 @@
     "harness/rgb_communication_runtime.py": "bc55925100f897192ea0f7ddd9036ac4b974502290f8c7a2d0b48fa7e1481183",
     "harness/rgb_communication_scenarios.py": "a64dc3cb7c7b87f5ec812f56850b0d36b4db1ea93c0f53eb4dcbea2f1a1ea991",
     "harness/rgb_communication_study.py": "017cc11f13503c26c34649d26325e0659ee973f8ac313463fc5d78dfc7eef886",
-    "harness/rgb_execution_bundle.py": "b791a8b46d0b460c827705f89ce2b06b3bd5c089d85aad641a69d24a5c16b170",
+    "harness/rgb_execution_bundle.py": "c3c6f53710ad0fc679272586b4aab7008e145e77286e6e0d6c50f6a8c14298d6",
     "harness/rgb_execution_contract.py": "a9988e2a697dbb9df9f4171979e9578e0cb559e418487541374b460fe6b9cdee",
     "harness/rgb_execution_port.py": "bb2457c6fd5b7b582679d7bdbcd7aa870b5a5a8d104bdb9672da6c938c333db0",
     "harness/rgb_skill_execution.py": "93d5c657d1e19e75f904030e0b7ea1fe6629f43073764a9438c3930a696ead58",
@@ -181,8 +179,8 @@
     "scripts/run_camera_goal_transport.py": "5f8da5389aaa9b765b3f5cbcbf05710b982ba0aed4f0697abeb3d057b36cadd5",
     "scripts/run_camera_pair_transport.py": "b8a0fd17563672b8ade073ec1ee5784874defcc39fc81436ede8a88a1f02d353",
     "scripts/run_camera_varied_start_student.py": "f8756260db8e74aaf2a6918a28771488921e9be6bf0928c3560fb351b5256ef0",
-    "scripts/run_dispatch_e2e.py": "5dd15d3e8f830e125267e2d2c7f23a49e56057909895cc984e4ada4d2b44148b",
-    "scripts/run_dispatch_skills.py": "e0d52ffc2c3442c7a025472c96348645abf10f46faa12c4bb92f19f589df9d71",
+    "scripts/run_dispatch_e2e.py": "f76e3882741c5faea4806eae6a7bc3b4d37a3e6b58d40ff6ec976a4dcb4308b8",
+    "scripts/run_dispatch_skills.py": "08ac586600747100dd5e13f1a10545a142fed6f63946288a835dd7203100ce61",
     "scripts/run_research_dispatch.py": "2e1e2d74a4c996560ac72ee248a03adeb0a2f5567c660e633395eda6f01fa4d8",
     "scripts/run_rgb_communication_study.py": "6353c3e6b25f8c9587162c4f4f915528c2c3c62d685561a448742304f481d8f4",
     "scripts/run_three_robot_mission.py": "97dc58ee40c4a9de0ba769ab5bf686079dd0820882d5f9168552347cdc3ce46f",
@@ -227,7 +225,7 @@
     "sim/warehouse_research.py": "034a1d2898b9f7b2e1ac123a2be192b7e1c9f042b4d771930440db2132ad9058",
     "sim/wrist_load_sensor.py": "93f7fd64fc6a4c59b63b1c2ee860b938ce2ad52d9e7dfe84ba5edfcff390b3f6"
   },
-  "parent_bundle_id": "rgb-standard-dispatch-v47",
+  "parent_bundle_id": "rgb-standard-dispatch-v43",
   "scene_definition": "sim.session_scenes.Scene",
   "controller_policy": {
     "paired_coarse_approach": "fresh shared TOP RGB gap; 16px maximum forward lead at command selection; hold forward while either partner corrects heading or lateral alignment",
@@ -315,7 +313,7 @@
     "rolling_solo_approach": "Default OFF --rolling-visual-servo, realtime open only. Distinct current own direct cyan and paired TOP hashes; frame/time/plan/permission audit. Capture next RGB during <=.25s issued motor window, original action horizon and observed+.6s unchanged. Expiry/revocation/stale/exception holds. At own-RGB range <=.22m plus .03m command-based reobserve buffer, hold and fresh image after .2s settled interval precede old final-entry macro; command integral is not measured displacement. Actual hold clips effective issued windows; original scheduled windows also logged. No arm/grasp/carry/release/physics changes.",
     "rolling_active_view_recovery": "Opt-in --rolling-view-recovery requires realtime open --rolling-visual-servo. After weak visible direct cyan, exact wheel HOLD then at most 3 issued pan/wrist view poses within 4 SIM-s per episode and at most 3 episodes per trial. Anchor uses completed self-issued pose receipts for both servos, matching plan and no intervening wheel issue; restore pan within 45 PWM and wrist offsets within 24 PWM. Existing pose interpolation + .3s settle; each recovery requires new paired own/TOP RGB, same cargo optical identity and direct confidence >=.75. Original .6s RGB TTL, .25s wire lease, near/final/grasp/carry/release/physics/camera boundaries unchanged. Failure or budget exhaustion holds; issued PWM never treated as measured joint state."
   },
-  "parent_bundle": "rgb-standard-dispatch-v47",
+  "parent_bundle": "rgb-standard-dispatch-v43",
   "communication_observer": {
     "scope": "operator-only; never actor RGB, request or controller input",
     "source": "validated reply.message recorded after inbox delivery; reason and proposal votes separate; fixture not counted as live model text",
@@ -329,14 +327,5 @@
     "latest_max_bytes": 8192,
     "new_model_calls": 0,
     "native_rendering": "ASCII 2D primer plus Korean UTF-8 image overlay1000x330, three recent wrapped messages; verified on native default state-only sync from saved real LLM messages without new calls."
-  },
-  "map_goto": {
-    "flag": "--navigation planned",
-    "default": "authored",
-    "module": "harness/map_goto.py",
-    "dispatch_glue": "harness/dispatch_goto.py",
-    "bound_robots": "solo box carrier only (loaded path + park move)",
-    "modes": "synchronous plan-first skills executor; serial resources only (route overlap and dynamic coordination rejected)",
-    "planner": "grid A* 0.025 m, 8-connected, fixed-heading rectangular envelope, clearance weighted"
   }
 }

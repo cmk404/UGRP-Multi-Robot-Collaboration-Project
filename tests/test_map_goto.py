@@ -247,3 +247,11 @@ def test_park_verdict_must_match_committed_plan(monkeypatch):
     with pytest.raises(RuntimeError, match='PARK_REJECTED'):
         dispatch_goto.MapGoToYield(static, fixture_plan(dock='dock_b', navigation='planned', park='dispatch_apron'),
                                    [800, 600], top_jpeg=b'', beam_center=[-.18, -1.65])
+
+
+@pytest.mark.parametrize('extra', [['--realtime-control'], ['--route-overlap'], ['--executor', 'raw'],
+                                   ['--coordination', 'dynamic']])
+def test_cli_limits_planned_navigation_to_the_serial_synchronous_skills_executor(tmp_path, extra):
+    from scripts.run_dispatch_e2e import main
+    with pytest.raises(SystemExit):
+        main(['--output', str(tmp_path / 'out'), '--navigation', 'planned', *extra])

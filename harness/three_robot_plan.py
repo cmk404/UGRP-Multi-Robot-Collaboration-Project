@@ -139,6 +139,27 @@ class TeamAgreement:
             self.version += 1
         return None
 
+    def commit_claims(self, plan, claims, turn):
+        """Commit when every robot's own self-claim already fits one valid plan.
+
+        Each robot declared only its own work; the host verified consistency
+        and edited nothing. Conflicts must go through ``receive`` instead.
+        """
+        if self.committed is not None or self.pending is not None:
+            raise ValueError('claims can only commit before any negotiation state')
+        if turn <= self.last_turn:
+            raise ValueError('stale negotiation turn')
+        if set(claims) != set(ROBOTS) or any(not c for c in claims.values()):
+            raise ValueError('every robot must submit its own claim')
+        plan = self.plan_validator(copy.deepcopy(plan))
+        self.last_turn = turn
+        self.committed = {'proposal_id': f'{self.run_id}-claims-v{self.version}',
+                          'version': self.version, 'plan_hash': digest(plan),
+                          'plan': plan, 'proposer': 'consistent_self_claims'}
+        self.events.append({'event': 'COMMITTED_FROM_CLAIMS', 'turn': turn,
+                            'claims': copy.deepcopy(claims), **copy.deepcopy(self.committed)})
+        return copy.deepcopy(self.committed)
+
     def invalidate(self, reason):
         """Revokes eligibility; physical execution must first be stopped externally."""
         self.events.append({'event': 'INVALIDATED', 'version': self.version, 'reason': reason})
