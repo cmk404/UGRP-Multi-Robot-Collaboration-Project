@@ -301,6 +301,8 @@ def main(argv=None):
                    help='bounded asynchronous RGB control and isolated observer; separately versioned candidate')
     p.add_argument('--rolling-visual-servo',action='store_true',
                    help='experimental solo approach: bounded drive while paired RGB is captured; requires realtime control and open map')
+    p.add_argument('--rolling-view-recovery',action='store_true',
+                   help='experimental solo approach: bounded own-RGB active view after weak visible cyan; requires rolling realtime open-map skill')
     p.add_argument('--bounded-carrier-relink',action='store_true',
                    help='experimental solo carry: finite current-RGB carrier revalidation across TOP cargo occlusion; requires rolling realtime open-map skill')
     p.add_argument('--fine-gain-schedule',action='store_true',
@@ -348,6 +350,8 @@ def main(argv=None):
         p.error('--rolling-visual-servo requires skills --realtime-control')
     if args.bounded_carrier_relink and not args.rolling_visual_servo:
         p.error('--bounded-carrier-relink requires --rolling-visual-servo')
+    if args.rolling_view_recovery and not args.rolling_visual_servo:
+        p.error('--rolling-view-recovery requires --rolling-visual-servo')
     if args.coordination=='dynamic':
         if args.executor!='skills' or args.plan_replay or args.realtime_control:
             p.error('--coordination dynamic uses live skills planning, synchronous only, without --plan-replay')
