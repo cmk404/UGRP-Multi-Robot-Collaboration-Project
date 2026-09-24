@@ -11,6 +11,7 @@ import argparse
 import hashlib
 import json
 import math
+import re
 import statistics
 from collections import Counter
 from pathlib import Path
@@ -167,7 +168,7 @@ def audit_pair_approach_renewals(pair_decisions, commands, result, mission):
     pair_ids = tuple(mapping.get(slot) for slot in ("r1", "r3"))
     errors = []
     issued = {slot: [row for row in commands.get(rid, []) if row.get("pending_renewal")
-                     and row.get("stage") == "APPROACH"]
+                     and row.get("stage") == "APPROACH" and not row.get("fine_axis")]
               for slot, rid in zip(("r1", "r3"), pair_ids)}
     if len(set(pair_ids)) != 2 or any(rid not in commands for rid in pair_ids):
         errors.append("pair physical robot mapping missing or duplicated")
@@ -289,6 +290,170 @@ def audit_pair_approach_renewals(pair_decisions, commands, result, mission):
             "errors": errors, "status": "pass" if not errors else "fail"}
 
 
+def audit_pair_fine_bridges(pair_decisions, commands, result):
+    """Audit the bounded fine approach bridge from saved RGB decisions and issued commands."""
+    receipts = [row for row in pair_decisions if row.get("kind") == "approach_fine_pending_bridge"]
+    mapping = (result.get("bindings") or {}).get("pair_model_slots") or {}
+    pair_ids = tuple(mapping.get(slot) for slot in ("r1", "r3"))
+    errors = []
+    issued = {slot: [row for row in commands.get(rid, []) if row.get("pending_renewal")
+                     and row.get("stage") == "APPROACH" and row.get("fine_axis")]
+              for slot, rid in zip(("r1", "r3"), pair_ids)}
+    for slot in ("r1", "r3"):
+        if len(issued[slot]) != len(receipts):
+            errors.append(f"{slot}: {len(issued[slot])} fine issued bridges for {len(receipts)} receipts")
+    if not receipts:
+        return {"receipts": 0, "issued_by_slot": {slot: len(rows) for slot, rows in issued.items()},
+                "errors": errors, "status": "pass" if not errors else "fail"}
+    if result.get("config", {}).get("realtime_control") is not True:
+        errors.append("fine bridge outside real-time control")
+    learned = next((row.get("report") or {} for row in pair_decisions
+                    if row.get("kind") == "learned_approach"), {})
+    approach_calls = learned.get("approach_calls") or []
+    seen_rows = {slot: set() for slot in ("r1", "r3")}
+    last_until = {}
+
+    def close(left, right):
+        return isinstance(left, (int, float)) and isinstance(right, (int, float)) and abs(left - right) <= 1e-6
+
+    allowed_phase_axes = {1: "lateral", 3: "forward", 5: "lateral", 6: "forward"}
+    for index, receipt in enumerate(receipts):
+        tag = f"fine bridge[{index}]"
+        frames = receipt.get("source_frame_ids") or {}
+        observed = receipt.get("source_observed_at_s")
+        original_at = receipt.get("source_decision_sim_time_s")
+        original_until = receipt.get("original_valid_until_s")
+        deadline = receipt.get("original_rgb_deadline_s")
+        previous = receipt.get("previous_valid_until_s")
+        issued_at = receipt.get("issued_at_s")
+        until = receipt.get("valid_until_s")
+        duration = receipt.get("duration_s")
+        extension = receipt.get("total_extension_s")
+        axis = receipt.get("fine_axis")
+        phase_index = receipt.get("phase_index")
+        phase_tag = receipt.get("phase_tag")
+        plan_hash = receipt.get("plan_hash")
+        key = (original_at, frames.get("r1"), frames.get("r3"), phase_tag)
+        times = (observed, original_at, original_until, deadline, previous, issued_at, until, duration, extension)
+        if not all(isinstance(value, (int, float)) and math.isfinite(value) for value in times):
+            errors.append(f"{tag}: missing or invalid time")
+            continue
+        if ((receipt.get("phase") not in (None, "APPROACH")) or not isinstance(phase_index, int)
+                or allowed_phase_axes.get(phase_index) != axis
+                or not isinstance(phase_tag, str)
+                or re.fullmatch(rf"phase-{phase_index}-\d{{3}}", phase_tag) is None):
+            errors.append(f"{tag}: yaw/final/non-fine phase or phase tag")
+        if receipt.get("permission_request") != ["beam", "APPROACH"] or not close(
+                receipt.get("permission_verified_at_s"), issued_at):
+            errors.append(f"{tag}: APPPROACH permission not verified at issue")
+        if not (isinstance(frames.get("r1"), int) and frames.get("r1") == frames.get("r3")):
+            errors.append(f"{tag}: pair source frame IDs differ")
+        if not close(deadline, observed + .6):
+            errors.append(f"{tag}: source RGB deadline differs")
+        if not (0 < duration <= .25 + 1e-8 and close(until, issued_at + duration)
+                and original_at <= issued_at < previous - 1e-9 and until <= deadline + 1e-8):
+            errors.append(f"{tag}: issued lease or RGB TTL invalid")
+        if not (0 < extension <= .05 + 1e-8 and close(extension, until - original_until)):
+            errors.append(f"{tag}: total extension exceeds .05 s or differs from expiry")
+        if key in last_until and not close(previous, last_until[key]):
+            errors.append(f"{tag}: previous lease does not chain to last bridge")
+        if key not in last_until and not close(previous, original_until):
+            errors.append(f"{tag}: first bridge does not extend original lease")
+        last_until[key] = until
+        outer = receipt.get("outer_tolerance_m")
+        multiplier = receipt.get("near_ready_multiplier")
+        far = receipt.get("far_error_m") or {}
+        if not (isinstance(outer, (int, float)) and outer > 0 and multiplier == 2
+                and isinstance(far, dict)):
+            errors.append(f"{tag}: far-error threshold record invalid")
+            outer, multiplier, far = 0, 2, {}
+        commands_by_slot = receipt.get("commands") or {}
+        moving_slots = {slot for slot in ("r1", "r3")
+                        if any(abs(float((commands_by_slot.get(slot) or {}).get(component, 0))) > 1e-9
+                               for component in MOTION_KEYS)}
+        if not moving_slots or set(far) != moving_slots:
+            errors.append(f"{tag}: far-error slots do not match moving slots")
+        for slot, rid in zip(("r1", "r3"), pair_ids):
+            original = next((row for row in commands.get(rid, [])
+                             if not row.get("pending_renewal") and row.get("stage") == "APPROACH"
+                             and close(row.get("issued_at_s"), original_at)
+                             and row.get("source_frame_ids") == frames
+                             and row.get("phase_tag") == phase_tag
+                             and row.get("fine_axis") == axis), None)
+            if original is None:
+                errors.append(f"{tag} {slot}: original accepted fine command missing")
+            elif (original.get("fine_bridge_eligible") is not True
+                  or not close(original.get("observed_at_s"), observed)
+                  or not close(original.get("valid_until_s"), original_until)
+                  or original.get("plan_hash") != plan_hash):
+                errors.append(f"{tag} {slot}: original command provenance/eligibility differs")
+            candidates = [(i, row) for i, row in enumerate(issued[slot])
+                          if close(row.get("issued_at_s"), issued_at)
+                          and row.get("source_frame_ids") == frames
+                          and row.get("phase_tag") == phase_tag]
+            if len(candidates) != 1:
+                errors.append(f"{tag} {slot}: expected exactly one bridge command")
+                continue
+            row_index, renewed = candidates[0]
+            if row_index in seen_rows[slot]:
+                errors.append(f"{tag} {slot}: bridge command reused")
+            seen_rows[slot].add(row_index)
+            for field, expected in (("observed_at_s", observed), ("source_decision_sim_time_s", original_at),
+                                    ("original_valid_until_s", original_until),
+                                    ("original_rgb_deadline_s", deadline),
+                                    ("previous_valid_until_s", previous), ("issued_at_s", issued_at),
+                                    ("valid_until_s", until), ("duration_s", duration),
+                                    ("total_extension_s", extension), ("permission_verified_at_s", issued_at)):
+                if not close(renewed.get(field), expected):
+                    errors.append(f"{tag} {slot}: issued {field} differs from receipt")
+            if (renewed.get("plan_hash") != plan_hash or renewed.get("fine_axis") != axis
+                    or renewed.get("permission_request") != ["beam", "APPROACH"]):
+                errors.append(f"{tag} {slot}: issued plan/axis/permission differs")
+            action = renewed.get("action") or {}
+            source_action = (original or {}).get("action") or {}
+            selected = commands_by_slot.get(slot) or {}
+            if action.get("kind") != "mecanum" or not close(action.get("duration_s"), duration):
+                errors.append(f"{tag} {slot}: bridge action duration invalid")
+            for component in MOTION_KEYS:
+                if not (close(action.get(component), selected.get(component))
+                        and close(action.get(component), source_action.get(component))):
+                    errors.append(f"{tag} {slot}: {component} changed from RGB accepted action")
+            if slot in moving_slots:
+                if not (axis == "lateral" and abs(float(selected.get("left", 0))) > 1e-9
+                        and all(abs(float(selected.get(component, 0))) <= 1e-9 for component in ("forward", "turn"))
+                        or axis == "forward" and abs(float(selected.get("forward", 0))) > 1e-9
+                        and all(abs(float(selected.get(component, 0))) <= 1e-9 for component in ("left", "turn"))):
+                    errors.append(f"{tag} {slot}: movement outside fine axis")
+                if not (isinstance(far.get(slot), (int, float)) and abs(far[slot]) > multiplier * outer):
+                    errors.append(f"{tag} {slot}: moving error is near ready")
+            call = next((call for call in approach_calls if call.get("robot_id") == slot
+                         and call.get("frame_id") == frames.get(slot)
+                         and call.get("phase_index") == phase_index
+                         and f"phase-{phase_index}-{call.get('index', -1):03d}" == phase_tag), None)
+            if call is None:
+                errors.append(f"{tag} {slot}: saved fine RGB decision missing")
+            else:
+                decision = call.get("decision") or {}
+                if (call.get("stage") != axis or call.get("stationary") is not False
+                        or call.get("reobservation") is not False
+                        or decision.get("ok") is not True or decision.get("precision") != "fine"
+                        or slot in moving_slots and decision.get("reason") != "visual_pose_command"):
+                    errors.append(f"{tag} {slot}: unsupported/stationary fine RGB decision")
+                if any(not close((call.get("action") or {}).get(component), selected.get(component))
+                       for component in MOTION_KEYS):
+                    errors.append(f"{tag} {slot}: saved fine action differs")
+                if slot in moving_slots and not close(abs((decision.get("diagnostics") or {}).get(
+                        "image_derived_error", float("nan"))), abs(far.get(slot, float("nan")))):
+                    errors.append(f"{tag} {slot}: far error differs from RGB decision")
+                if slot not in moving_slots and decision.get("ready") is not True:
+                    errors.append(f"{tag} {slot}: stationary slot was not ready")
+    for slot in ("r1", "r3"):
+        if len(seen_rows[slot]) != len(issued[slot]):
+            errors.append(f"{slot}: unmatched fine bridge command")
+    return {"receipts": len(receipts), "issued_by_slot": {slot: len(rows) for slot, rows in issued.items()},
+            "errors": errors, "status": "pass" if not errors else "fail"}
+
+
 def audit(run: Path, manager_path: Path):
     if not (run / "result.json").is_file():
         raise ValueError(f"missing result.json: {run}")
@@ -387,6 +552,9 @@ def audit(run: Path, manager_path: Path):
     pair_approach_audit = audit_pair_approach_renewals(pair_decisions, commands, result, mission)
     if pair_approach_audit["errors"]:
         errors.append("pair approach renewal invariants failed")
+    pair_fine_audit = audit_pair_fine_bridges(pair_decisions, commands, result)
+    if pair_fine_audit["errors"]:
+        errors.append("pair fine bridge invariants failed")
     return {
         "schema": "ugrp.faster_dispatch_run_audit.v1", "run": str(run), "manager": manager_summary,
         "source_bundle": {"active_bundle": "not identified by run result or manager; inspect pinned source separately",
@@ -419,6 +587,7 @@ def audit(run: Path, manager_path: Path):
                  "own_rgb_attachment_attached_counts": dict(held),
                  "own_rgb_attachment_scope": "recorded image-derived estimates, not a contact sensor"},
         "pair_approach_pending_renewal": pair_approach_audit,
+        "pair_fine_pending_bridge": pair_fine_audit,
         "core_files": core, "errors": errors,
     }
 

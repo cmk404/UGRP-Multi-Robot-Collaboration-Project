@@ -104,5 +104,16 @@
     "v24_max_trials": 2,
     "aggregate_native_wall_s": 1800,
     "repeat_condition": "physical+protocol success, no contacts/weld/renewal invariant errors, identical committed source/assets."
+  },
+  "review_after_v24": {
+    "outcome": "Physical/protocol success220.347821s, slower than196.104/200.929 baseline. Renewals/contact audits pass; fine70.45SIM, solo wait12.54SIM.",
+    "decision": "Do not spend repeat on a slower candidate. Scope next change to bounded fine lateral/forward bridge; same model actions/tolerances and conservative near-ready exclusion.",
+    "evidence": "v23 fine phase1+3 command gaps9.94SIM versus v19 2.75/2.61; image errors initially comparable or smaller. v24 fine70.45 still above baseline51–54.",
+    "budget_review": "Six prior runs652 approx wall seconds. Max2 v25 trials each500 => prospective1652 under original1800 aggregate ceiling. Repeat only after fullsuccess plus faster than faster baseline196.104s and invariant pass.",
+    "max_total_trials": 8,
+    "v25_max_trials": 2,
+    "max_wall_s_each": 500,
+    "aggregate_native_wall_s": 1800,
+    "repeat_condition": "physical+protocol success, wall below196.1036, no contact/weld/authority errors, same frozen source/assets."
   }
 }
