@@ -1,0 +1,70 @@
+{
+  "schema": "ugrp.fine_gain_schedule_protocol.v1",
+  "request": "현재 시뮬이 너무 느린 이유 분석 후 해결책 탐색 (2026-09-24)",
+  "question": "Does the opt-in far-field fine alignment command schedule shorten the paired fine RGB alignment and the whole native mission without losing physical/protocol success?",
+  "runtime_source_sha": "b44b3ccca3176281d687d9c720bbd29c668a82e9",
+  "bundle": {
+    "id": "rgb-standard-dispatch-v30",
+    "sha256": "53502d8267792b92b5058b2608c5cc9cc5a4481e94cc0a7d8dfd9f65650ce8fb",
+    "parent": "rgb-standard-dispatch-v27"
+  },
+  "offline_evidence": {
+    "file": "replay-audit.json",
+    "audit_source_sha": "46595c796900681d4d72d09fc3cee27614dddbe6",
+    "scope": "668 recorded moving fine decisions recomputed from original RGB with zero mismatches; commands the schedule would issue. No physical or timing claim."
+  },
+  "design": {
+    "comparison": "same runtime source and bundle; only --fine-gain-schedule differs",
+    "order": ["A1_off", "B1_on", "B2_on", "A2_off"],
+    "max_native_full_runs": 4,
+    "parallel_physics": false,
+    "precondition": "no other simulation or training process running; record load average before each run",
+    "new_llm_calls": 0,
+    "training_runs": 0
+  },
+  "fixed": {
+    "variant": "open",
+    "seed": 11,
+    "plan_replay": "experiments/2026-09-22-parallel-transport/independent-plan.json",
+    "plan_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+    "contact_profile": "local_contact_fine",
+    "timestep_s": 0.00025,
+    "weld": false,
+    "viewer": true,
+    "realtime_control": true,
+    "realtime_factor": 1.0,
+    "efficient_capture": true,
+    "auto_route_overlap": true,
+    "overlap_start": "grasp",
+    "video_fps": 10,
+    "max_wall_s": 350,
+    "rgb_ttl_s": 0.6,
+    "max_command_lease_s": 0.25,
+    "stage_and_grasp_models": "outputs/dispatch-models/e78a5a5777f5bc48/models/{varied,grasp} (faster-dispatch worktree copy; file hashes identical to the v19 simulation-realtime copy used by the replay audit)"
+  },
+  "command_template": "python3 scripts/ugrp_session.py run fine-gain-<run> -- .venv-sim-worker-mac/bin/python -m scripts.sim_cli workflow run dispatch-skills --record outputs/fine-gain-schedule-20260924/<run> --timeout 600 -- --variant open --seed 11 --plan-replay experiments/2026-09-22-parallel-transport/independent-plan.json --contact-profile local_contact_fine --grasp-model-dir <models>/grasp --stage-model-dir <models>/varied --viewer --realtime-control --efficient-capture --auto-route-overlap --overlap-start grasp --max-wall-s 350 [--fine-gain-schedule]",
+  "metrics": [
+    "physical_success and protocol_complete",
+    "fine_approach_sim_s (approach_elapsed_sim_s of learned_approach) and per-stage movement slices",
+    "whole mission wall_s and control_end_sim_s, motion_sim_to_wall",
+    "box pregrasp resource wait SIM s (box now expected to become critical)",
+    "issued command count, stage invalid-RGB reobservations, final alignment refinement usage",
+    "robot/obstacle contact steps, sampled carried-cargo floor contact, weld steps"
+  ],
+  "acceptance": [
+    "B runs both reach physical placement/release and protocol completion",
+    "No new contact, weld, lease/TTL or permission audit failure",
+    "Report B vs A fine alignment SIM s and whole wall time per run; no averaging of aborted runs",
+    "Adoption as a default is out of scope for this cohort; a positive result keeps the option experimental"
+  ],
+  "stop_conditions": [
+    "Any B failure or safety invariant failure stops further B runs for review; A2 still runs for the baseline if budget remains",
+    "No budget extension or threshold change inside this cohort",
+    "Preserve every run, including failures, with raw paths and hashes"
+  ],
+  "limits": [
+    "One saved plan, open map, seed 11; not a generalization or real-robot claim",
+    "Response constants are a controller calibration from recorded RGB-derived error changes, not a physical measurement",
+    "Box approach may become the critical path once the beam fine stage shortens; its tilt-step limit is handled separately in draft PRs #129/#131"
+  ]
+}
