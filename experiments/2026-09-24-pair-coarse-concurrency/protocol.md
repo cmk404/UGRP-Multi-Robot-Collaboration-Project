@@ -33,3 +33,7 @@
 감사기는 coarse index별로 같은 `frame_id`/공용 TOP SHA/관측 시각, 두 로봇 자기 RGB SHA, 모델 제안과 조정 후 명령, 물리 robot ID·port, 발행 전 SIM 시각과 **port 적용 후 실제 `issued_at_s`/종료 시각·motor PWM**, 소스 코드/지도 해시를 한 행으로 연결해야 한다. 양의 forward가 나온 모든 행에서 TOP 캡처 나이 ≤0.4초, 실제 `issued_at_s + effective_duration_s ≤ observed_at_s + 0.6초`, 선행 격차 `<16px`를 검증한다. 무효·미확인 입력 및 TTL 만료는 두 로봇 HOLD로 검증하고, ON 미적용 scope는 `requested=true, applied=false, reason`으로 구분한다. 우선 결과 JSON과 port 명령 감사만 읽고, 이후 referee/영상으로 물리 변위를 독립 평가한다. referee 위치·접촉은 학생 제어나 성공 통보에 역주입하지 않는다.
 
 현재 `pair-decisions.json`의 `coarse` 행과 `image_binding` RGB 행, `issued-commands.json`의 개별 `issued_at_s`는 있으나, cluttered-map 명령에는 source frame/own RGB SHA/실제 port PWM의 일대일 receipt가 없다. 따라서 **발행 로그를 순서로 추정하는 것만으로 TTL·동시 PWM 완전 통과를 선언하지 않는다.** 물리 시작 전 최소 감사 인터페이스는 pair-drive 발행 직후 robot별 `coarse_index`, capture frame/시각/TOP·own SHA, requested action, port ack PWM, actual issue/expiry SIM 시각을 불변 receipt로 기록하고 두 robot receipt를 같은 batch ID로 묶는 것이다. 출력 전용 로깅으로 유지하며 제어 입력에는 쓰지 않는다. 이 인터페이스가 구현되지 않으면 물리 실행 결과는 탐색 진단으로 기록하되 명령 안전 감사 통과·동시 물리 효과 판정은 보류한다. 1사례의 성공은 교사 3/3 승인이나 ACT 학습 데이터 허가가 아니다.
+
+## Root 직접 후속 구현 (2026-09-25)
+
+서브에이전트 중단 뒤 root가 출력 전용 port receipt와 무효 ack 회귀 검사를 완성했다. main 위에 병합하고 v48 / workflow 1.48.0으로 등록했다(v45·v46·v47은 별도 후보). source frame/own·TOP 해시, 실제 port ack PWM과 issue/expiry를 `coarse_command_receipt`로 연결한다. physics step으로 port cache가 지워지기 전에 기록을 복사하며 이후 제어에는 사용하지 않는다. 앞의 166 passed는 receipt 변경 전 검사다. 새 전체 검사와 물리 A/B는 아직 완료되지 않았고 Claude의 CPU 잠금 때문에 로컬 실행을 시작하지 않았다.

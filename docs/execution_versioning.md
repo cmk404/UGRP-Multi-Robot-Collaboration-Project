@@ -110,3 +110,5 @@ python3 -m harness.rgb_execution_bundle verify-registry --base origin/main
 - `rgb-standard-dispatch-v42`: 부모는 main의 v41이다. PR #137(v41)이 먼저 병합되어 PR #140의 v33을 바이트 그대로 은퇴 보존하고, v33의 관찰 전용 사후 재생(`--record-replay`, `native_observer.post_run_replay`)을 v41 위에 다시 등록했다. 기록은 physics owner step 뒤 관찰용 상태 복사본이며 actor·제어·판정 입력이 아니다. v41의 세 선택 옵션은 기본 OFF 그대로다. v33·v41의 결과를 승계하지 않는다.
 
 - `rgb-standard-dispatch-v43`: 부모는 v42다. realtime open 지도에서 `--rolling-visual-servo`와 함께 명시한 `--rolling-view-recovery`만 단독 상자 접근의 약한 own RGB 직접 관측 뒤 유한한 active-view pose를 시도한다. 자기 발행 완료 pan·wrist 명령 이력으로 확인된 anchor에만 돌아가며, 각 pose 전에 바퀴를 정확히 정지하고 기존 보간·안정화 후 새로운 own/TOP RGB로 직접 cyan·동일성·신뢰도 ≥0.75를 다시 확인한다. 한 episode에 최대 3 pose·4초, 한 실행에 최대 3 episode이며 실패하면 정지한다. 관측 TTL 0.6초, 원 rolling lease와 최종 접근·파지·운반·방출 기준, 카메라·물리는 유지한다. 기존 세 제어 옵션과 관찰 전용 재생도 그대로이며 모두 기본 OFF다. v40·v42의 물리 결과를 승계하지 않는다.
+
+- `rgb-standard-dispatch-v48`: 부모 v43 위의 opt-in coarse 동시 정렬 후보. 신선한 동일 TOP·자기 RGB와 자기 yaw/횡오차 준비, 16px 미만 선행 조건에서 동료의 방향 보정만으로 자기 전진을 막지 않는다. 실제 port 발행 시각·종료·PWM과 원영상 해시를 출력 기록으로 연결한다. open/shared_crossing 정확한 지도 해시만 허용하며 기본 OFF, 물리 미검증이다. v43 바이트를 보존한다.

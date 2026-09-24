@@ -4,7 +4,7 @@
   "purpose": "fixed south-train-a physical A/B; same new source with opt-in OFF versus ON",
   "reviewed_implementation_commit": "d2be823a23e90cc9f9c63bb8e6839f2565587c9a",
   "execution_source_sha": null,
-  "execution_bundle_id": null,
+  "execution_bundle_id": "rgb-standard-dispatch-v48",
   "freeze_owner": "root; assign only after focused tests, review and source freeze",
   "historical_context_only": {
     "case": "route-teachers-managed-v3/south-train-a",
@@ -36,7 +36,11 @@
     "viewer": true,
     "realtime_factor": 1,
     "video_fps": 10,
-    "spawn_offset": [0.006, 0.004, 0.25],
+    "spawn_offset": [
+      0.006,
+      0.004,
+      0.25
+    ],
     "max_wall_s_per_run": 360,
     "weld": false,
     "coarse_decision_cap": 120
@@ -101,7 +105,7 @@
       "source_sha",
       "static_map_sha256"
     ],
-    "current_gap": "cluttered-map command_history lacks direct source-frame/own-RGB and port PWM receipt; do not infer complete TTL/PWM audit from row order"
+    "current_gap": "Port acknowledgement interface implemented; current-source tests and physical receipts not yet verified."
   },
   "acceptance": {
     "denominator": "2 planned arms; report failures, timeouts and unstarted arms separately",
