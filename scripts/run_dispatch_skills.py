@@ -343,7 +343,7 @@ class SkillScene(DispatchScene):
             raise ValueError('rolling view recovery requires realtime dispatch_open without internal obstacles')
         self.solo=SoloBoxTransport(robot_id=self.bindings.solo,
             navigator=ImageRoute(self.bindings,'box',time_aware_box_reacquisition=fast_servo,
-                                 bounded_carrier_relink=self.bounded_carrier_relink),
+                                 bounded_carrier_relink=getattr(self,'bounded_carrier_relink',False)),
             attachment_min_saturation=150,release_refine_ground_fit=True,
             fast_near_field_servo=fast_servo)
         self.solo_executor=VisualMacroExecutor(self.ports[self.bindings.solo],

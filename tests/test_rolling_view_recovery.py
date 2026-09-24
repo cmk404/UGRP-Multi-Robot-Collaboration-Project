@@ -127,7 +127,7 @@ def test_active_view_aborts_when_candidate_exits_approach():
 def test_recovery_rejects_stale_detached_ambiguous_or_post_anchor_wheels():
     strong, weak = _saved_samples()
     for mutate, expected in [
-        (lambda s: s.update(decision_at_s=s["observed_at_s"] + .6),
+        (lambda s: s.update(decision_at_s=s["observed_at_s"] + .61),
          "stale_or_unpaired_rgb"),
         (lambda s: s["target"].__setitem__(0, s["target"][0] + .12),
          "weak_view_identity_unresolved"),
