@@ -129,6 +129,12 @@ bash scripts/open_simulation.command dispatch --plan-replay outputs/my-run/commi
 
 이전 촬영·자원 일정과 비교하려면 `dispatch --full-capture --serial-route`를 사용한다. 연구 실행기 `run_dispatch_e2e.py`와 `dispatch-skills` workflow의 기본값은 그대로이며 새 자동 선택은 `--auto-route-overlap`, 촬영 최적화는 `--efficient-capture`로 명시한다. 기본 병렬 진입은 봉의 운반 명령 이후이고, `--overlap-start grasp`는 파지부터 겹치는 별도 조건이다. 창의 배속, 렌더 처리량, 계획 협상 시간, 실제 동시 운반 시간은 각각 구분해 측정한다.
 
+계획 협상의 판단 기준은 `--plan-guidance`로 명시적으로 고른다. 기본 `legacy`는 기존 프롬프트 그대로다. 목표를 따로 주지 않고, 선행 조건 예시는 "box 먼저, beam 나중" 하나뿐이다. `objective`는 "충돌·낙하 없이 모두 배달한 뒤 총 SIM 시간을 줄인다"는 목표와, 선행 조건을 걸 때·비울 때 실행기가 어떻게 동작하는지를 중립적으로 알려 준다. `objective_preview`는 동결된 제안마다 대략적 일정 미리보기를 추가한다. 로봇별 예상 대기, 직렬/동시 여부, 예상 총 SIM 시간을 보여 주며, 과거 동기 실행 두 번의 명목 단계 시간을 사용한다. 미리보기는 추정일 뿐 현재 장면 관측·성공 검사가 아니다. 호스트는 시간을 이유로 계획을 고치거나 거절하지 않는다. 사용한 모드와 prior 해시는 `result.json`의 `plan_guidance`, 로봇에게 보여 준 미리보기는 `plan-previews.json`에 남는다.
+
+```sh
+bash scripts/open_simulation.command dispatch --variant open --plan-guidance objective_preview --task 'beam과 box를 dock_b로 옮겨'
+```
+
 **2026-09-24부터 표준 `dispatch`는 계산을 먼저 끝낸 뒤 재생한다.** 창 없이 끝까지 최대 속도로 계산하고, 그동안 관찰 전용 상태(관절·mocap 위치, SIM 30Hz)를 `replay/`에 기록한다. 끝나면 MuJoCo 기본 창에서 선택한 속도로 재생한다. 성공·실패와 관계없이 기록된 구간을 재생하며 종료 코드는 원래 실행의 값이다. 재생은 저장된 위치를 운동학적으로 보여 줄 뿐 물리를 다시 계산하지 않는다. 기록은 로봇·제어기·평가의 입력이 아니며 제어 동작은 바뀌지 않는다. 재생 창은 마우스 회전/확대, **Space** 일시정지/재개, **←/→** 5초 이동, **R** 처음부터, **Q 또는 창 닫기** 종료를 지원한다. 지난 실행은 `bash scripts/open_simulation.command replay outputs/<실행 폴더> --speed 2`로 다시 볼 수 있다. `replay/replay.json`의 파일 해시가 달라지면 재생을 거부한다. `--headless`는 기록도 창도 만들지 않으며, 필요하면 `--record-replay`를 추가한다.
 
 계산 중에 보려면 `dispatch --live-view`를 쓴다. 이전 기본 **dispatch 관찰 창**이며 마우스 회전/확대, **Space** 일시정지/재개, **Q 또는 창 닫기** 종료를 지원한다. 모델 대기 중 물리는 멈춘다. 관찰 창은 model/data의 별도 복사본을 사용하므로 패널 초기화·actuator 조작·물체 드래그가 실제 제어 세계에 전달되지 않는다. 실제 물체 조작은 아래 수동 경로를 사용한다. 종료 중 이미 진행된 모델 요청은 제한 시간 안에 끝날 때까지 기록을 회수하며, 서버 측 취소를 보장하지 않는다.

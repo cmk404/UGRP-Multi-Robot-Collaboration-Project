@@ -29,6 +29,7 @@ from harness.dispatch_skill_binding import (_CARRIER_RELINK_MAX_OCCLUDED_FRAMES,
     _CARRIER_RELINK_MAX_ELAPSED_S,_CARRIER_RELINK_MAX_MOTION_PX)
 from harness.dispatch_feasibility import negotiate_executable
 from harness.dispatch_yield import SoloYield,WheelObserver
+from harness.dispatch_plan_guidance import PlanGuidance
 from harness.three_robot_plan import ROBOTS, TeamAgreement, images
 from harness.solo_box_transport import SoloBoxTransport, normalize_own_rgb
 from harness.grasp_student_inference import predict_student
@@ -1614,11 +1615,17 @@ def run(args):
         scene.identity=identity
         task=actor_task(scene.config['static_map'],required_dock=getattr(args,'required_dock',None))
         if getattr(args,'task',None):task['operator_instruction']=args.task
-        task['capability_scope']='RGB pair approach/grasp plus loaded rotation and complete-footprint path checking; existing VisualBoxSkill. Parallel envelope 0.99m; rotated envelope 0.45m. Loaded terrain is unvalidated and avoided. In clutter, pickup preparation is exclusive. Waiting cargo and robots remain occupied space. If you select beam.after=[box_job] and box.after=[], the box executor releases its cargo and visually clears the unloading bay before finishing box_job. Role binding, routes and task dependencies follow your plan. All skills remain experimental; no raw-action fallback.'
+        guidance=PlanGuidance(getattr(args,'plan_guidance','legacy'),scene.config['static_map'],
+                              route_overlap=getattr(args,'route_overlap',False),
+                              auto_route_overlap=getattr(args,'auto_route_overlap',False),
+                              overlap_start=getattr(args,'overlap_start','transit'))
+        task['capability_scope']=guidance.capability_scope
+        scene.guidance=guidance
         write(args.output/'actor-mission.json',task)
         run_id=opaque_run_id()
         def planner(rid,**kwargs):
-            return build_dispatch_request(rid,task=task,execution_pilot=True,identity_evidence=identity[rid],**kwargs)
+            return build_dispatch_request(rid,task=task,execution_pilot=True,identity_evidence=identity[rid],
+                                          guidance=guidance,**kwargs)
         replay_plan=None
         if args.plan_replay:
             saved=json.loads(args.plan_replay.read_text())
@@ -1654,7 +1661,7 @@ def run(args):
             result['phase']='NEGOTIATE'
             result['plan_feasibility']=negotiate_executable(team,frames,scene.command_history,task,
                 scene.config['static_map'],scene.time(),identity=identity,reference_top=reference,
-                **negotiation)
+                feedback_instruction=guidance.feasibility_feedback,**negotiation)
         scene.bindings=SkillBindings(team.agreement.committed,scene.config['static_map'],
                                     route_overlap=getattr(args,'route_overlap',False),
                                     auto_route_overlap=getattr(args,'auto_route_overlap',False),
@@ -1740,6 +1747,9 @@ def run(args):
                     result['evaluation']=scene.referee.finish(result.get('plan'))
                     result['physical_success']=result['evaluation']['physical_success']
                     write(args.output/'evaluation-only.json',result['evaluation'])
+                if getattr(scene,'guidance',None):
+                    result['plan_guidance']=scene.guidance.record()
+                    write(args.output/'plan-previews.json',scene.guidance.preview_log)
                 write(args.output/'issued-commands.json',scene.command_history)
                 write(args.output/'solo-decisions.json',scene.solo_rows);write(args.output/'solo-raw-actions.json',scene.solo_raw)
                 write(args.output/'solo-renewals.json',scene.solo_renewals)

@@ -1,0 +1,1044 @@
+{
+ "cohort": "/Users/changmin/projects/ugrp/outputs/plan-guidance-20260925",
+ "runs": [
+  {
+   "run": "legacy-1",
+   "condition": "legacy",
+   "error": null,
+   "plan_committed": true,
+   "protocol_complete": true,
+   "physical_success": true,
+   "control_end_sim_s": 181.45999999743702,
+   "llm_calls": 15,
+   "usage": {
+    "prompt_tokens": 126975,
+    "completion_tokens": 3873,
+    "total_tokens": 134283
+   },
+   "result_sha256": "5ad1908de39e6d74c7650e6bb5f276b1546602ef7afeb3ef1b24ecd75cd5b1fe",
+   "plan": {
+    "dock": "dock_b",
+    "beam": [
+     [
+      "r1",
+      "r3"
+     ],
+     "north",
+     []
+    ],
+    "box": [
+     [
+      "r2"
+     ],
+     "south",
+     [
+      "beam_job"
+     ]
+    ]
+   },
+   "has_dependency": true,
+   "dependency": "beam_first",
+   "overlap_selection": {
+    "mode": "auto",
+    "enabled": false,
+    "reason": "agreed_dependencies_require_serial",
+    "plan_hash": "35c6a706d42ffb360ef8026202f59ded0c1f3a2502248011a43dfce9b8f4ac32",
+    "beam_route": "north",
+    "box_route": "south",
+    "beam_resource": "north_gate",
+    "box_resource": "south_gate",
+    "overlap_start": "transit"
+   },
+   "agreement_events": [
+    "PROPOSED",
+    "REJECTED",
+    "PROPOSED",
+    "MISSING_REPLY",
+    "COMMITTED"
+   ],
+   "negotiation_turns": 5,
+   "proposed_dependencies": [
+    "box_first",
+    "beam_first"
+   ],
+   "pair_idle_after_approach_sim_s": 0.2,
+   "carry_overlap_sim_s": 0.0,
+   "box_idle_waiting_sim_s": 56.7,
+   "previews_shown": 0,
+   "preview_distinct_plans": 0
+  },
+  {
+   "run": "legacy-2",
+   "condition": "legacy",
+   "error": null,
+   "plan_committed": true,
+   "protocol_complete": true,
+   "physical_success": true,
+   "control_end_sim_s": 141.25999999838763,
+   "llm_calls": 12,
+   "usage": {
+    "prompt_tokens": 116531,
+    "completion_tokens": 3106,
+    "total_tokens": 121491
+   },
+   "result_sha256": "0d405447f8486783e3459b0d1b12f9eeb52d9a3395da7594b99457fd9f67963d",
+   "plan": {
+    "dock": "dock_b",
+    "beam": [
+     [
+      "r1",
+      "r3"
+     ],
+     "north",
+     []
+    ],
+    "box": [
+     [
+      "r2"
+     ],
+     "south",
+     []
+    ]
+   },
+   "has_dependency": false,
+   "dependency": "none",
+   "overlap_selection": {
+    "mode": "auto",
+    "enabled": true,
+    "reason": "independent_open_routes",
+    "plan_hash": "7a85f10c2be4989161ea4174b16085aafe2fc122bcf37e50573a6e1d2a79d9e2",
+    "beam_route": "north",
+    "box_route": "south",
+    "beam_resource": "north_gate",
+    "box_resource": "south_gate",
+    "overlap_start": "transit"
+   },
+   "agreement_events": [
+    "PROPOSED",
+    "REJECTED",
+    "PROPOSED",
+    "COMMITTED"
+   ],
+   "negotiation_turns": 4,
+   "proposed_dependencies": [
+    "none",
+    "none"
+   ],
+   "pair_idle_after_approach_sim_s": 0.2,
+   "carry_overlap_sim_s": 15.0,
+   "box_idle_waiting_sim_s": 20.1,
+   "previews_shown": 0,
+   "preview_distinct_plans": 0
+  },
+  {
+   "run": "legacy-3",
+   "condition": "legacy",
+   "error": null,
+   "plan_committed": true,
+   "protocol_complete": true,
+   "physical_success": true,
+   "control_end_sim_s": 181.45999999743702,
+   "llm_calls": 12,
+   "usage": {
+    "prompt_tokens": 116473,
+    "completion_tokens": 3050,
+    "total_tokens": 129006
+   },
+   "result_sha256": "c37c578968725f224c75d1e18d39bb0f988c65eb3dbc4c07c8ecb01a6563bc76",
+   "plan": {
+    "dock": "dock_b",
+    "beam": [
+     [
+      "r1",
+      "r3"
+     ],
+     "north",
+     []
+    ],
+    "box": [
+     [
+      "r2"
+     ],
+     "south",
+     [
+      "beam_job"
+     ]
+    ]
+   },
+   "has_dependency": true,
+   "dependency": "beam_first",
+   "overlap_selection": {
+    "mode": "auto",
+    "enabled": false,
+    "reason": "agreed_dependencies_require_serial",
+    "plan_hash": "35c6a706d42ffb360ef8026202f59ded0c1f3a2502248011a43dfce9b8f4ac32",
+    "beam_route": "north",
+    "box_route": "south",
+    "beam_resource": "north_gate",
+    "box_resource": "south_gate",
+    "overlap_start": "transit"
+   },
+   "agreement_events": [
+    "PROPOSED",
+    "REJECTED",
+    "PROPOSED",
+    "COMMITTED"
+   ],
+   "negotiation_turns": 4,
+   "proposed_dependencies": [
+    "beam_first",
+    "beam_first"
+   ],
+   "pair_idle_after_approach_sim_s": 0.2,
+   "carry_overlap_sim_s": 0.0,
+   "box_idle_waiting_sim_s": 56.7,
+   "previews_shown": 0,
+   "preview_distinct_plans": 0
+  },
+  {
+   "run": "legacy-4",
+   "condition": "legacy",
+   "error": null,
+   "plan_committed": true,
+   "protocol_complete": true,
+   "physical_success": true,
+   "control_end_sim_s": 141.25999999838763,
+   "llm_calls": 9,
+   "usage": {
+    "prompt_tokens": 86206,
+    "completion_tokens": 2133,
+    "total_tokens": 88339
+   },
+   "result_sha256": "a72f4ecf0f44ae7b604b0a2e17f27916b4faf8f354be4051a374163fdd55252b",
+   "plan": {
+    "dock": "dock_b",
+    "beam": [
+     [
+      "r1",
+      "r3"
+     ],
+     "north",
+     []
+    ],
+    "box": [
+     [
+      "r2"
+     ],
+     "south",
+     []
+    ]
+   },
+   "has_dependency": false,
+   "dependency": "none",
+   "overlap_selection": {
+    "mode": "auto",
+    "enabled": true,
+    "reason": "independent_open_routes",
+    "plan_hash": "7a85f10c2be4989161ea4174b16085aafe2fc122bcf37e50573a6e1d2a79d9e2",
+    "beam_route": "north",
+    "box_route": "south",
+    "beam_resource": "north_gate",
+    "box_resource": "south_gate",
+    "overlap_start": "transit"
+   },
+   "agreement_events": [
+    "PROPOSER_DECLINED",
+    "PROPOSED",
+    "COMMITTED"
+   ],
+   "negotiation_turns": 3,
+   "proposed_dependencies": [
+    "none"
+   ],
+   "pair_idle_after_approach_sim_s": 0.2,
+   "carry_overlap_sim_s": 15.0,
+   "box_idle_waiting_sim_s": 20.1,
+   "previews_shown": 0,
+   "preview_distinct_plans": 0
+  },
+  {
+   "run": "legacy-5",
+   "condition": "legacy",
+   "error": null,
+   "plan_committed": true,
+   "protocol_complete": true,
+   "physical_success": true,
+   "control_end_sim_s": 141.25999999838763,
+   "llm_calls": 12,
+   "usage": {
+    "prompt_tokens": 116197,
+    "completion_tokens": 3104,
+    "total_tokens": 132645
+   },
+   "result_sha256": "a96485645dd733ab6529970b1d3d863b0c55b72f7091031f3dc50179208732da",
+   "plan": {
+    "dock": "dock_b",
+    "beam": [
+     [
+      "r1",
+      "r3"
+     ],
+     "north",
+     []
+    ],
+    "box": [
+     [
+      "r2"
+     ],
+     "south",
+     []
+    ]
+   },
+   "has_dependency": false,
+   "dependency": "none",
+   "overlap_selection": {
+    "mode": "auto",
+    "enabled": true,
+    "reason": "independent_open_routes",
+    "plan_hash": "7a85f10c2be4989161ea4174b16085aafe2fc122bcf37e50573a6e1d2a79d9e2",
+    "beam_route": "north",
+    "box_route": "south",
+    "beam_resource": "north_gate",
+    "box_resource": "south_gate",
+    "overlap_start": "transit"
+   },
+   "agreement_events": [
+    "PROPOSED",
+    "REJECTED",
+    "PROPOSED",
+    "COMMITTED"
+   ],
+   "negotiation_turns": 4,
+   "proposed_dependencies": [
+    "none",
+    "none"
+   ],
+   "pair_idle_after_approach_sim_s": 0.2,
+   "carry_overlap_sim_s": 15.0,
+   "box_idle_waiting_sim_s": 20.1,
+   "previews_shown": 0,
+   "preview_distinct_plans": 0
+  },
+  {
+   "run": "objective-1",
+   "condition": "objective",
+   "error": null,
+   "plan_committed": true,
+   "protocol_complete": true,
+   "physical_success": true,
+   "control_end_sim_s": 141.25999999838763,
+   "llm_calls": 18,
+   "usage": {
+    "prompt_tokens": 150331,
+    "completion_tokens": 4013,
+    "total_tokens": 164190
+   },
+   "result_sha256": "8b7626142371892ba9452ccf746142ab86f99dc8a1645227f451ee8e9a67dae2",
+   "plan": {
+    "dock": "dock_b",
+    "beam": [
+     [
+      "r1",
+      "r3"
+     ],
+     "north",
+     []
+    ],
+    "box": [
+     [
+      "r2"
+     ],
+     "south",
+     []
+    ]
+   },
+   "has_dependency": false,
+   "dependency": "none",
+   "overlap_selection": {
+    "mode": "auto",
+    "enabled": true,
+    "reason": "independent_open_routes",
+    "plan_hash": "7a85f10c2be4989161ea4174b16085aafe2fc122bcf37e50573a6e1d2a79d9e2",
+    "beam_route": "north",
+    "box_route": "south",
+    "beam_resource": "north_gate",
+    "box_resource": "south_gate",
+    "overlap_start": "transit"
+   },
+   "agreement_events": [
+    "PROPOSED",
+    "MISSING_REPLY",
+    "REJECTED",
+    "PROPOSED",
+    "MISSING_REPLY",
+    "COMMITTED"
+   ],
+   "negotiation_turns": 6,
+   "proposed_dependencies": [
+    "none",
+    "none"
+   ],
+   "pair_idle_after_approach_sim_s": 0.2,
+   "carry_overlap_sim_s": 15.0,
+   "box_idle_waiting_sim_s": 20.1,
+   "previews_shown": 0,
+   "preview_distinct_plans": 0
+  },
+  {
+   "run": "objective-2",
+   "condition": "objective",
+   "error": null,
+   "plan_committed": true,
+   "protocol_complete": true,
+   "physical_success": true,
+   "control_end_sim_s": 141.25999999838763,
+   "llm_calls": 15,
+   "usage": {
+    "prompt_tokens": 109506,
+    "completion_tokens": 3265,
+    "total_tokens": 112771
+   },
+   "result_sha256": "4e6a2a2b3be8caccb7abc063273342d9f9d4a83a1d73eabec8a6b22293ef29a5",
+   "plan": {
+    "dock": "dock_b",
+    "beam": [
+     [
+      "r1",
+      "r3"
+     ],
+     "north",
+     []
+    ],
+    "box": [
+     [
+      "r2"
+     ],
+     "south",
+     []
+    ]
+   },
+   "has_dependency": false,
+   "dependency": "none",
+   "overlap_selection": {
+    "mode": "auto",
+    "enabled": true,
+    "reason": "independent_open_routes",
+    "plan_hash": "7a85f10c2be4989161ea4174b16085aafe2fc122bcf37e50573a6e1d2a79d9e2",
+    "beam_route": "north",
+    "box_route": "south",
+    "beam_resource": "north_gate",
+    "box_resource": "south_gate",
+    "overlap_start": "transit"
+   },
+   "agreement_events": [
+    "MISSING_PROPOSER",
+    "PROPOSED",
+    "MISSING_REPLY",
+    "MISSING_REPLY",
+    "COMMITTED"
+   ],
+   "negotiation_turns": 5,
+   "proposed_dependencies": [
+    "none"
+   ],
+   "pair_idle_after_approach_sim_s": 0.2,
+   "carry_overlap_sim_s": 15.0,
+   "box_idle_waiting_sim_s": 20.1,
+   "previews_shown": 0,
+   "preview_distinct_plans": 0
+  },
+  {
+   "run": "objective-3",
+   "condition": "objective",
+   "error": null,
+   "plan_committed": true,
+   "protocol_complete": true,
+   "physical_success": true,
+   "control_end_sim_s": 141.25999999838763,
+   "llm_calls": 12,
+   "usage": {
+    "prompt_tokens": 118841,
+    "completion_tokens": 3018,
+    "total_tokens": 123591
+   },
+   "result_sha256": "b92652ca206574fb7c3450f5a9298344726b7c7f121b683815cf34bba019791c",
+   "plan": {
+    "dock": "dock_b",
+    "beam": [
+     [
+      "r1",
+      "r3"
+     ],
+     "north",
+     []
+    ],
+    "box": [
+     [
+      "r2"
+     ],
+     "south",
+     []
+    ]
+   },
+   "has_dependency": false,
+   "dependency": "none",
+   "overlap_selection": {
+    "mode": "auto",
+    "enabled": true,
+    "reason": "independent_open_routes",
+    "plan_hash": "7a85f10c2be4989161ea4174b16085aafe2fc122bcf37e50573a6e1d2a79d9e2",
+    "beam_route": "north",
+    "box_route": "south",
+    "beam_resource": "north_gate",
+    "box_resource": "south_gate",
+    "overlap_start": "transit"
+   },
+   "agreement_events": [
+    "PROPOSED",
+    "REJECTED",
+    "PROPOSED",
+    "COMMITTED"
+   ],
+   "negotiation_turns": 4,
+   "proposed_dependencies": [
+    "none",
+    "none"
+   ],
+   "pair_idle_after_approach_sim_s": 0.2,
+   "carry_overlap_sim_s": 15.0,
+   "box_idle_waiting_sim_s": 20.1,
+   "previews_shown": 0,
+   "preview_distinct_plans": 0
+  },
+  {
+   "run": "objective-4",
+   "condition": "objective",
+   "error": null,
+   "plan_committed": true,
+   "protocol_complete": true,
+   "physical_success": true,
+   "control_end_sim_s": 141.25999999838763,
+   "llm_calls": 12,
+   "usage": {
+    "prompt_tokens": 119159,
+    "completion_tokens": 2998,
+    "total_tokens": 127716
+   },
+   "result_sha256": "132d45cd395b25eb5b3b5b92431fead529cc30e3cabba5bb5f93a26e5298c591",
+   "plan": {
+    "dock": "dock_b",
+    "beam": [
+     [
+      "r1",
+      "r3"
+     ],
+     "north",
+     []
+    ],
+    "box": [
+     [
+      "r2"
+     ],
+     "south",
+     []
+    ]
+   },
+   "has_dependency": false,
+   "dependency": "none",
+   "overlap_selection": {
+    "mode": "auto",
+    "enabled": true,
+    "reason": "independent_open_routes",
+    "plan_hash": "7a85f10c2be4989161ea4174b16085aafe2fc122bcf37e50573a6e1d2a79d9e2",
+    "beam_route": "north",
+    "box_route": "south",
+    "beam_resource": "north_gate",
+    "box_resource": "south_gate",
+    "overlap_start": "transit"
+   },
+   "agreement_events": [
+    "PROPOSED",
+    "REJECTED",
+    "PROPOSED",
+    "COMMITTED"
+   ],
+   "negotiation_turns": 4,
+   "proposed_dependencies": [
+    "none",
+    "none"
+   ],
+   "pair_idle_after_approach_sim_s": 0.2,
+   "carry_overlap_sim_s": 15.0,
+   "box_idle_waiting_sim_s": 20.1,
+   "previews_shown": 0,
+   "preview_distinct_plans": 0
+  },
+  {
+   "run": "objective-5",
+   "condition": "objective",
+   "error": null,
+   "plan_committed": true,
+   "protocol_complete": true,
+   "physical_success": true,
+   "control_end_sim_s": 141.25999999838763,
+   "llm_calls": 12,
+   "usage": {
+    "prompt_tokens": 119145,
+    "completion_tokens": 3192,
+    "total_tokens": 127015
+   },
+   "result_sha256": "8b1191f91246ef4537ac29448043dd7cc696b9bf7b11e8adaa09ddc5670347d9",
+   "plan": {
+    "dock": "dock_b",
+    "beam": [
+     [
+      "r1",
+      "r3"
+     ],
+     "north",
+     []
+    ],
+    "box": [
+     [
+      "r2"
+     ],
+     "south",
+     []
+    ]
+   },
+   "has_dependency": false,
+   "dependency": "none",
+   "overlap_selection": {
+    "mode": "auto",
+    "enabled": true,
+    "reason": "independent_open_routes",
+    "plan_hash": "7a85f10c2be4989161ea4174b16085aafe2fc122bcf37e50573a6e1d2a79d9e2",
+    "beam_route": "north",
+    "box_route": "south",
+    "beam_resource": "north_gate",
+    "box_resource": "south_gate",
+    "overlap_start": "transit"
+   },
+   "agreement_events": [
+    "PROPOSED",
+    "REJECTED",
+    "PROPOSED",
+    "COMMITTED"
+   ],
+   "negotiation_turns": 4,
+   "proposed_dependencies": [
+    "none",
+    "none"
+   ],
+   "pair_idle_after_approach_sim_s": 0.2,
+   "carry_overlap_sim_s": 15.0,
+   "box_idle_waiting_sim_s": 20.1,
+   "previews_shown": 0,
+   "preview_distinct_plans": 0
+  },
+  {
+   "run": "objective_preview-1",
+   "condition": "objective_preview",
+   "error": null,
+   "plan_committed": true,
+   "protocol_complete": true,
+   "physical_success": true,
+   "control_end_sim_s": 141.25999999838763,
+   "llm_calls": 15,
+   "usage": {
+    "prompt_tokens": 147061,
+    "completion_tokens": 3717,
+    "total_tokens": 155176
+   },
+   "result_sha256": "6079b6b00139c930719cc984292f8d316ade5bb70365d9627a99d75067ba5d3b",
+   "plan": {
+    "dock": "dock_b",
+    "beam": [
+     [
+      "r1",
+      "r3"
+     ],
+     "north",
+     []
+    ],
+    "box": [
+     [
+      "r2"
+     ],
+     "south",
+     []
+    ]
+   },
+   "has_dependency": false,
+   "dependency": "none",
+   "overlap_selection": {
+    "mode": "auto",
+    "enabled": true,
+    "reason": "independent_open_routes",
+    "plan_hash": "7a85f10c2be4989161ea4174b16085aafe2fc122bcf37e50573a6e1d2a79d9e2",
+    "beam_route": "north",
+    "box_route": "south",
+    "beam_resource": "north_gate",
+    "box_resource": "south_gate",
+    "overlap_start": "transit"
+   },
+   "agreement_events": [
+    "PROPOSED",
+    "REJECTED",
+    "PROPOSED",
+    "MISSING_REPLY",
+    "COMMITTED"
+   ],
+   "negotiation_turns": 5,
+   "proposed_dependencies": [
+    "none",
+    "none"
+   ],
+   "pair_idle_after_approach_sim_s": 0.2,
+   "carry_overlap_sim_s": 15.0,
+   "box_idle_waiting_sim_s": 20.1,
+   "previews_shown": 9,
+   "preview_distinct_plans": 2,
+   "committed_preview_total_sim_s": 130
+  },
+  {
+   "run": "objective_preview-2",
+   "condition": "objective_preview",
+   "error": null,
+   "plan_committed": true,
+   "protocol_complete": true,
+   "physical_success": true,
+   "control_end_sim_s": 141.25999999838763,
+   "llm_calls": 15,
+   "usage": {
+    "prompt_tokens": 146772,
+    "completion_tokens": 3748,
+    "total_tokens": 154421
+   },
+   "result_sha256": "80e070b308aee1e12b7bbe6570230cd4674b45c46699dda3aa6f06ba231dc92c",
+   "plan": {
+    "dock": "dock_b",
+    "beam": [
+     [
+      "r1",
+      "r3"
+     ],
+     "north",
+     []
+    ],
+    "box": [
+     [
+      "r2"
+     ],
+     "south",
+     []
+    ]
+   },
+   "has_dependency": false,
+   "dependency": "none",
+   "overlap_selection": {
+    "mode": "auto",
+    "enabled": true,
+    "reason": "independent_open_routes",
+    "plan_hash": "7a85f10c2be4989161ea4174b16085aafe2fc122bcf37e50573a6e1d2a79d9e2",
+    "beam_route": "north",
+    "box_route": "south",
+    "beam_resource": "north_gate",
+    "box_resource": "south_gate",
+    "overlap_start": "transit"
+   },
+   "agreement_events": [
+    "PROPOSED",
+    "REJECTED",
+    "PROPOSED",
+    "MISSING_REPLY",
+    "COMMITTED"
+   ],
+   "negotiation_turns": 5,
+   "proposed_dependencies": [
+    "none",
+    "none"
+   ],
+   "pair_idle_after_approach_sim_s": 0.2,
+   "carry_overlap_sim_s": 15.0,
+   "box_idle_waiting_sim_s": 20.1,
+   "previews_shown": 9,
+   "preview_distinct_plans": 2,
+   "committed_preview_total_sim_s": 130
+  },
+  {
+   "run": "objective_preview-3",
+   "condition": "objective_preview",
+   "error": null,
+   "plan_committed": true,
+   "protocol_complete": true,
+   "physical_success": true,
+   "control_end_sim_s": 141.25999999838763,
+   "llm_calls": 12,
+   "usage": {
+    "prompt_tokens": 124669,
+    "completion_tokens": 3021,
+    "total_tokens": 129849
+   },
+   "result_sha256": "c9882fcd9b8d8416bdb628f581a150aab12519e732b78b03bd93ea2badad603d",
+   "plan": {
+    "dock": "dock_b",
+    "beam": [
+     [
+      "r1",
+      "r3"
+     ],
+     "north",
+     []
+    ],
+    "box": [
+     [
+      "r2"
+     ],
+     "south",
+     []
+    ]
+   },
+   "has_dependency": false,
+   "dependency": "none",
+   "overlap_selection": {
+    "mode": "auto",
+    "enabled": true,
+    "reason": "independent_open_routes",
+    "plan_hash": "7a85f10c2be4989161ea4174b16085aafe2fc122bcf37e50573a6e1d2a79d9e2",
+    "beam_route": "north",
+    "box_route": "south",
+    "beam_resource": "north_gate",
+    "box_resource": "south_gate",
+    "overlap_start": "transit"
+   },
+   "agreement_events": [
+    "PROPOSED",
+    "REJECTED",
+    "PROPOSED",
+    "COMMITTED"
+   ],
+   "negotiation_turns": 4,
+   "proposed_dependencies": [
+    "none",
+    "none"
+   ],
+   "pair_idle_after_approach_sim_s": 0.2,
+   "carry_overlap_sim_s": 15.0,
+   "box_idle_waiting_sim_s": 20.1,
+   "previews_shown": 6,
+   "preview_distinct_plans": 2,
+   "committed_preview_total_sim_s": 130
+  },
+  {
+   "run": "objective_preview-4",
+   "condition": "objective_preview",
+   "error": null,
+   "plan_committed": true,
+   "protocol_complete": true,
+   "physical_success": true,
+   "control_end_sim_s": 141.25999999838763,
+   "llm_calls": 12,
+   "usage": {
+    "prompt_tokens": 124783,
+    "completion_tokens": 3040,
+    "total_tokens": 131779
+   },
+   "result_sha256": "ec8e42ba16cca7fee74f72df3948cbeb3cbc72c0bb9f9dc26b8b71f0bed73558",
+   "plan": {
+    "dock": "dock_b",
+    "beam": [
+     [
+      "r1",
+      "r3"
+     ],
+     "north",
+     []
+    ],
+    "box": [
+     [
+      "r2"
+     ],
+     "south",
+     []
+    ]
+   },
+   "has_dependency": false,
+   "dependency": "none",
+   "overlap_selection": {
+    "mode": "auto",
+    "enabled": true,
+    "reason": "independent_open_routes",
+    "plan_hash": "7a85f10c2be4989161ea4174b16085aafe2fc122bcf37e50573a6e1d2a79d9e2",
+    "beam_route": "north",
+    "box_route": "south",
+    "beam_resource": "north_gate",
+    "box_resource": "south_gate",
+    "overlap_start": "transit"
+   },
+   "agreement_events": [
+    "PROPOSED",
+    "REJECTED",
+    "PROPOSED",
+    "COMMITTED"
+   ],
+   "negotiation_turns": 4,
+   "proposed_dependencies": [
+    "none",
+    "none"
+   ],
+   "pair_idle_after_approach_sim_s": 0.2,
+   "carry_overlap_sim_s": 15.0,
+   "box_idle_waiting_sim_s": 20.1,
+   "previews_shown": 6,
+   "preview_distinct_plans": 2,
+   "committed_preview_total_sim_s": 130
+  },
+  {
+   "run": "objective_preview-5",
+   "condition": "objective_preview",
+   "error": null,
+   "plan_committed": true,
+   "protocol_complete": true,
+   "physical_success": true,
+   "control_end_sim_s": 141.25999999838763,
+   "llm_calls": 12,
+   "usage": {
+    "prompt_tokens": 130383,
+    "completion_tokens": 3351,
+    "total_tokens": 136330
+   },
+   "result_sha256": "1ca610775ac448472782846d133e05c6dd41748adb9ac7c403f7e1c17b70528f",
+   "plan": {
+    "dock": "dock_b",
+    "beam": [
+     [
+      "r1",
+      "r3"
+     ],
+     "north",
+     []
+    ],
+    "box": [
+     [
+      "r2"
+     ],
+     "south",
+     []
+    ]
+   },
+   "has_dependency": false,
+   "dependency": "none",
+   "overlap_selection": {
+    "mode": "auto",
+    "enabled": true,
+    "reason": "independent_open_routes",
+    "plan_hash": "7a85f10c2be4989161ea4174b16085aafe2fc122bcf37e50573a6e1d2a79d9e2",
+    "beam_route": "north",
+    "box_route": "south",
+    "beam_resource": "north_gate",
+    "box_resource": "south_gate",
+    "overlap_start": "transit"
+   },
+   "agreement_events": [
+    "PROPOSED",
+    "COMMITTED",
+    "INVALIDATED",
+    "PROPOSED",
+    "COMMITTED"
+   ],
+   "negotiation_turns": 4,
+   "proposed_dependencies": [
+    "none",
+    "none"
+   ],
+   "pair_idle_after_approach_sim_s": 0.2,
+   "carry_overlap_sim_s": 15.0,
+   "box_idle_waiting_sim_s": 20.1,
+   "previews_shown": 6,
+   "preview_distinct_plans": 2,
+   "committed_preview_total_sim_s": 130
+  },
+  {
+   "run": "refused-dirty-tree-attempt",
+   "missing": "result.json"
+  }
+ ],
+ "summary": {
+  "legacy": {
+   "runs": 5,
+   "committed": 5,
+   "mission_success": 5,
+   "dependency_choice": {
+    "none": 3,
+    "beam_first": 2,
+    "box_first": 0
+   },
+   "concurrent_execution": 3,
+   "success_sim_s_median": 141.25999999838763,
+   "success_sim_s_all": [
+    181.45999999743702,
+    141.25999999838763,
+    181.45999999743702,
+    141.25999999838763,
+    141.25999999838763
+   ],
+   "pair_idle_median": 0.2,
+   "box_idle_median": 20.1,
+   "negotiation_turns_median": 4,
+   "llm_calls_median": 12,
+   "prompt_tokens_median": 116473,
+   "errors": []
+  },
+  "objective": {
+   "runs": 5,
+   "committed": 5,
+   "mission_success": 5,
+   "dependency_choice": {
+    "none": 5,
+    "beam_first": 0,
+    "box_first": 0
+   },
+   "concurrent_execution": 5,
+   "success_sim_s_median": 141.25999999838763,
+   "success_sim_s_all": [
+    141.25999999838763,
+    141.25999999838763,
+    141.25999999838763,
+    141.25999999838763,
+    141.25999999838763
+   ],
+   "pair_idle_median": 0.2,
+   "box_idle_median": 20.1,
+   "negotiation_turns_median": 4,
+   "llm_calls_median": 12,
+   "prompt_tokens_median": 119145,
+   "errors": []
+  },
+  "objective_preview": {
+   "runs": 5,
+   "committed": 5,
+   "mission_success": 5,
+   "dependency_choice": {
+    "none": 5,
+    "beam_first": 0,
+    "box_first": 0
+   },
+   "concurrent_execution": 5,
+   "success_sim_s_median": 141.25999999838763,
+   "success_sim_s_all": [
+    141.25999999838763,
+    141.25999999838763,
+    141.25999999838763,
+    141.25999999838763,
+    141.25999999838763
+   ],
+   "pair_idle_median": 0.2,
+   "box_idle_median": 20.1,
+   "negotiation_turns_median": 4,
+   "llm_calls_median": 12,
+   "prompt_tokens_median": 130383,
+   "errors": []
+  }
+ }
+}

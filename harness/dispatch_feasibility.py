@@ -4,6 +4,7 @@ import numpy as np
 from harness.camera_goal_transport import decode
 from harness.dispatch_skill_binding import SkillBindings,beam_feature
 from harness.dispatch_navigation_map import navigation_map,solo_gate
+from harness.dispatch_plan_guidance import LEGACY_FEEDBACK
 from harness.dispatch_pair_navigation import plan_placement_route
 from harness.known_map_navigation import pixel_to_world
 from harness.three_robot_plan import digest
@@ -100,7 +101,7 @@ def inspect_routes(committed,static_map,top_rgb,identity=None,reference_top=None
         'plan_hash':committed['plan_hash'],'input_sha256':__import__('hashlib').sha256(top_rgb).hexdigest()}
 
 
-def negotiate_executable(team,frames,history,task,static_map,sim_time,*,max_rounds=8,max_replans=2,max_tokens=1000000,live_replan=False,identity=None,reference_top=None):
+def negotiate_executable(team,frames,history,task,static_map,sim_time,*,max_rounds=8,max_replans=2,max_tokens=1000000,live_replan=False,identity=None,reference_top=None,feedback_instruction=None):
     """Reject unsupported commits, supply evidence, then require NEW unanimous ACKs.
 
     Called before motors are authorized. Never repairs routes or role assignments.
@@ -127,5 +128,5 @@ def negotiate_executable(team,frames,history,task,static_map,sim_time,*,max_roun
             team.mode='llm';team.plan_fixture=None
             team.event('FIXTURE_TO_LIVE_REPLAN_DIAGNOSTIC',sim_time)
         task['execution_feedback']={'rejected_plan':rejected,'capability_result':report,
-            'instruction':'Propose feasible participants, routes AND task dependencies and get a NEW exact unanimous agreement. When pickup_approach rejects a coarse path, change the participants or end order; relocating an occupied pickup robot is not an available skill. Where after_box_delivery_and_yield_feasible is true, you may choose beam.after=[box job id] and box.after=[]: the box executor then delivers, releases, and clears the unloading bay before completing its job. Current waiting cargo/robots are obstacles; do not assume they disappear. Assignments remain your decision. Conditional future goals must be rechecked in actual RGB after execution. A map path is not physical success.'}
+            'instruction':feedback_instruction or LEGACY_FEEDBACK}
     raise RuntimeError('no executable unanimously agreed plan within replan budget')
