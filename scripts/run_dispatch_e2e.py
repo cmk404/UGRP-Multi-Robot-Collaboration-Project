@@ -223,10 +223,8 @@ def run(args):
             batch = {r:f.result() for r,f in futures.items()}
             replies = {r:v[0] for r,v in batch.items()}
             for reply,stop,records in batch.values():team.calls.extend(records)
-            for rid,reply in replies.items():
-                if reply and reply['message']:
-                    for peer in ROBOTS:
-                        if peer!=rid:team.inbox[peer].append({'from_robot':rid,'message':reply['message'],'turn':turn})
+            team.deliver_replies(batch,phase='execution',turn=turn,
+                                 sim_time=float(scene.world.data.time))
             frame_id = frames['r1']['frame_id'];now = float(scene.world.data.time)
             commands = gate.batch(replies,frame_id=frame_id,now_s=now)
             row = {'turn':turn,'at_s':now,'stages':{r:p['stage'] if p else 'FINISHED' for r,p in rows.items()},
@@ -297,6 +295,8 @@ def main(argv=None):
     p.add_argument('--model',default='gemini-3.8-flash',help='existing peer planner model')
     p.add_argument('--viewer',action='store_true',help='skills: live native observer window, Space pause/resume, Q quit')
     p.add_argument('--realtime-factor',type=float,default=1.,help='native observer pacing; does not change physics timestep')
+    p.add_argument('--realtime-control',action='store_true',
+                   help='bounded asynchronous RGB control and isolated observer; separately versioned candidate')
     p.add_argument('--planning-rounds',type=int,default=8)
     p.add_argument('--max-replans',type=int,default=2)
     p.add_argument('--rounds',type=int,default=24)
@@ -320,6 +320,8 @@ def main(argv=None):
     p.add_argument('--video-fps',type=int,default=10)
     p.add_argument('--efficient-capture',action='store_true',help='omit unused pair camera and duplicate overview JPEG; actor inputs/video unchanged')
     p.add_argument('--route-overlap',action='store_true',help='open-map independent routes: overlap loaded travel, queue the box before the shared unload bay')
+    p.add_argument('--auto-route-overlap',action='store_true',
+                   help='use existing overlap gate only when the committed open-map plan has independent routes and resources')
     p.add_argument('--overlap-start',choices=('transit','grasp'),default='transit',help='issued pair stage that admits the box grasp on independent open-map routes')
     p.add_argument('--reference-top',type=Path,default=ROOT/'tests/fixtures/camera_goal_transport/reference-top.jpg')
     args = p.parse_args(argv)

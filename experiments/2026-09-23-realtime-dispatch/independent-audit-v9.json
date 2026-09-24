@@ -1,0 +1,196 @@
+{
+  "schema": "ugrp.independent_realtime_dispatch_v9_audit.v1",
+  "checked_at_utc": "2026-09-23T13:07:18.766460+00:00",
+  "source_sha": "5f14753a2d90902caa2ad0e4c2111129496ed8ae",
+  "bundle_id": "rgb-standard-dispatch-v9",
+  "bundle_sha256": "d50e4a2e2ebcac796daec1b4eca1c203da8b15b12d5182465f72d93865f0428c",
+  "manager": {
+    "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260923-220237-dispatch-3c3d2a5f/manifest.json",
+    "sha256": "fa8972905e9281deda66a1591354b4de81d9fdf73e7fc1015635f3ec929d9fdc",
+    "status": "process_failed",
+    "exit_code": 1,
+    "runtime_s": 65.07572170899948,
+    "source_dirty": false,
+    "source_before_sha256": "1fcd60898c3fe4064e9c3680e653137ca4ca25037e8c8ffcd86935a071283d43",
+    "source_after_sha256": "1fcd60898c3fe4064e9c3680e653137ca4ca25037e8c8ffcd86935a071283d43",
+    "source_changed_during_run": false,
+    "inputs_changed_during_run": false,
+    "inputs_before_after_equal": true,
+    "finalization_errors": []
+  },
+  "result": {
+    "phase": "APPROACH",
+    "error": "RuntimeError: coarse RGB approach budget exhausted",
+    "wall_s": 64.74888429199927,
+    "timing": {
+      "scene_and_observer_setup_wall_s": 1.642949499990209,
+      "scope": "output-only SIM/wall measurements; wall_s includes finalization",
+      "control_end_sim_s": 61.6800000002035,
+      "control_wall_s": 63.488760041989735,
+      "motion_wall_s": 56.48176162499294,
+      "motion_sim_s": 56.48000000020289,
+      "motion_sim_to_wall": 0.9999688107321839,
+      "cleanup_wall_s": 1.2601255830086302
+    },
+    "plan_committed": true,
+    "protocol_complete": false,
+    "physical_success": false,
+    "failed_component": "pair",
+    "llm_calls": 0,
+    "cost_usd": null,
+    "realtime_control_stats": {
+      "solo_backpressure": 0,
+      "solo_stale_rgb": 0,
+      "solo_decisions": 66,
+      "pair_backpressure": 0,
+      "pair_decisions": 0,
+      "max_decision_age_s": 0.45550000000217494,
+      "pair_stage_stale_rgb": 0,
+      "pair_stage_samples": 120
+    },
+    "pair_stage_sample_count": 120,
+    "pair_stage_age_s": {
+      "min": 0.21999999999948727,
+      "median": 0.26000000000124146,
+      "p95": 0.34000000000162345,
+      "max": 0.43999999999897454
+    },
+    "pair_stage_age_over_ttl_0_6_s": 0,
+    "pair_stage_wall_timing_s": {
+      "snapshot_submit_wall_s": {
+        "min": 0.0001982079993467778,
+        "median": 0.00030197900923667476,
+        "p95": 0.0005472079938044772,
+        "max": 0.0007400830072583631
+      },
+      "render_wait_wall_s": {
+        "min": 0.13020587498613168,
+        "median": 0.1427268124971306,
+        "p95": 0.23478216699732002,
+        "max": 0.29540566699870396
+      },
+      "jpeg_encode_wall_s": {
+        "min": 0.004452000008313917,
+        "median": 0.004766875004861504,
+        "p95": 0.006132042006356642,
+        "max": 0.012074832993675955
+      },
+      "image_record_wall_s": {
+        "min": 0.000794541003415361,
+        "median": 0.0012701875020866282,
+        "p95": 0.002826708005159162,
+        "max": 0.011795583995990455
+      },
+      "pair_bind_wall_s": {
+        "min": 0.008928290990297683,
+        "median": 0.010460625002451707,
+        "p95": 0.012647416006075218,
+        "max": 0.021599458006676286
+      },
+      "perception_wall_s": {
+        "min": 0.05606100001023151,
+        "median": 0.06509293749695644,
+        "p95": 0.07806274999165908,
+        "max": 0.2142850840027677
+      }
+    },
+    "last_referee_sim_s": 62.900250000209326,
+    "robot_path_length_m": {
+      "r1": 0.06526038704389105,
+      "r2": 0.398038197903199,
+      "r3": 0.0265652825827394
+    },
+    "cargo_displacement_m": {
+      "beam": 0.0,
+      "box": 0.0
+    },
+    "weld_steps": 0
+  },
+  "raw_files": {
+    "result.json": {
+      "bytes": 10591,
+      "sha256": "5fb5577a9a83663e8b7d1f70580aba29f6926acfab44a9695386bea6b8bb525f",
+      "matches_manager_receipt": true
+    },
+    "issued-commands.json": {
+      "bytes": 78473,
+      "sha256": "561f85fe80dc3232e3faf1093247b61e94b65823452ff4069262dbc766f9ac59",
+      "matches_manager_receipt": true
+    },
+    "referee-only.jsonl": {
+      "bytes": 808216,
+      "sha256": "f8df9c6ff2644902f1c7405cea71690a19f2020f5e0b3f43391d0af97a4d7ae0",
+      "matches_manager_receipt": true
+    },
+    "pair-decisions.json": {
+      "bytes": 680991,
+      "sha256": "e22aa363e8678b02b335cdd073a33da588e3c0a2a143aa03480280b184c1eb50",
+      "matches_manager_receipt": true
+    },
+    "execution.mp4": {
+      "bytes": 599674,
+      "sha256": "939eb220f7efef24d820d7529601c96f3ddfab47a86753b9804455a97ed275ea",
+      "matches_manager_receipt": true
+    },
+    "execution.frames.json": {
+      "bytes": 91566,
+      "sha256": "f2ee1220583a037ebe551b7ada37eee1ace49522bc682ff01d02a74b1c5c845f",
+      "matches_manager_receipt": true
+    },
+    "native-observer.json": {
+      "bytes": 78,
+      "sha256": "ae051de21d78babd9c26b27c74d314c5fe9cb972bfe26c64879d4a6d67612e13",
+      "matches_manager_receipt": true
+    },
+    "exception.txt": {
+      "bytes": 601,
+      "sha256": "2a76e19df5fe97a2de46ab9b70fecd5fa55b724826f739732d682bcf1222db36",
+      "matches_manager_receipt": true
+    }
+  },
+  "recording": {
+    "requested_fps": 10,
+    "written_frames": 617,
+    "captured_frames": 425,
+    "repeated_frames": 192,
+    "error": null,
+    "decoded_frames": 617,
+    "counts_consistent": true,
+    "observer": {
+      "mode": "isolated_latest_state",
+      "published": 1556,
+      "busy_skips": 0
+    },
+    "child_process_found_at_audit": false
+  },
+  "tensorboard": {
+    "path": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단/v9",
+    "collection": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단",
+    "manifest_sha256": "636fcdc218e661ffa035f166d0cf6256f96e62e5ee4ed206aea23bd413f8e9a2",
+    "event_sha256": "85439e5217392c6b84995b771601ecfeb01f1a44523cc1cc899cd36cfda5d17a",
+    "manifest_complete": true,
+    "source_matches": true,
+    "counts": {
+      "scalars": 12,
+      "texts": 4,
+      "images": 0
+    },
+    "scalars": {
+      "evaluation/reported_success": 0.0,
+      "claims/protocol_complete": 0.0,
+      "result/wall_s": 64.74888610839844,
+      "result/commands": 243.0,
+      "result/model_calls": 0.0
+    },
+    "video_id": "47820da51ad6241c867d",
+    "video_source_sha256": "939eb220f7efef24d820d7529601c96f3ddfab47a86753b9804455a97ed275ea",
+    "range_status": 206,
+    "content_range": "bytes 0-63/599674",
+    "range_bytes_match_source": true
+  },
+  "limits": [
+    "Motion SIM/wall rate measures physics playback while the controller may be holding; it is not mission throughput.",
+    "This run failed in APPROACH before pair grasp/carry and is not a successful transport or fresh-LLM E2E run.",
+    "Native-window visual appearance was reported by root from CUA; this read-only audit verified artifacts and did not inspect GUI."
+  ]
+}

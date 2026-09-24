@@ -1,4 +1,4 @@
-"""Last commanded chassis/arm values, with bounded live adjustments."""
+"""Last commanded chassis/arm values and bounded MasterPi commands."""
 
 from __future__ import annotations
 
@@ -10,12 +10,12 @@ import threading
 from pathlib import Path
 from typing import Any
 
-from dashboard.server import CommandResult, CommandRunner, validate_drive_payload, validate_servo_payload
+from .robot_commands import CommandResult, CommandRunner, validate_drive_payload, validate_servo_payload
 
 
 ROOT = Path(__file__).resolve().parents[1]
-# Legacy default retained; multi-REAL children override through the same env as
-# scripts/red_block/deploy.py so manual panel controls target the selected robot.
+# Multi-REAL children override through the same env as scripts/red_block/deploy.py
+# so commands target the selected robot.
 REMOTE_CONTROL = os.environ.get("UGRP_ROBOT_REMOTE_CONTROL", f"/home/{os.environ.get('UGRP_ROBOT_USER', 'ugrp1')}/MasterPi/tools/masterpi_control.py")
 ARM_JOINTS = (
     (1, "집게"),

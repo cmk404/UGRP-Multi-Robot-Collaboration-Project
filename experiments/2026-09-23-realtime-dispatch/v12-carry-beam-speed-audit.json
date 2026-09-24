@@ -1,0 +1,76 @@
+{
+  "source": "v12 diagnostic saved raw TOP JPEGs",
+  "frames": [
+    995,
+    999,
+    1005,
+    1010,
+    1015,
+    1020,
+    1026,
+    1030,
+    1035,
+    1040,
+    1045
+  ],
+  "raw_sha256": [
+    "622c997a838121214d9657095d12354780da8ce36c765fff33c587244e928ed2",
+    "f0090eb94a406adf4923570f59f65415965f1e328ec8b0fe38587a8ba20d7ec6",
+    "4f3d52b509b47259e0c023054de66766844a592f26ce875ed9c59456bae5a6e8",
+    "3137c3bf025bcf3dfb3cac6ef79ed94c3eba83a710f46f9a09fb69db61d8b953",
+    "650cd804366aa9675275a52151ac87665c7c3c5cd1823c56879b1ce5bf11a61d",
+    "091ae1d5838cd124a4dd37045ae0eefa2dd26848ee503d8d909adbb4706842ab",
+    "ad1b578f0e584cb845685dc1a76f67a7f637552363858c5564302e4941170471",
+    "c6a904e00dcb5e4c3195da923652e7eace89f0e15976a3980ae6f59600ada9b0",
+    "5f59354ba478af01b823f1a9b55a7f9094abc6931cecc6d01955571b0d2b97d6",
+    "46dc07947ae68e3c574dccd0a5dce2e245f8b0f7121d0ddbc5b929360db833b0",
+    "b4351b74e1d4ded9fb24409cd2e9a1289c9892516549eceb7da0ef94cd15caf1"
+  ],
+  "saturations": [
+    105,
+    110,
+    115,
+    120,
+    125,
+    130,
+    135,
+    140,
+    145,
+    150,
+    155,
+    160,
+    165,
+    170,
+    175,
+    180,
+    185,
+    190
+  ],
+  "candidate_exact_all": true,
+  "stateful_tracker_sequences": [
+    {
+      "initial": "fresh",
+      "outputs_equal": true,
+      "successes": 11,
+      "errors": []
+    },
+    {
+      "initial": "fixed_prior",
+      "outputs_equal": true,
+      "successes": 11,
+      "errors": []
+    }
+  ],
+  "old_first_pass_s": {
+    "median": 0.14359875000081956,
+    "min": 0.14234537500306033,
+    "max": 0.1747059169865679
+  },
+  "new_first_pass_s": {
+    "median": 0.04503445800219197,
+    "min": 0.04455225000856444,
+    "max": 0.04638504200556781
+  },
+  "speedup_ratio_median": 3.1886416839707534,
+  "scope": "saved-frame CPU only; no physical replay, no actor camera or thresholds changed"
+}

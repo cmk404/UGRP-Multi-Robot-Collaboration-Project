@@ -1,0 +1,113 @@
+{
+  "scope": "saved RGB pure CPU microprofile only; five v14 carry frames; no physics/render/actor timing",
+  "source_run": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260923/native-v14-full",
+  "source_pair_decisions_sha256": "0091143a945bd01363eb1b4f5dfd40f30f6c159378ca43b7f191047bea8d17a4",
+  "source_head": "427d6ad5a1c5d426d6c19441ef0695a6f4a74c00",
+  "reference_path": "tests/fixtures/camera_goal_transport/reference-top.jpg",
+  "reference_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c",
+  "anchor_own_sha256": {
+    "r1": "f70ad7415021ae72091a4a2f6f0e26aae113d0769806babbd73b067bab70dba0",
+    "r3": "7572657111c7b968344aae45313a48e65bd744ce2892e982e193c8f687733edd"
+  },
+  "method": "Use saved carry image_binding rows 145:150; seed CarriedBeamTracker.previous from row 144; clear _cached_carried_beam_scans before each raw TOP; time tracker.observe(raw), canonical_pair_top(raw, reference, hue_upper=35, observed_beam=beam), own_payload(current+fixed anchor) for r1/r3, and translation_skew(raw,beam) separately with perf_counter. Assert raw/derived JPEG SHA. No concurrent physical run.",
+  "stats": {
+    "first_carried_beam_scan_s": {
+      "median_s": 0.041116375010460615,
+      "min_s": 0.04073749999224674,
+      "max_s": 0.04616533299849834
+    },
+    "canonical_pair_top_s": {
+      "median_s": 0.005117249995237216,
+      "min_s": 0.005049166997196153,
+      "max_s": 0.005294959002640098
+    },
+    "own_payload_four_calls_s": {
+      "median_s": 0.012478457996621728,
+      "min_s": 0.012398292004945688,
+      "max_s": 0.012499124990426935
+    },
+    "translation_skew_s": {
+      "median_s": 0.004463791003217921,
+      "min_s": 0.0044039999920642,
+      "max_s": 0.00456608300737571
+    }
+  },
+  "samples": [
+    {
+      "frame_id": 1556,
+      "top_path": "rgb/pair-456-carry-top.jpg",
+      "top_sha256": "bd9a28a2b144cb0f2542ccf8d979837a88767038152e16463b0e45b603100d58",
+      "own_sha256": {
+        "r1": "7ec17b55c8310e94cc34e55dc11e1132dcfc2ebbcfd97fb7d85a891bdea47130",
+        "r3": "5a218a31e2dafc8d045055d107539c220d5378ed013fdedda207fe7a0f7e5e0f"
+      },
+      "times": {
+        "first_carried_beam_scan_s": 0.04616533299849834,
+        "canonical_pair_top_s": 0.005294959002640098,
+        "own_payload_four_calls_s": 0.012490624998463318,
+        "translation_skew_s": 0.0045315830066101626
+      }
+    },
+    {
+      "frame_id": 1559,
+      "top_path": "rgb/pair-457-carry-top.jpg",
+      "top_sha256": "4d0071006c085b741faeaafe90466809a4427a69b0098ab3dc476fa872bfb9fe",
+      "own_sha256": {
+        "r1": "9634159cef31b7f8225c6ee15bcd96e78e321747a18854945d9de4cd576306bf",
+        "r3": "3000ba75fe1a193ed99df93b880f1f6bd032d6b31ff697aed50fbff6daab9111"
+      },
+      "times": {
+        "first_carried_beam_scan_s": 0.041216375000658445,
+        "canonical_pair_top_s": 0.005049166997196153,
+        "own_payload_four_calls_s": 0.012398292004945688,
+        "translation_skew_s": 0.004461667005671188
+      }
+    },
+    {
+      "frame_id": 1563,
+      "top_path": "rgb/pair-458-carry-top.jpg",
+      "top_sha256": "e36b0a2a460e706ea4aeea68b7c79b998c944d1ed823db6cb4ec8eabef00ad21",
+      "own_sha256": {
+        "r1": "653f9224e4621b7ef0fff3713b8fb03bb42a46fadfad8322ad6958fce78e16f5",
+        "r3": "7740aff2ab98fef6d1dafd263b95c45a2ab57c0578ecf442954e5e1095b32e78"
+      },
+      "times": {
+        "first_carried_beam_scan_s": 0.04073749999224674,
+        "canonical_pair_top_s": 0.005061374991782941,
+        "own_payload_four_calls_s": 0.012423457999830134,
+        "translation_skew_s": 0.00456608300737571
+      }
+    },
+    {
+      "frame_id": 1567,
+      "top_path": "rgb/pair-459-carry-top.jpg",
+      "top_sha256": "c75ec0af4c29603b93d312f5b00cb9dd0924ccc32064585adddd8785fbb3e3cb",
+      "own_sha256": {
+        "r1": "7a259ee175de916abf9556c07d5b52c184407347da4b73c22258aebb34dfe67f",
+        "r3": "d00181eebd0e653d43e56f0b50976d22766ca766b7c07db55b3f36d9760c582b"
+      },
+      "times": {
+        "first_carried_beam_scan_s": 0.041010624991031364,
+        "canonical_pair_top_s": 0.005117249995237216,
+        "own_payload_four_calls_s": 0.012499124990426935,
+        "translation_skew_s": 0.0044039999920642
+      }
+    },
+    {
+      "frame_id": 1570,
+      "top_path": "rgb/pair-460-carry-top.jpg",
+      "top_sha256": "c8de8875503b62094614a72eebf54fc2297387f4ba23a2145491e9488a6626e0",
+      "own_sha256": {
+        "r1": "f11586f1a13eb0dcc13e9982936c1a03fd457d89fc5d311442083e2e1ccfe576",
+        "r3": "5999dafc09a3de64f95597fd09584ecf6e579dc864ff8b7a879897366c752514"
+      },
+      "times": {
+        "first_carried_beam_scan_s": 0.041116375010460615,
+        "canonical_pair_top_s": 0.00513824999507051,
+        "own_payload_four_calls_s": 0.012478457996621728,
+        "translation_skew_s": 0.004463791003217921
+      }
+    }
+  ],
+  "interpretation": "Reference decoding costs only about 2 ms; fixed anchor own_payload calls repeat about half of 4-call cost. Renderer wait was not measured by this replay."
+}

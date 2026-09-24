@@ -247,6 +247,15 @@ class ApproachScene:
 
     def finish_grasp(self, predict_correction, models, *, rounds=16, after_close=None, hold=None, close_pulse=None):
         from scripts.run_camera_pair_transport import evaluate_grasp_samples
+        def observe_and_predict(tag):
+            def predict(frames):
+                return {rid:predict_correction(models[rid],frames[rid]['own_bytes'],
+                                                frames[rid]['top_bytes'],max_step=25)
+                        for rid in ROBOTS}
+            hook=getattr(self,'observe_and_compute',None)
+            if hook is not None:return hook(tag,predict)
+            frames=self.capture(tag)
+            return frames,predict(frames)
         self.replay(self.skill['initialization_replay'][1:], 'grasp_initialization')
         # Match the original zero-perturbation runner's pre-recovery settling step.
         targets = {r: {c: self.commands[r][c] for c in (3, 4, 5)} for r in ROBOTS}
@@ -260,10 +269,11 @@ class ApproachScene:
         # Preserve RGB correction evidence even if a later readiness gate stops.
         self.grasp_report = rec
         for i in range(rounds):
-            frames, targets = self.capture(f'grasp-{i:03d}'), {}
+            frames,predictions=observe_and_predict(f'grasp-{i:03d}')
+            targets={}
             for rid in ROBOTS:
                 before = dict(self.commands[rid])
-                d = predict_correction(models[rid], frames[rid]['own_bytes'], frames[rid]['top_bytes'], max_step=25)
+                d = predictions[rid]
                 pose = {int(ch): max(500, min(2500, before[int(ch)] + int(delta)))
                         for ch, delta in zip(models[rid]['channels'], d['delta_pulses']) if delta}
                 if pose:
@@ -277,10 +287,10 @@ class ApproachScene:
             else:
                 self.phase = 'grasp_rgb_recovery'
                 self.tick(.45)
-        frames = self.capture('grasp-post-recovery')
+        frames,final_visual_errors=observe_and_predict('grasp-post-recovery')
         rec['preclose_issued_commands'] = {r: dict(self.commands[r]) for r in ROBOTS}
         rec['post_recovery_images'] = {r: {'own': frames[r]['own_rgb'], 'top': frames[r]['shared_top_rgb']} for r in ROBOTS}
-        rec['final_visual_errors'] = {r: predict_correction(models[r], frames[r]['own_bytes'], frames[r]['top_bytes'], max_step=25) for r in ROBOTS}
+        rec['final_visual_errors'] = final_visual_errors
         if close_pulse is not None and close_pulse not in (1500,1600,1700,1800):
             raise ValueError('explicit bounded grasp command comparison required')
         rec['close_command_override'] = close_pulse

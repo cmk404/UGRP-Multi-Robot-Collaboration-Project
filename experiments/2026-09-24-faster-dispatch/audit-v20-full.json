@@ -1,0 +1,213 @@
+{
+  "schema": "ugrp.faster_dispatch_run_audit.v1",
+  "run": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v20-full",
+  "manager": {
+    "path": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/simulation-runs/20260924-155816-dispatch-46b75d9b/manifest.json",
+    "sha256": "56e41953c75814e2b86b731bb66730141ef5198298322a960efd110ad6bd9ecd",
+    "run_id": "20260924-155816-dispatch-46b75d9b",
+    "status": "process_failed",
+    "exit_code": 1,
+    "output_matches_run": true,
+    "source_sha": "9b846e7c294ad1cf4c7bb7d013701a3795a2cc3e",
+    "source_dirty": false,
+    "source_tree_before_sha256": "444b18f3666a152c7cf32fe8a1adf037ef7e2faef2f4eb5a3b9dc0b38cfa3629",
+    "source_tree_after_sha256": "444b18f3666a152c7cf32fe8a1adf037ef7e2faef2f4eb5a3b9dc0b38cfa3629",
+    "source_unchanged": true,
+    "inputs_unchanged": true,
+    "finalization_errors": [],
+    "runtime_s": 40.73794474999886
+  },
+  "source_bundle": {
+    "active_bundle": "not identified by run result or manager; inspect pinned source separately",
+    "recorded_bundle_hashes": {
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v10.json": "aa3a4373fcbe2970b1ce95062d684704ea8c342cab77a0fce913720bb71eb606",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v11.json": "2ccc0a79d25d7a7cb32a9f909127a26655ebe32309616cb8a5cc6c1c7a19c4aa",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v12.json": "4577c8d906715ab98341f97aa6afa656e704acafd03ef20a2a4ac67adb41a54a",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v13.json": "fce4968d73ec94f38fde438ab74989a0a4199ec6e93c295ca50b85501a8089a2",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v14.json": "9fa9bd26155e66a60bb636be2c1334420024e40ed89357ac7698b4a43046aa72",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v15.json": "1933cd0e277e6249f5b6125d006bdca2fe8d9a4edf02603efb01514bfe12edaa",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v16.json": "9d11f82ca02fb60d283fe6908fe1f696b2d31aabfc1acd9bf779c56a94b98958",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v17.json": "8a686939f6505bfaae2f4ebadb3e637b0e229b63e25dfb96877c411235bf6125",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v18.json": "a6891549ad88372a168fca34813ae96dd5c387447cc2ec4b352d3c96d5b891e4",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v19.json": "5516e639e7a31029a7cfb2a5d92844eeee784e32a8aca629735bac8e0dc16e32",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v2.json": "771a1cb51feeeecb55174d0e68e0dad30bfedfb748149dcd7c9e1cf3f1e2d120",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v20.json": "c55ce2163f89d6db069f47a18b7cf46f92e27887611370019e5b2fc25dab3ad5",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v3.json": "a1a975381e4097c6e0c324d2153ab1cf6e886873f9068afe7c8cba604d235732",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v4.json": "16cf1053ff07372cb86921d52dfebb7f2a938e6d275d9923f4f11320eb158379",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v5.json": "8ab2b8a67141d769c425065b01015c5f5a0cd1c6c6bebc8474a0d55e10d2fd3f",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v6.json": "f07581649e84418c0ad31fc4577aaaebc680b34928ce3485fa8cb813d04d8045",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v7.json": "86f22c3d05280a5d8ab35a57b646852768520e0fcd536f7a54cc8018144544be",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v8.json": "a312cac4acb581c5c97b41d042049fa83ac6636d35f15f1579525c44119fb93e",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v9.json": "d50e4a2e2ebcac796daec1b4eca1c203da8b15b12d5182465f72d93865f0428c"
+    },
+    "plan_replay_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+    "scene_manifest_sha256": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a"
+  },
+  "outcome": {
+    "phase": "APPROACH",
+    "error": "RuntimeError: coarse RGB approach budget exhausted",
+    "protocol_complete": false,
+    "physical_success_reported": false,
+    "physical_success_evaluation_only": false,
+    "llm_calls": 0,
+    "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+    "interpretation": "referee samples are evaluation-only; issued commands are not measured motion or physical success"
+  },
+  "timing": {
+    "wall_s": 40.21062641699973,
+    "scene_and_observer_setup_wall_s": 1.965829541994026,
+    "scope": "output-only SIM/wall measurements; wall_s includes finalization",
+    "control_end_sim_s": 36.58000000008365,
+    "control_wall_s": 39.22456737500033,
+    "motion_wall_s": 31.384596791001968,
+    "motion_sim_s": 31.38000000008304,
+    "motion_sim_to_wall": 0.9998535335359081,
+    "cleanup_wall_s": 0.9860613749915501
+  },
+  "physical_evaluation_only": {
+    "cargo": {
+      "beam": {
+        "physical_success": false,
+        "max_lift_m": 0.0,
+        "displacement_m": 0.0,
+        "inside_slot_at_end": false,
+        "released_supported_stable": false,
+        "carry_clearance": {
+          "sampled_continuous_clearance": false,
+          "samples": 0,
+          "floor_contact_samples": 0,
+          "window_s": null,
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples."
+        }
+      },
+      "box": {
+        "physical_success": false,
+        "max_lift_m": 0.0,
+        "displacement_m": 0.0,
+        "inside_slot_at_end": false,
+        "released_supported_stable": false,
+        "carry_clearance": {
+          "sampled_continuous_clearance": false,
+          "samples": 0,
+          "floor_contact_samples": 0,
+          "window_s": null,
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples."
+        }
+      }
+    },
+    "weld_steps": 0,
+    "robot_robot_contact_samples": 0,
+    "obstacle_contact_steps": 0,
+    "simultaneous_loaded_motion_s": 0.0,
+    "both_loaded_intervals_count": 0,
+    "all_three_body_motion_sim_s": 1.2000000000057298
+  },
+  "resources": {
+    "events": [],
+    "apron_acquire_order": [],
+    "apron_exclusion_errors": [],
+    "solo_resource_wait_sim_s": 0.0
+  },
+  "solo": {
+    "decision_count": 32,
+    "carry_decision_count": 0,
+    "carry_decision_span_s": null,
+    "phase_counts": {
+      "approach": 32
+    },
+    "moving_command_coverage": {
+      "moving_command_count": 0,
+      "moving_command_union_s": 0,
+      "consecutive_positive_gap_s": {
+        "count": 0
+      }
+    },
+    "original_moving_command_coverage": {
+      "moving_command_count": 0,
+      "moving_command_union_s": 0,
+      "consecutive_positive_gap_s": {
+        "count": 0
+      }
+    },
+    "pending_renewal": {
+      "receipts": 0,
+      "issued_renewals": 0,
+      "errors": [],
+      "status": "pass"
+    },
+    "own_rgb_attachment_evidence_rows": 0,
+    "own_rgb_attachment_attached_counts": {},
+    "own_rgb_attachment_scope": "recorded image-derived estimates, not a contact sensor"
+  },
+  "core_files": {
+    "result.json": {
+      "present": true,
+      "bytes": 10770,
+      "sha256": "242f102a3826ed257c4369e41cd055be67a86f89251a51d1f2418ac84b981929",
+      "matches_manager_receipt": true
+    },
+    "evaluation-only.json": {
+      "present": true,
+      "bytes": 1610,
+      "sha256": "369be3295b790ef0c3924252bc8496468f055cdb3ba55d1ca4cbce7877fe52a2",
+      "matches_manager_receipt": true
+    },
+    "issued-commands.json": {
+      "present": true,
+      "bytes": 88268,
+      "sha256": "840595cbe469324eea521672ec842534f9458161788e599afc0fc0420c405c90",
+      "matches_manager_receipt": true
+    },
+    "solo-decisions.json": {
+      "present": true,
+      "bytes": 56150,
+      "sha256": "cbdd598b45f0b45afaab7bfba5f1de141318f894514f0b429fc310089ee3683d",
+      "matches_manager_receipt": true
+    },
+    "solo-raw-actions.json": {
+      "present": true,
+      "bytes": 78242,
+      "sha256": "57f38e73981b015c1eecb9233feaa24ffcd75a99d094d7e28d56e8f626c9b14a",
+      "matches_manager_receipt": true
+    },
+    "solo-renewals.json": {
+      "present": true,
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "matches_manager_receipt": true
+    },
+    "pair-decisions.json": {
+      "present": true,
+      "bytes": 678965,
+      "sha256": "eaf261f6c96fde70dd48f97ce0494918d37b368965fef89ff9e0d35f902c17cc",
+      "matches_manager_receipt": true
+    },
+    "referee-only.jsonl": {
+      "present": true,
+      "bytes": 479947,
+      "sha256": "95ea1d0765a3c38d315c124c6c685a6a3077a9b2c73a5620d56a4156d741dfeb",
+      "matches_manager_receipt": true
+    },
+    "execution.frames.json": {
+      "present": true,
+      "bytes": 50046,
+      "sha256": "8daaf8f3182aed98ddea8536bdaa6fc760247067d66d0fff4edfaa2979b80ba9",
+      "matches_manager_receipt": true
+    },
+    "execution.mp4": {
+      "present": true,
+      "bytes": 427688,
+      "sha256": "5b156fa6489612ca572a5e05c17efe2b21a15eb3b8d136710c22bb7e8b0040fb",
+      "matches_manager_receipt": true
+    },
+    "scene-manifest.json": {
+      "present": true,
+      "bytes": 606,
+      "sha256": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a",
+      "matches_manager_receipt": true
+    }
+  },
+  "errors": [
+    "manager process did not complete successfully"
+  ]
+}

@@ -1,0 +1,314 @@
+{
+  "scope": "read-only saved JSON; RGB top position proxy, no physics run; v7 different execution architecture",
+  "camera_projection": {
+    "source": "maps/research/dispatch_v1.json + harness/known_map_navigation.py",
+    "feature_plane_height_m": 0.09,
+    "meters_per_pixel": 0.0034849071995269676
+  },
+  "runs": {
+    "v13": {
+      "sources": {
+        "pair-decisions.json": "8f012cf318a683e4522c4efac6f18a7857cc3f2d62c21340ca42e29fe666b911",
+        "issued-commands.json": "0d8de080cc468de475f9c387883a0c2c74ece1e67dbb53ec490de2b6ff9707da"
+      },
+      "segment": {
+        "first_carry_index": 65,
+        "last_carry_index": 163,
+        "t0_sim_s": 124.95999999877306,
+        "t1_sim_s": 162.87999999787638,
+        "x0_px": 269.2476310383421,
+        "x1_px": 403.5114819439899,
+        "delta_sim_s": 37.919999999103325,
+        "delta_px": 134.26385090564781,
+        "delta_m_projection": 0.46789706065730746,
+        "avg_cm_per_sim_s": 1.233905750707731
+      },
+      "drive": {
+        "forward_only_lease_count": 91,
+        "covered_sim_s": 19.820000000524175,
+        "coverage_fraction": 0.5226793249206975,
+        "renewal_interval_sim_s": {
+          "median": 0.39999999999054126,
+          "mean": 0.4029999999904705,
+          "p95": 0.49999999998817657,
+          "max": 1.0299999999756437
+        },
+        "lease_gap_sim_s": {
+          "median": 0.17999999998156113,
+          "mean": 0.18477777776253437,
+          "p95": 0.33999999997777763,
+          "max": 0.7799999999756437
+        },
+        "gaps_over_0p1s": 75,
+        "gaps_over_0p2s": 28
+      },
+      "actor_timing_wall_s": {
+        "snapshot_submit_wall_s": {
+          "median": 0.0004432499990798533,
+          "mean": 0.00046356906070764355,
+          "p95": 0.000777291992562823,
+          "max": 0.0011090409971075132
+        },
+        "render_wait_wall_s": {
+          "median": 0.21301616700657178,
+          "mean": 0.21162142046530863,
+          "p95": 0.26472637499682605,
+          "max": 0.3313654169905931
+        },
+        "jpeg_encode_wall_s": {
+          "median": 0.005105499993078411,
+          "mean": 0.005513746182186144,
+          "p95": 0.007625792000908405,
+          "max": 0.00988129100005608
+        },
+        "image_record_wall_s": {
+          "median": 0.0017102499987231568,
+          "mean": 0.0018919271612751552,
+          "p95": 0.0032808749965624884,
+          "max": 0.006169957996462472
+        },
+        "pair_bind_wall_s": {
+          "median": 0.08794149999448564,
+          "mean": 0.10365263798060671,
+          "p95": 0.15289687499171123,
+          "max": 0.5096711250080261
+        },
+        "perception_wall_s": {
+          "median": 0.035624249998363666,
+          "mean": 0.04063753576786375,
+          "p95": 0.06717908299469855,
+          "max": 0.1302491250098683
+        }
+      },
+      "video_segment_status": {
+        "repeated": 188,
+        "captured": 191
+      }
+    },
+    "v7": {
+      "sources": {
+        "pair-decisions.json": "3c8f34ba3dc2370fe29aee527d65d87c0bb36a0b6a0901efd771936e176b9494",
+        "issued-commands.json": "2d0219b7b62579c2f8bf38605a4df3237fbfeb5dda35b6072e3efcff066f0518"
+      },
+      "segment": {
+        "first_carry_index": 25,
+        "last_carry_index": 55,
+        "t0_sim_s": 68.31000000011265,
+        "t1_sim_s": 74.30999999997077,
+        "x0_px": 269.4630691785903,
+        "x1_px": 408.4218016723621,
+        "delta_sim_s": 5.999999999858119,
+        "delta_px": 138.95873249377183,
+        "delta_m_projection": 0.48425828730468745,
+        "avg_cm_per_sim_s": 8.070971455268976
+      },
+      "drive": {
+        "forward_only_lease_count": 29,
+        "covered_sim_s": 5.79999999986758,
+        "coverage_fraction": 0.9666666666674554,
+        "renewal_interval_sim_s": {
+          "median": 0.19999999999527063,
+          "mean": 0.20714285713795885,
+          "p95": 0.19999999999527063,
+          "max": 0.39999999999054126
+        },
+        "lease_gap_sim_s": {
+          "median": 0.0,
+          "mean": 0.007142857142519229,
+          "p95": 0,
+          "max": 0.1999999999905384
+        },
+        "gaps_over_0p1s": 1,
+        "gaps_over_0p2s": 0
+      },
+      "actor_timing_wall_s": {
+        "snapshot_submit_wall_s": null,
+        "render_wait_wall_s": null,
+        "jpeg_encode_wall_s": null,
+        "image_record_wall_s": null,
+        "pair_bind_wall_s": null,
+        "perception_wall_s": null
+      },
+      "video_segment_status": null
+    },
+    "v14": {
+      "sources": {
+        "pair-decisions.json": "0091143a945bd01363eb1b4f5dfd40f30f6c159378ca43b7f191047bea8d17a4",
+        "issued-commands.json": "04c11a82b04c2606f973640d79d84c76544f33d12bb466ee2564bd347c930324"
+      },
+      "matched403": {
+        "segment": {
+          "first_carry_index": 81,
+          "last_carry_index": 162,
+          "t0_sim_s": 136.41999999850208,
+          "t1_sim_s": 165.57999999781254,
+          "x0_px": 269.5000361842973,
+          "x1_px": 404.9509757704011,
+          "delta_sim_s": 29.159999999310457,
+          "delta_px": 135.4509395861038,
+          "delta_m_projection": 0.4720339545463055,
+          "avg_cm_per_sim_s": 1.6187721349707394
+        },
+        "drive": {
+          "forward_only_lease_count": 78,
+          "covered_sim_s": 18.340000000275552,
+          "coverage_fraction": 0.6289437585977105,
+          "renewal_interval_sim_s": {
+            "median": 0.35999999999148713,
+            "mean": 0.37480519479633184,
+            "p95": 0.45999999998912244,
+            "max": 1.1399999999730426
+          },
+          "lease_gap_sim_s": {
+            "median": 0.11999999998297994,
+            "mean": 0.13987012985768832,
+            "p95": 0.3299999999862848,
+            "max": 0.8899999999730426
+          },
+          "gaps_over_0p1s": 47,
+          "gaps_over_0p2s": 7
+        },
+        "actor_timing_wall_s": {
+          "snapshot_submit_wall_s": {
+            "median": 0.00037902100302744657,
+            "mean": 0.0004483674375678231,
+            "p95": 0.0006487499922513962,
+            "max": 0.0016050419944804162
+          },
+          "render_wait_wall_s": {
+            "median": 0.1997055210013059,
+            "mean": 0.1995050660742691,
+            "p95": 0.25332295800035354,
+            "max": 0.2659291669988306
+          },
+          "jpeg_encode_wall_s": {
+            "median": 0.004441666504135355,
+            "mean": 0.00484117269484048,
+            "p95": 0.006018166997819208,
+            "max": 0.011753957995097153
+          },
+          "image_record_wall_s": {
+            "median": 0.0012033124949084595,
+            "mean": 0.001394172854439026,
+            "p95": 0.0025013340055011213,
+            "max": 0.0036043340078322217
+          },
+          "pair_bind_wall_s": {
+            "median": 0.07984039599978132,
+            "mean": 0.08996504682940346,
+            "p95": 0.09331933400244452,
+            "max": 0.4270578330033459
+          },
+          "perception_wall_s": {
+            "median": 0.039722666500892956,
+            "mean": 0.04169372862194971,
+            "p95": 0.04832095900201239,
+            "max": 0.19791125001211185
+          }
+        },
+        "decision_age_sim_s": {
+          "median": 0.33999999999196007,
+          "mean": 0.33975609755294145,
+          "p95": 0.39999999999054126,
+          "max": 0.5599999999867578
+        },
+        "video_segment_status": {
+          "captured": 107,
+          "repeated": 184
+        }
+      },
+      "full_horizontal": {
+        "segment": {
+          "first_carry_index": 81,
+          "last_carry_index": 309,
+          "t0_sim_s": 136.41999999850208,
+          "t1_sim_s": 217.96999999657368,
+          "x0_px": 269.5000361842973,
+          "x1_px": 631.564039967694,
+          "delta_sim_s": 81.5499999980716,
+          "delta_px": 362.06400378339674,
+          "delta_m_projection": 1.2617594534743186,
+          "avg_cm_per_sim_s": 1.547221892708958
+        },
+        "drive": {
+          "forward_only_lease_count": 222,
+          "covered_sim_s": 52.82000000069195,
+          "coverage_fraction": 0.6477007970808213,
+          "renewal_interval_sim_s": {
+            "median": 0.35999999999148713,
+            "mean": 0.36393665157510446,
+            "p95": 0.4399999999895954,
+            "max": 1.1399999999730426
+          },
+          "lease_gap_sim_s": {
+            "median": 0.10999999999148713,
+            "mean": 0.12592760179825843,
+            "p95": 0.27999999997919645,
+            "max": 0.8899999999730426
+          },
+          "gaps_over_0p1s": 122,
+          "gaps_over_0p2s": 15
+        },
+        "actor_timing_wall_s": {
+          "snapshot_submit_wall_s": {
+            "median": 0.0004130000015720725,
+            "mean": 0.0004518575583560205,
+            "p95": 0.0007097920024534687,
+            "max": 0.0016050419944804162
+          },
+          "render_wait_wall_s": {
+            "median": 0.1923170840018429,
+            "mean": 0.19192442489118422,
+            "p95": 0.2480832499859389,
+            "max": 0.2694672920042649
+          },
+          "jpeg_encode_wall_s": {
+            "median": 0.0048357500054407865,
+            "mean": 0.005064890768753129,
+            "p95": 0.00654179100820329,
+            "max": 0.011753957995097153
+          },
+          "image_record_wall_s": {
+            "median": 0.001427458002581261,
+            "mean": 0.0016380964410943732,
+            "p95": 0.0029447499982779846,
+            "max": 0.007722124995780177
+          },
+          "pair_bind_wall_s": {
+            "median": 0.08374712499789894,
+            "mean": 0.09062180661538659,
+            "p95": 0.11865587499050889,
+            "max": 0.4270578330033459
+          },
+          "perception_wall_s": {
+            "median": 0.03950391701073386,
+            "mean": 0.04215595087389295,
+            "p95": 0.051741667004534975,
+            "max": 0.21381899999687448
+          }
+        },
+        "decision_age_sim_s": {
+          "median": 0.33999999999196007,
+          "mean": 0.3372052401666986,
+          "p95": 0.39999999999054126,
+          "max": 0.619999999985339
+        },
+        "video_segment_status": {
+          "captured": 324,
+          "repeated": 491
+        }
+      }
+    }
+  },
+  "comparison": {
+    "observed_speed_ratio_v13_to_v7": 0.15288193714304363,
+    "drive_coverage_ratio_v13_to_v7": 0.5407027499175218,
+    "observed_cm_per_commanded_sim_s_v13": 2.3607318902367966,
+    "observed_cm_per_commanded_sim_s_v7": 8.349280815788681,
+    "v13_11cm_reference_times_duty_cm_per_sim_s": 5.749472574127672,
+    "v14_to_v13_matched_speed_ratio": 1.3119090611598663,
+    "v14_to_v13_matched_coverage_ratio": 1.2033071304152614,
+    "v14_observed_cm_per_commanded_sim_s": 2.5737947357645217,
+    "v14_11cm_reference_times_duty_cm_per_sim_s": 6.918381344574815
+  }
+}

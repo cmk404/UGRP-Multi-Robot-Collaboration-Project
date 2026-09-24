@@ -1,0 +1,251 @@
+{
+  "scope": "read-only v8 saved RGB replay and isolated frozen snapshot render microbench; no actor camera, physics, threshold or TTL edit",
+  "source_sha": "f2d6ced",
+  "inputs": {
+    "pair_decisions": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260923/native-v8/pair-decisions.json",
+    "pair_decisions_sha256": "40b41c1e5969c2ca1dcaa430aed68c91aa9065a4921eb66be7609c7a4731d72f",
+    "video_frames_sha256": "764e6cb314d7baab43870216ac21a6a4b02f04fc27f392786fa5bf6f1e099c70",
+    "result_sha256": "e65c7a3a89a2db284c692abd0264b2355c714d74f0416a7ecd427202275b4554"
+  },
+  "observed": {
+    "first_carry": [
+      {
+        "frame_id": 539,
+        "decision_age_sim_s": 0.7400000000021052,
+        "center_equal": true,
+        "corners_equal": true,
+        "raw_top_sha256": "39860e437923d1bc12603eb9668ae50f903c517eb4b3f38193986edd29edd68f"
+      },
+      {
+        "frame_id": 548,
+        "decision_age_sim_s": 0.7399999999825013,
+        "center_equal": true,
+        "corners_equal": true,
+        "raw_top_sha256": "1193b65ba217b299fda148933ddd83b859ba6ba99455c5c08f17cf4059913e33"
+      },
+      {
+        "frame_id": 557,
+        "decision_age_sim_s": 0.6999999999834472,
+        "center_equal": true,
+        "corners_equal": true,
+        "raw_top_sha256": "4777b0dc170627bcac588722351197239103d4ad8c7886f4bde7049e712ec982"
+      },
+      {
+        "frame_id": 566,
+        "decision_age_sim_s": 0.7199999999829743,
+        "center_equal": true,
+        "corners_equal": true,
+        "raw_top_sha256": "ee3fbb8914f0a897daf83d4b3c0b89efd81c830eee262d2cf3a865426a414732"
+      },
+      {
+        "frame_id": 575,
+        "decision_age_sim_s": 0.7399999999825013,
+        "center_equal": true,
+        "corners_equal": true,
+        "raw_top_sha256": "7e8490983d89db1e7d1685667e225551fe1187df3f4cdab2dd46266e5d87587b"
+      }
+    ],
+    "pair_backpressure": 0,
+    "video_63_30_to_67_16_sim": {
+      "requested": 39,
+      "captured": 35,
+      "repeated": 4
+    }
+  },
+  "replay": {
+    "method": "Read five saved carry RGB triplets, verify file SHA-256 from image_binding, initialize trackers on saved anchor, invoke _bind_capture, ImageRoute.observe, own_payload four times, translation_skew in original order; no physics or model call; 3 repeats in scratch output dirs removed afterwards. Times are wall seconds on this Mac without concurrent mission.",
+    "samples": [
+      {
+        "repeat": 0,
+        "frame_id": 539,
+        "bind_s": 0.1633,
+        "navigator_s": 0.1618,
+        "own_payload_4_s": 0.0132,
+        "translation_skew_s": 0.0065,
+        "total_s": 0.3448
+      },
+      {
+        "repeat": 0,
+        "frame_id": 548,
+        "bind_s": 0.1625,
+        "navigator_s": 0.1636,
+        "own_payload_4_s": 0.0129,
+        "translation_skew_s": 0.0068,
+        "total_s": 0.3458
+      },
+      {
+        "repeat": 0,
+        "frame_id": 557,
+        "bind_s": 0.1686,
+        "navigator_s": 0.1749,
+        "own_payload_4_s": 0.0131,
+        "translation_skew_s": 0.0068,
+        "total_s": 0.3634
+      },
+      {
+        "repeat": 0,
+        "frame_id": 566,
+        "bind_s": 0.1671,
+        "navigator_s": 0.1615,
+        "own_payload_4_s": 0.0127,
+        "translation_skew_s": 0.0066,
+        "total_s": 0.3479
+      },
+      {
+        "repeat": 0,
+        "frame_id": 575,
+        "bind_s": 0.1662,
+        "navigator_s": 0.1597,
+        "own_payload_4_s": 0.0125,
+        "translation_skew_s": 0.0064,
+        "total_s": 0.3448
+      },
+      {
+        "repeat": 1,
+        "frame_id": 539,
+        "bind_s": 0.1648,
+        "navigator_s": 0.1619,
+        "own_payload_4_s": 0.0124,
+        "translation_skew_s": 0.0065,
+        "total_s": 0.3456
+      },
+      {
+        "repeat": 1,
+        "frame_id": 548,
+        "bind_s": 0.1655,
+        "navigator_s": 0.1614,
+        "own_payload_4_s": 0.0125,
+        "translation_skew_s": 0.007,
+        "total_s": 0.3464
+      },
+      {
+        "repeat": 1,
+        "frame_id": 557,
+        "bind_s": 0.167,
+        "navigator_s": 0.1652,
+        "own_payload_4_s": 0.0124,
+        "translation_skew_s": 0.0067,
+        "total_s": 0.35130000000000006
+      },
+      {
+        "repeat": 1,
+        "frame_id": 566,
+        "bind_s": 0.1661,
+        "navigator_s": 0.1604,
+        "own_payload_4_s": 0.0134,
+        "translation_skew_s": 0.0062,
+        "total_s": 0.3461
+      },
+      {
+        "repeat": 1,
+        "frame_id": 575,
+        "bind_s": 0.1656,
+        "navigator_s": 0.1667,
+        "own_payload_4_s": 0.0125,
+        "translation_skew_s": 0.0066,
+        "total_s": 0.3514
+      },
+      {
+        "repeat": 2,
+        "frame_id": 539,
+        "bind_s": 0.1664,
+        "navigator_s": 0.1623,
+        "own_payload_4_s": 0.013,
+        "translation_skew_s": 0.0065,
+        "total_s": 0.3482
+      },
+      {
+        "repeat": 2,
+        "frame_id": 548,
+        "bind_s": 0.1663,
+        "navigator_s": 0.1621,
+        "own_payload_4_s": 0.0146,
+        "translation_skew_s": 0.007,
+        "total_s": 0.35000000000000003
+      },
+      {
+        "repeat": 2,
+        "frame_id": 557,
+        "bind_s": 0.1701,
+        "navigator_s": 0.1652,
+        "own_payload_4_s": 0.0125,
+        "translation_skew_s": 0.0069,
+        "total_s": 0.35470000000000007
+      },
+      {
+        "repeat": 2,
+        "frame_id": 566,
+        "bind_s": 0.1711,
+        "navigator_s": 0.1641,
+        "own_payload_4_s": 0.0127,
+        "translation_skew_s": 0.0067,
+        "total_s": 0.35459999999999997
+      },
+      {
+        "repeat": 2,
+        "frame_id": 575,
+        "bind_s": 0.1722,
+        "navigator_s": 0.1643,
+        "own_payload_4_s": 0.0131,
+        "translation_skew_s": 0.0065,
+        "total_s": 0.3561
+      }
+    ],
+    "median_s": {
+      "bind_s": 0.1663,
+      "navigator_s": 0.1623,
+      "own_payload_4_s": 0.0127,
+      "translation_skew_s": 0.0066,
+      "total_s": 0.3482
+    }
+  },
+  "tracker_probe": {
+    "method": "CarriedBeamTracker.observe on first saved carry TOP with saved anchor feature, wrapped extract_beams call count/timing; 3 repeats",
+    "tracker_wall_s": [
+      0.1731,
+      0.1577,
+      0.1568
+    ],
+    "extract_calls_each": 18,
+    "extract_wall_s": [
+      0.1614,
+      0.1551,
+      0.1542
+    ]
+  },
+  "render_microbench": {
+    "method": "Exact open seed11 scene, production world 960x720, coherent cctv_top+r1/r3 robot_cam batch, first two warm omitted, no physics/video concurrency or JPEG encode",
+    "warm_total_s": [
+      0.22307,
+      0.11885
+    ],
+    "submit_s": [
+      0.00027,
+      0.00024,
+      0.00026,
+      0.00025,
+      0.00025
+    ],
+    "render_wait_s": [
+      0.10108,
+      0.11786,
+      0.10158,
+      0.10143,
+      0.10054
+    ],
+    "median_total_s": 0.1016784590028692
+  },
+  "materialization_microbench": {
+    "method": "PIL quality95 JPEG + SHA-256 + write three 960x720 saved-image-derived RGB arrays to scratch; excludes batch Future wait",
+    "wall_s": [
+      0.006524,
+      0.00335,
+      0.003304,
+      0.003327,
+      0.003357
+    ],
+    "median_s": 0.0033504589955555275
+  },
+  "inference": "Two independently owned beam trackers repeat the same 18-contrast extraction on the same TOP JPEG. Saved binding and route features exactly match for all five carry frames. A shared already-validated beam feature could remove about one 0.16 wall-second scan while preserving RGB and equations, subject to full regression. Render batch adds roughly 0.10 wall-second in isolation, but exact v8 render queue wait, GIL scheduling, and SIM advancement rate were not timestamped by stage.",
+  "next_measurement": "Instrument one bounded rerun with monotonic timestamps at snapshot submit/render complete/JPEG materialize/_bind_capture/ImageRoute.observe/own_payload/skew/policy, and SIM time at capture/decision; verify byte-identical commands and referee with unchanged camera/TTL after deduplication."
+}

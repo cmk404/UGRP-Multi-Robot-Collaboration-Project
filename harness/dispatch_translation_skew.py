@@ -65,7 +65,33 @@ def translation_skew(jpeg, beam):
         cuts=[e['min_saturation'] for _,e in group]
         if len(group)>=4 and max(cuts)-min(cuts)>=15:groups.append(group)
     if not groups:
-        raise ValueError('translation shaft centerline lacks current RGB support across contrast cuts')
+        # A shaded shaft can lose its short high-saturation end sections even
+        # while its full orange face remains visible. Use the same line and
+        # section gates at the lower cuts already used for shaft tracking, but
+        # only when an independent high-saturation fit corroborates that line.
+        lower=[]
+        for saturation in range(105,131,5):
+            try:lower.append(_centerline(frame,hsv,beam,saturation))
+            except ValueError:pass
+        lower_groups=[]
+        for value,_ in lower:
+            group=[row for row in lower if abs(row[0]-value)<=1.5]
+            cuts=[e['min_saturation'] for _,e in group]
+            if len(group)>=4 and max(cuts)-min(cuts)>=15:lower_groups.append(group)
+        if not lower_groups:
+            raise ValueError('translation shaft centerline lacks current RGB support across contrast cuts')
+        group=max(lower_groups,key=len)
+        median=float(np.median([v for v,_ in group]))
+        corroborating=[(v,e) for v,e in fits if abs(v-median)<=1.5]
+        if not corroborating:
+            raise ValueError('translation shaft centerline lacks current RGB support across contrast cuts')
+        _,evidence=min(group,key=lambda row:abs(row[0]-median))
+        evidence={**evidence,'method':'current RGB cross-section line with low/high contrast corroboration',
+            'skew_px':median,
+            'contrast_fits':[{'min_saturation':e['min_saturation'],'skew_px':v} for v,e in lower+fits],
+            'consensus_saturations':[e['min_saturation'] for _,e in group],
+            'corroborating_high_saturations':[e['min_saturation'] for _,e in corroborating]}
+        return median,evidence
     group=max(groups,key=len)
     median=float(np.median([v for v,_ in group]))
     _,evidence=min(group,key=lambda row:abs(row[0]-median))

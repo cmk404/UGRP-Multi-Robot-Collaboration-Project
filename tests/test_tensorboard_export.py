@@ -206,6 +206,59 @@ def test_dispatch_counts_local_responses_commands_and_latency(tmp_path,export_ap
     assert 'issued-commands.json' in manifest['source_files']
 
 
+def test_dispatch_counts_stale_act_predictions_without_issuing_them(tmp_path,export_api):
+    convert,EA=export_api;src=tmp_path/'source';src.mkdir()
+    put(src,'result.json',{'physical_success':False,'llm_calls':0})
+    put(src,'pair-decisions.json',[
+        {'kind':'act_stale_capture','frame_id':1,'observed_at_s':1.},
+        {'kind':'act_stale_prediction','index':0,'received_at_s':2.,
+         'inputs':{'r1':{'physical_robot_id':'r1','inference_wall_s':.08},
+                   'r3':{'physical_robot_id':'r3','inference_wall_s':.09}},
+         'decisions':{'r1':{'done':True,'action':{'forward':.1}},
+                      'r3':{'done':False,'action':{'forward':.1}}}},
+        {'kind':'act_carry','index':0,'sim_time_s':2.2,
+         'inputs':{'r1':{'physical_robot_id':'r1','inference_wall_s':.04},
+                   'r3':{'physical_robot_id':'r3','inference_wall_s':.05}},
+         'decisions':{'r1':{'done':False,'action':{'forward':.02}},
+                      'r3':{'done':False,'action':{'forward':.02}}}}])
+    manifest=convert(src,tmp_path/'export',max_images=0)
+    ea=EA(str(tmp_path/'export')).Reload()
+    assert ea.Scalars('result/model_calls')[0].value==4
+    assert [x.value for x in ea.Scalars('execution/model_latency_s')]==pytest.approx([.08,.09,.04,.05])
+    assert [x.value for x in ea.Scalars('execution/act_stale_prediction')]==[1,1,0,0]
+    assert [x.value for x in ea.Scalars('claims/r1/done')]==[0]
+    assert manifest['metadata']['accepted_act_responses']==2
+    assert manifest['metadata']['stale_act_responses']==2
+    assert manifest['metadata']['completed_act_responses']==4
+
+
+def test_dispatch_counts_partial_inference_error_as_attempt(tmp_path,export_api):
+    convert,EA=export_api;src=tmp_path/'source';src.mkdir()
+    put(src,'result.json',{'physical_success':False,'llm_calls':0})
+    put(src,'pair-decisions.json',[
+        {'kind':'act_inference_error','index':0,'observed_at_s':1.,
+         'received_at_s':1.2,'error':'worker exited',
+         'inputs':{'r1':{'physical_robot_id':'r1','inference_wall_s':.03,
+                         'wire_sha256':'a'*64,'response_received':True},
+                   'r3':{'physical_robot_id':'r3','inference_wall_s':.05,
+                         'wire_sha256':'b'*64,'response_received':False}},
+         'decisions':{'r1':{'done':False}}}])
+    manifest=convert(src,tmp_path/'export',max_images=0)
+    ea=EA(str(tmp_path/'export')).Reload()
+    assert ea.Scalars('result/model_calls')[0].value==2
+    assert [x.value for x in ea.Scalars('execution/act_request_outcome')]==[2,2]
+    assert manifest['metadata']['completed_act_responses']==1
+    assert manifest['metadata']['attempted_act_requests']==2
+    assert manifest['metadata']['act_request_verification_complete'] is True
+    rows=json.loads((src/'pair-decisions.json').read_text())
+    rows[0]['inputs']['r3'].pop('wire_sha256')
+    put(src,'pair-decisions.json',rows)
+    incomplete=convert(src,tmp_path/'export-incomplete',max_images=0)
+    assert incomplete['metadata']['unverified_error_act_attempts']==1
+    assert incomplete['metadata']['act_request_verification_complete'] is False
+    assert EA(str(tmp_path/'export-incomplete')).Reload().Scalars('result/model_calls')[0].value==1
+
+
 def test_configured_act_does_not_invent_responses_or_latency(tmp_path,export_api):
     convert,EA=export_api;src=tmp_path/'source';src.mkdir()
     put(src,'result.json',{'physical_success':False,'llm_calls':0,

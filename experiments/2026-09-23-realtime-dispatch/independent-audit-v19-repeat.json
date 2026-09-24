@@ -1,0 +1,428 @@
+{
+  "schema": "ugrp.independent_realtime_dispatch_v19_repeat_audit.v1",
+  "checked_at_utc": "2026-09-23T16:30:26.273879+00:00",
+  "source_sha": "51fb09cf519f2ef61ff3f306beb07ffc64236816",
+  "bundle_sha256": "5516e639e7a31029a7cfb2a5d92844eeee784e32a8aca629735bac8e0dc16e32",
+  "manager": {
+    "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260924-012458-dispatch-e7c9de10/manifest.json",
+    "sha256": "5ef550ae4ea9c50b678063552439bbf1ec31a9eb37af2c0b8cbf8f81417e5b41",
+    "status": "process_completed",
+    "exit_code": 0,
+    "source_dirty": false,
+    "source_changed_during_run": false,
+    "inputs_changed_during_run": false,
+    "input_before_after_equal": true,
+    "source_tree_before_sha256": "a539f96ba3c44f3b59756a9cad8891faed25cb6eb1562e919425f66c2996489a",
+    "source_tree_after_sha256": "a539f96ba3c44f3b59756a9cad8891faed25cb6eb1562e919425f66c2996489a",
+    "finalization_errors": []
+  },
+  "result": {
+    "phase": "FINISHED",
+    "error": null,
+    "physical_success": true,
+    "protocol_complete": true,
+    "wall_s": 223.06365150000784,
+    "timing": {
+      "scene_and_observer_setup_wall_s": 1.6032059999997728,
+      "scope": "output-only SIM/wall measurements; wall_s includes finalization",
+      "control_end_sim_s": 216.3999999966108,
+      "control_wall_s": 221.27574529100093,
+      "motion_wall_s": 213.88899633300025,
+      "motion_sim_s": 211.1999999966102,
+      "motion_sim_to_wall": 0.9874280753919495,
+      "cleanup_wall_s": 1.787907667006948
+    },
+    "llm_calls": 0,
+    "realtime_control_stats": {
+      "solo_backpressure": 102,
+      "solo_stale_rgb": 0,
+      "solo_decisions": 444,
+      "pair_backpressure": 21,
+      "pair_decisions": 111,
+      "max_decision_age_s": 0.43850000000209377,
+      "solo_total_sim_s": 211.16299999661106,
+      "solo_active_sim_s": 193.41874999703066,
+      "solo_resource_wait_sim_s": 17.744249999580404,
+      "solo_resource_waiting": false,
+      "solo_resource_wait_intervals": 1,
+      "solo_active_budget_s": 300.0,
+      "pair_stage_stale_rgb": 0,
+      "pair_stage_samples": 323
+    },
+    "plan_replay_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+    "overlap_selection": {
+      "mode": "auto",
+      "enabled": true,
+      "reason": "independent_open_routes",
+      "plan_hash": "c2f420b7d1eb537334502b0eebe14161ffc0468f058bb5230e3d31c39281e45c",
+      "beam_route": "north",
+      "box_route": "south",
+      "beam_resource": "north_gate",
+      "box_resource": "south_gate",
+      "overlap_start": "transit"
+    }
+  },
+  "referee": {
+    "physical_success": true,
+    "cargo": {
+      "beam": {
+        "max_lift_m": 0.07753269976638047,
+        "displacement_m": 1.6857543146058407,
+        "lift_observed_by_referee": true,
+        "inside_slot_at_end": true,
+        "released_supported_stable": true,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 279,
+          "floor_contact_samples": 0,
+          "window_s": [
+            114.2799999990256,
+            142.12999999837177
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999764952,
+          "first_floor_contact_s": null
+        },
+        "physical_success": true
+      },
+      "box": {
+        "max_lift_m": 0.0688906331827667,
+        "displacement_m": 2.2930319830137127,
+        "lift_observed_by_referee": true,
+        "inside_slot_at_end": true,
+        "released_supported_stable": true,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 598,
+          "floor_contact_samples": 0,
+          "window_s": [
+            143.89224999832538,
+            203.6889999969161
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999763531,
+          "first_floor_contact_s": null
+        },
+        "physical_success": true
+      }
+    },
+    "simultaneous_loaded_motion_s": 0.0,
+    "weld_steps": 0,
+    "robot_robot_contact_samples": 0,
+    "all_three_body_motion_sim_s": 1.3000000000062073,
+    "beam_loaded_window_s": [
+      114.2799999990256,
+      142.12999999837177
+    ],
+    "box_loaded_window_s": [
+      143.89224999832538,
+      203.6889999969161
+    ],
+    "loaded_window_gap_s": 1.7622499999536103
+  },
+  "core_files": {
+    "result.json": {
+      "sha256": "fc07798b7ac2b2be5fe74cc1b13f9b4a2a7ac2394e11dffece91ee4302301e17",
+      "bytes": 7563851,
+      "matches_receipt": true
+    },
+    "issued-commands.json": {
+      "sha256": "47c0aa1bf43fe4fe054d6a593e56eaf2b8228883a3f42c0406d763d7693ad4f9",
+      "bytes": 491622,
+      "matches_receipt": true
+    },
+    "referee-only.jsonl": {
+      "sha256": "70965c7e67688f528b0e85559f3094f0af23e512dacafcf7f861e045cebd871f",
+      "bytes": 3156182,
+      "matches_receipt": true
+    },
+    "pair-decisions.json": {
+      "sha256": "b27ffc05a984060ff0eb85f3e1726ae7746699201968cec532ba550ca049f80f",
+      "bytes": 10421351,
+      "matches_receipt": true
+    },
+    "solo-decisions.json": {
+      "sha256": "8ece3ce6e8fe2a03d358ec6b905d7024e3d079f2717b50deb36181f3d69a6e7c",
+      "bytes": 2141915,
+      "matches_receipt": true
+    },
+    "execution.mp4": {
+      "sha256": "a2d0744cd8875dfbb9e073cc701c2b36157fd952d168b1b0f83459eb87e89a04",
+      "bytes": 2130234,
+      "matches_receipt": true
+    },
+    "execution.frames.json": {
+      "sha256": "153999f3211332696b69e4ddeb5648e385061f94d37ac50f1b4c882b343b8eaf",
+      "bytes": 302827,
+      "matches_receipt": true
+    },
+    "native-observer.json": {
+      "sha256": "eedf75eae736ec9516ede76e165e65a34fa37ed119059d3f296c3ae8aac84366",
+      "bytes": 78,
+      "matches_receipt": true
+    },
+    "evaluation-only.json": {
+      "sha256": "69dfdfb22e80de2eeca2131884dc30ffaf10fe91914091ddc77abf30d056de05",
+      "bytes": 1967,
+      "matches_receipt": true
+    }
+  },
+  "pair_carry": {
+    "count": 111,
+    "analysis_backend_counts": {
+      "spawn_cpu": 111
+    },
+    "permission_go": 111,
+    "frame_ids_strict_increasing": true,
+    "observed_at_monotone": true,
+    "age_s": {
+      "count": 111,
+      "min": 0.19274999999544207,
+      "median": 0.22474999999468537,
+      "p95": 0.25899999999387546,
+      "max": 0.32524999999230886,
+      "sum": 25.262999999402624
+    },
+    "period_s": {
+      "count": 110,
+      "min": 0.1599999999962165,
+      "median": 0.23999999999432475,
+      "p95": 0.35999999999148713,
+      "max": 0.45999999998912244,
+      "sum": 27.64999999934618
+    },
+    "effective_lease_s": {
+      "count": 111,
+      "min": 0.2,
+      "median": 0.25,
+      "p95": 0.25,
+      "max": 0.25,
+      "sum": 27.25
+    },
+    "waypoints": {
+      "0": {
+        "count": 22,
+        "span_sim_s": 5.189999999877273,
+        "start_error_px": [
+          0.0,
+          -89.63384984816679
+        ],
+        "end_error_px": [
+          0.05079538733110667,
+          -1.1314485144939397
+        ]
+      },
+      "1": {
+        "count": 58,
+        "span_sim_s": 14.099999999666593,
+        "start_error_px": [
+          367.74608526015584,
+          -1.6321911256616772
+        ],
+        "end_error_px": [
+          -3.4087400559776597,
+          -1.1360482877467462
+        ]
+      },
+      "2": {
+        "count": 2,
+        "span_sim_s": 0.22999999999456122,
+        "start_error_px": [
+          -2.4662482432704564,
+          3.6209818379400076
+        ],
+        "end_error_px": [
+          -2.9611047922644502,
+          3.6091976082337567
+        ]
+      },
+      "3": {
+        "count": 29,
+        "span_sim_s": 7.119999999831634,
+        "start_error_px": [
+          106.80365190562668,
+          3.615266926370083
+        ],
+        "end_error_px": [
+          -0.16647794729612997,
+          3.614012327505094
+        ]
+      }
+    },
+    "pending_renewal": {
+      "count": 37,
+      "duration_s": {
+        "count": 37,
+        "min": 0.04000000001323656,
+        "median": 0.13650000001095464,
+        "p95": 0.15300000001056446,
+        "max": 0.16025000001039302,
+        "sum": 4.940500000407923
+      },
+      "invariant_errors": []
+    },
+    "command_coverage": {
+      "r1": {
+        "with_renewal": {
+          "moving_command_union_s": 24.66399999948534,
+          "positive_gap": {
+            "count": 5,
+            "min": 0.1722499999817444,
+            "median": 0.1847499999814488,
+            "p95": 0.5299999999815554,
+            "max": 1.0989999999598297,
+            "sum": 2.1659999998861394
+          }
+        },
+        "original_only": {
+          "moving_command_union_s": 22.36999999970159,
+          "positive_gap": {
+            "count": 38,
+            "min": 0.009999999993851816,
+            "median": 0.069999999992433,
+            "p95": 0.3199999999865213,
+            "max": 1.2099999999654756,
+            "sum": 4.45999999966989
+          }
+        }
+      },
+      "r3": {
+        "with_renewal": {
+          "moving_command_union_s": 24.66399999948534,
+          "positive_gap": {
+            "count": 5,
+            "min": 0.1722499999817444,
+            "median": 0.1847499999814488,
+            "p95": 0.5299999999815554,
+            "max": 1.0989999999598297,
+            "sum": 2.1659999998861394
+          }
+        },
+        "original_only": {
+          "moving_command_union_s": 22.36999999970159,
+          "positive_gap": {
+            "count": 38,
+            "min": 0.009999999993851816,
+            "median": 0.069999999992433,
+            "p95": 0.3199999999865213,
+            "max": 1.2099999999654756,
+            "sum": 4.45999999966989
+          }
+        }
+      }
+    },
+    "partial_pipeline": {
+      "rows": 111,
+      "positive_overlap_count": 111,
+      "top_cpu_wall_s": {
+        "count": 111,
+        "min": 0.08784133300650865,
+        "median": 0.10503283300204203,
+        "p95": 0.12562854199495632,
+        "max": 0.15888520900625736,
+        "sum": 11.75694328910322
+      },
+      "top_cpu_overlap_own_render_wall_s": {
+        "count": 111,
+        "min": 0.0595820409944281,
+        "median": 0.10049774999788497,
+        "p95": 0.11985470799845643,
+        "max": 0.14778783400834072,
+        "sum": 11.198202121027862
+      },
+      "timestamp_invariant_errors": [],
+      "scope": "TOP CPU child analysis overlaps owner own RGB rendering; recorded monotonic wall timestamps, not a matched no-pipeline counterfactual."
+    },
+    "ttl_expiry_gap_after_prior_moving_cruise": {
+      "positive_count": 1,
+      "sum_sim_s": 0.17999999998155547,
+      "median_positive_sim_s": 0.17999999998155547,
+      "definition": "For adjacent CRUISE decisions with prior nonzero issued TRANSIT motor command, max(0, next decision SIM - (prior original RGB observed_at +0.6)); excludes zero-motion prior, not measured robot stationary duration."
+    }
+  },
+  "solo": {
+    "rows": 472,
+    "actual_decisions": 444,
+    "resource_drops": 28,
+    "phase_before_counts": {
+      "approach": 131,
+      "lower": 16,
+      "close": 1,
+      "lift": 15,
+      "verify_lift": 1,
+      "attachment_left": 1,
+      "attachment_right": 1,
+      "attachment_home": 1,
+      "carry": 283,
+      "release": 16,
+      "open": 1,
+      "retract": 1,
+      "verify_release": 1,
+      "release_ground_left": 1,
+      "release_ground_right": 1,
+      "release_ground_home": 1
+    },
+    "nominal_admission_rows": 270,
+    "shortened_admissions": 0,
+    "budget_margin_decisions": 156
+  },
+  "backend_and_cleanup": {
+    "spawn_cpu_carry_records": 111,
+    "native_observer": {
+      "mode": "isolated_latest_state",
+      "published": 5551,
+      "busy_skips": 9
+    },
+    "manager_process_completed": true,
+    "manager_finalization_errors": []
+  },
+  "video": {
+    "requested_fps": 10,
+    "written_frames": 2164,
+    "captured_frames": 1178,
+    "repeated_frames": 986,
+    "error": null,
+    "ffprobe_decoded_frames": 2164,
+    "media_range_206_matches_source": true,
+    "media_id": "554a1991c72690194bcf"
+  },
+  "tensorboard": {
+    "path": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단/v19-repeat",
+    "manifest_complete": true,
+    "scalars": {
+      "result/wall_s": 223.0636444091797,
+      "result/commands": 1250.0,
+      "result/model_calls": 0.0,
+      "result/input_tokens": 0.0,
+      "result/output_tokens": 0.0,
+      "result/model_latency_s": 0.0,
+      "result/recorded_raw_commands": 1190.0,
+      "evaluation/simultaneous_loaded_motion_s": 0.0,
+      "evaluation/robot_robot_contact_samples": 0.0,
+      "evaluation/reported_success": 1.0,
+      "claims/protocol_complete": 1.0,
+      "claims/plan_committed": 1.0
+    }
+  },
+  "comparison_to_v19_first": {
+    "same_source_sha": true,
+    "same_source_execution_tree": true,
+    "same_input_receipts": true,
+    "same_argv_except_output": true,
+    "first_wall_s": 207.9470199169882,
+    "repeat_wall_s": 223.06365150000784,
+    "first_pair_age_median_s": 0.19174999999546571,
+    "repeat_pair_age_median_s": 0.22474999999468537,
+    "first_loaded_window_gap_s": 2.539499999935231,
+    "repeat_loaded_window_gap_s": 1.7622499999536103,
+    "scope": "Two known saved-plan runs with same source/input; no strict simultaneous loaded movement in either; no generalization or communication effect."
+  },
+  "errors": [],
+  "comparison_to_v18_ttl_gaps": {
+    "v18_full_positive_count": 154,
+    "v18_full_sum_sim_s": 10.925749997,
+    "v18_repeat_positive_count": 15,
+    "v18_repeat_sum_sim_s": 1.44074999975,
+    "scope": "same gap definition; different source/asynchronous trajectory, not controlled causal speedup"
+  }
+}

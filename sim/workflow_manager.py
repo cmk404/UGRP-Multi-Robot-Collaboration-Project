@@ -27,7 +27,7 @@ from uuid import uuid4
 SCHEMA = "ugrp.simulation_run.v1"
 CATALOG = Path("configs/simulation_workflows.json")
 RECORDS = Path("outputs/simulation-runs")
-SOURCE_DIRS = ("harness", "sim", "scripts", "config", "configs", "maps", "calibration", "examples", "dashboard")
+SOURCE_DIRS = ("harness", "sim", "scripts", "config", "configs", "maps", "calibration", "examples")
 SOURCE_SUFFIXES = {".py", ".json", ".jsonl", ".xml", ".yaml", ".yml", ".toml", ".command",
                    ".txt", ".csv", ".png", ".jpg", ".jpeg", ".npy", ".npz"}
 SECRET = re.compile(r"(?:^|[-_])(?:token|password|secret|api[-_]?key|authorization|cookie|credential)(?:$|[-_])", re.I)
@@ -507,8 +507,10 @@ def _finish(manifest: dict, record: Path, *, exit_code: int | None, output: Path
 
 
 def _select_python(row: dict, argv: list[str]) -> str:
-    native = (row["id"] in ("local", "dispatch") and "--headless" not in argv or
-              row["id"] == "dispatch-skills" and "--viewer" in argv or
+    isolated = row["id"] in ("dispatch", "dispatch-skills") and "--realtime-control" in argv
+    native = (row["id"] == "local" and "--headless" not in argv or
+              row["id"] == "dispatch" and "--headless" not in argv and not isolated or
+              row["id"] == "dispatch-skills" and "--viewer" in argv and not isolated or
               row["id"] == "act-map-suite" and "--render" in argv)
     if native and sys.platform == "darwin":
         candidate = Path(sys.executable).with_name("mjpython")

@@ -1,0 +1,1941 @@
+{
+  "schema": "ugrp.local_dispatch_performance.results.v1",
+  "scope": "one saved-plan open/seed11 condition; RGB skills, no fresh external LLM calls",
+  "headless_wall_reduction_fraction": 0.22222508586655676,
+  "headless_comparison_source_ids": [
+    "baseline",
+    "candidate"
+  ],
+  "native_followup_source_ids": [
+    "native-v6",
+    "native-v7"
+  ],
+  "native_render_wall_reduction_fraction": 0.22911044221229304,
+  "native_smoke_excluded_from_full_task_denominator": [
+    "native-window"
+  ],
+  "native_baseline_incomplete_no_speedup_percentage": true,
+  "capture_benchmark": {
+    "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/main-capture/benchmark.json",
+    "bytes": 13882,
+    "sha256": "eaf699e796a1cacfd189eafc5aed286d1744fdcab8d604ebb7d6445b8efba3e6",
+    "source_sha": "6bc02ec951e83e61f8400cbbce075a1055cdc499",
+    "scope": "Paired capture only at a frozen physical state; excludes training, physics, inference and continuous video.",
+    "render_count": {
+      "baseline": 5,
+      "efficient": 3
+    },
+    "baseline_median_s": 0.19417083299777005,
+    "efficient_median_s": 0.11698920799972257,
+    "capture_time_reduction_fraction": 0.39749340210604067,
+    "all_actor_images_identical": true,
+    "state_before_sha256": "c12cd2be43c621bcf6c9740139d6db6f76fb2c77fbaca88a5b25a8c3877e1d79",
+    "state_after_sha256": "c12cd2be43c621bcf6c9740139d6db6f76fb2c77fbaca88a5b25a8c3877e1d79"
+  },
+  "runs": [
+    {
+      "id": "baseline",
+      "source_sha": "dbf7073deaf18c5720bcf4f209f25424b992afcd",
+      "wall_s": 367.0600932919915,
+      "last_referee_sim_s": 167.7002499977624,
+      "physical_success": true,
+      "protocol_complete": true,
+      "phase": "FINISHED",
+      "error": null,
+      "config": {
+        "output": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/baseline/artifacts",
+        "variant": "open",
+        "seed": 11,
+        "required_dock": null,
+        "task": null,
+        "model": "gemini-3.8-flash",
+        "viewer": false,
+        "realtime_factor": 1.0,
+        "planning_rounds": 8,
+        "max_replans": 2,
+        "rounds": 24,
+        "timeout": 60.0,
+        "max_wall_s": 600.0,
+        "max_input_tokens": 500000,
+        "max_quiet_rounds": 4,
+        "plan_replay": "/Users/changmin/.codex/worktrees/pair-approach-progress-sync/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+        "live_replan": false,
+        "executor": "skills",
+        "contact_profile": "local_contact_fine",
+        "grasp_model_dir": "/Users/changmin/.codex/worktrees/pair-approach-progress-sync/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/grasp",
+        "stage_model_dir": "/Users/changmin/.codex/worktrees/pair-approach-progress-sync/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied",
+        "carry_act_model": null,
+        "carry_act_python": null,
+        "carry_act_max_steps": 900,
+        "carry_act_stop_mode": "rgb_guarded",
+        "carry_max_steps": null,
+        "spawn_offset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "video_fps": 10,
+        "efficient_capture": false,
+        "route_overlap": false,
+        "overlap_start": "transit",
+        "reference_top": "/Users/changmin/.codex/worktrees/pair-approach-progress-sync/ugrp/tests/fixtures/camera_goal_transport/reference-top.jpg"
+      },
+      "environment": {
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+        "platform": "macOS-27.2-arm64-arm-64bit",
+        "mujoco": "3.12.0"
+      },
+      "model_provenance": {
+        "grasp_manifest_sha256": "372ecd9eed79627f64664a88ddeb7ba57975ecd824d079c34b03a6f847941933",
+        "grasp_models": {
+          "r1": {
+            "path": "r1-model.json",
+            "sha256": "1b2e6d6c3d010f4425fec605a197a1d758a3455e596b4a2e7b3be2bb63ae05a2"
+          },
+          "r3": {
+            "path": "r3-model.json",
+            "sha256": "fd7da785c3a9d25ebd35ccd8f087fa007b91406aa9470e684ddd057b55d7ecff"
+          }
+        },
+        "stage_manifest_sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a",
+        "stage_models": {
+          "r1": {
+            "forward": {
+              "path": "model-r1-forward.json",
+              "sha256": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45"
+            },
+            "lateral": {
+              "path": "model-r1-lateral.json",
+              "sha256": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869"
+            },
+            "yaw": {
+              "path": "model-r1-yaw.json",
+              "sha256": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374"
+            }
+          },
+          "r3": {
+            "forward": {
+              "path": "model-r3-forward.json",
+              "sha256": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+            },
+            "lateral": {
+              "path": "model-r3-lateral.json",
+              "sha256": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f"
+            },
+            "yaw": {
+              "path": "model-r3-yaw.json",
+              "sha256": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8"
+            }
+          }
+        },
+        "reference_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+      },
+      "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+      "evaluation": {
+        "physical_success": true,
+        "cargo": {
+          "beam": {
+            "max_lift_m": 0.07775569866030743,
+            "displacement_m": 1.680429246573463,
+            "lift_observed_by_referee": true,
+            "inside_slot_at_end": true,
+            "released_supported_stable": true,
+            "carry_clearance": {
+              "sampled_continuous_clearance": true,
+              "samples": 237,
+              "floor_contact_samples": 0,
+              "window_s": [
+                63.31000000021128,
+                87.00999999967637
+              ],
+              "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+              "max_sample_gap_s": 0.10000000000047748,
+              "first_floor_contact_s": null
+            },
+            "physical_success": true
+          },
+          "box": {
+            "max_lift_m": 0.06880015019927921,
+            "displacement_m": 2.309977452844145,
+            "lift_observed_by_referee": true,
+            "inside_slot_at_end": true,
+            "released_supported_stable": true,
+            "carry_clearance": {
+              "sampled_continuous_clearance": true,
+              "samples": 479,
+              "floor_contact_samples": 0,
+              "window_s": [
+                109.15124999914688,
+                157.0107499980199
+              ],
+              "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+              "max_sample_gap_s": 0.09999999999764952,
+              "first_floor_contact_s": null
+            },
+            "physical_success": true
+          }
+        },
+        "concurrent_transport": {
+          "simultaneous_loaded_motion_s": 0.0,
+          "intervals_s": [],
+          "minimum_displacement_per_sample_m": 0.001,
+          "max_sample_gap_s": 0.11,
+          "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+        },
+        "robot_robot_contact_samples": 0,
+        "robot_path_length_m": {
+          "r1": 2.638409361034049,
+          "r2": 4.167882470501645,
+          "r3": 2.594535038672821
+        },
+        "all_three_body_motion_sim_s": 2.9000000000067416,
+        "weld_steps": 0,
+        "samples": 1666,
+        "stable_window_s": 0.9999999999763531
+      },
+      "issued_records_including_setup": 939,
+      "commands_excluding_setup": 936,
+      "external_llm_calls": 0,
+      "fixture_protocol_calls": 6,
+      "cost_usd": null,
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "overlap_selection": null,
+      "plan_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+      "obstacle_contact_steps": 0,
+      "source_changed_during_run": false,
+      "inputs_changed_during_run": false,
+      "manifest": {
+        "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/baseline/manifest.json",
+        "bytes": 827617,
+        "sha256": "22996fa494711dd60941782e68c26d4bbc727e379d3d2abf8fa6644ee851f09d"
+      },
+      "files": {
+        "result.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/baseline/artifacts/result.json",
+          "bytes": 3230537,
+          "sha256": "90da3581734cec4943cb2f035b31db58bfd69cd5b49291f7bf70a0214ce99277"
+        },
+        "issued-commands.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/baseline/artifacts/issued-commands.json",
+          "bytes": 296267,
+          "sha256": "9aa6da5bd553d02c33e45e97799c3c907601e4cd1e1e7b7a516eae145d95423f"
+        },
+        "referee-only.jsonl": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/baseline/artifacts/referee-only.jsonl",
+          "bytes": 2469743,
+          "sha256": "8bff3bf085505e06727a223621d5a0243bb6791607de41e12a2be35db9b43416"
+        },
+        "execution.mp4": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/baseline/artifacts/execution.mp4",
+          "bytes": 1667128,
+          "sha256": "97689e0d32c941bb3a5be23bd151034c0099f339658db1f06bf708fd297bb97c"
+        },
+        "episode-setup-only.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/baseline/artifacts/episode-setup-only.json",
+          "bytes": 5487,
+          "sha256": "93e9db02cf32810422df3d0073e6575cd75f54e4e2d368d6584cf278011f3021"
+        },
+        "scene-manifest.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/baseline/artifacts/scene-manifest.json",
+          "bytes": 606,
+          "sha256": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a"
+        },
+        "committed-plan.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/baseline/artifacts/committed-plan.json",
+          "bytes": 579,
+          "sha256": "71120a2f29764530723f0b82f67992057e3918a1abdd522997c3d5768a2d34be"
+        },
+        "skill-bindings.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/baseline/artifacts/skill-bindings.json",
+          "bytes": 478,
+          "sha256": "19b98273c9a6a1369a6420af2ab38957a138c1554bfc14f7f04d37da4dc16e5e"
+        }
+      }
+    },
+    {
+      "id": "candidate",
+      "source_sha": "c44b571e98e10c47121681430c0006f70aebf175",
+      "wall_s": 285.49013254199235,
+      "last_referee_sim_s": 140.30024999841032,
+      "physical_success": true,
+      "protocol_complete": true,
+      "phase": "FINISHED",
+      "error": null,
+      "config": {
+        "output": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/candidate/artifacts",
+        "variant": "open",
+        "seed": 11,
+        "required_dock": null,
+        "task": null,
+        "model": "gemini-3.8-flash",
+        "viewer": false,
+        "realtime_factor": 1.0,
+        "planning_rounds": 8,
+        "max_replans": 2,
+        "rounds": 24,
+        "timeout": 60.0,
+        "max_wall_s": 600.0,
+        "max_input_tokens": 500000,
+        "max_quiet_rounds": 4,
+        "plan_replay": "/Users/changmin/.codex/worktrees/pair-approach-progress-sync/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+        "live_replan": false,
+        "executor": "skills",
+        "contact_profile": "local_contact_fine",
+        "grasp_model_dir": "/Users/changmin/.codex/worktrees/simulation-performance/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/grasp",
+        "stage_model_dir": "/Users/changmin/.codex/worktrees/simulation-performance/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied",
+        "carry_act_model": null,
+        "carry_act_python": null,
+        "carry_act_max_steps": 900,
+        "carry_act_stop_mode": "rgb_guarded",
+        "carry_max_steps": null,
+        "spawn_offset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "video_fps": 10,
+        "efficient_capture": true,
+        "route_overlap": false,
+        "auto_route_overlap": true,
+        "overlap_start": "transit",
+        "reference_top": "/Users/changmin/.codex/worktrees/simulation-performance/ugrp/tests/fixtures/camera_goal_transport/reference-top.jpg"
+      },
+      "environment": {
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+        "platform": "macOS-27.2-arm64-arm-64bit",
+        "mujoco": "3.12.0"
+      },
+      "model_provenance": {
+        "grasp_manifest_sha256": "372ecd9eed79627f64664a88ddeb7ba57975ecd824d079c34b03a6f847941933",
+        "grasp_models": {
+          "r1": {
+            "path": "r1-model.json",
+            "sha256": "1b2e6d6c3d010f4425fec605a197a1d758a3455e596b4a2e7b3be2bb63ae05a2"
+          },
+          "r3": {
+            "path": "r3-model.json",
+            "sha256": "fd7da785c3a9d25ebd35ccd8f087fa007b91406aa9470e684ddd057b55d7ecff"
+          }
+        },
+        "stage_manifest_sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a",
+        "stage_models": {
+          "r1": {
+            "forward": {
+              "path": "model-r1-forward.json",
+              "sha256": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45"
+            },
+            "lateral": {
+              "path": "model-r1-lateral.json",
+              "sha256": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869"
+            },
+            "yaw": {
+              "path": "model-r1-yaw.json",
+              "sha256": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374"
+            }
+          },
+          "r3": {
+            "forward": {
+              "path": "model-r3-forward.json",
+              "sha256": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+            },
+            "lateral": {
+              "path": "model-r3-lateral.json",
+              "sha256": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f"
+            },
+            "yaw": {
+              "path": "model-r3-yaw.json",
+              "sha256": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8"
+            }
+          }
+        },
+        "reference_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+      },
+      "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+      "evaluation": {
+        "physical_success": true,
+        "cargo": {
+          "beam": {
+            "max_lift_m": 0.07775569866030743,
+            "displacement_m": 1.6804292466115642,
+            "lift_observed_by_referee": true,
+            "inside_slot_at_end": true,
+            "released_supported_stable": true,
+            "carry_clearance": {
+              "sampled_continuous_clearance": true,
+              "samples": 237,
+              "floor_contact_samples": 0,
+              "window_s": [
+                63.31000000021128,
+                87.00999999967637
+              ],
+              "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+              "max_sample_gap_s": 0.10000000000047748,
+              "first_floor_contact_s": null
+            },
+            "physical_success": true
+          },
+          "box": {
+            "max_lift_m": 0.06880027436760147,
+            "displacement_m": 2.3080579222012565,
+            "lift_observed_by_referee": true,
+            "inside_slot_at_end": true,
+            "released_supported_stable": true,
+            "carry_clearance": {
+              "sampled_continuous_clearance": true,
+              "samples": 504,
+              "floor_contact_samples": 0,
+              "window_s": [
+                79.12674999985687,
+                129.58949999866832
+              ],
+              "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+              "max_sample_gap_s": 0.09999999999764952,
+              "first_floor_contact_s": null
+            },
+            "physical_success": true
+          }
+        },
+        "concurrent_transport": {
+          "simultaneous_loaded_motion_s": 2.899999999931424,
+          "intervals_s": [
+            [
+              79.4002499998504,
+              79.50024999984804
+            ],
+            [
+              79.60024999984567,
+              79.70024999984331
+            ],
+            [
+              79.80024999984094,
+              79.90024999983858
+            ],
+            [
+              80.00024999983621,
+              80.10024999983385
+            ],
+            [
+              80.20024999983148,
+              80.30024999982912
+            ],
+            [
+              80.40024999982676,
+              80.50024999982439
+            ],
+            [
+              80.60024999982203,
+              80.70024999981966
+            ],
+            [
+              80.8002499998173,
+              80.90024999981493
+            ],
+            [
+              81.00024999981257,
+              81.1002499998102
+            ],
+            [
+              81.20024999980784,
+              81.30024999980547
+            ],
+            [
+              82.00024999978892,
+              82.10024999978656
+            ],
+            [
+              82.80024999977,
+              82.90024999976764
+            ],
+            [
+              83.00024999976527,
+              83.10024999976291
+            ],
+            [
+              83.20024999976054,
+              83.30024999975818
+            ],
+            [
+              83.40024999975581,
+              83.50024999975345
+            ],
+            [
+              83.60024999975109,
+              83.70024999974872
+            ],
+            [
+              83.80024999974636,
+              83.90024999974399
+            ],
+            [
+              84.00024999974163,
+              84.10024999973926
+            ],
+            [
+              84.2002499997369,
+              84.30024999973453
+            ],
+            [
+              84.40024999973217,
+              84.5002499997298
+            ],
+            [
+              84.60024999972744,
+              84.70024999972507
+            ],
+            [
+              84.80024999972271,
+              84.90024999972034
+            ],
+            [
+              85.00024999971798,
+              85.10024999971561
+            ],
+            [
+              85.20024999971325,
+              85.30024999971089
+            ],
+            [
+              85.40024999970852,
+              85.50024999970616
+            ],
+            [
+              85.60024999970379,
+              85.70024999970143
+            ],
+            [
+              85.80024999969906,
+              85.9002499996967
+            ],
+            [
+              86.00024999969433,
+              86.10024999969197
+            ],
+            [
+              86.2002499996896,
+              86.30024999968724
+            ]
+          ],
+          "minimum_displacement_per_sample_m": 0.001,
+          "max_sample_gap_s": 0.11,
+          "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+        },
+        "robot_robot_contact_samples": 0,
+        "robot_path_length_m": {
+          "r1": 2.6384090089151817,
+          "r2": 4.172113900102295,
+          "r3": 2.5945349871032857
+        },
+        "all_three_body_motion_sim_s": 9.399999999853037,
+        "weld_steps": 0,
+        "samples": 1392,
+        "stable_window_s": 0.9999999999763531
+      },
+      "issued_records_including_setup": 952,
+      "commands_excluding_setup": 949,
+      "external_llm_calls": 0,
+      "fixture_protocol_calls": 6,
+      "cost_usd": null,
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "overlap_selection": {
+        "mode": "auto",
+        "enabled": true,
+        "reason": "independent_open_routes",
+        "plan_hash": "c2f420b7d1eb537334502b0eebe14161ffc0468f058bb5230e3d31c39281e45c",
+        "beam_route": "north",
+        "box_route": "south",
+        "beam_resource": "north_gate",
+        "box_resource": "south_gate",
+        "overlap_start": "transit"
+      },
+      "plan_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+      "obstacle_contact_steps": 0,
+      "source_changed_during_run": false,
+      "inputs_changed_during_run": false,
+      "manifest": {
+        "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/candidate/manifest.json",
+        "bytes": 664877,
+        "sha256": "28b9ff9cd539753caa5bf844bcf35dbabb051dbcdd23c5a3c7ec921d419d8666"
+      },
+      "files": {
+        "result.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/candidate/artifacts/result.json",
+          "bytes": 3234306,
+          "sha256": "fa73848158987d0ee0be3d3c13efb5ddb6b4c18d177c477b77e833d1f5285e64"
+        },
+        "issued-commands.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/candidate/artifacts/issued-commands.json",
+          "bytes": 300367,
+          "sha256": "2d0219b7b62579c2f8bf38605a4df3237fbfeb5dda35b6072e3efcff066f0518"
+        },
+        "referee-only.jsonl": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/candidate/artifacts/referee-only.jsonl",
+          "bytes": 2067992,
+          "sha256": "49038180a2d9ea63c97edcbf8b82a3bf9f9792c603df456f092dcc1133656978"
+        },
+        "execution.mp4": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/candidate/artifacts/execution.mp4",
+          "bytes": 1547064,
+          "sha256": "bfff51e83fa9e8e8ad577a5abe07fab688d3e43538d4b672e5bd34a356fab63e"
+        },
+        "episode-setup-only.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/candidate/artifacts/episode-setup-only.json",
+          "bytes": 5487,
+          "sha256": "93e9db02cf32810422df3d0073e6575cd75f54e4e2d368d6584cf278011f3021"
+        },
+        "scene-manifest.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/candidate/artifacts/scene-manifest.json",
+          "bytes": 606,
+          "sha256": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a"
+        },
+        "committed-plan.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/candidate/artifacts/committed-plan.json",
+          "bytes": 579,
+          "sha256": "772224bd028328e3f3b2723dde7715532bd1dbd0cfa85829eac0187b0eccb92c"
+        },
+        "skill-bindings.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/candidate/artifacts/skill-bindings.json",
+          "bytes": 827,
+          "sha256": "40fe2492d20c76702c5148ac5d408ba793ca046775006ceed787296543e4f8a7"
+        }
+      }
+    },
+    {
+      "id": "native-window",
+      "source_sha": "c44b571e98e10c47121681430c0006f70aebf175",
+      "wall_s": 46.789918292008224,
+      "last_referee_sim_s": 19.900250000004007,
+      "physical_success": false,
+      "protocol_complete": false,
+      "phase": "APPROACH",
+      "error": "RuntimeError: skill wall budget exhausted",
+      "config": {
+        "output": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-window/artifacts",
+        "variant": "open",
+        "seed": 11,
+        "required_dock": null,
+        "task": null,
+        "model": "gemini-3.8-flash",
+        "viewer": true,
+        "realtime_factor": 2.0,
+        "planning_rounds": 8,
+        "max_replans": 2,
+        "rounds": 24,
+        "timeout": 60.0,
+        "max_wall_s": 45.0,
+        "max_input_tokens": 500000,
+        "max_quiet_rounds": 4,
+        "plan_replay": "/Users/changmin/.codex/worktrees/pair-approach-progress-sync/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+        "live_replan": false,
+        "executor": "skills",
+        "contact_profile": "local_contact_fine",
+        "grasp_model_dir": "/Users/changmin/.codex/worktrees/simulation-performance/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/grasp",
+        "stage_model_dir": "/Users/changmin/.codex/worktrees/simulation-performance/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied",
+        "carry_act_model": null,
+        "carry_act_python": null,
+        "carry_act_max_steps": 900,
+        "carry_act_stop_mode": "rgb_guarded",
+        "carry_max_steps": null,
+        "spawn_offset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "video_fps": 10,
+        "efficient_capture": true,
+        "route_overlap": false,
+        "auto_route_overlap": true,
+        "overlap_start": "transit",
+        "reference_top": "/Users/changmin/.codex/worktrees/simulation-performance/ugrp/tests/fixtures/camera_goal_transport/reference-top.jpg"
+      },
+      "environment": {
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+        "platform": "macOS-27.2-arm64-arm-64bit",
+        "mujoco": "3.12.0"
+      },
+      "model_provenance": {
+        "grasp_manifest_sha256": "372ecd9eed79627f64664a88ddeb7ba57975ecd824d079c34b03a6f847941933",
+        "grasp_models": {
+          "r1": {
+            "path": "r1-model.json",
+            "sha256": "1b2e6d6c3d010f4425fec605a197a1d758a3455e596b4a2e7b3be2bb63ae05a2"
+          },
+          "r3": {
+            "path": "r3-model.json",
+            "sha256": "fd7da785c3a9d25ebd35ccd8f087fa007b91406aa9470e684ddd057b55d7ecff"
+          }
+        },
+        "stage_manifest_sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a",
+        "stage_models": {
+          "r1": {
+            "forward": {
+              "path": "model-r1-forward.json",
+              "sha256": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45"
+            },
+            "lateral": {
+              "path": "model-r1-lateral.json",
+              "sha256": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869"
+            },
+            "yaw": {
+              "path": "model-r1-yaw.json",
+              "sha256": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374"
+            }
+          },
+          "r3": {
+            "forward": {
+              "path": "model-r3-forward.json",
+              "sha256": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+            },
+            "lateral": {
+              "path": "model-r3-lateral.json",
+              "sha256": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f"
+            },
+            "yaw": {
+              "path": "model-r3-yaw.json",
+              "sha256": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8"
+            }
+          }
+        },
+        "reference_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+      },
+      "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+      "evaluation": {
+        "physical_success": false,
+        "cargo": {
+          "beam": {
+            "max_lift_m": 0.0,
+            "displacement_m": 0.0,
+            "lift_observed_by_referee": false,
+            "inside_slot_at_end": false,
+            "released_supported_stable": false,
+            "carry_clearance": {
+              "sampled_continuous_clearance": false,
+              "samples": 0,
+              "floor_contact_samples": 0,
+              "window_s": null,
+              "scope": "Post-run referee samples only; never actor input. No claim about contact between samples."
+            },
+            "physical_success": false
+          },
+          "box": {
+            "max_lift_m": 0.0,
+            "displacement_m": 0.0,
+            "lift_observed_by_referee": false,
+            "inside_slot_at_end": false,
+            "released_supported_stable": false,
+            "carry_clearance": {
+              "sampled_continuous_clearance": false,
+              "samples": 0,
+              "floor_contact_samples": 0,
+              "window_s": null,
+              "scope": "Post-run referee samples only; never actor input. No claim about contact between samples."
+            },
+            "physical_success": false
+          }
+        },
+        "concurrent_transport": {
+          "simultaneous_loaded_motion_s": 0.0,
+          "intervals_s": [],
+          "minimum_displacement_per_sample_m": 0.001,
+          "max_sample_gap_s": 0.11,
+          "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+        },
+        "robot_robot_contact_samples": 0,
+        "robot_path_length_m": {
+          "r1": 0.4562269459633447,
+          "r2": 0.2193985002292638,
+          "r3": 0.409416134137337
+        },
+        "all_three_body_motion_sim_s": 1.6000000000005343,
+        "weld_steps": 0,
+        "samples": 188,
+        "stable_window_s": 1.0000000000047748
+      },
+      "issued_records_including_setup": 142,
+      "commands_excluding_setup": 139,
+      "external_llm_calls": 0,
+      "fixture_protocol_calls": 6,
+      "cost_usd": null,
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "overlap_selection": {
+        "mode": "auto",
+        "enabled": true,
+        "reason": "independent_open_routes",
+        "plan_hash": "c2f420b7d1eb537334502b0eebe14161ffc0468f058bb5230e3d31c39281e45c",
+        "beam_route": "north",
+        "box_route": "south",
+        "beam_resource": "north_gate",
+        "box_resource": "south_gate",
+        "overlap_start": "transit"
+      },
+      "plan_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+      "obstacle_contact_steps": 0,
+      "source_changed_during_run": false,
+      "inputs_changed_during_run": false,
+      "manifest": {
+        "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-window/manifest.json",
+        "bytes": 266786,
+        "sha256": "672fef7ea6a62e616326ad4f309f875536e6f5b5a67c514f75f3f357602dc56d"
+      },
+      "files": {
+        "result.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-window/artifacts/result.json",
+          "bytes": 9911,
+          "sha256": "8298bf7594c4c4076184ceca60e5c89135087808e836d8d733f3d675cda75fe6"
+        },
+        "issued-commands.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-window/artifacts/issued-commands.json",
+          "bytes": 44567,
+          "sha256": "8be1b7cf310ccb034ef8db7ba0bedc647c36d51c8d0e95245d3cccfbb87aa02d"
+        },
+        "referee-only.jsonl": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-window/artifacts/referee-only.jsonl",
+          "bytes": 245853,
+          "sha256": "9747f23470a311d65cec4cc06df6c8e617a6e27d26d082bcea6323bc120a1a2e"
+        },
+        "execution.mp4": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-window/artifacts/execution.mp4",
+          "bytes": 211720,
+          "sha256": "ce6cfaf4c4107e35941f15d3cc14a545cba68e751d147278208584048357646d"
+        },
+        "episode-setup-only.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-window/artifacts/episode-setup-only.json",
+          "bytes": 5487,
+          "sha256": "93e9db02cf32810422df3d0073e6575cd75f54e4e2d368d6584cf278011f3021"
+        },
+        "scene-manifest.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-window/artifacts/scene-manifest.json",
+          "bytes": 606,
+          "sha256": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a"
+        },
+        "committed-plan.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-window/artifacts/committed-plan.json",
+          "bytes": 579,
+          "sha256": "00c574fac8b4f6e6bd13aad5b049988158b6dc171d92be243ca763280a38a030"
+        },
+        "skill-bindings.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-window/artifacts/skill-bindings.json",
+          "bytes": 827,
+          "sha256": "40fe2492d20c76702c5148ac5d408ba793ca046775006ceed787296543e4f8a7"
+        }
+      }
+    },
+    {
+      "id": "native-full",
+      "source_sha": "c44b571e98e10c47121681430c0006f70aebf175",
+      "wall_s": 601.9934858749912,
+      "last_referee_sim_s": 128.40024999869172,
+      "physical_success": false,
+      "protocol_complete": false,
+      "phase": "RELEASE",
+      "error": "RuntimeError: skill wall budget exhausted",
+      "config": {
+        "output": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-full/artifacts",
+        "variant": "open",
+        "seed": 11,
+        "required_dock": null,
+        "task": null,
+        "model": "gemini-3.8-flash",
+        "viewer": true,
+        "realtime_factor": 2.0,
+        "planning_rounds": 8,
+        "max_replans": 2,
+        "rounds": 24,
+        "timeout": 60.0,
+        "max_wall_s": 600.0,
+        "max_input_tokens": 500000,
+        "max_quiet_rounds": 4,
+        "plan_replay": "/Users/changmin/.codex/worktrees/pair-approach-progress-sync/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+        "live_replan": false,
+        "executor": "skills",
+        "contact_profile": "local_contact_fine",
+        "grasp_model_dir": "/Users/changmin/.codex/worktrees/simulation-performance/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/grasp",
+        "stage_model_dir": "/Users/changmin/.codex/worktrees/simulation-performance/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied",
+        "carry_act_model": null,
+        "carry_act_python": null,
+        "carry_act_max_steps": 900,
+        "carry_act_stop_mode": "rgb_guarded",
+        "carry_max_steps": null,
+        "spawn_offset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "video_fps": 10,
+        "efficient_capture": true,
+        "route_overlap": false,
+        "auto_route_overlap": true,
+        "overlap_start": "transit",
+        "reference_top": "/Users/changmin/.codex/worktrees/simulation-performance/ugrp/tests/fixtures/camera_goal_transport/reference-top.jpg"
+      },
+      "environment": {
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+        "platform": "macOS-27.2-arm64-arm-64bit",
+        "mujoco": "3.12.0"
+      },
+      "model_provenance": {
+        "grasp_manifest_sha256": "372ecd9eed79627f64664a88ddeb7ba57975ecd824d079c34b03a6f847941933",
+        "grasp_models": {
+          "r1": {
+            "path": "r1-model.json",
+            "sha256": "1b2e6d6c3d010f4425fec605a197a1d758a3455e596b4a2e7b3be2bb63ae05a2"
+          },
+          "r3": {
+            "path": "r3-model.json",
+            "sha256": "fd7da785c3a9d25ebd35ccd8f087fa007b91406aa9470e684ddd057b55d7ecff"
+          }
+        },
+        "stage_manifest_sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a",
+        "stage_models": {
+          "r1": {
+            "forward": {
+              "path": "model-r1-forward.json",
+              "sha256": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45"
+            },
+            "lateral": {
+              "path": "model-r1-lateral.json",
+              "sha256": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869"
+            },
+            "yaw": {
+              "path": "model-r1-yaw.json",
+              "sha256": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374"
+            }
+          },
+          "r3": {
+            "forward": {
+              "path": "model-r3-forward.json",
+              "sha256": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+            },
+            "lateral": {
+              "path": "model-r3-lateral.json",
+              "sha256": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f"
+            },
+            "yaw": {
+              "path": "model-r3-yaw.json",
+              "sha256": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8"
+            }
+          }
+        },
+        "reference_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+      },
+      "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+      "evaluation": {
+        "physical_success": false,
+        "cargo": {
+          "beam": {
+            "max_lift_m": 0.07775569866030743,
+            "displacement_m": 1.6804292466281125,
+            "lift_observed_by_referee": true,
+            "inside_slot_at_end": true,
+            "released_supported_stable": true,
+            "carry_clearance": {
+              "sampled_continuous_clearance": true,
+              "samples": 237,
+              "floor_contact_samples": 0,
+              "window_s": [
+                63.31000000021128,
+                87.00999999967637
+              ],
+              "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+              "max_sample_gap_s": 0.10000000000047748,
+              "first_floor_contact_s": null
+            },
+            "physical_success": true
+          },
+          "box": {
+            "max_lift_m": 0.06880027436760147,
+            "displacement_m": 2.394877563756815,
+            "lift_observed_by_referee": true,
+            "inside_slot_at_end": true,
+            "released_supported_stable": false,
+            "carry_clearance": {
+              "sampled_continuous_clearance": true,
+              "samples": 482,
+              "floor_contact_samples": 0,
+              "window_s": [
+                79.12674999985687,
+                127.3867499987204
+              ],
+              "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+              "max_sample_gap_s": 0.09999999999763531,
+              "first_floor_contact_s": null
+            },
+            "physical_success": false
+          }
+        },
+        "concurrent_transport": {
+          "simultaneous_loaded_motion_s": 2.899999999931424,
+          "intervals_s": [
+            [
+              79.4002499998504,
+              79.50024999984804
+            ],
+            [
+              79.60024999984567,
+              79.70024999984331
+            ],
+            [
+              79.80024999984094,
+              79.90024999983858
+            ],
+            [
+              80.00024999983621,
+              80.10024999983385
+            ],
+            [
+              80.20024999983148,
+              80.30024999982912
+            ],
+            [
+              80.40024999982676,
+              80.50024999982439
+            ],
+            [
+              80.60024999982203,
+              80.70024999981966
+            ],
+            [
+              80.8002499998173,
+              80.90024999981493
+            ],
+            [
+              81.00024999981257,
+              81.1002499998102
+            ],
+            [
+              81.20024999980784,
+              81.30024999980547
+            ],
+            [
+              82.00024999978892,
+              82.10024999978656
+            ],
+            [
+              82.80024999977,
+              82.90024999976764
+            ],
+            [
+              83.00024999976527,
+              83.10024999976291
+            ],
+            [
+              83.20024999976054,
+              83.30024999975818
+            ],
+            [
+              83.40024999975581,
+              83.50024999975345
+            ],
+            [
+              83.60024999975109,
+              83.70024999974872
+            ],
+            [
+              83.80024999974636,
+              83.90024999974399
+            ],
+            [
+              84.00024999974163,
+              84.10024999973926
+            ],
+            [
+              84.2002499997369,
+              84.30024999973453
+            ],
+            [
+              84.40024999973217,
+              84.5002499997298
+            ],
+            [
+              84.60024999972744,
+              84.70024999972507
+            ],
+            [
+              84.80024999972271,
+              84.90024999972034
+            ],
+            [
+              85.00024999971798,
+              85.10024999971561
+            ],
+            [
+              85.20024999971325,
+              85.30024999971089
+            ],
+            [
+              85.40024999970852,
+              85.50024999970616
+            ],
+            [
+              85.60024999970379,
+              85.70024999970143
+            ],
+            [
+              85.80024999969906,
+              85.9002499996967
+            ],
+            [
+              86.00024999969433,
+              86.10024999969197
+            ],
+            [
+              86.2002499996896,
+              86.30024999968724
+            ]
+          ],
+          "minimum_displacement_per_sample_m": 0.001,
+          "max_sample_gap_s": 0.11,
+          "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+        },
+        "robot_robot_contact_samples": 0,
+        "robot_path_length_m": {
+          "r1": 2.6384088559876444,
+          "r2": 4.059044399993631,
+          "r3": 2.59453496470689
+        },
+        "all_three_body_motion_sim_s": 9.399999999853037,
+        "weld_steps": 0,
+        "samples": 1273,
+        "stable_window_s": 0.9999999999763673
+      },
+      "issued_records_including_setup": 941,
+      "commands_excluding_setup": 938,
+      "external_llm_calls": 0,
+      "fixture_protocol_calls": 6,
+      "cost_usd": null,
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "overlap_selection": {
+        "mode": "auto",
+        "enabled": true,
+        "reason": "independent_open_routes",
+        "plan_hash": "c2f420b7d1eb537334502b0eebe14161ffc0468f058bb5230e3d31c39281e45c",
+        "beam_route": "north",
+        "box_route": "south",
+        "beam_resource": "north_gate",
+        "box_resource": "south_gate",
+        "overlap_start": "transit"
+      },
+      "plan_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+      "obstacle_contact_steps": 0,
+      "source_changed_during_run": false,
+      "inputs_changed_during_run": false,
+      "manifest": {
+        "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-full/manifest.json",
+        "bytes": 648017,
+        "sha256": "644fa2ac82bf312a6631b1c2e7d2e6eb9daaa5f26c6f311ef8abebf3062ee561"
+      },
+      "files": {
+        "result.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-full/artifacts/result.json",
+          "bytes": 3234215,
+          "sha256": "91cb2139a31a85a8a39f1ed3c420cd38a3fbab3913cba802a9f46f13106d785a"
+        },
+        "issued-commands.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-full/artifacts/issued-commands.json",
+          "bytes": 296828,
+          "sha256": "534c4feceee74f1275677d5e9454d3c1f19490f671376f5487227818b33d1a29"
+        },
+        "referee-only.jsonl": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-full/artifacts/referee-only.jsonl",
+          "bytes": 1872583,
+          "sha256": "a35ade4d92c57d286f98fa840dfacc33b545f06e8e09d8235baa74c8b81d7d2d"
+        },
+        "execution.mp4": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-full/artifacts/execution.mp4",
+          "bytes": 1488417,
+          "sha256": "a937ff141cf9d8080cab8b1e5c2d1ad683dcf441f79bba95fe5edda1f545fbd8"
+        },
+        "episode-setup-only.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-full/artifacts/episode-setup-only.json",
+          "bytes": 5487,
+          "sha256": "93e9db02cf32810422df3d0073e6575cd75f54e4e2d368d6584cf278011f3021"
+        },
+        "scene-manifest.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-full/artifacts/scene-manifest.json",
+          "bytes": 606,
+          "sha256": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a"
+        },
+        "committed-plan.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-full/artifacts/committed-plan.json",
+          "bytes": 579,
+          "sha256": "6460960eada9d6add9c510ecd811f5b54e421192582667d281749b1ba89b3f78"
+        },
+        "skill-bindings.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-full/artifacts/skill-bindings.json",
+          "bytes": 827,
+          "sha256": "40fe2492d20c76702c5148ac5d408ba793ca046775006ceed787296543e4f8a7"
+        }
+      }
+    },
+    {
+      "id": "native-v6",
+      "source_sha": "dd02695f1b97de9707d42c54eed0ec9bd98729a4",
+      "wall_s": 429.0201207499922,
+      "last_referee_sim_s": 140.30024999841032,
+      "physical_success": true,
+      "protocol_complete": true,
+      "phase": "FINISHED",
+      "error": null,
+      "config": {
+        "output": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v6/artifacts",
+        "variant": "open",
+        "seed": 11,
+        "required_dock": null,
+        "task": null,
+        "model": "gemini-3.8-flash",
+        "viewer": true,
+        "realtime_factor": 2.0,
+        "planning_rounds": 8,
+        "max_replans": 2,
+        "rounds": 24,
+        "timeout": 60.0,
+        "max_wall_s": 600.0,
+        "max_input_tokens": 500000,
+        "max_quiet_rounds": 4,
+        "plan_replay": "/Users/changmin/.codex/worktrees/pair-approach-progress-sync/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+        "live_replan": false,
+        "executor": "skills",
+        "contact_profile": "local_contact_fine",
+        "grasp_model_dir": "/Users/changmin/.codex/worktrees/simulation-performance/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/grasp",
+        "stage_model_dir": "/Users/changmin/.codex/worktrees/simulation-performance/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied",
+        "carry_act_model": null,
+        "carry_act_python": null,
+        "carry_act_max_steps": 900,
+        "carry_act_stop_mode": "rgb_guarded",
+        "carry_max_steps": null,
+        "spawn_offset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "video_fps": 10,
+        "efficient_capture": true,
+        "route_overlap": false,
+        "auto_route_overlap": true,
+        "overlap_start": "transit",
+        "reference_top": "/Users/changmin/.codex/worktrees/simulation-performance/ugrp/tests/fixtures/camera_goal_transport/reference-top.jpg"
+      },
+      "environment": {
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+        "platform": "macOS-27.2-arm64-arm-64bit",
+        "mujoco": "3.12.0"
+      },
+      "model_provenance": {
+        "grasp_manifest_sha256": "372ecd9eed79627f64664a88ddeb7ba57975ecd824d079c34b03a6f847941933",
+        "grasp_models": {
+          "r1": {
+            "path": "r1-model.json",
+            "sha256": "1b2e6d6c3d010f4425fec605a197a1d758a3455e596b4a2e7b3be2bb63ae05a2"
+          },
+          "r3": {
+            "path": "r3-model.json",
+            "sha256": "fd7da785c3a9d25ebd35ccd8f087fa007b91406aa9470e684ddd057b55d7ecff"
+          }
+        },
+        "stage_manifest_sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a",
+        "stage_models": {
+          "r1": {
+            "forward": {
+              "path": "model-r1-forward.json",
+              "sha256": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45"
+            },
+            "lateral": {
+              "path": "model-r1-lateral.json",
+              "sha256": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869"
+            },
+            "yaw": {
+              "path": "model-r1-yaw.json",
+              "sha256": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374"
+            }
+          },
+          "r3": {
+            "forward": {
+              "path": "model-r3-forward.json",
+              "sha256": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+            },
+            "lateral": {
+              "path": "model-r3-lateral.json",
+              "sha256": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f"
+            },
+            "yaw": {
+              "path": "model-r3-yaw.json",
+              "sha256": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8"
+            }
+          }
+        },
+        "reference_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+      },
+      "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+      "evaluation": {
+        "physical_success": true,
+        "cargo": {
+          "beam": {
+            "max_lift_m": 0.07775569866030743,
+            "displacement_m": 1.6804292466115642,
+            "lift_observed_by_referee": true,
+            "inside_slot_at_end": true,
+            "released_supported_stable": true,
+            "carry_clearance": {
+              "sampled_continuous_clearance": true,
+              "samples": 237,
+              "floor_contact_samples": 0,
+              "window_s": [
+                63.31000000021128,
+                87.00999999967637
+              ],
+              "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+              "max_sample_gap_s": 0.10000000000047748,
+              "first_floor_contact_s": null
+            },
+            "physical_success": true
+          },
+          "box": {
+            "max_lift_m": 0.06880027436760147,
+            "displacement_m": 2.3080579222012565,
+            "lift_observed_by_referee": true,
+            "inside_slot_at_end": true,
+            "released_supported_stable": true,
+            "carry_clearance": {
+              "sampled_continuous_clearance": true,
+              "samples": 504,
+              "floor_contact_samples": 0,
+              "window_s": [
+                79.12674999985687,
+                129.58949999866832
+              ],
+              "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+              "max_sample_gap_s": 0.09999999999764952,
+              "first_floor_contact_s": null
+            },
+            "physical_success": true
+          }
+        },
+        "concurrent_transport": {
+          "simultaneous_loaded_motion_s": 2.899999999931424,
+          "intervals_s": [
+            [
+              79.4002499998504,
+              79.50024999984804
+            ],
+            [
+              79.60024999984567,
+              79.70024999984331
+            ],
+            [
+              79.80024999984094,
+              79.90024999983858
+            ],
+            [
+              80.00024999983621,
+              80.10024999983385
+            ],
+            [
+              80.20024999983148,
+              80.30024999982912
+            ],
+            [
+              80.40024999982676,
+              80.50024999982439
+            ],
+            [
+              80.60024999982203,
+              80.70024999981966
+            ],
+            [
+              80.8002499998173,
+              80.90024999981493
+            ],
+            [
+              81.00024999981257,
+              81.1002499998102
+            ],
+            [
+              81.20024999980784,
+              81.30024999980547
+            ],
+            [
+              82.00024999978892,
+              82.10024999978656
+            ],
+            [
+              82.80024999977,
+              82.90024999976764
+            ],
+            [
+              83.00024999976527,
+              83.10024999976291
+            ],
+            [
+              83.20024999976054,
+              83.30024999975818
+            ],
+            [
+              83.40024999975581,
+              83.50024999975345
+            ],
+            [
+              83.60024999975109,
+              83.70024999974872
+            ],
+            [
+              83.80024999974636,
+              83.90024999974399
+            ],
+            [
+              84.00024999974163,
+              84.10024999973926
+            ],
+            [
+              84.2002499997369,
+              84.30024999973453
+            ],
+            [
+              84.40024999973217,
+              84.5002499997298
+            ],
+            [
+              84.60024999972744,
+              84.70024999972507
+            ],
+            [
+              84.80024999972271,
+              84.90024999972034
+            ],
+            [
+              85.00024999971798,
+              85.10024999971561
+            ],
+            [
+              85.20024999971325,
+              85.30024999971089
+            ],
+            [
+              85.40024999970852,
+              85.50024999970616
+            ],
+            [
+              85.60024999970379,
+              85.70024999970143
+            ],
+            [
+              85.80024999969906,
+              85.9002499996967
+            ],
+            [
+              86.00024999969433,
+              86.10024999969197
+            ],
+            [
+              86.2002499996896,
+              86.30024999968724
+            ]
+          ],
+          "minimum_displacement_per_sample_m": 0.001,
+          "max_sample_gap_s": 0.11,
+          "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+        },
+        "robot_robot_contact_samples": 0,
+        "robot_path_length_m": {
+          "r1": 2.6384090089151817,
+          "r2": 4.172113900102295,
+          "r3": 2.5945349871032857
+        },
+        "all_three_body_motion_sim_s": 9.399999999853037,
+        "weld_steps": 0,
+        "samples": 1392,
+        "stable_window_s": 0.9999999999763531
+      },
+      "issued_records_including_setup": 952,
+      "commands_excluding_setup": 949,
+      "external_llm_calls": 0,
+      "fixture_protocol_calls": 6,
+      "cost_usd": null,
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "overlap_selection": {
+        "mode": "auto",
+        "enabled": true,
+        "reason": "independent_open_routes",
+        "plan_hash": "c2f420b7d1eb537334502b0eebe14161ffc0468f058bb5230e3d31c39281e45c",
+        "beam_route": "north",
+        "box_route": "south",
+        "beam_resource": "north_gate",
+        "box_resource": "south_gate",
+        "overlap_start": "transit"
+      },
+      "plan_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+      "obstacle_contact_steps": 0,
+      "source_changed_during_run": false,
+      "inputs_changed_during_run": false,
+      "manifest": {
+        "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v6/manifest.json",
+        "bytes": 665280,
+        "sha256": "255230006099febda95aff18a2156c98eb9bb469d8617d2039b5aa00a8b32eed"
+      },
+      "files": {
+        "result.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v6/artifacts/result.json",
+          "bytes": 3234304,
+          "sha256": "d9d4542b7a62dbc427cab441fca75cbfccad327466b143360f67b9136489b2da"
+        },
+        "issued-commands.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v6/artifacts/issued-commands.json",
+          "bytes": 300367,
+          "sha256": "2d0219b7b62579c2f8bf38605a4df3237fbfeb5dda35b6072e3efcff066f0518"
+        },
+        "referee-only.jsonl": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v6/artifacts/referee-only.jsonl",
+          "bytes": 2067992,
+          "sha256": "49038180a2d9ea63c97edcbf8b82a3bf9f9792c603df456f092dcc1133656978"
+        },
+        "execution.mp4": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v6/artifacts/execution.mp4",
+          "bytes": 1547064,
+          "sha256": "bfff51e83fa9e8e8ad577a5abe07fab688d3e43538d4b672e5bd34a356fab63e"
+        },
+        "episode-setup-only.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v6/artifacts/episode-setup-only.json",
+          "bytes": 5487,
+          "sha256": "93e9db02cf32810422df3d0073e6575cd75f54e4e2d368d6584cf278011f3021"
+        },
+        "scene-manifest.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v6/artifacts/scene-manifest.json",
+          "bytes": 606,
+          "sha256": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a"
+        },
+        "committed-plan.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v6/artifacts/committed-plan.json",
+          "bytes": 579,
+          "sha256": "3b038f715cad5b6ccf55d0c53f00d766244f9f138cdcce56a76235a1ecffd6db"
+        },
+        "skill-bindings.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v6/artifacts/skill-bindings.json",
+          "bytes": 827,
+          "sha256": "40fe2492d20c76702c5148ac5d408ba793ca046775006ceed787296543e4f8a7"
+        }
+      }
+    },
+    {
+      "id": "native-v7",
+      "source_sha": "6916e8cd4182a65766178ec08d654649c1af1498",
+      "wall_s": 330.72713116699015,
+      "last_referee_sim_s": 140.30024999841032,
+      "physical_success": true,
+      "protocol_complete": true,
+      "phase": "FINISHED",
+      "error": null,
+      "config": {
+        "output": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v7/artifacts",
+        "variant": "open",
+        "seed": 11,
+        "required_dock": null,
+        "task": null,
+        "model": "gemini-3.8-flash",
+        "viewer": true,
+        "realtime_factor": 2.0,
+        "planning_rounds": 8,
+        "max_replans": 2,
+        "rounds": 24,
+        "timeout": 60.0,
+        "max_wall_s": 600.0,
+        "max_input_tokens": 500000,
+        "max_quiet_rounds": 4,
+        "plan_replay": "/Users/changmin/.codex/worktrees/pair-approach-progress-sync/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+        "live_replan": false,
+        "executor": "skills",
+        "contact_profile": "local_contact_fine",
+        "grasp_model_dir": "/Users/changmin/.codex/worktrees/simulation-performance/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/grasp",
+        "stage_model_dir": "/Users/changmin/.codex/worktrees/simulation-performance/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied",
+        "carry_act_model": null,
+        "carry_act_python": null,
+        "carry_act_max_steps": 900,
+        "carry_act_stop_mode": "rgb_guarded",
+        "carry_max_steps": null,
+        "spawn_offset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "video_fps": 10,
+        "efficient_capture": true,
+        "route_overlap": false,
+        "auto_route_overlap": true,
+        "overlap_start": "transit",
+        "reference_top": "/Users/changmin/.codex/worktrees/simulation-performance/ugrp/tests/fixtures/camera_goal_transport/reference-top.jpg"
+      },
+      "environment": {
+        "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.3.2)]",
+        "platform": "macOS-27.2-arm64-arm-64bit",
+        "mujoco": "3.12.0"
+      },
+      "model_provenance": {
+        "grasp_manifest_sha256": "372ecd9eed79627f64664a88ddeb7ba57975ecd824d079c34b03a6f847941933",
+        "grasp_models": {
+          "r1": {
+            "path": "r1-model.json",
+            "sha256": "1b2e6d6c3d010f4425fec605a197a1d758a3455e596b4a2e7b3be2bb63ae05a2"
+          },
+          "r3": {
+            "path": "r3-model.json",
+            "sha256": "fd7da785c3a9d25ebd35ccd8f087fa007b91406aa9470e684ddd057b55d7ecff"
+          }
+        },
+        "stage_manifest_sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a",
+        "stage_models": {
+          "r1": {
+            "forward": {
+              "path": "model-r1-forward.json",
+              "sha256": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45"
+            },
+            "lateral": {
+              "path": "model-r1-lateral.json",
+              "sha256": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869"
+            },
+            "yaw": {
+              "path": "model-r1-yaw.json",
+              "sha256": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374"
+            }
+          },
+          "r3": {
+            "forward": {
+              "path": "model-r3-forward.json",
+              "sha256": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+            },
+            "lateral": {
+              "path": "model-r3-lateral.json",
+              "sha256": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f"
+            },
+            "yaw": {
+              "path": "model-r3-yaw.json",
+              "sha256": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8"
+            }
+          }
+        },
+        "reference_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+      },
+      "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+      "evaluation": {
+        "physical_success": true,
+        "cargo": {
+          "beam": {
+            "max_lift_m": 0.07775569866030743,
+            "displacement_m": 1.6804292466115642,
+            "lift_observed_by_referee": true,
+            "inside_slot_at_end": true,
+            "released_supported_stable": true,
+            "carry_clearance": {
+              "sampled_continuous_clearance": true,
+              "samples": 237,
+              "floor_contact_samples": 0,
+              "window_s": [
+                63.31000000021128,
+                87.00999999967637
+              ],
+              "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+              "max_sample_gap_s": 0.10000000000047748,
+              "first_floor_contact_s": null
+            },
+            "physical_success": true
+          },
+          "box": {
+            "max_lift_m": 0.06880027436760147,
+            "displacement_m": 2.3080579222012565,
+            "lift_observed_by_referee": true,
+            "inside_slot_at_end": true,
+            "released_supported_stable": true,
+            "carry_clearance": {
+              "sampled_continuous_clearance": true,
+              "samples": 504,
+              "floor_contact_samples": 0,
+              "window_s": [
+                79.12674999985687,
+                129.58949999866832
+              ],
+              "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+              "max_sample_gap_s": 0.09999999999764952,
+              "first_floor_contact_s": null
+            },
+            "physical_success": true
+          }
+        },
+        "concurrent_transport": {
+          "simultaneous_loaded_motion_s": 2.899999999931424,
+          "intervals_s": [
+            [
+              79.4002499998504,
+              79.50024999984804
+            ],
+            [
+              79.60024999984567,
+              79.70024999984331
+            ],
+            [
+              79.80024999984094,
+              79.90024999983858
+            ],
+            [
+              80.00024999983621,
+              80.10024999983385
+            ],
+            [
+              80.20024999983148,
+              80.30024999982912
+            ],
+            [
+              80.40024999982676,
+              80.50024999982439
+            ],
+            [
+              80.60024999982203,
+              80.70024999981966
+            ],
+            [
+              80.8002499998173,
+              80.90024999981493
+            ],
+            [
+              81.00024999981257,
+              81.1002499998102
+            ],
+            [
+              81.20024999980784,
+              81.30024999980547
+            ],
+            [
+              82.00024999978892,
+              82.10024999978656
+            ],
+            [
+              82.80024999977,
+              82.90024999976764
+            ],
+            [
+              83.00024999976527,
+              83.10024999976291
+            ],
+            [
+              83.20024999976054,
+              83.30024999975818
+            ],
+            [
+              83.40024999975581,
+              83.50024999975345
+            ],
+            [
+              83.60024999975109,
+              83.70024999974872
+            ],
+            [
+              83.80024999974636,
+              83.90024999974399
+            ],
+            [
+              84.00024999974163,
+              84.10024999973926
+            ],
+            [
+              84.2002499997369,
+              84.30024999973453
+            ],
+            [
+              84.40024999973217,
+              84.5002499997298
+            ],
+            [
+              84.60024999972744,
+              84.70024999972507
+            ],
+            [
+              84.80024999972271,
+              84.90024999972034
+            ],
+            [
+              85.00024999971798,
+              85.10024999971561
+            ],
+            [
+              85.20024999971325,
+              85.30024999971089
+            ],
+            [
+              85.40024999970852,
+              85.50024999970616
+            ],
+            [
+              85.60024999970379,
+              85.70024999970143
+            ],
+            [
+              85.80024999969906,
+              85.9002499996967
+            ],
+            [
+              86.00024999969433,
+              86.10024999969197
+            ],
+            [
+              86.2002499996896,
+              86.30024999968724
+            ]
+          ],
+          "minimum_displacement_per_sample_m": 0.001,
+          "max_sample_gap_s": 0.11,
+          "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+        },
+        "robot_robot_contact_samples": 0,
+        "robot_path_length_m": {
+          "r1": 2.6384090089151817,
+          "r2": 4.172113900102295,
+          "r3": 2.5945349871032857
+        },
+        "all_three_body_motion_sim_s": 9.399999999853037,
+        "weld_steps": 0,
+        "samples": 1392,
+        "stable_window_s": 0.9999999999763531
+      },
+      "issued_records_including_setup": 952,
+      "commands_excluding_setup": 949,
+      "external_llm_calls": 0,
+      "fixture_protocol_calls": 6,
+      "cost_usd": null,
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "overlap_selection": {
+        "mode": "auto",
+        "enabled": true,
+        "reason": "independent_open_routes",
+        "plan_hash": "c2f420b7d1eb537334502b0eebe14161ffc0468f058bb5230e3d31c39281e45c",
+        "beam_route": "north",
+        "box_route": "south",
+        "beam_resource": "north_gate",
+        "box_resource": "south_gate",
+        "overlap_start": "transit"
+      },
+      "plan_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+      "obstacle_contact_steps": 0,
+      "source_changed_during_run": false,
+      "inputs_changed_during_run": false,
+      "manifest": {
+        "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v7/manifest.json",
+        "bytes": 665646,
+        "sha256": "f1324903f7b7b4fa4786a3f6831323e96e7e668c1e3e2e29b9d6300751ce4436"
+      },
+      "files": {
+        "result.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v7/artifacts/result.json",
+          "bytes": 3234305,
+          "sha256": "5ec13ae110201ee61c020084fdc9c1976c24a88c50f3ac3472873ec02381c4a3"
+        },
+        "issued-commands.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v7/artifacts/issued-commands.json",
+          "bytes": 300367,
+          "sha256": "2d0219b7b62579c2f8bf38605a4df3237fbfeb5dda35b6072e3efcff066f0518"
+        },
+        "referee-only.jsonl": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v7/artifacts/referee-only.jsonl",
+          "bytes": 2067992,
+          "sha256": "49038180a2d9ea63c97edcbf8b82a3bf9f9792c603df456f092dcc1133656978"
+        },
+        "execution.mp4": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v7/artifacts/execution.mp4",
+          "bytes": 1547064,
+          "sha256": "bfff51e83fa9e8e8ad577a5abe07fab688d3e43538d4b672e5bd34a356fab63e"
+        },
+        "episode-setup-only.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v7/artifacts/episode-setup-only.json",
+          "bytes": 5487,
+          "sha256": "93e9db02cf32810422df3d0073e6575cd75f54e4e2d368d6584cf278011f3021"
+        },
+        "scene-manifest.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v7/artifacts/scene-manifest.json",
+          "bytes": 606,
+          "sha256": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a"
+        },
+        "committed-plan.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v7/artifacts/committed-plan.json",
+          "bytes": 579,
+          "sha256": "9727db84628843d48d317c1ed754fe304f4f5db6b3c17e2e4c3e4639388a43d0"
+        },
+        "skill-bindings.json": {
+          "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v7/artifacts/skill-bindings.json",
+          "bytes": 827,
+          "sha256": "40fe2492d20c76702c5148ac5d408ba793ca046775006ceed787296543e4f8a7"
+        }
+      }
+    }
+  ],
+  "local_evidence_only": true,
+  "limitations": [
+    "No unseen-map or multi-seed claim",
+    "No LLM latency improvement claim",
+    "Headless comparison enables capture optimization and overlap together",
+    "Native window has a different wall-time workload and separate success denominator",
+    "Registered MacroQueue legacy bundle is not qualified by these fine-contact VisualMacro replays",
+    "Zero sampled contact is not a claim about every continuous instant"
+  ],
+  "additional_evidence": {
+    "independent-audit-baseline.json": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/independent-audit-baseline.json",
+      "sha256": "6ddd7cc1f451c4753cad36beb56e2178a765899ec31cd8c377ae8b16cef38ae7"
+    },
+    "independent-audit-candidate.json": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/independent-audit-candidate.json",
+      "sha256": "ff7b912b58372f09f8e55c8bb072f07b1dd02a38b0f092a76bdc86ce92bac628"
+    },
+    "independent-audit-native-v6.json": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/independent-audit-native-v6.json",
+      "sha256": "e71b37fd1c1daf0c11374f1c3c86a0b798009e6ede08749267908dd9036a3bde"
+    },
+    "independent-audit-native-v7.json": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/independent-audit-native-v7.json",
+      "sha256": "d7ed52d268daeb6500de93bfa363610dfa0834ce42614a1c07c14984be6948f7"
+    },
+    "motion-speed-audit.json": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/motion-speed-audit.json",
+      "sha256": "f95325093dc047e36229d79713f3aea1129071d291d267f5daa4e1417a2b64a5"
+    },
+    "native-v6-sample-audit.json": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v6-sample-audit.json",
+      "sha256": "e9ea674e8992e2584d791a431918998ade923f77d1a858eee1420a8cf0783cbc"
+    },
+    "tensorboard-verification.json": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/tensorboard-verification.json",
+      "sha256": "93a652c71fc828c687738ebb170f7b3310213b09b3cce5005ef93d829d513e53"
+    },
+    "tensorboard-native-full-verification.json": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/tensorboard-native-full-verification.json",
+      "sha256": "9cb646fd85e07437407112b4892ae9fad8e8cd064b7bac673b3d348435e320c0"
+    },
+    "tensorboard-capture-verification.json": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/tensorboard-capture-verification.json",
+      "sha256": "26b3f8d83a6ccc35331b1c69dc4a93d4af254bc7cdabc3dbdf61db6545a82840"
+    }
+  },
+  "v6_v7_trajectory_identical_files": [
+    "issued-commands.json",
+    "referee-only.jsonl",
+    "pair-decisions.json",
+    "solo-decisions.json"
+  ]
+}

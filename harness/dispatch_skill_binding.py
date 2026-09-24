@@ -6,6 +6,7 @@ poses are read here, and no failed model prediction is replaced by a raw LLM act
 """
 from __future__ import annotations
 import copy
+from functools import lru_cache
 import hashlib
 import math
 import cv2
@@ -160,7 +161,7 @@ def canonical_pair_top(jpeg, reference, *, translation_px=None, hue_upper=24, ob
 
 
 class SkillBindings:
-    def __init__(self, committed, static_map, *, route_overlap=False, overlap_start='transit'):
+    def __init__(self, committed, static_map, *, route_overlap=False, auto_route_overlap=False, overlap_start='transit'):
         if not committed or committed.get('plan_hash') != digest(committed.get('plan')):
             raise ValueError('exact committed plan required')
         self.committed = copy.deepcopy(committed)
@@ -180,19 +181,48 @@ class SkillBindings:
         self.locks = {}
         self.revoked = False
         self.cluttered=any(o['id']=='service_island' for o in static_map['obstacles'])
-        self.route_overlap=route_overlap
         if overlap_start not in ('grasp','transit'):raise ValueError('unknown overlap start')
         self.overlap_start=overlap_start
         self.grasp_started=set()
         self.transit_started=set()
         self.resource_events=[]
-        if route_overlap:
-            if self.cluttered:
-                raise ValueError('route overlap requires open-map translation; moving-obstacle rotation is not validated')
-            if any(t['after'] for t in self.tasks.values()):
-                raise ValueError('route overlap requires an explicitly agreed independent plan; dependencies are never removed')
-            if self.tasks['beam']['route']==self.tasks['box']['route']:
-                raise ValueError('route overlap requires distinct routes')
+        beam_route=self.tasks['beam']['route'];box_route=self.tasks['box']['route']
+        routes=static_map.get('routes',{})
+        beam_resource=routes.get(beam_route,{}).get('resource')
+        box_resource=routes.get(box_route,{}).get('resource')
+        reason=None;error=None
+        if self.cluttered:
+            reason='service_island_requires_serial'
+            error='route overlap requires open-map translation; moving-obstacle rotation is not validated'
+        elif any(t['after'] for t in self.tasks.values()):
+            reason='agreed_dependencies_require_serial'
+            error='route overlap requires an explicitly agreed independent plan; dependencies are never removed'
+        elif beam_route==box_route:
+            reason='same_route_requires_serial'
+            error='route overlap requires distinct routes'
+        elif not beam_resource or not box_resource:
+            reason='unknown_route_resource_requires_serial'
+            error='route overlap requires known route resources'
+        elif beam_resource==box_resource:
+            reason='shared_route_resource_requires_serial'
+            error='route overlap requires distinct route resources'
+        if route_overlap and error:
+            raise ValueError(error)
+        if auto_route_overlap and not route_overlap and reason is None:
+            boundary={'wall_north','wall_south','wall_west','wall_east'}
+            if static_map.get('map_id')!='dispatch_open' or any(
+                    obstacle.get('id') not in boundary for obstacle in static_map.get('obstacles',[])) \
+                    or static_map.get('terrain'):
+                reason='open_map_capability_not_established'
+        self.route_overlap=bool(route_overlap or (auto_route_overlap and reason is None))
+        mode='explicit' if route_overlap else 'auto' if auto_route_overlap else 'serial'
+        self.overlap_selection={'mode':mode,'enabled':self.route_overlap,
+            'reason':('explicit_overlap_requested' if route_overlap else
+                      'independent_open_routes' if self.route_overlap else
+                      reason if auto_route_overlap else 'serial_runner_default'),
+            'plan_hash':committed['plan_hash'],'beam_route':beam_route,'box_route':box_route,
+            'beam_resource':beam_resource,'box_resource':box_resource,
+            'overlap_start':overlap_start}
 
     def note_transit_command(self,obj):
         """Peer stage claim from issued commands, never measured completion."""
@@ -260,6 +290,7 @@ class SkillBindings:
                 if route['declared_min_width_m'] < .45:narrow.append(name)
         return {'pair_model_slots':self.pair, 'solo_robot':self.solo,
             'route_overlap':self.route_overlap,'overlap_start':self.overlap_start,
+            'overlap_selection':self.overlap_selection,
             'parallel_pair_envelope_m':width,'unsupported_pair_routes':narrow,
             'pair_rotation_skill_available':True,'rotated_pair_envelope_m':.45,
             'route_execution':'RGB wheel/shaft tracking and swept full-load SE2 search when cluttered; experimental',
@@ -294,6 +325,10 @@ class ImageRoute:
         self.box_center=None;self.box_delta=np.zeros(2);self.box_previous=None
         self.box_background=None;self.box_origin=None;self.box_background_sha=None
         self.box_pan_frames={}
+        # TOP RGB robot features are linked to cargo only after both have
+        # independently shown the same motion while the cargo is visible.
+        self.box_carrier_points=None
+        self.box_carrier_occluded_frames=0
         from harness.dispatch_beam_tracker import CarriedBeamTracker
         self.beam_tracker=CarriedBeamTracker()
 
@@ -303,7 +338,113 @@ class ImageRoute:
         if phase=='verify_lift':self.box_pan_frames={}
         self.box_pan_frames[phase]=jpeg
 
-    def observe(self,jpeg):
+    @staticmethod
+    def _tracked_points(old,new,points):
+        if points is None or len(points)==0:
+            return np.empty((0,2)),np.empty(0),np.empty((0,2)),np.empty((0,2))
+        forward,ok,errors=cv2.calcOpticalFlowPyrLK(old,new,points,None,winSize=(15,15),maxLevel=2)
+        if forward is None:
+            return np.empty((0,2)),np.empty(0),np.empty((0,2)),np.empty((0,2))
+        backward,back_ok,_=cv2.calcOpticalFlowPyrLK(new,old,forward,None,winSize=(15,15),maxLevel=2)
+        if backward is None:
+            return np.empty((0,2)),np.empty(0),np.empty((0,2)),np.empty((0,2))
+        cycle=np.linalg.norm(backward-points,axis=2).ravel()
+        delta=(forward-points).reshape(-1,2)
+        valid=(ok.ravel()>0)&(back_ok.ravel()>0)&(cycle<1)&(np.linalg.norm(delta,axis=1)<20)&(errors.ravel()<30)
+        return delta[valid],cycle[valid],points.reshape(-1,2)[valid],forward.reshape(-1,2)[valid]
+
+    @staticmethod
+    def _consistent_group(delta,*,minimum):
+        if len(delta)<minimum:return None
+        groups=np.linalg.norm(delta[:,None,:]-delta[None,:,:],axis=2)<1.5
+        inliers=groups[np.argmax(groups.sum(axis=1))]
+        return inliers if inliers.sum()>=max(minimum,.6*len(delta)) else None
+
+    @staticmethod
+    def _spread_supported(points):
+        # Distributed corners on the chassis, not a tiny painted patch.
+        return len(points)>=8 and np.all(np.ptp(points,axis=0)>=[20,15])
+
+    def _link_carrier_features(self,frame,center):
+        """Associate a visible cargo with the neighbouring robot by RGB comotion."""
+        self.box_carrier_points=None
+        if self.box_previous is None or self.box_center is None or self.box_background is None:
+            return
+        cargo_motion=center-self.box_center
+        if not 2<=np.linalg.norm(cargo_motion)<20:return
+        old=self.box_previous
+        h,w=old.shape[:2]
+        px,py=self.box_center
+        x0=max(0,math.floor(px-120));x1=min(w,math.ceil(px+120)+1)
+        y0=max(0,math.floor(py-120));y1=min(h,math.ceil(py+120)+1)
+        old_roi=old[y0:y1,x0:x1]
+        old_hsv=cv2.cvtColor(old_roi,cv2.COLOR_BGR2HSV)
+        # This robot's orange chassis trim has independent texture. Restrict
+        # candidates to the moving foreground around the previously observed
+        # cargo; cyan and the static yellow apron cannot establish identity.
+        orange=cv2.inRange(old_hsv,np.array((4,95,40),np.uint8),np.array((25,255,255),np.uint8))>0
+        foreground=cv2.absdiff(old_roi,self.box_background[y0:y1,x0:x1]).max(axis=2)>25
+        yy,xx=np.ogrid[y0:y1,x0:x1]
+        radius=np.hypot(xx-px,yy-py)
+        mask=np.uint8(orange&foreground&(radius>=25)&(radius<=120))*255
+        old_gray=cv2.cvtColor(old,cv2.COLOR_BGR2GRAY)
+        new_gray=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+        points=cv2.goodFeaturesToTrack(old_gray[y0:y1,x0:x1],100,.01,4,mask=mask)
+        if points is not None:points+=np.float32([x0,y0])
+        delta,_,_,current=self._tracked_points(old_gray,new_gray,points)
+        if len(delta)<8:return
+        # The visual cargo motion, not the issued command, selects the robot.
+        agreeing=np.linalg.norm(delta-cargo_motion,axis=1)<1.5
+        if agreeing.sum()<max(8,.6*len(delta)) or not self._spread_supported(current[agreeing]):return
+        self.box_carrier_points=current[agreeing].astype(np.float32).reshape(-1,1,2)
+
+    def _track_carrier_under_occlusion(self,frame,own_attachment):
+        """Use a previously linked TOP robot only while fresh own RGB holds cargo."""
+        if (self.box_carrier_points is None or self.box_previous is None
+                or self.box_carrier_occluded_frames>=3):
+            raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
+        if (not isinstance(own_attachment,tuple) or len(own_attachment)!=3):
+            raise RuntimeError('dispatch box occlusion requires current own RGB attachment evidence')
+        evidence,current_own,validated_own=own_attachment
+        if (not isinstance(evidence,dict) or evidence.get('evidence')!='visual_attachment'
+                or evidence.get('attached') is not True
+                or evidence.get('camera_pan_delta_pwm')!=0
+                or not isinstance(current_own,str) or current_own!=validated_own):
+            raise RuntimeError('dispatch box occlusion requires fresh validated own RGB attachment')
+        if np.array_equal(frame,self.box_previous):
+            raise RuntimeError('dispatch box occlusion has stale TOP RGB')
+        old_gray=cv2.cvtColor(self.box_previous,cv2.COLOR_BGR2GRAY)
+        new_gray=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+        delta,cycle,_,current=self._tracked_points(old_gray,new_gray,self.box_carrier_points)
+        inliers=self._consistent_group(delta,minimum=8)
+        if inliers is None or not self._spread_supported(current[inliers]):
+            raise RuntimeError('dispatch linked carrier motion ambiguous in TOP RGB')
+        # Preserve the linked robot's colour and foreground identity in the
+        # new image; tracking onto a stationary floor or a peer fails closed.
+        hsv=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
+        orange=cv2.inRange(hsv,np.array((4,95,40),np.uint8),np.array((25,255,255),np.uint8))>0
+        foreground=cv2.absdiff(frame,self.box_background).max(axis=2)>25
+        pixels=np.rint(current[inliers]).astype(int)
+        inside=(pixels[:,0]>=0)&(pixels[:,0]<frame.shape[1])&(pixels[:,1]>=0)&(pixels[:,1]<frame.shape[0])
+        if not np.all(inside) or np.mean(orange[pixels[:,1],pixels[:,0]]&foreground[pixels[:,1],pixels[:,0]])<.6:
+            raise RuntimeError('dispatch linked carrier appearance unresolved in TOP RGB')
+        motion=np.median(delta[inliers],axis=0)
+        if np.linalg.norm(motion)<1:
+            raise RuntimeError('dispatch linked carrier has no fresh TOP RGB motion')
+        self.box_carrier_points=current[inliers].astype(np.float32).reshape(-1,1,2)
+        self.box_carrier_occluded_frames+=1
+        return self.box_center+motion, {
+            'method':'linked TOP RGB carrier motion during cargo occlusion',
+            'linked_feature_count':int(len(delta)),
+            'consistent_features':int(inliers.sum()),
+            'max_cycle_error_px':float(cycle[inliers].max()),
+            'motion_px':motion.tolist(),
+            'occluded_frames':self.box_carrier_occluded_frames,
+            'own_attachment':'fresh validated own RGB required',
+            'uncertainty':'cargo silhouette hidden; proxy center cannot confirm delivery',
+        }
+
+    def observe(self,jpeg, *, own_attachment=None):
         frame=decode(jpeg);h,w=frame.shape[:2]
         if self.obj=='beam':
             feature=self.beam_tracker.observe(jpeg)
@@ -345,12 +486,22 @@ class ImageRoute:
                                    key=lambda i:np.linalg.norm(centers[i]-predicted))
                     if len(choices)>1 and np.linalg.norm(centers[choices[1]]-predicted)-np.linalg.norm(centers[choices[0]]-predicted)>5:
                         choices=choices[:1]
-                if choices:break
+                # A strong mask can split one partially occluded box into two
+                # nearby fragments. Keep the same geometry and motion gates,
+                # but allow an existing lower-saturation mask to join them.
+                # A unique strong candidate still wins immediately.
+                if len(choices)==1:break
             tracking={'method':'cyan component','min_saturation':saturation}
             if binding is not None:tracking['initial_identity']=binding
             if len(choices)==1:
                 i=choices[0];center=centers[i];x,y,bw,bh=stats[i,:4]
                 bounds=np.array([[x,y],[x+bw,y+bh]])
+            elif self.box_previous is not None and self.box_carrier_occluded_frames:
+                # Once the silhouette was lost, unrelated corners near the
+                # proxy must not silently re-establish cargo identity. Only a
+                # fresh cyan component can end the bounded occlusion window.
+                center,tracking=self._track_carrier_under_occlusion(frame,own_attachment)
+                bounds=np.array([center-12,center+12])
             elif self.box_previous is not None:
                 # Follow actual prior RGB appearance when same-colour floor
                 # merges the component. Own-camera attachment must independently
@@ -363,31 +514,34 @@ class ImageRoute:
                 feature_mask[old>90]=0
                 points=cv2.goodFeaturesToTrack(old,30,.01,3,mask=feature_mask)
                 if points is None or len(points)<3:
-                    raise RuntimeError('dispatch box appearance unresolved in TOP RGB')
-                forward,ok,errors=cv2.calcOpticalFlowPyrLK(old,gray,points,None,winSize=(15,15),maxLevel=2)
-                backward,back_ok,_=cv2.calcOpticalFlowPyrLK(gray,old,forward,None,winSize=(15,15),maxLevel=2)
-                cycle=np.linalg.norm(backward-points,axis=2).ravel()
-                delta=(forward-points).reshape(-1,2)
-                valid=(ok.ravel()>0)&(back_ok.ravel()>0)&(cycle<1)&(np.linalg.norm(delta,axis=1)<20)&(errors.ravel()<30)
-                delta=delta[valid];cycle=cycle[valid]
-                if len(delta)<3:raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
+                    if self.box_carrier_points is None:
+                        raise RuntimeError('dispatch box appearance unresolved in TOP RGB')
+                    delta,cycle=np.empty((0,2)),np.empty(0)
+                else:
+                    delta,cycle,_,_=self._tracked_points(old,gray,points)
+                if len(delta)<3 and self.box_carrier_points is None:
+                    raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
                 # A painted edge may supply stationary corners; require a
                 # majority of independently tracked corners to share motion.
-                groups=np.linalg.norm(delta[:,None,:]-delta[None,:,:],axis=2)<1.5
-                inliers=groups[np.argmax(groups.sum(axis=1))]
-                if inliers.sum()<max(3,.6*len(delta)):
-                    raise RuntimeError('dispatch box motion ambiguous in TOP RGB')
-                motion=np.median(delta[inliers],axis=0)
-                center=self.box_center+motion
-                bounds=np.array([center-12,center+12])
-                tracking={'method':'bidirectional RGB feature motion; own attachment independently required',
-                          'feature_count':int(len(delta)),'consistent_features':int(inliers.sum()),
-                          'max_cycle_error_px':float(cycle[inliers].max()),'motion_px':motion.tolist()}
+                inliers=self._consistent_group(delta,minimum=3)
+                if inliers is not None:
+                    motion=np.median(delta[inliers],axis=0)
+                    center=self.box_center+motion
+                    bounds=np.array([center-12,center+12])
+                    tracking={'method':'bidirectional RGB feature motion; own attachment independently required',
+                              'feature_count':int(len(delta)),'consistent_features':int(inliers.sum()),
+                              'max_cycle_error_px':float(cycle[inliers].max()),'motion_px':motion.tolist()}
+                else:
+                    center,tracking=self._track_carrier_under_occlusion(frame,own_attachment)
+                    bounds=np.array([center-12,center+12])
             else:raise RuntimeError('dispatch box unresolved or ambiguous in TOP RGB')
             if self.box_origin is None:self.box_origin=center.copy()
             tracking['static_background']={'reference_sha256':self.box_background_sha,
                 'active':bool(suppress_background),'rgb_difference_threshold':20,
                 'initial_occupied_radius_px':30,'origin_px':self.box_origin.tolist()}
+            if tracking['method']!='linked TOP RGB carrier motion during cargo occlusion':
+                self._link_carrier_features(frame,center)
+                self.box_carrier_occluded_frames=0
             self.box_delta=np.zeros(2) if self.box_center is None else center-self.box_center
             self.box_center=center.copy();self.box_previous=frame.copy()
 
@@ -436,6 +590,11 @@ class ImageRoute:
         tolerance=4 if self.index==len(self.points)-1 else 6
         ready=float(np.max(np.abs(error))) <= tolerance
         slot_evidence=None
+        if (self.obj=='box' and self.index==len(self.points)-1
+                and tracking['method']=='linked TOP RGB carrier motion during cargo occlusion'):
+            # The proxy can guide travel, but hidden cargo cannot establish
+            # final slot containment or authorize release.
+            raise RuntimeError('dispatch box delivery requires fresh cargo silhouette in TOP RGB')
         if self.obj=='box' and self.index==len(self.points)-1:
             # Delivery is containment in an authored floor region. Continuing
             # toward its exact centre can push the carrier into released cargo.
@@ -471,8 +630,19 @@ class ImageRoute:
         if slot_evidence is not None:evidence['destination_region']=slot_evidence
         if ready and self.confirmations>=2 and not done:
             self.index+=1;self.confirmations=0
-        control=np.clip(error*.002,-.08,.08)
+        # More authority only on known independent open-map cargo routes.
+        # The same proportional gain decelerates near every waypoint; final
+        # beam alignment and box containment keep their original caps.
+        cruise=(self.obj in ('beam','box') and self.route_overlap
+                and self.map.get('map_id')=='dispatch_open'
+                and not self.map.get('terrain')
+                and all(o.get('id') in {'wall_north','wall_south','wall_west','wall_east'}
+                        for o in self.map.get('obstacles',[]))
+                and evidence['waypoint_index']<len(self.points)-1)
+        limits=np.array([.12,.10]) if cruise else np.array([.08,.08])
+        control=np.clip(error*.002,-limits,limits)
         control[0]=max(-.05,control[0])
+        if cruise:evidence['cruise_command_limits']={'forward':.12,'left':.10,'reverse':.05}
         if ready:control[:]=0
         else:
             for i in range(2):
@@ -481,6 +651,55 @@ class ImageRoute:
         action={'kind':'mecanum','forward':float(control[0]),'left':float(-control[1]),
                 'turn':0.,'duration_s':.2}
         return action,evidence
+
+
+def _coarse_small_components(yellow):
+    """Keep the original <=300-pixel components with one label lookup."""
+    n, labels, stats, _ = cv2.connectedComponentsWithStats(yellow)
+    keep = np.zeros(n, dtype=np.uint8)
+    keep[1:] = (stats[1:, 4] <= 300).astype(np.uint8) * 255
+    clean = keep[labels]
+    return clean, int(np.count_nonzero(keep[1:])), int(np.count_nonzero(clean))
+
+
+@lru_cache(maxsize=4)
+def _cached_coarse_raw_mask(raw_top):
+    """State-free TOP segmentation, shared only by calls with identical JPEGs."""
+    frame = decode(raw_top)
+    h, w = frame.shape[:2]
+    if (w, h) != (960, 720):
+        raise ValueError('pair coarse TOP requires calibrated 960x720 pixels')
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    yellow = cv2.inRange(hsv, np.array((20, 70, 50), np.uint8),
+                         np.array((40, 255, 255), np.uint8))
+    clean, count, pixels = _coarse_small_components(yellow)
+    clean.setflags(write=False)
+    return clean, int(np.count_nonzero(yellow)), count, pixels
+
+
+def _coarse_raw_mask(raw_top):
+    clean, yellow_pixels, count, pixels = _cached_coarse_raw_mask(raw_top)
+    return clean.copy(), yellow_pixels, count, pixels
+
+
+@lru_cache(maxsize=4)
+def _cached_coarse_beam(raw_top):
+    return beam_feature(raw_top)
+
+
+def _coarse_beam(raw_top):
+    """Pure beam candidates are reused; callers receive their own copy."""
+    return copy.deepcopy(_cached_coarse_beam(raw_top))
+
+
+@lru_cache(maxsize=8)
+def _cached_coarse_reference_lane(reference, slot):
+    from harness.camera_goal_transport import lane_features
+    return lane_features(reference, slot)
+
+
+def _coarse_reference_lane(reference, slot):
+    return copy.deepcopy(_cached_coarse_reference_lane(reference, slot))
 
 
 class PairCoarsePixels:
@@ -503,37 +722,30 @@ class PairCoarsePixels:
             self.centers[slot]=np.array(claim['center'])*[width,height]
 
     def decide(self, raw_top, slot):
-        from harness.camera_goal_transport import lane_features, wheel_heading
-        frame=decode(raw_top);h,w=frame.shape[:2]
-        if (w,h)!=(960,720):
-            raise ValueError('pair coarse TOP requires calibrated 960x720 pixels')
-        hsv=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
-        yellow=cv2.inRange(hsv,np.array((20,70,50),np.uint8),np.array((40,255,255),np.uint8))
-        n,labels,stats,_=cv2.connectedComponentsWithStats(yellow)
-        clean=np.zeros_like(yellow)
-        selected_components=0
-        for i in range(1,n):
-            if stats[i,4]<=300:
-                clean[labels==i]=255
-                selected_components+=1
-        component_pixels=int(np.count_nonzero(clean))
+        from harness.camera_goal_transport import wheel_heading
+        if not isinstance(raw_top, bytes) or not raw_top:
+            raise ValueError('nonempty JPEG required')
+        clean, raw_yellow_pixels, selected_components, component_pixels = _coarse_raw_mask(raw_top)
+        h,w=clean.shape
         cx,cy=self.centers[slot]
         yy,xx=np.indices(clean.shape)
         clean[(abs(xx-cx)>55)|(abs(yy-cy)>48)]=0
         ys,xs=np.nonzero(clean)
-        mask={'raw_yellow_pixels':int(np.count_nonzero(yellow)),
+        mask={'raw_yellow_pixels':raw_yellow_pixels,
               'small_component_pixels':component_pixels,
               'small_component_count':selected_components,
               'local_wheel_pixels':int(len(xs)),
               'crop_center_px':[float(cx),float(cy)],
               'crop_half_size_px':[55,48], 'heading_tolerance_px':2.}
         heading=wheel_heading(clean,pixel_tolerance=2.)
-        if heading is None:
+        if not 80 <= len(xs) <= 700:
             return dict(ok=False,ready=False,forward=0.,left=0.,turn=0.,
                         reason='own_wheel_heading_unresolved',mask=mask)
-        center=np.array([xs.mean(),ys.mean()]);self.centers[slot]=center
+        center=np.array([xs.mean(),ys.mean()])
+        if heading is not None:self.centers[slot]=center
         try:
-            beam=beam_feature(raw_top);ref=lane_features(self.reference,slot)
+            beam=_coarse_beam(raw_top)
+            ref=_coarse_reference_lane(self.reference,slot)
         except ValueError as error:
             return dict(ok=False,ready=False,forward=0.,left=0.,turn=0.,
                         reason='payload_or_reference_unresolved',detail=str(error),
@@ -543,6 +755,13 @@ class PairCoarsePixels:
                         reason='reference_lane_unresolved',wheel_center_px=center.tolist(),
                         heading=heading,mask=mask)
         gap=(np.array(beam['center'])-center/[w,h])-np.array([ref['beam_x']-ref['robot_x'],ref['beam_y']-ref['robot_y']])
+        if heading is None:
+            # Translation remains observable even when the four-corner yaw
+            # estimator has no support. This is never a coarse motion permit;
+            # only the separate six-model, stopped-RGB handoff may use it.
+            return dict(ok=False,ready=False,forward=0.,left=0.,turn=0.,
+                        reason='own_wheel_heading_unresolved',mask=mask,
+                        wheel_center_px=center.tolist(),image_error=gap.tolist())
         angle=heading['angle_deg'];angle_ready=abs(angle)<=1.5
         lateral_ready=abs(gap[1])<=.003
         ready=gap[0]<=.065 and angle_ready and lateral_ready

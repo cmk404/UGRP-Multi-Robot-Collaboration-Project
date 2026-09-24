@@ -1,5 +1,6 @@
 import hashlib
 import json
+import copy
 import pytest
 
 from harness.carry_input_history import window_indices, wire_request
@@ -63,3 +64,96 @@ def test_changed_inputs_cannot_be_admitted(tmp_path, damage):
         path = tmp_path/'issued-commands.json'; issued = json.loads(path.read_text())
         issued['physical-a'][0]['action']['forward'] = .5; path.write_text(json.dumps(issued))
     with pytest.raises(ValueError): audit(tmp_path, calls)
+
+
+def test_stale_retry_reconstructed_but_not_added_to_history_or_previous(tmp_path):
+    calls = fixture(tmp_path)
+    stale = copy.deepcopy(calls[1])
+    stale.update(kind='act_stale_prediction', observed_at_s=.1,
+                 received_at_s=.19, frame_id=101)
+    stale.pop('sim_time_s')
+    stale.pop('actions')
+    for slot, inp in stale['inputs'].items():
+        images = {}
+        for name in ('own', 'top'):
+            payload = f'stale-{slot}-{name}'.encode()
+            filename = f'stale-{slot}-{name}.jpg'
+            (tmp_path/filename).write_bytes(payload)
+            images[name] = {'path': filename,
+                            'sha256': hashlib.sha256(payload).hexdigest()}
+        inp.update(images=images, frame_id=101, observed_at_s=.1)
+        inp['history'][-1].update(images=images, sim_time_s=.1, frame_id=101)
+        frames = [{'own_rgb': (tmp_path/f['images']['own']['path']).read_bytes(),
+                   'top_rgb': (tmp_path/f['images']['top']['path']).read_bytes(),
+                   'context': f['context']} for f in inp['history']]
+        payload = json.dumps(wire_request(frames, 4)) + '\n'
+        inp['wire_sha256'] = hashlib.sha256(payload.encode()).hexdigest()
+    stale['decisions'] = {'r1': {'done': False}, 'r3': {'done': False}}
+    result = audit(tmp_path, [calls[0], stale, calls[1], calls[2]])
+    assert result['requests'] == 8
+    assert result['accepted_decisions'] == 3
+    assert result['stale_predictions'] == 1
+    stale['inputs']['r1']['history'][-1]['frame_id'] = 999
+    with pytest.raises(ValueError, match='history'):
+        audit(tmp_path, [calls[0], stale, calls[1], calls[2]])
+
+
+def test_capture_timestamp_is_distinct_from_decision_time(tmp_path):
+    calls = fixture(tmp_path)
+    row = calls[1]
+    for inp in row['inputs'].values():
+        inp['observed_at_s'] = .15
+        inp['frame_id'] = 1
+        inp['history'][-1]['sim_time_s'] = .15
+    assert audit(tmp_path, calls)['passed']
+    for inp in row['inputs'].values():
+        inp['observed_at_s'] = .21
+    with pytest.raises(ValueError, match='capture time'):
+        audit(tmp_path, calls)
+
+
+def test_pair_capture_provenance_must_be_coherent(tmp_path):
+    calls = fixture(tmp_path)
+    for inp in calls[1]['inputs'].values():
+        inp['observed_at_s'] = .15
+        inp['frame_id'] = 1
+        inp['history'][-1]['sim_time_s'] = .15
+    calls[1]['inputs']['r3']['frame_id'] = 2
+    with pytest.raises(ValueError, match='not coherent'):
+        audit(tmp_path, calls)
+
+
+def test_issue_receipt_requires_actual_pair_commands(tmp_path):
+    calls = fixture(tmp_path)
+    receipt = {'kind': 'act_issue', 'index': 0, 'issued_at_s': 0.,
+               'actions': calls[0]['actions']}
+    assert audit(tmp_path, [calls[0], receipt, *calls[1:]])['passed']
+    issued_path = tmp_path/'issued-commands.json'
+    issued = json.loads(issued_path.read_text())
+    issued['physical-b'].pop(0)
+    issued_path.write_text(json.dumps(issued))
+    with pytest.raises(ValueError, match='no issued commands'):
+        audit(tmp_path, [calls[0], receipt, *calls[1:]])
+
+
+def test_partial_inference_error_attempt_is_audited_without_adoption(tmp_path):
+    calls = fixture(tmp_path)
+    error = copy.deepcopy(calls[1])
+    error.update(kind='act_inference_error', frame_id=1,
+                 observed_at_s=.1, received_at_s=.2,
+                 error='RuntimeError: worker exited')
+    error.pop('sim_time_s')
+    error.pop('actions')
+    error['decisions'] = {'r1': {'done': False}}
+    for slot, inp in error['inputs'].items():
+        inp.update(frame_id=1, observed_at_s=.1,
+                   response_received=slot=='r1')
+        inp['history'][-1]['sim_time_s'] = .1
+    result = audit(tmp_path, [calls[0], error])
+    assert result['requests'] == 4
+    assert result['completed_responses'] == 3
+    assert result['accepted_decisions'] == 1
+    assert result['inference_error_rows'] == 1
+    error['inputs']['r3'].pop('wire_sha256')
+    with pytest.raises(ValueError, match='wire hash'):
+        audit(tmp_path, [calls[0], error])

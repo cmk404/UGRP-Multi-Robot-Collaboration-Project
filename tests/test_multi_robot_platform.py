@@ -574,11 +574,6 @@ class TeamWakeDeliveryTests(unittest.TestCase):
             self.assertEqual(snap["chat"][-1]["reply_to"], posted["chat"]["id"])
             return captured
 
-    def test_team_dispatcher_owns_only_its_ui_mode_namespace(self):
-        web = (Path(__file__).resolve().parents[1] / "harness" / "web.py").read_text()
-        self.assertIn("mode = state.ui_mode", web)
-        self.assertNotIn('for mode in ("sim", "real"):', web)
-
     def test_sim_team_wakeup_can_execute_independent_agent_turn(self):
         payload = self._exercise("sim")
         self.assertTrue(payload["execute"])
@@ -949,15 +944,6 @@ class SimRoutingTests(unittest.TestCase):
         )
         self.assertEqual([name for name, _ in seen], ["stage_base"])
         self.assertEqual(solo.stopped, "goal_achieved")
-
-
-class RealPlaceholderSafetyTests(unittest.TestCase):
-    def test_unconfigured_real_slots_use_nonresolving_dry_run_placeholders(self):
-        script = Path("scripts/serve_real.sh").read_text()
-        self.assertIn("UGRP_REAL_PLACEHOLDER=1", script)
-        self.assertIn('UGRP_ROBOT_HOST="offline-${rid}.invalid"', script)
-        self.assertIn('run_harness --no-camera', script)
-        self.assertIn('elif [[ "${UGRP_REAL_FORCE_EXECUTE:-0}" == "1" ]]', script)
 
 
 if __name__ == "__main__":

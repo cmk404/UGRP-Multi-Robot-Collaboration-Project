@@ -1,0 +1,390 @@
+{
+  "schema": "ugrp.independent_realtime_dispatch_v19_grasp_repeat_audit.v1",
+  "checked_at_utc": "2026-09-23T16:45:54.493295+00:00",
+  "source_sha": "1fed936645d8c61bdbea99ec54d7cb09fd719d78",
+  "bundle_sha256": "5516e639e7a31029a7cfb2a5d92844eeee784e32a8aca629735bac8e0dc16e32",
+  "condition": "open seed11 saved plan; --overlap-start grasp; native full repeat",
+  "manager": {
+    "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260924-014030-dispatch-5020d320/manifest.json",
+    "sha256": "fdabb23f97fd8e0d113ecb8523948bfbf4bcaa44d48982d0bc7aee374653fe46",
+    "status": "process_completed",
+    "exit_code": 0,
+    "source_dirty": false,
+    "source_changed_during_run": false,
+    "inputs_changed_during_run": false,
+    "input_before_after_equal": true,
+    "source_tree_before_sha256": "a539f96ba3c44f3b59756a9cad8891faed25cb6eb1562e919425f66c2996489a",
+    "source_tree_after_sha256": "a539f96ba3c44f3b59756a9cad8891faed25cb6eb1562e919425f66c2996489a",
+    "finalization_errors": []
+  },
+  "same_grasp_source_and_inputs": {
+    "same_execution_tree": true,
+    "same_inputs": true,
+    "same_argv_except_output": true,
+    "same_bundle": true
+  },
+  "result": {
+    "phase": "FINISHED",
+    "error": null,
+    "physical_success": true,
+    "protocol_complete": true,
+    "wall_s": 196.1035526249907,
+    "timing": {
+      "scene_and_observer_setup_wall_s": 1.6470922499865992,
+      "scope": "output-only SIM/wall measurements; wall_s includes finalization",
+      "control_end_sim_s": 192.24999999718187,
+      "control_wall_s": 194.72446120799577,
+      "motion_wall_s": 187.2993460830039,
+      "motion_sim_s": 187.04999999718126,
+      "motion_sim_to_wall": 0.9986687295442443,
+      "cleanup_wall_s": 1.3790923749911599
+    },
+    "llm_calls": 0,
+    "realtime_control_stats": {
+      "solo_backpressure": 8,
+      "solo_stale_rgb": 0,
+      "solo_decisions": 480,
+      "pair_backpressure": 67,
+      "pair_decisions": 92,
+      "max_decision_age_s": 0.4932499999883362,
+      "solo_total_sim_s": 186.94949999718364,
+      "solo_active_sim_s": 186.94949999718364,
+      "solo_resource_wait_sim_s": 0.0,
+      "solo_resource_waiting": false,
+      "solo_resource_wait_intervals": 0,
+      "solo_active_budget_s": 300.0,
+      "pair_stage_stale_rgb": 0,
+      "pair_stage_samples": 288
+    },
+    "plan_replay_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+    "overlap_selection": {
+      "mode": "auto",
+      "enabled": true,
+      "reason": "independent_open_routes",
+      "plan_hash": "c2f420b7d1eb537334502b0eebe14161ffc0468f058bb5230e3d31c39281e45c",
+      "beam_route": "north",
+      "box_route": "south",
+      "beam_resource": "north_gate",
+      "box_resource": "south_gate",
+      "overlap_start": "grasp"
+    }
+  },
+  "referee": {
+    "physical_success": true,
+    "cargo": {
+      "beam": {
+        "max_lift_m": 0.07753027875862536,
+        "displacement_m": 1.6879492824179272,
+        "lift_observed_by_referee": true,
+        "inside_slot_at_end": true,
+        "released_supported_stable": true,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 260,
+          "floor_contact_samples": 0,
+          "window_s": [
+            99.13999999938362,
+            125.119999998774
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999763531,
+          "first_floor_contact_s": null
+        },
+        "physical_success": true
+      },
+      "box": {
+        "max_lift_m": 0.06872707957693872,
+        "displacement_m": 2.3036417474388027,
+        "lift_observed_by_referee": true,
+        "inside_slot_at_end": true,
+        "released_supported_stable": true,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 757,
+          "floor_contact_samples": 0,
+          "window_s": [
+            103.78199999927385,
+            179.4747499974887
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999764952,
+          "first_floor_contact_s": null
+        },
+        "physical_success": true
+      }
+    },
+    "simultaneous_loaded_motion_s": 3.499999999917236,
+    "weld_steps": 0,
+    "robot_robot_contact_samples": 0,
+    "all_three_body_motion_sim_s": 12.399999999766464,
+    "beam_loaded_window_s": [
+      99.13999999938362,
+      125.119999998774
+    ],
+    "box_loaded_window_s": [
+      103.78199999927385,
+      179.4747499974887
+    ],
+    "both_loaded_window_s": [
+      103.78199999927385,
+      125.119999998774
+    ],
+    "both_loaded_window_duration_s": 21.337999999500155
+  },
+  "resource_arbitration": {
+    "event_sequence": [
+      {
+        "event": "acquire",
+        "object": "beam",
+        "resource": "north_gate",
+        "stage": "GRASP"
+      },
+      {
+        "event": "acquire",
+        "object": "box",
+        "resource": "south_gate",
+        "stage": "GRASP"
+      },
+      {
+        "event": "acquire",
+        "object": "beam",
+        "resource": "dispatch_apron",
+        "stage": "UNLOAD"
+      },
+      {
+        "event": "finish",
+        "object": "beam",
+        "released": [
+          "north_gate",
+          "dispatch_apron"
+        ]
+      },
+      {
+        "event": "acquire",
+        "object": "box",
+        "resource": "dispatch_apron",
+        "stage": "UNLOAD"
+      },
+      {
+        "event": "finish",
+        "object": "box",
+        "released": [
+          "south_gate",
+          "dispatch_apron"
+        ]
+      }
+    ],
+    "beam_then_box_apron_exclusion_order": true,
+    "solo_resource_wait_sim_s": 0.0,
+    "scope": "Resource event order has no timestamps; sampled contact and strict motion separately recorded."
+  },
+  "core_files": {
+    "result.json": {
+      "sha256": "4201e1d2c65010ccb3c4dc2f2fa2a7991b03b91f1107795c895776289d91d117",
+      "bytes": 6017345,
+      "matches_receipt": true
+    },
+    "issued-commands.json": {
+      "sha256": "f90095bc3b4e4b0141d9ffeff5e98f84f234d97ffa7540b6eb41e78caf9e3f49",
+      "bytes": 501129,
+      "matches_receipt": true
+    },
+    "referee-only.jsonl": {
+      "sha256": "d82f3f8af7cbb1ca2a1a2e13b57c3a447dfc12282404fc5d701ad35950873bd0",
+      "bytes": 2844784,
+      "matches_receipt": true
+    },
+    "pair-decisions.json": {
+      "sha256": "891f1578aed39666f12b7ab739ed80578b488539cbcab90c7486828f96401fcc",
+      "bytes": 8450525,
+      "matches_receipt": true
+    },
+    "solo-decisions.json": {
+      "sha256": "d594184c5f80d292b383f2d3b9e9f149dda7be44787e55d6533e947bffc08c3e",
+      "bytes": 2359830,
+      "matches_receipt": true
+    },
+    "execution.mp4": {
+      "sha256": "130ff7c778a31383e3021aa70acfa46156a5277ddb77956d8345c3a28ee8f024",
+      "bytes": 2082603,
+      "matches_receipt": true
+    },
+    "execution.frames.json": {
+      "sha256": "327d7eec752107c0df4f63bb08a3c7f2af6a4ea60c6c745c8b83298edb9a27eb",
+      "bytes": 279309,
+      "matches_receipt": true
+    },
+    "native-observer.json": {
+      "sha256": "26a6081d72792a63b7e648a44136bf15da156ee00f52bf8e5a85779f267aa271",
+      "bytes": 78,
+      "matches_receipt": true
+    },
+    "evaluation-only.json": {
+      "sha256": "cbf98524ec9f317cdb3fa617927bd46cd4cf67fa506cddeb44d8acc1712116e4",
+      "bytes": 4283,
+      "matches_receipt": true
+    }
+  },
+  "pair_carry": {
+    "count": 92,
+    "analysis_backend_counts": {
+      "spawn_cpu": 92
+    },
+    "permission_go": 92,
+    "held_estimate_true_counts": {
+      "r1": 92,
+      "r3": 92
+    },
+    "control_valid_count": 92,
+    "frame_ids_strict_increasing": true,
+    "observed_at_monotone": true,
+    "age_s": {
+      "count": 92,
+      "min": 0.17374999999589136,
+      "median": 0.18812499999555143,
+      "p95": 0.23524999999443708,
+      "max": 0.3217499999923916,
+      "sum": 17.997999999574404
+    },
+    "period_s": {
+      "count": 91,
+      "min": 0.13999999999668944,
+      "median": 0.29999999999290594,
+      "p95": 0.35999999999148713,
+      "max": 0.5099999999879401,
+      "sum": 25.779999999390384
+    },
+    "effective_lease_s": {
+      "count": 92,
+      "min": 0.2,
+      "median": 0.25,
+      "p95": 0.25,
+      "max": 0.25,
+      "sum": 22.55
+    },
+    "pending_renewal": {
+      "count": 60,
+      "duration_s": {
+        "count": 60,
+        "min": 0.06000000001276362,
+        "median": 0.17250000001010335,
+        "p95": 0.17925000000994373,
+        "max": 0.18100000000990235,
+        "sum": 9.887500000617138
+      },
+      "invariant_errors": []
+    },
+    "command_coverage": {
+      "r1": {
+        "with_renewal": {
+          "moving_command_union_s": 22.507749999550498,
+          "positive_gap": {
+            "count": 6,
+            "min": 0.05974999998440467,
+            "median": 0.15624999998212274,
+            "p95": 0.5099999999820284,
+            "max": 1.1699999999664215,
+            "sum": 2.1504999998805943
+          }
+        },
+        "original_only": {
+          "moving_command_union_s": 19.159999999913452,
+          "positive_gap": {
+            "count": 61,
+            "min": 0.02999999999337888,
+            "median": 0.04999999999290594,
+            "p95": 0.18999999998959538,
+            "max": 1.1699999999664215,
+            "sum": 5.359999999512638
+          }
+        }
+      },
+      "r3": {
+        "with_renewal": {
+          "moving_command_union_s": 22.507749999550498,
+          "positive_gap": {
+            "count": 6,
+            "min": 0.05974999998440467,
+            "median": 0.15624999998212274,
+            "p95": 0.5099999999820284,
+            "max": 1.1699999999664215,
+            "sum": 2.1504999998805943
+          }
+        },
+        "original_only": {
+          "moving_command_union_s": 19.159999999913452,
+          "positive_gap": {
+            "count": 61,
+            "min": 0.02999999999337888,
+            "median": 0.04999999999290594,
+            "p95": 0.18999999998959538,
+            "max": 1.1699999999664215,
+            "sum": 5.359999999512638
+          }
+        }
+      }
+    },
+    "partial_pipeline": {
+      "rows": 92,
+      "positive_overlap_count": 92,
+      "top_cpu_overlap_own_render_wall_s": {
+        "count": 92,
+        "min": 0.06810616700386163,
+        "median": 0.0881760629999917,
+        "p95": 0.09732295799767599,
+        "max": 0.3414971250022063,
+        "sum": 8.670298042939976
+      },
+      "timestamp_invariant_errors": []
+    }
+  },
+  "solo": {
+    "rows": 480,
+    "actual_decisions": 480,
+    "resource_drops": 0,
+    "budget_margin_decisions": 120
+  },
+  "video": {
+    "requested_fps": 10,
+    "written_frames": 1923,
+    "captured_frames": 1205,
+    "repeated_frames": 718,
+    "error": null,
+    "ffprobe_decoded_frames": 1923,
+    "media_range_206_matches_source": true,
+    "media_id": "370403b34029a53eac00"
+  },
+  "tensorboard": {
+    "path": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단/v19-grasp-repeat",
+    "manifest_complete": true,
+    "scalars": {
+      "result/wall_s": 196.10354614257812,
+      "result/commands": 1235.0,
+      "result/model_calls": 0.0,
+      "result/input_tokens": 0.0,
+      "result/output_tokens": 0.0,
+      "result/model_latency_s": 0.0,
+      "result/recorded_raw_commands": 1175.0,
+      "evaluation/simultaneous_loaded_motion_s": 3.5,
+      "evaluation/robot_robot_contact_samples": 0.0,
+      "evaluation/reported_success": 1.0,
+      "claims/protocol_complete": 1.0,
+      "claims/plan_committed": 1.0
+    }
+  },
+  "cohort_scope": {
+    "same_saved_plan_grasp_trials": 2,
+    "physical_and_protocol_successes": 2,
+    "strict_loaded_motion_s_first_and_repeat": [
+      6.999999999834472,
+      3.499999999917236
+    ],
+    "whole_wall_s_first_and_repeat": [
+      200.92883170799178,
+      196.1035526249907
+    ],
+    "trial_budget_exhausted": true,
+    "limits": "One open map and seed11 saved plan. Contacts sampled only; no claim between samples. Not fresh LLM communication efficacy, general map/seed reliability or hardware transfer."
+  },
+  "errors": []
+}

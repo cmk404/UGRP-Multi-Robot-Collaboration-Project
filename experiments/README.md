@@ -1,5 +1,7 @@
 # 실험 인덱스
 
+- [2026-09-23 로컬 dispatch 속도·병렬 실행](2026-09-23-local-dispatch-performance/README.md): 동일 계획 headless 367→285초, 최종 MuJoCo 창331초 완주; 동시 적재 이동·중간 실패·SIM/wall 시간과 원본 해시를 구분.
+
 현재 코드의 진입점은 [현재 상태](../docs/current_status.md)를 참고한다. 아래는 실행 SHA별 보존 기록이며 과거 실패와 후속 결과를 함께 남긴다. 필요한 ID만 골라 읽는다.
 
 - [2026-09-23 표준 시뮬레이션 지도·로컬 실행 검증](2026-09-23-standard-simulation-refinement/README.md) — 관리 CLI에서 지도 22종 정적 검사·MuJoCo 창/영상 실행, 원본 해시와 TensorBoard 스냅샷; 학습·운반 성공 판정은 미실행.

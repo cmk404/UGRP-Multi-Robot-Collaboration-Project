@@ -1,0 +1,512 @@
+{
+  "scope": "Read-only retrospective of two existing open/seed11 recorded-plan v19 grasp-overlap runs; SIM times are post-run measurements, not control inputs. No new physical run, model call, or video hash.",
+  "method": "Pair boundaries from pair-decisions ordered records and issued commands; box phase and waypoint boundaries from solo-decisions; command coverage is the union of issued_at_s to valid_until_s; cap count tests abs(forward or left)>=0.0799 among carry mecanum actions. Linear saving is an algebraic estimate, not a measured outcome.",
+  "runs": [
+    {
+      "run": "native-v19-grasp-full",
+      "source_sha": "1fed936645d8c61bdbea99ec54d7cb09fd719d78",
+      "wall_s": 200.929,
+      "control_end_sim_s": 195.81,
+      "motion_sim_to_wall": 0.9946,
+      "physical_success": true,
+      "protocol_complete": true,
+      "pair_stage_timeline_sim_s": {
+        "coarse_first": 5.56,
+        "coarse_last": 31.54,
+        "fine_complete": 85.39,
+        "dock_first": 85.86,
+        "dock_last": 87.0,
+        "first_grasp_command": 87.2,
+        "grasp_lift_command": 103.99,
+        "first_carry_decision": 107.64,
+        "last_carry_decision": 135.02,
+        "visual_placement_complete": 142.71
+      },
+      "box_phase_timeline_sim_s": {
+        "approach": {
+          "first_sim_s": 5.618,
+          "last_sim_s": 87.259,
+          "decisions": 86
+        },
+        "lower": {
+          "first_sim_s": 88.914,
+          "last_sim_s": 95.647,
+          "decisions": 16
+        },
+        "close": {
+          "first_sim_s": 96.8,
+          "last_sim_s": 96.8,
+          "decisions": 1
+        },
+        "lift": {
+          "first_sim_s": 97.246,
+          "last_sim_s": 103.696,
+          "decisions": 15
+        },
+        "verify_lift": {
+          "first_sim_s": 104.82,
+          "last_sim_s": 104.82,
+          "decisions": 1
+        },
+        "attachment_left": {
+          "first_sim_s": 105.671,
+          "last_sim_s": 105.671,
+          "decisions": 1
+        },
+        "attachment_right": {
+          "first_sim_s": 106.551,
+          "last_sim_s": 106.551,
+          "decisions": 1
+        },
+        "attachment_home": {
+          "first_sim_s": 107.42,
+          "last_sim_s": 107.42,
+          "decisions": 1
+        },
+        "carry": {
+          "first_sim_s": 107.713,
+          "last_sim_s": 183.573,
+          "decisions": 316
+        },
+        "release": {
+          "first_sim_s": 183.776,
+          "last_sim_s": 190.474,
+          "decisions": 16
+        },
+        "open": {
+          "first_sim_s": 190.943,
+          "last_sim_s": 190.943,
+          "decisions": 1
+        },
+        "retract": {
+          "first_sim_s": 191.951,
+          "last_sim_s": 191.951,
+          "decisions": 1
+        },
+        "verify_release": {
+          "first_sim_s": 194.193,
+          "last_sim_s": 194.193,
+          "decisions": 1
+        },
+        "release_ground_left": {
+          "first_sim_s": 194.745,
+          "last_sim_s": 194.745,
+          "decisions": 1
+        },
+        "release_ground_right": {
+          "first_sim_s": 195.265,
+          "last_sim_s": 195.265,
+          "decisions": 1
+        },
+        "release_ground_home": {
+          "first_sim_s": 195.808,
+          "last_sim_s": 195.808,
+          "decisions": 1
+        }
+      },
+      "box_pregrasp_resource_wait_sim_s": 8.696,
+      "box_carry": {
+        "first_decision_sim_s": 107.713,
+        "last_decision_sim_s": 183.573,
+        "span_sim_s": 75.86,
+        "motion_decisions": 315,
+        "at_0_08_cap": 199,
+        "cap_fraction": 0.6317,
+        "nominal_capped_command_s_at_0_2_each": 39.8,
+        "nominal_linear_time_saving_if_cap_0_12": 13.267,
+        "cadence_wait_sum_s": 9.223,
+        "median_decision_age_s": 0.153,
+        "issued_command_span_sim_s": 75.904,
+        "issued_command_union_sim_s": 65.282,
+        "issued_command_gap_sim_s": 10.623,
+        "waypoints": [
+          {
+            "index": 0,
+            "first_decision_sim_s": 107.713,
+            "last_decision_sim_s": 121.404,
+            "span_sim_s": 13.691,
+            "decisions": 44,
+            "at_0_08_cap": 1,
+            "first_box_center_px": [
+              274.2,
+              545.35
+            ],
+            "last_box_center_px": [
+              279.44,
+              580.93
+            ],
+            "cadence_wait_sum_s": 0.0
+          },
+          {
+            "index": 1,
+            "first_decision_sim_s": 121.937,
+            "last_decision_sim_s": 144.87,
+            "span_sim_s": 22.932,
+            "decisions": 87,
+            "at_0_08_cap": 72,
+            "first_box_center_px": [
+              279.44,
+              580.93
+            ],
+            "last_box_center_px": [
+              571.83,
+              581.22
+            ],
+            "cadence_wait_sum_s": 1.784
+          },
+          {
+            "index": 2,
+            "first_decision_sim_s": 145.183,
+            "last_decision_sim_s": 148.686,
+            "span_sim_s": 3.503,
+            "decisions": 18,
+            "at_0_08_cap": 9,
+            "first_box_center_px": [
+              571.83,
+              581.22
+            ],
+            "last_box_center_px": [
+              639.94,
+              580.89
+            ],
+            "cadence_wait_sum_s": 0.424
+          },
+          {
+            "index": 3,
+            "first_decision_sim_s": 148.996,
+            "last_decision_sim_s": 159.7,
+            "span_sim_s": 10.704,
+            "decisions": 54,
+            "at_0_08_cap": 44,
+            "first_box_center_px": [
+              641.1,
+              579.9
+            ],
+            "last_box_center_px": [
+              633.32,
+              361.56
+            ],
+            "cadence_wait_sum_s": 1.558
+          },
+          {
+            "index": 4,
+            "first_decision_sim_s": 160.068,
+            "last_decision_sim_s": 169.875,
+            "span_sim_s": 9.806,
+            "decisions": 49,
+            "at_0_08_cap": 37,
+            "first_box_center_px": [
+              633.3,
+              361.56
+            ],
+            "last_box_center_px": [
+              886.14,
+              355.15
+            ],
+            "cadence_wait_sum_s": 2.522
+          },
+          {
+            "index": 5,
+            "first_decision_sim_s": 170.208,
+            "last_decision_sim_s": 179.727,
+            "span_sim_s": 9.519,
+            "decisions": 46,
+            "at_0_08_cap": 36,
+            "first_box_center_px": [
+              886.13,
+              355.15
+            ],
+            "last_box_center_px": [
+              877.99,
+              179.18
+            ],
+            "cadence_wait_sum_s": 2.071
+          },
+          {
+            "index": 6,
+            "first_decision_sim_s": 180.074,
+            "last_decision_sim_s": 183.213,
+            "span_sim_s": 3.139,
+            "decisions": 17,
+            "at_0_08_cap": 0,
+            "first_box_center_px": [
+              877.99,
+              179.18
+            ],
+            "last_box_center_px": [
+              839.28,
+              180.53
+            ],
+            "cadence_wait_sum_s": 0.864
+          }
+        ]
+      },
+      "evidence_files": [
+        "outputs/simulation-realtime-20260923/native-v19-grasp-full/result.json",
+        "outputs/simulation-realtime-20260923/native-v19-grasp-full/pair-decisions.json",
+        "outputs/simulation-realtime-20260923/native-v19-grasp-full/solo-decisions.json",
+        "outputs/simulation-realtime-20260923/native-v19-grasp-full/issued-commands.json"
+      ]
+    },
+    {
+      "run": "native-v19-grasp-repeat",
+      "source_sha": "1fed936645d8c61bdbea99ec54d7cb09fd719d78",
+      "wall_s": 196.104,
+      "control_end_sim_s": 192.25,
+      "motion_sim_to_wall": 0.9987,
+      "physical_success": true,
+      "protocol_complete": true,
+      "pair_stage_timeline_sim_s": {
+        "coarse_first": 5.52,
+        "coarse_last": 25.34,
+        "fine_complete": 76.57,
+        "dock_first": 77.38,
+        "dock_last": 78.6,
+        "first_grasp_command": 78.8,
+        "grasp_lift_command": 95.39,
+        "first_carry_decision": 99.14,
+        "last_carry_decision": 124.92,
+        "visual_placement_complete": 132.15
+      },
+      "box_phase_timeline_sim_s": {
+        "approach": {
+          "first_sim_s": 5.567,
+          "last_sim_s": 82.493,
+          "decisions": 92
+        },
+        "lower": {
+          "first_sim_s": 84.224,
+          "last_sim_s": 91.05,
+          "decisions": 16
+        },
+        "close": {
+          "first_sim_s": 92.06,
+          "last_sim_s": 92.06,
+          "decisions": 1
+        },
+        "lift": {
+          "first_sim_s": 92.494,
+          "last_sim_s": 99.236,
+          "decisions": 15
+        },
+        "verify_lift": {
+          "first_sim_s": 100.5,
+          "last_sim_s": 100.5,
+          "decisions": 1
+        },
+        "attachment_left": {
+          "first_sim_s": 101.573,
+          "last_sim_s": 101.573,
+          "decisions": 1
+        },
+        "attachment_right": {
+          "first_sim_s": 102.642,
+          "last_sim_s": 102.642,
+          "decisions": 1
+        },
+        "attachment_home": {
+          "first_sim_s": 103.782,
+          "last_sim_s": 103.782,
+          "decisions": 1
+        },
+        "carry": {
+          "first_sim_s": 104.222,
+          "last_sim_s": 179.597,
+          "decisions": 330
+        },
+        "release": {
+          "first_sim_s": 179.804,
+          "last_sim_s": 186.741,
+          "decisions": 16
+        },
+        "open": {
+          "first_sim_s": 187.173,
+          "last_sim_s": 187.173,
+          "decisions": 1
+        },
+        "retract": {
+          "first_sim_s": 188.185,
+          "last_sim_s": 188.185,
+          "decisions": 1
+        },
+        "verify_release": {
+          "first_sim_s": 190.477,
+          "last_sim_s": 190.477,
+          "decisions": 1
+        },
+        "release_ground_left": {
+          "first_sim_s": 191.057,
+          "last_sim_s": 191.057,
+          "decisions": 1
+        },
+        "release_ground_right": {
+          "first_sim_s": 191.594,
+          "last_sim_s": 191.594,
+          "decisions": 1
+        },
+        "release_ground_home": {
+          "first_sim_s": 192.149,
+          "last_sim_s": 192.149,
+          "decisions": 1
+        }
+      },
+      "box_pregrasp_resource_wait_sim_s": 0.0,
+      "box_carry": {
+        "first_decision_sim_s": 104.222,
+        "last_decision_sim_s": 179.597,
+        "span_sim_s": 75.375,
+        "motion_decisions": 329,
+        "at_0_08_cap": 185,
+        "cap_fraction": 0.5623,
+        "nominal_capped_command_s_at_0_2_each": 37.0,
+        "nominal_linear_time_saving_if_cap_0_12": 12.333,
+        "cadence_wait_sum_s": 10.098,
+        "median_decision_age_s": 0.158,
+        "issued_command_span_sim_s": 75.579,
+        "issued_command_union_sim_s": 67.258,
+        "issued_command_gap_sim_s": 8.32,
+        "waypoints": [
+          {
+            "index": 0,
+            "first_decision_sim_s": 104.222,
+            "last_decision_sim_s": 117.006,
+            "span_sim_s": 12.784,
+            "decisions": 42,
+            "at_0_08_cap": 0,
+            "first_box_center_px": [
+              273.89,
+              546.56
+            ],
+            "last_box_center_px": [
+              279.24,
+              581.11
+            ],
+            "cadence_wait_sum_s": 0.0
+          },
+          {
+            "index": 1,
+            "first_decision_sim_s": 117.506,
+            "last_decision_sim_s": 136.59,
+            "span_sim_s": 19.084,
+            "decisions": 81,
+            "at_0_08_cap": 60,
+            "first_box_center_px": [
+              279.3,
+              580.94
+            ],
+            "last_box_center_px": [
+              580.93,
+              586.8
+            ],
+            "cadence_wait_sum_s": 2.474
+          },
+          {
+            "index": 2,
+            "first_decision_sim_s": 136.904,
+            "last_decision_sim_s": 142.581,
+            "span_sim_s": 5.677,
+            "decisions": 29,
+            "at_0_08_cap": 7,
+            "first_box_center_px": [
+              580.93,
+              586.8
+            ],
+            "last_box_center_px": [
+              641.4,
+              588.5
+            ],
+            "cadence_wait_sum_s": 1.134
+          },
+          {
+            "index": 3,
+            "first_decision_sim_s": 142.889,
+            "last_decision_sim_s": 154.41,
+            "span_sim_s": 11.521,
+            "decisions": 57,
+            "at_0_08_cap": 45,
+            "first_box_center_px": [
+              641.72,
+              588.56
+            ],
+            "last_box_center_px": [
+              632.62,
+              357.01
+            ],
+            "cadence_wait_sum_s": 1.165
+          },
+          {
+            "index": 4,
+            "first_decision_sim_s": 154.773,
+            "last_decision_sim_s": 166.094,
+            "span_sim_s": 11.321,
+            "decisions": 57,
+            "at_0_08_cap": 37,
+            "first_box_center_px": [
+              632.62,
+              357.02
+            ],
+            "last_box_center_px": [
+              884.89,
+              360.42
+            ],
+            "cadence_wait_sum_s": 3.118
+          },
+          {
+            "index": 5,
+            "first_decision_sim_s": 166.457,
+            "last_decision_sim_s": 175.791,
+            "span_sim_s": 9.334,
+            "decisions": 46,
+            "at_0_08_cap": 36,
+            "first_box_center_px": [
+              884.87,
+              360.43
+            ],
+            "last_box_center_px": [
+              877.39,
+              178.87
+            ],
+            "cadence_wait_sum_s": 1.611
+          },
+          {
+            "index": 6,
+            "first_decision_sim_s": 176.111,
+            "last_decision_sim_s": 179.275,
+            "span_sim_s": 3.164,
+            "decisions": 17,
+            "at_0_08_cap": 0,
+            "first_box_center_px": [
+              877.4,
+              178.85
+            ],
+            "last_box_center_px": [
+              838.82,
+              179.9
+            ],
+            "cadence_wait_sum_s": 0.595
+          }
+        ]
+      },
+      "evidence_files": [
+        "outputs/simulation-realtime-20260923/native-v19-grasp-repeat/result.json",
+        "outputs/simulation-realtime-20260923/native-v19-grasp-repeat/pair-decisions.json",
+        "outputs/simulation-realtime-20260923/native-v19-grasp-repeat/solo-decisions.json",
+        "outputs/simulation-realtime-20260923/native-v19-grasp-repeat/issued-commands.json"
+      ]
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": 1,
+      "candidate": "Restrict any speed cap increase to box carry on the known open independent route when waypoint error is far from target; retain near/final control gain, reverse speed, 0.6 s RGB TTL, grasp and unload behavior.",
+      "evidence": "Waypoints 1,3,4,5 contain most 0.08-saturated actions; near waypoint 0 and final waypoint 6 are almost never saturated.",
+      "risk": "Faster cargo image jumps could violate <=8 px RGB continuation and attachment checks, increase contact/skew, or overshoot waypoint/slot. Full physical completion and referee contact audit required."
+    },
+    {
+      "priority": 2,
+      "candidate": "Investigate pair fine approach observation/command cadence separately; preserve saved model support and final alignment checks.",
+      "evidence": "Fine approach lasts about 51-54 SIM s in both runs and ends immediately before first beam grasp; box waited 8.696 SIM s for beam grasp in the full run.",
+      "risk": "Fine alignment is safety critical for joint grasp; fewer checks or larger moves cannot be called safe from these logs alone."
+    }
+  ]
+}

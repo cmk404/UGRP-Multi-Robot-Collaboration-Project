@@ -1,0 +1,385 @@
+{
+  "schema": "ugrp.independent_realtime_dispatch_v18_repeat_audit.v1",
+  "checked_at_utc": "2026-09-23T16:01:29.101376+00:00",
+  "source_sha": "81446dd0d3b97942b714442b086a4892a04b71b9",
+  "bundle_sha256": "a6891549ad88372a168fca34813ae96dd5c387447cc2ec4b352d3c96d5b891e4",
+  "manager": {
+    "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260924-005604-dispatch-e52de5f8/manifest.json",
+    "sha256": "dc1eea1eecd0a411c9f423d9854424e8a64fe6614b3850e74e6e42c9fe1d5eb7",
+    "status": "process_completed",
+    "exit_code": 0,
+    "source_dirty": false,
+    "source_changed_during_run": false,
+    "inputs_changed_during_run": false,
+    "input_before_after_equal": true,
+    "source_tree_before_sha256": "ba80ef46527eca1714ba20d6ec97ac153878ffda9a32fe6302b0f331ed31cb31",
+    "source_tree_after_sha256": "ba80ef46527eca1714ba20d6ec97ac153878ffda9a32fe6302b0f331ed31cb31",
+    "finalization_errors": []
+  },
+  "result": {
+    "phase": "FINISHED",
+    "error": null,
+    "physical_success": true,
+    "protocol_complete": true,
+    "wall_s": 204.84846675000153,
+    "timing": {
+      "scene_and_observer_setup_wall_s": 1.5084007499972358,
+      "scope": "output-only SIM/wall measurements; wall_s includes finalization",
+      "control_end_sim_s": 201.78999999695628,
+      "control_wall_s": 203.37512037499982,
+      "motion_wall_s": 196.59120870799234,
+      "motion_sim_s": 196.58999999695567,
+      "motion_sim_to_wall": 0.9999938516526522,
+      "cleanup_wall_s": 1.4733486670011189
+    },
+    "llm_calls": 0,
+    "realtime_control_stats": {
+      "solo_backpressure": 0,
+      "solo_stale_rgb": 0,
+      "solo_decisions": 420,
+      "pair_backpressure": 0,
+      "pair_decisions": 116,
+      "max_decision_age_s": 0.49999999998817657,
+      "solo_total_sim_s": 196.4577499969588,
+      "solo_active_sim_s": 165.86799999768215,
+      "solo_resource_wait_sim_s": 30.58974999927665,
+      "solo_resource_waiting": false,
+      "solo_resource_wait_intervals": 1,
+      "solo_active_budget_s": 300.0,
+      "pair_stage_stale_rgb": 0,
+      "pair_stage_samples": 302
+    },
+    "plan_replay_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+    "overlap_selection": {
+      "mode": "auto",
+      "enabled": true,
+      "reason": "independent_open_routes",
+      "plan_hash": "c2f420b7d1eb537334502b0eebe14161ffc0468f058bb5230e3d31c39281e45c",
+      "beam_route": "north",
+      "box_route": "south",
+      "beam_resource": "north_gate",
+      "box_resource": "south_gate",
+      "overlap_start": "transit"
+    }
+  },
+  "referee": {
+    "physical_success": true,
+    "cargo": {
+      "beam": {
+        "max_lift_m": 0.07773068594309734,
+        "displacement_m": 1.6811391182795974,
+        "lift_observed_by_referee": true,
+        "inside_slot_at_end": true,
+        "released_supported_stable": true,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 299,
+          "floor_contact_samples": 0,
+          "window_s": [
+            105.5899999992311,
+            135.47999999852902
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999764952,
+          "first_floor_contact_s": null
+        },
+        "physical_success": true
+      },
+      "box": {
+        "max_lift_m": 0.06880113441775873,
+        "displacement_m": 2.3080306916390523,
+        "lift_observed_by_referee": true,
+        "inside_slot_at_end": true,
+        "released_supported_stable": true,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 605,
+          "floor_contact_samples": 0,
+          "window_s": [
+            128.44424999869068,
+            188.90574999726567
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999763531,
+          "first_floor_contact_s": null
+        },
+        "physical_success": true
+      }
+    },
+    "simultaneous_loaded_motion_s": 1.599999999962165,
+    "weld_steps": 0,
+    "robot_robot_contact_samples": 0,
+    "all_three_body_motion_sim_s": 6.4999999999145075
+  },
+  "core_files": {
+    "result.json": {
+      "sha256": "fee0006629bee7065ae67de3b9626f26150ff16c25ab93c20dce927725a13cc9",
+      "bytes": 6383580,
+      "matches_receipt": true
+    },
+    "issued-commands.json": {
+      "sha256": "bbe6e6884f956c6ef7ede69cdcfd63e285429bf8ea52a9416d914aabcf927017",
+      "bytes": 489356,
+      "matches_receipt": true
+    },
+    "referee-only.jsonl": {
+      "sha256": "435e26430ab4c2aa0083720380e002b47c80db233c10da6cae72db1dd2880954",
+      "bytes": 2953350,
+      "matches_receipt": true
+    },
+    "pair-decisions.json": {
+      "sha256": "d38dc893e00f441036917e400946d22fca0f49267ea8b5edcdd497479a3b7dbf",
+      "bytes": 8982925,
+      "matches_receipt": true
+    },
+    "solo-decisions.json": {
+      "sha256": "f728446e2db470218b50ad325726cf5869da6cabf001410b4867b93a33a1d61e",
+      "bytes": 2133355,
+      "matches_receipt": true
+    },
+    "execution.mp4": {
+      "sha256": "a0f8c6391562f5b5c1826d395edb7cbc44a7a1fda5e11cfb75a9e9ad303a0bb9",
+      "bytes": 2198020,
+      "matches_receipt": true
+    },
+    "execution.frames.json": {
+      "sha256": "b4c9aa040fb865a9fdfebea8d0336980b21b76d09ef00449776ed57c1658a88c",
+      "bytes": 292888,
+      "matches_receipt": true
+    },
+    "native-observer.json": {
+      "sha256": "33868f3fd831623689964a93c20511e34fe29a036d9614b624c51e927ab116b4",
+      "bytes": 78,
+      "matches_receipt": true
+    },
+    "evaluation-only.json": {
+      "sha256": "56441edf1e43b7ea796407f592a90d335bf14410e33b8c50599d367c7bd6df09",
+      "bytes": 2772,
+      "matches_receipt": true
+    }
+  },
+  "pair_carry": {
+    "count": 116,
+    "analysis_backend_counts": {
+      "spawn_cpu": 116
+    },
+    "permission_go": 116,
+    "frame_ids_strict_increasing": true,
+    "observed_at_monotone": true,
+    "age_s": {
+      "count": 116,
+      "min": 0.2587499999938814,
+      "median": 0.2822499999933257,
+      "p95": 0.3584999999915226,
+      "max": 0.49999999998817657,
+      "sum": 33.703999999203035
+    },
+    "period_s": {
+      "count": 115,
+      "min": 0.17999999999574356,
+      "median": 0.2799999999933789,
+      "p95": 0.33999999999196007,
+      "max": 0.45999999998912244,
+      "sum": 29.68999999929794
+    },
+    "effective_lease_s": {
+      "count": 116,
+      "min": 0.10000000001181775,
+      "median": 0.25,
+      "p95": 0.25,
+      "max": 0.25,
+      "sum": 28.24425000006631
+    },
+    "waypoints": {
+      "0": {
+        "count": 24,
+        "span_sim_s": 5.329999999873962,
+        "start_error_px": [
+          0.0,
+          -90.13717422000917
+        ],
+        "end_error_px": [
+          0.03436306768662689,
+          -0.130941904238
+        ]
+      },
+      "1": {
+        "count": 56,
+        "span_sim_s": 13.969999999669653,
+        "start_error_px": [
+          367.6969770015969,
+          -0.13226812737087812
+        ],
+        "end_error_px": [
+          -4.333230746314143,
+          -0.1375208225361746
+        ]
+      },
+      "2": {
+        "count": 7,
+        "span_sim_s": 1.409999999966658,
+        "start_error_px": [
+          -7.673738219411803,
+          4.113413854266099
+        ],
+        "end_error_px": [
+          -3.8114687668117995,
+          4.11206882896974
+        ]
+      },
+      "3": {
+        "count": 29,
+        "span_sim_s": 8.36999999980209,
+        "start_error_px": [
+          105.86506881555931,
+          4.111904760545542
+        ],
+        "end_error_px": [
+          -0.1621808447254125,
+          -2.8848722877114312
+        ]
+      }
+    },
+    "pending_renewal": {
+      "count": 47,
+      "duration_s": {
+        "count": 47,
+        "min": 0.02100000001368585,
+        "median": 0.07700000001236162,
+        "p95": 0.08675000001213107,
+        "max": 0.09775000001187095,
+        "sum": 3.490750000584029
+      },
+      "invariant_errors": []
+    },
+    "command_coverage": {
+      "r1": {
+        "with_renewal": {
+          "moving_command_union_s": 26.10699999962732,
+          "positive_gap": {
+            "count": 18,
+            "min": 0.006249999985669774,
+            "median": 0.11374999998312774,
+            "p95": 0.4499999999834472,
+            "max": 0.4499999999834472,
+            "sum": 2.7107499997054276
+          }
+        },
+        "original_only": {
+          "moving_command_union_s": 23.794249999832218,
+          "positive_gap": {
+            "count": 56,
+            "min": 0.0184999999853801,
+            "median": 0.04999999999290594,
+            "p95": 0.24124999998011276,
+            "max": 0.4499999999834472,
+            "sum": 4.935749999494334
+          }
+        }
+      },
+      "r3": {
+        "with_renewal": {
+          "moving_command_union_s": 26.10699999962732,
+          "positive_gap": {
+            "count": 18,
+            "min": 0.006249999985669774,
+            "median": 0.11374999998312774,
+            "p95": 0.4499999999834472,
+            "max": 0.4499999999834472,
+            "sum": 2.7107499997054276
+          }
+        },
+        "original_only": {
+          "moving_command_union_s": 23.794249999832218,
+          "positive_gap": {
+            "count": 56,
+            "min": 0.0184999999853801,
+            "median": 0.04999999999290594,
+            "p95": 0.24124999998011276,
+            "max": 0.4499999999834472,
+            "sum": 4.935749999494334
+          }
+        }
+      }
+    }
+  },
+  "solo": {
+    "rows": 478,
+    "actual_decisions": 420,
+    "resource_drops": 58,
+    "phase_before_counts": {
+      "approach": 141,
+      "lower": 16,
+      "close": 1,
+      "lift": 15,
+      "verify_lift": 1,
+      "attachment_left": 1,
+      "attachment_right": 1,
+      "attachment_home": 1,
+      "carry": 279,
+      "release": 16,
+      "open": 1,
+      "retract": 1,
+      "verify_release": 1,
+      "release_ground_left": 1,
+      "release_ground_right": 1,
+      "release_ground_home": 1
+    },
+    "nominal_admission_rows": 266,
+    "shortened_admissions": 0,
+    "budget_margin_decisions": 180
+  },
+  "backend_and_cleanup": {
+    "spawn_cpu_carry_records": 116,
+    "native_observer": {
+      "mode": "isolated_latest_state",
+      "published": 5151,
+      "busy_skips": 2
+    },
+    "manager_process_completed": true,
+    "manager_finalization_errors": [],
+    "scope": "Backend label and manager cleanup receipt; OS process cleanup separately confirmed by root session."
+  },
+  "video": {
+    "requested_fps": 10,
+    "written_frames": 2018,
+    "captured_frames": 1259,
+    "repeated_frames": 759,
+    "error": null,
+    "ffprobe_decoded_frames": 2018,
+    "media_range_206_matches_source": true,
+    "media_id": "e6c4ed7303ea16456093"
+  },
+  "tensorboard": {
+    "path": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단/v18-repeat",
+    "manifest_complete": true,
+    "scalars": {
+      "result/wall_s": 204.8484649658203,
+      "result/commands": 1234.0,
+      "result/model_calls": 0.0,
+      "result/input_tokens": 0.0,
+      "result/output_tokens": 0.0,
+      "result/model_latency_s": 0.0,
+      "result/recorded_raw_commands": 1174.0,
+      "evaluation/simultaneous_loaded_motion_s": 1.600000023841858,
+      "evaluation/robot_robot_contact_samples": 0.0,
+      "evaluation/reported_success": 1.0,
+      "claims/protocol_complete": 1.0,
+      "claims/plan_committed": 1.0
+    }
+  },
+  "comparison_to_v18_first": {
+    "same_source_sha": true,
+    "same_source_execution_tree": true,
+    "same_input_receipts": true,
+    "same_argv_except_output": true,
+    "first_wall_s": 256.39910383299866,
+    "repeat_wall_s": 204.84846675000153,
+    "first_pair_age_median_s": 0.3159999999925276,
+    "repeat_pair_age_median_s": 0.2822499999933257,
+    "first_pair_period_median_s": 0.33999999999196007,
+    "repeat_pair_period_median_s": 0.2799999999933789,
+    "scope": "Two known saved-plan native runs; asynchronous physical trajectories differ and pair_bind child timing is not cross-backend comparable."
+  },
+  "errors": []
+}

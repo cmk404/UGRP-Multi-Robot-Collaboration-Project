@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import math
+from functools import lru_cache
+import copy
 from typing import Any
 
 import cv2
@@ -40,8 +42,16 @@ def extract_beams(jpeg: bytes, robust_shaft: bool = False, *, hue_upper: int = 2
     if frame is None or frame.size == 0:
         return []
 
-    height, width = frame.shape[:2]
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    return _extract_beams_from_hsv(hsv, robust_shaft=robust_shaft,
+        hue_upper=hue_upper, min_saturation=min_saturation,
+        include_contour=include_contour)
+
+
+def _extract_beams_from_hsv(hsv: np.ndarray, *, robust_shaft: bool,
+                            hue_upper: int, min_saturation: int,
+                            include_contour: bool = False) -> list[dict[str, Any]]:
+    height, width = hsv.shape[:2]
     if hue_upper not in (24, 35):
         raise ValueError("unsupported beam hue calibration")
     if isinstance(min_saturation,bool) or not isinstance(min_saturation,int) or not 0<=min_saturation<=255:
@@ -79,10 +89,13 @@ def extract_beams(jpeg: bytes, robust_shaft: bool = False, *, hue_upper: int = 2
             or np.any(contour[:, 0, 1] >= height - 2)
         )
         if robust_shaft:
-            component = np.zeros_like(mask)
-            cv2.drawContours(component, [contour], -1, 255, thickness=cv2.FILLED)
-            component = cv2.bitwise_and(component, mask)
-            shaft = robust_shaft_geometry(component)
+            x, y, component_width, component_height = cv2.boundingRect(contour)
+            component = np.zeros((component_height, component_width), dtype=np.uint8)
+            cv2.drawContours(component, [contour], -1, 255,
+                             thickness=cv2.FILLED, offset=(-x, -y))
+            component = cv2.bitwise_and(component,
+                                        mask[y:y + component_height, x:x + component_width])
+            shaft = robust_shaft_geometry(component, offset_xy=(x, y))
             if shaft is None:
                 continue
             cx, cy = shaft["center_px"]
@@ -104,6 +117,27 @@ def extract_beams(jpeg: bytes, robust_shaft: bool = False, *, hue_upper: int = 2
             }
         )
     return sorted(candidates, key=lambda item: (-item["area_px"], item["center"][0], item["center"][1]))
+
+
+@lru_cache(maxsize=4)
+def _cached_carried_beam_scans(jpeg: bytes) -> tuple[tuple[dict[str, Any], ...], ...]:
+    """Only image segmentation is shared; tracker identity remains per instance.
+
+    The cache owns these mutable dictionaries and never exposes them directly.
+    Four JPEGs bound retained memory even when many distinct frames arrive.
+    """
+    frame = cv2.imdecode(np.frombuffer(jpeg, dtype=np.uint8), cv2.IMREAD_COLOR)
+    if frame is None or frame.size == 0:
+        return tuple(() for _ in range(105, 191, 5))
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    return tuple(tuple(_extract_beams_from_hsv(hsv, robust_shaft=True,
+        hue_upper=35, min_saturation=saturation))
+        for saturation in range(105, 191, 5))
+
+
+def carried_beam_scans(jpeg: bytes) -> tuple[tuple[dict[str, Any], ...], ...]:
+    """Independent copies of exact 18-threshold RGB candidates for one JPEG."""
+    return copy.deepcopy(_cached_carried_beam_scans(bytes(jpeg)))
 
 
 def select_beam(

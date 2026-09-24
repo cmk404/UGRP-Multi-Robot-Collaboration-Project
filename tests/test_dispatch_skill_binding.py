@@ -2,7 +2,7 @@ import copy
 import itertools
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 import cv2
 import numpy as np
 import pytest
@@ -11,7 +11,7 @@ from harness.dispatch_plan import validate_dispatch_plan
 from harness.three_robot_plan import digest
 from harness.solo_box_transport import SoloBoxTransport
 from sim.research_dispatch_arena import authored_map
-from scripts.dispatch_pair_skill import BoundPairSkill
+from scripts.dispatch_pair_skill import BoundPairSkill, coordinated_coarse_commands
 
 
 def test_efficient_pair_capture_preserves_consumed_images_and_default(tmp_path):
@@ -72,6 +72,67 @@ def test_every_allocation_reaches_its_physical_endpoints(order):
     assert b.programs[order[1]][0]['model_slot']=='r1'
 
 
+def test_coarse_approach_holds_forward_while_peer_aligns_from_recorded_rgb():
+    # The 2026-09-23 open-map run issued physical r3 a 0.12 forward command
+    # while physical r1 was correcting laterally. Slots were swapped by plan.
+    decisions={
+        'r1':dict(ok=True,ready=False,forward=.12,left=0.,turn=0.,image_error=[.175334,.00177]),
+        'r3':dict(ok=True,ready=False,forward=0.,left=-.031379,turn=0.,image_error=[.167236,.031379]),
+    }
+    commands,evidence=coordinated_coarse_commands(decisions)
+    assert commands['r1']==dict(forward=0.,left=0.,turn=0.)
+    assert commands['r3']['left']==pytest.approx(-.031379)
+    assert evidence['held_forward']==['r1']
+    assert evidence['alignment_in_progress'] is True
+
+
+def test_coarse_approach_bounds_rgb_forward_lead_and_releases_after_catchup():
+    def decision(gap,forward,ready=False):
+        return dict(ok=True,ready=ready,forward=forward,left=0.,turn=0.,
+                    image_error=[gap,0.])
+    pair={'r1':decision(.10,.12),'r3':decision(.14,.12)}
+    commands,evidence=coordinated_coarse_commands(pair)
+    assert commands['r1']['forward']==0.
+    assert commands['r3']['forward']==.12
+    assert evidence['held_forward']==['r1']
+
+    pair={'r1':decision(.128,.12),'r3':decision(.14,.12)}
+    commands,evidence=coordinated_coarse_commands(pair)
+    assert {r:commands[r]['forward'] for r in pair}=={'r1':.12,'r3':.12}
+    assert evidence['held_forward']==[]
+
+    # A partner that is already in the coarse handoff band must stay still;
+    # the other may close its remaining RGB gap under the finite step budget.
+    pair={'r1':decision(.06,0.,ready=True),'r3':decision(.09,.03)}
+    commands,_=coordinated_coarse_commands(pair)
+    assert commands['r1']['forward']==0.
+    assert commands['r3']['forward']==.03
+
+
+def test_coarse_approach_rejects_missing_or_nonfinite_rgb_gap():
+    valid=dict(ok=True,ready=False,forward=.1,left=0.,turn=0.,image_error=[.1,0.])
+    with pytest.raises(ValueError,match='both coarse'):
+        coordinated_coarse_commands({'r1':valid})
+    with pytest.raises(ValueError,match='finite RGB'):
+        coordinated_coarse_commands({'r1':valid,'r3':{**valid,'image_error':[float('nan'),0.]}})
+
+
+def test_dispatch_pair_alone_opts_into_bounded_fine_rgb_reobservation():
+    bindings = SkillBindings(committed(), authored_map('open'))
+    io = SimpleNamespace(out=Path('/tmp/unused'), pair_drive=Mock(),
+                         last_frames={'r1': {'top_bytes': b'top'}})
+    skill = {'initialization_replay': [{'targets': {'r1': {1: 2000}, 'r3': {1: 2000}}}]}
+    pair = BoundPairSkill(io, bindings, skill, {}, {}, Path('/tmp/models'), b'')
+    ready = dict(ok=True, ready=True, forward=0., left=0., turn=0., image_error=[.06, 0.])
+    pair.coarse = SimpleNamespace(decide=Mock(return_value=ready))
+    pair.capture = Mock(return_value={})
+    with patch('scripts.dispatch_pair_skill.run_approach', return_value={'approach_ok': False}) as run:
+        with pytest.raises(RuntimeError, match='fine RGB alignment'):
+            pair.approach()
+    assert run.call_args.kwargs['invalid_reobserve_budget'] == 1
+    assert io.pair_drive.call_count == 2
+
+
 def test_no_silent_route_change_or_revoked_plan_execution():
     c=committed();c['plan']['tasks'][0]['route']='south';c['plan_hash']=digest(c['plan'])
     b=SkillBindings(c,authored_map('narrow_south'))
@@ -116,6 +177,58 @@ def test_route_overlap_does_not_remove_agreed_dependencies_or_assume_moving_obst
         SkillBindings(committed(after=True),authored_map('open'),route_overlap=True)
     with pytest.raises(ValueError,match='moving-obstacle'):
         SkillBindings(committed(),authored_map('shared_crossing'),route_overlap=True)
+
+
+def test_auto_overlap_uses_existing_transit_gate_and_preserves_plan():
+    c=committed();original=copy.deepcopy(c)
+    b=SkillBindings(c,authored_map('open'),auto_route_overlap=True)
+    assert b.route_overlap and b.overlap_start=='transit'
+    assert b.overlap_selection['mode']=='auto'
+    assert b.overlap_selection['reason']=='independent_open_routes'
+    assert b.capabilities()['overlap_selection']==b.overlap_selection
+    assert c==original and b.committed==original
+    assert b.permission('beam','GRASP')
+    assert not b.permission('box','GRASP')
+    b.note_transit_command('beam')
+    assert b.permission('box','GRASP')
+    assert not b.permission('box','UNLOAD')
+    b.finish('beam')
+    assert b.permission('box','UNLOAD')
+
+
+@pytest.mark.parametrize('map_variant,after,reason',[
+    ('open',True,'agreed_dependencies_require_serial'),
+    ('shared_crossing',False,'service_island_requires_serial'),
+])
+def test_auto_overlap_keeps_serial_gate_when_plan_or_map_requires_it(map_variant,after,reason):
+    c=committed(after=after)
+    b=SkillBindings(c,authored_map(map_variant),auto_route_overlap=True)
+    assert not b.route_overlap and b.overlap_selection['reason']==reason
+    if after:
+        assert not b.permission('beam','GRASP')
+    else:
+        assert b.permission('beam','GRASP')
+        assert not b.permission('box','GRASP')
+
+
+def test_auto_overlap_rejects_same_route_resource_and_unproven_map():
+    c=committed();shared=authored_map('open')
+    shared['routes']['south']['resource']=shared['routes']['north']['resource']
+    b=SkillBindings(c,shared,auto_route_overlap=True)
+    assert not b.route_overlap
+    assert b.overlap_selection['reason']=='shared_route_resource_requires_serial'
+    with pytest.raises(ValueError,match='distinct route resources'):
+        SkillBindings(c,shared,route_overlap=True)
+    same=copy.deepcopy(c);same['plan']['tasks'][1]['route']='north';same['plan_hash']=digest(same['plan'])
+    b=SkillBindings(same,authored_map('open'),auto_route_overlap=True)
+    assert not b.route_overlap and b.overlap_selection['reason']=='same_route_requires_serial'
+    unknown=authored_map('open');unknown['map_id']='custom'
+    b=SkillBindings(c,unknown,auto_route_overlap=True)
+    assert not b.route_overlap and b.overlap_selection['reason']=='open_map_capability_not_established'
+    obstacle=authored_map('open');obstacle['obstacles'].append({'id':'new_interior_obstacle'})
+    assert not SkillBindings(c,obstacle,auto_route_overlap=True).route_overlap
+    terrain=authored_map('open');terrain['terrain'].append({'id':'new_terrain'})
+    assert not SkillBindings(c,terrain,auto_route_overlap=True).route_overlap
 
 
 def test_open_pickup_overlap_waits_for_issued_pair_grasp_then_admits_box():
@@ -420,6 +533,47 @@ def test_tracked_thin_cargo_keeps_identity_after_leaving_cyan_floor():
     assert np.allclose(e['cargo_center_px'],[583.,573.],atol=2)
     assert e['tracking']['method']=='cyan component'
     assert e['tracking']['min_saturation']<=125
+
+
+def _split_cyan_box_route(*, bridged, strong_unique=False):
+    from harness.dispatch_skill_binding import ImageRoute
+    route=ImageRoute(SkillBindings(committed(),authored_map('open')),'box')
+    hsv=np.zeros((720,960,3),np.uint8)
+    hsv[196:200,219:223]=[90,200,220]
+    if strong_unique:
+        hsv[202:206,219:223]=[90,110,220]
+    else:
+        hsv[202:206,219:223]=[90,200,220]
+    if bridged:hsv[200:202,219:223]=[90,110,220]
+    frame=cv2.cvtColor(hsv,cv2.COLOR_HSV2BGR)
+    route.box_center=np.array([200.,200.]);route.box_delta=np.array([15.,0.])
+    route.box_previous=np.zeros_like(frame)
+    route.box_background=np.zeros_like(frame);route.box_background_sha='blank RGB'
+    route.box_origin=np.zeros(2)
+    route.points=[np.array([300.,200.])]
+    return route,cv2.imencode('.png',frame)[1].tobytes()
+
+
+def test_box_tracker_keeps_unique_strong_cyan_candidate():
+    route,image=_split_cyan_box_route(bridged=False,strong_unique=True)
+    _,evidence=route.observe(image)
+    assert evidence['tracking']['method']=='cyan component'
+    assert evidence['tracking']['min_saturation']==125
+    assert np.allclose(evidence['cargo_center_px'],[220.5,197.5],atol=.1)
+
+
+def test_box_tracker_reunites_split_cyan_at_existing_lower_threshold():
+    route,image=_split_cyan_box_route(bridged=True)
+    _,evidence=route.observe(image)
+    assert evidence['tracking']['method']=='cyan component'
+    assert evidence['tracking']['min_saturation']==105
+    assert np.allclose(evidence['cargo_center_px'],[220.5,200.5],atol=.1)
+
+
+def test_box_tracker_keeps_ambiguous_cyan_fail_closed():
+    route,image=_split_cyan_box_route(bridged=False)
+    with pytest.raises(RuntimeError,match='appearance unresolved'):
+        route.observe(image)
 
 
 def test_shadowed_cargo_requires_bidirectional_rgb_match():

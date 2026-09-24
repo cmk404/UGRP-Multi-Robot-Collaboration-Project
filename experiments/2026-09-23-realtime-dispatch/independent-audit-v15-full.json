@@ -1,0 +1,523 @@
+{
+  "schema": "ugrp.independent_realtime_dispatch_v15_full_audit.v1",
+  "checked_at_utc": "2026-09-23T14:22:15.854972+00:00",
+  "source_sha": "efe19d03d1b0d6e803f74c02cfdf11d3baa74def",
+  "bundle_id": "rgb-standard-dispatch-v15",
+  "bundle_sha256": "1933cd0e277e6249f5b6125d006bdca2fe8d9a4edf02603efb01514bfe12edaa",
+  "manager": {
+    "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260923-231251-dispatch-a1409e49/manifest.json",
+    "sha256": "371d1f0b85609688843de51a774badcdcc92f3de014bf096d2b75ec32ccf6ae6",
+    "status": "process_failed",
+    "exit_code": 1,
+    "runtime_s": 310.154573250009,
+    "source_dirty": false,
+    "source_before_sha256": "8d53a2f3b4e17319cf98afef775c2ef732e86102cd79ca29664ba619d8e15fee",
+    "source_after_sha256": "8d53a2f3b4e17319cf98afef775c2ef732e86102cd79ca29664ba619d8e15fee",
+    "source_changed_during_run": false,
+    "inputs_changed_during_run": false,
+    "inputs_before_after_equal": true,
+    "finalization_errors": []
+  },
+  "result": {
+    "phase": "RELEASE",
+    "error": "ComponentExecutionError: solo_box: RuntimeError: solo SIM budget exhausted",
+    "wall_s": 309.6806896249909,
+    "timing": {
+      "scene_and_observer_setup_wall_s": 1.6383153749920893,
+      "scope": "output-only SIM/wall measurements; wall_s includes finalization",
+      "control_end_sim_s": 305.36049999450717,
+      "control_wall_s": 308.2769339590013,
+      "motion_wall_s": 301.4321203340078,
+      "motion_sim_s": 300.16049999450655,
+      "motion_sim_to_wall": 0.9957814039920756,
+      "cleanup_wall_s": 1.4037569999927655
+    },
+    "plan_committed": true,
+    "protocol_complete": false,
+    "physical_success": true,
+    "failed_component": "solo_box",
+    "llm_calls": 0,
+    "realtime_control_stats": {
+      "solo_backpressure": 0,
+      "solo_stale_rgb": 0,
+      "solo_decisions": 575,
+      "pair_backpressure": 0,
+      "pair_decisions": 501,
+      "max_decision_age_s": 0.6999999999834472,
+      "pair_stage_stale_rgb": 0,
+      "pair_stage_samples": 294
+    },
+    "pair_carry": {
+      "carry_count": 501,
+      "frame_ids_strictly_increasing": true,
+      "observed_at_monotone": true,
+      "sim_time_monotone": true,
+      "next_capture_minus_previous_decision_s": {
+        "count": 500,
+        "min": -0.23999999999432475,
+        "median": -0.13999999999668944,
+        "p95": -0.11999999999716238,
+        "max": -0.09999999999763531,
+        "sum": -69.21999999836316
+      },
+      "next_capture_before_previous_decision_count": 500,
+      "decision_interval_s": {
+        "count": 500,
+        "min": 0.17999999999574356,
+        "median": 0.29999999999290594,
+        "p95": 0.36999999999125066,
+        "max": 0.5199999999877036,
+        "sum": 148.55999999648702
+      },
+      "decision_age_s": {
+        "count": 501,
+        "min": 0.2799999999933789,
+        "median": 0.4399999999895954,
+        "p95": 0.5199999999877036,
+        "max": 0.6999999999834472,
+        "sum": 218.09999999484262
+      },
+      "render_wait_wall_s": {
+        "count": 501,
+        "min": 0.16054804201121442,
+        "median": 0.291521166000166,
+        "p95": 0.3385272080049617,
+        "max": 0.7244274590048008,
+        "sum": 142.71818418285693
+      },
+      "pair_bind_wall_s": {
+        "count": 501,
+        "min": 0.06586750000133179,
+        "median": 0.08753249999426771,
+        "p95": 0.12293225000030361,
+        "max": 0.40430225001182407,
+        "sum": 46.21585492702434
+      },
+      "perception_wall_s": {
+        "count": 501,
+        "min": 0.02701725000224542,
+        "median": 0.038242082999204285,
+        "p95": 0.05168887499894481,
+        "max": 0.25685945800796617,
+        "sum": 20.05237091203162
+      },
+      "issued_carry_count": 492,
+      "issued_lease_s": {
+        "count": 492,
+        "min": 1.41824330057716e-11,
+        "median": 0.16000000001039894,
+        "p95": 0.25,
+        "max": 0.25,
+        "sum": 80.24000000449904
+      },
+      "positive_interlease_gap_s": {
+        "count": 491,
+        "min": 0,
+        "median": 0.15999999998203407,
+        "p95": 0.23999999998014232,
+        "max": 1.1599999999583872,
+        "sum": 70.79999999258892
+      },
+      "permission_phases": {
+        "GO": 492,
+        "HOLD": 9
+      },
+      "waypoint_counts": {
+        "0": 34,
+        "1": 214,
+        "2": 2,
+        "3": 251
+      },
+      "first_waypoint": {
+        "decision_count": 34,
+        "sim_span_s": 7.289999999827614,
+        "issued_count": 34,
+        "lease_s": {
+          "count": 34,
+          "min": 0.20000000000000284,
+          "median": 0.25,
+          "p95": 0.25,
+          "max": 0.25,
+          "sum": 7.900000000094536
+        },
+        "positive_interlease_gap_s": {
+          "count": 33,
+          "min": 0,
+          "median": 0,
+          "p95": 0.02999999999337888,
+          "max": 0.0699999999936125,
+          "sum": 0.3699999999274013
+        },
+        "age_s": {
+          "count": 34,
+          "min": 0.29999999999290594,
+          "median": 0.319999999992433,
+          "p95": 0.39999999999054126,
+          "max": 0.39999999999054126,
+          "sum": 11.60999999972546
+        },
+        "route_error_first_px": [
+          0.0,
+          -90.63567777945468
+        ],
+        "route_error_last_px": [
+          -0.0004047398697935023,
+          -4.631976373994007
+        ]
+      }
+    },
+    "pair_stale_count": 9,
+    "pair_ttl": {
+      "r1": {
+        "bounded_count": 492,
+        "matching_carry_records": 492,
+        "ttl_violations": 0,
+        "nonpositive_leases": 0,
+        "minimum_lease_s": 1.41824330057716e-11
+      },
+      "r3": {
+        "bounded_count": 492,
+        "matching_carry_records": 492,
+        "ttl_violations": 0,
+        "nonpositive_leases": 0,
+        "minimum_lease_s": 1.41824330057716e-11
+      }
+    },
+    "solo_ttl": {
+      "transit_issued_count": 433,
+      "moving_count": 420,
+      "moving_all_bounded": true,
+      "bounded_count": 420,
+      "ttl_violations": 0,
+      "first_carry_transition_bounded": true
+    },
+    "solo_drop_counts": {
+      "resource_permission": 272
+    },
+    "solo_resource_requests": {
+      "(('box', 'APPROACH'), ('box', 'GRASP'))": 45,
+      "(('box', 'TRANSIT'), ('box', 'UNLOAD'), ('box', 'TRANSIT'))": 216,
+      "(('box', 'GRASP'), ('box', 'UNLOAD'), ('box', 'TRANSIT'))": 11
+    },
+    "resource_events": [
+      {
+        "event": "acquire",
+        "object": "beam",
+        "resource": "north_gate",
+        "stage": "GRASP"
+      },
+      {
+        "event": "acquire",
+        "object": "box",
+        "resource": "south_gate",
+        "stage": "GRASP"
+      },
+      {
+        "event": "acquire",
+        "object": "beam",
+        "resource": "dispatch_apron",
+        "stage": "UNLOAD"
+      },
+      {
+        "event": "finish",
+        "object": "beam",
+        "released": [
+          "north_gate",
+          "dispatch_apron"
+        ]
+      },
+      {
+        "event": "acquire",
+        "object": "box",
+        "resource": "dispatch_apron",
+        "stage": "UNLOAD"
+      }
+    ],
+    "solo_last_phase": {
+      "before": "open",
+      "after": "retract",
+      "sim_time_s": 304.44699999452877
+    },
+    "cargo_evaluation": {
+      "beam": {
+        "max_lift_m": 0.07758289340589566,
+        "displacement_m": 1.6734949411987918,
+        "lift_observed_by_referee": true,
+        "inside_slot_at_end": true,
+        "released_supported_stable": true,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 1487,
+          "floor_contact_samples": 0,
+          "window_s": [
+            100.19999999935855,
+            248.8899999958567
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999764952,
+          "first_floor_contact_s": null
+        },
+        "physical_success": true
+      },
+      "box": {
+        "max_lift_m": 0.06862037169975518,
+        "displacement_m": 2.3131252267171796,
+        "lift_observed_by_referee": true,
+        "inside_slot_at_end": true,
+        "released_supported_stable": true,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 1727,
+          "floor_contact_samples": 0,
+          "window_s": [
+            124.08799999879368,
+            296.7757499947149
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999764952,
+          "first_floor_contact_s": null
+        },
+        "physical_success": true
+      }
+    },
+    "concurrent_transport_summary": {
+      "simultaneous_loaded_motion_s": 0.19999999999527063,
+      "minimum_displacement_per_sample_m": 0.001,
+      "max_sample_gap_s": 0.11,
+      "scope": "referee-only sampled physical motion during issued TRANSIT; not controller input"
+    },
+    "all_three_body_motion_sim_s": 6.899999999890838,
+    "weld_steps": 0
+  },
+  "v14_comparison": {
+    "source_path": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260923/native-v14-full",
+    "v14_carry": {
+      "carry_count": 320,
+      "frame_ids_strictly_increasing": true,
+      "observed_at_monotone": true,
+      "sim_time_monotone": true,
+      "next_capture_minus_previous_decision_s": {
+        "count": 319,
+        "min": 0.019999999999527063,
+        "median": 0.019999999999527063,
+        "p95": 0.019999999999527063,
+        "max": 0.04999999999881766,
+        "sum": 6.589999999844167
+      },
+      "next_capture_before_previous_decision_count": 0,
+      "decision_interval_s": {
+        "count": 319,
+        "min": 0.2799999999933789,
+        "median": 0.33999999999196007,
+        "p95": 0.4199999999900683,
+        "max": 0.639999999984866,
+        "sum": 112.4299999973414
+      },
+      "decision_age_s": {
+        "count": 320,
+        "min": 0.2599999999938518,
+        "median": 0.319999999992433,
+        "p95": 0.39999999999054126,
+        "max": 0.619999999985339,
+        "sum": 106.19999999748872
+      },
+      "render_wait_wall_s": {
+        "count": 320,
+        "min": 0.13706404200638644,
+        "median": 0.1819768120039953,
+        "p95": 0.24856520899629686,
+        "max": 0.3801794169994537,
+        "sum": 60.363337846065406
+      },
+      "pair_bind_wall_s": {
+        "count": 320,
+        "min": 0.0699320409912616,
+        "median": 0.0824417499898118,
+        "p95": 0.12054420899949037,
+        "max": 0.4270578330033459,
+        "sum": 28.553943464939948
+      },
+      "perception_wall_s": {
+        "count": 320,
+        "min": 0.028183125003124587,
+        "median": 0.0384485835020314,
+        "p95": 0.051741667004534975,
+        "max": 0.21381899999687448,
+        "sum": 13.029612707192427
+      },
+      "issued_carry_count": 319,
+      "issued_lease_s": {
+        "count": 319,
+        "min": 0.04000000001323656,
+        "median": 0.25,
+        "p95": 0.25,
+        "max": 0.25,
+        "sum": 75.85000000091213
+      },
+      "positive_interlease_gap_s": {
+        "count": 318,
+        "min": 0.02999999999337888,
+        "median": 0.10999999999148713,
+        "p95": 0.2299999999886495,
+        "max": 0.8299999999661907,
+        "sum": 36.829999996429265
+      },
+      "permission_phases": {
+        "GO": 319,
+        "HOLD": 1
+      },
+      "waypoint_counts": {
+        "0": 81,
+        "1": 228,
+        "2": 2,
+        "3": 9
+      },
+      "first_waypoint": {
+        "decision_count": 81,
+        "sim_span_s": 26.989999999361785,
+        "issued_count": 81,
+        "lease_s": {
+          "count": 81,
+          "min": 0.14000000001087187,
+          "median": 0.25,
+          "p95": 0.25,
+          "max": 0.25,
+          "sum": 19.340000000176275
+        },
+        "positive_interlease_gap_s": {
+          "count": 80,
+          "min": 0.02999999999337888,
+          "median": 0.08999999999196007,
+          "p95": 0.2599999999796694,
+          "max": 0.33999999997779184,
+          "sum": 7.849999999185499
+        },
+        "age_s": {
+          "count": 81,
+          "min": 0.2599999999938518,
+          "median": 0.29999999999290594,
+          "p95": 0.39999999999054126,
+          "max": 0.45999999998913665,
+          "sum": 25.719999999391817
+        },
+        "route_error_first_px": [
+          0.0,
+          -90.13345748726724
+        ],
+        "route_error_last_px": [
+          0.01608817011225483,
+          -5.639297637612174
+        ]
+      }
+    },
+    "strict_loaded_overlap_v14_s": 11.799999999720967,
+    "strict_loaded_overlap_v15_s": 0.19999999999527063,
+    "limits": "v14 and v15 have changed code and actual solo scheduling; first waypoint timing is informative, not a controlled causal speedup measurement."
+  },
+  "v7_comparison": {
+    "baseline_path": "/Users/changmin/projects/ugrp/outputs/simulation-performance-20260923/native-v7/artifacts/result.json",
+    "same_plan_replay_sha256": true,
+    "same_model_provenance": true,
+    "same_environment": true,
+    "v15_protocol_complete": false,
+    "v15_physical_success": true,
+    "v7_protocol_complete": true,
+    "v7_physical_success": true,
+    "changed_realtime_factor": [
+      1.0,
+      2.0
+    ]
+  },
+  "raw_files": {
+    "result.json": {
+      "bytes": 5940606,
+      "sha256": "dd8dcfd28a5b6896d3d2f50cd189e180f47f98c3941aaa55c0ac7960b95729a7",
+      "matches_manager_receipt": true
+    },
+    "issued-commands.json": {
+      "bytes": 787805,
+      "sha256": "3a76a3daac5ff398b57138fb234e4388734ac1db11df2785efb77b14378f8d35",
+      "matches_manager_receipt": true
+    },
+    "referee-only.jsonl": {
+      "bytes": 4636419,
+      "sha256": "fb4bca8ad5b1c026b1b8111865a7c38265fb90124a3b82684f5991fa0f56e807",
+      "matches_manager_receipt": true
+    },
+    "pair-decisions.json": {
+      "bytes": 11324095,
+      "sha256": "5c87531710e83bd579803df123ed7fe0d696e02170e6bbcfc61cb35f19be92b3",
+      "matches_manager_receipt": true
+    },
+    "solo-decisions.json": {
+      "bytes": 4205929,
+      "sha256": "09d859fe7ded492d256acc035202ec39add272447cc78905a9c8e75176f328a7",
+      "matches_manager_receipt": true
+    },
+    "execution.mp4": {
+      "bytes": 3413447,
+      "sha256": "c648b344c7101abb4c9af4299ceae5c5a57c12950c9a832c34d94f44a22d9028",
+      "matches_manager_receipt": true
+    },
+    "execution.frames.json": {
+      "bytes": 417567,
+      "sha256": "a9b2cb74ffc22002d4226860d10ae4b8d982323388ab123dd36a8434bc049547",
+      "matches_manager_receipt": true
+    },
+    "native-observer.json": {
+      "bytes": 78,
+      "sha256": "aba15f3f44cae8737e6d0ec73b3c37dd539314dee9a074ff3e569bb5c7029d66",
+      "matches_manager_receipt": true
+    },
+    "evaluation-only.json": {
+      "bytes": 2132,
+      "sha256": "49789b10838ac0b9a171ce43e50769bf73d55d23b7749122144a83e47cc50462",
+      "matches_manager_receipt": true
+    }
+  },
+  "recording": {
+    "requested_fps": 10,
+    "written_frames": 3054,
+    "captured_frames": 1507,
+    "repeated_frames": 1547,
+    "error": null,
+    "decoded_frames": 3054,
+    "counts_consistent": true,
+    "observer": {
+      "mode": "isolated_latest_state",
+      "published": 7670,
+      "busy_skips": 8
+    }
+  },
+  "tensorboard": {
+    "path": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단/v15-full",
+    "collection": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단",
+    "manifest_sha256": "3cf2999cb0be5a262daec70f26df937ca530d5ff2de902be53b61e7c92ae4dfc",
+    "event_sha256": "e6158057c4e8898f470d87dc84dee574f8936009ce624aa90d628c6be565488e",
+    "manifest_complete": true,
+    "source_matches": true,
+    "counts": {
+      "scalars": 12,
+      "texts": 4,
+      "images": 0
+    },
+    "scalars": {
+      "evaluation/reported_success": 1.0,
+      "claims/protocol_complete": 0.0,
+      "result/wall_s": 309.6806945800781,
+      "result/commands": 2030.0,
+      "result/model_calls": 0.0
+    },
+    "video_id": "50c83f9ad86cc45a843e",
+    "video_source_sha256": "c648b344c7101abb4c9af4299ceae5c5a57c12950c9a832c34d94f44a22d9028",
+    "range_status": 206,
+    "content_range": "bytes 0-63/3413447",
+    "range_bytes_match_source": true
+  },
+  "limits": [
+    "Referee physical success at end is distinct from protocol completion; solo SIM budget exhausted in RELEASE.",
+    "All next carry frames were captured before the previous decision, retaining actual timestamps; this increases age and shortens TTL-limited motor leases.",
+    "v14/v15 comparison is not a controlled isolated timing experiment.",
+    "Observer repeated frames are not actor RGB."
+  ]
+}

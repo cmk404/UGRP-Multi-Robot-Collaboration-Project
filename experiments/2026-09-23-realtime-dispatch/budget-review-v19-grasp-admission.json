@@ -1,0 +1,47 @@
+{
+  "recorded_at_utc": "2026-09-23T16:27:15.548076+00:00",
+  "scope": "finite single-variable follow-up to authorized native speed and concurrency repair",
+  "status": "planned; run only after v19 transit same-source repeat completes and is audited",
+  "baseline_source": "51fb09cf519f2ef61ff3f306beb07ffc64236816",
+  "evidence": {
+    "v19_full_physical_success": true,
+    "v19_full_protocol_complete": true,
+    "strict_simultaneous_loaded_s": 0,
+    "beam_loaded_interval_sim_s": [
+      106.12,
+      131.06
+    ],
+    "box_loaded_interval_sim_s": [
+      133.5995,
+      191.904
+    ],
+    "box_resource_wait_sim_s": 22.70475,
+    "pair_first_grasp_command_sim_s": 85.28,
+    "pair_first_transit_command_sim_s": 106.12
+  },
+  "hypothesis": "Existing conservative transit admission delays box grasp until the faster beam carry nearly finishes. Existing grasp admission may overlap independent route work while preserving common apron exclusion.",
+  "change": "Only add --overlap-start grasp. No controller, physics, camera, TTL, lease, threshold, source-code or budget change.",
+  "budget": {
+    "max_trials": 2,
+    "max_wall_s_each": 600,
+    "fresh_llm_calls": 0,
+    "training_runs": 0,
+    "repeat_only_after_first_physical_and_protocol_success": true
+  },
+  "acceptance": [
+    "Both cargo placement/release and protocol complete",
+    "Record robot contacts and grasp/held failures",
+    "Measure actual loaded intervals and strict concurrent physical movement, not merely commands",
+    "Preserve same source, plan, map, seed, models, images, TTL and lease limits between grasp trials",
+    "Preserve shared apron exclusion; do not weaken resource arbitration or use GT control"
+  ],
+  "stop_conditions": [
+    "First physical/protocol failure: stop cohort and review evidence; no automatic budget/threshold extension",
+    "Two completed trials: no further repeat under this review"
+  ],
+  "limits": [
+    "First grasp command is not verified grasp completion",
+    "Not generalized map/seed reliability or communication-efficacy evidence",
+    "No default change before physical evidence and independent review"
+  ]
+}

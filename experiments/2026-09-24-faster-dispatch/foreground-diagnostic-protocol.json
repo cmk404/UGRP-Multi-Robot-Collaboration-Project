@@ -1,0 +1,11 @@
+{
+  "source": "e67d345",
+  "reason": "v22 no fine handoff executed, but unchanged coarse wall kernels/render slowed 3-6x vs v20/v21. Read-only pmset: battery100, lowpower0, no recorded thermal warning. Check foreground native window with same frozen controller before judging performance.",
+  "run": "native-v22-foreground",
+  "max_wall_s": 70,
+  "new_llm_calls": 0,
+  "training_runs": 0,
+  "intervention": "Raise own native MuJoCo window, no physics/controller changes.",
+  "record": "Diagnostic only, no completion-speed claim if short wall/coarse budget stops.",
+  "aggregate_limit_wall_s": 1800
+}

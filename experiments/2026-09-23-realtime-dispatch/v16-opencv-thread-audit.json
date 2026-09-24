@@ -1,0 +1,337 @@
+{
+  "anchor_top_sha256": "cc3416518f3aa5dae5c8f2e1277138bd18796e00009e3bcd934fd5384e05f4e6",
+  "conditions": {
+    "1": {
+      "cold_sequential": {
+        "elapsed_wall_s": 1.6074744580109837,
+        "frame_median_wall_s": {
+          "canonical_s": 0.006142687001556624,
+          "own_s": 0.014676562503154855,
+          "skew_s": 0.0074224165073246695,
+          "total_s": 0.07754689549619798,
+          "tracker_s": 0.04947010449541267
+        },
+        "frames_per_job": 20,
+        "jobs": 1,
+        "signature_match_across_jobs": true,
+        "signature_match_to_8_cold": true,
+        "signatures_sha256": "2fb408b8774fdb977352489f36f6202ce1590f09833997e21dd695740d7a1ed6",
+        "throughput_frames_per_wall_s": 12.441877319000824
+      },
+      "concurrent_two_workers": {
+        "elapsed_wall_s": 2.1655122920055874,
+        "frame_median_wall_s": {
+          "canonical_s": 0.007878458505729213,
+          "own_s": 0.015035145501315128,
+          "skew_s": 0.014713520991790574,
+          "total_s": 0.1046104374981951,
+          "tracker_s": 0.06713772900548065
+        },
+        "frames_per_job": 20,
+        "jobs": 2,
+        "signature_match_across_jobs": true,
+        "signature_match_to_8_cold": true,
+        "signatures_sha256": "2fb408b8774fdb977352489f36f6202ce1590f09833997e21dd695740d7a1ed6",
+        "throughput_frames_per_wall_s": 18.47137979667344
+      },
+      "cv2_getNumThreads": 8,
+      "repeat_sequential": {
+        "elapsed_wall_s": 1.6069550829997752,
+        "frame_median_wall_s": {
+          "canonical_s": 0.006126458501967136,
+          "own_s": 0.014668416501081083,
+          "skew_s": 0.007475854494259693,
+          "total_s": 0.07751479199941969,
+          "tracker_s": 0.04929329199512722
+        },
+        "frames_per_job": 20,
+        "jobs": 1,
+        "signature_match_across_jobs": true,
+        "signature_match_to_8_cold": true,
+        "signatures_sha256": "2fb408b8774fdb977352489f36f6202ce1590f09833997e21dd695740d7a1ed6",
+        "throughput_frames_per_wall_s": 12.445898588941953
+      }
+    },
+    "2": {
+      "cold_sequential": {
+        "elapsed_wall_s": 1.5625967500091065,
+        "frame_median_wall_s": {
+          "canonical_s": 0.005499604500073474,
+          "own_s": 0.013265854497149121,
+          "skew_s": 0.0070171455008676276,
+          "total_s": 0.07530829150346108,
+          "tracker_s": 0.0495667914947262
+        },
+        "frames_per_job": 20,
+        "jobs": 1,
+        "signature_match_across_jobs": true,
+        "signature_match_to_8_cold": true,
+        "signatures_sha256": "2fb408b8774fdb977352489f36f6202ce1590f09833997e21dd695740d7a1ed6",
+        "throughput_frames_per_wall_s": 12.799207472998676
+      },
+      "concurrent_two_workers": {
+        "elapsed_wall_s": 2.119623666992993,
+        "frame_median_wall_s": {
+          "canonical_s": 0.00734893749904586,
+          "own_s": 0.013738729503529612,
+          "skew_s": 0.014759541998500936,
+          "total_s": 0.10243156250362517,
+          "tracker_s": 0.06663910349743674
+        },
+        "frames_per_job": 20,
+        "jobs": 2,
+        "signature_match_across_jobs": true,
+        "signature_match_to_8_cold": true,
+        "signatures_sha256": "2fb408b8774fdb977352489f36f6202ce1590f09833997e21dd695740d7a1ed6",
+        "throughput_frames_per_wall_s": 18.871274473334246
+      },
+      "cv2_getNumThreads": 8,
+      "repeat_sequential": {
+        "elapsed_wall_s": 1.5676773339946521,
+        "frame_median_wall_s": {
+          "canonical_s": 0.005437312996946275,
+          "own_s": 0.013340541503566783,
+          "skew_s": 0.007097145498846658,
+          "total_s": 0.07573045849858318,
+          "tracker_s": 0.04971789599949261
+        },
+        "frames_per_job": 20,
+        "jobs": 1,
+        "signature_match_across_jobs": true,
+        "signature_match_to_8_cold": true,
+        "signatures_sha256": "2fb408b8774fdb977352489f36f6202ce1590f09833997e21dd695740d7a1ed6",
+        "throughput_frames_per_wall_s": 12.757727350077403
+      }
+    },
+    "8": {
+      "cold_sequential": {
+        "elapsed_wall_s": 1.5273055830039084,
+        "frame_median_wall_s": {
+          "canonical_s": 0.0054229794986895286,
+          "own_s": 0.012910083001770545,
+          "skew_s": 0.006814478991145734,
+          "total_s": 0.07346737499756273,
+          "tracker_s": 0.04837558300641831
+        },
+        "frames_per_job": 20,
+        "jobs": 1,
+        "signature_match_across_jobs": true,
+        "signature_match_to_8_cold": true,
+        "signatures_sha256": "2fb408b8774fdb977352489f36f6202ce1590f09833997e21dd695740d7a1ed6",
+        "throughput_frames_per_wall_s": 13.09495638761691
+      },
+      "concurrent_two_workers": {
+        "elapsed_wall_s": 2.122290957995574,
+        "frame_median_wall_s": {
+          "canonical_s": 0.007511979005357716,
+          "own_s": 0.013809958501951769,
+          "skew_s": 0.01487325049674837,
+          "total_s": 0.10271466650010552,
+          "tracker_s": 0.06699393799499376
+        },
+        "frames_per_job": 20,
+        "jobs": 2,
+        "signature_match_across_jobs": true,
+        "signature_match_to_8_cold": true,
+        "signatures_sha256": "2fb408b8774fdb977352489f36f6202ce1590f09833997e21dd695740d7a1ed6",
+        "throughput_frames_per_wall_s": 18.847557093575205
+      },
+      "cv2_getNumThreads": 8,
+      "repeat_sequential": {
+        "elapsed_wall_s": 1.528791500008083,
+        "frame_median_wall_s": {
+          "canonical_s": 0.005438041494926438,
+          "own_s": 0.01305672950547887,
+          "skew_s": 0.006907667004270479,
+          "total_s": 0.07384766700124601,
+          "tracker_s": 0.04840585450438084
+        },
+        "frames_per_job": 20,
+        "jobs": 1,
+        "signature_match_across_jobs": true,
+        "signature_match_to_8_cold": true,
+        "signatures_sha256": "2fb408b8774fdb977352489f36f6202ce1590f09833997e21dd695740d7a1ed6",
+        "throughput_frames_per_wall_s": 13.082228675325744
+      }
+    }
+  },
+  "kind": "saved_rgb_cpu_replay_only",
+  "opencv": "5.0.0",
+  "pipeline": "Per worker: anchor CarriedBeamTracker/BeamContinuity; for each saved raw TOP, CarriedBeamTracker.observe, BeamContinuity.observe, canonical_pair_top(raw, reference, hue_upper=35, observed_beam=tracked), own_payload(current and anchor for both own RGB), translation_skew(raw, tracked previous). Independent state per worker. No renderer/physics/navigation/recording I/O in timed block.",
+  "python": "3.12.13",
+  "reference_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c",
+  "sample_frames": [
+    307,
+    308,
+    309,
+    310,
+    311,
+    312,
+    313,
+    314,
+    315,
+    316,
+    317,
+    318,
+    319,
+    320,
+    321,
+    322,
+    323,
+    324,
+    325,
+    326
+  ],
+  "sample_input_sha256": {
+    "307": {
+      "own": {
+        "r1": "313b4b7ca19baedcf99fbb26e47906ec46beb72c60c84c42d3066f1ccd3341e1",
+        "r3": "a0cc920c0113088d6019991e4c73976ceab6928a07b4ba7e7a10510e7204116a"
+      },
+      "top": "31a62eb1cadfbf7975582b101a68ede6f3b3455092fc6f942445fd00b70130be"
+    },
+    "308": {
+      "own": {
+        "r1": "471f9fe89facd7fb6172d2c5f17f57f80e6685bd0988a7368c05cec091ce4ab8",
+        "r3": "051edba9da3e9ebb2480be4555cf68885ac23318405169b0bad37884e484a7e3"
+      },
+      "top": "57f14d58249410d8f5367d8a2a53392576583135196a83ef7cd1e5b791f4819a"
+    },
+    "309": {
+      "own": {
+        "r1": "68b2dd3121d043acda9c801e018e355d6b7688f058ac9037f0f4cf5aaa5ea4a9",
+        "r3": "e46d8b65fb3c432a0061d46608f351a6ee8dc26c4eede7396bd00772818fb7b5"
+      },
+      "top": "e6c501f993bd33232912198d80011463bb88586295a6f9f69f0e6530e2925a94"
+    },
+    "310": {
+      "own": {
+        "r1": "398bef7954e8dc4bbaa4d578254065e38caa3d12840c3de2aa980e1e95eaf6f0",
+        "r3": "3040abae3844d688c376764f05c507f36898c2694ebd61f633df0065008b568a"
+      },
+      "top": "fe936322e31b8d9de1b67ae38059b9a51d1fe4144a45aadec56eee72365126ce"
+    },
+    "311": {
+      "own": {
+        "r1": "ebee65fa6a7e3ab498350529e63a2dfe85eee14b3d9aa9f8ee7a1658b14e9393",
+        "r3": "d28189d81f3b6b4f3396888ca3b7eafa70f0a95ef3d064fab5ab81de1a54246a"
+      },
+      "top": "044d5b376da1095af707862ce70260b8f8713a467c9f6857ecb1d0f01dfb2763"
+    },
+    "312": {
+      "own": {
+        "r1": "84fadc942fc69aeee22f4dfd7ef3577c9fa8fd9eb569c433f1a3fd4519af8416",
+        "r3": "449e94ef6ade4d8bb07ad6fe9b16ba70103e601e44f3279e7f6598c4664c54ea"
+      },
+      "top": "b36a1ceb996fcbf632148c6396d24d3f85f70882b88ee0f05391b908185ebe41"
+    },
+    "313": {
+      "own": {
+        "r1": "166356cb12afcddd614a1bcdbfa94014a12dae456b9d7dd87c224c7dc327fdb7",
+        "r3": "dc32e2131facebfe9b796c5f4f524ff5a86ff2f7e82fa5fefe751cea5b56f594"
+      },
+      "top": "14671eb17c6945a8f5ee816b804269554fc40a8105c9dc3b82abbd0db81830b3"
+    },
+    "314": {
+      "own": {
+        "r1": "8a990c195114e7ac5cccb433e0a4c2f4b4f6f6a3725fcf53759d5d3b063cabc7",
+        "r3": "89b4c683d4f3b73b0a59243a235eed073a6ade45ef278965aebf62d69501d7d1"
+      },
+      "top": "b78b15c3590570b461431eb28ada626439b8d3038c6a41abfbd27fbcbffb931e"
+    },
+    "315": {
+      "own": {
+        "r1": "df1d18b87e7cbfa5eafdbea85cc994c7498ffc12f1e843d9f712431cf12fa11f",
+        "r3": "b76a4c7cc8985d5bfedeb8874c6b070ba1a9b4c99e27d8185220d3b3ec833fb7"
+      },
+      "top": "01fc788e5dc76b2338f93822eb1ab9c1ae17a644f6e3360fa9d9b258ad765e8a"
+    },
+    "316": {
+      "own": {
+        "r1": "b98b2d662bec8b2773416ce143d3125a6ce957da7654fbcefffa82289201282f",
+        "r3": "005b806903ffea8e41989a887886de9f988198a1f0e124a6860f758813bbfe16"
+      },
+      "top": "0c90e2908c929739b66b5baad90fca193e81c2b7177e4c036b5f128ff4d1e4f6"
+    },
+    "317": {
+      "own": {
+        "r1": "ae8a67a8fb073111806e0d4b9b8ecff16aa7f02a9459efa377f7140e3a1bdc42",
+        "r3": "d243d7eb08bdd33636cc20fe26ba947da1dff993c9fd29d6eeb6e89434942feb"
+      },
+      "top": "0cc8150e746fcffd03da2a0e72c2dada22204ea56f8451532ae1e9cda679d0b7"
+    },
+    "318": {
+      "own": {
+        "r1": "e63c3cba1e4a4e270210ebac203ebef7bba201d00642a20e5525b541bd050f40",
+        "r3": "80565670375cc40539ac46ec11efe78df3d5969d073f85506fba2f852d36bce6"
+      },
+      "top": "3fcb6f05664744497a859999ef193f8ce657db9be209fcb623081e3a29a9d35a"
+    },
+    "319": {
+      "own": {
+        "r1": "bb9d1746a9572c2fbb5540b988d5f1375d5d33c3ac390dbfbfcf31acc9b5b05f",
+        "r3": "f2575d7f08fd588f19dc33b23a9389aefe8a480f12408b0479630c76aa1ae2e8"
+      },
+      "top": "08b257d96fe45abd5d85b0e6e5f1df5a0386ee68d6cb64e09695435e6c9fcc9b"
+    },
+    "320": {
+      "own": {
+        "r1": "f4835928bd45b6698c013b0dd8cd119b5857cddd97f8cbe7a50693bb01ad0385",
+        "r3": "f8ffb332e66977441dcd07291e823ec63301cf324346c09ce6986c01bce14dc1"
+      },
+      "top": "c25b42448b5b2423b1741d98b62119ec7e7772359fcaa3e51c1a642494dd5431"
+    },
+    "321": {
+      "own": {
+        "r1": "db37435443550fa264f9a0d33d5c43b76bad290e6b297ee8f399e681dd53d7fe",
+        "r3": "c12df4e4d9993145c3c04670f864d17c925c1b7b557012dbabeb75ed8b33bc05"
+      },
+      "top": "6bd505b20e1e7058ed88e1594b858e49929dd5cb7c2831c9eac26de5ae6f0696"
+    },
+    "322": {
+      "own": {
+        "r1": "19926fe29f03e6cf69e8fc72b122f4e094cf86d9f468fff1117db939bc744fbf",
+        "r3": "a6f9a078b9061102c94ac6ef9350dd9a4c0d8e424245de1006b0ecef12315750"
+      },
+      "top": "c3a0f7935339d78cd5e89d1fee7790d0717765f0cb72d09f5b5b625bf45c35bf"
+    },
+    "323": {
+      "own": {
+        "r1": "1c649700372a4936b4832df46c61bca3449b0e4c45719f81dcdec742e4c97229",
+        "r3": "dbdfe2411cb13a7ebeabc955dc2461190951577cecb64e999cdbb31447bba5e2"
+      },
+      "top": "db24a44f563a0b1cbdbc8ed42aa570aa340e47ab3cf12ec570b1d1f0b18ff5df"
+    },
+    "324": {
+      "own": {
+        "r1": "3824845aa4a8609cc2bf9994191d854874c5554e0c53f64aed8d564dd51f09f3",
+        "r3": "a855bb3d057b98bcc77cf2d0bf386e73a431a2e174b5226ab958f0a4e9cee919"
+      },
+      "top": "8306c146f6a5e6cb13d09e4da43485f026a314782df8905c77babce411b4ca4e"
+    },
+    "325": {
+      "own": {
+        "r1": "6c404a9a892a3de1a7699396c4181452c1b84d2ac386eae1bd8632925f6eba3f",
+        "r3": "3e86042880e6bdfd27d1653acd5154be1e3a901552675785fff4ded18ec77c7d"
+      },
+      "top": "f30398f497e2225b0f458fc97fd0acd9ea09a8747c22183a7251f91a83a45e53"
+    },
+    "326": {
+      "own": {
+        "r1": "58f162dab3d17bcfb8f888720fc4417caf9bd8e4ac5143099a266fbbc30cc9a3",
+        "r3": "9dbffbbb012bb263ac16f9004207e47572d458def855bb7c785257dbdd8e3205"
+      },
+      "top": "3560b0291c789f51099063b56dbc6da1d51a6993b8f5cebc63c2e44e3c9525c8"
+    }
+  },
+  "saved_binding_exact_parity": {
+    "compared": "canonical JPEG SHA256 and full transform dict versus v16 pair-decisions.json",
+    "matching_frames": 20,
+    "sampled_frames": 20
+  },
+  "source_pair_decisions_sha256": "864ee674c6bf2f8df80d38f19fcd891d0ebe15c560350464982a44e5fbe95845",
+  "source_raw": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260923/native-v16-full",
+  "source_sha": "bb9d4ba10b0e19fc97c7415b68838bfc140d9cfe",
+  "total_benchmark_wall_s": 15.834750624999288,
+  "worker_model": "Two concurrent identical pair-perception workers, a CPU-contention proxy; production pair and solo use different compute paths."
+}

@@ -1,0 +1,149 @@
+{
+  "schema": "ugrp.dispatch.box_tracking_diagnosis.v1",
+  "source_run": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v26-repeat",
+  "source_revision": "83f92c3c691311fae95dacc089fd76da3910b943",
+  "failed_component": "solo_box",
+  "failure": "RuntimeError: dispatch box motion ambiguous in TOP RGB",
+  "source_images": {
+    "background_top": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v26-repeat/rgb/solo-142-top.jpg",
+      "sha256": "82908ce8590cb69ef5f65761f52823cfba6f14a8fc1a4f7f181af0891b8f39a7"
+    },
+    "previous_top": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v26-repeat/rgb/solo-284-top.jpg",
+      "sha256": "b233755802362bf50b12da8eb044addd9754317de9eb0af4cb41a43beb734abf"
+    },
+    "failed_top": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v26-repeat/rgb/solo-285-top.jpg",
+      "sha256": "c0d8e5faa21069f0f8f1ca8ad50ce05bed82856579a9058fd37d7fc433330b78"
+    },
+    "previous_own": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v26-repeat/rgb/solo-284-own.jpg",
+      "sha256": "4c1c0b42158220650a063fe0cf343ed6d9e48ffc1de44abef1eb862e4bd5cc01"
+    },
+    "failed_own": {
+      "path": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v26-repeat/rgb/solo-285-own.jpg",
+      "sha256": "64174547926019df8a13e975f2f8d9a8fbf4322f9b5d39fcf703fd7e9d352bf0"
+    }
+  },
+  "last_accepted": {
+    "decision_index": 284,
+    "frame_id": 1452,
+    "observed_at_s": 179.08724999749313,
+    "sim_time_s": 179.3214999974876,
+    "solo_phase": "carry",
+    "cargo_center_px": [
+      828.7489429820668,
+      344.6551153009588
+    ],
+    "last_motion_px": [
+      13.03179931640625,
+      -0.053741455078125
+    ],
+    "predicted_next_center_px": [
+      841.780742298473,
+      344.6013738458807
+    ],
+    "own_attachment_passed": true,
+    "own_mask_iou": 0.999216879166397
+  },
+  "failed_rgb": {
+    "image_index": 285,
+    "cyan_gate": [
+      {
+        "min_saturation": 125,
+        "raw_cyan_pixels_within_25px": 0,
+        "eligible_components_within_8px": 0
+      },
+      {
+        "min_saturation": 105,
+        "raw_cyan_pixels_within_25px": 0,
+        "eligible_components_within_8px": 0
+      },
+      {
+        "min_saturation": 90,
+        "raw_cyan_pixels_within_25px": 0,
+        "eligible_components_within_8px": 0
+      },
+      {
+        "min_saturation": 70,
+        "raw_cyan_pixels_within_25px": 0,
+        "eligible_components_within_8px": 0
+      }
+    ],
+    "klt": {
+      "feature_count": 10,
+      "valid_after_existing_cycle_motion_error_gates": 4,
+      "valid_deltas_px": [
+        [
+          13.170166015625,
+          0.0772705078125
+        ],
+        [
+          13.5040283203125,
+          0.055023193359375
+        ],
+        [
+          0.0,
+          -0.00115966796875
+        ],
+        [
+          0.00335693359375,
+          0.00286865234375
+        ]
+      ],
+      "max_consistent_group": 2,
+      "minimum_consistent_group": 3,
+      "moving_cluster_approx_px": [
+        13.17,
+        13.5
+      ],
+      "stationary_cluster_approx_px": [
+        0.0,
+        0.0
+      ],
+      "motion_norms_under_existing_20px_limit": true
+    },
+    "exact_tracker_replay": "RuntimeError: dispatch box motion ambiguous in TOP RGB"
+  },
+  "v26_first_success_same_route_comparison": [
+    {
+      "index": 283,
+      "cargo_center_px": [
+        825.3840942382812,
+        344.43934631347656
+      ],
+      "tracking_method": "bidirectional RGB feature motion; own attachment independently required",
+      "feature_count": 8,
+      "consistent_features": 8
+    },
+    {
+      "index": 284,
+      "cargo_center_px": [
+        835.6815795898438,
+        344.4997100830078
+      ],
+      "tracking_method": "bidirectional RGB feature motion; own attachment independently required",
+      "feature_count": 8,
+      "consistent_features": 8
+    },
+    {
+      "index": 285,
+      "cargo_center_px": [
+        845.8092651367188,
+        344.66412353515625
+      ],
+      "tracking_method": "bidirectional RGB feature motion; own attachment independently required",
+      "feature_count": 6,
+      "consistent_features": 6
+    }
+  ],
+  "assessment": {
+    "class": "TOP RGB occlusion/insufficient moving feature support under existing visual identity gates",
+    "not_v23_split_mask_case": true,
+    "not_frame_gap_over_20px": true,
+    "physical_attachment_at_failed_frame": "unproven; last accepted own-camera attachment passed and failed own RGB still visibly cyan",
+    "narrow_reliable_fix_without_relaxing_thresholds": "not established; selecting the 2 moving points over 2 stationary points would violate existing minimum-three and 60-percent agreement gates",
+    "recommended_runtime_change": "none from this replay; retain fail-closed HOLD pending independent visual evidence"
+  }
+}

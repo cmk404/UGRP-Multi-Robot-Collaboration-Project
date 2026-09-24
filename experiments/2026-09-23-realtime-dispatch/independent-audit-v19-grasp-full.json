@@ -1,0 +1,378 @@
+{
+  "schema": "ugrp.independent_realtime_dispatch_v19_grasp_full_audit.v1",
+  "checked_at_utc": "2026-09-23T16:39:59.314324+00:00",
+  "source_sha": "1fed936645d8c61bdbea99ec54d7cb09fd719d78",
+  "bundle_sha256": "5516e639e7a31029a7cfb2a5d92844eeee784e32a8aca629735bac8e0dc16e32",
+  "condition": "open seed11 saved plan; --overlap-start grasp; native full",
+  "manager": {
+    "path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260924-013415-dispatch-3b6945da/manifest.json",
+    "sha256": "cfcd2f37fd1c57eb47ce8d9ca728e423af2da6a6c1fd42b9364d2f2eb8936962",
+    "status": "process_completed",
+    "exit_code": 0,
+    "source_dirty": false,
+    "source_changed_during_run": false,
+    "inputs_changed_during_run": false,
+    "input_before_after_equal": true,
+    "source_tree_before_sha256": "a539f96ba3c44f3b59756a9cad8891faed25cb6eb1562e919425f66c2996489a",
+    "source_tree_after_sha256": "a539f96ba3c44f3b59756a9cad8891faed25cb6eb1562e919425f66c2996489a",
+    "finalization_errors": []
+  },
+  "transit_baseline_pin": {
+    "manager_path": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260924-011434-dispatch-01a4daa7/manifest.json",
+    "same_execution_tree": true,
+    "same_inputs": true,
+    "same_argv_except_grasp_flag_and_output": true,
+    "source_sha_changed_by_docs_only": "51fb09cf -> 1fed936; execution tree and bundle exact equal"
+  },
+  "result": {
+    "phase": "FINISHED",
+    "error": null,
+    "physical_success": true,
+    "protocol_complete": true,
+    "wall_s": 200.92883170799178,
+    "timing": {
+      "scene_and_observer_setup_wall_s": 1.6120389580028132,
+      "scope": "output-only SIM/wall measurements; wall_s includes finalization",
+      "control_end_sim_s": 195.8099999970977,
+      "control_wall_s": 199.4076262079907,
+      "motion_wall_s": 191.6444657079992,
+      "motion_sim_s": 190.60999999709708,
+      "motion_sim_to_wall": 0.9946021623578826,
+      "cleanup_wall_s": 1.5212069590052124
+    },
+    "llm_calls": 0,
+    "realtime_control_stats": {
+      "solo_backpressure": 0,
+      "solo_stale_rgb": 0,
+      "solo_decisions": 460,
+      "pair_backpressure": 84,
+      "pair_decisions": 89,
+      "max_decision_age_s": 0.44724999999895765,
+      "solo_total_sim_s": 190.6084999970971,
+      "solo_active_sim_s": 181.91274999730274,
+      "solo_resource_wait_sim_s": 8.695749999794373,
+      "solo_resource_waiting": false,
+      "solo_resource_wait_intervals": 1,
+      "solo_active_budget_s": 300.0,
+      "pair_stage_stale_rgb": 0,
+      "pair_stage_samples": 316
+    },
+    "plan_replay_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+    "overlap_selection": {
+      "mode": "auto",
+      "enabled": true,
+      "reason": "independent_open_routes",
+      "plan_hash": "c2f420b7d1eb537334502b0eebe14161ffc0468f058bb5230e3d31c39281e45c",
+      "beam_route": "north",
+      "box_route": "south",
+      "beam_resource": "north_gate",
+      "box_resource": "south_gate",
+      "overlap_start": "grasp"
+    }
+  },
+  "referee": {
+    "physical_success": true,
+    "cargo": {
+      "beam": {
+        "max_lift_m": 0.07762710125580372,
+        "displacement_m": 1.6895834374536618,
+        "lift_observed_by_referee": true,
+        "inside_slot_at_end": true,
+        "released_supported_stable": true,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 276,
+          "floor_contact_samples": 0,
+          "window_s": [
+            107.63999999918262,
+            135.21999999853517
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999764952,
+          "first_floor_contact_s": null
+        },
+        "physical_success": true
+      },
+      "box": {
+        "max_lift_m": 0.06885265175540664,
+        "displacement_m": 2.298455727946017,
+        "lift_observed_by_referee": true,
+        "inside_slot_at_end": true,
+        "released_supported_stable": true,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 760,
+          "floor_contact_samples": 0,
+          "window_s": [
+            107.41999999918782,
+            183.41324999739555
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999764952,
+          "first_floor_contact_s": null
+        },
+        "physical_success": true
+      }
+    },
+    "simultaneous_loaded_motion_s": 6.999999999834472,
+    "weld_steps": 0,
+    "robot_robot_contact_samples": 0,
+    "all_three_body_motion_sim_s": 15.399999999650063,
+    "beam_loaded_window_s": [
+      107.63999999918262,
+      135.21999999853517
+    ],
+    "box_loaded_window_s": [
+      107.41999999918782,
+      183.41324999739555
+    ],
+    "both_loaded_window_s": [
+      107.63999999918262,
+      135.21999999853517
+    ],
+    "both_loaded_window_duration_s": 27.57999999935255
+  },
+  "resource_arbitration": {
+    "event_sequence": [
+      {
+        "event": "acquire",
+        "object": "beam",
+        "resource": "north_gate",
+        "stage": "GRASP"
+      },
+      {
+        "event": "acquire",
+        "object": "box",
+        "resource": "south_gate",
+        "stage": "GRASP"
+      },
+      {
+        "event": "acquire",
+        "object": "beam",
+        "resource": "dispatch_apron",
+        "stage": "UNLOAD"
+      },
+      {
+        "event": "finish",
+        "object": "beam",
+        "released": [
+          "north_gate",
+          "dispatch_apron"
+        ]
+      },
+      {
+        "event": "acquire",
+        "object": "box",
+        "resource": "dispatch_apron",
+        "stage": "UNLOAD"
+      },
+      {
+        "event": "finish",
+        "object": "box",
+        "released": [
+          "south_gate",
+          "dispatch_apron"
+        ]
+      }
+    ],
+    "beam_then_box_apron_exclusion_order": true,
+    "solo_resource_wait_sim_s": 8.695749999794373,
+    "scope": "Resource event order has no timestamps; sampled contact and strict motion separately recorded."
+  },
+  "core_files": {
+    "result.json": {
+      "sha256": "c58b87d1e140b02edd1bb6f03aa504dc04856fcb1f1f626f0fa33e49b1cb79ce",
+      "bytes": 6481029,
+      "matches_receipt": true
+    },
+    "issued-commands.json": {
+      "sha256": "783e4979dedf64d52554b4fb101bfc25432c1a0adc5cee171bff606cde06d9e8",
+      "bytes": 528274,
+      "matches_receipt": true
+    },
+    "referee-only.jsonl": {
+      "sha256": "a0290dfa0bbb7344e5e7d38588cb83edaa966a97d7f4c318b06e9e50f37c4d7a",
+      "bytes": 2883000,
+      "matches_receipt": true
+    },
+    "pair-decisions.json": {
+      "sha256": "92fb30975f1c227cf1e1fb753db589ebbd451ea6870a322bae731417b4e06aae",
+      "bytes": 9073956,
+      "matches_receipt": true
+    },
+    "solo-decisions.json": {
+      "sha256": "4f7e9979ca52fecb4aba958642582a004bbc85e53605ce53f88d7846b4776b94",
+      "bytes": 2286947,
+      "matches_receipt": true
+    },
+    "execution.mp4": {
+      "sha256": "91a18389cbe06eaf044eed7b23f4f094a9edf23a012dec6367cb7c3ed38f6d58",
+      "bytes": 2076148,
+      "matches_receipt": true
+    },
+    "execution.frames.json": {
+      "sha256": "38c4c401bd47a74c163f618fce71f39d1be7ca40b3e42520387c6a820e05e5bf",
+      "bytes": 279827,
+      "matches_receipt": true
+    },
+    "native-observer.json": {
+      "sha256": "b254712a99ad50fefed5ae203452bb934d4508d884a363c36bec45020ff18474",
+      "bytes": 78,
+      "matches_receipt": true
+    },
+    "evaluation-only.json": {
+      "sha256": "fe4c35f89e86eb987fa82f85a4ca40f25bcf1823250f07c1038152f667016ff3",
+      "bytes": 5068,
+      "matches_receipt": true
+    }
+  },
+  "pair_carry": {
+    "count": 89,
+    "analysis_backend_counts": {
+      "spawn_cpu": 89
+    },
+    "permission_go": 89,
+    "frame_ids_strict_increasing": true,
+    "observed_at_monotone": true,
+    "age_s": {
+      "count": 89,
+      "min": 0.1747499999958677,
+      "median": 0.1962499999953593,
+      "p95": 0.2599999999938518,
+      "max": 0.2874999999932015,
+      "sum": 18.091499999572207
+    },
+    "period_s": {
+      "count": 88,
+      "min": 0.1599999999962165,
+      "median": 0.29999999999290594,
+      "p95": 0.3799999999910142,
+      "max": 0.4399999999895954,
+      "sum": 27.379999999352563
+    },
+    "effective_lease_s": {
+      "count": 89,
+      "min": 0.2,
+      "median": 0.25,
+      "p95": 0.25,
+      "max": 0.25,
+      "sum": 21.8
+    },
+    "pending_renewal": {
+      "count": 74,
+      "duration_s": {
+        "count": 74,
+        "min": 0.07250000001246804,
+        "median": 0.16487500001028366,
+        "p95": 0.1780000000099733,
+        "max": 0.18525000000980185,
+        "sum": 11.567000000775977
+      },
+      "invariant_errors": []
+    },
+    "command_coverage": {
+      "r1": {
+        "with_renewal": {
+          "moving_command_union_s": 24.127749999571293,
+          "positive_gap": {
+            "count": 9,
+            "min": 0.010749999985563363,
+            "median": 0.08349999998384305,
+            "p95": 0.5439999999729537,
+            "max": 1.2709999999557624,
+            "sum": 2.428749999814926
+          }
+        },
+        "original_only": {
+          "moving_command_union_s": 19.379999999979205,
+          "positive_gap": {
+            "count": 73,
+            "min": 0.009999999993851816,
+            "median": 0.04999999999290594,
+            "p95": 0.16999999999006832,
+            "max": 1.349999999962165,
+            "sum": 7.019999999402444
+          }
+        }
+      },
+      "r3": {
+        "with_renewal": {
+          "moving_command_union_s": 24.127749999571293,
+          "positive_gap": {
+            "count": 9,
+            "min": 0.010749999985563363,
+            "median": 0.08349999998384305,
+            "p95": 0.5439999999729537,
+            "max": 1.2709999999557624,
+            "sum": 2.428749999814926
+          }
+        },
+        "original_only": {
+          "moving_command_union_s": 19.379999999979205,
+          "positive_gap": {
+            "count": 73,
+            "min": 0.009999999993851816,
+            "median": 0.04999999999290594,
+            "p95": 0.16999999999006832,
+            "max": 1.349999999962165,
+            "sum": 7.019999999402444
+          }
+        }
+      }
+    },
+    "partial_pipeline": {
+      "rows": 89,
+      "positive_overlap_count": 89,
+      "top_cpu_overlap_own_render_wall_s": {
+        "count": 89,
+        "min": 0.07736566699168179,
+        "median": 0.08774733300379012,
+        "p95": 0.09838424999907147,
+        "max": 0.3779472089954652,
+        "sum": 8.253092341925367
+      },
+      "timestamp_invariant_errors": []
+    },
+    "held_estimate_true_counts": {
+      "r1": 89,
+      "r3": 89
+    },
+    "control_valid_count": 89
+  },
+  "solo": {
+    "rows": 477,
+    "actual_decisions": 460,
+    "resource_drops": 17,
+    "budget_margin_decisions": 140
+  },
+  "video": {
+    "requested_fps": 10,
+    "written_frames": 1959,
+    "captured_frames": 1155,
+    "repeated_frames": 804,
+    "error": null,
+    "ffprobe_decoded_frames": 1959,
+    "media_range_206_matches_source": true,
+    "media_id": "dcc88a99768eaba328a1"
+  },
+  "tensorboard": {
+    "path": "/Users/changmin/projects/ugrp/outputs/tensorboard/0923-실시간-진단/v19-grasp-full",
+    "manifest_complete": true,
+    "scalars": {
+      "result/wall_s": 200.9288330078125,
+      "result/commands": 1299.0,
+      "result/model_calls": 0.0,
+      "result/input_tokens": 0.0,
+      "result/output_tokens": 0.0,
+      "result/model_latency_s": 0.0,
+      "result/recorded_raw_commands": 1239.0,
+      "evaluation/simultaneous_loaded_motion_s": 7.0,
+      "evaluation/robot_robot_contact_samples": 0.0,
+      "evaluation/reported_success": 1.0,
+      "claims/protocol_complete": 1.0,
+      "claims/plan_committed": 1.0
+    }
+  },
+  "scope": "One physically complete grasp-admission run with actual simultaneous loaded movement 7.0s. Repeat pending. Transit baseline had 0s in both trials; single-variable CLI comparison but asynchronous trajectories differ. Not general reliability or new LLM communication efficacy.",
+  "errors": []
+}

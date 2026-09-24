@@ -1,0 +1,322 @@
+{
+  "schema": "ugrp.faster_dispatch_run_audit.v1",
+  "run": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/native-v25-full",
+  "manager": {
+    "path": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/simulation-runs/20260924-165809-dispatch-4e5ecf31/manifest.json",
+    "sha256": "3eb55916e7bf38f14a4826ea446be8b5766bbd7cde78e103c3f854d0abad0026",
+    "run_id": "20260924-165809-dispatch-4e5ecf31",
+    "status": "process_completed",
+    "exit_code": 0,
+    "output_matches_run": true,
+    "source_sha": "dc64f335f9852612dbfe44f93135c54feb09ad27",
+    "source_dirty": false,
+    "source_tree_before_sha256": "c2404b66b7c31ce446a4e0a332d29b082fd61fcf5e15659dc5b24547513d0a00",
+    "source_tree_after_sha256": "c2404b66b7c31ce446a4e0a332d29b082fd61fcf5e15659dc5b24547513d0a00",
+    "source_unchanged": true,
+    "inputs_unchanged": true,
+    "finalization_errors": [],
+    "runtime_s": 194.64762304199394
+  },
+  "source_bundle": {
+    "active_bundle": "not identified by run result or manager; inspect pinned source separately",
+    "recorded_bundle_hashes": {
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v10.json": "aa3a4373fcbe2970b1ce95062d684704ea8c342cab77a0fce913720bb71eb606",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v11.json": "2ccc0a79d25d7a7cb32a9f909127a26655ebe32309616cb8a5cc6c1c7a19c4aa",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v12.json": "4577c8d906715ab98341f97aa6afa656e704acafd03ef20a2a4ac67adb41a54a",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v13.json": "fce4968d73ec94f38fde438ab74989a0a4199ec6e93c295ca50b85501a8089a2",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v14.json": "9fa9bd26155e66a60bb636be2c1334420024e40ed89357ac7698b4a43046aa72",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v15.json": "1933cd0e277e6249f5b6125d006bdca2fe8d9a4edf02603efb01514bfe12edaa",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v16.json": "9d11f82ca02fb60d283fe6908fe1f696b2d31aabfc1acd9bf779c56a94b98958",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v17.json": "8a686939f6505bfaae2f4ebadb3e637b0e229b63e25dfb96877c411235bf6125",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v18.json": "a6891549ad88372a168fca34813ae96dd5c387447cc2ec4b352d3c96d5b891e4",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v19.json": "5516e639e7a31029a7cfb2a5d92844eeee784e32a8aca629735bac8e0dc16e32",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v2.json": "771a1cb51feeeecb55174d0e68e0dad30bfedfb748149dcd7c9e1cf3f1e2d120",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v20.json": "c55ce2163f89d6db069f47a18b7cf46f92e27887611370019e5b2fc25dab3ad5",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v21.json": "0c50a3f5d842d675dc1c78fc33e5a17eab014c87cbf6bed167d228bb371815b3",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v22.json": "89fadd2c963025a8514a24c6c435b8f06b5caf4e7561b944506e1645c55ea157",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v23.json": "abc0d78e520fa5994003c36f1e9193352c08fabcbf75fdf99fc5ba5c595d0745",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v24.json": "d1dc432c4bcb176fd5c73cfa65c555c8ba856070b067e4ad8b37ec637c2a6173",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v25.json": "e591f30cc8318d2decad6c961da5912d96a81503f8a2b42998398cd1f18ace1f",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v3.json": "a1a975381e4097c6e0c324d2153ab1cf6e886873f9068afe7c8cba604d235732",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v4.json": "16cf1053ff07372cb86921d52dfebb7f2a938e6d275d9923f4f11320eb158379",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v5.json": "8ab2b8a67141d769c425065b01015c5f5a0cd1c6c6bebc8474a0d55e10d2fd3f",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v6.json": "f07581649e84418c0ad31fc4577aaaebc680b34928ce3485fa8cb813d04d8045",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v7.json": "86f22c3d05280a5d8ab35a57b646852768520e0fcd536f7a54cc8018144544be",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v8.json": "a312cac4acb581c5c97b41d042049fa83ac6636d35f15f1579525c44119fb93e",
+      "config/rgb_execution_bundles/rgb-standard-dispatch-v9.json": "d50e4a2e2ebcac796daec1b4eca1c203da8b15b12d5182465f72d93865f0428c"
+    },
+    "plan_replay_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+    "scene_manifest_sha256": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a"
+  },
+  "outcome": {
+    "phase": "FINISHED",
+    "error": null,
+    "protocol_complete": true,
+    "physical_success_reported": true,
+    "physical_success_evaluation_only": true,
+    "llm_calls": 0,
+    "scope": "recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E",
+    "interpretation": "referee samples are evaluation-only; issued commands are not measured motion or physical success"
+  },
+  "timing": {
+    "wall_s": 194.18305620801402,
+    "scene_and_observer_setup_wall_s": 1.7890514580067247,
+    "scope": "output-only SIM/wall measurements; wall_s includes finalization",
+    "control_end_sim_s": 189.7999999972398,
+    "control_wall_s": 192.40453341699322,
+    "motion_wall_s": 184.96417883399408,
+    "motion_sim_s": 184.5999999972392,
+    "motion_sim_to_wall": 0.9980310845102514,
+    "cleanup_wall_s": 1.7785239579970948
+  },
+  "physical_evaluation_only": {
+    "cargo": {
+      "beam": {
+        "physical_success": true,
+        "max_lift_m": 0.07766191770247324,
+        "displacement_m": 1.684808414786441,
+        "inside_slot_at_end": true,
+        "released_supported_stable": true,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 373,
+          "floor_contact_samples": 0,
+          "window_s": [
+            92.45999999954158,
+            129.70999999866547
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999764952,
+          "first_floor_contact_s": null
+        }
+      },
+      "box": {
+        "physical_success": true,
+        "max_lift_m": 0.06855108662764661,
+        "displacement_m": 2.2982177800112504,
+        "inside_slot_at_end": true,
+        "released_supported_stable": true,
+        "carry_clearance": {
+          "sampled_continuous_clearance": true,
+          "samples": 673,
+          "floor_contact_samples": 0,
+          "window_s": [
+            108.87899999915332,
+            176.1837499975665
+          ],
+          "scope": "Post-run referee samples only; never actor input. No claim about contact between samples.",
+          "max_sample_gap_s": 0.09999999999764952,
+          "first_floor_contact_s": null
+        }
+      }
+    },
+    "weld_steps": 0,
+    "robot_robot_contact_samples": 0,
+    "obstacle_contact_steps": 0,
+    "simultaneous_loaded_motion_s": 9.499999999775355,
+    "both_loaded_intervals_count": 35,
+    "all_three_body_motion_sim_s": 14.199999999678425
+  },
+  "resources": {
+    "events": [
+      {
+        "event": "acquire",
+        "object": "beam",
+        "resource": "north_gate",
+        "stage": "GRASP"
+      },
+      {
+        "event": "acquire",
+        "object": "box",
+        "resource": "south_gate",
+        "stage": "GRASP"
+      },
+      {
+        "event": "acquire",
+        "object": "beam",
+        "resource": "dispatch_apron",
+        "stage": "UNLOAD"
+      },
+      {
+        "event": "finish",
+        "object": "beam",
+        "released": [
+          "north_gate",
+          "dispatch_apron"
+        ]
+      },
+      {
+        "event": "acquire",
+        "object": "box",
+        "resource": "dispatch_apron",
+        "stage": "UNLOAD"
+      },
+      {
+        "event": "finish",
+        "object": "box",
+        "released": [
+          "south_gate",
+          "dispatch_apron"
+        ]
+      }
+    ],
+    "apron_acquire_order": [
+      "beam",
+      "box"
+    ],
+    "apron_exclusion_errors": [],
+    "solo_resource_wait_sim_s": 9.858999999766866
+  },
+  "solo": {
+    "decision_count": 404,
+    "carry_decision_count": 261,
+    "carry_decision_span_s": 67.08049999841377,
+    "phase_counts": {
+      "approach": 85,
+      "lower": 16,
+      "close": 1,
+      "lift": 15,
+      "verify_lift": 1,
+      "attachment_left": 1,
+      "attachment_right": 1,
+      "attachment_home": 1,
+      "carry": 261,
+      "release": 16,
+      "open": 1,
+      "retract": 1,
+      "verify_release": 1,
+      "release_ground_left": 1,
+      "release_ground_right": 1,
+      "release_ground_home": 1
+    },
+    "moving_command_coverage": {
+      "moving_command_count": 253,
+      "moving_command_union_s": 50.20299999887078,
+      "consecutive_positive_gap_s": {
+        "count": 6,
+        "min": 0.6274999999792499,
+        "median": 0.6897499999777779,
+        "p95": 13.21749999967328,
+        "max": 13.21749999967328,
+        "sum": 16.97699999954655
+      }
+    },
+    "original_moving_command_coverage": {
+      "moving_command_count": 211,
+      "moving_command_union_s": 44.59149999921749,
+      "consecutive_positive_gap_s": {
+        "count": 45,
+        "min": 0.03224999999332567,
+        "median": 0.13899999999080137,
+        "p95": 0.7339999999767315,
+        "max": 13.415249999676874,
+        "sum": 22.58849999919984
+      }
+    },
+    "pending_renewal": {
+      "receipts": 42,
+      "issued_renewals": 42,
+      "errors": [],
+      "status": "pass"
+    },
+    "own_rgb_attachment_evidence_rows": 287,
+    "own_rgb_attachment_attached_counts": {
+      "True": 287
+    },
+    "own_rgb_attachment_scope": "recorded image-derived estimates, not a contact sensor"
+  },
+  "pair_approach_pending_renewal": {
+    "receipts": 28,
+    "issued_by_slot": {
+      "r1": 28,
+      "r3": 28
+    },
+    "errors": [],
+    "status": "pass"
+  },
+  "pair_fine_pending_bridge": {
+    "receipts": 89,
+    "issued_by_slot": {
+      "r1": 89,
+      "r3": 89
+    },
+    "errors": [],
+    "status": "pass"
+  },
+  "core_files": {
+    "result.json": {
+      "present": true,
+      "bytes": 4494357,
+      "sha256": "0b0f9265ebde77ac59b2000ae7236d4f432867d1a9268abfac994eb9187eba25",
+      "matches_manager_receipt": true
+    },
+    "evaluation-only.json": {
+      "present": true,
+      "bytes": 4495,
+      "sha256": "eff7f0bc33237971327c0b4ec473676804da5576fa7a5819a9cb27f44a683591",
+      "matches_manager_receipt": true
+    },
+    "issued-commands.json": {
+      "present": true,
+      "bytes": 772567,
+      "sha256": "21bb6b3acf5c34fa5d1fa9de9c9d294b4ef81a7832d6e83e664381b9e4428489",
+      "matches_manager_receipt": true
+    },
+    "solo-decisions.json": {
+      "present": true,
+      "bytes": 1927333,
+      "sha256": "d342a326c990c4e3db6ff54d1bdfac233acf3c31f299e25ab872f7d51f855ccb",
+      "matches_manager_receipt": true
+    },
+    "solo-raw-actions.json": {
+      "present": true,
+      "bytes": 945323,
+      "sha256": "3b51acf602e8b5ef4525ffed17355f498691a88dd1086cf7c59efcc6911c42dc",
+      "matches_manager_receipt": true
+    },
+    "solo-renewals.json": {
+      "present": true,
+      "bytes": 31399,
+      "sha256": "504026fcc8696eb414cdb4fb5dde9c7313f233cff26dcf586a11820ac717f048",
+      "matches_manager_receipt": true
+    },
+    "pair-decisions.json": {
+      "present": true,
+      "bytes": 6859308,
+      "sha256": "82277e8674b54bdf2a19780cc8ba7569946498550fbc9e9100cb5e5473d62e0e",
+      "matches_manager_receipt": true
+    },
+    "referee-only.jsonl": {
+      "present": true,
+      "bytes": 2811128,
+      "sha256": "bb1ee0cd28ae433e5ff9f6774b8efbd09095bc5575b6f9c621ef75d795e9f1fe",
+      "matches_manager_receipt": true
+    },
+    "execution.frames.json": {
+      "present": true,
+      "bytes": 260882,
+      "sha256": "222a3efbacdbb0335007114ce98fd2b79e1b7c2c7f1f8d6a14feb0185c5374a1",
+      "matches_manager_receipt": true
+    },
+    "execution.mp4": {
+      "present": true,
+      "bytes": 1921898,
+      "sha256": "1bfbc9a43dd8a079475ed6c84714875e889289cf0784e101b7f97168ca345da7",
+      "matches_manager_receipt": true
+    },
+    "scene-manifest.json": {
+      "present": true,
+      "bytes": 606,
+      "sha256": "5e4a3c8bd35018110208a39f97adf2c9150d77070bf84eee4fa668ebb3784f3a",
+      "matches_manager_receipt": true
+    }
+  },
+  "errors": [],
+  "validator_correction": {
+    "validator_path": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/audit-v25-validator-corrected.py",
+    "validator_sha256": "d0aeac060f17d054953f6b99a7435f64ecf7c936473a4b4718edc747e617ddbd",
+    "change": "Fine bridge receipt axis is read from axis; issued command fine_axis remains unchanged.",
+    "negative_mutation": "In-memory first receipt total_extension_s=0.06 failed the .05 s bound; raw files unchanged.",
+    "previous_audit_path": "/Users/changmin/projects/ugrp/outputs/simulation-realtime-20260924-faster/audit-v25-full.json"
+  }
+}

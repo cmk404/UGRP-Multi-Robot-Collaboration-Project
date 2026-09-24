@@ -1,0 +1,142 @@
+{
+  "scope": "read-only saved JSON; RGB top position proxy, no physics run; v7 different execution architecture",
+  "camera_projection": {
+    "source": "maps/research/dispatch_v1.json + harness/known_map_navigation.py",
+    "feature_plane_height_m": 0.09,
+    "meters_per_pixel": 0.0034849071995269676
+  },
+  "runs": {
+    "v13": {
+      "sources": {
+        "pair-decisions.json": "8f012cf318a683e4522c4efac6f18a7857cc3f2d62c21340ca42e29fe666b911",
+        "issued-commands.json": "0d8de080cc468de475f9c387883a0c2c74ece1e67dbb53ec490de2b6ff9707da"
+      },
+      "segment": {
+        "first_carry_index": 65,
+        "last_carry_index": 163,
+        "t0_sim_s": 124.95999999877306,
+        "t1_sim_s": 162.87999999787638,
+        "x0_px": 269.2476310383421,
+        "x1_px": 403.5114819439899,
+        "delta_sim_s": 37.919999999103325,
+        "delta_px": 134.26385090564781,
+        "delta_m_projection": 0.46789706065730746,
+        "avg_cm_per_sim_s": 1.233905750707731
+      },
+      "drive": {
+        "forward_only_lease_count": 91,
+        "covered_sim_s": 19.820000000524175,
+        "coverage_fraction": 0.5226793249206975,
+        "renewal_interval_sim_s": {
+          "median": 0.39999999999054126,
+          "mean": 0.4029999999904705,
+          "p95": 0.49999999998817657,
+          "max": 1.0299999999756437
+        },
+        "lease_gap_sim_s": {
+          "median": 0.17999999998156113,
+          "mean": 0.18477777776253437,
+          "p95": 0.33999999997777763,
+          "max": 0.7799999999756437
+        },
+        "gaps_over_0p1s": 75,
+        "gaps_over_0p2s": 28
+      },
+      "actor_timing_wall_s": {
+        "snapshot_submit_wall_s": {
+          "median": 0.0004432499990798533,
+          "mean": 0.00046356906070764355,
+          "p95": 0.000777291992562823,
+          "max": 0.0011090409971075132
+        },
+        "render_wait_wall_s": {
+          "median": 0.21301616700657178,
+          "mean": 0.21162142046530863,
+          "p95": 0.26472637499682605,
+          "max": 0.3313654169905931
+        },
+        "jpeg_encode_wall_s": {
+          "median": 0.005105499993078411,
+          "mean": 0.005513746182186144,
+          "p95": 0.007625792000908405,
+          "max": 0.00988129100005608
+        },
+        "image_record_wall_s": {
+          "median": 0.0017102499987231568,
+          "mean": 0.0018919271612751552,
+          "p95": 0.0032808749965624884,
+          "max": 0.006169957996462472
+        },
+        "pair_bind_wall_s": {
+          "median": 0.08794149999448564,
+          "mean": 0.10365263798060671,
+          "p95": 0.15289687499171123,
+          "max": 0.5096711250080261
+        },
+        "perception_wall_s": {
+          "median": 0.035624249998363666,
+          "mean": 0.04063753576786375,
+          "p95": 0.06717908299469855,
+          "max": 0.1302491250098683
+        }
+      },
+      "video_segment_status": {
+        "repeated": 188,
+        "captured": 191
+      }
+    },
+    "v7": {
+      "sources": {
+        "pair-decisions.json": "3c8f34ba3dc2370fe29aee527d65d87c0bb36a0b6a0901efd771936e176b9494",
+        "issued-commands.json": "2d0219b7b62579c2f8bf38605a4df3237fbfeb5dda35b6072e3efcff066f0518"
+      },
+      "segment": {
+        "first_carry_index": 25,
+        "last_carry_index": 55,
+        "t0_sim_s": 68.31000000011265,
+        "t1_sim_s": 74.30999999997077,
+        "x0_px": 269.4630691785903,
+        "x1_px": 408.4218016723621,
+        "delta_sim_s": 5.999999999858119,
+        "delta_px": 138.95873249377183,
+        "delta_m_projection": 0.48425828730468745,
+        "avg_cm_per_sim_s": 8.070971455268976
+      },
+      "drive": {
+        "forward_only_lease_count": 29,
+        "covered_sim_s": 5.79999999986758,
+        "coverage_fraction": 0.9666666666674554,
+        "renewal_interval_sim_s": {
+          "median": 0.19999999999527063,
+          "mean": 0.20714285713795885,
+          "p95": 0.19999999999527063,
+          "max": 0.39999999999054126
+        },
+        "lease_gap_sim_s": {
+          "median": 0.0,
+          "mean": 0.007142857142519229,
+          "p95": 0,
+          "max": 0.1999999999905384
+        },
+        "gaps_over_0p1s": 1,
+        "gaps_over_0p2s": 0
+      },
+      "actor_timing_wall_s": {
+        "snapshot_submit_wall_s": null,
+        "render_wait_wall_s": null,
+        "jpeg_encode_wall_s": null,
+        "image_record_wall_s": null,
+        "pair_bind_wall_s": null,
+        "perception_wall_s": null
+      },
+      "video_segment_status": null
+    }
+  },
+  "comparison": {
+    "observed_speed_ratio_v13_to_v7": 0.15288193714304363,
+    "drive_coverage_ratio_v13_to_v7": 0.5407027499175218,
+    "observed_cm_per_commanded_sim_s_v13": 2.3607318902367966,
+    "observed_cm_per_commanded_sim_s_v7": 8.349280815788681,
+    "v13_11cm_reference_times_duty_cm_per_sim_s": 5.749472574127672
+  }
+}

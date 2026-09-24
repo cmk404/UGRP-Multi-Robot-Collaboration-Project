@@ -1,0 +1,165 @@
+{
+  "schema": "ugrp.realtime_dispatch.v1",
+  "question": "Remove rendering/decision stalls from shared physics without leaking state to actors; qualify completed native execution at real time.",
+  "base_sha": "4a79e79f5b97dd8daabc66491e47b0e490b6452b",
+  "baseline_evidence": "../2026-09-23-local-dispatch-performance/results.json",
+  "fixed": {
+    "variant": "open",
+    "seed": 11,
+    "plan_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+    "contact_profile": "local_contact_fine",
+    "timestep_s": 0.00025,
+    "weld": false,
+    "actor_camera_and_transform": "unchanged own RGB and common top RGB; actual observation timestamps preserved",
+    "external_model_calls": 0,
+    "training_runs": 0
+  },
+  "candidate": {
+    "realtime_control": true,
+    "realtime_factor": 1,
+    "native_viewer": "isolated latest-state process",
+    "video": "bounded async snapshot recording at requested10fps; repeated frames explicitly marked and counted, preserve SIM duration; not identical video sampling to synchronous baseline",
+    "control": "single shared physics owner; independent bounded RGB work; pair shared expiring leases"
+  },
+  "acceptance": [
+    "Full physical beam and box delivery and release; no artificial weld",
+    "Native end-to-end SIM/wall>=1 target; report active-loop and startup/cleanup separately, no silent exclusion",
+    "Report total mission SIM and wall durations and command/decision ages; time spent holding is not faster motion",
+    "Injected decision delays must not stall independent physics; expired joint actions hold both robots",
+    "No stale observation promoted to current time; all actor images and commands retain provenance"
+  ],
+  "budget": {
+    "baseline_profile_wall_s": 180,
+    "initial_native_trial_wall_s": 600,
+    "initial_native_trials": 1,
+    "diagnostic_trial_max_wall_s": 180,
+    "diagnostic_trials_before_review": 3,
+    "final_full_max_wall_s": 600,
+    "final_full_trials": 2,
+    "model_calls": 0
+  },
+  "source_freeze": "Commit each candidate before physical runs, preserve earlier bundles and every failed result; final candidate gets full replay after diagnostics.",
+  "scope": "Local open-map saved-plan RGB control. Does not qualify new LLM agreement, ACT, clutter/terrain, or physical hardware.",
+  "budget_review_after_v12": {
+    "evidence": "v10/v11 diagnosed lease gaps; v12 passed approach/grasp but first-frame carried-beam segmentation dominates 0.44-0.64 SIM-s decision age and 10-decision cap ended run.",
+    "additional_diagnostic_trials": 2,
+    "diagnostic_max_wall_s": 180,
+    "remaining_final_full_trials": 1,
+    "final_full_max_wall_s": 600,
+    "model_calls": 0,
+    "purpose": "Qualify exact first-frame segmentation optimization and moving carry renewal before the remaining full replay."
+  },
+  "budget_review_after_v13": {
+    "evidence": "v13 full ended on current-RGB high-saturation centerline ambiguity after 167 carry decisions; no stale pair inputs. Offline original-frame replay supports a corroborated low/high saturation fallback. Independent review found worker-side permission mutation and solo moving-command gaps.",
+    "additional_full_trials": 2,
+    "full_max_wall_s": 600,
+    "additional_diagnostic_trials": 1,
+    "diagnostic_max_wall_s": 180,
+    "model_calls": 0,
+    "purpose": "Qualify combined RGB corroboration, owner-only resource commit, and original-TTL solo carry/yield renewal on a new frozen source, then repeat the same full run if the first succeeds."
+  },
+  "budget_review_after_v15": {
+    "evidence": "v15 placed both cargo but exhausted the solo 300 SIM total budget after about 97.5 SIM resource waiting. Prefetch improved the first carry leg but old queued snapshots raised median RGB age .32 to .44 SIM-s and reduced lease .25 to .16.",
+    "additional_full_trials": 2,
+    "full_max_wall_s": 600,
+    "model_calls": 0,
+    "purpose": "Qualify capture at actual render readiness and explicit resource-wait budget accounting, including observer-only conversation display. Repeat identical committed source only if first full run succeeds."
+  },
+  "budget_review_after_v16": {
+    "evidence": "v16 failed at600 solo decisions with227.5 active SIMseconds.213/447 adjacent moving decisions arrived faster than the original .2-second action cadence. Pair median expiry gap .07 seconds remains; native dialogue display is now verified in state-only sync.",
+    "remaining_full_trials": 1,
+    "full_max_wall_s": 600,
+    "model_calls": 0,
+    "purpose": "Use the remaining post-v15 budget to qualify original solo moving cadence and exact prior pair motion renewal under unchanged originalRGB TTL; no new threshold, duration budget, camera, physics or model changes."
+  },
+  "budget_review_after_v17_success": {
+    "evidence": "First frozen v17 run completed both physical cargos and protocol; accepted solo decisions 598/600 leaves a narrow margin. Root approved one finite same-SHA repeat recorded in budget-review-after-v17-success.json.",
+    "additional_full_trials": 1,
+    "full_max_wall_s": 600,
+    "model_calls": 0,
+    "status": "completed; native-v17-repeat physical_success and protocol_complete true, wall 213.656 s; retain both original outcomes and timing variation",
+    "source_sha": "817872651083143fe4ff46b11dba30915e34f5ff",
+    "bundle_sha256": "8a686939f6505bfaae2f4ebadb3e637b0e229b63e25dfb96877c411235bf6125",
+    "purpose": "Check same frozen open/seed11 saved-plan candidate under asynchronous timing; does not authorize another run or promote default controller."
+  },
+  "budget_review_after_v17_repeat": {
+    "evidence": "Same frozen v17 source completed 2/2, wall312.371/213.656 with carry age medians .3547/.30275 and substantial stop/start variation. Pure CPU process prototype has low measured IPC overhead and exact recorded RGB outputs; physical benefit not yet established.",
+    "additional_full_trials": 2,
+    "full_max_wall_s": 600,
+    "model_calls": 0,
+    "training_runs": 0,
+    "scope": "Only open/seed11 same saved plan, camera/contact/physics/TTL/decision budgets unchanged; persistent spawn process for pure pair RGB perception.",
+    "gates": [
+      "Independent code review and relevant regressions pass",
+      "Recorded sequential carry RGB output parity including route transitions",
+      "New immutable execution bundle and clean committed source before any physical run",
+      "Repeat same source only if first full run succeeds; preserve both results and all earlier failures"
+    ],
+    "acceptance": "Both cargos physically placed/released and protocol complete; compare whole mission time, original RGB age, command gaps, active/resource-wait time, clock and concurrent motion. No best-run-only speed or generalization claim.",
+    "stop_rule": "No third full trial within this review; first physical failure triggers evidence review, not automatic budget or safety threshold extension."
+  },
+  "budget_review_after_v18_repeat": {
+    "evidence": "v18 same-source known saved-plan native replays completed twice, wall256.399/204.848. In first carry, 154 positive CRUISE gaps sum10.92575 SIM seconds and exactly equal next decision minus originalRGB+.6 deadline; 139 renewals were all issued .01 before lease expiry. Earlier renewal cannot cover expired image authority.",
+    "additional_full_trials": 2,
+    "full_max_wall_s": 600,
+    "external_model_calls": 0,
+    "training_runs": 0,
+    "candidate": "Same coherent snapshot, TOP-first RGB CPU analysis overlaps own-camera rendering; policy waits for all required views and owner alone applies commands.",
+    "fixed": "Same open/seed11 plan, transit admission, original cameras/JPEGs, scene/contact/physics, .6 RGB TTL, .25 command cap and decision budgets.",
+    "gates": [
+      "Existing batch API regressions pass",
+      "Same frozen snapshot frame/time/source hashes and bounded slot lifetime verified under partial success/error/cancellation",
+      "Recorded entire carry RGB output parity; small actual-render/gated test proves pixel identity and early TOP availability. Actual native TOP-analysis/render overlap is measured during the bounded full trial.",
+      "Independent review, new execution bundle and clean source commit before full physical runs"
+    ],
+    "repeat_rule": "Repeat identical source only after first physical and protocol success; retain both full outcomes and original raw results.",
+    "stop_rule": "At most two full native trials under this review. First failure or failed overlap/parity evidence triggers review, not automatic threshold/budget extension.",
+    "reporting": "Separate physical clock, whole task time, original RGB age, deadline gaps, resource waiting and measured concurrent cargo motion. Previous successes do not transfer to this candidate."
+  },
+  "budget_review_after_v19_transit": {
+    "record": "budget-review-v19-grasp-admission.json",
+    "evidence": "v19 same-source transit-admission native full and repeat both completed physical cargo and protocol, but strict loaded simultaneous motion was 0 in both; beam loaded interval ended before box loaded interval began by 2.54/1.76 SIM s.",
+    "candidate_difference": "Existing CLI --overlap-start grasp only; execution code from 51fb09cf519f2ef61ff3f306beb07ffc64236816 and the v19 bundle remain unchanged. Grasp runs use documentation-only descendant 1fed936645d8c61bdbea99ec54d7cb09fd719d78. Default transit mode unchanged.",
+    "additional_full_trials_max": 2,
+    "full_max_wall_s_each": 600,
+    "repeat_rule": "Only if first grasp trial completes both physical cargo and protocol; preserve each raw outcome.",
+    "stop_rule": "First failure or second completed trial ends this review; no silent budget extension.",
+    "status": "completed; finite 2/2 grasp-admission native trials used, no further trial under this review",
+    "gates": [
+      "same plan/map/seed/models/scene/camera/physics and original RGB TTL/lease",
+      "check grasp/held failure, contacts, strict simultaneous loaded motion, resource wait and exclusive apron",
+      "separate configuration difference from code change, no new LLM calls"
+    ],
+    "precondition_status": "Before the grasp cohort, native-v19-repeat manager exit 0, physical_success=true, protocol_complete=true and its independent audit fulfilled the prerequisite. Both later grasp runs are recorded in completion.",
+    "code_pin_check": "The pre-run review verified execution source 51fb09cf519f2ef61ff3f306beb07ffc64236816. Completed grasp runs pinned documentation-only descendant 1fed936645d8c61bdbea99ec54d7cb09fd719d78; independent audits verify the same execution-code tree and v19 bundle, with only CLI overlap_start and output paths differing.",
+    "completion": {
+      "source_sha": "1fed936645d8c61bdbea99ec54d7cb09fd719d78",
+      "execution_tree_equal_to_transit_source_51fb09c": true,
+      "bundle_sha256": "5516e639e7a31029a7cfb2a5d92844eeee784e32a8aca629735bac8e0dc16e32",
+      "changed_cli_option_only": "--overlap-start grasp",
+      "physical_and_protocol_successes": 2,
+      "completed_trials": 2,
+      "whole_wall_s": [
+        200.92883170799178,
+        196.1035526249907
+      ],
+      "strict_loaded_simultaneous_motion_s": [
+        6.999999999834472,
+        3.499999999917236
+      ],
+      "sampled_robot_contacts": [
+        0,
+        0
+      ],
+      "weld_steps": [
+        0,
+        0
+      ],
+      "raw_audits": [
+        "independent-audit-v19-grasp-full.json",
+        "independent-audit-v19-grasp-repeat.json"
+      ],
+      "scope": "known open/seed11 saved plan; no fresh LLM communication or generalized reliability claim"
+    }
+  }
+}

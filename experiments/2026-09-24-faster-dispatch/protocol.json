@@ -1,0 +1,200 @@
+{
+  "schema": "ugrp.faster_dispatch_protocol.v1",
+  "request": "더 빠르게는 못 해줘?",
+  "objective": "Reduce physical mission completion wall time in native MuJoCo, preserve camera-only control and physical/protocol success.",
+  "baseline": {
+    "source_sha": "1fed936645d8c61bdbea99ec54d7cb09fd719d78",
+    "bundle": "rgb-standard-dispatch-v19",
+    "whole_wall_s": [
+      200.92883170799178,
+      196.1035526249907
+    ],
+    "conditions": "open seed11 stored independent plan --overlap-start grasp"
+  },
+  "candidates": [
+    {
+      "id": "v20",
+      "change": "Only solo pending moving carry renewal within original TTL; speed policy unchanged",
+      "max_full_trials": 1
+    },
+    {
+      "id": "next-far-cruise",
+      "change": "Only raise far box forward cap .08 to .12 and lateral cap .08 to .10, within existing CameraRobotPort limits; proportional .002 near control, reverse .05, staging stop/final waypoint, routes and permissions preserved.",
+      "max_full_trials": 2,
+      "repeat_condition": "First candidate physical and protocol success, no contact/clearance/renewal invariant failure"
+    }
+  ],
+  "budget": {
+    "max_native_full_runs": 3,
+    "max_wall_s_each": 600,
+    "new_llm_calls": 0,
+    "training_runs": 0,
+    "parallel_physics": false
+  },
+  "fixed": {
+    "variant": "open",
+    "seed": 11,
+    "contact_profile": "local_contact_fine",
+    "timestep_s": 0.00025,
+    "camera_raw": [
+      960,
+      720
+    ],
+    "jpeg_quality": 95,
+    "rgb_ttl_s": 0.6,
+    "max_command_lease_s": 0.25,
+    "overlap_start": "grasp",
+    "weld": false,
+    "plan_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7"
+  },
+  "acceptance": [
+    "Both cargo physical placement/release and protocol complete",
+    "Record wall/SIM speed, phase duration, decision and command counts, strict loaded concurrency",
+    "No robot-robot contact, carried cargo sampled floor contact or artificial weld",
+    "Original RGB timestamps, maximum .25 lease, no expired-command revival, current gate/plan authority",
+    "Each candidate committed before run; source and assets remain fixed during run; preserve failed runs"
+  ],
+  "stop_conditions": [
+    "Failure or safety invariant failure stops that candidate cohort for review",
+    "No automatic budget extension or lowered success threshold",
+    "A final successful candidate is repeated once within the stated remaining budget"
+  ],
+  "limits": [
+    "One known saved plan/open map/seed only",
+    "No new LLM communication or physical robot generalization"
+  ],
+  "review_after_v20": {
+    "source_sha": "9b846e7",
+    "outcome": "APPROACH coarse budget failure; no solo carry/renewal ran",
+    "wall_s": 40.21062641699973,
+    "evidence": "audit-v20-full.json and coarse-handoff-diagnosis.json",
+    "decision": "v20 renewal performance unmeasured. Use remaining two full trials for v21 combined candidate and same-source repeat if first passes. Total maximum remains3; no repeat of failed v20.",
+    "v21_changes": [
+      "Bounded stationary RGB-supported coarse-to-fine handoff, retain final fine/physical criteria",
+      "Box farcruise forward .12/lateral .10 within existing port limits",
+      "Retain v20 original-TTL solo renewal"
+    ],
+    "qualification_limit": "Cannot isolate performance contribution of each v21 change from this cohort; compare whole mission and phase time only."
+  },
+  "review_after_v21": {
+    "outcome": "Stopped-RGB coarse wheel heading unresolved; fine6/6 support still valid on stationary frame204 and next206; no carry/renewal reached.",
+    "diagnosis": "A four-corner heading gate suppressed a valid RGB centroid/forward gap, preventing transition to finer supported models. Separate position evidence from coarse heading permission; preserve zero/invalid coarse action and require finer yaw support.",
+    "budget_review": "Two early diagnostic failures consumed65.484 actual wall seconds. Replace unused final-candidate slots with max2 v22 full trials, second only if first meets all acceptance. Total trial count ceiling4, aggregate native wall limit1800s retained (original3x600), pertrial600. No modelcalls/training. This review follows new source evidence, not an automatic retry.",
+    "max_total_trials": 4,
+    "aggregate_native_wall_s": 1800,
+    "v22_max_trials": 2,
+    "repeat_condition": "physical+protocol success, no contacts/clearance/renewal invariant error"
+  },
+  "review_after_v22": {
+    "full_outcome": "coarse120 failure, motion0.300313x, 120 alignment steps, 72.3% lease coverage; no new handoff or carry code executed",
+    "short_repeat_outcome": "70s diagnostic deadline; motion0.999878x, coarse completed and fine phase3 reached. Native Raise never occurred, foreground cause remains untested. Git1d550ff has only docs/audit differences from e67d345; execution bundle/hash identical.",
+    "decision": "Address measured coarse lease gaps within unchanged original RGB TTL using owner-only pending renewal; no heading/readiness relaxation. Preserve all prior results.",
+    "budget_review": "Allow max2 committed v23 full trials, each600 wall seconds, second only after physical/protocol success and invariant audit. Prior four runs consumed295.300 wall seconds; prospective aggregate1495.300 remains within original1800 ceiling. This is a new scoped controller change, not blind repeat of a failed candidate.",
+    "max_total_trials": 6,
+    "aggregate_native_wall_s": 1800,
+    "v23_max_trials": 2,
+    "repeat_condition": "physical and protocol success, no contact/weld/renewal invariant errors; same committed execution source and assets",
+    "limitations": "No new LLM calls or training. One open seed11 saved plan. Whole candidate comparison; component effects not isolated."
+  },
+  "review_after_v23": {
+    "outcome": "Both cargo lifted, coarse59 with32 validated renewals, solo carry22 decisions/21 validated renewals, stopped135.8886s by TOP box tracker. No contacts/weld; physical/protocol failure.",
+    "rgb_evidence": "Failed166→167 transition has two saturation125 fragments, saturation105 single area28/6x13 candidate within original8px predicted gate. Current if choices break bypasses it; fallback motion21px exceeds unchanged20px flow gate. Fix ambiguous-level early exit only, preserve all existing gates.",
+    "budget_review": "Prior5 runs431.1889 wall seconds. Max2 v24 trials of600 each (second only firstsuccess) => prospective1631.1889 below original1800. No retrial of failed v23.",
+    "max_total_trials": 7,
+    "v24_max_trials": 2,
+    "aggregate_native_wall_s": 1800,
+    "repeat_condition": "physical+protocol success, no contacts/weld/renewal invariant errors, identical committed source/assets."
+  },
+  "review_after_v24": {
+    "outcome": "Physical/protocol success220.347821s, slower than196.104/200.929 baseline. Renewals/contact audits pass; fine70.45SIM, solo wait12.54SIM.",
+    "decision": "Do not spend repeat on a slower candidate. Scope next change to bounded fine lateral/forward bridge; same model actions/tolerances and conservative near-ready exclusion.",
+    "evidence": "v23 fine phase1+3 command gaps9.94SIM versus v19 2.75/2.61; image errors initially comparable or smaller. v24 fine70.45 still above baseline51–54.",
+    "budget_review": "Six prior runs652 approx wall seconds. Max2 v25 trials each500 => prospective1652 under original1800 aggregate ceiling. Repeat only after fullsuccess plus faster than faster baseline196.104s and invariant pass.",
+    "max_total_trials": 8,
+    "v25_max_trials": 2,
+    "max_wall_s_each": 500,
+    "aggregate_native_wall_s": 1800,
+    "repeat_condition": "physical+protocol success, wall below196.1036, no contact/weld/authority errors, same frozen source/assets."
+  },
+  "review_after_v25": {
+    "outcome": "Two physical/protocol successes194.183056/206.512401s; mean200.347729 slower than baseline198.516192. Invariant audits pass. No overall speed improvement established.",
+    "evidence": "v25 repeat box has51 carry waiting_for_resource rows127.67575..149.00625SIM; beam retains .08/.08 cap and controls exclusive unload apron. Fine bridge reduces first-run fine to50.79SIM but faster box queues behind beam.",
+    "decision": "Extend existing open independent pre-final cruise caps to beam .12/.10. Preserve final .08, proportional near-waypoint braking, pair synchronization, permissions and apron exclusion. Do not include viewer resolution changes in this cohort.",
+    "budget_review": "Eight completed runs consumed1052.2311277 wall seconds. At most2 v26 trials each350=>1752.2311277 below original1800 aggregate. Review follows queue evidence, not retry of v25.",
+    "max_total_trials": 10,
+    "v26_max_trials": 2,
+    "max_wall_s_each": 350,
+    "aggregate_native_wall_s": 1800,
+    "repeat_condition": "First physical+protocol success, wall below196.1036, all contact/weld/authority audits pass; identical clean committed source/assets.",
+    "limit": "One open seed11 saved plan; no LLM calls or training; no further automatic candidate expansion."
+  },
+  "final_budget_record": {
+    "native_runs": [
+      {
+        "run": "native-v20-full",
+        "wall_s": 40.21062641699973,
+        "physical_success": false,
+        "protocol_complete": false
+      },
+      {
+        "run": "native-v21-full",
+        "wall_s": 25.27357337498688,
+        "physical_success": false,
+        "protocol_complete": false
+      },
+      {
+        "run": "native-v22-foreground",
+        "wall_s": 71.03117295799893,
+        "physical_success": false,
+        "protocol_complete": false
+      },
+      {
+        "run": "native-v22-full",
+        "wall_s": 158.78386712502106,
+        "physical_success": false,
+        "protocol_complete": false
+      },
+      {
+        "run": "native-v23-full",
+        "wall_s": 135.88860904198373,
+        "physical_success": false,
+        "protocol_complete": false
+      },
+      {
+        "run": "native-v24-full",
+        "wall_s": 220.34782145801,
+        "physical_success": true,
+        "protocol_complete": true
+      },
+      {
+        "run": "native-v25-full",
+        "wall_s": 194.18305620801402,
+        "physical_success": true,
+        "protocol_complete": true
+      },
+      {
+        "run": "native-v25-repeat",
+        "wall_s": 206.51240112501546,
+        "physical_success": true,
+        "protocol_complete": true
+      },
+      {
+        "run": "native-v26-full",
+        "wall_s": 187.9489868330129,
+        "physical_success": true,
+        "protocol_complete": true
+      },
+      {
+        "run": "native-v26-repeat",
+        "wall_s": 199.14402037500986,
+        "physical_success": false,
+        "protocol_complete": false
+      }
+    ],
+    "total_native_wall_s": 1439.3241349160526,
+    "aggregate_limit_s": 1800,
+    "new_llm_calls": 0,
+    "training_runs": 0,
+    "decision": "v26 repeat failure ends this qualification cohort. No automatic further trials. Preserve first success and repeat failure separately; no speed qualification."
+  }
+}

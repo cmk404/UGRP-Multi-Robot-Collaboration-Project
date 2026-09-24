@@ -1,0 +1,56 @@
+{
+  "schema": "ugrp.action_act_study.v1",
+  "request": "meaningful action algorithm / ACT training and physical comparison",
+  "status": "source_freeze_ready_no_new_training_or_physics_result",
+  "resource": "existing local Mac environments only; no cloud allocation or paid compute",
+  "training": {
+    "max_models": 2,
+    "first_seed": 20260924,
+    "optional_second_seed": 20260925,
+    "updates_per_model": 8000,
+    "max_wall_s_per_model": 1800,
+    "size": 128,
+    "history": 4,
+    "device": "cpu",
+    "termination_objective": "episode",
+    "selection": "development only; same complete episode never in train and development",
+    "second_model_gate": "Review first complete training and physical outcomes before a second training; preserve prior model and failed trials. No silent hyperparameter or heldout adaptation."
+  },
+  "physical": {
+    "regression_gate": {
+      "cases": [
+        "original spawn seed11 repeat1",
+        "original spawn seed11 repeat2"
+      ],
+      "max_wall_s_each": 350,
+      "purpose": "new algorithm complete replay and failure-window path; not heldout"
+    },
+    "matched_first_study": {
+      "design": "evaluation-design.json",
+      "max_trials": 6,
+      "max_aggregate_wall_s": 3600,
+      "one_physics_owner": true,
+      "training_concurrent_with_physics": false,
+      "run_all_planned_ordinary_outcomes": true
+    },
+    "qualification": "Review repeated/new-case results before claiming success/reliability/speed. Failed or aborted times never count as completion improvements. Additional study needs a recorded evidence review and a finite new protocol."
+  },
+  "preserve": [
+    "source commit and immutable execution bundle",
+    "train/dev image and action hashes with source runs",
+    "checkpoint readback and actual ACT requests including discarded inference",
+    "all model/physics failures, stop reasons, original videos and independent referee output"
+  ],
+  "publishing": "Keep PR review and owner-gated main merge separate; trained model assets can be published as explicitly labeled experimental GitHub artifacts with provenance per prior user request.",
+  "execution_bundle": {
+    "id": "rgb-standard-dispatch-v27",
+    "sha256": "74ac7aa8fb6c70a4f5781128a472a6722e993a8d9f731d430d365e3c01d75373"
+  },
+  "preflight": {
+    "related_tests_passed": 221,
+    "skipped": 1,
+    "post_review_affected_tests_passed": 46,
+    "static_bundle_verified": true,
+    "physical_result": null
+  }
+}

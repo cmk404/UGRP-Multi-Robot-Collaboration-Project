@@ -27,27 +27,38 @@ def payload_skew(top_jpeg: bytes):
 
 class PairCarryPolicy:
     """Fresh two-party permission, stop, image-based catch-up, and rejoin."""
-    def __init__(self, task_id='pair-carry'):
+    def __init__(self, task_id='pair-carry', *, stale_budget_s=3.):
+        if not math.isfinite(stale_budget_s) or stale_budget_s<=0:
+            raise ValueError('positive finite stale RGB budget required')
         self.sync = PairCarrySync(task_id, report_ttl_s=.6)
         self.mode = 'CRUISE'
         self.until_s = 0.
         self.skew_anchor = None
         self.index = 0
         self.invalid_count = 0
+        self.stale_budget_s = float(stale_budget_s)
+        self.stale_since_s = None
+        self.stale_count = 0
         self.confirmations = 0
         self.recoveries = 0
         self.events = []
 
-    def step(self, decisions, skew_px, frame_ids, now_s, delivered=ROBOTS):
+    def step(self, decisions, skew_px, frame_ids, now_s, delivered=ROBOTS, *, observed_at_s=None):
         if not math.isfinite(now_s):
             raise ValueError('finite monotonic clock required')
+        # Legacy synchronous callers observe and decide at one frozen SIM
+        # instant. Async callers must pass the RGB snapshot time explicitly.
+        observed_at_s = now_s if observed_at_s is None else float(observed_at_s)
+        if not math.isfinite(observed_at_s) or observed_at_s > now_s:
+            raise ValueError('RGB observation must have a finite past SIM timestamp')
         duration = .20
         forwards = {r: 0. for r in ROBOTS}
         # Local predictors may run during a relay outage, but an undelivered
         # report must not influence the execution coordinator.
         decisions = {r: decisions[r] for r in delivered if r in decisions}
         missing = set(decisions) != set(ROBOTS)
-        valid = (set(decisions) == set(ROBOTS)
+        stale_rgb = now_s-observed_at_s > self.sync.report_ttl_s
+        valid = (not stale_rgb and set(decisions) == set(ROBOTS)
                  and all(d.get('ok') is True and d.get('held_estimate') is True
                          for d in decisions.values())
                  and skew_px is not None and math.isfinite(skew_px))
@@ -60,6 +71,18 @@ class PairCarryPolicy:
         elif missing:
             self.confirmations = 0
             permission = self.sync.hold('fresh_pair_report_missing', now_s)
+        elif stale_rgb:
+            # A late but visually valid batch is a scheduling timeout, not a
+            # failed held/skew detector. Keep both motors stopped and a separate
+            # bounded budget without weakening the .6 SIM-s report TTL.
+            self.confirmations = 0
+            self.invalid_count = 0
+            self.stale_count += 1
+            if self.stale_since_s is None:self.stale_since_s=now_s
+            permission = self.sync.hold('stale_pair_rgb_on_arrival', now_s)
+            if now_s-self.stale_since_s >= self.stale_budget_s:
+                self.mode = 'ABORT'
+                permission = self.sync.abort('stale_pair_rgb_budget_exhausted', now_s)
         elif not valid:
             self.confirmations = 0
             self.invalid_count += 1
@@ -68,6 +91,7 @@ class PairCarryPolicy:
                 self.mode = 'ABORT'
                 permission = self.sync.abort('visual_evidence_unavailable_after_reobserve', now_s)
         else:
+            self.stale_since_s = None
             self.invalid_count = 0
             if abs(error_px) > 12.:
                 self.mode = 'ABORT'
@@ -94,7 +118,7 @@ class PairCarryPolicy:
                     accepted = []
                     for rid in delivered:
                         accepted.append(self.sync.report(rid, plan_version=1, epoch=self.sync.epoch,
-                            sequence=self.index, ready=not waiting, observed_at_s=now_s,
+                            sequence=self.index, ready=not waiting, observed_at_s=observed_at_s,
                             received_at_s=now_s, frame_id=str(frame_ids[rid]),
                             reason='rgb_valid_and_held_estimate'))
                     if len(accepted) != len(ROBOTS) or not all(accepted):
@@ -120,4 +144,7 @@ class PairCarryPolicy:
         return {'forwards': forwards, 'duration_s': duration, 'mode': self.mode,
                 'permission': permission, 'skew_error_px': error_px,
                 'done': self.mode == 'DONE', 'abort': self.mode == 'ABORT',
-                'valid': valid, 'recovery_count': self.recoveries}
+                'valid': valid, 'recovery_count': self.recoveries,
+                'stale_rgb': stale_rgb, 'stale_count': self.stale_count,
+                'stale_elapsed_s': (0. if self.stale_since_s is None else
+                                    now_s-self.stale_since_s)}
