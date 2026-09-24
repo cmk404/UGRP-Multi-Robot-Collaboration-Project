@@ -369,6 +369,15 @@ def test_dropped_job_releases_resources_and_unblocks_peers_without_counting_as_d
         b.drop('box')
 
 
+def test_dropping_the_beam_before_it_starts_releases_the_box_grasp():
+    # E4 (v51): the beam was dropped before any grasp/transit command and the
+    # box waited at the pregrasp boundary until its SIM budget ran out.
+    b = _bindings()
+    assert not b.permission('box', 'GRASP')  # box grasps after the beam starts
+    b.drop('beam')
+    assert b.permission('box', 'GRASP') and b.permission('box', 'TRANSIT') and b.permission('box', 'UNLOAD')
+
+
 class _Team:
     def __init__(self):
         self.events = []
@@ -516,9 +525,28 @@ def test_scene_pauses_box_and_applies_the_team_decision():
     assert scene._solo_event is None and scene._solo_recovery[0]['kind'] == 'pose'
     assert [a['forward'] for a in scene._solo_recovery[1:]] == [-.05] * 10
     assert scene.last_frames == {'kept': True} and scene.solo_events[0]['decision'] == 'retry'
+    assert scene._solo_search_turn == .12  # nothing seen: the skill's default left search
     scene._solo_event = {'reason': 'VISUAL_LOAD_DROPPED', 'phase': 'carry', 'sim_time_s': 4.}
     scene._handle_solo_event()
     assert scene.solo_dropped
+
+
+def test_box_retry_searches_toward_the_side_last_seen_in_own_rgb():
+    # E3 (v51): the box was last seen to the right (own RGB, robot frame y<0),
+    # but the fresh skill searched left and stopped as TARGET_NOT_VISIBLE.
+    from harness.visual_box_skill import VisualBoxSkill
+    from scripts.run_dispatch_skills import SkillScene
+    scene = SkillScene.__new__(SkillScene)
+    scene.solo_events, scene.solo_dropped, scene._solo_recovery = [], False, None
+    scene.team_event_handler = lambda event: 'retry'
+    for y, turn in ((-.08, -.12), (.05, .12)):
+        scene.solo = SimpleNamespace(box=SimpleNamespace(last_target=(.2, y, .02)))
+        scene._solo_event = {'reason': 'BOX_FACE_ALIGNMENT_UNOBSERVABLE', 'phase': 'approach', 'sim_time_s': 3.}
+        scene._handle_solo_event()
+        assert scene._solo_search_turn == turn
+    assert VisualBoxSkill().search_turn == .12 and VisualBoxSkill(search_turn=-.12).search_turn == -.12
+    with pytest.raises(ValueError):
+        VisualBoxSkill(search_turn=.3)
 
 
 def test_replay_overlay_shows_recent_peer_messages(tmp_path):

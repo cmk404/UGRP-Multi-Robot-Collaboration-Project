@@ -92,8 +92,8 @@ def port_issue_receipt(applied,port,action,*,bounded):
             'applied_action':copy.deepcopy(action) if acknowledged else None}
 
 
-def _solo_skill(scene,fast_servo):
-    return SoloBoxTransport(robot_id=scene.bindings.solo,
+def _solo_skill(scene,fast_servo,*,search_turn=.12):
+    return SoloBoxTransport(robot_id=scene.bindings.solo,search_turn=search_turn,
         navigator=ImageRoute(scene.bindings,'box',time_aware_box_reacquisition=fast_servo,
                              bounded_carrier_relink=getattr(scene,'bounded_carrier_relink',False)),
         attachment_min_saturation=150,release_refine_ground_fit=True,
@@ -221,6 +221,10 @@ class SkillScene(DispatchScene):
         if decision=='retry':
             self._solo_recovery=[{'kind':'pose','pulses':{1:2000,3:740,4:2320,5:1320,6:1500}}]+[
                 {'kind':'mecanum','forward':-.05,'left':0.,'turn':0.,'duration_s':.2}]*10
+            # The fresh skill first searches toward the side where the failed
+            # skill last saw the box in its own RGB (robot frame, +y = left).
+            seen=getattr(getattr(getattr(self,'solo',None),'box',None),'last_target',None)
+            self._solo_search_turn=-.12 if seen is not None and seen[1]<0 else .12
         elif decision=='dropped':self.solo_dropped=True
         else:raise RuntimeError(f"box stopped: {event['reason']}; team decided to stop all")
         self._solo_event=None
@@ -233,7 +237,8 @@ class SkillScene(DispatchScene):
         if not self.solo_executor.idle or now<self.solo_lease:return
         if not self._solo_recovery:
             self.solo=_solo_skill(self,fast_servo_map_supported(
-                self.bindings.static_map,realtime_control=self.realtime_control))
+                self.bindings.static_map,realtime_control=self.realtime_control),
+                search_turn=getattr(self,'_solo_search_turn',.12))
             self._solo_recovery=None
             self._solo_phase_label=self.solo.phase;return
         action=self._solo_recovery.pop(0)
