@@ -1,0 +1,54 @@
+{
+  "schema": "ugrp.cargo_recovery_cohort_closure.v1",
+  "recorded_utc": "2026-09-24T14:29:00.833398+00:00",
+  "source_sha": "0828988b65f34e4e77301cc86f6476e1eb8e359f",
+  "source_freeze_sha256": "d297f515f6949ff531ce50e15b9f9641a0d4b80585ffc916742735f04c8fa6a1",
+  "protocol_sha256": "1eee2b98629e060b17ef70f3fa6fab190fb7e4cd3a59d297ae2e43cce4c6820b",
+  "status": "closed_after_first_failed_diagnostic_and_postrun_audit_gate",
+  "planned": 8,
+  "attempted": 1,
+  "physical_successes": 0,
+  "physical_failures": 1,
+  "diagnostics_attempted": 1,
+  "qualification_attempted": 0,
+  "not_run": [
+    "original/candidate-diagnostic-2",
+    "roll-a/reference",
+    "roll-a/candidate",
+    "roll-b/candidate",
+    "roll-b/reference",
+    "roll-c/reference",
+    "roll-c/candidate"
+  ],
+  "original_diagnostic": {
+    "raw": "/Users/changmin/projects/ugrp/outputs/dispatch-cargo-recovery-20260924/original-candidate-diagnostic-1",
+    "result_sha256": "dd6d9114504bf59c011b0ea103e782f0ec417d8b5999eaa1b2d1a5c2355f122a",
+    "launch_sha256": "428a8b41822c4d482bada0eec1d7c713bb7320dd2d02cfa709b0e2883c545506",
+    "audit": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/audits/cargo-recovery-original-candidate-diagnostic-1.json",
+    "audit_sha256": "79ea4f6a7416008e8fb40044f438de721481103585402416a1b6dff76b11a7fc",
+    "physical_success": false,
+    "protocol_complete": false,
+    "wall_s": 261.88972495798953,
+    "process_wall_s": 264.1061282090086,
+    "motion_sim_to_wall": 0.9826414131942117,
+    "error": "ComponentExecutionError: solo_box: RuntimeError: solo RGB decision budget exhausted",
+    "postrun_audit_passed": false,
+    "failed_audit_boundaries": {
+      "rgb_evidence": [
+        "saved actor own/TOP RGB image bytes invalid"
+      ],
+      "lease_freshness": [
+        "solo/pair issued lease and freshness receipt invalid"
+      ]
+    }
+  },
+  "decision": "The frozen helper blocks every subsequent trial when a prior boundary audit does not pass. Keep the initial audit receipt and launch unchanged. A separate auditor correction/review may distinguish unsupported nested-image and rolling-receipt formats from corrupt evidence, but it cannot reopen this closed cohort or turn the physical failure into success.",
+  "mechanism_scope": "No bounded-carrier relink or direct-release gate was reached; the diagnostic ended at 600 solo decisions. The relink physical hypothesis is untested.",
+  "directional_speed_gate": false,
+  "speed_claim": false,
+  "known_auditor_compatibility_issues": [
+    "Nested per-robot image mappings were interpreted as individual image references.",
+    "The imported v28 carry-renewal checker counted rolling approach receipts as carry renewals."
+  ],
+  "raw_and_first_audit_preserved": true
+}

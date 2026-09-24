@@ -1,0 +1,65 @@
+{
+  "schema": "ugrp.tensorboard.view_recovery_v43_verification.v1",
+  "recorded_utc": "2026-09-24T15:25:23.181487+00:00",
+  "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0925-view-recovery-v43-failure",
+  "run": "0925-view-recovery-v43-failure/dispatch-view-recovery-20260924__original-candidate-diagnostic-1__c067f3b5",
+  "source_result_sha256": "1b364e1392e73bcb2c3b47b14145c48af83f6735e2bc2d94d27934f85dbf5e3a",
+  "manifest_sha256": "39accb333d8efde3b2e19a787bbb4532fa0f7940271bceb183e605b71b19fe49",
+  "scalars": {
+    "evaluation/reported_success": 0.0,
+    "claims/protocol_complete": 0.0,
+    "result/wall_s": 15.714974403381348,
+    "result/commands": 485.0,
+    "result/model_calls": 0.0,
+    "result/model_latency_s": 0.0
+  },
+  "videos": [
+    {
+      "id": "81f1dbadf0c78ec0d2dc",
+      "range_status": 206,
+      "bytes": 64
+    }
+  ],
+  "hparams_columns_registered": [
+    "family",
+    "policy",
+    "case",
+    "source_sha",
+    "outcome",
+    "evaluation/reported_success",
+    "claims/protocol_complete",
+    "result/wall_s",
+    "result/commands",
+    "result/model_calls"
+  ],
+  "view": {
+    "run_filter": "^0925-view-recovery-v43-failure/|^0924-action-act-v28-complete/.*__original-diagnostic-",
+    "scope": "v43 early failed development diagnostic with historical v28 references; not a matched speed cohort",
+    "pinned_tags": [
+      "evaluation/reported_success",
+      "claims/protocol_complete",
+      "result/wall_s",
+      "result/commands",
+      "result/model_calls",
+      "result/model_latency_s"
+    ],
+    "hparams_visible_columns": [
+      "family",
+      "policy",
+      "case",
+      "source_sha",
+      "outcome",
+      "evaluation/reported_success",
+      "claims/protocol_complete",
+      "result/wall_s",
+      "result/commands",
+      "result/model_calls"
+    ],
+    "ui_applied": false,
+    "native_ui_inspected": false,
+    "url": "http://127.0.0.1:6006/?pinnedCards=%5B%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Freported_success%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22claims%2Fprotocol_complete%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fwall_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fcommands%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fmodel_calls%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fmodel_latency_s%22%7D%5D&smoothing=0&runFilter=%5E0925-view-recovery-v43-failure%2F%7C%5E0924-action-act-v28-complete%2F.%2A__original-diagnostic-#timeseries"
+  },
+  "native_ui_inspected": false,
+  "ui_applied": false,
+  "scope": "Completed physical failure; no speed claim; seven unstarted arms retained in separate closure."
+}

@@ -1,0 +1,148 @@
+{
+  "schema": "ugrp.pair_coarse_concurrency_decisions.v1",
+  "source_path": "outputs/act-action-training-20260924/route-teachers-managed-v3/raw/south-train-a/pair-decisions.json",
+  "source_sha256": "35487ec2ad36193ffc907dbb6076d9a310b2d7ac6a167352d0efb885eaae94bc",
+  "source_scope": "saved decision/command evidence; no source RGB copied and no new physical result",
+  "rows": [
+    {
+      "source_row_index": 2,
+      "decisions": {
+        "r1": {
+          "ok": true,
+          "ready": false,
+          "forward": 0.12,
+          "left": 0.0,
+          "turn": 0.0,
+          "image_error": [
+            0.17047351899556,
+            0.001648933484847237
+          ],
+          "heading": {
+            "angle_deg": 0.0,
+            "wheel_pixels": 208,
+            "corner_pixels": [
+              54,
+              24,
+              58,
+              47
+            ]
+          }
+        },
+        "r3": {
+          "ok": true,
+          "ready": false,
+          "forward": 0.0,
+          "left": 0.0,
+          "turn": 0.016123443029612227,
+          "image_error": [
+            0.16502624840545574,
+            0.031390540399196476
+          ],
+          "heading": {
+            "angle_deg": 1.8476104736328125,
+            "wheel_pixels": 479,
+            "corner_pixels": [
+              94,
+              47,
+              121,
+              113
+            ]
+          }
+        }
+      },
+      "recorded_commands": {
+        "r1": {
+          "forward": 0.0,
+          "left": 0.0,
+          "turn": 0.0
+        },
+        "r3": {
+          "forward": 0.0,
+          "left": 0.0,
+          "turn": 0.016123443029612227
+        }
+      },
+      "recorded_coordination": {
+        "forward_gap_px": {
+          "r1": 163.6545782357376,
+          "r3": 158.4251984692375
+        },
+        "lead_limit_px": 16.0,
+        "alignment_in_progress": true,
+        "held_forward": [
+          "r1"
+        ]
+      }
+    },
+    {
+      "source_row_index": 359,
+      "decisions": {
+        "r1": {
+          "ok": true,
+          "ready": false,
+          "forward": 0.12,
+          "left": 0.0,
+          "turn": 0.0,
+          "image_error": [
+            0.17047351899556,
+            0.001648933484847237
+          ],
+          "heading": {
+            "angle_deg": 0.0,
+            "wheel_pixels": 208,
+            "corner_pixels": [
+              54,
+              24,
+              58,
+              47
+            ]
+          }
+        },
+        "r3": {
+          "ok": true,
+          "ready": false,
+          "forward": 0.0,
+          "left": -0.015139941900424697,
+          "turn": 0.0,
+          "image_error": [
+            0.16399521345610138,
+            0.015139941900424697
+          ],
+          "heading": {
+            "angle_deg": 0.0,
+            "wheel_pixels": 468,
+            "corner_pixels": [
+              83,
+              55,
+              129,
+              106
+            ]
+          }
+        }
+      },
+      "recorded_commands": {
+        "r1": {
+          "forward": 0.0,
+          "left": 0.0,
+          "turn": 0.0
+        },
+        "r3": {
+          "forward": 0.0,
+          "left": -0.015139941900424697,
+          "turn": 0.0
+        }
+      },
+      "recorded_coordination": {
+        "forward_gap_px": {
+          "r1": 163.6545782357376,
+          "r3": 157.4354049178573
+        },
+        "lead_limit_px": 16.0,
+        "alignment_in_progress": true,
+        "held_forward": [
+          "r1"
+        ]
+      }
+    }
+  ]
+}

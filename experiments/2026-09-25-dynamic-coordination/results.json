@@ -1,0 +1,308 @@
+{
+  "experiment": "2026-09-25-dynamic-coordination",
+  "model": "gemini-3.8-flash",
+  "map": "open",
+  "task": "서로 역할과 순서를 합의해서 beam과 box를 dock_b로 옮겨",
+  "mode": "synchronous SIM, headless, --record-replay",
+  "runs": [
+    {
+      "run": "baseline-plan-first",
+      "path": "/Users/changmin/projects/ugrp-worktrees/post-run-replay/outputs/simulation-runs/20260925-000852-dispatch-ee5eac42/artifacts",
+      "source_sha": "21722727a1892c9640f42d5c886d7a07e873d6e6",
+      "physical_success": true,
+      "protocol_complete": true,
+      "phase": "FINISHED",
+      "error": null,
+      "llm_calls": 15,
+      "usage": {
+        "prompt_tokens": 136618,
+        "completion_tokens": 3583,
+        "total_tokens": 145395
+      },
+      "control_end_sim_s": 216.05999999661884,
+      "wall_s": 399.79377154202666,
+      "plan": {
+        "dock": "dock_b",
+        "tasks": [
+          {
+            "id": "box_job",
+            "object": "box",
+            "participants": [
+              "r2"
+            ],
+            "route": "south",
+            "after": []
+          },
+          {
+            "id": "beam_job",
+            "object": "beam",
+            "participants": [
+              "r1",
+              "r3"
+            ],
+            "route": "north",
+            "after": [
+              "box_job"
+            ]
+          }
+        ]
+      },
+      "coordination": {},
+      "recoveries": [],
+      "simultaneous_loaded_motion_s": 0.0,
+      "sha256": {
+        "result.json": "8ddc9f2c89943c19e1bae62e76ea1812746fae5b3d02c62dcbdd5c33290220f1",
+        "team/team.json": "31eb3e89cc57a2037a2736392e8f942fe61104d8e3623d376b798711e57846a0"
+      },
+      "bundle": "rgb-standard-dispatch-v42",
+      "workflow": "1.42.0",
+      "note": "user-run plan_first reference"
+    },
+    {
+      "run": "D1-dynamic",
+      "status": "interrupted_by_claude",
+      "source_sha": "acf6251",
+      "note": "launched without confirmed lock; stopped during identity probes; no LLM call; not a result"
+    },
+    {
+      "run": "D2-dynamic",
+      "path": "/Users/changmin/projects/ugrp/outputs/dynamic-coordination-20260925/D2-dynamic",
+      "source_sha": "c340ef2a0e652959af2139e3df37fb701ca36fa0",
+      "physical_success": true,
+      "protocol_complete": true,
+      "phase": "FINISHED",
+      "error": null,
+      "llm_calls": 9,
+      "usage": {
+        "prompt_tokens": 85350,
+        "completion_tokens": 2020,
+        "total_tokens": 87370
+      },
+      "control_end_sim_s": 141.25999999838763,
+      "wall_s": 298.37809504100005,
+      "plan": {
+        "dock": "dock_b",
+        "tasks": [
+          {
+            "id": "beam_job",
+            "object": "beam",
+            "participants": [
+              "r1",
+              "r3"
+            ],
+            "route": "north",
+            "after": []
+          },
+          {
+            "id": "box_job",
+            "object": "box",
+            "participants": [
+              "r2"
+            ],
+            "route": "south",
+            "after": []
+          }
+        ]
+      },
+      "coordination": {
+        "mode": "dynamic",
+        "start": {
+          "claims": {
+            "r1": {
+              "object": "beam",
+              "beam_end": "upper",
+              "route": "north",
+              "dock": "dock_b"
+            },
+            "r2": {
+              "object": "box",
+              "beam_end": null,
+              "route": "south",
+              "dock": "dock_b"
+            },
+            "r3": {
+              "object": "beam",
+              "beam_end": "lower",
+              "route": "south",
+              "dock": "dock_b"
+            }
+          },
+          "conflicts": [
+            {
+              "kind": "beam_route",
+              "routes": {
+                "r1": "north",
+                "r3": "south"
+              }
+            }
+          ],
+          "path": "conflict_then_talk"
+        }
+      },
+      "recoveries": [],
+      "simultaneous_loaded_motion_s": 6.099999999855754,
+      "sha256": {
+        "result.json": "8f7e75e08b1ae004b66db9cb7deb0b21c403437209634473fe046f5c1ec3ceb9",
+        "team/team.json": "5379de2e3055ff20399f694c5ec47303907f35ead473073d30893de89878ee79"
+      },
+      "bundle": "rgb-standard-dispatch-v44",
+      "workflow": "1.44.0",
+      "loads": [
+        {
+          "run": "D2-dynamic",
+          "start_utc": "2026-09-24T15:28:03Z",
+          "load": "{ 8.64 7.18 6.03 }"
+        },
+        {
+          "run": "D2-dynamic",
+          "end_utc": "2026-09-24T15:33:03Z",
+          "exit": 0,
+          "load": "{ 6.55 6.17 5.81 }"
+        }
+      ]
+    },
+    {
+      "run": "D3-dynamic-inject",
+      "path": "/Users/changmin/projects/ugrp/outputs/dynamic-coordination-20260925/D3-dynamic-inject",
+      "source_sha": "c340ef2a0e652959af2139e3df37fb701ca36fa0",
+      "physical_success": false,
+      "protocol_complete": false,
+      "phase": "APPROACH",
+      "error": "RuntimeError: coarse RGB model convention unresolved",
+      "llm_calls": 18,
+      "usage": {
+        "prompt_tokens": 130733,
+        "completion_tokens": 2832,
+        "total_tokens": 134661
+      },
+      "control_end_sim_s": 53.15000000016277,
+      "wall_s": 218.92294683400542,
+      "plan": {
+        "dock": "dock_b",
+        "tasks": [
+          {
+            "after": [],
+            "id": "beam_job",
+            "object": "beam",
+            "participants": [
+              "r1",
+              "r3"
+            ],
+            "route": "north"
+          },
+          {
+            "after": [],
+            "id": "box_job",
+            "object": "box",
+            "participants": [
+              "r2"
+            ],
+            "route": "south"
+          }
+        ]
+      },
+      "coordination": {
+        "mode": "dynamic",
+        "start": {
+          "claims": {
+            "r1": {
+              "object": "beam",
+              "beam_end": "upper",
+              "route": "north",
+              "dock": "dock_b"
+            },
+            "r2": {
+              "beam_end": null,
+              "dock": "dock_b",
+              "object": "box",
+              "route": "south"
+            },
+            "r3": null
+          },
+          "conflicts": [
+            {
+              "kind": "missing_claim",
+              "robots": [
+                "r3"
+              ]
+            }
+          ],
+          "path": "conflict_then_talk"
+        }
+      },
+      "recoveries": [
+        {
+          "event_id": "approach-0",
+          "kind": "pair_approach_failure",
+          "stage": "APPROACH",
+          "failure": {
+            "reason": "diagnostic injected approach failure after a completed approach"
+          },
+          "participants": [
+            "r3",
+            "r1"
+          ],
+          "retries_left": 2,
+          "diagnostic_injection": true,
+          "sim_time_s": 48.150000000138895,
+          "decision": "retry"
+        },
+        {
+          "event_id": "approach-1",
+          "kind": "pair_approach_failure",
+          "stage": "APPROACH",
+          "failure": {
+            "reason": "coarse RGB model convention unresolved"
+          },
+          "participants": [
+            "r3",
+            "r1"
+          ],
+          "retries_left": 1,
+          "diagnostic_injection": false,
+          "sim_time_s": 50.900000000152026,
+          "decision": "retry"
+        }
+      ],
+      "simultaneous_loaded_motion_s": 0.0,
+      "sha256": {
+        "result.json": "b577bbb1502b1f53f547388df497ba09be1b54d69b205c144cfab2f26ab945c5",
+        "team/team.json": "e7d3e5c02d8dc80bb27752be6338fb25a19b7c2abed0d3585b7fe0e6699de19b"
+      },
+      "bundle": "rgb-standard-dispatch-v44",
+      "workflow": "1.44.0",
+      "flags": [
+        "--diagnostic-fail-approach-once"
+      ],
+      "loads": [
+        {
+          "run": "D3-dynamic-inject",
+          "start_utc": "2026-09-24T15:33:03Z",
+          "load": "{ 6.55 6.17 5.81 }"
+        },
+        {
+          "run": "D3-dynamic-inject",
+          "end_utc": "2026-09-24T15:36:43Z",
+          "exit": 1,
+          "load": "{ 6.44 9.35 7.67 }"
+        }
+      ],
+      "proxy_503": [
+        "r3 claim-0",
+        "r3 recovery-approach-0-r0"
+      ]
+    }
+  ],
+  "fix": {
+    "bundle": "rgb-standard-dispatch-v47",
+    "workflow": "1.47.0",
+    "retired_unchanged": "rgb-standard-dispatch-v44",
+    "regression_fixtures": {
+      "tests/fixtures/dynamic_recovery/after-short-backoff-top.jpg": "c8fcc9cbde658f0dbbab5f548a1e46ecef7c3e79619ddfd381a6909ed944eba0",
+      "tests/fixtures/dynamic_recovery/after-long-backoff-top.jpg": "12122a9b839c2ee2959e0373cb3f73c6907e081bad7f132cdf590700a6621f58"
+    }
+  },
+  "pending": [
+    "D4: v47 retry path live run (after the plan-objective-preview cohort releases the lock)"
+  ]
+}

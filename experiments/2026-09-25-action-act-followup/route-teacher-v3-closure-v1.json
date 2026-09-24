@@ -1,0 +1,117 @@
+{
+  "schema": "ugrp.route_teacher_v3_closure.v1",
+  "recorded_utc": "2026-09-24T14:56:12Z",
+  "scope": "Read-only closure of the fixed v3 collection; no retry, physics, training, quality audit, or TensorBoard conversion run by this review.",
+  "collection_root": "outputs/act-action-training-20260924/route-teachers-managed-v3",
+  "source_freeze": {
+    "path": "outputs/act-action-training-20260924/route-coverage-source-freeze-v5.json",
+    "sha256": "29b5dff4fd227ca916e4400e3c94d5ba00ce671efaaf597a0101733a62a02138",
+    "collector_source_sha": "dddd67b5b76f91bd2273ae00b8f5275846015dcf",
+    "teacher_source_sha": "931d910998a94361342c372ec2675c475daa625f",
+    "builder_source_sha": "08c39e1e76a60f1c4db6a1f92dd2833cf766362f",
+    "protocol_sha256": "f2072b5f63d62f12ed2c349e9ae47812a19dd723a5a99ed9d1bc590ab3c8ac54"
+  },
+  "prospective_amendment": {
+    "path": "outputs/act-action-training-20260924/route-teacher-infrastructure-retry-amendment-v2.json",
+    "sha256": "65cd07140b802affc4eeed479bc2ee3e2acd9957f552bf745900d41b68d54f2b",
+    "no_retry_within_v3": true
+  },
+  "runtime_policy": {
+    "host_load_policy": "teacher-data",
+    "verified_non_ugrp_pytest": "record_only; timing ineligible",
+    "unknown_or_ugrp_test_and_foreign_physics_training": "abort_and_preserve",
+    "speed_benchmark": false,
+    "aggregate_manager_hard_wall_s": 4620
+  },
+  "launcher": {
+    "path": "outputs/act-action-training-20260924/route-teachers-managed-v3/launcher.json",
+    "sha256": "3cd91b0a1abee184630615af06075cf08e20c76ad4f415d8c8cc5e9bfac94ec5",
+    "recorded_status": "foreign_interference_abort",
+    "elapsed_wall_s": 513.137862625008,
+    "input_hashes_unchanged_before_after": true,
+    "teacher_source_unchanged_after": true
+  },
+  "cases": [
+    {
+      "id": "south-train-a",
+      "split": "train",
+      "classification": "physical_failure",
+      "started": true,
+      "physical_verdict_available": true,
+      "physical_success": false,
+      "protocol_complete": false,
+      "raw_result": "outputs/act-action-training-20260924/route-teachers-managed-v3/raw/south-train-a/result.json",
+      "raw_result_sha256": "ae4db1591ebf5f756656a0b63f30b2885ef87ccd2e9af1bb85a3fa89ce5bdd4c",
+      "manager_manifest": "outputs/act-action-training-20260924/route-teachers-managed-v3/managed/south-train-a/manifest.json",
+      "manager_manifest_sha256": "15e2e4f3a41b719dde074609041b3f681af41622c18e0f0f556e0359051c3bda",
+      "manager_status": "process_failed",
+      "result_wall_s": 277.9706107079983,
+      "launcher_run_wall_s": 280.02601662499364,
+      "result_error": "RuntimeError: coarse RGB approach budget exhausted",
+      "pair_stage_samples": 120,
+      "failed_component": "pair",
+      "box_physical_success_only": true,
+      "beam_physical_success": false,
+      "not_wall_timeout": true,
+      "not_host_interference_abort": true
+    },
+    {
+      "id": "south-train-b",
+      "split": "train",
+      "classification": "infrastructure_abort_no_physical_verdict",
+      "started": true,
+      "physical_verdict_available": false,
+      "raw_result_present": false,
+      "manager_manifest": "outputs/act-action-training-20260924/route-teachers-managed-v3/managed/south-train-b/manifest.json",
+      "manager_manifest_sha256": "23714a4d2068482affdc7dc5c90e5fff9c47d1d2922198a350b8226f0a52e3fc",
+      "manager_status": "interrupted",
+      "launcher_run_wall_s": 232.000339582999,
+      "trigger_pid": 19480,
+      "trigger_command": "python3 -m pytest tests/test_bot.py -q",
+      "prior_verified_cwd": "/Users/changmin/projects/stock",
+      "guard_cwd_at_abort": null,
+      "guard_action": "abort_and_preserve",
+      "not_robot_failure": true
+    },
+    {
+      "id": "south-development",
+      "split": "development",
+      "classification": "not_run",
+      "started": false,
+      "raw_result_present": false,
+      "manager_manifest_present": false
+    }
+  ],
+  "denominators": {
+    "fixed_teacher_slots": 3,
+    "started": 2,
+    "physical_verdicts": 1,
+    "physical_successes": 0,
+    "physical_failures": 1,
+    "infrastructure_aborts_without_verdict": 1,
+    "not_run": 1,
+    "admitted_teacher_episodes": 0,
+    "third_dataset_built": false,
+    "third_act_training_started": false
+  },
+  "quality_audit": {
+    "entry": "outputs/act-action-training-20260924/route-teacher-quality-audit-entry-v4.json",
+    "entry_sha256": "212e1a153407a8ef40ccf53d32746ef79ae5b1ff629a357e52e8beb495b74b90",
+    "status": "incomplete_not_run",
+    "reason": "v3 auditor requires all three raw results and manager manifests; south-train-b has no result and south-development did not start"
+  },
+  "tensorboard": {
+    "conversion": "pending",
+    "reason": "Mixed physical failure, infrastructure abort and not-run cases cannot be forced into the existing first-case-only abort exporter schema",
+    "dashboard_display_verified": false
+  },
+  "verification": {
+    "protocol_and_collector_file_sha256_match_freeze": true,
+    "source_checkout_heads_match_freeze": true,
+    "manager_sources_clean_and_unchanged": true,
+    "known_run_and_stock_pytest_pids_or_pgids_present_at_review": false,
+    "raw_jpeg_inventory_hashed": false,
+    "videos_replayed": false,
+    "physics_rerun": false
+  }
+}

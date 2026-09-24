@@ -20,7 +20,7 @@ def _interactive(monkeypatch, answers):
 
 def test_start_dispatch_passes_selected_model_map_speed_and_task_to_managed_parser(monkeypatch, tmp_path):
     task = "dock_b로 함께 옮겨"
-    _interactive(monkeypatch, ["1", "open", "3", "2", "chosen-model", task])
+    _interactive(monkeypatch, ["1", "open", "3", "1", "2", "chosen-model", task])
     seen = {}
 
     def fake_dispatch(argv):
@@ -39,6 +39,15 @@ def test_start_dispatch_passes_selected_model_map_speed_and_task_to_managed_pars
                             "--model", "chosen-model", "--realtime-factor", "2"]
     assert seen["dispatch"][:-2] == seen["argv"][1:]
     assert seen["dispatch"][-2:] == ["--output", str(tmp_path / "result")]
+
+
+def test_start_dispatch_can_select_dynamic_coordination(monkeypatch):
+    _interactive(monkeypatch, ["1", "open", "2", "2", "1", "옮겨"])
+    monkeypatch.setattr("sim.workflow_manager.run_inprocess",
+                        lambda _root, _kind, argv, _invoke, **_kwargs: argv)
+    command = sim_cli.main(["start"])
+    assert command[-2:] == ["--coordination", "dynamic"]
+    assert command[command.index("--task") + 1] == "옮겨"
 
 
 def test_start_preview_uses_catalog_group_and_has_no_model_task(monkeypatch, capsys):
@@ -71,7 +80,7 @@ def test_start_preview_search_narrows_scene_list(monkeypatch, capsys):
 
 
 def test_start_dispatch_accepts_numbered_map_speed_and_default_model(monkeypatch, capsys):
-    _interactive(monkeypatch, ["1", "1", "1", "1", "짐을 옮겨"])
+    _interactive(monkeypatch, ["1", "1", "1", "1", "1", "짐을 옮겨"])
     monkeypatch.setenv("UGRP_SIM_MODEL", "configured-model")
     monkeypatch.setattr("sim.workflow_manager.run_inprocess",
                         lambda _root, _kind, argv, _invoke, **_kwargs: argv)
@@ -103,7 +112,7 @@ def test_start_preview_accepts_numbered_group_and_scene(monkeypatch, capsys):
 
 
 def test_start_reprompts_out_of_range_numbers_and_empty_custom_model(monkeypatch, capsys):
-    _interactive(monkeypatch, ["1", "99", "1", "9", "4", "3", "2", "", "test-model", "go"])
+    _interactive(monkeypatch, ["1", "99", "1", "9", "4", "1", "3", "2", "", "test-model", "go"])
     monkeypatch.setattr("sim.workflow_manager.run_inprocess",
                         lambda _root, _kind, argv, _invoke, **_kwargs: argv)
     command = sim_cli.main(["start"])
@@ -127,12 +136,13 @@ def test_start_preview_reprompts_invalid_group_and_scene_numbers(monkeypatch, ca
 
 
 def test_start_dispatch_enter_uses_default_mission(monkeypatch):
-    _interactive(monkeypatch, ["", "", "", "", ""])
+    _interactive(monkeypatch, ["", "", "", "", "", ""])
     monkeypatch.setattr("sim.workflow_manager.run_inprocess",
                         lambda _root, _kind, argv, _invoke, **_kwargs: argv)
     command = sim_cli.main(["start"])
     assert command[command.index("--variant") + 1] == "shared_crossing"
     assert command[command.index("--task") + 1] == "기존 beam과 box를 같은 dock으로 옮겨"
+    assert "--coordination" not in command
 
 
 def test_start_keeps_existing_advanced_menu(monkeypatch):

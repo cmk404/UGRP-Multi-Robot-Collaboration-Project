@@ -57,6 +57,7 @@ class VisualBoxSkill:
         self.fast_near_field_servo = fast_near_field_servo
         self._near_field_servo_sample = None
         self.last_approach_adjustment = None
+        self._rolling_view_lock = None
         if perception_mode not in {"markerless", "fiducial"}:
             raise ValueError("unsupported perception_mode")
         self.perception_mode = perception_mode
@@ -112,6 +113,45 @@ class VisualBoxSkill:
         if self.attachment_min_saturation!=65:kwargs['min_saturation']=self.attachment_min_saturation
         return compare_box_comotion(*args,**kwargs)
 
+    def lock_rolling_approach_view(self, pan_pwm: int, radial_m: float) -> None:
+        """Temporarily retain a newly tested RGB view after an active pose.
+
+        The runner may call this only after holding the wheels. PWM is an own
+        issued command, not a measured camera or arm joint angle.
+        """
+        if self.phase != "approach" or not 500 <= pan_pwm <= 2500 or not math.isfinite(radial_m):
+            raise ValueError("invalid rolling view lock")
+        self._rolling_view_lock = {"pan_pwm": pan_pwm, "radial_m": radial_m,
+                                   "started_at_s": self._last_sim_time,
+                                   "remaining_samples": 8}
+
+    def _retain_rolling_view(self, box, radial_m, pose, desired_pan):
+        lock = self._rolling_view_lock
+        if lock is None:
+            return False
+        lock["remaining_samples"] -= 1
+        confidence = box.get("confidence")
+        valid = (self.phase == "approach" and lock["remaining_samples"] >= 0
+                 and self._last_sim_time-lock["started_at_s"] <= 4.0
+                 and radial_m >= lock["radial_m"]-0.06
+                 and box.get("visible") is True
+                 and box.get("ambiguity_reason") is None
+                 and box.get("target_id") == self.cargo_id
+                 and box.get("identity_source") == "task_catalog_reference_only_not_visually_decoded"
+                 and box.get("reason") in {
+                     "FLOOR_CUBOID_HYPOTHESIS_VALIDATED",
+                     "MEASURED_TOP_FACE_FLOOR_HYPOTHESIS_VALIDATED"}
+                 and box.get("provenance") in {
+                     GROUND_BOX_PROVENANCE,
+                     GROUND_BOX_PROVENANCE + "+measured_full_top_rectangle"}
+                 and isinstance(confidence,(int,float)) and not isinstance(confidence,bool)
+                 and math.isfinite(confidence) and confidence >= 0.75
+                 and abs(int(pose["6"])-lock["pan_pwm"]) <= 2
+                 and abs(desired_pan-int(pose["6"])) <= 45)
+        if not valid:
+            self._rolling_view_lock = None
+        return valid
+
     @property
     def history(self) -> tuple[dict[str, Any], ...]:
         """Bounded metadata history; images and privileged state are not kept."""
@@ -120,6 +160,8 @@ class VisualBoxSkill:
     def decide(self, observation: Mapping[str, Any]) -> dict[str, Any]:
         obs, pose = self._validate_observation(observation)
         self.last_approach_adjustment = None
+        if self.phase != "approach":
+            self._rolling_view_lock = None
         ground_phase = self.phase in {"approach", "verify_release", "release_ground_left", "release_ground_right", "release_ground_home"}
         if self.perception_mode == "markerless":
             # A floor hypothesis is only appropriate before pickup or after
@@ -325,6 +367,7 @@ class VisualBoxSkill:
 
     def _approach(self, box, target, pose):
         if target is None:
+            self._rolling_view_lock = None
             self._near_field_servo_sample = None
             self._missing += 1
             if self._missing > 20:
@@ -343,7 +386,8 @@ class VisualBoxSkill:
         x, y, _z = (float(v) for v in target)
         bearing = math.atan2(y, x)
         desired_pan = _clip_int(round(1500 + math.degrees(bearing) * 2000 / 180), 500, 2500)
-        if abs(int(pose["6"]) - desired_pan) > 20:
+        retain_view = self._retain_rolling_view(box, math.hypot(x,y), pose, desired_pan)
+        if abs(int(pose["6"]) - desired_pan) > 20 and not retain_view:
             self._near_field_servo_sample = None
             return _pose({6: desired_pan})
         centroid = box.get("pixel_centroid")

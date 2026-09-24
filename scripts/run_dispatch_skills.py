@@ -36,8 +36,10 @@ from harness.grasp_student_inference import predict_student
 from harness.visual_macro_runtime import VisualMacroExecutor
 from harness.rolling_visual_servo import (FINAL_ENTRY_HANDOFF_M,
     FINAL_ENTRY_SETTLE_S, NEAR_MOTION_REOBSERVE_BUFFER_M,
-    RollingApproachLease, approach_drive_support,
-    guard_near_entry_from_issued_commands)
+    SettledViewRecovery, RollingApproachLease, approach_drive_support,
+    guard_near_entry_from_issued_commands, VIEW_RECOVERY_MAX_POSES,
+    VIEW_RECOVERY_MAX_ELAPSED_S, VIEW_RECOVERY_MAX_EPISODES,
+    VIEW_RECOVERY_WRIST_STEP_PWM, VIEW_RECOVERY_MAX_PAN_DELTA_PWM)
 from sim.research_dispatch_arena import episode, actor_task
 from scripts.research_dispatch_scene import DispatchScene
 from scripts.run_dispatch_e2e import Referee
@@ -46,7 +48,8 @@ from scripts.three_robot_runtime import ThreeRobotRuntime, write
 from scripts.run_camera_approach_student import models, sha
 from scripts.run_camera_varied_start_student import load_stage_models
 from scripts.run_three_robot_mission import prepare_grasp_models
-from scripts.dispatch_pair_skill import BoundPairSkill
+from scripts.dispatch_pair_skill import (BoundPairSkill, COARSE_LEAD_LIMIT_PX,
+    COARSE_CONCURRENT_MAX_CAPTURE_AGE_S, COARSE_CONCURRENT_COMMAND_S)
 from scripts.camera_approach_scene import image_record
 
 RGB_ACTION_TTL_S=.6
@@ -62,6 +65,33 @@ def fast_servo_map_supported(static_map, *, realtime_control):
                 and all(item.get('id') in boundaries for item in static_map.get('obstacles',[])))
 
 
+def coarse_concurrency_status(pair, *, requested):
+    if not requested:
+        return {'applied':False,'reason':'disabled'}
+    if pair.coarse is None:
+        return {'applied':False,'reason':'own_motion_identity_unresolved'}
+    if not pair._concurrent_coarse_scope():
+        return {'applied':False,'reason':'unsupported_map_or_runtime_scope'}
+    return {'applied':True,'reason':'eligible_for_rgb_decision_admission'}
+
+
+def port_issue_receipt(applied,port,action,*,bounded):
+    """Freeze only the returned port acknowledgement before physics advances."""
+    state=applied.get('actuator_state') if isinstance(applied,dict) else None
+    pwm=state.get('motor_commands') if isinstance(state,dict) else None
+    issued=applied.get('sim_time') if isinstance(applied,dict) else None
+    expiry=getattr(port,'_command_expires_at' if bounded else '_drive_expires_at',None)
+    acknowledged=(type(issued) in (int,float) and math.isfinite(issued)
+                  and type(expiry) in (int,float) and math.isfinite(expiry) and expiry>=issued
+                  and isinstance(pwm,(list,tuple)) and len(pwm)==4
+                  and all(type(v) in (int,float) and math.isfinite(v) for v in pwm))
+    return {'acknowledged':acknowledged,
+            'actual_issued_at_s':issued if acknowledged else None,
+            'effective_expiry_s':expiry if acknowledged else None,
+            'port_ack_motor_pwm':list(pwm) if acknowledged else None,
+            'applied_action':copy.deepcopy(action) if acknowledged else None}
+
+
 class SkillScene(DispatchScene):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
@@ -75,8 +105,11 @@ class SkillScene(DispatchScene):
         self.replay=None
         self.efficient_capture=False
         self.realtime_control=False
+        self.coarse_concurrent_alignment=False
         self.rolling_visual_servo=False
         self.bounded_carrier_relink=False
+        self.rolling_view_recovery=False
+        self._view_recovery=None
         self._decision_workers=None
         self._solo_pending=None
         self._solo_pending_lease=None
@@ -185,9 +218,12 @@ class SkillScene(DispatchScene):
         if self.bindings:self.bindings.authorize(self.team.agreement.committed)
     def raw(self,rid,action,stage):
         self.authorize();self.ports[rid].validate_action(action)
-        self.ports[rid].apply(action,self.time())
+        applied=self.ports[rid].apply(action,self.time())
         self.command_history[rid].append({'stage':stage,'action':copy.deepcopy(action),
-            'issued_at_s':self.time(),'plan_hash':self.bindings.committed['plan_hash'] if self.bindings else None})
+            'issued_at_s':(applied['sim_time'] if isinstance(applied,dict)
+                           and 'sim_time' in applied else self.time()),
+            'plan_hash':self.bindings.committed['plan_hash'] if self.bindings else None})
+        return applied
     def _permission_snapshot(self):
         """A private permission state for RGB workers and owner preflight."""
         snapshot=copy.copy(self.bindings)
@@ -298,8 +334,12 @@ class SkillScene(DispatchScene):
         for r,a in commands.items():self.ports[r].validate_action(a)
         if stage=='TRANSIT' and any(any(abs(a.get(k,0.))>0 for k in ('forward','left','turn')) for a in commands.values()):
             self.bindings.note_transit_command('beam')
-        for r,a in commands.items():self.raw(r,a,stage)
+        receipts={}
+        for r,a in commands.items():
+            applied=self.raw(r,a,stage)
+            receipts[r]=port_issue_receipt(applied,self.ports[r],a,bounded=False)
         self.step(duration)
+        return receipts
     def pair_issue_bounded(self,commands,duration,stage):
         """Issue one atomic pair lease; physics remains on the calling owner."""
         self.authorize();self.pair_phase=stage
@@ -309,15 +349,18 @@ class SkillScene(DispatchScene):
         if stage=='TRANSIT' and any(any(abs(a.get(k,0.))>0 for k in ('forward','left','turn')) for a in commands.values()):
             self.bindings.note_transit_command('beam')
         now=self.time()
+        receipts={}
         try:
             for r,a in commands.items():
-                self.ports[r].apply_bounded(a,now,duration)
+                applied=self.ports[r].apply_bounded(a,now,duration)
                 self.command_history[r].append({'stage':stage,'action':copy.deepcopy(a),
                     'issued_at_s':now,'valid_until_s':now+duration,
                     'plan_hash':self.bindings.committed['plan_hash']})
+                receipts[r]=port_issue_receipt(applied,self.ports[r],a,bounded=True)
         except BaseException:
             for r in commands:self.ports[r].hold(now)
             raise
+        return receipts
     def pair_arm(self,targets,duration,settle,stage):
         self.authorize();self.pair_phase=stage
         if not set(targets)<=set(self.bindings.pair.values()):raise ValueError('pair arm endpoint mismatch')
@@ -336,9 +379,11 @@ class SkillScene(DispatchScene):
             raise ValueError('rolling visual servo requires realtime dispatch_open without internal obstacles')
         if getattr(self,'bounded_carrier_relink',False) and not fast_servo:
             raise ValueError('bounded carrier relink requires realtime dispatch_open without internal obstacles')
+        if getattr(self,'rolling_view_recovery',False) and not fast_servo:
+            raise ValueError('rolling view recovery requires realtime dispatch_open without internal obstacles')
         self.solo=SoloBoxTransport(robot_id=self.bindings.solo,
             navigator=ImageRoute(self.bindings,'box',time_aware_box_reacquisition=fast_servo,
-                                 bounded_carrier_relink=self.bounded_carrier_relink),
+                                 bounded_carrier_relink=getattr(self,'bounded_carrier_relink',False)),
             attachment_min_saturation=150,release_refine_ground_fit=True,
             fast_near_field_servo=fast_servo)
         self.solo_executor=VisualMacroExecutor(self.ports[self.bindings.solo],
@@ -355,6 +400,9 @@ class SkillScene(DispatchScene):
         self._solo_approach_lease=None
         self._solo_approach_last_lease=None
         self._solo_approach_last_source=None
+        self._view_recovery=SettledViewRecovery() if getattr(self,'rolling_view_recovery',False) else None
+        self._solo_pose_log_cursor=0
+        self._solo_completed_pose_receipts={}
         self.solo_renewals=[]
         if self.realtime_control:
             self._decision_workers=ThreadPoolExecutor(max_workers=2,thread_name_prefix='dispatch-decision')
@@ -546,6 +594,103 @@ class SkillScene(DispatchScene):
             'source_top_sha256':lease.evidence['source_top_sha256'],
             'source_frame_id':lease.evidence['source_frame_id']})
 
+    def _rolling_view_sample(self,result,pending,obs,now):
+        """Only paired current RGB and the camera port's issued-command cache."""
+        return {'frame_id':result['frame_id'],
+                'capture_started_at_s':pending['capture_started_at_s'],
+                'observed_at_s':result['observed_at_s'],'decision_at_s':now,
+                'own_sha256':obs['sha256'],'top_sha256':result['top_sha256'],
+                'paired_top_sha256':result['images']['top']['sha256'],
+                'pose':obs['actuator_state']['servo_pulses'],
+                'box':self.solo.box.last_box,'target':self.solo.box.last_target,
+                'cargo_id':self.solo.box.cargo_id,
+                'completed_pose':self.solo_executor.last_execution,
+                'completed_pose_receipts':copy.deepcopy(self._solo_completed_pose_receipts),
+                'phase':self.solo.phase,
+                'plan_hash':self.bindings.committed['plan_hash']}
+
+    def _refresh_completed_issued_pose_receipts(self):
+        """Index completed own poses and every actually issued solo wheel command."""
+        if getattr(self,'_view_recovery',None) is None:return
+        for item in self.solo_raw[self._solo_pose_log_cursor:]:
+            if item.get('robot_id')==self.bindings.solo and (
+                    item.get('event')=='rolling_raw_action'
+                    or (item.get('event')=='raw_action'
+                        and (item.get('raw_action') or {}).get('kind') in ('drive','mecanum'))):
+                self._view_recovery.note_wheel_issue()
+            if item.get('event')!='macro_finished':continue
+            macro=item.get('macro') or {}
+            receipt=item.get('execution') or {}
+            if macro.get('kind')!='pose' or receipt.get('status')!='completed':continue
+            pulses=macro.get('pulses') or {}
+            for servo in (3,6):
+                if servo in pulses or str(servo) in pulses:
+                    self._solo_completed_pose_receipts[str(servo)]=copy.deepcopy(receipt)
+        self._solo_pose_log_cursor=len(self.solo_raw)
+
+    def _issue_rolling_view_reobserve(self,event,row,now):
+        """Hold first, then let the regular RGB worker capture after settling."""
+        port=self.ports[self.bindings.solo]
+        port.hold(now)
+        if any(abs(value)>1e-12 for value in port._motor_commands):
+            raise RuntimeError('rolling settled observation could not hold wheels')
+        self._solo_retry_at=event['capture_not_before_s']
+        self.solo_raw.append({'event':'rolling_view_recovery_settle_hold','time':now,
+            'robot_id':self.bindings.solo,'source_frame_id':event['frame_id'],
+            'source_frame_sha256':event['own_sha256'],
+            'source_top_sha256':event['top_sha256'],
+            'capture_not_before_s':event['capture_not_before_s'],
+            'episode':event['episode'],'motor_commands':list(port._motor_commands)})
+        row['view_recovery']=event
+        row['issued_action']={'kind':'hold','motor_commands':list(port._motor_commands)}
+        row['rolling_dropped']='hold_for_settled_rgb_instead_of_weak_drive'
+        self.solo_rows.append(row)
+
+    def _issue_rolling_view_pose(self,event,sample,obs,row,now):
+        """Hold wheels before the existing interpolated pose/settle scheduler."""
+        port=self.ports[self.bindings.solo]
+        port.hold(now)
+        if any(abs(value)>1e-12 for value in port._motor_commands):
+            raise RuntimeError('rolling view recovery could not hold wheels')
+        pose={'kind':'pose','pulses':event['issued_pose']}
+        self.solo.box.lock_rolling_approach_view(
+            int(event['issued_pose'].get('6',sample['pose']['6'])),
+            math.hypot(*sample['target'][:2]))
+        self.solo_raw.append({'event':'rolling_view_recovery_hold','time':now,
+            'robot_id':self.bindings.solo,'source_frame_id':sample['frame_id'],
+            'source_frame_sha256':sample['own_sha256'],
+            'source_top_sha256':sample['top_sha256'],
+            'motor_commands':list(port._motor_commands),
+            'reason':event['reason']})
+        self.solo_executor.submit(pose,obs,self.solo.phase,now)
+        event['issued_at_s']=now
+        event['macro_source_own_sha256']=obs['sha256']
+        row['view_recovery']=event
+        row['issued_action']=pose
+        row['rolling_dropped']='active_view_pose_instead_of_weak_drive'
+        self.solo_rows.append(row)
+
+    def _fail_rolling_view(self,event,row,now):
+        self.ports[self.bindings.solo].hold(now)
+        row['view_recovery']=event
+        row['rolling_dropped']=event['reason']
+        self.solo_rows.append(row)
+        self.solo_raw.append({'event':'rolling_view_recovery_stop','time':now,
+            'robot_id':self.bindings.solo,'reason':event['reason'],
+            'source_frame_id':event.get('frame_id'),
+            'source_frame_sha256':event.get('own_sha256'),
+            'motor_commands':list(self.ports[self.bindings.solo]._motor_commands)})
+        raise RuntimeError('solo RGB active-view recovery failed: '+event['reason'])
+
+    def _clear_rolling_view_recovery(self,now,reason):
+        recovery=getattr(self,'_view_recovery',None)
+        if recovery is None or recovery.episode is None:return
+        recovery.episode=None
+        self.ports[self.bindings.solo].hold(now)
+        self.solo_raw.append({'event':'rolling_view_recovery_stop','time':now,
+            'robot_id':self.bindings.solo,'reason':reason,
+            'motor_commands':list(self.ports[self.bindings.solo]._motor_commands)})
+
     def _start_solo_approach_lease(self,action,support,now,requests):
         """Issue the first <=.25 s slice of exactly one RGB-selected drive."""
         raw={'kind':'drive','forward':float(action['fwd']),
@@ -664,15 +809,41 @@ class SkillScene(DispatchScene):
     def _solo_tick_realtime(self):
         try:self._solo_tick_realtime_owned()
         except BaseException:
-            self._clear_solo_pending_lease(self.time(),hold=True)
-            self._clear_solo_approach_lease(self.time(),'owner_exception')
+            now=self.time()
+            recovery=getattr(self,'_view_recovery',None)
+            if recovery is not None and recovery.episode is not None:
+                if self.solo_executor:self.solo_executor.cancel(now,'active_view_owner_exception')
+                self.ports[self.bindings.solo].hold(now)
+                recovery.episode=None
+                self.solo_raw.append({'event':'rolling_view_recovery_stop','time':now,
+                    'robot_id':self.bindings.solo,'reason':'owner_exception',
+                    'motor_commands':list(self.ports[self.bindings.solo]._motor_commands)})
+            self._clear_solo_pending_lease(now,hold=True)
+            self._clear_solo_approach_lease(now,'owner_exception')
             raise
 
     def _solo_tick_realtime_owned(self):
         """Poll one RGB decision without making the physics owner wait for it."""
         if self.solo is None:return
         self.authorize();now=self.time()
+        recovery=getattr(self,'_view_recovery',None)
+        if recovery is not None and recovery.episode is not None:
+            if now>=recovery.episode['started_at_s']+VIEW_RECOVERY_MAX_ELAPSED_S:
+                self.solo_executor.cancel(now,'active_view_elapsed_budget')
+                self._clear_rolling_view_recovery(now,'active_view_elapsed_budget')
+                raise RuntimeError('solo RGB active-view elapsed budget exhausted')
+            if (self.bindings.committed['plan_hash']!=recovery.episode['plan_hash']
+                    or not self.bindings.permission('box','APPROACH')):
+                self.solo_executor.cancel(now,'active_view_plan_or_permission_changed')
+                self.ports[self.bindings.solo].hold(now)
+                recovery.episode=None
+                self.solo_raw.append({'event':'rolling_view_recovery_stop','time':now,
+                    'robot_id':self.bindings.solo,
+                    'reason':'plan_or_permission_changed',
+                    'motor_commands':list(self.ports[self.bindings.solo]._motor_commands)})
+                raise RuntimeError('solo RGB active-view recovery lost plan or permission')
         self.solo_executor.tick(now)
+        self._refresh_completed_issued_pose_receipts()
         if getattr(self,'rolling_visual_servo',False):self._tick_solo_approach_lease(now)
         tasks=getattr(getattr(self,'bindings',None),'tasks',None)
         finished=bool(tasks and tasks['box']['id'] in self.bindings.finished)
@@ -702,6 +873,13 @@ class SkillScene(DispatchScene):
                 self.solo_rows.append({'index':pending['index'],'sim_time_s':now,
                     'observed_at_s':observed,'dropped':'stale_rgb',
                     'frame_id':result['frame_id']})
+                if recovery is not None and recovery.episode is not None:
+                    recovery.episode=None
+                    self.solo_raw.append({'event':'rolling_view_recovery_stop','time':now,
+                        'robot_id':self.bindings.solo,'reason':'stale_reobservation',
+                        'source_frame_id':result['frame_id'],
+                        'motor_commands':list(self.ports[self.bindings.solo]._motor_commands)})
+                    raise RuntimeError('solo RGB active-view recovery stale reobservation')
                 return
             candidate=result['candidate']
             action,evidence=result['action'],result['evidence']
@@ -809,6 +987,23 @@ class SkillScene(DispatchScene):
                     'frame_within_issued_command_window':bool(previous_approach_lease and
                         previous_approach_lease.frame_within_issued_command_window(observed)),
                     'command_window_is_not_measured_motion':True}
+            view_sample=None
+            if recovery is not None and before=='approach':
+                view_sample=self._rolling_view_sample(result,pending,obs,now)
+                view_event=recovery.advance(view_sample)
+                if view_event is not None:
+                    if view_event['kind']=='pose_issued':
+                        self._issue_rolling_view_pose(view_event,view_sample,obs,row,now)
+                        return
+                    if view_event['kind']=='failed':
+                        self._fail_rolling_view(view_event,row,now)
+                    row['view_recovery']=view_event
+                if (not row['rolling_capture_evidence']['frame_within_issued_command_window']
+                        and recovery.episode is None):
+                    previous_end=(previous_approach_lease.last_command_end_s()
+                                  if previous_approach_lease is not None else None)
+                    recovery.remember(view_sample,view_sample['completed_pose_receipts'],
+                                      previous_end)
             if action['kind']=='mecanum':
                 if moving_carry:
                     effective=self._issue_realtime_motor(
@@ -879,6 +1074,17 @@ class SkillScene(DispatchScene):
                     # Preserve the existing settled final-entry/grasp routine.
                     self.solo_executor.submit(action,obs,self.solo.phase,now)
                 else:
+                    if (recovery is not None and support['reason']=='weak_direct_cyan_rgb'):
+                        view_event=recovery.start(view_sample)
+                        if view_event['kind']=='hold_reobserve':
+                            row['rolling_support']=support
+                            self._issue_rolling_view_reobserve(view_event,row,now)
+                            return
+                        if view_event['kind']=='pose_issued':
+                            row['rolling_support']=support
+                            self._issue_rolling_view_pose(view_event,view_sample,obs,row,now)
+                            return
+                        self._fail_rolling_view(view_event,row,now)
                     row['rolling_dropped']=support['reason']
                     self.ports[self.bindings.solo].hold(now)
                     self._solo_retry_at=max(now+.1,settle_until or now)
@@ -1051,6 +1257,7 @@ class SkillScene(DispatchScene):
     def close(self):
         if self.native_view:self.native_view.close();self.native_view=None
         if self.world:
+            self._clear_rolling_view_recovery(self.time(),'trial_end')
             self._clear_solo_approach_lease(self.time(),'trial_end')
             self._clear_solo_pending_lease(self.time(),hold=True)
             if self.solo_executor:self.solo_executor.cancel(self.time(),'trial_end')
@@ -1066,6 +1273,45 @@ def grasp_transfer_options(skill):
         return {'background_band': False, 'top_roi': None}
     return {'background_band': skill.get('task_domain') != 'dispatch_open_v1',
             'top_roi': [12,6,20,19] if skill.get('task_domain') == 'dispatch_open_v1' else None}
+
+
+def _approach(pair,scene,team,task,args,result):
+    """Pair approach; in dynamic coordination a supported failure is discussed.
+
+    The affected carriers decide unanimously to retry (bounded back-off and a
+    fresh RGB approach) or abort. Plan-first coordination keeps fail-closed.
+    """
+    dynamic=getattr(args,'coordination','plan_first')=='dynamic'
+    retries=getattr(args,'approach_retries',2) if dynamic else 0
+    inject=dynamic and getattr(args,'diagnostic_fail_approach_once',False)
+    attempt=0
+    while True:
+        injected=False
+        try:
+            report=pair.approach()
+            if inject and attempt==0:
+                # The robots see a real controller stop reason, so the team's
+                # decision rests on its images; the injection is output-only.
+                injected=True
+                raise RuntimeError('coarse RGB approach budget exhausted')
+            return report
+        except RuntimeError as exc:
+            from harness.dynamic_coordination import consult,recoverable
+            if not dynamic or not recoverable(exc) or attempt>=retries:raise
+            pair._hold_pair();scene.step(.5)
+            frames=scene.capture(f'recovery-{attempt}')
+            participants=[scene.bindings.pair[slot] for slot in sorted(scene.bindings.pair)]
+            event={'event_id':f'approach-{attempt}','kind':'pair_approach_failure','stage':'APPROACH',
+                   'failure':{'reason':str(exc)},'participants':participants,
+                   'retries_left':retries-attempt}
+            decision,rounds=consult(team,participants,event,frames,scene.command_history,task,
+                                    scene.time(),turn=attempt)
+            result['coordination']['recoveries'].append({**event,'sim_time_s':scene.time(),
+                'diagnostic_injection':injected,'decision':decision,'rounds':rounds})
+            team.event('RECOVERY_DECISION',scene.time(),event_id=event['event_id'],decision=decision)
+            print(f'RECOVERY {event["event_id"]}: {decision}',flush=True)
+            if decision!='retry':raise RuntimeError(f'{exc}; team decided to abort') from exc
+            pair.back_off();attempt+=1
 
 
 def run(args):
@@ -1089,12 +1335,18 @@ def run(args):
     scene=SkillScene(config,args.output)
     scene.efficient_capture=getattr(args,'efficient_capture',False)
     scene.realtime_control=bool(getattr(args,'realtime_control',False))
+    scene.coarse_concurrent_alignment=bool(getattr(args,'coarse_concurrent_alignment',False))
     scene.rolling_visual_servo=bool(getattr(args,'rolling_visual_servo',False))
     scene.bounded_carrier_relink=bool(getattr(args,'bounded_carrier_relink',False))
+    scene.rolling_view_recovery=bool(getattr(args,'rolling_view_recovery',False))
     if scene.rolling_visual_servo and not scene.realtime_control:
         raise ValueError('rolling visual servo requires realtime control')
+    if scene.coarse_concurrent_alignment and not scene.realtime_control:
+        raise ValueError('coarse concurrent alignment requires realtime control')
     if scene.bounded_carrier_relink and not (scene.rolling_visual_servo and scene.realtime_control):
         raise ValueError('bounded carrier relink requires rolling realtime control')
+    if scene.rolling_view_recovery and not (scene.rolling_visual_servo and scene.realtime_control):
+        raise ValueError('rolling view recovery requires rolling realtime control')
     scene.fine_gain_schedule=bool(getattr(args,'fine_gain_schedule',False))
     started=time.monotonic();pair=team=None
     motion_started_wall=motion_started_sim=None
@@ -1107,6 +1359,16 @@ def run(args):
         'environment':{'python':sys.version,'platform':platform.platform(),'mujoco':mujoco.__version__},
         'plan_committed':False,'protocol_complete':False,'physical_success':False,'error':None,
         'phase':'SETUP','cost_usd':None,
+        'coarse_concurrent_alignment':{
+            'requested':scene.coarse_concurrent_alignment,'applied':False,
+            'reason':'not_evaluated',
+            'scope':'realtime paired APPROACH on fixed dispatch_open or dispatch_shared_crossing RGB maps',
+            'static_map_sha256':config['static_map_sha256'],
+            'arena_variant':config['variant'],
+            'same_fresh_top_required':True,'max_capture_age_s':COARSE_CONCURRENT_MAX_CAPTURE_AGE_S,
+            'rgb_ttl_s':RGB_ACTION_TTL_S,'existing_coarse_command_s':COARSE_CONCURRENT_COMMAND_S,
+            'lead_limit_px':COARSE_LEAD_LIMIT_PX,'coarse_decision_cap':120,
+            'lease_policy':'unchanged existing 0.25s wire cap and 0.6s RGB TTL'},
         'rolling_approach':{'requested':scene.rolling_visual_servo,'applied':False,
             'scope':'solo approach only, realtime dispatch_open without internal obstacles',
             'max_wire_lease_s':REALTIME_MOTOR_RENEWAL_S,
@@ -1115,6 +1377,17 @@ def run(args):
             'near_motion_reobserve_buffer_m':NEAR_MOTION_REOBSERVE_BUFFER_M,
             'final_entry_settle_s':FINAL_ENTRY_SETTLE_S,
             'issued_command_integral_is_not_measured_travel':True},
+        'view_recovery':{'requested':scene.rolling_view_recovery,'applied':False,
+            'scope':'solo rolling approach on realtime dispatch_open; current paired own/TOP RGB and completed issued pose only',
+            'minimum_drive_rgb_confidence':0.75,
+            'max_poses_per_episode':VIEW_RECOVERY_MAX_POSES,
+            'max_elapsed_s':VIEW_RECOVERY_MAX_ELAPSED_S,
+            'max_episodes':VIEW_RECOVERY_MAX_EPISODES,
+            'wrist_step_pwm':VIEW_RECOVERY_WRIST_STEP_PWM,
+            'max_pan_delta_pwm':VIEW_RECOVERY_MAX_PAN_DELTA_PWM,
+            'episodes_started':0,
+            'poses_issued':0,
+            'issued_pwm_not_measured_joint':True},
         'bounded_carrier_relink':{'requested':scene.bounded_carrier_relink,'applied':False,
             'scope':'solo carry only, realtime dispatch_open with rolling approach',
             'max_total_occluded_frames':_CARRIER_RELINK_MAX_OCCLUDED_FRAMES,
@@ -1122,6 +1395,7 @@ def run(args):
             'max_cumulative_visual_motion_px':_CARRIER_RELINK_MAX_MOTION_PX,
             'final_slot_requires_direct_top_cargo':True},
         'input_boundary':'own fixed RGB + common fixed TOP RGB + static authored map + own issued commands + peer claims; referee output only'}
+    scene.source_sha=result['source_sha']
     try:
         scene.open();scene.deadline=started+args.max_wall_s
         if getattr(args,'viewer',False):
@@ -1193,12 +1467,24 @@ def run(args):
             model=getattr(args,'model','gemini-3.8-flash'),
             idle_callback=scene.native_view.poll if scene.native_view else None)
         scene.team=team;frames=scene.capture('planning')
-        result['phase']='NEGOTIATE'
-        result['plan_feasibility']=negotiate_executable(team,frames,scene.command_history,task,
-            scene.config['static_map'],scene.time(),max_tokens=args.max_input_tokens,
+        negotiation=dict(max_tokens=args.max_input_tokens,
             max_rounds=getattr(args,'planning_rounds',8),max_replans=getattr(args,'max_replans',2),
-            live_replan=getattr(args,'live_replan',False),identity=identity,reference_top=reference,
-            feedback_instruction=guidance.feasibility_feedback)
+            live_replan=getattr(args,'live_replan',False))
+        if getattr(args,'coordination','plan_first')=='dynamic':
+            # Start from independent self-claims; talk only on conflict/rejection.
+            from harness.dynamic_coordination import start as dynamic_start
+            result['phase']='CLAIM'
+            log=dynamic_start(team,frames,scene.command_history,task,scene.config['static_map'],
+                scene.time(),identity=identity,reference_top=reference,
+                required_dock=getattr(args,'required_dock',None),**negotiation)
+            result['plan_feasibility']=log.pop('feasibility')
+            result['coordination']={'mode':'dynamic','start':log,'recoveries':[]}
+            print('DYNAMIC START '+log['path'],flush=True)
+        else:
+            result['phase']='NEGOTIATE'
+            result['plan_feasibility']=negotiate_executable(team,frames,scene.command_history,task,
+                scene.config['static_map'],scene.time(),identity=identity,reference_top=reference,
+                feedback_instruction=guidance.feasibility_feedback,**negotiation)
         scene.bindings=SkillBindings(team.agreement.committed,scene.config['static_map'],
                                     route_overlap=getattr(args,'route_overlap',False),
                                     auto_route_overlap=getattr(args,'auto_route_overlap',False),
@@ -1219,9 +1505,12 @@ def run(args):
         scene.start_solo()
         result['rolling_approach']['applied']=scene.rolling_visual_servo
         result['bounded_carrier_relink']['applied']=scene.bounded_carrier_relink
+        result['view_recovery']['applied']=scene.rolling_view_recovery
         pair=BoundPairSkill(scene,scene.bindings,skill,grasp,stages,grasp_root,reference,identity)
+        result['coarse_concurrent_alignment'].update(coarse_concurrency_status(
+            pair,requested=scene.coarse_concurrent_alignment))
         while not scene.bindings.permission('beam','APPROACH'):scene.step(.2)
-        result['phase']='APPROACH';result['pair_approach']=pair.approach()
+        result['phase']='APPROACH';result['pair_approach']=_approach(pair,scene,team,task,args,result)
         while not scene.bindings.permission('beam','GRASP'):scene.step(.2)
         result['phase']='GRASP';result['pair_grasp']=pair.finish_grasp(predict_student,grasp)
         pair.grasp_report.pop('evaluation',None)
@@ -1271,9 +1560,15 @@ def run(args):
                 if scene.native_view:
                     scene.native_view.close();scene.native_view=None
                 # Freeze decisions before final referee-only settling.
+                scene._clear_rolling_view_recovery(scene.time(),'trial_end')
                 scene._clear_solo_approach_lease(scene.time(),'trial_end')
                 if scene.solo_executor:scene.solo_executor.cancel(scene.time(),'trial_end')
                 if scene.solo:result['solo_status']={'phase':scene.solo.phase,'reason':scene.solo.reason,'done':scene.solo.done}
+                if scene._view_recovery is not None:
+                    result['view_recovery']['episodes_started']=scene._view_recovery.episodes_started
+                    result['view_recovery']['poses_issued']=scene._view_recovery.poses_issued
+                    result['view_recovery']['holds_started']=scene._view_recovery.holds_started
+                    result['view_recovery']['settled_observations']=scene._view_recovery.settled_observations
                 if scene.bindings:result['resource_events']=scene.bindings.resource_events
                 if scene.realtime_control:result['realtime_control_stats']=dict(scene.realtime_stats)
                 scene.solo=None;scene.deadline=None;scene.hold()

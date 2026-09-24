@@ -143,3 +143,10 @@ def test_cli_accepts_guidance_only_for_skills(tmp_path):
         main(['--output', str(tmp_path / 'x'), '--executor', 'raw', '--plan-guidance', 'objective'])
     with pytest.raises(SystemExit):
         main(['--output', str(tmp_path / 'y'), '--plan-guidance', 'fastest'])
+
+
+def test_cli_rejects_guidance_with_dynamic_coordination(tmp_path):
+    from scripts.run_dispatch_e2e import main
+    with pytest.raises(SystemExit):
+        main(['--output', str(tmp_path / 'z'), '--variant', 'open', '--coordination', 'dynamic',
+              '--plan-guidance', 'objective', '--grasp-model-dir', str(tmp_path), '--stage-model-dir', str(tmp_path)])
