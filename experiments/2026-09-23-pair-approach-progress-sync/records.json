@@ -1,0 +1,402 @@
+{
+  "schema": "ugrp.pair_approach_progress_sync.v1",
+  "runs": [
+    {
+      "run_id": "20260923-170300-dispatch-dff8ade9",
+      "raw_root": "/Users/changmin/.codex/worktrees/standard-simulation-refinement/ugrp/outputs/simulation-runs/20260923-170300-dispatch-dff8ade9",
+      "source_sha": "b41ec686889be2e48f408cb4de16eb432a7f49bd",
+      "workflow_id": "dispatch",
+      "workflow_version": "1.0.0",
+      "catalog_sha256": "017f851ede95dd74f594923262a767c9ab78a2166821b4f9bbd6bed5b1c0af8b",
+      "source_dirty": false,
+      "source_changed_during_run": false,
+      "plan_replay_sha256": null,
+      "condition": {
+        "variant": "open",
+        "seed": 11,
+        "contact_profile": "local_contact_fine",
+        "viewer": true,
+        "max_wall_s": 1200.0,
+        "executor": "skills"
+      },
+      "model_provenance": {
+        "grasp_manifest_sha256": "372ecd9eed79627f64664a88ddeb7ba57975ecd824d079c34b03a6f847941933",
+        "grasp_models": {
+          "r1": {
+            "path": "r1-model.json",
+            "sha256": "1b2e6d6c3d010f4425fec605a197a1d758a3455e596b4a2e7b3be2bb63ae05a2"
+          },
+          "r3": {
+            "path": "r3-model.json",
+            "sha256": "fd7da785c3a9d25ebd35ccd8f087fa007b91406aa9470e684ddd057b55d7ecff"
+          }
+        },
+        "stage_manifest_sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a",
+        "stage_models": {
+          "r1": {
+            "forward": {
+              "path": "model-r1-forward.json",
+              "sha256": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45"
+            },
+            "lateral": {
+              "path": "model-r1-lateral.json",
+              "sha256": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869"
+            },
+            "yaw": {
+              "path": "model-r1-yaw.json",
+              "sha256": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374"
+            }
+          },
+          "r3": {
+            "forward": {
+              "path": "model-r3-forward.json",
+              "sha256": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+            },
+            "lateral": {
+              "path": "model-r3-lateral.json",
+              "sha256": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f"
+            },
+            "yaw": {
+              "path": "model-r3-yaw.json",
+              "sha256": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8"
+            }
+          }
+        },
+        "reference_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+      },
+      "environment": {
+        "python": "3.12.13",
+        "executable": "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/python",
+        "platform": "macOS-27.2-arm64-arm-64bit",
+        "packages": {
+          "mujoco": "3.12.0",
+          "numpy": "2.5.2",
+          "opencv-python": null,
+          "opencv-python-headless": "5.0.0.93",
+          "Pillow": "12.3.0",
+          "torch": null,
+          "gymnasium": "1.3.0"
+        }
+      },
+      "outcome": {
+        "manager_status": "process_failed",
+        "exit_code": 1,
+        "error": "KeyboardInterrupt: native viewer closed",
+        "protocol_complete": false,
+        "physical_success": false,
+        "beam_physical_success": false,
+        "box_physical_success": false,
+        "pair_approach_ok": null,
+        "wall_s": 187.60533637501067,
+        "commands": 347,
+        "llm_calls": 12,
+        "cost_usd": null
+      },
+      "artifact_sha256": {
+        "manifest.json": "150cd859ad5e15ddd8191447ec2b3954657fc74f33f30caee50771133bec309d",
+        "artifacts/result.json": "f59ad521f500bf80128cb68b20fc863b8b567e24c06da8fe0dbdfd5623d6f8e0",
+        "artifacts/issued-commands.json": "9914e490f87669ce7973bb3ce91f5ec02de4b49a846b27a3cffa449206b4bd18",
+        "artifacts/referee-only.jsonl": "9b317852d51da2c1920f49592a365ab43e0e4d99df9de013545e973910a7ac6c",
+        "artifacts/committed-plan.json": "1b6268175d15d410b6bb9319db665f09dcc6a22e9690bfe6b94d629a123596d9"
+      }
+    },
+    {
+      "run_id": "20260923-pair-approach-sync-b055042",
+      "raw_root": "/Users/changmin/.codex/worktrees/pair-approach-progress-sync/ugrp/outputs/simulation-runs/20260923-pair-approach-sync-b055042",
+      "source_sha": "b05504268e340cf1a905afc19ef19299e8012c4d",
+      "workflow_id": "dispatch-skills",
+      "workflow_version": "1.1.0",
+      "catalog_sha256": "1e89ab8c9fb24d4b48fca7b2856eadae9f53649dfc059745d8601323920773a7",
+      "source_dirty": false,
+      "source_changed_during_run": false,
+      "plan_replay_sha256": "1b6268175d15d410b6bb9319db665f09dcc6a22e9690bfe6b94d629a123596d9",
+      "condition": {
+        "variant": "open",
+        "seed": 11,
+        "contact_profile": "local_contact_fine",
+        "viewer": false,
+        "max_wall_s": 360.0,
+        "executor": "skills"
+      },
+      "model_provenance": {
+        "grasp_manifest_sha256": "372ecd9eed79627f64664a88ddeb7ba57975ecd824d079c34b03a6f847941933",
+        "grasp_models": {
+          "r1": {
+            "path": "r1-model.json",
+            "sha256": "1b2e6d6c3d010f4425fec605a197a1d758a3455e596b4a2e7b3be2bb63ae05a2"
+          },
+          "r3": {
+            "path": "r3-model.json",
+            "sha256": "fd7da785c3a9d25ebd35ccd8f087fa007b91406aa9470e684ddd057b55d7ecff"
+          }
+        },
+        "stage_manifest_sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a",
+        "stage_models": {
+          "r1": {
+            "forward": {
+              "path": "model-r1-forward.json",
+              "sha256": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45"
+            },
+            "lateral": {
+              "path": "model-r1-lateral.json",
+              "sha256": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869"
+            },
+            "yaw": {
+              "path": "model-r1-yaw.json",
+              "sha256": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374"
+            }
+          },
+          "r3": {
+            "forward": {
+              "path": "model-r3-forward.json",
+              "sha256": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+            },
+            "lateral": {
+              "path": "model-r3-lateral.json",
+              "sha256": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f"
+            },
+            "yaw": {
+              "path": "model-r3-yaw.json",
+              "sha256": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8"
+            }
+          }
+        },
+        "reference_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+      },
+      "environment": {
+        "python": "3.12.13",
+        "executable": "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/python",
+        "platform": "macOS-27.2-arm64-arm-64bit",
+        "packages": {
+          "mujoco": "3.12.0",
+          "numpy": "2.5.2",
+          "opencv-python": null,
+          "opencv-python-headless": "5.0.0.93",
+          "Pillow": "12.3.0",
+          "torch": null,
+          "gymnasium": "1.3.0"
+        }
+      },
+      "outcome": {
+        "manager_status": "process_failed",
+        "exit_code": 1,
+        "error": "RuntimeError: fine RGB alignment outside saved skill support",
+        "protocol_complete": false,
+        "physical_success": false,
+        "beam_physical_success": false,
+        "box_physical_success": false,
+        "pair_approach_ok": null,
+        "wall_s": 88.8229884589964,
+        "commands": 323,
+        "llm_calls": 0,
+        "cost_usd": null
+      },
+      "artifact_sha256": {
+        "manifest.json": "65a3a504ac38215f4c0ed74eb129196caf679d80bad8ceede345a791d0039188",
+        "artifacts/result.json": "d12f5aa032072821c466dde796eea83ae608f176b4346f96ceabebda654ea4bf",
+        "artifacts/issued-commands.json": "b361752023d8dec756d746253d732d60ed2e9d00f951400a61d1fe3de3b44c9e",
+        "artifacts/referee-only.jsonl": "b05a7dd47f1a830af4aedcac9a0df01823dc86462c9473c1a1f0f5080e29484f",
+        "artifacts/committed-plan.json": "9b8e2af226b281db35e56d9ca5222d831155bb5a3ecaf6623226841c03c9dcff"
+      }
+    },
+    {
+      "run_id": "20260923-pair-approach-sync-b055042-repeat",
+      "raw_root": "/Users/changmin/.codex/worktrees/pair-approach-progress-sync/ugrp/outputs/simulation-runs/20260923-pair-approach-sync-b055042-repeat",
+      "source_sha": "b05504268e340cf1a905afc19ef19299e8012c4d",
+      "workflow_id": "dispatch-skills",
+      "workflow_version": "1.1.0",
+      "catalog_sha256": "1e89ab8c9fb24d4b48fca7b2856eadae9f53649dfc059745d8601323920773a7",
+      "source_dirty": false,
+      "source_changed_during_run": false,
+      "plan_replay_sha256": "1b6268175d15d410b6bb9319db665f09dcc6a22e9690bfe6b94d629a123596d9",
+      "condition": {
+        "variant": "open",
+        "seed": 11,
+        "contact_profile": "local_contact_fine",
+        "viewer": false,
+        "max_wall_s": 360.0,
+        "executor": "skills"
+      },
+      "model_provenance": {
+        "grasp_manifest_sha256": "372ecd9eed79627f64664a88ddeb7ba57975ecd824d079c34b03a6f847941933",
+        "grasp_models": {
+          "r1": {
+            "path": "r1-model.json",
+            "sha256": "1b2e6d6c3d010f4425fec605a197a1d758a3455e596b4a2e7b3be2bb63ae05a2"
+          },
+          "r3": {
+            "path": "r3-model.json",
+            "sha256": "fd7da785c3a9d25ebd35ccd8f087fa007b91406aa9470e684ddd057b55d7ecff"
+          }
+        },
+        "stage_manifest_sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a",
+        "stage_models": {
+          "r1": {
+            "forward": {
+              "path": "model-r1-forward.json",
+              "sha256": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45"
+            },
+            "lateral": {
+              "path": "model-r1-lateral.json",
+              "sha256": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869"
+            },
+            "yaw": {
+              "path": "model-r1-yaw.json",
+              "sha256": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374"
+            }
+          },
+          "r3": {
+            "forward": {
+              "path": "model-r3-forward.json",
+              "sha256": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+            },
+            "lateral": {
+              "path": "model-r3-lateral.json",
+              "sha256": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f"
+            },
+            "yaw": {
+              "path": "model-r3-yaw.json",
+              "sha256": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8"
+            }
+          }
+        },
+        "reference_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+      },
+      "environment": {
+        "python": "3.12.13",
+        "executable": "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/python",
+        "platform": "macOS-27.2-arm64-arm-64bit",
+        "packages": {
+          "mujoco": "3.12.0",
+          "numpy": "2.5.2",
+          "opencv-python": null,
+          "opencv-python-headless": "5.0.0.93",
+          "Pillow": "12.3.0",
+          "torch": null,
+          "gymnasium": "1.3.0"
+        }
+      },
+      "outcome": {
+        "manager_status": "process_failed",
+        "exit_code": 1,
+        "error": "RuntimeError: fine RGB alignment outside saved skill support",
+        "protocol_complete": false,
+        "physical_success": false,
+        "beam_physical_success": false,
+        "box_physical_success": false,
+        "pair_approach_ok": null,
+        "wall_s": 99.82118808399537,
+        "commands": 323,
+        "llm_calls": 0,
+        "cost_usd": null
+      },
+      "artifact_sha256": {
+        "manifest.json": "782ffed2ae3a871a91ff106aa5faaff70202c6b3aee71ce6feb3cf3c1d5a5fbb",
+        "artifacts/result.json": "6c65dc20fcbd577cc05e469cafb0e2a6b43c9452db03642aca4ddfd1e2c2540d",
+        "artifacts/issued-commands.json": "b361752023d8dec756d746253d732d60ed2e9d00f951400a61d1fe3de3b44c9e",
+        "artifacts/referee-only.jsonl": "b05a7dd47f1a830af4aedcac9a0df01823dc86462c9473c1a1f0f5080e29484f",
+        "artifacts/committed-plan.json": "9a44027d50f550a44900d5ecc97bea945aebb451f54677d5d5db0af73fffeabe"
+      }
+    },
+    {
+      "run_id": "20260923-pair-approach-sync-c3178cf",
+      "raw_root": "/Users/changmin/.codex/worktrees/pair-approach-progress-sync/ugrp/outputs/simulation-runs/20260923-pair-approach-sync-c3178cf",
+      "source_sha": "c3178cf7b82de2e86dced5841f3f6ab3e0f75e73",
+      "workflow_id": "dispatch-skills",
+      "workflow_version": "1.2.0",
+      "catalog_sha256": "3ad1a4dddcf82dae7619b441d29be330186d66b66e25153bf466098a20fc86a9",
+      "source_dirty": false,
+      "source_changed_during_run": false,
+      "plan_replay_sha256": "1b6268175d15d410b6bb9319db665f09dcc6a22e9690bfe6b94d629a123596d9",
+      "condition": {
+        "variant": "open",
+        "seed": 11,
+        "contact_profile": "local_contact_fine",
+        "viewer": false,
+        "max_wall_s": 360.0,
+        "executor": "skills"
+      },
+      "model_provenance": {
+        "grasp_manifest_sha256": "372ecd9eed79627f64664a88ddeb7ba57975ecd824d079c34b03a6f847941933",
+        "grasp_models": {
+          "r1": {
+            "path": "r1-model.json",
+            "sha256": "1b2e6d6c3d010f4425fec605a197a1d758a3455e596b4a2e7b3be2bb63ae05a2"
+          },
+          "r3": {
+            "path": "r3-model.json",
+            "sha256": "fd7da785c3a9d25ebd35ccd8f087fa007b91406aa9470e684ddd057b55d7ecff"
+          }
+        },
+        "stage_manifest_sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a",
+        "stage_models": {
+          "r1": {
+            "forward": {
+              "path": "model-r1-forward.json",
+              "sha256": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45"
+            },
+            "lateral": {
+              "path": "model-r1-lateral.json",
+              "sha256": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869"
+            },
+            "yaw": {
+              "path": "model-r1-yaw.json",
+              "sha256": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374"
+            }
+          },
+          "r3": {
+            "forward": {
+              "path": "model-r3-forward.json",
+              "sha256": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d"
+            },
+            "lateral": {
+              "path": "model-r3-lateral.json",
+              "sha256": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f"
+            },
+            "yaw": {
+              "path": "model-r3-yaw.json",
+              "sha256": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8"
+            }
+          }
+        },
+        "reference_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c"
+      },
+      "environment": {
+        "python": "3.12.13",
+        "executable": "/Users/changmin/Project-Runtimes/ugrp/.venv-sim-worker-mac/bin/python",
+        "platform": "macOS-27.2-arm64-arm-64bit",
+        "packages": {
+          "mujoco": "3.12.0",
+          "numpy": "2.5.2",
+          "opencv-python": null,
+          "opencv-python-headless": "5.0.0.93",
+          "Pillow": "12.3.0",
+          "torch": null,
+          "gymnasium": "1.3.0"
+        }
+      },
+      "outcome": {
+        "manager_status": "process_failed",
+        "exit_code": 1,
+        "error": "RuntimeError: skill wall budget exhausted",
+        "protocol_complete": false,
+        "physical_success": false,
+        "beam_physical_success": true,
+        "box_physical_success": false,
+        "pair_approach_ok": true,
+        "wall_s": 362.0945573749923,
+        "commands": 919,
+        "llm_calls": 0,
+        "cost_usd": null
+      },
+      "artifact_sha256": {
+        "manifest.json": "f313b966885aed8d384fbdc7907d541318ea88b1266a0f076f8aea6e322c0437",
+        "artifacts/result.json": "97539cd6eafd13362337ee5de205e458041e1f38afc98919d8162a9471d0b8b1",
+        "artifacts/issued-commands.json": "c823708416b86c76b463d93d127bbbb6b7b75da27cbef82eeb6109c266b9a7fe",
+        "artifacts/referee-only.jsonl": "62085fc9b5cc18b1c5e3e83dba12b1776cb78e2058dfde94bdec5c960edce685",
+        "artifacts/committed-plan.json": "b5b32bf741614f6f94d1e834010f18b2fda32f8e32847f4a09b828c741b2b998"
+      }
+    }
+  ],
+  "assessment_scope": "one open/seed11 saved-plan replay cohort; beam partial outcome is separate from full task"
+}

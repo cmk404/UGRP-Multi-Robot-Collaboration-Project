@@ -16,6 +16,41 @@ from scripts.run_camera_varied_start_student import run_approach
 import math
 import numpy as np
 
+COARSE_LEAD_LIMIT_PX = 16.
+
+
+def coordinated_coarse_commands(decisions):
+    """Let RGB alignment finish before either beam partner advances past the other."""
+    if set(decisions) != set(ROBOTS) or not all(decisions[r].get('ok') is True for r in ROBOTS):
+        raise ValueError('both coarse RGB decisions are required')
+    gaps = {}
+    for r in ROBOTS:
+        d = decisions[r]
+        image_error = d.get('image_error')
+        gap = image_error[0] if isinstance(image_error, (list, tuple)) and image_error else d.get('image_gap')
+        if gap is None or not math.isfinite(float(gap)):
+            raise ValueError('finite RGB-relative forward gap required for paired approach')
+        gaps[r] = float(gap)
+    aligning = any(abs(float(decisions[r].get(axis, 0.))) > 1e-9
+                   for r in ROBOTS for axis in ('left', 'turn'))
+    farthest_gap = max(gaps.values())
+    commands = {}
+    held_forward = []
+    for r in ROBOTS:
+        d = decisions[r]
+        forward = float(d['forward'])
+        # All error terms come from the same fresh fixed TOP RGB. A partner
+        # correcting heading/lateral pose must not let the other travel ahead.
+        # Once aligned, the rear partner may catch up on its own if necessary.
+        if forward > 0 and (aligning or (farthest_gap - gaps[r]) * 960 >= COARSE_LEAD_LIMIT_PX):
+            forward = 0.
+            held_forward.append(r)
+        commands[r] = dict(forward=forward, left=float(d.get('left', 0.)),
+                           turn=float(d['turn']))
+    return commands, {'forward_gap_px': {r: gaps[r] * 960 for r in ROBOTS},
+                      'lead_limit_px': COARSE_LEAD_LIMIT_PX,
+                      'alignment_in_progress': aligning, 'held_forward': held_forward}
+
 
 class BoundPairSkill:
     finish_grasp = ApproachScene.finish_grasp
@@ -96,12 +131,16 @@ class BoundPairSkill:
             frames=self.capture('coarse')
             decisions={r:(self.coarse.decide(self.io.last_frames['r1']['top_bytes'],r) if self.coarse is not None
                           else coarse_approach(frames[r]['top_bytes'],self.reference,r)) for r in ROBOTS}
-            report['coarse_calls'].append(decisions);self.calls.append({'kind':'coarse','decisions':decisions})
             if not all(d['ok'] for d in decisions.values()):raise RuntimeError('coarse RGB model convention unresolved')
-            self.drive_mecanum({r:dict(forward=d['forward'],left=d.get('left',0.),turn=d['turn']) for r,d in decisions.items()})
+            commands,coordination=coordinated_coarse_commands(decisions)
+            report['coarse_calls'].append(decisions)
+            self.calls.append({'kind':'coarse','decisions':decisions,'commands':commands,
+                               'coordination':coordination})
+            self.drive_mecanum(commands)
             if all(d['ready'] for d in decisions.values()):self.stop_dwell();break
         else:raise RuntimeError('coarse RGB approach budget exhausted')
-        report.update(run_approach(self,self.stage_models,reacquire_on_settle=True,final_refinement_steps=40))
+        report.update(run_approach(self,self.stage_models,reacquire_on_settle=True,
+                                   final_refinement_steps=40,invalid_reobserve_budget=1))
         self.calls.append({'kind':'learned_approach','report':report})
         if not report['approach_ok']:raise RuntimeError('fine RGB alignment outside saved skill support')
         ready_count=0

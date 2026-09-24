@@ -2,7 +2,7 @@ import copy
 import itertools
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 import cv2
 import numpy as np
 import pytest
@@ -11,7 +11,7 @@ from harness.dispatch_plan import validate_dispatch_plan
 from harness.three_robot_plan import digest
 from harness.solo_box_transport import SoloBoxTransport
 from sim.research_dispatch_arena import authored_map
-from scripts.dispatch_pair_skill import BoundPairSkill
+from scripts.dispatch_pair_skill import BoundPairSkill, coordinated_coarse_commands
 
 
 def test_efficient_pair_capture_preserves_consumed_images_and_default(tmp_path):
@@ -70,6 +70,67 @@ def test_every_allocation_reaches_its_physical_endpoints(order):
     assert solo.box.robot_id==order[2]
     assert b.programs[order[0]][0]['role']=='end_a'
     assert b.programs[order[1]][0]['model_slot']=='r1'
+
+
+def test_coarse_approach_holds_forward_while_peer_aligns_from_recorded_rgb():
+    # The 2026-09-23 open-map run issued physical r3 a 0.12 forward command
+    # while physical r1 was correcting laterally. Slots were swapped by plan.
+    decisions={
+        'r1':dict(ok=True,ready=False,forward=.12,left=0.,turn=0.,image_error=[.175334,.00177]),
+        'r3':dict(ok=True,ready=False,forward=0.,left=-.031379,turn=0.,image_error=[.167236,.031379]),
+    }
+    commands,evidence=coordinated_coarse_commands(decisions)
+    assert commands['r1']==dict(forward=0.,left=0.,turn=0.)
+    assert commands['r3']['left']==pytest.approx(-.031379)
+    assert evidence['held_forward']==['r1']
+    assert evidence['alignment_in_progress'] is True
+
+
+def test_coarse_approach_bounds_rgb_forward_lead_and_releases_after_catchup():
+    def decision(gap,forward,ready=False):
+        return dict(ok=True,ready=ready,forward=forward,left=0.,turn=0.,
+                    image_error=[gap,0.])
+    pair={'r1':decision(.10,.12),'r3':decision(.14,.12)}
+    commands,evidence=coordinated_coarse_commands(pair)
+    assert commands['r1']['forward']==0.
+    assert commands['r3']['forward']==.12
+    assert evidence['held_forward']==['r1']
+
+    pair={'r1':decision(.128,.12),'r3':decision(.14,.12)}
+    commands,evidence=coordinated_coarse_commands(pair)
+    assert {r:commands[r]['forward'] for r in pair}=={'r1':.12,'r3':.12}
+    assert evidence['held_forward']==[]
+
+    # A partner that is already in the coarse handoff band must stay still;
+    # the other may close its remaining RGB gap under the finite step budget.
+    pair={'r1':decision(.06,0.,ready=True),'r3':decision(.09,.03)}
+    commands,_=coordinated_coarse_commands(pair)
+    assert commands['r1']['forward']==0.
+    assert commands['r3']['forward']==.03
+
+
+def test_coarse_approach_rejects_missing_or_nonfinite_rgb_gap():
+    valid=dict(ok=True,ready=False,forward=.1,left=0.,turn=0.,image_error=[.1,0.])
+    with pytest.raises(ValueError,match='both coarse'):
+        coordinated_coarse_commands({'r1':valid})
+    with pytest.raises(ValueError,match='finite RGB'):
+        coordinated_coarse_commands({'r1':valid,'r3':{**valid,'image_error':[float('nan'),0.]}})
+
+
+def test_dispatch_pair_alone_opts_into_bounded_fine_rgb_reobservation():
+    bindings = SkillBindings(committed(), authored_map('open'))
+    io = SimpleNamespace(out=Path('/tmp/unused'), pair_drive=Mock(),
+                         last_frames={'r1': {'top_bytes': b'top'}})
+    skill = {'initialization_replay': [{'targets': {'r1': {1: 2000}, 'r3': {1: 2000}}}]}
+    pair = BoundPairSkill(io, bindings, skill, {}, {}, Path('/tmp/models'), b'')
+    ready = dict(ok=True, ready=True, forward=0., left=0., turn=0., image_error=[.06, 0.])
+    pair.coarse = SimpleNamespace(decide=Mock(return_value=ready))
+    pair.capture = Mock(return_value={})
+    with patch('scripts.dispatch_pair_skill.run_approach', return_value={'approach_ok': False}) as run:
+        with pytest.raises(RuntimeError, match='fine RGB alignment'):
+            pair.approach()
+    assert run.call_args.kwargs['invalid_reobserve_budget'] == 1
+    assert io.pair_drive.call_count == 2
 
 
 def test_no_silent_route_change_or_revoked_plan_execution():
