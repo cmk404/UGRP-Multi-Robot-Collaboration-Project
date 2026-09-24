@@ -213,3 +213,7 @@ def test_replicas_get_the_dispatch_box_finger_pairs_and_the_planner_leaves_an_ov
     assert count == 2 and out.count('geom2="cargo_box_00_geom"') == 1 and out.count('3.4 3.4 .2 .01 .01') == 3
     bounds = [-1.05, 5.40, -3.15, -.85]
     assert plan_path((3.10, -2.15), (0., -1.30), bounds, [(3.24, -2.16, .06)]) is not None
+    # dev-fixture-3: with a path available the margin is kept, so a robot
+    # that grazes a box's margin does not plan straight through the box.
+    path = plan_path((-.60, -1.45), (1.0, -1.70), bounds, [(-.25, -1.70, .06)], radius=.21)
+    assert path and all(math.hypot(x+.25, y+1.70) >= .06+.21-1e-6 for x, y in path[1:-1])
