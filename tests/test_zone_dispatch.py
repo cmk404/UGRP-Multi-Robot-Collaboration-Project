@@ -199,3 +199,18 @@ def test_fixture_claims_do_not_collide_and_leave_extra_robots_idle():
     one_left = {'A': {'red': 1}}
     claims = {r: _fixture_claim(r, 'q', one_left, labels, view, {}, ('r2', 'r3'))['claim'] for r in ('r2', 'r3')}
     assert claims['r2']['box'] == 'red-1' and claims['r3'] == {'box': None, 'zone': None}
+
+
+def test_replicas_get_the_dispatch_box_finger_pairs_and_the_planner_leaves_an_overlapped_box():
+    # dev-fixture-2 (2026-09-25): every teacher carry slid out of the grip
+    # because the contact profile declares finger pairs for dispatch_box_geom
+    # only; robots that dropped a box next to themselves could not plan out.
+    from sim.zone_scene import mirror_box_contact_pairs
+    from scripts.zone_teacher import plan_path
+    xml = ('<mujoco><contact><pair geom1="r1__left_finger" geom2="dispatch_box_geom" friction="3.4 3.4 .2 .01 .01"/>'
+           '<pair geom1="r1__left_finger" geom2="team_beam_geom"/></contact></mujoco>')
+    out, count = mirror_box_contact_pairs(xml, ['cargo_box_00', 'cargo_box_01'])
+    assert count == 2 and out.count('geom2="cargo_box_00_geom"') == 1 and out.count('3.4 3.4 .2 .01 .01') == 3
+    bounds = [-1.05, 5.40, -3.15, -.85]
+    assert plan_path((3.10, -2.15), (0., -1.30), bounds, [(3.24, -2.16, .06)]) is not None
+    assert plan_path((2.0, -2.0), (3.24, -2.16), bounds, [(3.24, -2.16, .06)])[-1] == (3.24, -2.16)

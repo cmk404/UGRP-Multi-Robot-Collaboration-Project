@@ -18,6 +18,26 @@ OBSERVER_POSITION_M = (2.2, -6.6, 4.6)
 OBSERVER_TARGET_M = (2.2, -2., .03)
 
 
+def mirror_box_contact_pairs(xml, bodies):
+    """Give every painted replica the finger contact pairs of the dispatch box.
+
+    The contact profile declares finger/cargo pairs by geom name for the
+    original ``dispatch_box_geom`` only. Replicas are the same box with other
+    paint, so they receive identical copies of those pairs (same friction,
+    solref, solimp, margin); without them the fingers fall back to default
+    contact and the box slides out of the grip during transport.
+    """
+    import xml.etree.ElementTree as ET
+    root = ET.fromstring(xml)
+    contact = root.find('contact')
+    source = [pair for pair in (contact.findall('pair') if contact is not None else [])
+              if pair.get('geom2') == 'dispatch_box_geom']
+    for body in bodies:
+        for pair in source:
+            contact.append(ET.Element('pair', {**pair.attrib, 'geom2': body + '_geom'}))
+    return ET.tostring(root, encoding='unicode'), len(source)*len(bodies)
+
+
 class ZoneScene(Scene):
     @classmethod
     def from_zone_config(cls, config, base_dir=ROOT):
@@ -60,8 +80,10 @@ class ZoneScene(Scene):
         if self.scene['contact_profile']:
             from sim.dispatch_contact_profile import contact_profile
             xml = contact_profile(xml, self.scene['contact_profile'])
+            xml, mirrored = mirror_box_contact_pairs(xml, [r['body_name'] for r in self.manifest['box_replicas'].values()])
             self.manifest['scene_xml_sha256'] = hashlib.sha256(xml.encode()).hexdigest()
             self.manifest['contact_solver_profile'] = self.scene['contact_profile']
+            self.manifest['replica_finger_contact_pairs'] = mirrored
         return xml
 
     def setup(self, world):

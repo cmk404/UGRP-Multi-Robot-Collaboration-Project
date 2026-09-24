@@ -25,6 +25,9 @@ ROBOT_RADIUS_M = .17
 CARRY_RADIUS_M = .21
 BOX_CLEARANCE_M = .06
 PEER_CLEARANCE_M = .14
+# A drive phase (to the box, or carrying to the slot) that has not arrived
+# within this SIM time ends the job as teacher_path_blocked.
+DRIVE_PHASE_LIMIT_S = 120.
 
 
 def _wrap(angle):
@@ -34,6 +37,9 @@ def _wrap(angle):
 def plan_path(start, goal, bounds, discs, *, grid=GRID_M, radius=ROBOT_RADIUS_M, budget=40000):
     """8-connected grid A* for a disc robot; discs are (x, y, r) keep-outs."""
     x0, x1, y0, y1 = bounds
+    # A keep-out the robot already overlaps (e.g. a box it just dropped next
+    # to itself) would wall in the start cell; the robot may leave it.
+    discs = [(x, y, r) for x, y, r in discs if math.hypot(start[0]-x, start[1]-y) >= r+radius]
     def free(p):
         if not (x0+radius <= p[0] <= x1-radius and y0+radius <= p[1] <= y1-radius):
             return False
@@ -211,6 +217,12 @@ class TeacherRobot:
         if not self.busy:
             return
         job = self.job
+        if self.phase in ('to_box', 'carry') and now - self.phase_started > DRIVE_PHASE_LIMIT_S:
+            if self.phase == 'carry':
+                self.arm.queue({1: OPEN}, now, duration=.3)
+                self.arm.queue(FOLDED, now)
+            self._finish('teacher_path_blocked', now)
+            return
         if self.phase == 'to_box':
             box = self.box_xyz(job['box_body'])
             goal = (box[0]-GRASP_RADIUS_M-.10, box[1])
