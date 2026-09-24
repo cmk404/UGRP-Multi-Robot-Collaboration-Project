@@ -1,0 +1,253 @@
+{
+  "schema": "ugrp.view_recovery_physical_protocol.v1",
+  "status": "prospective_design_before_v43_source_freeze_or_physical_outcomes",
+  "question": "Can bounded active-view recovery break repeated weak-RGB HOLD without losing full physical transport success or matched full-mission speed?",
+  "claim_scope": "Local open-map nearby-pose RGB controller package only. Original spawn is observed development failure, not independent holdout. No isolated active-view causal effect, map generalization, statistical confirmation, or communication-efficacy claim.",
+  "comparison": {
+    "reference_checkout": "/Users/changmin/.codex/worktrees/action-act-refinement/ugrp",
+    "reference_source_sha": "931d910998a94361342c372ec2675c475daa625f",
+    "candidate_checkout": "/Users/changmin/.codex/worktrees/rolling-view-recovery/ugrp",
+    "candidate_source_sha": "freeze_after_clean_commit",
+    "candidate_flags": [
+      "--rolling-visual-servo",
+      "--bounded-carrier-relink",
+      "--rolling-view-recovery"
+    ],
+    "reference_flags": [],
+    "same_runtime_for_both": "standard scripts/open_simulation.command dispatch managed adapter; native realtime 1x; same 600-step solo RGB decision budget",
+    "same_models_root": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models",
+    "same_models_tree_sha256": "081841147e698c560dc122c633bf71169ecca0ddfee9936f06801efb59d2361c",
+    "plan_replay": "experiments/2026-09-22-parallel-transport/independent-plan.json",
+    "plan_replay_sha256": "1ab2499252427839d21eec7f474fe3c5a74c2a2c4cdeddb7ac338782a3c898c7",
+    "reference_top": "tests/fixtures/camera_goal_transport/reference-top.jpg",
+    "reference_top_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c",
+    "fixed": {
+      "variant": "open",
+      "seed": 11,
+      "required_dock": "dock_a",
+      "contact_profile": "local_contact_fine",
+      "overlap_start": "grasp",
+      "realtime_control": true,
+      "realtime_factor": 1,
+      "video_fps": 10,
+      "weld": false,
+      "camera": "unchanged own RGB and common TOP RGB",
+      "student_input": "own/TOP RGB, authored static map/goal, own issued commands only; no live GT joints, pose, contact or referee in control"
+    },
+    "candidate_runtime_confirmation": {
+      "config.rolling_view_recovery": true,
+      "result.view_recovery.requested": true,
+      "result.view_recovery.applied": true,
+      "bundle": "rgb-standard-dispatch-v43",
+      "workflow_version": "1.43.0"
+    },
+    "reference_runtime_confirmation": {
+      "config.rolling_view_recovery": "absent_or_false",
+      "result.view_recovery.applied": "absent_or_false"
+    },
+    "candidate_bundle_name": "rgb-standard-dispatch-v43.json",
+    "candidate_workflow_version": "1.43.0"
+  },
+  "diagnostic": {
+    "order": [
+      "original/candidate-diagnostic-1",
+      "original/candidate-diagnostic-2"
+    ],
+    "offset": [
+      0,
+      0,
+      0
+    ],
+    "source": "candidate v43 both times; original spawn is the observed v40 development failure condition",
+    "purpose": "Test full native recovery at the known v40 weak-RGB HOLD and decision-budget failure, not a new holdout.",
+    "must_pass_before_qualification": [
+      "both physical_success true",
+      "both protocol_complete true",
+      "both raw/manager/launch/freeze/source hash and invariant audit valid",
+      "both RGB/typed lease/weld/camera/static-map/active-view boundary audit pass",
+      "each diagnostic contains at least one actually issued, audited active-view pose; otherwise it cannot establish weak-RGB recovery"
+    ],
+    "failed_or_missing_diagnostic_policy": "Stop before any nearby-pose qualification; preserve both planned diagnostics with started/failed/not-run denominators. Do not reinterpret postrun review of v40 as a passed gate."
+  },
+  "qualification": {
+    "cases": [
+      {
+        "id": "view-a",
+        "offset": [
+          0.004,
+          -0.005,
+          0.15
+        ]
+      },
+      {
+        "id": "view-b",
+        "offset": [
+          -0.004,
+          0.005,
+          -0.15
+        ]
+      },
+      {
+        "id": "view-c",
+        "offset": [
+          0.005,
+          0.004,
+          0.35
+        ]
+      }
+    ],
+    "order": [
+      "view-a/reference",
+      "view-a/candidate",
+      "view-b/candidate",
+      "view-b/reference",
+      "view-c/reference",
+      "view-c/candidate"
+    ],
+    "planned_runs": 6,
+    "retry": false,
+    "failure_policy": "Record every planned arm in order. Ordinary physical/protocol failure does not cancel later qualification arms if source/input/RGB/typed-lease/active-view/weld audit remains valid. Infrastructure collision, missing/corrupt evidence or source/input invariant failure stops subsequent launches; no replacement runs."
+  },
+  "budget": {
+    "diagnostic_aggregate_process_wall_max_s": 740,
+    "qualification_aggregate_process_wall_max_s": 2220,
+    "per_trial_outer_process_wall_max_s": 370,
+    "per_trial_owned_child_timeout_s": 360,
+    "per_trial_internal_max_wall_s": 350,
+    "cleanup_reserve_s": 10,
+    "budget_gate": "Do not launch unless a full 370-second process allocation remains for that group. No overlap, retry, or automatic replenishment.",
+    "solo_rgb_decision_max_steps": 600,
+    "solo_rgb_decision_rule": "Use the existing frozen 600-decision guard; do not raise it to mask weak-RGB HOLD loops."
+  },
+  "freeze_before_first_launch": {
+    "schema": "ugrp.view_recovery_source_freeze.v1",
+    "required": [
+      "reference_source_sha",
+      "candidate_source_sha",
+      "physical_protocol_sha256",
+      "candidate_bundle_manifest_path",
+      "candidate_bundle_manifest_sha256",
+      "common_models_sha256",
+      "plan_replay_sha256",
+      "reference_top_sha256",
+      "run_helper_sha256",
+      "host_guard_source_sha",
+      "host_guard_file_sha256",
+      "audit_helper_sha256",
+      "rolling_audit_sha256",
+      "base_audit_sha256",
+      "candidate_active_view_flag",
+      "candidate_active_view_receipt_schema",
+      "audit_preflight_report_sha256",
+      "audit_preflight_report_path"
+    ],
+    "host_guard_source_sha": "dddd67b5b76f91bd2273ae00b8f5275846015dcf",
+    "host_guard_module": "/Users/changmin/.codex/worktrees/act-teacher-load-policy/ugrp/scripts/run_act_route_teachers.py",
+    "rule": "Root creates immutable freeze only after candidate candidate source/uniquely numbered bundle, exact CLI interface, run helper and postrun auditor are committed or SHA-pinned and clean. No pending fields at launch. Helpers verify pins before and after every trial. Source/helper changes require a new cohort."
+  },
+  "host_ownership": {
+    "prelaunch": "Call frozen dddd67 host guard foreign_snapshot and classify_host_load(policy=strict) before every child; any foreign process including unknown cwd blocks, no teacher-data exemption.",
+    "during": "Call frozen run_owned with host_load_policy=strict; monitor foreign_snapshot and clean only owned PGID on interference or timeout. Unknown cwd remains a blocker.",
+    "after": "An infrastructure abort blocks the next scheduled trial. Never signal, stop, inspect UI of, or modify a foreign owner."
+  },
+  "audit_contract": {
+    "path_template": "/Users/changmin/projects/ugrp/outputs/act-action-training-20260924/audits/view-recovery-{trial_slug}.json",
+    "schema": "ugrp.view_recovery_postrun_audit.v1",
+    "required_hash_links": [
+      "raw_result_sha256",
+      "manager_manifest_sha256",
+      "launch_record_sha256",
+      "scene_manifest_sha256",
+      "freeze_sha256",
+      "audit_helper_sha256",
+      "audit_dependencies.preflight_report_sha256"
+    ],
+    "required_boundary_pass_flags": [
+      "source_integrity",
+      "input_integrity",
+      "rgb_evidence",
+      "typed_lease_freshness",
+      "active_view_recovery",
+      "weld_off",
+      "camera_geometry",
+      "static_map_scene"
+    ],
+    "required_outcome_fields": [
+      "physical_success",
+      "protocol_complete",
+      "wall_s",
+      "timing_eligible"
+    ],
+    "rule": "A prelaunch fixture must cover nested pair RGB references, carry and rolling renewal kinds, unknown-kind rejection, and active-view issued-pose/zero-wheel/fresh-settled-RGB linkage. After each actual trial root creates a receipt by independent raw/manager audit. Missing or unsupported evidence is false, never inferred from result success. Runner cannot manufacture receipts.",
+    "active_view_evidence": {
+      "required": "Every accepted recovery pose must link to an actual issued own-robot pose command, zero-wheel hold for that pose, and subsequent settled fresh own/TOP RGB capture by frame/time and byte hashes; enforce bounded attempts, TTL and no GT/referee input. Mere planned poses, command windows, or success flags are insufficient.",
+      "negative_cases": "Missing command, new wheel issue before fresh RGB, stale/unsettled capture on a claimed recovery, exceeded bound, ambiguous/missing stop or unknown receipt kind fail boundary. A recognized deadline/plan/permission or finite-policy refusal with complete cancellation/zero-wheel stop and no subsequent drive is an audited ordinary physical failure; it is not a recovery.",
+      "observables": [
+        "weak RGB streak and HOLD count",
+        "accepted and rejected active-view attempts",
+        "pose commands actually issued",
+        "zero-wheel holds",
+        "settled fresh RGB captures",
+        "source frame/time/hash linkage"
+      ],
+      "implementation_bounds": {
+        "max_poses_per_episode": 3,
+        "max_elapsed_s": 4.0,
+        "max_episodes": 3,
+        "solo_rgb_decisions": 600
+      },
+      "saved_sources": [
+        "solo-decisions.json view_recovery rows with anchor/current own/TOP RGB SHA and quality",
+        "solo-raw-actions.json macro submit/look/arm receipts",
+        "solo-raw-actions.json exact zero-wheel port HOLD receipt and pose PWM issuance; issued-commands.json independently checks no newly issued wheel action",
+        "result.json view_recovery requested/applied/counts/bounds"
+      ],
+      "receipt_schema": "solo-decisions.view_recovery.v1",
+      "safe_abort": "A pose interrupted by the finite deadline or plan/permission loss may end without settled RGB only if its submitted/raw PWM/cancellation or completion, exact zero-wheel stop, known reason and no later drive are all recorded. The stop deadline is measured from the episode's first issued pose, not its last. Recovered-drive resumption still requires post-pose settled fresh own/TOP RGB.",
+      "identity_scope": "Bounded cargo identity is audited against saved own/TOP RGB frame hashes, tracker receipt, and frozen source behavior. The post-run auditor does not independently resegment JPEG pixels."
+    },
+    "preflight_report_path": "default /Users/changmin/projects/ugrp/outputs/act-action-training-20260924/view-recovery-audit-preflight.json; immutable numbered suffix allowed before freeze if a prior fixture report exists",
+    "preflight_required_checks": [
+      "nested_pair_rgb",
+      "typed_carry_and_rolling_renewals",
+      "unknown_renewal_kind_rejected",
+      "active_view_pose_to_issued_pwm",
+      "active_view_zero_wheel_hold",
+      "active_view_settled_fresh_rgb",
+      "active_view_safe_abort_and_missing_stop",
+      "active_view_anchor_fresh_and_wheel_free",
+      "active_view_first_pose_deadline",
+      "active_view_finite_refusals_and_unknown_rejected"
+    ]
+  },
+  "directional_speed_gate": {
+    "requires": "All three matched nearby-pose pairs have reference and candidate physical_success+protocol_complete, complete boundary audits, unchanged scene/contact/weld and uncontended valid full-mission wall times.",
+    "metric": "Median candidate full-mission wall_s across the three cases <= 0.90 * median reference full-mission wall_s. Report each paired wall difference and relative reduction; no requirement that every candidate pair be faster.",
+    "failure_handling": "Failed/aborted/timing-excluded wall times are excluded from speed median but retained with denominator; an absent valid pair makes the gate false.",
+    "claim": "Directional local completion-time evidence only; three pairs are not statistical confirmation."
+  },
+  "phase_and_timing_analysis": {
+    "primary": "Full physical mission completion wall_s, counted only for physical_success and protocol_complete with complete audits and uncontended timing; retain every planned arm in the denominator.",
+    "report_for_each_started_run": [
+      "approach phase SIM seconds",
+      "beam fine-alignment SIM seconds",
+      "box permission/wait SIM seconds",
+      "all other phase SIM seconds and total motion SIM seconds",
+      "full mission wall_s and motion_sim_to_wall ratio",
+      "host load or foreign-process evidence and timing exclusion reason",
+      "rolling command windows, issued-command count, observed motion, and carrier-relink evidence separately",
+      "weak-RGB streak length and HOLD count",
+      "active-view pose issue/zero-wheel/settled RGB counts and failure reasons",
+      "approach drive-window union (issued command, not measured travel)"
+    ],
+    "interpretation": "With overlap_start=grasp, approach savings can be absorbed by beam-grasp waiting. Source-level active-view microbenchmarks, fewer HOLDs, and issued approach windows are mechanism evidence only. Full physical transport success and full-mission wall time determine the physical claim; issued windows are not measured motion. Report SIM/wall and host load without an arbitrary 0.98 cutoff.",
+    "cohort_boundary": "Do not pool v40 stopped diagnostic, synchronized Claude runs or other cohorts with native v43 paired trials."
+  },
+  "output": {
+    "raw_root": "/Users/changmin/projects/ugrp/outputs/dispatch-view-recovery-20260924",
+    "every_trial": "raw result/video, pair/solo RGB decisions, issued commands, manager manifest, immutable launch record, per-run audit receipt and source/config/model hashes",
+    "diagnostic": "diagnostics excluded from qualification speed median",
+    "tensorboard": "new native snapshot after completed evidence, including failures; preserve existing originals/snapshots"
+  },
+  "prior_result_boundary": "v40 original/candidate-diagnostic-1 physically failed after 261.8897 s from solo RGB 600-decision exhaustion. Canonical audit invalid and frozen protocol stopped; diagnostic-2 and six qualification arms NOT RUN. Separate review of v40 audit schema cannot retroactively open that cohort. v28 successes do not transfer to v43."
+}

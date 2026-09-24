@@ -1,0 +1,102 @@
+{
+  "source_commit": "0828988b65f34e4e77301cc86f6476e1eb8e359f",
+  "scope": "saved RGB/controller-input fixture only; no v41 physical recovery claim",
+  "items": [
+    {
+      "label": "strong",
+      "source": "/Users/changmin/projects/ugrp/outputs/dispatch-cargo-recovery-20260924/original-candidate-diagnostic-1/rgb/solo-12-own.jpg",
+      "fixture": "strong-own.jpg",
+      "fixture_sha256": "e4b8d7da6906000beafb429585db42c4b38d7e38e8e721e25580e2dbc557f832",
+      "source_sha256": "e4b8d7da6906000beafb429585db42c4b38d7e38e8e721e25580e2dbc557f832",
+      "solo_index": 12,
+      "frame_id": 98,
+      "observed_at_s": 13.341749999991581,
+      "decision_at_s": 13.671749999990812,
+      "capture_started_at_s": 13.036249999992293,
+      "top_sha256": "a37501a1b81701587c8501680559bbae1cd41526e2e8e231fc92dba8ee572ca2",
+      "servo_pulses": {
+        "1": 2000,
+        "3": 740,
+        "4": 2320,
+        "5": 1320,
+        "6": 1558
+      },
+      "proposed_action": {
+        "kind": "pose",
+        "pulses": {
+          "6": 1528
+        }
+      },
+      "rolling_support": null
+    },
+    {
+      "label": "weak",
+      "source": "/Users/changmin/projects/ugrp/outputs/dispatch-cargo-recovery-20260924/original-candidate-diagnostic-1/rgb/solo-13-own.jpg",
+      "fixture": "weak-own.jpg",
+      "fixture_sha256": "12ab9ca1ab8b264496ea079e493620ce350547a483a375bcfb0f0e887ccb77df",
+      "source_sha256": "12ab9ca1ab8b264496ea079e493620ce350547a483a375bcfb0f0e887ccb77df",
+      "solo_index": 13,
+      "frame_id": 107,
+      "observed_at_s": 14.362249999989203,
+      "decision_at_s": 14.54799999998877,
+      "capture_started_at_s": 14.22199999998953,
+      "top_sha256": "1baacccd9eb11e05169a95c6a2e5b16d1a93326db17c1dada92dc60128d6d55d",
+      "servo_pulses": {
+        "1": 2000,
+        "3": 740,
+        "4": 2320,
+        "5": 1320,
+        "6": 1528
+      },
+      "proposed_action": {
+        "kind": "drive",
+        "fwd": 0.1,
+        "turn": 0.0,
+        "duration": 0.6
+      },
+      "rolling_support": {
+        "allowed": false,
+        "reason": "weak_direct_cyan_rgb",
+        "post_capture_issued_forward_integral_m": 0.0,
+        "issued_integral_is_not_measured_travel": true,
+        "previous_command_settle_until_s": 13.295749999992154
+      }
+    }
+  ],
+  "anchor_completed_pose_receipt": {
+    "event": "macro_finished",
+    "time_s": 11.798749999995177,
+    "source_frame_sha256": "09d89994b2b5662a36bb5dc1f8c0045809f7493aae59e1713b9e4fcc8cb1cf88",
+    "macro": {
+      "kind": "pose",
+      "pulses": {
+        "6": 1558
+      }
+    },
+    "execution": {
+      "status": "completed",
+      "ended_at": 11.798749999995177,
+      "motion_confirmed": false
+    }
+  },
+  "anchor_completed_wrist_receipt": {
+    "event": "macro_finished",
+    "time_s": 6.1795000000018065,
+    "source_frame_sha256": "bdc144ac2e8bcedf920d5983cb98599928f7286bf6f93e521cf7ca734daea4d5",
+    "macro": {
+      "kind": "pose",
+      "pulses": {
+        "1": 2000,
+        "3": 740,
+        "4": 2320,
+        "5": 1320,
+        "6": 1500
+      }
+    },
+    "execution": {
+      "status": "completed",
+      "ended_at": 6.1795000000018065,
+      "motion_confirmed": false
+    }
+  }
+}
