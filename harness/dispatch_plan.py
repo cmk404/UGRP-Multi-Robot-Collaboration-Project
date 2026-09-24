@@ -6,6 +6,7 @@ does not pretend the old fixed-lane motion skills support the new arena.
 from __future__ import annotations
 
 import copy
+from functools import partial
 import json
 import math
 
@@ -14,7 +15,18 @@ from harness.three_robot_plan import ROBOTS, images, validate_plan_reply, digest
 STAGES = ('APPROACH','GRASP','LIFT','TRANSIT','LOWER','RELEASE')
 
 
-def validate_dispatch_plan(value, *, required_dock=None):
+NAVIGATION_MODES = ('authored','planned')
+
+
+def validate_dispatch_plan(value, *, required_dock=None, navigation='authored'):
+    """`planned` navigation: the box task names its destinations, not its path.
+
+    Its route is "auto" (host A* over the authored map) and `park` is the
+    model-chosen waiting place after release, as a place name or map xy.
+    The beam keeps its agreed north/south corridor.
+    """
+    if navigation not in NAVIGATION_MODES:
+        raise ValueError('unknown navigation mode')
     if not isinstance(value,dict) or set(value) != {'dock','tasks'}:
         raise ValueError('plan requires dock and tasks')
     if value['dock'] not in ('dock_a','dock_b') or not isinstance(value['tasks'],list) or len(value['tasks']) != 2:
@@ -24,12 +36,19 @@ def validate_dispatch_plan(value, *, required_dock=None):
     tasks = value['tasks']
     used, objects, ids = [], [], []
     for task in tasks:
-        if not isinstance(task,dict) or set(task) != {'id','object','participants','route','after'}:
-            raise ValueError('invalid task fields')
+        planned_box = navigation=='planned' and isinstance(task,dict) and task.get('object')=='box'
+        fields = {'id','object','participants','route','after'} | ({'park'} if planned_box else set())
+        if not isinstance(task,dict) or set(task) != fields:
+            raise ValueError('invalid task fields'+(' (planned box task needs route "auto" and park)'
+                                                    if planned_box else ''))
         if task['id'] not in ('beam_job','box_job') or task['object'] not in ('beam','box'):
             raise ValueError('unknown task or cargo')
-        if task['id'] != task['object']+'_job' or task['route'] not in ('north','south'):
+        routes = ('auto',) if planned_box else ('north','south')
+        if task['id'] != task['object']+'_job' or task['route'] not in routes:
             raise ValueError('invalid route/task identity')
+        if planned_box:
+            from harness.map_goto import parse_destination
+            parse_destination(task['park'])
         participants = task['participants']
         if (not isinstance(participants,list) or len(participants) != (2 if task['object']=='beam' else 1)
                 or any(r not in ROBOTS for r in participants)):
@@ -45,21 +64,50 @@ def validate_dispatch_plan(value, *, required_dock=None):
     return copy.deepcopy(value)
 
 
-def fixture_plan(*, solo='r2', dock='dock_a', route='north'):
+def navigation_mode(plan):
+    """Infer the contract a plan was written for; validation happens separately."""
+    tasks = plan.get('tasks') if isinstance(plan,dict) else None
+    box = next((t for t in tasks if isinstance(t,dict) and t.get('object')=='box'),{}) \
+        if isinstance(tasks,list) else {}
+    return 'planned' if box.get('route')=='auto' else 'authored'
+
+
+def fixture_plan(*, solo='r2', dock='dock_a', route='north', navigation='authored', park='wait_west'):
     """Protocol test fixture only. Never substituted for a failed LLM reply."""
+    box = {'id':'box_job','object':'box','participants':[solo],
+           'route':'south' if route=='north' else 'north','after':[]}
+    if navigation=='planned':
+        box.update(route='auto',park=park)
     return validate_dispatch_plan({'dock':dock,'tasks':[
         {'id':'beam_job','object':'beam','participants':[r for r in ROBOTS if r != solo],
-         'route':route,'after':[]},
-        {'id':'box_job','object':'box','participants':[solo],
-         'route':'south' if route=='north' else 'north','after':[]}]})
+         'route':route,'after':[]},box]},navigation=navigation)
 
 
-def validate_dispatch_reply(raw, request_id, agreement):
-    return validate_plan_reply(raw,request_id,agreement,plan_validator=validate_dispatch_plan)
+def validate_dispatch_reply(raw, request_id, agreement, *, navigation='authored'):
+    return validate_plan_reply(raw,request_id,agreement,
+                               plan_validator=partial(validate_dispatch_plan,navigation=navigation))
+
+
+PLANNED_NAVIGATION_PROMPT = '''
+NAVIGATION MODE planned: you choose DESTINATIONS; the host plans the path.
+For box_job, set "route":"auto". The host plans the loaded box path with A* on
+the authored map from the current RGB cargo position to the box slot of your
+chosen dock, avoiding authored obstacles, terrain and RGB-visible barriers.
+Also set box_job "park": where the solo robot waits after releasing the box if
+the beam still needs the dock. Use an authored place name from
+static_map.regions (for example "wait_west") or {"xy_m":[x,y]} in the map
+frame warehouse_xy_m (x grows right, y grows up in the TOP image). Park must
+not block a gate, the dispatch_apron, a dock, or the beam team's route; the
+host rejects such a park with reasons before any motion. A planned path is not
+physical success. The beam still uses your agreed north/south route.
+The box_job object is then exactly:
+{"id":"box_job","object":"box","participants":["remaining robot"],
+"route":"auto","after":[],"park":"place name OR {\"xy_m\":[x,y]}"}'''
 
 
 def build_dispatch_request(rid, *, task, request_id, own_rgb, top_rgb, agreement,
-                           inbox=(), own_history=(), execution_pilot=False, identity_evidence=None):
+                           inbox=(), own_history=(), execution_pilot=False, identity_evidence=None,
+                           navigation='authored'):
     if rid not in ROBOTS:
         raise ValueError('unknown robot')
     p = agreement['proposal']
@@ -114,6 +162,11 @@ North is the upper passage around the central island; south is the lower one.'''
     if execution_pilot:
         prompt = prompt.replace('This run tests\nPLANNING ONLY; the new arena\'s physical transport is not validated.',
             'This is a bounded physical execution pilot after unanimous agreement.\nThe new arena\'s transport skills are experimental, not validated.')
+    if navigation=='planned':
+        prompt += PLANNED_NAVIGATION_PROMPT
+        context['navigation_mode'] = 'planned'
+    elif navigation!='authored':
+        raise ValueError('unknown navigation mode')
     extra = []
     if identity_evidence:
         context['own_motion_identity'] = copy.deepcopy(identity_evidence['claim'])
@@ -137,20 +190,24 @@ North is the upper passage around the central island; south is the lower one.'''
 
 def compile_programs(plan, static_map):
     """Robot queues derive only from the agreed plan, never hardcoded r1/r3/r2."""
-    plan = validate_dispatch_plan(plan)
+    plan = validate_dispatch_plan(plan,navigation=navigation_mode(plan))
     result = {r:[] for r in ROBOTS}
     for task in plan['tasks']:
-        route = static_map['routes'][task['route']]
+        # Before a path exists, an auto route conservatively claims every
+        # authored route resource. Skill bindings record the planned subset.
+        resources = ([static_map['routes'][task['route']]['resource']] if task['route']!='auto'
+                     else sorted({r['resource'] for r in static_map['routes'].values()}))
         for i, rid in enumerate(task['participants']):
             for stage in STAGES:
                 result[rid].append({'task_id':task['id'],'object':task['object'],
                     'stage':stage,'role':('end_a' if i==0 else 'end_b') if task['object']=='beam' else 'carrier',
                     'participants':task['participants'],'goal_region':plan['dock']+'_'+task['object'],
                     'route':task['route'],'after':task['after'],
-                    'resources':([route['resource'],'dispatch_apron'] if stage=='TRANSIT' else []),
+                    'resources':(resources+['dispatch_apron'] if stage=='TRANSIT' else []),
                     'barrier':len(task['participants'])>1 and stage!='APPROACH',
                     'completion_source':'local RGB claim, separately checked by output-only referee',
                     'execution_adapter':'unbound_new_arena_skill'})
+                if 'park' in task:result[rid][-1]['park']=copy.deepcopy(task['park'])
     return result
 
 

@@ -14,7 +14,7 @@ import json
 import math
 import cv2
 import numpy as np
-from harness.dispatch_plan import validate_dispatch_plan, compile_programs
+from harness.dispatch_plan import validate_dispatch_plan, compile_programs, navigation_mode
 from harness.three_robot_plan import digest
 from harness.camera_beam_features import extract_beams
 from harness.camera_goal_transport import decode
@@ -176,11 +176,20 @@ def canonical_pair_top(jpeg, reference, *, translation_px=None, hue_upper=24, ob
 
 
 class SkillBindings:
-    def __init__(self, committed, static_map, *, route_overlap=False, auto_route_overlap=False, overlap_start='transit'):
+    def __init__(self, committed, static_map, *, route_overlap=False, auto_route_overlap=False, overlap_start='transit',
+                 box_route=None):
         if not committed or committed.get('plan_hash') != digest(committed.get('plan')):
             raise ValueError('exact committed plan required')
         self.committed = copy.deepcopy(committed)
-        self.plan = validate_dispatch_plan(committed['plan'])
+        self.navigation = navigation_mode(committed['plan'])
+        self.plan = validate_dispatch_plan(committed['plan'],navigation=self.navigation)
+        # Planned navigation reserves exactly the authored resource regions the
+        # pre-motion box A* path touched (from planning-time TOP RGB).
+        self.box_route = copy.deepcopy(box_route)
+        if self.navigation=='planned' and box_route is not None and not box_route.get('resources_checked'):
+            raise ValueError('planned box route must come from the feasibility check')
+        self.planning_beam_center = (copy.deepcopy(box_route.get('planning_beam_center_m'))
+                                     if box_route else None)
         self.static_map = copy.deepcopy(static_map)
         self.tasks = {t['object']:t for t in self.plan['tasks']}
         upper, lower = self.tasks['beam']['participants']
@@ -206,7 +215,10 @@ class SkillBindings:
         beam_resource=routes.get(beam_route,{}).get('resource')
         box_resource=routes.get(box_route,{}).get('resource')
         reason=None;error=None
-        if self.cluttered:
+        if self.navigation=='planned':
+            reason='planned_navigation_requires_serial'
+            error='route overlap is not bound for planned (A*) box navigation'
+        elif self.cluttered:
             reason='service_island_requires_serial'
             error='route overlap requires open-map translation; moving-obstacle rotation is not validated'
         elif any(t['after'] for t in self.tasks.values()):
@@ -272,7 +284,7 @@ class SkillBindings:
                 if obj=='box' and self.tasks['beam']['id'] not in self.finished:return False
                 resources=['dispatch_apron']
             elif stage in ('GRASP','TRANSIT'):
-                resources=[self.static_map['routes'][task['route']]['resource']]
+                resources=self.route_resources(obj)
             else:resources=[]
             if any(self.locks.get(r,task['id'])!=task['id'] for r in resources):return False
             for r in resources:
@@ -282,11 +294,24 @@ class SkillBindings:
         if (stage != 'APPROACH' or self.cluttered) and any(dep not in self.finished for dep in task['after']):
             return False
         if stage in ('GRASP','TRANSIT') or (stage=='APPROACH' and self.cluttered):
-            resources = [self.static_map['routes'][task['route']]['resource'], 'dispatch_apron']
+            resources = self.route_resources(obj)+['dispatch_apron']
             if self.cluttered:resources.append('pickup_maneuver')
             if any(self.locks.get(r,task['id']) != task['id'] for r in resources):return False
             for r in resources:self.locks[r] = task['id']
         return True
+
+    def route_resources(self,obj):
+        task=self.tasks[obj]
+        if task['route']!='auto':return [self.static_map['routes'][task['route']]['resource']]
+        return [r for r in self.box_route_resources() if r!='dispatch_apron']
+
+    def box_route_resources(self):
+        """Resources the agreed-destination A* path may use; all if unplanned."""
+        if self.tasks['box']['route']!='auto':
+            raise ValueError('box route is an agreed corridor, not planned')
+        if self.box_route is None:
+            return sorted({r['resource'] for r in self.static_map['routes'].values()}|{'dispatch_apron'})
+        return sorted(set(self.box_route['resources'])|{'dispatch_apron'})
 
     def finish(self,obj):
         task_id = self.tasks[obj]['id']
@@ -303,13 +328,20 @@ class SkillBindings:
         if any(o['id']=='service_island' for o in self.static_map['obstacles']):
             for name, route in self.static_map['routes'].items():
                 if route['declared_min_width_m'] < .45:narrow.append(name)
-        return {'pair_model_slots':self.pair, 'solo_robot':self.solo,
+        result = {'pair_model_slots':self.pair, 'solo_robot':self.solo,
             'route_overlap':self.route_overlap,'overlap_start':self.overlap_start,
             'overlap_selection':self.overlap_selection,
             'parallel_pair_envelope_m':width,'unsupported_pair_routes':narrow,
             'pair_rotation_skill_available':True,'rotated_pair_envelope_m':.45,
             'route_execution':'RGB wheel/shaft tracking and swept full-load SE2 search when cluttered; experimental',
             'model_support':'unchanged learned support thresholds; fail closed on novelty'}
+        if self.navigation=='planned':
+            result['navigation']='planned'
+            result['box_navigation']={'mode':'model-chosen dock + map A* path (serial only)',
+                'reserved_resources':self.box_route_resources(),
+                'planning_plan_sha256':(self.box_route or {}).get('plan_sha256'),
+                'park':copy.deepcopy(self.tasks['box']['park'])}
+        return result
 
     def check_route(self):
         route = self.tasks['beam']['route']
@@ -345,6 +377,14 @@ class ImageRoute:
             raise ValueError('overlap route requires live permission check')
         self.map=bindings.static_map;self.obj=obj
         self.task=bindings.tasks[obj];self.dock=bindings.plan['dock']
+        # Planned navigation: the model chose the destination (dock); map A*
+        # chooses the path from the current RGB cargo position.
+        self.planned=self.task.get('route')=='auto'
+        if self.planned and obj!='box':raise ValueError('auto route is bound only for the solo box')
+        if self.planned and self.route_overlap:
+            raise ValueError('planned navigation is serial-only; route overlap is not bound')
+        self._bindings=bindings
+        self.auto_route=None;self.auto_replans=[]
         self.points=None;self.index=0;self.confirmations=0
         self.box_center=None;self.box_delta=np.zeros(2);self.box_previous=None
         self.box_previous_top_sha256=None
@@ -903,6 +943,50 @@ class ImageRoute:
         }
         return center,bounds,tracking,area,hue
 
+    def _plan_auto_route(self,jpeg,shape,center,reason):
+        from harness import dispatch_goto
+        from harness.map_goto import pixel_to_map,CARRY_PLANE_M
+        start=pixel_to_map(center,self.map,shape,height=CARRY_PLANE_M)
+        beam_done=self._bindings.tasks['beam']['id'] in self._bindings.finished
+        route=dispatch_goto.box_delivery_route(self.map,self.dock,start,beam_finished=beam_done,
+            top_jpeg=jpeg,fallback_beam_center=getattr(self._bindings,'planning_beam_center',None),
+            reserved_resources=self._bindings.box_route_resources())
+        if route is None:
+            raise RuntimeError('PLANNED_BOX_PATH_UNAVAILABLE: no A* path inside reserved resources from '
+                               +str([round(v,3) for v in start]))
+        self.auto_route=route
+        self.auto_replans.append({'reason':reason,'from_m':start,'plan_sha256':route['plan_sha256'],
+            'beam_finished':beam_done,'top_sha256':hashlib.sha256(jpeg).hexdigest()})
+        self.points=dispatch_goto.box_waypoints_px(route,self.map,shape)
+        self.index=0;self.confirmations=0
+
+    def _check_auto_deviation(self,jpeg,shape,center):
+        from harness import dispatch_goto
+        from harness.map_goto import pixel_to_map,CARRY_PLANE_M
+        if self.index>=len(self.points)-1:return  # final authored docking move
+        path=self.auto_route['waypoints_m']
+        a=np.array(path[self.index]);b=np.array(path[self.index+1])
+        xy=np.array(pixel_to_map(center,self.map,shape,height=CARRY_PLANE_M))
+        d=b-a;t=float(np.clip(np.dot(xy-a,d)/max(1e-9,float(np.dot(d,d))),0.,1.))
+        cross=float(np.linalg.norm(xy-(a+t*d)))
+        if cross<=dispatch_goto.REPLAN_CROSS_TRACK_M:return
+        if len(self.auto_replans)>dispatch_goto.MAX_REPLANS:
+            raise RuntimeError('PLANNED_BOX_PATH_DEVIATION: replan budget exhausted')
+        self._plan_auto_route(jpeg,shape,center,'cross_track_%.3f_m'%cross)
+
+    def _planned_control(self,error,tolerance,ready,limits):
+        # Keep the commanded travel direction on the planned straight segment:
+        # scale both axes together instead of clipping each independently.
+        from harness.map_goto import direction_preserving
+        if ready:return {'kind':'mecanum','forward':0.,'left':0.,'turn':0.,'duration_s':.2}
+        control=np.array(error,dtype=float)*.002
+        control[np.abs(error)<=tolerance]=0.
+        peak=float(np.max(np.abs(control)))
+        if 0<peak<.025:control*=.025/peak
+        control=direction_preserving(control,[(-.05,float(limits[0])),(-float(limits[1]),float(limits[1]))])
+        return {'kind':'mecanum','forward':float(control[0]),'left':float(-control[1]),
+                'turn':0.,'duration_s':.2}
+
     def observe(self,jpeg, *, own_attachment=None, observed_at_s=None,
                 frame_id=None, own_sha256=None):
         frame=decode(jpeg);h,w=frame.shape[:2]
@@ -1141,6 +1225,10 @@ class ImageRoute:
             self.box_center=center.copy();self.box_previous=frame.copy()
             self.box_previous_top_sha256=hashlib.sha256(jpeg).hexdigest()
 
+        if self.planned and self.points is None:
+            self._plan_auto_route(jpeg,frame.shape,center,'initial')
+        elif self.planned:
+            self._check_auto_deviation(jpeg,frame.shape,center)
         if self.points is None:
             # The open arena permits the original parallel formation. Avoid
             # shifting it into a wall merely to hit a narrow symbolic gate.
@@ -1260,6 +1348,13 @@ class ImageRoute:
                         for o in self.map.get('obstacles',[]))
                 and evidence['waypoint_index']<len(self.points)-1)
         limits=np.array([.12,.10]) if cruise else np.array([.08,.08])
+        if self.planned:
+            evidence['planned_route']={'plan_sha256':self.auto_route['plan_sha256'],
+                'destination':'dock '+self.dock,'replans':len(self.auto_replans)-1,
+                'waypoints_m':self.auto_route['waypoints_m'],
+                'final_docking_m':self.auto_route['final_docking_m']}
+            action=self._planned_control(error,tolerance,ready,limits)
+            return action,evidence
         control=np.clip(error*.002,-limits,limits)
         control[0]=max(-.05,control[0])
         if cruise:evidence['cruise_command_limits']={'forward':.12,'left':.10,'reverse':.05}

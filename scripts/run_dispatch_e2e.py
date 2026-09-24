@@ -334,6 +334,9 @@ def main(argv=None):
                    help='use existing overlap gate only when the committed open-map plan has independent routes and resources')
     p.add_argument('--overlap-start',choices=('transit','grasp'),default='transit',help='issued pair stage that admits the box grasp on independent open-map routes')
     p.add_argument('--reference-top',type=Path,default=ROOT/'tests/fixtures/camera_goal_transport/reference-top.jpg')
+    p.add_argument('--navigation',choices=('authored','planned'),default='authored',
+                   help='planned: the models choose the box destination dock and a park place (name or xy_m); '
+                        'map A* plans the box path. Skills executor, synchronous, serial only')
     args = p.parse_args(argv)
     import math
     if not math.isfinite(args.realtime_factor) or args.realtime_factor<=0:p.error('positive finite realtime factor required')
@@ -351,6 +354,8 @@ def main(argv=None):
     if args.carry_max_steps is not None and args.carry_max_steps<=0:p.error('positive carry-max-steps required')
     if args.fine_gain_schedule and args.executor!='skills':p.error('--fine-gain-schedule uses the skills executor')
     if args.fine_gain_schedule and args.realtime_control:p.error('--fine-gain-schedule is calibrated for synchronous execution only; omit --realtime-control')
+    if args.navigation=='planned' and (args.executor!='skills' or args.realtime_control or args.route_overlap):
+        p.error('--navigation planned uses the synchronous skills executor without --route-overlap')
     if args.live_replan and (not args.plan_replay or args.executor!='skills'):
         p.error('--live-replan requires a skills --plan-replay diagnostic')
     if args.output.exists():p.error('output exists; choose a new directory')

@@ -86,18 +86,54 @@ def inspect_routes(committed,static_map,top_rgb,identity=None,reference_top=None
                     'conditional_on_box_delivery_and_yield':box_first}
             else:routes[name]={'feasible':True,'reason':'open-map translation adapter; current RGB guards still required'}
         except RuntimeError as error:routes[name]={'feasible':False,'reason':str(error)}
-    box_routes={}
-    for name in ('north','south'):
-        try:box_routes[name]={'feasible':True,'gate_m':solo_gate(static_map,name,top_rgb)}
-        except RuntimeError as error:box_routes[name]={'feasible':False,'reason':str(error)}
     box_chosen=next(t['route'] for t in committed['plan']['tasks'] if t['object']=='box')
     chosen=next(t['route'] for t in committed['plan']['tasks'] if t['object']=='beam')
-    return {'feasible':routes[chosen]['feasible'] and box_routes[box_chosen]['feasible'] and (pickup is None or pickup['feasible']),
+    planned=None
+    if box_chosen=='auto':
+        box_routes,planned=inspect_planned_box(committed['plan'],static_map,top_rgb,center,
+                                               routes[chosen].get('route'))
+    else:
+        box_routes={}
+        for name in ('north','south'):
+            try:box_routes[name]={'feasible':True,'gate_m':solo_gate(static_map,name,top_rgb)}
+            except RuntimeError as error:box_routes[name]={'feasible':False,'reason':str(error)}
+    report={'feasible':routes[chosen]['feasible'] and box_routes[box_chosen]['feasible'] and (pickup is None or pickup['feasible']),
         'chosen_beam_route':chosen,'beam_routes':routes,'chosen_box_route':box_chosen,'box_routes':box_routes,
         'other_robot_rgb_observation':other,
         'pickup_approach':pickup,
         'source':'authored static geometry + current TOP RGB + declared loaded footprint; not physical passage proof',
         'plan_hash':committed['plan_hash'],'input_sha256':__import__('hashlib').sha256(top_rgb).hexdigest()}
+    if planned is not None:report['planned_box_route']=planned
+    return report
+
+
+def inspect_planned_box(plan,static_map,top_rgb,beam_center,beam_route):
+    """Model chose the dock and park place; check the A* paths exist.
+
+    Returns the per-route verdict and, when feasible, the pre-motion box path
+    whose touched resource regions become the box job's reservation.
+    """
+    from harness import dispatch_goto
+    verdict={'feasible':False}
+    planned=None
+    try:
+        start,route=dispatch_goto.planning_resources(static_map,plan,top_rgb)
+        if route is None:
+            verdict={'feasible':False,'start_m':start,
+                'reason':'no A* path for the loaded box envelope from its RGB position to the chosen dock '
+                         'around authored obstacles, terrain, RGB barriers and the beam team'}
+        else:
+            park=dispatch_goto.check_plan_park(static_map,plan,beam_center=list(map(float,beam_center)),
+                                               beam_route=beam_route)
+            planned={**route,'resources_checked':True,'planning_beam_center_m':list(map(float,beam_center)),
+                     'park':park,'start_source':'current TOP RGB cyan cargo (floor plane)'}
+            verdict={'feasible':bool(park['feasible']),'start_m':start,'resources':route['resources'],
+                'waypoints_m':route['waypoints_m'],'length_m':route['length_m'],'park':park,
+                'reason':('A* path found; park place accepted' if park['feasible'] else
+                          'park place rejected: '+'; '.join(park['problems']))}
+    except (RuntimeError,ValueError) as error:
+        verdict={'feasible':False,'reason':str(error)}
+    return {'auto':verdict},planned
 
 
 def negotiate_executable(team,frames,history,task,static_map,sim_time,*,max_rounds=8,max_replans=2,max_tokens=1000000,live_replan=False,identity=None,reference_top=None):
@@ -127,5 +163,5 @@ def negotiate_executable(team,frames,history,task,static_map,sim_time,*,max_roun
             team.mode='llm';team.plan_fixture=None
             team.event('FIXTURE_TO_LIVE_REPLAN_DIAGNOSTIC',sim_time)
         task['execution_feedback']={'rejected_plan':rejected,'capability_result':report,
-            'instruction':'Propose feasible participants, routes AND task dependencies and get a NEW exact unanimous agreement. When pickup_approach rejects a coarse path, change the participants or end order; relocating an occupied pickup robot is not an available skill. Where after_box_delivery_and_yield_feasible is true, you may choose beam.after=[box job id] and box.after=[]: the box executor then delivers, releases, and clears the unloading bay before completing its job. Current waiting cargo/robots are obstacles; do not assume they disappear. Assignments remain your decision. Conditional future goals must be rechecked in actual RGB after execution. A map path is not physical success.'}
+            'instruction':('For planned navigation, box_routes.auto explains why the chosen dock or park place failed; choose another dock, park place name or xy_m. ' if report.get('chosen_box_route')=='auto' else '')+'Propose feasible participants, routes AND task dependencies and get a NEW exact unanimous agreement. When pickup_approach rejects a coarse path, change the participants or end order; relocating an occupied pickup robot is not an available skill. Where after_box_delivery_and_yield_feasible is true, you may choose beam.after=[box job id] and box.after=[]: the box executor then delivers, releases, and clears the unloading bay before completing its job. Current waiting cargo/robots are obstacles; do not assume they disappear. Assignments remain your decision. Conditional future goals must be rechecked in actual RGB after execution. A map path is not physical success.'}
     raise RuntimeError('no executable unanimously agreed plan within replan budget')

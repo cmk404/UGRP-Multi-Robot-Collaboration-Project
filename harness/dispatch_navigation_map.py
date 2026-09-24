@@ -49,8 +49,19 @@ def navigation_map(bindings,jpeg,*,other_robot_center_px=None,planned_box_comple
         slot_pixel=pixel_from_map(static['docks'][bindings.plan['dock']]['slots']['box']['center_m'],static,decode(jpeg).shape)
         data['obstacles'].append({'id':'planned_box_slot','center_m':list(pixel_to_world(slot_pixel,decode(jpeg).shape,static['top_camera'])),
             'half_extents_m':[.05,.06],'height_m':.10,'source':'conditional authored destination; fresh RGB validation required after box job'})
-        data['obstacles'].append({'id':'planned_yield_pose','center_m':[static['bounds_m'][1]-.22,static['regions']['dispatch_apron']['center_m'][1]],
-            'half_extents_m':[.14,.14],'height_m':.35,'source':'conditional yield goal; not an observed position'})
+        yield_xy=[static['bounds_m'][1]-.22,static['regions']['dispatch_apron']['center_m'][1]]
+        source='conditional yield goal; not an observed position'
+        park=bindings.tasks['box'].get('park')
+        if park is not None:
+            # Planned navigation: the models chose where the box robot waits.
+            from harness.map_goto import resolve_destination
+            try:
+                yield_xy=resolve_destination(static,park)['xy_m']
+                source='conditional model-chosen park place; not an observed position'
+            except ValueError:
+                pass  # the separate park check rejects an unresolvable place
+        data['obstacles'].append({'id':'planned_yield_pose','center_m':yield_xy,
+            'half_extents_m':[.14,.14],'height_m':.35,'source':source})
     else:
         data['obstacles']+=visual_boxes(jpeg,static)
         if other_robot_center_px is not None:data['obstacles'].append(occupied_robot(other_robot_center_px,static))
