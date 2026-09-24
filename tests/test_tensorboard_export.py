@@ -75,6 +75,96 @@ def test_training_roundtrip_preserves_steps_and_labels_export_time(tmp_path,expo
     with pytest.raises(FileExistsError): convert(src,tmp_path/'export')
 
 
+def test_failed_artifact_finalization_is_not_a_training_curve_or_robot_failure(tmp_path,export_api):
+    convert,EA=export_api
+    src=tmp_path/'finalizer';(src/'artifacts').mkdir(parents=True)
+    report=put(src,'artifacts/report.json',{
+        'complete':False,'complete_scope':'artifact_finalization_only',
+        'termination_objective':'deployed_first_action','source_sha':'f'*40,
+        'optimizer_updates_this_run':0,'new_checkpoint_selection':False,
+        'selected_checkpoint_eligible':False,'selected_step':3000,
+        'physical_success_claim':False,'original_training_completed_steps':8000,
+        'original_training_wall_s':977.89,'original_failure_stage':'old training guard',
+        'development_all_rows_cache_guard':{
+            'first_action_original_strict_guard_passed':False,
+            'first_action_strict_mismatch_count':23,
+            'full_chunk_bounded_guard_passed':True,
+            'full_chunk_bounded_mismatch_count':0,'done_decision_flip_count':0},
+        'train_all_rows_cache_guard':{'first_action_strict_mismatch_count':0},
+        'train_native_metrics':{'samples':2934,'done_samples':18},
+        'development_native_metrics':{'samples':2128,'done_samples':8,
+                                      'offline_termination_pass':False}})
+    manager=put(src,'manifest.json',{'schema':'ugrp.simulation_run.v1',
+        'workflow_id':'act-input-finalization','status':'process_failed',
+        'exit_code':1,'runtime_s':324.96980529100983,
+        'source':{'source_sha':'f'*40,'source_dirty':False,
+                  'execution_tree':{'sha256':'a'*64}},
+        'source_after':{'sha256':'a'*64},
+        'source_changed_during_run':False,'inputs_changed_during_run':False,
+        'output':str((src/'artifacts').resolve())})
+    m=convert(src,tmp_path/'export');ea=EA(str(tmp_path/'export')).Reload()
+    tags=ea.Tags()['scalars']
+    assert m['metadata']['family']=='act-artifact-finalization'
+    assert m['metadata']['outcome']=='finalization_failed'
+    assert m['metadata']['error']=='development all-row first-action original strict guard failed'
+    assert m['metadata']['report_provenance']['sha256']==hashlib.sha256(report.read_bytes()).hexdigest()
+    assert m['metadata']['report_provenance']['manager_sha256']==hashlib.sha256(manager.read_bytes()).hexdigest()
+    assert ea.Scalars('process/exit_code')[0].value==1
+    assert ea.Scalars('finalization/process_wall_s')[0].value==pytest.approx(324.96980529100983,rel=1e-5)
+    assert ea.Scalars('finalization/development/first_action_strict_mismatch_count')[0].value==23
+    assert ea.Scalars('finalization/development/full_chunk_bounded_guard_passed')[0].value==1
+    assert ea.Scalars('finalization/development/done_decision_flip_count')[0].value==0
+    assert ea.Scalars('finalization/train/samples')[0].value==2934
+    assert ea.Scalars('finalization/development/samples')[0].value==2128
+    assert not any(tag.startswith(('training/','evaluation/','result/wall_s')) for tag in tags)
+
+
+def test_same_model_benchmark_is_request_latency_only(tmp_path,export_api):
+    convert,EA=export_api
+    src=tmp_path/'bench';src.mkdir()
+    data={'schema':'ugrp.act_runtime_benchmark_comparison.v1',
+          'reference_median_s':.1094913334964076,'refined_median_s':.03871479151712265,
+          'ratio':2.828152476243664,'reduction_fraction':.6464122750099406,
+          'max_decoded_difference':0.,'all_done_identical':True,
+          'per_condition_measured_pairs':24,'total_worker_requests_including_warmups':112,
+          'scope':'Same checkpoint and saved raw own/TOP histories; only request latency.',
+          'records':{}}
+    names=('v27-sequential-1','v28-parallel-cached-1',
+           'v28-parallel-cached-2','v27-sequential-2')
+    for name in names:
+        sequential=name.startswith('v27-')
+        request_s=data['reference_median_s'] if sequential else data['refined_median_s']
+        record=put(src,name+'.json',{
+            'schema':'ugrp.act_runtime_benchmark.v1',
+            'source_sha':('12f8e6dda76e39b3ec612f247deb4835a2ff50bc' if sequential
+                          else '931d910998a94361342c372ec2675c475daa625f'),
+            'mode':'sequential' if sequential else 'parallel-cached',
+            'model_sha256':'a'*64,'raw_source':'/tmp/fixed-raw',
+            'raw_decisions_sha256':'b'*64,'warmup_rows':2,'measured_rows':12,
+            'rows':[{'index':i,'wall_s':request_s,
+                     'decisions':{'r1':{'action':{'forward':.1},'done':False},
+                                  'r3':{'action':{'forward':.1},'done':False}}}
+                    for i in range(14)]})
+        data['records'][name]=hashlib.sha256(record.read_bytes()).hexdigest()
+    path=put(src,'runtime-benchmark-comparison.json',data)
+    m=convert(path,tmp_path/'export');ea=EA(str(tmp_path/'export')).Reload()
+    tags=ea.Tags()['scalars']
+    assert m['metadata']['family']=='act-request-latency-benchmark'
+    assert m['metadata']['report_provenance']['sha256']==hashlib.sha256(path.read_bytes()).hexdigest()
+    assert ea.Scalars('benchmark/reference_request_latency_median_s')[0].value==pytest.approx(.1094913334964076)
+    assert ea.Scalars('benchmark/refined_request_latency_median_s')[0].value==pytest.approx(.03871479151712265)
+    assert ea.Scalars('benchmark/measured_pairs_per_condition')[0].value==24
+    assert not any(tag.startswith(('result/','evaluation/','training/','finalization/')) for tag in tags)
+    data['ratio']=99;put(src,'runtime-benchmark-comparison.json',data)
+    with pytest.raises(ValueError,match='latency fields inconsistent'):
+        convert(path,tmp_path/'bad-export')
+    data['ratio']=2.828152476243664
+    put(src,'runtime-benchmark-comparison.json',data)
+    put(src,'v27-sequential-1.json',{'changed':True})
+    with pytest.raises(ValueError,match='source record hash mismatch'):
+        convert(path,tmp_path/'tampered-record-export')
+
+
 def test_deployment_objective_keeps_loss_parts_and_failed_selection(tmp_path,export_api):
     convert,EA=export_api
     src=tmp_path/'source';src.mkdir()
