@@ -5,17 +5,24 @@ Each run uses the standard dispatch entry point under ugrp_session so the
 whole child tree is cleaned up. A B failure skips remaining B runs; A2 still
 runs. Existing output directories are never reused.
 """
-import hashlib, json, os, subprocess, sys, time
+import argparse, hashlib, json, os, subprocess, sys, time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = Path('/Users/changmin/projects/ugrp/outputs/fine-gain-schedule-20260924')
+OUTS = {'v1': Path('/Users/changmin/projects/ugrp/outputs/fine-gain-schedule-20260924'),
+        'v2': Path('/Users/changmin/projects/ugrp/outputs/fine-gain-schedule-20260924-sync')}
 MODELS = Path('/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models')
 ORDER = [('A1', False), ('B1', True), ('B2', True), ('A2', False)]
 BASE = ['--realtime-control', '--plan-replay', 'experiments/2026-09-22-parallel-transport/independent-plan.json',
         '--variant', 'open', '--seed', '11', '--contact-profile', 'local_contact_fine',
         '--realtime-factor', '1', '--max-wall-s', '350', '--overlap-start', 'grasp', '--video-fps', '10',
         '--grasp-model-dir', str(MODELS / 'grasp'), '--stage-model-dir', str(MODELS / 'varied')]
+# protocol-v2: synchronous (non-realtime) headless execution; physics waits
+# for each capture/decision, so host CPU load changes wall time only.
+BASE_V2 = ['--headless', '--plan-replay', 'experiments/2026-09-22-parallel-transport/independent-plan.json',
+           '--variant', 'open', '--seed', '11', '--contact-profile', 'local_contact_fine',
+           '--max-wall-s', '1200', '--overlap-start', 'grasp', '--video-fps', '10',
+           '--grasp-model-dir', str(MODELS / 'grasp'), '--stage-model-dir', str(MODELS / 'varied')]
 
 
 def git(*args):
@@ -23,6 +30,10 @@ def git(*args):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--protocol', choices=('v1', 'v2'), default='v1')
+    version = parser.parse_args().protocol
+    OUT, base = OUTS[version], (BASE if version == 'v1' else BASE_V2)
     if git('status', '--porcelain'):
         raise SystemExit('runtime source must be committed and clean before the cohort')
     OUT.mkdir(parents=True, exist_ok=True)
@@ -37,9 +48,9 @@ def main():
                 {'run': name, 'reason': 'protocol stop: earlier B failure'}, indent=2) + '\n')
             continue
         # The standard launcher owns its own ugrp_session process group.
-        command = ['bash', 'scripts/open_simulation.command', 'dispatch', *BASE,
+        command = ['bash', 'scripts/open_simulation.command', 'dispatch', *base,
                    *(['--fine-gain-schedule'] if schedule else []), '--output', str(output)]
-        launch = {'run': name, 'fine_gain_schedule': schedule, 'source_sha': sha, 'cwd': str(ROOT),
+        launch = {'protocol': version, 'run': name, 'fine_gain_schedule': schedule, 'source_sha': sha, 'cwd': str(ROOT),
                   'command': command, 'loadavg_before': os.getloadavg(), 'started_unix': time.time()}
         log = OUT / f'{name}.console.log'
         start = time.monotonic()
